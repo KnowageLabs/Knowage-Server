@@ -1,6 +1,6 @@
 <template>
     <!-- <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine p-m-2" :style="getWidgetStyleString()" :gridOptions="gridOptions" :rowData="rowData" :columnDefs="columnDefs" :tooltipShowDelay="100" :tooltipMouseTrack="true" @grid-ready="onGridReady"></ag-grid-vue> -->
-    <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine p-m-2" :gridOptions="gridOptions" :rowData="rowData" :columnDefs="columnDefs" :tooltipShowDelay="100" :tooltipMouseTrack="true" @grid-ready="onGridReady"></ag-grid-vue>
+    <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine p-m-2" :gridOptions="gridOptions" :rowData="rowData" :columnDefs="columnDefs" :tooltipShowDelay="100" :tooltipMouseTrack="true" :overlayNoRowsTemplate="overlayNoRowsTemplateTest" @grid-ready="onGridReady"></ag-grid-vue>
 </template>
 
 <script lang="ts">
@@ -56,7 +56,8 @@ export default defineComponent({
                 flex: 1
             },
             gridApi: null as any,
-            columnApi: null as any
+            columnApi: null as any,
+            overlayNoRowsTemplateTest: null as any
         }
     },
     created() {
@@ -72,7 +73,7 @@ export default defineComponent({
         setEventListeners() {
             console.log('setEventListener')
             // emitter.on('paginationChanged', (pagination) => console.log('WidgetEditorPreview - PAGINATION CHANGED!', pagination)) //  { enabled: this.paginationEnabled, itemsNumber: +this.itemsNumber }
-            emitter.on('sortingChanged', this.sortColumn) // { sortingColumn: this.widgetModel.settings.sortingColumn, sortingOrder: this.widgetModel.settings.sortingOrder }
+            emitter.on('sortingChanged', this.sortColumn)
             emitter.on('refreshTable', this.createDatatableColumns)
         },
         setupDatatableOptions() {
@@ -88,7 +89,7 @@ export default defineComponent({
                 rowHeight: 25,
 
                 // EVENTS
-                onCellClicked: (event, params) => console.log('A cell was clicked', event, params),
+                // onCellClicked: (event, params) => console.log('A cell was clicked', event, params),
 
                 // CALLBACKS
                 getRowStyle: this.getRowStyle
@@ -106,11 +107,14 @@ export default defineComponent({
             this.gridApi.setColumnDefs(datatableColumns)
 
             const updateData = (data) => {
-                this.rowData = data.slice(0, this.propWidget.settings.pagination.itemsNumber)
-
                 if (this.propWidget.settings.configuration.summaryRows.enabled) {
-                    this.gridApi.setPinnedBottomRowData(data.slice(this.propWidget.settings.pagination.itemsNumber))
-                } else this.gridApi.setPinnedBottomRowData()
+                    var rowsNumber = this.propWidget.settings.configuration.summaryRows.list.length
+                    this.gridApi.setRowData(data.slice(0, data.length - rowsNumber))
+                    this.gridApi.setPinnedBottomRowData(data.slice(-rowsNumber))
+                } else {
+                    this.gridApi.setRowData(data)
+                    this.gridApi.setPinnedBottomRowData()
+                }
             }
             updateData(this.datasetRecordsRows)
         },
@@ -128,7 +132,7 @@ export default defineComponent({
             var columnGroups = {}
             this.columnsNameArray = []
 
-            // TODO: Get whole dataset here i guess...
+            // TODO: Get whole dataset here when we get the BE service...
             var dataset = { type: 'SbiFileDataSet' }
 
             if (this.propWidget.settings.configuration.rows.indexColumn) {
@@ -146,9 +150,7 @@ export default defineComponent({
                     cellRendererParams: { colId: 'indexColumn', propWidget: this.propWidget }
                 })
             }
-            // c = datasetColumn
-            // f = responseField, fields = responseFields
-            // this.propWidget.columns[datasetColumn] = this.propWidget.columns[datasetColumn]
+
             for (var datasetColumn in this.propWidget.columns) {
                 for (var responseField in responseFields) {
                     var thisColumn = this.propWidget.columns[datasetColumn]
@@ -168,11 +170,6 @@ export default defineComponent({
                         } as any
 
                         if (tempCol.measure === 'MEASURE') tempCol.aggregationSelected = this.propWidget.columns[datasetColumn].aggregation
-                        // tempCol.pinned = this.propWidget.columns[datasetColumn].pinned
-
-                        // if (this.propWidget.columns[datasetColumn].isCalculated) {
-                        //     tempCol.isCalculated = this.propWidget.columns[datasetColumn].isCalculated
-                        // }
 
                         //ROWSPAN MANAGEMENT
                         if (this.propWidget.settings.configuration.rows.rowSpan.enabled && this.propWidget.settings.configuration.rows.rowSpan.column === this.propWidget.columns[datasetColumn].id) {
@@ -248,6 +245,13 @@ export default defineComponent({
                             tempCol.tooltipComponentParams = { tooltipConfig: tooltipConfig }
                         } else {
                             tempCol.headerTooltip = null
+                        }
+
+                        // CUSTOM MESSAGE CONFIGURATION  -----------------------------------------------------------------
+                        var customMessageConfig = this.propWidget.settings.configuration.customMessages
+                        if (customMessageConfig) {
+                            if (customMessageConfig.hideNoRowsMessage) this.gridApi.hideOverlay()
+                            if (customMessageConfig.noRowsMessage) this.overlayNoRowsTemplateTest = customMessageConfig.noRowsMessage
                         }
 
                         // COLUMN GROUPING -----------------------------------------------------------------

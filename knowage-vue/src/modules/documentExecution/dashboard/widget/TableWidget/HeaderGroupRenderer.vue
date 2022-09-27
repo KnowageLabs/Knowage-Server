@@ -17,9 +17,6 @@ export default defineComponent({
     data() {
         return {}
     },
-    mounted() {
-        // console.log('\n \n GROUP RENDERER PARAMS \n', this.params)
-    },
     methods: {
         getHeaderGroupStyle() {
             var modelGroups = this.params.propWidget.settings.style.columnGroups

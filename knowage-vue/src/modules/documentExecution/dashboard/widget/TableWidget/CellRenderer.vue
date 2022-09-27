@@ -16,13 +16,7 @@ export default defineComponent({
         }
     },
     data() {
-        return {
-            rowStyles: '' as string
-        }
-    },
-    mounted() {
-        // if (this.params) console.log('\n \n cell RENDERER PARAMS \n', this.params)
-        // if (this.params.propWidget.settings.conditionalStyles.enabled) this.rowStyles = getColumnConditionalStyles(this.params.propWidget, this.params.colId, this.params.value, true)
+        return {}
     },
     methods: {
         getColumnStyle() {
