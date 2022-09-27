@@ -1,0 +1,1095 @@
+{
+    "configuration": {
+        "aggregations": [],
+        "associations": [],
+        "datasets": [
+            {
+                "dsId": 166,
+                "dsLabel": "BIG_TEST_GIS",
+                "frequency": 0,
+                "name": "BIG_TEST_GIS",
+                "parameters": {},
+                "useCache": true
+            },
+            {
+                "dsId": 5,
+                "dsLabel": "DOC_measures_parallell_DEF",
+                "frequency": 0,
+                "name": "Sales and Costs by Product Name",
+                "parameters": {
+                    "par_category": "$P{Driver}",
+                    "par_department": "$P{Driver}",
+                    "par_family": "$P{Driver}"
+                },
+                "useCache": false
+            },
+            {
+                "dsId": 18,
+                "dsLabel": "DOC_SALES_UNIT_COST_BY_MONTH",
+                "frequency": 0,
+                "name": "Sales, Unit sales and cost",
+                "parameters": {
+                    "year": "2015"
+                },
+                "useCache": false
+            }
+        ],
+        "documents": [],
+        "filters": {},
+        "indexes": [],
+        "showExcelExport": true,
+        "showMenuOnView": true,
+        "showScreenshot": true,
+        "showSelectionButton": true,
+        "style": {
+            "border": {
+                "border-color": "rgb(212, 212, 212)",
+                "border-style": "solid",
+                "border-width": "1px"
+            },
+            "borders": true,
+            "shadow": {
+                "box-shadow": "0px 2px 3px #ccc"
+            },
+            "shadows": true,
+            "title": {
+                "font": {
+                    "color": "rgb(59, 103, 140)",
+                    "font-size": "16px",
+                    "font-weight": "bold",
+                    "text-align": "center"
+                }
+            },
+            "titles": false
+        },
+        "variables": [
+            {
+                "name": "Variable Static",
+                "type": "static",
+                "value": "Static Value"
+            },
+            {
+                "column": "FID",
+                "dataset": 166,
+                "name": "Variable Dataset",
+                "type": "dataset"
+            },
+            {
+                "driver": "Driver",
+                "name": "Variable Driver",
+                "type": "driver"
+            },
+            {
+                "attribute": "user_id",
+                "name": "Variable Profile",
+                "type": "profile"
+            }
+        ]
+    },
+    "knowageVersion": "8.1.0-S",
+    "sheets": [
+        {
+            "index": 0,
+            "label": "New Sheet",
+            "widgets": [
+                {
+                    "cliccable": true,
+                    "col": 0,
+                    "content": {
+                        "columnSelectedOfDataset": [
+                            {
+                                "alias": "FID",
+                                "aliasToShow": "FID",
+                                "decript": false,
+                                "fieldType": "ATTRIBUTE",
+                                "multiValue": false,
+                                "name": "FID",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.String"
+                            },
+                            {
+                                "alias": "the_geom",
+                                "aliasToShow": "the_geom",
+                                "decript": false,
+                                "fieldType": "ATTRIBUTE",
+                                "multiValue": false,
+                                "name": "the_geom",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.String"
+                            },
+                            {
+                                "alias": "store_id",
+                                "aliasToShow": "store_id",
+                                "decript": false,
+                                "fieldType": "ATTRIBUTE",
+                                "multiValue": false,
+                                "name": "store_id",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.String"
+                            },
+                            {
+                                "aggregationSelected": "SUM",
+                                "alias": "region_id",
+                                "aliasToShow": "region_id",
+                                "decript": false,
+                                "fieldType": "MEASURE",
+                                "funcSummary": "SUM",
+                                "multiValue": false,
+                                "name": "region_id",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.Integer"
+                            },
+                            {
+                                "aggregationSelected": "SUM",
+                                "alias": "sales_regi",
+                                "aliasToShow": "sales_regi",
+                                "decript": false,
+                                "fieldType": "MEASURE",
+                                "funcSummary": "SUM",
+                                "multiValue": false,
+                                "name": "sales_regi",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.Integer"
+                            },
+                            {
+                                "alias": "store_name",
+                                "aliasToShow": "store_name",
+                                "decript": false,
+                                "fieldType": "ATTRIBUTE",
+                                "multiValue": false,
+                                "name": "store_name",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.String"
+                            },
+                            {
+                                "aggregationSelected": "SUM",
+                                "alias": "store_numb",
+                                "aliasToShow": "store_numb",
+                                "decript": false,
+                                "fieldType": "MEASURE",
+                                "funcSummary": "SUM",
+                                "multiValue": false,
+                                "name": "store_numb",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.Integer"
+                            },
+                            {
+                                "alias": "store_stre",
+                                "aliasToShow": "store_stre",
+                                "decript": false,
+                                "fieldType": "ATTRIBUTE",
+                                "multiValue": false,
+                                "name": "store_stre",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.String"
+                            },
+                            {
+                                "alias": "store_city",
+                                "aliasToShow": "store_city",
+                                "decript": false,
+                                "fieldType": "ATTRIBUTE",
+                                "multiValue": false,
+                                "name": "store_city",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.String"
+                            },
+                            {
+                                "alias": "store_stat",
+                                "aliasToShow": "store_stat",
+                                "decript": false,
+                                "fieldType": "ATTRIBUTE",
+                                "multiValue": false,
+                                "name": "store_stat",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.String"
+                            },
+                            {
+                                "aggregationSelected": "SUM",
+                                "alias": "store_post",
+                                "aliasToShow": "store_post",
+                                "decript": false,
+                                "fieldType": "MEASURE",
+                                "funcSummary": "SUM",
+                                "multiValue": false,
+                                "name": "store_post",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.Integer"
+                            },
+                            {
+                                "alias": "store_coun",
+                                "aliasToShow": "store_coun",
+                                "decript": false,
+                                "fieldType": "ATTRIBUTE",
+                                "multiValue": false,
+                                "name": "store_coun",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.String"
+                            },
+                            {
+                                "alias": "store_mana",
+                                "aliasToShow": "store_mana",
+                                "decript": false,
+                                "fieldType": "ATTRIBUTE",
+                                "multiValue": false,
+                                "name": "store_mana",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.String"
+                            },
+                            {
+                                "alias": "store_phon",
+                                "aliasToShow": "store_phon",
+                                "decript": false,
+                                "fieldType": "ATTRIBUTE",
+                                "multiValue": false,
+                                "name": "store_phon",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.String"
+                            },
+                            {
+                                "alias": "store_fax",
+                                "aliasToShow": "store_fax",
+                                "decript": false,
+                                "fieldType": "ATTRIBUTE",
+                                "multiValue": false,
+                                "name": "store_fax",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.String"
+                            },
+                            {
+                                "alias": "first_open",
+                                "aliasToShow": "first_open",
+                                "decript": false,
+                                "fieldType": "ATTRIBUTE",
+                                "multiValue": false,
+                                "name": "first_open",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.String"
+                            },
+                            {
+                                "alias": "last_remod",
+                                "aliasToShow": "last_remod",
+                                "decript": false,
+                                "fieldType": "ATTRIBUTE",
+                                "multiValue": false,
+                                "name": "last_remod",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.String"
+                            },
+                            {
+                                "aggregationSelected": "SUM",
+                                "alias": "store_sqft",
+                                "aliasToShow": "store_sqft",
+                                "decript": false,
+                                "fieldType": "MEASURE",
+                                "funcSummary": "SUM",
+                                "multiValue": false,
+                                "name": "store_sqft",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.Integer"
+                            },
+                            {
+                                "aggregationSelected": "SUM",
+                                "alias": "grocery_sq",
+                                "aliasToShow": "grocery_sq",
+                                "decript": false,
+                                "fieldType": "MEASURE",
+                                "funcSummary": "SUM",
+                                "multiValue": false,
+                                "name": "grocery_sq",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.Integer"
+                            },
+                            {
+                                "aggregationSelected": "SUM",
+                                "alias": "frozen_sqf",
+                                "aliasToShow": "frozen_sqf",
+                                "decript": false,
+                                "fieldType": "MEASURE",
+                                "funcSummary": "SUM",
+                                "multiValue": false,
+                                "name": "frozen_sqf",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.Integer"
+                            },
+                            {
+                                "aggregationSelected": "SUM",
+                                "alias": "meat_sqft",
+                                "aliasToShow": "meat_sqft",
+                                "decript": false,
+                                "fieldType": "MEASURE",
+                                "funcSummary": "SUM",
+                                "multiValue": false,
+                                "name": "meat_sqft",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.Integer"
+                            },
+                            {
+                                "aggregationSelected": "SUM",
+                                "alias": "coffee_bar",
+                                "aliasToShow": "coffee_bar",
+                                "decript": false,
+                                "fieldType": "MEASURE",
+                                "funcSummary": "SUM",
+                                "multiValue": false,
+                                "name": "coffee_bar",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.Integer"
+                            },
+                            {
+                                "aggregationSelected": "SUM",
+                                "alias": "video_stor",
+                                "aliasToShow": "video_stor",
+                                "decript": false,
+                                "fieldType": "MEASURE",
+                                "funcSummary": "SUM",
+                                "multiValue": false,
+                                "name": "video_stor",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.Integer"
+                            },
+                            {
+                                "aggregationSelected": "SUM",
+                                "alias": "salad_bar",
+                                "aliasToShow": "salad_bar",
+                                "decript": false,
+                                "fieldType": "MEASURE",
+                                "funcSummary": "SUM",
+                                "multiValue": false,
+                                "name": "salad_bar",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.Integer"
+                            },
+                            {
+                                "aggregationSelected": "SUM",
+                                "alias": "prepared_f",
+                                "aliasToShow": "prepared_f",
+                                "decript": false,
+                                "fieldType": "MEASURE",
+                                "funcSummary": "SUM",
+                                "multiValue": false,
+                                "name": "prepared_f",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.Integer"
+                            },
+                            {
+                                "aggregationSelected": "SUM",
+                                "alias": "florist",
+                                "aliasToShow": "florist",
+                                "decript": false,
+                                "fieldType": "MEASURE",
+                                "funcSummary": "SUM",
+                                "multiValue": false,
+                                "name": "florist",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.Integer"
+                            },
+                            {
+                                "alias": "address",
+                                "aliasToShow": "address",
+                                "decript": false,
+                                "fieldType": "ATTRIBUTE",
+                                "multiValue": false,
+                                "name": "address",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.String"
+                            },
+                            {
+                                "alias": "postal_cod",
+                                "aliasToShow": "postal_cod",
+                                "decript": false,
+                                "fieldType": "ATTRIBUTE",
+                                "multiValue": false,
+                                "name": "postal_cod",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.String"
+                            },
+                            {
+                                "alias": "city",
+                                "aliasToShow": "city",
+                                "decript": false,
+                                "fieldType": "ATTRIBUTE",
+                                "multiValue": false,
+                                "name": "city",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.String"
+                            }
+                        ],
+                        "name": "Table Widget"
+                    },
+                    "cross": {
+                        "cross": {
+                            "crossType": "allRow",
+                            "enable": false,
+                            "outputParametersList": {
+                                "Date": {
+                                    "dataType": "date"
+                                },
+                                "Date Range": {
+                                    "dataType": "date"
+                                },
+                                "Number": {
+                                    "dataType": "number"
+                                },
+                                "Output Parameter": {
+                                    "dataType": "text"
+                                }
+                            }
+                        },
+                        "preview": {
+                            "dataset": 5,
+                            "enable": true,
+                            "parameters": [
+                                {
+                                    "bindType": "selection",
+                                    "column": "FID",
+                                    "dataset": "BIG_TEST_GIS",
+                                    "defaultValue": "",
+                                    "multiValue": false,
+                                    "name": "par_category",
+                                    "type": "String"
+                                },
+                                {
+                                    "bindType": "driver",
+                                    "defaultValue": "",
+                                    "driver": "Driver",
+                                    "multiValue": false,
+                                    "name": "par_department",
+                                    "type": "String"
+                                },
+                                {
+                                    "bindType": "dynamic",
+                                    "column": "FID",
+                                    "defaultValue": "",
+                                    "multiValue": false,
+                                    "name": "par_family",
+                                    "type": "String"
+                                }
+                            ],
+                            "previewType": "allRow"
+                        }
+                    },
+                    "dataset": {
+                        "dsId": 166
+                    },
+                    "filters": [],
+                    "id": 1663578408325,
+                    "limitRows": {
+                        "enable": false,
+                        "rows": 10
+                    },
+                    "row": 0,
+                    "search": {
+                        "columns": ["FID", "the_geom", "store_id", "store_name", "store_stre", "store_city", "store_stat", "store_coun", "store_mana", "store_phon", "store_fax", "first_open", "last_remod", "address", "postal_cod", "city"]
+                    },
+                    "settings": {
+                        "alternateRows": {
+                            "enabled": true,
+                            "evenRowsColor": "rgb(228, 232, 236)"
+                        },
+                        "exportpdf": {
+                            "custom": {
+                                "height": 210,
+                                "width": 297
+                            },
+                            "enabled": true
+                        },
+                        "page": 1,
+                        "pagination": {
+                            "enabled": true,
+                            "frontEnd": false,
+                            "itemsNumber": 10
+                        }
+                    },
+                    "sizeX": 10,
+                    "sizeY": 7,
+                    "style": {
+                        "padding": {
+                            "enabled": true,
+                            "padding-bottom": "5px",
+                            "padding-left": "5px",
+                            "padding-right": "5px",
+                            "padding-top": "",
+                            "unlinked": true
+                        },
+                        "showExcelExport": true,
+                        "th": {
+                            "background-color": "rgb(137, 158, 175)",
+                            "color": "rgb(255, 255, 255)",
+                            "enabled": true,
+                            "font-size": "14px",
+                            "justify-content": "center"
+                        },
+                        "title": {
+                            "label": "Table Widget"
+                        },
+                        "tr": {}
+                    },
+                    "type": "table",
+                    "updateble": true
+                },
+                {
+                    "cliccable": true,
+                    "col": 10,
+                    "content": {
+                        "columnSelectedOfDataset": [
+                            {
+                                "alias": "FID",
+                                "aliasToShow": "FID",
+                                "colorThresholdOptions": {
+                                    "condition": ["none", "none", "none"]
+                                },
+                                "decript": false,
+                                "fieldType": "ATTRIBUTE",
+                                "group": "8819cb86-0b3a-4bcc-b581-b1492ed0a436",
+                                "multiValue": false,
+                                "name": "FID",
+                                "personal": false,
+                                "pinned": "left",
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "scopeFunc": {
+                                    "condition": [
+                                        {
+                                            "condition": "none"
+                                        },
+                                        {
+                                            "condition": "none"
+                                        },
+                                        {
+                                            "condition": "none"
+                                        },
+                                        {
+                                            "condition": "none"
+                                        }
+                                    ],
+                                    "conditions": [">", "<", "==", ">=", "<=", "!="]
+                                },
+                                "style": {
+                                    "align-items": "flex-end",
+                                    "background-color": "rgb(33, 113, 11)",
+                                    "color": "rgb(210, 9, 9)",
+                                    "customHeaderTooltip": "fsdfs",
+                                    "enableCustomHeaderTooltip": true,
+                                    "font-family": "arial",
+                                    "font-size": "5px",
+                                    "font-style": "normal",
+                                    "font-weight": "light",
+                                    "hiddenColumn": true,
+                                    "hideFromPdf": true,
+                                    "hideHeader": true,
+                                    "justify-content": "flex-start",
+                                    "maxChars": "4",
+                                    "overrideHeader": true,
+                                    "prefix": "PRE",
+                                    "suffix": "SUFF",
+                                    "tooltip": {
+                                        "prefix": "Test",
+                                        "suffix": "FFSFA"
+                                    },
+                                    "width": "5px"
+                                },
+                                "subjectId": false,
+                                "type": "java.lang.String",
+                                "variables": [
+                                    {
+                                        "action": "header",
+                                        "variable": "Variable Static"
+                                    }
+                                ]
+                            },
+                            {
+                                "alias": "the_geom",
+                                "aliasToShow": "the_geom",
+                                "decript": false,
+                                "fieldType": "ATTRIBUTE",
+                                "group": "8819cb86-0b3a-4bcc-b581-b1492ed0a436",
+                                "multiValue": false,
+                                "name": "the_geom",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.String"
+                            },
+                            {
+                                "alias": "store_id",
+                                "aliasToShow": "store_id",
+                                "decript": false,
+                                "fieldType": "ATTRIBUTE",
+                                "group": "94fc9ab4-223f-411f-9761-288d2de41ec0",
+                                "multiValue": false,
+                                "name": "store_id",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.String"
+                            },
+                            {
+                                "aggregationSelected": "SUM",
+                                "alias": "store_sqft",
+                                "aliasToShow": "store_sqft",
+                                "colorThresholdOptions": {
+                                    "condition": ["none", "none", "none"]
+                                },
+                                "decript": false,
+                                "fieldType": "MEASURE",
+                                "funcSummary": "SUM",
+                                "multiValue": false,
+                                "name": "store_sqft",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "ranges": [
+                                    {
+                                        "background-color": "rgb(20, 85, 125)",
+                                        "color": "rgb(193, 11, 11)",
+                                        "icon": "fab fa-adn",
+                                        "operator": "==",
+                                        "value": 4
+                                    }
+                                ],
+                                "scale": 0,
+                                "scopeFunc": {
+                                    "condition": [
+                                        {
+                                            "condition": "none"
+                                        },
+                                        {
+                                            "condition": "none"
+                                        },
+                                        {
+                                            "condition": "none"
+                                        },
+                                        {
+                                            "condition": "none"
+                                        }
+                                    ],
+                                    "conditions": [">", "<", "==", ">=", "<=", "!="]
+                                },
+                                "style": {
+                                    "precision": 3,
+                                    "prefix": "fw",
+                                    "suffix": "fewf",
+                                    "width": "4"
+                                },
+                                "subjectId": false,
+                                "type": "java.lang.Integer",
+                                "visType": "Text"
+                            },
+                            {
+                                "aggregationSelected": "SUM",
+                                "alias": "coffee_bar",
+                                "aliasToShow": "coffee_bar",
+                                "barchart": {
+                                    "enabled": true,
+                                    "maxValue": 5,
+                                    "minValue": 3,
+                                    "style": {
+                                        "background-color": "rgb(15, 92, 157)",
+                                        "color": "rgb(142, 35, 35)",
+                                        "justify-content": "center"
+                                    }
+                                },
+                                "colorThresholdOptions": {
+                                    "condition": ["none", "none", "none"]
+                                },
+                                "decript": false,
+                                "fieldType": "MEASURE",
+                                "funcSummary": "SUM",
+                                "multiValue": false,
+                                "name": "coffee_bar",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "scopeFunc": {
+                                    "condition": [
+                                        {
+                                            "condition": "none"
+                                        },
+                                        {
+                                            "condition": "none"
+                                        },
+                                        {
+                                            "condition": "none"
+                                        },
+                                        {
+                                            "condition": "none"
+                                        }
+                                    ],
+                                    "conditions": [">", "<", "==", ">=", "<=", "!="]
+                                },
+                                "style": {
+                                    "width": "5"
+                                },
+                                "subjectId": false,
+                                "type": "java.lang.Integer",
+                                "visType": "Text & Chart"
+                            },
+                            {
+                                "aggregationSelected": "SUM",
+                                "alias": "prepared_f",
+                                "aliasToShow": "prepared_f",
+                                "decript": false,
+                                "fieldType": "MEASURE",
+                                "funcSummary": "SUM",
+                                "multiValue": false,
+                                "name": "prepared_f",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.Integer"
+                            },
+                            {
+                                "alias": "postal_cod",
+                                "aliasToShow": "postal_cod",
+                                "decript": false,
+                                "fieldType": "ATTRIBUTE",
+                                "multiValue": false,
+                                "name": "postal_cod",
+                                "personal": false,
+                                "precision": 0,
+                                "properties": {},
+                                "scale": 0,
+                                "subjectId": false,
+                                "type": "java.lang.String"
+                            }
+                        ],
+                        "name": "widget_table_1664267255249"
+                    },
+                    "cross": {
+                        "link": {
+                            "enable": true,
+                            "links": [
+                                {
+                                    "baseurl": "www.bla.com",
+                                    "interactionType": "allRow",
+                                    "parameters": [
+                                        {
+                                            "bindType": "static",
+                                            "name": "Parameter 1",
+                                            "value": "Yrdgdgd"
+                                        },
+                                        {
+                                            "bindType": "dynamic",
+                                            "column": "store_sqft",
+                                            "name": "Parameter 2"
+                                        },
+                                        {
+                                            "bindType": "driver",
+                                            "driver": "Driver",
+                                            "name": "Parameter 3"
+                                        },
+                                        {
+                                            "bindType": "json",
+                                            "json": "{\n  bojan: 'bojan'\n}",
+                                            "name": "Parameter 4"
+                                        },
+                                        {
+                                            "bindType": "selection",
+                                            "column": "the_geom",
+                                            "dataset": "BIG_TEST_GIS",
+                                            "name": "Parameter 5"
+                                        }
+                                    ],
+                                    "type": "replace"
+                                },
+                                {
+                                    "baseurl": "ggrw",
+                                    "column": "the_geom",
+                                    "interactionType": "singleColumn",
+                                    "parameters": [
+                                        {
+                                            "bindType": "jwt",
+                                            "name": "Parameter 6"
+                                        }
+                                    ],
+                                    "type": "blank"
+                                }
+                            ]
+                        }
+                    },
+                    "dataset": {
+                        "dsId": 166
+                    },
+                    "filters": [
+                        {
+                            "colAlias": "FID",
+                            "colName": "FID",
+                            "dataset": {
+                                "dsId": 166,
+                                "label": "BIG_TEST_GIS"
+                            },
+                            "filterOperator": "=",
+                            "filterVal1": "test",
+                            "filterVal2": "",
+                            "filterVals": ["test"],
+                            "type": "java.lang.String"
+                        }
+                    ],
+                    "groups": [
+                        {
+                            "background-color": "rgb(17, 154, 135)",
+                            "border-bottom-left-radius": "4px",
+                            "border-bottom-right-radius": "1px",
+                            "border-top-left-radius": "1px",
+                            "border-top-right-radius": "2px",
+                            "color": "rgb(188, 8, 8)",
+                            "font-family": "arial",
+                            "font-size": "4px",
+                            "font-style": "normal",
+                            "font-weight": "regular",
+                            "id": "8819cb86-0b3a-4bcc-b581-b1492ed0a436",
+                            "justify-content": "center",
+                            "name": "Group 1"
+                        },
+                        {
+                            "font-family": "times-new-roman",
+                            "font-size": "6px",
+                            "id": "94fc9ab4-223f-411f-9761-288d2de41ec0",
+                            "name": "Group 2"
+                        }
+                    ],
+                    "id": 1664267255249,
+                    "limitRows": {
+                        "enable": false,
+                        "rows": 10
+                    },
+                    "row": 0,
+                    "search": {
+                        "columns": []
+                    },
+                    "settings": {
+                        "alternateRows": {
+                            "enabled": true,
+                            "evenRowsColor": "rgb(25, 110, 194)",
+                            "oddRowsColor": "rgb(182, 0, 0)"
+                        },
+                        "exportpdf": {
+                            "a4landscape": false,
+                            "a4portrait": false,
+                            "custom": {
+                                "enabled": true,
+                                "height": 210,
+                                "width": 297
+                            },
+                            "enabled": true
+                        },
+                        "indexColumn": true,
+                        "multiselectable": true,
+                        "multiselectablecolor": "rgba(6, 155, 36, 0.38)",
+                        "norows": {
+                            "hide": false,
+                            "message": "Custom empty message"
+                        },
+                        "page": 1,
+                        "pagination": {
+                            "enabled": true,
+                            "frontEnd": false,
+                            "itemsNumber": 10
+                        },
+                        "rowThresholds": {
+                            "enabled": true,
+                            "list": []
+                        },
+                        "summary": {
+                            "enabled": true,
+                            "list": [
+                                {
+                                    "label": "Summary row 1"
+                                },
+                                {
+                                    "aggregation": "SUM",
+                                    "label": "Summary row 2"
+                                }
+                            ],
+                            "style": {
+                                "background-color": "hsl(0, 100%, 8%)",
+                                "color": "hsl(0, 100%, 40%)",
+                                "font-family": "arial",
+                                "font-size": "12px",
+                                "font-style": "oblique",
+                                "font-weight": "regular",
+                                "pinnedOnly": true
+                            }
+                        }
+                    },
+                    "sizeX": 10,
+                    "sizeY": 7,
+                    "style": {
+                        "backgroundColor": "rgb(182, 16, 16)",
+                        "border": {
+                            "border-bottom-left-radius": "3px",
+                            "border-bottom-right-radius": "4px",
+                            "border-color": "rgb(165, 14, 14)",
+                            "border-top-left-radius": "1px",
+                            "border-top-right-radius": "2px"
+                        },
+                        "padding": {
+                            "enabled": true,
+                            "padding-bottom": "5px",
+                            "padding-left": "5px",
+                            "padding-right": "5px",
+                            "padding-top": "",
+                            "unlinked": true
+                        },
+                        "shadow": {
+                            "box-shadow": "0px 4px 5px #ccc"
+                        },
+                        "showExcelExport": true,
+                        "th": {
+                            "background-color": "rgb(11, 117, 203)",
+                            "color": "rgb(145, 11, 11)",
+                            "enabled": true,
+                            "font-family": "arial",
+                            "font-size": "18px",
+                            "font-style": "normal",
+                            "font-weight": "bold",
+                            "height": 10,
+                            "justify-content": "flex-end",
+                            "multiline": true
+                        },
+                        "title": {
+                            "font": {
+                                "color": "rgb(59, 103, 140)",
+                                "font-family": "arial",
+                                "font-size": "16px",
+                                "font-weight": "bold",
+                                "text-align": "right"
+                            },
+                            "label": "Table Widget"
+                        },
+                        "titles": true,
+                        "tr": {
+                            "height": 32
+                        }
+                    },
+                    "type": "table",
+                    "updateble": true
+                }
+            ]
+        }
+    ]
+}

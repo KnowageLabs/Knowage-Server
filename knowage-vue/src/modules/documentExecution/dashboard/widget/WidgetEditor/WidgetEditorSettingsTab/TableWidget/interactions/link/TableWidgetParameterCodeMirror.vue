@@ -31,9 +31,11 @@ export default defineComponent({
     watch: {
         visible() {
             this.loadParameter()
+            setTimeout(() => this.codeMirror.refresh(), 1000)
         },
         propParameter() {
             this.loadParameter()
+            setTimeout(() => this.codeMirror.refresh(), 1000)
         }
     },
     created() {

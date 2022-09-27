@@ -42,6 +42,7 @@ import mainStore from '../../../App.store'
 import DatasetEditor from './dataset/DatasetEditor.vue'
 import WidgetEditor from './widget/WidgetEditor/WidgetEditor.vue'
 import mockedDashboardModel from './mockedDashboardModel.json'
+// import mock1 from './tempMocks/mock1.json'
 
 export default defineComponent({
     name: 'dashboard-manager',
@@ -90,6 +91,7 @@ export default defineComponent({
             // TODO
             // this.model = mock
             this.model = formatModel(mockedDashboardModel) as any
+            // this.model = formatModel(mock1) as any
             console.log('Dashboard Controller - FORMATTED MODEL: ', formatModel(mockedDashboardModel))
             this.store.setDashboard(this.model)
         },
