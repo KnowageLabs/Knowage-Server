@@ -11,8 +11,6 @@ export const getColumnGroup = (propWidget: IWidget, col: ITableWidgetColumnGroup
     } else return false
 }
 
-// STYLES ------------------------------------
-
 export const getWidgetStyleByType = (propWidget: IWidget, styleType: string) => {
     const styleSettings = propWidget.settings.style[styleType]
     if (styleSettings.enabled) {
@@ -38,12 +36,12 @@ export const getColumnConditionalStyles = (propWidget: IWidget, colId: string, v
                         .map(([k, v]) => `${k}:${v}`)
                         .join(';')
                 }
-                // break
             }
         }
     }
     return styleString
 }
+
 export const isConditionMet = (condition, valueToCompare) => {
     var fullfilledCondition = false
     switch (condition.operator) {
@@ -57,7 +55,6 @@ export const isConditionMet = (condition, valueToCompare) => {
             fullfilledCondition = valueToCompare <= condition.value
             break
         case 'IN':
-            // fullfilledCondition = condition.value.contains(valueToCompare.toString()) != -1
             fullfilledCondition = condition.value.split(',').indexOf(valueToCompare) != -1
             break
         case '>':

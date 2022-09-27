@@ -37,11 +37,7 @@ export default defineComponent({
             default:
                 break
         }
-    },
-    mounted() {
-        // console.log('\n \n TOOLTIP PARAMS \n', this.params)
-    },
-    methods: {}
+    }
 })
 </script>
 <style lang="scss">

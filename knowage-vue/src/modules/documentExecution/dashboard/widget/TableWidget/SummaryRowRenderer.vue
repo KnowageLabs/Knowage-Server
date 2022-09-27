@@ -17,9 +17,6 @@ export default defineComponent({
             type: Object
         }
     },
-    data() {
-        return {}
-    },
     mounted() {},
     methods: {
         getSummaryStyle() {

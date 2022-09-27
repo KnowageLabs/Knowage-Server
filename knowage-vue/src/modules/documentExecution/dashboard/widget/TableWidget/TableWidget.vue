@@ -72,7 +72,7 @@ export default defineComponent({
         setEventListeners() {
             console.log('setEventListener')
             // emitter.on('paginationChanged', (pagination) => console.log('WidgetEditorPreview - PAGINATION CHANGED!', pagination)) //  { enabled: this.paginationEnabled, itemsNumber: +this.itemsNumber }
-            emitter.on('sortingChanged', this.sortColumn) // { sortingColumn: this.widgetModel.settings.sortingColumn, sortingOrder: this.widgetModel.settings.sortingOrder }
+            emitter.on('sortingChanged', this.sortColumn)
             emitter.on('refreshTable', this.createDatatableColumns)
         },
         setupDatatableOptions() {
@@ -128,7 +128,7 @@ export default defineComponent({
             var columnGroups = {}
             this.columnsNameArray = []
 
-            // TODO: Get whole dataset here i guess...
+            // TODO: Get whole dataset here when we get the BE service...
             var dataset = { type: 'SbiFileDataSet' }
 
             if (this.propWidget.settings.configuration.rows.indexColumn) {
@@ -146,9 +146,7 @@ export default defineComponent({
                     cellRendererParams: { colId: 'indexColumn', propWidget: this.propWidget }
                 })
             }
-            // c = datasetColumn
-            // f = responseField, fields = responseFields
-            // this.propWidget.columns[datasetColumn] = this.propWidget.columns[datasetColumn]
+
             for (var datasetColumn in this.propWidget.columns) {
                 for (var responseField in responseFields) {
                     var thisColumn = this.propWidget.columns[datasetColumn]
@@ -168,11 +166,6 @@ export default defineComponent({
                         } as any
 
                         if (tempCol.measure === 'MEASURE') tempCol.aggregationSelected = this.propWidget.columns[datasetColumn].aggregation
-                        // tempCol.pinned = this.propWidget.columns[datasetColumn].pinned
-
-                        // if (this.propWidget.columns[datasetColumn].isCalculated) {
-                        //     tempCol.isCalculated = this.propWidget.columns[datasetColumn].isCalculated
-                        // }
 
                         //ROWSPAN MANAGEMENT
                         if (this.propWidget.settings.configuration.rows.rowSpan.enabled && this.propWidget.settings.configuration.rows.rowSpan.column === this.propWidget.columns[datasetColumn].id) {

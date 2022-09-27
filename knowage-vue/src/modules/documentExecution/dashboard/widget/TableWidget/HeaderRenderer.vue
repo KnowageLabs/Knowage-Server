@@ -17,9 +17,6 @@ export default defineComponent({
     data() {
         return {}
     },
-    mounted() {
-        // console.log('\n \n HEADER RENDERER PARAMS \n', this.params)
-    },
     methods: {
         getHeaderStyle() {
             const styleSettings = this.params.propWidget.settings.style.headers
