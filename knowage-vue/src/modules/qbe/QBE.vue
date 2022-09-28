@@ -436,7 +436,6 @@ export default defineComponent({
             this.calcFieldFunctions = calcFieldDescriptor.availableFunctions
         },
         async initializeQBE() {
-            console.log('>>>>>>>>>>>>>>>>>>>> DATASET: ', this.dataset)
             const label = this.dataset?.dataSourceLabel ? this.dataset.dataSourceLabel : this.qbe?.qbeDataSource
             const datamart = this.dataset?.dataSourceLabel ? this.dataset.name : this.qbe?.qbeDatamarts
             const temp = this.getFormattedParameters(this.filtersData)
