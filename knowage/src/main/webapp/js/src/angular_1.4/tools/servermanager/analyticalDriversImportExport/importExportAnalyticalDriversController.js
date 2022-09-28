@@ -199,11 +199,15 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			fd.append('exportedArchive', $scope.IEDConf.fileImport.file);
 			sbiModule_restServices.promisePost("1.0/serverManager/importExport/analyticaldrivers", 'import', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}})
 			.then(function(response, status, headers, config) {
-//				$scope.catalogSelected = [];
-				$scope.catalogSelected = angular.copy(response.data.exportedCatalog, $scope.catalogSelected);  //for default all elements are checked
-				$scope.exportedCatalog = response.data.exportedCatalog;
-				//open 
-				$scope.IEDConf.showDriversImported = true;
+				if(response.data.ERROR) {
+					sbiModule_restServices.errorHandler(response.data.ERROR,"");
+				} else {
+	//				$scope.catalogSelected = [];
+					$scope.catalogSelected = angular.copy(response.data.exportedCatalog, $scope.catalogSelected);  //for default all elements are checked
+					$scope.exportedCatalog = response.data.exportedCatalog;
+					//open 
+					$scope.IEDConf.showDriversImported = true;
+				}
 
 			}, function(response, status, headers, config) {
 				sbiModule_restServices.errorHandler(response.data,"");
