@@ -30,11 +30,11 @@
                     <div class="table-header">
                         <i v-if="showDefaultNumberFormatIcon(col)" v-tooltip.top="$t('documentExecution.registry.numberFormatNotSupported')" class="pi pi-exclamation-triangle kn-cursor-pointer"></i>
                         {{ col.title }}
-                        <i v-if="col.isEditable && col.columnInfo?.type !== 'boolean'" class="pi pi-pencil edit-icon p-ml-2" :data-test="col.field + '-icon'" />
+                        <i v-if="col.isEditable && col.columnInfo?.type !== 'boolean'" class="pi pi-pencil edit-icon p-ml-2" :data-test="col.field + '-icon'" v-tooltip.bottom="$t('documentExecution.registry.isEditableField')" />
                     </div>
                 </template>
                 <template #body="slotProps">
-                    <div class="p-d-flex p-flex-row" :data-test="col.field + '-body'">
+                    <div class="p-d-flex p-flex-row editableField" :data-test="col.field + '-body'">
                         <Checkbox v-if="col.editorType == 'TEXT' && col.columnInfo?.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="setRowEdited(slotProps.data)" :disabled="!col.isEditable"></Checkbox>
                         <RegistryDatatableEditableField
                             v-else-if="col.isEditable || col.columnInfo?.type === 'int' || col.columnInfo?.type === 'float'"
@@ -400,5 +400,8 @@ export default defineComponent({
 }
 .scrollable-table .p-datatable {
     max-width: 93vw;
+}
+.editableField {
+    width: 100%;
 }
 </style>

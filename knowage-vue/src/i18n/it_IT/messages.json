@@ -954,7 +954,7 @@
             "title": "Behavioural Model Lineage"
         },
         "businessModelManager": {
-            "add": "Add",
+            "add": "Aggiungi",
             "addCondition": "Aggiungi condizione",
             "advancedView": "Usa la visualizzazione avanzata come impostazione predefinita di QBE",
             "analyticalDriver": "Analytical driver",
@@ -1114,8 +1114,8 @@
             "hindBreadMessage": "This field set the breadcrumb text visualizable within a cross navigation.It's possible to use parameters (output or input types) of the original document through the syntax $P(source_parameter_name).",
             "hindDesc": "Hint about Description",
             "hindDescMessage": "This field set the description of the navigation visualizable within the selection popup. The popup will be shown if there are multiple cross navigations startable by the same document.It's possible to use parameters (output or input types) of the original document through the syntax $P(source_parameter_name).",
-            "hintDrag": "Per collegare i parametri della cross-navigazione trascina i parametri dal documento di partenza sopra quelli del documento d'arrivo.",
             "hint": "Cross-navigation management functionality allows you to create the link between document navigations. You can select the type of navigation and connect che parameters value from output to input. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "hintDrag": "Per collegare i parametri della cross-navigazione trascina i parametri dal documento di partenza sopra quelli del documento d'arrivo.",
             "incompatibleTypes": "Incompatible types",
             "incompatibleTypesMessage": "{originParam} parameter's type not compatible with type of parameter {targetParam}",
             "input": "Input",
@@ -1301,12 +1301,12 @@
             "valueName": "Value name"
         },
         "driversManagement": {
-            "partialSuccessMessage": "Not all data has been updated successfully. Check again for unsaved informations.",
             "add": "Add",
             "deleteError": "Error",
             "functional": "Functional",
             "hint": "Driver models a concept or a piece of data frequently used as a distinguishing criterion on the global data context.Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "options": "Options",
+            "partialSuccessMessage": "Not all data has been updated successfully. Check again for unsaved informations.",
             "temporal": "Temporal",
             "title": "Drivers management",
             "useModes": {

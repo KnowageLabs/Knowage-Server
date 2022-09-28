@@ -13,6 +13,7 @@
     "iconColumn": {
         "style": {
             "justify-content": "center",
+            "max-width": "130px",
             "width": "100%"
         }
     },
