@@ -241,6 +241,7 @@ export default defineComponent({
         },
         getFormattedKpiDesigner() {
             const tempDesigner = deepcopy(this.kpiDesigner)
+            if (!tempDesigner) return
 
             if (tempDesigner.chart.type === 'kpi') {
                 delete tempDesigner.chart.data.scorecard
