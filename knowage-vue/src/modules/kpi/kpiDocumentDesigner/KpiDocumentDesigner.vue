@@ -241,6 +241,7 @@ export default defineComponent({
         },
         getFormattedKpiDesigner() {
             const tempDesigner = deepcopy(this.kpiDesigner)
+            if (!tempDesigner) return
 
             if (tempDesigner.chart.type === 'kpi') {
                 delete tempDesigner.chart.data.scorecard
@@ -252,7 +253,7 @@ export default defineComponent({
             return tempDesigner
         },
         closeKpi() {
-            const url = this.$route.query.from === 'documentDetail' ? `/document-details/${this.id}` : '/workspace/analysis'
+            const url = this.$route.query.from === 'documentDetail' ? `/document-browser/document-details/${this.id}` : '/workspace/analysis'
             this.$router.push(url)
         }
     }
