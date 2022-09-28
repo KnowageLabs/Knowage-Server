@@ -87,6 +87,7 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import WorkspaceDataPreviewDialog from '@/modules/workspace/views/dataView/dialogs/WorkspaceDataPreviewDialog.vue'
 import mainStore from '../../../../App.store'
+import { mapState } from 'pinia'
 
 export default defineComponent({
     components: { TabView, TabPanel, DetailCard, AdvancedCard, LinkCard, TypeCard, MetadataCard, WorkspaceDataPreviewDialog },
@@ -106,6 +107,9 @@ export default defineComponent({
         datasetToCloneId: { type: Number as any }
     },
     computed: {
+        ...mapState(mainStore, {
+            user: 'user'
+        }),
         buttonDisabled(): any {
             return this.v$.$invalid
         }
@@ -228,8 +232,8 @@ export default defineComponent({
         //#region ===================== Save/Update Dataset & Tags =================================================
         async saveDataset() {
             let dsToSave = { ...this.selectedDataset } as any
-            if (this.user?.functionalities?.includes('DataPreparation')) {
-                await this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/instance/dataset/' + dsToSave.id).then((response: AxiosResponse<any>) => {
+			if (this.user?.functionalities?.includes('DataPreparation') && dsToSave.id) {
+                await this.$http.get(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/instance/dataset/' + dsToSave.id).then((response: AxiosResponse<any>) => {
                     if (response.data) {
                         this.$confirm.require({
                             icon: 'pi pi-exclamation-triangle',

@@ -164,8 +164,13 @@ angular.module('chartRendererModule')
 				scope.updateChart = function(widgetData,data){
 					var updateWidgetData = angular.copy(widgetData);
 					updateWidgetData.jsonData = data;
-					scope.chartInitializer.updateData(updateWidgetData);
-
+				
+					if (widgetData.chartTemplate.CHART.seriesStacking === true) {
+						scope.renderChart(scope.chartConf, data);
+					}
+					else {
+							scope.chartInitializer.updateData(updateWidgetData);
+					}
 				}
 
 			scope.$on('refresh',function(event,data,isRealtime,changedChartType,chartConf,selectionsAndParams, shouldUpdate){
