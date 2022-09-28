@@ -954,7 +954,7 @@
             "title": "Behavioural Model Lineage"
         },
         "businessModelManager": {
-            "add": "Add",
+            "add": "Aggiungi",
             "addCondition": "Aggiungi condizione",
             "advancedView": "Usa la visualizzazione avanzata come impostazione predefinita di QBE",
             "analyticalDriver": "Analytical driver",
