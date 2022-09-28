@@ -37,7 +37,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
-import org.hibernate.criterion.Restrictions;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -313,32 +312,17 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			Assert.assertNotNull(profile, "User profile object is null; it must be provided for this method to continue");
 
 			aSession = getSession();
-
-			// We need the get data from other organizations
-			aSession.disableFilter(TENANT_FILTER_NAME);
-
 			tx = aSession.beginTransaction();
 
-			Criteria c = aSession.createCriteria(SbiOrganizationDatasource.class);
+			Query hibQuery = aSession.createQuery("select ds.sbiDataSource from SbiOrganizationDatasource ds where (ds.sbiOrganizations.name = :tenantName or ds.sbiDataSource.commonInfo.userIn = :userId) or length(ds.sbiDataSource.jndi) > 0");			
+			hibQuery.setString("tenantName", getTenant());
+			hibQuery.setString("userId", profile.getUserId().toString());
 
-			c.createAlias("sbiOrganizations", "sbiOrganization");
-			c.createAlias("sbiDataSource", "sbiDataSource");
-
-			Criterion condOnTenant = Restrictions.eq("sbiOrganization.name", getTenant());
-			Criterion condOnUser = Restrictions.eq("sbiDataSource.commonInfo.userIn", profile.getUserId().toString());
-			Criterion condOnJNDILength = Restrictions.and(Restrictions.isNotNull("sbiDataSource.jndi"), Restrictions.ne("sbiDataSource.jndi", ""));
-
-			Criterion where = Restrictions.or(condOnTenant, Restrictions.or(condOnUser, condOnJNDILength));
-
-			c.add(where);
-
-			List hibList = c.list();
+			List hibList = hibQuery.list();
 			Iterator it = hibList.iterator();
 
 			while (it.hasNext()) {
-				SbiOrganizationDatasource curr = (SbiOrganizationDatasource) it.next();
-				SbiDataSource ds = curr.getSbiDataSource();
-				realResult.add(toDataSource(ds));
+				realResult.add(toDataSource((SbiDataSource) it.next()));
 			}
 			tx.commit();
 		} catch (HibernateException he) {
