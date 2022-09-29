@@ -42,6 +42,7 @@ import mainStore from '../../../App.store'
 import DatasetEditor from './dataset/DatasetEditor.vue'
 import WidgetEditor from './widget/WidgetEditor/WidgetEditor.vue'
 import mockedDashboardModel from './mockedDashboardModel.json'
+import descriptor from './DashboardDescriptor.json'
 // import mock1 from './tempMocks/mock1.json'
 
 export default defineComponent({
@@ -50,6 +51,7 @@ export default defineComponent({
     props: { sbiExecutionId: { type: String }, document: { type: Object }, reloadTrigger: { type: Boolean }, hiddenFormData: { type: Object }, filtersData: { type: Object as PropType<{ filterStatus: iParameter[]; isReadyForExecution: boolean }> } },
     data() {
         return {
+            descriptor,
             model: mock as any,
             widgetPickerVisible: false,
             datasetEditorVisible: false,
@@ -116,80 +118,7 @@ export default defineComponent({
         loadOutputParameters() {
             console.log('>>>>>>>>>>>>>>>> LOADED DOCUMENT: ', this.document)
             // TODO - Remove Mocked Output Parameters
-            const mockedParameters = [
-                {
-                    id: 4207,
-                    name: 'Date Range',
-                    type: {
-                        valueId: 285,
-                        valueCd: 'DATE_RANGE',
-                        valueName: 'sbidomains.nm.dateRange',
-                        valueDescription: 'sbidomains.ds.range',
-                        domainCode: 'PAR_TYPE',
-                        domainName: 'Parameter type',
-                        translatedValueDescription: 'Range',
-                        translatedValueName: 'Date Range'
-                    },
-                    biObjectId: 3495,
-                    formatCode: null,
-                    formatValue: null,
-                    isUserDefined: true
-                },
-                {
-                    id: 4208,
-                    name: 'Date',
-                    type: {
-                        valueId: 28,
-                        valueCd: 'DATE',
-                        valueName: 'sbidomains.nm.date',
-                        valueDescription: 'sbidomains.ds.date',
-                        domainCode: 'PAR_TYPE',
-                        domainName: 'Parameter type',
-                        translatedValueDescription: 'Date',
-                        translatedValueName: 'Date'
-                    },
-                    biObjectId: 3495,
-                    formatCode: 'DDMMYYYY',
-                    formatValue: '',
-                    isUserDefined: true
-                },
-                {
-                    id: 4209,
-                    name: 'Number',
-                    type: {
-                        valueId: 29,
-                        valueCd: 'NUM',
-                        valueName: 'sbidomains.nm.num',
-                        valueDescription: 'sbidomains.ds.num',
-                        domainCode: 'PAR_TYPE',
-                        domainName: 'Parameter type',
-                        translatedValueDescription: 'Parameter expects numerical values',
-                        translatedValueName: 'Number'
-                    },
-                    biObjectId: 3495,
-                    formatCode: null,
-                    formatValue: null,
-                    isUserDefined: true
-                },
-                {
-                    id: 4206,
-                    name: 'Output Parameter',
-                    type: {
-                        valueId: 30,
-                        valueCd: 'STRING',
-                        valueName: 'sbidomains.nm.string',
-                        valueDescription: 'sbidomains.ds.string',
-                        domainCode: 'PAR_TYPE',
-                        domainName: 'Parameter type',
-                        translatedValueDescription: 'Parameter expects textual values',
-                        translatedValueName: 'String'
-                    },
-                    biObjectId: 3495,
-                    formatCode: null,
-                    formatValue: null,
-                    isUserDefined: true
-                }
-            ]
+            const mockedParameters = descriptor.mockedOutputParameters
             this.store.setOutputParameters(mockedParameters)
         },
         setEventListeners() {
