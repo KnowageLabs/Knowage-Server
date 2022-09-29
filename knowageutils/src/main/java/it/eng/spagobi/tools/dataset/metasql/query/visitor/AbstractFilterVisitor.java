@@ -142,7 +142,7 @@ public abstract class AbstractFilterVisitor implements IFilterVisitor {
 
 			andFilters[tupleIndex] = new AndFilter(equalFilters);
 		}
-		return new OrFilter(andFilters);
+		return new AndFilter(andFilters);
 	}
 
 	protected abstract String getFormattedTimestamp(Timestamp timestamp);
