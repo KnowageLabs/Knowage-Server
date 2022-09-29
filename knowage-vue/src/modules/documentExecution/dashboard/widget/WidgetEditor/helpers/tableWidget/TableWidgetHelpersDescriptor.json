@@ -1,0 +1,220 @@
+{
+    "defaultResponsivnes": { "xs": true, "sm": true, "md": true, "lg": true, "xl": true },
+    "defaultTooltips": [
+        {
+            "target": "all",
+            "enabled": false,
+            "prefix": "",
+            "suffix": "",
+            "precision": 0,
+            "header": {
+                "enabled": false,
+                "text": ""
+            }
+        }
+    ],
+    "defaultVisibilityCondition": {
+        "target": [],
+        "hide": false,
+        "hidePdf": false,
+        "condition": {
+            "type": "",
+            "value": ""
+        }
+    },
+    "defaultVisualizations": {
+        "visualizationTypes": {
+            "enabled": false,
+            "types": [
+                {
+                    "target": "all",
+                    "type": "Text",
+                    "prefix": "",
+                    "suffix": "",
+                    "pinned": ""
+                }
+            ]
+        },
+        "visibilityConditions": {
+            "enabled": false,
+            "conditions": []
+        }
+    },
+    "defaultSummaryStyle": {
+        "background-color": "",
+        "color": "",
+        "font-family": "",
+        "font-size": "",
+        "font-style": "",
+        "font-weight": "",
+        "justify-content": ""
+    },
+    "defaultShadowsStyle": {
+        "enabled": false,
+        "properties": {
+            "box-shadow": "",
+            "backgroundColor": ""
+        }
+    },
+    "defaultRowsStyle": {
+        "height": 0,
+        "multiselectable": false,
+        "selectionColor": "",
+        "alternatedRows": {
+            "enabled": false,
+            "evenBackgroundColor": "rgb(228, 232, 236)",
+            "oddBackgroundColor": ""
+        }
+    },
+    "defaultPaddingStyle": {
+        "enabled": false,
+        "properties": {
+            "padding-top": "",
+            "padding-left": "",
+            "padding-bottom": "",
+            "padding-right": "",
+            "unlinked": false
+        }
+    },
+    "defaultHeadersStyle": {
+        "height": 25,
+        "properties": {
+            "background-color": "rgb(137, 158, 175)",
+            "color": "rgb(255, 255, 255)",
+            "justify-content": "center",
+            "font-size": "14px",
+            "font-family": "",
+            "font-style": "normal",
+            "font-weight": ""
+        }
+    },
+    "defaultBordersStyle": {
+        "enabled": false,
+        "properties": {
+            "border-bottom-left-radius": "",
+            "border-bottom-right-radius": "",
+            "border-color": "rgb(212, 212, 212)",
+            "border-style": "",
+            "border-top-left-radius": "",
+            "border-top-right-radius": "",
+            "border-width": ""
+        }
+    },
+    "defaultColumnGroups": {
+        "enabled": false,
+        "groups": []
+    },
+    "defaultColumnStyles": {
+        "enabled": true,
+        "styles": [
+            {
+                "properties": {
+                    "background-color": "",
+                    "color": "",
+                    "font-family": "",
+                    "font-size": "",
+                    "font-style": "",
+                    "font-weight": "",
+                    "justify-content": ""
+                },
+                "target": "all"
+            }
+        ]
+    },
+    "defaultConditionalStyle": {
+        "applyToWholeRow": false,
+        "condition": {
+            "operator": "",
+            "type": "",
+            "value": ""
+        },
+        "properties": {
+            "background-color": "",
+            "color": "",
+            "font-family": "",
+            "font-size": "",
+            "font-style": "",
+            "font-weight": "",
+            "icon": "",
+            "justify-content": ""
+        },
+        "target": ""
+    },
+    "defaultConditionalStyles": {
+        "conditions": [],
+        "enabled": false
+    },
+    "defaultCrossNavigation": {
+        "column": "",
+        "enabled": false,
+        "name": "",
+        "parameters": [],
+        "type": ""
+    },
+    "defaultCustomMessages": {
+        "hideNoRowsMessage": true,
+        "noRowsMessage": ""
+    },
+    "defaultExportsConfiguration": {
+        "pdf": {
+            "a4landscape": false,
+            "a4portrait": false,
+            "custom": {
+                "enabled": false,
+                "height": 0,
+                "width": 0
+            },
+            "enabled": false
+        },
+        "showExcelExport": false,
+        "showScreenshot": false
+    },
+    "defaultHeadersConfiguration": {
+        "custom": {
+            "enabled": false,
+            "rules": []
+        },
+        "enabled": true,
+        "enabledMultiline": false
+    },
+    "defaultLinks": {
+        "enabled": false,
+        "links": []
+    },
+    "defaultPagination": {
+        "enabled": false,
+        "itemsNumber": 0
+    },
+    "defaultPreview": {
+        "dataset": -1,
+        "directDownload": false,
+        "enabled": false,
+        "parameters": [],
+        "type": ""
+    },
+    "defaultRowsConfiguration": {
+        "indexColumn": false,
+        "rowSpan": {
+            "column": "",
+            "enabled": false
+        }
+    },
+    "defaultSelection": {
+        "enabled": false,
+        "modalColumn": "",
+        "multiselection": {
+            "enabled": false,
+            "properties": {
+                "background-color": "",
+                "color": ""
+            }
+        }
+    },
+    "defaultSummaryRowsConfiguration": {
+        "enabled": false,
+        "list": [],
+        "style": {
+            "pinnedOnly": false
+        }
+    }
+}
