@@ -1647,6 +1647,18 @@
 			}
 		}        
 
+		&.loadingScreenshot {
+			#viewModeMenuSpeedDial {
+				md-fab-speed-dial {
+					md-fab-trigger {
+						.md-fab {
+							display: none !important;
+						}
+					}
+				}
+			}			
+		}
+
         .gridster-item{
         	.selectorUtilities {
         		transition: right 0.3s linear;

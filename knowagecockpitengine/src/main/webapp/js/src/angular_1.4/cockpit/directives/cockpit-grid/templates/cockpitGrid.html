@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <div ng-if="cockpitModule_properties.cockpitSpinner" layout-fill style='position:absolute;z-index: 700;background:rgba(0,0,0, 0.3);'>
    <md-progress-circular  md-diameter="20px" md-mode='indeterminate' style='top:50%;left:50%;margin-left:-25px;' ></md-progress-circular>
 </div>
-<div id="gridsterContainer" gridster="cockpitModule_gridsterOptions" flex class="noMargin" ng-style="backgroundStyle" ng-class="{'cockpitEditMode':cockpitModule_properties.EDIT_MODE}">
+<div id="gridsterContainer" gridster="cockpitModule_gridsterOptions" flex class="noMargin" ng-style="backgroundStyle" ng-class="{'cockpitEditMode':cockpitModule_properties.EDIT_MODE,'loadingScreenshot':cockpitModule_properties.LOADING_SCREENSHOT}">
 	<ul>
 	</ul>
 </div>
