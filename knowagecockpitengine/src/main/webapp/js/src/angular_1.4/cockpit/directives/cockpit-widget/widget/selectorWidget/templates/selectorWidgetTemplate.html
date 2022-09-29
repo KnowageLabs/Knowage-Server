@@ -40,6 +40,7 @@
 		<!-- single -->
 		<md-input-container class="md-block" ng-if="showSelection && ngModel.settings.modalityValue=='dropdown'" style="width:100%">
 			<div class="kn-select">
+				<span class="kn-select-arrow"></span>
 				<select ng-if="ngModel.settings.hideDisabled && (ngModel.activeValues.length > 0)" ng-model="selectedValues[0]" ng-change="toggleParameter(selectedValues[0])" ng-options="value for value in ngModel.activeValues" ng-style="::gridWidth()">
 					<option></option>
 				</select>
@@ -54,6 +55,7 @@
 		
 		 <md-input-container class="md-block" ng-if="ngModel.settings.modalityValue=='multiDropdown' && showSelection" style="width:100%">
               <div class="kn-select">
+              	<span class="kn-select-arrow"></span>
                   <div ng-click="openSelectDialog($event)" style="height:32px;padding-right:24px;" class="truncated fakeDialog"><span ng-repeat="value in selectedValues">{{value}}<b ng-if="!$last">,</b></span></div>
               </div>
          </md-input-container>
