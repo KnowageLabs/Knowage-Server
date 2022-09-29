@@ -1,5 +1,5 @@
 <template>
-    <div class="kn-page--full">
+    <div class="kn-width-full">
         <Card class="p-m-3">
             <template #header>
                 <Toolbar class="kn-toolbar kn-toolbar--secondary">
