@@ -233,7 +233,9 @@ export default defineComponent({
         async saveDataset() {
             let dsToSave = { ...this.selectedDataset } as any
 			if (this.user?.functionalities?.includes('DataPreparation') && dsToSave.id) {
-                await this.$http.get(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/instance/dataset/' + dsToSave.id).then((response: AxiosResponse<any>) => {
+                await this.$http
+                    .get(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/instance/dataset/' + dsToSave.id, { headers: { 'X-Disable-Interceptor': 'true' } })
+                    .then((response: AxiosResponse<any>) => {
                     if (response.data) {
                         this.$confirm.require({
                             icon: 'pi pi-exclamation-triangle',
@@ -244,6 +246,10 @@ export default defineComponent({
                     } else {
                         this.proceedOnSaving(dsToSave)
                     }
+                })
+                .catch((err) => {
+                    if (err.response.status === 404) this.proceedOnSaving(dsToSave)
+                    else this.$store.commit('setError', { title: 'Server error', msg: err.data.errors[0].message })
                 })
             } else {
                 this.proceedOnSaving(dsToSave)
