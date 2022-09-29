@@ -764,7 +764,7 @@
             "column": "Column/s",
             "filter": "Filter",
             "filters": "Filters",
-            "isEditableField": "To change, click on the cell and select/enter the new value",
+            "isEditableField": "Editable column. Click on a cell and select/enter the new value",
             "numberFormatNotSupported": "Number format is not supported.",
             "select": "Select",
             "title": "Registry Document",

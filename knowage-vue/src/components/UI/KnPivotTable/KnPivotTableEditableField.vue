@@ -91,7 +91,7 @@ export default defineComponent({
             if (data && typeof data === 'string') {
                 if (this.column?.columnInfo.type === 'date') {
                     this.row[this.column.field].data = new Date(luxonFormatDate(data, 'yyyy-MM-dd', 'yyyy-MM-dd'))
-                } else if (this.column?.columnInfo.type === 'timestamp') {
+                } else if (this.column?.columnInfo.type === 'timestamp' && this.row[this.column.field] !== '') {
                     this.row[this.column.field].data = new Date(luxonFormatDate(data, 'yyyy-MM-dd HH:mm:ss.S', 'yyyy-MM-dd HH:mm:ss.S'))
                 }
             }
