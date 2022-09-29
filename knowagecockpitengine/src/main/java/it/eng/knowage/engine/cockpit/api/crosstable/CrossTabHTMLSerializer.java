@@ -824,7 +824,13 @@ public class CrossTabHTMLSerializer {
 					String visType = (measureConfig.isNull("visType")) ? "Text" : measureConfig.getString("visType");
 					SourceBean iconSB = null;
 
-					Double value = (!text.equals("")) ? Double.parseDouble(text) : null;
+					Double value = null;
+					try {
+						value = (!text.equals("")) ? Double.parseDouble(text) : null;
+					} catch(NumberFormatException e) {
+						logger.debug("Value " + text + " is not parseable as Double");
+					}
+
 					JSONObject threshold = getThreshold(value, measureConfig.optJSONArray("ranges"));
 
 					if (cellType.getValue().equalsIgnoreCase("data") && threshold.has("icon")) {
@@ -874,7 +880,7 @@ public class CrossTabHTMLSerializer {
 						aColumn.setAttribute(CLASS_ATTRIBUTE, classType);
 					}
 
-					if (value == null) {
+					if (StringUtils.isEmpty(text) && value == null) {
 						aRow.setAttribute(aColumn);
 						continue;
 					}
@@ -905,7 +911,11 @@ public class CrossTabHTMLSerializer {
 							patternPrecision = measureConfig.getJSONObject("style").getInt("precision");
 						}
 						// 4. formatting value...
-						actualText = measureFormatter.format(value, patternFormat, patternPrecision, i, j, this.locale);
+						if (value != null) {
+							actualText = measureFormatter.format(value, patternFormat, patternPrecision, i, j, this.locale);
+						} else {
+							actualText = text;
+						}
 
 						String percentOn = crossTab.getCrosstabDefinition().getConfig().optString("percenton");
 						if ("row".equals(percentOn) || "column".equals(percentOn)) {
