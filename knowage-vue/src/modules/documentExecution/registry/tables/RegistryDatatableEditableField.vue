@@ -98,7 +98,7 @@ export default defineComponent({
             if (this.column && (this.row[this.column.field] || this.row[this.column.field] === 0 || this.row[this.column.field] === '')) {
                 if (this.column.columnInfo.type === 'date' && typeof this.row[this.column.field] === 'string') {
                     this.row[this.column.field] = new Date(luxonFormatDate(this.row[this.column.field], 'yyyy-MM-dd', 'yyyy-MM-dd'))
-                } else if (this.column.columnInfo.type === 'timestamp' && typeof this.row[this.column.field] === 'string') {
+                } else if (this.column.columnInfo.type === 'timestamp' && typeof this.row[this.column.field] === 'string' && this.row[this.column.field] !== '') {
                     this.row[this.column.field] = new Date(luxonFormatDate(this.row[this.column.field], 'yyyy-MM-dd HH:mm:ss.S', 'yyyy-MM-dd HH:mm:ss.S'))
                 } else if (this.column.editorType !== 'COMBO' && this.column.columnInfo.type !== 'date' && this.column.columnInfo.type !== 'timestamp' && this.getDataType(this.column.columnInfo.type) === 'number') {
                     this.formatNumberConfiguration()
@@ -134,11 +134,23 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.pivot-calendar.p-component,
-.p-inputtext.p-component,
-.p-dropdown.p-component {
-    border: none !important;
-    background-color: transparent !important;
-    width: 100% !important;
+.p-component {
+    &.pivot-calendar,
+    &.p-inputtext,
+    &.p-dropdown,
+    &.p-datepicker {
+        border: none !important;
+        background-color: transparent !important;
+        width: 100% !important;
+    }
+}
+
+.p-inputnumber,
+.p-calendar {
+    &:deep(.p-inputtext) {
+        border: none !important;
+        background-color: transparent !important;
+        width: 100% !important;
+    }
 }
 </style>
