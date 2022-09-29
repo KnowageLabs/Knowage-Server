@@ -25,7 +25,7 @@
         <Column class="kn-truncated" :style="registryDatatableDescriptor.numerationColumn.style" :headerStyle="registryDatatableDescriptor.numerationColumn.style" :field="columns[0].field" :header="columns[0].title"></Column>
 
         <template v-for="col of columns.slice(1)" :key="col.field">
-            <Column class="kn-truncated" :field="col.field" :style="`min-width:${col.size}px`" :sortable="col.columnInfo.type !== 'timestamp'">
+            <Column class="kn-truncated" :field="col.field" :style="`min-width:${col.size}px`" :sortable="col.columnInfo.type !== 'timestamp' && col.columnInfo.type !== 'date'">
                 <template #header>
                     <div class="table-header">
                         <i v-if="showDefaultNumberFormatIcon(col)" v-tooltip.top="$t('documentExecution.registry.numberFormatNotSupported')" class="pi pi-exclamation-triangle kn-cursor-pointer"></i>
