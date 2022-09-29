@@ -18,6 +18,8 @@
 package it.eng.spagobi.tools.dataset.common.datareader;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -101,16 +103,24 @@ public abstract class AbstractDataReader implements IDataReader {
 	}
 
 	protected Class getNewMetaType(Class oldType, Class newType) {
-		if (oldType == null)
-			return newType;
-		if (oldType == String.class)
-			return String.class;
-		if (newType == Integer.class) {
-			if (oldType == Double.class || oldType == Long.class || oldType == BigDecimal.class)
-				return oldType;
-			else
-				return newType;
-		} else
-			return newType;
+		Class ret = null;
+		if (oldType == null) {
+			ret = newType;
+		} else if (oldType == String.class) {
+			ret = String.class;
+		} else if (oldType == Date.class) {
+			ret = Date.class;
+		} else if (oldType == Timestamp.class) {
+			ret = Timestamp.class;
+		} else if (newType == Integer.class) {
+			if (oldType == Double.class || oldType == Long.class || oldType == BigDecimal.class) {
+				ret = oldType;
+			} else {
+				ret = newType;
+			}
+		} else {
+			ret = newType;
+		}
+		return ret;
 	}
 }
