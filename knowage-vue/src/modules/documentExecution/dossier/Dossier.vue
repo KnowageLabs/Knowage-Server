@@ -6,6 +6,9 @@
                     <template #start>
                         {{ $t('common.details') }}
                     </template>
+                    <template #end>
+                        <Button v-if="templateOptionEnabled('uploadable') || templateOptionEnabled('downloadable')" icon="fas fa-ellipsis-v kn-cursor-pointer" class="p-button-text p-button-rounded p-button-plain" @click="showMenu" />
+                    </template>
                 </Toolbar>
             </template>
             <template #content>
@@ -82,6 +85,8 @@
             </template>
         </Card>
     </div>
+    <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
+    <KnInputFile label="" v-if="!uploading" :changeFunction="startTemplateUpload" :triggerInput="triggerUpload" />
 </template>
 
 <script lang="ts">
@@ -98,10 +103,12 @@ import KnHint from '@/components/UI/KnHint.vue'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
 import mainStore from '../../../App.store'
+import Menu from 'primevue/contextmenu'
+import KnInputFile from '@/components/UI/KnInputFile.vue'
 
 export default defineComponent({
     name: 'dossier',
-    components: { Card, Column, DataTable, KnHint, KnValidationMessages },
+    components: { KnInputFile, Menu, Card, Column, DataTable, KnHint, KnValidationMessages },
     props: { id: { type: String, required: false }, reloadTrigger: { type: Boolean }, filterData: Object },
     computed: {
         showHint() {
@@ -143,8 +150,11 @@ export default defineComponent({
             dossierDescriptor,
             activity: { activityName: '' } as any,
             loading: false,
+            triggerUpload: false,
+            uploading: false,
             interval: null as any,
             dossierActivities: [] as any,
+            menuButtons: [] as any,
             columns: dossierDescriptor.columns,
             jsonTemplate: {} as any,
             filters: {
@@ -293,6 +303,67 @@ export default defineComponent({
         storeDOC(id, randomKey, activityName) {
             var link = import.meta.env.VITE_HOST_URL + `/knowagedossierengine/api/start/generateDOC?activityId=${id}&randomKey=${randomKey}&templateName=${this.jsonTemplate.DOC_TEMPLATE.name}&activityName=${activityName}`
             window.open(link)
+        },
+        showMenu(event) {
+            this.createMenuItems()
+            // eslint-disable-next-line
+            // @ts-ignore
+            this.$refs.optionsMenu.toggle(event)
+        },
+        createMenuItems() {
+            this.menuButtons = []
+            this.menuButtons.push(
+                { key: '1', visible: this.templateOptionEnabled('uploadable'), icon: 'fas fa-upload', label: this.$t('documentExecution.dossier.uploadTemplate'), command: () => this.setUploadType() },
+                { key: '2', visible: this.templateOptionEnabled('downloadable'), icon: 'fas fa-download', label: this.$t('documentExecution.dossier.downloadTemplate'), command: () => this.downloadTemplate() }
+            )
+        },
+        templateOptionEnabled(optionName: string) {
+            if (this.jsonTemplate && this.jsonTemplate?.PPT_TEMPLATE == null) {
+                return this.jsonTemplate?.DOC_TEMPLATE?.[optionName]
+            } else {
+                return this.jsonTemplate?.PPT_TEMPLATE?.[optionName]
+            }
+        },
+        async downloadTemplate() {
+            if (this.jsonTemplate.PPT_TEMPLATE == null) {
+                var fileName = this.jsonTemplate?.DOC_TEMPLATE?.name
+                await this.$http
+                    .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'dossier/checkPathFile?templateName=' + fileName)
+                    .then((response: AxiosResponse<any>) => {
+                        if (response.data.STATUS == 'KO') {
+                            this.store.setInfo({ title: this.$t('common.error.generic'), msg: this.$t('documentExecution.dossier.templateDownloadError') })
+                        } else if (response.data.STATUS == 'OK') {
+                            window.open(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'dossier/resourcePath?templateName=' + fileName)
+                        }
+                    })
+                    .catch((error) => {
+                        if (error) this.store.setError({ title: this.$t('common.error.generic'), msg: error.message })
+                    })
+            } else {
+                var fileName = this.jsonTemplate.PPT_TEMPLATE.name
+                window.open(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'resourcePath?templateName=' + fileName)
+            }
+        },
+        setUploadType() {
+            this.triggerUpload = false
+            setTimeout(() => (this.triggerUpload = true), 200)
+        },
+        startTemplateUpload(event) {
+            this.uploading = true
+            this.uploadTemplate(event.target.files[0])
+            this.triggerUpload = false
+            setTimeout(() => (this.uploading = false), 200)
+        },
+        async uploadTemplate(uploadedFile) {
+            var formData = new FormData()
+            formData.append('file', uploadedFile)
+            await this.$http
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'dossier/importTemplateFile', formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
+                .then(async () => {
+                    this.store.setInfo({ title: this.$t('common.toast.success'), msg: this.$t('common.toast.uploadSuccess') })
+                })
+                .catch(() => this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.dossier.templateUploadError') }))
+                .finally(() => (this.triggerUpload = false))
         }
     }
 })

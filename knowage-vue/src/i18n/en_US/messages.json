@@ -552,6 +552,10 @@
             "deleteSuccess": "Successfully deleted selected activity.",
             "deleteTitle": "Delete dossier activity",
             "downloadMissingError": "Download ERROR - Document is missing",
+            "downloadTemplate": "Download document template",
+            "uploadTemplate": "Upload document template",
+            "templateDownloadError": "Error downloading template",
+            "templateUploadError": "Error uploading template",
             "headers": {
                 "activity": "Activity Name",
                 "partial": "Partial",
