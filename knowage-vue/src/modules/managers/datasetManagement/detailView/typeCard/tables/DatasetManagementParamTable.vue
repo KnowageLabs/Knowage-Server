@@ -29,11 +29,18 @@
                 <Column field="defaultValue" :header="$t('managers.driversManagement.useModes.defaultValue')" :sortable="true">
                     <template #editor="{data}">
                         <InputText v-if="data.multiValue === false" class="kn-material-input" :style="tableDescriptor.style.columnStyle" v-model="data.defaultValue" />
-                        <Chips class="kn-border-none" v-else v-model="data.defaultValue" />
+                        <div v-else class="p-d-flex p-flex-column chipsContainer">
+                            <Chips class="kn-border-none"  v-model="data.defaultValue"/>
+                            <small id="chips-help">{{$t('common.chipsHint')}}</small>
+                        </div>
+                        
                     </template>
                     <template #body="{data}">
                         <InputText v-if="data.multiValue === false" class="kn-material-input" :style="tableDescriptor.style.columnStyle" v-model="data.defaultValue" />
-                        <Chips class="kn-border-none" v-else v-model="data.defaultValue" />
+                        <div v-else class="p-d-flex p-flex-column chipsContainer">
+                            <Chips class="kn-border-none"  v-model="data.defaultValue"/>
+                            <small id="chips-help">{{$t('common.chipsHint')}}</small>
+                        </div>
                     </template>
                 </Column>
                 <Column field="multiValue" :header="$t('managers.profileAttributesManagement.form.multiValue')" :sortable="true">
@@ -114,8 +121,9 @@ export default defineComponent({
         },
         checkboxChange(data){
             if(data.multiValue){
-                data.defaultValue = [data.defaultValue]
-            }else data.defaultValue = data.defaultValue.join('')         
+                if(data.defaultValue) data.defaultValue = [data.defaultValue]
+            }else if(data.defaultValue) data.defaultValue = data.defaultValue.join('')  
+            this.$forceUpdate()       
         },
         insertParameter() {
             this.dataset.pars ? '' : (this.dataset.pars = [])
@@ -144,3 +152,16 @@ export default defineComponent({
     }
 })
 </script>
+<style lang="scss" scoped>
+    .chipsContainer {
+        width: 100%;
+        &:deep(.p-chips) {
+            width: 100%;
+        .p-chips-multiple-container{
+            width: 100%;
+        }
+    }
+    }
+    
+
+</style>
