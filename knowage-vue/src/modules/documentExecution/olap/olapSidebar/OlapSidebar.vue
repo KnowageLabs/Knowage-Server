@@ -285,5 +285,9 @@ export default defineComponent({
 }
 .olap-sidebar-button-active {
     background-color: #43749e !important;
+    &:hover{
+        color: white !important;
+    }
 }
+
 </style>

@@ -92,7 +92,7 @@ export interface iOlapModelConfig {
 }
 
 export interface iNode {
-    key: number,
+    key: string,
     id: string,
     label: string,
     children: iNode[],
