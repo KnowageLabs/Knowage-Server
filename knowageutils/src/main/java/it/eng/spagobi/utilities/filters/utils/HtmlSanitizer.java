@@ -76,6 +76,7 @@ public class HtmlSanitizer {
 				.allowAttributes("type", "value", "min", "max").onElements("input")
 				.allowAttributes("for").onElements("label")
 				.allowAttributes("frameborder", "allow", "allowfullscreen").onElements("iframe")
+				.allowAttributes("target").onElements("a")
 				.allowWithoutAttributes("figure", "span")
 				.allowUrlProtocols("data")
 				// Knowage
