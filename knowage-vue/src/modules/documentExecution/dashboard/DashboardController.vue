@@ -72,13 +72,14 @@ export default defineComponent({
         return { store, appStore }
     },
     created() {
+        console.log('>>>>>>>>>> CREATED CAAAAAAAAAAAAAAAAAAAALED')
         this.setEventListeners()
         this.loadDatasets()
         this.loadCrossNavigations()
         this.loadOutputParameters()
         this.loadModel()
     },
-    moundet() {
+    mounted() {
         this.loadCrossNavigations()
         this.loadOutputParameters()
     },
@@ -94,7 +95,6 @@ export default defineComponent({
             // this.model = mock
             this.model = formatModel(mockedDashboardModel) as any
             // this.model = formatModel(mock1) as any
-            console.log('Dashboard Controller - FORMATTED MODEL: ', formatModel(mockedDashboardModel))
             this.store.setDashboard(this.model)
         },
         async loadDatasets() {
