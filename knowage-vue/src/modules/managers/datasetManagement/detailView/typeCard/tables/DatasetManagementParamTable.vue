@@ -62,7 +62,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, nextTick } from 'vue'
+import { defineComponent } from 'vue'
 import tableDescriptor from './DatasetManagementTablesDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import Card from 'primevue/card'
@@ -157,11 +157,9 @@ export default defineComponent({
         width: 100%;
         &:deep(.p-chips) {
             width: 100%;
-        .p-chips-multiple-container{
-            width: 100%;
+            .p-chips-multiple-container{
+                width: 100%;
+            }
         }
     }
-    }
-    
-
 </style>
