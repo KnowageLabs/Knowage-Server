@@ -180,7 +180,7 @@ sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
     boolean isFirstUrlToCallEqualsToDefaultPage = false;
 		
 	if(request.getParameter("targetService") != null) {
-		firstUrlToCall = StringEscapeUtils.escapeJavaScript(request.getParameter("targetService"));
+		firstUrlToCall = request.getParameter("targetService");
 		
 	} else {
 	
