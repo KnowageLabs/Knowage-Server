@@ -7,7 +7,7 @@
             {{ $t('documentExecution.olap.filterDialog.ancestorDescendantWarning') }}
         </Message>
         <InputText v-if="!treeLocked" id="olap-filter-tree-search" class="kn-material-input" v-model.trim="searchWord" type="text" :placeholder="$t('common.search')" @input="searchTree" />
-        <Tree id="kn-parameter-tree" :class="{ 'olap-filter-tree-locked': treeLocked }" :value="nodes" :metaKeySelection="false" :expandedKeys="expandedKeys" @nodeExpand="loadNodes($event)">
+        <Tree id="kn-parameter-tree" :class="{ 'olap-filter-tree-locked': treeLocked }" :value="nodes" :metaKeySelection="false" :expandedKeys="expandedKeys" :loading="loading" @nodeExpand="loadNodes($event)">
             <template #default="slotProps">
                 <Checkbox
                     class="p-ml-2"
@@ -32,7 +32,7 @@ import Message from 'primevue/message'
 import olapFilterDialogDescriptor from './OlapFilterDialogDescriptor.json'
 import Tree from 'primevue/tree'
 
-import cryptoRandomString from 'crypto-random-string';
+import cryptoRandomString from 'crypto-random-string'
 
 export default defineComponent({
     name: 'olap-filter-tree',
@@ -50,7 +50,8 @@ export default defineComponent({
             searchWord: '',
             searchTimeout: null as any,
             searchWarningMessageVisible: false,
-            selectedAncestorsWarningVisible: false
+            selectedAncestorsWarningVisible: false,
+            loading: false
         }
     },
     watch: {
@@ -86,9 +87,11 @@ export default defineComponent({
         },
         async loadNodes(parent: any) {
             this.$emit('loading', true)
+            this.loading = true
 
             if (!this.filter || (parent && parent.leaf) || this.searchWord.length > 2) {
                 this.$emit('loading', false)
+                this.loading = false
                 return
             }
 
@@ -118,10 +121,11 @@ export default defineComponent({
             if (this.filterType === 'visible' && !parent) this.setSelectedFiltersForVisibleType()
             this.$emit('rootNode', this.nodes[0])
             this.$emit('loading', false)
+            this.loading = false
         },
         createNode(el: iFilterNode) {
             const tempNode = {
-                key: cryptoRandomString({length: 16, type: 'base64'}),
+                key: cryptoRandomString({ length: 16, type: 'base64' }) as string,
                 id: '' + el.id,
                 label: el.name,
                 children: [] as iNode[],
@@ -188,9 +192,11 @@ export default defineComponent({
         },
         searchTree() {
             clearTimeout(this.searchTimeout)
+            this.searchWarningMessageVisible = this.searchWord.length > 0 && this.searchWord.length < 3
+            if (this.searchWarningMessageVisible) return
             this.searchTimeout = setTimeout(async () => {
-                this.searchWarningMessageVisible = this.searchWord.length > 0 && this.searchWord.length < 3
                 if (this.searchWord.length > 2) {
+                    this.loading = true
                     const content = [] as any[]
                     await this.$http
                         .post(import.meta.env.VITE_OLAP_PATH + `1.0/hierarchy/search?SBI_EXECUTION_ID=${this.id}`, { axis: this.filter.axis, hierarchy: this.filter.selectedHierarchyUniqueName, name: this.searchWord, showS: false }, { headers: { Accept: 'application/json, text/plain, */*' } })
@@ -202,6 +208,7 @@ export default defineComponent({
                         })
                         .catch(() => {})
                     this.attachContentToTree(null, content)
+                    this.loading = false
                 } else {
                     this.loadNodes(null)
                 }

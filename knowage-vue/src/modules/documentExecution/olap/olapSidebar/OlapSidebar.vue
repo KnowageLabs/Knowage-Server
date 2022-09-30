@@ -292,4 +292,7 @@ export default defineComponent({
 .olap-sidebar-button-active {
     background-color: #43749e !important;
 }
+.olap-sidebar-button-active:hover {
+    color: white !important;
+}
 </style>
