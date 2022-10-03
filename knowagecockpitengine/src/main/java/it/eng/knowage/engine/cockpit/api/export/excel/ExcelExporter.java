@@ -849,7 +849,24 @@ public class ExcelExporter extends AbstractFormatExporter {
 											continue;
 										}
 									} else {
-										selects.put(selKey, select);
+										if (select instanceof JSONArray) {
+											JSONArray selectArray = (JSONArray) select;
+											for (int j = 0; j < selectArray.length(); j++) {
+												Object selObj = selectArray.get(j);
+												if (selObj instanceof JSONObject) {
+													if (((JSONObject) selObj).has("filterOperator")) {
+														continue;
+													} else {
+														selects.put(selKey, selObj);
+													}
+
+												} else {
+													selects.put(selKey, selObj);
+												}
+											}
+										} else {
+											selects.put(selKey, select);
+										}
 									}
 								}
 							}
@@ -883,9 +900,25 @@ public class ExcelExporter extends AbstractFormatExporter {
 										continue;
 									}
 								} else {
-									selects.put(selKey, select);
-								}
+									if (select instanceof JSONArray) {
+										JSONArray selectArray = (JSONArray) select;
+										for (int j = 0; j < selectArray.length(); j++) {
+											Object selObj = selectArray.get(j);
+											if (selObj instanceof JSONObject) {
+												if (((JSONObject) selObj).has("filterOperator")) {
+													continue;
+												} else {
+													selects.put(selKey, selObj);
+												}
 
+											} else {
+												selects.put(selKey, selObj);
+											}
+										}
+									} else {
+										selects.put(selKey, select);
+									}
+								}
 							}
 						}
 						if (!selects.isEmpty())
