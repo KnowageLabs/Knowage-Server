@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
-		<version>7.4.35-SNAPSHOT</version>
+		<version>7.4.35</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
 
