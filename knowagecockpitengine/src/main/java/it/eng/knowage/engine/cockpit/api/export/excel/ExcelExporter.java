@@ -853,10 +853,17 @@ public class ExcelExporter extends AbstractFormatExporter {
 								String selKey = selectionKeys.next();
 								Object select = selection.get(selKey);
 								if (!selKey.contains(",")) {
-									selects.put(selKey, select);
+									if (select instanceof JSONObject) {
+										if (((JSONObject) select).has("filterOperator")) {
+											continue;
+										}
+									} else {
+										selects.put(selKey, select);
+									}
 								}
 							}
-							selectionsMap.put(key, selects);
+							if (!selects.isEmpty())
+								selectionsMap.put(key, selects);
 						}
 					}
 				}
@@ -875,15 +882,22 @@ public class ExcelExporter extends AbstractFormatExporter {
 						JSONObject selection = (JSONObject) selections.get(key);
 						Iterator<String> selectionKeys = selection.keys();
 						HashMap<String, Object> selects = new HashMap<String, Object>();
-
 						while (selectionKeys.hasNext()) {
 							String selKey = selectionKeys.next();
 							Object select = selection.get(selKey);
 							if (!selKey.contains(",")) {
-								selects.put(selKey, select);
+								if (select instanceof JSONObject) {
+									if (((JSONObject) select).has("filterOperator")) {
+										continue;
+									}
+								} else {
+									selects.put(selKey, select);
+								}
+
 							}
 						}
-						selectionsMap.put(key, selects);
+						if (!selects.isEmpty())
+							selectionsMap.put(key, selects);
 					}
 				}
 			}
