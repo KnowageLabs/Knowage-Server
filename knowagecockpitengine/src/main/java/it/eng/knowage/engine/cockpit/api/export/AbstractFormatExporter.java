@@ -59,6 +59,7 @@ public abstract class AbstractFormatExporter {
 	public static final String UNIQUE_ALIAS_PLACEHOLDER = "_$_";
 	protected static final String DATE_FORMAT = "dd/MM/yyyy";
 	public static final String TIMESTAMP_FORMAT = "dd/MM/yyyy HH:mm:ss.SSS";
+	// TODO : Do we really need a "state" instance here instead of a local variable?
 	protected List<Integer> hiddenColumns;
 	protected Map<String, String> i18nMessages;
 	protected Map<String, CellStyle> format2CellStyle = new HashMap<String, CellStyle>();
