@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
-		<version>8.0.19-SNAPSHOT</version>
+		<version>8.0.19</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
 
@@ -253,7 +253,7 @@
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-core</artifactId>
-			<version>8.0.19-SNAPSHOT</version>
+			<version>8.0.19</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -282,7 +282,7 @@
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-utils</artifactId>
-			<version>8.0.19-SNAPSHOT</version>
+			<version>8.0.19</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -313,28 +313,28 @@
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowageoauth2securityprovider</artifactId>
-			<version>8.0.19-SNAPSHOT</version>
+			<version>8.0.19</version>
 			<scope>runtime</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowageldapsecurityprovider</artifactId>
-			<version>8.0.19-SNAPSHOT</version>
+			<version>8.0.19</version>
 			<scope>runtime</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowagegooglesecurityprovider</artifactId>
-			<version>8.0.19-SNAPSHOT</version>
+			<version>8.0.19</version>
 			<scope>runtime</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowageazuresecurityprovider</artifactId>
-			<version>8.0.19-SNAPSHOT</version>
+			<version>8.0.19</version>
 			<scope>runtime</scope>
 		</dependency>
 
