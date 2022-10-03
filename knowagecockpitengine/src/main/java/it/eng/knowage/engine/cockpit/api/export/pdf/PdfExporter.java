@@ -18,8 +18,6 @@
 
 package it.eng.knowage.engine.cockpit.api.export.pdf;
 
-import static java.util.Objects.nonNull;
-
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -30,9 +28,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
@@ -64,7 +64,6 @@ public class PdfExporter extends AbstractFormatExporter {
 
 	private float totalColumnsWidth = 0;
 	private float[] columnPercentWidths;
-	private List<Integer> pdfHiddenColumns;
 	private CssColorParser cssColorParser = CssColorParser.getInstance();
 
 	public PdfExporter(String userUniqueIdentifier, JSONObject body) {
@@ -90,7 +89,7 @@ public class PdfExporter extends AbstractFormatExporter {
 			}
 		}
 
-		try (PDDocument document = new PDDocument()) {
+		try (PDDocument document = new PDDocument(MemoryUsageSetting.setupTempFileOnly())) {
 			long widgetId = body.getLong("widget");
 
 			exportTableWidget(document, templateString, widgetId);
@@ -113,175 +112,205 @@ public class PdfExporter extends AbstractFormatExporter {
 			JSONObject settings = widget.optJSONObject("settings");
 			JSONObject style = widget.optJSONObject("style");
 
-			int offset = 0;
-			int fetchSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
-			JSONObject dataStore = this.getDataStoreForWidget(template, widget, offset, fetchSize);
-			int totalNumberOfRows = dataStore.getInt("results");
 			PDPage page = createPage(settings, widget);
 			document.addPage(page);
-			while (offset < totalNumberOfRows) {
-				this.fillPageWithData(dataStore, document, page, style, settings);
-				offset += fetchSize;
+
+			JSONObject dataStore = null;
+			int totalNumberOfRows = 0;
+			int offset = 0;
+			int fetchSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
+			BaseTable table = null;
+			JSONObject metadata = null;
+			JSONArray columns = null;
+			JSONArray rows = null;
+			JSONObject widgetData = null;
+			JSONObject widgetContent = null;
+			JSONArray columnsOrdered = null;
+			List<Integer> pdfHiddenColumns = null;
+			String[] columnDateFormats = null;
+			JSONObject[] columnStyles = null;
+			JSONArray jsonArray = null;
+
+			do {
 				dataStore = this.getDataStoreForWidget(template, widget, offset, fetchSize);
-			}
+
+				if (offset == 0) {
+					metadata = dataStore.getJSONObject("metaData");
+					columns = metadata.getJSONArray("fields");
+					columns = filterDataStoreColumns(columns);
+
+					widgetData = dataStore.getJSONObject("widgetData");
+					widgetContent = widgetData.getJSONObject("content");
+
+					jsonArray = widgetContent.getJSONArray("columnSelectedOfDataset");
+					hiddenColumns = getHiddenColumnsList(jsonArray);
+
+					columnsOrdered = getTableOrderedColumns(jsonArray, columns);
+
+					pdfHiddenColumns = getPdfHiddenColumnsList(jsonArray, columnsOrdered);
+
+					columnDateFormats = getColumnDateFormats(columnsOrdered, widgetContent);
+
+					columnStyles = getColumnsStyles(columnsOrdered, widgetContent);
+					initColumnWidths(columnStyles, columnsOrdered.length(), pdfHiddenColumns);
+
+					totalNumberOfRows = dataStore.getInt("results");
+
+					table = createBaseTable(document, page);
+
+					addHeaderToTable(table, style, widgetContent, columnsOrdered, pdfHiddenColumns);
+				}
+
+				rows = dataStore.getJSONArray("rows");
+
+				addDataToTable(table, settings, columnsOrdered, pdfHiddenColumns, columnDateFormats, columnStyles, rows);
+
+				offset += fetchSize;
+			} while(offset < totalNumberOfRows);
+
+			table.draw();
+
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Unable to export generic widget: " + widgetId, e);
 		}
 	}
 
-	protected void fillPageWithData(JSONObject dataStore, PDDocument pdDoc, PDPage pdPage, JSONObject style, JSONObject settings) {
-		try {
-
-			JSONObject metadata = dataStore.getJSONObject("metaData");
-			JSONArray columns = metadata.getJSONArray("fields");
-			columns = filterDataStoreColumns(columns);
-			JSONArray rows = dataStore.getJSONArray("rows");
-
-			JSONObject widgetData = dataStore.getJSONObject("widgetData");
-			JSONObject widgetContent = widgetData.getJSONObject("content");
-			HashMap<String, String> arrayHeader = new HashMap<String, String>();
-			for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
-				JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
-				String key;
-				if (column.optBoolean("isCalculated") && !column.has("name")) {
-					key = column.getString("alias");
-				} else {
-					key = column.getString("name");
+	private void addDataToTable(BaseTable table, JSONObject settings, JSONArray columnsOrdered, List<Integer> pdfHiddenColumns, String[] columnDateFormats, JSONObject[] columnStyles, JSONArray rows) throws JSONException {
+		// Check if summary row is enabled
+		boolean summaryRowEnabled = false;
+		String summaryRowLabel = null;
+		if (settings.has("summary")) {
+			JSONObject summary = settings.getJSONObject("summary");
+			if (Objects.nonNull(summary)) {
+				summaryRowEnabled = Boolean.parseBoolean(summary.getString("enabled"));
+				JSONArray list = summary.getJSONArray("list");
+				int listLenght = list.length();
+				if (listLenght > 0) {
+					JSONObject jsonObject = list.getJSONObject(0);
+					summaryRowLabel = "";
+					if (jsonObject.has("label")) {
+						summaryRowLabel = jsonObject.getString("label");
+					}
 				}
-				arrayHeader.put(key, column.getString("aliasToShow"));
 			}
+		}
+		DateFormat inputDateFormat = new SimpleDateFormat(DATE_FORMAT, getLocale());
 
-			hiddenColumns = getHiddenColumnsList(widgetContent.getJSONArray("columnSelectedOfDataset"));
-			JSONArray columnsOrdered = getTableOrderedColumns(widgetContent.getJSONArray("columnSelectedOfDataset"), columns);
-			pdfHiddenColumns = getPdfHiddenColumnsList(columnsOrdered, widgetContent.getJSONArray("columnSelectedOfDataset"));
+		for (int r = 0; r < rows.length(); r++) {
 
-			JSONObject[] columnStyles = getColumnsStyles(columnsOrdered, widgetContent);
-			String[] columnDateFormats = getColumnDateFormats(columnsOrdered, widgetContent);
-			initColumnWidths(columnStyles, columnsOrdered.length());
+			JSONObject rowObject = rows.getJSONObject(r);
+			Row<PDPage> row = table.createRow(10);
 
-			BaseTable table = createBaseTable(pdDoc, pdPage);
-			Row<PDPage> headerRow = table.createRow(15f);
+			for (int c = 0; c < columnsOrdered.length(); c++) {
 
-			for (int i = 0; i < columnsOrdered.length(); i++) {
-
-				if (pdfHiddenColumns.contains(i))
+				if (pdfHiddenColumns.contains(c))
 					continue;
 
-				JSONObject column = columnsOrdered.getJSONObject(i);
-				String columnName = column.getString("header");
-				if (arrayHeader.get(columnName) != null) {
-					columnName = arrayHeader.get(columnName);
-				}
-
-				Cell<PDPage> headerCell = headerRow.createCell(columnPercentWidths[i], columnName, HorizontalAlignment.get("center"),
-						VerticalAlignment.get("top"));
-				if (style != null && style.has("th") && style.getJSONObject("th").optBoolean("enabled")) {
-					JSONObject headerStyle = style.getJSONObject("th");
-					headerCell.setFont(PDType1Font.HELVETICA_BOLD);
-					if (headerStyle.has("font-size")) {
-						float size = getFontSizeFromString(headerStyle.getString("font-size"));
-						if (size != 0)
-							headerCell.setFontSize(size);
-					}
-					headerCell.setFillColor(getColorFromString(headerStyle.optString("background-color"), Color.WHITE));
-					headerCell.setTextColor(getColorFromString(headerStyle.optString("color"), Color.BLACK));
-				}
-			}
-
-			table.addHeaderRow(headerRow);
-
-			// Check if summary row is enabled
-			boolean summaryRowEnabled = false;
-			String summaryRowLabel = null;
-			if (settings.has("summary")) {
-				JSONObject summary = settings.getJSONObject("summary");
-				if (nonNull(summary)) {
-					summaryRowEnabled = Boolean.parseBoolean(summary.getString("enabled"));
-					JSONArray list = summary.getJSONArray("list");
-					int listLenght = list.length();
-					if (listLenght > 0) {
-						summaryRowLabel = list.getJSONObject(0).getString("label");
-					}
-				}
-			}
-			DateFormat inputDateFormat = new SimpleDateFormat(DATE_FORMAT, getLocale());
-
-			for (int r = 0; r < rows.length(); r++) {
-				JSONObject rowObject = rows.getJSONObject(r);
-				Row<PDPage> row = table.createRow(10);
-
-				for (int c = 0; c < columnsOrdered.length(); c++) {
-
-					if (pdfHiddenColumns.contains(c))
-						continue;
-
-					JSONObject column = columnsOrdered.getJSONObject(c);
-					String type = column.getString("type");
-					String colIndex = column.getString("name"); // column_1, column_2, column_3...
-					Object value = rowObject.get(colIndex);
-					if (value != null) {
-						String valueStr = value.toString();
-						if (type.equalsIgnoreCase("float") && columnStyles[c] != null && columnStyles[c].has("precision")) {
-							int precision = columnStyles[c].optInt("precision");
-							int pos = valueStr.indexOf(".");
-							// offset = 0 se devo tagliare fuori anche la virgola ( in caso precision fosse 0 )
-							int offset = (precision == 0 ? 0 : 1);
-							if (pos != -1 && valueStr.length() >= pos + precision + offset) {
-								try {
-									valueStr = valueStr.substring(0, pos + precision + offset);
-								} catch (Exception e) {
-									// value stays as it is
-									LOGGER.error("Cannot format value according to precision", e);
-								}
-							} else {
-								LOGGER.warn("Cannot format raw value {" + valueStr + "} with precision {" + precision + "}");
-							}
-						}
-						if (type.equalsIgnoreCase("date")) {
+				JSONObject column = columnsOrdered.getJSONObject(c);
+				String type = column.getString("type");
+				String colIndex = column.getString("name"); // column_1, column_2, column_3...
+				Object value = rowObject.get(colIndex);
+				if (value != null) {
+					String valueStr = value.toString();
+					if (type.equalsIgnoreCase("float") && columnStyles[c] != null && columnStyles[c].has("precision")) {
+						int precision = columnStyles[c].optInt("precision");
+						int pos = valueStr.indexOf(".");
+						// offset = 0 se devo tagliare fuori anche la virgola ( in caso precision fosse 0 )
+						int offset = (precision == 0 ? 0 : 1);
+						if (pos != -1 && valueStr.length() >= pos + precision + offset) {
 							try {
-								DateFormat outputDateFormat = new SimpleDateFormat(columnDateFormats[c], getLocale());
-								Date date = inputDateFormat.parse(valueStr);
-								valueStr = outputDateFormat.format(date);
+								valueStr = valueStr.substring(0, pos + precision + offset);
 							} catch (Exception e) {
 								// value stays as it is
-								LOGGER.warn("Cannot format date {" + valueStr + "} according to format {" + columnDateFormats[c] + "}", e);
+								LOGGER.error("Cannot format value according to precision", e);
 							}
+						} else {
+							LOGGER.warn("Cannot format raw value {" + valueStr + "} with precision {" + precision + "}");
 						}
-
-						// If summary row is enabled, add the summary label to the value
-						if (r == (rows.length() - 1) && summaryRowEnabled && !StringUtils.isEmpty(valueStr)) {
-							valueStr = summaryRowLabel + " " + valueStr;
-						}
-
-						Cell<PDPage> cell = row.createCell(columnPercentWidths[c], valueStr, HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
-						// first of all set alternate rows color
-						if (settings != null && settings.has("alternateRows")) {
-							JSONObject alternateRows = settings.getJSONObject("alternateRows");
-							if (alternateRows.optBoolean("enabled")) {
-								cell.setFont(PDType1Font.HELVETICA);
-								if (r % 2 == 0) {
-									cell.setFillColor(getColorFromString(alternateRows.optString("evenRowsColor"), Color.WHITE));
-								} else {
-									cell.setFillColor(getColorFromString(alternateRows.optString("oddRowsColor"), Color.WHITE));
-								}
-							}
-						}
-						// then override it with custom column color (if set)
-						Color textColor = getColumnTextColor(columnStyles, c);
-						Color backgroundColor = getColumnBackgroundColor(columnStyles, c);
-						if (textColor != null)
-							cell.setTextColor(textColor);
-						if (backgroundColor != null)
-							cell.setFillColor(backgroundColor);
 					}
+					if (type.equalsIgnoreCase("date")) {
+						try {
+							DateFormat outputDateFormat = new SimpleDateFormat(columnDateFormats[c], getLocale());
+							Date date = inputDateFormat.parse(valueStr);
+							valueStr = outputDateFormat.format(date);
+						} catch (Exception e) {
+							// value stays as it is
+							LOGGER.warn("Cannot format date {" + valueStr + "} according to format {" + columnDateFormats[c] + "}", e);
+						}
+					}
+
+					// If summary row is enabled, add the summary label to the value
+					if (r == (rows.length() - 1) && summaryRowEnabled && !StringUtils.isEmpty(valueStr)) {
+						valueStr = summaryRowLabel + " " + valueStr;
+					}
+
+					Cell<PDPage> cell = row.createCell(columnPercentWidths[c], valueStr, HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
+					// first of all set alternate rows color
+					if (settings != null && settings.has("alternateRows")) {
+						JSONObject alternateRows = settings.getJSONObject("alternateRows");
+						if (alternateRows.optBoolean("enabled")) {
+							cell.setFont(PDType1Font.HELVETICA);
+							if (r % 2 == 0) {
+								cell.setFillColor(getColorFromString(alternateRows.optString("evenRowsColor"), Color.WHITE));
+							} else {
+								cell.setFillColor(getColorFromString(alternateRows.optString("oddRowsColor"), Color.WHITE));
+							}
+						}
+					}
+					// then override it with custom column color (if set)
+					Color textColor = getColumnTextColor(columnStyles, c);
+					Color backgroundColor = getColumnBackgroundColor(columnStyles, c);
+					if (textColor != null)
+						cell.setTextColor(textColor);
+					if (backgroundColor != null)
+						cell.setFillColor(backgroundColor);
 				}
 			}
-
-			table.draw();
-
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Cannot write data to PDF file", e);
 		}
+	}
+
+	private void addHeaderToTable(BaseTable table, JSONObject style, JSONObject widgetContent, JSONArray columnsOrdered, List<Integer> pdfHiddenColumns) throws JSONException {
+		HashMap<String, String> arrayHeader = new HashMap<String, String>();
+		for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
+			JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
+			String key;
+			if (column.optBoolean("isCalculated") && !column.has("name")) {
+				key = column.getString("alias");
+			} else {
+				key = column.getString("name");
+			}
+			arrayHeader.put(key, column.getString("aliasToShow"));
+		}
+
+		Row<PDPage> headerRow = table.createRow(15f);
+
+		for (int i = 0; i < columnsOrdered.length(); i++) {
+
+			if (pdfHiddenColumns.contains(i))
+				continue;
+
+			JSONObject column = columnsOrdered.getJSONObject(i);
+			String columnName = column.getString("header");
+			if (arrayHeader.get(columnName) != null) {
+				columnName = arrayHeader.get(columnName);
+			}
+
+			Cell<PDPage> headerCell = headerRow.createCell(columnPercentWidths[i], columnName, HorizontalAlignment.get("center"),
+					VerticalAlignment.get("top"));
+			if (style != null && style.has("th") && style.getJSONObject("th").optBoolean("enabled")) {
+				JSONObject headerStyle = style.getJSONObject("th");
+				headerCell.setFont(PDType1Font.HELVETICA_BOLD);
+				if (headerStyle.has("font-size")) {
+					float size = getFontSizeFromString(headerStyle.getString("font-size"));
+					if (size != 0)
+						headerCell.setFontSize(size);
+				}
+				headerCell.setFillColor(getColorFromString(headerStyle.optString("background-color"), Color.WHITE));
+				headerCell.setTextColor(getColorFromString(headerStyle.optString("color"), Color.BLACK));
+			}
+		}
+
+		table.addHeaderRow(headerRow);
 	}
 
 	private String[] getColumnDateFormats(JSONArray columnsOrdered, JSONObject widgetContent) {
@@ -389,7 +418,7 @@ public class PdfExporter extends AbstractFormatExporter {
 		}
 	}
 
-	private List<Integer> getPdfHiddenColumnsList(JSONArray columnsOrdered, JSONArray columns) {
+	private List<Integer> getPdfHiddenColumnsList(JSONArray columns, JSONArray columnsOrdered) {
 		List<Integer> pdfHiddenColumns = new ArrayList<>();
 		try {
 			for (int i = 0; i < columnsOrdered.length(); i++) {
@@ -415,7 +444,7 @@ public class PdfExporter extends AbstractFormatExporter {
 		}
 	}
 
-	private void initColumnWidths(JSONObject[] columnStyles, int numOfColumns) {
+	private void initColumnWidths(JSONObject[] columnStyles, int numOfColumns, List<Integer> pdfHiddenColumns) {
 		columnPercentWidths = new float[numOfColumns + 10];
 		for (int i = 0; i < numOfColumns; i++) {
 			if (columnStyles[i] != null && columnStyles[i].optInt("width") != 0) {
