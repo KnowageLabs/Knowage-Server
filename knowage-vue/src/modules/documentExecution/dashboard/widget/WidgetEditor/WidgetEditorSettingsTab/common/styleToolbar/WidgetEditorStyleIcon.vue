@@ -249,7 +249,7 @@ export default defineComponent({
 .style-icon-color-picker {
     position: absolute;
     top: 20px;
-    left: 20px;
+    right: 20px;
     z-index: 100000;
 }
 
