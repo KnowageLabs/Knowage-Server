@@ -5,6 +5,7 @@ import deepcopy from 'deepcopy'
 import * as  tableWidgetDefaultValues from './tableWidget/TableWidgetDefaultValues'
 
 export function createNewWidget() {
+
     const widget = {
         id: cryptoRandomString({ length: 16, type: 'base64' }),
         new: true,
@@ -49,6 +50,8 @@ export function createNewWidget() {
         }
 
     } as IWidget
+
+    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA : ", tableWidgetDefaultValues.getDefaultTooltips())
 
     return widget
 }

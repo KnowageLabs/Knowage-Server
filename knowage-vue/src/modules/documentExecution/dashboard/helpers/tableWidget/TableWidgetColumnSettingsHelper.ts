@@ -80,6 +80,7 @@ const getStyleFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
         formattedWidget.settings.style.columns.styles.push({
             target: [getColumnId(tempColumn.name)],
             properties: {
+                width: tempColumn.style.width,
                 'background-color': tempColumn.style['background-color'] ?? 'rgb(0, 0, 0)',
                 color: tempColumn.style.color ?? 'rgb(255, 255, 255)',
                 'justify-content': tempColumn.style['justify-content'] ?? '',

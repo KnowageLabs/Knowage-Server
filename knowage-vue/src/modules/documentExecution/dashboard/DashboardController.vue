@@ -72,7 +72,6 @@ export default defineComponent({
         return { store, appStore }
     },
     created() {
-        console.log('>>>>>>>>>> CREATED CAAAAAAAAAAAAAAAAAAAALED')
         this.setEventListeners()
         this.loadDatasets()
         this.loadCrossNavigations()

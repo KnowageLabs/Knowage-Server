@@ -4,7 +4,14 @@
             <InputSwitch v-model="columnStyles.enabled" @change="columnStylesChanged"></InputSwitch>
             <label class="kn-material-input-label p-ml-3">{{ $t('common.enable') }}</label>
         </div>
-        <div v-for="(columnStyle, index) in columnStyles.styles" :key="index" class="p-col-12 p-grid p-ai-center">
+        <div v-for="(columnStyle, index) in columnStyles.styles" :key="index" class="dynamic-form-item p-col-12 p-grid p-ai-center">
+            <div v-if="mode !== 'columnGroups'" class="p-col-12 p-grid">
+                <div class="p-col-4 p-d-flex p-flex-column kn-flex p-m-2">
+                    <label class="kn-material-input-label p-mr-2">{{ $t('common.width') }}</label>
+                    <InputNumber class="kn-material-input p-inputtext-sm" v-model="(columnStyle.properties.width as number)" :disabled="columnStylesDisabled" @blur="columnStylesChanged" />
+                </div>
+                <div class="p-col-8"></div>
+            </div>
             <div class="p-col-12 p-md-12 p-grid p-ai-center">
                 <div class="p-col-10 p-md-11 p-d-flex p-flex-column p-p-2">
                     <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
@@ -39,13 +46,14 @@ import { IWidget, ITableWidgetColumnStyle, IWidgetStyleToolbarModel, IWidgetColu
 import { emitter } from '../../../../../DashboardHelpers'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
+import InputNumber from 'primevue/inputnumber'
 import InputSwitch from 'primevue/inputswitch'
 import WidgetEditorStyleToolbar from '../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
 import WidgetEditorColumnsMultiselect from '../../common/WidgetEditorColumnsMultiselect.vue'
 
 export default defineComponent({
     name: 'table-widget-column-style',
-    components: { Dropdown, InputSwitch, WidgetEditorColumnsMultiselect, WidgetEditorStyleToolbar },
+    components: { Dropdown, InputNumber, InputSwitch, WidgetEditorColumnsMultiselect, WidgetEditorStyleToolbar },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, mode: { type: String } },
     data() {
         return {
@@ -155,6 +163,7 @@ export default defineComponent({
             this.columnStyles.styles.push({
                 target: [],
                 properties: {
+                    width: '',
                     'background-color': 'rgb(0, 0, 0)',
                     color: 'rgb(255, 255, 255)',
                     'justify-content': '',
@@ -183,15 +192,13 @@ export default defineComponent({
             this.reloadModel()
         },
         onStyleToolbarChange(model: IWidgetStyleToolbarModel, columnStyle: ITableWidgetColumnStyle) {
-            columnStyle.properties = {
-                'background-color': model['background-color'] ?? 'rgb(0, 0, 0)',
-                color: model.color ?? 'rgb(255, 255, 255)',
-                'justify-content': model['justify-content'] ?? 'center',
-                'font-size': model['font-size'] ?? '14px',
-                'font-family': model['font-family'] ?? '',
-                'font-style': model['font-style'] ?? 'normal',
-                'font-weight': model['font-weight'] ?? ''
-            }
+            ;(columnStyle.properties['background-color'] = model['background-color'] ?? 'rgb(0, 0, 0)'),
+                (columnStyle.properties.color = model.color ?? 'rgb(255, 255, 255)'),
+                (columnStyle.properties['justify-content'] = model['justify-content'] ?? 'center'),
+                (columnStyle.properties['font-size'] = model['font-size'] ?? '14px'),
+                (columnStyle.properties['font-family'] = model['font-family'] ?? ''),
+                (columnStyle.properties['font-style'] = model['font-style'] ?? 'normal'),
+                (columnStyle.properties['font-weight'] = model['font-weight'] ?? '')
             this.columnStylesChanged()
         },
         reloadModel() {

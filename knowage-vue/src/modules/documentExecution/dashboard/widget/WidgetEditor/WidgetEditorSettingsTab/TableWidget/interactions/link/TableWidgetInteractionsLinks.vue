@@ -1,7 +1,7 @@
 <template>
     <div v-if="linksModel" class="p-grid p-p-4">
         <div class="p-col-12">
-            <InputSwitch v-model="linksModel.enabled"></InputSwitch>
+            <InputSwitch v-model="linksModel.enabled" @change="onLinkEnabledChange"></InputSwitch>
             <label class="kn-material-input-label p-ml-3">{{ $t('dashboard.widgetEditor.interactions.enableLinkNavigation') }}</label>
         </div>
 
@@ -157,6 +157,12 @@ export default defineComponent({
         },
         onColumnRemoved() {
             this.loadLinksModel()
+        },
+        onLinkEnabledChange() {
+            if (!this.linksModel) return
+            if (this.linksModel.enabled && this.linksModel.links.length === 0) {
+                this.linksModel.links.push({ type: '', baseurl: '', action: '', parameters: [] })
+            }
         },
         addLink() {
             if (!this.linksModel || this.linksDisabled) return

@@ -66,8 +66,11 @@ export default defineComponent({
     methods: {
         loadWidget() {
             if (!this.propWidget) return
+            console.log('Widget Editor - LOADED WIDGET IN WIDGET EDITOR: ', this.propWidget)
             this.widget = this.propWidget.new ? createNewWidget() : deepcopy(this.propWidget)
-            console.log('Widget Editor - LOADED WIDGET IN WIDGET EDITOR: ', this.widget)
+            console.log('Widget Editor - LOADED WIDGET PROP IN WIDGET EDITOR: ', createNewWidget())
+            console.log('Widget Editor - LOADED WIDGET PROP IN WIDGET EDITOR: ', deepcopy(this.propWidget))
+            console.log('Widget Editor - LOADED WIDGET IN WIDGET EDITOR: ', deepcopy(this.widget))
         },
         loadSelectedModelDatasets() {
             // TODO - remove hardcoded dashboard index

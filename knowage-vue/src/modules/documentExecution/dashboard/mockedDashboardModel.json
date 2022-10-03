@@ -148,7 +148,8 @@
                                     "hideHeader": true,
                                     "justify-content": "flex-start",
                                     "prefix": "Prefix",
-                                    "suffix": "Suffix"
+                                    "suffix": "Suffix",
+                                    "width": "32"
                                 },
                                 "subjectId": false,
                                 "type": "java.lang.String",
@@ -187,7 +188,8 @@
                                     "tooltip": {
                                         "prefix": "Prefix",
                                         "suffix": "Suffix"
-                                    }
+                                    },
+                                    "width": "24"
                                 },
                                 "subjectId": false,
                                 "type": "java.lang.String"
@@ -258,7 +260,8 @@
                                         "precision": 2,
                                         "prefix": "Pre",
                                         "suffix": "Suff"
-                                    }
+                                    },
+                                    "width": "12"
                                 },
                                 "subjectId": false,
                                 "type": "java.lang.Integer",

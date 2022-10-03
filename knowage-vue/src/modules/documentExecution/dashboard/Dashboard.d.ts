@@ -237,6 +237,7 @@ export interface ITableWidgetColumnStyles {
 export interface ITableWidgetColumnStyle {
     target: string | string[]
     properties: {
+        width: string | number,
         'background-color': string
         color: string
         'justify-content': string
