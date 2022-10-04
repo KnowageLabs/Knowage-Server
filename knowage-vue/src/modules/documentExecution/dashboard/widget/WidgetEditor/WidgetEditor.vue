@@ -35,7 +35,7 @@ export default defineComponent({
     name: 'widget-editor',
     components: { WidgetEditorPreview, WidgetEditorTabs },
     emits: ['close', 'widgetUpdated', 'widgetSaved'],
-    props: { propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array as PropType<IDataset[]> }, drivers: { type: Array }, variables: { type: Array } },
+    props: { dashboardId: { type: String, required: true }, propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array as PropType<IDataset[]> }, drivers: { type: Array }, variables: { type: Array } },
     data() {
         return {
             descriptor,
@@ -73,8 +73,8 @@ export default defineComponent({
             console.log('Widget Editor - LOADED WIDGET IN WIDGET EDITOR: ', deepcopy(this.widget))
         },
         loadSelectedModelDatasets() {
-            // TODO - remove hardcoded dashboard index
-            this.selectedModelDatasets = this.dashboardStore.getDashboardSelectedDatastes(1)
+            // TODO - dashboardId
+            this.selectedModelDatasets = this.dashboardId ? this.dashboardStore.getDashboardSelectedDatastes(this.dashboardId) : {}
         },
         loadSelectedModel() {
             if (!this.datasets) return
@@ -139,11 +139,10 @@ export default defineComponent({
 
             if (tempWidget.new) {
                 delete tempWidget.new
-                this.dashboardStore.createNewWidget(tempWidget)
+                this.dashboardStore.createNewWidget(this.dashboardId, tempWidget)
                 this.$emit('widgetSaved')
             } else {
-                this.dashboardStore.updateWidget(tempWidget)
-                console.log('Widget Editor - WIDGET ON UPDATE: ', tempWidget)
+                this.dashboardStore.updateWidget(this.dashboardId, tempWidget)
                 this.$emit('widgetUpdated')
             }
         },
