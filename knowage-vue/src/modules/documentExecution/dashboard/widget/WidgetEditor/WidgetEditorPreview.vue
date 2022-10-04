@@ -2,7 +2,7 @@
     <div class="p-d-flex p-flex-column p-ai-stretch p-jc-center kn-overflow" :style="descriptor.style.preview">
         <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="logModel" />
 
-        <TableWidget class="p-m-2" v-if="propWidget.settings" :propWidget="propWidget" :editorMode="true" style="height: 30%" />
+        <TableWidget class="p-m-2" v-if="propWidget.settings" :propWidget="propWidget" :datasets="datasets" :editorMode="true" style="height: 30%" />
     </div>
 </template>
 
@@ -17,7 +17,7 @@ import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
 import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-alpine.css'
 import TableWidget from '../TableWidget/TableWidget.vue'
-import { IWidget } from '../../Dashboard'
+import { IDataset, IWidget } from '../../Dashboard'
 
 export default defineComponent({
     name: 'widget-editor-preview',
@@ -26,7 +26,8 @@ export default defineComponent({
         propWidget: {
             required: true,
             type: Object as PropType<IWidget>
-        }
+        },
+        datasets: { type: Array as PropType<IDataset[]> }
     },
     data() {
         return {

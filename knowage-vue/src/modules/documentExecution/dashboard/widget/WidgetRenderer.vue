@@ -1,7 +1,7 @@
 <template>
     <div class="widget-renderer" :style="getWidgetStyleString()">
         {{ widget.id }}
-        <TableWidget v-if="widget.type === 'table'" :propWidget="widget" :editorMode="false" style="flex: 1" />
+        <TableWidget v-if="widget.type === 'table'" :propWidget="widget" :datasets="datasets" :editorMode="false" style="flex: 1" />
         <!-- <div class="drag-handle">{{ widget.id }} {{ widget.type }}</div> -->
         <!-- <div style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center">
             <div>{{ data }}</div>
@@ -31,7 +31,8 @@ export default defineComponent({
         data: {
             required: true,
             type: Object
-        }
+        },
+        datasets: { type: Array }
     },
     created() {
         this.getWidgetStyleString()

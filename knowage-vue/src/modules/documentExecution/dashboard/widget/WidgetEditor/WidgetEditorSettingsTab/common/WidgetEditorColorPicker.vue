@@ -22,7 +22,8 @@ export default defineComponent({
     data() {
         return {
             modelValue: null as any,
-            color: ''
+            color: '',
+            colorPickTimer: null as any
         }
     },
     created() {
@@ -33,10 +34,16 @@ export default defineComponent({
             this.modelValue = this.initialValue ? getRGBColorFromString(this.initialValue) : {}
             this.color = this.initialValue ?? ''
         },
-        onChange() {
-            if (!this.modelValue) return
-            this.color = `rgb(${this.modelValue.r}, ${this.modelValue.g}, ${this.modelValue.b})`
-            this.$emit('change', this.color)
+        onChange(event: any) {
+            if (this.colorPickTimer) {
+                clearTimeout(this.colorPickTimer)
+                this.colorPickTimer = null
+            }
+            this.colorPickTimer = setTimeout(() => {
+                if (!this.modelValue) return
+                this.color = `rgb(${this.modelValue.r}, ${this.modelValue.g}, ${this.modelValue.b})`
+                this.$emit('change', this.color)
+            }, 200)
         }
     }
 })

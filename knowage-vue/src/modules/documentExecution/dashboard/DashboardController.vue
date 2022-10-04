@@ -2,7 +2,7 @@
     <div class="dashboard-container" :id="`dashboard_${model.configuration.id}`">
         <Button label="DATASET" style="position: absolute; margin-left: 250px; z-index: 999" @click="datasetEditorVisible = true" />
         <Button label="WIDGET" style="position: absolute; margin-left: 400px; z-index: 999" @click="widgetPickerVisible = true" />
-        <DashboardRenderer :model="model" :datasets="datasets"></DashboardRenderer>
+        <DashboardRenderer v-if="datasets.length > 0" :model="model" :datasets="datasets"></DashboardRenderer>
 
         <Transition name="editorEnter" appear>
             <DatasetEditor v-if="datasetEditorVisible" :availableDatasetsProp="datasets" :filtersDataProp="filtersData" @closeDatasetEditor="closeDatasetEditor" @datasetEditorSaved="datasetEditorVisible = false" />
