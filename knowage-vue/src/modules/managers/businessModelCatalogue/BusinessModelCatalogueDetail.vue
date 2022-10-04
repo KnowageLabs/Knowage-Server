@@ -184,6 +184,11 @@ export default defineComponent({
                 await this.saveBusinessModel()
             }
 
+            if (this.uploadingError) {
+                this.loading = false
+                return
+            }
+            
             if (this.selectedBusinessModel.id && this.uploadedFile && !this.uploadingError) {
                 await this.uploadFile()
             }
@@ -229,12 +234,17 @@ export default defineComponent({
             this.$store.commit('setError', { title: this.$t('common.toast.' + title), msg: message })
         },
         async saveBusinessModel() {
-            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/businessmodels/', { ...this.selectedBusinessModel, modelLocker: this.user.userId }).then((response: AxiosResponse<any>) => {
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/businessmodels/', { ...this.selectedBusinessModel, modelLocker: this.user.userId })
+                .then((response: AxiosResponse<any>) => {
                 if (response.data.errors) {
                     this.setUploadingError('createTitle', response.data.errors[0].message)
                 } else {
                     this.selectedBusinessModel = response.data
                 }
+            })
+            .catch(() => {
+                this.uploadingError = true
             })
         },
         async updateBusinessModel() {
@@ -249,6 +259,9 @@ export default defineComponent({
                     } else {
                         this.selectedBusinessModel = response.data
                     }
+                })
+                .catch(() => {
+                    this.uploadingError = true
                 })
                 .finally(() => this.formatBusinessModelAnalyticalDriver())
         },
