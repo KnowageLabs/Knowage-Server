@@ -12,8 +12,8 @@ const store = defineStore('dashboardStore', {
         }
     },
     actions: {
-        removeDashboard(state, dashboard) {
-            delete state.dashboards[dashboard.id]
+        removeDashboard(dashboard) {
+            delete this.dashboards[dashboard.id]
         },
         getDashboard(dashboardId) {
             return this.dashboards[dashboardId]

@@ -84,8 +84,8 @@ export default defineComponent({
         this.loadOutputParameters()
     },
     unmounted() {
-        // TODO
-        // this.store.removeDashboard({ id: (this as any).dHash as any })
+        // TODO - dashboardId
+        this.store.removeDashboard(this.dashboardId)
         this.store.setCrosssNavigations([])
         this.store.setOutputParameters([])
     },
