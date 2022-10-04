@@ -828,6 +828,41 @@ public class ExcelExporter extends AbstractFormatExporter {
 			for (int i = 0; i < cockpitSelections.length(); i++) {
 				JSONObject cockpitSelection = cockpitSelections.getJSONObject(i);
 
+				if (cockpitSelection.has("selections")) {
+					JSONObject selections = cockpitSelection.getJSONObject("selections");
+
+					Iterator<String> keys = selections.keys();
+
+					while (keys.hasNext()) {
+						String key = keys.next();
+						if (selections.get(key) instanceof JSONObject) {
+							JSONObject selection = (JSONObject) selections.get(key);
+							Iterator<String> selectionKeys = selection.keys();
+							HashMap<String, Object> selects = new HashMap<String, Object>();
+
+							while (selectionKeys.hasNext()) {
+								String selKey = selectionKeys.next();
+								Object select = selection.get(selKey);
+								if (!selKey.contains(",")) {
+									if (select instanceof JSONObject) {
+										if (((JSONObject) select).has("filterOperator")) {
+											continue;
+										}
+									} else {
+										selects.put(selKey, select);
+									}
+								}
+							}
+							if (!selects.isEmpty())
+								selectionsMap.put(key, selects);
+						}
+					}
+				}
+			}
+		} else if (body.has("COCKPIT_SELECTIONS") && body.get("COCKPIT_SELECTIONS") instanceof JSONObject) {
+
+			JSONObject cockpitSelection = body.getJSONObject("COCKPIT_SELECTIONS");
+			if (cockpitSelection.has("selections")) {
 				JSONObject selections = cockpitSelection.getJSONObject("selections");
 
 				Iterator<String> keys = selections.keys();
@@ -839,41 +874,25 @@ public class ExcelExporter extends AbstractFormatExporter {
 						Iterator<String> selectionKeys = selection.keys();
 						List<Object> selectList = new ArrayList<Object>();
 						HashMap<String, Object> selects = new HashMap<String, Object>();
-
 						while (selectionKeys.hasNext()) {
 							String selKey = selectionKeys.next();
 							Object select = selection.get(selKey);
-							selects.put(selKey, select);
+							if (!selKey.contains(",")) {
+								if (select instanceof JSONObject) {
+									if (((JSONObject) select).has("filterOperator")) {
+										continue;
+									}
+								} else {
+									selects.put(selKey, select);
+								}
+
+							}
 						}
-						selectionsMap.put(key, selects);
+						if (!selects.isEmpty())
+							selectionsMap.put(key, selects);
 					}
 				}
 			}
-		} else if (body.has("COCKPIT_SELECTIONS") && body.get("COCKPIT_SELECTIONS") instanceof JSONObject) {
-
-			JSONObject cockpitSelection = body.getJSONObject("COCKPIT_SELECTIONS");
-
-			JSONObject selections = cockpitSelection.getJSONObject("selections");
-
-			Iterator<String> keys = selections.keys();
-
-			while (keys.hasNext()) {
-				String key = keys.next();
-				if (selections.get(key) instanceof JSONObject) {
-					JSONObject selection = (JSONObject) selections.get(key);
-					Iterator<String> selectionKeys = selection.keys();
-					List<Object> selectList = new ArrayList<Object>();
-					HashMap<String, Object> selects = new HashMap<String, Object>();
-
-					while (selectionKeys.hasNext()) {
-						String selKey = selectionKeys.next();
-						Object select = selection.get(selKey);
-						selects.put(selKey, select);
-					}
-					selectionsMap.put(key, selects);
-				}
-			}
-
 		}
 
 		return selectionsMap;
