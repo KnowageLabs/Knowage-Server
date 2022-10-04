@@ -220,7 +220,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 				String type = documentDTO.getType();
 				if ("MAP".equalsIgnoreCase(type)) {
 					id = insertGeoreportDocument(saveDocumentDTO, documentManagementAPI);
-				} else if ("DOCUMENT_COMPOSITE".equalsIgnoreCase(type)) {
+				} else if ("DOCUMENT_COMPOSITE".equalsIgnoreCase(type) || "DASHBOARD".equalsIgnoreCase(type)) {
 					id = insertCockpitDocument(saveDocumentDTO, documentManagementAPI);
 				} else if ("KPI".equalsIgnoreCase(type)) {
 					id = insertKPIDocument(saveDocumentDTO, documentManagementAPI);
@@ -472,15 +472,16 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 			document.setPreviewFile(previewFile.replace("\"", ""));
 		}
 
-		if ("DOCUMENT_COMPOSITE".equalsIgnoreCase(type)) {
+		if ("DOCUMENT_COMPOSITE".equalsIgnoreCase(type) || "DASHBOARD".equalsIgnoreCase(type)) {
 			// gets correct type of the engine for DOCUMENT_COMPOSITION (it's
 			// cockpit and it uses the EXTERNAL engine)
 			Engine engine = null;
 			Domain engineType = null;
 
-			List<Engine> engines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectTypeAndTenant(type);
+			String retrocompatibilityType = "DOCUMENT_COMPOSITE";
+			List<Engine> engines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectTypeAndTenant(retrocompatibilityType);
 			if (engines != null && !engines.isEmpty()) {
-				if ("DOCUMENT_COMPOSITE".equalsIgnoreCase(type)) {
+				if ("DOCUMENT_COMPOSITE".equalsIgnoreCase(type) || "DASHBOARD".equalsIgnoreCase(type)) {
 					for (Engine e : engines) {
 						try {
 							engineType = DAOFactory.getDomainDAO().loadDomainById(e.getEngineTypeId());
