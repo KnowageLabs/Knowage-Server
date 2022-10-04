@@ -620,6 +620,15 @@ export default defineComponent({
                 if (!parameter.value) parameter.value = parameter.defaultValue
                 this.qbeParameters.push(parameter)
             })
+        },
+        onDropdownChange(parameter: any) {
+            this.updateParameterDescriptionOnDropdownChange(parameter)
+            this.updateDependency(parameter)
+        },
+        updateParameterDescriptionOnDropdownChange(parameter: any) {
+            if (!parameter.parameterValue[0]) return
+            const index = parameter.data?.findIndex((el: { value: string; description: string }) => el.value === parameter.parameterValue[0].value)
+            if (index !== -1) parameter.parameterValue[0].description = parameter.data[index].description
         }
     }
 })
