@@ -36,6 +36,7 @@ export const getColumnConditionalStyles = (propWidget: IWidget, colId: string, v
                         .map(([k, v]) => `${k}:${v}`)
                         .join(';')
                 }
+                break
             }
         }
     }
@@ -68,4 +69,69 @@ export const isConditionMet = (condition, valueToCompare) => {
             break
     }
     return fullfilledCondition
+}
+
+export const formatModelForGet = (propWidget: IWidget, datasetLabel) => {
+    //TODO: strong type this, and create a default object
+    var dataToSend = {
+        aggregations: {
+            measures: [],
+            categories: [],
+            dataset: ''
+        },
+        parameters: {},
+        selections: {},
+        indexes: []
+    } as any
+
+    dataToSend.aggregations.dataset = datasetLabel
+
+    if (propWidget.settings.configuration.summaryRows.enabled) {
+        dataToSend.summaryRow = getSummaryRow(propWidget)
+    }
+
+    propWidget.columns.forEach((column) => {
+        if (column.fieldType === 'MEASURE') {
+            let measureToPush = { id: column.alias, alias: column.alias, columnName: column.columnName, funct: column.aggregation, orderColumn: column.alias } as any
+            column.formula ? (measureToPush.formula = column.formula) : ''
+            dataToSend.aggregations.measures.push(measureToPush)
+        } else {
+            let attributeToPush = { id: column.alias, alias: column.alias, columnName: column.columnName, orderType: '', funct: 'NONE' } as any
+            column.id === propWidget.settings.sortingColumn ? (attributeToPush.orderType = propWidget.settings.sortingOrder) : ''
+            dataToSend.aggregations.categories.push(attributeToPush)
+        }
+    })
+
+    return dataToSend
+}
+
+const getSummaryRow = (propWidget: IWidget) => {
+    var summaryArray = [] as any
+    var columns = propWidget.columns
+    for (var k in propWidget.settings.configuration.summaryRows.list) {
+        var measures = [] as any
+        if (columns) {
+            for (var i = 0; i < columns.length; i++) {
+                var col = columns[i]
+                if (col.fieldType != 'ATTRIBUTE') {
+                    var obj = {}
+                    obj['id'] = col.columnName || col.alias
+                    obj['alias'] = col.alias || col.alias
+                    obj['funct'] = col.aggregation
+
+                    if (col.formula) {
+                        obj['formula'] = col.formula
+                    } else obj['columnName'] = col.columnName
+
+                    measures.push(obj)
+                }
+            }
+        }
+        var result = {} as any
+        result['measures'] = measures
+        result['dataset'] = propWidget.dataset
+        summaryArray.push(result)
+    }
+
+    return summaryArray
 }
