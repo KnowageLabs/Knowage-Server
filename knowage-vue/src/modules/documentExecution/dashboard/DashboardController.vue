@@ -92,10 +92,7 @@ export default defineComponent({
     methods: {
         async getData() {
             this.loading = true
-            this.loadDatasets()
-            this.loadCrossNavigations()
-            this.loadOutputParameters()
-            await this.loadModel()
+            await Promise.all([this.loadDatasets(), this.loadCrossNavigations(), this.loadOutputParameters(), this.loadModel()])
             this.loading = false
         },
         async loadModel() {

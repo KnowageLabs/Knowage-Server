@@ -347,6 +347,7 @@ export default defineComponent({
         getSelectedDataset(dsId) {
             let datasetIndex = this.datasets.findIndex((dataset: any) => dsId === dataset.id.dsId)
             this.selectedDataset = this.datasets[datasetIndex]
+            console.log('selected datase', this.datasets)
         },
         async getWidgetData() {
             if (this.selectedDataset) {
