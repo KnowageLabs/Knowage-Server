@@ -74,7 +74,6 @@ export default defineComponent({
 
     methods: {
         setEventListeners() {
-            console.log('setEventListener')
             // emitter.on('paginationChanged', (pagination) => console.log('WidgetEditorPreview - PAGINATION CHANGED!', pagination)) //  { enabled: this.paginationEnabled, itemsNumber: +this.itemsNumber }
             // emitter.on('sortingChanged', this.sortColumn)
             emitter.on('refreshTable', this.createDatatableColumns)
@@ -347,7 +346,6 @@ export default defineComponent({
         getSelectedDataset(dsId) {
             let datasetIndex = this.datasets.findIndex((dataset: any) => dsId === dataset.id.dsId)
             this.selectedDataset = this.datasets[datasetIndex]
-            console.log('selected datase', this.datasets)
         },
         async getWidgetData() {
             if (this.selectedDataset) {
