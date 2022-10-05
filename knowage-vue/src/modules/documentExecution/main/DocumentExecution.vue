@@ -8,7 +8,7 @@
             <template #end>
                 <div class="p-d-flex p-jc-around">
                     <Button v-if="mode == 'dashboard'" icon="fas fa-database" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.datasets')" @click="openDashboardDatasetManagement"></Button>
-                    <Button v-if="mode == 'dashboard'" icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.save')"></Button>
+                    <Button v-if="mode == 'dashboard'" icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.save')" @click="saveDashboard"></Button>
                     <Button
                         icon="pi pi-pencil"
                         class="p-button-text p-button-rounded p-button-plain p-mx-2"
@@ -47,7 +47,7 @@
         <div ref="document-execution-view" id="document-execution-view" class="p-d-flex p-flex-row myDivToPrint">
             <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
 
-            <template v-if="filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible">
+            <template v-if="(filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible) || newDashboardMode">
                 <Registry v-if="mode === 'registry'" :id="urlData?.sbiExecutionId" :reloadTrigger="reloadTrigger"></Registry>
                 <Dossier v-else-if="mode === 'dossier'" :id="document.id" :reloadTrigger="reloadTrigger" :filterData="filtersData"></Dossier>
                 <Olap
@@ -62,7 +62,7 @@
                     @applyCustomView="executeOlapCustomView"
                     @executeCrossNavigation="executeOLAPCrossNavigation"
                 ></Olap>
-                <DashboardController v-else-if="mode === 'dashboard'" :sbiExecutionId="urlData?.sbiExecutionId" :document="document" :reloadTrigger="reloadTrigger" :hiddenFormData="hiddenFormData" :filtersData="filtersData"></DashboardController>
+                <DashboardController v-else-if="mode === 'dashboard' || newDashboardMode" :sbiExecutionId="urlData?.sbiExecutionId" :document="document" :reloadTrigger="reloadTrigger" :hiddenFormData="hiddenFormData" :filtersData="filtersData"                     :newDashboardMode="newDashboardMode"></DashboardController>
             </template>
 
             <iframe
@@ -208,7 +208,8 @@ export default defineComponent({
             crossNavigationDocuments: [] as any[],
             angularData: null as any,
             crossNavigationContainerVisible: false,
-            crossNavigationContainerData: null as any
+            crossNavigationContainerData: null as any,
+            newDashboardMode: false
         }
     },
     watch: {
@@ -291,6 +292,12 @@ export default defineComponent({
         this.document = { label: this.id }
 
         if (!this.document.label) return
+
+        console.log('CAAAAAAAAAAAAAAAAAAAAALED', this.document)
+        if (this.document.label === 'new-dashboard') {
+            this.newDashboardMode = true
+            return
+        }
 
         await this.loadDocument()
 
@@ -1229,6 +1236,9 @@ export default defineComponent({
             emitter.on('widgetEditorClosed', () => {
                 this.managementOpened = false
             })
+        },
+        saveDashboard() {
+            emitter.emit('saveDashboard')
         }
     }
 })

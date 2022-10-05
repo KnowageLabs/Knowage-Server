@@ -33,7 +33,7 @@ import { AxiosResponse } from 'axios'
 import { v4 as uuidv4 } from 'uuid'
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
 import { IWidget } from './Dashboard'
-import { emitter } from './DashboardHelpers'
+import { emitter, createNewDashboardModel } from './DashboardHelpers'
 import { formatModel } from './helpers/DashboardBackwardCompatibilityHelper'
 import DashboardRenderer from './DashboardRenderer.vue'
 import WidgetPickerDialog from './widget/WidgetPicker/WidgetPickerDialog.vue'
@@ -50,7 +50,7 @@ import cryptoRandomString from 'crypto-random-string'
 export default defineComponent({
     name: 'dashboard-manager',
     components: { DashboardRenderer, WidgetPickerDialog, DatasetEditor, WidgetEditor },
-    props: { sbiExecutionId: { type: String }, document: { type: Object }, reloadTrigger: { type: Boolean }, hiddenFormData: { type: Object }, filtersData: { type: Object as PropType<{ filterStatus: iParameter[]; isReadyForExecution: boolean }> } },
+    props: { sbiExecutionId: { type: String }, document: { type: Object }, reloadTrigger: { type: Boolean }, hiddenFormData: { type: Object }, filtersData: { type: Object as PropType<{ filterStatus: iParameter[]; isReadyForExecution: boolean }> }, newDashboardMode: { type: Boolean } },
     data() {
         return {
             descriptor,
@@ -99,16 +99,19 @@ export default defineComponent({
             this.loading = false
         },
         async loadModel() {
-            let tempModel = null
-            await this.$http
-                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/documentexecution/` + this.document?.id + '/templates')
-                .then((response: AxiosResponse<any>) => (tempModel = response.data))
-                .catch(() => {})
-            console.log('>>>>>>>>>> TEEEEEEEEEEEEEEEEEEEEEST: ', tempModel)
+            let tempModel = null as any
+            if (this.newDashboardMode) {
+                tempModel = createNewDashboardModel()
+            } else {
+                await this.$http
+                    .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/documentexecution/` + this.document?.id + '/templates')
+                    .then((response: AxiosResponse<any>) => (tempModel = response.data))
+                    .catch(() => {})
+            }
             // TODO
             // this.model = mock
             // this.model = formatModel(mockedDashboardModel) as any
-            this.model = tempModel ? (formatModel(tempModel) as any) : {}
+            this.model = tempModel && this.newDashboardMode ? tempModel : (formatModel(tempModel) as any)
             this.dashboardId = cryptoRandomString({ length: 16, type: 'base64' })
             // this.model = formatModel(mock1) as any
             this.store.setDashboard(this.dashboardId, this.model)
@@ -147,6 +150,9 @@ export default defineComponent({
             emitter.on('openWidgetEditor', (widget) => {
                 this.openWidgetEditor(widget)
             })
+            emitter.on('saveDashboard', () => {
+                this.saveDashboard()
+            })
         },
         openNewWidgetPicker() {
             this.widgetPickerVisible = true
@@ -175,6 +181,36 @@ export default defineComponent({
         closeDatasetEditor() {
             this.datasetEditorVisible = false
             emitter.emit('datasetManagementClosed')
+        },
+        async saveDashboard() {
+            console.log('CAAAAAAAAAAAALED', this.store.getDashboard(this.dashboardId))
+            this.appStore.setLoading(true)
+            if (!this.document) return
+            const postData = {
+                document: {
+                    name: this.document.name,
+                    label: this.document.label,
+                    description: this.document.description,
+                    type: 'DOCUMENT_COMPOSITE'
+                },
+                customData: {
+                    templateContent: this.store.getDashboard(this.dashboardId)
+                },
+                action: 'MODIFY_COCKPIT'
+            }
+
+            await this.$http
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/saveDocument`, postData)
+                .then((response: AxiosResponse<any>) => {
+                    console.log('SAVE RESPONSE: ', response)
+                    this.store.setInfo({
+                        title: this.$t('common.toast.createTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                })
+                .catch(() => {})
+
+            this.appStore.setLoading(false)
         }
     }
 })
