@@ -5,7 +5,7 @@
         <DashboardRenderer v-if="!loading" :model="model" :datasets="datasets"></DashboardRenderer>
 
         <Transition name="editorEnter" appear>
-            <DatasetEditor v-if="datasetEditorVisible" :availableDatasetsProp="datasets" :filtersDataProp="filtersData" @closeDatasetEditor="closeDatasetEditor" @datasetEditorSaved="datasetEditorVisible = false" />
+            <DatasetEditor v-if="datasetEditorVisible" :dashboardIdProp="dashboardId" :availableDatasetsProp="datasets" :filtersDataProp="filtersData" @closeDatasetEditor="closeDatasetEditor" @datasetEditorSaved="closeDatasetEditor" />
         </Transition>
 
         <WidgetPickerDialog v-if="widgetPickerVisible" :visible="widgetPickerVisible" @openNewWidgetEditor="openNewWidgetEditor" @closeWidgetPicker="widgetPickerVisible = false" />
