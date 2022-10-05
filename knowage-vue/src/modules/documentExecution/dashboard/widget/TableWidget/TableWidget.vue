@@ -9,7 +9,6 @@
  */
 import { defineComponent, PropType } from 'vue'
 import { emitter } from '../../DashboardHelpers'
-import mock from '../../dataset/DatasetEditorTestMocks.json'
 import descriptor from '../../dataset/DatasetEditorDescriptor.json'
 import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
 import 'ag-grid-community/styles/ag-grid.css' // Core grid CSS, always needed
@@ -19,21 +18,19 @@ import SummaryRowRenderer from './SummaryRowRenderer.vue'
 import HeaderGroupRenderer from './HeaderGroupRenderer.vue'
 import TooltipRenderer from './TooltipRenderer.vue'
 import CellRenderer from './CellRenderer.vue'
-import { getWidgetStyleByType, getColumnConditionalStyles, isConditionMet } from './TableWidgetHelper'
+import { getWidgetStyleByType, getColumnConditionalStyles, isConditionMet, formatModelForGet } from './TableWidgetHelper'
 import { IWidget } from '../../Dashboard'
+import dashboardStore from '../../Dashboard.store'
+import mainStore from '../../../../../App.store'
+import { AxiosResponse } from 'axios'
 
 export default defineComponent({
     name: 'table-widget',
     components: { AgGridVue, HeaderRenderer, SummaryRowRenderer, HeaderGroupRenderer, TooltipRenderer },
     props: {
-        propWidget: {
-            type: Object as PropType<IWidget>,
-            required: true
-        },
-        editorMode: {
-            type: Boolean,
-            required: false
-        }
+        propWidget: { type: Object as PropType<IWidget>, required: true },
+        editorMode: { type: Boolean, required: false },
+        datasets: { type: Array, required: true }
     },
     watch: {
         propWidget: {
@@ -46,9 +43,7 @@ export default defineComponent({
     data() {
         return {
             descriptor,
-            mock,
             gridOptions: null as any,
-            datasetRecordsRows: mock.mockResponse.rows as any,
             columnsNameArray: [] as any,
             rowData: [] as any,
             columnDefs: [] as any,
@@ -57,12 +52,20 @@ export default defineComponent({
             },
             gridApi: null as any,
             columnApi: null as any,
-            overlayNoRowsTemplateTest: null as any
+            overlayNoRowsTemplateTest: null as any,
+            selectedDataset: {} as any,
+            tableData: [] as any
         }
+    },
+    setup() {
+        const store = dashboardStore()
+        const appStore = mainStore()
+        return { store, appStore }
     },
     created() {
         if (this.editorMode) this.setEventListeners()
         this.setupDatatableOptions()
+        this.getSelectedDataset(this.propWidget.dataset)
     },
     unmounted() {
         emitter.off('refreshTable', this.createDatatableColumns)
@@ -73,7 +76,7 @@ export default defineComponent({
         setEventListeners() {
             console.log('setEventListener')
             // emitter.on('paginationChanged', (pagination) => console.log('WidgetEditorPreview - PAGINATION CHANGED!', pagination)) //  { enabled: this.paginationEnabled, itemsNumber: +this.itemsNumber }
-            emitter.on('sortingChanged', this.sortColumn)
+            // emitter.on('sortingChanged', this.sortColumn)
             emitter.on('refreshTable', this.createDatatableColumns)
         },
         setupDatatableOptions() {
@@ -101,8 +104,10 @@ export default defineComponent({
 
             this.createDatatableColumns()
         },
-        createDatatableColumns() {
-            const datatableColumns = this.getTableColumns(this.mock.mockResponse.metaData.fields)
+        async createDatatableColumns() {
+            this.getSelectedDataset(this.propWidget.dataset)
+            await this.getWidgetData()
+            const datatableColumns = this.getTableColumns(this.tableData?.metaData?.fields)
             this.toggleHeaders(this.propWidget.settings.configuration.headers)
             this.gridApi.setColumnDefs(datatableColumns)
 
@@ -116,7 +121,8 @@ export default defineComponent({
                     this.gridApi.setPinnedBottomRowData()
                 }
             }
-            updateData(this.datasetRecordsRows)
+
+            updateData(this.tableData?.rows)
         },
         sortColumn(sorting) {
             this.columnApi.applyColumnState({
@@ -175,7 +181,7 @@ export default defineComponent({
                         if (this.propWidget.settings.configuration.rows.rowSpan.enabled && this.propWidget.settings.configuration.rows.rowSpan.column === this.propWidget.columns[datasetColumn].id) {
                             var previousValue
                             var previousIndex
-                            var tempRows = this.datasetRecordsRows as any
+                            var tempRows = this.tableData.rows as any
                             for (var r in tempRows as any) {
                                 if (previousValue != tempRows[r][responseFields[responseField].name]) {
                                     previousValue = tempRows[r][responseFields[responseField].name]
@@ -303,14 +309,11 @@ export default defineComponent({
         },
         getRowStyle(params) {
             var rowStyles = this.propWidget.settings.style.rows
-
+            var rowData = Object.entries(params.data).filter((row) => row[0].includes('column_'))
             if (this.propWidget.settings.conditionalStyles.enabled) {
-                for (let i = 0; i < Object.entries(params.data).length; i++) {
-                    var element = Object.entries(params.data)[i]
-                    if (element[0].includes('column_')) {
-                        var conditionalColumnStyle = getColumnConditionalStyles(this.propWidget, this.propWidget.columns[i].id!, element[1], false)
-                        if (conditionalColumnStyle) return conditionalColumnStyle
-                    }
+                for (let i = 0; i < rowData.length; i++) {
+                    var conditionalColumnStyle = getColumnConditionalStyles(this.propWidget, this.propWidget.columns[i].id!, rowData[i][1], false)
+                    if (conditionalColumnStyle) return conditionalColumnStyle
                 }
             }
 
@@ -340,6 +343,23 @@ export default defineComponent({
             }
 
             return columnHidden
+        },
+        getSelectedDataset(dsId) {
+            let datasetIndex = this.datasets.findIndex((dataset: any) => dsId === dataset.id.dsId)
+            this.selectedDataset = this.datasets[datasetIndex]
+            console.log('selected datase', this.datasets)
+        },
+        async getWidgetData() {
+            if (this.selectedDataset) {
+                this.appStore.setLoading(true)
+                let url = `2.0/datasets/${this.selectedDataset.label}/data?offset=0&size=10&nearRealtime=true`
+                let postData = formatModelForGet(this.propWidget, this.selectedDataset.label)
+                await this.$http
+                    .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData)
+                    .then((response: AxiosResponse<any>) => (this.tableData = response.data))
+                    .catch(() => {})
+                this.appStore.setLoading(false)
+            }
         }
     }
 })

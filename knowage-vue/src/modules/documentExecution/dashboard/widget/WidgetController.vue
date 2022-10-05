@@ -3,7 +3,7 @@
         <div v-if="initialized" class="drag-handle"></div>
         <ProgressBar mode="indeterminate" v-if="loading" />
         <Skeleton shape="rectangle" v-if="!initialized" height="100%" border-radius="0" />
-        <WidgetRenderer :widget="widget" :data="widgetData" v-if="initialized" @interaction="manageInteraction"></WidgetRenderer>
+        <WidgetRenderer :widget="widget" :data="widgetData" :datasets="datasets" v-if="initialized" @interaction="manageInteraction"></WidgetRenderer>
         <WidgetButtonBar @edit-widget="toggleEditMode"></WidgetButtonBar>
         <!-- <Transition name="editorEnter" appear>
             <WidgetEditor v-if="widgetEditorVisible" :propWidget="widget" :datasets="datasets" @close="toggleEditMode" @widgetUpdated="closeWidgetEditor"></WidgetEditor>

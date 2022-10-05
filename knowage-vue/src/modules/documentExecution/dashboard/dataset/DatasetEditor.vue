@@ -53,7 +53,7 @@ import deepcopy from 'deepcopy'
 export default defineComponent({
     name: 'dataset-editor',
     components: { TabView, TabPanel, DataTab, AssociationsTab, DriverWarningDialog },
-    props: { availableDatasetsProp: { required: true, type: Array }, filtersDataProp: { type: Object } },
+    props: { availableDatasetsProp: { required: true, type: Array }, filtersDataProp: { type: Object }, dashboardIdProp: { type: String, required: true } },
     emits: ['closeDatasetEditor', 'datasetEditorSaved'],
     data() {
         return {
@@ -98,8 +98,8 @@ export default defineComponent({
     methods: {
         async setDatasetsData() {
             this.availableDatasets = deepcopy(this.availableDatasetsProp)
-            this.dashboardDatasets = deepcopy(this.dashboardStore.$state.dashboards[1].configuration.datasets)
-            this.dashboardAssociations = deepcopy(this.dashboardStore.$state.dashboards[1].configuration.associations)
+            this.dashboardDatasets = deepcopy(this.dashboardStore.$state.dashboards[this.dashboardIdProp].configuration.datasets)
+            this.dashboardAssociations = deepcopy(this.dashboardStore.$state.dashboards[this.dashboardIdProp].configuration.associations)
             this.selectedDatasets = this.selectModelDatasetsFromAvailable()
             this.setDatasetParametersFromModel()
         },
@@ -143,6 +143,7 @@ export default defineComponent({
                     const formattedDatasetForDashboard = {
                         id: dataset.id.dsId,
                         indexes: [],
+                        drivers: [],
                         cache: true,
                         parameters: []
                     } as IModelDataset
@@ -201,8 +202,8 @@ export default defineComponent({
                 formattedDatasets.push(this.formatDatasetForModel(dataset))
             })
 
-            this.dashboardStore.$state.dashboards[1].configuration.datasets = formattedDatasets
-            this.dashboardStore.$state.dashboards[1].configuration.associations = this.dashboardAssociations
+            this.dashboardStore.$state.dashboards[this.dashboardIdProp].configuration.datasets = formattedDatasets
+            this.dashboardStore.$state.dashboards[this.dashboardIdProp].configuration.associations = this.dashboardAssociations
 
             this.$emit('datasetEditorSaved')
         },

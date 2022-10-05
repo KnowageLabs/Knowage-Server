@@ -3,11 +3,13 @@
         height: 100%;
         display: flex;
     }
+    .ag-row,
     .ag-header-cell,
     .ag-cell-value,
     .ag-header-group-cell,
     .ag-floating-bottom-container .ag-cell {
         padding: 0 !important;
+        border: none;
     }
 
     .custom-header-container,
