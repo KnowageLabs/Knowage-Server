@@ -55,6 +55,11 @@ export default defineComponent({
             return ['color', 'background-color'].includes(this.option.type)
         }
     },
+    watch: {
+        propModel() {
+            this.loadModel()
+        }
+    },
     setup() {
         const knowageStyleIcon = ref(null)
         let colorPickerVisible = ref(false)

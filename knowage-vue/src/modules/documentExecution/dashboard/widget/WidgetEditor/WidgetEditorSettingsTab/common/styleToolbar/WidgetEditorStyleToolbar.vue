@@ -25,6 +25,11 @@ export default defineComponent({
             iconPickerDialogVisible: false
         }
     },
+    watch: {
+        propModel() {
+            this.loadModel()
+        }
+    },
     created() {
         this.loadModel()
     },
