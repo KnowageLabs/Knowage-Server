@@ -136,39 +136,43 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		Map<String, Object> templateContent = customDataDTO.getTemplateContent();
 		ArrayList<Map<String, Object>> sheets = (ArrayList<Map<String, Object>>) templateContent.get("sheets");
 
-		for (Map<String, Object> sheet : sheets) {
-			String label = (String) sheet.get("label");
-			ArrayList<Map<String, Object>> widgets = (ArrayList<Map<String, Object>>) sheet.get("widgets");
+		try {
+			for (Map<String, Object> sheet : sheets) {
+				String label = (String) sheet.get("label");
+				ArrayList<Map<String, Object>> widgets = (ArrayList<Map<String, Object>>) sheet.get("widgets");
 
-			for (Map<String, Object> widget : widgets) {
+				for (Map<String, Object> widget : widgets) {
 
-				String type = (String) widget.get("type");
+					String type = (String) widget.get("type");
 
-				if ("html".equals(type)) {
+					if ("html".equals(type)) {
 
-					String html = (String) widget.get("htmlToRender");
+						String html = (String) widget.get("htmlToRender");
 
-					boolean isSafe = xssUtils.isSafe(html);
+						boolean isSafe = xssUtils.isSafe(html);
 
-					if (!isSafe) {
-						throw new InvalidHtmlPayloadInCockpitException(label, html);
+						if (!isSafe) {
+							throw new InvalidHtmlPayloadInCockpitException(label, html);
+						}
+
+					} else if ("customchart".equals(type)) {
+
+						Map<String, Object> html = (Map<String, Object>) widget.get("html");
+
+						String code = (String) html.get("code");
+
+						boolean isSafe = xssUtils.isSafe(code);
+
+						if (!isSafe) {
+							throw new InvalidHtmlPayloadInCockpitException(label, code);
+						}
+
 					}
-
-				} else if ("customchart".equals(type)) {
-
-					Map<String, Object> html = (Map<String, Object>) widget.get("html");
-
-					String code = (String) html.get("code");
-
-					boolean isSafe = xssUtils.isSafe(code);
-
-					if (!isSafe) {
-						throw new InvalidHtmlPayloadInCockpitException(label, code);
-					}
-
 				}
-			}
 
+			}
+		} catch (Exception e) {
+			logger.info("Old template version");
 		}
 	}
 
