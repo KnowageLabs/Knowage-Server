@@ -24,9 +24,9 @@
                         @click="editCockpitDocumentConfirm"
                     ></Button>
                     <Button v-if="mode !== 'dashboard'" icon="pi pi-book" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.onlineHelp')" @click="openHelp"></Button>
-                    <Button icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.refresh')" @click="refresh"></Button>
+                    <Button v-if="!newDashboardMode" icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.refresh')" @click="refresh"></Button>
                     <Button
-                        v-if="isParameterSidebarVisible"
+                        v-if="isParameterSidebarVisible && !newDashboardMode"
                         icon="fa fa-filter"
                         class="p-button-text p-button-rounded p-button-plain p-mx-2"
                         :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }"
@@ -62,7 +62,16 @@
                     @applyCustomView="executeOlapCustomView"
                     @executeCrossNavigation="executeOLAPCrossNavigation"
                 ></Olap>
-                <DashboardController v-else-if="mode === 'dashboard' || newDashboardMode" :sbiExecutionId="urlData?.sbiExecutionId" :document="document" :reloadTrigger="reloadTrigger" :hiddenFormData="hiddenFormData" :filtersData="filtersData"                     :newDashboardMode="newDashboardMode"></DashboardController>
+                <DashboardController
+                    v-else-if="mode === 'dashboard' || newDashboardMode"
+                    :sbiExecutionId="urlData?.sbiExecutionId"
+                    :document="document"
+                    :reloadTrigger="reloadTrigger"
+                    :hiddenFormData="hiddenFormData"
+                    :filtersData="filtersData"
+                    :newDashboardMode="newDashboardMode"
+                    @newDashboardSaved="onNewDashboardSaved"
+                ></DashboardController>
             </template>
 
             <iframe
@@ -293,16 +302,15 @@ export default defineComponent({
 
         if (!this.document.label) return
 
-        console.log('CAAAAAAAAAAAAAAAAAAAAALED', this.document)
+        this.user = (this.store.$state as any).user
+        this.userRole = this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
+
         if (this.document.label === 'new-dashboard') {
             this.newDashboardMode = true
             return
         }
 
         await this.loadDocument()
-
-        this.user = (this.store.$state as any).user
-        this.userRole = this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
 
         if (this.userRole) {
             await this.loadPage(true)
@@ -368,7 +376,8 @@ export default defineComponent({
                 this.user,
                 this.isOrganizerEnabled(),
                 this.mode,
-                this.$t
+                this.$t,
+                this.newDashboardMode
             )
         },
         print() {
@@ -1239,6 +1248,20 @@ export default defineComponent({
         },
         saveDashboard() {
             emitter.emit('saveDashboard')
+        },
+        async onNewDashboardSaved(document: { name: string; label: string }) {
+            this.document.label = document.label
+            await this.loadDocument()
+
+            this.user = (this.store.$state as any).user
+            this.userRole = this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
+
+            if (this.userRole) {
+                await this.loadPage(true)
+            } else {
+                this.parameterSidebarVisible = true
+            }
+            this.newDashboardMode = false
         }
     }
 })

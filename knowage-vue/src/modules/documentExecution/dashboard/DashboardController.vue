@@ -53,6 +53,7 @@ export default defineComponent({
     name: 'dashboard-manager',
     components: { DashboardRenderer, WidgetPickerDialog, DatasetEditor, WidgetEditor, DashboardControllerSaveDialog },
     props: { sbiExecutionId: { type: String }, document: { type: Object }, reloadTrigger: { type: Boolean }, hiddenFormData: { type: Object }, filtersData: { type: Object as PropType<{ filterStatus: iParameter[]; isReadyForExecution: boolean }> }, newDashboardMode: { type: Boolean } },
+    emits: ['newDashboardSaved'],
     data() {
         return {
             descriptor,
@@ -125,16 +126,17 @@ export default defineComponent({
             this.appStore.setLoading(false)
         },
         async loadCrossNavigations() {
-            // TODO - Remove mocked document label
+            if (this.newDashboardMode) return
             this.appStore.setLoading(true)
             await this.$http
-                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/Test%20Drivers/loadCrossNavigationByDocument`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${this.document?.label}/loadCrossNavigationByDocument`)
                 .then((response: AxiosResponse<any>) => (this.crossNavigations = response.data))
                 .catch(() => {})
             this.appStore.setLoading(false)
             this.store.setCrosssNavigations(this.crossNavigations)
         },
         loadOutputParameters() {
+            if (this.newDashboardMode) return
             console.log('>>>>>>>>>>>>>>>> LOADED DOCUMENT: ', this.document)
             // TODO - Remove Mocked Output Parameters
             const mockedParameters = descriptor.mockedOutputParameters
@@ -197,7 +199,8 @@ export default defineComponent({
             console.log('CAAAAAAAAAAAALED', this.store.getDashboard(this.dashboardId))
             this.appStore.setLoading(true)
             if (!this.document) return
-            // TODO remove Hard COded
+            const folders = this.newDashboardMode && this.$route.query.folderId ? [this.$route.query.folderId] : []
+            console.log('THIS ROUTE: ', this.$route)
             const postData = {
                 document: {
                     name: document.name,
@@ -209,18 +212,19 @@ export default defineComponent({
                     templateContent: this.store.getDashboard(this.dashboardId)
                 },
                 action: this.newDashboardMode ? 'DOC_SAVE' : 'MODIFY_COCKPIT',
-                folders: ['731']
+                folders: folders
             }
 
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/saveDocument`, postData)
                 .then((response: AxiosResponse<any>) => {
                     console.log('SAVE RESPONSE: ', response)
-                    this.store.setInfo({
+                    this.appStore.setInfo({
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.toast.success')
                     })
                     this.saveDialogVisible = false
+                    if (this.newDashboardMode) this.$emit('newDashboardSaved', document)
                 })
                 .catch(() => {})
 
