@@ -9,6 +9,7 @@
         </Transition>
 
         <WidgetPickerDialog v-if="widgetPickerVisible" :visible="widgetPickerVisible" @openNewWidgetEditor="openNewWidgetEditor" @closeWidgetPicker="widgetPickerVisible = false" />
+        <DashboardControllerSaveDialog v-if="saveDialogVisible" :visible="saveDialogVisible" @save="saveNewDashboard" @close="saveDialogVisible = false"></DashboardControllerSaveDialog>
     </div>
     <WidgetEditor
         v-if="widgetEditorVisible"
@@ -46,10 +47,11 @@ import mockedDashboardModel from './mockedDashboardModel.json'
 import descriptor from './DashboardDescriptor.json'
 import cryptoRandomString from 'crypto-random-string'
 // import mock1 from './tempMocks/mock1.json'
+import DashboardControllerSaveDialog from './DashboardControllerSaveDialog.vue'
 
 export default defineComponent({
     name: 'dashboard-manager',
-    components: { DashboardRenderer, WidgetPickerDialog, DatasetEditor, WidgetEditor },
+    components: { DashboardRenderer, WidgetPickerDialog, DatasetEditor, WidgetEditor, DashboardControllerSaveDialog },
     props: { sbiExecutionId: { type: String }, document: { type: Object }, reloadTrigger: { type: Boolean }, hiddenFormData: { type: Object }, filtersData: { type: Object as PropType<{ filterStatus: iParameter[]; isReadyForExecution: boolean }> }, newDashboardMode: { type: Boolean } },
     data() {
         return {
@@ -62,6 +64,7 @@ export default defineComponent({
             selectedWidget: null as any,
             crossNavigations: [] as any[],
             dashboardId: '',
+            saveDialogVisible: false,
             loading: false
         }
     },
@@ -148,7 +151,7 @@ export default defineComponent({
                 this.openWidgetEditor(widget)
             })
             emitter.on('saveDashboard', () => {
-                this.saveDashboard()
+                this.onSaveDashboardClicked()
             })
         },
         openNewWidgetPicker() {
@@ -179,21 +182,34 @@ export default defineComponent({
             this.datasetEditorVisible = false
             emitter.emit('datasetManagementClosed')
         },
-        async saveDashboard() {
+        async onSaveDashboardClicked() {
+            if (!this.document) return
+            if (this.newDashboardMode) {
+                this.saveDialogVisible = true
+            } else {
+                await this.saveDashboard(this.document)
+            }
+        },
+        async saveNewDashboard(document: { name: string; label: string }) {
+            await this.saveDashboard(document)
+        },
+        async saveDashboard(document: any) {
             console.log('CAAAAAAAAAAAALED', this.store.getDashboard(this.dashboardId))
             this.appStore.setLoading(true)
             if (!this.document) return
+            // TODO remove Hard COded
             const postData = {
                 document: {
-                    name: this.document.name,
-                    label: this.document.label,
-                    description: this.document.description,
+                    name: document.name,
+                    label: document.label,
+                    description: document.description,
                     type: 'DOCUMENT_COMPOSITE'
                 },
                 customData: {
                     templateContent: this.store.getDashboard(this.dashboardId)
                 },
-                action: 'MODIFY_COCKPIT'
+                action: this.newDashboardMode ? 'DOC_SAVE' : 'MODIFY_COCKPIT',
+                folders: ['731']
             }
 
             await this.$http
@@ -204,6 +220,7 @@ export default defineComponent({
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.toast.success')
                     })
+                    this.saveDialogVisible = false
                 })
                 .catch(() => {})
 

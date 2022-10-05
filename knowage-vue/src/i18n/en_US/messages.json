@@ -357,6 +357,8 @@
             "static": "Static",
             "title": "Dataset Manageent"
         },
+        "saveCockpit": "Save Cockpit",
+        "saveCockpitHint": "Please enter a valid name",
         "widgetEditor": {
             "addWidget": "Add widget",
             "aggregation": "Aggregation",

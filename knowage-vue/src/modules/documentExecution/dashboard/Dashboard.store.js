@@ -27,7 +27,11 @@ const store = defineStore('dashboardStore', {
         createNewWidget(dashboardId, widget) {
             // TODO - dashboardId
             this.dashboards[dashboardId].widgets.push(widget)
-            this.dashboards[dashboardId].sheets[this.selectedSheetIndex].widgets.lg.push({ id: widget.id, h: 10, i: cryptoRandomString({ length: 16, type: 'base64' }), w: 10, x: 0, y: 0, moved: false })
+            if (this.dashboards[dashboardId].sheets[this.selectedSheetIndex]) {
+                this.dashboards[dashboardId].sheets[this.selectedSheetIndex].widgets.lg.push({ id: widget.id, h: 10, i: cryptoRandomString({ length: 16, type: 'base64' }), w: 10, x: 0, y: 0, moved: false })
+            } else {
+                this.dashboards[dashboardId].sheets[this.selectedSheetIndex] = { widgets: { lg: [{ id: widget.id, h: 10, i: cryptoRandomString({ length: 16, type: 'base64' }), w: 10, x: 0, y: 0, moved: false }] } }
+            }
         },
         updateWidget(dashboardId, widget) {
             // TODO - dashboardId
