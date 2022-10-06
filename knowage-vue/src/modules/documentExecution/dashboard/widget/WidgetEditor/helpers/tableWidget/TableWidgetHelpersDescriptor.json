@@ -164,8 +164,8 @@
     "defaultShadowsStyle": {
         "enabled": false,
         "properties": {
-            "backgroundColor": "",
-            "box-shadow": ""
+            "box-shadow": "",
+            "color": ""
         }
     },
     "defaultSummaryRowsConfiguration": {

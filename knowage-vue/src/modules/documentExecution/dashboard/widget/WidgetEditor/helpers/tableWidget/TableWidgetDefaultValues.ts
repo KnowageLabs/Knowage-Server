@@ -80,7 +80,6 @@ export const getDefaultShadowsStyle = () => {
     return deepcopy(descriptor.defaultShadowsStyle) as ITableWidgetShadowsStyle
 }
 
-
 export const getDefualtSummryStyle = () => {
     return deepcopy(descriptor.defaultSummaryStyle) as ITableWidgetSummaryStyle
 }

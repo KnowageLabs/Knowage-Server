@@ -305,7 +305,7 @@ export interface ITableWidgetShadowsStyle {
     enabled: boolean
     properties: {
         'box-shadow': string
-        color: strubg
+        color: string
     }
 }
 
