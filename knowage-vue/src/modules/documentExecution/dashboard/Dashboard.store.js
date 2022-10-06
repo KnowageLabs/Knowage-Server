@@ -25,7 +25,6 @@ const store = defineStore('dashboardStore', {
             this.dashboardModel[dashboard.id].sheet = dashboard.sheet
         },
         createNewWidget(dashboardId, widget) {
-            // TODO - dashboardId
             this.dashboards[dashboardId].widgets.push(widget)
             if (this.dashboards[dashboardId].sheets[this.selectedSheetIndex]) {
                 this.dashboards[dashboardId].sheets[this.selectedSheetIndex].widgets.lg.push({ id: widget.id, h: 10, i: cryptoRandomString({ length: 16, type: 'base64' }), w: 10, x: 0, y: 0, moved: false })
@@ -34,7 +33,6 @@ const store = defineStore('dashboardStore', {
             }
         },
         updateWidget(dashboardId, widget) {
-            // TODO - dashboardId
             for (let i = 0; i < this.dashboards[dashboardId].widgets.length; i++) {
                 console.log(widget.id + ' === ' + this.dashboards[dashboardId].widgets[i].id)
                 if (widget.id === this.dashboards[dashboardId].widgets[i].id) {
