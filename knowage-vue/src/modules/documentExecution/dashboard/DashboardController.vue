@@ -1,7 +1,5 @@
 <template>
-    <div v-if="model" class="dashboard-container" :id="`dashboard_${model.configuration.id}`">
-        <Button label="DATASET" style="position: absolute; margin-left: 250px; z-index: 999" @click="datasetEditorVisible = true" />
-        <Button label="WIDGET" style="position: absolute; margin-left: 400px; z-index: 999" @click="widgetPickerVisible = true" />
+    <div class="dashboard-container" :id="`dashboard_${model.configuration.id}`">
         <DashboardRenderer v-if="!loading" :model="model" :datasets="datasets"></DashboardRenderer>
 
         <Transition name="editorEnter" appear>
