@@ -222,9 +222,9 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 				error.addErrorKey("sbi.document.labelAlreadyExistent");
 			} else {
 				String type = documentDTO.getType();
-				if ("MAP".equalsIgnoreCase(type)) {
+				if (SpagoBIConstants.MAP_TYPE_CODE.equalsIgnoreCase(type)) {
 					id = insertGeoreportDocument(saveDocumentDTO, documentManagementAPI);
-				} else if ("DOCUMENT_COMPOSITE".equalsIgnoreCase(type) || "DASHBOARD".equalsIgnoreCase(type)) {
+				} else if (SpagoBIConstants.DOCUMENT_COMPOSITE_TYPE.equalsIgnoreCase(type) || SpagoBIConstants.DASHBOARD_TYPE.equalsIgnoreCase(type)) {
 					id = insertCockpitDocument(saveDocumentDTO, documentManagementAPI);
 				} else if ("KPI".equalsIgnoreCase(type)) {
 					id = insertKPIDocument(saveDocumentDTO, documentManagementAPI);
@@ -476,16 +476,15 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 			document.setPreviewFile(previewFile.replace("\"", ""));
 		}
 
-		if ("DOCUMENT_COMPOSITE".equalsIgnoreCase(type) || "DASHBOARD".equalsIgnoreCase(type)) {
+		if (SpagoBIConstants.DOCUMENT_COMPOSITE_TYPE.equalsIgnoreCase(type) || SpagoBIConstants.DASHBOARD_TYPE.equalsIgnoreCase(type)) {
 			// gets correct type of the engine for DOCUMENT_COMPOSITION (it's
 			// cockpit and it uses the EXTERNAL engine)
 			Engine engine = null;
 			Domain engineType = null;
 
-			String retrocompatibilityType = "DOCUMENT_COMPOSITE";
-			List<Engine> engines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectTypeAndTenant(retrocompatibilityType);
+			List<Engine> engines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectTypeAndTenant(type);
 			if (engines != null && !engines.isEmpty()) {
-				if ("DOCUMENT_COMPOSITE".equalsIgnoreCase(type) || "DASHBOARD".equalsIgnoreCase(type)) {
+				if (SpagoBIConstants.DOCUMENT_COMPOSITE_TYPE.equalsIgnoreCase(type) || SpagoBIConstants.DASHBOARD_TYPE.equalsIgnoreCase(type)) {
 					for (Engine e : engines) {
 						try {
 							engineType = DAOFactory.getDomainDAO().loadDomainById(e.getEngineTypeId());

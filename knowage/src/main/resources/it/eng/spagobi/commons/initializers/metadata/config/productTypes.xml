@@ -3,6 +3,7 @@
 	<PRODUCT_TYPE label="KnowageBD" active="true">
 		<ENGINE label="knowageofficeengine" />
 		<ENGINE label="knowagecockpitengine" />
+		<ENGINE label="knowagedashboardengine" />
 		<ENGINE label="knowageqbeengine" />
 		<ENGINE label="knowageprocessengine" />
 		<ENGINE label="knowagegisengine" />
@@ -14,6 +15,7 @@
 		<ENGINE label="knowagetalendengine" />
 		<ENGINE label="knowageprocessengine" />
 		<ENGINE label="knowagecockpitengine" />
+		<ENGINE label="knowagedashboardengine" />
 		<ENGINE label="knowageolapengine" />
 		<ENGINE label="knowagedossierengine" />
 	</PRODUCT_TYPE>

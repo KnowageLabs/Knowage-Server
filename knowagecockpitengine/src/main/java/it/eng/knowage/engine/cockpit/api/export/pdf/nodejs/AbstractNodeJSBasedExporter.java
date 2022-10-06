@@ -120,6 +120,7 @@ public abstract class AbstractNodeJSBasedExporter {
 				numOfPages = 1;
 				return numOfPages;
 			case "knowagecockpitengine":
+			case "knowagedashboardengine":
 				ObjTemplate objTemplate = document.getActiveTemplate();
 				if (objTemplate == null) {
 					throw new SpagoBIRuntimeException("Unable to get template for document with id [" + documentId + "]");
@@ -146,6 +147,7 @@ public abstract class AbstractNodeJSBasedExporter {
 			case "knowagechartengine":
 				break;
 			case "knowagecockpitengine":
+			case "knowagedashboardengine":
 				ObjTemplate objTemplate = document.getActiveTemplate();
 				if (objTemplate == null) {
 					throw new SpagoBIRuntimeException("Unable to get template for document with id [" + documentId + "]");
@@ -182,6 +184,7 @@ public abstract class AbstractNodeJSBasedExporter {
 			case "knowagechartengine":
 				break;
 			case "knowagecockpitengine":
+			case "knowagedashboardengine":
 				ObjTemplate objTemplate = document.getActiveTemplate();
 				if (objTemplate == null) {
 					throw new SpagoBIRuntimeException("Unable to get template for document with id [" + documentId + "]");
