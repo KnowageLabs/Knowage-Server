@@ -1,12 +1,6 @@
 <template>
     <div class="widget-renderer" :style="getWidgetStyleString()">
-        {{ widget.id }}
         <TableWidget v-if="widget.type === 'table'" :propWidget="widget" :datasets="datasets" :editorMode="false" style="flex: 1" />
-        <!-- <div class="drag-handle">{{ widget.id }} {{ widget.type }}</div> -->
-        <!-- <div style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center">
-            <div>{{ data }}</div>
-            <button @click="click">CLICKME</button>
-        </div> -->
     </div>
 </template>
 
@@ -52,7 +46,7 @@ export default defineComponent({
 .widget-renderer {
     width: 100%;
     height: 100%;
-    background-color: #ccc;
+    background-color: #fff;
     overflow: hidden;
     display: flex;
     flex-direction: column;
