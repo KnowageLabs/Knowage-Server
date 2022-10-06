@@ -1294,9 +1294,12 @@ function cockpitChartWidgetControllerFunction(
 				columnValue = event.point.name;
 			}
 
-
+			
 			var category = $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY;
-			var columnName = category.name
+			var columnName =    category.name
+			if ($scope.ngModel.cliccable && $scope.ngModel.updateble && !$scope.ngModel.drillable && !event.point.drilldown && category.column != category.groupby) {
+				columnName = category.groupby;
+			} 
 
 
 			// var d3Types = ["WORDCLOUD", "PARALLEL", "SUNBURST"];
@@ -1304,8 +1307,6 @@ function cockpitChartWidgetControllerFunction(
 			// if(d3Types.indexOf(chartType)<0){
 			if( Array.isArray(category)){
 				columnName = category[(event.point.id.match(new RegExp("_", "g")) ).length-1].name;
-			}else{
-				columnName = category.name;
 			}
 			if(chartType === 'HEATMAP'){
 				columnName = event.point.category;
