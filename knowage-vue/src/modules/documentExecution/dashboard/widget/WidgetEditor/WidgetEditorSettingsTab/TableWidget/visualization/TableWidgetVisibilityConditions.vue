@@ -89,7 +89,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IWidgetColumn, ITableWidgetVisibilityCondition, ITableWidgetVisibilityConditions } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget, IWidgetColumn, ITableWidgetVisibilityCondition, ITableWidgetVisibilityConditions, IVariable } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import { getDefaultVisibilityCondition } from '../../../helpers/tableWidget/TableWidgetDefaultValues'
@@ -103,7 +103,7 @@ export default defineComponent({
     components: { Dropdown, InputSwitch, MultiSelect },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
-        variables: { type: Array }
+        variables: { type: Array as PropType<IVariable[]> }
     },
     data() {
         return {

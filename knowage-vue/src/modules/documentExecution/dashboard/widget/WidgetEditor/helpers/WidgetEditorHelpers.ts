@@ -51,8 +51,6 @@ export function createNewWidget() {
 
     } as IWidget
 
-    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA : ", tableWidgetDefaultValues.getDefaultTooltips())
-
     return widget
 }
 

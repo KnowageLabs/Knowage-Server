@@ -33,7 +33,7 @@ export default defineComponent({
     components: { Dialog, WidgetCard },
     emits: ['closeWidgetPicker', 'openNewWidgetEditor'],
     inject: [],
-    props: {},
+    props: { visible: { type: Boolean } },
     data() {
         return {
             descriptor,

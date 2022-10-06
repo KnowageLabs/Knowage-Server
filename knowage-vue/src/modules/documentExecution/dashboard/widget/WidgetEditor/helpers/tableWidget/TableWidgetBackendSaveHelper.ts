@@ -12,9 +12,6 @@ export function formatTableWidgetForSave(widget: IWidget) {
     loadColumnIdNameMap(tempWidget)
     formatTableSelectedColumns(tempWidget.columns)
     formatTableSettings(tempWidget.settings)
-
-
-    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>> BE SAVE - FORMATTED WIDGET: ", tempWidget)
 }
 
 function formatTableSelectedColumns(columns: IWidgetColumn[]) {

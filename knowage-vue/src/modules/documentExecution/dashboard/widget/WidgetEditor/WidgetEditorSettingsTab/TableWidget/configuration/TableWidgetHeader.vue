@@ -79,7 +79,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, ITableWidgetHeaders, ITableWidgetHeadersRule, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget, ITableWidgetHeaders, ITableWidgetHeadersRule, IWidgetColumn, IVariable } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
@@ -93,7 +93,7 @@ export default defineComponent({
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
         drivers: { type: Array },
-        variables: { type: Array }
+        variables: { type: Array as PropType<IVariable[]> }
     },
     data() {
         return {

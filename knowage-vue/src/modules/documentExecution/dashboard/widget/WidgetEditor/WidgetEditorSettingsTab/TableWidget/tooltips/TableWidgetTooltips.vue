@@ -80,7 +80,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, ITableWidgetTooltipStyle, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget, ITableWidgetTooltipStyle, IWidgetColumn, IVariable } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
@@ -91,7 +91,7 @@ import WidgetEditorColumnsMultiselect from '../../common/WidgetEditorColumnsMult
 export default defineComponent({
     name: 'table-widget-tooltips',
     components: { Dropdown, InputSwitch, InputNumber, WidgetEditorColumnsMultiselect },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, drivers: { type: Array }, variables: { type: Array } },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, drivers: { type: Array }, variables: { type: Array as PropType<IVariable[]> } },
     data() {
         return {
             descriptor,

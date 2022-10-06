@@ -21,7 +21,7 @@
  * ! this component will be in charge of managing the widget editing.
  */
 import { defineComponent, PropType } from 'vue'
-import { IWidgetEditorDataset, IDatasetOptions, IWidget, IDataset, IModelDataset } from '../../Dashboard'
+import { IWidgetEditorDataset, IDatasetOptions, IWidget, IDataset, IModelDataset, IVariable } from '../../Dashboard'
 import { AxiosResponse } from 'axios'
 import { createNewWidget, formatWidgetForSave } from './helpers/WidgetEditorHelpers'
 import WidgetEditorPreview from './WidgetEditorPreview.vue'
@@ -35,7 +35,7 @@ export default defineComponent({
     name: 'widget-editor',
     components: { WidgetEditorPreview, WidgetEditorTabs },
     emits: ['close', 'widgetUpdated', 'widgetSaved'],
-    props: { dashboardId: { type: String, required: true }, propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array as PropType<IDataset[]> }, drivers: { type: Array }, variables: { type: Array } },
+    props: { dashboardId: { type: String, required: true }, propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array as PropType<IDataset[]> }, documentDrivers: { type: Array }, variables: { type: Array as PropType<IVariable[]> } },
     data() {
         return {
             descriptor,
@@ -66,14 +66,9 @@ export default defineComponent({
     methods: {
         loadWidget() {
             if (!this.propWidget) return
-            console.log('Widget Editor - LOADED WIDGET IN WIDGET EDITOR: ', this.propWidget)
             this.widget = this.propWidget.new ? createNewWidget() : deepcopy(this.propWidget)
-            console.log('Widget Editor - LOADED WIDGET PROP IN WIDGET EDITOR: ', createNewWidget())
-            console.log('Widget Editor - LOADED WIDGET PROP IN WIDGET EDITOR: ', deepcopy(this.propWidget))
-            console.log('Widget Editor - LOADED WIDGET IN WIDGET EDITOR: ', deepcopy(this.widget))
         },
         loadSelectedModelDatasets() {
-            // TODO - dashboardId
             this.selectedModelDatasets = this.dashboardId ? this.dashboardStore.getDashboardSelectedDatastes(this.dashboardId) : {}
         },
         loadSelectedModel() {
@@ -86,44 +81,10 @@ export default defineComponent({
             }
         },
         loadDrivers() {
-            // TODO - remove mock
-            this.drivers = [
-                {
-                    name: 'Driver 1',
-                    type: 'static',
-                    multivalue: false,
-                    value: 'Driver 1'
-                },
-                {
-                    name: 'Driver 2',
-                    type: 'dynamic',
-                    multivalue: false,
-                    value: 'Driver 2'
-                }
-            ]
+            this.drivers = this.documentDrivers as any[]
         },
         onDatasetSelected(dataset: IWidgetEditorDataset) {
-            this.loadPreviewData(dataset)
             this.loadAvailableFunctions(dataset)
-        },
-        async loadPreviewData(dataset: IWidgetEditorDataset) {
-            this.store.setLoading(true)
-            // TODO - remove hardcoded
-            const postData = {
-                aggregations: {
-                    measures: [],
-                    categories: [],
-                    dataset: dataset.label
-                },
-                parameters: {},
-                selections: {},
-                indexes: []
-            } as IDatasetOptions
-            // await this.$http
-            //     .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasets/${dataset.label}/data?offset=0&size=10&nearRealtime=true&widgetName=widget_table_1658220241151`, postData)
-            //     .then((response: AxiosResponse<any>) => (this.previewData = response.data))
-            //     .catch(() => {})
-            this.store.setLoading(false)
         },
         async loadAvailableFunctions(dataset: IWidgetEditorDataset) {
             this.store.setLoading(true)

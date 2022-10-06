@@ -154,7 +154,6 @@ export default defineComponent({
             this.calcFieldDialogVisible = true
         },
         editCalcField(calcField) {
-            console.log('CALC IFELD ', calcField)
             this.createCalcFieldColumns()
             this.selectedCalcField = calcField
             this.calcFieldDialogVisible = true

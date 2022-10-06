@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IDataset } from '../../../Dashboard'
+import { IWidget, IDataset, IVariable } from '../../../Dashboard'
 import tableDescriptor from './TableWidget/TableWidgetSettingsDescriptor.json'
 import TableWidgetSettingsContainer from './TableWidget/TableWidgetSettingsContainer.vue'
 import WidgetEditorSettingsList from './WidgetEditorSettingsList.vue'
@@ -25,7 +25,7 @@ import WidgetEditorSettingsList from './WidgetEditorSettingsList.vue'
 export default defineComponent({
     name: 'widget-editor-settings-tab',
     components: { TableWidgetSettingsContainer, WidgetEditorSettingsList },
-    props: { propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array as PropType<IDataset[]> }, selectedDatasets: { type: Array as PropType<IDataset[]> }, drivers: { type: Array }, variables: { type: Array } },
+    props: { propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array as PropType<IDataset[]> }, selectedDatasets: { type: Array as PropType<IDataset[]> }, drivers: { type: Array }, variables: { type: Array as PropType<IVariable[]> } },
     emits: [],
     data() {
         return {

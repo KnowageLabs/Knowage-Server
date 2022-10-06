@@ -37,6 +37,7 @@ const getDefaultColumnGroupsStyle = (widget: any) => {
         }
         if (hasStyle) formattedColumnGroupsStyles.styles.push({
             target: [tempGroup.id], properties: {
+                width: 0,
                 "background-color": tempGroup['background-color'] ?? "rgb(0, 0, 0)",
                 color: tempGroup.color ?? 'rgb(255, 255, 255)',
                 "justify-content": tempGroup['justify-content'] ?? '',

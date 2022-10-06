@@ -16,7 +16,7 @@
         :dashboardId="dashboardId"
         :propWidget="selectedWidget"
         :datasets="datasets"
-        :documentDrivers="[]"
+        :documentDrivers="drivers"
         :variables="model ? model.configuration.variables : []"
         @close="closeWidgetEditor"
         @widgetSaved="closeWidgetEditor"
@@ -38,7 +38,6 @@ import { emitter, createNewDashboardModel } from './DashboardHelpers'
 import { formatModel } from './helpers/DashboardBackwardCompatibilityHelper'
 import DashboardRenderer from './DashboardRenderer.vue'
 import WidgetPickerDialog from './widget/WidgetPicker/WidgetPickerDialog.vue'
-import mock from './DashboardMock.json'
 import dashboardStore from './Dashboard.store'
 import mainStore from '../../../App.store'
 import DatasetEditor from './dataset/DatasetEditor.vue'
@@ -46,7 +45,6 @@ import WidgetEditor from './widget/WidgetEditor/WidgetEditor.vue'
 import mockedDashboardModel from './mockedDashboardModel.json'
 import descriptor from './DashboardDescriptor.json'
 import cryptoRandomString from 'crypto-random-string'
-// import mock1 from './tempMocks/mock1.json'
 import DashboardControllerSaveDialog from './DashboardControllerSaveDialog.vue'
 
 export default defineComponent({
@@ -57,13 +55,15 @@ export default defineComponent({
     data() {
         return {
             descriptor,
-            model: mock as any,
+            model: null as any,
             widgetPickerVisible: false,
             datasetEditorVisible: false,
             datasets: [] as any[],
             widgetEditorVisible: false,
             selectedWidget: null as any,
             crossNavigations: [] as any[],
+            profileAttributes: [] as { name: string; value: string }[],
+            drivers: [] as any[],
             dashboardId: '',
             saveDialogVisible: false,
             loading: false
@@ -88,7 +88,6 @@ export default defineComponent({
         this.loadOutputParameters()
     },
     unmounted() {
-        // TODO - dashboardId
         this.store.removeDashboard(this.dashboardId)
         this.store.setCrosssNavigations([])
         this.store.setOutputParameters([])
@@ -96,7 +95,7 @@ export default defineComponent({
     methods: {
         async getData() {
             this.loading = true
-            await Promise.all([this.loadDatasets(), this.loadCrossNavigations(), this.loadOutputParameters(), this.loadModel()])
+            await Promise.all([this.loadDatasets(), this.loadCrossNavigations(), this.loadOutputParameters(), this.loadDrivers(), this.loadProfileAttributes(), this.loadModel()])
             this.loading = false
         },
         async loadModel() {
@@ -109,12 +108,10 @@ export default defineComponent({
                     .then((response: AxiosResponse<any>) => (tempModel = response.data))
                     .catch(() => {})
             }
-            // TODO
-            // this.model = mock
+            // TODO - remove commented mock
             // this.model = formatModel(mockedDashboardModel) as any
             this.model = tempModel && this.newDashboardMode ? tempModel : (formatModel(tempModel) as any)
             this.dashboardId = cryptoRandomString({ length: 16, type: 'base64' })
-            // this.model = formatModel(mock1) as any
             this.store.setDashboard(this.dashboardId, this.model)
         },
         async loadDatasets() {
@@ -137,10 +134,33 @@ export default defineComponent({
         },
         loadOutputParameters() {
             if (this.newDashboardMode) return
-            console.log('>>>>>>>>>>>>>>>> LOADED DOCUMENT: ', this.document)
             // TODO - Remove Mocked Output Parameters
             const mockedParameters = descriptor.mockedOutputParameters
             this.store.setOutputParameters(mockedParameters)
+        },
+        loadDrivers() {
+            // TODO - remove mock
+            this.drivers = [
+                {
+                    name: 'Driver 1',
+                    type: 'static',
+                    multivalue: false,
+                    value: 'Driver 1'
+                },
+                {
+                    name: 'Driver 2',
+                    type: 'dynamic',
+                    multivalue: false,
+                    value: 'Driver 2'
+                }
+            ]
+        },
+        loadProfileAttributes() {
+            this.profileAttributes = []
+            const user = this.appStore.getUser()
+            if (user && user.attributes) {
+                Object.keys(user.attributes).forEach((key: string) => this.profileAttributes.push({ name: key, value: user.attributes[key] }))
+            }
         },
         setEventListeners() {
             emitter.on('openNewWidgetPicker', () => {
@@ -196,11 +216,9 @@ export default defineComponent({
             await this.saveDashboard(document)
         },
         async saveDashboard(document: any) {
-            console.log('CAAAAAAAAAAAALED', this.store.getDashboard(this.dashboardId))
             this.appStore.setLoading(true)
             if (!this.document) return
             const folders = this.newDashboardMode && this.$route.query.folderId ? [this.$route.query.folderId] : []
-            console.log('THIS ROUTE: ', this.$route)
             const postData = {
                 document: {
                     name: document.name,
@@ -218,7 +236,6 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/saveDocument`, postData)
                 .then((response: AxiosResponse<any>) => {
-                    console.log('SAVE RESPONSE: ', response)
                     this.appStore.setInfo({
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.toast.success')

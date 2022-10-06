@@ -14,7 +14,7 @@
  * ! this component will be in charge of managing the widget editing sections.
  */
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IDataset } from '../../Dashboard'
+import { IWidget, IDataset, IVariable } from '../../Dashboard'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import WidgetEditorDataTab from './WidgetEditorDataTab/WidgetEditorDataTab.vue'
@@ -23,7 +23,7 @@ import WidgetEditorSettingsTab from './WidgetEditorSettingsTab/WidgetEditorSetti
 export default defineComponent({
     name: 'widget-editor-tabs',
     components: { TabView, TabPanel, WidgetEditorDataTab, WidgetEditorSettingsTab },
-    props: { propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array as PropType<IDataset[]> }, selectedDatasets: { type: Array as PropType<IDataset[]> }, drivers: { type: Array }, variables: { type: Array } },
+    props: { propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array as PropType<IDataset[]> }, selectedDatasets: { type: Array as PropType<IDataset[]> }, drivers: { type: Array }, variables: { type: Array as PropType<IVariable[]> } },
     emits: ['datasetSelected'],
     data() {
         return {
