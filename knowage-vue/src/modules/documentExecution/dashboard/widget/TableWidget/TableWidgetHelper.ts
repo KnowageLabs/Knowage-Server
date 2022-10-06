@@ -85,6 +85,7 @@ export const formatModelForGet = (propWidget: IWidget, datasetLabel) => {
     } as any
 
     dataToSend.aggregations.dataset = datasetLabel
+    dataToSend.selections = getFilters(propWidget, datasetLabel)
 
     if (propWidget.settings.configuration.summaryRows.enabled) {
         dataToSend.summaryRow = getSummaryRow(propWidget)
@@ -134,4 +135,29 @@ const getSummaryRow = (propWidget: IWidget) => {
     }
 
     return summaryArray
+}
+
+const getFilters = (propWidget: IWidget, datasetLabel: string) => {
+    var columns = propWidget.columns
+    var activeFilters = {} as any
+
+    columns.forEach((column) => {
+        if (column.filter.enabled) {
+            var filterData = { filterOperator: column.filter.operator, filterVals: ["('" + column.filter.value + "')"] }
+            createNestedObject(activeFilters, [datasetLabel, column.columnName], filterData)
+        }
+    })
+
+    return activeFilters
+}
+
+const createNestedObject = function (base, names, value) {
+    var lastName = arguments.length === 3 ? names.pop() : false
+
+    for (var i = 0; i < names.length; i++) {
+        base = base[names[i]] = base[names[i]] || {}
+    }
+    if (lastName) base = base[lastName] = value
+
+    return base
 }

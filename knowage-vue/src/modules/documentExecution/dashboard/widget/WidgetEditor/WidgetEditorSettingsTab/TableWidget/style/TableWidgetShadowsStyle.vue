@@ -52,7 +52,7 @@ export default defineComponent({
             descriptor,
             shadowsStyleModel: null as ITableWidgetShadowsStyle | null,
             shadowSize: '',
-            shadowSizeOptionsMap: { small: '0px 1px 1px #ccc', medium: '0px 2px 3px #ccc', large: '0px 8px 19px #ccc', extraLarge: '0px 8px 19px #ccc' },
+            shadowSizeOptionsMap: { small: '0px 1px 1px', medium: '0px 2px 3px', large: '0px 8px 19px', extraLarge: '0px 8px 19px' },
             getTranslatedLabel
         }
     },
@@ -76,16 +76,16 @@ export default defineComponent({
         getShadowSize() {
             if (!this.shadowsStyleModel) return
             switch (this.shadowsStyleModel.properties['box-shadow']) {
-                case '0px 1px 1px #ccc':
+                case '0px 1px 1px':
                     this.shadowSize = 'small'
                     break
-                case '0px 2px 3px #ccc':
+                case '0px 2px 3px':
                     this.shadowSize = 'medium'
                     break
-                case '0px 4px 5px #ccc':
+                case '0px 4px 5px':
                     this.shadowSize = 'large'
                     break
-                case '0px 8px 19px #ccc':
+                case '0px 8px 19px':
                     this.shadowSize = 'extraLarge'
                     break
                 default:
@@ -99,7 +99,7 @@ export default defineComponent({
         },
         onBackroundColorChanged(event: string | null) {
             if (!event || !this.shadowsStyleModel) return
-            this.shadowsStyleModel.properties.backgroundColor = event
+            this.shadowsStyleModel.properties.color = event
             this.shadowStyleChanged()
         }
     }

@@ -123,18 +123,21 @@ export default defineComponent({
 .icon-disabled {
     color: #c2c2c2;
 }
-@media screen and (max-width: 1199px) {
-    #widget-editor-preview {
-        -webkit-transition: width 0.3s;
-        transition: flex 0.3s;
-        flex: 0;
-    }
+#widget-editor-preview {
+    flex: 0.5;
 }
-@media screen and (min-width: 1200px) {
-    #widget-editor-preview {
-        -webkit-transition: width 0.3s;
-        transition: flex 0.3s;
-        flex: 0.5;
-    }
-}
+// @media screen and (max-width: 1199px) {
+//     #widget-editor-preview {
+//         -webkit-transition: width 0.3s;
+//         transition: flex 0.3s;
+//         flex: 0;
+//     }
+// }
+// @media screen and (min-width: 1200px) {
+//     #widget-editor-preview {
+//         -webkit-transition: width 0.3s;
+//         transition: flex 0.3s;
+//         flex: 0.5;
+//     }
+// }
 </style>

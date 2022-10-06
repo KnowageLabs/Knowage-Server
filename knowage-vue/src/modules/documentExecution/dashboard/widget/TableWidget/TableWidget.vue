@@ -1,32 +1,36 @@
 <template>
-    <!-- <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine p-m-2" :style="getWidgetStyleString()" :gridOptions="gridOptions" :rowData="rowData" :columnDefs="columnDefs" :tooltipShowDelay="100" :tooltipMouseTrack="true" @grid-ready="onGridReady"></ag-grid-vue> -->
-    <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine p-m-2" :gridOptions="gridOptions" :rowData="rowData" :columnDefs="columnDefs" :tooltipShowDelay="100" :tooltipMouseTrack="true" :overlayNoRowsTemplate="overlayNoRowsTemplateTest" @grid-ready="onGridReady"></ag-grid-vue>
+    <!-- <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine p-m-2 kn-flex"  :gridOptions="gridOptions"></ag-grid-vue> -->
+    <div class="kn-table-widget-container p-d-flex p-d-row" :style="editorMode ? getWidgetStyleString() : ''">
+        <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine" :gridOptions="gridOptions"></ag-grid-vue>
+        <PaginatorRenderer v-if="showPaginator" :pagination="pagination" @pageChanged="getWidgetData()" />
+    </div>
 </template>
 
 <script lang="ts">
 /**
  * ! this component will be in charge of managing the widget editing preview.
  */
+import { AxiosResponse } from 'axios'
+import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
+import { IWidget } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
 import { emitter } from '../../DashboardHelpers'
+import { getWidgetStyleByType, getColumnConditionalStyles, isConditionMet, formatModelForGet } from './TableWidgetHelper'
+import mainStore from '../../../../../App.store'
+import dashboardStore from '../../Dashboard.store'
 import descriptor from '../../dataset/DatasetEditorDescriptor.json'
-import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
 import 'ag-grid-community/styles/ag-grid.css' // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
+import CellRenderer from './CellRenderer.vue'
 import HeaderRenderer from './HeaderRenderer.vue'
+import TooltipRenderer from './TooltipRenderer.vue'
 import SummaryRowRenderer from './SummaryRowRenderer.vue'
 import HeaderGroupRenderer from './HeaderGroupRenderer.vue'
-import TooltipRenderer from './TooltipRenderer.vue'
-import CellRenderer from './CellRenderer.vue'
-import { getWidgetStyleByType, getColumnConditionalStyles, isConditionMet, formatModelForGet } from './TableWidgetHelper'
-import { IWidget } from '../../Dashboard'
-import dashboardStore from '../../Dashboard.store'
-import mainStore from '../../../../../App.store'
-import { AxiosResponse } from 'axios'
+import PaginatorRenderer from './PaginatorRenderer.vue'
 
 export default defineComponent({
     name: 'table-widget',
-    components: { AgGridVue, HeaderRenderer, SummaryRowRenderer, HeaderGroupRenderer, TooltipRenderer },
+    components: { AgGridVue, HeaderRenderer, SummaryRowRenderer, HeaderGroupRenderer, TooltipRenderer, PaginatorRenderer },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         editorMode: { type: Boolean, required: false },
@@ -54,7 +58,13 @@ export default defineComponent({
             columnApi: null as any,
             overlayNoRowsTemplateTest: null as any,
             selectedDataset: {} as any,
-            tableData: [] as any
+            tableData: [] as any,
+            showPaginator: false,
+            pagination: {
+                offset: 0,
+                itemsNumber: 15,
+                totalItems: 0
+            }
         }
     },
     setup() {
@@ -74,7 +84,6 @@ export default defineComponent({
 
     methods: {
         setEventListeners() {
-            console.log('setEventListener')
             // emitter.on('paginationChanged', (pagination) => console.log('WidgetEditorPreview - PAGINATION CHANGED!', pagination)) //  { enabled: this.paginationEnabled, itemsNumber: +this.itemsNumber }
             // emitter.on('sortingChanged', this.sortColumn)
             emitter.on('refreshTable', this.createDatatableColumns)
@@ -82,8 +91,12 @@ export default defineComponent({
         setupDatatableOptions() {
             this.gridOptions = {
                 // PROPERTIES
+                rowData: this.rowData,
+                columnDefs: this.columnDefs,
+                tooltipShowDelay: 100,
+                tooltipMouseTrack: true,
+                overlayNoRowsTemplate: this.overlayNoRowsTemplateTest,
                 defaultColDef: this.defaultColDef,
-                pagination: false,
                 rowSelection: 'single',
                 suppressRowTransform: true,
                 suppressMovableColumns: true,
@@ -95,6 +108,7 @@ export default defineComponent({
                 // onCellClicked: (event, params) => console.log('A cell was clicked', event, params),
 
                 // CALLBACKS
+                onGridReady: this.onGridReady,
                 getRowStyle: this.getRowStyle
             }
         },
@@ -110,19 +124,6 @@ export default defineComponent({
             const datatableColumns = this.getTableColumns(this.tableData?.metaData?.fields)
             this.toggleHeaders(this.propWidget.settings.configuration.headers)
             this.gridApi.setColumnDefs(datatableColumns)
-
-            const updateData = (data) => {
-                if (this.propWidget.settings.configuration.summaryRows.enabled) {
-                    var rowsNumber = this.propWidget.settings.configuration.summaryRows.list.length
-                    this.gridApi.setRowData(data.slice(0, data.length - rowsNumber))
-                    this.gridApi.setPinnedBottomRowData(data.slice(-rowsNumber))
-                } else {
-                    this.gridApi.setRowData(data)
-                    this.gridApi.setPinnedBottomRowData()
-                }
-            }
-
-            updateData(this.tableData?.rows)
         },
         sortColumn(sorting) {
             this.columnApi.applyColumnState({
@@ -222,7 +223,6 @@ export default defineComponent({
                                 }
                             }
                         }
-
                         // HEADERS CONFIGURATION  -----------------------------------------------------------------
                         var headersConfiguration = this.propWidget.settings.configuration.headers
                         if (headersConfiguration.enabled && headersConfiguration.custom.enabled) {
@@ -252,6 +252,13 @@ export default defineComponent({
                         } else {
                             tempCol.headerTooltip = null
                         }
+
+                        // CUSTOM MESSAGE CONFIGURATION  -----------------------------------------------------------------
+                        var pagination = this.propWidget.settings.pagination
+                        if (pagination.enabled) {
+                            this.showPaginator = true
+                            this.pagination.itemsNumber = pagination.itemsNumber
+                        } else this.showPaginator = false
 
                         // CUSTOM MESSAGE CONFIGURATION  -----------------------------------------------------------------
                         var customMessageConfig = this.propWidget.settings.configuration.customMessages
@@ -347,18 +354,39 @@ export default defineComponent({
         getSelectedDataset(dsId) {
             let datasetIndex = this.datasets.findIndex((dataset: any) => dsId === dataset.id.dsId)
             this.selectedDataset = this.datasets[datasetIndex]
-            console.log('selected datase', this.datasets)
+        },
+        updateData(data) {
+            if (this.propWidget.settings.configuration.summaryRows.enabled) {
+                var rowsNumber = this.propWidget.settings.configuration.summaryRows.list.length
+                this.gridApi.setRowData(data.slice(0, data.length - rowsNumber))
+                this.gridApi.setPinnedBottomRowData(data.slice(-rowsNumber))
+            } else {
+                this.gridApi.setRowData(data)
+                this.gridApi.setPinnedBottomRowData()
+            }
         },
         async getWidgetData() {
             if (this.selectedDataset) {
-                this.appStore.setLoading(true)
-                let url = `2.0/datasets/${this.selectedDataset.label}/data?offset=0&size=10&nearRealtime=true`
+                this.gridApi.showLoadingOverlay()
+                // let url = createGetUrl(this.propWidget, this.selectedDataset.label)
+                var url = ''
+
+                if (this.propWidget.settings.pagination.enabled) {
+                    url = `2.0/datasets/${this.selectedDataset.label}/data?offset=${this.pagination.offset}&size=${this.propWidget.settings.pagination.itemsNumber}&nearRealtime=true`
+                } else url = `2.0/datasets/${this.selectedDataset.label}/data?offset=0&size=-1&nearRealtime=true`
+
                 let postData = formatModelForGet(this.propWidget, this.selectedDataset.label)
+
                 await this.$http
                     .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData)
-                    .then((response: AxiosResponse<any>) => (this.tableData = response.data))
+                    .then((response: AxiosResponse<any>) => {
+                        this.tableData = response.data
+                        this.pagination.totalItems = response.data.results
+                    })
                     .catch(() => {})
-                this.appStore.setLoading(false)
+
+                this.updateData(this.tableData?.rows)
+                this.gridApi.hideOverlay()
             }
         }
     }

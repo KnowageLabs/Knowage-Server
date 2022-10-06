@@ -255,7 +255,7 @@ export interface ITableWidgetColumnStyles {
 export interface ITableWidgetColumnStyle {
     target: string | string[]
     properties: {
-        width: string | number,
+        width: string | number
         'background-color': string
         color: string
         'justify-content': string
@@ -305,7 +305,7 @@ export interface ITableWidgetShadowsStyle {
     enabled: boolean
     properties: {
         'box-shadow': string
-        backgroundColor: strubg
+        color: strubg
     }
 }
 
