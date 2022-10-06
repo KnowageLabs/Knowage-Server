@@ -1,5 +1,5 @@
 <template>
-    <div class="dashboard-container" :id="`dashboard_${model.configuration.id}`">
+    <div v-if="model" class="dashboard-container" :id="`dashboard_${model.configuration.id}`">
         <DashboardRenderer v-if="!loading" :model="model" :datasets="datasets"></DashboardRenderer>
 
         <Transition name="editorEnter" appear>
