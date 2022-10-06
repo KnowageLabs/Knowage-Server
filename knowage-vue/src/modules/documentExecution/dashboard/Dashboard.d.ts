@@ -1,3 +1,21 @@
+export interface IDashboard {
+    sheets: [],
+    widgets: ITableWidget[],
+    configuration: {
+        id: string,
+        name: string,
+        label: string,
+        description: string,
+        associations: IAssociation[],
+        datasets: IModelDataset[],
+        variables: IVariable[],
+        themes: any
+    },
+    version: string
+}
+
+
+
 export interface IDatasetParameter {
     name: string
     type: 'static' | 'dynamic'
@@ -540,4 +558,14 @@ export interface IWidgetStyleToolbarModel {
     color?: string
     'background-color'?: string
     icon?: string
+}
+
+export interface IVariable {
+    name: string,
+    type: string,
+    value: string,
+    dataset?: string,
+    column?: string,
+    attribute?: string,
+    driver?: string
 }

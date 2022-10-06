@@ -9,6 +9,7 @@
         </Transition>
 
         <WidgetPickerDialog v-if="widgetPickerVisible" :visible="widgetPickerVisible" @openNewWidgetEditor="openNewWidgetEditor" @closeWidgetPicker="widgetPickerVisible = false" />
+        <DashboardControllerSaveDialog v-if="saveDialogVisible" :visible="saveDialogVisible" @save="saveNewDashboard" @close="saveDialogVisible = false"></DashboardControllerSaveDialog>
     </div>
     <WidgetEditor
         v-if="widgetEditorVisible"
@@ -33,7 +34,7 @@ import { AxiosResponse } from 'axios'
 import { v4 as uuidv4 } from 'uuid'
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
 import { IWidget } from './Dashboard'
-import { emitter } from './DashboardHelpers'
+import { emitter, createNewDashboardModel } from './DashboardHelpers'
 import { formatModel } from './helpers/DashboardBackwardCompatibilityHelper'
 import DashboardRenderer from './DashboardRenderer.vue'
 import WidgetPickerDialog from './widget/WidgetPicker/WidgetPickerDialog.vue'
@@ -46,11 +47,13 @@ import mockedDashboardModel from './mockedDashboardModel.json'
 import descriptor from './DashboardDescriptor.json'
 import cryptoRandomString from 'crypto-random-string'
 // import mock1 from './tempMocks/mock1.json'
+import DashboardControllerSaveDialog from './DashboardControllerSaveDialog.vue'
 
 export default defineComponent({
     name: 'dashboard-manager',
-    components: { DashboardRenderer, WidgetPickerDialog, DatasetEditor, WidgetEditor },
-    props: { sbiExecutionId: { type: String }, document: { type: Object }, reloadTrigger: { type: Boolean }, hiddenFormData: { type: Object }, filtersData: { type: Object as PropType<{ filterStatus: iParameter[]; isReadyForExecution: boolean }> } },
+    components: { DashboardRenderer, WidgetPickerDialog, DatasetEditor, WidgetEditor, DashboardControllerSaveDialog },
+    props: { sbiExecutionId: { type: String }, document: { type: Object }, reloadTrigger: { type: Boolean }, hiddenFormData: { type: Object }, filtersData: { type: Object as PropType<{ filterStatus: iParameter[]; isReadyForExecution: boolean }> }, newDashboardMode: { type: Boolean } },
+    emits: ['newDashboardSaved'],
     data() {
         return {
             descriptor,
@@ -62,6 +65,7 @@ export default defineComponent({
             selectedWidget: null as any,
             crossNavigations: [] as any[],
             dashboardId: '',
+            saveDialogVisible: false,
             loading: false
         }
     },
@@ -96,16 +100,19 @@ export default defineComponent({
             this.loading = false
         },
         async loadModel() {
-            let tempModel = null
-            await this.$http
-                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/documentexecution/` + this.document?.id + '/templates')
-                .then((response: AxiosResponse<any>) => (tempModel = response.data))
-                .catch(() => {})
-            console.log('>>>>>>>>>> TEEEEEEEEEEEEEEEEEEEEEST: ', tempModel)
+            let tempModel = null as any
+            if (this.newDashboardMode) {
+                tempModel = createNewDashboardModel()
+            } else {
+                await this.$http
+                    .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/documentexecution/` + this.document?.id + '/templates')
+                    .then((response: AxiosResponse<any>) => (tempModel = response.data))
+                    .catch(() => {})
+            }
             // TODO
             // this.model = mock
             // this.model = formatModel(mockedDashboardModel) as any
-            this.model = tempModel ? (formatModel(tempModel) as any) : {}
+            this.model = tempModel && this.newDashboardMode ? tempModel : (formatModel(tempModel) as any)
             this.dashboardId = cryptoRandomString({ length: 16, type: 'base64' })
             // this.model = formatModel(mock1) as any
             this.store.setDashboard(this.dashboardId, this.model)
@@ -119,16 +126,17 @@ export default defineComponent({
             this.appStore.setLoading(false)
         },
         async loadCrossNavigations() {
-            // TODO - Remove mocked document label
+            if (this.newDashboardMode) return
             this.appStore.setLoading(true)
             await this.$http
-                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/Test%20Drivers/loadCrossNavigationByDocument`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${this.document?.label}/loadCrossNavigationByDocument`)
                 .then((response: AxiosResponse<any>) => (this.crossNavigations = response.data))
                 .catch(() => {})
             this.appStore.setLoading(false)
             this.store.setCrosssNavigations(this.crossNavigations)
         },
         loadOutputParameters() {
+            if (this.newDashboardMode) return
             console.log('>>>>>>>>>>>>>>>> LOADED DOCUMENT: ', this.document)
             // TODO - Remove Mocked Output Parameters
             const mockedParameters = descriptor.mockedOutputParameters
@@ -143,6 +151,9 @@ export default defineComponent({
             })
             emitter.on('openWidgetEditor', (widget) => {
                 this.openWidgetEditor(widget)
+            })
+            emitter.on('saveDashboard', () => {
+                this.onSaveDashboardClicked()
             })
         },
         openNewWidgetPicker() {
@@ -172,6 +183,52 @@ export default defineComponent({
         closeDatasetEditor() {
             this.datasetEditorVisible = false
             emitter.emit('datasetManagementClosed')
+        },
+        async onSaveDashboardClicked() {
+            if (!this.document) return
+            if (this.newDashboardMode) {
+                this.saveDialogVisible = true
+            } else {
+                await this.saveDashboard(this.document)
+            }
+        },
+        async saveNewDashboard(document: { name: string; label: string }) {
+            await this.saveDashboard(document)
+        },
+        async saveDashboard(document: any) {
+            console.log('CAAAAAAAAAAAALED', this.store.getDashboard(this.dashboardId))
+            this.appStore.setLoading(true)
+            if (!this.document) return
+            const folders = this.newDashboardMode && this.$route.query.folderId ? [this.$route.query.folderId] : []
+            console.log('THIS ROUTE: ', this.$route)
+            const postData = {
+                document: {
+                    name: document.name,
+                    label: document.label,
+                    description: document.description,
+                    type: 'DOCUMENT_COMPOSITE'
+                },
+                customData: {
+                    templateContent: this.store.getDashboard(this.dashboardId)
+                },
+                action: this.newDashboardMode ? 'DOC_SAVE' : 'MODIFY_COCKPIT',
+                folders: folders
+            }
+
+            await this.$http
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/saveDocument`, postData)
+                .then((response: AxiosResponse<any>) => {
+                    console.log('SAVE RESPONSE: ', response)
+                    this.appStore.setInfo({
+                        title: this.$t('common.toast.createTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.saveDialogVisible = false
+                    if (this.newDashboardMode) this.$emit('newDashboardSaved', document)
+                })
+                .catch(() => {})
+
+            this.appStore.setLoading(false)
         }
     }
 })
