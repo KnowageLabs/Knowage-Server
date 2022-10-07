@@ -219,12 +219,8 @@ export default defineComponent({
             this.onRowsMove(eventData, index, position)
         },
         onRowsMove(sourceRowIndex: number, targetRowIndex: number, position: string) {
-            console.log('SORUCE ROW INDEX: ', sourceRowIndex)
-            console.log('TARGET ROW INDEX: ', targetRowIndex)
-            console.log('position: ', position)
             if (sourceRowIndex === targetRowIndex) return
             const newIndex = sourceRowIndex > targetRowIndex && position === 'after' ? targetRowIndex + 1 : targetRowIndex
-            console.log('newIndex: ', newIndex)
             this.tooltips.splice(newIndex, 0, this.tooltips.splice(sourceRowIndex, 1)[0])
             this.tooltipsChanged()
         },

@@ -42,7 +42,6 @@ export default defineComponent({
             emitter.emit('refreshTable', this.widgetModel.id)
         },
         onStyleToolbarChange(model: IWidgetStyleToolbarModel) {
-            console.log('ON CHANGE MODEL: ', model)
             this.summaryStyleModel = {
                 'background-color': model['background-color'] ?? '',
                 color: model.color ?? '',
