@@ -41,7 +41,6 @@ export default defineComponent({
             this.$emit('change', this.model)
         },
         onIconSelected(icon: IIcon) {
-            console.log('onIconSelected', icon)
             if (this.model) this.model.icon = icon.className
             this.iconPickerDialogVisible = false
             this.$emit('change', this.model)

@@ -117,12 +117,11 @@ export default defineComponent({
             this.loadParameterList()
         },
         loadOutputParameters() {
-            console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA >  ', this.store.getOutputParameters())
             this.outputParameters = this.store.getOutputParameters() ?? []
         },
         loadParameterList() {
             if (!this.crossNavigationModel) return
-            console.log('OUTPUT PARAMETERS: ', this.outputParameters)
+
             this.parameterList = []
             for (let i = 0; i < this.outputParameters.length; i++) {
                 const outputParameter = this.outputParameters[i]
