@@ -345,7 +345,7 @@ export default defineComponent({
                 })
             }
 
-            if (this.user.enterprise) {
+            if (this.user.functionalities.includes('EnableToRate') && this.user.functionalities.includes('Collaboration')) {
                 this.toolbarMenuItems.push({
                     label: this.$t('common.info.info'),
                     items: [
@@ -1314,7 +1314,7 @@ export default defineComponent({
             }
         },
         isOrganizerEnabled() {
-            return this.user.isSuperadmin || this.user.functionalities.includes('SaveIntoFolderFunctionality')
+            return this.user.isSuperadmin || this.user.functionalities.includes('DocumentAdminManagement') || this.user.functionalities.includes('SaveIntoFolderFunctionality')
         },
         async addToWorkspace() {
             this.loading = true
