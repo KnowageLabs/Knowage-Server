@@ -142,6 +142,7 @@ export default defineComponent({
                     this.selectedDatasets.push(dataset)
                     const formattedDatasetForDashboard = {
                         id: dataset.id.dsId,
+                        dsLabel: dataset.label,
                         indexes: [],
                         drivers: [],
                         cache: true,
@@ -210,6 +211,7 @@ export default defineComponent({
         formatDatasetForModel(datasetToFormat) {
             let formattedDataset = {
                 id: datasetToFormat.id.dsId,
+                dsLabel: datasetToFormat.label,
                 cache: datasetToFormat.modelCache ?? false,
                 indexes: datasetToFormat.modelCache ? datasetToFormat.modelIndexes : [],
                 parameters: datasetToFormat.parameters.map((parameter) => {

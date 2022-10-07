@@ -99,6 +99,7 @@ import KnHint from '@/components/UI/KnHint.vue'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
 import mainStore from '../../../App.store'
+import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
 
 export default defineComponent({
     name: 'dossier',
@@ -177,6 +178,10 @@ export default defineComponent({
             this.loading = true
             let url = `/knowagedossierengine/api/start/dossierTemplate?documentId=${this.id}`
             let filters = this.filterData ? this.filterData : {}
+            filters.filterStatus?.forEach((filter: iParameter) => {
+                const fields = ['dataDependsOnParameters', 'dataDependentParameters', 'lovDependsOnParameters', 'lovDependentParameters', 'dependsOnParameters', 'dependentParameters']
+                fields.forEach((field: string) => delete filter[field])
+            })
             let config = {
                 headers: { Accept: 'application/json, text/plain, */*' },
                 params: {

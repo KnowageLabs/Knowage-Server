@@ -405,6 +405,7 @@ export interface IWidgetEditorDataset {
     id: number
     label: string
     cache: boolean
+    dsLabel?: string
     parameters?: any[]
     drivers?: any[]
     indexes?: any[]
@@ -525,6 +526,7 @@ interface IAssociationField {
 
 export interface IModelDataset {
     id: number
+    dsLabel?: string
     cache: boolean
     indexes: string[]
     parameters: IModelDatasetParameter[]
