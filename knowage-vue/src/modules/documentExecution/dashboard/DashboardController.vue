@@ -108,7 +108,7 @@ export default defineComponent({
             }
             // TODO - remove commented mock
             // this.model = formatModel(mockedDashboardModel) as any
-            this.model = (tempModel && this.newDashboardMode) || tempModel?.hasOwnProperty('id') ? tempModel : (formatModel(tempModel) as any)
+            this.model = (tempModel && this.newDashboardMode) || tempModel.hasOwnProperty('id') ? tempModel : (formatModel(tempModel) as any)
             this.dashboardId = cryptoRandomString({ length: 16, type: 'base64' })
             this.store.setDashboard(this.dashboardId, this.model)
         },
@@ -222,7 +222,7 @@ export default defineComponent({
                     name: document.name,
                     label: document.label,
                     description: document.description,
-                    type: 'DASHBOARD'
+                    type: 'DOCUMENT_COMPOSITE'
                 },
                 customData: {
                     templateContent: this.store.getDashboard(this.dashboardId)
