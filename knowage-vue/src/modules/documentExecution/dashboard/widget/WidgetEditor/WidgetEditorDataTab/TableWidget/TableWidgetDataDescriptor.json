@@ -156,10 +156,6 @@
     ],
     "sortingOrderOptions": [
         {
-            "label": "",
-            "value": ""
-        },
-        {
             "label": "dashboard.widgetEditor.ascending",
             "value": "ASC"
         },

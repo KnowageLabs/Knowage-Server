@@ -82,7 +82,8 @@ export default defineComponent({
         widgetModel: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDataset[]> },
         selectedDatasets: { type: Array as PropType<IDataset[]> },
-        drivers: { type: Array }
+        drivers: { type: Array },
+        dashboardId: { type: String, required: true }
     },
     data() {
         return {
@@ -127,8 +128,7 @@ export default defineComponent({
             if (this.widgetModel?.settings?.interactions?.preview) this.previewModel = this.widgetModel.settings.interactions.preview
         },
         loadDashboardModel() {
-            // TODO - remove hardcoded id
-            this.dashboardModel = this.store.getDashboard(1)
+            this.dashboardModel = this.store.getDashboard(this.dashboardId)
             this.loadDatasetsFromModel()
         },
         loadDatasetsFromModel() {

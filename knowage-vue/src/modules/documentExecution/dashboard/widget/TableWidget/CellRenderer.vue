@@ -64,12 +64,6 @@ export default defineComponent({
                 .map(([k, v]) => `${k}:${v}`)
                 .join(';')
 
-            // console.group('getCellStyle')
-            // console.log('CONDITIONAL \n', this.getConditionalStyle())
-            // console.log('COLUMN \n', this.getColumnStyle() == columnStyleString)
-            // console.log('ROW \n', this.getRowspanRowColor())
-            // console.groupEnd()
-
             if (this.getConditionalStyle()) return this.getConditionalStyle()
             if (this.getColumnStyle() != columnStyleString) return this.getColumnStyle()
             if (this.getRowspanRowColor()) return this.getRowspanRowColor()

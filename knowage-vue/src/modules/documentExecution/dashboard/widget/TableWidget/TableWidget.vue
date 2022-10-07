@@ -1,5 +1,4 @@
 <template>
-    <!-- <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine p-m-2 kn-flex"  :gridOptions="gridOptions"></ag-grid-vue> -->
     <div class="kn-table-widget-container p-d-flex p-d-row" :style="editorMode ? getWidgetStyleString() : ''">
         <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine" :gridOptions="gridOptions"></ag-grid-vue>
         <PaginatorRenderer v-if="showPaginator" :pagination="pagination" @pageChanged="getWidgetData()" />
