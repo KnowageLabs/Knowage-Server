@@ -73,6 +73,10 @@ const router = createRouter({
     routes
 })
 
+router.afterEach(async (to, from) => {
+    if (localStorage.getItem('locale')) loadLanguageAsync(localStorage.getItem('locale'))
+})
+
 router.beforeEach((to, from, next) => {
     if (localStorage.getItem('locale')) loadLanguageAsync(localStorage.getItem('locale')).then(() => next())
     const checkRequired = !('/' == to.fullPath && '/' == from.fullPath)

@@ -136,39 +136,43 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		Map<String, Object> templateContent = customDataDTO.getTemplateContent();
 		ArrayList<Map<String, Object>> sheets = (ArrayList<Map<String, Object>>) templateContent.get("sheets");
 
-		for (Map<String, Object> sheet : sheets) {
-			String label = (String) sheet.get("label");
-			ArrayList<Map<String, Object>> widgets = (ArrayList<Map<String, Object>>) sheet.get("widgets");
+		try {
+			for (Map<String, Object> sheet : sheets) {
+				String label = (String) sheet.get("label");
+				ArrayList<Map<String, Object>> widgets = (ArrayList<Map<String, Object>>) sheet.get("widgets");
 
-			for (Map<String, Object> widget : widgets) {
+				for (Map<String, Object> widget : widgets) {
 
-				String type = (String) widget.get("type");
+					String type = (String) widget.get("type");
 
-				if ("html".equals(type)) {
+					if ("html".equals(type)) {
 
-					String html = (String) widget.get("htmlToRender");
+						String html = (String) widget.get("htmlToRender");
 
-					boolean isSafe = xssUtils.isSafe(html);
+						boolean isSafe = xssUtils.isSafe(html);
 
-					if (!isSafe) {
-						throw new InvalidHtmlPayloadInCockpitException(label, html);
+						if (!isSafe) {
+							throw new InvalidHtmlPayloadInCockpitException(label, html);
+						}
+
+					} else if ("customchart".equals(type)) {
+
+						Map<String, Object> html = (Map<String, Object>) widget.get("html");
+
+						String code = (String) html.get("code");
+
+						boolean isSafe = xssUtils.isSafe(code);
+
+						if (!isSafe) {
+							throw new InvalidHtmlPayloadInCockpitException(label, code);
+						}
+
 					}
-
-				} else if ("customchart".equals(type)) {
-
-					Map<String, Object> html = (Map<String, Object>) widget.get("html");
-
-					String code = (String) html.get("code");
-
-					boolean isSafe = xssUtils.isSafe(code);
-
-					if (!isSafe) {
-						throw new InvalidHtmlPayloadInCockpitException(label, code);
-					}
-
 				}
-			}
 
+			}
+		} catch (Exception e) {
+			logger.info("Old template version");
 		}
 	}
 
@@ -218,9 +222,9 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 				error.addErrorKey("sbi.document.labelAlreadyExistent");
 			} else {
 				String type = documentDTO.getType();
-				if ("MAP".equalsIgnoreCase(type)) {
+				if (SpagoBIConstants.MAP_TYPE_CODE.equalsIgnoreCase(type)) {
 					id = insertGeoreportDocument(saveDocumentDTO, documentManagementAPI);
-				} else if ("DOCUMENT_COMPOSITE".equalsIgnoreCase(type)) {
+				} else if (SpagoBIConstants.DOCUMENT_COMPOSITE_TYPE.equalsIgnoreCase(type) || SpagoBIConstants.DASHBOARD_TYPE.equalsIgnoreCase(type)) {
 					id = insertCockpitDocument(saveDocumentDTO, documentManagementAPI);
 				} else if ("KPI".equalsIgnoreCase(type)) {
 					id = insertKPIDocument(saveDocumentDTO, documentManagementAPI);
@@ -472,7 +476,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 			document.setPreviewFile(previewFile.replace("\"", ""));
 		}
 
-		if ("DOCUMENT_COMPOSITE".equalsIgnoreCase(type)) {
+		if (SpagoBIConstants.DOCUMENT_COMPOSITE_TYPE.equalsIgnoreCase(type) || SpagoBIConstants.DASHBOARD_TYPE.equalsIgnoreCase(type)) {
 			// gets correct type of the engine for DOCUMENT_COMPOSITION (it's
 			// cockpit and it uses the EXTERNAL engine)
 			Engine engine = null;
@@ -480,7 +484,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 
 			List<Engine> engines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectTypeAndTenant(type);
 			if (engines != null && !engines.isEmpty()) {
-				if ("DOCUMENT_COMPOSITE".equalsIgnoreCase(type)) {
+				if (SpagoBIConstants.DOCUMENT_COMPOSITE_TYPE.equalsIgnoreCase(type) || SpagoBIConstants.DASHBOARD_TYPE.equalsIgnoreCase(type)) {
 					for (Engine e : engines) {
 						try {
 							engineType = DAOFactory.getDomainDAO().loadDomainById(e.getEngineTypeId());
