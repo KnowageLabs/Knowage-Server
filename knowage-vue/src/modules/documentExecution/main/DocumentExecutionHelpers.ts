@@ -22,7 +22,7 @@ export function createToolbarMenuItems(document: any, functions: any, exporters:
         })
     }
 
-    if (user.enterprise) {
+    if (user.functionalities.includes('EnableToRate') && user.functionalities.includes('Collaboration')) {
         toolbarMenuItems.push({
             label: $t('common.info.info'),
             items: [{ icon: 'pi pi-star', label: $t('common.rank'), command: () => functions.openRank() }]

@@ -9,20 +9,8 @@
                 <div class="p-d-flex p-jc-around">
                     <Button v-if="mode == 'dashboard'" icon="fas fa-database" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.datasets')" @click="openDashboardDatasetManagement"></Button>
                     <Button v-if="mode == 'dashboard'" icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.save')"></Button>
-                    <Button
-                        icon="pi pi-pencil"
-                        class="p-button-text p-button-rounded p-button-plain p-mx-2"
-                        v-if="mode !== 'dashboard' && document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'VIEW'"
-                        v-tooltip.left="$t('documentExecution.main.editCockpit')"
-                        @click="editCockpitDocumentConfirm"
-                    ></Button>
-                    <Button
-                        icon="fa fa-eye"
-                        class="p-button-text p-button-rounded p-button-plain p-mx-2"
-                        v-if="mode !== 'dashboard' && document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'EDIT'"
-                        v-tooltip.left="$t('documentExecution.main.viewCockpit')"
-                        @click="editCockpitDocumentConfirm"
-                    ></Button>
+                    <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="mode !== 'dashboard' && canEditCockpit && documentMode === 'VIEW'" v-tooltip.left="$t('documentExecution.main.editCockpit')" @click="editCockpitDocumentConfirm"></Button>
+                    <Button icon="fa fa-eye" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="mode !== 'dashboard' && canEditCockpit && documentMode === 'EDIT'" v-tooltip.left="$t('documentExecution.main.viewCockpit')" @click="editCockpitDocumentConfirm"></Button>
                     <Button v-if="mode !== 'dashboard'" icon="pi pi-book" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.onlineHelp')" @click="openHelp"></Button>
                     <Button icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.refresh')" @click="refresh"></Button>
                     <Button
@@ -264,6 +252,10 @@ export default defineComponent({
         window.removeEventListener('message', this.iframeEventsListener)
     },
     computed: {
+        canEditCockpit(): boolean {
+            if (!this.user || !this.document) return false
+            return (this.document.engine.equalsIgnoreCase('knowagecockpitengine') || this.document.engine.equalsIgnoreCase('knowagedashboardengine')) && (this.user.functionalities?.includes('DocumentAdminManagement') || this.document.creationUser === this.user.userId)
+        },
         sessionRole(): string | null {
             if (!this.user) return null
             return this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
@@ -1221,7 +1213,7 @@ export default defineComponent({
             }
         },
         isOrganizerEnabled() {
-            return this.user.isSuperadmin || this.user.functionalities.includes('SaveIntoFolderFunctionality')
+            return this.user.isSuperadmin || this.user.functionalities.includes('DocumentAdminManagement') || this.user.functionalities.includes('SaveIntoFolderFunctionality')
         },
         async addToWorkspace() {
             this.loading = true
