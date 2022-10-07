@@ -4,7 +4,7 @@
         <TableWidgetSettingsContainer
             v-if="propWidget"
             id="model-div"
-            class="kn-flex kn-overflow p-px-2 p-py-3"
+            class="kn-flex kn-overflow p-my-3 p-mr-3"
             :widgetModel="propWidget"
             :selectedSetting="selectedSetting"
             :datasets="datasets"
