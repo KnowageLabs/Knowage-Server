@@ -1,5 +1,6 @@
 import { IWidget, IWidgetColumn } from "@/modules/documentExecution/dashboard/Dashboard"
 import { ISelectorWidgetDefaultValues, ISelectorWidgetSelectorType, ISelectorWidgetSettings, ISelectorWidgetValuesManagement } from "@/modules/documentExecution/dashboard/interfaces/DashboardSelectorWidget"
+import { getFormattedStyle } from './SelectorWidgetStyleHelper'
 import cryptoRandomString from 'crypto-random-string'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import * as selectorWidgetDefaultValues from '../../widget/WidgetEditor/helpers/selectorWidget/SelectorWidgetDefaultValues'
@@ -43,7 +44,7 @@ const getFormattedWidgetSettings = (widget: any) => {
         selectorType: getFormattedSelectorType(widget),
         defaultValues: getFormattedDefaultValues(widget),
         valuesManagement: getFormattedWidgetValuesManagement(widget),
-        style: {} as any,
+        style: getFormattedStyle(widget),
         responsive: widgetCommonDefaultValues.getDefaultResponsivnes()
     } as ISelectorWidgetSettings
     return formattedSettings

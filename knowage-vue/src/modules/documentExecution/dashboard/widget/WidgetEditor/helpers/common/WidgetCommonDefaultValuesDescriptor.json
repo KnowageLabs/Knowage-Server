@@ -5,5 +5,19 @@
         "sm": true,
         "xl": true,
         "xs": true
+    },
+    "defaultTitleStyle": {
+        "enabled": false,
+        "height": "",
+        "properties": {
+            "background-color": "",
+            "color": "",
+            "font-family": "",
+            "font-size": "",
+            "font-style": "",
+            "font-weight": "",
+            "justify-content": ""
+        },
+        "text": ""
     }
 }

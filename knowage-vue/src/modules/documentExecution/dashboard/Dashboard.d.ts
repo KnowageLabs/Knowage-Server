@@ -580,6 +580,12 @@ export interface IWidgetTitle {
     text: string,
     height: string,
     properties: {
+        'font-weight': string
+        'font-style': string
+        'font-size': string
+        'font-family': string
+        'justify-content': string
         color: string
+        'background-color': string
     }
 }
