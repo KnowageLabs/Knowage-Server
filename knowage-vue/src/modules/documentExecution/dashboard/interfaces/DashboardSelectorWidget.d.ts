@@ -41,12 +41,18 @@ export interface ISelectorWidgetStyle {
 export interface ISelectorWidgetLabelStyle {
     wrapText: boolean,
     properties: {
+        'font-weight': string
+        'font-style': string
+        'font-size': string
+        'font-family': string
+        'justify-content': string
         color: string
+        'background-color': string
     }
 }
 
 export interface ISelectorWidgetBackgroundStyle {
     properties: {
-        color: string
+        'background-color': string
     }
 }

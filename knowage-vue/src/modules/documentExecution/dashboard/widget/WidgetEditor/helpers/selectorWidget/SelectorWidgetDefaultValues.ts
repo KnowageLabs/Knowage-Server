@@ -1,4 +1,4 @@
-import { ISelectorWidgetDefaultValues, ISelectorWidgetSelectorType, ISelectorWidgetValuesManagement } from '@/modules/documentExecution/dashboard/interfaces/DashboardSelectorWidget'
+import { ISelectorWidgetBackgroundStyle, ISelectorWidgetDefaultValues, ISelectorWidgetSelectorType, ISelectorWidgetValuesManagement } from '@/modules/documentExecution/dashboard/interfaces/DashboardSelectorWidget'
 import descriptor from './SelectorWidgetDefaultValuesDescriptor.json'
 import deepcopy from 'deepcopy'
 
@@ -12,4 +12,12 @@ export const getDefaultValues = () => {
 
 export const getDefaultValuesManagement = () => {
     return deepcopy(descriptor.defaultValuesManagement) as ISelectorWidgetValuesManagement
+}
+
+export const getDefaultLabelStyle = () => {
+    return deepcopy(descriptor.defaultLabelStyle) as ISelectorWidgetValuesManagement
+}
+
+export const getDefaultBackgroundColor = () => {
+    return deepcopy(descriptor.defaultBackgroundColor) as ISelectorWidgetBackgroundStyle
 }
