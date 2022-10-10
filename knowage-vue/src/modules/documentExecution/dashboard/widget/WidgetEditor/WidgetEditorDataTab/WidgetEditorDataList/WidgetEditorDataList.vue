@@ -140,7 +140,7 @@ export default defineComponent({
         },
         addSelectedDatasetColumnsFromMetadata(fieldsMeta: any[]) {
             for (let i = 0; i < fieldsMeta.length; i++) {
-                this.selectedDatasetColumns.push({ ...fieldsMeta[i], dataset: this.selectedDataset?.id })
+                if (this.widgetModel.type !== 'selector' || fieldsMeta[i].fieldType === 'ATTRIBUTE') this.selectedDatasetColumns.push({ ...fieldsMeta[i], dataset: this.selectedDataset?.id })
             }
         },
         onDragStart(event: any, datasetColumn: IDatasetColumn) {

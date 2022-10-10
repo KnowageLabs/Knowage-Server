@@ -2,6 +2,7 @@ import { IWidget, IWidgetColumn } from "@/modules/documentExecution/dashboard/Da
 import { ISelectionsWidgetSettings } from "@/modules/documentExecution/dashboard/interfaces/DashboardSelectionsWidget"
 import cryptoRandomString from 'crypto-random-string'
 
+const columnNameIdMap = {}
 
 export const formatSelectorWidget = (widget: any) => {
     console.log('SelectorWidgetCompatibilityHelper - formatSelectorWidget called for: ', widget)
@@ -26,6 +27,7 @@ const getFormattedSelectionColumn = (widget: any) => {
     if (widget.content && widget.content.selectedColumn) {
         const formattedColumn = { id: cryptoRandomString({ length: 16, type: 'base64' }), columnName: widget.content.selectedColumn.name, alias: widget.content.selectedColumn.alias, type: widget.content.selectedColumn.type, fieldType: widget.content.selectedColumn.fieldType, multiValue: widget.content.selectedColumn.multiValue, filter: {} } as IWidgetColumn
         formattedColumns.push(formattedColumn)
+        columnNameIdMap[formattedColumn.columnName] = formattedColumn.id
     }
     return formattedColumns
 
@@ -33,6 +35,7 @@ const getFormattedSelectionColumn = (widget: any) => {
 
 const getFormattedWidgetSettings = (widget: any) => {
     const formattedSettings = {
+        sortingOrder: widget.settings?.sortingOrder ?? '',
         updatable: widget.updateble,
         clickable: widget.cliccable,
         type: "chips",
@@ -46,3 +49,8 @@ const getFormattedWidgetSettings = (widget: any) => {
 const getFormattedWidgetValuesManagement = (widget: any) => {
     return {} as any
 }
+
+export const getColumnId = (widgetColumnName: string) => {
+    return columnNameIdMap[widgetColumnName]
+}
+

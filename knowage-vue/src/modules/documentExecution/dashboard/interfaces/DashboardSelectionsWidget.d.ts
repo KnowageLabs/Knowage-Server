@@ -1,4 +1,5 @@
 export interface ISelectionsWidgetSettings {
+    sortingOrder?: string
     updatable: boolean,
     clickable: boolean,
     type: "chips" | "list",

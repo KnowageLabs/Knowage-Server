@@ -152,15 +152,5 @@
             "label": "not IN",
             "value": "not IN"
         }
-    ],
-    "sortingOrderOptions": [
-        {
-            "label": "dashboard.widgetEditor.ascending",
-            "value": "ASC"
-        },
-        {
-            "label": "dashboard.widgetEditor.descending",
-            "value": "DESC"
-        }
     ]
 }

@@ -2,7 +2,8 @@
     <WidgetEditorDataList :widgetModel="propWidget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="setSelectDataset"></WidgetEditorDataList>
     <div class="p-d-flex kn-flex kn-overflow" v-if="propWidget">
         <WidgetEditorHint v-if="!selectedDataset"></WidgetEditorHint>
-        <TableWidgetDataContainer v-else id="model-div" class="kn-flex kn-overflow p-mx-2 p-my-3" :widgetModel="propWidget"></TableWidgetDataContainer>
+        <TableWidgetDataContainer v-else-if="propWidget.type === 'table'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widgetModel="propWidget"></TableWidgetDataContainer>
+        <SelectorWidgetDataContainer v-else-if="propWidget.type === 'selector'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widgetModel="propWidget"></SelectorWidgetDataContainer>
     </div>
 </template>
 
@@ -12,10 +13,11 @@ import { IWidget, IDataset } from '../../../Dashboard'
 import WidgetEditorDataList from './WidgetEditorDataList/WidgetEditorDataList.vue'
 import WidgetEditorHint from '../WidgetEditorHint.vue'
 import TableWidgetDataContainer from './TableWidget/TableWidgetDataContainer.vue'
+import SelectorWidgetDataContainer from './SelectorWidget/SelectorWidgetDataContainer.vue'
 
 export default defineComponent({
     name: 'widget-editor-data-tab',
-    components: { WidgetEditorDataList, WidgetEditorHint, TableWidgetDataContainer },
+    components: { WidgetEditorDataList, WidgetEditorHint, TableWidgetDataContainer, SelectorWidgetDataContainer },
     props: { propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array as PropType<IDataset[]> }, selectedDatasets: { type: Array as PropType<IDataset[]> } },
     emits: ['datasetSelected'],
     data() {
