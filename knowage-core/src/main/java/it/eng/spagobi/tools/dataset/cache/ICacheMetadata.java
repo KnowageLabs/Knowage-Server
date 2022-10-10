@@ -20,6 +20,7 @@ package it.eng.spagobi.tools.dataset.cache;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -108,7 +109,7 @@ public interface ICacheMetadata {
 	 * update the cacheItem
 	 */
 	public void updateCacheItem(CacheItem cacheItem);
-	
+
 	/**
 	 * update all cacheItems
 	 */
@@ -116,8 +117,9 @@ public interface ICacheMetadata {
 
 	/**
 	 * remove the cacheItem
+	 * @return Table names of the removed cache items
 	 */
-	public void removeCacheItem(String signature);
+	public Set<String> removeCacheItem(String signature);
 
 	/**
 	 * remove all the cacheItems
