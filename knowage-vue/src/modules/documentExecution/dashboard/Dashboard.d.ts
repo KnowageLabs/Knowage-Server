@@ -51,7 +51,7 @@ export interface ITableWidgetSettings {
     style: ITableWidgetStyle
     tooltips: ITableWidgetTooltipStyle[]
     visualization: ITableWidgetVisualization
-    responsive: ITableWidgetResponsive
+    responsive: IWidgetResponsive
 }
 
 export interface ITableWidgetConditionalStyles {
@@ -226,17 +226,17 @@ export interface ITableWidgetPagination {
 }
 
 export interface ITableWidgetStyle {
-    borders: ITableWidgetBordersStyle
+    borders: IWidgetBordersStyle
     columns: ITableWidgetColumnStyles
     columnGroups: ITableWidgetColumnStyles
     headers: ITawbleWidgetHeadersStyle
-    padding: ITableWidgetPaddingStyle
+    padding: IWidgetPaddingStyle
     rows: ITableWidgetRowsStyle
     shadows: ITableWidgetShadowsStyle
     summary: ITableWidgetSummaryStyle
 }
 
-export interface ITableWidgetBordersStyle {
+export interface IWidgetBordersStyle {
     enabled: boolean
     properties: {
         'border-bottom-left-radius': string
@@ -281,7 +281,7 @@ export interface ITawbleWidgetHeadersStyle {
     }
 }
 
-export interface ITableWidgetPaddingStyle {
+export interface IWidgetPaddingStyle {
     enabled: boolean
     properties: {
         'padding-top': string
@@ -375,7 +375,7 @@ export interface ITableWidgetVisibilityCondition {
     }
 }
 
-export interface ITableWidgetResponsive {
+export interface IWidgetResponsive {
     xs: boolean
     sm: boolean
     md: boolean
@@ -574,3 +574,12 @@ export interface IVariable {
     driver?: string
 }
 
+// TODO
+export interface IWidgetTitle {
+    enabled: boolean,
+    text: string,
+    height: string,
+    properties: {
+        color: string
+    }
+}

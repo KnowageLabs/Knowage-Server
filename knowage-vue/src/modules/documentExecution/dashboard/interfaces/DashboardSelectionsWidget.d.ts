@@ -1,3 +1,5 @@
+import { IWidgetTitle } from '../Dashboard'
+
 export interface ISelectionsWidgetSettings {
     sortingOrder?: string
     updatable: boolean,
@@ -19,19 +21,10 @@ export interface ISelectionsWidgetNoSelections {
 }
 
 export interface ISelectionWidgetStyle {
-    title: ISelectionWidgetTitle,
+    title: IWidgetTitle,
     chips: ISelectionWidgetChips,
     rows: ISelectionWidgetRows,
     background: ISelectionWidgetBackground
-}
-
-export interface ISelectionWidgetTitle {
-    enabled: boolean,
-    text: string,
-    height: string,
-    properties: {
-        color: string
-    }
 }
 
 export interface ISelectionWidgetChips {

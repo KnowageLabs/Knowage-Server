@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, ITableWidgetResponsive } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget, IWidgetResponsive } from '@/modules/documentExecution/Dashboard/Dashboard'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
 import InputSwitch from 'primevue/inputswitch'
 
@@ -25,7 +25,7 @@ export default defineComponent({
     data() {
         return {
             descriptor,
-            responsiveModel: null as ITableWidgetResponsive | null
+            responsiveModel: null as IWidgetResponsive | null
         }
     },
     created() {

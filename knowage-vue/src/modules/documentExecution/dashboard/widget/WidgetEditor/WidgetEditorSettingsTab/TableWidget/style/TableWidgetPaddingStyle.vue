@@ -43,7 +43,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, ITableWidgetPaddingStyle } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget, IWidgetPaddingStyle } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
 import InputSwitch from 'primevue/inputswitch'
@@ -57,7 +57,7 @@ export default defineComponent({
     data() {
         return {
             descriptor,
-            paddingStyleModel: null as ITableWidgetPaddingStyle | null
+            paddingStyleModel: null as IWidgetPaddingStyle | null
         }
     },
     computed: {
