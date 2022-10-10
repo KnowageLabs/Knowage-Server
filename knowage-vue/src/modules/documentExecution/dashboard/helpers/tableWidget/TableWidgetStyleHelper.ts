@@ -1,4 +1,4 @@
-import { ITableWidgetBordersStyle, ITableWidgetPaddingStyle, ITableWidgetRowsStyle, ITableWidgetShadowsStyle, ITableWidgetStyle } from "../../Dashboard"
+import { IWidgetBordersStyle, IWidgetPaddingStyle, ITableWidgetRowsStyle, ITableWidgetShadowsStyle, ITableWidgetStyle } from "../../Dashboard"
 import { hexToRgb, convertColorFromHSLtoRGB } from '../FormattingHelpers'
 import * as  tableWidgetDefaultValues from '../../widget/WidgetEditor/helpers/tableWidget/TableWidgetDefaultValues'
 
@@ -19,7 +19,7 @@ export const getFormattedStyle = (widget: any) => {
 const getFormattedBorderStyle = (widget: any) => {
     if (!widget.style || !widget.style.border) return tableWidgetDefaultValues.getDefaultBordersStyle()
 
-    return { enabled: true, properties: { ...widget.style.border, 'border-color': hexToRgb(widget.style.border['border-color']) } } as ITableWidgetBordersStyle
+    return { enabled: true, properties: { ...widget.style.border, 'border-color': hexToRgb(widget.style.border['border-color']) } } as IWidgetBordersStyle
 }
 
 const getDefaultColumnGroupsStyle = (widget: any) => {
@@ -80,7 +80,7 @@ const getFormattedPaddingStyle = (widget: any) => {
             "padding-right": widget.style.padding['padding-right'],
             unlinked: widget.style.padding.unlinked
         }
-    } as ITableWidgetPaddingStyle
+    } as IWidgetPaddingStyle
 }
 
 const getFormattedRowsStyle = (widget: any) => {

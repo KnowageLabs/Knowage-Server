@@ -1,4 +1,4 @@
-import { ITableWidgetBordersStyle, ITableWidgetColumnGroups, ITableWidgetColumnStyles, ITableWidgetConditionalStyle, ITableWidgetConditionalStyles, ITableWidgetCrossNavigation, ITableWidgetCustomMessages, ITableWidgetExports, ITableWidgetHeaders, ITableWidgetLinks, ITableWidgetPaddingStyle, ITableWidgetPagination, ITableWidgetPreview, ITableWidgetResponsive, ITableWidgetRows, ITableWidgetRowsStyle, ITableWidgetSelection, ITableWidgetShadowsStyle, ITableWidgetSummaryRows, ITableWidgetSummaryStyle, ITableWidgetTooltipStyle, ITableWidgetVisibilityCondition, ITableWidgetVisualization, ITawbleWidgetHeadersStyle } from "../../../../Dashboard"
+import { IWidgetBordersStyle, ITableWidgetColumnGroups, ITableWidgetColumnStyles, ITableWidgetConditionalStyle, ITableWidgetConditionalStyles, ITableWidgetCrossNavigation, ITableWidgetCustomMessages, ITableWidgetExports, ITableWidgetHeaders, ITableWidgetLinks, IWidgetPaddingStyle, ITableWidgetPagination, ITableWidgetPreview, IWidgetResponsive, ITableWidgetRows, ITableWidgetRowsStyle, ITableWidgetSelection, ITableWidgetShadowsStyle, ITableWidgetSummaryRows, ITableWidgetSummaryStyle, ITableWidgetTooltipStyle, ITableWidgetVisibilityCondition, ITableWidgetVisualization, ITawbleWidgetHeadersStyle } from "../../../../Dashboard"
 import descriptor from './TableWidgetHelpersDescriptor.json'
 import deepcopy from 'deepcopy'
 
@@ -57,7 +57,7 @@ export const getDefaultPagination = () => {
 
 
 export const getDefaultBordersStyle = () => {
-    return deepcopy(descriptor.defaultBordersStyle) as ITableWidgetBordersStyle
+    return deepcopy(descriptor.defaultBordersStyle) as IWidgetBordersStyle
 }
 
 export const getDefaultColumnStyles = () => {
@@ -69,7 +69,7 @@ export const getDefaultHeadersStyle = () => {
 }
 
 export const getDefaultPaddingStyle = () => {
-    return deepcopy(descriptor.defaultPaddingStyle) as ITableWidgetPaddingStyle
+    return deepcopy(descriptor.defaultPaddingStyle) as IWidgetPaddingStyle
 }
 
 export const getDefaultRowsStyle = () => {
@@ -97,5 +97,5 @@ export const getDefaultTooltips = () => {
 }
 
 export const getDefaultResponsivnes = () => {
-    return deepcopy(descriptor.defaultResponsivnes) as ITableWidgetResponsive
+    return deepcopy(descriptor.defaultResponsivnes) as IWidgetResponsive
 }

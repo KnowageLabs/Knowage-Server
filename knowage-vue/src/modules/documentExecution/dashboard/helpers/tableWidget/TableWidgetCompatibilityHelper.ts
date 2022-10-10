@@ -9,7 +9,7 @@ import {
     ITableWidgetStyle,
     ITableWidgetInteractions,
     ITableWidgetConfiguration,
-    ITableWidgetResponsive,
+    IWidgetResponsive,
     ITableWidgetConditionalStyles
 } from '../../Dashboard'
 import { getFormattedConfiguration } from './TableWidgetConfigurationHelper'
@@ -74,7 +74,7 @@ const getFormattedWidgetSettings = (widget: any) => {
         style: getFormattedStyle(widget) as ITableWidgetStyle,
         tooltips: tableWidgetDefaultValues.getDefaultTooltips() as ITableWidgetTooltipStyle[],
         visualization: tableWidgetDefaultValues.getDefaultVisualizations(),
-        responsive: tableWidgetDefaultValues.getDefaultResponsivnes() as ITableWidgetResponsive
+        responsive: tableWidgetDefaultValues.getDefaultResponsivnes() as IWidgetResponsive
     } as ITableWidgetSettings
     return formattedSettings
 }
