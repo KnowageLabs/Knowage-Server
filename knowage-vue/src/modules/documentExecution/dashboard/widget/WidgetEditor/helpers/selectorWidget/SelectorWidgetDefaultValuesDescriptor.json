@@ -8,5 +8,9 @@
         "enabled": false,
         "value": "",
         "valueType": ""
+    },
+    "defaultValuesManagement": {
+        "enableAll": false,
+        "hideDisabled": false
     }
 }

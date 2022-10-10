@@ -1,5 +1,5 @@
 import { IWidget, IWidgetColumn } from "@/modules/documentExecution/dashboard/Dashboard"
-import { ISelectorWidgetDefaultValues, ISelectorWidgetSelectorType, ISelectorWidgetSettings } from "@/modules/documentExecution/dashboard/interfaces/DashboardSelectorWidget"
+import { ISelectorWidgetDefaultValues, ISelectorWidgetSelectorType, ISelectorWidgetSettings, ISelectorWidgetValuesManagement } from "@/modules/documentExecution/dashboard/interfaces/DashboardSelectorWidget"
 import cryptoRandomString from 'crypto-random-string'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import * as selectorWidgetDefaultValues from '../../widget/WidgetEditor/helpers/selectorWidget/SelectorWidgetDefaultValues'
@@ -50,7 +50,7 @@ const getFormattedWidgetSettings = (widget: any) => {
 }
 
 const getFormattedSelectorType = (widget: any) => {
-    if (!widget.content || widget.content.settings) return selectorWidgetDefaultValues.getDefaultSelectorType()
+    if (!widget.settings) return selectorWidgetDefaultValues.getDefaultSelectorType()
 
     const formattedSelectorType = {
         modality: widget.settings.modalityValue ?? 'radio',
@@ -65,19 +65,20 @@ const getFormattedSelectorType = (widget: any) => {
 }
 
 const getFormattedDefaultValues = (widget: any) => {
-    if (!widget.content || widget.content.settings) return selectorWidgetDefaultValues.getDefaultValues()
+    if (!widget.settings) return selectorWidgetDefaultValues.getDefaultValues()
     const formattedDefaultValues = {
         enabled: false,
-        valueType: widget.content.settings.defaultValue,
+        valueType: widget.settings.defaultValue,
     } as ISelectorWidgetDefaultValues
     if (formattedDefaultValues.valueType) formattedDefaultValues.enabled = true
-    if (formattedDefaultValues.valueType === 'STATIC') formattedDefaultValues.value = widget.content.settings.staticValues
+    if (formattedDefaultValues.valueType === 'STATIC') formattedDefaultValues.value = widget.settings.staticValues
     return formattedDefaultValues
 }
 
 
 const getFormattedWidgetValuesManagement = (widget: any) => {
-    return {} as any
+    if (!widget.settings) return selectorWidgetDefaultValues.getDefaultValuesManagement()
+    return { hideDisabled: widget.settings.hideDisabled ?? false, enableAll: widget.settings.enableAll ?? false } as ISelectorWidgetValuesManagement
 }
 
 export const getColumnId = (widgetColumnName: string) => {
