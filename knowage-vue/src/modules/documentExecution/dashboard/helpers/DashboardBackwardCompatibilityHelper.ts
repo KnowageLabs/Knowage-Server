@@ -126,6 +126,7 @@ export const formatWidget = (widget: any) => {
     switch (widget.type) {
         case 'table':
             formattedWidget = formatTableWidget(widget)
+            break;
         case 'selector':
             formattedWidget = formatSelectorWidget(widget)
     }
