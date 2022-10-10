@@ -1,14 +1,20 @@
 <template>
-    <div class=""></div>
+    <div class="p-grid p-m-2">
+        <TypeCard :imgUrl="'http://localhost:8080/knowage/themes/commons/img/cockpit/selectorWidget/check.svg'" />
+        <TypeCard :imgUrl="'http://localhost:8080/knowage/themes/commons/img/cockpit/selectorWidget/check.svg'" />
+        <TypeCard :imgUrl="'http://localhost:8080/knowage/themes/commons/img/cockpit/selectorWidget/check.svg'" />
+        <TypeCard :imgUrl="'http://localhost:8080/knowage/themes/commons/img/cockpit/selectorWidget/check.svg'" />
+    </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
+import TypeCard from './SelectorWidgetTypeCard.vue'
 
 export default defineComponent({
     name: 'table-widget-rows',
-    components: {},
+    components: { TypeCard },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {}
