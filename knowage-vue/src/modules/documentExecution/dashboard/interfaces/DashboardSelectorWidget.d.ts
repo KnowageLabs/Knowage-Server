@@ -53,6 +53,6 @@ export interface ISelectorWidgetLabelStyle {
 
 export interface ISelectorWidgetBackgroundStyle {
     properties: {
-        color: string
+        'background-color': string
     }
 }

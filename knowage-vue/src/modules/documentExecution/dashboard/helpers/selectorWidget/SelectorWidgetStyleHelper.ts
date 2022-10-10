@@ -1,5 +1,5 @@
-import { IWidgetTitle } from "../../Dashboard"
-import { ISelectorWidgetLabelStyle, ISelectorWidgetStyle } from "../../interfaces/DashboardSelectorWidget"
+import { IWidgetPaddingStyle, IWidgetTitle } from "../../Dashboard"
+import { ISelectorWidgetBackgroundStyle, ISelectorWidgetLabelStyle, ISelectorWidgetStyle } from "../../interfaces/DashboardSelectorWidget"
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import * as selectorWidgetDefaultValues from '../../widget/WidgetEditor/helpers/selectorWidget/SelectorWidgetDefaultValues'
 
@@ -7,8 +7,8 @@ export const getFormattedStyle = (widget: any) => {
     return {
         title: getFormattedTitleStyle(widget),
         label: getFormattedLabelStyle(widget),
-        background: {},
-        padding: {},
+        background: getFormattedBackgroundStyle(widget),
+        padding: getFormattedPaddingStyle(widget),
         borders: {}
     } as ISelectorWidgetStyle
 }
@@ -50,4 +50,24 @@ const getFormattedLabelStyle = (widget) => {
     } as ISelectorWidgetLabelStyle
 
     return formattedLabelStyle
+}
+
+const getFormattedBackgroundStyle = (widget) => {
+    return { properties: { 'background-color': widget.style?.backgroundColor ?? '' } } as ISelectorWidgetBackgroundStyle
+}
+
+
+const getFormattedPaddingStyle = (widget: any) => {
+    if (!widget.style || !widget.style.padding) return widgetCommonDefaultValues.getDefaultPaddingStyle()
+
+    return {
+        enabled: widget.style.padding.enabled,
+        properties: {
+            "padding-top": widget.style.padding['padding-top'],
+            "padding-left": widget.style.padding['padding-left'],
+            "padding-bottom": widget.style.padding['padding-bottom'],
+            "padding-right": widget.style.padding['padding-right'],
+            unlinked: widget.style.padding.unlinked
+        }
+    } as IWidgetPaddingStyle
 }

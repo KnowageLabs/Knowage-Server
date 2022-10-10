@@ -1,4 +1,9 @@
 {
+    "defaultBackgroundColor": {
+        "properties": {
+            "background-color": ""
+        }
+    },
     "defaultLabelStyle": {
         "properties": {
             "background-color": "",

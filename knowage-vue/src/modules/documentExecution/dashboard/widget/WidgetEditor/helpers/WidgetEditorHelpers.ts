@@ -39,9 +39,9 @@ export function createNewWidget() {
                 columns: tableWidgetDefaultValues.getDefaultColumnStyles(),
                 columnGroups: tableWidgetDefaultValues.getDefaultColumnStyles(),
                 headers: tableWidgetDefaultValues.getDefaultHeadersStyle(),
-                padding: tableWidgetDefaultValues.getDefaultPaddingStyle(),
+                padding: widgetCommonDefaultValues.getDefaultPaddingStyle(),
                 rows: tableWidgetDefaultValues.getDefaultRowsStyle(),
-                shadows: tableWidgetDefaultValues.getDefaultShadowsStyle(),
+                shadows: widgetCommonDefaultValues.getDefaultShadowsStyle(),
                 summary: tableWidgetDefaultValues.getDefualtSummryStyle()
             },
             tooltips: tableWidgetDefaultValues.getDefaultTooltips(),

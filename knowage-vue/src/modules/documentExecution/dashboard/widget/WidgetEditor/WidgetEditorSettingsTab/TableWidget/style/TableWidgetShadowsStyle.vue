@@ -33,7 +33,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, ITableWidgetShadowsStyle } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget, IWidgetShadowsStyle } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
@@ -50,7 +50,7 @@ export default defineComponent({
     data() {
         return {
             descriptor,
-            shadowsStyleModel: null as ITableWidgetShadowsStyle | null,
+            shadowsStyleModel: null as IWidgetShadowsStyle | null,
             shadowSize: '',
             shadowSizeOptionsMap: { small: '0px 1px 1px', medium: '0px 2px 3px', large: '0px 8px 19px', extraLarge: '0px 8px 19px' },
             getTranslatedLabel

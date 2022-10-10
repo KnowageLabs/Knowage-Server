@@ -1,10 +1,27 @@
 {
+    "defaultPaddingStyle": {
+        "enabled": false,
+        "properties": {
+            "padding-bottom": "",
+            "padding-left": "",
+            "padding-right": "",
+            "padding-top": "",
+            "unlinked": false
+        }
+    },
     "defaultResponsivnes": {
         "lg": true,
         "md": true,
         "sm": true,
         "xl": true,
         "xs": true
+    },
+    "defaultShadowsStyle": {
+        "enabled": false,
+        "properties": {
+            "box-shadow": "",
+            "color": ""
+        }
     },
     "defaultTitleStyle": {
         "enabled": false,

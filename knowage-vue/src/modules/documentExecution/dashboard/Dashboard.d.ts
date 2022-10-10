@@ -232,7 +232,7 @@ export interface ITableWidgetStyle {
     headers: ITawbleWidgetHeadersStyle
     padding: IWidgetPaddingStyle
     rows: ITableWidgetRowsStyle
-    shadows: ITableWidgetShadowsStyle
+    shadows: IWidgetShadowsStyle
     summary: ITableWidgetSummaryStyle
 }
 
@@ -303,7 +303,7 @@ export interface ITableWidgetRowsStyle {
     }
 }
 
-export interface ITableWidgetShadowsStyle {
+export interface IWidgetShadowsStyle {
     enabled: boolean
     properties: {
         'box-shadow': string
@@ -574,7 +574,6 @@ export interface IVariable {
     driver?: string
 }
 
-// TODO
 export interface IWidgetTitle {
     enabled: boolean,
     text: string,
