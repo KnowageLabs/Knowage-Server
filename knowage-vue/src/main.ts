@@ -54,8 +54,6 @@ if (import.meta.env.DEV) document.domain = 'localhost'
 
 import VueGridLayout from 'vue-grid-layout'
 
-import VueGridLayout from 'vue-grid-layout'
-
 const pinia = createPinia()
 
 const app = createApp(App).use(pinia)

@@ -90,7 +90,6 @@
         "dropIsActive": true,
         "label": "dashboard.widgetEditor.selectedColumns",
         "rowReorder": {
-            "enabled": true,
             "rowReorderColumnStyle": "width: 3rem"
         }
     },

@@ -7,7 +7,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
-import { removeColumnFromModel } from '../../helpers/tableWidget/TableWidgetFunctions'
+import { removeColumnFromModel } from '../../helpers/selectorWidget/SelectorWidgetFunctions'
 import { emitter } from '../../../../DashboardHelpers'
 import descriptor from '../TableWidget/TableWidgetDataDescriptor.json'
 import WidgetEditorColumnTable from '../common/WidgetEditorColumnTable.vue'
@@ -32,33 +32,28 @@ export default defineComponent({
             this.columnTableItems = this.widgetModel.columns ?? []
         },
         onColumnAdded(column: IWidgetColumn) {
-            this.widgetModel.columns.push(column)
+            if (this.widgetModel.columns.length > 0) {
+                emitter.emit('columnRemoved', this.widgetModel.columns[0])
+            }
+            this.widgetModel.columns = [column]
             emitter.emit('columnAdded', column)
-            emitter.emit('refreshTable', this.widgetModel.id)
+            emitter.emit('refreshSelector', this.widgetModel.id)
         },
         onColumnItemUpdate(column: IWidgetColumn) {
-            // TODO
-            const index = this.widgetModel.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === column.id)
-            if (index !== -1) {
-                this.widgetModel.columns[index] = { ...column }
-                emitter.emit('collumnUpdated', { column: this.widgetModel.columns[index], columnIndex: index })
-                emitter.emit('refreshSelector', this.widgetModel.id)
-                if (this.widgetModel.columns[index].id === this.selectedColumn?.id) this.selectedColumn = { ...this.widgetModel.columns[index] }
-            }
+            this.widgetModel.columns[0] = { ...column }
+            emitter.emit('collumnUpdated', { column: this.widgetModel.columns[0], columnIndex: 0 })
+            emitter.emit('refreshSelector', this.widgetModel.id)
+            if (this.widgetModel.columns[0].id === this.selectedColumn?.id) this.selectedColumn = { ...this.widgetModel.columns[0] }
         },
         setSelectedColumn(column: IWidgetColumn) {
             this.selectedColumn = { ...column }
         },
         onColumnDelete(column: IWidgetColumn) {
-            // TODO
-            const index = this.widgetModel.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === column.id)
-            if (index !== -1) {
-                this.widgetModel.columns.splice(index, 1)
-                if (column.id === this.selectedColumn?.id) this.selectedColumn = null
-                removeColumnFromModel(this.widgetModel, column)
-                emitter.emit('columnRemoved', column)
-                emitter.emit('refreshSelector', this.widgetModel.id)
-            }
+            this.widgetModel.columns = []
+            if (column.id === this.selectedColumn?.id) this.selectedColumn = null
+            removeColumnFromModel(this.widgetModel, column)
+            emitter.emit('columnRemoved', column)
+            emitter.emit('refreshSelector', this.widgetModel.id)
         }
     }
 })
