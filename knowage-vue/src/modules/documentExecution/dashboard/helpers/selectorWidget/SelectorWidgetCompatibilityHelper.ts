@@ -1,5 +1,5 @@
 import { IWidget, IWidgetColumn } from "@/modules/documentExecution/dashboard/Dashboard"
-import { ISelectorWidgetSelectorType, ISelectorWidgetSettings } from "@/modules/documentExecution/dashboard/interfaces/DashboardSelectorWidget"
+import { ISelectorWidgetDefaultValues, ISelectorWidgetSelectorType, ISelectorWidgetSettings } from "@/modules/documentExecution/dashboard/interfaces/DashboardSelectorWidget"
 import cryptoRandomString from 'crypto-random-string'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import * as selectorWidgetDefaultValues from '../../widget/WidgetEditor/helpers/selectorWidget/SelectorWidgetDefaultValues'
@@ -41,7 +41,7 @@ const getFormattedWidgetSettings = (widget: any) => {
         updatable: widget.updateble,
         clickable: widget.cliccable,
         selectorType: getFormattedSelectorType(widget),
-        defaultValues: {} as any,
+        defaultValues: getFormattedDefaultValues(widget),
         valuesManagement: getFormattedWidgetValuesManagement(widget),
         style: {} as any,
         responsive: widgetCommonDefaultValues.getDefaultResponsivnes()
@@ -63,6 +63,18 @@ const getFormattedSelectorType = (widget: any) => {
 
     return formattedSelectorType
 }
+
+const getFormattedDefaultValues = (widget: any) => {
+    if (!widget.content || widget.content.settings) return selectorWidgetDefaultValues.getDefaultValues()
+    const formattedDefaultValues = {
+        enabled: false,
+        valueType: widget.content.settings.defaultValue,
+    } as ISelectorWidgetDefaultValues
+    if (formattedDefaultValues.valueType) formattedDefaultValues.enabled = true
+    if (formattedDefaultValues.valueType === 'STATIC') formattedDefaultValues.value = widget.content.settings.staticValues
+    return formattedDefaultValues
+}
+
 
 const getFormattedWidgetValuesManagement = (widget: any) => {
     return {} as any

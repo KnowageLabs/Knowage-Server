@@ -21,8 +21,8 @@ export interface ISelectorWidgetSelectorType {
 
 export interface ISelectorWidgetDefaultValues {
     enabled: boolean,
-    valueType: "static" | "first" | "last",
-    value: string
+    valueType: "" | "STATIC" | "FIRST" | "LAST",
+    value?: string
 }
 
 export interface ISelectorWidgetValuesManagement {
