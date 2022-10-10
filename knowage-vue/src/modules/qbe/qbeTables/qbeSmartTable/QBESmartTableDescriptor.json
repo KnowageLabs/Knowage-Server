@@ -1,8 +1,8 @@
 {
     "style": {
         "column": {
-            "flex-grow": 1,
-            "flex-basis": "200px"
+            "flex-basis": "100px",
+            "flex-grow": 1
         }
     }
 }

@@ -3,11 +3,8 @@
         <div v-if="initialized" class="drag-handle"></div>
         <ProgressBar mode="indeterminate" v-if="loading" />
         <Skeleton shape="rectangle" v-if="!initialized" height="100%" border-radius="0" />
-        <WidgetRenderer :widget="widget" :data="widgetData" v-if="initialized" @interaction="manageInteraction"></WidgetRenderer>
+        <WidgetRenderer :widget="widget" :data="widgetData" :datasets="datasets" v-if="initialized" @interaction="manageInteraction"></WidgetRenderer>
         <WidgetButtonBar @edit-widget="toggleEditMode"></WidgetButtonBar>
-        <!-- <Transition name="editorEnter" appear>
-            <WidgetEditor v-if="widgetEditorVisible" :propWidget="widget" :datasets="datasets" @close="toggleEditMode" @widgetUpdated="closeWidgetEditor"></WidgetEditor>
-        </Transition> -->
     </grid-item>
 </template>
 
@@ -20,7 +17,6 @@ import { mapState } from 'vuex'
 import { getData } from '../DataProxyHelper'
 import { IWidget } from '../Dashboard'
 import { emitter } from '../DashboardHelpers'
-// import WidgetEditor from './WidgetEditor/WidgetEditor.vue'
 import WidgetRenderer from './WidgetRenderer.vue'
 import WidgetButtonBar from './WidgetButtonBar.vue'
 import Skeleton from 'primevue/skeleton'
@@ -28,13 +24,7 @@ import ProgressBar from 'primevue/progressbar'
 
 export default defineComponent({
     name: 'widget-manager',
-    components: {
-        ProgressBar,
-        Skeleton,
-        WidgetButtonBar,
-        // WidgetEditor,
-        WidgetRenderer
-    },
+    components: { ProgressBar, Skeleton, WidgetButtonBar, WidgetRenderer },
     inject: ['dHash'],
     props: {
         item: {
@@ -52,8 +42,8 @@ export default defineComponent({
     },
     data() {
         return {
-            loading: true,
-            initialized: false,
+            loading: false,
+            initialized: true,
             widgetData: [] as any,
             widgetEditorVisible: false,
             selectedWidgetId: '' as string
@@ -84,7 +74,7 @@ export default defineComponent({
             })
         },
         async initializeWidget() {
-            this.widgetData = await getData([{ test: 'test' }])
+            // this.widgetData = await getData([{ test: 'test' }])
             this.initialized = true
             this.loading = false
         },
@@ -126,5 +116,9 @@ export default defineComponent({
 .editorEnter-enter-from,
 .editorEnter-leave-to {
     opacity: 0;
+}
+
+.vue-resizable-handle {
+    z-index: 9999;
 }
 </style>

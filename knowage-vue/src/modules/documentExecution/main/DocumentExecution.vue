@@ -8,13 +8,13 @@
             <template #end>
                 <div class="p-d-flex p-jc-around">
                     <Button v-if="mode == 'dashboard'" icon="fas fa-database" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.datasets')" @click="openDashboardDatasetManagement"></Button>
-                    <Button v-if="mode == 'dashboard'" icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.save')"></Button>
+                    <Button v-if="mode == 'dashboard'" icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.save')" @click="saveDashboard"></Button>
                     <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="mode !== 'dashboard' && canEditCockpit && documentMode === 'VIEW'" v-tooltip.left="$t('documentExecution.main.editCockpit')" @click="editCockpitDocumentConfirm"></Button>
                     <Button icon="fa fa-eye" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="mode !== 'dashboard' && canEditCockpit && documentMode === 'EDIT'" v-tooltip.left="$t('documentExecution.main.viewCockpit')" @click="editCockpitDocumentConfirm"></Button>
                     <Button v-if="mode !== 'dashboard'" icon="pi pi-book" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.onlineHelp')" @click="openHelp"></Button>
-                    <Button icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.refresh')" @click="refresh"></Button>
+                    <Button v-if="!newDashboardMode" icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.refresh')" @click="refresh"></Button>
                     <Button
-                        v-if="isParameterSidebarVisible"
+                        v-if="isParameterSidebarVisible && !newDashboardMode"
                         icon="fa fa-filter"
                         class="p-button-text p-button-rounded p-button-plain p-mx-2"
                         :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }"
@@ -35,7 +35,7 @@
         <div ref="document-execution-view" id="document-execution-view" class="p-d-flex p-flex-row myDivToPrint">
             <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
 
-            <template v-if="filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible">
+            <template v-if="(filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible) || newDashboardMode">
                 <Registry v-if="mode === 'registry'" :id="urlData?.sbiExecutionId" :reloadTrigger="reloadTrigger"></Registry>
                 <Dossier v-else-if="mode === 'dossier'" :id="document.id" :reloadTrigger="reloadTrigger" :filterData="filtersData"></Dossier>
                 <Olap
@@ -50,7 +50,16 @@
                     @applyCustomView="executeOlapCustomView"
                     @executeCrossNavigation="executeOLAPCrossNavigation"
                 ></Olap>
-                <DashboardController v-else-if="mode === 'dashboard'" :sbiExecutionId="urlData?.sbiExecutionId" :document="document" :reloadTrigger="reloadTrigger" :hiddenFormData="hiddenFormData" :filtersData="filtersData"></DashboardController>
+                <DashboardController
+                    v-else-if="mode === 'dashboard' || newDashboardMode"
+                    :sbiExecutionId="urlData?.sbiExecutionId"
+                    :document="document"
+                    :reloadTrigger="reloadTrigger"
+                    :hiddenFormData="hiddenFormData"
+                    :filtersData="filtersData"
+                    :newDashboardMode="newDashboardMode"
+                    @newDashboardSaved="onNewDashboardSaved"
+                ></DashboardController>
             </template>
             <iframe
                 v-for="(item, index) in breadcrumbs"
@@ -211,7 +220,8 @@ export default defineComponent({
             crossNavigationDocuments: [] as any[],
             angularData: null as any,
             crossNavigationContainerVisible: false,
-            crossNavigationContainerData: null as any
+            crossNavigationContainerData: null as any,
+            newDashboardMode: false
         }
     },
     watch: {
@@ -299,10 +309,15 @@ export default defineComponent({
 
         if (!this.document.label) return
 
-        await this.loadDocument()
-
         this.user = (this.store.$state as any).user
         this.userRole = this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
+
+        if (this.document.label === 'new-dashboard') {
+            this.newDashboardMode = true
+            return
+        }
+
+        await this.loadDocument()
 
         if (this.userRole) {
             await this.loadPage(true)
@@ -368,7 +383,8 @@ export default defineComponent({
                 this.user,
                 this.isOrganizerEnabled(),
                 this.mode,
-                this.$t
+                this.$t,
+                this.newDashboardMode
             )
         },
         print() {
@@ -1261,7 +1277,7 @@ export default defineComponent({
         onCrossNavigationContainerClose() {
             this.crossNavigationContainerData = null
             this.crossNavigationContainerVisible = true
-            this.onBreadcrumbClick(this.breadcrumbs[this.breadcrumbs.length - 1])
+            this.onBreadcrumbClick(this.breadcrumbs[0])
         },
         addWidget() {
             emitter.emit('openNewWidgetPicker')
@@ -1280,6 +1296,23 @@ export default defineComponent({
             emitter.on('widgetEditorClosed', () => {
                 this.managementOpened = false
             })
+        },
+        saveDashboard() {
+            emitter.emit('saveDashboard')
+        },
+        async onNewDashboardSaved(document: { name: string; label: string }) {
+            this.document.label = document.label
+            await this.loadDocument()
+
+            this.user = (this.store.$state as any).user
+            this.userRole = this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
+
+            if (this.userRole) {
+                await this.loadPage(true)
+            } else {
+                this.parameterSidebarVisible = true
+            }
+            this.newDashboardMode = false
         }
     }
 })

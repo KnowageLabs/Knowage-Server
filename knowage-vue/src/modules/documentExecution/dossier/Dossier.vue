@@ -106,7 +106,6 @@ import mainStore from '../../../App.store'
 import Menu from 'primevue/contextmenu'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
-
 export default defineComponent({
     name: 'dossier',
     components: { KnInputFile, Menu, Card, Column, DataTable, KnHint, KnValidationMessages },
@@ -218,7 +217,6 @@ export default defineComponent({
         },
         async deleteDossier(selectedDossier) {
             let url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedDossier.id}`
-
             if (selectedDossier.status == 'DOWNLOAD' || selectedDossier.status == 'ERROR' || !this.dateCheck(selectedDossier)) {
                 await this.$http
                     .delete(url, { headers: { Accept: 'application/json, text/plain, */*' } })
@@ -304,7 +302,6 @@ export default defineComponent({
             var link = import.meta.env.VITE_HOST_URL + `/knowagedossierengine/api/start/generatePPT?activityId=${id}&randomKey=${randomKey}&templateName=${this.jsonTemplate.PPT_TEMPLATE.name}&activityName=${activityName}`
             window.open(link)
         },
-
         storeDOC(id, randomKey, activityName) {
             var link = import.meta.env.VITE_HOST_URL + `/knowagedossierengine/api/start/generateDOC?activityId=${id}&randomKey=${randomKey}&templateName=${this.jsonTemplate.DOC_TEMPLATE.name}&activityName=${activityName}`
             window.open(link)

@@ -6,10 +6,10 @@
         </span>
         <div class="p-col-12 p-d-flex">
             <label class="kn-material-input-label p-as-center p-ml-1"> {{ $t('common.columns') }} </label>
-            <Button :label="$t('common.addColumn')" icon="pi pi-plus-circle" class="p-button-outlined p-ml-auto p-mr-1" @click="showCalculatedFieldDialog"></Button>
+            <Button :label="$t('common.addColumn')" icon="pi pi-plus-circle" class="p-button-outlined p-ml-auto p-mr-1" @click="createNewCalcField"></Button>
         </div>
 
-        <Listbox v-if="selectedDataset" class="kn-list kn-list-no-border-right dashboard-editor-list" :options="selectedDatasetColumns" :filter="true" :filterPlaceholder="$t('common.search')" filterMatchMode="contains" :filterFields="[]" :emptyFilterMessage="$t('common.info.noDataFound')">
+        <Listbox v-if="selectedDataset" class="kn-list kn-list-no-border-right dashboard-editor-list" :options="selectedDatasetColumns" :filter="true" :filterPlaceholder="$t('common.search')" :filterFields="descriptor.filterFields" :emptyFilterMessage="$t('common.info.noDataFound')">
             <template #empty>{{ $t('common.info.noDataFound') }}</template>
             <template #option="slotProps">
                 <div class="kn-list-item kn-draggable" draggable="true" :style="dataListDescriptor.style.list.listItem" @dragstart="onDragStart($event, slotProps.option)">
@@ -22,11 +22,26 @@
             </template>
         </Listbox>
     </div>
+
+    <KnCalculatedField
+        v-if="calcFieldDialogVisible"
+        v-model:template="selectedCalcField"
+        v-model:visibility="calcFieldDialogVisible"
+        :fields="calcFieldColumns"
+        :descriptor="calcFieldDescriptor"
+        :propCalcFieldFunctions="calcFieldDescriptor.availableFunctions"
+        :readOnly="false"
+        :valid="true"
+        source="dashboard"
+        @save="onCalcFieldSave"
+        @cancel="calcFieldDialogVisible = false"
+    >
+    </KnCalculatedField>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidgetEditorDataset, IDatasetColumn, IWidgetColumn, IDataset, IWidget } from '../../../../Dashboard'
+import { IWidgetEditorDataset, IDatasetColumn, IDataset, IWidget } from '../../../../Dashboard'
 import { emitter } from '../../../../DashboardHelpers'
 import descriptor from './WidgetEditorDataListDescriptor.json'
 import Dropdown from 'primevue/dropdown'
@@ -34,37 +49,48 @@ import mainStore from '../../../../../../../App.store'
 import Listbox from 'primevue/listbox'
 import Card from 'primevue/card'
 import dataListDescriptor from '../../../../dataset/DatasetEditorDataTab/DatasetEditorDataList/DatasetEditorDataListDescriptor.json'
+import KnCalculatedField from '@/components/functionalities/KnCalculatedField/KnCalculatedField.vue'
+import calcFieldDescriptor from './WidgetEditorCalcFieldDescriptor.json'
+import cryptoRandomString from 'crypto-random-string'
 
 export default defineComponent({
     name: 'widget-editor-data-list',
-    components: { Card, Dropdown, Listbox },
+    components: { Card, Dropdown, Listbox, KnCalculatedField },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array }, selectedDatasets: { type: Array as PropType<IDataset[]> } },
     emits: ['datasetSelected'],
     data() {
         return {
             descriptor,
             dataListDescriptor,
+            model: null as IWidget | null,
             datasetOptions: [] as IWidgetEditorDataset[],
             selectedDataset: null as IWidgetEditorDataset | null,
-            selectedDatasetColumns: [] as IDatasetColumn[]
+            selectedDatasetColumns: [] as IDatasetColumn[],
+            calcFieldDescriptor,
+            calcFieldDialogVisible: false,
+            calcFieldColumns: [] as any,
+            selectedCalcField: null as any,
+            calcFieldFunctionsToShow: [] as any
         }
     },
     setup() {
         const store = mainStore()
         return { store }
     },
-    async created() {
-        this.loadDatasets()
+    created() {
         this.setEventListeners()
+        this.loadDatasets()
+        this.loadModel()
+    },
+    unmounted() {
+        this.removeEventListeners()
     },
     methods: {
         setEventListeners() {
-            emitter.on('collumnAdded', (event) => {
-                this.removeColumn(event)
-            })
-            emitter.on('collumnRemoved', (event) => {
-                this.addColumn(event)
-            })
+            emitter.on('editCalculatedField', this.editCalcField)
+        },
+        removeEventListeners() {
+            emitter.off('editCalculatedField', this.editCalcField)
         },
         loadDatasets() {
             this.datasetOptions = this.selectedDatasets
@@ -79,11 +105,32 @@ export default defineComponent({
                   })
                 : []
         },
+        loadModel() {
+            this.model = this.widgetModel
+            this.loadSelectedDataset()
+            this.loadDatasetColumns()
+        },
+        loadSelectedDataset() {
+            const index = this.datasetOptions?.findIndex((dataset: IWidgetEditorDataset) => dataset.id === this.model?.dataset)
+            if (index !== -1) {
+                this.selectedDataset = this.datasetOptions[index]
+                this.$emit('datasetSelected', this.selectedDataset)
+            }
+        },
         onDatasetSelected() {
             this.loadDatasetColumns()
+            this.removeSelectedColumnsFromModel()
+            this.widgetModel.dataset = this.selectedDataset ? this.selectedDataset.id : null
             this.$emit('datasetSelected', this.selectedDataset)
         },
-        showCalculatedFieldDialog() {},
+        removeSelectedColumnsFromModel() {
+            if (!this.model?.columns) return
+            for (let i = 0; i < this.model.columns.length; i++) {
+                emitter.emit('columnRemoved', this.model.columns[i])
+            }
+            emitter.emit('refreshTable', this.widgetModel.id)
+            this.model.columns = []
+        },
         loadDatasetColumns() {
             this.selectedDatasetColumns = []
             if (!this.selectedDatasets || this.selectedDatasets.length === 0) return
@@ -93,35 +140,49 @@ export default defineComponent({
         },
         addSelectedDatasetColumnsFromMetadata(fieldsMeta: any[]) {
             for (let i = 0; i < fieldsMeta.length; i++) {
-                if (!this.columnIsPresentInModel(fieldsMeta[i])) this.selectedDatasetColumns.push({ ...fieldsMeta[i], dataset: this.selectedDataset?.id })
+                this.selectedDatasetColumns.push({ ...fieldsMeta[i], dataset: this.selectedDataset?.id })
             }
-        },
-        columnIsPresentInModel(column: IDatasetColumn) {
-            const index = this.widgetModel.columns.findIndex((tempColumn: IWidgetColumn) => {
-                if (tempColumn.name.startsWith('(')) tempColumn.name = tempColumn.name.slice(1, -1)
-                return tempColumn.name == column.name
-            })
-            return index !== -1
         },
         onDragStart(event: any, datasetColumn: IDatasetColumn) {
             event.dataTransfer.setData('text/plain', JSON.stringify(datasetColumn))
             event.dataTransfer.dropEffect = 'move'
             event.dataTransfer.effectAllowed = 'move'
         },
-        addColumn(column: IWidgetColumn) {
-            if (this.selectedDataset && column.dataset === this.selectedDataset.id && this.datasets) {
-                let tempDatasetColumns = null as IDatasetColumn[] | null
-                const index = this.datasets.findIndex((dataset: any) => dataset.id?.dsId === this.selectedDataset?.id)
-                if (index !== -1) tempDatasetColumns = (this.datasets[index] as any).metadata.fieldsMeta
-                if (!tempDatasetColumns) return
-                if (column.name.startsWith('(')) column.name = column.name.slice(1, -1)
-                const columnIndex = tempDatasetColumns.findIndex((tempColumn: any) => column.name === tempColumn.name)
-                if (columnIndex !== -1) this.selectedDatasetColumns.push({ ...tempDatasetColumns[columnIndex], dataset: this.selectedDataset.id })
-            }
+        createNewCalcField() {
+            this.createCalcFieldColumns()
+            this.selectedCalcField = { alias: '', expression: '', format: undefined, nature: 'ATTRIBUTE', type: 'STRING' } as any
+            this.calcFieldDialogVisible = true
         },
-        removeColumn(column: IDatasetColumn) {
-            const index = this.selectedDatasetColumns.findIndex((tempColumn: IDatasetColumn) => tempColumn.name === column.name)
-            if (index !== -1) this.selectedDatasetColumns.splice(index, 1)
+        editCalcField(calcField) {
+            this.createCalcFieldColumns()
+            this.selectedCalcField = calcField
+            this.calcFieldDialogVisible = true
+        },
+        createCalcFieldColumns() {
+            this.calcFieldColumns = []
+            this.model?.columns.forEach((field) => {
+                if (field.fieldType === 'MEASURE') this.calcFieldColumns.push({ fieldAlias: `$F{${field.alias}}`, fieldLabel: field.alias })
+            })
+        },
+        onCalcFieldSave(calcFieldOutput) {
+            if (this.selectedCalcField.id) {
+                this.selectedCalcField.alias = calcFieldOutput.colName
+                this.selectedCalcField.formula = calcFieldOutput.formula
+            } else {
+                emitter.emit('addNewCalculatedField', {
+                    id: cryptoRandomString({ length: 16, type: 'base64' }),
+                    columnName: calcFieldOutput.colName,
+                    alias: calcFieldOutput.colName,
+                    type: 'java.lang.Double',
+                    fieldType: 'MEASURE',
+                    filter: {},
+                    formula: calcFieldOutput.formula,
+                    formulaEditor: calcFieldOutput.formula,
+                    aggregation: 'NONE'
+                })
+            }
+
+            this.calcFieldDialogVisible = false
         }
     }
 })

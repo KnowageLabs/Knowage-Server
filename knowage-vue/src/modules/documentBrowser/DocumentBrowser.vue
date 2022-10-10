@@ -87,7 +87,7 @@ export default defineComponent({
 
             if (id && id !== 'document-browser' && (this.$router.currentRoute.value.name === 'document-browser-document-execution' || this.$router.currentRoute.value.name === 'document-browser-document-details-edit' || this.$router.currentRoute.value.name === 'document-browser')) {
                 let tempDocument = {} as any
-                await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documents/${id}`).then((response: AxiosResponse<any>) => (tempDocument = response.data))
+                if (id !== 'new-dashboard') await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documents/${id}`).then((response: AxiosResponse<any>) => (tempDocument = response.data))
                 const tempItem = {
                     item: {
                         name: tempDocument.name,

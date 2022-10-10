@@ -1,9 +1,6 @@
 <template>
     <div class="p-d-flex p-flex-column p-ai-stretch p-jc-center kn-overflow" :style="descriptor.style.preview">
-        {{ propWidget }}
-        <!-- <DataTable :value="rows" class="p-datatable-sm kn-table" :style="descriptor.style.previewTable" stripedRows rowHover>
-            <Column v-for="col of columns" :field="col.name" :header="col.header" :key="col.dataIndex" class="kn-truncated" />
-        </DataTable> -->
+        <TableWidget class="p-m-2" v-if="propWidget.settings" :propWidget="propWidget" :datasets="datasets" :editorMode="true" style="height: 30%" />
     </div>
 </template>
 
@@ -11,39 +8,34 @@
 /**
  * ! this component will be in charge of managing the widget editing preview.
  */
-import { defineComponent } from 'vue'
-import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
+import { defineComponent, PropType } from 'vue'
 import mock from '../../dataset/DatasetEditorTestMocks.json'
 import descriptor from '../../dataset/DatasetEditorDescriptor.json'
+import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
+import 'ag-grid-community/styles/ag-grid.css'
+import 'ag-grid-community/styles/ag-theme-alpine.css'
+import TableWidget from '../TableWidget/TableWidget.vue'
+import { IDataset, IWidget } from '../../Dashboard'
 
 export default defineComponent({
     name: 'widget-editor-preview',
-    components: { Column, DataTable },
+    components: { TableWidget, AgGridVue },
     props: {
         propWidget: {
             required: true,
-            type: Object
-        }
+            type: Object as PropType<IWidget>
+        },
+        datasets: { type: Array as PropType<IDataset[]> }
     },
     data() {
         return {
             descriptor,
-            mock,
-            columns: [] as any,
-            rows: [] as any
+            mock
         }
     },
-    created() {
-        this.setDatatableData()
-    },
-    methods: {
-        setDatatableData() {
-            this.mock.previewMock.metaData.fields.forEach((el: any) => {
-                typeof el != 'object' ? '' : this.columns.push(el)
-            })
-            this.rows = this.mock.previewMock.rows
-        }
-    }
+    created() {},
+    mounted() {},
+
+    methods: {}
 })
 </script>

@@ -96,14 +96,12 @@ import { createValidations } from '@/helpers/commons/validationHelper'
 import { defineComponent } from 'vue'
 import { IKnCalculatedField, IKnCalculatedFieldFunction } from '@/components/functionalities/KnCalculatedField/KnCalculatedField'
 import VCodeMirror, { CodeMirror } from 'codemirror-editor-vue3'
-
 import Dropdown from 'primevue/dropdown'
 import Dialog from 'primevue/dialog'
 import KnHint from '@/components/UI/KnHint.vue'
 import Message from 'primevue/message'
 import ScrollPanel from 'primevue/scrollpanel'
 import useValidate from '@vuelidate/core'
-
 export default defineComponent({
     name: 'calculated-field',
     components: { Dialog, Dropdown, KnHint, Message, ScrollPanel, VCodeMirror },
@@ -153,19 +151,19 @@ export default defineComponent({
         this.availableFunctions.forEach((x) => {
             x.category = x.category.toUpperCase()
         })
-
         this.cf = { formula: '' } as IKnCalculatedField
-
         if (!this.readOnly && this.template && !this.template.parameters && this.source === 'QBE') {
+
             this.cf = { colName: this.template.alias, formula: this.template.expression } as IKnCalculatedField
+        }
+        if (!this.readOnly && this.template && !this.template.parameters && this.source === 'dashboard') {
+            this.cf = { colName: this.template.alias, formula: this.template.formula } as IKnCalculatedField
         }
         this.handleCategories()
     },
-
     updated() {
         this.setupCodeMirror()
         if (!this.cf.formula) this.cf.formula = ''
-
         if (this.readOnly && this.template && this.template.parameters) {
             this.cf = {} as IKnCalculatedField
             for (var i = 0; i < this.template.parameters.length; i++) {
@@ -173,19 +171,19 @@ export default defineComponent({
                 else if (this.template.parameters[i]['name'] == 'colName') this.cf.colName = this.template.parameters[i]['value']
             }
         }
-
         if (!this.readOnly && this.template && !this.template.parameters && this.source === 'QBE') {
             this.cf = { colName: this.template.alias, formula: this.template.expression } as IKnCalculatedField
         }
+        if (!this.readOnly && this.template && !this.template.parameters && this.source === 'dashboard') {
+            this.cf = { colName: this.template.alias, formula: this.template.formula } as IKnCalculatedField
+        }
     },
-
     validations() {
         if (this.descriptor) {
             return { cf: createValidations('cf', this.descriptor.validations) }
         }
         return {}
     },
-
     methods: {
         handleClick(af) {
             if (JSON.stringify(this.selectedFunction) === JSON.stringify(af)) {
@@ -234,7 +232,6 @@ export default defineComponent({
         },
         handleCategories() {
             let tmp = [] as any
-
             this.calcFieldFunctions
                 .sort((a, b) => {
                     return a.name.localeCompare(b.name)
@@ -243,9 +240,7 @@ export default defineComponent({
                 .forEach((element) => {
                     if (tmp.filter((y) => y.code === element.code).length == 0) tmp.push({ name: element.name, code: element.code })
                 })
-
             if (tmp.filter((x) => x.name === this.allCategories.name).length == 0) tmp = [this.allCategories, ...tmp]
-
             this.availableCategories = tmp
         },
         allowDrop(ev) {
@@ -259,7 +254,6 @@ export default defineComponent({
                 }
             }
         },
-
         dragElement(ev, item, elementType: String) {
             if (this.readOnly) return
             if (elementType === 'function') {
@@ -269,23 +263,17 @@ export default defineComponent({
             }
             ev.dataTransfer.effectAllowed = 'copy'
         },
-
         drop(cm, ev) {
             if (this.readOnly) return
             ev.stopPropagation()
             ev.preventDefault()
-
             var data = JSON.parse(ev.dataTransfer.getData('myItem'))
-
             var cursor = cm.coordsChar({
                 left: ev.x,
                 top: ev.y
             })
-
             this.clearCodemirror(cursor, data)
-
             this.codeMirror.clearHistory()
-
             let start = -1
             let end = -1
             if (cm.getLine(cursor.line).length == cursor.ch) {
@@ -295,33 +283,26 @@ export default defineComponent({
                 start = this.codeMirror.findWordAt(cursor).anchor.ch
                 end = this.codeMirror.findWordAt(cursor).head.ch
             }
-
             let from = { line: cursor.line, ch: start }
             let to = { line: cursor.line, ch: end }
-
             let range = this.codeMirror.getDoc().getRange(from, to)
             let fieldAlias = this.source !== 'QBE' ? '$F{' + data.item.fieldAlias + '}' : data.item.fieldAlias
             let spContent = data.elementType === 'function' ? data.item : fieldAlias
-
             if (range.match(/\(|\)|,|\./g)) {
                 this.codeMirror.getDoc().replaceSelection(spContent, cursor)
             } else {
                 this.codeMirror.getDoc().replaceRange(spContent, from, to)
             }
-
             let lines = document.querySelector('.CodeMirror-line')
             if (lines) {
                 let textEl = lines.querySelector('div span') as any
-
                 if (textEl) this.cf.formula = textEl.innerText
             }
-
             this.codeMirror.refresh()
         },
         applyValidationResultsToFormula() {
             let from = { line: this.codeMirror.getDoc().firstLine(), ch: 0 }
             let to = { line: this.codeMirror.getDoc().lastLine(), ch: this.codeMirror.getDoc().getLine(this.codeMirror.getDoc().lastLine()).length }
-
             if (!this.isValidFormula) {
                 this.codeMirror.getDoc().markText(from, to, { className: 'syntax-error' })
             } else {
@@ -382,18 +363,15 @@ export default defineComponent({
     width: 60%;
     max-width: 1200px;
 }
-
 .codeMirrorClass {
     height: 80px !important;
     max-height: 80px !important;
     border: 1px solid var(--kn-color-borders);
-
     .CodeMirror-scroll {
         overflow-x: hidden !important;
         overflow-y: auto !important;
     }
 }
-
 .readOnly {
     .CodeMirror-scroll {
         background-color: var(--kn-color-disabled);
@@ -403,38 +381,31 @@ export default defineComponent({
         }
     }
 }
-
 .field-header {
     font-weight: bold;
 }
-
 .kn-remove-card-padding .data-condition-list {
     border: 1px solid var(--kn-color-borders);
     border-top: none;
 }
-
 .p-listbox-item {
     height: 24px;
     .kn-list-item {
         height: 24px;
     }
 }
-
 .card-0-padding .p-card-body,
 .card-0-padding .p-card-content {
     padding: 0.25rem;
 }
-
 .helpCol {
     height: 100%;
     width: 100%;
-
     .helpScrollPanel {
         font-size: 0.75em !important;
         height: 140px !important;
     }
 }
-
 ::v-deep(.p-scrollpanel) {
     p {
         padding: 0.5rem;
@@ -455,21 +426,17 @@ export default defineComponent({
         }
     }
 }
-
 .syntax-error {
     text-decoration: underline;
     text-decoration-style: wavy;
     text-decoration-color: red;
 }
-
 .no-syntax-error {
     text-decoration: none;
 }
-
 .helpClass {
     font-size: 0.75em;
 }
-
 .fieldType,
 .formulaType {
     font-size: 0.75em;
@@ -477,11 +444,9 @@ export default defineComponent({
     border-bottom: 1px solid var(--kn-list-border-color);
     cursor: -webkit-grab;
     cursor: grab;
-
     &.selected {
         background-color: var(--kn-list-item-selected-background-color) !important;
     }
-
     &:hover {
         background-color: var(--kn-list-item-hover-background-color);
     }

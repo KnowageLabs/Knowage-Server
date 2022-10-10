@@ -32,6 +32,7 @@
             "python": "python"
         },
         "collapse": "collapse",
+        "column": "Column",
         "columns": "Columns",
         "comment": "Comment",
         "condition": "Condition",
@@ -39,6 +40,7 @@
         "copyOf": "Copy of",
         "create": "Create",
         "creationDate": "Creation Date",
+        "custom": "Custom",
         "data": "Data",
         "dataset": "Dataset",
         "datasets": "Datasets",
@@ -57,6 +59,7 @@
         "driver": "Driver",
         "edit": "edit",
         "enable": "Enable",
+        "enabled": "Enabled",
         "environment": "Environment",
         "error": {
             "allowedFileTypes": "File type allowed are {types}",
@@ -77,6 +80,7 @@
         "export": "export",
         "exportCSV": "Export CSV",
         "exportSuccess": "The download has started in background. You will find the result file in your download page.",
+        "extraLarge": "Extra Large",
         "field": "Field",
         "file": "File",
         "fileName": "File Name",
@@ -88,6 +92,7 @@
         "group": "Group",
         "height": "Height",
         "home": "Home",
+        "icon": "Icon",
         "id": "id",
         "image": "image",
         "import": "import",
@@ -105,6 +110,7 @@
         "kpi": "KPI",
         "label": "label",
         "language": "Language",
+        "large": "Large",
         "lastChangeDate": "Last change date",
         "left": "Left",
         "library": "Library",
@@ -113,9 +119,12 @@
         "locked": "Locked",
         "loggedUser": "logged user",
         "login": "Login",
+        "max": "Max",
+        "medium": "Medium",
         "menu": "Menu",
         "message": "Message",
         "metadata": "Metadata",
+        "min": "Min",
         "modify": "modify",
         "move": "Move",
         "name": "name",
@@ -130,6 +139,7 @@
         "ok": "ok",
         "onlineHelp": "Help Online",
         "open": "Open",
+        "operator": "Operator",
         "options": "Options",
         "order": "Order",
         "orderBy": "Order by",
@@ -171,12 +181,14 @@
         "shortcuts": "Shortcuts",
         "show": "Show",
         "size": "Size",
+        "small": "Small",
         "snapshot": "Snapshot",
         "sort": "sort",
         "source": "Source",
         "sqlExpression": "SQL expression",
         "start": "Start",
         "state": "State",
+        "static": "Static",
         "status": "Status",
         "style": "Style",
         "suspended": "Suspended",
@@ -229,6 +241,7 @@
         },
         "value": "Value",
         "values": "Values",
+        "variable": "Variable",
         "variables": "Variables",
         "version": "version",
         "view": "View",
@@ -236,6 +249,7 @@
         "visible": "Visible",
         "warning": "Warning",
         "widget": "Widget",
+        "width": "Width",
         "yes": "Yes"
     },
     "components": {
@@ -345,12 +359,15 @@
             "static": "Static",
             "title": "Dataset Manageent"
         },
+        "saveCockpit": "Save Cockpit",
+        "saveCockpitHint": "Please enter a valid name",
         "widgetEditor": {
             "addWidget": "Add widget",
+            "aggregation": "Aggregation",
+            "ascending": "Ascending",
             "borders": {
                 "borderRadiusBottomLeft": "Border radius bottom left",
                 "borderRadiusBottomRight": "Border radius bottom right",
-                "borderRadiusHint": "use px measure unit, ie: 5px",
                 "borderRadiusTopLeft": "Border radius top left",
                 "borderRadiusTopRight": "Border radius top right",
                 "bordersColor": "Borders Color",
@@ -364,22 +381,48 @@
                 "title": "Borders"
             },
             "columnDetails": "Column Details",
-            "conditionalStyle": {
-                "compareValue": "Compare value",
-                "compareValueType": "Value type",
-                "enableConditionalStyle": "Enable Conditional Style",
-                "title": "Conditional Style"
+            "columnFilterHint": "Select the filter operator and the value for the column. Remember to use the correct database sintax for the value. ie: %LIKE%",
+            "columnGroups": {
+                "enableColumnGroups": "Enable Column Groups",
+                "title": "Column Groups"
             },
+            "compareValueType": "Compare value type",
+            "conditionalStyle": "Conditional Style",
+            "conditions": {
+                "applyToWholeRow": "Apply to whole row",
+                "compareValueType": "Value type",
+                "title": "Conditions"
+            },
+            "configuration": "Configuration",
             "customHeaderTooltip": "Custom Header Tooltip",
+            "customMessages": {
+                "customEmptyRowsMessage": "Custom empty rows message",
+                "hideNoRowsAvailable": "Hide \"No Rows Available\" message",
+                "title": "Custom Messages"
+            },
+            "descending": "Descending",
             "dragColumnsHint": "Drag columns here",
+            "enableFilter": "Enable Filter",
             "enableTooltip": "Enable Tooltip",
+            "export": {
+                "a4landscape": "A4 Landscape",
+                "a4portrait": "A4 Portrait",
+                "enableScreenshots": "Enable Screenshots",
+                "exportPdf": "Export PDF",
+                "showExcelExport": "Enable show excel export (when available)",
+                "title": "Export"
+            },
             "fontawesome": "Fontawesome",
-            "header": {
-                "allowMultiline": "Allow Multiline",
+            "headers": {
+                "action": "Action",
+                "enableCustomHeaders": "Enable Custom Headers",
                 "enableHeader": "Enable Header",
+                "enableMultiline": "Enable Multiline",
                 "headerHeight": "Header height",
                 "headerHeightHint": "Header height in px (default is 25px)",
-                "title": "header"
+                "hideHeader": "Hide header",
+                "setLabel": "Set label",
+                "title": "Headers"
             },
             "hidden": "Hidden",
             "hint": "Select dataset",
@@ -393,18 +436,66 @@
                 "italic": "Italic",
                 "textAlignment": "Text alignment"
             },
+            "inputHintForPixels": "use px measure unit, ie: 5px",
+            "interactions": {
+                "analyticalDriver": "Analytical Driver",
+                "basicUrl": "Basic Url",
+                "crossNavigation": "Cross-navigation",
+                "crossNavigationName": "Cross Navigation Name",
+                "directDownload": "Direct download",
+                "dynamic": "Dynamic",
+                "enableClickOnIcon": "Enable click on an icon",
+                "enableClickOnSingleColumn": "Enable click on a single column",
+                "enableClickOnWholeRow": "Enable click on whole row",
+                "enableCrossNavigation": "Enable Cross-navigation",
+                "enableLinkNavigation": "Enable Link navigation",
+                "enableMultiselection": "Enable Multiselection",
+                "enablePreview": "Enable Preview",
+                "enableSelection": "Enable Selection",
+                "json": "JSON",
+                "jwt": "JWT",
+                "link": "Link",
+                "linkType": "Link type",
+                "modalColumn": "Modal Column",
+                "openInNewPage": "Open in new page",
+                "openInSamePage": "Open in the same page",
+                "outputParameter": "Output Parameter",
+                "preview": "Preview",
+                "selection": "Selection",
+                "static": "Static",
+                "title": "Interactions"
+            },
             "itemsPerPage": "Items per page",
             "manualInput": "Manual input",
+            "padding": {
+                "enablePadding": "Enable Padding",
+                "linkAllHint": "Link all paddings",
+                "paddingBottom": "Padding Bottom",
+                "paddingLeft": "Padding Left",
+                "paddingRight": "Padding Right",
+                "paddingTop": "Padding Top",
+                "title": "Padding",
+                "unlinkAllHint": "Unink all paddings"
+            },
             "pagination": "Pagination",
             "precision": "Precision",
             "prefix": "Prefix",
+            "responsive": {
+                "extraLargeDevices": "Show On Extra Large Devices",
+                "extraSmallDevices": "Show On Extra Small Devices",
+                "largeDevices": "Show On Large Devices",
+                "smallerDevices": "Show On Smaller Devices",
+                "tablets": "Show On Tablets",
+                "title": "Responsive"
+            },
             "rows": {
                 "alternatedRowsEven": "Alternated Rows Even",
                 "alternatedRowsOdd": "Alternated Rows Odd",
-                "customEmptyRowsMessage": "Custom empty rows message",
+                "enableIndexColumn": "Enable Index Column",
+                "enableRowspan": "Enable Row Span",
                 "enabledAlternatedRows": "Enabled Alternated Rows",
-                "hideNoRowsAvailable": "Hide \"No Rows Available\" message",
                 "multiselectable": "Multiselectable",
+                "rowSpanColumn": "Row span column",
                 "selectionColor": "Selection color",
                 "showIndexesColumn": "Show indexes column",
                 "title": "Rows"
@@ -414,15 +505,47 @@
             "settingsListOptions": {
                 "tooltip": "Tooltip"
             },
-            "sufix": "Sufix",
+            "shadows": {
+                "enableShadows": "Enable Shadows",
+                "shadowSize": "Shadow Size",
+                "title": "Shadows"
+            },
+            "sortingColumn": "Sorting column",
+            "sortingOrder": "Sorting order",
+            "suffix": "Suffix",
+            "summary": "Summary",
+            "summaryRows": {
+                "enableSummaryRows": "Enable Summary Rows",
+                "pinnedColumnsOnly": "Pinned columns only",
+                "title": "Summary rows"
+            },
             "title": "Widget Editor",
             "tooltipTextHint": "This text will overwrite the columns header default tooltip, variables and parameters placeholders ($V{placeholder} and $P{placeholder}) are available.",
+            "tooltips": {
+                "customHeader": "Custom Header",
+                "title": "Tooltips"
+            },
+            "visibilityConditions": {
+                "always": "Always",
+                "hideColumn": "Hide Column",
+                "hideOnPdf": "Hide on PDF",
+                "onVariableValue": "On Variable Value",
+                "title": "Visibility Conditions"
+            },
+            "visualization": "Visualization",
             "visualizationOptions": {
                 "chart": "Chart",
                 "iconOnly": "Icon only",
                 "textAndChart": "Text & Chart"
             },
-            "visualizationType": "Visualization Type"
+            "visualizationType": {
+                "alignment": "Alignment",
+                "bar": "Bar",
+                "pinned": "Pinned",
+                "sparkline": "Sparkline",
+                "textAndIcon": "Text & Icon",
+                "title": "Visualization Type"
+            }
         }
     },
     "documentBrowser": {
@@ -553,9 +676,6 @@
             "deleteTitle": "Delete dossier activity",
             "downloadMissingError": "Download ERROR - Document is missing",
             "downloadTemplate": "Download document template",
-            "uploadTemplate": "Upload document template",
-            "templateDownloadError": "Error downloading template",
-            "templateUploadError": "Error uploading template",
             "headers": {
                 "activity": "Activity Name",
                 "partial": "Partial",
@@ -567,7 +687,10 @@
             "launchedActivities": "Launched activities for this document",
             "progressNotFinished": "Please wait until document will be generated.",
             "saveSuccess": "Activity successfully saved!",
-            "title": "Dossier"
+            "templateDownloadError": "Error downloading template",
+            "templateUploadError": "Error uploading template",
+            "title": "Dossier",
+            "uploadTemplate": "Upload document template"
         },
         "main": {
             "addToWorkspace": "Add to my workspace",
@@ -1081,12 +1204,62 @@
     },
     "locale": {
         "dateFormat": "mm/dd/yy",
-        "dayNames": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-        "dayNamesMin": ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
-        "dayNamesShort": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+        "dayNames": [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday"
+        ],
+        "dayNamesMin": [
+            "Su",
+            "Mo",
+            "Tu",
+            "We",
+            "Th",
+            "Fr",
+            "Sa"
+        ],
+        "dayNamesShort": [
+            "Sun",
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat"
+        ],
         "firstDayOfWeek": 0,
-        "monthNames": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-        "monthNamesShort": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        "monthNames": [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"
+        ],
+        "monthNamesShort": [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec"
+        ],
         "today": "Today",
         "weekHeader": "Wk"
     },

@@ -49,6 +49,9 @@ const store = defineStore('store', {
         setConfigurations(configs) {
             this.configurations = configs
         },
+        getUser() {
+            return this.user
+        },
         setUser(user) {
             this.user = user
         },

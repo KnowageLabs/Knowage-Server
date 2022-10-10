@@ -1,0 +1,121 @@
+{
+    "labelMaxLength": 100,
+    "mockedOutputParameters": [
+        {
+            "biObjectId": 3495,
+            "formatCode": null,
+            "formatValue": null,
+            "id": 4207,
+            "isUserDefined": true,
+            "name": "Date Range",
+            "type": {
+                "domainCode": "PAR_TYPE",
+                "domainName": "Parameter type",
+                "translatedValueDescription": "Range",
+                "translatedValueName": "Date Range",
+                "valueCd": "DATE_RANGE",
+                "valueDescription": "sbidomains.ds.range",
+                "valueId": 285,
+                "valueName": "sbidomains.nm.dateRange"
+            }
+        },
+        {
+            "biObjectId": 3495,
+            "formatCode": "DDMMYYYY",
+            "formatValue": "",
+            "id": 4208,
+            "isUserDefined": true,
+            "name": "Date",
+            "type": {
+                "domainCode": "PAR_TYPE",
+                "domainName": "Parameter type",
+                "translatedValueDescription": "Date",
+                "translatedValueName": "Date",
+                "valueCd": "DATE",
+                "valueDescription": "sbidomains.ds.date",
+                "valueId": 28,
+                "valueName": "sbidomains.nm.date"
+            }
+        },
+        {
+            "biObjectId": 3495,
+            "formatCode": null,
+            "formatValue": null,
+            "id": 4209,
+            "isUserDefined": true,
+            "name": "Number",
+            "type": {
+                "domainCode": "PAR_TYPE",
+                "domainName": "Parameter type",
+                "translatedValueDescription": "Parameter expects numerical values",
+                "translatedValueName": "Number",
+                "valueCd": "NUM",
+                "valueDescription": "sbidomains.ds.num",
+                "valueId": 29,
+                "valueName": "sbidomains.nm.num"
+            }
+        },
+        {
+            "biObjectId": 3495,
+            "formatCode": null,
+            "formatValue": null,
+            "id": 4206,
+            "isUserDefined": true,
+            "name": "Output Parameter",
+            "type": {
+                "domainCode": "PAR_TYPE",
+                "domainName": "Parameter type",
+                "translatedValueDescription": "Parameter expects textual values",
+                "translatedValueName": "String",
+                "valueCd": "STRING",
+                "valueDescription": "sbidomains.ds.string",
+                "valueId": 30,
+                "valueName": "sbidomains.nm.string"
+            }
+        }
+    ],
+    "nameMaxLength": 200,
+    "saveDialog": {
+        "style": {
+            "width": "50vw"
+        }
+    },
+    "saveHintMessageStyle": {
+        "align-items": "center",
+        "display": "flex",
+        "justify-content": "center",
+        "text-align": "center"
+    },
+    "validations": {
+        "document": [
+            {
+                "fieldName": "label",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "name",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

@@ -1,3 +1,5 @@
 {
-    "filterFields": ["label"]
+    "filterFields": [
+        "alias"
+    ]
 }

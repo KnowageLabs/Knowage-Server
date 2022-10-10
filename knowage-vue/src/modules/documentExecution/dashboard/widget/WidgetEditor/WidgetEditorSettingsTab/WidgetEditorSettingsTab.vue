@@ -1,25 +1,35 @@
 <template>
-    <WidgetEditorList :widgetModel="propWidget" :settings="descriptor[propWidget.type].listSettings" :options="descriptor[propWidget.type].listOptions" @itemClicked="onItemClicked" data-test="widget-editor-settings-list"></WidgetEditorList>
+    <WidgetEditorSettingsList :widgetModel="propWidget" :options="tableDescriptor.settingsListOptions" @itemClicked="onItemClicked"></WidgetEditorSettingsList>
     <div class="p-d-flex kn-flex kn-overflow">
-        <WidgetEditorGeneric v-if="propWidget" id="model-div" class="kn-flex kn-overflow p-mx-2 p-my-3" :widgetModel="propWidget" :propDescriptor="selectedDescriptor" data-test="widget-editor-generic"></WidgetEditorGeneric>
+        <TableWidgetSettingsContainer
+            v-if="propWidget"
+            id="model-div"
+            class="kn-flex kn-overflow p-my-3 p-mr-3"
+            :widgetModel="propWidget"
+            :selectedSetting="selectedSetting"
+            :datasets="datasets"
+            :selectedDatasets="selectedDatasets"
+            :drivers="drivers"
+            :variables="variables"
+        ></TableWidgetSettingsContainer>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget } from '../../../Dashboard'
-import descriptor from './WidgetEditorSettingsTabDescriptor.json'
-import WidgetEditorList from '../WidgetEditorGeneric/components/WidgetEditorList.vue'
-import WidgetEditorGeneric from '../WidgetEditorGeneric/WidgetEditorGeneric.vue'
+import { IWidget, IDataset, IVariable } from '../../../Dashboard'
+import tableDescriptor from './TableWidget/TableWidgetSettingsDescriptor.json'
+import TableWidgetSettingsContainer from './TableWidget/TableWidgetSettingsContainer.vue'
+import WidgetEditorSettingsList from './WidgetEditorSettingsList.vue'
 
 export default defineComponent({
     name: 'widget-editor-settings-tab',
-    components: { WidgetEditorList, WidgetEditorGeneric },
-    props: { propWidget: { type: Object as PropType<IWidget>, required: true } },
+    components: { TableWidgetSettingsContainer, WidgetEditorSettingsList },
+    props: { propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array as PropType<IDataset[]> }, selectedDatasets: { type: Array as PropType<IDataset[]> }, drivers: { type: Array }, variables: { type: Array as PropType<IVariable[]> } },
     emits: [],
     data() {
         return {
-            descriptor,
+            tableDescriptor,
             selectedDescriptor: {},
             selectedSetting: ''
         }

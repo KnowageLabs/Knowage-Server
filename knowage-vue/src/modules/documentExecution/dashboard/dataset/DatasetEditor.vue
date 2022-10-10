@@ -53,7 +53,7 @@ import deepcopy from 'deepcopy'
 export default defineComponent({
     name: 'dataset-editor',
     components: { TabView, TabPanel, DataTab, AssociationsTab, DriverWarningDialog },
-    props: { availableDatasetsProp: { required: true, type: Array }, filtersDataProp: { type: Object } },
+    props: { availableDatasetsProp: { required: true, type: Array }, filtersDataProp: { type: Object }, dashboardIdProp: { type: String, required: true } },
     emits: ['closeDatasetEditor', 'datasetEditorSaved'],
     data() {
         return {
@@ -98,8 +98,8 @@ export default defineComponent({
     methods: {
         async setDatasetsData() {
             this.availableDatasets = deepcopy(this.availableDatasetsProp)
-            this.dashboardDatasets = deepcopy(this.dashboardStore.$state.dashboards[1].configuration.datasets)
-            this.dashboardAssociations = deepcopy(this.dashboardStore.$state.dashboards[1].configuration.associations)
+            this.dashboardDatasets = deepcopy(this.dashboardStore.$state.dashboards[this.dashboardIdProp].configuration.datasets)
+            this.dashboardAssociations = deepcopy(this.dashboardStore.$state.dashboards[this.dashboardIdProp].configuration.associations)
             this.selectedDatasets = this.selectModelDatasetsFromAvailable()
             this.setDatasetParametersFromModel()
         },
@@ -142,7 +142,9 @@ export default defineComponent({
                     this.selectedDatasets.push(dataset)
                     const formattedDatasetForDashboard = {
                         id: dataset.id.dsId,
+                        dsLabel: dataset.label,
                         indexes: [],
+                        drivers: [],
                         cache: true,
                         parameters: []
                     } as IModelDataset
@@ -201,14 +203,15 @@ export default defineComponent({
                 formattedDatasets.push(this.formatDatasetForModel(dataset))
             })
 
-            this.dashboardStore.$state.dashboards[1].configuration.datasets = formattedDatasets
-            this.dashboardStore.$state.dashboards[1].configuration.associations = this.dashboardAssociations
+            this.dashboardStore.$state.dashboards[this.dashboardIdProp].configuration.datasets = formattedDatasets
+            this.dashboardStore.$state.dashboards[this.dashboardIdProp].configuration.associations = this.dashboardAssociations
 
             this.$emit('datasetEditorSaved')
         },
         formatDatasetForModel(datasetToFormat) {
             let formattedDataset = {
                 id: datasetToFormat.id.dsId,
+                dsLabel: datasetToFormat.label,
                 cache: datasetToFormat.modelCache ?? false,
                 indexes: datasetToFormat.modelCache ? datasetToFormat.modelIndexes : [],
                 parameters: datasetToFormat.parameters.map((parameter) => {
@@ -221,43 +224,3 @@ export default defineComponent({
     }
 })
 </script>
-<style lang="scss">
-.dashboardEditor {
-    // height: 100vh;
-    height: 100%;
-    width: 100%;
-    top: 0;
-    left: 0;
-    background-color: white;
-    position: absolute;
-    z-index: 999;
-    display: flex;
-    flex-direction: column;
-    .datasetEditor-container {
-        flex: 1;
-        display: flex;
-    }
-}
-.dashboardEditor-tabs.p-tabview {
-    overflow: auto;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    .p-tabview-panels {
-        overflow: auto;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-        .p-tabview-panel {
-            overflow: auto;
-            display: flex;
-            flex-direction: row;
-            flex: 1;
-        }
-    }
-}
-.details-warning-color {
-    color: red;
-}
-</style>
