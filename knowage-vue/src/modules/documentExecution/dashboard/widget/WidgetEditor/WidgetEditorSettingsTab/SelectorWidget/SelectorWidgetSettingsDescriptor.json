@@ -1,0 +1,17 @@
+{
+    "settings": {
+        "Configuration": [
+            {
+                "title": "dashboard.widgetEditor.SelectorType.title",
+                "type": "SelectorType"
+            }
+        ]
+    },
+    "settingsListOptions": [
+        {
+            "icon": "fa fa-cogs",
+            "label": "dashboard.widgetEditor.configuration",
+            "value": "Configuration"
+        }
+    ]
+}
