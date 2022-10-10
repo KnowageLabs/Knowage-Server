@@ -28,6 +28,8 @@
 		domainNm="BI Object types" valueDs="sbidomains.ds.etl" />
 	<DOMAIN valueCd="DOCUMENT_COMPOSITE" valueNm="sbidomains.nm.document_composite"
 		domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.document_composite" />
+	<DOMAIN valueCd="DASHBOARD" valueNm="sbidomains.nm.dashboard"
+		domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.dashboard" />
 	<DOMAIN valueCd="KPI" valueNm="Kpi" domainCd="BIOBJ_TYPE"
 		domainNm="BI Object types" valueDs="Kpi business indicator" />
 	<DOMAIN valueCd="SMART_FILTER" valueNm="sbidomains.nm.smart_filter"

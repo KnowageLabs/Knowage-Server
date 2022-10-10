@@ -26,8 +26,12 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 import com.auth0.jwk.Jwk;
 import com.auth0.jwk.JwkException;
@@ -40,13 +44,15 @@ import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.Verification;
 
+import it.eng.spagobi.security.OAuth2.OAuth2Client;
 import it.eng.spagobi.security.OAuth2.OAuth2Config;
 import it.eng.spagobi.services.common.JWTSsoService;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
- * This SSO service retrieves the OAuth2 access token from session, then decodes it as a JWT token and gets configured claim ('sub' is the default) as user id.
- * Then returns the regular JWT token as per it.eng.spagobi.services.oauth2.JWTSsoService class.
+ * This SSO service retrieves the OAuth2 access token from session, then retrieves the user id in clear text: in case oauth2_user_info_url is defined, this SSO
+ * service invokes that URL to get user info, otherwise it decodes the access token as a JWT token; then gets configured claim ('sub' is the default) as user
+ * id. Then returns the regular JWT token as per it.eng.spagobi.services.oauth2.JWTSsoService class.
  *
  * @author Davide Zerbetto
  *
@@ -59,6 +65,8 @@ public class Oauth2HybridSsoService extends JWTSsoService {
 
 	@Override
 	public String readUserIdentifier(HttpServletRequest request) {
+		String toReturn = null;
+		String clearTextUserId = null;
 		HttpSession session = request.getSession();
 		String accessToken = (String) session.getAttribute(Oauth2SsoService.ACCESS_TOKEN);
 		if (accessToken == null) {
@@ -66,21 +74,54 @@ public class Oauth2HybridSsoService extends JWTSsoService {
 			return super.readUserIdentifier(request);
 		}
 		LogMF.debug(logger, "Access token found: [{0}]", accessToken);
-		String toReturn = accessToken2JWTToken(accessToken);
+		if (OAuth2Config.getInstance().hasUserInfoUrl()) {
+			logger.debug("User info URL found from config [" + OAuth2Config.getInstance().getUserInfoUrl() + "]; getting user id from it ...");
+			clearTextUserId = getUserIdFromProfileInfoURL(accessToken, OAuth2Config.getInstance().getUserInfoUrl());
+		} else {
+			logger.debug("User info URL not found from config; getting user id from access token as JWT token ....");
+			clearTextUserId = getUserIdFromAccessToken(accessToken);
+		}
+
+		LogMF.debug(logger, "User id detected [{0}]", clearTextUserId);
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.HOUR, USER_JWT_TOKEN_EXPIRE_HOURS);
+		Date expiresAt = calendar.getTime();
+		toReturn = JWTSsoService.userId2jwtToken(clearTextUserId, expiresAt);
+
 		LogMF.debug(logger, "OUT: returning [{0}]", toReturn);
 		return toReturn;
 	}
 
-	private String accessToken2JWTToken(String accessToken) {
-		String userId = getUserId(accessToken);
-		LogMF.debug(logger, "User id detected from access token [{0}]", userId);
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.HOUR, USER_JWT_TOKEN_EXPIRE_HOURS);
-		Date expiresAt = calendar.getTime();
-		return JWTSsoService.userId2jwtToken(userId, expiresAt);
+	private String getUserIdFromProfileInfoURL(String accessToken, String userInfoUrl) {
+		try {
+			OAuth2Client oauth2Client = new OAuth2Client();
+
+			HttpClient httpClient = oauth2Client.getHttpClient();
+
+			// We call the OAuth2 provider to get user's info
+			GetMethod httpget = new GetMethod(userInfoUrl);
+			httpget.addRequestHeader("Authorization", "Bearer " + accessToken);
+			int statusCode = httpClient.executeMethod(httpget);
+			byte[] response = httpget.getResponseBody();
+			if (statusCode != HttpStatus.SC_OK) {
+				logger.error("Error while getting user information from OAuth2 provider: server returned statusCode = " + statusCode);
+				LogMF.error(logger, "Server response is:\n{0}", new Object[] { new String(response) });
+				throw new SpagoBIRuntimeException("Error while getting user information from OAuth2 provider: server returned statusCode = " + statusCode);
+			}
+
+			String responseStr = new String(response);
+			LogMF.debug(logger, "Server response is:\n{0}", responseStr);
+			JSONObject jsonObject = new JSONObject(responseStr);
+
+			String userId = jsonObject.getString(OAuth2Config.getInstance().getUserIdClaim());
+			logger.debug("User id is [" + userId + "]");
+			return userId;
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Cannot get user id from access token [" + accessToken + "] by user profile info URL [" + userInfoUrl + "]", e);
+		}
 	}
 
-	private String getUserId(String accessToken) {
+	private String getUserIdFromAccessToken(String accessToken) {
 		try {
 			DecodedJWT decodedJWT = JWT.decode(accessToken);
 			logger.debug("Access token properly decoded as JWT token");

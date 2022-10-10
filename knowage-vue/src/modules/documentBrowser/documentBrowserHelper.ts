@@ -5,6 +5,7 @@ export function getRouteDocumentType(item: any) {
         case 'DATAMART':
             routeDocumentType = 'registry'
             break
+        case 'DASHBOARD':
         case 'DOCUMENT_COMPOSITE':
             routeDocumentType = 'document-composite'
             break

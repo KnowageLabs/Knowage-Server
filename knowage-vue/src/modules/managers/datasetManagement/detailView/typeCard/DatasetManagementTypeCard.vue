@@ -34,10 +34,10 @@
         </Card>
     </div>
     <FileDataset v-if="dataset.dsTypeCd == 'File'" :selectedDataset="selectedDataset" @fileUploaded="$emit('fileUploaded')" />
-    <QueryDataset v-if="dataset.dsTypeCd == 'Query'" :selectedDataset="selectedDataset" :dataSources="dataSources" :scriptTypes="scriptTypes" :activeTab="activeTab" />
+    <QueryDataset v-if="dataset.dsTypeCd == 'Query'" :selectedDataset="selectedDataset" :dataSources="dataSources" :scriptTypes="scriptTypes" :activeTab="activeTab" @queryEdited="$emit('queryEdited')" />
     <JavaDataset v-if="dataset.dsTypeCd == 'Java Class'" :selectedDataset="selectedDataset" />
     <ScriptDataset v-if="dataset.dsTypeCd == 'Script'" :selectedDataset="selectedDataset" :scriptTypes="scriptTypes" :activeTab="activeTab" />
-    <QbeDataset v-if="dataset.dsTypeCd == 'Qbe' || dataset.dsTypeCd == 'Federated'" :selectedDataset="selectedDataset" :businessModels="businessModels" :dataSources="dataSources" :parentValid="parentValid" @qbeSaved="$emit('qbeSaved')" />
+    <QbeDataset v-if="dataset.dsTypeCd == 'Qbe' || dataset.dsTypeCd == 'Federated'" :selectedDataset="selectedDataset" :businessModels="businessModels" :dataSources="dataSources" :parentValid="parentValid" />
     <FlatDataset v-if="dataset.dsTypeCd == 'Flat'" :selectedDataset="selectedDataset" :dataSources="dataSources" />
     <CkanDataset v-if="dataset.dsTypeCd == 'Ckan'" :selectedDataset="selectedDataset" />
     <RestDataset v-if="dataset.dsTypeCd == 'REST'" :selectedDataset="selectedDataset" />
@@ -83,7 +83,7 @@ export default defineComponent({
         activeTab: { type: Number as any }
     },
     computed: {},
-    emits: ['touched', 'fileUploaded', 'qbeSaved'],
+    emits: ['touched', 'fileUploaded', 'qbeSaved', 'queryEdited'],
     data() {
         return {
             typeTabDescriptor,

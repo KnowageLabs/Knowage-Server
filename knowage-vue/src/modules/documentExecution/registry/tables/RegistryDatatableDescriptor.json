@@ -12,13 +12,14 @@
     },
     "iconColumn": {
         "style": {
-            "text-align": "center",
-            "width": "70px"
+            "justify-content": "center",
+            "max-width": "130px",
+            "width": "100%"
         }
     },
     "numerationColumn": {
         "style": {
-            "width": "40px"
+            "max-width": "40px"
         }
     },
     "pivotStyles": {

@@ -7,7 +7,7 @@
                 </template>
                 <template #end>
                     <Button v-if="isParameterSidebarVisible" icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.filter')" @click="parameterSidebarVisible = !parameterSidebarVisible" />
-                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="savingDialogVisible = true" />
+                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="openSavingDialog" />
                     <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="$emit('close')" />
                 </template>
             </Toolbar>
@@ -232,8 +232,8 @@ export default defineComponent({
         KnCalculatedField,
         Dropdown
     },
-    props: { visible: { type: Boolean }, dataset: { type: Object } },
-    emits: ['close'],
+    props: { visible: { type: Boolean }, dataset: { type: Object }, returnQueryMode: { type: Boolean }, getQueryFromDatasetProp: { type: Boolean } },
+    emits: ['close', 'querySaved'],
     data() {
         return {
             moment,
@@ -326,8 +326,8 @@ export default defineComponent({
             this.loadQuery()
             this.qbeMetadata = this.extractFieldsMetadata(this.qbe?.meta.columns)
             this.generateFieldsAndMetadataId()
-            await this.loadDatasetDrivers()
-            if (this.qbe?.pars?.length === 0 && this.filtersData?.isReadyForExecution) {
+            if (!this.dataset?.federation_id) await this.loadDatasetDrivers()
+            if (this.qbe?.pars?.length === 0 && (this.filtersData?.isReadyForExecution || this.dataset?.federation_id)) {
                 await this.loadQBE()
             } else if (this.qbe?.pars?.length !== 0 || !this.filtersData?.isReadyForExecution) {
                 this.parameterSidebarVisible = true
@@ -342,22 +342,32 @@ export default defineComponent({
                 this.qbe = response.data[0]
                 if (this.qbe && this.qbe.qbeJSONQuery) this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
             })
+
+            if (this.qbe && this.getQueryFromDatasetProp) {
+                this.qbe = deepcopy(this.dataset) as any
+                if (this.qbe && this.qbe.qbeJSONQuery && typeof this.qbe.qbeJSONQuery === 'string') this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
+            }
+
+            if (this.qbe && this.dataset) {
+                this.qbe.pars = this.dataset.pars ?? []
+            }
         },
         getQBEFromModel() {
             if (!this.dataset) return {}
-
             this.smartView = this.dataset.smartView
             return {
                 dsTypeCd: 'Qbe',
                 qbeDatamarts: this.dataset.name,
                 qbeDataSource: this.dataset.dataSourceLabel,
-                qbeJSONQuery: {
-                    catalogue: {
-                        queries: [{ id: 'q1', name: 'Main', fields: [], distinct: false, filters: [], calendar: {}, expression: {}, isNestedExpression: false, havings: [], graph: [], relationRoles: [], subqueries: [] }]
-                    }
-                },
+                qbeJSONQuery: this.getQueryFromDatasetProp
+                    ? this.dataset.qbeJSONQuery
+                    : {
+                          catalogue: {
+                              queries: [{ id: 'q1', name: 'Main', fields: [], distinct: false, filters: [], calendar: {}, expression: {}, isNestedExpression: false, havings: [], graph: [], relationRoles: [], subqueries: [] }]
+                          }
+                      },
                 meta: [],
-                pars: [],
+                pars: this.dataset.pars ?? [],
                 scopeId: null,
                 scopeCd: '',
                 label: '',
@@ -430,9 +440,12 @@ export default defineComponent({
             const datamart = this.dataset?.dataSourceLabel ? this.dataset.name : this.qbe?.qbeDatamarts
             const temp = this.getFormattedParameters(this.filtersData)
             const drivers = encodeURI(JSON.stringify(temp))
+            const url = this.dataset?.federation_id
+                ? `start-federation?federationId=${this.dataset.federation_id}&datasourceForCache=cache&drivers=%7B%7D`
+                : `start-qbe?datamart=${datamart}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&DATA_SOURCE_LABEL=${label}&drivers=${drivers}`
             if (this.dataset) {
                 await this.$http
-                    .get(import.meta.env.VITE_QBE_PATH + `start-qbe?datamart=${datamart}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&DATA_SOURCE_LABEL=${label}&drivers=${drivers}`)
+                    .get(import.meta.env.VITE_QBE_PATH + url)
                     .then(() => {
                         this.qbeLoaded = true
                     })
@@ -441,6 +454,7 @@ export default defineComponent({
         },
         getFormattedParameters(loadedParameters: { filterStatus: any[]; isReadyForExecution: boolean }) {
             let parameters = {} as any
+            if (!loadedParameters.filterStatus) return parameters
             Object.keys(loadedParameters.filterStatus).forEach((key: any) => {
                 const parameter = loadedParameters.filterStatus[key]
                 if (!parameter.multivalue) {
@@ -452,6 +466,7 @@ export default defineComponent({
             return parameters
         },
         async loadCustomizedDatasetFunctions() {
+            if (this.dataset && this.dataset.federation_id) return
             const id = this.dataset?.dataSourceId ? this.dataset.dataSourceId : this.qbe?.qbeDataSourceId
             await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/configs/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/${id}`).then((response: AxiosResponse<any>) => {
                 this.customizedDatasetFunctions = response.data
@@ -932,7 +947,6 @@ export default defineComponent({
             this.smartView && this.selectedQuery.fields.length > 0 ? this.executeQBEQuery(false) : this.resetQueryPreviewAndPagination()
         },
         resetQueryPreviewAndPagination() {
-            console.log('called')
             this.pagination = { start: 0, limit: 25, size: 0 }
             this.queryPreviewData = {} as any
         },
@@ -981,9 +995,16 @@ export default defineComponent({
                 this.qbe = this.getQBEFromModel()
             }
             this.loadQuery()
-            await this.loadDatasetDrivers()
-        }
+            if (!this.dataset?.federation_id) await this.loadDatasetDrivers()
+        },
         //#endregion ================================================================================================
+        openSavingDialog() {
+            if (this.returnQueryMode) {
+                this.$emit('querySaved', this.qbe?.qbeJSONQuery)
+            } else {
+                this.savingDialogVisible = true
+            }
+        }
     }
 })
 </script>

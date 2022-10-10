@@ -2,15 +2,24 @@ import { defineConfig, loadEnv } from 'vite'
 const { resolve } = require('path')
 import vue from '@vitejs/plugin-vue'
 import builtins from 'rollup-plugin-node-builtins'
+import forwardToTrailingSlashPlugin from './forward-to-trailing-slash-plugin.js'
 
 const path = require('path')
 
 const builtinsPlugin = { ...builtins({ crypto: true }), name: 'rollup-plugin-node-builtins' }
 
+const build = {
+    rollupOptions: {
+        input: {
+            'knowage-vue': new URL('./index.html', import.meta.url).href
+        }
+    }
+}
+
 export default defineConfig((command, mode) => {
     const env = loadEnv(mode, process.cwd())
     return {
-        plugins: [vue(), builtinsPlugin],
+        plugins: [vue(), builtinsPlugin, forwardToTrailingSlashPlugin(Object.keys(build.rollupOptions.input))],
         define: {
             _KNOWAGE_VERSION: JSON.stringify(process.env.npm_package_version)
         },

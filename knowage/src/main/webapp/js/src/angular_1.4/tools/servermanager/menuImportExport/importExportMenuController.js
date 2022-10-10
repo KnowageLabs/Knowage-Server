@@ -102,7 +102,7 @@ function impExpFuncController(sbiModule_download, sbiModule_device, $scope, $mdD
 					if (data.hasOwnProperty("ERROR")) {
 						sbiModule_restServices.errorHandler(data.ERROR, "sbi.generic.toastr.title.error");
 					}
-					if (data.STATUS == "NON OK") {
+					else if (data.STATUS == "NON OK") {
 						sbiModule_restServices.errorHandler(data.ERROR, "sbi.generic.toastr.title.error");
 					} else if (data.STATUS == "OK") {
 

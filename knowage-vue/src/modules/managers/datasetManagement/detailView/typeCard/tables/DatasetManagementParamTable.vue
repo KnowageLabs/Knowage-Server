@@ -28,15 +28,27 @@
                 </Column>
                 <Column field="defaultValue" :header="$t('managers.driversManagement.useModes.defaultValue')" :sortable="true">
                     <template #editor="{data}">
-                        <InputText class="kn-material-input" :style="tableDescriptor.style.columnStyle" v-model="data.defaultValue" />
+                        <InputText v-if="data.multiValue === false" class="kn-material-input" :style="tableDescriptor.style.columnStyle" v-model="data.defaultValue" />
+                        <div v-else class="p-d-flex p-flex-column chipsContainer">
+                            <Chips class="kn-border-none"  v-model="data.defaultValue"/>
+                            <small id="chips-help">{{$t('common.chipsHint')}}</small>
+                        </div>
+                        
+                    </template>
+                    <template #body="{data}">
+                        <InputText v-if="data.multiValue === false" class="kn-material-input" :style="tableDescriptor.style.columnStyle" v-model="data.defaultValue" />
+                        <div v-else class="p-d-flex p-flex-column chipsContainer">
+                            <Chips class="kn-border-none"  v-model="data.defaultValue"/>
+                            <small id="chips-help">{{$t('common.chipsHint')}}</small>
+                        </div>
                     </template>
                 </Column>
                 <Column field="multiValue" :header="$t('managers.profileAttributesManagement.form.multiValue')" :sortable="true">
                     <template #body="{data}">
-                        <Checkbox v-model="data.multiValue" :binary="true" />
+                        <Checkbox v-model="data.multiValue" :binary="true" @change="checkboxChange(data)"/>
                     </template>
                     <template #editor="{data}">
-                        <Checkbox v-model="data.multiValue" :binary="true" />
+                        <Checkbox v-model="data.multiValue" :binary="true" @change="checkboxChange(data)"/>
                     </template>
                 </Column>
                 <Column @rowClick="false">
@@ -50,16 +62,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, nextTick } from 'vue'
 import tableDescriptor from './DatasetManagementTablesDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import Card from 'primevue/card'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Checkbox from 'primevue/checkbox'
+import Chips from 'primevue/chips'
 
 export default defineComponent({
-    components: { Card, Dropdown, DataTable, Column, Checkbox },
+    components: { Card, Chips, Dropdown, DataTable, Column, Checkbox },
     props: {
         selectedDataset: { type: Object as any }
     },
@@ -106,6 +119,12 @@ export default defineComponent({
                 this.insertParameter()
             }
         },
+        checkboxChange(data){
+            if(data.multiValue){
+                if(data.defaultValue) data.defaultValue = [data.defaultValue]
+            }else if(data.defaultValue) data.defaultValue = data.defaultValue.join('')  
+            this.$forceUpdate()       
+        },
         insertParameter() {
             this.dataset.pars ? '' : (this.dataset.pars = [])
             const newParam = { ...tableDescriptor.newParam }
@@ -133,3 +152,16 @@ export default defineComponent({
     }
 })
 </script>
+<style lang="scss" scoped>
+    .chipsContainer {
+        width: 100%;
+        &:deep(.p-chips) {
+            width: 100%;
+        .p-chips-multiple-container{
+            width: 100%;
+        }
+    }
+    }
+    
+
+</style>

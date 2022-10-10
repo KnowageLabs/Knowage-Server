@@ -22,9 +22,7 @@
 
 package it.eng.spagobi.tools.dataset.service;
 
-import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,7 +48,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONObjectDeserializator;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
+import it.eng.knowage.commons.security.PathTraversalChecker;
+import it.eng.knowage.parameter.ParameterManagerFactory;
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
@@ -705,35 +704,17 @@ public class ManageDataSetsForREST {
 				if (obj.has("type")) {
 					type = obj.optString("type");
 				}
+				boolean multiValue = obj.optBoolean("multiValue", false);
+				String value = obj.optString(PARAM_VALUE_NAME);
+				String defaultValue = obj.optString(DEFAULT_VALUE_PARAM);
+				String retValue = "";
 
-				// check if has value, if has not a valid value then use default
-				// value
-				boolean hasVal = obj.has(PARAM_VALUE_NAME) && !obj.getString(PARAM_VALUE_NAME).isEmpty();
-				String tempVal = "";
-				if (hasVal) {
-					tempVal = obj.getString(PARAM_VALUE_NAME);
-				} else {
-					boolean hasDefaultValue = obj.has(DEFAULT_VALUE_PARAM);
-					if (hasDefaultValue) {
-						tempVal = obj.getString(DEFAULT_VALUE_PARAM);
-						logger.debug("Value of param not present, use default value: " + tempVal);
-					}
-				}
+				retValue = ParameterManagerFactory.getInstance()
+						.defaultManager()
+						.fromFeToBe(type, value, defaultValue, multiValue);
 
-				boolean multivalue = false;
-				if (tempVal != null && tempVal.contains(",")) {
-					multivalue = true;
-				}
-
-				String value = "";
-				if (multivalue) {
-					value = getMultiValue(tempVal, type);
-				} else {
-					value = getSingleValue(tempVal, type);
-				}
-
-				logger.debug("name: " + name + " / value: " + value);
-				parametersMap.put(name, value);
+				logger.debug("name: " + name + " / value: " + retValue);
+				parametersMap.put(name, retValue);
 
 			}
 
@@ -767,51 +748,17 @@ public class ManageDataSetsForREST {
 				if (obj.has("type")) {
 					type = obj.optString("type");
 				}
+				boolean multivalue = obj.optBoolean("multiValue", false);
+				String value = obj.optString(PARAM_VALUE_NAME);
+				String defaultValue = obj.optString(DEFAULT_VALUE_PARAM);
+				String retValue = "";
 
-				// check if has value, if has not a valid value then use default
-				// value
-				boolean hasVal = obj.has(PARAM_VALUE_NAME) && !obj.getString(PARAM_VALUE_NAME).isEmpty();
-				String tempVal = "";
-				if (hasVal) {
-					tempVal = obj.getString(PARAM_VALUE_NAME);
-				} else {
-					boolean hasDefaultValue = obj.has(DEFAULT_VALUE_PARAM);
-					if (hasDefaultValue) {
-						tempVal = obj.getString(DEFAULT_VALUE_PARAM);
-						logger.debug("Value of param not present, use default value: " + tempVal);
-					}
-				}
+				retValue = ParameterManagerFactory.getInstance()
+					.solrManager()
+					.fromFeToBe(type, value, defaultValue, multivalue);
 
-				boolean multivalue = false;
-				if (tempVal != null && tempVal.contains(",")) {
-					multivalue = true;
-				}
-
-				String value = "";
-				if (multivalue) {
-
-					// WORKAROUND : the preview and the save dataset service have different format
-					List<Object> listValue = new ArrayList<>();
-
-					if (isNotEmpty(tempVal) && tempVal.startsWith("[") && tempVal.endsWith("]")) {
-						JSONArray arrayValue = new JSONArray(tempVal);
-
-						for (int j=0; j < arrayValue.length(); j++) {
-							listValue.add(arrayValue.get(j));
-						}
-					} else {
-						// TODO : Delete this branch when the format between preview and save dataset will be the same
-						listValue = Arrays.asList(tempVal.split(","));
-					}
-
-
-					value = getMultiValueForSolr(listValue, type);
-				} else {
-					value = getSingleValueForSolr(tempVal, type);
-				}
-
-				logger.debug("name: " + name + " / value: " + value);
-				parametersMap.put(name, value);
+				logger.debug("name: " + name + " / value: " + retValue);
+				parametersMap.put(name, retValue);
 			}
 		} catch (Throwable t) {
 			if (t instanceof SpagoBIServiceException) {
@@ -972,7 +919,7 @@ public class ManageDataSetsForREST {
 
 		File originalDatasetFile = new File(filePath + originalFileName);
 		File newDatasetFile = new File(fileNewPath + newFileName + "." + fileType.toLowerCase());
-
+		PathTraversalChecker.preventPathTraversalAttack(newDatasetFile, new File(fileNewPath));
 		String filePathCloning = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar;
 		File originalDatasetFileCloning = new File(filePathCloning + originalFileName);
 
@@ -1589,107 +1536,6 @@ public class ManageDataSetsForREST {
 		res.forceSchemaRead(config);
 
 		return res;
-	}
-
-	/**
-	 * Protected for testing purposes
-	 *
-	 * @param value
-	 * @param type
-	 * @return
-	 */
-	static String getSingleValue(String value, String type) {
-		String toReturn = "";
-		if (type.equalsIgnoreCase(DataSetUtilities.STRING_TYPE)) {
-
-			value = value.replace("'", "\\'");
-
-			if ((!(value.startsWith("'") && value.endsWith("'")))) {
-				toReturn = "'" + value + "'";
-			} else {
-				toReturn = value;
-			}
-
-		} else if (type.equalsIgnoreCase(DataSetUtilities.NUMBER_TYPE)) {
-
-			if (value.startsWith("'") && value.endsWith("'") && value.length() >= 2) {
-				toReturn = value.substring(1, value.length() - 1);
-			} else {
-				toReturn = value;
-			}
-			if (toReturn == null || toReturn.length() == 0) {
-				toReturn = "";
-			}
-		} else if (type.equalsIgnoreCase(DataSetUtilities.GENERIC_TYPE)) {
-			toReturn = value;
-		} else if (type.equalsIgnoreCase(DataSetUtilities.RAW_TYPE)) {
-			if (value.startsWith("'") && value.endsWith("'") && value.length() >= 2) {
-				toReturn = value.substring(1, value.length() - 1);
-			} else {
-				toReturn = value;
-			}
-		}
-
-		return toReturn;
-	}
-
-	/**
-	 * Protected for testing purposes
-	 *
-	 * @param value
-	 * @param type
-	 * @return
-	 */
-	static String getSingleValueForSolr(String value, String type) {
-		String toReturn = "";
-		if (type.equalsIgnoreCase(DataSetUtilities.STRING_TYPE)) {
-
-			toReturn = value.replace("'", "\\'");
-
-		} else if (type.equalsIgnoreCase(DataSetUtilities.NUMBER_TYPE)) {
-
-			if (value.startsWith("'") && value.endsWith("'") && value.length() >= 2) {
-				toReturn = value.substring(1, value.length() - 1);
-			} else {
-				toReturn = value;
-			}
-			if (toReturn == null || toReturn.length() == 0) {
-				toReturn = "";
-			}
-		} else if (type.equalsIgnoreCase(DataSetUtilities.GENERIC_TYPE)) {
-			toReturn = value;
-		} else if (type.equalsIgnoreCase(DataSetUtilities.RAW_TYPE)) {
-			if (value.startsWith("'") && value.endsWith("'") && value.length() >= 2) {
-				toReturn = value.substring(1, value.length() - 1);
-			} else {
-				toReturn = value;
-			}
-		}
-
-		return toReturn;
-	}
-
-	private String getMultiValue(String value, String type) {
-		String toReturn = "";
-
-		String[] tempArrayValues = value.split(",");
-		for (int j = 0; j < tempArrayValues.length; j++) {
-			String tempValue = tempArrayValues[j];
-			if (j == 0) {
-				toReturn = getSingleValue(tempValue, type);
-			} else {
-				toReturn = toReturn + "," + getSingleValue(tempValue, type);
-			}
-		}
-
-		return toReturn;
-	}
-
-	private String getMultiValueForSolr(List<Object> value, String type) {
-		return value.stream()
-			.map(String::valueOf)
-			.map(e -> getSingleValueForSolr(e, type))
-			.collect(joining(" OR ", "(", ")"));
 	}
 
 	private void checkFileDataset(IDataSet dataSet) {

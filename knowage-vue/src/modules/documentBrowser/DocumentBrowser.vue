@@ -1,6 +1,6 @@
 <template>
     <div class="kn-page">
-        <div class="document-browser-tab-container kn-page-content">
+        <div class="document-browser-tab-container kn-flex">
             <TabView id="document-browser-tab-view" class="p-d-flex p-flex-column kn-flex kn-tab" v-model:activeIndex="activeIndex" @tab-change="onTabChange">
                 <TabPanel>
                     <template #header>
@@ -229,7 +229,7 @@ export default defineComponent({
         },
         loadSavedCockpit(cockpit: any) {
             this.closeIframe()
-            this.selectedItem = { item: { ...cockpit, routerId: cryptoRandomString({ length: 16, type: 'base64' }), name: cockpit.DOCUMENT_NAME, label: cockpit.DOCUMENT_LABEL, showMode: 'createCockpit' } }
+            this.selectedItem = { item: { ...cockpit, routerId: cryptoRandomString({ length: 16, type: 'base64' }), name: cockpit.DOCUMENT_NAME, label: cockpit.DOCUMENT_LABEL, showMode: 'execute' }, mode: 'execute' }
             this.tabs[this.activeIndex - 1] = this.selectedItem
             this.$router.push(`/document-browser/document-composite/${cockpit.DOCUMENT_LABEL}`)
         },

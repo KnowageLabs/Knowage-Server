@@ -73,13 +73,12 @@
                     @newDashboardSaved="onNewDashboardSaved"
                 ></DashboardController>
             </template>
-
             <iframe
                 v-for="(item, index) in breadcrumbs"
                 :key="index"
                 ref="documentFrame"
                 :name="'documentFrame' + index"
-                v-show="mode === 'iframe' && filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible && item.label === document.label"
+                v-show="mode === 'iframe' && filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible && (item.label === document.name || (crossNavigationContainerData && index === breadcrumbs.length - 1))"
                 class="document-execution-iframe"
             ></iframe>
 
@@ -140,6 +139,22 @@ import DocumentExecutionCNContainerDialog from './dialogs/documentExecutionCNCon
 import mainStore from '../../../App.store'
 import deepcopy from 'deepcopy'
 import DashboardController from '../dashboard/DashboardController.vue'
+
+// @ts-ignore
+// eslint-disable-next-line
+window.execExternalCrossNavigation = function (outputParameters, otherOutputParameters, crossNavigationLabel) {
+    postMessage(
+        {
+            type: 'crossNavigation',
+            outputParameters: outputParameters,
+            inputParameters: {},
+            targetCrossNavigation: crossNavigationLabel,
+            docLabel: null,
+            otherOutputParameters: otherOutputParameters ? [otherOutputParameters] : []
+        },
+        '*'
+    )
+}
 
 export default defineComponent({
     name: 'document-execution',
@@ -387,7 +402,7 @@ export default defineComponent({
             if (this.document.typeCode === 'OLAP') {
                 this.exportOlap(type)
             } else {
-                const tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
+                const tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
                 let tempFrame = window.frames[tempIndex]
                 while (tempFrame && tempFrame.name !== 'documentFrame' + tempIndex) {
                     tempFrame = tempFrame[0].frames
@@ -461,13 +476,13 @@ export default defineComponent({
                 this.mode = 'iframe'
             }
         },
-        async loadPage(initialLoading: boolean = false, documentLabel: string | null = null) {
+        async loadPage(initialLoading: boolean = false, documentLabel: string | null = null, crossNavigationPopupMode: boolean = false) {
             this.loading = true
 
             await this.loadFilters(initialLoading)
             if (this.filtersData?.isReadyForExecution) {
                 this.parameterSidebarVisible = false
-                await this.loadURL(null, documentLabel)
+                await this.loadURL(null, documentLabel, crossNavigationPopupMode)
                 await this.loadExporters()
             } else if (this.filtersData?.filterStatus) {
                 this.parameterSidebarVisible = true
@@ -492,13 +507,12 @@ export default defineComponent({
         async loadDocument() {
             await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documents/${this.document?.label}`).then((response: AxiosResponse<any>) => (this.document = response.data))
 
-            const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
-
+            const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
             if (index !== -1) {
                 this.breadcrumbs[index].document = this.document
             } else {
                 this.breadcrumbs.push({
-                    label: this.document.label,
+                    label: this.document.name,
                     document: this.document
                 })
             }
@@ -528,7 +542,11 @@ export default defineComponent({
             }
 
             await this.$http
-                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentexecution/filters`, { label: this.document.label, role: this.userRole, parameters: this.document.navigationParams ?? {} })
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentexecution/filters`, {
+                    label: this.document.label,
+                    role: this.userRole,
+                    parameters: this.document.navigationParams ?? {}
+                })
                 .then((response: AxiosResponse<any>) => (this.filtersData = response.data))
                 .catch((error: any) => {
                     if (error.response?.status === 500) {
@@ -590,7 +608,7 @@ export default defineComponent({
             this.setFiltersForBreadcrumbItem()
         },
         setFiltersForBreadcrumbItem() {
-            const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
+            const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
             if (index !== -1) this.breadcrumbs[index].filtersData = this.filtersData
         },
         loadNavigationParamsInitialValue() {
@@ -598,20 +616,29 @@ export default defineComponent({
                 for (let i = 0; i < this.filtersData.filterStatus.length; i++) {
                     const tempParam = this.filtersData.filterStatus[i]
                     if (key === tempParam.urlName || key === tempParam.label) {
-                        tempParam.parameterValue[0].value = this.document.navigationParams[key]
-                        if (this.document.navigationParams[key + '_field_visible_description']) tempParam.parameterValue[0].description = this.document.navigationParams[key + '_field_visible_description']
-                        if (tempParam.selectionType === 'COMBOBOX') this.setCrossNavigationComboParameterDescription(tempParam)
-                        if (tempParam.type === 'DATE' && tempParam.parameterValue[0] && tempParam.parameterValue[0].value) {
-                            tempParam.parameterValue[0].value = new Date(tempParam.parameterValue[0].value)
+                        if (tempParam.multivalue && Array.isArray(this.document.navigationParams[key])) {
+                            tempParam.parameterValue = this.document.navigationParams[key].map((value: string) => {
+                                return { value: value, description: '' }
+                            })
+                            this.setCrossNavigationComboParameterDescription(tempParam)
+                        } else {
+                            tempParam.parameterValue[0].value = this.document.navigationParams[key]
+                            if (this.document.navigationParams[key + '_field_visible_description']) tempParam.parameterValue[0].description = this.document.navigationParams[key + '_field_visible_description']
+                            if (tempParam.selectionType === 'COMBOBOX') this.setCrossNavigationComboParameterDescription(tempParam)
+                            if (tempParam.type === 'DATE' && tempParam.parameterValue[0] && tempParam.parameterValue[0].value) {
+                                tempParam.parameterValue[0].value = new Date(tempParam.parameterValue[0].value)
+                            }
                         }
                     }
                 }
             })
         },
         setCrossNavigationComboParameterDescription(tempParam: any) {
-            if (tempParam.parameterValue[0]) {
-                const index = tempParam.data.findIndex((option: any) => option.value === tempParam.parameterValue[0].value)
-                if (index !== -1) tempParam.parameterValue[0].description = tempParam.data[index].description
+            for (let i = 0; i < tempParam.parameterValue.length; i++) {
+                if (tempParam.parameterValue[i].value) {
+                    const index = tempParam.data.findIndex((option: any) => option.value === tempParam.parameterValue[i].value)
+                    if (index !== -1) tempParam.parameterValue[i].description = tempParam.data[index].description
+                }
             }
         },
         formatParameterDataOptions(parameter: iParameter, data: any) {
@@ -625,7 +652,7 @@ export default defineComponent({
                 description: descriptionIndex ? data[descriptionIndex] : ''
             }
         },
-        async loadURL(olapParameters: any, documentLabel: string | null = null) {
+        async loadURL(olapParameters: any, documentLabel: string | null = null, crossNavigationPopupMode: boolean = false) {
             const postData = {
                 label: this.document.label,
                 role: this.userRole,
@@ -653,19 +680,19 @@ export default defineComponent({
                     this.sbiExecutionId = this.urlData?.sbiExecutionId as string
                 })
 
-            const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
+            const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
             if (index !== -1) {
                 this.breadcrumbs[index].urlData = this.urlData
                 this.sbiExecutionId = this.urlData?.sbiExecutionId as string
             }
 
-            await this.sendForm(documentLabel)
+            await this.sendForm(documentLabel, crossNavigationPopupMode)
         },
         async loadExporters() {
             await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/exporters/${this.urlData?.engineLabel}`).then((response: AxiosResponse<any>) => (this.exporters = response.data.exporters))
         },
-        async sendForm(documentLabel: string | null = null) {
-            let tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label) as any
+        async sendForm(documentLabel: string | null = null, crossNavigationPopupMode: boolean = false) {
+            let tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name) as any
 
             const documentUrl = this.urlData?.url + '&timereloadurl=' + new Date().getTime()
             const postObject = {
@@ -689,7 +716,8 @@ export default defineComponent({
             postForm.id = 'postForm_' + postObject.params.document
             postForm.action = import.meta.env.VITE_HOST_URL + postObject.url
             postForm.method = 'post'
-            postForm.target = tempIndex !== -1 ? 'documentFrame' + tempIndex : documentLabel
+            const iframeName = crossNavigationPopupMode ? 'documentFramePopup' : 'documentFrame'
+            postForm.target = tempIndex !== -1 ? iframeName + tempIndex : documentLabel
             postForm.acceptCharset = 'UTF-8'
             document.body.appendChild(postForm)
 
@@ -732,7 +760,7 @@ export default defineComponent({
                 postForm.submit()
             }
 
-            const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
+            const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
             if (index !== -1) this.breadcrumbs[index].hiddenFormData = this.hiddenFormData
         },
         async sendHiddenFormData() {
@@ -1036,22 +1064,53 @@ export default defineComponent({
                     iFrameName: documentLabel
                 }
                 this.crossNavigationContainerVisible = true
-                await this.loadPage(false, documentLabel)
+                await this.loadPage(false, documentLabel, true)
             } else {
-                const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
+                const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
                 if (index !== -1) {
                     this.breadcrumbs[index].document = this.document
                 } else {
                     this.breadcrumbs.push({
-                        label: this.document.label,
+                        label: this.document.name,
                         document: this.document,
-                        crossBreadcrumb: crossNavigationDocument.crossBreadcrumb ?? this.document.name
+                        crossBreadcrumb: this.getCrossBeadcrumb(crossNavigationDocument, angularData)
                     })
                 }
 
                 await this.loadPage()
             }
             this.documentMode = 'VIEW'
+        },
+        getCrossBeadcrumb(crossNavigationDocument: any, angularData: any) {
+            let tempCrossBreadcrumb = crossNavigationDocument.crossBreadcrumb
+            if (tempCrossBreadcrumb?.includes('$P{')) {
+                tempCrossBreadcrumb = this.updateCrossBreadCrumbWithParameterValues(tempCrossBreadcrumb, angularData)
+            }
+
+            return tempCrossBreadcrumb ?? this.document.name
+        },
+        updateCrossBreadCrumbWithParameterValues(tempCrossBreadcrumb: string, angularData: any) {
+            const parameterPlaceholders = tempCrossBreadcrumb.match(/{[\w\d]+}/g)
+            if (!parameterPlaceholders) return ''
+            const parameters = angularData.outputParameters
+            for (let i = 0; i < angularData.otherOutputParameters.length; i++) {
+                const key = Object.keys(angularData.otherOutputParameters[i])[0]
+                parameters[key] = angularData.otherOutputParameters[i][key]
+            }
+            const temp = [] as any[]
+            for (let i = 0; i < parameterPlaceholders.length; i++) {
+                const tempParameterName = parameterPlaceholders[i].substring(1, parameterPlaceholders[i].length - 1)
+                temp.push({
+                    parameterPlaceholder: parameterPlaceholders[i],
+                    value: parameters[tempParameterName]
+                })
+            }
+            let finalString = tempCrossBreadcrumb
+            for (let i = 0; i < temp.length; i++) {
+                finalString = finalString.replaceAll('$P' + temp[i].parameterPlaceholder, temp[i].value)
+            }
+
+            return finalString
         },
         addDocumentOtherParametersToNavigationParamas(navigationParams: any[], angularData: any, crossNavigationDocument: any) {
             if (!angularData.outputParameters || angularData.outputParameters.length === 0 || !crossNavigationDocument?.navigationParams) return
@@ -1146,12 +1205,12 @@ export default defineComponent({
                 navigationParams: this.formatOLAPNavigationParams(crossNavigationParams, temp[0].navigationParams)
             }
 
-            const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
+            const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
             if (index !== -1) {
                 this.breadcrumbs[index].document = this.document
             } else {
                 this.breadcrumbs.push({
-                    label: this.document.label,
+                    label: this.document.name,
                     document: this.document
                 })
             }

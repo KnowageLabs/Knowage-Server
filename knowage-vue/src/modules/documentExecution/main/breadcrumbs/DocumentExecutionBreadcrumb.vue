@@ -1,7 +1,7 @@
 <template>
     <Breadcrumb :home="home" :model="items">
-        <template #item="{item}">
-            <span class="breadcrumbs-item" @click="selectBreadcrumb">{{ item.crossBreadcrumb ?? item.label }}</span>
+        <template #item="{ item }">
+            <span class="breadcrumbs-item" @click="selectBreadcrumb">{{ item.crossBreadcrumb ? item.crossBreadcrumb : item.label }}</span>
         </template>
     </Breadcrumb>
 </template>

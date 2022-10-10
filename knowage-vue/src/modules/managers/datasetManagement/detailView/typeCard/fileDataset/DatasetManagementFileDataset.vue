@@ -50,19 +50,19 @@
             <div v-if="dataset.fileType == 'XLS' || dataset.fileType == 'XLSX'" class="p-fluid p-formgrid p-grid p-mt-3">
                 <div class="p-field p-col">
                     <span class="p-float-label">
-                        <InputText id="skipRows" class="kn-material-input" type="number" v-model.trim="dataset.skipRows" @change="$emit('touched')" />
+                        <InputText id="skipRows" class="kn-material-input" type="number" v-model.trim="dataset.skipRows" @change="getPreviewData(false)" />
                         <label for="skipRows" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanSkipRows') }} </label>
                     </span>
                 </div>
                 <div class="p-field p-col">
                     <span class="p-float-label">
-                        <InputText id="limitRows" class="kn-material-input" type="number" v-model.trim="dataset.limitRows" @change="$emit('touched')" />
+                        <InputText id="limitRows" class="kn-material-input" type="number" v-model.trim="dataset.limitRows" @change="getPreviewData(false)" />
                         <label for="limitRows" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanLimitRows') }} </label>
                     </span>
                 </div>
                 <div class="p-field p-col">
                     <span class="p-float-label">
-                        <InputText id="sheetnumber" class="kn-material-input" type="number" v-model.trim="dataset.xslSheetNumber" @change="$emit('touched')" />
+                        <InputText id="sheetnumber" class="kn-material-input" type="number" v-model.trim="dataset.xslSheetNumber" @change="getPreviewData(false)" />
                         <label for="sheetnumber" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanXslSheetNumber') }} </label>
                     </span>
                 </div>
@@ -76,6 +76,9 @@
                 <Button v-if="!expandTableCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color: white" @click="expandTableCard = true" />
                 <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color: white" @click="expandTableCard = false" />
                 {{ $t('managers.lovsManagement.preview') }}
+            </template>
+            <template #end>
+                <Button icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain p-ml-auto" v-tooltip.left="$t('common.refresh')" @click="getPreviewData"></Button>
             </template>
         </Toolbar>
         <Card class="p-m-2" v-show="expandTableCard">

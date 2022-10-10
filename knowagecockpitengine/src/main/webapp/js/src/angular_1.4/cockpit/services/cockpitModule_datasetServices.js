@@ -466,7 +466,8 @@ $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_ut
 			for(var j=0;j<sheet.widgets.length;j++){
 				var widget = sheet.widgets[j];
 				if(widget.dataset !=undefined){
-					array.push(widget.dataset.dsId);
+					if(Array.isArray(widget.dataset.dsId)) array.push(...widget.dataset.dsId)
+					else array.push(widget.dataset.dsId)
 				}
 			}
 		}

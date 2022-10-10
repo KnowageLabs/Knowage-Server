@@ -26,7 +26,7 @@
 
                     <Column v-if="showSaveAsColumn" field="vieweas" :header="$t('kpi.kpiDocumentDesigner.viewAs')" key="vieweas" :sortable="true" :style="KpiDocumentDesignerKpiListCardDescriptor.columnStyle">
                         <template #body="slotProps">
-                            <Dropdown class="kpi-edit-kpi-list-card-dropdown" v-model="slotProps.data[slotProps.column.props.field]" :options="KpiDocumentDesignerKpiListCardDescriptor.viewAsOptions" optionValue="value" :placeholder="$t('kpi.KpiDocumentDesigner.viewAsPlaceholder')">
+                            <Dropdown class="kpi-edit-kpi-list-card-dropdown" v-model="slotProps.data[slotProps.column.props.field]" :options="KpiDocumentDesignerKpiListCardDescriptor.viewAsOptions" optionValue="value" :placeholder="$t('kpi.kpiDocumentDesigner.viewAsPlaceholder')">
                                 <template #value="slotProps">
                                     <div v-if="slotProps.value">
                                         <span>{{ slotProps.value === 'speedometer' ? $t('kpi.kpiDocumentDesigner.speedometer') : $t('kpi.kpiDocumentDesigner.kpiCard') }}</span>
@@ -104,6 +104,7 @@ import DataTable from 'primevue/datatable'
 import Dropdown from 'primevue/dropdown'
 import KpiDocumentDesignerKpiListCardDescriptor from './KpiDocumentDesignerKpiListCardDescriptor.json'
 import KpiDocumentDesignerKpiSelectDialog from './KpiDocumentDesignerKpiSelectDialog.vue'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'kpi-edit-kpi-list-card',
@@ -131,25 +132,33 @@ export default defineComponent({
     },
     methods: {
         loadData() {
-            this.data = this.propData as { kpi: iKpiListItem[] }
+            this.data = { kpi: [] }
+            if (!this.propData) return
+            this.data = Array.isArray(this.propData.kpi) ? (this.propData as { kpi: iKpiListItem[] }) : { kpi: [this.propData.kpi] }
             this.setShowSaveAsColumn()
         },
         setShowSaveAsColumn() {
             this.showSaveAsColumn = this.documentType === 'widget'
         },
         onKpiSelected(selectedKpi: iKpi[]) {
+            const temp = deepcopy(this.data.kpi) as any[]
             this.data.kpi = []
-            selectedKpi.forEach((kpi: iKpi) =>
-                this.data.kpi.push({
-                    isSuffix: 'false',
-                    name: kpi.name,
-                    prefixSuffixValue: '',
-                    rangeMaxValue: '',
-                    rangeMinValue: '',
-                    vieweas: 'Speedometer',
-                    category: kpi.category ? kpi.category.valueName : ''
-                })
-            )
+            selectedKpi.forEach((kpi: iKpi) => {
+                const index = temp.findIndex((tempKpi: iKpi) => tempKpi.name === kpi.name)
+                if (index !== -1) {
+                    this.data.kpi.push(temp[index])
+                } else {
+                    this.data.kpi.push({
+                        isSuffix: 'false',
+                        name: kpi.name,
+                        prefixSuffixValue: '',
+                        rangeMaxValue: '',
+                        rangeMinValue: '',
+                        vieweas: 'Speedometer',
+                        category: kpi.category ? kpi.category.valueName : ''
+                    })
+                }
+            })
             this.addKpiAssociationVisible = false
         },
         deleteKpiAssociationConfirm(kpi: iKpiListItem) {

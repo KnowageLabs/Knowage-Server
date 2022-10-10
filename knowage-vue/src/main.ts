@@ -50,7 +50,9 @@ import i18n from '@/App.i18n'
 
 import QBEOperator from './modules/qbe/qbeDialogs/qbeAdvancedFilterDialog/QBEOperator.vue'
 
-if (import.meta.env.NODE_ENV === 'development') document.domain = 'localhost'
+if (import.meta.env.DEV) document.domain = 'localhost'
+
+import VueGridLayout from 'vue-grid-layout'
 
 import VueGridLayout from 'vue-grid-layout'
 

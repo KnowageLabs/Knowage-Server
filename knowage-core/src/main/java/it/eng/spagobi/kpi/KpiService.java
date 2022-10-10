@@ -978,14 +978,18 @@ public class KpiService {
 					try {
 						JSONArray measures = new JSONObject(kpi.getCardinality()).getJSONArray("measureList");
 						for (int i = 0; i < measures.length(); i++) {
-							Iterator<String> attributesIterator = measures.getJSONObject(i).getJSONObject("attributes").keys();
-							while (attributesIterator.hasNext()) {
-								String attribute = attributesIterator.next();
-								usedAttributes.add(attribute);
-								if (kpis.get(kpi.getName()) == null) {
-									kpis.put(kpi.getName(), new ArrayList<String>());
+
+							JSONObject measure = measures.getJSONObject(i);
+							if (measure.getString("ruleName").equals(rule.getName())) {
+								Iterator<String> attributesIterator = measure.getJSONObject("attributes").keys();
+								while (attributesIterator.hasNext()) {
+									String attribute = attributesIterator.next();
+									usedAttributes.add(attribute);
+									if (kpis.get(kpi.getName()) == null) {
+										kpis.put(kpi.getName(), new ArrayList<String>());
+									}
+									kpis.get(kpi.getName()).add(attribute);
 								}
-								kpis.get(kpi.getName()).add(attribute);
 							}
 						}
 					} catch (JSONException e) {

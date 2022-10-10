@@ -251,7 +251,12 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 					} else {
 						serviceUrlBuilder.append("&pdfDeviceScaleFactor=" + Double.valueOf(renderOptions.getDimensions().getDeviceScaleFactor()));
 					}
-
+					JSONObject templateJSON = new JSONObject(new String(biObject.getActiveTemplate().getContent()));
+					boolean isMultiSheet = false;
+					if (templateJSON.has("sheets") && templateJSON.getJSONArray("sheets").length() > 1) {
+						isMultiSheet = true;
+					}
+					serviceUrlBuilder.append("&isMultiSheet=" + isMultiSheet);
 					String serviceUrl = addParametersToServiceUrl(progressThreadId, biObject, reportToUse, serviceUrlBuilder, jsonArray, paramMap);
 
 					if (executedDocuments.contains(serviceUrl)) {

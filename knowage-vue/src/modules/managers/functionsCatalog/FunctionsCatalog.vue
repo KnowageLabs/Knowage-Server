@@ -110,7 +110,7 @@ export default defineComponent({
                 })
                 .catch(() => {
                     this.store.setError({
-                        title: this.$t('common.toast.deleteTitle'),
+                        title: this.$t('common.toast.errorTitle'),
                         msg: this.$t('managers.functionsCatalog.deleteError')
                     })
                 })

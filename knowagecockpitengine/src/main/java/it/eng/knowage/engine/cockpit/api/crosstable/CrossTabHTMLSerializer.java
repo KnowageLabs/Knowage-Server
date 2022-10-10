@@ -81,7 +81,6 @@ public class CrossTabHTMLSerializer {
 	private static String DEFAULT_CENTER_ALIGN = "text-align:center;";
 
 	private Map<String, String> customStylesMap = new HashMap<String, String>();
-	private List<Integer> rowsToBeHidden;
 
 	private Locale locale = null;
 	private final Integer myGlobalId;
@@ -134,10 +133,6 @@ public class CrossTabHTMLSerializer {
 
 	private SourceBean getSourceBean(CrossTab crossTab) throws SourceBeanException, JSONException {
 		SourceBean toReturn = new SourceBean(COLUMN_DIV);
-		if (crossTab.isHideZeroRows())
-			rowsToBeHidden = getNullRowsIndexList(crossTab);
-		else
-			rowsToBeHidden = new ArrayList<Integer>();
 
 		Monitor htmlserializeTopLeftCornerMonitor = null;
 		Monitor htmlserializeRowsHeaderssMonitor = null;
@@ -217,38 +212,14 @@ public class CrossTabHTMLSerializer {
 		Boolean columnsTotals = config.optBoolean("calculatetotalsonrows");
 		Boolean noSelectedColumn = crossTab.getCrosstabDefinition().getRows().isEmpty();
 		String labelTotal = (!config.optString("rowtotalLabel").equals("")) ? config.optString("rowtotalLabel") : CrossTab.TOTAL;
-		List<Node> nodesToBeIgnored = new ArrayList<Node>();
 
 		List<SourceBean> rows = new ArrayList<SourceBean>();
 		int levels = crossTab.getRowsRoot().getDistanceFromLeaves();
 		if (crossTab.isMeasureOnRow()) {
 			levels--;
 		}
-
-		// nodes to be ignored at last level (leaves)
-		for (int i = 0; i < leaves; i++) {
-			Node n = nodes.get(i);
-			if (rowsToBeHidden.contains(i)) {
-				nodesToBeIgnored.add(n);
-			}
-		}
-		// nodes to be ignored at upper levels
-		for (int i = levels - 2; i >= 0; i--) {
-			List<Node> levelNodes = crossTab.getRowsRoot().getLevel(i + 1);
-			for (int j = 0; j < levelNodes.size(); j++) {
-				Node node = levelNodes.get(j);
-				List<Node> children = new ArrayList<Node>(node.getLeafs());
-				if (nodesToBeIgnored.containsAll(children)) {
-					nodesToBeIgnored.add(node);
-				}
-			}
-		}
-
 		// initialize all rows (without columns)
 		for (int i = 0; i < leaves; i++) {
-			if (rowsToBeHidden.contains(i)) {
-				continue;
-			}
 			SourceBean aRow = new SourceBean(ROW_TAG);
 
 			Node node = nodes.get(i);
@@ -282,15 +253,11 @@ public class CrossTabHTMLSerializer {
 
 		boolean addedLabelTotal = false;
 		for (int i = 0; i < levels; i++) {
-			List<Node> allLevelNodes = crossTab.getRowsRoot().getLevel(i + 1);
-			List<Node> filteredLevelNodes = filterNodes(allLevelNodes, nodesToBeIgnored);
+			List<Node> levelNodes = crossTab.getRowsRoot().getLevel(i + 1);
 			int counter = 0;
-			for (int j = 0; j < filteredLevelNodes.size(); j++) {
+			for (int j = 0; j < levelNodes.size(); j++) {
 				SourceBean aRow = rows.get(counter);
-				Node aNode = filteredLevelNodes.get(j);
-				if (isNodeToBeIgnored(aNode, nodesToBeIgnored)) {
-					continue;
-				}
+				Node aNode = levelNodes.get(j);
 				SourceBean aColumn = new SourceBean(COLUMN_TAG);
 
 				String text = null;
@@ -343,9 +310,7 @@ public class CrossTabHTMLSerializer {
 							+ StringEscapeUtils.escapeJavaScript(text) + "')");
 				aColumn.setCharacters(text);
 
-				List<Node> allChildren = new ArrayList<Node>(aNode.getLeafs());
-				List<Node> filteredChildren = filterNodes(allChildren, nodesToBeIgnored);
-				int rowSpan = filteredChildren.size();
+				int rowSpan = aNode.getLeafsNumber();
 
 				if (rowSpan > 1) {
 					aColumn.setAttribute(ROWSPAN_ATTRIBUTE, rowSpan);
@@ -746,30 +711,6 @@ public class CrossTabHTMLSerializer {
 		return toReturn;
 	}
 
-	private List<Integer> getNullRowsIndexList(CrossTab crossTab) {
-		List<Integer> nullRows = new ArrayList<Integer>();
-		String[][] data = crossTab.getDataMatrix();
-		for (int i = 0; i < data.length; i++) {
-			String[] values = data[i];
-			if (isNullOrZeroRow(values)) {
-				nullRows.add(i);
-			}
-		}
-		return nullRows;
-	}
-
-	private boolean isNullOrZeroRow(String[] values) {
-		for (int i = 0; i < values.length; i++) {
-			String curVal = values[i];
-			if (curVal != null && !curVal.equals("")) {
-				Double doubleVal = Double.parseDouble(curVal);
-				if (doubleVal != 0)
-					return false;
-			}
-		}
-		return true;
-	}
-
 	private SourceBean serializeData(CrossTab crossTab) throws SourceBeanException, JSONException {
 		SourceBean table = new SourceBean(TABLE_TAG);
 		String[][] data = crossTab.getDataMatrix();
@@ -848,9 +789,6 @@ public class CrossTabHTMLSerializer {
 				aRow.setAttribute(measureHeaders.get(i % measureHeaderSize));
 			}
 
-			if (rowsToBeHidden.contains(i))
-				continue;
-
 			String[] values = data[i];
 			int totalsCounter = 0;
 			int pos;
@@ -886,7 +824,13 @@ public class CrossTabHTMLSerializer {
 					String visType = (measureConfig.isNull("visType")) ? "Text" : measureConfig.getString("visType");
 					SourceBean iconSB = null;
 
-					Double value = (!text.equals("")) ? Double.parseDouble(text) : null;
+					Double value = null;
+					try {
+						value = (!text.equals("")) ? Double.parseDouble(text) : null;
+					} catch(NumberFormatException e) {
+						logger.debug("Value " + text + " is not parseable as Double");
+					}
+
 					JSONObject threshold = getThreshold(value, measureConfig.optJSONArray("ranges"));
 
 					if (cellType.getValue().equalsIgnoreCase("data") && threshold.has("icon")) {
@@ -936,7 +880,7 @@ public class CrossTabHTMLSerializer {
 						aColumn.setAttribute(CLASS_ATTRIBUTE, classType);
 					}
 
-					if (value == null) {
+					if (StringUtils.isEmpty(text) && value == null) {
 						aRow.setAttribute(aColumn);
 						continue;
 					}
@@ -967,7 +911,11 @@ public class CrossTabHTMLSerializer {
 							patternPrecision = measureConfig.getJSONObject("style").getInt("precision");
 						}
 						// 4. formatting value...
-						actualText = measureFormatter.format(value, patternFormat, patternPrecision, i, j, this.locale);
+						if (value != null) {
+							actualText = measureFormatter.format(value, patternFormat, patternPrecision, i, j, this.locale);
+						} else {
+							actualText = text;
+						}
 
 						String percentOn = crossTab.getCrosstabDefinition().getConfig().optString("percenton");
 						if ("row".equals(percentOn) || "column".equals(percentOn)) {

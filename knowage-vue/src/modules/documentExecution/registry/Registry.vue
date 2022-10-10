@@ -1,6 +1,6 @@
 <template>
-    <div class="kn-page--full">
-        <Toolbar class="kn-toolbar kn-toolbar--secondary">
+    <div class="p-d-flex p-flex-column kn-width-full kn-height-full">
+        <Toolbar class="kn-toolbar kn-toolbar--secondary kn-width-full">
             <template #start>
                 {{ $t('documentExecution.registry.title') }}
             </template>
@@ -10,41 +10,43 @@
                 </div>
             </template>
         </Toolbar>
-        <div class="kn-page-content p-m-0">
+        <div class="p-d-flex p-flex-column kn-overflow kn-flex">
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-            <div class="p-col-12 p-p-0">
+            <div class="">
                 <RegistryFiltersCard v-if="filters.length > 0" :id="id" :propFilters="filters" :entity="entity" @filter="filterRegistry" class=""></RegistryFiltersCard>
             </div>
-            <div class="p-col-12 p-p-0" v-if="!loading">
-                <RegistryPivotDatatable
-                    v-if="isPivot"
-                    :columns="columns"
-                    :id="id"
-                    :rows="rows"
-                    :entity="entity"
-                    :propConfiguration="configuration"
-                    :propPagination="pagination"
-                    @rowChanged="onRowChanged"
-                    @rowDeleted="onRowDeleted"
-                    @pageChanged="updatePagination"
-                    @resetRows="updatedRows = []"
-                    @warningChanged="setWarningState"
-                ></RegistryPivotDatatable>
-                <RegistryDatatable
-                    v-else
-                    :propColumns="columns"
-                    :id="id"
-                    :propRows="rows"
-                    :propConfiguration="configuration"
-                    :columnMap="columnMap"
-                    :pagination="pagination"
-                    :entity="entity"
-                    :stopWarningsState="stopWarningsState"
-                    @rowChanged="onRowChanged"
-                    @rowDeleted="onRowDeleted"
-                    @pageChanged="updatePagination"
-                    @warningChanged="setWarningState"
-                ></RegistryDatatable>
+            <div class="kn-relative kn-flex p-m-2 registry-custom-card">
+                <div class="kn-height-full kn-width-full kn-absolute">
+                    <RegistryPivotDatatable
+                        v-if="isPivot"
+                        :columns="columns"
+                        :id="id"
+                        :rows="rows"
+                        :entity="entity"
+                        :propConfiguration="configuration"
+                        :propPagination="pagination"
+                        @rowChanged="onRowChanged"
+                        @rowDeleted="onRowDeleted"
+                        @pageChanged="updatePagination"
+                        @resetRows="updatedRows = []"
+                        @warningChanged="setWarningState"
+                    ></RegistryPivotDatatable>
+                    <RegistryDatatable
+                        v-else
+                        :propColumns="columns"
+                        :id="id"
+                        :propRows="rows"
+                        :propConfiguration="configuration"
+                        :columnMap="columnMap"
+                        :pagination="pagination"
+                        :entity="entity"
+                        :stopWarningsState="stopWarningsState"
+                        @rowChanged="onRowChanged"
+                        @rowDeleted="onRowDeleted"
+                        @pageChanged="updatePagination"
+                        @warningChanged="setWarningState"
+                    ></RegistryDatatable>
+                </div>
             </div>
         </div>
     </div>
@@ -57,7 +59,7 @@ import registryDescriptor from './RegistryDescriptor.json'
 import RegistryDatatable from './tables/RegistryDatatable.vue'
 import RegistryPivotDatatable from './tables/RegistryPivotDatatable.vue'
 import RegistryFiltersCard from './RegistryFiltersCard.vue'
-import mainStore from '../../../App.store'
+import { formatDate } from '@/helpers/commons/localeHelper'
 
 export default defineComponent({
     name: 'registry',
@@ -94,10 +96,6 @@ export default defineComponent({
             await this.loadPage()
             this.stopWarningsState = []
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         await this.loadPage()
@@ -194,12 +192,30 @@ export default defineComponent({
                 if (this.isPivot) {
                     this.formatPivotRows(el)
                 }
+
                 delete el.id
                 delete el.isNew
                 delete el.edited
             })
+
+            const updatedRowsToIsoStrings = JSON.parse(JSON.stringify(this.updatedRows))
+            updatedRowsToIsoStrings.forEach((el: any) => {
+                this.registry.metaData.fields.forEach((element) => {
+                    if (el[element.header]) {
+                        if (element.type === 'date') {
+                            let date = new Date(formatDate(el[element.header], 'toISOString'))
+                            let offset = new Date().getTimezoneOffset()
+
+                            el[element.header] = new Date(date.getTime() - offset * 60000)
+                        } else if (element.type === 'timestamp') {
+                            el[element.header] = formatDate(el[element.header], 'toISOString')
+                        }
+                    }
+                })
+            })
+
             const postData = new URLSearchParams()
-            postData.append('records', '' + JSON.stringify(this.updatedRows))
+            postData.append('records', '' + JSON.stringify(updatedRowsToIsoStrings))
             await this.$http
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=UPDATE_RECORDS_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
                 .then(() => {
@@ -294,3 +310,10 @@ export default defineComponent({
     }
 })
 </script>
+<style lang="scss">
+.registry-custom-card {
+    background: #ffffff;
+    color: rgba(0, 0, 0, 0.87);
+    box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
+}
+</style>

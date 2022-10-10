@@ -15,22 +15,23 @@ export function getLocale(js?: boolean): string {
 }
 
 export function formatDate(dateString?: string, format?: string, incomingFormat?: string) {
-    return moment(dateString || new Date(), incomingFormat)
-        .locale(getLocale())
-        .format(format || 'L')
+    let tmp = moment(dateString || new Date(), incomingFormat).locale(getLocale())
+
+    if (format === 'toISOString') return tmp.toISOString()
+    else return tmp.format(format || 'L')
 }
 
-export function formatDateWithLocale(dateString?: string|number, format?: any, keepNull?:boolean):string {
-    if(keepNull && !dateString) return ''
+export function formatDateWithLocale(dateString?: string | number, format?: any, keepNull?: boolean): string {
+    if (keepNull && !dateString) return ''
     let dateToFormat = new Date()
     if (dateString) {
         if (typeof dateString == 'string') {
-            for (var key in timezones) dateString = dateString.replace(key, timezones[key]);
+            for (var key in timezones) dateString = dateString.replace(key, timezones[key])
         }
-        dateToFormat = new Date(dateString);
+        dateToFormat = new Date(dateString)
     }
-   
-    return Intl.DateTimeFormat(getLocale(true), format).format(dateToFormat)  
+
+    return Intl.DateTimeFormat(getLocale(true), format).format(dateToFormat)
 }
 
 export function formatNumberWithLocale(number: number, precision?: number, format?: any) {
@@ -38,11 +39,23 @@ export function formatNumberWithLocale(number: number, precision?: number, forma
 }
 
 export function luxonFormatDate(dateString: any | Date, inputFormat?: string, outputFormat?: string) {
-    const tempDate = inputFormat ? DateTime.fromFormat(dateString, inputFormat) : DateTime.fromJSDate(dateString).setLocale(getLocale(true))
+    const tempDate = inputFormat ? DateTime.fromFormat(dateString, inputFormat).setLocale(getLocale(true)) : DateTime.fromJSDate(dateString).setLocale(getLocale(true))
     if (outputFormat) return tempDate.toFormat(outputFormat)
     else return tempDate.toLocaleString(DateTime.DATE_SHORT)
 }
 
-export function primeVueDate(locale: any = 'en-US'): String {
-    return formats[locale].replaceAll('yy', 'y').replaceAll('M', 'm')
+export function localeDate(locale?: any): String {
+    let loc = locale
+    if (!loc) loc = getLocale(true)
+    return formats[loc].replaceAll('m', 'M')
+}
+
+export function primeVueDate(locale?: any): String {
+    let loc = locale
+    if (!loc) loc = getLocale(true)
+    return convertToPrimeVueFormat(formats[loc])
+}
+
+export function convertToPrimeVueFormat(format: String) {
+    return format.replaceAll('yy', 'y').replaceAll('M', 'm')
 }

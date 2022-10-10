@@ -54,6 +54,10 @@
 		mainUrl="/knowagecockpitengine/api/1.0/pages/execute" driverNm="it.eng.spagobi.engines.drivers.cockpit.CockpitDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="DOCUMENT_COMPOSITE"
 		useDataSet="false" useDataSource="false" encrypt="0" />
+	<ENGINE label="knowagedashboardengine" name="Dashboard Engine" descr="Dashboard Engine"
+		mainUrl="/knowagedashboardengine/api/1.0/pages/execute" driverNm="it.eng.spagobi.engines.drivers.dashboard.DashboardDriver"
+		engineTypeCd="EXT" classNm="" biobjTypeCd="DASHBOARD"
+		useDataSet="false" useDataSource="false" encrypt="0" />
 	<ENGINE label="knowagewhatifengine" name="What-If Engine" descr="What-If Engine"
 		mainUrl="/knowagewhatifengine/restful-services/olap/startwhatif" driverNm="it.eng.spagobi.engines.drivers.whatif.WhatIfDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="OLAP" useDataSet="false"

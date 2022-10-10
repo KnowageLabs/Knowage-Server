@@ -37,6 +37,7 @@
                             :class="{
                                 'p-invalid': v$.dataset.qbeDatamarts.$invalid && v$.dataset.qbeDatamarts.$dirty
                             }"
+                            @change="getDriversData"
                             @before-show="v$.dataset.qbeDatamarts.$touch()"
                         />
                         <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.qbeDatamarts') }} * </label>
@@ -50,7 +51,7 @@
                 </div>
             </form>
             <div v-if="dataset.dsTypeCd == 'Qbe' || dataset.dsTypeCd == 'Federated'">
-                <Button :label="$t('managers.datasetManagement.viewQbeButton')" class="p-col-2 p-mr-2 p-button kn-button--primary" style="max-height:38px" @click="openQbeQueryDialog" />
+                <Button :label="$t('managers.datasetManagement.viewQbeButton')" class="p-col-2 p-mr-2 p-button kn-button--primary" style="max-height: 38px" @click="openQbeQueryDialog" />
                 <Button :label="$t('managers.datasetManagement.openQbeButton')" class="p-col-2 p-button kn-button--primary" :disabled="parentValid" @click="openDatasetInQBE" />
             </div>
         </template>
@@ -70,13 +71,14 @@
         <VCodeMirror class="kn-height-full" ref="codeMirror" v-model:value="qbeQuery" :options="codemirrorOptions" />
     </Dialog>
 
-    <QBE v-if="qbeVisible" :visible="qbeVisible" :dataset="dataset" @close="closeQbe" @datasetSaved="$emit('datasetSaved')" />
+    <QBE v-if="qbeVisible" :visible="qbeVisible" :dataset="qbeDataset" :returnQueryMode="true" :getQueryFromDatasetProp="getQueryFromDataset" @querySaved="onQbeDialogSave" @close="onQbeDialogClose" />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
-import VCodeMirror, { CodeMirror  } from 'codemirror-editor-vue3'
+import { AxiosResponse } from 'axios'
+import VCodeMirror, { CodeMirror } from 'codemirror-editor-vue3'
 import useValidate from '@vuelidate/core'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import qbeDescriptor from './DatasetManagementQbeDatasetDescriptor.json'
@@ -84,11 +86,12 @@ import Dropdown from 'primevue/dropdown'
 import Card from 'primevue/card'
 import Dialog from 'primevue/dialog'
 import QBE from '@/modules/qbe/QBE.vue'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     components: { Card, Dropdown, KnValidationMessages, Dialog, VCodeMirror, QBE },
     props: { parentValid: { type: Boolean }, selectedDataset: { type: Object as any }, dataSources: { type: Array as any }, businessModels: { type: Array as any } },
-    emits: ['touched', 'qbeSaved'],
+    emits: ['touched', 'qbeDialogClosed', 'qbeDialogSaved'],
     data() {
         return {
             qbeDescriptor,
@@ -98,6 +101,10 @@ export default defineComponent({
             qbeQueryDialogVisible: false,
             qbeVisible: false,
             codeMirror: {} as any,
+            qbeDataset: {} as any,
+            selectedBusinessModel: {} as any,
+            datsetBmChanged: false,
+            getQueryFromDataset: false,
             codemirrorOptions: {
                 readOnly: true,
                 mode: 'text/javascript',
@@ -148,12 +155,39 @@ export default defineComponent({
             }
             this.qbeQueryDialogVisible = true
         },
+        async getDriversData(event) {
+            this.datsetBmChanged = true
+            this.getQueryFromDataset = false
+            const bmId = this.businessModels.find((bm) => bm.name === event.value).id
+            await this.$http
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${bmId}`)
+                .then((response: AxiosResponse<any>) => {
+                    this.selectedBusinessModel = response.data
+                })
+                .catch()
+        },
         openDatasetInQBE() {
+            if (this.$route.name === 'new-dataset') {
+                this.qbeDataset = deepcopy(this.selectedBusinessModel)
+                this.getQueryFromDataset ? (this.qbeDataset.qbeJSONQuery = this.dataset.qbeJSONQuery) : ''
+            } else {
+                if (this.datsetBmChanged) {
+                    this.qbeDataset = deepcopy(this.selectedBusinessModel)
+                } else {
+                    this.qbeDataset = deepcopy(this.dataset)
+                }
+            }
+            this.qbeDataset.pars = this.dataset.pars
             this.qbeVisible = true
         },
-        closeQbe() {
+        onQbeDialogClose() {
             this.qbeVisible = false
-            this.$emit('qbeSaved')
+        },
+        onQbeDialogSave(query) {
+            this.dataset.qbeJSONQuery = query
+            this.datsetBmChanged = false
+            this.getQueryFromDataset = true
+            this.qbeVisible = false
         }
     }
 })

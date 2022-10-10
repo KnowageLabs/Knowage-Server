@@ -117,7 +117,12 @@ public class XlsxStreamingOutput implements StreamingOutput {
 			JSONObject currObj = fields.getJSONObject(i);
 
 			aliases.add(i, currObj.getString("alias"));
-			formats.add(i, currObj.getString("format"));
+
+			String format = null;
+			if (currObj.has("format")) {
+				format = currObj.getString("format");
+			}
+			formats.add(i, format);
 		}
 	}
 

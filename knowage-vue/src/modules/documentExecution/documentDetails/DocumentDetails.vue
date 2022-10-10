@@ -48,7 +48,7 @@
                     </template>
                     <OutputParamsTab :selectedDocument="selectedDocument" :typeList="parTypes" :dateFormats="dateFormats" />
                 </TabPanel>
-                <TabPanel v-if="this.selectedDocument?.id">
+                <TabPanel v-if="this.selectedDocument?.id && showDataLineageTab">
                     <template #header>
                         <span>{{ $t('documentExecution.documentDetails.dataLineage.title') }}</span>
                     </template>
@@ -153,6 +153,9 @@ export default defineComponent({
                 return this.selectedDocument.drivers.filter((parameter: any) => parameter.numberOfErrors > 0).length
             }
             return 0
+        },
+        showDataLineageTab(): boolean {
+            return (this.store.$state as any).user.functionalities.includes('DataSourceManagement')
         }
     },
     watch: {

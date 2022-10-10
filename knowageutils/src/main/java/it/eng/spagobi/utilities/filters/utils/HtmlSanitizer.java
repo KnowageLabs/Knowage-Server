@@ -65,7 +65,7 @@ public class HtmlSanitizer {
 				.allowCommonInlineFormattingElements()
 				.allowStandardUrlProtocols()
 				.allowStyling(CssSchema.union(CssSchema.DEFAULT, stylePropertiesInSVG))
-				.allowElements("a", "audio", "article", "figure", "footer", "header", "iframe", "input", "img", "label", "pre", "span", "tbody", "tfoot", "thead", "table", "td", "th", "tr", "video")
+				.allowElements("a", "audio", "article", "figure", "footer", "header", "hr", "iframe", "input", "img", "label", "pre", "span", "tbody", "tfoot", "thead", "table", "td", "th", "tr", "video","canvas","fieldset")
 				.allowAttributes("alt").onElements("img")
 				.allowAttributes("aria-hidden").globally()
 				.allowAttributes("height", "width").globally()
@@ -75,7 +75,9 @@ public class HtmlSanitizer {
 				.allowAttributes("src").matching(this::isSrcAttributeInWhitelist).onElements("audio", "iframe", "img", "video")
 				.allowAttributes("title").globally()
 				.allowAttributes("type", "value", "min", "max").onElements("input")
+				.allowAttributes("for").onElements("label")
 				.allowAttributes("frameborder", "allow", "allowfullscreen").onElements("iframe")
+				.allowAttributes("target").onElements("a")
 				.allowWithoutAttributes("figure", "span")
 				.allowUrlProtocols("data")
 				// Knowage

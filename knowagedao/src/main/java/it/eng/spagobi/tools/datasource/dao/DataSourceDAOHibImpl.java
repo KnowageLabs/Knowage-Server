@@ -37,6 +37,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -60,6 +61,7 @@ import it.eng.spagobi.commons.metadata.SbiOrganizationDatasourceId;
 import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.json.Xml;
+import it.eng.spagobi.security.utils.DataSourceJDBCPasswordManager;
 import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
@@ -301,12 +303,18 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibQuery = null;
+			aSession.disableFilter(TENANT_FILTER_NAME);
 
-			hibQuery = aSession.createQuery("select ds.sbiDataSource from SbiOrganizationDatasource ds where ds.sbiOrganizations.name = :tenantName");
-			hibQuery.setString("tenantName", getTenant());
+			Criteria c = aSession.createCriteria(SbiDataSource.class);
 
-			List hibList = hibQuery.list();
+			c.createAlias("sbiOrganizationDatasources", "sbiOrganizationDatasources");
+			c.createAlias("sbiOrganizationDatasources.sbiOrganizations", "sbiOrganizations");
+
+			Criterion eqOnOrganizationName = Restrictions.eq("sbiOrganizations.name", getTenant());
+
+			c.add(eqOnOrganizationName);
+
+			List hibList = c.list();
 			Iterator it = hibList.iterator();
 
 			while (it.hasNext()) {
@@ -323,8 +331,9 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 		} finally {
 			if (aSession != null) {
-				if (aSession.isOpen())
+				if (aSession.isOpen()) {
 					aSession.close();
+				}
 			}
 		}
 		logger.debug("OUT");
@@ -336,7 +345,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
-		List<IDataSource> realResult = new ArrayList<IDataSource>();
+		List<IDataSource> realResult = new ArrayList<>();
 
 		try {
 
@@ -346,12 +355,15 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibQuery = aSession.createQuery(
-					"select ds.sbiDataSource from SbiOrganizationDatasource ds where (ds.sbiOrganizations.name = :tenantName or ds.sbiDataSource.commonInfo.userIn = :userId) or length(ds.sbiDataSource.jndi) > 0");
-			hibQuery.setString("tenantName", getTenant());
-			hibQuery.setString("userId", profile.getUserId().toString());
+			aSession.disableFilter(TENANT_FILTER_NAME);
 
-			List hibList = hibQuery.list();
+			Criteria c = aSession.createCriteria(SbiDataSource.class);
+
+			Criterion eqOnOrganization = Restrictions.eq("commonInfo.organization", getTenant());
+
+			c.add(eqOnOrganization);
+
+			List hibList = c.list();
 			Iterator it = hibList.iterator();
 
 			while (it.hasNext()) {
@@ -368,8 +380,9 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 		} finally {
 			if (aSession != null) {
-				if (aSession.isOpen())
+				if (aSession.isOpen()) {
 					aSession.close();
+				}
 			}
 		}
 		logger.debug("OUT");
@@ -548,7 +561,9 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			hibDataSource.setJndi(aDataSource.getJndi());
 			hibDataSource.setUrl_connection(aDataSource.getUrlConnection());
 			hibDataSource.setUser(aDataSource.getUser());
-			hibDataSource.setPwd(aDataSource.getPwd());
+
+			String encPassword = DataSourceJDBCPasswordManager.encrypt(aDataSource.getPwd());
+			hibDataSource.setPwd(encPassword);
 			hibDataSource.setDriver(aDataSource.getDriver());
 			hibDataSource.setMultiSchema(aDataSource.getMultiSchema());
 
@@ -795,7 +810,8 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			ds.setJndi(hibDataSource.getJndi());
 			ds.setUrlConnection(hibDataSource.getUrl_connection());
 			ds.setUser(hibDataSource.getUser());
-			ds.setPwd(hibDataSource.getPwd());
+			String decryptedPassword = DataSourceJDBCPasswordManager.decrypt(hibDataSource.getPwd());
+			ds.setPwd(decryptedPassword);
 			ds.setDriver(hibDataSource.getDriver());
 			ds.setOwner(hibDataSource.getCommonInfo().getUserIn());
 			ds.setDialectName(hibDataSource.getDialect().getValueCd());
@@ -848,7 +864,10 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			sbiDataSource.setJndi(dataSource.getJndi());
 			sbiDataSource.setUrl_connection(dataSource.getUrlConnection());
 			sbiDataSource.setUser(dataSource.getUser());
-			sbiDataSource.setPwd(dataSource.getPwd());
+
+			String password = dataSource.getPwd();
+			String encPassword = DataSourceJDBCPasswordManager.encrypt(password);
+			sbiDataSource.setPwd(encPassword);
 			sbiDataSource.setDriver(dataSource.getDriver());
 			sbiDataSource.setDialectDescr(dataSource.getDialectName());
 			sbiDataSource.setSbiEngineses(dataSource.getEngines());

@@ -107,6 +107,7 @@ angular
             	 case "knowagechartengine":
             	 case "knowagenetworkengine":
             	 case "knowagecockpitengine":
+            	 case "knowagedashboardengine":
             	 case "knowagedossierengine":
             	 case "knowagekpiengine":
             	 case "knowagesvgviewerengine":

@@ -138,6 +138,7 @@
         "object": "Object",
         "ok": "ok",
         "onlineHelp": "Help Online",
+        "open": "Open",
         "operator": "Operator",
         "options": "Options",
         "order": "Order",
@@ -254,7 +255,8 @@
     "components": {
         "knCalculatedField": {
             "columnName": "Column Name",
-            "description": "Calculated field description",
+            "description": "Choose a name, select a type and add an expression for the calculated field. Drag and drop the functions and the fields from the list into the expression text area. Note that fields should be written the format $F{'{'}fieldName{'}'}",
+            "fieldName": "fieldName",
             "fields": "Fields",
             "formula": "Formula",
             "functions": "Functions",
@@ -673,6 +675,7 @@
             "deleteSuccess": "Successfully deleted selected activity.",
             "deleteTitle": "Delete dossier activity",
             "downloadMissingError": "Download ERROR - Document is missing",
+            "downloadTemplate": "Download document template",
             "headers": {
                 "activity": "Activity Name",
                 "partial": "Partial",
@@ -684,7 +687,10 @@
             "launchedActivities": "Launched activities for this document",
             "progressNotFinished": "Please wait until document will be generated.",
             "saveSuccess": "Activity successfully saved!",
-            "title": "Dossier"
+            "templateDownloadError": "Error downloading template",
+            "templateUploadError": "Error uploading template",
+            "title": "Dossier",
+            "uploadTemplate": "Upload document template"
         },
         "main": {
             "addToWorkspace": "Add to my workspace",
@@ -885,6 +891,8 @@
             "column": "Column/s",
             "filter": "Filter",
             "filters": "Filters",
+            "isEditableField": "Editable column. Click on a cell and select/enter the new value",
+            "numberFormatNotSupported": "Number format is not supported.",
             "select": "Select",
             "title": "Registry Document",
             "warning": "Warning",
@@ -1196,12 +1204,62 @@
     },
     "locale": {
         "dateFormat": "mm/dd/yy",
-        "dayNames": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-        "dayNamesMin": ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
-        "dayNamesShort": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+        "dayNames": [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday"
+        ],
+        "dayNamesMin": [
+            "Su",
+            "Mo",
+            "Tu",
+            "We",
+            "Th",
+            "Fr",
+            "Sa"
+        ],
+        "dayNamesShort": [
+            "Sun",
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat"
+        ],
         "firstDayOfWeek": 0,
-        "monthNames": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-        "monthNamesShort": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        "monthNames": [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"
+        ],
+        "monthNamesShort": [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec"
+        ],
         "today": "Today",
         "weekHeader": "Wk"
     },
@@ -1373,6 +1431,7 @@
             "hindDesc": "Hint about Description",
             "hindDescMessage": "This field set the description of the navigation visualizable within the selection popup. The popup will be shown if there are multiple cross navigations startable by the same document.It's possible to use parameters (output or input types) of the original document through the syntax $P(source_parameter_name).",
             "hint": "Cross-navigation management functionality allows you to create the link between document navigations. You can select the type of navigation and connect che parameters value from output to input. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "hintDrag": "To connect parameters between documents drag and drop them from the starting document to the target one.",
             "incompatibleTypes": "Incompatible types",
             "incompatibleTypesMessage": "{originParam} parameter's type not compatible with type of parameter {targetParam}",
             "input": "Input",
@@ -1455,6 +1514,9 @@
             "ckanXslSheetNumber": "Sheet Number",
             "confirmMsg": "You will lose all unsaved changes, are you sure you want to open Data Preparation?",
             "creationUser": "Creation User",
+            "dataPreparation": {
+                "datasetInvolvedIntoDataPrep": "Dataset is involved in a Data Preparation process, do you want to proceed?"
+            },
             "dataframeName": "Dataframe variable name",
             "decrypt": "Decrypt",
             "deleteAllParams": "Clear all dataset parameters",
@@ -1528,10 +1590,12 @@
             "restRequestBody": "Request Body",
             "restoreMsg": "Do you want to restore the dataset version?",
             "restoreTitle": "Restore dataset version",
+            "saveTitle": "Save dataset",
             "scheduling": "Scheduling",
             "scope": "Scope",
             "selectDatasetType": "DataSet Type",
             "selectedTables": "Selected Tables",
+            "showMetadataQueryInfo": "To update the metadata save the data set.",
             "solrCollection": "Collection",
             "solrFacetField": "Facet Field (comma-separated values)",
             "solrFacetPrefix": "Facet Prefix",
@@ -2400,6 +2464,7 @@
                         "label": "Merge columns"
                     },
                     "newChar": "New char",
+                    "numOfChars": "Number of characters",
                     "number": "Number",
                     "numberOfChars": "Number of characters",
                     "oldChar": "Old char",
@@ -2701,6 +2766,7 @@
     },
     "workspace": {
         "advancedData": {
+            "chooseDataset": "Choose dataset",
             "title": "Data preparation"
         },
         "buttonsTooltips": {

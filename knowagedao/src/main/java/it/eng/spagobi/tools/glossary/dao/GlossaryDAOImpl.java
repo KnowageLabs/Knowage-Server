@@ -515,9 +515,26 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 					}
 				} else {
 					// check if have word references
+					Set<Integer> wordIds = new HashSet<Integer>();
+					listWlistWord(contentId).forEach(x -> wordIds.add(x.getWordId()));
 
-					Query q = session.createQuery("delete from SbiGlWlist  where content.contentId=" + contentId);
-					q.executeUpdate();
+					logger.debug("Deleting from GlWlist where content.contentId=" + contentId);
+					Query q1 = session.createQuery("delete from SbiGlWlist where content.contentId=:contentId");
+					q1.setParameter("contentId", contentId);
+					q1.executeUpdate();
+
+					String queryString = "delete from SbiGlWord where wordId = :id";
+					wordIds.forEach(x -> {
+						Integer id = x;
+						List checkQueryList = existingWordsOnOtherContents(contentId, session, id);
+						if (checkQueryList.isEmpty()) {
+							logger.debug(String.format("Deleting from GlWord where wordId = %s", id));
+
+							Query q = session.createQuery(queryString);
+							q.setParameter("id", id);
+							q.executeUpdate();
+						}
+					});
 
 				}
 
@@ -526,6 +543,20 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 					session.delete(obj);
 				}
 				return true;
+			}
+
+			/**
+			 * @param contentId
+			 * @param session
+			 * @param id
+			 * @return
+			 */
+			private List existingWordsOnOtherContents(final Integer contentId, Session session, Integer id) {
+				Query checkQuery = session.createQuery("select word.wordId from SbiGlWlist sgw where word.wordId = :id and content.contentId <> :contentId");
+				checkQuery.setParameter("id", id);
+				checkQuery.setParameter("contentId", contentId);
+				List checkQueryList = checkQuery.list();
+				return checkQueryList;
 			}
 
 		});

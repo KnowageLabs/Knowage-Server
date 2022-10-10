@@ -31,8 +31,6 @@ import org.xml.sax.InputSource;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 
 /**
  * Defines method to manage dataset parametes
@@ -129,35 +127,6 @@ public class DataSetParametersList {
 		lovXML += "</ROWS></PARAMETERSLIST>";
 		logger.debug("OUT");
 		return lovXML;
-	}
-
-	/**
-	 * Returns the result of the Dataset using a user profile to fill the Datase profile attribute.
-	 *
-	 * @param profile
-	 *            the profile of the user
-	 *
-	 * @return the string result of the lov
-	 *
-	 * @throws Exception
-	 *             the exception
-	 */
-	public String getDataSetResult(IEngUserProfile profile) throws Exception {
-		logger.debug("IN");
-		String lovResult = "<ROWS>";
-		DataSetParameterItem lov = null;
-		Iterator iter = items.iterator();
-		while (iter.hasNext()) {
-			lov = (DataSetParameterItem) iter.next();
-			String name = lov.getName();
-			String type = lov.getType();
-			String defaultValue = lov.getDefaultValue();
-			lovResult += "<ROW" + " NAME=\"" + name + "\"" + " TYPE=\"" + type + "\"" + " " + DEFAULT_VALUE_XML + "=\"" + defaultValue + "\" />";
-		}
-		lovResult += "</ROWS>";
-		lovResult = StringUtilities.substituteProfileAttributesInString(lovResult, profile);
-		logger.debug("OUT");
-		return lovResult;
 	}
 
 	/**

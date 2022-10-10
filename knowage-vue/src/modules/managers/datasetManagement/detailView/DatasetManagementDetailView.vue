@@ -43,7 +43,7 @@
                     :rEnvironments="rEnvironments"
                     @fileUploaded="selectedDataset.fileUploaded = true"
                     @touched="$emit('touched')"
-                    @qbeSaved="getSelectedDataset"
+                    @queryEdited="showMetadataQueryInfo = true"
                 />
             </TabPanel>
 
@@ -51,7 +51,7 @@
                 <template #header>
                     <span>{{ $t('kpi.measureDefinition.metadata') }}</span>
                 </template>
-                <MetadataCard :selectedDataset="selectedDataset" @touched="$emit('touched')" />
+                <MetadataCard :selectedDataset="selectedDataset" :showMetadataQueryInfoProp="showMetadataQueryInfo" @touched="$emit('touched')" />
             </TabPanel>
 
             <TabPanel v-if="selectedDataset.dsTypeCd == 'Query'">
@@ -87,6 +87,7 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import WorkspaceDataPreviewDialog from '@/modules/workspace/views/dataView/dialogs/WorkspaceDataPreviewDialog.vue'
 import mainStore from '../../../../App.store'
+import { mapState } from 'pinia'
 
 export default defineComponent({
     components: { TabView, TabPanel, DetailCard, AdvancedCard, LinkCard, TypeCard, MetadataCard, WorkspaceDataPreviewDialog },
@@ -106,6 +107,9 @@ export default defineComponent({
         datasetToCloneId: { type: Number as any }
     },
     computed: {
+        ...mapState(mainStore, {
+            user: 'user'
+        }),
         buttonDisabled(): any {
             return this.v$.$invalid
         }
@@ -128,6 +132,7 @@ export default defineComponent({
             loading: false,
             loadingVersion: false,
             showPreviewDialog: false,
+            showMetadataQueryInfo: false,
             activeTab: 0
         }
     },
@@ -155,6 +160,15 @@ export default defineComponent({
                 .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.id}`)
                 .then((response: AxiosResponse<any>) => {
                     this.selectedDataset = response.data[0] ? { ...response.data[0] } : {}
+
+                    this.selectedDataset.restJsonPathAttributes ? (this.selectedDataset.restJsonPathAttributes = JSON.parse(this.selectedDataset.restJsonPathAttributes ? this.selectedDataset.restJsonPathAttributes : '[]')) : []
+                    this.selectedDataset.restRequestHeaders ? (this.selectedDataset.restRequestHeaders = JSON.parse(this.selectedDataset.restRequestHeaders ? this.selectedDataset.restRequestHeaders : '{}')) : {}
+
+                    if (this.selectedDataset.restRequestHeaders) {
+                        const restRequestHeadersKeys = Object.keys(this.selectedDataset.restRequestHeaders)
+                        this.selectedDataset.restRequestHeaders = restRequestHeadersKeys.map((e) => ({ name: e, value: this.selectedDataset.restRequestHeaders[e] }))
+                    }
+
                     this.selectedDataset.pythonEnvironment ? (this.selectedDataset.pythonEnvironment = JSON.parse(this.selectedDataset.pythonEnvironment ? this.selectedDataset.pythonEnvironment : '{}')) : ''
                 })
                 .catch()
@@ -217,18 +231,42 @@ export default defineComponent({
 
         //#region ===================== Save/Update Dataset & Tags =================================================
         async saveDataset() {
-            this.$emit('showSavingSpinner')
             let dsToSave = { ...this.selectedDataset } as any
-            let restRequestHeadersTemp = {}
-            if (dsToSave.dsTypeCd.toLowerCase() == 'rest' || dsToSave.dsTypeCd.toLowerCase() == 'solr') {
-                for (let i = 0; i < dsToSave.restRequestHeaders.length; i++) {
-                    restRequestHeadersTemp[dsToSave.restRequestHeaders[i]['name']] = dsToSave.restRequestHeaders[i]['value']
-                }
+			if (this.user?.functionalities?.includes('DataPreparation') && dsToSave.id) {
+                await this.$http
+                    .get(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/instance/dataset/' + dsToSave.id, { headers: { 'X-Disable-Interceptor': 'true' } })
+                    .then((response: AxiosResponse<any>) => {
+                    if (response.data) {
+                        this.$confirm.require({
+                            icon: 'pi pi-exclamation-triangle',
+                            message: this.$t('managers.datasetManagement.dataPreparation.datasetInvolvedIntoDataPrep'),
+                            header: this.$t('managers.datasetManagement.saveTitle'),
+                            accept: () => this.proceedOnSaving(dsToSave)
+                        })
+                    } else {
+                        this.proceedOnSaving(dsToSave)
+                    }
+                })
+                .catch((err) => {
+                    if (err.response.status === 404) this.proceedOnSaving(dsToSave)
+                    else this.$store.commit('setError', { title: 'Server error', msg: err.data.errors[0].message })
+                })
+            } else {
+                this.proceedOnSaving(dsToSave)
             }
-            dsToSave['restRequestHeaders'] = JSON.stringify(restRequestHeadersTemp)
-            dsToSave['restJsonPathAttributes'] && dsToSave['restJsonPathAttributes'].length > 0 ? (dsToSave.restJsonPathAttributes = JSON.stringify(dsToSave.restJsonPathAttributes)) : (dsToSave.restJsonPathAttributes = '')
+        },
+        async proceedOnSaving(dsToSave) {
+            this.$emit('showSavingSpinner')
+            if (dsToSave.dsTypeCd.toLowerCase() == 'rest' || dsToSave.dsTypeCd.toLowerCase() == 'solr') {
+                dsToSave.restRequestHeaders = (dsToSave.restRequestHeaders || []).reduce((acc, curr) => {
+                    acc[curr['name']] = curr['value']
+                    return acc
+                }, {})
+            }
+
             dsToSave.pars ? '' : (dsToSave.pars = [])
             dsToSave.pythonEnvironment ? (dsToSave.pythonEnvironment = JSON.stringify(dsToSave.pythonEnvironment)) : ''
+
             dsToSave.meta ? (dsToSave.meta = await this.manageDatasetFieldMetadata(dsToSave.meta)) : (dsToSave.meta = [])
             dsToSave.recalculateMetadata = true
 
@@ -254,6 +292,7 @@ export default defineComponent({
                 .catch()
                 .finally(() => this.$emit('hideSavingSpinner'))
         },
+
         async saveTags(dsToSave, id) {
             let tags = {} as any
             tags.versNum = dsToSave.versNum + 1
@@ -424,7 +463,7 @@ export default defineComponent({
                     }
                 }
                 this.previewDataset['restRequestHeaders'] = JSON.stringify(restRequestHeadersTemp)
-                this.previewDataset['restJsonPathAttributes'] && this.previewDataset['restJsonPathAttributes'].length > 0 ? (this.previewDataset.restJsonPathAttributes = JSON.stringify(this.previewDataset.restJsonPathAttributes)) : (this.previewDataset.restJsonPathAttributes = '')
+                this.previewDataset['restJsonPathAttributes'] && this.previewDataset['restJsonPathAttributes'].length > 0 ? (this.previewDataset.restJsonPathAttributes = JSON.stringify(this.previewDataset.restJsonPathAttributes)) : (this.previewDataset.restJsonPathAttributes = [])
                 this.previewDataset.pars ? '' : (this.previewDataset.pars = [])
                 this.previewDataset.pythonEnvironment ? (this.previewDataset.pythonEnvironment = JSON.stringify(this.previewDataset.pythonEnvironment)) : ''
                 this.previewDataset.meta ? (this.previewDataset.meta = await this.manageDatasetFieldMetadata(this.previewDataset.meta)) : (this.previewDataset.meta = [])

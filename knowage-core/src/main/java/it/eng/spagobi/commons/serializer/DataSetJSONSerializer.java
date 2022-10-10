@@ -31,6 +31,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.knowage.parameter.ParameterManagerFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -209,8 +210,14 @@ public class DataSetJSONSerializer implements Serializer {
 						JSONObject jsonPar = new JSONObject();
 						jsonPar.put("name", name);
 						jsonPar.put("type", type);
-						jsonPar.put(ManageDatasets.DEFAULT_VALUE_PARAM, defaultValue);
 						jsonPar.put("multiValue", multiValue);
+
+						Object defaultValueAsObject = ParameterManagerFactory.getInstance()
+								.defaultManager()
+								.fromBeToFe(type, defaultValue, multiValue);
+
+						jsonPar.put(ManageDatasets.DEFAULT_VALUE_PARAM, defaultValueAsObject);
+
 						parsListJSON.put(jsonPar);
 					}
 				}

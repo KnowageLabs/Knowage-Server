@@ -24,6 +24,8 @@ import { defineComponent, PropType } from 'vue'
 import { iMondrianTemplate, iMondrianSchema } from '../../DocumentDetails'
 import Dropdown from 'primevue/dropdown'
 import { AxiosResponse } from 'axios'
+import { mapActions } from 'pinia'
+import mainStore from '@/App.store'
 
 export default defineComponent({
     name: 'document-detail-mondrian-form',
@@ -46,6 +48,7 @@ export default defineComponent({
         this.loadModel()
     },
     methods: {
+        ...mapActions(mainStore, ['setLoading']),
         loadModel() {
             this.model = this.mondrianModel as iMondrianTemplate
         },
@@ -60,9 +63,12 @@ export default defineComponent({
         async loadCubes() {
             if (!this.selectedMondrianSchema) return
 
-            this.store.setLoading(true)
-            await this.$http.get(import.meta.env.VITE_OLAP_PATH + `1.0/designer/allcubes/${this.selectedMondrianSchema.currentContentId}?SBI_EXECUTION_ID=${this.sbiExecutionId}`).then((response: AxiosResponse<any>) => (this.cubes = response.data))
-            this.store.setLoading(false)
+            this.setLoading(true)
+            await this.$http
+                .get(import.meta.env.VITE_OLAP_PATH + `1.0/designer/allcubes/${this.selectedMondrianSchema.currentContentId}?SBI_EXECUTION_ID=${this.sbiExecutionId}`)
+                .then((response: AxiosResponse<any>) => (this.cubes = response.data))
+                .catch(() => {})
+            this.setLoading(false)
         },
         onCubeSelected() {
             if (!this.selectedCube) return
@@ -72,14 +78,15 @@ export default defineComponent({
         async loadMDX() {
             if (!this.selectedMondrianSchema || !this.selectedCube) return
 
-            this.store.setLoading(true)
+            this.setLoading(true)
             await this.$http
                 .get(import.meta.env.VITE_OLAP_PATH + `1.0/designer/cubes/getMDX/${this.selectedMondrianSchema.currentContentId}/${this.selectedCube}?SBI_EXECUTION_ID=${this.sbiExecutionId}`, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then((response: AxiosResponse<any>) => {
                     this.model.mdxQuery = response.data
                     this.model.mondrianMdxQuery = response.data
                 })
-            this.store.setLoading(false)
+                .catch(() => {})
+            this.setLoading(false)
         }
     }
 })

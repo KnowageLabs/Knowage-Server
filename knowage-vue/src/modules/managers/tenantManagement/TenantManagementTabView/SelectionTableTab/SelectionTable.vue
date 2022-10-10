@@ -27,6 +27,7 @@
                 </template>
                 <Column selectionMode="multiple" :style="tabViewDescriptor.column.style" dataKey="ID"></Column>
                 <Column field="LABEL" :header="$t('common.name')"></Column>
+                <Column v-if="dataList && dataList.length > 0 && dataList[0].DESCRIPTION" field="DESCRIPTION" :header="$t('common.description')"></Column>
             </DataTable>
         </template>
     </Card>

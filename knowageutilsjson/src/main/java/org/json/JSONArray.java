@@ -18,6 +18,8 @@
 package org.json;
 
 import java.lang.reflect.Array;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -280,6 +282,10 @@ public class JSONArray extends AbstractJSONArray implements ICommonObject {
 				rootNode.add((Float) wrappedValue);
 			} else if (wrappedValue instanceof Double) {
 				rootNode.add((Double) wrappedValue);
+			} else if (wrappedValue instanceof BigDecimal) {
+				rootNode.add((BigDecimal) wrappedValue);
+			} else if (wrappedValue instanceof BigInteger) {
+				rootNode.add((BigInteger) wrappedValue);
 			} else if (wrappedValue instanceof String) {
 				rootNode.add((String) wrappedValue);
 			} else if (wrappedValue instanceof JSONObject) {
