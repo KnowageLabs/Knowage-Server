@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 export interface IDashboard {
     sheets: [],
     widgets: ITableWidget[],
@@ -23,8 +22,6 @@ export interface IDatasetParameter {
     value: string
 }
 
-=======
->>>>>>> dc68877ffd14f0090fd401cad46f3e8a404b13a0
 export interface ISheet {
     label: string
     icon?: string
@@ -33,7 +30,6 @@ export interface ISheet {
 
 export interface IWidget {
     id?: string
-<<<<<<< HEAD
     dataset: number | null
     type: string
     columns: IWidgetColumn[]
@@ -403,49 +399,16 @@ export interface IWidgetColumnFilter {
     operator: string
     value: string
     value2?: string
-=======
-    type: string
-    columns: IWidgetColumn[]
-    conditionalStyles: any[]
-    datasets: any[]
-    interactions: any[]
-    theme: string
-    styles: any
-    settings: any
-    temp?: any
-    functions?: any,
-    new?: boolean
-}
-
-export interface IWidgetColumn {
-    dataset: number
-    name: string
-    alias: string
-    type: string
-    fieldType: string
-    aggregation: string
-    style: any,
-    enableTooltip?: boolean,
-    visType?: string
-}
-
-export interface IInteraction {
-    type: string
->>>>>>> dc68877ffd14f0090fd401cad46f3e8a404b13a0
 }
 
 export interface IWidgetEditorDataset {
     id: number
     label: string
     cache: boolean
-<<<<<<< HEAD
     dsLabel?: string
     parameters?: any[]
     drivers?: any[]
     indexes?: any[]
-=======
-    parameters: any[]
->>>>>>> dc68877ffd14f0090fd401cad46f3e8a404b13a0
 }
 export interface IWidgetPickerType {
     cssClass: string
@@ -534,16 +497,10 @@ export interface IDataset {
     isRealtime: boolean
     isCachingSupported: boolean
     isIterable: boolean
-<<<<<<< HEAD
     isNearRealtimeSupported: boolean
     cache?: boolean
     indexes?: any[]
     drivers?: any[]
-=======
-    isNearRealtimeSupported: boolean,
-    cache?: boolean,
-    indexes?: any[]
->>>>>>> dc68877ffd14f0090fd401cad46f3e8a404b13a0
 }
 
 interface IDatasetParameters {
@@ -569,17 +526,11 @@ interface IAssociationField {
 
 export interface IModelDataset {
     id: number
-<<<<<<< HEAD
     dsLabel?: string
     cache: boolean
     indexes: string[]
     parameters: IModelDatasetParameter[]
     drivers: any[]
-=======
-    cache: boolean
-    indexes: string[]
-    parameters: IModelDatasetParameter[]
->>>>>>> dc68877ffd14f0090fd401cad46f3e8a404b13a0
 }
 
 interface IModelDatasetParameter {
@@ -590,7 +541,6 @@ interface IModelDatasetParameter {
 }
 
 export interface IIcon {
-<<<<<<< HEAD
     category: string
     className: string
     fontFamily: string
@@ -621,9 +571,3 @@ export interface IVariable {
     attribute?: string,
     driver?: string
 }
-=======
-    id: number
-    name: string
-    value: string
-}
->>>>>>> dc68877ffd14f0090fd401cad46f3e8a404b13a0
