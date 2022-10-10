@@ -26,9 +26,7 @@ export default defineComponent({
             gridApi: null as any,
             gridColumnApi: null as any,
             gridOptions: {
-                // PROPERTIES
                 rowData: [],
-
                 columnDefs: [
                     { headerName: 'Dataset', field: 'ds' },
                     { headerName: 'Column Name', field: 'columnName' },
