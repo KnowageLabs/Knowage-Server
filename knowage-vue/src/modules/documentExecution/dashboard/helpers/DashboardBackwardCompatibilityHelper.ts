@@ -1,6 +1,7 @@
 import deepcopy from 'deepcopy'
 import cryptoRandomString from 'crypto-random-string'
 import { formatTableWidget } from './tableWidget/TableWidgetCompatibilityHelper'
+import { formatSelectorWidget } from '@/modules/documentExecution/dashboard/helpers/selectorWidget/SelectorWidgetCompatibilityHelper'
 import { IDatasetParameter, IWidgetEditorDataset } from '../Dashboard'
 
 export const formatModel = (model: any) => {
@@ -18,6 +19,8 @@ export const formatModel = (model: any) => {
         const formattedSheet = formatSheet(model.sheets[i], formattedModel)
         formattedModel.sheets.push(formattedSheet)
     }
+
+    console.log("FORMATTED MODEL: ", formattedModel)
     return formattedModel
 }
 
@@ -118,9 +121,13 @@ const checkIfWidgetInModel = (widget: any, formattedModel: any) => {
 export const formatWidget = (widget: any) => {
     let formattedWidget = {} as any
 
+    console.log(">>>>>>>>>>>>>", widget.type)
+
     switch (widget.type) {
         case 'table':
             formattedWidget = formatTableWidget(widget)
+        case 'selector':
+            formattedWidget = formatSelectorWidget(widget)
     }
 
     return formattedWidget
