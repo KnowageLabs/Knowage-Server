@@ -13,3 +13,7 @@ export const getDefaultValues = () => {
 export const getDefaultValuesManagement = () => {
     return deepcopy(descriptor.defaultValuesManagement) as ISelectorWidgetValuesManagement
 }
+
+export const getDefaultLabelStyle = () => {
+    return deepcopy(descriptor.defaultLabelStyle) as ISelectorWidgetValuesManagement
+}

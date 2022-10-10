@@ -1,11 +1,12 @@
 import { IWidgetTitle } from "../../Dashboard"
-import { ISelectorWidgetStyle } from "../../interfaces/DashboardSelectorWidget"
+import { ISelectorWidgetLabelStyle, ISelectorWidgetStyle } from "../../interfaces/DashboardSelectorWidget"
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
+import * as selectorWidgetDefaultValues from '../../widget/WidgetEditor/helpers/selectorWidget/SelectorWidgetDefaultValues'
 
 export const getFormattedStyle = (widget: any) => {
     return {
         title: getFormattedTitleStyle(widget),
-        label: {},
+        label: getFormattedLabelStyle(widget),
         background: {},
         padding: {},
         borders: {}
@@ -31,4 +32,22 @@ const getFormattedTitleStyle = (widget: any) => {
 
     return formattedTitleStyle
 
-} 
+}
+
+const getFormattedLabelStyle = (widget) => {
+    if (!widget.style) return selectorWidgetDefaultValues.getDefaultLabelStyle()
+    const formattedLabelStyle = {
+        wrapText: widget.settings.wrapText ?? '',
+        properties: {
+            'font-weight': widget.style['font-weight'] ?? '',
+            'font-style': widget.style['font-style'] ?? '',
+            'font-size': widget.style['font-size'] ?? '',
+            'font-family': widget.style['font-family'] ?? '',
+            'justify-content': widget.style['justify-content'] ?? '',
+            color: widget.style.color ?? '',
+            'background-color': widget.style['background-color'] ?? '',
+        }
+    } as ISelectorWidgetLabelStyle
+
+    return formattedLabelStyle
+}
