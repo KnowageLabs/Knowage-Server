@@ -1,3 +1,5 @@
+import { ISelectionsWidgetSettings } from '@/modules/documentExecution/dashboard/interfaces/DashboardSelectionsWidget'
+
 export interface IDashboard {
     sheets: [],
     widgets: ITableWidget[],
@@ -33,7 +35,7 @@ export interface IWidget {
     dataset: number | null
     type: string
     columns: IWidgetColumn[]
-    settings: ITableWidgetSettings
+    settings: ITableWidgetSettings | ISelectionsWidgetSettings
     new?: boolean
 }
 
@@ -571,3 +573,4 @@ export interface IVariable {
     attribute?: string,
     driver?: string
 }
+

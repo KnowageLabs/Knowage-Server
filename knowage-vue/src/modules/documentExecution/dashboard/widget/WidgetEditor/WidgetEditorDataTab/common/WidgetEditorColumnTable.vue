@@ -18,7 +18,7 @@
                 <template #empty>
                     {{ $t('common.info.noDataFound') }}
                 </template>
-                <Column v-if="settings.rowReorder" :rowReorder="settings.rowReorder?.enabled" :style="settings.rowReorder.rowReorderColumnStyle" />
+                <Column v-if="rowReorderEnabled" :rowReorder="rowReorderEnabled" :style="settings.rowReorder.rowReorderColumnStyle" />
                 <Column>
                     <template #body="slotProps">
                         <i :class="getIcon(slotProps.data)"></i>
@@ -72,13 +72,18 @@ export default defineComponent({
     name: 'widget-editor-column-table',
     components: { Column, DataTable, Dropdown },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, items: { type: Array, required: true }, settings: { type: Object, required: true } },
-    emits: ['rowReorder', 'itemUpdated', 'itemSelected', 'itemDeleted', 'itemAdded'],
+    emits: ['rowReorder', 'itemUpdated', 'itemSelected', 'itemDeleted', 'itemAdded', 'singleItemReplaced'],
     data() {
         return {
             descriptor,
             rows: [] as IWidgetColumn[],
             filters: {} as any,
             inputValuesMap: {}
+        }
+    },
+    computed: {
+        rowReorderEnabled(): boolean {
+            return this.widgetModel && this.widgetModel.type === 'table'
         }
     },
     watch: {
@@ -123,7 +128,11 @@ export default defineComponent({
             if (event.dataTransfer.getData('text/plain') === 'b') return
             const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
             const tempColumn = createNewWidgetColumn(eventData)
-            this.rows.push(tempColumn as IWidgetColumn)
+            if (this.widgetModel.type === 'table') {
+                this.rows.push(tempColumn as IWidgetColumn)
+            } else {
+                this.rows = [tempColumn]
+            }
             this.$emit('itemAdded', tempColumn)
         },
         deleteItem(item: IWidgetColumn, index: number) {
