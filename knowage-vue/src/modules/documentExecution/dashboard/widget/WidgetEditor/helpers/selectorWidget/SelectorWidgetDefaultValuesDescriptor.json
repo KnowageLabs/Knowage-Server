@@ -1,0 +1,12 @@
+{
+    "defaultSelectorType": {
+        "alignment": "vertical",
+        "columnSize": "",
+        "modality": "radio"
+    },
+    "defaultValues": {
+        "enabled": false,
+        "value": "",
+        "valueType": ""
+    }
+}

@@ -3,6 +3,7 @@ import { formatTableWidgetForSave } from './tableWidget/TableWidgetBackendSaveHe
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
 import * as  tableWidgetDefaultValues from './tableWidget/TableWidgetDefaultValues'
+import * as widgetCommonDefaultValues from './common/WidgetCommonDefaultValues'
 
 export function createNewWidget() {
 
@@ -45,7 +46,7 @@ export function createNewWidget() {
             },
             tooltips: tableWidgetDefaultValues.getDefaultTooltips(),
             visualization: tableWidgetDefaultValues.getDefaultVisualizations(),
-            responsive: tableWidgetDefaultValues.getDefaultResponsivnes()
+            responsive: widgetCommonDefaultValues.getDefaultResponsivnes()
 
         }
 

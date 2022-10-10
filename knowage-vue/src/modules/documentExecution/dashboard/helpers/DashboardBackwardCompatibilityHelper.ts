@@ -121,8 +121,6 @@ const checkIfWidgetInModel = (widget: any, formattedModel: any) => {
 export const formatWidget = (widget: any) => {
     let formattedWidget = {} as any
 
-    console.log(">>>>>>>>>>>>>", widget.type)
-
     switch (widget.type) {
         case 'table':
             formattedWidget = formatTableWidget(widget)

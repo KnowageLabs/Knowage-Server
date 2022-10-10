@@ -95,7 +95,3 @@ export const getDefaultVisibilityCondition = () => {
 export const getDefaultTooltips = () => {
     return deepcopy(descriptor.defaultTooltips) as ITableWidgetTooltipStyle[]
 }
-
-export const getDefaultResponsivnes = () => {
-    return deepcopy(descriptor.defaultResponsivnes) as IWidgetResponsive
-}
