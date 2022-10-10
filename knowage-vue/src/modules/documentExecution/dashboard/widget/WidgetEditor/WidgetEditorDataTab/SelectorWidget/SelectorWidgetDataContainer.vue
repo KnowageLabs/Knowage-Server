@@ -17,6 +17,7 @@
             </Dropdown>
         </div>
         <WidgetEditorColumnTable class="p-m-2" :widgetModel="widgetModel" :items="columnTableItems" :settings="descriptor.columnTableSettings" @itemAdded="onColumnAdded" @itemUpdated="onColumnItemUpdate" @itemSelected="setSelectedColumn" @itemDeleted="onColumnDelete"></WidgetEditorColumnTable>
+        <WidgetEditorFilterForm v-if="selectedColumn" :column="selectedColumn"></WidgetEditorFilterForm>
     </div>
 </template>
 
@@ -29,10 +30,11 @@ import descriptor from '../TableWidget/TableWidgetDataDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import commonDescriptor from '../common/WidgetCommonDescriptor.json'
 import WidgetEditorColumnTable from '../common/WidgetEditorColumnTable.vue'
+import WidgetEditorFilterForm from '../common/WidgetEditorFilterForm.vue'
 
 export default defineComponent({
     name: 'selector-widget-data-container',
-    components: { Dropdown, WidgetEditorColumnTable },
+    components: { Dropdown, WidgetEditorColumnTable, WidgetEditorFilterForm },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {
@@ -70,6 +72,7 @@ export default defineComponent({
             if (this.widgetModel.columns[0].id === this.selectedColumn?.id) this.selectedColumn = { ...this.widgetModel.columns[0] }
         },
         setSelectedColumn(column: IWidgetColumn) {
+            console.log('AAAAAAAAAAAA')
             this.selectedColumn = { ...column }
         },
         onColumnDelete(column: IWidgetColumn) {
