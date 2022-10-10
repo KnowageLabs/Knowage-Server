@@ -20,16 +20,20 @@ package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
 import com.hazelcast.core.IMap;
 
 import it.eng.spagobi.cache.dao.ICacheDAO;
+import it.eng.spagobi.cache.metadata.SbiCacheItem;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -99,7 +103,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 
 	/**
 	 * Returns the number of bytes used by the table already cached (approximate)
-	 * 
+	 *
 	 * @throws DataBaseException
 	 */
 
@@ -113,7 +117,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 
 	/**
 	 * Returns the number of bytes available in the cache (approximate)
-	 * 
+	 *
 	 * @throws DataBaseException
 	 */
 
@@ -202,6 +206,12 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		addCacheItem(dataSetName, resultsetSignature, new HashMap<String, Object>(0), tableName, dimension);
 	}
 
+	/**
+	 * Add cache item.
+	 *
+	 * TODO : a call to {@link #removeCacheItem(String)} or {@link #removeCacheItem(String, boolean)} before this method
+	 * is actually a requirement.
+	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void addCacheItem(String dataSetName, String resultsetSignature, Map<String, Object> properties, String tableName, BigDecimal dimension) {
@@ -210,8 +220,6 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
 		mapLocks.lock(hashedSignature); // it is possible to use also the method tryLock(...) with timeout parameter
 		try {
-			removeCacheItem(resultsetSignature);
-
 			CacheItem item = new CacheItem();
 			item.setName(dataSetName);
 			item.setTable(tableName);
@@ -247,11 +255,11 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 			mapLocks.unlock(hashedSignature);
 		}
 	}
-	
+
 	/**
 	 * Updates all items in sbi_cache_item setting the correct dimension calculated
 	 * on the effective DB space occupation.
-	 * 
+	 *
 	 */
 	@Override
 	public void updateAllCacheItems(IDataSource dataSource) {
@@ -266,18 +274,22 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 			}
 			cacheDao.updateCacheItem(cacheItem);
 		}
-		
+
 	}
 
+	/**
+	 * @return Table names of the removed cache items
+	 */
 	@Override
-	public void removeCacheItem(String signature) {
+	public Set<String> removeCacheItem(String signature) {
+		Set<String> ret = Collections.emptySet();
 		String hashedSignature = Helper.sha256(signature);
 
 		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
 		mapLocks.lock(hashedSignature); // it is possible to use also the method tryLock(...) with timeout parameter
 		try {
 			if (containsCacheItem(signature)) {
-				cacheDao.deleteCacheItemBySignature(hashedSignature);
+				ret = getTableNameSet(cacheDao.deleteCacheItemBySignature(hashedSignature));
 				logger.debug("The dataset with signature[" + signature + "] and hash [" + hashedSignature + "] has been updated");
 			} else {
 				logger.debug("The dataset with signature[" + signature + "] and hash [" + hashedSignature + "] does not exist in cache");
@@ -285,16 +297,22 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		} finally {
 			mapLocks.unlock(hashedSignature);
 		}
+
+		return ret;
 	}
 
-	public void removeCacheItem(String signature, boolean isHash) {
+	/**
+	 * @return Table names of the removed cache items
+	 */
+	public Set<String> removeCacheItem(String signature, boolean isHash) {
+		Set<String> ret = Collections.emptySet();
 		if (isHash) {
 			IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME,
 					SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
 			mapLocks.lock(signature); // it is possible to use also the method tryLock(...) with timeout parameter
 			try {
 				if (containsCacheItem(signature, true)) {
-					cacheDao.deleteCacheItemBySignature(signature);
+					ret = getTableNameSet(cacheDao.deleteCacheItemBySignature(signature));
 					logger.debug("The dataset with hash [" + signature + "] has been deleted");
 				} else {
 					logger.debug("The dataset with hash [" + signature + "] does not exist in cache");
@@ -303,8 +321,10 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 				mapLocks.unlock(signature);
 			}
 		} else {
-			removeCacheItem(signature);
+			ret = removeCacheItem(signature);
 		}
+
+		return ret;
 	}
 
 	@Override
@@ -399,6 +419,12 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 
 	public String getTableNamePrefix() {
 		return cacheConfiguration.getTableNamePrefix().toUpperCase();
+	}
+
+	private Set<String> getTableNameSet(List<SbiCacheItem> cacheItems) {
+		return cacheItems.stream()
+				.map(SbiCacheItem::getTableName)
+				.collect(Collectors.toSet());
 	}
 
 }
