@@ -254,7 +254,7 @@ export default defineComponent({
     computed: {
         canEditCockpit(): boolean {
             if (!this.user || !this.document) return false
-            return (this.document.engine.equalsIgnoreCase('knowagecockpitengine') || this.document.engine.equalsIgnoreCase('knowagedashboardengine')) && (this.user.functionalities?.includes('DocumentAdminManagement') || this.document.creationUser === this.user.userId)
+            return (this.document.engine?.toLowerCase() === 'knowagecockpitengine' || this.document.engine?.toLowerCase() === 'knowagedashboardengine') && (this.user.functionalities?.includes('DocumentAdminManagement') || this.document.creationUser === this.user.userId)
         },
         sessionRole(): string | null {
             if (!this.user) return null
