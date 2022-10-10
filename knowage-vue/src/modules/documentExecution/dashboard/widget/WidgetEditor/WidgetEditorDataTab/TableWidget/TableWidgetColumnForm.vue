@@ -22,7 +22,7 @@
 
         <hr />
 
-        <WidgetEditorFilterForm v-if="column.filter" :column="column"></WidgetEditorFilterForm>
+        <WidgetEditorFilterForm v-if="column.filter" :propColumn="column"></WidgetEditorFilterForm>
     </div>
 </template>
 

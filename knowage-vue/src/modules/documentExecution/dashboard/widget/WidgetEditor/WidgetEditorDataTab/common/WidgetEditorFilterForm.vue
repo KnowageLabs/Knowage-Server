@@ -1,5 +1,6 @@
 <template>
     <div v-if="column">
+        {{ column }}
         <div class="p-d-flex p-flex-row p-ai-center">
             <div class="kn-flex p-m-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.enableFilter') }}</label>
@@ -38,14 +39,25 @@ import Dropdown from 'primevue/dropdown'
 export default defineComponent({
     name: 'widget-editor-filter-form',
     components: { InputSwitch, Dropdown },
-    props: { column: { type: Object as PropType<IWidgetColumn | null>, required: true } },
+    props: { propColumn: { type: Object as PropType<IWidgetColumn | null>, required: true } },
     data() {
         return {
-            descriptor
+            descriptor,
+            column: null as IWidgetColumn | null
         }
     },
-    async created() {},
+    watch: {
+        propColumn() {
+            this.loadColumn()
+        }
+    },
+    created() {
+        this.loadColumn()
+    },
     methods: {
+        loadColumn() {
+            this.column = this.propColumn
+        },
         selectedColumnUpdated() {
             emitter.emit('selectedColumnUpdated', this.column)
         },

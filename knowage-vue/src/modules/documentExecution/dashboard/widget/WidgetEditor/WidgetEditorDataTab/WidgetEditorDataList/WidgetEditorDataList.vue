@@ -1,10 +1,10 @@
 <template>
-    <div class="dashboard-editor-list-card-container p-m-3">
+    <div v-if="widgetModel" class="dashboard-editor-list-card-container p-m-3">
         <span class="p-float-label p-mx-2 p-mt-4 p-mb-1">
             <Dropdown id="dataset" class="kn-material-input kn-width-full" v-model="selectedDataset" :options="datasetOptions" optionLabel="label" @change="onDatasetSelected"></Dropdown>
             <label for="dataset" class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.selectDataset') }} </label>
         </span>
-        <div class="p-col-12 p-d-flex">
+        <div v-if="widgetModel.type !== 'selector'" class="p-col-12 p-d-flex">
             <label class="kn-material-input-label p-as-center p-ml-1"> {{ $t('common.columns') }} </label>
             <Button :label="$t('common.addColumn')" icon="pi pi-plus-circle" class="p-button-outlined p-ml-auto p-mr-1" @click="createNewCalcField"></Button>
         </div>

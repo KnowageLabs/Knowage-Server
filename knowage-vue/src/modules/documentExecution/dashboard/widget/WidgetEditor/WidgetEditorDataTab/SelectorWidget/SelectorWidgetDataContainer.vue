@@ -17,7 +17,7 @@
             </Dropdown>
         </div>
         <WidgetEditorColumnTable class="p-m-2" :widgetModel="widgetModel" :items="columnTableItems" :settings="descriptor.columnTableSettings" @itemAdded="onColumnAdded" @itemUpdated="onColumnItemUpdate" @itemSelected="setSelectedColumn" @itemDeleted="onColumnDelete"></WidgetEditorColumnTable>
-        <WidgetEditorFilterForm v-if="selectedColumn" :column="selectedColumn"></WidgetEditorFilterForm>
+        <WidgetEditorFilterForm v-if="selectedColumn" :propColumn="selectedColumn"></WidgetEditorFilterForm>
     </div>
 </template>
 
@@ -60,6 +60,7 @@ export default defineComponent({
         onColumnAdded(column: IWidgetColumn) {
             if (this.widgetModel.columns.length > 0) {
                 emitter.emit('columnRemoved', this.widgetModel.columns[0])
+                this.selectedColumn = null
             }
             this.widgetModel.columns = [column]
             emitter.emit('columnAdded', column)
@@ -72,7 +73,6 @@ export default defineComponent({
             if (this.widgetModel.columns[0].id === this.selectedColumn?.id) this.selectedColumn = { ...this.widgetModel.columns[0] }
         },
         setSelectedColumn(column: IWidgetColumn) {
-            console.log('AAAAAAAAAAAA')
             this.selectedColumn = { ...column }
         },
         onColumnDelete(column: IWidgetColumn) {
