@@ -17,6 +17,7 @@ import { getFormattedInteractions } from './TableWidgetInteractionsHelper'
 import { getFormattedStyle } from './TableWidgetStyleHelper'
 import { getSettingsFromWidgetColumns } from './TableWidgetColumnSettingsHelper'
 import * as tableWidgetDefaultValues from '../../widget/WidgetEditor/helpers/tableWidget/TableWidgetDefaultValues'
+import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import cryptoRandomString from 'crypto-random-string'
 
 const columnNameIdMap = {}
@@ -74,7 +75,7 @@ const getFormattedWidgetSettings = (widget: any) => {
         style: getFormattedStyle(widget) as ITableWidgetStyle,
         tooltips: tableWidgetDefaultValues.getDefaultTooltips() as ITableWidgetTooltipStyle[],
         visualization: tableWidgetDefaultValues.getDefaultVisualizations(),
-        responsive: tableWidgetDefaultValues.getDefaultResponsivnes() as IWidgetResponsive
+        responsive: widgetCommonDefaultValues.getDefaultResponsivnes() as IWidgetResponsive
     } as ITableWidgetSettings
     return formattedSettings
 }

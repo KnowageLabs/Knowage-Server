@@ -126,13 +126,6 @@
         "parameters": [],
         "type": ""
     },
-    "defaultResponsivnes": {
-        "lg": true,
-        "md": true,
-        "sm": true,
-        "xl": true,
-        "xs": true
-    },
     "defaultRowsConfiguration": {
         "indexColumn": false,
         "rowSpan": {

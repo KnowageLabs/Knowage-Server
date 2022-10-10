@@ -1,5 +1,6 @@
 <template>
     <div class="p-d-flex p-flex-column p-ai-stretch p-jc-center kn-overflow" :style="descriptor.style.preview">
+        {{ propWidget }}
         <TableWidget class="p-m-2" v-if="propWidget.settings" :propWidget="propWidget" :datasets="datasets" :editorMode="true" style="height: 30%" />
     </div>
 </template>

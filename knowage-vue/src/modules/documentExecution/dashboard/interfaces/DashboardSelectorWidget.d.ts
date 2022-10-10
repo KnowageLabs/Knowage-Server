@@ -1,6 +1,7 @@
 import { IWidgetResponsive, IWidgetTitle, IWidgetPaddingStyle, IWidgetBordersStyle } from '../Dashboard'
 
 export interface ISelectorWidgetSettings {
+    isDateType: boolean,
     sortingOrder: string
     updatable: boolean,
     clickable: boolean,
@@ -12,7 +13,7 @@ export interface ISelectorWidgetSettings {
 }
 
 export interface ISelectorWidgetSelectorType {
-    modality: "radio" | "checkbox" | "dropdown" | "multipleDropdown" | "datepicker" | "dateRange",
+    modality: "singleValue" | "multiValue" | "dropdown" | "multiDropdown" | "datepicker" | "dateRange",
     alignment: "vertical" | "horizontal" | "grid",
     columnSize: string
 

@@ -1,6 +1,9 @@
 import { IWidget, IWidgetColumn } from "@/modules/documentExecution/dashboard/Dashboard"
-import { ISelectionsWidgetSettings } from "@/modules/documentExecution/dashboard/interfaces/DashboardSelectionsWidget"
+import { ISelectorWidgetSelectorType, ISelectorWidgetSettings } from "@/modules/documentExecution/dashboard/interfaces/DashboardSelectorWidget"
 import cryptoRandomString from 'crypto-random-string'
+import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
+import * as selectorWidgetDefaultValues from '../../widget/WidgetEditor/helpers/selectorWidget/SelectorWidgetDefaultValues'
+
 
 const columnNameIdMap = {}
 
@@ -11,12 +14,10 @@ export const formatSelectorWidget = (widget: any) => {
         dataset: widget.dataset.dsId,
         type: widget.type,
         columns: getFormattedSelectionColumn(widget),
-        conditionalStyles: [],
         theme: '',
-        style: {},
-        settings: {} as ISelectionsWidgetSettings
+        settings: {} as ISelectorWidgetSettings
     } as IWidget
-    formattedWidget.settings = getFormattedWidgetSettings(widget)
+    formattedWidget.settings = getFormattedWidgetSettings(widget) as ISelectorWidgetSettings
 
     console.log('SelectorWidgetCompatibilityHelper - FORMATTED WIDGET: ', formattedWidget)
     return formattedWidget
@@ -35,15 +36,32 @@ const getFormattedSelectionColumn = (widget: any) => {
 
 const getFormattedWidgetSettings = (widget: any) => {
     const formattedSettings = {
+        isDateType: widget.content.selectedColumn?.type === 'oracle.sql.TIMESTAMP',
         sortingOrder: widget.settings?.sortingOrder ?? '',
         updatable: widget.updateble,
         clickable: widget.cliccable,
-        type: "chips",
+        selectorType: getFormattedSelectorType(widget),
+        defaultValues: {} as any,
         valuesManagement: getFormattedWidgetValuesManagement(widget),
-        noSelections: {} as any,
-        style: {} as any
-    } as ISelectionsWidgetSettings
+        style: {} as any,
+        responsive: widgetCommonDefaultValues.getDefaultResponsivnes()
+    } as ISelectorWidgetSettings
     return formattedSettings
+}
+
+const getFormattedSelectorType = (widget: any) => {
+    if (!widget.content || widget.content.settings) return selectorWidgetDefaultValues.getDefaultSelectorType()
+
+    const formattedSelectorType = {
+        modality: widget.settings.modalityValue ?? 'radio',
+        alignment: widget.settings.modalityView ?? 'vertical',
+        columnSize: widget.settings.gridColumnsWidth ?? ''
+    } as ISelectorWidgetSelectorType
+    if (widget.content.selectedColumn?.type === 'oracle.sql.TIMESTAMP') {
+        formattedSelectorType.modality = formattedSelectorType.modality === 'singleValue' ? 'datepicker' : 'dateRange'
+    }
+
+    return formattedSelectorType
 }
 
 const getFormattedWidgetValuesManagement = (widget: any) => {
