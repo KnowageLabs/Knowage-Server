@@ -7,8 +7,8 @@
 
             <template #end>
                 <div class="p-d-flex p-jc-around">
-                    <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'VIEW'" v-tooltip.left="$t('documentExecution.main.editCockpit')" @click="editCockpitDocumentConfirm"></Button>
-                    <Button icon="fa fa-eye" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'EDIT'" v-tooltip.left="$t('documentExecution.main.viewCockpit')" @click="editCockpitDocumentConfirm"></Button>
+                    <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="canEditCockpit && documentMode === 'VIEW'" v-tooltip.left="$t('documentExecution.main.editCockpit')" @click="editCockpitDocumentConfirm"></Button>
+                    <Button icon="fa fa-eye" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="canEditCockpit && documentMode === 'EDIT'" v-tooltip.left="$t('documentExecution.main.viewCockpit')" @click="editCockpitDocumentConfirm"></Button>
                     <Button icon="pi pi-book" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.onlineHelp')" @click="openHelp"></Button>
                     <Button icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.refresh')" @click="refresh"></Button>
                     <Button icon="fa fa-filter" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="isParameterSidebarVisible" v-tooltip.left="$t('common.parameters')" @click="parameterSidebarVisible = !parameterSidebarVisible" data-test="parameter-sidebar-icon"></Button>
@@ -230,6 +230,10 @@ export default defineComponent({
         window.removeEventListener('message', this.iframeEventsListener)
     },
     computed: {
+        canEditCockpit(): boolean {
+            if (!this.user || !this.document) return false
+            return (this.document.engine.equalsIgnoreCase('knowagecockpitengine') || this.document.engine.equalsIgnoreCase('knowagedashboardengine')) && (this.user.functionalities?.includes('DocumentAdminManagement') || this.document.creationUser === this.user.userId)
+        },
         sessionRole(): string | null {
             if (!this.user) return null
             return this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
@@ -341,7 +345,7 @@ export default defineComponent({
                 })
             }
 
-            if (this.user.enterprise) {
+            if (this.user.functionalities.includes('EnableToRate') && this.user.functionalities.includes('Collaboration')) {
                 this.toolbarMenuItems.push({
                     label: this.$t('common.info.info'),
                     items: [
@@ -1310,7 +1314,7 @@ export default defineComponent({
             }
         },
         isOrganizerEnabled() {
-            return this.user.isSuperadmin || this.user.functionalities.includes('SaveIntoFolderFunctionality')
+            return this.user.isSuperadmin || this.user.functionalities.includes('DocumentAdminManagement') || this.user.functionalities.includes('SaveIntoFolderFunctionality')
         },
         async addToWorkspace() {
             this.loading = true
