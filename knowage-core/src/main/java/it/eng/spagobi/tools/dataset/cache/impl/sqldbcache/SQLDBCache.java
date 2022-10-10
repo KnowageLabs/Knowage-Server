@@ -38,7 +38,6 @@ import com.jamonapi.MonitorFactory;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.tools.dataset.bo.AbstractDataSet;
 import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategyType;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -474,23 +473,25 @@ public class SQLDBCache implements ICache {
 						updateAlreadyPresent();
 					}
 					// check again it is not already inserted
-					if (getMetadata().containsCacheItem(signature)) {
+					SQLDBCacheMetadata metadata = getMetadata();
+					if (metadata.containsCacheItem(signature)) {
 						logger.debug("Cache item already inserted for dataset with label " + dataSet.getLabel() + " and signature " + dataSet.getSignature());
 					}
 					Monitor timingMemory = MonitorFactory.start("Knowage.SQLDBCache.put:calculateRequiredMemory[" + hashedSignature + "]");
-					BigDecimal requiredMemory = getMetadata().getRequiredMemory(dataStore);
+					BigDecimal requiredMemory = metadata.getRequiredMemory(dataStore);
 					timingMemory.stop();
 					timingMemory = MonitorFactory.start("Knowage.SQLDBCache.put:calculateTotalMemory[" + hashedSignature + "]");
-					BigDecimal maxUsableMemory = getMetadata().getTotalMemory().multiply(new BigDecimal(getMetadata().getCachePercentageToStore()))
+					BigDecimal maxUsableMemory = metadata.getTotalMemory().multiply(new BigDecimal(metadata.getCachePercentageToStore()))
 							.divide(new BigDecimal(100), RoundingMode.FLOOR);
 					timingMemory.stop();
 
 					if (requiredMemory.compareTo(maxUsableMemory) < 1) { // if requiredMemory is less or equal to maxUsableMemory
-						if (getMetadata().isCleaningEnabled() && !getMetadata().isAvailableMemoryGreaterThen(requiredMemory)) {
+						if (metadata.isCleaningEnabled() && !metadata.isAvailableMemoryGreaterThen(requiredMemory)) {
 							deleteToQuota();
 						}
 						// check again if the cleaning mechanism is on and if there is enough space for the resultset
-						if (!getMetadata().isCleaningEnabled() || getMetadata().isAvailableMemoryGreaterThen(requiredMemory)) {
+						if (!metadata.isCleaningEnabled() || metadata.isAvailableMemoryGreaterThen(requiredMemory)) {
+							String name = dataSet.getName();
 							long start = System.currentTimeMillis();
 							String tableName = persistStoreInCache(dataSet, dataStore);
 							timeSpent = System.currentTimeMillis() - start;
@@ -498,11 +499,17 @@ public class SQLDBCache implements ICache {
 							if (dataSet instanceof VersionedDataSet) {
 								dataSet = ((VersionedDataSet) dataSet).getWrappedDataset();
 							}
-							getMetadata().addCacheItem(((AbstractDataSet) dataSet).getName(), signature, properties, tableName, dataStore);
+
+							Set<String> removedCacheTables = metadata.removeCacheItem(signature);
+							for (String oldCacheTable : removedCacheTables) {
+								deleteTableFromCache(oldCacheTable);
+							}
+
+							metadata.addCacheItem(name, signature, properties, tableName, dataStore);
 
 						} else {
 							throw new CacheException("Store is to big to be persisted in cache." + " Store estimated dimension is [" + requiredMemory + "]"
-									+ " while cache available space is [" + getMetadata().getAvailableMemory() + "]."
+									+ " while cache available space is [" + metadata.getAvailableMemory() + "]."
 									+ " Increase cache size or execute the dataset disabling cache.");
 						}
 					} else {
@@ -544,6 +551,36 @@ public class SQLDBCache implements ICache {
 			String tableName = PersistedTableManager.generateRandomTableName(this.getMetadata().getTableNamePrefix());
 			Monitor monitor = MonitorFactory.start("spagobi.cache.sqldb.persistStoreInCache.persistdataset");
 			persistedTableManager.persistDataset(dataset, resultset, getDataSource(), tableName);
+			monitor.stop();
+			return tableName;
+		} catch (Throwable t) {
+			if (t instanceof CacheException)
+				throw (CacheException) t;
+			else
+				throw new CacheException("An unexpected error occured while persisting store in cache", t);
+		} finally {
+			logger.trace("OUT");
+		}
+	}
+
+	private String deleteTableFromCache(String tableName) {
+		logger.trace("IN");
+		try {
+			int queryTimeout;
+			try {
+				queryTimeout = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT"));
+			} catch (NumberFormatException nfe) {
+				logger.debug("The value of SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT config must be an integer");
+				queryTimeout = -1;
+			}
+
+			PersistedTableManager persistedTableManager = new PersistedTableManager();
+			persistedTableManager.setRowCountColumIncluded(true);
+			if (queryTimeout > 0) {
+				persistedTableManager.setQueryTimeout(queryTimeout);
+			}
+			Monitor monitor = MonitorFactory.start("spagobi.cache.sqldb.deleteTableFromCache.dropTableIfExists");
+			persistedTableManager.dropTableIfExists(getDataSource(), tableName);
 			monitor.stop();
 			return tableName;
 		} catch (Throwable t) {
@@ -803,6 +840,7 @@ public class SQLDBCache implements ICache {
 	/**
 	 * @return the dataSource
 	 */
+	@Override
 	public IDataSource getDataSource() {
 		return dataSource;
 	}
@@ -810,6 +848,7 @@ public class SQLDBCache implements ICache {
 	/**
 	 * @param dataSource the dataSource to set
 	 */
+	@Override
 	public void setDataSource(IDataSource dataSource) {
 		this.dataSource = dataSource;
 	}

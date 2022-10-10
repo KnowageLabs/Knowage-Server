@@ -20,6 +20,7 @@ package it.eng.spagobi.cache.dao;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -276,8 +277,11 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 	// ========================================================================================
 	// DELETE operations (cruD)
 	// ========================================================================================
+	/**
+	 * @return {@link SbiCacheItem} instances of the removed cache items
+	 */
 	@Override
-	public void deleteCacheItemByTableName(String tableName) {
+	public List<SbiCacheItem> deleteCacheItemByTableName(String tableName) {
 		Session session;
 		Transaction transaction;
 		boolean deleted;
@@ -313,6 +317,8 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 
 			transaction.commit();
 
+			return sbiCacheItemList;
+
 		} catch (Throwable t) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
@@ -328,8 +334,11 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 		}
 	}
 
+	/**
+	 * @return {@link SbiCacheItem} instances of the removed cache items
+	 */
 	@Override
-	public void deleteCacheItemBySignature(String signature) {
+	public List<SbiCacheItem> deleteCacheItemBySignature(String signature) {
 		Session session;
 		Transaction transaction;
 
@@ -363,6 +372,8 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 
 			transaction.commit();
 
+			return sbiCacheItemList;
+
 		} catch (Throwable t) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
@@ -378,8 +389,11 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 		}
 	}
 
+	/**
+	 * @return {@link SbiCacheItem} instances of the removed cache items
+	 */
 	@Override
-	public boolean deleteAllCacheItem() {
+	public List<SbiCacheItem> deleteAllCacheItem() {
 
 		Session session;
 		Transaction transaction;
@@ -390,6 +404,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 		session = null;
 		transaction = null;
 		deleted = false;
+		List<SbiCacheItem> toBeDeleted = Collections.emptyList();
 
 		try {
 
@@ -403,7 +418,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 			}
 
 			Query hibernateQuery = session.createQuery("from SbiCacheItem");
-			List toBeDeleted = hibernateQuery.list();
+			toBeDeleted = hibernateQuery.list();
 			if (toBeDeleted != null && toBeDeleted.isEmpty() == false) {
 				Iterator it = toBeDeleted.iterator();
 				while (it.hasNext()) {
@@ -428,7 +443,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 			}
 			logger.debug("OUT");
 		}
-		return deleted;
+		return toBeDeleted;
 	}
 
 	private SbiCacheItem toSbiCacheItem(CacheItem cacheItem) {
