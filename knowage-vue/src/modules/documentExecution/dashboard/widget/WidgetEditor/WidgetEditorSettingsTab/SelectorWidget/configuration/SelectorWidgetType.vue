@@ -1,9 +1,6 @@
 <template>
     <div class="p-grid p-m-2">
-        <TypeCard :imgUrl="'http://localhost:8080/knowage/themes/commons/img/cockpit/selectorWidget/check.svg'" />
-        <TypeCard :imgUrl="'http://localhost:8080/knowage/themes/commons/img/cockpit/selectorWidget/check.svg'" />
-        <TypeCard :imgUrl="'http://localhost:8080/knowage/themes/commons/img/cockpit/selectorWidget/check.svg'" />
-        <TypeCard :imgUrl="'http://localhost:8080/knowage/themes/commons/img/cockpit/selectorWidget/check.svg'" />
+        <TypeCard v-for="(type, index) of selectorTypes" :key="index" :selectorType="type" />
     </div>
 </template>
 
@@ -17,7 +14,16 @@ export default defineComponent({
     components: { TypeCard },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
-        return {}
+        return {
+            selectorTypes: [
+                { label: 'singleValue', value: 'singleValue', imageUrl: 'http://localhost:8080/knowage/themes/commons/img/cockpit/selectorWidget/radio.svg' },
+                { label: 'multiValue', value: 'multiValue', imageUrl: 'http://localhost:8080/knowage/themes/commons/img/cockpit/selectorWidget/check.svg' },
+                { label: 'dropdown', value: 'dropdown', imageUrl: 'http://localhost:8080/knowage/themes/commons/img/cockpit/selectorWidget/dropdown.svg' },
+                { label: 'multiDropdown', value: 'multiDropdown', imageUrl: 'http://localhost:8080/knowage/themes/commons/img/cockpit/selectorWidget/multiDropdown.svg' },
+                { label: 'date', value: 'date', imageUrl: 'http://localhost:8080/knowage/themes/commons/img/cockpit/selectorWidget/singleDate.svg' },
+                { label: 'dateRange', value: 'dateRange', imageUrl: 'http://localhost:8080/knowage/themes/commons/img/cockpit/selectorWidget/multiDate.svg' }
+            ]
+        }
     },
     created() {},
     unmounted() {},
