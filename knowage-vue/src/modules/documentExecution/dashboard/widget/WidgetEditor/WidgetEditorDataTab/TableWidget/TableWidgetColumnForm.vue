@@ -22,7 +22,9 @@
 
         <hr />
 
-        <div v-if="column.filter" class="p-my-2">
+        <WidgetEditorFilterForm v-if="column.filter" :column="column"></WidgetEditorFilterForm>
+
+        <!-- <div v-if="column.filter" class="p-my-2">
             <div class="p-d-flex p-flex-row p-ai-center">
                 <div class="kn-flex p-m-2">
                     <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.enableFilter') }}</label>
@@ -47,7 +49,7 @@
                 </div>
                 <i class="pi pi-question-circle kn-cursor-pointer p-ml-auto p-mr-4" v-tooltip.top="$t('dashboard.widgetEditor.columnFilterHint')"></i>
             </div>
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -58,10 +60,11 @@ import { emitter } from '../../../../DashboardHelpers'
 import descriptor from './TableWidgetDataDescriptor.json'
 import InputSwitch from 'primevue/inputswitch'
 import Dropdown from 'primevue/dropdown'
+import WidgetEditorFilterForm from '../common/WidgetEditorFilterForm.vue'
 
 export default defineComponent({
     name: 'table-widget-column-form',
-    components: { InputSwitch, Dropdown },
+    components: { InputSwitch, Dropdown, WidgetEditorFilterForm },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedColumn: { type: Object as PropType<IWidgetColumn | null>, required: true } },
     data() {
         return {
