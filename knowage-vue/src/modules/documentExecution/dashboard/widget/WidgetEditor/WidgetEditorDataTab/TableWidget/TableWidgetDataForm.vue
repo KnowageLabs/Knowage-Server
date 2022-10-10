@@ -19,7 +19,7 @@
             </div>
             <div class="p-d-flex p-flex-column kn-flex p-m-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.sortingOrder') }}</label>
-                <Dropdown class="kn-material-input" v-model="sortingOrder" :options="descriptor.sortingOrderOptions" optionValue="value" @change="sortingChanged">
+                <Dropdown class="kn-material-input" v-model="sortingOrder" :options="commonDescriptor.sortingOrderOptions" optionValue="value" @change="sortingChanged">
                     <template #value="slotProps">
                         <div>
                             <span>{{ slotProps.value }}</span>
@@ -42,6 +42,7 @@ import { IWidget, IWidgetColumn, ITableWidgetPagination } from '@/modules/docume
 import { emitter } from '../../../../DashboardHelpers'
 import Dropdown from 'primevue/dropdown'
 import descriptor from '../TableWidget/TableWidgetDataDescriptor.json'
+import commonDescriptor from '../common/WidgetCommonDescriptor.json'
 import InputSwitch from 'primevue/inputswitch'
 
 export default defineComponent({
@@ -51,6 +52,7 @@ export default defineComponent({
     data() {
         return {
             descriptor,
+            commonDescriptor,
             paginationEnabled: false,
             itemsNumber: '0',
             sortingColumn: '',
