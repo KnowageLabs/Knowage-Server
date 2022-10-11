@@ -11,6 +11,10 @@
                 <label :for="layout.key">{{ layout.name }}</label>
             </div>
         </div>
+        <span v-if="widgetModel.settings.configuration.selectorType.alignment === 'Grid'" class="p-float-label">
+            <InputText id="colSize" class="kn-material-input kn-width-full" v-model="widgetModel.settings.configuration.selectorType.columnSize" />
+            <label for="colSize" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.info.uploadTemplate') }} </label>
+        </span>
     </div>
 </template>
 
@@ -23,7 +27,7 @@ import RadioButton from 'primevue/radiobutton'
 export default defineComponent({
     name: 'table-widget-rows',
     components: { TypeCard, RadioButton },
-    props: { widgetModel: { type: Object as PropType<any>, required: true } },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     computed: {
         showAlignment(): boolean {
             return this.widgetModel.settings.configuration.selectorType.modality === 'singleValue' || this.widgetModel.settings.configuration.selectorType.modality === 'multiValue'
