@@ -1,5 +1,5 @@
 import { IWidget, IWidgetColumn } from "@/modules/documentExecution/dashboard/Dashboard"
-import { ISelectorWidgetDefaultValues, ISelectorWidgetSelectorType, ISelectorWidgetSettings, ISelectorWidgetValuesManagement } from "@/modules/documentExecution/dashboard/interfaces/DashboardSelectorWidget"
+import { ISelectorWidgetDefaultValues, ISelectorWidgetSelectorType, ISelectorWidgetSettings, ISelectorWidgetValuesManagement, ISelectorWidgetConfiguration } from "@/modules/documentExecution/dashboard/interfaces/DashboardSelectorWidget"
 import { getFormattedStyle } from './SelectorWidgetStyleHelper'
 import cryptoRandomString from 'crypto-random-string'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
@@ -41,13 +41,19 @@ const getFormattedWidgetSettings = (widget: any) => {
         sortingOrder: widget.settings?.sortingOrder ?? '',
         updatable: widget.updateble,
         clickable: widget.cliccable,
-        selectorType: getFormattedSelectorType(widget),
-        defaultValues: getFormattedDefaultValues(widget),
-        valuesManagement: getFormattedWidgetValuesManagement(widget),
+        configuration: getFormattedConfiguration(widget),
         style: getFormattedStyle(widget),
         responsive: widgetCommonDefaultValues.getDefaultResponsivnes()
     } as ISelectorWidgetSettings
     return formattedSettings
+}
+
+const getFormattedConfiguration = (widget: any) => {
+    return {
+        selectorType: getFormattedSelectorType(widget),
+        defaultValues: getFormattedDefaultValues(widget),
+        valuesManagement: getFormattedWidgetValuesManagement(widget),
+    } as ISelectorWidgetConfiguration
 }
 
 const getFormattedSelectorType = (widget: any) => {

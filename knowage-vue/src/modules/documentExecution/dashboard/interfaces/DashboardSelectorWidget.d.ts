@@ -5,11 +5,15 @@ export interface ISelectorWidgetSettings {
     sortingOrder: string
     updatable: boolean,
     clickable: boolean,
+    configuration: ISelectorWidgetConfiguration,
+    style: ISelectorWidgetStyle,
+    responsive: IWidgetResponsive,
+}
+
+export interface ISelectorWidgetConfiguration {
     selectorType: ISelectorWidgetSelectorType,
     defaultValues: ISelectorWidgetDefaultValues,
     valuesManagement: ISelectorWidgetValuesManagement,
-    style: ISelectorWidgetStyle,
-    responsive: IWidgetResponsive,
 }
 
 export interface ISelectorWidgetSelectorType {
