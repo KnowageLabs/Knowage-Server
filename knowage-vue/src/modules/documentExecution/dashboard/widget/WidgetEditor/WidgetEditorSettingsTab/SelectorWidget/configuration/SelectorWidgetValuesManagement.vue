@@ -1,30 +1,29 @@
 <template>
     <div v-if="valuesManagementModel" class="p-grid p-jc-center p-ai-center kn-flex p-p-4">
-        <div class="p-col-12">
-            {{ valuesManagementModel }}
-        </div>
         <div class="p-col-12 p-grid p-d-flex p-flex-row p-jc-start p-p-4">
             <div class="p-sm-12 p-md-2">
                 <InputSwitch v-model="valuesManagementModel.hideDisabled" @change="onHideDisabledChanged"></InputSwitch>
             </div>
-            <div class="p-sm-12 p-md-5">
-                <label class="kn-material-input-label p-ml-auto">{{ $t('dashboard.widgetEditor.valuesManagement.hideDisabledValues') }}</label>
+            <div class="p-sm-12 p-md-10 p-d-flex">
+                <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.valuesManagement.hideDisabledValues') }}</label>
+                <i class="pi pi-question-circle kn-cursor-pointer p-ml-auto p-mr-4" v-tooltip.top="$t('dashboard.widgetEditor.valuesManagement.hideDisabledValuesHint')"></i>
             </div>
-            <div class="p-md-5"></div>
+
             <div class="p-sm-12 p-md-2">
                 <InputSwitch v-model="valuesManagementModel.enableAll" @change="onEnableAllChange"></InputSwitch>
             </div>
-            <div class="p-sm-12 p-md-5">
-                <label class="kn-material-input-label p-ml-auto">{{ $t('dashboard.widgetEditor.valuesManagement.alwaysEnableValues') }}</label>
+            <div class="p-sm-12 p-md-10 p-d-flex">
+                <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.valuesManagement.alwaysEnableValues') }}</label>
+                <i class="pi pi-question-circle kn-cursor-pointer p-ml-auto p-mr-4" v-tooltip.top="$t('dashboard.widgetEditor.valuesManagement.alwaysEnableValuesHint')"></i>
             </div>
-            <div class="p-md-5"></div>
+
             <div class="p-sm-12 p-md-2">
                 <InputSwitch v-model="valuesManagementModel.wrapText" @change="valuesManagementChanged"></InputSwitch>
             </div>
-            <div class="p-sm-12 p-md-5">
-                <label class="kn-material-input-label p-ml-auto">{{ $t('dashboard.widgetEditor.valuesManagement.wrapText') }}</label>
+            <div class="p-sm-12 p-md-10 p-d-flex">
+                <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.valuesManagement.wrapText') }}</label>
+                <i class="pi pi-question-circle kn-cursor-pointer p-ml-auto p-mr-4" v-tooltip.top="$t('dashboard.widgetEditor.valuesManagement.wrapTextHint')"></i>
             </div>
-            <div class="p-md-5"></div>
         </div>
     </div>
 </template>

@@ -535,9 +535,12 @@
             },
             "valuesManagement": {
                 "alwaysEnableValues": "Always Enable Values",
+                "alwaysEnableValuesHint": "Always enable values hint placeholder",
                 "hideDisabledValues": "Hide Disabled Values",
+                "hideDisabledValuesHint": "Hide disabled values hint placeholder",
                 "title": "Values Management",
-                "wrapText": "Wrap Text"
+                "wrapText": "Wrap Text",
+                "wrapTextHint": "Wrap text hint placeholder"
             },
             "visibilityConditions": {
                 "always": "Always",
