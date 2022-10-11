@@ -1269,7 +1269,7 @@ function cockpitChartWidgetControllerFunction(
 			
 			var category = $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY;
 			var columnName =    category.name
-			if ($scope.ngModel.cliccable && $scope.ngModel.updateble && !$scope.ngModel.drillable && !event.point.drilldown && category.column != category.groupby) {
+			if ($scope.ngModel.cliccable && $scope.ngModel.updateble && !$scope.ngModel.drillable && !event.point.drilldown && (category.column != category.groupby && !category.groupby.length === 0)) {
 				columnName = category.groupby;
 			} 
 
