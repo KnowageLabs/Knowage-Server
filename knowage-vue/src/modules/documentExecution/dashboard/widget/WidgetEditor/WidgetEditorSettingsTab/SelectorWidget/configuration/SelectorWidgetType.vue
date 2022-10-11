@@ -26,7 +26,7 @@ export default defineComponent({
     props: { widgetModel: { type: Object as PropType<any>, required: true } },
     computed: {
         showAlignment(): boolean {
-            return this.widgetModel.settings.selectorType.modality === 'singleValue' || this.widgetModel.settings.selectorType.modality === 'multiValue'
+            return this.widgetModel.settings.configuration.selectorType.modality === 'singleValue' || this.widgetModel.settings.configuration.selectorType.modality === 'multiValue'
         }
     },
     data() {

@@ -3,10 +3,7 @@
         <Accordion class="selectorAccordion" v-model:activeIndex="activeIndex">
             <AccordionTab v-for="(accordion, index) in settings" :key="index">
                 <template #header>
-                    <div>
-                        <label class="kn-material-input-label">{{ $t(accordion.title) }}</label>
-                        <Button icon="fas fa-square-check" class="p-button-rounded p-button-text p-button-plain" @click="logWidget" />
-                    </div>
+                    <label class="kn-material-input-label">{{ $t(accordion.title) }}</label>
                 </template>
                 <SelectorWidgetType v-if="accordion.type === 'SelectorType'" :widgetModel="widgetModel"></SelectorWidgetType>
             </AccordionTab>
@@ -49,11 +46,7 @@ export default defineComponent({
         }
     },
     created() {},
-    methods: {
-        logWidget() {
-            console.log('widget ----------------- \n', this.widgetModel)
-        }
-    }
+    methods: {}
 })
 </script>
 

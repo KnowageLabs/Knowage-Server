@@ -2,15 +2,6 @@
     <div v-if="model" class="dashboard-container" :id="`dashboard_${model.configuration.id}`">
         <Button icon="fas fa-square-check" class="p-m-3 p-button-rounded p-button-text p-button-plain" style="position: fixed; right: 0; z-index: 999; background-color: white; box-shadow: 0px 2px 3px #ccc" @click="selectionsDialogVisible = true" />
 
-        <!-- <Accordion class="widget-editor-accordion" style="width: 500px" :activeIndex="0">
-            <AccordionTab>
-                <template #header>
-                    <label class="kn-material-input-label">title</label>
-                </template>
-                <SelectorType />
-            </AccordionTab>
-        </Accordion> -->
-
         <DashboardRenderer v-if="!loading" :model="model" :datasets="datasets"></DashboardRenderer>
 
         <Transition name="editorEnter" appear>
@@ -56,13 +47,10 @@ import descriptor from './DashboardDescriptor.json'
 import cryptoRandomString from 'crypto-random-string'
 import DashboardControllerSaveDialog from './DashboardControllerSaveDialog.vue'
 import SelectionsListDialog from './widget/SelectorWidget/SelectionsListDialog.vue'
-import Accordion from 'primevue/accordion'
-import AccordionTab from 'primevue/accordiontab'
-import SelectorType from './widget/WidgetEditor/WidgetEditorSettingsTab/SelectorWidget/configuration/SelectorWidgetType.vue'
 
 export default defineComponent({
     name: 'dashboard-manager',
-    components: { SelectorType, Accordion, AccordionTab, DashboardRenderer, WidgetPickerDialog, DatasetEditor, WidgetEditor, DashboardControllerSaveDialog, SelectionsListDialog },
+    components: { DashboardRenderer, WidgetPickerDialog, DatasetEditor, WidgetEditor, DashboardControllerSaveDialog, SelectionsListDialog },
     props: { sbiExecutionId: { type: String }, document: { type: Object }, reloadTrigger: { type: Boolean }, hiddenFormData: { type: Object }, filtersData: { type: Object as PropType<{ filterStatus: iParameter[]; isReadyForExecution: boolean }> }, newDashboardMode: { type: Boolean } },
     emits: ['newDashboardSaved'],
     data() {
