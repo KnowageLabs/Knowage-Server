@@ -1,5 +1,5 @@
 <template>
-    <div class="outerIcon" :class="{ selected: widgetModel.settings.selectorType.modality == selectorType.value, disabled: selectorType.value == 'date' || selectorType.value == 'dateRange' }" :style="documentImageSource()" @click="changeModality(selectorType.value)"></div>
+    <div class="outerIcon" :class="{ selected: widgetModel.settings.configuration.selectorType.modality == selectorType.value, disabled: selectorType.value == 'date' || selectorType.value == 'dateRange' }" :style="documentImageSource()" @click="changeModality(selectorType.value)"></div>
 </template>
 
 <script lang="ts">
@@ -24,7 +24,7 @@ export default defineComponent({
             }
         },
         changeModality(event) {
-            this.widgetModel.settings.selectorType.modality = event
+            this.widgetModel.settings.configuration.selectorType.modality = event
         }
     }
 })
