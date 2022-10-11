@@ -17,9 +17,9 @@ export const getFormattedStyle = (widget: any) => {
 }
 
 const getFormattedBorderStyle = (widget: any) => {
-    if (!widget.style || !widget.style.border) return tableWidgetDefaultValues.getDefaultBordersStyle()
+    if (!widget.style || !widget.style.border) return widgetCommonDefaultValues.getDefaultBordersStyle()
 
-    return { enabled: true, properties: { ...widget.style.border, 'border-color': hexToRgb(widget.style.border['border-color']) } } as IWidgetBordersStyle
+    return { enabled: widget.style.borders, properties: { ...widget.style.border, 'border-color': hexToRgb(widget.style.border['border-color']) } } as IWidgetBordersStyle
 }
 
 const getDefaultColumnGroupsStyle = (widget: any) => {
@@ -102,7 +102,7 @@ const getFormattedShadowsStyle = (widget: any) => {
     if (!widget.style || !widget.style.shadow) return widgetCommonDefaultValues.getDefaultShadowsStyle()
 
     return {
-        enabled: true,
+        enabled: widget.style.shadows,
         properties: {
             "box-shadow": widget.style.shadow["box-shadow"],
             "color": hexToRgb(widget.style.backgroundColor)

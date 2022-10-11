@@ -35,7 +35,7 @@ export function createNewWidget() {
             },
             pagination: tableWidgetDefaultValues.getDefaultPagination(),
             style: {
-                borders: tableWidgetDefaultValues.getDefaultBordersStyle(),
+                borders: widgetCommonDefaultValues.getDefaultBordersStyle(),
                 columns: tableWidgetDefaultValues.getDefaultColumnStyles(),
                 columnGroups: tableWidgetDefaultValues.getDefaultColumnStyles(),
                 headers: tableWidgetDefaultValues.getDefaultHeadersStyle(),

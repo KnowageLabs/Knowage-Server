@@ -1,5 +1,6 @@
-import { IWidgetPaddingStyle, IWidgetTitle } from "../../Dashboard"
+import { IWidgetBordersStyle, IWidgetPaddingStyle, IWidgetShadowsStyle, IWidgetTitle } from "../../Dashboard"
 import { ISelectorWidgetBackgroundStyle, ISelectorWidgetLabelStyle, ISelectorWidgetStyle } from "../../interfaces/DashboardSelectorWidget"
+import { hexToRgb } from '../FormattingHelpers'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import * as selectorWidgetDefaultValues from '../../widget/WidgetEditor/helpers/selectorWidget/SelectorWidgetDefaultValues'
 
@@ -9,7 +10,8 @@ export const getFormattedStyle = (widget: any) => {
         label: getFormattedLabelStyle(widget),
         background: getFormattedBackgroundStyle(widget),
         padding: getFormattedPaddingStyle(widget),
-        borders: {}
+        borders: getFormattedBorderStyle(widget),
+        shadow: getFormattedShadowsStyle(widget)
     } as ISelectorWidgetStyle
 }
 
@@ -70,4 +72,22 @@ const getFormattedPaddingStyle = (widget: any) => {
             unlinked: widget.style.padding.unlinked
         }
     } as IWidgetPaddingStyle
+}
+
+const getFormattedBorderStyle = (widget: any) => {
+    if (!widget.style || !widget.style.border) return widgetCommonDefaultValues.getDefaultBordersStyle()
+
+    return { enabled: widget.style.borders, properties: { ...widget.style.border, 'border-color': hexToRgb(widget.style.border['border-color']) } } as IWidgetBordersStyle
+}
+
+const getFormattedShadowsStyle = (widget: any) => {
+    if (!widget.style || !widget.style.shadow) return widgetCommonDefaultValues.getDefaultShadowsStyle()
+
+    return {
+        enabled: widget.style.shadows,
+        properties: {
+            "box-shadow": widget.style.shadow["box-shadow"],
+            "color": hexToRgb(widget.style.backgroundColor)
+        }
+    } as IWidgetShadowsStyle
 }

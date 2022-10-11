@@ -55,11 +55,6 @@ export const getDefaultPagination = () => {
     return deepcopy(descriptor.defaultPagination) as ITableWidgetPagination
 }
 
-
-export const getDefaultBordersStyle = () => {
-    return deepcopy(descriptor.defaultBordersStyle) as IWidgetBordersStyle
-}
-
 export const getDefaultColumnStyles = () => {
     return deepcopy(descriptor.defaultColumnStyles) as ITableWidgetColumnStyles
 }

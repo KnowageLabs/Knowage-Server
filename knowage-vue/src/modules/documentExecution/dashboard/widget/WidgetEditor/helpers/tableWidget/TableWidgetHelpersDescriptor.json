@@ -1,16 +1,4 @@
 {
-    "defaultBordersStyle": {
-        "enabled": false,
-        "properties": {
-            "border-bottom-left-radius": "",
-            "border-bottom-right-radius": "",
-            "border-color": "rgb(212, 212, 212)",
-            "border-style": "",
-            "border-top-left-radius": "",
-            "border-top-right-radius": "",
-            "border-width": ""
-        }
-    },
     "defaultColumnGroups": {
         "enabled": false,
         "groups": []
