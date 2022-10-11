@@ -1,9 +1,4 @@
 {
-    "defaultBackgroundColor": {
-        "properties": {
-            "background-color": ""
-        }
-    },
     "defaultLabelStyle": {
         "properties": {
             "background-color": "",
@@ -28,6 +23,7 @@
     },
     "defaultValuesManagement": {
         "enableAll": false,
-        "hideDisabled": false
+        "hideDisabled": false,
+        "wrapText": false
     }
 }

@@ -37,7 +37,7 @@ const getFormattedSelectionColumn = (widget: any) => {
 
 const getFormattedWidgetSettings = (widget: any) => {
     const formattedSettings = {
-        isDateType: widget.content.selectedColumn?.type === 'oracle.sql.TIMESTAMP',
+        isDateType: widget.content.selectedColumn && (widget.content.selectedColumn.type === 'oracle.sql.TIMESTAMP' || widget.content.selectedColumn.type === 'java.util.Date'),
         sortingOrder: widget.settings?.sortingOrder ?? '',
         updatable: widget.updateble,
         clickable: widget.cliccable,
@@ -75,17 +75,19 @@ const getFormattedDefaultValues = (widget: any) => {
     if (!widget.settings) return selectorWidgetDefaultValues.getDefaultValues()
     const formattedDefaultValues = {
         enabled: false,
-        valueType: widget.settings.defaultValue,
     } as ISelectorWidgetDefaultValues
-    if (formattedDefaultValues.valueType) formattedDefaultValues.enabled = true
-    if (formattedDefaultValues.valueType === 'STATIC') formattedDefaultValues.value = widget.settings.staticValues
+    if (widget.settings.defaultValue) formattedDefaultValues.valueType = widget.settings.defaultValue
+    if (widget.settings.staticValues) formattedDefaultValues.value = widget.settings.staticValues
+    if (widget.settings.defaultStartDate) formattedDefaultValues.startDate = new Date(widget.settings.defaultStartDate)
+    if (widget.settings.defaultEndDate) formattedDefaultValues.endDate = new Date(widget.settings.defaultEndDate)
+    if (formattedDefaultValues.valueType || widget.settings.defaultStartDate || widget.settings.defaultEndDate) formattedDefaultValues.enabled = true
     return formattedDefaultValues
 }
 
 
 const getFormattedWidgetValuesManagement = (widget: any) => {
     if (!widget.settings) return selectorWidgetDefaultValues.getDefaultValuesManagement()
-    return { hideDisabled: widget.settings.hideDisabled ?? false, enableAll: widget.settings.enableAll ?? false } as ISelectorWidgetValuesManagement
+    return { hideDisabled: widget.settings.hideDisabled ?? false, enableAll: widget.settings.enableAll ?? false, wrapText: widget.settings.wrapText ?? false } as ISelectorWidgetValuesManagement
 }
 
 export const getColumnId = (widgetColumnName: string) => {

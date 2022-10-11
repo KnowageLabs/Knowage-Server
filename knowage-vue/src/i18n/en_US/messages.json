@@ -404,6 +404,7 @@
                 "columnsFirstItem": "Main column's first item",
                 "columnsLastItem": "Main column's last item",
                 "enableDefaultValues": "Enable Default Values",
+                "hint": "Default values hint placeholder",
                 "selectDafaultValue": "Select Default Value",
                 "title": "Default Values"
             },
@@ -531,6 +532,15 @@
             "tooltips": {
                 "customHeader": "Custom Header",
                 "title": "Tooltips"
+            },
+            "valuesManagement": {
+                "alwaysEnableValues": "Always Enable Values",
+                "alwaysEnableValuesHint": "Always enable values hint placeholder",
+                "hideDisabledValues": "Hide Disabled Values",
+                "hideDisabledValuesHint": "Hide disabled values hint placeholder",
+                "title": "Values Management",
+                "wrapText": "Wrap Text",
+                "wrapTextHint": "Wrap text hint placeholder"
             },
             "visibilityConditions": {
                 "always": "Always",
