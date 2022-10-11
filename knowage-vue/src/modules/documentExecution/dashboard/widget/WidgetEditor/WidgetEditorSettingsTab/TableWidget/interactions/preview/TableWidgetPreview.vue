@@ -62,7 +62,7 @@ import { IWidget, ITableWidgetParameter, IDataset, IDatasetParameter, IWidgetSty
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import { emitter } from '../../../../../../DashboardHelpers'
 import descriptor from '../../TableWidgetSettingsDescriptor.json'
-import dashboardStore from '@/modules/documentExecution/Dashboard/Dashboard.store'
+import dashboardStore from '../../../../../../../../documentExecution/Dashboard/Dashboard.store'
 import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
