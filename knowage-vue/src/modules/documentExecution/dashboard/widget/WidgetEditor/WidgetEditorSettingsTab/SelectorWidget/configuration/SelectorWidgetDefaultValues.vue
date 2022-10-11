@@ -16,12 +16,12 @@
             <div v-if="isDateType" class="p-col-10 p-lg-11 p-grid">
                 <div class="p-col-12 p-lg-6 p-d-flex p-flex-column">
                     <label class="kn-material-input-label"> {{ $t('cron.startDate') }}</label>
-                    <Calendar v-model="defaultValuesModel.startDate" :manualInput="true" @input="defaultValuesChanged" @dateSelect="defaultValuesChanged"></Calendar>
+                    <Calendar v-model="(defaultValuesModel.startDate as Date)" :manualInput="true" :disabled="defaultModelDisabled" @input="defaultValuesChanged" @dateSelect="defaultValuesChanged"></Calendar>
                 </div>
 
                 <div class="p-col-12 p-lg-6 p-d-flex p-flex-column">
                     <label class="kn-material-input-label"> {{ $t('cron.endDate') }}</label>
-                    <Calendar v-model="defaultValuesModel.endDate" :manualInput="true" @input="defaultValuesChanged" @dateSelect="defaultValuesChanged"></Calendar>
+                    <Calendar v-model="(defaultValuesModel.endDate as Date)" :manualInput="true" :disabled="defaultModelDisabled" @input="defaultValuesChanged" @dateSelect="defaultValuesChanged"></Calendar>
                 </div>
             </div>
             <div v-else class="p-col-10 p-lg-11 p-grid">
@@ -47,7 +47,7 @@
                 </div>
             </div>
             <div class="p-col-2 p-lg-1 p-d-flex p-jc-center">
-                <i class="pi pi-question-circle kn-cursor-pointer p-ml-auto p-mt-4 p-mr-4" v-tooltip.top="$t('dashboard.widgetEditor.defaultValues.hint')"></i>
+                <i class="pi pi-question-circle kn-cursor-pointer p-ml-auto p-mr-4" v-tooltip.top="$t('dashboard.widgetEditor.defaultValues.hint')"></i>
             </div>
         </div>
     </div>
@@ -83,6 +83,11 @@ export default defineComponent({
             return this.widgetModel?.settings?.isDateType
         }
     },
+    watch: {
+        isDateType() {
+            this.onDefaultValuesTypeChanged()
+        }
+    },
     created() {
         this.loadDefaultValuesModel()
     },
@@ -96,6 +101,13 @@ export default defineComponent({
         },
         onDefaultValuesTypeChanged() {
             if (!this.defaultValuesModel) return
+            if (this.isDateType) {
+                delete this.defaultValuesModel.value
+                delete this.defaultValuesModel.valueType
+            } else {
+                delete this.defaultValuesModel.startDate
+                delete this.defaultValuesModel.endDate
+            }
             if (this.defaultValuesModel.valueType !== 'STATIC') delete this.defaultValuesModel.value
             this.defaultValuesChanged()
         }

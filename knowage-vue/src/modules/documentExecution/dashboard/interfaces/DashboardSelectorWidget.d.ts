@@ -25,7 +25,7 @@ export interface ISelectorWidgetSelectorType {
 
 export interface ISelectorWidgetDefaultValues {
     enabled: boolean,
-    valueType: "" | "STATIC" | "FIRST" | "LAST",
+    valueType?: "" | "STATIC" | "FIRST" | "LAST",
     value?: string,
     startDate?: Date | null,
     endDate?: Date | null
