@@ -9,7 +9,7 @@ import { IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
 export default defineComponent({
     name: 'table-widget-rows',
     components: {},
-    props: { widgetModel: { type: Object as PropType<any>, required: true }, selectorType: { type: Object as any, true: false } },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectorType: { type: Object as any, true: false } },
     data() {
         return {}
     },

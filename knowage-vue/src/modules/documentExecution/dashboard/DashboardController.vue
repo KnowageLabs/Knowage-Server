@@ -255,11 +255,11 @@ export default defineComponent({
 <style lang="scss">
 .dashboard-container {
     flex: 1;
-    height: 100%;
+    // height: 100%;
     // width: 100%;
     // height: 100vh;
-    overflow-y: auto;
-    position: relative;
+    // overflow-y: auto;
+    // position: relative;
 }
 @media screen and (max-width: 600px) {
     .dashboard-container {

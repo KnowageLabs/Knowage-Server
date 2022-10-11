@@ -2,7 +2,7 @@
     <div class="p-d-flex p-flex-column p-ai-stretch p-jc-center kn-overflow" :style="descriptor.style.preview">
         <Button icon="fas fa-square-check" class="p-button-rounded p-button-text p-button-plain" @click="logWidget" />
         <TableWidget class="p-m-2" v-if="propWidget.settings && propWidget.type == 'table'" :propWidget="propWidget" :datasets="datasets" :editorMode="true" style="height: 30%" />
-        <SelectorWidget class="p-m-2" v-if="propWidget.settings && propWidget.type == 'selector'" :propWidget="propWidget" :datasets="datasets" :editorMode="true" style="height: 30%" />
+        <SelectorWidget v-if="propWidget.settings && propWidget.type == 'selector'" :propWidget="propWidget" :dataToShow="mock.selectorMockedResponse" :editorMode="true" style="height: 30%" />
     </div>
 </template>
 
