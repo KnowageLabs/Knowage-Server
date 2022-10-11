@@ -9,6 +9,7 @@
                     </div>
                 </template>
                 <SelectorWidgetType v-if="accordion.type === 'SelectorType'" :widgetModel="widgetModel"></SelectorWidgetType>
+                <SelectorWidgetDefaultValues v-else-if="accordion.type === 'DefaultValues'" :widgetModel="widgetModel"></SelectorWidgetDefaultValues>
             </AccordionTab>
         </Accordion>
     </div>
@@ -21,13 +22,15 @@ import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import descriptor from './SelectorWidgetSettingsDescriptor.json'
 import SelectorWidgetType from './configuration/SelectorWidgetType.vue'
+import SelectorWidgetDefaultValues from './configuration/SelectorWidgetDefaultValues.vue'
 
 export default defineComponent({
     name: 'selector-widget-settings-container',
     components: {
         Accordion,
         AccordionTab,
-        SelectorWidgetType
+        SelectorWidgetType,
+        SelectorWidgetDefaultValues
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
