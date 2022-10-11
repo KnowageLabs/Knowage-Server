@@ -34,6 +34,7 @@ export interface ISelectorWidgetDefaultValues {
 export interface ISelectorWidgetValuesManagement {
     hideDisabled: boolean,
     enableAll: boolean,
+    wrapText: boolean,
 }
 
 export interface ISelectorWidgetStyle {

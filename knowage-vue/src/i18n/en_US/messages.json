@@ -533,6 +533,12 @@
                 "customHeader": "Custom Header",
                 "title": "Tooltips"
             },
+            "valuesManagement": {
+                "alwaysEnableValues": "Always Enable Values",
+                "hideDisabledValues": "Hide Disabled Values",
+                "title": "Values Management",
+                "wrapText": "Wrap Text"
+            },
             "visibilityConditions": {
                 "always": "Always",
                 "hideColumn": "Hide Column",

@@ -27,6 +27,10 @@
             {
                 "title": "dashboard.widgetEditor.defaultValues.title",
                 "type": "DefaultValues"
+            },
+            {
+                "title": "dashboard.widgetEditor.valuesManagement.title",
+                "type": "ValuesManagement"
             }
         ]
     },
