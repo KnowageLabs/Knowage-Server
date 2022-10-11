@@ -4,7 +4,6 @@
             "label": "",
             "value": ""
         },
-
         {
             "label": "dashboard.widgetEditor.defaultValues.columnsFirstItem",
             "value": "FIRST"
@@ -32,13 +31,19 @@
                 "title": "dashboard.widgetEditor.valuesManagement.title",
                 "type": "ValuesManagement"
             }
-        ]
+        ],
+        "Style": []
     },
     "settingsListOptions": [
         {
             "icon": "fa fa-cogs",
             "label": "dashboard.widgetEditor.configuration",
             "value": "Configuration"
+        },
+        {
+            "icon": "fa fa-paint-brush",
+            "label": "common.style",
+            "value": "Style"
         }
     ]
 }
