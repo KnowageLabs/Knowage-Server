@@ -1,9 +1,32 @@
 {
+    "defaultValuesTypes": [
+        {
+            "label": "",
+            "value": ""
+        },
+
+        {
+            "label": "dashboard.widgetEditor.defaultValues.columnsFirstItem",
+            "value": "FIRST"
+        },
+        {
+            "label": "dashboard.widgetEditor.defaultValues.columnsLastItem",
+            "value": "LAST"
+        },
+        {
+            "label": "common.static",
+            "value": "STATIC"
+        }
+    ],
     "settings": {
         "Configuration": [
             {
-                "title": "dashboard.widgetEditor.SelectorType.title",
+                "title": "dashboard.widgetEditor.selectorType.title",
                 "type": "SelectorType"
+            },
+            {
+                "title": "dashboard.widgetEditor.defaultValues.title",
+                "type": "DefaultValues"
             }
         ]
     },
