@@ -1,4 +1,4 @@
-import { IWidgetResponsive, IWidgetTitle, IWidgetPaddingStyle, IWidgetBordersStyle } from '../Dashboard'
+import { IWidgetResponsive, IWidgetTitle, IWidgetPaddingStyle, IWidgetBordersStyle, IWidgetShadowsStyle } from '../Dashboard'
 
 export interface ISelectorWidgetSettings {
     isDateType: boolean,
@@ -33,9 +33,9 @@ export interface ISelectorWidgetValuesManagement {
 export interface ISelectorWidgetStyle {
     title: IWidgetTitle,
     label: ISelectorWidgetLabelStyle,
-    background: ISelectorWidgetBackgroundStyle,
     padding: IWidgetPaddingStyle,
-    borders: IWidgetBordersStyle
+    borders: IWidgetBordersStyle,
+    shadows: IWidgetShadowsStyle
 }
 
 export interface ISelectorWidgetLabelStyle {
@@ -47,12 +47,6 @@ export interface ISelectorWidgetLabelStyle {
         'font-family': string
         'justify-content': string
         color: string
-        'background-color': string
-    }
-}
-
-export interface ISelectorWidgetBackgroundStyle {
-    properties: {
         'background-color': string
     }
 }

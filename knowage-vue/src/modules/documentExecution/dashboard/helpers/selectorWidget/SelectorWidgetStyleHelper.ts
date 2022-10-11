@@ -1,5 +1,5 @@
 import { IWidgetBordersStyle, IWidgetPaddingStyle, IWidgetShadowsStyle, IWidgetTitle } from "../../Dashboard"
-import { ISelectorWidgetBackgroundStyle, ISelectorWidgetLabelStyle, ISelectorWidgetStyle } from "../../interfaces/DashboardSelectorWidget"
+import { ISelectorWidgetLabelStyle, ISelectorWidgetStyle } from "../../interfaces/DashboardSelectorWidget"
 import { hexToRgb } from '../FormattingHelpers'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import * as selectorWidgetDefaultValues from '../../widget/WidgetEditor/helpers/selectorWidget/SelectorWidgetDefaultValues'
@@ -8,10 +8,9 @@ export const getFormattedStyle = (widget: any) => {
     return {
         title: getFormattedTitleStyle(widget),
         label: getFormattedLabelStyle(widget),
-        background: getFormattedBackgroundStyle(widget),
         padding: getFormattedPaddingStyle(widget),
         borders: getFormattedBorderStyle(widget),
-        shadow: getFormattedShadowsStyle(widget)
+        shadows: getFormattedShadowsStyle(widget)
     } as ISelectorWidgetStyle
 }
 
@@ -53,11 +52,6 @@ const getFormattedLabelStyle = (widget) => {
 
     return formattedLabelStyle
 }
-
-const getFormattedBackgroundStyle = (widget) => {
-    return { properties: { 'background-color': widget.style?.backgroundColor ?? '' } } as ISelectorWidgetBackgroundStyle
-}
-
 
 const getFormattedPaddingStyle = (widget: any) => {
     if (!widget.style || !widget.style.padding) return widgetCommonDefaultValues.getDefaultPaddingStyle()
