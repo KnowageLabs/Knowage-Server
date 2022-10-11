@@ -12,7 +12,7 @@
 
         <div class="p-col-12 p-fluid p-d-flex p-flex-column p-px-4 p-py-2">
             <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.defaultValues.selectDafaultValue') }}</label>
-            <Dropdown class="kn-material-input" v-model="defaultValuesModel.valueType" :options="descriptor.defaultValuesTypes" optionValue="value" :disabled="defaultModelDisabled" @change="defaultValuesChanged">
+            <Dropdown class="kn-material-input" v-model="defaultValuesModel.valueType" :options="descriptor.defaultValuesTypes" optionValue="value" :disabled="defaultModelDisabled" @change="onDefaultValuesTypeChanged">
                 <template #value="slotProps">
                     <div>
                         <span>{{ getTranslatedLabel(slotProps.value, descriptor.defaultValuesTypes, $t) }}</span>
@@ -31,7 +31,8 @@
                 <label class="kn-material-input-label">{{ $t('common.value') }}</label>
             </div>
             <div class="p-col-9 p-sm-12 p-md-9">
-                <InputSwitch v-model="defaultValuesModel.value" @change="defaultValuesChanged"></InputSwitch>
+                <label class="kn-material-input-label p-mr-2">{{ $t('common.alias') }}</label>
+                <InputText class="kn-material-input p-inputtext-sm" v-model="defaultValuesModel.value" @change="defaultValuesChanged" />
             </div>
         </div>
     </div>
@@ -73,6 +74,11 @@ export default defineComponent({
         defaultValuesChanged() {
             emitter.emit('defaultValuesChanged', this.defaultValuesModel)
             emitter.emit('refreshSelector', this.widgetModel.id)
+        },
+        onDefaultValuesTypeChanged() {
+            if (!this.defaultValuesModel) return
+            if (this.defaultValuesModel.valueType !== 'STATIC') delete this.defaultValuesModel.value
+            this.defaultValuesChanged()
         }
     }
 })

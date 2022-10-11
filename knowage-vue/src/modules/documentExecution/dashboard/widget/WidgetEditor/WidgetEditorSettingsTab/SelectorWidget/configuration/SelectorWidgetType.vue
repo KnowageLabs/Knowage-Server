@@ -6,7 +6,7 @@
 
         <div v-if="showAlignment" class="p-d-flex p-flex-row p-m-2">
             <div v-for="(layout, index) of layouts" :key="index" class="p-m-2">
-                <RadioButton :inputId="layout.key" name="layout" :value="layout.name" v-model="widgetModel.settings.selectorType.alignment" />
+                <RadioButton :inputId="layout.key" name="layout" :value="layout.name" v-model="widgetModel.settings.configuration.selectorType.alignment" />
                 <i :class="layout.icon" class="p-mx-2" />
                 <label :for="layout.key">{{ layout.name }}</label>
             </div>
@@ -26,7 +26,7 @@ export default defineComponent({
     props: { widgetModel: { type: Object as PropType<any>, required: true } },
     computed: {
         showAlignment(): boolean {
-            return this.widgetModel.settings.selectorType.modality === 'singleValue' || this.widgetModel.settings.selectorType.modality === 'multiValue'
+            return this.widgetModel.settings.configuration.selectorType.modality === 'singleValue' || this.widgetModel.settings.configuration.selectorType.modality === 'multiValue'
         }
     },
     data() {
