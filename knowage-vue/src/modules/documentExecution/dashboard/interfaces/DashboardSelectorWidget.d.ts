@@ -20,7 +20,6 @@ export interface ISelectorWidgetSelectorType {
     modality: "singleValue" | "multiValue" | "dropdown" | "multiDropdown" | "datepicker" | "dateRange",
     alignment: "vertical" | "horizontal" | "grid",
     columnSize: string
-
 }
 
 export interface ISelectorWidgetDefaultValues {

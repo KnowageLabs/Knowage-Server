@@ -528,6 +528,10 @@
                 "title": "Summary rows"
             },
             "title": "Widget Editor",
+            "titles": {
+                "enableTitle": "Enable Title",
+                "title": "Title"
+            },
             "tooltipTextHint": "This text will overwrite the columns header default tooltip, variables and parameters placeholders ($V{placeholder} and $P{placeholder}) are available.",
             "tooltips": {
                 "customHeader": "Custom Header",

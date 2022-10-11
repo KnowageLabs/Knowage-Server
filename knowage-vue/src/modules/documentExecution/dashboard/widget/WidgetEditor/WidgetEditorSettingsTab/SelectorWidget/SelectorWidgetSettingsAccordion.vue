@@ -8,6 +8,7 @@
                 <SelectorWidgetType v-if="accordion.type === 'SelectorType'" :widgetModel="widgetModel"></SelectorWidgetType>
                 <SelectorWidgetDefaultValues v-else-if="accordion.type === 'DefaultValues'" :widgetModel="widgetModel"></SelectorWidgetDefaultValues>
                 <SelectorWidgetValuesManagement v-else-if="accordion.type === 'ValuesManagement'" :widgetModel="widgetModel"></SelectorWidgetValuesManagement>
+                <WidgetHeaders v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetHeaders>
             </AccordionTab>
         </Accordion>
     </div>
@@ -19,9 +20,11 @@ import { IWidget, IDataset, IVariable } from '@/modules/documentExecution/Dashbo
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import descriptor from './SelectorWidgetSettingsDescriptor.json'
+import settingsTabDescriptor from '../WidgetEditorSettingsTabDescriptor.json'
 import SelectorWidgetType from './configuration/SelectorWidgetType.vue'
 import SelectorWidgetDefaultValues from './configuration/SelectorWidgetDefaultValues.vue'
 import SelectorWidgetValuesManagement from './configuration/SelectorWidgetValuesManagement.vue'
+import WidgetHeaders from '../common/style/WidgetHeaders.vue'
 
 export default defineComponent({
     name: 'selector-widget-settings-container',
@@ -30,7 +33,8 @@ export default defineComponent({
         AccordionTab,
         SelectorWidgetType,
         SelectorWidgetDefaultValues,
-        SelectorWidgetValuesManagement
+        SelectorWidgetValuesManagement,
+        WidgetHeaders
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
@@ -48,6 +52,7 @@ export default defineComponent({
     data() {
         return {
             descriptor,
+            settingsTabDescriptor,
             activeIndex: -1
         }
     },

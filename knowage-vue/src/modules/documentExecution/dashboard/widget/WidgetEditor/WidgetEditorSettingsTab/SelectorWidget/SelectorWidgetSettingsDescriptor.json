@@ -32,7 +32,12 @@
                 "type": "ValuesManagement"
             }
         ],
-        "Style": []
+        "Style": [
+            {
+                "title": "dashboard.widgetEditor.titles.title",
+                "type": "Title"
+            }
+        ]
     },
     "settingsListOptions": [
         {
