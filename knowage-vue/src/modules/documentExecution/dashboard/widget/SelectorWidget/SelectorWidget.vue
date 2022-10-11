@@ -13,6 +13,14 @@
                 <label :for="`multi-${index}`" class="multi-select-label">{{ value.column_1 }}</label>
             </div>
         </div>
+
+        <span class="p-float-label p-m-2">
+            <Dropdown v-if="widgetType === 'dropdown'" class="kn-material-input kn-width-full" v-model="selectedValues" :options="dataToShow?.rows" optionLabel="column_1" optionValue="column_1" />
+        </span>
+
+        <span class="p-float-label p-m-2">
+            <MultiSelect v-if="widgetType === 'multiDropdown'" class="kn-material-input kn-width-full" v-model="selectedValues" :options="dataToShow?.rows" optionLabel="column_1" optionValue="column_1" :filter="true" />
+        </span>
     </div>
 </template>
 
@@ -21,10 +29,12 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget } from '../../Dashboard'
 import Checkbox from 'primevue/checkbox'
 import RadioButton from 'primevue/radiobutton'
+import Dropdown from 'primevue/dropdown'
+import MultiSelect from 'primevue/multiselect'
 
 export default defineComponent({
     name: 'datasets-catalog-datatable',
-    components: { Checkbox, RadioButton },
+    components: { Checkbox, RadioButton, Dropdown, MultiSelect },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         dataToShow: { type: Object as any, required: true }
