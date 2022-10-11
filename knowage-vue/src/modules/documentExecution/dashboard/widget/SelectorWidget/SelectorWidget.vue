@@ -14,13 +14,33 @@
             </div>
         </div>
 
-        <span class="p-float-label p-m-2">
-            <Dropdown v-if="widgetType === 'dropdown'" class="kn-material-input kn-width-full" v-model="selectedValues" :options="dataToShow?.rows" optionLabel="column_1" optionValue="column_1" />
+        <span v-if="widgetType === 'dropdown'" class="p-float-label p-m-2">
+            <Dropdown class="kn-material-input kn-width-full" v-model="selectedValues" :options="dataToShow?.rows" optionLabel="column_1" optionValue="column_1" />
         </span>
 
-        <span class="p-float-label p-m-2">
-            <MultiSelect v-if="widgetType === 'multiDropdown'" class="kn-material-input kn-width-full" v-model="selectedValues" :options="dataToShow?.rows" optionLabel="column_1" optionValue="column_1" :filter="true" />
+        <span v-if="widgetType === 'multiDropdown'" class="p-float-label p-m-2">
+            <MultiSelect class="kn-material-input kn-width-full" v-model="selectedValues" :options="dataToShow?.rows" optionLabel="column_1" optionValue="column_1" :filter="true" />
         </span>
+
+        <span v-if="widgetType === 'date'" class="p-float-label p-m-2">
+            <Calendar id="startDate" class="kn-material-input kn-width-full" v-model="selectedDate" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :showIcon="true" />
+            <label for="startDate" class="kn-material-input-label"> {{ selectedDate }} </label>
+        </span>
+
+        <div v-if="widgetType === 'dateRange'" :class="getLayoutStyle()">
+            <span class="p-float-label p-m-2" :style="getGridWidth()">
+                <Calendar id="startDate" class="kn-material-input kn-width-full" v-model="startDate" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :showIcon="true" />
+            </span>
+            <span class="p-float-label p-m-2" :style="getGridWidth()">
+                <Calendar id="startDate" class="kn-material-input kn-width-full" v-model="endDate" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :showIcon="true" />
+            </span>
+        </div>
+
+        <!-- TODO: Ask if they want date range selection using PV component or no
+        <span v-if="widgetType === 'dateRange'" class="p-float-label p-m-2">
+            <Calendar id="startDate" class="kn-material-input kn-width-full" selectionMode="range" v-model="selectedDateRange" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :showIcon="true" @change="logRange" />
+            <label for="startDate" class="kn-material-input-label">{{ selectedDateRange }}</label>
+        </span> -->
     </div>
 </template>
 
@@ -31,10 +51,11 @@ import Checkbox from 'primevue/checkbox'
 import RadioButton from 'primevue/radiobutton'
 import Dropdown from 'primevue/dropdown'
 import MultiSelect from 'primevue/multiselect'
+import Calendar from 'primevue/calendar'
 
 export default defineComponent({
     name: 'datasets-catalog-datatable',
-    components: { Checkbox, RadioButton, Dropdown, MultiSelect },
+    components: { Checkbox, RadioButton, Dropdown, MultiSelect, Calendar },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         dataToShow: { type: Object as any, required: true }
@@ -47,7 +68,11 @@ export default defineComponent({
     },
     data() {
         return {
-            selectedValues: [] as any
+            selectedValues: [] as any,
+            selectedDate: null as any,
+            selectedDateRange: null as any,
+            startDate: null as any,
+            endDate: null as any
         }
     },
     setup() {},
@@ -73,6 +98,14 @@ export default defineComponent({
             let gridWidth = this.propWidget.settings.configuration.selectorType.columnSize
             if (gridWidth != '') return { width: gridWidth }
             else return {}
+        },
+        getDateRange(rangeValue: string) {
+            let dateRange = this.propWidget.settings.configuration.defaultValues
+            if (dateRange.enabled && dateRange[rangeValue]) return dateRange[rangeValue]
+            else return undefined
+        },
+        logRange(event) {
+            console.log('range', event)
         }
     }
 })

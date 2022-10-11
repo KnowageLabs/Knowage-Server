@@ -1,7 +1,7 @@
 <template>
     <div class="widget-renderer" :style="getWidgetStyleString()">
         <TableWidget v-if="widget.type === 'table'" :propWidget="widget" :datasets="datasets" :editorMode="false" style="flex: 1" />
-        <SelectorWidget v-if="widget.type === 'selector'" :propWidget="widget" :datasets="datasets" :editorMode="false" style="flex: 1" />
+        <SelectorWidget v-if="widget.type === 'selector'" :propWidget="widget" :datasets="datasets" :dataToShow="mock.selectorMockedResponse" :editorMode="false" style="flex: 1" />
     </div>
 </template>
 
@@ -14,6 +14,7 @@ import { defineComponent } from 'vue'
 import { getWidgetStyleByType } from '../widget/TableWidget/TableWidgetHelper'
 import TableWidget from './TableWidget/TableWidget.vue'
 import SelectorWidget from './SelectorWidget/SelectorWidget.vue'
+import mock from '../dataset/DatasetEditorTestMocks.json'
 
 export default defineComponent({
     name: 'widget-renderer',
@@ -29,6 +30,11 @@ export default defineComponent({
             type: Object
         },
         datasets: { type: Array }
+    },
+    data() {
+        return {
+            mock
+        }
     },
     created() {
         this.getWidgetStyleString()

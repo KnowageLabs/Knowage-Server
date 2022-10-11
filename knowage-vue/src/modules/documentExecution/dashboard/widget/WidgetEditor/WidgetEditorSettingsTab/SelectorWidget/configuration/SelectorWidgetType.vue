@@ -30,7 +30,8 @@ export default defineComponent({
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     computed: {
         showAlignment(): boolean {
-            return this.widgetModel.settings.configuration.selectorType.modality === 'singleValue' || this.widgetModel.settings.configuration.selectorType.modality === 'multiValue'
+            let modality = this.widgetModel.settings.configuration.selectorType.modality
+            return modality === 'singleValue' || modality === 'multiValue' || modality === 'dateRange'
         }
     },
     data() {
