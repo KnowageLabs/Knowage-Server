@@ -61,7 +61,7 @@ export default defineComponent({
                 emitter.emit('columnRemoved', this.widgetModel.columns[0])
                 this.selectedColumn = null
             }
-            this.widgetModel.settings.isDateType = column.type === 'oracle.sql.TIMESTAMP' || column.type === 'java.util.Date'
+            this.widgetModel.settings.isDateType = column.type.toLowerCase().includes('date') || column.type.toLowerCase().includes('timestamp')
             this.widgetModel.columns = [column]
             emitter.emit('columnAdded', column)
             emitter.emit('refreshSelector', this.widgetModel.id)
