@@ -1000,6 +1000,8 @@ public class ExcelExporter {
 						return getCockpitVariables().getString(variable.getString("variable"));
 				}
 				return column.getString("aliasToShow");
+			} else if (!column.has("aliasToShow")) {
+				return column.getString("alias");
 			} else
 				return column.getString("aliasToShow");
 		} catch (Exception e) {
