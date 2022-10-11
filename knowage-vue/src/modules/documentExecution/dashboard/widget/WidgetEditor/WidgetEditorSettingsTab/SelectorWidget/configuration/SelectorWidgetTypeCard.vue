@@ -1,14 +1,15 @@
 <template>
-    <div class="outerIcon" :style="documentImageSource()"></div>
+    <div class="outerIcon" :class="{ selected: widgetModel.settings.selectorType.modality == selectorType.value, disabled: selectorType.value == 'date' || selectorType.value == 'dateRange' }" :style="documentImageSource()" @click="changeModality(selectorType.value)"></div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
+import { IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
 
 export default defineComponent({
     name: 'table-widget-rows',
     components: {},
-    props: { selectorType: { type: Object as any, true: false } },
+    props: { widgetModel: { type: Object as PropType<any>, required: true }, selectorType: { type: Object as any, true: false } },
     data() {
         return {}
     },
@@ -21,6 +22,9 @@ export default defineComponent({
                     'background-image': `url(${this.selectorType.imageUrl})`
                 }
             }
+        },
+        changeModality(event) {
+            this.widgetModel.settings.selectorType.modality = event
         }
     }
 })
@@ -34,16 +38,17 @@ export default defineComponent({
     cursor: pointer;
     margin: 5px;
     &.selected {
+        border: 2px solid;
         background-color: #a9c3db;
+        border-color: #43749e;
     }
     &:hover {
         background-color: darken(#a9c3db, 15%);
     }
-    &:hover,
-    &.selected {
-        .selTypesIcon {
-            background-color: white;
-        }
+    &.disabled {
+        background-color: darken(#ccc, 10%);
+        cursor: not-allowed;
+        pointer-events: none !important;
     }
     background-repeat: no-repeat;
     background-size: contain;

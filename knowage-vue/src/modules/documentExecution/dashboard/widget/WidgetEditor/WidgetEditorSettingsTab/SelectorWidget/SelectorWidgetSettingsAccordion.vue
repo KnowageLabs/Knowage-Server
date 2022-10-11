@@ -1,6 +1,6 @@
 <template>
     <div v-show="widgetModel">
-        <Accordion v-model:activeIndex="activeIndex">
+        <Accordion class="selectorAccordion" v-model:activeIndex="activeIndex">
             <AccordionTab v-for="(accordion, index) in settings" :key="index">
                 <template #header>
                     <div>
@@ -58,14 +58,13 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-// .widget-editor-accordion {
-//     ::v-deep(.p-accordion-tab-active) {
-//         margin: 0;
-//     }
-// }
-
-.p-accordion-content {
-    padding: 0 !important;
+.selectorAccordion {
+    ::v-deep(.p-accordion-tab-active) {
+        margin: 0;
+    }
+    .p-accordion-content {
+        display: flex;
+    }
 }
 
 .dynamic-form-item {
