@@ -577,7 +577,7 @@ export interface IVariable {
 export interface IWidgetTitle {
     enabled: boolean,
     text: string,
-    height: string,
+    height: number,
     properties: {
         'font-weight': string
         'font-style': string

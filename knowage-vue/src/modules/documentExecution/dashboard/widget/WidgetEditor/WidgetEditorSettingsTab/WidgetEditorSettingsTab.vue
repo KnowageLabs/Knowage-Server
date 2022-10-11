@@ -10,6 +10,7 @@
             :selectedDatasets="selectedDatasets"
             :drivers="drivers"
             :variables="variables"
+            :dashboardId="dashboardId"
         ></TableWidgetSettingsContainer>
         <SelectorWidgetSettingsContainer
             v-else-if="propWidget.type === 'selector'"
@@ -36,7 +37,14 @@ import WidgetEditorSettingsList from './WidgetEditorSettingsList.vue'
 export default defineComponent({
     name: 'widget-editor-settings-tab',
     components: { TableWidgetSettingsContainer, WidgetEditorSettingsList, SelectorWidgetSettingsContainer },
-    props: { propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array as PropType<IDataset[]> }, selectedDatasets: { type: Array as PropType<IDataset[]> }, drivers: { type: Array }, variables: { type: Array as PropType<IVariable[]> } },
+    props: {
+        propWidget: { type: Object as PropType<IWidget>, required: true },
+        datasets: { type: Array as PropType<IDataset[]> },
+        selectedDatasets: { type: Array as PropType<IDataset[]> },
+        drivers: { type: Array },
+        variables: { type: Array as PropType<IVariable[]> },
+        dashboardId: { type: String, required: true }
+    },
     emits: [],
     data() {
         return {

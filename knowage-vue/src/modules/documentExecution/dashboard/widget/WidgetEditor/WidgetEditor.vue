@@ -9,7 +9,7 @@
                 </template>
             </Toolbar>
             <div class="datasetEditor-container kn-overflow">
-                <WidgetEditorTabs class="dashboardEditor-tabs" :propWidget="widget" :datasets="datasets" :selectedDatasets="selectedDatasets" :drivers="drivers" :variables="variables" @datasetSelected="onDatasetSelected" />
+                <WidgetEditorTabs class="dashboardEditor-tabs" :propWidget="widget" :datasets="datasets" :selectedDatasets="selectedDatasets" :drivers="drivers" :variables="variables" :dashboardId="dashboardId" @datasetSelected="onDatasetSelected" />
                 <WidgetEditorPreview id="widget-editor-preview" :propWidget="widget" :dashboardId="dashboardId" :datasets="datasets" />
             </div>
         </div>
@@ -35,7 +35,13 @@ export default defineComponent({
     name: 'widget-editor',
     components: { WidgetEditorPreview, WidgetEditorTabs },
     emits: ['close', 'widgetUpdated', 'widgetSaved'],
-    props: { dashboardId: { type: String, required: true }, propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array as PropType<IDataset[]> }, documentDrivers: { type: Array }, variables: { type: Array as PropType<IVariable[]> } },
+    props: {
+        dashboardId: { type: String, required: true },
+        propWidget: { type: Object as PropType<IWidget>, required: true },
+        datasets: { type: Array as PropType<IDataset[]> },
+        documentDrivers: { type: Array },
+        variables: { type: Array as PropType<IVariable[]> }
+    },
     data() {
         return {
             descriptor,
