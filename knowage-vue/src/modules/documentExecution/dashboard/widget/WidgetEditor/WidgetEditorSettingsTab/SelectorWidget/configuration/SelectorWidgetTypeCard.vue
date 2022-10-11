@@ -1,5 +1,5 @@
 <template>
-    <div class="outerIcon" :class="{ selected: widgetModel.settings.configuration.selectorType.modality == selectorType.value, disabled: selectorType.value == 'date' || selectorType.value == 'dateRange' }" :style="documentImageSource()" @click="changeModality(selectorType.value)"></div>
+    <div class="outerIcon" :class="{ selected: widgetModel.settings.configuration.selectorType.modality == selectorType.value, disabled: dateDisabled }" :style="documentImageSource()" @click="changeModality(selectorType.value)"></div>
 </template>
 
 <script lang="ts">
@@ -10,6 +10,14 @@ export default defineComponent({
     name: 'table-widget-rows',
     components: {},
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectorType: { type: Object as any, true: false } },
+    computed: {
+        dateDisabled(): boolean {
+            if (this.selectorType.value == 'date' || this.selectorType.value == 'dateRange') {
+                if (this.widgetModel.columns[0]?.type.toLowerCase().includes('date')) return false
+                else return true
+            } else return false
+        }
+    },
     data() {
         return {}
     },
