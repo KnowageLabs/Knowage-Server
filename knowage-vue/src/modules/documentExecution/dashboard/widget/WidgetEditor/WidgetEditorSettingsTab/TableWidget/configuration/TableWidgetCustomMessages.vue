@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, ITableWidgetCustomMessages } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget, ITableWidgetCustomMessages } from '@/modules/documentExecution/dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
 import Checkbox from 'primevue/checkbox'
 import descriptor from '../TableWidgetSettingsDescriptor.json'

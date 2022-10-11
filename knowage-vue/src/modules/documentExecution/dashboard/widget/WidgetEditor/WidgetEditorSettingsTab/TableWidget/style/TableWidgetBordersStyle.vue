@@ -60,7 +60,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, ITableWidgetBordersStyle } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget, ITableWidgetBordersStyle } from '@/modules/documentExecution/dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import descriptor from '../TableWidgetSettingsDescriptor.json'

@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import { ITableWidgetParameter } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { ITableWidgetParameter } from '@/modules/documentExecution/dashboard/Dashboard'
 import { defineComponent, PropType } from 'vue'
 import VCodeMirror, { CodeMirror } from 'codemirror-editor-vue3'
 

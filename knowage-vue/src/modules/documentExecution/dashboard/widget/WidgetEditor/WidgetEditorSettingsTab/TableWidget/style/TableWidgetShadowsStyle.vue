@@ -33,7 +33,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, ITableWidgetShadowsStyle } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget, ITableWidgetShadowsStyle } from '@/modules/documentExecution/dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import descriptor from '../TableWidgetSettingsDescriptor.json'

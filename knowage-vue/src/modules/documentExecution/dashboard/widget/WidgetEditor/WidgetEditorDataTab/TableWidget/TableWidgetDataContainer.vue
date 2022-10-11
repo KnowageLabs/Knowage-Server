@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
 import { removeColumnFromModel } from '../../helpers/tableWidget/TableWidgetFunctions'
 import { emitter } from '../../../../DashboardHelpers'
 import descriptor from './TableWidgetDataDescriptor.json'

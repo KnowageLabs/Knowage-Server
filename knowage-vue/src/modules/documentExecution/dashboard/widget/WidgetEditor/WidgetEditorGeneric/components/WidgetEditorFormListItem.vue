@@ -31,7 +31,7 @@
                     :itemIndex="itemIndex"
                     @change="onChange($event, component, index)"
                 ></WidgetEditorDropdown>
-                <WidgetEditorStyleToolbar v-else-if="component.type === 'styleToolbar'" :widgetModel="widgetModel" :icons="component.icons" :settings="component.settings" :item="item" :itemIndex="itemIndex"></WidgetEditorStyleToolbar >
+                <WidgetEditorStyleToolbar v-else-if="component.type === 'styleToolbar'" :widgetModel="widgetModel" :icons="component.icons" :settings="component.settings" :item="item" :itemIndex="itemIndex"></WidgetEditorStyleToolbar>
                 <i v-if="component.type === 'addDeleteIcon'" :class="[itemIndex === 0 ? 'pi pi-plus-circle' : 'pi pi-trash', disabled ? 'icon-disabled' : '']" class="kn-cursor-pointer p-ml-2" @click="$emit('addNewItem', itemIndex)"></i>
             </template>
         </div>
@@ -42,7 +42,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
 import { getModelProperty } from '../WidgetEditorGenericHelper'
 import WidgetEditorInputText from './WidgetEditorInputText.vue'
 import WidgetEditorDropdown from './WidgetEditorDropdown.vue'

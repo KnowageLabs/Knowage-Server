@@ -10,7 +10,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidgetStyleToolbarModel, IIcon } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidgetStyleToolbarModel, IIcon } from '@/modules/documentExecution/dashboard/Dashboard'
 import WidgetEditorStyleIcon from './WidgetEditorStyleIcon.vue'
 import WidgetEditorStyleIconPickerDialog from './WidgetEditorStyleIconPickerDialog.vue'
 

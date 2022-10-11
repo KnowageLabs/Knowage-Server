@@ -33,7 +33,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, ITableWidgetRowsStyle } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget, ITableWidgetRowsStyle } from '@/modules/documentExecution/dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
 import InputNumber from 'primevue/inputnumber'

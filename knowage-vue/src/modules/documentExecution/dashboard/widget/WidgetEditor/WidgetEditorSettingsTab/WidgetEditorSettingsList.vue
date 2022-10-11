@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
 import Listbox from 'primevue/listbox'
 import descriptor from './WidgetEditorSettingsTabDescriptor.json'
 

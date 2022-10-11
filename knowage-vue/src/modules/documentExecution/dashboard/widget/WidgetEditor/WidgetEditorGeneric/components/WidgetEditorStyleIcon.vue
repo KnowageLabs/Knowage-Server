@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
 import { getModelProperty } from '../WidgetEditorGenericHelper'
 import { emitter } from '../../../../DashboardHelpers'
 import ColorPicker from 'primevue/colorpicker'
