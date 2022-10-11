@@ -1,6 +1,7 @@
 <template>
     <div class="widget-renderer" :style="getWidgetStyleString()">
         <TableWidget v-if="widget.type === 'table'" :propWidget="widget" :datasets="datasets" :editorMode="false" style="flex: 1" />
+        <SelectorWidget v-if="widget.type === 'selector'" :propWidget="widget" :datasets="datasets" :editorMode="false" style="flex: 1" />
     </div>
 </template>
 
@@ -10,13 +11,14 @@
  * TODO: the switch between different widget types will be added here
  */
 import { defineComponent } from 'vue'
-import TableWidget from './TableWidget/TableWidget.vue'
 import { getWidgetStyleByType } from '../widget/TableWidget/TableWidgetHelper'
+import TableWidget from './TableWidget/TableWidget.vue'
+import SelectorWidget from './SelectorWidget/SelectorWidget.vue'
 
 export default defineComponent({
     name: 'widget-renderer',
     emits: ['interaction'],
-    components: { TableWidget },
+    components: { TableWidget, SelectorWidget },
     props: {
         widget: {
             required: true,
