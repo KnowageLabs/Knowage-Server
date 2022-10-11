@@ -404,6 +404,7 @@
                 "columnsFirstItem": "Main column's first item",
                 "columnsLastItem": "Main column's last item",
                 "enableDefaultValues": "Enable Default Values",
+                "hint": "Default values hint placeholder",
                 "selectDafaultValue": "Select Default Value",
                 "title": "Default Values"
             },

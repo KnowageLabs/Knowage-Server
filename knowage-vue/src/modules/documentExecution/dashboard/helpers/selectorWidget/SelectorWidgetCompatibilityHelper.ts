@@ -78,7 +78,9 @@ const getFormattedDefaultValues = (widget: any) => {
         valueType: widget.settings.defaultValue,
     } as ISelectorWidgetDefaultValues
     if (formattedDefaultValues.valueType) formattedDefaultValues.enabled = true
-    if (formattedDefaultValues.valueType === 'STATIC') formattedDefaultValues.value = widget.settings.staticValues
+    if (widget.settings.staticValues) formattedDefaultValues.value = widget.settings.staticValues
+    if (widget.settings.defaultStartDate) formattedDefaultValues.startDate = new Date(widget.settings.defaultStartDate)
+    if (widget.settings.defaultEndDate) formattedDefaultValues.endDate = new Date(widget.settings.defaultEndDate)
     return formattedDefaultValues
 }
 
