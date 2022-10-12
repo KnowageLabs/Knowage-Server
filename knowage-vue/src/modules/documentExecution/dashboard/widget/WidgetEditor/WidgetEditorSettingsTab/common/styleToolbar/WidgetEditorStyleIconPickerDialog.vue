@@ -30,7 +30,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IIcon, IWidgetStyleToolbarModel } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IIcon, IWidgetStyleToolbarModel } from '@/modules/documentExecution/dashboard/Dashboard'
 import Dialog from 'primevue/dialog'
 import descriptor from './WidgetEditorStyleToolbarDescriptor.json'
 

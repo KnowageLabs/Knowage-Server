@@ -21,7 +21,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType, ref } from 'vue'
-import { IWidgetStyleToolbarModel } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidgetStyleToolbarModel } from '@/modules/documentExecution/dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
 import { getRGBColorFromString } from '../../../helpers/WidgetEditorHelpers'
 import { useClickOutside } from './useClickOutside'

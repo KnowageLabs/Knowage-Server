@@ -46,11 +46,11 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, ITableWidgetCrossNavigation, ITableWidgetParameter, IDataset, IWidgetStyleToolbarModel } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget, ITableWidgetCrossNavigation, ITableWidgetParameter, IDataset, IWidgetStyleToolbarModel } from '@/modules/documentExecution/dashboard/Dashboard'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import { emitter } from '../../../../../../DashboardHelpers'
 import descriptor from '../../TableWidgetSettingsDescriptor.json'
-import dashboardStore from '@/modules/documentExecution/Dashboard/Dashboard.store'
+import dashboardStore from '@/modules/documentExecution/dashboard/Dashboard.store'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 import TableWidgetOutputParametersList from './TableWidgetOutputParametersList.vue'

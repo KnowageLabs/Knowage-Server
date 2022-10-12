@@ -25,7 +25,7 @@
 import { defineComponent } from 'vue'
 import type { PropType } from 'vue'
 import Menu from 'primevue/menu'
-import type { ISheet } from '@/modules/documentExecution/Dashboard/Dashboard'
+import type { ISheet } from '@/modules/documentExecution/dashboard/Dashboard'
 
 export default defineComponent({
     name: 'kn-dashboard-tabs-panel',

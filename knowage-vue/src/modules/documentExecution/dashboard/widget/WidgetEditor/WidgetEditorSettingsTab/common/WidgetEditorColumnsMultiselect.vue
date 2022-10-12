@@ -5,7 +5,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import MultiSelect from 'primevue/multiselect'
-import { IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
 
 export default defineComponent({
     name: 'widget-editor-multiselect',

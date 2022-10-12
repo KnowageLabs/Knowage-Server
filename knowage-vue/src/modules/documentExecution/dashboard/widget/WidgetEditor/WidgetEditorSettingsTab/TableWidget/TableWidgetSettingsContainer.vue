@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IDataset, IVariable } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget, IDataset, IVariable } from '@/modules/documentExecution/dashboard/Dashboard'
 import descriptor from './TableWidgetSettingsDescriptor.json'
 import TableWidgetSettingsAccordion from './TableWidgetSettingsAccordion.vue'
 
