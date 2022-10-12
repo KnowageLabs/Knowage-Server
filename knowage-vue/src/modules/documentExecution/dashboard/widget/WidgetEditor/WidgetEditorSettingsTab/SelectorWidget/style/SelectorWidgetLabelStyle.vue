@@ -1,12 +1,16 @@
 <template>
     <div v-if="labelStyleModel" class="p-grid p-jc-center p-ai-center kn-flex p-p-4">
-        <div class="p-col-6">
-            <InputSwitch v-model="labelStyleModel.wrapText" @change="labelStyleChanged"></InputSwitch>
+        <div class="p-col-12">
+            <InputSwitch v-model="labelStyleModel.enabled" @change="labelStyleChanged"></InputSwitch>
+            <label class="kn-material-input-label p-ml-3">{{ $t('common.enable') }}</label>
+        </div>
+        <div class="p-col-6 p-mt-1">
+            <InputSwitch v-model="labelStyleModel.wrapText" :disabled="labelStyleDisabled" @change="labelStyleChanged"></InputSwitch>
             <label class="kn-material-input-label p-ml-3">{{ $t('dashboard.widgetEditor.valuesManagement.wrapText') }}</label>
         </div>
         <div class="p-col-6"></div>
         <div class="p-col-12 p-py-4">
-            <WidgetEditorStyleToolbar :options="toolbarStyleSettings" :propModel="labelStyleModel.properties" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
+            <WidgetEditorStyleToolbar :options="toolbarStyleSettings" :propModel="labelStyleModel.properties" :disabled="labelStyleDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
         </div>
     </div>
 </template>
@@ -28,6 +32,11 @@ export default defineComponent({
         return {
             descriptor,
             labelStyleModel: null as ISelectorWidgetLabelStyle | null
+        }
+    },
+    computed: {
+        labelStyleDisabled() {
+            return !this.labelStyleModel || !this.labelStyleModel.enabled
         }
     },
     created() {

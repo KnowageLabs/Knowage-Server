@@ -1,4 +1,4 @@
-import { IWidgetResponsive, IWidgetTitle, IWidgetPaddingStyle, IWidgetBordersStyle, IWidgetShadowsStyle } from '../Dashboard'
+import { IWidgetResponsive, IWidgetTitle, IWidgetPaddingStyle, IWidgetBordersStyle, IWidgetShadowsStyle, IWidgetBackgroundStyle } from '../Dashboard'
 
 export interface ISelectorWidgetSettings {
     isDateType: boolean,
@@ -7,7 +7,7 @@ export interface ISelectorWidgetSettings {
     clickable: boolean,
     configuration: ISelectorWidgetConfiguration,
     style: ISelectorWidgetStyle,
-    responsive: IWidgetResponsive,
+    responsive: IWidgetResponsive
 }
 
 export interface ISelectorWidgetConfiguration {
@@ -41,10 +41,11 @@ export interface ISelectorWidgetStyle {
     padding: IWidgetPaddingStyle,
     borders: IWidgetBordersStyle,
     shadows: IWidgetShadowsStyle,
-    ['background-color']: string
+    background: IWidgetBackgroundStyle
 }
 
 export interface ISelectorWidgetLabelStyle {
+    enabled: boolean,
     wrapText: boolean,
     properties: {
         'font-weight': string
