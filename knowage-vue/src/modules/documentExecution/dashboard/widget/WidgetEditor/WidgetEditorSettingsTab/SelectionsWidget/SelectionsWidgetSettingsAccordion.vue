@@ -5,10 +5,9 @@
                 <template #header>
                     <label class="kn-material-input-label">{{ $t(accordion.title) }}</label>
                 </template>
-                {{ 'test' }}
-
                 <!-- <SelectorWidgetType v-if="accordion.type === 'SelectorType'" :widgetModel="widgetModel"></SelectorWidgetType> -->
-                <WidgetHeaders v-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetHeaders>
+                <SelectionsWidgetValuesManagement v-if="accordion.type === 'ValuesManagement'" :widgetModel="widgetModel"></SelectionsWidgetValuesManagement>
+                <WidgetHeaders v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetHeaders>
             </AccordionTab>
         </Accordion>
     </div>
@@ -23,6 +22,7 @@ import descriptor from './SelectionsWidgetSettingsDescriptor.json'
 import settingsTabDescriptor from '../WidgetEditorSettingsTabDescriptor.json'
 import SelectorWidgetType from '../SelectorWidget/configuration/SelectorWidgetType.vue'
 import WidgetHeaders from '../common/style/WidgetHeaders.vue'
+import SelectionsWidgetValuesManagement from './configuration/SelectionsWidgetValuesManagement.vue'
 
 export default defineComponent({
     name: 'selections-widget-settings-container',
@@ -30,7 +30,8 @@ export default defineComponent({
         Accordion,
         AccordionTab,
         SelectorWidgetType,
-        WidgetHeaders
+        WidgetHeaders,
+        SelectionsWidgetValuesManagement
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

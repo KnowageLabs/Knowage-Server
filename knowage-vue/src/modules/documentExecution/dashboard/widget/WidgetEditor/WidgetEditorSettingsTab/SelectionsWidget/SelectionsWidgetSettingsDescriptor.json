@@ -4,6 +4,10 @@
             {
                 "title": "dashboard.widgetEditor.selectorType.title",
                 "type": "SelectorType"
+            },
+            {
+                "title": "dashboard.widgetEditor.valuesManagement.title",
+                "type": "ValuesManagement"
             }
         ],
         "Responsive": [],
