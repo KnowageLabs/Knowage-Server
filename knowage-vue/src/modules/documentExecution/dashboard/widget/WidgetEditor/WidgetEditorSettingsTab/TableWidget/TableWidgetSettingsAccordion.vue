@@ -25,7 +25,7 @@
                 <WidgetShadowsStyle v-else-if="accordion.type === 'ShadowsStyle'" :widgetModel="widgetModel"></WidgetShadowsStyle>
                 <TableWidgetConditions v-else-if="accordion.type === 'Conditions'" :widgetModel="widgetModel" :drivers="drivers" :variables="variables"></TableWidgetConditions>
                 <TableWidgetTooltips v-else-if="accordion.type === 'Tooltips'" :widgetModel="widgetModel"></TableWidgetTooltips>
-                <TableWidgetResponsive v-else-if="accordion.type === 'Responsive'" :widgetModel="widgetModel"></TableWidgetResponsive>
+                <WidgetResponsive v-else-if="accordion.type === 'Responsive'" :widgetModel="widgetModel"></WidgetResponsive>
                 <TableWidgetSelection v-else-if="accordion.type === 'Selection'" :widgetModel="widgetModel"></TableWidgetSelection>
                 <TableWidgetCrossNavigation v-else-if="accordion.type === 'CrossNavigation'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets"></TableWidgetCrossNavigation>
                 <TableWidgetInteractionsLinks v-else-if="accordion.type === 'Link'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :drivers="drivers"></TableWidgetInteractionsLinks>
@@ -57,7 +57,7 @@ import WidgetBordersStyle from '../common/style/WidgetBordersStyle.vue'
 import WidgetShadowsStyle from '../common/style/WidgetShadowsStyle.vue'
 import TableWidgetConditions from './conditionalStyle/TableWidgetConditions.vue'
 import TableWidgetTooltips from './tooltips/TableWidgetTooltips.vue'
-import TableWidgetResponsive from './responsive/TableWidgetResponsive.vue'
+import WidgetResponsive from '../common/responsive/WidgetResponsive.vue'
 import TableWidgetSelection from './interactions/selection/TableWidgetSelection.vue'
 import TableWidgetCrossNavigation from './interactions/crossNavigation/TableWidgetCrossNavigation.vue'
 import TableWidgetInteractionsLinks from './interactions/link/TableWidgetInteractionsLinks.vue'
@@ -86,7 +86,7 @@ export default defineComponent({
         WidgetShadowsStyle,
         TableWidgetConditions,
         TableWidgetTooltips,
-        TableWidgetResponsive,
+        WidgetResponsive,
         TableWidgetSelection,
         TableWidgetCrossNavigation,
         TableWidgetInteractionsLinks,

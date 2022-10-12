@@ -19,7 +19,7 @@ import descriptor from '../../WidgetEditorSettingsTabDescriptor.json'
 import InputSwitch from 'primevue/inputswitch'
 
 export default defineComponent({
-    name: 'table-widget-responsive',
+    name: 'widget-responsive',
     components: { InputSwitch },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {

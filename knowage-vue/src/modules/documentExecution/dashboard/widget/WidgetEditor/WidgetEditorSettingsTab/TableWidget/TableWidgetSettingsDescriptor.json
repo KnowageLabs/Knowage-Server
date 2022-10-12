@@ -240,7 +240,6 @@
             "value": "selection"
         }
     ],
-    "responsiveInputSwiitches": ["xs", "sm", "md", "lg", "xl"],
     "settings": {
         "ConditionalStyle": [
             {

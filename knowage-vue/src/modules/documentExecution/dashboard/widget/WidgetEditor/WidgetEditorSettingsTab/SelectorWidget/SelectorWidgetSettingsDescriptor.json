@@ -32,6 +32,12 @@
                 "type": "ValuesManagement"
             }
         ],
+        "Responsive": [
+            {
+                "title": "dashboard.widgetEditor.responsive.title",
+                "type": "Responsive"
+            }
+        ],
         "Style": [
             {
                 "title": "dashboard.widgetEditor.titles.title",
@@ -69,6 +75,11 @@
             "icon": "fa fa-paint-brush",
             "label": "common.style",
             "value": "Style"
+        },
+        {
+            "icon": "pi pi-tablet",
+            "label": "dashboard.widgetEditor.responsive.title",
+            "value": "Responsive"
         }
     ]
 }

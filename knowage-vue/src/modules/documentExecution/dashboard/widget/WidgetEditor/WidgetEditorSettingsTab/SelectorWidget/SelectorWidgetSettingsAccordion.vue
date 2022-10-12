@@ -14,6 +14,7 @@
                 <WidgetPaddingStyle v-else-if="accordion.type === 'PaddingStyle'" :widgetModel="widgetModel"></WidgetPaddingStyle>
                 <WidgetBordersStyle v-else-if="accordion.type === 'BordersStyle'" :widgetModel="widgetModel"></WidgetBordersStyle>
                 <WidgetShadowsStyle v-else-if="accordion.type === 'ShadowsStyle'" :widgetModel="widgetModel"></WidgetShadowsStyle>
+                <WidgetResponsive v-else-if="accordion.type === 'Responsive'" :widgetModel="widgetModel"></WidgetResponsive>
             </AccordionTab>
         </Accordion>
     </div>
@@ -35,6 +36,7 @@ import WidgetBackgroundColorStyle from '../common/style/WidgetBackgroundColorSty
 import WidgetPaddingStyle from '../common/style/WidgetPaddingStyle.vue'
 import WidgetBordersStyle from '../common/style/WidgetBordersStyle.vue'
 import WidgetShadowsStyle from '../common/style/WidgetShadowsStyle.vue'
+import WidgetResponsive from '../common/responsive/WidgetResponsive.vue'
 
 export default defineComponent({
     name: 'selector-widget-settings-container',
@@ -49,7 +51,8 @@ export default defineComponent({
         WidgetBackgroundColorStyle,
         WidgetPaddingStyle,
         WidgetBordersStyle,
-        WidgetShadowsStyle
+        WidgetShadowsStyle,
+        WidgetResponsive
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
