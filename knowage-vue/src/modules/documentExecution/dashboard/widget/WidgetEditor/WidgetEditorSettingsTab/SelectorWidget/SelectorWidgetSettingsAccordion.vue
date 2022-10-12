@@ -12,6 +12,7 @@
                 <SelectorWidgetLabelStyle v-else-if="accordion.type === 'LabelStyle'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></SelectorWidgetLabelStyle>
                 <WidgetPaddingStyle v-else-if="accordion.type === 'PaddingStyle'" :widgetModel="widgetModel"></WidgetPaddingStyle>
                 <WidgetBordersStyle v-else-if="accordion.type === 'BordersStyle'" :widgetModel="widgetModel"></WidgetBordersStyle>
+                <WidgetShadowsStyle v-else-if="accordion.type === 'ShadowsStyle'" :widgetModel="widgetModel"></WidgetShadowsStyle>
             </AccordionTab>
         </Accordion>
     </div>
@@ -31,6 +32,7 @@ import WidgetHeaders from '../common/style/WidgetHeaders.vue'
 import SelectorWidgetLabelStyle from './style/SelectorWidgetLabelStyle.vue'
 import WidgetPaddingStyle from '../common/style/WidgetPaddingStyle.vue'
 import WidgetBordersStyle from '../common/style/WidgetBordersStyle.vue'
+import WidgetShadowsStyle from '../common/style/WidgetShadowsStyle.vue'
 
 export default defineComponent({
     name: 'selector-widget-settings-container',
@@ -43,7 +45,8 @@ export default defineComponent({
         WidgetHeaders,
         SelectorWidgetLabelStyle,
         WidgetPaddingStyle,
-        WidgetBordersStyle
+        WidgetBordersStyle,
+        WidgetShadowsStyle
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

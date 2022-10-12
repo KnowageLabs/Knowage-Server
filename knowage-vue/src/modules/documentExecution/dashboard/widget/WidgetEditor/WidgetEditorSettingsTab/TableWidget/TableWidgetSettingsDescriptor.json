@@ -386,24 +386,6 @@
             "value": "Responsive"
         }
     ],
-    "shadowsSizeOptions": [
-        {
-            "label": "common.small",
-            "value": "small"
-        },
-        {
-            "label": "common.medium",
-            "value": "medium"
-        },
-        {
-            "label": "common.large",
-            "value": "large"
-        },
-        {
-            "label": "common.extraLarge",
-            "value": "extraLarge"
-        }
-    ],
     "styleToolbarSelectionOptions": [
         {
             "type": "color"

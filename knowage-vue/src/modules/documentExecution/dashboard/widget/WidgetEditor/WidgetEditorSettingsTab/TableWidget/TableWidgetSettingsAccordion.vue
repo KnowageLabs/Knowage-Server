@@ -22,7 +22,7 @@
                 <TableWidgetSummaryStyle v-else-if="accordion.type === 'SummaryStyle'" :widgetModel="widgetModel"></TableWidgetSummaryStyle>
                 <WidgetBordersStyle v-else-if="accordion.type === 'BordersStyle'" :widgetModel="widgetModel"></WidgetBordersStyle>
                 <WidgetPaddingStyle v-else-if="accordion.type === 'PaddingStyle'" :widgetModel="widgetModel"></WidgetPaddingStyle>
-                <TableWidgetShadowsStyle v-else-if="accordion.type === 'ShadowsStyle'" :widgetModel="widgetModel"></TableWidgetShadowsStyle>
+                <WidgetShadowsStyle v-else-if="accordion.type === 'ShadowsStyle'" :widgetModel="widgetModel"></WidgetShadowsStyle>
                 <TableWidgetConditions v-else-if="accordion.type === 'Conditions'" :widgetModel="widgetModel" :drivers="drivers" :variables="variables"></TableWidgetConditions>
                 <TableWidgetTooltips v-else-if="accordion.type === 'Tooltips'" :widgetModel="widgetModel"></TableWidgetTooltips>
                 <TableWidgetResponsive v-else-if="accordion.type === 'Responsive'" :widgetModel="widgetModel"></TableWidgetResponsive>
@@ -54,7 +54,7 @@ import TableWidgetColumnStyle from './style/TableWidgetColumnStyle.vue'
 import TableWidgetRowsStyle from './style/TableWidgetRowsStyle.vue'
 import TableWidgetSummaryStyle from './style/TableWidgetSummaryStyle.vue'
 import WidgetBordersStyle from '../common/style/WidgetBordersStyle.vue'
-import TableWidgetShadowsStyle from './style/TableWidgetShadowsStyle.vue'
+import WidgetShadowsStyle from '../common/style/WidgetShadowsStyle.vue'
 import TableWidgetConditions from './conditionalStyle/TableWidgetConditions.vue'
 import TableWidgetTooltips from './tooltips/TableWidgetTooltips.vue'
 import TableWidgetResponsive from './responsive/TableWidgetResponsive.vue'
@@ -83,7 +83,7 @@ export default defineComponent({
         TableWidgetRowsStyle,
         TableWidgetSummaryStyle,
         WidgetBordersStyle,
-        TableWidgetShadowsStyle,
+        WidgetShadowsStyle,
         TableWidgetConditions,
         TableWidgetTooltips,
         TableWidgetResponsive,

@@ -1,5 +1,5 @@
 <template>
-    <div v-if="shadowsStyleModel" class="p-grid p-jc-center p-ai-center p-p-4">
+    <div v-if="shadowsStyleModel" class="p-grid p-jc-center p-ai-center kn-flex p-p-4">
         <div class="p-col-12 p-d-flex p-flex-row p-ai-center p-mb-4">
             <div class="kn-flex p-m-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.shadows.enableShadows') }}</label>
@@ -25,7 +25,7 @@
             </div>
 
             <div class="p-col-12 p-md-6 p-px-2">
-                <WidgetEditorColorPicker :initialValue="shadowsStyleModel.properties.backgroundColor" :label="$t('dashboard.widgetEditor.iconTooltips.backgroundColor')" :disabled="shadowsStyleDisabled" @change="onBackroundColorChanged"></WidgetEditorColorPicker>
+                <WidgetEditorColorPicker :initialValue="shadowsStyleModel.properties.color" :label="$t('dashboard.widgetEditor.iconTooltips.backgroundColor')" :disabled="shadowsStyleDisabled" @change="onBackroundColorChanged"></WidgetEditorColorPicker>
             </div>
         </div>
     </div>
@@ -36,7 +36,7 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget, IWidgetShadowsStyle } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
-import descriptor from '../TableWidgetSettingsDescriptor.json'
+import descriptor from '../../WidgetEditorSettingsTabDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 import WidgetEditorColorPicker from '../../common/WidgetEditorColorPicker.vue'
@@ -53,6 +53,7 @@ export default defineComponent({
             shadowsStyleModel: null as IWidgetShadowsStyle | null,
             shadowSize: '',
             shadowSizeOptionsMap: { small: '0px 1px 1px', medium: '0px 2px 3px', large: '0px 8px 19px', extraLarge: '0px 8px 19px' },
+            widgetType: '' as string,
             getTranslatedLabel
         }
     },
@@ -66,12 +67,20 @@ export default defineComponent({
     },
     methods: {
         loadShadowsStyle() {
-            if (this.widgetModel?.settings?.style?.shadows) this.shadowsStyleModel = this.widgetModel.settings.style.shadows
+            if (!this.widgetModel) return
+            this.widgetType = this.widgetModel.type
+            if (this.widgetModel.settings?.style?.shadows) this.shadowsStyleModel = this.widgetModel.settings.style.shadows
             this.getShadowSize()
         },
         shadowStyleChanged() {
             emitter.emit('shadowStyleChanged', this.shadowsStyleModel)
-            emitter.emit('refreshTable', this.widgetModel.id)
+            switch (this.widgetType) {
+                case 'table':
+                    emitter.emit('refreshTable', this.widgetModel.id)
+                    break
+                case 'selector':
+                    emitter.emit('refreshSelector', this.widgetModel.id)
+            }
         },
         getShadowSize() {
             if (!this.shadowsStyleModel) return
