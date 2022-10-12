@@ -1,6 +1,5 @@
 <template>
     <div v-if="paddingStyleModel" class="p-grid p-jc-center p-ai-center p-p-4">
-        {{ paddingStyleModel }}
         <div class="p-col-12 p-d-flex p-flex-row p-ai-center p-pt-2 p-pb-4">
             <div class="kn-flex p-m-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.padding.enablePadding') }}</label>
@@ -46,7 +45,6 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IWidgetPaddingStyle } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
-import descriptor from '../TableWidgetSettingsDescriptor.json'
 import InputSwitch from 'primevue/inputswitch'
 
 export default defineComponent({
@@ -57,7 +55,6 @@ export default defineComponent({
     },
     data() {
         return {
-            descriptor,
             paddingStyleModel: null as IWidgetPaddingStyle | null,
             widgetType: '' as string
         }
@@ -72,12 +69,11 @@ export default defineComponent({
     },
     methods: {
         loadPaddingStyle() {
-            if (!this.widgetModel) return
-            this.widgetType = this.widgetModel.type
-            if (this.widgetModel.settings?.style?.padding) this.paddingStyleModel = this.widgetModel.settings.style.padding
+            if (this.widgetModel?.settings?.style?.padding) this.paddingStyleModel = this.widgetModel.settings.style.padding
         },
         paddingStyleChanged() {
             emitter.emit('paddingStyleChanged', this.paddingStyleModel)
+            this.widgetType = this.widgetModel.type
             switch (this.widgetType) {
                 case 'table':
                     emitter.emit('refreshTable', this.widgetModel.id)

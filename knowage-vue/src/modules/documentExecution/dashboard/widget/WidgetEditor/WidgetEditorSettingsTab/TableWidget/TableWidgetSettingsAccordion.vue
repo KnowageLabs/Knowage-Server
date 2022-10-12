@@ -21,7 +21,8 @@
                 <TableWidgetRowsStyle v-else-if="accordion.type === 'RowsStyle'" :widgetModel="widgetModel"></TableWidgetRowsStyle>
                 <TableWidgetSummaryStyle v-else-if="accordion.type === 'SummaryStyle'" :widgetModel="widgetModel"></TableWidgetSummaryStyle>
                 <TableWidgetBordersStyle v-else-if="accordion.type === 'BordersStyle'" :widgetModel="widgetModel"></TableWidgetBordersStyle>
-                <TableWidgetPaddingStyle v-else-if="accordion.type === 'PaddingStyle'" :widgetModel="widgetModel"></TableWidgetPaddingStyle>
+                <WidgetPaddingStyle v-else-if="accordion.type === 'PaddingStyle'" :widgetModel="widgetModel"></WidgetPaddingStyle>
+                <!-- <TableWidgetPaddingStyle v-else-if="accordion.type === 'PaddingStyle'" :widgetModel="widgetModel"></TableWidgetPaddingStyle> -->
                 <TableWidgetShadowsStyle v-else-if="accordion.type === 'ShadowsStyle'" :widgetModel="widgetModel"></TableWidgetShadowsStyle>
                 <TableWidgetConditions v-else-if="accordion.type === 'Conditions'" :widgetModel="widgetModel" :drivers="drivers" :variables="variables"></TableWidgetConditions>
                 <TableWidgetTooltips v-else-if="accordion.type === 'Tooltips'" :widgetModel="widgetModel"></TableWidgetTooltips>
@@ -64,6 +65,7 @@ import TableWidgetCrossNavigation from './interactions/crossNavigation/TableWidg
 import TableWidgetInteractionsLinks from './interactions/link/TableWidgetInteractionsLinks.vue'
 import TableWidgetPreview from './interactions/preview/TableWidgetPreview.vue'
 import WidgetHeaders from '../common/style/WidgetHeaders.vue'
+import WidgetPaddingStyle from '../common/style/WidgetPaddingStyle.vue'
 
 export default defineComponent({
     name: 'table-widget-configuration-container',
@@ -91,7 +93,8 @@ export default defineComponent({
         TableWidgetSelection,
         TableWidgetCrossNavigation,
         TableWidgetInteractionsLinks,
-        TableWidgetPreview
+        TableWidgetPreview,
+        WidgetPaddingStyle
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
