@@ -5,9 +5,6 @@ import cryptoRandomString from 'crypto-random-string'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import * as selectorWidgetDefaultValues from '../../widget/WidgetEditor/helpers/selectorWidget/SelectorWidgetDefaultValues'
 
-
-const columnNameIdMap = {}
-
 export const formatSelectorWidget = (widget: any) => {
     console.log('SelectorWidgetCompatibilityHelper - formatSelectorWidget called for: ', widget)
     const formattedWidget = {
@@ -29,7 +26,6 @@ const getFormattedSelectionColumn = (widget: any) => {
     if (widget.content && widget.content.selectedColumn) {
         const formattedColumn = { id: cryptoRandomString({ length: 16, type: 'base64' }), columnName: widget.content.selectedColumn.name, alias: widget.content.selectedColumn.alias, type: widget.content.selectedColumn.type, fieldType: widget.content.selectedColumn.fieldType, multiValue: widget.content.selectedColumn.multiValue, filter: {} } as IWidgetColumn
         formattedColumns.push(formattedColumn)
-        columnNameIdMap[formattedColumn.columnName] = formattedColumn.id
     }
     return formattedColumns
 
@@ -91,8 +87,3 @@ const getFormattedWidgetValuesManagement = (widget: any) => {
         hideDisabled: widget.settings.hideDisabled ?? false, enableAll: widget.settings.enableAll ?? false,
     } as ISelectorWidgetValuesManagement
 }
-
-export const getColumnId = (widgetColumnName: string) => {
-    return columnNameIdMap[widgetColumnName]
-}
-

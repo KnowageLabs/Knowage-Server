@@ -3,6 +3,7 @@ import cryptoRandomString from 'crypto-random-string'
 import { formatTableWidget } from './tableWidget/TableWidgetCompatibilityHelper'
 import { formatSelectorWidget } from '@/modules/documentExecution/dashboard/helpers/selectorWidget/SelectorWidgetCompatibilityHelper'
 import { IDatasetParameter, IWidgetEditorDataset } from '../Dashboard'
+import { formatSelectionWidget } from './selectionWidget/SelectionsWidgetCompatibilityHelper'
 
 export const formatModel = (model: any) => {
     if (!model.sheets) return
@@ -127,6 +128,9 @@ export const formatWidget = (widget: any) => {
             break;
         case 'selector':
             formattedWidget = formatSelectorWidget(widget)
+            break;
+        case 'selection':
+            formattedWidget = formatSelectionWidget(widget)
     }
 
     return formattedWidget

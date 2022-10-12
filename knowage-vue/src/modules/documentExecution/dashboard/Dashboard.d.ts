@@ -588,3 +588,10 @@ export interface IWidgetTitle {
         'background-color': string
     }
 }
+
+export interface IWidgetBackgroundStyle {
+    enabled: boolean,
+    property: {
+        'background-color': string
+    }
+}

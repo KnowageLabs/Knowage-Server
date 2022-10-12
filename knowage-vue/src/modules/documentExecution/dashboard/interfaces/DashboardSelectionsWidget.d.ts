@@ -1,13 +1,17 @@
-import { IWidgetTitle } from '../Dashboard'
+import { IWidgetBackgroundStyle, IWidgetResponsive, IWidgetTitle } from '../Dashboard'
 
 export interface ISelectionsWidgetSettings {
-    sortingOrder?: string
     updatable: boolean,
     clickable: boolean,
+    configuration: ISelectionWidgetConfiguration,
+    style: ISelectionWidgetStyle,
+    responsive: IWidgetResponsive
+}
+
+export interface ISelectionWidgetConfiguration {
     type: "chips" | "list",
     valuesManagement: ISelectionsWidgetValuesManagement,
     noSelections: ISelectionsWidgetNoSelections,
-    style: ISelectionWidgetStyle
 }
 
 export interface ISelectionsWidgetValuesManagement {
@@ -22,15 +26,25 @@ export interface ISelectionsWidgetNoSelections {
 
 export interface ISelectionWidgetStyle {
     title: IWidgetTitle,
-    chips: ISelectionWidgetChips,
+    chips: ISelectionWidgetChipsStyle,
     rows: ISelectionWidgetRows,
-    background: ISelectionWidgetBackground
+    padding: IWidgetPaddingStyle,
+    borders: IWidgetBordersStyle,
+    shadows: IWidgetShadowsStyle,
+    background: IWidgetBackgroundStyle
 }
 
-export interface ISelectionWidgetChips {
+
+export interface ISelectionWidgetChipsStyle {
     height: string,
     properties: {
+        'font-weight': string
+        'font-style': string
+        'font-size': string
+        'font-family': string
+        'justify-content': string
         color: string
+        'background-color': string
     }
 }
 
@@ -40,11 +54,5 @@ export interface ISelectionWidgetRows {
         enabled: string,
         evenBackgroundColor: string,
         oddBackgroundColor: string
-    }
-}
-
-export interface ISelectionWidgetBackground {
-    properties: {
-        color: string
     }
 }

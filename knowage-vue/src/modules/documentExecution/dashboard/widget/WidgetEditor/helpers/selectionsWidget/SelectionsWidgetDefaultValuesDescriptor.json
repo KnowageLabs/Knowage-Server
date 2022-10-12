@@ -5,7 +5,8 @@
             "background-color": ""
         }
     },
-    "defaultLabelStyle": {
+    "defaultChipsStyle": {
+        "height": "",
         "properties": {
             "background-color": "",
             "color": "",
@@ -14,21 +15,10 @@
             "font-style": "",
             "font-weight": "",
             "justify-content": ""
-        },
-        "wrapText": false
-    },
-    "defaultSelectorType": {
-        "alignment": "vertical",
-        "columnSize": "",
-        "modality": "radio"
-    },
-    "defaultValues": {
-        "enabled": false,
-        "value": "",
-        "valueType": ""
+        }
     },
     "defaultValuesManagement": {
-        "enableAll": false,
-        "hideDisabled": false
+        "showColumn": true,
+        "showDataset": true
     }
 }
