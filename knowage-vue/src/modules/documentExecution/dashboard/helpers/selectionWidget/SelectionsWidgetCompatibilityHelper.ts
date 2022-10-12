@@ -34,8 +34,8 @@ const getFormattedWidgetSettings = (widget: any) => {
 const getFormattedConfiguration = (widget: any) => {
     return {
         type: widget.style?.chips?.enabled ? 'chips' : 'list',
-        valuesManagement: getFormattedValuesManagement(widget) as any,
-        noSelections: getFormattedNoSelections(widget) as any,
+        valuesManagement: getFormattedValuesManagement(widget),
+        noSelections: getFormattedNoSelections(widget),
     } as ISelectionWidgetConfiguration
 }
 

@@ -8,6 +8,10 @@
             {
                 "title": "dashboard.widgetEditor.valuesManagement.title",
                 "type": "ValuesManagement"
+            },
+            {
+                "title": "dashboard.widgetEditor.noSelections.title",
+                "type": "NoSelections"
             }
         ],
         "Responsive": [],

@@ -39,10 +39,10 @@ export default defineComponent({
         }
     },
     created() {
-        this.loadDefaultValuesModel()
+        this.loadValuesManagementModel()
     },
     methods: {
-        loadDefaultValuesModel() {
+        loadValuesManagementModel() {
             if (this.widgetModel.settings?.configuration?.valuesManagement) this.valuesManagementModel = this.widgetModel.settings.configuration.valuesManagement
         },
         valuesManagementChanged() {

@@ -7,6 +7,7 @@
                 </template>
                 <!-- <SelectorWidgetType v-if="accordion.type === 'SelectorType'" :widgetModel="widgetModel"></SelectorWidgetType> -->
                 <SelectionsWidgetValuesManagement v-if="accordion.type === 'ValuesManagement'" :widgetModel="widgetModel"></SelectionsWidgetValuesManagement>
+                <SelectionsNoSelectionConfiguration v-else-if="accordion.type === 'NoSelections'" :widgetModel="widgetModel"></SelectionsNoSelectionConfiguration>
                 <WidgetHeaders v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetHeaders>
             </AccordionTab>
         </Accordion>
@@ -23,6 +24,7 @@ import settingsTabDescriptor from '../WidgetEditorSettingsTabDescriptor.json'
 import SelectorWidgetType from '../SelectorWidget/configuration/SelectorWidgetType.vue'
 import WidgetHeaders from '../common/style/WidgetHeaders.vue'
 import SelectionsWidgetValuesManagement from './configuration/SelectionsWidgetValuesManagement.vue'
+import SelectionsNoSelectionConfiguration from './configuration/SelectionsNoSelectionConfiguration.vue'
 
 export default defineComponent({
     name: 'selections-widget-settings-container',
@@ -31,7 +33,8 @@ export default defineComponent({
         AccordionTab,
         SelectorWidgetType,
         WidgetHeaders,
-        SelectionsWidgetValuesManagement
+        SelectionsWidgetValuesManagement,
+        SelectionsNoSelectionConfiguration
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
