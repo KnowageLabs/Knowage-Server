@@ -11,7 +11,7 @@
                 <TableWidgetSummaryRows v-else-if="accordion.type === 'SummaryRows'" :widgetModel="widgetModel"></TableWidgetSummaryRows>
                 <TableWidgetHeader v-else-if="accordion.type === 'Header'" :widgetModel="widgetModel" :drivers="drivers" :variables="variables"></TableWidgetHeader>
                 <TableWidgetColumnGroups v-else-if="accordion.type === 'ColumnGroups'" :widgetModel="widgetModel"></TableWidgetColumnGroups>
-                <TableWidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></TableWidgetExport>
+                <WidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
                 <TableWidgetCustomMessages v-else-if="accordion.type === 'CustomMessages'" :widgetModel="widgetModel"></TableWidgetCustomMessages>
                 <TableWidgetVisualizationType v-else-if="accordion.type === 'VisualizationType'" :widgetModel="widgetModel"></TableWidgetVisualizationType>
                 <TableWidgetVisibilityConditions v-else-if="accordion.type === 'VisibilityConditions'" :widgetModel="widgetModel" :variables="variables"></TableWidgetVisibilityConditions>
@@ -46,7 +46,7 @@ import TableWidgetRows from './configuration/TableWidgetRows.vue'
 import TableWidgetSummaryRows from './configuration/TableWidgetSummaryRows.vue'
 import TableWidgetHeader from './configuration/TableWidgetHeader.vue'
 import TableWidgetColumnGroups from './configuration/TableWidgetColumnGroups.vue'
-import TableWidgetExport from './configuration/TableWidgetExport.vue'
+import WidgetExport from '../common/configuration/WidgetExport.vue'
 import TableWidgetCustomMessages from './configuration/TableWidgetCustomMessages.vue'
 import TableWidgetVisualizationType from './visualization/TableWidgetVisualizationType.vue'
 import TableWidgetVisibilityConditions from './visualization/TableWidgetVisibilityConditions.vue'
@@ -74,7 +74,7 @@ export default defineComponent({
         TableWidgetSummaryRows,
         TableWidgetHeader,
         TableWidgetColumnGroups,
-        TableWidgetExport,
+        WidgetExport,
         TableWidgetCustomMessages,
         TableWidgetVisualizationType,
         TableWidgetVisibilityConditions,

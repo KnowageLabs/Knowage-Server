@@ -82,7 +82,7 @@ export interface ITableWidgetConditionalStyle {
 }
 export interface ITableWidgetConfiguration {
     columnGroups: ITableWidgetColumnGroups
-    exports: ITableWidgetExports
+    exports: IWidgetExports
     headers: ITableWidgetHeaders
     rows: ITableWidgetRows
     summaryRows: ITableWidgetSummaryRows
@@ -100,8 +100,8 @@ export interface ITableWidgetColumnGroup {
     columns: string[]
 }
 
-export interface ITableWidgetExports {
-    pdf: {
+export interface IWidgetExports {
+    pdf?: {
         enabled: boolean
         custom: {
             height: number
@@ -112,7 +112,7 @@ export interface ITableWidgetExports {
         a4portrait: boolean
     }
     showExcelExport: boolean
-    showScreenshot: boolean
+    showScreenshot?: boolean
 }
 
 export interface ITableWidgetHeaders {

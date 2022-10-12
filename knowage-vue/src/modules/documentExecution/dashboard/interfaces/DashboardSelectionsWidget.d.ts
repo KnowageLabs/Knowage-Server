@@ -12,6 +12,7 @@ export interface ISelectionWidgetConfiguration {
     type: "chips" | "list",
     valuesManagement: ISelectionsWidgetValuesManagement,
     noSelections: ISelectionsWidgetNoSelections,
+    exports: IWidgetExports
 }
 
 export interface ISelectionsWidgetValuesManagement {

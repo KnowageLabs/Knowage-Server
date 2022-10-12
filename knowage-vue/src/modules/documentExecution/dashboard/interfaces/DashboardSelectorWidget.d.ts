@@ -14,6 +14,7 @@ export interface ISelectorWidgetConfiguration {
     selectorType: ISelectorWidgetSelectorType,
     defaultValues: ISelectorWidgetDefaultValues,
     valuesManagement: ISelectorWidgetValuesManagement,
+    exports: IWidgetExports
 }
 
 export interface ISelectorWidgetSelectorType {

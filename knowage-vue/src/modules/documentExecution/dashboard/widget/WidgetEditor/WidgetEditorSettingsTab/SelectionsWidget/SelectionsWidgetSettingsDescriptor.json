@@ -12,6 +12,10 @@
             {
                 "title": "dashboard.widgetEditor.noSelections.title",
                 "type": "NoSelections"
+            },
+            {
+                "title": "dashboard.widgetEditor.export.title",
+                "type": "Export"
             }
         ],
         "Responsive": [
