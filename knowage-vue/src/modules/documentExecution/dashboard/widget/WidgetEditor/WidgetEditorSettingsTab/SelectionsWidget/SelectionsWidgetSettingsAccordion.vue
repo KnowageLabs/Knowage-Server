@@ -8,6 +8,7 @@
                 <SelectorWidgetType v-if="accordion.type === 'SelectorType'" :widgetModel="widgetModel"></SelectorWidgetType>
                 <SelectionsWidgetValuesManagement v-if="accordion.type === 'ValuesManagement'" :widgetModel="widgetModel"></SelectionsWidgetValuesManagement>
                 <SelectionsNoSelectionConfiguration v-else-if="accordion.type === 'NoSelections'" :widgetModel="widgetModel"></SelectionsNoSelectionConfiguration>
+                <WidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
                 <WidgetHeaders v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetHeaders>
                 <SelectionsWidgetChipsStyle v-else-if="accordion.type === 'ChipsStyle'" :widgetModel="widgetModel"></SelectionsWidgetChipsStyle>
                 <WidgetRowsStyle v-else-if="accordion.type === 'RowsStyle'" :widgetModel="widgetModel"></WidgetRowsStyle>
@@ -31,6 +32,7 @@ import settingsTabDescriptor from '../WidgetEditorSettingsTabDescriptor.json'
 import SelectorWidgetType from '../SelectorWidget/configuration/SelectorWidgetType.vue'
 import SelectionsWidgetValuesManagement from './configuration/SelectionsWidgetValuesManagement.vue'
 import SelectionsNoSelectionConfiguration from './configuration/SelectionsNoSelectionConfiguration.vue'
+import WidgetExport from '../common/configuration/WidgetExport.vue'
 import WidgetHeaders from '../common/style/WidgetHeaders.vue'
 import SelectionsWidgetChipsStyle from './style/SelectionsWidgetChipsStyle.vue'
 import WidgetRowsStyle from '../common/style/WidgetRowsStyle.vue'
@@ -48,6 +50,7 @@ export default defineComponent({
         SelectorWidgetType,
         SelectionsWidgetValuesManagement,
         SelectionsNoSelectionConfiguration,
+        WidgetExport,
         WidgetHeaders,
         SelectionsWidgetChipsStyle,
         WidgetRowsStyle,

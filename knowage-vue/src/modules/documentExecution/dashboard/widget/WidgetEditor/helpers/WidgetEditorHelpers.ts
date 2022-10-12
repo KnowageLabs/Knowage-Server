@@ -1,58 +1,32 @@
 import { IWidget } from '../../../Dashboard'
 import { formatTableWidgetForSave } from './tableWidget/TableWidgetBackendSaveHelper'
+import { createNewTableWidgetSettings } from '../helpers/tableWidget/TableWidgetFunctions'
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
-import * as  tableWidgetDefaultValues from './tableWidget/TableWidgetDefaultValues'
-import * as widgetCommonDefaultValues from './common/WidgetCommonDefaultValues'
 
-export function createNewWidget() {
-
+export function createNewWidget(type: string) {
+    console.log(">>>>>>>> type: ", type)
     const widget = {
         id: cryptoRandomString({ length: 16, type: 'base64' }),
         new: true,
-        type: 'table',
+        type: type,
         dataset: null,
         columns: [],
         settings: {
-            sortingColumn: '',
-            sortingOrder: '',
-            updatable: true,
-            clickable: true,
-            conditionalStyles: tableWidgetDefaultValues.getDefaultConditionalStyles(),
-            configuration: {
-                columnGroups: tableWidgetDefaultValues.getDefaultColumnGroups(),
-                exports: tableWidgetDefaultValues.getDefaultExportsConfiguration(),
-                headers: tableWidgetDefaultValues.getDefaultHeadersConfiguration(),
-                rows: tableWidgetDefaultValues.getDefaultRowsConfiguration(),
-                summaryRows: tableWidgetDefaultValues.getDefaultSummaryRowsConfiguration(),
-                customMessages: tableWidgetDefaultValues.getDefaultCustomMessages()
-            },
-            interactions: {
-                crosssNavigation: tableWidgetDefaultValues.getDefaultCrossNavigation(),
-                link: tableWidgetDefaultValues.getDefaultLinks(),
-                preview: tableWidgetDefaultValues.getDefaultPreview(),
-                selection: tableWidgetDefaultValues.getDefaultSelection()
-            },
-            pagination: tableWidgetDefaultValues.getDefaultPagination(),
-            style: {
-                borders: widgetCommonDefaultValues.getDefaultBordersStyle(),
-                columns: tableWidgetDefaultValues.getDefaultColumnStyles(),
-                columnGroups: tableWidgetDefaultValues.getDefaultColumnStyles(),
-                headers: tableWidgetDefaultValues.getDefaultHeadersStyle(),
-                padding: widgetCommonDefaultValues.getDefaultPaddingStyle(),
-                rows: tableWidgetDefaultValues.getDefaultRowsStyle(),
-                shadows: widgetCommonDefaultValues.getDefaultShadowsStyle(),
-                summary: tableWidgetDefaultValues.getDefualtSummryStyle()
-            },
-            tooltips: tableWidgetDefaultValues.getDefaultTooltips(),
-            visualization: tableWidgetDefaultValues.getDefaultVisualizations(),
-            responsive: widgetCommonDefaultValues.getDefaultResponsivnes()
-
         }
 
     } as IWidget
 
+    createNewWidgetSettings(widget)
+
     return widget
+}
+
+const createNewWidgetSettings = (widget: IWidget) => {
+    switch (widget.type) {
+        case 'table':
+            widget.settings = createNewTableWidgetSettings()
+    }
 }
 
 

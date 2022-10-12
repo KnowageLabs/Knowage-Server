@@ -8,7 +8,7 @@
             "border-style": "solid",
             "border-top-left-radius": "",
             "border-top-right-radius": "",
-            "border-width": ""
+            "border-width": "1px"
         }
     },
     "defaultPaddingStyle": {

@@ -1,4 +1,4 @@
-import { IWidget } from "../../Dashboard"
+import { IWidget, IWidgetExports } from "../../Dashboard"
 import { ISelectionsWidgetNoSelections, ISelectionsWidgetSettings, ISelectionsWidgetValuesManagement, ISelectionWidgetConfiguration } from "../../interfaces/DashboardSelectionsWidget"
 import { getFormattedStyle } from "./SelectionsWidgetStyleHelper"
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
@@ -36,6 +36,7 @@ const getFormattedConfiguration = (widget: any) => {
         type: widget.style?.chips?.enabled ? 'chips' : 'list',
         valuesManagement: getFormattedValuesManagement(widget),
         noSelections: getFormattedNoSelections(widget),
+        exports: { showExcelExport: widget.style?.showExcelExport ?? false } as IWidgetExports
     } as ISelectionWidgetConfiguration
 }
 

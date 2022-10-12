@@ -21,7 +21,7 @@
  * ! this component will be in charge of managing the widget editing.
  */
 import { defineComponent, PropType } from 'vue'
-import { IWidgetEditorDataset, IDatasetOptions, IWidget, IDataset, IModelDataset, IVariable } from '../../Dashboard'
+import { IWidgetEditorDataset, IWidget, IDataset, IModelDataset, IVariable } from '../../Dashboard'
 import { AxiosResponse } from 'axios'
 import { createNewWidget, formatWidgetForSave } from './helpers/WidgetEditorHelpers'
 import WidgetEditorPreview from './WidgetEditorPreview.vue'
@@ -72,7 +72,8 @@ export default defineComponent({
     methods: {
         loadWidget() {
             if (!this.propWidget) return
-            this.widget = this.propWidget.new ? createNewWidget() : deepcopy(this.propWidget)
+
+            this.widget = this.propWidget.new ? createNewWidget(this.propWidget.type) : deepcopy(this.propWidget)
         },
         loadSelectedModelDatasets() {
             this.selectedModelDatasets = this.dashboardId ? this.dashboardStore.getDashboardSelectedDatastes(this.dashboardId) : {}

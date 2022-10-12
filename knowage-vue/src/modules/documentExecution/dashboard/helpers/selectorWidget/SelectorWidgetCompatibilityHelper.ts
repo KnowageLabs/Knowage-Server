@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn } from "@/modules/documentExecution/dashboard/Dashboard"
+import { IWidget, IWidgetColumn, IWidgetExports } from "@/modules/documentExecution/dashboard/Dashboard"
 import { ISelectorWidgetDefaultValues, ISelectorWidgetSelectorType, ISelectorWidgetSettings, ISelectorWidgetValuesManagement, ISelectorWidgetConfiguration } from "@/modules/documentExecution/dashboard/interfaces/DashboardSelectorWidget"
 import { getFormattedStyle } from './SelectorWidgetStyleHelper'
 import cryptoRandomString from 'crypto-random-string'
@@ -49,6 +49,7 @@ const getFormattedConfiguration = (widget: any) => {
         selectorType: getFormattedSelectorType(widget),
         defaultValues: getFormattedDefaultValues(widget),
         valuesManagement: getFormattedWidgetValuesManagement(widget),
+        exports: { showExcelExport: widget.style?.showExcelExport ?? false } as IWidgetExports
     } as ISelectorWidgetConfiguration
 }
 

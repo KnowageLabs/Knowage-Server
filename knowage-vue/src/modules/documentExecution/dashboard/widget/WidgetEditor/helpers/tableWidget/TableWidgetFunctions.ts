@@ -1,6 +1,46 @@
-import { IWidget, IWidgetColumn, IIcon, ITableWidgetSettings, ITableWidgetConfiguration, ITableWidgetHeaders, ITableWidgetColumnGroups, ITableWidgetColumnGroup, ITableWidgetParameter } from "../../../../Dashboard"
+import { IWidget, IWidgetColumn, ITableWidgetColumnGroup, ITableWidgetParameter, ITableWidgetSettings } from "../../../../Dashboard"
 import { emitter } from '../../../../DashboardHelpers'
 import cryptoRandomString from 'crypto-random-string'
+import * as  tableWidgetDefaultValues from '../tableWidget/TableWidgetDefaultValues'
+import * as widgetCommonDefaultValues from '../common/WidgetCommonDefaultValues'
+
+export const createNewTableWidgetSettings = () => {
+    return {
+        sortingColumn: '',
+        sortingOrder: '',
+        updatable: true,
+        clickable: true,
+        conditionalStyles: tableWidgetDefaultValues.getDefaultConditionalStyles(),
+        configuration: {
+            columnGroups: tableWidgetDefaultValues.getDefaultColumnGroups(),
+            exports: tableWidgetDefaultValues.getDefaultExportsConfiguration(),
+            headers: tableWidgetDefaultValues.getDefaultHeadersConfiguration(),
+            rows: tableWidgetDefaultValues.getDefaultRowsConfiguration(),
+            summaryRows: tableWidgetDefaultValues.getDefaultSummaryRowsConfiguration(),
+            customMessages: tableWidgetDefaultValues.getDefaultCustomMessages()
+        },
+        interactions: {
+            crosssNavigation: tableWidgetDefaultValues.getDefaultCrossNavigation(),
+            link: tableWidgetDefaultValues.getDefaultLinks(),
+            preview: tableWidgetDefaultValues.getDefaultPreview(),
+            selection: tableWidgetDefaultValues.getDefaultSelection()
+        },
+        pagination: tableWidgetDefaultValues.getDefaultPagination(),
+        style: {
+            borders: widgetCommonDefaultValues.getDefaultBordersStyle(),
+            columns: tableWidgetDefaultValues.getDefaultColumnStyles(),
+            columnGroups: tableWidgetDefaultValues.getDefaultColumnStyles(),
+            headers: tableWidgetDefaultValues.getDefaultHeadersStyle(),
+            padding: widgetCommonDefaultValues.getDefaultPaddingStyle(),
+            rows: tableWidgetDefaultValues.getDefaultRowsStyle(),
+            shadows: widgetCommonDefaultValues.getDefaultShadowsStyle(),
+            summary: tableWidgetDefaultValues.getDefualtSummryStyle()
+        },
+        tooltips: tableWidgetDefaultValues.getDefaultTooltips(),
+        visualization: tableWidgetDefaultValues.getDefaultVisualizations(),
+        responsive: widgetCommonDefaultValues.getDefaultResponsivnes()
+    } as ITableWidgetSettings
+}
 
 export const createNewWidgetColumn = (eventData: any) => {
     const tempColumn = {
@@ -15,7 +55,7 @@ export const createNewWidgetColumn = (eventData: any) => {
     return tempColumn
 }
 
-//#region ===================== Remove Column ====================================================
+
 export const removeColumnFromModel = (widgetModel: IWidget, column: IWidgetColumn) => {
     removeColumnFromRows(widgetModel, column)
     removeColumnFromSubmodel(column, widgetModel.settings.configuration.headers.custom.rules, 'target', 'headersColumnRemoved', false)
@@ -78,5 +118,5 @@ export const removeColumnGroupFromModel = (widgetModel: IWidget, columnGroup: IT
 }
 
 export default removeColumnFromModel
-//#endregion ================================================================================================
+
 

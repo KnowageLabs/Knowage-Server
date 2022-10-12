@@ -8,6 +8,7 @@
                 <SelectorWidgetType v-if="accordion.type === 'SelectorType'" :widgetModel="widgetModel"></SelectorWidgetType>
                 <SelectorWidgetDefaultValues v-else-if="accordion.type === 'DefaultValues'" :widgetModel="widgetModel"></SelectorWidgetDefaultValues>
                 <SelectorWidgetValuesManagement v-else-if="accordion.type === 'ValuesManagement'" :widgetModel="widgetModel"></SelectorWidgetValuesManagement>
+                <WidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
                 <WidgetHeaders v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetHeaders>
                 <SelectorWidgetLabelStyle v-else-if="accordion.type === 'LabelStyle'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></SelectorWidgetLabelStyle>
                 <WidgetBackgroundColorStyle v-else-if="accordion.type === 'BackgroundColorStyle'" :widgetModel="widgetModel"></WidgetBackgroundColorStyle>
@@ -30,6 +31,7 @@ import settingsTabDescriptor from '../WidgetEditorSettingsTabDescriptor.json'
 import SelectorWidgetType from './configuration/SelectorWidgetType.vue'
 import SelectorWidgetDefaultValues from './configuration/SelectorWidgetDefaultValues.vue'
 import SelectorWidgetValuesManagement from './configuration/SelectorWidgetValuesManagement.vue'
+import WidgetExport from '../common/configuration/WidgetExport.vue'
 import WidgetHeaders from '../common/style/WidgetHeaders.vue'
 import SelectorWidgetLabelStyle from './style/SelectorWidgetLabelStyle.vue'
 import WidgetBackgroundColorStyle from '../common/style/WidgetBackgroundColorStyle.vue'
@@ -46,6 +48,7 @@ export default defineComponent({
         SelectorWidgetType,
         SelectorWidgetDefaultValues,
         SelectorWidgetValuesManagement,
+        WidgetExport,
         WidgetHeaders,
         SelectorWidgetLabelStyle,
         WidgetBackgroundColorStyle,
