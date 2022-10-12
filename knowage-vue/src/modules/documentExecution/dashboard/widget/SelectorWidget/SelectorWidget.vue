@@ -1,21 +1,21 @@
 <template>
-    <div class="selector-widget">
+    <div class="selector-widget" :style="getBackgroundColor()">
         <div v-if="widgetType === 'singleValue'" :class="getLayoutStyle()">
-            <div class="multi-select p-m-1" :style="getGridWidth()" v-for="(value, index) of dataToShow?.rows" :key="index">
+            <div class="multi-select p-p-1" :style="getLabelStyle() + getGridWidth()" v-for="(value, index) of dataToShow?.rows" :key="index">
                 <RadioButton :inputId="`radio-${index}`" class="p-mr-2" :name="value.column_1" :value="value.column_1" v-model="selectedValues" />
                 <label :for="`radio-${index}`" class="multi-select-label">{{ value.column_1 }}</label>
             </div>
         </div>
 
         <div v-if="widgetType === 'multiValue'" :class="getLayoutStyle()">
-            <div class="multi-select p-m-1" :style="getGridWidth()" v-for="(value, index) of dataToShow?.rows" :key="index">
+            <div class="multi-select p-p-1" :style="getLabelStyle() + getGridWidth()" v-for="(value, index) of dataToShow?.rows" :key="index">
                 <Checkbox :inputId="`multi-${index}`" class="p-mr-2" :name="value.column_1" :value="value.column_1" v-model="selectedValues" />
                 <label :for="`multi-${index}`" class="multi-select-label">{{ value.column_1 }}</label>
             </div>
         </div>
 
         <span v-if="widgetType === 'dropdown'" class="p-float-label p-m-2">
-            <Dropdown class="kn-material-input kn-width-full" v-model="selectedValues" :options="dataToShow?.rows" optionLabel="column_1" optionValue="column_1" />
+            <Dropdown class="kn-width-full" panelClass="testClass" inputClass="testClass" v-model="selectedValues" :options="dataToShow?.rows" optionLabel="column_1" optionValue="column_1" />
         </span>
 
         <span v-if="widgetType === 'multiDropdown'" class="p-float-label p-m-2">
@@ -52,6 +52,7 @@ import RadioButton from 'primevue/radiobutton'
 import Dropdown from 'primevue/dropdown'
 import MultiSelect from 'primevue/multiselect'
 import Calendar from 'primevue/calendar'
+import { getWidgetStyleByType } from '../TableWidget/TableWidgetHelper'
 
 export default defineComponent({
     name: 'datasets-catalog-datatable',
@@ -83,11 +84,11 @@ export default defineComponent({
             let selectorType = this.propWidget.settings.configuration.selectorType
             if (selectorType.alignment) {
                 switch (selectorType.alignment) {
-                    case 'Vertical':
+                    case 'vertical':
                         return 'vertical-layout'
-                    case 'Horizontal':
+                    case 'horizontal':
                         return 'horizontal-layout'
-                    case 'Grid':
+                    case 'grid':
                         return 'grid-layout'
                     default:
                         break
@@ -96,13 +97,26 @@ export default defineComponent({
         },
         getGridWidth() {
             let gridWidth = this.propWidget.settings.configuration.selectorType.columnSize
-            if (gridWidth != '') return { width: gridWidth }
-            else return {}
+            if (gridWidth != '') return `width: ${gridWidth}`
+            else return ''
         },
         getDateRange(rangeValue: string) {
             let dateRange = this.propWidget.settings.configuration.defaultValues
             if (dateRange.enabled && dateRange[rangeValue]) return dateRange[rangeValue]
             else return undefined
+        },
+        getLabelStyle() {
+            const styleSettings = this.propWidget.settings.style.label
+            if (styleSettings.properties) {
+                const styleString = Object.entries(styleSettings.properties ?? styleSettings)
+                    .map(([k, v]) => `${k}:${v}`)
+                    .join(';')
+                console.log(styleString)
+                return styleString + ';'
+            } else return ''
+        },
+        getBackgroundColor() {
+            return `background-color:${this.propWidget.settings.style['background-color']};`
         },
         logRange(event) {
             console.log('range', event)
@@ -116,6 +130,7 @@ export default defineComponent({
     overflow-y: auto;
     .multi-select {
         display: flex;
+        align-items: center;
         .multi-select-label {
             text-overflow: ellipsis;
             overflow: hidden;
@@ -150,5 +165,9 @@ export default defineComponent({
 }
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
+}
+.testClass {
+    background-color: red;
+    color: blue;
 }
 </style>

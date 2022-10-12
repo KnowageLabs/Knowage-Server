@@ -6,7 +6,7 @@
 
         <div v-if="showAlignment" class="p-d-flex p-flex-row p-m-2">
             <div v-for="(layout, index) of layouts" :key="index" class="p-m-2">
-                <RadioButton :inputId="layout.key" name="layout" :value="layout.name" v-model="widgetModel.settings.configuration.selectorType.alignment" />
+                <RadioButton :inputId="layout.key" :name="layout.name" :value="layout.value" v-model="widgetModel.settings.configuration.selectorType.alignment" />
                 <i :class="layout.icon" class="p-mx-2" />
                 <label :for="layout.key">{{ layout.name }}</label>
             </div>
