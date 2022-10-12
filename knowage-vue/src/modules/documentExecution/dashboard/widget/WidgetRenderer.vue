@@ -44,7 +44,7 @@ export default defineComponent({
             this.$emit('interaction', e, this.widget)
         },
         getWidgetStyleString() {
-            const styleString = getWidgetStyleByType(this.widget, 'shadows') + getWidgetStyleByType(this.widget, 'padding') + getWidgetStyleByType(this.widget, 'borders')
+            const styleString = getWidgetStyleByType(this.widget, 'shadows') + getWidgetStyleByType(this.widget, 'padding') + getWidgetStyleByType(this.widget, 'borders') + getWidgetStyleByType(this.widget, 'background')
             return styleString
         }
     }

@@ -1,13 +1,16 @@
 <template>
     <div class="p-d-flex p-flex-column p-ai-stretch p-jc-center kn-overflow" :style="descriptor.style.preview">
         <Button icon="fas fa-square-check" class="p-button-rounded p-button-text p-button-plain" @click="logWidget" />
-        <div id="preview-widget-container" class="p-d-flex p-flex-column p-m-2" style="max-height: 300px; overflow: hidden" :style="getWidgetContainerStyle()">
+
+        <div id="preview-widget-container" v-if="propWidget.settings && propWidget.type == 'table'" class="p-d-flex p-flex-column p-m-2" style="height: 300px; overflow: hidden" :style="getWidgetContainerStyle()">
+            <TableWidget class="kn-flex" :propWidget="propWidget" :datasets="datasets" :editorMode="true" />
+        </div>
+
+        <div id="preview-widget-container" v-if="propWidget.settings && propWidget.type == 'selector'" class="p-d-flex p-flex-column p-m-2" style="max-height: 300px; overflow: hidden" :style="getWidgetContainerStyle()">
             <div v-if="widgetTitle && widgetTitle.enabled" class="p-d-flex p-ai-center" style="border-radius: 0px" :style="getWidgetTitleStyle()">
                 {{ widgetTitle?.text }}
             </div>
-
-            <TableWidget class="kn-flex" v-if="propWidget.settings && propWidget.type == 'table'" :propWidget="propWidget" :datasets="datasets" :editorMode="true" />
-            <SelectorWidget v-if="propWidget.settings && propWidget.type == 'selector'" :propWidget="propWidget" :dataToShow="mock.selectorMockedResponse" :editorMode="true" />
+            <SelectorWidget :propWidget="propWidget" :dataToShow="mock.selectorMockedResponse" :editorMode="true" />
         </div>
     </div>
 </template>
@@ -55,7 +58,7 @@ export default defineComponent({
             return styleString + `height: ${this.widgetTitle.height}px;`
         },
         getWidgetContainerStyle() {
-            const styleString = getWidgetStyleByType(this.propWidget, 'borders') + getWidgetStyleByType(this.propWidget, 'shadows') + getWidgetStyleByType(this.propWidget, 'padding')
+            const styleString = getWidgetStyleByType(this.propWidget, 'borders') + getWidgetStyleByType(this.propWidget, 'shadows') + getWidgetStyleByType(this.propWidget, 'padding') + getWidgetStyleByType(this.propWidget, 'background')
             return styleString
         }
     }

@@ -11,7 +11,7 @@
                 <label :for="layout.key">{{ layout.name }}</label>
             </div>
         </div>
-        <span v-if="widgetModel.settings.configuration.selectorType.alignment === 'Grid'" class="p-float-label">
+        <span v-if="widgetModel.settings.configuration.selectorType.alignment === 'grid'" class="p-float-label">
             <InputText id="colSize" class="kn-material-input kn-width-full" v-model="widgetModel.settings.configuration.selectorType.columnSize" />
             <label for="colSize" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.info.uploadTemplate') }} </label>
         </span>
