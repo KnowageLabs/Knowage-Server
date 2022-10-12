@@ -381,6 +381,7 @@
                 "solid": "Solid",
                 "title": "Borders"
             },
+            "chips": "Chips",
             "columnDetails": "Column Details",
             "columnFilterHint": "Select the filter operator and the value for the column. Remember to use the correct database sintax for the value. ie: %LIKE%",
             "columnGroups": {

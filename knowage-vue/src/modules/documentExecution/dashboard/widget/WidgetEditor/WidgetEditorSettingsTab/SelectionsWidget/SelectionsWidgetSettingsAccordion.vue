@@ -9,6 +9,7 @@
                 <SelectionsWidgetValuesManagement v-if="accordion.type === 'ValuesManagement'" :widgetModel="widgetModel"></SelectionsWidgetValuesManagement>
                 <SelectionsNoSelectionConfiguration v-else-if="accordion.type === 'NoSelections'" :widgetModel="widgetModel"></SelectionsNoSelectionConfiguration>
                 <WidgetHeaders v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetHeaders>
+                <SelectionsWidgetChipsStyle v-else-if="accordion.type === 'ChipsStyle'" :widgetModel="widgetModel"></SelectionsWidgetChipsStyle>
                 <WidgetBackgroundColorStyle v-else-if="accordion.type === 'BackgroundColorStyle'" :widgetModel="widgetModel"></WidgetBackgroundColorStyle>
                 <WidgetPaddingStyle v-else-if="accordion.type === 'PaddingStyle'" :widgetModel="widgetModel"></WidgetPaddingStyle>
                 <WidgetBordersStyle v-else-if="accordion.type === 'BordersStyle'" :widgetModel="widgetModel"></WidgetBordersStyle>
@@ -30,6 +31,7 @@ import SelectorWidgetType from '../SelectorWidget/configuration/SelectorWidgetTy
 import SelectionsWidgetValuesManagement from './configuration/SelectionsWidgetValuesManagement.vue'
 import SelectionsNoSelectionConfiguration from './configuration/SelectionsNoSelectionConfiguration.vue'
 import WidgetHeaders from '../common/style/WidgetHeaders.vue'
+import SelectionsWidgetChipsStyle from './style/SelectionsWidgetChipsStyle.vue'
 import WidgetBackgroundColorStyle from '../common/style/WidgetBackgroundColorStyle.vue'
 import WidgetPaddingStyle from '../common/style/WidgetPaddingStyle.vue'
 import WidgetBordersStyle from '../common/style/WidgetBordersStyle.vue'
@@ -45,6 +47,7 @@ export default defineComponent({
         SelectionsWidgetValuesManagement,
         SelectionsNoSelectionConfiguration,
         WidgetHeaders,
+        SelectionsWidgetChipsStyle,
         WidgetBackgroundColorStyle,
         WidgetPaddingStyle,
         WidgetBordersStyle,

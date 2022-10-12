@@ -36,7 +36,7 @@ export interface ISelectionWidgetStyle {
 
 
 export interface ISelectionWidgetChipsStyle {
-    height: string,
+    height: number,
     properties: {
         'font-weight': string
         'font-style': string
