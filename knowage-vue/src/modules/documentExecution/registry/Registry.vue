@@ -16,8 +16,6 @@
                 <RegistryFiltersCard v-if="filters.length > 0" :id="id" :propFilters="filters" :entity="entity" @filter="filterRegistry" class=""></RegistryFiltersCard>
             </div>
             <div class="kn-relative kn-flex p-m-2 registry-custom-card">
-                {{ 'TODO' }}
-                {{ updatedRows }}
                 <div class="kn-height-full kn-width-full kn-absolute">
                     <RegistryPivotDatatable
                         v-if="isPivot"
