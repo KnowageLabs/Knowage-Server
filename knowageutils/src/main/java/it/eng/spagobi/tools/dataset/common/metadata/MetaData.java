@@ -18,6 +18,7 @@
 package it.eng.spagobi.tools.dataset.common.metadata;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -34,20 +35,16 @@ public class MetaData implements IMetaData, Cloneable {
 
 	int idFieldIndex;
 
-	private List<IFieldMetaData> fieldsMeta;
-	Map<String, Object> properties;
+	private final List<IFieldMetaData> fieldsMeta = new ArrayList<>();
+	final Map<String, Object> properties = new HashMap<>();
 
 	// @deprecated this map is used only by deprecated method getFieldIndex. Once this method will be removed
 	// remove also this map and all the references to it made within this class
-	Map<String, Integer> name2IndexMap;
-	Map<String, Integer> alias2IndexMap;
+	final Map<String, Integer> name2IndexMap = new HashMap<>();
+	final Map<String, Integer> alias2IndexMap = new HashMap<>();
 
 	public MetaData() {
 		idFieldIndex = -1;
-		name2IndexMap = new HashMap<String, Integer>();
-		alias2IndexMap = new HashMap<String, Integer>();
-		fieldsMeta = new ArrayList<IFieldMetaData>();
-		properties = new HashMap<String, Object>();
 	}
 
 	@Override
@@ -210,25 +207,24 @@ public class MetaData implements IMetaData, Cloneable {
 	}
 
 	public void setProperties(Map<String, Object> properties) {
-		this.properties = properties;
+		this.properties.clear();
+		this.properties.putAll(properties);
 	}
 
 	@Override
-	public List getFieldsMeta() {
+	public List<IFieldMetaData> getFieldsMeta() {
 		return fieldsMeta;
 	}
 
 	@JsonSetter
 	public void setFieldsMeta(FieldMetadata[] fieldsMeta) {
-		this.fieldsMeta = new ArrayList<IFieldMetaData>(fieldsMeta.length);
-
-		for (FieldMetadata fm : fieldsMeta) {
-			this.getFieldsMeta().add(fm);
-		}
+		this.fieldsMeta.clear();
+		this.fieldsMeta.addAll(Arrays.asList(fieldsMeta));
 	}
 
 	public void setFieldsMeta(List<IFieldMetaData> fieldsMeta) {
-		this.fieldsMeta = fieldsMeta;
+		this.fieldsMeta.clear();
+		this.fieldsMeta.addAll(fieldsMeta);
 	}
 
 	@Override
