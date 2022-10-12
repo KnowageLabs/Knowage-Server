@@ -458,6 +458,15 @@ export default defineComponent({
                     })
                 }
             }
+
+            this.removeEmptyToolbarItems()
+        },
+        removeEmptyToolbarItems() {
+            for (let i = this.toolbarMenuItems.length - 1; i >= 0; i--) {
+                if (this.toolbarMenuItems[i].items.length === 0) {
+                    this.toolbarMenuItems.splice(i, 1)
+                }
+            }
         },
         print() {
             window.print()
