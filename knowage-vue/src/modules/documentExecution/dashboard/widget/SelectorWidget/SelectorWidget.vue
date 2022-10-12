@@ -2,7 +2,7 @@
     <div class="selector-widget" :style="getBackgroundColor()">
         <div v-if="widgetType === 'singleValue'" :class="getLayoutStyle()">
             <div class="multi-select p-p-1" :style="getLabelStyle() + getGridWidth()" v-for="(value, index) of dataToShow?.rows" :key="index">
-                <RadioButton :inputId="`radio-${index}`" class="p-mr-2" :name="value.column_1" :value="value.column_1" v-model="selectedValues" />
+                <RadioButton :inputId="`radio-${index}`" class="p-mr-2" :name="value.column_1" :value="value.column_1" v-model="selectedValue" />
                 <label :for="`radio-${index}`" class="multi-select-label">{{ value.column_1 }}</label>
             </div>
         </div>
@@ -15,11 +15,11 @@
         </div>
 
         <span v-if="widgetType === 'dropdown'" class="p-float-label p-m-2">
-            <Dropdown class="kn-width-full" panelClass="testClass" inputClass="testClass" v-model="selectedValues" :options="dataToShow?.rows" optionLabel="column_1" optionValue="column_1" />
+            <Dropdown class="kn-width-full" panelClass="selectorCustomDropdownPanel" v-model="selectedValue" :options="dataToShow?.rows" optionLabel="column_1" optionValue="column_1" :style="getLabelStyle()" :inputStyle="getLabelStyle()" :panelStyle="getLabelStyle()" />
         </span>
 
         <span v-if="widgetType === 'multiDropdown'" class="p-float-label p-m-2">
-            <MultiSelect class="kn-material-input kn-width-full" v-model="selectedValues" :options="dataToShow?.rows" optionLabel="column_1" optionValue="column_1" :filter="true" />
+            <MultiSelect class="kn-width-full" panelClass="selectorCustomDropdownPanel" v-model="selectedValues" :options="dataToShow?.rows" optionLabel="column_1" optionValue="column_1" :style="getLabelStyle()" :inputStyle="getLabelStyle()" :panelStyle="getLabelStyle()" :filter="true" />
         </span>
 
         <span v-if="widgetType === 'date'" class="p-float-label p-m-2">
@@ -29,10 +29,10 @@
 
         <div v-if="widgetType === 'dateRange'" :class="getLayoutStyle()">
             <span class="p-float-label p-m-2" :style="getGridWidth()">
-                <Calendar id="startDate" class="kn-material-input kn-width-full" v-model="startDate" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :showIcon="true" />
+                <Calendar id="startDate" class="kn-width-full" v-model="startDate" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :style="getLabelStyle()" :inputStyle="getLabelStyle()" :panelStyle="getLabelStyle()" :showIcon="true" />
             </span>
             <span class="p-float-label p-m-2" :style="getGridWidth()">
-                <Calendar id="startDate" class="kn-material-input kn-width-full" v-model="endDate" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :showIcon="true" />
+                <Calendar id="startDate" class="kn-width-full" v-model="endDate" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :style="getLabelStyle()" :inputStyle="getLabelStyle()" :panelStyle="getLabelStyle()" :showIcon="true" />
             </span>
         </div>
 
@@ -69,6 +69,7 @@ export default defineComponent({
     },
     data() {
         return {
+            selectedValue: null as any,
             selectedValues: [] as any,
             selectedDate: null as any,
             selectedDateRange: null as any,
@@ -106,17 +107,10 @@ export default defineComponent({
             else return undefined
         },
         getLabelStyle() {
-            const styleSettings = this.propWidget.settings.style.label
-            if (styleSettings.properties) {
-                const styleString = Object.entries(styleSettings.properties ?? styleSettings)
-                    .map(([k, v]) => `${k}:${v}`)
-                    .join(';')
-                console.log(styleString)
-                return styleString + ';'
-            } else return ''
+            return getWidgetStyleByType(this.propWidget, 'label')
         },
         getBackgroundColor() {
-            return `background-color:${this.propWidget.settings.style['background-color']};`
+            return getWidgetStyleByType(this.propWidget, 'background')
         },
         logRange(event) {
             console.log('range', event)
@@ -150,6 +144,9 @@ export default defineComponent({
         flex-wrap: wrap;
         overflow-y: auto;
     }
+}
+.selectorCustomDropdownPanel {
+    color: unset;
 }
 </style>
 <style lang="scss" scoped>

@@ -1,11 +1,11 @@
 <template>
-    <div v-if="widgetModel" class="p-m-2">
+    <div v-if="widgetModel && widgetModel.type == 'selector'" class="p-m-2">
         <div class="p-grid p-mx-2">
-            <TypeCard v-for="(type, index) of selectorTypes" :widgetModel="widgetModel" :key="index" :selectorType="type" />
+            <TypeCard v-for="(type, index) of descriptor.selectorTypes" :widgetModel="widgetModel" :key="index" :selectorType="type" />
         </div>
 
         <div v-if="showAlignment" class="p-d-flex p-flex-row p-m-2">
-            <div v-for="(layout, index) of layouts" :key="index" class="p-m-2">
+            <div v-for="(layout, index) of descriptor.layouts" :key="index" class="p-m-2">
                 <RadioButton :inputId="layout.key" :name="layout.name" :value="layout.value" v-model="widgetModel.settings.configuration.selectorType.alignment" />
                 <i :class="layout.icon" class="p-mx-2" />
                 <label :for="layout.key">{{ layout.name }}</label>
@@ -16,6 +16,12 @@
             <label for="colSize" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.info.uploadTemplate') }} </label>
         </span>
     </div>
+
+    <div v-if="widgetModel && widgetModel.type == 'selection'" class="p-m-2">
+        <div class="p-grid p-mx-2">
+            <TypeCard v-for="(type, index) of descriptor.selectionTypes" :widgetModel="widgetModel" :key="index" :selectorType="type" />
+        </div>
+    </div>
 </template>
 
 <script lang="ts">
@@ -23,6 +29,7 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
 import TypeCard from './SelectorWidgetTypeCard.vue'
 import RadioButton from 'primevue/radiobutton'
+import descriptor from './SelectorWidgetDescriptor.json'
 
 export default defineComponent({
     name: 'table-widget-rows',
@@ -36,19 +43,7 @@ export default defineComponent({
     },
     data() {
         return {
-            selectorTypes: [
-                { label: 'singleValue', value: 'singleValue', imageUrl: 'http://localhost:8080/knowage/themes/commons/img/cockpit/selectorWidget/radio.svg' },
-                { label: 'multiValue', value: 'multiValue', imageUrl: 'http://localhost:8080/knowage/themes/commons/img/cockpit/selectorWidget/check.svg' },
-                { label: 'dropdown', value: 'dropdown', imageUrl: 'http://localhost:8080/knowage/themes/commons/img/cockpit/selectorWidget/dropdown.svg' },
-                { label: 'multiDropdown', value: 'multiDropdown', imageUrl: 'http://localhost:8080/knowage/themes/commons/img/cockpit/selectorWidget/multiDropdown.svg' },
-                { label: 'date', value: 'date', imageUrl: 'http://localhost:8080/knowage/themes/commons/img/cockpit/selectorWidget/singleDate.svg' },
-                { label: 'dateRange', value: 'dateRange', imageUrl: 'http://localhost:8080/knowage/themes/commons/img/cockpit/selectorWidget/multiDate.svg' }
-            ],
-            layouts: [
-                { value: 'vertical', name: 'Vertical', icon: 'fa fa-ellipsis-v' },
-                { value: 'horizontal', name: 'Horizontal', icon: 'fa fa-ellipsis-h' },
-                { value: 'grid', name: 'Grid', icon: 'fa fa-th' }
-            ]
+            descriptor
         }
     },
     created() {},

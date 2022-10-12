@@ -1,7 +1,7 @@
-import { ISelectionWidgetChipsStyle, ISelectionWidgetStyle } from "../../interfaces/DashboardSelectionsWidget"
+import { ISelectionWidgetChipsStyle, ISelectionWidgetStyle } from '../../interfaces/DashboardSelectionsWidget'
 import { getFormattedTitleStyle, getFormattedPaddingStyle, getFormattedBorderStyle, getFormattedShadowsStyle } from '../common/WidgetStyleHelper'
 import * as selectionsWidgetDefaultValues from '../../widget/WidgetEditor/helpers/selectionsWidget/SelectionsWidgetDefaultValues'
-import { IWidgetRowsStyle } from "../../Dashboard"
+import { IWidgetRowsStyle } from '../../Dashboard'
 
 export const getFormattedStyle = (widget: any) => {
     return {
@@ -14,7 +14,6 @@ export const getFormattedStyle = (widget: any) => {
         background: selectionsWidgetDefaultValues.getDefaultBackgroundStyle()
     } as ISelectionWidgetStyle
 }
-
 
 const getFormattedChipsStyle = (widget: any) => {
     if (!widget.style || !widget.style.chips) return selectionsWidgetDefaultValues.getDefaultChipsStyle()
@@ -32,18 +31,15 @@ const getFormattedChipsStyle = (widget: any) => {
     } as ISelectionWidgetChipsStyle
 }
 
-
 const getFormattedRowsStyle = (widget: any) => {
     const formattedRowsStyle = {
         height: widget.style.row?.height ?? 0,
 
         alternatedRows: {
-            enabled: widget.style.alternateRows.enabled ?? false,
-            evenBackgroundColor: widget.style.alternateRows.evenRowsColor ?? 'rgb(228, 232, 236)',
-            oddBackgroundColor: widget.style.alternateRows.oddRowsColor ?? ''
-
+            enabled: widget.style.alternateRows?.enabled ?? false,
+            evenBackgroundColor: widget.style.alternateRows?.evenRowsColor ?? 'rgb(228, 232, 236)',
+            oddBackgroundColor: widget.style.alternateRows?.oddRowsColor ?? ''
         }
     } as IWidgetRowsStyle
     return formattedRowsStyle
 }
-

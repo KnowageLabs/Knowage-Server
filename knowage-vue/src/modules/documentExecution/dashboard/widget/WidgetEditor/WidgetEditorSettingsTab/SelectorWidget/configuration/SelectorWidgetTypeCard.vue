@@ -1,5 +1,6 @@
 <template>
-    <div class="outerIcon" :class="{ selected: widgetModel.settings.configuration.selectorType.modality == selectorType.value, disabled: cardDisabled }" :style="documentImageSource()" @click="changeModality(selectorType.value)"></div>
+    <div v-if="widgetModel && widgetModel.type == 'selector'" class="outerIcon" :class="{ selected: widgetModel.settings.configuration.selectorType.modality == selectorType.value, disabled: cardDisabled }" :style="documentImageSource()" @click="changeSelectorModality(selectorType.value)" />
+    <div v-if="widgetModel && widgetModel.type == 'selection'" class="outerIcon" :class="{ selected: widgetModel.settings.configuration.type == selectorType.value }" :style="documentImageSource()" @click="changeSelectionType(selectorType.value)" />
 </template>
 
 <script lang="ts">
@@ -32,8 +33,11 @@ export default defineComponent({
                 }
             }
         },
-        changeModality(event) {
+        changeSelectorModality(event) {
             this.widgetModel.settings.configuration.selectorType.modality = event
+        },
+        changeSelectionType(event) {
+            this.widgetModel.settings.configuration.type = event
         }
     }
 })
