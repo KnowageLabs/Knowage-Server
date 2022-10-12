@@ -1,7 +1,7 @@
 <template>
     <div class="p-d-flex p-flex-column p-ai-stretch p-jc-center kn-overflow" :style="descriptor.style.preview">
         <Button icon="fas fa-square-check" class="p-button-rounded p-button-text p-button-plain" @click="logWidget" />
-        <div id="preview-widget-container" class="p-d-flex p-flex-column p-m-2" style="height: 300px; overflow: hidden" :style="getWidgetContainerStyle()">
+        <div id="preview-widget-container" class="p-d-flex p-flex-column p-m-2" style="max-height: 300px; overflow: hidden" :style="getWidgetContainerStyle()">
             <div v-if="widgetTitle && widgetTitle.enabled" class="p-d-flex p-ai-center" style="border-radius: 0px" :style="getWidgetTitleStyle()">
                 {{ widgetTitle?.text }}
             </div>

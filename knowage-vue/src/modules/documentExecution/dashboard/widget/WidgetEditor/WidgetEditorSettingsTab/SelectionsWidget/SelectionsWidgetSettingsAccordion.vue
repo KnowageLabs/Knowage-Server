@@ -5,9 +5,8 @@
                 <template #header>
                     <label class="kn-material-input-label">{{ $t(accordion.title) }}</label>
                 </template>
-                {{ 'test' }}
 
-                <!-- <SelectorWidgetType v-if="accordion.type === 'SelectorType'" :widgetModel="widgetModel"></SelectorWidgetType> -->
+                <SelectorWidgetType v-if="accordion.type === 'SelectorType'" :widgetModel="widgetModel"></SelectorWidgetType>
                 <WidgetHeaders v-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetHeaders>
             </AccordionTab>
         </Accordion>
