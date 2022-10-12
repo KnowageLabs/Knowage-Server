@@ -81,6 +81,9 @@ export default defineComponent({
                     break
                 case 'selector':
                     emitter.emit('refreshSelector', this.widgetModel.id)
+                    break
+                case 'selection':
+                    emitter.emit('refreshSelection', this.widgetModel.id)
             }
         },
         onLinkIconClicked() {

@@ -57,6 +57,7 @@ export default defineComponent({
                     if (this.widgetModel.settings?.style?.headers) this.headersStyleModel = this.widgetModel.settings.style.headers
                     break
                 case 'selector':
+                case 'selection':
                     if (this.widgetModel.settings?.style?.title) this.headersStyleModel = this.widgetModel.settings.style.title
             }
         },
@@ -71,6 +72,9 @@ export default defineComponent({
                         emitter.emit('titleStyleChanged', this.headersStyleModel)
                         emitter.emit('refreshSelector', this.widgetModel.id)
                         break
+                    case 'selection':
+                        emitter.emit('titleStyleChanged', this.headersStyleModel)
+                        emitter.emit('refreshSelection', this.widgetModel.id)
                 }
             }, 0)
         },

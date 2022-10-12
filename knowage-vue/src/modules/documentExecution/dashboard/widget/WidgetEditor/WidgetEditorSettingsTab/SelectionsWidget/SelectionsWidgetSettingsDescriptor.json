@@ -14,8 +14,34 @@
                 "type": "NoSelections"
             }
         ],
-        "Responsive": [],
-        "Style": []
+        "Responsive": [
+            {
+                "title": "dashboard.widgetEditor.responsive.title",
+                "type": "Responsive"
+            }
+        ],
+        "Style": [
+            {
+                "title": "dashboard.widgetEditor.titles.title",
+                "type": "Title"
+            },
+            {
+                "title": "dashboard.widgetEditor.background",
+                "type": "BackgroundColorStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.borders.title",
+                "type": "BordersStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.padding.title",
+                "type": "PaddingStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.shadows.title",
+                "type": "ShadowsStyle"
+            }
+        ]
     },
     "settingsListOptions": [
         {

@@ -9,6 +9,11 @@
                 <SelectionsWidgetValuesManagement v-if="accordion.type === 'ValuesManagement'" :widgetModel="widgetModel"></SelectionsWidgetValuesManagement>
                 <SelectionsNoSelectionConfiguration v-else-if="accordion.type === 'NoSelections'" :widgetModel="widgetModel"></SelectionsNoSelectionConfiguration>
                 <WidgetHeaders v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetHeaders>
+                <WidgetBackgroundColorStyle v-else-if="accordion.type === 'BackgroundColorStyle'" :widgetModel="widgetModel"></WidgetBackgroundColorStyle>
+                <WidgetPaddingStyle v-else-if="accordion.type === 'PaddingStyle'" :widgetModel="widgetModel"></WidgetPaddingStyle>
+                <WidgetBordersStyle v-else-if="accordion.type === 'BordersStyle'" :widgetModel="widgetModel"></WidgetBordersStyle>
+                <WidgetShadowsStyle v-else-if="accordion.type === 'ShadowsStyle'" :widgetModel="widgetModel"></WidgetShadowsStyle>
+                <WidgetResponsive v-else-if="accordion.type === 'Responsive'" :widgetModel="widgetModel"></WidgetResponsive>
             </AccordionTab>
         </Accordion>
     </div>
@@ -22,9 +27,14 @@ import AccordionTab from 'primevue/accordiontab'
 import descriptor from './SelectionsWidgetSettingsDescriptor.json'
 import settingsTabDescriptor from '../WidgetEditorSettingsTabDescriptor.json'
 import SelectorWidgetType from '../SelectorWidget/configuration/SelectorWidgetType.vue'
-import WidgetHeaders from '../common/style/WidgetHeaders.vue'
 import SelectionsWidgetValuesManagement from './configuration/SelectionsWidgetValuesManagement.vue'
 import SelectionsNoSelectionConfiguration from './configuration/SelectionsNoSelectionConfiguration.vue'
+import WidgetHeaders from '../common/style/WidgetHeaders.vue'
+import WidgetBackgroundColorStyle from '../common/style/WidgetBackgroundColorStyle.vue'
+import WidgetPaddingStyle from '../common/style/WidgetPaddingStyle.vue'
+import WidgetBordersStyle from '../common/style/WidgetBordersStyle.vue'
+import WidgetShadowsStyle from '../common/style/WidgetShadowsStyle.vue'
+import WidgetResponsive from '../common/responsive/WidgetResponsive.vue'
 
 export default defineComponent({
     name: 'selections-widget-settings-container',
@@ -32,9 +42,14 @@ export default defineComponent({
         Accordion,
         AccordionTab,
         SelectorWidgetType,
-        WidgetHeaders,
         SelectionsWidgetValuesManagement,
-        SelectionsNoSelectionConfiguration
+        SelectionsNoSelectionConfiguration,
+        WidgetHeaders,
+        WidgetBackgroundColorStyle,
+        WidgetPaddingStyle,
+        WidgetBordersStyle,
+        WidgetShadowsStyle,
+        WidgetResponsive
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
