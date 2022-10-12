@@ -20,7 +20,6 @@
 package it.eng.spagobi.tools.dataset.strategy;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +42,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
-import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.DataStoreCalculatedField;
@@ -152,7 +151,7 @@ class SolrEvaluationStrategy extends AbstractSolrStrategy {
 			SolrDataStore datastoresToAdd = new SolrDataStore(originalDTS.getFacets());
 			IMetaData pagedMetaData = pagedDataStore.getMetaData();
 			Integer idIndex = null;
-			ArrayList<FieldMetadata> metas = (ArrayList<FieldMetadata>) pagedMetaData.getFieldsMeta();
+			List<IFieldMetaData> metas = pagedMetaData.getFieldsMeta();
 			boolean hasIdOnMeta = false;
 			for (int i = 0; i < metas.size(); i++) {
 
