@@ -69,11 +69,12 @@ export default defineComponent({
     },
     methods: {
         loadPaddingStyle() {
-            if (this.widgetModel?.settings?.style?.padding) this.paddingStyleModel = this.widgetModel.settings.style.padding
+            if (!this.widgetModel) return
+            this.widgetType = this.widgetModel.type
+            if (this.widgetModel.settings?.style?.padding) this.paddingStyleModel = this.widgetModel.settings.style.padding
         },
         paddingStyleChanged() {
             emitter.emit('paddingStyleChanged', this.paddingStyleModel)
-            this.widgetType = this.widgetModel.type
             switch (this.widgetType) {
                 case 'table':
                     emitter.emit('refreshTable', this.widgetModel.id)

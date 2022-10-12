@@ -49,24 +49,6 @@
             "value": "all"
         }
     ],
-    "bordersStyleOptions": [
-        {
-            "label": "",
-            "value": ""
-        },
-        {
-            "label": "dashboard.widgetEditor.borders.solid",
-            "value": "solid"
-        },
-        {
-            "label": "dashboard.widgetEditor.borders.dashed",
-            "value": "dashed"
-        },
-        {
-            "label": "dashboard.widgetEditor.borders.dotted",
-            "value": "dotted"
-        }
-    ],
     "columnConditionOptions": [
         {
             "label": ">",
@@ -146,29 +128,6 @@
         {
             "label": "dashboard.widgetEditor.headers.setLabel",
             "value": "setLabel"
-        }
-    ],
-    "defaultToolbarStyleOptions": [
-        {
-            "type": "font-weight"
-        },
-        {
-            "type": "font-style"
-        },
-        {
-            "type": "font-size"
-        },
-        {
-            "type": "justify-content"
-        },
-        {
-            "type": "font-family"
-        },
-        {
-            "type": "color"
-        },
-        {
-            "type": "background-color"
         }
     ],
     "headersCompareValueType": [

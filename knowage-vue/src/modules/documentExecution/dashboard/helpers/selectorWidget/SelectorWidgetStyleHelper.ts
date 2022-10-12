@@ -57,7 +57,7 @@ const getFormattedPaddingStyle = (widget: any) => {
     if (!widget.style || !widget.style.padding) return widgetCommonDefaultValues.getDefaultPaddingStyle()
 
     return {
-        enabled: widget.style.padding.enabled,
+        enabled: true,
         properties: {
             "padding-top": widget.style.padding['padding-top'],
             "padding-left": widget.style.padding['padding-left'],
@@ -71,14 +71,14 @@ const getFormattedPaddingStyle = (widget: any) => {
 const getFormattedBorderStyle = (widget: any) => {
     if (!widget.style || !widget.style.border) return widgetCommonDefaultValues.getDefaultBordersStyle()
 
-    return { enabled: widget.style.borders, properties: { ...widget.style.border, 'border-color': hexToRgb(widget.style.border['border-color']) } } as IWidgetBordersStyle
+    return { enabled: true, properties: { ...widget.style.border, 'border-color': hexToRgb(widget.style.border['border-color']) } } as IWidgetBordersStyle
 }
 
 const getFormattedShadowsStyle = (widget: any) => {
     if (!widget.style || !widget.style.shadow) return widgetCommonDefaultValues.getDefaultShadowsStyle()
 
     return {
-        enabled: widget.style.shadows,
+        enabled: true,
         properties: {
             "box-shadow": widget.style.shadow["box-shadow"],
             "color": hexToRgb(widget.style.backgroundColor)

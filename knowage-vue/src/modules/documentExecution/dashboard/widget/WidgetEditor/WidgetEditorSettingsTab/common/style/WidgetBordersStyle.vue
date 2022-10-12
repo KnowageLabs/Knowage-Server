@@ -63,7 +63,7 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget, IWidgetBordersStyle } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
-import descriptor from '../TableWidgetSettingsDescriptor.json'
+import descriptor from '../../WidgetEditorSettingsTabDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 import WidgetEditorColorPicker from '../../common/WidgetEditorColorPicker.vue'
@@ -78,6 +78,7 @@ export default defineComponent({
         return {
             descriptor,
             bordersStyleModel: null as IWidgetBordersStyle | null,
+            widgetType: '' as string,
             getTranslatedLabel
         }
     },
@@ -91,11 +92,19 @@ export default defineComponent({
     },
     methods: {
         loadBordersStyle() {
+            if (!this.widgetModel) return
+            this.widgetType = this.widgetModel.type
             if (this.widgetModel?.settings?.style?.borders) this.bordersStyleModel = this.widgetModel.settings.style.borders
         },
         bordersStyleChanged() {
             emitter.emit('bordersStyleChanged', this.bordersStyleModel)
-            emitter.emit('refreshTable', this.widgetModel.id)
+            switch (this.widgetType) {
+                case 'table':
+                    emitter.emit('refreshTable', this.widgetModel.id)
+                    break
+                case 'selector':
+                    emitter.emit('refreshSelector', this.widgetModel.id)
+            }
         },
         onSelectionColorChanged(event: string | null) {
             if (!event || !this.bordersStyleModel) return

@@ -20,9 +20,8 @@
                 <TableWidgetColumnStyle v-else-if="accordion.type === 'ColumnGroupsStyle'" :widgetModel="widgetModel" mode="columnGroups"></TableWidgetColumnStyle>
                 <TableWidgetRowsStyle v-else-if="accordion.type === 'RowsStyle'" :widgetModel="widgetModel"></TableWidgetRowsStyle>
                 <TableWidgetSummaryStyle v-else-if="accordion.type === 'SummaryStyle'" :widgetModel="widgetModel"></TableWidgetSummaryStyle>
-                <TableWidgetBordersStyle v-else-if="accordion.type === 'BordersStyle'" :widgetModel="widgetModel"></TableWidgetBordersStyle>
+                <WidgetBordersStyle v-else-if="accordion.type === 'BordersStyle'" :widgetModel="widgetModel"></WidgetBordersStyle>
                 <WidgetPaddingStyle v-else-if="accordion.type === 'PaddingStyle'" :widgetModel="widgetModel"></WidgetPaddingStyle>
-                <!-- <TableWidgetPaddingStyle v-else-if="accordion.type === 'PaddingStyle'" :widgetModel="widgetModel"></TableWidgetPaddingStyle> -->
                 <TableWidgetShadowsStyle v-else-if="accordion.type === 'ShadowsStyle'" :widgetModel="widgetModel"></TableWidgetShadowsStyle>
                 <TableWidgetConditions v-else-if="accordion.type === 'Conditions'" :widgetModel="widgetModel" :drivers="drivers" :variables="variables"></TableWidgetConditions>
                 <TableWidgetTooltips v-else-if="accordion.type === 'Tooltips'" :widgetModel="widgetModel"></TableWidgetTooltips>
@@ -54,8 +53,7 @@ import TableWidgetVisibilityConditions from './visualization/TableWidgetVisibili
 import TableWidgetColumnStyle from './style/TableWidgetColumnStyle.vue'
 import TableWidgetRowsStyle from './style/TableWidgetRowsStyle.vue'
 import TableWidgetSummaryStyle from './style/TableWidgetSummaryStyle.vue'
-import TableWidgetBordersStyle from './style/TableWidgetBordersStyle.vue'
-import TableWidgetPaddingStyle from './style/TableWidgetPaddingStyle.vue'
+import WidgetBordersStyle from '../common/style/WidgetBordersStyle.vue'
 import TableWidgetShadowsStyle from './style/TableWidgetShadowsStyle.vue'
 import TableWidgetConditions from './conditionalStyle/TableWidgetConditions.vue'
 import TableWidgetTooltips from './tooltips/TableWidgetTooltips.vue'
@@ -84,8 +82,7 @@ export default defineComponent({
         TableWidgetColumnStyle,
         TableWidgetRowsStyle,
         TableWidgetSummaryStyle,
-        TableWidgetBordersStyle,
-        TableWidgetPaddingStyle,
+        WidgetBordersStyle,
         TableWidgetShadowsStyle,
         TableWidgetConditions,
         TableWidgetTooltips,
