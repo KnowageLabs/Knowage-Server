@@ -591,7 +591,7 @@ export interface IWidgetTitle {
 
 export interface IWidgetBackgroundStyle {
     enabled: boolean,
-    property: {
+    properties: {
         'background-color': string
     }
 }

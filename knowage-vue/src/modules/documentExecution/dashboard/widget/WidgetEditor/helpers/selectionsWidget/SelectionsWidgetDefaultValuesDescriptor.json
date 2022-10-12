@@ -1,12 +1,12 @@
 {
     "defaultBackgroundStyle": {
         "enabled": false,
-        "property": {
+        "properties": {
             "background-color": ""
         }
     },
     "defaultChipsStyle": {
-        "height": "",
+        "height": 0,
         "properties": {
             "background-color": "",
             "color": "",
@@ -19,6 +19,6 @@
     },
     "defaultValuesManagement": {
         "showColumn": true,
-        "showDataset": true
+        "showDataset": false
     }
 }
