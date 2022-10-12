@@ -1,6 +1,6 @@
 <template>
     <TabView :activeIndex="activeIndex">
-        <TabPanel :header="$t('common.data')">
+        <TabPanel v-if="propWidget && propWidget.type !== 'selection'" :header="$t('common.data')">
             <WidgetEditorDataTab :propWidget="propWidget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="$emit('datasetSelected', $event)" data-test="data-tab"></WidgetEditorDataTab>
         </TabPanel>
         <TabPanel :header="$t('common.settings')">

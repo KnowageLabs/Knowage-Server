@@ -1,0 +1,29 @@
+{
+    "settings": {
+        "Configuration": [
+            {
+                "title": "dashboard.widgetEditor.selectorType.title",
+                "type": "SelectorType"
+            }
+        ],
+        "Responsive": [],
+        "Style": []
+    },
+    "settingsListOptions": [
+        {
+            "icon": "fa fa-cogs",
+            "label": "dashboard.widgetEditor.configuration",
+            "value": "Configuration"
+        },
+        {
+            "icon": "fa fa-paint-brush",
+            "label": "common.style",
+            "value": "Style"
+        },
+        {
+            "icon": "pi pi-tablet",
+            "label": "dashboard.widgetEditor.responsive.title",
+            "value": "Responsive"
+        }
+    ]
+}

@@ -88,12 +88,4 @@ export default defineComponent({
         display: flex;
     }
 }
-
-.dynamic-form-item {
-    border-bottom: 1px solid #c2c2c2;
-}
-
-.dynamic-form-item:last-child {
-    border-bottom: none;
-}
 </style>
