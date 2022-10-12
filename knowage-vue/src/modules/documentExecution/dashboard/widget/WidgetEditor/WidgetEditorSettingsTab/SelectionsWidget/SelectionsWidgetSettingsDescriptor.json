@@ -30,6 +30,10 @@
                 "type": "ChipsStyle"
             },
             {
+                "title": "dashboard.widgetEditor.rows.title",
+                "type": "RowsStyle"
+            },
+            {
                 "title": "dashboard.widgetEditor.background",
                 "type": "BackgroundColorStyle"
             },

@@ -231,7 +231,7 @@ export interface ITableWidgetStyle {
     columnGroups: ITableWidgetColumnStyles
     headers: ITawbleWidgetHeadersStyle
     padding: IWidgetPaddingStyle
-    rows: ITableWidgetRowsStyle
+    rows: IWidgetRowsStyle
     shadows: IWidgetShadowsStyle
     summary: ITableWidgetSummaryStyle
 }
@@ -292,10 +292,10 @@ export interface IWidgetPaddingStyle {
     }
 }
 
-export interface ITableWidgetRowsStyle {
+export interface IWidgetRowsStyle {
     height: number
-    selectionColor: string
-    multiselectable: boolean
+    selectionColor?: string
+    multiselectable?: boolean
     alternatedRows: {
         enabled: boolean
         evenBackgroundColor: string

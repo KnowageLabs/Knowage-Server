@@ -1,4 +1,4 @@
-import { IWidgetBackgroundStyle, IWidgetResponsive, IWidgetTitle } from '../Dashboard'
+import { IWidgetBackgroundStyle, IWidgetResponsive, IWidgetRowsStyle, IWidgetTitle } from '../Dashboard'
 
 export interface ISelectionsWidgetSettings {
     updatable: boolean,
@@ -27,7 +27,7 @@ export interface ISelectionsWidgetNoSelections {
 export interface ISelectionWidgetStyle {
     title: IWidgetTitle,
     chips: ISelectionWidgetChipsStyle,
-    rows: ISelectionWidgetRows,
+    rows: IWidgetRowsStyle,
     padding: IWidgetPaddingStyle,
     borders: IWidgetBordersStyle,
     shadows: IWidgetShadowsStyle,
@@ -45,14 +45,5 @@ export interface ISelectionWidgetChipsStyle {
         'justify-content': string
         color: string
         'background-color': string
-    }
-}
-
-export interface ISelectionWidgetRows {
-    height: string,
-    alternatedRows: {
-        enabled: string,
-        evenBackgroundColor: string,
-        oddBackgroundColor: string
     }
 }

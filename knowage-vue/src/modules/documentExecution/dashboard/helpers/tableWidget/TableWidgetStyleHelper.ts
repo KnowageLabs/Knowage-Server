@@ -1,7 +1,7 @@
-import { IWidgetBordersStyle, IWidgetPaddingStyle, ITableWidgetRowsStyle, IWidgetShadowsStyle, ITableWidgetStyle } from "../../Dashboard"
-import { hexToRgb, convertColorFromHSLtoRGB } from '../FormattingHelpers'
+import { IWidgetRowsStyle, ITableWidgetStyle } from "../../Dashboard"
+import { convertColorFromHSLtoRGB } from '../FormattingHelpers'
+import { getFormattedPaddingStyle, getFormattedBorderStyle, getFormattedShadowsStyle } from '../common/WidgetStyleHelper'
 import * as  tableWidgetDefaultValues from '../../widget/WidgetEditor/helpers/tableWidget/TableWidgetDefaultValues'
-import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 
 export const getFormattedStyle = (widget: any) => {
     return {
@@ -16,11 +16,6 @@ export const getFormattedStyle = (widget: any) => {
     } as ITableWidgetStyle
 }
 
-const getFormattedBorderStyle = (widget: any) => {
-    if (!widget.style || !widget.style.border) return widgetCommonDefaultValues.getDefaultBordersStyle()
-
-    return { enabled: widget.style.borders, properties: { ...widget.style.border, 'border-color': hexToRgb(widget.style.border['border-color']) } } as IWidgetBordersStyle
-}
 
 const getDefaultColumnGroupsStyle = (widget: any) => {
     const formattedColumnGroupsStyles = tableWidgetDefaultValues.getDefaultColumnStyles()
@@ -68,21 +63,6 @@ const getFormattedHeadersStyle = (widget: any) => {
     }
 }
 
-const getFormattedPaddingStyle = (widget: any) => {
-    if (!widget.style || !widget.style.padding) return widgetCommonDefaultValues.getDefaultPaddingStyle()
-
-    return {
-        enabled: widget.style.padding.enabled,
-        properties: {
-            "padding-top": widget.style.padding['padding-top'],
-            "padding-left": widget.style.padding['padding-left'],
-            "padding-bottom": widget.style.padding['padding-bottom'],
-            "padding-right": widget.style.padding['padding-right'],
-            unlinked: widget.style.padding.unlinked
-        }
-    } as IWidgetPaddingStyle
-}
-
 const getFormattedRowsStyle = (widget: any) => {
     const formattedRowsStyle = {
         height: widget.style.tr?.height ?? 0,
@@ -95,21 +75,8 @@ const getFormattedRowsStyle = (widget: any) => {
 
         }
     }
-    return formattedRowsStyle as ITableWidgetRowsStyle
+    return formattedRowsStyle as IWidgetRowsStyle
 }
-
-const getFormattedShadowsStyle = (widget: any) => {
-    if (!widget.style || !widget.style.shadow) return widgetCommonDefaultValues.getDefaultShadowsStyle()
-
-    return {
-        enabled: widget.style.shadows,
-        properties: {
-            "box-shadow": widget.style.shadow["box-shadow"],
-            "color": hexToRgb(widget.style.backgroundColor)
-        }
-    } as IWidgetShadowsStyle
-}
-
 
 const getFormattedSummaryStyle = (widget: any) => {
     if (!widget.settings.summary || !widget.settings.summary.style) return tableWidgetDefaultValues.getDefualtSummryStyle()

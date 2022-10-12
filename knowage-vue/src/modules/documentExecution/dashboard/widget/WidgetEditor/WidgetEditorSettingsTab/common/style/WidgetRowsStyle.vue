@@ -5,13 +5,13 @@
             <InputNumber class="kn-material-input p-inputtext-sm" v-model="rowsStyleModel.height" @blur="rowsStyleChanged" />
         </div>
         <div class="p-col-8"></div>
-        <div class="p-col-12 p-grid p-ai-center">
+        <div v-if="widgetType === 'table'" class="p-col-12 p-grid p-ai-center">
             <div class="p-col-12 p-md-6 p-lg-6 p-d-flex p-flex-row p-jc-md-start p-px-4">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.rows.multiselectable') }}</label>
                 <InputSwitch v-model="rowsStyleModel.multiselectable" @change="rowsStyleChanged"></InputSwitch>
             </div>
         </div>
-        <div class="p-col-12 p-md-12 p-lg-12">
+        <div v-if="widgetType === 'table'" class="p-col-12 p-md-12 p-lg-12">
             <WidgetEditorColorPicker :initialValue="rowsStyleModel.selectionColor" :label="$t('dashboard.widgetEditor.rows.selectionColor')" :disabled="!rowsStyleModel.multiselectable" @change="onSelectionColorChanged"></WidgetEditorColorPicker>
         </div>
         <div class="p-col-12 p-grid p-ai-center p-p-4">
@@ -33,23 +33,22 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, ITableWidgetRowsStyle } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IWidget, IWidgetRowsStyle } from '@/modules/documentExecution/dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
-import descriptor from '../TableWidgetSettingsDescriptor.json'
 import InputNumber from 'primevue/inputnumber'
 import InputSwitch from 'primevue/inputswitch'
 import WidgetEditorColorPicker from '../../common/WidgetEditorColorPicker.vue'
 
 export default defineComponent({
-    name: 'table-widget-rows-style',
+    name: 'widget-rows-style',
     components: { InputNumber, InputSwitch, WidgetEditorColorPicker },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true }
     },
     data() {
         return {
-            descriptor,
-            rowsStyleModel: null as ITableWidgetRowsStyle | null
+            rowsStyleModel: null as IWidgetRowsStyle | null,
+            widgetType: '' as string
         }
     },
     created() {
@@ -57,11 +56,20 @@ export default defineComponent({
     },
     methods: {
         loadRowsModel() {
-            if (this.widgetModel?.settings?.style?.rows) this.rowsStyleModel = this.widgetModel.settings.style.rows
+            console.log('MODEL: ', this.widgetModel)
+            if (!this.widgetModel) return
+            this.widgetType = this.widgetModel.type
+            if (this.widgetModel.settings?.style?.rows) this.rowsStyleModel = this.widgetModel.settings.style.rows
         },
         rowsStyleChanged() {
             emitter.emit('rowsStyleChanged', this.rowsStyleModel)
-            emitter.emit('refreshTable', this.widgetModel.id)
+            switch (this.widgetType) {
+                case 'table':
+                    emitter.emit('refreshTable', this.widgetModel.id)
+                    break
+                case 'selection':
+                    emitter.emit('refreshSelection', this.widgetModel.id)
+            }
         },
         onSelectionColorChanged(event: string | null) {
             if (!event || !this.rowsStyleModel) return
