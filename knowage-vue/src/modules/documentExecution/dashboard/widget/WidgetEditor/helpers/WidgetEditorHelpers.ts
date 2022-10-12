@@ -5,12 +5,12 @@ import deepcopy from 'deepcopy'
 import * as  tableWidgetDefaultValues from './tableWidget/TableWidgetDefaultValues'
 import * as widgetCommonDefaultValues from './common/WidgetCommonDefaultValues'
 
-export function createNewWidget() {
-
+export function createNewWidget(type: string) {
+    console.log(">>>>>>>> type: ", type)
     const widget = {
         id: cryptoRandomString({ length: 16, type: 'base64' }),
         new: true,
-        type: 'table',
+        type: type,
         dataset: null,
         columns: [],
         settings: {
