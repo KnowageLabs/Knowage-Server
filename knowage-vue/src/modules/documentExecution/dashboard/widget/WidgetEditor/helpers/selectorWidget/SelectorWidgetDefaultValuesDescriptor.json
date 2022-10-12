@@ -6,6 +6,7 @@
         }
     },
     "defaultLabelStyle": {
+        "enabled": true,
         "properties": {
             "background-color": "",
             "color": "",

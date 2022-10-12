@@ -45,6 +45,7 @@ export interface ISelectorWidgetStyle {
 }
 
 export interface ISelectorWidgetLabelStyle {
+    enabled: boolean,
     wrapText: boolean,
     properties: {
         'font-weight': string

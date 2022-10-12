@@ -39,6 +39,7 @@ const getFormattedTitleStyle = (widget: any) => {
 const getFormattedLabelStyle = (widget) => {
     if (!widget.style) return selectorWidgetDefaultValues.getDefaultLabelStyle()
     const formattedLabelStyle = {
+        enabled: true,
         wrapText: widget.settings.wrapText ?? '',
         properties: {
             'font-weight': widget.style['font-weight'] ?? '',
