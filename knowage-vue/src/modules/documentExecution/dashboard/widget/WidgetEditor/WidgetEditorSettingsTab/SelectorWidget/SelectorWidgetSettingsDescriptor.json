@@ -36,6 +36,10 @@
             {
                 "title": "dashboard.widgetEditor.titles.title",
                 "type": "Title"
+            },
+            {
+                "title": "common.label",
+                "type": "LabelStyle"
             }
         ]
     },

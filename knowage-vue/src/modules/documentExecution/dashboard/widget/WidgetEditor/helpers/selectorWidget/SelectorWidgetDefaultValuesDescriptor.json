@@ -23,7 +23,6 @@
     },
     "defaultValuesManagement": {
         "enableAll": false,
-        "hideDisabled": false,
-        "wrapText": false
+        "hideDisabled": false
     }
 }

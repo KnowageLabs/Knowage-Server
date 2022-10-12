@@ -87,7 +87,9 @@ const getFormattedDefaultValues = (widget: any) => {
 
 const getFormattedWidgetValuesManagement = (widget: any) => {
     if (!widget.settings) return selectorWidgetDefaultValues.getDefaultValuesManagement()
-    return { hideDisabled: widget.settings.hideDisabled ?? false, enableAll: widget.settings.enableAll ?? false, wrapText: widget.settings.wrapText ?? false } as ISelectorWidgetValuesManagement
+    return {
+        hideDisabled: widget.settings.hideDisabled ?? false, enableAll: widget.settings.enableAll ?? false,
+    } as ISelectorWidgetValuesManagement
 }
 
 export const getColumnId = (widgetColumnName: string) => {
