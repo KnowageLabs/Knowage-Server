@@ -10,7 +10,8 @@ export const getFormattedStyle = (widget: any) => {
         label: getFormattedLabelStyle(widget),
         padding: getFormattedPaddingStyle(widget),
         borders: getFormattedBorderStyle(widget),
-        shadows: getFormattedShadowsStyle(widget)
+        shadows: getFormattedShadowsStyle(widget),
+        'background-color': selectorWidgetDefaultValues.getDefaultBackgroundColor()
     } as ISelectorWidgetStyle
 }
 

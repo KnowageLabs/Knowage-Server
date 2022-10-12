@@ -10,6 +10,7 @@
                 <SelectorWidgetValuesManagement v-else-if="accordion.type === 'ValuesManagement'" :widgetModel="widgetModel"></SelectorWidgetValuesManagement>
                 <WidgetHeaders v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetHeaders>
                 <SelectorWidgetLabelStyle v-else-if="accordion.type === 'LabelStyle'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></SelectorWidgetLabelStyle>
+                <WidgetBackgroundColorStyle v-else-if="accordion.type === 'BackgroundColorStyle'" :widgetModel="widgetModel"></WidgetBackgroundColorStyle>
                 <WidgetPaddingStyle v-else-if="accordion.type === 'PaddingStyle'" :widgetModel="widgetModel"></WidgetPaddingStyle>
                 <WidgetBordersStyle v-else-if="accordion.type === 'BordersStyle'" :widgetModel="widgetModel"></WidgetBordersStyle>
                 <WidgetShadowsStyle v-else-if="accordion.type === 'ShadowsStyle'" :widgetModel="widgetModel"></WidgetShadowsStyle>
@@ -30,6 +31,7 @@ import SelectorWidgetDefaultValues from './configuration/SelectorWidgetDefaultVa
 import SelectorWidgetValuesManagement from './configuration/SelectorWidgetValuesManagement.vue'
 import WidgetHeaders from '../common/style/WidgetHeaders.vue'
 import SelectorWidgetLabelStyle from './style/SelectorWidgetLabelStyle.vue'
+import WidgetBackgroundColorStyle from '../common/style/WidgetBackgroundColorStyle.vue'
 import WidgetPaddingStyle from '../common/style/WidgetPaddingStyle.vue'
 import WidgetBordersStyle from '../common/style/WidgetBordersStyle.vue'
 import WidgetShadowsStyle from '../common/style/WidgetShadowsStyle.vue'
@@ -44,6 +46,7 @@ export default defineComponent({
         SelectorWidgetValuesManagement,
         WidgetHeaders,
         SelectorWidgetLabelStyle,
+        WidgetBackgroundColorStyle,
         WidgetPaddingStyle,
         WidgetBordersStyle,
         WidgetShadowsStyle

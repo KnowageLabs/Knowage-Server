@@ -69,7 +69,7 @@ import InputSwitch from 'primevue/inputswitch'
 import WidgetEditorColorPicker from '../../common/WidgetEditorColorPicker.vue'
 
 export default defineComponent({
-    name: 'table-widget-borders-style',
+    name: 'widget-borders-style',
     components: { Dropdown, InputSwitch, WidgetEditorColorPicker },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true }

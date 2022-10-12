@@ -40,7 +40,8 @@ export interface ISelectorWidgetStyle {
     label: ISelectorWidgetLabelStyle,
     padding: IWidgetPaddingStyle,
     borders: IWidgetBordersStyle,
-    shadows: IWidgetShadowsStyle
+    shadows: IWidgetShadowsStyle,
+    ['background-color']: string
 }
 
 export interface ISelectorWidgetLabelStyle {

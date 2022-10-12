@@ -48,7 +48,7 @@ import { emitter } from '../../../../../DashboardHelpers'
 import InputSwitch from 'primevue/inputswitch'
 
 export default defineComponent({
-    name: 'table-widget-padding-style',
+    name: 'widget-padding-style',
     components: { InputSwitch },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true }
