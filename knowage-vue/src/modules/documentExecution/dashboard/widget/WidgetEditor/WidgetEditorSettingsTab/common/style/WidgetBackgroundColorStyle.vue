@@ -8,7 +8,7 @@
         </div>
 
         <div class="p-col-12">
-            <WidgetEditorColorPicker :initialValue="backgroundStyleModel.property['background-color']" :label="$t('dashboard.widgetEditor.iconTooltips.backgroundColor')" :disabled="backgroundStyleDisabled" @change="onBackroundColorChanged"></WidgetEditorColorPicker>
+            <WidgetEditorColorPicker :initialValue="backgroundStyleModel.properties['background-color']" :label="$t('dashboard.widgetEditor.iconTooltips.backgroundColor')" :disabled="backgroundStyleDisabled" @change="onBackroundColorChanged"></WidgetEditorColorPicker>
         </div>
     </div>
 </template>
@@ -55,11 +55,17 @@ export default defineComponent({
             switch (this.widgetType) {
                 case 'selector':
                     emitter.emit('refreshSelector', this.widgetModel.id)
+                    break
+                case 'selection':
+                    emitter.emit('refreshSelection', this.widgetModel.id)
+                    break
+                case 'selection':
+                    emitter.emit('refreshSelection', this.widgetModel.id)
             }
         },
         onBackroundColorChanged(event: string | null) {
             if (!event || !this.backgroundStyleModel) return
-            this.backgroundStyleModel.property['background-color'] = event
+            this.backgroundStyleModel.properties['background-color'] = event
             this.backgroundColorStyleChanged()
         }
     }

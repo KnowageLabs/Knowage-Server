@@ -3,7 +3,7 @@
     <div v-if="propWidget" class="p-d-flex kn-flex kn-overflow">
         <TableWidgetSettingsContainer
             v-if="propWidget.type === 'table'"
-            class="model-div kn-flex kn-overflow p-my-3 p-mr-3"
+            class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
             :widgetModel="propWidget"
             :selectedSetting="selectedSetting"
             :datasets="datasets"
@@ -14,7 +14,7 @@
         ></TableWidgetSettingsContainer>
         <SelectorWidgetSettingsContainer
             v-else-if="propWidget.type === 'selector'"
-            class="model-div kn-flex kn-overflow p-my-3 p-mr-3"
+            class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
             :widgetModel="propWidget"
             :selectedSetting="selectedSetting"
             :datasets="datasets"
@@ -24,7 +24,7 @@
         ></SelectorWidgetSettingsContainer>
         <SelectionsWidgetSettingsContainer
             v-else-if="propWidget.type === 'selection'"
-            class="model-div kn-flex kn-overflow p-my-3 p-mr-3"
+            class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
             :widgetModel="propWidget"
             :selectedSetting="selectedSetting"
             :datasets="datasets"

@@ -1,4 +1,4 @@
-import { IWidgetBordersStyle, ITableWidgetColumnGroups, ITableWidgetColumnStyles, ITableWidgetConditionalStyle, ITableWidgetConditionalStyles, ITableWidgetCrossNavigation, ITableWidgetCustomMessages, ITableWidgetExports, ITableWidgetHeaders, ITableWidgetLinks, IWidgetPaddingStyle, ITableWidgetPagination, ITableWidgetPreview, IWidgetResponsive, ITableWidgetRows, ITableWidgetRowsStyle, ITableWidgetSelection, IWidgetShadowsStyle, ITableWidgetSummaryRows, ITableWidgetSummaryStyle, ITableWidgetTooltipStyle, ITableWidgetVisibilityCondition, ITableWidgetVisualization, ITawbleWidgetHeadersStyle } from "../../../../Dashboard"
+import { IWidgetBordersStyle, ITableWidgetColumnGroups, ITableWidgetColumnStyles, ITableWidgetConditionalStyle, ITableWidgetConditionalStyles, ITableWidgetCrossNavigation, ITableWidgetCustomMessages, ITableWidgetExports, ITableWidgetHeaders, ITableWidgetLinks, IWidgetPaddingStyle, ITableWidgetPagination, ITableWidgetPreview, IWidgetResponsive, ITableWidgetRows, IWidgetRowsStyle, ITableWidgetSelection, IWidgetShadowsStyle, ITableWidgetSummaryRows, ITableWidgetSummaryStyle, ITableWidgetTooltipStyle, ITableWidgetVisibilityCondition, ITableWidgetVisualization, ITawbleWidgetHeadersStyle } from "../../../../Dashboard"
 import descriptor from './TableWidgetHelpersDescriptor.json'
 import deepcopy from 'deepcopy'
 
@@ -64,7 +64,7 @@ export const getDefaultHeadersStyle = () => {
 }
 
 export const getDefaultRowsStyle = () => {
-    return deepcopy(descriptor.defaultRowsStyle) as ITableWidgetRowsStyle
+    return deepcopy(descriptor.defaultRowsStyle) as IWidgetRowsStyle
 }
 
 export const getDefualtSummryStyle = () => {

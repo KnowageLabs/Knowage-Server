@@ -16,14 +16,6 @@
                 <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.valuesManagement.alwaysEnableValues') }}</label>
                 <i class="pi pi-question-circle kn-cursor-pointer p-ml-auto p-mr-4" v-tooltip.top="$t('dashboard.widgetEditor.valuesManagement.alwaysEnableValuesHint')"></i>
             </div>
-
-            <div class="p-sm-12 p-md-2">
-                <InputSwitch v-model="valuesManagementModel.wrapText" @change="valuesManagementChanged"></InputSwitch>
-            </div>
-            <div class="p-sm-12 p-md-10 p-d-flex">
-                <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.valuesManagement.wrapText') }}</label>
-                <i class="pi pi-question-circle kn-cursor-pointer p-ml-auto p-mr-4" v-tooltip.top="$t('dashboard.widgetEditor.valuesManagement.wrapTextHint')"></i>
-            </div>
         </div>
     </div>
 </template>
@@ -34,13 +26,11 @@ import { IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { ISelectorWidgetValuesManagement } from '@/modules/documentExecution/dashboard/interfaces/DashboardSelectorWidget'
 import { emitter } from '../../../../../DashboardHelpers'
 import descriptor from '../SelectorWidgetSettingsDescriptor.json'
-import Calendar from 'primevue/calendar'
 import InputSwitch from 'primevue/inputswitch'
-import Dropdown from 'primevue/dropdown'
 
 export default defineComponent({
     name: 'selector-widget-values-management',
-    components: { Calendar, InputSwitch, Dropdown },
+    components: { InputSwitch },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {

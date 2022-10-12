@@ -18,7 +18,7 @@
                 <WidgetHeaders v-else-if="accordion.type === 'Headers'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetHeaders>
                 <TableWidgetColumnStyle v-else-if="accordion.type === 'ColumnStyle'" :widgetModel="widgetModel"></TableWidgetColumnStyle>
                 <TableWidgetColumnStyle v-else-if="accordion.type === 'ColumnGroupsStyle'" :widgetModel="widgetModel" mode="columnGroups"></TableWidgetColumnStyle>
-                <TableWidgetRowsStyle v-else-if="accordion.type === 'RowsStyle'" :widgetModel="widgetModel"></TableWidgetRowsStyle>
+                <WidgetRowsStyle v-else-if="accordion.type === 'RowsStyle'" :widgetModel="widgetModel"></WidgetRowsStyle>
                 <TableWidgetSummaryStyle v-else-if="accordion.type === 'SummaryStyle'" :widgetModel="widgetModel"></TableWidgetSummaryStyle>
                 <WidgetBordersStyle v-else-if="accordion.type === 'BordersStyle'" :widgetModel="widgetModel"></WidgetBordersStyle>
                 <WidgetPaddingStyle v-else-if="accordion.type === 'PaddingStyle'" :widgetModel="widgetModel"></WidgetPaddingStyle>
@@ -51,7 +51,7 @@ import TableWidgetCustomMessages from './configuration/TableWidgetCustomMessages
 import TableWidgetVisualizationType from './visualization/TableWidgetVisualizationType.vue'
 import TableWidgetVisibilityConditions from './visualization/TableWidgetVisibilityConditions.vue'
 import TableWidgetColumnStyle from './style/TableWidgetColumnStyle.vue'
-import TableWidgetRowsStyle from './style/TableWidgetRowsStyle.vue'
+import WidgetRowsStyle from '../common/style/WidgetRowsStyle.vue'
 import TableWidgetSummaryStyle from './style/TableWidgetSummaryStyle.vue'
 import WidgetBordersStyle from '../common/style/WidgetBordersStyle.vue'
 import WidgetShadowsStyle from '../common/style/WidgetShadowsStyle.vue'
@@ -80,7 +80,7 @@ export default defineComponent({
         TableWidgetVisibilityConditions,
         WidgetHeaders,
         TableWidgetColumnStyle,
-        TableWidgetRowsStyle,
+        WidgetRowsStyle,
         TableWidgetSummaryStyle,
         WidgetBordersStyle,
         WidgetShadowsStyle,

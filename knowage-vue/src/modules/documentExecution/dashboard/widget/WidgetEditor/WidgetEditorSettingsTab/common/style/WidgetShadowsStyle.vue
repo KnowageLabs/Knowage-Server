@@ -80,6 +80,9 @@ export default defineComponent({
                     break
                 case 'selector':
                     emitter.emit('refreshSelector', this.widgetModel.id)
+                    break
+                case 'selector':
+                    emitter.emit('refreshSelection', this.widgetModel.id)
             }
         },
         getShadowSize() {
