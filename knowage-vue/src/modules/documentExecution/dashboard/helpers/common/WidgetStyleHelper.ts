@@ -7,7 +7,7 @@ export const getFormattedTitleStyle = (widget: any) => {
     const formattedTitleStyle = {
         enabled: widget.style.titles,
         text: widget.style.title.label,
-        height: widget.style.title.height,
+        height: widget.style.title.height ?? 25,
         properties: { 'font-weight': '', 'font-style': '', 'font-size': '', 'font-family': '', 'justify-content': '', color: '', 'background-color': widget.style.title['background-color'] ?? '' }
     } as IWidgetTitle
 

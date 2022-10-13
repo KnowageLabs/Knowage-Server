@@ -6,7 +6,7 @@
         </div>
 
         <div class="p-col-12 p-py-4">
-            <WidgetEditorStyleToolbar :options="settingsDescriptor.defaultToolbarStyleOptions" :propModel="chipsStyleModel.properties" :disabled="chipsStyleDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
+            <WidgetEditorStyleToolbar :options="descriptor.chipsToolbarStyleOptions" :propModel="chipsStyleModel.properties" :disabled="chipsStyleDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
         </div>
     </div>
 </template>
@@ -16,7 +16,7 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget, IWidgetStyleToolbarModel } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { ISelectionWidgetChipsStyle } from '@/modules/documentExecution/dashboard/interfaces/DashboardSelectionsWidget'
 import { emitter } from '../../../../../DashboardHelpers'
-import settingsDescriptor from '../../WidgetEditorSettingsTabDescriptor.json'
+import descriptor from '../SelectionsWidgetSettingsDescriptor.json'
 import InputNumber from 'primevue/inputnumber'
 import InputSwitch from 'primevue/inputswitch'
 import WidgetEditorStyleToolbar from '../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
@@ -27,7 +27,7 @@ export default defineComponent({
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {
-            settingsDescriptor,
+            descriptor,
             chipsStyleModel: null as ISelectionWidgetChipsStyle | null
         }
     },

@@ -43,7 +43,7 @@
     },
     "defaultTitleStyle": {
         "enabled": false,
-        "height": 0,
+        "height": 25,
         "properties": {
             "background-color": "",
             "color": "",

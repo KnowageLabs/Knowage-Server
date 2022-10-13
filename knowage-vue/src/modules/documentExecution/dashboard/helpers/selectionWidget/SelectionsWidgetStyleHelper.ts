@@ -18,7 +18,7 @@ export const getFormattedStyle = (widget: any) => {
 const getFormattedChipsStyle = (widget: any) => {
     if (!widget.style || !widget.style.chips) return selectionsWidgetDefaultValues.getDefaultChipsStyle()
     return {
-        height: 0,
+        height: 25,
         properties: {
             'font-weight': '',
             'font-style': '',
@@ -33,7 +33,7 @@ const getFormattedChipsStyle = (widget: any) => {
 
 const getFormattedRowsStyle = (widget: any) => {
     const formattedRowsStyle = {
-        height: widget.style.row?.height ?? 0,
+        height: widget.style.row?.height ?? 25,
 
         alternatedRows: {
             enabled: widget.style.alternateRows?.enabled ?? false,

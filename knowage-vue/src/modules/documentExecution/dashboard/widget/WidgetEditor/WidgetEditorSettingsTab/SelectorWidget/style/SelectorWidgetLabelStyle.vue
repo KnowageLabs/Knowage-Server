@@ -10,7 +10,7 @@
         </div>
         <div class="p-col-6"></div>
         <div class="p-col-12 p-py-4">
-            <WidgetEditorStyleToolbar :options="toolbarStyleSettings" :propModel="labelStyleModel.properties" :disabled="labelStyleDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
+            <WidgetEditorStyleToolbar :options="descriptor.labelToolbarStyleOptions" :propModel="labelStyleModel.properties" :disabled="labelStyleDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
         </div>
     </div>
 </template>
@@ -27,7 +27,7 @@ import WidgetEditorStyleToolbar from '../../common/styleToolbar/WidgetEditorStyl
 export default defineComponent({
     name: 'selector-widget-label-style',
     components: { InputSwitch, WidgetEditorStyleToolbar },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, toolbarStyleSettings: { type: Array, required: true } },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {
             descriptor,

@@ -52,7 +52,7 @@ const getFormattedHeadersStyle = (widget: any) => {
     if (!widget.style?.th) return tableWidgetDefaultValues.getDefaultHeadersStyle()
 
     return {
-        height: widget.style.th.height,
+        height: widget.style.th.height ?? 25,
         properties: {
             "background-color": widget.style.th['background-color'] ?? "rgb(137, 158, 175)",
             color: widget.style.th.color ?? 'rgb(255, 255, 255)',
@@ -67,7 +67,7 @@ const getFormattedHeadersStyle = (widget: any) => {
 
 const getFormattedRowsStyle = (widget: any) => {
     const formattedRowsStyle = {
-        height: widget.style.tr?.height ?? 0,
+        height: widget.style.tr?.height ?? 25,
         multiselectable: widget.settings.multiselectable ?? false,
         selectionColor: widget.settings.multiselectablecolor ?? '',
         alternatedRows: {
