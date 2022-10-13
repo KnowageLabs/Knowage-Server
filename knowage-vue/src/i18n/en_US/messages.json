@@ -518,6 +518,9 @@
             },
             "selectDataset": "Select Dataset",
             "selectedColumns": "Selected Columns",
+            "selectorType": {
+                "title": "Selector Type"
+            },
             "settingsListOptions": {
                 "tooltip": "Tooltip"
             },

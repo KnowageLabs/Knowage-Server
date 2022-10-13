@@ -1,7 +1,7 @@
 import { IWidget, IWidgetColumn, ITableWidgetColumnGroup, ITableWidgetParameter, ITableWidgetSettings } from "../../../../Dashboard"
 import { emitter } from '../../../../DashboardHelpers'
 import cryptoRandomString from 'crypto-random-string'
-import * as  tableWidgetDefaultValues from '../tableWidget/TableWidgetDefaultValues'
+import * as  tableWidgetDefaultValues from './TableWidgetDefaultValues'
 import * as widgetCommonDefaultValues from '../common/WidgetCommonDefaultValues'
 
 export const createNewTableWidgetSettings = () => {

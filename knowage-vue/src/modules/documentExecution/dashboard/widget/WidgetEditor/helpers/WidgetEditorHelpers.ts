@@ -1,6 +1,7 @@
 import { IWidget } from '../../../Dashboard'
 import { formatTableWidgetForSave } from './tableWidget/TableWidgetBackendSaveHelper'
 import { createNewTableWidgetSettings } from '../helpers/tableWidget/TableWidgetFunctions'
+import { createNewSelectorWidgetSettings } from '../helpers/selectorWidget/SelectorWidgetFunctions'
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
 
@@ -26,6 +27,10 @@ const createNewWidgetSettings = (widget: IWidget) => {
     switch (widget.type) {
         case 'table':
             widget.settings = createNewTableWidgetSettings()
+            break
+        case 'selector':
+            widget.settings = createNewSelectorWidgetSettings()
+            break
     }
 }
 

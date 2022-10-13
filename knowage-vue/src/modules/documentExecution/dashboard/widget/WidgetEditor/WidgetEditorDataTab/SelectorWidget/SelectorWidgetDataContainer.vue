@@ -23,7 +23,6 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
-import { removeColumnFromModel } from '../../helpers/selectorWidget/SelectorWidgetFunctions'
 import { emitter } from '../../../../DashboardHelpers'
 import descriptor from '../TableWidget/TableWidgetDataDescriptor.json'
 import Dropdown from 'primevue/dropdown'
@@ -78,7 +77,6 @@ export default defineComponent({
         onColumnDelete(column: IWidgetColumn) {
             this.widgetModel.columns = []
             if (column.id === this.selectedColumn?.id) this.selectedColumn = null
-            removeColumnFromModel(this.widgetModel, column)
             emitter.emit('columnRemoved', column)
             emitter.emit('refreshSelector', this.widgetModel.id)
         },

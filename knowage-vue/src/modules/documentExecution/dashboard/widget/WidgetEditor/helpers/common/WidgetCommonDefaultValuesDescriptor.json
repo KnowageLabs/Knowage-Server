@@ -37,7 +37,7 @@
     },
     "defaultTitleStyle": {
         "enabled": false,
-        "height": "",
+        "height": 0,
         "properties": {
             "background-color": "",
             "color": "",

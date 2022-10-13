@@ -34,7 +34,7 @@
             </div>
 
             <div class="p-col-12 p-md-12 p-py-4">
-                <WidgetEditorStyleToolbar :options="descriptor.defaultToolbarStyleOptions" :propModel="columnStyle.properties" :disabled="columnStylesDisabled" @change="onStyleToolbarChange($event, columnStyle)"> </WidgetEditorStyleToolbar>
+                <WidgetEditorStyleToolbar :options="settingsDescriptor.defaultToolbarStyleOptions" :propModel="columnStyle.properties" :disabled="columnStylesDisabled" @change="onStyleToolbarChange($event, columnStyle)"> </WidgetEditorStyleToolbar>
             </div>
         </div>
     </div>
@@ -45,6 +45,7 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget, ITableWidgetColumnStyle, IWidgetStyleToolbarModel, IWidgetColumn, ITableWidgetColumnGroup, ITableWidgetColumnStyles } from '@/modules/documentExecution/dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
+import settingsDescriptor from '../../WidgetEditorSettingsTabDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import InputNumber from 'primevue/inputnumber'
 import InputSwitch from 'primevue/inputswitch'
@@ -58,6 +59,7 @@ export default defineComponent({
     data() {
         return {
             descriptor,
+            settingsDescriptor,
             columnStyles: null as ITableWidgetColumnStyles | null,
             availableColumnOptions: [] as (IWidgetColumn | ITableWidgetColumnGroup | { id: string; alias: string })[],
             widgetColumnsAliasMap: {} as any

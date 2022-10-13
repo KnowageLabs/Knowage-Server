@@ -1,5 +1,27 @@
-import { IWidget, IWidgetColumn } from "@/modules/documentExecution/dashboard/Dashboard"
+import { ISelectorWidgetSettings } from "@/modules/documentExecution/dashboard/interfaces/DashboardSelectorWidget"
+import * as selectorWidgetDefaultValues from './SelectorWidgetDefaultValues'
+import * as widgetCommonDefaultValues from '../common/WidgetCommonDefaultValues'
 
-export const removeColumnFromModel = (widgetModel: IWidget, column: IWidgetColumn) => {
-    console.log("SELECTOR removeColumnFromModel: ")
+export const createNewSelectorWidgetSettings = () => {
+    return {
+        isDateType: false,
+        sortingOrder: '',
+        updatable: true,
+        clickable: true,
+        configuration: {
+            selectorType: selectorWidgetDefaultValues.getDefaultSelectorType(),
+            defaultValues: selectorWidgetDefaultValues.getDefaultValues(),
+            valuesManagement: selectorWidgetDefaultValues.getDefaultValuesManagement(),
+            exports: { showExcelExport: true }
+        },
+        style: {
+            title: widgetCommonDefaultValues.getDefaultTitleStyle(),
+            label: selectorWidgetDefaultValues.getDefaultLabelStyle(),
+            padding: widgetCommonDefaultValues.getDefaultPaddingStyle(),
+            borders: widgetCommonDefaultValues.getDefaultBordersStyle(),
+            shadows: widgetCommonDefaultValues.getDefaultShadowsStyle(),
+            background: selectorWidgetDefaultValues.getDefaultBackgroundStyle()
+        },
+        responsive: widgetCommonDefaultValues.getDefaultResponsivnes()
+    } as ISelectorWidgetSettings
 }

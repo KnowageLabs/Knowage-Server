@@ -18,7 +18,6 @@ export const getDefaultShadowsStyle = () => {
     return deepcopy(descriptor.defaultShadowsStyle) as IWidgetShadowsStyle
 }
 
-
 export const getDefaultBordersStyle = () => {
     return deepcopy(descriptor.defaultBordersStyle) as IWidgetBordersStyle
 }

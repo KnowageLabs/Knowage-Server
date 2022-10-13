@@ -1,35 +1,35 @@
 {
-    "defaultBackgroundStyle": {
-        "enabled": false,
-        "properties": {
-            "background-color": ""
-        }
-    },
-    "defaultLabelStyle": {
-        "enabled": true,
-        "properties": {
-            "background-color": "",
-            "color": "",
-            "font-family": "",
-            "font-size": "",
-            "font-style": "",
-            "font-weight": "",
-            "justify-content": ""
-        },
-        "wrapText": false
-    },
-    "defaultSelectorType": {
-        "alignment": "vertical",
-        "columnSize": "",
-        "modality": "radio"
-    },
-    "defaultValues": {
-        "enabled": false,
-        "value": "",
-        "valueType": ""
-    },
-    "defaultValuesManagement": {
-        "enableAll": false,
-        "hideDisabled": false
+  "defaultBackgroundStyle": {
+    "enabled": false,
+    "properties": {
+      "background-color": ""
     }
+  },
+  "defaultLabelStyle": {
+    "enabled": true,
+    "properties": {
+      "background-color": "",
+      "color": "",
+      "font-family": "",
+      "font-size": "",
+      "font-style": "",
+      "font-weight": "",
+      "justify-content": ""
+    },
+    "wrapText": false
+  },
+  "defaultSelectorType": {
+    "alignment": "vertical",
+    "columnSize": "",
+    "modality": "singleValue"
+  },
+  "defaultValues": {
+    "enabled": false,
+    "value": "",
+    "valueType": ""
+  },
+  "defaultValuesManagement": {
+    "enableAll": false,
+    "hideDisabled": false
+  }
 }
