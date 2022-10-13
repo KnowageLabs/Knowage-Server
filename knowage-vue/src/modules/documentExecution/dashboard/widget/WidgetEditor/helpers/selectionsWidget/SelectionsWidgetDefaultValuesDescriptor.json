@@ -17,6 +17,18 @@
             "justify-content": ""
         }
     },
+    "defaultNoSelectionsConfiguration": {
+        "customText": "",
+        "enabled": false
+    },
+    "defaultRowsStyle": {
+        "alternatedRows": {
+            "enabled": false,
+            "evenBackgroundColor": "rgb(228, 232, 236)",
+            "oddBackgroundColor": ""
+        },
+        "height": 0
+    },
     "defaultValuesManagement": {
         "showColumn": true,
         "showDataset": false

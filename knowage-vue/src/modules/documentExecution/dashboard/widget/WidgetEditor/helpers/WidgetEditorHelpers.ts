@@ -2,11 +2,11 @@ import { IWidget } from '../../../Dashboard'
 import { formatTableWidgetForSave } from './tableWidget/TableWidgetBackendSaveHelper'
 import { createNewTableWidgetSettings } from '../helpers/tableWidget/TableWidgetFunctions'
 import { createNewSelectorWidgetSettings } from '../helpers/selectorWidget/SelectorWidgetFunctions'
+import { createNewSelectionsWidgetSettings } from '../helpers/selectionsWidget/SelectionsWidgetFunctions'
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
 
 export function createNewWidget(type: string) {
-    console.log(">>>>>>>> type: ", type)
     const widget = {
         id: cryptoRandomString({ length: 16, type: 'base64' }),
         new: true,
@@ -30,6 +30,9 @@ const createNewWidgetSettings = (widget: IWidget) => {
             break
         case 'selector':
             widget.settings = createNewSelectorWidgetSettings()
+            break
+        case 'selection':
+            widget.settings = createNewSelectionsWidgetSettings()
             break
     }
 }
