@@ -3,19 +3,21 @@ import { ISelectionsWidgetSettings } from '@/modules/documentExecution/dashboard
 export interface IDashboard {
     sheets: [],
     widgets: ITableWidget[],
-    configuration: {
-        id: string,
-        name: string,
-        label: string,
-        description: string,
-        associations: IAssociation[],
-        datasets: IModelDataset[],
-        variables: IVariable[],
-        themes: any
-    },
+    configuration: IDashboardConfiguration,
     version: string
 }
 
+export interface IDashboardConfiguration {
+    id: string,
+    name: string,
+    label: string,
+    description: string,
+    associations: IAssociation[],
+    datasets: IModelDataset[],
+    variables: IVariable[],
+    selections: ISelection[],
+    themes: any
+}
 
 
 export interface IDatasetParameter {
@@ -594,4 +596,12 @@ export interface IWidgetBackgroundStyle {
     properties: {
         'background-color': string
     }
+}
+
+export interface ISelection {
+    datasetId: number,
+    datasetName: string,
+    columnName: string,
+    value: (string | number)[],
+    aggregated: boolean
 }

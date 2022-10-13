@@ -1,6 +1,6 @@
 import { formatTableWidget } from './tableWidget/TableWidgetCompatibilityHelper'
 import { formatSelectorWidget } from '@/modules/documentExecution/dashboard/helpers/selectorWidget/SelectorWidgetCompatibilityHelper'
-import { IAssociation, IDataset, IDatasetParameter, IWidgetEditorDataset } from '../Dashboard'
+import { IAssociation, IDashboardConfiguration, IDataset, IDatasetParameter, ISelection, IWidgetEditorDataset } from '../Dashboard'
 import { formatSelectionWidget } from './selectionWidget/SelectionsWidgetCompatibilityHelper'
 import deepcopy from 'deepcopy'
 import cryptoRandomString from 'crypto-random-string'
@@ -9,6 +9,17 @@ const datasetIdNameMap = {}
 
 export const formatModel = (model: any, document: any, datasets: IDataset[]) => {
     if (!model.sheets) return
+
+    // TODO - Remove mocked selections when BE is fixed
+    model.selections = [{
+        "ds": "TEST_04",
+        "columnName": "store_id",
+        "value": [
+            2,
+            4
+        ],
+        "aggregated": true
+    }]
 
     console.log(">>>>>>>>>>>>>>> LOADED MODEL: ", model)
     console.log(">>>>>>>>>>>>>>> LOADED DOCUMENT: ", document)
@@ -42,13 +53,13 @@ const getDatasetId = (datasetName: string) => {
 }
 
 const getFormattedModelConfiguration = (model: any, document: any) => {
-    const formattedConfiguration = { id: document.id, name: document.name, label: document.label, description: document.description, associations: getFormattedAssociations(model), datasets: getFormattedDatasets(model), variables: getFormattedVariables(model), themes: {} }
+    const formattedConfiguration = { id: document.id, name: document.name, label: document.label, description: document.description, associations: getFormattedAssociations(model), datasets: getFormattedDatasets(model), variables: getFormattedVariables(model), selections: getFormattedSelections(model), themes: {} } as IDashboardConfiguration
 
     return formattedConfiguration
 }
 
 const getFormattedAssociations = (model: any) => {
-    if (!model.configuration || !model.configuration.associations) return
+    if (!model.configuration || !model.configuration.associations) return []
     const formattedAssociations = [] as IAssociation[]
     for (let i = 0; i < model.configuration.associations.length; i++) {
         formattedAssociations.push(getFormattedAssociation(model.configuration.associations[i]))
@@ -114,6 +125,15 @@ const getFormattedVariables = (model: any) => {
     }
 
     return formattedVariables
+}
+
+const getFormattedSelections = (model: any) => {
+    if (!model.configuration || !model.selections) return []
+    const formattedSelections = [] as ISelection[]
+    model.selections.forEach((selection: { ds: string, columnName: string, value: string | (string | number)[], aggregated: boolean }) => {
+        formattedSelections.push({ datasetId: getDatasetId(selection.ds), datasetName: selection.ds, columnName: selection.columnName, value: Array.isArray(selection.value) ? selection.value : [selection.value], aggregated: selection.aggregated })
+    })
+    return formattedSelections
 }
 
 const formatSheet = (sheet: any, formattedModel: any) => {

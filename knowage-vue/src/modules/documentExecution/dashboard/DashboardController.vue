@@ -90,9 +90,7 @@ export default defineComponent({
         this.loadOutputParameters()
     },
     unmounted() {
-        this.store.removeDashboard(this.dashboardId)
-        this.store.setCrosssNavigations([])
-        this.store.setOutputParameters([])
+        this.emptyStoreValues()
     },
     methods: {
         async getData() {
@@ -116,6 +114,7 @@ export default defineComponent({
             this.model = (tempModel && this.newDashboardMode) || tempModel.hasOwnProperty('id') ? tempModel : (formatModel(tempModel, this.document, this.datasets) as any)
             this.dashboardId = cryptoRandomString({ length: 16, type: 'base64' })
             this.store.setDashboard(this.dashboardId, this.model)
+            this.store.setSelections(this.dashboardId, this.model.configuration.selections)
         },
         async loadDatasets() {
             this.appStore.setLoading(true)
@@ -197,6 +196,12 @@ export default defineComponent({
             this.widgetPickerVisible = false
             this.widgetEditorVisible = true
             emitter.emit('widgetEditorOpened')
+        },
+        emptyStoreValues() {
+            this.store.removeDashboard(this.dashboardId)
+            this.store.setCrosssNavigations([])
+            this.store.setOutputParameters([])
+            this.store.setSelections(this.dashboardId, [])
         },
         closeWidgetEditor() {
             this.widgetEditorVisible = false

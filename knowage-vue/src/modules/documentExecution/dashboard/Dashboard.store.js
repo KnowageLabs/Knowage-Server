@@ -8,7 +8,8 @@ const store = defineStore('dashboardStore', {
             dashboards: {},
             selectedSheetIndex: 0,
             crossNavigations: [],
-            outputParameters: []
+            outputParameters: [],
+            selections: {}
         }
     },
     actions: {
@@ -58,6 +59,12 @@ const store = defineStore('dashboardStore', {
         },
         setOutputParameters(outputParameters) {
             this.outputParameters = outputParameters
+        },
+        getSelections(id) {
+            return this.selections[id]
+        },
+        setSelections(id, selections) {
+            this.selections[id] = selections
         }
     }
 })
