@@ -1,4 +1,4 @@
-import { IWidgetBordersStyle, IWidgetPaddingStyle, IWidgetShadowsStyle, IWidgetTitle } from '../../Dashboard'
+import { IWidgetBackgroundStyle, IWidgetBordersStyle, IWidgetPaddingStyle, IWidgetShadowsStyle, IWidgetTitle } from '../../Dashboard'
 import { hexToRgb } from '../FormattingHelpers'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 
@@ -50,7 +50,12 @@ export const getFormattedShadowsStyle = (widget: any) => {
         enabled: widget.style.shadows,
         properties: {
             "box-shadow": widget.style.shadow["box-shadow"],
-            "color": hexToRgb(widget.style.backgroundColor)
+            "color": ''
         }
     } as IWidgetShadowsStyle
+}
+
+export const getFormattedBackgroundStyle = (widget: any) => {
+    if (!widget.style || !widget.style.backgroundColor) return widgetCommonDefaultValues.getDefaultBackgroundStyle()
+    return { enabled: true, "properties": { "background-color": widget.style.backgroundColor } } as IWidgetBackgroundStyle
 }

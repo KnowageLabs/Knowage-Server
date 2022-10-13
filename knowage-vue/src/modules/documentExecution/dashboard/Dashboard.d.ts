@@ -235,7 +235,8 @@ export interface ITableWidgetStyle {
     padding: IWidgetPaddingStyle
     rows: IWidgetRowsStyle
     shadows: IWidgetShadowsStyle
-    summary: ITableWidgetSummaryStyle
+    summary: ITableWidgetSummaryStyle,
+    background: IWidgetBackgroundStyle
 }
 
 export interface IWidgetBordersStyle {

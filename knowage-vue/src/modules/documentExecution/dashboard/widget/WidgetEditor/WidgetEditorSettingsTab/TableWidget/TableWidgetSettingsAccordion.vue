@@ -20,6 +20,7 @@
                 <TableWidgetColumnStyle v-else-if="accordion.type === 'ColumnGroupsStyle'" :widgetModel="widgetModel" mode="columnGroups"></TableWidgetColumnStyle>
                 <WidgetRowsStyle v-else-if="accordion.type === 'RowsStyle'" :widgetModel="widgetModel"></WidgetRowsStyle>
                 <TableWidgetSummaryStyle v-else-if="accordion.type === 'SummaryStyle'" :widgetModel="widgetModel"></TableWidgetSummaryStyle>
+                <WidgetBackgroundColorStyle v-else-if="accordion.type === 'BackgroundColorStyle'" :widgetModel="widgetModel"></WidgetBackgroundColorStyle>
                 <WidgetBordersStyle v-else-if="accordion.type === 'BordersStyle'" :widgetModel="widgetModel"></WidgetBordersStyle>
                 <WidgetPaddingStyle v-else-if="accordion.type === 'PaddingStyle'" :widgetModel="widgetModel"></WidgetPaddingStyle>
                 <WidgetShadowsStyle v-else-if="accordion.type === 'ShadowsStyle'" :widgetModel="widgetModel"></WidgetShadowsStyle>
@@ -64,6 +65,7 @@ import TableWidgetInteractionsLinks from './interactions/link/TableWidgetInterac
 import TableWidgetPreview from './interactions/preview/TableWidgetPreview.vue'
 import WidgetHeaders from '../common/style/WidgetHeaders.vue'
 import WidgetPaddingStyle from '../common/style/WidgetPaddingStyle.vue'
+import WidgetBackgroundColorStyle from '../common/style/WidgetBackgroundColorStyle.vue'
 
 export default defineComponent({
     name: 'table-widget-configuration-container',
@@ -91,7 +93,8 @@ export default defineComponent({
         TableWidgetCrossNavigation,
         TableWidgetInteractionsLinks,
         TableWidgetPreview,
-        WidgetPaddingStyle
+        WidgetPaddingStyle,
+        WidgetBackgroundColorStyle
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

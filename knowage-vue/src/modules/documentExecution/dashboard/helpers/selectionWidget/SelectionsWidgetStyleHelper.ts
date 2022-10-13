@@ -1,7 +1,7 @@
 import { ISelectionWidgetChipsStyle, ISelectionWidgetStyle } from '../../interfaces/DashboardSelectionsWidget'
-import { getFormattedTitleStyle, getFormattedPaddingStyle, getFormattedBorderStyle, getFormattedShadowsStyle } from '../common/WidgetStyleHelper'
-import * as selectionsWidgetDefaultValues from '../../widget/WidgetEditor/helpers/selectionsWidget/SelectionsWidgetDefaultValues'
+import { getFormattedTitleStyle, getFormattedPaddingStyle, getFormattedBorderStyle, getFormattedShadowsStyle, getFormattedBackgroundStyle } from '../common/WidgetStyleHelper'
 import { IWidgetRowsStyle } from '../../Dashboard'
+import * as selectionsWidgetDefaultValues from '../../widget/WidgetEditor/helpers/selectionsWidget/SelectionsWidgetDefaultValues'
 
 export const getFormattedStyle = (widget: any) => {
     return {
@@ -11,7 +11,7 @@ export const getFormattedStyle = (widget: any) => {
         padding: getFormattedPaddingStyle(widget),
         borders: getFormattedBorderStyle(widget),
         shadows: getFormattedShadowsStyle(widget),
-        background: selectionsWidgetDefaultValues.getDefaultBackgroundStyle()
+        background: getFormattedBackgroundStyle(widget)
     } as ISelectionWidgetStyle
 }
 

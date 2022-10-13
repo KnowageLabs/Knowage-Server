@@ -1,4 +1,4 @@
-import { IWidgetBordersStyle, IWidgetPaddingStyle, IWidgetResponsive, IWidgetShadowsStyle, IWidgetTitle } from "@/modules/documentExecution/dashboard/Dashboard"
+import { IWidgetBackgroundStyle, IWidgetBordersStyle, IWidgetPaddingStyle, IWidgetResponsive, IWidgetShadowsStyle, IWidgetTitle } from "@/modules/documentExecution/dashboard/Dashboard"
 import descriptor from './WidgetCommonDefaultValuesDescriptor.json'
 import deepcopy from 'deepcopy'
 
@@ -20,4 +20,8 @@ export const getDefaultShadowsStyle = () => {
 
 export const getDefaultBordersStyle = () => {
     return deepcopy(descriptor.defaultBordersStyle) as IWidgetBordersStyle
+}
+
+export const getDefaultBackgroundStyle = () => {
+    return deepcopy(descriptor.defaultBackgroundStyle) as IWidgetBackgroundStyle
 }

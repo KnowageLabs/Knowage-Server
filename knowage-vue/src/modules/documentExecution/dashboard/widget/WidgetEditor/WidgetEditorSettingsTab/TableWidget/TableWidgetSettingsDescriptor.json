@@ -318,6 +318,10 @@
                 "type": "SummaryStyle"
             },
             {
+                "title": "dashboard.widgetEditor.background",
+                "type": "BackgroundColorStyle"
+            },
+            {
                 "title": "dashboard.widgetEditor.borders.title",
                 "type": "BordersStyle"
             },

@@ -1,5 +1,6 @@
 import { IWidgetBordersStyle, IWidgetPaddingStyle, IWidgetShadowsStyle, IWidgetTitle } from "../../Dashboard"
 import { ISelectorWidgetLabelStyle, ISelectorWidgetStyle } from "../../interfaces/DashboardSelectorWidget"
+import { getFormattedBackgroundStyle } from "../common/WidgetStyleHelper"
 import { hexToRgb } from '../FormattingHelpers'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import * as selectorWidgetDefaultValues from '../../widget/WidgetEditor/helpers/selectorWidget/SelectorWidgetDefaultValues'
@@ -11,7 +12,7 @@ export const getFormattedStyle = (widget: any) => {
         padding: getFormattedPaddingStyle(widget),
         borders: getFormattedBorderStyle(widget),
         shadows: getFormattedShadowsStyle(widget),
-        background: selectorWidgetDefaultValues.getDefaultBackgroundStyle()
+        background: getFormattedBackgroundStyle(widget)
     } as ISelectorWidgetStyle
 }
 
