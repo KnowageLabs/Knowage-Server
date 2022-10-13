@@ -19,7 +19,7 @@
 
             <div id="padding-left-container" class="p-col-11 p-md-5 p-lg-2 p-d-flex p-flex-column kn-flex p-px-2">
                 <label class="kn-material-input-label p-mr-2">{{ paddingStyleModel.properties.unlinked ? $t('dashboard.widgetEditor.padding.paddingLeft') : $t('dashboard.widgetEditor.padding.title') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="paddingStyleModel.properties['padding-left']" :disabled="paddingStyleDisabled" @change="onPaddingLeftInputChange" />
+                <InputText class="kn-material-input p-inputtext-sm" v-model="paddingStyleModel.properties['padding-left']" :disabled="paddingStyleDisabled" @input="onPaddingLeftInputChange" />
                 <small>{{ $t('dashboard.widgetEditor.inputHintForPixels') }}</small>
             </div>
             <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column p-px-2" v-if="paddingStyleModel.properties.unlinked">
