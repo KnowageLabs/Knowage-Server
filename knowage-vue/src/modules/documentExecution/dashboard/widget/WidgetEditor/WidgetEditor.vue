@@ -10,7 +10,7 @@
             </Toolbar>
             <div class="datasetEditor-container kn-overflow">
                 <WidgetEditorTabs class="dashboardEditor-tabs" :propWidget="widget" :datasets="datasets" :selectedDatasets="selectedDatasets" :drivers="drivers" :variables="variables" :dashboardId="dashboardId" @datasetSelected="onDatasetSelected" />
-                <WidgetEditorPreview id="widget-editor-preview" :propWidget="widget" :dashboardId="dashboardId" :datasets="datasets" />
+                <WidgetEditorPreview :propWidget="widget" :dashboardId="dashboardId" :datasets="datasets" />
             </div>
         </div>
     </Teleport>
@@ -130,21 +130,4 @@ export default defineComponent({
 .icon-disabled {
     color: #c2c2c2;
 }
-#widget-editor-preview {
-    flex: 0.5;
-}
-// @media screen and (max-width: 1199px) {
-//     #widget-editor-preview {
-//         -webkit-transition: width 0.3s;
-//         transition: flex 0.3s;
-//         flex: 0;
-//     }
-// }
-// @media screen and (min-width: 1200px) {
-//     #widget-editor-preview {
-//         -webkit-transition: width 0.3s;
-//         transition: flex 0.3s;
-//         flex: 0.5;
-//     }
-// }
 </style>

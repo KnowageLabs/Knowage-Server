@@ -1,6 +1,6 @@
 <template>
     <div class="widget-renderer" :style="getWidgetStyleString()">
-        <TableWidget v-if="widget.type === 'table'" :propWidget="widget" :datasets="datasets" :editorMode="false" style="flex: 1" />
+        <TableWidget v-if="widget.type === 'table'" :propWidget="widget" :datasets="datasets" :editorMode="false" />
         <SelectorWidget v-if="widget.type === 'selector'" :propWidget="widget" :datasets="datasets" :dataToShow="mock.selectorMockedResponse" :editorMode="false" style="flex: 1" />
     </div>
 </template>

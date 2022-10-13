@@ -1,8 +1,18 @@
 <template>
-    <div class="p-d-flex p-flex-column p-ai-stretch p-jc-center kn-overflow" :style="descriptor.style.preview">
+    <div class="widget-editor-preview-container p-d-flex p-flex-column p-ai-stretch p-jc-center kn-overflow">
         <Button icon="fas fa-square-check" class="p-button-rounded p-button-text p-button-plain" @click="logWidget" />
 
-        <div id="preview-widget-container" v-if="propWidget.settings && propWidget.type == 'table'" class="p-d-flex p-flex-column p-m-2" style="height: 300px; overflow: hidden" :style="getWidgetContainerStyle()">
+        <div class="widget p-m-2" :style="getWidgetContainerStyle()">
+            <div class="p-d-flex p-ai-center" style="border-radius: 0px" :style="getWidgetTitleStyle()">{{ widgetTitle?.text ?? 'test' }}</div>
+            <div class="widget-editor-preview" :style="getWidgetPadding()">
+                <TableWidget v-if="propWidget.type == 'table'" :propWidget="propWidget" :datasets="datasets" :editorMode="true" />
+                <SelectorWidget v-if="propWidget.type == 'selector'" :propWidget="propWidget" :dataToShow="mock.selectorMockedResponse" :editorMode="true" />
+                <ActiveSelectionsWidget v-if="propWidget.type == 'selection'" :propWidget="propWidget" :dataToShow="mock.selectionMockedResponse" :editorMode="true" />
+                <!-- <ActiveSelectionsWidget :propWidget="propWidget" :dataToShow="[]" :editorMode="true" /> -->
+            </div>
+        </div>
+
+        <!-- <div id="preview-widget-container" v-if="propWidget.settings && propWidget.type == 'table'" class="p-d-flex p-flex-column p-m-2" style="height: 300px; overflow: hidden" :style="getWidgetContainerStyle()">
             <TableWidget class="kn-flex" :propWidget="propWidget" :datasets="datasets" :editorMode="true" />
         </div>
 
@@ -18,8 +28,8 @@
                 {{ widgetTitle?.text }}
             </div>
             <ActiveSelectionsWidget :propWidget="propWidget" :dataToShow="mock.selectionMockedResponse" :editorMode="true" />
-            <!-- <ActiveSelectionsWidget :propWidget="propWidget" :dataToShow="[]" :editorMode="true" /> -->
-        </div>
+            <ActiveSelectionsWidget :propWidget="propWidget" :dataToShow="[]" :editorMode="true" />
+        </div> -->
     </div>
 </template>
 
@@ -53,23 +63,63 @@ export default defineComponent({
             mock
         }
     },
-    created() {
-        if (this.propWidget.settings && this.propWidget.type == 'selector') this.getWidgetTitleStyle()
-    },
+    created() {},
     mounted() {},
     methods: {
         logWidget() {
             console.log('widget ----------------- \n', this.propWidget)
         },
         getWidgetTitleStyle() {
-            this.widgetTitle = this.propWidget.settings.style.title
+            this.widgetTitle = this.propWidget.settings.style.title ?? 20
             const styleString = getWidgetStyleByType(this.propWidget, 'title')
             return styleString + `height: ${this.widgetTitle.height}px;`
         },
+        // getWidgetContainerStyle() {
+        //     const styleString = getWidgetStyleByType(this.propWidget, 'borders') + getWidgetStyleByType(this.propWidget, 'shadows') + getWidgetStyleByType(this.propWidget, 'padding') + getWidgetStyleByType(this.propWidget, 'background')
+        //     return styleString
+        // },
         getWidgetContainerStyle() {
-            const styleString = getWidgetStyleByType(this.propWidget, 'borders') + getWidgetStyleByType(this.propWidget, 'shadows') + getWidgetStyleByType(this.propWidget, 'padding') + getWidgetStyleByType(this.propWidget, 'background')
+            const styleString = getWidgetStyleByType(this.propWidget, 'borders') + getWidgetStyleByType(this.propWidget, 'shadows') + getWidgetStyleByType(this.propWidget, 'background')
+
+            return styleString
+        },
+        getWidgetPadding() {
+            const styleString = getWidgetStyleByType(this.propWidget, 'padding')
             return styleString
         }
     }
 })
 </script>
+<style lang="scss" scoped>
+.widget-editor-preview-container {
+    flex: 0.5;
+    border-left: 1px solid #ccc;
+    .widget {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        flex: 1;
+        max-height: 35%;
+        .widget-editor-preview {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+    }
+}
+// @media screen and (max-width: 1199px) {
+//     .widget-editor-preview-container {
+//         -webkit-transition: width 0.3s;
+//         transition: flex 0.3s;
+//         flex: 0;
+//     }
+// }
+// @media screen and (min-width: 1200px) {
+//     .widget-editor-preview-container {
+//         -webkit-transition: width 0.3s;
+//         transition: flex 0.3s;
+//         flex: 0.5;
+//     }
+// }
+</style>
