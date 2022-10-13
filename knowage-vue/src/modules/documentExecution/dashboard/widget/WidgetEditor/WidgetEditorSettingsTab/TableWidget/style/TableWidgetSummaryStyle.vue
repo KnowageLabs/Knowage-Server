@@ -1,7 +1,7 @@
 <template>
     <div v-if="summaryStyleModel" class="p-grid p-jc-center p-ai-center p-p-4">
         <div class="p-col-12 p-p-4">
-            <WidgetEditorStyleToolbar :options="descriptor.defaultToolbarStyleOptions" :propModel="summaryStyleModel" :disabled="summaryStyleDisabled" @change="onStyleToolbarChange($event)"> </WidgetEditorStyleToolbar>
+            <WidgetEditorStyleToolbar :options="settingsDescriptor.defaultToolbarStyleOptions" :propModel="summaryStyleModel" :disabled="summaryStyleDisabled" @change="onStyleToolbarChange($event)"> </WidgetEditorStyleToolbar>
         </div>
     </div>
 </template>
@@ -10,7 +10,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget, ITableWidgetSummaryStyle, IWidgetStyleToolbarModel } from '@/modules/documentExecution/dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
-import descriptor from '../TableWidgetSettingsDescriptor.json'
+import settingsDescriptor from '../../WidgetEditorSettingsTabDescriptor.json'
 import WidgetEditorStyleToolbar from '../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
 
 export default defineComponent({
@@ -21,7 +21,7 @@ export default defineComponent({
     },
     data() {
         return {
-            descriptor,
+            settingsDescriptor,
             summaryStyleModel: null as ITableWidgetSummaryStyle | null
         }
     },
