@@ -134,7 +134,6 @@ export default defineComponent({
             return formatDate(date, format, incomingFormat)
         },
         onInputNumberChange() {
-            console.log('CAAAAAAAAAAAAAAAAAAALED')
             setTimeout(() => this.$emit('rowChanged', this.row), 250)
         }
     }
