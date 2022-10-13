@@ -12,6 +12,14 @@
             </div>
             <SelectorWidget :propWidget="propWidget" :dataToShow="mock.selectorMockedResponse" :editorMode="true" />
         </div>
+
+        <div id="preview-widget-container" v-if="propWidget.settings && propWidget.type == 'selection'" class="p-d-flex p-flex-column p-m-2" style="max-height: 300px; overflow: hidden" :style="getWidgetContainerStyle()">
+            <div v-if="widgetTitle && widgetTitle.enabled" class="p-d-flex p-ai-center" style="border-radius: 0px" :style="getWidgetTitleStyle()">
+                {{ widgetTitle?.text }}
+            </div>
+            <ActiveSelectionsWidget :propWidget="propWidget" :dataToShow="mock.selectionMockedResponse" :editorMode="true" />
+            <!-- <ActiveSelectionsWidget :propWidget="propWidget" :dataToShow="[]" :editorMode="true" /> -->
+        </div>
     </div>
 </template>
 
@@ -21,15 +29,16 @@
  */
 import { defineComponent, PropType } from 'vue'
 import { IDataset, IWidget } from '../../Dashboard'
+import { getWidgetStyleByType } from '../TableWidget/TableWidgetHelper'
 import mock from '../../dataset/DatasetEditorTestMocks.json'
 import descriptor from '../../dataset/DatasetEditorDescriptor.json'
 import TableWidget from '../TableWidget/TableWidget.vue'
 import SelectorWidget from '../SelectorWidget/SelectorWidget.vue'
-import { getWidgetStyleByType } from '../TableWidget/TableWidgetHelper'
+import ActiveSelectionsWidget from '../ActiveSelectionsWidget/ActiveSelectionsWidget.vue'
 
 export default defineComponent({
     name: 'widget-editor-preview',
-    components: { TableWidget, SelectorWidget },
+    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget },
     props: {
         propWidget: {
             required: true,

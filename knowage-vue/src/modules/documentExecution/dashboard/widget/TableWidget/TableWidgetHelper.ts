@@ -21,6 +21,14 @@ export const getWidgetStyleByType = (propWidget: IWidget, styleType: string) => 
     } else return ''
 }
 
+export const getWidgetStyleByTypeWithoutValidation = (propWidget: IWidget, styleType: string) => {
+    const styleSettings = propWidget.settings.style[styleType]
+    const styleString = Object.entries(styleSettings.properties ?? styleSettings)
+        .map(([k, v]) => `${k}:${v}`)
+        .join(';')
+    return styleString + ';'
+}
+
 export const getColumnConditionalStyles = (propWidget: IWidget, colId: string, valueToCompare: any, returnString?: boolean) => {
     var conditionalStyles = propWidget.settings.conditionalStyles
     var styleString = null as any
