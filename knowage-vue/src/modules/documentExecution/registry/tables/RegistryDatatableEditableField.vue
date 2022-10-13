@@ -16,7 +16,7 @@
         :minFractionDigits="minFractionDigits"
         :maxFractionDigits="maxFractionDigits"
         :disabled="!column.isEditable"
-        @input="$emit('rowChanged', row)"
+        @blur="onInputNumberChange"
     >
     </InputNumber>
     <Dropdown
@@ -57,7 +57,11 @@ import registryDatatableDescriptor from './RegistryDatatableDescriptor.json'
 export default defineComponent({
     name: 'registry-datatable-editable-field',
     components: { Calendar, Dropdown, InputNumber },
-    props: { column: { type: Object }, propRow: { type: Object }, comboColumnOptions: { type: Array } },
+    props: {
+        column: { type: Object },
+        propRow: { type: Object },
+        comboColumnOptions: { type: Array }
+    },
     emits: ['rowChanged', 'dropdownChanged', 'dropdownOpened'],
     data() {
         return {
@@ -128,6 +132,10 @@ export default defineComponent({
         },
         getFormattedDate(date: any, format: any, incomingFormat?: string) {
             return formatDate(date, format, incomingFormat)
+        },
+        onInputNumberChange() {
+            console.log('CAAAAAAAAAAAAAAAAAAALED')
+            setTimeout(() => this.$emit('rowChanged', this.row), 250)
         }
     }
 })
