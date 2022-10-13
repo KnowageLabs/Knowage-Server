@@ -846,8 +846,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 				if (!(cockpitSelections.get(i) instanceof JSONArray)) {
 					JSONObject cockpitSelection = cockpitSelections.getJSONObject(i);
 
-					if (cockpitSelection.has("selections")) {
-						JSONObject selections = cockpitSelection.getJSONObject("selections");
+					if (cockpitSelection.has("userSelections")) {
+						JSONObject selections = cockpitSelection.getJSONObject("userSelections");
 
 						Iterator<String> keys = selections.keys();
 
@@ -898,8 +898,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 		} else if (body.has("COCKPIT_SELECTIONS") && body.get("COCKPIT_SELECTIONS") instanceof JSONObject) {
 
 			JSONObject cockpitSelection = body.getJSONObject("COCKPIT_SELECTIONS");
-			if (cockpitSelection.has("selections")) {
-				JSONObject selections = cockpitSelection.getJSONObject("selections");
+			if (cockpitSelection.has("userSelections")) {
+				JSONObject selections = cockpitSelection.getJSONObject("userSelections");
 
 				Iterator<String> keys = selections.keys();
 
