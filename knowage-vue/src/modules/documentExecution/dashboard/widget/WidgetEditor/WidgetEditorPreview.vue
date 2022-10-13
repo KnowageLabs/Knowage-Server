@@ -1,32 +1,22 @@
 <template>
-    <div class="p-d-flex p-flex-column p-ai-stretch p-jc-center kn-overflow" :style="descriptor.style.preview">
+    <div class="widget-editor-preview-container p-d-flex p-flex-column p-ai-stretch p-jc-center kn-overflow">
         <Button icon="fas fa-square-check" class="p-button-rounded p-button-text p-button-plain" @click="logWidget" />
 
-        <div id="preview-widget-container" v-if="propWidget.settings && propWidget.type == 'table'" class="p-d-flex p-flex-column p-m-2" style="height: 300px; overflow: hidden" :style="getWidgetContainerStyle()">
-            <TableWidget class="kn-flex" :propWidget="propWidget" :datasets="datasets" :editorMode="true" />
-        </div>
-
-        <div id="preview-widget-container" v-if="propWidget.settings && propWidget.type == 'selector'" class="p-d-flex p-flex-column p-m-2" style="max-height: 300px; overflow: hidden" :style="getWidgetContainerStyle()">
+        <div class="widget p-m-2" :style="getWidgetContainerStyle()">
             <div v-if="widgetTitle && widgetTitle.enabled" class="p-d-flex p-ai-center" style="border-radius: 0px" :style="getWidgetTitleStyle()">
                 {{ widgetTitle?.text }}
             </div>
-            <SelectorWidget :propWidget="propWidget" :dataToShow="mock.selectorMockedResponse" :editorMode="true" />
-        </div>
-
-        <div id="preview-widget-container" v-if="propWidget.settings && propWidget.type == 'selection'" class="p-d-flex p-flex-column p-m-2" style="max-height: 300px; overflow: hidden" :style="getWidgetContainerStyle()">
-            <div v-if="widgetTitle && widgetTitle.enabled" class="p-d-flex p-ai-center" style="border-radius: 0px" :style="getWidgetTitleStyle()">
-                {{ widgetTitle?.text }}
+            <div class="widget-editor-preview" :style="getWidgetPadding()">
+                <TableWidget v-if="propWidget.type == 'table'" :propWidget="propWidget" :datasets="datasets" :editorMode="true" />
+                <SelectorWidget v-if="propWidget.type == 'selector'" :propWidget="propWidget" :dataToShow="mock.selectorMockedResponse" :editorMode="true" />
+                <ActiveSelectionsWidget v-if="propWidget.type == 'selection'" :propWidget="propWidget" :dataToShow="mock.selectionMockedResponse" :editorMode="true" />
+                <!-- <ActiveSelectionsWidget :propWidget="propWidget" :dataToShow="[]" :editorMode="true" /> -->
             </div>
-            <ActiveSelectionsWidget :propWidget="propWidget" :dataToShow="mock.selectionMockedResponse" :editorMode="true" />
-            <!-- <ActiveSelectionsWidget :propWidget="propWidget" :dataToShow="[]" :editorMode="true" /> -->
         </div>
     </div>
 </template>
 
 <script lang="ts">
-/**
- * ! this component will be in charge of managing the widget editing preview.
- */
 import { defineComponent, PropType } from 'vue'
 import { IDataset, IWidget } from '../../Dashboard'
 import { getWidgetStyleByType } from '../TableWidget/TableWidgetHelper'
@@ -54,7 +44,7 @@ export default defineComponent({
         }
     },
     created() {
-        if (this.propWidget.settings && this.propWidget.type == 'selector') this.getWidgetTitleStyle()
+        this.getWidgetTitleStyle()
     },
     mounted() {},
     methods: {
@@ -64,12 +54,49 @@ export default defineComponent({
         getWidgetTitleStyle() {
             this.widgetTitle = this.propWidget.settings.style.title
             const styleString = getWidgetStyleByType(this.propWidget, 'title')
-            return styleString + `height: ${this.widgetTitle.height}px;`
+            return styleString + `height: ${this.widgetTitle.height ?? 25}px;`
         },
         getWidgetContainerStyle() {
-            const styleString = getWidgetStyleByType(this.propWidget, 'borders') + getWidgetStyleByType(this.propWidget, 'shadows') + getWidgetStyleByType(this.propWidget, 'padding') + getWidgetStyleByType(this.propWidget, 'background')
+            const styleString = getWidgetStyleByType(this.propWidget, 'borders') + getWidgetStyleByType(this.propWidget, 'shadows') + getWidgetStyleByType(this.propWidget, 'background')
+            return styleString
+        },
+        getWidgetPadding() {
+            const styleString = getWidgetStyleByType(this.propWidget, 'padding')
             return styleString
         }
     }
 })
 </script>
+<style lang="scss" scoped>
+.widget-editor-preview-container {
+    flex: 0.5;
+    border-left: 1px solid #ccc;
+    .widget {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        flex: 1;
+        max-height: 35%;
+        .widget-editor-preview {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+    }
+}
+// @media screen and (max-width: 1199px) {
+//     .widget-editor-preview-container {
+//         -webkit-transition: width 0.3s;
+//         transition: flex 0.3s;
+//         flex: 0;
+//     }
+// }
+// @media screen and (min-width: 1200px) {
+//     .widget-editor-preview-container {
+//         -webkit-transition: width 0.3s;
+//         transition: flex 0.3s;
+//         flex: 0.5;
+//     }
+// }
+</style>
