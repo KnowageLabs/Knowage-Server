@@ -3,7 +3,9 @@
         <Button icon="fas fa-square-check" class="p-button-rounded p-button-text p-button-plain" @click="logWidget" />
 
         <div class="widget p-m-2" :style="getWidgetContainerStyle()">
-            <div class="p-d-flex p-ai-center" style="border-radius: 0px" :style="getWidgetTitleStyle()">{{ widgetTitle?.text ?? 'test' }}</div>
+            <div v-if="widgetTitle && widgetTitle.enabled" class="p-d-flex p-ai-center" style="border-radius: 0px" :style="getWidgetTitleStyle()">
+                {{ widgetTitle?.text }}
+            </div>
             <div class="widget-editor-preview" :style="getWidgetPadding()">
                 <TableWidget v-if="propWidget.type == 'table'" :propWidget="propWidget" :datasets="datasets" :editorMode="true" />
                 <SelectorWidget v-if="propWidget.type == 'selector'" :propWidget="propWidget" :dataToShow="mock.selectorMockedResponse" :editorMode="true" />
@@ -11,32 +13,10 @@
                 <!-- <ActiveSelectionsWidget :propWidget="propWidget" :dataToShow="[]" :editorMode="true" /> -->
             </div>
         </div>
-
-        <!-- <div id="preview-widget-container" v-if="propWidget.settings && propWidget.type == 'table'" class="p-d-flex p-flex-column p-m-2" style="height: 300px; overflow: hidden" :style="getWidgetContainerStyle()">
-            <TableWidget class="kn-flex" :propWidget="propWidget" :datasets="datasets" :editorMode="true" />
-        </div>
-
-        <div id="preview-widget-container" v-if="propWidget.settings && propWidget.type == 'selector'" class="p-d-flex p-flex-column p-m-2" style="max-height: 300px; overflow: hidden" :style="getWidgetContainerStyle()">
-            <div v-if="widgetTitle && widgetTitle.enabled" class="p-d-flex p-ai-center" style="border-radius: 0px" :style="getWidgetTitleStyle()">
-                {{ widgetTitle?.text }}
-            </div>
-            <SelectorWidget :propWidget="propWidget" :dataToShow="mock.selectorMockedResponse" :editorMode="true" />
-        </div>
-
-        <div id="preview-widget-container" v-if="propWidget.settings && propWidget.type == 'selection'" class="p-d-flex p-flex-column p-m-2" style="max-height: 300px; overflow: hidden" :style="getWidgetContainerStyle()">
-            <div v-if="widgetTitle && widgetTitle.enabled" class="p-d-flex p-ai-center" style="border-radius: 0px" :style="getWidgetTitleStyle()">
-                {{ widgetTitle?.text }}
-            </div>
-            <ActiveSelectionsWidget :propWidget="propWidget" :dataToShow="mock.selectionMockedResponse" :editorMode="true" />
-            <ActiveSelectionsWidget :propWidget="propWidget" :dataToShow="[]" :editorMode="true" />
-        </div> -->
     </div>
 </template>
 
 <script lang="ts">
-/**
- * ! this component will be in charge of managing the widget editing preview.
- */
 import { defineComponent, PropType } from 'vue'
 import { IDataset, IWidget } from '../../Dashboard'
 import { getWidgetStyleByType } from '../TableWidget/TableWidgetHelper'
@@ -63,24 +43,21 @@ export default defineComponent({
             mock
         }
     },
-    created() {},
+    created() {
+        this.getWidgetTitleStyle()
+    },
     mounted() {},
     methods: {
         logWidget() {
             console.log('widget ----------------- \n', this.propWidget)
         },
         getWidgetTitleStyle() {
-            this.widgetTitle = this.propWidget.settings.style.title ?? 20
+            this.widgetTitle = this.propWidget.settings.style.title
             const styleString = getWidgetStyleByType(this.propWidget, 'title')
-            return styleString + `height: ${this.widgetTitle.height}px;`
+            return styleString + `height: ${this.widgetTitle.height ?? 25}px;`
         },
-        // getWidgetContainerStyle() {
-        //     const styleString = getWidgetStyleByType(this.propWidget, 'borders') + getWidgetStyleByType(this.propWidget, 'shadows') + getWidgetStyleByType(this.propWidget, 'padding') + getWidgetStyleByType(this.propWidget, 'background')
-        //     return styleString
-        // },
         getWidgetContainerStyle() {
             const styleString = getWidgetStyleByType(this.propWidget, 'borders') + getWidgetStyleByType(this.propWidget, 'shadows') + getWidgetStyleByType(this.propWidget, 'background')
-
             return styleString
         },
         getWidgetPadding() {
