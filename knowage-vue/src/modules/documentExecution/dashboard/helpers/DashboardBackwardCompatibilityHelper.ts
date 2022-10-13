@@ -1,19 +1,24 @@
-import deepcopy from 'deepcopy'
-import cryptoRandomString from 'crypto-random-string'
 import { formatTableWidget } from './tableWidget/TableWidgetCompatibilityHelper'
 import { formatSelectorWidget } from '@/modules/documentExecution/dashboard/helpers/selectorWidget/SelectorWidgetCompatibilityHelper'
-import { IDatasetParameter, IWidgetEditorDataset } from '../Dashboard'
+import { IAssociation, IDataset, IDatasetParameter, IWidgetEditorDataset } from '../Dashboard'
 import { formatSelectionWidget } from './selectionWidget/SelectionsWidgetCompatibilityHelper'
+import deepcopy from 'deepcopy'
+import cryptoRandomString from 'crypto-random-string'
 
-export const formatModel = (model: any) => {
+const datasetIdNameMap = {}
+
+export const formatModel = (model: any, document: any, datasets: IDataset[]) => {
     if (!model.sheets) return
 
-    // TODO - id
+    console.log(">>>>>>>>>>>>>>> LOADED MODEL: ", model)
+    console.log(">>>>>>>>>>>>>>> LOADED DOCUMENT: ", document)
+    console.log(">>>>>>>>>>>>>>> LOADED datasets: ", datasets)
+    loadDatasetIdNameMap(datasets)
     const formattedModel = {
-        id: 1,
+        id: cryptoRandomString({ length: 16, type: 'base64' }),
         widgets: [],
         version: model.knowageVersion,
-        configuration: getFormattedModelConfiguration(model),
+        configuration: getFormattedModelConfiguration(model, document),
         sheets: []
     } as any
     for (let i = 0; i < model.sheets.length; i++) {
@@ -25,11 +30,36 @@ export const formatModel = (model: any) => {
     return formattedModel
 }
 
-const getFormattedModelConfiguration = (model: any) => {
-    // TODO - id, name, label, description
-    const formattedConfiguration = { id: '', name: '', label: '', description: '', associations: [], datasets: getFormattedDatasets(model), variables: getFormattedVariables(model), themes: {} }
+const loadDatasetIdNameMap = (datasets: IDataset[]) => {
+    if (!datasets) return
+    datasets.forEach((dataset: IDataset) => {
+        datasetIdNameMap[dataset.name] = dataset.id.dsId
+    })
+}
+
+const getDatasetId = (datasetName: string) => {
+    return datasetIdNameMap[datasetName]
+}
+
+const getFormattedModelConfiguration = (model: any, document: any) => {
+    const formattedConfiguration = { id: document.id, name: document.name, label: document.label, description: document.description, associations: getFormattedAssociations(model), datasets: getFormattedDatasets(model), variables: getFormattedVariables(model), themes: {} }
 
     return formattedConfiguration
+}
+
+const getFormattedAssociations = (model: any) => {
+    if (!model.configuration || !model.configuration.associations) return
+    const formattedAssociations = [] as IAssociation[]
+    for (let i = 0; i < model.configuration.associations.length; i++) {
+        formattedAssociations.push(getFormattedAssociation(model.configuration.associations[i]))
+    }
+    return formattedAssociations
+}
+
+const getFormattedAssociation = (association: any) => {
+    const formattedAssociation = { id: association.id, fields: [] } as IAssociation
+    association.fields?.forEach((field: { column: string, store: string, type: string }) => formattedAssociation.fields.push({ column: field.store, dataset: getDatasetId(field.store) }))
+    return formattedAssociation
 }
 
 const getFormattedDatasets = (model: any) => {
