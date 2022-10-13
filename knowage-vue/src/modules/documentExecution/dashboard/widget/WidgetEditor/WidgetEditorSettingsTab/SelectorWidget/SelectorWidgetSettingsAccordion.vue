@@ -9,7 +9,7 @@
                 <SelectorWidgetDefaultValues v-else-if="accordion.type === 'DefaultValues'" :widgetModel="widgetModel"></SelectorWidgetDefaultValues>
                 <SelectorWidgetValuesManagement v-else-if="accordion.type === 'ValuesManagement'" :widgetModel="widgetModel"></SelectorWidgetValuesManagement>
                 <WidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
-                <WidgetHeaders v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetHeaders>
+                <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
                 <SelectorWidgetLabelStyle v-else-if="accordion.type === 'LabelStyle'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></SelectorWidgetLabelStyle>
                 <WidgetBackgroundColorStyle v-else-if="accordion.type === 'BackgroundColorStyle'" :widgetModel="widgetModel"></WidgetBackgroundColorStyle>
                 <WidgetPaddingStyle v-else-if="accordion.type === 'PaddingStyle'" :widgetModel="widgetModel"></WidgetPaddingStyle>
@@ -32,7 +32,7 @@ import SelectorWidgetType from './configuration/SelectorWidgetType.vue'
 import SelectorWidgetDefaultValues from './configuration/SelectorWidgetDefaultValues.vue'
 import SelectorWidgetValuesManagement from './configuration/SelectorWidgetValuesManagement.vue'
 import WidgetExport from '../common/configuration/WidgetExport.vue'
-import WidgetHeaders from '../common/style/WidgetHeaders.vue'
+import WidgetTitleStyle from '../common/style/WidgetTitleStyle.vue'
 import SelectorWidgetLabelStyle from './style/SelectorWidgetLabelStyle.vue'
 import WidgetBackgroundColorStyle from '../common/style/WidgetBackgroundColorStyle.vue'
 import WidgetPaddingStyle from '../common/style/WidgetPaddingStyle.vue'
@@ -49,7 +49,7 @@ export default defineComponent({
         SelectorWidgetDefaultValues,
         SelectorWidgetValuesManagement,
         WidgetExport,
-        WidgetHeaders,
+        WidgetTitleStyle,
         SelectorWidgetLabelStyle,
         WidgetBackgroundColorStyle,
         WidgetPaddingStyle,

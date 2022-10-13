@@ -27,6 +27,7 @@ export const createNewTableWidgetSettings = () => {
         },
         pagination: tableWidgetDefaultValues.getDefaultPagination(),
         style: {
+            title: widgetCommonDefaultValues.getDefaultTitleStyle(),
             borders: widgetCommonDefaultValues.getDefaultBordersStyle(),
             columns: tableWidgetDefaultValues.getDefaultColumnStyles(),
             columnGroups: tableWidgetDefaultValues.getDefaultColumnStyles(),
@@ -34,7 +35,8 @@ export const createNewTableWidgetSettings = () => {
             padding: widgetCommonDefaultValues.getDefaultPaddingStyle(),
             rows: tableWidgetDefaultValues.getDefaultRowsStyle(),
             shadows: widgetCommonDefaultValues.getDefaultShadowsStyle(),
-            summary: tableWidgetDefaultValues.getDefualtSummryStyle()
+            summary: tableWidgetDefaultValues.getDefualtSummryStyle(),
+            background: widgetCommonDefaultValues.getDefaultBackgroundStyle()
         },
         tooltips: tableWidgetDefaultValues.getDefaultTooltips(),
         visualization: tableWidgetDefaultValues.getDefaultVisualizations(),

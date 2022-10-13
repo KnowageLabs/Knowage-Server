@@ -298,6 +298,10 @@
         ],
         "Style": [
             {
+                "title": "dashboard.widgetEditor.titles.title",
+                "type": "Title"
+            },
+            {
                 "title": "dashboard.widgetEditor.headers.title",
                 "type": "Headers"
             },

@@ -20,7 +20,7 @@ export const createNewSelectorWidgetSettings = () => {
             padding: widgetCommonDefaultValues.getDefaultPaddingStyle(),
             borders: widgetCommonDefaultValues.getDefaultBordersStyle(),
             shadows: widgetCommonDefaultValues.getDefaultShadowsStyle(),
-            background: selectorWidgetDefaultValues.getDefaultBackgroundStyle()
+            background: widgetCommonDefaultValues.getDefaultBackgroundStyle()
         },
         responsive: widgetCommonDefaultValues.getDefaultResponsivnes()
     } as ISelectorWidgetSettings

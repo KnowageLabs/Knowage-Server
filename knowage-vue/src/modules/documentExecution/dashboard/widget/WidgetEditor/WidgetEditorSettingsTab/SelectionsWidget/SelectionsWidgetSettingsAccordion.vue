@@ -9,7 +9,7 @@
                 <SelectionsWidgetValuesManagement v-if="accordion.type === 'ValuesManagement'" :widgetModel="widgetModel"></SelectionsWidgetValuesManagement>
                 <SelectionsNoSelectionConfiguration v-else-if="accordion.type === 'NoSelections'" :widgetModel="widgetModel"></SelectionsNoSelectionConfiguration>
                 <WidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
-                <WidgetHeaders v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetHeaders>
+                <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
                 <SelectionsWidgetChipsStyle v-else-if="accordion.type === 'ChipsStyle'" :widgetModel="widgetModel"></SelectionsWidgetChipsStyle>
                 <WidgetRowsStyle v-else-if="accordion.type === 'RowsStyle'" :widgetModel="widgetModel"></WidgetRowsStyle>
                 <WidgetBackgroundColorStyle v-else-if="accordion.type === 'BackgroundColorStyle'" :widgetModel="widgetModel"></WidgetBackgroundColorStyle>
@@ -33,7 +33,7 @@ import SelectorWidgetType from '../SelectorWidget/configuration/SelectorWidgetTy
 import SelectionsWidgetValuesManagement from './configuration/SelectionsWidgetValuesManagement.vue'
 import SelectionsNoSelectionConfiguration from './configuration/SelectionsNoSelectionConfiguration.vue'
 import WidgetExport from '../common/configuration/WidgetExport.vue'
-import WidgetHeaders from '../common/style/WidgetHeaders.vue'
+import WidgetTitleStyle from '../common/style/WidgetTitleStyle.vue'
 import SelectionsWidgetChipsStyle from './style/SelectionsWidgetChipsStyle.vue'
 import WidgetRowsStyle from '../common/style/WidgetRowsStyle.vue'
 import WidgetBackgroundColorStyle from '../common/style/WidgetBackgroundColorStyle.vue'
@@ -51,7 +51,7 @@ export default defineComponent({
         SelectionsWidgetValuesManagement,
         SelectionsNoSelectionConfiguration,
         WidgetExport,
-        WidgetHeaders,
+        WidgetTitleStyle,
         SelectionsWidgetChipsStyle,
         WidgetRowsStyle,
         WidgetBackgroundColorStyle,

@@ -228,6 +228,7 @@ export interface ITableWidgetPagination {
 }
 
 export interface ITableWidgetStyle {
+    title: IWidgetTitle,
     borders: IWidgetBordersStyle
     columns: ITableWidgetColumnStyles
     columnGroups: ITableWidgetColumnStyles

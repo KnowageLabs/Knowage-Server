@@ -15,7 +15,8 @@
                 <TableWidgetCustomMessages v-else-if="accordion.type === 'CustomMessages'" :widgetModel="widgetModel"></TableWidgetCustomMessages>
                 <TableWidgetVisualizationType v-else-if="accordion.type === 'VisualizationType'" :widgetModel="widgetModel"></TableWidgetVisualizationType>
                 <TableWidgetVisibilityConditions v-else-if="accordion.type === 'VisibilityConditions'" :widgetModel="widgetModel" :variables="variables"></TableWidgetVisibilityConditions>
-                <WidgetHeaders v-else-if="accordion.type === 'Headers'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetHeaders>
+                <TableWidgetHeaders v-else-if="accordion.type === 'Headers'" :widgetModel="widgetModel"></TableWidgetHeaders>
+                <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
                 <TableWidgetColumnStyle v-else-if="accordion.type === 'ColumnStyle'" :widgetModel="widgetModel"></TableWidgetColumnStyle>
                 <TableWidgetColumnStyle v-else-if="accordion.type === 'ColumnGroupsStyle'" :widgetModel="widgetModel" mode="columnGroups"></TableWidgetColumnStyle>
                 <WidgetRowsStyle v-else-if="accordion.type === 'RowsStyle'" :widgetModel="widgetModel"></WidgetRowsStyle>
@@ -51,6 +52,7 @@ import WidgetExport from '../common/configuration/WidgetExport.vue'
 import TableWidgetCustomMessages from './configuration/TableWidgetCustomMessages.vue'
 import TableWidgetVisualizationType from './visualization/TableWidgetVisualizationType.vue'
 import TableWidgetVisibilityConditions from './visualization/TableWidgetVisibilityConditions.vue'
+import TableWidgetHeaders from './style/TableWidgetHeaders.vue'
 import TableWidgetColumnStyle from './style/TableWidgetColumnStyle.vue'
 import WidgetRowsStyle from '../common/style/WidgetRowsStyle.vue'
 import TableWidgetSummaryStyle from './style/TableWidgetSummaryStyle.vue'
@@ -63,7 +65,7 @@ import TableWidgetSelection from './interactions/selection/TableWidgetSelection.
 import TableWidgetCrossNavigation from './interactions/crossNavigation/TableWidgetCrossNavigation.vue'
 import TableWidgetInteractionsLinks from './interactions/link/TableWidgetInteractionsLinks.vue'
 import TableWidgetPreview from './interactions/preview/TableWidgetPreview.vue'
-import WidgetHeaders from '../common/style/WidgetHeaders.vue'
+import WidgetTitleStyle from '../common/style/WidgetTitleStyle.vue'
 import WidgetPaddingStyle from '../common/style/WidgetPaddingStyle.vue'
 import WidgetBackgroundColorStyle from '../common/style/WidgetBackgroundColorStyle.vue'
 
@@ -80,7 +82,8 @@ export default defineComponent({
         TableWidgetCustomMessages,
         TableWidgetVisualizationType,
         TableWidgetVisibilityConditions,
-        WidgetHeaders,
+        WidgetTitleStyle,
+        TableWidgetHeaders,
         TableWidgetColumnStyle,
         WidgetRowsStyle,
         TableWidgetSummaryStyle,

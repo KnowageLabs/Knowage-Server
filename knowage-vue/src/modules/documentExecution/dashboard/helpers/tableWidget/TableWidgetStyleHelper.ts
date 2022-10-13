@@ -1,10 +1,11 @@
 import { IWidgetRowsStyle, ITableWidgetStyle } from "../../Dashboard"
 import { convertColorFromHSLtoRGB } from '../FormattingHelpers'
-import { getFormattedPaddingStyle, getFormattedBorderStyle, getFormattedShadowsStyle, getFormattedBackgroundStyle } from '../common/WidgetStyleHelper'
+import { getFormattedPaddingStyle, getFormattedBorderStyle, getFormattedShadowsStyle, getFormattedBackgroundStyle, getFormattedTitleStyle } from '../common/WidgetStyleHelper'
 import * as  tableWidgetDefaultValues from '../../widget/WidgetEditor/helpers/tableWidget/TableWidgetDefaultValues'
 
 export const getFormattedStyle = (widget: any) => {
     return {
+        title: getFormattedTitleStyle(widget),
         borders: getFormattedBorderStyle(widget),
         columns: tableWidgetDefaultValues.getDefaultColumnStyles(),
         columnGroups: getDefaultColumnGroupsStyle(widget),
