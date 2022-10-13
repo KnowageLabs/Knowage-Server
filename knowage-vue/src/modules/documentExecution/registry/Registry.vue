@@ -60,6 +60,8 @@ import RegistryDatatable from './tables/RegistryDatatable.vue'
 import RegistryPivotDatatable from './tables/RegistryPivotDatatable.vue'
 import RegistryFiltersCard from './RegistryFiltersCard.vue'
 import { formatDate } from '@/helpers/commons/localeHelper'
+import { mapActions } from 'pinia'
+import store from '../../../App.store'
 
 export default defineComponent({
     name: 'registry',
@@ -101,6 +103,7 @@ export default defineComponent({
         await this.loadPage()
     },
     methods: {
+        ...mapActions(store, ['setInfo', 'setError']),
         async loadPage() {
             this.loading = true
             await this.loadRegistry()
@@ -219,7 +222,7 @@ export default defineComponent({
             await this.$http
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=UPDATE_RECORDS_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
                 .then(() => {
-                    this.store.setInfo({
+                    this.setInfo({
                         title: this.$t('common.toast.updateTitle'),
                         msg: this.$t('common.toast.updateSuccess')
                     })
@@ -237,7 +240,7 @@ export default defineComponent({
             await this.$http
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=DELETE_RECORDS_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
                 .then((response: AxiosResponse<any>) => {
-                    this.store.setInfo({
+                    this.setInfo({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
                     })
@@ -249,7 +252,7 @@ export default defineComponent({
                     }
                 })
                 .catch((response: AxiosResponse<any>) => {
-                    this.store.setError({
+                    this.setError({
                         title: this.$t('common.error.generic'),
                         msg: response
                     })

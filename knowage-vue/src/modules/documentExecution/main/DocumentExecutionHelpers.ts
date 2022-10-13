@@ -95,5 +95,15 @@ export function createToolbarMenuItems(document: any, functions: any, exporters:
         })
     }
 
+    removeEmptyToolbarItems(toolbarMenuItems)
+
     return toolbarMenuItems
+}
+
+const removeEmptyToolbarItems = (toolbarMenuItems: any[]) => {
+    for (let i = toolbarMenuItems.length - 1; i >= 0; i--) {
+        if (toolbarMenuItems[i].items.length === 0) {
+            toolbarMenuItems.splice(i, 1)
+        }
+    }
 }
