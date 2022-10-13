@@ -90,14 +90,13 @@ export default defineComponent({
         this.loadOutputParameters()
     },
     unmounted() {
-        this.store.removeDashboard(this.dashboardId)
-        this.store.setCrosssNavigations([])
-        this.store.setOutputParameters([])
+        this.emptyStoreValues()
     },
     methods: {
         async getData() {
             this.loading = true
-            await Promise.all([this.loadDatasets(), this.loadCrossNavigations(), this.loadOutputParameters(), this.loadDrivers(), this.loadProfileAttributes(), this.loadModel()])
+            await this.loadDatasets()
+            await Promise.all([this.loadCrossNavigations(), this.loadOutputParameters(), this.loadDrivers(), this.loadProfileAttributes(), this.loadModel()])
             this.loading = false
         },
         async loadModel() {
@@ -112,9 +111,10 @@ export default defineComponent({
             }
             // TODO - remove commented mock
             // this.model = formatModel(mockedDashboardModel) as any
-            this.model = (tempModel && this.newDashboardMode) || tempModel.hasOwnProperty('id') ? tempModel : (formatModel(tempModel) as any)
+            this.model = (tempModel && this.newDashboardMode) || tempModel.hasOwnProperty('id') ? tempModel : (formatModel(tempModel, this.document, this.datasets) as any)
             this.dashboardId = cryptoRandomString({ length: 16, type: 'base64' })
             this.store.setDashboard(this.dashboardId, this.model)
+            this.store.setSelections(this.dashboardId, this.model.configuration.selections)
         },
         async loadDatasets() {
             this.appStore.setLoading(true)
@@ -172,7 +172,7 @@ export default defineComponent({
                 this.openDatasetManagementDialog()
             })
             emitter.on('openWidgetEditor', (widget) => {
-                this.openWidgetEditor(widget)
+                this.openWidgetEditor(widget as IWidget)
             })
             emitter.on('saveDashboard', () => {
                 this.onSaveDashboardClicked()
@@ -196,6 +196,12 @@ export default defineComponent({
             this.widgetPickerVisible = false
             this.widgetEditorVisible = true
             emitter.emit('widgetEditorOpened')
+        },
+        emptyStoreValues() {
+            this.store.removeDashboard(this.dashboardId)
+            this.store.setCrosssNavigations([])
+            this.store.setOutputParameters([])
+            this.store.setSelections(this.dashboardId, [])
         },
         closeWidgetEditor() {
             this.widgetEditorVisible = false

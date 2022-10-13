@@ -5,7 +5,7 @@
                 v-model:layout="sheet.widgets['lg']"
                 :responsive-layouts="sheet.widgets"
                 :responsive="true"
-                :cols="{ lg: 100, md: 100, sm: 50, xs: 20, xxs: 10 }"
+                :cols="{ lg: 50, md: 100, sm: 50, xs: 20, xxs: 10 }"
                 :row-height="30"
                 :is-draggable="true"
                 :is-resizable="true"
@@ -60,7 +60,7 @@ export default defineComponent({
             if ((!this.dashboard[this.dHash] && index === 0) || this.dashboard[this.dHash] === index) return true
             return false
         },
-        breakpointChangedEvent: function (newBreakpoint, newLayout) {
+        breakpointChangedEvent: function(newBreakpoint, newLayout) {
             // console.log('BREAKPOINT CHANGED breakpoint=', newBreakpoint, ', layout: ', newLayout)
         },
         currentWidget(id) {

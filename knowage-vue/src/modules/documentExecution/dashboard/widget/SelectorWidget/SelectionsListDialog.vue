@@ -19,7 +19,7 @@ import buttonRenderer from './SelectionsListDialogCellRenderer.vue'
 export default defineComponent({
     name: 'datasets-catalog-datatable',
     components: { Dialog, AgGridVue },
-    props: { selectedDatasetsProp: { required: true, type: Array as any }, availableDatasetsProp: { required: true, type: Array as any } },
+    props: { visible: { type: Boolean }, selectedDatasetsProp: { required: true, type: Array as any }, availableDatasetsProp: { required: true, type: Array as any } },
     emits: ['close'],
     data() {
         return {
@@ -56,8 +56,8 @@ export default defineComponent({
             this.gridColumnApi = params.columnApi
 
             params.api.sizeColumnsToFit()
-            window.addEventListener('resize', function () {
-                setTimeout(function () {
+            window.addEventListener('resize', function() {
+                setTimeout(function() {
                     params.api.sizeColumnsToFit()
                 })
             })

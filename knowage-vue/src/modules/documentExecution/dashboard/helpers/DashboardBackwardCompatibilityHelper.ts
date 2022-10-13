@@ -1,19 +1,32 @@
-import deepcopy from 'deepcopy'
-import cryptoRandomString from 'crypto-random-string'
 import { formatTableWidget } from './tableWidget/TableWidgetCompatibilityHelper'
 import { formatSelectorWidget } from '@/modules/documentExecution/dashboard/helpers/selectorWidget/SelectorWidgetCompatibilityHelper'
-import { IDatasetParameter, IWidgetEditorDataset } from '../Dashboard'
+import { IAssociation, IDashboardConfiguration, IDataset, IDatasetParameter, ISelection, IWidgetEditorDataset } from '../Dashboard'
 import { formatSelectionWidget } from './selectionWidget/SelectionsWidgetCompatibilityHelper'
+import deepcopy from 'deepcopy'
+import cryptoRandomString from 'crypto-random-string'
 
-export const formatModel = (model: any) => {
+const datasetIdNameMap = {}
+
+export const formatModel = (model: any, document: any, datasets: IDataset[]) => {
     if (!model.sheets) return
 
-    // TODO - id
+    // TODO - Remove mocked selections when BE is fixed
+    model.selections = [{
+        "ds": "TEST_04",
+        "columnName": "store_id",
+        "value": [
+            2,
+            4
+        ],
+        "aggregated": true
+    }]
+
+    loadDatasetIdNameMap(datasets)
     const formattedModel = {
-        id: 1,
+        id: cryptoRandomString({ length: 16, type: 'base64' }),
         widgets: [],
         version: model.knowageVersion,
-        configuration: getFormattedModelConfiguration(model),
+        configuration: getFormattedModelConfiguration(model, document),
         sheets: []
     } as any
     for (let i = 0; i < model.sheets.length; i++) {
@@ -25,11 +38,36 @@ export const formatModel = (model: any) => {
     return formattedModel
 }
 
-const getFormattedModelConfiguration = (model: any) => {
-    // TODO - id, name, label, description
-    const formattedConfiguration = { id: '', name: '', label: '', description: '', associations: [], datasets: getFormattedDatasets(model), variables: getFormattedVariables(model), themes: {} }
+const loadDatasetIdNameMap = (datasets: IDataset[]) => {
+    if (!datasets) return
+    datasets.forEach((dataset: IDataset) => {
+        datasetIdNameMap[dataset.name] = dataset.id.dsId
+    })
+}
+
+const getDatasetId = (datasetName: string) => {
+    return datasetIdNameMap[datasetName]
+}
+
+const getFormattedModelConfiguration = (model: any, document: any) => {
+    const formattedConfiguration = { id: document.id, name: document.name, label: document.label, description: document.description, associations: getFormattedAssociations(model), datasets: getFormattedDatasets(model), variables: getFormattedVariables(model), selections: getFormattedSelections(model), themes: {} } as IDashboardConfiguration
 
     return formattedConfiguration
+}
+
+const getFormattedAssociations = (model: any) => {
+    if (!model.configuration || !model.configuration.associations) return []
+    const formattedAssociations = [] as IAssociation[]
+    for (let i = 0; i < model.configuration.associations.length; i++) {
+        formattedAssociations.push(getFormattedAssociation(model.configuration.associations[i]))
+    }
+    return formattedAssociations
+}
+
+const getFormattedAssociation = (association: any) => {
+    const formattedAssociation = { id: association.id, fields: [] } as IAssociation
+    association.fields?.forEach((field: { column: string, store: string, type: string }) => formattedAssociation.fields.push({ column: field.store, dataset: getDatasetId(field.store) }))
+    return formattedAssociation
 }
 
 const getFormattedDatasets = (model: any) => {
@@ -86,6 +124,15 @@ const getFormattedVariables = (model: any) => {
     return formattedVariables
 }
 
+const getFormattedSelections = (model: any) => {
+    if (!model.configuration || !model.selections) return []
+    const formattedSelections = [] as ISelection[]
+    model.selections.forEach((selection: { ds: string, columnName: string, value: string | (string | number)[], aggregated: boolean }) => {
+        formattedSelections.push({ datasetId: getDatasetId(selection.ds), datasetName: selection.ds, columnName: selection.columnName, value: Array.isArray(selection.value) ? selection.value : [selection.value], aggregated: selection.aggregated })
+    })
+    return formattedSelections
+}
+
 const formatSheet = (sheet: any, formattedModel: any) => {
     if (!sheet.widgets) return
 
@@ -94,7 +141,7 @@ const formatSheet = (sheet: any, formattedModel: any) => {
 
     for (let i = 0; i < sheet.widgets.length; i++) {
         const tempWidget = sheet.widgets[i]
-        formattedSheet.widgets.lg.push({ id: tempWidget.id, h: 5, w: 10, x: 0, y: 0, i: cryptoRandomString({ length: 16, type: 'base64' }), moved: false })
+        formattedSheet.widgets.lg.push({ id: tempWidget.id, h: tempWidget.sizeY, w: tempWidget.sizeX, x: tempWidget.col, y: tempWidget.row, i: cryptoRandomString({ length: 16, type: 'base64' }), moved: false })
         addWidgetToModel(tempWidget, formattedModel)
     }
 

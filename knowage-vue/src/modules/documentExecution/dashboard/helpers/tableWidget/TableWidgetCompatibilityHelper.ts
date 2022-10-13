@@ -1,17 +1,4 @@
-import {
-    IWidget,
-    IWidgetColumn,
-    IWidgetColumnFilter,
-    ITableWidgetSettings,
-    ITableWidgetPagination,
-    ITableWidgetConditionalStyle,
-    ITableWidgetTooltipStyle,
-    ITableWidgetStyle,
-    ITableWidgetInteractions,
-    ITableWidgetConfiguration,
-    IWidgetResponsive,
-    ITableWidgetConditionalStyles
-} from '../../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle, ITableWidgetStyle, ITableWidgetInteractions, ITableWidgetConfiguration, IWidgetResponsive, ITableWidgetConditionalStyles } from '../../Dashboard'
 import { getFormattedConfiguration } from './TableWidgetConfigurationHelper'
 import { getFormattedInteractions } from './TableWidgetInteractionsHelper'
 import { getFormattedStyle } from './TableWidgetStyleHelper'

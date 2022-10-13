@@ -73,7 +73,7 @@ const getFormattedPaddingStyle = (widget: any) => {
 const getFormattedBorderStyle = (widget: any) => {
     if (!widget.style || !widget.style.border) return widgetCommonDefaultValues.getDefaultBordersStyle()
 
-    return { enabled: true, properties: { ...widget.style.border, 'border-color': hexToRgb(widget.style.border['border-color']) } } as IWidgetBordersStyle
+    return { enabled: true, properties: { ...widget.style.border, 'border-color': widget.style.border['border-color'] } } as IWidgetBordersStyle
 }
 
 const getFormattedShadowsStyle = (widget: any) => {
