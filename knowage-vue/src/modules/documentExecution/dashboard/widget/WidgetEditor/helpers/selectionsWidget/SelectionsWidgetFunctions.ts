@@ -19,7 +19,7 @@ export const createNewSelectionsWidgetSettings = () => {
             padding: widgetCommonDefaultValues.getDefaultPaddingStyle(),
             borders: widgetCommonDefaultValues.getDefaultBordersStyle(),
             shadows: widgetCommonDefaultValues.getDefaultShadowsStyle(),
-            background: selectionsWidgetDefaultValues.getDefaultBackgroundStyle()
+            background: widgetCommonDefaultValues.getDefaultBackgroundStyle()
         },
         responsive: widgetCommonDefaultValues.getDefaultResponsivnes()
     } as ISelectionsWidgetSettings

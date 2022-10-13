@@ -1,4 +1,4 @@
-import { IWidgetBordersStyle, IWidgetPaddingStyle, IWidgetShadowsStyle, IWidgetTitle } from '../../Dashboard'
+import { IWidgetBackgroundStyle, IWidgetBordersStyle, IWidgetPaddingStyle, IWidgetShadowsStyle, IWidgetTitle } from '../../Dashboard'
 import { hexToRgb } from '../FormattingHelpers'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 
@@ -8,16 +8,20 @@ export const getFormattedTitleStyle = (widget: any) => {
         enabled: widget.style.titles,
         text: widget.style.title.label,
         height: widget.style.title.height,
-        properties: {
-            'font-weight': widget.style.title.font['font-weight'] ?? '',
-            'font-style': widget.style.title.font['font-style'] ?? '',
-            'font-size': widget.style.title.font['font-size'] ?? '',
-            'font-family': widget.style.title.font['font-family'] ?? '',
-            'justify-content': widget.style.title.font['text-align'] ?? '',
-            color: widget.style.title.font.color ?? '',
-            'background-color': widget.style.title['background-color'] ?? ''
-        }
+        properties: { 'font-weight': '', 'font-style': '', 'font-size': '', 'font-family': '', 'justify-content': '', color: '', 'background-color': widget.style.title['background-color'] ?? '' }
     } as IWidgetTitle
+
+    if (widget.style.title.font) {
+        formattedTitleStyle.properties = {
+            'font-weight': widget.style.title.font['font-weight'],
+            'font-style': widget.style.title.font['font-style'],
+            'font-size': widget.style.title.font['font-size'],
+            'font-family': widget.style.title.font['font-family'],
+            'justify-content': widget.style.title.font['text-align'],
+            color: widget.style.title.font.color,
+            'background-color': widget.style.title['background-color']
+        }
+    }
 
     return formattedTitleStyle
 }
@@ -50,7 +54,12 @@ export const getFormattedShadowsStyle = (widget: any) => {
         enabled: widget.style.shadows,
         properties: {
             "box-shadow": widget.style.shadow["box-shadow"],
-            "color": hexToRgb(widget.style.backgroundColor)
+            "color": ''
         }
     } as IWidgetShadowsStyle
+}
+
+export const getFormattedBackgroundStyle = (widget: any) => {
+    if (!widget.style || !widget.style.backgroundColor) return widgetCommonDefaultValues.getDefaultBackgroundStyle()
+    return { enabled: true, "properties": { "background-color": widget.style.backgroundColor } } as IWidgetBackgroundStyle
 }

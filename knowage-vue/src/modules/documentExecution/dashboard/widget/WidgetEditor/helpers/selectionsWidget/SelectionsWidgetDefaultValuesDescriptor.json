@@ -1,10 +1,4 @@
 {
-    "defaultBackgroundStyle": {
-        "enabled": false,
-        "properties": {
-            "background-color": ""
-        }
-    },
     "defaultChipsStyle": {
         "height": 0,
         "properties": {

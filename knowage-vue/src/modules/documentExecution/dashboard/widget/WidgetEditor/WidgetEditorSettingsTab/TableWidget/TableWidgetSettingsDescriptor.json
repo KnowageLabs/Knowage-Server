@@ -298,6 +298,10 @@
         ],
         "Style": [
             {
+                "title": "dashboard.widgetEditor.titles.title",
+                "type": "Title"
+            },
+            {
                 "title": "dashboard.widgetEditor.headers.title",
                 "type": "Headers"
             },
@@ -316,6 +320,10 @@
             {
                 "title": "dashboard.widgetEditor.summary",
                 "type": "SummaryStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.background",
+                "type": "BackgroundColorStyle"
             },
             {
                 "title": "dashboard.widgetEditor.borders.title",

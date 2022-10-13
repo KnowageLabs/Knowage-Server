@@ -1,10 +1,4 @@
 {
-  "defaultBackgroundStyle": {
-    "enabled": false,
-    "properties": {
-      "background-color": ""
-    }
-  },
   "defaultLabelStyle": {
     "enabled": true,
     "properties": {
