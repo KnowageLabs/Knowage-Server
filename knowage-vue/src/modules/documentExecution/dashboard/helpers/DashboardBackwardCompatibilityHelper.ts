@@ -21,9 +21,6 @@ export const formatModel = (model: any, document: any, datasets: IDataset[]) => 
         "aggregated": true
     }]
 
-    console.log(">>>>>>>>>>>>>>> LOADED MODEL: ", model)
-    console.log(">>>>>>>>>>>>>>> LOADED DOCUMENT: ", document)
-    console.log(">>>>>>>>>>>>>>> LOADED datasets: ", datasets)
     loadDatasetIdNameMap(datasets)
     const formattedModel = {
         id: cryptoRandomString({ length: 16, type: 'base64' }),
@@ -144,7 +141,8 @@ const formatSheet = (sheet: any, formattedModel: any) => {
 
     for (let i = 0; i < sheet.widgets.length; i++) {
         const tempWidget = sheet.widgets[i]
-        formattedSheet.widgets.lg.push({ id: tempWidget.id, h: 5, w: 10, x: 0, y: 0, i: cryptoRandomString({ length: 16, type: 'base64' }), moved: false })
+        console.log(">>>>>>>>>>>> TEMP WIDGET: ", tempWidget)
+        formattedSheet.widgets.lg.push({ id: tempWidget.id, h: tempWidget.sizeY, w: tempWidget.sizeX, x: tempWidget.col, y: tempWidget.row, i: cryptoRandomString({ length: 16, type: 'base64' }), moved: false })
         addWidgetToModel(tempWidget, formattedModel)
     }
 
