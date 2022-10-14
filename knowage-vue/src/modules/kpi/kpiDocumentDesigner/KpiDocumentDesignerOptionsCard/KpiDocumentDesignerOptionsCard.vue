@@ -88,6 +88,10 @@ export default defineComponent({
     methods: {
         loadOptions() {
             this.options = this.propOptions
+            this.options.showtarget = this.options.showtarget === 'true'
+            this.options.showtargetpercentage = this.options.showtargetpercentage === 'true'
+            this.options.showthreshold = this.options.showthreshold === 'true'
+            this.options.showvalue = this.options.showvalue === 'true'
         }
     }
 })

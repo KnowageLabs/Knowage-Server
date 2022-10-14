@@ -1,5 +1,5 @@
 <template>
-    <DataTable v-if="!metadataError" class="p-datatable-sm kn-table" :value="rule.ruleOutputs" editMode="cell" dataKey="id" responsiveLayout="stack" breakpoint="960px" @cell-edit-complete="onCellEditComplete" data-test="metadata-table">
+    <DataTable v-if="!metadataError" class="p-datatable-sm kn-table" :value="rule.ruleOutputs" dataKey="id" responsiveLayout="stack" breakpoint="960px" data-test="metadata-table">
         <Column :style="metadataCardDescriptor.table.iconColumn.style">
             <template #body="slotProps">
                 <i v-if="slotProps.data.aliasIcon" :class="slotProps.data.aliasIcon" v-tooltip.top="alisIconTooltip(slotProps.data.aliasIcon)"></i>
@@ -7,8 +7,8 @@
         </Column>
         <Column class="kn-truncated" field="alias" :header="$t('kpi.measureDefinition.alias')"> </Column>
         <Column class="kn-truncated" field="type" :header="$t('kpi.measureDefinition.tipology')">
-            <template #editor="slotProps">
-                <Dropdown class="p-mr-2" v-model="slotProps.data['type']" :options="tipologiesType" @change="$emit('touched')">
+            <template #body="slotProps">
+                <Dropdown class="metaweb-dropdown-field p-mr-2" v-model="slotProps.data['type']" :options="tipologiesType" @change="$emit('touched')">
                     <template #value="slotProps">
                         <div v-if="slotProps.value">
                             <span>{{ slotProps.value['valueCd'] }}</span>
@@ -22,16 +22,12 @@
                 </Dropdown>
                 <i class="pi pi-pencil edit-icon"
             /></template>
-            <template #body="slotProps">
-                {{ slotProps.data.type.translatedValueName }}
-                <i class="pi pi-pencil edit-icon" />
-            </template>
         </Column>
         <Column :header="$t('common.category')">
-            <template #editor="slotProps">
+            <template #body="slotProps">
                 <AutoComplete
-                    class="p-inputtext-sm p-mr-2"
-                    v-if="slotProps.data.type.valueCd != 'TEMPORAL_ATTRIBUTE'"
+                    class="metaweb-dropdown-field  p-mr-2"
+                    v-if="slotProps.data['category'] && slotProps.data.type.valueCd != 'TEMPORAL_ATTRIBUTE'"
                     v-model="slotProps.data['category'].valueCd"
                     :suggestions="filteredCategories"
                     field="valueCd"
@@ -39,7 +35,7 @@
                     @input="$emit('touched')"
                     @item-select="setRuleCategory($event.value, slotProps.data)"
                 />
-                <Dropdown class="p-mr-2" v-else v-model="slotProps.data['hierarchy']" :options="domainsTemporalLevel" :placeholder="$t('kpi.measureDefinition.temporalAttributePlaceholder')" @change="$emit('touched')">
+                <Dropdown class="metaweb-dropdown-field p-mr-2" v-else v-model="slotProps.data['hierarchy']" :options="domainsTemporalLevel" :placeholder="$t('kpi.measureDefinition.temporalAttributePlaceholder')" @change="$emit('touched')">
                     <template #value="slotProps">
                         <div v-if="slotProps.value">
                             <span>{{ slotProps.value['valueCd'] }}</span>
@@ -54,10 +50,6 @@
                         </div>
                     </template>
                 </Dropdown>
-                <i class="pi pi-pencil edit-icon" />
-            </template>
-            <template #body="slotProps">
-                <span class="p-mr-2">{{ slotProps.data.type.valueCd != 'TEMPORAL_ATTRIBUTE' ? slotProps.data['category']?.valueCd : slotProps.data['hierarchy']?.valueCd }}</span>
                 <i class="pi pi-pencil edit-icon" />
             </template>
         </Column>
@@ -131,9 +123,6 @@ export default defineComponent({
         },
         setRuleCategory(category: any, alias: any) {
             alias.category.valueCd = category.valueCd
-        },
-        onCellEditComplete(event: any) {
-            if (this.rule) this.rule.ruleOutputs[event.index] = event.newData
         }
     }
 })
@@ -150,5 +139,14 @@ export default defineComponent({
 
 .edit-icon {
     font-size: 0.7rem;
+}
+
+.metaweb-dropdown-field {
+    min-width: 300px;
+    max-width: 300px;
+
+    :deep(.p-autocomplete-input) {
+        flex: 1;
+    }
 }
 </style>
