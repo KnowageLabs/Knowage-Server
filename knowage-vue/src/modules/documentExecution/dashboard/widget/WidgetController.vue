@@ -4,7 +4,7 @@
         <ProgressBar mode="indeterminate" v-if="loading" />
         <Skeleton shape="rectangle" v-if="!initialized" height="100%" border-radius="0" />
         <button @click="test">CLICK ME FOR TEST</button>
-        <WidgetRenderer :widget="widget" :data="widgetData" :datasets="datasets" v-if="initialized" @interaction="manageInteraction"></WidgetRenderer>
+        <WidgetRenderer :widget="widget" :data="widgetData" :datasets="datasets" v-if="initialized" :dashboardId="dashboardId" @interaction="manageInteraction"></WidgetRenderer>
         <WidgetButtonBar @edit-widget="toggleEditMode"></WidgetButtonBar>
     </grid-item>
 </template>

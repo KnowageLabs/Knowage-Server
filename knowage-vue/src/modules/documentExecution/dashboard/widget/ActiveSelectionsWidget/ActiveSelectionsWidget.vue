@@ -1,11 +1,11 @@
 <template>
     <div class="active-selections-widget p-d-flex p-flex-column kn-flex kn-overflow-y">
         <div v-if="widgetType === 'list' && dataToShow.length > 0" class="p-d-flex p-flex-row p-flex-wrap kn-flex">
-            <ActiveSelectionsList :activeSelections="dataToShow" :propWidget="propWidget" :showDataset="showDataset" :showColumn="showColumn" />
+            <ActiveSelectionsList :activeSelections="activeSelections" :propWidget="propWidget" :showDataset="showDataset" :showColumn="showColumn" />
         </div>
 
         <div v-if="widgetType === 'chips' && dataToShow.length > 0" class="p-d-flex p-flex-row p-flex-wrap">
-            <ActiveSelectionsChips v-for="(value, index) of dataToShow" :key="index" :activeSelection="value" :showDataset="showDataset" :showColumn="showColumn" :style="getChipsStyle()" />
+            <ActiveSelectionsChips v-for="(activeSelection, index) of activeSelections" :key="index" :activeSelection="activeSelection" :showDataset="showDataset" :showColumn="showColumn" :style="getChipsStyle()" />
         </div>
 
         <Message v-if="dataToShow.length == 0" class="p-mx-2" severity="info" :closable="false">{{ noSelectionsMessage }}</Message>
@@ -14,22 +14,21 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget } from '../../Dashboard'
+import { ISelection, IWidget } from '../../Dashboard'
 import { getWidgetStyleByTypeWithoutValidation } from '../TableWidget/TableWidgetHelper'
+import { mapActions } from 'pinia'
 import ActiveSelectionsChips from './ActiveSelectionsWidgetChips.vue'
 import ActiveSelectionsList from './ActiveSelectionsWidgetList.vue'
 import Message from 'primevue/message'
+import store from '../../Dashboard.store'
 
 export default defineComponent({
     name: 'datasets-catalog-datatable',
     components: { ActiveSelectionsChips, ActiveSelectionsList, Message },
-    props: {
-        propWidget: { type: Object as PropType<IWidget>, required: true },
-        dataToShow: { type: Array as any, required: true }
-    },
+    props: { propWidget: { type: Object as PropType<IWidget>, required: true }, dataToShow: { type: Array as any, required: true }, dashboardId: { type: String, required: true } },
     emits: ['close'],
     computed: {
-        widgetType(): boolean {
+        widgetType(): string {
             return this.propWidget.settings.configuration.type || null
         },
         showDataset(): boolean {
@@ -45,12 +44,20 @@ export default defineComponent({
         }
     },
     data() {
-        return {}
+        return {
+            activeSelections: [] as ISelection[]
+        }
     },
     setup() {},
-    created() {},
+    created() {
+        this.loadActiveSelections()
+    },
     updated() {},
     methods: {
+        ...mapActions(store, ['getSelections']),
+        loadActiveSelections() {
+            this.activeSelections = this.getSelections(this.dashboardId)
+        },
         getChipsStyle() {
             let height = this.propWidget.settings.style.chips.height
             return getWidgetStyleByTypeWithoutValidation(this.propWidget, 'chips') + `height: ${height != 0 ? height : 25}px`

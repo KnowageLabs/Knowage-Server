@@ -63,7 +63,7 @@ export default defineComponent({
     },
     emits: ['close'],
     computed: {
-        widgetType(): boolean {
+        widgetType(): string {
             return this.propWidget.settings.configuration.selectorType.modality || null
         }
     },
@@ -78,7 +78,9 @@ export default defineComponent({
         }
     },
     setup() {},
-    created() {},
+    created() {
+        console.log('TEEEEEST: ', this.dataToShow)
+    },
     updated() {},
     methods: {
         getLayoutStyle() {

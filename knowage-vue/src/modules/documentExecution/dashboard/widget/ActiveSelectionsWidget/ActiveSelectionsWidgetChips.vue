@@ -1,14 +1,15 @@
 <template>
     <div class="active-selections-chip">
-        <span v-if="showDataset">{{ activeSelection.ds }}</span>
+        <span v-if="showDataset">{{ activeSelection.datasetLabel }}</span>
         <span class="p-mx-2" v-if="showColumn">{{ activeSelection.columnName }}</span>
-        <span>{{ activeSelection.value }}</span>
+        <span>{{ activeSelection.value?.toString() }}</span>
         <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" v-tooltip.left="$t('common.delete')" @click.stop="logMe()" />
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
+import { ISelection } from '../../Dashboard'
 
 export default defineComponent({
     name: 'datasets-catalog-datatable',
@@ -16,7 +17,7 @@ export default defineComponent({
     props: {
         showDataset: Boolean,
         showColumn: Boolean,
-        activeSelection: { type: Object as any, required: true }
+        activeSelection: { type: Object as PropType<ISelection>, required: true }
     },
     emits: ['selectionDeleted'],
     computed: {},

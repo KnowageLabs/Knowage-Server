@@ -1,9 +1,9 @@
 <template>
     <ul class="active-selections-list">
         <li v-for="(selection, index) of activeSelections" :key="index" :style="getRowStyle(index)">
-            <p v-if="showDataset">{{ selection.ds }}</p>
+            <p v-if="showDataset">{{ selection.datasetLabel }}</p>
             <p v-if="showColumn">{{ selection.columnName }}</p>
-            <p>{{ selection.value }}</p>
+            <p>{{ selection.value?.toString() }}</p>
             <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" v-tooltip.left="$t('common.delete')" />
         </li>
     </ul>
@@ -11,7 +11,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget } from '../../Dashboard'
+import { ISelection, IWidget } from '../../Dashboard'
 
 export default defineComponent({
     name: 'datasets-catalog-datatable',
@@ -19,7 +19,7 @@ export default defineComponent({
     props: {
         showDataset: Boolean,
         showColumn: Boolean,
-        activeSelections: { type: Array as any, required: true },
+        activeSelections: { type: Array as PropType<ISelection[]>, required: true },
         propWidget: { type: Object as PropType<IWidget>, required: true }
     },
     emits: ['selectionDeleted'],
