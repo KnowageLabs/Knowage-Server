@@ -16,7 +16,7 @@
         :minFractionDigits="minFractionDigits"
         :maxFractionDigits="maxFractionDigits"
         :disabled="!column.isEditable"
-        @input="$emit('rowChanged', row)"
+        @blur="onInputNumberChange"
     >
     </InputNumber>
     <Dropdown
@@ -128,6 +128,9 @@ export default defineComponent({
         },
         getFormattedDate(date: any, format: any, incomingFormat?: string) {
             return formatDate(date, format, incomingFormat)
+        },
+        onInputNumberChange() {
+            setTimeout(() => this.$emit('rowChanged', this.row), 250)
         }
     }
 })
