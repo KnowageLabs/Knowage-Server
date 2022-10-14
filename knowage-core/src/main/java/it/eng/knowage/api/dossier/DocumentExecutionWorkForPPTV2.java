@@ -180,7 +180,7 @@ public class DocumentExecutionWorkForPPTV2 extends DossierExecutionClient implem
 			HashMap<String, String> paramMap = new HashMap<String, String>();
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put("TYPE", "PPT_TEMPLATE_V2");
-			jsonObject.put("MESSAGE", dossierTemplate.getPPTV2Template().getName());
+			jsonObject.put("MESSAGE", dossierTemplate.getPptTemplateV2().getName());
 
 			if (dbArray != null && !dbArray.isEmpty()) {
 				jsonArray = new org.json.JSONArray(dbArray);
