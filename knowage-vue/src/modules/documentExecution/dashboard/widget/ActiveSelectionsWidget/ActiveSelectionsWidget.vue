@@ -1,11 +1,11 @@
 <template>
     <div class="active-selections-widget p-d-flex p-flex-column kn-flex kn-overflow-y">
         <div v-if="widgetType === 'list' && dataToShow.length > 0" class="p-d-flex p-flex-row p-flex-wrap kn-flex">
-            <ActiveSelectionsList :activeSelections="activeSelections" :propWidget="propWidget" :showDataset="showDataset" :showColumn="showColumn" />
+            <ActiveSelectionsList :activeSelections="activeSelections" :propWidget="propWidget" :showDataset="showDataset" :showColumn="showColumn" @deleteSelection="onDeleteSelection" />
         </div>
 
         <div v-if="widgetType === 'chips' && dataToShow.length > 0" class="p-d-flex p-flex-row p-flex-wrap">
-            <ActiveSelectionsChips v-for="(activeSelection, index) of activeSelections" :key="index" :activeSelection="activeSelection" :showDataset="showDataset" :showColumn="showColumn" :style="getChipsStyle()" />
+            <ActiveSelectionsChips v-for="(activeSelection, index) of activeSelections" :key="index" :activeSelection="activeSelection" :showDataset="showDataset" :showColumn="showColumn" :style="getChipsStyle()" @deleteSelection="onDeleteSelection" />
         </div>
 
         <Message v-if="dataToShow.length == 0" class="p-mx-2" severity="info" :closable="false">{{ noSelectionsMessage }}</Message>
@@ -17,6 +17,7 @@ import { defineComponent, PropType } from 'vue'
 import { ISelection, IWidget } from '../../Dashboard'
 import { getWidgetStyleByTypeWithoutValidation } from '../TableWidget/TableWidgetHelper'
 import { mapActions } from 'pinia'
+import { emitter } from '../../DashboardHelpers'
 import ActiveSelectionsChips from './ActiveSelectionsWidgetChips.vue'
 import ActiveSelectionsList from './ActiveSelectionsWidgetList.vue'
 import Message from 'primevue/message'
@@ -50,17 +51,31 @@ export default defineComponent({
     },
     setup() {},
     created() {
+        this.setEventListeners()
         this.loadActiveSelections()
     },
     updated() {},
+    unmounted() {
+        this.removeEventListeners()
+    },
     methods: {
-        ...mapActions(store, ['getSelections']),
+        ...mapActions(store, ['getSelections', 'setSelections']),
+        setEventListeners() {
+            emitter.on('selectionsChanged', this.loadActiveSelections)
+        },
+        removeEventListeners() {
+            emitter.off('selectionsChanged', this.loadActiveSelections)
+        },
         loadActiveSelections() {
             this.activeSelections = this.getSelections(this.dashboardId)
         },
         getChipsStyle() {
             let height = this.propWidget.settings.style.chips.height
             return getWidgetStyleByTypeWithoutValidation(this.propWidget, 'chips') + `height: ${height != 0 ? height : 25}px`
+        },
+        onDeleteSelection(selection: ISelection) {
+            console.log('>>> SELECTION FOR DELETE: ', selection)
+            console.log('>>> ACTIVE SELECTIONS: ', this.activeSelections)
         }
     }
 })

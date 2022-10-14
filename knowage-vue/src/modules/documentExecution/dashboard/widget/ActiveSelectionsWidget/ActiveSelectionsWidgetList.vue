@@ -4,7 +4,7 @@
             <p v-if="showDataset">{{ selection.datasetLabel }}</p>
             <p v-if="showColumn">{{ selection.columnName }}</p>
             <p>{{ selection.value?.toString() }}</p>
-            <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" v-tooltip.left="$t('common.delete')" />
+            <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" v-tooltip.left="$t('common.delete')" @click="deleteSelection(selection)" />
         </li>
     </ul>
 </template>
@@ -22,7 +22,7 @@ export default defineComponent({
         activeSelections: { type: Array as PropType<ISelection[]>, required: true },
         propWidget: { type: Object as PropType<IWidget>, required: true }
     },
-    emits: ['selectionDeleted'],
+    emits: ['deleteSelection'],
     computed: {},
     data() {
         return {}
@@ -39,6 +39,9 @@ export default defineComponent({
                     return { background: rowStyles.alternatedRows.oddBackgroundColor, height: `${rowStyles.height}px` }
                 } else return { background: rowStyles.alternatedRows.evenBackgroundColor, height: `${rowStyles.height}px` }
             }
+        },
+        deleteSelection(selection: ISelection) {
+            this.$emit('deleteSelection', selection)
         }
     }
 })

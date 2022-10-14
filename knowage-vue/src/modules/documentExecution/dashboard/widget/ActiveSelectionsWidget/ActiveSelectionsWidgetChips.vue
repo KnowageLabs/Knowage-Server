@@ -3,7 +3,7 @@
         <span v-if="showDataset">{{ activeSelection.datasetLabel }}</span>
         <span class="p-mx-2" v-if="showColumn">{{ activeSelection.columnName }}</span>
         <span>{{ activeSelection.value?.toString() }}</span>
-        <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" v-tooltip.left="$t('common.delete')" @click.stop="logMe()" />
+        <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" v-tooltip.left="$t('common.delete')" @click.stop="deleteSelection()" />
     </div>
 </template>
 
@@ -19,7 +19,7 @@ export default defineComponent({
         showColumn: Boolean,
         activeSelection: { type: Object as PropType<ISelection>, required: true }
     },
-    emits: ['selectionDeleted'],
+    emits: ['deleteSelection'],
     computed: {},
     data() {
         return {}
@@ -28,8 +28,8 @@ export default defineComponent({
     created() {},
     updated() {},
     methods: {
-        logMe() {
-            console.log('ACTIVE SELECTION', this.activeSelection)
+        deleteSelection() {
+            this.$emit('deleteSelection', this.activeSelection)
         }
     }
 })

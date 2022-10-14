@@ -76,7 +76,7 @@ export default defineComponent({
             this.widget = this.propWidget.new ? createNewWidget(this.propWidget.type) : deepcopy(this.propWidget)
         },
         loadSelectedModelDatasets() {
-            this.selectedModelDatasets = this.dashboardId ? this.dashboardStore.getDashboardSelectedDatastes(this.dashboardId) : {}
+            this.selectedModelDatasets = this.dashboardId ? this.dashboardStore.getDashboardSelectedDatasets(this.dashboardId) : {}
         },
         loadSelectedModel() {
             if (!this.datasets) return
