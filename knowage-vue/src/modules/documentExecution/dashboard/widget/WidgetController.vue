@@ -3,6 +3,7 @@
         <div v-if="initialized" class="drag-handle"></div>
         <ProgressBar mode="indeterminate" v-if="loading" />
         <Skeleton shape="rectangle" v-if="!initialized" height="100%" border-radius="0" />
+        <button @click="test">CLICK ME FOR TEST</button>
         <WidgetRenderer :widget="widget" :data="widgetData" :datasets="datasets" v-if="initialized" @interaction="manageInteraction"></WidgetRenderer>
         <WidgetButtonBar @edit-widget="toggleEditMode"></WidgetButtonBar>
     </grid-item>
@@ -17,6 +18,9 @@ import { mapState } from 'vuex'
 import { getData } from '../DataProxyHelper'
 import { IWidget } from '../Dashboard'
 import { emitter } from '../DashboardHelpers'
+import { mapActions } from 'pinia'
+import { getAssociativeSelections } from './dataProxyHelper/DataProxyHelper'
+import store from '../Dashboard.store'
 import WidgetRenderer from './WidgetRenderer.vue'
 import WidgetButtonBar from './WidgetButtonBar.vue'
 import Skeleton from 'primevue/skeleton'
@@ -26,20 +30,7 @@ export default defineComponent({
     name: 'widget-manager',
     components: { ProgressBar, Skeleton, WidgetButtonBar, WidgetRenderer },
     inject: ['dHash'],
-    props: {
-        item: {
-            required: true,
-            type: Object
-        },
-        activeSheet: {
-            type: Boolean
-        },
-        widget: {
-            type: Object as PropType<IWidget>,
-            required: true
-        },
-        datasets: { type: Array }
-    },
+    props: { item: { required: true, type: Object }, activeSheet: { type: Boolean }, widget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array }, dashboardId: { type: String, required: true } },
     data() {
         return {
             loading: false,
@@ -58,6 +49,13 @@ export default defineComponent({
         })
     },
     methods: {
+        // TODO
+        ...mapActions(store, ['getDashboard']),
+        async test() {
+            const dashboardModel = this.getDashboard(this.dashboardId)
+            const response = await getAssociativeSelections(dashboardModel, this.datasets, this.$http)
+            console.log('>>>>> RESPONSE: ', response)
+        },
         setEventListeners() {
             emitter.on('interaction', async (event) => {
                 /**

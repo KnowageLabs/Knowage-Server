@@ -14,7 +14,7 @@
                 :margin="[2, 2]"
                 @breakpoint-changed="breakpointChangedEvent"
             >
-                <WidgetController :activeSheet="activeSheet(index)" :widget="currentWidget(item.id)" :item="item" v-for="item in sheet.widgets['lg']" :key="item.i" :datasets="datasets"></WidgetController>
+                <WidgetController :activeSheet="activeSheet(index)" :widget="currentWidget(item.id)" :item="item" v-for="item in sheet.widgets['lg']" :key="item.i" :datasets="datasets" :dashboardId="dashboardId"></WidgetController>
             </grid-layout>
         </KnDashboardTab>
     </KnDashboardTabsPanel>
@@ -34,7 +34,7 @@ import dashboardStore from './Dashboard.store'
 export default defineComponent({
     name: 'dashboard-manager',
     components: { KnDashboardTab, KnDashboardTabsPanel, WidgetController },
-    props: { model: { type: Object }, datasets: { type: Array } },
+    props: { model: { type: Object }, datasets: { type: Array }, dashboardId: { type: String, required: true } },
     inject: ['dHash'],
     data() {
         return {

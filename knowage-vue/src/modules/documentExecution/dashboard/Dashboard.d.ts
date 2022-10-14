@@ -602,7 +602,7 @@ export interface IWidgetBackgroundStyle {
 
 export interface ISelection {
     datasetId: number,
-    datasetName: string,
+    datasetLabel: string,
     columnName: string,
     value: (string | number)[],
     aggregated: boolean

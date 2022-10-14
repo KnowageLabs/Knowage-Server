@@ -5,7 +5,7 @@ import { formatSelectionWidget } from './selectionWidget/SelectionsWidgetCompati
 import deepcopy from 'deepcopy'
 import cryptoRandomString from 'crypto-random-string'
 
-const datasetIdNameMap = {}
+const datasetIdLabelMap = {}
 
 export const formatModel = (model: any, document: any, datasets: IDataset[]) => {
     if (!model.sheets) return
@@ -41,12 +41,12 @@ export const formatModel = (model: any, document: any, datasets: IDataset[]) => 
 const loadDatasetIdNameMap = (datasets: IDataset[]) => {
     if (!datasets) return
     datasets.forEach((dataset: IDataset) => {
-        datasetIdNameMap[dataset.name] = dataset.id.dsId
+        datasetIdLabelMap[dataset.label] = dataset.id.dsId
     })
 }
 
-const getDatasetId = (datasetName: string) => {
-    return datasetIdNameMap[datasetName]
+const getDatasetId = (datasetLabel: string) => {
+    return datasetIdLabelMap[datasetLabel]
 }
 
 const getFormattedModelConfiguration = (model: any, document: any) => {
@@ -66,7 +66,7 @@ const getFormattedAssociations = (model: any) => {
 
 const getFormattedAssociation = (association: any) => {
     const formattedAssociation = { id: association.id, fields: [] } as IAssociation
-    association.fields?.forEach((field: { column: string, store: string, type: string }) => formattedAssociation.fields.push({ column: field.store, dataset: getDatasetId(field.store) }))
+    association.fields?.forEach((field: { column: string, store: string, type: string }) => formattedAssociation.fields.push({ column: field.column, dataset: getDatasetId(field.store) }))
     return formattedAssociation
 }
 
@@ -81,6 +81,7 @@ const getFormattedDatasets = (model: any) => {
 }
 
 const getFormattedDataset = (dataset: any) => {
+    console.log("DATASET: ", dataset)
     const formattedDataset = { id: dataset.dsId, dsLabel: dataset.dsLabel, cache: dataset.useCache } as IWidgetEditorDataset
     if (dataset.indexes) formattedDataset.indexes = dataset.indexes
     if (dataset.parameters) formattedDataset.parameters = getFormattedDatasetParameters(dataset)
@@ -128,7 +129,7 @@ const getFormattedSelections = (model: any) => {
     if (!model.configuration || !model.selections) return []
     const formattedSelections = [] as ISelection[]
     model.selections.forEach((selection: { ds: string, columnName: string, value: string | (string | number)[], aggregated: boolean }) => {
-        formattedSelections.push({ datasetId: getDatasetId(selection.ds), datasetName: selection.ds, columnName: selection.columnName, value: Array.isArray(selection.value) ? selection.value : [selection.value], aggregated: selection.aggregated })
+        formattedSelections.push({ datasetId: getDatasetId(selection.ds), datasetLabel: selection.ds, columnName: selection.columnName, value: Array.isArray(selection.value) ? selection.value : [selection.value], aggregated: selection.aggregated })
     })
     return formattedSelections
 }

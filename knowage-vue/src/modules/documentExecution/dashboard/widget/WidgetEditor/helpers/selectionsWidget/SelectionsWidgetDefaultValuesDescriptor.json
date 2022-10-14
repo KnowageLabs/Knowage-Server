@@ -1,6 +1,6 @@
 {
     "defaultChipsStyle": {
-        "height": 0,
+        "height": 25,
         "properties": {
             "background-color": "",
             "color": "",
@@ -21,7 +21,7 @@
             "evenBackgroundColor": "rgb(228, 232, 236)",
             "oddBackgroundColor": ""
         },
-        "height": 0
+        "height": 25
     },
     "defaultValuesManagement": {
         "showColumn": true,
