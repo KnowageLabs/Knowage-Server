@@ -14,11 +14,10 @@
  * ! this component will be in charge of managing the widget behaviour related to data and interactions, not related to view elements.
  */
 import { defineComponent, PropType } from 'vue'
-import { mapState } from 'vuex'
 import { getData } from '../DataProxyHelper'
-import { IWidget } from '../Dashboard'
+import { IDataset, IWidget } from '../Dashboard'
 import { emitter } from '../DashboardHelpers'
-import { mapActions } from 'pinia'
+import { mapState, mapActions } from 'pinia'
 import { getAssociativeSelections } from './dataProxyHelper/DataProxyHelper'
 import store from '../Dashboard.store'
 import WidgetRenderer from './WidgetRenderer.vue'
@@ -30,7 +29,7 @@ export default defineComponent({
     name: 'widget-manager',
     components: { ProgressBar, Skeleton, WidgetButtonBar, WidgetRenderer },
     inject: ['dHash'],
-    props: { item: { required: true, type: Object }, activeSheet: { type: Boolean }, widget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array }, dashboardId: { type: String, required: true } },
+    props: { item: { required: true, type: Object }, activeSheet: { type: Boolean }, widget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array as PropType<IDataset[]>, required: true }, dashboardId: { type: String, required: true } },
     data() {
         return {
             loading: false,
@@ -44,16 +43,14 @@ export default defineComponent({
         this.setEventListeners()
     },
     computed: {
-        ...mapState({
-            dashboard: (state: any) => state.dashboard.dashboards
-        })
+        ...mapState(store, ['dashboards'])
     },
     methods: {
         // TODO
         ...mapActions(store, ['getDashboard']),
         async test() {
             const dashboardModel = this.getDashboard(this.dashboardId)
-            const response = await getAssociativeSelections(dashboardModel, this.datasets, this.$http)
+            const response = await getAssociativeSelections(dashboardModel, this.datasets, this.$http, this.dashboards)
             console.log('>>>>> RESPONSE: ', response)
         },
         setEventListeners() {

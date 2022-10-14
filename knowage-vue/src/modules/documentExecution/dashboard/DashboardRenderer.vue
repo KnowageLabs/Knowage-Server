@@ -24,7 +24,8 @@
 /**
  * ! this component will be in charge of creating the dashboard visualizazion, specifically to manage responsive structure and sheets.
  */
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
+import { IDataset } from './Dashboard'
 import { mapState } from 'pinia'
 import WidgetController from './widget/WidgetController.vue'
 import KnDashboardTabsPanel from '@/components/UI/KnDashboardTabs/KnDashboardTabsPanel.vue'
@@ -34,7 +35,7 @@ import dashboardStore from './Dashboard.store'
 export default defineComponent({
     name: 'dashboard-manager',
     components: { KnDashboardTab, KnDashboardTabsPanel, WidgetController },
-    props: { model: { type: Object }, datasets: { type: Array }, dashboardId: { type: String, required: true } },
+    props: { model: { type: Object }, datasets: { type: Array as PropType<IDataset[]>, required: true }, dashboardId: { type: String, required: true } },
     inject: ['dHash'],
     data() {
         return {

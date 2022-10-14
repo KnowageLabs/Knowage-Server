@@ -3,7 +3,7 @@ import { IAssociation, IDashboard, IDataset, IModelDataset, IModelDatasetParamet
 
 const datasetMapById = {}
 
-export const getAssociativeSelections = async (model: IDashboard, datasets: IDataset[], $http: any) => {
+export const getAssociativeSelections = async (model: IDashboard, datasets: IDataset[], $http: any, dashboard: any) => {
     loadDatasetLabelIdMap(datasets)
     console.log(">>>>>>>>>>> MODEL: ", model)
 
@@ -23,6 +23,7 @@ export const getAssociativeSelections = async (model: IDashboard, datasets: IDat
         .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/associativeSelections/`, postData)
         .then((response: AxiosResponse<any>) => (tempResponse = response.data))
         .catch(() => { })
+    if (tempResponse) updateStoreSelections(tempResponse, dashboard)
     return tempResponse
 }
 
@@ -54,9 +55,11 @@ const getDatasetById = (datasetId: number) => {
 const getFormattedAssocitationsGroups = (associations: IAssociation[]) => {
     const formattedAssociations = [] as any[]
     const datasetsUsedInAssociations = [] as string[]
+
     associations.forEach((association: IAssociation) => formattedAssociations.push({
         id: association.id,
-        fields: getFormattedAssociationFields(association.fields, datasetsUsedInAssociations)
+        fields: getFormattedAssociationFields(association.fields, datasetsUsedInAssociations),
+        description: getAssociationDescription(association.fields)
     }))
     return { datasets: datasetsUsedInAssociations, associations: formattedAssociations }
 }
@@ -68,8 +71,17 @@ const getFormattedAssociationFields = (associationFields: { column: string, data
             const index = datasetsUsedInAssociations.findIndex((dasetLabel: string) => dasetLabel === tempDataset.label)
             if (index === -1) datasetsUsedInAssociations.push(tempDataset.label)
         }
-        return { column: field.column, store: tempDataset ? tempDataset.label : '' }
+        return { column: field.column, store: tempDataset ? tempDataset.label : '', type: 'dataset' }
     })
+}
+
+const getAssociationDescription = (associationFields: { column: string, dataset: number }[]) => {
+    let description = ''
+    for (let i = 0; i < associationFields.length; i++) {
+        description += getDatasetById(associationFields[i].dataset)?.label + '.' + associationFields[i].column
+        if (i !== associationFields.length - 1) description += '='
+    }
+    return description
 }
 
 const getFormattedSelections = (modelSelections: ISelection[]) => {
@@ -95,4 +107,9 @@ const getFormattedDatasetParameters = (dataset: IModelDataset) => {
 
 const getNearRealtimeDatasets = (tempDatasets: IDataset[]) => {
     return tempDatasets.filter((dataset: IDataset) => dataset.isNearRealtimeSupported).map((dataset: IDataset) => dataset.label)
+}
+
+const updateStoreSelections = (response: any, dashboard: any) => {
+    console.log(">>>>>>>>>>>> updateStoreSelections response: ", response)
+    console.log(">>>>>>>>>>>> updateStoreSelections dashboard: ", dashboard)
 }
