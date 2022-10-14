@@ -1,7 +1,7 @@
 <template>
     <div class="widget p-m-2" :style="getWidgetContainerStyle()">
         <div v-if="widget.settings.style.title && widget.settings.style.title.enabled" class="p-d-flex p-ai-center" style="border-radius: 0px" :style="getWidgetTitleStyle()">
-            {{ widgetTitle?.text }}
+            {{ widget.settings.style.title.text }}
         </div>
         <div class="widget-editor-preview" :style="getWidgetPadding()">
             <TableWidget v-if="widget.type == 'table'" :propWidget="widget" :datasets="datasets" :editorMode="true" />
@@ -20,12 +20,13 @@ import { defineComponent } from 'vue'
 import { getWidgetStyleByType } from '../widget/TableWidget/TableWidgetHelper'
 import TableWidget from './TableWidget/TableWidget.vue'
 import SelectorWidget from './SelectorWidget/SelectorWidget.vue'
+import ActiveSelectionsWidget from './ActiveSelectionsWidget/ActiveSelectionsWidget.vue'
 import mock from '../dataset/DatasetEditorTestMocks.json'
 
 export default defineComponent({
     name: 'widget-renderer',
     emits: ['interaction'],
-    components: { TableWidget, SelectorWidget },
+    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget },
     props: {
         widget: {
             required: true,

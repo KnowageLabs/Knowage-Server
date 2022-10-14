@@ -1,6 +1,8 @@
 <template>
-    <div class="active-selections-widget">
-        <div v-if="widgetType === 'list' && dataToShow.length > 0">table</div>
+    <div class="active-selections-widget p-d-flex p-flex-column kn-flex kn-overflow-y">
+        <div v-if="widgetType === 'list' && dataToShow.length > 0" class="p-d-flex p-flex-row p-flex-wrap kn-flex">
+            <ActiveSelectionsList :activeSelections="dataToShow" :propWidget="propWidget" :showDataset="showDataset" :showColumn="showColumn" />
+        </div>
 
         <div v-if="widgetType === 'chips' && dataToShow.length > 0" class="p-d-flex p-flex-row p-flex-wrap">
             <ActiveSelectionsChips v-for="(value, index) of dataToShow" :key="index" :activeSelection="value" :showDataset="showDataset" :showColumn="showColumn" :style="getChipsStyle()" />
@@ -13,13 +15,14 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IWidget } from '../../Dashboard'
-import ActiveSelectionsChips from './ActiveSelectionsWidgetChips.vue'
-import Message from 'primevue/message'
 import { getWidgetStyleByTypeWithoutValidation } from '../TableWidget/TableWidgetHelper'
+import ActiveSelectionsChips from './ActiveSelectionsWidgetChips.vue'
+import ActiveSelectionsList from './ActiveSelectionsWidgetList.vue'
+import Message from 'primevue/message'
 
 export default defineComponent({
     name: 'datasets-catalog-datatable',
-    components: { ActiveSelectionsChips, Message },
+    components: { ActiveSelectionsChips, ActiveSelectionsList, Message },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         dataToShow: { type: Array as any, required: true }
@@ -55,3 +58,17 @@ export default defineComponent({
     }
 })
 </script>
+<style scoped>
+::-webkit-scrollbar {
+    width: 5px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+</style>
