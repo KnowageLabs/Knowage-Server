@@ -130,7 +130,7 @@ import DashboardController from '../dashboard/DashboardController.vue'
 
 // @ts-ignore
 // eslint-disable-next-line
-window.execExternalCrossNavigation = function (outputParameters, otherOutputParameters, crossNavigationLabel) {
+window.execExternalCrossNavigation = function(outputParameters, otherOutputParameters, crossNavigationLabel) {
     postMessage(
         {
             type: 'crossNavigation',
@@ -634,6 +634,7 @@ export default defineComponent({
             }
         },
         formatParameterDataOptions(parameter: iParameter, data: any) {
+            if (!parameter.metadata) return { value: '', description: '' }
             const valueColumn = parameter.metadata.valueColumn
             const descriptionColumn = parameter.metadata.descriptionColumn
             const valueIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === valueColumn)
