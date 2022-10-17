@@ -66,6 +66,7 @@ const store = defineStore('dashboardStore', {
             return this.selections[dashboardId]
         },
         setSelections(dashboardId: string, selections: ISelection[]) {
+            console.log(" ---- STORE - SET SELECTIONS: ", selections)
             this.selections[dashboardId] = selections
             emitter.emit('selectionsChanged', { dashboardId: dashboardId, selections: this.selections[dashboardId] })
         }

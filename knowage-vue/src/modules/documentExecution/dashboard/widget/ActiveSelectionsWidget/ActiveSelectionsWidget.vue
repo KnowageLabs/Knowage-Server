@@ -76,6 +76,11 @@ export default defineComponent({
         onDeleteSelection(selection: ISelection) {
             console.log('>>> SELECTION FOR DELETE: ', selection)
             console.log('>>> ACTIVE SELECTIONS: ', this.activeSelections)
+            const index = this.activeSelections.findIndex((activeSelection: ISelection) => activeSelection.datasetId === selection.datasetId && activeSelection.columnName === selection.columnName)
+            if (index !== -1) {
+                this.activeSelections.splice(index, 1)
+                this.setSelections(this.dashboardId, this.activeSelections)
+            }
         }
     }
 })
