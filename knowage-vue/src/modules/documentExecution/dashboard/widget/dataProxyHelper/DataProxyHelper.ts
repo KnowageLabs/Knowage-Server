@@ -8,9 +8,6 @@ export const getAssociativeSelections = async (model: IDashboard, datasets: IDat
     console.log(">>>>>>>>>>> MODEL: ", model)
 
     const tempDatasets = getDatasetsInfoFromModelDatasets(model.configuration.datasets, datasets)
-    console.log(">>>>>>>>>>> MODEL DATASETS: ", model.configuration.datasets)
-    console.log(">>>>>>>>>>> FULL DATASETS: ", tempDatasets)
-
     const postData = {
         associationGroup: getFormattedAssocitationsGroups(model.configuration.associations),
         selections: getFormattedSelections(model.configuration.selections),
@@ -23,7 +20,6 @@ export const getAssociativeSelections = async (model: IDashboard, datasets: IDat
         .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/associativeSelections/`, postData)
         .then((response: AxiosResponse<any>) => (tempResponse = response.data))
         .catch(() => { })
-    if (tempResponse) updateStoreSelections(tempResponse, dashboard)
     return tempResponse
 }
 
@@ -109,7 +105,19 @@ const getNearRealtimeDatasets = (tempDatasets: IDataset[]) => {
     return tempDatasets.filter((dataset: IDataset) => dataset.isNearRealtimeSupported).map((dataset: IDataset) => dataset.label)
 }
 
-const updateStoreSelections = (response: any, dashboard: any) => {
-    console.log(">>>>>>>>>>>> updateStoreSelections response: ", response)
-    console.log(">>>>>>>>>>>> updateStoreSelections dashboard: ", dashboard)
+export const updateStoreSelections = (newSelection: ISelection, currentActiveSelections: ISelection[], dashboardId: string, updateSelectionFunction: Function) => {
+    console.log(">>>>>>>>>> updateStoreSelections - newSelection: ", newSelection)
+    const index = currentActiveSelections.findIndex((activeSelection: ISelection) => activeSelection.datasetId === newSelection.datasetId && activeSelection.columnName === newSelection.columnName)
+    index !== -1 ? currentActiveSelections[index] = newSelection : currentActiveSelections.push(newSelection)
+    updateSelectionFunction(dashboardId, currentActiveSelections)
+}
+
+export const removeSelectionFromActiveSelections = (payload: { datasetId: number, columnName: string }, activeSelections: ISelection[], dashboardId: string, updateSelectionFunction: Function) => {
+    console.log('>>> SELECTION FOR DELETE - payload: ', payload)
+    console.log('>>> ACTIVE SELECTIONS: ', activeSelections)
+    const index = activeSelections.findIndex((activeSelection: ISelection) => activeSelection.datasetId === payload.datasetId && activeSelection.columnName === payload.columnName)
+    if (index !== -1) {
+        activeSelections.splice(index, 1)
+        updateSelectionFunction(dashboardId, activeSelections)
+    }
 }

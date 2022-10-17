@@ -10,17 +10,7 @@ const datasetIdLabelMap = {}
 export const formatModel = (model: any, document: any, datasets: IDataset[]) => {
     if (!model.sheets) return
 
-    // TODO - Remove mocked selections when BE is fixed
-    model.selections = [{
-        "ds": "TEST_04",
-        "columnName": "store_id",
-        "value": [
-            2,
-            4
-        ],
-        "aggregated": true
-    }]
-
+    console.log(">>>>>>>>>>>>>>>>>>> LOADED MODEL: ", model)
     loadDatasetIdNameMap(datasets)
     const formattedModel = {
         id: cryptoRandomString({ length: 16, type: 'base64' }),
@@ -81,7 +71,6 @@ const getFormattedDatasets = (model: any) => {
 }
 
 const getFormattedDataset = (dataset: any) => {
-    console.log("DATASET: ", dataset)
     const formattedDataset = { id: dataset.dsId, dsLabel: dataset.dsLabel, cache: dataset.useCache } as IWidgetEditorDataset
     if (dataset.indexes) formattedDataset.indexes = dataset.indexes
     if (dataset.parameters) formattedDataset.parameters = getFormattedDatasetParameters(dataset)
@@ -129,7 +118,7 @@ const getFormattedSelections = (model: any) => {
     if (!model.configuration || !model.selections) return []
     const formattedSelections = [] as ISelection[]
     model.selections.forEach((selection: { ds: string, columnName: string, value: string | (string | number)[], aggregated: boolean }) => {
-        formattedSelections.push({ datasetId: getDatasetId(selection.ds), datasetLabel: selection.ds, columnName: selection.columnName, value: Array.isArray(selection.value) ? selection.value : [selection.value], aggregated: selection.aggregated })
+        formattedSelections.push({ datasetId: getDatasetId(selection.ds), datasetLabel: selection.ds, columnName: selection.columnName, value: Array.isArray(selection.value) ? selection.value : [selection.value], aggregated: selection.aggregated, timestamp: new Date().getTime() })
     })
     return formattedSelections
 }
