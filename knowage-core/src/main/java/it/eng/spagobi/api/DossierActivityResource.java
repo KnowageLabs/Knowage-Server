@@ -47,6 +47,7 @@ import org.json.JSONObject;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.knowage.engine.dossier.activity.bo.DossierActivity;
+import it.eng.knowage.engines.dossier.utils.DossierDocumentType;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
@@ -54,6 +55,7 @@ import it.eng.spagobi.dossier.dao.ISbiDossierActivityDAO;
 import it.eng.spagobi.tools.massiveExport.bo.ProgressThread;
 import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Nikola Simovic (nikola.simovic@mht.net)
@@ -277,7 +279,7 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 
 		ISbiDossierActivityDAO sdaDAO;
 		DossierActivity activity;
-		byte[] file;
+		byte[] file = null;
 
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
@@ -287,17 +289,33 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 			sdaDAO = DAOFactory.getDossierActivityDao();
 			logger.debug("Downloading PPT file with activity id: " + activityId + ". Activity name: " + activityName);
 			activity = sdaDAO.loadActivity(activityId);
-			if (type.equals("doc")) {
+			String extension = "";
+
+			switch (type) {
+			case "doc":
+			case "docx":
 				file = activity.getDocBinContent();
-			} else if (type.equals("pptV2")) {
-				file = activity.getPptV2BinContent();
-			} else {
+				extension = DossierDocumentType.DOCX.getType();
+				break;
+			case "ppt":
 				file = activity.getBinContent();
+				extension = DossierDocumentType.PPT.getType();
+			case "pptx":
+				file = activity.getBinContent();
+				extension = DossierDocumentType.PPTX.getType();
+			default:
+				break;
+			}
+
+			if (file == null) {
+				String message = "Error while matching the file extesion";
+				logger.error(message + " " + type);
+				throw new SpagoBIRuntimeException(message);
 			}
 
 			ResponseBuilder response = Response.ok(file);
-			response.header("Content-Disposition", "attachment; filename=" + activityName + "_" + formattedDate + "." + type);
-			response.header("filename", activityName + "_" + formattedDate + "." + type);
+			response.header("Content-Disposition", "attachment; filename=" + activityName + "_" + formattedDate + "." + extension);
+			response.header("filename", activityName + "_" + formattedDate + "." + extension);
 			return response.build();
 
 		} catch (Exception e) {
