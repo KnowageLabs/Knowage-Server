@@ -91,7 +91,8 @@ export default defineComponent({
         dataToShow: { type: Object as any, required: true },
         dashboardId: { type: String, required: true },
         datasets: { type: Array as PropType<IDataset[]>, required: true },
-        selectionIsLocked: { type: Boolean, required: true }
+        selectionIsLocked: { type: Boolean, required: true },
+        editorMode: { type: Boolean }
     },
     emits: ['close'],
     computed: {
@@ -155,15 +156,19 @@ export default defineComponent({
             console.log('range', event)
         },
         singleValueSelectionChanged() {
+            if (this.editorMode) return
             updateStoreSelections(this.createNewSelection([this.selectedValue]), this.activeSelections, this.dashboardId, this.setSelections)
         },
         multiValueSelectionChanged() {
+            if (this.editorMode) return
             updateStoreSelections(this.createNewSelection(this.selectedValues), this.activeSelections, this.dashboardId, this.setSelections)
         },
         dateSelectionChanged() {
+            if (this.editorMode) return
             updateStoreSelections(this.createNewSelection([this.selectedDate]), this.activeSelections, this.dashboardId, this.setSelections)
         },
         dateRangeSelectionChanged() {
+            if (this.editorMode) return
             updateStoreSelections(this.createNewSelection([this.startDate, this.endDate]), this.activeSelections, this.dashboardId, this.setSelections)
         },
         createNewSelection(value: (string | number)[]) {

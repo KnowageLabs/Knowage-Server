@@ -4,7 +4,7 @@
             <p v-if="showDataset">{{ selection.datasetLabel }}</p>
             <p v-if="showColumn">{{ selection.columnName }}</p>
             <p>{{ selection.value?.toString() }}</p>
-            <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" v-tooltip.left="$t('common.delete')" @click="deleteSelection(selection)" />
+            <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" v-tooltip.left="$t('common.delete')" :disabled="editorMode" @click="deleteSelection(selection)" />
         </li>
     </ul>
 </template>
@@ -20,7 +20,8 @@ export default defineComponent({
         showDataset: Boolean,
         showColumn: Boolean,
         activeSelections: { type: Array as PropType<ISelection[]>, required: true },
-        propWidget: { type: Object as PropType<IWidget>, required: true }
+        propWidget: { type: Object as PropType<IWidget>, required: true },
+        editorMode: { type: Boolean }
     },
     emits: ['deleteSelection'],
     computed: {},
