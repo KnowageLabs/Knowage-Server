@@ -280,6 +280,9 @@ export default defineComponent({
                 } else if (selectedActivity.hasDocBinContent) {
                     link = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedActivity.id}/doc?activityName=${selectedActivity.activity}`
                     window.open(link)
+                } else if (selectedActivity.hasPptV2BinContent) {
+                    link = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedActivity.id}/pptv2?activityName=${selectedActivity.activity}`
+                    window.open(link)
                 } else {
                     link = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/random-key/${selectedActivity.progressId}`
                     await this.$http.get(link, { headers: { Accept: 'application/json, text/plain, */*' } }).then((response: AxiosResponse<any>) => {

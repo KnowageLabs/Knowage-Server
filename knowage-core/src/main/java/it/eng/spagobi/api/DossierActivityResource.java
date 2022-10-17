@@ -289,6 +289,8 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 			activity = sdaDAO.loadActivity(activityId);
 			if (type.equals("doc")) {
 				file = activity.getDocBinContent();
+			} else if (type.equals("pptV2")) {
+				file = activity.getPptV2BinContent();
 			} else {
 				file = activity.getBinContent();
 			}
