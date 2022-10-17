@@ -4,10 +4,10 @@
             {{ widget.settings.style.title.text }}
         </div>
         <div class="widget-editor-preview" :style="getWidgetPadding()">
-            <TableWidget v-if="widget.type == 'table'" :propWidget="widget" :datasets="datasets" :editorMode="true" />
+            <TableWidget v-if="widget.type == 'table'" :propWidget="widget" :datasets="datasets" :editorMode="false" />
             <!-- <SelectorWidget v-if="widget.type == 'selector'" :propWidget="widget" :dataToShow="mock.selectorMockedResponse" :editorMode="true" :dashboardId="dashboardId" :datasets="datasets" :selectionIsLocked="selectionIsLocked" /> -->
-            <SelectorWidget v-if="widget.type == 'selector'" :propWidget="widget" :dataToShow="widgetData" :editorMode="true" :dashboardId="dashboardId" :datasets="datasets" :selectionIsLocked="selectionIsLocked" />
-            <ActiveSelectionsWidget v-if="widget.type == 'selection'" :propWidget="widget" :dataToShow="mock.selectionMockedResponse" :editorMode="true" :dashboardId="dashboardId" />
+            <SelectorWidget v-if="widget.type == 'selector'" :propWidget="widget" :dataToShow="widgetData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" :datasets="datasets" :selectionIsLocked="selectionIsLocked" />
+            <ActiveSelectionsWidget v-if="widget.type == 'selection'" :propWidget="widget" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" />
         </div>
     </div>
 </template>
@@ -23,13 +23,20 @@ import TableWidget from './TableWidget/TableWidget.vue'
 import SelectorWidget from './SelectorWidget/SelectorWidget.vue'
 import ActiveSelectionsWidget from './ActiveSelectionsWidget/ActiveSelectionsWidget.vue'
 import mock from '../dataset/DatasetEditorTestMocks.json'
-import { IDataset } from '../Dashboard'
+import { IDataset, ISelection } from '../Dashboard'
 
 export default defineComponent({
     name: 'widget-renderer',
     emits: ['interaction'],
     components: { TableWidget, SelectorWidget, ActiveSelectionsWidget },
-    props: { widget: { required: true, type: Object as any }, widgetData: { required: true, type: Object }, datasets: { type: Array as PropType<IDataset[]>, required: true }, dashboardId: { type: String, required: true }, selectionIsLocked: { type: Boolean, required: true } },
+    props: {
+        widget: { required: true, type: Object as any },
+        widgetData: { required: true, type: Object },
+        datasets: { type: Array as PropType<IDataset[]>, required: true },
+        dashboardId: { type: String, required: true },
+        selectionIsLocked: { type: Boolean, required: true },
+        activeSelections: { type: Array as PropType<ISelection[]>, required: true }
+    },
     data() {
         return {
             mock

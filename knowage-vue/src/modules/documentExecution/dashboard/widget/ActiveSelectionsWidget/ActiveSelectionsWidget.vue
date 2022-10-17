@@ -17,17 +17,17 @@ import { defineComponent, PropType } from 'vue'
 import { ISelection, IWidget } from '../../Dashboard'
 import { getWidgetStyleByTypeWithoutValidation } from '../TableWidget/TableWidgetHelper'
 import { mapActions } from 'pinia'
-import { emitter } from '../../DashboardHelpers'
 import { removeSelectionFromActiveSelections } from '../interactionsHelpers/InteractionHelper'
 import ActiveSelectionsChips from './ActiveSelectionsWidgetChips.vue'
 import ActiveSelectionsList from './ActiveSelectionsWidgetList.vue'
 import Message from 'primevue/message'
 import store from '../../Dashboard.store'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'datasets-catalog-datatable',
     components: { ActiveSelectionsChips, ActiveSelectionsList, Message },
-    props: { propWidget: { type: Object as PropType<IWidget>, required: true }, dataToShow: { type: Array as any, required: true }, dashboardId: { type: String, required: true }, editorMode: { type: Boolean } },
+    props: { propWidget: { type: Object as PropType<IWidget>, required: true }, propActiveSelections: { type: Array as PropType<ISelection[]>, required: true }, dashboardId: { type: String, required: true }, editorMode: { type: Boolean } },
     emits: ['close'],
     computed: {
         widgetType(): string {
@@ -50,25 +50,21 @@ export default defineComponent({
             activeSelections: [] as ISelection[]
         }
     },
+    watch: {
+        propActiveSelections() {
+            this.loadActiveSelections()
+        }
+    },
     setup() {},
     created() {
-        this.setEventListeners()
         this.loadActiveSelections()
     },
     updated() {},
-    unmounted() {
-        this.removeEventListeners()
-    },
+    unmounted() {},
     methods: {
-        ...mapActions(store, ['getSelections', 'setSelections']),
-        setEventListeners() {
-            emitter.on('selectionsChanged', this.loadActiveSelections)
-        },
-        removeEventListeners() {
-            emitter.off('selectionsChanged', this.loadActiveSelections)
-        },
+        ...mapActions(store, ['setSelections']),
         loadActiveSelections() {
-            this.activeSelections = this.getSelections(this.dashboardId)
+            this.activeSelections = deepcopy(this.propActiveSelections)
         },
         getChipsStyle() {
             let height = this.propWidget.settings.style.chips.height

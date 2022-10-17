@@ -7,9 +7,10 @@
         {{ 'TODO - REMOVE THIS' }}
         {{ selectionIsLocked }}
         <br />
-        <button @click="unlockSelection">UNLOCK SELECTION</button>
+        <button class="p-mr-2" :style="'max-width: 100px;'" @click="unlockSelection">UNLOCK SELECTION</button>
+        <button v-if="playSelectionButtonVisible" :style="'max-width: 100px;'" @click="launchSelection">LAUNCH SELECTION</button>
         <!-- <button @click="test">CLICK ME FOR TEST</button> -->
-        <WidgetRenderer :widget="widget" :widgetData="widgetData" :datasets="datasets" v-if="initialized" :dashboardId="dashboardId" :selectionIsLocked="selectionIsLocked" @interaction="manageInteraction"></WidgetRenderer>
+        <WidgetRenderer :widget="widget" :widgetData="widgetData" :datasets="datasets" v-if="initialized" :dashboardId="dashboardId" :selectionIsLocked="selectionIsLocked" :activeSelections="activeSelections" @interaction="manageInteraction"></WidgetRenderer>
         <WidgetButtonBar @edit-widget="toggleEditMode"></WidgetButtonBar>
     </grid-item>
 </template>
@@ -23,8 +24,8 @@ import { getData } from '../DataProxyHelper'
 import { IDataset, ISelection, IWidget } from '../Dashboard'
 import { emitter } from '../DashboardHelpers'
 import { mapState, mapActions } from 'pinia'
-import { getAssociativeSelections, removeSelectionFromActiveSelections } from './interactionsHelpers/InteractionHelper'
 import { getSelectorWidgetData } from '../DataProxyHelper'
+import { getAssociativeSelections, removeSelectionFromActiveSelections, updateStoreSelections } from './interactionsHelpers/InteractionHelper'
 import store from '../Dashboard.store'
 import WidgetRenderer from './WidgetRenderer.vue'
 import WidgetButtonBar from './WidgetButtonBar.vue'
@@ -52,37 +53,36 @@ export default defineComponent({
         this.loadActiveSelections()
         this.widgetData = await getSelectorWidgetData(this.widget, this.datasets, this.$http)
     },
+    unmounted() {
+        this.removeEventListeners()
+    },
     computed: {
         ...mapState(store, ['dashboards']),
         selectionIsLocked(): boolean {
             return this.checkIfSelectionIsLocked()
+        },
+        playSelectionButtonVisible(): boolean {
+            if (!this.widget || !this.widget.settings.configuration.selectorType) return false
+            console.log('TEEEEEEST: ', this.widget.settings.configuration.selectorType.modality)
+            return this.widget.type === 'selector' && ['multiValue', 'multiDropdown', 'dateRange'].includes(this.widget.settings.configuration.selectorType.modality)
         }
     },
     methods: {
-        // TODO
-        ...mapActions(store, ['getDashboard', 'getSelections']),
+        ...mapActions(store, ['getDashboard', 'getSelections', 'setSelections']),
+        setEventListeners() {
+            emitter.on('selectionsChanged', this.loadActiveSelections)
+        },
+        removeEventListeners() {
+            emitter.off('selectionsChanged', this.loadActiveSelections)
+        },
         loadActiveSelections() {
             this.activeSelections = this.getSelections(this.dashboardId)
         },
+        // TODO
         async test() {
             const dashboardModel = this.getDashboard(this.dashboardId)
             const response = await getAssociativeSelections(dashboardModel, this.datasets, this.$http, this.dashboards)
             console.log('>>>>> RESPONSE: ', response)
-        },
-        setEventListeners() {
-            emitter.on('interaction', async (event) => {
-                /**
-                 * ! this is just an example of a possible interaction.
-                 * TODO: after getting the informations related to what the needed data will be, the dataProxyHelper should take care of getting the updated data.
-                 */
-
-                this.loading = true
-                this.loading = false
-            })
-        },
-        async initializeWidget() {
-            this.initialized = true
-            this.loading = false
         },
         manageInteraction(e, item) {
             console.log('interaction', e, item)
@@ -104,12 +104,9 @@ export default defineComponent({
         unlockSelection() {
             const payload = { datasetId: this.widget.dataset as number, columnName: this.widget.columns[0].columnName }
             removeSelectionFromActiveSelections(payload, this.activeSelections, this.dashboardId, this.setSelections)
-        }
-    },
-    updated() {
-        if (!this.initialized && this.activeSheet) {
-            this.$nextTick()
-            this.initializeWidget()
+        },
+        launchSelection() {
+            this.setSelections(this.dashboardId, this.activeSelections)
         }
     }
 })
