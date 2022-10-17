@@ -152,6 +152,13 @@ export default defineComponent({
             this.formatDriver()
             this.formatUseMode()
 
+            if (this.modesToSave.length === 0) {
+                return this.$store.commit('setError', {
+                    title: this.$t('common.toast.errorTitle'),
+                    msg: this.$t('managers.driversManagement.noModesSelected')
+                })
+            }
+
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/'
             if (this.driver.id) {
                 this.operation = 'update'
@@ -209,16 +216,24 @@ export default defineComponent({
         },
         sendRequest(url: string) {
             if (this.operation === 'insert') {
-                return this.$http.post(url, this.driver, { headers: { 'X-Disable-Errors': 'true' } })
+                return this.$http.post(url, this.driver, {
+                    headers: { 'X-Disable-Errors': 'true' }
+                })
             } else {
-                return this.$http.put(url, this.driver, { headers: { 'X-Disable-Errors': 'true' } })
+                return this.$http.put(url, this.driver, {
+                    headers: { 'X-Disable-Errors': 'true' }
+                })
             }
         },
         sendUseModeRequest(url: string, useMode: any) {
             if (this.useModeOperation === 'insert') {
-                return this.$http.post(url, useMode, { headers: { 'X-Disable-Errors': 'true' } })
+                return this.$http.post(url, useMode, {
+                    headers: { 'X-Disable-Errors': 'true' }
+                })
             } else {
-                return this.$http.put(url, useMode, { headers: { 'X-Disable-Errors': 'true' } })
+                return this.$http.put(url, useMode, {
+                    headers: { 'X-Disable-Errors': 'true' }
+                })
             }
         },
         setDirty(): void {

@@ -437,9 +437,6 @@
             "deleteTitle": "Delete dossier activity",
             "downloadMissingError": "Download ERROR - Document is missing",
             "downloadTemplate": "Download document template",
-            "uploadTemplate": "Upload document template",
-            "templateDownloadError": "Error downloading template",
-            "templateUploadError": "Error uploading template",
             "headers": {
                 "activity": "Activity Name",
                 "partial": "Partial",
@@ -451,7 +448,10 @@
             "launchedActivities": "Launched activities for this document",
             "progressNotFinished": "Please wait until document will be generated.",
             "saveSuccess": "Activity successfully saved!",
-            "title": "Dossier"
+            "templateDownloadError": "Error downloading template",
+            "templateUploadError": "Error uploading template",
+            "title": "Dossier",
+            "uploadTemplate": "Upload document template"
         },
         "main": {
             "addToWorkspace": "Add to my workspace",
@@ -1334,6 +1334,7 @@
             "deleteError": "Error",
             "functional": "Functional",
             "hint": "Driver models a concept or a piece of data frequently used as a distinguishing criterion on the global data context.Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "noModesSelected": "No modes selected",
             "options": "Options",
             "partialSuccessMessage": "Not all data has been updated successfully. Check again for unsaved informations.",
             "temporal": "Temporal",
