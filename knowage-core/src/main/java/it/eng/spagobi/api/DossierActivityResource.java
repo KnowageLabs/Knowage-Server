@@ -300,7 +300,7 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 			case "ppt":
 				file = activity.getBinContent();
 				extension = DossierDocumentType.PPT.getType();
-			case "pptx":
+			case "pptV2":
 				file = activity.getBinContent();
 				extension = DossierDocumentType.PPTX.getType();
 			default:

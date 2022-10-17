@@ -337,15 +337,20 @@ export default defineComponent({
             )
         },
         templateOptionEnabled(optionName: string) {
-            if (this.jsonTemplate && this.jsonTemplate?.PPT_TEMPLATE == null) {
-                return this.jsonTemplate?.DOC_TEMPLATE?.[optionName]
-            } else {
-                return this.jsonTemplate?.PPT_TEMPLATE?.[optionName]
+            var isEnabled = false
+
+            if (this.jsonTemplate && this.jsonTemplate?.PPT_TEMPLATE) {
+                isEnabled = this.jsonTemplate?.PPT_TEMPLATE?.[optionName]
+            } else if (this.jsonTemplate && this.jsonTemplate?.PPT_TEMPLATE_V2) {
+                isEnabled = this.jsonTemplate?.PPT_TEMPLATE_V2?.[optionName]
+            } else if (this.jsonTemplate && this.jsonTemplate?.DOC_TEMPLATE) {
+                isEnabled = this.jsonTemplate?.DOC_TEMPLATE?.[optionName]
             }
+            return isEnabled
         },
         async downloadTemplate() {
             if (this.jsonTemplate.PPT_TEMPLATE == null) {
-                var fileName = this.jsonTemplate?.DOC_TEMPLATE?.name
+                var fileName = this.jsonTemplate?.DOC_TEMPLATE?.name ? this.jsonTemplate?.DOC_TEMPLATE?.name : this.jsonTemplate?.PPT_TEMPLATE_V2?.name
                 await this.$http
                     .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'dossier/checkPathFile?templateName=' + fileName)
                     .then((response: AxiosResponse<any>) => {
