@@ -18,6 +18,7 @@ import { ISelection, IWidget } from '../../Dashboard'
 import { getWidgetStyleByTypeWithoutValidation } from '../TableWidget/TableWidgetHelper'
 import { mapActions } from 'pinia'
 import { emitter } from '../../DashboardHelpers'
+import { removeSelectionFromActiveSelections } from '../dataProxyHelper/DataProxyHelper'
 import ActiveSelectionsChips from './ActiveSelectionsWidgetChips.vue'
 import ActiveSelectionsList from './ActiveSelectionsWidgetList.vue'
 import Message from 'primevue/message'
@@ -74,13 +75,8 @@ export default defineComponent({
             return getWidgetStyleByTypeWithoutValidation(this.propWidget, 'chips') + `height: ${height != 0 ? height : 25}px`
         },
         onDeleteSelection(selection: ISelection) {
-            console.log('>>> SELECTION FOR DELETE: ', selection)
-            console.log('>>> ACTIVE SELECTIONS: ', this.activeSelections)
-            const index = this.activeSelections.findIndex((activeSelection: ISelection) => activeSelection.datasetId === selection.datasetId && activeSelection.columnName === selection.columnName)
-            if (index !== -1) {
-                this.activeSelections.splice(index, 1)
-                this.setSelections(this.dashboardId, this.activeSelections)
-            }
+            const payload = { datasetId: selection.datasetId, columnName: selection.columnName }
+            removeSelectionFromActiveSelections(payload, this.activeSelections, this.dashboardId, this.setSelections)
         }
     }
 })

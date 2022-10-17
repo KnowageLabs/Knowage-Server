@@ -3,8 +3,13 @@
         <div v-if="initialized" class="drag-handle"></div>
         <ProgressBar mode="indeterminate" v-if="loading" />
         <Skeleton shape="rectangle" v-if="!initialized" height="100%" border-radius="0" />
-        <button @click="test">CLICK ME FOR TEST</button>
-        <WidgetRenderer :widget="widget" :data="widgetData" :datasets="datasets" v-if="initialized" :dashboardId="dashboardId" @interaction="manageInteraction"></WidgetRenderer>
+
+        {{ 'TODO - REMOVE THIS' }}
+        {{ selectionIsLocked }}
+        <br />
+        <button @click="unlockSelection">UNLOCK SELECTION</button>
+        <!-- <button @click="test">CLICK ME FOR TEST</button> -->
+        <WidgetRenderer :widget="widget" :data="widgetData" :datasets="datasets" v-if="initialized" :dashboardId="dashboardId" :selectionIsLocked="selectionIsLocked" @interaction="manageInteraction"></WidgetRenderer>
         <WidgetButtonBar @edit-widget="toggleEditMode"></WidgetButtonBar>
     </grid-item>
 </template>
@@ -15,10 +20,10 @@
  */
 import { defineComponent, PropType } from 'vue'
 import { getData } from '../DataProxyHelper'
-import { IDataset, IWidget } from '../Dashboard'
+import { IDataset, ISelection, IWidget } from '../Dashboard'
 import { emitter } from '../DashboardHelpers'
 import { mapState, mapActions } from 'pinia'
-import { getAssociativeSelections } from './dataProxyHelper/DataProxyHelper'
+import { getAssociativeSelections, removeSelectionFromActiveSelections } from './dataProxyHelper/DataProxyHelper'
 import store from '../Dashboard.store'
 import WidgetRenderer from './WidgetRenderer.vue'
 import WidgetButtonBar from './WidgetButtonBar.vue'
@@ -36,18 +41,26 @@ export default defineComponent({
             initialized: true,
             widgetData: [] as any,
             widgetEditorVisible: false,
-            selectedWidgetId: '' as string
+            selectedWidgetId: '' as string,
+            activeSelections: [] as ISelection[]
         }
     },
     mounted() {
         this.setEventListeners()
+        this.loadActiveSelections()
     },
     computed: {
-        ...mapState(store, ['dashboards'])
+        ...mapState(store, ['dashboards']),
+        selectionIsLocked(): boolean {
+            return this.checkIfSelectionIsLocked()
+        }
     },
     methods: {
         // TODO
-        ...mapActions(store, ['getDashboard']),
+        ...mapActions(store, ['getDashboard', 'getSelections']),
+        loadActiveSelections() {
+            this.activeSelections = this.getSelections(this.dashboardId)
+        },
         async test() {
             const dashboardModel = this.getDashboard(this.dashboardId)
             const response = await getAssociativeSelections(dashboardModel, this.datasets, this.$http, this.dashboards)
@@ -92,6 +105,15 @@ export default defineComponent({
         closeWidgetEditor() {
             this.widgetEditorVisible = false
             this.selectedWidgetId = ''
+        },
+        checkIfSelectionIsLocked() {
+            if (this.widget.type !== 'selector') return false
+            const index = this.activeSelections.findIndex((selection: ISelection) => selection.datasetId === this.widget.dataset && selection.columnName === this.widget.columns[0].columnName)
+            return index !== -1
+        },
+        unlockSelection() {
+            const payload = { datasetId: this.widget.dataset as number, columnName: this.widget.columns[0].columnName }
+            removeSelectionFromActiveSelections(payload, this.activeSelections, this.dashboardId, this.setSelections)
         }
     },
     updated() {

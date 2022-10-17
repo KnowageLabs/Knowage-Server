@@ -1,5 +1,6 @@
 <template>
     <div class="selector-widget">
+        {{ selectionIsLocked }}
         <div v-if="widgetType === 'singleValue'" :class="getLayoutStyle()">
             <div class="multi-select p-p-1" :style="getLabelStyle() + getGridWidth()" v-for="(value, index) of dataToShow?.rows" :key="index">
                 <RadioButton :inputId="`radio-${index}`" class="p-mr-2" :name="value.column_1" :value="value.column_1" v-model="selectedValue" @change="singleValueSelectionChanged" />
@@ -89,7 +90,8 @@ export default defineComponent({
         propWidget: { type: Object as PropType<IWidget>, required: true },
         dataToShow: { type: Object as any, required: true },
         dashboardId: { type: String, required: true },
-        datasets: { type: Array as PropType<IDataset[]>, required: true }
+        datasets: { type: Array as PropType<IDataset[]>, required: true },
+        selectionIsLocked: { type: Boolean, required: true }
     },
     emits: ['close'],
     computed: {
