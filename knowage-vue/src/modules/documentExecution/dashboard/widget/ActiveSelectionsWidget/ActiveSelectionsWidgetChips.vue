@@ -3,7 +3,7 @@
         <span v-if="showDataset">{{ activeSelection.datasetLabel }}</span>
         <span class="p-mx-2" v-if="showColumn">{{ activeSelection.columnName }}</span>
         <span>{{ activeSelection.value?.toString() }}</span>
-        <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" v-tooltip.left="$t('common.delete')" @click.stop="deleteSelection()" />
+        <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" v-tooltip.left="$t('common.delete')" :disabled="editorMode" @click.stop="deleteSelection()" />
     </div>
 </template>
 
@@ -17,7 +17,8 @@ export default defineComponent({
     props: {
         showDataset: Boolean,
         showColumn: Boolean,
-        activeSelection: { type: Object as PropType<ISelection>, required: true }
+        activeSelection: { type: Object as PropType<ISelection>, required: true },
+        editorMode: { type: Boolean }
     },
     emits: ['deleteSelection'],
     computed: {},
