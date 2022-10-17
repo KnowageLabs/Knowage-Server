@@ -9,7 +9,7 @@
             <div class="widget-editor-preview" :style="getWidgetPadding()">
                 <TableWidget v-if="propWidget.type == 'table'" :propWidget="propWidget" :datasets="datasets" :editorMode="true" />
                 <SelectorWidget v-if="propWidget.type == 'selector'" :propWidget="propWidget" :dataToShow="mock.selectorMockedResponse" :editorMode="true" />
-                <ActiveSelectionsWidget v-if="propWidget.type == 'selection'" :propWidget="propWidget" :dataToShow="mock.selectionMockedResponse" :editorMode="true" />
+                <ActiveSelectionsWidget v-if="propWidget.type == 'selection'" :propWidget="propWidget" :dataToShow="mock.selectionMockedResponse" :editorMode="true" :dashboardId="dashboardId" />
                 <!-- <ActiveSelectionsWidget :propWidget="propWidget" :dataToShow="[]" :editorMode="true" /> -->
             </div>
         </div>
@@ -34,7 +34,8 @@ export default defineComponent({
             required: true,
             type: Object as PropType<IWidget>
         },
-        datasets: { type: Array as PropType<IDataset[]> }
+        datasets: { type: Array as PropType<IDataset[]> },
+        dashboardId: { type: String, required: true }
     },
     data() {
         return {

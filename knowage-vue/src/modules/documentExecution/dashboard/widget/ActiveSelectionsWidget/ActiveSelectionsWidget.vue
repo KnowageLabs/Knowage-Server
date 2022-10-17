@@ -1,14 +1,16 @@
 <template>
     <div class="active-selections-widget p-d-flex p-flex-column kn-flex kn-overflow-y">
-        <div v-if="widgetType === 'list' && dataToShow.length > 0" class="p-d-flex p-flex-row p-flex-wrap kn-flex">
+        <div v-if="widgetType === 'list' && activeSelections?.length > 0" class="p-d-flex p-flex-row p-flex-wrap kn-flex">
+            list
             <ActiveSelectionsList :activeSelections="activeSelections" :propWidget="propWidget" :showDataset="showDataset" :showColumn="showColumn" @deleteSelection="onDeleteSelection" />
         </div>
 
-        <div v-if="widgetType === 'chips' && dataToShow.length > 0" class="p-d-flex p-flex-row p-flex-wrap">
+        <div v-if="widgetType === 'chips' && activeSelections?.length > 0" class="p-d-flex p-flex-row p-flex-wrap">
+            chip
             <ActiveSelectionsChips v-for="(activeSelection, index) of activeSelections" :key="index" :activeSelection="activeSelection" :showDataset="showDataset" :showColumn="showColumn" :style="getChipsStyle()" @deleteSelection="onDeleteSelection" />
         </div>
 
-        <Message v-if="dataToShow.length == 0" class="p-mx-2" severity="info" :closable="false">{{ noSelectionsMessage }}</Message>
+        <Message v-if="activeSelections?.length == 0" class="p-mx-2" severity="info" :closable="false">{{ noSelectionsMessage }}</Message>
     </div>
 </template>
 
