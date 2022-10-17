@@ -5,7 +5,8 @@
         </div>
         <div class="widget-editor-preview" :style="getWidgetPadding()">
             <TableWidget v-if="widget.type == 'table'" :propWidget="widget" :datasets="datasets" :editorMode="true" />
-            <SelectorWidget v-if="widget.type == 'selector'" :propWidget="widget" :dataToShow="mock.selectorMockedResponse" :editorMode="true" />
+            <!-- <SelectorWidget v-if="widget.type == 'selector'" :propWidget="widget" :dataToShow="mock.selectorMockedResponse" :editorMode="true" /> -->
+            <SelectorWidget v-if="widget.type == 'selector'" :propWidget="widget" :dataToShow="widgetData" :editorMode="true" />
             <ActiveSelectionsWidget v-if="widget.type == 'selection'" :propWidget="widget" :dataToShow="mock.selectionMockedResponse" :editorMode="true" :dashboardId="dashboardId" />
         </div>
     </div>
@@ -27,7 +28,7 @@ export default defineComponent({
     name: 'widget-renderer',
     emits: ['interaction'],
     components: { TableWidget, SelectorWidget, ActiveSelectionsWidget },
-    props: { widget: { required: true, type: Object as any }, data: { required: true, type: Object }, datasets: { type: Array }, dashboardId: { type: String, required: true } },
+    props: { widget: { required: true, type: Object as any }, widgetData: { required: true, type: Object }, datasets: { type: Array }, dashboardId: { type: String, required: true } },
     data() {
         return {
             mock

@@ -58,7 +58,8 @@ export default defineComponent({
         },
         getWidgetContainerStyle() {
             const styleString = getWidgetStyleByType(this.propWidget, 'borders') + getWidgetStyleByType(this.propWidget, 'shadows') + getWidgetStyleByType(this.propWidget, 'background')
-            return styleString
+            if (this.propWidget.type == 'table') return styleString + 'height: 30%;'
+            else return styleString
         },
         getWidgetPadding() {
             const styleString = getWidgetStyleByType(this.propWidget, 'padding')

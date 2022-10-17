@@ -3,8 +3,8 @@
         <div v-if="initialized" class="drag-handle"></div>
         <ProgressBar mode="indeterminate" v-if="loading" />
         <Skeleton shape="rectangle" v-if="!initialized" height="100%" border-radius="0" />
-        <button @click="test">CLICK ME FOR TEST</button>
-        <WidgetRenderer :widget="widget" :data="widgetData" :datasets="datasets" v-if="initialized" :dashboardId="dashboardId" @interaction="manageInteraction"></WidgetRenderer>
+        <!-- <button @click="test">CLICK ME FOR TEST</button> -->
+        <WidgetRenderer :widget="widget" :widgetData="widgetData" :datasets="datasets" v-if="initialized" :dashboardId="dashboardId" @interaction="manageInteraction"></WidgetRenderer>
         <WidgetButtonBar @edit-widget="toggleEditMode"></WidgetButtonBar>
     </grid-item>
 </template>
@@ -19,6 +19,7 @@ import { IDataset, IWidget } from '../Dashboard'
 import { emitter } from '../DashboardHelpers'
 import { mapState, mapActions } from 'pinia'
 import { getAssociativeSelections } from './dataProxyHelper/DataProxyHelper'
+import { AxiosResponse } from 'axios'
 import store from '../Dashboard.store'
 import WidgetRenderer from './WidgetRenderer.vue'
 import WidgetButtonBar from './WidgetButtonBar.vue'
@@ -34,13 +35,14 @@ export default defineComponent({
         return {
             loading: false,
             initialized: true,
-            widgetData: [] as any,
-            widgetEditorVisible: false,
-            selectedWidgetId: '' as string
+            widgetData: {} as any,
+            selectedWidgetId: '' as string,
+            selectedDataset: {} as any
         }
     },
     mounted() {
         this.setEventListeners()
+        this.getWidgetData()
     },
     computed: {
         ...mapState(store, ['dashboards'])
@@ -61,15 +63,10 @@ export default defineComponent({
                  */
 
                 this.loading = true
-                this.widgetData = await getData([{ event: event }])
                 this.loading = false
-            })
-            emitter.on('openNewWidgetEditor', () => {
-                this.openWidgetEditorDialog()
             })
         },
         async initializeWidget() {
-            // this.widgetData = await getData([{ test: 'test' }])
             this.initialized = true
             this.loading = false
         },
@@ -84,14 +81,54 @@ export default defineComponent({
         },
         toggleEditMode() {
             emitter.emit('openWidgetEditor', this.widget)
-            // this.widgetEditorVisible = !this.widgetEditorVisible
         },
-        openWidgetEditorDialog() {
-            this.widgetEditorVisible = true
+        formatModelForGet(propWidget: IWidget, datasetLabel) {
+            //TODO: strong type this, and create a default object
+            var dataToSend = {
+                aggregations: {
+                    measures: [],
+                    categories: [],
+                    dataset: ''
+                },
+                parameters: {},
+                selections: {},
+                indexes: []
+            } as any
+
+            dataToSend.aggregations.dataset = datasetLabel
+
+            propWidget.columns.forEach((column) => {
+                if (column.fieldType === 'MEASURE') {
+                    let measureToPush = { id: column.alias, alias: column.alias, columnName: column.columnName, funct: column.aggregation, orderColumn: column.alias } as any
+                    column.formula ? (measureToPush.formula = column.formula) : ''
+                    dataToSend.aggregations.measures.push(measureToPush)
+                } else {
+                    let attributeToPush = { id: column.alias, alias: column.alias, columnName: column.columnName, orderType: '', funct: 'NONE' } as any
+                    column.id === propWidget.settings.sortingColumn ? (attributeToPush.orderType = propWidget.settings.sortingOrder) : ''
+                    dataToSend.aggregations.categories.push(attributeToPush)
+                }
+            })
+
+            return dataToSend
         },
-        closeWidgetEditor() {
-            this.widgetEditorVisible = false
-            this.selectedWidgetId = ''
+        async getWidgetData() {
+            let datasetIndex = this.datasets.findIndex((dataset: any) => this.widget.dataset === dataset.id.dsId)
+            this.selectedDataset = this.datasets[datasetIndex]
+
+            if (this.selectedDataset) {
+                // let url = createGetUrl(this.widget, this.selectedDataset.label)
+                var url = `2.0/datasets/${this.selectedDataset.label}/data?offset=-1&size=-1&nearRealtime=true`
+
+                let postData = this.formatModelForGet(this.widget, this.selectedDataset.label)
+
+                await this.$http
+                    .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData)
+                    .then((response: AxiosResponse<any>) => {
+                        console.log('WIDGET DATA FROM CONTROLLER ---------------------', response.data)
+                        this.widgetData = response.data
+                    })
+                    .catch(() => {})
+            }
         }
     },
     updated() {
