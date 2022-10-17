@@ -81,7 +81,7 @@ import MultiSelect from 'primevue/multiselect'
 import Calendar from 'primevue/calendar'
 import { getWidgetStyleByType } from '../TableWidget/TableWidgetHelper'
 import store from '../../Dashboard.store'
-import { updateStoreSelections } from '../dataProxyHelper/DataProxyHelper'
+import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
 
 export default defineComponent({
     name: 'datasets-catalog-datatable',
