@@ -2,37 +2,62 @@
     <div class="selector-widget">
         <div v-if="widgetType === 'singleValue'" :class="getLayoutStyle()">
             <div class="multi-select p-p-1" :style="getLabelStyle() + getGridWidth()" v-for="(value, index) of dataToShow?.rows" :key="index">
-                <RadioButton :inputId="`radio-${index}`" class="p-mr-2" :name="value.column_1" :value="value.column_1" v-model="selectedValue" />
+                <RadioButton :inputId="`radio-${index}`" class="p-mr-2" :name="value.column_1" :value="value.column_1" v-model="selectedValue" @change="singleValueSelectionChanged" />
                 <label :for="`radio-${index}`" class="multi-select-label">{{ value.column_1 }}</label>
             </div>
         </div>
 
         <div v-if="widgetType === 'multiValue'" :class="getLayoutStyle()">
             <div class="multi-select p-p-1" :style="getLabelStyle() + getGridWidth()" v-for="(value, index) of dataToShow?.rows" :key="index">
-                <Checkbox :inputId="`multi-${index}`" class="p-mr-2" :name="value.column_1" :value="value.column_1" v-model="selectedValues" />
+                <Checkbox :inputId="`multi-${index}`" class="p-mr-2" :name="value.column_1" :value="value.column_1" v-model="selectedValues" @change="multiValueSelectionChanged" />
                 <label :for="`multi-${index}`" class="multi-select-label">{{ value.column_1 }}</label>
             </div>
         </div>
 
         <span v-if="widgetType === 'dropdown'" class="p-float-label p-m-2">
-            <Dropdown class="kn-width-full" panelClass="selectorCustomDropdownPanel" v-model="selectedValue" :options="dataToShow?.rows" optionLabel="column_1" optionValue="column_1" :style="getLabelStyle()" :inputStyle="getLabelStyle()" :panelStyle="getLabelStyle()" />
+            <Dropdown
+                class="kn-width-full"
+                panelClass="selectorCustomDropdownPanel"
+                v-model="selectedValue"
+                :options="dataToShow?.rows"
+                optionLabel="column_1"
+                optionValue="column_1"
+                :style="getLabelStyle()"
+                :inputStyle="getLabelStyle()"
+                :panelStyle="getLabelStyle()"
+                @change="singleValueSelectionChanged"
+            />
         </span>
 
         <span v-if="widgetType === 'multiDropdown'" class="p-float-label p-m-2">
-            <MultiSelect class="kn-width-full" panelClass="selectorCustomDropdownPanel" v-model="selectedValues" :options="dataToShow?.rows" optionLabel="column_1" optionValue="column_1" :style="getLabelStyle()" :inputStyle="getLabelStyle()" :panelStyle="getLabelStyle()" :filter="true" />
+            <MultiSelect
+                class="kn-width-full"
+                panelClass="selectorCustomDropdownPanel"
+                v-model="selectedValues"
+                :options="dataToShow?.rows"
+                optionLabel="column_1"
+                optionValue="column_1"
+                :style="getLabelStyle()"
+                :inputStyle="getLabelStyle()"
+                :panelStyle="getLabelStyle()"
+                :filter="true"
+                @change="multiValueSelectionChanged"
+            />
         </span>
 
         <span v-if="widgetType === 'date'" class="p-float-label p-m-2">
-            <Calendar id="startDate" class="kn-material-input kn-width-full" v-model="selectedDate" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :showIcon="true" />
-            <label for="startDate" class="kn-material-input-label"> {{ selectedDate }} </label>
+            <Calendar id="startDate" class="kn-material-input kn-width-full" v-model="selectedDate" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :showIcon="true" @change="dateSelectionChanged" />
+            <label for="startDate" class="kn-material-input-label">
+                {{ selectedDate }}
+            </label>
         </span>
 
         <div v-if="widgetType === 'dateRange'" :class="getLayoutStyle()">
             <span class="p-float-label p-m-2" :style="getGridWidth()">
-                <Calendar id="startDate" class="kn-width-full" v-model="startDate" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :style="getLabelStyle()" :inputStyle="getLabelStyle()" :panelStyle="getLabelStyle()" :showIcon="true" />
+                <Calendar id="startDate" class="kn-width-full" v-model="startDate" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :style="getLabelStyle()" :inputStyle="getLabelStyle()" :panelStyle="getLabelStyle()" :showIcon="true" @change="dateRangeSelectionChanged" />
             </span>
             <span class="p-float-label p-m-2" :style="getGridWidth()">
-                <Calendar id="startDate" class="kn-width-full" v-model="endDate" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :style="getLabelStyle()" :inputStyle="getLabelStyle()" :panelStyle="getLabelStyle()" :showIcon="true" />
+                <Calendar id="startDate" class="kn-width-full" v-model="endDate" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :style="getLabelStyle()" :inputStyle="getLabelStyle()" :panelStyle="getLabelStyle()" :showIcon="true" @change="dateRangeSelectionChanged" />
             </span>
         </div>
 
@@ -46,20 +71,25 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget } from '../../Dashboard'
+import { IDataset, ISelection, IWidget } from '../../Dashboard'
+import { mapActions } from 'pinia'
 import Checkbox from 'primevue/checkbox'
 import RadioButton from 'primevue/radiobutton'
 import Dropdown from 'primevue/dropdown'
 import MultiSelect from 'primevue/multiselect'
 import Calendar from 'primevue/calendar'
 import { getWidgetStyleByType } from '../TableWidget/TableWidgetHelper'
+import store from '../../Dashboard.store'
+import { updateStoreSelections } from '../dataProxyHelper/DataProxyHelper'
 
 export default defineComponent({
     name: 'datasets-catalog-datatable',
     components: { Checkbox, RadioButton, Dropdown, MultiSelect, Calendar },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
-        dataToShow: { type: Object as any, required: true }
+        dataToShow: { type: Object as any, required: true },
+        dashboardId: { type: String, required: true },
+        datasets: { type: Array as PropType<IDataset[]>, required: true }
     },
     emits: ['close'],
     computed: {
@@ -74,15 +104,20 @@ export default defineComponent({
             selectedDate: null as any,
             selectedDateRange: null as any,
             startDate: null as any,
-            endDate: null as any
+            endDate: null as any,
+            activeSelections: [] as ISelection[]
         }
     },
     setup() {},
     created() {
-        console.log('TEEEEEST: ', this.dataToShow)
+        this.loadActiveSelections()
     },
     updated() {},
     methods: {
+        ...mapActions(store, ['getSelections', 'setSelections']),
+        loadActiveSelections() {
+            this.activeSelections = this.getSelections(this.dashboardId)
+        },
         getLayoutStyle() {
             let selectorType = this.propWidget.settings.configuration.selectorType
             if (selectorType.alignment) {
@@ -116,6 +151,25 @@ export default defineComponent({
         },
         logRange(event) {
             console.log('range', event)
+        },
+        singleValueSelectionChanged() {
+            updateStoreSelections(this.createNewSelection([this.selectedValue]), this.activeSelections, this.dashboardId, this.setSelections)
+        },
+        multiValueSelectionChanged() {
+            updateStoreSelections(this.createNewSelection(this.selectedValues), this.activeSelections, this.dashboardId, this.setSelections)
+        },
+        dateSelectionChanged() {
+            updateStoreSelections(this.createNewSelection([this.selectedDate]), this.activeSelections, this.dashboardId, this.setSelections)
+        },
+        dateRangeSelectionChanged() {
+            updateStoreSelections(this.createNewSelection([this.startDate, this.endDate]), this.activeSelections, this.dashboardId, this.setSelections)
+        },
+        createNewSelection(value: (string | number)[]) {
+            return { datasetId: this.propWidget.dataset as number, datasetLabel: this.getDatasetLabel(this.propWidget.dataset as number), columnName: this.propWidget.columns[0]?.columnName ?? '', value: value, aggregated: false, timestamp: new Date().getTime() }
+        },
+        getDatasetLabel(datasetId: number) {
+            const index = this.datasets.findIndex((dataset: IDataset) => dataset.id.dsId == datasetId)
+            return index !== -1 ? this.datasets[index].label : ''
         }
     }
 })

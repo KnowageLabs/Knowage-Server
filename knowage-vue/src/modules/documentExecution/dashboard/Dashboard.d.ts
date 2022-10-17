@@ -605,5 +605,6 @@ export interface ISelection {
     datasetLabel: string,
     columnName: string,
     value: (string | number)[],
-    aggregated: boolean
+    aggregated: boolean,
+    timestamp: number
 }
