@@ -1,6 +1,5 @@
 <template>
     <div class="selector-widget">
-        data: {{ dataToShow }} selection: {{ selectionIsLocked }}
         <div v-if="widgetType === 'singleValue'" :class="getLayoutStyle()">
             <div class="multi-select p-p-1" :style="getLabelStyle() + getGridWidth()" v-for="(value, index) of dataToShow?.rows" :key="index">
                 <RadioButton :inputId="`radio-${index}`" class="p-mr-2" :name="value.column_1" :value="value.column_1" v-model="selectedValue" @change="singleValueSelectionChanged" />
@@ -47,25 +46,25 @@
         </span>
 
         <span v-if="widgetType === 'date'" class="p-float-label p-m-2">
-            <Calendar id="startDate" class="kn-material-input kn-width-full" v-model="selectedDate" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :showIcon="true" @change="dateSelectionChanged" />
-            <label for="startDate" class="kn-material-input-label">
+            <Calendar class="kn-material-input kn-width-full" v-model="selectedDate" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :showIcon="true" @date-select="dateSelectionChanged" />
+            <label class="kn-material-input-label">
                 {{ selectedDate }}
             </label>
         </span>
 
         <div v-if="widgetType === 'dateRange'" :class="getLayoutStyle()">
             <span class="p-float-label p-m-2" :style="getGridWidth()">
-                <Calendar id="startDate" class="kn-width-full" v-model="startDate" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :style="getLabelStyle()" :inputStyle="getLabelStyle()" :panelStyle="getLabelStyle()" :showIcon="true" @change="dateRangeSelectionChanged" />
+                <Calendar class="kn-width-full" v-model="startDate" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :style="getLabelStyle()" :inputStyle="getLabelStyle()" :panelStyle="getLabelStyle()" :showIcon="true" @dateSelected="dateRangeSelectionChanged" />
             </span>
             <span class="p-float-label p-m-2" :style="getGridWidth()">
-                <Calendar id="startDate" class="kn-width-full" v-model="endDate" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :style="getLabelStyle()" :inputStyle="getLabelStyle()" :panelStyle="getLabelStyle()" :showIcon="true" @change="dateRangeSelectionChanged" />
+                <Calendar class="kn-width-full" v-model="endDate" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :style="getLabelStyle()" :inputStyle="getLabelStyle()" :panelStyle="getLabelStyle()" :showIcon="true" @dateSelected="dateRangeSelectionChanged" />
             </span>
         </div>
 
         <!-- TODO: Ask if they want date range selection using PV component or no
         <span v-if="widgetType === 'dateRange'" class="p-float-label p-m-2">
-            <Calendar id="startDate" class="kn-material-input kn-width-full" selectionMode="range" v-model="selectedDateRange" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :showIcon="true" @change="logRange" />
-            <label for="startDate" class="kn-material-input-label">{{ selectedDateRange }}</label>
+            <Calendar  class="kn-material-input kn-width-full" selectionMode="range" v-model="selectedDateRange" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :showIcon="true" @change="logRange" />
+            <label class="kn-material-input-label">{{ selectedDateRange }}</label>
         </span> -->
     </div>
 </template>
@@ -82,6 +81,7 @@ import Calendar from 'primevue/calendar'
 import { getWidgetStyleByType } from '../TableWidget/TableWidgetHelper'
 import store from '../../Dashboard.store'
 import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'datasets-catalog-datatable',
@@ -89,6 +89,7 @@ export default defineComponent({
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         dataToShow: { type: Object as any, required: true },
+        propActiveSelections: { type: Array as PropType<ISelection[]>, required: true },
         dashboardId: { type: String, required: true },
         datasets: { type: Array as PropType<IDataset[]>, required: true },
         selectionIsLocked: { type: Boolean, required: true },
@@ -111,15 +112,20 @@ export default defineComponent({
             activeSelections: [] as ISelection[]
         }
     },
+    watch: {
+        propActiveSelections() {
+            this.loadActiveSelections()
+        }
+    },
     setup() {},
     created() {
         this.loadActiveSelections()
     },
     updated() {},
     methods: {
-        ...mapActions(store, ['getSelections', 'setSelections']),
+        ...mapActions(store, ['setSelections']),
         loadActiveSelections() {
-            this.activeSelections = this.getSelections(this.dashboardId)
+            this.activeSelections = deepcopy(this.propActiveSelections)
         },
         getLayoutStyle() {
             let selectorType = this.propWidget.settings.configuration.selectorType
@@ -161,7 +167,8 @@ export default defineComponent({
         },
         multiValueSelectionChanged() {
             if (this.editorMode) return
-            updateStoreSelections(this.createNewSelection(this.selectedValues), this.activeSelections, this.dashboardId, this.setSelections)
+            this.activeSelections.push(this.createNewSelection(this.selectedValues))
+            //  updateStoreSelections(this.createNewSelection(this.selectedValues), this.activeSelections, this.dashboardId, this.setSelections)
         },
         dateSelectionChanged() {
             if (this.editorMode) return
@@ -169,7 +176,8 @@ export default defineComponent({
         },
         dateRangeSelectionChanged() {
             if (this.editorMode) return
-            updateStoreSelections(this.createNewSelection([this.startDate, this.endDate]), this.activeSelections, this.dashboardId, this.setSelections)
+            this.activeSelections.push(this.createNewSelection([this.startDate, this.endDate]))
+            // updateStoreSelections(this.createNewSelection([this.startDate, this.endDate]), this.activeSelections, this.dashboardId, this.setSelections)
         },
         createNewSelection(value: (string | number)[]) {
             return { datasetId: this.propWidget.dataset as number, datasetLabel: this.getDatasetLabel(this.propWidget.dataset as number), columnName: this.propWidget.columns[0]?.columnName ?? '', value: value, aggregated: false, timestamp: new Date().getTime() }
