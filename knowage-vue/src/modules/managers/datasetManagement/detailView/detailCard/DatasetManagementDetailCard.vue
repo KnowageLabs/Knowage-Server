@@ -192,6 +192,8 @@ export default defineComponent({
     watch: {
         selectedDataset() {
             this.dataset = this.selectedDataset
+            this.v$.dataset.label.$touch()
+            this.v$.dataset.name.$touch()
         }
     },
     validations() {
