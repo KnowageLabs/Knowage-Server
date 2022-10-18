@@ -1,6 +1,7 @@
 <template>
     <div v-if="options" class="selector-widget">
         {{ showMode }}
+        {{ selectedValue }}
         <div v-if="widgetType === 'singleValue'" :class="getLayoutStyle()">
             <div class="multi-select p-p-1" :style="getLabelStyle() + getGridWidth()" v-for="(value, index) of showMode === 'hideDisabled' ?  options.rows.filter((row: any) => !row.disabled) : options.rows" :key="index">
                 <RadioButton :inputId="`radio-${index}`" class="p-mr-2" :name="value.column_1" :value="value.column_1" v-model="selectedValue" :disabled="showMode === 'showDisabled' && value.disabled" @change="singleValueSelectionChanged" />
@@ -150,9 +151,11 @@ export default defineComponent({
         ...mapActions(store, ['setSelections']),
         setEventListeners() {
             emitter.on('defaultValuesChanged', this.onDefaultValuesChanged)
+            emitter.on('valuesManagementChanged', this.onDefaultValuesChanged)
         },
         removeEventListeners() {
             emitter.off('defaultValuesChanged', this.onDefaultValuesChanged)
+            emitter.off('valuesManagementChanged', this.onDefaultValuesChanged)
         },
         loadOptions() {
             this.loadInitialValues()
@@ -161,7 +164,7 @@ export default defineComponent({
             this.updateSelectedValue()
         },
         loadInitialValues() {
-            if (this.initialOptions.rows && this.initialOptions.rows >= this.dataToShow) return
+            if (this.initialOptions.fields && this.initialOptions.fields[0]?.header === this.dataToShow.fields[0]?.header) return
             this.initialOptions = deepcopy(this.dataToShow)
             console.log('>>>>>>>>>>>>>>> LOADED INIITAL OPTIONS: ', this.initialOptions)
         },
@@ -197,6 +200,7 @@ export default defineComponent({
         },
         updateSelectedValue() {
             const defaultMode = this.propWidget.settings.configuration.defaultValues.valueType
+            console.log('>>>>>>>>>>>>>>>>> updateSelectedValue: ', defaultMode)
             switch (this.widgetType) {
                 case 'singleValue':
                 case 'dropdown':
@@ -214,20 +218,27 @@ export default defineComponent({
             }
         },
         selectDefaultValue(defaultMode: string, multivalue: boolean) {
-            if (!this.options || !this.options.rows || defaultMode) return
+            console.log('>>>>>>>>>>>>>>>>>>> selectDefaultValue: ', defaultMode)
+            console.log('>>>>>>>>>>>>>>>>>>> selectDefaultValue: ', this.options.rows)
+            if (!this.options || !this.options.rows || !defaultMode) return
+            console.log('>>>>>>>>>>>>>>>>>>> GOT HERE: ')
             switch (defaultMode) {
                 case 'FIRST':
+                    const firstValue = this.findFirstAvailableValue()
+                    console.log('>>>>>>>>> FIRST VALUE: ', firstValue)
                     if (multivalue) {
-                        this.selectedValues = this.options.rows[0] ? [this.options.rows[0].column_1] : []
+                        this.selectedValues = firstValue !== null ? [firstValue.column_1] : []
                     } else {
-                        this.selectedValue = this.options.rows[0] ? this.options.rows[0].column_1 : null
+                        this.selectedValue = firstValue !== null ? firstValue.column_1 : null
                     }
                     break
                 case 'LAST':
+                    const lastValue = this.findLastAvailableValue()
+                    console.log('>>>>>>>>> LAST VALUE: ', lastValue)
                     if (multivalue) {
-                        this.selectedValues = this.options.rows[this.options.rows.length - 1] ? [this.options.rows[this.options.rows.length - 1].column_1] : []
+                        this.selectedValues = lastValue !== null ? [lastValue.column_1] : []
                     } else {
-                        this.selectedValue = this.options.rows[this.options.rows.length - 1] ? this.options.rows[this.options.rows.length - 1].column_1 : null
+                        this.selectedValue = lastValue !== null ? lastValue.column_1 : null
                     }
                     break
                 case 'STATIC':
@@ -236,6 +247,16 @@ export default defineComponent({
                 default:
                     this.selectedValue = null
             }
+        },
+        findFirstAvailableValue() {
+            if (this.showMode === 'enableAll') return this.options.rows[0]
+            const index = this.options.rows.findIndex((row: any) => !row.disabled)
+            return index !== -1 ? this.options.rows[index] : null
+        },
+        findLastAvailableValue() {
+            if (this.showMode === 'enableAll') return this.options.rows[this.options.rows.length - 1]
+            const index = this.options.rows.findLastIndex((row: any) => !row.disabled)
+            return index !== -1 ? this.options.rows[index] : null
         },
         setDefaultStaticValue(multivalue: boolean) {
             const staticValue = this.propWidget.settings.configuration.defaultValues?.value ?? ''

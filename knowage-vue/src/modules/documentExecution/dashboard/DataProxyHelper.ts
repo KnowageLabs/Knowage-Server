@@ -5,7 +5,7 @@
  */
 
 import { AxiosResponse } from 'axios'
-import { IDataset, IWidget } from './Dashboard'
+import { IDataset, ISelection, IWidget } from './Dashboard'
 
 export const getData = (item) =>
     new Promise((resolve) => {
@@ -14,7 +14,7 @@ export const getData = (item) =>
         }, 1000)
     })
 
-const formatSelectorModelForGet = (propWidget: IWidget, datasetLabel) => {
+const formatSelectorModelForGet = (propWidget: IWidget, datasetLabel: string, selections?: ISelection[]) => {
     //TODO: strong type this
     //TODO: Make method that will merge associations and selections with dataToSend object.
     var dataToSend = {
@@ -59,7 +59,7 @@ export const getSelectorWidgetData = async (widget: IWidget, datasets: IDataset[
         await $http
             .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData)
             .then((response: AxiosResponse<any>) => (tempResponse = response.data))
-            .catch(() => {})
+            .catch(() => { })
         return tempResponse
     }
 }

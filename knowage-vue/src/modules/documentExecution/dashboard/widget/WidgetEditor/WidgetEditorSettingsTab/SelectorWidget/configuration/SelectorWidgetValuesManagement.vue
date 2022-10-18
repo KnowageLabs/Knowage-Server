@@ -46,7 +46,7 @@ export default defineComponent({
             if (this.widgetModel.settings?.configuration?.valuesManagement) this.valuesManagementModel = this.widgetModel.settings.configuration.valuesManagement
         },
         valuesManagementChanged() {
-            emitter.emit('valuesManagementChanged', this.valuesManagementModel)
+            emitter.emit('valuesManagementChanged', this.widgetModel.id)
             emitter.emit('refreshSelector', this.widgetModel.id)
         },
         onHideDisabledChanged() {
