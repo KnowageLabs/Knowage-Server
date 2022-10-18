@@ -3,7 +3,7 @@
         <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine selectionGrid p-m-2" :gridOptions="gridOptions"></ag-grid-vue>
         <template #footer>
             <Button class="kn-button kn-button--secondary p-mb-2" :label="$t('common.close')" @click="$emit('close')" />
-            <Button class="kn-button kn-button p-mb-2" v-t="'common.save'" @click="addSelectedDatasets" />
+            <Button class="kn-button kn-button p-mb-2" v-t="'common.save'" />
         </template>
     </Dialog>
 </template>
@@ -15,11 +15,14 @@ import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
 import 'ag-grid-community/styles/ag-grid.css' // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
 import buttonRenderer from './SelectionsListDialogCellRenderer.vue'
+import { mapState, mapActions } from 'pinia'
+import store from '../../Dashboard.store'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'datasets-catalog-datatable',
     components: { Dialog, AgGridVue },
-    props: { visible: { type: Boolean }, selectedDatasetsProp: { required: true, type: Array as any }, availableDatasetsProp: { required: true, type: Array as any } },
+    props: { visible: { type: Boolean }, selectedDatasetsProp: { required: true, type: Array as any }, availableDatasetsProp: { required: true, type: Array as any }, dashboardId: { type: String, required: true } },
     emits: ['close'],
     data() {
         return {
@@ -28,7 +31,7 @@ export default defineComponent({
             gridOptions: {
                 rowData: [],
                 columnDefs: [
-                    { headerName: 'Dataset', field: 'ds' },
+                    { headerName: 'Dataset', field: 'datasetLabel' },
                     { headerName: 'Column Name', field: 'columnName' },
                     { headerName: 'Values', field: 'value' },
                     { headerName: '', cellRenderer: buttonRenderer, field: 'id', cellStyle: { 'text-align': 'right', display: 'inline-flex', 'justify-content': 'flex-end', border: 'none' }, width: 50, suppressSizeToFit: true, tooltip: false }
@@ -47,29 +50,26 @@ export default defineComponent({
             }
         }
     },
-    setup() {},
-    async created() {},
-    updated() {},
+    computed: {
+        ...mapState(store, ['dashboards'])
+    },
     methods: {
+        ...mapActions(store, ['getDashboard', 'getSelections', 'setSelections']),
+
         onGridReady(params) {
             this.gridApi = params.api
             this.gridColumnApi = params.columnApi
 
             params.api.sizeColumnsToFit()
-            window.addEventListener('resize', function() {
-                setTimeout(function() {
+            window.addEventListener('resize', function () {
+                setTimeout(function () {
                     params.api.sizeColumnsToFit()
                 })
             })
 
             const updateData = (data) => params.api.setRowData(data)
 
-            updateData([
-                { ds: 'AUDIT_02', columnName: 'data', column: 'data', value: '2021 11 22', aggregated: false },
-                { ds: 'AUDIT_03', columnName: 'data', column: 'data', value: '2021 11 22', aggregated: false },
-                { ds: 'AUDIT_04', columnName: 'data', column: 'data', value: '2021 11 22', aggregated: false },
-                { ds: 'AUDIT_05', columnName: 'data', column: 'data', value: '2021 11 22', aggregated: false }
-            ])
+            updateData(deepcopy(this.getSelections(this.dashboardId)))
         }
     }
 })
