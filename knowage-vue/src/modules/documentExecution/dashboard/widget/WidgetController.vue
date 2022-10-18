@@ -38,6 +38,14 @@ export default defineComponent({
     components: { ProgressBar, Skeleton, WidgetButtonBar, WidgetRenderer },
     inject: ['dHash'],
     props: { item: { required: true, type: Object }, activeSheet: { type: Boolean }, widget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array as PropType<IDataset[]>, required: true }, dashboardId: { type: String, required: true } },
+    watch: {
+        widget: {
+            async handler() {
+                this.widgetData = await getSelectorWidgetData(this.widget, this.datasets, this.$http)
+            },
+            deep: true
+        }
+    },
     data() {
         return {
             loading: false,
