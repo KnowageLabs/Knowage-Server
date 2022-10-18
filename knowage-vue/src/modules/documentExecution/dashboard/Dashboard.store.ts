@@ -68,6 +68,7 @@ const store = defineStore('dashboardStore', {
         removeSelection(payload: { datasetId: number, columnName: string }, dashboardId: string) {
             const index = this.selections[dashboardId]?.findIndex((selection: ISelection) => selection.datasetId === payload.datasetId && selection.columnName === payload.columnName)
             if (index !== -1) {
+                emitter.emit('selectionDeleted', deepcopy(this.selections[dashboardId]))
                 this.selections[dashboardId].splice(index, 1)
                 emitter.emit('selectionsChanged', { dashboardId: dashboardId, selections: this.selections[dashboardId] })
             }

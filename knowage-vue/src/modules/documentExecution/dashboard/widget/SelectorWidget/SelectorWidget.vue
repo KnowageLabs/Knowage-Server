@@ -1,7 +1,6 @@
 <template>
     <div v-if="options" class="selector-widget">
         {{ showMode }}
-        {{ selectedValue }}
         <div v-if="widgetType === 'singleValue'" :class="getLayoutStyle()">
             <div class="multi-select p-p-1" :style="getLabelStyle() + getGridWidth()" v-for="(value, index) of showMode === 'hideDisabled' ?  options.rows.filter((row: any) => !row.disabled) : options.rows" :key="index">
                 <RadioButton :inputId="`radio-${index}`" class="p-mr-2" :name="value.column_1" :value="value.column_1" v-model="selectedValue" :disabled="showMode === 'showDisabled' && value.disabled" @change="singleValueSelectionChanged" />
@@ -171,9 +170,8 @@ export default defineComponent({
         loadAvailableOptions(dataToShow: any) {
             this.options = { rows: [] }
             if (!dataToShow || !dataToShow.rows) return
-            // TODO - remove mock subarray
             this.initialOptions.rows.forEach((initialOption: any) => {
-                const index = dataToShow.rows.slice(0, 1).findIndex((row: any) => row.column_1 === initialOption.column_1)
+                const index = dataToShow.rows.findIndex((row: any) => row.column_1 === initialOption.column_1)
                 this.options.rows.push({ ...initialOption, disabled: index === -1 })
             })
         },
@@ -200,7 +198,6 @@ export default defineComponent({
         },
         updateSelectedValue() {
             const defaultMode = this.propWidget.settings.configuration.defaultValues.valueType
-            console.log('>>>>>>>>>>>>>>>>> updateSelectedValue: ', defaultMode)
             switch (this.widgetType) {
                 case 'singleValue':
                 case 'dropdown':
@@ -218,14 +215,10 @@ export default defineComponent({
             }
         },
         selectDefaultValue(defaultMode: string, multivalue: boolean) {
-            console.log('>>>>>>>>>>>>>>>>>>> selectDefaultValue: ', defaultMode)
-            console.log('>>>>>>>>>>>>>>>>>>> selectDefaultValue: ', this.options.rows)
             if (!this.options || !this.options.rows || !defaultMode) return
-            console.log('>>>>>>>>>>>>>>>>>>> GOT HERE: ')
             switch (defaultMode) {
                 case 'FIRST':
                     const firstValue = this.findFirstAvailableValue()
-                    console.log('>>>>>>>>> FIRST VALUE: ', firstValue)
                     if (multivalue) {
                         this.selectedValues = firstValue !== null ? [firstValue.column_1] : []
                     } else {
@@ -234,7 +227,6 @@ export default defineComponent({
                     break
                 case 'LAST':
                     const lastValue = this.findLastAvailableValue()
-                    console.log('>>>>>>>>> LAST VALUE: ', lastValue)
                     if (multivalue) {
                         this.selectedValues = lastValue !== null ? [lastValue.column_1] : []
                     } else {

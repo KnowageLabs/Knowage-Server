@@ -72,7 +72,7 @@ export default defineComponent({
         onDeleteSelection(selection: ISelection) {
             if (this.editorMode) return
             const payload = { datasetId: selection.datasetId, columnName: selection.columnName }
-            removeSelectionFromActiveSelections(payload, this.activeSelections, this.dashboardId, this.setSelections)
+            removeSelectionFromActiveSelections(payload, this.dashboardId, this.removeSelection)
         }
     }
 })

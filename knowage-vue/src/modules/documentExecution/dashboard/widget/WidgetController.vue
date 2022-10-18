@@ -34,7 +34,7 @@ export default defineComponent({
         widget: {
             async handler() {
                 this.loading = true
-                this.widgetData = await getSelectorWidgetData(this.widget, this.datasets, this.$http)
+                this.widgetData = await getSelectorWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
                 this.loading = false
             },
             deep: true
@@ -54,7 +54,7 @@ export default defineComponent({
     async mounted() {
         this.setEventListeners()
         this.loadActiveSelections()
-        this.widgetData = await getSelectorWidgetData(this.widget, this.datasets, this.$http)
+        this.widgetData = await getSelectorWidgetData(this.widget, this.datasets, this.$http, true, this.activeSelections)
     },
     unmounted() {
         this.removeEventListeners()
@@ -77,9 +77,26 @@ export default defineComponent({
         removeEventListeners() {
             emitter.off('selectionsChanged', this.loadActiveSelections)
         },
-        loadActiveSelections() {
+        async loadActiveSelections() {
             this.activeSelections = deepcopy(this.getSelections(this.dashboardId))
-            console.log('--------------- LOADED ACTIVE SEELCTIONS: ', this.activeSelections)
+            await this.reloadWidgetData()
+        },
+        async reloadWidgetData() {
+            if (this.widgetUsesSelections()) this.widgetData = await getSelectorWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
+        },
+        widgetUsesSelections() {
+            let widgetUsesSelection = false
+            if (!this.widget.columns) return widgetUsesSelection
+            for (let i = 0; i < this.widget.columns.length; i++) {
+                const index = this.activeSelections.findIndex((activeSelection: ISelection) => activeSelection.datasetId === this.widget.dataset && activeSelection.columnName === this.widget.columns[i].columnName)
+                if (index !== -1) {
+                    widgetUsesSelection = true
+                    break
+                }
+            }
+            console.log('CAAAAAAAAAAAAAAAAAAAAAAAAALED: ', widgetUsesSelection)
+
+            return widgetUsesSelection
         },
         // TODO
         async test() {
