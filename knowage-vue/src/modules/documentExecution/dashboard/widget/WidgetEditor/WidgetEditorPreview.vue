@@ -10,7 +10,7 @@
             <div class="widget-container-renderer" :style="getWidgetPadding()">
                 <TableWidget v-if="propWidget.type == 'table'" :propWidget="propWidget" :datasets="datasets" :editorMode="true" />
                 <SelectorWidget v-if="propWidget.type == 'selector'" :propWidget="propWidget" :dataToShow="widgetData" :editorMode="true" />
-                <ActiveSelectionsWidget v-if="propWidget.type == 'selection'" :propWidget="propWidget" :dataToShow="mock.selectionMockedResponse" :editorMode="true" :dashboardId="dashboardId" />
+                <ActiveSelectionsWidget v-if="propWidget.type == 'selection'" :propWidget="propWidget" :propActiveSelections="activeSelections" :editorMode="true" :dashboardId="dashboardId" />
             </div>
         </div>
     </div>
@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IDataset, IWidget } from '../../Dashboard'
+import { IDataset, ISelection, IWidget } from '../../Dashboard'
 import { getWidgetStyleByType } from '../TableWidget/TableWidgetHelper'
 import mock from '../../dataset/DatasetEditorTestMocks.json'
 import descriptor from '../../dataset/DatasetEditorDescriptor.json'
@@ -28,6 +28,9 @@ import ActiveSelectionsWidget from '../ActiveSelectionsWidget/ActiveSelectionsWi
 import { emitter } from '../../DashboardHelpers'
 import { getSelectorWidgetData } from '../../DataProxyHelper'
 import ProgressBar from 'primevue/progressbar'
+import { mapState, mapActions } from 'pinia'
+import store from '../../Dashboard.store'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'widget-editor-preview',
@@ -43,8 +46,12 @@ export default defineComponent({
             widgetTitle: null as any,
             mock,
             widgetData: {} as any,
-            loading: false
+            loading: false,
+            activeSelections: [] as ISelection[]
         }
+    },
+    computed: {
+        ...mapState(store, ['dashboards'])
     },
     created() {
         this.setEventListeners()
@@ -58,6 +65,8 @@ export default defineComponent({
         emitter.off('datasetChanged', this.clearWidgetData)
     },
     methods: {
+        ...mapActions(store, ['getDashboard', 'getSelections', 'setSelections']),
+
         setEventListeners() {
             emitter.on('getWidgetData', this.getWidgetData)
             emitter.on('clearWidgetData', this.clearWidgetData)
@@ -66,6 +75,7 @@ export default defineComponent({
             this.loading = true
             console.log('getting data ------------')
             this.widgetData = await getSelectorWidgetData(this.propWidget, this.datasets, this.$http)
+            this.activeSelections = deepcopy(this.getSelections(this.dashboardId))
             this.loading = false
         },
         clearWidgetData() {

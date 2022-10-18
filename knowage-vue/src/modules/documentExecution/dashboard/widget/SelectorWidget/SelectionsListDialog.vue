@@ -68,8 +68,8 @@ export default defineComponent({
             })
 
             const updateData = (data) => params.api.setRowData(data)
-            let stuff = deepcopy(this.getSelections(this.dashboardId))
-            updateData(stuff)
+
+            updateData(deepcopy(this.getSelections(this.dashboardId)))
         }
     }
 })
