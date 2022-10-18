@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
-import { emitter } from './DashboardHelpers'
-import deepcopy from 'deepcopy'
-import cryptoRandomString from 'crypto-random-string'
+import { emitter, updateWidgetHelper } from './DashboardHelpers'
 import { ISelection, IWidget } from './Dashboard'
+import cryptoRandomString from 'crypto-random-string'
+import deepcopy from 'deepcopy'
 
 const store = defineStore('dashboardStore', {
     state() {
@@ -36,12 +36,7 @@ const store = defineStore('dashboardStore', {
             }
         },
         updateWidget(dashboardId: string, widget: IWidget) {
-            for (let i = 0; i < this.dashboards[dashboardId].widgets.length; i++) {
-                console.log(widget.id + ' === ' + this.dashboards[dashboardId].widgets[i].id)
-                if (widget.id === this.dashboards[dashboardId].widgets[i].id) {
-                    this.dashboards[dashboardId].widgets[i] = deepcopy(widget)
-                }
-            }
+            updateWidgetHelper(dashboardId, widget, this.dashboards, this.removeSelection)
         },
         setSelectedSheetIndex(index: number) {
             this.selectedSheetIndex = index
@@ -69,6 +64,13 @@ const store = defineStore('dashboardStore', {
             console.log(" ---- STORE - SET SELECTIONS: ", selections)
             this.selections[dashboardId] = selections
             emitter.emit('selectionsChanged', { dashboardId: dashboardId, selections: this.selections[dashboardId] })
+        },
+        removeSelection(payload: { datasetId: number, columnName: string }, dashboardId: string) {
+            const index = this.selections[dashboardId]?.findIndex((selection: ISelection) => selection.datasetId === payload.datasetId && selection.columnName === payload.columnName)
+            if (index !== -1) {
+                this.selections[dashboardId].splice(index, 1)
+                emitter.emit('selectionsChanged', { dashboardId: dashboardId, selections: this.selections[dashboardId] })
+            }
         }
     }
 })
