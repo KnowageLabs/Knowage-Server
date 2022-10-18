@@ -19,7 +19,7 @@ import UseMode from './useModes/DriversManagementUseMode.vue'
 import { AxiosResponse } from 'axios'
 import driversManagemenDetailtDescriptor from './DriversManagementDetailDescriptor.json'
 import mainStore from '../../../App.store'
-	
+
 export default defineComponent({
     name: 'metadata-management-detail',
     components: { DriversDetailCard, UseMode },
@@ -75,7 +75,7 @@ export default defineComponent({
             this.getModes()
         }
     },
-      setup() {
+    setup() {
         const store = mainStore()
         return { store }
     },
@@ -156,6 +156,13 @@ export default defineComponent({
         async handleSubmit() {
             this.formatDriver()
             this.formatUseMode()
+
+            if (this.modesToSave.length === 0) {
+                return this.store.setError({
+                    title: this.$t('common.toast.errorTitle'),
+                    msg: this.$t('managers.driversManagement.noModesSelected')
+                })
+            }
 
             let url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/'
             if (this.driver.id) {
