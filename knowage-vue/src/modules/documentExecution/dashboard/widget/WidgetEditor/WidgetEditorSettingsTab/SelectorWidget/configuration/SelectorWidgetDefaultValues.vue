@@ -1,5 +1,6 @@
 <template>
     <div v-if="defaultValuesModel" class="p-grid p-jc-center p-ai-center kn-flex p-p-4">
+        {{ defaultValuesModel }}
         <div class="p-col-12 p-grid">
             <div class="p-col-3 p-sm-12 p-md-3">
                 <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.defaultValues.enableDefaultValues') }}</label>
@@ -93,7 +94,7 @@ export default defineComponent({
             if (this.widgetModel.settings?.configuration?.defaultValues) this.defaultValuesModel = this.widgetModel.settings.configuration.defaultValues
         },
         defaultValuesChanged() {
-            emitter.emit('defaultValuesChanged', this.defaultValuesModel)
+            emitter.emit('defaultValuesChanged', this.widgetModel.id)
             emitter.emit('refreshSelector', this.widgetModel.id)
         },
         onDefaultValuesTypeChanged() {
