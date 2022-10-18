@@ -18,7 +18,7 @@ export interface ISelectorWidgetConfiguration {
 }
 
 export interface ISelectorWidgetSelectorType {
-    modality: "singleValue" | "multiValue" | "dropdown" | "multiDropdown" | "datepicker" | "dateRange",
+    modality: "singleValue" | "multiValue" | "dropdown" | "multiDropdown" | "date" | "dateRange",
     alignment: "vertical" | "horizontal" | "grid",
     columnSize: string
 }

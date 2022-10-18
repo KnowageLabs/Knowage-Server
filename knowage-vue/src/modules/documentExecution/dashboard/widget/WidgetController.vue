@@ -10,7 +10,7 @@
         <button class="p-mr-2" :style="'max-width: 100px;'" @click="unlockSelection">UNLOCK SELECTION</button>
         <button v-if="playSelectionButtonVisible" :style="'max-width: 100px;'" @click="launchSelection">LAUNCH SELECTION</button>
         <!-- <button @click="test">CLICK ME FOR TEST</button> -->
-        <WidgetRenderer :widget="widget" :widgetData="widgetData" :datasets="datasets" v-if="initialized" :dashboardId="dashboardId" :selectionIsLocked="selectionIsLocked" :activeSelections="activeSelections" @interaction="manageInteraction"></WidgetRenderer>
+        <WidgetRenderer :widget="widget" :widgetData="widgetData" :datasets="datasets" v-if="initialized" :dashboardId="dashboardId" :selectionIsLocked="selectionIsLocked" :propActiveSelections="activeSelections" @interaction="manageInteraction"></WidgetRenderer>
         <WidgetButtonBar @edit-widget="toggleEditMode"></WidgetButtonBar>
     </grid-item>
 </template>
@@ -31,6 +31,7 @@ import WidgetRenderer from './WidgetRenderer.vue'
 import WidgetButtonBar from './WidgetButtonBar.vue'
 import Skeleton from 'primevue/skeleton'
 import ProgressBar from 'primevue/progressbar'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'widget-manager',
@@ -75,7 +76,7 @@ export default defineComponent({
             emitter.off('selectionsChanged', this.loadActiveSelections)
         },
         loadActiveSelections() {
-            this.activeSelections = this.getSelections(this.dashboardId)
+            this.activeSelections = deepcopy(this.getSelections(this.dashboardId))
             console.log('--------------- LOADED ACTIVE SEELCTIONS: ', this.activeSelections)
         },
         // TODO

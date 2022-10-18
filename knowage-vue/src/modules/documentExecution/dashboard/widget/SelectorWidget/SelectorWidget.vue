@@ -167,8 +167,8 @@ export default defineComponent({
         },
         multiValueSelectionChanged() {
             if (this.editorMode) return
-            this.activeSelections.push(this.createNewSelection(this.selectedValues))
-            //  updateStoreSelections(this.createNewSelection(this.selectedValues), this.activeSelections, this.dashboardId, this.setSelections)
+            const tempSelection = this.createNewSelection(this.selectedValues)
+            this.updateActiveSelectionsWithMultivalueSelection(tempSelection)
         },
         dateSelectionChanged() {
             if (this.editorMode) return
@@ -176,8 +176,12 @@ export default defineComponent({
         },
         dateRangeSelectionChanged() {
             if (this.editorMode) return
-            this.activeSelections.push(this.createNewSelection([this.startDate, this.endDate]))
-            // updateStoreSelections(this.createNewSelection([this.startDate, this.endDate]), this.activeSelections, this.dashboardId, this.setSelections)
+            const tempSelection = this.createNewSelection([this.startDate, this.endDate])
+            this.updateActiveSelectionsWithMultivalueSelection(tempSelection)
+        },
+        updateActiveSelectionsWithMultivalueSelection(tempSelection: ISelection) {
+            const index = this.activeSelections.findIndex((activeSelection: ISelection) => activeSelection.datasetId === tempSelection.datasetId && activeSelection.columnName === tempSelection.columnName)
+            index !== -1 ? (this.activeSelections[index] = tempSelection) : this.activeSelections.push(tempSelection)
         },
         createNewSelection(value: (string | number)[]) {
             return { datasetId: this.propWidget.dataset as number, datasetLabel: this.getDatasetLabel(this.propWidget.dataset as number), columnName: this.propWidget.columns[0]?.columnName ?? '', value: value, aggregated: false, timestamp: new Date().getTime() }

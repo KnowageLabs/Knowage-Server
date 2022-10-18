@@ -35,17 +35,24 @@ export default defineComponent({
         datasets: { type: Array as PropType<IDataset[]>, required: true },
         dashboardId: { type: String, required: true },
         selectionIsLocked: { type: Boolean, required: true },
-        activeSelections: { type: Array as PropType<ISelection[]>, required: true }
+        propActiveSelections: { type: Array as PropType<ISelection[]>, required: true }
     },
     data() {
         return {
-            mock
+            mock,
+            activeSelections: [] as ISelection[]
+        }
+    },
+    watch: {
+        propActiveSelections() {
+            this.loadActiveSelections()
         }
     },
     created() {},
     methods: {
-        click(e) {
-            this.$emit('interaction', e, this.widget)
+        loadActiveSelections() {
+            this.activeSelections = this.propActiveSelections
+            console.log('CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALED: ', this.activeSelections)
         },
         getWidgetTitleStyle() {
             let widgetTitle = this.widget.settings.style.title

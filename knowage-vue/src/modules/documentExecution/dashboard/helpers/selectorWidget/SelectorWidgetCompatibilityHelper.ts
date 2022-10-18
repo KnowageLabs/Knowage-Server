@@ -62,7 +62,7 @@ const getFormattedSelectorType = (widget: any) => {
         columnSize: widget.settings.gridColumnsWidth ?? ''
     } as ISelectorWidgetSelectorType
     if (widget.content.selectedColumn?.type === 'oracle.sql.TIMESTAMP') {
-        formattedSelectorType.modality = formattedSelectorType.modality === 'singleValue' ? 'datepicker' : 'dateRange'
+        formattedSelectorType.modality = formattedSelectorType.modality === 'singleValue' ? 'date' : 'dateRange'
     }
 
     return formattedSelectorType

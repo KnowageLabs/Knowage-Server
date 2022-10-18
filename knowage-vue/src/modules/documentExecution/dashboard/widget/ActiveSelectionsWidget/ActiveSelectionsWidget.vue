@@ -22,7 +22,6 @@ import ActiveSelectionsChips from './ActiveSelectionsWidgetChips.vue'
 import ActiveSelectionsList from './ActiveSelectionsWidgetList.vue'
 import Message from 'primevue/message'
 import store from '../../Dashboard.store'
-import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'datasets-catalog-datatable',
@@ -64,7 +63,7 @@ export default defineComponent({
     methods: {
         ...mapActions(store, ['setSelections']),
         loadActiveSelections() {
-            this.activeSelections = deepcopy(this.propActiveSelections)
+            this.activeSelections = this.propActiveSelections
         },
         getChipsStyle() {
             let height = this.propWidget.settings.style.chips.height

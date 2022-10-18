@@ -63,7 +63,6 @@ const store = defineStore('dashboardStore', {
             this.outputParameters = outputParameters
         },
         getSelections(dashboardId: string) {
-            console.log(" ----- STORE - GET SEELCTIONS: ", dashboardId)
             return this.selections[dashboardId]
         },
         setSelections(dashboardId: string, selections: ISelection[]) {
