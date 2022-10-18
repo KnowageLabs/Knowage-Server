@@ -1,9 +1,9 @@
 <template>
-    <div class="widget p-m-2" :style="getWidgetContainerStyle()">
+    <div class="widget-container" :style="getWidgetContainerStyle()">
         <div v-if="widget.settings.style.title && widget.settings.style.title.enabled" class="p-d-flex p-ai-center" style="border-radius: 0px" :style="getWidgetTitleStyle()">
             {{ widget.settings.style.title.text }}
         </div>
-        <div class="widget-editor-preview" :style="getWidgetPadding()">
+        <div class="widget-container-renderer" :style="getWidgetPadding()">
             <TableWidget v-if="widget.type == 'table'" :propWidget="widget" :datasets="datasets" :editorMode="false" />
             <!-- <SelectorWidget v-if="widget.type == 'selector'" :propWidget="widget" :dataToShow="mock.selectorMockedResponse" :editorMode="true" :dashboardId="dashboardId" :datasets="datasets" :selectionIsLocked="selectionIsLocked" /> -->
             <SelectorWidget v-if="widget.type == 'selector'" :propWidget="widget" :dataToShow="widgetData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" :datasets="datasets" :selectionIsLocked="selectionIsLocked" />
@@ -70,7 +70,7 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped>
-.widget {
+.widget-container {
     width: 100%;
     height: 100%;
     display: flex;
@@ -78,7 +78,7 @@ export default defineComponent({
     overflow: hidden;
     background-color: #fff;
     flex: 1;
-    .widget-editor-preview {
+    .widget-container-renderer {
         flex: 1;
         display: flex;
         flex-direction: column;

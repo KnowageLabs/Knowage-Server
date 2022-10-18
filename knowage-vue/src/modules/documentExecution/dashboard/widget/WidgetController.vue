@@ -1,17 +1,18 @@
 <template>
-    <grid-item :key="item.id" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" drag-allow-from=".drag-handle">
+    <grid-item class="p-d-flex" :key="item.id" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" drag-allow-from=".drag-handle">
         <div v-if="initialized" class="drag-handle"></div>
         <ProgressBar mode="indeterminate" v-if="loading" />
         <Skeleton shape="rectangle" v-if="!initialized" height="100%" border-radius="0" />
 
-        {{ 'TODO - REMOVE THIS' }}
-        {{ selectionIsLocked }}
+        <!-- {{ 'TODO - REMOVE THIS' }} -->
+        <!-- {{ selectionIsLocked }} -->
         <br />
-        <button class="p-mr-2" :style="'max-width: 100px;'" @click="unlockSelection">UNLOCK SELECTION</button>
-        <button v-if="playSelectionButtonVisible" :style="'max-width: 100px;'" @click="launchSelection">LAUNCH SELECTION</button>
+        <!-- <button class="p-mr-2" :style="'max-width: 100px;'" @click="unlockSelection">UNLOCK SELECTION</button> -->
+        <!-- <button v-if="playSelectionButtonVisible" :style="'max-width: 100px;'" @click="launchSelection">LAUNCH SELECTION</button> -->
         <!-- <button @click="test">CLICK ME FOR TEST</button> -->
+
         <WidgetRenderer :widget="widget" :widgetData="widgetData" :datasets="datasets" v-if="initialized" :dashboardId="dashboardId" :selectionIsLocked="selectionIsLocked" :propActiveSelections="activeSelections" @interaction="manageInteraction"></WidgetRenderer>
-        <WidgetButtonBar @edit-widget="toggleEditMode"></WidgetButtonBar>
+        <WidgetButtonBar :playSelectionButtonVisible="playSelectionButtonVisible" @edit-widget="toggleEditMode" @unlockSelection="unlockSelection" @launchSelection="launchSelection"></WidgetButtonBar>
     </grid-item>
 </template>
 

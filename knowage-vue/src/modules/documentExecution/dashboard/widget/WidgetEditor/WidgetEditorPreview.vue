@@ -3,11 +3,11 @@
         <Button icon="fas fa-square-check" class="p-button-rounded p-button-text p-button-plain" @click="logWidget" />
 
         <ProgressBar v-if="loading" class="p-mx-2" mode="indeterminate" />
-        <div class="widget p-m-2" :style="getWidgetContainerStyle()">
+        <div class="widget-container p-m-2" :style="getWidgetContainerStyle()">
             <div v-if="widgetTitle && widgetTitle.enabled" class="p-d-flex p-ai-center" style="border-radius: 0px" :style="getWidgetTitleStyle()">
                 {{ widgetTitle?.text }}
             </div>
-            <div class="widget-editor-preview" :style="getWidgetPadding()">
+            <div class="widget-container-renderer" :style="getWidgetPadding()">
                 <TableWidget v-if="propWidget.type == 'table'" :propWidget="propWidget" :datasets="datasets" :editorMode="true" />
                 <SelectorWidget v-if="propWidget.type == 'selector'" :propWidget="propWidget" :dataToShow="widgetData" :editorMode="true" />
                 <ActiveSelectionsWidget v-if="propWidget.type == 'selection'" :propWidget="propWidget" :dataToShow="mock.selectionMockedResponse" :editorMode="true" :dashboardId="dashboardId" />
@@ -96,13 +96,13 @@ export default defineComponent({
 .widget-editor-preview-container {
     flex: 0.5;
     border-left: 1px solid #ccc;
-    .widget {
+    .widget-container {
         display: flex;
         flex-direction: column;
         overflow: hidden;
         // flex: 1;
         max-height: 35%;
-        .widget-editor-preview {
+        .widget-container-renderer {
             flex: 1;
             display: flex;
             flex-direction: column;
