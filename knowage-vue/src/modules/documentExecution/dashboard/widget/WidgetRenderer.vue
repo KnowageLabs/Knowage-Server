@@ -52,7 +52,6 @@ export default defineComponent({
     methods: {
         loadActiveSelections() {
             this.activeSelections = this.propActiveSelections
-            console.log('CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALED: ', this.activeSelections)
         },
         getWidgetTitleStyle() {
             let widgetTitle = this.widget.settings.style.title

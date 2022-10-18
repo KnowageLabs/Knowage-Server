@@ -1,14 +1,14 @@
 <template>
-    <div class="selector-widget">
+    <div v-if="options" class="selector-widget">
         <div v-if="widgetType === 'singleValue'" :class="getLayoutStyle()">
-            <div class="multi-select p-p-1" :style="getLabelStyle() + getGridWidth()" v-for="(value, index) of dataToShow?.rows" :key="index">
+            <div class="multi-select p-p-1" :style="getLabelStyle() + getGridWidth()" v-for="(value, index) of options.rows" :key="index">
                 <RadioButton :inputId="`radio-${index}`" class="p-mr-2" :name="value.column_1" :value="value.column_1" v-model="selectedValue" @change="singleValueSelectionChanged" />
                 <label :for="`radio-${index}`" class="multi-select-label">{{ value.column_1 }}</label>
             </div>
         </div>
 
         <div v-if="widgetType === 'multiValue'" :class="getLayoutStyle()">
-            <div class="multi-select p-p-1" :style="getLabelStyle() + getGridWidth()" v-for="(value, index) of dataToShow?.rows" :key="index">
+            <div class="multi-select p-p-1" :style="getLabelStyle() + getGridWidth()" v-for="(value, index) of options.rows" :key="index">
                 <Checkbox :inputId="`multi-${index}`" class="p-mr-2" :name="value.column_1" :value="value.column_1" v-model="selectedValues" @change="multiValueSelectionChanged" />
                 <label :for="`multi-${index}`" class="multi-select-label">{{ value.column_1 }}</label>
             </div>
@@ -19,7 +19,7 @@
                 class="kn-width-full"
                 panelClass="selectorCustomDropdownPanel"
                 v-model="selectedValue"
-                :options="dataToShow?.rows"
+                :options="options.rows"
                 optionLabel="column_1"
                 optionValue="column_1"
                 :style="getLabelStyle()"
@@ -34,7 +34,7 @@
                 class="kn-width-full"
                 panelClass="selectorCustomDropdownPanel"
                 v-model="selectedValues"
-                :options="dataToShow?.rows"
+                :options="options.rows"
                 optionLabel="column_1"
                 optionValue="column_1"
                 :style="getLabelStyle()"
@@ -73,14 +73,15 @@
 import { defineComponent, PropType } from 'vue'
 import { IDataset, ISelection, IWidget } from '../../Dashboard'
 import { mapActions } from 'pinia'
+import { getWidgetStyleByType } from '../TableWidget/TableWidgetHelper'
+import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
+import { emitter } from '../../DashboardHelpers'
 import Checkbox from 'primevue/checkbox'
 import RadioButton from 'primevue/radiobutton'
 import Dropdown from 'primevue/dropdown'
 import MultiSelect from 'primevue/multiselect'
 import Calendar from 'primevue/calendar'
-import { getWidgetStyleByType } from '../TableWidget/TableWidgetHelper'
 import store from '../../Dashboard.store'
-import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
 import deepcopy from 'deepcopy'
 
 export default defineComponent({
@@ -103,6 +104,8 @@ export default defineComponent({
     },
     data() {
         return {
+            initialOptions: {} as any,
+            options: {} as any,
             selectedValue: null as any,
             selectedValues: [] as any,
             selectedDate: null as any,
@@ -115,17 +118,93 @@ export default defineComponent({
     watch: {
         propActiveSelections() {
             this.loadActiveSelections()
+        },
+        dataToShow() {
+            this.loadOptions()
+        },
+        defaultMode() {
+            this.selectDefaultValue()
         }
     },
-    setup() {},
     created() {
+        this.setEventListeners()
         this.loadActiveSelections()
+        this.loadOptions()
     },
-    updated() {},
+    unmounted() {
+        this.removeEventListeners()
+    },
     methods: {
         ...mapActions(store, ['setSelections']),
+        setEventListeners() {
+            emitter.on('defaultValuesChanged', this.onDefaultValuesChanged)
+        },
+        removeEventListeners() {
+            emitter.off('defaultValuesChanged', this.onDefaultValuesChanged)
+        },
+        loadOptions() {
+            this.options = this.dataToShow
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> OPTIONS TO SHOW: ', this.options)
+            if (this.initialOptions.rows && this.initialOptions.rows >= this.dataToShow) return
+            this.initialOptions = deepcopy(this.dataToShow)
+            this.selectDefaultValue()
+        },
         loadActiveSelections() {
             this.activeSelections = this.propActiveSelections
+        },
+        onDefaultValuesChanged() {
+            console.log(' >>>>>>>>>>>>>>>> onDefaultValuesChanged: ', this.propWidget.settings.configuration.defaultValues.enabled)
+            if (!this.propWidget.settings.configuration.defaultValues.enabled) {
+                this.removeDeafultValues()
+            } else {
+                this.selectDefaultValue()
+            }
+        },
+        removeDeafultValues() {
+            this.selectedValue = null
+            this.selectedValues = []
+        },
+        selectDefaultValue() {
+            const defaultMode = this.propWidget.settings.configuration.defaultValues.valueType
+            if (!defaultMode) return
+            switch (this.widgetType) {
+                case 'singleValue':
+                    this.selectDefaultSingleValue(defaultMode)
+                    break
+                case 'multiValue':
+                    this.selectDefaultMultiValue()
+                    break
+                case 'dropdown':
+                    this.selectDefaultDropdownValue()
+                    break
+                case 'multiDropdown':
+                    this.selectDefaultMultiDropdownValue()
+            }
+        },
+        selectDefaultSingleValue(defaultMode: string) {
+            if (!this.options.rows) return
+            switch (defaultMode) {
+                case 'FIRST':
+                    this.selectedValue = this.options.rows[0] ? this.options.rows[0].column_1 : null
+                    break
+                case 'LAST':
+                    this.selectedValue = this.options.rows[this.options.rows.length - 1] ? this.options.rows[this.options.rows.length - 1].column_1 : null
+                    break
+                case 'STATIC':
+                    this.setDefaultStaticValue()
+                    break
+                default:
+                    this.selectedValue = null
+            }
+        },
+        selectDefaultMultiValue() {},
+        selectDefaultDropdownValue() {},
+        selectDefaultMultiDropdownValue() {},
+        setDefaultStaticValue() {
+            const staticValue = this.propWidget.settings.configuration.defaultValues?.value ?? ''
+            if (!staticValue || !this.options.rows) return
+            const index = this.options.rows.findIndex((option: any) => staticValue.trim() === option.column_1.trim())
+            index !== -1 ? (this.selectedValue = this.options.rows[index].column_1) : (this.selectedValue = null)
         },
         getLayoutStyle() {
             let selectorType = this.propWidget.settings.configuration.selectorType
