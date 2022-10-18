@@ -122,8 +122,8 @@ export default defineComponent({
         dataToShow() {
             this.loadOptions()
         },
-        defaultMode() {
-            this.selectDefaultValue()
+        widgetType() {
+            this.updateDefaultValues()
         }
     },
     created() {
@@ -144,67 +144,97 @@ export default defineComponent({
         },
         loadOptions() {
             this.options = this.dataToShow
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> OPTIONS TO SHOW: ', this.options)
             if (this.initialOptions.rows && this.initialOptions.rows >= this.dataToShow) return
             this.initialOptions = deepcopy(this.dataToShow)
-            this.selectDefaultValue()
+            this.updateSelectedValue()
         },
         loadActiveSelections() {
             this.activeSelections = this.propActiveSelections
         },
-        onDefaultValuesChanged() {
-            console.log(' >>>>>>>>>>>>>>>> onDefaultValuesChanged: ', this.propWidget.settings.configuration.defaultValues.enabled)
+        onDefaultValuesChanged(widgetId: any) {
+            if (this.propWidget.id !== widgetId || !this.editorMode) return
+            this.updateDefaultValues()
+        },
+        updateDefaultValues() {
             if (!this.propWidget.settings.configuration.defaultValues.enabled) {
                 this.removeDeafultValues()
             } else {
-                this.selectDefaultValue()
+                this.updateSelectedValue()
             }
         },
         removeDeafultValues() {
             this.selectedValue = null
             this.selectedValues = []
+            this.selectedDate = null
+            this.startDate = null
+            this.endDate = null
         },
-        selectDefaultValue() {
+        updateSelectedValue() {
             const defaultMode = this.propWidget.settings.configuration.defaultValues.valueType
-            if (!defaultMode) return
             switch (this.widgetType) {
                 case 'singleValue':
-                    this.selectDefaultSingleValue(defaultMode)
+                case 'dropdown':
+                    this.selectDefaultValue(defaultMode, false)
                     break
                 case 'multiValue':
-                    this.selectDefaultMultiValue()
-                    break
-                case 'dropdown':
-                    this.selectDefaultDropdownValue()
-                    break
                 case 'multiDropdown':
-                    this.selectDefaultMultiDropdownValue()
+                    this.selectDefaultValue(defaultMode, true)
+                    break
+                case 'date':
+                    this.updateDateSelectedValue(false)
+                    break
+                case 'dateRange':
+                    this.updateDateSelectedValue(true)
             }
         },
-        selectDefaultSingleValue(defaultMode: string) {
-            if (!this.options.rows) return
+        selectDefaultValue(defaultMode: string, multivalue: boolean) {
+            if (!this.options.rows || defaultMode) return
             switch (defaultMode) {
                 case 'FIRST':
-                    this.selectedValue = this.options.rows[0] ? this.options.rows[0].column_1 : null
+                    if (multivalue) {
+                        this.selectedValues = this.options.rows[0] ? [this.options.rows[0].column_1] : []
+                    } else {
+                        this.selectedValue = this.options.rows[0] ? this.options.rows[0].column_1 : null
+                    }
                     break
                 case 'LAST':
-                    this.selectedValue = this.options.rows[this.options.rows.length - 1] ? this.options.rows[this.options.rows.length - 1].column_1 : null
+                    if (multivalue) {
+                        this.selectedValues = this.options.rows[this.options.rows.length - 1] ? [this.options.rows[this.options.rows.length - 1].column_1] : []
+                    } else {
+                        this.selectedValue = this.options.rows[this.options.rows.length - 1] ? this.options.rows[this.options.rows.length - 1].column_1 : null
+                    }
                     break
                 case 'STATIC':
-                    this.setDefaultStaticValue()
+                    this.setDefaultStaticValue(multivalue)
                     break
                 default:
                     this.selectedValue = null
             }
         },
-        selectDefaultMultiValue() {},
-        selectDefaultDropdownValue() {},
-        selectDefaultMultiDropdownValue() {},
-        setDefaultStaticValue() {
+        setDefaultStaticValue(multivalue: boolean) {
             const staticValue = this.propWidget.settings.configuration.defaultValues?.value ?? ''
-            if (!staticValue || !this.options.rows) return
+            if (!staticValue || !this.options.rows) {
+                this.selectedValue = null
+                this.selectedValues = []
+                return
+            }
             const index = this.options.rows.findIndex((option: any) => staticValue.trim() === option.column_1.trim())
-            index !== -1 ? (this.selectedValue = this.options.rows[index].column_1) : (this.selectedValue = null)
+            if (index !== -1) {
+                multivalue ? (this.selectedValues = [this.options.rows[index].column_1]) : (this.selectedValue = this.options.rows[index].column_1)
+            } else {
+                this.selectedValue = null
+                this.selectedValues = []
+            }
+        },
+        updateDateSelectedValue(multivalue: boolean) {
+            const minDate = this.propWidget.settings.configuration.defaultValues?.startDate ?? null
+            const maxDate = this.propWidget.settings.configuration.defaultValues?.endDate ?? null
+            const datesProperties = multivalue ? ['startDate', 'endDate'] : ['selectedDate']
+            datesProperties.forEach((property: string) => {
+                if (this[property]?.getTime() < minDate?.getTime() || this[property]?.getTime() > maxDate?.getTime()) {
+                    this[property] = null
+                }
+            })
         },
         getLayoutStyle() {
             let selectorType = this.propWidget.settings.configuration.selectorType

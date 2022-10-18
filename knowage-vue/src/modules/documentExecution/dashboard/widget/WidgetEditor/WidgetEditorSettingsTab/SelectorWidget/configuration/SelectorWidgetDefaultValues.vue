@@ -94,7 +94,7 @@ export default defineComponent({
             if (this.widgetModel.settings?.configuration?.defaultValues) this.defaultValuesModel = this.widgetModel.settings.configuration.defaultValues
         },
         defaultValuesChanged() {
-            emitter.emit('defaultValuesChanged', this.defaultValuesModel)
+            emitter.emit('defaultValuesChanged', this.widgetModel.id)
             emitter.emit('refreshSelector', this.widgetModel.id)
         },
         onDefaultValuesTypeChanged() {
