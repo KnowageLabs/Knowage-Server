@@ -6,7 +6,7 @@
         <div class="widget-container-renderer" :style="getWidgetPadding()">
             <TableWidget v-if="widget.type == 'table'" :propWidget="widget" :datasets="datasets" :editorMode="false" />
             <!-- <SelectorWidget v-if="widget.type == 'selector'" :propWidget="widget" :dataToShow="mock.selectorMockedResponse" :editorMode="true" :dashboardId="dashboardId" :datasets="datasets" :selectionIsLocked="selectionIsLocked" /> -->
-            <SelectorWidget v-if="widget.type == 'selector'" :propWidget="widget" :dataToShow="widgetData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" :datasets="datasets" :selectionIsLocked="selectionIsLocked" />
+            <SelectorWidget v-if="widget.type == 'selector'" :propWidget="widget" :dataToShow="dataToShow" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" :datasets="datasets" :selectionIsLocked="selectionIsLocked" />
             <ActiveSelectionsWidget v-if="widget.type == 'selection'" :propWidget="widget" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" />
         </div>
     </div>
@@ -40,16 +40,25 @@ export default defineComponent({
     data() {
         return {
             mock,
+            dataToShow: {} as any,
             activeSelections: [] as ISelection[]
         }
     },
     watch: {
+        widgetData() {
+            this.loadDataToShow()
+        },
         propActiveSelections() {
             this.loadActiveSelections()
         }
     },
-    created() {},
+    created() {
+        this.loadDataToShow()
+    },
     methods: {
+        loadDataToShow() {
+            this.dataToShow = this.widgetData
+        },
         loadActiveSelections() {
             this.activeSelections = this.propActiveSelections
         },
