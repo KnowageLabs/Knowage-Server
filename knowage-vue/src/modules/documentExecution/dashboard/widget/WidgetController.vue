@@ -24,7 +24,7 @@ import { getData } from '../DataProxyHelper'
 import { IDataset, ISelection, IWidget } from '../Dashboard'
 import { emitter } from '../DashboardHelpers'
 import { mapState, mapActions } from 'pinia'
-import { AxiosResponse } from 'axios'
+import { getSelectorWidgetData } from '../DataProxyHelper'
 import { getAssociativeSelections, removeSelectionFromActiveSelections, updateStoreSelections } from './interactionsHelpers/InteractionHelper'
 import store from '../Dashboard.store'
 import WidgetRenderer from './WidgetRenderer.vue'
@@ -48,10 +48,10 @@ export default defineComponent({
             activeSelections: [] as ISelection[]
         }
     },
-    mounted() {
+    async mounted() {
         this.setEventListeners()
-        this.getWidgetData()
         this.loadActiveSelections()
+        this.widgetData = await getSelectorWidgetData(this.widget, this.datasets, this.$http)
     },
     unmounted() {
         this.removeEventListeners()
@@ -95,54 +95,6 @@ export default defineComponent({
         },
         toggleEditMode() {
             emitter.emit('openWidgetEditor', this.widget)
-        },
-        formatModelForGet(propWidget: IWidget, datasetLabel) {
-            //TODO: strong type this, and create a default object
-            var dataToSend = {
-                aggregations: {
-                    measures: [],
-                    categories: [],
-                    dataset: ''
-                },
-                parameters: {},
-                selections: {},
-                indexes: []
-            } as any
-
-            dataToSend.aggregations.dataset = datasetLabel
-
-            propWidget.columns.forEach((column) => {
-                if (column.fieldType === 'MEASURE') {
-                    let measureToPush = { id: column.alias, alias: column.alias, columnName: column.columnName, funct: column.aggregation, orderColumn: column.alias } as any
-                    column.formula ? (measureToPush.formula = column.formula) : ''
-                    dataToSend.aggregations.measures.push(measureToPush)
-                } else {
-                    let attributeToPush = { id: column.alias, alias: column.alias, columnName: column.columnName, orderType: '', funct: 'NONE' } as any
-                    column.id === propWidget.settings.sortingColumn ? (attributeToPush.orderType = propWidget.settings.sortingOrder) : ''
-                    dataToSend.aggregations.categories.push(attributeToPush)
-                }
-            })
-
-            return dataToSend
-        },
-        async getWidgetData() {
-            let datasetIndex = this.datasets.findIndex((dataset: any) => this.widget.dataset === dataset.id.dsId)
-            this.selectedDataset = this.datasets[datasetIndex]
-
-            if (this.selectedDataset) {
-                // let url = createGetUrl(this.widget, this.selectedDataset.label)
-                var url = `2.0/datasets/${this.selectedDataset.label}/data?offset=-1&size=-1&nearRealtime=true`
-
-                let postData = this.formatModelForGet(this.widget, this.selectedDataset.label)
-
-                await this.$http
-                    .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData)
-                    .then((response: AxiosResponse<any>) => {
-                        console.log('WIDGET DATA FROM CONTROLLER ---------------------', response.data)
-                        this.widgetData = response.data
-                    })
-                    .catch(() => {})
-            }
         },
         checkIfSelectionIsLocked() {
             if (this.widget.type !== 'selector') return false
