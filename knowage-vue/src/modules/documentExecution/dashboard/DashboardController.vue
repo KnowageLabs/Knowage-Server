@@ -10,7 +10,7 @@
 
         <WidgetPickerDialog v-if="widgetPickerVisible" :visible="widgetPickerVisible" @openNewWidgetEditor="openNewWidgetEditor" @closeWidgetPicker="widgetPickerVisible = false" />
         <DashboardControllerSaveDialog v-if="saveDialogVisible" :visible="saveDialogVisible" @save="saveNewDashboard" @close="saveDialogVisible = false"></DashboardControllerSaveDialog>
-        <SelectionsListDialog v-if="selectionsDialogVisible" :visible="selectionsDialogVisible" @close="selectionsDialogVisible = false" />
+        <SelectionsListDialog v-if="selectionsDialogVisible" :visible="selectionsDialogVisible" :dashboardId="dashboardId" @close="selectionsDialogVisible = false" />
     </div>
     <WidgetEditor
         v-if="widgetEditorVisible"
