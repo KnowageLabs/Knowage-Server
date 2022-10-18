@@ -63,7 +63,6 @@ export default defineComponent({
         },
         playSelectionButtonVisible(): boolean {
             if (!this.widget || !this.widget.settings.configuration.selectorType) return false
-            console.log('TEEEEEEST: ', this.widget.settings.configuration.selectorType.modality)
             return this.widget.type === 'selector' && ['multiValue', 'multiDropdown', 'dateRange'].includes(this.widget.settings.configuration.selectorType.modality)
         }
     },
@@ -77,6 +76,7 @@ export default defineComponent({
         },
         loadActiveSelections() {
             this.activeSelections = this.getSelections(this.dashboardId)
+            console.log('--------------- LOADED ACTIVE SEELCTIONS: ', this.activeSelections)
         },
         // TODO
         async test() {

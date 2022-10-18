@@ -125,7 +125,7 @@ export default defineComponent({
     methods: {
         ...mapActions(store, ['setSelections']),
         loadActiveSelections() {
-            this.activeSelections = deepcopy(this.propActiveSelections)
+            this.activeSelections = this.propActiveSelections
         },
         getLayoutStyle() {
             let selectorType = this.propWidget.settings.configuration.selectorType
