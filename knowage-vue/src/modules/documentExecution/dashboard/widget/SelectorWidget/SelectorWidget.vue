@@ -1,15 +1,16 @@
 <template>
     <div v-if="options" class="selector-widget">
+        {{ showMode }}
         <div v-if="widgetType === 'singleValue'" :class="getLayoutStyle()">
-            <div class="multi-select p-p-1" :style="getLabelStyle() + getGridWidth()" v-for="(value, index) of options.rows" :key="index">
-                <RadioButton :inputId="`radio-${index}`" class="p-mr-2" :name="value.column_1" :value="value.column_1" v-model="selectedValue" @change="singleValueSelectionChanged" />
+            <div class="multi-select p-p-1" :style="getLabelStyle() + getGridWidth()" v-for="(value, index) of showMode === 'hideDisabled' ?  options.rows.filter((row: any) => !row.disabled) : options.rows" :key="index">
+                <RadioButton :inputId="`radio-${index}`" class="p-mr-2" :name="value.column_1" :value="value.column_1" v-model="selectedValue" :disabled="showMode === 'showDisabled' && value.disabled" @change="singleValueSelectionChanged" />
                 <label :for="`radio-${index}`" class="multi-select-label">{{ value.column_1 }}</label>
             </div>
         </div>
 
         <div v-if="widgetType === 'multiValue'" :class="getLayoutStyle()">
-            <div class="multi-select p-p-1" :style="getLabelStyle() + getGridWidth()" v-for="(value, index) of options.rows" :key="index">
-                <Checkbox :inputId="`multi-${index}`" class="p-mr-2" :name="value.column_1" :value="value.column_1" v-model="selectedValues" @change="multiValueSelectionChanged" />
+            <div class="multi-select p-p-1" :style="getLabelStyle() + getGridWidth()" v-for="(value, index) of showMode === 'hideDisabled' ?  options.rows.filter((row: any) => !row.disabled) : options.rows" :key="index">
+                <Checkbox :inputId="`multi-${index}`" class="p-mr-2" :name="value.column_1" :value="value.column_1" v-model="selectedValues" :disabled="showMode === 'showDisabled' && value.disabled" @change="multiValueSelectionChanged" />
                 <label :for="`multi-${index}`" class="multi-select-label">{{ value.column_1 }}</label>
             </div>
         </div>
@@ -19,12 +20,13 @@
                 class="kn-width-full"
                 panelClass="selectorCustomDropdownPanel"
                 v-model="selectedValue"
-                :options="options.rows"
+                :options="showMode === 'hideDisabled' ?  options.rows.filter((row: any) => !row.disabled) : options.rows"
                 optionLabel="column_1"
                 optionValue="column_1"
                 :style="getLabelStyle()"
                 :inputStyle="getLabelStyle()"
                 :panelStyle="getLabelStyle()"
+                :optionDisabled="showMode === 'showDisabled' ? 'disabled' : ''"
                 @change="singleValueSelectionChanged"
             />
         </span>
@@ -34,13 +36,14 @@
                 class="kn-width-full"
                 panelClass="selectorCustomDropdownPanel"
                 v-model="selectedValues"
-                :options="options.rows"
+                :options="showMode === 'hideDisabled' ?  options.rows.filter((row: any) => !row.disabled) : options.rows"
                 optionLabel="column_1"
                 optionValue="column_1"
                 :style="getLabelStyle()"
                 :inputStyle="getLabelStyle()"
                 :panelStyle="getLabelStyle()"
                 :filter="true"
+                :optionDisabled="showMode === 'showDisabled' ? 'disabled' : ''"
                 @change="multiValueSelectionChanged"
             />
         </span>
@@ -100,12 +103,21 @@ export default defineComponent({
     computed: {
         widgetType(): string {
             return this.propWidget.settings.configuration.selectorType.modality || null
+        },
+        showMode(): string {
+            if (this.propWidget.settings.configuration.valuesManagement.hideDisabled) return 'hideDisabled'
+            else if (this.propWidget.settings.configuration.valuesManagement.enableAll) return 'enableAll'
+            else return 'showDisabled'
         }
     },
     data() {
         return {
-            initialOptions: {} as any,
-            options: {} as any,
+            initialOptions: {
+                rows: []
+            } as any,
+            options: {
+                rows: []
+            } as any,
             selectedValue: null as any,
             selectedValues: [] as any,
             selectedDate: null as any,
@@ -143,10 +155,24 @@ export default defineComponent({
             emitter.off('defaultValuesChanged', this.onDefaultValuesChanged)
         },
         loadOptions() {
-            this.options = this.dataToShow
+            this.loadInitialValues()
+            this.loadAvailableOptions(this.dataToShow)
+            console.log('>>>>>>>>>>>>>>>>> LOADED OPTIONS: ', this.options)
+            this.updateSelectedValue()
+        },
+        loadInitialValues() {
             if (this.initialOptions.rows && this.initialOptions.rows >= this.dataToShow) return
             this.initialOptions = deepcopy(this.dataToShow)
-            this.updateSelectedValue()
+            console.log('>>>>>>>>>>>>>>> LOADED INIITAL OPTIONS: ', this.initialOptions)
+        },
+        loadAvailableOptions(dataToShow: any) {
+            this.options = { rows: [] }
+            if (!dataToShow || !dataToShow.rows) return
+            // TODO - remove mock subarray
+            this.initialOptions.rows.forEach((initialOption: any) => {
+                const index = dataToShow.rows.slice(0, 1).findIndex((row: any) => row.column_1 === initialOption.column_1)
+                this.options.rows.push({ ...initialOption, disabled: index === -1 })
+            })
         },
         loadActiveSelections() {
             this.activeSelections = this.propActiveSelections
@@ -188,7 +214,7 @@ export default defineComponent({
             }
         },
         selectDefaultValue(defaultMode: string, multivalue: boolean) {
-            if (!this.options.rows || defaultMode) return
+            if (!this.options || !this.options.rows || defaultMode) return
             switch (defaultMode) {
                 case 'FIRST':
                     if (multivalue) {
