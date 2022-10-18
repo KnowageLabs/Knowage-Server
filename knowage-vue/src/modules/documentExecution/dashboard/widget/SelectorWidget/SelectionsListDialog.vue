@@ -55,14 +55,13 @@ export default defineComponent({
     },
     methods: {
         ...mapActions(store, ['getDashboard', 'getSelections', 'setSelections']),
-
         onGridReady(params) {
             this.gridApi = params.api
             this.gridColumnApi = params.columnApi
 
             params.api.sizeColumnsToFit()
-            window.addEventListener('resize', function () {
-                setTimeout(function () {
+            window.addEventListener('resize', function() {
+                setTimeout(function() {
                     params.api.sizeColumnsToFit()
                 })
             })
