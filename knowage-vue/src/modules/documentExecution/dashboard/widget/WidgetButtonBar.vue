@@ -1,9 +1,11 @@
 <template>
     <!-- ENABLE IF NEEDED -->
-    <!-- <div class="widgetButtonBarContainer">
-        <Button @click="editWidget" data-test="edit-widget-button">Edit</Button>
-    </div> -->
-    <div class="widgetButtonBarContainer2">
+    <div class="lockButtonContainer" style="width: 32px; height: 32px">
+        <i class="fas fa-lock kn-cursor-pointer" @click="$emit('unlockSelection')" />
+        <i v-if="playSelectionButtonVisible" class="fas fa-play kn-cursor-pointer" @click="$emit('launchSelection')" />
+    </div>
+
+    <div class="widgetButtonBarContainer">
         <SpeedDial class="speed-dial-menu" :model="items" direction="right" :transitionDelay="80" showIcon="fas fa-ellipsis-v" hideIcon="fas fa-ellipsis-v" buttonClass="p-button-text p-button-rounded p-button-plain">
             <template #item>
                 <i class="fas fa-arrows-up-down-left-right p-button-text p-button-rounded p-button-plain drag-handle drag-widget-icon buttonHover" style="width: 20px; height: 10px"></i>
@@ -23,7 +25,7 @@ import SpeedDial from 'primevue/speeddial'
 
 export default defineComponent({
     name: 'widget-button-bar',
-    emits: ['editWidget'],
+    emits: ['editWidget', 'unlockSelection', 'launchSelection'],
     components: { SpeedDial },
     data() {
         return {
@@ -44,17 +46,24 @@ export default defineComponent({
 })
 </script>
 <style lang="scss">
-.widgetButtonBarContainer {
+.lockButtonContainer {
+    width: 32px;
+    height: 32px;
     position: absolute;
-    top: 0;
-    right: 0;
+    right: -32px;
+    background-color: #a9c3db;
+    color: rgb(82, 82, 82);
+    border: 1px solid #ccc;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
 }
-.widgetButtonBarContainer2 {
+.widgetButtonBarContainer {
     position: absolute;
     bottom: 0;
     left: 0;
-    // margin-left: 5px;
-    // margin-bottom: 10px;
 }
 .drag-widget-icon {
     border-radius: 50% !important;

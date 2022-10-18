@@ -1,17 +1,10 @@
 <template>
-    <grid-item :key="item.id" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" drag-allow-from=".drag-handle">
+    <grid-item class="p-d-flex" :key="item.id" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" drag-allow-from=".drag-handle">
         <div v-if="initialized" class="drag-handle"></div>
-        <ProgressBar mode="indeterminate" v-if="loading" />
+        <ProgressSpinner v-if="loading" class="kn-progress-spinner" />
         <Skeleton shape="rectangle" v-if="!initialized" height="100%" border-radius="0" />
-
-        {{ 'TODO - REMOVE THIS' }}
-        {{ selectionIsLocked }}
-        <br />
-        <button class="p-mr-2" :style="'max-width: 100px;'" @click="unlockSelection">UNLOCK SELECTION</button>
-        <button v-if="playSelectionButtonVisible" :style="'max-width: 100px;'" @click="launchSelection">LAUNCH SELECTION</button>
-        <!-- <button @click="test">CLICK ME FOR TEST</button> -->
         <WidgetRenderer :widget="widget" :widgetData="widgetData" :datasets="datasets" v-if="initialized" :dashboardId="dashboardId" :selectionIsLocked="selectionIsLocked" :propActiveSelections="activeSelections" @interaction="manageInteraction"></WidgetRenderer>
-        <WidgetButtonBar @edit-widget="toggleEditMode"></WidgetButtonBar>
+        <WidgetButtonBar :playSelectionButtonVisible="playSelectionButtonVisible" @edit-widget="toggleEditMode" @unlockSelection="unlockSelection" @launchSelection="launchSelection"></WidgetButtonBar>
     </grid-item>
 </template>
 
@@ -20,7 +13,6 @@
  * ! this component will be in charge of managing the widget behaviour related to data and interactions, not related to view elements.
  */
 import { defineComponent, PropType } from 'vue'
-import { getData } from '../DataProxyHelper'
 import { IDataset, ISelection, IWidget } from '../Dashboard'
 import { emitter } from '../DashboardHelpers'
 import { mapState, mapActions } from 'pinia'
@@ -30,14 +22,24 @@ import store from '../Dashboard.store'
 import WidgetRenderer from './WidgetRenderer.vue'
 import WidgetButtonBar from './WidgetButtonBar.vue'
 import Skeleton from 'primevue/skeleton'
-import ProgressBar from 'primevue/progressbar'
+import ProgressSpinner from 'primevue/progressspinner'
 import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'widget-manager',
-    components: { ProgressBar, Skeleton, WidgetButtonBar, WidgetRenderer },
+    components: { Skeleton, WidgetButtonBar, WidgetRenderer, ProgressSpinner },
     inject: ['dHash'],
     props: { item: { required: true, type: Object }, activeSheet: { type: Boolean }, widget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array as PropType<IDataset[]>, required: true }, dashboardId: { type: String, required: true } },
+    watch: {
+        widget: {
+            async handler() {
+                this.loading = true
+                this.widgetData = await getSelectorWidgetData(this.widget, this.datasets, this.$http)
+                this.loading = false
+            },
+            deep: true
+        }
+    },
     data() {
         return {
             loading: false,

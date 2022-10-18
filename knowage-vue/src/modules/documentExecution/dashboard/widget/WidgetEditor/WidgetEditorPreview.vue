@@ -2,15 +2,15 @@
     <div class="widget-editor-preview-container p-d-flex p-flex-column p-ai-stretch p-jc-center kn-overflow">
         <Button icon="fas fa-square-check" class="p-button-rounded p-button-text p-button-plain" @click="logWidget" />
 
-        <div class="widget p-m-2" :style="getWidgetContainerStyle()">
+        <ProgressBar v-if="loading" class="p-mx-2" mode="indeterminate" />
+        <div class="widget-container p-m-2" :style="getWidgetContainerStyle()">
             <div v-if="widgetTitle && widgetTitle.enabled" class="p-d-flex p-ai-center" style="border-radius: 0px" :style="getWidgetTitleStyle()">
                 {{ widgetTitle?.text }}
             </div>
-            <div class="widget-editor-preview" :style="getWidgetPadding()">
+            <div class="widget-container-renderer" :style="getWidgetPadding()">
                 <TableWidget v-if="propWidget.type == 'table'" :propWidget="propWidget" :datasets="datasets" :editorMode="true" />
-                <SelectorWidget v-if="propWidget.type == 'selector'" :propWidget="propWidget" :dataToShow="mock.selectorMockedResponse" :editorMode="true" />
+                <SelectorWidget v-if="propWidget.type == 'selector'" :propWidget="propWidget" :dataToShow="widgetData" :editorMode="true" />
                 <ActiveSelectionsWidget v-if="propWidget.type == 'selection'" :propWidget="propWidget" :dataToShow="mock.selectionMockedResponse" :editorMode="true" :dashboardId="dashboardId" />
-                <!-- <ActiveSelectionsWidget :propWidget="propWidget" :dataToShow="[]" :editorMode="true" /> -->
             </div>
         </div>
     </div>
@@ -25,30 +25,53 @@ import descriptor from '../../dataset/DatasetEditorDescriptor.json'
 import TableWidget from '../TableWidget/TableWidget.vue'
 import SelectorWidget from '../SelectorWidget/SelectorWidget.vue'
 import ActiveSelectionsWidget from '../ActiveSelectionsWidget/ActiveSelectionsWidget.vue'
+import { emitter } from '../../DashboardHelpers'
+import { getSelectorWidgetData } from '../../DataProxyHelper'
+import ProgressBar from 'primevue/progressbar'
 
 export default defineComponent({
     name: 'widget-editor-preview',
-    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget },
+    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, ProgressBar },
     props: {
-        propWidget: {
-            required: true,
-            type: Object as PropType<IWidget>
-        },
-        datasets: { type: Array as PropType<IDataset[]> },
+        propWidget: { type: Object as PropType<IWidget>, required: true },
+        datasets: { type: Array as PropType<IDataset[]>, required: true },
         dashboardId: { type: String, required: true }
     },
     data() {
         return {
             descriptor,
             widgetTitle: null as any,
-            mock
+            mock,
+            widgetData: {} as any,
+            loading: false
         }
     },
     created() {
+        this.setEventListeners()
         this.getWidgetTitleStyle()
     },
-    mounted() {},
+    mounted() {
+        this.getWidgetData()
+    },
+    unmounted() {
+        emitter.off('getWidgetData', this.getWidgetData)
+        emitter.off('datasetChanged', this.clearWidgetData)
+    },
     methods: {
+        setEventListeners() {
+            emitter.on('getWidgetData', this.getWidgetData)
+            emitter.on('clearWidgetData', this.clearWidgetData)
+        },
+        async getWidgetData() {
+            this.loading = true
+            console.log('getting data ------------')
+            this.widgetData = await getSelectorWidgetData(this.propWidget, this.datasets, this.$http)
+            this.loading = false
+        },
+        clearWidgetData() {
+            console.log('clearing data ------------')
+            this.widgetData = { metaData: {}, rows: [] }
+        },
         logWidget() {
             console.log('widget ----------------- \n', this.propWidget)
         },
@@ -73,13 +96,13 @@ export default defineComponent({
 .widget-editor-preview-container {
     flex: 0.5;
     border-left: 1px solid #ccc;
-    .widget {
+    .widget-container {
         display: flex;
         flex-direction: column;
         overflow: hidden;
         // flex: 1;
         max-height: 35%;
-        .widget-editor-preview {
+        .widget-container-renderer {
             flex: 1;
             display: flex;
             flex-direction: column;

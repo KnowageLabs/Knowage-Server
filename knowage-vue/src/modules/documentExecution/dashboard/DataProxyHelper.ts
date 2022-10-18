@@ -29,6 +29,7 @@ const formatSelectorModelForGet = (propWidget: IWidget, datasetLabel) => {
     } as any
 
     dataToSend.aggregations.dataset = datasetLabel
+    dataToSend.selections = getFilters(propWidget, datasetLabel)
 
     propWidget.columns.forEach((column) => {
         if (column.fieldType === 'MEASURE') {
@@ -37,7 +38,7 @@ const formatSelectorModelForGet = (propWidget: IWidget, datasetLabel) => {
             dataToSend.aggregations.measures.push(measureToPush)
         } else {
             let attributeToPush = { id: column.alias, alias: column.alias, columnName: column.columnName, orderType: '', funct: 'NONE' } as any
-            column.id === propWidget.settings.sortingColumn ? (attributeToPush.orderType = propWidget.settings.sortingOrder) : ''
+            attributeToPush.orderType = propWidget.settings.sortingOrder
             dataToSend.aggregations.categories.push(attributeToPush)
         }
     })
@@ -61,4 +62,29 @@ export const getSelectorWidgetData = async (widget: IWidget, datasets: IDataset[
             .catch(() => {})
         return tempResponse
     }
+}
+
+const getFilters = (propWidget: IWidget, datasetLabel: string) => {
+    var columns = propWidget.columns
+    var activeFilters = {} as any
+
+    columns.forEach((column) => {
+        if (column.filter.enabled && column.filter.operator) {
+            var filterData = { filterOperator: column.filter.operator, filterVals: [`('${column.filter.value}')`] }
+            createNestedObject(activeFilters, [datasetLabel, column.columnName], filterData)
+        }
+    })
+
+    return activeFilters
+}
+
+const createNestedObject = function (base, names, value) {
+    var lastName = arguments.length === 3 ? names.pop() : false
+
+    for (var i = 0; i < names.length; i++) {
+        base = base[names[i]] = base[names[i]] || {}
+    }
+    if (lastName) base = base[lastName] = value
+
+    return base
 }
