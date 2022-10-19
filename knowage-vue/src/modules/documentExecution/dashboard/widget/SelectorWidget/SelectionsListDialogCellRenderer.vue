@@ -20,6 +20,7 @@ export default defineComponent({
     methods: {
         logMe() {
             console.log(this.params)
+            this.params.context.componentParent.methodFromParent(this.params.node.data)
         }
     }
 })

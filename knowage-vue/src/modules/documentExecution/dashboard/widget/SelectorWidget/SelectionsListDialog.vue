@@ -1,6 +1,6 @@
 <template>
     <Dialog class="kn-dialog--toolbar--secondary selectionsDialog" :visible="visible" style="width: 60%" :header="$t('dashboard.datasetEditor.selectDatasets')" :closable="false" modal :breakpoints="{ '960px': '75vw', '640px': '100vw' }">
-        <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine selectionGrid p-m-2" :gridOptions="gridOptions"></ag-grid-vue>
+        <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine selectionGrid p-m-2" :gridOptions="gridOptions" :context="context"></ag-grid-vue>
         <template #footer>
             <Button class="kn-button kn-button--secondary p-mb-2" :label="$t('common.close')" @click="$emit('close')" />
             <Button class="kn-button kn-button p-mb-2" v-t="'common.save'" />
@@ -47,11 +47,15 @@ export default defineComponent({
                 rowHeight: 25,
                 headerHeight: 30,
                 onGridReady: this.onGridReady
-            }
+            },
+            context: null as any
         }
     },
     computed: {
         ...mapState(store, ['dashboards'])
+    },
+    beforeMount() {
+        this.context = { componentParent: this }
     },
     methods: {
         ...mapActions(store, ['getDashboard', 'getSelections', 'setSelections']),
@@ -60,8 +64,8 @@ export default defineComponent({
             this.gridColumnApi = params.columnApi
 
             params.api.sizeColumnsToFit()
-            window.addEventListener('resize', function() {
-                setTimeout(function() {
+            window.addEventListener('resize', function () {
+                setTimeout(function () {
                     params.api.sizeColumnsToFit()
                 })
             })
@@ -69,6 +73,10 @@ export default defineComponent({
             const updateData = (data) => params.api.setRowData(data)
 
             updateData(deepcopy(this.getSelections(this.dashboardId)))
+        },
+        // row === selection
+        methodFromParent(row) {
+            alert('Parent Component Method from ' + row + '!')
         }
     }
 })
