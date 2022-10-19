@@ -68,10 +68,21 @@ const store = defineStore('dashboardStore', {
         removeSelection(payload: { datasetId: number, columnName: string }, dashboardId: string) {
             const index = this.selections[dashboardId]?.findIndex((selection: ISelection) => selection.datasetId === payload.datasetId && selection.columnName === payload.columnName)
             if (index !== -1) {
-                emitter.emit('selectionDeleted', deepcopy(this.selections[dashboardId]))
+                emitter.emit('selectionsDeleted', [this.selections[dashboardId]])
                 this.selections[dashboardId].splice(index, 1)
                 emitter.emit('selectionsChanged', { dashboardId: dashboardId, selections: this.selections[dashboardId] })
             }
+        },
+        removeSelections(selectionsToRemove: ISelection[], dashboardId: string) {
+            const removedSelections = [] as ISelection[]
+            selectionsToRemove?.forEach((selection: ISelection) => {
+                const index = this.selections[dashboardId].findIndex((activeSelection: ISelection) => activeSelection.datasetId === selection.datasetId && activeSelection.columnName === selection.columnName)
+                if (index !== -1) {
+                    this.selections[dashboardId].splice(index, 1)
+                    removedSelections.push(selection)
+                }
+            })
+            if (removedSelections.length > 0) emitter.emit('selectionsDeleted', removedSelections)
         }
     }
 })

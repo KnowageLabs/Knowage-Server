@@ -34,6 +34,7 @@ export default defineComponent({
         widget: {
             async handler() {
                 this.loading = true
+                console.log('>>>>>>>>>>>>>>>>>>>>>>> CALLED FROM WIDGET CONTROLLER WATCHER!!!!')
                 this.widgetData = await getSelectorWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
                 this.loading = false
             },
@@ -54,6 +55,7 @@ export default defineComponent({
     async mounted() {
         this.setEventListeners()
         this.loadActiveSelections()
+        console.log('>>>>>>>>>>>>>>>>>>>>>>> CALLED FROM WIDGET CONTROLLER MOUNTED!!!!')
         this.widgetData = await getSelectorWidgetData(this.widget, this.datasets, this.$http, true, this.activeSelections)
     },
     unmounted() {
@@ -73,28 +75,33 @@ export default defineComponent({
         ...mapActions(store, ['getDashboard', 'getSelections', 'setSelections']),
         setEventListeners() {
             emitter.on('selectionsChanged', this.loadActiveSelections)
+            emitter.on('selectionsDeleted', this.onSelectionsDeleted)
         },
         removeEventListeners() {
             emitter.off('selectionsChanged', this.loadActiveSelections)
+            emitter.off('selectionsDeleted', this.onSelectionsDeleted)
         },
         async loadActiveSelections() {
             this.activeSelections = deepcopy(this.getSelections(this.dashboardId))
             await this.reloadWidgetData()
         },
-        async reloadWidgetData() {
-            if (this.widgetUsesSelections()) this.widgetData = await getSelectorWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
+        async onSelectionsDeleted(deletedSelections: any) {
+            if (this.widgetUsesSelections(deletedSelections)) this.widgetData = await getSelectorWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
         },
-        widgetUsesSelections() {
+        async reloadWidgetData() {
+            if (this.widgetUsesSelections(this.activeSelections)) this.widgetData = await getSelectorWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
+        },
+        widgetUsesSelections(selections: ISelection[]) {
             let widgetUsesSelection = false
             if (!this.widget.columns) return widgetUsesSelection
             for (let i = 0; i < this.widget.columns.length; i++) {
-                const index = this.activeSelections.findIndex((activeSelection: ISelection) => activeSelection.datasetId === this.widget.dataset && activeSelection.columnName === this.widget.columns[i].columnName)
+                const index = selections.findIndex((activeSelection: ISelection) => activeSelection.datasetId === this.widget.dataset && activeSelection.columnName === this.widget.columns[i].columnName)
                 if (index !== -1) {
                     widgetUsesSelection = true
                     break
                 }
             }
-            console.log('CAAAAAAAAAAAAAAAAAAAAAAAAALED: ', widgetUsesSelection)
+            console.log('>>>>>>>>>>>>>>>>>>>>> widgetUsesSelections: ', widgetUsesSelection)
 
             return widgetUsesSelection
         },
