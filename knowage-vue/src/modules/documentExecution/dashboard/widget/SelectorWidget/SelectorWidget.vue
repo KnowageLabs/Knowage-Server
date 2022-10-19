@@ -1,6 +1,7 @@
 <template>
     <div v-if="options" class="selector-widget">
         {{ showMode }}
+        {{ selectedValue }}
         <div v-if="widgetType === 'singleValue'" :class="getLayoutStyle()">
             <div class="multi-select p-p-1" :style="getLabelStyle() + getGridWidth()" v-for="(value, index) of showMode === 'hideDisabled' ?  options.rows.filter((row: any) => !row.disabled) : options.rows" :key="index">
                 <RadioButton :inputId="`radio-${index}`" class="p-mr-2" :name="value.column_1" :value="value.column_1" v-model="selectedValue" :disabled="showMode === 'showDisabled' && value.disabled" @change="singleValueSelectionChanged" />
@@ -134,8 +135,11 @@ export default defineComponent({
         },
         dataToShow() {
             this.loadOptions()
+            if (this.dataToShow.initial) this.updateSelectedValue()
         },
-        widgetInitialData() {},
+        widgetInitialData() {
+            this.loadInitialValues()
+        },
         widgetType() {
             this.updateDefaultValues()
         }
@@ -143,7 +147,7 @@ export default defineComponent({
     created() {
         this.setEventListeners()
         this.loadActiveSelections()
-        this.loadOptions()
+        this.loadInitialValues()
     },
     unmounted() {
         this.removeEventListeners()
@@ -153,21 +157,28 @@ export default defineComponent({
         setEventListeners() {
             emitter.on('defaultValuesChanged', this.onDefaultValuesChanged)
             emitter.on('valuesManagementChanged', this.onDefaultValuesChanged)
+            emitter.on('widgetUnlocked', this.removeDeafultValues)
+            emitter.on('selectionsDeleted', this.onSelectionsDeleted)
         },
         removeEventListeners() {
             emitter.off('defaultValuesChanged', this.onDefaultValuesChanged)
             emitter.off('valuesManagementChanged', this.onDefaultValuesChanged)
-        },
-        loadOptions() {
-            this.loadInitialValues()
-            this.loadAvailableOptions(this.dataToShow)
-            console.log('>>>>>>>>>>>>>>>>> LOADED OPTIONS: ', this.options)
-            this.updateSelectedValue()
+            emitter.off('widgetUnlocked', this.removeDeafultValues)
+            emitter.off('selectionsDeleted', this.onSelectionsDeleted)
         },
         loadInitialValues() {
             this.initialOptions = deepcopy(this.widgetInitialData)
-            console.log('>>>>>>>>>>>>>>> LOADED INIITAL OPTIONS: ', this.initialOptions)
+            console.log('%c >>>>>>>>>>>>>>> LOADED INIITAL OPTIONS: ', 'background-color: red; color: white')
+            console.log(this.initialOptions)
+            this.loadOptions()
+            this.updateSelectedValue()
         },
+        loadOptions() {
+            this.loadAvailableOptions(this.dataToShow)
+            console.log('%c >>>>>>>>>>>>>>> LOADED  OPTIONS: ', 'background-color: red; red; color: white')
+            console.log(this.options)
+        },
+
         loadAvailableOptions(dataToShow: any) {
             this.options = { rows: [] }
             if (!dataToShow || !dataToShow.rows) return
@@ -244,6 +255,8 @@ export default defineComponent({
         findFirstAvailableValue() {
             if (this.showMode === 'enableAll') return this.options.rows[0]
             const index = this.options.rows.findIndex((row: any) => !row.disabled)
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> findFirstAvailableValue: ', this.options.rows)
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> index: ', index)
             return index !== -1 ? this.options.rows[index] : null
         },
         findLastAvailableValue() {
@@ -338,6 +351,10 @@ export default defineComponent({
         getDatasetLabel(datasetId: number) {
             const index = this.datasets.findIndex((dataset: IDataset) => dataset.id.dsId == datasetId)
             return index !== -1 ? this.datasets[index].label : ''
+        },
+        onSelectionsDeleted(selections: any) {
+            const index = selections.findIndex((selection: ISelection) => selection.datasetId === this.propWidget.dataset && selection.columnName === this.propWidget.columns[0]?.columnName)
+            if (index !== -1) this.removeDeafultValues()
         }
     }
 })

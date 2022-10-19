@@ -10,7 +10,7 @@
 
         <WidgetPickerDialog v-if="widgetPickerVisible" :visible="widgetPickerVisible" @openNewWidgetEditor="openNewWidgetEditor" @closeWidgetPicker="widgetPickerVisible = false" />
         <DashboardControllerSaveDialog v-if="saveDialogVisible" :visible="saveDialogVisible" @save="saveNewDashboard" @close="saveDialogVisible = false"></DashboardControllerSaveDialog>
-        <SelectionsListDialog v-if="selectionsDialogVisible" :visible="selectionsDialogVisible" :dashboardId="dashboardId" @close="selectionsDialogVisible = false" />
+        <SelectionsListDialog v-if="selectionsDialogVisible" :visible="selectionsDialogVisible" :dashboardId="dashboardId" @close="selectionsDialogVisible = false" @save="onSelectionsRemove" />
     </div>
     <WidgetEditor
         v-if="widgetEditorVisible"
@@ -34,8 +34,9 @@ import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import { v4 as uuidv4 } from 'uuid'
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
-import { IWidget } from './Dashboard'
+import { ISelection, IWidget } from './Dashboard'
 import { emitter, createNewDashboardModel } from './DashboardHelpers'
+import { mapActions } from 'pinia'
 import { formatModel } from './helpers/DashboardBackwardCompatibilityHelper'
 import DashboardRenderer from './DashboardRenderer.vue'
 import WidgetPickerDialog from './widget/WidgetPicker/WidgetPickerDialog.vue'
@@ -93,6 +94,7 @@ export default defineComponent({
         this.emptyStoreValues()
     },
     methods: {
+        ...mapActions(dashboardStore, ['removeSelections']),
         async getData() {
             this.loading = true
             await this.loadDatasets()
@@ -254,6 +256,10 @@ export default defineComponent({
                 .catch(() => {})
 
             this.appStore.setLoading(false)
+        },
+        onSelectionsRemove(selections: ISelection[]) {
+            this.selectionsDialogVisible = false
+            this.removeSelections(selections, this.dashboardId)
         }
     }
 })

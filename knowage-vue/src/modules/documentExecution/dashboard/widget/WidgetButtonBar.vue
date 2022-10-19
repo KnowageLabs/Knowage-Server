@@ -1,6 +1,6 @@
 <template>
-    <!-- ENABLE IF NEEDED -->
-    <div class="lockButtonContainer" style="width: 32px; height: 32px">
+    <!-- TODO - ENABLE IF NEEDED -->
+    <div v-if="selectionIsLocked || playSelectionButtonVisible" class="lockButtonContainer" style="width: 32px; height: 32px">
         <i v-if="selectionIsLocked" class="fas fa-lock kn-cursor-pointer" @click="$emit('unlockSelection')" />
         <i v-if="playSelectionButtonVisible" class="fas fa-play kn-cursor-pointer" @click="$emit('launchSelection')" />
     </div>

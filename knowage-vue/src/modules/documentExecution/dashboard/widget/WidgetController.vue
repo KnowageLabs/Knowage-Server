@@ -44,6 +44,7 @@ export default defineComponent({
         widget: {
             async handler() {
                 this.loading = true
+                // console.log('%c --  CALLED FROM WIDGET CONTROLLER watcher!!!!', 'background-color: blue; color: white', this.widget.type)
                 this.widgetData = await getWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
                 this.loading = false
             },
@@ -95,13 +96,15 @@ export default defineComponent({
             emitter.off('selectionsDeleted', this.onSelectionsDeleted)
         },
         async loadInitalData() {
-            console.log(' ---  CALLED FROM WIDGET CONTROLLER loadInitalData!!!!')
+            if (!this.widget || this.widget.type === 'selection') return
+            // console.log('%c --  CALLED FROM WIDGET CONTROLLER loadInitalData!!!!', 'background-color: blue; color: white', this.widget.type)
             this.loading = true
-            if (this.widget && this.widget.type === 'selector') {
-                this.widgetInitialData = await getWidgetData(this.widget, this.datasets, this.$http, true, this.activeSelections)
-            }
-            this.widgetData = await getWidgetData(this.widget, this.datasets, this.$http, true, this.activeSelections)
+
+            this.widgetInitialData = await getWidgetData(this.widget, this.datasets, this.$http, true, this.activeSelections)
+            this.widgetData = this.widgetInitialData
+
             await this.loadActiveSelections()
+            if (this.widgetData) this.widgetData.initial = true
             this.loading = false
         },
         async loadActiveSelections() {
@@ -109,25 +112,25 @@ export default defineComponent({
             await this.reloadWidgetData()
         },
         async onSelectionsDeleted(deletedSelections: any) {
-            // console.log('>>>>>>>>>>> DELETED SELECTIONS: ', deletedSelections)
             this.loading = true
             this.activeSelections = deepcopy(this.getSelections(this.dashboardId))
-            console.log(' --- CALLED FROM WIDGET CONTROLLER onSelectionsDeleted!!!!', this.activeSelections)
+            // console.log('%c --  CALLED FROM WIDGET CONTROLLER onSelectionsDeleted!!!!', 'background-color: blue; color: white', this.widget.type)
             if (this.widgetUsesSelections(deletedSelections)) this.widgetData = await getWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
+
             this.loading = false
         },
         async reloadWidgetData() {
-            console.log(' --- CALLED FROM WIDGET CONTROLLER reloadWidgetData!!!!', this.activeSelections)
+            // console.log('%c --  CALLED FROM WIDGET CONTROLLER reloadWidgetData!!!!', 'background-color: blue; color: white', this.widget.type)
             if (this.widgetUsesSelections(this.activeSelections)) this.widgetData = await getWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
         },
         widgetUsesSelections(selections: ISelection[]) {
-            console.log('>>>>>>>>>>> widgetUsesSelections: ', selections)
+            // console.log('>>>>>>>>>>> widgetUsesSelections: ', selections)
             let widgetUsesSelection = false
             if (!this.widget.columns) return widgetUsesSelection
             for (let i = 0; i < this.widget.columns.length; i++) {
                 const index = selections.findIndex((selection: ISelection) => {
-                    console.log('>>>>>>>>>> SELECTION: ', selection)
-                    console.log(selection.datasetId + ' === ' + this.widget.dataset + ' && ' + selection.columnName + ' === ' + this.widget.columns[i].columnName)
+                    // console.log('>>>>>>>>>> SELECTION: ', selection)
+                    // console.log(selection.datasetId + ' === ' + this.widget.dataset + ' && ' + selection.columnName + ' === ' + this.widget.columns[i].columnName)
                     return selection.datasetId === this.widget.dataset && selection.columnName === this.widget.columns[i].columnName
                 })
                 if (index !== -1) {
@@ -135,7 +138,7 @@ export default defineComponent({
                     break
                 }
             }
-            console.log('>>>>>>>>>>>>>>>>>>>>> widgetUsesSelections: ', widgetUsesSelection)
+            // console.log('>>>>>>>>>>>>>>>>>>>>> widgetUsesSelections: ', widgetUsesSelection)
 
             return widgetUsesSelection
         },
@@ -164,6 +167,7 @@ export default defineComponent({
         },
         unlockSelection() {
             const payload = { datasetId: this.widget.dataset as number, columnName: this.widget.columns[0].columnName }
+            emitter.emit('widgetUnlocked', this.widget.id)
             this.removeSelection(payload, this.dashboardId)
         },
         launchSelection() {

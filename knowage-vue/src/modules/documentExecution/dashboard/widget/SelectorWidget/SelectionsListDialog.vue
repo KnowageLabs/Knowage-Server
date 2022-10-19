@@ -2,8 +2,8 @@
     <Dialog class="kn-dialog--toolbar--secondary selectionsDialog" :visible="visible" style="width: 60%" :header="$t('dashboard.datasetEditor.selectDatasets')" :closable="false" modal :breakpoints="{ '960px': '75vw', '640px': '100vw' }">
         <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine selectionGrid p-m-2" :gridOptions="gridOptions" :context="context"></ag-grid-vue>
         <template #footer>
-            <Button class="kn-button kn-button--secondary p-mb-2" :label="$t('common.close')" @click="$emit('close')" />
-            <Button class="kn-button kn-button p-mb-2" v-t="'common.save'" />
+            <Button class="kn-button kn-button--secondary p-mb-2" :label="$t('common.close')" @click="closeDialog" />
+            <Button class="kn-button kn-button p-mb-2" v-t="'common.save'" @click="onSave" />
         </template>
     </Dialog>
 </template>
@@ -18,12 +18,13 @@ import buttonRenderer from './SelectionsListDialogCellRenderer.vue'
 import { mapState, mapActions } from 'pinia'
 import store from '../../Dashboard.store'
 import deepcopy from 'deepcopy'
+import { ISelection } from '../../Dashboard'
 
 export default defineComponent({
     name: 'datasets-catalog-datatable',
     components: { Dialog, AgGridVue },
     props: { visible: { type: Boolean }, selectedDatasetsProp: { required: true, type: Array as any }, availableDatasetsProp: { required: true, type: Array as any }, dashboardId: { type: String, required: true } },
-    emits: ['close'],
+    emits: ['close', 'save'],
     data() {
         return {
             gridApi: null as any,
@@ -48,7 +49,9 @@ export default defineComponent({
                 headerHeight: 30,
                 onGridReady: this.onGridReady
             },
-            context: null as any
+            context: null as any,
+            activeSelections: [] as ISelection[],
+            selectionsToRemove: [] as ISelection[]
         }
     },
     computed: {
@@ -64,19 +67,31 @@ export default defineComponent({
             this.gridColumnApi = params.columnApi
 
             params.api.sizeColumnsToFit()
-            window.addEventListener('resize', function () {
-                setTimeout(function () {
+            window.addEventListener('resize', function() {
+                setTimeout(function() {
                     params.api.sizeColumnsToFit()
                 })
             })
 
             const updateData = (data) => params.api.setRowData(data)
-
-            updateData(deepcopy(this.getSelections(this.dashboardId)))
+            this.activeSelections = deepcopy(this.getSelections(this.dashboardId))
+            updateData(this.activeSelections)
         },
-        // row === selection
-        methodFromParent(row) {
-            alert('Parent Component Method from ' + row + '!')
+        deleteSelection(selection: ISelection) {
+            const index = this.activeSelections.findIndex((tempSelection: ISelection) => tempSelection.datasetId === selection.datasetId && tempSelection.columnName === selection.columnName)
+            if (index !== -1) {
+                this.selectionsToRemove.push(this.activeSelections[index])
+                this.activeSelections.splice(index, 1)
+                this.gridApi.setRowData(this.activeSelections)
+            }
+        },
+        closeDialog() {
+            this.activeSelections = []
+            this.selectionsToRemove = []
+            this.$emit('close')
+        },
+        onSave() {
+            this.$emit('save', this.selectionsToRemove)
         }
     }
 })

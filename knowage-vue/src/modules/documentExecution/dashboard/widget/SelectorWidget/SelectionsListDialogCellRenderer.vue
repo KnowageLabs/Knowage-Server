@@ -1,5 +1,5 @@
 <template>
-    <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain p-ml-auto" v-tooltip.left="$t('common.delete')" @click.stop="logMe()" />
+    <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain p-ml-auto" v-tooltip.left="$t('common.delete')" @click.stop="deleteSelection()" />
 </template>
 
 <script lang="ts">
@@ -18,9 +18,8 @@ export default defineComponent({
     },
     created() {},
     methods: {
-        logMe() {
-            console.log(this.params)
-            this.params.context.componentParent.methodFromParent(this.params.node.data)
+        deleteSelection() {
+            this.params.context.componentParent.deleteSelection(this.params.node.data)
         }
     }
 })
