@@ -97,7 +97,7 @@ public class SbiDossierActivityDAOHibImpl extends AbstractHibernateDAO implement
 				hibDossierActivity.setBinContent(file);
 			} else if (type.equals("doc")) {
 				hibDossierActivity.setDocBinContent(file);
-			} else if (type.equals("pptV2")) {
+			} else if (type.equals("pptv2")) {
 				hibDossierActivity.setPptV2BinContent(file);
 			}
 
