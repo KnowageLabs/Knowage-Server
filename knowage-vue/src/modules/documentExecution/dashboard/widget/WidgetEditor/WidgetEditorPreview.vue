@@ -8,7 +8,7 @@
                 {{ widgetTitle?.text }}
             </div>
             <div class="widget-container-renderer" :style="getWidgetPadding()">
-                <TableWidget v-if="propWidget.type == 'table'" :propWidget="propWidget" :datasets="datasets" :editorMode="true" />
+                <TableWidget v-if="propWidget.type == 'table'" :propWidget="propWidget" :datasets="datasets" :dataToShow="widgetData" :editorMode="true" />
                 <SelectorWidget v-if="propWidget.type == 'selector'" :propWidget="propWidget" :dataToShow="widgetData" :editorMode="true" />
                 <ActiveSelectionsWidget v-if="propWidget.type == 'selection'" :propWidget="propWidget" :propActiveSelections="activeSelections" :editorMode="true" :dashboardId="dashboardId" />
             </div>
@@ -26,7 +26,7 @@ import TableWidget from '../TableWidget/TableWidget.vue'
 import SelectorWidget from '../SelectorWidget/SelectorWidget.vue'
 import ActiveSelectionsWidget from '../ActiveSelectionsWidget/ActiveSelectionsWidget.vue'
 import { emitter } from '../../DashboardHelpers'
-import { getSelectorWidgetData } from '../../DataProxyHelper'
+import { getWidgetData } from '../../DataProxyHelper'
 import ProgressBar from 'primevue/progressbar'
 import { mapState, mapActions } from 'pinia'
 import store from '../../Dashboard.store'
@@ -74,7 +74,7 @@ export default defineComponent({
         async getWidgetData() {
             this.loading = true
             console.log('getting data ------------')
-            this.widgetData = await getSelectorWidgetData(this.propWidget, this.datasets, this.$http)
+            this.widgetData = await getWidgetData(this.propWidget, this.datasets, this.$http, false, this.activeSelections)
             this.activeSelections = deepcopy(this.getSelections(this.dashboardId))
             this.loading = false
         },

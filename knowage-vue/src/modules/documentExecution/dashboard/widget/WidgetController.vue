@@ -16,7 +16,7 @@ import { defineComponent, PropType } from 'vue'
 import { IDataset, ISelection, IWidget } from '../Dashboard'
 import { emitter } from '../DashboardHelpers'
 import { mapState, mapActions } from 'pinia'
-import { getSelectorWidgetData } from '../DataProxyHelper'
+import { getSelectorWidgetData, getWidgetData } from '../DataProxyHelper'
 import { getAssociativeSelections, removeSelectionFromActiveSelections, updateStoreSelections } from './interactionsHelpers/InteractionHelper'
 import store from '../Dashboard.store'
 import WidgetRenderer from './WidgetRenderer.vue'
@@ -35,7 +35,7 @@ export default defineComponent({
             async handler() {
                 this.loading = true
                 console.log('>>>>>>>>>>>>>>>>>>>>>>> CALLED FROM WIDGET CONTROLLER WATCHER!!!!')
-                this.widgetData = await getSelectorWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
+                this.widgetData = await getWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
                 this.loading = false
             },
             deep: true
@@ -49,14 +49,19 @@ export default defineComponent({
             selectedWidgetId: '' as string,
             selectedDataset: {} as any,
             widgetEditorVisible: false,
-            activeSelections: [] as ISelection[]
+            activeSelections: [] as ISelection[],
+            pagination: {
+                offset: 0,
+                itemsNumber: 15,
+                totalItems: 0
+            }
         }
     },
     async mounted() {
         this.setEventListeners()
         this.loadActiveSelections()
         console.log('>>>>>>>>>>>>>>>>>>>>>>> CALLED FROM WIDGET CONTROLLER MOUNTED!!!!')
-        this.widgetData = await getSelectorWidgetData(this.widget, this.datasets, this.$http, true, this.activeSelections)
+        this.widgetData = await getWidgetData(this.widget, this.datasets, this.$http, true, this.activeSelections)
     },
     unmounted() {
         this.removeEventListeners()
@@ -86,10 +91,10 @@ export default defineComponent({
             await this.reloadWidgetData()
         },
         async onSelectionsDeleted(deletedSelections: any) {
-            if (this.widgetUsesSelections(deletedSelections)) this.widgetData = await getSelectorWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
+            if (this.widgetUsesSelections(deletedSelections)) this.widgetData = await getWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
         },
         async reloadWidgetData() {
-            if (this.widgetUsesSelections(this.activeSelections)) this.widgetData = await getSelectorWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
+            if (this.widgetUsesSelections(this.activeSelections)) this.widgetData = await getWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
         },
         widgetUsesSelections(selections: ISelection[]) {
             let widgetUsesSelection = false

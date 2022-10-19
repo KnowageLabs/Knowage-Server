@@ -26,6 +26,7 @@ import TooltipRenderer from './TooltipRenderer.vue'
 import SummaryRowRenderer from './SummaryRowRenderer.vue'
 import HeaderGroupRenderer from './HeaderGroupRenderer.vue'
 import PaginatorRenderer from './PaginatorRenderer.vue'
+import { getSelectorWidgetData, getWidgetData } from '../../DataProxyHelper'
 
 export default defineComponent({
     name: 'table-widget',
@@ -33,12 +34,24 @@ export default defineComponent({
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         editorMode: { type: Boolean, required: false },
-        datasets: { type: Array, required: true }
+        datasets: { type: Array as any, required: true },
+        dataToShow: { type: Object as any, required: true }
     },
     watch: {
         propWidget: {
             handler() {
                 if (!this.editorMode) this.createDatatableColumns()
+            },
+            deep: true
+        },
+        dataToShow: {
+            handler() {
+                if (!this.editorMode) {
+                    console.log('%c Table DataToShow ---------------------', 'background-color: #2C2F33; color: white')
+                    console.log(this.dataToShow)
+                    this.tableData = this.dataToShow
+                    this.updateData(this.tableData.rows)
+                }
             },
             deep: true
         }
@@ -119,7 +132,10 @@ export default defineComponent({
         },
         async createDatatableColumns() {
             this.getSelectedDataset(this.propWidget.dataset)
-            await this.getWidgetData()
+            // await this.getWidgetData()
+            this.tableData = await getWidgetData(this.propWidget, this.datasets, this.$http, true, [])
+            if (this.editorMode) this.updateData(this.tableData.rows)
+
             const datatableColumns = this.getTableColumns(this.tableData?.metaData?.fields)
             this.toggleHeaders(this.propWidget.settings.configuration.headers)
             this.gridApi.setColumnDefs(datatableColumns)
@@ -351,6 +367,8 @@ export default defineComponent({
             this.selectedDataset = this.datasets[datasetIndex]
         },
         updateData(data) {
+            console.log('%c UPDATE DATA ---------------------', 'background-color: #2C2F33; color: green')
+            console.log(data)
             if (this.propWidget.settings.configuration.summaryRows.enabled) {
                 var rowsNumber = this.propWidget.settings.configuration.summaryRows.list.length
                 this.gridApi.setRowData(data.slice(0, data.length - rowsNumber))
@@ -359,31 +377,31 @@ export default defineComponent({
                 this.gridApi.setRowData(data)
                 this.gridApi.setPinnedBottomRowData()
             }
-        },
-        async getWidgetData() {
-            if (this.selectedDataset) {
-                this.gridApi.showLoadingOverlay()
-                // let url = createGetUrl(this.propWidget, this.selectedDataset.label)
-                var url = ''
-
-                if (this.propWidget.settings.pagination.enabled) {
-                    url = `2.0/datasets/${this.selectedDataset.label}/data?offset=${this.pagination.offset}&size=${this.propWidget.settings.pagination.itemsNumber}&nearRealtime=true`
-                } else url = `2.0/datasets/${this.selectedDataset.label}/data?offset=0&size=-1&nearRealtime=true`
-
-                let postData = formatModelForGet(this.propWidget, this.selectedDataset.label)
-
-                await this.$http
-                    .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData)
-                    .then((response: AxiosResponse<any>) => {
-                        this.tableData = response.data
-                        this.pagination.totalItems = response.data.results
-                    })
-                    .catch(() => {})
-
-                this.updateData(this.tableData?.rows)
-                this.gridApi.hideOverlay()
-            }
         }
+        // async getWidgetData() {
+        //     if (this.selectedDataset) {
+        //         this.gridApi.showLoadingOverlay()
+        //         // let url = createGetUrl(this.propWidget, this.selectedDataset.label)
+        //         var url = ''
+
+        //         if (this.propWidget.settings.pagination.enabled) {
+        //             url = `2.0/datasets/${this.selectedDataset.label}/data?offset=${this.pagination.offset}&size=${this.propWidget.settings.pagination.itemsNumber}&nearRealtime=true`
+        //         } else url = `2.0/datasets/${this.selectedDataset.label}/data?offset=0&size=-1&nearRealtime=true`
+
+        //         let postData = formatModelForGet(this.propWidget, this.selectedDataset.label)
+
+        //         await this.$http
+        //             .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData)
+        //             .then((response: AxiosResponse<any>) => {
+        //                 this.tableData = response.data
+        //                 this.pagination.totalItems = response.data.results
+        //             })
+        //             .catch(() => {})
+
+        //         this.updateData(this.tableData?.rows)
+        //         this.gridApi.hideOverlay()
+        //     }
+        // }
     }
 })
 </script>

@@ -4,7 +4,7 @@
             {{ widget.settings.style.title.text }}
         </div>
         <div class="widget-container-renderer" :style="getWidgetPadding()">
-            <TableWidget v-if="widget.type == 'table'" :propWidget="widget" :datasets="datasets" :editorMode="false" />
+            <TableWidget v-if="widget.type == 'table'" :propWidget="widget" :datasets="datasets" :dataToShow="dataToShow" :editorMode="false" />
             <!-- <SelectorWidget v-if="widget.type == 'selector'" :propWidget="widget" :dataToShow="mock.selectorMockedResponse" :editorMode="true" :dashboardId="dashboardId" :datasets="datasets" :selectionIsLocked="selectionIsLocked" /> -->
             <SelectorWidget v-if="widget.type == 'selector'" :propWidget="widget" :dataToShow="dataToShow" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" :datasets="datasets" :selectionIsLocked="selectionIsLocked" />
             <ActiveSelectionsWidget v-if="widget.type == 'selection'" :propWidget="widget" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" />
