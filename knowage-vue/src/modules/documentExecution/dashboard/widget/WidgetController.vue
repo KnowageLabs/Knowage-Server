@@ -97,10 +97,10 @@ export default defineComponent({
         async loadInitalData() {
             console.log(' ---  CALLED FROM WIDGET CONTROLLER loadInitalData!!!!')
             this.loading = true
-            this.widgetData = await getWidgetData(this.widget, this.datasets, this.$http, true, this.activeSelections)
             if (this.widget && this.widget.type === 'selector') {
                 this.widgetInitialData = await getWidgetData(this.widget, this.datasets, this.$http, true, this.activeSelections)
             }
+            this.widgetData = await getWidgetData(this.widget, this.datasets, this.$http, true, this.activeSelections)
             await this.loadActiveSelections()
             this.loading = false
         },
