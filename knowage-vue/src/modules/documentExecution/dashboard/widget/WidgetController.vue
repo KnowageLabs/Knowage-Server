@@ -93,7 +93,9 @@ export default defineComponent({
         async loadInitalData() {
             console.log(' ---  CALLED FROM WIDGET CONTROLLER loadInitalData!!!!')
             this.loading = true
-            this.widgetInitialData = await getSelectorWidgetData(this.widget, this.datasets, this.$http, true, this.activeSelections)
+            if (this.widget && this.widget.type === 'selector') {
+                this.widgetInitialData = await getSelectorWidgetData(this.widget, this.datasets, this.$http, true, this.activeSelections)
+            }
             await this.loadActiveSelections()
             this.loading = false
         },
@@ -102,23 +104,27 @@ export default defineComponent({
             await this.reloadWidgetData()
         },
         async onSelectionsDeleted(deletedSelections: any) {
-            console.log(' --- CALLED FROM WIDGET CONTROLLER onSelectionsDeleted!!!!')
-            console.log('>>>>>>>>>>> DELETED SELECTIONS: ', deletedSelections)
+            // console.log('>>>>>>>>>>> DELETED SELECTIONS: ', deletedSelections)
             this.loading = true
+            this.activeSelections = deepcopy(this.getSelections(this.dashboardId))
+            console.log(' --- CALLED FROM WIDGET CONTROLLER onSelectionsDeleted!!!!', this.activeSelections)
             if (this.widgetUsesSelections(deletedSelections)) this.widgetData = await getSelectorWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
             this.loading = false
         },
         async reloadWidgetData() {
-            console.log(' --- CALLED FROM WIDGET CONTROLLER reloadWidgetData!!!!')
+            console.log(' --- CALLED FROM WIDGET CONTROLLER reloadWidgetData!!!!', this.activeSelections)
             if (this.widgetUsesSelections(this.activeSelections)) this.widgetData = await getSelectorWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
         },
         widgetUsesSelections(selections: ISelection[]) {
+            console.log('>>>>>>>>>>> widgetUsesSelections: ', selections)
             let widgetUsesSelection = false
             if (!this.widget.columns) return widgetUsesSelection
             for (let i = 0; i < this.widget.columns.length; i++) {
-                console.log('>>> widget column', this.widget.columns[i])
-                console.log('>>> widget dataset', this.widget.dataset)
-                const index = selections.findIndex((activeSelection: ISelection) => activeSelection.datasetId === this.widget.dataset && activeSelection.columnName === this.widget.columns[i].columnName)
+                const index = selections.findIndex((selection: ISelection) => {
+                    console.log('>>>>>>>>>> SELECTION: ', selection)
+                    console.log(selection.datasetId + ' === ' + this.widget.dataset + ' && ' + selection.columnName + ' === ' + this.widget.columns[i].columnName)
+                    return selection.datasetId === this.widget.dataset && selection.columnName === this.widget.columns[i].columnName
+                })
                 if (index !== -1) {
                     widgetUsesSelection = true
                     break

@@ -54,6 +54,7 @@ export default defineComponent({
         }
     },
     created() {
+        this.loadActiveSelections()
         this.loadDataToShow()
     },
     methods: {
