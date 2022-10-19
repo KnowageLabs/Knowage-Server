@@ -17,7 +17,6 @@ import { defineComponent, PropType } from 'vue'
 import { ISelection, IWidget } from '../../Dashboard'
 import { getWidgetStyleByTypeWithoutValidation } from '../TableWidget/TableWidgetHelper'
 import { mapActions } from 'pinia'
-import { removeSelectionFromActiveSelections } from '../interactionsHelpers/InteractionHelper'
 import ActiveSelectionsChips from './ActiveSelectionsWidgetChips.vue'
 import ActiveSelectionsList from './ActiveSelectionsWidgetList.vue'
 import Message from 'primevue/message'
@@ -61,7 +60,7 @@ export default defineComponent({
     updated() {},
     unmounted() {},
     methods: {
-        ...mapActions(store, ['setSelections']),
+        ...mapActions(store, ['removeSelection']),
         loadActiveSelections() {
             this.activeSelections = this.propActiveSelections
         },
@@ -72,7 +71,7 @@ export default defineComponent({
         onDeleteSelection(selection: ISelection) {
             if (this.editorMode) return
             const payload = { datasetId: selection.datasetId, columnName: selection.columnName }
-            removeSelectionFromActiveSelections(payload, this.activeSelections, this.dashboardId, this.setSelections)
+            this.removeSelection(payload, this.dashboardId)
         }
     }
 })

@@ -93,6 +93,7 @@ export default defineComponent({
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         dataToShow: { type: Object as any, required: true },
+        widgetInitialData: { type: Object as any, required: true },
         propActiveSelections: { type: Array as PropType<ISelection[]>, required: true },
         dashboardId: { type: String, required: true },
         datasets: { type: Array as PropType<IDataset[]>, required: true },
@@ -134,6 +135,7 @@ export default defineComponent({
         dataToShow() {
             this.loadOptions()
         },
+        widgetInitialData() {},
         widgetType() {
             this.updateDefaultValues()
         }
@@ -163,8 +165,7 @@ export default defineComponent({
             this.updateSelectedValue()
         },
         loadInitialValues() {
-            if (this.initialOptions.fields && this.initialOptions.fields[0]?.header === this.dataToShow.fields[0]?.header) return
-            this.initialOptions = deepcopy(this.dataToShow)
+            this.initialOptions = deepcopy(this.widgetInitialData)
             console.log('>>>>>>>>>>>>>>> LOADED INIITAL OPTIONS: ', this.initialOptions)
         },
         loadAvailableOptions(dataToShow: any) {

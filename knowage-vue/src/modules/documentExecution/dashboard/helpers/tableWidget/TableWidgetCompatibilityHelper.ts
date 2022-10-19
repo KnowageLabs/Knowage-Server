@@ -10,7 +10,6 @@ import cryptoRandomString from 'crypto-random-string'
 const columnNameIdMap = {}
 
 export const formatTableWidget = (widget: any) => {
-    console.log('TableWidgetCompatibilityHelper - formatTableWidget called for: ', widget)
     const formattedWidget = {
         id: widget.id,
         dataset: widget.dataset.dsId,
@@ -24,8 +23,6 @@ export const formatTableWidget = (widget: any) => {
     formattedWidget.settings = getFormattedWidgetSettings(widget)
     getFiltersForColumns(formattedWidget, widget)
     getSettingsFromWidgetColumns(formattedWidget, widget)
-
-    console.log('TableWidgetCompatibilityHelper - FORMATTED WIDGET: ', formattedWidget)
     return formattedWidget
 }
 

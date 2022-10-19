@@ -49,7 +49,6 @@ const formatSelectorModelForGet = (propWidget: IWidget, datasetLabel: string, in
 
 export const getSelectorWidgetData = async (widget: IWidget, datasets: IDataset[], $http: any, initialCall: boolean, selections: ISelection[]) => {
     console.log("_________________________ CAAAAAAAAAAALED FOR WIDGET: ", widget)
-    console.log("_________________________ INITIAL CALL: ", initialCall)
     var datasetIndex = datasets.findIndex((dataset: any) => widget.dataset === dataset.id.dsId)
     var selectedDataset = datasets[datasetIndex]
 
@@ -95,8 +94,7 @@ const createNestedObject = function (base, names, value) {
 // TODO
 const getFormattedSelections = (selections: ISelection[]) => {
     const formattedSelections = {}
-    console.log("_________________________ SELECTIONS: ", selections)
-    selections.forEach((selection: ISelection) => {
+    selections?.forEach((selection: ISelection) => {
         const formattedFilterValues = selection.value.map((value: string | number) => "('" + value + "')")
         if (formattedSelections[selection.datasetLabel]) formattedSelections[selection.datasetLabel][selection.columnName] = formattedFilterValues
         else {
@@ -105,6 +103,5 @@ const getFormattedSelections = (selections: ISelection[]) => {
 
         }
     })
-    console.log(" _____________ FORMATTED SELECTIONS: ", formattedSelections)
     return formattedSelections
 }
