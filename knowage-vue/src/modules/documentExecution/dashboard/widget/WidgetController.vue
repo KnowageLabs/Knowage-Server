@@ -104,7 +104,6 @@ export default defineComponent({
             this.widgetData = this.widgetInitialData
 
             await this.loadActiveSelections()
-            if (this.widgetData) this.widgetData.initial = true
             this.loading = false
         },
         async loadActiveSelections() {

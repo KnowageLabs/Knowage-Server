@@ -135,7 +135,13 @@ export default defineComponent({
         },
         dataToShow() {
             this.loadOptions()
-            if (this.dataToShow.initial) this.updateSelectedValue()
+            console.log('>>>>>>>>>>>>>>>>>>> DATA TO SHOW: ', this.dataToShow)
+            console.log('>>>>>>>>>>>>>>>>>>> DATA TO SHOW init: ', this.dataToShow.initialCall)
+            if (this.dataToShow.initialCall) {
+                console.log('>>>>>>>>>>>>>>>>>>> DATA ENTEEEEEEEEERED!')
+
+                this.updateSelectedValue()
+            }
         },
         widgetInitialData() {
             this.loadInitialValues()
@@ -209,6 +215,7 @@ export default defineComponent({
             this.endDate = null
         },
         updateSelectedValue() {
+            console.log('>>>>>>>>>>>>>>> CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALED')
             const defaultMode = this.propWidget.settings.configuration.defaultValues.valueType
             switch (this.widgetType) {
                 case 'singleValue':
@@ -236,6 +243,7 @@ export default defineComponent({
                     } else {
                         this.selectedValue = firstValue !== null ? firstValue.column_1 : null
                     }
+                    this.singleValueSelectionChanged()
                     break
                 case 'LAST':
                     const lastValue = this.findLastAvailableValue()
@@ -244,6 +252,7 @@ export default defineComponent({
                     } else {
                         this.selectedValue = lastValue !== null ? lastValue.column_1 : null
                     }
+                    this.multiValueSelectionChanged()
                     break
                 case 'STATIC':
                     this.setDefaultStaticValue(multivalue)
@@ -255,8 +264,6 @@ export default defineComponent({
         findFirstAvailableValue() {
             if (this.showMode === 'enableAll') return this.options.rows[0]
             const index = this.options.rows.findIndex((row: any) => !row.disabled)
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> findFirstAvailableValue: ', this.options.rows)
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> index: ', index)
             return index !== -1 ? this.options.rows[index] : null
         },
         findLastAvailableValue() {
@@ -273,7 +280,13 @@ export default defineComponent({
             }
             const index = this.options.rows.findIndex((option: any) => staticValue.trim() === option.column_1.trim())
             if (index !== -1) {
-                multivalue ? (this.selectedValues = [this.options.rows[index].column_1]) : (this.selectedValue = this.options.rows[index].column_1)
+                if (multivalue) {
+                    this.selectedValues = [this.options.rows[index].column_1]
+                    this.dateSelectionChanged()
+                } else {
+                    this.selectedValue = this.options.rows[index].column_1
+                    this.singleValueSelectionChanged()
+                }
             } else {
                 this.selectedValue = null
                 this.selectedValues = []
@@ -320,9 +333,6 @@ export default defineComponent({
         getBackgroundColor() {
             return getWidgetStyleByType(this.propWidget, 'background')
         },
-        logRange(event) {
-            console.log('range', event)
-        },
         singleValueSelectionChanged() {
             if (this.editorMode) return
             updateStoreSelections(this.createNewSelection([this.selectedValue]), this.activeSelections, this.dashboardId, this.setSelections)
@@ -354,6 +364,7 @@ export default defineComponent({
         },
         onSelectionsDeleted(selections: any) {
             const index = selections.findIndex((selection: ISelection) => selection.datasetId === this.propWidget.dataset && selection.columnName === this.propWidget.columns[0]?.columnName)
+            console.log('INDEX: ', index)
             if (index !== -1) this.removeDeafultValues()
         }
     }
