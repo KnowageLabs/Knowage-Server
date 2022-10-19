@@ -3,8 +3,18 @@
         <div v-if="initialized" class="drag-handle"></div>
         <ProgressSpinner v-if="loading" class="kn-progress-spinner" />
         <Skeleton shape="rectangle" v-if="!initialized" height="100%" border-radius="0" />
-        <WidgetRenderer :widget="widget" :widgetData="widgetData" :datasets="datasets" v-if="initialized" :dashboardId="dashboardId" :selectionIsLocked="selectionIsLocked" :propActiveSelections="activeSelections" @interaction="manageInteraction"></WidgetRenderer>
-        <WidgetButtonBar :playSelectionButtonVisible="playSelectionButtonVisible" @edit-widget="toggleEditMode" @unlockSelection="unlockSelection" @launchSelection="launchSelection"></WidgetButtonBar>
+        <WidgetRenderer
+            :widget="widget"
+            :widgetData="widgetData"
+            :widgetInitialData="widgetInitialData"
+            :datasets="datasets"
+            v-if="initialized"
+            :dashboardId="dashboardId"
+            :selectionIsLocked="selectionIsLocked"
+            :propActiveSelections="activeSelections"
+            @interaction="manageInteraction"
+        ></WidgetRenderer>
+        <WidgetButtonBar :playSelectionButtonVisible="playSelectionButtonVisible" :selectionIsLocked="selectionIsLocked" @edit-widget="toggleEditMode" @unlockSelection="unlockSelection" @launchSelection="launchSelection"></WidgetButtonBar>
     </grid-item>
 </template>
 
@@ -16,8 +26,8 @@ import { defineComponent, PropType } from 'vue'
 import { IDataset, ISelection, IWidget } from '../Dashboard'
 import { emitter } from '../DashboardHelpers'
 import { mapState, mapActions } from 'pinia'
-import { getSelectorWidgetData, getWidgetData } from '../DataProxyHelper'
-import { getAssociativeSelections, removeSelectionFromActiveSelections, updateStoreSelections } from './interactionsHelpers/InteractionHelper'
+import { getWidgetData } from '../DataProxyHelper'
+import { getAssociativeSelections } from './interactionsHelpers/InteractionHelper'
 import store from '../Dashboard.store'
 import WidgetRenderer from './WidgetRenderer.vue'
 import WidgetButtonBar from './WidgetButtonBar.vue'
@@ -34,7 +44,6 @@ export default defineComponent({
         widget: {
             async handler() {
                 this.loading = true
-                console.log('>>>>>>>>>>>>>>>>>>>>>>> CALLED FROM WIDGET CONTROLLER WATCHER!!!!')
                 this.widgetData = await getWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
                 this.loading = false
             },
@@ -45,6 +54,7 @@ export default defineComponent({
         return {
             loading: false,
             initialized: true,
+            widgetInitialData: {} as any,
             widgetData: {} as any,
             selectedWidgetId: '' as string,
             selectedDataset: {} as any,
@@ -57,11 +67,9 @@ export default defineComponent({
             }
         }
     },
-    async mounted() {
+    async created() {
         this.setEventListeners()
-        this.loadActiveSelections()
-        console.log('>>>>>>>>>>>>>>>>>>>>>>> CALLED FROM WIDGET CONTROLLER MOUNTED!!!!')
-        this.widgetData = await getWidgetData(this.widget, this.datasets, this.$http, true, this.activeSelections)
+        this.loadInitalData()
     },
     unmounted() {
         this.removeEventListeners()
@@ -77,7 +85,7 @@ export default defineComponent({
         }
     },
     methods: {
-        ...mapActions(store, ['getDashboard', 'getSelections', 'setSelections']),
+        ...mapActions(store, ['getDashboard', 'getSelections', 'setSelections', 'removeSelection']),
         setEventListeners() {
             emitter.on('selectionsChanged', this.loadActiveSelections)
             emitter.on('selectionsDeleted', this.onSelectionsDeleted)
@@ -86,21 +94,42 @@ export default defineComponent({
             emitter.off('selectionsChanged', this.loadActiveSelections)
             emitter.off('selectionsDeleted', this.onSelectionsDeleted)
         },
+        async loadInitalData() {
+            console.log(' ---  CALLED FROM WIDGET CONTROLLER loadInitalData!!!!')
+            this.loading = true
+            this.widgetData = await getWidgetData(this.widget, this.datasets, this.$http, true, this.activeSelections)
+            if (this.widget && this.widget.type === 'selector') {
+                this.widgetInitialData = await getWidgetData(this.widget, this.datasets, this.$http, true, this.activeSelections)
+            }
+            await this.loadActiveSelections()
+            this.loading = false
+        },
         async loadActiveSelections() {
             this.activeSelections = deepcopy(this.getSelections(this.dashboardId))
             await this.reloadWidgetData()
         },
         async onSelectionsDeleted(deletedSelections: any) {
+            // console.log('>>>>>>>>>>> DELETED SELECTIONS: ', deletedSelections)
+            this.loading = true
+            this.activeSelections = deepcopy(this.getSelections(this.dashboardId))
+            console.log(' --- CALLED FROM WIDGET CONTROLLER onSelectionsDeleted!!!!', this.activeSelections)
             if (this.widgetUsesSelections(deletedSelections)) this.widgetData = await getWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
+            this.loading = false
         },
         async reloadWidgetData() {
+            console.log(' --- CALLED FROM WIDGET CONTROLLER reloadWidgetData!!!!', this.activeSelections)
             if (this.widgetUsesSelections(this.activeSelections)) this.widgetData = await getWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
         },
         widgetUsesSelections(selections: ISelection[]) {
+            console.log('>>>>>>>>>>> widgetUsesSelections: ', selections)
             let widgetUsesSelection = false
             if (!this.widget.columns) return widgetUsesSelection
             for (let i = 0; i < this.widget.columns.length; i++) {
-                const index = selections.findIndex((activeSelection: ISelection) => activeSelection.datasetId === this.widget.dataset && activeSelection.columnName === this.widget.columns[i].columnName)
+                const index = selections.findIndex((selection: ISelection) => {
+                    console.log('>>>>>>>>>> SELECTION: ', selection)
+                    console.log(selection.datasetId + ' === ' + this.widget.dataset + ' && ' + selection.columnName + ' === ' + this.widget.columns[i].columnName)
+                    return selection.datasetId === this.widget.dataset && selection.columnName === this.widget.columns[i].columnName
+                })
                 if (index !== -1) {
                     widgetUsesSelection = true
                     break
@@ -135,7 +164,7 @@ export default defineComponent({
         },
         unlockSelection() {
             const payload = { datasetId: this.widget.dataset as number, columnName: this.widget.columns[0].columnName }
-            removeSelectionFromActiveSelections(payload, this.activeSelections, this.dashboardId, this.setSelections)
+            this.removeSelection(payload, this.dashboardId)
         },
         launchSelection() {
             this.setSelections(this.dashboardId, this.activeSelections)

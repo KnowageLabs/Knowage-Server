@@ -111,14 +111,3 @@ export const updateStoreSelections = (newSelection: ISelection, currentActiveSel
     index !== -1 ? currentActiveSelections[index] = newSelection : currentActiveSelections.push(newSelection)
     updateSelectionFunction(dashboardId, currentActiveSelections)
 }
-
-export const removeSelectionFromActiveSelections = (payload: { datasetId: number, columnName: string }, activeSelections: ISelection[], dashboardId: string, updateSelectionFunction: Function) => {
-    console.log('>>> SELECTION FOR DELETE - payload: ', payload)
-    console.log('>>> ACTIVE SELECTIONS: ', activeSelections)
-
-    const index = activeSelections.findIndex((activeSelection: ISelection) => activeSelection.datasetId === payload.datasetId && activeSelection.columnName === payload.columnName)
-    if (index !== -1) {
-        activeSelections.splice(index, 1)
-        updateSelectionFunction(dashboardId, activeSelections)
-    }
-}

@@ -6,7 +6,7 @@
         <div class="widget-container-renderer" :style="getWidgetPadding()">
             <TableWidget v-if="widget.type == 'table'" :propWidget="widget" :datasets="datasets" :dataToShow="dataToShow" :editorMode="false" />
             <!-- <SelectorWidget v-if="widget.type == 'selector'" :propWidget="widget" :dataToShow="mock.selectorMockedResponse" :editorMode="true" :dashboardId="dashboardId" :datasets="datasets" :selectionIsLocked="selectionIsLocked" /> -->
-            <SelectorWidget v-if="widget.type == 'selector'" :propWidget="widget" :dataToShow="dataToShow" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" :datasets="datasets" :selectionIsLocked="selectionIsLocked" />
+            <SelectorWidget v-if="widget.type == 'selector'" :propWidget="widget" :dataToShow="dataToShow" :widgetInitialData="widgetInitialData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" :datasets="datasets" :selectionIsLocked="selectionIsLocked" />
             <ActiveSelectionsWidget v-if="widget.type == 'selection'" :propWidget="widget" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" />
         </div>
     </div>
@@ -32,6 +32,7 @@ export default defineComponent({
     props: {
         widget: { required: true, type: Object as any },
         widgetData: { required: true, type: Object },
+        widgetInitialData: { required: true, type: Object },
         datasets: { type: Array as PropType<IDataset[]>, required: true },
         dashboardId: { type: String, required: true },
         selectionIsLocked: { type: Boolean, required: true },
@@ -53,6 +54,7 @@ export default defineComponent({
         }
     },
     created() {
+        this.loadActiveSelections()
         this.loadDataToShow()
     },
     methods: {

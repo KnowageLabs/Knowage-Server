@@ -6,7 +6,6 @@ import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/co
 import * as selectorWidgetDefaultValues from '../../widget/WidgetEditor/helpers/selectorWidget/SelectorWidgetDefaultValues'
 
 export const formatSelectorWidget = (widget: any) => {
-    console.log('SelectorWidgetCompatibilityHelper - formatSelectorWidget called for: ', widget)
     const formattedWidget = {
         id: widget.id,
         dataset: widget.dataset.dsId,
@@ -16,8 +15,6 @@ export const formatSelectorWidget = (widget: any) => {
         settings: {} as ISelectorWidgetSettings
     } as IWidget
     formattedWidget.settings = getFormattedWidgetSettings(widget) as ISelectorWidgetSettings
-
-    console.log('SelectorWidgetCompatibilityHelper - FORMATTED WIDGET: ', formattedWidget)
     return formattedWidget
 }
 
