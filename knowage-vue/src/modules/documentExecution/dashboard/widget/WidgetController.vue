@@ -107,6 +107,7 @@ export default defineComponent({
             this.loading = false
         },
         async loadActiveSelections() {
+            // console.log('%c --  loadActiveSelections', 'background-color: blue; color: white', this.widget.type)
             this.activeSelections = deepcopy(this.getSelections(this.dashboardId))
             await this.reloadWidgetData()
         },
