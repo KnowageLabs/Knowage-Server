@@ -49,6 +49,7 @@ const formatSelectorModelForGet = (propWidget: IWidget, datasetLabel: string, in
 
 export const getSelectorWidgetData = async (widget: IWidget, datasets: IDataset[], $http: any, initialCall: boolean, selections: ISelection[]) => {
     console.log("_________________________ CAAAAAAAAAAALED FOR WIDGET: ", widget)
+    console.log("_________________________ INITIAL CALL: ", initialCall)
     var datasetIndex = datasets.findIndex((dataset: any) => widget.dataset === dataset.id.dsId)
     var selectedDataset = datasets[datasetIndex]
 
