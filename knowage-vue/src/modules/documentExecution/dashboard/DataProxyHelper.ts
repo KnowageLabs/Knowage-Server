@@ -14,19 +14,19 @@ export const getData = (item) =>
         }, 1000)
     })
 
-export const getWidgetData = async (widget: IWidget, datasets: IDataset[], $http: any, initialCall: boolean, selections: ISelection[]) => {
+export const getWidgetData = async (widget: IWidget, datasets: IDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
     switch (widget.type) {
         case 'table':
-            return await getTableWidgetData(widget, datasets, $http, initialCall, selections)
+            return await getTableWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         case 'selector':
-            return await getSelectorWidgetData(widget, datasets, $http, initialCall, selections)
+            return await getSelectorWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
 
         default:
             break
     }
 }
 
-const formatSelectorModelForGet = (propWidget: IWidget, datasetLabel: string, initialCall: boolean, selections: ISelection[]) => {
+const formatSelectorModelForGet = (propWidget: IWidget, datasetLabel: string, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
     //TODO: strong type this
     //TODO: Make method that will merge associations and selections with dataToSend object.
     var dataToSend = {
@@ -36,9 +36,16 @@ const formatSelectorModelForGet = (propWidget: IWidget, datasetLabel: string, in
             categories: []
         },
         parameters: {},
-        selections: initialCall ? {} : getFormattedSelections(selections),
+        selections: {},
         indexes: []
     } as any
+
+    if (associativeResponseSelections) {
+        dataToSend.selections = associativeResponseSelections
+    } else if (!initialCall) {
+        dataToSend.selections = getFormattedSelections(selections)
+    }
+
 
     dataToSend.aggregations.dataset = datasetLabel
     // TODO - Uncomment filters
@@ -68,7 +75,7 @@ const formatSelectorModelForGet = (propWidget: IWidget, datasetLabel: string, in
     return dataToSend
 }
 
-export const getSelectorWidgetData = async (widget: IWidget, datasets: IDataset[], $http: any, initialCall: boolean, selections: ISelection[]) => {
+export const getSelectorWidgetData = async (widget: IWidget, datasets: IDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
     var datasetIndex = datasets.findIndex((dataset: any) => widget.dataset === dataset.id.dsId)
     var selectedDataset = datasets[datasetIndex]
 
@@ -84,12 +91,12 @@ export const getSelectorWidgetData = async (widget: IWidget, datasets: IDataset[
                 tempResponse = response.data
                 tempResponse.initialCall = initialCall
             })
-            .catch(() => {})
+            .catch(() => { })
         return tempResponse
     }
 }
 
-export const getTableWidgetData = async (widget: IWidget, datasets: IDataset[], $http: any, initialCall: boolean, selections: ISelection[]) => {
+export const getTableWidgetData = async (widget: IWidget, datasets: IDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
     var datasetIndex = datasets.findIndex((dataset: IDataset) => widget.dataset === dataset.id.dsId)
     var selectedDataset = datasets[datasetIndex] as any
 
@@ -110,7 +117,7 @@ export const getTableWidgetData = async (widget: IWidget, datasets: IDataset[], 
                 if (pagination.enabled) widget.settings.pagination.properties.totalItems = response.data.results
                 // pagination.totalItems = response.data.results
             })
-            .catch(() => {})
+            .catch(() => { })
 
         return tempResponse
     }

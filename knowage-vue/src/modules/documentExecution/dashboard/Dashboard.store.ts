@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import { emitter, updateWidgetHelper } from './DashboardHelpers'
-import { ISelection, IWidget } from './Dashboard'
+import { IDataset, ISelection, IWidget } from './Dashboard'
+import { selectionsUseDatasetWithAssociation } from './widget/interactionsHelpers/DatasetAssociationsHelper'
+import { loadAssociativeSelections } from './widget/interactionsHelpers/InteractionHelper'
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
 
@@ -11,7 +13,8 @@ const store = defineStore('dashboardStore', {
             selectedSheetIndex: 0,
             crossNavigations: [] as any,
             outputParameters: [] as any,
-            selections: {}
+            selections: {},
+            allDatasets: [] as IDataset[]
         }
     },
     actions: {
@@ -60,10 +63,16 @@ const store = defineStore('dashboardStore', {
         getSelections(dashboardId: string) {
             return this.selections[dashboardId]
         },
-        setSelections(dashboardId: string, selections: ISelection[]) {
+        setSelections(dashboardId: string, selections: ISelection[], $http: any) {
             console.log(" ---- STORE - SET SELECTIONS: ", selections)
+            console.log(" ---- STORE - SET SELECTIONS A: ", $http)
             this.selections[dashboardId] = selections
-            emitter.emit('selectionsChanged', { dashboardId: dashboardId, selections: this.selections[dashboardId] })
+            console.log('----- STORE- --- TEST', selectionsUseDatasetWithAssociation(selections, this.dashboards[dashboardId].configuration.associations))
+            if (selectionsUseDatasetWithAssociation(selections, this.dashboards[dashboardId].configuration.associations)) {
+                loadAssociativeSelections(this.dashboards[dashboardId], this.allDatasets, selections, $http)
+            } else {
+                emitter.emit('selectionsChanged', { dashboardId: dashboardId, selections: this.selections[dashboardId] })
+            }
         },
         removeSelection(payload: { datasetId: number, columnName: string }, dashboardId: string) {
             const index = this.selections[dashboardId]?.findIndex((selection: ISelection) => selection.datasetId === payload.datasetId && selection.columnName === payload.columnName)
@@ -87,6 +96,12 @@ const store = defineStore('dashboardStore', {
                 }
             })
             if (removedSelections.length > 0) emitter.emit('selectionsDeleted', removedSelections)
+        },
+        getAllDatasets() {
+            return this.allDatasets
+        },
+        setAllDatasets(datasets: IDataset[]) {
+            this.allDatasets = datasets
         }
     }
 })

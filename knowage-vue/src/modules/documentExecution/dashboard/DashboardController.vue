@@ -94,7 +94,7 @@ export default defineComponent({
         this.emptyStoreValues()
     },
     methods: {
-        ...mapActions(dashboardStore, ['removeSelections']),
+        ...mapActions(dashboardStore, ['removeSelections', 'setAllDatasets']),
         async getData() {
             this.loading = true
             await this.loadDatasets()
@@ -116,7 +116,7 @@ export default defineComponent({
             this.model = (tempModel && this.newDashboardMode) || tempModel.hasOwnProperty('id') ? tempModel : (formatModel(tempModel, this.document, this.datasets) as any)
             this.dashboardId = cryptoRandomString({ length: 16, type: 'base64' })
             this.store.setDashboard(this.dashboardId, this.model)
-            this.store.setSelections(this.dashboardId, this.model.configuration.selections)
+            this.store.setSelections(this.dashboardId, this.model.configuration.selections, this.$http)
         },
         async loadDatasets() {
             this.appStore.setLoading(true)
@@ -124,6 +124,7 @@ export default defineComponent({
                 .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasets/?asPagedList=true&seeTechnical=true`)
                 .then((response: AxiosResponse<any>) => (this.datasets = response.data ? response.data.item : []))
                 .catch(() => {})
+            this.setAllDatasets(this.datasets)
             this.appStore.setLoading(false)
         },
         async loadCrossNavigations() {
@@ -203,7 +204,7 @@ export default defineComponent({
             this.store.removeDashboard(this.dashboardId)
             this.store.setCrosssNavigations([])
             this.store.setOutputParameters([])
-            this.store.setSelections(this.dashboardId, [])
+            this.store.setSelections(this.dashboardId, [], this.$http)
         },
         closeWidgetEditor() {
             this.widgetEditorVisible = false

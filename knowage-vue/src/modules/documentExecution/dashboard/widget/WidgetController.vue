@@ -28,7 +28,6 @@ import { IDataset, ISelection, IWidget } from '../Dashboard'
 import { emitter } from '../DashboardHelpers'
 import { mapState, mapActions } from 'pinia'
 import { getWidgetData } from '../DataProxyHelper'
-import { getAssociativeSelections } from './interactionsHelpers/InteractionHelper'
 import store from '../Dashboard.store'
 import WidgetRenderer from './WidgetRenderer.vue'
 import WidgetButtonBar from './WidgetButtonBar.vue'
@@ -95,11 +94,13 @@ export default defineComponent({
             emitter.on('selectionsChanged', this.loadActiveSelections)
             emitter.on('selectionsDeleted', this.onSelectionsDeleted)
             emitter.on('widgetUpdatedFromStore', this.onWidgetUpdated)
+            emitter.on('associativeSelectionsLoaded', this.onAssociativeSelectionsLoaded)
         },
         removeEventListeners() {
             emitter.off('selectionsChanged', this.loadActiveSelections)
             emitter.off('selectionsDeleted', this.onSelectionsDeleted)
             emitter.off('widgetUpdatedFromStore', this.onWidgetUpdated)
+            emitter.off('associativeSelectionsLoaded', this.onAssociativeSelectionsLoaded)
         },
         loadWidget(widget: IWidget) {
             this.widgetModel = widget
@@ -127,7 +128,7 @@ export default defineComponent({
             // console.log('%c --  loadActiveSelections', 'background-color: blue; color: white', this.widget.type)
             this.activeSelections = deepcopy(this.getSelections(this.dashboardId))
             // console.log('%c --  loadActiveSelections', 'background-color: blue; color: white', this.activeSelections)
-            await this.reloadWidgetData()
+            await this.reloadWidgetData(null)
         },
         async onSelectionsDeleted(deletedSelections: any) {
             this.loading = true
@@ -148,9 +149,9 @@ export default defineComponent({
             }
             return widgetUsesSelection
         },
-        async reloadWidgetData() {
+        async reloadWidgetData(associativeResponseSelections: any) {
             // console.log('%c --  CALLED FROM WIDGET CONTROLLER reloadWidgetData!!!!', 'background-color: blue; color: black', this.widgetModel)
-            if (this.widgetUsesSelections(this.activeSelections)) this.widgetData = await getWidgetData(this.widgetModel, this.datasets, this.$http, false, this.activeSelections)
+            if (this.widgetUsesSelections(this.activeSelections)) this.widgetData = await getWidgetData(this.widgetModel, this.datasets, this.$http, false, this.activeSelections, associativeResponseSelections)
         },
         widgetUsesSelections(selections: ISelection[]) {
             let widgetUsesSelection = false
@@ -164,12 +165,6 @@ export default defineComponent({
             // console.log('>>>>>>>>>>>>>>>>>>>>> widgetUsesSelections: ', widgetUsesSelection)
 
             return widgetUsesSelection
-        },
-        // TODO
-        async test() {
-            const dashboardModel = this.getDashboard(this.dashboardId)
-            const response = await getAssociativeSelections(dashboardModel, this.datasets, this.$http, this.dashboards)
-            // console.log('>>>>> RESPONSE: ', response)
         },
         toggleEditMode() {
             emitter.emit('openWidgetEditor', this.widget)
@@ -185,7 +180,20 @@ export default defineComponent({
             this.removeSelection(payload, this.dashboardId)
         },
         launchSelection() {
-            this.setSelections(this.dashboardId, this.activeSelections)
+            this.setSelections(this.dashboardId, this.activeSelections, this.$http)
+        },
+        async onAssociativeSelectionsLoaded(response: any) {
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> onAssociativeSelectionsLoaded onAssociativeSelectionsLoaded: ', response)
+            if (!response) return
+            const datasets = Object.keys(response)
+            const dataset = this.datasets.find((dataset: IDataset) => dataset.id.dsId === this.widgetModel.dataset)
+            const index = datasets.findIndex((datasetLabel: string) => datasetLabel === dataset?.label)
+            console.log('>>>>>>>>>>>>>> INDEX: ', index)
+            if (index !== -1) {
+                this.loading = true
+                await this.reloadWidgetData(null)
+                this.loading = false
+            }
         }
     }
 })
