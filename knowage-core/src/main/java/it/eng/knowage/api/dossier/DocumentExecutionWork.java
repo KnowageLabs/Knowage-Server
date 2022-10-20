@@ -12,7 +12,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
 import commonj.work.Work;
@@ -26,7 +25,6 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.exceptions.SpagoBIEmptyFileExeception;
 import it.eng.spagobi.commons.exceptions.SpagoBIResponseHasErrorsExeception;
-import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
@@ -36,27 +34,15 @@ import it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
-public class DocumentExecutionWork implements Work {
+public class DocumentExecutionWork extends AbstractDocumentExecutionWork implements Work {
 
 	private static transient Logger logger = Logger.getLogger(DocumentExecutionWork.class);
-
-	public static final String PREPARED = "PREPARED";
-	public static final String STARTED = "STARTED";
-	public static final String DOWNLOAD = "DOWNLOAD";
-	public static final String ERROR = "ERROR";
-
-	private IEngUserProfile userProfile;
-	private List<BIObjectPlaceholdersPair> documents;
-
-	private Integer progressThreadId;
-	private String randomKey;
 
 	public static final String OUTPUT_PDF = "application/pdf";
 
 	static byte[] buf = new byte[1024];
 
 	private boolean completeWithoutError = false;
-	IProgressThreadDAO progressThreadDAO;
 
 	public DocumentExecutionWork(List<BIObjectPlaceholdersPair> documents, IEngUserProfile userProfile, Integer progressThreadId, String randomKey) {
 		super();
@@ -74,15 +60,6 @@ public class DocumentExecutionWork implements Work {
 		} finally {
 			TenantManager.unset();
 		}
-	}
-
-	private void setTenant() {
-		logger.debug("IN");
-		UserProfile profile = (UserProfile) this.getProfile();
-		String tenant = profile.getOrganization();
-		LogMF.debug(logger, "Tenant : [{0}]", tenant);
-		TenantManager.setTenant(new Tenant(tenant));
-		logger.debug("OUT");
 	}
 
 	private void runInternal() {
@@ -218,10 +195,6 @@ public class DocumentExecutionWork implements Work {
 	 */
 	public boolean isCompleteWithoutError() {
 		return completeWithoutError;
-	}
-
-	public IEngUserProfile getProfile() {
-		return userProfile;
 	}
 
 	public void setProfile(IEngUserProfile profile) {
