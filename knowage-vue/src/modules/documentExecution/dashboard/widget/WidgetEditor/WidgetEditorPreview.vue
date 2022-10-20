@@ -63,6 +63,7 @@ export default defineComponent({
     unmounted() {
         emitter.off('getWidgetData', this.getWidgetData)
         emitter.off('datasetChanged', this.clearWidgetData)
+        emitter.off('refreshTable', this.getWidgetData)
     },
     methods: {
         ...mapActions(store, ['getDashboard', 'getSelections', 'setSelections']),
@@ -70,6 +71,7 @@ export default defineComponent({
         setEventListeners() {
             emitter.on('getWidgetData', this.getWidgetData)
             emitter.on('clearWidgetData', this.clearWidgetData)
+            emitter.on('refreshTable', this.getWidgetData)
         },
         async getWidgetData() {
             this.loading = true

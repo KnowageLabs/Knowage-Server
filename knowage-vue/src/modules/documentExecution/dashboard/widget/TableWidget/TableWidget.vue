@@ -46,12 +46,11 @@ export default defineComponent({
         },
         dataToShow: {
             handler() {
-                if (!this.editorMode) {
-                    console.log('%c Table DataToShow ---------------------', 'background-color: #2C2F33; color: white')
-                    console.log(this.dataToShow)
-                    this.tableData = this.dataToShow
-                    this.updateData(this.tableData.rows)
-                }
+                console.log('%c Table DataToShow ---------------------', 'background-color: #2C2F33; color: white')
+                console.log(this.dataToShow)
+                this.tableData = this.dataToShow
+                this.createDatatableColumns()
+                // this.updateData(this.tableData.rows)
             },
             deep: true
         }
@@ -88,9 +87,10 @@ export default defineComponent({
         if (this.editorMode) this.setEventListeners()
         this.setupDatatableOptions()
         this.getSelectedDataset(this.propWidget.dataset)
+        this.tableData = this.dataToShow
     },
     unmounted() {
-        emitter.off('refreshTable', this.createDatatableColumns)
+        // emitter.off('refreshTable', this.createDatatableColumns)
     },
     mounted() {},
 
@@ -98,7 +98,7 @@ export default defineComponent({
         setEventListeners() {
             // emitter.on('paginationChanged', (pagination) => console.log('WidgetEditorPreview - PAGINATION CHANGED!', pagination)) //  { enabled: this.paginationEnabled, itemsNumber: +this.itemsNumber }
             // emitter.on('sortingChanged', this.sortColumn)
-            emitter.on('refreshTable', this.createDatatableColumns)
+            // emitter.on('refreshTable', this.createDatatableColumns)
         },
         setupDatatableOptions() {
             this.gridOptions = {
@@ -133,12 +133,13 @@ export default defineComponent({
         async createDatatableColumns() {
             this.getSelectedDataset(this.propWidget.dataset)
             // await this.getWidgetData()
-            this.tableData = await getWidgetData(this.propWidget, this.datasets, this.$http, true, [])
-            if (this.editorMode) this.updateData(this.tableData.rows)
+            // this.tableData = await getWidgetData(this.propWidget, this.datasets, this.$http, true, [])
+            // if (this.editorMode) this.updateData(this.tableData.rows)
 
             const datatableColumns = this.getTableColumns(this.tableData?.metaData?.fields)
             this.toggleHeaders(this.propWidget.settings.configuration.headers)
             this.gridApi.setColumnDefs(datatableColumns)
+            this.updateData(this.tableData.rows)
         },
         sortColumn(sorting) {
             this.columnApi.applyColumnState({
