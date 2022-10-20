@@ -356,7 +356,7 @@ export default defineComponent({
         singleValueSelectionChanged() {
             if (this.editorMode) return
             this.loadActiveSelections()
-            updateStoreSelections(this.createNewSelection([this.selectedValue]), this.activeSelections, this.dashboardId, this.setSelections)
+            updateStoreSelections(this.createNewSelection([this.selectedValue]), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
         },
         multiValueSelectionChanged() {
             if (this.editorMode) return
@@ -367,7 +367,7 @@ export default defineComponent({
         dateSelectionChanged() {
             if (this.editorMode) return
             this.loadActiveSelections()
-            updateStoreSelections(this.createNewSelection([this.selectedDate]), this.activeSelections, this.dashboardId, this.setSelections)
+            updateStoreSelections(this.createNewSelection([this.selectedDate]), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
         },
         dateRangeSelectionChanged() {
             if (this.editorMode) return

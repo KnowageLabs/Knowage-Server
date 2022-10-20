@@ -77,7 +77,7 @@ export default defineComponent({
         this.context = { componentParent: this }
     },
     methods: {
-        ...mapActions(store, ['getDashboard', 'getSelections', 'setSelections']),
+        ...mapActions(store, ['getDashboard', 'getSelections']),
         onGridReady(params) {
             this.gridApi = params.api
             this.gridColumnApi = params.columnApi

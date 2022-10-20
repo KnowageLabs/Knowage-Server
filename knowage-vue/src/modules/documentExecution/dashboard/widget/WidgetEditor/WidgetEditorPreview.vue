@@ -66,7 +66,7 @@ export default defineComponent({
         emitter.off('refreshTable', this.getWidgetData)
     },
     methods: {
-        ...mapActions(store, ['getDashboard', 'getSelections', 'setSelections']),
+        ...mapActions(store, ['getDashboard', 'getSelections']),
 
         setEventListeners() {
             emitter.on('getWidgetData', this.getWidgetData)
