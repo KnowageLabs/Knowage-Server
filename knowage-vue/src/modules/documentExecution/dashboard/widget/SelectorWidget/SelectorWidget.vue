@@ -190,6 +190,7 @@ export default defineComponent({
             this.activeSelections = this.propActiveSelections
         },
         loadActiveSelectionValue() {
+            if (this.editorMode) return false
             const index = this.activeSelections.findIndex((selection: ISelection) => selection.datasetId === this.propWidget.dataset && selection.columnName === this.propWidget.columns[0]?.columnName)
             if (index !== -1) {
                 const selection = this.activeSelections[index]

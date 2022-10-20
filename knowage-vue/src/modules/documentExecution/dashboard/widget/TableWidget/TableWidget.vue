@@ -139,7 +139,7 @@ export default defineComponent({
             const datatableColumns = this.getTableColumns(this.tableData?.metaData?.fields)
             this.toggleHeaders(this.propWidget.settings.configuration.headers)
             this.gridApi.setColumnDefs(datatableColumns)
-            this.updateData(this.tableData.rows)
+            this.updateData(this.tableData?.rows)
         },
         sortColumn(sorting) {
             this.columnApi.applyColumnState({
@@ -214,7 +214,7 @@ export default defineComponent({
                                 } else return 1
                             }
                             tempCol.cellClassRules = {
-                                'cell-span': function (params) {
+                                'cell-span': function(params) {
                                     return tempRows[params.rowIndex].span > 1
                                 }
                             }
@@ -273,7 +273,7 @@ export default defineComponent({
                         var pagination = this.propWidget.settings.pagination
                         if (pagination.enabled) {
                             this.showPaginator = true
-                            this.pagination.itemsNumber = pagination.itemsNumber
+                            this.pagination.itemsNumber = pagination.properties.itemsNumber
                         } else this.showPaginator = false
 
                         // CUSTOM MESSAGE CONFIGURATION  -----------------------------------------------------------------

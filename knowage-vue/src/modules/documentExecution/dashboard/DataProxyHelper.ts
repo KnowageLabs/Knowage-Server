@@ -97,7 +97,7 @@ export const getTableWidgetData = async (widget: IWidget, datasets: IDataset[], 
         var url = ''
         if (widget.settings.pagination.enabled) {
             // url = `2.0/datasets/${selectedDataset.label}/data?offset=${pagination.offset}&size=${widget.settings.pagination.itemsNumber}&nearRealtime=true`
-            url = `2.0/datasets/${selectedDataset.label}/data?offset=0&size=${widget.settings.pagination.itemsNumber}&nearRealtime=true`
+            url = `2.0/datasets/${selectedDataset.label}/data?offset=0&size=${widget.settings.pagination.properties.itemsNumber}&nearRealtime=true`
         } else url = `2.0/datasets/${selectedDataset.label}/data?offset=0&size=-1&nearRealtime=true`
 
         let postData = formatSelectorModelForGet(widget, selectedDataset.label, initialCall, selections)
