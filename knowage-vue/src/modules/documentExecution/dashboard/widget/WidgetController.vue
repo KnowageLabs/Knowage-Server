@@ -3,6 +3,7 @@
         <div v-if="initialized" class="drag-handle"></div>
         <ProgressSpinner v-if="loading" class="kn-progress-spinner" />
         <Skeleton shape="rectangle" v-if="!initialized" height="100%" border-radius="0" />
+
         <WidgetRenderer
             :widget="widget"
             :widgetData="widgetData"
@@ -44,8 +45,9 @@ export default defineComponent({
         widget: {
             async handler() {
                 this.loading = true
-                // console.log('%c --  CALLED FROM WIDGET CONTROLLER watcher!!!!', 'background-color: blue; color: white', this.widget.type)
-                this.widgetData = await getWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
+                console.log('%c --  CALLED FROM WIDGET CONTROLLER watcher!!!!', 'background-color: blue; color: white', this.widget.type)
+                this.loadWidget(this.widget)
+                // this.widgetData = await getWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
                 this.loading = false
             },
             deep: true
@@ -55,6 +57,7 @@ export default defineComponent({
         return {
             loading: false,
             initialized: true,
+            widgetModel: null as any,
             widgetInitialData: {} as any,
             widgetData: {} as any,
             selectedWidgetId: '' as string,
@@ -70,6 +73,7 @@ export default defineComponent({
     },
     async created() {
         this.setEventListeners()
+        this.loadWidget(this.widget)
         this.loadInitalData()
     },
     unmounted() {
@@ -90,14 +94,25 @@ export default defineComponent({
         setEventListeners() {
             emitter.on('selectionsChanged', this.loadActiveSelections)
             emitter.on('selectionsDeleted', this.onSelectionsDeleted)
+            emitter.on('widgetUpdated', this.onWidgetUpdated)
         },
         removeEventListeners() {
             emitter.off('selectionsChanged', this.loadActiveSelections)
             emitter.off('selectionsDeleted', this.onSelectionsDeleted)
+            emitter.off('widgetUpdated', this.onWidgetUpdated)
+        },
+        loadWidget(widget: IWidget) {
+            this.widgetModel = widget
+        },
+        onWidgetUpdated(widget: any) {
+            if (this.widget.id !== widget.id) return
+            this.loadWidget(widget)
+            console.log('%c --  CALLED FROM WIDGET CONTROLLER onWidgetUpdated!!!!', 'background-color: blue; color: white', this.widget)
+            this.loadInitalData()
         },
         async loadInitalData() {
             if (!this.widget || this.widget.type === 'selection') return
-            // console.log('%c --  CALLED FROM WIDGET CONTROLLER loadInitalData!!!!', 'background-color: blue; color: white', this.widget.type)
+            console.log('%c --  CALLED FROM WIDGET CONTROLLER loadInitalData!!!!', 'background-color: blue; color: white', this.widget)
             this.loading = true
 
             this.widgetInitialData = await getWidgetData(this.widget, this.datasets, this.$http, true, this.activeSelections)
@@ -107,20 +122,33 @@ export default defineComponent({
             this.loading = false
         },
         async loadActiveSelections() {
-            // console.log('%c --  loadActiveSelections', 'background-color: blue; color: white', this.widget.type)
+            console.log('%c --  loadActiveSelections', 'background-color: blue; color: white', this.widget.type)
             this.activeSelections = deepcopy(this.getSelections(this.dashboardId))
             await this.reloadWidgetData()
         },
         async onSelectionsDeleted(deletedSelections: any) {
             this.loading = true
             this.activeSelections = deepcopy(this.getSelections(this.dashboardId))
-            // console.log('%c --  CALLED FROM WIDGET CONTROLLER onSelectionsDeleted!!!!', 'background-color: blue; color: white', this.widget.type)
-            if (this.widgetUsesSelections(deletedSelections)) this.widgetData = await getWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
+            console.log('%c --  CALLED FROM WIDGET CONTROLLER onSelectionsDeleted!!!!', 'background-color: blue; color: white', this.widget)
+            if (this.widgetUsesDeletedSelectionsDataset(deletedSelections)) this.widgetData = await getWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
 
             this.loading = false
         },
+        widgetUsesDeletedSelectionsDataset(deletedSelections: ISelection[]) {
+            let widgetUsesSelection = false
+            if (!this.widget.dataset) return widgetUsesSelection
+            for (let i = 0; i < deletedSelections.length; i++) {
+                if (deletedSelections[i].datasetId === this.widget.dataset) {
+                    widgetUsesSelection = true
+                    break
+                }
+            }
+            console.log('>>>>>>>>>>>>>>>>>>>>> widgetUsesDeletedSelectionsDataset: ', widgetUsesSelection)
+
+            return widgetUsesSelection
+        },
         async reloadWidgetData() {
-            // console.log('%c --  CALLED FROM WIDGET CONTROLLER reloadWidgetData!!!!', 'background-color: blue; color: white', this.widget.type)
+            console.log('%c --  CALLED FROM WIDGET CONTROLLER reloadWidgetData!!!!', 'background-color: blue; color: black', this.widget)
             if (this.widgetUsesSelections(this.activeSelections)) this.widgetData = await getWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
         },
         widgetUsesSelections(selections: ISelection[]) {
@@ -138,7 +166,7 @@ export default defineComponent({
                     break
                 }
             }
-            // console.log('>>>>>>>>>>>>>>>>>>>>> widgetUsesSelections: ', widgetUsesSelection)
+            console.log('>>>>>>>>>>>>>>>>>>>>> widgetUsesSelections: ', widgetUsesSelection)
 
             return widgetUsesSelection
         },
@@ -168,7 +196,7 @@ export default defineComponent({
         unlockSelection() {
             const payload = { datasetId: this.widget.dataset as number, columnName: this.widget.columns[0].columnName }
             emitter.emit('widgetUnlocked', this.widget.id)
-            this.removeSelection(payload, this.dashboardId)
+            this.removeSelection(payload, this.dashboardId, true)
         },
         launchSelection() {
             this.setSelections(this.dashboardId, this.activeSelections)

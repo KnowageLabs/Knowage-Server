@@ -23,7 +23,10 @@ import { ISelection } from '../../Dashboard'
 export default defineComponent({
     name: 'datasets-catalog-datatable',
     components: { Dialog, AgGridVue },
-    props: { visible: { type: Boolean }, selectedDatasetsProp: { required: true, type: Array as any }, availableDatasetsProp: { required: true, type: Array as any }, dashboardId: { type: String, required: true } },
+    props: {
+        visible: { type: Boolean },
+        dashboardId: { type: String, required: true }
+    },
     emits: ['close', 'save'],
     data() {
         return {
@@ -35,7 +38,20 @@ export default defineComponent({
                     { headerName: 'Dataset', field: 'datasetLabel' },
                     { headerName: 'Column Name', field: 'columnName' },
                     { headerName: 'Values', field: 'value' },
-                    { headerName: '', cellRenderer: buttonRenderer, field: 'id', cellStyle: { 'text-align': 'right', display: 'inline-flex', 'justify-content': 'flex-end', border: 'none' }, width: 50, suppressSizeToFit: true, tooltip: false }
+                    {
+                        headerName: '',
+                        cellRenderer: buttonRenderer,
+                        field: 'id',
+                        cellStyle: {
+                            'text-align': 'right',
+                            display: 'inline-flex',
+                            'justify-content': 'flex-end',
+                            border: 'none'
+                        },
+                        width: 50,
+                        suppressSizeToFit: true,
+                        tooltip: false
+                    }
                 ],
                 enableColResize: false,
                 enableFilter: false,
