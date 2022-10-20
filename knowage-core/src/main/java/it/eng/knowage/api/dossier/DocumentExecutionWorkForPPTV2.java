@@ -17,11 +17,11 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-public class DocumentExecutionWorkForDoc extends AbstractDocumentExecutionWork implements Work {
+public class DocumentExecutionWorkForPPTV2 extends AbstractDocumentExecutionWork implements Work {
 
-	private static transient Logger logger = Logger.getLogger(DocumentExecutionWorkForDoc.class);
+	private static transient Logger logger = Logger.getLogger(DocumentExecutionWorkForPPTV2.class);
 
-	public DocumentExecutionWorkForDoc(AbstractDossierTemplate dossierTemplate, List<BIObjectPlaceholdersPair> documents, IEngUserProfile userProfile,
+	public DocumentExecutionWorkForPPTV2(AbstractDossierTemplate dossierTemplate, List<BIObjectPlaceholdersPair> documents, IEngUserProfile userProfile,
 			Integer progressThreadId, String randomKey) {
 		super();
 		this.documents = documents;
@@ -29,14 +29,15 @@ public class DocumentExecutionWorkForDoc extends AbstractDocumentExecutionWork i
 		this.progressThreadId = progressThreadId;
 		this.randomKey = randomKey;
 		this.dossierTemplate = dossierTemplate;
+
 	}
 
 	@Override
 	public void run() {
 		try {
 			JSONObject jsonObject = new JSONObject();
-			jsonObject.put("TYPE", "DOC_TEMPLATE");
-			jsonObject.put("MESSAGE", dossierTemplate.getDocTemplate().getName());
+			jsonObject.put("TYPE", "PPT_TEMPLATE_V2");
+			jsonObject.put("MESSAGE", dossierTemplate.getPptTemplateV2().getName());
 			this.setJsonObjectTemplate(jsonObjectTemplate);
 
 			this.setTenant();

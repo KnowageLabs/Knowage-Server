@@ -97,6 +97,8 @@ public class SbiDossierActivityDAOHibImpl extends AbstractHibernateDAO implement
 				hibDossierActivity.setBinContent(file);
 			} else if (type.equals("doc")) {
 				hibDossierActivity.setDocBinContent(file);
+			} else if (type.equals("pptv2")) {
+				hibDossierActivity.setPptV2BinContent(file);
 			}
 
 			updateSbiCommonInfo4Update(hibDossierActivity);
@@ -237,9 +239,14 @@ public class SbiDossierActivityDAOHibImpl extends AbstractHibernateDAO implement
 		if (hibDossierActivity.getDocBinContent() != null) {
 			da.setDocBinContent(hibDossierActivity.getDocBinContent());
 			da.setHasDocBinContent(true);
+		} else if (hibDossierActivity.getPptV2BinContent() != null) {
+			da.setPptV2BinContent(hibDossierActivity.getPptV2BinContent());
+			da.setHasPptV2BinContent(true);
 		} else {
 			da.setDocBinContent(null);
 			da.setHasDocBinContent(false);
+			da.setPptV2BinContent(null);
+			da.setHasPptV2BinContent(false);
 		}
 		da.setCreationDate(hibDossierActivity.getCommonInfo().getTimeIn());
 		da.setConfigContent(hibDossierActivity.getConfigContent());

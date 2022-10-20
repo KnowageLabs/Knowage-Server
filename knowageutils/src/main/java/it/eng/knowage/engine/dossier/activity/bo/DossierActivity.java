@@ -18,12 +18,16 @@ public class DossierActivity {
 	private byte[] binContent;
 	private boolean hasBinContent;
 	private boolean hasDocBinContent;
+	private boolean hasPptV2BinContent;
 	private boolean pptExists;
 	private Date creationDate;
 	private String configContent;
 
 	@JsonIgnore
 	private byte[] docBinContent;
+
+	@JsonIgnore
+	private byte[] pptV2BinContent;
 
 	public boolean isHasDocBinContent() {
 		return hasDocBinContent;
@@ -149,6 +153,22 @@ public class DossierActivity {
 
 	public void setConfigContent(String configContent) {
 		this.configContent = configContent;
+	}
+
+	public boolean isHasPptV2BinContent() {
+		return hasPptV2BinContent;
+	}
+
+	public void setHasPptV2BinContent(boolean hasPptV2BinContent) {
+		this.hasPptV2BinContent = hasPptV2BinContent;
+	}
+
+	public byte[] getPptV2BinContent() {
+		return pptV2BinContent;
+	}
+
+	public void setPptV2BinContent(byte[] pptV2BinContent) {
+		this.pptV2BinContent = pptV2BinContent;
 	}
 
 }
