@@ -1,24 +1,23 @@
 import { ISelectionsWidgetSettings } from '@/modules/documentExecution/dashboard/interfaces/DashboardSelectionsWidget'
 
 export interface IDashboard {
-    sheets: [],
-    widgets: ITableWidget[],
-    configuration: IDashboardConfiguration,
+    sheets: []
+    widgets: ITableWidget[]
+    configuration: IDashboardConfiguration
     version: string
 }
 
 export interface IDashboardConfiguration {
-    id: string,
-    name: string,
-    label: string,
-    description: string,
-    associations: IAssociation[],
-    datasets: IModelDataset[],
-    variables: IVariable[],
-    selections: ISelection[],
+    id: string
+    name: string
+    label: string
+    description: string
+    associations: IAssociation[]
+    datasets: IModelDataset[]
+    variables: IVariable[]
+    selections: ISelection[]
     themes: any
 }
-
 
 export interface IDatasetParameter {
     name: string
@@ -224,11 +223,15 @@ export interface ITableWidgetSelection {
 
 export interface ITableWidgetPagination {
     enabled: boolean
-    itemsNumber: number
+    properties: {
+        offset: number
+        itemsNumber: number
+        totalItems: number
+    }
 }
 
 export interface ITableWidgetStyle {
-    title: IWidgetTitle,
+    title: IWidgetTitle
     borders: IWidgetBordersStyle
     columns: ITableWidgetColumnStyles
     columnGroups: ITableWidgetColumnStyles
@@ -236,7 +239,7 @@ export interface ITableWidgetStyle {
     padding: IWidgetPaddingStyle
     rows: IWidgetRowsStyle
     shadows: IWidgetShadowsStyle
-    summary: ITableWidgetSummaryStyle,
+    summary: ITableWidgetSummaryStyle
     background: IWidgetBackgroundStyle
 }
 
@@ -569,19 +572,19 @@ export interface IWidgetStyleToolbarModel {
 }
 
 export interface IVariable {
-    name: string,
-    type: string,
-    value: string,
-    dataset?: string,
-    column?: string,
-    attribute?: string,
+    name: string
+    type: string
+    value: string
+    dataset?: string
+    column?: string
+    attribute?: string
     driver?: string
 }
 
 export interface IWidgetTitle {
-    enabled: boolean,
-    text: string,
-    height: number,
+    enabled: boolean
+    text: string
+    height: number
     properties: {
         'font-weight': string
         'font-style': string
@@ -594,17 +597,17 @@ export interface IWidgetTitle {
 }
 
 export interface IWidgetBackgroundStyle {
-    enabled: boolean,
+    enabled: boolean
     properties: {
         'background-color': string
     }
 }
 
 export interface ISelection {
-    datasetId: number,
-    datasetLabel: string,
-    columnName: string,
-    value: (string | number)[],
-    aggregated: boolean,
+    datasetId: number
+    datasetLabel: string
+    columnName: string
+    value: (string | number)[]
+    aggregated: boolean
     timestamp: number
 }
