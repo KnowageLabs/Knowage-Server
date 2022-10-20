@@ -82,7 +82,7 @@ export const getSelectorWidgetData = async (widget: IWidget, datasets: IDataset[
     if (selectedDataset) {
         var url = `2.0/datasets/${selectedDataset.label}/data?offset=-1&size=-1&nearRealtime=true`
 
-        let postData = formatSelectorModelForGet(widget, selectedDataset.label, initialCall, selections)
+        let postData = formatSelectorModelForGet(widget, selectedDataset.label, initialCall, selections, associativeResponseSelections)
         var tempResponse = null as any
 
         await $http
@@ -107,7 +107,7 @@ export const getTableWidgetData = async (widget: IWidget, datasets: IDataset[], 
             url = `2.0/datasets/${selectedDataset.label}/data?offset=${pagination.properties.offset}&size=${pagination.properties.itemsNumber}&nearRealtime=true`
         } else url = `2.0/datasets/${selectedDataset.label}/data?offset=0&size=-1&nearRealtime=true`
 
-        let postData = formatSelectorModelForGet(widget, selectedDataset.label, initialCall, selections)
+        let postData = formatSelectorModelForGet(widget, selectedDataset.label, initialCall, selections, associativeResponseSelections)
         var tempResponse = null as any
 
         await $http
