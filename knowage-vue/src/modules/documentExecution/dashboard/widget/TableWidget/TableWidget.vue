@@ -174,6 +174,7 @@ export default defineComponent({
                             hide: this.getColumnVisibilityCondition(this.propWidget.columns[datasetColumn].id),
                             colId: this.propWidget.columns[datasetColumn].id,
                             headerName: this.propWidget.columns[datasetColumn].alias,
+                            columnName: this.propWidget.columns[datasetColumn].columnName,
                             field: responseFields[responseField].name,
                             measure: this.propWidget.columns[datasetColumn].fieldType,
                             headerComponent: HeaderRenderer,
@@ -396,7 +397,7 @@ export default defineComponent({
                         console.log('CREATING MODAL ', this.createNewSelection(selectionValue, tempColName))
                     } else {
                         selectionValue.push(node.value)
-                        console.log('CREATING NO MODAL', this.createNewSelection(selectionValue, tempColName))
+                        console.log('CREATING NO MODAL', this.createNewSelection(selectionValue, node.colDef.columnName))
                     }
                 }
             }
