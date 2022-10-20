@@ -12,7 +12,7 @@
  */
 import { AxiosResponse } from 'axios'
 import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
-import { IWidget } from '../../Dashboard'
+import { IDataset, IWidget } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
 import { emitter } from '../../DashboardHelpers'
 import { getWidgetStyleByType, getColumnConditionalStyles, isConditionMet, formatModelForGet } from './TableWidgetHelper'
@@ -70,7 +70,6 @@ export default defineComponent({
             gridApi: null as any,
             columnApi: null as any,
             overlayNoRowsTemplateTest: null as any,
-            selectedDataset: {} as any,
             tableData: [] as any,
             showPaginator: false
         }
@@ -83,7 +82,6 @@ export default defineComponent({
     created() {
         if (this.editorMode) this.setEventListeners()
         this.setupDatatableOptions()
-        this.getSelectedDataset(this.propWidget.dataset)
         this.tableData = this.dataToShow
     },
     unmounted() {
@@ -114,7 +112,7 @@ export default defineComponent({
                 rowHeight: 25,
 
                 // EVENTS
-                // onCellClicked: (event, params) => console.log('A cell was clicked', event, params),
+                onCellClicked: this.onCellClicked,
 
                 // CALLBACKS
                 onGridReady: this.onGridReady,
@@ -128,11 +126,6 @@ export default defineComponent({
             this.createDatatableColumns()
         },
         async createDatatableColumns() {
-            this.getSelectedDataset(this.propWidget.dataset)
-            // await this.getWidgetData()
-            // this.tableData = await getWidgetData(this.propWidget, this.datasets, this.$http, true, [])
-            // if (this.editorMode) this.updateData(this.tableData.rows)
-
             const datatableColumns = this.getTableColumns(this.tableData?.metaData?.fields)
             this.toggleHeaders(this.propWidget.settings.configuration.headers)
             this.gridApi.setColumnDefs(datatableColumns)
@@ -359,10 +352,6 @@ export default defineComponent({
 
             return columnHidden
         },
-        getSelectedDataset(dsId) {
-            let datasetIndex = this.datasets.findIndex((dataset: any) => dsId === dataset.id.dsId)
-            this.selectedDataset = this.datasets[datasetIndex]
-        },
         updateData(data) {
             console.log('%c UPDATE DATA ---------------------', 'background-color: #2C2F33; color: green')
             console.log(data)
@@ -374,6 +363,60 @@ export default defineComponent({
                 this.gridApi.setRowData(data)
                 this.gridApi.setPinnedBottomRowData()
             }
+        },
+        onCellClicked(node) {
+            console.log('params: ', node)
+            if (node.colDef.measure == 'MEASURE' || node.colDef.pinned || node.value === '' || node.value == undefined) return
+
+            var modelSelection = this.propWidget.settings.interactions.selection
+            if (modelSelection.enabled) {
+                var selectionValue = [] as any
+                var tempAlias = ''
+                var tempColName = ''
+
+                if (modelSelection.multiselection.enabled) {
+                }
+                if (!modelSelection.multiselection.enabled) {
+                    if (modelSelection.modalColumn != undefined && modelSelection.modalColumn != '') {
+                        console.log('MOD COL modelSelection.modalColumn', modelSelection.modalColumn)
+                        var rows = [] as any
+
+                        for (var i in this.propWidget.columns) {
+                            if (this.propWidget.columns[i].id == modelSelection.modalColumn) {
+                                tempAlias = this.propWidget.columns[i].alias
+                                tempColName = this.propWidget.columns[i].columnName
+                            }
+                        }
+
+                        rows.push(this.mapRow(node.data))
+
+                        for (var k in rows) {
+                            selectionValue.push(rows[k][tempAlias])
+                        }
+                        console.log('CREATING MODAL ', this.createNewSelection(selectionValue, tempColName))
+                    } else {
+                        selectionValue.push(node.value)
+                        console.log('CREATING NO MODAL', this.createNewSelection(selectionValue, tempColName))
+                    }
+                }
+            }
+            console.log('selectionValue AAAAAA', selectionValue)
+        },
+        mapRow(rowData) {
+            var keyMap = {}
+            for (var r in rowData) {
+                for (var f in this.tableData?.metaData?.fields) {
+                    if (this.tableData?.metaData?.fields[f].dataIndex == r) keyMap[this.tableData?.metaData?.fields[f].header] = rowData[r]
+                }
+            }
+            return keyMap
+        },
+        createNewSelection(value: (string | number)[], columnName: string) {
+            return { datasetId: this.propWidget.dataset as number, datasetLabel: this.getDatasetLabel(this.propWidget.dataset as number), columnName: columnName, value: value, aggregated: false, timestamp: new Date().getTime() }
+        },
+        getDatasetLabel(datasetId: number) {
+            const index = this.datasets.findIndex((dataset: IDataset) => dataset.id.dsId == datasetId)
+            return index !== -1 ? this.datasets[index].label : ''
         }
     }
 })
