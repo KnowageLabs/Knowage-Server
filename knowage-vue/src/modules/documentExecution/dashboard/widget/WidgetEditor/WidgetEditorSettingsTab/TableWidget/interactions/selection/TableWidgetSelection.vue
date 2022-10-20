@@ -25,7 +25,7 @@
             <div class="p-col-12 p-d-flex p-flex-row p-ai-center p-p-3">
                 <div class="p-d-flex p-flex-column kn-flex p-m-2">
                     <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.interactions.modalColumn') }}</label>
-                    <Dropdown class="kn-material-input" v-model="selectionModel.modalColumn" :options="widgetModel.columns" optionLabel="alias" optionValue="id" @change="selectionChanged"> </Dropdown>
+                    <Dropdown class="kn-material-input" v-model="selectionModel.modalColumn" :options="widgetModel.columns" :showClear="true" optionLabel="alias" optionValue="id" @change="selectionChanged"> </Dropdown>
                 </div>
             </div>
         </div>
