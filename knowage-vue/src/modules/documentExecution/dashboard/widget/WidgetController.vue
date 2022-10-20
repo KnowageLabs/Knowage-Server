@@ -13,7 +13,6 @@
             :dashboardId="dashboardId"
             :selectionIsLocked="selectionIsLocked"
             :propActiveSelections="activeSelections"
-            @interaction="manageInteraction"
             @pageChanged="reloadWidgetData"
         ></WidgetRenderer>
         <WidgetButtonBar :playSelectionButtonVisible="playSelectionButtonVisible" :selectionIsLocked="selectionIsLocked" @edit-widget="toggleEditMode" @unlockSelection="unlockSelection" @launchSelection="launchSelection"></WidgetButtonBar>
@@ -46,8 +45,8 @@ export default defineComponent({
         widget: {
             async handler() {
                 this.loading = true
-                console.log('%c --  CALLED FROM WIDGET CONTROLLER watcher!!!!', 'background-color: blue; color: white', this.widget.type)
-                this.loadWidget(this.widget)
+                // console.log('%c --  CALLED FROM WIDGET CONTROLLER watcher!!!!', 'background-color: blue; color: white', this.widget.type)
+                // this.loadWidget(this.widget)
                 // this.widgetData = await getWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
                 this.loading = false
             },
@@ -95,73 +94,74 @@ export default defineComponent({
         setEventListeners() {
             emitter.on('selectionsChanged', this.loadActiveSelections)
             emitter.on('selectionsDeleted', this.onSelectionsDeleted)
-            emitter.on('widgetUpdated', this.onWidgetUpdated)
+            emitter.on('widgetUpdatedFromStore', this.onWidgetUpdated)
         },
         removeEventListeners() {
             emitter.off('selectionsChanged', this.loadActiveSelections)
             emitter.off('selectionsDeleted', this.onSelectionsDeleted)
-            emitter.off('widgetUpdated', this.onWidgetUpdated)
+            emitter.off('widgetUpdatedFromStore', this.onWidgetUpdated)
         },
         loadWidget(widget: IWidget) {
             this.widgetModel = widget
         },
         onWidgetUpdated(widget: any) {
+            // console.log('%c --  CALLED FROM WIDGET CONTROLLER PROP!!!!', 'background-color: blue; color: white', this.widget.id !== widget.id)
             if (this.widget.id !== widget.id) return
             this.loadWidget(widget)
-            console.log('%c --  CALLED FROM WIDGET CONTROLLER onWidgetUpdated!!!!', 'background-color: blue; color: white', this.widget)
+            // console.log('%c --  CALLED FROM WIDGET CONTROLLER onWidgetUpdated!!!!', 'background-color: blue; color: white', this.widgetModel)
+            // console.log('%c --  CALLED FROM WIDGET CONTROLLER onWidgetUpdated!!!!', 'background-color: blue; color: white', widget)
             this.loadInitalData()
         },
         async loadInitalData() {
-            if (!this.widget || this.widget.type === 'selection') return
-            console.log('%c --  CALLED FROM WIDGET CONTROLLER loadInitalData!!!!', 'background-color: blue; color: white', this.widget)
+            if (!this.widgetModel || this.widgetModel.type === 'selection') return
+            // console.log('%c --  CALLED FROM WIDGET CONTROLLER loadInitalData!!!!', 'background-color: blue; color: white', this.widgetModel)
             this.loading = true
 
-            this.widgetInitialData = await getWidgetData(this.widget, this.datasets, this.$http, true, this.activeSelections)
+            this.widgetInitialData = await getWidgetData(this.widgetModel, this.datasets, this.$http, true, this.activeSelections)
             this.widgetData = this.widgetInitialData
 
             await this.loadActiveSelections()
             this.loading = false
         },
         async loadActiveSelections() {
-            console.log('%c --  loadActiveSelections', 'background-color: blue; color: white', this.widget.type)
+            // console.log('%c --  loadActiveSelections', 'background-color: blue; color: white', this.widget.type)
             this.activeSelections = deepcopy(this.getSelections(this.dashboardId))
+            // console.log('%c --  loadActiveSelections', 'background-color: blue; color: white', this.activeSelections)
             await this.reloadWidgetData()
         },
         async onSelectionsDeleted(deletedSelections: any) {
             this.loading = true
             this.activeSelections = deepcopy(this.getSelections(this.dashboardId))
-            console.log('%c --  CALLED FROM WIDGET CONTROLLER onSelectionsDeleted!!!!', 'background-color: blue; color: white', this.widget)
-            if (this.widgetUsesSelections(deletedSelections)) this.widgetData = await getWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
+            // console.log('%c --  CALLED FROM WIDGET CONTROLLER onSelectionsDeleted!!!!', 'background-color: blue; color: white', this.widgetModel)
+            if (this.widgetUsesSelections(deletedSelections)) this.widgetData = await getWidgetData(this.widgetModel, this.datasets, this.$http, false, this.activeSelections)
 
             this.loading = false
         },
         widgetUsesDeletedSelectionsDataset(deletedSelections: ISelection[]) {
             let widgetUsesSelection = false
-            if (!this.widget.dataset) return widgetUsesSelection
+            if (!this.widgetModel.dataset) return widgetUsesSelection
             for (let i = 0; i < deletedSelections.length; i++) {
-                if (deletedSelections[i].datasetId === this.widget.dataset) {
+                if (deletedSelections[i].datasetId === this.widgetModel.dataset) {
                     widgetUsesSelection = true
                     break
                 }
             }
-            console.log('>>>>>>>>>>>>>>>>>>>>> widgetUsesDeletedSelectionsDataset: ', widgetUsesSelection)
-
             return widgetUsesSelection
         },
         async reloadWidgetData() {
-            console.log('%c --  CALLED FROM WIDGET CONTROLLER reloadWidgetData!!!!', 'background-color: blue; color: black', this.widget)
-            if (this.widgetUsesSelections(this.activeSelections)) this.widgetData = await getWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
+            // console.log('%c --  CALLED FROM WIDGET CONTROLLER reloadWidgetData!!!!', 'background-color: blue; color: black', this.widgetModel)
+            if (this.widgetUsesSelections(this.activeSelections)) this.widgetData = await getWidgetData(this.widgetModel, this.datasets, this.$http, false, this.activeSelections)
         },
         widgetUsesSelections(selections: ISelection[]) {
             let widgetUsesSelection = false
-            if (!this.widget.dataset) return widgetUsesSelection
+            if (!this.widgetModel.dataset) return widgetUsesSelection
             for (let i = 0; i < selections.length; i++) {
-                if (selections[i].datasetId === this.widget.dataset) {
+                if (selections[i].datasetId === this.widgetModel.dataset) {
                     widgetUsesSelection = true
                     break
                 }
             }
-            console.log('>>>>>>>>>>>>>>>>>>>>> widgetUsesSelections: ', widgetUsesSelection)
+            // console.log('>>>>>>>>>>>>>>>>>>>>> widgetUsesSelections: ', widgetUsesSelection)
 
             return widgetUsesSelection
         },
@@ -169,29 +169,20 @@ export default defineComponent({
         async test() {
             const dashboardModel = this.getDashboard(this.dashboardId)
             const response = await getAssociativeSelections(dashboardModel, this.datasets, this.$http, this.dashboards)
-            console.log('>>>>> RESPONSE: ', response)
-        },
-        manageInteraction(e, item) {
-            console.log('interaction', e, item)
-            /**
-             * TODO: The interaction manager will find in the widget model the interaction type, and provide the corrent event to be emitted with needed data
-             */
-
-            // @ts-ignore
-            emitter.emit('interaction', { id: this.dHash, event: e })
+            // console.log('>>>>> RESPONSE: ', response)
         },
         toggleEditMode() {
             emitter.emit('openWidgetEditor', this.widget)
         },
         checkIfSelectionIsLocked() {
-            if (this.widget.type !== 'selector') return false
-            const index = this.activeSelections.findIndex((selection: ISelection) => selection.datasetId === this.widget.dataset && selection.columnName === this.widget.columns[0].columnName)
+            if (this.widgetModel.type !== 'selector') return false
+            const index = this.activeSelections.findIndex((selection: ISelection) => selection.datasetId === this.widgetModel.dataset && selection.columnName === this.widgetModel.columns[0].columnName)
             return index !== -1
         },
         unlockSelection() {
-            const payload = { datasetId: this.widget.dataset as number, columnName: this.widget.columns[0].columnName }
-            emitter.emit('widgetUnlocked', this.widget.id)
-            this.removeSelection(payload, this.dashboardId, true)
+            const payload = { datasetId: this.widgetModel.dataset as number, columnName: this.widgetModel.columns[0].columnName }
+            emitter.emit('widgetUnlocked', this.widgetModel.id)
+            this.removeSelection(payload, this.dashboardId)
         },
         launchSelection() {
             this.setSelections(this.dashboardId, this.activeSelections)
