@@ -84,7 +84,7 @@ export const getSelectorWidgetData = async (widget: IWidget, datasets: IDataset[
                 tempResponse = response.data
                 tempResponse.initialCall = initialCall
             })
-            .catch(() => { })
+            .catch(() => {})
         return tempResponse
     }
 }
@@ -95,9 +95,9 @@ export const getTableWidgetData = async (widget: IWidget, datasets: IDataset[], 
 
     if (selectedDataset) {
         var url = ''
-        if (widget.settings.pagination.enabled) {
-            // url = `2.0/datasets/${selectedDataset.label}/data?offset=${pagination.offset}&size=${widget.settings.pagination.itemsNumber}&nearRealtime=true`
-            url = `2.0/datasets/${selectedDataset.label}/data?offset=0&size=${widget.settings.pagination.properties.itemsNumber}&nearRealtime=true`
+        let pagination = widget.settings.pagination
+        if (pagination.enabled) {
+            url = `2.0/datasets/${selectedDataset.label}/data?offset=${pagination.properties.offset}&size=${pagination.properties.itemsNumber}&nearRealtime=true`
         } else url = `2.0/datasets/${selectedDataset.label}/data?offset=0&size=-1&nearRealtime=true`
 
         let postData = formatSelectorModelForGet(widget, selectedDataset.label, initialCall, selections)
@@ -107,9 +107,10 @@ export const getTableWidgetData = async (widget: IWidget, datasets: IDataset[], 
             .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData)
             .then((response: AxiosResponse<any>) => {
                 tempResponse = response.data
+                if (pagination.enabled) widget.settings.pagination.properties.totalItems = response.data.results
                 // pagination.totalItems = response.data.results
             })
-            .catch(() => { })
+            .catch(() => {})
 
         return tempResponse
     }

@@ -1,10 +1,19 @@
 <template>
-    <Paginator class="kn-table-widget-paginator" v-model:first="pagination.offset" :rows="pagination.itemsNumber" :totalRecords="pagination.totalItems" template="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink" @page="onPage($event)" />
+    <Paginator
+        v-if="propWidgetPagination && propWidgetPagination.properties"
+        class="kn-table-widget-paginator"
+        v-model:first="propWidgetPagination.properties.offset"
+        :rows="propWidgetPagination.properties.itemsNumber"
+        :totalRecords="propWidgetPagination.properties.totalItems"
+        template="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+        @page="onPage($event)"
+    />
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import Paginator from 'primevue/paginator'
+import { ITableWidgetPagination } from '../../Dashboard'
 
 export default defineComponent({
     components: {
@@ -12,16 +21,10 @@ export default defineComponent({
     },
     emits: ['pageChanged'],
     props: {
-        pagination: {
-            required: true,
-            type: Object
-        }
+        propWidgetPagination: { type: Object as PropType<ITableWidgetPagination>, required: true }
     },
     data() {
-        return {
-            first: 0,
-            totalRecords: 120
-        }
+        return {}
     },
     created() {},
     methods: {

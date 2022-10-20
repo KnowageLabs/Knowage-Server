@@ -4,7 +4,7 @@
             {{ widget.settings.style.title.text }}
         </div>
         <div class="widget-container-renderer" :style="getWidgetPadding()">
-            <TableWidget v-if="widget.type == 'table'" :propWidget="widget" :datasets="datasets" :dataToShow="dataToShow" :editorMode="false" />
+            <TableWidget v-if="widget.type == 'table'" :propWidget="widget" :datasets="datasets" :dataToShow="dataToShow" :editorMode="false" @pageChanged="$emit('pageChanged')" />
             <!-- <SelectorWidget v-if="widget.type == 'selector'" :propWidget="widget" :dataToShow="mock.selectorMockedResponse" :editorMode="true" :dashboardId="dashboardId" :datasets="datasets" :selectionIsLocked="selectionIsLocked" /> -->
             <SelectorWidget v-if="widget.type == 'selector'" :propWidget="widget" :dataToShow="dataToShow" :widgetInitialData="widgetInitialData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" :datasets="datasets" :selectionIsLocked="selectionIsLocked" />
             <ActiveSelectionsWidget v-if="widget.type == 'selection'" :propWidget="widget" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" />
@@ -27,7 +27,7 @@ import { IDataset, ISelection } from '../Dashboard'
 
 export default defineComponent({
     name: 'widget-renderer',
-    emits: ['interaction'],
+    emits: ['interaction', 'pageChanged'],
     components: { TableWidget, SelectorWidget, ActiveSelectionsWidget },
     props: {
         widget: { required: true, type: Object as any },

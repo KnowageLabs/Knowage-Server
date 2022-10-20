@@ -4,7 +4,17 @@
         <ProgressSpinner v-if="loading" class="kn-progress-spinner" />
         <Skeleton shape="rectangle" v-if="!initialized" height="100%" border-radius="0" />
 
-        <WidgetRenderer :widget="widget" :widgetData="widgetData" :widgetInitialData="widgetInitialData" :datasets="datasets" v-if="initialized" :dashboardId="dashboardId" :selectionIsLocked="selectionIsLocked" :propActiveSelections="activeSelections"></WidgetRenderer>
+        <WidgetRenderer
+            :widget="widget"
+            :widgetData="widgetData"
+            :widgetInitialData="widgetInitialData"
+            :datasets="datasets"
+            v-if="initialized"
+            :dashboardId="dashboardId"
+            :selectionIsLocked="selectionIsLocked"
+            :propActiveSelections="activeSelections"
+            @pageChanged="reloadWidgetData"
+        ></WidgetRenderer>
         <WidgetButtonBar :playSelectionButtonVisible="playSelectionButtonVisible" :selectionIsLocked="selectionIsLocked" @edit-widget="toggleEditMode" @unlockSelection="unlockSelection" @launchSelection="launchSelection"></WidgetButtonBar>
     </grid-item>
 </template>
