@@ -1,7 +1,8 @@
 <template>
+    {{ propWidget.settings.pagination }}
     <div class="kn-table-widget-container p-d-flex p-d-row kn-flex">
         <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine kn-flex" :gridOptions="gridOptions"></ag-grid-vue>
-        <PaginatorRenderer v-if="showPaginator" :pagination="pagination" @pageChanged="getWidgetData()" />
+        <PaginatorRenderer v-if="showPaginator" :propWidgetPagination="propWidget.settings.pagination" @pageChanged="$emit('pageChanged')" />
     </div>
 </template>
 
@@ -30,6 +31,7 @@ import { getSelectorWidgetData, getWidgetData } from '../../DataProxyHelper'
 
 export default defineComponent({
     name: 'table-widget',
+    emits: ['pageChanged'],
     components: { AgGridVue, HeaderRenderer, SummaryRowRenderer, HeaderGroupRenderer, TooltipRenderer, PaginatorRenderer },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
@@ -70,12 +72,7 @@ export default defineComponent({
             overlayNoRowsTemplateTest: null as any,
             selectedDataset: {} as any,
             tableData: [] as any,
-            showPaginator: false,
-            pagination: {
-                offset: 0,
-                itemsNumber: 15,
-                totalItems: 0
-            }
+            showPaginator: false
         }
     },
     setup() {
@@ -214,7 +211,7 @@ export default defineComponent({
                                 } else return 1
                             }
                             tempCol.cellClassRules = {
-                                'cell-span': function(params) {
+                                'cell-span': function (params) {
                                     return tempRows[params.rowIndex].span > 1
                                 }
                             }
@@ -269,11 +266,10 @@ export default defineComponent({
                             tempCol.headerTooltip = null
                         }
 
-                        // CUSTOM MESSAGE CONFIGURATION  -----------------------------------------------------------------
+                        // PAGINATION CONFIGURATION  -----------------------------------------------------------------
                         var pagination = this.propWidget.settings.pagination
                         if (pagination.enabled) {
                             this.showPaginator = true
-                            this.pagination.itemsNumber = pagination.properties.itemsNumber
                         } else this.showPaginator = false
 
                         // CUSTOM MESSAGE CONFIGURATION  -----------------------------------------------------------------
@@ -379,30 +375,6 @@ export default defineComponent({
                 this.gridApi.setPinnedBottomRowData()
             }
         }
-        // async getWidgetData() {
-        //     if (this.selectedDataset) {
-        //         this.gridApi.showLoadingOverlay()
-        //         // let url = createGetUrl(this.propWidget, this.selectedDataset.label)
-        //         var url = ''
-
-        //         if (this.propWidget.settings.pagination.enabled) {
-        //             url = `2.0/datasets/${this.selectedDataset.label}/data?offset=${this.pagination.offset}&size=${this.propWidget.settings.pagination.itemsNumber}&nearRealtime=true`
-        //         } else url = `2.0/datasets/${this.selectedDataset.label}/data?offset=0&size=-1&nearRealtime=true`
-
-        //         let postData = formatModelForGet(this.propWidget, this.selectedDataset.label)
-
-        //         await this.$http
-        //             .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData)
-        //             .then((response: AxiosResponse<any>) => {
-        //                 this.tableData = response.data
-        //                 this.pagination.totalItems = response.data.results
-        //             })
-        //             .catch(() => {})
-
-        //         this.updateData(this.tableData?.rows)
-        //         this.gridApi.hideOverlay()
-        //     }
-        // }
     }
 })
 </script>
