@@ -259,7 +259,7 @@ export default defineComponent({
         },
         onSelectionsRemove(selections: ISelection[]) {
             this.selectionsDialogVisible = false
-            this.removeSelections(selections, this.dashboardId, true)
+            this.removeSelections(selections, this.dashboardId)
         }
     }
 })

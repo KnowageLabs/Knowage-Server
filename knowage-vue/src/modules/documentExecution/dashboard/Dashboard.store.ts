@@ -36,7 +36,7 @@ const store = defineStore('dashboardStore', {
             }
         },
         updateWidget(dashboardId: string, widget: IWidget) {
-            updateWidgetHelper(dashboardId, widget, this.dashboards, this.removeSelection)
+            updateWidgetHelper(dashboardId, widget, this.dashboards)
         },
         setSelectedSheetIndex(index: number) {
             this.selectedSheetIndex = index
@@ -65,19 +65,19 @@ const store = defineStore('dashboardStore', {
             this.selections[dashboardId] = selections
             emitter.emit('selectionsChanged', { dashboardId: dashboardId, selections: this.selections[dashboardId] })
         },
-        removeSelection(payload: { datasetId: number, columnName: string }, dashboardId: string, emitEvent: boolean) {
+        removeSelection(payload: { datasetId: number, columnName: string }, dashboardId: string) {
             const index = this.selections[dashboardId]?.findIndex((selection: ISelection) => selection.datasetId === payload.datasetId && selection.columnName === payload.columnName)
             console.log("----- STORE - REMOVE SELECTION: ", index)
             if (index !== -1) {
                 const tempSelection = deepcopy(this.selections[dashboardId][index])
                 this.selections[dashboardId].splice(index, 1)
-                if (emitEvent) {
-                    emitter.emit('selectionsDeleted', [tempSelection])
-                    emitter.emit('selectionsChanged', { dashboardId: dashboardId, selections: this.selections[dashboardId] })
-                }
+
+                emitter.emit('selectionsDeleted', [tempSelection])
+                emitter.emit('selectionsChanged', { dashboardId: dashboardId, selections: this.selections[dashboardId] })
+
             }
         },
-        removeSelections(selectionsToRemove: ISelection[], dashboardId: string, emitEvent: boolean) {
+        removeSelections(selectionsToRemove: ISelection[], dashboardId: string) {
             const removedSelections = [] as ISelection[]
             selectionsToRemove?.forEach((selection: ISelection) => {
                 const index = this.selections[dashboardId].findIndex((activeSelection: ISelection) => activeSelection.datasetId === selection.datasetId && activeSelection.columnName === selection.columnName)
@@ -86,7 +86,7 @@ const store = defineStore('dashboardStore', {
                     removedSelections.push(selection)
                 }
             })
-            if (removedSelections.length > 0 && emitEvent) emitter.emit('selectionsDeleted', removedSelections)
+            if (removedSelections.length > 0) emitter.emit('selectionsDeleted', removedSelections)
         }
     }
 })

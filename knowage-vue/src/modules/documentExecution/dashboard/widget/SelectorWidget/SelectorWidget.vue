@@ -136,6 +136,8 @@ export default defineComponent({
             if (this.dataToShow?.initialCall && !hasActiveSelectionValue) this.updateSelectedValue()
         },
         widgetInitialData() {
+            // console.log('------------ >>>>>>>>>>>>>>>>>>>>>>>>> widgetInitialData: ', deepcopy(this.widgetInitialData))
+            // console.log('------------ >>>>>>>>>>>>>>>>>>>>>>>>> data: ', deepcopy(this.dataToShow))
             this.loadInitialValues()
         },
         widgetType() {
@@ -179,7 +181,7 @@ export default defineComponent({
         },
         loadAvailableOptions(dataToShow: any) {
             this.options = { rows: [] }
-            console.log('%c loadAvailableOptions', 'background-color: green; color: white', dataToShow)
+            // console.log('%c loadAvailableOptions', 'background-color: green; color: white', dataToShow)
             if (!dataToShow || !dataToShow.rows) return
             this.initialOptions?.rows?.forEach((initialOption: any) => {
                 const index = dataToShow.rows.findIndex((row: any) => row.column_1 === initialOption.column_1)
@@ -194,7 +196,7 @@ export default defineComponent({
             const index = this.activeSelections.findIndex((selection: ISelection) => selection.datasetId === this.propWidget.dataset && selection.columnName === this.propWidget.columns[0]?.columnName)
             if (index !== -1) {
                 const selection = this.activeSelections[index]
-                console.log('%c selection', 'background-color: green; color: white', selection)
+                // console.log('%c selection', 'background-color: green; color: white', selection)
                 switch (this.widgetType) {
                     case 'singleValue':
                     case 'dropdown':
