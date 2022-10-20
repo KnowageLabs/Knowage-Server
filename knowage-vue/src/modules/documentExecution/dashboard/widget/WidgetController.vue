@@ -130,7 +130,7 @@ export default defineComponent({
             this.loading = true
             this.activeSelections = deepcopy(this.getSelections(this.dashboardId))
             console.log('%c --  CALLED FROM WIDGET CONTROLLER onSelectionsDeleted!!!!', 'background-color: blue; color: white', this.widget)
-            if (this.widgetUsesDeletedSelectionsDataset(deletedSelections)) this.widgetData = await getWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
+            if (this.widgetUsesSelections(deletedSelections)) this.widgetData = await getWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
 
             this.loading = false
         },
@@ -152,16 +152,10 @@ export default defineComponent({
             if (this.widgetUsesSelections(this.activeSelections)) this.widgetData = await getWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
         },
         widgetUsesSelections(selections: ISelection[]) {
-            // console.log('>>>>>>>>>>> widgetUsesSelections: ', selections)
             let widgetUsesSelection = false
-            if (!this.widget.columns) return widgetUsesSelection
-            for (let i = 0; i < this.widget.columns.length; i++) {
-                const index = selections.findIndex((selection: ISelection) => {
-                    // console.log('>>>>>>>>>> SELECTION: ', selection)
-                    // console.log(selection.datasetId + ' === ' + this.widget.dataset + ' && ' + selection.columnName + ' === ' + this.widget.columns[i].columnName)
-                    return selection.datasetId === this.widget.dataset && selection.columnName === this.widget.columns[i].columnName
-                })
-                if (index !== -1) {
+            if (!this.widget.dataset) return widgetUsesSelection
+            for (let i = 0; i < selections.length; i++) {
+                if (selections[i].datasetId === this.widget.dataset) {
                     widgetUsesSelection = true
                     break
                 }
