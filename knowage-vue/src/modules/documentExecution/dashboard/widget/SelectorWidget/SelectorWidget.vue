@@ -2,6 +2,7 @@
     <div v-if="options" class="selector-widget">
         {{ showMode }}
         {{ selectedValue }}
+        {{ propWidget?.id }}
         <div v-if="widgetType === 'singleValue'" :class="getLayoutStyle()">
             <div class="multi-select p-p-1" :style="getLabelStyle() + getGridWidth()" v-for="(value, index) of showMode === 'hideDisabled' ?  options.rows.filter((row: any) => !row.disabled) : options.rows" :key="index">
                 <RadioButton :inputId="`radio-${index}`" class="p-mr-2" :name="value.column_1" :value="value.column_1" v-model="selectedValue" :disabled="showMode === 'showDisabled' && value.disabled" @change="singleValueSelectionChanged" />
@@ -114,12 +115,8 @@ export default defineComponent({
     },
     data() {
         return {
-            initialOptions: {
-                rows: []
-            } as any,
-            options: {
-                rows: []
-            } as any,
+            initialOptions: { rows: [] } as any,
+            options: { rows: [] } as any,
             selectedValue: null as any,
             selectedValues: [] as any,
             selectedDate: null as any,
@@ -135,7 +132,8 @@ export default defineComponent({
         },
         dataToShow() {
             this.loadOptions()
-            if (this.dataToShow.initial) this.updateSelectedValue()
+            const hasActiveSelectionValue = this.loadActiveSelectionValue()
+            if (this.dataToShow?.initialCall && !hasActiveSelectionValue) this.updateSelectedValue()
         },
         widgetInitialData() {
             this.loadInitialValues()
@@ -148,6 +146,7 @@ export default defineComponent({
         this.setEventListeners()
         this.loadActiveSelections()
         this.loadInitialValues()
+        this.loadActiveSelectionValue()
     },
     unmounted() {
         this.removeEventListeners()
@@ -168,19 +167,19 @@ export default defineComponent({
         },
         loadInitialValues() {
             this.initialOptions = deepcopy(this.widgetInitialData)
-            console.log('%c >>>>>>>>>>>>>>> LOADED INIITAL OPTIONS: ', 'background-color: red; color: white')
-            console.log(this.initialOptions)
+            // console.log('%c >>>>>>>>>>>>>>> LOADED INIITAL OPTIONS: ', 'background-color: red; color: white')
+            // console.log(this.initialOptions)
             this.loadOptions()
             this.updateSelectedValue()
         },
         loadOptions() {
             this.loadAvailableOptions(this.dataToShow)
-            console.log('%c >>>>>>>>>>>>>>> LOADED  OPTIONS: ', 'background-color: red; red; color: white')
-            console.log(this.options)
+            // console.log('%c >>>>>>>>>>>>>>> LOADED  OPTIONS: ', 'background-color: red; red; color: white')
+            // console.log(this.options)
         },
-
         loadAvailableOptions(dataToShow: any) {
             this.options = { rows: [] }
+            console.log('%c loadAvailableOptions', 'background-color: green; color: white', dataToShow)
             if (!dataToShow || !dataToShow.rows) return
             this.initialOptions?.rows?.forEach((initialOption: any) => {
                 const index = dataToShow.rows.findIndex((row: any) => row.column_1 === initialOption.column_1)
@@ -189,6 +188,30 @@ export default defineComponent({
         },
         loadActiveSelections() {
             this.activeSelections = this.propActiveSelections
+        },
+        loadActiveSelectionValue() {
+            const index = this.activeSelections.findIndex((selection: ISelection) => selection.datasetId === this.propWidget.dataset && selection.columnName === this.propWidget.columns[0]?.columnName)
+            if (index !== -1) {
+                const selection = this.activeSelections[index]
+                console.log('%c selection', 'background-color: green; color: white', selection)
+                switch (this.widgetType) {
+                    case 'singleValue':
+                    case 'dropdown':
+                        this.selectedValue = selection.value[0]
+                        break
+                    case 'multiValue':
+                    case 'multiDropdown':
+                        this.selectedValues = selection.value
+                        break
+                    case 'date':
+                        this.selectedDate = selection.value[0]
+                        break
+                    case 'dateRange':
+                        this.startDate = selection.value[0]
+                        this.endDate = selection.value[1]
+                }
+                return true
+            } else return false
         },
         onDefaultValuesChanged(widgetId: any) {
             if (this.propWidget.id !== widgetId || !this.editorMode) return
@@ -251,12 +274,15 @@ export default defineComponent({
                 default:
                     this.selectedValue = null
             }
+            this.updateSelectionsAfterDefaultValuesAreSet(multivalue)
+        },
+        updateSelectionsAfterDefaultValuesAreSet(multivalue: boolean) {
+            if (multivalue && this.selectedValues.length > 0) this.multiValueSelectionChanged()
+            else if (!multivalue && this.selectedValue) this.singleValueSelectionChanged()
         },
         findFirstAvailableValue() {
             if (this.showMode === 'enableAll') return this.options.rows[0]
             const index = this.options.rows.findIndex((row: any) => !row.disabled)
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> findFirstAvailableValue: ', this.options.rows)
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> index: ', index)
             return index !== -1 ? this.options.rows[index] : null
         },
         findLastAvailableValue() {
@@ -273,7 +299,11 @@ export default defineComponent({
             }
             const index = this.options.rows.findIndex((option: any) => staticValue.trim() === option.column_1.trim())
             if (index !== -1) {
-                multivalue ? (this.selectedValues = [this.options.rows[index].column_1]) : (this.selectedValue = this.options.rows[index].column_1)
+                if (multivalue) {
+                    this.selectedValues = [this.options.rows[index].column_1]
+                } else {
+                    this.selectedValue = this.options.rows[index].column_1
+                }
             } else {
                 this.selectedValue = null
                 this.selectedValues = []
@@ -320,24 +350,25 @@ export default defineComponent({
         getBackgroundColor() {
             return getWidgetStyleByType(this.propWidget, 'background')
         },
-        logRange(event) {
-            console.log('range', event)
-        },
         singleValueSelectionChanged() {
             if (this.editorMode) return
+            this.loadActiveSelections()
             updateStoreSelections(this.createNewSelection([this.selectedValue]), this.activeSelections, this.dashboardId, this.setSelections)
         },
         multiValueSelectionChanged() {
             if (this.editorMode) return
+            this.loadActiveSelections()
             const tempSelection = this.createNewSelection(this.selectedValues)
             this.updateActiveSelectionsWithMultivalueSelection(tempSelection)
         },
         dateSelectionChanged() {
             if (this.editorMode) return
+            this.loadActiveSelections()
             updateStoreSelections(this.createNewSelection([this.selectedDate]), this.activeSelections, this.dashboardId, this.setSelections)
         },
         dateRangeSelectionChanged() {
             if (this.editorMode) return
+            this.loadActiveSelections()
             const tempSelection = this.createNewSelection([this.startDate, this.endDate])
             this.updateActiveSelectionsWithMultivalueSelection(tempSelection)
         },

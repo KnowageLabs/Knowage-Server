@@ -27,17 +27,22 @@ export const createNewDashboardModel = () => {
 
 export const updateWidgetHelper = (dashboardId: string, widget: IWidget, dashboards: any, removeSelection: Function) => {
     for (let i = 0; i < dashboards[dashboardId].widgets.length; i++) {
-        console.log(widget.id + ' === ' + dashboards[dashboardId].widgets[i].id)
         if (widget.id === dashboards[dashboardId].widgets[i].id) {
-            if (widget.type === 'selector') updateSelectionsOnWidgetEdit(dashboards[dashboardId].widgets[i], widget, dashboardId, removeSelection)
+            let changed = false
+            if (widget.type === 'selector') {
+                changed = updateSelectionsOnWidgetEdit(dashboards[dashboardId].widgets[i], widget, dashboardId, removeSelection)
+            }
             dashboards[dashboardId].widgets[i] = deepcopy(widget)
+            if (changed) emitter.emit("widgetUpdated", dashboards[dashboardId].widgets[i])
         }
     }
 }
 
 const updateSelectionsOnWidgetEdit = (oldWidget: IWidget, newWidget: IWidget, dashboardId: string, removeSelection: Function) => {
     if (oldWidget.dataset !== newWidget.dataset || (oldWidget.dataset === newWidget.dataset && oldWidget.columns[0]?.columnName !== newWidget.columns[0].columnName)) {
-        removeSelection({ datasetId: oldWidget.dataset, columnName: oldWidget.columns[0]?.columnName ?? '' }, dashboardId)
+        removeSelection({ datasetId: oldWidget.dataset, columnName: oldWidget.columns[0]?.columnName ?? '' }, dashboardId, false)
+        return true
     }
+    return false
 
 }

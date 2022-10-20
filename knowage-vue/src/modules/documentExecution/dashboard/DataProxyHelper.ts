@@ -80,8 +80,11 @@ export const getSelectorWidgetData = async (widget: IWidget, datasets: IDataset[
 
         await $http
             .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData)
-            .then((response: AxiosResponse<any>) => (tempResponse = response.data))
-            .catch(() => {})
+            .then((response: AxiosResponse<any>) => {
+                tempResponse = response.data
+                tempResponse.initialCall = initialCall
+            })
+            .catch(() => { })
         return tempResponse
     }
 }
@@ -106,7 +109,7 @@ export const getTableWidgetData = async (widget: IWidget, datasets: IDataset[], 
                 tempResponse = response.data
                 // pagination.totalItems = response.data.results
             })
-            .catch(() => {})
+            .catch(() => { })
 
         return tempResponse
     }
