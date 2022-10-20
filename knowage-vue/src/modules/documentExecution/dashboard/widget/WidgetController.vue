@@ -151,7 +151,7 @@ export default defineComponent({
         },
         async reloadWidgetData(associativeResponseSelections: any) {
             // console.log('%c --  CALLED FROM WIDGET CONTROLLER reloadWidgetData!!!!', 'background-color: blue; color: black', this.widgetModel)
-            if (this.widgetUsesSelections(this.activeSelections)) this.widgetData = await getWidgetData(this.widgetModel, this.datasets, this.$http, false, this.activeSelections, associativeResponseSelections)
+            if (this.widgetUsesSelections(this.activeSelections) || associativeResponseSelections) this.widgetData = await getWidgetData(this.widgetModel, this.datasets, this.$http, false, this.activeSelections, associativeResponseSelections)
         },
         widgetUsesSelections(selections: ISelection[]) {
             let widgetUsesSelection = false
@@ -191,7 +191,8 @@ export default defineComponent({
             console.log('>>>>>>>>>>>>>> INDEX: ', index)
             if (index !== -1) {
                 this.loading = true
-                await this.reloadWidgetData(null)
+                console.log('>>>>>>>>>>>>>> EEEEEEEEEEEEEEEEEEEEEEEEEEENTEERD: ', index)
+                await this.reloadWidgetData(response)
                 this.loading = false
             }
         }
