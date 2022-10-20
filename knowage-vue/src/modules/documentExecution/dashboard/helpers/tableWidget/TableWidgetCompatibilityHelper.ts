@@ -114,7 +114,9 @@ const createConditionFromRowThreshold = (rowThreshold: any) => {
 
 const getFormattedPaginations = (widget: any) => {
     if (!widget.settings?.pagination) return tableWidgetDefaultValues.getDefaultPagination()
-    return { enabled: widget.settings.pagination.enabled, itemsNumber: widget.settings.pagination.itemsNumber } as ITableWidgetPagination
+    return {
+        enabled: widget.settings.pagination.enabled, properties: { offset: 0, itemsNumber: widget.settings.pagination.itemsNumber ?? 15, totalItems: 0 }
+    } as ITableWidgetPagination
 }
 
 const getFiltersForColumns = (formattedWidget: IWidget, oldWidget: any) => {

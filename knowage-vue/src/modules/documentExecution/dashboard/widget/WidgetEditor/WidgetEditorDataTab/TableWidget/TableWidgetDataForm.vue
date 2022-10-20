@@ -89,7 +89,8 @@ export default defineComponent({
         },
         paginationChanged() {
             if (!this.widgetModel.settings) return
-            this.widgetModel.settings.pagination = { enabled: this.paginationEnabled, itemsNumber: +this.itemsNumber } as ITableWidgetPagination
+            this.widgetModel.settings.pagination.enabled = this.paginationEnabled
+            this.widgetModel.settings.pagination.itemsNumber = +this.itemsNumber
             emitter.emit('paginationChanged', this.widgetModel.settings.pagination)
             emitter.emit('refreshTable', this.widgetModel.id)
         },

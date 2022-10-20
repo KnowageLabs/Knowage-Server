@@ -95,7 +95,11 @@
     },
     "defaultPagination": {
         "enabled": false,
-        "itemsNumber": 0
+        "properties": {
+            "itemsNumber": 15,
+            "offset": 0,
+            "totalItems": 0
+        }
     },
     "defaultPreview": {
         "dataset": -1,
