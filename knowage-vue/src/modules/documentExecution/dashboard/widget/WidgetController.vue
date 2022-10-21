@@ -88,12 +88,14 @@ export default defineComponent({
             emitter.on('selectionsDeleted', this.onSelectionsDeleted)
             emitter.on('widgetUpdatedFromStore', this.onWidgetUpdated)
             emitter.on('associativeSelectionsLoaded', this.onAssociativeSelectionsLoaded)
+            emitter.on('datasetRefreshed', this.onDatasetRefresh)
         },
         removeEventListeners() {
             emitter.off('selectionsChanged', this.loadActiveSelections)
             emitter.off('selectionsDeleted', this.onSelectionsDeleted)
             emitter.off('widgetUpdatedFromStore', this.onWidgetUpdated)
             emitter.off('associativeSelectionsLoaded', this.onAssociativeSelectionsLoaded)
+            emitter.off('datasetRefreshed', this.onDatasetRefresh)
         },
         loadWidget(widget: IWidget) {
             this.widgetModel = widget
@@ -122,7 +124,7 @@ export default defineComponent({
             this.getSelectionsFromStore()
             // console.log('%c --  loadActiveSelections - activeSelections', 'background-color: blue; color: white', this.activeSelections)
             if (this.widgetModel.type === 'selection') return
-            await this.reloadWidgetData(null)
+            if (this.widgetUsesSelections(this.activeSelections)) await this.reloadWidgetData(null)
         },
         getSelectionsFromStore() {
             this.activeSelections = deepcopy(this.getSelections(this.dashboardId))
@@ -132,7 +134,7 @@ export default defineComponent({
             this.loading = true
             this.getSelectionsFromStore()
             // // console.log('%c --  CALLED FROM WIDGET CONTROLLER onSelectionsDeleted!!!!', 'background-color: blue; color: white', this.widgetModel)
-            if (this.widgetUsesSelections(deletedSelections)) this.widgetData = await getWidgetData(this.widgetModel, this.datasets, this.$http, false, this.activeSelections)
+            if (this.widgetUsesSelections(deletedSelections)) this.reloadWidgetData(null)
 
             this.loading = false
         },
@@ -148,8 +150,10 @@ export default defineComponent({
             return widgetUsesSelection
         },
         async reloadWidgetData(associativeResponseSelections: any) {
-            // // console.log('%c --  CALLED FROM WIDGET CONTROLLER reloadWidgetData!!!!', 'background-color: blue; color: black', this.widgetModel)
-            if (this.widgetUsesSelections(this.activeSelections) || associativeResponseSelections) this.widgetData = await getWidgetData(this.widgetModel, this.datasets, this.$http, false, this.activeSelections, associativeResponseSelections)
+            // // console.log('%c --  CALLED FROM WIDGET CONTROLLER reloadWidgetData2!!!!', 'background-color: blue; color: black', this.widgetModel)
+            this.loading = true
+            this.widgetData = await getWidgetData(this.widgetModel, this.datasets, this.$http, false, this.activeSelections, associativeResponseSelections)
+            this.loading = false
         },
         widgetUsesSelections(selections: ISelection[]) {
             let widgetUsesSelection = false
@@ -196,6 +200,13 @@ export default defineComponent({
                 await this.reloadWidgetData(response)
                 this.loading = false
             }
+        },
+        async onDatasetRefresh(modelDatasetId: any) {
+            // console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> onDatasetRefresh onDatasetRefresh: ', modelDataset)
+            // console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> onDatasetRefresh onDatasetRefresh entered: ', modelDataset)
+            if (this.widgetModel.dataset !== modelDatasetId) return
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> onDatasetRefresh EEEEEEEEEEEEEEEENTERED: ', modelDatasetId)
+            await this.reloadWidgetData(null)
         }
     }
 })
