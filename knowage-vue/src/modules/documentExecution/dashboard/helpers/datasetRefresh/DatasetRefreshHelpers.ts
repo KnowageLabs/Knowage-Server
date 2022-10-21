@@ -12,7 +12,7 @@ export const setDatasetIntervals = (modelDatasets: IModelDataset[], datasets: ID
         const index = datasets.findIndex((dataset: IDataset) => dataset.id.dsId === modelDatasets[i].id)
         // TODO - add condition and remove hardcoded interval
         if (index !== -1) {
-            setDatasetInterval(modelDatasets[i].id, 10000)
+            // setDatasetInterval(modelDatasets[i].id, 10000)
         }
     }
 
