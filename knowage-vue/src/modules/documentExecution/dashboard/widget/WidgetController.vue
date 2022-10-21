@@ -34,6 +34,8 @@ import Skeleton from 'primevue/skeleton'
 import ProgressSpinner from 'primevue/progressspinner'
 import deepcopy from 'deepcopy'
 import { ISelectorWidgetSettings } from '../interfaces/DashboardSelectorWidget'
+import { datasetIsUsedInAssociations } from './interactionsHelpers/DatasetAssociationsHelper'
+import { loadAssociativeSelections } from './interactionsHelpers/InteractionHelper'
 
 export default defineComponent({
     name: 'widget-manager',
@@ -90,6 +92,7 @@ export default defineComponent({
             emitter.on('widgetUpdatedFromStore', this.onWidgetUpdated)
             emitter.on('associativeSelectionsLoaded', this.onAssociativeSelectionsLoaded)
             emitter.on('datasetRefreshed', this.onDatasetRefresh)
+            emitter.on('setWidgetLoading', this.setWidgetLoading)
         },
         removeEventListeners() {
             emitter.off('selectionsChanged', this.loadActiveSelections)
@@ -97,33 +100,31 @@ export default defineComponent({
             emitter.off('widgetUpdatedFromStore', this.onWidgetUpdated)
             emitter.off('associativeSelectionsLoaded', this.onAssociativeSelectionsLoaded)
             emitter.off('datasetRefreshed', this.onDatasetRefresh)
+            emitter.off('setWidgetLoading', this.setWidgetLoading)
         },
         loadWidget(widget: IWidget) {
             this.widgetModel = widget
         },
+        setWidgetLoading(loading: any) {
+            this.loading = loading
+        },
         onWidgetUpdated(widget: any) {
-            // // console.log('%c --  CALLED FROM WIDGET CONTROLLER PROP!!!!', 'background-color: blue; color: white', this.widget.id !== widget.id)
             if (this.widget.id !== widget.id) return
             this.loadWidget(widget)
-            // // console.log('%c --  CALLED FROM WIDGET CONTROLLER onWidgetUpdated!!!!', 'background-color: blue; color: white', this.widgetModel)
-            // // console.log('%c --  CALLED FROM WIDGET CONTROLLER onWidgetUpdated!!!!', 'background-color: blue; color: white', widget)
             this.loadInitalData()
         },
         async loadInitalData() {
             if (!this.widgetModel || this.widgetModel.type === 'selection') return
-            // // console.log('%c --  CALLED FROM WIDGET CONTROLLER loadInitalData!!!!', 'background-color: blue; color: white', this.widgetModel)
             this.loading = true
 
             this.widgetInitialData = await getWidgetData(this.widgetModel, this.datasets, this.$http, true, this.activeSelections)
             this.widgetData = this.widgetInitialData
-
             await this.loadActiveSelections()
+
             this.loading = false
         },
         async loadActiveSelections() {
-            // console.log('%c --  loadActiveSelections', 'background-color: blue; color: white', this.widget.type)
             this.getSelectionsFromStore()
-            // console.log('%c --  loadActiveSelections - activeSelections', 'background-color: blue; color: white', this.activeSelections)
             if (this.widgetModel.type === 'selection') return
             if (this.widgetUsesSelections(this.activeSelections)) await this.reloadWidgetData(null)
         },
@@ -134,9 +135,7 @@ export default defineComponent({
         async onSelectionsDeleted(deletedSelections: any) {
             this.loading = true
             this.getSelectionsFromStore()
-            // // console.log('%c --  CALLED FROM WIDGET CONTROLLER onSelectionsDeleted!!!!', 'background-color: blue; color: white', this.widgetModel)
             if (this.widgetUsesSelections(deletedSelections)) this.reloadWidgetData(null)
-
             this.loading = false
         },
         widgetUsesDeletedSelectionsDataset(deletedSelections: ISelection[]) {
@@ -151,7 +150,6 @@ export default defineComponent({
             return widgetUsesSelection
         },
         async reloadWidgetData(associativeResponseSelections: any) {
-            // // console.log('%c --  CALLED FROM WIDGET CONTROLLER reloadWidgetData2!!!!', 'background-color: blue; color: black', this.widgetModel)
             this.loading = true
             this.widgetData = await getWidgetData(this.widgetModel, this.datasets, this.$http, false, this.activeSelections, associativeResponseSelections)
             this.loading = false
@@ -165,7 +163,6 @@ export default defineComponent({
                     break
                 }
             }
-            // // console.log('>>>>>>>>>>>>>>>>>>>>> widgetUsesSelections: ', widgetUsesSelection)
 
             return widgetUsesSelection
         },
@@ -174,9 +171,7 @@ export default defineComponent({
         },
         checkIfSelectionIsLocked() {
             if (this.widgetModel.type !== 'selector' || (this.widgetModel.settings as ISelectorWidgetSettings).configuration.valuesManagement.enableAll) return false
-            // console.log('-------------------- CAAAAAAAAAAAAAAALED: checkIfSelectionIsLocked ', this.activeSelections)
             const index = this.activeSelections.findIndex((selection: ISelection) => selection.datasetId === this.widgetModel.dataset && selection.columnName === this.widgetModel.columns[0].columnName)
-            // console.log('-------------------- CAAAAAAAAAAAAAAALE checkIfSelectionIsLocked index: ', index)
             this.selectionIsLocked = index !== -1
         },
         unlockSelection() {
@@ -189,25 +184,19 @@ export default defineComponent({
         },
         async onAssociativeSelectionsLoaded(response: any) {
             this.getSelectionsFromStore()
-            // console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> onAssociativeSelectionsLoaded onAssociativeSelectionsLoaded: ', response)
             if (!response) return
             const datasets = Object.keys(response)
             const dataset = this.datasets.find((dataset: IDataset) => dataset.id.dsId === this.widgetModel.dataset)
             const index = datasets.findIndex((datasetLabel: string) => datasetLabel === dataset?.label)
-            // console.log('>>>>>>>>>>>>>> INDEX: ', index)
-            if (index !== -1) {
-                this.loading = true
-                // console.log('>>>>>>>>>>>>>> EEEEEEEEEEEEEEEEEEEEEEEEEEENTEERD: ', index)
-                await this.reloadWidgetData(response)
-                this.loading = false
-            }
+            if (index !== -1) await this.reloadWidgetData(response)
         },
         async onDatasetRefresh(modelDatasetId: any) {
-            // console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> onDatasetRefresh onDatasetRefresh: ', modelDataset)
-            // console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> onDatasetRefresh onDatasetRefresh entered: ', modelDataset)
             if (this.widgetModel.dataset !== modelDatasetId) return
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> onDatasetRefresh EEEEEEEEEEEEEEEENTERED: ', modelDatasetId)
-            await this.reloadWidgetData(null)
+            if (this.activeSelections.length > 0 && datasetIsUsedInAssociations(modelDatasetId, this.dashboards[this.dashboardId].configuration.associations)) {
+                loadAssociativeSelections(this.dashboards[this.dashboardId], this.datasets, this.activeSelections, this.$http)
+            } else {
+                await this.reloadWidgetData(null)
+            }
         }
     }
 })

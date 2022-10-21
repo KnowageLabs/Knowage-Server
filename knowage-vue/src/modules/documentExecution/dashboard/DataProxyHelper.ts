@@ -94,7 +94,7 @@ export const getSelectorWidgetData = async (widget: IWidget, datasets: IDataset[
                 tempResponse.initialCall = initialCall
             })
             .catch(() => { })
-        // .finally(() => { if (widget.dataset || widget.dataset === 0) setDatasetInterval(widget.dataset as number, 10000) })  // TODO - SET PROPER INTERVAL
+            .finally(() => { if (widget.dataset || widget.dataset === 0) setDatasetInterval(widget.dataset as number, 10000) })  // TODO - SET PROPER INTERVAL
         return tempResponse
     }
 }
@@ -123,7 +123,7 @@ export const getTableWidgetData = async (widget: IWidget, datasets: IDataset[], 
                 // pagination.totalItems = response.data.results
             })
             .catch(() => { })
-        // .finally(() => { if (widget.dataset || widget.dataset === 0) setDatasetInterval(widget.dataset as number, 10000) })  // TODO - SET PROPER INTERVAL
+            .finally(() => { if (widget.dataset || widget.dataset === 0) setDatasetInterval(widget.dataset as number, 10000) })  // TODO - SET PROPER INTERVAL
 
         return tempResponse
     }
