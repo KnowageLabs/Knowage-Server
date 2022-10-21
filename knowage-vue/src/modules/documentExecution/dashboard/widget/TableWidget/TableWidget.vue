@@ -12,7 +12,7 @@
  */
 import { AxiosResponse } from 'axios'
 import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
-import { IDataset, IWidget } from '../../Dashboard'
+import { IDataset, ISelection, IWidget } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
 import { emitter } from '../../DashboardHelpers'
 import { getWidgetStyleByType, getColumnConditionalStyles, isConditionMet, formatModelForGet } from './TableWidgetHelper'
@@ -28,6 +28,9 @@ import SummaryRowRenderer from './SummaryRowRenderer.vue'
 import HeaderGroupRenderer from './HeaderGroupRenderer.vue'
 import PaginatorRenderer from './PaginatorRenderer.vue'
 import { getSelectorWidgetData, getWidgetData } from '../../DataProxyHelper'
+import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
+import { mapActions } from 'pinia'
+import store from '../../Dashboard.store'
 
 export default defineComponent({
     name: 'table-widget',
@@ -37,7 +40,9 @@ export default defineComponent({
         propWidget: { type: Object as PropType<IWidget>, required: true },
         editorMode: { type: Boolean, required: false },
         datasets: { type: Array as any, required: true },
-        dataToShow: { type: Object as any, required: true }
+        dataToShow: { type: Object as any, required: true },
+        propActiveSelections: { type: Array as PropType<ISelection[]>, required: true },
+        dashboardId: { type: String, required: true }
     },
     watch: {
         propWidget: {
@@ -53,8 +58,12 @@ export default defineComponent({
                 this.tableData = this.dataToShow
                 this.createDatatableColumns()
                 // this.updateData(this.tableData.rows)
+                this.loadActiveSelectionValue()
             },
             deep: true
+        },
+        propActiveSelections() {
+            this.loadActiveSelections()
         }
     },
     data() {
@@ -71,7 +80,8 @@ export default defineComponent({
             columnApi: null as any,
             overlayNoRowsTemplateTest: null as any,
             tableData: [] as any,
-            showPaginator: false
+            showPaginator: false,
+            activeSelections: [] as ISelection[]
         }
     },
     setup() {
@@ -81,7 +91,9 @@ export default defineComponent({
     },
     created() {
         if (this.editorMode) this.setEventListeners()
+        this.loadActiveSelections()
         this.setupDatatableOptions()
+        this.loadActiveSelectionValue()
         this.tableData = this.dataToShow
     },
     unmounted() {
@@ -90,10 +102,22 @@ export default defineComponent({
     mounted() {},
 
     methods: {
+        ...mapActions(store, ['setSelections']),
         setEventListeners() {
             // emitter.on('paginationChanged', (pagination) => console.log('WidgetEditorPreview - PAGINATION CHANGED!', pagination)) //  { enabled: this.paginationEnabled, itemsNumber: +this.itemsNumber }
             // emitter.on('sortingChanged', this.sortColumn)
             // emitter.on('refreshTable', this.createDatatableColumns)
+        },
+        loadActiveSelections() {
+            this.activeSelections = this.propActiveSelections
+        },
+        loadActiveSelectionValue() {
+            if (this.editorMode) return false
+            const index = this.activeSelections.findIndex((selection: ISelection) => selection.datasetId === this.propWidget.dataset && selection.columnName === this.propWidget.columns[0]?.columnName)
+            if (index !== -1) {
+                const selection = this.activeSelections[index]
+                // TODO - Add Active selection to the active ones
+            }
         },
         setupDatatableOptions() {
             this.gridOptions = {
@@ -205,7 +229,7 @@ export default defineComponent({
                                 } else return 1
                             }
                             tempCol.cellClassRules = {
-                                'cell-span': function (params) {
+                                'cell-span': function(params) {
                                     return tempRows[params.rowIndex].span > 1
                                 }
                             }
@@ -395,9 +419,11 @@ export default defineComponent({
                             selectionValue.push(rows[k][tempAlias])
                         }
                         console.log('CREATING MODAL ', this.createNewSelection(selectionValue, tempColName))
+                        updateStoreSelections(this.createNewSelection(selectionValue, tempColName), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
                     } else {
                         selectionValue.push(node.value)
                         console.log('CREATING NO MODAL', this.createNewSelection(selectionValue, node.colDef.columnName))
+                        updateStoreSelections(this.createNewSelection(selectionValue, node.colDef.columnName), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
                     }
                 }
             }
