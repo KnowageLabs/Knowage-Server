@@ -5,7 +5,7 @@ let datasetMapById = {}
 
 export const getAssociativeSelections = async (model: IDashboard, datasets: IDataset[], selections: ISelection[], $http: any) => {
     loadDatasetLabelIdMap(datasets)
-    console.log(">>>>>>>>>>> MODEL: ", model)
+    // console.log(">>>>>>>>>>> MODEL: ", model)
 
     const tempDatasets = getDatasetsInfoFromModelDatasets(model.configuration.datasets, datasets)
     const postData = {
@@ -107,8 +107,8 @@ const getNearRealtimeDatasets = (tempDatasets: IDataset[]) => {
 
 
 export const selectionsUseDatasetWithAssociation = (selections: ISelection[], associations: IAssociation[]) => {
-    console.log(">>>>>>>>>>>>>>> selectionUsesDatasetWithAssociation - selection: ", selections)
-    console.log(">>>>>>>>>>>>>>> selectionUsesDatasetWithAssociation - associations: ", associations)
+    // console.log(">>>>>>>>>>>>>>> selectionUsesDatasetWithAssociation - selection: ", selections)
+    // console.log(">>>>>>>>>>>>>>> selectionUsesDatasetWithAssociation - associations: ", associations)
 
     if (!selections || !associations) return false
     for (let i = 0; i < selections.length; i++) {

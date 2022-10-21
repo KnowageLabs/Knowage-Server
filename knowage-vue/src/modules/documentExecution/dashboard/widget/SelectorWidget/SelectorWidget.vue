@@ -1,8 +1,6 @@
 <template>
     <div v-if="options" class="selector-widget">
         {{ showMode }}
-        {{ selectedValue }}
-        {{ propWidget?.id }}
         <div v-if="widgetType === 'singleValue'" :class="getLayoutStyle()">
             <div class="multi-select p-p-1" :style="getLabelStyle() + getGridWidth()" v-for="(value, index) of showMode === 'hideDisabled' ?  options.rows.filter((row: any) => !row.disabled) : options.rows" :key="index">
                 <RadioButton :inputId="`radio-${index}`" class="p-mr-2" :name="value.column_1" :value="value.column_1" v-model="selectedValue" :disabled="showMode === 'showDisabled' && value.disabled" @change="singleValueSelectionChanged" />
@@ -88,6 +86,7 @@ import MultiSelect from 'primevue/multiselect'
 import Calendar from 'primevue/calendar'
 import store from '../../Dashboard.store'
 import deepcopy from 'deepcopy'
+import { isTSIndexSignature } from '@babel/types'
 
 export default defineComponent({
     name: 'datasets-catalog-datatable',
@@ -136,8 +135,8 @@ export default defineComponent({
             if (this.dataToShow?.initialCall && !hasActiveSelectionValue) this.updateSelectedValue()
         },
         widgetInitialData() {
-            // console.log('------------ >>>>>>>>>>>>>>>>>>>>>>>>> widgetInitialData: ', deepcopy(this.widgetInitialData))
-            // console.log('------------ >>>>>>>>>>>>>>>>>>>>>>>>> data: ', deepcopy(this.dataToShow))
+            // // console.log('------------ >>>>>>>>>>>>>>>>>>>>>>>>> widgetInitialData: ', deepcopy(this.widgetInitialData))
+            // // console.log('------------ >>>>>>>>>>>>>>>>>>>>>>>>> data: ', deepcopy(this.dataToShow))
             this.loadInitialValues()
         },
         widgetType() {
@@ -169,19 +168,19 @@ export default defineComponent({
         },
         loadInitialValues() {
             this.initialOptions = deepcopy(this.widgetInitialData)
-            // console.log('%c >>>>>>>>>>>>>>> LOADED INIITAL OPTIONS: ', 'background-color: red; color: white')
-            // console.log(this.initialOptions)
+            // // console.log('%c >>>>>>>>>>>>>>> LOADED INIITAL OPTIONS: ', 'background-color: red; color: white')
+            // // console.log(this.initialOptions)
             this.loadOptions()
             this.updateSelectedValue()
         },
         loadOptions() {
             this.loadAvailableOptions(this.dataToShow)
-            // console.log('%c >>>>>>>>>>>>>>> LOADED  OPTIONS: ', 'background-color: red; red; color: white')
-            // console.log(this.options)
+            // // console.log('%c >>>>>>>>>>>>>>> LOADED  OPTIONS: ', 'background-color: red; red; color: white')
+            // // console.log(this.options)
         },
         loadAvailableOptions(dataToShow: any) {
             this.options = { rows: [] }
-            // console.log('%c loadAvailableOptions', 'background-color: green; color: white', dataToShow)
+            // // console.log('%c loadAvailableOptions', 'background-color: green; color: white', dataToShow)
             if (!dataToShow || !dataToShow.rows) return
             this.initialOptions?.rows?.forEach((initialOption: any) => {
                 const index = dataToShow.rows.findIndex((row: any) => row.column_1 === initialOption.column_1)
@@ -189,6 +188,7 @@ export default defineComponent({
             })
         },
         loadActiveSelections() {
+            // console.log('CAAAAAAAAAALED loadActiveSelections')
             this.activeSelections = this.propActiveSelections
         },
         loadActiveSelectionValue() {
@@ -196,7 +196,7 @@ export default defineComponent({
             const index = this.activeSelections.findIndex((selection: ISelection) => selection.datasetId === this.propWidget.dataset && selection.columnName === this.propWidget.columns[0]?.columnName)
             if (index !== -1) {
                 const selection = this.activeSelections[index]
-                // console.log('%c selection', 'background-color: green; color: white', selection)
+                // // console.log('%c selection', 'background-color: green; color: white', selection)
                 switch (this.widgetType) {
                     case 'singleValue':
                     case 'dropdown':
@@ -253,7 +253,10 @@ export default defineComponent({
             }
         },
         selectDefaultValue(defaultMode: string, multivalue: boolean) {
-            if (!this.options || !this.options.rows || !defaultMode) return
+            if (!this.options || !this.options.rows || !defaultMode) {
+                this.removeDeafultValues()
+                return
+            }
             switch (defaultMode) {
                 case 'FIRST':
                     const firstValue = this.findFirstAvailableValue()
@@ -275,7 +278,7 @@ export default defineComponent({
                     this.setDefaultStaticValue(multivalue)
                     break
                 default:
-                    this.selectedValue = null
+                    this.removeDeafultValues()
             }
             this.updateSelectionsAfterDefaultValuesAreSet(multivalue)
         },
@@ -355,29 +358,34 @@ export default defineComponent({
         },
         singleValueSelectionChanged() {
             if (this.editorMode) return
-            this.loadActiveSelections()
             updateStoreSelections(this.createNewSelection([this.selectedValue]), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
         },
         multiValueSelectionChanged() {
             if (this.editorMode) return
-            this.loadActiveSelections()
             const tempSelection = this.createNewSelection(this.selectedValues)
+
             this.updateActiveSelectionsWithMultivalueSelection(tempSelection)
         },
         dateSelectionChanged() {
             if (this.editorMode) return
-            this.loadActiveSelections()
             updateStoreSelections(this.createNewSelection([this.selectedDate]), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
         },
         dateRangeSelectionChanged() {
             if (this.editorMode) return
-            this.loadActiveSelections()
             const tempSelection = this.createNewSelection([this.startDate, this.endDate])
             this.updateActiveSelectionsWithMultivalueSelection(tempSelection)
         },
         updateActiveSelectionsWithMultivalueSelection(tempSelection: ISelection) {
+            // console.log('>>>>>>>>>>>>>>>>>>>>>>>> TEMP SELECTION: ', tempSelection)
             const index = this.activeSelections.findIndex((activeSelection: ISelection) => activeSelection.datasetId === tempSelection.datasetId && activeSelection.columnName === tempSelection.columnName)
-            index !== -1 ? (this.activeSelections[index] = tempSelection) : this.activeSelections.push(tempSelection)
+            // console.log('INDEX: ', index)
+            if (index !== -1) {
+                this.activeSelections[index] = tempSelection
+            } else {
+                // console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAA')
+                this.activeSelections.push(tempSelection)
+                // console.log(' this.activeSelections: ', deepcopy(this.activeSelections))
+            }
         },
         createNewSelection(value: (string | number)[]) {
             return { datasetId: this.propWidget.dataset as number, datasetLabel: this.getDatasetLabel(this.propWidget.dataset as number), columnName: this.propWidget.columns[0]?.columnName ?? '', value: value, aggregated: false, timestamp: new Date().getTime() }

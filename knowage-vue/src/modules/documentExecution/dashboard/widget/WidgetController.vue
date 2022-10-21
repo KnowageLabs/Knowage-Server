@@ -3,7 +3,6 @@
         <div v-if="initialized" class="drag-handle"></div>
         <ProgressSpinner v-if="loading" class="kn-progress-spinner" />
         <Skeleton shape="rectangle" v-if="!initialized" height="100%" border-radius="0" />
-
         <WidgetRenderer
             :widget="widget"
             :widgetData="widgetData"
@@ -43,11 +42,7 @@ export default defineComponent({
     watch: {
         widget: {
             async handler() {
-                this.loading = true
-                // console.log('%c --  CALLED FROM WIDGET CONTROLLER watcher!!!!', 'background-color: blue; color: white', this.widget.type)
-                // this.loadWidget(this.widget)
-                // this.widgetData = await getWidgetData(this.widget, this.datasets, this.$http, false, this.activeSelections)
-                this.loading = false
+                this.loadWidget(this.widget)
             },
             deep: true
         }
@@ -67,25 +62,23 @@ export default defineComponent({
                 offset: 0,
                 itemsNumber: 15,
                 totalItems: 0
-            }
+            },
+            selectionIsLocked: false
         }
     },
     async created() {
         this.setEventListeners()
         this.loadWidget(this.widget)
-        this.loadInitalData()
+        this.widget.type !== 'selection' ? this.loadInitalData() : this.loadActiveSelections()
     },
     unmounted() {
         this.removeEventListeners()
     },
     computed: {
         ...mapState(store, ['dashboards']),
-        selectionIsLocked(): boolean {
-            return this.checkIfSelectionIsLocked()
-        },
         playSelectionButtonVisible(): boolean {
             if (!this.widget || !this.widget.settings.configuration.selectorType) return false
-            return this.widget.type === 'selector' && ['multiValue', 'multiDropdown', 'dateRange'].includes(this.widget.settings.configuration.selectorType.modality)
+            return this.widget.type === 'selector' && ['multiValue', 'multiDropdown', 'dateRange'].includes(this.widget.settings.configuration.selectorType.modality) && !this.selectionIsLocked
         }
     },
     methods: {
@@ -106,16 +99,16 @@ export default defineComponent({
             this.widgetModel = widget
         },
         onWidgetUpdated(widget: any) {
-            // console.log('%c --  CALLED FROM WIDGET CONTROLLER PROP!!!!', 'background-color: blue; color: white', this.widget.id !== widget.id)
+            // // console.log('%c --  CALLED FROM WIDGET CONTROLLER PROP!!!!', 'background-color: blue; color: white', this.widget.id !== widget.id)
             if (this.widget.id !== widget.id) return
             this.loadWidget(widget)
-            // console.log('%c --  CALLED FROM WIDGET CONTROLLER onWidgetUpdated!!!!', 'background-color: blue; color: white', this.widgetModel)
-            // console.log('%c --  CALLED FROM WIDGET CONTROLLER onWidgetUpdated!!!!', 'background-color: blue; color: white', widget)
+            // // console.log('%c --  CALLED FROM WIDGET CONTROLLER onWidgetUpdated!!!!', 'background-color: blue; color: white', this.widgetModel)
+            // // console.log('%c --  CALLED FROM WIDGET CONTROLLER onWidgetUpdated!!!!', 'background-color: blue; color: white', widget)
             this.loadInitalData()
         },
         async loadInitalData() {
             if (!this.widgetModel || this.widgetModel.type === 'selection') return
-            // console.log('%c --  CALLED FROM WIDGET CONTROLLER loadInitalData!!!!', 'background-color: blue; color: white', this.widgetModel)
+            // // console.log('%c --  CALLED FROM WIDGET CONTROLLER loadInitalData!!!!', 'background-color: blue; color: white', this.widgetModel)
             this.loading = true
 
             this.widgetInitialData = await getWidgetData(this.widgetModel, this.datasets, this.$http, true, this.activeSelections)
@@ -126,14 +119,19 @@ export default defineComponent({
         },
         async loadActiveSelections() {
             // console.log('%c --  loadActiveSelections', 'background-color: blue; color: white', this.widget.type)
-            this.activeSelections = deepcopy(this.getSelections(this.dashboardId))
-            // console.log('%c --  loadActiveSelections', 'background-color: blue; color: white', this.activeSelections)
+            this.getSelectionsFromStore()
+            // console.log('%c --  loadActiveSelections - activeSelections', 'background-color: blue; color: white', this.activeSelections)
+            if (this.widgetModel.type === 'selection') return
             await this.reloadWidgetData(null)
+        },
+        getSelectionsFromStore() {
+            this.activeSelections = deepcopy(this.getSelections(this.dashboardId))
+            this.checkIfSelectionIsLocked()
         },
         async onSelectionsDeleted(deletedSelections: any) {
             this.loading = true
-            this.activeSelections = deepcopy(this.getSelections(this.dashboardId))
-            // console.log('%c --  CALLED FROM WIDGET CONTROLLER onSelectionsDeleted!!!!', 'background-color: blue; color: white', this.widgetModel)
+            this.getSelectionsFromStore()
+            // // console.log('%c --  CALLED FROM WIDGET CONTROLLER onSelectionsDeleted!!!!', 'background-color: blue; color: white', this.widgetModel)
             if (this.widgetUsesSelections(deletedSelections)) this.widgetData = await getWidgetData(this.widgetModel, this.datasets, this.$http, false, this.activeSelections)
 
             this.loading = false
@@ -150,7 +148,7 @@ export default defineComponent({
             return widgetUsesSelection
         },
         async reloadWidgetData(associativeResponseSelections: any) {
-            // console.log('%c --  CALLED FROM WIDGET CONTROLLER reloadWidgetData!!!!', 'background-color: blue; color: black', this.widgetModel)
+            // // console.log('%c --  CALLED FROM WIDGET CONTROLLER reloadWidgetData!!!!', 'background-color: blue; color: black', this.widgetModel)
             if (this.widgetUsesSelections(this.activeSelections) || associativeResponseSelections) this.widgetData = await getWidgetData(this.widgetModel, this.datasets, this.$http, false, this.activeSelections, associativeResponseSelections)
         },
         widgetUsesSelections(selections: ISelection[]) {
@@ -162,7 +160,7 @@ export default defineComponent({
                     break
                 }
             }
-            // console.log('>>>>>>>>>>>>>>>>>>>>> widgetUsesSelections: ', widgetUsesSelection)
+            // // console.log('>>>>>>>>>>>>>>>>>>>>> widgetUsesSelections: ', widgetUsesSelection)
 
             return widgetUsesSelection
         },
@@ -171,8 +169,10 @@ export default defineComponent({
         },
         checkIfSelectionIsLocked() {
             if (this.widgetModel.type !== 'selector') return false
+            // console.log('-------------------- CAAAAAAAAAAAAAAALED: checkIfSelectionIsLocked ', this.activeSelections)
             const index = this.activeSelections.findIndex((selection: ISelection) => selection.datasetId === this.widgetModel.dataset && selection.columnName === this.widgetModel.columns[0].columnName)
-            return index !== -1
+            // console.log('-------------------- CAAAAAAAAAAAAAAALE checkIfSelectionIsLocked index: ', index)
+            this.selectionIsLocked = index !== -1
         },
         unlockSelection() {
             const payload = { datasetId: this.widgetModel.dataset as number, columnName: this.widgetModel.columns[0].columnName }
@@ -183,15 +183,16 @@ export default defineComponent({
             this.setSelections(this.dashboardId, this.activeSelections, this.$http)
         },
         async onAssociativeSelectionsLoaded(response: any) {
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> onAssociativeSelectionsLoaded onAssociativeSelectionsLoaded: ', response)
+            this.getSelectionsFromStore()
+            // console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> onAssociativeSelectionsLoaded onAssociativeSelectionsLoaded: ', response)
             if (!response) return
             const datasets = Object.keys(response)
             const dataset = this.datasets.find((dataset: IDataset) => dataset.id.dsId === this.widgetModel.dataset)
             const index = datasets.findIndex((datasetLabel: string) => datasetLabel === dataset?.label)
-            console.log('>>>>>>>>>>>>>> INDEX: ', index)
+            // console.log('>>>>>>>>>>>>>> INDEX: ', index)
             if (index !== -1) {
                 this.loading = true
-                console.log('>>>>>>>>>>>>>> EEEEEEEEEEEEEEEEEEEEEEEEEEENTEERD: ', index)
+                // console.log('>>>>>>>>>>>>>> EEEEEEEEEEEEEEEEEEEEEEEEEEENTEERD: ', index)
                 await this.reloadWidgetData(response)
                 this.loading = false
             }
