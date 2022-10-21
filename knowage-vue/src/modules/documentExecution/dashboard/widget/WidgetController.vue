@@ -33,6 +33,7 @@ import WidgetButtonBar from './WidgetButtonBar.vue'
 import Skeleton from 'primevue/skeleton'
 import ProgressSpinner from 'primevue/progressspinner'
 import deepcopy from 'deepcopy'
+import { ISelectorWidgetSettings } from '../interfaces/DashboardSelectorWidget'
 
 export default defineComponent({
     name: 'widget-manager',
@@ -172,7 +173,7 @@ export default defineComponent({
             emitter.emit('openWidgetEditor', this.widget)
         },
         checkIfSelectionIsLocked() {
-            if (this.widgetModel.type !== 'selector') return false
+            if (this.widgetModel.type !== 'selector' || (this.widgetModel.settings as ISelectorWidgetSettings).configuration.valuesManagement.enableAll) return false
             // console.log('-------------------- CAAAAAAAAAAAAAAALED: checkIfSelectionIsLocked ', this.activeSelections)
             const index = this.activeSelections.findIndex((selection: ISelection) => selection.datasetId === this.widgetModel.dataset && selection.columnName === this.widgetModel.columns[0].columnName)
             // console.log('-------------------- CAAAAAAAAAAAAAAALE checkIfSelectionIsLocked index: ', index)
