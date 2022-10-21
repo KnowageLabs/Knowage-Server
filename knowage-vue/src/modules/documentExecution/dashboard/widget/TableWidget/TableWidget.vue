@@ -1,6 +1,10 @@
 <template>
-    {{ propWidget.settings.pagination }}
     <div class="kn-table-widget-container p-d-flex p-d-row kn-flex">
+        <div v-if="selectedColumn" class="multiselect-overlay">
+            <i class="fas fa-play kn-cursor-pointer" @click="applyMultiSelection" />
+            values:{{ this.multiSelectedCells }}
+        </div>
+
         <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine kn-flex" :gridOptions="gridOptions"></ag-grid-vue>
         <PaginatorRenderer v-if="showPaginator" :propWidgetPagination="propWidget.settings.pagination" @pageChanged="$emit('pageChanged')" />
     </div>
@@ -66,6 +70,11 @@ export default defineComponent({
             this.loadActiveSelections()
         }
     },
+    computed: {
+        gridWidth(): any {
+            return (this.store.$state as any).user.sessionRole
+        }
+    },
     data() {
         return {
             descriptor,
@@ -73,15 +82,15 @@ export default defineComponent({
             columnsNameArray: [] as any,
             rowData: [] as any,
             columnDefs: [] as any,
-            defaultColDef: {
-                flex: 1
-            },
             gridApi: null as any,
             columnApi: null as any,
             overlayNoRowsTemplateTest: null as any,
             tableData: [] as any,
             showPaginator: false,
-            activeSelections: [] as ISelection[]
+            activeSelections: [] as ISelection[],
+            multiSelectedCells: [] as any,
+            selectedRows: [] as any,
+            selectedColumn: false as any
         }
     },
     setup() {
@@ -127,7 +136,7 @@ export default defineComponent({
                 tooltipShowDelay: 100,
                 tooltipMouseTrack: true,
                 overlayNoRowsTemplate: this.overlayNoRowsTemplateTest,
-                defaultColDef: this.defaultColDef,
+                defaultColDef: { flex: 1 },
                 rowSelection: 'single',
                 suppressRowTransform: true,
                 suppressMovableColumns: true,
@@ -229,7 +238,7 @@ export default defineComponent({
                                 } else return 1
                             }
                             tempCol.cellClassRules = {
-                                'cell-span': function(params) {
+                                'cell-span': function (params) {
                                     return tempRows[params.rowIndex].span > 1
                                 }
                             }
@@ -390,44 +399,53 @@ export default defineComponent({
             }
         },
         onCellClicked(node) {
-            console.log('params: ', node)
             if (node.colDef.measure == 'MEASURE' || node.colDef.pinned || node.value === '' || node.value == undefined) return
 
-            var modelSelection = this.propWidget.settings.interactions.selection
-            if (modelSelection.enabled) {
-                var selectionValue = [] as any
-                var tempAlias = ''
-                var tempColName = ''
+            var modalSelection = this.propWidget.settings.interactions.selection
+            if (modalSelection.enabled) {
+                if (modalSelection.multiselection.enabled) {
+                    //first check to see it the column selected is the same, if not clear the past selections
+                    if (!this.selectedColumn || this.selectedColumn != node.colDef.field) {
+                        this.multiSelectedCells.splice(0, this.multiSelectedCells.length)
+                        this.selectedColumn = node.colDef.field
+                    }
 
-                if (modelSelection.multiselection.enabled) {
-                }
-                if (!modelSelection.multiselection.enabled) {
-                    if (modelSelection.modalColumn != undefined && modelSelection.modalColumn != '') {
-                        console.log('MOD COL modelSelection.modalColumn', modelSelection.modalColumn)
-                        var rows = [] as any
+                    if (modalSelection.modalColumn) {
+                        const modalColumnIndex = this.propWidget.columns.findIndex((column) => column.id == modalSelection.modalColumn)
+                        const modalColumnValue = node.data[`column_${modalColumnIndex + 1}`]
 
-                        for (var i in this.propWidget.columns) {
-                            if (this.propWidget.columns[i].id == modelSelection.modalColumn) {
-                                tempAlias = this.propWidget.columns[i].alias
-                                tempColName = this.propWidget.columns[i].columnName
-                            }
-                        }
-
-                        rows.push(this.mapRow(node.data))
-
-                        for (var k in rows) {
-                            selectionValue.push(rows[k][tempAlias])
-                        }
-                        console.log('CREATING MODAL ', this.createNewSelection(selectionValue, tempColName))
-                        updateStoreSelections(this.createNewSelection(selectionValue, tempColName), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
+                        if (!this.multiSelectedCells.includes(modalColumnValue)) this.multiSelectedCells.push(modalColumnValue)
+                        else this.multiSelectedCells.splice(this.multiSelectedCells.indexOf(modalColumnValue), 1)
+                        if (this.multiSelectedCells.length == 0) this.selectedColumn = false
                     } else {
-                        selectionValue.push(node.value)
-                        console.log('CREATING NO MODAL', this.createNewSelection(selectionValue, node.colDef.columnName))
-                        updateStoreSelections(this.createNewSelection(selectionValue, node.colDef.columnName), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
+                        if (!this.multiSelectedCells.includes(node.value)) this.multiSelectedCells.push(node.value)
+                        else this.multiSelectedCells.splice(this.multiSelectedCells.indexOf(node.value), 1)
+                        if (this.multiSelectedCells.length == 0) this.selectedColumn = false
+                    }
+
+                    // console.log('SELECTED CELLS -----------', this.multiSelectedCells)
+                } else if (!modalSelection.multiselection.enabled) {
+                    if (modalSelection.modalColumn) {
+                        const modalColumnIndex = this.propWidget.columns.findIndex((column) => column.id == modalSelection.modalColumn)
+                        const modalColumnValue = node.data[`column_${modalColumnIndex + 1}`]
+
+                        // console.log('SINGLESELECT MODAL ', this.createNewSelection([modalColumnValue], this.propWidget.columns[modalColumnIndex].columnName))
+                        updateStoreSelections(this.createNewSelection([modalColumnValue], this.propWidget.columns[modalColumnIndex].columnName), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
+                    } else {
+                        // console.log('SINGLESELECT NO MODAL', this.createNewSelection([node.value], node.colDef.columnName))
+                        updateStoreSelections(this.createNewSelection([node.value], node.colDef.columnName), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
                     }
                 }
             }
-            console.log('selectionValue AAAAAA', selectionValue)
+        },
+        applyMultiSelection() {
+            const modalSelection = this.propWidget.settings.interactions.selection
+
+            if (modalSelection.enabled) {
+                const modalColumnIndex = this.propWidget.columns.findIndex((column) => column.id == modalSelection.modalColumn)
+                const modalColumnName = this.propWidget.columns[modalColumnIndex].columnName
+                console.log('MULTISELECT MODAL:  ', this.createNewSelection(this.multiSelectedCells, modalColumnName))
+            } else console.log('MULTISELECT NO MODAL:  ', this.createNewSelection(this.multiSelectedCells, this.selectedColumn))
         },
         mapRow(rowData) {
             var keyMap = {}
@@ -453,5 +471,17 @@ export default defineComponent({
     border-left: 1px solid lightgrey !important;
     border-right: 1px solid lightgrey !important;
     border-bottom: 1px solid lightgrey !important;
+}
+.multiselect-overlay {
+    font-size: 0.8rem;
+    background-color: #f1f5f9;
+    min-height: 25px;
+    max-height: 25px;
+    border-top: 1px solid #3b678c;
+    border-bottom: 1px solid #3b678c;
+    text-align: center;
+    width: 100%;
+    z-index: 9999;
+    opacity: 0.7;
 }
 </style>
