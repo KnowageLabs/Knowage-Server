@@ -135,8 +135,6 @@ export default defineComponent({
             if (this.dataToShow?.initialCall && !hasActiveSelectionValue) this.updateSelectedValue()
         },
         widgetInitialData() {
-            // // console.log('------------ >>>>>>>>>>>>>>>>>>>>>>>>> widgetInitialData: ', deepcopy(this.widgetInitialData))
-            // // console.log('------------ >>>>>>>>>>>>>>>>>>>>>>>>> data: ', deepcopy(this.dataToShow))
             this.loadInitialValues()
         },
         widgetType() {
@@ -168,19 +166,14 @@ export default defineComponent({
         },
         loadInitialValues() {
             this.initialOptions = deepcopy(this.widgetInitialData)
-            // // console.log('%c >>>>>>>>>>>>>>> LOADED INIITAL OPTIONS: ', 'background-color: red; color: white')
-            // // console.log(this.initialOptions)
             this.loadOptions()
             this.updateSelectedValue()
         },
         loadOptions() {
             this.loadAvailableOptions(this.dataToShow)
-            // // console.log('%c >>>>>>>>>>>>>>> LOADED  OPTIONS: ', 'background-color: red; red; color: white')
-            // // console.log(this.options)
         },
         loadAvailableOptions(dataToShow: any) {
             this.options = { rows: [] }
-            // // console.log('%c loadAvailableOptions', 'background-color: green; color: white', dataToShow)
             if (!dataToShow || !dataToShow.rows) return
             this.initialOptions?.rows?.forEach((initialOption: any) => {
                 const index = dataToShow.rows.findIndex((row: any) => row.column_1 === initialOption.column_1)
@@ -188,7 +181,6 @@ export default defineComponent({
             })
         },
         loadActiveSelections() {
-            // console.log('CAAAAAAAAAALED loadActiveSelections')
             this.activeSelections = this.propActiveSelections
         },
         loadActiveSelectionValue() {
@@ -196,7 +188,6 @@ export default defineComponent({
             const index = this.activeSelections.findIndex((selection: ISelection) => selection.datasetId === this.propWidget.dataset && selection.columnName === this.propWidget.columns[0]?.columnName)
             if (index !== -1) {
                 const selection = this.activeSelections[index]
-                // // console.log('%c selection', 'background-color: green; color: white', selection)
                 switch (this.widgetType) {
                     case 'singleValue':
                     case 'dropdown':
@@ -376,15 +367,11 @@ export default defineComponent({
             this.updateActiveSelectionsWithMultivalueSelection(tempSelection)
         },
         updateActiveSelectionsWithMultivalueSelection(tempSelection: ISelection) {
-            // console.log('>>>>>>>>>>>>>>>>>>>>>>>> TEMP SELECTION: ', tempSelection)
             const index = this.activeSelections.findIndex((activeSelection: ISelection) => activeSelection.datasetId === tempSelection.datasetId && activeSelection.columnName === tempSelection.columnName)
-            // console.log('INDEX: ', index)
             if (index !== -1) {
                 this.activeSelections[index] = tempSelection
             } else {
-                // console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAA')
                 this.activeSelections.push(tempSelection)
-                // console.log(' this.activeSelections: ', deepcopy(this.activeSelections))
             }
         },
         createNewSelection(value: (string | number)[]) {

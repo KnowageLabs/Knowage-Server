@@ -34,10 +34,11 @@ import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import { v4 as uuidv4 } from 'uuid'
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
-import { ISelection, IWidget } from './Dashboard'
+import { IModelDataset, ISelection, IWidget } from './Dashboard'
 import { emitter, createNewDashboardModel } from './DashboardHelpers'
 import { mapActions } from 'pinia'
 import { formatModel } from './helpers/DashboardBackwardCompatibilityHelper'
+import { setDatasetIntervals, clearAllDatasetIntervals } from './helpers/datasetRefresh/DatasetRefreshHelpers'
 import DashboardRenderer from './DashboardRenderer.vue'
 import WidgetPickerDialog from './widget/WidgetPicker/WidgetPickerDialog.vue'
 import dashboardStore from './Dashboard.store'
@@ -85,6 +86,9 @@ export default defineComponent({
     async created() {
         this.setEventListeners()
         await this.getData()
+        this.$watch('model.configuration.datasets', (modelDatasets: IModelDataset[]) => {
+            setDatasetIntervals(modelDatasets, this.datasets)
+        })
     },
     mounted() {
         this.loadCrossNavigations()
@@ -92,6 +96,7 @@ export default defineComponent({
     },
     unmounted() {
         this.emptyStoreValues()
+        clearAllDatasetIntervals()
     },
     methods: {
         ...mapActions(dashboardStore, ['removeSelections', 'setAllDatasets']),
@@ -114,6 +119,7 @@ export default defineComponent({
             // TODO - remove commented mock
             // this.model = formatModel(mockedDashboardModel) as any
             this.model = (tempModel && this.newDashboardMode) || tempModel.hasOwnProperty('id') ? tempModel : (formatModel(tempModel, this.document, this.datasets) as any)
+            setDatasetIntervals(this.model.configuration.datasets, this.datasets)
             this.dashboardId = cryptoRandomString({ length: 16, type: 'base64' })
             this.store.setDashboard(this.dashboardId, this.model)
             this.store.setSelections(this.dashboardId, this.model.configuration.selections, this.$http)
@@ -186,6 +192,7 @@ export default defineComponent({
         },
         openDatasetManagementDialog() {
             this.datasetEditorVisible = true
+            clearAllDatasetIntervals()
         },
         openWidgetEditor(widget: IWidget) {
             this.selectedWidget = widget
@@ -199,6 +206,7 @@ export default defineComponent({
             this.widgetPickerVisible = false
             this.widgetEditorVisible = true
             emitter.emit('widgetEditorOpened')
+            clearAllDatasetIntervals()
         },
         emptyStoreValues() {
             this.store.removeDashboard(this.dashboardId)
@@ -210,6 +218,7 @@ export default defineComponent({
             this.widgetEditorVisible = false
             this.selectedWidget = null
             emitter.emit('widgetEditorClosed')
+            setDatasetIntervals(this.model.configuration.datasets, this.datasets)
         },
         closeDatasetEditor() {
             this.datasetEditorVisible = false

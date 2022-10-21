@@ -1,13 +1,22 @@
 import { IAssociation, IAssociationField, IDashboard, IDataset, IModelDataset, IModelDatasetParameter, ISelection } from "../../Dashboard"
 import { AxiosResponse } from "axios"
+import { emitter } from '../../DashboardHelpers'
+import { clearDatasetInterval } from "../../helpers/datasetRefresh/DatasetRefreshHelpers"
 
 let datasetMapById = {}
 
 export const getAssociativeSelections = async (model: IDashboard, datasets: IDataset[], selections: ISelection[], $http: any) => {
+    emitter.emit('setWidgetLoading', true)
     loadDatasetLabelIdMap(datasets)
-    // console.log(">>>>>>>>>>> MODEL: ", model)
 
     const tempDatasets = getDatasetsInfoFromModelDatasets(model.configuration.datasets, datasets)
+    const formattedAssocitationsGroups = getFormattedAssocitationsGroups(model.configuration.associations)
+
+    formattedAssocitationsGroups.datasets?.forEach((datasetLabel: string) => {
+        const datasetId = getDatasetIdByLabel(datasetLabel)
+        if (datasetId) clearDatasetInterval(+datasetId)
+    })
+
     const postData = {
         associationGroup: getFormattedAssocitationsGroups(model.configuration.associations),
         selections: getFormattedSelections(selections),
@@ -20,6 +29,7 @@ export const getAssociativeSelections = async (model: IDashboard, datasets: IDat
         .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/associativeSelections/`, postData)
         .then((response: AxiosResponse<any>) => (tempResponse = response.data))
         .catch(() => { })
+    emitter.emit('setWidgetLoading', false)
     return tempResponse
 }
 
@@ -36,6 +46,10 @@ const getDatasetsInfoFromModelDatasets = (modelDatasets: IModelDataset[], datase
         }
     })
     return tempDatasets
+}
+
+const getDatasetIdByLabel = (datasetLabel: string) => {
+    return Object.keys(datasetMapById).find(key => datasetMapById[key].label === datasetLabel);
 }
 
 const findDatasetByLabel = (datasetLabel: string, datasets: IDataset[]) => {
@@ -107,9 +121,6 @@ const getNearRealtimeDatasets = (tempDatasets: IDataset[]) => {
 
 
 export const selectionsUseDatasetWithAssociation = (selections: ISelection[], associations: IAssociation[]) => {
-    // console.log(">>>>>>>>>>>>>>> selectionUsesDatasetWithAssociation - selection: ", selections)
-    // console.log(">>>>>>>>>>>>>>> selectionUsesDatasetWithAssociation - associations: ", associations)
-
     if (!selections || !associations) return false
     for (let i = 0; i < selections.length; i++) {
         for (let j = 0; j < associations.length; j++) {
@@ -120,5 +131,15 @@ export const selectionsUseDatasetWithAssociation = (selections: ISelection[], as
         }
     }
 
+    return false
+}
+
+export const datasetIsUsedInAssociations = (datasetId: number, associations: IAssociation[]) => {
+    for (let i = 0; i < associations.length; i++) {
+        for (let j = 0; j < associations[i].fields.length; j++) {
+            const field = associations[i].fields[j]
+            if (field.dataset === datasetId) return true
+        }
+    }
     return false
 }

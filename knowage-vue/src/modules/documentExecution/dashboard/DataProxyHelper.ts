@@ -6,6 +6,7 @@
 
 import { AxiosResponse } from 'axios'
 import { IDataset, ISelection, IWidget } from './Dashboard'
+import { setDatasetInterval, clearDatasetInterval } from './helpers/datasetRefresh/DatasetRefreshHelpers'
 
 export const getData = (item) =>
     new Promise((resolve) => {
@@ -85,6 +86,7 @@ export const getSelectorWidgetData = async (widget: IWidget, datasets: IDataset[
         let postData = formatSelectorModelForGet(widget, selectedDataset.label, initialCall, selections, associativeResponseSelections)
         var tempResponse = null as any
 
+        if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
         await $http
             .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData)
             .then((response: AxiosResponse<any>) => {
@@ -92,6 +94,7 @@ export const getSelectorWidgetData = async (widget: IWidget, datasets: IDataset[
                 tempResponse.initialCall = initialCall
             })
             .catch(() => { })
+            .finally(() => { if (widget.dataset || widget.dataset === 0) setDatasetInterval(widget.dataset as number, 10000) })  // TODO - SET PROPER INTERVAL
         return tempResponse
     }
 }
@@ -110,6 +113,8 @@ export const getTableWidgetData = async (widget: IWidget, datasets: IDataset[], 
         let postData = formatSelectorModelForGet(widget, selectedDataset.label, initialCall, selections, associativeResponseSelections)
         var tempResponse = null as any
 
+
+        if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
         await $http
             .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData)
             .then((response: AxiosResponse<any>) => {
@@ -118,6 +123,7 @@ export const getTableWidgetData = async (widget: IWidget, datasets: IDataset[], 
                 // pagination.totalItems = response.data.results
             })
             .catch(() => { })
+            .finally(() => { if (widget.dataset || widget.dataset === 0) setDatasetInterval(widget.dataset as number, 10000) })  // TODO - SET PROPER INTERVAL
 
         return tempResponse
     }
