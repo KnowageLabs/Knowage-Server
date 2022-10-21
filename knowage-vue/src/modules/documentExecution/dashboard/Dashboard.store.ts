@@ -66,7 +66,7 @@ const store = defineStore('dashboardStore', {
         setSelections(dashboardId: string, selections: ISelection[], $http: any) {
             console.log(" ---- STORE - SET SELECTIONS: ", selections)
             this.selections[dashboardId] = selections
-            if (selectionsUseDatasetWithAssociation(selections, this.dashboards[dashboardId].configuration.associations)) {
+            if (selections.length > 0 && selectionsUseDatasetWithAssociation(selections, this.dashboards[dashboardId].configuration.associations)) {
                 console.log(" ---- STORE - SET SELECTIONS ENTERED 1")
                 loadAssociativeSelections(this.dashboards[dashboardId], this.allDatasets, selections, $http)
             } else {
