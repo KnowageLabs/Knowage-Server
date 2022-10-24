@@ -83,7 +83,7 @@ export default defineComponent({
                 )
                 this.store.setLoading(false)
             })
-            .catch(function (error) {
+            .catch(function(error) {
                 if (error.response) {
                     console.log(error.response.data)
                     console.log(error.response.status)
@@ -137,7 +137,7 @@ export default defineComponent({
                     this.newsDownloadHandler()
                     this.loadInternationalization()
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                     if (error.response) {
                         console.log(error.response.data)
                         console.log(error.response.status)
@@ -162,7 +162,7 @@ export default defineComponent({
             console.log('Starting connection to WebSocket Server')
             const store = this.store
 
-            WEB_SOCKET.update = function (event) {
+            WEB_SOCKET.update = function(event) {
                 if (event.data) {
                     let json = JSON.parse(event.data)
                     if (json.news) {
@@ -173,7 +173,7 @@ export default defineComponent({
                     }
                 }
             }
-            WEB_SOCKET.onopen = function (event) {
+            WEB_SOCKET.onopen = function(event) {
                 if (event.data) {
                     let json = JSON.parse(event.data)
                     if (json.news) {
@@ -184,7 +184,7 @@ export default defineComponent({
                     }
                 }
             }
-            WEB_SOCKET.onmessage = function (event) {
+            WEB_SOCKET.onmessage = function(event) {
                 if (event.data) {
                     let json = JSON.parse(event.data)
                     if (json.news) {
@@ -205,6 +205,7 @@ export default defineComponent({
         ...mapState(mainStore, {
             error: 'error',
             info: 'info',
+            warning: 'warning',
             user: 'user',
             loading: 'loading',
             isEnterprise: 'isEnterprise',
@@ -230,6 +231,15 @@ export default defineComponent({
                 detail: newInfo.msg ? this.$t(newInfo.msg) : '',
                 baseZIndex: typeof newInfo.baseZIndex == 'undefined' ? 0 : newInfo.baseZIndex,
                 life: typeof newInfo.duration == 'undefined' ? import.meta.env.VITE_TOAST_DURATION : newInfo.duration
+            })
+        },
+        warning(newWarning) {
+            this.$toast.add({
+                severity: 'warn',
+                summary: newWarning.title ? this.$t(newWarning.title) : '',
+                detail: newWarning.msg ? this.$t(newWarning.msg) : '',
+                baseZIndex: typeof newWarning.baseZIndex == 'undefined' ? 0 : newWarning.baseZIndex,
+                life: typeof newWarning.duration == 'undefined' ? import.meta.env.VUE_APP_TOAST_DURATION : newWarning.duration
             })
         },
         user() {
