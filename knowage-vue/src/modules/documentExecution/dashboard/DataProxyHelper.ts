@@ -28,8 +28,6 @@ export const getWidgetData = async (widget: IWidget, datasets: IDataset[], $http
 }
 
 const formatSelectorModelForGet = (propWidget: IWidget, datasetLabel: string, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
-    //TODO: strong type this
-    //TODO: Make method that will merge associations and selections with dataToSend object.
     var dataToSend = {
         aggregations: {
             dataset: '',
@@ -46,7 +44,6 @@ const formatSelectorModelForGet = (propWidget: IWidget, datasetLabel: string, in
     } else if (!initialCall) {
         dataToSend.selections = getFormattedSelections(selections)
     }
-
 
     dataToSend.aggregations.dataset = datasetLabel
     // TODO - Uncomment filters
@@ -93,8 +90,10 @@ export const getSelectorWidgetData = async (widget: IWidget, datasets: IDataset[
                 tempResponse = response.data
                 tempResponse.initialCall = initialCall
             })
-            .catch(() => { })
-            .finally(() => { if (widget.dataset || widget.dataset === 0) setDatasetInterval(widget.dataset as number, 10000) })  // TODO - SET PROPER INTERVAL
+            .catch(() => {})
+            .finally(() => {
+                if (widget.dataset || widget.dataset === 0) setDatasetInterval(widget.dataset as number, 10000)
+            }) // TODO - SET PROPER INTERVAL
         return tempResponse
     }
 }
@@ -113,7 +112,6 @@ export const getTableWidgetData = async (widget: IWidget, datasets: IDataset[], 
         let postData = formatSelectorModelForGet(widget, selectedDataset.label, initialCall, selections, associativeResponseSelections)
         var tempResponse = null as any
 
-
         if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
         await $http
             .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData)
@@ -122,8 +120,10 @@ export const getTableWidgetData = async (widget: IWidget, datasets: IDataset[], 
                 if (pagination.enabled) widget.settings.pagination.properties.totalItems = response.data.results
                 // pagination.totalItems = response.data.results
             })
-            .catch(() => { })
-            .finally(() => { if (widget.dataset || widget.dataset === 0) setDatasetInterval(widget.dataset as number, 10000) })  // TODO - SET PROPER INTERVAL
+            .catch(() => {})
+            .finally(() => {
+                if (widget.dataset || widget.dataset === 0) setDatasetInterval(widget.dataset as number, 10000)
+            }) // TODO - SET PROPER INTERVAL
 
         return tempResponse
     }

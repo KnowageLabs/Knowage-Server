@@ -1,10 +1,9 @@
-import { ITableWidgetColumnGroups, ITableWidgetConfiguration, ITableWidgetCrossNavigation, ITableWidgetHeaders, ITableWidgetInteractions, ITableWidgetSelection, ITableWidgetSettings, ITableWidgetVisualization, IWidget, IWidgetColumn } from "../../../../Dashboard"
+import { ITableWidgetColumnGroups, ITableWidgetConfiguration, ITableWidgetCrossNavigation, ITableWidgetHeaders, ITableWidgetInteractions, ITableWidgetSelection, ITableWidgetSettings, ITableWidgetVisualization, IWidget, IWidgetColumn } from '../../../../Dashboard'
 import deepcopy from 'deepcopy'
 
 const columnIdNameMap = {}
 
 export function formatTableWidgetForSave(widget: IWidget) {
-    // TODO - CHANGE WHEN BE IS DONE
     const tempWidget = deepcopy(widget)
 
     if (!tempWidget) return
@@ -47,7 +46,6 @@ const formatRowsConfiguration = (widgetConfiguration: ITableWidgetConfiguration)
     if (!widgetConfiguration.rows) return
     widgetConfiguration.rows.rowSpan.column = getColumnName(widgetConfiguration.rows.rowSpan.column)
 }
-
 
 const formatHeadersConfiguration = (widgetConfiguration: ITableWidgetConfiguration) => {
     if (!widgetConfiguration.headers) return

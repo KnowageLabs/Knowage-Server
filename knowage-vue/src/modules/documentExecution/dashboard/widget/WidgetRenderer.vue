@@ -25,7 +25,6 @@
 <script lang="ts">
 /**
  * ! this component will be in charge of creating the common widget elements to be rendered.
- * TODO: the switch between different widget types will be added here
  */
 import { defineComponent, PropType } from 'vue'
 import { getWidgetStyleByType } from '../widget/TableWidget/TableWidgetHelper'
