@@ -13,6 +13,7 @@
             :selectionIsLocked="selectionIsLocked"
             :propActiveSelections="activeSelections"
             @pageChanged="reloadWidgetData"
+            @sortingChanged="reloadWidgetData"
         ></WidgetRenderer>
         <WidgetButtonBar :playSelectionButtonVisible="playSelectionButtonVisible" :selectionIsLocked="selectionIsLocked" @edit-widget="toggleEditMode" @unlockSelection="unlockSelection" @launchSelection="launchSelection"></WidgetButtonBar>
     </grid-item>

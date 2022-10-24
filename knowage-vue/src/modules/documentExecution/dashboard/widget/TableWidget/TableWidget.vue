@@ -4,22 +4,16 @@
             <i class="fas fa-play kn-cursor-pointer" @click="applyMultiSelection" />
             values:{{ this.multiSelectedCells }}
         </div>
-
-        <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine kn-flex" :gridOptions="gridOptions"></ag-grid-vue>
+        <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine kn-flex" :gridOptions="gridOptions" :context="context"></ag-grid-vue>
         <PaginatorRenderer v-if="showPaginator" :propWidgetPagination="propWidget.settings.pagination" @pageChanged="$emit('pageChanged')" />
     </div>
 </template>
 
 <script lang="ts">
-/**
- * ! this component will be in charge of managing the widget editing preview.
- */
-import { AxiosResponse } from 'axios'
 import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
 import { IDataset, ISelection, IWidget } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
-import { emitter } from '../../DashboardHelpers'
-import { getWidgetStyleByType, getColumnConditionalStyles, isConditionMet, formatModelForGet } from './TableWidgetHelper'
+import { getColumnConditionalStyles, isConditionMet } from './TableWidgetHelper'
 import mainStore from '../../../../../App.store'
 import dashboardStore from '../../Dashboard.store'
 import descriptor from '../../dataset/DatasetEditorDescriptor.json'
@@ -31,14 +25,13 @@ import TooltipRenderer from './TooltipRenderer.vue'
 import SummaryRowRenderer from './SummaryRowRenderer.vue'
 import HeaderGroupRenderer from './HeaderGroupRenderer.vue'
 import PaginatorRenderer from './PaginatorRenderer.vue'
-import { getSelectorWidgetData, getWidgetData } from '../../DataProxyHelper'
 import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
 import { mapActions } from 'pinia'
 import store from '../../Dashboard.store'
 
 export default defineComponent({
     name: 'table-widget',
-    emits: ['pageChanged'],
+    emits: ['pageChanged', 'sortingChanged'],
     components: { AgGridVue, HeaderRenderer, SummaryRowRenderer, HeaderGroupRenderer, TooltipRenderer, PaginatorRenderer },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
@@ -61,18 +54,12 @@ export default defineComponent({
                 console.log(this.dataToShow)
                 this.tableData = this.dataToShow
                 this.createDatatableColumns()
-                // this.updateData(this.tableData.rows)
                 this.loadActiveSelectionValue()
             },
             deep: true
         },
         propActiveSelections() {
             this.loadActiveSelections()
-        }
-    },
-    computed: {
-        gridWidth(): any {
-            return (this.store.$state as any).user.sessionRole
         }
     },
     data() {
@@ -90,7 +77,8 @@ export default defineComponent({
             activeSelections: [] as ISelection[],
             multiSelectedCells: [] as any,
             selectedRows: [] as any,
-            selectedColumn: false as any
+            selectedColumn: false as any,
+            context: null as any
         }
     },
     setup() {
@@ -98,25 +86,17 @@ export default defineComponent({
         const appStore = mainStore()
         return { store, appStore }
     },
+    beforeMount() {
+        this.context = { componentParent: this }
+    },
     created() {
-        if (this.editorMode) this.setEventListeners()
         this.loadActiveSelections()
         this.setupDatatableOptions()
         this.loadActiveSelectionValue()
         this.tableData = this.dataToShow
     },
-    unmounted() {
-        // emitter.off('refreshTable', this.createDatatableColumns)
-    },
-    mounted() {},
-
     methods: {
         ...mapActions(store, ['setSelections']),
-        setEventListeners() {
-            // emitter.on('paginationChanged', (pagination) => console.log('WidgetEditorPreview - PAGINATION CHANGED!', pagination)) //  { enabled: this.paginationEnabled, itemsNumber: +this.itemsNumber }
-            // emitter.on('sortingChanged', this.sortColumn)
-            // emitter.on('refreshTable', this.createDatatableColumns)
-        },
         loadActiveSelections() {
             this.activeSelections = this.propActiveSelections
         },
@@ -401,6 +381,7 @@ export default defineComponent({
         onCellClicked(node) {
             if (node.colDef.measure == 'MEASURE' || node.colDef.pinned || node.value === '' || node.value == undefined) return
 
+            //SELECTION LOGIC -------------------------------------------------------------------
             var modalSelection = this.propWidget.settings.interactions.selection
             if (modalSelection.enabled) {
                 if (modalSelection.multiselection.enabled) {
@@ -462,6 +443,12 @@ export default defineComponent({
         getDatasetLabel(datasetId: number) {
             const index = this.datasets.findIndex((dataset: IDataset) => dataset.id.dsId == datasetId)
             return index !== -1 ? this.datasets[index].label : ''
+        },
+        sortingChanged(updatedSorting) {
+            console.log('AAAAAAAAAA SORTING', updatedSorting)
+            this.propWidget.settings.sortingColumn = updatedSorting.colId
+            this.propWidget.settings.sortingOrder = updatedSorting.order
+            this.$emit('sortingChanged')
         }
     }
 })
