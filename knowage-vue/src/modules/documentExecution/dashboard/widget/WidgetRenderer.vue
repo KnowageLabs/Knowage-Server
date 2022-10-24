@@ -36,7 +36,7 @@ import { IDataset, ISelection } from '../Dashboard'
 
 export default defineComponent({
     name: 'widget-renderer',
-    emits: ['interaction', 'pageChanged', 'launchSelection'],
+    emits: ['interaction', 'pageChanged', 'launchSelection', 'sortingChanged'],
     components: { TableWidget, SelectorWidget, ActiveSelectionsWidget },
     props: {
         widget: { required: true, type: Object as any },

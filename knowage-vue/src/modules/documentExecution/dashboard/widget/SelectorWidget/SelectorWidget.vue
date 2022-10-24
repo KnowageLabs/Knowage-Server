@@ -1,6 +1,7 @@
 <template>
     <div v-if="options" class="selector-widget">
         {{ showMode }}
+        {{ selectedDate }}
         <div v-if="widgetType === 'singleValue'" :class="getLayoutStyle()">
             <div class="multi-select p-p-1" :style="getLabelStyle() + getGridWidth()" v-for="(value, index) of showMode === 'hideDisabled' ?  options.rows.filter((row: any) => !row.disabled) : options.rows" :key="index">
                 <RadioButton :inputId="`radio-${index}`" class="p-mr-2" :name="value.column_1" :value="value.column_1" v-model="selectedValue" :disabled="showMode === 'showDisabled' && value.disabled" @change="singleValueSelectionChanged" />
@@ -80,7 +81,8 @@ import MultiSelect from 'primevue/multiselect'
 import Calendar from 'primevue/calendar'
 import store from '../../Dashboard.store'
 import deepcopy from 'deepcopy'
-import { isTSIndexSignature } from '@babel/types'
+import moment from 'moment'
+import dashboardDescriptor from '../../DashboardDescriptor.json'
 
 export default defineComponent({
     name: 'datasets-catalog-datatable',
@@ -108,6 +110,7 @@ export default defineComponent({
     },
     data() {
         return {
+            dashboardDescriptor,
             initialOptions: { rows: [] } as any,
             options: { rows: [] } as any,
             selectedValue: null as any,
@@ -192,11 +195,12 @@ export default defineComponent({
                         this.selectedValues = selection.value
                         break
                     case 'date':
-                        this.selectedDate = selection.value[0]
+                        console.log('>>>>>>>>>>>>> TEEEEEEEEEEEEEEEEEEEEEEEST 1: ', selection.value[0])
+                        this.selectedDate = selection.value[0] ? moment(selection.value[0], dashboardDescriptor.selectionsDateFormat).toDate() : null
                         break
                     case 'dateRange':
-                        this.startDate = selection.value[0]
-                        this.endDate = selection.value[1]
+                        this.startDate = new Date(selection.value[0])
+                        this.endDate = new Date(selection.value[1])
                 }
                 return true
             } else return false
@@ -353,11 +357,13 @@ export default defineComponent({
         },
         dateSelectionChanged() {
             if (this.editorMode) return
-            updateStoreSelections(this.createNewSelection([this.selectedDate]), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
+            console.log('>>>>>>>>>>> SELECTED DATE: ', this.selectedDate)
+            //  console.log('>>>>>>>>>>> SELECTED DATE FORMATTED moment: ', moment(this.selectedDate).format(dashboardDescriptor.selectionsDateFormat))
+            updateStoreSelections(this.createNewSelection([moment(deepcopy(this.selectedDate)).format(dashboardDescriptor.selectionsDateFormat)]), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
         },
         dateRangeSelectionChanged() {
             if (this.editorMode) return
-            const tempSelection = this.createNewSelection([this.startDate, this.endDate])
+            const tempSelection = this.createNewSelection([moment(this.selectedDate).format(dashboardDescriptor.selectionsDateFormat), moment(this.endDate).format(dashboardDescriptor.selectionsDateFormat)])
             this.updateActiveSelectionsWithMultivalueSelection(tempSelection)
         },
         updateActiveSelectionsWithMultivalueSelection(tempSelection: ISelection) {

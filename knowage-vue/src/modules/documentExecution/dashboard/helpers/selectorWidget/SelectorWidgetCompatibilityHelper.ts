@@ -30,7 +30,7 @@ const getFormattedSelectionColumn = (widget: any) => {
 
 const getFormattedWidgetSettings = (widget: any) => {
     const formattedSettings = {
-        isDateType: widget.content.selectedColumn && (widget.content.selectedColumn.type === 'oracle.sql.TIMESTAMP' || widget.content.selectedColumn.type === 'java.util.Date'),
+        isDateType: widget.content.selectedColumn && (widget.content.selectedColumn.type.toLowerCase().includes('date') || widget.content.selectedColumn.typetoLowerCase().includes('timestamp')),
         sortingOrder: widget.settings?.sortingOrder ?? '',
         updatable: widget.updateble,
         clickable: widget.cliccable,
@@ -58,7 +58,7 @@ const getFormattedSelectorType = (widget: any) => {
         alignment: widget.settings.modalityView ?? 'vertical',
         columnSize: widget.settings.gridColumnsWidth ?? ''
     } as ISelectorWidgetSelectorType
-    if (widget.content.selectedColumn?.type === 'oracle.sql.TIMESTAMP') {
+    if (widget.content.selectedColumn.type.toLowerCase().includes('date') || widget.content.selectedColumn.typetoLowerCase().includes('timestamp')) {
         formattedSelectorType.modality = formattedSelectorType.modality === 'singleValue' ? 'date' : 'dateRange'
     }
 
