@@ -63,12 +63,6 @@
                 <Calendar class="kn-width-full" v-model="endDate" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :style="getLabelStyle()" :inputStyle="getLabelStyle()" :panelStyle="getLabelStyle()" :showIcon="true" @dateSelected="dateRangeSelectionChanged" />
             </span>
         </div>
-
-        <!-- TODO: Ask if they want date range selection using PV component or no
-        <span v-if="widgetType === 'dateRange'" class="p-float-label p-m-2">
-            <Calendar  class="kn-material-input kn-width-full" selectionMode="range" v-model="selectedDateRange" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :showIcon="true" @change="logRange" />
-            <label class="kn-material-input-label">{{ selectedDateRange }}</label>
-        </span> -->
     </div>
 </template>
 

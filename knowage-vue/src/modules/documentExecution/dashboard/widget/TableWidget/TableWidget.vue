@@ -179,7 +179,6 @@ export default defineComponent({
             var columnGroups = {}
             this.columnsNameArray = []
 
-            // TODO: Get whole dataset here when we get the BE service...
             var dataset = { type: 'SbiFileDataSet' }
 
             if (this.propWidget.settings.configuration.rows.indexColumn) {

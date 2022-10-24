@@ -116,7 +116,6 @@ export default defineComponent({
                 })
             })
         },
-        //TODO: Improve this method
         setDatasetParametersFromModel() {
             this.selectedDatasets.forEach((dataset) => {
                 if (dataset.parameters.length > 0 && dataset.modelParams.length > 0) {
@@ -162,7 +161,6 @@ export default defineComponent({
         },
 
         confirmDeleteDataset(datasetToDelete) {
-            //TODO: Check if widget is using a dataset
             let datasetUsedByWidgetCheck = false
             if (datasetUsedByWidgetCheck) {
                 this.store.setInfo({ title: this.$t('common.toast.error'), msg: 'Dataset is being used by some widget.' })
