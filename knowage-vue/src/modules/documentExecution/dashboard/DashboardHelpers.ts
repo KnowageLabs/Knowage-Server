@@ -33,3 +33,26 @@ export const updateWidgetHelper = (dashboardId: string, widget: IWidget, dashboa
         }
     }
 }
+
+export const deleteWidgetHelper = (dashboardId: string, widget: IWidget, dashboards: any) => {
+    if (!dashboards[dashboardId]) return
+    const index = dashboards[dashboardId].widgets.findIndex((tempWidget: IWidget) => tempWidget.id === widget.id)
+    if (index !== -1) {
+        dashboards[dashboardId].widgets.splice(index, 1)
+        deleteWidgetFromSheets(dashboards[dashboardId], widget.id as string)
+    }
+
+}
+
+const deleteWidgetFromSheets = (dashboard: IDashboard, widgetId: string) => {
+    const sheets = dashboard.sheets as any
+    for (let i = 0; i < sheets.length; i++) {
+        const widgets = sheets[i].widgets.lg
+        for (let j = widgets.length - 1; j >= 0; j--) {
+            if (widgets[j].id === widgetId) {
+                widgets.splice(widgets[j], 1)
+            }
+        }
+    }
+}
+

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { emitter, updateWidgetHelper } from './DashboardHelpers'
+import { deleteWidgetHelper, emitter, updateWidgetHelper } from './DashboardHelpers'
 import { IDataset, ISelection, IWidget } from './Dashboard'
 import { selectionsUseDatasetWithAssociation } from './widget/interactionsHelpers/DatasetAssociationsHelper'
 import { loadAssociativeSelections } from './widget/interactionsHelpers/InteractionHelper'
@@ -40,6 +40,9 @@ const store = defineStore('dashboardStore', {
         },
         updateWidget(dashboardId: string, widget: IWidget) {
             updateWidgetHelper(dashboardId, widget, this.dashboards)
+        },
+        deleteWidget(dashboardId: string, widget: IWidget) {
+            deleteWidgetHelper(dashboardId, widget, this.dashboards)
         },
         setSelectedSheetIndex(index: number) {
             this.selectedSheetIndex = index

@@ -10,7 +10,7 @@
             <template #item>
                 <i class="fas fa-arrows-up-down-left-right p-button-text p-button-rounded p-button-plain drag-handle drag-widget-icon buttonHover" style="width: 20px; height: 10px"></i>
                 <Button icon="fas fa-pen-to-square" class="p-button-text p-button-rounded p-button-plain" @click="editWidget" />
-                <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop />
+                <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="onDeleteWidget" />
             </template>
         </SpeedDial>
     </div>
@@ -20,13 +20,16 @@
 /**
  * ! this component will be in charge of managing the widget buttons and visibility.
  */
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
+import { mapActions } from 'pinia'
+import { IWidget } from '../Dashboard'
 import SpeedDial from 'primevue/speeddial'
+import store from '../Dashboard.store'
 
 export default defineComponent({
     name: 'widget-button-bar',
     components: { SpeedDial },
-    props: { playSelectionButtonVisible: { type: Boolean, required: true }, selectionIsLocked: { type: Boolean, required: true } },
+    props: { widget: { type: Object as PropType<IWidget>, required: true }, playSelectionButtonVisible: { type: Boolean, required: true }, selectionIsLocked: { type: Boolean, required: true }, dashboardId: { type: String, required: true } },
     emits: ['editWidget', 'unlockSelection', 'launchSelection'],
     data() {
         return {
@@ -40,8 +43,12 @@ export default defineComponent({
         }
     },
     methods: {
+        ...mapActions(store, ['deleteWidget']),
         editWidget() {
             this.$emit('editWidget')
+        },
+        onDeleteWidget() {
+            this.deleteWidget(this.dashboardId, this.widget)
         }
     }
 })
