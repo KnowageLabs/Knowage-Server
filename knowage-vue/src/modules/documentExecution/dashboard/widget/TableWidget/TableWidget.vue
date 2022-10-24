@@ -2,7 +2,7 @@
     <div class="kn-table-widget-container p-d-flex p-d-row kn-flex">
         <div v-if="selectedColumn" class="multiselect-overlay">
             <i class="fas fa-play kn-cursor-pointer" @click="applyMultiSelection" />
-            values:{{ this.multiSelectedCells }}
+            values:{{ multiSelectedCells }}
         </div>
         <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine kn-flex" :gridOptions="gridOptions" :context="context"></ag-grid-vue>
         <PaginatorRenderer v-if="showPaginator" :propWidgetPagination="propWidget.settings.pagination" @pageChanged="$emit('pageChanged')" />
@@ -28,10 +28,11 @@ import PaginatorRenderer from './PaginatorRenderer.vue'
 import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
 import { mapActions } from 'pinia'
 import store from '../../Dashboard.store'
+import { emitter } from '../../DashboardHelpers'
 
 export default defineComponent({
     name: 'table-widget',
-    emits: ['pageChanged', 'sortingChanged'],
+    emits: ['pageChanged', 'sortingChanged', 'launchSelection'],
     components: { AgGridVue, HeaderRenderer, SummaryRowRenderer, HeaderGroupRenderer, TooltipRenderer, PaginatorRenderer },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
@@ -50,8 +51,8 @@ export default defineComponent({
         },
         dataToShow: {
             handler() {
-                console.log('%c Table DataToShow ---------------------', 'background-color: #2C2F33; color: white')
-                console.log(this.dataToShow)
+                // console.log('%c Table DataToShow ---------------------', 'background-color: #2C2F33; color: white')
+                // console.log(this.dataToShow)
                 this.tableData = this.dataToShow
                 this.createDatatableColumns()
                 this.loadActiveSelectionValue()
@@ -90,13 +91,29 @@ export default defineComponent({
         this.context = { componentParent: this }
     },
     created() {
+        this.setEventListeners()
         this.loadActiveSelections()
         this.setupDatatableOptions()
         this.loadActiveSelectionValue()
         this.tableData = this.dataToShow
     },
+    unmounted() {
+        this.removeEventListeners()
+    },
+    mounted() {},
+
     methods: {
         ...mapActions(store, ['setSelections']),
+        setEventListeners() {
+            // emitter.on('paginationChanged', (pagination) => console.log('WidgetEditorPreview - PAGINATION CHANGED!', pagination)) //  { enabled: this.paginationEnabled, itemsNumber: +this.itemsNumber }
+            // emitter.on('sortingChanged', this.sortColumn)
+            // emitter.on('refreshTable', this.createDatatableColumns)
+            emitter.on('selectionsDeleted', this.onSelectionsDeleted)
+        },
+        removeEventListeners() {
+            // emitter.off('refreshTable', this.createDatatableColumns)
+            emitter.off('selectionsDeleted', this.onSelectionsDeleted)
+        },
         loadActiveSelections() {
             this.activeSelections = this.propActiveSelections
         },
@@ -104,8 +121,12 @@ export default defineComponent({
             if (this.editorMode) return false
             const index = this.activeSelections.findIndex((selection: ISelection) => selection.datasetId === this.propWidget.dataset && selection.columnName === this.propWidget.columns[0]?.columnName)
             if (index !== -1) {
+                const modalSelection = this.propWidget.settings.interactions.selection
                 const selection = this.activeSelections[index]
-                // TODO - Add Active selection to the active ones
+                if (modalSelection.multiselection.enabled) {
+                    // TODO - See about selected column
+                    this.multiSelectedCells = selection.value
+                }
             }
         },
         setupDatatableOptions() {
@@ -367,8 +388,8 @@ export default defineComponent({
             return columnHidden
         },
         updateData(data) {
-            console.log('%c UPDATE DATA ---------------------', 'background-color: #2C2F33; color: green')
-            console.log(data)
+            // console.log('%c UPDATE DATA ---------------------', 'background-color: #2C2F33; color: green')
+            // console.log(data)
             if (this.propWidget.settings.configuration.summaryRows.enabled) {
                 var rowsNumber = this.propWidget.settings.configuration.summaryRows.list.length
                 this.gridApi.setRowData(data.slice(0, data.length - rowsNumber))
@@ -422,11 +443,28 @@ export default defineComponent({
         applyMultiSelection() {
             const modalSelection = this.propWidget.settings.interactions.selection
 
-            if (modalSelection.enabled) {
+            let tempSelection = null as ISelection | null
+            if (modalSelection.modalColumn) {
                 const modalColumnIndex = this.propWidget.columns.findIndex((column) => column.id == modalSelection.modalColumn)
                 const modalColumnName = this.propWidget.columns[modalColumnIndex].columnName
-                console.log('MULTISELECT MODAL:  ', this.createNewSelection(this.multiSelectedCells, modalColumnName))
-            } else console.log('MULTISELECT NO MODAL:  ', this.createNewSelection(this.multiSelectedCells, this.selectedColumn))
+                tempSelection = this.createNewSelection(this.multiSelectedCells, modalColumnName)
+            } else {
+                const columnIndex = this.selectedColumn?.split('_')[1]
+                if (columnIndex || columnIndex === 0) tempSelection = this.createNewSelection(this.multiSelectedCells, this.propWidget.columns[columnIndex - 1].columnName)
+            }
+            if (tempSelection) {
+                this.updateActiveSelectionsWithMultivalueSelection(tempSelection)
+                this.$emit('launchSelection')
+            }
+        },
+
+        updateActiveSelectionsWithMultivalueSelection(tempSelection: ISelection) {
+            const index = this.activeSelections.findIndex((activeSelection: ISelection) => activeSelection.datasetId === tempSelection.datasetId && activeSelection.columnName === tempSelection.columnName)
+            if (index !== -1) {
+                this.activeSelections[index] = tempSelection
+            } else {
+                this.activeSelections.push(tempSelection)
+            }
         },
         mapRow(rowData) {
             var keyMap = {}
@@ -444,8 +482,14 @@ export default defineComponent({
             const index = this.datasets.findIndex((dataset: IDataset) => dataset.id.dsId == datasetId)
             return index !== -1 ? this.datasets[index].label : ''
         },
+        onSelectionsDeleted(selections: any) {
+            const index = selections.findIndex((selection: ISelection) => selection.datasetId === this.propWidget.dataset && selection.columnName === this.propWidget.columns[0]?.columnName)
+            if (index !== -1) this.removeSelectedValues()
+        },
+        removeSelectedValues() {
+            this.multiSelectedCells = []
+        },
         sortingChanged(updatedSorting) {
-            console.log('AAAAAAAAAA SORTING', updatedSorting)
             this.propWidget.settings.sortingColumn = updatedSorting.colId
             this.propWidget.settings.sortingOrder = updatedSorting.order
             this.$emit('sortingChanged')

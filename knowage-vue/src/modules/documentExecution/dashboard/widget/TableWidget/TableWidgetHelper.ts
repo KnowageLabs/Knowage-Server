@@ -12,7 +12,7 @@ export const getColumnGroup = (propWidget: IWidget, col: ITableWidgetColumnGroup
 }
 
 export const getWidgetStyleByType = (propWidget: IWidget, styleType: string) => {
-    const styleSettings = propWidget.settings.style[styleType]
+    const styleSettings = propWidget?.settings.style[styleType]
     if (styleSettings?.enabled) {
         const styleString = Object.entries(styleSettings.properties ?? styleSettings)
             .map(([k, v]) => `${k}:${v}`)

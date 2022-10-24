@@ -360,7 +360,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 						for (Object object : itemsSBList) {
 							SourceBean objectSB = (SourceBean) object;
 
-							if (objectSB.getAttribute("id").equals("8012")) {
+							if (objectSB.getAttribute("id").equals("8005")) {
 								JSONArray children = new JSONArray();
 								JSONObject licenseMenu = createMenuNodeAndRecordGroupMenu(locale, messageBuilder, objectSB, menuType);
 								children.put(licenseMenu);
