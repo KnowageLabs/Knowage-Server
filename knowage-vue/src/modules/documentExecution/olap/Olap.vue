@@ -388,12 +388,11 @@ export default defineComponent({
         },
         async loadVersions() {
             this.loading = true
-            if (this.olapHasScenario) {
-                await this.$http
-                    .get(import.meta.env.VITE_OLAP_PATH + `1.0/version?SBI_EXECUTION_ID=${this.id}`)
-                    .then((response: AxiosResponse<any>) => (this.olapVersions = response.data))
-                    .catch(() => {})
-            }
+
+            await this.$http
+                .get(import.meta.env.VITE_OLAP_PATH + `1.0/version?SBI_EXECUTION_ID=${this.id}`)
+                .then((response: AxiosResponse<any>) => (this.olapVersions = response.data))
+                .catch(() => {})
 
             this.loading = false
         },
@@ -1082,7 +1081,7 @@ export default defineComponent({
                 group = ''
 
             // separators
-            parts_local.forEach(function (i) {
+            parts_local.forEach(function(i) {
                 switch (i.type) {
                     case 'group':
                         group = i.value
@@ -1146,6 +1145,7 @@ export default defineComponent({
         onNewVersionSaved(olap: iOlap) {
             this.olap = olap
             this.formatOlapTable()
+            this.loadVersions()
             this.saveVersionDialogVisible = false
         }
     }
