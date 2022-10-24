@@ -198,11 +198,21 @@ export default defineComponent({
                         this.selectedDate = selection.value[0] ? moment(selection.value[0], dashboardDescriptor.selectionsDateFormat).toDate() : null
                         break
                     case 'dateRange':
-                        this.startDate = selection.value[0] ? moment(selection.value[0], dashboardDescriptor.selectionsDateFormat).toDate() : null
-                        this.endDate = selection.value[selection.value.length - 1] ? moment(selection.value[selection.value.length - 1], dashboardDescriptor.selectionsDateFormat).toDate() : null
+                        this.loadDateRangeInitialValues(selection)
                 }
                 return true
             } else return false
+        },
+        loadDateRangeInitialValues(selection: ISelection) {
+            let minDateAsMilliseconds = null as number | null
+            let maxDateAsMilliseconds = null as number | null
+            selection.value.forEach((value: string | number) => {
+                const tempSelectionValue = moment(value, dashboardDescriptor.selectionsDateMultiFormat).valueOf()
+                if (!minDateAsMilliseconds || tempSelectionValue < minDateAsMilliseconds) minDateAsMilliseconds = tempSelectionValue
+                if (!maxDateAsMilliseconds || tempSelectionValue > maxDateAsMilliseconds) maxDateAsMilliseconds = tempSelectionValue
+            })
+            this.startDate = minDateAsMilliseconds ? new Date(minDateAsMilliseconds) : this.startDate
+            this.endDate = maxDateAsMilliseconds ? new Date(maxDateAsMilliseconds) : this.endDate
         },
         onDefaultValuesChanged(widgetId: any) {
             if (this.propWidget.id !== widgetId || !this.editorMode) return
@@ -356,8 +366,6 @@ export default defineComponent({
         },
         dateSelectionChanged() {
             if (this.editorMode) return
-            console.log('>>>>>>>>>>> SELECTED DATE: ', this.selectedDate)
-            //  console.log('>>>>>>>>>>> SELECTED DATE FORMATTED moment: ', moment(this.selectedDate).format(dashboardDescriptor.selectionsDateFormat))
             updateStoreSelections(this.createNewSelection([moment(deepcopy(this.selectedDate)).format(dashboardDescriptor.selectionsDateFormat)]), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
         },
         dateRangeSelectionChanged() {
@@ -369,7 +377,7 @@ export default defineComponent({
                 if ((!this.startDate || tempDate >= this.startDate.getTime()) && (!this.endDate || tempDate <= this.endDate.getTime())) tempDateValues.push(iniitalOption)
             }
             const tempSelection = this.createNewSelection(tempDateValues)
-            this.updateActiveSelectionsWithMultivalueSelection(tempSelection)
+            updateStoreSelections(tempSelection, this.activeSelections, this.dashboardId, this.setSelections, this.$http)
         },
         updateActiveSelectionsWithMultivalueSelection(tempSelection: ISelection) {
             const index = this.activeSelections.findIndex((activeSelection: ISelection) => activeSelection.datasetId === tempSelection.datasetId && activeSelection.columnName === tempSelection.columnName)
