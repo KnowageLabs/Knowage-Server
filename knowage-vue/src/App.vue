@@ -202,6 +202,7 @@ export default defineComponent({
             error: 'error',
             info: 'info',
             user: 'user',
+            warning: 'warning',
             loading: 'loading',
             isEnterprise: 'isEnterprise',
             documentExecution: 'documentExecution',
@@ -226,6 +227,15 @@ export default defineComponent({
                 detail: newInfo.msg ? this.$t(newInfo.msg) : '',
                 baseZIndex: typeof newInfo.baseZIndex == 'undefined' ? 0 : newInfo.baseZIndex,
                 life: typeof newInfo.duration == 'undefined' ? process.env.VUE_APP_TOAST_DURATION : newInfo.duration
+            })
+        },
+        warning(newWarning) {
+            this.$toast.add({
+                severity: 'warn',
+                summary: newWarning.title ? this.$t(newWarning.title) : '',
+                detail: newWarning.msg ? this.$t(newWarning.msg) : '',
+                baseZIndex: typeof newWarning.baseZIndex == 'undefined' ? 0 : newWarning.baseZIndex,
+                life: typeof newWarning.duration == 'undefined' ? process.env.VUE_APP_TOAST_DURATION : newWarning.duration
             })
         },
         user() {
