@@ -631,7 +631,37 @@
 	<CONFIG label="KNOWAGE.EMIT_AUTHORIZATION_EVENTS" name="KNOWAGE.EMIT_AUTHORIZATION_EVENTS"
 		description="Enable or disable events emission for authorization changes"
 		isActive="true" valueCheck="false" valueType="STRING"
-		category="GENERIC_CONFIGURATION" />
+		category="GENERIC_CONFIGURATION" />		
+		
+	<CONFIG label="document.exporter.knowagekpiengine" name="document.exporter.knowagekpiengine"
+		description="Adds exporters file format"
+		isActive="true" valueCheck="PDF" valueType="STRING"
+		category="EXPORTER_CONFIGURATION" />
+	<CONFIG label="document.exporter.knowagejasperreporte" name="document.exporter.knowagejasperreporte"
+		description="Adds exporters file format"
+		isActive="true" valueCheck="PDF,XLS,RTF,JPG" valueType="STRING"
+		category="EXPORTER_CONFIGURATION" />
+	<CONFIG label="document.exporter.knowagebirtreporteng" name="document.exporter.knowagebirtreporteng"
+		description="Adds exporters file format"
+		isActive="true" valueCheck="PDF,XLS,XLSX,RTF,DOC,DOCX,PPTX,CSV,XML,JPG,TXT,PPT" valueType="STRING"
+		category="EXPORTER_CONFIGURATION" />
+	<CONFIG label="document.exporter.knowageqbeengine" name="document.exporter.knowageqbeengine"
+		description="Adds exporters file format"
+		isActive="true" valueCheck="XLS,XLSX,CSV" valueType="STRING"
+		category="EXPORTER_CONFIGURATION" />
+	<CONFIG label="document.exporter.knowagewhatifengine" name="document.exporter.knowagewhatifengine"
+		description="Adds exporters file format"
+		isActive="true" valueCheck="XLS" valueType="STRING"
+		category="EXPORTER_CONFIGURATION" />
+	<CONFIG label="document.exporter.knowagecockpitengine" name="document.exporter.knowagecockpitengine"
+		description="Adds exporters file format"
+		isActive="true" valueCheck="XLSX,PDF" valueType="STRING"
+		category="EXPORTER_CONFIGURATION" />
+	<CONFIG label="document.exporter.knowageolapengine" name="document.exporter.knowageolapengine"
+		description="Adds exporters file format"
+		isActive="true" valueCheck="XLS" valueType="STRING"
+		category="EXPORTER_CONFIGURATION" />		
+		
 
 </CONFIGS>
 
