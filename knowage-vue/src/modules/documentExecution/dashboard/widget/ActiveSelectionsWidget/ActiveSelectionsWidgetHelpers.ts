@@ -9,9 +9,11 @@ export const formatSelectionForDisplay = (selection: ISelection) => {
     for (let i = 0; i < selection.value.length; i++) {
         const tempValue = selection.value[i]
         if (moment(tempValue, dashboardDescriptor.selectionsDateFormat, true).isValid()) {
-            result = formatDate(tempValue as string, '', dashboardDescriptor.selectionsDateFormat) + ' '
+            console.log("EEEEEEEEEEEEEEEENTERED: 1")
+            result += formatDate(tempValue as string, '', dashboardDescriptor.selectionsDateFormat) + ' '
         } else {
-            result = tempValue + ' '
+            console.log("EEEEEEEEEEEEEEEENTERED: 2", tempValue)
+            result += tempValue + ' '
         }
     }
     return result.trim()

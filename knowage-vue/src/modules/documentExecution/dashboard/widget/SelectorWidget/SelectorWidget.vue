@@ -58,10 +58,10 @@
 
         <div v-if="widgetType === 'dateRange'" :class="getLayoutStyle()">
             <span class="p-float-label p-m-2" :style="getGridWidth()">
-                <Calendar class="kn-width-full" v-model="startDate" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :style="getLabelStyle()" :inputStyle="getLabelStyle()" :panelStyle="getLabelStyle()" :showIcon="true" @dateSelected="dateRangeSelectionChanged" />
+                <Calendar class="kn-width-full" v-model="startDate" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :style="getLabelStyle()" :inputStyle="getLabelStyle()" :panelStyle="getLabelStyle()" :showIcon="true" @date-select="dateRangeSelectionChanged" />
             </span>
             <span class="p-float-label p-m-2" :style="getGridWidth()">
-                <Calendar class="kn-width-full" v-model="endDate" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :style="getLabelStyle()" :inputStyle="getLabelStyle()" :panelStyle="getLabelStyle()" :showIcon="true" @dateSelected="dateRangeSelectionChanged" />
+                <Calendar class="kn-width-full" v-model="endDate" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :style="getLabelStyle()" :inputStyle="getLabelStyle()" :panelStyle="getLabelStyle()" :showIcon="true" @date-select="dateRangeSelectionChanged" />
             </span>
         </div>
 
@@ -201,12 +201,11 @@ export default defineComponent({
                         this.selectedValues = selection.value
                         break
                     case 'date':
-                        console.log('>>>>>>>>>>>>> TEEEEEEEEEEEEEEEEEEEEEEEST 1: ', selection.value[0])
                         this.selectedDate = selection.value[0] ? moment(selection.value[0], dashboardDescriptor.selectionsDateFormat).toDate() : null
                         break
                     case 'dateRange':
-                        this.startDate = new Date(selection.value[0])
-                        this.endDate = new Date(selection.value[1])
+                        this.startDate = selection.value[0] ? moment(selection.value[0], dashboardDescriptor.selectionsDateFormat).toDate() : null
+                        this.endDate = selection.value[selection.value.length - 1] ? moment(selection.value[selection.value.length - 1], dashboardDescriptor.selectionsDateFormat).toDate() : null
                 }
                 return true
             } else return false
@@ -369,7 +368,13 @@ export default defineComponent({
         },
         dateRangeSelectionChanged() {
             if (this.editorMode) return
-            const tempSelection = this.createNewSelection([moment(this.selectedDate).format(dashboardDescriptor.selectionsDateFormat), moment(this.endDate).format(dashboardDescriptor.selectionsDateFormat)])
+            const tempDateValues = [] as string[]
+            for (let i = 0; i < this.initialOptions.rows.length; i++) {
+                const iniitalOption = this.initialOptions.rows[i].column_1
+                const tempDate = moment(iniitalOption, dashboardDescriptor.selectionsDateMultiFormat).valueOf()
+                if ((!this.startDate || tempDate >= this.startDate.getTime()) && (!this.endDate || tempDate <= this.endDate.getTime())) tempDateValues.push(iniitalOption)
+            }
+            const tempSelection = this.createNewSelection(tempDateValues)
             this.updateActiveSelectionsWithMultivalueSelection(tempSelection)
         },
         updateActiveSelectionsWithMultivalueSelection(tempSelection: ISelection) {
