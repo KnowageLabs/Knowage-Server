@@ -86,6 +86,7 @@
         "justify-content": "center",
         "text-align": "center"
     },
+    "selectionsDateFormat": "DD/MM/yyyy HH:mm:ss sss",
     "validations": {
         "document": [
             {

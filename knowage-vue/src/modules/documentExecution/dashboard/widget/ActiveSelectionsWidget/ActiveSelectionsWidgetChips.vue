@@ -2,7 +2,7 @@
     <div class="active-selections-chip">
         <span v-if="showDataset">{{ activeSelection.datasetLabel }}</span>
         <span class="p-mx-2" v-if="showColumn">{{ activeSelection.columnName }}</span>
-        <span>{{ activeSelection.value?.toString() }}</span>
+        <span>{{ formatSelectionForDisplay(activeSelection) }}</span>
         <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" v-tooltip.left="$t('common.delete')" :disabled="editorMode" @click.stop="deleteSelection()" />
     </div>
 </template>
@@ -10,6 +10,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { ISelection } from '../../Dashboard'
+import { formatSelectionForDisplay } from './ActiveSelectionsWidgetHelpers'
 
 export default defineComponent({
     name: 'datasets-catalog-datatable',
@@ -23,7 +24,9 @@ export default defineComponent({
     emits: ['deleteSelection'],
     computed: {},
     data() {
-        return {}
+        return {
+            formatSelectionForDisplay
+        }
     },
     setup() {},
     created() {},

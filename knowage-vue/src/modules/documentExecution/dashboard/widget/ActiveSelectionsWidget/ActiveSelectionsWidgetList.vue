@@ -3,7 +3,7 @@
         <li v-for="(selection, index) of activeSelections" :key="index" :style="getRowStyle(index)">
             <p v-if="showDataset">{{ selection.datasetLabel }}</p>
             <p v-if="showColumn">{{ selection.columnName }}</p>
-            <p>{{ selection.value?.toString() }}</p>
+            <p>{{ formatSelectionForDisplay(selection) }}</p>
             <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" v-tooltip.left="$t('common.delete')" :disabled="editorMode" @click="deleteSelection(selection)" />
         </li>
     </ul>
@@ -12,6 +12,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { ISelection, IWidget } from '../../Dashboard'
+import { formatSelectionForDisplay } from './ActiveSelectionsWidgetHelpers'
 
 export default defineComponent({
     name: 'datasets-catalog-datatable',
@@ -26,13 +27,15 @@ export default defineComponent({
     emits: ['deleteSelection'],
     computed: {},
     data() {
-        return {}
+        return {
+            formatSelectionForDisplay
+        }
     },
     setup() {},
     created() {},
     updated() {},
     methods: {
-        getRowStyle(rowIndex) {
+        getRowStyle(rowIndex: number) {
             var rowStyles = this.propWidget.settings.style.rows
 
             if (rowStyles.alternatedRows && rowStyles.alternatedRows.enabled) {
