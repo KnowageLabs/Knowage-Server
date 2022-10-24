@@ -13,6 +13,7 @@
             :selectionIsLocked="selectionIsLocked"
             :propActiveSelections="activeSelections"
             @pageChanged="reloadWidgetData"
+            @launchSelection="launchSelection"
         ></WidgetRenderer>
         <WidgetButtonBar :widget="widget" :playSelectionButtonVisible="playSelectionButtonVisible" :selectionIsLocked="selectionIsLocked" :dashboardId="dashboardId" @edit-widget="toggleEditMode" @unlockSelection="unlockSelection" @launchSelection="launchSelection"></WidgetButtonBar>
     </grid-item>
@@ -41,7 +42,13 @@ export default defineComponent({
     name: 'widget-manager',
     components: { Skeleton, WidgetButtonBar, WidgetRenderer, ProgressSpinner },
     inject: ['dHash'],
-    props: { item: { required: true, type: Object }, activeSheet: { type: Boolean }, widget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array as PropType<IDataset[]>, required: true }, dashboardId: { type: String, required: true } },
+    props: {
+        item: { required: true, type: Object },
+        activeSheet: { type: Boolean },
+        widget: { type: Object as PropType<IWidget>, required: true },
+        datasets: { type: Array as PropType<IDataset[]>, required: true },
+        dashboardId: { type: String, required: true }
+    },
     watch: {
         widget: {
             async handler() {
@@ -175,7 +182,10 @@ export default defineComponent({
             this.selectionIsLocked = index !== -1
         },
         unlockSelection() {
-            const payload = { datasetId: this.widgetModel.dataset as number, columnName: this.widgetModel.columns[0].columnName }
+            const payload = {
+                datasetId: this.widgetModel.dataset as number,
+                columnName: this.widgetModel.columns[0].columnName
+            }
             emitter.emit('widgetUnlocked', this.widgetModel.id)
             this.removeSelection(payload, this.dashboardId)
         },
