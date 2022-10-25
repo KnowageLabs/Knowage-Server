@@ -1,5 +1,7 @@
 <template>
     <div class="kn-table-widget-container p-d-flex p-d-row kn-flex">
+        {{ multiSelectedCells }}
+        {{ selectedColumn }}
         <div v-if="selectedColumn" class="multiselect-overlay">
             <i class="fas fa-play kn-cursor-pointer" @click="applyMultiSelection" />
             values:{{ multiSelectedCells }}
@@ -124,10 +126,15 @@ export default defineComponent({
                 const modalSelection = this.propWidget.settings.interactions.selection
                 const selection = this.activeSelections[index]
                 if (modalSelection.multiselection.enabled) {
-                    // TODO - See about selected column
+                    this.setSelectedCellForMultiselected(selection.columnName)
                     this.multiSelectedCells = selection.value
                 }
             }
+        },
+        setSelectedCellForMultiselected(columnName: string) {
+            if (!columnName || !this.tableData || !this.tableData.metaData) this.selectedColumn = ''
+            const index = this.tableData.metaData.fields?.findIndex((field: any) => field.header === columnName)
+            this.selectedColumn = index !== -1 ? this.tableData.metaData.fields[index].name : ''
         },
         setupDatatableOptions() {
             this.gridOptions = {
@@ -238,7 +245,7 @@ export default defineComponent({
                                 } else return 1
                             }
                             tempCol.cellClassRules = {
-                                'cell-span': function (params) {
+                                'cell-span': function(params) {
                                     return tempRows[params.rowIndex].span > 1
                                 }
                             }
@@ -387,8 +394,6 @@ export default defineComponent({
             return columnHidden
         },
         updateData(data) {
-            // console.log('%c UPDATE DATA ---------------------', 'background-color: #2C2F33; color: green')
-            // console.log(data)
             if (this.propWidget.settings.configuration.summaryRows.enabled) {
                 var rowsNumber = this.propWidget.settings.configuration.summaryRows.list.length
                 this.gridApi.setRowData(data.slice(0, data.length - rowsNumber))
@@ -429,11 +434,8 @@ export default defineComponent({
                     if (modalSelection.modalColumn) {
                         const modalColumnIndex = this.propWidget.columns.findIndex((column) => column.id == modalSelection.modalColumn)
                         const modalColumnValue = node.data[`column_${modalColumnIndex + 1}`]
-
-                        // console.log('SINGLESELECT MODAL ', this.createNewSelection([modalColumnValue], this.propWidget.columns[modalColumnIndex].columnName))
                         updateStoreSelections(this.createNewSelection([modalColumnValue], this.propWidget.columns[modalColumnIndex].columnName), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
                     } else {
-                        // console.log('SINGLESELECT NO MODAL', this.createNewSelection([node.value], node.colDef.columnName))
                         updateStoreSelections(this.createNewSelection([node.value], node.colDef.columnName), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
                     }
                 }
