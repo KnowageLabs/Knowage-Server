@@ -1,6 +1,6 @@
 import { formatTableWidget } from './tableWidget/TableWidgetCompatibilityHelper'
 import { formatSelectorWidget } from '@/modules/documentExecution/dashboard/helpers/selectorWidget/SelectorWidgetCompatibilityHelper'
-import { IAssociation, IDashboardConfiguration, IDataset, IDatasetParameter, ISelection, IWidgetEditorDataset } from '../Dashboard'
+import { IAssociation, IDashboardConfiguration, IDataset, IDatasetParameter, ISelection, IWidget, IWidgetColumn, IWidgetColumnFilter, IWidgetEditorDataset } from '../Dashboard'
 import { formatSelectionWidget } from './selectionWidget/SelectionsWidgetCompatibilityHelper'
 import deepcopy from 'deepcopy'
 import cryptoRandomString from 'crypto-random-string'
@@ -171,4 +171,16 @@ export const formatWidget = (widget: any) => {
     }
 
     return formattedWidget
+}
+
+export const getFiltersForColumns = (formattedWidget: IWidget, oldWidget: any) => {
+    if (!oldWidget.filters || oldWidget.filters.length === 0) return
+    for (let i = 0; i < oldWidget.filters.length; i++) {
+        const tempFilter = oldWidget.filters[i]
+        const index = formattedWidget.columns?.findIndex((column: IWidgetColumn) => column.columnName === tempFilter.colName)
+        if (index !== -1) {
+            formattedWidget.columns[index].filter = { enabled: true, operator: tempFilter.filterOperator, value: tempFilter.filterVal1 }
+            if (tempFilter.filterVal2 && formattedWidget.columns[index].filter) (formattedWidget.columns[index].filter as IWidgetColumnFilter).value2 = tempFilter.filterVal2
+        }
+    }
 }

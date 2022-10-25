@@ -6,6 +6,7 @@ import { getSettingsFromWidgetColumns } from './TableWidgetColumnSettingsHelper'
 import * as tableWidgetDefaultValues from '../../widget/WidgetEditor/helpers/tableWidget/TableWidgetDefaultValues'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import cryptoRandomString from 'crypto-random-string'
+import { getFiltersForColumns } from '../DashboardBackwardCompatibilityHelper'
 
 const columnNameIdMap = {}
 
@@ -119,17 +120,6 @@ const getFormattedPaginations = (widget: any) => {
     } as ITableWidgetPagination
 }
 
-const getFiltersForColumns = (formattedWidget: IWidget, oldWidget: any) => {
-    if (!oldWidget.filters || oldWidget.filters.length === 0) return
-    for (let i = 0; i < oldWidget.filters.length; i++) {
-        const tempFilter = oldWidget.filters[i]
-        const index = formattedWidget.columns?.findIndex((column: IWidgetColumn) => column.columnName === tempFilter.colName)
-        if (index !== -1) {
-            formattedWidget.columns[index].filter = { enabled: true, operator: tempFilter.filterOperator, value: tempFilter.filterVal1 }
-            if (tempFilter.filterVal2 && formattedWidget.columns[index].filter) (formattedWidget.columns[index].filter as IWidgetColumnFilter).value2 = tempFilter.filterVal2
-        }
-    }
-}
 
 // TODO - PARAMETER VALUE
 const getParameterValue = (parameterName: string) => {

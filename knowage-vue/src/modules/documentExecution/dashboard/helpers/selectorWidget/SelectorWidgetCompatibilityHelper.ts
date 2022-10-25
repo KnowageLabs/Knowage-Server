@@ -4,6 +4,7 @@ import { getFormattedStyle } from './SelectorWidgetStyleHelper'
 import cryptoRandomString from 'crypto-random-string'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import * as selectorWidgetDefaultValues from '../../widget/WidgetEditor/helpers/selectorWidget/SelectorWidgetDefaultValues'
+import { getFiltersForColumns } from "../DashboardBackwardCompatibilityHelper"
 
 export const formatSelectorWidget = (widget: any) => {
     const formattedWidget = {
@@ -15,6 +16,7 @@ export const formatSelectorWidget = (widget: any) => {
         settings: {} as ISelectorWidgetSettings
     } as IWidget
     formattedWidget.settings = getFormattedWidgetSettings(widget) as ISelectorWidgetSettings
+    getFiltersForColumns(formattedWidget, widget)
     return formattedWidget
 }
 
