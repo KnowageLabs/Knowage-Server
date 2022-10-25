@@ -5,15 +5,6 @@
             <InputNumber class="kn-material-input p-inputtext-sm" v-model="rowsStyleModel.height" @blur="rowsStyleChanged" />
         </div>
         <div class="p-col-8"></div>
-        <div v-if="widgetType === 'table'" class="p-col-12 p-grid p-ai-center">
-            <div class="p-col-12 p-md-6 p-lg-6 p-d-flex p-flex-row p-jc-md-start p-px-4">
-                <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.rows.multiselectable') }}</label>
-                <InputSwitch v-model="rowsStyleModel.multiselectable" @change="rowsStyleChanged"></InputSwitch>
-            </div>
-        </div>
-        <div v-if="widgetType === 'table'" class="p-col-12 p-md-12 p-lg-12">
-            <WidgetEditorColorPicker :initialValue="rowsStyleModel.selectionColor" :label="$t('dashboard.widgetEditor.rows.selectionColor')" :disabled="!rowsStyleModel.multiselectable" @change="onSelectionColorChanged"></WidgetEditorColorPicker>
-        </div>
         <div class="p-col-12 p-grid p-ai-center p-p-4">
             <div class="p-d-flex p-flex-row kn-flex">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.rows.enabledAlternatedRows') }}</label>
@@ -56,7 +47,6 @@ export default defineComponent({
     },
     methods: {
         loadRowsModel() {
-            console.log('MODEL: ', this.widgetModel)
             if (!this.widgetModel) return
             this.widgetType = this.widgetModel.type
             if (this.widgetModel.settings?.style?.rows) this.rowsStyleModel = this.widgetModel.settings.style.rows
@@ -70,11 +60,6 @@ export default defineComponent({
                 case 'selection':
                     emitter.emit('refreshSelection', this.widgetModel.id)
             }
-        },
-        onSelectionColorChanged(event: string | null) {
-            if (!event || !this.rowsStyleModel) return
-            this.rowsStyleModel.selectionColor = event
-            this.rowsStyleChanged()
         },
         onBackroundColorChanged(event: string | null, type: 'even' | 'odd') {
             if (!event || !this.rowsStyleModel) return

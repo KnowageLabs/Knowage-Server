@@ -121,9 +121,7 @@
             "evenBackgroundColor": "rgb(228, 232, 236)",
             "oddBackgroundColor": ""
         },
-        "height": 25,
-        "multiselectable": false,
-        "selectionColor": ""
+        "height": 25
     },
     "defaultSelection": {
         "enabled": true,

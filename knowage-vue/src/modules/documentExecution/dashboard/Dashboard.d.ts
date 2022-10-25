@@ -301,8 +301,6 @@ export interface IWidgetPaddingStyle {
 
 export interface IWidgetRowsStyle {
     height: number
-    selectionColor?: string
-    multiselectable?: boolean
     alternatedRows: {
         enabled: boolean
         evenBackgroundColor: string
