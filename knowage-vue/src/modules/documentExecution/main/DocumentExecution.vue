@@ -681,7 +681,7 @@ export default defineComponent({
             await this.sendForm(documentLabel, crossNavigationPopupMode)
         },
         async loadExporters() {
-            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/exporters/${this.urlData?.engineLabel}`).then((response: AxiosResponse<any>) => (this.exporters = response.data.exporters))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/exporters/config/${this.urlData?.engineLabel}`).then((response: AxiosResponse<any>) => (this.exporters = response.data.exporters))
         },
         async sendForm(documentLabel: string | null = null, crossNavigationPopupMode: boolean = false) {
             let tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name) as any
