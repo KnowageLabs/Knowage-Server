@@ -1,6 +1,8 @@
 <template>
     <div class="custom-cell-container p-d-flex kn-height-full" :style="getCellStyle()">
-        <div class="custom-cell-label">{{ params.value }} {{ params.data.span > 1 ? params.data.span : '' }}</div>
+        <div v-if="isColumnOfType('date')" class="custom-cell-label">{{ dateFormatter(params.value) }}</div>
+        <div v-else-if="isColumnOfType('timestamp')" class="custom-cell-label">{{ dateTimeFormatter(params.value) }}</div>
+        <div v-else class="custom-cell-label">{{ params.value }} {{ params.data.span > 1 ? params.data.span : '' }}</div>
     </div>
 </template>
 
@@ -8,12 +10,14 @@
 import { defineComponent } from 'vue'
 import { getColumnConditionalStyles } from './TableWidgetHelper'
 import helpersDecriptor from '../WidgetEditor/helpers/tableWidget/TableWidgetHelpersDescriptor.json'
+import moment from 'moment'
+import { getLocale } from '@/helpers/commons/localeHelper'
 
 export default defineComponent({
     props: {
         params: {
             required: true,
-            type: Object
+            type: Object as any
         }
     },
     data() {
@@ -67,6 +71,21 @@ export default defineComponent({
             if (this.getConditionalStyle()) return this.getConditionalStyle()
             if (this.getColumnStyle() != columnStyleString) return this.getColumnStyle()
             if (this.getRowspanRowColor()) return this.getRowspanRowColor()
+        },
+        isColumnOfType(columnType: string) {
+            let widgetColumns = this.params.propWidget.columns
+            let cellColumnId = this.params.colId
+            let cellColumn = widgetColumns.find(({ id }) => id === cellColumnId)
+
+            return cellColumn.type.toLowerCase().includes(columnType)
+        },
+        dateFormatter(params) {
+            let isDateValid = moment(params, 'DD/MM/YYYY').isValid()
+            return isDateValid ? moment(params, 'DD/MM/YYYY').locale(getLocale(true)).format('LL') : params
+        },
+        dateTimeFormatter(params) {
+            let isDateValid = moment(params, 'DD/MM/YYYY HH:mm:ss.SSS').isValid()
+            return isDateValid ? moment(params, 'DD/MM/YYYY HH:mm:ss.SSS').locale(getLocale(true)).format('LLL') : params
         }
     }
 })
