@@ -1,6 +1,7 @@
 package it.eng.knowage.engine.cockpit.api.export.excel.crosstab;
 
 import java.awt.Color;
+import java.util.ArrayList;
 
 /* SpagoBI, the Open Source Business Intelligence suite
 
@@ -39,6 +40,7 @@ import com.jamonapi.MonitorFactory;
 import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab;
 import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab.CellType;
 import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab.MeasureInfo;
+import it.eng.knowage.engine.cockpit.api.crosstable.Measure;
 import it.eng.knowage.engine.cockpit.api.crosstable.MeasureFormatter;
 import it.eng.knowage.engine.cockpit.api.crosstable.MeasureScaleFactorOption;
 import it.eng.knowage.engine.cockpit.api.crosstable.Node;
@@ -190,6 +192,9 @@ public class CrosstabXLSExporter {
 		int rowNum = 0;
 		logger.debug("Data matrix number of rows: " + dataMatrix.length);
 		logger.debug("Data matrix number of columns: " + dataMatrix[0].length);
+		List<Measure> allMeasures = cs.getCrosstabDefinition().getMeasures();
+		List<Measure> subtotalMeasures = getSubtotalsMeasures(allMeasures);
+		List<MeasureInfo> measuresInfo = cs.getMeasures();
 
 		for (int i = 0; i < dataMatrix.length; i++) {
 			rowNum = rowOffset + i;
@@ -197,7 +202,28 @@ public class CrosstabXLSExporter {
 			if (row == null) {
 				row = sheet.createRow(rowNum);
 			}
+
+			int totalsCounter = 0;
+			int pos;
+
 			for (int j = 0; j < dataMatrix[0].length; j++) {
+
+				JSONObject measureConfig = new JSONObject();
+				if (cs.isMeasureOnRow()) {
+					pos = i % measuresInfo.size();
+					measureConfig = allMeasures.get(pos).getConfig();
+				} else {
+					pos = cs.getOffsetInColumnSubtree(j) % measuresInfo.size();
+					if (cs.isCellFromSubtotalsColumn(j)) {
+						measureConfig = subtotalMeasures.get(pos).getConfig();
+					} else if (cs.isCellFromTotalsColumn(j)) {
+						measureConfig = subtotalMeasures.get(totalsCounter).getConfig();
+						totalsCounter++;
+					} else {
+						measureConfig = allMeasures.get(pos).getConfig();
+					}
+				}
+
 				String text = dataMatrix[i][j];
 				int columnNum = columnOffset + j;
 				Cell cell = row.createCell(columnNum);
@@ -210,12 +236,21 @@ public class CrosstabXLSExporter {
 					int measureIdx = j % numOfMeasures;
 					String measureId = getMeasureId(cs, measureIdx);
 					int decimals = measureFormatter.getFormatXLS(i, j);
-					CellStyle style = getStyle(decimals, decimalFormats, sheet, createHelper, cs.getCellType(i, j), measureId, value);
+					CellType cellType = cs.getCellType(i, j);
+					CellStyle style = getStyle(decimals, decimalFormats, sheet, createHelper, cellType, measureId, value);
 					cellStyleMonitor.stop();
 					Monitor buildCellMonitor = MonitorFactory.start("CockpitEngine.export.excel.CrossTabExporter.buildDataMatrix.buildCellMonitor");
-					cell.setCellValue(valueFormatted);
-					cell.setCellType(this.getCellTypeNumeric());
-					cell.setCellStyle(style);
+					String cellTypeValue = cellType.getValue();
+					boolean insertValue = true;
+					if (measureConfig.has("excludeFromTotalAndSubtotal") && measureConfig.getBoolean("excludeFromTotalAndSubtotal")
+							&& (cellTypeValue.equalsIgnoreCase("partialsum") || cellTypeValue.equalsIgnoreCase("totals"))) {
+						insertValue = false;
+					}
+					if (insertValue) {
+						cell.setCellValue(valueFormatted);
+						cell.setCellType(this.getCellTypeNumeric());
+						cell.setCellStyle(style);
+					}
 					buildCellMonitor.stop();
 				} catch (NumberFormatException e) {
 					logger.debug("Text " + text + " is not recognized as a number");
@@ -227,6 +262,17 @@ public class CrosstabXLSExporter {
 			}
 		}
 		return rowNum;
+	}
+
+	List<Measure> getSubtotalsMeasures(List<Measure> allMeasures) throws JSONException {
+		List<Measure> toReturn = new ArrayList<Measure>();
+		for (int k = 0; k < allMeasures.size(); k++) {
+			if (!allMeasures.get(k).getConfig().has("excludeFromTotalAndSubtotal")
+					|| !allMeasures.get(k).getConfig().getBoolean("excludeFromTotalAndSubtotal")) {
+				toReturn.add(allMeasures.get(k));
+			}
+		}
+		return toReturn;
 	}
 
 	private String getMeasureId(CrossTab cs, int index) {
