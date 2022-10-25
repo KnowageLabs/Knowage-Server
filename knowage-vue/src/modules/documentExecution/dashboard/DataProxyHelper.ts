@@ -39,15 +39,9 @@ const formatSelectorModelForGet = (propWidget: IWidget, datasetLabel: string, in
         indexes: []
     } as any
 
-    if (associativeResponseSelections) {
-        dataToSend.selections = associativeResponseSelections
-    } else if (!initialCall) {
-        dataToSend.selections = getFormattedSelections(selections)
-    }
+    addSelectionsToData(dataToSend, propWidget, datasetLabel, initialCall, selections, associativeResponseSelections)
 
     dataToSend.aggregations.dataset = datasetLabel
-    // TODO - Uncomment filters
-    // dataToSend.selections = getFilters(propWidget, datasetLabel)
 
     //summary rows - exclusive to table
     if (propWidget.type === 'table' && propWidget.settings.configuration.summaryRows.enabled) {
@@ -73,6 +67,40 @@ const formatSelectorModelForGet = (propWidget: IWidget, datasetLabel: string, in
     return dataToSend
 }
 
+const addSelectionsToData = (dataToSend: any, propWidget: IWidget, datasetLabel: string, initialCall: boolean, selections: ISelection[], associativeResponseSelections: any) => {
+    if (associativeResponseSelections) {
+        dataToSend.selections = associativeResponseSelections
+    } else if (!initialCall) {
+        dataToSend.selections = getFormattedSelections(selections)
+    }
+    addFiltersToPostData(propWidget, dataToSend.selections, datasetLabel)
+}
+
+const addFiltersToPostData = (propWidget: IWidget, selectionsToSend: any, datasetLabel: string) => {
+    const filters = getFilters(propWidget, datasetLabel)
+    const filterKeys = filters ? Object.keys(filters) : []
+    filterKeys.forEach((key: string) => {
+        if (selectionsToSend[key]) {
+            addFilterToSelection(selectionsToSend[key], filters[key])
+        }
+        else {
+            selectionsToSend[key] = filters[key]
+        }
+    })
+}
+
+const addFilterToSelection = (selection: any, filter: any) => {
+    const filterColumnKeys = filter ? Object.keys(filter) : []
+    filterColumnKeys.forEach((key: string) => {
+        if (selection[key]) {
+            selection[key].push(filter[key])
+        }
+        else {
+            selection[key] = filter[key]
+        }
+    })
+}
+
 export const getSelectorWidgetData = async (widget: IWidget, datasets: IDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
     var datasetIndex = datasets.findIndex((dataset: any) => widget.dataset === dataset.id.dsId)
     var selectedDataset = datasets[datasetIndex]
@@ -90,7 +118,7 @@ export const getSelectorWidgetData = async (widget: IWidget, datasets: IDataset[
                 tempResponse = response.data
                 tempResponse.initialCall = initialCall
             })
-            .catch(() => {})
+            .catch(() => { })
             .finally(() => {
                 if (widget.dataset || widget.dataset === 0) setDatasetInterval(widget.dataset as number, 10000)
             }) // TODO - SET PROPER INTERVAL
@@ -120,7 +148,7 @@ export const getTableWidgetData = async (widget: IWidget, datasets: IDataset[], 
                 if (pagination.enabled) widget.settings.pagination.properties.totalItems = response.data.results
                 // pagination.totalItems = response.data.results
             })
-            .catch(() => {})
+            .catch(() => { })
             .finally(() => {
                 if (widget.dataset || widget.dataset === 0) setDatasetInterval(widget.dataset as number, 10000)
             }) // TODO - SET PROPER INTERVAL

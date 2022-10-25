@@ -1,7 +1,18 @@
-import { IAssociation, IAssociationField, IDashboard, IDataset, IModelDataset, IModelDatasetParameter, ISelection } from "../../Dashboard"
+import { IAssociation, IAssociationField, IDashboard, IDataset, IModelDataset, IModelDatasetParameter, ISelection, IWidget, IWidgetColumn, IWidgetColumnFilter } from "../../Dashboard"
 import { AxiosResponse } from "axios"
 import { emitter } from '../../DashboardHelpers'
 import { clearDatasetInterval } from "../../helpers/datasetRefresh/DatasetRefreshHelpers"
+
+interface IFormattedFilter {
+    filterOperator: string,
+    filterVals: string[
+    ],
+    dataset: {
+        dsId: number,
+        label: string
+    },
+    colName: string
+}
 
 let datasetMapById = {}
 
@@ -22,6 +33,11 @@ export const getAssociativeSelections = async (model: IDashboard, datasets: IDat
         selections: getFormattedSelections(selections),
         datasets: getFormattedModelDatasets(model.configuration.datasets),
         nearRealtime: getNearRealtimeDatasets(tempDatasets)
+    } as any
+
+    const filters = getFiltersFromWidgets(model, postData.datasets)
+    if (filters.length > 0) {
+        postData.filters = filters
     }
 
     let tempResponse = null
@@ -32,6 +48,8 @@ export const getAssociativeSelections = async (model: IDashboard, datasets: IDat
     emitter.emit('setWidgetLoading', false)
     return tempResponse
 }
+
+
 
 const loadDatasetLabelIdMap = (datasets: IDataset[]) => {
     datasets.forEach((dataset: IDataset) => datasetMapById[dataset.id.dsId] = dataset)
@@ -117,6 +135,31 @@ const getFormattedDatasetParameters = (dataset: IModelDataset) => {
 
 const getNearRealtimeDatasets = (tempDatasets: IDataset[]) => {
     return tempDatasets.filter((dataset: IDataset) => dataset.isNearRealtimeSupported).map((dataset: IDataset) => dataset.label)
+}
+
+const getFiltersFromWidgets = (model: IDashboard, datasetsInAssociation: any) => {
+    const datasetLabels = datasetsInAssociation ? Object.keys(datasetsInAssociation) : []
+    const filters = [] as IFormattedFilter[]
+    model.widgets.forEach((widget: IWidget) => {
+        const datasetLabel = widget.dataset ? getDatasetById(widget.dataset)?.label : ''
+        if (datasetLabels.includes(datasetLabel)) {
+            widget.columns?.forEach((column: IWidgetColumn) => {
+                if (column.filter.enabled) {
+                    const formattedFilter = {
+                        filterOperator: column.filter.operator,
+                        filterVals: [`('${column.filter.value}')`],
+                        dataset: {
+                            dsId: widget.dataset,
+                            label: datasetLabel
+                        },
+                        colName: column.columnName
+                    } as IFormattedFilter
+                    filters.push(formattedFilter)
+                }
+            })
+        }
+    })
+    return filters
 }
 
 
