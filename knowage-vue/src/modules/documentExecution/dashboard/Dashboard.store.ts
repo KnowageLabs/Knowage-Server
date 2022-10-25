@@ -67,19 +67,15 @@ const store = defineStore('dashboardStore', {
             return this.selections[dashboardId]
         },
         setSelections(dashboardId: string, selections: ISelection[], $http: any) {
-            console.log(" ---- STORE - SET SELECTIONS: ", selections)
             this.selections[dashboardId] = selections
             if (selections.length > 0 && selectionsUseDatasetWithAssociation(selections, this.dashboards[dashboardId].configuration.associations)) {
-                console.log(" ---- STORE - SET SELECTIONS ENTERED 1")
                 loadAssociativeSelections(this.dashboards[dashboardId], this.allDatasets, selections, $http)
             } else {
-                console.log(" ---- STORE - SET SELECTIONS ENTERED 2")
                 emitter.emit('selectionsChanged', { dashboardId: dashboardId, selections: this.selections[dashboardId] })
             }
         },
         removeSelection(payload: { datasetId: number, columnName: string }, dashboardId: string) {
             const index = this.selections[dashboardId]?.findIndex((selection: ISelection) => selection.datasetId === payload.datasetId && selection.columnName === payload.columnName)
-            console.log("----- STORE - REMOVE SELECTION: ", index)
             if (index !== -1) {
                 const tempSelection = deepcopy(this.selections[dashboardId][index])
                 this.selections[dashboardId].splice(index, 1)

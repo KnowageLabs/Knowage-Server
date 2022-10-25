@@ -46,11 +46,11 @@ export const deleteWidgetHelper = (dashboardId: string, widget: IWidget, dashboa
 
 const deleteWidgetFromSheets = (dashboard: IDashboard, widgetId: string) => {
     const sheets = dashboard.sheets as any
-    for (let i = 0; i < sheets.length; i++) {
+    for (let i = sheets.length - 1; i >= 0; i--) {
         const widgets = sheets[i].widgets.lg
         for (let j = widgets.length - 1; j >= 0; j--) {
             if (widgets[j].id === widgetId) {
-                widgets.splice(widgets[j], 1)
+                widgets.splice(j, 1)
             }
         }
     }

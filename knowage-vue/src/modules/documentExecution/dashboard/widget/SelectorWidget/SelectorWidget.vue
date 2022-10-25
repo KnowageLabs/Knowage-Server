@@ -1,7 +1,5 @@
 <template>
     <div v-if="options" class="selector-widget">
-        {{ showMode }}
-        {{ selectedDate }}
         <div v-if="widgetType === 'singleValue'" :class="getLayoutStyle()">
             <div class="multi-select p-p-1" :style="getLabelStyle() + getGridWidth()" v-for="(value, index) of showMode === 'hideDisabled' ?  options.rows.filter((row: any) => !row.disabled) : options.rows" :key="index">
                 <RadioButton :inputId="`radio-${index}`" class="p-mr-2" :name="value.column_1" :value="value.column_1" v-model="selectedValue" :disabled="showMode === 'showDisabled' && value.disabled" @change="singleValueSelectionChanged" />
@@ -52,7 +50,7 @@
         <span v-if="widgetType === 'date'" class="p-float-label p-m-2">
             <Calendar class="kn-material-input kn-width-full" v-model="selectedDate" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :showIcon="true" @date-select="dateSelectionChanged" />
             <label class="kn-material-input-label">
-                {{ selectedDate }}
+                {{ $t('common.date') }}
             </label>
         </span>
 
@@ -259,17 +257,17 @@ export default defineComponent({
                 case 'FIRST':
                     const firstValue = this.findFirstAvailableValue()
                     if (multivalue) {
-                        this.selectedValues = firstValue !== null ? [firstValue.column_1] : []
+                        this.selectedValues = firstValue != null ? [firstValue.column_1] : []
                     } else {
-                        this.selectedValue = firstValue !== null ? firstValue.column_1 : null
+                        this.selectedValue = firstValue != null ? firstValue.column_1 : null
                     }
                     break
                 case 'LAST':
                     const lastValue = this.findLastAvailableValue()
                     if (multivalue) {
-                        this.selectedValues = lastValue !== null ? [lastValue.column_1] : []
+                        this.selectedValues = lastValue != null ? [lastValue.column_1] : []
                     } else {
-                        this.selectedValue = lastValue !== null ? lastValue.column_1 : null
+                        this.selectedValue = lastValue != null ? lastValue.column_1 : null
                     }
                     break
                 case 'STATIC':

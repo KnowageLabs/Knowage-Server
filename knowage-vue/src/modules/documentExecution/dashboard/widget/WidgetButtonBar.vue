@@ -63,6 +63,7 @@ export default defineComponent({
     color: rgb(82, 82, 82);
     border: 1px solid #ccc;
     display: flex;
+    z-index: 99999999 !important;
     flex-direction: column;
     justify-content: center;
     align-items: center;
