@@ -116,8 +116,6 @@ export default defineComponent({
                     .then((response: AxiosResponse<any>) => (tempModel = response.data))
                     .catch(() => {})
             }
-            // TODO - remove commented mock
-            // this.model = formatModel(mockedDashboardModel) as any
             this.model = (tempModel && this.newDashboardMode) || tempModel.hasOwnProperty('id') ? tempModel : (formatModel(tempModel, this.document, this.datasets) as any)
             setDatasetIntervals(this.model.configuration.datasets, this.datasets)
             this.dashboardId = cryptoRandomString({ length: 16, type: 'base64' })

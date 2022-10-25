@@ -1,5 +1,6 @@
-import { ITableWidgetCrossNavigation, ITableWidgetLink, ITableWidgetLinks, ITableWidgetParameter, ITableWidgetPreview, ITableWidgetSelection } from "../../Dashboard"
+import { ITableWidgetCrossNavigation, ITableWidgetLink, ITableWidgetLinks, ITableWidgetParameter, ITableWidgetPreview, ITableWidgetSelection, IWidget } from "../../Dashboard"
 import { getColumnId } from './TableWidgetCompatibilityHelper'
+import { hexToRgb } from '../FormattingHelpers'
 import * as  tableWidgetDefaultValues from '../../widget/WidgetEditor/helpers/tableWidget/TableWidgetDefaultValues'
 
 export const getFormattedInteractions = (widget: any) => {
@@ -7,7 +8,7 @@ export const getFormattedInteractions = (widget: any) => {
         crosssNavigation: getFormattedCrossNavigation(widget) as ITableWidgetCrossNavigation,
         link: getFormattedLinkInteraction(widget) as ITableWidgetLinks,
         preview: getFormattedPreview(widget) as ITableWidgetPreview,
-        selection: tableWidgetDefaultValues.getDefaultSelection() as ITableWidgetSelection
+        selection: getFormattedSelection(widget) as ITableWidgetSelection
     }
 }
 
@@ -131,4 +132,21 @@ const getFormattedPreviewParameters = (previewParameters: any) => {
 
 
     return formattedParameters
+}
+
+const getFormattedSelection = (widget: IWidget) => {
+    if (!widget.settings.multiselectable && !widget.settings.multiselectablecolor && !widget.settings.modalSelectionColumn) return tableWidgetDefaultValues.getDefaultSelection() as ITableWidgetSelection
+    const formattedSelection = {
+        enabled: true,
+        modalColumn: widget.settings.modalSelectionColumn ? getColumnId(widget.settings.modalSelectionColumn) : '',
+        multiselection: {
+            enabled: widget.settings.multiselectable,
+            properties: {
+                'background-color': widget.settings.multiselectablecolor ? hexToRgb(widget.settings.multiselectablecolor) : '',
+                color: ''
+            }
+        }
+    } as ITableWidgetSelection
+
+    return formattedSelection
 }

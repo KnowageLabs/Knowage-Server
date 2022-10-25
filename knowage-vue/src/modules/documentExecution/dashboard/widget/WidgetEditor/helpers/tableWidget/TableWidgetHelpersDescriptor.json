@@ -126,7 +126,7 @@
         "selectionColor": ""
     },
     "defaultSelection": {
-        "enabled": false,
+        "enabled": true,
         "modalColumn": "",
         "multiselection": {
             "enabled": false,
