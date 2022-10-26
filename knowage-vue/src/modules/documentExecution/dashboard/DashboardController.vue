@@ -99,7 +99,7 @@ export default defineComponent({
         clearAllDatasetIntervals()
     },
     methods: {
-        ...mapActions(dashboardStore, ['removeSelections', 'setAllDatasets']),
+        ...mapActions(dashboardStore, ['removeSelections', 'setAllDatasets', 'getSelections']),
         async getData() {
             this.loading = true
             await this.loadDatasets()
@@ -245,7 +245,7 @@ export default defineComponent({
                     type: 'DOCUMENT_COMPOSITE'
                 },
                 customData: {
-                    templateContent: this.store.getDashboard(this.dashboardId)
+                    templateContent: this.getTemplateContent()
                 },
                 action: this.newDashboardMode ? 'DOC_SAVE' : 'MODIFY_COCKPIT',
                 folders: folders
@@ -264,6 +264,11 @@ export default defineComponent({
                 .catch(() => {})
 
             this.appStore.setLoading(false)
+        },
+        getTemplateContent() {
+            const dashboardModel = this.store.getDashboard(this.dashboardId)
+            dashboardModel.configuration.selections = this.getSelections(this.dashboardId)
+            return dashboardModel
         },
         onSelectionsRemove(selections: ISelection[]) {
             this.selectionsDialogVisible = false
