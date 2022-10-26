@@ -142,7 +142,7 @@ const getFormattedSelection = (widget: IWidget) => {
         multiselection: {
             enabled: widget.settings.multiselectable,
             properties: {
-                'background-color': widget.settings.multiselectablecolor ? hexToRgb(widget.settings.multiselectablecolor) : '',
+                'background-color': widget.settings.multiselectablecolor ? widget.settings.multiselectablecolor : '',
                 color: ''
             }
         }

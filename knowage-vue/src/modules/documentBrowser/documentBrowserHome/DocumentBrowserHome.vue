@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import DocumentBrowserHint from './DocumentBrowserHint.vue'
 import DocumentBrowserTree from './DocumentBrowserTree.vue'
@@ -59,7 +59,7 @@ import mainStore from '../../../App.store'
 export default defineComponent({
     name: 'document-browser-home',
     components: { DocumentBrowserHint, DocumentBrowserTree, DocumentBrowserDetail, KnFabButton, Menu },
-    props: { documentSaved: { type: Object }, documentSavedTrigger: { type: Boolean } },
+    props: { documentSaved: { type: Object as PropType<any> }, documentSavedTrigger: { type: Boolean } },
     emits: ['itemSelected'],
     data() {
         return {
@@ -229,6 +229,7 @@ export default defineComponent({
             this.items.push({ label: this.$t('documentBrowser.genericDocument'), command: () => this.createNewDocument() })
             if (this.hasCreateCockpitFunctionality) {
                 this.items.push({ label: this.$t('common.cockpit'), command: () => this.createNewCockpit() })
+                this.items.push({ label: this.$t('dashboard.dashboardBeta'), command: () => this.createNewDashboard() })
             }
         },
         createNewDocument() {
@@ -241,6 +242,9 @@ export default defineComponent({
         },
         createNewCockpit() {
             this.$emit('itemSelected', { item: null, mode: 'createCockpit', functionalityId: this.selectedFolder.id })
+        },
+        createNewDashboard() {
+            this.$emit('itemSelected', { item: null, mode: 'createDashboard', functionalityId: this.selectedFolder.id })
         },
         toggleSidebarView() {
             this.sidebarVisible = !this.sidebarVisible

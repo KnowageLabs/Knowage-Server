@@ -89,7 +89,7 @@ export default defineComponent({
 
             if (this.loadedItem.showMode === 'documentDetail') {
                 this.mode = 'document-detail'
-            } else if (this.loadedItem.showMode === 'execute') {
+            } else if (this.loadedItem.showMode === 'execute' || this.loadedItem.showMode === 'createDashboard') {
                 this.mode = 'document-execution'
             } else if (this.loadedItem.showMode === 'createCockpit') {
                 this.mode = 'cockpit'

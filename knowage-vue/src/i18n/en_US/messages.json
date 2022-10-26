@@ -337,6 +337,7 @@
         "yearly": "Yearly"
     },
     "dashboard": {
+        "dashboardBeta": "Dashboard (Beta)",
         "datasetEditor": {
             "addAssociation": "Add Association",
             "addIndexes": "Add Indexes on Associations",
