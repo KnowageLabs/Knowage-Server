@@ -65,7 +65,6 @@ public class HtmlSanitizer {
 				.allowStyling(CssSchema.union(CssSchema.DEFAULT, stylePropertiesInSVG))
 				.allowElements("a", "audio", "article", "figure", "footer", "header", "hr", "iframe", "input", "img", "label", "pre", "span", "tbody", "tfoot", "thead", "table", "td", "th", "tr", "video","canvas","fieldset")
 				.allowAttributes("alt").onElements("img")
-				.allowAttributes("colspan","rowspan").onElements("td","th")
 				.allowAttributes("aria-hidden").globally()
 				.allowAttributes("height", "width").globally()
 				.allowAttributes("class").globally()

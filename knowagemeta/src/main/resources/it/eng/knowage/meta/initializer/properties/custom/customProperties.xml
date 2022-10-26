@@ -214,7 +214,7 @@
 				<value>AVG</value>
 				<value>MAX</value>
 				<value>MIN</value>
-				<value>COUNT_DISTINCT</value>
+				<value>DISTINCT-COUNT</value>
 			</admissibleValuesOf>
 
 			<admissibleValuesOf typeId="structural.attribute">

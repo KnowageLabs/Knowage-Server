@@ -153,6 +153,10 @@
 			<ITEM id="7002" label="menu.Domain"
 				requiredFunctionality="DomainManagement"
 				to="/domains-management" />
+
+			<ITEM id="7003" label="Exporters menu"
+				requiredFunctionality="ExportersCatalogue"
+				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=exportersCatalogue" />
 			<ITEM id="7004" label="menu.MetadataMan"
 				requiredFunctionality="ObjMetadataManagement"
 				to="/metadata-management" />
