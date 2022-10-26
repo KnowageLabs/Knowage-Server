@@ -363,6 +363,7 @@
         },
         "saveCockpit": "Save Cockpit",
         "saveCockpitHint": "Please enter a valid name",
+        "selectionsList": "Selections List",
         "tableWidget": {
             "launchSelection": "LAUNCH SELECTION"
         },
