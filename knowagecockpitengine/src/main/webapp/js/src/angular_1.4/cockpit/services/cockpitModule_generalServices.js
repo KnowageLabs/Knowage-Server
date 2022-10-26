@@ -75,6 +75,7 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 				dataToSend.folders.push(cockpitModule_properties.FOLDER_ID);
 			}
 			dataToSend.customData={};
+			cockpitModule_template.getSelections()
 			dataToSend.customData.templateContent=angular.copy(cockpitModule_template);
 			dataToSend.customData.templateContent.knowageVersion = cockpitModule_properties.CURRENT_KNOWAGE_VERSION;
 
