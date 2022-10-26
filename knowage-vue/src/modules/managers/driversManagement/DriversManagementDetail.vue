@@ -158,7 +158,7 @@ export default defineComponent({
             this.formatUseMode()
 
             if (this.modesToSave.length === 0) {
-                return this.store.setError({
+                return this.store.setWarning({
                     title: this.$t('common.toast.errorTitle'),
                     msg: this.$t('managers.driversManagement.noModesSelected')
                 })
