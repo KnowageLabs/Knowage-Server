@@ -1,6 +1,6 @@
 <template>
     <div v-if="summaryRowsModel" class="p-grid p-jc-center p-ai-center p-p-4">
-        <div class="p-col-12 p-grid p-p-3">
+        <div class="p-col-12 p-grid">
             <div class="p-col-12 p-md-6 p-p-2">
                 <InputSwitch v-model="summaryRowsModel.enabled" @change="onSummarRowEnabledChange"></InputSwitch>
                 <label class="kn-material-input-label p-ml-4">{{ $t('dashboard.widgetEditor.summaryRows.enableSummaryRows') }}</label>
@@ -11,7 +11,7 @@
             </div>
         </div>
 
-        <div class="p-col-12 p-p-3">
+        <div class="p-col-12">
             <div v-for="(summaryRow, index) in summaryRowsModel.list" :key="index" class="p-grid p-ai-center">
                 <div class="p-col-12 p-md-4 p-d-flex p-flex-column p-pt-1">
                     <label class="kn-material-input-label p-mr-2">{{ $t('common.label') }}</label>

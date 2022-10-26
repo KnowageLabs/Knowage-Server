@@ -1,6 +1,6 @@
 <template>
     <div v-if="headersModel" class="p-grid p-jc-center p-ai-center p-p-4">
-        <div id="input-switches-container" class="p-grid p-col-12 p-p-3">
+        <div id="input-switches-container" class="p-grid p-col-12">
             <div class="p-col-12 p-md-6 p-p-2">
                 <InputSwitch v-model="headersModel.enabled" @change="headersConfigurationChanged"></InputSwitch>
                 <label class="kn-material-input-label p-ml-3">{{ $t('dashboard.widgetEditor.headers.enableHeader') }}</label>
@@ -11,7 +11,7 @@
             </div>
         </div>
 
-        <div class="p-col-12 p-p-3">
+        <div class="p-col-12 p-mt-1">
             <div class="p-col-12 p-p-2">
                 <InputSwitch v-model="headersModel.custom.enabled" @change="onCustomHeadersEnabledChange"></InputSwitch>
                 <label class="kn-material-input-label p-ml-3">{{ $t('dashboard.widgetEditor.headers.enableCustomHeaders') }}</label>

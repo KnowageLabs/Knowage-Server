@@ -1,11 +1,15 @@
 <template>
     <div v-if="exportModel" class="p-grid p-jc-center p-ai-center p-p-4">
-        <div class="p-col-12 p-p-2">
-            <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.export.exportPdf') }}</label>
-            <InputSwitch v-model="exportModel.pdf.enabled" @change="onEnableExportChanged"></InputSwitch>
+        <div class="p-col-12 p-p-2 p-grid">
+            <div class="p-col-2 p-sm-12 p-md-2">
+                <InputSwitch v-model="exportModel.pdf.enabled" @change="onEnableExportChanged"></InputSwitch>
+            </div>
+            <div class="p-col-11 p-sm-12 p-md-10">
+                <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.export.exportPdf') }}</label>
+            </div>
         </div>
         <div class="p-grid p-col-12 p-ai-center">
-            <div class="p-grid p-col-12 p-lg-3 p-ai-center p-pt-4">
+            <div class="p-grid p-col-12 p-ai-center p-pt-4">
                 <div class="p-col-6 field-radiobutton p-px-2">
                     <RadioButton v-model="selectedExport" name="export" value="a4portrait" :disabled="pdfExportDisabled" @change="onSelectedExportChanged" />
                     <label class="kn-material-input-label p-m-2"> {{ $t('dashboard.widgetEditor.export.a4portrait') }}</label>
@@ -34,11 +38,11 @@
             </div>
         </div>
         <div class="p-grid p-col-12">
-            <div class="p-col-12 p-lg-6 p-p-4">
+            <div class="p-col-12 p-lg-6">
                 <InputSwitch v-model="exportModel.showScreenshot" @change="onEnableExportChanged"></InputSwitch>
                 <label class="kn-material-input-label p-ml-4">{{ $t('dashboard.widgetEditor.export.enableScreenshots') }}</label>
             </div>
-            <div class="p-col-12 p-lg-6 p-p-4">
+            <div class="p-col-12 p-lg-6">
                 <InputSwitch v-model="exportModel.showExcelExport" @change="onEnableExportChanged"></InputSwitch>
                 <label class="kn-material-input-label p-ml-4">{{ $t('dashboard.widgetEditor.export.showExcelExport') }}</label>
             </div>

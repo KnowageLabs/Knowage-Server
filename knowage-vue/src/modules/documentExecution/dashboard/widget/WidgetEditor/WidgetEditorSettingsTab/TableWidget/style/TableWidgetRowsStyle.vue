@@ -5,22 +5,18 @@
             <InputNumber class="kn-material-input p-inputtext-sm" v-model="rowsStyleModel.height" @blur="rowsStyleChanged" />
         </div>
         <div class="p-col-8"></div>
-        <div class="p-col-12 p-grid p-ai-center">
-            <div class="p-col-12 p-md-6 p-lg-6 p-d-flex p-flex-row p-jc-md-start p-px-4">
-                <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.rows.multiselectable') }}</label>
-                <InputSwitch v-model="rowsStyleModel.multiselectable" @change="rowsStyleChanged"></InputSwitch>
-            </div>
+        <div class="p-col-12 p-grid p-ai-center p-mt-2 p-pt-4" style="border-top: 1px solid #ccc">
+            <InputSwitch class="p-mr-2" v-model="rowsStyleModel.multiselectable" @change="rowsStyleChanged"></InputSwitch>
+            <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.rows.multiselectable') }}</label>
         </div>
         <div class="p-col-12 p-md-12 p-lg-12">
             <WidgetEditorColorPicker :initialValue="rowsStyleModel.selectionColor" :label="$t('dashboard.widgetEditor.rows.selectionColor')" :disabled="!rowsStyleModel.multiselectable" @change="onSelectionColorChanged"></WidgetEditorColorPicker>
         </div>
         <div class="p-col-12 p-grid p-ai-center p-p-4">
-            <div class="p-d-flex p-flex-row kn-flex">
-                <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.rows.enabledAlternatedRows') }}</label>
-                <InputSwitch v-model="rowsStyleModel.alternatedRows.enabled" @change="rowsStyleChanged"></InputSwitch>
-            </div>
+            <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.rows.enabledAlternatedRows') }}</label>
+            <InputSwitch v-model="rowsStyleModel.alternatedRows.enabled" @change="rowsStyleChanged"></InputSwitch>
         </div>
-        <div class="p-col-12 p-grid p-ai-center">
+        <div class="p-col-12 p-grid p-ai-center p-p-0">
             <div class="p-col-12 p-md-6 p-px-2">
                 <WidgetEditorColorPicker :initialValue="rowsStyleModel.alternatedRows.evenBackgroundColor" :label="$t('dashboard.widgetEditor.rows.alternatedRowsEven')" :disabled="!rowsStyleModel.alternatedRows.enabled" @change="onBackroundColorChanged($event, 'even')"></WidgetEditorColorPicker>
             </div>

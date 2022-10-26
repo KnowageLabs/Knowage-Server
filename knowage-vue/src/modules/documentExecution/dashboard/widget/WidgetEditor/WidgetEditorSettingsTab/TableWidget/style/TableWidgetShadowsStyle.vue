@@ -1,14 +1,12 @@
 <template>
     <div v-if="shadowsStyleModel" class="p-grid p-jc-center p-ai-center p-p-4">
-        <div class="p-col-12 p-d-flex p-flex-row p-ai-center p-mb-4">
-            <div class="kn-flex p-m-2">
-                <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.shadows.enableShadows') }}</label>
-                <InputSwitch v-model="shadowsStyleModel.enabled" @change="shadowStyleChanged"></InputSwitch>
-            </div>
+        <div class="p-col-12 p-d-flex p-flex-row p-ai-center p-mb-2">
+            <InputSwitch v-model="shadowsStyleModel.enabled" @change="shadowStyleChanged"></InputSwitch>
+            <label class="kn-material-input-label p-ml-2">{{ $t('dashboard.widgetEditor.shadows.enableShadows') }}</label>
         </div>
 
-        <div class="p-col-12 p-grid p-ai-center">
-            <div class="p-col-12 p-md-6 p-d-flex p-flex-column p-px-2 p-pb-3">
+        <div class="p-col-12 p-grid p-ai-center p-p-0">
+            <div class="p-col-12 p-md-6 p-d-flex p-flex-column p-pb-3">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.shadows.shadowSize') }}</label>
                 <Dropdown class="kn-material-input" v-model="shadowSize" :options="descriptor.shadowsSizeOptions" optionValue="value" :disabled="shadowsStyleDisabled" @change="onShadowsSizeChanged">
                     <template #value="slotProps">
@@ -24,7 +22,7 @@
                 </Dropdown>
             </div>
 
-            <div class="p-col-12 p-md-6 p-px-2">
+            <div class="p-col-12 p-md-6 p-px-2 p-pt-3">
                 <WidgetEditorColorPicker :initialValue="shadowsStyleModel.properties.backgroundColor" :label="$t('dashboard.widgetEditor.iconTooltips.backgroundColor')" :disabled="shadowsStyleDisabled" @change="onBackroundColorChanged"></WidgetEditorColorPicker>
             </div>
         </div>

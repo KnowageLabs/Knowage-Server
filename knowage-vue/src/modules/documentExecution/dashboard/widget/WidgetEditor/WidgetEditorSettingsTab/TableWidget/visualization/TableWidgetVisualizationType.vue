@@ -4,7 +4,7 @@
             <InputSwitch v-model="visualizationTypeModel.enabled" @change="visualizationTypeChanged"></InputSwitch>
             <label class="kn-material-input-label p-ml-3">{{ $t('common.enable') }}</label>
         </div>
-        <div v-for="(visualizationType, index) in visualizationTypeModel.types" :key="index" class="dynamic-form-item p-grid p-col-12 p-ai-center p-pt-4">
+        <div v-for="(visualizationType, index) in visualizationTypeModel.types" :key="index" class="dynamic-form-item p-grid p-col-12 p-ai-center">
             <div class="p-col-12 p-grid p-ai-center">
                 <div class="p-col-12 p-md-6 p-d-flex p-flex-column p-p-2">
                     <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
@@ -40,7 +40,7 @@
                     <i :class="[index === 0 ? 'pi pi-plus-circle' : 'pi pi-trash', visualizationTypeDisabled ? 'icon-disabled' : '']" class="kn-cursor-pointer p-ml-2" @click="index === 0 ? addVisualizationType() : removeVisualizationType(index)"></i>
                 </div>
             </div>
-            <div class="p-col-12 p-grid p-ai-center p-mt-1">
+            <div class="p-col-12 p-grid p-ai-center">
                 <div class="p-col-6 p-md-3 p-d-flex p-flex-column p-pr-2">
                     <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.prefix') }}</label>
                     <InputText class="kn-material-input p-inputtext-sm" v-model="visualizationType.prefix" :disabled="visualizationTypeDisabled" @change="visualizationTypeChanged" />

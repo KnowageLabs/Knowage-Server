@@ -1,10 +1,8 @@
 <template>
     <div v-if="bordersStyleModel" class="p-grid p-jc-center p-ai-center p-p-4">
-        <div class="p-col-12 p-d-flex p-flex-row p-ai-center p-pt-2 p-pb-4">
-            <div class="kn-flex p-m-2">
-                <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.borders.enableBorders') }}</label>
-                <InputSwitch v-model="bordersStyleModel.enabled" @change="bordersStyleChanged"></InputSwitch>
-            </div>
+        <div class="p-col-12 p-px-2 p-pb-5">
+            <InputSwitch v-model="bordersStyleModel.enabled" @change="bordersStyleChanged"></InputSwitch>
+            <label class="kn-material-input-label p-ml-3">{{ $t('dashboard.widgetEditor.borders.enableBorders') }}</label>
         </div>
 
         <div class="p-col-12 p-grid p-ai-center">
@@ -28,7 +26,7 @@
                 <InputText class="kn-material-input p-inputtext-sm" v-model="bordersStyleModel.properties['border-width']" :disabled="bordersStyleDisabled" @change="bordersStyleChanged" />
                 <small>{{ $t('dashboard.widgetEditor.borders.bordersThicknessHint') }}</small>
             </div>
-            <div class="p-col-12 p-md-4 p-px-2">
+            <div class="p-col-12 p-md-4 p-px-2 p-pt-4">
                 <WidgetEditorColorPicker :initialValue="bordersStyleModel.properties['border-width']" :label="$t('dashboard.widgetEditor.borders.bordersColor')" :disabled="bordersStyleDisabled" @change="onSelectionColorChanged"></WidgetEditorColorPicker>
             </div>
         </div>

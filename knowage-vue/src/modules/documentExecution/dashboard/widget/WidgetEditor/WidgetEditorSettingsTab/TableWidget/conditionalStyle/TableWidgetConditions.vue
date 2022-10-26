@@ -1,16 +1,14 @@
 <template>
     <div v-if="conditionalStylesModel" class="p-grid p-jc-center p-ai-center p-p-4">
-        <div class="p-col-12 p-px-2 p-pb-4">
-            <div class="kn-flex p-m-2">
-                <label class="kn-material-input-label p-mr-2">{{ $t('common.enable') }}</label>
-                <InputSwitch v-model="conditionalStylesModel.enabled" @change="onConditionalStylesEnabledChange"></InputSwitch>
-            </div>
+        <div class="p-col-12 p-px-2 p-pb-1">
+            <InputSwitch v-model="conditionalStylesModel.enabled" @change="onConditionalStylesEnabledChange"></InputSwitch>
+            <label class="kn-material-input-label p-ml-2">{{ $t('common.enable') }}</label>
         </div>
         <div v-for="(conditionalStyle, index) in conditionalStylesModel.conditions" :key="index" class="dynamic-form-item p-grid p-col-12 p-ai-center p-pt-2">
             <div class="p-grid p-col-12 p-ai-center">
                 <div v-show="dropzoneTopVisible[index]" class="p-col-12 form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'before', index)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
                 <div
-                    class="p-col-12 form-list-item-dropzone"
+                    class="p-col-12 form-list-item-dropzone p-p-0"
                     :class="{ 'form-list-item-dropzone-active': dropzoneTopVisible[index] }"
                     @drop.stop="onDropComplete($event, 'before', index)"
                     @dragover.prevent
@@ -18,7 +16,7 @@
                     @dragleave.prevent="hideDropzone('top', index)"
                 ></div>
 
-                <div class="p-col-12 p-grid" :draggable="!conditionalStylesDisabled" @dragstart.stop="onDragStart($event, index)">
+                <div class="p-col-12 p-grid p-p-0" :draggable="!conditionalStylesDisabled" @dragstart.stop="onDragStart($event, index)">
                     <div class="p-col-1 p-d-flex p-flex-column p-jc-center p-ai-center">
                         <i class="pi pi-th-large kn-cursor-pointer" :class="[conditionalStylesDisabled ? 'icon-disabled' : '']"></i>
                     </div>
@@ -60,7 +58,7 @@
                                 <Dropdown class="kn-material-input" v-model="conditionalStyle.condition.variable" :options="variables" optionLabel="name" optionValue="name" :disabled="conditionalStylesDisabled" @change="onVariableChanged(conditionalStyle)"> </Dropdown>
                             </div>
                         </div>
-                        <div class="p-col-12 p-p-4">
+                        <div class="p-col-12">
                             <WidgetEditorStyleToolbar :options="descriptor.conditionsToolbarStyleOptions" :propModel="conditionalStyle.properties" :disabled="conditionalStylesDisabled" @change="onStyleToolbarChange($event, conditionalStyle)"> </WidgetEditorStyleToolbar>
                         </div>
 
@@ -76,7 +74,7 @@
                 </div>
 
                 <div
-                    class="p-col-12 form-list-item-dropzone"
+                    class="p-col-12 form-list-item-dropzone p-p-0"
                     :class="{ 'form-list-item-dropzone-active': dropzoneBottomVisible[index] }"
                     @drop.stop="onDropComplete($event, 'after', index)"
                     @dragover.prevent

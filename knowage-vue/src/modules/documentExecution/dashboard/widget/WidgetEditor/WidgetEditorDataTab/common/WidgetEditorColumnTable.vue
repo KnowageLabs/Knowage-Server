@@ -156,11 +156,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.dropzone-active {
-    border: 1.5px blue dotted;
-    padding: 0.5rem;
-}
-
 .table-headers-hidden {
     ::v-deep(.p-datatable-header) {
         display: none;
