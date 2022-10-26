@@ -180,17 +180,9 @@ public interface IDataSet extends Iterable<IRecord> {
 
 	void setPivotColumnValue(String pivotColumnValue);
 
-	boolean hasDataStoreTransformer();
-
-	void removeDataStoreTransformer();
-
 	void setAbortOnOverflow(boolean abortOnOverflow);
 
 	void addBinding(String bindingName, Object bindingValue);
-
-	void setDataStoreTransformer(IDataStoreTransformer transformer);
-
-	IDataStoreTransformer getDataStoreTransformer();
 
 	boolean isPersisted();
 
@@ -315,5 +307,16 @@ public interface IDataSet extends Iterable<IRecord> {
 	Set getTags();
 
 	public void setTags(Set tags);
+
+	// Data store transformer
+	boolean hasDataStoreTransformers();
+
+	void removeDataStoreTransformers();
+
+	List<IDataStoreTransformer> getDataStoreTransformers();
+
+	void addDataStoreTransformer(IDataStoreTransformer transformer);
+
+	void executeDataStoreTransformers(IDataStore dataStore);
 
 }

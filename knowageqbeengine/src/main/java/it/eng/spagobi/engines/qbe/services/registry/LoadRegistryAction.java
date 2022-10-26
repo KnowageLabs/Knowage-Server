@@ -1110,11 +1110,6 @@ class DecoratedDataStore implements IDataStore {
 	}
 
 	@Override
-	public SourceBean toSourceBean() throws SourceBeanException {
-		return dataStore.toSourceBean();
-	}
-
-	@Override
 	public Date getCacheDate() {
 		return dataStore.getCacheDate();
 	}
@@ -1132,6 +1127,5 @@ class DecoratedDataStore implements IDataStore {
 	public RegistryConfiguration getRegistryConfiguration() {
 		return registryConfiguration;
 	}
-
 
 }

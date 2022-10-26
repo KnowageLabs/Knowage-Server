@@ -123,7 +123,7 @@
                             {
                                 "alias": "FID",
                                 "aliasToShow": "FID",
-                                "decript": false,
+                                "decrypt": false,
                                 "fieldType": "ATTRIBUTE",
                                 "group": "d83a2272-8887-4222-8a50-ef5df2cb72fa",
                                 "hideTooltip": true,
@@ -165,7 +165,7 @@
                             {
                                 "alias": "the_geom",
                                 "aliasToShow": "the_geom",
-                                "decript": false,
+                                "decrypt": false,
                                 "fieldType": "ATTRIBUTE",
                                 "group": "de477ba5-6589-44f3-aba7-79eecb134615",
                                 "multiValue": false,
@@ -197,7 +197,7 @@
                             {
                                 "alias": "store_id",
                                 "aliasToShow": "store_id",
-                                "decript": false,
+                                "decrypt": false,
                                 "fieldType": "ATTRIBUTE",
                                 "group": "de477ba5-6589-44f3-aba7-79eecb134615",
                                 "multiValue": false,
@@ -226,7 +226,7 @@
                                         "justify-content": "flex-start"
                                     }
                                 },
-                                "decript": false,
+                                "decrypt": false,
                                 "fieldType": "MEASURE",
                                 "funcSummary": "SUM",
                                 "multiValue": false,

@@ -75,7 +75,7 @@ public class QbeDataSet extends ConfigurableDataSet {
 
 	public static String DS_TYPE = "SbiQbeDataSet";
 
-	private static transient Logger logger = Logger.getLogger(QbeDataSet.class);
+	private static Logger logger = Logger.getLogger(QbeDataSet.class);
 
 	public static final String QBE_DATA_SOURCE = "qbeDataSource";
 

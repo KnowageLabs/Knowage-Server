@@ -515,7 +515,7 @@ public class DataSetFactory {
 				ds.setOrganization(sbiDataSet.getId().getOrganization());
 
 				if (ds.getPivotColumnName() != null && ds.getPivotColumnValue() != null && ds.getPivotRowName() != null) {
-					ds.setDataStoreTransformer(
+					ds.addDataStoreTransformer(
 							new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
 				}
 				ds.setPersisted(sbiDataSet.isPersisted());
@@ -769,7 +769,7 @@ public class DataSetFactory {
 				ds.setOrganization(sbiDataSet.getOrganization());
 
 				if (ds.getPivotColumnName() != null && ds.getPivotColumnValue() != null && ds.getPivotRowName() != null) {
-					ds.setDataStoreTransformer(
+					ds.addDataStoreTransformer(
 							new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
 				}
 				ds.setPersisted(sbiDataSet.isPersisted());
@@ -1119,7 +1119,7 @@ public class DataSetFactory {
 				ds.setOrganization(sbiDataSet.getId().getOrganization());
 
 				if (ds.getPivotColumnName() != null && ds.getPivotColumnValue() != null && ds.getPivotRowName() != null) {
-					ds.setDataStoreTransformer(
+					ds.addDataStoreTransformer(
 							new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
 				}
 				ds.setPersisted(sbiDataSet.isPersisted());
