@@ -137,8 +137,9 @@ public class ProductTypesInitializer extends SpagoBIInitializer {
 				}
 				// Retrieving all the product types in the DB with the specified label
 				logger.debug("Retrieving all the product types in the DB with the specified label");
-				String hql = "from SbiProductType where label = '" + label + "'";
+				String hql = "from SbiProductType where label = :label";
 				Query hqlQuery = aSession.createQuery(hql);
+				hqlQuery.setParameter("label", label);
 				List result = hqlQuery.list();
 
 				logger.debug("Retrieving all the product types in the XML file with the specified label");
@@ -157,7 +158,7 @@ public class ProductTypesInitializer extends SpagoBIInitializer {
 			}
 		}
 
-		//update engines of product types
+		// update engines of product types
 		it = productTypesList.iterator();
 		while (it.hasNext()) {
 			SourceBean aProductTypeSB = (SourceBean) it.next();
@@ -251,8 +252,9 @@ public class ProductTypesInitializer extends SpagoBIInitializer {
 			SbiEngines anEngine = findEngine(aSession, (String) anEngineSB.getAttribute("label"));
 			SbiProductType aProductType = findProductType(aSession, (String) aProductTypeSB.getAttribute("label"));
 
-			SbiProductTypeEngine association = findProductEngineType(aSession,  (String) anEngineSB.getAttribute("label"), (String) aProductTypeSB.getAttribute("label"));
-			if(association==null) {
+			SbiProductTypeEngine association = findProductEngineType(aSession, (String) anEngineSB.getAttribute("label"),
+					(String) aProductTypeSB.getAttribute("label"));
+			if (association == null) {
 				association = new SbiProductTypeEngine();
 				association.setSbiProductType(aProductType);
 				association.setSbiEngines(anEngine);
