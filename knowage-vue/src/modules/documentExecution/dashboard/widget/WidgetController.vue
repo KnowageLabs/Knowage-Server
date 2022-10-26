@@ -15,8 +15,20 @@
             @pageChanged="reloadWidgetData"
             @sortingChanged="reloadWidgetData"
             @launchSelection="launchSelection"
+            @mouseover="toggleFocus"
+            @mouseleave="startUnfocusTimer"
         ></WidgetRenderer>
-        <WidgetButtonBar :widget="widget" :playSelectionButtonVisible="playSelectionButtonVisible" :selectionIsLocked="selectionIsLocked" :dashboardId="dashboardId" @edit-widget="toggleEditMode" @unlockSelection="unlockSelection" @launchSelection="launchSelection"></WidgetButtonBar>
+        <WidgetButtonBar
+            :widget="widget"
+            :playSelectionButtonVisible="playSelectionButtonVisible"
+            :selectionIsLocked="selectionIsLocked"
+            :dashboardId="dashboardId"
+            :inFocus="inFocus"
+            @edit-widget="toggleEditMode"
+            @unlockSelection="unlockSelection"
+            @launchSelection="launchSelection"
+            @keepFocus="keepFocus"
+        ></WidgetButtonBar>
     </grid-item>
 </template>
 
@@ -74,7 +86,9 @@ export default defineComponent({
                 itemsNumber: 15,
                 totalItems: 0
             },
-            selectionIsLocked: false
+            inFocus: false,
+            selectionIsLocked: false,
+            delayFocus: false
         }
     },
     async created() {
@@ -207,6 +221,27 @@ export default defineComponent({
                 loadAssociativeSelections(this.dashboards[this.dashboardId], this.datasets, this.activeSelections, this.$http)
             } else {
                 await this.reloadWidgetData(null)
+            }
+        },
+        startUnfocusTimer() {
+            if (this.delayFocus) {
+                setTimeout(() => {
+                    this.inFocus = false
+                }, 1000)
+            }
+        },
+        toggleFocus() {
+            this.inFocus = true
+            this.delayFocus = false
+        },
+        keepFocus(value) {
+            console.log('keepfocus', value)
+            if (value) {
+                this.inFocus = true
+                this.delayFocus = true
+            } else {
+                this.inFocus = false
+                this.delayFocus = false
             }
         }
     }

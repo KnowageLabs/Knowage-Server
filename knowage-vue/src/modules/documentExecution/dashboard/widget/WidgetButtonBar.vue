@@ -1,6 +1,6 @@
 <template>
     <!-- TODO - ENABLE IF NEEDED -->
-    <div v-if="selectionIsLocked || playSelectionButtonVisible" class="lockButtonContainer" style="width: 32px; height: 32px">
+    <div v-if="(selectionIsLocked || playSelectionButtonVisible) && inFocus" class="lockButtonContainer" @mouseover="$emit('keepFocus', true)" @mouseleave="$emit('keepFocus', false)">
         <i v-if="selectionIsLocked" class="fas fa-lock kn-cursor-pointer" @click="$emit('unlockSelection')" />
         <i v-if="playSelectionButtonVisible" class="fas fa-play kn-cursor-pointer" @click="$emit('launchSelection')" />
     </div>
@@ -29,7 +29,7 @@ import store from '../Dashboard.store'
 export default defineComponent({
     name: 'widget-button-bar',
     components: { SpeedDial },
-    props: { widget: { type: Object as PropType<IWidget>, required: true }, playSelectionButtonVisible: { type: Boolean, required: true }, selectionIsLocked: { type: Boolean, required: true }, dashboardId: { type: String, required: true } },
+    props: { widget: { type: Object as PropType<IWidget>, required: true }, playSelectionButtonVisible: { type: Boolean, required: true }, selectionIsLocked: { type: Boolean, required: true }, dashboardId: { type: String, required: true }, inFocus: { type: Boolean, required: true } },
     emits: ['editWidget', 'unlockSelection', 'launchSelection'],
     data() {
         return {
