@@ -31,7 +31,6 @@
         </Toolbar>
         <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
         <DocumentExecutionBreadcrumb v-if="breadcrumbs.length > 1" :breadcrumbs="breadcrumbs" @breadcrumbClicked="onBreadcrumbClick"></DocumentExecutionBreadcrumb>
-
         <div ref="document-execution-view" id="document-execution-view" class="p-d-flex p-flex-row myDivToPrint">
             <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
 
@@ -300,6 +299,9 @@ export default defineComponent({
 
         if (this.propMode !== 'document-execution' && !this.$route.path.includes('olap-designer') && this.$route.name !== 'document-execution' && this.$route.name !== 'document-execution-embed' && this.$route.name !== 'document-execution-workspace') return
 
+        if (this.$route.name === 'new-dashboard') {
+            this.newDashboardMode = true
+        }
         await this.loadUserConfig()
 
         this.isOlapDesignerMode()

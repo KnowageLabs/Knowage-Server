@@ -5,6 +5,12 @@ const routes = [
         component: () => import('@/modules/documentBrowser/DocumentBrowser.vue'),
         children: [
             {
+                path: 'new-cockpit',
+                name: 'new-cockpit',
+                component: () => import('@/modules/documentBrowser/DocumentBrowserCockpitContainer.vue'),
+                props: true
+            },
+            {
                 path: 'new-dashboard',
                 name: 'new-dashboard',
                 component: () => import('@/modules/documentBrowser/DocumentBrowserCockpitContainer.vue'),

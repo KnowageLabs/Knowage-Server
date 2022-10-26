@@ -154,8 +154,9 @@ export default defineComponent({
                     this.$router.push(`/document-browser/${routeDocumentType}/` + id)
                 } else {
                     this.selectedItem.item = { routerId: cryptoRandomString({ length: 16, type: 'base64' }) }
-                    this.selectedItem.item.showMode = 'createCockpit'
-                    this.$router.push(`/document-browser/new-dashboard`)
+                    this.selectedItem.item.showMode = payload.mode
+                    const link = payload.mode === 'createCockpit' ? '/document-browser/new-cockpit' : `/document-browser/new-dashboard?folderId=${payload.functionalityId}`
+                    this.$router.push(link)
                 }
             }
 
