@@ -1191,12 +1191,12 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		dataSet = dataSet instanceof VersionedDataSet ? ((VersionedDataSet) dataSet).getWrappedDataset() : dataSet;
 		if (dataSet instanceof AbstractJDBCDataset) {
 			IDataBase database = DataBaseFactory.getDataBase(dataSet.getDataSource());
-			isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported() && !dataSet.hasDataStoreTransformer();
+			isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported() && !dataSet.hasDataStoreTransformers();
 		} else if (dataSet instanceof FederatedDataSet) {
 			isNearRealtimeSupported = false;
 		} else if (dataSet instanceof QbeDataSet) {
 			IDataBase database = DataBaseFactory.getDataBase(dataSet.getDataSource());
-			isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported() && !dataSet.hasDataStoreTransformer();
+			isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported() && !dataSet.hasDataStoreTransformers();
 		} else if (dataSet instanceof FlatDataSet || dataSet.isPersisted() || dataSet instanceof PreparedDataSet
 				|| dataSet.getClass().equals(SolrDataSet.class)) {
 			isNearRealtimeSupported = true;

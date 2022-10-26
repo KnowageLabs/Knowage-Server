@@ -42,7 +42,7 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 public class HQLDataSet extends AbstractQbeDataSet {
 
 	/** Logger component. */
-	public static transient Logger logger = Logger.getLogger(HQLDataSet.class);
+	public static Logger logger = Logger.getLogger(HQLDataSet.class);
 
 	public HQLDataSet(HQLStatement statement) {
 		super(statement);
@@ -97,8 +97,8 @@ public class HQLDataSet extends AbstractQbeDataSet {
 				dataStore.getMetaData().setProperty("resultNumber", resultNumber);
 			}
 
-			if (hasDataStoreTransformer()) {
-				getDataStoreTransformer().transform(dataStore);
+			if (hasDataStoreTransformers()) {
+				executeDataStoreTransformers(dataStore);
 			}
 		} finally {
 			if (session != null && session.isOpen())

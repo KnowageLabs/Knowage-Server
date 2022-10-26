@@ -58,8 +58,7 @@ import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import gnu.trove.set.hash.TLongHashSet;
 import it.eng.knowage.encryption.EncryptionConfiguration;
 import it.eng.knowage.encryption.EncryptionPreferencesRegistry;
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
@@ -70,7 +69,8 @@ import it.eng.spagobi.utilities.NumberUtilities;
 import net.openhft.hashing.LongHashFunction;
 
 /**
- * @authors Angelo Bernabei (angelo.bernabei@eng.it) Andrea Gioia (andrea.gioia@eng.it)
+ * @author Angelo Bernabei (angelo.bernabei@eng.it)
+ * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class DataStore implements IDataStore {
 
@@ -79,18 +79,19 @@ public class DataStore implements IDataStore {
 	public static String DEFAULT_TABLE_NAME = "TemporaryTable";
 	public static String DEFAULT_SCHEMA_NAME = "KA";
 
-	protected IMetaData metaData;
+	protected IMetaData metaData = new MetaData();
 
 	protected List<IRecord> records = new ArrayList<>();
 
 	Date cacheDate = null;
 
+	private IDataSet dataSet;
+
 	public DataStore() {
-		this.metaData = new MetaData();
 	}
 
 	public DataStore(IMetaData dataSetMetadata) {
-		super();
+		this();
 		this.metaData = dataSetMetadata;
 		this.metaData.setProperty(IMetaData.RESULT_NUMBER_PROPERTY, 0);
 		adjustMetadata(dataSetMetadata);
@@ -478,28 +479,6 @@ public class DataStore implements IDataStore {
 	}
 
 	@Override
-	public SourceBean toSourceBean() throws SourceBeanException {
-		SourceBean sb1 = new SourceBean("ROWS");
-		Iterator<IRecord> it = iterator();
-		while (it.hasNext()) {
-			SourceBean sb2 = new SourceBean("ROW");
-			IRecord record = it.next();
-			for (int i = 0; i < getMetaData().getFieldCount(); i++) {
-				IField field = record.getFieldAt(i);
-				IFieldMetaData fieldMeta = getMetaData().getFieldMeta(i);
-				String name = fieldMeta.getName();
-				Object value = field.getValue();
-				Class type = fieldMeta.getType();
-				if (value == null)
-					value = new String("");
-				sb2.setAttribute(name, value);
-			}
-			sb1.setAttribute(sb2);
-		}
-		return sb1;
-	}
-
-	@Override
 	public String toXml() {
 		String xml;
 
@@ -812,7 +791,7 @@ public class DataStore implements IDataStore {
 
 	private boolean needDecryption = false;
 	private List<IFieldMetaData> decryptableField = new ArrayList<>();
-	private Map<Integer, IFieldMetaData> decryptableFieldByIndex = new LinkedHashMap();
+	private Map<Integer, IFieldMetaData> decryptableFieldByIndex = new LinkedHashMap<>();
 	private StandardPBEStringEncryptor encryptor;
 
 	private void setUpDecryption() {
@@ -875,4 +854,24 @@ public class DataStore implements IDataStore {
 			}
 		}
 	}
+
+	private String mapFieldKey(IFieldMetaData field) {
+		return field.getName();
+	}
+
+	private Map<String, IFieldMetaData> mapFieldByColumnName(IMetaData metaData) {
+		return metaData.getFieldsMeta()
+			.stream()
+			.collect(Collectors.toMap(e -> mapFieldKey(e), e -> e));
+	}
+
+//	@Override
+//	public IDataSet getDataSet() {
+//		return dataSet;
+//	}
+//
+//	@Override
+//	public void setDataSet(IDataSet dataSet) {
+//		this.dataSet = dataSet;
+//	}
 }

@@ -373,16 +373,6 @@ public class VersionedDataSet implements IDataSet {
 	}
 
 	@Override
-	public boolean hasDataStoreTransformer() {
-		return wrappedDataset.hasDataStoreTransformer();
-	}
-
-	@Override
-	public void removeDataStoreTransformer() {
-		wrappedDataset.removeDataStoreTransformer();
-	}
-
-	@Override
 	public void setAbortOnOverflow(boolean abortOnOverflow) {
 		wrappedDataset.setAbortOnOverflow(abortOnOverflow);
 	}
@@ -390,16 +380,6 @@ public class VersionedDataSet implements IDataSet {
 	@Override
 	public void addBinding(String bindingName, Object bindingValue) {
 		wrappedDataset.addBinding(bindingName, bindingValue);
-	}
-
-	@Override
-	public void setDataStoreTransformer(IDataStoreTransformer transformer) {
-		wrappedDataset.setDataStoreTransformer(transformer);
-	}
-
-	@Override
-	public IDataStoreTransformer getDataStoreTransformer() {
-		return wrappedDataset.getDataStoreTransformer();
 	}
 
 	@Override
@@ -764,6 +744,31 @@ public class VersionedDataSet implements IDataSet {
 	@Override
 	public void setTags(Set tags) {
 		wrappedDataset.setTags(tags);
+	}
+
+	@Override
+	public boolean hasDataStoreTransformers() {
+		return wrappedDataset.hasDataStoreTransformers();
+	}
+
+	@Override
+	public void removeDataStoreTransformers() {
+		wrappedDataset.removeDataStoreTransformers();
+	}
+
+	@Override
+	public void addDataStoreTransformer(IDataStoreTransformer transformer) {
+		wrappedDataset.addDataStoreTransformer(transformer);
+	}
+
+	@Override
+	public List<IDataStoreTransformer> getDataStoreTransformers() {
+		return wrappedDataset.getDataStoreTransformers();
+	}
+
+	@Override
+	public void executeDataStoreTransformers(IDataStore dataStore) {
+		wrappedDataset.executeDataStoreTransformers(dataStore);
 	}
 
 }
