@@ -92,14 +92,14 @@ export default defineComponent({
             this.widgetModel.settings.pagination.enabled = this.paginationEnabled
             this.widgetModel.settings.pagination.properties.itemsNumber = +this.itemsNumber
             emitter.emit('paginationChanged', this.widgetModel.settings.pagination)
-            emitter.emit('refreshTable', this.widgetModel.id)
+            emitter.emit('refreshWidgetWithData', this.widgetModel.id)
         },
         sortingChanged() {
             if (!this.widgetModel.settings) return
             this.widgetModel.settings.sortingColumn = this.sortingColumn
             this.widgetModel.settings.sortingOrder = this.sortingOrder
             emitter.emit('sortingChanged', { sortingColumn: this.widgetModel.settings.sortingColumn, sortingOrder: this.widgetModel.settings.sortingOrder })
-            emitter.emit('refreshTable', this.widgetModel.id)
+            emitter.emit('refreshWidgetWithData', this.widgetModel.id)
         },
         updateSortingColumn(column: IWidgetColumn) {
             if (column.columnName === this.sortingColumn) {

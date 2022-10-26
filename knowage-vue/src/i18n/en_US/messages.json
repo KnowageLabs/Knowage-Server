@@ -362,6 +362,9 @@
         },
         "saveCockpit": "Save Cockpit",
         "saveCockpitHint": "Please enter a valid name",
+        "tableWidget": {
+            "launchSelection": "LAUNCH SELECTION"
+        },
         "widgetEditor": {
             "addWidget": "Add widget",
             "aggregation": "Aggregation",

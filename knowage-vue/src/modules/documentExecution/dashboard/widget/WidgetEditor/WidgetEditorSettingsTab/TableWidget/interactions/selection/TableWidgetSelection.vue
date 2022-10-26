@@ -62,6 +62,7 @@ export default defineComponent({
         },
         selectionChanged() {
             emitter.emit('selectionChanged', this.selectionModel)
+            emitter.emit('refreshTable', this.widgetModel.id)
         },
         onStyleToolbarChange(model: IWidgetStyleToolbarModel) {
             if (!this.selectionModel) return

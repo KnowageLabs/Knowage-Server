@@ -1,8 +1,8 @@
 <template>
     <div class="custom-cell-container p-d-flex kn-height-full" :style="getCellStyle()">
-        <!-- <div v-if="isColumnOfType('date')" class="custom-cell-label">{{ dateFormatter(params.value) }}</div> -->
-        <!-- <div v-else-if="isColumnOfType('timestamp')" class="custom-cell-label">{{ dateTimeFormatter(params.value) }}</div> -->
-        <!-- <div v-else class="custom-cell-label">{{ params.value }} {{ params.data.span > 1 ? params.data.span : '' }}</div> -->
+        <div v-if="isColumnOfType('date')" class="custom-cell-label">{{ dateFormatter(params.value) }}</div>
+        <div v-else-if="isColumnOfType('timestamp')" class="custom-cell-label">{{ dateTimeFormatter(params.value) }}</div>
+        <div v-else class="custom-cell-label">{{ params.value }} {{ params.data.span > 1 ? params.data.span : '' }}</div>
         <span>{{ params.selectedColumn }}</span>
     </div>
 </template>
@@ -32,13 +32,6 @@ export default defineComponent({
     },
     created() {
         this.getCellStyle()
-        console.log('%c Table DataToShow ---------------------', 'background-color: #2C2F33; color: green')
-        let selection = this.params.propWidget.settings.interactions.selection
-        let celectedCellValues = this.params.multiSelectedCells
-        let selectedColumn = this.params.selectedColumn
-        console.log(selection)
-        console.log(celectedCellValues)
-        console.log(selectedColumn)
     },
     methods: {
         getColumnStyle() {
@@ -80,7 +73,7 @@ export default defineComponent({
         getMultiselectStyle() {
             let selection = this.params.propWidget.settings.interactions.selection
             let celectedCellValues = this.params.multiSelectedCells
-            let selectedColumn = this.params.selectedColumn
+            let selectedColumn = this.params.selectedColumnArray[0]
 
             if (selection.enabled && selection.multiselection.enabled) {
                 var multiselectStyle = Object.entries(selection.multiselection.properties)

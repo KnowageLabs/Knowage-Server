@@ -61,17 +61,18 @@ export default defineComponent({
         this.getWidgetData()
     },
     unmounted() {
-        emitter.off('getWidgetData', this.getWidgetData)
-        emitter.off('datasetChanged', this.clearWidgetData)
-        emitter.off('refreshTable', this.getWidgetData)
+        this.unsetEventListeners()
     },
     methods: {
         ...mapActions(store, ['getDashboard', 'getSelections']),
 
         setEventListeners() {
-            emitter.on('getWidgetData', this.getWidgetData)
             emitter.on('clearWidgetData', this.clearWidgetData)
-            emitter.on('refreshTable', this.getWidgetData)
+            emitter.on('refreshWidgetWithData', this.getWidgetData)
+        },
+        unsetEventListeners() {
+            emitter.off('clearWidgetData', this.clearWidgetData)
+            emitter.off('refreshWidgetWithData', this.getWidgetData)
         },
         async getWidgetData() {
             this.loading = true

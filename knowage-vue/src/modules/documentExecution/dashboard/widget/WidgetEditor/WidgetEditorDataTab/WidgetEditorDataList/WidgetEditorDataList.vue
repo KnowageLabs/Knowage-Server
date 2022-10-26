@@ -129,7 +129,7 @@ export default defineComponent({
             for (let i = 0; i < this.model.columns.length; i++) {
                 emitter.emit('columnRemoved', this.model.columns[i])
             }
-            emitter.emit('refreshTable', this.widgetModel.id)
+            emitter.emit('refreshWidgetWithData', this.widgetModel.id)
             this.model.columns = []
         },
         loadDatasetColumns() {

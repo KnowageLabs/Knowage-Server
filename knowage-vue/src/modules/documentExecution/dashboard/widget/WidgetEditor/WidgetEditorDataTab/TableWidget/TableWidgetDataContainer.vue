@@ -48,19 +48,19 @@ export default defineComponent({
         onColumnsReorder(columns: IWidgetColumn[]) {
             this.widgetModel.columns = columns
             emitter.emit('columnsReordered', this.widgetModel.columns)
-            emitter.emit('refreshTable', this.widgetModel.id)
+            emitter.emit('refreshWidgetWithData', this.widgetModel.id)
         },
         onColumnAdded(column: IWidgetColumn) {
             this.widgetModel.columns.push(column)
             emitter.emit('columnAdded', column)
-            emitter.emit('refreshTable', this.widgetModel.id)
+            emitter.emit('refreshWidgetWithData', this.widgetModel.id)
         },
         onColumnItemUpdate(column: IWidgetColumn) {
             const index = this.widgetModel.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === column.id)
             if (index !== -1) {
                 this.widgetModel.columns[index] = { ...column }
                 emitter.emit('collumnUpdated', { column: this.widgetModel.columns[index], columnIndex: index })
-                emitter.emit('refreshTable', this.widgetModel.id)
+                emitter.emit('refreshWidgetWithData', this.widgetModel.id)
                 if (this.widgetModel.columns[index].id === this.selectedColumn?.id) this.selectedColumn = { ...this.widgetModel.columns[index] }
             }
         },
@@ -74,7 +74,7 @@ export default defineComponent({
                 if (column.id === this.selectedColumn?.id) this.selectedColumn = null
                 removeColumnFromModel(this.widgetModel, column)
                 emitter.emit('columnRemoved', column)
-                emitter.emit('refreshTable', this.widgetModel.id)
+                emitter.emit('refreshWidgetWithData', this.widgetModel.id)
             }
         }
     }

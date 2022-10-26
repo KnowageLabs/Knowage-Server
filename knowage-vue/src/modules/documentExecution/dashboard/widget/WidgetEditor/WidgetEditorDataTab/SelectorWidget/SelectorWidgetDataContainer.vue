@@ -64,14 +64,14 @@ export default defineComponent({
             this.widgetModel.columns = [column]
             emitter.emit('columnAdded', column)
             emitter.emit('refreshSelector', this.widgetModel.id)
-            emitter.emit('getWidgetData', this.widgetModel.id)
+            emitter.emit('refreshWidgetWithData', this.widgetModel.id)
         },
         onColumnItemUpdate(column: IWidgetColumn) {
             this.widgetModel.columns[0] = { ...column }
             emitter.emit('collumnUpdated', { column: this.widgetModel.columns[0], columnIndex: 0 })
             emitter.emit('refreshSelector', this.widgetModel.id)
             if (this.widgetModel.columns[0].id === this.selectedColumn?.id) this.selectedColumn = { ...this.widgetModel.columns[0] }
-            emitter.emit('getWidgetData', this.widgetModel.id)
+            emitter.emit('refreshWidgetWithData', this.widgetModel.id)
         },
         setSelectedColumn(column: IWidgetColumn) {
             this.selectedColumn = { ...column }
@@ -82,11 +82,11 @@ export default defineComponent({
             emitter.emit('columnRemoved', column)
             emitter.emit('refreshSelector', this.widgetModel.id)
             if (this.widgetModel.columns.length == 0) emitter.emit('clearWidgetData', this.widgetModel.id)
-            else emitter.emit('getWidgetData', this.widgetModel.id)
+            else emitter.emit('refreshWidgetWithData', this.widgetModel.id)
         },
         sortingChanged() {
             this.widgetModel.settings.sortingOrder = this.sortingOrder
-            if (this.widgetModel.columns.length > 0) emitter.emit('getWidgetData', this.widgetModel.id)
+            if (this.widgetModel.columns.length > 0) emitter.emit('refreshWidgetWithData', this.widgetModel.id)
             emitter.emit('refreshSelector', this.widgetModel.id)
         }
     }
