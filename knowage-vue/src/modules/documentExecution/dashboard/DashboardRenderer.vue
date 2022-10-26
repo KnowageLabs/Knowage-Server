@@ -10,7 +10,7 @@
                 :is-draggable="true"
                 :is-resizable="true"
                 :vertical-compact="false"
-                :use-css-transforms="true"
+                :use-css-transforms="false"
                 :margin="[2, 2]"
                 @breakpoint-changed="breakpointChangedEvent"
             >

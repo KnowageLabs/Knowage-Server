@@ -79,6 +79,7 @@ export default defineComponent({
 <style scoped>
 ::-webkit-scrollbar {
     width: 5px;
+    height: 5px;
 }
 ::-webkit-scrollbar-track {
     background: #f1f1f1;
