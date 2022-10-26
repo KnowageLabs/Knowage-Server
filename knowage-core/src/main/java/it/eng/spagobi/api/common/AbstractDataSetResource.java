@@ -56,6 +56,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import it.eng.knowage.encryption.DecryptionDataStoreTransformer;
 import it.eng.knowage.functionscatalog.utils.CatalogFunctionException;
 import it.eng.knowage.functionscatalog.utils.CatalogFunctionRuntimeConfigDTO;
 import it.eng.knowage.functionscatalog.utils.CatalogFunctionTransformer;
@@ -291,6 +292,9 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				IDataStoreTransformer functionTransformer = new CatalogFunctionTransformer(getUserProfile(), catalogFuncId, catalogFunctionConfig);
 				functionTransformer.transform(dataStore);
 			}
+
+			DecryptionDataStoreTransformer ddt = new DecryptionDataStoreTransformer(dataSet);
+			ddt.transform(dataStore);
 
 			IDataWriter dataWriter = getDataStoreWriter();
 
