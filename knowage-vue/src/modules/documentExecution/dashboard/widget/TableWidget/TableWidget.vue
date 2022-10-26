@@ -1,9 +1,8 @@
 <template>
     <div class="kn-table-widget-container p-d-flex p-d-row kn-flex">
-        {{ selectedColumn }}
         <div v-if="selectedColumn" class="multiselect-overlay">
-            <i class="fas fa-play kn-cursor-pointer" @click="applyMultiSelection" />
-            values:{{ multiSelectedCells }}
+            <i class="fas fa-bolt kn-cursor-pointer" @click="applyMultiSelection" />
+            {{ $t('dashboard.tableWidget.launchSelection') }}
         </div>
         <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine kn-flex" :gridOptions="gridOptions" :context="context"></ag-grid-vue>
         <PaginatorRenderer v-if="showPaginator" :propWidgetPagination="propWidget.settings.pagination" @pageChanged="$emit('pageChanged')" />
@@ -11,10 +10,13 @@
 </template>
 
 <script lang="ts">
+import { emitter } from '../../DashboardHelpers'
+import { mapActions } from 'pinia'
 import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
 import { IDataset, ISelection, IWidget } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
 import { getColumnConditionalStyles, isConditionMet } from './TableWidgetHelper'
+import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
 import mainStore from '../../../../../App.store'
 import dashboardStore from '../../Dashboard.store'
 import descriptor from '../../dataset/DatasetEditorDescriptor.json'
@@ -26,10 +28,7 @@ import TooltipRenderer from './TooltipRenderer.vue'
 import SummaryRowRenderer from './SummaryRowRenderer.vue'
 import HeaderGroupRenderer from './HeaderGroupRenderer.vue'
 import PaginatorRenderer from './PaginatorRenderer.vue'
-import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
-import { mapActions } from 'pinia'
 import store from '../../Dashboard.store'
-import { emitter } from '../../DashboardHelpers'
 
 export default defineComponent({
     name: 'table-widget',
@@ -46,7 +45,7 @@ export default defineComponent({
     watch: {
         propWidget: {
             handler() {
-                if (!this.editorMode) this.createDatatableColumns()
+                if (!this.editorMode) this.refreshGridConfiguration(true)
             },
             deep: true
         },
@@ -55,7 +54,7 @@ export default defineComponent({
                 // console.log('%c Table DataToShow ---------------------', 'background-color: #2C2F33; color: white')
                 // console.log(this.dataToShow)
                 this.tableData = this.dataToShow
-                this.createDatatableColumns()
+                this.refreshGridConfiguration(true)
                 this.loadActiveSelectionValue()
             },
             deep: true
@@ -79,6 +78,7 @@ export default defineComponent({
             activeSelections: [] as ISelection[],
             multiSelectedCells: [] as any,
             selectedColumn: false as any,
+            selectedColumnArray: [] as any,
             context: null as any
         }
     },
@@ -105,13 +105,11 @@ export default defineComponent({
     methods: {
         ...mapActions(store, ['setSelections']),
         setEventListeners() {
-            // emitter.on('paginationChanged', (pagination) => console.log('WidgetEditorPreview - PAGINATION CHANGED!', pagination)) //  { enabled: this.paginationEnabled, itemsNumber: +this.itemsNumber }
-            // emitter.on('sortingChanged', this.sortColumn)
-            // emitter.on('refreshTable', this.createDatatableColumns)
+            emitter.on('refreshTable', this.refreshGridConfigurationWithoutData)
             emitter.on('selectionsDeleted', this.onSelectionsDeleted)
         },
         removeEventListeners() {
-            // emitter.off('refreshTable', this.createDatatableColumns)
+            emitter.off('refreshTable', this.refreshGridConfigurationWithoutData)
             emitter.off('selectionsDeleted', this.onSelectionsDeleted)
         },
         loadActiveSelections() {
@@ -148,6 +146,10 @@ export default defineComponent({
                 suppressMovableColumns: true,
                 suppressDragLeaveHidesColumns: true,
                 suppressRowGroupHidesColumns: true,
+                suppressRowHoverHighlight: true,
+                suppressRowClickSelection: true,
+                suppressCellFocus: true,
+                suppressMultiRangeSelection: true,
                 rowHeight: 25,
 
                 // EVENTS
@@ -162,24 +164,29 @@ export default defineComponent({
             this.gridApi = params.api
             this.columnApi = params.columnApi
 
-            this.createDatatableColumns()
+            this.refreshGridConfiguration(true)
         },
-        async createDatatableColumns() {
-            const datatableColumns = this.getTableColumns(this.tableData?.metaData?.fields)
+        async refreshGridConfiguration(updateData?: boolean) {
+            const gridColumns = this.createGridColumns(this.tableData?.metaData?.fields)
             this.toggleHeaders(this.propWidget.settings.configuration.headers)
-            this.gridApi.setColumnDefs(datatableColumns)
-            this.updateData(this.tableData?.rows)
+            this.gridApi.setColumnDefs(gridColumns)
+
+            if (updateData) this.updateData(this.tableData?.rows)
         },
-        sortColumn(sorting) {
-            this.columnApi.applyColumnState({
-                state: [{ colId: sorting.sortingColumn, sort: sorting.sortingOrder.toLowerCase() }],
-                defaultState: { sort: null }
-            })
+        refreshGridConfigurationWithoutData() {
+            if (this.editorMode) {
+                console.log('%c Refresh - No Data ---------------------', 'background-color: #2C2F33; color: white')
+
+                const gridColumns = this.createGridColumns(this.tableData?.metaData?.fields)
+                this.toggleHeaders(this.propWidget.settings.configuration.headers)
+                this.gridApi.setColumnDefs(gridColumns)
+                this.gridApi.redrawRows()
+            }
         },
         toggleHeaders(headersConfiguration) {
             headersConfiguration.enabled ? this.gridApi.setHeaderHeight(this.propWidget.settings.style.headers.height) : this.gridApi.setHeaderHeight(0)
         },
-        getTableColumns(responseFields) {
+        createGridColumns(responseFields) {
             var columns = [] as any
             var columnGroups = {}
             this.columnsNameArray = []
@@ -218,7 +225,7 @@ export default defineComponent({
                             headerComponent: HeaderRenderer,
                             headerComponentParams: { colId: this.propWidget.columns[datasetColumn].id, propWidget: this.propWidget },
                             cellRenderer: CellRenderer,
-                            cellRendererParams: { colId: this.propWidget.columns[datasetColumn].id, propWidget: this.propWidget, multiSelectedCells: this.multiSelectedCells, selectedColumn: this.selectedColumn }
+                            cellRendererParams: { colId: this.propWidget.columns[datasetColumn].id, propWidget: this.propWidget, multiSelectedCells: this.multiSelectedCells, selectedColumnArray: this.selectedColumnArray }
                         } as any
 
                         if (tempCol.measure === 'MEASURE') tempCol.aggregationSelected = this.propWidget.columns[datasetColumn].aggregation
@@ -439,11 +446,12 @@ export default defineComponent({
                     }
                 }
             }
-            var params = { force: true, suppressFlash: false }
-            this.gridApi.refreshCells(params)
-            // this.gridApi.redrawRows()
 
-            // this.createDatatableColumns()
+            this.selectedColumnArray.pop()
+            this.selectedColumnArray.push(node.colDef.field)
+
+            var params = { force: true }
+            this.gridApi.refreshCells(params)
         },
         applyMultiSelection() {
             const modalSelection = this.propWidget.settings.interactions.selection
@@ -461,6 +469,8 @@ export default defineComponent({
                 this.updateActiveSelectionsWithMultivalueSelection(tempSelection)
                 this.$emit('launchSelection')
             }
+
+            this.multiSelectedCells.length = 0
         },
 
         updateActiveSelectionsWithMultivalueSelection(tempSelection: ISelection) {
@@ -509,6 +519,10 @@ export default defineComponent({
     border-bottom: 1px solid lightgrey !important;
 }
 .multiselect-overlay {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
     font-size: 0.8rem;
     background-color: #f1f5f9;
     min-height: 25px;
@@ -518,6 +532,5 @@ export default defineComponent({
     text-align: center;
     width: 100%;
     z-index: 9999;
-    opacity: 0.7;
 }
 </style>
