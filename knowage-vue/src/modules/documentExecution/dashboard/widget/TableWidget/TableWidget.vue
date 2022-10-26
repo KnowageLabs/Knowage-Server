@@ -169,7 +169,7 @@ export default defineComponent({
         async refreshGridConfiguration(updateData?: boolean) {
             const gridColumns = this.createGridColumns(this.tableData?.metaData?.fields)
             this.toggleHeaders(this.propWidget.settings.configuration.headers)
-            this.gridApi.setColumnDefs(gridColumns)
+            this.gridApi?.setColumnDefs(gridColumns)
 
             if (updateData) this.updateData(this.tableData?.rows)
         },
@@ -179,12 +179,12 @@ export default defineComponent({
 
                 const gridColumns = this.createGridColumns(this.tableData?.metaData?.fields)
                 this.toggleHeaders(this.propWidget.settings.configuration.headers)
-                this.gridApi.setColumnDefs(gridColumns)
-                this.gridApi.redrawRows()
+                this.gridApi?.setColumnDefs(gridColumns)
+                this.gridApi?.redrawRows()
             }
         },
         toggleHeaders(headersConfiguration) {
-            headersConfiguration.enabled ? this.gridApi.setHeaderHeight(this.propWidget.settings.style.headers.height) : this.gridApi.setHeaderHeight(0)
+            headersConfiguration.enabled ? this.gridApi?.setHeaderHeight(this.propWidget.settings.style.headers.height) : this.gridApi?.setHeaderHeight(0)
         },
         createGridColumns(responseFields) {
             var columns = [] as any
@@ -314,7 +314,7 @@ export default defineComponent({
                         // CUSTOM MESSAGE CONFIGURATION  -----------------------------------------------------------------
                         var customMessageConfig = this.propWidget.settings.configuration.customMessages
                         if (customMessageConfig) {
-                            if (customMessageConfig.hideNoRowsMessage) this.gridApi.hideOverlay()
+                            if (customMessageConfig.hideNoRowsMessage) this.gridApi?.hideOverlay()
                             if (customMessageConfig.noRowsMessage) this.overlayNoRowsTemplateTest = customMessageConfig.noRowsMessage
                         }
 
@@ -401,11 +401,11 @@ export default defineComponent({
         updateData(data) {
             if (this.propWidget.settings.configuration.summaryRows.enabled) {
                 var rowsNumber = this.propWidget.settings.configuration.summaryRows.list.length
-                this.gridApi.setRowData(data.slice(0, data.length - rowsNumber))
-                this.gridApi.setPinnedBottomRowData(data.slice(-rowsNumber))
+                this.gridApi?.setRowData(data.slice(0, data.length - rowsNumber))
+                this.gridApi?.setPinnedBottomRowData(data.slice(-rowsNumber))
             } else {
-                this.gridApi.setRowData(data)
-                this.gridApi.setPinnedBottomRowData()
+                this.gridApi?.setRowData(data)
+                this.gridApi?.setPinnedBottomRowData()
             }
         },
         onCellClicked(node) {
@@ -451,7 +451,7 @@ export default defineComponent({
             this.selectedColumnArray.push(node.colDef.field)
 
             var params = { force: true }
-            this.gridApi.refreshCells(params)
+            this.gridApi?.refreshCells(params)
         },
         applyMultiSelection() {
             const modalSelection = this.propWidget.settings.interactions.selection
