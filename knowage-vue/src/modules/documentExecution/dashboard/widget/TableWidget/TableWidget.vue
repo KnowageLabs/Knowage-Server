@@ -1,6 +1,5 @@
 <template>
     <div class="kn-table-widget-container p-d-flex p-d-row kn-flex">
-        {{ multiSelectedCells }}
         {{ selectedColumn }}
         <div v-if="selectedColumn" class="multiselect-overlay">
             <i class="fas fa-play kn-cursor-pointer" @click="applyMultiSelection" />
@@ -79,7 +78,6 @@ export default defineComponent({
             showPaginator: false,
             activeSelections: [] as ISelection[],
             multiSelectedCells: [] as any,
-            selectedRows: [] as any,
             selectedColumn: false as any,
             context: null as any
         }
@@ -220,7 +218,7 @@ export default defineComponent({
                             headerComponent: HeaderRenderer,
                             headerComponentParams: { colId: this.propWidget.columns[datasetColumn].id, propWidget: this.propWidget },
                             cellRenderer: CellRenderer,
-                            cellRendererParams: { colId: this.propWidget.columns[datasetColumn].id, propWidget: this.propWidget }
+                            cellRendererParams: { colId: this.propWidget.columns[datasetColumn].id, propWidget: this.propWidget, multiSelectedCells: this.multiSelectedCells, selectedColumn: this.selectedColumn }
                         } as any
 
                         if (tempCol.measure === 'MEASURE') tempCol.aggregationSelected = this.propWidget.columns[datasetColumn].aggregation
@@ -245,7 +243,7 @@ export default defineComponent({
                                 } else return 1
                             }
                             tempCol.cellClassRules = {
-                                'cell-span': function(params) {
+                                'cell-span': function (params) {
                                     return tempRows[params.rowIndex].span > 1
                                 }
                             }
@@ -404,6 +402,7 @@ export default defineComponent({
             }
         },
         onCellClicked(node) {
+            console.log(node)
             if (node.colDef.measure == 'MEASURE' || node.colDef.pinned || node.value === '' || node.value == undefined) return
 
             //SELECTION LOGIC -------------------------------------------------------------------
@@ -440,6 +439,11 @@ export default defineComponent({
                     }
                 }
             }
+            var params = { force: true, suppressFlash: false }
+            this.gridApi.refreshCells(params)
+            // this.gridApi.redrawRows()
+
+            // this.createDatatableColumns()
         },
         applyMultiSelection() {
             const modalSelection = this.propWidget.settings.interactions.selection
