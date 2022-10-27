@@ -79,8 +79,8 @@ export default defineComponent({
                 var multiselectStyle = Object.entries(selection.multiselection.properties)
                     .map(([k, v]) => `${k}:${v}`)
                     .join(';')
-                // if(selectedColumn == this.params.colDef.field)
-                if (selection.modalColumn) {
+                if (selection.modalColumn && selection.modalColumn == this.params.colDef.colId && celectedCellValues.includes(this.params.value)) {
+                    return multiselectStyle
                 } else if (!selection.modalColumn && selectedColumn == this.params.colDef.field && celectedCellValues.includes(this.params.value)) {
                     return multiselectStyle
                 }
