@@ -1,7 +1,7 @@
 <template>
     <div v-show="widgetModel">
         <Accordion class="selectorAccordion" v-model:activeIndex="activeIndex">
-            <AccordionTab v-for="(accordion, index) in settings" :key="index">
+            <AccordionTab v-for="(accordion, index) in settings" :key="index" :disabled="accordionIsDisabled(accordion.type)">
                 <template #header>
                     <label class="kn-material-input-label">{{ $t(accordion.title) }}</label>
                 </template>
@@ -68,11 +68,7 @@ export default defineComponent({
         drivers: { type: Array },
         variables: { type: Array as PropType<IVariable[]> }
     },
-    watch: {
-        settings() {
-            this.activeIndex = -1
-        }
-    },
+
     data() {
         return {
             descriptor,
@@ -80,8 +76,22 @@ export default defineComponent({
             activeIndex: -1
         }
     },
+    computed: {
+        selectionViewMode(): string {
+            return this.widgetModel.settings?.configuration?.type ?? ''
+        }
+    },
+    watch: {
+        settings() {
+            this.activeIndex = -1
+        }
+    },
     created() {},
-    methods: {}
+    methods: {
+        accordionIsDisabled(accordionType: string) {
+            return (accordionType === 'RowsStyle' && this.selectionViewMode === 'chips') || (accordionType === 'ChipsStyle' && this.selectionViewMode === 'list')
+        }
+    }
 })
 </script>
 
