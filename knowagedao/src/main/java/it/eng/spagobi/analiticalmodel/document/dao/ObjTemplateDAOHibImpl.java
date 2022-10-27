@@ -604,9 +604,9 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 				templates.add(toObjTemplate(it.next()));
 			}
 
-			String hqlUpdate = "update SbiObjTemplates sot set sot.active = true where sot.creationDate = '" + templates.get(0).getCreationDate()
-					+ "'  and sot.sbiObject.biobjId=?";
+			String hqlUpdate = "update SbiObjTemplates sot set sot.active = true where sot.creationDate = :templateDate " + "  and sot.sbiObject.biobjId=?";
 			query = aSession.createQuery(hqlUpdate);
+			query.setParameter("templateDate", templates.get(0).getCreationDate());
 			query.setInteger(0, biObjId);
 			query.executeUpdate();
 			tx.commit();

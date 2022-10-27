@@ -57,13 +57,11 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	/**
 	 * Load by id.
 	 *
-	 * @param id
-	 *            the id
+	 * @param id the id
 	 *
 	 * @return the sbi obj par
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO#loadById(java.lang.Integer)
 	 */
@@ -155,13 +153,11 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	/**
 	 * Load for detail by obj par id.
 	 *
-	 * @param objParId
-	 *            the obj par id
+	 * @param objParId the obj par id
 	 *
 	 * @return the BI object parameter
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO#loadForDetailByObjParId(java.lang.Integer)
 	 */
@@ -196,11 +192,9 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	/**
 	 * Modify bi object parameter.
 	 *
-	 * @param aBIObjectParameter
-	 *            the a bi object parameter
+	 * @param aBIObjectParameter the a bi object parameter
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO#modifyBIObjectParameter(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter)
 	 */
@@ -242,10 +236,14 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 					String hqlUpdateShiftRight = "update SbiObjPar s set s.priority = (s.priority + 1) where s.priority >= " + newPriority
 							+ " and s.priority < " + oldPriority + "and s.sbiObject.biobjId = " + aSbiObject.getBiobjId();
 					query = aSession.createQuery(hqlUpdateShiftRight);
+					query.setParameter("newPriority", newPriority);
+					query.setParameter("biobjId", aSbiObject.getBiobjId());
 				} else {
 					String hqlUpdateShiftLeft = "update SbiObjPar s set s.priority = (s.priority - 1) where s.priority > " + oldPriority + " and s.priority <= "
-							+ newPriority + "and s.sbiObject.biobjId = " + aSbiObject.getBiobjId();
+							+ " :newPriority and s.sbiObject.biobjId = :biobjId";
 					query = aSession.createQuery(hqlUpdateShiftLeft);
+					query.setParameter("newPriority", newPriority);
+					query.setParameter("biobjId", aSbiObject.getBiobjId());
 				}
 				query.executeUpdate();
 			}
@@ -272,11 +270,9 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	/**
 	 * Insert bi object parameter.
 	 *
-	 * @param aBIObjectParameter
-	 *            the a bi object parameter
+	 * @param aBIObjectParameter the a bi object parameter
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO#insertBIObjectParameter(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter)
 	 */
@@ -304,9 +300,11 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			hibObjectParameterNew.setColSpan(aBIObjectParameter.getColSpan());
 			hibObjectParameterNew.setThickPerc(aBIObjectParameter.getThickPerc());
 
-			String hqlUpdateShiftRight = "update SbiObjPar s set s.priority = (s.priority + 1) where s.priority >= " + aBIObjectParameter.getPriority()
-					+ " and s.sbiObject.biobjId = " + aSbiObject.getBiobjId();
+			String hqlUpdateShiftRight = "update SbiObjPar s set s.priority = (s.priority + 1) where s.priority >= :aBIObjectParameterPriority"
+					+ " and s.sbiObject.biobjId = :biobjId";
 			Query query = aSession.createQuery(hqlUpdateShiftRight);
+			query.setParameter("aBIObjectParameterPriority", aBIObjectParameter.getPriority());
+			query.setParameter("biobjId", aSbiObject.getBiobjId());
 			query.executeUpdate();
 
 			hibObjectParameterNew.setPriority(aBIObjectParameter.getPriority());
@@ -336,11 +334,9 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	/**
 	 * Erase bi object parameter.
 	 *
-	 * @param aBIObjectParameter
-	 *            the a bi object parameter
+	 * @param aBIObjectParameter the a bi object parameter
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO#eraseBIObjectParameter(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter)
 	 */
@@ -480,22 +476,22 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 
 		Integer biobjId = hibObjPar.getSbiObject().getBiobjId();
 
-		String hqlUpdateShiftRight = "update SbiObjPar s set s.priority = (s.priority - 1) where s.priority >= " + hibObjPar.getPriority()
-				+ " and s.sbiObject.biobjId = " + biobjId;
+		String hqlUpdateShiftRight = "update SbiObjPar s set s.priority = (s.priority - 1) where s.priority >= :hibObjParPriority"
+				+ " and s.sbiObject.biobjId = :biobjId";
 		Query query = aSession.createQuery(hqlUpdateShiftRight);
+		query.setParameter("hibObjParPriority", hibObjPar.getPriority());
+		query.setParameter("biobjId", biobjId);
 		query.executeUpdate();
 	}
 
 	/**
 	 * Gets the document labels list using parameter.
 	 *
-	 * @param parId
-	 *            the par id
+	 * @param parId the par id
 	 *
 	 * @return the document labels list using parameter
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO#getDocumentLabelsListUsingParameter(java.lang.Integer)
 	 */
@@ -510,8 +506,9 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			tx = aSession.beginTransaction();
 
 			String hql = "select " + "	distinct(obj.label) " + "from " + "	SbiObjects obj, SbiObjPar objPar " + "where "
-					+ "	obj.biobjId = objPar.sbiObject.biobjId and " + "	objPar.sbiParameter.parId = " + parId;
+					+ "	obj.biobjId = objPar.sbiObject.biobjId and " + "	objPar.sbiParameter.parId = :parId";
 			Query query = aSession.createQuery(hql);
+			query.setParameter("parId", parId);
 			List result = query.list();
 
 			toReturn = result;
@@ -534,13 +531,11 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	/**
 	 * Load bi object parameters by id.
 	 *
-	 * @param biObjectID
-	 *            the bi object id
+	 * @param biObjectID the bi object id
 	 *
 	 * @return the list
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO#loadBIObjectParametersById(java.lang.Integer)
 	 */
@@ -554,9 +549,10 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			String hql = "from SbiObjPar s where s.sbiObject.biobjId = " + biObjectID + " order by s.priority asc";
+			String hql = "from SbiObjPar s where s.sbiObject.biobjId = :biObjectID  order by s.priority asc";
 
 			Query hqlQuery = aSession.createQuery(hql);
+			hqlQuery.setParameter("biObjectID", biObjectID);
 			List hibObjectPars = hqlQuery.list();
 
 			Iterator it = hibObjectPars.iterator();
@@ -600,14 +596,13 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	/**
 	 * Recalculates the priority of all the BiParameters of the document, identified by its biObjectID, in the Hibernate session passed at input.
 	 *
-	 * @param biObjectID
-	 *            The id of the document
-	 * @param aSession
-	 *            The Hibernate session
+	 * @param biObjectID The id of the document
+	 * @param aSession   The Hibernate session
 	 */
 	public void recalculateBiParametersPriority(Integer biObjectID, Session aSession) {
-		String hql = "from SbiObjPar s where s.sbiObject.biobjId = " + biObjectID + " order by s.priority asc";
+		String hql = "from SbiObjPar s where s.sbiObject.biobjId = :biObjectID order by s.priority asc";
 		Query hqlQuery = aSession.createQuery(hql);
+		hqlQuery.setParameter("biObjectID", biObjectID);
 		List hibObjectPars = hqlQuery.list();
 		Iterator it = hibObjectPars.iterator();
 		int count = 1;
@@ -622,8 +617,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	/**
 	 * From the hibernate BI object parameter at input, gives the corrispondent <code>BIObjectParameter</code> object.
 	 *
-	 * @param hiObjPar
-	 *            The hybernate BI object parameter
+	 * @param hiObjPar The hybernate BI object parameter
 	 *
 	 * @return The corrispondent <code>BIObjectParameter</code>
 	 */
