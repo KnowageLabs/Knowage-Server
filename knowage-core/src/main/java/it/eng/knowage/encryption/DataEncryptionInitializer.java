@@ -95,6 +95,10 @@ public class DataEncryptionInitializer implements InitializerIFace {
 
 					cfg.setAlgorithm(genAlgo);
 
+					DataEncryptionCfgForExternalEngines decfee = DataEncryptionCfgForExternalEngines.getInstance();
+					decfee.setKeyTemplateForAlgorithm(cfgKey, genAlgo);
+					decfee.setKeyTemplateForPassword(cfgKey, genPwd);
+
 					LOGGER.warn("Generic encryption algorithm configuration created");
 				}
 			} else {
