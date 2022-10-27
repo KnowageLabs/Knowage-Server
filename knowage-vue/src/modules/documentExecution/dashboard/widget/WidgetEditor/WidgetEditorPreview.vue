@@ -1,7 +1,7 @@
 <template>
     <div class="widget-editor-preview-container p-d-flex p-flex-column p-ai-stretch p-jc-center kn-overflow">
-        <!-- <Button icon="fas fa-square-check" class="p-button-rounded p-button-text p-button-plain" @click="logWidget" /> -->
-        <ProgressBar v-if="true" class="p-mx-2" mode="indeterminate" />
+        <Button icon="fas fa-square-check" class="p-button-rounded p-button-text p-button-plain" @click="logWidget" />
+        <ProgressBar v-if="loading" class="p-mx-2" mode="indeterminate" />
         <div class="widget-container p-mx-2" :style="getWidgetContainerStyle()">
             <div v-if="widgetTitle && widgetTitle.enabled" class="p-d-flex p-ai-center" style="border-radius: 0px" :style="getWidgetTitleStyle()">
                 {{ widgetTitle?.text }}
