@@ -361,6 +361,7 @@
             "static": "Static",
             "title": "Dataset Manageent"
         },
+        "getDataError": "Unable to load data from dataset {datasetLabel}. Please check dataset & widget configuration.",
         "saveCockpit": "Save Cockpit",
         "saveCockpitHint": "Please enter a valid name",
         "selectionsList": "Selections List",

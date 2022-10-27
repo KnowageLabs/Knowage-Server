@@ -7,6 +7,11 @@
 import { AxiosResponse } from 'axios'
 import { IDataset, ISelection, IWidget } from './Dashboard'
 import { setDatasetInterval, clearDatasetInterval } from './helpers/datasetRefresh/DatasetRefreshHelpers'
+import i18n from '@/App.i18n'
+import store from '@/App.store.js'
+
+const { t } = i18n.global
+const mainStore = store()
 
 export const getData = (item) =>
     new Promise((resolve) => {
@@ -21,7 +26,6 @@ export const getWidgetData = async (widget: IWidget, datasets: IDataset[], $http
             return await getTableWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         case 'selector':
             return await getSelectorWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
-
         default:
             break
     }
@@ -113,15 +117,17 @@ export const getSelectorWidgetData = async (widget: IWidget, datasets: IDataset[
 
         if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
         await $http
-            .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData)
+            .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData, { headers: { 'X-Disable-Errors': 'true' } })
             .then((response: AxiosResponse<any>) => {
                 tempResponse = response.data
                 tempResponse.initialCall = initialCall
             })
-            .catch(() => { })
+            .catch((error: any) => {
+                showGetDataError(error, selectedDataset)
+            })
             .finally(() => {
-                if (widget.dataset || widget.dataset === 0) setDatasetInterval(widget.dataset as number, 10000)
-            }) // TODO - SET PROPER INTERVAL
+                resetDatasetInterval(widget)
+            })
         return tempResponse
     }
 }
@@ -142,16 +148,18 @@ export const getTableWidgetData = async (widget: IWidget, datasets: IDataset[], 
 
         if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
         await $http
-            .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData)
+            .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData, { headers: { 'X-Disable-Errors': 'true' } })
             .then((response: AxiosResponse<any>) => {
                 tempResponse = response.data
                 if (pagination.enabled) widget.settings.pagination.properties.totalItems = response.data.results
                 // pagination.totalItems = response.data.results
             })
-            .catch(() => { })
+            .catch((error: any) => {
+                showGetDataError(error, selectedDataset)
+            })
             .finally(() => {
-                if (widget.dataset || widget.dataset === 0) setDatasetInterval(widget.dataset as number, 10000)
-            }) // TODO - SET PROPER INTERVAL
+                resetDatasetInterval(widget)
+            })
 
         return tempResponse
     }
@@ -213,7 +221,6 @@ const getSummaryRow = (propWidget: IWidget) => {
     return summaryArray
 }
 
-// TODO
 const getFormattedSelections = (selections: ISelection[]) => {
     const formattedSelections = {}
     selections?.forEach((selection: ISelection) => {
@@ -225,4 +232,17 @@ const getFormattedSelections = (selections: ISelection[]) => {
         }
     })
     return formattedSelections
+}
+
+const showGetDataError = (error: any, selectedDataset: IDataset) => {
+    let message = error.message
+    if (error.message === '100') {
+        message = t('dashboard.getDataError', { datasetLabel: selectedDataset.label })
+    }
+    mainStore.setError({ title: t('common.toast.errorTitle'), msg: message })
+}
+
+const resetDatasetInterval = (widget: IWidget) => {
+    // TODO - set proper interval when realtime dataset example is ready
+    if (widget.dataset || widget.dataset === 0) setDatasetInterval(widget.dataset as number, 10000)
 }
