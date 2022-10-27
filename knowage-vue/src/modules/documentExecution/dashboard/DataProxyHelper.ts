@@ -126,7 +126,8 @@ export const getSelectorWidgetData = async (widget: IWidget, datasets: IDataset[
                 showGetDataError(error, selectedDataset)
             })
             .finally(() => {
-                resetDatasetInterval(widget)
+                // TODO - uncomment when realtime dataset example is ready
+                // resetDatasetInterval(widget)
             })
         return tempResponse
     }
@@ -158,7 +159,8 @@ export const getTableWidgetData = async (widget: IWidget, datasets: IDataset[], 
                 showGetDataError(error, selectedDataset)
             })
             .finally(() => {
-                resetDatasetInterval(widget)
+                // TODO - uncomment when realtime dataset example is ready
+                // resetDatasetInterval(widget)
             })
 
         return tempResponse
