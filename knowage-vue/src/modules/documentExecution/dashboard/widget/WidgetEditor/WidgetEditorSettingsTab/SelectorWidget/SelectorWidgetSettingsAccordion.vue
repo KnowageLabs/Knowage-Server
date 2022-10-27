@@ -1,7 +1,7 @@
 <template>
     <div v-show="widgetModel">
         <Accordion class="selectorAccordion" v-model:activeIndex="activeIndex">
-            <AccordionTab v-for="(accordion, index) in settings" :key="index">
+            <AccordionTab v-for="(accordion, index) in settings" :key="index" :disabled="accordion.type === 'LabelStyle' && labelStyleAccordionDisabled">
                 <template #header>
                     <label class="kn-material-input-label">{{ $t(accordion.title) }}</label>
                 </template>
@@ -65,16 +65,21 @@ export default defineComponent({
         drivers: { type: Array },
         variables: { type: Array as PropType<IVariable[]> }
     },
-    watch: {
-        settings() {
-            this.activeIndex = -1
-        }
-    },
     data() {
         return {
             descriptor,
             settingsTabDescriptor,
             activeIndex: -1
+        }
+    },
+    computed: {
+        labelStyleAccordionDisabled(): boolean {
+            return !this.widgetModel || this.widgetModel.settings?.isDateType
+        }
+    },
+    watch: {
+        settings() {
+            this.activeIndex = -1
         }
     },
     created() {},
