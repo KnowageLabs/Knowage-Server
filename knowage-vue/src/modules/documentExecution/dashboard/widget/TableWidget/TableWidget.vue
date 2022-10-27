@@ -104,11 +104,12 @@ export default defineComponent({
                 rowHeight: 25,
 
                 // EVENTS
-                // onCellClicked: (event, params) => console.log('A cell was clicked', event, params),
+                onCellClicked: (event, params) => console.log('A cell was clicked', event, params),
 
                 // CALLBACKS
                 onGridReady: this.onGridReady,
-                getRowStyle: this.getRowStyle
+                getRowStyle: this.getRowStyle,
+                getRowHeight: this.getRowHeight
             }
         },
         onGridReady(params) {
@@ -132,6 +133,12 @@ export default defineComponent({
         },
         toggleHeaders(headersConfiguration) {
             headersConfiguration.enabled ? this.gridApi.setHeaderHeight(this.propWidget.settings.style.headers.height) : this.gridApi.setHeaderHeight(0)
+            // headersConfiguration.enabled ? this.gridApi.setRowHeight(this.propWidget.settings.style.headers.height) : this.gridApi.setRowHeight(0)
+        },
+        getRowHeight() {
+            const rowsConfiguration = this.propWidget.settings.style.rows
+            if (rowsConfiguration.height && rowsConfiguration.height != 0) return rowsConfiguration.height
+            else return 25
         },
         getTableColumns(responseFields) {
             var columns = [] as any
@@ -286,7 +293,6 @@ export default defineComponent({
                     }
                 }
             }
-
             return columns
         },
         getColumnGroup(col) {
