@@ -8,7 +8,7 @@
                 <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.export.exportPdf') }}</label>
             </div>
         </div>
-        <div class="p-grid p-col-12 p-ai-center">
+        <div v-if="widgetType === 'table'" class="p-grid p-col-12 p-ai-center">
             <div class="p-grid p-col-12 p-ai-center p-pt-4">
                 <div class="p-col-6 field-radiobutton p-px-2">
                     <RadioButton v-model="selectedExport" name="export" value="a4portrait" :disabled="pdfExportDisabled" @change="onSelectedExportChanged" />
@@ -37,8 +37,8 @@
                 </div>
             </div>
         </div>
-        <div v-if="widgetType === 'table'" class="p-grid p-col-12">
-            <div class="p-col-12 p-lg-6">
+        <div class="p-grid p-col-12">
+            <div v-if="widgetType === 'table'" class="p-col-12 p-lg-6">
                 <InputSwitch v-model="exportModel.showScreenshot" @change="onEnableExportChanged"></InputSwitch>
                 <label class="kn-material-input-label p-ml-4">{{ $t('dashboard.widgetEditor.export.enableScreenshots') }}</label>
             </div>
