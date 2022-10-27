@@ -1,10 +1,10 @@
 <template>
     <div v-if="customMessagesModel" class="p-grid p-jc-center p-ai-center p-p-4">
-        <div class="p-col-12 p-md-3 p-pt-4">
+        <div class="p-col-12">
             <Checkbox v-model="customMessagesModel.hideNoRowsMessage" :binary="true" @change="customMessagesChanged" />
             <label class="kn-material-input-label p-ml-3"> {{ $t('dashboard.widgetEditor.customMessages.hideNoRowsAvailable') }}</label>
         </div>
-        <div class="p-col-12 p-md-9 p-d-flex p-flex-column p-pt-2">
+        <div class="p-col-12 p-d-flex p-flex-column p-pt-2">
             <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.customMessages.customEmptyRowsMessage') }}</label>
             <InputText class="kn-material-input p-inputtext-sm" v-model="customMessagesModel.noRowsMessage" :disabled="customMessagesModel.hideNoRowsMessage" @change="customMessagesChanged" />
         </div>

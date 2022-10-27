@@ -1,24 +1,24 @@
 <template>
     <div v-if="rowsModel" class="p-grid p-jc-center p-ai-center p-p-4">
-        <div id="index-column-switch" class="p-col-12 p-grid p-p-3">
-            <div class="p-col-3 p-sm-12 p-md-3">
-                <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.rows.enableIndexColumn') }}</label>
-            </div>
-            <div class="p-col-9 p-sm-12 p-md-9">
+        <div id="index-column-switch" class="p-col-12 p-grid">
+            <div class="p-col-2 p-sm-12 p-md-2">
                 <InputSwitch v-model="rowsModel.indexColumn" @change="onIndexColumnChanged"></InputSwitch>
             </div>
+            <div class="p-col-11 p-sm-12 p-md-10">
+                <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.rows.enableIndexColumn') }}</label>
+            </div>
         </div>
 
-        <div class="p-col-12 p-grid p-px-3 p-py-4">
-            <div class="p-col-3 p-sm-12 p-md-3">
-                <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.rows.enableRowspan') }}</label>
-            </div>
-            <div class="p-col-9 p-sm-12 p-md-9">
+        <div class="p-col-12 p-grid p-mt-1">
+            <div class="p-col-2 p-sm-12 p-md-2">
                 <InputSwitch v-model="rowsModel.rowSpan.enabled" @change="onRowSpanChanged"></InputSwitch>
             </div>
+            <div class="p-col-10 p-sm-12 p-md-10">
+                <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.rows.enableRowspan') }}</label>
+            </div>
         </div>
 
-        <div class="p-col-12 p-fluid p-d-flex p-flex-column p-px-4 p-py-2">
+        <div class="p-col-12 p-fluid p-d-flex p-flex-column">
             <label class="kn-material-input-label p-mb-1"> {{ $t('dashboard.widgetEditor.rows.rowSpanColumn') }}</label>
             <Dropdown class="kn-material-input" v-model="rowsModel.rowSpan.column" :options="widgetModel.columns" optionLabel="alias" optionValue="id" :disabled="!rowsModel.rowSpan.enabled" @change="onRowSpanChanged"> </Dropdown>
         </div>

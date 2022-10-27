@@ -1,10 +1,10 @@
 <template>
     <div v-if="visibilityConditionsModel" class="p-grid p-jc-center p-ai-center p-p-4">
-        <div class="p-col-12 p-px-2 p-pb-4">
+        <div class="p-col-12 p-px-2">
             <InputSwitch v-model="visibilityConditionsModel.enabled" @change="onVisibilityConditionsEnabledChange"></InputSwitch>
             <label class="kn-material-input-label p-ml-3">{{ $t('common.enable') }}</label>
         </div>
-        <div v-for="(visibilityCondition, index) in visibilityConditionsModel.conditions" :key="index" class="dynamic-form-item p-grid p-col-12 p-ai-center p-pt-2">
+        <div v-for="(visibilityCondition, index) in visibilityConditionsModel.conditions" :key="index" class="dynamic-form-item p-grid p-col-12 p-ai-center">
             <div class="p-grid p-col-12 p-ai-center">
                 <div v-show="dropzoneTopVisible[index]" class="p-col-12 form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'before', index)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
                 <div
@@ -56,17 +56,17 @@
                             </div>
                         </div>
                         <div class="p-col-12 p-grid p-ai-center p-ai-center p-pt-1">
-                            <div class="p-col-12 p-md-5 p-d-flex p-flex-column p-p-2">
+                            <div class="p-col-12 p-md-4 p-d-flex p-flex-column p-p-2">
                                 <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
                                 <MultiSelect v-model="visibilityCondition.target" :options="widgetModel.columns" optionLabel="alias" optionValue="id" :disabled="visibilityConditionsDisabled" @change="visibilityConditionsChanged"> </MultiSelect>
                             </div>
-                            <div class="p-col-6 p-md-4 p-pl-4 p-pt-4">
+                            <div class="p-col-6 p-md-4">
                                 <InputSwitch v-model="visibilityCondition.hide" :disabled="visibilityConditionsDisabled" @change="visibilityConditionsChanged"></InputSwitch>
-                                <label class="kn-material-input-label p-p-3">{{ $t('dashboard.widgetEditor.visibilityConditions.hideColumn') }}</label>
+                                <label class="kn-material-input-label p-p-1">{{ $t('dashboard.widgetEditor.visibilityConditions.hideColumn') }}</label>
                             </div>
-                            <div class="p-col-6 p-md-3 p-pr-4 p-pt-4">
+                            <div class="p-col-6 p-md-4">
                                 <InputSwitch v-model="visibilityCondition.hidePdf" :disabled="visibilityConditionsDisabled" @change="visibilityConditionsChanged"></InputSwitch>
-                                <label class="kn-material-input-label p-p-3">{{ $t('dashboard.widgetEditor.visibilityConditions.hideOnPdf') }}</label>
+                                <label class="kn-material-input-label p-p-1">{{ $t('dashboard.widgetEditor.visibilityConditions.hideOnPdf') }}</label>
                             </div>
                         </div>
                     </div>

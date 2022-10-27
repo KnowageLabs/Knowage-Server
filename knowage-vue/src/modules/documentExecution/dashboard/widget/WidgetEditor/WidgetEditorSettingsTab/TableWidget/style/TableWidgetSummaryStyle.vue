@@ -1,6 +1,6 @@
 <template>
     <div v-if="summaryStyleModel" class="p-grid p-jc-center p-ai-center p-p-4">
-        <div class="p-col-12 p-p-4">
+        <div class="p-col-12">
             <WidgetEditorStyleToolbar :options="settingsDescriptor.defaultToolbarStyleOptions" :propModel="summaryStyleModel" :disabled="summaryStyleDisabled" @change="onStyleToolbarChange($event)"> </WidgetEditorStyleToolbar>
         </div>
     </div>

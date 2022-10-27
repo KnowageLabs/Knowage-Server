@@ -1,12 +1,12 @@
 <template>
-    <div v-if="columnStyles" class="p-grid p-jc-center p-ai-center p-p-4">
-        <div class="p-col-12 p-px-2 p-pb-4">
+    <div v-if="columnStyles" class="p-grid p-p-4">
+        <div class="p-col-12">
             <InputSwitch v-model="columnStyles.enabled" @change="columnStylesChanged"></InputSwitch>
             <label class="kn-material-input-label p-ml-3">{{ $t('common.enable') }}</label>
         </div>
         <div v-for="(columnStyle, index) in columnStyles.styles" :key="index" class="dynamic-form-item p-col-12 p-grid p-ai-center">
             <div v-if="mode !== 'columnGroups'" class="p-col-12 p-grid">
-                <div class="p-col-4 p-d-flex p-flex-column kn-flex p-m-2">
+                <div class="p-col-4 p-d-flex p-flex-column kn-flex">
                     <label class="kn-material-input-label p-mr-2">{{ $t('common.width') }}</label>
                     <InputNumber class="kn-material-input p-inputtext-sm" v-model="(columnStyle.properties.width as number)" :disabled="columnStylesDisabled" @blur="columnStylesChanged" />
                 </div>
@@ -33,7 +33,7 @@
                 </div>
             </div>
 
-            <div class="p-col-12 p-md-12 p-py-4">
+            <div class="p-col-12 p-md-12 p-py-2">
                 <WidgetEditorStyleToolbar :options="settingsDescriptor.defaultToolbarStyleOptions" :propModel="columnStyle.properties" :disabled="columnStylesDisabled" @change="onStyleToolbarChange($event, columnStyle)"> </WidgetEditorStyleToolbar>
             </div>
         </div>
