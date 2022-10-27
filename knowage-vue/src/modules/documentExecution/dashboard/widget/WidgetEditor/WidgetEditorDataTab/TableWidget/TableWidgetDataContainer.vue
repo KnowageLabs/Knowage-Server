@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IWidget, IDataset, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
 import { removeColumnFromModel } from '../../helpers/tableWidget/TableWidgetFunctions'
 import { emitter } from '../../../../DashboardHelpers'
 import descriptor from './TableWidgetDataDescriptor.json'
@@ -29,12 +29,17 @@ import WidgetEditorColumnTable from '../common/WidgetEditorColumnTable.vue'
 export default defineComponent({
     name: 'table-widget-data-container',
     components: { TableWidgetDataForm, TableWidgetColumnForm, WidgetEditorColumnTable },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedDataset: { type: Object as PropType<IDataset | null> } },
     data() {
         return {
             descriptor,
             columnTableItems: [] as IWidgetColumn[],
             selectedColumn: null as IWidgetColumn | null
+        }
+    },
+    watch: {
+        selectedDataset() {
+            this.selectedColumn = null
         }
     },
     async created() {

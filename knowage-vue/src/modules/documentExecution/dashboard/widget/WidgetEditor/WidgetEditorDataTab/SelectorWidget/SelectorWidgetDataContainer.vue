@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IDataset, IWidget, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../DashboardHelpers'
 import descriptor from '../TableWidget/TableWidgetDataDescriptor.json'
 import Dropdown from 'primevue/dropdown'
@@ -33,7 +33,7 @@ import WidgetEditorFilterForm from '../common/WidgetEditorFilterForm.vue'
 export default defineComponent({
     name: 'selector-widget-data-container',
     components: { Dropdown, WidgetEditorColumnTable, WidgetEditorFilterForm },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedDataset: { type: Object as PropType<IDataset | null> } },
     data() {
         return {
             descriptor,
@@ -41,6 +41,11 @@ export default defineComponent({
             columnTableItems: [] as IWidgetColumn[],
             selectedColumn: null as IWidgetColumn | null,
             sortingOrder: ''
+        }
+    },
+    watch: {
+        selectedDataset() {
+            this.selectedColumn = null
         }
     },
     async created() {

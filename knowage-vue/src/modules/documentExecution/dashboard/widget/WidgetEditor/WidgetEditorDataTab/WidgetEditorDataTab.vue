@@ -2,8 +2,8 @@
     <WidgetEditorDataList :widgetModel="propWidget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="setSelectDataset"></WidgetEditorDataList>
     <div class="p-d-flex kn-flex kn-overflow" v-if="propWidget">
         <WidgetEditorHint v-if="!selectedDataset"></WidgetEditorHint>
-        <TableWidgetDataContainer v-else-if="propWidget.type === 'table'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widgetModel="propWidget"></TableWidgetDataContainer>
-        <SelectorWidgetDataContainer v-else-if="propWidget.type === 'selector'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widgetModel="propWidget"></SelectorWidgetDataContainer>
+        <TableWidgetDataContainer v-else-if="propWidget.type === 'table'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widgetModel="propWidget" :selectedDataset="selectedDataset"></TableWidgetDataContainer>
+        <SelectorWidgetDataContainer v-else-if="propWidget.type === 'selector'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widgetModel="propWidget" :selectedDataset="selectedDataset"></SelectorWidgetDataContainer>
     </div>
 </template>
 
