@@ -16,7 +16,7 @@
             @sortingChanged="reloadWidgetData"
             @launchSelection="launchSelection"
             @mouseover="toggleFocus"
-            @mouseleave="startUnfocusTimer"
+            @mouseleave="startUnfocusTimer(500)"
         ></WidgetRenderer>
         <WidgetButtonBar
             :widget="widget"
@@ -27,7 +27,7 @@
             @edit-widget="toggleEditMode"
             @unlockSelection="unlockSelection"
             @launchSelection="launchSelection"
-            @keepFocus="keepFocus"
+            @changeFocus="changeFocus"
         ></WidgetButtonBar>
     </grid-item>
 </template>
@@ -88,7 +88,7 @@ export default defineComponent({
             },
             inFocus: false,
             selectionIsLocked: false,
-            delayFocus: false
+            playDisabledButtonTimeout: null as any
         }
     },
     async created() {
@@ -223,25 +223,22 @@ export default defineComponent({
                 await this.reloadWidgetData(null)
             }
         },
-        startUnfocusTimer() {
-            if (this.delayFocus) {
-                setTimeout(() => {
-                    this.inFocus = false
-                }, 1000)
-            }
+        startUnfocusTimer(milliseconds: number) {
+            this.playDisabledButtonTimeout = setTimeout(() => {
+                this.inFocus = false
+            }, milliseconds)
         },
         toggleFocus() {
+            clearTimeout(this.playDisabledButtonTimeout)
             this.inFocus = true
-            this.delayFocus = false
         },
-        keepFocus(value) {
-            console.log('keepfocus', value)
+        changeFocus(value: boolean) {
+            clearTimeout(this.playDisabledButtonTimeout)
             if (value) {
                 this.inFocus = true
-                this.delayFocus = true
+                this.startUnfocusTimer(3000)
             } else {
                 this.inFocus = false
-                this.delayFocus = false
             }
         }
     }
