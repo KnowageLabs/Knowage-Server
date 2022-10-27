@@ -8,8 +8,8 @@ export const setDatasetIntervals = (modelDatasets: IModelDataset[], datasets: ID
 
     for (let i = 0; i < modelDatasets.length; i++) {
         const index = datasets.findIndex((dataset: IDataset) => dataset.id.dsId === modelDatasets[i].id)
-        // TODO - add condition and remove hardcoded interval
-        if (index !== -1) {
+        // TODO - check condition and remove hardcoded interval when realtime dataset example is ready
+        if (index !== -1 && datasets[i].isRealtime) {
             setDatasetInterval(modelDatasets[i].id, 10000)
         }
     }
@@ -18,9 +18,8 @@ export const setDatasetIntervals = (modelDatasets: IModelDataset[], datasets: ID
 }
 
 export const setDatasetInterval = (modelDatasetId: number, interval: number) => {
-    // TODO - dataset interval
     if (dataSetIntervals[modelDatasetId]) clearInterval(dataSetIntervals[modelDatasetId])
-    // dataSetIntervals[modelDatasetId] = setInterval(() => emittDatasetRefresh(modelDatasetId), 30000)
+    dataSetIntervals[modelDatasetId] = setInterval(() => emittDatasetRefresh(modelDatasetId), interval)
 
 }
 

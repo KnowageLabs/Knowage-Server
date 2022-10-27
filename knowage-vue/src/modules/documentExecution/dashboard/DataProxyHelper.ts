@@ -126,8 +126,8 @@ export const getSelectorWidgetData = async (widget: IWidget, datasets: IDataset[
                 showGetDataError(error, selectedDataset)
             })
             .finally(() => {
-                if (widget.dataset || widget.dataset === 0) setDatasetInterval(widget.dataset as number, 10000)
-            }) // TODO - SET PROPER INTERVAL
+                resetDatasetInterval(widget)
+            })
         return tempResponse
     }
 }
@@ -158,8 +158,8 @@ export const getTableWidgetData = async (widget: IWidget, datasets: IDataset[], 
                 showGetDataError(error, selectedDataset)
             })
             .finally(() => {
-                if (widget.dataset || widget.dataset === 0) setDatasetInterval(widget.dataset as number, 10000)
-            }) // TODO - SET PROPER INTERVAL
+                resetDatasetInterval(widget)
+            })
 
         return tempResponse
     }
@@ -240,4 +240,9 @@ const showGetDataError = (error: any, selectedDataset: IDataset) => {
         message = t('dashboard.getDataError', { datasetLabel: selectedDataset.label })
     }
     mainStore.setError({ title: t('common.toast.errorTitle'), msg: message })
+}
+
+const resetDatasetInterval = (widget: IWidget) => {
+    // TODO - set proper interval when realtime dataset example is ready
+    if (widget.dataset || widget.dataset === 0) setDatasetInterval(widget.dataset as number, 10000)
 }
