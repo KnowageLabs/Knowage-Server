@@ -152,7 +152,7 @@ public class QbeDataSet extends ConfigurableDataSet {
 		ds.setPivotColumnValue(pivotColumnValue);
 		ds.setPivotRowName(pivotRowName);
 		ds.setNumRows(numRows);
-		ds.setDataStoreTransformer(dataSetTransformer);
+		ds.addDataStoreTransformers(dataStoreTransformers);
 		ds.setPersisted(persisted);
 		ds.setPersistTableName(persistTableName);
 		ds.setDataSourceForReading(this.getDataSourceForReading());

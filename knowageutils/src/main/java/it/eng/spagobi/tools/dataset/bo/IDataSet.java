@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -316,6 +317,8 @@ public interface IDataSet extends Iterable<IRecord> {
 	List<IDataStoreTransformer> getDataStoreTransformers();
 
 	void addDataStoreTransformer(IDataStoreTransformer transformer);
+
+	void addDataStoreTransformers(Collection<IDataStoreTransformer> transformers);
 
 	void executeDataStoreTransformers(IDataStore dataStore);
 

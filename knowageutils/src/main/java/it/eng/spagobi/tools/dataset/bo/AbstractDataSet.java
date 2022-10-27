@@ -14,6 +14,7 @@ package it.eng.spagobi.tools.dataset.bo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -1219,6 +1220,11 @@ public abstract class AbstractDataSet implements IDataSet {
 	@Override
 	public void addDataStoreTransformer(IDataStoreTransformer dataSetTransformer) {
 		dataStoreTransformers.add(dataSetTransformer);
+	}
+
+	@Override
+	public void addDataStoreTransformers(Collection<IDataStoreTransformer> dataSetTransformers) {
+		dataStoreTransformers.addAll(dataSetTransformers);
 	}
 
 	@Override

@@ -18,6 +18,7 @@
 package it.eng.spagobi.tools.dataset.listener;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -480,6 +481,11 @@ public class DataStoreListenerOperatorTest extends TestCase {
 
 		@Override
 		public void addDataStoreTransformer(IDataStoreTransformer transformer) {
+
+		}
+
+		@Override
+		public void addDataStoreTransformers(Collection<IDataStoreTransformer> transformers) {
 
 		}
 

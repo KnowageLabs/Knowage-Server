@@ -31,13 +31,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.log4j.Logger;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.hibernate3.encryptor.HibernatePBEEncryptorRegistry;
 import org.json.JSONObject;
 
-import it.eng.knowage.encryption.EncryptionConfiguration;
-import it.eng.knowage.encryption.EncryptionPreferencesRegistry;
+import it.eng.knowage.encryption.DataEncryptionCfgForExternalEngines;
 import it.eng.qbe.datasource.AbstractDataSource;
 import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.datasource.IPersistenceManager;
@@ -110,12 +110,12 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 	private void initJasypt() {
 
 		String cfgKey = DEFAULT_CFG_KEY;
-		EncryptionConfiguration cfg = EncryptionPreferencesRegistry.getInstance()
-			.getConfiguration(cfgKey);
 
-		if (cfg != null) {
-			String algorithm = cfg.getAlgorithm();
-			String password = cfg.getEncryptionPwd();
+		DataEncryptionCfgForExternalEngines decfee = DataEncryptionCfgForExternalEngines.getInstance();
+		String algorithm = decfee.getKeyTemplateForAlgorithm(cfgKey);
+		String password = decfee.getKeyTemplateForPassword(cfgKey);
+
+		if (ObjectUtils.allNotNull(algorithm, password)) {
 
 			String modelName = configuration.getModelName();
 			String encryptorName = modelName + "_encryptor";

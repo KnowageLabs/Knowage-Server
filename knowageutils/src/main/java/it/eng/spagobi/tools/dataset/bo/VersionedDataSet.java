@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -759,6 +760,11 @@ public class VersionedDataSet implements IDataSet {
 	@Override
 	public void addDataStoreTransformer(IDataStoreTransformer transformer) {
 		wrappedDataset.addDataStoreTransformer(transformer);
+	}
+
+	@Override
+	public void addDataStoreTransformers(Collection<IDataStoreTransformer> transformers) {
+		wrappedDataset.addDataStoreTransformers(transformers);
 	}
 
 	@Override
