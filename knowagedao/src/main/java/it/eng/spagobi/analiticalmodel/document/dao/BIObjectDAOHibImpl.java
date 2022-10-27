@@ -212,7 +212,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			if (aSession != null && aSession.isOpen()) {
-					aSession.close();
+				aSession.close();
 			}
 		}
 		logger.debug("OUT");
@@ -629,7 +629,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 			logger.debug("OUT");
 		} catch (HibernateException he) {
-			logger.error("Error modifing BI Object " + String.valueOf(biObject) + " using template " + String.valueOf(objTemp) + " with load parameters equals to " + loadParsDC, he);
+			logger.error("Error modifing BI Object " + String.valueOf(biObject) + " using template " + String.valueOf(objTemp)
+					+ " with load parameters equals to " + loadParsDC, he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -777,7 +778,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 			logger.debug("OUT");
 		} catch (HibernateException he) {
-			logger.error("Error modifing BI Object " + String.valueOf(biObject) + " using template " + String.valueOf(objTemp) + " with load parameters equals to " + loadParsDC, he);
+			logger.error("Error modifing BI Object " + String.valueOf(biObject) + " using template " + String.valueOf(objTemp)
+					+ " with load parameters equals to " + loadParsDC, he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -921,7 +923,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 			logger.debug("OUT");
 		} catch (HibernateException he) {
-			logger.error("Error modifing BI Object " + String.valueOf(biObject) + " using template " + String.valueOf(objTemp) + " with load parameters equals to " + loadParsDC, he);
+			logger.error("Error modifing BI Object " + String.valueOf(biObject) + " using template " + String.valueOf(objTemp)
+					+ " with load parameters equals to " + loadParsDC, he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -1130,7 +1133,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				insertParametersDocComposition(id);
 			}
 		} catch (HibernateException he) {
-			logger.error("Error inserting BI Object " + String.valueOf(obj) + " using template " + String.valueOf(objTemp) + " with load parameters equals to " + loadParsDC, he);
+			logger.error("Error inserting BI Object " + String.valueOf(obj) + " using template " + String.valueOf(objTemp) + " with load parameters equals to "
+					+ loadParsDC, he);
 			if (tx != null)
 				tx.rollback();
 			throw new HibernateException(he.getLocalizedMessage(), he);
@@ -1184,8 +1188,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				logger.debug("The object [" + obj.getName() + "] is no more referenced by any functionality. It will be completely deleted from db.");
 
 				// delete templates
-				String hql = "from SbiObjTemplates sot where sot.sbiObject.biobjId=" + obj.getId();
+				String hql = "from SbiObjTemplates sot where sot.sbiObject.biobjId=:idObj";
 				Query query = aSession.createQuery(hql);
+				query.setParameter("idObj", +obj.getId());
 				List templs = query.list();
 				Iterator iterTempls = templs.iterator();
 				while (iterTempls.hasNext()) {
@@ -1368,15 +1373,17 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 						logger.debug("Document state [" + objectState + "]");
 
 						String rolesHql = "select distinct roles.name from " + "SbiExtRoles as roles, SbiFuncRole as funcRole "
-								+ "where roles.extRoleId = funcRole.id.role.extRoleId and " + "	   funcRole.id.function.functId = " + aSbiFunctions.getFunctId()
-								+ " and " + "	   funcRole.id.state.valueCd = '" + permission + "' ";
+								+ "where roles.extRoleId = funcRole.id.role.extRoleId and " + "	   funcRole.id.function.functId = :functId " + " and "
+								+ "	   funcRole.id.state.valueCd =  :permission  ";
 						Query rolesHqlQuery = aSession.createQuery(rolesHql);
 						// get the list of roles that can see the document (in REL
 						// or TEST state) in that functionality
+						rolesHqlQuery.setParameter("functId", aSbiFunctions.getFunctId());
+						rolesHqlQuery.setParameter("permission", permission);
 						List rolesNames = new ArrayList();
 						rolesNames = rolesHqlQuery.list();
 						allRolesWithPermission.addAll(rolesNames);
-					} else if(aSbiFunctions.getName().equals(_profile.getUserId())) {
+					} else if (aSbiFunctions.getName().equals(_profile.getUserId())) {
 						allRolesWithPermission.addAll(roles);
 					}
 				}
@@ -1387,7 +1394,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 				Set<String> userRolesWithPermission = getUserRoles(aSession, roles, allRolesWithPermission);
 
-				logger.debug("The user have [" + userRolesWithPermission.size() + "] different roles that can execute doc [" + id + "] depending on its location");
+				logger.debug(
+						"The user have [" + userRolesWithPermission.size() + "] different roles that can execute doc [" + id + "] depending on its location");
 
 				correctRoles = filterUsableRolesByObjectParameters(id, correctRoles, aSession, userRolesWithPermission);
 
@@ -1475,9 +1483,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 					logger.debug("Document state [" + objectState + "]");
 
 					String rolesHql = "select distinct roles.name from " + "SbiExtRoles as roles, SbiFuncRole as funcRole "
-							+ "where roles.extRoleId = funcRole.id.role.extRoleId and " + "	   funcRole.id.function.functId = " + aSbiFunctions.getFunctId()
-							+ " and " + "	   funcRole.id.state.valueCd = '" + permission + "' ";
+							+ "where roles.extRoleId = funcRole.id.role.extRoleId and " + "	   funcRole.id.function.functId = :funcId" + " and "
+							+ "	   funcRole.id.state.valueCd = :permission ";
 					Query rolesHqlQuery = aSession.createQuery(rolesHql);
+					rolesHqlQuery.setParameter("funcId", aSbiFunctions.getFunctId());
+					rolesHqlQuery.setParameter("permission", permission);
 					// get the list of roles that can see the document (in REL
 					// or TEST state) in that functionality
 					List rolesNames = new ArrayList();
@@ -1860,7 +1870,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			Query hibQuery = aSession.createQuery("from SbiObjects s  order by s." + filterOrder);
+			Query hibQuery = aSession.createQuery("from SbiObjects s  order by s.:filterOrder");
+			hibQuery.setParameter("filterOrder", filterOrder);
 			// Query hibQuery =
 			// aSession.createQuery("from SbiObjects s order by ?" );
 			// hibQuery.setString(0, filterOrder);
@@ -2214,7 +2225,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			tx.commit();
 		} catch (HibernateException he) {
-			logger.error("Error inserting parameters in doc composition for BI Object " + biObject + ", Obj Template " + template + " and flag delete equals to " + flgDelete, he);
+			logger.error("Error inserting parameters in doc composition for BI Object " + biObject + ", Obj Template " + template
+					+ " and flag delete equals to " + flgDelete, he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -2503,12 +2515,14 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			tx.commit();
 		} catch (HibernateException he) {
-			logger.error("Error loading BI Objects for folder id " + folderID + ", suer profile " + profile +" and is personal folder equals to " + isPersonalFolder, he);
+			logger.error("Error loading BI Objects for folder id " + folderID + ", suer profile " + profile + " and is personal folder equals to "
+					+ isPersonalFolder, he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} catch (Exception e) {
-			logger.error("Error loading BI Objects for folder id " + folderID + ", suer profile " + profile +" and is personal folder equals to " + isPersonalFolder, e);
+			logger.error("Error loading BI Objects for folder id " + folderID + ", suer profile " + profile + " and is personal folder equals to "
+					+ isPersonalFolder, e);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -2534,8 +2548,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			tx = aSession.beginTransaction();
 			Query hibQuery = aSession.createQuery(
 					"select distinct obj from   SbiObjects as obj " + "inner join obj.sbiObjPars as objPars " + "inner join objPars.sbiParameter as param "
-							+ "inner join param.sbiParuses as paruses " + "inner join paruses.sbiLov as lov " + "where  lov.lovId = " + idLov);
-
+							+ "inner join param.sbiParuses as paruses " + "inner join paruses.sbiLov as lov " + "where  lov.lovId = :idLov");
+			hibQuery.setParameter("idLov", idLov);
 			List hibList = hibQuery.list();
 
 			Iterator it = hibList.iterator();
@@ -2572,8 +2586,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			Query hibQuery = aSession.createQuery("select distinct obj from   SbiObjects as obj " + "inner join obj.sbiObjPars as objPars "
-					+ "inner join objPars.sbiParameter as param " + "where  param.parId = " + idParameter);
-
+					+ "inner join objPars.sbiParameter as param " + "where  param.parId = :idParameter");
+			hibQuery.setParameter("idParameter", idParameter);
 			List hibList = hibQuery.list();
 
 			Iterator it = hibList.iterator();
@@ -2814,12 +2828,14 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			tx.commit();
 		} catch (HibernateException he) {
-			logger.error("Error searching BI Objects by value filter " + valueFilter + ", type filter " + typeFilter + ", column filter " + columnFilter + ", scope " + scope + ", node filter " + nodeFilter + " and profile " + profile, he);
+			logger.error("Error searching BI Objects by value filter " + valueFilter + ", type filter " + typeFilter + ", column filter " + columnFilter
+					+ ", scope " + scope + ", node filter " + nodeFilter + " and profile " + profile, he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} catch (Exception e) {
-			logger.error("Error searching BI Objects by value filter " + valueFilter + ", type filter " + typeFilter + ", column filter " + columnFilter + ", scope " + scope + ", node filter " + nodeFilter + " and profile " + profile, e);
+			logger.error("Error searching BI Objects by value filter " + valueFilter + ", type filter " + typeFilter + ", column filter " + columnFilter
+					+ ", scope " + scope + ", node filter " + nodeFilter + " and profile " + profile, e);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -3105,7 +3121,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		try {
 			parameter = aParameterDAO.loadForExecutionByParameterIDandRoleName(docDriver.getParID(), role, false);
 		} catch (EMFUserError e) {
-			logger.error("Error transforming DS Driver to BI Object Parameter the driver " + String.valueOf(datasetDriver) + " of BI Object " + String.valueOf(biObject) + " and role " + String.valueOf(role), e);
+			logger.error("Error transforming DS Driver to BI Object Parameter the driver " + String.valueOf(datasetDriver) + " of BI Object "
+					+ String.valueOf(biObject) + " and role " + String.valueOf(role), e);
 		}
 		parameter.setId(datasetDriver.getParameter().getId());
 		parameter.setType(datasetDriver.getParameter().getType());
@@ -3234,7 +3251,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	}
 
 	private String getRoleType(Session aSession, String role) {
-		String roleTHql = "select roles.roleTypeCode from SbiExtRoles as roles where roles.name = '" + role + "'";
+		String roleTHql = "select roles.roleTypeCode from SbiExtRoles as roles where roles.name = :role";
 		Query roleHqlQuery = aSession.createQuery(roleTHql);
 		return (String) roleHqlQuery.uniqueResult();
 	}
@@ -3273,14 +3290,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				// current role
 				while (iterParam.hasNext()) {
 					idPar = iterParam.next().toString();
-					hql = "select puseDet.id.sbiParuse.useId"
-							+ " from SbiParuse as puse,"
-							+ "     SbiParuseDet as puseDet,"
-							+ "     SbiExtRoles as rol"
-							+ " where rol.name = '" + role + "'"
-							+ "  and puseDet.id.sbiExtRoles.extRoleId = rol.extRoleId"
-							+ "  and puse.sbiParameters.parId = " + idPar
-							+ "  and puseDet.id.sbiParuse.useId = puse.useId";
+					hql = "select puseDet.id.sbiParuse.useId" + " from SbiParuse as puse," + "     SbiParuseDet as puseDet," + "     SbiExtRoles as rol"
+							+ " where rol.name = '" + role + "'" + "  and puseDet.id.sbiExtRoles.extRoleId = rol.extRoleId"
+							+ "  and puse.sbiParameters.parId = " + idPar + "  and puseDet.id.sbiParuse.useId = puse.useId";
 					hqlQuery = aSession.createQuery(hql);
 					parUses = hqlQuery.list();
 					// if the modality for the current role and the current
