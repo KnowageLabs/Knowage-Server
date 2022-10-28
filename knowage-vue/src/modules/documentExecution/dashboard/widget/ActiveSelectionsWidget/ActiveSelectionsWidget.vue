@@ -21,6 +21,7 @@ import ActiveSelectionsChips from './ActiveSelectionsWidgetChips.vue'
 import ActiveSelectionsList from './ActiveSelectionsWidgetList.vue'
 import Message from 'primevue/message'
 import store from '../../Dashboard.store'
+import descriptor from '../WidgetEditor/WidgetEditorDescriptor.json'
 
 export default defineComponent({
     name: 'datasets-catalog-datatable',
@@ -65,7 +66,8 @@ export default defineComponent({
     methods: {
         ...mapActions(store, ['removeSelection']),
         loadActiveSelections() {
-            this.activeSelections = this.propActiveSelections
+            if (this.editorMode) this.activeSelections = [...descriptor.activeSelectionsEditorMock] as ISelection[]
+            else this.activeSelections = this.propActiveSelections
         },
         getChipsStyle() {
             let height = this.propWidget.settings.style.chips.height

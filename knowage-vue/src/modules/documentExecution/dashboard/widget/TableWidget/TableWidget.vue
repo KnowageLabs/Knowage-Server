@@ -473,6 +473,7 @@ export default defineComponent({
             }
 
             this.multiSelectedCells.length = 0
+            this.selectedColumn = ''
         },
 
         updateActiveSelectionsWithMultivalueSelection(tempSelection: ISelection) {

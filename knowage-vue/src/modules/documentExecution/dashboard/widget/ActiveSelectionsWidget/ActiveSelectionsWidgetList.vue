@@ -42,7 +42,7 @@ export default defineComponent({
                 if (rowStyles.alternatedRows.oddBackgroundColor && rowIndex % 2 === 0) {
                     return { background: rowStyles.alternatedRows.oddBackgroundColor, height: `${rowStyles.height}px` }
                 } else return { background: rowStyles.alternatedRows.evenBackgroundColor, height: `${rowStyles.height}px` }
-            }
+            } else return { height: `${rowStyles.height}px` }
         },
         deleteSelection(selection: ISelection) {
             this.$emit('deleteSelection', selection)
