@@ -51,11 +51,9 @@ export default defineComponent({
         },
         dataToShow: {
             handler() {
-                // console.log('%c Table DataToShow ---------------------', 'background-color: #2C2F33; color: white')
-                // console.log(this.dataToShow)
                 this.tableData = this.dataToShow
                 this.refreshGridConfiguration(true)
-                this.loadActiveSelectionValue()
+                // this.loadActiveSelectionValue()
             },
             deep: true
         },
@@ -94,7 +92,7 @@ export default defineComponent({
         this.setEventListeners()
         this.loadActiveSelections()
         this.setupDatatableOptions()
-        this.loadActiveSelectionValue()
+        // this.loadActiveSelectionValue()
         this.tableData = this.dataToShow
     },
     unmounted() {
@@ -157,7 +155,8 @@ export default defineComponent({
 
                 // CALLBACKS
                 onGridReady: this.onGridReady,
-                getRowStyle: this.getRowStyle
+                getRowStyle: this.getRowStyle,
+                getRowHeight: this.getRowHeight
             }
         },
         onGridReady(params) {
@@ -175,8 +174,6 @@ export default defineComponent({
         },
         refreshGridConfigurationWithoutData() {
             if (this.editorMode) {
-                console.log('%c Refresh - No Data ---------------------', 'background-color: #2C2F33; color: white')
-
                 const gridColumns = this.createGridColumns(this.tableData?.metaData?.fields)
                 this.toggleHeaders(this.propWidget.settings.configuration.headers)
                 this.gridApi?.setColumnDefs(gridColumns)
@@ -185,6 +182,11 @@ export default defineComponent({
         },
         toggleHeaders(headersConfiguration) {
             headersConfiguration.enabled ? this.gridApi?.setHeaderHeight(this.propWidget.settings.style.headers.height) : this.gridApi?.setHeaderHeight(0)
+        },
+        getRowHeight() {
+            const rowsConfiguration = this.propWidget.settings.style.rows
+            if (rowsConfiguration.height && rowsConfiguration.height != 0) return rowsConfiguration.height
+            else return 25
         },
         createGridColumns(responseFields) {
             var columns = [] as any
@@ -409,49 +411,49 @@ export default defineComponent({
             }
         },
         onCellClicked(node) {
-            console.log(node)
-            if (node.colDef.measure == 'MEASURE' || node.colDef.pinned || node.value === '' || node.value == undefined) return
+            if (!this.editorMode) {
+                if (node.colDef.measure == 'MEASURE' || node.colDef.pinned || node.value === '' || node.value == undefined) return
+                //SELECTION LOGIC -------------------------------------------------------------------
+                var modalSelection = this.propWidget.settings.interactions.selection
+                if (modalSelection.enabled) {
+                    if (modalSelection.multiselection.enabled) {
+                        //first check to see it the column selected is the same, if not clear the past selections
+                        if (!this.selectedColumn || this.selectedColumn != node.colDef.field) {
+                            this.multiSelectedCells.splice(0, this.multiSelectedCells.length)
+                            this.selectedColumn = node.colDef.field
+                        }
 
-            //SELECTION LOGIC -------------------------------------------------------------------
-            var modalSelection = this.propWidget.settings.interactions.selection
-            if (modalSelection.enabled) {
-                if (modalSelection.multiselection.enabled) {
-                    //first check to see it the column selected is the same, if not clear the past selections
-                    if (!this.selectedColumn || this.selectedColumn != node.colDef.field) {
-                        this.multiSelectedCells.splice(0, this.multiSelectedCells.length)
-                        this.selectedColumn = node.colDef.field
-                    }
+                        if (modalSelection.modalColumn) {
+                            const modalColumnIndex = this.propWidget.columns.findIndex((column) => column.id == modalSelection.modalColumn)
+                            const modalColumnValue = node.data[`column_${modalColumnIndex + 1}`]
 
-                    if (modalSelection.modalColumn) {
-                        const modalColumnIndex = this.propWidget.columns.findIndex((column) => column.id == modalSelection.modalColumn)
-                        const modalColumnValue = node.data[`column_${modalColumnIndex + 1}`]
+                            if (!this.multiSelectedCells.includes(modalColumnValue)) this.multiSelectedCells.push(modalColumnValue)
+                            else this.multiSelectedCells.splice(this.multiSelectedCells.indexOf(modalColumnValue), 1)
+                            if (this.multiSelectedCells.length == 0) this.selectedColumn = false
+                        } else {
+                            if (!this.multiSelectedCells.includes(node.value)) this.multiSelectedCells.push(node.value)
+                            else this.multiSelectedCells.splice(this.multiSelectedCells.indexOf(node.value), 1)
+                            if (this.multiSelectedCells.length == 0) this.selectedColumn = false
+                        }
 
-                        if (!this.multiSelectedCells.includes(modalColumnValue)) this.multiSelectedCells.push(modalColumnValue)
-                        else this.multiSelectedCells.splice(this.multiSelectedCells.indexOf(modalColumnValue), 1)
-                        if (this.multiSelectedCells.length == 0) this.selectedColumn = false
-                    } else {
-                        if (!this.multiSelectedCells.includes(node.value)) this.multiSelectedCells.push(node.value)
-                        else this.multiSelectedCells.splice(this.multiSelectedCells.indexOf(node.value), 1)
-                        if (this.multiSelectedCells.length == 0) this.selectedColumn = false
-                    }
-
-                    // console.log('SELECTED CELLS -----------', this.multiSelectedCells)
-                } else if (!modalSelection.multiselection.enabled) {
-                    if (modalSelection.modalColumn) {
-                        const modalColumnIndex = this.propWidget.columns.findIndex((column) => column.id == modalSelection.modalColumn)
-                        const modalColumnValue = node.data[`column_${modalColumnIndex + 1}`]
-                        updateStoreSelections(this.createNewSelection([modalColumnValue], this.propWidget.columns[modalColumnIndex].columnName), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
-                    } else {
-                        updateStoreSelections(this.createNewSelection([node.value], node.colDef.columnName), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
+                        // console.log('SELECTED CELLS -----------', this.multiSelectedCells)
+                    } else if (!modalSelection.multiselection.enabled) {
+                        if (modalSelection.modalColumn) {
+                            const modalColumnIndex = this.propWidget.columns.findIndex((column) => column.id == modalSelection.modalColumn)
+                            const modalColumnValue = node.data[`column_${modalColumnIndex + 1}`]
+                            updateStoreSelections(this.createNewSelection([modalColumnValue], this.propWidget.columns[modalColumnIndex].columnName), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
+                        } else {
+                            updateStoreSelections(this.createNewSelection([node.value], node.colDef.columnName), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
+                        }
                     }
                 }
+
+                this.selectedColumnArray.pop()
+                this.selectedColumnArray.push(node.colDef.field)
+
+                var params = { force: true }
+                this.gridApi?.refreshCells(params)
             }
-
-            this.selectedColumnArray.pop()
-            this.selectedColumnArray.push(node.colDef.field)
-
-            var params = { force: true }
-            this.gridApi?.refreshCells(params)
         },
         applyMultiSelection() {
             const modalSelection = this.propWidget.settings.interactions.selection

@@ -56,6 +56,7 @@ export default defineComponent({
     padding: 0;
     margin: 0;
     list-style-type: none;
+    width: 100%;
     li {
         list-style: none;
         justify-content: flex-start;

@@ -8,7 +8,7 @@
             <ActiveSelectionsChips v-for="(activeSelection, index) of activeSelections" :key="index" :activeSelection="activeSelection" :showDataset="showDataset" :showColumn="showColumn" :style="getChipsStyle()" :editorMode="editorMode" @deleteSelection="onDeleteSelection" />
         </div>
 
-        <Message v-if="activeSelections.length == 0" class="p-mx-2" severity="info" :closable="false">{{ noSelectionsMessage }}</Message>
+        <Message v-if="activeSelections.length == 0 && selectionMessageEnabled" class="p-mx-2" severity="info" :closable="false">{{ noSelectionsMessage }}</Message>
     </div>
 </template>
 
@@ -40,7 +40,10 @@ export default defineComponent({
         noSelectionsMessage(): string {
             let noSelections = this.propWidget.settings.configuration.noSelections
             if (noSelections.enabled) return noSelections.customText
-            else return 'TODO: PUT THIS INTO EN_US No Active Selections'
+            else return 'No Active Selections'
+        },
+        selectionMessageEnabled(): boolean {
+            return this.propWidget.settings.configuration.noSelections.enabled
         }
     },
     data() {
