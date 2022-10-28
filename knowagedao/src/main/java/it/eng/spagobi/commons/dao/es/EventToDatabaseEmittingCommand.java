@@ -315,7 +315,7 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 				.add("code", Optional.ofNullable(role.getCode()).orElse(""))
 				.add("name", role.getName())
 				.add("description", Optional.ofNullable(role.getDescr()).orElse(""))
-				.add("isPublic", role.getIsPublic())
+				.add("isPublic", Optional.ofNullable(role.getIsPublic()).orElse(false))
 				.add("roleTypeCode", role.getRoleTypeCode())
 				.add("authorizations", authorizations)
 				.add("datasetCategories", datasetCategories)
