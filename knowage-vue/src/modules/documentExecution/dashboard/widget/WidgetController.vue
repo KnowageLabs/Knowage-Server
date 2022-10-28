@@ -168,7 +168,6 @@ export default defineComponent({
             return widgetUsesSelection
         },
         async reloadWidgetData(associativeResponseSelections: any) {
-            console.log('CAAAAAAAAAAAAAAAAAAAAAAAALED')
             this.loading = true
             this.widgetData = await getWidgetData(this.widgetModel, this.datasets, this.$http, false, this.activeSelections, associativeResponseSelections)
             this.loading = false
