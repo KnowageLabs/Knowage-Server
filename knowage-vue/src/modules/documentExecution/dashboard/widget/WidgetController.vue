@@ -137,13 +137,10 @@ export default defineComponent({
         },
         async loadInitalData() {
             if (!this.widgetModel || this.widgetModel.type === 'selection') return
-            this.loading = true
 
             this.widgetInitialData = await getWidgetData(this.widgetModel, this.datasets, this.$http, true, this.activeSelections)
             this.widgetData = this.widgetInitialData
             await this.loadActiveSelections()
-
-            this.loading = false
         },
         async loadActiveSelections() {
             this.getSelectionsFromStore()
@@ -155,10 +152,9 @@ export default defineComponent({
             this.checkIfSelectionIsLocked()
         },
         async onSelectionsDeleted(deletedSelections: any) {
-            this.loading = true
+            const associations = this.dashboards[this.dashboardId]?.configuration.associations ?? []
             this.getSelectionsFromStore()
-            if (this.widgetUsesSelections(deletedSelections)) this.reloadWidgetData(null)
-            this.loading = false
+            if (this.widgetUsesSelections(deletedSelections) || (this.widget.dataset && datasetIsUsedInAssociations(this.widget.dataset, associations))) this.reloadWidgetData(null)
         },
         widgetUsesDeletedSelectionsDataset(deletedSelections: ISelection[]) {
             let widgetUsesSelection = false
@@ -172,6 +168,7 @@ export default defineComponent({
             return widgetUsesSelection
         },
         async reloadWidgetData(associativeResponseSelections: any) {
+            console.log('CAAAAAAAAAAAAAAAAAAAAAAAALED')
             this.loading = true
             this.widgetData = await getWidgetData(this.widgetModel, this.datasets, this.$http, false, this.activeSelections, associativeResponseSelections)
             this.loading = false
