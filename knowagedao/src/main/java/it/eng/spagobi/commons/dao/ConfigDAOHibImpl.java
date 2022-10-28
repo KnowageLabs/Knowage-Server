@@ -25,7 +25,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
@@ -36,7 +35,9 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.metadata.SbiConfig;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.security.utils.EncryptionPBEWithMD5AndDESManager;
 import it.eng.spagobi.utilities.cache.ConfigurationCache;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * Defines the Hibernate implementations for all DAO methods, for a domain.
@@ -63,7 +64,7 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibQuery = aSession.createQuery(" from SbiConfig");
+			Criteria hibQuery = aSession.createCriteria(SbiConfig.class);
 			List hibList = hibQuery.list();
 			Iterator it = hibList.iterator();
 			while (it.hasNext()) {
@@ -259,7 +260,23 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 				hibConfig.setLabel(config.getLabel());
 				hibConfig.setDescription(config.getDescription());
 				hibConfig.setName(config.getName());
-				hibConfig.setValueCheck(config.getValueCheck());
+
+				String valueCheck = config.getValueCheck();
+				if (hibConfig.getCategory().equals("PASSWORD")) {
+					if (valueCheck == null) {
+						try {
+							Config existingConfig = loadConfigParametersByLabel(config.getLabel());
+							valueCheck = (existingConfig == null) ? null : existingConfig.getValueCheck();
+
+						} catch (Exception e) {
+							throw new SpagoBIRuntimeException("An error occurred while getting configuration with label [" + config.getLabel() + "]", e);
+						}
+					} else {
+						valueCheck = EncryptionPBEWithMD5AndDESManager.encrypt(valueCheck);
+					}
+				}
+				hibConfig.setValueCheck(valueCheck);
+
 				hibConfig.setIsActive(config.isActive());
 				hibConfig.setSbiDomains(hibDomains);
 				hibConfig.setCategory(config.getCategory());

@@ -61,7 +61,7 @@ import it.eng.spagobi.commons.metadata.SbiOrganizationDatasourceId;
 import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.json.Xml;
-import it.eng.spagobi.security.utils.DataSourceJDBCPasswordManager;
+import it.eng.spagobi.security.utils.EncryptionPBEWithMD5AndDESManager;
 import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
@@ -562,7 +562,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			hibDataSource.setUrl_connection(aDataSource.getUrlConnection());
 			hibDataSource.setUser(aDataSource.getUser());
 
-			String encPassword = DataSourceJDBCPasswordManager.encrypt(aDataSource.getPwd());
+			String encPassword = EncryptionPBEWithMD5AndDESManager.encrypt(aDataSource.getPwd());
 			hibDataSource.setPwd(encPassword);
 			hibDataSource.setDriver(aDataSource.getDriver());
 			hibDataSource.setMultiSchema(aDataSource.getMultiSchema());
@@ -810,7 +810,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			ds.setJndi(hibDataSource.getJndi());
 			ds.setUrlConnection(hibDataSource.getUrl_connection());
 			ds.setUser(hibDataSource.getUser());
-			String decryptedPassword = DataSourceJDBCPasswordManager.decrypt(hibDataSource.getPwd());
+			String decryptedPassword = EncryptionPBEWithMD5AndDESManager.decrypt(hibDataSource.getPwd());
 			ds.setPwd(decryptedPassword);
 			ds.setDriver(hibDataSource.getDriver());
 			ds.setOwner(hibDataSource.getCommonInfo().getUserIn());
@@ -866,7 +866,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			sbiDataSource.setUser(dataSource.getUser());
 
 			String password = dataSource.getPwd();
-			String encPassword = DataSourceJDBCPasswordManager.encrypt(password);
+			String encPassword = EncryptionPBEWithMD5AndDESManager.encrypt(password);
 			sbiDataSource.setPwd(encPassword);
 			sbiDataSource.setDriver(dataSource.getDriver());
 			sbiDataSource.setDialectDescr(dataSource.getDialectName());
