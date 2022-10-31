@@ -10,6 +10,18 @@
             <DatasetEditor v-if="datasetEditorVisible" :dashboardIdProp="dashboardId" :availableDatasetsProp="datasets" :filtersDataProp="filtersData" @closeDatasetEditor="closeDatasetEditor" @datasetEditorSaved="closeDatasetEditor" />
         </Transition>
 
+        <Transition name="editorEnter" appear>
+            <DashboardGeneralSettings
+                v-if="generalSettingsVisible"
+                :dashboardId="dashboardId"
+                :datasets="datasets"
+                :documentDrivers="drivers"
+                :profileAttributes="profileAttributes"
+                @closeGeneralSettings="closeGeneralSettings"
+                @saveGeneralSettings="generalSettingsVisible = false"
+            ></DashboardGeneralSettings>
+        </Transition>
+
         <WidgetPickerDialog v-if="widgetPickerVisible" :visible="widgetPickerVisible" @openNewWidgetEditor="openNewWidgetEditor" @closeWidgetPicker="widgetPickerVisible = false" />
         <DashboardControllerSaveDialog v-if="saveDialogVisible" :visible="saveDialogVisible" @save="saveNewDashboard" @close="saveDialogVisible = false"></DashboardControllerSaveDialog>
         <SelectionsListDialog v-if="selectionsDialogVisible" :visible="selectionsDialogVisible" :dashboardId="dashboardId" @close="selectionsDialogVisible = false" @save="onSelectionsRemove" />
@@ -51,12 +63,13 @@ import descriptor from './DashboardDescriptor.json'
 import cryptoRandomString from 'crypto-random-string'
 import DashboardControllerSaveDialog from './DashboardControllerSaveDialog.vue'
 import SelectionsListDialog from './widget/SelectorWidget/SelectionsListDialog.vue'
+import DashboardGeneralSettings from './generalSettings/DashboardGeneralSettings.vue'
 
 // import './webComponentExample/hello-world'
 
 export default defineComponent({
     name: 'dashboard-manager',
-    components: { DashboardRenderer, WidgetPickerDialog, DatasetEditor, WidgetEditor, DashboardControllerSaveDialog, SelectionsListDialog },
+    components: { DashboardRenderer, WidgetPickerDialog, DatasetEditor, WidgetEditor, DashboardControllerSaveDialog, SelectionsListDialog, DashboardGeneralSettings },
     props: { sbiExecutionId: { type: String }, document: { type: Object }, reloadTrigger: { type: Boolean }, hiddenFormData: { type: Object }, filtersData: { type: Object as PropType<{ filterStatus: iParameter[]; isReadyForExecution: boolean }> }, newDashboardMode: { type: Boolean } },
     emits: ['newDashboardSaved'],
     data() {
@@ -74,6 +87,7 @@ export default defineComponent({
             dashboardId: '',
             saveDialogVisible: false,
             selectionsDialogVisible: false,
+            generalSettingsVisible: false,
             loading: false
         }
     },
@@ -277,6 +291,10 @@ export default defineComponent({
         onSelectionsRemove(selections: ISelection[]) {
             this.selectionsDialogVisible = false
             this.removeSelections(selections, this.dashboardId)
+        },
+        closeGeneralSettings() {
+            this.generalSettingsVisible = false
+            emitter.emit('dashboardGeneralSettingsClosed')
         }
     }
 })

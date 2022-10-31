@@ -1,6 +1,6 @@
 <template>
     <div class="kn-height-full detail-page-container">
-        <Toolbar v-if="!embed && !olapDesignerMode && !managementOpened" class="kn-toolbar kn-toolbar--primary p-col-12">
+        <Toolbar v-if="!embed && !olapDesignerMode && !managementOpened && !dashboardGeneralSettingsOpened" class="kn-toolbar kn-toolbar--primary p-col-12">
             <template #start>
                 <span>{{ document?.name }}</span>
             </template>
@@ -220,7 +220,8 @@ export default defineComponent({
             angularData: null as any,
             crossNavigationContainerVisible: false,
             crossNavigationContainerData: null as any,
-            newDashboardMode: false
+            newDashboardMode: false,
+            dashboardGeneralSettingsOpened: false
         }
     },
     watch: {
@@ -326,6 +327,9 @@ export default defineComponent({
         } else {
             this.parameterSidebarVisible = true
         }
+    },
+    unmounted() {
+        this.removeEventListeners()
     },
     methods: {
         iframeEventsListener(event) {
@@ -1290,15 +1294,32 @@ export default defineComponent({
             emitter.emit('openDatasetManagement')
         },
         setEventListeners() {
-            emitter.on('datasetManagementClosed', () => {
-                this.managementOpened = false
-            })
-            emitter.on('widgetEditorOpened', () => {
-                this.managementOpened = true
-            })
-            emitter.on('widgetEditorClosed', () => {
-                this.managementOpened = false
-            })
+            emitter.on('datasetManagementClosed', this.onDatasetManagementClosed)
+            emitter.on('widgetEditorOpened', this.onWidgetEditorOpened)
+            emitter.on('widgetEditorClosed', this.onWidgetEditorClosed)
+            emitter.on('dashboardGeneralSettingsClosed', this.onDashboardGeneralSettingsClosed)
+        },
+        removeEventListeners() {
+            emitter.off('datasetManagementClosed', this.onDatasetManagementClosed)
+            emitter.off('widgetEditorOpened', this.onWidgetEditorOpened)
+            emitter.off('widgetEditorClosed', this.onWidgetEditorClosed)
+            emitter.off('dashboardGeneralSettingsClosed', this.onDashboardGeneralSettingsClosed)
+        },
+        onDatasetManagementClosed() {
+            this.managementOpened = false
+        },
+        onWidgetEditorOpened() {
+            this.managementOpened = true
+        },
+        onWidgetEditorClosed() {
+            this.managementOpened = false
+        },
+        onDashboardGeneralSettingsClosed() {
+            this.dashboardGeneralSettingsOpened = false
+        },
+        openDashboardGeneralSettings() {
+            this.dashboardGeneralSettingsOpened = true
+            emitter.emit('openDashboardGeneralSettings')
         },
         saveDashboard() {
             emitter.emit('saveDashboard')
