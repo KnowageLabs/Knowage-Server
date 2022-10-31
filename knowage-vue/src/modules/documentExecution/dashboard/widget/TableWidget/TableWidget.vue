@@ -252,7 +252,7 @@ export default defineComponent({
                                 } else return 1
                             }
                             tempCol.cellClassRules = {
-                                'cell-span': function (params) {
+                                'cell-span': function(params) {
                                     return tempRows[params.rowIndex].span > 1
                                 }
                             }
@@ -340,7 +340,6 @@ export default defineComponent({
                     }
                 }
             }
-
             return columns
         },
         getColumnGroup(col) {

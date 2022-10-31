@@ -36,7 +36,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 	private String code;
 	private String name;
 	private String descr;
-	private Boolean isPublic;
+	private Boolean isPublic = Boolean.FALSE;
 
 	private Set sbiFuncRoles;
 	private Set sbiParuseDets;

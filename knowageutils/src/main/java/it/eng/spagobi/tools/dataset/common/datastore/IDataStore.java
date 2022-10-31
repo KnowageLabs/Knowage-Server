@@ -17,16 +17,20 @@
  */
 package it.eng.spagobi.tools.dataset.common.datastore;
 
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import gnu.trove.set.hash.TLongHashSet;
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.query.IQuery;
 
-import java.util.*;
-
 /**
- * @authors Angelo Bernabei (angelo.bernabei@eng.it) Andrea Gioia (andrea.gioia@eng.it)
+ * @authors Angelo Bernabei (angelo.bernabei@eng.it)
+ * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public interface IDataStore {
 
@@ -34,15 +38,15 @@ public interface IDataStore {
 
 	void setMetaData(IMetaData metaData);
 
-	Iterator iterator();
+	Iterator<IRecord> iterator();
 
 	boolean isEmpty();
 
 	long getRecordsCount();
 
-	List getRecords();
+	List<IRecord> getRecords();
 
-	void setRecords(List records);
+	void setRecords(List<IRecord> records);
 
 	IRecord getRecordAt(int i);
 
@@ -70,7 +74,7 @@ public interface IDataStore {
 
 	void sortRecords(int fieldIndex, Comparator filedComparator);
 
-	void sortRecords(Comparator recordComparator);
+	void sortRecords(Comparator<IRecord> recordComparator);
 
 	void appendRecord(IRecord r);
 
@@ -93,12 +97,6 @@ public interface IDataStore {
 	 */
 	@Deprecated
 	String toXml();
-
-	/**
-	 * @deprecated use the proper DataWriter instead
-	 */
-	@Deprecated
-	SourceBean toSourceBean() throws SourceBeanException;
 
 	Date getCacheDate();
 

@@ -40,12 +40,12 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.dao.dto.SbiCategory;
 import it.eng.spagobi.commons.initializers.metadata.SpagoBIInitializer;
 import it.eng.spagobi.commons.metadata.SbiAuthorizations;
 import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
 import it.eng.spagobi.commons.metadata.SbiAuthorizationsRolesId;
 import it.eng.spagobi.commons.metadata.SbiCommonInfo;
-import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.metadata.SbiProductType;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
@@ -108,8 +108,8 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 							String value = (String) attribute.getAttribute("value");
 							logger.debug("Setting attribute [" + name + "] of user [" + userId + "] to value [" + value + "]");
 							if (usersLookupMap.get(userId) == null) {
-								logger.debug(
-										"User [" + userId + "] was already stored in the database. The value of attribute [" + name + "] will not be overwritten");
+								logger.debug("User [" + userId + "] was already stored in the database. The value of attribute [" + name
+										+ "] will not be overwritten");
 								continue;
 							}
 
@@ -136,8 +136,8 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 							String name = (String) role.getAttribute("name");
 							logger.debug("Creating association beetween user [" + userId + "] and role [" + name + "]");
 							if (usersLookupMap.get(userId) == null) {
-								logger.debug(
-										"User [" + userId + "] was already stored in the database. The associatino with role [" + name + "] will not be created");
+								logger.debug("User [" + userId + "] was already stored in the database. The associatino with role [" + name
+										+ "] will not be created");
 								continue;
 							}
 
@@ -694,11 +694,12 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 
 				if (DAOFactory.getRoleDAO().getMetaModelCategoriesForRole(role.getExtRoleId()).size() == 0) {
 					for (SourceBean extRolesCategorySB : extRolesCategoriesSB) {
-						SbiDomains category = (SbiDomains) aSession.createCriteria(SbiDomains.class)
-								.add(Restrictions.eq("domainCd", extRolesCategorySB.getAttribute("domainCd")))
-								.add(Restrictions.isNull("commonInfo.organization")).uniqueResult();
 
-						roleDAO.insertRoleMetaModelCategory(role.getExtRoleId(), category.getValueId());
+						SbiCategory category = (SbiCategory) aSession.createCriteria(SbiCategory.class)
+								.add(Restrictions.eq("type", extRolesCategorySB.getAttribute("domainCd")))
+								.add(Restrictions.eq("commonInfo.organization", organization)).uniqueResult();
+
+						roleDAO.insertRoleMetaModelCategory(role.getExtRoleId(), category.getId());
 					}
 				}
 

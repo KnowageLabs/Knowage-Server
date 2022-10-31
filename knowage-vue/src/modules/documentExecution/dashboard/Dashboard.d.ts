@@ -456,7 +456,7 @@ export interface IDatasetColumn {
     precision: number
     scale: number
     personal: boolean
-    decript: boolean
+    decrypt: boolean
     subjectId: boolean
 }
 

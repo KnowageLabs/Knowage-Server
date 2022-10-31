@@ -17,18 +17,29 @@
  */
 package it.eng.spagobi.tools.dataset.common.datastore;
 
-import gnu.trove.set.hash.TLongHashSet;
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
-import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
-import it.eng.spagobi.tools.dataset.common.query.IQuery;
-import it.eng.spagobi.utilities.NumberUtilities;
-import net.openhft.hashing.LongHashFunction;
-import org.apache.log4j.Logger;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.data.Row;
@@ -40,37 +51,51 @@ import org.apache.metamodel.query.Query;
 import org.apache.metamodel.query.SelectItem;
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.util.SimpleTableDef;
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.jasypt.exceptions.EncryptionInitializationException;
+import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import gnu.trove.set.hash.TLongHashSet;
+import it.eng.knowage.encryption.EncryptionConfiguration;
+import it.eng.knowage.encryption.EncryptionPreferencesRegistry;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
+import it.eng.spagobi.tools.dataset.common.query.IQuery;
+import it.eng.spagobi.utilities.NumberUtilities;
+import net.openhft.hashing.LongHashFunction;
 
 /**
- * @authors Angelo Bernabei (angelo.bernabei@eng.it) Andrea Gioia (andrea.gioia@eng.it)
+ * @author Angelo Bernabei (angelo.bernabei@eng.it)
+ * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class DataStore implements IDataStore {
 
-	private static transient Logger logger = Logger.getLogger(DataStore.class);
+	private static final Logger LOGGER = LogManager.getLogger(DataStore.class);
 
 	public static String DEFAULT_TABLE_NAME = "TemporaryTable";
 	public static String DEFAULT_SCHEMA_NAME = "KA";
 
-	protected IMetaData metaData;
+	protected IMetaData metaData = new MetaData();
 
-	protected List records = new ArrayList();
+	protected List<IRecord> records = new ArrayList<>();
 
 	Date cacheDate = null;
 
+	private IDataSet dataSet;
+
 	public DataStore() {
-		this.metaData = new MetaData();
 	}
 
 	public DataStore(IMetaData dataSetMetadata) {
-		super();
+		this();
 		this.metaData = dataSetMetadata;
 		this.metaData.setProperty(IMetaData.RESULT_NUMBER_PROPERTY, 0);
 		adjustMetadata(dataSetMetadata);
+		setUpDecryption();
 	}
 
 	@Override
@@ -84,34 +109,37 @@ public class DataStore implements IDataStore {
 	}
 
 	@Override
-	public Iterator iterator() {
+	public Iterator<IRecord> iterator() {
 		return records.iterator();
 	}
 
 	@Override
 	public void appendRecord(IRecord record) {
+		decryptIfNeeded(record);
 		records.add(record);
 	}
 
 	@Override
 	public void prependRecord(IRecord record) {
+		decryptIfNeeded(record);
 		insertRecord(0, record);
 	}
 
 	@Override
 	public void insertRecord(int position, IRecord record) {
+		decryptIfNeeded(record);
 		records.add(position, record);
 	}
 
 	@Override
 	public IRecord getRecordAt(int i) {
-		IRecord r = (IRecord) records.get(i);
+		IRecord r = records.get(i);
 		return r;
 	}
 
 	@Override
 	public IRecord getRecordByID(Object value) {
-		List result;
+		List<IRecord> result;
 		final int idFieldIndex;
 
 		idFieldIndex = getMetaData().getIdFieldIndex();
@@ -122,14 +150,14 @@ public class DataStore implements IDataStore {
 		result = findRecords(idFieldIndex, value);
 
 		if (result.size() > 1) {
-			logger.warn("Duplicate idetifier found while searching record by id on value [" + value + "]. Only the first match will be used");
+			LOGGER.warn("Duplicate idetifier found while searching record by id on value [" + value + "]. Only the first match will be used");
 		}
 
 		return result.size() == 1 ? (IRecord) result.get(0) : null;
 	}
 
 	@Override
-	public List findRecords(int fieldIndex, Object fieldValue) {
+	public List<IRecord> findRecords(int fieldIndex, Object fieldValue) {
 		List fieldIndexes = new ArrayList();
 		List fieldValues = new ArrayList();
 
@@ -140,9 +168,9 @@ public class DataStore implements IDataStore {
 	}
 
 	@Override
-	public List findRecords(final List fieldIndexes, final List fieldValues) {
+	public List<IRecord> findRecords(final List fieldIndexes, final List fieldValues) {
 
-		List results = findRecords(new IRecordMatcher() {
+		List<IRecord> results = findRecords(new IRecordMatcher() {
 			@Override
 			public boolean match(IRecord record) {
 				boolean match = true;
@@ -163,7 +191,7 @@ public class DataStore implements IDataStore {
 	}
 
 	@Override
-	public List findRecords(IRecordMatcher... matchers) {
+	public List<IRecord> findRecords(IRecordMatcher... matchers) {
 
 		List<IRecord> results = new ArrayList<>();
 
@@ -193,18 +221,20 @@ public class DataStore implements IDataStore {
 	@Override
 	public void setMetaData(IMetaData metaData) {
 		this.metaData = metaData;
+		// TODO : Do we need to call adjustMetadata?
+		setUpDecryption();
 	}
 
 	@Override
 	public List getFieldValues(int fieldIndex) {
 		List results;
-		Iterator it;
+		Iterator<IRecord> it;
 
 		results = new ArrayList();
 
 		it = iterator();
 		while (it.hasNext()) {
-			IRecord record = (IRecord) it.next();
+			IRecord record = it.next();
 			IField field = record.getFieldAt(fieldIndex);
 			if (field.getValue() != null) {
 				results.add(field.getValue());
@@ -217,13 +247,13 @@ public class DataStore implements IDataStore {
 	@Override
 	public Set getFieldDistinctValues(int fieldIndex) {
 		Set results;
-		Iterator it;
+		Iterator<IRecord> it;
 
 		results = new LinkedHashSet();
 
 		it = iterator();
 		while (it.hasNext()) {
-			IRecord record = (IRecord) it.next();
+			IRecord record = it.next();
 			IField field = record.getFieldAt(fieldIndex);
 			if (field.getValue() != null) {
 				results.add(field.getValue());
@@ -236,13 +266,13 @@ public class DataStore implements IDataStore {
 	@Override
 	public Set<String> getFieldDistinctValuesAsString(int fieldIndex) {
 		Set<String> results;
-		Iterator it;
+		Iterator<IRecord> it;
 
 		results = new LinkedHashSet();
 
 		it = iterator();
 		while (it.hasNext()) {
-			IRecord record = (IRecord) it.next();
+			IRecord record = it.next();
 			IField field = record.getFieldAt(fieldIndex);
 			if (field.getValue() != null) {
 				String normalizedValue;
@@ -269,22 +299,22 @@ public class DataStore implements IDataStore {
 
 	@Override
 	public Map<Integer, Set<Object>> getFieldsDistinctValues(final List<Integer> fieldIndexes) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
-		logger.debug("Initializing structure to contain distinct values for fields with index " + fieldIndexes);
+		LOGGER.debug("Initializing structure to contain distinct values for fields with index " + fieldIndexes);
 		Map<Integer, Set<Object>> results = new HashMap<>(fieldIndexes.size());
 		for (Integer fieldIndex : fieldIndexes) {
 			results.put(fieldIndex, new HashSet<Object>());
 		}
 
-		Iterator it = iterator();
+		Iterator<IRecord> it = iterator();
 		while (it.hasNext()) {
-			IRecord record = (IRecord) it.next();
+			IRecord record = it.next();
 			for (Integer fieldIndex : fieldIndexes) {
 				IField field = record.getFieldAt(fieldIndex);
 				Object value = field.getValue();
 				if (value != null) {
-					logger.debug("Got value [" + value + "] for field index [" + fieldIndex + "]");
+					LOGGER.debug("Got value [" + value + "] for field index [" + fieldIndex + "]");
 					results.get(fieldIndex).add(value);
 				}
 			}
@@ -299,9 +329,9 @@ public class DataStore implements IDataStore {
 			results.put(fieldIndex, new HashSet<String>());
 		}
 
-		Iterator it = iterator();
+		Iterator<IRecord> it = iterator();
 		while (it.hasNext()) {
-			IRecord record = (IRecord) it.next();
+			IRecord record = it.next();
 			for (Integer fieldIndex : fieldIndexes) {
 				IField field = record.getFieldAt(fieldIndex);
 				Object value = field.getValue();
@@ -321,7 +351,7 @@ public class DataStore implements IDataStore {
 					}
 
 					normalizedValue = String.valueOf(value);
-					logger.debug("Got value [" + normalizedValue + "] for field index [" + fieldIndex + "]");
+					LOGGER.debug("Got value [" + normalizedValue + "] for field index [" + fieldIndex + "]");
 					results.get(fieldIndex).add(normalizedValue);
 				}
 			}
@@ -334,13 +364,13 @@ public class DataStore implements IDataStore {
 	public Map<String, TLongHashSet> getFieldsDistinctValuesAsLongHash(final List<Integer> fieldIndexes) {
 		Map<String, TLongHashSet> results = new HashMap<>(fieldIndexes.size());
 
-		Iterator it = iterator();
+		Iterator<IRecord> it = iterator();
 		while (it.hasNext()) {
-			IRecord record = (IRecord) it.next();
+			IRecord record = it.next();
 			for (Integer fieldIndex : fieldIndexes) {
 				IFieldMetaData fieldMetaData = metaData.getFieldMeta(fieldIndex);
 				String fieldName = fieldMetaData.getAlias();
-				logger.debug("Field name [" + fieldName + "]");
+				LOGGER.debug("Field name [" + fieldName + "]");
 				if (NumberUtilities.isNumber(fieldMetaData.getType())) {
 					if (!results.containsKey(fieldName)) {
 						results.put(fieldName, null);
@@ -349,7 +379,7 @@ public class DataStore implements IDataStore {
 					IField field = record.getFieldAt(fieldIndex);
 					Object value = field.getValue();
 					if (value != null) {
-						logger.debug("Field value [" + value + "]");
+						LOGGER.debug("Field value [" + value + "]");
 						String normalizedValue;
 						if (value instanceof Number) {
 							Number number = (Number) value;
@@ -365,9 +395,9 @@ public class DataStore implements IDataStore {
 						}
 
 						normalizedValue = String.valueOf(value);
-						logger.debug("Got value [" + normalizedValue + "] for field index [" + fieldIndex + "]");
+						LOGGER.debug("Got value [" + normalizedValue + "] for field index [" + fieldIndex + "]");
 						long hashValue = LongHashFunction.xx_r39().hashChars(normalizedValue);
-						logger.debug("Value [" + normalizedValue + "] has been hashed into [" + hashValue + "]");
+						LOGGER.debug("Value [" + normalizedValue + "] has been hashed into [" + hashValue + "]");
 
 						if (!results.containsKey(fieldName)) {
 							results.put(fieldName, new TLongHashSet());
@@ -430,50 +460,34 @@ public class DataStore implements IDataStore {
 	}
 
 	@Override
-	public void sortRecords(Comparator recordComparator) {
+	public void sortRecords(Comparator<IRecord> recordComparator) {
 		Collections.sort(records, recordComparator);
 	}
 
-	public List getRecords() {
+	@Override
+	public List<IRecord> getRecords() {
 		return records;
 	}
 
-	public void setRecords(List records) {
-		this.records = records;
-	}
-
 	@Override
-	public SourceBean toSourceBean() throws SourceBeanException {
-		SourceBean sb1 = new SourceBean("ROWS");
-		Iterator it = iterator();
-		while (it.hasNext()) {
-			SourceBean sb2 = new SourceBean("ROW");
-			IRecord record = (IRecord) it.next();
-			for (int i = 0; i < getMetaData().getFieldCount(); i++) {
-				IField field = record.getFieldAt(i);
-				IFieldMetaData fieldMeta = getMetaData().getFieldMeta(i);
-				String name = fieldMeta.getName();
-				Object value = field.getValue();
-				Class type = fieldMeta.getType();
-				if (value == null)
-					value = new String("");
-				sb2.setAttribute(name, value);
+	public void setRecords(List<IRecord> records) {
+		if (Objects.nonNull(records)) {
+			for (IRecord record : records) {
+				appendRecord(record);
 			}
-			sb1.setAttribute(sb2);
 		}
-		return sb1;
 	}
 
 	@Override
 	public String toXml() {
 		String xml;
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		xml = "<ROWS>";
-		Iterator it = iterator();
+		Iterator<IRecord> it = iterator();
 		while (it.hasNext()) {
-			IRecord record = (IRecord) it.next();
+			IRecord record = it.next();
 			xml += "<ROW ";
 			for (int j = 0; j < getMetaData().getFieldCount(); j++) {
 				IField field = record.getFieldAt(j);
@@ -486,7 +500,7 @@ public class DataStore implements IDataStore {
 		}
 		xml += "</ROWS>";
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 
 		return xml;
 	}
@@ -499,9 +513,9 @@ public class DataStore implements IDataStore {
 		buffer.append(metaData);
 		buffer.append("\n");
 		buffer.append("Records:\n");
-		Iterator it = this.iterator();
+		Iterator<IRecord> it = this.iterator();
 		while (it.hasNext()) {
-			IRecord record = (IRecord) it.next();
+			IRecord record = it.next();
 			buffer.append(record);
 			buffer.append("\n");
 		}
@@ -774,4 +788,90 @@ public class DataStore implements IDataStore {
 		newDataStoreMetadata.setProperties(dataStoreMetadata.getProperties());
 		setMetaData(newDataStoreMetadata);
 	}
+
+	private boolean needDecryption = false;
+	private List<IFieldMetaData> decryptableField = new ArrayList<>();
+	private Map<Integer, IFieldMetaData> decryptableFieldByIndex = new LinkedHashMap<>();
+	private StandardPBEStringEncryptor encryptor;
+
+	private void setUpDecryption() {
+		IMetaData dataStoreMetadata = getMetaData();
+
+		AtomicInteger index = new AtomicInteger();
+
+		dataStoreMetadata.getFieldsMeta()
+			.stream()
+			.collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e))
+			.entrySet()
+			.stream()
+			.filter(e -> e.getValue().isDecrypt())
+			.forEach(e -> {
+				Integer key = e.getKey();
+				IFieldMetaData value = e.getValue();
+				decryptableField.add(value);
+				decryptableFieldByIndex.put(key, value);
+			});
+
+		needDecryption = !decryptableField.isEmpty();
+
+		if (needDecryption) {
+			EncryptionConfiguration cfg = EncryptionPreferencesRegistry.getInstance()
+					.getConfiguration(EncryptionPreferencesRegistry.DEFAULT_CFG_KEY);
+
+			String algorithm = cfg.getAlgorithm();
+			String password = cfg.getEncryptionPwd();
+
+			encryptor = new StandardPBEStringEncryptor();
+			encryptor.setAlgorithm(algorithm);
+			encryptor.setPassword(password);
+		}
+
+	}
+
+	private void decryptIfNeeded(IRecord record) {
+		if (needDecryption) {
+			List<IField> fields = record.getFields();
+
+			for (int i = 0; i<fields.size(); i++) {
+				if (decryptableFieldByIndex.containsKey(i)) {
+					IFieldMetaData fieldMetaData = decryptableFieldByIndex.get(i);
+					String fieldName = fieldMetaData.getName();
+					String fieldAlias = fieldMetaData.getAlias();
+					IField fieldAt = record.getFieldAt(i);
+					Object value = fieldAt.getValue();
+					String newValue = null;
+
+					try {
+						newValue = encryptor.decrypt(value.toString());
+						fieldAt.setValue(newValue);
+					} catch (EncryptionOperationNotPossibleException e) {
+						LOGGER.warn("Ignoring field value {} from field {} (with \"{}\" alias): see following message", value, fieldName, fieldAlias);
+						LOGGER.warn(e);
+					} catch (EncryptionInitializationException e) {
+						LOGGER.error("Encryption initialization error: check decryption system properties", e);
+					}
+				}
+			}
+		}
+	}
+
+	private String mapFieldKey(IFieldMetaData field) {
+		return field.getName();
+	}
+
+	private Map<String, IFieldMetaData> mapFieldByColumnName(IMetaData metaData) {
+		return metaData.getFieldsMeta()
+			.stream()
+			.collect(Collectors.toMap(e -> mapFieldKey(e), e -> e));
+	}
+
+//	@Override
+//	public IDataSet getDataSet() {
+//		return dataSet;
+//	}
+//
+//	@Override
+//	public void setDataSet(IDataSet dataSet) {
+//		this.dataSet = dataSet;
+//	}
 }

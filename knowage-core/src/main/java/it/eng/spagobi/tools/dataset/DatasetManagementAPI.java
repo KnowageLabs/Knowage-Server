@@ -311,7 +311,7 @@ public class DatasetManagementAPI {
 			if (dataSet instanceof VersionedDataSet) {
 				dataSet = ((VersionedDataSet) dataSet).getWrappedDataset();
 			}
-			if (dataSet instanceof AbstractJDBCDataset && !dataSet.hasDataStoreTransformer()) {
+			if (dataSet instanceof AbstractJDBCDataset && !dataSet.hasDataStoreTransformers()) {
 				logger.debug("Copying JDBC dataset in cache using its iterator");
 				cache.put(dataSet, columns);
 			} else {

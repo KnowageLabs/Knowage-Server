@@ -18,6 +18,8 @@
 package it.eng.spagobi.tools.dataset.listener;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -457,13 +459,13 @@ public class DataStoreListenerOperatorTest extends TestCase {
 		}
 
 		@Override
-		public boolean hasDataStoreTransformer() {
+		public boolean hasDataStoreTransformers() {
 
 			return false;
 		}
 
 		@Override
-		public void removeDataStoreTransformer() {
+		public void removeDataStoreTransformers() {
 
 		}
 
@@ -478,14 +480,19 @@ public class DataStoreListenerOperatorTest extends TestCase {
 		}
 
 		@Override
-		public void setDataStoreTransformer(IDataStoreTransformer transformer) {
+		public void addDataStoreTransformer(IDataStoreTransformer transformer) {
 
 		}
 
 		@Override
-		public IDataStoreTransformer getDataStoreTransformer() {
+		public void addDataStoreTransformers(Collection<IDataStoreTransformer> transformers) {
 
-			return null;
+		}
+
+		@Override
+		public List<IDataStoreTransformer> getDataStoreTransformers() {
+
+			return Collections.emptyList();
 		}
 
 		@Override
@@ -789,6 +796,11 @@ public class DataStoreListenerOperatorTest extends TestCase {
 		@Override
 		public void setTags(Set tags) {
 			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void executeDataStoreTransformers(IDataStore dataStore) {
 
 		}
 

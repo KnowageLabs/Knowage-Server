@@ -109,7 +109,8 @@ public class CockpitDataExportJobBuilder {
 		JobDetail job = newJob().withIdentity("export_" + randomUUID, "export")
 			.withDescription(jobDescription)
 			.usingJobData(jobDataMap)
-			.storeDurably(false)
+			.storeDurably(true)
+			.ofType(CockpitDataExportJob.class)
 			.build();
 
 		return job;

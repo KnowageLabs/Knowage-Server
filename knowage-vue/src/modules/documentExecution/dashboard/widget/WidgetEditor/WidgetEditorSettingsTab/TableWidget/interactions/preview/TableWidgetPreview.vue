@@ -132,7 +132,7 @@ export default defineComponent({
             this.loadDatasetsFromModel()
         },
         loadDatasetsFromModel() {
-            this.dashboardDatasets = this.dashboardModel.configuration.datasets
+            this.dashboardDatasets = this.dashboardModel?.configuration.datasets
         },
         onColumnRemoved() {
             this.loadPreviewModel()
