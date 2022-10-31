@@ -434,8 +434,6 @@ export default defineComponent({
                             else this.multiSelectedCells.splice(this.multiSelectedCells.indexOf(node.value), 1)
                             if (this.multiSelectedCells.length == 0) this.selectedColumn = false
                         }
-
-                        // console.log('SELECTED CELLS -----------', this.multiSelectedCells)
                     } else if (!modalSelection.multiselection.enabled) {
                         if (modalSelection.modalColumn) {
                             const modalColumnIndex = this.propWidget.columns.findIndex((column) => column.id == modalSelection.modalColumn)
