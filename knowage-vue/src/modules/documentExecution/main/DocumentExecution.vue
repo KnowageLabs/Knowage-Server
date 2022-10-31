@@ -383,7 +383,8 @@ export default defineComponent({
                     showScheduledExecutions: this.showScheduledExecutions,
                     addToWorkspace: this.addToWorkspace,
                     showOLAPCustomView: this.showOLAPCustomView,
-                    copyLink: this.copyLink
+                    copyLink: this.copyLink,
+                    openDashboardGeneralSettings: this.openDashboardGeneralSettings
                 },
                 this.exporters,
                 this.user,

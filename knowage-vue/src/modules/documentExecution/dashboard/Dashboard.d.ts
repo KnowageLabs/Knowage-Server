@@ -576,7 +576,8 @@ export interface IVariable {
     dataset?: string
     column?: string
     attribute?: string
-    driver?: string
+    driver?: string,
+    key?: string
 }
 
 export interface IWidgetTitle {

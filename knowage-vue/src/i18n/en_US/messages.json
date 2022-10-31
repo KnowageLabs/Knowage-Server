@@ -361,6 +361,13 @@
             "static": "Static",
             "title": "Dataset Manageent"
         },
+        "generalSettings": {
+            "attribute": "Attribute",
+            "profile": "Profile",
+            "title": "General Settings",
+            "variableColumnHint": "If no column is defined the whole dataset will be used.",
+            "variablesHint": "Variables can be used everywhere in the dashboard widgets. They can be static values or dynamic values set in different ways. Check the documentation or the single widgets to learn how to use them."
+        },
         "getDataError": "Unable to load data from dataset {datasetLabel}. Please check dataset & widget configuration.",
         "saveCockpit": "Save Cockpit",
         "saveCockpitHint": "Please enter a valid name",

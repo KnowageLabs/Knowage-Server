@@ -134,7 +134,7 @@ export default defineComponent({
                     .then((response: AxiosResponse<any>) => (tempModel = response.data))
                     .catch(() => {})
             }
-            this.model = (tempModel && this.newDashboardMode) || tempModel.hasOwnProperty('id') ? tempModel : (formatModel(tempModel, this.document, this.datasets) as any)
+            this.model = (tempModel && this.newDashboardMode) || tempModel.hasOwnProperty('id') ? tempModel : (formatModel(tempModel, this.document, this.datasets, this.drivers, this.profileAttributes) as any)
             setDatasetIntervals(this.model.configuration.datasets, this.datasets)
             this.dashboardId = cryptoRandomString({ length: 16, type: 'base64' })
             this.store.setDashboard(this.dashboardId, this.model)
@@ -169,16 +169,18 @@ export default defineComponent({
             // TODO - remove mock
             this.drivers = [
                 {
-                    name: 'Driver 1',
+                    name: 'Variable Analytical Driver',
                     type: 'static',
                     multivalue: false,
-                    value: 'Driver 1'
+                    value: 'Driver 1',
+                    urlName: 'analytical_driver'
                 },
                 {
                     name: 'Driver 2',
                     type: 'dynamic',
                     multivalue: false,
-                    value: 'Driver 2'
+                    value: 'Driver 2',
+                    urlName: 'Driver_2'
                 }
             ]
         },
@@ -201,7 +203,10 @@ export default defineComponent({
             })
             emitter.on('saveDashboard', () => {
                 this.onSaveDashboardClicked()
-            })
+            }),
+                emitter.on('openDashboardGeneralSettings', () => {
+                    this.openGeneralSettings()
+                })
         },
         openNewWidgetPicker() {
             this.widgetPickerVisible = true
@@ -291,6 +296,9 @@ export default defineComponent({
         onSelectionsRemove(selections: ISelection[]) {
             this.selectionsDialogVisible = false
             this.removeSelections(selections, this.dashboardId)
+        },
+        openGeneralSettings() {
+            this.generalSettingsVisible = true
         },
         closeGeneralSettings() {
             this.generalSettingsVisible = false

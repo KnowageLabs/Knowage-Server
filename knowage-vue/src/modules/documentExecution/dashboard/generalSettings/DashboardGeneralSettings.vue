@@ -1,30 +1,30 @@
 <template>
-    <Teleport to=".dashboard-container">
-        <div class="dashboardEditor">
-            <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #start> {{ $t('dashboard.generalSettings.title') }} </template>
-                <template #end>
-                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="saveGeneralSettings" />
-                    <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="$emit('closeGeneralSettings')" />
-                </template>
-            </Toolbar>
+    <div class="dashboardEditor">
+        <Toolbar class="kn-toolbar kn-toolbar--primary">
+            <template #start> {{ $t('dashboard.generalSettings.title') }} </template>
+            <template #end>
+                <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="saveGeneralSettings" />
+                <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="$emit('closeGeneralSettings')" />
+            </template>
+        </Toolbar>
 
-            <div class="p-grid p-m-0 p-p-0">
-                <DashboardGeneralSettingsList class="p-col-3" @selectedOption="setSelectedOption"></DashboardGeneralSettingsList>
-                <DashboardVariables v-if="selectedOption === 'Variables'" class="p-col-9" :propVariables="variables" :selectedDatasets="selectedDatasets" :selectedDatasetsColumnsMap="selectedDatasetColumnsMap" :drivers="documentDrivers" :profileAttributes="profileAttributes"></DashboardVariables>
-            </div>
+        <div class="p-grid p-m-0 p-p-0 kn-overflow">
+            <DashboardGeneralSettingsList class="p-col-3 p-pr-2" @selectedOption="setSelectedOption"></DashboardGeneralSettingsList>
+            <DashboardVariables v-if="selectedOption === 'Variables'" class="p-col-9 p-pl-2" :propVariables="variables" :selectedDatasets="selectedDatasets" :selectedDatasetsColumnsMap="selectedDatasetColumnsMap" :drivers="documentDrivers" :profileAttributes="profileAttributes"></DashboardVariables>
         </div>
-    </Teleport>
+    </div>
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IVariable, IModelDataset, IDataset } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IVariable, IDataset } from '@/modules/documentExecution/dashboard/Dashboard'
 import { mapActions } from 'pinia'
+import { getVariableValueFromDatasetColumn } from './VariablesHelper'
 import DashboardGeneralSettingsList from './DashboardGeneralSettingsList.vue'
 import DashboardVariables from './DashboardVariables.vue'
-import store from '@/modules/documentExecution/dashboard/Dashboard.store.js'
+import store from '@/modules/documentExecution/dashboard/Dashboard.store'
 import mainStore from '@/App.store'
 import deepcopy from 'deepcopy'
+
 export default defineComponent({
     name: 'dashboard-general-settings',
     components: { DashboardGeneralSettingsList, DashboardVariables },
@@ -87,13 +87,16 @@ export default defineComponent({
         setSelectedOption(option: string) {
             this.selectedOption = option
         },
-        saveGeneralSettings() {}
+        saveGeneralSettings() {
+            this.dashboardModel.configuration.variables = this.variables
+            this.$emit('closeGeneralSettings')
+        }
     }
 })
 </script>
 <style lang="scss">
 .dashboardEditor {
-    height: 100%;
+    height: 95%;
     width: 100%;
     top: 0;
     left: 0;
@@ -102,9 +105,5 @@ export default defineComponent({
     z-index: 999;
     display: flex;
     flex-direction: column;
-    .datasetEditor-container {
-        flex: 1;
-        display: flex;
-    }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <div class="dashboard-editor-list-card-container p-m-3">
+    <div class="dashboard-editor-list-card-container p-p-3">
         <div class="dashboard-editor-list-card">
             <Listbox
                 class="kn-list kn-list-no-border-right dashboard-editor-list"

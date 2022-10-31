@@ -1,13 +1,14 @@
 import { formatTableWidget } from './tableWidget/TableWidgetCompatibilityHelper'
 import { formatSelectorWidget } from '@/modules/documentExecution/dashboard/helpers/selectorWidget/SelectorWidgetCompatibilityHelper'
-import { IAssociation, IDashboardConfiguration, IDataset, IDatasetParameter, ISelection, IWidget, IWidgetColumn, IWidgetColumnFilter, IWidgetEditorDataset } from '../Dashboard'
+import { IAssociation, IDashboardConfiguration, IDataset, IDatasetParameter, ISelection, IVariable, IWidget, IWidgetColumn, IWidgetColumnFilter, IWidgetEditorDataset } from '../Dashboard'
 import { formatSelectionWidget } from './selectionWidget/SelectionsWidgetCompatibilityHelper'
 import deepcopy from 'deepcopy'
 import cryptoRandomString from 'crypto-random-string'
+import { getVariableValueFromDatasetColumn } from '../generalSettings/VariablesHelper'
 
 const datasetIdLabelMap = {}
 
-export const formatModel = (model: any, document: any, datasets: IDataset[]) => {
+export const formatModel = (model: any, document: any, datasets: IDataset[], drivers: any[], profileAttributes: { name: string, value: string }[]) => {
     if (!model.sheets) return
 
     console.log(">>>>>>>>>>>>>>>>>>> LOADED MODEL: ", model)
@@ -16,7 +17,7 @@ export const formatModel = (model: any, document: any, datasets: IDataset[]) => 
         id: cryptoRandomString({ length: 16, type: 'base64' }),
         widgets: [],
         version: model.knowageVersion,
-        configuration: getFormattedModelConfiguration(model, document),
+        configuration: getFormattedModelConfiguration(model, document, drivers, profileAttributes),
         sheets: []
     } as any
     for (let i = 0; i < model.sheets.length; i++) {
@@ -39,8 +40,8 @@ const getDatasetId = (datasetLabel: string) => {
     return datasetIdLabelMap[datasetLabel]
 }
 
-const getFormattedModelConfiguration = (model: any, document: any) => {
-    const formattedConfiguration = { id: document.id, name: document.name, label: document.label, description: document.description, associations: getFormattedAssociations(model), datasets: getFormattedDatasets(model), variables: getFormattedVariables(model), selections: getFormattedSelections(model), themes: {} } as IDashboardConfiguration
+const getFormattedModelConfiguration = (model: any, document: any, drivers: any[], profileAttributes: { name: string, value: string }[]) => {
+    const formattedConfiguration = { id: document.id, name: document.name, label: document.label, description: document.description, associations: getFormattedAssociations(model), datasets: getFormattedDatasets(model), variables: getFormattedVariables(model, drivers, profileAttributes), selections: getFormattedSelections(model), themes: {} } as IDashboardConfiguration
 
     return formattedConfiguration
 }
@@ -88,30 +89,46 @@ const getFormattedDatasetParameters = (dataset: any) => {
     return parameters
 }
 
-const getFormattedVariables = (model: any) => {
-    const formattedVariables = [] as { name: string, type: string, value: string }[]
+const getFormattedVariables = (model: any, drivers: any[], profileAttributes: { name: string, value: string }[]) => {
+    const formattedVariables = [] as IVariable[]
     if (!model.configuration || !model.configuration.variables) return formattedVariables
     for (let i = 0; i < model.configuration.variables.length; i++) {
         const tempVariable = model.configuration.variables[i]
-        const formattedVariable = { name: tempVariable.name, type: tempVariable.type, value: '' }
+        const formattedVariable = { name: tempVariable.name, type: tempVariable.type, value: '' } as IVariable
         switch (formattedVariable.type) {
             case 'static':
                 formattedVariable.value = tempVariable.value;
                 break
             case 'dataset':
-                formattedVariable.value = tempVariable.column;
+                formattedVariable.dataset = tempVariable.dataset;
+                formattedVariable.column = tempVariable.column;
+                getVariableValueFromDatasetColumn(formattedVariable)
                 break
             case 'driver':
-                formattedVariable.value = tempVariable.driver;
+                formattedVariable.driver = tempVariable.driver;
+                formattedVariable.value = getDriverValue(tempVariable.driver, drivers);
                 break
             case 'profile':
-                formattedVariable.value = tempVariable.attribute;
+                formattedVariable.attribute = tempVariable.attribute
+                formattedVariable.value = getProfileAttributeValue(tempVariable.attribute, profileAttributes);
                 break
         }
         formattedVariables.push(formattedVariable)
     }
 
     return formattedVariables
+}
+
+const getDriverValue = (driverUrlName: string, drivers: any[]) => {
+    if (!drivers) return ''
+    const index = drivers.findIndex((driver: any) => driver.urlName === driverUrlName)
+    return index !== -1 ? drivers[index].value : ''
+}
+
+const getProfileAttributeValue = (profileAttributeName: string, profileAttributes: { name: string, value: string }[]) => {
+    if (!profileAttributes) return ''
+    const index = profileAttributes.findIndex((profileAttribute: { name: string, value: string }) => profileAttribute.name === profileAttributeName)
+    return index !== -1 ? profileAttributes[index].value : ''
 }
 
 const getFormattedSelections = (model: any) => {
