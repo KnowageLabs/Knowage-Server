@@ -4,11 +4,11 @@ import { IAssociation, IDashboardConfiguration, IDataset, IDatasetParameter, ISe
 import { formatSelectionWidget } from './selectionWidget/SelectionsWidgetCompatibilityHelper'
 import deepcopy from 'deepcopy'
 import cryptoRandomString from 'crypto-random-string'
-import { getVariableValueFromDatasetColumn } from '../generalSettings/VariablesHelper'
+import { setVariableValueFromDatasetColumn } from '../generalSettings/VariablesHelper'
 
 const datasetIdLabelMap = {}
 
-export const formatModel = (model: any, document: any, datasets: IDataset[], drivers: any[], profileAttributes: { name: string, value: string }[]) => {
+export const formatModel = async (model: any, document: any, datasets: IDataset[], drivers: any[], profileAttributes: { name: string, value: string }[], $http: any) => {
     if (!model.sheets) return
 
     console.log(">>>>>>>>>>>>>>>>>>> LOADED MODEL: ", model)
@@ -17,7 +17,7 @@ export const formatModel = (model: any, document: any, datasets: IDataset[], dri
         id: cryptoRandomString({ length: 16, type: 'base64' }),
         widgets: [],
         version: model.knowageVersion,
-        configuration: getFormattedModelConfiguration(model, document, drivers, profileAttributes),
+        configuration: await getFormattedModelConfiguration(model, document, drivers, profileAttributes, datasets, $http),
         sheets: []
     } as any
     for (let i = 0; i < model.sheets.length; i++) {
@@ -40,8 +40,8 @@ const getDatasetId = (datasetLabel: string) => {
     return datasetIdLabelMap[datasetLabel]
 }
 
-const getFormattedModelConfiguration = (model: any, document: any, drivers: any[], profileAttributes: { name: string, value: string }[]) => {
-    const formattedConfiguration = { id: document.id, name: document.name, label: document.label, description: document.description, associations: getFormattedAssociations(model), datasets: getFormattedDatasets(model), variables: getFormattedVariables(model, drivers, profileAttributes), selections: getFormattedSelections(model), themes: {} } as IDashboardConfiguration
+const getFormattedModelConfiguration = async (model: any, document: any, drivers: any[], profileAttributes: { name: string, value: string }[], datasets: IDataset[], $http: any) => {
+    const formattedConfiguration = { id: document.id, name: document.name, label: document.label, description: document.description, associations: getFormattedAssociations(model), datasets: getFormattedDatasets(model), variables: await getFormattedVariables(model, drivers, profileAttributes, datasets, $http), selections: getFormattedSelections(model), themes: {} } as IDashboardConfiguration
 
     return formattedConfiguration
 }
@@ -89,7 +89,7 @@ const getFormattedDatasetParameters = (dataset: any) => {
     return parameters
 }
 
-const getFormattedVariables = (model: any, drivers: any[], profileAttributes: { name: string, value: string }[]) => {
+const getFormattedVariables = async (model: any, drivers: any[], profileAttributes: { name: string, value: string }[], datasets: IDataset[], $http: any) => {
     const formattedVariables = [] as IVariable[]
     if (!model.configuration || !model.configuration.variables) return formattedVariables
     for (let i = 0; i < model.configuration.variables.length; i++) {
@@ -102,7 +102,7 @@ const getFormattedVariables = (model: any, drivers: any[], profileAttributes: { 
             case 'dataset':
                 formattedVariable.dataset = tempVariable.dataset;
                 formattedVariable.column = tempVariable.column;
-                getVariableValueFromDatasetColumn(formattedVariable)
+                await setVariableValueFromDatasetColumn(formattedVariable, datasets, $http)
                 break
             case 'driver':
                 formattedVariable.driver = tempVariable.driver;
@@ -116,6 +116,7 @@ const getFormattedVariables = (model: any, drivers: any[], profileAttributes: { 
         formattedVariables.push(formattedVariable)
     }
 
+    console.log(">>>>>>>>>>>>>> LOADED FOPRMATTED VARIABLES: ", formattedVariables)
     return formattedVariables
 }
 

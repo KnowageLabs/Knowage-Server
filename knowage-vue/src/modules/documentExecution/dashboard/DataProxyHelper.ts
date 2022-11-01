@@ -5,7 +5,7 @@
  */
 
 import { AxiosResponse } from 'axios'
-import { IDataset, ISelection, IWidget } from './Dashboard'
+import { IDataset, ISelection, IVariable, IWidget } from './Dashboard'
 import { setDatasetInterval, clearDatasetInterval } from './helpers/datasetRefresh/DatasetRefreshHelpers'
 import i18n from '@/App.i18n'
 import store from '@/App.store.js'
@@ -123,7 +123,7 @@ export const getSelectorWidgetData = async (widget: IWidget, datasets: IDataset[
                 tempResponse.initialCall = initialCall
             })
             .catch((error: any) => {
-                showGetDataError(error, selectedDataset)
+                showGetDataError(error, selectedDataset.label)
             })
             .finally(() => {
                 // TODO - uncomment when realtime dataset example is ready
@@ -236,10 +236,10 @@ const getFormattedSelections = (selections: ISelection[]) => {
     return formattedSelections
 }
 
-const showGetDataError = (error: any, selectedDataset: IDataset) => {
+const showGetDataError = (error: any, datasetLabel: string) => {
     let message = error.message
     if (error.message === '100') {
-        message = t('dashboard.getDataError', { datasetLabel: selectedDataset.label })
+        message = t('dashboard.getDataError', { datasetLabel: datasetLabel })
     }
     mainStore.setError({ title: t('common.toast.errorTitle'), msg: message })
 }
@@ -247,4 +247,26 @@ const showGetDataError = (error: any, selectedDataset: IDataset) => {
 const resetDatasetInterval = (widget: IWidget) => {
     // TODO - set proper interval when realtime dataset example is ready
     if (widget.dataset || widget.dataset === 0) setDatasetInterval(widget.dataset as number, 10000)
+}
+
+export const getVariableData = async (variable: IVariable, datasets: IDataset[], $http: any,) => {
+    console.log(">>>> VARIABLE: ", variable)
+    const selectedDataset = getVariableDatasetLabel(variable, datasets)
+    if (!selectedDataset) return
+    const url = `2.0/datasets/${selectedDataset.label}/data?offset=-1&size=-1&widgetName=undefined`
+    const postData = { aggregations: { dataset: selectedDataset.label, measures: [], categories: [] }, parameters: {}, selections: {}, indexes: [] }
+    let tempResponse = null as any
+    await $http
+        .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData, { headers: { 'X-Disable-Errors': 'true' } })
+        .then((response: AxiosResponse<any>) =>
+            tempResponse = response.data)
+        .catch((error: any) => {
+            showGetDataError(error, selectedDataset.label)
+        })
+    return tempResponse
+}
+
+const getVariableDatasetLabel = (variable: IVariable, datasets: IDataset[]) => {
+    var datasetIndex = datasets.findIndex((dataset: IDataset) => variable.dataset === dataset.id.dsId)
+    return datasetIndex !== -1 ? datasets[datasetIndex] : null
 }

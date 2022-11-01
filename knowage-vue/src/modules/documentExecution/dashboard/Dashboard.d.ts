@@ -573,7 +573,7 @@ export interface IVariable {
     name: string
     type: string
     value: string
-    dataset?: string
+    dataset?: number
     column?: string
     attribute?: string
     driver?: string,

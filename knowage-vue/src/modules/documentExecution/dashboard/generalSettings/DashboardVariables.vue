@@ -44,7 +44,7 @@
             <div v-if="variable.type === 'dataset'" class="p-col-6 p-grid">
                 <div class="p-col-6 p-d-flex p-flex-column">
                     <label class="kn-material-input-label"> {{ $t('common.dataset') }}</label>
-                    <Dropdown class="kn-material-input" v-model="variable.dataset" :options="selectedDatasetOptions" optionLabel="name" optionValue="id"> </Dropdown>
+                    <Dropdown class="kn-material-input" v-model="variable.dataset" :options="selectedDatasetOptions" optionLabel="label" optionValue="id"> </Dropdown>
                 </div>
                 <div class="p-col-6 p-d-flex p-flex-column">
                     <label class="kn-material-input-label"> {{ $t('common.column') }}</label>

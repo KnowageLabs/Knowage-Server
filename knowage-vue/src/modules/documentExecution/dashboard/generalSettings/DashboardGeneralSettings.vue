@@ -18,7 +18,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IVariable, IDataset } from '@/modules/documentExecution/dashboard/Dashboard'
 import { mapActions } from 'pinia'
-import { getVariableValueFromDatasetColumn } from './VariablesHelper'
+import { setVariableValueFromDatasetColumn } from './VariablesHelper'
 import DashboardGeneralSettingsList from './DashboardGeneralSettingsList.vue'
 import DashboardVariables from './DashboardVariables.vue'
 import store from '@/modules/documentExecution/dashboard/Dashboard.store'
@@ -89,6 +89,8 @@ export default defineComponent({
         },
         saveGeneralSettings() {
             this.dashboardModel.configuration.variables = this.variables
+
+            console.log('>>>>>>>>>>> VARIABLES FOR SAVE: ', this.variables)
             this.$emit('closeGeneralSettings')
         }
     }
