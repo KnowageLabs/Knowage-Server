@@ -156,6 +156,7 @@ export default defineComponent({
                 // CALLBACKS
                 onGridReady: this.onGridReady,
                 getRowStyle: this.getRowStyle,
+                getRowHeight: this.getRowHeight,
                 getRowHeight: this.getRowHeight
             }
         },
