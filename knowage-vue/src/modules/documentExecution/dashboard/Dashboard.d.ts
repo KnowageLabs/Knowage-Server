@@ -69,6 +69,8 @@ export interface ITableWidgetConditionalStyle {
         type: string
         variable?: string
         parameter?: string
+        variableKey?: string
+        variablePivotDatasetOptions?: any,
         operator: string
         value: string
     }

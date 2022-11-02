@@ -195,14 +195,6 @@ export default defineComponent({
             }
             this.visibilityConditionsChanged()
         },
-        getVariablePivotDatasetOptions(variable: IVariable) {
-            if (!variable || !variable.pivotedValues) return []
-            const formattedOptions = {} as { key: string; value: string }[]
-            Object.keys(variable.pivotedValues).forEach((key: string) => {
-                formattedOptions[key] = variable.pivotedValues[key]
-            })
-            return formattedOptions
-        },
         onVariableKeyChanged(visibilityCondition: ITableWidgetVisibilityCondition) {
             visibilityCondition.condition.variableValue = visibilityCondition.condition.variableKey ? visibilityCondition.condition.variablePivotDatasetOptions[visibilityCondition.condition.variableKey] : ''
             this.visibilityConditionsChanged()

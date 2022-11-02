@@ -53,9 +53,20 @@
                                 <label class="kn-material-input-label">{{ $t('common.value') }}</label>
                                 <Dropdown class="kn-material-input" v-model="conditionalStyle.condition.parameter" :options="drivers" optionLabel="name" optionValue="name" :disabled="conditionalStylesDisabled" @change="onDriverChanged(conditionalStyle)"> </Dropdown>
                             </div>
-                            <div v-else-if="conditionalStyle.condition.type === 'variable'" class="p-sm-12 p-md-6 p-lg-4 p-pl-2 p-d-flex p-flex-column p-pl-2">
+                            <div v-else-if="conditionalStyle.condition.type === 'variable'" class="p-sm-12 p-md-4 p-lg-2 p-pl-2 p-d-flex p-flex-column kn-flex p-pl-2">
                                 <label class="kn-material-input-label">{{ $t('common.value') }}</label>
                                 <Dropdown class="kn-material-input" v-model="conditionalStyle.condition.variable" :options="variables" optionLabel="name" optionValue="name" :disabled="conditionalStylesDisabled" @change="onVariableChanged(conditionalStyle)"> </Dropdown>
+                            </div>
+                            <div v-if="conditionalStyle.condition.type === 'variable' && conditionalStyle.condition.variablePivotDatasetOptions" class="p-col-12 p-md-2 p-d-flex p-flex-column">
+                                <label class="kn-material-input-label p-mr-2">{{ $t('common.key') }}</label>
+                                <Dropdown
+                                    class="kn-material-input"
+                                    v-model="conditionalStyle.condition.variableKey"
+                                    :options="conditionalStyle.condition.variablePivotDatasetOptions ? Object.keys(conditionalStyle.condition.variablePivotDatasetOptions) : []"
+                                    :disabled="conditionalStylesDisabled"
+                                    @change="onVariableKeyChanged(conditionalStyle)"
+                                >
+                                </Dropdown>
                             </div>
                         </div>
                         <div class="p-col-12">
@@ -97,11 +108,12 @@ import descriptor from '../TableWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 import WidgetEditorStyleToolbar from '../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
+import { getSelectedVariable } from '@/modules/documentExecution/dashboard/generalSettings/VariablesHelper'
 
 export default defineComponent({
     name: 'table-widget-conditions',
     components: { Dropdown, InputSwitch, WidgetEditorStyleToolbar },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, drivers: { type: Array }, variables: { type: Array as PropType<IVariable[]> } },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, drivers: { type: Array }, variables: { type: Array as PropType<IVariable[]>, required: true } },
     data() {
         return {
             descriptor,
@@ -161,18 +173,18 @@ export default defineComponent({
         },
         onCompareValueTypeChanged(conditionalStyle: ITableWidgetConditionalStyle) {
             conditionalStyle.condition.value = ''
+            let fields = [] as string[]
             switch (conditionalStyle.condition.type) {
                 case 'static':
-                    delete conditionalStyle.condition.parameter
-                    delete conditionalStyle.condition.variable
+                    fields = ['parameter', 'variable', 'variableKey', 'variablePivotDatasetOptions']
                     break
                 case 'parameter':
-                    delete conditionalStyle.condition.variable
+                    fields = ['variable', 'variableKey', 'variablePivotDatasetOptions']
                     break
                 case 'variable':
-                    delete conditionalStyle.condition.parameter
-                    break
+                    fields = ['parameter']
             }
+            fields.forEach((field: string) => delete conditionalStyle.condition[field])
             this.conditionalStylesChanged()
         },
         onDriverChanged(conditionalStyle: ITableWidgetConditionalStyle) {
@@ -182,7 +194,21 @@ export default defineComponent({
         },
         onVariableChanged(conditionalStyle: ITableWidgetConditionalStyle) {
             const temp = conditionalStyle.condition.variable
-            if (temp) conditionalStyle.condition.value = this.variableValuesMap[temp]
+            if (temp) {
+                const variable = getSelectedVariable(temp, this.variables)
+                if (variable && variable.dataset && !variable.column) {
+                    conditionalStyle.condition.variablePivotDatasetOptions = variable.pivotedValues ?? {}
+                    conditionalStyle.condition.value = ''
+                } else {
+                    conditionalStyle.condition.value = this.variableValuesMap[temp]
+                    delete conditionalStyle.condition.variablePivotDatasetOptions
+                }
+                delete conditionalStyle.condition.variableKey
+            }
+            this.conditionalStylesChanged()
+        },
+        onVariableKeyChanged(conditionalStyle: ITableWidgetConditionalStyle) {
+            conditionalStyle.condition.value = conditionalStyle.condition.variableKey ? conditionalStyle.condition.variablePivotDatasetOptions[conditionalStyle.condition.variableKey] : ''
             this.conditionalStylesChanged()
         },
         onStyleToolbarChange(model: IWidgetStyleToolbarModel, conditionalStyle: ITableWidgetConditionalStyle) {
