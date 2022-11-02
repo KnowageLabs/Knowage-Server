@@ -32,6 +32,16 @@
             :drivers="drivers"
             :variables="variables"
         ></SelectionsWidgetSettingsContainer>
+        <HTMLWidgetSettingsContainer
+            v-else-if="propWidget.type === 'html'"
+            class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
+            :widgetModel="propWidget"
+            :selectedSetting="selectedSetting"
+            :datasets="datasets"
+            :selectedDatasets="selectedDatasets"
+            :drivers="drivers"
+            :variables="variables"
+        ></HTMLWidgetSettingsContainer>
     </div>
 </template>
 
@@ -42,13 +52,15 @@ import tableDescriptor from './TableWidget/TableWidgetSettingsDescriptor.json'
 import TableWidgetSettingsContainer from './TableWidget/TableWidgetSettingsContainer.vue'
 import SelectorWidgetSettingsContainer from './SelectorWidget/SelectorWidgetSettingsContainer.vue'
 import SelectionsWidgetSettingsContainer from './SelectionsWidget/SelectionsWidgetSettingsContainer.vue'
+import HTMLWidgetSettingsContainer from './HTMLWidget/HTMLWidgetSettingsContainer.vue'
 import selectorDescriptor from './SelectorWidget/SelectorWidgetSettingsDescriptor.json'
 import selectionsDescriptor from './SelectionsWidget/SelectionsWidgetSettingsDescriptor.json'
 import WidgetEditorSettingsList from './WidgetEditorSettingsList.vue'
+import htmlDescriptor from './HTMLWidget/HTMLWidgetSettingsDescriptor.json'
 
 export default defineComponent({
     name: 'widget-editor-settings-tab',
-    components: { TableWidgetSettingsContainer, WidgetEditorSettingsList, SelectorWidgetSettingsContainer, SelectionsWidgetSettingsContainer },
+    components: { TableWidgetSettingsContainer, WidgetEditorSettingsList, SelectorWidgetSettingsContainer, SelectionsWidgetSettingsContainer, HTMLWidgetSettingsContainer },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDataset[]> },
@@ -79,6 +91,9 @@ export default defineComponent({
                     break
                 case 'selection':
                     this.descriptor = selectionsDescriptor
+                    break
+                case 'html':
+                    this.descriptor = htmlDescriptor
             }
         },
         onItemClicked(item: any) {
