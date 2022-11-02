@@ -83,7 +83,7 @@ export default defineComponent({
     },
     computed: {
         rowReorderEnabled(): boolean {
-            return this.widgetModel && this.widgetModel.type === 'table'
+            return this.widgetModel && ['table', 'html', 'text'].includes(this.widgetModel.type)
         }
     },
     watch: {
@@ -128,7 +128,7 @@ export default defineComponent({
             if (event.dataTransfer.getData('text/plain') === 'b') return
             const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
             const tempColumn = createNewWidgetColumn(eventData)
-            if (this.widgetModel.type === 'table') {
+            if (['table', 'html', 'text'].includes(this.widgetModel.type)) {
                 this.rows.push(tempColumn as IWidgetColumn)
             } else {
                 this.rows = [tempColumn]
