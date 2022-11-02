@@ -1,5 +1,6 @@
 <template>
     <div v-if="headersModel" class="p-grid p-jc-center p-ai-center p-p-4">
+        {{ headersModel }}
         <div id="input-switches-container" class="p-grid p-col-12">
             <div class="p-col-12 p-md-6 p-p-2">
                 <InputSwitch v-model="headersModel.enabled" @change="headersConfigurationChanged"></InputSwitch>
@@ -189,10 +190,23 @@ export default defineComponent({
         },
         onVariableChanged(rule: ITableWidgetHeadersRule) {
             const temp = rule.variable
-            if (temp) rule.value = this.variableValuesMap[temp]
+            if (temp) {
+                if (this.checkIfVariableIsDatasetTypeWithoutColumn(temp)) this.getDatasetValueFromPivotedDataset()
+                rule.value = this.variableValuesMap[temp]
+                console.log('>>>>>>>>>>> RULE: ', rule)
+                //
+            }
             this.headersConfigurationChanged()
         },
-
+        checkIfVariableIsDatasetTypeWithoutColumn(variableName: string) {
+            if (!this.variables) return false
+            const index = this.variables.findIndex((variable: IVariable) => variable.name === variableName)
+            return index !== -1 ? this.variables[index].dataset && !this.variables[index].column : false
+        },
+        getDatasetValueFromPivotedDataset() {
+            console.log('>>>>>>>>>>>> getDatasetValueFromPivotedDataset')
+            // await getVariablePivotedDataset()
+        },
         headersConfigurationChanged() {
             emitter.emit('headersConfigurationChanged', this.headersModel)
             emitter.emit('refreshTable', this.widgetModel.id)

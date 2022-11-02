@@ -2,7 +2,7 @@ import { formatTableWidget } from './tableWidget/TableWidgetCompatibilityHelper'
 import { formatSelectorWidget } from '@/modules/documentExecution/dashboard/helpers/selectorWidget/SelectorWidgetCompatibilityHelper'
 import { IAssociation, IDashboardConfiguration, IDataset, IDatasetParameter, ISelection, IVariable, IWidget, IWidgetColumn, IWidgetColumnFilter, IWidgetEditorDataset } from '../Dashboard'
 import { formatSelectionWidget } from './selectionWidget/SelectionsWidgetCompatibilityHelper'
-import { setVariableValueFromDatasetColumn } from '../generalSettings/VariablesHelper'
+import { setVariableValueFromDataset } from '../generalSettings/VariablesHelper'
 import deepcopy from 'deepcopy'
 import cryptoRandomString from 'crypto-random-string'
 import { formatHTMLWidget } from './htmlWidget/HTMLWidgetCompatibilityHelper'
@@ -104,7 +104,7 @@ const getFormattedVariables = async (model: any, drivers: any[], profileAttribut
             case 'dataset':
                 formattedVariable.dataset = tempVariable.dataset;
                 formattedVariable.column = tempVariable.column;
-                await setVariableValueFromDatasetColumn(formattedVariable, datasets, $http)
+                await setVariableValueFromDataset(formattedVariable, datasets, $http)
                 break
             case 'driver':
                 formattedVariable.driver = tempVariable.driver;

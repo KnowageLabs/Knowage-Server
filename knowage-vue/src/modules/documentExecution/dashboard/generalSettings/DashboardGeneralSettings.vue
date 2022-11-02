@@ -18,7 +18,6 @@
 import { defineComponent, PropType } from 'vue'
 import { IVariable, IDataset } from '@/modules/documentExecution/dashboard/Dashboard'
 import { mapActions } from 'pinia'
-import { setVariableValueFromDatasetColumn } from './VariablesHelper'
 import DashboardGeneralSettingsList from './DashboardGeneralSettingsList.vue'
 import DashboardVariables from './DashboardVariables.vue'
 import store from '@/modules/documentExecution/dashboard/Dashboard.store'

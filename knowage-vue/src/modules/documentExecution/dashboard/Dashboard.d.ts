@@ -579,7 +579,8 @@ export interface IVariable {
     column?: string
     attribute?: string
     driver?: string,
-    key?: string
+    key?: string,
+    pivotedValues?: any
 }
 
 export interface IWidgetTitle {
