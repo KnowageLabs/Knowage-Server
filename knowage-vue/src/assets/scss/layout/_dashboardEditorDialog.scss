@@ -14,6 +14,24 @@
         display: flex;
     }
 
+    .datasetEditor-container {
+        .kn-material-input {
+            border: 1px solid var(--kn-color-borders);
+            border-radius: 2px;
+            .p-inputtext {
+                width: 100%;
+                border-radius: 0;
+                border: 0;
+            }
+            &.p-dropdown,
+            .p-dropdown {
+                .p-dropdown-label {
+                    min-height: 38px;
+                }
+            }
+        }
+    }
+
     .dashboardEditor-tabs.p-tabview {
         overflow: auto;
         display: flex;
@@ -72,6 +90,35 @@
                 }
             }
         }
+    }
+
+    .dashboard-editor-list-card-container {
+        display: flex;
+        flex-direction: column;
+        width: 300px;
+        background: #ffffff;
+        color: rgba(0, 0, 0, 0.87);
+        box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
+        border-radius: 4px;
+        .dashboard-editor-list-card,
+        .dashboard-editor-list {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+            border-radius: 4px !important;
+            .kn-list-item-text {
+                text-overflow: ellipsis;
+                max-width: 190px;
+                overflow: hidden;
+                white-space: nowrap;
+            }
+        }
+    }
+
+    .dashboard-card-shadow {
+        box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
+        border-radius: 4px;
     }
 
     .details-warning-color {

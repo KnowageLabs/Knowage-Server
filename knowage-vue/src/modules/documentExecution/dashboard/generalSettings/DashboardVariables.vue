@@ -1,69 +1,68 @@
 <template>
-    <div id="variables-container" class="p-grid p-p-4 p-m-0 kn-overflow">
-        {{ selectedDatasetOptions }}
-        <br />
+    <div class="p-d-flex p-flex-column kn-flex p-mr-3 p-my-3 dashboard-card-shadow">
+        <KnFabButton icon="fas fa-plus" class="p-as-end" @click="addNewVariable()"></KnFabButton>
+        <label class="kn-material-input-label p-m-3"> {{ $t('common.variables') }}</label>
 
-        <div class="p-col-12">
-            <label class="kn-material-input-label"> {{ $t('common.variables') }}</label>
-        </div>
-        <div class="p-col-6 p-m-auto">
-            <KnHint class="p-as-center" :title="'common.variables'" :hint="'dashboard.generalSettings.variablesHint'"></KnHint>
-        </div>
-        <div class="p-col-11"></div>
-        <div class="p-col-1 p-pt-2">
-            <KnFabButton icon="fas fa-plus" @click="addNewVariable()"></KnFabButton>
-        </div>
-        <div v-for="(variable, index) in variables" :key="index" class="p-grid p-col-12 p-ai-center p-p-2">
-            <div class="p-col-12">
-                {{ variable }}
+        <KnHint v-if="variables.length == 0" class="p-as-center" :title="'common.variables'" :hint="'dashboard.generalSettings.variablesHint'"></KnHint>
+
+        <div v-for="(variable, index) in variables" :key="index" class="p-fluid p-formgrid p-grid p-m-3" style="gap: 5px">
+            <div class="p-field kn-flex">
+                <span class="p-float-label">
+                    <InputText class="kn-material-input" v-model="variable.name" />
+                    <label class="kn-material-input-label">{{ $t('common.name') }}</label>
+                </span>
             </div>
-            <div class="p-col-3 p-d-flex p-flex-column">
-                <label class="kn-material-input-label">{{ $t('common.name') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="variable.name" />
-            </div>
-            <div class="p-col-2 p-d-flex p-flex-column">
-                <label class="kn-material-input-label"> {{ $t('common.type') }}</label>
-                <Dropdown class="kn-material-input" v-model="variable.type" :options="descriptor.variableTypes" optionValue="value" @change="onVariableTypeChange(variable)">
-                    <template #value="slotProps">
-                        <div>
+
+            <div class="p-field kn-flex">
+                <span class="p-float-label">
+                    <Dropdown class="kn-material-input" v-model="variable.type" :options="descriptor.variableTypes" optionValue="value" @change="onVariableTypeChange(variable)">
+                        <template #value="slotProps">
                             <span>{{ getTranslatedLabel(slotProps.value, descriptor.variableTypes, $t) }}</span>
-                        </div>
-                    </template>
-                    <template #option="slotProps">
-                        <div>
+                        </template>
+                        <template #option="slotProps">
                             <span>{{ $t(slotProps.option.label) }}</span>
-                        </div>
-                    </template>
-                </Dropdown>
+                        </template>
+                    </Dropdown>
+                    <label class="kn-material-input-label"> {{ $t('common.type') }}</label>
+                </span>
             </div>
 
-            <div v-if="variable.type === 'static'" class="p-col-6 p-d-flex p-flex-column">
-                <label class="kn-material-input-label">{{ $t('common.value') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="variable.value" />
+            <div v-if="variable.type === 'static'" class="p-field kn-flex">
+                <span class="p-float-label">
+                    <InputText class="kn-material-input" v-model="variable.value" />
+                    <label class="kn-material-input-label">{{ $t('common.value') }}</label>
+                </span>
             </div>
-            <div v-if="variable.type === 'dataset'" class="p-col-6 p-grid">
-                <div class="p-col-6 p-d-flex p-flex-column">
-                    <label class="kn-material-input-label"> {{ $t('common.dataset') }}</label>
+
+            <div v-if="variable.type === 'dataset'" class="p-field kn-flex">
+                <span class="p-float-label">
                     <Dropdown class="kn-material-input" v-model="variable.dataset" :options="selectedDatasetOptions" optionLabel="label" optionValue="id"> </Dropdown>
-                </div>
-                <div class="p-col-6 p-d-flex p-flex-column">
-                    <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
+                    <label class="kn-material-input-label"> {{ $t('common.dataset') }}</label>
+                </span>
+            </div>
+            <div v-if="variable.type === 'dataset'" class="p-field kn-flex">
+                <span class="p-float-label">
                     <Dropdown class="kn-material-input" v-model="variable.column" :options="getSelectionDatasetColumnOptions(variable)"> </Dropdown>
-                    <small>{{ $t('dashboard.generalSettings.variableColumnHint') }}</small>
-                </div>
-            </div>
-            <div v-if="variable.type === 'driver'" class="p-col-6 p-d-flex p-flex-column">
-                <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.interactions.analyticalDriver') }}</label>
-                <Dropdown class="kn-material-input" v-model="variable.driver" :options="drivers" optionLabel="name" optionValue="urlName" @change="setValueFromAnalyticalDriver(variable)"> </Dropdown>
-            </div>
-            <div v-if="variable.type === 'profile'" class="p-col-6 p-d-flex p-flex-column">
-                <label class="kn-material-input-label">{{ $t('dashboard.generalSettings.attribute') }}</label>
-                <Dropdown class="kn-material-input" v-model="variable.attribute" :options="profileAttributes" optionLabel="name" optionValue="name" @change="setValueFromProfileAttribute(variable)"> </Dropdown>
+                    <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
+                </span>
+                <small>{{ $t('dashboard.generalSettings.variableColumnHint') }}</small>
             </div>
 
-            <div class="p-col-1 p-d-flex p-flex-column p-jc-center p-ai-center p-pl-2 p-ml-auto">
-                <i :class="'pi pi-trash'" class="kn-cursor-pointer p-ml-2" @click="removeVariable(index)"></i>
+            <div v-if="variable.type === 'driver'" class="p-field kn-flex">
+                <span class="p-float-label">
+                    <Dropdown class="kn-material-input" v-model="variable.driver" :options="drivers" optionLabel="name" optionValue="urlName" @change="setValueFromAnalyticalDriver(variable)"> </Dropdown>
+                    <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.interactions.analyticalDriver') }}</label>
+                </span>
             </div>
+
+            <div v-if="variable.type === 'profile'" class="p-field kn-flex">
+                <span class="p-float-label">
+                    <Dropdown class="kn-material-input" v-model="variable.attribute" :options="profileAttributes" optionLabel="name" optionValue="name" @change="setValueFromProfileAttribute(variable)"> </Dropdown>
+                    <label class="kn-material-input-label">{{ $t('dashboard.generalSettings.attribute') }}</label>
+                </span>
+            </div>
+
+            <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain p-mt-1" v-tooltip.left="$t('common.delete')" @click="removeVariable(index)" />
         </div>
     </div>
 </template>
@@ -152,10 +151,3 @@ export default defineComponent({
     }
 })
 </script>
-
-<style lang="scss" scoped>
-#variables-container {
-    box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
-    border-radius: 4px;
-}
-</style>

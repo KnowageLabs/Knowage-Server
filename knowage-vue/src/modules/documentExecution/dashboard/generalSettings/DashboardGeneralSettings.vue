@@ -8,9 +8,9 @@
             </template>
         </Toolbar>
 
-        <div class="p-grid p-m-0 p-p-0 kn-overflow">
-            <DashboardGeneralSettingsList class="p-col-3 p-pr-2" @selectedOption="setSelectedOption"></DashboardGeneralSettingsList>
-            <DashboardVariables v-if="selectedOption === 'Variables'" class="p-col-9 p-pl-2" :propVariables="variables" :selectedDatasets="selectedDatasets" :selectedDatasetsColumnsMap="selectedDatasetColumnsMap" :drivers="documentDrivers" :profileAttributes="profileAttributes"></DashboardVariables>
+        <div class="datasetEditor-container kn-overflow">
+            <DashboardGeneralSettingsList @selectedOption="setSelectedOption"></DashboardGeneralSettingsList>
+            <DashboardVariables v-if="selectedOption === 'Variables'" :propVariables="variables" :selectedDatasets="selectedDatasets" :selectedDatasetsColumnsMap="selectedDatasetColumnsMap" :drivers="documentDrivers" :profileAttributes="profileAttributes"></DashboardVariables>
         </div>
     </div>
 </template>
@@ -95,16 +95,3 @@ export default defineComponent({
     }
 })
 </script>
-<style lang="scss">
-.dashboardEditor {
-    height: 95%;
-    width: 100%;
-    top: 0;
-    left: 0;
-    background-color: white;
-    position: absolute;
-    z-index: 999;
-    display: flex;
-    flex-direction: column;
-}
-</style>
