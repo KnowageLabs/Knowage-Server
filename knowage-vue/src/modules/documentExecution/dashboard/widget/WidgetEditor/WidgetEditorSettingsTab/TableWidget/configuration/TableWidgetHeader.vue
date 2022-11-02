@@ -202,12 +202,13 @@ export default defineComponent({
             if (temp) {
                 const variable = this.getSelectedVariable(temp)
                 if (variable && variable.dataset && !variable.column) {
-                    console.log('>>>>>>>>>>> VARIABLE!!!!!!!!!: ', variable)
                     rule.variablePivotDatasetOptions = this.getVariablePivotDatasetOptions(variable)
+                    rule.value = ''
                 } else {
                     rule.value = this.variableValuesMap[temp]
                     delete rule.variablePivotDatasetOptions
                 }
+                delete rule.variableKey
             }
             this.headersConfigurationChanged()
         },
@@ -225,8 +226,8 @@ export default defineComponent({
             return formattedOptions
         },
         onVariableKeyChanged(rule: ITableWidgetHeadersRule) {
-            console.log('RULE: ', rule)
             rule.value = rule.variableKey ? rule.variablePivotDatasetOptions[rule.variableKey] : ''
+            this.headersConfigurationChanged()
         },
         headersConfigurationChanged() {
             emitter.emit('headersConfigurationChanged', this.headersModel)
@@ -247,17 +248,18 @@ export default defineComponent({
         },
         onCompareValueTypeChanged(rule: ITableWidgetHeadersRule) {
             rule.value = ''
+            let fields = [] as string[]
             switch (rule.compareType) {
                 case 'static':
-                    delete rule.parameter
-                    delete rule.variable
+                    fields = ['parameter', 'variable', 'variableKey', 'variablePivotDatasetOptions']
                     break
                 case 'parameter':
-                    delete rule.variable
+                    fields = ['variable', 'variableKey', 'variablePivotDatasetOptions']
                     break
                 case 'variable':
-                    delete rule.parameter
+                    fields = ['parameter']
             }
+            fields.forEach((field: string) => delete rule[field])
             this.headersConfigurationChanged()
         },
         onColumnsSelected(event: any, rule: ITableWidgetHeadersRule) {
