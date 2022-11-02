@@ -42,6 +42,16 @@
             :drivers="drivers"
             :variables="variables"
         ></HTMLWidgetSettingsContainer>
+        <TextWidgetSettingsContainer
+            v-else-if="propWidget.type === 'text'"
+            class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
+            :widgetModel="propWidget"
+            :selectedSetting="selectedSetting"
+            :datasets="datasets"
+            :selectedDatasets="selectedDatasets"
+            :drivers="drivers"
+            :variables="variables"
+        ></TextWidgetSettingsContainer>
     </div>
 </template>
 
@@ -53,14 +63,16 @@ import TableWidgetSettingsContainer from './TableWidget/TableWidgetSettingsConta
 import SelectorWidgetSettingsContainer from './SelectorWidget/SelectorWidgetSettingsContainer.vue'
 import SelectionsWidgetSettingsContainer from './SelectionsWidget/SelectionsWidgetSettingsContainer.vue'
 import HTMLWidgetSettingsContainer from './HTMLWidget/HTMLWidgetSettingsContainer.vue'
+import TextWidgetSettingsContainer from './TextWidget/TextWidgetSettingsContainer.vue'
 import selectorDescriptor from './SelectorWidget/SelectorWidgetSettingsDescriptor.json'
 import selectionsDescriptor from './SelectionsWidget/SelectionsWidgetSettingsDescriptor.json'
 import WidgetEditorSettingsList from './WidgetEditorSettingsList.vue'
 import htmlDescriptor from './HTMLWidget/HTMLWidgetSettingsDescriptor.json'
+import textDescriptor from './TextWidget/TextWidgetSettingsDescriptor.json'
 
 export default defineComponent({
     name: 'widget-editor-settings-tab',
-    components: { TableWidgetSettingsContainer, WidgetEditorSettingsList, SelectorWidgetSettingsContainer, SelectionsWidgetSettingsContainer, HTMLWidgetSettingsContainer },
+    components: { TableWidgetSettingsContainer, WidgetEditorSettingsList, SelectorWidgetSettingsContainer, SelectionsWidgetSettingsContainer, HTMLWidgetSettingsContainer, TextWidgetSettingsContainer },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDataset[]> },
@@ -94,6 +106,9 @@ export default defineComponent({
                     break
                 case 'html':
                     this.descriptor = htmlDescriptor
+                    break
+                case 'text':
+                    this.descriptor = textDescriptor
             }
         },
         onItemClicked(item: any) {

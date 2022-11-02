@@ -38,7 +38,7 @@
             </div>
         </div>
         <div class="p-grid p-col-12">
-            <div v-if="widgetType === 'table' || widgetType === 'html'" class="p-col-12 p-lg-6">
+            <div v-if="widgetType === 'table' || widgetType === 'html' || widgetType === 'text'" class="p-col-12 p-lg-6">
                 <InputSwitch v-model="exportModel.showScreenshot" @change="onEnableExportChanged"></InputSwitch>
                 <label class="kn-material-input-label p-ml-4">{{ $t('dashboard.widgetEditor.export.enableScreenshots') }}</label>
             </div>

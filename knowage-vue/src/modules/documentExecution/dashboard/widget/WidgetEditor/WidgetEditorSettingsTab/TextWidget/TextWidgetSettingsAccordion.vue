@@ -22,7 +22,7 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget, IDataset, IVariable } from '@/modules/documentExecution/Dashboard/Dashboard'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
-import descriptor from './HTMLWidgetSettingsDescriptor.json'
+import descriptor from './TextWidgetSettingsDescriptor.json'
 import settingsTabDescriptor from '../WidgetEditorSettingsTabDescriptor.json'
 import WidgetExport from '../common/configuration/WidgetExport.vue'
 import WidgetTitleStyle from '../common/style/WidgetTitleStyle.vue'
@@ -33,7 +33,7 @@ import WidgetShadowsStyle from '../common/style/WidgetShadowsStyle.vue'
 import WidgetResponsive from '../common/responsive/WidgetResponsive.vue'
 
 export default defineComponent({
-    name: 'html-widget-settings-container',
+    name: 'text-widget-settings-container',
     components: {
         Accordion,
         AccordionTab,
