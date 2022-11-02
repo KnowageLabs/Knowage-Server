@@ -2,9 +2,10 @@ import { formatTableWidget } from './tableWidget/TableWidgetCompatibilityHelper'
 import { formatSelectorWidget } from '@/modules/documentExecution/dashboard/helpers/selectorWidget/SelectorWidgetCompatibilityHelper'
 import { IAssociation, IDashboardConfiguration, IDataset, IDatasetParameter, ISelection, IVariable, IWidget, IWidgetColumn, IWidgetColumnFilter, IWidgetEditorDataset } from '../Dashboard'
 import { formatSelectionWidget } from './selectionWidget/SelectionsWidgetCompatibilityHelper'
+import { setVariableValueFromDatasetColumn } from '../generalSettings/VariablesHelper'
 import deepcopy from 'deepcopy'
 import cryptoRandomString from 'crypto-random-string'
-import { setVariableValueFromDatasetColumn } from '../generalSettings/VariablesHelper'
+import { formatHTMLWidget } from './htmlWidget/HTMLWidgetCompatibilityHelper'
 
 const datasetIdLabelMap = {}
 
@@ -186,6 +187,9 @@ export const formatWidget = (widget: any) => {
             break;
         case 'selection':
             formattedWidget = formatSelectionWidget(widget)
+            break
+        case 'html':
+            formattedWidget = formatHTMLWidget(widget)
     }
 
     return formattedWidget
