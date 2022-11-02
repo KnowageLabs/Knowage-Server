@@ -1,5 +1,5 @@
 <template>
-    <div class="dashboard-editor-list-card-container p-p-3">
+    <div class="dashboard-editor-list-card-container p-m-3">
         <div class="dashboard-editor-list-card">
             <Listbox
                 class="kn-list kn-list-no-border-right dashboard-editor-list"
@@ -47,29 +47,3 @@ export default defineComponent({
     }
 })
 </script>
-
-<style lang="scss">
-.dashboard-editor-list-card-container {
-    display: flex;
-    flex-direction: column;
-    width: 300px;
-    background: #ffffff;
-    color: rgba(0, 0, 0, 0.87);
-    box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
-    border-radius: 4px;
-    .dashboard-editor-list-card,
-    .dashboard-editor-list {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-        min-height: 0;
-        border-radius: 4px !important;
-        .kn-list-item-text {
-            text-overflow: ellipsis;
-            max-width: 190px;
-            overflow: hidden;
-            white-space: nowrap;
-        }
-    }
-}
-</style>
