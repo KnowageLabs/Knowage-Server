@@ -5,9 +5,6 @@
             <label class="kn-material-input-label p-ml-3">{{ $t('common.enable') }}</label>
         </div>
         <div v-for="(visibilityCondition, index) in visibilityConditionsModel.conditions" :key="index" class="dynamic-form-item p-grid p-col-12 p-ai-center">
-            <div class="p-col-12">
-                {{ visibilityCondition }}
-            </div>
             <div class="p-grid p-col-12 p-ai-center">
                 <div v-show="dropzoneTopVisible[index]" class="p-col-12 form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'before', index)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
                 <div
