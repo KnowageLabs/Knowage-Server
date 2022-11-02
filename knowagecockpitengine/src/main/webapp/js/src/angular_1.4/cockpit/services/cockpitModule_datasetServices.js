@@ -1626,7 +1626,7 @@ $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_ut
 								$scope.$destroy();
 
 							}
-							cockpitModule_properties.PARAMETERS = this.returnParametersArray();
+							cockpitModule_properties.PARAMETERS = ds.returnParametersArray();
 						}
 					}
 
