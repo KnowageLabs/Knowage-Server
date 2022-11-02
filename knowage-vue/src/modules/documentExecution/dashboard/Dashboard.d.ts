@@ -379,8 +379,10 @@ export interface ITableWidgetVisibilityCondition {
         type: string
         variable?: string
         variableValue?: string
+        variableKey?: string,
         operator?: string
-        value?: string
+        value?: string,
+        variablePivotDatasetOptions?: any
     }
 }
 

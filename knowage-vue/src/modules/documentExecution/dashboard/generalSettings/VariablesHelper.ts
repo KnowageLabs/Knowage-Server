@@ -23,3 +23,9 @@ const getPivotedDataset = (variableData: any) => {
     variableData.rows?.forEach((row: any) => pivotedDataset[row.column_1] = row.column_2)
     return pivotedDataset
 }
+
+export const getSelectedVariable = (variableName: string, variables: IVariable[]) => {
+    if (!variables) return null
+    const index = variables.findIndex((variable: IVariable) => variable.name === variableName)
+    return index !== -1 ? variables[index] : null
+}

@@ -1,6 +1,5 @@
 <template>
     <div v-if="headersModel" class="p-grid p-jc-center p-ai-center p-p-4">
-        {{ headersModel }}
         <div id="input-switches-container" class="p-grid p-col-12">
             <div class="p-col-12 p-md-6 p-p-2">
                 <InputSwitch v-model="headersModel.enabled" @change="headersConfigurationChanged"></InputSwitch>
@@ -96,6 +95,7 @@ import descriptor from '../TableWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 import WidgetEditorColumnsMultiselect from '../../common/WidgetEditorColumnsMultiselect.vue'
+import { getSelectedVariable } from '@/modules/documentExecution/dashboard/generalSettings/VariablesHelper'
 
 export default defineComponent({
     name: 'table-widget-headers',
@@ -103,7 +103,7 @@ export default defineComponent({
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
         drivers: { type: Array },
-        variables: { type: Array as PropType<IVariable[]> }
+        variables: { type: Array as PropType<IVariable[]>, required: true }
     },
     data() {
         return {
@@ -200,9 +200,9 @@ export default defineComponent({
         onVariableChanged(rule: ITableWidgetHeadersRule) {
             const temp = rule.variable
             if (temp) {
-                const variable = this.getSelectedVariable(temp)
+                const variable = getSelectedVariable(temp, this.variables)
                 if (variable && variable.dataset && !variable.column) {
-                    rule.variablePivotDatasetOptions = this.getVariablePivotDatasetOptions(variable)
+                    rule.variablePivotDatasetOptions = variable.pivotedValues ?? {}
                     rule.value = ''
                 } else {
                     rule.value = this.variableValuesMap[temp]
@@ -211,19 +211,6 @@ export default defineComponent({
                 delete rule.variableKey
             }
             this.headersConfigurationChanged()
-        },
-        getSelectedVariable(variableName: string) {
-            if (!this.variables) return false
-            const index = this.variables.findIndex((variable: IVariable) => variable.name === variableName)
-            return index !== -1 ? this.variables[index] : null
-        },
-        getVariablePivotDatasetOptions(variable: IVariable) {
-            if (!variable || !variable.pivotedValues) return []
-            const formattedOptions = {} as { key: string; value: string }[]
-            Object.keys(variable.pivotedValues).forEach((key: string) => {
-                formattedOptions[key] = variable.pivotedValues[key]
-            })
-            return formattedOptions
         },
         onVariableKeyChanged(rule: ITableWidgetHeadersRule) {
             rule.value = rule.variableKey ? rule.variablePivotDatasetOptions[rule.variableKey] : ''
