@@ -233,15 +233,17 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			if (!oldPriority.equals(newPriority)) {
 				Query query = null;
 				if (oldPriority.intValue() > newPriority.intValue()) {
-					String hqlUpdateShiftRight = "update SbiObjPar s set s.priority = (s.priority + 1) where s.priority >= " + newPriority
-							+ " and s.priority < " + oldPriority + "and s.sbiObject.biobjId = " + aSbiObject.getBiobjId();
+					String hqlUpdateShiftRight = "update SbiObjPar s set s.priority = (s.priority + 1) where s.priority >= :newPriority"
+							+ " and s.priority < :oldPriority and s.sbiObject.biobjId = :biobjId";
 					query = aSession.createQuery(hqlUpdateShiftRight);
+					query.setParameter("oldPriority", oldPriority);
 					query.setParameter("newPriority", newPriority);
 					query.setParameter("biobjId", aSbiObject.getBiobjId());
 				} else {
-					String hqlUpdateShiftLeft = "update SbiObjPar s set s.priority = (s.priority - 1) where s.priority > " + oldPriority + " and s.priority <= "
+					String hqlUpdateShiftLeft = "update SbiObjPar s set s.priority = (s.priority - 1) where s.priority > :oldPriority  and s.priority <= "
 							+ " :newPriority and s.sbiObject.biobjId = :biobjId";
 					query = aSession.createQuery(hqlUpdateShiftLeft);
+					query.setParameter("oldPriority", oldPriority);
 					query.setParameter("newPriority", newPriority);
 					query.setParameter("biobjId", aSbiObject.getBiobjId());
 				}

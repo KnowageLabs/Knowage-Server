@@ -345,8 +345,9 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			String hql = "select count(*) from SbiDataSet where active=true and label like '%" + search + "%'" + getIdsWhereClause(ids);
+			String hql = "select count(*) from SbiDataSet where active=true and label like :search " + getIdsWhereClause(ids);
 			Query hqlQuery = aSession.createQuery(hql);
+			hqlQuery.setParameter("search", "%" + search + "%");
 			Long temp = (Long) hqlQuery.uniqueResult();
 			resultNumber = new Integer(temp.intValue());
 

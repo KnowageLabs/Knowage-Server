@@ -111,13 +111,14 @@ public class BIMetaModelParameterDAOHibImpl extends AbstractHibernateDAO impleme
 				Query query = null;
 				if (oldPriority.intValue() > newPriority.intValue()) {
 					String hqlUpdateShiftRight = "update SbiMetaModelParameter s set s.priority = (s.priority + 1) where s.priority >=  :newPriority"
-							+ " and s.priority < " + oldPriority + "and s.sbiMetaModel.id = :hibMetaModelId";
+							+ " and s.priority <  :oldPriority and s.sbiMetaModel.id = :hibMetaModelId";
 					query = session.createQuery(hqlUpdateShiftRight);
+					query.setParameter("oldPriority", oldPriority);
 					query.setParameter("newPriority", newPriority);
 					query.setParameter("hibMetaModelId", hibMetaModel.getId());
 				} else {
 					String hqlUpdateShiftLeft = "update SbiMetaModelParameter s set s.priority = (s.priority - 1) where s.priority >  :oldPriority"
-							+ " and s.priority <= " + newPriority + "and s.sbiMetaModel.id = :hibMetaModelId";
+							+ " and s.priority <= :newPriority and s.sbiMetaModel.id = :hibMetaModelId";
 					query = session.createQuery(hqlUpdateShiftLeft);
 					query.setParameter("newPriority", newPriority);
 					query.setParameter("hibMetaModelId", hibMetaModel.getId());
