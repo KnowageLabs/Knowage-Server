@@ -581,7 +581,6 @@ export interface IVariable {
     column?: string
     attribute?: string
     driver?: string,
-    key?: string,
     pivotedValues?: any
 }
 

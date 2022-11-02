@@ -43,6 +43,8 @@ export function formatWidgetForSave(tempWidget: IWidget) {
 
     const widget = deepcopy(tempWidget)
 
+
+
     switch (widget.type) {
         case 'table': formatTableWidgetForSave(widget)
     }
