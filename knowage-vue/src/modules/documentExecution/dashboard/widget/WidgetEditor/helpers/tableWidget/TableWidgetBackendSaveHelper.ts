@@ -1,4 +1,4 @@
-import { ITableWidgetColumnGroups, ITableWidgetConfiguration, ITableWidgetCrossNavigation, ITableWidgetHeaders, ITableWidgetInteractions, ITableWidgetSelection, ITableWidgetSettings, ITableWidgetVisualization, IWidget, IWidgetColumn } from '../../../../Dashboard'
+import { ITableWidgetColumnGroups, ITableWidgetConditionalStyle, ITableWidgetConditionalStyles, ITableWidgetConfiguration, ITableWidgetCrossNavigation, ITableWidgetHeaders, ITableWidgetInteractions, ITableWidgetSelection, ITableWidgetSettings, ITableWidgetVisualization, IWidget, IWidgetColumn } from '../../../../Dashboard'
 import deepcopy from 'deepcopy'
 
 const columnIdNameMap = {}
@@ -33,6 +33,7 @@ const getColumnName = (columnId: string) => {
 const formatTableSettings = (widgetSettings: ITableWidgetSettings) => {
     formatTableWidgetConfiguration(widgetSettings.configuration)
     formatTableWidgetVisualisation(widgetSettings.visualization)
+    formatTableWidgetConditionalStyle(widgetSettings.conditionalStyles)
     formatTableInteractions(widgetSettings.interactions)
 }
 
@@ -60,6 +61,7 @@ const formatHeaderConfigurationRules = (configurationHeaders: ITableWidgetHeader
             formattedRuleColumns.push(getColumnName(tempRule.target[j]))
         }
         tempRule.target = formattedRuleColumns
+        delete tempRule.variablePivotDatasetOptions
     }
 }
 
@@ -91,6 +93,14 @@ const formatVisibilityConditions = (widgetVisualization: ITableWidgetVisualizati
             formattedRuleColumns.push(getColumnName(tempCondition.target[j]))
         }
         tempCondition.target = formattedRuleColumns
+        delete tempCondition.condition.variablePivotDatasetOptions
+    }
+}
+
+const formatTableWidgetConditionalStyle = (widgetConditionalStyles: ITableWidgetConditionalStyles) => {
+    for (let i = 0; i < widgetConditionalStyles.conditions.length; i++) {
+        const tempCondition = widgetConditionalStyles.conditions[i]
+        delete tempCondition.condition.variablePivotDatasetOptions
     }
 }
 
