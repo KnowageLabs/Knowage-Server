@@ -326,13 +326,13 @@
 		category="MAIL" />
 	<CONFIG label="MAIL.PROFILES.trustedStore.password" name="Trusted Store Password"
 		description="" isActive="true" valueCheck="" valueType="STRING"
-		category="PASSWORD" />
+		category="MAIL" />
 	<CONFIG label="MAIL.PROFILES.keyStore.file" name="Key Store File Path"
 		description="" isActive="true" valueCheck="" valueType="STRING"
 		category="MAIL" />
 	<CONFIG label="MAIL.PROFILES.keyStore.password" name="Key Store Password"
 		description="" isActive="true" valueCheck="" valueType="STRING"
-		category="PASSWORD" />
+		category="MAIL" />
 
 
 	<CONFIG label="MAIL.PROFILES.scheduler.smtphost" name="Scheduler Smtp Host"
@@ -349,7 +349,7 @@
 		category="MAIL" />
 	<CONFIG label="MAIL.PROFILES.scheduler.password" name="Scheduler Password"
 		description="" isActive="true" valueCheck="" valueType="STRING"
-		category="PASSWORD" />
+		category="MAIL" />
 	<CONFIG label="MAIL.PROFILES.scheduler.security" name="Security connection mode"
 		description="Choose between NONE, SSL and STARTTLS" isActive="true"
 		valueCheck="NONE" valueType="STRING" category="MAIL" />
@@ -368,7 +368,7 @@
 		category="MAIL" />
 	<CONFIG label="MAIL.PROFILES.user.password" name="Scheduler Password"
 		description="" isActive="true" valueCheck="" valueType="STRING"
-		category="PASSWORD" />
+		category="MAIL" />
 	<CONFIG label="MAIL.PROFILES.user.security" name="Security connection mode"
 		description="Choose between NONE, SSL and STARTTLS" isActive="true"
 		valueCheck="NONE" valueType="STRING" category="MAIL" />
@@ -388,7 +388,7 @@
 		category="MAIL" />
 	<CONFIG label="MAIL.PROFILES.kpi_alarm.password" name="Scheduler Password"
 		description="" isActive="true" valueCheck="" valueType="STRING"
-		category="PASSWORD" />
+		category="MAIL" />
 	<CONFIG label="MAIL.PROFILES.kpi_alarm.security" name="Security connection mode"
 		description="Choose between NONE, SSL and STARTTLS" isActive="true"
 		valueCheck="NONE" valueType="STRING" category="MAIL" />

@@ -262,7 +262,7 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 				hibConfig.setName(config.getName());
 
 				String valueCheck = config.getValueCheck();
-				if (hibConfig.getCategory().equals("PASSWORD")) {
+				if (hibConfig.getLabel().toLowerCase().endsWith(".password")) {
 					if (valueCheck == null) {
 						try {
 							Config existingConfig = loadConfigParametersByLabel(config.getLabel());
