@@ -1,4 +1,6 @@
 import { ISelectionsWidgetSettings } from '@/modules/documentExecution/dashboard/interfaces/DashboardSelectionsWidget'
+import { IHTMLWidgetSettings } from './interfaces/DashboardHTMLWidget'
+import { ITextWidgetSettings } from './interfaces/DashboardTextWidget'
 
 export interface IDashboard {
     sheets: []
@@ -36,7 +38,7 @@ export interface IWidget {
     dataset: number | null
     type: string
     columns: IWidgetColumn[]
-    settings: ITableWidgetSettings | ISelectionsWidgetSettings | ISelectorWidgetSettings
+    settings: ITableWidgetSettings | ISelectionsWidgetSettings | ISelectorWidgetSettings | IHTMLWidgetSettings | ITextWidgetSettings
     new?: boolean
 }
 

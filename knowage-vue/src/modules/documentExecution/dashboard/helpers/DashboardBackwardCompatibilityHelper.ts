@@ -6,6 +6,7 @@ import { setVariableValueFromDatasetColumn } from '../generalSettings/VariablesH
 import deepcopy from 'deepcopy'
 import cryptoRandomString from 'crypto-random-string'
 import { formatHTMLWidget } from './htmlWidget/HTMLWidgetCompatibilityHelper'
+import { formatTextWidget } from './textWidget/TextWidgetCompatibilityHelper'
 
 const datasetIdLabelMap = {}
 
@@ -190,6 +191,9 @@ export const formatWidget = (widget: any) => {
             break
         case 'html':
             formattedWidget = formatHTMLWidget(widget)
+            break
+        case 'text':
+            formattedWidget = formatTextWidget(widget)
     }
 
     return formattedWidget

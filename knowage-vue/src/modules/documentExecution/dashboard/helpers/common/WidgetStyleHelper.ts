@@ -36,7 +36,7 @@ export const getFormattedPaddingStyle = (widget: any) => {
             "padding-left": widget.style.padding['padding-left'],
             "padding-bottom": widget.style.padding['padding-bottom'],
             "padding-right": widget.style.padding['padding-right'],
-            unlinked: widget.style.padding.unlinked
+            unlinked: widget.style.padding.unlinked ?? false
         }
     } as IWidgetPaddingStyle
 }
@@ -44,14 +44,14 @@ export const getFormattedPaddingStyle = (widget: any) => {
 export const getFormattedBorderStyle = (widget: any) => {
     if (!widget.style || !widget.style.border) return widgetCommonDefaultValues.getDefaultBordersStyle()
 
-    return { enabled: widget.style.borders, properties: { ...widget.style.border, 'border-color': hexToRgb(widget.style.border['border-color']) } } as IWidgetBordersStyle
+    return { enabled: widget.style.borders, properties: { ...widget.style.border, 'border-color': widget.style.border['border-color'] } } as IWidgetBordersStyle
 }
 
 export const getFormattedShadowsStyle = (widget: any) => {
     if (!widget.style || !widget.style.shadow) return widgetCommonDefaultValues.getDefaultShadowsStyle()
 
     return {
-        enabled: widget.style.shadows,
+        enabled: widget.style.shadows ?? false,
         properties: {
             "box-shadow": widget.style.shadow["box-shadow"],
             "color": ''
@@ -61,5 +61,5 @@ export const getFormattedShadowsStyle = (widget: any) => {
 
 export const getFormattedBackgroundStyle = (widget: any) => {
     if (!widget.style || !widget.style.backgroundColor) return widgetCommonDefaultValues.getDefaultBackgroundStyle()
-    return { enabled: true, "properties": { "background-color": widget.style.backgroundColor } } as IWidgetBackgroundStyle
+    return { enabled: true, properties: { "background-color": widget.style.backgroundColor } } as IWidgetBackgroundStyle
 }
