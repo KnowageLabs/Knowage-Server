@@ -49,7 +49,7 @@ import { AxiosResponse } from 'axios'
 import { v4 as uuidv4 } from 'uuid'
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
 import { IModelDataset, ISelection, IWidget } from './Dashboard'
-import { emitter, createNewDashboardModel } from './DashboardHelpers'
+import { emitter, createNewDashboardModel, formatDashboardForSave } from './DashboardHelpers'
 import { mapActions } from 'pinia'
 import { formatModel } from './helpers/DashboardBackwardCompatibilityHelper'
 import { setDatasetIntervals, clearAllDatasetIntervals } from './helpers/datasetRefresh/DatasetRefreshHelpers'
@@ -64,6 +64,7 @@ import cryptoRandomString from 'crypto-random-string'
 import DashboardControllerSaveDialog from './DashboardControllerSaveDialog.vue'
 import SelectionsListDialog from './widget/SelectorWidget/SelectionsListDialog.vue'
 import DashboardGeneralSettings from './generalSettings/DashboardGeneralSettings.vue'
+import deepcopy from 'deepcopy'
 
 // import './webComponentExample/hello-world'
 
@@ -289,8 +290,9 @@ export default defineComponent({
             this.appStore.setLoading(false)
         },
         getTemplateContent() {
-            const dashboardModel = this.store.getDashboard(this.dashboardId)
+            const dashboardModel = deepcopy(this.store.getDashboard(this.dashboardId))
             dashboardModel.configuration.selections = this.getSelections(this.dashboardId)
+            formatDashboardForSave(dashboardModel)
             return dashboardModel
         },
         onSelectionsRemove(selections: ISelection[]) {

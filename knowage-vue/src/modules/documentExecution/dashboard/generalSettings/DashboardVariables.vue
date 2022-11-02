@@ -90,7 +90,7 @@ export default defineComponent({
         return {
             descriptor,
             variables: [] as IVariable[],
-            selectedDatasetOptions: [] as { id: number; name: string }[],
+            selectedDatasetOptions: [] as { id: number; label: string }[],
             getTranslatedLabel
         }
     },
@@ -100,6 +100,7 @@ export default defineComponent({
         }
     },
     created() {
+        console.log('selectedDatasetOptions: ', this.selectedDatasetOptions)
         this.loadVariables()
         this.loadSelectedDatasetNames()
     },
@@ -109,7 +110,7 @@ export default defineComponent({
         },
         loadSelectedDatasetNames() {
             if (!this.selectedDatasetsColumnsMap) return
-            Object.keys(this.selectedDatasetsColumnsMap).forEach((key: string) => this.selectedDatasetOptions.push({ id: +key, name: this.selectedDatasetsColumnsMap[key].name }))
+            Object.keys(this.selectedDatasetsColumnsMap).forEach((key: string) => this.selectedDatasetOptions.push({ id: +key, label: this.selectedDatasetsColumnsMap[key].name }))
         },
         getSelectionDatasetColumnOptions(variable: IVariable) {
             return variable.dataset && this.selectedDatasetsColumnsMap ? [''].concat(this.selectedDatasetsColumnsMap[variable.dataset].columns) : []

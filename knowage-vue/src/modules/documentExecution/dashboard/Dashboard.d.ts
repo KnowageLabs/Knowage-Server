@@ -69,6 +69,8 @@ export interface ITableWidgetConditionalStyle {
         type: string
         variable?: string
         parameter?: string
+        variableKey?: string
+        variablePivotDatasetOptions?: any,
         operator: string
         value: string
     }
@@ -379,8 +381,10 @@ export interface ITableWidgetVisibilityCondition {
         type: string
         variable?: string
         variableValue?: string
+        variableKey?: string,
         operator?: string
-        value?: string
+        value?: string,
+        variablePivotDatasetOptions?: any
     }
 }
 
@@ -581,7 +585,6 @@ export interface IVariable {
     column?: string
     attribute?: string
     driver?: string,
-    key?: string,
     pivotedValues?: any
 }
 

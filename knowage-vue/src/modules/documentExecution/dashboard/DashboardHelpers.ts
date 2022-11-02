@@ -1,4 +1,4 @@
-import { IDashboard, IWidget } from './Dashboard'
+import { IDashboard, IDashboardConfiguration, IVariable, IWidget } from './Dashboard'
 import mitt from 'mitt'
 export const emitter = mitt()
 import cryptoRandomString from 'crypto-random-string'
@@ -56,3 +56,11 @@ const deleteWidgetFromSheets = (dashboard: IDashboard, widgetId: string) => {
     }
 }
 
+export const formatDashboardForSave = (dasdashboard: IDashboard) => {
+    formatVariablesForSave(dasdashboard.configuration)
+}
+
+const formatVariablesForSave = (dasdashboardConfiguration: IDashboardConfiguration) => {
+    if (!dasdashboardConfiguration || !dasdashboardConfiguration.variables) return
+    dasdashboardConfiguration.variables.forEach((variable: IVariable) => delete variable.pivotedValues)
+}
