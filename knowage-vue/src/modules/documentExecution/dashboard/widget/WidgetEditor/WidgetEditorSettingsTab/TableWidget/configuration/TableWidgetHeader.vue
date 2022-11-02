@@ -24,7 +24,7 @@
                     <WidgetEditorColumnsMultiselect :value="rule.target" :availableTargetOptions="availableTargetOptions" :widgetColumnsAliasMap="widgetColumnsAliasMap" optionLabel="alias" optionValue="id" :disabled="headersCustomDisabled" @change="onColumnsSelected($event, rule)">
                     </WidgetEditorColumnsMultiselect>
                 </div>
-                <div class="p-col-12 p-sm-12 p-md-12 p-lg-9 p-grid">
+                <div class="p-col-12 p-sm-12 p-md-12 p-lg-9 p-grid p-ai-center">
                     <div class="p-col-11 p-sm-11 p-md-6 p-lg-3 kn-flex p-d-flex p-flex-column p-p-2">
                         <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.headers.action') }}</label>
                         <Dropdown class="kn-material-input" v-model="rule.action" :options="descriptor.customHeadersActionOptions" optionValue="value" :disabled="headersCustomDisabled" @change="onHeadersRuleActionChanged(rule)">
@@ -55,15 +55,24 @@
                             </template>
                         </Dropdown>
                     </div>
-                    <div v-if="rule.action === 'setLabel'" class="p-grid p-col-12 p-sm-12 p-md-6 p-lg-4 p-d-flex p-flex-row p-ai-center">
+                    <div v-if="rule.action === 'setLabel'" class="p-grid p-col-12 p-sm-12 p-md-6 p-lg-4 p-ai-center">
                         <div v-if="rule.compareType === 'static'" class="p-col-12 p-d-flex p-flex-column kn-flex">
                             <label class="kn-material-input-label p-mr-2">{{ $t('common.value') }}</label>
                             <InputText class="kn-material-input p-inputtext-sm" v-model="rule.value" :disabled="headersCustomDisabled" @change="headersConfigurationChanged" />
                         </div>
-                        <div v-else-if="rule.compareType === 'variable'" class="p-col-12 p-d-flex p-flex-column kn-flex">
-                            <label class="kn-material-input-label p-mr-2">{{ $t('common.variable') }}</label>
-                            <Dropdown class="kn-material-input" v-model="rule.variable" :options="variables" optionValue="name" optionLabel="name" :disabled="headersCustomDisabled" @change="onVariableChanged(rule)"> </Dropdown>
+
+                        <div v-else-if="rule.compareType === 'variable'" class="p-col-12 p-d-grid">
+                            <div class="p-col-6 kn-flex">
+                                <label class="kn-material-input-label p-mr-2">{{ $t('common.variable') }}</label>
+                                <Dropdown class="kn-material-input" v-model="rule.variable" :options="variables" optionValue="name" optionLabel="name" :disabled="headersCustomDisabled" @change="onVariableChanged(rule)"> </Dropdown>
+                            </div>
+
+                            <div v-if="rule.compareType === 'variable' && rule.variablePivotDatasetOptions" class="p-col-6 kn-flex">
+                                <label class="kn-material-input-label p-mr-2">{{ $t('common.key') }}</label>
+                                <Dropdown class="kn-material-input" v-model="rule.variableKey" :options="rule.variablePivotDatasetOptions ? Object.keys(rule.variablePivotDatasetOptions) : []" :disabled="headersCustomDisabled" @change="onVariableKeyChanged(rule)"> </Dropdown>
+                            </div>
                         </div>
+
                         <div v-else-if="rule.compareType === 'parameter'" class="p-col-12 p-d-flex p-flex-column kn-flex">
                             <label class="kn-material-input-label p-mr-2">{{ $t('common.parameter') }}</label>
                             <Dropdown class="kn-material-input" v-model="rule.parameter" :options="drivers" optionValue="name" optionLabel="name" :disabled="headersCustomDisabled" @change="onDriverChanged(rule)"> </Dropdown>
@@ -191,21 +200,33 @@ export default defineComponent({
         onVariableChanged(rule: ITableWidgetHeadersRule) {
             const temp = rule.variable
             if (temp) {
-                if (this.checkIfVariableIsDatasetTypeWithoutColumn(temp)) this.getDatasetValueFromPivotedDataset()
-                rule.value = this.variableValuesMap[temp]
-                console.log('>>>>>>>>>>> RULE: ', rule)
-                //
+                const variable = this.getSelectedVariable(temp)
+                if (variable && variable.dataset && !variable.column) {
+                    console.log('>>>>>>>>>>> VARIABLE!!!!!!!!!: ', variable)
+                    rule.variablePivotDatasetOptions = this.getVariablePivotDatasetOptions(variable)
+                } else {
+                    rule.value = this.variableValuesMap[temp]
+                    delete rule.variablePivotDatasetOptions
+                }
             }
             this.headersConfigurationChanged()
         },
-        checkIfVariableIsDatasetTypeWithoutColumn(variableName: string) {
+        getSelectedVariable(variableName: string) {
             if (!this.variables) return false
             const index = this.variables.findIndex((variable: IVariable) => variable.name === variableName)
-            return index !== -1 ? this.variables[index].dataset && !this.variables[index].column : false
+            return index !== -1 ? this.variables[index] : null
         },
-        getDatasetValueFromPivotedDataset() {
-            console.log('>>>>>>>>>>>> getDatasetValueFromPivotedDataset')
-            // await getVariablePivotedDataset()
+        getVariablePivotDatasetOptions(variable: IVariable) {
+            if (!variable || !variable.pivotedValues) return []
+            const formattedOptions = {} as { key: string; value: string }[]
+            Object.keys(variable.pivotedValues).forEach((key: string) => {
+                formattedOptions[key] = variable.pivotedValues[key]
+            })
+            return formattedOptions
+        },
+        onVariableKeyChanged(rule: ITableWidgetHeadersRule) {
+            console.log('RULE: ', rule)
+            rule.value = rule.variableKey ? rule.variablePivotDatasetOptions[rule.variableKey] : ''
         },
         headersConfigurationChanged() {
             emitter.emit('headersConfigurationChanged', this.headersModel)

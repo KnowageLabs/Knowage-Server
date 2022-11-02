@@ -132,6 +132,8 @@ export interface ITableWidgetHeadersRule {
     action: string
     compareType?: string
     variable?: string
+    variableKey?: string,
+    variablePivotDatasetOptions?: any,
     value?: string
     parameter?: string
 }
