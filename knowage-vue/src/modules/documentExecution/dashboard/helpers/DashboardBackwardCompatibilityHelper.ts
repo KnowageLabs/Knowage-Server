@@ -1,6 +1,6 @@
 import { formatTableWidget } from './tableWidget/TableWidgetCompatibilityHelper'
 import { formatSelectorWidget } from '@/modules/documentExecution/dashboard/helpers/selectorWidget/SelectorWidgetCompatibilityHelper'
-import { IAssociation, IDashboardConfiguration, IDataset, IDatasetParameter, ISelection, IVariable, IWidget, IWidgetColumn, IWidgetColumnFilter, IWidgetEditorDataset } from '../Dashboard'
+import { IAssociation, IDashboard, IDashboardConfiguration, IDataset, IDatasetParameter, ISelection, IVariable, IWidget, IWidgetColumn, IWidgetColumnFilter, IWidgetEditorDataset } from '../Dashboard'
 import { formatSelectionWidget } from './selectionWidget/SelectionsWidgetCompatibilityHelper'
 import { setVariableValueFromDataset } from '../generalSettings/VariablesHelper'
 import deepcopy from 'deepcopy'
@@ -160,7 +160,7 @@ const formatSheet = (sheet: any, formattedModel: any) => {
 
 const addWidgetToModel = (widget: any, formattedModel: any) => {
     if (checkIfWidgetInModel(widget, formattedModel)) return
-    formattedModel.widgets.push(formatWidget(widget))
+    formattedModel.widgets.push(formatWidget(widget, formattedModel))
 }
 
 const checkIfWidgetInModel = (widget: any, formattedModel: any) => {
@@ -176,12 +176,12 @@ const checkIfWidgetInModel = (widget: any, formattedModel: any) => {
     return found
 }
 
-export const formatWidget = (widget: any) => {
+export const formatWidget = (widget: any, formattedModel: IDashboard) => {
     let formattedWidget = {} as any
 
     switch (widget.type) {
         case 'table':
-            formattedWidget = formatTableWidget(widget)
+            formattedWidget = formatTableWidget(widget, formattedModel)
             break;
         case 'selector':
             formattedWidget = formatSelectorWidget(widget)

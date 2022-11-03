@@ -1,5 +1,6 @@
 <template>
     <div v-if="headersModel" class="p-grid p-jc-center p-ai-center p-p-4">
+        {{ headersModel }}
         <div id="input-switches-container" class="p-grid p-col-12">
             <div class="p-col-12 p-md-6 p-p-2">
                 <InputSwitch v-model="headersModel.enabled" @change="headersConfigurationChanged"></InputSwitch>

@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle, ITableWidgetStyle, ITableWidgetInteractions, ITableWidgetConfiguration, IWidgetResponsive, ITableWidgetConditionalStyles } from '../../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle, ITableWidgetStyle, ITableWidgetInteractions, ITableWidgetConfiguration, IWidgetResponsive, ITableWidgetConditionalStyles, IDashboard } from '../../Dashboard'
 import { getFormattedConfiguration } from './TableWidgetConfigurationHelper'
 import { getFormattedInteractions } from './TableWidgetInteractionsHelper'
 import { getFormattedStyle } from './TableWidgetStyleHelper'
@@ -10,7 +10,7 @@ import { getFiltersForColumns } from '../DashboardBackwardCompatibilityHelper'
 
 const columnNameIdMap = {}
 
-export const formatTableWidget = (widget: any) => {
+export const formatTableWidget = (widget: any, formattedDashboardModel: IDashboard) => {
     const formattedWidget = {
         id: widget.id,
         dataset: widget.dataset.dsId,
@@ -23,7 +23,7 @@ export const formatTableWidget = (widget: any) => {
     } as IWidget
     formattedWidget.settings = getFormattedWidgetSettings(widget)
     getFiltersForColumns(formattedWidget, widget)
-    getSettingsFromWidgetColumns(formattedWidget, widget)
+    getSettingsFromWidgetColumns(formattedWidget, widget, formattedDashboardModel)
     return formattedWidget
 }
 
