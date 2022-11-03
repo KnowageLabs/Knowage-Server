@@ -11,7 +11,7 @@
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
-    <KnDatasetList :visibility="showDatasetList" :items="availableDatasets" @selected="newDataPrep" @save="openDataPreparation(selectedDsForDataPrep)" @cancel="hideDataSetCatalog" />
+    <KnDatasetList :visibility="showDatasetList" :items="availableDatasets" @selected="newDataPrep" @save="handleSave(selectedDsForDataPrep)" @cancel="hideDataSetCatalog" />
 
     <div class="p-d-flex p-flex-row p-ai-center">
         <InputText class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
@@ -90,6 +90,8 @@
     <WorkspaceDataCloneDialog :visible="cloneDialogVisible" :propDataset="selectedDataset" @close="cloneDialogVisible = false" @clone="handleDatasetClone"></WorkspaceDataCloneDialog>
     <WorkspaceDataPreviewDialog :visible="previewDialogVisible" :propDataset="selectedDataset" @close="previewDialogVisible = false"></WorkspaceDataPreviewDialog>
     <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.advancedData.title')" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
+
+    <DataPreparationAvroHandlingDialog :visible="dataPrepAvroHandlingDialogVisbile" :title="$t('workspace.myData.isPreparing')" :infoMessage="dataPrepAvroHandlingMessage" @close="proceedToDataPrep" :events="events"></DataPreparationAvroHandlingDialog>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -109,6 +111,7 @@ import Message from 'primevue/message'
 import WorkspaceDataCloneDialog from '@/modules/workspace/views/dataView/dialogs/WorkspaceDataCloneDialog.vue'
 import WorkspaceDataPreviewDialog from '@/modules/workspace/views/dataView/dialogs/WorkspaceDataPreviewDialog.vue'
 import WorkspaceWarningDialog from '@/modules/workspace/genericComponents/WorkspaceWarningDialog.vue'
+import DataPreparationAvroHandlingDialog from '@/modules/workspace/dataPreparation/DataPreparationAvroHandlingDialog.vue'
 import { AxiosResponse } from 'axios'
 import DataPreparationMonitoringDialog from '@/modules/workspace/dataPreparation/DataPreparationMonitoring/DataPreparationMonitoringDialog.vue'
 import { mapState, mapActions } from 'pinia'
@@ -118,7 +121,7 @@ import workspaceStore from '@/modules/workspace/Workspace.store.js'
 import { Client } from '@stomp/stompjs'
 
 export default defineComponent({
-    components: { DataTable, KnDatasetList, Column, Chip, DataPreparationMonitoringDialog, EditPreparedDatasetDialog, DetailSidebar, WorkspaceCard, KnFabButton, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataPreviewDialog, Message, Menu },
+    components: { DataTable, KnDatasetList, Column, Chip, DataPreparationMonitoringDialog, EditPreparedDatasetDialog, DetailSidebar, WorkspaceCard, KnFabButton, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataPreviewDialog, Message, Menu, DataPreparationAvroHandlingDialog },
     emits: ['toggleDisplayView'],
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {
@@ -163,11 +166,16 @@ export default defineComponent({
             warningMessage: '',
             searchWord: '' as string,
             showMonitoring: false,
-            client: {} as any
+            client: {} as any,
+            dataPrepAvroHandlingDialogVisbile: false,
+            dataPrepAvroHandlingMessage: '',
+            existingPreparedDatasetId: null,
+            events: [] as any
         }
     },
     async created() {
         if (this.user?.functionalities.includes('DataPreparation')) {
+            this.events = []
             var url = new URL(window.location.origin)
             url.protocol = url.protocol.replace('http', 'ws')
             let uri = url + 'knowage-data-preparation/ws?' + import.meta.env.VITE_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
@@ -186,9 +194,12 @@ export default defineComponent({
                     if (message.body) {
                         let avroJobResponse = JSON.parse(message.body)
                         if (avroJobResponse.statusOk) {
-                            this.setInfo({ title: 'Dataset prepared successfully' })
                             this.addToLoadedAvros(avroJobResponse.dsId)
                             this.addToAvroDatasets(avroJobResponse.dsId)
+
+                            this.pushEvent(4)
+
+                            if (!this.dataPrepAvroHandlingDialogVisbile) this.openDataPreparation({ id: avroJobResponse.dsId })
                         } else {
                             this.setError({ title: 'Cannot prepare dataset', msg: avroJobResponse.errorMessage })
                         }
@@ -216,11 +227,12 @@ export default defineComponent({
         if (this.user?.functionalities.includes('DataPreparation') && this.client && Object.keys(this.client).length > 0) {
             this.client.deactivate()
             this.client = {}
+            this.events = []
         }
     },
     methods: {
         ...mapActions(mainStore, ['setInfo', 'setError']),
-        ...mapActions(workspaceStore, ['addToLoadedAvros', 'addToLoadingAvros', 'addToAvroDatasets', 'removeFromLoadingAvros', 'removeFromLoadedAvros', 'setAvroDatasets', 'setLoadedAvros']),
+        ...mapActions(workspaceStore, ['addToLoadedAvros', 'addToLoadingAvros', 'addToAvroDatasets', 'removeFromLoadingAvros', 'removeFromLoadedAvros', 'setAvroDatasets', 'setLoadedAvros', 'setLoadingAvros']),
         async updatePreparedDataset(newDataset) {
             this.showEditPreparedDatasetDialog = false
             this.selectedDataset.name = newDataset.name
@@ -319,7 +331,12 @@ export default defineComponent({
             console.log(dataset)
             this.showMonitoring = !this.showMonitoring
         },
+        handleSave(dataset: any) {
+            this.hideDataSetCatalog()
+            this.openDataPreparation(dataset)
+        },
         async openDataPreparation(dataset: any) {
+            this.pushEvent(0)
             if (dataset.dsTypeCd == 'Prepared') {
                 //edit existing data prep
                 await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced/${dataset.id}`).then(
@@ -334,6 +351,10 @@ export default defineComponent({
                                 // check if Avro file has been deleted or not
                                 /*                                 this.$router.push({ name: 'data-preparation', params: { id: datasetId, transformations: JSON.stringify(transformations), processId: processId, instanceId: instanceId, dataset: JSON.stringify(dataset) } }) */
 
+                                this.dataPrepAvroHandlingDialogVisbile = true
+                                this.dataPrepAvroHandlingMessage = this.$t('managers.workspaceManagement.dataPreparation.info.dataPrepIsLoadingAndWillBeOpened')
+
+                                this.existingPreparedDatasetId = datasetId
                                 this.generateAvro(datasetId)
                             } else {
                                 this.$router.push({ name: 'data-preparation', params: { id: datasetId, transformations: JSON.stringify(transformations), processId: processId, instanceId: instanceId, dataset: JSON.stringify(dataset) } })
@@ -350,10 +371,14 @@ export default defineComponent({
                 // original dataset already exported in Avro
                 this.$router.push({ name: 'data-preparation', params: { id: dataset.id } })
             } else {
+                this.dataPrepAvroHandlingDialogVisbile = true
+                this.dataPrepAvroHandlingMessage = this.$t('managers.workspaceManagement.dataPreparation.info.dataPrepIsLoadingAndWillBeOpened')
+
                 await this.generateAvro(dataset.id)
             }
         },
         async generateAvro(dsId: Number) {
+            this.pushEvent(1)
             // launch avro export job
             await this.$http
                 .post(
@@ -367,12 +392,12 @@ export default defineComponent({
                     }
                 )
                 .then(() => {
-                    this.setInfo({
-                        title: this.$t('workspace.myData.isPreparing')
-                    })
+                    this.pushEvent(2)
+
                     this.addToLoadingAvros(dsId)
                     let idx = this.dataPreparation.loadedAvros.indexOf(dsId)
                     if (idx >= 0) this.removeFromLoadedAvros(idx)
+                    this.pushEvent(3)
                 })
                 .catch(() => {})
 
@@ -385,6 +410,7 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => {
                     this.setAvroDatasets(response.data)
                     this.setLoadedAvros(response.data)
+                    this.setLoadingAvros([])
                 })
                 .catch(() => {})
         },
@@ -492,6 +518,12 @@ export default defineComponent({
             this.warningMessage = ''
             this.warningDialogVisbile = false
         },
+        proceedToDataPrep() {
+            this.dataPrepAvroHandlingMessage = ''
+            this.dataPrepAvroHandlingDialogVisbile = false
+
+            if (this.existingPreparedDatasetId && this.isAvroReady(this.existingPreparedDatasetId)) this.openDataPreparation({ id: this.existingPreparedDatasetId })
+        },
         async getDatasets() {
             this.loading = true
             this.searchWord = ''
@@ -525,6 +557,27 @@ export default defineComponent({
                     this.setError({ title: this.$t('common.error.saving'), msg: this.$t('managers.workspaceManagement.dataPreparation.errors.updatingSchedulation') })
                 }
             )
+        },
+        pushEvent(id: Number) {
+            let message = {}
+            switch (id) {
+                case 0:
+                    message = { id: 0, status: this.$t('managers.workspaceManagement.dataPreparation.dataPreparationIsStarting') }
+                    break
+                case 1:
+                    message = { id: 1, status: this.$t('managers.workspaceManagement.dataPreparation.dataPreparationIsManagingTheDataset') }
+                    break
+                case 2:
+                    message = { id: 2, status: this.$t('managers.workspaceManagement.dataPreparation.dataPreparationIsCreatingFiles') }
+                    break
+                case 3:
+                    message = { id: 3, status: this.$t('managers.workspaceManagement.dataPreparation.dataPreparationIsApplyingTheChanges') }
+                    break
+                case 4:
+                    message = { id: 4, status: this.$t('managers.workspaceManagement.dataPreparation.dataPreparationIsCompleted') }
+                    break
+            }
+            setTimeout(this.events.push(message), 1500)
         }
     }
 })
