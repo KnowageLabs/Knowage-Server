@@ -9,7 +9,7 @@ export const getSettingsFromWidgetColumns = (formattedWidget: IWidget, widget: a
         getHeaderConfigurationFromWidgetColumn(formattedWidget, tempColumn, formattedDashboardModel)
         if (tempColumn.group) addColumnToColumnGroup(formattedWidget, tempColumn)
         getVisualizationTypeConfigurationsFromColumn(formattedWidget, tempColumn)
-        getVisibilityConditionsFromColumn(formattedWidget, tempColumn)
+        getVisibilityConditionsFromColumn(formattedWidget, tempColumn, formattedDashboardModel)
         getStyleFromColumn(formattedWidget, tempColumn)
         getConditionalStyleFromColumn(formattedWidget, tempColumn)
         getTooltipFromColumn(formattedWidget, tempColumn)
@@ -30,7 +30,7 @@ const getVisualizationTypeConfigurationsFromColumn = (formattedWidget: IWidget, 
     }
 }
 
-const getVisibilityConditionsFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
+const getVisibilityConditionsFromColumn = (formattedWidget: IWidget, tempColumn: any, formattedDashboardModel: IDashboard) => {
     if (tempColumn.style && (tempColumn.style.hasOwnProperty('hiddenColumn') || tempColumn.style.hasOwnProperty('hideFromPdf'))) {
         const tempVisibiilityCondition = {
             target: [getColumnId(tempColumn.name)],
@@ -41,7 +41,8 @@ const getVisibilityConditionsFromColumn = (formattedWidget: IWidget, tempColumn:
             }
         } as ITableWidgetVisibilityCondition
         if (tempColumn.variables) {
-            getVisibilityConditionVariable(formattedWidget, tempColumn.variables, tempVisibiilityCondition)
+            console.log("TEMP COLUMN VARIABLES: ", tempColumn.variables)
+            getVisibilityConditionVariable(formattedWidget, tempColumn, tempVisibiilityCondition, formattedDashboardModel)
         } else {
             formattedWidget.settings.visualization.visibilityConditions.enabled = true
             formattedWidget.settings.visualization.visibilityConditions.conditions.push(tempVisibiilityCondition)
@@ -49,21 +50,65 @@ const getVisibilityConditionsFromColumn = (formattedWidget: IWidget, tempColumn:
     }
 }
 
-const getVisibilityConditionVariable = (formattedWidget: IWidget, variables: { action: string; variable: string; condition: string; value: string }[], tempVisibiilityCondition: ITableWidgetVisibilityCondition) => {
-    variables.forEach((variable: { action: string; variable: string; condition: string; value: string }) => {
+const getVisibilityConditionVariable = (formattedWidget: IWidget, column: any, tempVisibiilityCondition: ITableWidgetVisibilityCondition, formattedDashboardModel: IDashboard) => {
+    const modelVariables = formattedDashboardModel?.configuration?.variables ?? []
+    column.variables.forEach((variable: { action: string; variable: string; condition: string; value: string }) => {
+        console.log("VARIABLE: ", variable)
         if (variable.action === 'hide') {
+            const modelVariable = modelVariables.find((tempVariable: IVariable) => tempVariable.name === variable.variable)
+            console.log("MODEL VARIABLE: ", modelVariable)
             tempVisibiilityCondition.condition = {
                 type: 'variable',
                 variable: variable.variable,
-                variableValue: 'MOCK',
                 operator: variable.condition,
                 value: variable.value
             }
+            setVisibilityConditionValueFromVariable(tempVisibiilityCondition, modelVariable, variable)
             formattedWidget.settings.visualization.visibilityConditions.enabled = true
-            formattedWidget.settings.visualization.visibilityConditions.conditions.push(tempVisibiilityCondition)
+            addVisibilityConditionToTheModel(tempVisibiilityCondition, formattedWidget)
         }
     })
 }
+
+const setVisibilityConditionValueFromVariable = (tempVisibiilityCondition: ITableWidgetVisibilityCondition, modelVariable: IVariable | undefined, variable: any) => {
+    if (!modelVariable) return
+    switch (modelVariable.type) {
+        case 'static':
+        case 'profile':
+        case 'driver':
+            tempVisibiilityCondition.condition.value = modelVariable.value
+            break;
+        case 'dataset':
+            if (modelVariable.column) {
+                tempVisibiilityCondition.condition.value = modelVariable.value
+            } else {
+                tempVisibiilityCondition.condition.variableKey = variable.key
+                tempVisibiilityCondition.condition.variablePivotDatasetOptions = modelVariable.pivotedValues
+                tempVisibiilityCondition.condition.value = tempVisibiilityCondition.condition.variableKey ? tempVisibiilityCondition.condition.variablePivotDatasetOptions[tempVisibiilityCondition.condition.variableKey] : ''
+            }
+    }
+}
+
+const addVisibilityConditionToTheModel = (rule: ITableWidgetVisibilityCondition, formattedWidget: IWidget) => {
+    for (let i = 0; i < formattedWidget.settings.visualization.visibilityConditions.conditions.length; i++) {
+        if (formattedWidget.settings.visualization.visibilityConditions.conditions[i].target.includes(rule.target[0])) return
+    }
+    formattedWidget.settings.visualization.visibilityConditions.conditions.push(rule)
+}
+// export interface ITableWidgetVisibilityCondition {
+//     target: string[]
+//     hide: boolean
+//     hidePdf: boolean
+//     condition: {
+//         type: string
+//         variable?: string
+//         variableValue?: string
+//         variableKey?: string,
+//         operator?: string
+//         value?: string,
+//         variablePivotDatasetOptions?: any
+//     }
+// }
 
 const getStyleFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
     if (!tempColumn.style) return
