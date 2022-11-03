@@ -231,14 +231,3 @@ const addHeadersRuleToTheModel = (rule: ITableWidgetHeadersRule, formattedWidget
     }
     formattedWidget.settings.configuration.headers.custom.rules.push(rule)
 }
-
-// export interface ITableWidgetHeadersRule {
-//     target: string[]
-//     action: string
-//     compareType?: string
-//     variable?: string
-//     variableKey?: string,
-//     variablePivotDatasetOptions?: any,
-//     value?: string
-//     parameter?: string
-// }
