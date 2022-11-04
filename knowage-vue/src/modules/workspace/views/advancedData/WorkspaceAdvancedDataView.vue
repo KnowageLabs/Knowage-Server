@@ -202,10 +202,18 @@ export default defineComponent({
                             this.$store.commit('addToLoadedAvros', avroJobResponse.dsId)
                             this.$store.commit('addToAvroDatasets', avroJobResponse.dsId)
                             this.pushEvent(4)
-                            if (!this.dataPrepAvroHandlingDialogVisbile) this.openDataPreparation({ id: avroJobResponse.dsId })
+                            if (!this.dataPrepAvroHandlingDialogVisbile) {
+                                this.$store.commit('setInfo', { title: this.$t('managers.workspaceManagement.dataPreparation.dataPreparationIsCompleted') })
+                                setTimeout(() => {
+                                    this.openDataPreparation({ id: avroJobResponse.dsId })
+                                }, 1500)
+                            }
                         } else {
-                            this.pushEvent(5)
-                            // this.$store.commit('setError', { title: 'Cannot prepare dataset', msg: avroJobResponse.errorMessage })
+                            if (this.dataPrepAvroHandlingDialogVisbile) {
+                                this.pushEvent(5)
+                            } else {
+                                this.$store.commit('setError', { title: 'Cannot prepare dataset', msg: avroJobResponse.errorMessage })
+                            }
                         }
                         this.$store.commit('removeFromLoadingAvros', avroJobResponse.dsId)
                     } else {
