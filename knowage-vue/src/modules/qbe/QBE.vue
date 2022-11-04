@@ -441,7 +441,7 @@ export default defineComponent({
             const temp = this.getFormattedParameters(this.filtersData)
             const drivers = encodeURI(JSON.stringify(temp))
             const url = this.dataset?.federation_id
-                ? `start-federation?federationId=${this.dataset.federation_id}&datasourceForCache=cache&drivers=%7B%7D`
+                ? `start-federation?federationId=${this.dataset.federation_id}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&drivers=%7B%7D`
                 : `start-qbe?datamart=${datamart}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&DATA_SOURCE_LABEL=${label}&drivers=${drivers}`
             if (this.dataset) {
                 await this.$http
@@ -489,7 +489,10 @@ export default defineComponent({
             } else this.calcFieldFunctionsToShow = deepcopy(this.calcFieldFunctions)
         },
         async loadEntities() {
-            const datamartName = this.dataset?.dataSourceId ? this.dataset.name : this.qbe?.qbeDatamarts
+            let datamartName = this.dataset?.dataSourceId ? this.dataset.name : this.qbe?.qbeDatamarts
+            if (this.dataset?.type === "federatedDataset") {
+              datamartName = null
+            }
             await this.$http
                 .get(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_TREE_ACTION&SBI_EXECUTION_ID=${this.uniqueID}&datamartName=${datamartName}`)
                 .then(async (response: AxiosResponse<any>) => {
