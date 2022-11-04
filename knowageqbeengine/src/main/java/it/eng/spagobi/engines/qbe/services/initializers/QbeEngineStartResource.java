@@ -213,6 +213,9 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 		if (dataSourceLabel != null) {
 			dataSource = getDataSourceServiceProxy().getDataSourceByLabel(dataSourceLabel);
 		}
+		if (dataSource == null) {
+			dataSource = getDataSourceServiceProxy().getDataSourceForCache();
+		}
 		return dataSource;
 	}
 
