@@ -142,6 +142,9 @@ const store = createStore({
         },
         setLoadedAvros(state, data) {
             state.dataPreparation.loadedAvros = data
+        },
+        setLoadingAvros(data) {
+            this.dataPreparation.loadingAvros = data
         }
     },
     getters: {
