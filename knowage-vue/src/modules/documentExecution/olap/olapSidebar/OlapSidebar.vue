@@ -137,7 +137,13 @@ import SelectButton from 'primevue/selectbutton'
 export default defineComponent({
     name: 'olap-sidebar',
     components: { SelectButton },
-    props: { olap: { type: Object }, olapDesignerMode: { type: Boolean }, propButtons: { type: Array }, whatIfMode: { type: Boolean }, olapHasScenario: { type: Boolean } },
+    props: {
+        olap: { type: Object },
+        olapDesignerMode: { type: Boolean },
+        propButtons: { type: Array },
+        whatIfMode: { type: Boolean },
+        olapHasScenario: { type: Boolean }
+    },
     emits: [
         'openCustomViewDialog',
         'drillTypeChanged',
@@ -255,13 +261,19 @@ export default defineComponent({
             if (!this.olap) return
             this.$emit('loading', true)
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/locker/${this.olap.modelConfig.artifactId}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8', 'X-Disable-Errors': 'true' } })
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/locker/${this.olap.modelConfig.artifactId}`, null, {
+                    headers: {
+                        Accept: 'application/json, text/plain, */*',
+                        'Content-Type': 'application/json;charset=UTF-8',
+                        'X-Disable-Errors': 'true'
+                    }
+                })
                 .then((response: AxiosResponse<any>) => {
                     if ((response.data.status === 'unlocked' || response.data.status === 'locked_by_user' || response.data.status === 'locked_by_other') && this.olap) {
                         this.$store.commit('setInfo', {
                             msg: this.$t('common.toast.success')
                         })
-                        this.olapLocked = true
+                        this.olapLocked = false
                     }
                 })
                 .catch(() => {})
