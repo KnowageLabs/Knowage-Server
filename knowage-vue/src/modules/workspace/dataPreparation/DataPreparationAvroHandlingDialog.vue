@@ -7,12 +7,18 @@
             <Timeline :value="events" align="alternate">
                 <template #marker="slotProps">
                     <span class="custom-marker shadow-2">
-                        <i v-if="events && slotProps.item.id < 4 && slotProps.item.id === events.length - 1" class="fa-solid fa-spinner fa-spin"></i>
-                        <i v-else class="fa-regular fa-circle-check"></i>
+                        <span v-if="slotProps.item.id < 4">
+                            <i v-if="events && slotProps.item.id === events.length - 1" class="fa-solid fa-spinner fa-spin"></i>
+                            <i v-else class="fa-regular fa-circle-check"></i>
+                        </span>
+                        <i v-if="slotProps.item.id === 4">
+                            <i v-if="slotProps.item.status && slotProps.item.status === 'error'" class="fa-regular fa-circle-xmark"></i>
+                            <i v-else class="fa-regular fa-circle-check"></i>
+                        </i>
                     </span>
                 </template>
                 <template #content="slotProps">
-                    {{ slotProps.item.status }}
+                    {{ slotProps.item.message }}
                 </template>
             </Timeline>
             <template #footer>
@@ -28,12 +34,11 @@ import Dialog from 'primevue/dialog'
 import Message from 'primevue/message'
 import descriptor from './DataPreparationAvroHandlingDialogDescriptor.json'
 import Timeline from 'primevue/timeline'
-
 export default defineComponent({
     name: 'data-preparation-avro-handling-dialog',
     components: { Dialog, Message, Timeline },
     emits: ['close'],
-    props: { visible: { type: Boolean }, title: { type: String }, infoMessage: { type: String }, events: { type: Array<any> } },
+    props: { visible: { type: Boolean }, title: { type: String }, infoMessage: { type: String }, events: { type: Array } },
     data() {
         return {
             descriptor,
@@ -46,7 +51,12 @@ export default defineComponent({
     methods: {
         computeLabel() {
             if (this.events?.length === 5) {
-                return this.$t('common.continue') + ' (' + this.sec + ')'
+                let lastEvent = this.events[this.events.length - 1] as any
+                if (lastEvent?.status === 'error') {
+                    return this.$t('common.close')
+                } else {
+                    return this.$t('common.continue') + ' (' + this.sec + ')'
+                }
             } else {
                 return this.$t('common.continue')
             }
@@ -72,7 +82,10 @@ export default defineComponent({
         events: {
             handler(newValue) {
                 if (newValue.length === 5) {
-                    this.handleTimeout()
+                    let lastEvent = newValue[newValue.length - 1] as any
+                    if (lastEvent?.status !== 'error') {
+                        this.handleTimeout()
+                    }
                 }
             },
             deep: true

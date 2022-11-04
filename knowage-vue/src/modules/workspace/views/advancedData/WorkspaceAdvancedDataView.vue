@@ -197,13 +197,22 @@ export default defineComponent({
                             this.addToLoadedAvros(avroJobResponse.dsId)
                             this.addToAvroDatasets(avroJobResponse.dsId)
 
-                            this.pushEvent(4)
-
-                            if (!this.dataPrepAvroHandlingDialogVisbile) this.openDataPreparation({ id: avroJobResponse.dsId })
+                            if (this.dataPrepAvroHandlingDialogVisbile) {
+                                this.pushEvent(4)
+                            } else {
+                                this.$store.commit('setInfo', { title: this.$t('managers.workspaceManagement.dataPreparation.dataPreparationIsCompleted') })
+                                setTimeout(() => {
+                                    this.openDataPreparation({ id: avroJobResponse.dsId })
+                                }, 1500)
+                            }
                         } else {
-                            this.setError({ title: 'Cannot prepare dataset', msg: avroJobResponse.errorMessage })
+                            if (this.dataPrepAvroHandlingDialogVisbile) {
+                                this.pushEvent(5)
+                            } else {
+                                this.$store.commit('setError', { title: 'Cannot prepare dataset', msg: avroJobResponse.errorMessage })
+                            }
+                            this.removeFromLoadingAvros(avroJobResponse.dsId)
                         }
-                        this.removeFromLoadingAvros(avroJobResponse.dsId)
                     } else {
                         this.setError({ title: 'Websocket error', msg: 'got empty message' })
                     }
@@ -562,19 +571,22 @@ export default defineComponent({
             let message = {}
             switch (id) {
                 case 0:
-                    message = { id: 0, status: this.$t('managers.workspaceManagement.dataPreparation.dataPreparationIsStarting') }
+                    message = { id: 0, message: this.$t('managers.workspaceManagement.dataPreparation.dataPreparationIsStarting') }
                     break
                 case 1:
-                    message = { id: 1, status: this.$t('managers.workspaceManagement.dataPreparation.dataPreparationIsManagingTheDataset') }
+                    message = { id: 1, message: this.$t('managers.workspaceManagement.dataPreparation.dataPreparationIsManagingTheDataset') }
                     break
                 case 2:
-                    message = { id: 2, status: this.$t('managers.workspaceManagement.dataPreparation.dataPreparationIsCreatingFiles') }
+                    message = { id: 2, message: this.$t('managers.workspaceManagement.dataPreparation.dataPreparationIsCreatingFiles') }
                     break
                 case 3:
-                    message = { id: 3, status: this.$t('managers.workspaceManagement.dataPreparation.dataPreparationIsApplyingTheChanges') }
+                    message = { id: 3, message: this.$t('managers.workspaceManagement.dataPreparation.dataPreparationIsApplyingTheChanges') }
                     break
                 case 4:
-                    message = { id: 4, status: this.$t('managers.workspaceManagement.dataPreparation.dataPreparationIsCompleted') }
+                    message = { id: 4, message: this.$t('managers.workspaceManagement.dataPreparation.dataPreparationIsCompleted') }
+                    break
+                case 5:
+                    message = { id: 4, message: this.$t('managers.workspaceManagement.dataPreparation.dataPreparationStoppedWithErrors'), status: 'error' }
                     break
             }
             setTimeout(this.events.push(message), 1500)

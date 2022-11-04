@@ -2343,6 +2343,7 @@
                 "dataPreparationIsCreatingFiles": "The data preparation is creating the necessary files",
                 "dataPreparationIsManagingTheDataset": "Data preparation is managing the dataset",
                 "dataPreparationIsStarting": "Data preparation is starting",
+                "dataPreparationStoppedWithErrors": "Data preparation was aborted due to an error that occurred during the process",
                 "dataset": {
                     "description": "Description",
                     "label": "Label",
@@ -2364,7 +2365,7 @@
                     "updatingSchedulation": "An error occurred while updating schedulation"
                 },
                 "info": {
-                    "dataPrepIsLoadingAndWillBeOpened": "Data preparation is in progress... You don't have to wait until it's done. If you continue or wait here, the data preparation will be opened when the process is completed."
+                    "dataPrepIsLoadingAndWillBeOpened": "Data preparation is in progress... You don't have to wait until it's done. If you continue or wait here, the data preparation will be opened when the process is completed successfully."
                 },
                 "label": "Data preparation",
                 "monitoring": {
