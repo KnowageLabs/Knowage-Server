@@ -380,6 +380,8 @@
             "addWidget": "Add widget",
             "aggregation": "Aggregation",
             "ascending": "Ascending",
+            "gallery": "Gallery",
+            "editor": "Editor",
             "background": "Background",
             "borders": {
                 "borderRadiusBottomLeft": "Border radius bottom left",

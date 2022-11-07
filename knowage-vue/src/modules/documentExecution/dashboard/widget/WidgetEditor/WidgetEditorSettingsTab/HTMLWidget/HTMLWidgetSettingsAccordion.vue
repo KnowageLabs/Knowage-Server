@@ -12,6 +12,8 @@
                 <WidgetBordersStyle v-else-if="accordion.type === 'BordersStyle'" :widgetModel="widgetModel"></WidgetBordersStyle>
                 <WidgetShadowsStyle v-else-if="accordion.type === 'ShadowsStyle'" :widgetModel="widgetModel"></WidgetShadowsStyle>
                 <WidgetResponsive v-else-if="accordion.type === 'Responsive'" :widgetModel="widgetModel"></WidgetResponsive>
+                <WidgetHtmlEditor v-else-if="accordion.type === 'HTML'" :widgetModel="widgetModel"></WidgetHtmlEditor>
+                <WidgetCssEditor v-else-if="accordion.type === 'CSS'" :widgetModel="widgetModel"></WidgetCssEditor>
             </AccordionTab>
         </Accordion>
     </div>
@@ -31,6 +33,8 @@ import WidgetPaddingStyle from '../common/style/WidgetPaddingStyle.vue'
 import WidgetBordersStyle from '../common/style/WidgetBordersStyle.vue'
 import WidgetShadowsStyle from '../common/style/WidgetShadowsStyle.vue'
 import WidgetResponsive from '../common/responsive/WidgetResponsive.vue'
+import WidgetHtmlEditor from '../common/editor/WidgetHtmlEditor.vue'
+import WidgetCssEditor from '../common/editor/WidgetCssEditor.vue'
 
 export default defineComponent({
     name: 'html-widget-settings-container',
@@ -43,7 +47,9 @@ export default defineComponent({
         WidgetPaddingStyle,
         WidgetBordersStyle,
         WidgetShadowsStyle,
-        WidgetResponsive
+        WidgetResponsive,
+        WidgetHtmlEditor,
+        WidgetCssEditor
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
