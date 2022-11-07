@@ -1459,6 +1459,8 @@ public class ManageDataSetsForREST {
 			return java.sql.Date.class;
 		else if (columnClass.equalsIgnoreCase("java.util.Timestamp"))
 			return java.sql.Timestamp.class;
+		else if (columnClass.equalsIgnoreCase("java.sql.Timestamp"))
+			return java.sql.Timestamp.class;
 		else
 			throw new SpagoBIRuntimeException("Couldn't map class <" + columnClass + ">");
 	}
