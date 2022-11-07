@@ -166,9 +166,9 @@ export interface ITableWidgetSummaryRow {
 
 export interface IWidgetInteractions {
     crosssNavigation: IWidgetCrossNavigation
-    link: IWidgetLinks
-    preview: IWidgetPreview
-    selection: IWidgetSelection
+    link?: IWidgetLinks
+    preview?: IWidgetPreview
+    selection?: IWidgetSelection
 }
 
 export interface IWidgetCrossNavigation {

@@ -1,3 +1,4 @@
+import { IWidgetExports } from "../Dashboard"
 
 
 export interface ITextWidgetSettings {
@@ -5,17 +6,19 @@ export interface ITextWidgetSettings {
     sortingOrder?: string,
     updatable: boolean,
     clickable: boolean,
+    editor: ITextWidgetEditor,
     configuration: ITextWidgetConfiguration,
+    interactions: IWidgetInteractions,
     style: ITextWidgetStyle,
     responsive: IWidgetResponsive
 }
 
-export interface ITextWidgetConfiguration {
-    content: ITextWidgetContent
+export interface ITextWidgetEditor {
+    text: string
 }
 
-export interface ITextWidgetContent {
-    text: string
+export interface ITextWidgetConfiguration {
+    exports: IWidgetExports
 }
 
 export interface ITextWidgetStyle {

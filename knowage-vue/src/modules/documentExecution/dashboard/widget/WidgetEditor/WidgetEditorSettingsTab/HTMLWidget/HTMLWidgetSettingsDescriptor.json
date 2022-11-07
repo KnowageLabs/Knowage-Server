@@ -1,5 +1,11 @@
 {
     "settings": {
+        "Configuration": [
+            {
+                "title": "dashboard.widgetEditor.export.title",
+                "type": "Export"
+            }
+        ],
         "Editor": [
             {
                 "title": "CSS",
@@ -67,14 +73,19 @@
             "value": "Editor"
         },
         {
-            "icon": "fa fa-hand-pointer",
-            "label": "dashboard.widgetEditor.interactions.title",
-            "value": "Interactions"
+            "icon": "fa fa-cogs",
+            "label": "dashboard.widgetEditor.configuration",
+            "value": "Configuration"
         },
         {
             "icon": "fa fa-paint-brush",
             "label": "common.style",
             "value": "Style"
+        },
+        {
+            "icon": "fa fa-hand-pointer",
+            "label": "dashboard.widgetEditor.interactions.title",
+            "value": "Interactions"
         },
         {
             "icon": "pi pi-tablet",

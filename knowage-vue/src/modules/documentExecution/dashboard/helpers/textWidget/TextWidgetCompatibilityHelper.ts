@@ -1,5 +1,5 @@
 import { IWidget, IWidgetColumn, IWidgetExports, IWidgetInteractions } from "../../Dashboard"
-import { ITextWidgetConfiguration, ITextWidgetContent, ITextWidgetSettings } from "../../interfaces/DashboardTextWidget"
+import { ITextWidgetConfiguration, ITextWidgetEditor, ITextWidgetSettings } from "../../interfaces/DashboardTextWidget"
 import { getFormattedStyle } from "./TextWidgetStyleHelper"
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import cryptoRandomString from "crypto-random-string"
@@ -44,6 +44,7 @@ const getFormattedWidgetSettings = (widget: any) => {
     const formattedSettings = {
         updatable: widget.updateble,
         clickable: widget.cliccable,
+        editor: getFormattedEditor(widget),
         configuration: getFormattedConfiguration(widget),
         style: getFormattedStyle(widget),
         interactions: getFormattedInteractions(widget) as IWidgetInteractions,
@@ -52,9 +53,12 @@ const getFormattedWidgetSettings = (widget: any) => {
     return formattedSettings
 }
 
+const getFormattedEditor = (widget: any) => {
+    return { text: widget.content?.text ?? '' } as ITextWidgetEditor
+}
+
 const getFormattedConfiguration = (widget: any) => {
     return {
-        content: { text: widget.content?.text ?? '' } as ITextWidgetContent,
         exports: { showExcelExport: widget.style?.showExcelExport ?? false, showScreenshot: widget.style?.showScreenshot ?? false } as IWidgetExports
     } as ITextWidgetConfiguration
 }
