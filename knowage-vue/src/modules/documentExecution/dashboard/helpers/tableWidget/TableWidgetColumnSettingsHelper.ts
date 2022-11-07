@@ -31,38 +31,34 @@ const getVisualizationTypeConfigurationsFromColumn = (formattedWidget: IWidget, 
 }
 
 const getVisibilityConditionsFromColumn = (formattedWidget: IWidget, tempColumn: any, formattedDashboardModel: IDashboard) => {
-    if (tempColumn.style && (tempColumn.style.hasOwnProperty('hiddenColumn') || tempColumn.style.hasOwnProperty('hideFromPdf'))) {
-        const tempVisibiilityCondition = {
-            target: [getColumnId(tempColumn.name)],
-            hide: tempColumn.style.hiddenColumn ?? false,
-            hidePdf: tempColumn.style.hideFromPdf ?? false,
-            condition: {
-                type: 'always'
-            }
-        } as ITableWidgetVisibilityCondition
-        if (tempColumn.variables) {
-            console.log("TEMP COLUMN VARIABLES: ", tempColumn.variables)
-            getVisibilityConditionVariable(formattedWidget, tempColumn, tempVisibiilityCondition, formattedDashboardModel)
-        } else {
-            formattedWidget.settings.visualization.visibilityConditions.enabled = true
-            formattedWidget.settings.visualization.visibilityConditions.conditions.push(tempVisibiilityCondition)
+    const tempVisibiilityCondition = {
+        target: [getColumnId(tempColumn.name)],
+        hide: tempColumn.style?.hiddenColumn ?? false,
+        hidePdf: tempColumn.style?.hideFromPdf ?? false,
+        condition: {
+            type: 'always'
         }
+    } as ITableWidgetVisibilityCondition
+    if (tempColumn.variables) {
+        getVisibilityConditionVariable(formattedWidget, tempColumn, tempVisibiilityCondition, formattedDashboardModel)
+    } else if (tempVisibiilityCondition.hide || tempVisibiilityCondition.hidePdf) {
+        formattedWidget.settings.visualization.visibilityConditions.enabled = true
+        formattedWidget.settings.visualization.visibilityConditions.conditions.push(tempVisibiilityCondition)
     }
 }
 
 const getVisibilityConditionVariable = (formattedWidget: IWidget, column: any, tempVisibiilityCondition: ITableWidgetVisibilityCondition, formattedDashboardModel: IDashboard) => {
     const modelVariables = formattedDashboardModel?.configuration?.variables ?? []
-    column.variables.forEach((variable: { action: string; variable: string; condition: string; value: string }) => {
-        console.log("VARIABLE: ", variable)
+    column.variables.forEach((variable: { action: string; variable: string; condition: string; value: string, key?: string }) => {
         if (variable.action === 'hide') {
             const modelVariable = modelVariables.find((tempVariable: IVariable) => tempVariable.name === variable.variable)
-            console.log("MODEL VARIABLE: ", modelVariable)
             tempVisibiilityCondition.condition = {
                 type: 'variable',
                 variable: variable.variable,
                 operator: variable.condition,
                 value: variable.value
             }
+            if (variable.key) tempVisibiilityCondition.condition.variableKey = variable.key
             setVisibilityConditionValueFromVariable(tempVisibiilityCondition, modelVariable, variable)
             formattedWidget.settings.visualization.visibilityConditions.enabled = true
             addVisibilityConditionToTheModel(tempVisibiilityCondition, formattedWidget)
