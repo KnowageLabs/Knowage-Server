@@ -2838,7 +2838,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 			bufferOrder.append(" order by o.name");
 
-			String hql = bufferSelect.toString() + bufferFrom.toString() + bufferWhere.toString() + bufferOrder.toString();
+			String hql = bufferSelect.toString().concat(bufferFrom.toString()).concat(bufferWhere.toString()).concat(bufferOrder.toString());
 
 			logger.debug("query hql: " + hql);
 
