@@ -1,4 +1,4 @@
-import { ITableWidgetColumnGroups, ITableWidgetConditionalStyles, ITableWidgetConfiguration, ITableWidgetCrossNavigation, ITableWidgetHeaders, ITableWidgetInteractions, ITableWidgetSelection, ITableWidgetSettings, ITableWidgetVisualization, IWidget, IWidgetColumn } from '../../../../Dashboard'
+import { ITableWidgetColumnGroups, ITableWidgetConditionalStyles, ITableWidgetConfiguration, IWidgetCrossNavigation, ITableWidgetHeaders, IWidgetInteractions, IWidgetSelection, ITableWidgetSettings, ITableWidgetVisualization, IWidget, IWidgetColumn } from '../../../../Dashboard'
 
 const columnIdNameMap = {}
 
@@ -112,15 +112,15 @@ const formatColumnGroupsColumnIdToName = (columnGroupsConfiguration: ITableWidge
     }
 }
 
-const formatTableInteractions = (widgetInteractions: ITableWidgetInteractions) => {
+const formatTableInteractions = (widgetInteractions: IWidgetInteractions) => {
     formatSelection(widgetInteractions.selection)
     formatCrossNavigation(widgetInteractions.crosssNavigation)
 }
 
-const formatSelection = (selection: ITableWidgetSelection) => {
+const formatSelection = (selection: IWidgetSelection) => {
     if (selection.modalColumn) selection.modalColumn = getColumnName(selection.modalColumn)
 }
 
-const formatCrossNavigation = (crosssNavigation: ITableWidgetCrossNavigation) => {
+const formatCrossNavigation = (crosssNavigation: IWidgetCrossNavigation) => {
     if (crosssNavigation.column) crosssNavigation.column = getColumnName(crosssNavigation.column)
 }

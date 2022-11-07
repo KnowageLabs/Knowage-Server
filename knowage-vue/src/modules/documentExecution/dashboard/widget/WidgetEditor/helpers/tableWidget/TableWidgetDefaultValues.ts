@@ -1,4 +1,4 @@
-import { IWidgetBordersStyle, ITableWidgetColumnGroups, ITableWidgetColumnStyles, ITableWidgetConditionalStyle, ITableWidgetConditionalStyles, ITableWidgetCrossNavigation, ITableWidgetCustomMessages, IWidgetExports, ITableWidgetHeaders, ITableWidgetLinks, ITableWidgetPagination, ITableWidgetPreview, ITableWidgetRows, IWidgetRowsStyle, ITableWidgetSelection, IWidgetShadowsStyle, ITableWidgetSummaryRows, ITableWidgetSummaryStyle, ITableWidgetTooltipStyle, ITableWidgetVisibilityCondition, ITableWidgetVisualization, ITawbleWidgetHeadersStyle } from "../../../../Dashboard"
+import { IWidgetBordersStyle, ITableWidgetColumnGroups, ITableWidgetColumnStyles, ITableWidgetConditionalStyle, ITableWidgetConditionalStyles, IWidgetCrossNavigation, ITableWidgetCustomMessages, IWidgetExports, ITableWidgetHeaders, IWidgetLinks, ITableWidgetPagination, IWidgetPreview, ITableWidgetRows, IWidgetRowsStyle, IWidgetSelection, IWidgetShadowsStyle, ITableWidgetSummaryRows, ITableWidgetSummaryStyle, ITableWidgetTooltipStyle, ITableWidgetVisibilityCondition, ITableWidgetVisualization, ITawbleWidgetHeadersStyle } from "../../../../Dashboard"
 import descriptor from './TableWidgetHelpersDescriptor.json'
 import deepcopy from 'deepcopy'
 
@@ -35,20 +35,20 @@ export const getDefaultCustomMessages = () => {
 }
 
 export const getDefaultCrossNavigation = () => {
-    return deepcopy(descriptor.defaultCrossNavigation) as ITableWidgetCrossNavigation
+    return deepcopy(descriptor.defaultCrossNavigation) as IWidgetCrossNavigation
 }
 
 export const getDefaultLinks = () => {
-    return deepcopy(descriptor.defaultLinks) as ITableWidgetLinks
+    return deepcopy(descriptor.defaultLinks) as IWidgetLinks
 }
 
 export const getDefaultPreview = () => {
-    return deepcopy(descriptor.defaultPreview) as ITableWidgetPreview
+    return deepcopy(descriptor.defaultPreview) as IWidgetPreview
 }
 
 
 export const getDefaultSelection = () => {
-    return deepcopy(descriptor.defaultSelection) as ITableWidgetSelection
+    return deepcopy(descriptor.defaultSelection) as IWidgetSelection
 }
 
 export const getDefaultPagination = () => {

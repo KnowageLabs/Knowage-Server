@@ -51,7 +51,8 @@ export default defineComponent({
         datasets: { type: Array as PropType<IDataset[]> },
         selectedDatasets: { type: Array as PropType<IDataset[]> },
         drivers: { type: Array },
-        variables: { type: Array as PropType<IVariable[]> }
+        variables: { type: Array as PropType<IVariable[]> },
+        dashboardId: { type: String, required: true }
     },
     data() {
         return {

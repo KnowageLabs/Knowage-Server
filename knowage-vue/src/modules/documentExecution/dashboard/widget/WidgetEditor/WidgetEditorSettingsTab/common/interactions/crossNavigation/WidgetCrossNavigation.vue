@@ -46,15 +46,15 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, ITableWidgetCrossNavigation, ITableWidgetParameter, IDataset, IWidgetStyleToolbarModel } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IWidget, IWidgetCrossNavigation, ITableWidgetParameter, IDataset, IWidgetStyleToolbarModel } from '@/modules/documentExecution/dashboard/Dashboard'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import { emitter } from '../../../../../../DashboardHelpers'
-import descriptor from '../../TableWidgetSettingsDescriptor.json'
+import descriptor from '../WidgetInteractionsDescriptor.json'
 import dashboardStore from '@/modules/documentExecution/dashboard/Dashboard.store'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
-import TableWidgetOutputParametersList from './TableWidgetOutputParametersList.vue'
-import WidgetEditorStyleToolbar from '../../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
+import TableWidgetOutputParametersList from './WidgetOutputParametersList.vue'
+import WidgetEditorStyleToolbar from '../../styleToolbar/WidgetEditorStyleToolbar.vue'
 
 export default defineComponent({
     name: 'table-widget-cross-navigation',
@@ -67,7 +67,7 @@ export default defineComponent({
     data() {
         return {
             descriptor,
-            crossNavigationModel: null as ITableWidgetCrossNavigation | null,
+            crossNavigationModel: null as IWidgetCrossNavigation | null,
             crossNavigationOptions: [] as string[],
             outputParameters: [] as any[],
             parameterList: [] as ITableWidgetParameter[],

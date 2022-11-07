@@ -57,7 +57,7 @@
 import { ITableWidgetParameter, IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
 import { defineComponent, PropType } from 'vue'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
-import descriptor from '../../TableWidgetSettingsDescriptor.json'
+import descriptor from '../WidgetInteractionsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 

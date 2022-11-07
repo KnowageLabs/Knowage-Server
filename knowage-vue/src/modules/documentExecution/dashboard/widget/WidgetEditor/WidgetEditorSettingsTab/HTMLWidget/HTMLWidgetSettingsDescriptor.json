@@ -16,6 +16,16 @@
                 "type": "Export"
             }
         ],
+        "Interactions": [
+            {
+                "title": "dashboard.widgetEditor.interactions.crossNavigation",
+                "type": "CrossNavigation"
+            },
+            {
+                "title": "dashboard.widgetEditor.interactions.preview",
+                "type": "Preview"
+            }
+        ],
         "Responsive": [
             {
                 "title": "dashboard.widgetEditor.responsive.title",
@@ -55,6 +65,11 @@
             "icon": "fa fa-code",
             "label": "dashboard.widgetEditor.editor",
             "value": "Editor"
+        },
+        {
+            "icon": "fa fa-hand-pointer",
+            "label": "dashboard.widgetEditor.interactions.title",
+            "value": "Interactions"
         },
         {
             "icon": "fa fa-paint-brush",

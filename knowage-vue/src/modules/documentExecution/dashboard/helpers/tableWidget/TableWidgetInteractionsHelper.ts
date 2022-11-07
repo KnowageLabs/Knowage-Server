@@ -1,14 +1,13 @@
-import { ITableWidgetCrossNavigation, ITableWidgetLink, ITableWidgetLinks, ITableWidgetParameter, ITableWidgetPreview, ITableWidgetSelection, IWidget } from "../../Dashboard"
+import { IWidgetCrossNavigation, ITableWidgetLink, IWidgetLinks, ITableWidgetParameter, IWidgetPreview, IWidgetSelection, IWidget } from "../../Dashboard"
 import { getColumnId } from './TableWidgetCompatibilityHelper'
-import { hexToRgb } from '../FormattingHelpers'
 import * as  tableWidgetDefaultValues from '../../widget/WidgetEditor/helpers/tableWidget/TableWidgetDefaultValues'
 
 export const getFormattedInteractions = (widget: any) => {
     return {
-        crosssNavigation: getFormattedCrossNavigation(widget) as ITableWidgetCrossNavigation,
-        link: getFormattedLinkInteraction(widget) as ITableWidgetLinks,
-        preview: getFormattedPreview(widget) as ITableWidgetPreview,
-        selection: getFormattedSelection(widget) as ITableWidgetSelection
+        crosssNavigation: getFormattedCrossNavigation(widget) as IWidgetCrossNavigation,
+        link: getFormattedLinkInteraction(widget) as IWidgetLinks,
+        preview: getFormattedPreview(widget) as IWidgetPreview,
+        selection: getFormattedSelection(widget) as IWidgetSelection
     }
 }
 
@@ -103,7 +102,7 @@ const getFormattedPreview = (widget: any) => {
         dataset: widget.cross.preview.dataset,
         directDownload: widget.cross.preview.background,
         parameters: widget.cross.preview.parameters ? getFormattedPreviewParameters(widget.cross.preview.parameters) : []
-    } as ITableWidgetPreview
+    } as IWidgetPreview
 
     if (widget.cross.preview.column) formattedPreview.column = widget.cross.preview.column
 
@@ -135,7 +134,7 @@ const getFormattedPreviewParameters = (previewParameters: any) => {
 }
 
 const getFormattedSelection = (widget: IWidget) => {
-    if (!widget.settings.multiselectable && !widget.settings.multiselectablecolor && !widget.settings.modalSelectionColumn) return tableWidgetDefaultValues.getDefaultSelection() as ITableWidgetSelection
+    if (!widget.settings.multiselectable && !widget.settings.multiselectablecolor && !widget.settings.modalSelectionColumn) return tableWidgetDefaultValues.getDefaultSelection() as IWidgetSelection
     const formattedSelection = {
         enabled: true,
         modalColumn: widget.settings.modalSelectionColumn ? getColumnId(widget.settings.modalSelectionColumn) : '',
@@ -146,7 +145,7 @@ const getFormattedSelection = (widget: IWidget) => {
                 color: ''
             }
         }
-    } as ITableWidgetSelection
+    } as IWidgetSelection
 
     return formattedSelection
 }

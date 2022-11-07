@@ -34,7 +34,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, ITableWidgetSelection, IWidgetStyleToolbarModel } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IWidget, IWidgetSelection, IWidgetStyleToolbarModel } from '@/modules/documentExecution/dashboard/Dashboard'
 import { emitter } from '../../../../../../DashboardHelpers'
 import descriptor from '../../TableWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
@@ -50,7 +50,7 @@ export default defineComponent({
     data() {
         return {
             descriptor,
-            selectionModel: null as ITableWidgetSelection | null
+            selectionModel: null as IWidgetSelection | null
         }
     },
     created() {

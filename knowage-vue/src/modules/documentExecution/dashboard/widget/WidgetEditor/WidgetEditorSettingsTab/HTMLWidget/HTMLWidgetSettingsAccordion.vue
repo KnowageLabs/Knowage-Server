@@ -14,6 +14,9 @@
                 <WidgetResponsive v-else-if="accordion.type === 'Responsive'" :widgetModel="widgetModel"></WidgetResponsive>
                 <WidgetHtmlEditor v-else-if="accordion.type === 'HTML'" :widgetModel="widgetModel"></WidgetHtmlEditor>
                 <WidgetCssEditor v-else-if="accordion.type === 'CSS'" :widgetModel="widgetModel"></WidgetCssEditor>
+                <WidgetCrossNavigation v-else-if="accordion.type === 'CrossNavigation'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets"></WidgetCrossNavigation>
+                <WidgetInteractionsLinks v-else-if="accordion.type === 'Link'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :drivers="drivers"></WidgetInteractionsLinks>
+                <WidgetPreview v-else-if="accordion.type === 'Preview'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :drivers="drivers" :dashboardId="dashboardId"></WidgetPreview>
             </AccordionTab>
         </Accordion>
     </div>
@@ -35,6 +38,9 @@ import WidgetShadowsStyle from '../common/style/WidgetShadowsStyle.vue'
 import WidgetResponsive from '../common/responsive/WidgetResponsive.vue'
 import WidgetHtmlEditor from '../common/editor/WidgetHtmlEditor.vue'
 import WidgetCssEditor from '../common/editor/WidgetCssEditor.vue'
+import WidgetCrossNavigation from '../common/interactions/crossNavigation/WidgetCrossNavigation.vue'
+import WidgetInteractionsLinks from '../common/interactions/link/WidgetInteractionsLinks.vue'
+import WidgetPreview from '../common/interactions/preview/WidgetPreview.vue'
 
 export default defineComponent({
     name: 'html-widget-settings-container',
@@ -49,7 +55,10 @@ export default defineComponent({
         WidgetShadowsStyle,
         WidgetResponsive,
         WidgetHtmlEditor,
-        WidgetCssEditor
+        WidgetCssEditor,
+        WidgetCrossNavigation,
+        WidgetInteractionsLinks,
+        WidgetPreview
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
@@ -57,7 +66,8 @@ export default defineComponent({
         datasets: { type: Array as PropType<IDataset[]> },
         selectedDatasets: { type: Array as PropType<IDataset[]> },
         drivers: { type: Array },
-        variables: { type: Array as PropType<IVariable[]> }
+        variables: { type: Array as PropType<IVariable[]> },
+        dashboardId: { type: String, required: true }
     },
     data() {
         return {

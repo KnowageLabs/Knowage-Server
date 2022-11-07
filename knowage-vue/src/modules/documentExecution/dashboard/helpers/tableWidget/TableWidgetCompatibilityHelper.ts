@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle, ITableWidgetStyle, ITableWidgetInteractions, ITableWidgetConfiguration, IWidgetResponsive, ITableWidgetConditionalStyles, IDashboard, IVariable } from '../../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle, ITableWidgetStyle, IWidgetInteractions, ITableWidgetConfiguration, IWidgetResponsive, ITableWidgetConditionalStyles, IDashboard, IVariable } from '../../Dashboard'
 import { getFormattedConfiguration } from './TableWidgetConfigurationHelper'
 import { getFormattedInteractions } from './TableWidgetInteractionsHelper'
 import { getFormattedStyle } from './TableWidgetStyleHelper'
@@ -54,7 +54,7 @@ const getFormattedWidgetSettings = (widget: any, formattedDashboardModel: IDashb
         clickable: widget.cliccable,
         conditionalStyles: getFormattedConditionalStyles(widget, formattedDashboardModel),
         configuration: getFormattedConfiguration(widget) as ITableWidgetConfiguration,
-        interactions: getFormattedInteractions(widget) as ITableWidgetInteractions,
+        interactions: getFormattedInteractions(widget) as IWidgetInteractions,
         pagination: getFormattedPaginations(widget),
         style: getFormattedStyle(widget) as ITableWidgetStyle,
         tooltips: tableWidgetDefaultValues.getDefaultTooltips() as ITableWidgetTooltipStyle[],

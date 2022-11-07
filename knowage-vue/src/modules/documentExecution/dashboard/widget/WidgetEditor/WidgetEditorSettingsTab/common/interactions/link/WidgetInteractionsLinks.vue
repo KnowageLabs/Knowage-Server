@@ -76,15 +76,15 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IDataset, ITableWidgetLinks, ITableWidgetLink, IWidgetStyleToolbarModel, ITableWidgetParameter } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IWidget, IDataset, IWidgetLinks, ITableWidgetLink, IWidgetStyleToolbarModel, ITableWidgetParameter } from '@/modules/documentExecution/dashboard/Dashboard'
 import { emitter } from '../../../../../../DashboardHelpers'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
-import descriptor from '../../TableWidgetSettingsDescriptor.json'
+import descriptor from '../WidgetInteractionsDescriptor.json'
 import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
-import WidgetEditorStyleToolbar from '../../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
-import TableWidgetLinkParameterList from './TableWidgetLinkParameterList.vue'
+import WidgetEditorStyleToolbar from '../../styleToolbar/WidgetEditorStyleToolbar.vue'
+import TableWidgetLinkParameterList from './WidgetLinkParameterList.vue'
 
 export default defineComponent({
     name: 'table-widget-interactions-links',
@@ -98,7 +98,7 @@ export default defineComponent({
     data() {
         return {
             descriptor,
-            linksModel: null as ITableWidgetLinks | null,
+            linksModel: null as IWidgetLinks | null,
             selectedDatasetColumnNameMap: {},
             getTranslatedLabel
         }

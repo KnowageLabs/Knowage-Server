@@ -41,6 +41,7 @@
             :selectedDatasets="selectedDatasets"
             :drivers="drivers"
             :variables="variables"
+            :dashboardId="dashboardId"
         ></HTMLWidgetSettingsContainer>
         <TextWidgetSettingsContainer
             v-else-if="propWidget.type === 'text'"
@@ -51,6 +52,7 @@
             :selectedDatasets="selectedDatasets"
             :drivers="drivers"
             :variables="variables"
+            :dashboardId="dashboardId"
         ></TextWidgetSettingsContainer>
     </div>
 </template>
