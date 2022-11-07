@@ -41,6 +41,9 @@ const workspaceStore = defineStore('workspaceStore', {
         },
         setLoadedAvros(data) {
             this.dataPreparation.loadedAvros = data
+        },
+        setLoadingAvros(data) {
+            this.dataPreparation.loadingAvros = data
         }
     },
     getters: {

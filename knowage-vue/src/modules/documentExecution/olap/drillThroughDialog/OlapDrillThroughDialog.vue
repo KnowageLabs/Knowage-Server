@@ -16,7 +16,7 @@
             </template>
         </Card>
 
-        <DataTable :value="dtData" id="olap-custom-views-table" class="p-datatable-sm kn-table p-m-2" v-model:filters="filters" :paginator="drillData.length > 20" :rows="18" responsiveLayout="stack" breakpoint="600px" stripedRows="true" rowHover="true">
+        <DataTable :value="dtData" id="olap-custom-views-table" class="p-datatable-sm kn-table kn-flex p-m-2 olap-drill-through-table" v-model:filters="filters" :paginator="drillData.length > 20" :rows="18" responsiveLayout="stack" breakpoint="600px" stripedRows="true" rowHover="true">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -171,3 +171,12 @@ export default defineComponent({
     }
 })
 </script>
+<style lang="scss">
+.olap-drill-through-table {
+    overflow: auto;
+    .p-datatable-wrapper,
+    .p-datatable-table {
+        overflow: auto;
+    }
+}
+</style>

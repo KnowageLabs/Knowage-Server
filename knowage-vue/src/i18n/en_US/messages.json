@@ -1038,7 +1038,7 @@
             "execution": "Single Execution",
             "expiredWarning": "WARNING: The alert is expired",
             "hint": "The Alert definition allows you to define a serie of action to start when one or more KPI reach a specific threshold. You can set email alert, execute ETL or call a context broker .Click on one existing item from the list on the side, or press the \"+\" button to add one.",
-            "kpiEditing": "Kpi editing in progres",
+            "kpiEditing": "Kpi editing in progress",
             "kpiEditingMessage": "Current kpi have associated action and will be removed. Are you sure?",
             "kpiListener": "Listener",
             "label": "Label",
@@ -2389,6 +2389,12 @@
         },
         "workspaceManagement": {
             "dataPreparation": {
+                "dataPreparationIsApplyingTheChanges": "Data preparation is applying the changes",
+                "dataPreparationIsCompleted": "Data preparation is completed",
+                "dataPreparationIsCreatingFiles": "The data preparation is creating the necessary files",
+                "dataPreparationIsManagingTheDataset": "Data preparation is managing the dataset",
+                "dataPreparationIsStarting": "Data preparation is starting",
+                "dataPreparationStoppedWithErrors": "Data preparation was aborted due to an error that occurred during the process",
                 "dataset": {
                     "description": "Description",
                     "label": "Label",
@@ -2408,6 +2414,9 @@
                 },
                 "errors": {
                     "updatingSchedulation": "An error occurred while updating schedulation"
+                },
+                "info": {
+                    "dataPrepIsLoadingAndWillBeOpened": "Data preparation is in progress... You don't have to wait until it's done. If you continue or wait here, the data preparation will be opened when the process is completed successfully."
                 },
                 "label": "Data preparation",
                 "monitoring": {
@@ -2877,7 +2886,7 @@
             "driverable": "Drivable",
             "exportSuccess": "The download has started in background. You will find the result file in your download page.",
             "fileDownload": "Download Dataset file",
-            "isPreparing": "Preparing avro file...",
+            "isPreparing": "Preparing dataset...",
             "modified": "Modified",
             "monitoring": "Monitoring",
             "openData": "Import Open Data",

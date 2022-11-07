@@ -148,7 +148,7 @@ public class SbiConfig extends SbiHibernateModel {
 		config.setDescription(getDescription());
 		config.setActive(isActive);
 		config.setCategory(getCategory());
-		if (!config.getCategory().equals("PASSWORD")) {
+		if (!config.getLabel().toLowerCase().endsWith(".password")) {
 			config.setValueCheck(getValueCheck());
 		}
 		SbiDomains tmpDom = getSbiDomains();

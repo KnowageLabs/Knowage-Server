@@ -5,10 +5,6 @@
             "value": "SECURITY"
         },
         {
-            "name": "PASSWORD",
-            "value": "PASSWORD"
-        },
-        {
             "name": "GENERIC_CONFIGURATION",
             "value": "GENERIC_CONFIGURATION"
         },
