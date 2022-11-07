@@ -509,7 +509,7 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 		UserProfile userProfile = UserProfileManager.getProfile();
 
 		JsonObject userProfileAsJson = Json.createObjectBuilder()
-				.add("id", userProfile.getUserId().toString())
+				.add("id", Optional.ofNullable(userProfile.getUserId()).orElse("").toString())
 				.add("username", userProfile.getUserName().toString())
 				.build();
 
