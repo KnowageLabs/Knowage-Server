@@ -8,6 +8,9 @@ export function createNewField(editQueryObj, field) {
         fieldType: field.attributes.iconCls,
         entity: field.attributes.entity,
         field: field.attributes.field,
+        decrypt: field.attributes.decrypt,
+        personal: field.attributes.personal,
+        subjectId: field.attributes.subjectId,
         funct: getFunct(field),
         color: field.color,
         group: getGroup(field),
@@ -45,9 +48,9 @@ export function creatNewMetadataFromField(newField) {
         fieldAlias: newField.field,
         Type: newField.dataType,
         fieldType: newField.iconCls.toUpperCase(),
-        decrypt: false,
-        personal: false,
-        subjectid: false
+        decrypt: newField.decrypt,
+        personal: newField.personal,
+        subjectId: newField.subjectId
     } as any
 
     return newMetadata
@@ -75,4 +78,20 @@ export function isCalculatedFieldColumnType(inLineCalculatedField, columnType) {
 }
 export function isInLineCalculatedField(field) {
     return field.attributes.type === 'inLineCalculatedField'
+}
+
+export const numberFormatRegex = '^(\\$#,##0|€#,##0|####|#.###|#,###){1}([,.]?)(#|0*)$' //eslint-disable-line no-useless-escape
+
+export const formatNumber = (column: any) => {
+    if (!column.format) return null
+
+    const result = column.format.trim().match(numberFormatRegex)
+    if (!result) return null
+
+    const useGrouping = result[1].includes('.') || result[1].includes(',')
+    const maxFractionDigits = result[3].length
+    const currency = result[1].charAt(0) === '$' || result[1].charAt(0) === '€' ? result[1].charAt(0) : ''
+    const configuration = { useGrouping: useGrouping, minFractionDigits: maxFractionDigits, maxFractionDigits: maxFractionDigits, currency: currency }
+
+    return configuration
 }
