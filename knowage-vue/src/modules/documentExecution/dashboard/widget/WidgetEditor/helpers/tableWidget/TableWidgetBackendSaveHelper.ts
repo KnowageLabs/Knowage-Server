@@ -1,16 +1,13 @@
-import { ITableWidgetColumnGroups, ITableWidgetConditionalStyle, ITableWidgetConditionalStyles, ITableWidgetConfiguration, ITableWidgetCrossNavigation, ITableWidgetHeaders, ITableWidgetInteractions, ITableWidgetSelection, ITableWidgetSettings, ITableWidgetVisualization, IWidget, IWidgetColumn } from '../../../../Dashboard'
-import deepcopy from 'deepcopy'
+import { ITableWidgetColumnGroups, ITableWidgetConditionalStyles, ITableWidgetConfiguration, ITableWidgetCrossNavigation, ITableWidgetHeaders, ITableWidgetInteractions, ITableWidgetSelection, ITableWidgetSettings, ITableWidgetVisualization, IWidget, IWidgetColumn } from '../../../../Dashboard'
 
 const columnIdNameMap = {}
 
 export function formatTableWidgetForSave(widget: IWidget) {
-    const tempWidget = deepcopy(widget)
+    if (!widget) return
 
-    if (!tempWidget) return
-
-    loadColumnIdNameMap(tempWidget)
-    formatTableSelectedColumns(tempWidget.columns)
-    formatTableSettings(tempWidget.settings)
+    loadColumnIdNameMap(widget)
+    formatTableSelectedColumns(widget.columns)
+    formatTableSettings(widget.settings)
 }
 
 function formatTableSelectedColumns(columns: IWidgetColumn[]) {

@@ -152,7 +152,16 @@ export default defineComponent({
             this.onColumnRemoved()
         },
         loadVisibilityConditions() {
-            if (this.widgetModel.settings?.visualization?.visibilityConditions) this.visibilityConditionsModel = this.widgetModel.settings.visualization.visibilityConditions
+            if (this.widgetModel.settings?.visualization?.visibilityConditions) {
+                this.visibilityConditionsModel = this.widgetModel.settings.visualization.visibilityConditions
+                this.visibilityConditionsModel?.conditions.forEach((visibilityCondition: ITableWidgetVisibilityCondition) => {
+                    if (visibilityCondition.condition.type === 'variable' && visibilityCondition.condition.variableKey) this.setVisibilityConditionPivotedValues(visibilityCondition)
+                })
+            }
+        },
+        setVisibilityConditionPivotedValues(visibilityCondition: ITableWidgetVisibilityCondition) {
+            const index = this.variables.findIndex((variable: IVariable) => variable.name === visibilityCondition.condition.variable)
+            if (index !== -1) visibilityCondition.condition.variablePivotDatasetOptions = this.variables[index].pivotedValues
         },
         loadWidgetColumnMaps() {
             this.widgetModel.columns.forEach((column: IWidgetColumn) => {

@@ -16,7 +16,6 @@ export const formatTableWidget = (widget: any, formattedDashboardModel: IDashboa
         dataset: widget.dataset.dsId,
         type: widget.type,
         columns: getFormattedWidgetColumns(widget),
-        conditionalStyles: [],
         theme: '',
         style: {},
         settings: {} as ITableWidgetSettings

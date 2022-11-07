@@ -1,8 +1,10 @@
-import { IDashboard, IDashboardConfiguration, IVariable, IWidget } from './Dashboard'
+import { IDashboard, IDashboardConfiguration, IDataset, IVariable, IWidget } from './Dashboard'
 import mitt from 'mitt'
 export const emitter = mitt()
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
+import { formatWidgetForSave } from './widget/WidgetEditor/helpers/WidgetEditorHelpers'
+import { setVariableValueFromDataset } from './generalSettings/VariablesHelper'
 
 export const createNewDashboardModel = () => {
     const dashboardModel = {
@@ -56,11 +58,21 @@ const deleteWidgetFromSheets = (dashboard: IDashboard, widgetId: string) => {
     }
 }
 
-export const formatDashboardForSave = (dasdashboard: IDashboard) => {
-    formatVariablesForSave(dasdashboard.configuration)
+export const formatDashboardForSave = (dashboard: IDashboard) => {
+    for (let i = 0; i < dashboard.widgets.length; i++) {
+        dashboard.widgets[i] = formatWidgetForSave(dashboard.widgets[i])
+    }
+    formatVariablesForSave(dashboard.configuration)
 }
 
-const formatVariablesForSave = (dasdashboardConfiguration: IDashboardConfiguration) => {
-    if (!dasdashboardConfiguration || !dasdashboardConfiguration.variables) return
-    dasdashboardConfiguration.variables.forEach((variable: IVariable) => delete variable.pivotedValues)
+const formatVariablesForSave = (dashboardConfiguration: IDashboardConfiguration) => {
+    if (!dashboardConfiguration || !dashboardConfiguration.variables) return
+    dashboardConfiguration.variables.forEach((variable: IVariable) => delete variable.pivotedValues)
+}
+
+export const formatNewModel = async (dashboard: IDashboard, datasets: IDataset[], $http: any) => {
+    for (let i = 0; i < dashboard.configuration.variables.length; i++) {
+        if (dashboard.configuration.variables[i].type === 'dataset') await setVariableValueFromDataset(dashboard.configuration.variables[i], datasets, $http)
+    }
+    return dashboard
 }

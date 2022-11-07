@@ -160,10 +160,18 @@ export default defineComponent({
             this.availableTargetOptions = [...this.widgetModel.columns]
         },
         loadHeadersModel() {
+            console.log('>>>>>>>> this.widgetModel.settings.configuration.headers: ', this.widgetModel.settings.configuration.headers)
             if (this.widgetModel?.settings?.configuration) {
                 this.headersModel = this.widgetModel.settings.configuration.headers
+                this.headersModel?.custom.rules.forEach((headerRule: ITableWidgetHeadersRule) => {
+                    if (headerRule.compareType === 'variable' && headerRule.variableKey) this.setVisibilityConditionPivotedValues(headerRule)
+                })
             }
             this.removeColumnsFromTargetOptions()
+        },
+        setVisibilityConditionPivotedValues(headerRule: ITableWidgetHeadersRule) {
+            const index = this.variables.findIndex((variable: IVariable) => variable.name === headerRule.variable)
+            if (index !== -1) headerRule.variablePivotDatasetOptions = this.variables[index].pivotedValues
         },
         removeColumnsFromTargetOptions() {
             if (!this.headersModel) return

@@ -49,7 +49,7 @@ import { AxiosResponse } from 'axios'
 import { v4 as uuidv4 } from 'uuid'
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
 import { IModelDataset, ISelection, IWidget } from './Dashboard'
-import { emitter, createNewDashboardModel, formatDashboardForSave } from './DashboardHelpers'
+import { emitter, createNewDashboardModel, formatDashboardForSave, formatNewModel } from './DashboardHelpers'
 import { mapActions } from 'pinia'
 import { formatModel } from './helpers/DashboardBackwardCompatibilityHelper'
 import { setDatasetIntervals, clearAllDatasetIntervals } from './helpers/datasetRefresh/DatasetRefreshHelpers'
@@ -135,8 +135,8 @@ export default defineComponent({
                     .then((response: AxiosResponse<any>) => (tempModel = response.data))
                     .catch(() => {})
             }
-            this.model = (tempModel && this.newDashboardMode) || tempModel.hasOwnProperty('id') ? tempModel : await (formatModel(tempModel, this.document, this.datasets, this.drivers, this.profileAttributes, this.$http) as any)
-            setDatasetIntervals(this.model.configuration.datasets, this.datasets)
+            this.model = (tempModel && this.newDashboardMode) || tempModel.hasOwnProperty('id') ? await formatNewModel(tempModel, this.datasets, this.$http) : await (formatModel(tempModel, this.document, this.datasets, this.drivers, this.profileAttributes, this.$http) as any)
+            setDatasetIntervals(this.model?.configuration.datasets, this.datasets)
             this.dashboardId = cryptoRandomString({ length: 16, type: 'base64' })
             this.store.setDashboard(this.dashboardId, this.model)
             this.store.setSelections(this.dashboardId, this.model.configuration.selections, this.$http)
@@ -204,10 +204,10 @@ export default defineComponent({
             })
             emitter.on('saveDashboard', () => {
                 this.onSaveDashboardClicked()
-            }),
-                emitter.on('openDashboardGeneralSettings', () => {
-                    this.openGeneralSettings()
-                })
+            })
+            emitter.on('openDashboardGeneralSettings', () => {
+                this.openGeneralSettings()
+            })
         },
         openNewWidgetPicker() {
             this.widgetPickerVisible = true

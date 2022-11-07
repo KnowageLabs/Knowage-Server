@@ -150,7 +150,16 @@ export default defineComponent({
             this.onColumnRemoved()
         },
         loadConditionalStyles() {
-            if (this.widgetModel?.settings?.conditionalStyles) this.conditionalStylesModel = this.widgetModel.settings.conditionalStyles
+            if (this.widgetModel?.settings?.conditionalStyles) {
+                this.conditionalStylesModel = this.widgetModel.settings.conditionalStyles
+                this.conditionalStylesModel?.conditions.forEach((conditionalStyle: ITableWidgetConditionalStyle) => {
+                    if (conditionalStyle.condition.type === 'variable' && conditionalStyle.condition.variableKey) this.setVisibilityConditionPivotedValues(conditionalStyle)
+                })
+            }
+        },
+        setVisibilityConditionPivotedValues(conditionalStyle: ITableWidgetConditionalStyle) {
+            const index = this.variables.findIndex((variable: IVariable) => variable.name === conditionalStyle.condition.variable)
+            if (index !== -1) conditionalStyle.condition.variablePivotDatasetOptions = this.variables[index].pivotedValues
         },
         loadParameterValuesMap() {
             if (!this.drivers) return

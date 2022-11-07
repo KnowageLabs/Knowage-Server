@@ -39,11 +39,9 @@ const createNewWidgetSettings = (widget: IWidget) => {
 
 
 export function formatWidgetForSave(tempWidget: IWidget) {
-    if (!tempWidget) return
+    if (!tempWidget) return null
 
     const widget = deepcopy(tempWidget)
-
-
 
     switch (widget.type) {
         case 'table': formatTableWidgetForSave(widget)
