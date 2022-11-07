@@ -133,7 +133,7 @@ export default defineComponent({
             } else {
                 this.rows = [tempColumn]
             }
-            this.$emit('itemAdded', tempColumn)
+            this.$emit('itemAdded', { column: tempColumn, rows: this.rows })
         },
         checkIfColumnIsAlreadyPresent(tempColumn: IWidgetColumn) {
             const index = this.rows.findIndex((row: IWidgetColumn) => row.columnName === tempColumn.columnName)

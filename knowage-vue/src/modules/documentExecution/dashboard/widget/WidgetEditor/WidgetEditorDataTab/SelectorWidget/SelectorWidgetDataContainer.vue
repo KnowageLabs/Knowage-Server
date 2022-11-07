@@ -60,14 +60,14 @@ export default defineComponent({
         loadSortingOrder() {
             this.sortingOrder = this.widgetModel.settings.sortingOrder ?? ''
         },
-        onColumnAdded(column: IWidgetColumn) {
+        onColumnAdded(payload: { column: IWidgetColumn; rows: IWidgetColumn[] }) {
             if (this.widgetModel.columns.length > 0) {
                 emitter.emit('columnRemoved', this.widgetModel.columns[0])
                 this.selectedColumn = null
             }
-            this.widgetModel.settings.isDateType = column.type.toLowerCase().includes('date') || column.type.toLowerCase().includes('timestamp')
-            this.widgetModel.columns = [column]
-            emitter.emit('columnAdded', column)
+            this.widgetModel.settings.isDateType = payload.column.type.toLowerCase().includes('date') || payload.column.type.toLowerCase().includes('timestamp')
+            this.widgetModel.columns = [payload.column]
+            emitter.emit('columnAdded', payload.column)
             emitter.emit('refreshSelector', this.widgetModel.id)
             emitter.emit('refreshWidgetWithData', this.widgetModel.id)
         },

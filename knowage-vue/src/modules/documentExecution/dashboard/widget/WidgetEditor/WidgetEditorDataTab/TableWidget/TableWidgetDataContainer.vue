@@ -55,9 +55,9 @@ export default defineComponent({
             emitter.emit('columnsReordered', this.widgetModel.columns)
             emitter.emit('refreshWidgetWithData', this.widgetModel.id)
         },
-        onColumnAdded(column: IWidgetColumn) {
-            this.widgetModel.columns.push(column)
-            emitter.emit('columnAdded', column)
+        onColumnAdded(payload: { column: IWidgetColumn; rows: IWidgetColumn[] }) {
+            this.widgetModel.columns = payload.rows
+            emitter.emit('columnAdded', payload.column)
             emitter.emit('refreshWidgetWithData', this.widgetModel.id)
         },
         onColumnItemUpdate(column: IWidgetColumn) {
