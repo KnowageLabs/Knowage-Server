@@ -1,6 +1,16 @@
 {
     "settings": {
-        "Configuration": [
+        "Editor": [
+            {
+                "title": "CSS",
+                "type": "CSS"
+            },
+            {
+                "title": "HTML",
+                "type": "HTML"
+            }
+        ],
+        "Gallery": [
             {
                 "title": "dashboard.widgetEditor.export.title",
                 "type": "Export"
@@ -37,9 +47,14 @@
     },
     "settingsListOptions": [
         {
-            "icon": "fa fa-cogs",
-            "label": "dashboard.widgetEditor.configuration",
-            "value": "Configuration"
+            "icon": "fa fa-book",
+            "label": "dashboard.widgetEditor.gallery",
+            "value": "Gallery"
+        },
+        {
+            "icon": "fa fa-code",
+            "label": "dashboard.widgetEditor.editor",
+            "value": "Editor"
         },
         {
             "icon": "fa fa-paint-brush",
