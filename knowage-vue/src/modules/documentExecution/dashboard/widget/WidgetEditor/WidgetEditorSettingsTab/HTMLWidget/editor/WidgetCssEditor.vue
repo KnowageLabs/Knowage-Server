@@ -1,7 +1,7 @@
 <template>
     <!-- <Button icon="fas fa-terminal" class="p-button-text p-button-rounded p-button-plain" @click="logModel" /> -->
     <div class="cssMirrorContainer" style="height: 500px; width: 100%">
-        <VCodeMirror ref="codeMirrorCssEditor" v-model:value="widgetModel.settings.configuration.cssToRender" :options="scriptOptions" />
+        <VCodeMirror ref="codeMirrorCssEditor" v-model:value="widgetModel.settings.editor.css" :options="scriptOptions" />
     </div>
 </template>
 

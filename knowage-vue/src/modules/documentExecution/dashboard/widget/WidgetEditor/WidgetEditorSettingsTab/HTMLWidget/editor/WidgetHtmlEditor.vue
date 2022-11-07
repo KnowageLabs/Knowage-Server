@@ -2,7 +2,7 @@
     <!-- <Button icon="fas fa-terminal" class="p-button-text p-button-rounded p-button-plain" @click="logModel" /> -->
     <div class="htmlMirrorContainer" style="height: 500px; width: 100%">
         <Button icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain editor-tags-menu-button" v-tooltip.left="$t('common.menu')" @click="toggle"></Button>
-        <VCodeMirror ref="codeMirrorHtmlEditor" v-model:value="widgetModel.settings.configuration.htmlToRender" :options="scriptOptions" />
+        <VCodeMirror ref="codeMirrorHtmlEditor" v-model:value="widgetModel.settings.editor.html" :options="scriptOptions" />
     </div>
 
     <TieredMenu ref="menu" :model="toolbarMenuItems" :popup="true" />
