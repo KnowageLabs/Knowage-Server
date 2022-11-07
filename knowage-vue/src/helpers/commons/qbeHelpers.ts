@@ -85,8 +85,6 @@ export const formatNumber = (column: any) => {
     if (!column.format) return null
 
     const result = column.format.trim().match(numberFormatRegex)
-    console.log(">>>>>>>>>>> RESUnumberFormatRegex ", numberFormatRegex)
-    console.log(">>>>>>>>>>> RESULT", result)
     if (!result) return null
 
     const useGrouping = result[1].includes('.') || result[1].includes(',')
