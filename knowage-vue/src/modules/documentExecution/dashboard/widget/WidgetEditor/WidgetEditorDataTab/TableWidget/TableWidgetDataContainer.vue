@@ -1,6 +1,6 @@
 <template>
     <div v-if="widgetModel">
-        <TableWidgetDataForm v-if="widgetModel.type === 'table'" class="p-m-2" :widgetModel="widgetModel" :sortingColumnOptions="columnTableItems"></TableWidgetDataForm>
+        <TableWidgetDataForm class="p-m-2" :widgetModel="widgetModel" :sortingColumnOptions="columnTableItems"></TableWidgetDataForm>
         <WidgetEditorColumnTable
             class="p-m-2"
             :widgetModel="widgetModel"

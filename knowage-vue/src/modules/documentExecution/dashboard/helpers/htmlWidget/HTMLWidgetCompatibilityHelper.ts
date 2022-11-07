@@ -41,6 +41,8 @@ const getFormattedWidgetColumn = (widgetColumn: any) => {
 
 const getFormattedWidgetSettings = (widget: any, formattedWidget: IWidget) => {
     const formattedSettings = {
+        sortingColumn: getColumnId(widget.settings?.sortingColumn) ?? '',
+        sortingOrder: widget.settings?.sortingOrder ?? '',
         updatable: widget.updateble,
         clickable: widget.cliccable,
         configuration: getFormattedConfiguration(widget, formattedWidget),
@@ -61,4 +63,8 @@ const getFormattedConfiguration = (widget: any, formattedWidget: IWidget) => {
 const getFormattedCssToRender = (cssToRender: string, formattedWidget: IWidget) => {
     if (!cssToRender) return ''
     return cssToRender.replaceAll('[kn-widget-id]', formattedWidget.id as string)
+}
+
+const getColumnId = (widgetColumnName: string) => {
+    return columnNameIdMap[widgetColumnName]
 }

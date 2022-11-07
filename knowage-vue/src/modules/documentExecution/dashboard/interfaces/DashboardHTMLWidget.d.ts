@@ -1,6 +1,8 @@
 import { IWidgetResponsive } from "../Dashboard";
 
 export interface IHTMLWidgetSettings {
+    sortingColumn?: string,
+    sortingOrder?: string,
     updatable: boolean,
     clickable: boolean,
     configuration: IHTMLWidgetConfiguration,

@@ -1,6 +1,8 @@
 
 
 export interface ITextWidgetSettings {
+    sortingColumn?: string,
+    sortingOrder?: string,
     updatable: boolean,
     clickable: boolean,
     configuration: ITextWidgetConfiguration,

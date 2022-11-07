@@ -1,6 +1,6 @@
 <template>
-    <div class="widget-editor-card p-p-2">
-        <div class="p-d-flex p-flex-row p-ai-center">
+    <div v-if="widgetModel" class="widget-editor-card p-p-2">
+        <div v-if="widgetModel.type === 'table'" class="p-d-flex p-flex-row p-ai-center">
             <div class="kn-flex p-m-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.pagination') }}</label>
                 <InputSwitch v-model="paginationEnabled" @change="paginationChanged"></InputSwitch>
