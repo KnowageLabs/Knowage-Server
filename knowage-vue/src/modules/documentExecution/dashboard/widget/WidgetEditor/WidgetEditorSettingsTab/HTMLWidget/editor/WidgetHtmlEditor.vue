@@ -6,7 +6,7 @@
     </div>
 
     <TieredMenu ref="menu" :model="toolbarMenuItems" :popup="true" />
-    <TagsDialog :visible="tagsDialogVisible" :mode="tagsDialogMode" widgetType="html" @close="closeTagsDialog" />
+    <TagsDialog :visible="tagsDialogVisible" :mode="tagsDialogMode" widgetType="html" :drivers="drivers" @close="closeTagsDialog" />
 </template>
 
 <script lang="ts">
@@ -19,7 +19,7 @@ import TagsDialog from '../../common/editor/WidgetTagsDialog.vue'
 export default defineComponent({
     name: 'widget-responsive',
     components: { VCodeMirror, TieredMenu, TagsDialog },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, drivers: { type: Array as PropType<any[]>, required: true } },
     data() {
         return {
             codeMirrorHtmlEditor: null as any,

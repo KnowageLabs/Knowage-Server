@@ -11,31 +11,49 @@
         <div class="tags-dialog-content p-mx-2">
             <p class="kn-material-input-label">TODO: Add guides for each fo the tags.</p>
             {{ widgetType }}
+
+            <WidgetEditorParameters v-if="mode === 'parameters'" :model="model" :drivers="drivers" @insertChanged="onInsertChanged"></WidgetEditorParameters>
         </div>
 
         <template #footer>
-            <Button class="kn-button kn-button--secondary" @click="$emit('close')"> {{ $t('common.cancel') }}</Button>
-            <Button class="kn-button kn-button--primary"> {{ $t('common.add') }}</Button>
+            <Button class="kn-button kn-button--secondary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
+            <Button class="kn-button kn-button--primary" @click="addInsert"> {{ $t('common.add') }}</Button>
         </template>
     </Dialog>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import Dialog from 'primevue/dialog'
+import WidgetEditorParameters from './options/WidgetEditorParameters.vue'
 
 export default defineComponent({
     name: 'olap-custom-view-save-dialog',
-    components: { Dialog },
-    props: { visible: Boolean, mode: String, widgetType: String },
+    components: { Dialog, WidgetEditorParameters },
+    props: { visible: Boolean, mode: String, widgetType: String, drivers: { type: Array as PropType<any[]>, required: true } },
+    emited: ['close', 'insert'],
     computed: {},
     data() {
-        return {}
+        return {
+            forInsert: '' as string
+        }
     },
     setup() {},
     created() {},
     watch: {},
-    methods: {}
+    methods: {
+        onInsertChanged(value: string) {
+            console.log('>>> ON INSERT CHANGED: ', value)
+            this.forInsert = value
+        },
+        addInsert() {
+            this.$emit('insert', this.forInsert)
+        },
+        closeDialog() {
+            this.forInsert = ''
+            this.$emit('close')
+        }
+    }
 })
 </script>
 <style lang="scss">
