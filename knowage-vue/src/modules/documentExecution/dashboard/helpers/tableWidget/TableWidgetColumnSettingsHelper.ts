@@ -11,7 +11,7 @@ export const getSettingsFromWidgetColumns = (formattedWidget: IWidget, widget: a
         getVisualizationTypeConfigurationsFromColumn(formattedWidget, tempColumn)
         getVisibilityConditionsFromColumn(formattedWidget, tempColumn, formattedDashboardModel)
         getStyleFromColumn(formattedWidget, tempColumn)
-        getConditionalStyleFromColumn(formattedWidget, tempColumn)
+        getConditionalStyleFromColumn(formattedWidget, tempColumn, formattedDashboardModel)
         getTooltipFromColumn(formattedWidget, tempColumn)
     }
 }
@@ -91,20 +91,6 @@ const addVisibilityConditionToTheModel = (rule: ITableWidgetVisibilityCondition,
     }
     formattedWidget.settings.visualization.visibilityConditions.conditions.push(rule)
 }
-// export interface ITableWidgetVisibilityCondition {
-//     target: string[]
-//     hide: boolean
-//     hidePdf: boolean
-//     condition: {
-//         type: string
-//         variable?: string
-//         variableValue?: string
-//         variableKey?: string,
-//         operator?: string
-//         value?: string,
-//         variablePivotDatasetOptions?: any
-//     }
-// }
 
 const getStyleFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
     if (!tempColumn.style) return
@@ -133,7 +119,7 @@ const getStyleFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
         })
 }
 
-const getConditionalStyleFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
+const getConditionalStyleFromColumn = (formattedWidget: IWidget, tempColumn: any, formattedDashboardModel: IDashboard) => {
     if (!tempColumn.ranges || tempColumn.ranges.length === 0) return
     const columnId = getColumnId(tempColumn.name)
     tempColumn.ranges.forEach((range: any) => {
@@ -156,10 +142,40 @@ const getConditionalStyleFromColumn = (formattedWidget: IWidget, tempColumn: any
                 icon: range.icon ?? ''
             }
         } as ITableWidgetConditionalStyle
+        if (range.compareValueType === 'variable') {
+            tempConditionalStyle.condition.type = 'variable'
+            tempConditionalStyle.condition.variable = range.value
+            updateConditionalStyleFromVariable(tempConditionalStyle, range, formattedDashboardModel)
+        }
         formattedWidget.settings.conditionalStyles.enabled = true
         formattedWidget.settings.conditionalStyles.conditions.push(tempConditionalStyle)
     })
 }
+
+const updateConditionalStyleFromVariable = (conditionStyle: ITableWidgetConditionalStyle, range: any, formattedDashboardModel: IDashboard) => {
+    const modelVariable = formattedDashboardModel.configuration.variables?.find((variable: IVariable) => variable.name === range.value)
+    setConditionalStyleValueFromVariable(conditionStyle, modelVariable, range)
+}
+
+const setConditionalStyleValueFromVariable = (conditionStyle: ITableWidgetConditionalStyle, modelVariable: IVariable | undefined, rowThreshold: any) => {
+    if (!modelVariable) return
+    switch (modelVariable.type) {
+        case 'static':
+        case 'profile':
+        case 'driver':
+            conditionStyle.condition.value = modelVariable.value
+            break;
+        case 'dataset':
+            if (modelVariable.column) {
+                conditionStyle.condition.value = modelVariable.value
+            } else {
+                conditionStyle.condition.variableKey = rowThreshold.compareValueKey
+                conditionStyle.condition.variablePivotDatasetOptions = modelVariable.pivotedValues
+                conditionStyle.condition.value = conditionStyle.condition.variableKey ? conditionStyle.condition.variablePivotDatasetOptions[conditionStyle.condition.variableKey] : ''
+            }
+    }
+}
+
 
 const getTooltipFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
     if (tempColumn.hasOwnProperty('hideTooltip') || tempColumn.style?.hasOwnProperty('tooltip')) {

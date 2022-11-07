@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle, ITableWidgetStyle, ITableWidgetInteractions, ITableWidgetConfiguration, IWidgetResponsive, ITableWidgetConditionalStyles, IDashboard } from '../../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle, ITableWidgetStyle, ITableWidgetInteractions, ITableWidgetConfiguration, IWidgetResponsive, ITableWidgetConditionalStyles, IDashboard, IVariable } from '../../Dashboard'
 import { getFormattedConfiguration } from './TableWidgetConfigurationHelper'
 import { getFormattedInteractions } from './TableWidgetInteractionsHelper'
 import { getFormattedStyle } from './TableWidgetStyleHelper'
@@ -21,7 +21,7 @@ export const formatTableWidget = (widget: any, formattedDashboardModel: IDashboa
         style: {},
         settings: {} as ITableWidgetSettings
     } as IWidget
-    formattedWidget.settings = getFormattedWidgetSettings(widget)
+    formattedWidget.settings = getFormattedWidgetSettings(widget, formattedDashboardModel)
     getFiltersForColumns(formattedWidget, widget)
     getSettingsFromWidgetColumns(formattedWidget, widget, formattedDashboardModel)
     return formattedWidget
@@ -47,13 +47,13 @@ const getFormattedWidgetColumn = (widgetColumn: any) => {
     return formattedColumn
 }
 
-const getFormattedWidgetSettings = (widget: any) => {
+const getFormattedWidgetSettings = (widget: any, formattedDashboardModel: IDashboard) => {
     const formattedSettings = {
         sortingColumn: getColumnId(widget.settings?.sortingColumn) ?? '',
         sortingOrder: widget.settings?.sortingOrder ?? '',
         updatable: widget.updateble,
         clickable: widget.cliccable,
-        conditionalStyles: getFormattedConditionalStyles(widget),
+        conditionalStyles: getFormattedConditionalStyles(widget, formattedDashboardModel),
         configuration: getFormattedConfiguration(widget) as ITableWidgetConfiguration,
         interactions: getFormattedInteractions(widget) as ITableWidgetInteractions,
         pagination: getFormattedPaginations(widget),
@@ -64,18 +64,18 @@ const getFormattedWidgetSettings = (widget: any) => {
     } as ITableWidgetSettings
     return formattedSettings
 }
-const getFormattedConditionalStyles = (widget: any) => {
+const getFormattedConditionalStyles = (widget: any, formattedDashboardModel: IDashboard) => {
     const formattedStyles = { enabled: false, conditions: [] } as ITableWidgetConditionalStyles
     if (widget.settings.rowThresholds?.enabled) {
         widget.settings.rowThresholds.list.forEach((rowThreshold: any) => {
-            formattedStyles.conditions.push(createConditionFromRowThreshold(rowThreshold))
+            formattedStyles.conditions.push(createConditionFromRowThreshold(rowThreshold, formattedDashboardModel))
         })
     }
 
     return formattedStyles
 }
 
-const createConditionFromRowThreshold = (rowThreshold: any) => {
+const createConditionFromRowThreshold = (rowThreshold: any, formattedDashboardModel: IDashboard) => {
     const conditionStyle = {
         target: getColumnId(rowThreshold.column),
         applyToWholeRow: false,
@@ -100,8 +100,8 @@ const createConditionFromRowThreshold = (rowThreshold: any) => {
             conditionStyle.condition.parameter = rowThreshold.compareValue
             break
         case 'variable':
-            conditionStyle.condition.value = getVariableValue(rowThreshold.compareValue)
             conditionStyle.condition.variable = rowThreshold.compareValue
+            updateConditionalStyleFromVariable(conditionStyle, rowThreshold, formattedDashboardModel)
     }
 
     if (rowThreshold.style) {
@@ -111,6 +111,30 @@ const createConditionFromRowThreshold = (rowThreshold: any) => {
     }
 
     return conditionStyle
+}
+
+const updateConditionalStyleFromVariable = (conditionStyle: ITableWidgetConditionalStyle, rowThreshold: any, formattedDashboardModel: IDashboard) => {
+    const modelVariable = formattedDashboardModel.configuration.variables?.find((variable: IVariable) => variable.name === rowThreshold.compareValue)
+    setConditionalStyleValueFromVariable(conditionStyle, modelVariable, rowThreshold)
+}
+
+const setConditionalStyleValueFromVariable = (conditionStyle: ITableWidgetConditionalStyle, modelVariable: IVariable | undefined, rowThreshold: any) => {
+    if (!modelVariable) return
+    switch (modelVariable.type) {
+        case 'static':
+        case 'profile':
+        case 'driver':
+            conditionStyle.condition.value = modelVariable.value
+            break;
+        case 'dataset':
+            if (modelVariable.column) {
+                conditionStyle.condition.value = modelVariable.value
+            } else {
+                conditionStyle.condition.variableKey = rowThreshold.compareValueKey
+                conditionStyle.condition.variablePivotDatasetOptions = modelVariable.pivotedValues
+                conditionStyle.condition.value = conditionStyle.condition.variableKey ? conditionStyle.condition.variablePivotDatasetOptions[conditionStyle.condition.variableKey] : ''
+            }
+    }
 }
 
 const getFormattedPaginations = (widget: any) => {
