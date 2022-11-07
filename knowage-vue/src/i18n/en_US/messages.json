@@ -598,6 +598,20 @@
                 "sparkline": "Sparkline",
                 "textAndIcon": "Text & Icon",
                 "title": "Visualization Type"
+            },
+            "editorTags": {
+                "columnsData": "Columns Data",
+                "parameters": "Parameters",
+                "repeater": "Repeater",
+                "repeatIndex": "Repeat Index",
+                "conditional": "Conditional Container",
+                "calculator": "Calculator",
+                "crossnav": "Cross-Navigation",
+                "selection": "Selection",
+                "preview": "Preview",
+                "activesel": "Active Selection",
+                "variables": "Variables",
+                "internationalization": "Internationalization"
             }
         }
     },

@@ -33,8 +33,8 @@ import WidgetPaddingStyle from '../common/style/WidgetPaddingStyle.vue'
 import WidgetBordersStyle from '../common/style/WidgetBordersStyle.vue'
 import WidgetShadowsStyle from '../common/style/WidgetShadowsStyle.vue'
 import WidgetResponsive from '../common/responsive/WidgetResponsive.vue'
-import WidgetHtmlEditor from '../common/editor/WidgetHtmlEditor.vue'
-import WidgetCssEditor from '../common/editor/WidgetCssEditor.vue'
+import WidgetHtmlEditor from './editor/WidgetHtmlEditor.vue'
+import WidgetCssEditor from './editor/WidgetCssEditor.vue'
 
 export default defineComponent({
     name: 'html-widget-settings-container',
