@@ -1,19 +1,19 @@
 {
-    "Interactions": [
-        {
-            "title": "dashboard.widgetEditor.interactions.crossNavigation",
-            "type": "CrossNavigation"
-        },
-        {
-            "title": "dashboard.widgetEditor.interactions.preview",
-            "type": "Preview"
-        }
-    ],
     "settings": {
         "Configuration": [
             {
                 "title": "dashboard.widgetEditor.export.title",
                 "type": "Export"
+            }
+        ],
+        "Interactions": [
+            {
+                "title": "dashboard.widgetEditor.interactions.crossNavigation",
+                "type": "CrossNavigation"
+            },
+            {
+                "title": "dashboard.widgetEditor.interactions.preview",
+                "type": "Preview"
             }
         ],
         "Responsive": [

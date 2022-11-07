@@ -60,7 +60,7 @@
 </template>
 
 <script lang="ts">
-import { ITableWidgetParameter, IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IWidgetInteractionParameter, IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
 import { defineComponent, PropType } from 'vue'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import descriptor from '../WidgetInteractionsDescriptor.json'
@@ -70,12 +70,12 @@ import InputSwitch from 'primevue/inputswitch'
 export default defineComponent({
     name: 'table-widget-preview-parameters-list',
     components: { Dropdown, InputSwitch },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, propParameters: { type: Array as PropType<ITableWidgetParameter[]>, required: true }, selectedDatasetsColumnsMap: { type: Object }, drivers: { type: Array }, disabled: { type: Boolean } },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, propParameters: { type: Array as PropType<IWidgetInteractionParameter[]>, required: true }, selectedDatasetsColumnsMap: { type: Object }, drivers: { type: Array }, disabled: { type: Boolean } },
     emits: ['change'],
     data() {
         return {
             descriptor,
-            parameters: [] as ITableWidgetParameter[],
+            parameters: [] as IWidgetInteractionParameter[],
             selectedDatasetNames: [] as string[],
             getTranslatedLabel
         }
@@ -100,7 +100,7 @@ export default defineComponent({
         parametersChanged() {
             this.$emit('change', this.parameters)
         },
-        onParameterTypeChanged(parameter: ITableWidgetParameter) {
+        onParameterTypeChanged(parameter: IWidgetInteractionParameter) {
             parameter.value = ''
             switch (parameter.type) {
                 case 'static':
@@ -124,11 +124,11 @@ export default defineComponent({
             }
             this.parametersChanged()
         },
-        onDatasetChanged(parameter: ITableWidgetParameter) {
+        onDatasetChanged(parameter: IWidgetInteractionParameter) {
             parameter.column = ''
             this.parametersChanged()
         },
-        getSelectionDatasetColumnOptions(parameter: ITableWidgetParameter) {
+        getSelectionDatasetColumnOptions(parameter: IWidgetInteractionParameter) {
             return parameter.dataset && this.selectedDatasetsColumnsMap ? this.selectedDatasetsColumnsMap[parameter.dataset] : []
         }
     }

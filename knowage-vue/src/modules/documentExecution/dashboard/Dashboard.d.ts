@@ -177,7 +177,7 @@ export interface IWidgetCrossNavigation {
     column: string
     icon?: string
     name: string
-    parameters: ITableWidgetParameter[]
+    parameters: IWidgetInteractionParameter[]
 }
 
 export interface IWidgetLinks {
@@ -191,10 +191,10 @@ export interface ITableWidgetLink {
     baseurl: string
     column?: string
     action: string
-    parameters: ITableWidgetParameter[]
+    parameters: IWidgetInteractionParameter[]
 }
 
-export interface ITableWidgetParameter {
+export interface IWidgetInteractionParameter {
     enabled: boolean
     name: string
     type: string
@@ -208,7 +208,7 @@ export interface ITableWidgetParameter {
 export interface IWidgetPreview {
     enabled: boolean
     type: string
-    parameters: ITableWidgetParameter[]
+    parameters: IWidgetInteractionParameter[]
     dataset: number
     column?: string
     directDownload: boolean

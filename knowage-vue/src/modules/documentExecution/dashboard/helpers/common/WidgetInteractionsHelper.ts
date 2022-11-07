@@ -1,18 +1,36 @@
-import { IWidgetCrossNavigation, ITableWidgetLink, IWidgetLinks, ITableWidgetParameter, IWidgetPreview, IWidgetSelection, IWidget } from "../../Dashboard"
-import { getColumnId } from './TableWidgetCompatibilityHelper'
+import { ITableWidgetLink, IWidget, IWidgetCrossNavigation, IWidgetInteractionParameter, IWidgetInteractions, IWidgetLinks, IWidgetPreview, IWidgetSelection } from "../../Dashboard"
+import { getColumnId } from "../tableWidget/TableWidgetCompatibilityHelper"
+import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import * as  tableWidgetDefaultValues from '../../widget/WidgetEditor/helpers/tableWidget/TableWidgetDefaultValues'
 
 export const getFormattedInteractions = (widget: any) => {
-    return {
-        crosssNavigation: getFormattedCrossNavigation(widget) as IWidgetCrossNavigation,
-        link: getFormattedLinkInteraction(widget) as IWidgetLinks,
-        preview: getFormattedPreview(widget) as IWidgetPreview,
-        selection: getFormattedSelection(widget) as IWidgetSelection
-    }
+    const interactions = {} as IWidgetInteractions
+    if (['table'].includes(widget.type)) interactions.selection = getFormattedSelection(widget) as IWidgetSelection
+    if (['table', 'html', 'text'].includes(widget.type)) interactions.crosssNavigation = getFormattedCrossNavigation(widget) as IWidgetCrossNavigation
+    if (['table'].includes(widget.type)) interactions.link = getFormattedLinkInteraction(widget) as IWidgetLinks
+    if (['table', 'html', 'text'].includes(widget.type)) interactions.preview = getFormattedPreview(widget) as IWidgetPreview
+    return interactions
 }
 
-const getFormattedCrossNavigation = (widget: any) => {
-    if (!widget.cross || !widget.cross.cross) return tableWidgetDefaultValues.getDefaultCrossNavigation()
+const getFormattedSelection = (widget: IWidget) => {
+    if (!widget.settings.multiselectable && !widget.settings.multiselectablecolor && !widget.settings.modalSelectionColumn) return tableWidgetDefaultValues.getDefaultSelection() as IWidgetSelection
+    const formattedSelection = {
+        enabled: true,
+        modalColumn: widget.settings.modalSelectionColumn ? getColumnId(widget.settings.modalSelectionColumn) : '',
+        multiselection: {
+            enabled: widget.settings.multiselectable,
+            properties: {
+                'background-color': widget.settings.multiselectablecolor ? widget.settings.multiselectablecolor : '',
+                color: ''
+            }
+        }
+    } as IWidgetSelection
+
+    return formattedSelection
+}
+
+export const getFormattedCrossNavigation = (widget: any) => {
+    if (!widget.cross || !widget.cross.cross) return widgetCommonDefaultValues.getDefaultCrossNavigation()
 
     return {
         enabled: widget.cross.cross.enable,
@@ -25,7 +43,7 @@ const getFormattedCrossNavigation = (widget: any) => {
 }
 
 const getFormattedCrossNavigationParameters = (outputParameterList: any) => {
-    const formattedParameters = [] as ITableWidgetParameter[]
+    const formattedParameters = [] as IWidgetInteractionParameter[]
     if (outputParameterList) {
         Object.keys(outputParameterList).forEach((key: string) => {
             const tempParameter = outputParameterList[key]
@@ -34,7 +52,7 @@ const getFormattedCrossNavigationParameters = (outputParameterList: any) => {
                 name: key,
                 type: tempParameter.type,
                 value: tempParameter.value
-            } as ITableWidgetParameter
+            } as IWidgetInteractionParameter
             if (tempParameter) formattedParameter.column = tempParameter.column
             if (tempParameter) formattedParameter.dataset = tempParameter.dataset
             formattedParameters.push(formattedParameter)
@@ -43,8 +61,8 @@ const getFormattedCrossNavigationParameters = (outputParameterList: any) => {
     return formattedParameters
 }
 
-const getFormattedLinkInteraction = (widget: any) => {
-    if (!widget.cross || !widget.cross.link) return tableWidgetDefaultValues.getDefaultLinks()
+export const getFormattedLinkInteraction = (widget: any) => {
+    if (!widget.cross || !widget.cross.link) return widgetCommonDefaultValues.getDefaultLinks()
 
     return {
         enabled: widget.cross.link.enable,
@@ -73,14 +91,14 @@ const getFormattededLinks = (links: any) => {
 
 const getFormattedLinkParameters = (linkParameters: any[]) => {
     if (!linkParameters || linkParameters.length === 0) return []
-    const formattedParameters = [] as ITableWidgetParameter[]
+    const formattedParameters = [] as IWidgetInteractionParameter[]
     linkParameters.forEach((linkParameter: any) => {
         const formattedParameter = {
             enabled: true,
             name: linkParameter.name,
             type: linkParameter.bindType,
             value: linkParameter.value ?? ''
-        } as ITableWidgetParameter
+        } as IWidgetInteractionParameter
 
         if (linkParameter.column) formattedParameter.column = linkParameter.column
         if (linkParameter.dataset) formattedParameter.dataset = linkParameter.dataset
@@ -92,8 +110,8 @@ const getFormattedLinkParameters = (linkParameters: any[]) => {
     return formattedParameters
 }
 
-const getFormattedPreview = (widget: any) => {
-    if (!widget.cross || !widget.cross.preview) return tableWidgetDefaultValues.getDefaultPreview()
+export const getFormattedPreview = (widget: any) => {
+    if (!widget.cross || !widget.cross.preview) return widgetCommonDefaultValues.getDefaultPreview()
 
     const formattedPreview = {
         enabled: widget.cross.preview.enable,
@@ -112,7 +130,7 @@ const getFormattedPreview = (widget: any) => {
 
 
 const getFormattedPreviewParameters = (previewParameters: any) => {
-    const formattedParameters = [] as ITableWidgetParameter[]
+    const formattedParameters = [] as IWidgetInteractionParameter[]
 
     previewParameters?.forEach((previewParameter: any) => {
         const formattedParameter = {
@@ -120,7 +138,7 @@ const getFormattedPreviewParameters = (previewParameters: any) => {
             name: previewParameter.name,
             type: previewParameter.bindType,
             value: previewParameter.value ?? ''
-        } as ITableWidgetParameter
+        } as IWidgetInteractionParameter
 
         if (previewParameter.driver) formattedParameter.driver = previewParameter.driver
         if (previewParameter.column) formattedParameter.column = previewParameter.column
@@ -131,21 +149,4 @@ const getFormattedPreviewParameters = (previewParameters: any) => {
 
 
     return formattedParameters
-}
-
-const getFormattedSelection = (widget: IWidget) => {
-    if (!widget.settings.multiselectable && !widget.settings.multiselectablecolor && !widget.settings.modalSelectionColumn) return tableWidgetDefaultValues.getDefaultSelection() as IWidgetSelection
-    const formattedSelection = {
-        enabled: true,
-        modalColumn: widget.settings.modalSelectionColumn ? getColumnId(widget.settings.modalSelectionColumn) : '',
-        multiselection: {
-            enabled: widget.settings.multiselectable,
-            properties: {
-                'background-color': widget.settings.multiselectablecolor ? widget.settings.multiselectablecolor : '',
-                color: ''
-            }
-        }
-    } as IWidgetSelection
-
-    return formattedSelection
 }

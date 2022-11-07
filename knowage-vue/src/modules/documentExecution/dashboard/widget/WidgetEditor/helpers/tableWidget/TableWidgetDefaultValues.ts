@@ -34,19 +34,6 @@ export const getDefaultCustomMessages = () => {
     return deepcopy(descriptor.defaultCustomMessages) as ITableWidgetCustomMessages
 }
 
-export const getDefaultCrossNavigation = () => {
-    return deepcopy(descriptor.defaultCrossNavigation) as IWidgetCrossNavigation
-}
-
-export const getDefaultLinks = () => {
-    return deepcopy(descriptor.defaultLinks) as IWidgetLinks
-}
-
-export const getDefaultPreview = () => {
-    return deepcopy(descriptor.defaultPreview) as IWidgetPreview
-}
-
-
 export const getDefaultSelection = () => {
     return deepcopy(descriptor.defaultSelection) as IWidgetSelection
 }

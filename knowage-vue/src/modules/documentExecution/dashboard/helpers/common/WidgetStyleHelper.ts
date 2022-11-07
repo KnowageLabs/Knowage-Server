@@ -1,5 +1,4 @@
 import { IWidgetBackgroundStyle, IWidgetBordersStyle, IWidgetPaddingStyle, IWidgetShadowsStyle, IWidgetTitle } from '../../Dashboard'
-import { hexToRgb } from '../FormattingHelpers'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 
 export const getFormattedTitleStyle = (widget: any) => {

@@ -1,12 +1,12 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle, ITableWidgetStyle, IWidgetInteractions, ITableWidgetConfiguration, IWidgetResponsive, ITableWidgetConditionalStyles, IDashboard, IVariable } from '../../Dashboard'
+import { IWidget, IWidgetColumn, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle, ITableWidgetStyle, IWidgetInteractions, ITableWidgetConfiguration, IWidgetResponsive, ITableWidgetConditionalStyles, IDashboard, IVariable } from '../../Dashboard'
 import { getFormattedConfiguration } from './TableWidgetConfigurationHelper'
-import { getFormattedInteractions } from './TableWidgetInteractionsHelper'
 import { getFormattedStyle } from './TableWidgetStyleHelper'
 import { getSettingsFromWidgetColumns } from './TableWidgetColumnSettingsHelper'
 import * as tableWidgetDefaultValues from '../../widget/WidgetEditor/helpers/tableWidget/TableWidgetDefaultValues'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import cryptoRandomString from 'crypto-random-string'
 import { getFiltersForColumns } from '../DashboardBackwardCompatibilityHelper'
+import { getFormattedInteractions } from '../common/WidgetInteractionsHelper'
 
 const columnNameIdMap = {}
 

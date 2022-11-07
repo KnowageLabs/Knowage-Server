@@ -58,7 +58,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, ITableWidgetParameter, IDataset, IDatasetParameter, IWidgetStyleToolbarModel, IWidgetPreview } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IWidget, IWidgetInteractionParameter, IDataset, IDatasetParameter, IWidgetStyleToolbarModel, IWidgetPreview } from '@/modules/documentExecution/dashboard/Dashboard'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import { emitter } from '../../../../../../DashboardHelpers'
 import descriptor from '../WidgetInteractionsDescriptor.json'
@@ -163,7 +163,7 @@ export default defineComponent({
                     delete this.previewModel.column
             }
         },
-        onParametersChanged(parameters: ITableWidgetParameter[]) {
+        onParametersChanged(parameters: IWidgetInteractionParameter[]) {
             if (this.previewModel) this.previewModel.parameters = parameters
         },
         onStyleToolbarChange(model: IWidgetStyleToolbarModel) {

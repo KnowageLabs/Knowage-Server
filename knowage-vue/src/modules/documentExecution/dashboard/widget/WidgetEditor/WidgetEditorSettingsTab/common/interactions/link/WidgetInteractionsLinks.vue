@@ -76,7 +76,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IDataset, IWidgetLinks, ITableWidgetLink, IWidgetStyleToolbarModel, ITableWidgetParameter } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IWidget, IDataset, IWidgetLinks, ITableWidgetLink, IWidgetStyleToolbarModel, IWidgetInteractionParameter } from '@/modules/documentExecution/dashboard/Dashboard'
 import { emitter } from '../../../../../../DashboardHelpers'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import descriptor from '../WidgetInteractionsDescriptor.json'
@@ -172,7 +172,7 @@ export default defineComponent({
             if (!this.linksModel || this.linksDisabled) return
             this.linksModel.links.splice(index, 1)
         },
-        onParametersChanged(parameters: ITableWidgetParameter[], link: ITableWidgetLink) {
+        onParametersChanged(parameters: IWidgetInteractionParameter[], link: ITableWidgetLink) {
             link.parameters = parameters
         },
         onAddParameter(link: ITableWidgetLink) {

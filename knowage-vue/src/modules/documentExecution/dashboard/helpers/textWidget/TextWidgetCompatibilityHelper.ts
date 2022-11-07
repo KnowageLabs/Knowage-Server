@@ -1,8 +1,9 @@
-import { IWidget, IWidgetColumn, IWidgetExports } from "../../Dashboard"
+import { IWidget, IWidgetColumn, IWidgetExports, IWidgetInteractions } from "../../Dashboard"
 import { ITextWidgetConfiguration, ITextWidgetContent, ITextWidgetSettings } from "../../interfaces/DashboardTextWidget"
 import { getFormattedStyle } from "./TextWidgetStyleHelper"
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import cryptoRandomString from "crypto-random-string"
+import { getFormattedInteractions } from "../common/WidgetInteractionsHelper"
 
 const columnNameIdMap = {}
 
@@ -45,6 +46,7 @@ const getFormattedWidgetSettings = (widget: any) => {
         clickable: widget.cliccable,
         configuration: getFormattedConfiguration(widget),
         style: getFormattedStyle(widget),
+        interactions: getFormattedInteractions(widget) as IWidgetInteractions,
         responsive: widgetCommonDefaultValues.getDefaultResponsivnes()
     } as ITextWidgetSettings
     return formattedSettings

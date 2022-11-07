@@ -46,7 +46,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IWidgetCrossNavigation, ITableWidgetParameter, IDataset, IWidgetStyleToolbarModel } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IWidget, IWidgetCrossNavigation, IWidgetInteractionParameter, IDataset, IWidgetStyleToolbarModel } from '@/modules/documentExecution/dashboard/Dashboard'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import { emitter } from '../../../../../../DashboardHelpers'
 import descriptor from '../WidgetInteractionsDescriptor.json'
@@ -70,7 +70,7 @@ export default defineComponent({
             crossNavigationModel: null as IWidgetCrossNavigation | null,
             crossNavigationOptions: [] as string[],
             outputParameters: [] as any[],
-            parameterList: [] as ITableWidgetParameter[],
+            parameterList: [] as IWidgetInteractionParameter[],
             selectedDatasetsColumnsMap: {},
             getTranslatedLabel
         }
@@ -125,8 +125,8 @@ export default defineComponent({
             this.parameterList = []
             for (let i = 0; i < this.outputParameters.length; i++) {
                 const outputParameter = this.outputParameters[i]
-                const temp = { enabled: false, name: outputParameter.name, type: '' } as ITableWidgetParameter
-                const index = this.crossNavigationModel.parameters.findIndex((parameter: ITableWidgetParameter) => parameter.name === outputParameter.name)
+                const temp = { enabled: false, name: outputParameter.name, type: '' } as IWidgetInteractionParameter
+                const index = this.crossNavigationModel.parameters.findIndex((parameter: IWidgetInteractionParameter) => parameter.name === outputParameter.name)
                 if (index !== -1) {
                     const modelParameter = this.crossNavigationModel?.parameters[index]
                     temp.enabled = modelParameter.enabled
@@ -152,7 +152,7 @@ export default defineComponent({
         onInteractionTypeChanged() {
             if (this.crossNavigationModel && this.crossNavigationModel.type !== 'icon') delete this.crossNavigationModel.icon
         },
-        onParametersChanged(parameters: ITableWidgetParameter[]) {
+        onParametersChanged(parameters: IWidgetInteractionParameter[]) {
             if (this.crossNavigationModel) this.crossNavigationModel.parameters = parameters
         },
         onStyleToolbarChange(model: IWidgetStyleToolbarModel) {
