@@ -129,11 +129,15 @@ export default defineComponent({
             const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
             const tempColumn = createNewWidgetColumn(eventData)
             if (['table', 'html', 'text'].includes(this.widgetModel.type)) {
-                this.rows.push(tempColumn as IWidgetColumn)
+                if (this.widgetModel.type === 'table' || !this.checkIfColumnIsAlreadyPresent(tempColumn)) this.rows.push(tempColumn as IWidgetColumn)
             } else {
                 this.rows = [tempColumn]
             }
             this.$emit('itemAdded', tempColumn)
+        },
+        checkIfColumnIsAlreadyPresent(tempColumn: IWidgetColumn) {
+            const index = this.rows.findIndex((row: IWidgetColumn) => row.columnName === tempColumn.columnName)
+            return index !== -1
         },
         deleteItem(item: IWidgetColumn, index: number) {
             this.rows.splice(index, 1)
