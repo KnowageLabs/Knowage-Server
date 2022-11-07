@@ -1,8 +1,9 @@
-import { IWidget, IWidgetColumn, IWidgetExports } from "../../Dashboard"
-import { IHTMLWidgetConfiguration, IHTMLWidgetSettings } from "../../interfaces/DashboardHTMLWidget"
+import { IWidget, IWidgetColumn, IWidgetExports, IWidgetInteractions } from "../../Dashboard"
+import { IHTMLWidgetConfiguration, IHTMLWidgetEditor, IHTMLWidgetSettings } from "../../interfaces/DashboardHTMLWidget"
 import { getFormattedStyle } from "./HTMLWidgetStyleHelper"
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import cryptoRandomString from "crypto-random-string"
+import { getFormattedInteractions } from "../common/WidgetInteractionsHelper"
 
 const columnNameIdMap = {}
 
@@ -45,19 +46,26 @@ const getFormattedWidgetSettings = (widget: any, formattedWidget: IWidget) => {
         sortingOrder: widget.settings?.sortingOrder ?? '',
         updatable: widget.updateble,
         clickable: widget.cliccable,
-        configuration: getFormattedConfiguration(widget, formattedWidget),
+        configuration: getFormattedConfiguration(widget),
+        editor: getFormattedEditor(widget, formattedWidget),
         style: getFormattedStyle(widget),
+        interactions: getFormattedInteractions(widget) as IWidgetInteractions,
         responsive: widgetCommonDefaultValues.getDefaultResponsivnes()
     } as IHTMLWidgetSettings
     return formattedSettings
 }
 
-const getFormattedConfiguration = (widget: any, formattedWidget: IWidget) => {
+const getFormattedConfiguration = (widget: any) => {
     return {
-        cssToRender: getFormattedCssToRender(widget.cssToRender, formattedWidget),
-        htmlToRender: widget.htmlToRender,
         exports: { showExcelExport: widget.style?.showExcelExport ?? false, showScreenshot: widget.style?.showScreenshot ?? false } as IWidgetExports
     } as IHTMLWidgetConfiguration
+}
+
+const getFormattedEditor = (widget: any, formattedWidget: IWidget) => {
+    return {
+        css: getFormattedCssToRender(widget.cssToRender, formattedWidget),
+        html: widget.htmlToRender,
+    } as IHTMLWidgetEditor
 }
 
 const getFormattedCssToRender = (cssToRender: string, formattedWidget: IWidget) => {

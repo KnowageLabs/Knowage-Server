@@ -12,6 +12,9 @@
                 <WidgetBordersStyle v-else-if="accordion.type === 'BordersStyle'" :widgetModel="widgetModel"></WidgetBordersStyle>
                 <WidgetShadowsStyle v-else-if="accordion.type === 'ShadowsStyle'" :widgetModel="widgetModel"></WidgetShadowsStyle>
                 <WidgetResponsive v-else-if="accordion.type === 'Responsive'" :widgetModel="widgetModel"></WidgetResponsive>
+                <WidgetCrossNavigation v-else-if="accordion.type === 'CrossNavigation'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets"></WidgetCrossNavigation>
+                <WidgetInteractionsLinks v-else-if="accordion.type === 'Link'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :drivers="drivers"></WidgetInteractionsLinks>
+                <WidgetPreview v-else-if="accordion.type === 'Preview'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :drivers="drivers" :dashboardId="dashboardId"></WidgetPreview>
             </AccordionTab>
         </Accordion>
     </div>
@@ -31,6 +34,9 @@ import WidgetPaddingStyle from '../common/style/WidgetPaddingStyle.vue'
 import WidgetBordersStyle from '../common/style/WidgetBordersStyle.vue'
 import WidgetShadowsStyle from '../common/style/WidgetShadowsStyle.vue'
 import WidgetResponsive from '../common/responsive/WidgetResponsive.vue'
+import WidgetCrossNavigation from '../common/interactions/crossNavigation/WidgetCrossNavigation.vue'
+import WidgetInteractionsLinks from '../common/interactions/link/WidgetInteractionsLinks.vue'
+import WidgetPreview from '../common/interactions/preview/WidgetPreview.vue'
 
 export default defineComponent({
     name: 'text-widget-settings-container',
@@ -43,7 +49,10 @@ export default defineComponent({
         WidgetPaddingStyle,
         WidgetBordersStyle,
         WidgetShadowsStyle,
-        WidgetResponsive
+        WidgetResponsive,
+        WidgetCrossNavigation,
+        WidgetInteractionsLinks,
+        WidgetPreview
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
@@ -51,7 +60,8 @@ export default defineComponent({
         datasets: { type: Array as PropType<IDataset[]> },
         selectedDatasets: { type: Array as PropType<IDataset[]> },
         drivers: { type: Array },
-        variables: { type: Array as PropType<IVariable[]> }
+        variables: { type: Array as PropType<IVariable[]> },
+        dashboardId: { type: String, required: true }
     },
     data() {
         return {

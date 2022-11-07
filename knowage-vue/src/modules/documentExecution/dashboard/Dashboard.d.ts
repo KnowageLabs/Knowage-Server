@@ -49,7 +49,7 @@ export interface ITableWidgetSettings {
     clickable: boolean
     conditionalStyles: ITableWidgetConditionalStyles
     configuration: ITableWidgetConfiguration
-    interactions: ITableWidgetInteractions
+    interactions: IWidgetInteractions
     pagination: ITableWidgetPagination
     style: ITableWidgetStyle
     tooltips: ITableWidgetTooltipStyle[]
@@ -164,23 +164,23 @@ export interface ITableWidgetSummaryRow {
     aggregation: string
 }
 
-export interface ITableWidgetInteractions {
-    crosssNavigation: ITableWidgetCrossNavigation
-    link: ITableWidgetLinks
-    preview: ITableWidgetPreview
-    selection: ITableWidgetSelection
+export interface IWidgetInteractions {
+    crosssNavigation: IWidgetCrossNavigation
+    link?: IWidgetLinks
+    preview?: IWidgetPreview
+    selection?: IWidgetSelection
 }
 
-export interface ITableWidgetCrossNavigation {
+export interface IWidgetCrossNavigation {
     enabled: boolean
     type: string
     column: string
     icon?: string
     name: string
-    parameters: ITableWidgetParameter[]
+    parameters: IWidgetInteractionParameter[]
 }
 
-export interface ITableWidgetLinks {
+export interface IWidgetLinks {
     enabled: boolean
     links: ITableWidgetLink[]
 }
@@ -191,10 +191,10 @@ export interface ITableWidgetLink {
     baseurl: string
     column?: string
     action: string
-    parameters: ITableWidgetParameter[]
+    parameters: IWidgetInteractionParameter[]
 }
 
-export interface ITableWidgetParameter {
+export interface IWidgetInteractionParameter {
     enabled: boolean
     name: string
     type: string
@@ -205,17 +205,17 @@ export interface ITableWidgetParameter {
     json?: string
 }
 
-export interface ITableWidgetPreview {
+export interface IWidgetPreview {
     enabled: boolean
     type: string
-    parameters: ITableWidgetParameter[]
+    parameters: IWidgetInteractionParameter[]
     dataset: number
     column?: string
     directDownload: boolean
     icon?: stirng
 }
 
-export interface ITableWidgetSelection {
+export interface IWidgetSelection {
     enabled: boolean
     modalColumn: string
     multiselection: {

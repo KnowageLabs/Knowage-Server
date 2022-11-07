@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, ITableWidgetColumnGroup, ITableWidgetParameter, ITableWidgetSettings } from "../../../../Dashboard"
+import { IWidget, IWidgetColumn, ITableWidgetColumnGroup, IWidgetInteractionParameter, ITableWidgetSettings } from "../../../../Dashboard"
 import { emitter } from '../../../../DashboardHelpers'
 import cryptoRandomString from 'crypto-random-string'
 import * as  tableWidgetDefaultValues from './TableWidgetDefaultValues'
@@ -20,9 +20,9 @@ export const createNewTableWidgetSettings = () => {
             customMessages: tableWidgetDefaultValues.getDefaultCustomMessages()
         },
         interactions: {
-            crosssNavigation: tableWidgetDefaultValues.getDefaultCrossNavigation(),
-            link: tableWidgetDefaultValues.getDefaultLinks(),
-            preview: tableWidgetDefaultValues.getDefaultPreview(),
+            crosssNavigation: widgetCommonDefaultValues.getDefaultCrossNavigation(),
+            link: widgetCommonDefaultValues.getDefaultLinks(),
+            preview: widgetCommonDefaultValues.getDefaultPreview(),
             selection: tableWidgetDefaultValues.getDefaultSelection()
         },
         pagination: tableWidgetDefaultValues.getDefaultPagination(),
@@ -96,7 +96,7 @@ const removeColumnFromCrossNavigation = (widgetModel: IWidget, column: IWidgetCo
     const crossNavigation = widgetModel.settings.interactions.crosssNavigation
     if (crossNavigation.column === column.id) {
         crossNavigation.enabled = false;
-        crossNavigation.parameters.forEach((parameter: ITableWidgetParameter) => {
+        crossNavigation.parameters.forEach((parameter: IWidgetInteractionParameter) => {
             parameter.enabled = false
             if (parameter.column === column.columnName) parameter.column = ''
         })

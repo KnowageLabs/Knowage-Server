@@ -17,6 +17,17 @@
             "border-width": "1px"
         }
     },
+    "defaultCrossNavigation": {
+        "column": "",
+        "enabled": false,
+        "name": "",
+        "parameters": [],
+        "type": ""
+    },
+    "defaultLinks": {
+        "enabled": false,
+        "links": []
+    },
     "defaultPaddingStyle": {
         "enabled": false,
         "properties": {
@@ -26,6 +37,13 @@
             "padding-top": "",
             "unlinked": false
         }
+    },
+    "defaultPreview": {
+        "dataset": -1,
+        "directDownload": false,
+        "enabled": false,
+        "parameters": [],
+        "type": ""
     },
     "defaultResponsivnes": {
         "lg": true,

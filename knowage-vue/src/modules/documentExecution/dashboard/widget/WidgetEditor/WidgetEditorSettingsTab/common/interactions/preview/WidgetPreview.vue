@@ -58,16 +58,16 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, ITableWidgetParameter, IDataset, IDatasetParameter, IWidgetStyleToolbarModel, ITableWidgetPreview } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IWidget, IWidgetInteractionParameter, IDataset, IDatasetParameter, IWidgetStyleToolbarModel, IWidgetPreview } from '@/modules/documentExecution/dashboard/Dashboard'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import { emitter } from '../../../../../../DashboardHelpers'
-import descriptor from '../../TableWidgetSettingsDescriptor.json'
+import descriptor from '../WidgetInteractionsDescriptor.json'
 import dashboardStore from '../../../../../../Dashboard.store'
 import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
-import TableWidgetPreviewParameterList from './TableWidgetPreviewParameterList.vue'
-import WidgetEditorStyleToolbar from '../../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
+import TableWidgetPreviewParameterList from './WidgetPreviewParameterList.vue'
+import WidgetEditorStyleToolbar from '../../styleToolbar/WidgetEditorStyleToolbar.vue'
 
 export default defineComponent({
     name: 'table-widget-preview',
@@ -88,7 +88,7 @@ export default defineComponent({
     data() {
         return {
             descriptor,
-            previewModel: null as ITableWidgetPreview | null,
+            previewModel: null as IWidgetPreview | null,
             dashboardModel: null as any,
             dashboardDatasets: [] as any[],
             selectedDatasetColumnIdMap: {},
@@ -163,7 +163,7 @@ export default defineComponent({
                     delete this.previewModel.column
             }
         },
-        onParametersChanged(parameters: ITableWidgetParameter[]) {
+        onParametersChanged(parameters: IWidgetInteractionParameter[]) {
             if (this.previewModel) this.previewModel.parameters = parameters
         },
         onStyleToolbarChange(model: IWidgetStyleToolbarModel) {

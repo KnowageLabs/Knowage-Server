@@ -1,4 +1,4 @@
-import { IWidgetBordersStyle, ITableWidgetColumnGroups, ITableWidgetColumnStyles, ITableWidgetConditionalStyle, ITableWidgetConditionalStyles, ITableWidgetCrossNavigation, ITableWidgetCustomMessages, IWidgetExports, ITableWidgetHeaders, ITableWidgetLinks, ITableWidgetPagination, ITableWidgetPreview, ITableWidgetRows, IWidgetRowsStyle, ITableWidgetSelection, IWidgetShadowsStyle, ITableWidgetSummaryRows, ITableWidgetSummaryStyle, ITableWidgetTooltipStyle, ITableWidgetVisibilityCondition, ITableWidgetVisualization, ITawbleWidgetHeadersStyle } from "../../../../Dashboard"
+import { IWidgetBordersStyle, ITableWidgetColumnGroups, ITableWidgetColumnStyles, ITableWidgetConditionalStyle, ITableWidgetConditionalStyles, IWidgetCrossNavigation, ITableWidgetCustomMessages, IWidgetExports, ITableWidgetHeaders, IWidgetLinks, ITableWidgetPagination, IWidgetPreview, ITableWidgetRows, IWidgetRowsStyle, IWidgetSelection, IWidgetShadowsStyle, ITableWidgetSummaryRows, ITableWidgetSummaryStyle, ITableWidgetTooltipStyle, ITableWidgetVisibilityCondition, ITableWidgetVisualization, ITawbleWidgetHeadersStyle } from "../../../../Dashboard"
 import descriptor from './TableWidgetHelpersDescriptor.json'
 import deepcopy from 'deepcopy'
 
@@ -34,21 +34,8 @@ export const getDefaultCustomMessages = () => {
     return deepcopy(descriptor.defaultCustomMessages) as ITableWidgetCustomMessages
 }
 
-export const getDefaultCrossNavigation = () => {
-    return deepcopy(descriptor.defaultCrossNavigation) as ITableWidgetCrossNavigation
-}
-
-export const getDefaultLinks = () => {
-    return deepcopy(descriptor.defaultLinks) as ITableWidgetLinks
-}
-
-export const getDefaultPreview = () => {
-    return deepcopy(descriptor.defaultPreview) as ITableWidgetPreview
-}
-
-
 export const getDefaultSelection = () => {
-    return deepcopy(descriptor.defaultSelection) as ITableWidgetSelection
+    return deepcopy(descriptor.defaultSelection) as IWidgetSelection
 }
 
 export const getDefaultPagination = () => {

@@ -5,18 +5,18 @@
 </template>
 
 <script lang="ts">
-import { ITableWidgetParameter } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IWidgetInteractionParameter } from '@/modules/documentExecution/dashboard/Dashboard'
 import { defineComponent, PropType } from 'vue'
 import VCodeMirror, { CodeMirror } from 'codemirror-editor-vue3'
 
 export default defineComponent({
     name: 'table-widget-link-parameters-list',
     components: { VCodeMirror },
-    props: { propParameter: { type: Object as PropType<ITableWidgetParameter>, required: true }, visible: { type: Boolean } },
+    props: { propParameter: { type: Object as PropType<IWidgetInteractionParameter>, required: true }, visible: { type: Boolean } },
     emits: ['change'],
     data() {
         return {
-            parameter: null as ITableWidgetParameter | null,
+            parameter: null as IWidgetInteractionParameter | null,
             codeMirror: {} as any,
             code: '',
             options: {
