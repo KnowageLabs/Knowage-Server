@@ -9,7 +9,9 @@
         </template>
 
         <div class="tags-dialog-content p-mx-2">
-            <p class="kn-material-input-label">{{ $t(`dashboard.widgetEditor.editorTags.hint.${mode}`) }}</p>
+            <Message class="kn-flex p-m-4" severity="info" :closable="false" :style="descriptor.hintStyle">
+                {{ $t(`dashboard.widgetEditor.editorTags.hint.${mode}`) }}
+            </Message>
             {{ widgetType }}
 
             <WidgetEditorParameters v-if="mode === 'parameters'" :drivers="drivers" @insertChanged="onInsertChanged"></WidgetEditorParameters>
@@ -27,10 +29,11 @@ import { defineComponent, PropType } from 'vue'
 import Dialog from 'primevue/dialog'
 import WidgetEditorParameters from './options/WidgetEditorParameters.vue'
 import descriptor from './WidgetTagsDialogDescriptor.json'
+import Message from 'primevue/message'
 
 export default defineComponent({
     name: 'olap-custom-view-save-dialog',
-    components: { Dialog, WidgetEditorParameters },
+    components: { Dialog, WidgetEditorParameters, Message },
     props: { visible: Boolean, mode: { type: String, required: true }, widgetType: String, drivers: { type: Array as PropType<any[]>, required: true } },
     emited: ['close', 'insert'],
     computed: {},
@@ -40,10 +43,25 @@ export default defineComponent({
             forInsert: '' as string
         }
     },
-    setup() {},
-    created() {},
-    watch: {},
+    watch: {
+        mode() {
+            this.setInitialInsertValue()
+        }
+    },
+    created() {
+        this.setInitialInsertValue()
+    },
+
     methods: {
+        setInitialInsertValue() {
+            switch (this.mode) {
+                case 'crossnav':
+                    this.forInsert = '<div kn-cross></div>'
+                    break
+                default:
+                    this.forInsert = ''
+            }
+        },
         onInsertChanged(value: string) {
             console.log('>>> ON INSERT CHANGED: ', value)
             this.forInsert = value
