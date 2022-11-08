@@ -6,12 +6,12 @@
     </div>
 
     <TieredMenu ref="menu" :model="toolbarMenuItems" :popup="true" />
-    <TagsDialog :visible="tagsDialogVisible" :widgetModel="widgetModel" :mode="tagsDialogMode" widgetType="html" :drivers="drivers" @close="closeTagsDialog" @insert="onInsert" />
+    <TagsDialog :visible="tagsDialogVisible" :widgetModel="widgetModel" :mode="tagsDialogMode" widgetType="html" :drivers="drivers" :variables="variables" @close="closeTagsDialog" @insert="onInsert" />
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IVariable, IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
 import VCodeMirror, { CodeMirror } from 'codemirror-editor-vue3'
 import TieredMenu from 'primevue/tieredmenu'
 import TagsDialog from '../../common/editor/WidgetTagsDialog.vue'
@@ -19,7 +19,7 @@ import TagsDialog from '../../common/editor/WidgetTagsDialog.vue'
 export default defineComponent({
     name: 'widget-responsive',
     components: { VCodeMirror, TieredMenu, TagsDialog },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, activeIndex: { type: Number, required: true }, drivers: { type: Array as PropType<any[]>, required: true } },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, activeIndex: { type: Number, required: true }, drivers: { type: Array as PropType<any[]>, required: true }, variables: { type: Array as PropType<IVariable[]>, required: true } },
     data() {
         return {
             codeMirrorHtmlEditor: null as any,

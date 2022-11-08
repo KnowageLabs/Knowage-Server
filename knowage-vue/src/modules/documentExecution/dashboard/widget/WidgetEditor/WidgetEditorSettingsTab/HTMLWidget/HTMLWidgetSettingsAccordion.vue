@@ -12,7 +12,7 @@
                 <WidgetBordersStyle v-else-if="accordion.type === 'BordersStyle'" :widgetModel="widgetModel"></WidgetBordersStyle>
                 <WidgetShadowsStyle v-else-if="accordion.type === 'ShadowsStyle'" :widgetModel="widgetModel"></WidgetShadowsStyle>
                 <WidgetResponsive v-else-if="accordion.type === 'Responsive'" :widgetModel="widgetModel"></WidgetResponsive>
-                <WidgetHtmlEditor v-else-if="accordion.type === 'HTML'" :activeIndex="activeIndex" :widgetModel="widgetModel" :drivers="drivers"></WidgetHtmlEditor>
+                <WidgetHtmlEditor v-else-if="accordion.type === 'HTML'" :activeIndex="activeIndex" :widgetModel="widgetModel" :drivers="drivers" :variables="variables"></WidgetHtmlEditor>
                 <WidgetCssEditor v-else-if="accordion.type === 'CSS'" :widgetModel="widgetModel"></WidgetCssEditor>
                 <WidgetCrossNavigation v-else-if="accordion.type === 'CrossNavigation'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets"></WidgetCrossNavigation>
                 <WidgetInteractionsLinks v-else-if="accordion.type === 'Link'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :drivers="drivers"></WidgetInteractionsLinks>
@@ -66,7 +66,7 @@ export default defineComponent({
         datasets: { type: Array as PropType<IDataset[]> },
         selectedDatasets: { type: Array as PropType<IDataset[]> },
         drivers: { type: Array, required: true },
-        variables: { type: Array as PropType<IVariable[]> },
+        variables: { type: Array as PropType<IVariable[]>, required: true },
         dashboardId: { type: String, required: true }
     },
     data() {

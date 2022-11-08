@@ -9,8 +9,8 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import Dropdown from 'primevue/dropdown'
 import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
+import Dropdown from 'primevue/dropdown'
 
 export default defineComponent({
     name: 'widget-editor-active-selections',

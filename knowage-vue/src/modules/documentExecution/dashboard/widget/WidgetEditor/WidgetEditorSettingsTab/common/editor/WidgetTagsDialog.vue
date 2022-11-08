@@ -16,6 +16,7 @@
 
             <WidgetEditorParameters v-if="mode === 'parameters'" :drivers="drivers" @insertChanged="onInsertChanged"></WidgetEditorParameters>
             <WidgetEditorActiveSelections v-else-if="mode === 'activesel'" :widgetModel="widgetModel" @insertChanged="onInsertChanged"></WidgetEditorActiveSelections>
+            <WidgetEditorVariables v-else-if="mode === 'variables'" :variables="variables" @insertChanged="onInsertChanged"></WidgetEditorVariables>
         </div>
 
         <template #footer>
@@ -27,17 +28,18 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IVariable, IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
 import Dialog from 'primevue/dialog'
 import descriptor from './WidgetTagsDialogDescriptor.json'
 import Message from 'primevue/message'
 import WidgetEditorParameters from './options/WidgetEditorParameters.vue'
 import WidgetEditorActiveSelections from './options/WidgetEditorActiveSelections.vue'
+import WidgetEditorVariables from './options/WidgetEditorVariables.vue'
 
 export default defineComponent({
     name: 'olap-custom-view-save-dialog',
-    components: { Dialog, Message, WidgetEditorParameters, WidgetEditorActiveSelections },
-    props: { visible: Boolean, widgetModel: { type: Object as PropType<IWidget>, required: true }, mode: { type: String, required: true }, widgetType: String, drivers: { type: Array as PropType<any[]>, required: true } },
+    components: { Dialog, Message, WidgetEditorParameters, WidgetEditorActiveSelections, WidgetEditorVariables },
+    props: { visible: Boolean, widgetModel: { type: Object as PropType<IWidget>, required: true }, mode: { type: String, required: true }, widgetType: String, drivers: { type: Array as PropType<any[]>, required: true }, variables: { type: Array as PropType<IVariable[]>, required: true } },
     emited: ['close', 'insert'],
     computed: {},
     data() {
