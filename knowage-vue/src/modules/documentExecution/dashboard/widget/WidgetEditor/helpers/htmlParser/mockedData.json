@@ -1,0 +1,60 @@
+{
+    "metaData": {
+        "cacheDate": "2022-11-08 15:04:00.000",
+        "fields": [
+            "recNo",
+            {
+                "dataIndex": "column_1",
+                "header": "date",
+                "multiValue": false,
+                "name": "column_1",
+                "type": "string"
+            },
+            {
+                "dataIndex": "column_2",
+                "header": "documents",
+                "multiValue": false,
+                "name": "column_2",
+                "precision": 19,
+                "scale": 0,
+                "type": "int"
+            }
+        ],
+        "id": "id",
+        "root": "rows",
+        "totalProperty": "results"
+    },
+    "results": 6,
+    "rows": [
+        {
+            "column_1": "2022 10 19",
+            "column_2": 138,
+            "id": 1
+        },
+        {
+            "column_1": "2022 11 07",
+            "column_2": 100,
+            "id": 2
+        },
+        {
+            "column_1": "2022 10 25",
+            "column_2": 99,
+            "id": 3
+        },
+        {
+            "column_1": "2022 10 20",
+            "column_2": 98,
+            "id": 4
+        },
+        {
+            "column_1": "2022 10 17",
+            "column_2": 96,
+            "id": 5
+        },
+        {
+            "column_1": "2022 09 16",
+            "column_2": 92,
+            "id": 6
+        }
+    ]
+}

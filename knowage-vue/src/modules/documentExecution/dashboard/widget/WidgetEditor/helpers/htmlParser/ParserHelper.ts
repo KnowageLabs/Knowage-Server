@@ -1,5 +1,6 @@
-import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard";
-
+import { ISelection, IVariable, IWidget } from "@/modules/documentExecution/dashboard/Dashboard";
+import { formatSelectionForDisplay } from "../../../ActiveSelectionsWidget/ActiveSelectionsWidgetHelpers";
+import deepcopy from "deepcopy";
 
 const widgetIdRegex = /\[kn-widget-id\]/g;
 const activeSelectionsRegex = /(?:\[kn-active-selection(?:=\'([a-zA-Z0-9\_\-]+)\')?\s?\])/g;
@@ -19,12 +20,20 @@ const gt = /(\<.*kn-.*=["].*)(>)(.*["].*\>)/g;
 const lt = /(\<.*kn-.*=["].*)(<)(.*["].*\>)/g;
 
 let drivers = [] as any[]
+let variables = [] as IVariable[]
+let activeSelections = [] as ISelection[]
+let widgetModel = null as IWidget | null
 
-export const parseHtml = (widgetModel: IWidget, tempDrivers: any[]) => {
+import mockedData from './mockedData.json'
+
+export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVariables: IVariable[], tempSelections: ISelection[]) => {
     drivers = tempDrivers
+    variables = tempVariables
+    activeSelections = tempSelections
+    widgetModel = tempWidgetModel
+
 
     const html = widgetModel.settings.editor.html
-    console.log('>>> PARSE HTML: ', html)
 
     if (html) {
         let wrappedHtmlToRender = "<div>" + html + " </div>";
@@ -35,26 +44,83 @@ export const parseHtml = (widgetModel: IWidget, tempDrivers: any[]) => {
     }
 }
 
-const parseHtmlFunctions = (wrappedHtmlToRender: string) => {
-    checkPlaceholders(wrappedHtmlToRender)
+const parseHtmlFunctions = (rawHtml: string) => {
+    const parser = new DOMParser()
+    const parsedHtml = parser.parseFromString(rawHtml, "text/html");
+    let allElements = parsedHtml.getElementsByTagName('*');
+    allElements = parseRepeat(allElements);
+    // allElements = $scope.parseIf(allElements);  // TODO
+    //  allElements = $scope.parseAttrs(allElements);  // TODO
+    console.log(">>>>>>>>> ALL ELEMENTS: ", allElements)
+    checkPlaceholders(parsedHtml)
+}
+
+const parseRepeat = (allElements: any) => {
+    let i = 0;
+    do {
+        if (!allElements[i].innerHTML) allElements[i].innerHTML = ' ';
+        if (allElements[i] && allElements[i].hasAttribute("kn-repeat")) {
+            if (eval(checkAttributePlaceholders(allElements[i].getAttribute('kn-repeat')))) {
+                allElements[i].removeAttribute("kn-repeat");
+
+                let limit = allElements[i].hasAttribute("limit") && (allElements[i].hasAttribute("limit") <= mockedData.rows.length) ? allElements[i].getAttribute('limit') : mockedData.rows.length;
+                if (allElements[i].hasAttribute("limit") && allElements[i].getAttribute('limit') == -1) limit = mockedData.rows.length;
+                if (allElements[i].hasAttribute("limit")) allElements[i].removeAttribute("limit");
+                const repeatedElement = deepcopy(allElements[i]);
+                let tempElement;
+                for (let j = 0; j < limit; j++) {
+                    const tempRow = deepcopy(repeatedElement);
+                    tempRow.innerHTML = tempRow.innerHTML.replace(columnRegex, function (match, c1, c2, c3, precision, format) {
+                        let precisionPlaceholder = '';
+                        let formatPlaceholder = '';
+                        if (format) formatPlaceholder = ' format';
+                        if (precision) precisionPlaceholder = " precision='" + precision + "'";
+                        return "[kn-column=\'" + c1 + "\' row=\'" + (c2 || j) + "\'" + precisionPlaceholder + formatPlaceholder + "]";
+                    });
+                    tempRow.innerHTML = tempRow.innerHTML.replace(repeatIndexRegex, j);
+                    if (j == 0) {
+                        tempElement = tempRow.outerHTML;
+                    } else {
+                        tempElement += tempRow.outerHTML;
+                    }
+                }
+                allElements[i].outerHTML = tempElement;
+            } else {
+                allElements[i].outerHTML = "";
+            }
+        } i++;
+    } while (i < allElements.length);
+    return allElements;
+}
+
+const checkAttributePlaceholders = (bla) => {
+    return ''
 }
 
 
-const checkPlaceholders = (rawHtml: string) => {
-    let resultHtml = rawHtml;
+const checkPlaceholders = (document: Document) => {
+    let resultHtml = document.firstChild ? (document.firstChild as any).innerHTML : '';
 
 
     // if ($scope.datasetLabel) {
     //     resultHtml = resultHtml.replace($scope.columnRegex, $scope.replacer);
-    //     resultHtml = resultHtml.replace($scope.activeSelectionsRegex, $scope.activeSelectionsReplacer);
+    //  
     // }
-    resultHtml = replaceWidgetId(resultHtml);
+    resultHtml = resultHtml.replace(activeSelectionsRegex, activeSelectionsReplacer);
+    resultHtml = replaceWidgetId(resultHtml);  // TODO
     resultHtml = resultHtml.replace(paramsRegex, paramsReplacer);
-    resultHtml = replaceVariables(resultHtml);
-    resultHtml = replaceI18N(resultHtml);
+    resultHtml = resultHtml.replace(variablesRegex, variablesReplacer);
+    resultHtml = replaceI18N(resultHtml);  // TODO
     console.log(">>>>>>>>>> RESULT HTML: ", resultHtml)
     return resultHtml
 }
+
+const activeSelectionsReplacer = (match: string, columnName: string) => {
+    const index = activeSelections.findIndex((selection: ISelection) => selection.datasetId === widgetModel?.dataset && selection.columnName === columnName)
+    return index !== -1 ? formatSelectionForDisplay(activeSelections[index]) : 'null'
+}
+
+
 
 const replaceWidgetId = (rawHtml: string) => {
     // resultHtml.replace($scope.widgetIdRegex, 'w' + $scope.ngModel.id);
@@ -70,9 +136,11 @@ const paramsReplacer = (match: string, p1: string, p2: string) => {
     return addSlashes(result)
 }
 
-const replaceVariables = (rawHtml: string) => {
-    // resultHtml.replace($scope.variablesRegex, $scope.variablesReplacer);
-    return rawHtml
+const variablesReplacer = (match: string, p1: string, p2: string) => {
+    const index = variables.findIndex((variable: IVariable) => variable.name === p1)
+    if (index === -1) return null
+    const result = p2 && variables[index].pivotedValues ? variables[index].pivotedValues[p2] : variables[index].value
+    return result || null
 }
 
 const replaceI18N = (rawHtml: string) => {

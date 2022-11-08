@@ -6,6 +6,7 @@
             <div v-if="widgetTitle && widgetTitle.enabled" class="p-d-flex p-ai-center" style="border-radius: 0px" :style="getWidgetTitleStyle()">
                 {{ widgetTitle?.text }}
             </div>
+            <Button v-if="propWidget.type == 'html'" icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" v-tooltip.left="$t('common.todo')" @click="test">TODO</Button>
             <div class="widget-container-renderer" :style="getWidgetPadding()">
                 <TableWidget v-if="propWidget.type == 'table'" :propWidget="propWidget" :datasets="datasets" :dataToShow="widgetData" :editorMode="true" @pageChanged="getWidgetData" />
                 <SelectorWidget v-if="propWidget.type == 'selector'" :propWidget="propWidget" :dataToShow="widgetData" :widgetInitialData="widgetData" :editorMode="true" />
@@ -17,7 +18,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IDataset, ISelection, IWidget } from '../../Dashboard'
+import { IDataset, ISelection, IVariable, IWidget } from '../../Dashboard'
 import { getWidgetStyleByType } from '../TableWidget/TableWidgetHelper'
 import mock from '../../dataset/DatasetEditorTestMocks.json'
 import descriptor from '../../dataset/DatasetEditorDescriptor.json'
@@ -30,6 +31,7 @@ import ProgressBar from 'primevue/progressbar'
 import { mapState, mapActions } from 'pinia'
 import store from '../../Dashboard.store'
 import deepcopy from 'deepcopy'
+import { parseHtml } from './helpers/htmlParser/ParserHelper'
 
 export default defineComponent({
     name: 'widget-editor-preview',
@@ -37,7 +39,9 @@ export default defineComponent({
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDataset[]>, required: true },
-        dashboardId: { type: String, required: true }
+        dashboardId: { type: String, required: true },
+        drivers: { type: Array as PropType<any[]>, required: true },
+        variables: { type: Array as PropType<IVariable[]>, required: true }
     },
     data() {
         return {
@@ -100,6 +104,10 @@ export default defineComponent({
         getWidgetPadding() {
             const styleString = getWidgetStyleByType(this.propWidget, 'padding')
             return styleString
+        },
+        test() {
+            // TODO
+            parseHtml(this.propWidget, this.drivers, this.variables, this.getSelections(this.dashboardId))
         }
     }
 })

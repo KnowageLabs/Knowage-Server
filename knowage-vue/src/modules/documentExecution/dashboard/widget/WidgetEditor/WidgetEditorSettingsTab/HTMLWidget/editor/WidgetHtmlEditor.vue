@@ -1,9 +1,7 @@
 <template>
     <!-- <Button icon="fas fa-terminal" class="p-button-text p-button-rounded p-button-plain" @click="logModel" /> -->
-    <Button icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" v-tooltip.left="$t('common.todo')" @click="test">TODO</Button>
     <div class="htmlMirrorContainer" style="height: 500px; width: 100%">
         <Button icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain editor-tags-menu-button" v-tooltip.left="$t('common.menu')" @click="toggle"></Button>
-
         <VCodeMirror ref="codeMirrorHtmlEditor" v-model:value="widgetModel.settings.editor.html" :options="scriptOptions" />
     </div>
 
@@ -14,13 +12,10 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IVariable, IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
-import VCodeMirror, { CodeMirror } from 'codemirror-editor-vue3'
+import VCodeMirror from 'codemirror-editor-vue3'
 import TieredMenu from 'primevue/tieredmenu'
 import TagsDialog from '../../common/editor/WidgetTagsDialog.vue'
 import { IDataset } from '@/modules/documentExecution/dashboard/Dashboard'
-
-// TODO - remove this
-import { parseHtml } from '../../../../../widget/WidgetEditor/helpers/htmlParser/ParserHelper'
 
 export default defineComponent({
     name: 'widget-responsive',
@@ -30,7 +25,8 @@ export default defineComponent({
         activeIndex: { type: Number, required: true },
         drivers: { type: Array as PropType<any[]>, required: true },
         variables: { type: Array as PropType<IVariable[]>, required: true },
-        selectedDatasets: { type: Array as PropType<IDataset[]> }
+        selectedDatasets: { type: Array as PropType<IDataset[]> },
+        dashboardId: { type: String, required: true }
     },
     data() {
         return {
@@ -83,28 +79,64 @@ export default defineComponent({
         createMenuItems() {
             this.toolbarMenuItems.length = 0
             this.toolbarMenuItems.push(
-                { label: this.$t('dashboard.widgetEditor.editorTags.columnsData'), command: () => this.openTagsDialog('columnsData') },
-                { label: this.$t('dashboard.widgetEditor.editorTags.parameters'), command: () => this.openTagsDialog('parameters') },
-                { label: this.$t('dashboard.widgetEditor.editorTags.variables'), command: () => this.openTagsDialog('variables') },
-                { label: this.$t('dashboard.widgetEditor.editorTags.internationalization'), command: () => this.openTagsDialog('internationalization') },
+                {
+                    label: this.$t('dashboard.widgetEditor.editorTags.columnsData'),
+                    command: () => this.openTagsDialog('columnsData')
+                },
+                {
+                    label: this.$t('dashboard.widgetEditor.editorTags.parameters'),
+                    command: () => this.openTagsDialog('parameters')
+                },
+                {
+                    label: this.$t('dashboard.widgetEditor.editorTags.variables'),
+                    command: () => this.openTagsDialog('variables')
+                },
+                {
+                    label: this.$t('dashboard.widgetEditor.editorTags.internationalization'),
+                    command: () => this.openTagsDialog('internationalization')
+                },
                 {
                     label: this.$t('dashboard.widgetEditor.editorTags.repeater'),
                     items: [
-                        { label: this.$t('dashboard.widgetEditor.editorTags.repeater'), command: () => this.openTagsDialog('repeater') },
-                        { label: this.$t('dashboard.widgetEditor.editorTags.repeatIndex'), command: () => this.openTagsDialog('repeatIndex') }
+                        {
+                            label: this.$t('dashboard.widgetEditor.editorTags.repeater'),
+                            command: () => this.openTagsDialog('repeater')
+                        },
+                        {
+                            label: this.$t('dashboard.widgetEditor.editorTags.repeatIndex'),
+                            command: () => this.openTagsDialog('repeatIndex')
+                        }
                     ]
                 },
-                { label: this.$t('dashboard.widgetEditor.editorTags.calculator'), command: () => this.openTagsDialog('calculator') },
+                {
+                    label: this.$t('dashboard.widgetEditor.editorTags.calculator'),
+                    command: () => this.openTagsDialog('calculator')
+                },
                 {
                     label: this.$t('dashboard.widgetEditor.interactions.title'),
                     items: [
-                        { label: this.$t('dashboard.widgetEditor.editorTags.selection'), command: () => this.openTagsDialog('selection') },
-                        { label: this.$t('dashboard.widgetEditor.editorTags.preview'), command: () => this.openTagsDialog('preview') },
-                        { label: this.$t('dashboard.widgetEditor.editorTags.crossnav'), command: () => this.openTagsDialog('crossnav') }
+                        {
+                            label: this.$t('dashboard.widgetEditor.editorTags.selection'),
+                            command: () => this.openTagsDialog('selection')
+                        },
+                        {
+                            label: this.$t('dashboard.widgetEditor.editorTags.preview'),
+                            command: () => this.openTagsDialog('preview')
+                        },
+                        {
+                            label: this.$t('dashboard.widgetEditor.editorTags.crossnav'),
+                            command: () => this.openTagsDialog('crossnav')
+                        }
                     ]
                 },
-                { label: this.$t('dashboard.widgetEditor.editorTags.conditional'), command: () => this.openTagsDialog('conditional') },
-                { label: this.$t('dashboard.widgetEditor.editorTags.activesel'), command: () => this.openTagsDialog('activesel') }
+                {
+                    label: this.$t('dashboard.widgetEditor.editorTags.conditional'),
+                    command: () => this.openTagsDialog('conditional')
+                },
+                {
+                    label: this.$t('dashboard.widgetEditor.editorTags.activesel'),
+                    command: () => this.openTagsDialog('activesel')
+                }
             )
         },
         openTagsDialog(mode: string) {
@@ -119,9 +151,6 @@ export default defineComponent({
             this.cursorPosition = this.codeMirrorHtmlEditor.getCursor()
             this.codeMirrorHtmlEditor.replaceRange(value, this.cursorPosition)
             this.tagsDialogVisible = false
-        },
-        test() {
-            parseHtml(this.widgetModel, this.drivers)
         }
     }
 })

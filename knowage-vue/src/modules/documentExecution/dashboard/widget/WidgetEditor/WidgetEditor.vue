@@ -10,7 +10,7 @@
             </Toolbar>
             <div class="datasetEditor-container kn-overflow">
                 <WidgetEditorTabs class="dashboardEditor-tabs" :propWidget="widget" :datasets="datasets" :selectedDatasets="selectedDatasets" :drivers="drivers" :variables="variables" :dashboardId="dashboardId" @datasetSelected="onDatasetSelected" />
-                <WidgetEditorPreview :propWidget="widget" :dashboardId="dashboardId" :datasets="datasets" />
+                <WidgetEditorPreview :propWidget="widget" :dashboardId="dashboardId" :datasets="datasets" :drivers="documentDrivers" :variables="variables" />
             </div>
         </div>
     </Teleport>
@@ -47,7 +47,10 @@ export default defineComponent({
             descriptor,
             widget: {} as any,
             previewData: null as any,
-            datasetFunctions: {} as { availableFunctions: string[]; nullifFunction: string[] },
+            datasetFunctions: {} as {
+                availableFunctions: string[]
+                nullifFunction: string[]
+            },
             selectedModelDatasets: [] as IModelDataset[],
             selectedDatasets: [] as IDataset[],
             drivers: [] as any[]
@@ -84,7 +87,14 @@ export default defineComponent({
             for (let i = 0; i < this.selectedModelDatasets.length; i++) {
                 const tempDataset = this.selectedModelDatasets[i]
                 const index = this.datasets.findIndex((dataset: any) => dataset.id.dsId === tempDataset.id)
-                if (index !== -1) this.selectedDatasets.push({ ...this.datasets[index], cache: tempDataset.cache, indexes: tempDataset.indexes ?? [], parameters: tempDataset.parameters as any[], drivers: tempDataset.drivers ?? [] })
+                if (index !== -1)
+                    this.selectedDatasets.push({
+                        ...this.datasets[index],
+                        cache: tempDataset.cache,
+                        indexes: tempDataset.indexes ?? [],
+                        parameters: tempDataset.parameters as any[],
+                        drivers: tempDataset.drivers ?? []
+                    })
             }
         },
         loadDrivers() {
