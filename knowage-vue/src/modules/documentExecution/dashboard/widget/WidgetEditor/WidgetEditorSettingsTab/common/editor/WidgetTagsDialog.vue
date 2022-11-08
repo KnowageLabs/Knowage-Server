@@ -14,12 +14,15 @@
             </Message>
 
             <WidgetEditorParameters v-if="mode === 'parameters'" :drivers="drivers" @insertChanged="onInsertChanged"></WidgetEditorParameters>
-            <WidgetEditorActiveSelections v-else-if="mode === 'activesel'" :widgetModel="widgetModel" @insertChanged="onInsertChanged"></WidgetEditorActiveSelections>
-            <WidgetEditorRepeater v-else-if="mode === 'repeater'" :widgetModel="widgetModel" @insertChanged="onInsertChanged"></WidgetEditorRepeater>
-            <WidgetEditorCalculator v-else-if="mode === 'calculator'" :widgetModel="widgetModel" @insertChanged="onInsertChanged"></WidgetEditorCalculator>
-            <WidgetEditorRepeatIndex v-else-if="mode === 'repeatIndex'" :widgetModel="widgetModel"></WidgetEditorRepeatIndex>
             <WidgetEditorVariables v-else-if="mode === 'variables'" :variables="variables" @insertChanged="onInsertChanged"></WidgetEditorVariables>
+            <WidgetEditorInternationalization v-else-if="mode === 'internationalization'" @insertChanged="onInsertChanged"></WidgetEditorInternationalization>
+            <WidgetEditorRepeater v-else-if="mode === 'repeater'" :widgetModel="widgetModel" @insertChanged="onInsertChanged"></WidgetEditorRepeater>
+            <WidgetEditorRepeatIndex v-else-if="mode === 'repeatIndex'" :widgetModel="widgetModel"></WidgetEditorRepeatIndex>
+            <WidgetEditorCalculator v-else-if="mode === 'calculator'" @insertChanged="onInsertChanged"></WidgetEditorCalculator>
+            <WidgetEditorPreview v-else-if="mode === 'preview'" :widgetModel="widgetModel" :selectedDatasets="selectedDatasets" @insertChanged="onInsertChanged"></WidgetEditorPreview>
             <WidgetEditorConditionalContainer v-else-if="mode === 'conditional'" @insertChanged="onInsertChanged"></WidgetEditorConditionalContainer>
+            <WidgetEditorActiveSelections v-else-if="mode === 'activesel'" :widgetModel="widgetModel" @insertChanged="onInsertChanged"></WidgetEditorActiveSelections>
+            <WidgetEditorSelection v-else-if="mode === 'selection'" :widgetModel="widgetModel" @insertChanged="onInsertChanged"></WidgetEditorSelection>
         </div>
 
         <template #footer>
@@ -31,7 +34,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IVariable, IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IDataset, IVariable, IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
 import Dialog from 'primevue/dialog'
 import descriptor from './WidgetTagsDialogDescriptor.json'
 import Message from 'primevue/message'
@@ -42,11 +45,22 @@ import WidgetEditorRepeater from './options/WidgetEditorRepeater.vue'
 import WidgetEditorRepeatIndex from './options/WidgetEditorRepeatIndex.vue'
 import WidgetEditorConditionalContainer from './options/WidgetEditorConditionalContainer.vue'
 import WidgetEditorCalculator from './options/WidgetEditorCalculator.vue'
+import WidgetEditorInternationalization from './options/WidgetEditorInternationalization.vue'
+import WidgetEditorPreview from './options/WidgetEditorPreview.vue'
+import WidgetEditorSelection from './options/WidgetEditorSelection.vue'
 
 export default defineComponent({
     name: 'olap-custom-view-save-dialog',
-    components: { Dialog, Message, WidgetEditorParameters, WidgetEditorActiveSelections, WidgetEditorVariables, WidgetEditorRepeater, WidgetEditorRepeatIndex, WidgetEditorConditionalContainer, WidgetEditorCalculator },
-    props: { visible: Boolean, widgetModel: { type: Object as PropType<IWidget>, required: true }, mode: { type: String, required: true }, widgetType: String, drivers: { type: Array as PropType<any[]>, required: true }, variables: { type: Array as PropType<IVariable[]>, required: true } },
+    components: { Dialog, Message, WidgetEditorParameters, WidgetEditorActiveSelections, WidgetEditorVariables, WidgetEditorRepeater, WidgetEditorRepeatIndex, WidgetEditorConditionalContainer, WidgetEditorCalculator, WidgetEditorInternationalization, WidgetEditorPreview, WidgetEditorSelection },
+    props: {
+        visible: Boolean,
+        widgetModel: { type: Object as PropType<IWidget>, required: true },
+        mode: { type: String, required: true },
+        widgetType: String,
+        drivers: { type: Array as PropType<any[]>, required: true },
+        variables: { type: Array as PropType<IVariable[]>, required: true },
+        selectedDatasets: { type: Array as PropType<IDataset[]> }
+    },
     emited: ['close', 'insert'],
     computed: {},
     data() {

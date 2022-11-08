@@ -430,6 +430,7 @@
             "editor": "Editor",
             "editorTags": {
                 "activesel": "Active Selection",
+                "calc": "Calculation",
                 "calculator": "Calculator",
                 "columnsData": "Columns Data",
                 "conditional": "Conditional Container",
@@ -446,19 +447,20 @@
                     "repeatIndex": "This tag is used inside a kn-repeat to get the current row value of the repeater..Dynamic fields from dataset will take the value of the repeated row.",
                     "repeater": "This tag is used to repeat the HTML section delimited by the tag ending for every row in the dataset if the condition is verified. Set the condition to \"true\" to always show.The limit attribute limits the number of rows shown. Dynamic fields from dataset will take the value of the repeated row.",
                     "selection": "This tag is used to create an interactive element generating a selection on the specified column with the specified value.",
-                    "variables": "This tag is used to show the value of the selected variable.",
-                    "toLocale": "TODO: Add to locale hint"
+                    "toLocale": "TODO: Add to locale hint",
+                    "variables": "This tag is used to show the value of the selected variable."
                 },
-                "toLocale": "Format to locale",
+                "i18n": "i18n",
                 "internationalization": "Internationalization",
+                "limit": "Limit",
                 "parameters": "Parameters",
                 "preview": "Preview",
                 "repeatIndex": "Repeat Index",
                 "repeater": "Repeater",
                 "selection": "Selection",
-                "variables": "Variables",
-                "limit": "Limit",
-                "calc": "Calculation"
+                "selectionVal": "Selection Value",
+                "toLocale": "Format to locale",
+                "variables": "Variables"
             },
             "enableFilter": "Enable Filter",
             "enableTooltip": "Enable Tooltip",
