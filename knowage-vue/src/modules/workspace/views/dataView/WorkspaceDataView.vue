@@ -394,8 +394,9 @@ export default defineComponent({
         async loadDatasetDrivers(dataset) {
             let hasError = false
             if (dataset.label && dataset.id && dataset.dsTypeCd !== 'Prepared') {
+                let postPayload = { role: this.userRole || this.user.roles[0] }
                 await this.$http
-                    .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/datasets/${dataset.label}/filters`, { role: this.userRole })
+                    .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/datasets/${dataset.label}/filters`, postPayload)
                     .then((response: AxiosResponse<any>) => {
                         this.filtersData = response.data
                         if (this.filtersData.filterStatus) {
