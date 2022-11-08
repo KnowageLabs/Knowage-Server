@@ -1,6 +1,6 @@
 import { ISelection, IVariable, IWidget } from "@/modules/documentExecution/dashboard/Dashboard";
 import { formatSelectionForDisplay } from "../../../ActiveSelectionsWidget/ActiveSelectionsWidgetHelpers";
-
+import deepcopy from "deepcopy";
 
 const widgetIdRegex = /\[kn-widget-id\]/g;
 const activeSelectionsRegex = /(?:\[kn-active-selection(?:=\'([a-zA-Z0-9\_\-]+)\')?\s?\])/g;
@@ -24,6 +24,8 @@ let variables = [] as IVariable[]
 let activeSelections = [] as ISelection[]
 let widgetModel = null as IWidget | null
 
+import mockedData from './mockedData.json'
+
 export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVariables: IVariable[], tempSelections: ISelection[]) => {
     drivers = tempDrivers
     variables = tempVariables
@@ -42,13 +44,62 @@ export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVari
     }
 }
 
-const parseHtmlFunctions = (wrappedHtmlToRender: string) => {
-    checkPlaceholders(wrappedHtmlToRender)
+const parseHtmlFunctions = (rawHtml: string) => {
+    const parser = new DOMParser()
+    const parsedHtml = parser.parseFromString(rawHtml, "text/html");
+    let allElements = parsedHtml.getElementsByTagName('*');
+    allElements = parseRepeat(allElements);
+    // allElements = $scope.parseIf(allElements);  // TODO
+    //  allElements = $scope.parseAttrs(allElements);  // TODO
+    console.log(">>>>>>>>> ALL ELEMENTS: ", allElements)
+    checkPlaceholders(parsedHtml)
+}
+
+const parseRepeat = (allElements: any) => {
+    let i = 0;
+    do {
+        if (!allElements[i].innerHTML) allElements[i].innerHTML = ' ';
+        if (allElements[i] && allElements[i].hasAttribute("kn-repeat")) {
+            if (eval(checkAttributePlaceholders(allElements[i].getAttribute('kn-repeat')))) {
+                allElements[i].removeAttribute("kn-repeat");
+
+                let limit = allElements[i].hasAttribute("limit") && (allElements[i].hasAttribute("limit") <= mockedData.rows.length) ? allElements[i].getAttribute('limit') : mockedData.rows.length;
+                if (allElements[i].hasAttribute("limit") && allElements[i].getAttribute('limit') == -1) limit = mockedData.rows.length;
+                if (allElements[i].hasAttribute("limit")) allElements[i].removeAttribute("limit");
+                const repeatedElement = deepcopy(allElements[i]);
+                let tempElement;
+                for (let j = 0; j < limit; j++) {
+                    const tempRow = deepcopy(repeatedElement);
+                    tempRow.innerHTML = tempRow.innerHTML.replace(columnRegex, function (match, c1, c2, c3, precision, format) {
+                        let precisionPlaceholder = '';
+                        let formatPlaceholder = '';
+                        if (format) formatPlaceholder = ' format';
+                        if (precision) precisionPlaceholder = " precision='" + precision + "'";
+                        return "[kn-column=\'" + c1 + "\' row=\'" + (c2 || j) + "\'" + precisionPlaceholder + formatPlaceholder + "]";
+                    });
+                    tempRow.innerHTML = tempRow.innerHTML.replace(repeatIndexRegex, j);
+                    if (j == 0) {
+                        tempElement = tempRow.outerHTML;
+                    } else {
+                        tempElement += tempRow.outerHTML;
+                    }
+                }
+                allElements[i].outerHTML = tempElement;
+            } else {
+                allElements[i].outerHTML = "";
+            }
+        } i++;
+    } while (i < allElements.length);
+    return allElements;
+}
+
+const checkAttributePlaceholders = (bla) => {
+    return ''
 }
 
 
-const checkPlaceholders = (rawHtml: string) => {
-    let resultHtml = rawHtml;
+const checkPlaceholders = (document: Document) => {
+    let resultHtml = document.firstChild ? (document.firstChild as any).innerHTML : '';
 
 
     // if ($scope.datasetLabel) {
