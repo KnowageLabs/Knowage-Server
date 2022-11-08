@@ -25,6 +25,7 @@ let activeSelections = [] as ISelection[]
 let widgetModel = null as IWidget | null
 
 import mockedData from './mockedData.json'
+const aggregationDataset = null as any  // TODO
 
 export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVariables: IVariable[], tempSelections: ISelection[]) => {
     drivers = tempDrivers
@@ -34,6 +35,7 @@ export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVari
 
 
     const html = widgetModel.settings.editor.html
+    console.log(">>>>>>>>>> LOADED HTML: ", html)
 
     if (html) {
         let wrappedHtmlToRender = "<div>" + html + " </div>";
@@ -49,7 +51,7 @@ const parseHtmlFunctions = (rawHtml: string) => {
     const parsedHtml = parser.parseFromString(rawHtml, "text/html");
     let allElements = parsedHtml.getElementsByTagName('*');
     allElements = parseRepeat(allElements);
-    // allElements = $scope.parseIf(allElements);  // TODO
+    allElements = parseIf(allElements);  // TODO - additional
     //  allElements = $scope.parseAttrs(allElements);  // TODO
     console.log(">>>>>>>>> ALL ELEMENTS: ", allElements)
     checkPlaceholders(parsedHtml)
@@ -62,29 +64,11 @@ const parseRepeat = (allElements: any) => {
         if (allElements[i] && allElements[i].hasAttribute("kn-repeat")) {
             if (eval(checkAttributePlaceholders(allElements[i].getAttribute('kn-repeat')))) {
                 allElements[i].removeAttribute("kn-repeat");
-
                 let limit = allElements[i].hasAttribute("limit") && (allElements[i].hasAttribute("limit") <= mockedData.rows.length) ? allElements[i].getAttribute('limit') : mockedData.rows.length;
                 if (allElements[i].hasAttribute("limit") && allElements[i].getAttribute('limit') == -1) limit = mockedData.rows.length;
                 if (allElements[i].hasAttribute("limit")) allElements[i].removeAttribute("limit");
                 const repeatedElement = deepcopy(allElements[i]);
-                let tempElement;
-                for (let j = 0; j < limit; j++) {
-                    const tempRow = deepcopy(repeatedElement);
-                    tempRow.innerHTML = tempRow.innerHTML.replace(columnRegex, function (match, c1, c2, c3, precision, format) {
-                        let precisionPlaceholder = '';
-                        let formatPlaceholder = '';
-                        if (format) formatPlaceholder = ' format';
-                        if (precision) precisionPlaceholder = " precision='" + precision + "'";
-                        return "[kn-column=\'" + c1 + "\' row=\'" + (c2 || j) + "\'" + precisionPlaceholder + formatPlaceholder + "]";
-                    });
-                    tempRow.innerHTML = tempRow.innerHTML.replace(repeatIndexRegex, j);
-                    if (j == 0) {
-                        tempElement = tempRow.outerHTML;
-                    } else {
-                        tempElement += tempRow.outerHTML;
-                    }
-                }
-                allElements[i].outerHTML = tempElement;
+                allElements[i].outerHTML = formatRepeatedElement(limit, repeatedElement);
             } else {
                 allElements[i].outerHTML = "";
             }
@@ -93,10 +77,72 @@ const parseRepeat = (allElements: any) => {
     return allElements;
 }
 
-const checkAttributePlaceholders = (bla) => {
-    return ''
+const formatRepeatedElement = (limit: number, repeatedElement: any) => {
+    let tempElement = null;
+    for (var j = 0; j < limit; j++) {
+        const tempRow = deepcopy(repeatedElement);
+        tempRow.innerHTML = tempRow.innerHTML.replace(columnRegex, function (match: string, columnName: string, row: string, c3: string, precision: string, format: string) {
+            let precisionPlaceholder = '';
+            let formatPlaceholder = '';
+            if (format) formatPlaceholder = ' format';
+            if (precision) precisionPlaceholder = " precision='" + precision + "'";
+            return "[kn-column=\'" + columnName + "\' row=\'" + (row || j) + "\'" + precisionPlaceholder + formatPlaceholder + "]";
+        }
+        );
+        tempRow.innerHTML = tempRow.innerHTML.replace(repeatIndexRegex, j);
+        j == 0 ? tempElement = tempRow.outerHTML : tempElement += tempRow.outerHTML
+    }
+    return tempElement
 }
 
+const parseIf = (allElements: any) => {
+    var j = 0;
+    var nodesNumber = allElements.length;
+    do {
+        if (allElements[j] && allElements[j].hasAttribute("kn-if")) {
+            var condition = allElements[j].getAttribute("kn-if").replace(columnRegex, ifConditionReplacer);
+            condition = condition.replace(activeSelectionsRegex, activeSelectionsReplacer);
+            //  condition = condition.replace(paramsRegex, ifConditionParamsReplacer);  // TODO
+            // condition = condition.replace(calcRegex, calcReplacer); // TODO
+            condition = condition.replace(variablesRegex, variablesReplacer);
+            // condition = condition.replace(i18nRegex, $scope.i18nReplacer);  // TODO
+            if (eval(condition)) {
+                allElements[j].removeAttribute("kn-if");
+            } else {
+                allElements[j].parentNode.removeChild(allElements[j]);
+                j--;
+            }
+        }
+        j++;
+
+    } while (j < nodesNumber);
+    return allElements;
+}
+
+// TODO
+const ifConditionReplacer = (match: string, p1: any, row: string, aggr: string, precision: number) => {
+    const columnInfo = getColumnFromName(p1, aggr ? aggregationDataset : mockedData, aggr);
+    if (!columnInfo) return p1;
+    if (aggr) {
+        p1 = aggregationDataset && aggregationDataset.rows[0] && aggregationDataset.rows[0][columnInfo.name] !== "" && typeof (aggregationDataset.rows[0][columnInfo.name]) != 'undefined' ? aggregationDataset.rows[0][columnInfo.name] : null;
+    }
+    else if (mockedData && mockedData.rows[row || 0] && typeof (mockedData.rows[row || 0][columnInfo.name]) != 'undefined' && mockedData.rows[row || 0][columnInfo.name] !== "") {
+        let columnValue = mockedData.rows[row || 0][columnInfo.name];
+        if (typeof columnValue == 'string') columnValue = addSlashes(columnValue);
+        p1 = columnInfo.type == 'string' ? '\'' + columnValue + '\'' : columnValue;
+    } else {
+        p1 = null;
+    }
+    return (precision && !isNaN(p1)) ? parseFloat(p1).toFixed(precision) : p1;
+}
+
+
+const checkAttributePlaceholders = (rawAttribute: string) => {
+    // TODO
+    // let resultAttribute = rawAttribute.replace($scope.columnRegex, $scope.replacer); - TODO
+    let resultAttribute = rawAttribute.replace(paramsRegex, paramsReplacer);
+    return resultAttribute;
+}
 
 const checkPlaceholders = (document: Document) => {
     let resultHtml = document.firstChild ? (document.firstChild as any).innerHTML : '';
@@ -150,4 +196,12 @@ const replaceI18N = (rawHtml: string) => {
 
 const addSlashes = (value: string | null) => {
     return (value + '').replace(/\"/g, '&quot;').replace(/\'/g, '&apos;').replace(/\u0000/g, '\\0');
+}
+
+const getColumnFromName = (columnName: string, datasetData: any, aggregation: any) => {
+    for (var i in datasetData.metaData.fields) {
+        if (typeof datasetData.metaData.fields[i].header != 'undefined' && datasetData.metaData.fields[i].header.toLowerCase() == (aggregation ? columnName + '_' + aggregation : columnName).toLowerCase()) {
+            return { 'name': datasetData.metaData.fields[i].name, 'type': datasetData.metaData.fields[i].type };
+        }
+    }
 }
