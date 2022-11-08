@@ -114,7 +114,7 @@ export default defineComponent({
             this.tagsDialogVisible = false
         },
         test() {
-            parseHtml(this.widgetModel, this.drivers)
+            parseHtml(this.widgetModel, this.drivers, this.variables)
         }
     }
 })

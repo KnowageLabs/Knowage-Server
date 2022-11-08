@@ -1,4 +1,4 @@
-import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard";
+import { IVariable, IWidget } from "@/modules/documentExecution/dashboard/Dashboard";
 
 
 const widgetIdRegex = /\[kn-widget-id\]/g;
@@ -19,9 +19,11 @@ const gt = /(\<.*kn-.*=["].*)(>)(.*["].*\>)/g;
 const lt = /(\<.*kn-.*=["].*)(<)(.*["].*\>)/g;
 
 let drivers = [] as any[]
+let variables = [] as IVariable[]
 
-export const parseHtml = (widgetModel: IWidget, tempDrivers: any[]) => {
+export const parseHtml = (widgetModel: IWidget, tempDrivers: any[], tempVariables: IVariable[]) => {
     drivers = tempDrivers
+    variables = tempVariables
 
     const html = widgetModel.settings.editor.html
     console.log('>>> PARSE HTML: ', html)
@@ -50,7 +52,7 @@ const checkPlaceholders = (rawHtml: string) => {
     // }
     resultHtml = replaceWidgetId(resultHtml);
     resultHtml = resultHtml.replace(paramsRegex, paramsReplacer);
-    resultHtml = replaceVariables(resultHtml);
+    resultHtml = resultHtml.replace(variablesRegex, variablesReplacer);
     resultHtml = replaceI18N(resultHtml);
     console.log(">>>>>>>>>> RESULT HTML: ", resultHtml)
     return resultHtml
@@ -70,9 +72,11 @@ const paramsReplacer = (match: string, p1: string, p2: string) => {
     return addSlashes(result)
 }
 
-const replaceVariables = (rawHtml: string) => {
-    // resultHtml.replace($scope.variablesRegex, $scope.variablesReplacer);
-    return rawHtml
+const variablesReplacer = (match: string, p1: string, p2: string) => {
+    const index = variables.findIndex((variable: IVariable) => variable.name === p1)
+    if (index === -1) return null
+    const result = p2 && variables[index].pivotedValues ? variables[index].pivotedValues[p2] : variables[index].value
+    return result || null
 }
 
 const replaceI18N = (rawHtml: string) => {
