@@ -25,6 +25,7 @@ let activeSelections = [] as ISelection[]
 let widgetModel = null as IWidget | null
 
 import mockedData from './mockedData.json'
+const aggregationDataset = null as any  // TODO
 
 export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVariables: IVariable[], tempSelections: ISelection[]) => {
     drivers = tempDrivers
@@ -50,7 +51,7 @@ const parseHtmlFunctions = (rawHtml: string) => {
     const parsedHtml = parser.parseFromString(rawHtml, "text/html");
     let allElements = parsedHtml.getElementsByTagName('*');
     allElements = parseRepeat(allElements);
-    // allElements = $scope.parseIf(allElements);  // TODO
+    allElements = parseIf(allElements);  // TODO - additional
     //  allElements = $scope.parseAttrs(allElements);  // TODO
     console.log(">>>>>>>>> ALL ELEMENTS: ", allElements)
     checkPlaceholders(parsedHtml)
@@ -94,13 +95,47 @@ const formatRepeatedElement = (limit: number, repeatedElement: any) => {
     return tempElement
 }
 
-const columnPlaceholderReplacer = function (match, c1, c2, c3, precision, format) {
-    let precisionPlaceholder = '';
-    let formatPlaceholder = '';
-    if (format) formatPlaceholder = ' format';
-    if (precision) precisionPlaceholder = " precision='" + precision + "'";
-    //  return "[kn-column=\'" + c1 + "\' row=\'" + (c2 || j) + "\'" + precisionPlaceholder + formatPlaceholder + "]";
+const parseIf = (allElements: any) => {
+    var j = 0;
+    var nodesNumber = allElements.length;
+    do {
+        if (allElements[j] && allElements[j].hasAttribute("kn-if")) {
+            var condition = allElements[j].getAttribute("kn-if").replace(columnRegex, ifConditionReplacer);
+            condition = condition.replace(activeSelectionsRegex, activeSelectionsReplacer);
+            //  condition = condition.replace(paramsRegex, ifConditionParamsReplacer);  // TODO
+            // condition = condition.replace(calcRegex, calcReplacer); // TODO
+            condition = condition.replace(variablesRegex, variablesReplacer);
+            // condition = condition.replace(i18nRegex, $scope.i18nReplacer);  // TODO
+            if (eval(condition)) {
+                allElements[j].removeAttribute("kn-if");
+            } else {
+                allElements[j].parentNode.removeChild(allElements[j]);
+                j--;
+            }
+        }
+        j++;
+
+    } while (j < nodesNumber);
+    return allElements;
 }
+
+// TODO
+const ifConditionReplacer = (match: string, p1: any, row: string, aggr: string, precision: number) => {
+    const columnInfo = getColumnFromName(p1, aggr ? aggregationDataset : mockedData, aggr);
+    if (!columnInfo) return p1;
+    if (aggr) {
+        p1 = aggregationDataset && aggregationDataset.rows[0] && aggregationDataset.rows[0][columnInfo.name] !== "" && typeof (aggregationDataset.rows[0][columnInfo.name]) != 'undefined' ? aggregationDataset.rows[0][columnInfo.name] : null;
+    }
+    else if (mockedData && mockedData.rows[row || 0] && typeof (mockedData.rows[row || 0][columnInfo.name]) != 'undefined' && mockedData.rows[row || 0][columnInfo.name] !== "") {
+        let columnValue = mockedData.rows[row || 0][columnInfo.name];
+        if (typeof columnValue == 'string') columnValue = addSlashes(columnValue);
+        p1 = columnInfo.type == 'string' ? '\'' + columnValue + '\'' : columnValue;
+    } else {
+        p1 = null;
+    }
+    return (precision && !isNaN(p1)) ? parseFloat(p1).toFixed(precision) : p1;
+}
+
 
 const checkAttributePlaceholders = (rawAttribute: string) => {
     // TODO
@@ -161,4 +196,12 @@ const replaceI18N = (rawHtml: string) => {
 
 const addSlashes = (value: string | null) => {
     return (value + '').replace(/\"/g, '&quot;').replace(/\'/g, '&apos;').replace(/\u0000/g, '\\0');
+}
+
+const getColumnFromName = (columnName: string, datasetData: any, aggregation: any) => {
+    for (var i in datasetData.metaData.fields) {
+        if (typeof datasetData.metaData.fields[i].header != 'undefined' && datasetData.metaData.fields[i].header.toLowerCase() == (aggregation ? columnName + '_' + aggregation : columnName).toLowerCase()) {
+            return { 'name': datasetData.metaData.fields[i].name, 'type': datasetData.metaData.fields[i].type };
+        }
+    }
 }
