@@ -5,9 +5,9 @@
                 "fieldName": "filterValue",
                 "validators": [
                     {
-                        "key": "extendedAlphanumericNoQuestionMark",
+                        "key": "noQuestionMark",
                         "validator": {
-                            "type": "extendedAlphanumericNoQuestionMark"
+                            "type": "noQuestionMark"
                         }
                     }
                 ]
