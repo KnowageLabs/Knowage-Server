@@ -26,6 +26,24 @@ let widgetModel = null as IWidget | null
 
 import mockedData from './mockedData.json'
 const aggregationDataset = null as any  // TODO
+let limitRows = null as any // TODO - do we need it?
+
+
+// TODO - DO WE NEED THIS?
+const maxRow = () => {
+    if (!widgetModel) return
+    const str = widgetModel.settings.editor.css + widgetModel.settings.editor.html;
+    let tempMaxRow = 1;
+    const repeaters = str.replace(limitRegex, function (match: string, p1: any) {
+        if (parseInt(p1) == -1) tempMaxRow = -1;
+        else if (p1 > tempMaxRow) tempMaxRow = parseInt(p1) + 1;
+    })
+    const occurrencies = str.replace(rowsRegex, function (match: string, p1: any, p2: any) {
+        if (p2 >= tempMaxRow) tempMaxRow = parseInt(p2) + 1;
+    });
+    limitRows = { enable: true, rows: tempMaxRow };
+    return tempMaxRow;
+}
 
 export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVariables: IVariable[], tempSelections: ISelection[]) => {
     drivers = tempDrivers
@@ -46,15 +64,31 @@ export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVari
     }
 }
 
+const getColumnFromName = (columnName: string, datasetData: any, aggregation: any) => {
+    for (var i in datasetData.metaData.fields) {
+        if (typeof datasetData.metaData.fields[i].header != 'undefined' && datasetData.metaData.fields[i].header.toLowerCase() == (aggregation ? columnName + '_' + aggregation : columnName).toLowerCase()) {
+            return { 'name': datasetData.metaData.fields[i].name, 'type': datasetData.metaData.fields[i].type };
+        }
+    }
+}
+
 const parseHtmlFunctions = (rawHtml: string) => {
     const parser = new DOMParser()
     const parsedHtml = parser.parseFromString(rawHtml, "text/html");
     let allElements = parsedHtml.getElementsByTagName('*');
     allElements = parseRepeat(allElements);
     allElements = parseIf(allElements);  // TODO - additional
-    //  allElements = $scope.parseAttrs(allElements);  // TODO
+    allElements = parseAttrs(allElements);  // TODO - change function names???
     console.log(">>>>>>>>> ALL ELEMENTS: ", allElements)
-    checkPlaceholders(parsedHtml)
+    const placeholderResultHtml = checkPlaceholders(parsedHtml)
+    const parseCalcResultHtml = parseCalc(placeholderResultHtml)
+    console.log(">>>>>> parseCalcResultHtml RESULT HTML: ", parseCalcResultHtml)
+    // const trustedHtml = $sce.trustAsHtml(placeholderResultHtml // TODO - what should replace this?
+}
+
+// TODO
+const parseAggregations = () => {
+    // TODO
 }
 
 const parseRepeat = (allElements: any) => {
@@ -119,7 +153,73 @@ const parseIf = (allElements: any) => {
     return allElements;
 }
 
-// TODO
+const parseAttrs = (allElements: any) => {
+    // TODO - change function signatures
+    let j = 0;
+    const nodesNumber = allElements.length;
+    do {
+        if (allElements[j] && allElements[j].hasAttribute("kn-preview")) {
+            const datasetPreviewLabel = allElements[j].getAttribute("kn-preview");
+            allElements[j].setAttribute("ng-click", "showPreview('" + datasetPreviewLabel + "')");
+        }
+        if (allElements[j] && allElements[j].hasAttribute("kn-cross")) {
+            allElements[j].setAttribute("ng-click", "doSelection(null,'" + allElements[j].getAttribute("kn-cross") + "')");
+        }
+        if (allElements[j] && allElements[j].hasAttribute("kn-selection-column")) {
+            const columnSelectionLabel = allElements[j].getAttribute("kn-selection-column");
+            let columnSelectionValue = allElements[j].getAttribute("kn-selection-value");
+            if (columnSelectionValue.charAt(0) != "[") columnSelectionValue = "'" + columnSelectionValue + "'";
+            allElements[j].setAttribute("ng-click", columnSelectionValue ? "select('" + columnSelectionLabel + "'," + columnSelectionValue + ")" : "select('" + columnSelectionLabel + "')");
+        }
+        j++;
+
+    } while (j < nodesNumber);
+    return allElements;
+}
+
+const parseCalc = (rawHtml: string) => {
+    rawHtml = rawHtml.replace(advancedCalcRegex, calcReplacer);
+    rawHtml = rawHtml.replace(calcRegex, calcReplacer);
+    return rawHtml;
+}
+
+const checkPlaceholders = (document: Document) => {
+    let resultHtml = document.firstChild ? (document.firstChild as any).innerHTML : '';
+
+
+    // if ($scope.datasetLabel) {
+    //     resultHtml = resultHtml.replace($scope.columnRegex, $scope.replacer);
+    //  
+    // }
+    resultHtml = resultHtml.replace(activeSelectionsRegex, activeSelectionsReplacer);
+    resultHtml = resultHtml.replace(widgetIdRegex, 'w' + widgetModel?.id);
+    resultHtml = resultHtml.replace(paramsRegex, paramsReplacer);
+    resultHtml = resultHtml.replace(variablesRegex, variablesReplacer);
+    // resultHtml = replaceI18N(resultHtml);  // TODO
+    console.log(">>>>>>>>>> RESULT HTML: ", resultHtml)
+    return resultHtml
+}
+
+const activeSelectionsReplacer = (match: string, columnName: string) => {
+    const index = activeSelections.findIndex((selection: ISelection) => selection.datasetId === widgetModel?.dataset && selection.columnName === columnName)
+    return index !== -1 ? formatSelectionForDisplay(activeSelections[index]) : 'null'
+}
+
+const addSlashes = (value: string | null) => {
+    return (value + '').replace(/\"/g, '&quot;').replace(/\'/g, '&apos;').replace(/\u0000/g, '\\0');
+}
+
+
+const calcReplacer = (match: string, p1: string, min: string, max: string, precision: any, format: string) => {
+    var result = eval(p1);
+    if (min && result < min) result = min;
+    if (max && result > max) result = max;
+    // if (format) return precision ? $filter('number')(result, precision) : $filter('number')(result);  // TODO - see about $filter
+    return (precision && !isNaN(result)) ? parseFloat(result).toFixed(precision) : result;
+}
+
+
+// TODO - aggregationDataset ???
 const ifConditionReplacer = (match: string, p1: any, row: string, aggr: string, precision: number) => {
     const columnInfo = getColumnFromName(p1, aggr ? aggregationDataset : mockedData, aggr);
     if (!columnInfo) return p1;
@@ -136,42 +236,14 @@ const ifConditionReplacer = (match: string, p1: any, row: string, aggr: string, 
     return (precision && !isNaN(p1)) ? parseFloat(p1).toFixed(precision) : p1;
 }
 
-
-const checkAttributePlaceholders = (rawAttribute: string) => {
+// TODO 
+const ifConditionParamsReplacer = () => {
     // TODO
-    // let resultAttribute = rawAttribute.replace($scope.columnRegex, $scope.replacer); - TODO
-    let resultAttribute = rawAttribute.replace(paramsRegex, paramsReplacer);
-    return resultAttribute;
 }
 
-const checkPlaceholders = (document: Document) => {
-    let resultHtml = document.firstChild ? (document.firstChild as any).innerHTML : '';
-
-
-    // if ($scope.datasetLabel) {
-    //     resultHtml = resultHtml.replace($scope.columnRegex, $scope.replacer);
-    //  
-    // }
-    resultHtml = resultHtml.replace(activeSelectionsRegex, activeSelectionsReplacer);
-    resultHtml = replaceWidgetId(resultHtml);  // TODO
-    resultHtml = resultHtml.replace(paramsRegex, paramsReplacer);
-    resultHtml = resultHtml.replace(variablesRegex, variablesReplacer);
-    resultHtml = replaceI18N(resultHtml);  // TODO
-    console.log(">>>>>>>>>> RESULT HTML: ", resultHtml)
-    return resultHtml
-}
-
-const activeSelectionsReplacer = (match: string, columnName: string) => {
-    const index = activeSelections.findIndex((selection: ISelection) => selection.datasetId === widgetModel?.dataset && selection.columnName === columnName)
-    return index !== -1 ? formatSelectionForDisplay(activeSelections[index]) : 'null'
-}
-
-
-
-const replaceWidgetId = (rawHtml: string) => {
-    // resultHtml.replace($scope.widgetIdRegex, 'w' + $scope.ngModel.id);
-
-    return rawHtml
+// TODO
+const replacer = () => {
+    // TODO
 }
 
 const paramsReplacer = (match: string, p1: string, p2: string) => {
@@ -189,19 +261,14 @@ const variablesReplacer = (match: string, p1: string, p2: string) => {
     return result || null
 }
 
-const replaceI18N = (rawHtml: string) => {
-    // resultHtml.replace($scope.i18nRegex, $scope.i18nReplacer);
-    return rawHtml
+// TODO
+const i18nReplacer = () => {
+    // TODO
 }
 
-const addSlashes = (value: string | null) => {
-    return (value + '').replace(/\"/g, '&quot;').replace(/\'/g, '&apos;').replace(/\u0000/g, '\\0');
-}
-
-const getColumnFromName = (columnName: string, datasetData: any, aggregation: any) => {
-    for (var i in datasetData.metaData.fields) {
-        if (typeof datasetData.metaData.fields[i].header != 'undefined' && datasetData.metaData.fields[i].header.toLowerCase() == (aggregation ? columnName + '_' + aggregation : columnName).toLowerCase()) {
-            return { 'name': datasetData.metaData.fields[i].name, 'type': datasetData.metaData.fields[i].type };
-        }
-    }
+const checkAttributePlaceholders = (rawAttribute: string) => {
+    // TODO
+    // let resultAttribute = rawAttribute.replace($scope.columnRegex, $scope.replacer); - TODO
+    let resultAttribute = rawAttribute.replace(paramsRegex, paramsReplacer);
+    return resultAttribute;
 }
