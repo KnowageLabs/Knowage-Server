@@ -6,7 +6,7 @@
     </div>
 
     <TieredMenu ref="menu" :model="toolbarMenuItems" :popup="true" />
-    <TagsDialog :visible="tagsDialogVisible" :widgetModel="widgetModel" :mode="tagsDialogMode" widgetType="html" :drivers="drivers" :variables="variables" @close="closeTagsDialog" @insert="onInsert" />
+    <TagsDialog :visible="tagsDialogVisible" :widgetModel="widgetModel" :mode="tagsDialogMode" widgetType="html" :drivers="drivers" :variables="variables" :selectedDatasets="selectedDatasets" @close="closeTagsDialog" @insert="onInsert" />
 </template>
 
 <script lang="ts">
@@ -15,6 +15,7 @@ import { IVariable, IWidget } from '@/modules/documentExecution/Dashboard/Dashbo
 import VCodeMirror from 'codemirror-editor-vue3'
 import TieredMenu from 'primevue/tieredmenu'
 import TagsDialog from '../../common/editor/WidgetTagsDialog.vue'
+import { IDataset } from '@/modules/documentExecution/dashboard/Dashboard'
 
 export default defineComponent({
     name: 'widget-responsive',
@@ -24,6 +25,7 @@ export default defineComponent({
         activeIndex: { type: Number, required: true },
         drivers: { type: Array as PropType<any[]>, required: true },
         variables: { type: Array as PropType<IVariable[]>, required: true },
+        selectedDatasets: { type: Array as PropType<IDataset[]> },
         dashboardId: { type: String, required: true }
     },
     data() {

@@ -44,7 +44,6 @@ import Textarea from 'primevue/textarea'
 export default defineComponent({
     name: 'widget-editor-repeater',
     components: { Message, Textarea, InputNumber, InputSwitch },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     emits: ['insertChanged'],
     data() {
         return {
