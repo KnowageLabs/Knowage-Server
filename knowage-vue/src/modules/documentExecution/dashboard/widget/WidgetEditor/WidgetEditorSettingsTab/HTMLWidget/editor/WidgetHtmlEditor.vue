@@ -20,11 +20,19 @@ import TagsDialog from '../../common/editor/WidgetTagsDialog.vue'
 
 // TODO - remove this
 import { parseHtml } from '../../../../../widget/WidgetEditor/helpers/htmlParser/ParserHelper'
+import store from '../../../../../Dashboard.store'
+import { mapActions } from 'pinia'
 
 export default defineComponent({
     name: 'widget-responsive',
     components: { VCodeMirror, TieredMenu, TagsDialog },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, activeIndex: { type: Number, required: true }, drivers: { type: Array as PropType<any[]>, required: true }, variables: { type: Array as PropType<IVariable[]>, required: true } },
+    props: {
+        widgetModel: { type: Object as PropType<IWidget>, required: true },
+        activeIndex: { type: Number, required: true },
+        drivers: { type: Array as PropType<any[]>, required: true },
+        variables: { type: Array as PropType<IVariable[]>, required: true },
+        dashboardId: { type: String, required: true }
+    },
     data() {
         return {
             codeMirrorHtmlEditor: null as any,
@@ -55,6 +63,7 @@ export default defineComponent({
         this.setupCodeMirror()
     },
     methods: {
+        ...mapActions(store, ['getSelections']),
         setupCodeMirror() {
             const interval = setInterval(() => {
                 if (!this.$refs.codeMirrorHtmlEditor) return
@@ -114,7 +123,7 @@ export default defineComponent({
             this.tagsDialogVisible = false
         },
         test() {
-            parseHtml(this.widgetModel, this.drivers, this.variables)
+            parseHtml(this.widgetModel, this.drivers, this.variables, this.getSelections(this.dashboardId))
         }
     }
 })

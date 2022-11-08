@@ -1,4 +1,5 @@
-import { IVariable, IWidget } from "@/modules/documentExecution/dashboard/Dashboard";
+import { ISelection, IVariable, IWidget } from "@/modules/documentExecution/dashboard/Dashboard";
+import { formatSelectionForDisplay } from "../../../ActiveSelectionsWidget/ActiveSelectionsWidgetHelpers";
 
 
 const widgetIdRegex = /\[kn-widget-id\]/g;
@@ -20,13 +21,17 @@ const lt = /(\<.*kn-.*=["].*)(<)(.*["].*\>)/g;
 
 let drivers = [] as any[]
 let variables = [] as IVariable[]
+let activeSelections = [] as ISelection[]
+let widgetModel = null as IWidget | null
 
-export const parseHtml = (widgetModel: IWidget, tempDrivers: any[], tempVariables: IVariable[]) => {
+export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVariables: IVariable[], tempSelections: ISelection[]) => {
     drivers = tempDrivers
     variables = tempVariables
+    activeSelections = tempSelections
+    widgetModel = tempWidgetModel
+
 
     const html = widgetModel.settings.editor.html
-    console.log('>>> PARSE HTML: ', html)
 
     if (html) {
         let wrappedHtmlToRender = "<div>" + html + " </div>";
@@ -48,15 +53,23 @@ const checkPlaceholders = (rawHtml: string) => {
 
     // if ($scope.datasetLabel) {
     //     resultHtml = resultHtml.replace($scope.columnRegex, $scope.replacer);
-    //     resultHtml = resultHtml.replace($scope.activeSelectionsRegex, $scope.activeSelectionsReplacer);
+    //  
     // }
-    resultHtml = replaceWidgetId(resultHtml);
+    resultHtml = resultHtml.replace(activeSelectionsRegex, activeSelectionsReplacer);
+    resultHtml = replaceWidgetId(resultHtml);  // TODO
     resultHtml = resultHtml.replace(paramsRegex, paramsReplacer);
     resultHtml = resultHtml.replace(variablesRegex, variablesReplacer);
-    resultHtml = replaceI18N(resultHtml);
+    resultHtml = replaceI18N(resultHtml);  // TODO
     console.log(">>>>>>>>>> RESULT HTML: ", resultHtml)
     return resultHtml
 }
+
+const activeSelectionsReplacer = (match: string, columnName: string) => {
+    const index = activeSelections.findIndex((selection: ISelection) => selection.datasetId === widgetModel?.dataset && selection.columnName === columnName)
+    return index !== -1 ? formatSelectionForDisplay(activeSelections[index]) : 'null'
+}
+
+
 
 const replaceWidgetId = (rawHtml: string) => {
     // resultHtml.replace($scope.widgetIdRegex, 'w' + $scope.ngModel.id);
