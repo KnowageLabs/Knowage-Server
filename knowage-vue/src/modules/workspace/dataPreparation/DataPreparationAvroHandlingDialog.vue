@@ -9,16 +9,16 @@
                     <span class="custom-marker shadow-2">
                         <span v-if="slotProps.item.id < 4">
                             <i v-if="events && slotProps.item.id === events.length - 1" class="fa-solid fa-spinner fa-spin"></i>
-                            <i v-else class="fa-regular fa-circle-check"></i>
+                            <i v-else class="fa-regular fa-circle-check successClass"></i>
                         </span>
                         <i v-if="slotProps.item.id === 4">
-                            <i v-if="slotProps.item.status && slotProps.item.status === 'error'" class="fa-regular fa-circle-xmark"></i>
-                            <i v-else class="fa-regular fa-circle-check"></i>
+                            <i v-if="slotProps.item.status && slotProps.item.status === 'error'" class="fa-regular fa-circle-xmark errorClass"></i>
+                            <i v-else class="fa-regular fa-circle-check successClass"></i>
                         </i>
                     </span>
                 </template>
                 <template #content="slotProps">
-                    {{ slotProps.item.message }}
+                    <span :class="slotProps.item.status && slotProps.item.status === 'error' ? 'errorClass' : ''"> {{ slotProps.item.message }}</span>
                 </template>
             </Timeline>
             <template #footer>
@@ -98,5 +98,13 @@ export default defineComponent({
 .p-timeline-event {
     min-height: 40px;
     max-height: 40px;
+}
+
+.errorClass {
+    color: var(--kn-message-error-color);
+}
+
+.successClass {
+    color: var(--kn-message-success-color);
 }
 </style>
