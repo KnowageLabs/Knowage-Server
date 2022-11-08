@@ -1,7 +1,9 @@
 <template>
     <!-- <Button icon="fas fa-terminal" class="p-button-text p-button-rounded p-button-plain" @click="logModel" /> -->
+    <Button icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" v-tooltip.left="$t('common.todo')" @click="test">TODO</Button>
     <div class="htmlMirrorContainer" style="height: 500px; width: 100%">
         <Button icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain editor-tags-menu-button" v-tooltip.left="$t('common.menu')" @click="toggle"></Button>
+
         <VCodeMirror ref="codeMirrorHtmlEditor" v-model:value="widgetModel.settings.editor.html" :options="scriptOptions" />
     </div>
 
@@ -15,6 +17,9 @@ import { IVariable, IWidget } from '@/modules/documentExecution/Dashboard/Dashbo
 import VCodeMirror, { CodeMirror } from 'codemirror-editor-vue3'
 import TieredMenu from 'primevue/tieredmenu'
 import TagsDialog from '../../common/editor/WidgetTagsDialog.vue'
+
+// TODO - remove this
+import { parseHtml } from '../../../../../widget/WidgetEditor/helpers/htmlParser/ParserHelper'
 
 export default defineComponent({
     name: 'widget-responsive',
@@ -107,6 +112,9 @@ export default defineComponent({
             this.cursorPosition = this.codeMirrorHtmlEditor.getCursor()
             this.codeMirrorHtmlEditor.replaceRange(value, this.cursorPosition)
             this.tagsDialogVisible = false
+        },
+        test() {
+            parseHtml(this.widgetModel, this.drivers)
         }
     }
 })
