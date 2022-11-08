@@ -276,6 +276,7 @@ export default defineComponent({
                             visible: filter.isVisible,
                             column: column
                         })
+                        break
                     }
                 }
             }
