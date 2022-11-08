@@ -12,14 +12,14 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
-import VCodeMirror from 'codemirror-editor-vue3'
+import VCodeMirror, { CodeMirror } from 'codemirror-editor-vue3'
 import TieredMenu from 'primevue/tieredmenu'
 import TagsDialog from '../../common/editor/WidgetTagsDialog.vue'
 
 export default defineComponent({
     name: 'widget-responsive',
     components: { VCodeMirror, TieredMenu, TagsDialog },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, drivers: { type: Array as PropType<any[]>, required: true } },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, activeIndex: { type: Number, required: true }, drivers: { type: Array as PropType<any[]>, required: true } },
     data() {
         return {
             codeMirrorHtmlEditor: null as any,
@@ -34,10 +34,16 @@ export default defineComponent({
                 smartIndent: true,
                 lineWrapping: true,
                 matchBrackets: true,
-                mode: 'html',
+                mode: 'xml',
                 tabSize: 4,
                 theme: 'eclipse'
-            }
+            },
+            cursorPosition: null
+        }
+    },
+    watch: {
+        activeIndex(value: number) {
+            if (value === 1 && this.codeMirrorHtmlEditor) setTimeout(() => this.codeMirrorHtmlEditor.refresh(), 100)
         }
     },
     created() {
@@ -97,7 +103,10 @@ export default defineComponent({
             this.tagsDialogVisible = false
         },
         onInsert(value: string) {
-            console.log('ON INSERT: ', value)
+            console.log('>>> ON INSERT: ', value)
+            this.cursorPosition = this.codeMirrorHtmlEditor.getCursor()
+            this.codeMirrorHtmlEditor.replaceRange(value, this.cursorPosition)
+            this.tagsDialogVisible = false
         }
     }
 })

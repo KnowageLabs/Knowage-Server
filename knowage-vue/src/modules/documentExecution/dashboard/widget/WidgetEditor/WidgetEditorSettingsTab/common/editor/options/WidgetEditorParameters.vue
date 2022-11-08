@@ -24,7 +24,6 @@ export default defineComponent({
     created() {},
     methods: {
         onDriverValueChanged() {
-            console.log('>>>>> SELECTED DRIVER: ', this.selectedDriver)
             const forInsert = `[kn-parameter='${this.selectedDriver}']`
             this.$emit('insertChanged', forInsert)
         }
