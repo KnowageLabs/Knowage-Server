@@ -4,5 +4,8 @@
         "display": "flex",
         "justify-content": "center",
         "text-align": "center"
+    },
+    "dialogStyle": {
+        "width": "60%"
     }
 }

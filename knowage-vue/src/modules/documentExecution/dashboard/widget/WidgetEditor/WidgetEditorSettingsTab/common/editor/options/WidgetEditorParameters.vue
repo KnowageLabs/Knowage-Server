@@ -1,5 +1,5 @@
 <template>
-    <div class="p-field kn-flex">
+    <div class="p-field">
         <span class="p-float-label">
             <Dropdown class="kn-material-input" v-model="selectedDriver" :options="drivers" optionValue="urlName" optionLabel="name" @change="onDriverValueChanged"> </Dropdown>
             <label class="kn-material-input-label"> {{ $t('common.parameter') }}</label>
