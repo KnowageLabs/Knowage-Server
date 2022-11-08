@@ -34,6 +34,7 @@ export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVari
 
 
     const html = widgetModel.settings.editor.html
+    console.log(">>>>>>>>>> LOADED HTML: ", html)
 
     if (html) {
         let wrappedHtmlToRender = "<div>" + html + " </div>";
@@ -62,29 +63,11 @@ const parseRepeat = (allElements: any) => {
         if (allElements[i] && allElements[i].hasAttribute("kn-repeat")) {
             if (eval(checkAttributePlaceholders(allElements[i].getAttribute('kn-repeat')))) {
                 allElements[i].removeAttribute("kn-repeat");
-
                 let limit = allElements[i].hasAttribute("limit") && (allElements[i].hasAttribute("limit") <= mockedData.rows.length) ? allElements[i].getAttribute('limit') : mockedData.rows.length;
                 if (allElements[i].hasAttribute("limit") && allElements[i].getAttribute('limit') == -1) limit = mockedData.rows.length;
                 if (allElements[i].hasAttribute("limit")) allElements[i].removeAttribute("limit");
                 const repeatedElement = deepcopy(allElements[i]);
-                let tempElement;
-                for (let j = 0; j < limit; j++) {
-                    const tempRow = deepcopy(repeatedElement);
-                    tempRow.innerHTML = tempRow.innerHTML.replace(columnRegex, function (match, c1, c2, c3, precision, format) {
-                        let precisionPlaceholder = '';
-                        let formatPlaceholder = '';
-                        if (format) formatPlaceholder = ' format';
-                        if (precision) precisionPlaceholder = " precision='" + precision + "'";
-                        return "[kn-column=\'" + c1 + "\' row=\'" + (c2 || j) + "\'" + precisionPlaceholder + formatPlaceholder + "]";
-                    });
-                    tempRow.innerHTML = tempRow.innerHTML.replace(repeatIndexRegex, j);
-                    if (j == 0) {
-                        tempElement = tempRow.outerHTML;
-                    } else {
-                        tempElement += tempRow.outerHTML;
-                    }
-                }
-                allElements[i].outerHTML = tempElement;
+                allElements[i].outerHTML = formatRepeatedElement(limit, repeatedElement);
             } else {
                 allElements[i].outerHTML = "";
             }
@@ -93,10 +76,38 @@ const parseRepeat = (allElements: any) => {
     return allElements;
 }
 
-const checkAttributePlaceholders = (bla) => {
-    return ''
+const formatRepeatedElement = (limit: number, repeatedElement: any) => {
+    let tempElement = null;
+    for (var j = 0; j < limit; j++) {
+        const tempRow = deepcopy(repeatedElement);
+        tempRow.innerHTML = tempRow.innerHTML.replace(columnRegex, function (match: string, columnName: string, row: string, c3: string, precision: string, format: string) {
+            let precisionPlaceholder = '';
+            let formatPlaceholder = '';
+            if (format) formatPlaceholder = ' format';
+            if (precision) precisionPlaceholder = " precision='" + precision + "'";
+            return "[kn-column=\'" + columnName + "\' row=\'" + (row || j) + "\'" + precisionPlaceholder + formatPlaceholder + "]";
+        }
+        );
+        tempRow.innerHTML = tempRow.innerHTML.replace(repeatIndexRegex, j);
+        j == 0 ? tempElement = tempRow.outerHTML : tempElement += tempRow.outerHTML
+    }
+    return tempElement
 }
 
+const columnPlaceholderReplacer = function (match, c1, c2, c3, precision, format) {
+    let precisionPlaceholder = '';
+    let formatPlaceholder = '';
+    if (format) formatPlaceholder = ' format';
+    if (precision) precisionPlaceholder = " precision='" + precision + "'";
+    //  return "[kn-column=\'" + c1 + "\' row=\'" + (c2 || j) + "\'" + precisionPlaceholder + formatPlaceholder + "]";
+}
+
+const checkAttributePlaceholders = (rawAttribute: string) => {
+    // TODO
+    // let resultAttribute = rawAttribute.replace($scope.columnRegex, $scope.replacer); - TODO
+    let resultAttribute = rawAttribute.replace(paramsRegex, paramsReplacer);
+    return resultAttribute;
+}
 
 const checkPlaceholders = (document: Document) => {
     let resultHtml = document.firstChild ? (document.firstChild as any).innerHTML : '';
