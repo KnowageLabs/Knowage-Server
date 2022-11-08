@@ -9,10 +9,10 @@
         </template>
 
         <div class="tags-dialog-content p-mx-2">
-            <p class="kn-material-input-label">TODO: Add guides for each fo the tags.</p>
+            <p class="kn-material-input-label">{{ $t(`dashboard.widgetEditor.editorTags.hint.${mode}`) }}</p>
             {{ widgetType }}
 
-            <WidgetEditorParameters v-if="mode === 'parameters'" :model="model" :drivers="drivers" @insertChanged="onInsertChanged"></WidgetEditorParameters>
+            <WidgetEditorParameters v-if="mode === 'parameters'" :drivers="drivers" @insertChanged="onInsertChanged"></WidgetEditorParameters>
         </div>
 
         <template #footer>
@@ -26,15 +26,17 @@
 import { defineComponent, PropType } from 'vue'
 import Dialog from 'primevue/dialog'
 import WidgetEditorParameters from './options/WidgetEditorParameters.vue'
+import descriptor from './WidgetTagsDialogDescriptor.json'
 
 export default defineComponent({
     name: 'olap-custom-view-save-dialog',
     components: { Dialog, WidgetEditorParameters },
-    props: { visible: Boolean, mode: String, widgetType: String, drivers: { type: Array as PropType<any[]>, required: true } },
+    props: { visible: Boolean, mode: { type: String, required: true }, widgetType: String, drivers: { type: Array as PropType<any[]>, required: true } },
     emited: ['close', 'insert'],
     computed: {},
     data() {
         return {
+            descriptor,
             forInsert: '' as string
         }
     },

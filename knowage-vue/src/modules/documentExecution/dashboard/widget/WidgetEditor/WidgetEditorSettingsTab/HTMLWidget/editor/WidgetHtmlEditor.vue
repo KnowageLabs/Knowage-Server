@@ -6,7 +6,7 @@
     </div>
 
     <TieredMenu ref="menu" :model="toolbarMenuItems" :popup="true" />
-    <TagsDialog :visible="tagsDialogVisible" :mode="tagsDialogMode" widgetType="html" :drivers="drivers" @close="closeTagsDialog" />
+    <TagsDialog :visible="tagsDialogVisible" :mode="tagsDialogMode" widgetType="html" :drivers="drivers" @close="closeTagsDialog" @insert="onInsert" />
 </template>
 
 <script lang="ts">
@@ -95,6 +95,9 @@ export default defineComponent({
         },
         closeTagsDialog() {
             this.tagsDialogVisible = false
+        },
+        onInsert(value: string) {
+            console.log('ON INSERT: ', value)
         }
     }
 })

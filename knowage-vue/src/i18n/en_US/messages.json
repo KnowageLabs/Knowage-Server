@@ -380,8 +380,6 @@
             "addWidget": "Add widget",
             "aggregation": "Aggregation",
             "ascending": "Ascending",
-            "gallery": "Gallery",
-            "editor": "Editor",
             "background": "Background",
             "borders": {
                 "borderRadiusBottomLeft": "Border radius bottom left",
@@ -429,6 +427,24 @@
             },
             "descending": "Descending",
             "dragColumnsHint": "Drag columns here",
+            "editor": "Editor",
+            "editorTags": {
+                "activesel": "Active Selection",
+                "calculator": "Calculator",
+                "columnsData": "Columns Data",
+                "conditional": "Conditional Container",
+                "crossnav": "Cross-Navigation",
+                "hint": {
+                    "parameters": "This tag is used to show a parameter value from the ones available to the selected dataset."
+                },
+                "internationalization": "Internationalization",
+                "parameters": "Parameters",
+                "preview": "Preview",
+                "repeatIndex": "Repeat Index",
+                "repeater": "Repeater",
+                "selection": "Selection",
+                "variables": "Variables"
+            },
             "enableFilter": "Enable Filter",
             "enableTooltip": "Enable Tooltip",
             "export": {
@@ -440,6 +456,7 @@
                 "title": "Export"
             },
             "fontawesome": "Fontawesome",
+            "gallery": "Gallery",
             "headers": {
                 "action": "Action",
                 "enableCustomHeaders": "Enable Custom Headers",
@@ -598,20 +615,6 @@
                 "sparkline": "Sparkline",
                 "textAndIcon": "Text & Icon",
                 "title": "Visualization Type"
-            },
-            "editorTags": {
-                "columnsData": "Columns Data",
-                "parameters": "Parameters",
-                "repeater": "Repeater",
-                "repeatIndex": "Repeat Index",
-                "conditional": "Conditional Container",
-                "calculator": "Calculator",
-                "crossnav": "Cross-Navigation",
-                "selection": "Selection",
-                "preview": "Preview",
-                "activesel": "Active Selection",
-                "variables": "Variables",
-                "internationalization": "Internationalization"
             }
         }
     },
