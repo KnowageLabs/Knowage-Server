@@ -77,8 +77,7 @@ export default defineComponent({
         },
         filterChanged() {
             this.$emit('changed', this.filter.filterValue)
-            this.$emit('valid', true)
-            //this.$emit('valid', this.v$.filter.filterValue.$invalid)
+            this.$emit('valid', !this.v$.filter.filterValue.$invalid)
         }
     }
 })

@@ -233,10 +233,10 @@
         "uploading": "Uploading",
         "uppercaseDelete": "Delete",
         "validation": {
-            "extendedAlphanumericNoQuestionMark": "The value of the field must contain only alphanumeric characters but not the question mark (?)",
             "maxLength": "This field must have less then {max} characters",
             "maximumCharacters": "The maximum length allowed is {max}",
             "minLength": "This field should have at least {min} characters",
+            "noQuestionMark": "The value of the field must not contain the question mark (?)",
             "regex": "Invalid format",
             "required": "{fieldName} is required"
         },
