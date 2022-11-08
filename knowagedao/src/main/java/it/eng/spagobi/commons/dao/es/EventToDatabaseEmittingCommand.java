@@ -506,11 +506,11 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 
 	protected final JsonObjectBuilder createCommonDataForEvent() {
 
-		UserProfile userProfile = UserProfileManager.getProfile();
+		UserProfile userProfile = Optional.ofNullable(UserProfileManager.getProfile()).orElse(new UserProfile());
 
 		JsonObject userProfileAsJson = Json.createObjectBuilder()
 				.add("id", Optional.ofNullable(userProfile.getUserId()).orElse("").toString())
-				.add("username", userProfile.getUserName().toString())
+				.add("username", Optional.ofNullable(userProfile.getUserName()).orElse("").toString())
 				.build();
 
 		return Json.createObjectBuilder()
