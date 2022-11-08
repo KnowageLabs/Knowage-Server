@@ -50,6 +50,8 @@ import Column from 'primevue/column'
 import Dropdown from 'primevue/dropdown'
 import Checkbox from 'primevue/checkbox'
 import Card from 'primevue/card'
+import mainStore from '../../../../App.store'
+import { mapActions } from 'pinia'
 
 export default defineComponent({
     components: { Card, Column, DataTable, Dropdown, Checkbox },
@@ -74,15 +76,15 @@ export default defineComponent({
             deep: true
         }
     },
-
     methods: {
+        ...mapActions(mainStore, ['setInfo', 'setError']),
         warnForDuplicateSpatialFields() {
             var numberOfSpatialAttribute = 0
             for (let i = 0; i < this.fieldsMetadata.length; i++) {
                 if (this.fieldsMetadata[i].fieldType == 'SPATIAL_ATTRIBUTE') {
                     numberOfSpatialAttribute++
                     if (numberOfSpatialAttribute > 1) {
-                        this.$store.commit('setError', { title: this.$t('common.error.saving'), msg: this.$t('managers.datasetManagement.duplicateSpatialAttribute') })
+                        this.setError({ title: this.$t('common.error.saving'), msg: this.$t('managers.datasetManagement.duplicateSpatialAttribute') })
                         return
                     }
                 }
