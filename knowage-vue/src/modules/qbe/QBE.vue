@@ -442,7 +442,7 @@ export default defineComponent({
                 : `start-qbe?datamart=${datamart}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&DATA_SOURCE_LABEL=${label}&drivers=${drivers}`
             if (this.dataset) {
                 await this.$http
-                    .get(import.meta.env.VITE_QBE_PATH + url)
+                    .get(process.env.VUE_APP_QBE_PATH + url)
                     .then(() => {
                         this.qbeLoaded = true
                     })
