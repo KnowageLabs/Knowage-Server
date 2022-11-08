@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary widget-tags-dialog" :visible="visible" :modal="true" :closable="false">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary widget-tags-dialog" :style="descriptor.dialogStyle" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #start>
@@ -9,14 +9,17 @@
         </template>
 
         <div class="tags-dialog-content p-mx-2">
-            <Message class="kn-flex p-m-4" severity="info" :closable="false" :style="descriptor.hintStyle">
+            <Message severity="info" :closable="false" :style="descriptor.hintStyle">
                 {{ $t(`dashboard.widgetEditor.editorTags.hint.${mode}`) }}
             </Message>
-            {{ widgetType }}
 
             <WidgetEditorParameters v-if="mode === 'parameters'" :drivers="drivers" @insertChanged="onInsertChanged"></WidgetEditorParameters>
             <WidgetEditorActiveSelections v-else-if="mode === 'activesel'" :widgetModel="widgetModel" @insertChanged="onInsertChanged"></WidgetEditorActiveSelections>
+            <WidgetEditorRepeater v-else-if="mode === 'repeater'" :widgetModel="widgetModel" @insertChanged="onInsertChanged"></WidgetEditorRepeater>
+            <WidgetEditorCalculator v-else-if="mode === 'calculator'" :widgetModel="widgetModel" @insertChanged="onInsertChanged"></WidgetEditorCalculator>
+            <WidgetEditorRepeatIndex v-else-if="mode === 'repeatIndex'" :widgetModel="widgetModel"></WidgetEditorRepeatIndex>
             <WidgetEditorVariables v-else-if="mode === 'variables'" :variables="variables" @insertChanged="onInsertChanged"></WidgetEditorVariables>
+            <WidgetEditorConditionalContainer v-else-if="mode === 'conditional'" @insertChanged="onInsertChanged"></WidgetEditorConditionalContainer>
         </div>
 
         <template #footer>
@@ -35,10 +38,14 @@ import Message from 'primevue/message'
 import WidgetEditorParameters from './options/WidgetEditorParameters.vue'
 import WidgetEditorActiveSelections from './options/WidgetEditorActiveSelections.vue'
 import WidgetEditorVariables from './options/WidgetEditorVariables.vue'
+import WidgetEditorRepeater from './options/WidgetEditorRepeater.vue'
+import WidgetEditorRepeatIndex from './options/WidgetEditorRepeatIndex.vue'
+import WidgetEditorConditionalContainer from './options/WidgetEditorConditionalContainer.vue'
+import WidgetEditorCalculator from './options/WidgetEditorCalculator.vue'
 
 export default defineComponent({
     name: 'olap-custom-view-save-dialog',
-    components: { Dialog, Message, WidgetEditorParameters, WidgetEditorActiveSelections, WidgetEditorVariables },
+    components: { Dialog, Message, WidgetEditorParameters, WidgetEditorActiveSelections, WidgetEditorVariables, WidgetEditorRepeater, WidgetEditorRepeatIndex, WidgetEditorConditionalContainer, WidgetEditorCalculator },
     props: { visible: Boolean, widgetModel: { type: Object as PropType<IWidget>, required: true }, mode: { type: String, required: true }, widgetType: String, drivers: { type: Array as PropType<any[]>, required: true }, variables: { type: Array as PropType<IVariable[]>, required: true } },
     emited: ['close', 'insert'],
     computed: {},
@@ -62,6 +69,9 @@ export default defineComponent({
             switch (this.mode) {
                 case 'crossnav':
                     this.forInsert = '<div kn-cross></div>'
+                    break
+                case 'repeatIndex':
+                    if (this.widgetModel.dataset) this.forInsert = '[kn-repeat-index]'
                     break
                 default:
                     this.forInsert = ''
