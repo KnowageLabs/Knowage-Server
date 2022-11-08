@@ -6,7 +6,7 @@
     </div>
 
     <TieredMenu ref="menu" :model="toolbarMenuItems" :popup="true" />
-    <TagsDialog :visible="tagsDialogVisible" :mode="tagsDialogMode" widgetType="html" :drivers="drivers" @close="closeTagsDialog" @insert="onInsert" />
+    <TagsDialog :visible="tagsDialogVisible" :widgetModel="widgetModel" :mode="tagsDialogMode" widgetType="html" :drivers="drivers" @close="closeTagsDialog" @insert="onInsert" />
 </template>
 
 <script lang="ts">
