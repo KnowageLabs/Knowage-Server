@@ -102,7 +102,7 @@
     <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
     <KnParameterSidebar
         v-if="parameterSidebarVisible"
-        style="height:100%;top: 0 !important;"
+        style="height: 100%; top: 0 !important"
         class="workspace-parameter-sidebar kn-overflow-y"
         :filtersData="filtersData"
         :propDocument="selectedDataset"
@@ -312,7 +312,7 @@ export default defineComponent({
                 })
             }
 
-            this.client.onStompError = function(frame) {
+            this.client.onStompError = function (frame) {
                 // Will be invoked in case of error encountered at Broker
                 // Bad login/passcode typically will cause an error
                 // Complaint brokers will set `message` header with a brief message. Body may contain details.
@@ -337,7 +337,7 @@ export default defineComponent({
                 data: this.selectedDataset,
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Disable-Errors': 'true' },
 
-                transformRequest: function(obj) {
+                transformRequest: function (obj) {
                     var str = [] as any
                     for (var p in obj) str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
                     return str.join('&')
@@ -389,8 +389,9 @@ export default defineComponent({
         async loadDatasetDrivers(dataset) {
             let hasError = false
             if (dataset.label && dataset.id && dataset.dsTypeCd !== 'Prepared') {
+                let postPayload = { role: this.userRole || this.user.roles[0] }
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/${dataset.label}/filters`, { role: this.userRole })
+                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/${dataset.label}/filters`, postPayload)
                     .then((response: AxiosResponse<any>) => {
                         this.filtersData = response.data
                         if (this.filtersData.filterStatus) {
