@@ -23,6 +23,7 @@
             <WidgetEditorConditionalContainer v-else-if="mode === 'conditional'" @insertChanged="onInsertChanged"></WidgetEditorConditionalContainer>
             <WidgetEditorActiveSelections v-else-if="mode === 'activesel'" :widgetModel="widgetModel" @insertChanged="onInsertChanged"></WidgetEditorActiveSelections>
             <WidgetEditorSelection v-else-if="mode === 'selection'" :widgetModel="widgetModel" @insertChanged="onInsertChanged"></WidgetEditorSelection>
+            <WidgetEditorColumnData v-else-if="mode === 'columnsData'" :widgetModel="widgetModel" @insertChanged="onInsertChanged"></WidgetEditorColumnData>
         </div>
 
         <template #footer>
@@ -48,10 +49,25 @@ import WidgetEditorCalculator from './options/WidgetEditorCalculator.vue'
 import WidgetEditorInternationalization from './options/WidgetEditorInternationalization.vue'
 import WidgetEditorPreview from './options/WidgetEditorPreview.vue'
 import WidgetEditorSelection from './options/WidgetEditorSelection.vue'
+import WidgetEditorColumnData from './options/WidgetEditorColumnData.vue'
 
 export default defineComponent({
     name: 'olap-custom-view-save-dialog',
-    components: { Dialog, Message, WidgetEditorParameters, WidgetEditorActiveSelections, WidgetEditorVariables, WidgetEditorRepeater, WidgetEditorRepeatIndex, WidgetEditorConditionalContainer, WidgetEditorCalculator, WidgetEditorInternationalization, WidgetEditorPreview, WidgetEditorSelection },
+    components: {
+        Dialog,
+        Message,
+        WidgetEditorParameters,
+        WidgetEditorActiveSelections,
+        WidgetEditorVariables,
+        WidgetEditorRepeater,
+        WidgetEditorRepeatIndex,
+        WidgetEditorConditionalContainer,
+        WidgetEditorCalculator,
+        WidgetEditorInternationalization,
+        WidgetEditorPreview,
+        WidgetEditorSelection,
+        WidgetEditorColumnData
+    },
     props: {
         visible: Boolean,
         widgetModel: { type: Object as PropType<IWidget>, required: true },

@@ -27,7 +27,7 @@ export default defineComponent({
     },
     methods: {
         onColumnChanged() {
-            const forInsert = `<div kn-preview="${this.selectedDatasetName}"></div>']`
+            const forInsert = `<div kn-preview="${this.selectedDatasetName}"></div>`
             this.$emit('insertChanged', forInsert)
         }
     }

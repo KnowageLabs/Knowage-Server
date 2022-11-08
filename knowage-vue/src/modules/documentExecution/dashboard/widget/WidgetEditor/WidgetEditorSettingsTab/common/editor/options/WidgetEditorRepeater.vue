@@ -6,7 +6,6 @@
         <InputText class="kn-material-input" v-model="repeaterLimit" @change="onColumnChanged" />
         <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.editorTags.limit') }}</label>
     </span>
-    <!-- <Button icon="fas fa-terminal" class="p-button-text p-button-rounded p-button-plain" @click="logModel" /> -->
 </template>
 
 <script lang="ts">
@@ -33,9 +32,6 @@ export default defineComponent({
             const forInsert = `<div kn-repeat="true" limit="${limit}"></div>`
             this.$emit('insertChanged', forInsert)
         }
-        // logModel() {
-        //     console.log(this.widgetModel)
-        // }
     }
 })
 </script>
