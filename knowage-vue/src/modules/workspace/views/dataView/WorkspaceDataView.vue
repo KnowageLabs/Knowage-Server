@@ -295,7 +295,7 @@ export default defineComponent({
                             if (this.dataPrepAvroHandlingDialogVisbile) {
                                 this.pushEvent(4)
                             } else {
-                                this.$store.commit('setInfo', { title: this.$t('managers.workspaceManagement.dataPreparation.dataPreparationIsCompleted') })
+                                this.setInfo({ title: this.$t('managers.workspaceManagement.dataPreparation.dataPreparationIsCompleted') })
                                 setTimeout(() => {
                                     this.openDataPreparation({ id: avroJobResponse.dsId })
                                 }, 1500)
@@ -304,7 +304,7 @@ export default defineComponent({
                             if (this.dataPrepAvroHandlingDialogVisbile) {
                                 this.pushEvent(5)
                             } else {
-                                this.$store.commit('setError', { title: 'Cannot prepare dataset', msg: avroJobResponse.errorMessage })
+                                this.setError({ title: 'Cannot prepare dataset', msg: avroJobResponse.errorMessage })
                             }
                             this.removeFromLoadingAvros(avroJobResponse.dsId)
                         }
@@ -582,6 +582,7 @@ export default defineComponent({
             if (this.user?.functionalities.includes('DataPreparation') && Object.keys(this.client).length > 0) this.client.publish({ destination: '/app/prepare', body: dsId })
         },
         async openDataPreparation(dataset: any) {
+            this.events = []
             this.pushEvent(0)
             if (dataset?.dsTypeCd == 'Prepared') {
                 //edit existing data prep
