@@ -60,6 +60,7 @@ public class HtmlSanitizer {
 
 		CssSchema stylePropertiesInSVG = CssSchema.withProperties(stylePropertiesInSVGMap);
 
+		// @formatter:off
 		policy = new HtmlPolicyBuilder()
 				.allowCommonBlockElements()
 				.allowCommonInlineFormattingElements()
@@ -100,6 +101,7 @@ public class HtmlSanitizer {
 				.allowAttributes("sodipodi:nodetypes", "sodipodi:role").globally()
 				//
 				.toFactory();
+		// @formatter:on
 
 		this.whiteList = whiteList;
 
@@ -161,9 +163,11 @@ public class HtmlSanitizer {
 		boolean isInWhiteListAsExternalService = isInWhiteListAsExternalService(url);
 		boolean isInWhiteListAsRelativePath = isInWhiteListAsRelativePath(url);
 
+		// @formatter:off
 		boolean ret = isSrcData
 				|| isInWhiteListAsExternalService
 				|| isInWhiteListAsRelativePath;
+		// @formatter:on
 
 		LOGGER.debug("Checking if {} in src is in whitelist: {} ", url, ret);
 
@@ -175,8 +179,10 @@ public class HtmlSanitizer {
 		boolean isInWhiteListAsExternalService = isInWhiteListAsExternalService(url);
 		boolean isInWhiteListAsRelativePath = isInWhiteListAsRelativePath(url);
 
+		// @formatter:off
 		boolean ret = isInWhiteListAsExternalService
 				|| isInWhiteListAsRelativePath;
+		// @formatter:on
 
 		LOGGER.debug("Checking if {} in href is in whitelist: {} ", url, ret);
 
