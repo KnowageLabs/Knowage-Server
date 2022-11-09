@@ -106,8 +106,7 @@ export default defineComponent({
             return styleString
         },
         test() {
-            // TODO
-            parseHtml(this.propWidget, this.drivers, this.variables, this.getSelections(this.dashboardId))
+            parseHtml(this.propWidget, this.drivers, this.variables, this.getSelections(this.dashboardId), this.$sanitize)
         }
     }
 })

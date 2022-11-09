@@ -45,22 +45,35 @@ const maxRow = () => {
     return tempMaxRow;
 }
 
-export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVariables: IVariable[], tempSelections: ISelection[]) => {
+export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVariables: IVariable[], tempSelections: ISelection[], $sanitize: any) => {
     drivers = tempDrivers
     variables = tempVariables
     activeSelections = tempSelections
     widgetModel = tempWidgetModel
 
 
+    const css = widgetModel.settings.editor.css
+    console.log(">>>>>>>>>> LOADED CSS: ", css)
+
+    if (css) {
+        let placeholderResultCss = checkPlaceholders(css)
+        placeholderResultCss = parseCalc(placeholderResultCss)
+        const trustedCss = $sanitize('<style>' + placeholderResultCss + '</style>')
+        console.log("-------------- TRUSTED CSS: ", trustedCss)
+    }
+
+
     const html = widgetModel.settings.editor.html
-    console.log(">>>>>>>>>> LOADED HTML: ", html)
+    // console.log(">>>>>>>>>> LOADED HTML: ", html)
 
     if (html) {
         let wrappedHtmlToRender = "<div>" + html + " </div>";
         wrappedHtmlToRender = wrappedHtmlToRender.replace(gt, '$1&gt;$3');
         wrappedHtmlToRender = wrappedHtmlToRender.replace(lt, '$1&lt;$3');
 
-        parseHtmlFunctions(wrappedHtmlToRender)
+        const parseHtmlFunctionsResult = parseHtmlFunctions(wrappedHtmlToRender)
+        const trustedHtml = $sanitize(parseHtmlFunctionsResult)
+        console.log("-------------- TRUSTED HTML: ", trustedHtml)
     }
 }
 
@@ -79,11 +92,9 @@ const parseHtmlFunctions = (rawHtml: string) => {
     allElements = parseRepeat(allElements);
     allElements = parseIf(allElements);  // TODO - additional
     allElements = parseAttrs(allElements);  // TODO - change function names???
-    console.log(">>>>>>>>> ALL ELEMENTS: ", allElements)
     const placeholderResultHtml = checkPlaceholders(parsedHtml)
     const parseCalcResultHtml = parseCalc(placeholderResultHtml)
-    console.log(">>>>>> parseCalcResultHtml RESULT HTML: ", parseCalcResultHtml)
-    // const trustedHtml = $sce.trustAsHtml(placeholderResultHtml // TODO - what should replace this?
+    return parseCalcResultHtml
 }
 
 // TODO
