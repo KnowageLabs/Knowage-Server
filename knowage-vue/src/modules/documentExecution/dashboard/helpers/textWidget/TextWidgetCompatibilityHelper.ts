@@ -54,7 +54,7 @@ const getFormattedWidgetSettings = (widget: any) => {
 }
 
 const getFormattedEditor = (widget: any) => {
-    return { text: widget.content?.text ? getFormattedText(widget.content.text) : '' } as ITextWidgetEditor
+    return { text: widget.content?.text ? getFormattedText(widget, widget.content.text) : '' } as ITextWidgetEditor
 }
 
 const getFormattedConfiguration = (widget: any) => {
@@ -63,12 +63,12 @@ const getFormattedConfiguration = (widget: any) => {
     } as ITextWidgetConfiguration
 }
 
-const getFormattedText = (originalText: string) => {
+const getFormattedText = (widget: any, originalText: string) => {
     console.log(">>>>>>>> ORIGINAL TEXT: ", originalText)
     if ((originalText.indexOf("$F{") < 0 && originalText.indexOf("$P{") < 0 && originalText.indexOf("$V{") < 0)) return originalText
     let formattedText = replaceParameters(originalText)
     formattedText = replaceVariables(formattedText)
-    formattedText = replaceColumns(formattedText)
+    formattedText = replaceColumns(widget, formattedText)
 
     console.log(">>>>>>>>>>>>> FORMATTED TEXT: ", formattedText)
     return formattedText
@@ -92,10 +92,18 @@ const variablesReplacer = (match: string, variableName: string) => {
     return `[kn-variable='${variableName}']`
 }
 
-const replaceColumns = (text: string) => {
-    return text
-}
-
-const columnsReplacer = (match: string, parameterUrlName: string) => {
-    return `[kn-parameter='${parameterUrlName}']`
+const replaceColumns = (widget: any, text: string) => {
+    const numberFormatting = widget.numbers
+    console.log(">>>>>>>>> NUMBERS FORMATTING: ", numberFormatting)
+    const regex = /\$F{(.+?)\}/g;
+    return text.replace(regex, (match: string, columnName: string) => {
+        let result = `[kn-column='${columnName}' row='0'`
+        if (numberFormatting) {
+            if (numberFormatting.prefix) result += ` prefix='${numberFormatting.prefix}'`
+            if (numberFormatting.suffix) result += ` suffix='${numberFormatting.suffix}'`
+            if (numberFormatting.precision) result += ` precision='${numberFormatting.precision}'`
+        }
+        result += ']'
+        return result
+    })
 }
