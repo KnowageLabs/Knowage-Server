@@ -148,7 +148,7 @@ const parseIf = (allElements: any) => {
             var condition = allElements[j].getAttribute("kn-if").replace(columnRegex, ifConditionReplacer);
             condition = condition.replace(activeSelectionsRegex, activeSelectionsReplacer);
             //  condition = condition.replace(paramsRegex, ifConditionParamsReplacer);  // TODO
-            // condition = condition.replace(calcRegex, calcReplacer); // TODO
+            condition = condition.replace(calcRegex, calcReplacer);
             condition = condition.replace(variablesRegex, variablesReplacer);
             // condition = condition.replace(i18nRegex, $scope.i18nReplacer);  // TODO
             if (eval(condition)) {
@@ -225,7 +225,7 @@ const calcReplacer = (match: string, p1: string, min: string, max: string, preci
     var result = eval(p1);
     if (min && result < min) result = min;
     if (max && result > max) result = max;
-    // if (format) return precision ? $filter('number')(result, precision) : $filter('number')(result);  // TODO - see about $filter
+    if (format) return precision ? parseFloat(result).toFixed(precision) : result;
     return (precision && !isNaN(result)) ? parseFloat(result).toFixed(precision) : result;
 }
 
