@@ -100,11 +100,11 @@ export default defineComponent({
         loadRow() {
             this.row = this.propRow
             if (this.column && (this.row[this.column.field] || this.row[this.column.field] === 0 || this.row[this.column.field] === '')) {
-                if (this.column.columnInfo.type === 'date' && typeof this.row[this.column.field] === 'string') {
+                if (this.column.columnInfo?.type === 'date' && typeof this.row[this.column.field] === 'string') {
                     this.row[this.column.field] = this.row[this.column.field] ? new Date(luxonFormatDate(this.row[this.column.field], 'yyyy-MM-dd', 'yyyy-MM-dd')) : null
-                } else if (this.column.columnInfo.type === 'timestamp' && typeof this.row[this.column.field] === 'string' && this.row[this.column.field] !== '') {
+                } else if (this.column.columnInfo?.type === 'timestamp' && typeof this.row[this.column.field] === 'string' && this.row[this.column.field] !== '') {
                     this.row[this.column.field] = new Date(luxonFormatDate(this.row[this.column.field], 'yyyy-MM-dd HH:mm:ss.S', 'yyyy-MM-dd HH:mm:ss.S'))
-                } else if (this.column.editorType !== 'COMBO' && this.column.columnInfo.type !== 'date' && this.column.columnInfo.type !== 'timestamp' && this.getDataType(this.column.columnInfo.type) === 'number') {
+                } else if (this.column.editorType !== 'COMBO' && this.column.columnInfo?.type !== 'date' && this.column.columnInfo?.type !== 'timestamp' && this.getDataType(this.column.columnInfo?.type) === 'number') {
                     this.formatNumberConfiguration()
                 }
             }
