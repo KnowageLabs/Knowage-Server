@@ -64,14 +64,11 @@ const getFormattedConfiguration = (widget: any) => {
 }
 
 const getFormattedText = (widget: any, originalText: string) => {
-    console.log(">>>>>>>> ORIGINAL TEXT: ", originalText)
     if ((originalText.indexOf("$F{") < 0 && originalText.indexOf("$P{") < 0 && originalText.indexOf("$V{") < 0)) return originalText
     let formattedText = replaceParameters(originalText)
     formattedText = replaceVariables(formattedText)
     formattedText = replaceColumns(widget, formattedText)
     formattedText = replaceCrossNavigation(formattedText)
-
-    console.log(">>>>>>>>>>>>> FORMATTED TEXT: ", formattedText)
     return formattedText
 }
 

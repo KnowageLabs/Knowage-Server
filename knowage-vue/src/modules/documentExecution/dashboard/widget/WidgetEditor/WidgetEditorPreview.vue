@@ -6,11 +6,14 @@
             <div v-if="widgetTitle && widgetTitle.enabled" class="p-d-flex p-ai-center" style="border-radius: 0px" :style="getWidgetTitleStyle()">
                 {{ widgetTitle?.text }}
             </div>
-            <Button v-if="propWidget.type == 'html'" icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" v-tooltip.left="$t('common.todo')" @click="test">TODO</Button>
+            <Button v-if="propWidget.type == 'html' || propWidget.type == 'text'" icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" v-tooltip.left="$t('common.todo')" @click="test">TODO</Button>
             <div class="widget-container-renderer" :style="getWidgetPadding()">
                 <TableWidget v-if="propWidget.type == 'table'" :propWidget="propWidget" :datasets="datasets" :dataToShow="widgetData" :editorMode="true" :dashboardId="dashboardId" @pageChanged="getWidgetData" />
                 <SelectorWidget v-if="propWidget.type == 'selector'" :propWidget="propWidget" :dataToShow="widgetData" :widgetInitialData="widgetData" :editorMode="true" />
                 <ActiveSelectionsWidget v-if="propWidget.type == 'selection'" :propWidget="propWidget" :propActiveSelections="activeSelections" :editorMode="true" :dashboardId="dashboardId" />
+                {{ 'TODO - Chabge Lib' }}
+                <Editor v-if="propWidget.type == 'text'" v-model="textModel" />
+                <div v-html="textModel"></div>
             </div>
         </div>
     </div>
@@ -31,11 +34,12 @@ import ProgressBar from 'primevue/progressbar'
 import { mapState, mapActions } from 'pinia'
 import store from '../../Dashboard.store'
 import deepcopy from 'deepcopy'
-import { parseHtml } from './helpers/htmlParser/ParserHelper'
+import { parseHtml, parseText } from './helpers/htmlParser/ParserHelper'
+import Editor from 'primevue/editor'
 
 export default defineComponent({
     name: 'widget-editor-preview',
-    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, ProgressBar },
+    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, ProgressBar, Editor },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDataset[]>, required: true },
@@ -50,7 +54,8 @@ export default defineComponent({
             mock,
             widgetData: {} as any,
             loading: false,
-            activeSelections: [] as ISelection[]
+            activeSelections: [] as ISelection[],
+            textModel: '' as string // TODO - remove this
         }
     },
     computed: {
@@ -106,7 +111,8 @@ export default defineComponent({
             return styleString
         },
         test() {
-            parseHtml(this.propWidget, this.drivers, this.variables, this.getSelections(this.dashboardId), this.$sanitize, this.getInternationalization())
+            if (this.propWidget.type === 'html') parseHtml(this.propWidget, this.drivers, this.variables, this.getSelections(this.dashboardId), this.$sanitize, this.getInternationalization())
+            else this.textModel = parseText(this.propWidget, this.drivers, this.variables, this.getSelections(this.dashboardId), this.$sanitize, this.getInternationalization())
         }
     }
 })

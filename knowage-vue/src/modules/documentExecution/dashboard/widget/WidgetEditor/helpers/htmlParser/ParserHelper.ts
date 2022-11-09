@@ -45,6 +45,38 @@ const maxRow = () => {
     return tempMaxRow
 }
 
+
+export const parseText = (tempWidgetModel: IWidget, tempDrivers: any[], tempVariables: IVariable[], tempSelections: ISelection[], $sanitize: any, internationalization: any) => {
+    drivers = tempDrivers
+    variables = tempVariables
+    activeSelections = tempSelections
+    widgetModel = tempWidgetModel
+    translatedValues = internationalization
+
+    const unparsedText = widgetModel.settings.editor.text
+    if (!unparsedText) return ''
+
+    // console.log(">>>>>>> unparsedText: ", unparsedText)
+    let parsedText = checkTextWidgetPlaceholders(unparsedText)
+    parsedText = replaceTextFunctions(parsedText)
+    console.log(">>>>>>> parsedText: ", parsedText)
+    return parsedText
+}
+
+const checkTextWidgetPlaceholders = (unparsedText: string) => {
+    unparsedText = unparsedText.replace(paramsRegex, paramsReplacer)
+    unparsedText = unparsedText.replace(variablesRegex, variablesReplacer)
+    return unparsedText
+}
+
+const replaceTextFunctions = (parsedText: string) => {
+    const parser = new DOMParser()
+    const parsedHtml = parser.parseFromString(parsedText, 'text/html')
+    let allElements = parsedHtml.getElementsByTagName('*')
+    allElements = parseAttrs(allElements)
+    return parsedHtml.firstChild ? (parsedHtml.firstChild as any).innerHTML : ''
+}
+
 export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVariables: IVariable[], tempSelections: ISelection[], $sanitize: any, internationalization: any) => {
     drivers = tempDrivers
     variables = tempVariables
@@ -253,7 +285,7 @@ const replacer = () => {
     // TODO
 }
 
-const paramsReplacer = (match: string, p1: string, p2: string) => {
+export const paramsReplacer = (match: string, p1: string, p2: string) => {
     // TODO - Change when we finish drivers
     const index = drivers.findIndex((driver: any) => driver.urlName === p1)
     if (index === -1) return addSlashes(null)
@@ -261,7 +293,7 @@ const paramsReplacer = (match: string, p1: string, p2: string) => {
     return addSlashes(result)
 }
 
-const variablesReplacer = (match: string, p1: string, p2: string) => {
+export const variablesReplacer = (match: string, p1: string, p2: string) => {
     const index = variables.findIndex((variable: IVariable) => variable.name === p1)
     if (index === -1) return null
     const result = p2 && variables[index].pivotedValues ? variables[index].pivotedValues[p2] : variables[index].value
