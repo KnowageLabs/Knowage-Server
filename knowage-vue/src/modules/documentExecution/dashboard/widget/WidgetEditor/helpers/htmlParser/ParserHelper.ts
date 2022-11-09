@@ -270,10 +270,6 @@ const variablesReplacer = (match: string, p1: string, p2: string) => {
 
 // TODO
 const i18nReplacer = (match: string, p1: string) => {
-    console.log('i18nReplacer match--------------------', match)
-    console.log('i18nReplacer p1--------------------', p1)
-    console.log('translatedValues translatedValues--------------------', translatedValues[p1])
-
     const result = translatedValues[p1] ? translatedValues[p1] : p1
     return result || null
 }
