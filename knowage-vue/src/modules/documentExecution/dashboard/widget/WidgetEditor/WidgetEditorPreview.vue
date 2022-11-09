@@ -67,7 +67,7 @@ export default defineComponent({
         this.unsetEventListeners()
     },
     methods: {
-        ...mapActions(store, ['getDashboard', 'getSelections']),
+        ...mapActions(store, ['getDashboard', 'getSelections', 'getInternationalization']),
 
         setEventListeners() {
             emitter.on('clearWidgetData', this.clearWidgetData)
@@ -106,7 +106,7 @@ export default defineComponent({
             return styleString
         },
         test() {
-            parseHtml(this.propWidget, this.drivers, this.variables, this.getSelections(this.dashboardId), this.$sanitize)
+            parseHtml(this.propWidget, this.drivers, this.variables, this.getSelections(this.dashboardId), this.$sanitize, this.getInternationalization())
         }
     }
 })

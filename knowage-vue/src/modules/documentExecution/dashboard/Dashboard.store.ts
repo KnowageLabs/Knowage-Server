@@ -14,7 +14,8 @@ const store = defineStore('dashboardStore', {
             crossNavigations: [] as any,
             outputParameters: [] as any,
             selections: {},
-            allDatasets: [] as IDataset[]
+            allDatasets: [] as IDataset[],
+            internationalization: {}
         }
     },
     actions: {
@@ -66,6 +67,9 @@ const store = defineStore('dashboardStore', {
         getSelections(dashboardId: string) {
             return this.selections[dashboardId]
         },
+        setInternationalization(internationalization) {
+            this.internationalization = internationalization
+        },
         setSelections(dashboardId: string, selections: ISelection[], $http: any) {
             this.selections[dashboardId] = selections
             if (selections.length > 0 && selectionsUseDatasetWithAssociation(selections, this.dashboards[dashboardId].configuration.associations)) {
@@ -74,7 +78,7 @@ const store = defineStore('dashboardStore', {
                 emitter.emit('selectionsChanged', { dashboardId: dashboardId, selections: this.selections[dashboardId] })
             }
         },
-        removeSelection(payload: { datasetId: number, columnName: string }, dashboardId: string) {
+        removeSelection(payload: { datasetId: number; columnName: string }, dashboardId: string) {
             const index = this.selections[dashboardId]?.findIndex((selection: ISelection) => selection.datasetId === payload.datasetId && selection.columnName === payload.columnName)
             if (index !== -1) {
                 const tempSelection = deepcopy(this.selections[dashboardId][index])
@@ -82,7 +86,6 @@ const store = defineStore('dashboardStore', {
 
                 emitter.emit('selectionsDeleted', [tempSelection])
                 emitter.emit('selectionsChanged', { dashboardId: dashboardId, selections: this.selections[dashboardId] })
-
             }
         },
         removeSelections(selectionsToRemove: ISelection[], dashboardId: string) {
@@ -98,6 +101,9 @@ const store = defineStore('dashboardStore', {
         },
         getAllDatasets() {
             return this.allDatasets
+        },
+        getInternationalization() {
+            return this.internationalization
         },
         setAllDatasets(datasets: IDataset[]) {
             this.allDatasets = datasets
