@@ -1,15 +1,15 @@
 <template>
     <InputText
         class="kn-material-input"
-        v-if="column && column.editorType !== 'COMBO' && column.columnInfo?.type !== 'date' && column.columnInfo?.type !== 'timestamp' && getDataType(column.columnInfo.type) === 'text'"
+        v-if="column && column.editorType !== 'COMBO' && column.columnInfo?.type !== 'date' && column.columnInfo?.type !== 'timestamp' && getDataType(column.columnInfo?.type) === 'text'"
         :type="'text'"
-        :step="getStep(column.columnInfo.type)"
+        :step="getStep(column.columnInfo?.type)"
         v-model="row[column.field]"
         @input="$emit('rowChanged', row)"
     />
     <InputNumber
         class="kn-material-input p-inputtext-sm"
-        v-if="column && column.editorType !== 'COMBO' && column.columnInfo?.type !== 'date' && column.columnInfo?.type !== 'timestamp' && getDataType(column.columnInfo.type) === 'number'"
+        v-if="column && column.editorType !== 'COMBO' && column.columnInfo?.type !== 'date' && column.columnInfo?.type !== 'timestamp' && getDataType(column.columnInfo?.type) === 'number'"
         v-model="row[column.field]"
         :useGrouping="useGrouping"
         :locale="locale"
@@ -96,11 +96,11 @@ export default defineComponent({
         loadRow() {
             this.row = this.propRow
             if (this.column && (this.row[this.column.field] || this.row[this.column.field] === 0 || this.row[this.column.field] === '')) {
-                if (this.column.columnInfo.type === 'date' && typeof this.row[this.column.field] === 'string') {
+                if (this.column.columnInfo?.type === 'date' && typeof this.row[this.column.field] === 'string') {
                     this.row[this.column.field] = this.row[this.column.field] ? new Date(luxonFormatDate(this.row[this.column.field], 'yyyy-MM-dd', 'yyyy-MM-dd')) : null
-                } else if (this.column.columnInfo.type === 'timestamp' && typeof this.row[this.column.field] === 'string' && this.row[this.column.field] !== '') {
+                } else if (this.column.columnInfo?.type === 'timestamp' && typeof this.row[this.column.field] === 'string' && this.row[this.column.field] !== '') {
                     this.row[this.column.field] = new Date(luxonFormatDate(this.row[this.column.field], 'yyyy-MM-dd HH:mm:ss.S', 'yyyy-MM-dd HH:mm:ss.S'))
-                } else if (this.column.editorType !== 'COMBO' && this.column.columnInfo.type !== 'date' && this.column.columnInfo.type !== 'timestamp' && this.getDataType(this.column.columnInfo.type) === 'number') {
+                } else if (this.column.editorType !== 'COMBO' && this.column.columnInfo?.type !== 'date' && this.column.columnInfo?.type !== 'timestamp' && this.getDataType(this.column.columnInfo?.type) === 'number') {
                     this.formatNumberConfiguration()
                 }
             }
