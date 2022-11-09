@@ -54,11 +54,48 @@ const getFormattedWidgetSettings = (widget: any) => {
 }
 
 const getFormattedEditor = (widget: any) => {
-    return { text: widget.content?.text ?? '' } as ITextWidgetEditor
+    return { text: widget.content?.text ? getFormattedText(widget.content.text) : '' } as ITextWidgetEditor
 }
 
 const getFormattedConfiguration = (widget: any) => {
     return {
         exports: { showExcelExport: widget.style?.showExcelExport ?? false, showScreenshot: widget.style?.showScreenshot ?? false } as IWidgetExports
     } as ITextWidgetConfiguration
+}
+
+const getFormattedText = (originalText: string) => {
+    console.log(">>>>>>>> ORIGINAL TEXT: ", originalText)
+    if ((originalText.indexOf("$F{") < 0 && originalText.indexOf("$P{") < 0 && originalText.indexOf("$V{") < 0)) return originalText
+    let formattedText = replaceParameters(originalText)
+    formattedText = replaceVariables(formattedText)
+    formattedText = replaceColumns(formattedText)
+
+    console.log(">>>>>>>>>>>>> FORMATTED TEXT: ", formattedText)
+    return formattedText
+}
+
+const replaceParameters = (text: string) => {
+    const regex = /\$P{(.+?)\}/g;
+    return text.replace(regex, parametersReplacer)
+}
+
+const parametersReplacer = (match: string, parameterUrlName: string) => {
+    return `[kn-parameter='${parameterUrlName}']`
+}
+
+const replaceVariables = (text: string) => {
+    const regex = /\$V{(.+?)\}/g;
+    return text.replace(regex, variablesReplacer)
+}
+
+const variablesReplacer = (match: string, variableName: string) => {
+    return `[kn-variable='${variableName}']`
+}
+
+const replaceColumns = (text: string) => {
+    return text
+}
+
+const columnsReplacer = (match: string, parameterUrlName: string) => {
+    return `[kn-parameter='${parameterUrlName}']`
 }
