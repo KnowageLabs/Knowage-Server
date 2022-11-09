@@ -98,6 +98,9 @@ public class HtmlSanitizer {
 				.allowAttributes("pagecolor", "bordercolor", "borderopacity", "showgrid", "fit-margin-top", "fit-margin-left", "fit-margin-right", "fit-margin-bottom").onElements("sodipodi:namedview")
 				.allowAttributes("inkscape:connector-curvature", "inkscape:label", "inkscape:groupmode", "inkscape:version").globally()
 				.allowAttributes("sodipodi:nodetypes", "sodipodi:role").globally()
+				// font (even if it is not supported by HTML 5)
+				.allowElements("font")
+				.allowAttributes("size", "face", "color").onElements("font")
 				//
 				.toFactory();
 		// @formatter:on
@@ -190,8 +193,7 @@ public class HtmlSanitizer {
 
 	private boolean isADataUrl(String url) {
 
-		boolean ret = IMG_SRC_DATA.matcher(url)
-				.matches();
+		boolean ret = IMG_SRC_DATA.matcher(url).matches();
 
 		LOGGER.debug("Checking if " + url + " is a data URL: " + ret);
 
@@ -201,8 +203,7 @@ public class HtmlSanitizer {
 	private boolean isInWhiteListAsExternalService(String url) {
 		List<String> validValues = whiteList.getExternalServices();
 
-		boolean ret = validValues.stream()
-				.anyMatch(url::startsWith);
+		boolean ret = validValues.stream().anyMatch(url::startsWith);
 
 		LOGGER.debug("Checking if " + url + " is in whitelist as external service giving the following " + validValues + ": " + ret);
 
@@ -212,8 +213,7 @@ public class HtmlSanitizer {
 	private boolean isInWhiteListAsRelativePath(String url) {
 		List<String> validValues = whiteList.getRelativePaths();
 
-		boolean ret = validValues.stream()
-				.anyMatch(url::startsWith);
+		boolean ret = validValues.stream().anyMatch(url::startsWith);
 
 		LOGGER.debug("Checking if " + url + " is in whitelist as relative path giving the following " + validValues + ": " + ret);
 
