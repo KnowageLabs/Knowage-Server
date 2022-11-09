@@ -11,9 +11,9 @@ import { IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
 import VCodeMirror from 'codemirror-editor-vue3'
 
 export default defineComponent({
-    name: 'widget-responsive',
+    name: 'widget-css-editor',
     components: { VCodeMirror },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, activeIndex: { type: Number, required: true } },
     data() {
         return {
             codeMirrorCssEditor: null as any,
@@ -21,14 +21,15 @@ export default defineComponent({
                 cursor: true,
                 line: false,
                 lineNumbers: true,
-                indentWithTabs: true,
-                smartIndent: true,
-                lineWrapping: true,
-                matchBrackets: true,
                 mode: 'css',
                 tabSize: 4,
                 theme: 'eclipse'
             }
+        }
+    },
+    watch: {
+        activeIndex(value: number) {
+            if (value === 0 && this.codeMirrorCssEditor) setTimeout(() => this.codeMirrorCssEditor.refresh(), 100)
         }
     },
     created() {

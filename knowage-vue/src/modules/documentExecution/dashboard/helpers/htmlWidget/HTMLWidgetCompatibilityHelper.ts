@@ -16,7 +16,7 @@ export const formatHTMLWidget = (widget: any) => {
         theme: '',
         settings: {} as IHTMLWidgetSettings
     } as IWidget
-    formattedWidget.settings = getFormattedWidgetSettings(widget, formattedWidget) as IHTMLWidgetSettings
+    formattedWidget.settings = getFormattedWidgetSettings(widget) as IHTMLWidgetSettings
     return formattedWidget
 }
 
@@ -40,14 +40,14 @@ const getFormattedWidgetColumn = (widgetColumn: any) => {
     return formattedColumn
 }
 
-const getFormattedWidgetSettings = (widget: any, formattedWidget: IWidget) => {
+const getFormattedWidgetSettings = (widget: any) => {
     const formattedSettings = {
         sortingColumn: getColumnId(widget.settings?.sortingColumn) ?? '',
         sortingOrder: widget.settings?.sortingOrder ?? '',
         updatable: widget.updateble,
         clickable: widget.cliccable,
         configuration: getFormattedConfiguration(widget),
-        editor: getFormattedEditor(widget, formattedWidget),
+        editor: getFormattedEditor(widget),
         style: getFormattedStyle(widget),
         interactions: getFormattedInteractions(widget) as IWidgetInteractions,
         responsive: widgetCommonDefaultValues.getDefaultResponsivnes()
@@ -61,16 +61,11 @@ const getFormattedConfiguration = (widget: any) => {
     } as IHTMLWidgetConfiguration
 }
 
-const getFormattedEditor = (widget: any, formattedWidget: IWidget) => {
+const getFormattedEditor = (widget: any) => {
     return {
-        css: getFormattedCssToRender(widget.cssToRender, formattedWidget),
+        css: widget.cssToRender,
         html: widget.htmlToRender,
     } as IHTMLWidgetEditor
-}
-
-const getFormattedCssToRender = (cssToRender: string, formattedWidget: IWidget) => {
-    if (!cssToRender) return ''
-    return cssToRender.replaceAll('[kn-widget-id]', formattedWidget.id as string)
 }
 
 const getColumnId = (widgetColumnName: string) => {
