@@ -94,16 +94,24 @@ const variablesReplacer = (match: string, variableName: string) => {
 
 const replaceColumns = (widget: any, text: string) => {
     const numberFormatting = widget.numbers
-    console.log(">>>>>>>>> NUMBERS FORMATTING: ", numberFormatting)
     const regex = /\$F{(.+?)\}/g;
-    return text.replace(regex, (match: string, columnName: string) => {
+    return text.replace(regex, (match: string, datasetAndColumnName: string) => {
+        const columnName = datasetAndColumnName && datasetAndColumnName.split('.') ? datasetAndColumnName.split('.')[1] : ''
         let result = `[kn-column='${columnName}' row='0'`
-        if (numberFormatting) {
+        if (numberFormatting && columnIsMeasure(columnName, widget)) {
             if (numberFormatting.prefix) result += ` prefix='${numberFormatting.prefix}'`
             if (numberFormatting.suffix) result += ` suffix='${numberFormatting.suffix}'`
             if (numberFormatting.precision) result += ` precision='${numberFormatting.precision}'`
+            if (numberFormatting.format) result += ` format`
         }
         result += ']'
         return result
     })
+}
+
+const columnIsMeasure = (columnName: string, widget: any) => {
+    if (!widget || !widget.content || !widget.content.columnSelectedOfDataset) return false
+    const index = widget.content.columnSelectedOfDataset.findIndex((column: any) => column.name === columnName)
+    if (index === -1) return false
+    return widget.content.columnSelectedOfDataset[index].fieldType === 'MEASURE'
 }
