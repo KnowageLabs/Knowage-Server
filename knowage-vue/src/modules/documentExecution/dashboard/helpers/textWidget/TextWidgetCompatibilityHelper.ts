@@ -94,11 +94,13 @@ const variablesReplacer = (match: string, variableName: string) => {
 
 const replaceColumns = (widget: any, text: string) => {
     const numberFormatting = widget.numbers
-    const regex = /\$F{(.+?)\}/g;
-    return text.replace(regex, (match: string, datasetAndColumnName: string) => {
+    const regex = /(SUM\(|AVG\(|MIN\(|MAX\(|COUNT\(|COUNT_DISTINCT\()?\$F{(.+?)\}\)?/g;
+    return text.replace(regex, (match: string, aggregation: string, datasetAndColumnName: any) => {
+        const formattedAggregation = aggregation ? aggregation.substring(0, aggregation.length - 1) : ''
         const columnName = datasetAndColumnName && datasetAndColumnName.split('.') ? datasetAndColumnName.split('.')[1] : ''
         let result = `[kn-column='${columnName}' row='0'`
         if (numberFormatting && columnIsMeasure(columnName, widget)) {
+            if (formattedAggregation) result += ` aggregation='${formattedAggregation}'`
             if (numberFormatting.prefix) result += ` prefix='${numberFormatting.prefix}'`
             if (numberFormatting.suffix) result += ` suffix='${numberFormatting.suffix}'`
             if (numberFormatting.precision) result += ` precision='${numberFormatting.precision}'`
