@@ -85,6 +85,7 @@ export default defineComponent({
             crossNavigations: [] as any[],
             profileAttributes: [] as { name: string; value: string }[],
             drivers: [] as any[],
+            internationalization: {} as any,
             dashboardId: '',
             saveDialogVisible: false,
             selectionsDialogVisible: false,
@@ -118,11 +119,11 @@ export default defineComponent({
         clearAllDatasetIntervals()
     },
     methods: {
-        ...mapActions(dashboardStore, ['removeSelections', 'setAllDatasets', 'getSelections']),
+        ...mapActions(dashboardStore, ['removeSelections', 'setAllDatasets', 'getSelections', 'setInternationalization', 'getInternationalization']),
         async getData() {
             this.loading = true
             await this.loadDatasets()
-            await Promise.all([this.loadCrossNavigations(), this.loadOutputParameters(), this.loadDrivers(), this.loadProfileAttributes(), this.loadModel()])
+            await Promise.all([this.loadCrossNavigations(), this.loadOutputParameters(), this.loadDrivers(), this.loadProfileAttributes(), this.loadModel(), this.loadInternationalization()])
             this.loading = false
         },
         async loadModel() {
@@ -148,6 +149,19 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => (this.datasets = response.data ? response.data.item : []))
                 .catch(() => {})
             this.setAllDatasets(this.datasets)
+            this.appStore.setLoading(false)
+        },
+        async loadInternationalization() {
+            this.appStore.setLoading(true)
+            var result = (this.appStore.$state as any).user.locale.split('_')
+            await this.$http
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/i18nMessages/?currCountry=${result[1]}&currLanguage=${result[0]}&currScript=`)
+                .then((response: AxiosResponse<any>) => {
+                    this.internationalization = response.data
+                    this.setInternationalization(response.data)
+                })
+                .catch(() => {})
+
             this.appStore.setLoading(false)
         },
         async loadCrossNavigations() {
