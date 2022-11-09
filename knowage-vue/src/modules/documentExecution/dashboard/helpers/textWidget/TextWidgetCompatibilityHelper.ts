@@ -69,6 +69,7 @@ const getFormattedText = (widget: any, originalText: string) => {
     let formattedText = replaceParameters(originalText)
     formattedText = replaceVariables(formattedText)
     formattedText = replaceColumns(widget, formattedText)
+    formattedText = replaceCrossNavigation(formattedText)
 
     console.log(">>>>>>>>>>>>> FORMATTED TEXT: ", formattedText)
     return formattedText
@@ -116,4 +117,10 @@ const columnIsMeasure = (columnName: string, widget: any) => {
     const index = widget.content.columnSelectedOfDataset.findIndex((column: any) => column.name === columnName)
     if (index === -1) return false
     return widget.content.columnSelectedOfDataset[index].fieldType === 'MEASURE'
+}
+
+
+const replaceCrossNavigation = (text: string) => {
+    const regex = /ng-click="doSelection(.+?)"/g;
+    return text.replace(regex, 'kn-cross')
 }
