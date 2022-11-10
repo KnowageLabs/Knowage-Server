@@ -140,12 +140,6 @@ export const getHtmlWidgetData = async (widget: IWidget, datasets: IDataset[], $
     var datasetIndex = datasets.findIndex((dataset: any) => widget.dataset === dataset.id.dsId)
     var selectedDataset = datasets[datasetIndex]
 
-    console.log('GET HTML WIDGET DATA TRIGGERED')
-    console.group('Console group example')
-    console.log(widget)
-    console.log(selectedDataset)
-    console.groupEnd()
-
     if (selectedDataset && widget.settings.editor.html) {
         var html = widget.settings.editor.html
         var numOfRowsToGet = maxRow(widget)
@@ -310,7 +304,6 @@ const resetDatasetInterval = (widget: IWidget) => {
 }
 
 export const getVariableData = async (variable: IVariable, datasets: IDataset[], $http: any) => {
-    console.log('>>>> VARIABLE: ', variable)
     const selectedDataset = getVariableDatasetLabel(variable, datasets)
     if (!selectedDataset) return
     const url = `2.0/datasets/${selectedDataset.label}/data?offset=-1&size=-1&widgetName=undefined`

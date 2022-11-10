@@ -1,6 +1,7 @@
 import { ISelection, IVariable, IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
 import { formatSelectionForDisplay } from '../../../ActiveSelectionsWidget/ActiveSelectionsWidgetHelpers'
 import deepcopy from 'deepcopy'
+import { formatNumberWithLocale } from '@/helpers/commons/localeHelper'
 
 const widgetIdRegex = /#\[kn-widget-id\]/g
 const activeSelectionsRegex = /(?:\[kn-active-selection(?:=\'([a-zA-Z0-9\_\-]+)\')?\s?\])/g
@@ -28,23 +29,6 @@ let widgetData = {} as any
 
 import mockedData from './mockedData.json'
 const aggregationDataset = null as any // TODO
-let limitRows = null as any // TODO - do we need it?
-
-// TODO - DO WE NEED THIS?
-const maxRow = () => {
-    if (!widgetModel) return
-    const str = widgetModel.settings.editor.css + widgetModel.settings.editor.html
-    let tempMaxRow = 1
-    const repeaters = str.replace(limitRegex, function (match: string, p1: any) {
-        if (parseInt(p1) == -1) tempMaxRow = -1
-        else if (p1 > tempMaxRow) tempMaxRow = parseInt(p1) + 1
-    })
-    const occurrencies = str.replace(rowsRegex, function (match: string, p1: any, p2: any) {
-        if (p2 >= tempMaxRow) tempMaxRow = parseInt(p2) + 1
-    })
-    limitRows = { enable: true, rows: tempMaxRow }
-    return tempMaxRow
-}
 
 export const parseText = (tempWidgetModel: IWidget, tempDrivers: any[], tempVariables: IVariable[], tempSelections: ISelection[], internationalization: any) => {
     drivers = tempDrivers
@@ -56,10 +40,9 @@ export const parseText = (tempWidgetModel: IWidget, tempDrivers: any[], tempVari
     const unparsedText = widgetModel.settings.editor.text
     if (!unparsedText) return ''
 
-    // console.log(">>>>>>> unparsedText: ", unparsedText)
     let parsedText = checkTextWidgetPlaceholders(unparsedText)
     parsedText = replaceTextFunctions(parsedText)
-    // console.log(">>>>>>> parsedText: ", parsedText)
+
     return parsedText
 }
 
@@ -86,31 +69,24 @@ export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVari
     widgetData = tempWidgetData
 
     const css = widgetModel.settings.editor.css
-    // console.log('>>>>>>>>>> LOADED CSS: ', css)
     let trustedCss = ''
+
     if (css) {
         let placeholderResultCss = checkPlaceholders(css)
-        // console.log("------------------- placeholderResultCss 1: ", deepcopy(placeholderResultCss))
         placeholderResultCss = parseCalc(placeholderResultCss)
-        // console.log("------------------- placeholderResultCss 2: ", placeholderResultCss)
         trustedCss = placeholderResultCss
-        // console.log('-------------- TRUSTED CSS: ', trustedCss)
     }
 
     const html = widgetModel.settings.editor.html
     let trustedHtml = ''
-    // console.log(">>>>>>>>>> LOADED HTML: ", html)
 
     if (html) {
         let wrappedHtmlToRender = '<div>' + html + ' </div>'
         wrappedHtmlToRender = wrappedHtmlToRender.replace(gt, '$1&gt;$3')
         wrappedHtmlToRender = wrappedHtmlToRender.replace(lt, '$1&lt;$3')
-        console.log('%c WIDGET DATA AAAAAAAAAAAAAAAAA ', 'color: white; background-color: #61dbfb')
-        console.log(widgetData)
 
         const parseHtmlFunctionsResult = parseHtmlFunctions(wrappedHtmlToRender)
         trustedHtml = parseHtmlFunctionsResult
-        //  console.log('-------------- TRUSTED HTML: ', trustedHtml)
     }
 
     return { html: trustedHtml, css: trustedCss }
@@ -245,7 +221,7 @@ const checkPlaceholders = (document: string) => {
     resultHtml = resultHtml.replace(paramsRegex, paramsReplacer)
     resultHtml = resultHtml.replace(variablesRegex, variablesReplacer)
     resultHtml = resultHtml.replace(i18nRegex, i18nReplacer)
-    // console.log('>>>>>>>>>> RESULT HTML: ', resultHtml)
+
     return resultHtml
 }
 
@@ -308,9 +284,8 @@ const columnsReplacer = (match, column, row, aggr, precision, format) => {
     }
 
     if ((column != null && columnInfo.type == 'int') || columnInfo.type == 'float') {
-        //TODO: Format Logic
-        // if(format) column = precision ? $filter('number')(column, precision) : $filter('number')(column);
-        // else column = precision ? parseFloat(column).toFixed(precision) : parseFloat(column);
+        if (format) column = precision ? formatNumberWithLocale(column, precision, null) : formatNumberWithLocale(column, undefined, null)
+        else column = precision ? parseFloat(column).toFixed(precision) : parseFloat(column)
     }
     console.log('%c returned  column column ', 'color: white; background-color: #61dbfb')
     console.log(column)

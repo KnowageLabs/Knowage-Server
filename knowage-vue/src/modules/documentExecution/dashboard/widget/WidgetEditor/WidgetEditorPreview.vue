@@ -87,13 +87,11 @@ export default defineComponent({
         loadWebComponentData() {},
         async getWidgetData() {
             this.loading = true
-            console.log('getting data ------------')
             this.widgetData = await getWidgetData(this.propWidget, this.datasets, this.$http, false, this.activeSelections)
             this.activeSelections = deepcopy(this.getSelections(this.dashboardId))
             this.loading = false
         },
         clearWidgetData() {
-            console.log('clearing data ------------')
             this.widgetData = { metaData: {}, rows: [] }
         },
         logWidget() {
