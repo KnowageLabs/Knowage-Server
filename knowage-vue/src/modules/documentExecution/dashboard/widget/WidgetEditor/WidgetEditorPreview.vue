@@ -113,18 +113,23 @@ export default defineComponent({
             const styleString = getWidgetStyleByType(this.propWidget, 'padding')
             return styleString
         },
-        previewHTML() {
+        async previewHTML() {
             let temp = {} as any
             if (this.propWidget.type === 'html') {
-                temp = parseHtml(this.propWidget, this.drivers, this.variables, this.getSelections(this.dashboardId), this.getInternationalization())
+                await this.getWidgetData()
+                temp = parseHtml(this.propWidget, this.drivers, this.variables, this.getSelections(this.dashboardId), this.getInternationalization(), this.widgetData)
                 this.htmlContent = temp.html
                 this.webComponentCss = temp.css
             } else {
                 this.textModel = parseText(this.propWidget, this.drivers, this.variables, this.getSelections(this.dashboardId), this.getInternationalization())
             }
-            this.$refs.webComponent.htmlContent = this.htmlContent
-            this.$refs.webComponent.webComponentCss = this.webComponentCss
 
+            console.log('TEEEEEEEEEST: ', this.$refs)
+            //@ts-ignore
+            this.$refs.webComponent.htmlContent = this.htmlContent
+            //@ts-ignore
+            this.$refs.webComponent.webComponentCss = this.webComponentCss
+            //@ts-ignore
             this.$refs.webComponent.addEventListener('selectEvent', this.onSelect)
         },
         onSelect(event: any) {
@@ -151,18 +156,18 @@ export default defineComponent({
         }
     }
 }
-@media screen and (max-width: 1199px) {
-    .widget-editor-preview-container {
-        -webkit-transition: width 0.3s;
-        transition: flex 0.3s;
-        flex: 0;
-    }
-}
-@media screen and (min-width: 1200px) {
-    .widget-editor-preview-container {
-        -webkit-transition: width 0.3s;
-        transition: flex 0.3s;
-        flex: 0.5;
-    }
-}
+// @media screen and (max-width: 1199px) {
+//     .widget-editor-preview-container {
+//         -webkit-transition: width 0.3s;
+//         transition: flex 0.3s;
+//         flex: 0;
+//     }
+// }
+// @media screen and (min-width: 1200px) {
+//     .widget-editor-preview-container {
+//         -webkit-transition: width 0.3s;
+//         transition: flex 0.3s;
+//         flex: 0.5;
+//     }
+// }
 </style>

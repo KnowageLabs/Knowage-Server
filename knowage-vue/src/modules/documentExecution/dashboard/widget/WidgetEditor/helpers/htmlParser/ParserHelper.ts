@@ -24,6 +24,7 @@ let variables = [] as IVariable[]
 let activeSelections = [] as ISelection[]
 let widgetModel = null as IWidget | null
 let translatedValues = {} as any
+let widgetData = {} as any
 
 import mockedData from './mockedData.json'
 const aggregationDataset = null as any // TODO
@@ -44,7 +45,6 @@ const maxRow = () => {
     limitRows = { enable: true, rows: tempMaxRow }
     return tempMaxRow
 }
-
 
 export const parseText = (tempWidgetModel: IWidget, tempDrivers: any[], tempVariables: IVariable[], tempSelections: ISelection[], internationalization: any) => {
     drivers = tempDrivers
@@ -77,23 +77,24 @@ const replaceTextFunctions = (parsedText: string) => {
     return parsedHtml.firstChild ? (parsedHtml.firstChild as any).innerHTML : ''
 }
 
-export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVariables: IVariable[], tempSelections: ISelection[], internationalization: any) => {
+export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVariables: IVariable[], tempSelections: ISelection[], tempInternationalization: any, tempWidgetData: any) => {
     drivers = tempDrivers
     variables = tempVariables
     activeSelections = tempSelections
     widgetModel = tempWidgetModel
-    translatedValues = internationalization
+    translatedValues = tempInternationalization
+    widgetData = tempWidgetData
 
     const css = widgetModel.settings.editor.css
-    console.log('>>>>>>>>>> LOADED CSS: ', css)
+    // console.log('>>>>>>>>>> LOADED CSS: ', css)
     let trustedCss = ''
     if (css) {
         let placeholderResultCss = checkPlaceholders(css)
-        console.log("------------------- placeholderResultCss 1: ", deepcopy(placeholderResultCss))
+        // console.log("------------------- placeholderResultCss 1: ", deepcopy(placeholderResultCss))
         placeholderResultCss = parseCalc(placeholderResultCss)
-        console.log("------------------- placeholderResultCss 2: ", placeholderResultCss)
+        // console.log("------------------- placeholderResultCss 2: ", placeholderResultCss)
         trustedCss = placeholderResultCss
-        console.log('-------------- TRUSTED CSS: ', trustedCss)
+        // console.log('-------------- TRUSTED CSS: ', trustedCss)
     }
 
     const html = widgetModel.settings.editor.html
@@ -104,11 +105,12 @@ export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVari
         let wrappedHtmlToRender = '<div>' + html + ' </div>'
         wrappedHtmlToRender = wrappedHtmlToRender.replace(gt, '$1&gt;$3')
         wrappedHtmlToRender = wrappedHtmlToRender.replace(lt, '$1&lt;$3')
+        console.log('%c WIDGET DATA AAAAAAAAAAAAAAAAA ', 'color: white; background-color: #61dbfb')
+        console.log(widgetData)
 
         const parseHtmlFunctionsResult = parseHtmlFunctions(wrappedHtmlToRender)
         trustedHtml = parseHtmlFunctionsResult
         //  console.log('-------------- TRUSTED HTML: ', trustedHtml)
-
     }
 
     return { html: trustedHtml, css: trustedCss }
@@ -235,12 +237,11 @@ const parseCalc = (rawHtml: string) => {
 const checkPlaceholders = (document: string) => {
     let resultHtml = document ?? ''
 
-    // if ($scope.datasetLabel) {
-    //     resultHtml = resultHtml.replace($scope.columnRegex, $scope.replacer);
-    //
-    // }
+    resultHtml = resultHtml.replace(columnRegex, columnsReplacer)
+    resultHtml = resultHtml.replace(columnRegex, columnsReplacer)
+
     resultHtml = resultHtml.replace(activeSelectionsRegex, activeSelectionsReplacer)
-    resultHtml = resultHtml.replace(widgetIdRegex, '')  // TODO - Check if needed
+    resultHtml = resultHtml.replace(widgetIdRegex, '') // TODO - Check if needed
     resultHtml = resultHtml.replace(paramsRegex, paramsReplacer)
     resultHtml = resultHtml.replace(variablesRegex, variablesReplacer)
     resultHtml = resultHtml.replace(i18nRegex, i18nReplacer)
@@ -289,9 +290,31 @@ const ifConditionParamsReplacer = () => {
     // TODO
 }
 
-// TODO
-const replacer = () => {
-    // TODO
+const columnsReplacer = (match, column, row, aggr, precision, format) => {
+    console.log('COLUMNS REPLACER', match, column, row, aggr, precision, format)
+
+    const columnInfo = getColumnFromName(column, aggr ? aggregationDataset : widgetData, aggr)
+    console.log('%c columnInfo columnInfo columnInfo ', 'color: white; background-color: #61dbfb')
+    console.log(columnInfo)
+
+    if (!columnInfo) return column
+
+    if (aggr) {
+        column = aggregationDataset && aggregationDataset.rows[0] && aggregationDataset.rows[0][columnInfo.name] !== '' && typeof aggregationDataset.rows[0][columnInfo.name] != 'undefined' ? aggregationDataset.rows[0][columnInfo.name] : null
+    } else if (widgetData && widgetData.rows[row || 0] && typeof widgetData.rows[row || 0][columnInfo.name] != 'undefined' && widgetData.rows[row || 0][columnInfo.name] !== '') {
+        column = widgetData.rows[row || 0][columnInfo.name]
+    } else {
+        column = null
+    }
+
+    if ((column != null && columnInfo.type == 'int') || columnInfo.type == 'float') {
+        //TODO: Format Logic
+        // if(format) column = precision ? $filter('number')(column, precision) : $filter('number')(column);
+        // else column = precision ? parseFloat(column).toFixed(precision) : parseFloat(column);
+    }
+    console.log('%c returned  column column ', 'color: white; background-color: #61dbfb')
+    console.log(column)
+    return column
 }
 
 export const paramsReplacer = (match: string, p1: string, p2: string) => {

@@ -12,6 +12,9 @@ import store from '@/App.store.js'
 
 const { t } = i18n.global
 const mainStore = store()
+const noAggregationsExistRegex = /\[kn-column=\'[a-zA-Z0-9\_\-\s]+\'(?:\s+row=\'\d+\')?(?!\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')(?:\s+precision=\'(?:\d)\')?(?:\s+format)?\s?\]/g
+const limitRegex = /<[\s\w\=\"\'\-\[\]]*(?!limit=)"([\-\d]+)"[\s\w\=\"\'\-\[\]]*>/g
+const rowsRegex = /(?:\[kn-column=\'([a-zA-Z0-9\_\-\s]+)\'(?:\s+row=\'(\d+)\'){1}(?:\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\s?\])/g
 
 export const getData = (item) =>
     new Promise((resolve) => {
@@ -26,6 +29,8 @@ export const getWidgetData = async (widget: IWidget, datasets: IDataset[], $http
             return await getTableWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         case 'selector':
             return await getSelectorWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
+        case 'html':
+            return await getHtmlWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         default:
             break
     }
@@ -86,8 +91,7 @@ const addFiltersToPostData = (propWidget: IWidget, selectionsToSend: any, datase
     filterKeys.forEach((key: string) => {
         if (selectionsToSend[key]) {
             addFilterToSelection(selectionsToSend[key], filters[key])
-        }
-        else {
+        } else {
             selectionsToSend[key] = filters[key]
         }
     })
@@ -98,8 +102,7 @@ const addFilterToSelection = (selection: any, filter: any) => {
     filterColumnKeys.forEach((key: string) => {
         if (selection[key]) {
             selection[key].push(filter[key])
-        }
-        else {
+        } else {
             selection[key] = filter[key]
         }
     })
@@ -131,6 +134,63 @@ export const getSelectorWidgetData = async (widget: IWidget, datasets: IDataset[
             })
         return tempResponse
     }
+}
+
+export const getHtmlWidgetData = async (widget: IWidget, datasets: IDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+    var datasetIndex = datasets.findIndex((dataset: any) => widget.dataset === dataset.id.dsId)
+    var selectedDataset = datasets[datasetIndex]
+
+    console.log('GET HTML WIDGET DATA TRIGGERED')
+    console.group('Console group example')
+    console.log(widget)
+    console.log(selectedDataset)
+    console.groupEnd()
+
+    if (selectedDataset && widget.settings.editor.html) {
+        var html = widget.settings.editor.html
+        var numOfRowsToGet = maxRow(widget)
+        var url = `2.0/datasets/${selectedDataset.label}/data?offset=0&size=${numOfRowsToGet}&nearRealtime=true&limit=${numOfRowsToGet}`
+
+        if (aggregationsExistInHtml(html)) {
+            //TODO: AGGREGATION LOGIC OMFG
+        } else {
+            let postData = formatSelectorModelForGet(widget, selectedDataset.label, initialCall, selections, associativeResponseSelections)
+            var tempResponse = null as any
+            if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
+            await $http
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData, { headers: { 'X-Disable-Errors': 'true' } })
+                .then((response: AxiosResponse<any>) => {
+                    tempResponse = response.data
+                    tempResponse.initialCall = initialCall
+                })
+                .catch((error: any) => {
+                    showGetDataError(error, selectedDataset.label)
+                })
+                .finally(() => {
+                    // TODO - uncomment when realtime dataset example is ready
+                    // resetDatasetInterval(widget)
+                })
+            return tempResponse
+        }
+    }
+}
+
+const maxRow = (widgetModel) => {
+    if (!widgetModel) return
+    const str = widgetModel.settings.editor.css + widgetModel.settings.editor.html
+    let tempMaxRow = 1
+    const repeaters = str.replace(limitRegex, function (match: string, p1: any) {
+        if (parseInt(p1) == -1) tempMaxRow = -1
+        else if (p1 > tempMaxRow) tempMaxRow = parseInt(p1) + 1
+    })
+    const occurrencies = str.replace(rowsRegex, function (match: string, p1: any, p2: any) {
+        if (p2 >= tempMaxRow) tempMaxRow = parseInt(p2) + 1
+    })
+    return tempMaxRow
+}
+
+const aggregationsExistInHtml = (html) => {
+    return html.search(noAggregationsExistRegex) == -1
 }
 
 export const getTableWidgetData = async (widget: IWidget, datasets: IDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
@@ -249,8 +309,8 @@ const resetDatasetInterval = (widget: IWidget) => {
     if (widget.dataset || widget.dataset === 0) setDatasetInterval(widget.dataset as number, 10000)
 }
 
-export const getVariableData = async (variable: IVariable, datasets: IDataset[], $http: any,) => {
-    console.log(">>>> VARIABLE: ", variable)
+export const getVariableData = async (variable: IVariable, datasets: IDataset[], $http: any) => {
+    console.log('>>>> VARIABLE: ', variable)
     const selectedDataset = getVariableDatasetLabel(variable, datasets)
     if (!selectedDataset) return
     const url = `2.0/datasets/${selectedDataset.label}/data?offset=-1&size=-1&widgetName=undefined`
@@ -258,8 +318,7 @@ export const getVariableData = async (variable: IVariable, datasets: IDataset[],
     let tempResponse = null as any
     await $http
         .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData, { headers: { 'X-Disable-Errors': 'true' } })
-        .then((response: AxiosResponse<any>) =>
-            tempResponse = response.data)
+        .then((response: AxiosResponse<any>) => (tempResponse = response.data))
         .catch((error: any) => {
             showGetDataError(error, selectedDataset.label)
         })
