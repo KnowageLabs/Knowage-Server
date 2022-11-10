@@ -28,7 +28,7 @@ let translatedValues = {} as any
 let widgetData = {} as any
 
 import mockedData from './mockedData.json'
-const aggregationDataset = null as any // TODO
+let aggregationDataset = null as any // TODO
 
 export const parseText = (tempWidgetModel: IWidget, tempDrivers: any[], tempVariables: IVariable[], tempSelections: ISelection[], internationalization: any) => {
     drivers = tempDrivers
@@ -66,7 +66,13 @@ export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVari
     activeSelections = tempSelections
     widgetModel = tempWidgetModel
     translatedValues = tempInternationalization
-    widgetData = tempWidgetData
+    widgetData = tempWidgetData.tempResponse
+    aggregationDataset = tempWidgetData.aggregationDataset
+
+    console.group(`STUFF`)
+    console.log(`widget data: `, widgetData)
+    console.log(`widget data: `, aggregationDataset)
+    console.groupEnd()
 
     const css = widgetModel.settings.editor.css
     let trustedCss = ''

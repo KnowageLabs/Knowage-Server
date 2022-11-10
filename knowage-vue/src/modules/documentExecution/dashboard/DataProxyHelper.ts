@@ -9,12 +9,15 @@ import { IDataset, ISelection, IVariable, IWidget } from './Dashboard'
 import { setDatasetInterval, clearDatasetInterval } from './helpers/datasetRefresh/DatasetRefreshHelpers'
 import i18n from '@/App.i18n'
 import store from '@/App.store.js'
+import deepcopy from 'deepcopy'
 
 const { t } = i18n.global
 const mainStore = store()
 const noAggregationsExistRegex = /\[kn-column=\'[a-zA-Z0-9\_\-\s]+\'(?:\s+row=\'\d+\')?(?!\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')(?:\s+precision=\'(?:\d)\')?(?:\s+format)?\s?\]/g
 const limitRegex = /<[\s\w\=\"\'\-\[\]]*(?!limit=)"([\-\d]+)"[\s\w\=\"\'\-\[\]]*>/g
 const rowsRegex = /(?:\[kn-column=\'([a-zA-Z0-9\_\-\s]+)\'(?:\s+row=\'(\d+)\'){1}(?:\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\s?\])/g
+const aggregationRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-\s]+)[\']{1}(?:\s+row=\'(\d*)\')?(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?(\s+format)?\])/
+const aggregationsRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-\s]+)[\']{1}(?:\s+row=\'(\d*)\')?(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?(\s+format)?\])/g
 
 export const getData = (item) =>
     new Promise((resolve) => {
@@ -36,7 +39,7 @@ export const getWidgetData = async (widget: IWidget, datasets: IDataset[], $http
     }
 }
 
-const formatSelectorModelForGet = (propWidget: IWidget, datasetLabel: string, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+const formatWidgetModelForGet = (propWidget: IWidget, datasetLabel: string, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
     var dataToSend = {
         aggregations: {
             dataset: '',
@@ -115,7 +118,7 @@ export const getSelectorWidgetData = async (widget: IWidget, datasets: IDataset[
     if (selectedDataset) {
         var url = `2.0/datasets/${selectedDataset.label}/data?offset=-1&size=-1&nearRealtime=true`
 
-        let postData = formatSelectorModelForGet(widget, selectedDataset.label, initialCall, selections, associativeResponseSelections)
+        let postData = formatWidgetModelForGet(widget, selectedDataset.label, initialCall, selections, associativeResponseSelections)
         var tempResponse = null as any
 
         if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
@@ -145,27 +148,39 @@ export const getHtmlWidgetData = async (widget: IWidget, datasets: IDataset[], $
         var numOfRowsToGet = maxRow(widget)
         var url = `2.0/datasets/${selectedDataset.label}/data?offset=0&size=${numOfRowsToGet}&nearRealtime=true&limit=${numOfRowsToGet}`
 
-        if (aggregationsExistInHtml(html)) {
-            //TODO: AGGREGATION LOGIC OMFG
-        } else {
-            let postData = formatSelectorModelForGet(widget, selectedDataset.label, initialCall, selections, associativeResponseSelections)
-            var tempResponse = null as any
-            if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
+        var aggregationsModel = getAggregationsModel(widget, html, selectedDataset)
+        var aggregationDataset = null as any
+        if (aggregationsModel) {
+            let aggregationsPostData = formatWidgetModelForGet(aggregationsModel, selectedDataset.label, initialCall, selections, associativeResponseSelections)
             await $http
-                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData, { headers: { 'X-Disable-Errors': 'true' } })
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, aggregationsPostData, { headers: { 'X-Disable-Errors': 'true' } })
                 .then((response: AxiosResponse<any>) => {
-                    tempResponse = response.data
-                    tempResponse.initialCall = initialCall
+                    aggregationDataset = response.data
                 })
                 .catch((error: any) => {
                     showGetDataError(error, selectedDataset.label)
                 })
-                .finally(() => {
-                    // TODO - uncomment when realtime dataset example is ready
-                    // resetDatasetInterval(widget)
-                })
-            return tempResponse
         }
+
+        let postData = formatWidgetModelForGet(widget, selectedDataset.label, initialCall, selections, associativeResponseSelections)
+        var tempResponse = null as any
+        if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
+        await $http
+            .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData, { headers: { 'X-Disable-Errors': 'true' } })
+            .then((response: AxiosResponse<any>) => {
+                tempResponse = response.data
+                tempResponse.initialCall = initialCall
+            })
+            .catch((error: any) => {
+                showGetDataError(error, selectedDataset.label)
+            })
+            .finally(() => {
+                // TODO - uncomment when realtime dataset example is ready
+                // resetDatasetInterval(widget)
+            })
+
+        console.log('AGREGATIONS DATASET- -------------- - - ------------ - -- - - ', aggregationDataset)
+        return { tempResponse: tempResponse, aggregationDataset: aggregationDataset }
     }
 }
 
@@ -183,6 +198,34 @@ const maxRow = (widgetModel) => {
     return tempMaxRow
 }
 
+const getAggregationsModel = (widgetModel, rawHtml, selectedDataset) => {
+    var aggregationsReg = rawHtml.match(aggregationsRegex)
+    if (aggregationsReg) {
+        var tempModel = deepcopy(widgetModel)
+        delete tempModel.settings
+        tempModel.columns = []
+        var tempDataset = deepcopy(selectedDataset)
+
+        for (var a in aggregationsReg) {
+            var aggregationReg = aggregationRegex.exec(aggregationsReg[a])
+            for (var m in widgetModel.columns) {
+                if (aggregationReg && aggregationReg[1] && widgetModel.columns[m].columnName == aggregationReg[1]) {
+                    widgetModel.columns[m].alias = aggregationReg[1] + '_' + aggregationReg[3]
+                    widgetModel.columns[m].fieldType = 'MEASURE'
+                    widgetModel.columns[m].aggregation = aggregationReg[3]
+                    var exists = false
+                    for (var c in tempModel.columns) {
+                        if (tempModel.columns[c].alias == aggregationReg[1] + '_' + aggregationReg[3]) exists = true
+                    }
+                    if (!exists) tempModel.columns.push(deepcopy(widgetModel.columns[m]))
+                }
+            }
+        }
+        console.log('TEMP MODEL COLUMNSZZZZZZ', tempModel)
+        return tempModel
+    } else return null
+}
+
 const aggregationsExistInHtml = (html) => {
     return html.search(noAggregationsExistRegex) == -1
 }
@@ -198,7 +241,7 @@ export const getTableWidgetData = async (widget: IWidget, datasets: IDataset[], 
             url = `2.0/datasets/${selectedDataset.label}/data?offset=${pagination.properties.offset}&size=${pagination.properties.itemsNumber}&nearRealtime=true`
         } else url = `2.0/datasets/${selectedDataset.label}/data?offset=0&size=-1&nearRealtime=true`
 
-        let postData = formatSelectorModelForGet(widget, selectedDataset.label, initialCall, selections, associativeResponseSelections)
+        let postData = formatWidgetModelForGet(widget, selectedDataset.label, initialCall, selections, associativeResponseSelections)
         var tempResponse = null as any
 
         if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)

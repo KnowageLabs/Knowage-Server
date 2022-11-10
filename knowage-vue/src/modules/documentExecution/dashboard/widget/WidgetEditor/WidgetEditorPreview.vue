@@ -1,6 +1,6 @@
 <template>
     <div class="widget-editor-preview-container p-d-flex p-flex-column p-ai-stretch p-jc-center kn-overflow">
-        <!-- <Button icon="fas fa-square-check" class="p-button-rounded p-button-text p-button-plain" @click="logWidget" /> -->
+        <Button icon="fas fa-square-check" class="p-button-rounded p-button-text p-button-plain" @click="logWidget" />
         <ProgressBar v-if="loading" class="p-mx-2" mode="indeterminate" />
         <!-- TODO - return widget-container class -->
         <div class="p-mx-2" :style="getWidgetContainerStyle()" style="'height: 500px; overflow: auto;'">
