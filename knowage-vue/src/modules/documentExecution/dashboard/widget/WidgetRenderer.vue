@@ -18,7 +18,7 @@
             />
             <SelectorWidget v-if="widget.type == 'selector'" :propWidget="widget" :dataToShow="dataToShow" :widgetInitialData="widgetInitialData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" :datasets="datasets" :selectionIsLocked="selectionIsLocked" />
             <ActiveSelectionsWidget v-if="widget.type == 'selection'" :propWidget="widget" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" />
-            <widget-web-component v-if="widget.type == 'html'" ref="webComponent"></widget-web-component>
+            <WebComponentContainer v-if="widget.type == 'html'" :propWidget="widget" :widgetData="dataToShow" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" :drivers="drivers" :variables="variables"></WebComponentContainer>
         </div>
     </div>
 </template>
@@ -34,15 +34,12 @@ import SelectorWidget from './SelectorWidget/SelectorWidget.vue'
 import ActiveSelectionsWidget from './ActiveSelectionsWidget/ActiveSelectionsWidget.vue'
 import mock from '../dataset/DatasetEditorTestMocks.json'
 import { IDataset, ISelection, IVariable } from '../Dashboard'
-import './WidgetEditor/WidgetEditorSettingsTab/common/webComponent/WidgetWebComponent'
-import { parseHtml, parseText } from './WidgetEditor/helpers/htmlParser/ParserHelper'
-import { mapActions } from 'pinia'
-import store from '../Dashboard.store'
+import WebComponentContainer from './WebComponent/WebComponentContainer.vue'
 
 export default defineComponent({
     name: 'widget-renderer',
     emits: ['interaction', 'pageChanged', 'launchSelection', 'sortingChanged'],
-    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget },
+    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, WebComponentContainer },
     props: {
         widget: { required: true, type: Object as any },
         widgetData: { required: true, type: Object },
@@ -77,10 +74,8 @@ export default defineComponent({
         this.loadDataToShow()
     },
     methods: {
-        ...mapActions(store, ['getInternationalization']),
         async loadDataToShow() {
             this.dataToShow = this.widgetData
-            await this.loadHTML()
         },
         loadActiveSelections() {
             this.activeSelections = this.propActiveSelections
@@ -97,30 +92,11 @@ export default defineComponent({
         getWidgetPadding() {
             const styleString = getWidgetStyleByType(this.widget, 'padding')
             return styleString
-        },
-        async loadHTML() {
-            if (this.widget.type !== 'html' && this.widget.type !== 'text') return
-            let temp = {} as any
-            if (this.widget.type === 'html') {
-                temp = parseHtml(this.widget, this.drivers, this.variables, this.activeSelections, this.getInternationalization(), this.dataToShow)
-                this.htmlContent = temp.html
-                this.webComponentCss = temp.css
-            } else {
-                this.textModel = parseText(this.widget, this.drivers, this.variables, this.activeSelections, this.getInternationalization())
-            }
-
-            console.log('TEEEEEEEEEST: ', this.$refs)
-            const webComponentRef = this.$refs.webComponent as any
-            webComponentRef.htmlContent = this.htmlContent
-            webComponentRef.webComponentCss = this.webComponentCss
-            webComponentRef.addEventListener('selectEvent', this.onSelect)
-        },
-        onSelect(event: any) {
-            console.log('>>>>>>>>>>>>>>>>>>>>> ON SELECT CAAAALED: ', event)
         }
     }
 })
 </script>
+
 <style lang="scss" scoped>
 .widget-container {
     width: 100%;

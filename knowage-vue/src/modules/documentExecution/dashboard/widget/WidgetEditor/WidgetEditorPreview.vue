@@ -7,12 +7,13 @@
             <div v-if="widgetTitle && widgetTitle.enabled" class="p-d-flex p-ai-center" style="border-radius: 0px" :style="getWidgetTitleStyle()">
                 {{ widgetTitle?.text }}
             </div>
-            <Button v-if="propWidget.type == 'html' || propWidget.type == 'text'" icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" v-tooltip.left="$t('common.todo')" @click="previewHTML">preview HTML</Button>
+
             <div class="widget-container-renderer" :style="getWidgetPadding()">
                 <TableWidget v-if="propWidget.type == 'table'" :propWidget="propWidget" :datasets="datasets" :dataToShow="widgetData" :editorMode="true" :dashboardId="dashboardId" @pageChanged="getWidgetData" />
                 <SelectorWidget v-if="propWidget.type == 'selector'" :propWidget="propWidget" :dataToShow="widgetData" :widgetInitialData="widgetData" :editorMode="true" />
                 <ActiveSelectionsWidget v-if="propWidget.type == 'selection'" :propWidget="propWidget" :propActiveSelections="activeSelections" :editorMode="true" :dashboardId="dashboardId" />
-                <widget-web-component v-if="propWidget.type == 'html'" ref="webComponent"></widget-web-component>
+                <!-- <widget-web-component v-if="propWidget.type == 'html'" ref="webComponent"></widget-web-component> -->
+                <WebComponentContainer v-if="propWidget.type == 'html'" :propWidget="propWidget" :widgetData="widgetData" :propActiveSelections="activeSelections" :editorMode="true" :dashboardId="dashboardId" :drivers="drivers" :variables="variables"></WebComponentContainer>
                 <!-- <div v-html="textModel"></div> -->
             </div>
         </div>
@@ -34,12 +35,11 @@ import ProgressBar from 'primevue/progressbar'
 import { mapState, mapActions } from 'pinia'
 import store from '../../Dashboard.store'
 import deepcopy from 'deepcopy'
-import { parseHtml, parseText } from './helpers/htmlParser/ParserHelper'
-import './WidgetEditorSettingsTab/common/webComponent/WidgetWebComponent'
+import WebComponentContainer from '../WebComponent/WebComponentContainer.vue'
 
 export default defineComponent({
     name: 'widget-editor-preview',
-    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, ProgressBar },
+    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, ProgressBar, WebComponentContainer },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDataset[]>, required: true },
@@ -75,7 +75,7 @@ export default defineComponent({
         this.unsetEventListeners()
     },
     methods: {
-        ...mapActions(store, ['getDashboard', 'getSelections', 'getInternationalization']),
+        ...mapActions(store, ['getDashboard', 'getSelections']),
         setEventListeners() {
             emitter.on('clearWidgetData', this.clearWidgetData)
             emitter.on('refreshWidgetWithData', this.getWidgetData)
@@ -110,28 +110,6 @@ export default defineComponent({
         getWidgetPadding() {
             const styleString = getWidgetStyleByType(this.propWidget, 'padding')
             return styleString
-        },
-        async previewHTML() {
-            let temp = {} as any
-            if (this.propWidget.type === 'html') {
-                await this.getWidgetData()
-                temp = parseHtml(this.propWidget, this.drivers, this.variables, this.getSelections(this.dashboardId), this.getInternationalization(), this.widgetData)
-                this.htmlContent = temp.html
-                this.webComponentCss = temp.css
-            } else {
-                this.textModel = parseText(this.propWidget, this.drivers, this.variables, this.getSelections(this.dashboardId), this.getInternationalization())
-            }
-
-            console.log('TEEEEEEEEEST: ', this.$refs)
-            //@ts-ignore
-            this.$refs.webComponent.htmlContent = this.htmlContent
-            //@ts-ignore
-            this.$refs.webComponent.webComponentCss = this.webComponentCss
-            //@ts-ignore
-            this.$refs.webComponent.addEventListener('selectEvent', this.onSelect)
-        },
-        onSelect(event: any) {
-            console.log('>>>>>>>>>>>>>>>>>>>>> ON SELECT CAAAALED: ', event)
         }
     }
 })
