@@ -1,3 +1,5 @@
+const { sass } = require('sass')
+
 process.env.VUE_APP_VERSION = process.env.npm_package_version
 
 module.exports = {
@@ -40,7 +42,8 @@ module.exports = {
     css: {
         loaderOptions: {
             scss: {
-                additionalData: '@import "@/assets/scss/main.scss";'
+                additionalData: '@import "@/assets/scss/main.scss";',
+                implementation: sass
             }
         }
     }
