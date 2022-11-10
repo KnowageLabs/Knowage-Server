@@ -14,10 +14,10 @@ export const updateStoreSelections = (newSelection: ISelection, currentActiveSel
     updateSelectionFunction(dashboardId, currentActiveSelections, $http)
 }
 
-export const executeCrossNavigation = (payload: any) => {
-    console.log("TODO: executeCrossNavigation(): ", payload)
+export const executeCrossNavigation = (dynamicValue: string, crossNavigationName: string) => {
+    console.log("TODO: executeCrossNavigation() - dynamicValue: ", dynamicValue, ', crossNavigationName: ', crossNavigationName)
 }
 
-export const executePreview = (payload: any) => {
-    console.log("TODO: executePreview(): ", payload)
+export const executePreview = (datasetLabel: string) => {
+    console.log("TODO: executePreview() - datasetLabel: ", datasetLabel)
 }

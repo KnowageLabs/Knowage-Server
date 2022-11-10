@@ -106,7 +106,7 @@ const parseHtmlFunctions = (rawHtml: string) => {
     let allElements = parsedHtml.getElementsByTagName('*')
     allElements = parseRepeat(allElements)
     allElements = parseIf(allElements) // TODO - additional
-    allElements = parseAttrs(allElements) // TODO - change function names???
+    allElements = parseAttrs(allElements)
     const placeholderResultHtml = checkPlaceholders(parsedHtml.firstChild ? (parsedHtml.firstChild as any).innerHTML : '')
     const parseCalcResultHtml = parseCalc(placeholderResultHtml)
     return parseCalcResultHtml
@@ -184,19 +184,12 @@ const parseAttrs = (allElements: any) => {
     const nodesNumber = allElements.length
     do {
         if (allElements[j] && allElements[j].hasAttribute('kn-preview')) {
-            const datasetPreviewLabel = allElements[j].getAttribute('kn-preview')
-            // allElements[j].setAttribute('onclick', "showPreview('" + datasetPreviewLabel + "')")
             allElements[j].classList.add('preview-class-temp')
         }
         if (allElements[j] && allElements[j].hasAttribute('kn-cross')) {
-            allElements[j].setAttribute('onclick', "showCrossNavigation(null,'" + allElements[j].getAttribute('kn-cross') + "')")
-            // allElements[j].classList.add('cross-nav-class-temp')
+            allElements[j].classList.add('cross-nav-class-temp')
         }
         if (allElements[j] && allElements[j].hasAttribute('kn-selection-column')) {
-            const columnSelectionLabel = allElements[j].getAttribute('kn-selection-column')
-            let columnSelectionValue = allElements[j].getAttribute('kn-selection-value')
-            if (columnSelectionValue.charAt(0) != '[') columnSelectionValue = "'" + columnSelectionValue + "'"
-            // allElements[j].setAttribute('onclick', columnSelectionValue ? "select('" + columnSelectionLabel + "'," + columnSelectionValue + ')' : "select('" + columnSelectionLabel + "')")
             allElements[j].classList.add('select-class-temp')
         }
         j++

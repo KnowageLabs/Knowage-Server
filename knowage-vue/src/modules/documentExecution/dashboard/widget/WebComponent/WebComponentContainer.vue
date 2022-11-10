@@ -1,5 +1,6 @@
 <template>
     <div>
+        <button @click="loadHTML">Test</button>
         <widget-web-component ref="webComponent"></widget-web-component>
     </div>
 </template>
@@ -15,7 +16,7 @@ import { mapActions } from 'pinia'
 import store from '../../Dashboard.store'
 import { IWidget } from '../../Dashboard'
 import { parseHtml, parseText } from '../WidgetEditor/helpers/htmlParser/ParserHelper'
-import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
+import { executeCrossNavigation, executePreview, updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
 
 export default defineComponent({
     name: 'widget-component-container',
@@ -75,6 +76,8 @@ export default defineComponent({
             webComponentRef.htmlContent = this.htmlContent
             webComponentRef.webComponentCss = this.webComponentCss
             webComponentRef.addEventListener('selectEvent', this.onSelect)
+            webComponentRef.addEventListener('previewEvent', this.onPreview)
+            webComponentRef.addEventListener('crossNavEvent', this.onCrossNavigation)
         },
         onSelect(event: any) {
             if (this.editorMode || !event.detail) return
@@ -90,6 +93,16 @@ export default defineComponent({
         },
         createNewSelection(value: (string | number)[], columnName: string) {
             return { datasetId: this.propWidget.dataset as number, datasetLabel: this.getDatasetLabel(this.propWidget.dataset as number), columnName: columnName, value: value, aggregated: false, timestamp: new Date().getTime() }
+        },
+        onPreview(event: any) {
+            if (this.editorMode || !event.detail) return
+            const datasetLabel = event.detail.datasetLabel
+            executePreview(datasetLabel)
+        },
+        onCrossNavigation(event: any) {
+            if (this.editorMode || !event.detail) return
+            const crossValue = event.detail.crossValue
+            executeCrossNavigation(crossValue, '')
         }
     }
 })
