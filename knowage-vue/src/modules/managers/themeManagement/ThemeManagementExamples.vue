@@ -52,6 +52,15 @@
                 <Button icon="fas fa-box" class="p-button-text p-button-rounded p-button-plain" disabled />
             </template>
         </Toolbar>
+
+        <div style="padding:8px; background-color: #eee">
+            <Breadcrumb :home="examples.breadcrumbs.home" :model="examples.breadcrumbs.items" class="kn-breadcrumb">
+                <template #item="{ item }">
+                    <span class="breadcrumbs-item">{{ item.crossBreadcrumb ? item.crossBreadcrumb : item.label }}</span>
+                </template>
+            </Breadcrumb>
+        </div>
+
         <Card class="p-mt-4">
             <template #content>
                 <Button class="p-m-2 kn-button--primary">Primary</Button>
@@ -122,47 +131,48 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import Button from 'primevue/button'
-    import Card from 'primevue/card'
-    import Column from 'primevue/column'
-    import DataTable from 'primevue/datatable'
-    import FabButton from '@/components/UI/KnFabButton.vue'
-    import Message from 'primevue/message'
-    import TabPanel from 'primevue/tabpanel'
-    import TabView from 'primevue/tabview'
-    import ThemeManagementDescriptor from './ThemeManagementDescriptor.json'
+import { defineComponent } from 'vue'
+import Breadcrumb from 'primevue/breadcrumb'
+import Button from 'primevue/button'
+import Card from 'primevue/card'
+import Column from 'primevue/column'
+import DataTable from 'primevue/datatable'
+import FabButton from '@/components/UI/KnFabButton.vue'
+import Message from 'primevue/message'
+import TabPanel from 'primevue/tabpanel'
+import TabView from 'primevue/tabview'
+import ThemeManagementDescriptor from './ThemeManagementDescriptor.json'
 
-    export default defineComponent({
-        name: 'theme-management-examples',
-        components: { Button, Card, Column, DataTable, FabButton, Message, TabPanel, TabView },
-        props: { properties: Object },
-        data() {
-            return {
-                examples: ThemeManagementDescriptor.examples
-            }
-        },
-        mounted() {
-            this.updateStyle(this.properties)
-        },
-        updated() {
-            this.updateStyle(this.properties)
-        },
-        methods: {
-            updateStyle(properties) {
-                for (let key in properties) {
-                    // @ts-ignore
-                    this.$refs.example.style.setProperty(key, properties[key])
-                }
+export default defineComponent({
+    name: 'theme-management-examples',
+    components: { Breadcrumb, Button, Card, Column, DataTable, FabButton, Message, TabPanel, TabView },
+    props: { properties: Object },
+    data() {
+        return {
+            examples: ThemeManagementDescriptor.examples
+        }
+    },
+    mounted() {
+        this.updateStyle(this.properties)
+    },
+    updated() {
+        this.updateStyle(this.properties)
+    },
+    methods: {
+        updateStyle(properties) {
+            for (let key in properties) {
+                // @ts-ignore
+                this.$refs.example.style.setProperty(key, properties[key])
             }
         }
-    })
+    }
+})
 </script>
 <style lang="scss" scoped>
-    #example {
-        font-size: var(--kn-font-size);
-    }
-    .hiddenProperties {
-        display: none;
-    }
+#example {
+    font-size: var(--kn-font-size);
+}
+.hiddenProperties {
+    display: none;
+}
 </style>

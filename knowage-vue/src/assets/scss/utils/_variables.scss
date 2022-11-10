@@ -21,7 +21,10 @@
     --kn-app-background-color: #ffffff;
 
     // BREADCRUMBS
-    --kn-breadcrumb-border-color: #cccccc;
+    --kn-breadcrumb-items-color: #000000de;
+    --kn-breadcrumb-items-border: 0;
+    --kn-breadcrumb-selected-item-color: #000000de;
+    --kn-breadcrumb-selected-item-border: 0;
 
     // BUTTONS
     --kn-button-border-radius: 2px;
@@ -60,6 +63,8 @@
     --kn-adminmenu-hover-background-color: #cbdeef;
     --kn-mainmenu-box-shadow: 0px 4px 8px #484848;
     --kn-mainmenu-highlight-color: #ce0651;
+    --kn-mainmenu-avatar-background-color: #fff;
+    --kn-mainmenu-avatar-border-radius: 50%;
     --kn-mainmenu-icon-color: #fff;
     --kn-mainmenu-panel-color: #f0f8ff;
     --kn-mainmenu-panel-text-color: #43749e;

@@ -1,9 +1,52 @@
 .p-breadcrumb.kn-breadcrumb {
     border-radius: 0;
-    &.border-bottom {
-        border: none;
-        border-bottom: 1px solid var(--kn-breadcrumb-border-color);
+    background: transparent;
+    border: 0;
+    height: 100%;
+    max-height: 38px;
+    padding: 0 0 0 4px;
+    display: flex;
+    .p-breadcrumb-chevron {
+        display: inline-flex;
+        height: 100%;
+        align-items: center;
+        margin-right: 8px;
+        color: var(--kn-breadcrumb-items-color);
+        font-size: 12px;
+        line-height: 30px;
+        &:nth-child(2) {
+            display: none;
+        }
     }
+    li {
+        &:not(.p-breadcrumb-home) {
+            .breadcrumbs-item {
+                display: inline;
+                white-space: nowrap;
+                height: 30px;
+                text-align: center;
+                position: relative;
+                font-size: 12px;
+                text-decoration: none;
+                text-transform: none;
+                border-radius: 10px;
+                border: var(--kn-breadcrumb-items-border);
+                background-color: transparent;
+                padding: 0 16px;
+                line-height: 24px;
+                color: var(--kn-breadcrumb-items-color);
+                height: 30px;
+            }
+        }
+        &:last-child {
+            .breadcrumbs-item {
+                cursor: default;
+                color: var(--kn-breadcrumb-selected-item-color);
+                border: var(--kn-breadcrumb-selected-item-border);
+            }
+        }
+    }
+
     .breadcrumbs-item:hover {
         cursor: pointer;
     }
