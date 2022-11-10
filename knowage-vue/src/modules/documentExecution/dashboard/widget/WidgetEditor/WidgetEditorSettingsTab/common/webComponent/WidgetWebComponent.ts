@@ -1,8 +1,14 @@
 class WidgetWebComponent extends HTMLElement {
+    selectEvent = null as any
 
     constructor() {
         super();
 
+        this.selectEvent = new CustomEvent("selectEvent", {
+            bubbles: true,
+            cancelable: false,
+            composed: true
+        });
     }
 
     connectedCallback() {
@@ -15,16 +21,6 @@ class WidgetWebComponent extends HTMLElement {
         wrapper.textContent = '';
         shadow.appendChild(style);
         shadow.appendChild(wrapper);
-
-        console.log('>>>>>>>>>> connectedCallback: ', this.attributes)
-    }
-
-    static get observedAttributes() {
-        return [];
-    }
-
-    attributeChangedCallback(name, oldValue, newValue) {
-        console.log(`Value changed for ${name} from ${oldValue} to ${newValue}`);
     }
 
     get htmlContent() {
@@ -32,13 +28,20 @@ class WidgetWebComponent extends HTMLElement {
     }
 
     set htmlContent(value: string) {
-        //this.htmlContent = value;
-        console.log("htmlContent:", value)
         if (this.shadowRoot) {
             const temp = this.shadowRoot.querySelector('.component-wrapper')
-            console.log("TEMP: ", temp)
             if (temp) temp.innerHTML = value
+
+            const temp2 = this.shadowRoot.querySelector('.select-class-temp')
+            console.log(">>>>> TEMP 2: ", temp2)
+            if (temp2) temp2.addEventListener('click', event => {
+                console.log("CAAAAAAAALED select: ", event.target)
+                console.log("CAAAAAAAALED select: ", event.target?.attributes)
+                this.dispatchEvent(this.selectEvent);
+            }, false);
         }
+
+
     }
 
 
@@ -47,14 +50,11 @@ class WidgetWebComponent extends HTMLElement {
     }
 
     set webComponentCss(value: string) {
-        console.log("webComponentCss:", value)
         if (this.shadowRoot) {
             const temp = this.shadowRoot.querySelector('.style-wrapper')
-            console.log("TEMP: ", temp)
             if (temp) temp.innerHTML = value
         }
     }
-
 }
 
 customElements.define("widget-web-component", WidgetWebComponent)

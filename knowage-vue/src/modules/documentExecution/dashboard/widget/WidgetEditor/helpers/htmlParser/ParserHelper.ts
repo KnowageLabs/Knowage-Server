@@ -207,16 +207,19 @@ const parseAttrs = (allElements: any) => {
     do {
         if (allElements[j] && allElements[j].hasAttribute('kn-preview')) {
             const datasetPreviewLabel = allElements[j].getAttribute('kn-preview')
-            allElements[j].setAttribute('click', "showPreview('" + datasetPreviewLabel + "')")
+            // allElements[j].setAttribute('onclick', "showPreview('" + datasetPreviewLabel + "')")
+            allElements[j].classList.add('preview-class-temp')
         }
         if (allElements[j] && allElements[j].hasAttribute('kn-cross')) {
-            allElements[j].setAttribute('lick', "showCrossNavigation(null,'" + allElements[j].getAttribute('kn-cross') + "')")
+            allElements[j].setAttribute('onclick', "showCrossNavigation(null,'" + allElements[j].getAttribute('kn-cross') + "')")
+            // allElements[j].classList.add('cross-nav-class-temp')
         }
         if (allElements[j] && allElements[j].hasAttribute('kn-selection-column')) {
             const columnSelectionLabel = allElements[j].getAttribute('kn-selection-column')
             let columnSelectionValue = allElements[j].getAttribute('kn-selection-value')
             if (columnSelectionValue.charAt(0) != '[') columnSelectionValue = "'" + columnSelectionValue + "'"
-            allElements[j].setAttribute('click', columnSelectionValue ? "select('" + columnSelectionLabel + "'," + columnSelectionValue + ')' : "select('" + columnSelectionLabel + "')")
+            // allElements[j].setAttribute('onclick', columnSelectionValue ? "select('" + columnSelectionLabel + "'," + columnSelectionValue + ')' : "select('" + columnSelectionLabel + "')")
+            allElements[j].classList.add('select-class-temp')
         }
         j++
     } while (j < nodesNumber)

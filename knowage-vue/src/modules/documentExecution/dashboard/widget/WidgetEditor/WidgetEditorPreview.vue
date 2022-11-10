@@ -122,11 +122,13 @@ export default defineComponent({
             } else {
                 this.textModel = parseText(this.propWidget, this.drivers, this.variables, this.getSelections(this.dashboardId), this.getInternationalization())
             }
-
-            console.log('TEEEEEEEEEST: ', this.$refs)
             this.$refs.webComponent.htmlContent = this.htmlContent
             this.$refs.webComponent.webComponentCss = this.webComponentCss
-            // console.log('---- HTML CONTENT: ', this.htmlContent)
+
+            this.$refs.webComponent.addEventListener('selectEvent', this.onSelect)
+        },
+        onSelect(event: any) {
+            console.log('>>>>>>>>>>>>>>>>>>>>> ON SELECT CAAAALED: ', event)
         }
     }
 })
