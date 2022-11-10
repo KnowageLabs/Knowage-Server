@@ -179,7 +179,6 @@ const parseIf = (allElements: any) => {
 }
 
 const parseAttrs = (allElements: any) => {
-    // TODO - change function signatures
     let j = 0
     const nodesNumber = allElements.length
     do {
@@ -207,10 +206,8 @@ const checkPlaceholders = (document: string) => {
     let resultHtml = document ?? ''
 
     resultHtml = resultHtml.replace(columnRegex, columnsReplacer)
-    resultHtml = resultHtml.replace(columnRegex, columnsReplacer)
-
     resultHtml = resultHtml.replace(activeSelectionsRegex, activeSelectionsReplacer)
-    resultHtml = resultHtml.replace(widgetIdRegex, '') // TODO - Check if needed
+    resultHtml = resultHtml.replace(widgetIdRegex, '')
     resultHtml = resultHtml.replace(paramsRegex, paramsReplacer)
     resultHtml = resultHtml.replace(variablesRegex, variablesReplacer)
     resultHtml = resultHtml.replace(i18nRegex, i18nReplacer)
@@ -300,15 +297,13 @@ export const variablesReplacer = (match: string, p1: string, p2: string) => {
     return result || null
 }
 
-// TODO
 const i18nReplacer = (match: string, p1: string) => {
     const result = translatedValues[p1] ? translatedValues[p1] : p1
     return result || null
 }
 
 const checkAttributePlaceholders = (rawAttribute: string) => {
-    // TODO
-    // let resultAttribute = rawAttribute.replace($scope.columnRegex, $scope.replacer); - TODO
-    let resultAttribute = rawAttribute.replace(paramsRegex, paramsReplacer)
+    let resultAttribute = rawAttribute.replace(columnRegex, columnsReplacer)
+    resultAttribute = resultAttribute.replace(paramsRegex, paramsReplacer)
     return resultAttribute
 }
