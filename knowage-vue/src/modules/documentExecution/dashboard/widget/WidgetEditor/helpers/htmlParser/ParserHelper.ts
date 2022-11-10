@@ -1,6 +1,7 @@
 import { ISelection, IVariable, IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
 import { formatSelectionForDisplay } from '../../../ActiveSelectionsWidget/ActiveSelectionsWidgetHelpers'
 import deepcopy from 'deepcopy'
+import { formatNumberWithLocale } from '@/helpers/commons/localeHelper'
 
 const widgetIdRegex = /#\[kn-widget-id\]/g
 const activeSelectionsRegex = /(?:\[kn-active-selection(?:=\'([a-zA-Z0-9\_\-]+)\')?\s?\])/g
@@ -308,9 +309,8 @@ const columnsReplacer = (match, column, row, aggr, precision, format) => {
     }
 
     if ((column != null && columnInfo.type == 'int') || columnInfo.type == 'float') {
-        //TODO: Format Logic
-        // if(format) column = precision ? $filter('number')(column, precision) : $filter('number')(column);
-        // else column = precision ? parseFloat(column).toFixed(precision) : parseFloat(column);
+        if (format) column = precision ? formatNumberWithLocale(column, precision, null) : formatNumberWithLocale(column, undefined, null)
+        else column = precision ? parseFloat(column).toFixed(precision) : parseFloat(column)
     }
     console.log('%c returned  column column ', 'color: white; background-color: #61dbfb')
     console.log(column)
