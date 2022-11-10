@@ -15,6 +15,7 @@ import { mapActions } from 'pinia'
 import store from '../../Dashboard.store'
 import { IWidget } from '../../Dashboard'
 import { parseHtml, parseText } from '../WidgetEditor/helpers/htmlParser/ParserHelper'
+import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
 
 export default defineComponent({
     name: 'widget-component-container',
@@ -51,7 +52,7 @@ export default defineComponent({
         this.loadDataToShow()
     },
     methods: {
-        ...mapActions(store, ['getInternationalization']),
+        ...mapActions(store, ['getInternationalization', 'setSelections', 'getAllDatasets']),
         async loadDataToShow() {
             this.dataToShow = this.widgetData
             await this.loadHTML()
@@ -70,14 +71,25 @@ export default defineComponent({
                 this.textModel = parseText(this.propWidget, this.drivers, this.variables, this.activeSelections, this.getInternationalization())
             }
 
-            console.log('TEEEEEEEEEST: ', this.$refs)
             const webComponentRef = this.$refs.webComponent as any
             webComponentRef.htmlContent = this.htmlContent
             webComponentRef.webComponentCss = this.webComponentCss
             webComponentRef.addEventListener('selectEvent', this.onSelect)
         },
         onSelect(event: any) {
-            console.log('>>>>>>>>>>>>>>>>>>>>> ON SELECT CAAAALED: ', event)
+            if (this.editorMode || !event.detail) return
+            const value = event.detail.selectionValue
+            const selectionColumnName = event.detail.selectionColumn
+            updateStoreSelections(this.createNewSelection([value], selectionColumnName), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
+        },
+
+        getDatasetLabel(datasetId: number) {
+            const datasets = this.getAllDatasets()
+            const index = datasets.findIndex((dataset: IDataset) => dataset.id.dsId == datasetId)
+            return index !== -1 ? datasets[index].label : ''
+        },
+        createNewSelection(value: (string | number)[], columnName: string) {
+            return { datasetId: this.propWidget.dataset as number, datasetLabel: this.getDatasetLabel(this.propWidget.dataset as number), columnName: columnName, value: value, aggregated: false, timestamp: new Date().getTime() }
         }
     }
 })

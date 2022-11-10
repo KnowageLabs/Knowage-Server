@@ -4,11 +4,6 @@ class WidgetWebComponent extends HTMLElement {
     constructor() {
         super();
 
-        this.selectEvent = new CustomEvent("selectEvent", {
-            bubbles: true,
-            cancelable: false,
-            composed: true
-        });
     }
 
     connectedCallback() {
@@ -33,17 +28,22 @@ class WidgetWebComponent extends HTMLElement {
             if (temp) temp.innerHTML = value
 
             const temp2 = this.shadowRoot.querySelector('.select-class-temp')
-            console.log(">>>>> TEMP 2: ", temp2)
             if (temp2) temp2.addEventListener('click', event => {
-                console.log("CAAAAAAAALED select: ", event.target)
-                console.log("CAAAAAAAALED select: ", event.target?.attributes)
-                this.dispatchEvent(this.selectEvent);
+                const eventTarget = event.target as any
+
+                if (eventTarget.attributes) {
+                    const selectionColumn = eventTarget.attributes['kn-selection-column'].value
+                    const selectionValue = eventTarget.attributes['kn-selection-value'].value
+                    this.dispatchEvent(new CustomEvent("selectEvent", {
+                        bubbles: true,
+                        cancelable: false,
+                        composed: true,
+                        detail: { selectionColumn: selectionColumn, selectionValue: selectionValue }
+                    }));
+                }
             }, false);
         }
-
-
     }
-
 
     get webComponentCss() {
         return this.htmlContent
