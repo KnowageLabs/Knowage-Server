@@ -14,7 +14,7 @@
                 :margin="[2, 2]"
                 @breakpoint-changed="breakpointChangedEvent"
             >
-                <WidgetController :activeSheet="activeSheet(index)" :widget="currentWidget(item.id)" :item="item" v-for="item in sheet.widgets['lg']" :key="item.i" :datasets="datasets" :dashboardId="dashboardId"></WidgetController>
+                <WidgetController :activeSheet="activeSheet(index)" :widget="currentWidget(item.id)" :item="item" v-for="item in sheet.widgets['lg']" :key="item.i" :datasets="datasets" :dashboardId="dashboardId" :drivers="documentDrivers" :variables="variables"></WidgetController>
             </grid-layout>
         </KnDashboardTab>
     </KnDashboardTabsPanel>
@@ -25,7 +25,7 @@
  * ! this component will be in charge of creating the dashboard visualizazion, specifically to manage responsive structure and sheets.
  */
 import { defineComponent, PropType } from 'vue'
-import { IDataset } from './Dashboard'
+import { IDataset, IVariable } from './Dashboard'
 import { mapState } from 'pinia'
 import WidgetController from './widget/WidgetController.vue'
 import KnDashboardTabsPanel from '@/components/UI/KnDashboardTabs/KnDashboardTabsPanel.vue'
@@ -35,7 +35,7 @@ import dashboardStore from './Dashboard.store'
 export default defineComponent({
     name: 'dashboard-manager',
     components: { KnDashboardTab, KnDashboardTabsPanel, WidgetController },
-    props: { model: { type: Object }, datasets: { type: Array as PropType<IDataset[]>, required: true }, dashboardId: { type: String, required: true } },
+    props: { model: { type: Object }, datasets: { type: Array as PropType<IDataset[]>, required: true }, dashboardId: { type: String, required: true }, documentDrivers: { type: Array, required: true }, variables: { type: Array as PropType<IVariable[]> } },
     inject: ['dHash'],
     data() {
         return {
@@ -61,7 +61,7 @@ export default defineComponent({
             if ((!this.dashboard[this.dHash] && index === 0) || this.dashboard[this.dHash] === index) return true
             return false
         },
-        breakpointChangedEvent: function (newBreakpoint, newLayout) {
+        breakpointChangedEvent: function(newBreakpoint, newLayout) {
             // console.log('BREAKPOINT CHANGED breakpoint=', newBreakpoint, ', layout: ', newLayout)
         },
         currentWidget(id) {

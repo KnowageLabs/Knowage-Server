@@ -12,6 +12,8 @@
             :dashboardId="dashboardId"
             :selectionIsLocked="selectionIsLocked"
             :propActiveSelections="activeSelections"
+            :drivers="drivers"
+            :variables="variables"
             @pageChanged="reloadWidgetData"
             @sortingChanged="reloadWidgetData"
             @launchSelection="launchSelection"
@@ -37,7 +39,7 @@
  * ! this component will be in charge of managing the widget behaviour related to data and interactions, not related to view elements.
  */
 import { defineComponent, PropType } from 'vue'
-import { IDataset, ISelection, IWidget } from '../Dashboard'
+import { IDataset, ISelection, IVariable, IWidget } from '../Dashboard'
 import { emitter } from '../DashboardHelpers'
 import { mapState, mapActions } from 'pinia'
 import { getWidgetData } from '../DataProxyHelper'
@@ -60,7 +62,9 @@ export default defineComponent({
         activeSheet: { type: Boolean },
         widget: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDataset[]>, required: true },
-        dashboardId: { type: String, required: true }
+        dashboardId: { type: String, required: true },
+        drivers: { type: Array, required: true },
+        variables: { type: Array as PropType<IVariable[]>, required: true }
     },
     watch: {
         widget: {

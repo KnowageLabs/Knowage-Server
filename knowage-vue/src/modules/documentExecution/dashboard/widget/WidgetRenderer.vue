@@ -18,6 +18,7 @@
             />
             <SelectorWidget v-if="widget.type == 'selector'" :propWidget="widget" :dataToShow="dataToShow" :widgetInitialData="widgetInitialData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" :datasets="datasets" :selectionIsLocked="selectionIsLocked" />
             <ActiveSelectionsWidget v-if="widget.type == 'selection'" :propWidget="widget" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" />
+            <widget-web-component v-if="widget.type == 'html'" ref="webComponent"></widget-web-component>
         </div>
     </div>
 </template>
@@ -32,7 +33,11 @@ import TableWidget from './TableWidget/TableWidget.vue'
 import SelectorWidget from './SelectorWidget/SelectorWidget.vue'
 import ActiveSelectionsWidget from './ActiveSelectionsWidget/ActiveSelectionsWidget.vue'
 import mock from '../dataset/DatasetEditorTestMocks.json'
-import { IDataset, ISelection } from '../Dashboard'
+import { IDataset, ISelection, IVariable } from '../Dashboard'
+import './WidgetEditor/WidgetEditorSettingsTab/common/webComponent/WidgetWebComponent'
+import { parseHtml, parseText } from './WidgetEditor/helpers/htmlParser/ParserHelper'
+import { mapActions } from 'pinia'
+import store from '../Dashboard.store'
 
 export default defineComponent({
     name: 'widget-renderer',
@@ -45,13 +50,18 @@ export default defineComponent({
         datasets: { type: Array as PropType<IDataset[]>, required: true },
         dashboardId: { type: String, required: true },
         selectionIsLocked: { type: Boolean, required: true },
-        propActiveSelections: { type: Array as PropType<ISelection[]>, required: true }
+        propActiveSelections: { type: Array as PropType<ISelection[]>, required: true },
+        drivers: { type: Array, required: true },
+        variables: { type: Array as PropType<IVariable[]>, required: true }
     },
     data() {
         return {
             mock,
             dataToShow: {} as any,
-            activeSelections: [] as ISelection[]
+            activeSelections: [] as ISelection[],
+            htmlContent: '' as string,
+            webComponentCss: '' as string,
+            textModel: '' as string
         }
     },
     watch: {
@@ -67,8 +77,10 @@ export default defineComponent({
         this.loadDataToShow()
     },
     methods: {
-        loadDataToShow() {
+        ...mapActions(store, ['getInternationalization']),
+        async loadDataToShow() {
             this.dataToShow = this.widgetData
+            await this.loadHTML()
         },
         loadActiveSelections() {
             this.activeSelections = this.propActiveSelections
@@ -85,6 +97,26 @@ export default defineComponent({
         getWidgetPadding() {
             const styleString = getWidgetStyleByType(this.widget, 'padding')
             return styleString
+        },
+        async loadHTML() {
+            if (this.widget.type !== 'html' && this.widget.type !== 'text') return
+            let temp = {} as any
+            if (this.widget.type === 'html') {
+                temp = parseHtml(this.widget, this.drivers, this.variables, this.activeSelections, this.getInternationalization(), this.dataToShow)
+                this.htmlContent = temp.html
+                this.webComponentCss = temp.css
+            } else {
+                this.textModel = parseText(this.widget, this.drivers, this.variables, this.activeSelections, this.getInternationalization())
+            }
+
+            console.log('TEEEEEEEEEST: ', this.$refs)
+            const webComponentRef = this.$refs.webComponent as any
+            webComponentRef.htmlContent = this.htmlContent
+            webComponentRef.webComponentCss = this.webComponentCss
+            webComponentRef.addEventListener('selectEvent', this.onSelect)
+        },
+        onSelect(event: any) {
+            console.log('>>>>>>>>>>>>>>>>>>>>> ON SELECT CAAAALED: ', event)
         }
     }
 })

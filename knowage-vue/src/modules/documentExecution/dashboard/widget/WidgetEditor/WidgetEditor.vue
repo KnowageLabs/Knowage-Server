@@ -39,8 +39,8 @@ export default defineComponent({
         dashboardId: { type: String, required: true },
         propWidget: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDataset[]>, required: true },
-        documentDrivers: { type: Array },
-        variables: { type: Array as PropType<IVariable[]> }
+        documentDrivers: { type: Array, required: true },
+        variables: { type: Array as PropType<IVariable[]>, required: true }
     },
     data() {
         return {
