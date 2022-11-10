@@ -12,9 +12,16 @@
                 <TableWidget v-if="propWidget.type == 'table'" :propWidget="propWidget" :datasets="datasets" :dataToShow="widgetData" :editorMode="true" :dashboardId="dashboardId" @pageChanged="getWidgetData" />
                 <SelectorWidget v-if="propWidget.type == 'selector'" :propWidget="propWidget" :dataToShow="widgetData" :widgetInitialData="widgetData" :editorMode="true" />
                 <ActiveSelectionsWidget v-if="propWidget.type == 'selection'" :propWidget="propWidget" :propActiveSelections="activeSelections" :editorMode="true" :dashboardId="dashboardId" />
-                <!-- <widget-web-component v-if="propWidget.type == 'html'" ref="webComponent"></widget-web-component> -->
-                <WebComponentContainer v-if="propWidget.type == 'html'" :propWidget="propWidget" :widgetData="widgetData" :propActiveSelections="activeSelections" :editorMode="true" :dashboardId="dashboardId" :drivers="drivers" :variables="variables"></WebComponentContainer>
-                <!-- <div v-html="textModel"></div> -->
+                <WebComponentContainer
+                    v-if="propWidget.type == 'html' || propWidget.type == 'text'"
+                    :propWidget="propWidget"
+                    :widgetData="widgetData"
+                    :propActiveSelections="activeSelections"
+                    :editorMode="true"
+                    :dashboardId="dashboardId"
+                    :drivers="drivers"
+                    :variables="variables"
+                ></WebComponentContainer>
             </div>
         </div>
     </div>

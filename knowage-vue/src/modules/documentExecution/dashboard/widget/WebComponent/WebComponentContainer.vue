@@ -36,8 +36,7 @@ export default defineComponent({
             dataToShow: {} as any,
             activeSelections: [] as ISelection[],
             htmlContent: '' as string,
-            webComponentCss: '' as string,
-            textModel: '' as string
+            webComponentCss: '' as string
         }
     },
     watch: {
@@ -69,10 +68,11 @@ export default defineComponent({
                 this.htmlContent = temp.html
                 this.webComponentCss = temp.css
             } else {
-                this.textModel = parseText(this.propWidget, this.drivers, this.variables, this.activeSelections, this.getInternationalization())
+                this.htmlContent = parseText(this.propWidget, this.drivers, this.variables, this.activeSelections, this.getInternationalization())
             }
 
             const webComponentRef = this.$refs.webComponent as any
+            if (!webComponentRef) return
             webComponentRef.htmlContent = this.htmlContent
             webComponentRef.webComponentCss = this.webComponentCss
             webComponentRef.addEventListener('selectEvent', this.onSelect)
@@ -85,7 +85,6 @@ export default defineComponent({
             const selectionColumnName = event.detail.selectionColumn
             updateStoreSelections(this.createNewSelection([value], selectionColumnName), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
         },
-
         getDatasetLabel(datasetId: number) {
             const datasets = this.getAllDatasets()
             const index = datasets.findIndex((dataset: IDataset) => dataset.id.dsId == datasetId)
