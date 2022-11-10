@@ -25,6 +25,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -35,6 +36,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -63,6 +65,7 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 	private int numberOfColumns = 0;
 	private String fileType;
 	private DataFormatter formatter = null;
+	private static final String ZIP_MIN_INFLATE_RATIO = "ZIP_MIN_INFLATE_RATIO";
 
 	public FileDatasetXlsDataReader(JSONObject jsonConf) {
 		super();
@@ -135,13 +138,14 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 		if (maxResults > 0) {
 			checkMaxResults = true;
 		}
-
+		Double defaulRatio = Double.parseDouble(SingletonConfig.getInstance().getConfigValue("ZIP_MIN_INFLATE_RATIO"));
 		logger.debug("IN");
 
 		dataStore = new DataStore();
 
 		try {
 			ExcelDataReaderFactory excelFactory = new ExcelDataReaderFactory();
+			ZipSecureFile.setMinInflateRatio(defaulRatio);
 			Workbook wb = excelFactory.getWorkookInstance(getFileType(), inputDataStream);
 			Sheet sheet = getSheet(wb);
 

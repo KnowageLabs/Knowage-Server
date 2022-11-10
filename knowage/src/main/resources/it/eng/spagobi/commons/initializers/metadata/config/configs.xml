@@ -657,8 +657,11 @@
 	<CONFIG label="document.exporter.knowageolapengine" name="document.exporter.knowageolapengine"
 		description="Adds exporters file format"
 		isActive="true" valueCheck="XLS" valueType="STRING"
-		category="EXPORTER_CONFIGURATION" />		
-		
+		category="EXPORTER_CONFIGURATION" />				
+	<CONFIG label="ZIP_MIN_INFLATE_RATIO" name="ZIP_MIN_INFLATE_RATIO"
+		description="Sets the ratio between de- and inflated bytes to detect zipbomb. It defaults to 0.0009"
+		isActive="true" valueCheck="0.0009" valueType="NUM"
+		category="GENERIC_CONFIGURATION" />	
 
 </CONFIGS>
 
