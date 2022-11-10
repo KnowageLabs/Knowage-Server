@@ -353,14 +353,12 @@ public abstract class AbstractDataSet implements IDataSet {
 
 	@Override
 	public Map getParamsMap() {
-		DataSetUtilities.fillDefaultValues(this, this.paramsMap);
 		return paramsMap;
 	}
 
 	@Override
 	public void setParamsMap(Map paramsMap) {
 		this.paramsMap = paramsMap;
-		DataSetUtilities.fillDefaultValues(this, this.paramsMap);
 	}
 
 	@Override

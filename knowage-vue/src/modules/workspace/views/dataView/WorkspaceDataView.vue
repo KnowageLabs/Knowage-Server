@@ -295,7 +295,7 @@ export default defineComponent({
                             if (this.dataPrepAvroHandlingDialogVisbile) {
                                 this.pushEvent(4)
                             } else {
-                                this.$store.commit('setInfo', { title: this.$t('managers.workspaceManagement.dataPreparation.dataPreparationIsCompleted') })
+                                this.setInfo({ title: this.$t('managers.workspaceManagement.dataPreparation.dataPreparationIsCompleted') })
                                 setTimeout(() => {
                                     this.openDataPreparation({ id: avroJobResponse.dsId })
                                 }, 1500)
@@ -304,7 +304,7 @@ export default defineComponent({
                             if (this.dataPrepAvroHandlingDialogVisbile) {
                                 this.pushEvent(5)
                             } else {
-                                this.$store.commit('setError', { title: 'Cannot prepare dataset', msg: avroJobResponse.errorMessage })
+                                this.setError({ title: 'Cannot prepare dataset', msg: avroJobResponse.errorMessage })
                             }
                             this.removeFromLoadingAvros(avroJobResponse.dsId)
                         }
@@ -394,8 +394,9 @@ export default defineComponent({
         async loadDatasetDrivers(dataset) {
             let hasError = false
             if (dataset.label && dataset.id && dataset.dsTypeCd !== 'Prepared') {
+                let postPayload = { role: this.userRole || this.user.roles[0] }
                 await this.$http
-                    .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/datasets/${dataset.label}/filters`, { role: this.userRole })
+                    .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/datasets/${dataset.label}/filters`, postPayload)
                     .then((response: AxiosResponse<any>) => {
                         this.filtersData = response.data
                         if (this.filtersData.filterStatus) {
@@ -582,6 +583,7 @@ export default defineComponent({
             if (this.user?.functionalities.includes('DataPreparation') && Object.keys(this.client).length > 0) this.client.publish({ destination: '/app/prepare', body: dsId })
         },
         async openDataPreparation(dataset: any) {
+            this.events = []
             this.pushEvent(0)
             if (dataset?.dsTypeCd == 'Prepared') {
                 //edit existing data prep

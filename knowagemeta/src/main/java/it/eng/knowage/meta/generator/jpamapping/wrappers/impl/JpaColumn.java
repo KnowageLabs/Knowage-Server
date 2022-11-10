@@ -18,6 +18,7 @@
 package it.eng.knowage.meta.generator.jpamapping.wrappers.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -232,7 +233,12 @@ public class JpaColumn implements IJpaColumn {
 
 	public boolean isDecryptable() {
 		ModelProperty property = businessColumn.getProperties().get(JpaProperties.DECRYPTABLE);
-		return Boolean.parseBoolean(property.getValue());
+		// @formatter:off
+		return Optional.ofNullable(property)
+				.map(ModelProperty::getValue)
+				.map(Boolean::parseBoolean)
+				.orElse(false);
+		// @formatter:on
 	}
 
 	/*

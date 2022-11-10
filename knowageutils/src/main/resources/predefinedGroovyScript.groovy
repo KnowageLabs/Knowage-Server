@@ -64,5 +64,11 @@ public String NULLIF(BigDecimal expression1, Integer expression2) {
 };
 
 public Boolean isValid(String key) {
-	return key != null && parameters.get(key) != null && !parameters.get(key).equals("") && !parameters.get(key).equals("''") && !parameters.get(key).equals("null") && !parameters.get(key).equals("%");
+	return key != null
+		&& parameters.get(key) != null
+		&& !parameters.get(key).equals("")
+		&& !parameters.get(key).equals("''")
+		&& !parameters.get(key).equals("null")
+		&& !parameters.get(key).equals("[]")
+		&& !parameters.get(key).equals("%");
 }

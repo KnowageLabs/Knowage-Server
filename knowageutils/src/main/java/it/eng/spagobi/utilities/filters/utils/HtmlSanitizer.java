@@ -60,6 +60,7 @@ public class HtmlSanitizer {
 
 		CssSchema stylePropertiesInSVG = CssSchema.withProperties(stylePropertiesInSVGMap);
 
+		// @formatter:off
 		policy = new HtmlPolicyBuilder()
 				.allowCommonBlockElements()
 				.allowCommonInlineFormattingElements()
@@ -97,8 +98,12 @@ public class HtmlSanitizer {
 				.allowAttributes("pagecolor", "bordercolor", "borderopacity", "showgrid", "fit-margin-top", "fit-margin-left", "fit-margin-right", "fit-margin-bottom").onElements("sodipodi:namedview")
 				.allowAttributes("inkscape:connector-curvature", "inkscape:label", "inkscape:groupmode", "inkscape:version").globally()
 				.allowAttributes("sodipodi:nodetypes", "sodipodi:role").globally()
+				// font (even if it is not supported by HTML 5)
+				.allowElements("font")
+				.allowAttributes("size", "face", "color").onElements("font")
 				//
 				.toFactory();
+		// @formatter:on
 
 		this.whiteList = whiteList;
 
@@ -160,9 +165,11 @@ public class HtmlSanitizer {
 		boolean isInWhiteListAsExternalService = isInWhiteListAsExternalService(url);
 		boolean isInWhiteListAsRelativePath = isInWhiteListAsRelativePath(url);
 
+		// @formatter:off
 		boolean ret = isSrcData
 				|| isInWhiteListAsExternalService
 				|| isInWhiteListAsRelativePath;
+		// @formatter:on
 
 		LOGGER.debug("Checking if {} in src is in whitelist: {} ", url, ret);
 
@@ -174,8 +181,10 @@ public class HtmlSanitizer {
 		boolean isInWhiteListAsExternalService = isInWhiteListAsExternalService(url);
 		boolean isInWhiteListAsRelativePath = isInWhiteListAsRelativePath(url);
 
+		// @formatter:off
 		boolean ret = isInWhiteListAsExternalService
 				|| isInWhiteListAsRelativePath;
+		// @formatter:on
 
 		LOGGER.debug("Checking if {} in href is in whitelist: {} ", url, ret);
 
@@ -184,8 +193,7 @@ public class HtmlSanitizer {
 
 	private boolean isADataUrl(String url) {
 
-		boolean ret = IMG_SRC_DATA.matcher(url)
-				.matches();
+		boolean ret = IMG_SRC_DATA.matcher(url).matches();
 
 		LOGGER.debug("Checking if {} is a data URL: {} ", url, ret);
 
@@ -195,8 +203,7 @@ public class HtmlSanitizer {
 	private boolean isInWhiteListAsExternalService(String url) {
 		List<String> validValues = whiteList.getExternalServices();
 
-		boolean ret = validValues.stream()
-				.anyMatch(url::startsWith);
+		boolean ret = validValues.stream().anyMatch(url::startsWith);
 
 		LOGGER.debug("Checking if {} is in whitelist as external service giving the following {}: {} ", url, validValues, ret);
 
@@ -206,8 +213,7 @@ public class HtmlSanitizer {
 	private boolean isInWhiteListAsRelativePath(String url) {
 		List<String> validValues = whiteList.getRelativePaths();
 
-		boolean ret = validValues.stream()
-				.anyMatch(url::startsWith);
+		boolean ret = validValues.stream().anyMatch(url::startsWith);
 
 		LOGGER.debug("Checking if {} is in whitelist as relative path giving the following {}: {} ", url, validValues, ret);
 

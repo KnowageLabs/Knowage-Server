@@ -106,15 +106,15 @@ export default defineComponent({
                         if (!this.propertyKeys.includes(key)) this.propertyKeys.push(key)
 
                         if (key === 'structural.visible') {
-                            this.columnsVisibility[column.uniqueName] = tempProperty[key].value === 'true'
+                            this.columnsVisibility[column.uniqueName] = tempProperty[key].value === true || tempProperty[key].value === 'true'
                         } else if (key === 'structural.columntype') {
                             this.columnsType[column.uniqueName] = tempProperty[key].value
                         } else if (key === 'structural.personal') {
-                            this.columnsPersonal[column.uniqueName] = tempProperty[key].value === 'true'
+                            this.columnsPersonal[column.uniqueName] = tempProperty[key].value === true || tempProperty[key].value === 'true'
                         } else if (key === 'structural.decrypt') {
-                            this.columnsDecrypt[column.uniqueName] = tempProperty[key].value === 'true'
+                            this.columnsDecrypt[column.uniqueName] = tempProperty[key].value === true || tempProperty[key].value === 'true'
                         } else if (key === 'structural.subjectId') {
-                            this.columnsSubjectId[column.uniqueName] = tempProperty[key].value === 'true'
+                            this.columnsSubjectId[column.uniqueName] = tempProperty[key].value === true || tempProperty[key].value === 'true'
                         }
                     }
                 })

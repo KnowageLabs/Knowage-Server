@@ -59,11 +59,9 @@ public class QbeEngineFromFederationStartResource extends QbeEngineStartResource
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response startFederation(
 			@QueryParam("federationId") String federationId,
-			@QueryParam("datasourceForCache") String datasourceForCache,
 			@QueryParam("drivers") String drivers) {
 
 		Objects.nonNull(federationId);
-		Objects.nonNull(datasourceForCache);
 		Objects.nonNull(drivers);
 
 		QbeEngineInstance qbeEngineInstance = null;
@@ -75,7 +73,7 @@ public class QbeEngineFromFederationStartResource extends QbeEngineStartResource
 			logger.debug("Template: " + templateBean);
 			logger.debug("Creating engine instance ...");
 
-			Map<Object, Object> env = getEnv(federationId, datasourceForCache, drivers);
+			Map<Object, Object> env = getEnv(federationId, drivers);
 
 			try {
 				qbeEngineInstance = QbeEngine.createInstance(templateBean, env);
@@ -130,13 +128,13 @@ public class QbeEngineFromFederationStartResource extends QbeEngineStartResource
 		return templateSB;
 	}
 
-	public Map<Object, Object> getEnv(String federationName, String datasourceForCache, String drivers) {
+	public Map<Object, Object> getEnv(String federationName, String drivers) {
 		String federatedDatasetId = federationName;
 
 		// loading federation
 		FederationDefinition dsf = loadFederationDefinition(federatedDatasetId);
 		logger.debug("Found a federated dataset on the request");
-		Map<Object, Object> env = addFederatedDatasetsToEnv(dsf, datasourceForCache);
+		Map<Object, Object> env = addFederatedDatasetsToEnv(dsf);
 
 		env.put("DRIVERS", decodeParameterValue(drivers));
 
@@ -159,19 +157,18 @@ public class QbeEngineFromFederationStartResource extends QbeEngineStartResource
 		}
 	}
 
-	private IDataSource getCacheDataSource(String datasourceForCache) {
+	private IDataSource getCacheDataSource() {
 		logger.debug("Loading the cache datasource");
-		logger.debug("The datasource for cahce is " + datasourceForCache);
-		IDataSource dataSource = getDataSourceServiceProxy().getDataSourceByLabel(datasourceForCache);
+		IDataSource dataSource = getDataSourceServiceProxy().getDataSourceForCache();
 		logger.debug("cache datasource loaded");
 		return dataSource;
 	}
 
-	public Map<Object, Object> addFederatedDatasetsToEnv(FederationDefinition dsf, String datasourceForCache) {
+	public Map<Object, Object> addFederatedDatasetsToEnv(FederationDefinition dsf) {
 
 		Assert.assertNotNull(dsf, "The federation id has to be not null");
 
-		IDataSource cachedDataSource = getCacheDataSource(datasourceForCache);
+		IDataSource cachedDataSource = getCacheDataSource();
 
 		Map<Object, Object> env = super.getEnv();
 

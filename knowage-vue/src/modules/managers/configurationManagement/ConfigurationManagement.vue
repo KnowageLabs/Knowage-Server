@@ -56,7 +56,8 @@
                             <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
                         </template>
                         <template #body="slotProps">
-                            <span :title="slotProps.data[col.field]">{{ slotProps.data[col.field] }}</span>
+                            <span v-if="slotProps.data['label'].toLowerCase().endsWith('.password') && col.field == 'valueCheck'">●●●●●●●●●●●●</span>
+                            <span v-else :title="slotProps.data[col.field]">{{ slotProps.data[col.field] }}</span>
                         </template>
                     </Column>
                     <Column :style="configurationManagementDescriptor.table.iconColumn.style" @rowClick="false">
