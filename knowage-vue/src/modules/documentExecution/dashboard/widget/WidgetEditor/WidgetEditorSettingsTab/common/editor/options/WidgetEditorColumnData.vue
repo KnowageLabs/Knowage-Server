@@ -57,14 +57,14 @@ export default defineComponent({
             selectedColumnName: '',
             row: '',
             aggregation: '',
-            precision: null as any,
+            precision: 0 as any,
             format: false
         }
     },
     created() {},
     methods: {
         onColumnChanged() {
-            const forInsert = `[kn-column='${this.selectedColumnName}' row='${this.row}' aggregation='${this.aggregation}' precision='${this.precision}'${this.format ? ' format' : ''}]`
+            const forInsert = `[kn-column='${this.selectedColumnName}'${this.row ? ` row='${this.row}'` : ''}${this.aggregation ? ` aggregation='${this.aggregation}'` : ''}${this.precision ? ` precision='${this.precision}'` : ''}${this.format ? ' format' : ''}]`
             this.$emit('insertChanged', forInsert)
         }
     }
