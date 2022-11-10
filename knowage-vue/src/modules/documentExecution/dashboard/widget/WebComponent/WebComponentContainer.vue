@@ -100,9 +100,10 @@ export default defineComponent({
             executePreview(datasetLabel)
         },
         onCrossNavigation(event: any) {
-            if (this.editorMode || !event.detail) return
+            if (this.editorMode || !event.detail || !this.propWidget) return
             const crossValue = event.detail.crossValue
-            executeCrossNavigation(crossValue, '')
+            const crossNavigationConfiguration = this.propWidget.settings.interactions.crosssNavigation
+            executeCrossNavigation(crossValue, crossNavigationConfiguration)
         }
     }
 })

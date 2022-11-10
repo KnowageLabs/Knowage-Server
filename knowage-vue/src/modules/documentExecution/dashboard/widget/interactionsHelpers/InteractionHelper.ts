@@ -1,4 +1,4 @@
-import { IDashboard, IDataset, ISelection } from "../../Dashboard"
+import { IDashboard, IDataset, ISelection, IWidgetCrossNavigation } from "../../Dashboard"
 import { getAssociativeSelections } from './DatasetAssociationsHelper'
 import { emitter } from '../../DashboardHelpers'
 
@@ -14,8 +14,8 @@ export const updateStoreSelections = (newSelection: ISelection, currentActiveSel
     updateSelectionFunction(dashboardId, currentActiveSelections, $http)
 }
 
-export const executeCrossNavigation = (dynamicValue: string, crossNavigationName: string) => {
-    console.log("TODO: executeCrossNavigation() - dynamicValue: ", dynamicValue, ', crossNavigationName: ', crossNavigationName)
+export const executeCrossNavigation = (dynamicValue: string, crossNavigation: IWidgetCrossNavigation) => {
+    console.log("TODO: executeCrossNavigation() - dynamicValue: ", dynamicValue, ', crossNavigation: ', crossNavigation)
 }
 
 export const executePreview = (datasetLabel: string) => {
