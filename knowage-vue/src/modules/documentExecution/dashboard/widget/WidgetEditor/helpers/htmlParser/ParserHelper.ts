@@ -2,7 +2,7 @@ import { ISelection, IVariable, IWidget } from '@/modules/documentExecution/dash
 import { formatSelectionForDisplay } from '../../../ActiveSelectionsWidget/ActiveSelectionsWidgetHelpers'
 import deepcopy from 'deepcopy'
 
-const widgetIdRegex = /\[kn-widget-id\]/g
+const widgetIdRegex = /#\[kn-widget-id\]/g
 const activeSelectionsRegex = /(?:\[kn-active-selection(?:=\'([a-zA-Z0-9\_\-]+)\')?\s?\])/g
 const columnRegex = /(?:\[kn-column=\'([a-zA-Z0-9\_\-\s]+)\'(?:\s+row=\'(\d*)\')?(?:\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\s?\])/g
 const rowsRegex = /(?:\[kn-column=\'([a-zA-Z0-9\_\-\s]+)\'(?:\s+row=\'(\d+)\'){1}(?:\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\s?\])/g
@@ -46,7 +46,7 @@ const maxRow = () => {
 }
 
 
-export const parseText = (tempWidgetModel: IWidget, tempDrivers: any[], tempVariables: IVariable[], tempSelections: ISelection[], $sanitize: any, internationalization: any) => {
+export const parseText = (tempWidgetModel: IWidget, tempDrivers: any[], tempVariables: IVariable[], tempSelections: ISelection[], internationalization: any) => {
     drivers = tempDrivers
     variables = tempVariables
     activeSelections = tempSelections
@@ -59,7 +59,7 @@ export const parseText = (tempWidgetModel: IWidget, tempDrivers: any[], tempVari
     // console.log(">>>>>>> unparsedText: ", unparsedText)
     let parsedText = checkTextWidgetPlaceholders(unparsedText)
     parsedText = replaceTextFunctions(parsedText)
-    console.log(">>>>>>> parsedText: ", parsedText)
+    // console.log(">>>>>>> parsedText: ", parsedText)
     return parsedText
 }
 
@@ -77,7 +77,7 @@ const replaceTextFunctions = (parsedText: string) => {
     return parsedHtml.firstChild ? (parsedHtml.firstChild as any).innerHTML : ''
 }
 
-export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVariables: IVariable[], tempSelections: ISelection[], $sanitize: any, internationalization: any) => {
+export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVariables: IVariable[], tempSelections: ISelection[], internationalization: any) => {
     drivers = tempDrivers
     variables = tempVariables
     activeSelections = tempSelections
@@ -86,15 +86,18 @@ export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVari
 
     const css = widgetModel.settings.editor.css
     console.log('>>>>>>>>>> LOADED CSS: ', css)
-
+    let trustedCss = ''
     if (css) {
         let placeholderResultCss = checkPlaceholders(css)
+        console.log("------------------- placeholderResultCss 1: ", deepcopy(placeholderResultCss))
         placeholderResultCss = parseCalc(placeholderResultCss)
-        const trustedCss = $sanitize('<style>' + placeholderResultCss + '</style>')
+        console.log("------------------- placeholderResultCss 2: ", placeholderResultCss)
+        trustedCss = placeholderResultCss
         console.log('-------------- TRUSTED CSS: ', trustedCss)
     }
 
     const html = widgetModel.settings.editor.html
+    let trustedHtml = ''
     // console.log(">>>>>>>>>> LOADED HTML: ", html)
 
     if (html) {
@@ -103,9 +106,12 @@ export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVari
         wrappedHtmlToRender = wrappedHtmlToRender.replace(lt, '$1&lt;$3')
 
         const parseHtmlFunctionsResult = parseHtmlFunctions(wrappedHtmlToRender)
-        const trustedHtml = $sanitize(parseHtmlFunctionsResult)
-        console.log('-------------- TRUSTED HTML: ', trustedHtml)
+        trustedHtml = parseHtmlFunctionsResult
+        //  console.log('-------------- TRUSTED HTML: ', trustedHtml)
+
     }
+
+    return { html: trustedHtml, css: trustedCss }
 }
 
 const getColumnFromName = (columnName: string, datasetData: any, aggregation: any) => {
@@ -123,7 +129,7 @@ const parseHtmlFunctions = (rawHtml: string) => {
     allElements = parseRepeat(allElements)
     allElements = parseIf(allElements) // TODO - additional
     allElements = parseAttrs(allElements) // TODO - change function names???
-    const placeholderResultHtml = checkPlaceholders(parsedHtml)
+    const placeholderResultHtml = checkPlaceholders(parsedHtml.firstChild ? (parsedHtml.firstChild as any).innerHTML : '')
     const parseCalcResultHtml = parseCalc(placeholderResultHtml)
     return parseCalcResultHtml
 }
@@ -201,16 +207,16 @@ const parseAttrs = (allElements: any) => {
     do {
         if (allElements[j] && allElements[j].hasAttribute('kn-preview')) {
             const datasetPreviewLabel = allElements[j].getAttribute('kn-preview')
-            allElements[j].setAttribute('ng-click', "showPreview('" + datasetPreviewLabel + "')")
+            allElements[j].setAttribute('click', "showPreview('" + datasetPreviewLabel + "')")
         }
         if (allElements[j] && allElements[j].hasAttribute('kn-cross')) {
-            allElements[j].setAttribute('ng-click', "doSelection(null,'" + allElements[j].getAttribute('kn-cross') + "')")
+            allElements[j].setAttribute('lick', "showCrossNavigation(null,'" + allElements[j].getAttribute('kn-cross') + "')")
         }
         if (allElements[j] && allElements[j].hasAttribute('kn-selection-column')) {
             const columnSelectionLabel = allElements[j].getAttribute('kn-selection-column')
             let columnSelectionValue = allElements[j].getAttribute('kn-selection-value')
             if (columnSelectionValue.charAt(0) != '[') columnSelectionValue = "'" + columnSelectionValue + "'"
-            allElements[j].setAttribute('ng-click', columnSelectionValue ? "select('" + columnSelectionLabel + "'," + columnSelectionValue + ')' : "select('" + columnSelectionLabel + "')")
+            allElements[j].setAttribute('click', columnSelectionValue ? "select('" + columnSelectionLabel + "'," + columnSelectionValue + ')' : "select('" + columnSelectionLabel + "')")
         }
         j++
     } while (j < nodesNumber)
@@ -223,19 +229,19 @@ const parseCalc = (rawHtml: string) => {
     return rawHtml
 }
 
-const checkPlaceholders = (document: Document) => {
-    let resultHtml = document.firstChild ? (document.firstChild as any).innerHTML : ''
+const checkPlaceholders = (document: string) => {
+    let resultHtml = document ?? ''
 
     // if ($scope.datasetLabel) {
     //     resultHtml = resultHtml.replace($scope.columnRegex, $scope.replacer);
     //
     // }
     resultHtml = resultHtml.replace(activeSelectionsRegex, activeSelectionsReplacer)
-    resultHtml = resultHtml.replace(widgetIdRegex, 'w' + widgetModel?.id)
+    resultHtml = resultHtml.replace(widgetIdRegex, '')  // TODO - Check if needed
     resultHtml = resultHtml.replace(paramsRegex, paramsReplacer)
     resultHtml = resultHtml.replace(variablesRegex, variablesReplacer)
     resultHtml = resultHtml.replace(i18nRegex, i18nReplacer)
-    console.log('>>>>>>>>>> RESULT HTML: ', resultHtml)
+    // console.log('>>>>>>>>>> RESULT HTML: ', resultHtml)
     return resultHtml
 }
 

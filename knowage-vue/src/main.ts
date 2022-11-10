@@ -55,9 +55,6 @@ if (import.meta.env.DEV) document.domain = 'localhost'
 
 import VueGridLayout from 'vue-grid-layout'
 
-import Vue3Sanitize from "vue-3-sanitize";
-
-
 const pinia = createPinia()
 
 const app = createApp(App).use(pinia)
@@ -74,7 +71,6 @@ app.use(VueAxios, interceptor)
     .use(internationalizationPlugin, mainStore.$state.internationalization)
     .use(GlobalCmComponent)
     .use(VueGridLayout)
-    .use(Vue3Sanitize)
 
     .directive('badge', BadgeDirective)
     .directive('tooltip', Tooltip)

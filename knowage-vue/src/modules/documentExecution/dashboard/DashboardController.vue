@@ -1,7 +1,5 @@
 <template>
     <div v-if="model" class="dashboard-container" :id="`dashboard_${model.configuration.id}`">
-        <!-- <hello-world></hello-world> -->
-
         <Button icon="fas fa-square-check" class="p-m-3 p-button-rounded p-button-text p-button-plain" style="position: fixed; right: 0; z-index: 999; background-color: white; box-shadow: 0px 2px 3px #ccc" @click="selectionsDialogVisible = true" />
 
         <DashboardRenderer v-if="!loading" :model="model" :datasets="datasets" :dashboardId="dashboardId"></DashboardRenderer>
@@ -65,8 +63,6 @@ import DashboardControllerSaveDialog from './DashboardControllerSaveDialog.vue'
 import SelectionsListDialog from './widget/SelectorWidget/SelectionsListDialog.vue'
 import DashboardGeneralSettings from './generalSettings/DashboardGeneralSettings.vue'
 import deepcopy from 'deepcopy'
-
-// import './webComponentExample/hello-world'
 
 export default defineComponent({
     name: 'dashboard-manager',

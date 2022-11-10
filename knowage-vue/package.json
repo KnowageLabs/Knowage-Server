@@ -46,7 +46,6 @@
         "reflect-metadata": "^0.1.13",
         "uuid": "8.3.2",
         "vue": "3.2.41",
-        "vue-3-sanitize": "^0.1.4",
         "vue-axios": "^3.2.4",
         "vue-class-component": "^8.0.0-0",
         "vue-grid-layout": "^3.0.0-beta1",
