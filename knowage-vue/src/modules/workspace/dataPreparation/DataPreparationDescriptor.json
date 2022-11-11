@@ -265,7 +265,8 @@
             "name": "padding",
             "position": 6,
             "toolbar": true,
-            "type": "simple"
+            "type": "simple",
+            "incompatibleDataTypes": ["java.lang.Double","java.math.BigDecimal","java.lang.Long","java.lang.Float","java.lang.Integer"]
         },
         {
             "category": "cleaning",
@@ -297,7 +298,7 @@
             "description": "managers.workspaceManagement.dataPreparation.transformations.replace.description",
             "editColumn": true,
             "icon": "fas fa-sync-alt",
-            "incompatibleDataTypes": ["date"],
+            "incompatibleDataTypes": ["java.sql.Date"],
             "label": "managers.workspaceManagement.dataPreparation.transformations.replace.label",
             "name": "replace",
             "position": 9,
