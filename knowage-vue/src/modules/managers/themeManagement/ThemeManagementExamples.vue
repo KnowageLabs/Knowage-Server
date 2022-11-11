@@ -53,6 +53,16 @@
             </template>
         </Toolbar>
 
+        <Toolbar class="kn-toolbar kn-toolbar--primary p-mt-4">
+            <template #start>
+                <Breadcrumb :home="examples.breadcrumbs.home" :model="examples.breadcrumbs.items" class="kn-breadcrumb-toolbar">
+                    <template #item="{ item }">
+                        <span class="breadcrumbs-item">{{ item.crossBreadcrumb ? item.crossBreadcrumb : item.label }}</span>
+                    </template>
+                </Breadcrumb>
+            </template>
+        </Toolbar>
+
         <div style="padding:8px; background-color: #eee">
             <Breadcrumb :home="examples.breadcrumbs.home" :model="examples.breadcrumbs.items" class="kn-breadcrumb">
                 <template #item="{ item }">
