@@ -1,9 +1,10 @@
-.p-breadcrumb.kn-breadcrumb {
+.p-breadcrumb.kn-breadcrumb,
+.p-breadcrumb.kn-breadcrumb-toolbar {
     border-radius: 0;
     background: transparent;
     border: 0;
     height: 100%;
-    max-height: 38px;
+    max-height: var(--kn-breadcrumb-height);
     padding: 0 0 0 4px;
     display: flex;
     .p-breadcrumb-chevron {
@@ -49,5 +50,25 @@
 
     .breadcrumbs-item:hover {
         cursor: pointer;
+    }
+}
+.p-breadcrumb.kn-breadcrumb-toolbar {
+    .p-breadcrumb-chevron {
+        color: var(--kn-breadcrumb-toolbar-items-color);
+    }
+    li {
+        &:not(.p-breadcrumb-home) {
+            .breadcrumbs-item {
+                border: var(--kn-breadcrumb-toolbar-items-border);
+                color: var(--kn-breadcrumb-toolbar-items-color);
+            }
+        }
+        &:last-child {
+            .breadcrumbs-item {
+                cursor: default;
+                color: var(--kn-breadcrumb-toolbar-selected-item-color);
+                border: var(--kn-breadcrumb-toolbar-selected-item-border);
+            }
+        }
     }
 }

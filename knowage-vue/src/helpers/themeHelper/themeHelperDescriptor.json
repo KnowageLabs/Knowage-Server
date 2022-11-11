@@ -21,6 +21,26 @@
                 "key": "--kn-breadcrumb-selected-item-border",
                 "label": "Breadcrumb selected item border",
                 "type": "text"
+            },
+            {
+                "key": "--kn-breadcrumb-toolbar-items-color",
+                "label": "Toolbar Breadcrumb items Color",
+                "type": "color"
+            },
+            {
+                "key": "--kn-breadcrumb-toolbar-items-border",
+                "label": "Toolbar Breadcrumb items border",
+                "type": "text"
+            },
+            {
+                "key": "--kn-breadcrumb-toolbar-selected-item-color",
+                "label": "Toolbar Breadcrumb selected item Color",
+                "type": "color"
+            },
+            {
+                "key": "--kn-breadcrumb-toolbar-selected-item-border",
+                "label": "Toolbar Breadcrumb selected item border",
+                "type": "text"
             }
         ]
     },
