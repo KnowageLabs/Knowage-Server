@@ -69,7 +69,7 @@ const formatWidgetModelForGet = (propWidget: IWidget, datasetLabel: string, init
             let attributeToPush = { id: column.alias, alias: column.alias, columnName: column.columnName, orderType: '', funct: 'NONE' } as any
 
             //sort logic - to be changed by other widgets
-            if (propWidget.type === 'table') column.id === propWidget.settings.sortingColumn ? (attributeToPush.orderType = propWidget.settings.sortingOrder) : ''
+            if (propWidget.type === 'table' || propWidget.type === 'html' || propWidget.type === 'text') column.id === propWidget.settings.sortingColumn ? (attributeToPush.orderType = propWidget.settings.sortingOrder) : ''
             else attributeToPush.orderType = propWidget.settings.sortingOrder
 
             dataToSend.aggregations.categories.push(attributeToPush)
@@ -179,7 +179,6 @@ export const getHtmlWidgetData = async (widget: IWidget, datasets: IDataset[], $
                 // resetDatasetInterval(widget)
             })
 
-        console.log('AGREGATIONS DATASET- -------------- - - ------------ - -- - - ', aggregationDataset)
         return { tempResponse: tempResponse, aggregationDataset: aggregationDataset }
     }
 }
@@ -220,7 +219,6 @@ const getAggregationsModel = (widgetModel, rawHtml, selectedDataset) => {
                 }
             }
         }
-        console.log('TEMP MODEL COLUMNSZZZZZZ', tempModel)
         return tempModel
     } else return null
 }
