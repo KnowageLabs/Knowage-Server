@@ -60,7 +60,7 @@
 </template>
 
 <script lang="ts">
-import { IWidgetInteractionParameter, IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IWidgetInteractionParameter, IWidget, IDashboardDriver } from '@/modules/documentExecution/dashboard/Dashboard'
 import { defineComponent, PropType } from 'vue'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import descriptor from '../WidgetInteractionsDescriptor.json'
@@ -70,7 +70,13 @@ import InputSwitch from 'primevue/inputswitch'
 export default defineComponent({
     name: 'table-widget-preview-parameters-list',
     components: { Dropdown, InputSwitch },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, propParameters: { type: Array as PropType<IWidgetInteractionParameter[]>, required: true }, selectedDatasetsColumnsMap: { type: Object }, drivers: { type: Array }, disabled: { type: Boolean } },
+    props: {
+        widgetModel: { type: Object as PropType<IWidget>, required: true },
+        propParameters: { type: Array as PropType<IWidgetInteractionParameter[]>, required: true },
+        selectedDatasetsColumnsMap: { type: Object },
+        drivers: { type: Array as PropType<IDashboardDriver[]> },
+        disabled: { type: Boolean }
+    },
     emits: ['change'],
     data() {
         return {

@@ -10,11 +10,12 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import Dropdown from 'primevue/dropdown'
+import { IDashboardDriver } from '@/modules/documentExecution/dashboard/Dashboard'
 
 export default defineComponent({
     name: 'widget-editor-parameters',
     components: { Dropdown },
-    props: { drivers: { type: Array as PropType<any[]>, required: true } },
+    props: { drivers: { type: Array as PropType<IDashboardDriver[]>, required: true } },
     emits: ['insertChanged'],
     data() {
         return {

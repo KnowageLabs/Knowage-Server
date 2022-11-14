@@ -21,7 +21,7 @@
  * ! this component will be in charge of managing the widget editing.
  */
 import { defineComponent, PropType } from 'vue'
-import { IWidgetEditorDataset, IWidget, IDataset, IModelDataset, IVariable } from '../../Dashboard'
+import { IWidgetEditorDataset, IWidget, IDataset, IModelDataset, IVariable, IDashboardDriver } from '../../Dashboard'
 import { AxiosResponse } from 'axios'
 import { createNewWidget, formatWidgetForSave } from './helpers/WidgetEditorHelpers'
 import WidgetEditorPreview from './WidgetEditorPreview.vue'
@@ -39,7 +39,7 @@ export default defineComponent({
         dashboardId: { type: String, required: true },
         propWidget: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDataset[]>, required: true },
-        documentDrivers: { type: Array, required: true },
+        documentDrivers: { type: Array as PropType<IDashboardDriver[]>, required: true },
         variables: { type: Array as PropType<IVariable[]>, required: true }
     },
     data() {

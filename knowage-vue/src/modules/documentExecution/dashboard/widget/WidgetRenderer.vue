@@ -33,7 +33,7 @@ import TableWidget from './TableWidget/TableWidget.vue'
 import SelectorWidget from './SelectorWidget/SelectorWidget.vue'
 import ActiveSelectionsWidget from './ActiveSelectionsWidget/ActiveSelectionsWidget.vue'
 import mock from '../dataset/DatasetEditorTestMocks.json'
-import { IDataset, ISelection, IVariable } from '../Dashboard'
+import { IDashboardDriver, IDataset, ISelection, IVariable } from '../Dashboard'
 import WebComponentContainer from './WebComponent/WebComponentContainer.vue'
 
 export default defineComponent({
@@ -48,7 +48,7 @@ export default defineComponent({
         dashboardId: { type: String, required: true },
         selectionIsLocked: { type: Boolean, required: true },
         propActiveSelections: { type: Array as PropType<ISelection[]>, required: true },
-        drivers: { type: Array, required: true },
+        drivers: { type: Array as PropType<IDashboardDriver[]>, required: true },
         variables: { type: Array as PropType<IVariable[]>, required: true }
     },
     data() {

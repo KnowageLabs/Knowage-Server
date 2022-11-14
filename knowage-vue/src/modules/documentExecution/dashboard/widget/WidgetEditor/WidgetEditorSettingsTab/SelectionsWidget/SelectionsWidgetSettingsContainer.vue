@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IDataset, IVariable } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget, IDataset, IVariable, IDashboardDriver } from '@/modules/documentExecution/Dashboard/Dashboard'
 import descriptor from './SelectionsWidgetSettingsDescriptor.json'
 import SelectionsWidgetSettingsAccordion from './SelectionsWidgetSettingsAccordion.vue'
 
@@ -18,7 +18,7 @@ export default defineComponent({
         selectedSetting: { type: String, required: true },
         datasets: { type: Array as PropType<IDataset[]> },
         selectedDatasets: { type: Array as PropType<IDataset[]> },
-        drivers: { type: Array },
+        drivers: { type: Array as PropType<IDashboardDriver[]> },
         variables: { type: Array as PropType<IVariable[]> }
     },
     data() {

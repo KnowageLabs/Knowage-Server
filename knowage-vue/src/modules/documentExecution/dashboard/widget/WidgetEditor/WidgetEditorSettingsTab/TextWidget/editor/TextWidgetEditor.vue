@@ -10,7 +10,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IVariable, IWidget, IDataset } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IVariable, IWidget, IDataset, IDashboardDriver } from '@/modules/documentExecution/Dashboard/Dashboard'
 import TieredMenu from 'primevue/tieredmenu'
 import TagsDialog from '../../common/editor/WidgetTagsDialog.vue'
 import { QuillEditor } from '@vueup/vue-quill'
@@ -22,7 +22,7 @@ export default defineComponent({
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
         activeIndex: { type: Number, required: true },
-        drivers: { type: Array as PropType<any[]>, required: true },
+        drivers: { type: Array as PropType<IDashboardDriver[]>, required: true },
         variables: { type: Array as PropType<IVariable[]>, required: true },
         selectedDatasets: { type: Array as PropType<IDataset[]> },
         dashboardId: { type: String, required: true }

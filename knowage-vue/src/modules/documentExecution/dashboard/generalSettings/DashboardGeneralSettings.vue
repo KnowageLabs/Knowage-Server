@@ -16,7 +16,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IVariable, IDataset } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IVariable, IDataset, IDashboardDriver } from '@/modules/documentExecution/dashboard/Dashboard'
 import { mapActions } from 'pinia'
 import DashboardGeneralSettingsList from './DashboardGeneralSettingsList.vue'
 import DashboardVariables from './DashboardVariables.vue'
@@ -28,7 +28,12 @@ import { setVariableValueFromDataset } from './VariablesHelper'
 export default defineComponent({
     name: 'dashboard-general-settings',
     components: { DashboardGeneralSettingsList, DashboardVariables },
-    props: { dashboardId: { type: String, required: true }, datasets: { type: Array as PropType<IDataset[]>, required: true }, documentDrivers: { type: Array, required: true }, profileAttributes: { type: Array as PropType<{ name: string; value: string }[]>, required: true } },
+    props: {
+        dashboardId: { type: String, required: true },
+        datasets: { type: Array as PropType<IDataset[]>, required: true },
+        documentDrivers: { type: Array as PropType<IDashboardDriver[]>, required: true },
+        profileAttributes: { type: Array as PropType<{ name: string; value: string }[]>, required: true }
+    },
     emits: ['closeGeneralSettings'],
     data() {
         return {

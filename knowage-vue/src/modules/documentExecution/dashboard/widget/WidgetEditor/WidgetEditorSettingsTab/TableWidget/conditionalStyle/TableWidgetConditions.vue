@@ -100,7 +100,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, ITableWidgetConditionalStyle, IWidgetStyleToolbarModel, ITableWidgetConditionalStyles, IVariable } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IWidget, ITableWidgetConditionalStyle, IWidgetStyleToolbarModel, ITableWidgetConditionalStyles, IVariable, IDashboardDriver } from '@/modules/documentExecution/dashboard/Dashboard'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import { emitter } from '../../../../../DashboardHelpers'
 import { getDefaultConditionalStyle } from '../../../helpers/tableWidget/TableWidgetDefaultValues'
@@ -113,7 +113,7 @@ import { getSelectedVariable } from '@/modules/documentExecution/dashboard/gener
 export default defineComponent({
     name: 'table-widget-conditions',
     components: { Dropdown, InputSwitch, WidgetEditorStyleToolbar },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, drivers: { type: Array }, variables: { type: Array as PropType<IVariable[]>, required: true } },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, drivers: { type: Array as PropType<IDashboardDriver[]> }, variables: { type: Array as PropType<IVariable[]>, required: true } },
     data() {
         return {
             descriptor,
