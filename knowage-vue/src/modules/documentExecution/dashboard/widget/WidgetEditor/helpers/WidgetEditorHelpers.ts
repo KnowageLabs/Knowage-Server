@@ -3,6 +3,8 @@ import { formatTableWidgetForSave } from './tableWidget/TableWidgetBackendSaveHe
 import { createNewTableWidgetSettings } from '../helpers/tableWidget/TableWidgetFunctions'
 import { createNewSelectorWidgetSettings } from '../helpers/selectorWidget/SelectorWidgetFunctions'
 import { createNewSelectionsWidgetSettings } from '../helpers/selectionsWidget/SelectionsWidgetFunctions'
+import { createNewHtmlWidgetSettings } from './htmlWidget/HTMLWidgetFunctions'
+import { createNewTextWidgetSettings } from './textWidget/TextWidgetFunctions'
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
 
@@ -33,6 +35,12 @@ const createNewWidgetSettings = (widget: IWidget) => {
             break
         case 'selection':
             widget.settings = createNewSelectionsWidgetSettings()
+            break
+        case 'html':
+            widget.settings = createNewHtmlWidgetSettings()
+            break
+        case 'text':
+            widget.settings = createNewTextWidgetSettings()
             break
     }
 }
