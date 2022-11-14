@@ -104,6 +104,10 @@ export default defineComponent({
                       }
                   })
                 : []
+            if (this.datasetOptions.length === 1) {
+                this.selectedDataset = this.datasetOptions[0]
+                this.onDatasetSelected()
+            }
         },
         loadModel() {
             this.model = this.widgetModel
