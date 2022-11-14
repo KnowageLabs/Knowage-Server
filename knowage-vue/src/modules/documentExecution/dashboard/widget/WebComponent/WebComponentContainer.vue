@@ -70,7 +70,7 @@ export default defineComponent({
 
             const webComponentRef = this.$refs.webComponent as any
             if (!webComponentRef) return
-            webComponentRef.htmlContent = this.htmlContent
+            webComponentRef.htmlContent = this.propWidget.type === 'text' ? '<div style="position: absolute;height: 100%;width: 100%;">' + this.htmlContent + '</div>' : this.htmlContent
             webComponentRef.webComponentCss = this.webComponentCss
             webComponentRef.addEventListener('selectEvent', this.onSelect)
             webComponentRef.addEventListener('previewEvent', this.onPreview)
