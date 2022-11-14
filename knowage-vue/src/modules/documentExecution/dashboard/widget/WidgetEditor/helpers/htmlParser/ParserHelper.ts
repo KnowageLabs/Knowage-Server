@@ -111,7 +111,7 @@ const parseHtmlFunctions = (rawHtml: string) => {
     const parsedHtml = parser.parseFromString(rawHtml, 'text/html')
     let allElements = parsedHtml.getElementsByTagName('*')
     allElements = parseRepeat(allElements)
-    allElements = parseIf(allElements) // TODO - additional
+    allElements = parseIf(allElements)
     allElements = parseAttrs(allElements)
     const placeholderResultHtml = checkPlaceholders(parsedHtml.firstChild ? (parsedHtml.firstChild as any).innerHTML : '')
     const parseCalcResultHtml = parseCalc(placeholderResultHtml)
@@ -146,14 +146,14 @@ const parseRepeat = (allElements: any) => {
 
 const formatRepeatedElement = (limit: number, repeatedElement: any) => {
     let tempElement = null
-    for (var j = 0; j < limit; j++) {
+    for (let j = 0; j < limit; j++) {
         const tempRow = deepcopy(repeatedElement)
         tempRow.innerHTML = tempRow.innerHTML.replace(columnRegex, function (match: string, columnName: string, row: string, c3: string, precision: string, format: string) {
             let precisionPlaceholder = ''
             let formatPlaceholder = ''
             if (format) formatPlaceholder = ' format'
             if (precision) precisionPlaceholder = " precision='" + precision + "'"
-            return "[kn-column='" + columnName + "' row='" + (row || j) + "'" + precisionPlaceholder + formatPlaceholder + ']'
+            return "[kn-column='" + columnName + "' row='" + j + "'" + precisionPlaceholder + formatPlaceholder + ']'
         })
         tempRow.innerHTML = tempRow.innerHTML.replace(repeatIndexRegex, j)
         j == 0 ? (tempElement = tempRow.outerHTML) : (tempElement += tempRow.outerHTML)
@@ -168,7 +168,7 @@ const parseIf = (allElements: any) => {
         if (allElements[j] && allElements[j].hasAttribute('kn-if')) {
             var condition = allElements[j].getAttribute('kn-if').replace(columnRegex, ifConditionReplacer)
             condition = condition.replace(activeSelectionsRegex, activeSelectionsReplacer)
-            //  condition = condition.replace(paramsRegex, ifConditionParamsReplacer);  // TODO
+            condition = condition.replace(paramsRegex, ifConditionParamsReplacer);
             condition = condition.replace(calcRegex, calcReplacer)
             condition = condition.replace(variablesRegex, variablesReplacer)
             condition = condition.replace(i18nRegex, i18nReplacer)
@@ -257,9 +257,17 @@ const ifConditionReplacer = (match: string, p1: any, row: string, aggr: string, 
     return precision && !isNaN(p1) ? parseFloat(p1).toFixed(precision) : p1
 }
 
-// TODO
-const ifConditionParamsReplacer = () => {
-    // TODO
+const ifConditionParamsReplacer = (match: string, p1: string, p2: string) => {
+    console.log(" >>> match: ", match)
+    console.log(" >>> p1: ", p1)
+    console.log(" >>> p2: ", p2)
+    const index = drivers.findIndex((driver: any) => driver.urlName === p1)
+    if (index === -1) return addSlashes(null)
+    let result = p2 ? drivers[index].description : drivers[index].value
+    if (typeof (result) == 'string') {
+        result = '\'' + addSlashes(result) + '\''
+    }
+    return result;
 }
 
 const columnsReplacer = (match, column, row, aggr, precision, format) => {
