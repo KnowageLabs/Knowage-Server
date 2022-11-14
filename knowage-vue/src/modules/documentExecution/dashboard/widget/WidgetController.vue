@@ -8,7 +8,6 @@
             :widgetData="widgetData"
             :widgetInitialData="widgetInitialData"
             :datasets="datasets"
-            v-if="initialized"
             :dashboardId="dashboardId"
             :selectionIsLocked="selectionIsLocked"
             :propActiveSelections="activeSelections"
