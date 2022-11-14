@@ -280,10 +280,38 @@ export default defineComponent({
         this.user = (this.$store.state as any).user
         this.userRole = this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
 
-        if (this.userRole) {
-            await this.loadPage(true)
-        } else {
-            this.parameterSidebarVisible = true
+        let params = this.document.id ? `id=${this.document.id}` : `label=${this.document.label}`
+        let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/documentexecution/correctRolesForExecution?` + params
+
+        let invalidRole = false
+        await this.$http.get(url).then((response: AxiosResponse<any>) => {
+            let correctRolesForExecution = response.data
+
+            if (!this.userRole) {
+                if (correctRolesForExecution.length == 1) {
+                    this.userRole = correctRolesForExecution[0]
+                } else {
+                    this.parameterSidebarVisible = true
+                }
+            } else if (this.userRole) {
+                if (correctRolesForExecution[0].length == 1) {
+                    let correctRole = correctRolesForExecution[0]
+                    if (this.userRole !== correctRole) {
+                        this.$store.commit('setError', {
+                            title: this.$t('common.error.generic'),
+                            msg: this.$t('documentExecution.main.userRoleError')
+                        })
+                        invalidRole = true
+                    }
+                }
+            }
+        })
+        if (!invalidRole) {
+            if (this.userRole) {
+                this.loadPage(true)
+            } else {
+                this.parameterSidebarVisible = true
+            }
         }
     },
     methods: {
@@ -823,7 +851,15 @@ export default defineComponent({
 
             this.hiddenFormData.append('documentMode', this.documentMode)
 
-            if (this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER' || this.document.typeCode === 'OLAP') {
+            if (this.document.typeCode === 'DATAMART') {
+                let doc = this.document
+                let drivers = doc.drivers
+                let url = `start-qbe?user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.sbiExecutionId}&drivers=${drivers}&registryId=${doc.id}`
+
+                await this.$http.get(process.env.VUE_APP_QBE_PATH + url).then(() => {
+                    this.sendHiddenFormData()
+                })
+            } else if (this.document.typeCode === 'DOSSIER' || this.document.typeCode === 'OLAP') {
                 await this.sendHiddenFormData()
             } else {
                 postForm.submit()

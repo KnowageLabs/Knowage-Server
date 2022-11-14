@@ -1,15 +1,15 @@
 <template>
     <InputText
         class="kn-material-input"
-        v-if="column && column.editorType !== 'COMBO' && column.columnInfo?.type !== 'date' && column.columnInfo?.type !== 'timestamp' && getDataType(column.columnInfo.type) === 'text'"
+        v-if="column && column.editorType !== 'COMBO' && column.columnInfo?.type !== 'date' && column.columnInfo?.type !== 'timestamp' && getDataType(column.columnInfo?.type) === 'text'"
         :type="'text'"
-        :step="getStep(column.columnInfo.type)"
+        :step="getStep(column.columnInfo?.type)"
         v-model="row[column.field]"
         @input="$emit('rowChanged', row)"
     />
     <InputNumber
         class="kn-material-input p-inputtext-sm"
-        v-if="column && column.editorType !== 'COMBO' && column.columnInfo?.type !== 'date' && column.columnInfo?.type !== 'timestamp' && getDataType(column.columnInfo.type) === 'number'"
+        v-if="column && column.editorType !== 'COMBO' && column.columnInfo?.type !== 'date' && column.columnInfo?.type !== 'timestamp' && getDataType(column.columnInfo?.type) === 'number'"
         v-model="row[column.field]"
         :useGrouping="useGrouping"
         :locale="locale"

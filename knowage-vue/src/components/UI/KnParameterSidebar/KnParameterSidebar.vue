@@ -15,7 +15,7 @@
                 <div class="p-d-flex">
                     <label class="kn-material-input-label">{{ $t('common.roles') }}</label>
                 </div>
-                <Dropdown class="kn-material-input" v-model="role" :options="user.roles" @change="setNewSessionRole" />
+                <Dropdown class="kn-material-input" v-model="role" :options="correctRolesForExecution" @change="setNewSessionRole" />
             </div>
 
             <template v-if="mode === 'qbeView' || mode === 'workspaceView' || mode === 'datasetManagement'">
@@ -254,7 +254,8 @@ export default defineComponent({
             mode: 'execution',
             qbeParameters: [] as any,
             primary: true,
-            userDateFormat: '' as string
+            userDateFormat: '' as string,
+            correctRolesForExecution: []
         }
     },
     watch: {
@@ -310,8 +311,19 @@ export default defineComponent({
             this.$emit('roleChanged', this.role)
             this.parameters = { isReadyForExecution: false, filterStatus: [] }
         },
-        loadDocument() {
+        async loadDocument() {
             this.document = this.propDocument as iDocument
+            let params = this.document.id ? `id=${this.document.id}` : `label=${this.document.label}`
+            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/documentexecution/correctRolesForExecution?` + params
+
+            await this.$http.get(url).then((response: AxiosResponse<any>) => {
+                this.correctRolesForExecution = response.data
+            })
+
+            if (this.correctRolesForExecution.length == 1) {
+                this.role = this.correctRolesForExecution[0]
+                this.setNewSessionRole()
+            }
         },
         loadParameters() {
             this.parameters.isReadyForExecution = this.filtersData?.isReadyForExecution

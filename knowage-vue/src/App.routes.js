@@ -10,6 +10,9 @@ import overlayRoutes from '@/overlay/Overlay.routes.js'
 import authHelper from '@/helpers/commons/authHelper'
 import dataPreparationRoutes from '@/modules/workspace/dataPreparation/DataPreparation.routes.js'
 import { loadLanguageAsync } from '@/App.i18n.js'
+import axios from 'axios'
+import store from './App.store'
+import i18n from '@/App.i18n'
 
 const baseRoutes = [
     {
@@ -86,8 +89,28 @@ router.beforeEach((to, from, next) => {
     const checkRequired = !('/' == to.fullPath && '/' == from.fullPath)
     const loggedIn = localStorage.getItem('token')
 
+    let docTypesRegEx = /registry|document-composite|report|office-doc|olap|map|report|kpi|dossier|etl/
     if (checkRequired && !loggedIn) {
         authHelper.handleUnauthorized()
+    } else if (docTypesRegEx.test(to.fullPath)) {
+        let params = `label=${to.params.id}`
+
+        let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/documentexecution/correctRolesForExecution?` + params
+
+        axios.get(url).then((response) => {
+            let correctRolesForExecution = response.data
+
+            if (correctRolesForExecution.length == 0) {
+                store.commit('setError', {
+                    title: i18n.global.t('common.error.generic'),
+                    msg: i18n.global.t('documentExecution.main.userRoleError')
+                })
+
+                return false
+            } else {
+                next()
+            }
+        })
     } else {
         next()
     }
