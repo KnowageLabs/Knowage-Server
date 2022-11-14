@@ -46,7 +46,7 @@ import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import { v4 as uuidv4 } from 'uuid'
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
-import { IModelDataset, ISelection, IWidget } from './Dashboard'
+import { IModelDataset, ISelection, IWidget, IDashboardDriver } from './Dashboard'
 import { emitter, createNewDashboardModel, formatDashboardForSave, formatNewModel } from './DashboardHelpers'
 import { mapActions } from 'pinia'
 import { formatModel } from './helpers/DashboardBackwardCompatibilityHelper'
@@ -177,23 +177,30 @@ export default defineComponent({
             this.store.setOutputParameters(mockedParameters)
         },
         loadDrivers() {
-            // TODO - remove mock
-            this.drivers = [
-                {
-                    name: 'Variable Analytical Driver',
-                    type: 'static',
-                    multivalue: false,
-                    value: 'Driver 1',
-                    urlName: 'analytical_driver'
-                },
-                {
-                    name: 'Driver 2',
-                    type: 'dynamic',
-                    multivalue: false,
-                    value: 'Driver 2',
-                    urlName: 'Driver_2'
-                }
-            ]
+            console.log('>>>>>>>>>> FILTERS DATA: ', this.filtersData)
+            this.drivers = []
+            if (this.filtersData?.filterStatus) {
+                this.filtersData.filterStatus.forEach((filter: iParameter) => {
+                    const formattedDriver = {
+                        name: filter.driverLabel,
+                        type: filter.type,
+                        multivalue: filter.multivalue,
+                        value: this.getFormattedDriverValue(filter),
+                        urlName: filter.urlName
+                    } as IDashboardDriver
+                    this.drivers.push(formattedDriver)
+                })
+            }
+            console.log('>>>>>>>>>> drivers: ', this.drivers)
+        },
+        getFormattedDriverValue(filter: iParameter) {
+            if (!filter || !filter.parameterValue) return ''
+            let value = ''
+            for (let i = 0; i < filter.parameterValue.length; i++) {
+                value += filter.parameterValue[i].value
+                value += i === filter.parameterValue.length ? ' ' : '; '
+            }
+            return value.trim()
         },
         loadProfileAttributes() {
             this.profileAttributes = []

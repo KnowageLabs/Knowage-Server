@@ -258,9 +258,6 @@ const ifConditionReplacer = (match: string, p1: any, row: string, aggr: string, 
 }
 
 const ifConditionParamsReplacer = (match: string, p1: string, p2: string) => {
-    console.log(" >>> match: ", match)
-    console.log(" >>> p1: ", p1)
-    console.log(" >>> p2: ", p2)
     const index = drivers.findIndex((driver: any) => driver.urlName === p1)
     if (index === -1) return addSlashes(null)
     let result = p2 ? drivers[index].description : drivers[index].value

@@ -618,3 +618,11 @@ export interface ISelection {
     aggregated: boolean
     timestamp: number
 }
+
+export interface IDashboardDriver {
+    name: string,
+    type: string,
+    multivalue: boolean,
+    value: string,
+    urlName: string
+}
