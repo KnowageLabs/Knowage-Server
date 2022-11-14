@@ -16,12 +16,7 @@
                 "type": "HTML"
             }
         ],
-        "Gallery": [
-            {
-                "title": "dashboard.widgetEditor.export.title",
-                "type": "Export"
-            }
-        ],
+        "Gallery": [],
         "Interactions": [
             {
                 "title": "dashboard.widgetEditor.interactions.crossNavigation",

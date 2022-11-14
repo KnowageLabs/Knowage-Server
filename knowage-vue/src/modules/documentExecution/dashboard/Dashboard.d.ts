@@ -70,7 +70,7 @@ export interface ITableWidgetConditionalStyle {
         variable?: string
         parameter?: string
         variableKey?: string
-        variablePivotDatasetOptions?: any,
+        variablePivotDatasetOptions?: any
         operator: string
         value: string
     }
@@ -134,8 +134,8 @@ export interface ITableWidgetHeadersRule {
     action: string
     compareType?: string
     variable?: string
-    variableKey?: string,
-    variablePivotDatasetOptions?: any,
+    variableKey?: string
+    variablePivotDatasetOptions?: any
     value?: string
     parameter?: string
 }
@@ -381,9 +381,9 @@ export interface ITableWidgetVisibilityCondition {
         type: string
         variable?: string
         variableValue?: string
-        variableKey?: string,
+        variableKey?: string
         operator?: string
-        value?: string,
+        value?: string
         variablePivotDatasetOptions?: any
     }
 }
@@ -584,7 +584,7 @@ export interface IVariable {
     dataset?: number
     column?: string
     attribute?: string
-    driver?: string,
+    driver?: string
     pivotedValues?: any
 }
 
@@ -620,9 +620,30 @@ export interface ISelection {
 }
 
 export interface IDashboardDriver {
-    name: string,
-    type: string,
-    multivalue: boolean,
-    value: string,
+    name: string
+    type: string
+    multivalue: boolean
+    value: string
     urlName: string
+}
+
+export interface IGalleryItem {
+    id: string
+    author: string
+    name: string
+    label: string
+    description: string
+    type: string
+    tags: string[]
+    image: string
+    organization: string
+    usageCounter: number
+    code: IGalleryitemCode
+}
+
+interface IGalleryitemCode {
+    html: string
+    javascript: string
+    python: string
+    css: string
 }
