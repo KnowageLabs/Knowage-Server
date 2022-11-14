@@ -10,7 +10,7 @@
  * ! this component will be in charge of creating the common widget elements to be rendered.
  */
 import { defineComponent, PropType } from 'vue'
-import { IDataset, ISelection, IVariable } from '../../Dashboard'
+import { IDashboardDriver, IDataset, ISelection, IVariable } from '../../Dashboard'
 import './component/WidgetWebComponent'
 import { mapActions } from 'pinia'
 import store from '../../Dashboard.store'
@@ -27,7 +27,7 @@ export default defineComponent({
         widgetData: { type: Object as any, required: true },
         dashboardId: { type: String, required: true },
         propActiveSelections: { type: Array as PropType<ISelection[]>, required: true },
-        drivers: { type: Array, required: true },
+        drivers: { type: Array as PropType<IDashboardDriver[]>, required: true },
         variables: { type: Array as PropType<IVariable[]>, required: true },
         editorMode: { type: Boolean }
     },

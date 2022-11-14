@@ -69,7 +69,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IVariable, IDataset } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IVariable, IDataset, IDashboardDriver } from '@/modules/documentExecution/dashboard/Dashboard'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import KnHint from '@/components/UI/KnHint.vue'
 import descriptor from './DashboardGeneralSettingsDescriptor.json'
@@ -83,7 +83,7 @@ export default defineComponent({
         propVariables: { type: Array as PropType<IVariable[]>, required: true },
         selectedDatasets: { type: Array as PropType<IDataset[]>, required: true },
         selectedDatasetsColumnsMap: { type: Object, required: true },
-        drivers: { type: Array as PropType<any[]>, required: true },
+        drivers: { type: Array as PropType<IDashboardDriver[]>, required: true },
         profileAttributes: { type: Array as PropType<{ name: string; value: string }[]>, required: true }
     },
     data() {

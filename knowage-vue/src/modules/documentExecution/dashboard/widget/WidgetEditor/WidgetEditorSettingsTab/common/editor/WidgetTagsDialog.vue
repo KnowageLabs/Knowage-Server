@@ -35,7 +35,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IDataset, IVariable, IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IDashboardDriver, IDataset, IVariable, IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
 import Dialog from 'primevue/dialog'
 import descriptor from './WidgetTagsDialogDescriptor.json'
 import Message from 'primevue/message'
@@ -73,7 +73,7 @@ export default defineComponent({
         widgetModel: { type: Object as PropType<IWidget>, required: true },
         mode: { type: String, required: true },
         widgetType: String,
-        drivers: { type: Array as PropType<any[]>, required: true },
+        drivers: { type: Array as PropType<IDashboardDriver[]>, required: true },
         variables: { type: Array as PropType<IVariable[]>, required: true },
         selectedDatasets: { type: Array as PropType<IDataset[]> }
     },

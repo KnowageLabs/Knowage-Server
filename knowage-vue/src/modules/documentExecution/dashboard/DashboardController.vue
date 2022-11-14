@@ -177,7 +177,6 @@ export default defineComponent({
             this.store.setOutputParameters(mockedParameters)
         },
         loadDrivers() {
-            console.log('>>>>>>>>>> FILTERS DATA: ', this.filtersData)
             this.drivers = []
             if (this.filtersData?.filterStatus) {
                 this.filtersData.filterStatus.forEach((filter: iParameter) => {
@@ -191,16 +190,15 @@ export default defineComponent({
                     this.drivers.push(formattedDriver)
                 })
             }
-            console.log('>>>>>>>>>> drivers: ', this.drivers)
         },
         getFormattedDriverValue(filter: iParameter) {
             if (!filter || !filter.parameterValue) return ''
             let value = ''
             for (let i = 0; i < filter.parameterValue.length; i++) {
                 value += filter.parameterValue[i].value
-                value += i === filter.parameterValue.length ? ' ' : '; '
+                value += i === filter.parameterValue.length ? '  ' : '; '
             }
-            return value.trim()
+            return value.substring(0, value.length - 2)
         },
         loadProfileAttributes() {
             this.profileAttributes = []

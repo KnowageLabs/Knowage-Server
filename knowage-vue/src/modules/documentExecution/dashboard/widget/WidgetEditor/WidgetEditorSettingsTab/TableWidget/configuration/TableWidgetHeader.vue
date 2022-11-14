@@ -89,7 +89,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, ITableWidgetHeaders, ITableWidgetHeadersRule, IWidgetColumn, IVariable } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IWidget, ITableWidgetHeaders, ITableWidgetHeadersRule, IWidgetColumn, IVariable, IDashboardDriver } from '@/modules/documentExecution/dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
@@ -103,7 +103,7 @@ export default defineComponent({
     components: { Dropdown, InputSwitch, WidgetEditorColumnsMultiselect },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
-        drivers: { type: Array },
+        drivers: { type: Array as PropType<IDashboardDriver[]> },
         variables: { type: Array as PropType<IVariable[]>, required: true }
     },
     data() {
