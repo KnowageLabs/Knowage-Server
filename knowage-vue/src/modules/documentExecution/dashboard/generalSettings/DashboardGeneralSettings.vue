@@ -23,6 +23,7 @@ import DashboardVariables from './DashboardVariables.vue'
 import store from '@/modules/documentExecution/dashboard/Dashboard.store'
 import mainStore from '@/App.store'
 import deepcopy from 'deepcopy'
+import { setVariableValueFromDataset } from './VariablesHelper'
 
 export default defineComponent({
     name: 'dashboard-general-settings',
@@ -86,9 +87,12 @@ export default defineComponent({
         setSelectedOption(option: string) {
             this.selectedOption = option
         },
-        saveGeneralSettings() {
-            this.dashboardModel.configuration.variables = this.variables
+        async saveGeneralSettings() {
+            for (let i = 0; i < this.variables.length; i++) {
+                if (this.variables[i].type === 'dataset') await setVariableValueFromDataset(this.variables[i], this.datasets, this.$http)
+            }
 
+            this.dashboardModel.configuration.variables = this.variables
             console.log('>>>>>>>>>>> VARIABLES FOR SAVE: ', this.variables)
             this.$emit('closeGeneralSettings')
         }

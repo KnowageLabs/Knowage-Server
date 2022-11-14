@@ -100,7 +100,6 @@ export default defineComponent({
         }
     },
     created() {
-        console.log('selectedDatasetOptions: ', this.selectedDatasetOptions)
         this.loadVariables()
         this.loadSelectedDatasetNames()
     },
