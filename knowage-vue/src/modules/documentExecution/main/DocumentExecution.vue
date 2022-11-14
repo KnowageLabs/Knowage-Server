@@ -2,7 +2,8 @@
     <div class="kn-height-full detail-page-container">
         <Toolbar v-if="!embed && !olapDesignerMode && !managementOpened && !dashboardGeneralSettingsOpened" class="kn-toolbar kn-toolbar--primary p-col-12">
             <template #start>
-                <span>{{ document?.name }}</span>
+                <DocumentExecutionBreadcrumb v-if="breadcrumbs.length > 1" :breadcrumbs="breadcrumbs" @breadcrumbClicked="onBreadcrumbClick"></DocumentExecutionBreadcrumb>
+                <span v-else>{{ document?.name }}</span>
             </template>
 
             <template #end>
@@ -30,7 +31,7 @@
             </template>
         </Toolbar>
         <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
-        <DocumentExecutionBreadcrumb v-if="breadcrumbs.length > 1" :breadcrumbs="breadcrumbs" @breadcrumbClicked="onBreadcrumbClick"></DocumentExecutionBreadcrumb>
+
         <div ref="document-execution-view" id="document-execution-view" class="p-d-flex p-flex-row myDivToPrint">
             <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
 

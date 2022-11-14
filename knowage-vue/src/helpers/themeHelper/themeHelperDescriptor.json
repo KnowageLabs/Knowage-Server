@@ -1,4 +1,49 @@
 {
+    "breadcrumbs": {
+        "label": "breadcrumbs",
+        "properties": [
+            {
+                "key": "--kn-breadcrumb-items-color",
+                "label": "Breadcrumb items Color",
+                "type": "color"
+            },
+            {
+                "key": "--kn-breadcrumb-items-border",
+                "label": "Breadcrumb items border",
+                "type": "text"
+            },
+            {
+                "key": "--kn-breadcrumb-selected-item-color",
+                "label": "Breadcrumb selected item Color",
+                "type": "color"
+            },
+            {
+                "key": "--kn-breadcrumb-selected-item-border",
+                "label": "Breadcrumb selected item border",
+                "type": "text"
+            },
+            {
+                "key": "--kn-breadcrumb-toolbar-items-color",
+                "label": "Toolbar Breadcrumb items Color",
+                "type": "color"
+            },
+            {
+                "key": "--kn-breadcrumb-toolbar-items-border",
+                "label": "Toolbar Breadcrumb items border",
+                "type": "text"
+            },
+            {
+                "key": "--kn-breadcrumb-toolbar-selected-item-color",
+                "label": "Toolbar Breadcrumb selected item Color",
+                "type": "color"
+            },
+            {
+                "key": "--kn-breadcrumb-toolbar-selected-item-border",
+                "label": "Toolbar Breadcrumb selected item border",
+                "type": "text"
+            }
+        ]
+    },
     "buttons": {
         "label": "buttons",
         "properties": [
@@ -96,6 +141,16 @@
                 "key": "--kn-mainmenu-icon-color",
                 "label": "Menu Icons Color",
                 "type": "color"
+            },
+            {
+                "key": "--kn-mainmenu-avatar-background-color",
+                "label": "Profile Background Color",
+                "type": "color"
+            },
+            {
+                "key": "--kn-mainmenu-avatar-border-radius",
+                "label": "Profile Border Radius",
+                "type": "text"
             }
         ]
     },

@@ -121,7 +121,7 @@ export default defineComponent({
             var formData = new FormData()
             formData.append('file', uploadedFile)
             await this.$http
-                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `/selfservicedatasetupload/fileupload`, formData, {
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `selfservicedatasetupload/fileupload`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundaryFYwjkDOpT85ZFN3L'
                     }
