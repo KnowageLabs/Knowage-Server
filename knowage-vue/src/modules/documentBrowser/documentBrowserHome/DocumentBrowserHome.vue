@@ -5,7 +5,7 @@
             <span>{{ searchMode ? $t('documentBrowser.documentsSearch') : $t('documentBrowser.title') }}</span>
             <span v-show="searchMode" class="p-mx-4">
                 <i class="fa fa-arrow-left search-pointer p-mx-4" @click="exitSearchMode" />
-                <InputText id="document-search" class="kn-material-input p-inputtext-sm p-mx-2 searchInput" ref="searchBar" @keyup.enter="loadDocuments" v-model="searchWord" :placeholder="$t('common.search')" autofocus />
+                <InputText id="document-search" class="kn-material-input p-inputtext-sm p-mx-2" ref="searchBar" @keyup.enter="loadDocuments" v-model="searchWord" :placeholder="$t('common.search')" autofocus />
                 <i class="fa fa-times search-pointer p-mx-4" @click="searchWord = ''" />
                 <i class="pi pi-search search-pointer p-mx-4" @click="loadDocuments" />
             </span>
@@ -309,7 +309,7 @@ export default defineComponent({
     min-width: 500px;
     background-color: var(--kn-color-primary);
     color: white;
-    border-bottom-color: white;
+    border-bottom-color: var(--kn-color-primary);
 }
 
 #document-search::placeholder {
@@ -324,9 +324,5 @@ export default defineComponent({
     overflow: auto;
     max-height: calc(100vh - 71px);
     flex: 3;
-}
-
-.searchInput {
-    background-color: transparent;
 }
 </style>
