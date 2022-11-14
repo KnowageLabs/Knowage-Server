@@ -24,7 +24,9 @@ const getFormattedWidgetColumns = (widget: any,) => {
     if (!widget.content || !widget.content.columnSelectedOfDataset) return []
     const formattedColumns = [] as IWidgetColumn[]
     for (let i = 0; i < widget.content.columnSelectedOfDataset.length; i++) {
-        formattedColumns.push(getFormattedWidgetColumn(widget.content.columnSelectedOfDataset[i]))
+        const formattedColumn = getFormattedWidgetColumn(widget.content.columnSelectedOfDataset[i])
+        const index = formattedColumns.findIndex((column: IWidgetColumn) => column.columnName === formattedColumn.columnName && column.alias === formattedColumn.alias)
+        if (index === -1) formattedColumns.push(formattedColumn)
     }
     return formattedColumns
 }
