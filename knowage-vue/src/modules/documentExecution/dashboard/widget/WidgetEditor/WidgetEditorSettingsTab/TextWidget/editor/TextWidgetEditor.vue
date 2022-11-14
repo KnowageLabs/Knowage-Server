@@ -1,6 +1,6 @@
 <template>
     <div class="htmlMirrorContainer" style="height: 600px; width: 100%">
-        <Button icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain editor-tags-menu-button" v-tooltip.left="$t('common.menu')" @click="toggle"></Button>
+        {{ widgetModel.settings.editor.text }}
         <Editor v-model="widgetModel.settings.editor.text" editorStyle="height: 320px">
             <template v-slot:toolbar>
                 <span class="ql-formats">
@@ -62,6 +62,10 @@
 
                 <span class="ql-formats">
                     <button class="ql-clean"></button>
+                </span>
+
+                <span class="ql-formats">
+                    <Button icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" v-tooltip.left="$t('common.menu')" @click="toggle"></Button>
                 </span>
             </template>
         </Editor>
@@ -130,23 +134,6 @@ export default defineComponent({
                     command: () => this.openTagsDialog('internationalization')
                 },
                 {
-                    label: this.$t('dashboard.widgetEditor.editorTags.repeater'),
-                    items: [
-                        {
-                            label: this.$t('dashboard.widgetEditor.editorTags.repeater'),
-                            command: () => this.openTagsDialog('repeater')
-                        },
-                        {
-                            label: this.$t('dashboard.widgetEditor.editorTags.repeatIndex'),
-                            command: () => this.openTagsDialog('repeatIndex')
-                        }
-                    ]
-                },
-                {
-                    label: this.$t('dashboard.widgetEditor.editorTags.calculator'),
-                    command: () => this.openTagsDialog('calculator')
-                },
-                {
                     label: this.$t('dashboard.widgetEditor.interactions.title'),
                     items: [
                         {
@@ -162,14 +149,6 @@ export default defineComponent({
                             command: () => this.openTagsDialog('crossnav')
                         }
                     ]
-                },
-                {
-                    label: this.$t('dashboard.widgetEditor.editorTags.conditional'),
-                    command: () => this.openTagsDialog('conditional')
-                },
-                {
-                    label: this.$t('dashboard.widgetEditor.editorTags.activesel'),
-                    command: () => this.openTagsDialog('activesel')
                 }
             )
         },
@@ -182,7 +161,7 @@ export default defineComponent({
         },
         onInsert(value: string) {
             console.log('>>> ON INSERT: ', value)
-            this.widgetModel.settings.editor.text += value
+            this.widgetModel.settings.editor.text += '<p>' + value + '</p>'
             this.tagsDialogVisible = false
         }
     }
