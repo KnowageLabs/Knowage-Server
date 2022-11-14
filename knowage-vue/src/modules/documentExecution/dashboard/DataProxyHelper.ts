@@ -204,7 +204,6 @@ const getAggregationsModel = (widgetModel, rawHtml, selectedDataset) => {
         var tempModel = deepcopy(widgetModel)
         delete tempModel.settings
         tempModel.columns = []
-        var tempDataset = deepcopy(selectedDataset)
 
         for (var a in aggregationsReg) {
             var aggregationReg = aggregationRegex.exec(aggregationsReg[a])

@@ -99,9 +99,11 @@ export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVari
 }
 
 const getColumnFromName = (columnName: string, datasetData: any, aggregation: any) => {
-    for (var i in datasetData.metaData.fields) {
-        if (typeof datasetData.metaData.fields[i].header != 'undefined' && datasetData.metaData.fields[i].header.toLowerCase() == (aggregation ? columnName + '_' + aggregation : columnName).toLowerCase()) {
-            return { name: datasetData.metaData.fields[i].name, type: datasetData.metaData.fields[i].type }
+    if (datasetData) {
+        for (var i in datasetData.metaData.fields) {
+            if (typeof datasetData.metaData.fields[i].header != 'undefined' && datasetData.metaData.fields[i].header.toLowerCase() == (aggregation ? columnName + '_' + aggregation : columnName).toLowerCase()) {
+                return { name: datasetData.metaData.fields[i].name, type: datasetData.metaData.fields[i].type }
+            }
         }
     }
 }
