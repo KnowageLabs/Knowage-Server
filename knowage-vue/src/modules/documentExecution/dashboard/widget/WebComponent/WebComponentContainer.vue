@@ -1,8 +1,5 @@
 <template>
-    <div>
-        <button @click="loadHTML">Test</button>
-        <widget-web-component ref="webComponent"></widget-web-component>
-    </div>
+    <widget-web-component class="kn-flex" ref="webComponent"></widget-web-component>
 </template>
 
 <script lang="ts">
