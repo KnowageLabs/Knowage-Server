@@ -83,7 +83,7 @@ export default defineComponent({
         variables: { type: Array as PropType<IVariable[]>, required: true },
         dashboardId: { type: String, required: true }
     },
-    emits: [],
+    emits: ['settingChanged'],
     data() {
         return {
             descriptor: null as any,
@@ -115,6 +115,7 @@ export default defineComponent({
         },
         onItemClicked(item: any) {
             this.selectedSetting = item.value
+            this.$emit('settingChanged', item.value)
             this.selectedDescriptor = { table: item.descriptor }
         }
     }

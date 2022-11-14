@@ -4,7 +4,7 @@
             <WidgetEditorDataTab :propWidget="propWidget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="$emit('datasetSelected', $event)" data-test="data-tab"></WidgetEditorDataTab>
         </TabPanel>
         <TabPanel :header="$t('common.settings')">
-            <WidgetEditorSettingsTab :propWidget="propWidget" :datasets="datasets" :selectedDatasets="selectedDatasets" :drivers="drivers" :variables="variables" :dashboardId="dashboardId"></WidgetEditorSettingsTab>
+            <WidgetEditorSettingsTab :propWidget="propWidget" :datasets="datasets" :selectedDatasets="selectedDatasets" :drivers="drivers" :variables="variables" :dashboardId="dashboardId" @settingChanged="$emit('settingChanged', $event)"></WidgetEditorSettingsTab>
         </TabPanel>
     </TabView>
 </template>
@@ -31,7 +31,7 @@ export default defineComponent({
         variables: { type: Array as PropType<IVariable[]>, required: true },
         dashboardId: { type: String, required: true }
     },
-    emits: ['datasetSelected'],
+    emits: ['datasetSelected', 'settingChanged'],
     data() {
         return {
             activeIndex: 0

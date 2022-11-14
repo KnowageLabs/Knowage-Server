@@ -9,8 +9,19 @@
                 </template>
             </Toolbar>
             <div class="datasetEditor-container kn-overflow">
-                <WidgetEditorTabs class="dashboardEditor-tabs" :propWidget="widget" :datasets="datasets" :selectedDatasets="selectedDatasets" :drivers="drivers" :variables="variables" :dashboardId="dashboardId" @datasetSelected="onDatasetSelected" />
-                <WidgetEditorPreview :propWidget="widget" :dashboardId="dashboardId" :datasets="datasets" :drivers="documentDrivers" :variables="variables" />
+                <WidgetEditorTabs
+                    class="dashboardEditor-tabs"
+                    :propWidget="widget"
+                    :datasets="datasets"
+                    :selectedDatasets="selectedDatasets"
+                    :drivers="drivers"
+                    :variables="variables"
+                    :dashboardId="dashboardId"
+                    :selectedSettingProp="selectedSetting"
+                    @settingChanged="onSettingChanged"
+                    @datasetSelected="onDatasetSelected"
+                />
+                <WidgetEditorPreview v-if="selectedSetting != 'Gallery'" :propWidget="widget" :dashboardId="dashboardId" :datasets="datasets" :drivers="documentDrivers" :variables="variables" />
             </div>
         </div>
     </Teleport>
@@ -53,7 +64,8 @@ export default defineComponent({
             },
             selectedModelDatasets: [] as IModelDataset[],
             selectedDatasets: [] as IDataset[],
-            drivers: [] as any[]
+            drivers: [] as any[],
+            selectedSetting: ''
         }
     },
     watch: {
@@ -126,6 +138,10 @@ export default defineComponent({
         },
         close() {
             this.$emit('close')
+        },
+        onSettingChanged(setting) {
+            this.selectedSetting = setting
+            console.log(this.selectedSetting)
         }
     }
 })
