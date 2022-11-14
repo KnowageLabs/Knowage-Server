@@ -6,11 +6,6 @@ import { formatNumberWithLocale } from '@/helpers/commons/localeHelper'
 const widgetIdRegex = /#\[kn-widget-id\]/g
 const activeSelectionsRegex = /(?:\[kn-active-selection(?:=\'([a-zA-Z0-9\_\-]+)\')?\s?\])/g
 const columnRegex = /(?:\[kn-column=\'([a-zA-Z0-9\_\-\s]+)\'(?:\s+row=\'(\d*)\')?(?:\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\s?\])/g
-const rowsRegex = /(?:\[kn-column=\'([a-zA-Z0-9\_\-\s]+)\'(?:\s+row=\'(\d+)\'){1}(?:\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\s?\])/g
-const noAggregationsExistRegex = /\[kn-column=\'[a-zA-Z0-9\_\-\s]+\'(?:\s+row=\'\d+\')?(?!\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')(?:\s+precision=\'(?:\d)\')?(?:\s+format)?\s?\]/g
-const limitRegex = /<[\s\w\=\"\'\-\[\]]*(?!limit=)"([\-\d]+)"[\s\w\=\"\'\-\[\]]*>/g
-const aggregationsRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-\s]+)[\']{1}(?:\s+row=\'(\d*)\')?(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?(\s+format)?\])/g
-const aggregationRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-\s]+)[\']{1}(?:\s+row=\'(\d*)\')?(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?(\s+format)?\])/
 const paramsRegex = /(?:\[kn-parameter=[\'\"]{1}([a-zA-Z0-9\_\-\s]+)[\'\"]{1}(\s+value)?\])/g
 const calcRegex = /(?:\[kn-calc=\(([\[\]\w\s\-\=\>\<\"\'\!\+\*\/\%\&\,\.\|]*)\)(?:\s+min=\'(\d*)\')?(?:\s+max=\'(\d*)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\])/g
 const advancedCalcRegex = /(?:\[kn-calc=\{([\(\)\[\]\w\s\-\=\>\<\"\'\!\+\*\/\%\&\,\.\|]*)\}(?:\s+min=\'(\d*)\')?(?:\s+max=\'(\d*)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\])/g
@@ -27,7 +22,6 @@ let widgetModel = null as IWidget | null
 let translatedValues = {} as any
 let widgetData = {} as any
 
-import mockedData from './mockedData.json'
 let aggregationDataset = null as any // TODO
 
 export const parseText = (tempWidgetModel: IWidget, tempDrivers: any[], tempVariables: IVariable[], tempSelections: ISelection[], internationalization: any) => {
@@ -87,7 +81,8 @@ export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVari
     let trustedHtml = ''
 
     if (html) {
-        let wrappedHtmlToRender = '<div>' + html + ' </div>'
+        let wrappedHtmlToRender = '<div style="position: absolute;height: 100%;width: 100%;">' + html + ' </div>'
+
         wrappedHtmlToRender = wrappedHtmlToRender.replace(gt, '$1&gt;$3')
         wrappedHtmlToRender = wrappedHtmlToRender.replace(lt, '$1&lt;$3')
 
@@ -132,8 +127,8 @@ const parseRepeat = (allElements: any) => {
         if (allElements[i] && allElements[i].hasAttribute('kn-repeat')) {
             if (eval(checkAttributePlaceholders(allElements[i].getAttribute('kn-repeat')))) {
                 allElements[i].removeAttribute('kn-repeat')
-                let limit = allElements[i].hasAttribute('limit') && allElements[i].hasAttribute('limit') <= mockedData.rows.length ? allElements[i].getAttribute('limit') : mockedData.rows.length
-                if (allElements[i].hasAttribute('limit') && allElements[i].getAttribute('limit') == -1) limit = mockedData.rows.length
+                let limit = allElements[i].hasAttribute('limit') && allElements[i].hasAttribute('limit') <= widgetData.rows.length ? allElements[i].getAttribute('limit') : widgetData.rows.length
+                if (allElements[i].hasAttribute('limit') && allElements[i].getAttribute('limit') == -1) limit = widgetData.rows.length
                 if (allElements[i].hasAttribute('limit')) allElements[i].removeAttribute('limit')
                 const repeatedElement = deepcopy(allElements[i])
                 allElements[i].outerHTML = formatRepeatedElement(limit, repeatedElement)
@@ -170,7 +165,7 @@ const parseIf = (allElements: any) => {
         if (allElements[j] && allElements[j].hasAttribute('kn-if')) {
             var condition = allElements[j].getAttribute('kn-if').replace(columnRegex, ifConditionReplacer)
             condition = condition.replace(activeSelectionsRegex, activeSelectionsReplacer)
-            condition = condition.replace(paramsRegex, ifConditionParamsReplacer);
+            condition = condition.replace(paramsRegex, ifConditionParamsReplacer)
             condition = condition.replace(calcRegex, calcReplacer)
             condition = condition.replace(variablesRegex, variablesReplacer)
             condition = condition.replace(i18nRegex, i18nReplacer)
@@ -245,12 +240,12 @@ const calcReplacer = (match: string, p1: string, min: string, max: string, preci
 
 // TODO - aggregationDataset ???
 const ifConditionReplacer = (match: string, p1: any, row: string, aggr: string, precision: number) => {
-    const columnInfo = getColumnFromName(p1, aggr ? aggregationDataset : mockedData, aggr)
+    const columnInfo = getColumnFromName(p1, aggr ? aggregationDataset : widgetData, aggr)
     if (!columnInfo) return p1
     if (aggr) {
         p1 = aggregationDataset && aggregationDataset.rows[0] && aggregationDataset.rows[0][columnInfo.name] !== '' && typeof aggregationDataset.rows[0][columnInfo.name] != 'undefined' ? aggregationDataset.rows[0][columnInfo.name] : null
-    } else if (mockedData && mockedData.rows[row || 0] && typeof mockedData.rows[row || 0][columnInfo.name] != 'undefined' && mockedData.rows[row || 0][columnInfo.name] !== '') {
-        let columnValue = mockedData.rows[row || 0][columnInfo.name]
+    } else if (widgetData && widgetData.rows[row || 0] && typeof widgetData.rows[row || 0][columnInfo.name] != 'undefined' && widgetData.rows[row || 0][columnInfo.name] !== '') {
+        let columnValue = widgetData.rows[row || 0][columnInfo.name]
         if (typeof columnValue == 'string') columnValue = addSlashes(columnValue)
         p1 = columnInfo.type == 'string' ? "'" + columnValue + "'" : columnValue
     } else {
@@ -263,10 +258,10 @@ const ifConditionParamsReplacer = (match: string, p1: string, p2: string) => {
     const index = drivers.findIndex((driver: any) => driver.urlName === p1)
     if (index === -1) return addSlashes(null)
     let result = p2 ? drivers[index].description : drivers[index].value
-    if (typeof (result) == 'string') {
-        result = '\'' + addSlashes(result) + '\''
+    if (typeof result == 'string') {
+        result = "'" + addSlashes(result) + "'"
     }
-    return result;
+    return result
 }
 
 const columnsReplacer = (match, column, row, aggr, precision, format) => {

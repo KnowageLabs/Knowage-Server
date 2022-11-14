@@ -1,9 +1,13 @@
 <template>
-    <div class="widget-editor-preview-container p-d-flex p-flex-column p-ai-stretch p-jc-center kn-overflow">
-        <Button icon="fas fa-square-check" class="p-button-rounded p-button-text p-button-plain" @click="logWidget" />
+    <div ref="widgetPreviewContainer" class="widget-editor-preview-container p-d-flex p-flex-column p-ai-stretch p-jc-center kn-overflow">
+        <div class="preview-buttons-container p-d-flex" style="position: absolute; top: 38px; right: 10px">
+            <Button icon="fas fa-maximize" class="p-button-rounded p-button-text p-button-plain expand-button" @click="toggleExpandPreview" />
+            <Button icon="fas fa-terminal" class="p-button-rounded p-button-text p-button-plain" @click="logWidget" />
+        </div>
+
         <ProgressBar v-if="loading" class="p-mx-2" mode="indeterminate" />
-        <!-- TODO - return widget-container class -->
-        <div class="p-mx-2" :style="getWidgetContainerStyle()" style="'height: 500px; overflow: auto;'">
+
+        <div class="widget-container p-mx-2" :style="getWidgetContainerStyle()">
             <div v-if="widgetTitle && widgetTitle.enabled" class="p-d-flex p-ai-center" style="border-radius: 0px" :style="getWidgetTitleStyle()">
                 {{ widgetTitle?.text }}
             </div>
@@ -111,12 +115,17 @@ export default defineComponent({
         },
         getWidgetContainerStyle() {
             const styleString = getWidgetStyleByType(this.propWidget, 'borders') + getWidgetStyleByType(this.propWidget, 'shadows') + getWidgetStyleByType(this.propWidget, 'background')
-            if (this.propWidget.type == 'table') return styleString + 'height: 30%;'
+            if (this.propWidget.type == 'table' || this.propWidget.type == 'html' || this.propWidget.type == 'text') return styleString + 'height: 30%;'
             else return styleString
         },
         getWidgetPadding() {
             const styleString = getWidgetStyleByType(this.propWidget, 'padding')
             return styleString
+        },
+        toggleExpandPreview() {
+            const widgetPreviewContainerRef = this.$refs.widgetPreviewContainer as any
+            console.log(widgetPreviewContainerRef)
+            widgetPreviewContainerRef.classList.toggle('expand')
         }
     }
 })
@@ -139,18 +148,21 @@ export default defineComponent({
         }
     }
 }
-// @media screen and (max-width: 1199px) {
-//     .widget-editor-preview-container {
-//         -webkit-transition: width 0.3s;
-//         transition: flex 0.3s;
-//         flex: 0;
-//     }
-// }
-// @media screen and (min-width: 1200px) {
-//     .widget-editor-preview-container {
-//         -webkit-transition: width 0.3s;
-//         transition: flex 0.3s;
-//         flex: 0.5;
-//     }
-// }
+.widget-editor-preview-container.expand {
+    flex: 10000;
+}
+@media screen and (max-width: 1199px) {
+    .widget-editor-preview-container {
+        -webkit-transition: width 0.3s;
+        transition: flex 0.3s;
+        flex: 0;
+    }
+}
+@media screen and (min-width: 1200px) {
+    .widget-editor-preview-container {
+        -webkit-transition: width 0.3s;
+        transition: flex 0.3s;
+        flex: 0.5;
+    }
+}
 </style>
