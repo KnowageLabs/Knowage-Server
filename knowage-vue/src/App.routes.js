@@ -92,7 +92,7 @@ router.beforeEach((to, from, next) => {
     let docTypesRegEx = /registry|document-composite|report|office-doc|olap|map|report|kpi|dossier|etl/
     if (checkRequired && !loggedIn) {
         authHelper.handleUnauthorized()
-    } else if (docTypesRegEx.test(to.fullPath)) {
+    } else if (to.fullPath.startsWith('/document-browser') && docTypesRegEx.test(to.fullPath)) {
         let params = `label=${to.params.id}`
 
         let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/documentexecution/correctRolesForExecution?` + params

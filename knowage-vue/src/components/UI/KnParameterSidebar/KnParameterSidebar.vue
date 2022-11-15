@@ -319,8 +319,7 @@ export default defineComponent({
             await this.$http.get(url).then((response: AxiosResponse<any>) => {
                 this.correctRolesForExecution = response.data
             })
-
-            if (this.correctRolesForExecution.length == 1) {
+            if (!this.role && this.correctRolesForExecution.length == 1) {
                 this.role = this.correctRolesForExecution[0]
                 this.setNewSessionRole()
             }
