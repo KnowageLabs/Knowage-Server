@@ -21,7 +21,7 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget, IDataset, IVariable, IDashboardDriver, IGalleryItem } from '@/modules/documentExecution/Dashboard/Dashboard'
 import descriptor from './HTMLWidgetSettingsDescriptor.json'
 import HTMLWidgetSettingsAccordion from './HTMLWidgetSettingsAccordion.vue'
-import HTMLWidgetSettingsGallery from './gallery/HTMLWidgetSettingsGallery.vue'
+import HTMLWidgetSettingsGallery from './gallery/HTMLWidgetGallery.vue'
 
 export default defineComponent({
     name: 'html-widget-settings-container',

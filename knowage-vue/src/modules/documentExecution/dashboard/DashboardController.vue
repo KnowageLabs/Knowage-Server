@@ -31,6 +31,7 @@
         :datasets="datasets"
         :documentDrivers="drivers"
         :variables="model ? model.configuration.variables : []"
+        :htmlGalleryProp="htmlGallery"
         @close="closeWidgetEditor"
         @widgetSaved="closeWidgetEditor"
         @widgetUpdated="closeWidgetEditor"
@@ -46,7 +47,7 @@ import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import { v4 as uuidv4 } from 'uuid'
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
-import { IModelDataset, ISelection, IWidget, IDashboardDriver } from './Dashboard'
+import { IModelDataset, ISelection, IWidget, IDashboardDriver, IGalleryItem } from './Dashboard'
 import { emitter, createNewDashboardModel, formatDashboardForSave, formatNewModel } from './DashboardHelpers'
 import { mapActions } from 'pinia'
 import { formatModel } from './helpers/DashboardBackwardCompatibilityHelper'
@@ -86,7 +87,8 @@ export default defineComponent({
             saveDialogVisible: false,
             selectionsDialogVisible: false,
             generalSettingsVisible: false,
-            loading: false
+            loading: false,
+            htmlGallery: [] as IGalleryItem[]
         }
     },
     provide() {
@@ -121,6 +123,9 @@ export default defineComponent({
             await this.loadDatasets()
             await Promise.all([this.loadCrossNavigations(), this.loadOutputParameters(), this.loadDrivers(), this.loadProfileAttributes(), this.loadModel(), this.loadInternationalization()])
             this.loading = false
+
+            //lazy lodaded data
+            this.loadHtmlGallery()
         },
         async loadModel() {
             let tempModel = null as any
@@ -169,6 +174,12 @@ export default defineComponent({
                 .catch(() => {})
             this.appStore.setLoading(false)
             this.store.setCrosssNavigations(this.crossNavigations)
+        },
+        async loadHtmlGallery() {
+            await this.$http
+                .get(import.meta.env.VITE_API_PATH + `1.0/widgetgallery/widgets/html`)
+                .then((response: AxiosResponse<any>) => (this.htmlGallery = response.data))
+                .catch(() => {})
         },
         loadOutputParameters() {
             if (this.newDashboardMode) return
