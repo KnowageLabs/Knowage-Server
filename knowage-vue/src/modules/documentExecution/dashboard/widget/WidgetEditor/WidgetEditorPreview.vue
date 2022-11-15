@@ -3,6 +3,7 @@
         <div class="preview-buttons-container p-d-flex" style="position: absolute; top: 38px; right: 10px">
             <Button icon="fas fa-maximize" class="p-button-rounded p-button-text p-button-plain expand-button" @click="toggleExpandPreview" />
             <Button icon="fas fa-terminal" class="p-button-rounded p-button-text p-button-plain" @click="logWidget" />
+            <Button icon="fas fa-cross" class="p-button-rounded p-button-text p-button-plain" @click="getWidgetData" />
         </div>
 
         <ProgressBar v-if="loading" class="p-mx-2" mode="indeterminate" />

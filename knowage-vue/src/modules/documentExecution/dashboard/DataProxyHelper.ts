@@ -34,6 +34,8 @@ export const getWidgetData = async (widget: IWidget, datasets: IDataset[], $http
             return await getSelectorWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         case 'html':
             return await getHtmlWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
+        case 'text':
+            return await getTextWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         default:
             break
     }
@@ -139,6 +141,50 @@ export const getSelectorWidgetData = async (widget: IWidget, datasets: IDataset[
     }
 }
 
+export const getTextWidgetData = async (widget: IWidget, datasets: IDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+    var datasetIndex = datasets.findIndex((dataset: any) => widget.dataset === dataset.id.dsId)
+    var selectedDataset = datasets[datasetIndex]
+
+    if (selectedDataset && widget.settings.editor.text) {
+        var text = widget.settings.editor.text
+        var numOfRowsToGet = maxRow(widget)
+        var url = `2.0/datasets/${selectedDataset.label}/data?offset=0&size=${numOfRowsToGet}&nearRealtime=true&limit=${numOfRowsToGet}`
+
+        var aggregationsModel = getAggregationsModel(widget, text, selectedDataset)
+        var aggregationDataset = null as any
+        if (aggregationsModel) {
+            let aggregationsPostData = formatWidgetModelForGet(aggregationsModel, selectedDataset.label, initialCall, selections, associativeResponseSelections)
+            await $http
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, aggregationsPostData, { headers: { 'X-Disable-Errors': 'true' } })
+                .then((response: AxiosResponse<any>) => {
+                    aggregationDataset = response.data
+                })
+                .catch((error: any) => {
+                    showGetDataError(error, selectedDataset.label)
+                })
+        }
+
+        let postData = formatWidgetModelForGet(widget, selectedDataset.label, initialCall, selections, associativeResponseSelections)
+        var tempResponse = null as any
+        if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
+        await $http
+            .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData, { headers: { 'X-Disable-Errors': 'true' } })
+            .then((response: AxiosResponse<any>) => {
+                tempResponse = response.data
+                tempResponse.initialCall = initialCall
+            })
+            .catch((error: any) => {
+                showGetDataError(error, selectedDataset.label)
+            })
+            .finally(() => {
+                // TODO - uncomment when realtime dataset example is ready
+                // resetDatasetInterval(widget)
+            })
+
+        return { tempResponse: tempResponse, aggregationDataset: aggregationDataset }
+    }
+}
+
 export const getHtmlWidgetData = async (widget: IWidget, datasets: IDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
     var datasetIndex = datasets.findIndex((dataset: any) => widget.dataset === dataset.id.dsId)
     var selectedDataset = datasets[datasetIndex]
@@ -185,7 +231,8 @@ export const getHtmlWidgetData = async (widget: IWidget, datasets: IDataset[], $
 
 const maxRow = (widgetModel) => {
     if (!widgetModel) return
-    const str = widgetModel.settings.editor.css + widgetModel.settings.editor.html
+
+    const str = widgetModel.type == 'html' ? widgetModel.settings.editor.css + widgetModel.settings.editor.html : widgetModel.settings.editor.text
     let tempMaxRow = 1
     const repeaters = str.replace(limitRegex, function (match: string, p1: any) {
         if (parseInt(p1) == -1) tempMaxRow = -1
