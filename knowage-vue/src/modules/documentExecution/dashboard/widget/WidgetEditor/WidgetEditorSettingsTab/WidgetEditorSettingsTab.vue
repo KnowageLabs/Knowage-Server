@@ -42,6 +42,7 @@
             :drivers="drivers"
             :variables="variables"
             :dashboardId="dashboardId"
+            :htmlGalleryProp="htmlGalleryProp"
         ></HTMLWidgetSettingsContainer>
         <TextWidgetSettingsContainer
             v-else-if="propWidget.type === 'text'"
@@ -59,7 +60,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IDataset, IVariable, IDashboardDriver } from '../../../Dashboard'
+import { IWidget, IDataset, IVariable, IDashboardDriver, IGalleryItem } from '../../../Dashboard'
 import tableDescriptor from './TableWidget/TableWidgetSettingsDescriptor.json'
 import TableWidgetSettingsContainer from './TableWidget/TableWidgetSettingsContainer.vue'
 import SelectorWidgetSettingsContainer from './SelectorWidget/SelectorWidgetSettingsContainer.vue'
@@ -81,9 +82,10 @@ export default defineComponent({
         selectedDatasets: { type: Array as PropType<IDataset[]> },
         drivers: { type: Array as PropType<IDashboardDriver[]>, required: true },
         variables: { type: Array as PropType<IVariable[]>, required: true },
+        htmlGalleryProp: { type: Array as PropType<IGalleryItem[]>, required: true },
         dashboardId: { type: String, required: true }
     },
-    emits: [],
+    emits: ['settingChanged'],
     data() {
         return {
             descriptor: null as any,
@@ -115,6 +117,7 @@ export default defineComponent({
         },
         onItemClicked(item: any) {
             this.selectedSetting = item.value
+            this.$emit('settingChanged', item.value)
             this.selectedDescriptor = { table: item.descriptor }
         }
     }

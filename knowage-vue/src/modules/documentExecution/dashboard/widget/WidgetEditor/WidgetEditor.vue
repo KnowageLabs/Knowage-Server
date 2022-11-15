@@ -9,8 +9,20 @@
                 </template>
             </Toolbar>
             <div class="datasetEditor-container kn-overflow">
-                <WidgetEditorTabs class="dashboardEditor-tabs" :propWidget="widget" :datasets="datasets" :selectedDatasets="selectedDatasets" :drivers="drivers" :variables="variables" :dashboardId="dashboardId" @datasetSelected="onDatasetSelected" />
-                <WidgetEditorPreview :propWidget="widget" :dashboardId="dashboardId" :datasets="datasets" :drivers="documentDrivers" :variables="variables" />
+                <WidgetEditorTabs
+                    class="dashboardEditor-tabs"
+                    :propWidget="widget"
+                    :datasets="datasets"
+                    :selectedDatasets="selectedDatasets"
+                    :drivers="drivers"
+                    :variables="variables"
+                    :dashboardId="dashboardId"
+                    :selectedSettingProp="selectedSetting"
+                    :htmlGalleryProp="htmlGallery"
+                    @settingChanged="onSettingChanged"
+                    @datasetSelected="onDatasetSelected"
+                />
+                <WidgetEditorPreview v-if="selectedSetting != 'Gallery'" :propWidget="widget" :dashboardId="dashboardId" :datasets="datasets" :drivers="documentDrivers" :variables="variables" />
             </div>
         </div>
     </Teleport>
@@ -21,7 +33,7 @@
  * ! this component will be in charge of managing the widget editing.
  */
 import { defineComponent, PropType } from 'vue'
-import { IWidgetEditorDataset, IWidget, IDataset, IModelDataset, IVariable, IDashboardDriver } from '../../Dashboard'
+import { IWidgetEditorDataset, IWidget, IDataset, IModelDataset, IVariable, IDashboardDriver, IGalleryItem } from '../../Dashboard'
 import { AxiosResponse } from 'axios'
 import { createNewWidget, formatWidgetForSave } from './helpers/WidgetEditorHelpers'
 import WidgetEditorPreview from './WidgetEditorPreview.vue'
@@ -53,7 +65,9 @@ export default defineComponent({
             },
             selectedModelDatasets: [] as IModelDataset[],
             selectedDatasets: [] as IDataset[],
-            drivers: [] as any[]
+            drivers: [] as any[],
+            selectedSetting: '',
+            htmlGallery: [] as IGalleryItem[]
         }
     },
     watch: {
@@ -71,6 +85,8 @@ export default defineComponent({
         this.loadSelectedModelDatasets()
         this.loadSelectedModel()
         this.loadDrivers()
+
+        if(this.propWidget.type == 'html') this.loadHtmlGallery()
     },
     methods: {
         loadWidget() {
@@ -111,6 +127,14 @@ export default defineComponent({
                 .catch(() => {})
             this.store.setLoading(false)
         },
+        async loadHtmlGallery() {
+            this.store.setLoading(true)
+            await this.$http
+                .get(import.meta.env.VITE_API_PATH + `1.0/widgetgallery/widgets/html`)
+                .then((response: AxiosResponse<any>) => (this.htmlGallery = response.data))
+                .catch(() => {})
+            this.store.setLoading(false)
+        },
         save() {
             const tempWidget = formatWidgetForSave(this.widget)
             if (!tempWidget) return
@@ -126,6 +150,10 @@ export default defineComponent({
         },
         close() {
             this.$emit('close')
+        },
+        onSettingChanged(setting) {
+            this.selectedSetting = setting
+            console.log(this.selectedSetting)
         }
     }
 })
