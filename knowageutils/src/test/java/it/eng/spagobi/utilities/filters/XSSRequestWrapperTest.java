@@ -73,6 +73,7 @@ public class XSSRequestWrapperTest {
 			"<div kn-repeat=\"true\" limit=\"1\"></div>",
 			"<img height=\"10px\" width=\"10px\" alt=\"text\" />",
 			"<img src=\"data:image/png;base64,iVBORw0KGg\" />",
+			"<kn-import src=\"https://www.youtube.com/image.png\"></kn-import>",
 			"");
 
 	private static final String VALID_BUT_NOT_SANITIZED = Joiner.on('\n').join(

@@ -111,6 +111,7 @@ export default defineComponent({
     watch: {
         settings() {
             this.activeIndex = -1
+            this.setActiveAccordion()
         }
     },
     data() {
@@ -120,8 +121,14 @@ export default defineComponent({
             activeIndex: -1
         }
     },
-    created() {},
-    methods: {}
+    created() {
+        this.setActiveAccordion()
+    },
+    methods: {
+        setActiveAccordion() {
+            if (this.settings?.length === 1) this.activeIndex = 0
+        }
+    }
 })
 </script>
 
