@@ -8,7 +8,7 @@
                 {{ $t('common.info.noDataFound') }}
             </Message>
             <template v-else>
-                <GalleryCard v-for="(galleryItem, index) of filteredGallery" :key="index" :widgetModel="widgetModel" :htmlGalleryItemProp="galleryItem" @click="logMe(galleryItem)" />
+                <GalleryCard v-for="(galleryItem, index) of filteredGallery" :key="index" :widgetModel="widgetModel" :htmlGalleryItemProp="galleryItem" @click="checkForTemplateContent(galleryItem)" />
             </template>
         </div>
     </div>
@@ -29,15 +29,23 @@ export default defineComponent({
     },
     data() {
         return {
+            htmlEditor: '',
+            cssEditor: '',
             searchWord: '',
             filteredGallery: [] as IGalleryItem[]
         }
     },
     watch: {},
     created() {
+        this.loadWidgetEditors()
         this.filteredGallery = [...this.htmlGalleryProp] as IGalleryItem[]
     },
     methods: {
+        loadWidgetEditors() {
+            if (!this.widgetModel) return
+            this.htmlEditor = this.widgetModel.settings.editor.html
+            this.cssEditor = this.widgetModel.settings.editor.css
+        },
         searchItems() {
             setTimeout(() => {
                 if (!this.searchWord.trim().length) {
@@ -60,7 +68,17 @@ export default defineComponent({
             }
             return tagFound
         },
-        logMe(galleryItem: IGalleryItem) {
+        checkForTemplateContent(galleryItem: IGalleryItem) {
+            if (this.widgetModel.settings.editor.html > 0 || this.widgetModel.settings.editor.css > 0) {
+                this.$confirm.require({
+                    message: this.$t('documentExecution.dossier.deleteConfirm'),
+                    header: this.$t('documentExecution.dossier.deleteTitle'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => this.loadGalleryItem(galleryItem)
+                })
+            } else this.loadGalleryItem(galleryItem)
+        },
+        loadGalleryItem(galleryItem: IGalleryItem) {
             console.log(galleryItem)
         }
     }
@@ -68,7 +86,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-/* width */
 ::-webkit-scrollbar {
     width: 5px;
 }
