@@ -1,5 +1,5 @@
 <template>
-    <Message v-if="selectedDatasets.length == 0" class="p-mb-2" severity="warn" :closable="false" :style="descriptor.hintStyle">
+    <Message v-if="selectedDatasets?.length == 0" class="p-mb-2" severity="warn" :closable="false" :style="descriptor.hintStyle">
         {{ $t(`managers.functionsCatalog.noDatasetSelected`) }}
     </Message>
     <div v-else class="p-field">
@@ -14,20 +14,23 @@
 import { defineComponent, PropType } from 'vue'
 import { IDataset, IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
 import Dropdown from 'primevue/dropdown'
+import descriptor from '../WidgetTagsDialogDescriptor.json'
+import Message from 'primevue/message'
 
 export default defineComponent({
     name: 'widget-editor-active-selections',
-    components: { Dropdown },
+    components: { Dropdown, Message },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedDatasets: { type: Array as PropType<IDataset[]> } },
     emits: ['insertChanged'],
     data() {
         return {
+            descriptor,
             selectedDatasetName: ''
         }
     },
     methods: {
         onColumnChanged() {
-            const forInsert = `<div kn-preview="${this.selectedDatasetName}"></div>`
+            const forInsert = this.widgetModel.type === 'html' ? `<div kn-preview="${this.selectedDatasetName}"></div>` : `<div kn-preview="${this.selectedDatasetName}">${this.selectedDatasetName}</div>`
             this.$emit('insertChanged', forInsert)
         }
     }

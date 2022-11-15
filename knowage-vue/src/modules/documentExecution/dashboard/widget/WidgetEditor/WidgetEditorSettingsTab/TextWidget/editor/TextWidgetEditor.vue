@@ -88,6 +88,14 @@ var Font = Quill.import('formats/font')
 Font.whitelist = ['mirza', 'roboto', 'arial', 'aref-ruqua', 'roboto', 'inconsolata', 'sans-serif', 'serif', 'monospace']
 Quill.register(Font, true)
 
+const QuillJS = (function() {
+    try {
+        return (window as any).Quill
+    } catch {
+        return null
+    }
+})()
+
 export default defineComponent({
     name: 'text-widget-editor',
     components: { TieredMenu, TagsDialog, Editor },
@@ -108,6 +116,18 @@ export default defineComponent({
         }
     },
     watch: {},
+    created() {
+        console.log('>>>>>>>> TEST: ', new Quill(this.$refs.editorElement, {}))
+        var quill = new Quill('#editor-container', {
+            modules: {
+                toolbar: [[{ header: [1, 2, false] }], ['bold', 'italic', 'underline'], ['image', 'code-block']]
+            },
+            placeholder: 'Compose an epic...',
+            theme: 'snow'
+        })
+        console.log('>>>>>>>> TEST 2: ', quill)
+        quill.container.clipboard.dangerouslyPasteHTML(0, 'Hello world!<br>This is a test paragraph')
+    },
     methods: {
         toggle(event: Event) {
             this.createMenuItems()

@@ -181,7 +181,7 @@ export default defineComponent({
             if (this.filtersData?.filterStatus) {
                 this.filtersData.filterStatus.forEach((filter: iParameter) => {
                     const formattedDriver = {
-                        name: filter.driverLabel,
+                        name: filter.label,
                         type: filter.type,
                         multivalue: filter.multivalue,
                         value: this.getFormattedDriverValue(filter),

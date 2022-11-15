@@ -40,7 +40,8 @@ export default defineComponent({
     created() {},
     methods: {
         onColumnChanged() {
-            const forInsert = `<div kn-selection-column="${this.selectedColumnName}" kn-selection-value="${this.selectionValue}"></div>`
+            const forInsert =
+                this.widgetModel.type === 'html' ? `<div kn-selection-column="${this.selectedColumnName}" kn-selection-value="${this.selectionValue}"></div>` : `<div kn-selection-column="${this.selectedColumnName}" kn-selection-value="${this.selectionValue}">${this.selectedColumnName}</div>`
             this.$emit('insertChanged', forInsert)
         }
     }
