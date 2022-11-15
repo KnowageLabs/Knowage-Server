@@ -18,7 +18,7 @@
                     :variables="variables"
                     :dashboardId="dashboardId"
                     :selectedSettingProp="selectedSetting"
-                    :htmlGalleryProp="htmlGallery"
+                    :htmlGalleryProp="htmlGalleryProp"
                     @settingChanged="onSettingChanged"
                     @datasetSelected="onDatasetSelected"
                 />
@@ -52,7 +52,8 @@ export default defineComponent({
         propWidget: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDataset[]>, required: true },
         documentDrivers: { type: Array as PropType<IDashboardDriver[]>, required: true },
-        variables: { type: Array as PropType<IVariable[]>, required: true }
+        variables: { type: Array as PropType<IVariable[]>, required: true },
+        htmlGalleryProp: { type: Array as PropType<IGalleryItem[]>, required: true }
     },
     data() {
         return {
@@ -66,8 +67,7 @@ export default defineComponent({
             selectedModelDatasets: [] as IModelDataset[],
             selectedDatasets: [] as IDataset[],
             drivers: [] as any[],
-            selectedSetting: '',
-            htmlGallery: [] as IGalleryItem[]
+            selectedSetting: ''
         }
     },
     watch: {
@@ -85,8 +85,6 @@ export default defineComponent({
         this.loadSelectedModelDatasets()
         this.loadSelectedModel()
         this.loadDrivers()
-
-        if(this.propWidget.type == 'html') this.loadHtmlGallery()
     },
     methods: {
         loadWidget() {
@@ -124,14 +122,6 @@ export default defineComponent({
             await this.$http
                 .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasets/availableFunctions/${dataset.id}?useCache=false`)
                 .then((response: AxiosResponse<any>) => (this.datasetFunctions = response.data))
-                .catch(() => {})
-            this.store.setLoading(false)
-        },
-        async loadHtmlGallery() {
-            this.store.setLoading(true)
-            await this.$http
-                .get(import.meta.env.VITE_API_PATH + `1.0/widgetgallery/widgets/html`)
-                .then((response: AxiosResponse<any>) => (this.htmlGallery = response.data))
                 .catch(() => {})
             this.store.setLoading(false)
         },
