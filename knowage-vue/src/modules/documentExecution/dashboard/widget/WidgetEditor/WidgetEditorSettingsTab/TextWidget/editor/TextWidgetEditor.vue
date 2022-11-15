@@ -1,6 +1,5 @@
 <template>
-    <div class="p-grid">
-        <div class="p-col-12">{{ widgetModel?.settings.editor.text }}</div>
+    <!-- <div class="p-col-12">{{ widgetModel?.settings.editor.text }}</div>
         <div class="htmlMirrorContainer" style="height: 600px; width: 100%">
             <Editor class="p-col-12" v-model="widgetModel.settings.editor.text" editorStyle="height: 320px">
                 <template v-slot:toolbar>
@@ -70,12 +69,12 @@
                     </span>
                 </template>
             </Editor>
-        </div>
-    </div>
-    <!-- <div class="p-grid">
+        </div> -->
+    <div class="p-grid">
+        <Button class="p-button-text p-button-rounded p-button-plain" v-tooltip.left="$t('common.menu')" @click="toggle">TEEEEEEEEEEEEST</Button>
         <div class="p-col-12">{{ widgetModel?.settings.editor.text }}</div>
         <div id="editor-container" class="p-col-12"></div>
-    </div> -->
+    </div>
 
     <TieredMenu ref="menu" :model="toolbarMenuItems" :popup="true" />
     <TagsDialog :visible="tagsDialogVisible" :widgetModel="widgetModel" :mode="tagsDialogMode" widgetType="text" :drivers="drivers" :variables="variables" :selectedDatasets="selectedDatasets" @close="closeTagsDialog" @insert="onInsert" />
@@ -86,9 +85,10 @@ import { defineComponent, PropType } from 'vue'
 import { IVariable, IWidget, IDataset, IDashboardDriver } from '@/modules/documentExecution/Dashboard/Dashboard'
 import TieredMenu from 'primevue/tieredmenu'
 import TagsDialog from '../../common/editor/WidgetTagsDialog.vue'
-import { Quill } from '@vueup/vue-quill'
+import { Delta, Quill } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 import Editor from 'primevue/editor'
+const Inline = Quill.import('blots/inline')
 
 // const BlockEmbed = Quill.import('blots/block/embed')
 
@@ -106,6 +106,34 @@ import Editor from 'primevue/editor'
 // ;(keepHTML as any).tagName = 'div'
 
 // Quill.register(keepHTML)
+
+export class TagBlot extends Inline {
+    static blotName = 'tag'
+    static className = 'aur-tag'
+    static tagName = 'span'
+
+    static create(value) {
+        let node = super.create(value)
+        console.log('>>>>>>>>>> VALUE: ', value)
+        node.innerHTML = 'Bojan inner html'
+        node.setAttribute('test-in-create', 'Bojan')
+        //  node.setAttribute('data-alternative-spellings', [])
+        node.addEventListener('click', () => alert('radi'))
+        return node
+    }
+
+    static formats(domNode: HTMLElement): any {
+        console.log('>>>>>>>>>> formats: ', domNode)
+        if (typeof this.tagName === 'string') {
+            return true
+        } else if (Array.isArray(this.tagName)) {
+            return domNode.tagName.toLowerCase()
+        }
+        return undefined
+    }
+}
+
+Quill.register(TagBlot, true)
 
 var Parchment = Quill.import('parchment')
 var dataId = new Parchment.Attributor.Attribute('test', 'test', {
@@ -139,17 +167,32 @@ export default defineComponent({
     },
     watch: {},
     mounted() {
-        // this.quill = new Quill('#editor-container', {
-        //     modules: {
-        //         toolbar: [[{ header: [1, 2, false] }], ['bold', 'italic', 'underline'], ['image', 'code-block']]
-        //     },
-        //     placeholder: 'Compose an epic...',
-        //     theme: 'snow'
-        // })
-        // console.log('>>>>>>>> TEST 2: ', this.quill)
-        //  this.quill.on('text-change', this.onTextChange)
+        this.quill = new Quill('#editor-container', {
+            modules: {
+                toolbar: [[{ header: [1, 2, false] }], ['bold', 'italic', 'underline'], ['image', 'code-block']]
+            },
+            placeholder: 'Compose an epic...',
+            theme: 'snow'
+        })
+        console.log('>>>>>>>> TEST 2: ', this.quill)
+        this.quill.on('text-change', this.onTextChange)
         // this.quill.root.innerHTML = this.widgetModel.settings.editor.text
-        // this.quill.clipboard.dangerouslyPasteHTML(0,  this.widgetModel.settings.editor.text )
+        this.quill.clipboard.addMatcher('SPAN', function(node, delta) {
+            console.log('>>>>>>>> NODE: ', node)
+            return new Delta().retain(delta.length()).insert(
+                {
+                    tag: 'test in insert'
+                },
+                {
+                    width: '350',
+                    nameClass: 'else',
+                    alt: 'no working',
+                    offset: 3
+                }
+            )
+        })
+        this.quill.clipboard.dangerouslyPasteHTML(0, '<span>Test</span>')
+        this.quill.clipboard.dangerouslyPasteHTML(100, '<p>Bla</p>')
         console.log('>>>>>> QUILL IMPORTS:', Quill.imports)
     },
     methods: {
@@ -213,7 +256,10 @@ export default defineComponent({
         },
         onInsert(value: string) {
             console.log('>>> ON INSERT: ', value)
-            this.widgetModel.settings.editor.text += '<p class="innerHTML test-class" test="bla">' + value + '</p>'
+            this.quill.insertEmbed(0, 'tag', 'test')
+            // this.quill.insertEmbed(0, 'span', 'test 2')
+            // this.widgetModel.settings.editor.text += '<span class="innerHTML test-class" test="bla">' + value + '</span>'
+            console.log('>>>>>>>>> QUIL: ', this.quill)
             this.tagsDialogVisible = false
         }
     }

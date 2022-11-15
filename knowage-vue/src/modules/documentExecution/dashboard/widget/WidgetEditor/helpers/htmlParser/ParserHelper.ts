@@ -127,8 +127,8 @@ const parseRepeat = (allElements: any) => {
         if (allElements[i] && allElements[i].hasAttribute('kn-repeat')) {
             if (eval(checkAttributePlaceholders(allElements[i].getAttribute('kn-repeat')))) {
                 allElements[i].removeAttribute('kn-repeat')
-                let limit = allElements[i].hasAttribute('limit') && allElements[i].hasAttribute('limit') <= widgetData.rows.length ? allElements[i].getAttribute('limit') : widgetData.rows.length
-                if (allElements[i].hasAttribute('limit') && allElements[i].getAttribute('limit') == -1) limit = widgetData.rows.length
+                let limit = allElements[i].hasAttribute('limit') && allElements[i].hasAttribute('limit') <= widgetData?.rows.length ? allElements[i].getAttribute('limit') : widgetData?.rows.length
+                if (allElements[i].hasAttribute('limit') && allElements[i].getAttribute('limit') == -1) limit = widgetData?.rows.length
                 if (allElements[i].hasAttribute('limit')) allElements[i].removeAttribute('limit')
                 const repeatedElement = deepcopy(allElements[i])
                 allElements[i].outerHTML = formatRepeatedElement(limit, repeatedElement)

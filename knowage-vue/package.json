@@ -36,6 +36,7 @@
         "luxon": "^2.3.1",
         "mitt": "^3.0.0",
         "moment": "2.29.4",
+        "parchment": "^2.0.1",
         "pinia": "^2.0.14",
         "pleaserotate.js": "^0.1.2",
         "primeflex": "^2.0.0",
