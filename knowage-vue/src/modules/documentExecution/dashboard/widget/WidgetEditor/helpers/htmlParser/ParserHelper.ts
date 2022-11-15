@@ -24,12 +24,14 @@ let widgetData = {} as any
 
 let aggregationDataset = null as any // TODO
 
-export const parseText = (tempWidgetModel: IWidget, tempDrivers: any[], tempVariables: IVariable[], tempSelections: ISelection[], internationalization: any) => {
+export const parseText = (tempWidgetModel: IWidget, tempDrivers: any[], tempVariables: IVariable[], tempSelections: ISelection[], internationalization: any, tempWidgetData: any) => {
     drivers = tempDrivers
     variables = tempVariables
     activeSelections = tempSelections
     widgetModel = tempWidgetModel
     translatedValues = internationalization
+    widgetData = tempWidgetData.tempResponse
+    aggregationDataset = tempWidgetData.aggregationDataset
 
     const unparsedText = widgetModel.settings.editor.text
     if (!unparsedText) return ''
@@ -41,6 +43,7 @@ export const parseText = (tempWidgetModel: IWidget, tempDrivers: any[], tempVari
 }
 
 const checkTextWidgetPlaceholders = (unparsedText: string) => {
+    unparsedText = unparsedText.replace(columnRegex, columnsReplacer)
     unparsedText = unparsedText.replace(paramsRegex, paramsReplacer)
     unparsedText = unparsedText.replace(variablesRegex, variablesReplacer)
     return unparsedText

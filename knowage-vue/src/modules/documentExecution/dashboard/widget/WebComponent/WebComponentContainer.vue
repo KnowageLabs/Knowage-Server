@@ -65,7 +65,7 @@ export default defineComponent({
                 this.htmlContent = temp.html
                 this.webComponentCss = temp.css
             } else {
-                this.htmlContent = parseText(this.propWidget, this.drivers, this.variables, this.activeSelections, this.getInternationalization())
+                this.htmlContent = parseText(this.propWidget, this.drivers, this.variables, this.activeSelections, this.getInternationalization(), this.dataToShow)
             }
 
             const webComponentRef = this.$refs.webComponent as any
