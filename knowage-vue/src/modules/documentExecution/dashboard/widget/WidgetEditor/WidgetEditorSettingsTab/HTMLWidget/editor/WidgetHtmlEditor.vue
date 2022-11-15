@@ -1,8 +1,9 @@
 <template>
     <!-- <Button icon="fas fa-terminal" class="p-button-text p-button-rounded p-button-plain" @click="logModel" /> -->
     <div class="htmlMirrorContainer" style="height: 500px; width: 100%">
+        {{ widgetModel.settings.editor.html }}
         <Button icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain editor-tags-menu-button" v-tooltip.left="$t('common.menu')" @click="toggle"></Button>
-        <VCodeMirror ref="codeMirrorHtmlEditor" v-model:value="widgetModel.settings.editor.html" :options="scriptOptions" />
+        <VCodeMirror ref="codeMirrorHtmlEditor" v-model:value="code" :options="scriptOptions" @keyup="onKeyUp" @change="onKeyUp" @blur="onKeyUp" />
     </div>
 
     <TieredMenu ref="menu" :model="toolbarMenuItems" :popup="true" />
@@ -46,7 +47,8 @@ export default defineComponent({
                 tabSize: 4,
                 theme: 'eclipse'
             },
-            cursorPosition: null
+            cursorPosition: null,
+            code: ''
         }
     },
     watch: {
@@ -61,12 +63,16 @@ export default defineComponent({
         setupCodeMirror() {
             const interval = setInterval(() => {
                 if (!this.$refs.codeMirrorHtmlEditor) return
+                this.code = this.widgetModel.settings.editor.html
                 this.codeMirrorHtmlEditor = (this.$refs.codeMirrorHtmlEditor as any).cminstance as any
                 setTimeout(() => {
                     this.codeMirrorHtmlEditor.refresh()
                 }, 0)
                 clearInterval(interval)
             }, 200)
+        },
+        onKeyUp() {
+            this.widgetModel.settings.editor.html = this.code
         },
         logModel() {
             console.log(this.widgetModel)
