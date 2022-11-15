@@ -3,7 +3,7 @@
     <div class="htmlMirrorContainer" style="height: 500px; width: 100%">
         {{ widgetModel.settings.editor.html }}
         <Button icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain editor-tags-menu-button" v-tooltip.left="$t('common.menu')" @click="toggle"></Button>
-        <VCodeMirror ref="codeMirrorHtmlEditor" v-model:value="code" :options="scriptOptions" @keyup="onKeyUp" @change="onKeyUp" @blur="onKeyUp" />
+        <VCodeMirror ref="codeMirrorHtmlEditor" v-model:value="code" :options="scriptOptions" @keyup="onKeyUp" @keyDown="onKeyUp" @change="onKeyUp" @blur="onKeyUp" />
     </div>
 
     <TieredMenu ref="menu" :model="toolbarMenuItems" :popup="true" />
