@@ -1,75 +1,81 @@
 <template>
-    <div class="htmlMirrorContainer" style="height: 600px; width: 100%">
-        {{ widgetModel.settings.editor.text }}
-        <Editor v-model="widgetModel.settings.editor.text" editorStyle="height: 320px">
-            <template v-slot:toolbar>
-                <span class="ql-formats">
-                    <select class="ql-font">
-                        <option selected value="arial">Arial</option>
-                        <option value="aref-ruqua">Aref Ruqua</option>
-                        <option value="mirza">Mirza</option>
-                        <option value="roboto">Roboto</option>
-                        <option value="inconsolata">Inconsolata</option>
-                        <option value="sans-serif">Sans Serif</option>
-                        <option value="serif">Serif</option>
-                        <option value="monospace">Monospace</option>
-                    </select>
+    <div class="p-grid">
+        <div class="p-col-12">{{ widgetModel?.settings.editor.text }}</div>
+        <div class="htmlMirrorContainer" style="height: 600px; width: 100%">
+            <Editor class="p-col-12" v-model="widgetModel.settings.editor.text" editorStyle="height: 320px">
+                <template v-slot:toolbar>
+                    <span class="ql-formats">
+                        <select class="ql-font">
+                            <option selected value="arial">Arial</option>
+                            <option value="aref-ruqua">Aref Ruqua</option>
+                            <option value="mirza">Mirza</option>
+                            <option value="roboto">Roboto</option>
+                            <option value="inconsolata">Inconsolata</option>
+                            <option value="sans-serif">Sans Serif</option>
+                            <option value="serif">Serif</option>
+                            <option value="monospace">Monospace</option>
+                        </select>
 
-                    <select class="ql-size">
-                        <option value="small"></option>
-                        <option selected></option>
-                        <option value="large"></option>
-                        <option value="huge"></option>
-                    </select>
-                </span>
+                        <select class="ql-size">
+                            <option value="small"></option>
+                            <option selected></option>
+                            <option value="large"></option>
+                            <option value="huge"></option>
+                        </select>
+                    </span>
 
-                <span class="ql-formats">
-                    <button class="ql-bold"></button>
-                    <button class="ql-italic"></button>
-                    <button class="ql-underline"></button>
-                    <button class="ql-strike"></button>
-                </span>
+                    <span class="ql-formats">
+                        <button class="ql-bold"></button>
+                        <button class="ql-italic"></button>
+                        <button class="ql-underline"></button>
+                        <button class="ql-strike"></button>
+                    </span>
 
-                <span class="ql-formats">
-                    <button class="ql-color"></button>
-                    <button class="ql-background"></button>
-                </span>
+                    <span class="ql-formats">
+                        <button class="ql-color"></button>
+                        <button class="ql-background"></button>
+                    </span>
 
-                <span class="ql-formats">
-                    <button class="ql-script" value="sub"></button>
-                    <button class="ql-script" value="super"></button>
-                </span>
+                    <span class="ql-formats">
+                        <button class="ql-script" value="sub"></button>
+                        <button class="ql-script" value="super"></button>
+                    </span>
 
-                <span class="ql-formats">
-                    <button class="ql-header" value="1"></button>
-                    <button class="ql-header" value="2"></button>
-                    <button class="ql-blockquote"></button>
-                    <button class="ql-block"></button>
-                </span>
+                    <span class="ql-formats">
+                        <button class="ql-header" value="1"></button>
+                        <button class="ql-header" value="2"></button>
+                        <button class="ql-blockquote"></button>
+                        <button class="ql-block"></button>
+                    </span>
 
-                <span class="ql-formats">
-                    <button class="ql-list" value="ordered"></button>
-                    <button class="ql-list" value="bullet"></button>
+                    <span class="ql-formats">
+                        <button class="ql-list" value="ordered"></button>
+                        <button class="ql-list" value="bullet"></button>
 
-                    <button class="ql-indent" value="-1"></button>
-                    <button class="ql-indent" value="+1"></button>
-                </span>
+                        <button class="ql-indent" value="-1"></button>
+                        <button class="ql-indent" value="+1"></button>
+                    </span>
 
-                <span class="ql-formats">
-                    <button class="ql-direction"></button>
-                    <button class="ql-align"></button>
-                </span>
+                    <span class="ql-formats">
+                        <button class="ql-direction"></button>
+                        <button class="ql-align"></button>
+                    </span>
 
-                <span class="ql-formats">
-                    <button class="ql-clean"></button>
-                </span>
+                    <span class="ql-formats">
+                        <button class="ql-clean"></button>
+                    </span>
 
-                <span class="ql-formats">
-                    <Button icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" v-tooltip.left="$t('common.menu')" @click="toggle"></Button>
-                </span>
-            </template>
-        </Editor>
+                    <span class="ql-formats">
+                        <Button icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" v-tooltip.left="$t('common.menu')" @click="toggle"></Button>
+                    </span>
+                </template>
+            </Editor>
+        </div>
     </div>
+    <!-- <div class="p-grid">
+        <div class="p-col-12">{{ widgetModel?.settings.editor.text }}</div>
+        <div id="editor-container" class="p-col-12"></div>
+    </div> -->
 
     <TieredMenu ref="menu" :model="toolbarMenuItems" :popup="true" />
     <TagsDialog :visible="tagsDialogVisible" :widgetModel="widgetModel" :mode="tagsDialogMode" widgetType="text" :drivers="drivers" :variables="variables" :selectedDatasets="selectedDatasets" @close="closeTagsDialog" @insert="onInsert" />
@@ -84,17 +90,32 @@ import { Quill } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 import Editor from 'primevue/editor'
 
+// const BlockEmbed = Quill.import('blots/block/embed')
+
+// class keepHTML extends BlockEmbed {
+//     static create(node) {
+//         return node
+//     }
+//     static value(node) {
+//         return node
+//     }
+// }
+
+// ;(keepHTML as any).blotName = 'keepHTML'
+// ;(keepHTML as any).className = 'keepHTML'
+// ;(keepHTML as any).tagName = 'div'
+
+// Quill.register(keepHTML)
+
+var Parchment = Quill.import('parchment')
+var dataId = new Parchment.Attributor.Attribute('test', 'test', {
+    scope: Parchment.Scope.BLOCK
+})
+Quill.register(dataId)
+
 var Font = Quill.import('formats/font')
 Font.whitelist = ['mirza', 'roboto', 'arial', 'aref-ruqua', 'roboto', 'inconsolata', 'sans-serif', 'serif', 'monospace']
 Quill.register(Font, true)
-
-const QuillJS = (function() {
-    try {
-        return (window as any).Quill
-    } catch {
-        return null
-    }
-})()
 
 export default defineComponent({
     name: 'text-widget-editor',
@@ -112,21 +133,24 @@ export default defineComponent({
             toolbarMenuItems: [] as any[],
             tagsDialogMode: '' as string,
             tagsDialogVisible: false,
-            cursorPosition: null
+            cursorPosition: null,
+            quill: {} as any
         }
     },
     watch: {},
-    created() {
-        console.log('>>>>>>>> TEST: ', new Quill(this.$refs.editorElement, {}))
-        var quill = new Quill('#editor-container', {
-            modules: {
-                toolbar: [[{ header: [1, 2, false] }], ['bold', 'italic', 'underline'], ['image', 'code-block']]
-            },
-            placeholder: 'Compose an epic...',
-            theme: 'snow'
-        })
-        console.log('>>>>>>>> TEST 2: ', quill)
-        quill.container.clipboard.dangerouslyPasteHTML(0, 'Hello world!<br>This is a test paragraph')
+    mounted() {
+        // this.quill = new Quill('#editor-container', {
+        //     modules: {
+        //         toolbar: [[{ header: [1, 2, false] }], ['bold', 'italic', 'underline'], ['image', 'code-block']]
+        //     },
+        //     placeholder: 'Compose an epic...',
+        //     theme: 'snow'
+        // })
+        // console.log('>>>>>>>> TEST 2: ', this.quill)
+        //  this.quill.on('text-change', this.onTextChange)
+        // this.quill.root.innerHTML = this.widgetModel.settings.editor.text
+        // this.quill.clipboard.dangerouslyPasteHTML(0,  this.widgetModel.settings.editor.text )
+        console.log('>>>>>> QUILL IMPORTS:', Quill.imports)
     },
     methods: {
         toggle(event: Event) {
@@ -172,6 +196,14 @@ export default defineComponent({
                 }
             )
         },
+        onTextChange(event: any) {
+            console.log('>>>>>>> ON TEXT CHANGE: ', event)
+            console.log('>>>>>>> ON TEXT CHANGE: ', this.quill.root.innerHTML)
+            this.widgetModel.settings.editor.text = this.quill.root.innerHTML
+        },
+        onEditorChange(event: any) {
+            console.log('>>>>>>> ON EDITOR CHANGE: ', event)
+        },
         openTagsDialog(mode: string) {
             this.tagsDialogMode = mode
             this.tagsDialogVisible = true
@@ -181,7 +213,7 @@ export default defineComponent({
         },
         onInsert(value: string) {
             console.log('>>> ON INSERT: ', value)
-            this.widgetModel.settings.editor.text += '<p>' + value + '</p>'
+            this.widgetModel.settings.editor.text += '<p class="innerHTML test-class" test="bla">' + value + '</p>'
             this.tagsDialogVisible = false
         }
     }

@@ -1,7 +1,7 @@
 <template>
     <!-- <Button icon="fas fa-terminal" class="p-button-text p-button-rounded p-button-plain" @click="logModel" /> -->
     <div class="cssMirrorContainer" style="height: 500px; width: 100%">
-        <VCodeMirror ref="codeMirrorCssEditor" v-model:value="widgetModel.settings.editor.css" :options="scriptOptions" />
+        <VCodeMirror ref="codeMirrorCssEditor" v-model:value="code" :options="scriptOptions" @keyup="onKeyUp" @keyDown="onKeyUp" @change="onKeyUp" @blur="onKeyUp" />
     </div>
 </template>
 
@@ -24,7 +24,8 @@ export default defineComponent({
                 mode: 'css',
                 tabSize: 4,
                 theme: 'eclipse'
-            }
+            },
+            code: ''
         }
     },
     watch: {
@@ -39,12 +40,16 @@ export default defineComponent({
         setupCodeMirror() {
             const interval = setInterval(() => {
                 if (!this.$refs.codeMirrorCssEditor) return
+                this.code = this.widgetModel.settings.editor.css
                 this.codeMirrorCssEditor = (this.$refs.codeMirrorCssEditor as any).cminstance as any
                 setTimeout(() => {
                     this.codeMirrorCssEditor.refresh()
                 }, 0)
                 clearInterval(interval)
             }, 200)
+        },
+        onKeyUp() {
+            this.widgetModel.settings.editor.css = this.code
         },
         logModel() {
             console.log(this.widgetModel)
