@@ -29,8 +29,7 @@ export default defineComponent({
     },
     data() {
         return {
-            htmlEditor: '',
-            cssEditor: '',
+            templateEditor: {} as any,
             searchWord: '',
             filteredGallery: [] as IGalleryItem[]
         }
@@ -43,8 +42,7 @@ export default defineComponent({
     methods: {
         loadWidgetEditors() {
             if (!this.widgetModel) return
-            this.htmlEditor = this.widgetModel.settings.editor.html
-            this.cssEditor = this.widgetModel.settings.editor.css
+            this.templateEditor = this.widgetModel.settings.editor
         },
         searchItems() {
             setTimeout(() => {
@@ -69,7 +67,7 @@ export default defineComponent({
             return tagFound
         },
         checkForTemplateContent(galleryItem: IGalleryItem) {
-            if (this.widgetModel.settings.editor.html > 0 || this.widgetModel.settings.editor.css > 0) {
+            if (this.widgetModel.settings.editor.html.length > 0 || this.widgetModel.settings.editor.css.length > 0) {
                 this.$confirm.require({
                     message: this.$t('documentExecution.dossier.deleteConfirm'),
                     header: this.$t('documentExecution.dossier.deleteTitle'),
@@ -79,7 +77,8 @@ export default defineComponent({
             } else this.loadGalleryItem(galleryItem)
         },
         loadGalleryItem(galleryItem: IGalleryItem) {
-            console.log(galleryItem)
+            this.templateEditor.html = galleryItem.code.html
+            this.templateEditor.css = galleryItem.code.css
         }
     }
 })
