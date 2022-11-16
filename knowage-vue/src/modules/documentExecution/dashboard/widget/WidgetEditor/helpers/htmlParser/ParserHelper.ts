@@ -5,7 +5,8 @@ import { formatNumberWithLocale } from '@/helpers/commons/localeHelper'
 
 const widgetIdRegex = /#\[kn-widget-id\]/g
 const activeSelectionsRegex = /(?:\[kn-active-selection(?:=\'([a-zA-Z0-9\_\-]+)\')?\s?\])/g
-const columnRegex = /(?:\[kn-column=\'([a-zA-Z0-9\_\-\s]+)\'(?:\s+row=\'(\d*)\')?(?:\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\s?\])/g
+const columnRegexOld = /(?:\[kn-column=\'([a-zA-Z0-9\_\-\s]+)\'(?:\s+row=\'(\d*)\')?(?:\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\s?\])/g
+const columnRegex = /(?:\[kn-column=\'([a-zA-Z0-9\_\-\s]+)\'(?:\s+row=\'(\d*)\')?(?:\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')?(?:\s+precision=\'(\d)\')?(\s+format)?(?:\s+prefix=\'([a-zA-Z0-9\_\-\s]+)\')?(?:\s+suffix=\'([a-zA-Z0-9\_\-\s]+)\')?\s?\])/g
 const paramsRegex = /(?:\[kn-parameter=[\'\"]{1}([a-zA-Z0-9\_\-\s]+)[\'\"]{1}(\s+value)?\])/g
 const calcRegex = /(?:\[kn-calc=\(([\[\]\w\s\-\=\>\<\"\'\!\+\*\/\%\&\,\.\|]*)\)(?:\s+min=\'(\d*)\')?(?:\s+max=\'(\d*)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\])/g
 const advancedCalcRegex = /(?:\[kn-calc=\{([\(\)\[\]\w\s\-\=\>\<\"\'\!\+\*\/\%\&\,\.\|]*)\}(?:\s+min=\'(\d*)\')?(?:\s+max=\'(\d*)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\])/g
@@ -116,11 +117,6 @@ const parseHtmlFunctions = (rawHtml: string) => {
     const placeholderResultHtml = checkPlaceholders(parsedHtml.firstChild ? (parsedHtml.firstChild as any).innerHTML : '')
     const parseCalcResultHtml = parseCalc(placeholderResultHtml)
     return parseCalcResultHtml
-}
-
-// TODO
-const parseAggregations = () => {
-    // TODO
 }
 
 const parseRepeat = (allElements: any) => {
@@ -267,7 +263,7 @@ const ifConditionParamsReplacer = (match: string, p1: string, p2: string) => {
     return result
 }
 
-const columnsReplacer = (match, column, row, aggr, precision, format) => {
+const columnsReplacer = (match, column, row, aggr, precision, format, prefix, suffix) => {
     console.log('COLUMNS REPLACER', match, column, row, aggr, precision, format)
 
     const columnInfo = getColumnFromName(column, aggr ? aggregationDataset : widgetData, aggr)
@@ -287,7 +283,9 @@ const columnsReplacer = (match, column, row, aggr, precision, format) => {
     if ((column != null && columnInfo.type == 'int') || columnInfo.type == 'float') {
         if (format) column = precision ? formatNumberWithLocale(column, precision, null) : formatNumberWithLocale(column, undefined, null)
         else column = precision ? parseFloat(column).toFixed(precision) : parseFloat(column)
+        column = (prefix || '') + column + (suffix || '')
     }
+
     console.log('%c returned  column column ', 'color: white; background-color: #61dbfb')
     console.log(column)
     return column
