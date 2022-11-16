@@ -1,18 +1,9 @@
 <template>
-    <Message v-if="!widgetModel.dataset" class="p-mb-2" severity="warn" :closable="false" :style="descriptor.hintStyle">
-        {{ $t(`managers.functionsCatalog.noDatasetSelected`) }}
-    </Message>
-    <div v-else class="p-fluid p-formgrid p-grid">
-        <div class="p-field p-col-6">
+    <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col-12 p-p-2">
             <span class="p-float-label">
                 <Dropdown class="kn-material-input" v-model="selectedColumnName" :options="widgetModel.columns" optionValue="columnName" optionLabel="columnName" @change="onColumnChanged"> </Dropdown>
                 <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
-            </span>
-        </div>
-        <div class="p-field p-col-6">
-            <span class="p-float-label">
-                <InputText class="kn-material-input" v-model="selectionValue" @change="onColumnChanged" />
-                <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.editorTags.selectionVal') }}</label>
             </span>
         </div>
     </div>
@@ -26,7 +17,7 @@ import descriptor from '../WidgetTagsDialogDescriptor.json'
 import Message from 'primevue/message'
 
 export default defineComponent({
-    name: 'widget-editor-selections',
+    name: 'widget-editor-cross-navigation',
     components: { Dropdown, Message },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     emits: ['insertChanged'],
@@ -40,8 +31,7 @@ export default defineComponent({
     created() {},
     methods: {
         onColumnChanged() {
-            const forInsert =
-                this.widgetModel.type === 'html' ? `<div kn-selection-column="${this.selectedColumnName}" kn-selection-value="${this.selectionValue}"></div>` : `<div kn-selection-column="${this.selectedColumnName}" kn-selection-value="${this.selectionValue}">${this.selectedColumnName}</div>`
+            const forInsert = this.widgetModel.type === 'html' ? `<div kn-cross[kn-column='${this.selectedColumnName}']</div>` : `<span class='crossNavigation' kn-cross="">[kn-column='${this.selectedColumnName}' row='0']</span>`
             this.$emit('insertChanged', forInsert)
         }
     }

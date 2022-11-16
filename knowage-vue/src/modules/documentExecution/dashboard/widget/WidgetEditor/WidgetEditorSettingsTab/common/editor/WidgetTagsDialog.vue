@@ -24,6 +24,7 @@
             <WidgetEditorActiveSelections v-else-if="mode === 'activesel'" :widgetModel="widgetModel" @insertChanged="onInsertChanged"></WidgetEditorActiveSelections>
             <WidgetEditorSelection v-else-if="mode === 'selection'" :widgetModel="widgetModel" @insertChanged="onInsertChanged"></WidgetEditorSelection>
             <WidgetEditorColumnData v-else-if="mode === 'columnsData'" :widgetModel="widgetModel" @insertChanged="onInsertChanged"></WidgetEditorColumnData>
+            <WidgetEditorCrossNavigation v-else-if="mode === 'crossnav'" :widgetModel="widgetModel" @insertChanged="onInsertChanged"></WidgetEditorCrossNavigation>
         </div>
 
         <template #footer>
@@ -50,6 +51,7 @@ import WidgetEditorInternationalization from './options/WidgetEditorInternationa
 import WidgetEditorPreview from './options/WidgetEditorPreview.vue'
 import WidgetEditorSelection from './options/WidgetEditorSelection.vue'
 import WidgetEditorColumnData from './options/WidgetEditorColumnData.vue'
+import WidgetEditorCrossNavigation from './options/WidgetEditorCrossNavigation.vue'
 
 export default defineComponent({
     name: 'olap-custom-view-save-dialog',
@@ -66,7 +68,8 @@ export default defineComponent({
         WidgetEditorInternationalization,
         WidgetEditorPreview,
         WidgetEditorSelection,
-        WidgetEditorColumnData
+        WidgetEditorColumnData,
+        WidgetEditorCrossNavigation
     },
     props: {
         visible: Boolean,
@@ -97,9 +100,6 @@ export default defineComponent({
     methods: {
         setInitialInsertValue() {
             switch (this.mode) {
-                case 'crossnav':
-                    this.forInsert = '<div kn-cross></div>'
-                    break
                 case 'repeatIndex':
                     if (this.widgetModel.dataset) this.forInsert = '[kn-repeat-index]'
                     break
@@ -112,7 +112,7 @@ export default defineComponent({
             this.forInsert = value
         },
         addInsert() {
-            this.$emit('insert', this.forInsert)
+            this.$emit('insert', this.forInsert, this.mode)
         },
         closeDialog() {
             this.forInsert = ''
