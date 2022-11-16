@@ -89,7 +89,7 @@ import TagsDialog from '../../common/editor/WidgetTagsDialog.vue'
 import { Delta, Quill } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 import Editor from 'primevue/editor'
-import { CrossNavBlot } from './TextWidgetEditorQuillHelpers'
+import { CrossNavBlot, PreviewBlot } from './TextWidgetEditorQuillHelpers'
 
 // const BlockEmbed = Quill.import('blots/block/embed')
 
@@ -109,12 +109,7 @@ import { CrossNavBlot } from './TextWidgetEditorQuillHelpers'
 // Quill.register(keepHTML)
 
 Quill.register(CrossNavBlot, true)
-
-var Parchment = Quill.import('parchment')
-var dataId = new Parchment.Attributor.Attribute('test', 'test', {
-    scope: Parchment.Scope.BLOCK
-})
-Quill.register(dataId)
+Quill.register(PreviewBlot, true)
 
 var Font = Quill.import('formats/font')
 Font.whitelist = ['mirza', 'roboto', 'arial', 'aref-ruqua', 'roboto', 'inconsolata', 'sans-serif', 'serif', 'monospace']
@@ -225,12 +220,8 @@ export default defineComponent({
         closeTagsDialog() {
             this.tagsDialogVisible = false
         },
-        onInsert(value: string, mode?: string) {
+        onInsert(value: string) {
             console.log('>>> ON INSERT: ', value)
-            console.log('>>> ON INSERT MODE: ', mode)
-            //  this.quill.insertEmbed(this.quill.getLength(), 'crossNav', 'test')
-            //  this.quill.clipboard.dangerouslyPasteHTML(this.quill.getLength(), this.widgetModel.settings.editor.text)
-            // this.quill.insertEmbed(0, 'span', 'test 2')
             this.widgetModel.settings.editor.text += '<p>' + value + '</p>'
             console.log('>>>>>>>>> QUIL: ', this.quill)
             this.tagsDialogVisible = false
@@ -302,5 +293,13 @@ export default defineComponent({
 }
 .ql-font-monospace {
     font-family: 'Monospace';
+}
+
+.crossNavigation {
+    background-color: green;
+}
+
+.preview {
+    background-color: red;
 }
 </style>

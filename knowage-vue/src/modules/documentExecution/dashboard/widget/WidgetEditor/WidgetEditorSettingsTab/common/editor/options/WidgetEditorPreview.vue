@@ -30,7 +30,7 @@ export default defineComponent({
     },
     methods: {
         onColumnChanged() {
-            const forInsert = this.widgetModel.type === 'html' ? `<div kn-preview="${this.selectedDatasetName}"></div>` : `<div kn-preview="${this.selectedDatasetName}">${this.selectedDatasetName}</div>`
+            const forInsert = this.widgetModel.type === 'html' ? `<div kn-preview="${this.selectedDatasetName}"></div>` : `<span class="preview" kn-preview="${this.selectedDatasetName}">${this.selectedDatasetName}</div>`
             this.$emit('insertChanged', forInsert)
         }
     }
