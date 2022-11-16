@@ -12,9 +12,12 @@ import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 
+import it.eng.knowage.security.ProductProfiler;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -44,6 +47,7 @@ public class DocumentExecutionResource {
 		ObjectsAccessVerifier oav = new ObjectsAccessVerifier();
 
 		try {
+			checkExecRightsByProducts(id, label);
 			if (id != null) {
 				roles = oav.getCorrectRolesForExecution(id, userProfile);
 			} else {
@@ -63,6 +67,18 @@ public class DocumentExecutionResource {
 
 		logger.debug("OUT");
 		return Response.ok().entity(roles).build();
+	}
+
+	private void checkExecRightsByProducts(Integer id, String label) throws EMFUserError {
+		BIObject biobj = null;
+		if (id != null) {
+			biobj = DAOFactory.getBIObjectDAO().loadBIObjectById(id);
+		} else {
+			biobj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(label);
+		}
+		if (!ProductProfiler.canExecuteDocument(biobj)) {
+			throw new SpagoBIRuntimeException("This document cannot be executed within the current product!");
+		}
 	}
 
 }

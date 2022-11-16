@@ -102,6 +102,7 @@ import moment from 'moment'
 import DocumentExecutionSelectCrossNavigationDialog from './dialogs/documentExecutionSelectCrossNavigationDialog/DocumentExecutionSelectCrossNavigationDialog.vue'
 import DocumentExecutionCNContainerDialog from './dialogs/documentExecutionCNContainerDialog/DocumentExecutionCNContainerDialog.vue'
 
+const crypto = require('crypto')
 const deepcopy = require('deepcopy')
 // @ts-ignore
 // eslint-disable-next-line
@@ -852,13 +853,12 @@ export default defineComponent({
             this.hiddenFormData.append('documentMode', this.documentMode)
 
             if (this.document.typeCode === 'DATAMART') {
+                this.sbiExecutionId = crypto.randomBytes(16).toString('hex')
                 let doc = this.document
                 let drivers = doc.drivers
                 let url = `start-qbe?user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.sbiExecutionId}&drivers=${drivers}&registryId=${doc.id}`
 
-                await this.$http.get(process.env.VUE_APP_QBE_PATH + url).then(() => {
-                    this.sendHiddenFormData()
-                })
+                await this.$http.get(process.env.VUE_APP_QBE_PATH + url).then(() => {})
             } else if (this.document.typeCode === 'DOSSIER' || this.document.typeCode === 'OLAP') {
                 await this.sendHiddenFormData()
             } else {
@@ -869,15 +869,12 @@ export default defineComponent({
             if (index !== -1) this.breadcrumbs[index].hiddenFormData = this.hiddenFormData
         },
         async sendHiddenFormData() {
-            await this.$http
-                .post(this.hiddenFormUrl, this.hiddenFormData, {
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
-                    }
-                })
-                .then(() => {})
-                .catch(() => {})
+            await this.$http.post(this.hiddenFormUrl, this.hiddenFormData, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
+                }
+            })
         },
         async onExecute() {
             this.loading = true
