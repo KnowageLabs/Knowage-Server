@@ -89,7 +89,7 @@ import TagsDialog from '../../common/editor/WidgetTagsDialog.vue'
 import { Delta, Quill } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 import Editor from 'primevue/editor'
-import { CrossNavBlot, PreviewBlot } from './TextWidgetEditorQuillHelpers'
+import { CrossNavBlot, PreviewBlot, SelectionBlot } from './TextWidgetEditorQuillHelpers'
 
 // const BlockEmbed = Quill.import('blots/block/embed')
 
@@ -110,6 +110,7 @@ import { CrossNavBlot, PreviewBlot } from './TextWidgetEditorQuillHelpers'
 
 Quill.register(CrossNavBlot, true)
 Quill.register(PreviewBlot, true)
+Quill.register(SelectionBlot, true)
 
 var Font = Quill.import('formats/font')
 Font.whitelist = ['mirza', 'roboto', 'arial', 'aref-ruqua', 'roboto', 'inconsolata', 'sans-serif', 'serif', 'monospace']

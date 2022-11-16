@@ -35,7 +35,7 @@ export class PreviewBlot extends Inline {
         console.log('>>>>>>>>>> NODE: ', node)
         console.log('>>>>>>>>>> node domNode: ', deepcopy(node.textContent))
         // console.log('>>>>>>>>>> node kn-preview: ', node.domNode['kn-preview'])
-        node.setAttribute('kn-preview', '')
+        node.setAttribute('kn-preview', value)
         return node
     }
 
@@ -43,11 +43,38 @@ export class PreviewBlot extends Inline {
     static formats(domNode: HTMLElement): any {
         console.log(">>>> FORMATS: ", domNode)
         console.log(">>>> FORMATS       domNode.innerHTML: ", domNode.innerHTML)
-        return domNode.getAttribute('kn-preview') || true;
+        return domNode.innerHTML || true;
+    }
+    formats() {
+        let formats = super.formats();
+        console.log("---------- formats: ", formats)
+        return formats
+    }
+}
+
+export class SelectionBlot extends Inline {
+    static blotName = 'selection'
+    static className = 'selection'
+    static tagName = 'span'
+
+    static create(value: any) {
+        let node = super.create(value)
+        console.log('>>>>>>>>>> CREATE - VALUE: ', value)
+        console.log('>>>>>>>>>> NODE: ', node)
+        console.log('>>>>>>>>>> node domNode: ', deepcopy(node.textContent))
+        return node
     }
 
-    format(format: any, value: any) {
-        console.log("---------- format: ", format)
-        console.log("---------- value: ", value)
+
+    static formats(domNode: HTMLElement): any {
+        console.log(">>>> FORMATS: ", domNode)
+        console.log(">>>> FORMATS       domNode.innerHTML: ", domNode.innerHTML)
+        return domNode.innerHTML || true;
+    }
+
+    formats() {
+        let formats = super.formats();
+        console.log("---------- formats: ", formats)
+        return formats
     }
 }
