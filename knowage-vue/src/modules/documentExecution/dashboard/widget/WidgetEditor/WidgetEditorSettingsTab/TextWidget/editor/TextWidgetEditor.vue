@@ -1,8 +1,6 @@
 <template>
     <div class="p-grid">
         <div class="p-col-12">{{ widgetModel?.settings.editor.text }}</div>
-        <!-- <div id="editor-container" class="p-col-12"></div> -->
-        <!-- <Button class="p-button-text p-button-rounded p-button-plain p-col-6" v-tooltip.left="$t('common.menu')" @click="toggle">TEEEEEEEEEEEEST</Button> -->
         <div class="p-col-12">
             <div class="htmlMirrorContainer" style="height: 600px; width: 100%">
                 <Editor class="p-col-12" v-model="widgetModel.settings.editor.text" editorStyle="height: 320px">
@@ -86,27 +84,10 @@ import { defineComponent, PropType } from 'vue'
 import { IVariable, IWidget, IDataset, IDashboardDriver } from '@/modules/documentExecution/Dashboard/Dashboard'
 import TieredMenu from 'primevue/tieredmenu'
 import TagsDialog from '../../common/editor/WidgetTagsDialog.vue'
-import { Delta, Quill } from '@vueup/vue-quill'
+import { Quill } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 import Editor from 'primevue/editor'
 import { CrossNavBlot, PreviewBlot, SelectionBlot } from './TextWidgetEditorQuillHelpers'
-
-// const BlockEmbed = Quill.import('blots/block/embed')
-
-// class keepHTML extends BlockEmbed {
-//     static create(node) {
-//         return node
-//     }
-//     static value(node) {
-//         return node
-//     }
-// }
-
-// ;(keepHTML as any).blotName = 'keepHTML'
-// ;(keepHTML as any).className = 'keepHTML'
-// ;(keepHTML as any).tagName = 'div'
-
-// Quill.register(keepHTML)
 
 Quill.register(CrossNavBlot, true)
 Quill.register(PreviewBlot, true)
@@ -135,35 +116,6 @@ export default defineComponent({
             cursorPosition: null,
             quill: {} as any
         }
-    },
-    watch: {},
-    mounted() {
-        // this.quill = new Quill('#editor-container', {
-        //     modules: {
-        //         toolbar: [[{ header: [1, 2, false] }], ['bold', 'italic', 'underline'], ['image', 'code-block']]
-        //     },
-        //     placeholder: 'Compose an epic...',
-        //     theme: 'snow'
-        // })
-        // this.quill.on('text-change', this.onTextChange)
-        // this.quill.clipboard.addMatcher('SPAN', function(node, delta) {
-        //     console.log('>>>>>>>> NODE: ', node)
-        //     console.log('>>>>>>>> NODE ATTRIBUTES: ', node.getAttribute('kn-cross'))
-        //     console.log('>>>>>>>> NODE INNER HTML: ', node.innerHTML)
-        //     console.log('>>>>>>>> NODE DATA: ', node.data)
-        //     if (node.getAttribute('kn-cross') !== null) {
-        //         return new Delta().retain(delta.length()).insert({
-        //             tag: node.innerHTML
-        //         })
-        //     } else {
-        //         return new Delta().insert(node.innerHTML)
-        //     }
-        // })
-
-        // this.quill.clipboard.dangerouslyPasteHTML(0, this.widgetModel.settings.editor.text, 'user')
-        // this.quill.clipboard.dangerouslyPasteHTML(0, '<p>Test</p>', 'user')
-        //this.quill.setContents(this.quill.clipboard.convert('<div>' + this.widgetModel.settings.editor.text + '</div>'))
-        console.log('>>>>>> QUILL IMPORTS:', Quill.imports)
     },
     methods: {
         toggle(event: Event) {
@@ -209,11 +161,6 @@ export default defineComponent({
                 }
             )
         },
-        onTextChange(event: any) {
-            console.log('>>>>>>> ON TEXT CHANGE: ', event)
-            console.log('>>>>>>> ON TEXT CHANGE: ', this.quill.root.innerHTML)
-            this.widgetModel.settings.editor.text = this.quill.root.innerHTML
-        },
         openTagsDialog(mode: string) {
             this.tagsDialogMode = mode
             this.tagsDialogVisible = true
@@ -224,7 +171,7 @@ export default defineComponent({
         onInsert(value: string) {
             console.log('>>> ON INSERT: ', value)
             this.widgetModel.settings.editor.text += '<p>' + value + '</p>'
-            console.log('>>>>>>>>> QUIL: ', this.quill)
+            this.widgetModel.settings.editor.text += '&#8205;'
             this.tagsDialogVisible = false
         }
     }
@@ -296,11 +243,20 @@ export default defineComponent({
     font-family: 'Monospace';
 }
 
-.crossNavigation {
-    background-color: green;
+.crossNavigation,
+.preview,
+.selection {
+    font-weight: bold;
+    font-style: italic;
+    transition: all 0.3s ease;
+    padding: 2px;
+    border: 1px solid #ccc;
 }
 
-.preview {
-    background-color: red;
+.crossNavigation:hover,
+.preview:hover,
+.selection:hover {
+    background-color: #ccc;
+    cursor: pointer;
 }
 </style>

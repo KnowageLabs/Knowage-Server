@@ -31,7 +31,7 @@ export default defineComponent({
     created() {},
     methods: {
         onColumnChanged() {
-            const forInsert = this.widgetModel.type === 'html' ? `<div kn-cross[kn-column='${this.selectedColumnName}']</div>` : `<span class='crossNavigation' kn-cross="">[kn-column='${this.selectedColumnName}' row='0']</span>`
+            const forInsert = this.widgetModel.type === 'html' ? `<div kn-cross>[kn-column='${this.selectedColumnName}']</div>` : `<span class='crossNavigation' kn-cross="">[kn-column='${this.selectedColumnName}' row='0']</span>`
             this.$emit('insertChanged', forInsert)
         }
     }
