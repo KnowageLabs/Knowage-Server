@@ -264,13 +264,13 @@ const ifConditionParamsReplacer = (match: string, p1: string, p2: string) => {
 }
 
 const columnsReplacer = (match, column, row, aggr, precision, format, prefix, suffix) => {
-    console.log('COLUMNS REPLACER', match, column, row, aggr, precision, format)
+    console.log('COLUMNS REPLACER', match, column, row, aggr, precision, format, prefix, suffix)
 
     const columnInfo = getColumnFromName(column, aggr ? aggregationDataset : widgetData, aggr)
     console.log('%c columnInfo columnInfo columnInfo ', 'color: white; background-color: #61dbfb')
     console.log(columnInfo)
 
-    if (!columnInfo) return column
+    if (!columnInfo) return column = (prefix || '') + null + (suffix || '')
 
     if (aggr) {
         column = aggregationDataset && aggregationDataset.rows[0] && aggregationDataset.rows[0][columnInfo.name] !== '' && typeof aggregationDataset.rows[0][columnInfo.name] != 'undefined' ? aggregationDataset.rows[0][columnInfo.name] : null
@@ -280,11 +280,11 @@ const columnsReplacer = (match, column, row, aggr, precision, format, prefix, su
         column = null
     }
 
-    if ((column != null && columnInfo.type == 'int') || columnInfo.type == 'float') {
+    if (column != null && (columnInfo.type == 'int' || columnInfo.type == 'float')) {
         if (format) column = precision ? formatNumberWithLocale(column, precision, null) : formatNumberWithLocale(column, undefined, null)
         else column = precision ? parseFloat(column).toFixed(precision) : parseFloat(column)
-        column = (prefix || '') + column + (suffix || '')
     }
+    column = (prefix || '') + column + (suffix || '')
 
     console.log('%c returned  column column ', 'color: white; background-color: #61dbfb')
     console.log(column)

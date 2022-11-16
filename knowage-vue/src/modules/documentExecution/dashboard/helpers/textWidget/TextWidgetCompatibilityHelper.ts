@@ -101,10 +101,10 @@ const replaceColumns = (widget: any, text: string) => {
         let result = `[kn-column='${columnName}' row='0'`
         if (numberFormatting && columnIsMeasure(columnName, widget)) {
             if (formattedAggregation) result += ` aggregation='${formattedAggregation}'`
-            if (numberFormatting.prefix) result += ` prefix='${numberFormatting.prefix}'`
-            if (numberFormatting.suffix) result += ` suffix='${numberFormatting.suffix}'`
             if (numberFormatting.precision) result += ` precision='${numberFormatting.precision}'`
             if (numberFormatting.format) result += ` format`
+            if (numberFormatting.prefix) result += ` prefix='${numberFormatting.prefix}'`
+            if (numberFormatting.suffix) result += ` suffix='${numberFormatting.suffix}'`
         }
         result += ']'
         return result
