@@ -69,6 +69,7 @@ export default defineComponent({
     align-content: center;
 }
 .widgetButtonBarContainer {
+    display: none;
     position: absolute;
     bottom: 0;
     left: 0;

@@ -1,5 +1,5 @@
 <template>
-    <grid-item class="p-d-flex" :key="item.id" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" drag-allow-from=".drag-handle">
+    <grid-item class="p-d-flex widget-grid-item" :key="item.id" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" drag-allow-from=".drag-handle">
         <div v-if="initialized" class="drag-handle"></div>
         <ProgressSpinner v-if="loading" class="kn-progress-spinner" />
         <Skeleton shape="rectangle" v-if="!initialized" height="100%" border-radius="0" />
@@ -244,6 +244,10 @@ export default defineComponent({
 })
 </script>
 <style lang="scss">
+.widget-grid-item:hover .widgetButtonBarContainer {
+    display: block;
+}
+
 .editorEnter-enter-active,
 .editorEnter-leave-active {
     transition: opacity 0.5s ease;
