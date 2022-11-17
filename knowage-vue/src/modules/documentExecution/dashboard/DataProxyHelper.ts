@@ -13,11 +13,14 @@ import deepcopy from 'deepcopy'
 
 const { t } = i18n.global
 const mainStore = store()
-const noAggregationsExistRegex = /\[kn-column=\'[a-zA-Z0-9\_\-\s]+\'(?:\s+row=\'\d+\')?(?!\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')(?:\s+precision=\'(?:\d)\')?(?:\s+format)?\s?\]/g
 const limitRegex = /<[\s\w\=\"\'\-\[\]]*(?!limit=)"([\-\d]+)"[\s\w\=\"\'\-\[\]]*>/g
 const rowsRegex = /(?:\[kn-column=\'([a-zA-Z0-9\_\-\s]+)\'(?:\s+row=\'(\d+)\'){1}(?:\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\s?\])/g
-const aggregationRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-\s]+)[\']{1}(?:\s+row=\'(\d*)\')?(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?(\s+format)?\])/
-const aggregationsRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-\s]+)[\']{1}(?:\s+row=\'(\d*)\')?(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?(\s+format)?\])/g
+const aggregationsRegexOld = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-\s]+)[\']{1}(?:\s+row=\'(\d*)\')?(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?(\s+format)?\])/g
+const aggregationRegexOld = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-\s]+)[\']{1}(?:\s+row=\'(\d*)\')?(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?(\s+format)?\])/
+const aggregationRegex =
+    /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-\s]+)[\']{1}(?:\s+row=\'(\d*)\')?(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?(\s+format)?(\s+prefix=\'([a-zA-Z0-9\_\-\s]+)\')?(\s+suffix=\'([a-zA-Z0-9\_\-\s]+)\')?\])/
+const aggregationsRegex =
+    /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-\s]+)[\']{1}(?:\s+row=\'(\d*)\')?(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?(\s+format)?(\s+prefix=\'([a-zA-Z0-9\_\-\s]+)\')?(\s+suffix=\'([a-zA-Z0-9\_\-\s]+)\')?\])/g
 
 export const getData = (item) =>
     new Promise((resolve) => {
@@ -247,31 +250,28 @@ const maxRow = (widgetModel) => {
 const getAggregationsModel = (widgetModel, rawHtml, selectedDataset) => {
     var aggregationsReg = rawHtml.match(aggregationsRegex)
     if (aggregationsReg) {
-        var tempModel = deepcopy(widgetModel)
-        delete tempModel.settings
-        tempModel.columns = []
+        var modelToSend = deepcopy(widgetModel)
+        const tempModel = deepcopy(widgetModel)
+        delete modelToSend.settings
+        modelToSend.columns = []
 
         for (var a in aggregationsReg) {
             var aggregationReg = aggregationRegex.exec(aggregationsReg[a])
-            for (var m in widgetModel.columns) {
-                if (aggregationReg && aggregationReg[1] && widgetModel.columns[m].columnName == aggregationReg[1]) {
-                    widgetModel.columns[m].alias = aggregationReg[1] + '_' + aggregationReg[3]
-                    widgetModel.columns[m].fieldType = 'MEASURE'
-                    widgetModel.columns[m].aggregation = aggregationReg[3]
+            for (var m in tempModel.columns) {
+                if (aggregationReg && aggregationReg[1] && tempModel.columns[m].columnName == aggregationReg[1]) {
+                    tempModel.columns[m].alias = aggregationReg[1] + '_' + aggregationReg[3]
+                    tempModel.columns[m].fieldType = 'MEASURE'
+                    tempModel.columns[m].aggregation = aggregationReg[3]
                     var exists = false
-                    for (var c in tempModel.columns) {
-                        if (tempModel.columns[c].alias == aggregationReg[1] + '_' + aggregationReg[3]) exists = true
+                    for (var c in modelToSend.columns) {
+                        if (modelToSend.columns[c].alias == aggregationReg[1] + '_' + aggregationReg[3]) exists = true
                     }
-                    if (!exists) tempModel.columns.push(deepcopy(widgetModel.columns[m]))
+                    if (!exists) modelToSend.columns.push(deepcopy(tempModel.columns[m]))
                 }
             }
         }
-        return tempModel
+        return modelToSend
     } else return null
-}
-
-const aggregationsExistInHtml = (html) => {
-    return html.search(noAggregationsExistRegex) == -1
 }
 
 export const getTableWidgetData = async (widget: IWidget, datasets: IDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
