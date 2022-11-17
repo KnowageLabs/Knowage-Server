@@ -57,7 +57,9 @@ export default defineComponent({
     },
     methods: {
         onColumnChanged() {
-            const forInsert = `[kn-calc=(${this.calc}) min='${this.min}' max='${this.max}' precision='${this.precision}'${this.format ? ' format' : ''}]`
+            let forInsert = `[kn-calc=(${this.calc}) min='${this.min}' max='${this.max}'`
+            if (this.precision) forInsert += ` precision='${this.precision}`
+            forInsert += `${this.format ? ' format' : ''}]`
             this.$emit('insertChanged', forInsert)
         }
     }
