@@ -84,12 +84,18 @@ export default defineComponent({
     watch: {
         settings() {
             this.activeIndex = -1
+            this.setActiveAccordion()
         }
     },
-    created() {},
+    created() {
+        this.setActiveAccordion()
+    },
     methods: {
         accordionIsDisabled(accordionType: string) {
             return (accordionType === 'RowsStyle' && this.selectionViewMode === 'chips') || (accordionType === 'ChipsStyle' && this.selectionViewMode === 'list')
+        },
+        setActiveAccordion() {
+            if (this.settings?.length === 1) this.activeIndex = 0
         }
     }
 })

@@ -58,6 +58,7 @@
     },
     "settingsListOptions": [
         {
+            "disabled": false,
             "icon": "fa fa-book",
             "label": "dashboard.widgetEditor.gallery",
             "value": "Gallery"

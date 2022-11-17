@@ -109,7 +109,8 @@ export default defineComponent({
                     this.descriptor = selectionsDescriptor
                     break
                 case 'html':
-                    this.descriptor = htmlDescriptor
+                    this.descriptor = { ...htmlDescriptor }
+                    this.checkIfHtmlWidgetGalleryOptionIsDisabled()
                     break
                 case 'text':
                     this.descriptor = textDescriptor
@@ -119,6 +120,11 @@ export default defineComponent({
             this.selectedSetting = item.value
             this.$emit('settingChanged', item.value)
             this.selectedDescriptor = { table: item.descriptor }
+        },
+        checkIfHtmlWidgetGalleryOptionIsDisabled() {
+            if (this.htmlGalleryProp.length > 0) return
+            const index = this.descriptor.settingsListOptions.findIndex((option: any) => option.value === 'Gallery')
+            if (index !== -1) this.descriptor.settingsListOptions[index].disabled = true
         }
     }
 })
