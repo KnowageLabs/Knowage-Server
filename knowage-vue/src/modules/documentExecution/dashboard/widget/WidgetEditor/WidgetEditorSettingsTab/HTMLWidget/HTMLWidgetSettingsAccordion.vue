@@ -5,6 +5,7 @@
                 <template #header>
                     <label class="kn-material-input-label">{{ $t(accordion.title) }}</label>
                 </template>
+                {{ activeIndex }}
                 <WidgetExport v-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
                 <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
                 <WidgetBackgroundColorStyle v-else-if="accordion.type === 'BackgroundColorStyle'" :widgetModel="widgetModel"></WidgetBackgroundColorStyle>
@@ -62,7 +63,7 @@ export default defineComponent({
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
-        settings: { type: Array as PropType<{ title: string; type: string }[]> },
+        settings: { type: Array as PropType<{ title: string; type: string }[]>, required: true },
         datasets: { type: Array as PropType<IDataset[]> },
         selectedDatasets: { type: Array as PropType<IDataset[]> },
         drivers: { type: Array as PropType<IDashboardDriver[]>, required: true },
@@ -87,7 +88,9 @@ export default defineComponent({
     },
     methods: {
         setActiveAccordion() {
-            if (this.settings?.length === 1) this.activeIndex = 0
+            if (!this.settings) return
+            if (this.settings.length === 1) this.activeIndex = 0
+            else if (this.activeIndex === -1 && this.settings.length === 2 && this.settings[1].type === 'HTML') this.activeIndex = 1
         }
     }
 })

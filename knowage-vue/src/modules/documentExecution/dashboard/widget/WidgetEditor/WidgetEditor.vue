@@ -141,9 +141,8 @@ export default defineComponent({
         close() {
             this.$emit('close')
         },
-        onSettingChanged(setting) {
+        onSettingChanged(setting: string) {
             this.selectedSetting = setting
-            console.log(this.selectedSetting)
         }
     }
 })
