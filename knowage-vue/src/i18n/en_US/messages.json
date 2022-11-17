@@ -430,6 +430,8 @@
             "descending": "Descending",
             "dragColumnsHint": "Drag columns here",
             "editor": "Editor",
+            "htmlParsingError": "HTML Parsing Error",
+            "textParsingError": "Text Parsing Error",
             "editorTags": {
                 "activesel": "Active Selection",
                 "calc": "Calculation",

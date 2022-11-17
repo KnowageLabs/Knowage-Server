@@ -11,6 +11,7 @@ import { IDashboardDriver, IDataset, ISelection, IVariable } from '../../Dashboa
 import './component/WidgetWebComponent'
 import { mapActions } from 'pinia'
 import store from '../../Dashboard.store'
+import appStore from '../../../../../App.store'
 import { IWidget } from '../../Dashboard'
 import { parseHtml, parseText } from '../WidgetEditor/helpers/htmlParser/ParserHelper'
 import { executeCrossNavigation, executePreview, updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
@@ -50,6 +51,7 @@ export default defineComponent({
     },
     methods: {
         ...mapActions(store, ['getInternationalization', 'setSelections', 'getAllDatasets']),
+        ...mapActions(appStore, ['setError']),
         async loadDataToShow() {
             this.dataToShow = this.widgetData
             await this.loadHTML()
@@ -61,11 +63,11 @@ export default defineComponent({
             if (this.propWidget.type !== 'html' && this.propWidget.type !== 'text') return
             let temp = {} as any
             if (this.propWidget.type === 'html') {
-                temp = parseHtml(this.propWidget, this.drivers, this.variables, this.activeSelections, this.getInternationalization(), this.dataToShow)
+                temp = parseHtml(this.propWidget, this.drivers, this.variables, this.activeSelections, this.getInternationalization(), this.dataToShow, this.$toast)
                 this.htmlContent = temp.html
                 this.webComponentCss = temp.css
             } else {
-                this.htmlContent = parseText(this.propWidget, this.drivers, this.variables, this.activeSelections, this.getInternationalization(), this.dataToShow)
+                this.htmlContent = parseText(this.propWidget, this.drivers, this.variables, this.activeSelections, this.getInternationalization(), this.dataToShow, this.$toast)
             }
 
             const webComponentRef = this.$refs.webComponent as any

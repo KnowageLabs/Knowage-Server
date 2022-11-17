@@ -2,6 +2,9 @@ import { ISelection, IVariable, IWidget } from '@/modules/documentExecution/dash
 import { formatSelectionForDisplay } from '../../../ActiveSelectionsWidget/ActiveSelectionsWidgetHelpers'
 import deepcopy from 'deepcopy'
 import { formatNumberWithLocale } from '@/helpers/commons/localeHelper'
+import i18n from '@/App.i18n'
+
+const { t } = i18n.global
 
 const widgetIdRegex = /#\[kn-widget-id\]/g
 const activeSelectionsRegex = /(?:\[kn-active-selection(?:=\'([a-zA-Z0-9\_\-]+)\')?\s?\])/g
@@ -23,22 +26,28 @@ let widgetModel = null as IWidget | null
 let translatedValues = {} as any
 let widgetData = {} as any
 
-let aggregationDataset = null as any // TODO
+let aggregationDataset = null as any
 
-export const parseText = (tempWidgetModel: IWidget, tempDrivers: any[], tempVariables: IVariable[], tempSelections: ISelection[], internationalization: any, tempWidgetData: any) => {
+export const parseText = (tempWidgetModel: IWidget, tempDrivers: any[], tempVariables: IVariable[], tempSelections: ISelection[], internationalization: any, tempWidgetData: any, toast: any) => {
     drivers = tempDrivers
     variables = tempVariables
     activeSelections = tempSelections
     widgetModel = tempWidgetModel
     translatedValues = internationalization
-    widgetData = tempWidgetData.tempResponse
-    aggregationDataset = tempWidgetData.aggregationDataset
+    widgetData = tempWidgetData?.tempResponse
+    aggregationDataset = tempWidgetData?.aggregationDataset
 
-    const unparsedText = widgetModel.settings.editor.text
-    if (!unparsedText) return ''
+    let parsedText = ''
 
-    let parsedText = checkTextWidgetPlaceholders(unparsedText)
-    parsedText = replaceTextFunctions(parsedText)
+    try {
+        const unparsedText = widgetModel.settings.editor.text
+        if (!unparsedText) return ''
+
+        parsedText = checkTextWidgetPlaceholders(unparsedText)
+        parsedText = replaceTextFunctions(parsedText)
+    } catch (error: any) {
+        setError(tempWidgetModel, toast, error, 'text')
+    }
 
     return parsedText
 }
@@ -58,43 +67,59 @@ const replaceTextFunctions = (parsedText: string) => {
     return parsedHtml.firstChild ? (parsedHtml.firstChild as any).innerHTML : ''
 }
 
-export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVariables: IVariable[], tempSelections: ISelection[], tempInternationalization: any, tempWidgetData: any) => {
+export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVariables: IVariable[], tempSelections: ISelection[], tempInternationalization: any, tempWidgetData: any, toast: any) => {
     drivers = tempDrivers
     variables = tempVariables
     activeSelections = tempSelections
     widgetModel = tempWidgetModel
     translatedValues = tempInternationalization
-    widgetData = tempWidgetData.tempResponse
-    aggregationDataset = tempWidgetData.aggregationDataset
+    widgetData = tempWidgetData?.tempResponse
+    aggregationDataset = tempWidgetData?.aggregationDataset
 
-    console.group(`STUFF`)
-    console.log(`widget data: `, widgetData)
-    console.log(`widget data: `, aggregationDataset)
-    console.groupEnd()
+    // console.group(`STUFF`)
+    // console.log(`widget data: `, widgetData)
+    // console.log(`widget data: `, aggregationDataset)
+    // console.groupEnd()
 
-    const css = widgetModel.settings.editor.css
     let trustedCss = ''
-
-    if (css) {
-        let placeholderResultCss = checkPlaceholders(css)
-        placeholderResultCss = parseCalc(placeholderResultCss)
-        trustedCss = placeholderResultCss
-    }
-
-    const html = widgetModel.settings.editor.html
     let trustedHtml = ''
 
-    if (html) {
-        let wrappedHtmlToRender = '<div style="position: absolute;height: 100%;width: 100%;">' + html + ' </div>'
+    try {
+        const css = widgetModel.settings.editor.css
+        if (css) {
+            let placeholderResultCss = checkPlaceholders(css)
+            placeholderResultCss = parseCalc(placeholderResultCss)
+            trustedCss = placeholderResultCss
+        }
 
-        wrappedHtmlToRender = wrappedHtmlToRender.replace(gt, '$1&gt;$3')
-        wrappedHtmlToRender = wrappedHtmlToRender.replace(lt, '$1&lt;$3')
+        const html = widgetModel.settings.editor.html
+        if (html) {
+            let wrappedHtmlToRender = '<div style="position: absolute;height: 100%;width: 100%;">' + html + ' </div>'
 
-        const parseHtmlFunctionsResult = parseHtmlFunctions(wrappedHtmlToRender)
-        trustedHtml = parseHtmlFunctionsResult
+            wrappedHtmlToRender = wrappedHtmlToRender.replace(gt, '$1&gt;$3')
+            wrappedHtmlToRender = wrappedHtmlToRender.replace(lt, '$1&lt;$3')
+
+            const parseHtmlFunctionsResult = parseHtmlFunctions(wrappedHtmlToRender)
+            trustedHtml = parseHtmlFunctionsResult
+        }
+    } catch (error: any) {
+        setError(tempWidgetModel, toast, error, 'html')
     }
 
     return { html: trustedHtml, css: trustedCss }
+}
+
+const setError = (tempWidgetModel: IWidget, toast: any, error: any, type: 'html' | 'text') => {
+    if (toast) {
+        const title = type === 'html' ? t('dashboard.widgetEditor.htmlParsingError') : t('dashboard.widgetEditor.textParsingError')
+        toast.add({
+            severity: 'error',
+            summary: title + ' ' + tempWidgetModel?.id,
+            detail: error.message,
+            baseZIndex: 0,
+            life: import.meta.env.VITE_TOAST_DURATION
+        })
+    }
 }
 
 const getColumnFromName = (columnName: string, datasetData: any, aggregation: any) => {
@@ -237,7 +262,6 @@ const calcReplacer = (match: string, p1: string, min: string, max: string, preci
     return precision && !isNaN(result) ? parseFloat(result).toFixed(precision) : result
 }
 
-// TODO - aggregationDataset ???
 const ifConditionReplacer = (match: string, p1: any, row: string, aggr: string, precision: number) => {
     const columnInfo = getColumnFromName(p1, aggr ? aggregationDataset : widgetData, aggr)
     if (!columnInfo) return p1
@@ -264,11 +288,11 @@ const ifConditionParamsReplacer = (match: string, p1: string, p2: string) => {
 }
 
 const columnsReplacer = (match, column, row, aggr, precision, format, prefix, suffix) => {
-    console.log('COLUMNS REPLACER', match, column, row, aggr, precision, format, prefix, suffix)
+    //  console.log('COLUMNS REPLACER', match, column, row, aggr, precision, format, prefix, suffix)
 
     const columnInfo = getColumnFromName(column, aggr ? aggregationDataset : widgetData, aggr)
-    console.log('%c columnInfo columnInfo columnInfo ', 'color: white; background-color: #61dbfb')
-    console.log(columnInfo)
+    // console.log('%c columnInfo columnInfo columnInfo ', 'color: white; background-color: #61dbfb')
+    // console.log(columnInfo)
 
     if (!columnInfo) return column = (prefix || '') + null + (suffix || '')
 
@@ -286,8 +310,8 @@ const columnsReplacer = (match, column, row, aggr, precision, format, prefix, su
     }
     column = (prefix || '') + column + (suffix || '')
 
-    console.log('%c returned  column column ', 'color: white; background-color: #61dbfb')
-    console.log(column)
+    // console.log('%c returned  column column ', 'color: white; background-color: #61dbfb')
+    // console.log(column)
     return column
 }
 
