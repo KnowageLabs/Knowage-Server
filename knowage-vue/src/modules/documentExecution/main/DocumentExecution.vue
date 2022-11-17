@@ -852,11 +852,14 @@ export default defineComponent({
             this.hiddenFormData.append('documentMode', this.documentMode)
 
             if (this.document.typeCode === 'DATAMART') {
-                let doc = this.document
-                let drivers = doc.drivers
-                let url = `start-qbe?user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.sbiExecutionId}&drivers=${drivers}&registryId=${doc.id}`
+                // let doc = this.document
+                // let drivers = doc.drivers
+                // let url = `start-qbe?user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.sbiExecutionId}&drivers=${drivers}&registryId=${doc.id}`
 
-                await this.$http.get(process.env.VUE_APP_QBE_PATH + url)
+                // await this.$http.get(process.env.VUE_APP_QBE_PATH + url)
+
+                await this.sendHiddenFormData()
+                
             } else if (this.document.typeCode === 'DOSSIER' || this.document.typeCode === 'OLAP') {
                 await this.sendHiddenFormData()
             } else {
