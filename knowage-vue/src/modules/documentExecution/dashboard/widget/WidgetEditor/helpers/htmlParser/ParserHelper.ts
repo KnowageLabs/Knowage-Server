@@ -106,6 +106,7 @@ export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVari
             })
         }
     } catch (error: any) {
+        console.log(">>>>> ERROR:  ", error)
         setError(tempWidgetModel, toast, error, 'html')
     }
 
