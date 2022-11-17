@@ -137,6 +137,7 @@ const getColumnFromName = (columnName: string, datasetData: any, aggregation: an
 }
 
 const parseHtmlFunctions = (rawHtml: string) => {
+
     const parser = new DOMParser()
     const parsedHtml = parser.parseFromString(rawHtml, 'text/html')
     let allElements = parsedHtml.getElementsByTagName('*')
@@ -170,9 +171,11 @@ const parseRepeat = (allElements: any) => {
 }
 
 const formatRepeatedElement = (limit: number, repeatedElement: any) => {
+    const repeatedElementInnerHtml = repeatedElement.innerHTML
     let tempElement = null
     for (let j = 0; j < limit; j++) {
         const tempRow = deepcopy(repeatedElement)
+        tempRow.innerHTML = repeatedElementInnerHtml
         tempRow.innerHTML = tempRow.innerHTML.replace(columnRegex, function (match: string, columnName: string, row: string, c3: string, precision: string, format: string) {
             let precisionPlaceholder = ''
             let formatPlaceholder = ''
