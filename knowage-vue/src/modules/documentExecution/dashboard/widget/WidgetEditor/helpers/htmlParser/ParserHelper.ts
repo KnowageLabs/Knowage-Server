@@ -3,6 +3,7 @@ import { formatSelectionForDisplay } from '../../../ActiveSelectionsWidget/Activ
 import deepcopy from 'deepcopy'
 import { formatNumberWithLocale } from '@/helpers/commons/localeHelper'
 import i18n from '@/App.i18n'
+import * as sanitizeHtml from 'sanitize-html';
 
 const { t } = i18n.global
 
@@ -89,7 +90,7 @@ export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVari
         if (css) {
             let placeholderResultCss = checkPlaceholders(css)
             placeholderResultCss = parseCalc(placeholderResultCss)
-            trustedCss = placeholderResultCss
+            trustedCss = sanitizeHtml(placeholderResultCss)
         }
 
         const html = widgetModel.settings.editor.html
@@ -100,7 +101,9 @@ export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVari
             wrappedHtmlToRender = wrappedHtmlToRender.replace(lt, '$1&lt;$3')
 
             const parseHtmlFunctionsResult = parseHtmlFunctions(wrappedHtmlToRender)
-            trustedHtml = parseHtmlFunctionsResult
+            trustedHtml = sanitizeHtml(parseHtmlFunctionsResult, {
+                allowedAttributes: { '*': ['*'] }
+            })
         }
     } catch (error: any) {
         setError(tempWidgetModel, toast, error, 'html')
