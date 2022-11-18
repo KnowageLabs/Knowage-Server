@@ -99,7 +99,7 @@ const replaceColumns = (widget: any, text: string) => {
         const formattedAggregation = aggregation ? aggregation.substring(0, aggregation.length - 1) : ''
         const columnName = datasetAndColumnName && datasetAndColumnName.split('.') ? datasetAndColumnName.split('.')[1] : ''
         let result = `[kn-column='${columnName}' row='0'`
-        if (numberFormatting && columnIsMeasure(columnName, widget)) {
+        if (numberFormatting) {
             if (formattedAggregation) result += ` aggregation='${formattedAggregation}'`
             if (numberFormatting.precision) result += ` precision='${numberFormatting.precision}'`
             if (numberFormatting.format) result += ` format`
@@ -111,7 +111,7 @@ const replaceColumns = (widget: any, text: string) => {
     })
 }
 
-const columnIsMeasure = (columnName: string, widget: any) => {
+const columnIsMeasure = (columnName: string, widget: any) => {  // TODO - Ask about this condition
     if (!widget || !widget.content || !widget.content.columnSelectedOfDataset) return false
     const index = widget.content.columnSelectedOfDataset.findIndex((column: any) => column.name === columnName)
     if (index === -1) return false
