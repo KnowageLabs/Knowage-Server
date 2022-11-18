@@ -66,7 +66,7 @@
                             <button class="ql-clean"></button>
                         </span>
 
-                        <span class="ql-formats">
+                        <span id="menu-icon-container" class="ql-formats">
                             <Button icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" v-tooltip.left="$t('common.menu')" @click="toggle"></Button>
                         </span>
                     </template>
@@ -258,5 +258,9 @@ export default defineComponent({
 .selection:hover {
     background-color: #ccc;
     cursor: pointer;
+}
+
+#menu-icon-container {
+    float: right;
 }
 </style>
