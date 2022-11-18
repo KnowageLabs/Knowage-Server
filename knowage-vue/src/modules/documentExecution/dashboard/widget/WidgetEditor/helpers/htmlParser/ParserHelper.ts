@@ -57,6 +57,7 @@ const checkTextWidgetPlaceholders = (unparsedText: string) => {
     unparsedText = unparsedText.replace(columnRegex, columnsReplacer)
     unparsedText = unparsedText.replace(paramsRegex, paramsReplacer)
     unparsedText = unparsedText.replace(variablesRegex, variablesReplacer)
+    unparsedText = unparsedText.replace(i18nRegex, i18nReplacer)
     return unparsedText
 }
 
