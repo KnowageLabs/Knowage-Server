@@ -49,9 +49,6 @@ export default defineComponent({
         },
         onKeyUp() {
             this.widgetModel.settings.editor.css = this.code
-        },
-        logModel() {
-            console.log(this.widgetModel)
         }
     }
 })

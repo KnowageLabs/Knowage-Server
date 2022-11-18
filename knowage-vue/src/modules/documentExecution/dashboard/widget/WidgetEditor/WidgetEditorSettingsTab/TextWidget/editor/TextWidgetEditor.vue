@@ -1,6 +1,5 @@
 <template>
     <div class="p-grid">
-        <div class="p-col-12">{{ widgetModel?.settings.editor.text }}</div>
         <div class="p-col-12">
             <div class="htmlMirrorContainer" style="height: 600px; width: 100%">
                 <Editor class="p-col-12" v-model="widgetModel.settings.editor.text" editorStyle="height: 320px">
@@ -169,7 +168,6 @@ export default defineComponent({
             this.tagsDialogVisible = false
         },
         onInsert(value: string) {
-            console.log('>>> ON INSERT: ', value)
             this.widgetModel.settings.editor.text += '<p>' + value + '</p>'
             this.widgetModel.settings.editor.text += '&#8205;'
             this.tagsDialogVisible = false
