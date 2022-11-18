@@ -71,9 +71,6 @@ export default defineComponent({
         onKeyUp() {
             this.widgetModel.settings.editor.html = this.code
         },
-        logModel() {
-            console.log(this.widgetModel)
-        },
         toggle(event: Event) {
             this.createMenuItems()
             const menu = this.$refs.menu as any
@@ -150,7 +147,6 @@ export default defineComponent({
             this.tagsDialogVisible = false
         },
         onInsert(value: string) {
-            console.log('>>> ON INSERT: ', value)
             this.cursorPosition = this.codeMirrorHtmlEditor.getCursor()
             this.codeMirrorHtmlEditor.replaceRange(value, this.cursorPosition)
             this.tagsDialogVisible = false

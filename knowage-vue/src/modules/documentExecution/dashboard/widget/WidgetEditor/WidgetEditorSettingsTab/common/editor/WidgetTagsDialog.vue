@@ -108,7 +108,6 @@ export default defineComponent({
             }
         },
         onInsertChanged(value: string) {
-            console.log('>>> ON INSERT CHANGED: ', value)
             this.forInsert = value
         },
         addInsert() {

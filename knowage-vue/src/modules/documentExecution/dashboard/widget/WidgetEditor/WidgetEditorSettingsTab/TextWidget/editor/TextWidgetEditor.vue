@@ -1,6 +1,5 @@
 <template>
     <div class="p-grid">
-        <div class="p-col-12">{{ widgetModel?.settings.editor.text }}</div>
         <div class="p-col-12">
             <div class="htmlMirrorContainer" style="height: 600px; width: 100%">
                 <Editor class="p-col-12" v-model="widgetModel.settings.editor.text" editorStyle="height: 320px">
@@ -66,7 +65,7 @@
                             <button class="ql-clean"></button>
                         </span>
 
-                        <span class="ql-formats">
+                        <span id="menu-icon-container" class="ql-formats">
                             <Button icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" v-tooltip.left="$t('common.menu')" @click="toggle"></Button>
                         </span>
                     </template>
@@ -169,7 +168,6 @@ export default defineComponent({
             this.tagsDialogVisible = false
         },
         onInsert(value: string) {
-            console.log('>>> ON INSERT: ', value)
             this.widgetModel.settings.editor.text += '<p>' + value + '</p>'
             this.widgetModel.settings.editor.text += '&#8205;'
             this.tagsDialogVisible = false
@@ -258,5 +256,9 @@ export default defineComponent({
 .selection:hover {
     background-color: #ccc;
     cursor: pointer;
+}
+
+#menu-icon-container {
+    float: right;
 }
 </style>
