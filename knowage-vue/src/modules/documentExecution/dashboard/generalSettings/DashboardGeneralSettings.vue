@@ -98,7 +98,6 @@ export default defineComponent({
             }
 
             this.dashboardModel.configuration.variables = this.variables
-            console.log('>>>>>>>>>>> VARIABLES FOR SAVE: ', this.variables)
             this.$emit('closeGeneralSettings')
         }
     }
