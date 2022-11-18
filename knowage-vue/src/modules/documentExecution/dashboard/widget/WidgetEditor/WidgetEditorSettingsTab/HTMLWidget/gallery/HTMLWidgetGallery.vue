@@ -69,8 +69,8 @@ export default defineComponent({
         checkForTemplateContent(galleryItem: IGalleryItem) {
             if (this.widgetModel.settings.editor.html.length > 0 || this.widgetModel.settings.editor.css.length > 0) {
                 this.$confirm.require({
-                    message: this.$t('documentExecution.dossier.deleteConfirm'),
-                    header: this.$t('documentExecution.dossier.deleteTitle'),
+                    message: this.$t('dashboard.widgetEditor.galleryWarning'),
+                    header: this.$t('common.toast.warning'),
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => this.loadGalleryItem(galleryItem)
                 })

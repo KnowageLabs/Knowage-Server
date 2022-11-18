@@ -1,7 +1,7 @@
 <template>
     <span class="p-float-label">
         <Textarea class="kn-material-input kn-width-full" rows="4" :autoResize="true" v-model="condition" maxlength="150" @change="onColumnChanged" />
-        <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.editorTags.limit') }}</label>
+        <label class="kn-material-input-label">{{ $t('common.condition') }}</label>
     </span>
 </template>
 

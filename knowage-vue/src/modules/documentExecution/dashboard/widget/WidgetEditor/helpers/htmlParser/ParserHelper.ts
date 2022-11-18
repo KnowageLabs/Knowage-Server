@@ -3,7 +3,7 @@ import { formatSelectionForDisplay } from '../../../ActiveSelectionsWidget/Activ
 import deepcopy from 'deepcopy'
 import { formatNumberWithLocale } from '@/helpers/commons/localeHelper'
 import i18n from '@/App.i18n'
-import * as sanitizeHtml from 'sanitize-html';
+import * as sanitizeHtml from 'sanitize-html'
 
 const { t } = i18n.global
 
@@ -77,11 +77,6 @@ export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVari
     widgetData = tempWidgetData?.tempResponse
     aggregationDataset = tempWidgetData?.aggregationDataset
 
-    // console.group(`STUFF`)
-    // console.log(`widget data: `, widgetData)
-    // console.log(`widget data: `, aggregationDataset)
-    // console.groupEnd()
-
     let trustedCss = ''
     let trustedHtml = ''
 
@@ -136,7 +131,6 @@ const getColumnFromName = (columnName: string, datasetData: any, aggregation: an
 }
 
 const parseHtmlFunctions = (rawHtml: string) => {
-
     const parser = new DOMParser()
     const parsedHtml = parser.parseFromString(rawHtml, 'text/html')
     let allElements = parsedHtml.getElementsByTagName('*')
@@ -294,13 +288,9 @@ const ifConditionParamsReplacer = (match: string, p1: string, p2: string) => {
 }
 
 const columnsReplacer = (match, column, row, aggr, precision, format, prefix, suffix) => {
-    //  console.log('COLUMNS REPLACER', match, column, row, aggr, precision, format, prefix, suffix)
-
     const columnInfo = getColumnFromName(column, aggr ? aggregationDataset : widgetData, aggr)
-    // console.log('%c columnInfo columnInfo columnInfo ', 'color: white; background-color: #61dbfb')
-    // console.log(columnInfo)
 
-    if (!columnInfo) return column = (prefix || '') + null + (suffix || '')
+    if (!columnInfo) return (column = (prefix || '') + null + (suffix || ''))
 
     if (aggr) {
         column = aggregationDataset && aggregationDataset.rows[0] && aggregationDataset.rows[0][columnInfo.name] !== '' && typeof aggregationDataset.rows[0][columnInfo.name] != 'undefined' ? aggregationDataset.rows[0][columnInfo.name] : null
@@ -316,8 +306,6 @@ const columnsReplacer = (match, column, row, aggr, precision, format, prefix, su
     }
     column = (prefix || '') + column + (suffix || '')
 
-    // console.log('%c returned  column column ', 'color: white; background-color: #61dbfb')
-    // console.log(column)
     return column
 }
 

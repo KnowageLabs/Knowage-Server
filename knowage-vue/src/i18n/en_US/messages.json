@@ -432,6 +432,8 @@
             "editor": "Editor",
             "htmlParsingError": "HTML Parsing Error",
             "textParsingError": "Text Parsing Error",
+            "galleryWarning": "Are you sure you want to overwrite changes in editor with the template?",
+
             "editorTags": {
                 "activesel": "Active Selection",
                 "calc": "Calculation",

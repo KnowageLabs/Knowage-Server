@@ -2,12 +2,11 @@
     <div ref="widgetPreviewContainer" class="widget-editor-preview-container p-d-flex p-flex-column p-ai-stretch p-jc-center kn-overflow">
         <div class="preview-buttons-container p-d-flex" style="position: absolute; top: 38px; right: 10px">
             <Button icon="fas fa-maximize" class="p-button-rounded p-button-text p-button-plain expand-button" @click="toggleExpandPreview" />
-            <Button icon="fas fa-terminal" class="p-button-rounded p-button-text p-button-plain" @click="logWidget" />
-            <Button icon="fas fa-cross" class="p-button-rounded p-button-text p-button-plain" @click="getWidgetData" />
+            <!-- <Button icon="fas fa-terminal" class="p-button-rounded p-button-text p-button-plain" @click="logWidget" /> -->
+            <Button icon="fas fa-rotate-right" class="p-button-rounded p-button-text p-button-plain" @click="getWidgetData" />
         </div>
 
         <ProgressBar v-if="loading" class="p-mx-2" mode="indeterminate" />
-
         <div class="widget-container p-mx-2" :style="getWidgetContainerStyle()">
             <div v-if="widgetTitle && widgetTitle.enabled" class="p-d-flex p-ai-center" style="border-radius: 0px" :style="getWidgetTitleStyle()">
                 {{ widgetTitle?.text }}
@@ -104,9 +103,9 @@ export default defineComponent({
         clearWidgetData() {
             this.widgetData = { metaData: {}, rows: [] }
         },
-        logWidget() {
-            console.log('widget ----------------- \n', this.propWidget)
-        },
+        // logWidget() {
+        //     console.log('widget ----------------- \n', this.propWidget)
+        // },
         getWidgetTitleStyle() {
             this.widgetTitle = this.propWidget.settings.style.title
             const styleString = getWidgetStyleByType(this.propWidget, 'title')
@@ -123,7 +122,6 @@ export default defineComponent({
         },
         toggleExpandPreview() {
             const widgetPreviewContainerRef = this.$refs.widgetPreviewContainer as any
-            console.log(widgetPreviewContainerRef)
             widgetPreviewContainerRef.classList.toggle('expand')
         }
     }
