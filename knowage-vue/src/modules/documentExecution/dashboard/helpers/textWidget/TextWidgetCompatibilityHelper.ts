@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IWidgetExports, IWidgetInteractions } from "../../Dashboard"
+import { IWidget, IWidgetExports, IWidgetInteractions } from "../../Dashboard"
 import { ITextWidgetConfiguration, ITextWidgetEditor, ITextWidgetSettings } from "../../interfaces/DashboardTextWidget"
 import { getFormattedStyle } from "./TextWidgetStyleHelper"
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
