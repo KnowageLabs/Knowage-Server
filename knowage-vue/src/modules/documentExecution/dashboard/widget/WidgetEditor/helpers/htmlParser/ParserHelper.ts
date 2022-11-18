@@ -9,7 +9,6 @@ const { t } = i18n.global
 
 const widgetIdRegex = /#\[kn-widget-id\]/g
 const activeSelectionsRegex = /(?:\[kn-active-selection(?:=\'([a-zA-Z0-9\_\-]+)\')?\s?\])/g
-const columnRegexOld = /(?:\[kn-column=\'([a-zA-Z0-9\_\-\s]+)\'(?:\s+row=\'(\d*)\')?(?:\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\s?\])/g
 const columnRegex = /(?:\[kn-column=\'([a-zA-Z0-9\_\-\s]+)\'(?:\s+row=\'(\d*)\')?(?:\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')?(?:\s+precision=\'(\d)\')?(\s+format)?(?:\s+prefix=\'([a-zA-Z0-9\_\-\s]+)\')?(?:\s+suffix=\'([a-zA-Z0-9\_\-\s]+)\')?\s?\])/g
 const paramsRegex = /(?:\[kn-parameter=[\'\"]{1}([a-zA-Z0-9\_\-\s]+)[\'\"]{1}(\s+value)?\])/g
 const calcRegex = /(?:\[kn-calc=\(([\[\]\w\s\-\=\>\<\"\'\!\+\*\/\%\&\,\.\|]*)\)(?:\s+min=\'(\d*)\')?(?:\s+max=\'(\d*)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\])/g
@@ -107,7 +106,6 @@ export const parseHtml = (tempWidgetModel: IWidget, tempDrivers: any[], tempVari
             })
         }
     } catch (error: any) {
-        console.log(">>>>> ERROR:  ", error)
         setError(tempWidgetModel, toast, error, 'html')
     }
 

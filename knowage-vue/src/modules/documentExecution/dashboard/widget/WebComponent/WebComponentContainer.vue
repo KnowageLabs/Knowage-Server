@@ -3,9 +3,6 @@
 </template>
 
 <script lang="ts">
-/**
- * ! this component will be in charge of creating the common widget elements to be rendered.
- */
 import { defineComponent, PropType } from 'vue'
 import { IDashboardDriver, IDataset, ISelection, IVariable } from '../../Dashboard'
 import './component/WidgetWebComponent'

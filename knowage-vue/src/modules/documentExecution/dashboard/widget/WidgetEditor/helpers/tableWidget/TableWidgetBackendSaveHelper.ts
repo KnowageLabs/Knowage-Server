@@ -113,7 +113,7 @@ const formatColumnGroupsColumnIdToName = (columnGroupsConfiguration: ITableWidge
 }
 
 const formatTableInteractions = (widgetInteractions: IWidgetInteractions) => {
-    formatSelection(widgetInteractions.selection)
+    formatSelection(widgetInteractions.selection as IWidgetSelection)
     formatCrossNavigation(widgetInteractions.crosssNavigation)
 }
 

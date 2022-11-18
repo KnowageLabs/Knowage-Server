@@ -33,8 +33,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
+import { defineComponent } from 'vue'
 import descriptor from '../WidgetTagsDialogDescriptor.json'
 import Message from 'primevue/message'
 import InputNumber from 'primevue/inputnumber'

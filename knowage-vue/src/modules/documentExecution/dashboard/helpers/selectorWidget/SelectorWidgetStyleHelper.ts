@@ -1,4 +1,4 @@
-import { IWidgetBordersStyle, IWidgetPaddingStyle, IWidgetShadowsStyle, IWidgetTitle } from "../../Dashboard"
+import { IWidgetBordersStyle, IWidgetPaddingStyle, IWidgetShadowsStyle } from "../../Dashboard"
 import { ISelectorWidgetLabelStyle, ISelectorWidgetStyle } from "../../interfaces/DashboardSelectorWidget"
 import { getFormattedBackgroundStyle, getFormattedTitleStyle } from "../common/WidgetStyleHelper"
 import { hexToRgb } from '../FormattingHelpers'

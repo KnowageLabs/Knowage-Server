@@ -64,7 +64,7 @@ export default defineComponent({
                 rowHeight: 25,
                 headerHeight: 30,
                 onGridReady: this.onGridReady
-            },
+            } as any,
             context: null as any,
             activeSelections: [] as ISelection[],
             selectionsToRemove: [] as ISelection[]

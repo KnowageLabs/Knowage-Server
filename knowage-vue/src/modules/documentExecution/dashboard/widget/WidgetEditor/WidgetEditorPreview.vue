@@ -14,8 +14,8 @@
             </div>
 
             <div class="widget-container-renderer" :style="getWidgetPadding()">
-                <TableWidget v-if="propWidget.type == 'table'" :propWidget="propWidget" :datasets="datasets" :dataToShow="widgetData" :editorMode="true" :dashboardId="dashboardId" @pageChanged="getWidgetData" />
-                <SelectorWidget v-if="propWidget.type == 'selector'" :propWidget="propWidget" :dataToShow="widgetData" :widgetInitialData="widgetData" :editorMode="true" />
+                <TableWidget v-if="propWidget.type == 'table'" :propWidget="propWidget" :datasets="datasets" :dataToShow="widgetData" :editorMode="true" :dashboardId="dashboardId" :propActiveSelections="activeSelections" @pageChanged="getWidgetData" />
+                <SelectorWidget v-if="propWidget.type == 'selector'" :propWidget="propWidget" :dataToShow="widgetData" :widgetInitialData="widgetData" :editorMode="true" :propActiveSelections="activeSelections" :datasets="datasets" :selectionIsLocked="false" :dashboardId="dashboardId" />
                 <ActiveSelectionsWidget v-if="propWidget.type == 'selection'" :propWidget="propWidget" :propActiveSelections="activeSelections" :editorMode="true" :dashboardId="dashboardId" />
                 <WebComponentContainer
                     v-if="propWidget.type == 'html' || propWidget.type == 'text'"

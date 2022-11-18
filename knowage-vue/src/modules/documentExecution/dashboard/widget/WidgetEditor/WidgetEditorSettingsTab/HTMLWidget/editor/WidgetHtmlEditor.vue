@@ -10,14 +10,13 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IDashboardDriver, IVariable, IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IDataset, IDashboardDriver, IVariable, IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
 import VCodeMirror from 'codemirror-editor-vue3'
 import TieredMenu from 'primevue/tieredmenu'
 import TagsDialog from '../../common/editor/WidgetTagsDialog.vue'
-import { IDataset } from '@/modules/documentExecution/dashboard/Dashboard'
 
 export default defineComponent({
-    name: 'widget-responsive',
+    name: 'widget-html-editor',
     components: { VCodeMirror, TieredMenu, TagsDialog },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

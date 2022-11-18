@@ -1,4 +1,4 @@
-import { ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetCustomMessages, ITableWidgetHeaders, ITableWidgetRows, ITableWidgetSummaryRows, IWidget } from "../../Dashboard"
+import { ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetCustomMessages, ITableWidgetHeaders, ITableWidgetRows, ITableWidgetSummaryRows } from "../../Dashboard"
 import * as  tableWidgetDefaultValues from '../../widget/WidgetEditor/helpers/tableWidget/TableWidgetDefaultValues'
 
 export const getFormattedConfiguration = (widget: any) => {

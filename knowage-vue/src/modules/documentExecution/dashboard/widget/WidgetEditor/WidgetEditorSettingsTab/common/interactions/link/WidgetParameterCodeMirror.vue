@@ -7,7 +7,7 @@
 <script lang="ts">
 import { IWidgetInteractionParameter } from '@/modules/documentExecution/dashboard/Dashboard'
 import { defineComponent, PropType } from 'vue'
-import VCodeMirror, { CodeMirror } from 'codemirror-editor-vue3'
+import VCodeMirror from 'codemirror-editor-vue3'
 
 export default defineComponent({
     name: 'table-widget-link-parameters-list',

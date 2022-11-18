@@ -1,4 +1,4 @@
-import { IWidgetBordersStyle, ITableWidgetColumnGroups, ITableWidgetColumnStyles, ITableWidgetConditionalStyle, ITableWidgetConditionalStyles, IWidgetCrossNavigation, ITableWidgetCustomMessages, IWidgetExports, ITableWidgetHeaders, IWidgetLinks, ITableWidgetPagination, IWidgetPreview, ITableWidgetRows, IWidgetRowsStyle, IWidgetSelection, IWidgetShadowsStyle, ITableWidgetSummaryRows, ITableWidgetSummaryStyle, ITableWidgetTooltipStyle, ITableWidgetVisibilityCondition, ITableWidgetVisualization, ITawbleWidgetHeadersStyle } from "../../../../Dashboard"
+import { ITableWidgetColumnGroups, ITableWidgetColumnStyles, ITableWidgetConditionalStyle, ITableWidgetConditionalStyles, ITableWidgetCustomMessages, IWidgetExports, ITableWidgetHeaders, ITableWidgetPagination, ITableWidgetRows, IWidgetRowsStyle, IWidgetSelection, ITableWidgetSummaryRows, ITableWidgetSummaryStyle, ITableWidgetTooltipStyle, ITableWidgetVisibilityCondition, ITableWidgetVisualization, ITawbleWidgetHeadersStyle } from "../../../../Dashboard"
 import descriptor from './TableWidgetHelpersDescriptor.json'
 import deepcopy from 'deepcopy'
 
