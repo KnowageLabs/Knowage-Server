@@ -345,7 +345,9 @@ const getSummaryRow = (propWidget: IWidget) => {
                     var obj = {}
                     obj['id'] = col.columnName || col.alias
                     obj['alias'] = col.alias || col.alias
-                    obj['funct'] = col.aggregation
+
+                    if (propWidget.settings.configuration.summaryRows.list[k].aggregation == 'Columns Default Aggregation') obj['funct'] = col.aggregation
+                    else obj['funct'] = propWidget.settings.configuration.summaryRows.list[k].aggregation || col.aggregation
 
                     if (col.formula) {
                         obj['formula'] = col.formula
