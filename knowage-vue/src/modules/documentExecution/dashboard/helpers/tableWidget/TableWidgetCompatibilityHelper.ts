@@ -1,12 +1,12 @@
-import { IWidget, IWidgetColumn, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle, ITableWidgetStyle, IWidgetInteractions, ITableWidgetConfiguration, IWidgetResponsive, ITableWidgetConditionalStyles, IDashboard, IVariable } from '../../Dashboard'
+import { IWidget, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle, ITableWidgetStyle, IWidgetInteractions, ITableWidgetConfiguration, IWidgetResponsive, ITableWidgetConditionalStyles, IDashboard, IVariable } from '../../Dashboard'
 import { getFormattedConfiguration } from './TableWidgetConfigurationHelper'
 import { getFormattedStyle } from './TableWidgetStyleHelper'
 import { getSettingsFromWidgetColumns } from './TableWidgetColumnSettingsHelper'
 import * as tableWidgetDefaultValues from '../../widget/WidgetEditor/helpers/tableWidget/TableWidgetDefaultValues'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
-import cryptoRandomString from 'crypto-random-string'
 import { getFiltersForColumns } from '../DashboardBackwardCompatibilityHelper'
 import { getFormattedInteractions } from '../common/WidgetInteractionsHelper'
+import { getFormattedWidgetColumns } from '../common/WidgetColumnHelper'
 
 const columnNameIdMap = {}
 
@@ -15,7 +15,7 @@ export const formatTableWidget = (widget: any, formattedDashboardModel: IDashboa
         id: widget.id,
         dataset: widget.dataset.dsId,
         type: widget.type,
-        columns: getFormattedWidgetColumns(widget),
+        columns: getFormattedWidgetColumns(widget, columnNameIdMap),
         theme: '',
         style: {},
         settings: {} as ITableWidgetSettings
@@ -24,26 +24,6 @@ export const formatTableWidget = (widget: any, formattedDashboardModel: IDashboa
     getFiltersForColumns(formattedWidget, widget)
     getSettingsFromWidgetColumns(formattedWidget, widget, formattedDashboardModel)
     return formattedWidget
-}
-
-const getFormattedWidgetColumns = (widget: any) => {
-    if (!widget.content || !widget.content.columnSelectedOfDataset) return []
-    const formattedColumns = [] as IWidgetColumn[]
-    for (let i = 0; i < widget.content.columnSelectedOfDataset.length; i++) {
-        formattedColumns.push(getFormattedWidgetColumn(widget.content.columnSelectedOfDataset[i]))
-    }
-    return formattedColumns
-}
-
-const getFormattedWidgetColumn = (widgetColumn: any) => {
-    const formattedColumn = { id: cryptoRandomString({ length: 16, type: 'base64' }), columnName: widgetColumn.name, alias: widgetColumn.alias, type: widgetColumn.type, fieldType: widgetColumn.fieldType, multiValue: widgetColumn.multiValue, filter: {} } as IWidgetColumn
-    if (widgetColumn.isCalculated) {
-        formattedColumn.formula = widgetColumn.formula
-        formattedColumn.formulaEditor = widgetColumn.formulaEditor
-    }
-    columnNameIdMap[formattedColumn.columnName] = formattedColumn.id
-    if (widgetColumn.aggregationSelected) formattedColumn.aggregation = widgetColumn.aggregationSelected
-    return formattedColumn
 }
 
 const getFormattedWidgetSettings = (widget: any, formattedDashboardModel: IDashboard) => {

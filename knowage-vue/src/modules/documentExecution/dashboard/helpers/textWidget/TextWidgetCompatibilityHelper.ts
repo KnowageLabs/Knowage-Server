@@ -2,8 +2,8 @@ import { IWidget, IWidgetColumn, IWidgetExports, IWidgetInteractions } from "../
 import { ITextWidgetConfiguration, ITextWidgetEditor, ITextWidgetSettings } from "../../interfaces/DashboardTextWidget"
 import { getFormattedStyle } from "./TextWidgetStyleHelper"
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
-import cryptoRandomString from "crypto-random-string"
 import { getFormattedInteractions } from "../common/WidgetInteractionsHelper"
+import { getFormattedWidgetColumns } from "../common/WidgetColumnHelper"
 
 const columnNameIdMap = {}
 
@@ -12,7 +12,7 @@ export const formatTextWidget = (widget: any) => {
         id: widget.id,
         dataset: widget.dataset.dsId ? widget.dataset.dsId[0] : null,
         type: widget.type,
-        columns: getFormattedWidgetColumns(widget),
+        columns: getFormattedWidgetColumns(widget, columnNameIdMap, false),
         theme: '',
         settings: {} as ITextWidgetSettings
     } as IWidget
@@ -20,27 +20,6 @@ export const formatTextWidget = (widget: any) => {
     return formattedWidget
 }
 
-const getFormattedWidgetColumns = (widget: any,) => {
-    if (!widget.content || !widget.content.columnSelectedOfDataset) return []
-    const formattedColumns = [] as IWidgetColumn[]
-    for (let i = 0; i < widget.content.columnSelectedOfDataset.length; i++) {
-        const formattedColumn = getFormattedWidgetColumn(widget.content.columnSelectedOfDataset[i])
-        const index = formattedColumns.findIndex((column: IWidgetColumn) => column.columnName === formattedColumn.columnName && column.alias === formattedColumn.alias)
-        if (index === -1) formattedColumns.push(formattedColumn)
-    }
-    return formattedColumns
-}
-
-const getFormattedWidgetColumn = (widgetColumn: any) => {
-    const formattedColumn = { id: cryptoRandomString({ length: 16, type: 'base64' }), columnName: widgetColumn.name, alias: widgetColumn.alias, type: widgetColumn.type, fieldType: widgetColumn.fieldType, multiValue: widgetColumn.multiValue, filter: {} } as IWidgetColumn
-    if (widgetColumn.isCalculated) {
-        formattedColumn.formula = widgetColumn.formula
-        formattedColumn.formulaEditor = widgetColumn.formulaEditor
-    }
-    columnNameIdMap[formattedColumn.columnName] = formattedColumn.id
-    if (widgetColumn.aggregationSelected) formattedColumn.aggregation = widgetColumn.aggregationSelected
-    return formattedColumn
-}
 
 const getFormattedWidgetSettings = (widget: any) => {
     const formattedSettings = {
