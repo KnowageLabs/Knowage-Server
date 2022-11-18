@@ -89,7 +89,6 @@ export default defineComponent({
     methods: {
         loadWidget() {
             if (!this.propWidget) return
-
             this.widget = this.propWidget.new ? createNewWidget(this.propWidget.type) : deepcopy(this.propWidget)
         },
         loadSelectedModelDatasets() {
@@ -126,7 +125,7 @@ export default defineComponent({
             this.store.setLoading(false)
         },
         save() {
-            const tempWidget = formatWidgetForSave(this.widget)
+            const tempWidget = deepcopy(this.widget)
             if (!tempWidget) return
 
             if (tempWidget.new) {

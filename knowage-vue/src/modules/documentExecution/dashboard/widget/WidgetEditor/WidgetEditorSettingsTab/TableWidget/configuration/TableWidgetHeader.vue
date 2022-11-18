@@ -157,7 +157,6 @@ export default defineComponent({
             this.availableTargetOptions = [...this.widgetModel.columns]
         },
         loadHeadersModel() {
-            console.log('>>>>>>>> this.widgetModel.settings.configuration.headers: ', this.widgetModel.settings.configuration.headers)
             if (this.widgetModel?.settings?.configuration) {
                 this.headersModel = this.widgetModel.settings.configuration.headers
                 this.headersModel?.custom.rules.forEach((headerRule: ITableWidgetHeadersRule) => {
