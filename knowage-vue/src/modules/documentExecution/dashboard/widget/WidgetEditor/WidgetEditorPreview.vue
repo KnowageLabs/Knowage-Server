@@ -77,12 +77,10 @@ export default defineComponent({
         ...mapState(store, ['dashboards'])
     },
     created() {
+        this.getWidgetData()
         this.setEventListeners()
         this.getWidgetTitleStyle()
         this.loadWebComponentData()
-    },
-    mounted() {
-        this.getWidgetData()
     },
     unmounted() {
         this.unsetEventListeners()

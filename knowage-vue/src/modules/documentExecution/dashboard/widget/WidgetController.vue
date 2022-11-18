@@ -4,6 +4,7 @@
         <ProgressSpinner v-if="loading" class="kn-progress-spinner" />
         <Skeleton shape="rectangle" v-if="!initialized" height="100%" border-radius="0" />
         <WidgetRenderer
+            v-if="!loading"
             :widget="widget"
             :widgetData="widgetData"
             :widgetInitialData="widgetInitialData"
@@ -95,9 +96,13 @@ export default defineComponent({
         }
     },
     async created() {
+        this.setWidgetLoading(true)
+
         this.setEventListeners()
         this.loadWidget(this.widget)
-        this.widget.type !== 'selection' ? this.loadInitalData() : this.loadActiveSelections()
+        this.widget.type !== 'selection' ? await this.loadInitalData() : await this.loadActiveSelections()
+
+        this.setWidgetLoading(false)
     },
     unmounted() {
         this.removeEventListeners()
@@ -141,9 +146,13 @@ export default defineComponent({
         async loadInitalData() {
             if (!this.widgetModel || this.widgetModel.type === 'selection') return
 
+            this.setWidgetLoading(true)
+
             this.widgetInitialData = await getWidgetData(this.widgetModel, this.datasets, this.$http, true, this.activeSelections)
             this.widgetData = this.widgetInitialData
             await this.loadActiveSelections()
+
+            this.setWidgetLoading(false)
         },
         async loadActiveSelections() {
             this.getSelectionsFromStore()
@@ -171,9 +180,7 @@ export default defineComponent({
             return widgetUsesSelection
         },
         async reloadWidgetData(associativeResponseSelections: any) {
-            this.loading = true
             this.widgetData = await getWidgetData(this.widgetModel, this.datasets, this.$http, false, this.activeSelections, associativeResponseSelections)
-            this.loading = false
         },
         widgetUsesSelections(selections: ISelection[]) {
             let widgetUsesSelection = false

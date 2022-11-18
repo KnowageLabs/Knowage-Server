@@ -31,7 +31,8 @@ export default defineComponent({
             dataToShow: {} as any,
             activeSelections: [] as ISelection[],
             htmlContent: '' as string,
-            webComponentCss: '' as string
+            webComponentCss: '' as string,
+            webComponentRef: {} as any
         }
     },
     watch: {
@@ -42,7 +43,8 @@ export default defineComponent({
             this.loadActiveSelections()
         }
     },
-    created() {
+    mounted() {
+        this.webComponentRef = this.$refs.webComponent as any
         this.loadActiveSelections()
         this.loadDataToShow()
     },
@@ -67,13 +69,12 @@ export default defineComponent({
                 this.htmlContent = parseText(this.propWidget, this.drivers, this.variables, this.activeSelections, this.getInternationalization(), this.dataToShow, this.$toast)
             }
 
-            const webComponentRef = this.$refs.webComponent as any
-            if (!webComponentRef) return
-            webComponentRef.htmlContent = this.propWidget.type === 'text' ? '<div style="position: absolute;height: 100%;width: 100%;">' + this.htmlContent + '</div>' : this.htmlContent
-            webComponentRef.webComponentCss = this.webComponentCss
-            webComponentRef.addEventListener('selectEvent', this.onSelect)
-            webComponentRef.addEventListener('previewEvent', this.onPreview)
-            webComponentRef.addEventListener('crossNavEvent', this.onCrossNavigation)
+            if (!this.webComponentRef) return
+            this.webComponentRef.htmlContent = this.propWidget.type === 'text' ? '<div style="position: absolute;height: 100%;width: 100%;">' + this.htmlContent + '</div>' : this.htmlContent
+            this.webComponentRef.webComponentCss = this.webComponentCss
+            this.webComponentRef.addEventListener('selectEvent', this.onSelect)
+            this.webComponentRef.addEventListener('previewEvent', this.onPreview)
+            this.webComponentRef.addEventListener('crossNavEvent', this.onCrossNavigation)
         },
         onSelect(event: any) {
             if (this.editorMode || !event.detail) return
