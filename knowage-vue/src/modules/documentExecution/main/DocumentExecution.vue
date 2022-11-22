@@ -283,7 +283,7 @@ export default defineComponent({
 
         let invalidRole = false
         getCorrectRolesForExecution('DOCUMENT', this.document.id, this.document.label).then((response: any) => {
-            let correctRolesForExecution = response.data
+            let correctRolesForExecution = response
 
             if (!this.userRole) {
                 if (correctRolesForExecution.length == 1) {
