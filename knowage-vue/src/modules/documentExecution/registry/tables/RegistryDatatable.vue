@@ -1,5 +1,6 @@
 <template>
     <DataTable
+        v-if="!loading"
         class="p-datatable-sm kn-table"
         :scrollable="true"
         v-model:first="first"
@@ -127,7 +128,8 @@ export default defineComponent({
             stopWarnings: [] as any[],
             flagShown: 'flag-shown',
             flagHidden: 'flag-hidden',
-            first: 0
+            first: 0,
+            loading: false
         }
     },
     watch: {
@@ -164,7 +166,8 @@ export default defineComponent({
         }
     },
     methods: {
-        loadColumns() {
+        async loadColumns() {
+            this.loading = true
             this.columns = [
                 {
                     field: 'id',
@@ -179,7 +182,8 @@ export default defineComponent({
                 if (el.isVisible) this.columns.push(el)
             })
             this.setColumnDependencies()
-            this.loadInitialDropdownOptions()
+            await this.loadInitialDropdownOptions()
+            this.loading = false
         },
         setColumnDependencies() {
             this.columns.forEach((column: any) => {
@@ -192,10 +196,12 @@ export default defineComponent({
                 }
             })
         },
-        loadInitialDropdownOptions() {
-            this.columns.forEach((column: any) => {
-                if (column.editorType === 'COMBO') this.addColumnOptions({ column: column, row: {} })
-            })
+        async loadInitialDropdownOptions() {
+            for (let i = 0; i < this.columns.length; i++) {
+                if (this.columns[i].editorType === 'COMBO') {
+                    await this.addColumnOptions({ column: this.columns[i], row: {} })
+                }
+            }
         },
         loadRows() {
             this.rows = deepcopy(this.propRows)
@@ -273,7 +279,7 @@ export default defineComponent({
         getFormattedNumber(number: number, column: any) {
             return formatNumberWithLocale(number, undefined, null)
         },
-        addColumnOptions(payload: any) {
+        async addColumnOptions(payload: any) {
             const column = payload.column
             const row = payload.row
 
@@ -282,7 +288,7 @@ export default defineComponent({
             }
 
             if (!this.comboColumnOptions[column.field][row[column.dependences]]) {
-                this.loadColumnOptions(column, row)
+                await this.loadColumnOptions(column, row)
             }
         },
         async loadColumnOptions(column: any, row: any) {
@@ -303,7 +309,7 @@ export default defineComponent({
             }
             await this.$http
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
-                .then((response: AxiosResponse<any>) => (this.comboColumnOptions[column.field][row[column.dependences]] = response.data.rows))
+                .then((response: AxiosResponse<any>) => (this.comboColumnOptions[column.field][row[column.dependences] ?? 'All'] = response.data.rows))
         },
         addNewRow() {
             const newRow = { id: this.rows.length + 1, isNew: true }
