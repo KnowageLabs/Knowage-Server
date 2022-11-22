@@ -42,18 +42,8 @@
                         </span>
 
                         <span class="ql-formats">
-                            <button class="ql-header" value="1"></button>
-                            <button class="ql-header" value="2"></button>
-                            <button class="ql-blockquote"></button>
-                            <button class="ql-block"></button>
-                        </span>
-
-                        <span class="ql-formats">
                             <button class="ql-list" value="ordered"></button>
                             <button class="ql-list" value="bullet"></button>
-
-                            <button class="ql-indent" value="-1"></button>
-                            <button class="ql-indent" value="+1"></button>
                         </span>
 
                         <span class="ql-formats">
