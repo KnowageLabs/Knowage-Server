@@ -43,6 +43,7 @@
             :variables="variables"
             :dashboardId="dashboardId"
             :htmlGalleryProp="htmlGalleryProp"
+            @galleryItemSelected="onGalleryItemSelected"
         ></HTMLWidgetSettingsContainer>
         <TextWidgetSettingsContainer
             v-else-if="propWidget.type === 'text'"
@@ -125,6 +126,10 @@ export default defineComponent({
             if (this.htmlGalleryProp.length > 0) return
             const index = this.descriptor.settingsListOptions.findIndex((option: any) => option.value === 'Gallery')
             if (index !== -1) this.descriptor.settingsListOptions[index].disabled = true
+        },
+        onGalleryItemSelected() {
+            this.selectedSetting = 'Editor'
+            this.$emit('settingChanged', 'Editor')
         }
     }
 })

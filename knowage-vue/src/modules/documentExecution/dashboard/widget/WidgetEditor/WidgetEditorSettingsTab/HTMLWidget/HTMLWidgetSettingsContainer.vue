@@ -12,7 +12,7 @@
             :dashboardId="dashboardId"
         ></HTMLWidgetSettingsAccordion>
 
-        <HTMLWidgetSettingsGallery v-if="selectedSetting == 'Gallery'" v-show="selectedSetting" :widgetModel="widgetModel" :htmlGalleryProp="htmlGalleryProp"></HTMLWidgetSettingsGallery>
+        <HTMLWidgetSettingsGallery v-if="selectedSetting == 'Gallery'" v-show="selectedSetting" :widgetModel="widgetModel" :htmlGalleryProp="htmlGalleryProp" @galleryItemSelected="$emit('galleryItemSelected')"></HTMLWidgetSettingsGallery>
     </div>
 </template>
 
@@ -36,9 +36,11 @@ export default defineComponent({
         htmlGalleryProp: { type: Array as PropType<IGalleryItem[]>, required: true },
         dashboardId: { type: String, required: true }
     },
+    emits: ['galleryItemSelected'],
     data() {
         return {
-            descriptor
+            descriptor,
+            setting: ''
         }
     },
     created() {},

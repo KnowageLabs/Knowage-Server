@@ -103,9 +103,6 @@ export default defineComponent({
         clearWidgetData() {
             this.widgetData = { metaData: {}, rows: [] }
         },
-        // logWidget() {
-        //     console.log('widget ----------------- \n', this.propWidget)
-        // },
         getWidgetTitleStyle() {
             this.widgetTitle = this.propWidget.settings.style.title
             const styleString = getWidgetStyleByType(this.propWidget, 'title')

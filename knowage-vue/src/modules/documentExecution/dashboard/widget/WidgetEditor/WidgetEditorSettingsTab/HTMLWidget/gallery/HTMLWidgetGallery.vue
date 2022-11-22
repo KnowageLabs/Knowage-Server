@@ -27,6 +27,7 @@ export default defineComponent({
         widgetModel: { type: Object as PropType<IWidget>, required: true },
         htmlGalleryProp: { type: Array as PropType<IGalleryItem[]>, required: true }
     },
+    emits: ['galleryItemSelected'],
     data() {
         return {
             templateEditor: {} as any,
@@ -79,6 +80,7 @@ export default defineComponent({
         loadGalleryItem(galleryItem: IGalleryItem) {
             this.templateEditor.html = galleryItem.code.html
             this.templateEditor.css = galleryItem.code.css
+            this.$emit('galleryItemSelected')
         }
     }
 })

@@ -129,11 +129,6 @@ const getParameterValue = (parameterName: string) => {
     return 'MOCKED PARAMETER VALUE'
 }
 
-// TODO - VARIABLE VALUE
-const getVariableValue = (variable: string) => {
-    return 'MOCKED VARIABLE VALUE'
-}
-
 export const getColumnId = (widgetColumnName: string) => {
     return columnNameIdMap[widgetColumnName]
 }
