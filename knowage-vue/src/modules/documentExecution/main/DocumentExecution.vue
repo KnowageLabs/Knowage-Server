@@ -101,6 +101,7 @@ import Olap from '../olap/Olap.vue'
 import moment from 'moment'
 import DocumentExecutionSelectCrossNavigationDialog from './dialogs/documentExecutionSelectCrossNavigationDialog/DocumentExecutionSelectCrossNavigationDialog.vue'
 import DocumentExecutionCNContainerDialog from './dialogs/documentExecutionCNContainerDialog/DocumentExecutionCNContainerDialog.vue'
+import { getCorrectRolesForExecution } from '../../../helpers/commons/roleHelper'
 
 const deepcopy = require('deepcopy')
 // @ts-ignore
@@ -280,11 +281,8 @@ export default defineComponent({
         this.user = (this.$store.state as any).user
         this.userRole = this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
 
-        let params = this.document.id ? `id=${this.document.id}` : `label=${this.document.label}`
-        let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/documentexecution/correctRolesForExecution?` + params
-
         let invalidRole = false
-        await this.$http.get(url).then((response: AxiosResponse<any>) => {
+        getCorrectRolesForExecution('DOCUMENT', this.document.id, this.document.label).then((response: any) => {
             let correctRolesForExecution = response.data
 
             if (!this.userRole) {
@@ -859,7 +857,6 @@ export default defineComponent({
                 // await this.$http.get(process.env.VUE_APP_QBE_PATH + url)
 
                 await this.sendHiddenFormData()
-                
             } else if (this.document.typeCode === 'DOSSIER' || this.document.typeCode === 'OLAP') {
                 await this.sendHiddenFormData()
             } else {

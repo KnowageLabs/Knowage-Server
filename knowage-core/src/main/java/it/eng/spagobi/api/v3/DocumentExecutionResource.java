@@ -54,7 +54,6 @@ public class DocumentExecutionResource {
 
 			List<String> userRoles = new ArrayList<String>();
 			userProfile.getRolesForUse().forEach(x -> userRoles.add((String) x));
-			correctRoles = userRoles;
 
 			ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
 
@@ -65,13 +64,13 @@ public class DocumentExecutionResource {
 				rolesByCategory = getRolesByCategory(categoryDao, model.getCategory());
 				rolesByModel = getModelRoles(userProfile, model);
 
-				correctRoles = correctRoles.stream().filter(rolesByCategory::contains).filter(rolesByModel::contains).collect(Collectors.toList());
+				correctRoles = userRoles.stream().filter(rolesByCategory::contains).filter(rolesByModel::contains).collect(Collectors.toList());
 			} else if ("DATASET".equals(typeCode)) {
 				IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(id);
 				Integer categoryId = dataset.getCategoryId();
 				rolesByCategory = getRolesByCategory(categoryDao, categoryId);
 
-				correctRoles = correctRoles.stream().filter(rolesByCategory::contains).collect(Collectors.toList());
+				correctRoles = userRoles.stream().filter(rolesByCategory::contains).collect(Collectors.toList());
 			} else if ("DOCUMENT".equals(typeCode)) {
 				ObjectsAccessVerifier oav = new ObjectsAccessVerifier();
 				checkExecRightsByProducts(id, label);

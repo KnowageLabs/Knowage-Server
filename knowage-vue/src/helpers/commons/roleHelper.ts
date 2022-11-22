@@ -8,10 +8,9 @@ export async function getCorrectRolesForExecution(typeCode, id, label) {
 
     let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/documentexecution/correctRolesForExecution?` + params
 
-    let rolesForExecution = [] as any
     return new Promise((resolve, reject) => {
         axios.get(url).then((response: AxiosResponse<any>) => {
-            rolesForExecution = response.data
+            let rolesForExecution = response.data
             if (rolesForExecution.length == 0) {
                 store.commit('setError', {
                     title: i18n.global.t('common.error.generic'),
