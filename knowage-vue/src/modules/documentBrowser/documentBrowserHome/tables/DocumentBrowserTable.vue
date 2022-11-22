@@ -84,6 +84,7 @@ import DataTable from 'primevue/datatable'
 import Message from 'primevue/message'
 import documentBrowserTableDescriptor from './DocumentBrowserTableDescriptor.json'
 import mainStore from '../../../../App.store'
+import { getCorrectRolesForExecution } from '../../../../helpers/commons/roleHelper'
 
 export default defineComponent({
     name: 'document-browser-table',
@@ -152,7 +153,9 @@ export default defineComponent({
             return status ? this.$t(documentBrowserTableDescriptor.status[status] ?? '') : ''
         },
         executeDocument(document: any) {
-            this.$emit('itemSelected', { item: document, mode: 'execute' })
+            getCorrectRolesForExecution('DOCUMENT', document.id, document.label).then(() => {
+                this.$emit('itemSelected', { item: document, mode: 'execute' })
+            })
         }
     }
 })

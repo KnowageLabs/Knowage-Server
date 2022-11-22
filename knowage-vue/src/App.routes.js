@@ -10,6 +10,7 @@ import overlayRoutes from '@/overlay/Overlay.routes.js'
 import authHelper from '@/helpers/commons/authHelper'
 import dataPreparationRoutes from '@/modules/workspace/dataPreparation/DataPreparation.routes.js'
 import { loadLanguageAsync } from '@/App.i18n.js'
+import { getCorrectRolesForExecution } from '@/helpers/commons/roleHelper'
 
 const baseRoutes = [
     {
@@ -82,8 +83,13 @@ router.beforeEach((to, from, next) => {
     const checkRequired = !('/' == to.fullPath && '/' == from.fullPath)
     const loggedIn = localStorage.getItem('token')
 
+    const routes = ['registry', 'document-composite', 'report', 'office-doc', 'olap', 'map', 'report', '/kpi/', 'dossier', 'etl']
     if (checkRequired && !loggedIn) {
         authHelper.handleUnauthorized()
+    } else if (routes.some((el) => to.fullPath.includes(el))) {
+        getCorrectRolesForExecution('DOCUMENT', null, to.params.id).then(() => {
+            next()
+        })
     } else {
         next()
     }
