@@ -588,11 +588,13 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 			// only odd levels are levels (except the last one, since it contains measures' names)
 			boolean isLevel = isLevel(recursionLevel, aNode);
 			if (isLevel) {
-				it.eng.knowage.engine.cockpit.api.crosstable.CrosstabDefinition.Column aColDef = cs.getCrosstabDefinition().getColumns()
-						.get(recursionLevel / 2);
-				String variable = aColDef.getVariable();
-				if (variables.has(variable)) {
-					text = variables.getString(variable);
+				if (!cs.getCrosstabDefinition().getColumns().isEmpty()) {
+					it.eng.knowage.engine.cockpit.api.crosstable.CrosstabDefinition.Column aColDef = cs.getCrosstabDefinition().getColumns()
+							.get(recursionLevel / 2);
+					String variable = aColDef.getVariable();
+					if (variables.has(variable)) {
+						text = variables.getString(variable);
+					}
 				}
 			}
 			if (!cs.isMeasureOnRow() && (childs == null || childs.size() <= 0)) {

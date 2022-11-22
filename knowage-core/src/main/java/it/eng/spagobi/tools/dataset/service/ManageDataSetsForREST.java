@@ -239,6 +239,7 @@ public class ManageDataSetsForREST {
 			String catTypeCd = json.optString("catTypeVn");
 
 			String meta = json.optString("meta");
+			JSONArray metaAsJSONArray = json.optJSONArray("meta");
 			String trasfTypeCd = json.optString("trasfTypeCd");
 
 			List<Domain> domainsCat = getCategories(userProfile);
@@ -279,8 +280,8 @@ public class ManageDataSetsForREST {
 				}
 			}
 
-			if (meta != null && !meta.equals("")) {
-				ds.setDsMetadata(meta);
+			if (metaAsJSONArray != null) {
+				manageDataSetMetadataV2(metaAsJSONArray, ds);
 			}
 
 			String pars = getDataSetParametersAsString(json);
@@ -1401,21 +1402,72 @@ public class ManageDataSetsForREST {
 	private void manageDataSetMetadata(JSONObject json, IDataSet dataSet) throws JSONException {
 		if (json.optJSONObject(DataSetConstants.METADATA) != null && json.optJSONObject(DataSetConstants.METADATA).optJSONArray("columns") != null) {
 			JSONArray dsMeta = json.optJSONObject(DataSetConstants.METADATA).getJSONArray("columns");
-			DatasetMetadataParser dsp = new DatasetMetadataParser();
-			IMetaData userMetaData = getUserMetaData(dsMeta);
-			String metadataXML = dsp.metadataToXML(userMetaData);
-			dataSet.setDsMetadata(metadataXML);
-			dataSet.setMetadata(userMetaData);
+			manageDataSetMetadata(dsMeta, dataSet);
+		} else if(json.optJSONArray(DataSetConstants.METADATA).length() > 0) {
+			JSONArray dsMeta = json.optJSONArray(DataSetConstants.METADATA);
+			manageDataSetMetadataV2(dsMeta, dataSet);
 		}
 	}
 
+	private void manageDataSetMetadata(JSONArray dsMeta, IDataSet dataSet) throws JSONException {
+		DatasetMetadataParser dsp = new DatasetMetadataParser();
+		IMetaData userMetaData = getUserMetaData(dsMeta);
+		String metadataXML = dsp.metadataToXML(userMetaData);
+		dataSet.setDsMetadata(metadataXML);
+		dataSet.setMetadata(userMetaData);
+	}
+
+	private void manageDataSetMetadataV2(JSONArray dsMeta, IDataSet dataSet) throws JSONException {
+		DatasetMetadataParser dsp = new DatasetMetadataParser();
+		IMetaData userMetaData = getUserMetaDataV2(dsMeta);
+		String metadataXML = dsp.metadataToXML(userMetaData);
+		dataSet.setDsMetadata(metadataXML);
+		dataSet.setMetadata(userMetaData);
+	}
+
+	/**
+	 * Parse user metadata.
+	 *
+	 * It manages JSON like:
+	 * <pre>
+	 * [
+	 * 	{
+	 * 		...,
+	 * 		"meta": {
+	 * 			"dataset": ...,
+	 * 			"columns": [
+	 * 				{"column": "col1","pname": "Type","pvalue": "java.lang.String"},
+	 * 				{"column": "col1","pname": "fieldType","pvalue": "ATTRIBUTE"},
+	 * 				{"column": "col1","pname": "fieldAlias","pvalue": "col1"},
+	 * 				{"column": "col1","pname": "personal","pvalue": false},
+	 * 				{"column": "col1","pname": "decrypt","pvalue": true},
+	 * 				{"column": "col1","pname": "subjectId","pvalue": false},
+	 * 				{"column": "col2","pname": "Type","pvalue": "java.lang.String"},
+	 * 				{"column": "col2","pname": "fieldType","pvalue": "ATTRIBUTE"},
+	 * 				{"column": "col2","pname": "fieldAlias","pvalue": "col2"},
+	 * 				{"column": "col2","pname": "personal","pvalue": false},
+	 * 				{"column": "col2","pname": "decrypt","pvalue": true},
+	 * 				{"column": "col2","pname": "subjectId","pvalue": false},
+	 * 				{"column": "col3","pname": "Type","pvalue": "java.lang.Integer"},
+	 * 				{"column": "col3","pname": "fieldType","pvalue": "MEASURE"},
+	 * 				{"column": "col3","pname": "fieldAlias","pvalue": "col3"},
+	 * 				{"column": "col3","pname": "personal","pvalue": false},
+	 * 				{"column": "col3","pname": "decrypt","pvalue": false},
+	 * 				{"column": "col3","pname": "subjectId","pvalue": false}
+	 * 			]
+	 * 		},
+	 * 		...
+	 * 	}
+	 * ]
+	 * </pre>
+	 */
 	private IMetaData getUserMetaData(JSONArray dsMeta) throws JSONException {
 		MetaData toReturn = new MetaData();
 
 		List<IFieldMetaData> fieldsMeta = new ArrayList<>();
 		Map<String, IFieldMetaData> m = new LinkedHashMap<>();
 
-		for (int i = 0; i < dsMeta.length() - 1; i++) {
+		for (int i = 0; i < dsMeta.length(); i++) {
 			JSONObject currMetaType = dsMeta.getJSONObject(i);
 			String column = currMetaType.getString("column");
 			IFieldMetaData columnMap = m.get(column);
@@ -1454,6 +1506,61 @@ public class ManageDataSetsForREST {
 		}
 
 		m.keySet().forEach(x -> fieldsMeta.add(m.get(x)));
+
+		toReturn.setFieldsMeta(fieldsMeta);
+		return toReturn;
+	}
+
+	/**
+	 * Parse user metadata.
+	 *
+	 * It manages JSON like:
+	 * <pre>
+	 * {
+	 * 	...
+	 * 	"meta": [
+	 * 		{"displayedName": "col1","name": "col1","fieldType": "ATTRIBUTE","type": "java.lang.String","personal": false,"decrypt": true,"subjectId": false},
+	 * 		{"displayedName": "col2","name": "col2","fieldType": "ATTRIBUTE","type": "java.lang.String","personal": false,"decrypt": true,"subjectId": false},
+	 * 		{"displayedName": "col3","name": "col3","fieldType": "MEASURE","type": "java.lang.Integer","personal": false,"decrypt": false,"subjectId": false}
+	 * 	],
+	 * 	...
+	 * }
+	 * </pre>
+	 */
+	private IMetaData getUserMetaDataV2(JSONArray dsMeta) throws JSONException {
+		MetaData toReturn = new MetaData();
+
+		List<IFieldMetaData> fieldsMeta = new ArrayList<>();
+
+		for (int i = 0; i < dsMeta.length(); i++) {
+			JSONObject currMetaType = dsMeta.getJSONObject(i);
+			String name = currMetaType.getString("name");
+			String displayedName = currMetaType.getString("displayedName");
+			String fieldType = currMetaType.getString("fieldType");
+			String type = currMetaType.getString("type");
+			boolean decrypt = currMetaType.getBoolean("decrypt");
+			boolean personal = currMetaType.getBoolean("personal");
+			boolean subjectId = currMetaType.getBoolean("subjectId");
+
+			FieldType fieldTypeFromColumn = getFieldTypeFromColumn(fieldType);
+			Class<?> classTypeFromColumn = getClassTypeFromColumn(type);
+
+			FieldMetadata fieldMetaData = new FieldMetadata();
+
+			fieldMetaData.setAlias(displayedName);
+			fieldMetaData.setDecrypt(decrypt);
+			fieldMetaData.setFieldType(fieldTypeFromColumn);
+			fieldMetaData.setMultiValue(false);
+			fieldMetaData.setName(name);
+			fieldMetaData.setPersonal(personal);
+			fieldMetaData.setPrecision(0);
+			fieldMetaData.setProperties(new HashMap<>());
+			fieldMetaData.setScale(0);
+			fieldMetaData.setSubjectId(subjectId);
+			fieldMetaData.setType(classTypeFromColumn);
+
+			fieldsMeta.add(fieldMetaData);
+		}
 
 		toReturn.setFieldsMeta(fieldsMeta);
 		return toReturn;
