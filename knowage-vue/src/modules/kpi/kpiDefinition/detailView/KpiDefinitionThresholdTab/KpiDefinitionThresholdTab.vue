@@ -71,13 +71,13 @@
                 <Column :rowReorder="true" headerStyle="width: 3rem" :reorderableColumn="false" />
 
                 <Column field="label" :header="$t('common.label')">
-                    <template #editor="slotProps">
+                    <template #body="slotProps">
                         <InputText :style="tresholdTabDescriptor.styles.input" v-model="slotProps.data['label']" @change="$emit('touched')" />
                     </template>
                 </Column>
 
                 <Column field="minValue" :header="$t('kpi.kpiDefinition.min')">
-                    <template #editor="slotProps">
+                    <template #body="slotProps">
                         <InputText :style="tresholdTabDescriptor.styles.input" v-model="slotProps.data['minValue']" type="number" @change="$emit('touched')" />
                     </template>
                 </Column>
@@ -89,7 +89,7 @@
                 </Column>
 
                 <Column field="maxValue" :header="$t('kpi.kpiDefinition.max')">
-                    <template #editor="slotProps">
+                    <template #body="slotProps">
                         <InputText :style="tresholdTabDescriptor.styles.input" v-model="slotProps.data['maxValue']" type="number" @change="$emit('touched')" />
                     </template>
                 </Column>
@@ -101,14 +101,13 @@
                 </Column>
 
                 <Column field="severityId" header="Severity">
-                    <template #editor="slotProps">
+                    <template #body="slotProps">
                         <Dropdown v-model="slotProps.data['severityId']" :style="tresholdTabDescriptor.styles.input" :options="severityOptions" optionLabel="valueCd" optionValue="valueId" @change="setSeverityCd($event, slotProps.data)">
                             <template #option="slotProps">
                                 <span>{{ slotProps.option.valueCd }}</span>
                             </template>
                         </Dropdown>
                     </template>
-                    <template #body="slotProps">{{ slotProps.data['severityCd'] }} </template>
                 </Column>
 
                 <Column field="color" :header="$t('kpi.kpiDefinition.color')">
@@ -118,7 +117,7 @@
                     </template>
                 </Column>
 
-                <Column header style="text-align:right">
+                <Column header style="text-align: right">
                     <template #header>
                         <Button :label="$t('kpi.kpiDefinition.thresholdsListTitle')" class="p-button-link" @click="thresholdListVisible = true" />
                     </template>
@@ -181,12 +180,10 @@ import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
 import ColorPicker from 'primevue/colorpicker'
 import Dialog from 'primevue/dialog'
-
 export default defineComponent({
     components: { KnValidationMessages, Card, Sidebar, Listbox, Message, DataTable, Column, Checkbox, Dropdown, ColorPicker, Dialog },
     props: { selectedKpi: { type: Object as any }, thresholdsList: Array, severityOptions: { type: Array as any, required: false }, thresholdTypeList: { type: Array as any, required: false }, loading: Boolean },
     emits: ['touched'],
-
     data() {
         return {
             v$: useValidate() as any,
@@ -199,20 +196,17 @@ export default defineComponent({
             overrideDialogVisible: false
         }
     },
-
     watch: {
         selectedKpi() {
             this.kpi = this.selectedKpi as any
             this.threshold = this.kpi.threshold
         }
     },
-
     validations() {
         return {
             threshold: createValidations('threshold', tresholdTabDescriptor.validations.kpi)
         }
     },
-
     methods: {
         setPositionOnReorder(event) {
             this.kpi.threshold.thresholdValues = event.value
@@ -220,23 +214,19 @@ export default defineComponent({
                 this.kpi.threshold.thresholdValues[index].position = index + 1
             })
         },
-
         setSeverityCd(event, data) {
             const index = this.severityOptions.findIndex((SO: any) => SO.valueId === event.value)
             data.severityCd = index >= 0 ? this.severityOptions[index].valueCd : ''
         },
-
         setTypeCd(event) {
             const index = this.thresholdTypeList.findIndex((SO: any) => SO.valueId === event.value)
             this.threshold.type = index >= 0 ? this.thresholdTypeList[index].translatedValueName : ''
         },
-
         addNewThresholdItem() {
             const newThreshold = { ...tresholdTabDescriptor.newThreshold }
             newThreshold.position = this.kpi.threshold.thresholdValues.length + 1
             this.kpi.threshold.thresholdValues.push(newThreshold)
         },
-
         deleteThresholdItemConfirm(index) {
             this.$confirm.require({
                 message: this.$t('common.toast.deleteMessage'),
@@ -248,7 +238,6 @@ export default defineComponent({
         deleteThresholdItem(index) {
             this.kpi.threshold.thresholdValues.splice(index, 1)
         },
-
         confirmToLoadThreshold(event) {
             if (this.kpi.threshold.thresholdValues.length == 0 || this.kpi.threshold === tresholdTabDescriptor.newThreshold) {
                 this.loadSelectedThreshold(event)
@@ -291,7 +280,6 @@ export default defineComponent({
             this.kpi.threshold.id = undefined
             this.kpi.threshold.usedByKpi = false
         },
-
         onCellEditComplete(event) {
             this.kpi.threshold.thresholdValues[event.index] = event.newData
         }
