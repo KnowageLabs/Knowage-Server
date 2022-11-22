@@ -4,20 +4,9 @@ import deepcopy from 'deepcopy'
 import { formatNumberWithLocale } from '@/helpers/commons/localeHelper'
 import i18n from '@/App.i18n'
 import * as sanitizeHtml from 'sanitize-html'
+import { activeSelectionsRegex, advancedCalcRegex, calcRegex, columnRegex, gt, i18nRegex, lt, paramsRegex, repeatIndexRegex, variablesRegex, widgetIdRegex } from '@/modules/documentExecution/dashboard/helpers/common/DashboardRegexHelper'
 
 const { t } = i18n.global
-
-const widgetIdRegex = /#\[kn-widget-id\]/g
-const activeSelectionsRegex = /(?:\[kn-active-selection(?:=\'([a-zA-Z0-9\_\-]+)\')?\s?\])/g
-const columnRegex = /(?:\[kn-column=\'([a-zA-Z0-9\_\-\s]+)\'(?:\s+row=\'(\d*)\')?(?:\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')?(?:\s+precision=\'(\d)\')?(\s+format)?(?:\s+prefix=\'([a-zA-Z0-9\_\-\s]+)\')?(?:\s+suffix=\'([a-zA-Z0-9\_\-\s]+)\')?\s?\])/g
-const paramsRegex = /(?:\[kn-parameter=[\'\"]{1}([a-zA-Z0-9\_\-\s]+)[\'\"]{1}(\s+value)?\])/g
-const calcRegex = /(?:\[kn-calc=\(([\[\]\w\s\-\=\>\<\"\'\!\+\*\/\%\&\,\.\|]*)\)(?:\s+min=\'(\d*)\')?(?:\s+max=\'(\d*)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\])/g
-const advancedCalcRegex = /(?:\[kn-calc=\{([\(\)\[\]\w\s\-\=\>\<\"\'\!\+\*\/\%\&\,\.\|]*)\}(?:\s+min=\'(\d*)\')?(?:\s+max=\'(\d*)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\])/g
-const repeatIndexRegex = /\[kn-repeat-index\]/g
-const variablesRegex = /(?:\[kn-variable=\'([a-zA-Z0-9\_\-\s]+)\'(?:\s+key=\'([a-zA-Z0-9\_\-\s]+)\')?\s?\])/g
-const i18nRegex = /(?:\[kn-i18n=\'([a-zA-Z0-9\_\-\s]+)\'\s?\])/g
-const gt = /(\<.*kn-.*=["].*)(>)(.*["].*\>)/g
-const lt = /(\<.*kn-.*=["].*)(<)(.*["].*\>)/g
 
 let drivers = [] as any[]
 let variables = [] as IVariable[]
@@ -310,7 +299,6 @@ const columnsReplacer = (match, column, row, aggr, precision, format, prefix, su
 }
 
 export const paramsReplacer = (match: string, p1: string, p2: string) => {
-    // TODO - Change when we finish drivers
     const index = drivers.findIndex((driver: any) => driver.urlName === p1)
     if (index === -1) return addSlashes(null)
     const result = p2 ? drivers[index].description : drivers[index].value

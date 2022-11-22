@@ -4,6 +4,7 @@ import { getFormattedStyle } from "./TextWidgetStyleHelper"
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import { getFormattedInteractions } from "../common/WidgetInteractionsHelper"
 import { getFormattedWidgetColumns } from "../common/WidgetColumnHelper"
+import { columnTextCompatibilityRegex, crossNavigationTextCompatibilityRegex, parameterTextCompatibilityRegex, variableTextCompatibilityRegex } from "../common/DashboardRegexHelper"
 
 const columnNameIdMap = {}
 
@@ -54,8 +55,7 @@ const getFormattedText = (widget: any, originalText: string) => {
 }
 
 const replaceParameters = (text: string) => {
-    const regex = /\$P{(.+?)\}/g;
-    return text.replace(regex, parametersReplacer)
+    return text.replace(parameterTextCompatibilityRegex, parametersReplacer)
 }
 
 const parametersReplacer = (match: string, parameterUrlName: string) => {
@@ -63,8 +63,7 @@ const parametersReplacer = (match: string, parameterUrlName: string) => {
 }
 
 const replaceVariables = (text: string) => {
-    const regex = /\$V{(.+?)\}/g;
-    return text.replace(regex, variablesReplacer)
+    return text.replace(variableTextCompatibilityRegex, variablesReplacer)
 }
 
 const variablesReplacer = (match: string, variableName: string) => {
@@ -73,8 +72,7 @@ const variablesReplacer = (match: string, variableName: string) => {
 
 const replaceColumns = (widget: any, text: string) => {
     const numberFormatting = widget.numbers
-    const regex = /(SUM\(|AVG\(|MIN\(|MAX\(|COUNT\(|COUNT_DISTINCT\()?\$F{(.+?)\}\)?/g;
-    return text.replace(regex, (match: string, aggregation: string, datasetAndColumnName: any) => {
+    return text.replace(columnTextCompatibilityRegex, (match: string, aggregation: string, datasetAndColumnName: any) => {
         const formattedAggregation = aggregation ? aggregation.substring(0, aggregation.length - 1) : ''
         const columnName = datasetAndColumnName && datasetAndColumnName.split('.') ? datasetAndColumnName.split('.')[1] : ''
         let result = `[kn-column='${columnName}' row='0'`
@@ -90,15 +88,6 @@ const replaceColumns = (widget: any, text: string) => {
     })
 }
 
-const columnIsMeasure = (columnName: string, widget: any) => {  // TODO - Ask about this condition
-    if (!widget || !widget.content || !widget.content.columnSelectedOfDataset) return false
-    const index = widget.content.columnSelectedOfDataset.findIndex((column: any) => column.name === columnName)
-    if (index === -1) return false
-    return widget.content.columnSelectedOfDataset[index].fieldType === 'MEASURE'
-}
-
-
 const replaceCrossNavigation = (text: string) => {
-    const regex = /ng-click="doSelection(.+?)"/g;
-    return text.replace(regex, 'kn-cross')
+    return text.replace(crossNavigationTextCompatibilityRegex, 'kn-cross')
 }
