@@ -191,14 +191,16 @@ export default defineComponent({
             this.searchWord = ''
         },
         openDatasetInQBE(dataset: any) {
-            getCorrectRolesForExecution('DATAMART', dataset.id, dataset.label).then(() => {
-                if (process.env.VUE_APP_USE_OLD_QBE_IFRAME == 'true') {
-                    this.$emit('showQbeDialog', dataset)
-                } else {
-                    this.selectedQbeDataset = dataset
-                    this.qbeVisible = true
-                }
-            })
+            getCorrectRolesForExecution('DATAMART', dataset.id, dataset.label)
+                .then(() => {
+                    if (process.env.VUE_APP_USE_OLD_QBE_IFRAME == 'true') {
+                        this.$emit('showQbeDialog', dataset)
+                    } else {
+                        this.selectedQbeDataset = dataset
+                        this.qbeVisible = true
+                    }
+                })
+                .catch(() => {})
         },
         createNewFederation() {
             this.$router.push('models/federation-definition/new-federation')
