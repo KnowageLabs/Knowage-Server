@@ -79,11 +79,11 @@
 import { defineComponent } from 'vue'
 import { FilterOperator } from 'primevue/api'
 import { filterDefault } from '@/helpers/commons/filterHelper'
-import { AxiosResponse } from 'axios'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Message from 'primevue/message'
 import documentBrowserTableDescriptor from './DocumentBrowserTableDescriptor.json'
+import { getCorrectRolesForExecution } from '../../../../helpers/commons/roleHelper'
 
 export default defineComponent({
     name: 'document-browser-table',
@@ -147,22 +147,9 @@ export default defineComponent({
         getTranslatedStatus(status: string) {
             return status ? this.$t(documentBrowserTableDescriptor.status[status] ?? '') : ''
         },
-        async executeDocument(document: any) {
-            let params = document.id ? `id=${document.id}` : `label=${document.label}`
-
-            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/documentexecution/correctRolesForExecution?` + params
-
-            await this.$http.get(url).then((response: AxiosResponse<any>) => {
-                let correctRolesForExecution = response.data
-
-                if (correctRolesForExecution.length == 0) {
-                    this.$store.commit('setError', {
-                        title: this.$t('common.error.generic'),
-                        msg: this.$t('documentExecution.main.userRoleError')
-                    })
-                } else {
-                    this.$emit('itemSelected', { item: document, mode: 'execute' })
-                }
+        executeDocument(document: any) {
+            getCorrectRolesForExecution('DOCUMENT', document.id, document.label).then(() => {
+                this.$emit('itemSelected', { item: document, mode: 'execute' })
             })
         }
     }

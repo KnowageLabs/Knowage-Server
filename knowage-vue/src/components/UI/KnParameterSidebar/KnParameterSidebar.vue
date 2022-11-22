@@ -15,7 +15,7 @@
                 <div class="p-d-flex">
                     <label class="kn-material-input-label">{{ $t('common.roles') }}</label>
                 </div>
-                <Dropdown class="kn-material-input" v-model="role" :options="correctRolesForExecution" @change="setNewSessionRole" />
+                <Dropdown class="kn-material-input" v-model="role" :options="availableRolesForExecution" @change="setNewSessionRole" />
             </div>
 
             <template v-if="mode === 'qbeView' || mode === 'workspaceView' || mode === 'datasetManagement'">
@@ -202,6 +202,7 @@ import Menu from 'primevue/menu'
 import MultiSelect from 'primevue/multiselect'
 import RadioButton from 'primevue/radiobutton'
 import ScrollPanel from 'primevue/scrollpanel'
+import { getCorrectRolesForExecution } from '../../../helpers/commons/roleHelper'
 
 export default defineComponent({
     name: 'kn-parameter-sidebar',
@@ -227,7 +228,8 @@ export default defineComponent({
         propMode: { type: String },
         propQBEParameters: { type: Array },
         dateFormat: { type: String },
-        dataset: { type: Object }
+        dataset: { type: Object },
+        correctRolesForExecution: []
     },
     emits: ['execute', 'exportCSV', 'roleChanged', 'parametersChanged'],
     data() {
@@ -255,7 +257,7 @@ export default defineComponent({
             qbeParameters: [] as any,
             primary: true,
             userDateFormat: '' as string,
-            correctRolesForExecution: []
+            availableRolesForExecution: [] as any
         }
     },
     watch: {
@@ -291,7 +293,7 @@ export default defineComponent({
             return this.document?.parametersRegion ? 'kn-parameter-sidebar-' + this.document.parametersRegion : 'kn-parameter-sidebar'
         }
     },
-    created() {
+    mounted() {
         this.loadMode()
         if (this.mode === 'qbeView' || this.mode === 'workspaceView' || this.mode === 'datasetManagement') this.loadQBEParameters()
 
@@ -313,15 +315,24 @@ export default defineComponent({
         },
         async loadDocument() {
             this.document = this.propDocument as iDocument
-            let params = this.document.id ? `id=${this.document.id}` : `label=${this.document.label}`
-            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/documentexecution/correctRolesForExecution?` + params
 
-            await this.$http.get(url).then((response: AxiosResponse<any>) => {
-                this.correctRolesForExecution = response.data
-            })
-            if (!this.role && this.correctRolesForExecution.length == 1) {
-                this.role = this.correctRolesForExecution[0]
-                this.setNewSessionRole()
+            if (this.correctRolesForExecution) {
+                this.availableRolesForExecution = this.correctRolesForExecution
+            } else {
+                let typeCode = 'DOCUMENT'
+                if (this.document.type === 'businessModel') {
+                    typeCode = 'DATAMART'
+                } else if (this.document.dsTypeCd) {
+                    typeCode = 'DATASET'
+                }
+
+                getCorrectRolesForExecution(typeCode, this.document.id, this.document.label).then((response: any) => {
+                    this.availableRolesForExecution = response
+                    if (!this.role && this.availableRolesForExecution.length == 1) {
+                        this.role = this.availableRolesForExecution[0]
+                        this.setNewSessionRole()
+                    }
+                })
             }
         },
         loadParameters() {
