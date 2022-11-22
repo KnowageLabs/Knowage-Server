@@ -292,7 +292,7 @@ export default defineComponent({
                     this.parameterSidebarVisible = true
                 }
             } else if (this.userRole) {
-                if (correctRolesForExecution[0].length == 1) {
+                if (correctRolesForExecution.length == 1) {
                     let correctRole = correctRolesForExecution[0]
                     if (this.userRole !== correctRole) {
                         this.$store.commit('setError', {
