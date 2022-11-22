@@ -54,42 +54,32 @@ public class DocumentExecutionResource {
 
 			List<String> userRoles = new ArrayList<String>();
 			userProfile.getRolesForUse().forEach(x -> userRoles.add((String) x));
+			correctRoles = userRoles;
 
 			ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
 
-			List<String> correctRolesForDocumentExecution = null;
 			List<String> rolesByCategory = null;
-			List<String> modelRoles = null;
+			List<String> rolesByModel = null;
 			if ("DATAMART".equals(typeCode)) {
 				MetaModel model = DAOFactory.getMetaModelsDAO().loadMetaModelById(id);
 				rolesByCategory = getRolesByCategory(categoryDao, model.getCategory());
-				modelRoles = getModelRoles(userProfile, model);
+				rolesByModel = getModelRoles(userProfile, model);
+
+				correctRoles = correctRoles.stream().filter(rolesByCategory::contains).filter(rolesByModel::contains).collect(Collectors.toList());
 			} else if ("DATASET".equals(typeCode)) {
 				IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(id);
 				Integer categoryId = dataset.getCategoryId();
 				rolesByCategory = getRolesByCategory(categoryDao, categoryId);
+
+				correctRoles = correctRoles.stream().filter(rolesByCategory::contains).collect(Collectors.toList());
 			} else if ("DOCUMENT".equals(typeCode)) {
 				ObjectsAccessVerifier oav = new ObjectsAccessVerifier();
 				checkExecRightsByProducts(id, label);
 				if (id != null) {
-					correctRolesForDocumentExecution = oav.getCorrectRolesForExecution(id, userProfile);
+					correctRoles = oav.getCorrectRolesForExecution(id, userProfile);
 				} else {
-					correctRolesForDocumentExecution = oav.getCorrectRolesForExecution(label, userProfile);
+					correctRoles = oav.getCorrectRolesForExecution(label, userProfile);
 				}
-			}
-
-			correctRoles = userRoles;
-
-			if (rolesByCategory != null && rolesByCategory.size() > 0) {
-				correctRoles = correctRoles.stream().filter(rolesByCategory::contains).collect(Collectors.toList());
-			}
-
-			if (modelRoles != null && modelRoles.size() > 0) {
-				correctRoles = correctRoles.stream().filter(modelRoles::contains).collect(Collectors.toList());
-			}
-
-			if (correctRolesForDocumentExecution != null && correctRolesForDocumentExecution.size() > 0) {
-				correctRoles = correctRoles.stream().filter(correctRolesForDocumentExecution::contains).collect(Collectors.toList());
 			}
 
 		} catch (EMFInternalError e) {
