@@ -422,9 +422,19 @@ export interface IWidgetEditorDataset {
     cache: boolean
     dsLabel?: string
     parameters?: any[]
-    drivers?: any[]
+    drivers?: IDashboardDatasetDriver[]
     indexes?: any[]
 }
+
+export interface IDashboardDatasetDriver {
+    urlName: string,
+    parameterValue: { value: string, description: string }[]
+    type: string,
+    defaultValue: { value: string, description: string } | null,
+    label: string,
+    multivalue: boolean
+}
+
 export interface IWidgetPickerType {
     cssClass: string
     descKey: string

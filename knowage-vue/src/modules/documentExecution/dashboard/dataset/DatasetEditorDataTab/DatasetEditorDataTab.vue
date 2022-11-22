@@ -17,13 +17,16 @@ export default defineComponent({
     emits: ['addSelectedDatasets', 'deleteDataset'],
     data() {
         return {
-            selectedDataset: {} as any
+            selectedDataset: {} as any,
+            datasetDriversMap: {}
         }
     },
     async created() {},
     methods: {
         selectDataset(datasetId) {
             this.selectedDataset = this.availableDatasetsProp.find((dataset) => dataset.id.dsId === datasetId)
+            console.log('>>>>>>>>>>>> SELECTED DATASET: ', this.selectedDataset)
+            //  if (this.selectDataset)
         },
         addSelectedDatasets(datasetsToAdd) {
             this.$emit('addSelectedDatasets', datasetsToAdd)

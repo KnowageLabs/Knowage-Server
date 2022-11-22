@@ -56,7 +56,9 @@ export default defineComponent({
         }
     },
     setup() {},
-    async created() {},
+    async created() {
+        console.log('>>>>>>>> selectedDatasetProp: ', this.selectedDatasetProp)
+    },
     methods: {
         showMenu(event, parameter) {
             this.createMenuItems(parameter)

@@ -1,6 +1,6 @@
 import { formatTableWidget } from './tableWidget/TableWidgetCompatibilityHelper'
 import { formatSelectorWidget } from '@/modules/documentExecution/dashboard/helpers/selectorWidget/SelectorWidgetCompatibilityHelper'
-import { IAssociation, IDashboard, IDashboardConfiguration, IDataset, IDatasetParameter, ISelection, IVariable, IWidget, IWidgetColumn, IWidgetColumnFilter, IWidgetEditorDataset } from '../Dashboard'
+import { IAssociation, IDashboard, IDashboardConfiguration, IDashboardDatasetDriver, IDataset, IDatasetParameter, ISelection, IVariable, IWidget, IWidgetColumn, IWidgetColumnFilter, IWidgetEditorDataset } from '../Dashboard'
 import { formatSelectionWidget } from './selectionWidget/SelectionsWidgetCompatibilityHelper'
 import { setVariableValueFromDataset } from '../generalSettings/VariablesHelper'
 import deepcopy from 'deepcopy'
@@ -12,6 +12,8 @@ const datasetIdLabelMap = {}
 
 export const formatModel = async (model: any, document: any, datasets: IDataset[], drivers: any[], profileAttributes: { name: string, value: string }[], $http: any) => {
     if (!model.sheets) return
+
+    console.log(">>>>>>>> LOADED MODEL: ", model)
 
     loadDatasetIdNameMap(datasets)
     const formattedModel = {
@@ -72,11 +74,35 @@ const getFormattedDatasets = (model: any) => {
 }
 
 const getFormattedDataset = (dataset: any) => {
+    console.log(">>>>>>>>>>>>>>>>> DATASET: ", dataset)
     const formattedDataset = { id: dataset.dsId, dsLabel: dataset.dsLabel, cache: dataset.useCache } as IWidgetEditorDataset
     if (dataset.indexes) formattedDataset.indexes = dataset.indexes
     if (dataset.parameters) formattedDataset.parameters = getFormattedDatasetParameters(dataset)
+    if (dataset.drivers) formattedDataset.parameters = getFormattedDatasetDrivers(dataset)
 
     return formattedDataset
+}
+
+const getFormattedDatasetDrivers = (dataset: any) => {
+    if (!dataset.drivers || dataset.drivers.length === 0) return []
+    const formattedDrivers = [] as IDashboardDatasetDriver[]
+    dataset.drivers.forEach((driver: any) => formattedDrivers.push(getFormattedDatasetDriver(driver)))
+
+    console.log("FORMATTED DRIVERS: ", formattedDrivers)
+    return formattedDrivers
+}
+
+const getFormattedDatasetDriver = (driver: any) => {
+    console.log(">>>>>>> DRIVER: ", driver)
+    const formattedDriver = { urlName: driver.urlName, type: driver.type, label: driver.label, multivalue: driver.multivalue, parameterValue: getFormattedDriverValue(driver) } as IDashboardDatasetDriver
+    return formattedDriver
+}
+
+const getFormattedDriverValue = (driver: any) => {
+    console.log(">>>>>>> DRIVER VALUE: ", driver.parameterValue)
+    console.log(">>>>>>> DRIVER DESCRIPTION: ", driver.parameterDescription)
+    const formattedDriverValue = [] as { value: string, description: string }[]
+    return formattedDriverValue
 }
 
 const getFormattedDatasetParameters = (dataset: any) => {
