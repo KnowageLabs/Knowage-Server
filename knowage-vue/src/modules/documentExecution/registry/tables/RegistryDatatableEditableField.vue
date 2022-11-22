@@ -23,7 +23,7 @@
         class="kn-material-input"
         v-else-if="column && column.editorType === 'COMBO'"
         v-model="row[column.field]"
-        :options="columnOptions && columnOptions[column.field] ? columnOptions[column.field][row[column.dependences]] : []"
+        :options="getOptions(column, row)"
         optionValue="column_1"
         optionLabel="column_1"
         @change="$emit('dropdownChanged', { row: row, column: column })"
@@ -131,6 +131,11 @@ export default defineComponent({
         },
         onInputNumberChange() {
             setTimeout(() => this.$emit('rowChanged', this.row), 250)
+        },
+        getOptions(column: any, row: any) {
+            let options = this.columnOptions && this.columnOptions[column.field] ? this.columnOptions[column.field][row[column.dependences]] : []
+            if (!options || options.length === 0) options = this.columnOptions[column.field]['All']
+            return options ?? []
         }
     }
 })
