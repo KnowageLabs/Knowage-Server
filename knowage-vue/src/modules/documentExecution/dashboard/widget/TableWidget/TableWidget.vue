@@ -215,7 +215,7 @@ export default defineComponent({
                 for (var responseField in responseFields) {
                     var thisColumn = this.propWidget.columns[datasetColumn]
 
-                    if (typeof responseFields[responseField] == 'object' && ((dataset.type == 'SbiSolrDataSet' && thisColumn.columnName.toLowerCase() === responseFields[responseField].header) || thisColumn.columnName.toLowerCase() === responseFields[responseField].header.toLowerCase())) {
+                    if (typeof responseFields[responseField] == 'object' && ((dataset.type == 'SbiSolrDataSet' && thisColumn.alias.toLowerCase() === responseFields[responseField].header) || thisColumn.alias.toLowerCase() === responseFields[responseField].header.toLowerCase())) {
                         this.columnsNameArray.push(responseFields[responseField].name)
                         var tempCol = {
                             hide: this.getColumnVisibilityCondition(this.propWidget.columns[datasetColumn].id),
@@ -252,7 +252,7 @@ export default defineComponent({
                                 } else return 1
                             }
                             tempCol.cellClassRules = {
-                                'cell-span': function(params) {
+                                'cell-span': function (params) {
                                     return tempRows[params.rowIndex].span > 1
                                 }
                             }
@@ -340,6 +340,7 @@ export default defineComponent({
                     }
                 }
             }
+            console.log('CREATED COLUMNS', columns)
             return columns
         },
         getColumnGroup(col) {
