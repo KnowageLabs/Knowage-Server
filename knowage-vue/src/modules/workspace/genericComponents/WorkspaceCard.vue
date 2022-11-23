@@ -29,6 +29,7 @@ import descriptor from './DetailSidebarDescriptor.json'
 import cardDescriptor from './WorkspaceCardDescriptor.json'
 import Menu from 'primevue/contextmenu'
 import mainStore from '../../../App.store'
+import { getCorrectRolesForExecution } from '../../../helpers/commons/roleHelper'
 
 export default defineComponent({
     name: 'workspace-sidebar',
@@ -161,7 +162,15 @@ export default defineComponent({
             this.$refs.optionsMenu.toggle(event)
         },
         emitEvent(event) {
-            return () => this.$emit(event, this.document)
+            let typeCode = 'DOCUMENT'
+            if (this.document.type === 'businessModel') {
+                typeCode = 'DATAMART'
+            } else if (this.document.dsTypeCd) {
+                typeCode = 'DATASET'
+            }
+            getCorrectRolesForExecution(typeCode, this.document.id, this.document.label).then(() => {
+                return () => this.$emit(event, this.document)
+            })
         },
         // prettier-ignore
         createMenuItems() {

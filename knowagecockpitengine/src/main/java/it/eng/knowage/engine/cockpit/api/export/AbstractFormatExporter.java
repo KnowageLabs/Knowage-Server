@@ -375,7 +375,7 @@ public abstract class AbstractFormatExporter {
 				JSONObject orderedCol = columnsOrdered.getJSONObject(i);
 				for (int j = 0; j < columns.length(); j++) {
 					JSONObject col = columns.getJSONObject(j);
-					if (orderedCol.getString("header").equals(getTableColumnHeaderValue(col))) {
+					if (col.has("aliasToShow") && orderedCol.getString("header").equals(getTableColumnHeaderValue(col))) {
 						if (col.has("style")) {
 							toReturn[i] = col.getJSONObject("style");
 						}
