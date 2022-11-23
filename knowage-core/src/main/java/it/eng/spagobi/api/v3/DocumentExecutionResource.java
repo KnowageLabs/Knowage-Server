@@ -39,12 +39,25 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 @Path("/3.0/documentexecution")
 public class DocumentExecutionResource {
 
+	/**
+	 *
+	 */
+	private static final String DOCUMENT = "DOCUMENT";
+	/**
+	 *
+	 */
+	private static final String DATASET = "DATASET";
+	/**
+	 *
+	 */
+	private static final String DATAMART = "DATAMART";
+
 	static protected Logger logger = Logger.getLogger(DocumentExecutionResource.class);
 
 	@GET
 	@Path("/correctRolesForExecution")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getDocumentExecutionFilterList(@QueryParam("typeCode") String typeCode, @QueryParam("id") Integer id, @QueryParam("label") String label) {
+	public Response getCorrectRolesForExecution(@QueryParam("typeCode") String typeCode, @QueryParam("id") Integer id, @QueryParam("label") String label) {
 		logger.debug("IN");
 
 		UserProfile userProfile = UserProfileManager.getProfile();
@@ -57,21 +70,28 @@ public class DocumentExecutionResource {
 
 			ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
 
-			List<String> rolesByCategory = null;
-			List<String> rolesByModel = null;
-			if ("DATAMART".equals(typeCode)) {
+			if (DATAMART.equals(typeCode)) {
 				MetaModel model = DAOFactory.getMetaModelsDAO().loadMetaModelById(id);
-				rolesByCategory = getRolesByCategory(categoryDao, model.getCategory());
-				rolesByModel = getModelRoles(userProfile, model);
+				List<String> rolesByCategory = getRolesByCategory(categoryDao, model.getCategory());
+				userRoles.retainAll(rolesByCategory);
+				correctRoles = userRoles;
 
-				correctRoles = userRoles.stream().filter(rolesByCategory::contains).filter(rolesByModel::contains).collect(Collectors.toList());
-			} else if ("DATASET".equals(typeCode)) {
+				List<BIMetaModelParameter> drivers = model.getDrivers();
+				if (correctRoles.size() > 0 && drivers.size() > 0) {
+					List<String> rolesByModel = getModelRoles(userProfile, model);
+					correctRoles.retainAll(rolesByModel);
+				}
+			} else if (DATASET.equals(typeCode)) {
 				IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(id);
 				Integer categoryId = dataset.getCategoryId();
-				rolesByCategory = getRolesByCategory(categoryDao, categoryId);
-
-				correctRoles = userRoles.stream().filter(rolesByCategory::contains).collect(Collectors.toList());
-			} else if ("DOCUMENT".equals(typeCode)) {
+				if (categoryId != null) {
+					List<String> rolesByCategory = getRolesByCategory(categoryDao, categoryId);
+					userRoles.retainAll(rolesByCategory);
+					correctRoles = userRoles;
+				} else {
+					correctRoles = userRoles.stream().collect(Collectors.toList());
+				}
+			} else if (DOCUMENT.equals(typeCode)) {
 				ObjectsAccessVerifier oav = new ObjectsAccessVerifier();
 				checkExecRightsByProducts(id, label);
 				if (id != null) {
@@ -94,10 +114,7 @@ public class DocumentExecutionResource {
 	}
 
 	private List<String> getRolesByCategory(ICategoryDAO categoryDao, Integer categoryId) throws EMFUserError {
-		List<String> rolesByCategory = new ArrayList<String>();
-		if (categoryId != null) {
-			rolesByCategory = categoryDao.getRolesByCategory(categoryId).stream().map(SbiExtRoles::getName).collect(Collectors.toList());
-		}
+		List<String> rolesByCategory = categoryDao.getRolesByCategory(categoryId).stream().map(SbiExtRoles::getName).collect(Collectors.toList());
 		return rolesByCategory;
 	}
 
@@ -116,7 +133,8 @@ public class DocumentExecutionResource {
 						modelsRoles.add(String.valueOf(role));
 					}
 				} catch (Exception e) {
-
+					logger.debug(
+							"Role " + role + " is not valid for model [" + model.getName() + "] execution. It will be not added to the available roles list.");
 				}
 
 			}
