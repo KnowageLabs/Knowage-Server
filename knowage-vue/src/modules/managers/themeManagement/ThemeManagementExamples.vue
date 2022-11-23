@@ -63,7 +63,7 @@
             </template>
         </Toolbar>
 
-        <div style="padding:8px; background-color: #eee">
+        <div>
             <Breadcrumb :home="examples.breadcrumbs.home" :model="examples.breadcrumbs.items" class="kn-breadcrumb">
                 <template #item="{ item }">
                     <span class="breadcrumbs-item">{{ item.crossBreadcrumb ? item.crossBreadcrumb : item.label }}</span>
