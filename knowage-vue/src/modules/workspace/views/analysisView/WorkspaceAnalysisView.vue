@@ -7,7 +7,7 @@
         <template #end>
             <Button v-if="toggleCardDisplay" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="$emit('toggleDisplayView')" />
             <Button v-if="!toggleCardDisplay" icon="fas fa-th-large" class="p-button-text p-button-rounded p-button-plain" @click="$emit('toggleDisplayView')" />
-            <KnFabButton icon="fas fa-plus" data-test="new-folder-button" @click="showCreationMenu" />
+            <KnFabButton v-if="addButtonIsVisible" icon="fas fa-plus" data-test="new-folder-button" @click="showCreationMenu" />
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
@@ -116,7 +116,10 @@ export default defineComponent({
         },
         ...mapState(mainStore, {
             user: 'user'
-        })
+        }),
+        addButtonIsVisible(): boolean {
+            return this.user.functionalities.includes('CreateSelfSelviceCockpit') || this.user.functionalities.includes('CreateSelfSelviceGeoreport') || this.user.functionalities.includes('CreateSelfSelviceKpi')
+        }
     },
     data() {
         return {
@@ -368,13 +371,11 @@ export default defineComponent({
             this.$refs.creationMenu.toggle(event)
         },
         createCreationMenuButtons() {
-            console.log('>>>>>>>>>> USER: ', this.user)
             this.creationMenuButtons = []
-            this.creationMenuButtons.push(
-                { key: '0', label: this.$t('common.cockpit'), command: this.openCockpitDialog, visible: true },
-                { key: '1', label: this.$t('workspace.myAnalysis.geoRef'), command: this.openGeoRefCreation, visible: true },
-                { key: '2', label: this.$t('common.kpi'), command: this.openKpiDocumentDesigner, visible: true }
-            )
+
+            if (this.user.functionalities.includes('CreateSelfSelviceCockpit')) this.creationMenuButtons.push({ key: '0', label: this.$t('common.cockpit'), command: this.openCockpitDialog, visible: true })
+            if (this.user.functionalities.includes('CreateSelfSelviceGeoreport')) this.creationMenuButtons.push({ key: '1', label: this.$t('workspace.myAnalysis.geoRef'), command: this.openGeoRefCreation, visible: true })
+            if (this.user.functionalities.includes('CreateSelfSelviceKpi')) this.creationMenuButtons.push({ key: '2', label: this.$t('common.kpi'), command: this.openKpiDocumentDesigner, visible: true })
         },
         openCockpitDialog() {
             this.cockpitDialogVisible = true
