@@ -269,7 +269,7 @@ public class OracleSelectQueryVisitor extends AbstractSelectQueryVisitor {
 				}
 			}
 
-			queryBuilder.append(item.isAscending() ? " ASC" : " DESC");
+			queryBuilder.append(item.isAscending() ? " ASC NULLS FIRST" : " DESC NULLS LAST");
 		} else {
 
 			DataStoreCalculatedField projection = (DataStoreCalculatedField) proj;
@@ -287,7 +287,7 @@ public class OracleSelectQueryVisitor extends AbstractSelectQueryVisitor {
 				}
 			}
 
-			queryBuilder.append(item.isAscending() ? " ASC" : " DESC");
+			queryBuilder.append(item.isAscending() ? " ASC NULLS FIRST" : " DESC NULLS LAST");
 
 		}
 

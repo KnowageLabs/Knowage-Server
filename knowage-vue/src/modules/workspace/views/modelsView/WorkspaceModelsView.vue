@@ -198,7 +198,7 @@ export default defineComponent({
         openDatasetInQBE(dataset: any) {
             getCorrectRolesForExecution('DATAMART', dataset.id, dataset.label)
                 .then(() => {
-                    if (process.env.VUE_APP_USE_OLD_QBE_IFRAME == 'true') {
+                    if (import.meta.env.VITE_USE_OLD_QBE_IFRAME == 'true') {
                         this.$emit('showQbeDialog', dataset)
                     } else {
                         this.selectedQbeDataset = dataset

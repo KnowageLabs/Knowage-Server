@@ -709,9 +709,7 @@ public class ManageDataSetsForREST {
 				String defaultValue = obj.optString(DEFAULT_VALUE_PARAM);
 				String retValue = "";
 
-				retValue = ParameterManagerFactory.getInstance()
-						.defaultManager()
-						.fromFeToBe(type, value, defaultValue, multiValue);
+				retValue = ParameterManagerFactory.getInstance().defaultManager().fromFeToBe(type, value, defaultValue, multiValue);
 
 				logger.debug("name: " + name + " / value: " + retValue);
 				parametersMap.put(name, retValue);
@@ -753,9 +751,7 @@ public class ManageDataSetsForREST {
 				String defaultValue = obj.optString(DEFAULT_VALUE_PARAM);
 				String retValue = "";
 
-				retValue = ParameterManagerFactory.getInstance()
-					.solrManager()
-					.fromFeToBe(type, value, defaultValue, multivalue);
+				retValue = ParameterManagerFactory.getInstance().solrManager().fromFeToBe(type, value, defaultValue, multivalue);
 
 				logger.debug("name: " + name + " / value: " + retValue);
 				parametersMap.put(name, retValue);
@@ -1403,7 +1399,7 @@ public class ManageDataSetsForREST {
 		if (json.optJSONObject(DataSetConstants.METADATA) != null && json.optJSONObject(DataSetConstants.METADATA).optJSONArray("columns") != null) {
 			JSONArray dsMeta = json.optJSONObject(DataSetConstants.METADATA).getJSONArray("columns");
 			manageDataSetMetadata(dsMeta, dataSet);
-		} else if(json.optJSONArray(DataSetConstants.METADATA).length() > 0) {
+		} else if (json.optJSONArray(DataSetConstants.METADATA).length() > 0) {
 			JSONArray dsMeta = json.optJSONArray(DataSetConstants.METADATA);
 			manageDataSetMetadataV2(dsMeta, dataSet);
 		}
@@ -1429,6 +1425,7 @@ public class ManageDataSetsForREST {
 	 * Parse user metadata.
 	 *
 	 * It manages JSON like:
+	 *
 	 * <pre>
 	 * [
 	 * 	{
@@ -1515,6 +1512,7 @@ public class ManageDataSetsForREST {
 	 * Parse user metadata.
 	 *
 	 * It manages JSON like:
+	 *
 	 * <pre>
 	 * {
 	 * 	...
@@ -1582,6 +1580,8 @@ public class ManageDataSetsForREST {
 		else if (columnClass.equalsIgnoreCase("java.util.Timestamp"))
 			return java.sql.Timestamp.class;
 		else if (columnClass.equalsIgnoreCase("java.sql.Timestamp"))
+			return java.sql.Timestamp.class;
+		else if (columnClass.equalsIgnoreCase("oracle.sql.TIMESTAMP"))
 			return java.sql.Timestamp.class;
 		else
 			throw new SpagoBIRuntimeException("Couldn't map class <" + columnClass + ">");
