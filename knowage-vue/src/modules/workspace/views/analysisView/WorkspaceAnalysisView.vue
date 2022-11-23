@@ -100,6 +100,7 @@ import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
 import WorkspaceCockpitDialog from './dialogs/WorkspaceCockpitDialog.vue'
 import mainStore from '../../../../App.store'
 import { getCorrectRolesForExecution } from '../../../../helpers/commons/roleHelper'
+import { mapState } from 'pinia'
 
 export default defineComponent({
     name: 'workspace-analysis-view',
@@ -112,7 +113,10 @@ export default defineComponent({
         },
         isShared(): any {
             return this.selectedAnalysis.functionalities.length > 1
-        }
+        },
+        ...mapState(mainStore, {
+            user: 'user'
+        })
     },
     data() {
         return {
@@ -142,6 +146,7 @@ export default defineComponent({
     created() {
         this.getAnalysisDocs()
     },
+
     methods: {
         getAnalysisDocs() {
             this.loading = true
@@ -363,6 +368,7 @@ export default defineComponent({
             this.$refs.creationMenu.toggle(event)
         },
         createCreationMenuButtons() {
+            console.log('>>>>>>>>>> USER: ', this.user)
             this.creationMenuButtons = []
             this.creationMenuButtons.push(
                 { key: '0', label: this.$t('common.cockpit'), command: this.openCockpitDialog, visible: true },
