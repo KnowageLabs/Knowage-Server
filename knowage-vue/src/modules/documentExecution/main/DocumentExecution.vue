@@ -127,10 +127,11 @@ import DocumentExecutionCNContainerDialog from './dialogs/documentExecutionCNCon
 import mainStore from '../../../App.store'
 import deepcopy from 'deepcopy'
 import DashboardController from '../dashboard/DashboardController.vue'
+import { getCorrectRolesForExecution } from '../../../helpers/commons/roleHelper'
 
 // @ts-ignore
 // eslint-disable-next-line
-window.execExternalCrossNavigation = function(outputParameters, otherOutputParameters, crossNavigationLabel) {
+window.execExternalCrossNavigation = function (outputParameters, otherOutputParameters, crossNavigationLabel) {
     postMessage(
         {
             type: 'crossNavigation',
@@ -323,10 +324,35 @@ export default defineComponent({
 
         await this.loadDocument()
 
-        if (this.userRole) {
-            await this.loadPage(true)
-        } else {
-            this.parameterSidebarVisible = true
+        let invalidRole = false
+        getCorrectRolesForExecution('DOCUMENT', this.document.id, this.document.label).then((response: any) => {
+            let correctRolesForExecution = response
+
+            if (!this.userRole) {
+                if (correctRolesForExecution.length == 1) {
+                    this.userRole = correctRolesForExecution[0]
+                } else {
+                    this.parameterSidebarVisible = true
+                }
+            } else if (this.userRole) {
+                if (correctRolesForExecution.length == 1) {
+                    let correctRole = correctRolesForExecution[0]
+                    if (this.userRole !== correctRole) {
+                        this.$store.commit('setError', {
+                            title: this.$t('common.error.generic'),
+                            msg: this.$t('documentExecution.main.userRoleError')
+                        })
+                        invalidRole = true
+                    }
+                }
+            }
+        })
+        if (!invalidRole) {
+            if (this.userRole) {
+                this.loadPage(true)
+            } else {
+                this.parameterSidebarVisible = true
+            }
         }
     },
     unmounted() {

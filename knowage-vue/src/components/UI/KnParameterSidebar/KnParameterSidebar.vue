@@ -15,7 +15,7 @@
                 <div class="p-d-flex">
                     <label class="kn-material-input-label">{{ $t('common.roles') }}</label>
                 </div>
-                <Dropdown class="kn-material-input" v-model="role" :options="user.roles" @change="setNewSessionRole" />
+                <Dropdown class="kn-material-input" v-model="role" :options="availableRolesForExecution" @change="setNewSessionRole" />
             </div>
 
             <template v-if="mode === 'qbeView' || mode === 'workspaceView' || mode === 'datasetManagement'">
@@ -203,11 +203,12 @@ import MultiSelect from 'primevue/multiselect'
 import RadioButton from 'primevue/radiobutton'
 import ScrollPanel from 'primevue/scrollpanel'
 import mainStore from '../../../App.store'
+import { getCorrectRolesForExecution } from '../../../helpers/commons/roleHelper'
 
 export default defineComponent({
     name: 'kn-parameter-sidebar',
     components: { Calendar, Chip, Chips, Checkbox, Dropdown, KnParameterPopupDialog, KnParameterTreeDialog, KnParameterSaveDialog, KnParameterSavedParametersDialog, Menu, MultiSelect, RadioButton, ScrollPanel },
-    props: { filtersData: { type: Object }, propDocument: { type: Object }, userRole: { type: Object as PropType<String | null> }, propMode: { type: String }, propQBEParameters: { type: Array }, dateFormat: { type: String }, dataset: { type: Object } },
+    props: { filtersData: { type: Object }, propDocument: { type: Object }, userRole: { type: Object as PropType<String | null> }, propMode: { type: String }, propQBEParameters: { type: Array }, dateFormat: { type: String }, dataset: { type: Object }, correctRolesForExecution: [] },
     emits: ['execute', 'exportCSV', 'roleChanged', 'parametersChanged'],
     data() {
         return {
@@ -230,7 +231,8 @@ export default defineComponent({
             mode: 'execution',
             qbeParameters: [] as any,
             primary: true,
-            userDateFormat: '' as string
+            userDateFormat: '' as string,
+            availableRolesForExecution: [] as any
         }
     },
     watch: {
@@ -270,7 +272,7 @@ export default defineComponent({
         const store = mainStore()
         return { store }
     },
-    created() {
+    mounted() {
         this.loadMode()
         if (this.mode === 'qbeView' || this.mode === 'workspaceView' || this.mode === 'datasetManagement') this.loadQBEParameters()
 
@@ -292,6 +294,24 @@ export default defineComponent({
         },
         loadDocument() {
             this.document = this.propDocument as iDocument
+
+            if (this.correctRolesForExecution) {
+                this.availableRolesForExecution = this.correctRolesForExecution
+            } else {
+                let typeCode = 'DOCUMENT'
+                if (this.document.type === 'businessModel') {
+                    typeCode = 'DATAMART'
+                } else if (this.document.dsTypeCd) {
+                    typeCode = 'DATASET'
+                }
+                getCorrectRolesForExecution(typeCode, this.document.id, this.document.label).then((response: any) => {
+                    this.availableRolesForExecution = response
+                    if (!this.role && this.availableRolesForExecution.length == 1) {
+                        this.role = this.availableRolesForExecution[0]
+                        this.setNewSessionRole()
+                    }
+                })
+            }
         },
         loadParameters() {
             this.parameters.isReadyForExecution = this.filtersData?.isReadyForExecution
