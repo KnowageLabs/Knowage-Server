@@ -7,7 +7,7 @@
             </template>
 
             <template #end>
-                <div class="p-d-flex p-jc-around" v-if="user?.functionalities?.includes('DocumentAdministration') || user?.isSuperAdmin">
+                <div class="p-d-flex p-jc-around">
                     <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="canEditCockpit && documentMode === 'VIEW'" v-tooltip.left="$t('documentExecution.main.editCockpit')" @click="editCockpitDocumentConfirm"></Button>
                     <Button icon="fa fa-eye" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="canEditCockpit && documentMode === 'EDIT'" v-tooltip.left="$t('documentExecution.main.viewCockpit')" @click="editCockpitDocumentConfirm"></Button>
                     <Button icon="pi pi-book" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.onlineHelp')" @click="openHelp"></Button>
@@ -867,14 +867,15 @@ export default defineComponent({
             if (index !== -1) this.breadcrumbs[index].hiddenFormData = this.hiddenFormData
         },
         async sendHiddenFormData() {
-            await this.$http.post(this.hiddenFormUrl, this.hiddenFormData, {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
-                }
-            })
-            .then(() => {})
-            .catch(() => {})
+            await this.$http
+                .post(this.hiddenFormUrl, this.hiddenFormData, {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
+                    }
+                })
+                .then(() => {})
+                .catch(() => {})
         },
         async onExecute() {
             this.loading = true
