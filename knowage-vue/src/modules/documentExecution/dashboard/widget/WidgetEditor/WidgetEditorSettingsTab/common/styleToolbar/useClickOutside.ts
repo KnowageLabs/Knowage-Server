@@ -5,7 +5,7 @@ export function useClickOutside(el_target_ref, callback_fn) {
 
     let listener = (e) => {
         if (e.target == el_target_ref.value || e.composedPath().filter((el) => {
-            return el.className?.includes('click-outside')
+            return el?.className?.includes('click-outside')
         }).length > 0) {
             return
         }
