@@ -7,6 +7,7 @@ import deepcopy from 'deepcopy'
 import cryptoRandomString from 'crypto-random-string'
 import { formatHTMLWidget } from './htmlWidget/HTMLWidgetCompatibilityHelper'
 import { formatTextWidget } from './textWidget/TextWidgetCompatibilityHelper'
+import moment from 'moment'
 
 const datasetIdLabelMap = {}
 
@@ -93,17 +94,77 @@ const getFormattedDatasetDrivers = (dataset: any) => {
 }
 
 const getFormattedDatasetDriver = (driver: any) => {
-    console.log(">>>>>>> DRIVER: ", driver)
-    const formattedDriver = { urlName: driver.urlName, type: driver.type, label: driver.label, multivalue: driver.multivalue, parameterValue: getFormattedDriverValue(driver) } as IDashboardDatasetDriver
+    //  console.log(">>>>>>> DRIVER: ", driver)
+    const formattedDriver = { urlName: driver.urlName, type: driver.type, label: driver.label, multivalue: driver.multivalue } as IDashboardDatasetDriver
+    getFormattedDriverProperties(driver, formattedDriver)
+    // console.log(">>>>>>>>> FORMATTED DRIVER: ", formattedDriver)
     return formattedDriver
 }
 
-const getFormattedDriverValue = (driver: any) => {
+const getFormattedDriverProperties = (driver: any, formattedDriver: IDashboardDatasetDriver) => {
+    console.log(">>>>>>> DRIVER: ", driver)
     console.log(">>>>>>> DRIVER VALUE: ", driver.parameterValue)
     console.log(">>>>>>> DRIVER DESCRIPTION: ", driver.parameterDescription)
-    const formattedDriverValue = [] as { value: string, description: string }[]
-    return formattedDriverValue
+    if (driver.typeCode === 'MAN_IN' && (driver.type === 'NUM' || driver.type === 'STRING')) {
+        driver.type === 'NUM' ? getFormattedManualNumberDriver(driver, formattedDriver) : getFormattedManualStringDriver(driver, formattedDriver)
+    } else if (driver.type === 'DATE') {
+        getFormattedDateDriver(driver, formattedDriver)
+    } else if (driver.selectionType === 'LIST') {
+        getFormattedListDriver(driver, formattedDriver)
+    }
+    else if (driver.selectionType === 'COMBOBOX') {
+        getFormattedDropdownDriver(driver, formattedDriver)
+    } else if (driver.selectionType === 'LOOKUP') {
+        getFormattedPopupDriver(driver, formattedDriver)
+    }
+
+    // TODO - Tree
 }
+
+
+const getFormattedManualStringDriver = (driver: any, formattedDriver: IDashboardDatasetDriver) => {
+    formattedDriver.parameterValue = [{ value: driver.parameterValue ?? '', description: driver.parameterDescription && Array.isArray(driver.parameterDescription) ? driver.parameterDescription[0] : '' }]
+}
+
+
+const getFormattedManualNumberDriver = (driver: any, formattedDriver: IDashboardDatasetDriver) => {
+    formattedDriver.parameterValue = [{ value: driver.parameterValue ?? '', description: driver.parameterDescription && Array.isArray(driver.parameterDescription) ? driver.parameterDescription[0] : '' }]
+}
+
+const getFormattedDateDriver = (driver: any, formattedDriver: IDashboardDatasetDriver) => {
+    formattedDriver.parameterValue = [{ value: moment(driver.parameterValue[0].parameterDescription?.split('#')[0]).toDate() as any, description: driver.parameterDescription && Array.isArray(driver.parameterDescription) ? driver.parameterDescription[0] : '' }]
+}
+
+const getFormattedListDriver = (driver: any, formattedDriver: IDashboardDatasetDriver) => {
+    formattedDriver.options = driver.defaultValues ? driver.defaultValues.map((option: any) => { return { value: option.value, description: option.description } }) : []
+    formattedDriver.parameterValue = [{ value: driver.parameterValue ?? '', description: driver.parameterDescription && Array.isArray(driver.parameterDescription) ? driver.parameterDescription[0] : '' }]
+}
+
+const getFormattedDropdownDriver = (driver: any, formattedDriver: IDashboardDatasetDriver) => {
+    formattedDriver.options = driver.defaultValues ? driver.defaultValues.map((option: any) => { return { value: option.value, description: option.description } }) : []
+    if (driver.multivalue) {
+        formattedDriver.parameterValue = []
+        driver.parameterValue?.forEach((value: string) => {
+            const option = formattedDriver.options?.find((option: { value: string, description: string }) => option.value === value)
+            if (option) formattedDriver.parameterValue.push({ value: value, description: option.description })
+        })
+    } else {
+        formattedDriver.parameterValue = [{ value: driver.parameterValue ?? '', description: driver.parameterDescription && Array.isArray(driver.parameterDescription) ? driver.parameterDescription[0] : '' }]
+    }
+}
+
+const getFormattedPopupDriver = (driver: any, formattedDriver: IDashboardDatasetDriver) => {
+    if (driver.multivalue) {
+        formattedDriver.parameterValue = []
+        driver.parameterValue?.forEach((value: string) => {
+            formattedDriver.parameterValue.push({ value: value, description: driver.parameterDescription[value] })
+        })
+    } else {
+        formattedDriver.parameterValue = [{ value: driver.parameterValue ?? '', description: driver.parameterDescription && Array.isArray(driver.parameterDescription) ? driver.parameterDescription[0] : '' }]
+    }
+}
+
+
 
 const getFormattedDatasetParameters = (dataset: any) => {
     const parameters = [] as IDatasetParameter[]

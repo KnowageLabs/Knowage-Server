@@ -432,7 +432,8 @@ export interface IDashboardDatasetDriver {
     type: string,
     defaultValue: { value: string, description: string } | null,
     label: string,
-    multivalue: boolean
+    multivalue: boolean,
+    options?: { value: string, description: string }[]
 }
 
 export interface IWidgetPickerType {
@@ -634,7 +635,7 @@ export interface IDashboardDriver {
     type: string
     multivalue: boolean
     value: string
-    urlName: string
+    urlName: string,
 }
 
 export interface IGalleryItem {
