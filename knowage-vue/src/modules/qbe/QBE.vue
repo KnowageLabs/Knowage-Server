@@ -316,7 +316,7 @@ export default defineComponent({
             id = this.dataset.id
             label = this.dataset.label
         }
-        getCorrectRolesForExecution('DATAMART', id, label).then((response: any) => {
+        getCorrectRolesForExecution('DATAMART', id, label).then(async (response: any) => {
             let correctRolesForExecution = response
 
             if (!this.userRole) {
@@ -339,7 +339,7 @@ export default defineComponent({
             }
             if (!invalidRole) {
                 if (this.userRole) {
-                    this.loadPage()
+                    await this.loadPage()
                 } else {
                     this.parameterSidebarVisible = true
                 }
