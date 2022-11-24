@@ -131,7 +131,7 @@ import { getCorrectRolesForExecution } from '../../../helpers/commons/roleHelper
 
 // @ts-ignore
 // eslint-disable-next-line
-window.execExternalCrossNavigation = function (outputParameters, otherOutputParameters, crossNavigationLabel) {
+window.execExternalCrossNavigation = function(outputParameters, otherOutputParameters, crossNavigationLabel) {
     postMessage(
         {
             type: 'crossNavigation',
@@ -419,9 +419,9 @@ export default defineComponent({
         export(type: string) {
             if (this.document.typeCode === 'OLAP') {
                 this.exportOlap(type)
-            } else if(this.document.typeCode === 'REPORT'){
-                window.open(this.urlData.url+"&outputType="+type) , 'name', 'resizable=1,height=750,width=1000');
-            } else{
+            } else if (this.document.typeCode === 'REPORT') {
+                window.open(this.urlData?.url + '&outputType=' + type, 'name', 'resizable=1,height=750,width=1000')
+            } else {
                 const tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
                 let tempFrame = window.frames[tempIndex]
                 while (tempFrame && tempFrame.name !== 'documentFrame' + tempIndex) {
