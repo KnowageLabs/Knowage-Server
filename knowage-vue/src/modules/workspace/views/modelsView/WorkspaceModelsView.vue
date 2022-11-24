@@ -200,7 +200,9 @@ export default defineComponent({
                         this.qbeVisible = true
                     }
                 })
-                .catch(() => {})
+                .catch(() => {
+                    this.qbeVisible = false
+                })
         },
         createNewFederation() {
             this.$router.push('models/federation-definition/new-federation')

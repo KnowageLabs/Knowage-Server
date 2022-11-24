@@ -159,6 +159,7 @@ import MultiSelect from 'primevue/multiselect'
 import moment from 'moment'
 import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
 import { mapActions, mapGetters, mapState } from 'vuex'
+import { getCorrectRolesForExecution } from '@/helpers/commons/roleHelper'
 
 export default defineComponent({
     components: {
@@ -312,7 +313,7 @@ export default defineComponent({
                 })
             }
 
-            this.client.onStompError = function (frame) {
+            this.client.onStompError = function(frame) {
                 // Will be invoked in case of error encountered at Broker
                 // Bad login/passcode typically will cause an error
                 // Complaint brokers will set `message` header with a brief message. Body may contain details.
@@ -337,7 +338,7 @@ export default defineComponent({
                 data: this.selectedDataset,
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Disable-Errors': 'true' },
 
-                transformRequest: function (obj) {
+                transformRequest: function(obj) {
                     var str = [] as any
                     for (var p in obj) str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
                     return str.join('&')
@@ -542,9 +543,13 @@ export default defineComponent({
             this.showDatasetDialog = true
         },
         async previewDataset(dataset: any) {
-            await this.loadDataset(dataset.label)
-            if (this.selectedDataset) this.selectedDataset.drivers = dataset.drivers
-            this.previewDialogVisible = true
+            let typeCode = dataset.dsTypeCd === 'Qbe' ? 'DATAMART' : 'DATASET'
+
+            getCorrectRolesForExecution(typeCode, dataset.id, dataset.label).then(async () => {
+                await this.loadDataset(dataset.label)
+                if (this.selectedDataset) this.selectedDataset.drivers = dataset.drivers
+                this.previewDialogVisible = true
+            })
         },
         editDataset() {
             if (this.selectedDataset.dsTypeCd == 'File') this.showDatasetDialog = true
