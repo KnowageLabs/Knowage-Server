@@ -25,9 +25,8 @@ export async function getCorrectRolesForExecution(typeCode, id, label) {
                         msg = i18n.global.t('workspace.myData.userRoleError')
                         break
                 }
-                store.commit('setError', {
+                store.setError({
                     title: i18n.global.t('common.error.generic'),
-                    msg: i18n.global.t('documentExecution.main.userRoleError')
                     msg: msg
                 })
                 reject()
