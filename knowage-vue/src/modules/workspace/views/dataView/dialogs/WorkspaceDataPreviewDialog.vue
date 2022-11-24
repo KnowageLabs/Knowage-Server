@@ -140,6 +140,19 @@ export default defineComponent({
             if (this.filtersData.filterStatus?.length > 0) {
                 postData.DRIVERS = this.formatDriversForPreviewData()
             }
+            if (postData.dsTypeCd ==='Prepared') {
+                await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/${this.dataset.label}/preview`, postData, { headers: { 'X-Disable-Errors': 'true' } })
+                .then((response: AxiosResponse<any>) => {
+                    this.setPreviewColumns(response.data)
+                    this.rows = response.data.rows
+                    this.pagination.size = response.data.results
+                })
+                .catch((error) => {
+                    this.errorMessage = error.message
+                    this.errorMessageVisible = true
+                })
+            }else {
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/preview`, postData, { headers: { 'X-Disable-Errors': 'true' } })
                 .then((response: AxiosResponse<any>) => {
@@ -151,6 +164,7 @@ export default defineComponent({
                     this.errorMessage = error.message
                     this.errorMessageVisible = true
                 })
+            }
             this.loading = false
         },
         async loadPreviewData() {

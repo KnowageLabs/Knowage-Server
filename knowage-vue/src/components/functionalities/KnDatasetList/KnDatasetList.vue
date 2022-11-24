@@ -34,9 +34,7 @@
                 <template #body="slotProps">
                     <span v-if="col.field !== 'icon'" v-tooltip.top="slotProps.data[col.field]"> {{ slotProps.data[col.field] }}</span>
                     <span v-else>
-                        <Button icon="far fa-circle-check" v-if="isAvroLoaded(slotProps.data.id)" class="p-button-link" v-tooltip.left="$t('workspace.advancedData.avroReady')" />
-                        <Button icon="fa-solid fa-spinner" v-else-if="isAvroLoading(slotProps.data.id)" class="p-button-link" v-tooltip.left="$t('workspace.advancedData.avroLoading')" />
-                        <div v-else style="height: 1.57rem"></div>
+                        <div style="height: 1.57rem"></div>
                     </span>
                 </template>
             </Column>
@@ -55,7 +53,6 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dialog from 'primevue/dialog'
 import KnDatasetListDescriptor from './KnDatasetListDescriptor.json'
-import { mapGetters } from 'vuex'
 
 export default defineComponent({
     name: 'datasets-catalog-datatable',
@@ -79,9 +76,6 @@ export default defineComponent({
     updated() {
         if (this.items) this.datasets = this.items
         this.filteredDatasets = [...this.datasets]
-    },
-    computed: {
-        ...mapGetters(['isAvroLoaded', 'isAvroLoading'])
     },
     methods: {
         apply(): void {

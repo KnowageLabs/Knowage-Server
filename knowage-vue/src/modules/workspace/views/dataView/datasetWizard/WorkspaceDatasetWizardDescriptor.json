@@ -161,6 +161,12 @@
                         "validator": {
                             "type": "persist-field-required"
                         }
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "alphanumericNoSpaces"
+                        }
                     }
                 ]
             }

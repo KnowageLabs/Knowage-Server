@@ -3,7 +3,7 @@
   <!-- <url>https://www.knowage-suite.com/zanata/</url> -->
   <url>http://161.27.213.102:10080/zanata/</url>
   <project>Knowage</project>
-  <project-version>master</project-version>
+  <project-version>8.1</project-version>
   <project-type>utf8properties</project-type>
   <src-dir>.</src-dir>
   <trans-dir>.</trans-dir>

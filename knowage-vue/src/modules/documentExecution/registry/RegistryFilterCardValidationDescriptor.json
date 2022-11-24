@@ -1,0 +1,17 @@
+{
+    "validations": {
+        "configuration": [
+            {
+                "fieldName": "filterValue",
+                "validators": [
+                    {
+                        "key": "noQuestionMark",
+                        "validator": {
+                            "type": "noQuestionMark"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

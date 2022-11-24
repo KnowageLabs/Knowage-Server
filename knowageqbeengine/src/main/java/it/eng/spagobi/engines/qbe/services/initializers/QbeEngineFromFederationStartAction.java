@@ -41,6 +41,10 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
+/**
+ * @deprecated Replaced by {@link QbeEngineFromFederationStartResource}
+ */
+@Deprecated
 public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 
 	// INPUT PARAMETERS

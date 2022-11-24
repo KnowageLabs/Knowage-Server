@@ -309,7 +309,7 @@ export default defineComponent({
     min-width: 500px;
     background-color: var(--kn-color-primary);
     color: white;
-    border-bottom-color: white;
+    border-bottom-color: var(--kn-color-primary);
 }
 
 #document-search::placeholder {

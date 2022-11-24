@@ -53,7 +53,7 @@
             </template>
             <template #content>
                 <KnHint v-if="showHint" :title="'documentExecution.dossier.title'" :hint="'documentExecution.dossier.hint'" data-test="hint"></KnHint>
-                <DataTable v-else :value="dossierActivities" v-model:filters="filters" :scrollable="true" scrollHeight="40vh" :rows="20" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" data-test="activities-table">
+                <DataTable v-else :value="dossierActivities" v-model:filters="filters" :scrollable="true" scrollHeight="40vh" :rows="20" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" data-test="activities-table" sortField="creationDate" :sortOrder="-1">
                     <template #header>
                         <div class="table-header">
                             <span class="p-input-icon-left">
@@ -261,9 +261,12 @@ export default defineComponent({
                         if (this.jsonTemplate.PPT_TEMPLATE != null) {
                             url += '&type=PPT'
                             url += '&templateName=' + this.jsonTemplate.PPT_TEMPLATE.name
-                        } else {
+                        } else if (this.jsonTemplate.DOC_TEMPLATE != null) {
                             url += '&type=DOC'
                             url += '&templateName=' + this.jsonTemplate.DOC_TEMPLATE.name
+                        } else {
+                            url += '&type=PPTV2'
+                            url += '&templateName=' + this.jsonTemplate.PPT_TEMPLATE_V2.name
                         }
                         link = process.env.VUE_APP_RESTFUL_SERVICES_PATH + url
                         window.open(link)
@@ -277,13 +280,18 @@ export default defineComponent({
                 } else if (selectedActivity.hasDocBinContent) {
                     link = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedActivity.id}/doc?activityName=${selectedActivity.activity}`
                     window.open(link)
+                } else if (selectedActivity.hasPptV2BinContent) {
+                    link = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedActivity.id}/pptv2?activityName=${selectedActivity.activity}`
+                    window.open(link)
                 } else {
                     link = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/random-key/${selectedActivity.progressId}`
                     await this.$http.get(link, { headers: { Accept: 'application/json, text/plain, */*' } }).then((response: AxiosResponse<any>) => {
                         if (this.jsonTemplate.PPT_TEMPLATE != null) {
                             this.storePPT(selectedActivity.id, response.data, selectedActivity.activity)
-                        } else {
+                        } else if (this.jsonTemplate.DOC_TEMPLATE != null) {
                             this.storeDOC(selectedActivity.id, response.data, selectedActivity.activity)
+                        } else {
+                            this.storePPTV2(selectedActivity.id, response.data, selectedActivity.activity)
                         }
                         response.data.errors ? this.$store.commit('setError', { title: this.$t('common.error.generic'), msg: response.data.errors[0].message }) : ''
                     })
@@ -296,14 +304,25 @@ export default defineComponent({
             }
         },
         storePPT(id, randomKey, activityName) {
-            var link = process.env.VUE_APP_HOST_URL + `/knowagedossierengine/api/start/generatePPT?activityId=${id}&randomKey=${randomKey}&templateName=${this.jsonTemplate.PPT_TEMPLATE.name}&activityName=${activityName}`
+            let generateType = 'generatePPT'
+            let templateName = this.jsonTemplate.PPT_TEMPLATE.name
+            this.store(id, randomKey, activityName, generateType, templateName)
+        },
+        storePPTV2(id, randomKey, activityName) {
+            let generateType = 'generatePPTV2'
+            let templateName = this.jsonTemplate.PPT_TEMPLATE_V2.name
+            this.store(id, randomKey, activityName, generateType, templateName)
+        },
+        storeDOC(id, randomKey, activityName) {
+            let generateType = 'generateDOC'
+            let templateName = this.jsonTemplate.DOC_TEMPLATE.name
+            this.store(id, randomKey, activityName, generateType, templateName)
+        },
+        store(id, randomKey, activityName, generateType, templateName) {
+            var link = process.env.VUE_APP_HOST_URL + `/knowagedossierengine/api/start/` + generateType + `?activityId=${id}&randomKey=${randomKey}&templateName=${templateName}&activityName=${activityName}`
             window.open(link)
         },
 
-        storeDOC(id, randomKey, activityName) {
-            var link = process.env.VUE_APP_HOST_URL + `/knowagedossierengine/api/start/generateDOC?activityId=${id}&randomKey=${randomKey}&templateName=${this.jsonTemplate.DOC_TEMPLATE.name}&activityName=${activityName}`
-            window.open(link)
-        },
         showMenu(event) {
             this.createMenuItems()
             // eslint-disable-next-line
@@ -318,26 +337,31 @@ export default defineComponent({
             )
         },
         templateOptionEnabled(optionName: string) {
-            if (this.jsonTemplate && this.jsonTemplate?.PPT_TEMPLATE == null) {
-                return this.jsonTemplate?.DOC_TEMPLATE?.[optionName]
-            } else {
-                return this.jsonTemplate?.PPT_TEMPLATE?.[optionName]
+            var isEnabled = false
+
+            if (this.jsonTemplate && this.jsonTemplate?.PPT_TEMPLATE) {
+                isEnabled = this.jsonTemplate?.PPT_TEMPLATE?.[optionName]
+            } else if (this.jsonTemplate && this.jsonTemplate?.PPT_TEMPLATE_V2) {
+                isEnabled = this.jsonTemplate?.PPT_TEMPLATE_V2?.[optionName]
+            } else if (this.jsonTemplate && this.jsonTemplate?.DOC_TEMPLATE) {
+                isEnabled = this.jsonTemplate?.DOC_TEMPLATE?.[optionName]
             }
+            return isEnabled
         },
         async downloadTemplate() {
             if (this.jsonTemplate.PPT_TEMPLATE == null) {
-                var fileName = this.jsonTemplate?.DOC_TEMPLATE?.name
+                var fileName = this.jsonTemplate?.DOC_TEMPLATE?.name ? this.jsonTemplate?.DOC_TEMPLATE?.name : this.jsonTemplate?.PPT_TEMPLATE_V2?.name
                 await this.$http
                     .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'dossier/checkPathFile?templateName=' + fileName)
                     .then((response: AxiosResponse<any>) => {
                         if (response.data.STATUS == 'KO') {
-                            this.$store.commit('setInfo',{ title: this.$t('common.error.generic'), msg: this.$t('documentExecution.dossier.templateDownloadError') })
+                            this.$store.commit('setInfo', { title: this.$t('common.error.generic'), msg: this.$t('documentExecution.dossier.templateDownloadError') })
                         } else if (response.data.STATUS == 'OK') {
                             window.open(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'dossier/resourcePath?templateName=' + fileName)
                         }
                     })
                     .catch((error) => {
-                        if (error) this.$store.commit('setError',{ title: this.$t('common.error.generic'), msg: error.message })
+                        if (error) this.$store.commit('setError', { title: this.$t('common.error.generic'), msg: error.message })
                     })
             } else {
                 fileName = this.jsonTemplate.PPT_TEMPLATE.name
@@ -360,9 +384,9 @@ export default defineComponent({
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'dossier/importTemplateFile', formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
                 .then(async () => {
-                    this.$store.commit('setInfo',{ title: this.$t('common.toast.success'), msg: this.$t('common.toast.uploadSuccess') })
+                    this.$store.commit('setInfo', { title: this.$t('common.toast.success'), msg: this.$t('common.toast.uploadSuccess') })
                 })
-                .catch(() => this.$store.commit('setError',{ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.dossier.templateUploadError') }))
+                .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.dossier.templateUploadError') }))
                 .finally(() => (this.triggerUpload = false))
         }
     }

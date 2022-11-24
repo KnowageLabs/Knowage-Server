@@ -1,5 +1,5 @@
 <template>
-    <Breadcrumb :home="home" :model="items">
+    <Breadcrumb :home="home" :model="items" class="kn-breadcrumb-toolbar">
         <template #item="{ item }">
             <span class="breadcrumbs-item" @click="selectBreadcrumb">{{ item.crossBreadcrumb ? item.crossBreadcrumb : item.label }}</span>
         </template>

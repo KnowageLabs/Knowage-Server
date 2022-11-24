@@ -24,6 +24,7 @@ import it.eng.knowage.api.dossier.utils.DossierExecutionUtilities;
 import it.eng.knowage.engines.dossier.template.AbstractDossierTemplate;
 import it.eng.knowage.engines.dossier.template.parameter.Parameter;
 import it.eng.knowage.engines.dossier.template.report.Report;
+import it.eng.knowage.engines.dossier.utils.DossierDocumentType;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
@@ -79,75 +80,14 @@ public class DossierExecutionResource extends AbstractSpagoBIResource {
 							"Impossible to retrive from the configuration the property [" + SpagoBIConstants.JNDI_THREAD_MANAGER + "]");
 				}
 				WorkManager workManager = new WorkManager(config.getValueCheck());
-				Work documentExportWork = getExecutionWork(dossierTemplate, documentsToExecute, profile, progressThreadId, randomName, "PPT");
-				FooRemoteWorkItem remoteWorkItem = workManager.buildFooRemoteWorkItem(documentExportWork, null);
-
-				// Check if work was accepted
-				if (remoteWorkItem.getStatus() != WorkEvent.WORK_ACCEPTED) {
-					int statusWI = remoteWorkItem.getStatus();
-					throw new SpagoBIRuntimeException("Dossier Execution Work thread with id [" + progressThreadId + "] was rejected with status " + statusWI);
-				} else {
-					logger.debug("Running (Dossier) Work Item with id: " + progressThreadId);
-					WorkItem workItem = workManager.runWithReturnWI(documentExportWork, null);
-					int statusWI = workItem.getStatus();
+				String type = DossierDocumentType.PPT.name();
+				if (dossierTemplate.getDocTemplate() != null) {
+					type = DossierDocumentType.DOC.name();
+				} else if (dossierTemplate.getPptTemplateV2() != null) {
+					type = DossierDocumentType.PPTV2.name();
 				}
-				JSONObject jsonObject = new JSONObject();
-				jsonObject.put("progressThreadId", progressThreadId);
-				return progressThreadId.toString();
-			}
 
-		} catch (SpagoBIRuntimeException e) {
-			if (progressThreadId != null) {
-				deleteDBRowInCaseOfError(progressThreadId);
-			}
-			logger.error("Error while generating PDF documents for PPT template.", e);
-			throw new SpagoBIRuntimeException(e.getMessage(), e);
-
-		} catch (Throwable t) {
-			if (progressThreadId != null) {
-				deleteDBRowInCaseOfError(progressThreadId);
-			}
-			logger.error("Error while generating PDF documents for PPT template.", t.getCause());
-			throw new SpagoBIRuntimeException(t.getMessage(), t);
-		}
-		return null;
-
-	}
-
-	@POST
-	@Path("/executedocumentsForImagesReplacing")
-	@Produces(MediaType.TEXT_HTML + "; charset=UTF-8")
-	@Consumes(MediaType.APPLICATION_JSON)
-	public String executeDocumentsForImagesReplacing(AbstractDossierTemplate dossierTemplate) {
-		logger.debug("IN");
-		Integer progressThreadId = null;
-
-		try {
-
-			// TODO: check this and also authorization in business-map.xml
-			// get user Profile
-			UserProfile profile = getUserProfile();
-
-			// get reports information form Dossier Template
-
-			if (profile != null) {
-				List<BIObjectPlaceholdersPair> documentsToExecute = getBIObjectFromTemplate(dossierTemplate);
-
-				String randomName = getRandomName();
-				ProgressThread progressThread = new ProgressThread(profile.getUserId().toString(), documentsToExecute.size(), null, null, randomName,
-						ProgressThread.TYPE_DOSSIER_EXECUTION);
-				IProgressThreadDAO progressThreadDAO = DAOFactory.getProgressThreadDAO();
-				progressThreadId = progressThreadDAO.insertProgressThread(progressThread);
-
-				IConfigDAO configDAO = DAOFactory.getSbiConfigDAO();
-				Config config = configDAO.loadConfigParametersByLabel(SpagoBIConstants.JNDI_THREAD_MANAGER);
-				if (config == null) {
-					logger.debug("Impossible to retrive from the configuration the property [" + SpagoBIConstants.JNDI_THREAD_MANAGER + "]");
-					throw new SpagoBIRuntimeException(
-							"Impossible to retrive from the configuration the property [" + SpagoBIConstants.JNDI_THREAD_MANAGER + "]");
-				}
-				WorkManager workManager = new WorkManager(config.getValueCheck());
-				Work documentExportWork = getExecutionWork(dossierTemplate, documentsToExecute, profile, progressThreadId, randomName, "DOC");
+				Work documentExportWork = getExecutionWork(dossierTemplate, documentsToExecute, profile, progressThreadId, randomName, type);
 				FooRemoteWorkItem remoteWorkItem = workManager.buildFooRemoteWorkItem(documentExportWork, null);
 
 				// Check if work was accepted
@@ -191,6 +131,10 @@ public class DossierExecutionResource extends AbstractSpagoBIResource {
 			break;
 		case "PPT":
 			work = new DocumentExecutionWork(documentsToExecute, profile, progressThreadId, randomName);
+			break;
+		case "PPTV2":
+			work = new DocumentExecutionWorkForPPTV2(dossierTemplate, documentsToExecute, profile, progressThreadId, randomName);
+			;
 			break;
 		default:
 			break;

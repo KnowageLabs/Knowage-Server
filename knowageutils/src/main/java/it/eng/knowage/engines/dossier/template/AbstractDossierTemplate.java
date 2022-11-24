@@ -12,12 +12,14 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import it.eng.knowage.engines.dossier.template.doc.DocDossierTemplate;
 import it.eng.knowage.engines.dossier.template.parameter.Parameter;
 import it.eng.knowage.engines.dossier.template.ppt.PptDossierTemplate;
+import it.eng.knowage.engines.dossier.template.ppt.PptDossierTemplateV2;
 import it.eng.knowage.engines.dossier.template.report.Report;
 
 public class AbstractDossierTemplate {
 
 	private String name;
 	private PptDossierTemplate pptTemplate;
+	private PptDossierTemplateV2 pptTemplateV2;
 	private DocDossierTemplate docTemplate;
 	private String downloadable;
 	private String uploadable;
@@ -32,6 +34,15 @@ public class AbstractDossierTemplate {
 	@JsonSetter("PPT_TEMPLATE")
 	public void setPptTemplate(PptDossierTemplate pptTemplate) {
 		this.pptTemplate = pptTemplate;
+	}
+
+	@JsonSetter("PPT_TEMPLATE_V2")
+	public void setPptTemplateV2(PptDossierTemplateV2 pptTemplateV2) {
+		this.pptTemplateV2 = pptTemplateV2;
+	}
+
+	public PptDossierTemplateV2 getPptTemplateV2() {
+		return pptTemplateV2;
 	}
 
 	public DocDossierTemplate getDocTemplate() {

@@ -23,7 +23,7 @@
             <template #default="slotProps">
                 <Checkbox v-if="multivalue && slotProps.node.selectable" class="p-ml-2" v-model="selectedNodes" :value="slotProps.node.data" @change="onNodeChange($event)" />
                 <span>{{ slotProps.node.label }}</span
-                >e
+                >
             </template>
         </Tree>
 

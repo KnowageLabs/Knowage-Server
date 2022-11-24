@@ -43,8 +43,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class SQLStatement extends AbstractStatement {
 
-	protected IDataSource dataSource;
-
 	public static transient Logger logger = Logger.getLogger(SQLStatement.class);
 
 	protected SQLStatement(IDataSource dataSource) {
