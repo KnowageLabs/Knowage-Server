@@ -2849,6 +2849,7 @@
             "tablePrefix": "Table Prefix",
             "title": "My Data",
             "unshareDataset": "Unshare Dataset",
+            "userRoleError": "User does not have valid roles for the execution of the selected model",
             "wizardTitle": "Dataset Wizard",
             "xlsxExport": "Export Dataset to XLSX"
         },
@@ -2857,7 +2858,8 @@
             "editDataset": "Edit dataset",
             "openInQBE": "Open dataset in QBE",
             "showInfo": "Show dataset info",
-            "title": "My Models"
+            "title": "My Models",
+            "userRoleError": "User does not have valid roles for the execution of the selected model"
         },
         "myRepository": {
             "destinationFolder": "Destination folder",

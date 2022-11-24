@@ -342,14 +342,14 @@ export default defineComponent({
                     }
                 }
             }
-        })
-        if (!invalidRole) {
-            if (this.userRole) {
-                this.loadPage(true)
-            } else {
-                this.parameterSidebarVisible = true
+            if (!invalidRole) {
+                if (this.userRole) {
+                    this.loadPage(true)
+                } else {
+                    this.parameterSidebarVisible = true
+                }
             }
-        }
+        })
     },
     methods: {
         iframeEventsListener(event) {

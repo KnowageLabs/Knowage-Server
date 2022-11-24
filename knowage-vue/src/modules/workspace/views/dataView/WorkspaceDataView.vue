@@ -162,6 +162,7 @@ import { mapState, mapActions } from 'pinia'
 import mainStore from '../../../../App.store'
 import workspaceStore from '@/modules/workspace/Workspace.store.js'
 import { Client } from '@stomp/stompjs'
+import { getCorrectRolesForExecution } from '@/helpers/commons/roleHelper'
 
 export default defineComponent({
     components: {
@@ -547,9 +548,12 @@ export default defineComponent({
             this.showDatasetDialog = true
         },
         async previewDataset(dataset: any) {
-            await this.loadDataset(dataset.label)
-            if (this.selectedDataset) this.selectedDataset.drivers = dataset.drivers
-            this.previewDialogVisible = true
+            let typeCode = dataset.dsTypeCd === 'Qbe' ? 'DATAMART' : 'DATASET'
+            getCorrectRolesForExecution(typeCode, dataset.id, dataset.label).then(async () => {
+                await this.loadDataset(dataset.label)
+                if (this.selectedDataset) this.selectedDataset.drivers = dataset.drivers
+                this.previewDialogVisible = true
+            })
         },
         editDataset() {
             if (this.selectedDataset.dsTypeCd == 'File') this.showDatasetDialog = true
