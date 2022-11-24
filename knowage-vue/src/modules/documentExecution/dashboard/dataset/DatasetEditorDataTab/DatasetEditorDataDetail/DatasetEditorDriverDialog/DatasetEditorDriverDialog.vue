@@ -17,7 +17,7 @@
 
         <template #footer>
             <Button class="kn-button kn-button--secondary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
-            <Button class="kn-button kn-button--primary" @click="updateDriver"> {{ $t('common.add') }}</Button>
+            <Button class="kn-button kn-button--primary" @click="updateDriver"> {{ $t('common.save') }}</Button>
         </template>
     </Dialog>
 </template>

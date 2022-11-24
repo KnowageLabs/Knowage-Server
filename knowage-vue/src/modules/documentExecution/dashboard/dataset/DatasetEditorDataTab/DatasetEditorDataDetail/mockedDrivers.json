@@ -15,6 +15,7 @@
             }
         ],
         "type": "STRING",
+        "typeCode": "MAN_IN",
         "urlName": "manual_string"
     },
     {
@@ -28,6 +29,7 @@
             }
         ],
         "type": "STRING",
+        "typeCode": "MAN_IN",
         "urlName": "manual_string_multi"
     },
     {
@@ -46,6 +48,7 @@
             }
         ],
         "type": "NUM",
+        "typeCode": "MAN_IN",
         "urlName": "manual_numero"
     },
     {
@@ -64,6 +67,7 @@
             }
         ],
         "type": "NUM",
+        "typeCode": "MAN_IN",
         "urlName": "manual_numero_multi"
     },
     {
@@ -78,10 +82,11 @@
         "parameterValue": [
             {
                 "description": "20220408#yyyymmdd",
-                "value": "2022-11-24T10:06:42.865Z"
+                "value": "2022-11-24T10:31:41.920Z"
             }
         ],
         "type": "DATE",
+        "typeCode": "MAN_IN",
         "urlName": "manual_data"
     },
     {
@@ -96,10 +101,11 @@
         "parameterValue": [
             {
                 "description": "20220408#yyyymmdd",
-                "value": "2022-11-24T10:06:42.865Z"
+                "value": "2022-11-24T10:31:41.921Z"
             }
         ],
         "type": "DATE",
+        "typeCode": "MAN_IN",
         "urlName": "manual_data_multi"
     },
     {
@@ -136,6 +142,7 @@
             }
         ],
         "type": "STRING",
+        "typeCode": "QUERY",
         "urlName": "lista"
     },
     {
@@ -172,6 +179,7 @@
             }
         ],
         "type": "STRING",
+        "typeCode": "QUERY",
         "urlName": "lista_multi"
     },
     {
@@ -208,6 +216,7 @@
             }
         ],
         "type": "STRING",
+        "typeCode": "QUERY",
         "urlName": "combo"
     },
     {
@@ -252,6 +261,7 @@
             }
         ],
         "type": "STRING",
+        "typeCode": "QUERY",
         "urlName": "combo_multi"
     },
     {
@@ -270,6 +280,7 @@
             }
         ],
         "type": "STRING",
+        "typeCode": "QUERY",
         "urlName": "pop-up"
     },
     {
@@ -296,6 +307,7 @@
             }
         ],
         "type": "STRING",
+        "typeCode": "QUERY",
         "urlName": "pop-up_multi"
     }
 ]

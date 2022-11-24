@@ -34,14 +34,14 @@
                 </div>
                 <div class="p-field p-col-12 p-lg-8 p-d-flex">
                     <span class="p-float-label kn-flex">
-                        <Chips v-if="driver.multivalue" v-model="driver.parameterValue" :disabled="true">
+                        <InputText v-if="(!driver.multivalue || (driver.typeCode === 'MAN_IN' && (driver.type === 'NUM' || driver.type === 'STRING'))) && driver.parameterValue[0]" class="kn-material-input" v-model="driver.parameterValue[0].value" />
+                        <Chips v-else :disabled="true">
                             <template #chip="slotProps">
                                 <div>
                                     <span>{{ slotProps.value.value }}</span>
                                 </div>
                             </template>
                         </Chips>
-                        <InputText v-if="!driver.multivalue && driver.parameterValue[0]" class="kn-material-input" v-model="driver.parameterValue[0].value" />
                         <label class="kn-material-input-label"> {{ $t('common.value') }} </label>
                     </span>
                     <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain" @click.stop="openDriverDialog(driver)" />
@@ -118,6 +118,9 @@ export default defineComponent({
         },
         onUpdateDriver(driver: IDashboardDatasetDriver) {
             console.log('>>>>>>>> ON UPDATE DRIVER: ', driver)
+            this.driversDialogVisible = false
+            const index = this.drivers.findIndex((tempDriver: IDashboardDatasetDriver) => tempDriver.urlName === driver.urlName)
+            if (index !== -1) this.drivers[index] = driver
         }
     }
 })
