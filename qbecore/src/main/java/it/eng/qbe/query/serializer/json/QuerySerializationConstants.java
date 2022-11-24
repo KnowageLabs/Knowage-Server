@@ -101,6 +101,7 @@ public class QuerySerializationConstants {
 	public static final String DIALECT_EXTENDED_POSTGRES = "org.hibernate.dialect.ExtendedPostgresDialect";
 	public static final String DIALECT_SQLSERVER = "org.hibernate.dialect.SQLServerDialect";
 	public static final String DIALECT_INGRES = "org.hibernate.dialect.IngresDialect";
+	public static final String DIALECT_VERTICA = "org.hibernate.dialect.VerticaDialect";
 
 	// Date functions
 	public static final String FUNC_GG_BETWEEN_DATES = "GG-between-dates";
