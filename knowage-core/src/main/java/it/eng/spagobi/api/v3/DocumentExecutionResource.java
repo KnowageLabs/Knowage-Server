@@ -19,6 +19,8 @@ package it.eng.spagobi.api.v3;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.GET;
@@ -49,6 +51,7 @@ import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
@@ -105,7 +108,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		return jsonTemplate.getWrappedObject();
 	}
 
-		@GET
+	@GET
 	@Path("/correctRolesForExecution")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getCorrectRolesForExecution(@QueryParam("typeCode") String typeCode, @QueryParam("id") Integer id, @QueryParam("label") String label) {
