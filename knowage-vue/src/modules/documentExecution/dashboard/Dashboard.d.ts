@@ -434,7 +434,8 @@ export interface IDashboardDatasetDriver {
     label: string,
     multivalue: boolean,
     options?: { value: string, description: string }[],
-    typeCode: string
+    typeCode: string,
+    selectionType: string
 }
 
 export interface IWidgetPickerType {

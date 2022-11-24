@@ -14,6 +14,7 @@
                 "value": "Food"
             }
         ],
+        "selectionType": "",
         "type": "STRING",
         "typeCode": "MAN_IN",
         "urlName": "manual_string"
@@ -28,6 +29,7 @@
                 "value": "Bojan Test"
             }
         ],
+        "selectionType": "",
         "type": "STRING",
         "typeCode": "MAN_IN",
         "urlName": "manual_string_multi"
@@ -47,6 +49,7 @@
                 "value": 4
             }
         ],
+        "selectionType": "",
         "type": "NUM",
         "typeCode": "MAN_IN",
         "urlName": "manual_numero"
@@ -66,6 +69,7 @@
                 "value": ""
             }
         ],
+        "selectionType": "",
         "type": "NUM",
         "typeCode": "MAN_IN",
         "urlName": "manual_numero_multi"
@@ -82,9 +86,10 @@
         "parameterValue": [
             {
                 "description": "20220408#yyyymmdd",
-                "value": "2022-11-24T10:31:41.920Z"
+                "value": "2022-11-24T11:01:57.488Z"
             }
         ],
+        "selectionType": "",
         "type": "DATE",
         "typeCode": "MAN_IN",
         "urlName": "manual_data"
@@ -101,9 +106,10 @@
         "parameterValue": [
             {
                 "description": "20220408#yyyymmdd",
-                "value": "2022-11-24T10:31:41.921Z"
+                "value": "2022-11-24T11:01:57.489Z"
             }
         ],
+        "selectionType": "",
         "type": "DATE",
         "typeCode": "MAN_IN",
         "urlName": "manual_data_multi"
@@ -119,28 +125,29 @@
         "multivalue": false,
         "options": [
             {
-                "description": "0",
+                "description": "Car_desc",
                 "value": "Car"
             },
             {
-                "description": "0",
+                "description": "Drink_desc",
                 "value": "Drink"
             },
             {
-                "description": "0",
+                "description": "Food_desc",
                 "value": "Food"
             },
             {
-                "description": "0",
+                "description": "Non-Consumable_desc",
                 "value": "Non-Consumable"
             }
         ],
         "parameterValue": [
             {
-                "description": "0",
+                "description": "Food_desc",
                 "value": "Food"
             }
         ],
+        "selectionType": "LIST",
         "type": "STRING",
         "typeCode": "QUERY",
         "urlName": "lista"
@@ -156,28 +163,29 @@
         "multivalue": true,
         "options": [
             {
-                "description": "0",
+                "description": "Car_desc",
                 "value": "Car"
             },
             {
-                "description": "0",
+                "description": "Drink_desc",
                 "value": "Drink"
             },
             {
-                "description": "0",
+                "description": "Food_desc",
                 "value": "Food"
             },
             {
-                "description": "0",
+                "description": "Non-Consumable_desc",
                 "value": "Non-Consumable"
             }
         ],
         "parameterValue": [
             {
-                "description": "0",
+                "description": "Food_desc",
                 "value": "Food"
             }
         ],
+        "selectionType": "LIST",
         "type": "STRING",
         "typeCode": "QUERY",
         "urlName": "lista_multi"
@@ -185,7 +193,7 @@
     {
         "defaultValue": [
             {
-                "description": "0",
+                "description": "Non-Consumable_desc",
                 "value": "Non-Consumable"
             }
         ],
@@ -193,28 +201,29 @@
         "multivalue": false,
         "options": [
             {
-                "description": "0",
+                "description": "Car_desc",
                 "value": "Car"
             },
             {
-                "description": "0",
+                "description": "Drink_desc",
                 "value": "Drink"
             },
             {
-                "description": "0",
+                "description": "Food_desc",
                 "value": "Food"
             },
             {
-                "description": "0",
+                "description": "Non-Consumable_desc",
                 "value": "Non-Consumable"
             }
         ],
         "parameterValue": [
             {
-                "description": "0",
+                "description": "Non-Consumable_desc",
                 "value": "Non-Consumable"
             }
         ],
+        "selectionType": "COMBOBOX",
         "type": "STRING",
         "typeCode": "QUERY",
         "urlName": "combo"
@@ -222,7 +231,7 @@
     {
         "defaultValue": [
             {
-                "description": "0",
+                "description": "Non-Consumable_desc",
                 "value": "Non-Consumable"
             }
         ],
@@ -230,36 +239,37 @@
         "multivalue": true,
         "options": [
             {
-                "description": "0",
+                "description": "Car_desc",
                 "value": "Car"
             },
             {
-                "description": "0",
+                "description": "Drink_desc",
                 "value": "Drink"
             },
             {
-                "description": "0",
+                "description": "Food_desc",
                 "value": "Food"
             },
             {
-                "description": "0",
+                "description": "Non-Consumable_desc",
                 "value": "Non-Consumable"
             }
         ],
         "parameterValue": [
             {
-                "description": "0",
+                "description": "Drink_desc",
                 "value": "Drink"
             },
             {
-                "description": "0",
+                "description": "Food_desc",
                 "value": "Food"
             },
             {
-                "description": "0",
+                "description": "Non-Consumable_desc",
                 "value": "Non-Consumable"
             }
         ],
+        "selectionType": "COMBOBOX",
         "type": "STRING",
         "typeCode": "QUERY",
         "urlName": "combo_multi"
@@ -279,6 +289,7 @@
                 "value": "Car"
             }
         ],
+        "selectionType": "LOOKUP",
         "type": "STRING",
         "typeCode": "QUERY",
         "urlName": "pop-up"
@@ -306,6 +317,7 @@
                 "value": "Non-Consumable"
             }
         ],
+        "selectionType": "LOOKUP",
         "type": "STRING",
         "typeCode": "QUERY",
         "urlName": "pop-up_multi"

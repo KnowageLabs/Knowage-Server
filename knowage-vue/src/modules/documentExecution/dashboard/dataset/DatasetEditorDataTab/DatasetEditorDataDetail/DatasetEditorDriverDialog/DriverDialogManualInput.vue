@@ -17,7 +17,6 @@ export default defineComponent({
     name: 'driver-dialog-manual-input',
     components: {},
     props: { propDriver: { type: Object as PropType<IDashboardDatasetDriver | null>, required: true } },
-    emited: ['close', 'updateDriver'],
     computed: {},
     data() {
         return {
