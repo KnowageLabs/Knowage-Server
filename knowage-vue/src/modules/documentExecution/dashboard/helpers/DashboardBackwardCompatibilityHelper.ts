@@ -29,6 +29,7 @@ export const formatModel = async (model: any, document: any, datasets: IDataset[
         formattedModel.sheets.push(formattedSheet)
     }
 
+    console.log(">>>>>>>> LOADED FORMATTED MODEL: ", formattedModel)
     return formattedModel
 }
 
