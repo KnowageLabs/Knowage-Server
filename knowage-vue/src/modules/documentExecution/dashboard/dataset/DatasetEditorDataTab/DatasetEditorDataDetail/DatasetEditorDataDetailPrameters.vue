@@ -2,7 +2,7 @@
     <Accordion class="p-mb-3">
         <AccordionTab :header="$t('common.parameters')">
             <!-- PARAMETERS ---------------- -->
-            <div id="parameters" v-for="(parameter, index) of selectedDatasetProp.parameters" :key="index" class="p-fluid p-formgrid p-grid">
+            <div v-for="(parameter, index) of selectedDatasetProp.parameters" :key="index" class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-col-12 p-lg-4">
                     <span class="p-float-label">
                         <InputText id="label" class="kn-material-input" type="text" :disabled="true" v-model="parameter.name" />
@@ -25,11 +25,29 @@
             </div>
 
             <!-- DRIVERS ---------------- -->
-            <!-- <div id="drivers" v-for="(driver, index) of selectedDatasetProp.drivers" :key="index" class="p-field p-col-12">
-                <span v-if="driver.showOnPanel == 'true'">
-                    {{ driver.label }}
-                </span>
-            </div> -->
+            <div v-for="(driver, index) of drivers" :key="index" class="p-field p-formgrid p-grid">
+                <div class="p-field p-col-12 p-lg-4">
+                    <span class="p-float-label">
+                        <InputText id="label" class="kn-material-input" :disabled="true" v-model="driver.label" />
+                        <label for="label" class="kn-material-input-label"> {{ $t('common.driver') }} </label>
+                    </span>
+                </div>
+                <div class="p-field p-col-12 p-lg-8 p-d-flex">
+                    <span class="p-float-label kn-flex">
+                        <Chips v-if="driver.multivalue" v-model="driver.parameterValue" :disabled="true">
+                            <template #chip="slotProps">
+                                <div>
+                                    <span>{{ slotProps.value.value }}</span>
+                                </div>
+                            </template>
+                        </Chips>
+                        <InputText v-if="!driver.multivalue && driver.parameterValue[0]" class="kn-material-input" v-model="driver.parameterValue[0].value" />
+                        <label class="kn-material-input-label"> {{ $t('common.value') }} </label>
+                    </span>
+                    <Button icon="fa-solid fa-link" class="p-button-text p-button-rounded p-button-plain" @click.stop="openDriverDialog(driver)" />
+                    <Button icon="fa fa-eraser" class="p-button-text p-button-rounded p-button-plain" @click="resetDefaultValue(driver)" />
+                </div>
+            </div>
         </AccordionTab>
     </Accordion>
 
@@ -38,21 +56,27 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { IDashboardDatasetDriver } from '../../../Dashboard'
 import Card from 'primevue/card'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import Dropdown from 'primevue/dropdown'
 import Menu from 'primevue/contextmenu'
+import Chips from 'primevue/chips'
+
+import mockedDrivers from './mockedDrivers.json'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'dataset-editor-data-detail-info',
-    components: { Card, Accordion, AccordionTab, Dropdown, Menu },
+    components: { Card, Accordion, AccordionTab, Dropdown, Menu, Chips },
     props: { selectedDatasetProp: { required: true, type: Object }, dashboardDatasetsProp: { required: true, type: Array as any }, documentDriversProp: { type: Array as any } },
     emits: [],
     data() {
         return {
             parameterTypes: ['static', 'dynamic'],
-            menuButtons: [] as any
+            menuButtons: [] as any,
+            drivers: deepcopy(mockedDrivers) as IDashboardDatasetDriver[]
         }
     },
     setup() {},
@@ -73,6 +97,14 @@ export default defineComponent({
         },
         addDriverValueToParameter(driverUrl, paramName) {
             this.selectedDatasetProp.parameters.find((parameter) => parameter.name === paramName).value = '$P{' + driverUrl + '}'
+        },
+        openDriverDialog(driver: IDashboardDatasetDriver) {
+            console.log('>>>>>>>> OPEN DRIVER DIALOG WITH: ', driver)
+        },
+        resetDefaultValue(driver: IDashboardDatasetDriver) {
+            console.log('>>>>>>>> RESET DEFAULT VALUE: ', driver.defaultValue)
+            if (!driver.defaultValue) return
+            driver.parameterValue = driver.defaultValue
         }
     }
 })

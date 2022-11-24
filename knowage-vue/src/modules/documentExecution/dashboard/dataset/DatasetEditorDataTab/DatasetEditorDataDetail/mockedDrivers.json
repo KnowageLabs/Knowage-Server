@@ -1,0 +1,301 @@
+[
+    {
+        "defaultValue": [
+            {
+                "description": "0",
+                "value": "Food"
+            }
+        ],
+        "label": "manual_string",
+        "multivalue": false,
+        "parameterValue": [
+            {
+                "description": "0",
+                "value": "Food"
+            }
+        ],
+        "type": "STRING",
+        "urlName": "manual_string"
+    },
+    {
+        "defaultValue": [],
+        "label": "manual_string multi",
+        "multivalue": true,
+        "parameterValue": [
+            {
+                "description": "",
+                "value": "Bojan Test"
+            }
+        ],
+        "type": "STRING",
+        "urlName": "manual_string_multi"
+    },
+    {
+        "defaultValue": [
+            {
+                "description": "5",
+                "value": "5"
+            }
+        ],
+        "label": "manual_numero",
+        "multivalue": false,
+        "parameterValue": [
+            {
+                "description": "5",
+                "value": 4
+            }
+        ],
+        "type": "NUM",
+        "urlName": "manual_numero"
+    },
+    {
+        "defaultValue": [
+            {
+                "description": "5",
+                "value": "5"
+            }
+        ],
+        "label": "manual_numero_multi",
+        "multivalue": true,
+        "parameterValue": [
+            {
+                "description": "5",
+                "value": ""
+            }
+        ],
+        "type": "NUM",
+        "urlName": "manual_numero_multi"
+    },
+    {
+        "defaultValue": [
+            {
+                "description": "20220408#yyyymmdd",
+                "value": "20220108"
+            }
+        ],
+        "label": "manual_data",
+        "multivalue": false,
+        "parameterValue": [
+            {
+                "description": "20220408#yyyymmdd",
+                "value": "2022-11-24T10:06:42.865Z"
+            }
+        ],
+        "type": "DATE",
+        "urlName": "manual_data"
+    },
+    {
+        "defaultValue": [
+            {
+                "description": "20220408#yyyymmdd",
+                "value": "20220108"
+            }
+        ],
+        "label": "manual_data_multi",
+        "multivalue": true,
+        "parameterValue": [
+            {
+                "description": "20220408#yyyymmdd",
+                "value": "2022-11-24T10:06:42.865Z"
+            }
+        ],
+        "type": "DATE",
+        "urlName": "manual_data_multi"
+    },
+    {
+        "defaultValue": [
+            {
+                "description": "0",
+                "value": "Food"
+            }
+        ],
+        "label": "Lista",
+        "multivalue": false,
+        "options": [
+            {
+                "description": "0",
+                "value": "Car"
+            },
+            {
+                "description": "0",
+                "value": "Drink"
+            },
+            {
+                "description": "0",
+                "value": "Food"
+            },
+            {
+                "description": "0",
+                "value": "Non-Consumable"
+            }
+        ],
+        "parameterValue": [
+            {
+                "description": "0",
+                "value": "Food"
+            }
+        ],
+        "type": "STRING",
+        "urlName": "lista"
+    },
+    {
+        "defaultValue": [
+            {
+                "description": "0",
+                "value": "Food"
+            }
+        ],
+        "label": "Lista multi",
+        "multivalue": true,
+        "options": [
+            {
+                "description": "0",
+                "value": "Car"
+            },
+            {
+                "description": "0",
+                "value": "Drink"
+            },
+            {
+                "description": "0",
+                "value": "Food"
+            },
+            {
+                "description": "0",
+                "value": "Non-Consumable"
+            }
+        ],
+        "parameterValue": [
+            {
+                "description": "0",
+                "value": "Food"
+            }
+        ],
+        "type": "STRING",
+        "urlName": "lista_multi"
+    },
+    {
+        "defaultValue": [
+            {
+                "description": "0",
+                "value": "Non-Consumable"
+            }
+        ],
+        "label": "Combo",
+        "multivalue": false,
+        "options": [
+            {
+                "description": "0",
+                "value": "Car"
+            },
+            {
+                "description": "0",
+                "value": "Drink"
+            },
+            {
+                "description": "0",
+                "value": "Food"
+            },
+            {
+                "description": "0",
+                "value": "Non-Consumable"
+            }
+        ],
+        "parameterValue": [
+            {
+                "description": "0",
+                "value": "Non-Consumable"
+            }
+        ],
+        "type": "STRING",
+        "urlName": "combo"
+    },
+    {
+        "defaultValue": [
+            {
+                "description": "0",
+                "value": "Non-Consumable"
+            }
+        ],
+        "label": "Combo multi",
+        "multivalue": true,
+        "options": [
+            {
+                "description": "0",
+                "value": "Car"
+            },
+            {
+                "description": "0",
+                "value": "Drink"
+            },
+            {
+                "description": "0",
+                "value": "Food"
+            },
+            {
+                "description": "0",
+                "value": "Non-Consumable"
+            }
+        ],
+        "parameterValue": [
+            {
+                "description": "0",
+                "value": "Drink"
+            },
+            {
+                "description": "0",
+                "value": "Food"
+            },
+            {
+                "description": "0",
+                "value": "Non-Consumable"
+            }
+        ],
+        "type": "STRING",
+        "urlName": "combo_multi"
+    },
+    {
+        "defaultValue": [
+            {
+                "description": "0",
+                "value": "Car"
+            }
+        ],
+        "label": "pop-up",
+        "multivalue": false,
+        "parameterValue": [
+            {
+                "description": "0",
+                "value": "Car"
+            }
+        ],
+        "type": "STRING",
+        "urlName": "pop-up"
+    },
+    {
+        "defaultValue": [
+            {
+                "description": "0",
+                "value": "Car"
+            }
+        ],
+        "label": "pop-up multi",
+        "multivalue": true,
+        "parameterValue": [
+            {
+                "description": "0",
+                "value": "Drink"
+            },
+            {
+                "description": "0",
+                "value": "Food"
+            },
+            {
+                "description": "0",
+                "value": "Non-Consumable"
+            }
+        ],
+        "type": "STRING",
+        "urlName": "pop-up_multi"
+    }
+]

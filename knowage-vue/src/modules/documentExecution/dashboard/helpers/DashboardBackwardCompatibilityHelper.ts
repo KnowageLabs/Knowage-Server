@@ -104,8 +104,6 @@ const getFormattedDatasetDriver = (driver: any) => {
 
 const getFormattedDriverProperties = (driver: any, formattedDriver: IDashboardDatasetDriver) => {
     console.log(">>>>>>> DRIVER: ", driver)
-    console.log(">>>>>>> DRIVER VALUE: ", driver.parameterValue)
-    console.log(">>>>>>> DRIVER DESCRIPTION: ", driver.parameterDescription)
     if (driver.typeCode === 'MAN_IN' && (driver.type === 'NUM' || driver.type === 'STRING')) {
         driver.type === 'NUM' ? getFormattedManualNumberDriver(driver, formattedDriver) : getFormattedManualStringDriver(driver, formattedDriver)
     } else if (driver.type === 'DATE') {
@@ -118,8 +116,9 @@ const getFormattedDriverProperties = (driver: any, formattedDriver: IDashboardDa
     } else if (driver.selectionType === 'LOOKUP') {
         getFormattedPopupDriver(driver, formattedDriver)
     }
-
     // TODO - Tree
+
+    getFormattedDriverDefaultValue(driver, formattedDriver)
 }
 
 
@@ -164,6 +163,27 @@ const getFormattedPopupDriver = (driver: any, formattedDriver: IDashboardDataset
         formattedDriver.parameterValue = [{ value: driver.parameterValue ?? '', description: driver.parameterDescription && Array.isArray(driver.parameterDescription) ? driver.parameterDescription[0] : '' }]
     }
 }
+
+
+const getFormattedDriverDefaultValue = (driver: any, formattedDriver: IDashboardDatasetDriver) => {
+    const formattedDefaultValues = [] as { value: string, description: string }[]
+    driver.driverDefaultValue?.forEach((defaultValue: string) => {
+        console.log(">>>>>>>>>>> defaultValue: ", defaultValue)
+        const defaultValueString = defaultValue.substring(defaultValue.indexOf('[') + 1, defaultValue.lastIndexOf(']'))
+        console.log(">>>>>>>>> defaultValueString: ", defaultValueString)
+        if (defaultValueString) {
+            const value = defaultValueString.substring(defaultValueString.indexOf('=') + 1, defaultValueString.indexOf(','))
+            const description = defaultValueString.substring(defaultValueString.lastIndexOf('=') + 1)
+            console.log(">>>>>>>>> value: ", value)
+            console.log(">>>>>>>>> description: ", description)
+            formattedDefaultValues.push({ value: value?.trim() ?? '', description: description?.trim() ?? '' })
+
+        }
+    })
+    formattedDriver.defaultValue = formattedDefaultValues
+}
+
+
 
 
 
