@@ -96,7 +96,7 @@ const getFormattedDatasetDrivers = (dataset: any) => {
 
 const getFormattedDatasetDriver = (driver: any) => {
     //  console.log(">>>>>>> DRIVER: ", driver)
-    const formattedDriver = { urlName: driver.urlName, type: driver.type, label: driver.label, multivalue: driver.multivalue } as IDashboardDatasetDriver
+    const formattedDriver = { urlName: driver.urlName, type: driver.type, typeCode: driver.typeCode, label: driver.label, multivalue: driver.multivalue } as IDashboardDatasetDriver
     getFormattedDriverProperties(driver, formattedDriver)
     // console.log(">>>>>>>>> FORMATTED DRIVER: ", formattedDriver)
     return formattedDriver

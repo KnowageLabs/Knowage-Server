@@ -1,4 +1,7 @@
 {
+    "driverDialogStyle": {
+        "width": "60%"
+    },
     "indexFields": [
         {
             "label": "dashboard.datasetEditor.dynamic",

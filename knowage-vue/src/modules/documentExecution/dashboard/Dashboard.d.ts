@@ -433,7 +433,8 @@ export interface IDashboardDatasetDriver {
     defaultValue: { value: string, description: string }[] | null,
     label: string,
     multivalue: boolean,
-    options?: { value: string, description: string }[]
+    options?: { value: string, description: string }[],
+    typeCode: string
 }
 
 export interface IWidgetPickerType {

@@ -44,7 +44,7 @@
                         <InputText v-if="!driver.multivalue && driver.parameterValue[0]" class="kn-material-input" v-model="driver.parameterValue[0].value" />
                         <label class="kn-material-input-label"> {{ $t('common.value') }} </label>
                     </span>
-                    <Button icon="fa-solid fa-link" class="p-button-text p-button-rounded p-button-plain" @click.stop="openDriverDialog(driver)" />
+                    <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain" @click.stop="openDriverDialog(driver)" />
                     <Button icon="fa fa-eraser" class="p-button-text p-button-rounded p-button-plain" @click="resetDefaultValue(driver)" />
                 </div>
             </div>
@@ -52,6 +52,7 @@
     </Accordion>
 
     <Menu id="parameterPickerMenu" ref="parameterPickerMenu" :model="menuButtons" />
+    <DatasetEditorDriverDialog :visible="driversDialogVisible" :propDriver="selectedDriver" @updateDriver="onUpdateDriver" @close="onDriversDialogClose"></DatasetEditorDriverDialog>
 </template>
 
 <script lang="ts">
@@ -63,20 +64,23 @@ import AccordionTab from 'primevue/accordiontab'
 import Dropdown from 'primevue/dropdown'
 import Menu from 'primevue/contextmenu'
 import Chips from 'primevue/chips'
+import DatasetEditorDriverDialog from './DatasetEditorDriverDialog/DatasetEditorDriverDialog.vue'
 
 import mockedDrivers from './mockedDrivers.json'
 import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'dataset-editor-data-detail-info',
-    components: { Card, Accordion, AccordionTab, Dropdown, Menu, Chips },
+    components: { Card, Accordion, AccordionTab, Dropdown, Menu, Chips, DatasetEditorDriverDialog },
     props: { selectedDatasetProp: { required: true, type: Object }, dashboardDatasetsProp: { required: true, type: Array as any }, documentDriversProp: { type: Array as any } },
     emits: [],
     data() {
         return {
             parameterTypes: ['static', 'dynamic'],
             menuButtons: [] as any,
-            drivers: deepcopy(mockedDrivers) as IDashboardDatasetDriver[]
+            drivers: deepcopy(mockedDrivers) as IDashboardDatasetDriver[],
+            driversDialogVisible: false,
+            selectedDriver: null as IDashboardDatasetDriver | null
         }
     },
     setup() {},
@@ -100,11 +104,20 @@ export default defineComponent({
         },
         openDriverDialog(driver: IDashboardDatasetDriver) {
             console.log('>>>>>>>> OPEN DRIVER DIALOG WITH: ', driver)
+            this.selectedDriver = driver
+            this.driversDialogVisible = true
         },
         resetDefaultValue(driver: IDashboardDatasetDriver) {
             console.log('>>>>>>>> RESET DEFAULT VALUE: ', driver.defaultValue)
             if (!driver.defaultValue) return
             driver.parameterValue = driver.defaultValue
+        },
+        onDriversDialogClose() {
+            this.driversDialogVisible = false
+            this.selectedDriver = null
+        },
+        onUpdateDriver(driver: IDashboardDatasetDriver) {
+            console.log('>>>>>>>> ON UPDATE DRIVER: ', driver)
         }
     }
 })
