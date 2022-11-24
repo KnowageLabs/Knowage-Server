@@ -194,7 +194,7 @@ export default defineComponent({
             } else if (document.dsTypeCd) {
                 typeCode = 'DATASET'
             }
-            getCorrectRolesForExecution(typeCode, document.id, document.label).then(() => {
+            getCorrectRolesForExecution(document).then(() => {
                 this.$emit('execute', document)
             })
         },

@@ -548,8 +548,7 @@ export default defineComponent({
             this.showDatasetDialog = true
         },
         async previewDataset(dataset: any) {
-            let typeCode = dataset.dsTypeCd === 'Qbe' ? 'DATAMART' : 'DATASET'
-            getCorrectRolesForExecution(typeCode, dataset.id, dataset.label).then(async () => {
+            getCorrectRolesForExecution(null, dataset).then(async () => {
                 await this.loadDataset(dataset.label)
                 if (this.selectedDataset) this.selectedDataset.drivers = dataset.drivers
                 this.previewDialogVisible = true

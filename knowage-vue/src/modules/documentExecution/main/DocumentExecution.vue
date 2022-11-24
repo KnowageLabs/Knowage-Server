@@ -321,7 +321,7 @@ export default defineComponent({
         await this.loadDocument()
 
         let invalidRole = false
-        getCorrectRolesForExecution('DOCUMENT', this.document.id, this.document.label).then(async (response: any) => {
+        getCorrectRolesForExecution(this.document).then(async (response: any) => {
             let correctRolesForExecution = response
 
             if (!this.userRole) {

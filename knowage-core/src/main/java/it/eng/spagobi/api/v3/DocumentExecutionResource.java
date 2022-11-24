@@ -63,18 +63,10 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 @Path("/3.0/documentexecution")
 public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
-	/**
-	 *
-	 */
 	private static final String DOCUMENT = "DOCUMENT";
-	/**
-	 *
-	 */
 	private static final String DATASET = "DATASET";
-	/**
-	 *
-	 */
 	private static final String DATAMART = "DATAMART";
+	private static final String FEDERATED_DATASET = "FEDERATED_DATASET";
 
 	@GET
 	@Path("/{id}/templates")
@@ -113,7 +105,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		return jsonTemplate.getWrappedObject();
 	}
 
-	@GET
+		@GET
 	@Path("/correctRolesForExecution")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getCorrectRolesForExecution(@QueryParam("typeCode") String typeCode, @QueryParam("id") Integer id, @QueryParam("label") String label) {
@@ -140,8 +132,23 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					List<String> rolesByModel = getModelRoles(userProfile, model);
 					correctRoles.retainAll(rolesByModel);
 				}
-			} else if (DATASET.equals(typeCode)) {
-				IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(id);
+			} else if (DATASET.equals(typeCode) || FEDERATED_DATASET.equals(typeCode)) {
+
+				IDataSet dataset = null;
+				if (DATASET.equals(typeCode)) {
+					dataset = id != null ? DAOFactory.getDataSetDAO().loadDataSetById(id) : DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
+				} else {
+
+					FederationDefinition federationDefinition = DAOFactory.getFedetatedDatasetDAO().loadFederationDefinition(id);
+
+					Set<IDataSet> fedSourceDatasets = federationDefinition.getSourceDatasets();
+					Optional<IDataSet> fedSourceDataset = fedSourceDatasets.stream().findFirst();
+					if (!fedSourceDataset.isPresent()) {
+						throw new SpagoBIRuntimeException("Error while getting the dataset info");
+					}
+					dataset = fedSourceDataset.get();
+
+				}
 				Integer categoryId = dataset.getCategoryId();
 				if (categoryId != null) {
 					List<String> rolesByCategory = getRolesByCategory(categoryDao, categoryId);
@@ -209,7 +216,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			biobj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(label);
 		}
 		if (!ProductProfiler.canExecuteDocument(biobj)) {
-			throw new SpagoBIRuntimeException("This document cannot be executed within the current product!");
+			throw new SpagoBIRuntimeException("This document cannot be executed within the current product");
 		}
 	}
 
