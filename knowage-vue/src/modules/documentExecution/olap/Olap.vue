@@ -692,7 +692,7 @@ export default defineComponent({
 
             await this.$http
                 .post(
-                    import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documents/${this.documentName}/saveOlapTemplate`,
+                    import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documents/${this.documentLabel}/saveOlapTemplate`,
                     { olap: { ...this.olapDesigner.template.wrappedObject.olap, JSONTEMPLATE: { XML_TAG_TEXT_CONTENT: JSON.stringify(this.olapDesigner.template.wrappedObject) } } },
                     { headers: { Accept: 'application/json, text/plain, */*' } }
                 )
