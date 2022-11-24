@@ -282,7 +282,7 @@ export default defineComponent({
         this.userRole = this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
 
         let invalidRole = false
-        getCorrectRolesForExecution('DOCUMENT', this.document.id, this.document.label).then((response: any) => {
+        getCorrectRolesForExecution('DOCUMENT', this.document.id, this.document.label).then(async (response: any) => {
             let correctRolesForExecution = response
 
             if (!this.userRole) {
@@ -305,7 +305,7 @@ export default defineComponent({
             }
             if (!invalidRole) {
                 if (this.userRole) {
-                    this.loadPage(true)
+                    await this.loadPage(true)
                 } else {
                     this.parameterSidebarVisible = true
                 }
