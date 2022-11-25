@@ -1,7 +1,8 @@
 <template>
     <div v-if="model" class="dashboard-container" :id="`dashboard_${model.configuration.id}`">
         <Button icon="fas fa-square-check" class="p-m-3 p-button-rounded p-button-text p-button-plain" style="position: fixed; right: 0; z-index: 999; background-color: white; box-shadow: 0px 2px 3px #ccc" @click="selectionsDialogVisible = true" />
-        <ChartJSContainer style="height: 300px; width: 300px"></ChartJSContainer>
+        <!-- <ChartJSContainer style="height: 300px; width: 300px"></ChartJSContainer> -->
+        <HighchartsContainer style="height: 300px; width: 300px"></HighchartsContainer>
         <DashboardRenderer v-if="!loading" :model="model" :datasets="datasets" :dashboardId="dashboardId" :documentDrivers="drivers" :variables="model ? model.configuration.variables : []"></DashboardRenderer>
 
         <Transition name="editorEnter" appear>
@@ -65,10 +66,11 @@ import SelectionsListDialog from './widget/SelectorWidget/SelectionsListDialog.v
 import DashboardGeneralSettings from './generalSettings/DashboardGeneralSettings.vue'
 import deepcopy from 'deepcopy'
 import ChartJSContainer from './widget/ChartWidget/ChartJS/ChartJSContainer.vue'
+import HighchartsContainer from './widget/ChartWidget/Highcharts/HighchartsContainer.vue'
 
 export default defineComponent({
     name: 'dashboard-manager',
-    components: { ChartJSContainer, DashboardRenderer, WidgetPickerDialog, DatasetEditor, WidgetEditor, DashboardControllerSaveDialog, SelectionsListDialog, DashboardGeneralSettings },
+    components: { HighchartsContainer, ChartJSContainer, DashboardRenderer, WidgetPickerDialog, DatasetEditor, WidgetEditor, DashboardControllerSaveDialog, SelectionsListDialog, DashboardGeneralSettings },
     props: { sbiExecutionId: { type: String }, document: { type: Object }, reloadTrigger: { type: Boolean }, hiddenFormData: { type: Object }, filtersData: { type: Object as PropType<{ filterStatus: iParameter[]; isReadyForExecution: boolean }> }, newDashboardMode: { type: Boolean } },
     emits: ['newDashboardSaved'],
     data() {

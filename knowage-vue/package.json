@@ -32,6 +32,7 @@
         "deasync": "^0.1.21",
         "deepcopy": "^2.1.0",
         "fast-json-patch": "^3.1.0",
+        "highcharts": "^10.3.1",
         "js-base64": "3.6.1",
         "luxon": "^2.3.1",
         "mitt": "^3.0.0",
