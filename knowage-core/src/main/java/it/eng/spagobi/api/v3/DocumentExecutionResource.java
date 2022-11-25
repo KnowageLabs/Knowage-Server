@@ -35,8 +35,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 import it.eng.knowage.security.ProductProfiler;
 import it.eng.spago.error.EMFInternalError;
@@ -58,7 +57,6 @@ import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import net.minidev.json.JSONObject;
 
 /**
  *
@@ -73,6 +71,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	private static final String DATASET = "DATASET";
 	private static final String DATAMART = "DATAMART";
 	private static final String FEDERATED_DATASET = "FEDERATED_DATASET";
+	private static final String QBE_DATASET = "QBE_DATASET";
 
 	@GET
 	@Path("/{id}/templates")
@@ -128,12 +127,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
 
 			if (DATAMART.equals(typeCode)) {
-				IDataSet dataset = id != null ? DAOFactory.getDataSetDAO().loadDataSetById(id) : DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
-
-				String conf = dataset.getConfiguration();
-				String modelLabel = (String) new Gson().fromJson(conf, JSONObject.class).get("qbeDatamarts");
-
-				MetaModel model = DAOFactory.getMetaModelsDAO().loadMetaModelByName(modelLabel);
+				MetaModel model = DAOFactory.getMetaModelsDAO().loadMetaModelById(id);
 				List<String> rolesByCategory = getRolesByCategory(categoryDao, model.getCategory());
 				userRoles.retainAll(rolesByCategory);
 				correctRoles = userRoles;
@@ -168,7 +162,33 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				} else {
 					correctRoles = userRoles.stream().collect(Collectors.toList());
 				}
-			} else if (DOCUMENT.equals(typeCode)) {
+			}
+
+			else if (QBE_DATASET.equals(typeCode)) {
+				IDataSet dataset = id != null ? DAOFactory.getDataSetDAO().loadDataSetById(id) : DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
+
+				String conf = dataset.getConfiguration();
+				try {
+					String modelLabel = new JSONObject(conf).getString("qbeDatamarts");
+
+					MetaModel model = DAOFactory.getMetaModelsDAO().loadMetaModelByName(modelLabel);
+					List<String> rolesByCategory = getRolesByCategory(categoryDao, model.getCategory());
+					userRoles.retainAll(rolesByCategory);
+					correctRoles = userRoles;
+
+					List<BIMetaModelParameter> drivers = model.getDrivers();
+					if (correctRoles.size() > 0 && drivers.size() > 0) {
+						List<String> rolesByModel = getModelRoles(userProfile, model);
+						correctRoles.retainAll(rolesByModel);
+					}
+				} catch (JsonSyntaxException | JSONException e) {
+					logger.error("An error occurred while parsing dataset configuration", e);
+					throw new SpagoBIRuntimeException(e.getMessage(), e);
+				}
+
+			}
+
+			else if (DOCUMENT.equals(typeCode)) {
 				ObjectsAccessVerifier oav = new ObjectsAccessVerifier();
 				checkExecRightsByProducts(id, label);
 				if (id != null) {
@@ -230,5 +250,4 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRuntimeException("This document cannot be executed within the current product");
 		}
 	}
-
 }
