@@ -36,6 +36,8 @@ import org.json.JSONObject;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import com.google.gson.Gson;
+
 import it.eng.knowage.security.ProductProfiler;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -56,6 +58,7 @@ import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import net.minidev.json.JSONObject;
 
 /**
  *
@@ -125,7 +128,12 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
 
 			if (DATAMART.equals(typeCode)) {
-				MetaModel model = DAOFactory.getMetaModelsDAO().loadMetaModelById(id);
+				IDataSet dataset = id != null ? DAOFactory.getDataSetDAO().loadDataSetById(id) : DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
+
+				String conf = dataset.getConfiguration();
+				String modelLabel = (String) new Gson().fromJson(conf, JSONObject.class).get("qbeDatamarts");
+
+				MetaModel model = DAOFactory.getMetaModelsDAO().loadMetaModelByName(modelLabel);
 				List<String> rolesByCategory = getRolesByCategory(categoryDao, model.getCategory());
 				userRoles.retainAll(rolesByCategory);
 				correctRoles = userRoles;
