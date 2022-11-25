@@ -49,6 +49,7 @@ public class DocumentExecutionResource {
 	private static final String DATASET = "DATASET";
 	private static final String DATAMART = "DATAMART";
 	private static final String FEDERATED_DATASET = "FEDERATED_DATASET";
+	private static final String QBE_DATASET = "QBE_DATASET";
 
 	static protected Logger logger = Logger.getLogger(DocumentExecutionResource.class);
 
@@ -69,12 +70,7 @@ public class DocumentExecutionResource {
 			ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
 
 			if (DATAMART.equals(typeCode)) {
-				IDataSet dataset = id != null ? DAOFactory.getDataSetDAO().loadDataSetById(id) : DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
-
-				String conf = dataset.getConfiguration();
-				String modelLabel = (String) new Gson().fromJson(conf, JSONObject.class).get("qbeDatamarts");
-
-				MetaModel model = DAOFactory.getMetaModelsDAO().loadMetaModelByName(modelLabel);
+				MetaModel model = DAOFactory.getMetaModelsDAO().loadMetaModelById(id);
 				List<String> rolesByCategory = getRolesByCategory(categoryDao, model.getCategory());
 				userRoles.retainAll(rolesByCategory);
 				correctRoles = userRoles;
@@ -109,7 +105,28 @@ public class DocumentExecutionResource {
 				} else {
 					correctRoles = userRoles.stream().collect(Collectors.toList());
 				}
-			} else if (DOCUMENT.equals(typeCode)) {
+			}
+
+			else if (QBE_DATASET.equals(typeCode)) {
+				IDataSet dataset = id != null ? DAOFactory.getDataSetDAO().loadDataSetById(id) : DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
+
+				String conf = dataset.getConfiguration();
+				String modelLabel = (String) new Gson().fromJson(conf, JSONObject.class).get("qbeDatamarts");
+
+				MetaModel model = DAOFactory.getMetaModelsDAO().loadMetaModelByName(modelLabel);
+				List<String> rolesByCategory = getRolesByCategory(categoryDao, model.getCategory());
+				userRoles.retainAll(rolesByCategory);
+				correctRoles = userRoles;
+
+				List<BIMetaModelParameter> drivers = model.getDrivers();
+				if (correctRoles.size() > 0 && drivers.size() > 0) {
+					List<String> rolesByModel = getModelRoles(userProfile, model);
+					correctRoles.retainAll(rolesByModel);
+				}
+
+			}
+
+			else if (DOCUMENT.equals(typeCode)) {
 				ObjectsAccessVerifier oav = new ObjectsAccessVerifier();
 				checkExecRightsByProducts(id, label);
 				if (id != null) {
