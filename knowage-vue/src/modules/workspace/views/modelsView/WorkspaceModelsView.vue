@@ -191,7 +191,8 @@ export default defineComponent({
             this.searchWord = ''
         },
         openDatasetInQBE(dataset: any) {
-            getCorrectRolesForExecutionForType('DATAMART', dataset.id, dataset.label)
+            let id = dataset.federation_id ? dataset.federation_id : dataset.id
+            getCorrectRolesForExecutionForType('DATAMART', id, dataset.label)
                 .then(() => {
                     if (process.env.VUE_APP_USE_OLD_QBE_IFRAME == 'true') {
                         this.$emit('showQbeDialog', dataset)

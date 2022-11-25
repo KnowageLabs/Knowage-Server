@@ -14,8 +14,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 import it.eng.knowage.security.ProductProfiler;
 import it.eng.spago.error.EMFInternalError;
@@ -32,7 +34,6 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import net.minidev.json.JSONObject;
 
 /**
  * 
@@ -111,17 +112,22 @@ public class DocumentExecutionResource {
 				IDataSet dataset = id != null ? DAOFactory.getDataSetDAO().loadDataSetById(id) : DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
 
 				String conf = dataset.getConfiguration();
-				String modelLabel = (String) new Gson().fromJson(conf, JSONObject.class).get("qbeDatamarts");
+				try {
+					String modelLabel = new JSONObject(conf).getString("qbeDatamarts");
 
-				MetaModel model = DAOFactory.getMetaModelsDAO().loadMetaModelByName(modelLabel);
-				List<String> rolesByCategory = getRolesByCategory(categoryDao, model.getCategory());
-				userRoles.retainAll(rolesByCategory);
-				correctRoles = userRoles;
+					MetaModel model = DAOFactory.getMetaModelsDAO().loadMetaModelByName(modelLabel);
+					List<String> rolesByCategory = getRolesByCategory(categoryDao, model.getCategory());
+					userRoles.retainAll(rolesByCategory);
+					correctRoles = userRoles;
 
-				List<BIMetaModelParameter> drivers = model.getDrivers();
-				if (correctRoles.size() > 0 && drivers.size() > 0) {
-					List<String> rolesByModel = getModelRoles(userProfile, model);
-					correctRoles.retainAll(rolesByModel);
+					List<BIMetaModelParameter> drivers = model.getDrivers();
+					if (correctRoles.size() > 0 && drivers.size() > 0) {
+						List<String> rolesByModel = getModelRoles(userProfile, model);
+						correctRoles.retainAll(rolesByModel);
+					}
+				} catch (JsonSyntaxException | JSONException e) {
+					logger.error("An error occurred while parsing dataset configuration", e);
+					throw new SpagoBIRuntimeException(e.getMessage(), e);
 				}
 
 			}
