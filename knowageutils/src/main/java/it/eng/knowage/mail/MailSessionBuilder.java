@@ -39,6 +39,7 @@ import org.apache.log4j.Logger;
 
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.security.utils.EncryptionPBEWithMD5AndDESManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -54,9 +55,7 @@ public class MailSessionBuilder {
 	 * Define the supported security modes.
 	 */
 	private static enum SecurityMode {
-		NONE(25),
-		SSL(465),
-		STARTTLS(587);
+		NONE(25), SSL(465), STARTTLS(587);
 
 		private final int defaultPort;
 
@@ -227,16 +226,16 @@ public class MailSessionBuilder {
 
 		String smtpHostKey = String.format(SMTP_HOST_TEMPLATE, profileName);
 		String smtpPortKey = String.format(SMTP_PORT_TEMPLATE, profileName);
-		String fromKey     = String.format(FROM_TEMPLATE, profileName);
-		String userKey     = String.format(USER_TEMPLATE, profileName);
+		String fromKey = String.format(FROM_TEMPLATE, profileName);
+		String userKey = String.format(USER_TEMPLATE, profileName);
 		String passwordKey = String.format(PASSWORD_TEMPLATE, profileName);
 		String securityKey = String.format(SECURITY_TEMPLATE, profileName);
 
 		logger.debug("We got the following profile keys:");
 		LogMF.debug(logger, "\tsmtpHostKey = {0}", smtpHostKey);
 		LogMF.debug(logger, "\tsmtpPortKey = {0}", smtpPortKey);
-		LogMF.debug(logger, "\tfromKey     = {0}", fromKey    );
-		LogMF.debug(logger, "\tuserKey     = {0}", userKey    );
+		LogMF.debug(logger, "\tfromKey     = {0}", fromKey);
+		LogMF.debug(logger, "\tuserKey     = {0}", userKey);
 		LogMF.debug(logger, "\tpasswordKey = {0}", passwordKey);
 		LogMF.debug(logger, "\tsecurityKey = {0}", securityKey);
 
@@ -244,16 +243,16 @@ public class MailSessionBuilder {
 
 		smtpHostValue = config.getConfigValue(smtpHostKey);
 		smtpPortValue = config.getConfigValue(smtpPortKey);
-		fromValue     = config.getConfigValue(fromKey);
-		userValue     = config.getConfigValue(userKey);
-		passwordValue = config.getConfigValue(passwordKey);
+		fromValue = config.getConfigValue(fromKey);
+		userValue = config.getConfigValue(userKey);
+		passwordValue = EncryptionPBEWithMD5AndDESManager.decrypt(config.getConfigValue(passwordKey));
 		securityValue = config.getConfigValue(securityKey);
 
 		logger.debug("We got the following profile values:");
 		LogMF.debug(logger, "\tsmtpHostValue = {0}", smtpHostValue);
 		LogMF.debug(logger, "\tsmtpPortValue = {0}", smtpPortValue);
-		LogMF.debug(logger, "\tfromValue     = {0}", fromValue    );
-		LogMF.debug(logger, "\tuserValue     = {0}", userValue    );
+		LogMF.debug(logger, "\tfromValue     = {0}", fromValue);
+		LogMF.debug(logger, "\tuserValue     = {0}", userValue);
 		LogMF.debug(logger, "\tpasswordValue = {0}", passwordValue);
 		LogMF.debug(logger, "\tsecurityValue = {0}", securityValue);
 
@@ -289,9 +288,7 @@ public class MailSessionBuilder {
 			props.put(prefix + ".starttls.enable", "true");
 		}
 
-
 		props.put(prefix + ".host", smtpHostValue);
-
 
 		if (StringUtils.isEmpty(smtpPortValue)) {
 			int defaultPort = securityValueEnum.getDefaultPort();
@@ -301,13 +298,11 @@ public class MailSessionBuilder {
 		}
 		props.put(prefix + ".port", smtpPortValue);
 
-
 		Authenticator auth = null;
 		if (StringUtils.isNotEmpty(userValue)) {
 			props.put(prefix + ".user", userValue);
 			props.put(prefix + ".password", passwordValue);
 		}
-
 
 		if (StringUtils.isEmpty(fromValue)) {
 			fromValue = "spagobi.scheduler@eng.it";
@@ -315,16 +310,13 @@ public class MailSessionBuilder {
 		InternetAddress fromValueInternetAddress = new InternetAddress(fromValue);
 		props.put(prefix + ".from", fromValue);
 
-
 		if (timeout != null) {
 			props.put(prefix + ".timeout", timeout.toString());
 		}
 
-
 		if (connectionTimeout != null) {
 			props.put(prefix + ".connectiontimeout", connectionTimeout.toString());
 		}
-
 
 		// create autheticator object
 		if (StringUtils.isNotEmpty(userValue)) {
@@ -348,17 +340,16 @@ public class MailSessionBuilder {
 			session = Session.getInstance(props);
 		}
 
-
 		if (debug) {
 			session.setDebug(true);
 			session.setDebugOut(System.out);
 		}
 
-
 		LogMF.debug(logger, "Session created using properties {0}", props);
 		LogMF.info(logger, "End creating a new SessionFacade for profile name {0}", profileName);
 
-		return new SessionFacade(session, fromValueInternetAddress, securityValueEnum, smtpHostValue, Integer.parseInt(smtpPortValue), userValue, passwordValue);
+		return new SessionFacade(session, fromValueInternetAddress, securityValueEnum, smtpHostValue, Integer.parseInt(smtpPortValue), userValue,
+				passwordValue);
 	}
 
 	public MailSessionBuilder withTimeout(int timeout) {

@@ -72,6 +72,7 @@ import { AxiosResponse } from 'axios'
 import QBE from '@/modules/qbe/QBE.vue'
 import MultiSelect from 'primevue/multiselect'
 import mainStore from '../../../../App.store'
+import { getCorrectRolesForExecutionForType } from '@/helpers/commons/roleHelper'
 
 export default defineComponent({
     name: 'workspace-models-view',
@@ -195,12 +196,28 @@ export default defineComponent({
             this.searchWord = ''
         },
         openDatasetInQBE(dataset: any) {
-            if (import.meta.env.VITE_USE_OLD_QBE_IFRAME == 'true') {
-                this.$emit('showQbeDialog', dataset)
+            let id = null
+            let typeCode = ''
+            if (dataset.federation_id) {
+                typeCode = 'FEDERATED_DATASET'
+                id = dataset.federation_id
             } else {
-                this.selectedQbeDataset = dataset
-                this.qbeVisible = true
+                id = dataset.id
+                typeCode = 'DATAMART'
             }
+
+            getCorrectRolesForExecutionForType(typeCode, id, dataset.label)
+                .then(() => {
+                    if (import.meta.env.VITE_USE_OLD_QBE_IFRAME == 'true') {
+                        this.$emit('showQbeDialog', dataset)
+                    } else {
+                        this.selectedQbeDataset = dataset
+                        this.qbeVisible = true
+                    }
+                })
+                .catch(() => {
+                    this.qbeVisible = false
+                })
         },
         createNewFederation() {
             this.$router.push('models/federation-definition/new-federation')

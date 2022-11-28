@@ -1,6 +1,4 @@
 <template>
-    <Message v-if="showMetadataQueryInfoProp" severity="info" class="p-mx-2" :closable="true">{{ $t('managers.datasetManagement.showMetadataQueryInfo') }}</Message>
-
     <Card class="p-m-2">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
@@ -57,12 +55,12 @@ import Message from 'primevue/message'
 import Dropdown from 'primevue/dropdown'
 import Checkbox from 'primevue/checkbox'
 import mainStore from '../../../../../App.store'
+import { mapActions } from 'pinia'
 
 export default defineComponent({
     components: { Card, Column, DataTable, Message, Dropdown, Checkbox },
     props: {
-        selectedDataset: { type: Object as any },
-        showMetadataQueryInfoProp: { type: Boolean as any }
+        selectedDataset: { type: Object as any }
     },
     computed: {},
     emits: ['touched'],
@@ -74,10 +72,6 @@ export default defineComponent({
             dataset: {} as any,
             fieldsMetadata: [] as any
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.dataset = this.selectedDataset
@@ -91,6 +85,7 @@ export default defineComponent({
     },
 
     methods: {
+        ...mapActions(mainStore, ['setInfo', 'setError']),
         exctractFieldsMetadata(array) {
             var object = {}
 
@@ -131,7 +126,7 @@ export default defineComponent({
                 if (this.fieldsMetadata[i].fieldType == 'SPATIAL_ATTRIBUTE') {
                     numberOfSpatialAttribute++
                     if (numberOfSpatialAttribute > 1) {
-                        this.store.setError({ title: this.$t('common.error.saving'), msg: this.$t('managers.datasetManagement.duplicateSpatialAttribute') })
+                        this.setError({ title: this.$t('common.error.saving'), msg: this.$t('managers.datasetManagement.duplicateSpatialAttribute') })
                         return
                     }
                 }

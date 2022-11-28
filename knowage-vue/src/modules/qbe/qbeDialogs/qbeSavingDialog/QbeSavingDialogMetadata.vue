@@ -22,17 +22,17 @@
                         <Dropdown class="kn-material-input" :style="linkTabDescriptor.style.maxwidth" v-model="data.fieldType" :options="fieldMetadataTypes" optionLabel="value" optionValue="value" @change="warnForDuplicateSpatialFields('fieldType')" />
                     </template>
                 </Column>
-                <Column hidden="true" field="personal" :header="$t('managers.datasetManagement.personal')" :sortable="true">
+                <Column :hidden="true" field="personal" :header="$t('managers.datasetManagement.personal')" :sortable="true">
                     <template #body="{ data }">
                         <Checkbox id="personal" v-model="data.personal" :binary="true" @change="warnForDuplicateSpatialFields('personal')" />
                     </template>
                 </Column>
-                <Column hidden="true" field="decrypt" :header="$t('managers.datasetManagement.decrypt')" :sortable="true">
+                <Column :hidden="true" field="decrypt" :header="$t('managers.datasetManagement.decrypt')" :sortable="true">
                     <template #body="{ data }">
                         <Checkbox id="decrypt" v-model="data.decrypt" :binary="true" @change="warnForDuplicateSpatialFields('decrypt')" />
                     </template>
                 </Column>
-                <Column hidden="true" field="subjectId" :header="$t('managers.datasetManagement.subjectId')" :sortable="true">
+                <Column :hidden="true" field="subjectId" :header="$t('managers.datasetManagement.subjectId')" :sortable="true">
                     <template #body="{ data }">
                         <Checkbox id="subjectId" v-model="data.subjectId" :binary="true" @change="warnForDuplicateSpatialFields('subjectId')" />
                     </template>
@@ -51,6 +51,7 @@ import Dropdown from 'primevue/dropdown'
 import Checkbox from 'primevue/checkbox'
 import Card from 'primevue/card'
 import mainStore from '../../../../App.store'
+import { mapActions } from 'pinia'
 
 export default defineComponent({
     components: { Card, Column, DataTable, Dropdown, Checkbox },
@@ -64,10 +65,6 @@ export default defineComponent({
             fieldsMetadata: [] as any
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
     created() {
         this.fieldsMetadata = this.propMetadata
     },
@@ -79,15 +76,15 @@ export default defineComponent({
             deep: true
         }
     },
-
     methods: {
+        ...mapActions(mainStore, ['setInfo', 'setError']),
         warnForDuplicateSpatialFields() {
             var numberOfSpatialAttribute = 0
             for (let i = 0; i < this.fieldsMetadata.length; i++) {
                 if (this.fieldsMetadata[i].fieldType == 'SPATIAL_ATTRIBUTE') {
                     numberOfSpatialAttribute++
                     if (numberOfSpatialAttribute > 1) {
-                        this.store.setError({ title: this.$t('common.error.saving'), msg: this.$t('managers.datasetManagement.duplicateSpatialAttribute') })
+                        this.setError({ title: this.$t('common.error.saving'), msg: this.$t('managers.datasetManagement.duplicateSpatialAttribute') })
                         return
                     }
                 }

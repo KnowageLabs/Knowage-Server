@@ -67,4 +67,11 @@ public interface DataSourceService {
 	 * @return SpagoBiDataSource[]
 	 */
 	SpagoBiDataSource[] getAllDataSource(String token,String user);
+
+	/**
+	 * @param token String
+	 * @param user String
+	 * @return SpagoBiDataSource
+	 */
+	SpagoBiDataSource getDataSourceForCache(String token, String user);
 }

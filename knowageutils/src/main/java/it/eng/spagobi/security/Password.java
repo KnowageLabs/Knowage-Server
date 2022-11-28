@@ -23,8 +23,6 @@ import java.security.NoSuchAlgorithmException;
 
 import org.apache.log4j.Logger;
 
-import it.eng.spagobi.commons.SingletonConfig;
-
 /**
  * @author Franco vuoto (franco.vuoto@eng.it)
  * @author Alessandro Pegoraro (alessandro.pegoraro@eng.it)
@@ -135,18 +133,15 @@ public class Password {
 	 */
 	public static String encriptPassword(String password, boolean before72) throws Exception {
 		if (password != null) {
-			String enable = SingletonConfig.getInstance().getConfigValue("internal.security.encript.password");
-			if ("true".equalsIgnoreCase(enable)) {
-				Password hashPass = new Password(password);
-				try {
-					password = (hashPass.getEncValue(before72));
-				} catch (InvalidKeyException e) {
-					logger.error("not valid HASH", e);
-					throw new Exception("not valid HASH", e);
-				} catch (NoSuchAlgorithmException e) {
-					logger.error("Impossible to calcolate HASH", e);
-					throw new Exception("Impossible to calcolate HASH", e);
-				}
+			Password hashPass = new Password(password);
+			try {
+				password = (hashPass.getEncValue(before72));
+			} catch (InvalidKeyException e) {
+				logger.error("not valid HASH", e);
+				throw new Exception("not valid HASH", e);
+			} catch (NoSuchAlgorithmException e) {
+				logger.error("Impossible to calcolate HASH", e);
+				throw new Exception("Impossible to calcolate HASH", e);
 			}
 		}
 		return password;

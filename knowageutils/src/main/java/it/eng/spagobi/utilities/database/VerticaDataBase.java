@@ -18,11 +18,28 @@
 
 package it.eng.spagobi.utilities.database;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
-public class VerticaDataBase extends AbstractDataBase {
+public class VerticaDataBase extends AbstractDataBase implements MetaDataBase {
+
+	private static String CURRENT_SCHEMA_SQL_QUERY = "select CURRENT_SCHEMA()";
 
 	public VerticaDataBase(IDataSource dataSource) {
 		super(dataSource);
+	}
+
+	@Override
+	public String getSchema(Connection conn) throws SQLException {
+		ResultSet rs = conn.createStatement().executeQuery(CURRENT_SCHEMA_SQL_QUERY);
+		return rs.next() ? rs.getString(1) : null;
+	}
+
+	@Override
+	public String getCatalog(Connection conn) throws SQLException {
+		return conn.getCatalog();
 	}
 }

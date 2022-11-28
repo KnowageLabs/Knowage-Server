@@ -31,6 +31,7 @@ import org.hibernate.criterion.Restrictions;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.dto.SbiCategory;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -226,6 +227,47 @@ public class CategoryDAOHibImpl extends AbstractHibernateDAO implements ICategor
 	private void delete(Session aSession, SbiCategory category) {
 
 		aSession.delete(category);
+
+	}
+
+	@Override
+	public List<SbiExtRoles> getRolesByCategory(Integer categoryId) throws EMFUserError {
+
+		List roles = null;
+		Session aSession = null;
+		Transaction tx = null;
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			roles = getRoles(aSession, categoryId);
+
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null) {
+				tx.rollback();
+			}
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession != null && aSession.isOpen()) {
+				aSession.close();
+			}
+		}
+
+		return roles;
+	}
+
+	private List getRoles(Session aSession, Integer categoryId) {
+
+		List l = aSession.createCriteria(SbiExtRoles.class).createAlias("sbiMetaModelCategories", "_tCategory")
+				.add(Restrictions.eq("_tCategory.id", categoryId)).list();
+
+		return l;
 
 	}
 

@@ -87,7 +87,7 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import WorkspaceDataPreviewDialog from '@/modules/workspace/views/dataView/dialogs/WorkspaceDataPreviewDialog.vue'
 import mainStore from '../../../../App.store'
-import { mapState } from 'pinia'
+import { mapState, mapActions } from 'pinia'
 
 export default defineComponent({
     components: { TabView, TabPanel, DetailCard, AdvancedCard, LinkCard, TypeCard, MetadataCard, WorkspaceDataPreviewDialog },
@@ -136,10 +136,6 @@ export default defineComponent({
             activeTab: 0
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
     created() {
         this.getAllDatasetData()
     },
@@ -154,6 +150,7 @@ export default defineComponent({
     },
     validations() {},
     methods: {
+        ...mapActions(mainStore, ['setInfo', 'setError']),
         //#region ===================== Get All Data ====================================================
         async getSelectedDataset() {
             await this.$http
@@ -232,25 +229,25 @@ export default defineComponent({
         //#region ===================== Save/Update Dataset & Tags =================================================
         async saveDataset() {
             let dsToSave = { ...this.selectedDataset } as any
-			if (this.user?.functionalities?.includes('DataPreparation') && dsToSave.id) {
+            if (this.user?.functionalities?.includes('DataPreparation') && dsToSave.id) {
                 await this.$http
                     .get(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/instance/dataset/' + dsToSave.id, { headers: { 'X-Disable-Interceptor': 'true' } })
                     .then((response: AxiosResponse<any>) => {
-                    if (response.data) {
-                        this.$confirm.require({
-                            icon: 'pi pi-exclamation-triangle',
-                            message: this.$t('managers.datasetManagement.dataPreparation.datasetInvolvedIntoDataPrep'),
-                            header: this.$t('managers.datasetManagement.saveTitle'),
-                            accept: () => this.proceedOnSaving(dsToSave)
-                        })
-                    } else {
-                        this.proceedOnSaving(dsToSave)
-                    }
-                })
-                .catch((err) => {
-                    if (err.response.status === 404) this.proceedOnSaving(dsToSave)
-                    else this.$store.commit('setError', { title: 'Server error', msg: err.data.errors[0].message })
-                })
+                        if (response.data) {
+                            this.$confirm.require({
+                                icon: 'pi pi-exclamation-triangle',
+                                message: this.$t('managers.datasetManagement.dataPreparation.datasetInvolvedIntoDataPrep'),
+                                header: this.$t('managers.datasetManagement.saveTitle'),
+                                accept: () => this.proceedOnSaving(dsToSave)
+                            })
+                        } else {
+                            this.proceedOnSaving(dsToSave)
+                        }
+                    })
+                    .catch((err) => {
+                        if (err.response.status === 404) this.proceedOnSaving(dsToSave)
+                        else this.setError({ title: 'Server error', msg: err.data.errors[0].message })
+                    })
             } else {
                 this.proceedOnSaving(dsToSave)
             }
@@ -281,7 +278,7 @@ export default defineComponent({
                 })
                 .then(async (response: AxiosResponse<any>) => {
                     this.touched = false
-                    this.store.setInfo({ title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
+                    this.setInfo({ title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
                     this.selectedDataset.id ? this.$emit('updated') : this.$emit('created', response)
                     await this.saveTags(dsToSave, response.data.id)
                     await this.saveSchedulation(dsToSave, response.data.id)
@@ -397,7 +394,7 @@ export default defineComponent({
         },
         checkFormulaForParams() {
             if (this.selectedDataset?.query?.includes('${') && this.selectedDataset?.isPersisted) {
-                this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.datasetManagement.formulaParamError') })
+                this.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.datasetManagement.formulaParamError') })
             } else this.saveDataset()
         },
         removeDuplicates(array) {

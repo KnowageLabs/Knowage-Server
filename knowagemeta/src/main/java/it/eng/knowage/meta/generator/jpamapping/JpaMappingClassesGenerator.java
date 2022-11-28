@@ -17,19 +17,24 @@
  */
 package it.eng.knowage.meta.generator.jpamapping;
 
+import static java.util.stream.Collectors.toList;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.stream.Stream;
+
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import it.eng.knowage.meta.generator.GenerationException;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.JpaProperties;
 import it.eng.knowage.meta.generator.utils.Compiler;
 import it.eng.knowage.meta.model.ModelObject;
 import it.eng.knowage.meta.model.business.BusinessModel;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -37,7 +42,7 @@ import org.slf4j.LoggerFactory;
  */
 public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 
-	// List<File> libs;
+	private static final Logger LOGGER = LoggerFactory.getLogger(JpaMappingClassesGenerator.class);
 
 	private File libDir;
 	private File binDir;
@@ -50,11 +55,7 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 	public static final String DEFAULT_LOG_DIR = "logs";
 	private static final String SBI_MODEL_FILE_NAME = "sbimodel";
 
-	// private String[] libs = { "org.eclipse.persistence.core_2.1.1.v20100817-r8050.jar", "javax.persistence_2.0.1.v201006031150.jar",
-	// "hibernate-spatial-1.1.1.jar", "jts-1.13.jar", "hibernate3.6.2.jar" };
-	private String[] libs = { "javax.persistence-2.0.5.jar", "hibernate-core-3.6.2.Final.jar", "jts-1.13.jar" };
-
-	private static Logger logger = LoggerFactory.getLogger(JpaMappingClassesGenerator.class);
+	private String[] libs;
 
 	public JpaMappingClassesGenerator() {
 		super();
@@ -68,7 +69,7 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 	@Override
 	public void generate(ModelObject o, String outputDir, boolean isUpdatableMapping, boolean includeSources, File libsDir, byte[] fileModel) {
 
-		logger.trace("IN");
+		LOGGER.trace("IN");
 
 		// try {
 		BusinessModel model;
@@ -76,10 +77,10 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 		super.generate(o, outputDir, isUpdatableMapping, includeSources, libsDir, null);
 
 		binDir = (binDir == null) ? new File(outputDir, DEFAULT_BIN_DIR) : binDir;
-		logger.debug("src dir is equal to [{}]", getSrcDir());
+		LOGGER.debug("src dir is equal to [{}]", getSrcDir());
 		// libDir = (libDir == null) ? new File(outputDir, DEFAULT_LIB_DIR) : libDir;
 		libDir = (libsDir == null) ? new File(outputDir, DEFAULT_LIB_DIR) : libsDir;
-		logger.debug("lib dir is equal to [{}]", libDir);
+		LOGGER.debug("lib dir is equal to [{}]", libDir);
 
 		logDir = logDir == null ? new File(outputDir, DEFAULT_LOG_DIR) : logDir;
 
@@ -91,6 +92,20 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 		// Call Java Compiler
 		Compiler compiler;
 
+		if (libs == null) {
+			try(Stream<Path> paths = Files.list(libDir.toPath())) {
+
+				libs = paths
+						.map(e -> libDir.toPath().relativize(e))
+						.map(Path::toString)
+						.collect(toList())
+						.toArray(new String[0]);
+
+			} catch (IOException e) {
+				throw new GenerationException("Impossible to compile mapping code. Please download errors log", e);
+			}
+		}
+
 		compiler = new Compiler(getSrcDir(), binDir, libDir, packageName.replace(".", "/"), errorLog);
 		compiler.addLibs(libs);
 		libs = new String[] {};
@@ -98,7 +113,7 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 		boolean compiled = compiler.compile();
 
 		if (!compiled) {
-			logger.error("Impossible to compile mapping code. Please download compiler errors log");
+			LOGGER.error("Impossible to compile mapping code. Please download compiler errors log");
 			throw new GenerationException("Impossible to compile mapping code. Please download errors log");
 		}
 
@@ -129,7 +144,7 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 				// copy sources files to binDir (to include it in the jar)
 				FileUtils.copyDirectory(srcDir, binDir);
 			} catch (IOException e) {
-				logger.error("Error copying source files to bin directory", e);
+				LOGGER.error("Error copying source files to bin directory", e);
 			}
 		}
 

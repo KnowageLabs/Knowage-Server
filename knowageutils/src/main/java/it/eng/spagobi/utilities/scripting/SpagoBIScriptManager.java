@@ -35,13 +35,11 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.script.Bindings;
-import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
-import javax.script.SimpleScriptContext;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
@@ -97,12 +95,13 @@ public class SpagoBIScriptManager {
 				logger.debug("Found engine [" + scriptEngine.NAME + "]");
 			}
 
-			ScriptContext scriptContext = new SimpleScriptContext();
 			if (bindings != null) {
 				Bindings scriptBindings = new SimpleBindings(bindings);
-				scriptContext.setBindings(scriptBindings, ScriptContext.ENGINE_SCOPE);
+
+				scriptBindings.forEach((k, v) -> {
+					scriptEngine.put(k, v);
+				});
 			}
-			scriptEngine.setContext(scriptContext);
 
 			PermissionCollection pc = new Permissions(); // This means no permissions at all
 			CodeSource codeSource = scriptEngine.getClass().getProtectionDomain().getCodeSource();
@@ -112,13 +111,15 @@ public class SpagoBIScriptManager {
 
 			final String _script = script;
 
-			results = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 
 				@Override
 				public Object run() throws ScriptException {
 					return scriptEngine.eval(_script);
 				}
 			}, accessControlContext);
+
+			results = scriptEngine.get("query");
 
 		} catch (Throwable t) {
 			logger.error("Error while executing Javascript:\n" + script, t);

@@ -829,6 +829,10 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 				value = getAttribute(filter.getField()).toString();
 			}
 			if (value != null && !value.equalsIgnoreCase("")) {
+
+				if (value.contains("?")) {
+					throw new SpagoBIEngineServiceException(getActionName(), "Character '?' not allowed in query filter");
+				}
 				logger.debug("Set filter " + filter.getField() + "=" + value);
 
 				String fieldId = fieldNameIdMap.get(filter.getField());
@@ -1110,11 +1114,6 @@ class DecoratedDataStore implements IDataStore {
 	}
 
 	@Override
-	public SourceBean toSourceBean() throws SourceBeanException {
-		return dataStore.toSourceBean();
-	}
-
-	@Override
 	public Date getCacheDate() {
 		return dataStore.getCacheDate();
 	}
@@ -1132,6 +1131,5 @@ class DecoratedDataStore implements IDataStore {
 	public RegistryConfiguration getRegistryConfiguration() {
 		return registryConfiguration;
 	}
-
 
 }

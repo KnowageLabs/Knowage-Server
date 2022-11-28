@@ -217,4 +217,24 @@ public class DataSourceSupplier {
 		logger.debug("OUT");
 		return arDS;
 	}
+
+	/**
+	 * Gets data source for cache.
+	 *
+	 * @return the data source for cache
+	 */
+	public SpagoBiDataSource getDataSourceForCache() {
+		logger.debug("IN");
+		SpagoBiDataSource ret = null;
+
+		// gets all data source from database
+		try {
+			IDataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceWriteDefault();
+			ret = toSpagoBiDataSource(ds);
+		} catch (Exception e) {
+			logger.error("The data sources are not correctly returned", e);
+		}
+		logger.debug("OUT");
+		return ret;
+	}
 }

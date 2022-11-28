@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -180,17 +181,9 @@ public interface IDataSet extends Iterable<IRecord> {
 
 	void setPivotColumnValue(String pivotColumnValue);
 
-	boolean hasDataStoreTransformer();
-
-	void removeDataStoreTransformer();
-
 	void setAbortOnOverflow(boolean abortOnOverflow);
 
 	void addBinding(String bindingName, Object bindingValue);
-
-	void setDataStoreTransformer(IDataStoreTransformer transformer);
-
-	IDataStoreTransformer getDataStoreTransformer();
 
 	boolean isPersisted();
 
@@ -315,5 +308,18 @@ public interface IDataSet extends Iterable<IRecord> {
 	Set getTags();
 
 	public void setTags(Set tags);
+
+	// Data store transformer
+	boolean hasDataStoreTransformers();
+
+	void removeDataStoreTransformers();
+
+	List<IDataStoreTransformer> getDataStoreTransformers();
+
+	void addDataStoreTransformer(IDataStoreTransformer transformer);
+
+	void addDataStoreTransformers(Collection<IDataStoreTransformer> transformers);
+
+	void executeDataStoreTransformers(IDataStore dataStore);
 
 }

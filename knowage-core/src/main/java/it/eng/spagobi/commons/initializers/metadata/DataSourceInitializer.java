@@ -33,7 +33,7 @@ import it.eng.spagobi.commons.metadata.SbiOrganizationDatasource;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasourceId;
 import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.commons.utilities.HibernateSessionManager;
-import it.eng.spagobi.security.utils.DataSourceJDBCPasswordManager;
+import it.eng.spagobi.security.utils.EncryptionPBEWithMD5AndDESManager;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -93,7 +93,7 @@ public class DataSourceInitializer extends SpagoBIInitializer {
 			aDataSource.setUrl_connection((String) dataSourceSB.getAttribute("urlConnection"));
 			aDataSource.setUser((String) dataSourceSB.getAttribute("username"));
 			String password = (String) dataSourceSB.getAttribute("pwd");
-			String encPassword = DataSourceJDBCPasswordManager.encrypt(password);
+			String encPassword = EncryptionPBEWithMD5AndDESManager.encrypt(password);
 			aDataSource.setPwd(encPassword);
 			aDataSource.setDriver((String) dataSourceSB.getAttribute("driver"));
 

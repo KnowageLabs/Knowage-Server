@@ -49,6 +49,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.SpagoBIDAOException;
+import it.eng.spagobi.commons.dao.dto.SbiCategory;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
@@ -197,14 +198,13 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 
 				if (categoryList != null) {
 					if (categoryList.size() > 0) {
-						SbiDomains[] categoryArray = new SbiDomains[categoryList.size()];
+						SbiCategory[] categoryArray = new SbiCategory[categoryList.size()];
 						int i = 0;
 						for (Iterator iterator = categoryList.iterator(); iterator.hasNext();) {
 							Domain domain = (Domain) iterator.next();
-							String domainCd = domain.getDomainCode();
 							String valueCd = domain.getValueCd();
-							SbiDomains sbiDomain = DAOFactory.getDomainDAO().loadSbiDomainByCodeAndValue(domainCd, valueCd);
-							categoryArray[i] = sbiDomain;
+							SbiCategory sbiCategory = DAOFactory.getCategoryDAO().getCategoryForDataSet(valueCd);
+							categoryArray[i] = sbiCategory;
 							i++;
 						}
 						// (IN CATEGORY AND (SCOPE=USER OR SCOPE=ENTERPRISE)) OR SCOPE=TECHNICAL

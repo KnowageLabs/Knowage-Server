@@ -57,6 +57,8 @@ function getValidatorFunction(validatorName: string, customValidators: ICustomVa
             return testRegex(alphanumericNoSpaces)
         case 'fullnameRegex':
             return testRegex(fullnameRegex)
+        case 'noQuestionMark':
+            return testQuestionMark()
         case 'valueListValidator':
             return valueListValidator(validator?.params.valueList)
         case 'email':
@@ -75,6 +77,10 @@ function getValidatorFunction(validatorName: string, customValidators: ICustomVa
 
 function testRegex(regex: RegExp) {
     return (value: any) => regex.test(value)
+}
+
+function testQuestionMark() {
+    return (value: any) => (value?.length > 0 ? !value.includes('?') : true)
 }
 
 const valueListValidator = (list: string[] | number[]) => (value: string | number) => {

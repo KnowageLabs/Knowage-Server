@@ -315,7 +315,7 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 				.add("code", Optional.ofNullable(role.getCode()).orElse(""))
 				.add("name", role.getName())
 				.add("description", Optional.ofNullable(role.getDescr()).orElse(""))
-				.add("isPublic", role.getIsPublic())
+				.add("isPublic", Optional.ofNullable(role.getIsPublic()).orElse(false))
 				.add("roleTypeCode", role.getRoleTypeCode())
 				.add("authorizations", authorizations)
 				.add("datasetCategories", datasetCategories)
@@ -506,11 +506,11 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 
 	protected final JsonObjectBuilder createCommonDataForEvent() {
 
-		UserProfile userProfile = UserProfileManager.getProfile();
+		UserProfile userProfile = Optional.ofNullable(UserProfileManager.getProfile()).orElse(new UserProfile());
 
 		JsonObject userProfileAsJson = Json.createObjectBuilder()
-				.add("id", userProfile.getUserId().toString())
-				.add("username", userProfile.getUserName().toString())
+				.add("id", Optional.ofNullable(userProfile.getUserId()).orElse("").toString())
+				.add("username", Optional.ofNullable(userProfile.getUserName()).orElse("").toString())
 				.build();
 
 		return Json.createObjectBuilder()

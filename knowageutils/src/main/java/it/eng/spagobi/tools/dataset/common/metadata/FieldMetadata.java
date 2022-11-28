@@ -33,7 +33,7 @@ public class FieldMetadata implements IFieldMetaData, Cloneable {
 
 	boolean personal;
 	boolean masked;
-	boolean decript;
+	boolean decrypt;
 	boolean subjectId;
 
 	public FieldMetadata() {
@@ -241,19 +241,19 @@ public class FieldMetadata implements IFieldMetaData, Cloneable {
 //	}
 
 	/**
-	 * @return the decript
+	 * @return the decrypt
 	 */
 	@Override
-	public boolean isDecript() {
-		return decript;
+	public boolean isDecrypt() {
+		return decrypt;
 	}
 
 	/**
-	 * @param decript the decript to set
+	 * @param decrypt the decrypt to set
 	 */
 	@Override
-	public void setDecript(boolean decript) {
-		this.decript = decript;
+	public void setDecrypt(boolean decrypt) {
+		this.decrypt = decrypt;
 	}
 
 	/**

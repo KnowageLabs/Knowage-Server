@@ -346,11 +346,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.quartz-scheduler</groupId>
-			<artifactId>quartz-oracle</artifactId>
-		</dependency>
-
-		<dependency>
 			<groupId>com.xebialabs.restito</groupId>
 			<artifactId>restito</artifactId>
 			<version>0.5.1</version>
@@ -682,7 +677,6 @@
 		<dependency>
 			<groupId>org.jasypt</groupId>
 			<artifactId>jasypt</artifactId>
-			<version>1.9.3</version>
 		</dependency>
 
 	</dependencies>

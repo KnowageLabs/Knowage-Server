@@ -85,6 +85,7 @@ parameters.isValid = function(key) {
 		&& parameters.get(key) != ''
 		&& parameters.get(key) != "''"
 		&& parameters.get(key) != "null"
+		&& parameters.get(key) != "[]"
 		&& parameters.get(key) != "%";
 }
 
@@ -94,5 +95,6 @@ function isValid(key) {
 		&& parameters.get(key) != ''
 		&& parameters.get(key) != "''"
 		&& parameters.get(key) != "null"
+		&& parameters.get(key) != "[]"
 		&& parameters.get(key) != "%";
 }

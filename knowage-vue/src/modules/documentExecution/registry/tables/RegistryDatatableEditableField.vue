@@ -1,15 +1,15 @@
 <template>
     <InputText
         class="kn-material-input"
-        v-if="column && column.editorType !== 'COMBO' && column.columnInfo?.type !== 'date' && column.columnInfo?.type !== 'timestamp' && getDataType(column.columnInfo.type) === 'text'"
+        v-if="column && column.editorType !== 'COMBO' && column.columnInfo?.type !== 'date' && column.columnInfo?.type !== 'timestamp' && getDataType(column.columnInfo?.type) === 'text'"
         :type="'text'"
-        :step="getStep(column.columnInfo.type)"
+        :step="getStep(column.columnInfo?.type)"
         v-model="row[column.field]"
         @input="$emit('rowChanged', row)"
     />
     <InputNumber
         class="kn-material-input p-inputtext-sm"
-        v-if="column && column.editorType !== 'COMBO' && column.columnInfo?.type !== 'date' && column.columnInfo?.type !== 'timestamp' && getDataType(column.columnInfo.type) === 'number'"
+        v-if="column && column.editorType !== 'COMBO' && column.columnInfo?.type !== 'date' && column.columnInfo?.type !== 'timestamp' && getDataType(column.columnInfo?.type) === 'number'"
         v-model="row[column.field]"
         :useGrouping="useGrouping"
         :locale="locale"
@@ -23,7 +23,7 @@
         class="kn-material-input"
         v-else-if="column && column.editorType === 'COMBO'"
         v-model="row[column.field]"
-        :options="columnOptions && columnOptions[column.field] ? columnOptions[column.field][row[column.dependences]] : []"
+        :options="getOptions(column, row)"
         optionValue="column_1"
         optionLabel="column_1"
         @change="$emit('dropdownChanged', { row: row, column: column })"
@@ -96,16 +96,22 @@ export default defineComponent({
         loadRow() {
             this.row = this.propRow
             if (this.column && (this.row[this.column.field] || this.row[this.column.field] === 0 || this.row[this.column.field] === '')) {
-                if (this.column.columnInfo.type === 'date' && typeof this.row[this.column.field] === 'string') {
+                if (this.column.columnInfo?.type === 'date' && typeof this.row[this.column.field] === 'string') {
                     this.row[this.column.field] = this.row[this.column.field] ? new Date(luxonFormatDate(this.row[this.column.field], 'yyyy-MM-dd', 'yyyy-MM-dd')) : null
-                } else if (this.column.columnInfo.type === 'timestamp' && typeof this.row[this.column.field] === 'string' && this.row[this.column.field] !== '') {
+                } else if (this.column.columnInfo?.type === 'timestamp' && typeof this.row[this.column.field] === 'string' && this.row[this.column.field] !== '') {
                     this.row[this.column.field] = new Date(luxonFormatDate(this.row[this.column.field], 'yyyy-MM-dd HH:mm:ss.S', 'yyyy-MM-dd HH:mm:ss.S'))
-                } else if (this.column.editorType !== 'COMBO' && this.column.columnInfo.type !== 'date' && this.column.columnInfo.type !== 'timestamp' && this.getDataType(this.column.columnInfo.type) === 'number') {
+                } else if (this.column.editorType !== 'COMBO' && this.column.columnInfo?.type !== 'date' && this.column.columnInfo?.type !== 'timestamp' && this.getDataType(this.column.columnInfo?.type) === 'number') {
                     this.formatNumberConfiguration()
                 }
             }
         },
         formatNumberConfiguration() {
+            if (this.column?.columnInfo?.type === 'int') {
+                this.useGrouping = false
+                this.minFractionDigits = 0
+                this.maxFractionDigits = 0
+                return
+            }
             const configuration = formatNumber(this.column)
             if (configuration) {
                 this.useGrouping = configuration.useGrouping
@@ -131,6 +137,11 @@ export default defineComponent({
         },
         onInputNumberChange() {
             setTimeout(() => this.$emit('rowChanged', this.row), 250)
+        },
+        getOptions(column: any, row: any) {
+            let options = this.columnOptions && this.columnOptions[column.field] ? this.columnOptions[column.field][row[column.dependences]] : []
+            if (!options || options.length === 0) options = this.columnOptions[column.field]['All']
+            return options ?? []
         }
     }
 })

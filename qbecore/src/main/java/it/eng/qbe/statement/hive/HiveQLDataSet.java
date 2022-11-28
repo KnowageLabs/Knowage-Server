@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,12 +11,14 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package it.eng.qbe.statement.hive;
+
+import org.apache.log4j.Logger;
 
 import it.eng.qbe.datasource.dataset.DataSetDataSource;
 import it.eng.qbe.statement.AbstractQbeDataSet;
@@ -31,26 +33,21 @@ import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-import org.apache.log4j.Logger;
-
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
  */
 
 public class HiveQLDataSet extends AbstractQbeDataSet {
 
-
-	
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(HiveQLDataSet.class);
-    
-	
+	public static Logger logger = Logger.getLogger(HiveQLDataSet.class);
+
 	public HiveQLDataSet(HiveQLStatement statement) {
-		
+
 		super(statement);
 	}
-	
-	
+
+	@Override
 	public void loadData(int offset, int fetchSize, int maxResults) {
 		AbstractJDBCDataset dataset;
 		if (persisted) {
@@ -70,25 +67,27 @@ public class HiveQLDataSet extends AbstractQbeDataSet {
 
 		dataStore = dataset.getDataStore();
 
-		
+
 		IMetaData jdbcMetadata = dataStore.getMetaData();
 		IMetaData qbeQueryMetaData = getDataStoreMeta(this.getStatement().getQuery());
 		IMetaData merged = mergeMetadata(jdbcMetadata, qbeQueryMetaData);
 		((DataStore)dataStore).setMetaData(merged);
-		
-				
-		if(hasDataStoreTransformer()) {
-			getDataStoreTransformer().transform(dataStore);
+
+
+		if(hasDataStoreTransformers()) {
+			executeDataStoreTransformers(dataStore);
 		}
 
-	
+
 	}
-	
+
+	@Override
 	public void setDataSource(IDataSource dataSource) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
+	@Override
 	public IDataSetTableDescriptor persist(String tableName, IDataSource dataSource) {
 		IDataSetTableDescriptor td = null;
 		// TODO check this

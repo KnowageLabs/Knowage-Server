@@ -13,12 +13,9 @@
             <KnListBox :options="availableThemes" :selected="selectedTheme" :settings="descriptor.knListSettings" @click="selectTheme" @delete.stop="deleteThemeConfirm" />
         </div>
 
-        <div class="p-col p-p-0 p-m-0 kn-page" v-if="!selectedTheme.themeName">
-            <KnHint :title="$t('managers.themeManagement.title')" :hint="$t('managers.themeManagement.hint')"></KnHint>
-        </div>
-
-        <div class="p-col p-p-0 p-m-0 kn-page" v-if="selectedTheme.themeName">
-            <ThemeManagementExamples :properties="selectedTheme.config"></ThemeManagementExamples>
+        <div class="p-col p-p-0 p-m-0 kn-page">
+            <KnHint v-if="!selectedTheme.themeName" :title="$t('managers.themeManagement.title')" :hint="$t('managers.themeManagement.hint')"></KnHint>
+            <ThemeManagementExamples v-else :properties="selectedTheme.config"></ThemeManagementExamples>
         </div>
 
         <div class="kn-list--column kn-page p-col-2 p-sm-2 p-md-3 p-p-0" v-if="selectedTheme.themeName">
@@ -38,7 +35,7 @@
                 <InputSwitch v-model="themeToSend.active" v-tooltip="'active'"></InputSwitch>
             </div>
             <Divider class="p-my-2" />
-            <div class="p-p-2 kn-page-content" v-if="selectedTheme.themeName">
+            <div class="p-p-2 kn-page-content">
                 <div>
                     <template v-for="(value, key) in themeHelper.descriptor" :key="key">
                         <Fieldset :legend="key" :toggleable="true" :collapsed="true">
@@ -178,13 +175,6 @@ export default defineComponent({
         },
         updateModelToSend(key) {
             this.themeToSend.config[key] = this.selectedTheme.config[key]
-        }
-    },
-    watch: {
-        selectedTheme(newSelected, oldSelected) {
-            if (newSelected != oldSelected) {
-                this.selectedTheme = { ...(this.store.$state as any).defaultTheme, ...newSelected.config }
-            }
         }
     }
 })
