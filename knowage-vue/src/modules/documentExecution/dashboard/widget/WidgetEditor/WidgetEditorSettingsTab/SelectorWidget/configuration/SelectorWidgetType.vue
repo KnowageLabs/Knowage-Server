@@ -1,7 +1,7 @@
 <template>
     <div v-if="widgetModel && widgetModel.type == 'selector'" class="p-m-2">
         <div class="p-grid p-mx-2">
-            <TypeCard v-for="(type, index) of descriptor.selectorTypes" :widgetModel="widgetModel" :key="index" :selectorType="type" />
+            <TypeCard v-for="(type, index) of selectorTypes" :widgetModel="widgetModel" :key="index" :selectorType="type" />
         </div>
 
         <div v-if="showAlignment" class="p-d-flex p-flex-row p-m-2">
@@ -19,7 +19,7 @@
 
     <div v-if="widgetModel && widgetModel.type == 'selection'" class="p-m-2">
         <div class="p-grid p-mx-2">
-            <TypeCard v-for="(type, index) of descriptor.selectionTypes" :widgetModel="widgetModel" :key="index" :selectorType="type" />
+            <TypeCard v-for="(type, index) of selectionTypes" :widgetModel="widgetModel" :key="index" :selectorType="type" />
         </div>
     </div>
 </template>
@@ -32,7 +32,7 @@ import RadioButton from 'primevue/radiobutton'
 import descriptor from './SelectorWidgetDescriptor.json'
 
 export default defineComponent({
-    name: 'table-widget-rows',
+    name: 'selector-widget-type',
     components: { TypeCard, RadioButton },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     computed: {
@@ -43,12 +43,28 @@ export default defineComponent({
     },
     data() {
         return {
-            descriptor
+            descriptor,
+            selectorTypes: [] as { imageUrl: string; label: string; value: string }[],
+            selectionTypes: [] as { imageUrl: string; label: string; value: string }[]
         }
     },
-    created() {},
+    created() {
+        this.loadSelectorTypes()
+        this.loadSelectionTypes()
+    },
     unmounted() {},
-    methods: {}
+    methods: {
+        loadSelectorTypes() {
+            this.selectorTypes = this.descriptor.selectorTypes.map((type: { imageUrl: string; label: string; value: string }) => {
+                return { imageUrl: import.meta.env.VITE_HOST_URL + type.imageUrl, label: type.label, value: type.value }
+            })
+        },
+        loadSelectionTypes() {
+            this.selectionTypes = this.descriptor.selectionTypes.map((type: { imageUrl: string; label: string; value: string }) => {
+                return { imageUrl: import.meta.env.VITE_HOST_URL + type.imageUrl, label: type.label, value: type.value }
+            })
+        }
+    }
 })
 </script>
 

@@ -444,8 +444,4 @@ export default defineComponent({
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
-.testClass {
-    background-color: red;
-    color: blue;
-}
 </style>
