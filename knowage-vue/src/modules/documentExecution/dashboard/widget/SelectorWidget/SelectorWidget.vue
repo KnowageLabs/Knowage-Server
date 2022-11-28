@@ -400,36 +400,6 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss">
-.selector-widget {
-    overflow-y: auto;
-    .multi-select {
-        display: flex;
-        align-items: center;
-        .multi-select-label {
-            text-overflow: ellipsis;
-            overflow: hidden;
-            white-space: nowrap;
-        }
-    }
-    .vertical-layout {
-        display: flex;
-        flex-direction: column;
-    }
-    .horizontal-layout {
-        display: flex;
-    }
-    .grid-layout {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        overflow-y: auto;
-    }
-}
-.selectorCustomDropdownPanel {
-    color: unset;
-}
-</style>
 <style lang="scss" scoped>
 ::-webkit-scrollbar {
     width: 5px;
