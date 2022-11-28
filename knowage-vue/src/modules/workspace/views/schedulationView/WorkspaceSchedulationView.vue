@@ -4,9 +4,13 @@
             <Button id="showSidenavIcon" icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showMenu')" />
             {{ $t('workspace.schedulation.title') }}
         </template>
+
+        <template #end>
+            <Button v-if="canRunScheduledExecutions" class="kn-button p-button-text p-button-rounded" @click="runAllSchedulations">{{ $t('common.run') }}</Button>
+        </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-    <WorkspaceSchedulationTable class="kn-overflow p-m-2" :propJobs="jobs" @viewOldSchedulationsClick="viewOldSchedulations" data-test="schedulation-table"></WorkspaceSchedulationTable>
+    <WorkspaceSchedulationTable class="overflow p-m-2" :propJobs="jobs" @runSchedulationClick="runSingleSchedulation" @schedulationsSelected="setSelectedSchedulations" @viewOldSchedulationsClick="viewOldSchedulations"></WorkspaceSchedulationTable>
 
     <WorkspaceSchedulationOldSchedulationsDialog :visible="schedulationsDialogVisible" :selectedJob="selectedJob" @close="closeOldSchedulationsDialog"></WorkspaceSchedulationOldSchedulationsDialog>
 </template>
@@ -14,9 +18,11 @@
 <script lang="ts">
 import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
-import { IPackage } from '../../Workspace'
+import { IPackage, ITrigger } from '../../Workspace'
 import WorkspaceSchedulationOldSchedulationsDialog from './dialog/WorkspaceSchedulationOldSchedulationsDialog.vue'
 import WorkspaceSchedulationTable from './tables/WorkspaceSchedulationTable.vue'
+import mainStore from '../../../../App.store.js'
+import { mapActions, mapState } from 'pinia'
 
 export default defineComponent({
     name: 'workspace-schedulation-view',
@@ -31,13 +37,56 @@ export default defineComponent({
             loading: false
         }
     },
+    computed: {
+        ...mapState(mainStore, {
+            user: 'user'
+        }),
+        canRunScheduledExecutions(): any {
+            return this.user.functionalities.includes('RunSnapshotsFunctionality')
+        }
+    },
     async created() {
         await this.loadJobs()
     },
     methods: {
+        ...mapActions(mainStore, ['setInfo']),
         async loadJobs() {
             this.loading = true
             await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `scheduleree/listAllJobs`).then((response: AxiosResponse<any>) => (this.jobs = response.data.root))
+            this.loading = false
+        },
+        setSelectedSchedulations(schedulations: any) {
+            this.selectedSchedulations = schedulations
+        },
+        async runSingleSchedulation(schedulation: ITrigger) {
+            await this.runSchedulations([{ jobName: schedulation.jobName, jobGroup: schedulation.jobGroup, triggerName: schedulation.triggerName, triggerGroup: schedulation.triggerGroup }])
+        },
+        async runAllSchedulations() {
+            const formatedSchedulations = this.getFormatedSchedulations()
+            await this.runSchedulations(formatedSchedulations)
+        },
+        getFormatedSchedulations() {
+            let formatedSchedulations = [] as ITrigger[]
+            Object.keys(this.selectedSchedulations).forEach((key) => {
+                this.selectedSchedulations[key].forEach((schedulation: ITrigger) => {
+                    formatedSchedulations.push({ jobName: schedulation.jobName, jobGroup: schedulation.jobGroup, triggerName: schedulation.triggerName, triggerGroup: schedulation.triggerGroup })
+                })
+            })
+            return formatedSchedulations
+        },
+        async runSchedulations(schedulations: any) {
+            this.loading = true
+            await this.$http
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `scheduleree/executeMultipleTrigger`, schedulations)
+                .then((response: AxiosResponse<any>) => {
+                    if (response.data.resp === 'ok') {
+                        this.setInfo({
+                            title: this.$t('common.information'),
+                            msg: this.$t('managers.scheduler.schedulationExecuted')
+                        })
+                    }
+                })
+                .catch(() => {})
             this.loading = false
         },
         viewOldSchedulations(job: IPackage) {
