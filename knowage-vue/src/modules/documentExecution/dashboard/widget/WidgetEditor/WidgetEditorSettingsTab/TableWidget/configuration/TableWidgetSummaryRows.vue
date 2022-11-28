@@ -64,7 +64,7 @@ export default defineComponent({
         },
         summaryRowsChanged() {
             emitter.emit('summaryRowsChanged', this.summaryRowsModel)
-            emitter.emit('refreshTable', this.widgetModel.id)
+            emitter.emit('refreshWidgetWithData', this.widgetModel.id)
         },
         onSummarRowEnabledChange() {
             if (!this.summaryRowsModel) return

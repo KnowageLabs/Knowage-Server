@@ -1,6 +1,48 @@
-import { IWidget, IWidgetColumn, IIcon, ITableWidgetSettings, ITableWidgetConfiguration, ITableWidgetHeaders, ITableWidgetColumnGroups, ITableWidgetColumnGroup, ITableWidgetParameter } from "../../../../Dashboard"
+import { IWidget, IWidgetColumn, ITableWidgetColumnGroup, IWidgetInteractionParameter, ITableWidgetSettings } from "../../../../Dashboard"
 import { emitter } from '../../../../DashboardHelpers'
 import cryptoRandomString from 'crypto-random-string'
+import * as  tableWidgetDefaultValues from './TableWidgetDefaultValues'
+import * as widgetCommonDefaultValues from '../common/WidgetCommonDefaultValues'
+
+export const createNewTableWidgetSettings = () => {
+    return {
+        sortingColumn: '',
+        sortingOrder: '',
+        updatable: true,
+        clickable: true,
+        conditionalStyles: tableWidgetDefaultValues.getDefaultConditionalStyles(),
+        configuration: {
+            columnGroups: tableWidgetDefaultValues.getDefaultColumnGroups(),
+            exports: tableWidgetDefaultValues.getDefaultExportsConfiguration(),
+            headers: tableWidgetDefaultValues.getDefaultHeadersConfiguration(),
+            rows: tableWidgetDefaultValues.getDefaultRowsConfiguration(),
+            summaryRows: tableWidgetDefaultValues.getDefaultSummaryRowsConfiguration(),
+            customMessages: tableWidgetDefaultValues.getDefaultCustomMessages()
+        },
+        interactions: {
+            crosssNavigation: widgetCommonDefaultValues.getDefaultCrossNavigation(),
+            link: widgetCommonDefaultValues.getDefaultLinks(),
+            preview: widgetCommonDefaultValues.getDefaultPreview(),
+            selection: tableWidgetDefaultValues.getDefaultSelection()
+        },
+        pagination: tableWidgetDefaultValues.getDefaultPagination(),
+        style: {
+            title: widgetCommonDefaultValues.getDefaultTitleStyle(),
+            borders: widgetCommonDefaultValues.getDefaultBordersStyle(),
+            columns: tableWidgetDefaultValues.getDefaultColumnStyles(),
+            columnGroups: tableWidgetDefaultValues.getDefaultColumnStyles(),
+            headers: tableWidgetDefaultValues.getDefaultHeadersStyle(),
+            padding: widgetCommonDefaultValues.getDefaultPaddingStyle(),
+            rows: tableWidgetDefaultValues.getDefaultRowsStyle(),
+            shadows: widgetCommonDefaultValues.getDefaultShadowsStyle(),
+            summary: tableWidgetDefaultValues.getDefualtSummryStyle(),
+            background: widgetCommonDefaultValues.getDefaultBackgroundStyle()
+        },
+        tooltips: tableWidgetDefaultValues.getDefaultTooltips(),
+        visualization: tableWidgetDefaultValues.getDefaultVisualizations(),
+        responsive: widgetCommonDefaultValues.getDefaultResponsivnes()
+    } as ITableWidgetSettings
+}
 
 export const createNewWidgetColumn = (eventData: any) => {
     const tempColumn = {
@@ -15,7 +57,7 @@ export const createNewWidgetColumn = (eventData: any) => {
     return tempColumn
 }
 
-//#region ===================== Remove Column ====================================================
+
 export const removeColumnFromModel = (widgetModel: IWidget, column: IWidgetColumn) => {
     removeColumnFromRows(widgetModel, column)
     removeColumnFromSubmodel(column, widgetModel.settings.configuration.headers.custom.rules, 'target', 'headersColumnRemoved', false)
@@ -54,7 +96,7 @@ const removeColumnFromCrossNavigation = (widgetModel: IWidget, column: IWidgetCo
     const crossNavigation = widgetModel.settings.interactions.crosssNavigation
     if (crossNavigation.column === column.id) {
         crossNavigation.enabled = false;
-        crossNavigation.parameters.forEach((parameter: ITableWidgetParameter) => {
+        crossNavigation.parameters.forEach((parameter: IWidgetInteractionParameter) => {
             parameter.enabled = false
             if (parameter.column === column.columnName) parameter.column = ''
         })
@@ -78,5 +120,5 @@ export const removeColumnGroupFromModel = (widgetModel: IWidget, columnGroup: IT
 }
 
 export default removeColumnFromModel
-//#endregion ================================================================================================
+
 

@@ -1,14 +1,15 @@
 <template>
-    <!-- ENABLE IF NEEDED -->
-    <!-- <div class="widgetButtonBarContainer">
-        <Button @click="editWidget" data-test="edit-widget-button">Edit</Button>
-    </div> -->
-    <div class="widgetButtonBarContainer2">
+    <div v-if="(selectionIsLocked || playSelectionButtonVisible) && inFocus" class="lockButtonContainer" @mouseover="$emit('changeFocus', true)" @mouseleave="$emit('changeFocus', false)">
+        <i v-if="selectionIsLocked" class="fas fa-lock kn-cursor-pointer" @click="$emit('unlockSelection')" />
+        <i v-if="playSelectionButtonVisible" class="fas fa-play kn-cursor-pointer" @click="$emit('launchSelection')" />
+    </div>
+
+    <div class="widgetButtonBarContainer">
         <SpeedDial class="speed-dial-menu" :model="items" direction="right" :transitionDelay="80" showIcon="fas fa-ellipsis-v" hideIcon="fas fa-ellipsis-v" buttonClass="p-button-text p-button-rounded p-button-plain">
             <template #item>
                 <i class="fas fa-arrows-up-down-left-right p-button-text p-button-rounded p-button-plain drag-handle drag-widget-icon buttonHover" style="width: 20px; height: 10px"></i>
                 <Button icon="fas fa-pen-to-square" class="p-button-text p-button-rounded p-button-plain" @click="editWidget" />
-                <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop />
+                <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="onDeleteWidget" />
             </template>
         </SpeedDial>
     </div>
@@ -18,13 +19,17 @@
 /**
  * ! this component will be in charge of managing the widget buttons and visibility.
  */
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
+import { mapActions } from 'pinia'
+import { IWidget } from '../Dashboard'
 import SpeedDial from 'primevue/speeddial'
+import store from '../Dashboard.store'
 
 export default defineComponent({
     name: 'widget-button-bar',
-    emits: ['editWidget'],
     components: { SpeedDial },
+    props: { widget: { type: Object as PropType<IWidget>, required: true }, playSelectionButtonVisible: { type: Boolean, required: true }, selectionIsLocked: { type: Boolean, required: true }, dashboardId: { type: String, required: true }, inFocus: { type: Boolean, required: true } },
+    emits: ['editWidget', 'unlockSelection', 'launchSelection', 'changeFocus'],
     data() {
         return {
             items: [
@@ -37,24 +42,37 @@ export default defineComponent({
         }
     },
     methods: {
+        ...mapActions(store, ['deleteWidget']),
         editWidget() {
             this.$emit('editWidget')
+        },
+        onDeleteWidget() {
+            this.deleteWidget(this.dashboardId, this.widget)
         }
     }
 })
 </script>
 <style lang="scss">
-.widgetButtonBarContainer {
+.lockButtonContainer {
+    width: 32px;
+    height: 32px;
     position: absolute;
-    top: 0;
-    right: 0;
+    right: -32px;
+    background-color: #a9c3db;
+    color: rgb(82, 82, 82);
+    border: 1px solid #ccc;
+    display: flex;
+    z-index: 99999999 !important;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
 }
-.widgetButtonBarContainer2 {
+.widgetButtonBarContainer {
+    display: none;
     position: absolute;
     bottom: 0;
     left: 0;
-    // margin-left: 5px;
-    // margin-bottom: 10px;
 }
 .drag-widget-icon {
     border-radius: 50% !important;

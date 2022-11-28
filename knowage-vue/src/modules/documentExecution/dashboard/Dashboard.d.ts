@@ -1,20 +1,25 @@
+import { ISelectionsWidgetSettings } from '@/modules/documentExecution/dashboard/interfaces/DashboardSelectionsWidget'
+import { IHTMLWidgetSettings } from './interfaces/DashboardHTMLWidget'
+import { ITextWidgetSettings } from './interfaces/DashboardTextWidget'
+
 export interface IDashboard {
-    sheets: [],
-    widgets: ITableWidget[],
-    configuration: {
-        id: string,
-        name: string,
-        label: string,
-        description: string,
-        associations: IAssociation[],
-        datasets: IModelDataset[],
-        variables: IVariable[],
-        themes: any
-    },
+    sheets: []
+    widgets: ITableWidget[]
+    configuration: IDashboardConfiguration
     version: string
 }
 
-
+export interface IDashboardConfiguration {
+    id: string
+    name: string
+    label: string
+    description: string
+    associations: IAssociation[]
+    datasets: IModelDataset[]
+    variables: IVariable[]
+    selections: ISelection[]
+    themes: any
+}
 
 export interface IDatasetParameter {
     name: string
@@ -33,7 +38,7 @@ export interface IWidget {
     dataset: number | null
     type: string
     columns: IWidgetColumn[]
-    settings: ITableWidgetSettings
+    settings: ITableWidgetSettings | ISelectionsWidgetSettings | ISelectorWidgetSettings | IHTMLWidgetSettings | ITextWidgetSettings
     new?: boolean
 }
 
@@ -44,12 +49,12 @@ export interface ITableWidgetSettings {
     clickable: boolean
     conditionalStyles: ITableWidgetConditionalStyles
     configuration: ITableWidgetConfiguration
-    interactions: ITableWidgetInteractions
+    interactions: IWidgetInteractions
     pagination: ITableWidgetPagination
     style: ITableWidgetStyle
     tooltips: ITableWidgetTooltipStyle[]
     visualization: ITableWidgetVisualization
-    responsive: ITableWidgetResponsive
+    responsive: IWidgetResponsive
 }
 
 export interface ITableWidgetConditionalStyles {
@@ -64,6 +69,8 @@ export interface ITableWidgetConditionalStyle {
         type: string
         variable?: string
         parameter?: string
+        variableKey?: string
+        variablePivotDatasetOptions?: any
         operator: string
         value: string
     }
@@ -80,7 +87,7 @@ export interface ITableWidgetConditionalStyle {
 }
 export interface ITableWidgetConfiguration {
     columnGroups: ITableWidgetColumnGroups
-    exports: ITableWidgetExports
+    exports: IWidgetExports
     headers: ITableWidgetHeaders
     rows: ITableWidgetRows
     summaryRows: ITableWidgetSummaryRows
@@ -98,8 +105,8 @@ export interface ITableWidgetColumnGroup {
     columns: string[]
 }
 
-export interface ITableWidgetExports {
-    pdf: {
+export interface IWidgetExports {
+    pdf?: {
         enabled: boolean
         custom: {
             height: number
@@ -110,7 +117,7 @@ export interface ITableWidgetExports {
         a4portrait: boolean
     }
     showExcelExport: boolean
-    showScreenshot: boolean
+    showScreenshot?: boolean
 }
 
 export interface ITableWidgetHeaders {
@@ -127,6 +134,8 @@ export interface ITableWidgetHeadersRule {
     action: string
     compareType?: string
     variable?: string
+    variableKey?: string
+    variablePivotDatasetOptions?: any
     value?: string
     parameter?: string
 }
@@ -155,23 +164,23 @@ export interface ITableWidgetSummaryRow {
     aggregation: string
 }
 
-export interface ITableWidgetInteractions {
-    crosssNavigation: ITableWidgetCrossNavigation
-    link: ITableWidgetLinks
-    preview: ITableWidgetPreview
-    selection: ITableWidgetSelection
+export interface IWidgetInteractions {
+    crosssNavigation: IWidgetCrossNavigation
+    link?: IWidgetLinks
+    preview?: IWidgetPreview
+    selection?: IWidgetSelection
 }
 
-export interface ITableWidgetCrossNavigation {
+export interface IWidgetCrossNavigation {
     enabled: boolean
     type: string
     column: string
     icon?: string
     name: string
-    parameters: ITableWidgetParameter[]
+    parameters: IWidgetInteractionParameter[]
 }
 
-export interface ITableWidgetLinks {
+export interface IWidgetLinks {
     enabled: boolean
     links: ITableWidgetLink[]
 }
@@ -182,10 +191,10 @@ export interface ITableWidgetLink {
     baseurl: string
     column?: string
     action: string
-    parameters: ITableWidgetParameter[]
+    parameters: IWidgetInteractionParameter[]
 }
 
-export interface ITableWidgetParameter {
+export interface IWidgetInteractionParameter {
     enabled: boolean
     name: string
     type: string
@@ -196,17 +205,17 @@ export interface ITableWidgetParameter {
     json?: string
 }
 
-export interface ITableWidgetPreview {
+export interface IWidgetPreview {
     enabled: boolean
     type: string
-    parameters: ITableWidgetParameter[]
+    parameters: IWidgetInteractionParameter[]
     dataset: number
     column?: string
     directDownload: boolean
     icon?: stirng
 }
 
-export interface ITableWidgetSelection {
+export interface IWidgetSelection {
     enabled: boolean
     modalColumn: string
     multiselection: {
@@ -220,21 +229,27 @@ export interface ITableWidgetSelection {
 
 export interface ITableWidgetPagination {
     enabled: boolean
-    itemsNumber: number
+    properties: {
+        offset: number
+        itemsNumber: number
+        totalItems: number
+    }
 }
 
 export interface ITableWidgetStyle {
-    borders: ITableWidgetBordersStyle
+    title: IWidgetTitle
+    borders: IWidgetBordersStyle
     columns: ITableWidgetColumnStyles
     columnGroups: ITableWidgetColumnStyles
     headers: ITawbleWidgetHeadersStyle
-    padding: ITableWidgetPaddingStyle
-    rows: ITableWidgetRowsStyle
-    shadows: ITableWidgetShadowsStyle
+    padding: IWidgetPaddingStyle
+    rows: IWidgetRowsStyle
+    shadows: IWidgetShadowsStyle
     summary: ITableWidgetSummaryStyle
+    background: IWidgetBackgroundStyle
 }
 
-export interface ITableWidgetBordersStyle {
+export interface IWidgetBordersStyle {
     enabled: boolean
     properties: {
         'border-bottom-left-radius': string
@@ -279,7 +294,7 @@ export interface ITawbleWidgetHeadersStyle {
     }
 }
 
-export interface ITableWidgetPaddingStyle {
+export interface IWidgetPaddingStyle {
     enabled: boolean
     properties: {
         'padding-top': string
@@ -290,10 +305,8 @@ export interface ITableWidgetPaddingStyle {
     }
 }
 
-export interface ITableWidgetRowsStyle {
+export interface IWidgetRowsStyle {
     height: number
-    selectionColor: string
-    multiselectable: boolean
     alternatedRows: {
         enabled: boolean
         evenBackgroundColor: string
@@ -301,7 +314,7 @@ export interface ITableWidgetRowsStyle {
     }
 }
 
-export interface ITableWidgetShadowsStyle {
+export interface IWidgetShadowsStyle {
     enabled: boolean
     properties: {
         'box-shadow': string
@@ -368,12 +381,14 @@ export interface ITableWidgetVisibilityCondition {
         type: string
         variable?: string
         variableValue?: string
+        variableKey?: string
         operator?: string
         value?: string
+        variablePivotDatasetOptions?: any
     }
 }
 
-export interface ITableWidgetResponsive {
+export interface IWidgetResponsive {
     xs: boolean
     sm: boolean
     md: boolean
@@ -563,11 +578,72 @@ export interface IWidgetStyleToolbarModel {
 }
 
 export interface IVariable {
-    name: string,
-    type: string,
-    value: string,
-    dataset?: string,
-    column?: string,
-    attribute?: string,
+    name: string
+    type: string
+    value: string
+    dataset?: number
+    column?: string
+    attribute?: string
     driver?: string
+    pivotedValues?: any
+}
+
+export interface IWidgetTitle {
+    enabled: boolean
+    text: string
+    height: number
+    properties: {
+        'font-weight': string
+        'font-style': string
+        'font-size': string
+        'font-family': string
+        'justify-content': string
+        color: string
+        'background-color': string
+    }
+}
+
+export interface IWidgetBackgroundStyle {
+    enabled: boolean
+    properties: {
+        'background-color': string
+    }
+}
+
+export interface ISelection {
+    datasetId: number
+    datasetLabel: string
+    columnName: string
+    value: (string | number)[]
+    aggregated: boolean
+    timestamp: number
+}
+
+export interface IDashboardDriver {
+    name: string
+    type: string
+    multivalue: boolean
+    value: string
+    urlName: string
+}
+
+export interface IGalleryItem {
+    id: string
+    author: string
+    name: string
+    label: string
+    description: string
+    type: string
+    tags: string[]
+    image: string
+    organization: string
+    usageCounter: number
+    code: IGalleryitemCode
+}
+
+interface IGalleryitemCode {
+    html: string
+    javascript: string
+    python: string
+    css: string
 }

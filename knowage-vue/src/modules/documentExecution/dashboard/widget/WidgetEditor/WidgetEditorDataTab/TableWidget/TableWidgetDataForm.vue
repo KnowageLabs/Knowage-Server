@@ -1,6 +1,6 @@
 <template>
-    <div class="widget-editor-card p-p-2">
-        <div class="p-d-flex p-flex-row p-ai-center">
+    <div v-if="widgetModel" class="widget-editor-card p-p-2">
+        <div v-if="widgetModel.type === 'table'" class="p-d-flex p-flex-row p-ai-center">
             <div class="kn-flex p-m-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.pagination') }}</label>
                 <InputSwitch v-model="paginationEnabled" @change="paginationChanged"></InputSwitch>
@@ -19,7 +19,7 @@
             </div>
             <div class="p-d-flex p-flex-column kn-flex p-m-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.sortingOrder') }}</label>
-                <Dropdown class="kn-material-input" v-model="sortingOrder" :options="descriptor.sortingOrderOptions" optionValue="value" @change="sortingChanged">
+                <Dropdown class="kn-material-input" v-model="sortingOrder" :options="commonDescriptor.sortingOrderOptions" optionValue="value" @change="sortingChanged">
                     <template #value="slotProps">
                         <div>
                             <span>{{ slotProps.value }}</span>
@@ -38,10 +38,11 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IWidgetColumn, ITableWidgetPagination } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
 import { emitter } from '../../../../DashboardHelpers'
 import Dropdown from 'primevue/dropdown'
 import descriptor from '../TableWidget/TableWidgetDataDescriptor.json'
+import commonDescriptor from '../common/WidgetCommonDescriptor.json'
 import InputSwitch from 'primevue/inputswitch'
 
 export default defineComponent({
@@ -51,6 +52,7 @@ export default defineComponent({
     data() {
         return {
             descriptor,
+            commonDescriptor,
             paginationEnabled: false,
             itemsNumber: '0',
             sortingColumn: '',
@@ -78,7 +80,7 @@ export default defineComponent({
         loadPagination() {
             if (this.widgetModel?.settings?.pagination) {
                 this.paginationEnabled = this.widgetModel.settings.pagination.enabled
-                this.itemsNumber = '' + this.widgetModel.settings.pagination.itemsNumber
+                this.itemsNumber = '' + this.widgetModel.settings.pagination.properties.itemsNumber
             }
         },
         loadSortingSettings() {
@@ -87,16 +89,17 @@ export default defineComponent({
         },
         paginationChanged() {
             if (!this.widgetModel.settings) return
-            this.widgetModel.settings.pagination = { enabled: this.paginationEnabled, itemsNumber: +this.itemsNumber } as ITableWidgetPagination
+            this.widgetModel.settings.pagination.enabled = this.paginationEnabled
+            this.widgetModel.settings.pagination.properties.itemsNumber = +this.itemsNumber
             emitter.emit('paginationChanged', this.widgetModel.settings.pagination)
-            emitter.emit('refreshTable', this.widgetModel.id)
+            emitter.emit('refreshWidgetWithData', this.widgetModel.id)
         },
         sortingChanged() {
             if (!this.widgetModel.settings) return
             this.widgetModel.settings.sortingColumn = this.sortingColumn
             this.widgetModel.settings.sortingOrder = this.sortingOrder
             emitter.emit('sortingChanged', { sortingColumn: this.widgetModel.settings.sortingColumn, sortingOrder: this.widgetModel.settings.sortingOrder })
-            emitter.emit('refreshTable', this.widgetModel.id)
+            emitter.emit('refreshWidgetWithData', this.widgetModel.id)
         },
         updateSortingColumn(column: IWidgetColumn) {
             if (column.columnName === this.sortingColumn) {

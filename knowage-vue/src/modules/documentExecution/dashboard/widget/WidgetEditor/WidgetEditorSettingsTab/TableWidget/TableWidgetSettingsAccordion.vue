@@ -11,25 +11,27 @@
                 <TableWidgetSummaryRows v-else-if="accordion.type === 'SummaryRows'" :widgetModel="widgetModel"></TableWidgetSummaryRows>
                 <TableWidgetHeader v-else-if="accordion.type === 'Header'" :widgetModel="widgetModel" :drivers="drivers" :variables="variables"></TableWidgetHeader>
                 <TableWidgetColumnGroups v-else-if="accordion.type === 'ColumnGroups'" :widgetModel="widgetModel"></TableWidgetColumnGroups>
-                <TableWidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></TableWidgetExport>
+                <WidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
                 <TableWidgetCustomMessages v-else-if="accordion.type === 'CustomMessages'" :widgetModel="widgetModel"></TableWidgetCustomMessages>
                 <TableWidgetVisualizationType v-else-if="accordion.type === 'VisualizationType'" :widgetModel="widgetModel"></TableWidgetVisualizationType>
                 <TableWidgetVisibilityConditions v-else-if="accordion.type === 'VisibilityConditions'" :widgetModel="widgetModel" :variables="variables"></TableWidgetVisibilityConditions>
                 <TableWidgetHeaders v-else-if="accordion.type === 'Headers'" :widgetModel="widgetModel"></TableWidgetHeaders>
+                <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
                 <TableWidgetColumnStyle v-else-if="accordion.type === 'ColumnStyle'" :widgetModel="widgetModel"></TableWidgetColumnStyle>
                 <TableWidgetColumnStyle v-else-if="accordion.type === 'ColumnGroupsStyle'" :widgetModel="widgetModel" mode="columnGroups"></TableWidgetColumnStyle>
-                <TableWidgetRowsStyle v-else-if="accordion.type === 'RowsStyle'" :widgetModel="widgetModel"></TableWidgetRowsStyle>
+                <WidgetRowsStyle v-else-if="accordion.type === 'RowsStyle'" :widgetModel="widgetModel"></WidgetRowsStyle>
                 <TableWidgetSummaryStyle v-else-if="accordion.type === 'SummaryStyle'" :widgetModel="widgetModel"></TableWidgetSummaryStyle>
-                <TableWidgetBordersStyle v-else-if="accordion.type === 'BordersStyle'" :widgetModel="widgetModel"></TableWidgetBordersStyle>
-                <TableWidgetPaddingStyle v-else-if="accordion.type === 'PaddingStyle'" :widgetModel="widgetModel"></TableWidgetPaddingStyle>
-                <TableWidgetShadowsStyle v-else-if="accordion.type === 'ShadowsStyle'" :widgetModel="widgetModel"></TableWidgetShadowsStyle>
+                <WidgetBackgroundColorStyle v-else-if="accordion.type === 'BackgroundColorStyle'" :widgetModel="widgetModel"></WidgetBackgroundColorStyle>
+                <WidgetBordersStyle v-else-if="accordion.type === 'BordersStyle'" :widgetModel="widgetModel"></WidgetBordersStyle>
+                <WidgetPaddingStyle v-else-if="accordion.type === 'PaddingStyle'" :widgetModel="widgetModel"></WidgetPaddingStyle>
+                <WidgetShadowsStyle v-else-if="accordion.type === 'ShadowsStyle'" :widgetModel="widgetModel"></WidgetShadowsStyle>
                 <TableWidgetConditions v-else-if="accordion.type === 'Conditions'" :widgetModel="widgetModel" :drivers="drivers" :variables="variables"></TableWidgetConditions>
                 <TableWidgetTooltips v-else-if="accordion.type === 'Tooltips'" :widgetModel="widgetModel"></TableWidgetTooltips>
-                <TableWidgetResponsive v-else-if="accordion.type === 'Responsive'" :widgetModel="widgetModel"></TableWidgetResponsive>
+                <WidgetResponsive v-else-if="accordion.type === 'Responsive'" :widgetModel="widgetModel"></WidgetResponsive>
                 <TableWidgetSelection v-else-if="accordion.type === 'Selection'" :widgetModel="widgetModel"></TableWidgetSelection>
-                <TableWidgetCrossNavigation v-else-if="accordion.type === 'CrossNavigation'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets"></TableWidgetCrossNavigation>
-                <TableWidgetInteractionsLinks v-else-if="accordion.type === 'Link'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :drivers="drivers"></TableWidgetInteractionsLinks>
-                <TableWidgetPreview v-else-if="accordion.type === 'Preview'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :drivers="drivers"></TableWidgetPreview>
+                <WidgetCrossNavigation v-else-if="accordion.type === 'CrossNavigation'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :dashboardId="dashboardId"></WidgetCrossNavigation>
+                <WidgetInteractionsLinks v-else-if="accordion.type === 'Link'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :drivers="drivers"></WidgetInteractionsLinks>
+                <WidgetPreview v-else-if="accordion.type === 'Preview'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :drivers="drivers" :dashboardId="dashboardId"></WidgetPreview>
             </AccordionTab>
         </Accordion>
     </div>
@@ -37,32 +39,35 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IDataset, IVariable } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IWidget, IDataset, IVariable, IDashboardDriver } from '@/modules/documentExecution/dashboard/Dashboard'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import descriptor from './TableWidgetSettingsDescriptor.json'
+import settingsTabDescriptor from '../WidgetEditorSettingsTabDescriptor.json'
 import TableWidgetRows from './configuration/TableWidgetRows.vue'
 import TableWidgetSummaryRows from './configuration/TableWidgetSummaryRows.vue'
 import TableWidgetHeader from './configuration/TableWidgetHeader.vue'
 import TableWidgetColumnGroups from './configuration/TableWidgetColumnGroups.vue'
-import TableWidgetExport from './configuration/TableWidgetExport.vue'
+import WidgetExport from '../common/configuration/WidgetExport.vue'
 import TableWidgetCustomMessages from './configuration/TableWidgetCustomMessages.vue'
 import TableWidgetVisualizationType from './visualization/TableWidgetVisualizationType.vue'
 import TableWidgetVisibilityConditions from './visualization/TableWidgetVisibilityConditions.vue'
 import TableWidgetHeaders from './style/TableWidgetHeaders.vue'
 import TableWidgetColumnStyle from './style/TableWidgetColumnStyle.vue'
-import TableWidgetRowsStyle from './style/TableWidgetRowsStyle.vue'
+import WidgetRowsStyle from '../common/style/WidgetRowsStyle.vue'
 import TableWidgetSummaryStyle from './style/TableWidgetSummaryStyle.vue'
-import TableWidgetBordersStyle from './style/TableWidgetBordersStyle.vue'
-import TableWidgetPaddingStyle from './style/TableWidgetPaddingStyle.vue'
-import TableWidgetShadowsStyle from './style/TableWidgetShadowsStyle.vue'
+import WidgetBordersStyle from '../common/style/WidgetBordersStyle.vue'
+import WidgetShadowsStyle from '../common/style/WidgetShadowsStyle.vue'
 import TableWidgetConditions from './conditionalStyle/TableWidgetConditions.vue'
 import TableWidgetTooltips from './tooltips/TableWidgetTooltips.vue'
-import TableWidgetResponsive from './responsive/TableWidgetResponsive.vue'
+import WidgetResponsive from '../common/responsive/WidgetResponsive.vue'
 import TableWidgetSelection from './interactions/selection/TableWidgetSelection.vue'
-import TableWidgetCrossNavigation from './interactions/crossNavigation/TableWidgetCrossNavigation.vue'
-import TableWidgetInteractionsLinks from './interactions/link/TableWidgetInteractionsLinks.vue'
-import TableWidgetPreview from './interactions/preview/TableWidgetPreview.vue'
+import WidgetCrossNavigation from '../common/interactions/crossNavigation/WidgetCrossNavigation.vue'
+import WidgetInteractionsLinks from '../common/interactions/link/WidgetInteractionsLinks.vue'
+import WidgetPreview from '../common/interactions/preview/WidgetPreview.vue'
+import WidgetTitleStyle from '../common/style/WidgetTitleStyle.vue'
+import WidgetPaddingStyle from '../common/style/WidgetPaddingStyle.vue'
+import WidgetBackgroundColorStyle from '../common/style/WidgetBackgroundColorStyle.vue'
 
 export default defineComponent({
     name: 'table-widget-configuration-container',
@@ -73,32 +78,35 @@ export default defineComponent({
         TableWidgetSummaryRows,
         TableWidgetHeader,
         TableWidgetColumnGroups,
-        TableWidgetExport,
+        WidgetExport,
         TableWidgetCustomMessages,
         TableWidgetVisualizationType,
         TableWidgetVisibilityConditions,
+        WidgetTitleStyle,
         TableWidgetHeaders,
         TableWidgetColumnStyle,
-        TableWidgetRowsStyle,
+        WidgetRowsStyle,
         TableWidgetSummaryStyle,
-        TableWidgetBordersStyle,
-        TableWidgetPaddingStyle,
-        TableWidgetShadowsStyle,
+        WidgetBordersStyle,
+        WidgetShadowsStyle,
         TableWidgetConditions,
         TableWidgetTooltips,
-        TableWidgetResponsive,
+        WidgetResponsive,
         TableWidgetSelection,
-        TableWidgetCrossNavigation,
-        TableWidgetInteractionsLinks,
-        TableWidgetPreview
+        WidgetPaddingStyle,
+        WidgetBackgroundColorStyle,
+        WidgetCrossNavigation,
+        WidgetInteractionsLinks,
+        WidgetPreview
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
         settings: { type: Array as PropType<{ title: string; type: string }[]> },
         datasets: { type: Array as PropType<IDataset[]> },
         selectedDatasets: { type: Array as PropType<IDataset[]> },
-        drivers: { type: Array },
-        variables: { type: Array as PropType<IVariable[]> }
+        drivers: { type: Array as PropType<IDashboardDriver[]> },
+        variables: { type: Array as PropType<IVariable[]>, required: true },
+        dashboardId: { type: String, required: true }
     },
     watch: {
         settings() {
@@ -109,6 +117,7 @@ export default defineComponent({
     data() {
         return {
             descriptor,
+            settingsTabDescriptor,
             activeIndex: -1
         }
     },

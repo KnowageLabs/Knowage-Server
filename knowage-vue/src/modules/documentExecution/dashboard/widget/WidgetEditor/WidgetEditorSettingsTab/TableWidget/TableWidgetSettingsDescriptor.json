@@ -49,24 +49,6 @@
             "value": "all"
         }
     ],
-    "bordersStyleOptions": [
-        {
-            "label": "",
-            "value": ""
-        },
-        {
-            "label": "dashboard.widgetEditor.borders.solid",
-            "value": "solid"
-        },
-        {
-            "label": "dashboard.widgetEditor.borders.dashed",
-            "value": "dashed"
-        },
-        {
-            "label": "dashboard.widgetEditor.borders.dotted",
-            "value": "dotted"
-        }
-    ],
     "columnConditionOptions": [
         {
             "label": ">",
@@ -137,7 +119,6 @@
             "type": "icon"
         }
     ],
-    "configurationExportNumberInputStyle": "max-width: 100px",
     "customHeadersActionOptions": [
         {
             "label": "dashboard.widgetEditor.headers.hideHeader",
@@ -146,29 +127,6 @@
         {
             "label": "dashboard.widgetEditor.headers.setLabel",
             "value": "setLabel"
-        }
-    ],
-    "defaultToolbarStyleOptions": [
-        {
-            "type": "font-weight"
-        },
-        {
-            "type": "font-style"
-        },
-        {
-            "type": "font-size"
-        },
-        {
-            "type": "justify-content"
-        },
-        {
-            "type": "font-family"
-        },
-        {
-            "type": "color"
-        },
-        {
-            "type": "background-color"
         }
     ],
     "headersCompareValueType": [
@@ -185,70 +143,6 @@
             "value": "parameter"
         }
     ],
-    "interactionTypes": [
-        {
-            "label": "dashboard.widgetEditor.interactions.enableClickOnWholeRow",
-            "value": "allRow"
-        },
-        {
-            "label": "dashboard.widgetEditor.interactions.enableClickOnSingleColumn",
-            "value": "singleColumn"
-        },
-        {
-            "label": "dashboard.widgetEditor.interactions.enableClickOnIcon",
-            "value": "icon"
-        }
-    ],
-    "linkParameterTypeOptions": [
-        {
-            "label": "dashboard.widgetEditor.interactions.static",
-            "value": "static"
-        },
-        {
-            "label": "dashboard.widgetEditor.interactions.dynamic",
-            "value": "dynamic"
-        },
-        {
-            "label": "dashboard.widgetEditor.interactions.analyticalDriver",
-            "value": "driver"
-        },
-        {
-            "label": "dashboard.widgetEditor.interactions.json",
-            "value": "json"
-        },
-        {
-            "label": "dashboard.widgetEditor.interactions.selection",
-            "value": "selection"
-        },
-        {
-            "label": "dashboard.widgetEditor.interactions.jwt",
-            "value": "jwt"
-        }
-    ],
-    "linkTypes": [
-        {
-            "label": "dashboard.widgetEditor.interactions.openInSamePage",
-            "value": "replace"
-        },
-        {
-            "label": "dashboard.widgetEditor.interactions.openInNewPage",
-            "value": "blank"
-        }
-    ],
-    "outputParameterTypeOptions": [
-        {
-            "label": "dashboard.widgetEditor.interactions.static",
-            "value": "static"
-        },
-        {
-            "label": "dashboard.widgetEditor.interactions.dynamic",
-            "value": "dynamic"
-        },
-        {
-            "label": "dashboard.widgetEditor.interactions.selection",
-            "value": "selection"
-        }
-    ],
     "pinnedOptions": [
         {
             "label": "",
@@ -263,25 +157,6 @@
             "value": "right"
         }
     ],
-    "previewParameterTypeOptions": [
-        {
-            "label": "dashboard.widgetEditor.interactions.static",
-            "value": "static"
-        },
-        {
-            "label": "dashboard.widgetEditor.interactions.analyticalDriver",
-            "value": "driver"
-        },
-        {
-            "label": "dashboard.widgetEditor.interactions.dynamic",
-            "value": "dynamic"
-        },
-        {
-            "label": "dashboard.widgetEditor.interactions.selection",
-            "value": "selection"
-        }
-    ],
-    "responsiveInputSwiitches": ["xs", "sm", "md", "lg", "xl"],
     "settings": {
         "ConditionalStyle": [
             {
@@ -341,6 +216,10 @@
         ],
         "Style": [
             {
+                "title": "dashboard.widgetEditor.titles.title",
+                "type": "Title"
+            },
+            {
                 "title": "dashboard.widgetEditor.headers.title",
                 "type": "Headers"
             },
@@ -359,6 +238,10 @@
             {
                 "title": "dashboard.widgetEditor.summary",
                 "type": "SummaryStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.background",
+                "type": "BackgroundColorStyle"
             },
             {
                 "title": "dashboard.widgetEditor.borders.title",
@@ -425,24 +308,6 @@
             "icon": "pi pi-tablet",
             "label": "dashboard.widgetEditor.responsive.title",
             "value": "Responsive"
-        }
-    ],
-    "shadowsSizeOptions": [
-        {
-            "label": "common.small",
-            "value": "small"
-        },
-        {
-            "label": "common.medium",
-            "value": "medium"
-        },
-        {
-            "label": "common.large",
-            "value": "large"
-        },
-        {
-            "label": "common.extraLarge",
-            "value": "extraLarge"
         }
     ],
     "styleToolbarSelectionOptions": [

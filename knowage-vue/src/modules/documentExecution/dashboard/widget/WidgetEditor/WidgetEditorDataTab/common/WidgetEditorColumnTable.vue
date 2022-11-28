@@ -18,7 +18,7 @@
                 <template #empty>
                     {{ $t('common.info.noDataFound') }}
                 </template>
-                <Column v-if="settings.rowReorder" :rowReorder="settings.rowReorder?.enabled" :style="settings.rowReorder.rowReorderColumnStyle" />
+                <Column v-if="rowReorderEnabled" :rowReorder="rowReorderEnabled" :style="settings.rowReorder.rowReorderColumnStyle" />
                 <Column>
                     <template #body="slotProps">
                         <i :class="getIcon(slotProps.data)"></i>
@@ -72,13 +72,18 @@ export default defineComponent({
     name: 'widget-editor-column-table',
     components: { Column, DataTable, Dropdown },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, items: { type: Array, required: true }, settings: { type: Object, required: true } },
-    emits: ['rowReorder', 'itemUpdated', 'itemSelected', 'itemDeleted', 'itemAdded'],
+    emits: ['rowReorder', 'itemUpdated', 'itemSelected', 'itemDeleted', 'itemAdded', 'singleItemReplaced'],
     data() {
         return {
             descriptor,
             rows: [] as IWidgetColumn[],
             filters: {} as any,
             inputValuesMap: {}
+        }
+    },
+    computed: {
+        rowReorderEnabled(): boolean {
+            return this.widgetModel && ['table', 'html', 'text'].includes(this.widgetModel.type)
         }
     },
     watch: {
@@ -110,7 +115,7 @@ export default defineComponent({
             this.rows = deepcopy(this.items) as IWidgetColumn[]
         },
         setFilters() {
-            if (this.settings.globalFilterFields?.length) this.filters.global = [filterDefault]
+            if (this.settings?.globalFilterFields?.length) this.filters.global = [filterDefault]
         },
         getIcon(item: IWidgetColumn) {
             return item.fieldType === 'ATTRIBUTE' ? 'fas fa-font' : 'fas fa-hashtag'
@@ -123,8 +128,16 @@ export default defineComponent({
             if (event.dataTransfer.getData('text/plain') === 'b') return
             const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
             const tempColumn = createNewWidgetColumn(eventData)
-            this.rows.push(tempColumn as IWidgetColumn)
-            this.$emit('itemAdded', tempColumn)
+            if (['table', 'html', 'text'].includes(this.widgetModel.type)) {
+                if (this.widgetModel.type === 'table' || !this.checkIfColumnIsAlreadyPresent(tempColumn)) this.rows.push(tempColumn as IWidgetColumn)
+            } else {
+                this.rows = [tempColumn]
+            }
+            this.$emit('itemAdded', { column: tempColumn, rows: this.rows })
+        },
+        checkIfColumnIsAlreadyPresent(tempColumn: IWidgetColumn) {
+            const index = this.rows.findIndex((row: IWidgetColumn) => row.columnName === tempColumn.columnName)
+            return index !== -1
         },
         deleteItem(item: IWidgetColumn, index: number) {
             this.rows.splice(index, 1)

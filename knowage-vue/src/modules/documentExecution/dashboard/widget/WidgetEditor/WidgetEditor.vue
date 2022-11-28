@@ -9,8 +9,20 @@
                 </template>
             </Toolbar>
             <div class="datasetEditor-container kn-overflow">
-                <WidgetEditorTabs class="dashboardEditor-tabs" :propWidget="widget" :datasets="datasets" :selectedDatasets="selectedDatasets" :drivers="drivers" :variables="variables" @datasetSelected="onDatasetSelected" />
-                <WidgetEditorPreview id="widget-editor-preview" :propWidget="widget" :dashboardId="dashboardId" :datasets="datasets" />
+                <WidgetEditorTabs
+                    class="dashboardEditor-tabs"
+                    :propWidget="widget"
+                    :datasets="datasets"
+                    :selectedDatasets="selectedDatasets"
+                    :drivers="drivers"
+                    :variables="variables"
+                    :dashboardId="dashboardId"
+                    :selectedSettingProp="selectedSetting"
+                    :htmlGalleryProp="htmlGalleryProp"
+                    @settingChanged="onSettingChanged"
+                    @datasetSelected="onDatasetSelected"
+                />
+                <WidgetEditorPreview v-if="selectedSetting != 'Gallery'" :propWidget="widget" :dashboardId="dashboardId" :datasets="datasets" :drivers="documentDrivers" :variables="variables" />
             </div>
         </div>
     </Teleport>
@@ -21,7 +33,7 @@
  * ! this component will be in charge of managing the widget editing.
  */
 import { defineComponent, PropType } from 'vue'
-import { IWidgetEditorDataset, IDatasetOptions, IWidget, IDataset, IModelDataset, IVariable } from '../../Dashboard'
+import { IWidgetEditorDataset, IWidget, IDataset, IModelDataset, IVariable, IDashboardDriver, IGalleryItem } from '../../Dashboard'
 import { AxiosResponse } from 'axios'
 import { createNewWidget, formatWidgetForSave } from './helpers/WidgetEditorHelpers'
 import WidgetEditorPreview from './WidgetEditorPreview.vue'
@@ -35,16 +47,27 @@ export default defineComponent({
     name: 'widget-editor',
     components: { WidgetEditorPreview, WidgetEditorTabs },
     emits: ['close', 'widgetUpdated', 'widgetSaved'],
-    props: { dashboardId: { type: String, required: true }, propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array as PropType<IDataset[]> }, documentDrivers: { type: Array }, variables: { type: Array as PropType<IVariable[]> } },
+    props: {
+        dashboardId: { type: String, required: true },
+        propWidget: { type: Object as PropType<IWidget>, required: true },
+        datasets: { type: Array as PropType<IDataset[]>, required: true },
+        documentDrivers: { type: Array as PropType<IDashboardDriver[]>, required: true },
+        variables: { type: Array as PropType<IVariable[]>, required: true },
+        htmlGalleryProp: { type: Array as PropType<IGalleryItem[]>, required: true }
+    },
     data() {
         return {
             descriptor,
             widget: {} as any,
             previewData: null as any,
-            datasetFunctions: {} as { availableFunctions: string[]; nullifFunction: string[] },
+            datasetFunctions: {} as {
+                availableFunctions: string[]
+                nullifFunction: string[]
+            },
             selectedModelDatasets: [] as IModelDataset[],
             selectedDatasets: [] as IDataset[],
-            drivers: [] as any[]
+            drivers: [] as any[],
+            selectedSetting: ''
         }
     },
     watch: {
@@ -66,10 +89,10 @@ export default defineComponent({
     methods: {
         loadWidget() {
             if (!this.propWidget) return
-            this.widget = this.propWidget.new ? createNewWidget() : deepcopy(this.propWidget)
+            this.widget = this.propWidget.new ? createNewWidget(this.propWidget.type) : deepcopy(this.propWidget)
         },
         loadSelectedModelDatasets() {
-            this.selectedModelDatasets = this.dashboardId ? this.dashboardStore.getDashboardSelectedDatastes(this.dashboardId) : {}
+            this.selectedModelDatasets = this.dashboardId ? this.dashboardStore.getDashboardSelectedDatasets(this.dashboardId) : {}
         },
         loadSelectedModel() {
             if (!this.datasets) return
@@ -77,7 +100,14 @@ export default defineComponent({
             for (let i = 0; i < this.selectedModelDatasets.length; i++) {
                 const tempDataset = this.selectedModelDatasets[i]
                 const index = this.datasets.findIndex((dataset: any) => dataset.id.dsId === tempDataset.id)
-                if (index !== -1) this.selectedDatasets.push({ ...this.datasets[index], cache: tempDataset.cache, indexes: tempDataset.indexes ?? [], parameters: tempDataset.parameters as any[], drivers: tempDataset.drivers ?? [] })
+                if (index !== -1)
+                    this.selectedDatasets.push({
+                        ...this.datasets[index],
+                        cache: tempDataset.cache,
+                        indexes: tempDataset.indexes ?? [],
+                        parameters: tempDataset.parameters as any[],
+                        drivers: tempDataset.drivers ?? []
+                    })
             }
         },
         loadDrivers() {
@@ -95,7 +125,7 @@ export default defineComponent({
             this.store.setLoading(false)
         },
         save() {
-            const tempWidget = formatWidgetForSave(this.widget)
+            const tempWidget = deepcopy(this.widget)
             if (!tempWidget) return
 
             if (tempWidget.new) {
@@ -109,6 +139,9 @@ export default defineComponent({
         },
         close() {
             this.$emit('close')
+        },
+        onSettingChanged(setting: string) {
+            this.selectedSetting = setting
         }
     }
 })
@@ -122,22 +155,5 @@ export default defineComponent({
 
 .icon-disabled {
     color: #c2c2c2;
-}
-#widget-editor-preview {
-    flex: 0.5;
-}
-@media screen and (max-width: 1199px) {
-    #widget-editor-preview {
-        -webkit-transition: width 0.3s;
-        transition: flex 0.3s;
-        flex: 0;
-    }
-}
-@media screen and (min-width: 1200px) {
-    #widget-editor-preview {
-        -webkit-transition: width 0.3s;
-        transition: flex 0.3s;
-        flex: 0.5;
-    }
 }
 </style>

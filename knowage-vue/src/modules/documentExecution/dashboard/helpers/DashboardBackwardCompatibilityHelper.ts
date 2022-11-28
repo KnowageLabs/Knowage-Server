@@ -1,31 +1,64 @@
+import { formatTableWidget } from './tableWidget/TableWidgetCompatibilityHelper'
+import { formatSelectorWidget } from '@/modules/documentExecution/dashboard/helpers/selectorWidget/SelectorWidgetCompatibilityHelper'
+import { IAssociation, IDashboard, IDashboardConfiguration, IDataset, IDatasetParameter, ISelection, IVariable, IWidget, IWidgetColumn, IWidgetColumnFilter, IWidgetEditorDataset } from '../Dashboard'
+import { formatSelectionWidget } from './selectionWidget/SelectionsWidgetCompatibilityHelper'
+import { setVariableValueFromDataset } from '../generalSettings/VariablesHelper'
 import deepcopy from 'deepcopy'
 import cryptoRandomString from 'crypto-random-string'
-import { formatTableWidget } from './tableWidget/TableWidgetCompatibilityHelper'
-import { IDatasetParameter, IWidgetEditorDataset } from '../Dashboard'
+import { formatHTMLWidget } from './htmlWidget/HTMLWidgetCompatibilityHelper'
+import { formatTextWidget } from './textWidget/TextWidgetCompatibilityHelper'
 
-export const formatModel = (model: any) => {
+const datasetIdLabelMap = {}
+
+export const formatModel = async (model: any, document: any, datasets: IDataset[], drivers: any[], profileAttributes: { name: string, value: string }[], $http: any) => {
     if (!model.sheets) return
 
-    // TODO - id
+    loadDatasetIdNameMap(datasets)
     const formattedModel = {
-        id: 1,
+        id: cryptoRandomString({ length: 16, type: 'base64' }),
         widgets: [],
         version: model.knowageVersion,
-        configuration: getFormattedModelConfiguration(model),
+        configuration: await getFormattedModelConfiguration(model, document, drivers, profileAttributes, datasets, $http),
         sheets: []
     } as any
     for (let i = 0; i < model.sheets.length; i++) {
         const formattedSheet = formatSheet(model.sheets[i], formattedModel)
         formattedModel.sheets.push(formattedSheet)
     }
+
     return formattedModel
 }
 
-const getFormattedModelConfiguration = (model: any) => {
-    // TODO - id, name, label, description
-    const formattedConfiguration = { id: '', name: '', label: '', description: '', associations: [], datasets: getFormattedDatasets(model), variables: getFormattedVariables(model), themes: {} }
+const loadDatasetIdNameMap = (datasets: IDataset[]) => {
+    if (!datasets) return
+    datasets.forEach((dataset: IDataset) => {
+        datasetIdLabelMap[dataset.label] = dataset.id.dsId
+    })
+}
+
+const getDatasetId = (datasetLabel: string) => {
+    return datasetIdLabelMap[datasetLabel]
+}
+
+const getFormattedModelConfiguration = async (model: any, document: any, drivers: any[], profileAttributes: { name: string, value: string }[], datasets: IDataset[], $http: any) => {
+    const formattedConfiguration = { id: document.id, name: document.name, label: document.label, description: document.description, associations: getFormattedAssociations(model), datasets: getFormattedDatasets(model), variables: await getFormattedVariables(model, drivers, profileAttributes, datasets, $http), selections: getFormattedSelections(model), themes: {} } as IDashboardConfiguration
 
     return formattedConfiguration
+}
+
+const getFormattedAssociations = (model: any) => {
+    if (!model.configuration || !model.configuration.associations) return []
+    const formattedAssociations = [] as IAssociation[]
+    for (let i = 0; i < model.configuration.associations.length; i++) {
+        formattedAssociations.push(getFormattedAssociation(model.configuration.associations[i]))
+    }
+    return formattedAssociations
+}
+
+const getFormattedAssociation = (association: any) => {
+    const formattedAssociation = { id: association.id, fields: [] } as IAssociation
+    association.fields?.forEach((field: { column: string, store: string, type: string }) => formattedAssociation.fields.push({ column: field.column, dataset: getDatasetId(field.store) }))
+    return formattedAssociation
 }
 
 const getFormattedDatasets = (model: any) => {
@@ -56,30 +89,54 @@ const getFormattedDatasetParameters = (dataset: any) => {
     return parameters
 }
 
-const getFormattedVariables = (model: any) => {
-    const formattedVariables = [] as { name: string, type: string, value: string }[]
+const getFormattedVariables = async (model: any, drivers: any[], profileAttributes: { name: string, value: string }[], datasets: IDataset[], $http: any) => {
+    const formattedVariables = [] as IVariable[]
     if (!model.configuration || !model.configuration.variables) return formattedVariables
     for (let i = 0; i < model.configuration.variables.length; i++) {
         const tempVariable = model.configuration.variables[i]
-        const formattedVariable = { name: tempVariable.name, type: tempVariable.type, value: '' }
+        const formattedVariable = { name: tempVariable.name, type: tempVariable.type, value: '' } as IVariable
         switch (formattedVariable.type) {
             case 'static':
                 formattedVariable.value = tempVariable.value;
                 break
             case 'dataset':
-                formattedVariable.value = tempVariable.column;
+                formattedVariable.dataset = tempVariable.dataset;
+                formattedVariable.column = tempVariable.column;
+                await setVariableValueFromDataset(formattedVariable, datasets, $http)
                 break
             case 'driver':
-                formattedVariable.value = tempVariable.driver;
+                formattedVariable.driver = tempVariable.driver;
+                formattedVariable.value = getDriverValue(tempVariable.driver, drivers);
                 break
             case 'profile':
-                formattedVariable.value = tempVariable.attribute;
+                formattedVariable.attribute = tempVariable.attribute
+                formattedVariable.value = getProfileAttributeValue(tempVariable.attribute, profileAttributes);
                 break
         }
         formattedVariables.push(formattedVariable)
     }
-
     return formattedVariables
+}
+
+const getDriverValue = (driverUrlName: string, drivers: any[]) => {
+    if (!drivers) return ''
+    const index = drivers.findIndex((driver: any) => driver.urlName === driverUrlName)
+    return index !== -1 ? drivers[index].value : ''
+}
+
+const getProfileAttributeValue = (profileAttributeName: string, profileAttributes: { name: string, value: string }[]) => {
+    if (!profileAttributes) return ''
+    const index = profileAttributes.findIndex((profileAttribute: { name: string, value: string }) => profileAttribute.name === profileAttributeName)
+    return index !== -1 ? profileAttributes[index].value : ''
+}
+
+const getFormattedSelections = (model: any) => {
+    if (!model.configuration || !model.selections) return []
+    const formattedSelections = [] as ISelection[]
+    model.selections.forEach((selection: { ds: string, columnName: string, value: string | (string | number)[], aggregated: boolean }) => {
+        formattedSelections.push({ datasetId: getDatasetId(selection.ds), datasetLabel: selection.ds, columnName: selection.columnName, value: Array.isArray(selection.value) ? selection.value : [selection.value], aggregated: selection.aggregated, timestamp: new Date().getTime() })
+    })
+    return formattedSelections
 }
 
 const formatSheet = (sheet: any, formattedModel: any) => {
@@ -90,7 +147,7 @@ const formatSheet = (sheet: any, formattedModel: any) => {
 
     for (let i = 0; i < sheet.widgets.length; i++) {
         const tempWidget = sheet.widgets[i]
-        formattedSheet.widgets.lg.push({ id: tempWidget.id, h: 5, w: 10, x: 0, y: 0, i: cryptoRandomString({ length: 16, type: 'base64' }), moved: false })
+        formattedSheet.widgets.lg.push({ id: tempWidget.id, h: tempWidget.sizeY, w: tempWidget.sizeX, x: tempWidget.col, y: tempWidget.row, i: cryptoRandomString({ length: 16, type: 'base64' }), moved: false })
         addWidgetToModel(tempWidget, formattedModel)
     }
 
@@ -99,7 +156,7 @@ const formatSheet = (sheet: any, formattedModel: any) => {
 
 const addWidgetToModel = (widget: any, formattedModel: any) => {
     if (checkIfWidgetInModel(widget, formattedModel)) return
-    formattedModel.widgets.push(formatWidget(widget))
+    formattedModel.widgets.push(formatWidget(widget, formattedModel))
 }
 
 const checkIfWidgetInModel = (widget: any, formattedModel: any) => {
@@ -115,13 +172,37 @@ const checkIfWidgetInModel = (widget: any, formattedModel: any) => {
     return found
 }
 
-export const formatWidget = (widget: any) => {
+export const formatWidget = (widget: any, formattedModel: IDashboard) => {
     let formattedWidget = {} as any
 
     switch (widget.type) {
         case 'table':
-            formattedWidget = formatTableWidget(widget)
+            formattedWidget = formatTableWidget(widget, formattedModel)
+            break;
+        case 'selector':
+            formattedWidget = formatSelectorWidget(widget)
+            break;
+        case 'selection':
+            formattedWidget = formatSelectionWidget(widget)
+            break
+        case 'html':
+            formattedWidget = formatHTMLWidget(widget)
+            break
+        case 'text':
+            formattedWidget = formatTextWidget(widget)
     }
 
     return formattedWidget
+}
+
+export const getFiltersForColumns = (formattedWidget: IWidget, oldWidget: any) => {
+    if (!oldWidget.filters || oldWidget.filters.length === 0) return
+    for (let i = 0; i < oldWidget.filters.length; i++) {
+        const tempFilter = oldWidget.filters[i]
+        const index = formattedWidget.columns?.findIndex((column: IWidgetColumn) => column.columnName === tempFilter.colName)
+        if (index !== -1) {
+            formattedWidget.columns[index].filter = { enabled: true, operator: tempFilter.filterOperator, value: tempFilter.filterVal1 }
+            if (tempFilter.filterVal2 && formattedWidget.columns[index].filter) (formattedWidget.columns[index].filter as IWidgetColumnFilter).value2 = tempFilter.filterVal2
+        }
+    }
 }

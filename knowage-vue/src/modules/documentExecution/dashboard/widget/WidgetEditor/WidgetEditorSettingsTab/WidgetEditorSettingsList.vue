@@ -1,6 +1,6 @@
 <template>
     <div class="dashboard-editor-list-card-container p-m-3">
-        <Listbox class="kn-list kn-list-no-border-right dashboard-editor-list" :options="options">
+        <Listbox class="kn-list kn-list-no-border-right dashboard-editor-list" :options="options" optionDisabled="disabled">
             <template #option="slotProps">
                 <div class="kn-list-item" :style="descriptor.listStyle.listItem" @click="itemClicked(slotProps.option)" data-test="widget-editor-list-item">
                     <i v-if="slotProps.option.icon" :class="slotProps.option.icon" class="p-mr-2" :style="descriptor.listStyle.listIcon"></i>

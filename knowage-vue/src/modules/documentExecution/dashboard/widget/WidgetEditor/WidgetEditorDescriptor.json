@@ -1,4 +1,46 @@
 {
+    "activeSelectionsEditorMock": [
+        {
+            "aggregated": false,
+            "columnName": "Example Column 1",
+            "datasetId": 1,
+            "datasetLabel": "Example Dataset 1",
+            "timestamp": 1666950495017,
+            "value": ["Example Value 1"]
+        },
+        {
+            "aggregated": false,
+            "columnName": "Example Column 2",
+            "datasetId": 1,
+            "datasetLabel": "Example Dataset 2",
+            "timestamp": 1666950495017,
+            "value": ["Example Value 2"]
+        },
+        {
+            "aggregated": false,
+            "columnName": "Example Column 3",
+            "datasetId": 1,
+            "datasetLabel": "Example Dataset 3",
+            "timestamp": 1666950495017,
+            "value": ["Example Value 3"]
+        },
+        {
+            "aggregated": false,
+            "columnName": "Example Column 4",
+            "datasetId": 1,
+            "datasetLabel": "Example Dataset 4",
+            "timestamp": 1666950495017,
+            "value": ["Example Value 4"]
+        },
+        {
+            "aggregated": false,
+            "columnName": "Example Column 5",
+            "datasetId": 1,
+            "datasetLabel": "Example Dataset 5",
+            "timestamp": 1666950495017,
+            "value": ["Example Value 5"]
+        }
+    ],
     "bordersStyleOptions": [
         {
             "label": "",

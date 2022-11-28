@@ -1,0 +1,63 @@
+{
+    "layouts": [
+        {
+            "icon": "fa fa-ellipsis-v",
+            "name": "Vertical",
+            "value": "vertical"
+        },
+        {
+            "icon": "fa fa-ellipsis-h",
+            "name": "Horizontal",
+            "value": "horizontal"
+        },
+        {
+            "icon": "fa fa-th",
+            "name": "Grid",
+            "value": "grid"
+        }
+    ],
+    "selectionTypes": [
+        {
+            "imageUrl": "/knowage/themes/commons/img/cockpit/selectorWidget/radio.svg",
+            "label": "list",
+            "value": "list"
+        },
+        {
+            "imageUrl": "/knowage/themes/commons/img/cockpit/selectorWidget/multiDropdown.svg",
+            "label": "chips",
+            "value": "chips"
+        }
+    ],
+    "selectorTypes": [
+        {
+            "imageUrl": "/knowage/themes/commons/img/cockpit/selectorWidget/radio.svg",
+            "label": "singleValue",
+            "value": "singleValue"
+        },
+        {
+            "imageUrl": "/knowage/themes/commons/img/cockpit/selectorWidget/check.svg",
+            "label": "multiValue",
+            "value": "multiValue"
+        },
+        {
+            "imageUrl": "/knowage/themes/commons/img/cockpit/selectorWidget/dropdown.svg",
+            "label": "dropdown",
+            "value": "dropdown"
+        },
+        {
+            "imageUrl": "/knowage/themes/commons/img/cockpit/selectorWidget/multiDropdown.svg",
+            "label": "multiDropdown",
+            "value": "multiDropdown"
+        },
+        {
+            "imageUrl": "/knowage/themes/commons/img/cockpit/selectorWidget/singleDate.svg",
+            "label": "date",
+            "value": "date"
+        },
+        {
+            "imageUrl": "/knowage/themes/commons/img/cockpit/selectorWidget/multiDate.svg",
+            "label": "dateRange",
+            "value": "dateRange"
+        }
+    ]
+}

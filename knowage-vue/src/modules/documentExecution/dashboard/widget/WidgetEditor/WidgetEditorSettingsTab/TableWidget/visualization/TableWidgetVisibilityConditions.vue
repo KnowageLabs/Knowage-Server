@@ -41,12 +41,23 @@
                                     <label class="kn-material-input-label">{{ $t('common.variable') }}</label>
                                     <Dropdown class="kn-material-input" v-model="visibilityCondition.condition.variable" :options="variables" optionValue="name" optionLabel="name" :disabled="visibilityConditionsDisabled" @change="onVariabeSelected(visibilityCondition)"> </Dropdown>
                                 </div>
-                                <div class="p-col-12 p-md-3 p-d-flex p-flex-column p-px-2 p-pt-3">
+                                <div v-if="visibilityCondition.condition.type === 'variable' && visibilityCondition.condition.variablePivotDatasetOptions" class="p-col-12 p-md-2 p-d-flex p-flex-column">
+                                    <label class="kn-material-input-label p-mr-2">{{ $t('common.key') }}</label>
+                                    <Dropdown
+                                        class="kn-material-input"
+                                        v-model="visibilityCondition.condition.variableKey"
+                                        :options="visibilityCondition.condition.variablePivotDatasetOptions ? Object.keys(visibilityCondition.condition.variablePivotDatasetOptions) : []"
+                                        :disabled="visibilityConditionsDisabled"
+                                        @change="onVariableKeyChanged(visibilityCondition)"
+                                    >
+                                    </Dropdown>
+                                </div>
+                                <div class="p-col-12 p-md-2 p-d-flex p-flex-column p-px-2 p-pt-3">
                                     <label class="kn-material-input-label">{{ $t('common.operator') }}</label>
                                     <Dropdown class="kn-material-input" v-model="visibilityCondition.condition.operator" :options="descriptor.visibilityConditionOperators" optionValue="value" optionLabel="label" :disabled="visibilityConditionsDisabled" @change="visibilityConditionsChanged">
                                     </Dropdown>
                                 </div>
-                                <div class="p-col-12 p-md-5 p-d-flex p-flex-column p-px-2 p-pt-3">
+                                <div class="p-col-12 p-md-4 p-d-flex p-flex-column p-px-2 p-pt-3">
                                     <label class="kn-material-input-label p-pb-1">{{ $t('common.value') }}</label>
                                     <InputText class="kn-material-input p-inputtext-sm" v-model="visibilityCondition.condition.value" :disabled="visibilityConditionsDisabled" @change="visibilityConditionsChanged" />
                                 </div>
@@ -97,13 +108,14 @@ import descriptor from '../TableWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 import MultiSelect from 'primevue/multiselect'
+import { getSelectedVariable } from '@/modules/documentExecution/dashboard/generalSettings/VariablesHelper'
 
 export default defineComponent({
     name: 'table-widget-visibility-condition',
     components: { Dropdown, InputSwitch, MultiSelect },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
-        variables: { type: Array as PropType<IVariable[]> }
+        variables: { type: Array as PropType<IVariable[]>, required: true }
     },
     data() {
         return {
@@ -140,7 +152,16 @@ export default defineComponent({
             this.onColumnRemoved()
         },
         loadVisibilityConditions() {
-            if (this.widgetModel.settings?.visualization?.visibilityConditions) this.visibilityConditionsModel = this.widgetModel.settings.visualization.visibilityConditions
+            if (this.widgetModel.settings?.visualization?.visibilityConditions) {
+                this.visibilityConditionsModel = this.widgetModel.settings.visualization.visibilityConditions
+                this.visibilityConditionsModel?.conditions.forEach((visibilityCondition: ITableWidgetVisibilityCondition) => {
+                    if (visibilityCondition.condition.type === 'variable' && visibilityCondition.condition.variableKey) this.setVisibilityConditionPivotedValues(visibilityCondition)
+                })
+            }
+        },
+        setVisibilityConditionPivotedValues(visibilityCondition: ITableWidgetVisibilityCondition) {
+            const index = this.variables.findIndex((variable: IVariable) => variable.name === visibilityCondition.condition.variable)
+            if (index !== -1) visibilityCondition.condition.variablePivotDatasetOptions = this.variables[index].pivotedValues
         },
         loadWidgetColumnMaps() {
             this.widgetModel.columns.forEach((column: IWidgetColumn) => {
@@ -164,13 +185,27 @@ export default defineComponent({
         },
         onVisibilityConditionTypeChanged(visibilityCondition: ITableWidgetVisibilityCondition) {
             if (visibilityCondition.condition.type === 'always') {
-                const fields = ['variable', 'variableValue', 'operator', 'value']
+                const fields = ['variable', 'variableValue', 'operator', 'value', 'variablePivotDatasetOptions']
                 fields.forEach((field: string) => delete visibilityCondition.condition[field])
             }
             this.visibilityConditionsChanged()
         },
         onVariabeSelected(visibilityCondition: ITableWidgetVisibilityCondition) {
-            if (visibilityCondition.condition.variable) visibilityCondition.condition.variableValue = this.variableMap[visibilityCondition.condition.variable] ?? ''
+            if (visibilityCondition.condition.variable) {
+                const variable = getSelectedVariable(visibilityCondition.condition.variable, this.variables)
+                if (variable && variable.dataset && !variable.column) {
+                    visibilityCondition.condition.variablePivotDatasetOptions = variable.pivotedValues ?? {}
+                    visibilityCondition.condition.variableValue = ''
+                } else {
+                    visibilityCondition.condition.variableValue = this.variableMap[visibilityCondition.condition.variable] ?? ''
+                    delete visibilityCondition.condition.variablePivotDatasetOptions
+                }
+                delete visibilityCondition.condition.variableKey
+            }
+            this.visibilityConditionsChanged()
+        },
+        onVariableKeyChanged(visibilityCondition: ITableWidgetVisibilityCondition) {
+            visibilityCondition.condition.variableValue = visibilityCondition.condition.variableKey ? visibilityCondition.condition.variablePivotDatasetOptions[visibilityCondition.condition.variableKey] : ''
             this.visibilityConditionsChanged()
         },
         addVisibilityCondition() {

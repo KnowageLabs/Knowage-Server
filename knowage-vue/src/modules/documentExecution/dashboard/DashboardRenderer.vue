@@ -5,16 +5,16 @@
                 v-model:layout="sheet.widgets['lg']"
                 :responsive-layouts="sheet.widgets"
                 :responsive="true"
-                :cols="{ lg: 100, md: 100, sm: 50, xs: 20, xxs: 10 }"
+                :cols="{ lg: 50, md: 100, sm: 50, xs: 20, xxs: 10 }"
                 :row-height="30"
                 :is-draggable="true"
                 :is-resizable="true"
                 :vertical-compact="false"
-                :use-css-transforms="true"
+                :use-css-transforms="false"
                 :margin="[2, 2]"
                 @breakpoint-changed="breakpointChangedEvent"
             >
-                <WidgetController :activeSheet="activeSheet(index)" :widget="currentWidget(item.id)" :item="item" v-for="item in sheet.widgets['lg']" :key="item.i" :datasets="datasets"></WidgetController>
+                <WidgetController :activeSheet="activeSheet(index)" :widget="currentWidget(item.id)" :item="item" v-for="item in sheet.widgets['lg']" :key="item.i" :datasets="datasets" :dashboardId="dashboardId" :drivers="documentDrivers" :variables="variables"></WidgetController>
             </grid-layout>
         </KnDashboardTab>
     </KnDashboardTabsPanel>
@@ -24,7 +24,8 @@
 /**
  * ! this component will be in charge of creating the dashboard visualizazion, specifically to manage responsive structure and sheets.
  */
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
+import { IDashboardDriver, IDataset, IVariable } from './Dashboard'
 import { mapState } from 'pinia'
 import WidgetController from './widget/WidgetController.vue'
 import KnDashboardTabsPanel from '@/components/UI/KnDashboardTabs/KnDashboardTabsPanel.vue'
@@ -34,7 +35,13 @@ import dashboardStore from './Dashboard.store'
 export default defineComponent({
     name: 'dashboard-manager',
     components: { KnDashboardTab, KnDashboardTabsPanel, WidgetController },
-    props: { model: { type: Object }, datasets: { type: Array } },
+    props: {
+        model: { type: Object },
+        datasets: { type: Array as PropType<IDataset[]>, required: true },
+        dashboardId: { type: String, required: true },
+        documentDrivers: { type: Array as PropType<IDashboardDriver[]>, required: true },
+        variables: { type: Array as PropType<IVariable[]>, required: true }
+    },
     inject: ['dHash'],
     data() {
         return {
@@ -60,7 +67,7 @@ export default defineComponent({
             if ((!this.dashboard[this.dHash] && index === 0) || this.dashboard[this.dHash] === index) return true
             return false
         },
-        breakpointChangedEvent: function (newBreakpoint, newLayout) {
+        breakpointChangedEvent: function(newBreakpoint, newLayout) {
             // console.log('BREAKPOINT CHANGED breakpoint=', newBreakpoint, ', layout: ', newLayout)
         },
         currentWidget(id) {

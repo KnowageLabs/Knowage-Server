@@ -1,17 +1,13 @@
-import { ITableWidgetColumnGroups, ITableWidgetConfiguration, ITableWidgetCrossNavigation, ITableWidgetHeaders, ITableWidgetInteractions, ITableWidgetSelection, ITableWidgetSettings, ITableWidgetVisualization, IWidget, IWidgetColumn } from "../../../../Dashboard"
-import deepcopy from 'deepcopy'
+import { ITableWidgetColumnGroups, ITableWidgetConditionalStyles, ITableWidgetConfiguration, IWidgetCrossNavigation, ITableWidgetHeaders, IWidgetInteractions, IWidgetSelection, ITableWidgetSettings, ITableWidgetVisualization, IWidget, IWidgetColumn } from '../../../../Dashboard'
 
 const columnIdNameMap = {}
 
 export function formatTableWidgetForSave(widget: IWidget) {
-    // TODO - CHANGE WHEN BE IS DONE
-    const tempWidget = deepcopy(widget)
+    if (!widget) return
 
-    if (!tempWidget) return
-
-    loadColumnIdNameMap(tempWidget)
-    formatTableSelectedColumns(tempWidget.columns)
-    formatTableSettings(tempWidget.settings)
+    loadColumnIdNameMap(widget)
+    formatTableSelectedColumns(widget.columns)
+    formatTableSettings(widget.settings)
 }
 
 function formatTableSelectedColumns(columns: IWidgetColumn[]) {
@@ -34,6 +30,7 @@ const getColumnName = (columnId: string) => {
 const formatTableSettings = (widgetSettings: ITableWidgetSettings) => {
     formatTableWidgetConfiguration(widgetSettings.configuration)
     formatTableWidgetVisualisation(widgetSettings.visualization)
+    formatTableWidgetConditionalStyle(widgetSettings.conditionalStyles)
     formatTableInteractions(widgetSettings.interactions)
 }
 
@@ -48,7 +45,6 @@ const formatRowsConfiguration = (widgetConfiguration: ITableWidgetConfiguration)
     widgetConfiguration.rows.rowSpan.column = getColumnName(widgetConfiguration.rows.rowSpan.column)
 }
 
-
 const formatHeadersConfiguration = (widgetConfiguration: ITableWidgetConfiguration) => {
     if (!widgetConfiguration.headers) return
     formatHeaderConfigurationRules(widgetConfiguration.headers)
@@ -62,6 +58,7 @@ const formatHeaderConfigurationRules = (configurationHeaders: ITableWidgetHeader
             formattedRuleColumns.push(getColumnName(tempRule.target[j]))
         }
         tempRule.target = formattedRuleColumns
+        delete tempRule.variablePivotDatasetOptions
     }
 }
 
@@ -93,6 +90,14 @@ const formatVisibilityConditions = (widgetVisualization: ITableWidgetVisualizati
             formattedRuleColumns.push(getColumnName(tempCondition.target[j]))
         }
         tempCondition.target = formattedRuleColumns
+        delete tempCondition.condition.variablePivotDatasetOptions
+    }
+}
+
+const formatTableWidgetConditionalStyle = (widgetConditionalStyles: ITableWidgetConditionalStyles) => {
+    for (let i = 0; i < widgetConditionalStyles.conditions.length; i++) {
+        const tempCondition = widgetConditionalStyles.conditions[i]
+        delete tempCondition.condition.variablePivotDatasetOptions
     }
 }
 
@@ -107,15 +112,15 @@ const formatColumnGroupsColumnIdToName = (columnGroupsConfiguration: ITableWidge
     }
 }
 
-const formatTableInteractions = (widgetInteractions: ITableWidgetInteractions) => {
-    formatSelection(widgetInteractions.selection)
+const formatTableInteractions = (widgetInteractions: IWidgetInteractions) => {
+    formatSelection(widgetInteractions.selection as IWidgetSelection)
     formatCrossNavigation(widgetInteractions.crosssNavigation)
 }
 
-const formatSelection = (selection: ITableWidgetSelection) => {
+const formatSelection = (selection: IWidgetSelection) => {
     if (selection.modalColumn) selection.modalColumn = getColumnName(selection.modalColumn)
 }
 
-const formatCrossNavigation = (crosssNavigation: ITableWidgetCrossNavigation) => {
+const formatCrossNavigation = (crosssNavigation: IWidgetCrossNavigation) => {
     if (crosssNavigation.column) crosssNavigation.column = getColumnName(crosssNavigation.column)
 }

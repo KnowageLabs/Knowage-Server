@@ -6,19 +6,18 @@
         </div>
 
         <div class="p-col-12 p-py-4">
-            <WidgetEditorStyleToolbar :options="descriptor.defaultToolbarStyleOptions" :propModel="headersStyleModel.properties" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
+            <WidgetEditorStyleToolbar :options="settingsDescriptor.defaultToolbarStyleOptions" :propModel="headersStyleModel.properties" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
         </div>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, ITawbleWidgetHeadersStyle, IWidgetStyleToolbarModel } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IWidget, ITawbleWidgetHeadersStyle, IWidgetStyleToolbarModel } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
-import descriptor from '../TableWidgetSettingsDescriptor.json'
+import settingsDescriptor from '../../WidgetEditorSettingsTabDescriptor.json'
 import InputNumber from 'primevue/inputnumber'
 import WidgetEditorStyleToolbar from '../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
-
 export default defineComponent({
     name: 'table-widget-headers',
     components: { InputNumber, WidgetEditorStyleToolbar },
@@ -27,7 +26,7 @@ export default defineComponent({
     },
     data() {
         return {
-            descriptor,
+            settingsDescriptor,
             headersStyleModel: null as ITawbleWidgetHeadersStyle | null
         }
     },

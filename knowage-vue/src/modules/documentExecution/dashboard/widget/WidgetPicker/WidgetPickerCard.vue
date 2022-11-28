@@ -1,6 +1,6 @@
 <template>
     <div id="widget-card" class="p-m-2" :style="descriptor.style.widgetCard">
-        <div id="widget-card-icon-container" class="p-d-flex p-ai-center p-jc-center" :style="descriptor.style.cardIconContainer">
+        <div id="widget-card-icon-container" class="p-d-flex p-ai-center p-jc-center" :style="descriptor.style.cardIconContainer as any">
             <i :class="widget.cssClass" :style="descriptor.style.mainIcon" />
         </div>
         <div class="p-d-flex p-flex-column p-ai-start p-jc-center">
