@@ -35,7 +35,7 @@
                 <div class="p-field p-col-12 p-lg-8 p-d-flex">
                     <span class="p-float-label kn-flex">
                         <InputText v-if="(!driver.multivalue || (driver.typeCode === 'MAN_IN' && (driver.type === 'NUM' || driver.type === 'STRING'))) && driver.parameterValue[0]" class="kn-material-input" v-model="driver.parameterValue[0].value" />
-                        <Chips v-else :disabled="true">
+                        <Chips v-else v-model="driver.parameterValue" :disabled="true">
                             <template #chip="slotProps">
                                 <div>
                                     <span>{{ slotProps.value.value }}</span>

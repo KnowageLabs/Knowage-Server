@@ -11,6 +11,7 @@
         <div v-if="driver">
             <DriverDialogManualInput v-if="driver.typeCode === 'MAN_IN' && (driver.type === 'NUM' || driver.type === 'STRING')" :propDriver="driver"></DriverDialogManualInput>
             <DriverDialogList v-else-if="driver.selectionType === 'LIST'" :propDriver="driver"></DriverDialogList>
+            <DriverDialogDropdown v-else-if="driver.selectionType === 'COMBOBOX'" :propDriver="driver"></DriverDialogDropdown>
             <span v-else>
                 {{ driver }}
             </span>
@@ -31,10 +32,11 @@ import descriptor from '../DatasetEditorDataDetailDescriptor.json'
 import deepcopy from 'deepcopy'
 import DriverDialogManualInput from './DriverDialogManualInput.vue'
 import DriverDialogList from './DriverDialogList.vue'
+import DriverDialogDropdown from './DriverDialogDropdown.vue'
 
 export default defineComponent({
     name: 'dataset-editor-driver-dialog',
-    components: { Dialog, DriverDialogManualInput, DriverDialogList },
+    components: { Dialog, DriverDialogManualInput, DriverDialogList, DriverDialogDropdown },
     props: { visible: Boolean, propDriver: { type: Object as PropType<IDashboardDatasetDriver | null>, required: true } },
     emits: ['close', 'updateDriver'],
     computed: {},

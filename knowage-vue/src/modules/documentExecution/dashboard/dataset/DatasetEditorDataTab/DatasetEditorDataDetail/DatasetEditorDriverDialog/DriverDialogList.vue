@@ -1,10 +1,5 @@
 <template>
     <div v-if="driver" class="p-fluid p-formgrid p-grid p-jc-center p-ai-center p-p-5 p-m-0">
-        {{ driver.parameterValue }}
-        <br />
-        {{ driver.options }}
-        <br />
-        {{ checkedValues }}
         <div class="p-field-radiobutton p-col-12" v-for="(option, index) in driver.options" :key="index">
             <RadioButton v-if="!driver.multivalue && driver.parameterValue" :value="option.value" v-model="driver.parameterValue[0].value" @change="setRadioButtonValue" />
             <Checkbox v-if="driver.multivalue && driver.parameterValue" :value="option.value" v-model="checkedValues" @change="setCheckboxValue" />
@@ -51,7 +46,6 @@ export default defineComponent({
         },
         setCheckboxValue() {
             if (!this.driver) return
-            console.log('>>>>>>>>> setCheckboxValue DRIVER: ', this.driver)
             this.driver.parameterValue = []
             this.checkedValues.forEach((checkedValue: string) => {
                 this.driver?.parameterValue.push({ value: checkedValue, description: this.getDescriptionForTheValue(checkedValue) as string })
