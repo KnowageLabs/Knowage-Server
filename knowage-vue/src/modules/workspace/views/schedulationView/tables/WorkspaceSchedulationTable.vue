@@ -1,5 +1,17 @@
 <template>
-    <DataTable :value="jobs" id="jobs-table" class="p-datatable-sm kn-table" dataKey="jobName" v-model:filters="filters" :globalFilterFields="workspaceSchedulationTableDescriptor.globalFilterFields" responsiveLayout="stack" breakpoint="600px">
+    <DataTable
+        :value="jobs"
+        id="jobs-table"
+        class="p-datatable-sm kn-table"
+        v-model:expandedRows="expandedRows"
+        dataKey="jobName"
+        v-model:filters="filters"
+        :globalFilterFields="workspaceSchedulationTableDescriptor.globalFilterFields"
+        :paginator="true"
+        :rows="20"
+        responsiveLayout="stack"
+        breakpoint="960px"
+    >
         <template #header>
             <div class="table-header p-d-flex p-ai-center">
                 <span id="search-container" class="p-input-icon-left p-mr-3">
@@ -14,10 +26,22 @@
             </Message>
         </template>
 
+        <template #expansion="slotProps">
+            <WorkspaceSchedulationSchedulationsTable
+                class="p-m-4"
+                :triggers="slotProps.data.triggers"
+                :index="slotProps.index"
+                :propSelectedSchedulations="selectedSchedulations"
+                @runSchedulationClick="$emit('runSchedulationClick', $event)"
+                @selectedSchedulations="setSelectedSchedulations"
+            ></WorkspaceSchedulationSchedulationsTable>
+        </template>
+        <Column :expander="true" :headerStyle="workspaceSchedulationTableDescriptor.expanderHeaderStyle" />
+
         <Column class="kn-truncated" v-for="col of workspaceSchedulationTableDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true"></Column>
         <Column :style="workspaceSchedulationTableDescriptor.iconColumn.style">
             <template #body="slotProps">
-                <Button icon="fa fa-eye" class="p-button-link" v-tooltip.left="$t('workspace.schedulation.ranSchedulations')" @click.stop="viewRanSchedulations(slotProps.data)" />
+                <Button v-if="canSeeScheduledExecutions" icon="fa fa-eye" class="p-button-link" v-tooltip.left="$t('workspace.schedulation.ranSchedulations')" @click.stop="viewRanSchedulations(slotProps.data)" />
             </template>
         </Column>
     </DataTable>
@@ -30,18 +54,31 @@ import { filterDefault } from '@/helpers/commons/filterHelper'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Message from 'primevue/message'
+import WorkspaceSchedulationSchedulationsTable from './WorkspaceSchedulationSchedulationsTable.vue'
 import workspaceSchedulationTableDescriptor from './WorkspaceSchedulationTableDescriptor.json'
+import { mapState } from 'pinia'
+import mainStore from '../../../../../App.store.js'
 
 export default defineComponent({
     name: 'workspace-schedulation-table',
-    components: { Column, DataTable, Message },
+    components: { Column, DataTable, Message, WorkspaceSchedulationSchedulationsTable },
     props: { propJobs: { type: Array } },
-    emits: ['viewOldSchedulationsClick'],
+    emits: ['runSchedulationClick', 'schedulationsSelected', 'viewOldSchedulationsClick'],
     data() {
         return {
             workspaceSchedulationTableDescriptor,
             jobs: [] as IPackage[],
-            filters: { global: [filterDefault] } as Object
+            expandedRows: [] as any[],
+            filters: { global: [filterDefault] } as any,
+            selectedSchedulations: {} as any
+        }
+    },
+    computed: {
+        ...mapState(mainStore, {
+            user: 'user'
+        }),
+        canSeeScheduledExecutions(): any {
+            return this.user.functionalities.includes('ViewScheduledWorkspace')
         }
     },
     watch: {
@@ -58,6 +95,10 @@ export default defineComponent({
         },
         viewRanSchedulations(job: IPackage) {
             this.$emit('viewOldSchedulationsClick', job)
+        },
+        setSelectedSchedulations(payload: any) {
+            this.selectedSchedulations[payload.index] = payload.schedulations
+            this.$emit('schedulationsSelected', this.selectedSchedulations)
         }
     }
 })

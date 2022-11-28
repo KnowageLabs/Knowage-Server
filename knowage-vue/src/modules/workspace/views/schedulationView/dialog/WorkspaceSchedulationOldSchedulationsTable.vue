@@ -61,7 +61,7 @@ export default defineComponent({
         return {
             workspaceSchedulationOldSchedulationsTableDescriptor,
             schedulations: [] as ISchedulation[],
-            filters: { global: [filterDefault] } as Object,
+            filters: { global: [filterDefault] } as any,
             user: null as any
         }
     },

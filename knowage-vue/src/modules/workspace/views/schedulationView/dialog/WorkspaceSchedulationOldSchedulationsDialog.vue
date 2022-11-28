@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { IPackage, ISchedulation } from '../../../Workspace'
 import Dialog from 'primevue/dialog'
 import workspaceSchedulationOldSchedulationsDialogDescriptor from './WorkspaceSchedulationOldSchedulationsDialogDescriptor.json'
@@ -29,7 +29,7 @@ import { AxiosResponse } from 'axios'
 export default defineComponent({
     name: 'workspace-schedulation-old-schedulations-dialog',
     components: { Dialog, WorkspaceSchedulationOldSchedulationsTable },
-    props: { visible: { type: Boolean }, selectedJob: { type: Object } },
+    props: { visible: { type: Boolean }, selectedJob: { type: Object as PropType<any> } },
     emits: ['close'],
     data() {
         return {
