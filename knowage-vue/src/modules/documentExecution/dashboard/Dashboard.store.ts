@@ -11,9 +11,6 @@ const store = defineStore('dashboardStore', {
         return {
             dashboards: {},
             selectedSheetIndex: 0,
-            crossNavigations: [] as any,
-            outputParameters: [] as any,
-            selections: {},
             allDatasets: [] as IDataset[],
             internationalization: {}
         }
@@ -52,48 +49,49 @@ const store = defineStore('dashboardStore', {
             const temp = this.dashboards[dashboardId]?.configuration?.datasets
             return temp ?? []
         },
-        getCrossNavigations() {
-            return this.crossNavigations
+        getCrossNavigations(dashboardId: string) {
+            return this.dashboards[dashboardId].crossNavigations
         },
-        setCrosssNavigations(crossNavigations: any[]) {
-            this.crossNavigations = crossNavigations
+        setCrosssNavigations(dashboardId: string, crossNavigations: any[]) {
+            this.dashboards[dashboardId].crossNavigations = crossNavigations
         },
-        getOutputParameters() {
-            return this.outputParameters
+        getOutputParameters(dashboardId: string) {
+            return this.dashboards[dashboardId].outputParameters
         },
-        setOutputParameters(outputParameters) {
-            this.outputParameters = outputParameters
+        setOutputParameters(dashboardId: string, outputParameters: any) {
+            this.dashboards[dashboardId].outputParameters = outputParameters
         },
         getSelections(dashboardId: string) {
-            return this.selections[dashboardId]
+
+            return this.dashboards[dashboardId].selections
         },
         setInternationalization(internationalization) {
             this.internationalization = internationalization
         },
         setSelections(dashboardId: string, selections: ISelection[], $http: any) {
-            this.selections[dashboardId] = selections
+            this.dashboards[dashboardId].selections = selections
             if (selections.length > 0 && selectionsUseDatasetWithAssociation(selections, this.dashboards[dashboardId].configuration.associations)) {
                 loadAssociativeSelections(this.dashboards[dashboardId], this.allDatasets, selections, $http)
             } else {
-                emitter.emit('selectionsChanged', { dashboardId: dashboardId, selections: this.selections[dashboardId] })
+                emitter.emit('selectionsChanged', { dashboardId: dashboardId, selections: this.dashboards[dashboardId].selections })
             }
         },
         removeSelection(payload: { datasetId: number; columnName: string }, dashboardId: string) {
-            const index = this.selections[dashboardId]?.findIndex((selection: ISelection) => selection.datasetId === payload.datasetId && selection.columnName === payload.columnName)
+            const index = this.dashboards[dashboardId].selections?.findIndex((selection: ISelection) => selection.datasetId === payload.datasetId && selection.columnName === payload.columnName)
             if (index !== -1) {
-                const tempSelection = deepcopy(this.selections[dashboardId][index])
-                this.selections[dashboardId].splice(index, 1)
+                const tempSelection = deepcopy(this.dashboards[dashboardId].selections[index])
+                this.dashboards[dashboardId].selections.splice(index, 1)
 
                 emitter.emit('selectionsDeleted', [tempSelection])
-                emitter.emit('selectionsChanged', { dashboardId: dashboardId, selections: this.selections[dashboardId] })
+                emitter.emit('selectionsChanged', { dashboardId: dashboardId, selections: this.dashboards[dashboardId].selections })
             }
         },
         removeSelections(selectionsToRemove: ISelection[], dashboardId: string) {
             const removedSelections = [] as ISelection[]
             selectionsToRemove?.forEach((selection: ISelection) => {
-                const index = this.selections[dashboardId].findIndex((activeSelection: ISelection) => activeSelection.datasetId === selection.datasetId && activeSelection.columnName === selection.columnName)
+                const index = this.dashboards[dashboardId].selections.findIndex((activeSelection: ISelection) => activeSelection.datasetId === selection.datasetId && activeSelection.columnName === selection.columnName)
                 if (index !== -1) {
-                    this.selections[dashboardId].splice(index, 1)
+                    this.dashboards[dashboardId].selections.splice(index, 1)
                     removedSelections.push(selection)
                 }
             })

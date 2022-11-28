@@ -62,7 +62,8 @@ export default defineComponent({
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDataset[]> },
-        selectedDatasets: { type: Array as PropType<IDataset[]> }
+        selectedDatasets: { type: Array as PropType<IDataset[]> },
+        dashboardId: { type: String, required: true }
     },
     data() {
         return {
@@ -109,7 +110,7 @@ export default defineComponent({
             if (this.widgetModel?.settings?.interactions?.crosssNavigation) this.crossNavigationModel = this.widgetModel.settings.interactions.crosssNavigation
         },
         loadCrossNavigationOptions() {
-            const temp = this.store.getCrossNavigations()
+            const temp = this.store.getCrossNavigations(this.dashboardId)
             if (temp) this.crossNavigationOptions = temp.map((crossNavigation: any) => crossNavigation.crossName)
         },
         onColumnRemoved() {
@@ -117,7 +118,7 @@ export default defineComponent({
             this.loadParameterList()
         },
         loadOutputParameters() {
-            this.outputParameters = this.store.getOutputParameters() ?? []
+            this.outputParameters = this.store.getOutputParameters(this.dashboardId) ?? []
         },
         loadParameterList() {
             if (!this.crossNavigationModel) return

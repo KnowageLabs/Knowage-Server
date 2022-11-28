@@ -108,10 +108,6 @@ export default defineComponent({
             setDatasetIntervals(modelDatasets, this.datasets)
         })
     },
-    mounted() {
-        this.loadCrossNavigations()
-        this.loadOutputParameters()
-    },
     unmounted() {
         this.emptyStoreValues()
         clearAllDatasetIntervals()
@@ -121,7 +117,7 @@ export default defineComponent({
         async getData() {
             this.loading = true
             await this.loadDatasets()
-            await Promise.all([this.loadCrossNavigations(), this.loadOutputParameters(), this.loadDrivers(), this.loadProfileAttributes(), this.loadModel(), this.loadInternationalization()])
+            await Promise.all([this.loadDrivers(), this.loadProfileAttributes(), this.loadModel(), this.loadInternationalization()])
             this.loading = false
 
             //lazy lodaded data
@@ -142,6 +138,8 @@ export default defineComponent({
             this.dashboardId = cryptoRandomString({ length: 16, type: 'base64' })
             this.store.setDashboard(this.dashboardId, this.model)
             this.store.setSelections(this.dashboardId, this.model.configuration.selections, this.$http)
+            await this.loadCrossNavigations()
+            this.loadOutputParameters()
         },
         async loadDatasets() {
             this.appStore.setLoading(true)
@@ -173,7 +171,7 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => (this.crossNavigations = response.data))
                 .catch(() => {})
             this.appStore.setLoading(false)
-            this.store.setCrosssNavigations(this.crossNavigations)
+            this.store.setCrosssNavigations(this.dashboardId, this.crossNavigations)
         },
         async loadHtmlGallery() {
             await this.$http
@@ -185,7 +183,7 @@ export default defineComponent({
             if (this.newDashboardMode) return
             // TODO - Remove Mocked Output Parameters
             const mockedParameters = descriptor.mockedOutputParameters
-            this.store.setOutputParameters(mockedParameters)
+            this.store.setOutputParameters(this.dashboardId, mockedParameters)
         },
         loadDrivers() {
             this.drivers = []
@@ -258,8 +256,8 @@ export default defineComponent({
         },
         emptyStoreValues() {
             this.store.removeDashboard(this.dashboardId)
-            this.store.setCrosssNavigations([])
-            this.store.setOutputParameters([])
+            this.store.setCrosssNavigations(this.dashboardId, [])
+            this.store.setOutputParameters(this.dashboardId, [])
             this.store.setSelections(this.dashboardId, [], this.$http)
         },
         closeWidgetEditor() {
