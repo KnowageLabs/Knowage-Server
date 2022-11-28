@@ -19,6 +19,8 @@ package it.eng.spagobi.api.v3;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.GET;
@@ -33,6 +35,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.gson.JsonSyntaxException;
 
 import it.eng.knowage.security.ProductProfiler;
 import it.eng.spago.error.EMFInternalError;
@@ -49,6 +52,7 @@ import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
@@ -63,18 +67,11 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 @Path("/3.0/documentexecution")
 public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
-	/**
-	 *
-	 */
 	private static final String DOCUMENT = "DOCUMENT";
-	/**
-	 *
-	 */
 	private static final String DATASET = "DATASET";
-	/**
-	 *
-	 */
 	private static final String DATAMART = "DATAMART";
+	private static final String FEDERATED_DATASET = "FEDERATED_DATASET";
+	private static final String QBE_DATASET = "QBE_DATASET";
 
 	@GET
 	@Path("/{id}/templates")
@@ -140,8 +137,23 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					List<String> rolesByModel = getModelRoles(userProfile, model);
 					correctRoles.retainAll(rolesByModel);
 				}
-			} else if (DATASET.equals(typeCode)) {
-				IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(id);
+			} else if (DATASET.equals(typeCode) || FEDERATED_DATASET.equals(typeCode)) {
+
+				IDataSet dataset = null;
+				if (DATASET.equals(typeCode)) {
+					dataset = id != null ? DAOFactory.getDataSetDAO().loadDataSetById(id) : DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
+				} else {
+
+					FederationDefinition federationDefinition = DAOFactory.getFedetatedDatasetDAO().loadFederationDefinition(id);
+
+					Set<IDataSet> fedSourceDatasets = federationDefinition.getSourceDatasets();
+					Optional<IDataSet> fedSourceDataset = fedSourceDatasets.stream().findFirst();
+					if (!fedSourceDataset.isPresent()) {
+						throw new SpagoBIRuntimeException("Error while getting the dataset info");
+					}
+					dataset = fedSourceDataset.get();
+
+				}
 				Integer categoryId = dataset.getCategoryId();
 				if (categoryId != null) {
 					List<String> rolesByCategory = getRolesByCategory(categoryDao, categoryId);
@@ -150,7 +162,33 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				} else {
 					correctRoles = userRoles.stream().collect(Collectors.toList());
 				}
-			} else if (DOCUMENT.equals(typeCode)) {
+			}
+
+			else if (QBE_DATASET.equals(typeCode)) {
+				IDataSet dataset = id != null ? DAOFactory.getDataSetDAO().loadDataSetById(id) : DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
+
+				String conf = dataset.getConfiguration();
+				try {
+					String modelLabel = new JSONObject(conf).getString("qbeDatamarts");
+
+					MetaModel model = DAOFactory.getMetaModelsDAO().loadMetaModelByName(modelLabel);
+					List<String> rolesByCategory = getRolesByCategory(categoryDao, model.getCategory());
+					userRoles.retainAll(rolesByCategory);
+					correctRoles = userRoles;
+
+					List<BIMetaModelParameter> drivers = model.getDrivers();
+					if (correctRoles.size() > 0 && drivers.size() > 0) {
+						List<String> rolesByModel = getModelRoles(userProfile, model);
+						correctRoles.retainAll(rolesByModel);
+					}
+				} catch (JsonSyntaxException | JSONException e) {
+					logger.error("An error occurred while parsing dataset configuration", e);
+					throw new SpagoBIRuntimeException(e.getMessage(), e);
+				}
+
+			}
+
+			else if (DOCUMENT.equals(typeCode)) {
 				ObjectsAccessVerifier oav = new ObjectsAccessVerifier();
 				checkExecRightsByProducts(id, label);
 				if (id != null) {
@@ -209,8 +247,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			biobj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(label);
 		}
 		if (!ProductProfiler.canExecuteDocument(biobj)) {
-			throw new SpagoBIRuntimeException("This document cannot be executed within the current product!");
+			throw new SpagoBIRuntimeException("This document cannot be executed within the current product");
 		}
 	}
-
 }

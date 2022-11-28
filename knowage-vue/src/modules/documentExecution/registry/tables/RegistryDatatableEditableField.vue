@@ -106,6 +106,12 @@ export default defineComponent({
             }
         },
         formatNumberConfiguration() {
+            if (this.column?.columnInfo?.type === 'int') {
+                this.useGrouping = false
+                this.minFractionDigits = 0
+                this.maxFractionDigits = 0
+                return
+            }
             const configuration = formatNumber(this.column)
             if (configuration) {
                 this.useGrouping = configuration.useGrouping

@@ -162,13 +162,7 @@ export default defineComponent({
             this.$refs.optionsMenu.toggle(event)
         },
         emitEvent(event) {
-            let typeCode = 'DOCUMENT'
-            if (this.document.type === 'businessModel') {
-                typeCode = 'DATAMART'
-            } else if (this.document.dsTypeCd) {
-                typeCode = 'DATASET'
-            }
-            getCorrectRolesForExecution(typeCode, this.document.id, this.document.label).then(() => {
+            getCorrectRolesForExecution(this.document).then(() => {
                 return () => this.$emit(event, this.document)
             })
         },

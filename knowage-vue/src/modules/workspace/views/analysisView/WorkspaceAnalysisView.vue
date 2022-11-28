@@ -7,7 +7,7 @@
         <template #end>
             <Button v-if="toggleCardDisplay" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="$emit('toggleDisplayView')" />
             <Button v-if="!toggleCardDisplay" icon="fas fa-th-large" class="p-button-text p-button-rounded p-button-plain" @click="$emit('toggleDisplayView')" />
-            <KnFabButton icon="fas fa-plus" data-test="new-folder-button" @click="showCreationMenu" />
+            <KnFabButton v-if="addButtonIsVisible" icon="fas fa-plus" data-test="new-folder-button" @click="showCreationMenu" />
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
@@ -100,6 +100,7 @@ import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
 import WorkspaceCockpitDialog from './dialogs/WorkspaceCockpitDialog.vue'
 import mainStore from '../../../../App.store'
 import { getCorrectRolesForExecution } from '../../../../helpers/commons/roleHelper'
+import { mapState } from 'pinia'
 
 export default defineComponent({
     name: 'workspace-analysis-view',
@@ -112,6 +113,12 @@ export default defineComponent({
         },
         isShared(): any {
             return this.selectedAnalysis.functionalities.length > 1
+        },
+        ...mapState(mainStore, {
+            user: 'user'
+        }),
+        addButtonIsVisible(): boolean {
+            return this.user.functionalities.includes('CreateSelfSelviceCockpit') || this.user.functionalities.includes('CreateSelfSelviceGeoreport') || this.user.functionalities.includes('CreateSelfSelviceKpi')
         }
     },
     data() {
@@ -142,6 +149,7 @@ export default defineComponent({
     created() {
         this.getAnalysisDocs()
     },
+
     methods: {
         getAnalysisDocs() {
             this.loading = true
@@ -186,7 +194,7 @@ export default defineComponent({
             } else if (document.dsTypeCd) {
                 typeCode = 'DATASET'
             }
-            getCorrectRolesForExecution(typeCode, document.id, document.label).then(() => {
+            getCorrectRolesForExecution(document).then(() => {
                 this.$emit('execute', document)
             })
         },
@@ -364,11 +372,10 @@ export default defineComponent({
         },
         createCreationMenuButtons() {
             this.creationMenuButtons = []
-            this.creationMenuButtons.push(
-                { key: '0', label: this.$t('common.cockpit'), command: this.openCockpitDialog, visible: true },
-                { key: '1', label: this.$t('workspace.myAnalysis.geoRef'), command: this.openGeoRefCreation, visible: true },
-                { key: '2', label: this.$t('common.kpi'), command: this.openKpiDocumentDesigner, visible: true }
-            )
+
+            if (this.user.functionalities.includes('CreateSelfSelviceCockpit')) this.creationMenuButtons.push({ key: '0', label: this.$t('common.cockpit'), command: this.openCockpitDialog, visible: true })
+            if (this.user.functionalities.includes('CreateSelfSelviceGeoreport')) this.creationMenuButtons.push({ key: '1', label: this.$t('workspace.myAnalysis.geoRef'), command: this.openGeoRefCreation, visible: true })
+            if (this.user.functionalities.includes('CreateSelfSelviceKpi')) this.creationMenuButtons.push({ key: '2', label: this.$t('common.kpi'), command: this.openKpiDocumentDesigner, visible: true })
         },
         openCockpitDialog() {
             this.cockpitDialogVisible = true

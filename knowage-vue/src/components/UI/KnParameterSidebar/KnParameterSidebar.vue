@@ -203,7 +203,7 @@ import MultiSelect from 'primevue/multiselect'
 import RadioButton from 'primevue/radiobutton'
 import ScrollPanel from 'primevue/scrollpanel'
 import mainStore from '../../../App.store'
-import { getCorrectRolesForExecution } from '../../../helpers/commons/roleHelper'
+import { getCorrectRolesForExecutionForType } from '../../../helpers/commons/roleHelper'
 
 export default defineComponent({
     name: 'kn-parameter-sidebar',
@@ -304,7 +304,7 @@ export default defineComponent({
                 } else if (this.document.dsTypeCd) {
                     typeCode = 'DATASET'
                 }
-                getCorrectRolesForExecution(typeCode, this.document.id, this.document.label).then((response: any) => {
+                getCorrectRolesForExecutionForType(typeCode, this.document.id, this.document.label).then((response: any) => {
                     this.availableRolesForExecution = response
                     if (!this.role && this.availableRolesForExecution.length == 1) {
                         this.role = this.availableRolesForExecution[0]

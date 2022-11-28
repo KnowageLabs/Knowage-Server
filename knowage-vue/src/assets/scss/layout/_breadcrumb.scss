@@ -37,6 +37,7 @@
                 line-height: 24px;
                 color: var(--kn-breadcrumb-items-color);
                 height: 30px;
+                padding: var(--kn-breadcrumb-items-padding);
             }
         }
         &:last-child {
@@ -52,6 +53,9 @@
         cursor: pointer;
     }
 }
+.p-breadcrumb.kn-breadcrumb {
+    background: var(--kn-breadcrumb-background);
+}
 .p-breadcrumb.kn-breadcrumb-toolbar {
     .p-breadcrumb-chevron {
         color: var(--kn-breadcrumb-toolbar-items-color);
@@ -61,6 +65,7 @@
             .breadcrumbs-item {
                 border: var(--kn-breadcrumb-toolbar-items-border);
                 color: var(--kn-breadcrumb-toolbar-items-color);
+                padding: var(--kn-breadcrumb-toolbar-items-padding);
             }
         }
         &:last-child {

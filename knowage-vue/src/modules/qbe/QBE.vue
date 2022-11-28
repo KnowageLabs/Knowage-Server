@@ -205,6 +205,7 @@ import Dropdown from 'primevue/dropdown'
 import mainStore from '../../App.store'
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
+import { getCorrectRolesForExecution } from '@/helpers/commons/roleHelper'
 
 export default defineComponent({
     name: 'qbe',
@@ -307,11 +308,37 @@ export default defineComponent({
         this.uniqueID = cryptoRandomString({ length: 16, type: 'base64' })
         this.user = (this.store.$state as any).user
         this.userRole = this.user.sessionRole && this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
-        if (this.userRole) {
-            await this.loadPage()
-        } else {
-            this.parameterSidebarVisible = true
-        }
+
+        let invalidRole = false
+        getCorrectRolesForExecution(null, this.dataset).then(async (response: any) => {
+            let correctRolesForExecution = response
+
+            if (!this.userRole) {
+                if (correctRolesForExecution.length == 1) {
+                    this.userRole = correctRolesForExecution[0]
+                } else {
+                    this.parameterSidebarVisible = true
+                }
+            } else if (this.userRole) {
+                if (correctRolesForExecution.length == 1) {
+                    let correctRole = correctRolesForExecution[0]
+                    if (this.userRole !== correctRole) {
+                        this.$store.commit('setError', {
+                            title: this.$t('common.error.generic'),
+                            msg: this.$t('documentExecution.main.userRoleError')
+                        })
+                        invalidRole = true
+                    }
+                }
+            }
+            if (!invalidRole) {
+                if (this.userRole) {
+                    await this.loadPage()
+                } else {
+                    this.parameterSidebarVisible = true
+                }
+            }
+        })
     },
     methods: {
         //#region ===================== Load QBE and format data ====================================================
@@ -490,8 +517,8 @@ export default defineComponent({
         },
         async loadEntities() {
             let datamartName = this.dataset?.dataSourceId ? this.dataset.name : this.qbe?.qbeDatamarts
-            if (this.dataset?.type === "federatedDataset") {
-              datamartName = null
+            if (this.dataset?.type === 'federatedDataset') {
+                datamartName = null
             }
             await this.$http
                 .get(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_TREE_ACTION&SBI_EXECUTION_ID=${this.uniqueID}&datamartName=${datamartName}`)

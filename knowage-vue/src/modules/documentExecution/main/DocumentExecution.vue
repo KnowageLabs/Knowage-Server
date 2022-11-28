@@ -131,7 +131,7 @@ import { getCorrectRolesForExecution } from '../../../helpers/commons/roleHelper
 
 // @ts-ignore
 // eslint-disable-next-line
-window.execExternalCrossNavigation = function (outputParameters, otherOutputParameters, crossNavigationLabel) {
+window.execExternalCrossNavigation = function(outputParameters, otherOutputParameters, crossNavigationLabel) {
     postMessage(
         {
             type: 'crossNavigation',
@@ -325,7 +325,7 @@ export default defineComponent({
         await this.loadDocument()
 
         let invalidRole = false
-        getCorrectRolesForExecution('DOCUMENT', this.document.id, this.document.label).then((response: any) => {
+        getCorrectRolesForExecution(this.document).then(async (response: any) => {
             let correctRolesForExecution = response
 
             if (!this.userRole) {
@@ -346,14 +346,14 @@ export default defineComponent({
                     }
                 }
             }
-        })
-        if (!invalidRole) {
-            if (this.userRole) {
-                this.loadPage(true)
-            } else {
-                this.parameterSidebarVisible = true
+            if (!invalidRole) {
+                if (this.userRole) {
+                    await this.loadPage(true)
+                } else {
+                    this.parameterSidebarVisible = true
+                }
             }
-        }
+        })
     },
     unmounted() {
         this.removeEventListeners()
@@ -427,6 +427,8 @@ export default defineComponent({
         export(type: string) {
             if (this.document.typeCode === 'OLAP') {
                 this.exportOlap(type)
+            } else if (this.document.typeCode === 'REPORT') {
+                window.open(this.urlData?.url + '&outputType=' + type, 'name', 'resizable=1,height=750,width=1000')
             } else {
                 const tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
                 let tempFrame = window.frames[tempIndex]
