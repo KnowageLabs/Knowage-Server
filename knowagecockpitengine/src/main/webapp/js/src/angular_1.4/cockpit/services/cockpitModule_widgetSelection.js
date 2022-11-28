@@ -12,6 +12,19 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		}
 		return {};
 	}
+		this.getUserSelections = function(datasetLabel){
+		for(var i=0;i< cockpitModule_widgetSelectionUtils.userSelections.length;i++){
+			if(cockpitModule_widgetSelectionUtils.userSelections[i].hasOwnProperty(datasetLabel)){
+				return cockpitModule_widgetSelectionUtils.userSelections[i];
+			}
+		}
+		return {};
+	}
+	this.getAllUserSelections = function(){		
+		return cockpitModule_widgetSelectionUtils.userSelections;
+
+	}
+	
 	this.getCurrentFilters = function(datasetLabel){
 		var toRet={};
 		if(cockpitModule_template.configuration.filters[datasetLabel]!=undefined && Object.keys(cockpitModule_template.configuration.filters[datasetLabel]).length>0){
@@ -340,6 +353,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				angular.copy(response.data,cockpitModule_template.configuration.aggregations);
 				if(reloadSelection || (!reloadSelection && someDel)){
 					cockpitModule_widgetSelectionUtils.responseCurrentSelection = [];
+					cockpitModule_widgetSelectionUtils.userSelections = [];
 					ws.refreshAllAssociations(associatedDatasets);
 				}
 			}
@@ -829,8 +843,9 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 					}
 				}
 			}
-
-
+ 			cockpitModule_widgetSelectionUtils.userSelections = [];
+			 var userSelections =  this.convertIntoJSON(body['selections']);
+			cockpitModule_widgetSelectionUtils.userSelections.push(userSelections);
 			sbiModule_restServices.restToRootProject();
 			sbiModule_restServices.promisePost("2.0/associativeSelections","",body)
 			.then(function(response){
@@ -854,12 +869,33 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				this[item]={};
 			},objDS)
 			angular.copy([],cockpitModule_widgetSelectionUtils.responseCurrentSelection);
+			angular.copy([],cockpitModule_widgetSelectionUtils.userSelections);
 			$rootScope.hideCockpitSpinner();
 			defer.resolve(objDS);
 		}
 
 
 	}
+
+this.convertIntoJSON = function(obj) {
+
+                var o = {}, j, d;
+                for (var m in obj) {
+                    d = m.split(".");
+                var startOfObj = o;
+                for (j = 0; j < d.length  ; j += 1) {
+
+                    if (j == d.length - 1) {
+                        startOfObj[d[j]] = obj[m];
+                    }
+                    else {
+                        startOfObj[d[j]] = startOfObj[d[j]] || {};
+                        startOfObj = startOfObj[d[j]];
+                    }
+                }
+            }
+            return o;
+        }
 
 	this.currentSelectionContainsAss = function(data){
 		for(var i=0;i<cockpitModule_widgetSelectionUtils.responseCurrentSelection.length;i++){

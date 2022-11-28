@@ -35,9 +35,9 @@ public class EngineConstants {
 	public static final String DOCUMENT_COMPOSITION = "DOCUMENT_COMPOSITION";
 
 	public static final String ENV_DATASOURCE = "DATASOURCE";
-	public static final Object ENV_DATASET = "DATASET";
-	public static final Object ENV_DATASET_LABEL = "datasetLabel";
-	public static final Object ENV_DATASOURCE_LABEL = "datasourceLabel";
+	public static final String ENV_DATASET = "DATASET";
+	public static final String ENV_DATASET_LABEL = "datasetLabel";
+	public static final String ENV_DATASOURCE_LABEL = "datasourceLabel";
 
 	public static final String ENV_RELATIONS = "RELATIONS";
 	public static final String ENV_DATASET_CACHE_MAP = "DATASET_CACHE_MAP";

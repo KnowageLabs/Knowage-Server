@@ -90,7 +90,7 @@ public class PathTraversalChecker {
 	/**
 	 * Sanitize file names
 	 */
-	public static final String REGEX_PATTERN = "^[A-za-z0-9().\\s]{1,255}$";
+	public static final String REGEX_PATTERN = "^[^\\/\\\\]{1,255}$";
 
 	private static boolean validateStringFilenameUsingRegex(String filename, String regex) {
 		if (filename == null) {

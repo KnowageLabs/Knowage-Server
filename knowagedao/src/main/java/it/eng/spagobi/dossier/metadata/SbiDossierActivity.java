@@ -15,6 +15,7 @@ public class SbiDossierActivity extends SbiHibernateModel {
 	private byte[] binContent;
 	private byte[] docBinContent;
 	private String configContent;
+	private byte[] pptV2BinContent;
 
 	public String getConfigContent() {
 		return configContent;
@@ -82,6 +83,14 @@ public class SbiDossierActivity extends SbiHibernateModel {
 
 	public void setDocBinContent(byte[] docBinContent) {
 		this.docBinContent = docBinContent;
+	}
+
+	public byte[] getPptV2BinContent() {
+		return pptV2BinContent;
+	}
+
+	public void setPptV2BinContent(byte[] pptV2BinContent) {
+		this.pptV2BinContent = pptV2BinContent;
 	}
 
 }

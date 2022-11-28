@@ -829,6 +829,10 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 				value = getAttribute(filter.getField()).toString();
 			}
 			if (value != null && !value.equalsIgnoreCase("")) {
+
+				if (value.contains("?")) {
+					throw new SpagoBIEngineServiceException(getActionName(), "Character '?' not allowed in query filter");
+				}
 				logger.debug("Set filter " + filter.getField() + "=" + value);
 
 				String fieldId = fieldNameIdMap.get(filter.getField());

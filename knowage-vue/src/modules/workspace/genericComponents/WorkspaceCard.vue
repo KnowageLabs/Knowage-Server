@@ -28,6 +28,7 @@ import { defineComponent } from 'vue'
 import descriptor from './DetailSidebarDescriptor.json'
 import cardDescriptor from './WorkspaceCardDescriptor.json'
 import Menu from 'primevue/contextmenu'
+import { getCorrectRolesForExecution } from '../../../helpers/commons/roleHelper'
 
 export default defineComponent({
     name: 'workspace-sidebar',
@@ -157,7 +158,16 @@ export default defineComponent({
             this.$refs.optionsMenu.toggle(event)
         },
         emitEvent(event) {
-            return () => this.$emit(event, this.document)
+            let typeCode = 'DOCUMENT'
+            if (this.document.type === 'businessModel') {
+                typeCode = 'DATAMART'
+            } else if (this.document.dsTypeCd) {
+                typeCode = 'DATASET'
+            }
+
+            getCorrectRolesForExecution(typeCode, this.document.id, this.document.label).then(() => {
+                return () => this.$emit(event, this.document)
+            })
         },
         // prettier-ignore
         createMenuItems() {
@@ -190,12 +200,12 @@ export default defineComponent({
                         { key: '8', label: this.$t('workspace.myData.monitoring'), icon: 'fas fa-cogs', command: this.emitEvent('monitoring'), visible: this.canLoadData && this.document.dsTypeCd != 'Qbe' && (this.document.pars && this.document.pars.length == 0) }
                     )
                 }
-                
+
                 tmp = tmp.sort((a,b)=>a.key.localeCompare(b.key))
                 this.menuButtons = tmp
 
             } else if (this.viewType === 'federationDataset') {
-                this.menuButtons.push( 
+                this.menuButtons.push(
                     { key: '0', icon: 'pi pi-pencil', label: this.$t('workspace.myModels.editDataset'), class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('editDataset') },
                     { key: '1', icon: 'fas fa-trash-alt', label: this.$t('workspace.myModels.deleteDataset'), class: 'p-button-text p-button-rounded p-button-plain', visible: (this.$store.state as any).user.isSuperadmin || (this.$store.state as any).user.userId === this.document.owner, command: this.emitEvent('deleteDataset') })
             } else if (this.viewType === 'repository') {

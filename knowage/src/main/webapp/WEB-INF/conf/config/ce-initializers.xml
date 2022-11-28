@@ -20,6 +20,8 @@
 	<!-- 
 	<INITIALIZER class="it.eng.spagobi.tools.scheduler.init.AlarmQuartzInitializer" config="" />
 	 -->
+	 
+ 	<INITIALIZER class="it.eng.spagobi.commons.initializers.metadata.CategoriesInitializer" config="" />
 	
 	<!-- Initializer for Cache Cleaning -->
 	<INITIALIZER class="it.eng.spagobi.tools.scheduler.init.CleanCacheQuartzInitializer" config="" />
@@ -45,7 +47,5 @@
 	
 		<!-- Initializer for Audit Cleaning -->
 	<INITIALIZER class="it.eng.spagobi.tools.scheduler.init.CleanAuditQuartzInitializer" config="" />
-	
-	<INITIALIZER class="it.eng.spagobi.commons.initializers.metadata.CategoriesInitializer" config="" />
 	
 </INITIALIZERS>

@@ -2,7 +2,8 @@
     <div class="kn-height-full detail-page-container">
         <Toolbar v-if="!embed && !olapDesignerMode" class="kn-toolbar kn-toolbar--primary p-col-12">
             <template #start>
-                <span>{{ document?.name }}</span>
+                <DocumentExecutionBreadcrumb v-if="breadcrumbs.length > 1" :breadcrumbs="breadcrumbs" @breadcrumbClicked="onBreadcrumbClick"></DocumentExecutionBreadcrumb>
+                <span v-else>{{ document?.name }}</span>
             </template>
 
             <template #end>
@@ -19,7 +20,6 @@
             </template>
         </Toolbar>
         <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
-        <DocumentExecutionBreadcrumb v-if="breadcrumbs.length > 1" :breadcrumbs="breadcrumbs" @breadcrumbClicked="onBreadcrumbClick"></DocumentExecutionBreadcrumb>
 
         <div ref="document-execution-view" id="document-execution-view" class="p-d-flex p-flex-row myDivToPrint">
             <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
@@ -101,6 +101,7 @@ import Olap from '../olap/Olap.vue'
 import moment from 'moment'
 import DocumentExecutionSelectCrossNavigationDialog from './dialogs/documentExecutionSelectCrossNavigationDialog/DocumentExecutionSelectCrossNavigationDialog.vue'
 import DocumentExecutionCNContainerDialog from './dialogs/documentExecutionCNContainerDialog/DocumentExecutionCNContainerDialog.vue'
+import { getCorrectRolesForExecution } from '../../../helpers/commons/roleHelper'
 
 const deepcopy = require('deepcopy')
 // @ts-ignore
@@ -280,11 +281,36 @@ export default defineComponent({
         this.user = (this.$store.state as any).user
         this.userRole = this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
 
-        if (this.userRole) {
-            await this.loadPage(true)
-        } else {
-            this.parameterSidebarVisible = true
-        }
+        let invalidRole = false
+        getCorrectRolesForExecution('DOCUMENT', this.document.id, this.document.label).then((response: any) => {
+            let correctRolesForExecution = response
+
+            if (!this.userRole) {
+                if (correctRolesForExecution.length == 1) {
+                    this.userRole = correctRolesForExecution[0]
+                } else {
+                    this.parameterSidebarVisible = true
+                }
+            } else if (this.userRole) {
+                if (correctRolesForExecution.length == 1) {
+                    let correctRole = correctRolesForExecution[0]
+                    if (this.userRole !== correctRole) {
+                        this.$store.commit('setError', {
+                            title: this.$t('common.error.generic'),
+                            msg: this.$t('documentExecution.main.userRoleError')
+                        })
+                        invalidRole = true
+                    }
+                }
+            }
+            if (!invalidRole) {
+                if (this.userRole) {
+                    this.loadPage(true)
+                } else {
+                    this.parameterSidebarVisible = true
+                }
+            }
+        })
     },
     methods: {
         iframeEventsListener(event) {
@@ -758,7 +784,7 @@ export default defineComponent({
             await this.sendForm(documentLabel, crossNavigationPopupMode)
         },
         async loadExporters() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/exporters/${this.urlData?.engineLabel}`).then((response: AxiosResponse<any>) => (this.exporters = response.data.exporters))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/exporters/config/${this.urlData?.engineLabel}`).then((response: AxiosResponse<any>) => (this.exporters = response.data.exporters))
         },
         async sendForm(documentLabel: string | null = null, crossNavigationPopupMode: boolean = false) {
             let tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name) as any
@@ -823,7 +849,15 @@ export default defineComponent({
 
             this.hiddenFormData.append('documentMode', this.documentMode)
 
-            if (this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER' || this.document.typeCode === 'OLAP') {
+            if (this.document.typeCode === 'DATAMART') {
+                // let doc = this.document
+                // let drivers = doc.drivers
+                // let url = `start-qbe?user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.sbiExecutionId}&drivers=${drivers}&registryId=${doc.id}`
+
+                // await this.$http.get(process.env.VUE_APP_QBE_PATH + url)
+
+                await this.sendHiddenFormData()
+            } else if (this.document.typeCode === 'DOSSIER' || this.document.typeCode === 'OLAP') {
                 await this.sendHiddenFormData()
             } else {
                 postForm.submit()

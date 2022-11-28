@@ -20,6 +20,7 @@ package it.eng.spagobi.api.v2;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -31,15 +32,18 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.bo.Exporters;
@@ -195,6 +199,53 @@ public class ExportersResource extends AbstractSpagoBIResource {
 
 				exportersJSON.put(jsonExporterDett);
 			}
+			toReturn.put("exporters", exportersJSON);
+			logger.debug("Getting exporters for engine label=[" + label + "] - done successfully");
+
+		} catch (Exception exception) {
+
+			String messageToSend = String.format("Error while getting exporters for engine: [" + label + "]");
+			logger.error(messageToSend, exception);
+			throw new SpagoBIServiceException(messageToSend, exception);
+
+		} finally {
+
+			LogMF.debug(logger, "OUT: returning [{0}]", toReturn.toString());
+
+		}
+
+		return Response.ok(toReturn.toString()).build();
+	}
+
+	@GET
+	@Path("/config/{label}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getExportersByConfig(@PathParam("label") String label) {
+
+		logger.debug("IN: input label = " + label);
+		JSONObject toReturn = new JSONObject();
+
+		try {
+			IEngineDAO engineDAO = DAOFactory.getEngineDAO();
+			engineDAO.setUserProfile(getUserProfile());
+			IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();
+			configsDao.setUserProfile(getUserProfile());
+			List<Config> configs = configsDao.loadConfigParametersByCategory("EXPORTER_CONFIGURATION");
+			Optional<Config> exporterType = null;
+			JSONArray exportersJSON = new JSONArray();
+			exporterType = configs.stream().filter(x -> x.getLabel().contains(label)).findFirst();
+			if (exporterType.isPresent()) {
+				if (StringUtils.isNotBlank(exporterType.get().getValueCheck())) {
+					String[] exporterFormats = exporterType.get().getValueCheck().split(",");
+					for (int i = 0; i < exporterFormats.length; i++) {
+						// create the json object with export configurations:
+						JSONObject jsonExporterDett = new JSONObject();
+						jsonExporterDett.put("name", exporterFormats[i]);
+						exportersJSON.put(jsonExporterDett);
+					}
+				}
+			}
+
 			toReturn.put("exporters", exportersJSON);
 			logger.debug("Getting exporters for engine label=[" + label + "] - done successfully");
 

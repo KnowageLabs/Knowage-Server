@@ -23,6 +23,7 @@ import org.hibernate.Session;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.dto.SbiCategory;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
 
 /**
  * Defines the interfaces for all methods needed to operate with a category.
@@ -55,6 +56,8 @@ public interface ICategoryDAO extends ISpagoBIDao {
 	void update(SbiCategory category) throws EMFUserError;
 
 	void delete(SbiCategory category) throws EMFUserError;
+
+	List<SbiExtRoles> getRolesByCategory(Integer categoryId) throws EMFUserError;
 
 	// Defaults
 

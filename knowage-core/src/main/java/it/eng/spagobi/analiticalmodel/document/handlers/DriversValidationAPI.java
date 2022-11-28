@@ -256,17 +256,17 @@ public class DriversValidationAPI {
 		DefaultValuesList selectedDefaultValue = this.getSelectedDefaultValues(driver, allDefaultValues);
 		// validation must proceed only with non-default values
 		// from the complete list of values, get the values that are not default values
-		List nonDefaultValues = null;
-		if (lov.getITypeCd().equalsIgnoreCase("QUERY")) {
-			DefaultValuesList allDefaultQueryValues = retriever.getDefaultQueryValuesDum(driver, dum, this.userProfile, object, this.locale, role);
-			nonDefaultValues = this.getNonDefaultQueryValues(driver, allDefaultQueryValues);
-		} else {
-			nonDefaultValues = this.getNonDefaultValues(driver, allDefaultValues);
-		}
-		if (nonDefaultValues.isEmpty()) {
-			logger.debug("All selected values are default values; no need to validate them");
-			return new ArrayList();
-		}
+//		List nonDefaultValues = null;
+//		if (lov.getITypeCd().equalsIgnoreCase("QUERY")) {
+//			DefaultValuesList allDefaultQueryValues = retriever.getDefaultQueryValuesDum(driver, dum, this.userProfile, object, this.locale, role);
+//			nonDefaultValues = this.getNonDefaultQueryValues(driver, allDefaultQueryValues);
+//		} else {
+//			nonDefaultValues = this.getNonDefaultValues(driver, allDefaultValues);
+//		}
+//		if (nonDefaultValues.isEmpty()) {
+//			logger.debug("All selected values are default values; no need to validate them");
+//			return new ArrayList();
+//		}
 		AbstractDriver clone;
 		if (driver instanceof BIObjectParameter) {
 			BIObjectParameter biParam = (BIObjectParameter) driver;
@@ -278,7 +278,7 @@ public class DriversValidationAPI {
 			clone = biMetaParam;
 		}
 		// BIObjectParameter clone = driver.clone();
-		clone.setParameterValues(nonDefaultValues);
+		clone.setParameterValues(driver.getParameterValues());
 		// get the lov provider detail
 		String lovProv = lov.getLovProvider();
 		ILovDetail lovProvDet = LovDetailFactory.getLovFromXML(lovProv);

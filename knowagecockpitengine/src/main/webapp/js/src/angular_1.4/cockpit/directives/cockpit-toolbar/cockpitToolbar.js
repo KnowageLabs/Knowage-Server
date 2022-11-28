@@ -364,13 +364,15 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 					}
 					var loadDomainValues = widget.type == "selector" ? true : false;
 					var selections = cockpitModule_datasetServices.getWidgetSelectionsAndFilters(widget, dataset, loadDomainValues);
+					var userSelections = cockpitModule_widgetSelection.getUserSelections(dataset.label);
 					var parameters = cockpitModule_datasetServices.getDatasetParameters(dsId);
 					var parametersString = cockpitModule_datasetServices.getParametersAsString(parameters);
 					var paramsToSend = angular.fromJson(parametersString);
 					requestUrl.COCKPIT_SELECTIONS[i].aggregations = aggregation;
 					requestUrl.COCKPIT_SELECTIONS[i].parameters = paramsToSend;
-					requestUrl.COCKPIT_SELECTIONS[i].drivers = drivers;
+					requestUrl.COCKPIT_SELECTIONS[i].drivers = drivers;					
 					requestUrl.COCKPIT_SELECTIONS[i].selections = selections;
+					requestUrl.COCKPIT_SELECTIONS[i].userSelections = userSelections;
 				}
 				requestUrl.COCKPIT_VARIABLES= cockpitModule_properties.VARIABLES;
 			}

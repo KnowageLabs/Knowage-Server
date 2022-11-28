@@ -202,6 +202,7 @@ import ProgressSpinner from 'primevue/progressspinner'
 import calcFieldDescriptor from './QBECalcFieldDescriptor.json'
 import KnCalculatedField from '@/components/functionalities/KnCalculatedField/KnCalculatedField.vue'
 import Dropdown from 'primevue/dropdown'
+import { getCorrectRolesForExecution } from '@/helpers/commons/roleHelper'
 
 const crypto = require('crypto')
 const deepcopy = require('deepcopy')
@@ -303,11 +304,43 @@ export default defineComponent({
         this.uniqueID = crypto.randomBytes(16).toString('hex')
         this.user = (this.$store.state as any).user
         this.userRole = this.user.sessionRole && this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
-        if (this.userRole) {
-            await this.loadPage()
-        } else {
-            this.parameterSidebarVisible = true
+
+        let invalidRole = false
+        let id = null
+        let label = null
+        if (this.dataset) {
+            id = this.dataset.id
+            label = this.dataset.label
         }
+        getCorrectRolesForExecution('DATAMART', id, label).then((response: any) => {
+            let correctRolesForExecution = response
+
+            if (!this.userRole) {
+                if (correctRolesForExecution.length == 1) {
+                    this.userRole = correctRolesForExecution[0]
+                } else {
+                    this.parameterSidebarVisible = true
+                }
+            } else if (this.userRole) {
+                if (correctRolesForExecution.length == 1) {
+                    let correctRole = correctRolesForExecution[0]
+                    if (this.userRole !== correctRole) {
+                        this.$store.commit('setError', {
+                            title: this.$t('common.error.generic'),
+                            msg: this.$t('documentExecution.main.userRoleError')
+                        })
+                        invalidRole = true
+                    }
+                }
+            }
+            if (!invalidRole) {
+                if (this.userRole) {
+                    this.loadPage()
+                } else {
+                    this.parameterSidebarVisible = true
+                }
+            }
+        })
     },
     methods: {
         //#region ===================== Load QBE and format data ====================================================
@@ -322,8 +355,8 @@ export default defineComponent({
             this.loadQuery()
             this.qbeMetadata = this.extractFieldsMetadata(this.qbe?.meta.columns)
             this.generateFieldsAndMetadataId()
-            await this.loadDatasetDrivers()
-            if (this.qbe?.pars?.length === 0 && this.filtersData?.isReadyForExecution) {
+            if (!this.dataset?.federation_id) await this.loadDatasetDrivers()
+            if (this.qbe?.pars?.length === 0 && (this.filtersData?.isReadyForExecution || this.dataset?.federation_id)) {
                 await this.loadQBE()
             } else if (this.qbe?.pars?.length !== 0 || !this.filtersData?.isReadyForExecution) {
                 this.parameterSidebarVisible = true
@@ -432,13 +465,17 @@ export default defineComponent({
             this.calcFieldFunctions = calcFieldDescriptor.availableFunctions
         },
         async initializeQBE() {
+            console.log('>>>>>>>>>>>>>>>>>>>> DATASET: ', this.dataset)
             const label = this.dataset?.dataSourceLabel ? this.dataset.dataSourceLabel : this.qbe?.qbeDataSource
             const datamart = this.dataset?.dataSourceLabel ? this.dataset.name : this.qbe?.qbeDatamarts
             const temp = this.getFormattedParameters(this.filtersData)
             const drivers = encodeURI(JSON.stringify(temp))
+            const url = this.dataset?.federation_id
+                ? `start-federation?federationId=${this.dataset.federation_id}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&drivers=%7B%7D`
+                : `start-qbe?datamart=${datamart}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&DATA_SOURCE_LABEL=${label}&drivers=${drivers}`
             if (this.dataset) {
                 await this.$http
-                    .get(process.env.VUE_APP_QBE_PATH + `start-qbe?datamart=${datamart}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&DATA_SOURCE_LABEL=${label}&drivers=${drivers}`)
+                    .get(process.env.VUE_APP_QBE_PATH + url)
                     .then(() => {
                         this.qbeLoaded = true
                     })
@@ -447,6 +484,7 @@ export default defineComponent({
         },
         getFormattedParameters(loadedParameters: { filterStatus: any[]; isReadyForExecution: boolean }) {
             let parameters = {} as any
+            if (!loadedParameters.filterStatus) return parameters
             Object.keys(loadedParameters.filterStatus).forEach((key: any) => {
                 const parameter = loadedParameters.filterStatus[key]
                 if (!parameter.multivalue) {
@@ -458,6 +496,7 @@ export default defineComponent({
             return parameters
         },
         async loadCustomizedDatasetFunctions() {
+            if (this.dataset && this.dataset.federation_id) return
             const id = this.dataset?.dataSourceId ? this.dataset.dataSourceId : this.qbe?.qbeDataSourceId
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/${id}`).then((response: AxiosResponse<any>) => {
                 this.customizedDatasetFunctions = response.data
@@ -480,7 +519,10 @@ export default defineComponent({
             } else this.calcFieldFunctionsToShow = deepcopy(this.calcFieldFunctions)
         },
         async loadEntities() {
-            const datamartName = this.dataset?.dataSourceId ? this.dataset.name : this.qbe?.qbeDatamarts
+            let datamartName = this.dataset?.dataSourceId ? this.dataset.name : this.qbe?.qbeDatamarts
+            if (this.dataset?.type === 'federatedDataset') {
+                datamartName = null
+            }
             await this.$http
                 .get(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_TREE_ACTION&SBI_EXECUTION_ID=${this.uniqueID}&datamartName=${datamartName}`)
                 .then(async (response: AxiosResponse<any>) => {
@@ -986,7 +1028,7 @@ export default defineComponent({
                 this.qbe = this.getQBEFromModel()
             }
             this.loadQuery()
-            await this.loadDatasetDrivers()
+            if (!this.dataset?.federation_id) await this.loadDatasetDrivers()
         },
         //#endregion ================================================================================================
         openSavingDialog() {

@@ -48,13 +48,13 @@ import i18n from '@/App.i18n'
 
 import QBEOperator from './modules/qbe/qbeDialogs/qbeAdvancedFilterDialog/QBEOperator.vue'
 
-if(process.env.NODE_ENV==='development') document.domain = 'localhost'
+if (process.env.NODE_ENV === 'development') document.domain = 'localhost'
 
 createApp(App)
     .use(VueAxios, interceptor)
     .use(store)
-    .use(router)
     .use(i18n)
+    .use(router)
     .use(PrimeVue)
     .use(ToastService)
     .use(ConfirmationService)
