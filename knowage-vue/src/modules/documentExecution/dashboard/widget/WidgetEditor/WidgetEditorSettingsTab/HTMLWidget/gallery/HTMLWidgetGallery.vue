@@ -3,7 +3,7 @@
         <div class="p-d-flex p-flex-row p-ai-center p-flex-wrap">
             <InputText class="kn-material-input p-m-3 model-search" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" />
         </div>
-        <div class="p-grid p-m-2 kn-flex kn-overflow">
+        <div class="p-grid p-m-2 kn-flex kn-overflow dashboard-scrollbar">
             <Message v-if="htmlGalleryProp.length == 0" class="kn-flex p-m-2" severity="info" :closable="false">
                 {{ $t('common.info.noDataFound') }}
             </Message>
@@ -85,18 +85,3 @@ export default defineComponent({
     }
 })
 </script>
-
-<style lang="scss" scoped>
-::-webkit-scrollbar {
-    width: 5px;
-}
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-::-webkit-scrollbar-thumb {
-    background: #888;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: #555;
-}
-</style>

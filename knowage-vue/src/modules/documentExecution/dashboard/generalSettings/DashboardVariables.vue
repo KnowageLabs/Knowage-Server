@@ -1,5 +1,5 @@
 <template>
-    <div class="p-d-flex p-flex-column kn-flex p-mr-3 p-my-3 dashboard-card-shadow kn-overflow">
+    <div class="p-d-flex p-flex-column kn-flex p-mr-3 p-my-3 dashboard-card-shadow kn-overflow dashboard-scrollbar">
         <KnFabButton icon="fas fa-plus" class="p-as-end" style="position: absolute; right: 10px" @click="addNewVariable()"></KnFabButton>
         <label class="kn-material-input-label p-m-3"> {{ $t('common.variables') }}</label>
 
@@ -150,17 +150,3 @@ export default defineComponent({
     }
 })
 </script>
-<style lang="scss" scoped>
-::-webkit-scrollbar {
-    width: 5px;
-}
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-::-webkit-scrollbar-thumb {
-    background: #888;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: #555;
-}
-</style>
