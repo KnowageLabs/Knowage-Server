@@ -120,7 +120,7 @@ export default defineComponent({
         clearAllDatasetIntervals()
     },
     methods: {
-        ...mapActions(dashboardStore, ['removeSelections', 'setAllDatasets', 'getSelections', 'setInternationalization', 'getInternationalization']),
+        ...mapActions(dashboardStore, ['removeSelections', 'setAllDatasets', 'getSelections', 'setInternationalization', 'getInternationalization', 'setDashboardDocument']),
         async getData() {
             this.loading = true
             await this.loadDatasets()
@@ -145,6 +145,7 @@ export default defineComponent({
             this.dashboardId = cryptoRandomString({ length: 16, type: 'base64' })
             this.store.setDashboard(this.dashboardId, this.model)
             this.store.setSelections(this.dashboardId, this.model.configuration.selections, this.$http)
+            this.store.setDashboardDocument(this.dashboardId, this.document)
         },
         async loadDatasets() {
             this.appStore.setLoading(true)

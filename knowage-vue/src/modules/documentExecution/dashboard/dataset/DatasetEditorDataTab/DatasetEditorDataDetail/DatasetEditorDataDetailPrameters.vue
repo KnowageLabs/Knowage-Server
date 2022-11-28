@@ -52,7 +52,7 @@
     </Accordion>
 
     <Menu id="parameterPickerMenu" ref="parameterPickerMenu" :model="menuButtons" />
-    <DatasetEditorDriverDialog :visible="driversDialogVisible" :propDriver="selectedDriver" @updateDriver="onUpdateDriver" @close="onDriversDialogClose"></DatasetEditorDriverDialog>
+    <DatasetEditorDriverDialog :visible="driversDialogVisible" :propDriver="selectedDriver" :dashboardId="dashboardId" :selectedDatasetProp="selectedDatasetProp" :drivers="drivers" @updateDriver="onUpdateDriver" @close="onDriversDialogClose"></DatasetEditorDriverDialog>
 </template>
 
 <script lang="ts">
@@ -72,7 +72,7 @@ import deepcopy from 'deepcopy'
 export default defineComponent({
     name: 'dataset-editor-data-detail-info',
     components: { Card, Accordion, AccordionTab, Dropdown, Menu, Chips, DatasetEditorDriverDialog },
-    props: { selectedDatasetProp: { required: true, type: Object }, dashboardDatasetsProp: { required: true, type: Array as any }, documentDriversProp: { type: Array as any } },
+    props: { selectedDatasetProp: { required: true, type: Object }, dashboardDatasetsProp: { required: true, type: Array as any }, documentDriversProp: { type: Array as any }, dashboardId: { type: String, required: true } },
     emits: [],
     data() {
         return {

@@ -31,6 +31,12 @@ const store = defineStore('dashboardStore', {
         setDashboardSheet(dashboard: any) {
             this.dashboards[dashboard.id].sheet = dashboard.sheet
         },
+        getDashboardDocument(dashboardId: string) {
+            return this.dashboards[dashboardId].document
+        },
+        setDashboardDocument(dashboardId: string, document: any) {
+            this.dashboards[dashboardId].document = document
+        },
         createNewWidget(dashboardId: string, widget: IWidget) {
             this.dashboards[dashboardId].widgets.push(widget)
             if (this.dashboards[dashboardId].sheets[this.selectedSheetIndex]) {

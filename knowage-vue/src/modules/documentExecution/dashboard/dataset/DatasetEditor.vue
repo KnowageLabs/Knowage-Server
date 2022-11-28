@@ -11,7 +11,15 @@
 
             <TabView v-if="!loading" class="dashboardEditor-tabs">
                 <TabPanel :header="$t('dashboard.datasetEditor.dataTabTitle')">
-                    <DataTab :availableDatasetsProp="availableDatasets" :dashboardDatasetsProp="dashboardDatasets" :selectedDatasetsProp="selectedDatasets" :documentDriversProp="filtersDataProp" @addSelectedDatasets="addSelectedDatasets" @deleteDataset="confirmDeleteDataset" />
+                    <DataTab
+                        :availableDatasetsProp="availableDatasets"
+                        :dashboardDatasetsProp="dashboardDatasets"
+                        :selectedDatasetsProp="selectedDatasets"
+                        :documentDriversProp="filtersDataProp"
+                        :dashboardId="dashboardIdProp"
+                        @addSelectedDatasets="addSelectedDatasets"
+                        @deleteDataset="confirmDeleteDataset"
+                    />
                 </TabPanel>
                 <TabPanel>
                     <template #header>
@@ -177,7 +185,7 @@ export default defineComponent({
             }
         },
         async checkForDatasetAssociations(datasetToDelete) {
-            let datasetAssociations = (await this.getDatasetAssociations(datasetToDelete.id.dsId)) as unknown as IAssociation[]
+            let datasetAssociations = ((await this.getDatasetAssociations(datasetToDelete.id.dsId)) as unknown) as IAssociation[]
             if (datasetAssociations && datasetAssociations.length > 0) this.deleteDatasetAssociations(datasetAssociations)
             this.deleteDataset(datasetToDelete.id.dsId)
         },
