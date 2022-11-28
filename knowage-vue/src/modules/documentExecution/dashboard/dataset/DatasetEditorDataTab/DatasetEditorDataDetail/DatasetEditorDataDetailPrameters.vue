@@ -66,6 +66,8 @@ import Menu from 'primevue/contextmenu'
 import Chips from 'primevue/chips'
 import DatasetEditorDriverDialog from './DatasetEditorDriverDialog/DatasetEditorDriverDialog.vue'
 
+import mockedDriversReal from './mockedDriversReal.json'
+
 import mockedDrivers from './mockedDrivers.json'
 import deepcopy from 'deepcopy'
 
@@ -78,7 +80,7 @@ export default defineComponent({
         return {
             parameterTypes: ['static', 'dynamic'],
             menuButtons: [] as any,
-            drivers: deepcopy(mockedDrivers) as IDashboardDatasetDriver[],
+            drivers: deepcopy(mockedDriversReal) as IDashboardDatasetDriver[],
             driversDialogVisible: false,
             selectedDriver: null as IDashboardDatasetDriver | null
         }
