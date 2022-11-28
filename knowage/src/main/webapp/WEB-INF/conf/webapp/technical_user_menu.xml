@@ -168,11 +168,6 @@
 					functionality="DomainManagement"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=domainManagement"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/functionalities16.png" />
-					
-			<ITEM	title="Exporters menu"
-					functionality="ExportersCatalogue"
-					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=exportersCatalogue"
-					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/dataset/dataset16.png" />
 			<ITEM	title="#menu.MetadataMan"
 					functionality="ObjMetadataManagement"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListObjMetadataPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
