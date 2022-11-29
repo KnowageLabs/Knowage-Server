@@ -1,5 +1,5 @@
 <template>
-    <div v-if="activeSelections" class="active-selections-widget p-d-flex p-flex-column kn-flex kn-overflow-y">
+    <div v-if="activeSelections" class="active-selections-widget p-d-flex p-flex-column kn-flex kn-overflow-y dashboard-scrollbar">
         <div v-if="widgetType === 'list' && activeSelections.length > 0" class="p-d-flex p-flex-row p-flex-wrap kn-flex">
             <ActiveSelectionsList :activeSelections="activeSelections" :propWidget="propWidget" :showDataset="showDataset" :showColumn="showColumn" :editorMode="editorMode" @deleteSelection="onDeleteSelection" />
         </div>
@@ -81,18 +81,3 @@ export default defineComponent({
     }
 })
 </script>
-<style scoped>
-::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
-}
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-::-webkit-scrollbar-thumb {
-    background: #888;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: #555;
-}
-</style>

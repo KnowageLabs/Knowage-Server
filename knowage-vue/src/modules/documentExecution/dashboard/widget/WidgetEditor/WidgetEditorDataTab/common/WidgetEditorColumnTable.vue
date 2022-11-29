@@ -115,7 +115,7 @@ export default defineComponent({
             this.rows = deepcopy(this.items) as IWidgetColumn[]
         },
         setFilters() {
-            if (this.settings.globalFilterFields?.length) this.filters.global = [filterDefault]
+            if (this.settings?.globalFilterFields?.length) this.filters.global = [filterDefault]
         },
         getIcon(item: IWidgetColumn) {
             return item.fieldType === 'ATTRIBUTE' ? 'fas fa-font' : 'fas fa-hashtag'

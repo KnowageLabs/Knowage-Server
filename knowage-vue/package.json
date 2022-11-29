@@ -64,6 +64,7 @@
         "@pinia/testing": "0.0.12",
         "@types/jest": "^24.0.19",
         "@types/luxon": "^2.3.1",
+        "@types/sanitize-html": "^2.6.2",
         "@types/stompjs": "^2.3.5",
         "@typescript-eslint/eslint-plugin": "^2.33.0",
         "@typescript-eslint/parser": "^2.33.0",

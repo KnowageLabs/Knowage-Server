@@ -1,5 +1,5 @@
 <template>
-    <div v-if="options" class="selector-widget">
+    <div v-if="options" class="selector-widget dashboard-scrollbar">
         <div v-if="widgetType === 'singleValue'" :class="getLayoutStyle()">
             <div class="multi-select p-p-1" :style="getLabelStyle() + getGridWidth()" v-for="(value, index) of showMode === 'hideDisabled' ?  options.rows.filter((row: any) => !row.disabled) : options.rows" :key="index">
                 <RadioButton :inputId="`radio-${index}`" class="p-mr-2" :name="value.column_1" :value="value.column_1" v-model="selectedValue" :disabled="showMode === 'showDisabled' && value.disabled" @change="singleValueSelectionChanged" />
@@ -399,53 +399,3 @@ export default defineComponent({
     }
 })
 </script>
-
-<style lang="scss">
-.selector-widget {
-    overflow-y: auto;
-    .multi-select {
-        display: flex;
-        align-items: center;
-        .multi-select-label {
-            text-overflow: ellipsis;
-            overflow: hidden;
-            white-space: nowrap;
-        }
-    }
-    .vertical-layout {
-        display: flex;
-        flex-direction: column;
-    }
-    .horizontal-layout {
-        display: flex;
-    }
-    .grid-layout {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        overflow-y: auto;
-    }
-}
-.selectorCustomDropdownPanel {
-    color: unset;
-}
-</style>
-<style lang="scss" scoped>
-::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
-}
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-::-webkit-scrollbar-thumb {
-    background: #888;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: #555;
-}
-.testClass {
-    background-color: red;
-    color: blue;
-}
-</style>

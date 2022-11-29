@@ -125,7 +125,8 @@ import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import Card from 'primevue/card'
 import Checkbox from 'primevue/checkbox'
 import InputSwitch from 'primevue/inputswitch'
-import { mapState } from 'vuex'
+import { mapState } from 'pinia'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     components: { Card, InputSwitch, Checkbox, KnValidationMessages, DatasetScheduler },
@@ -135,7 +136,7 @@ export default defineComponent({
         schedulingData: { type: Object as any }
     },
     computed: {
-        ...mapState({
+        ...mapState(mainStore, {
             user: 'user'
         }),
         disablePersist() {
