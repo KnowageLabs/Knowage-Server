@@ -55,7 +55,7 @@
                         <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)" :data-test="'parameter-input-clear-' + parameter.id"></i>
                     </div>
                     <InputText
-                        v-if="parameter.parameterValue"
+                        v-if="parameter.parameterValue && parameter.parameterValue[0]"
                         class="kn-material-input p-inputtext-sm"
                         :type="parameter.type === 'NUM' ? 'number' : 'text'"
                         v-model="parameter.parameterValue[0].value"

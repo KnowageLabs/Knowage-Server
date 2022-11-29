@@ -5,6 +5,7 @@ export interface iParameter {
         valueColumn: string
         descriptionColumn: string
     }
+    typeCode?: string,
     data: any
     visible: boolean
     valueSelection: string
