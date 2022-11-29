@@ -87,6 +87,7 @@ function cockpitCustomChartControllerFunction(
 		if(scrajs.length > 0){
 			var toLoad = scrajs.length;
 			var loaded = 0;
+			var initializedIndex = 0;
 			var updateLoaded = function(){
 				loaded++;
 				scriptSemaphore();
