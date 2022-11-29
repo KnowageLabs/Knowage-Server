@@ -137,6 +137,7 @@ export default defineComponent({
         onUpdateDriver(driver: IDashboardDatasetDriver) {
             console.log('>>>>>>>> ON UPDATE DRIVER: ', driver)
             this.driversDialogVisible = false
+            if (driver.type === 'DATE') this.setDateDisplayValue(driver)
             const index = this.drivers.findIndex((tempDriver: IDashboardDatasetDriver) => tempDriver.urlName === driver.urlName)
             if (index !== -1) this.drivers[index] = driver
         }

@@ -14,6 +14,7 @@
             <DriverDialogDropdown v-else-if="driver.selectionType === 'COMBOBOX'" :propDriver="driver"></DriverDialogDropdown>
             <DriverDialogDateInput v-else-if="driver.type === 'DATE'" :propDriver="driver"></DriverDialogDateInput>
             <DriverDialogPopup v-else-if="driver.selectionType === 'LOOKUP'" :propDriver="driver" :dashboardId="dashboardId" :selectedDatasetProp="selectedDatasetProp" :drivers="drivers"></DriverDialogPopup>
+            <DriverDialogTree v-else-if="driver.selectionType === 'TREE'" :propDriver="driver" :dashboardId="dashboardId" :selectedDatasetProp="selectedDatasetProp" :drivers="drivers"></DriverDialogTree>
             <span v-else>
                 {{ driver }}
             </span>
@@ -37,10 +38,11 @@ import DriverDialogList from './DriverDialogList.vue'
 import DriverDialogDropdown from './DriverDialogDropdown.vue'
 import DriverDialogPopup from './DriverDialogPopup.vue'
 import DriverDialogDateInput from './DriverDialogDateInput.vue'
+import DriverDialogTree from './DriverDialogTree.vue'
 
 export default defineComponent({
     name: 'dataset-editor-driver-dialog',
-    components: { Dialog, DriverDialogManualInput, DriverDialogList, DriverDialogDropdown, DriverDialogPopup, DriverDialogDateInput },
+    components: { Dialog, DriverDialogManualInput, DriverDialogList, DriverDialogDropdown, DriverDialogPopup, DriverDialogDateInput, DriverDialogTree },
     props: {
         visible: Boolean,
         propDriver: { type: Object as PropType<IDashboardDatasetDriver | null>, required: true },
@@ -49,7 +51,6 @@ export default defineComponent({
         drivers: { type: Array as PropType<IDashboardDatasetDriver[]>, required: true }
     },
     emits: ['close', 'updateDriver'],
-    computed: {},
     data() {
         return {
             descriptor,

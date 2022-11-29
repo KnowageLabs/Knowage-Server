@@ -1,0 +1,113 @@
+import { IDashboardDatasetDriver } from "@/modules/documentExecution/dashboard/Dashboard"
+import moment from "moment"
+import i18n from '@/App.i18n'
+
+const { t } = i18n.global
+
+export const getFormattedDrivers = (drivers: IDashboardDatasetDriver[]) => {
+    console.log('>>>>>>>>>>>>> ALLL DRIVERS: ', drivers)
+    const formattedDrivers = {} as any
+    drivers.forEach((driver: IDashboardDatasetDriver) => {
+        if (driver.typeCode === 'MAN_IN' && (driver.type === 'NUM' || driver.type === 'STRING')) {
+            driver.type === 'NUM' ? getFormattedManualNumberDriver(driver, formattedDrivers) : getFormattedManualStringDriver(driver, formattedDrivers)
+        } else if (driver.type === 'DATE') {
+            getFormattedDateDriver(driver, formattedDrivers)
+        } else if (driver.selectionType === 'LIST') {
+            getFormattedListDriver(driver, formattedDrivers)
+        } else if (driver.selectionType === 'COMBOBOX') {
+            getFormattedDropdownDriver(driver, formattedDrivers)
+        } else if (driver.selectionType === 'LOOKUP') {
+            getFormattedPopupDriver(driver, formattedDrivers)
+        } else if (driver.selectionType === 'TREE') {
+            getFormattedTreeDriver(driver, formattedDrivers)
+        }
+    })
+    return formattedDrivers
+}
+
+const getFormattedManualStringDriver = (driver: any, formattedDrivers: any) => {
+    formattedDrivers[driver.urlName] = driver.parameterValue[0].value
+    formattedDrivers[driver.urlName + '_field_visible_description'] = driver.parameterValue[0].description
+}
+
+const getFormattedManualNumberDriver = (driver: any, formattedDrivers: any) => {
+    formattedDrivers[driver.urlName] = driver.parameterValue[0].value ? +driver.parameterValue[0].value : driver.parameterValue[0].value
+    formattedDrivers[driver.urlName + '_field_visible_description'] = driver.parameterValue[0].description
+}
+const getFormattedDateDriver = (driver: any, formattedDrivers: any) => {
+    const formattedDate = moment(driver.parameterValue[0].value).format('MMM DD, YYYY')
+    formattedDrivers[driver.urlName] = formattedDate
+    formattedDrivers[driver.urlName + '_field_visible_description'] = formattedDate
+}
+const getFormattedListDriver = (driver: any, formattedDrivers: any) => {
+    if (driver.multivalue) {
+        const driverValues = [] as string[]
+        const driverDescriptions = [] as string[]
+        driver.parameterValue.forEach((parameterValue: { value: string; description: string }) => {
+            driverValues.push(parameterValue.value)
+            driverDescriptions.push(parameterValue.description)
+        })
+        formattedDrivers[driver.urlName] = driverValues
+        formattedDrivers[driver.urlName + '_field_visible_description'] = driverDescriptions.join(';')
+    } else {
+        formattedDrivers[driver.urlName] = driver.parameterValue[0].value
+        formattedDrivers[driver.urlName + '_field_visible_description'] = driver.parameterValue[0].description
+    }
+}
+const getFormattedDropdownDriver = (driver: any, formattedDrivers: any) => {
+    if (driver.multivalue) {
+        const driverValues = [] as string[]
+        const driverDescriptions = [] as string[]
+        driver.parameterValue.forEach((parameterValue: { value: string; description: string }) => {
+            driverValues.push(parameterValue.value)
+            driverDescriptions.push(parameterValue.description)
+        })
+        formattedDrivers[driver.urlName] = driverValues
+        formattedDrivers[driver.urlName + '_field_visible_description'] = driverDescriptions.join(';')
+    } else {
+        formattedDrivers[driver.urlName] = driver.parameterValue[0].value
+        formattedDrivers[driver.urlName + '_field_visible_description'] = driver.parameterValue[0].description
+    }
+}
+const getFormattedPopupDriver = (driver: any, formattedDrivers: any) => {
+    if (driver.multivalue) {
+        const driverValues = [] as string[]
+        const driverDescriptions = [] as string[]
+        driver.parameterValue.forEach((parameterValue: { value: string; description: string }) => {
+            driverValues.push(parameterValue.value)
+            driverDescriptions.push(parameterValue.description)
+        })
+        formattedDrivers[driver.urlName] = driverValues
+        formattedDrivers[driver.urlName + '_field_visible_description'] = driverDescriptions.join(';')
+    } else {
+        formattedDrivers[driver.urlName] = driver.parameterValue[0].value
+        formattedDrivers[driver.urlName + '_field_visible_description'] = driver.parameterValue[0].description
+    }
+}
+const getFormattedTreeDriver = (driver: any, formattedDrivers: any) => {
+    if (driver.multivalue) {
+        const driverValues = [] as string[]
+        const driverDescriptions = [] as string[]
+        driver.parameterValue.forEach((parameterValue: { value: string; description: string }) => {
+            driverValues.push(parameterValue.value)
+            driverDescriptions.push(parameterValue.description)
+        })
+        formattedDrivers[driver.urlName] = driverValues
+        formattedDrivers[driver.urlName + '_field_visible_description'] = driverDescriptions.join(';')
+    } else {
+        formattedDrivers[driver.urlName] = driver.parameterValue[0].value
+        formattedDrivers[driver.urlName + '_field_visible_description'] = driver.parameterValue[0].description
+    }
+}
+
+export const getUserRole = (user: any) => {
+    if (user.sessionRole && user.sessionRole !== t('role.defaultRolePlaceholder')) {
+        return user.sessionRole
+    } else if (user.defaultRole) {
+        return user.defaultRole
+    } else if (user.roles.length > 0) {
+        return user.roles[0]
+    } else {
+        return ''
+    }
+}

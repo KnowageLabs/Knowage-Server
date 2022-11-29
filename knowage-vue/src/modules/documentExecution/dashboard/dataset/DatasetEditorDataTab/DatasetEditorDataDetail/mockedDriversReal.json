@@ -307,6 +307,7 @@
         "urlName": "pop-up_multi"
     },
     {
+        "allowInternalNodeSelection": true,
         "defaultValue": [
             {
                 "description": "Super Sesame Oil",
@@ -327,6 +328,7 @@
         "urlName": "tree"
     },
     {
+        "allowInternalNodeSelection": true,
         "defaultValue": [
             {
                 "description": "Super Sesame Oil",

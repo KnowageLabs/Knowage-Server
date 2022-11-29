@@ -22,8 +22,7 @@
         >
             <template #default="slotProps">
                 <Checkbox v-if="multivalue && slotProps.node.selectable" class="p-ml-2" v-model="selectedNodes" :value="slotProps.node.data" @change="onNodeChange($event)" />
-                <span>{{ slotProps.node.label }}</span
-                >
+                <span>{{ slotProps.node.label }}</span>
             </template>
         </Tree>
 
@@ -44,8 +43,9 @@ import Checkbox from 'primevue/checkbox'
 import Dialog from 'primevue/dialog'
 import knParameterTreeDialogDescriptor from './KnParameterTreeDialogDescriptor.json'
 import Tree from 'primevue/tree'
-
 import deepcopy from 'deepcopy'
+import { mapState } from 'pinia'
+import mainStore from '@/App.store'
 
 export default defineComponent({
     name: 'kn-parameter-tree-dialog',
@@ -64,6 +64,11 @@ export default defineComponent({
             selectedNodes: [] as any[],
             loading: false
         }
+    },
+    computed: {
+        ...mapState(mainStore, {
+            user: 'user'
+        })
     },
     watch: {
         async visible() {
@@ -111,7 +116,7 @@ export default defineComponent({
                 return
             }
 
-            const sessionRole = (this.store.$state as any).user.sessionRole
+            const sessionRole = this.user.sessionRole
             const role = sessionRole && sessionRole !== this.$t('role.defaultRolePlaceholder') ? sessionRole : this.selectedRole
 
             let url = '2.0/documentexecution/admissibleValuesTree'

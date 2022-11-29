@@ -116,6 +116,7 @@ const getFormattedDriverProperties = (driver: any, formattedDriver: IDashboardDa
     } else if (driver.selectionType === 'LOOKUP') {
         getFormattedPopupDriver(driver, formattedDriver)
     } else if (driver.selectionType === 'TREE') {
+        formattedDriver.allowInternalNodeSelection = driver.allowInternalNodeSelection
         getFormattedTreeDriver(driver, formattedDriver)
     }
 

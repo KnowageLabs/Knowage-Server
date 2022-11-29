@@ -90,8 +90,8 @@ export interface iAdmissibleTreeValues {
 }
 
 export interface iNode {
-    key: number
-    id: number
+    key: number | string
+    id: number | string
     label: string
     children: iNode[]
     data: { value: string; description: string }

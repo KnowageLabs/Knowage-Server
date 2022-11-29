@@ -47,13 +47,14 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Message from 'primevue/message'
 import descriptor from '../DatasetEditorDataDetailDescriptor.json'
-import moment from 'moment'
+import { getFormattedDrivers, getUserRole } from './DatasetEditorDriverHelper'
+import { mapState } from 'pinia'
+import mainStore from '@/App.store'
 
 export default defineComponent({
     name: 'driver-dialog-popup',
     components: { Column, DataTable, Message },
     props: { propDriver: { type: Object as PropType<IDashboardDatasetDriver | null>, required: true }, dashboardId: { type: String, required: true }, selectedDatasetProp: { required: true, type: Object }, drivers: { type: Array as PropType<IDashboardDatasetDriver[]>, required: true } },
-    computed: {},
     data() {
         return {
             descriptor,
@@ -65,6 +66,11 @@ export default defineComponent({
             selectedRows: null as any,
             loading: false
         }
+    },
+    computed: {
+        ...mapState(mainStore, {
+            user: 'user'
+        })
     },
     watch: {
         propDriver() {
@@ -82,13 +88,13 @@ export default defineComponent({
         async getDriverPopupInfo() {
             if (!this.driver || !this.selectedDatasetProp) return
             this.loading = true
-            const role = '/demo/admin' // TODO - see about user role
+            const role = getUserRole(this.user)
             const postData = {
                 OBJECT_NAME: this.selectedDatasetProp.configuration?.qbeDatamarts,
                 ROLE: role,
                 PARAMETER_ID: this.driver.urlName,
                 MODE: 'extra',
-                PARAMETERS: this.getFormattedDrivers()
+                PARAMETERS: getFormattedDrivers(this.drivers)
             }
 
             await this.$http
@@ -103,92 +109,12 @@ export default defineComponent({
             this.setSelectedRows()
             this.loading = false
         },
-
         setSelectedRows() {
             this.selectedRows = []
             this.driver?.parameterValue.forEach((parameterValue: { value: string | number | Date; description: string }) => {
                 const index = this.rows.findIndex((row: any) => row.value === parameterValue.value && row.description == parameterValue.description)
                 if (index !== -1) this.selectedRows.push(this.rows[index])
             })
-        },
-        getFormattedDrivers() {
-            console.log('>>>>>>>>>>>>> ALLL DRIVERS: ', this.drivers)
-            const formattedDrivers = {} as any
-            this.drivers.forEach((driver: IDashboardDatasetDriver) => {
-                if (driver.typeCode === 'MAN_IN' && (driver.type === 'NUM' || driver.type === 'STRING')) {
-                    driver.type === 'NUM' ? this.getFormattedManualNumberDriver(driver, formattedDrivers) : this.getFormattedManualStringDriver(driver, formattedDrivers)
-                } else if (driver.type === 'DATE') {
-                    this.getFormattedDateDriver(driver, formattedDrivers)
-                } else if (driver.selectionType === 'LIST') {
-                    this.getFormattedListDriver(driver, formattedDrivers)
-                } else if (driver.selectionType === 'COMBOBOX') {
-                    this.getFormattedDropdownDriver(driver, formattedDrivers)
-                } else if (driver.selectionType === 'LOOKUP') {
-                    this.getFormattedPopupDriver(driver, formattedDrivers)
-                }
-                // TODO - Tree
-            })
-            return formattedDrivers
-        },
-        getFormattedManualStringDriver(driver: any, formattedDrivers: any) {
-            formattedDrivers[driver.urlName] = driver.parameterValue[0].value
-            formattedDrivers[driver.urlName + '_field_visible_description'] = driver.parameterValue[0].description
-        },
-        getFormattedManualNumberDriver(driver: any, formattedDrivers: any) {
-            console.log('>>>>>>>>>>>>> ----------------- TEEEEEEST: ', driver)
-            formattedDrivers[driver.urlName] = driver.parameterValue[0].value ? +driver.parameterValue[0].value : driver.parameterValue[0].value
-            formattedDrivers[driver.urlName + '_field_visible_description'] = driver.parameterValue[0].description
-        },
-        getFormattedDateDriver(driver: any, formattedDrivers: any) {
-            const formattedDate = moment(driver.parameterValue[0].value).format('MMM DD, YYYY')
-            formattedDrivers[driver.urlName] = formattedDate
-            formattedDrivers[driver.urlName + '_field_visible_description'] = formattedDate
-        },
-        getFormattedListDriver(driver: any, formattedDrivers: any) {
-            if (driver.multivalue) {
-                const driverValues = [] as string[]
-                const driverDescriptions = [] as string[]
-                driver.parameterValue.forEach((parameterValue: { value: string; description: string }) => {
-                    driverValues.push(parameterValue.value)
-                    driverDescriptions.push(parameterValue.description)
-                })
-                formattedDrivers[driver.urlName] = driverValues
-                formattedDrivers[driver.urlName + '_field_visible_description'] = driverDescriptions.join(';')
-            } else {
-                formattedDrivers[driver.urlName] = driver.parameterValue[0].value
-                formattedDrivers[driver.urlName + '_field_visible_description'] = driver.parameterValue[0].description
-            }
-        },
-        getFormattedDropdownDriver(driver: any, formattedDrivers: any) {
-            if (driver.multivalue) {
-                const driverValues = [] as string[]
-                const driverDescriptions = [] as string[]
-                driver.parameterValue.forEach((parameterValue: { value: string; description: string }) => {
-                    driverValues.push(parameterValue.value)
-                    driverDescriptions.push(parameterValue.description)
-                })
-                formattedDrivers[driver.urlName] = driverValues
-                formattedDrivers[driver.urlName + '_field_visible_description'] = driverDescriptions.join(';')
-            } else {
-                formattedDrivers[driver.urlName] = driver.parameterValue[0].value
-                formattedDrivers[driver.urlName + '_field_visible_description'] = driver.parameterValue[0].description
-            }
-        },
-        getFormattedPopupDriver(driver: any, formattedDrivers: any) {
-            console.log('>>>>>>>>>>> DRIVER: ', driver)
-            if (driver.multivalue) {
-                const driverValues = [] as string[]
-                const driverDescriptions = [] as string[]
-                driver.parameterValue.forEach((parameterValue: { value: string; description: string }) => {
-                    driverValues.push(parameterValue.value)
-                    driverDescriptions.push(parameterValue.description)
-                })
-                formattedDrivers[driver.urlName] = driverValues
-                formattedDrivers[driver.urlName + '_field_visible_description'] = driverDescriptions.join(';')
-            } else {
-                formattedDrivers[driver.urlName] = driver.parameterValue[0].value
-                formattedDrivers[driver.urlName + '_field_visible_description'] = driver.parameterValue[0].description
-            }
         },
         onRowSelect() {
             if (!this.driver) return
