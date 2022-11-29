@@ -47,8 +47,8 @@ import { filterDefault } from '@/helpers/commons/filterHelper'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Message from 'primevue/message'
-import moment from 'moment'
 import descriptor from '../DatasetEditorDataDetailDescriptor.json'
+import moment from 'moment'
 
 export default defineComponent({
     name: 'driver-dialog-popup',
@@ -84,7 +84,6 @@ export default defineComponent({
             if (!this.driver || !this.selectedDatasetProp) return
             this.loading = true
             const role = '/demo/admin' // TODO - see about user role
-            console.log('>>>>>>>>>>>>> selectedDatasetProp: ', this.selectedDatasetProp)
             const postData = {
                 OBJECT_NAME: this.selectedDatasetProp.configuration?.qbeDatamarts,
                 ROLE: role,
@@ -103,9 +102,6 @@ export default defineComponent({
                 .catch((error: any) => console.log('ERROR: ', error))
 
             this.setSelectedRows()
-
-            console.log('>>>>>>> LOADED columns: ', this.columns)
-            console.log('>>>>>>> rows ', this.rows)
             this.loading = false
         },
 
@@ -140,13 +136,14 @@ export default defineComponent({
             formattedDrivers[driver.urlName + '_field_visible_description'] = driver.parameterValue[0].description
         },
         getFormattedManualNumberDriver(driver: any, formattedDrivers: any) {
-            formattedDrivers[driver.urlName] = +driver.parameterValue[0].value
+            console.log('>>>>>>>>>>>>> ----------------- TEEEEEEST: ', driver)
+            formattedDrivers[driver.urlName] = driver.parameterValue[0].value ? +driver.parameterValue[0].value : driver.parameterValue[0].value
             formattedDrivers[driver.urlName + '_field_visible_description'] = driver.parameterValue[0].description
         },
         getFormattedDateDriver(driver: any, formattedDrivers: any) {
-            // TODO - Format Date
-            formattedDrivers[driver.urlName] = driver.parameterValue[0].value
-            formattedDrivers[driver.urlName + '_field_visible_description'] = driver.parameterValue[0].description
+            const formattedDate = moment(driver.parameterValue[0].value).format('MMM DD, YYYY')
+            formattedDrivers[driver.urlName] = formattedDate
+            formattedDrivers[driver.urlName + '_field_visible_description'] = formattedDate
         },
         getFormattedListDriver(driver: any, formattedDrivers: any) {
             if (driver.multivalue) {
@@ -197,11 +194,9 @@ export default defineComponent({
         onRowSelect() {
             if (!this.driver) return
             if (this.driver.multivalue) {
-                console.log('>>>>>>>>>>>>>>> SELECTED ROW MULTIVALUE: ', this.selectedRows)
                 this.driver.parameterValue = []
                 this.selectedRows.forEach((row: any) => this.driver?.parameterValue.push({ value: row.value, description: row.description }))
             } else {
-                console.log('>>>>>>>>>>>>>>> SELECTED ROW SINGLE: ', this.selectedRows)
                 this.driver.parameterValue[0] = { value: this.selectedRows.value, description: this.selectedRows.description }
             }
         }

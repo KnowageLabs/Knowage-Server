@@ -86,7 +86,7 @@
         "parameterValue": [
             {
                 "description": "20220408#yyyymmdd",
-                "value": "2022-11-28T16:32:12.292Z"
+                "value": "2022-11-22T23:00:00.000Z"
             }
         ],
         "selectionType": "",
@@ -106,7 +106,7 @@
         "parameterValue": [
             {
                 "description": "20220408#yyyymmdd",
-                "value": "2022-11-28T16:32:12.293Z"
+                "value": "20220108"
             }
         ],
         "selectionType": "",

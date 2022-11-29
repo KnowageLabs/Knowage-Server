@@ -76,7 +76,6 @@ const getFormattedDatasets = (model: any) => {
 }
 
 const getFormattedDataset = (dataset: any) => {
-    console.log(">>>>>>>>>>>>>>>>> DATASET: ", dataset)
     const formattedDataset = { id: dataset.dsId, dsLabel: dataset.dsLabel, cache: dataset.useCache } as IWidgetEditorDataset
     if (dataset.indexes) formattedDataset.indexes = dataset.indexes
     if (dataset.parameters) formattedDataset.parameters = getFormattedDatasetParameters(dataset)
@@ -87,10 +86,11 @@ const getFormattedDataset = (dataset: any) => {
 
 const getFormattedDatasetDrivers = (dataset: any) => {
     if (!dataset.drivers || dataset.drivers.length === 0) return []
+    console.log("---------------------- DATASET DRIVERS: ", dataset.drivers)
     const formattedDrivers = [] as IDashboardDatasetDriver[]
     dataset.drivers.forEach((driver: any) => formattedDrivers.push(getFormattedDatasetDriver(driver)))
 
-    console.log("FORMATTED DRIVERS: ", formattedDrivers)
+    console.log("---------------------- FORMATTED DRIVERS: ", formattedDrivers)
     return formattedDrivers
 }
 
@@ -103,7 +103,6 @@ const getFormattedDatasetDriver = (driver: any) => {
 }
 
 const getFormattedDriverProperties = (driver: any, formattedDriver: IDashboardDatasetDriver) => {
-    console.log(">>>>>>> DRIVER: ", driver)
     if (driver.typeCode === 'MAN_IN' && (driver.type === 'NUM' || driver.type === 'STRING')) {
         driver.type === 'NUM' ? getFormattedManualNumberDriver(driver, formattedDriver) : getFormattedManualStringDriver(driver, formattedDriver)
     } else if (driver.type === 'DATE') {
@@ -132,7 +131,9 @@ const getFormattedManualNumberDriver = (driver: any, formattedDriver: IDashboard
 }
 
 const getFormattedDateDriver = (driver: any, formattedDriver: IDashboardDatasetDriver) => {
-    formattedDriver.parameterValue = [{ value: moment(driver.parameterValue[0].parameterDescription?.split('#')[0]).toDate() as any, description: driver.parameterDescription && Array.isArray(driver.parameterDescription) ? driver.parameterDescription[0] : '' }]
+    console.log(">>>>>>> DRIVER: ", driver)
+    formattedDriver.parameterValue = [{ value: driver.parameterValue, description: driver.parameterDescription && Array.isArray(driver.parameterDescription) ? driver.parameterDescription[0] : '' }]
+    console.log(">>>>>>> FORMATTED DRIVER: ", formattedDriver)
 }
 
 const getFormattedListDriver = (driver: any, formattedDriver: IDashboardDatasetDriver) => {
