@@ -1,62 +1,53 @@
 import { IWidget } from '../../../Dashboard'
 import { formatTableWidgetForSave } from './tableWidget/TableWidgetBackendSaveHelper'
+import { createNewTableWidgetSettings } from '../helpers/tableWidget/TableWidgetFunctions'
+import { createNewSelectorWidgetSettings } from '../helpers/selectorWidget/SelectorWidgetFunctions'
+import { createNewSelectionsWidgetSettings } from '../helpers/selectionsWidget/SelectionsWidgetFunctions'
+import { createNewHtmlWidgetSettings } from './htmlWidget/HTMLWidgetFunctions'
+import { createNewTextWidgetSettings } from './textWidget/TextWidgetFunctions'
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
-import * as  tableWidgetDefaultValues from './tableWidget/TableWidgetDefaultValues'
 
-export function createNewWidget() {
-
+export function createNewWidget(type: string) {
     const widget = {
         id: cryptoRandomString({ length: 16, type: 'base64' }),
         new: true,
-        type: 'table',
+        type: type,
         dataset: null,
         columns: [],
         settings: {
-            sortingColumn: '',
-            sortingOrder: '',
-            updatable: true,
-            clickable: true,
-            conditionalStyles: tableWidgetDefaultValues.getDefaultConditionalStyles(),
-            configuration: {
-                columnGroups: tableWidgetDefaultValues.getDefaultColumnGroups(),
-                exports: tableWidgetDefaultValues.getDefaultExportsConfiguration(),
-                headers: tableWidgetDefaultValues.getDefaultHeadersConfiguration(),
-                rows: tableWidgetDefaultValues.getDefaultRowsConfiguration(),
-                summaryRows: tableWidgetDefaultValues.getDefaultSummaryRowsConfiguration(),
-                customMessages: tableWidgetDefaultValues.getDefaultCustomMessages()
-            },
-            interactions: {
-                crosssNavigation: tableWidgetDefaultValues.getDefaultCrossNavigation(),
-                link: tableWidgetDefaultValues.getDefaultLinks(),
-                preview: tableWidgetDefaultValues.getDefaultPreview(),
-                selection: tableWidgetDefaultValues.getDefaultSelection()
-            },
-            pagination: tableWidgetDefaultValues.getDefaultPagination(),
-            style: {
-                borders: tableWidgetDefaultValues.getDefaultBordersStyle(),
-                columns: tableWidgetDefaultValues.getDefaultColumnStyles(),
-                columnGroups: tableWidgetDefaultValues.getDefaultColumnStyles(),
-                headers: tableWidgetDefaultValues.getDefaultHeadersStyle(),
-                padding: tableWidgetDefaultValues.getDefaultPaddingStyle(),
-                rows: tableWidgetDefaultValues.getDefaultRowsStyle(),
-                shadows: tableWidgetDefaultValues.getDefaultShadowsStyle(),
-                summary: tableWidgetDefaultValues.getDefualtSummryStyle()
-            },
-            tooltips: tableWidgetDefaultValues.getDefaultTooltips(),
-            visualization: tableWidgetDefaultValues.getDefaultVisualizations(),
-            responsive: tableWidgetDefaultValues.getDefaultResponsivnes()
-
         }
 
     } as IWidget
 
+    createNewWidgetSettings(widget)
+
     return widget
+}
+
+const createNewWidgetSettings = (widget: IWidget) => {
+    switch (widget.type) {
+        case 'table':
+            widget.settings = createNewTableWidgetSettings()
+            break
+        case 'selector':
+            widget.settings = createNewSelectorWidgetSettings()
+            break
+        case 'selection':
+            widget.settings = createNewSelectionsWidgetSettings()
+            break
+        case 'html':
+            widget.settings = createNewHtmlWidgetSettings()
+            break
+        case 'text':
+            widget.settings = createNewTextWidgetSettings()
+            break
+    }
 }
 
 
 export function formatWidgetForSave(tempWidget: IWidget) {
-    if (!tempWidget) return
+    if (!tempWidget) return null
 
     const widget = deepcopy(tempWidget)
 

@@ -1,4 +1,45 @@
 {
+    "bordersStyleOptions": [
+        {
+            "label": "",
+            "value": ""
+        },
+        {
+            "label": "dashboard.widgetEditor.borders.solid",
+            "value": "solid"
+        },
+        {
+            "label": "dashboard.widgetEditor.borders.dashed",
+            "value": "dashed"
+        },
+        {
+            "label": "dashboard.widgetEditor.borders.dotted",
+            "value": "dotted"
+        }
+    ],
+    "defaultToolbarStyleOptions": [
+        {
+            "type": "font-weight"
+        },
+        {
+            "type": "font-style"
+        },
+        {
+            "type": "font-size"
+        },
+        {
+            "type": "justify-content"
+        },
+        {
+            "type": "font-family"
+        },
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
+        }
+    ],
     "listStyle": {
         "listIcon": {
             "color": "#929292"
@@ -6,5 +47,24 @@
         "listItem": {
             "height": "30px"
         }
-    }
+    },
+    "responsiveInputSwiitches": ["xs", "sm", "md", "lg", "xl"],
+    "shadowsSizeOptions": [
+        {
+            "label": "common.small",
+            "value": "small"
+        },
+        {
+            "label": "common.medium",
+            "value": "medium"
+        },
+        {
+            "label": "common.large",
+            "value": "large"
+        },
+        {
+            "label": "common.extraLarge",
+            "value": "extraLarge"
+        }
+    ]
 }

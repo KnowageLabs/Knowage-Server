@@ -22,32 +22,7 @@
 
         <hr />
 
-        <div v-if="column.filter" class="p-my-2">
-            <div class="p-d-flex p-flex-row p-ai-center">
-                <div class="kn-flex p-m-2">
-                    <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.enableFilter') }}</label>
-                    <InputSwitch v-model="column.filter.enabled" @change="selectedColumnUpdated"></InputSwitch>
-                </div>
-            </div>
-
-            <div class="p-d-flex p-flex-row p-ai-center p-mt-2">
-                <div id="filter-operator-dropdown" class="p-d-flex p-flex-column kn-flex p-m-2">
-                    <label class="kn-material-input-label p-mr-2">{{ $t('common.operator') }}</label>
-                    <Dropdown class="kn-material-input" v-model="column.filter.operator" :options="getColumnFilterOptions()" optionValue="value" optionLabel="label" :disabled="!column.filter.enabled" @change="onFilterOperatorChange"> </Dropdown>
-                </div>
-
-                <div v-if="['=', '<', '>', '<=', '>=', '!=', 'IN', 'like', 'range'].includes(column.filter.operator)" class="p-d-flex p-flex-column kn-flex-3 p-m-2">
-                    <label class="kn-material-input-label p-mr-2">{{ column.filter.operator === 'range' ? $t('common.from') : $t('common.value') }}</label>
-                    <InputText class="kn-material-input p-inputtext-sm" v-model="column.filter.value" :disabled="!column.filter.enabled" @change="selectedColumnUpdated" />
-                </div>
-
-                <div v-if="column.filter.operator === 'range'" class="p-d-flex p-flex-column kn-flex-3 p-m-2">
-                    <label class="kn-material-input-label p-mr-2">{{ $t('common.to') }}</label>
-                    <InputText class="kn-material-input p-inputtext-sm" v-model="column.filter.value2" :disabled="!column.filter.enabled" @change="selectedColumnUpdated" />
-                </div>
-                <i class="pi pi-question-circle kn-cursor-pointer p-ml-auto p-mr-4" v-tooltip.top="$t('dashboard.widgetEditor.columnFilterHint')"></i>
-            </div>
-        </div>
+        <WidgetEditorFilterForm v-if="column.filter" :propColumn="column"></WidgetEditorFilterForm>
     </div>
 </template>
 
@@ -58,10 +33,11 @@ import { emitter } from '../../../../DashboardHelpers'
 import descriptor from './TableWidgetDataDescriptor.json'
 import InputSwitch from 'primevue/inputswitch'
 import Dropdown from 'primevue/dropdown'
+import WidgetEditorFilterForm from '../common/WidgetEditorFilterForm.vue'
 
 export default defineComponent({
     name: 'table-widget-column-form',
-    components: { InputSwitch, Dropdown },
+    components: { InputSwitch, Dropdown, WidgetEditorFilterForm },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedColumn: { type: Object as PropType<IWidgetColumn | null>, required: true } },
     data() {
         return {

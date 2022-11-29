@@ -1,17 +1,17 @@
-import { ITableWidgetColumnGroup, ITableWidgetConditionalStyle, ITableWidgetVisibilityCondition, ITableWidgetVisualizationType, IWidget } from '../../Dashboard'
+import { IDashboard, ITableWidgetColumnGroup, ITableWidgetConditionalStyle, ITableWidgetHeadersRule, ITableWidgetVisibilityCondition, ITableWidgetVisualizationType, IVariable, IWidget } from '../../Dashboard'
 import { hexToRgb } from '../FormattingHelpers'
 import { getColumnId } from './TableWidgetCompatibilityHelper'
 
-export const getSettingsFromWidgetColumns = (formattedWidget: IWidget, widget: any) => {
+export const getSettingsFromWidgetColumns = (formattedWidget: IWidget, widget: any, formattedDashboardModel: IDashboard) => {
     for (let i = 0; i < widget.content.columnSelectedOfDataset.length; i++) {
         const tempColumn = widget.content.columnSelectedOfDataset[i]
         getRowConfigurationFromWidgetColumn(formattedWidget, tempColumn)
-        getHeaderConfigurationFromWidgetColumn(formattedWidget, tempColumn)
+        getHeaderConfigurationFromWidgetColumn(formattedWidget, tempColumn, formattedDashboardModel)
         if (tempColumn.group) addColumnToColumnGroup(formattedWidget, tempColumn)
         getVisualizationTypeConfigurationsFromColumn(formattedWidget, tempColumn)
-        getVisibilityConditionsFromColumn(formattedWidget, tempColumn)
+        getVisibilityConditionsFromColumn(formattedWidget, tempColumn, formattedDashboardModel)
         getStyleFromColumn(formattedWidget, tempColumn)
-        getConditionalStyleFromColumn(formattedWidget, tempColumn)
+        getConditionalStyleFromColumn(formattedWidget, tempColumn, formattedDashboardModel)
         getTooltipFromColumn(formattedWidget, tempColumn)
     }
 }
@@ -30,39 +30,66 @@ const getVisualizationTypeConfigurationsFromColumn = (formattedWidget: IWidget, 
     }
 }
 
-const getVisibilityConditionsFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
-    if (tempColumn.style && (tempColumn.style.hasOwnProperty('hiddenColumn') || tempColumn.style.hasOwnProperty('hideFromPdf'))) {
-        const tempVisibiilityCondition = {
-            target: [getColumnId(tempColumn.name)],
-            hide: tempColumn.style.hiddenColumn ?? false,
-            hidePdf: tempColumn.style.hideFromPdf ?? false,
-            condition: {
-                type: 'always'
-            }
-        } as ITableWidgetVisibilityCondition
-        if (tempColumn.variables) {
-            getVisibilityConditionVariable(formattedWidget, tempColumn.variables, tempVisibiilityCondition)
-        } else {
-            formattedWidget.settings.visualization.visibilityConditions.enabled = true
-            formattedWidget.settings.visualization.visibilityConditions.conditions.push(tempVisibiilityCondition)
+const getVisibilityConditionsFromColumn = (formattedWidget: IWidget, tempColumn: any, formattedDashboardModel: IDashboard) => {
+    const tempVisibiilityCondition = {
+        target: [getColumnId(tempColumn.name)],
+        hide: tempColumn.style?.hiddenColumn ?? false,
+        hidePdf: tempColumn.style?.hideFromPdf ?? false,
+        condition: {
+            type: 'always'
         }
+    } as ITableWidgetVisibilityCondition
+    if (tempColumn.variables) {
+        getVisibilityConditionVariable(formattedWidget, tempColumn, tempVisibiilityCondition, formattedDashboardModel)
+    } else if (tempVisibiilityCondition.hide || tempVisibiilityCondition.hidePdf) {
+        formattedWidget.settings.visualization.visibilityConditions.enabled = true
+        formattedWidget.settings.visualization.visibilityConditions.conditions.push(tempVisibiilityCondition)
     }
 }
 
-const getVisibilityConditionVariable = (formattedWidget: IWidget, variables: { action: string; variable: string; condition: string; value: string }[], tempVisibiilityCondition: ITableWidgetVisibilityCondition) => {
-    variables.forEach((variable: { action: string; variable: string; condition: string; value: string }) => {
+const getVisibilityConditionVariable = (formattedWidget: IWidget, column: any, tempVisibiilityCondition: ITableWidgetVisibilityCondition, formattedDashboardModel: IDashboard) => {
+    const modelVariables = formattedDashboardModel?.configuration?.variables ?? []
+    column.variables.forEach((variable: { action: string; variable: string; condition: string; value: string, key?: string }) => {
         if (variable.action === 'hide') {
+            const modelVariable = modelVariables.find((tempVariable: IVariable) => tempVariable.name === variable.variable)
             tempVisibiilityCondition.condition = {
                 type: 'variable',
                 variable: variable.variable,
-                variableValue: 'MOCK',
                 operator: variable.condition,
                 value: variable.value
             }
+            if (variable.key) tempVisibiilityCondition.condition.variableKey = variable.key
+            setVisibilityConditionValueFromVariable(tempVisibiilityCondition, modelVariable, variable)
             formattedWidget.settings.visualization.visibilityConditions.enabled = true
-            formattedWidget.settings.visualization.visibilityConditions.conditions.push(tempVisibiilityCondition)
+            addVisibilityConditionToTheModel(tempVisibiilityCondition, formattedWidget)
         }
     })
+}
+
+const setVisibilityConditionValueFromVariable = (tempVisibiilityCondition: ITableWidgetVisibilityCondition, modelVariable: IVariable | undefined, variable: any) => {
+    if (!modelVariable) return
+    switch (modelVariable.type) {
+        case 'static':
+        case 'profile':
+        case 'driver':
+            tempVisibiilityCondition.condition.value = modelVariable.value
+            break;
+        case 'dataset':
+            if (modelVariable.column) {
+                tempVisibiilityCondition.condition.value = modelVariable.value
+            } else {
+                tempVisibiilityCondition.condition.variableKey = variable.key
+                tempVisibiilityCondition.condition.variablePivotDatasetOptions = modelVariable.pivotedValues
+                tempVisibiilityCondition.condition.value = tempVisibiilityCondition.condition.variableKey ? tempVisibiilityCondition.condition.variablePivotDatasetOptions[tempVisibiilityCondition.condition.variableKey] : ''
+            }
+    }
+}
+
+const addVisibilityConditionToTheModel = (rule: ITableWidgetVisibilityCondition, formattedWidget: IWidget) => {
+    for (let i = 0; i < formattedWidget.settings.visualization.visibilityConditions.conditions.length; i++) {
+        if (formattedWidget.settings.visualization.visibilityConditions.conditions[i].target.includes(rule.target[0])) return
+    }
+    formattedWidget.settings.visualization.visibilityConditions.conditions.push(rule)
 }
 
 const getStyleFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
@@ -92,7 +119,7 @@ const getStyleFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
         })
 }
 
-const getConditionalStyleFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
+const getConditionalStyleFromColumn = (formattedWidget: IWidget, tempColumn: any, formattedDashboardModel: IDashboard) => {
     if (!tempColumn.ranges || tempColumn.ranges.length === 0) return
     const columnId = getColumnId(tempColumn.name)
     tempColumn.ranges.forEach((range: any) => {
@@ -115,10 +142,40 @@ const getConditionalStyleFromColumn = (formattedWidget: IWidget, tempColumn: any
                 icon: range.icon ?? ''
             }
         } as ITableWidgetConditionalStyle
+        if (range.compareValueType === 'variable') {
+            tempConditionalStyle.condition.type = 'variable'
+            tempConditionalStyle.condition.variable = range.value
+            updateConditionalStyleFromVariable(tempConditionalStyle, range, formattedDashboardModel)
+        }
         formattedWidget.settings.conditionalStyles.enabled = true
         formattedWidget.settings.conditionalStyles.conditions.push(tempConditionalStyle)
     })
 }
+
+const updateConditionalStyleFromVariable = (conditionStyle: ITableWidgetConditionalStyle, range: any, formattedDashboardModel: IDashboard) => {
+    const modelVariable = formattedDashboardModel.configuration.variables?.find((variable: IVariable) => variable.name === range.value)
+    setConditionalStyleValueFromVariable(conditionStyle, modelVariable, range)
+}
+
+const setConditionalStyleValueFromVariable = (conditionStyle: ITableWidgetConditionalStyle, modelVariable: IVariable | undefined, rowThreshold: any) => {
+    if (!modelVariable) return
+    switch (modelVariable.type) {
+        case 'static':
+        case 'profile':
+        case 'driver':
+            conditionStyle.condition.value = modelVariable.value
+            break;
+        case 'dataset':
+            if (modelVariable.column) {
+                conditionStyle.condition.value = modelVariable.value
+            } else {
+                conditionStyle.condition.variableKey = rowThreshold.compareValueKey
+                conditionStyle.condition.variablePivotDatasetOptions = modelVariable.pivotedValues
+                conditionStyle.condition.value = conditionStyle.condition.variableKey ? conditionStyle.condition.variablePivotDatasetOptions[conditionStyle.condition.variableKey] : ''
+            }
+    }
+}
+
 
 const getTooltipFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
     if (tempColumn.hasOwnProperty('hideTooltip') || tempColumn.style?.hasOwnProperty('tooltip')) {
@@ -182,9 +239,52 @@ const getRowConfigurationFromWidgetColumn = (formattedWidget: IWidget, column: a
     }
 }
 
-const getHeaderConfigurationFromWidgetColumn = (formattedWidget: IWidget, column: any) => {
+const getHeaderConfigurationFromWidgetColumn = (formattedWidget: IWidget, column: any, formattedDashboardModel: IDashboard) => {
     if (column.style && column.style.hasOwnProperty('hideHeader')) {
         formattedWidget.settings.configuration.headers.custom.enabled = true
         formattedWidget.settings.configuration.headers.custom.rules.push({ target: [getColumnId(column.name)], action: 'hide' })
     }
+    if (column.variables) {
+        formattedWidget.settings.configuration.headers.custom.enabled = true
+        getHeaderConfigurationFromColumnVariable(formattedWidget, column, formattedDashboardModel)
+    }
+}
+
+const getHeaderConfigurationFromColumnVariable = (formattedWidget: IWidget, column: any, formattedDashboardModel: IDashboard) => {
+    const modelVariables = formattedDashboardModel?.configuration?.variables ?? []
+    column.variables.forEach((variable: { action: string; variable: string; condition: string; value: string }) => {
+
+        if (variable.action === 'header') {
+            const modelVariable = modelVariables.find((tempVariable: IVariable) => tempVariable.name === variable.variable)
+            const tempHeadersConfigurationRule = { target: [getColumnId(column.name)], action: 'setLabel', compareType: 'variable', variable: variable.variable } as ITableWidgetHeadersRule
+            setHeaderConfigurationRuleValueFromVariable(tempHeadersConfigurationRule, modelVariable, variable)
+            addHeadersRuleToTheModel(tempHeadersConfigurationRule, formattedWidget)
+        }
+    })
+}
+
+const setHeaderConfigurationRuleValueFromVariable = (rule: ITableWidgetHeadersRule, modelVariable: IVariable | undefined, variable: { action: string; variable: string; condition: string; value: string, key?: string }) => {
+    if (!modelVariable) return
+    switch (modelVariable.type) {
+        case 'static':
+        case 'profile':
+        case 'driver':
+            rule.value = modelVariable.value
+            break;
+        case 'dataset':
+            if (modelVariable.column) {
+                rule.value = modelVariable.value
+            } else {
+                rule.variableKey = variable.key
+                rule.variablePivotDatasetOptions = modelVariable.pivotedValues
+                rule.value = rule.variableKey ? rule.variablePivotDatasetOptions[rule.variableKey] : ''
+            }
+    }
+}
+
+const addHeadersRuleToTheModel = (rule: ITableWidgetHeadersRule, formattedWidget: IWidget) => {
+    for (let i = 0; i < formattedWidget.settings.configuration.headers.custom.rules.length; i++) {
+        if (formattedWidget.settings.configuration.headers.custom.rules[i].target.includes(rule.target[0])) return
+    }
+    formattedWidget.settings.configuration.headers.custom.rules.push(rule)
 }

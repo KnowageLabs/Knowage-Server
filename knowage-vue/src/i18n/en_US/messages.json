@@ -11,6 +11,7 @@
         "attributes": "Attributes",
         "author": "Author",
         "back": "back",
+        "row": "Row",
         "bottom": "bottom",
         "cancel": "cancel",
         "category": "Category",
@@ -44,6 +45,7 @@
         "data": "Data",
         "dataset": "Dataset",
         "datasets": "Datasets",
+        "date": "Date",
         "default": "Default",
         "delete": "delete",
         "deleteAll": "delete all",
@@ -107,6 +109,7 @@
         },
         "information": "information",
         "input": "Input",
+        "key": "Key",
         "kpi": "KPI",
         "label": "label",
         "language": "Language",
@@ -337,6 +340,7 @@
         "yearly": "Yearly"
     },
     "dashboard": {
+        "dashboardBeta": "Dashboard (Beta)",
         "datasetEditor": {
             "addAssociation": "Add Association",
             "addIndexes": "Add Indexes on Associations",
@@ -360,12 +364,25 @@
             "static": "Static",
             "title": "Dataset Manageent"
         },
+        "generalSettings": {
+            "attribute": "Attribute",
+            "profile": "Profile",
+            "title": "General Settings",
+            "variableColumnHint": "If no column is defined the whole dataset will be used.",
+            "variablesHint": "Variables can be used everywhere in the dashboard widgets. They can be static values or dynamic values set in different ways. Check the documentation or the single widgets to learn how to use them."
+        },
+        "getDataError": "Unable to load data from dataset {datasetLabel}. Please check dataset & widget configuration.",
         "saveCockpit": "Save Cockpit",
         "saveCockpitHint": "Please enter a valid name",
+        "selectionsList": "Selections List",
+        "tableWidget": {
+            "launchSelection": "LAUNCH SELECTION"
+        },
         "widgetEditor": {
             "addWidget": "Add widget",
             "aggregation": "Aggregation",
             "ascending": "Ascending",
+            "background": "Background",
             "borders": {
                 "borderRadiusBottomLeft": "Border radius bottom left",
                 "borderRadiusBottomRight": "Border radius bottom right",
@@ -381,6 +398,7 @@
                 "solid": "Solid",
                 "title": "Borders"
             },
+            "chips": "Chips",
             "columnDetails": "Column Details",
             "columnFilterHint": "Select the filter operator and the value for the column. Remember to use the correct database sintax for the value. ie: %LIKE%",
             "columnGroups": {
@@ -401,8 +419,55 @@
                 "hideNoRowsAvailable": "Hide \"No Rows Available\" message",
                 "title": "Custom Messages"
             },
+            "defaultValues": {
+                "columnsFirstItem": "Main column's first item",
+                "columnsLastItem": "Main column's last item",
+                "enableDefaultValues": "Enable Default Values",
+                "hint": "Default values hint placeholder",
+                "selectDafaultValue": "Select Default Value",
+                "title": "Default Values"
+            },
             "descending": "Descending",
             "dragColumnsHint": "Drag columns here",
+            "editor": "Editor",
+            "htmlParsingError": "HTML Parsing Error",
+            "textParsingError": "Text Parsing Error",
+            "galleryWarning": "Are you sure you want to overwrite changes in editor with the template?",
+
+            "editorTags": {
+                "activesel": "Active Selection",
+                "calc": "Calculation",
+                "calculator": "Calculator",
+                "columnsData": "Columns Data",
+                "conditional": "Conditional Container",
+                "crossnav": "Cross-Navigation",
+                "hint": {
+                    "activesel": "This tag is used to show the selected value of a column of the selected parameter.",
+                    "calculator": "This tag is used to calculate a result number from standard operations and other tags like kn-column and kn-parameter.",
+                    "columnsData": "This tag is used to show a field value from the selected dataset column. The optional attribute ROW make the tag show the field value of the specified row for that column. If a row is not specified the tag will show the first occurrence for the column.",
+                    "conditional": "This tag is used to conditionally show a specific HTML section delimited by the tag ending. If the condition is verified the tag will be displayed, else it will be hidden. Other tags can be used to dinamically get a value for the condition.",
+                    "crossnav": "This tag is used to create an interactive element bind to the selected cross-navigation. Cross-navigation must be enabled in the 'Cross' tab of this widget setting. If you selected \"Dynamic\" output you can add a value to the kn-cross attribute.",
+                    "internationalization": "This tag is used to show a label value depending on the user locale and using the internationalization manager.",
+                    "parameters": "This tag is used to show a parameter value from the ones available to the selected dataset.",
+                    "preview": "This tag is used to create an interactive element creating a link to a popup showing the specified dataset preview.",
+                    "repeatIndex": "This tag is used inside a kn-repeat to get the current row value of the repeater..Dynamic fields from dataset will take the value of the repeated row.",
+                    "repeater": "This tag is used to repeat the HTML section delimited by the tag ending for every row in the dataset if the condition is verified. Set the condition to \"true\" to always show.The limit attribute limits the number of rows shown. Dynamic fields from dataset will take the value of the repeated row.",
+                    "selection": "This tag is used to create an interactive element generating a selection on the specified column with the specified value.",
+                    "toLocale": "TODO: Add to locale hint",
+                    "variables": "This tag is used to show the value of the selected variable."
+                },
+                "i18n": "i18n",
+                "internationalization": "Internationalization",
+                "limit": "Limit",
+                "parameters": "Parameters",
+                "preview": "Preview",
+                "repeatIndex": "Repeat Index",
+                "repeater": "Repeater",
+                "selection": "Selection",
+                "selectionVal": "Selection Value",
+                "toLocale": "Format to locale",
+                "variables": "Variables"
+            },
             "enableFilter": "Enable Filter",
             "enableTooltip": "Enable Tooltip",
             "export": {
@@ -414,6 +479,7 @@
                 "title": "Export"
             },
             "fontawesome": "Fontawesome",
+            "gallery": "Gallery",
             "headers": {
                 "action": "Action",
                 "enableCustomHeaders": "Enable Custom Headers",
@@ -468,6 +534,12 @@
             },
             "itemsPerPage": "Items per page",
             "manualInput": "Manual input",
+            "noSelections": {
+                "customMessage": "Custom Message",
+                "customMessageHint": "If left empty the message will be 'No Active Selections'",
+                "enable": "Enable 'no Selection' message",
+                "title": "No Selection Message"
+            },
             "padding": {
                 "enablePadding": "Enable Padding",
                 "linkAllHint": "Link all paddings",
@@ -503,6 +575,9 @@
             },
             "selectDataset": "Select Dataset",
             "selectedColumns": "Selected Columns",
+            "selectorType": {
+                "title": "Selector Type"
+            },
             "settingsListOptions": {
                 "tooltip": "Tooltip"
             },
@@ -521,10 +596,27 @@
                 "title": "Summary rows"
             },
             "title": "Widget Editor",
+            "titles": {
+                "enableTitle": "Enable Title",
+                "title": "Title"
+            },
             "tooltipTextHint": "This text will overwrite the columns header default tooltip, variables and parameters placeholders ($V{placeholder} and $P{placeholder}) are available.",
             "tooltips": {
                 "customHeader": "Custom Header",
                 "title": "Tooltips"
+            },
+            "valuesManagement": {
+                "alwaysEnableValues": "Always Enable Values",
+                "alwaysEnableValuesHint": "Always enable values hint placeholder",
+                "hideDisabledValues": "Hide Disabled Values",
+                "hideDisabledValuesHint": "Hide disabled values hint placeholder",
+                "showColumn": "Show Selection Column",
+                "showColumnHint": "Show selection column hint placeholder",
+                "showDataset": "Show Selection Dataset",
+                "showDatasetHint": "Show Selection dataset hint placeholder",
+                "title": "Values Management",
+                "wrapText": "Wrap Text",
+                "wrapTextHint": "Wrap text hint placeholder"
             },
             "visibilityConditions": {
                 "always": "Always",

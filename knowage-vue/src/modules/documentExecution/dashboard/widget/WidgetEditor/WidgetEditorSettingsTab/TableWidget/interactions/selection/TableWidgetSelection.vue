@@ -25,7 +25,7 @@
             <div class="p-col-12 p-d-flex p-flex-row p-ai-center p-p-3">
                 <div class="p-d-flex p-flex-column kn-flex p-m-2">
                     <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.interactions.modalColumn') }}</label>
-                    <Dropdown class="kn-material-input" v-model="selectionModel.modalColumn" :options="widgetModel.columns" optionLabel="alias" optionValue="id" @change="selectionChanged"> </Dropdown>
+                    <Dropdown class="kn-material-input" v-model="selectionModel.modalColumn" :options="widgetModel.columns" :showClear="true" optionLabel="alias" optionValue="id" @change="selectionChanged"> </Dropdown>
                 </div>
             </div>
         </div>
@@ -34,7 +34,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, ITableWidgetSelection, IWidgetStyleToolbarModel } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IWidget, IWidgetSelection, IWidgetStyleToolbarModel } from '@/modules/documentExecution/dashboard/Dashboard'
 import { emitter } from '../../../../../../DashboardHelpers'
 import descriptor from '../../TableWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
@@ -50,7 +50,7 @@ export default defineComponent({
     data() {
         return {
             descriptor,
-            selectionModel: null as ITableWidgetSelection | null
+            selectionModel: null as IWidgetSelection | null
         }
     },
     created() {
@@ -62,6 +62,7 @@ export default defineComponent({
         },
         selectionChanged() {
             emitter.emit('selectionChanged', this.selectionModel)
+            emitter.emit('refreshTable', this.widgetModel.id)
         },
         onStyleToolbarChange(model: IWidgetStyleToolbarModel) {
             if (!this.selectionModel) return

@@ -1,6 +1,6 @@
 <template>
     <div class="kn-height-full detail-page-container">
-        <Toolbar v-if="!embed && !olapDesignerMode && !managementOpened" class="kn-toolbar kn-toolbar--primary p-col-12">
+        <Toolbar v-if="!embed && !olapDesignerMode && !managementOpened && !dashboardGeneralSettingsOpened" class="kn-toolbar kn-toolbar--primary p-col-12">
             <template #start>
                 <DocumentExecutionBreadcrumb v-if="breadcrumbs.length > 1" :breadcrumbs="breadcrumbs" @breadcrumbClicked="onBreadcrumbClick"></DocumentExecutionBreadcrumb>
                 <span v-else>{{ document?.name }}</span>
@@ -222,7 +222,8 @@ export default defineComponent({
             angularData: null as any,
             crossNavigationContainerVisible: false,
             crossNavigationContainerData: null as any,
-            newDashboardMode: false
+            newDashboardMode: false,
+            dashboardGeneralSettingsOpened: false
         }
     },
     watch: {
@@ -301,6 +302,9 @@ export default defineComponent({
 
         if (this.propMode !== 'document-execution' && !this.$route.path.includes('olap-designer') && this.$route.name !== 'document-execution' && this.$route.name !== 'document-execution-embed' && this.$route.name !== 'document-execution-workspace') return
 
+        if (this.$route.name === 'new-dashboard') {
+            this.newDashboardMode = true
+        }
         await this.loadUserConfig()
 
         this.isOlapDesignerMode()
@@ -350,6 +354,9 @@ export default defineComponent({
                 }
             }
         })
+    },
+    unmounted() {
+        this.removeEventListeners()
     },
     methods: {
         iframeEventsListener(event) {
@@ -403,7 +410,8 @@ export default defineComponent({
                     showScheduledExecutions: this.showScheduledExecutions,
                     addToWorkspace: this.addToWorkspace,
                     showOLAPCustomView: this.showOLAPCustomView,
-                    copyLink: this.copyLink
+                    copyLink: this.copyLink,
+                    openDashboardGeneralSettings: this.openDashboardGeneralSettings
                 },
                 this.exporters,
                 this.user,
@@ -662,6 +670,7 @@ export default defineComponent({
             }
         },
         formatParameterDataOptions(parameter: iParameter, data: any) {
+            if (!parameter.metadata) return { value: '', description: '' }
             const valueColumn = parameter.metadata.valueColumn
             const descriptionColumn = parameter.metadata.descriptionColumn
             const valueIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === valueColumn)
@@ -709,7 +718,7 @@ export default defineComponent({
             await this.sendForm(documentLabel, crossNavigationPopupMode)
         },
         async loadExporters() {
-            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/exporters/config/${this.urlData?.engineLabel}`).then((response: AxiosResponse<any>) => (this.exporters = response.data.exporters))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/exporters/${this.urlData?.engineLabel}`).then((response: AxiosResponse<any>) => (this.exporters = response.data.exporters))
         },
         async sendForm(documentLabel: string | null = null, crossNavigationPopupMode: boolean = false) {
             let tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name) as any
@@ -1315,15 +1324,32 @@ export default defineComponent({
             emitter.emit('openDatasetManagement')
         },
         setEventListeners() {
-            emitter.on('datasetManagementClosed', () => {
-                this.managementOpened = false
-            })
-            emitter.on('widgetEditorOpened', () => {
-                this.managementOpened = true
-            })
-            emitter.on('widgetEditorClosed', () => {
-                this.managementOpened = false
-            })
+            emitter.on('datasetManagementClosed', this.onDatasetManagementClosed)
+            emitter.on('widgetEditorOpened', this.onWidgetEditorOpened)
+            emitter.on('widgetEditorClosed', this.onWidgetEditorClosed)
+            emitter.on('dashboardGeneralSettingsClosed', this.onDashboardGeneralSettingsClosed)
+        },
+        removeEventListeners() {
+            emitter.off('datasetManagementClosed', this.onDatasetManagementClosed)
+            emitter.off('widgetEditorOpened', this.onWidgetEditorOpened)
+            emitter.off('widgetEditorClosed', this.onWidgetEditorClosed)
+            emitter.off('dashboardGeneralSettingsClosed', this.onDashboardGeneralSettingsClosed)
+        },
+        onDatasetManagementClosed() {
+            this.managementOpened = false
+        },
+        onWidgetEditorOpened() {
+            this.managementOpened = true
+        },
+        onWidgetEditorClosed() {
+            this.managementOpened = false
+        },
+        onDashboardGeneralSettingsClosed() {
+            this.dashboardGeneralSettingsOpened = false
+        },
+        openDashboardGeneralSettings() {
+            this.dashboardGeneralSettingsOpened = true
+            emitter.emit('openDashboardGeneralSettings')
         },
         saveDashboard() {
             emitter.emit('saveDashboard')

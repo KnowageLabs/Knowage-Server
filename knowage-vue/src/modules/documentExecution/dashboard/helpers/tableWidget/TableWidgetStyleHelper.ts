@@ -1,10 +1,11 @@
-import { ITableWidgetBordersStyle, ITableWidgetPaddingStyle, ITableWidgetRowsStyle, ITableWidgetShadowsStyle, ITableWidgetStyle } from "../../Dashboard"
-import { hexToRgb, convertColorFromHSLtoRGB } from '../FormattingHelpers'
+import { IWidgetRowsStyle, ITableWidgetStyle } from "../../Dashboard"
+import { convertColorFromHSLtoRGB } from '../FormattingHelpers'
+import { getFormattedPaddingStyle, getFormattedBorderStyle, getFormattedShadowsStyle, getFormattedBackgroundStyle, getFormattedTitleStyle } from '../common/WidgetStyleHelper'
 import * as  tableWidgetDefaultValues from '../../widget/WidgetEditor/helpers/tableWidget/TableWidgetDefaultValues'
-
 
 export const getFormattedStyle = (widget: any) => {
     return {
+        title: getFormattedTitleStyle(widget),
         borders: getFormattedBorderStyle(widget),
         columns: tableWidgetDefaultValues.getDefaultColumnStyles(),
         columnGroups: getDefaultColumnGroupsStyle(widget),
@@ -12,15 +13,11 @@ export const getFormattedStyle = (widget: any) => {
         padding: getFormattedPaddingStyle(widget),
         rows: getFormattedRowsStyle(widget),
         shadows: getFormattedShadowsStyle(widget),
-        summary: getFormattedSummaryStyle(widget)
+        summary: getFormattedSummaryStyle(widget),
+        background: getFormattedBackgroundStyle(widget)
     } as ITableWidgetStyle
 }
 
-const getFormattedBorderStyle = (widget: any) => {
-    if (!widget.style || !widget.style.border) return tableWidgetDefaultValues.getDefaultBordersStyle()
-
-    return { enabled: true, properties: { ...widget.style.border, 'border-color': hexToRgb(widget.style.border['border-color']) } } as ITableWidgetBordersStyle
-}
 
 const getDefaultColumnGroupsStyle = (widget: any) => {
     const formattedColumnGroupsStyles = tableWidgetDefaultValues.getDefaultColumnStyles()
@@ -55,7 +52,7 @@ const getFormattedHeadersStyle = (widget: any) => {
     if (!widget.style?.th) return tableWidgetDefaultValues.getDefaultHeadersStyle()
 
     return {
-        height: widget.style.th.height,
+        height: widget.style.th.height ?? 25,
         properties: {
             "background-color": widget.style.th['background-color'] ?? "rgb(137, 158, 175)",
             color: widget.style.th.color ?? 'rgb(255, 255, 255)',
@@ -68,24 +65,9 @@ const getFormattedHeadersStyle = (widget: any) => {
     }
 }
 
-const getFormattedPaddingStyle = (widget: any) => {
-    if (!widget.style || !widget.style.padding) return tableWidgetDefaultValues.getDefaultPaddingStyle()
-
-    return {
-        enabled: widget.style.padding.enabled,
-        properties: {
-            "padding-top": widget.style.padding['padding-top'],
-            "padding-left": widget.style.padding['padding-left'],
-            "padding-bottom": widget.style.padding['padding-bottom'],
-            "padding-right": widget.style.padding['padding-right'],
-            unlinked: widget.style.padding.unlinked
-        }
-    } as ITableWidgetPaddingStyle
-}
-
 const getFormattedRowsStyle = (widget: any) => {
     const formattedRowsStyle = {
-        height: widget.style.tr?.height ?? 0,
+        height: widget.style.tr?.height ?? 25,
         multiselectable: widget.settings.multiselectable ?? false,
         selectionColor: widget.settings.multiselectablecolor ?? '',
         alternatedRows: {
@@ -95,21 +77,8 @@ const getFormattedRowsStyle = (widget: any) => {
 
         }
     }
-    return formattedRowsStyle as ITableWidgetRowsStyle
+    return formattedRowsStyle as IWidgetRowsStyle
 }
-
-const getFormattedShadowsStyle = (widget: any) => {
-    if (!widget.style || !widget.style.shadow) return tableWidgetDefaultValues.getDefaultShadowsStyle()
-
-    return {
-        enabled: true,
-        properties: {
-            "box-shadow": widget.style.shadow["box-shadow"],
-            "color": hexToRgb(widget.style.backgroundColor)
-        }
-    } as ITableWidgetShadowsStyle
-}
-
 
 const getFormattedSummaryStyle = (widget: any) => {
     if (!widget.settings.summary || !widget.settings.summary.style) return tableWidgetDefaultValues.getDefualtSummryStyle()
@@ -124,4 +93,3 @@ const getFormattedSummaryStyle = (widget: any) => {
         "justify-content": ""
     }
 }
-

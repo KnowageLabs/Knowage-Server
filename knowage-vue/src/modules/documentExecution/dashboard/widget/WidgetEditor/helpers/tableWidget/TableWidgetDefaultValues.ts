@@ -1,4 +1,4 @@
-import { ITableWidgetBordersStyle, ITableWidgetColumnGroups, ITableWidgetColumnStyles, ITableWidgetConditionalStyle, ITableWidgetConditionalStyles, ITableWidgetCrossNavigation, ITableWidgetCustomMessages, ITableWidgetExports, ITableWidgetHeaders, ITableWidgetLinks, ITableWidgetPaddingStyle, ITableWidgetPagination, ITableWidgetPreview, ITableWidgetResponsive, ITableWidgetRows, ITableWidgetRowsStyle, ITableWidgetSelection, ITableWidgetShadowsStyle, ITableWidgetSummaryRows, ITableWidgetSummaryStyle, ITableWidgetTooltipStyle, ITableWidgetVisibilityCondition, ITableWidgetVisualization, ITawbleWidgetHeadersStyle } from "../../../../Dashboard"
+import { ITableWidgetColumnGroups, ITableWidgetColumnStyles, ITableWidgetConditionalStyle, ITableWidgetConditionalStyles, ITableWidgetCustomMessages, IWidgetExports, ITableWidgetHeaders, ITableWidgetPagination, ITableWidgetRows, IWidgetRowsStyle, IWidgetSelection, ITableWidgetSummaryRows, ITableWidgetSummaryStyle, ITableWidgetTooltipStyle, ITableWidgetVisibilityCondition, ITableWidgetVisualization, ITawbleWidgetHeadersStyle } from "../../../../Dashboard"
 import descriptor from './TableWidgetHelpersDescriptor.json'
 import deepcopy from 'deepcopy'
 
@@ -15,7 +15,7 @@ export const getDefaultColumnGroups = () => {
 }
 
 export const getDefaultExportsConfiguration = () => {
-    return deepcopy(descriptor.defaultExportsConfiguration) as ITableWidgetExports
+    return deepcopy(descriptor.defaultExportsConfiguration) as IWidgetExports
 }
 
 export const getDefaultHeadersConfiguration = () => {
@@ -34,30 +34,12 @@ export const getDefaultCustomMessages = () => {
     return deepcopy(descriptor.defaultCustomMessages) as ITableWidgetCustomMessages
 }
 
-export const getDefaultCrossNavigation = () => {
-    return deepcopy(descriptor.defaultCrossNavigation) as ITableWidgetCrossNavigation
-}
-
-export const getDefaultLinks = () => {
-    return deepcopy(descriptor.defaultLinks) as ITableWidgetLinks
-}
-
-export const getDefaultPreview = () => {
-    return deepcopy(descriptor.defaultPreview) as ITableWidgetPreview
-}
-
-
 export const getDefaultSelection = () => {
-    return deepcopy(descriptor.defaultSelection) as ITableWidgetSelection
+    return deepcopy(descriptor.defaultSelection) as IWidgetSelection
 }
 
 export const getDefaultPagination = () => {
     return deepcopy(descriptor.defaultPagination) as ITableWidgetPagination
-}
-
-
-export const getDefaultBordersStyle = () => {
-    return deepcopy(descriptor.defaultBordersStyle) as ITableWidgetBordersStyle
 }
 
 export const getDefaultColumnStyles = () => {
@@ -68,16 +50,8 @@ export const getDefaultHeadersStyle = () => {
     return deepcopy(descriptor.defaultHeadersStyle) as ITawbleWidgetHeadersStyle
 }
 
-export const getDefaultPaddingStyle = () => {
-    return deepcopy(descriptor.defaultPaddingStyle) as ITableWidgetPaddingStyle
-}
-
 export const getDefaultRowsStyle = () => {
-    return deepcopy(descriptor.defaultRowsStyle) as ITableWidgetRowsStyle
-}
-
-export const getDefaultShadowsStyle = () => {
-    return deepcopy(descriptor.defaultShadowsStyle) as ITableWidgetShadowsStyle
+    return deepcopy(descriptor.defaultRowsStyle) as IWidgetRowsStyle
 }
 
 export const getDefualtSummryStyle = () => {
@@ -94,8 +68,4 @@ export const getDefaultVisibilityCondition = () => {
 
 export const getDefaultTooltips = () => {
     return deepcopy(descriptor.defaultTooltips) as ITableWidgetTooltipStyle[]
-}
-
-export const getDefaultResponsivnes = () => {
-    return deepcopy(descriptor.defaultResponsivnes) as ITableWidgetResponsive
 }

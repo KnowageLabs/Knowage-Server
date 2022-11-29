@@ -1,16 +1,4 @@
 {
-    "defaultBordersStyle": {
-        "enabled": false,
-        "properties": {
-            "border-bottom-left-radius": "",
-            "border-bottom-right-radius": "",
-            "border-color": "rgb(212, 212, 212)",
-            "border-style": "",
-            "border-top-left-radius": "",
-            "border-top-right-radius": "",
-            "border-width": ""
-        }
-    },
     "defaultColumnGroups": {
         "enabled": false,
         "groups": []
@@ -56,13 +44,6 @@
         "conditions": [],
         "enabled": false
     },
-    "defaultCrossNavigation": {
-        "column": "",
-        "enabled": false,
-        "name": "",
-        "parameters": [],
-        "type": ""
-    },
     "defaultCustomMessages": {
         "hideNoRowsMessage": true,
         "noRowsMessage": ""
@@ -101,37 +82,13 @@
             "justify-content": "center"
         }
     },
-    "defaultLinks": {
-        "enabled": false,
-        "links": []
-    },
-    "defaultPaddingStyle": {
-        "enabled": false,
-        "properties": {
-            "padding-bottom": "",
-            "padding-left": "",
-            "padding-right": "",
-            "padding-top": "",
-            "unlinked": false
-        }
-    },
     "defaultPagination": {
         "enabled": false,
-        "itemsNumber": 0
-    },
-    "defaultPreview": {
-        "dataset": -1,
-        "directDownload": false,
-        "enabled": false,
-        "parameters": [],
-        "type": ""
-    },
-    "defaultResponsivnes": {
-        "lg": true,
-        "md": true,
-        "sm": true,
-        "xl": true,
-        "xs": true
+        "properties": {
+            "itemsNumber": 15,
+            "offset": 0,
+            "totalItems": 0
+        }
     },
     "defaultRowsConfiguration": {
         "indexColumn": false,
@@ -146,12 +103,10 @@
             "evenBackgroundColor": "rgb(228, 232, 236)",
             "oddBackgroundColor": ""
         },
-        "height": 0,
-        "multiselectable": false,
-        "selectionColor": ""
+        "height": 25
     },
     "defaultSelection": {
-        "enabled": false,
+        "enabled": true,
         "modalColumn": "",
         "multiselection": {
             "enabled": false,
@@ -159,13 +114,6 @@
                 "background-color": "",
                 "color": ""
             }
-        }
-    },
-    "defaultShadowsStyle": {
-        "enabled": false,
-        "properties": {
-            "box-shadow": "",
-            "color": ""
         }
     },
     "defaultSummaryRowsConfiguration": {

@@ -40,6 +40,8 @@ export function formatNumberWithLocale(number: number, precision?: number, forma
 
 export function luxonFormatDate(dateString: any | Date, inputFormat?: string, outputFormat?: string) {
     const tempDate = inputFormat ? DateTime.fromFormat(dateString, inputFormat).setLocale(getLocale(true)) : DateTime.fromJSDate(dateString).setLocale(getLocale(true))
+    console.log(">>>>>>> TEMP DATE: ", tempDate)
+    console.log(">>>>>>> TEMP DATE BLA: ", tempDate.toFormat(outputFormat as string))
     if (outputFormat) return tempDate.toFormat(outputFormat)
     else return tempDate.toLocaleString(DateTime.DATE_SHORT)
 }
