@@ -333,7 +333,7 @@ export default defineComponent({
                     await this.loadOlapButtons()
                     this.setClickedButtons()
                     await this.loadModelConfig()
-                    await this.loadVersions()
+                    if (this.olap?.modelConfig?.whatIfScenario) await this.loadVersions()
                 })
                 .catch(() => {})
             this.loading = false
