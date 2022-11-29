@@ -299,12 +299,17 @@ export default defineComponent({
                 this.availableRolesForExecution = this.correctRolesForExecution
             } else {
                 let typeCode = 'DOCUMENT'
+                let id = this.document.id
                 if (this.document.type === 'businessModel') {
                     typeCode = 'DATAMART'
                 } else if (this.document.dsTypeCd) {
                     typeCode = 'DATASET'
+                } else if (this.document.type == 'federatedDataset' && this.document.federation_id) {
+                    typeCode = 'FEDERATED_DATASET'
+                    id = this.document.federation_id
                 }
-                getCorrectRolesForExecutionForType(typeCode, this.document.id, this.document.label).then((response: any) => {
+
+                getCorrectRolesForExecutionForType(typeCode, id, this.document.label).then((response: any) => {
                     this.availableRolesForExecution = response
                     if (!this.role && this.availableRolesForExecution.length == 1) {
                         this.role = this.availableRolesForExecution[0]
