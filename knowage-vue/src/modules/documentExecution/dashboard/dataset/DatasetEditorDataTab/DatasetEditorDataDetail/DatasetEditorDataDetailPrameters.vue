@@ -34,7 +34,8 @@
                 </div>
                 <div class="p-field p-col-12 p-lg-8 p-d-flex">
                     <span class="p-float-label kn-flex">
-                        <InputText v-if="(!driver.multivalue || (driver.typeCode === 'MAN_IN' && (driver.type === 'NUM' || driver.type === 'STRING'))) && driver.parameterValue[0]" class="kn-material-input" v-model="driver.parameterValue[0].value" />
+                        <InputText v-if="driver.type === 'DATE'" class="kn-material-input" v-model="driver.displayDate" :disabled="true" />
+                        <InputText v-else-if="!driver.multivalue || (driver.typeCode === 'MAN_IN' && (driver.type === 'NUM' || driver.type === 'STRING') && driver.parameterValue[0])" class="kn-material-input" v-model="driver.parameterValue[0].value as string" :disabled="true" />
                         <Chips v-else v-model="driver.parameterValue" :disabled="true">
                             <template #chip="slotProps">
                                 <div>
@@ -70,6 +71,7 @@ import mockedDriversReal from './mockedDriversReal.json'
 
 import mockedDrivers from './mockedDrivers.json'
 import deepcopy from 'deepcopy'
+import { luxonFormatDate } from '@/helpers/commons/localeHelper'
 
 export default defineComponent({
     name: 'dataset-editor-data-detail-info',
@@ -80,7 +82,7 @@ export default defineComponent({
         return {
             parameterTypes: ['static', 'dynamic'],
             menuButtons: [] as any,
-            drivers: deepcopy(mockedDriversReal) as IDashboardDatasetDriver[],
+            drivers: [] as IDashboardDatasetDriver[],
             driversDialogVisible: false,
             selectedDriver: null as IDashboardDatasetDriver | null
         }
@@ -88,8 +90,15 @@ export default defineComponent({
     setup() {},
     async created() {
         console.log('>>>>>>>> selectedDatasetProp: ', this.selectedDatasetProp)
+        this.loadDrivers()
     },
     methods: {
+        loadDrivers() {
+            this.drivers = deepcopy(mockedDriversReal)
+            this.drivers.forEach((driver: IDashboardDatasetDriver) => {
+                if (driver.type === 'DATE') this.setDateDisplayValue(driver)
+            })
+        },
         showMenu(event, parameter) {
             this.createMenuItems(parameter)
             // eslint-disable-next-line
@@ -113,6 +122,13 @@ export default defineComponent({
             console.log('>>>>>>>> RESET DEFAULT VALUE: ', driver.defaultValue)
             if (!driver.defaultValue) return
             driver.parameterValue = driver.defaultValue
+        },
+        setDateDisplayValue(driver: IDashboardDatasetDriver) {
+            if (!driver.parameterValue[0] || !driver.parameterValue[0].value) return ''
+
+            // TODO - See if we need this after we remove the mocked drivers
+            const tempDate = new Date(driver.parameterValue[0].value)
+            driver.displayDate = luxonFormatDate(tempDate, undefined, undefined)
         },
         onDriversDialogClose() {
             this.driversDialogVisible = false

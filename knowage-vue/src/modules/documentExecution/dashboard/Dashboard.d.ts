@@ -428,14 +428,15 @@ export interface IWidgetEditorDataset {
 
 export interface IDashboardDatasetDriver {
     urlName: string,
-    parameterValue: { value: string, description: string }[]
+    parameterValue: { value: string | number | Date, description: string }[]
     type: string,
     defaultValue: { value: string, description: string }[] | null,
     label: string,
     multivalue: boolean,
-    options?: { value: string, description: string }[],
     typeCode: string,
     selectionType: string
+    options?: { value: string, description: string }[],
+    displayDate?: string
 }
 
 export interface IWidgetPickerType {

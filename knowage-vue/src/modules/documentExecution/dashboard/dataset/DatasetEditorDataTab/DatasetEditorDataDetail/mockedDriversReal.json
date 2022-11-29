@@ -26,7 +26,7 @@
         "parameterValue": [
             {
                 "description": "",
-                "value": "Bojan Test"
+                "value": ""
             }
         ],
         "selectionType": "",
@@ -46,7 +46,7 @@
         "parameterValue": [
             {
                 "description": "5",
-                "value": 4
+                "value": ""
             }
         ],
         "selectionType": "",
@@ -86,7 +86,7 @@
         "parameterValue": [
             {
                 "description": "20220408#yyyymmdd",
-                "value": "2022-11-22T23:00:00.000Z"
+                "value": "2022-01-07T23:00:00.000Z"
             }
         ],
         "selectionType": "",
@@ -106,7 +106,7 @@
         "parameterValue": [
             {
                 "description": "20220408#yyyymmdd",
-                "value": "20220108"
+                "value": "2022-01-07T23:00:00.000Z"
             }
         ],
         "selectionType": "",
@@ -258,14 +258,6 @@
         "parameterValue": [
             {
                 "description": "0",
-                "value": "Drink"
-            },
-            {
-                "description": "0",
-                "value": "Food"
-            },
-            {
-                "description": "0",
                 "value": "Non-Consumable"
             }
         ],
@@ -306,20 +298,52 @@
         "parameterValue": [
             {
                 "description": "0",
-                "value": "Drink"
-            },
-            {
-                "description": "0",
-                "value": "Food"
-            },
-            {
-                "description": "0",
-                "value": "Non-Consumable"
+                "value": "Car"
             }
         ],
         "selectionType": "LOOKUP",
         "type": "STRING",
         "typeCode": "QUERY",
         "urlName": "pop-up_multi"
+    },
+    {
+        "defaultValue": [
+            {
+                "description": "Super Sesame Oil",
+                "value": "Super Sesame Oil"
+            }
+        ],
+        "label": "Tree",
+        "multivalue": false,
+        "parameterValue": [
+            {
+                "description": "Super Sesame Oil",
+                "value": "Super Sesame Oil"
+            }
+        ],
+        "selectionType": "TREE",
+        "type": "STRING",
+        "typeCode": "QUERY",
+        "urlName": "tree"
+    },
+    {
+        "defaultValue": [
+            {
+                "description": "Super Sesame Oil",
+                "value": "Super Sesame Oil"
+            }
+        ],
+        "label": "Tree multi",
+        "multivalue": true,
+        "parameterValue": [
+            {
+                "description": "Super Sesame Oil",
+                "value": "Super Sesame Oil"
+            }
+        ],
+        "selectionType": "TREE",
+        "type": "STRING",
+        "typeCode": "QUERY",
+        "urlName": "tree_multi"
     }
 ]

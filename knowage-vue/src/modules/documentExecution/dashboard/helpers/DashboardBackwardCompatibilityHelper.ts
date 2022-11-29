@@ -95,7 +95,7 @@ const getFormattedDatasetDrivers = (dataset: any) => {
 }
 
 const getFormattedDatasetDriver = (driver: any) => {
-    console.log(">>>>>>> DRIVER: ", driver)
+    // console.log(">>>>>>> DRIVER: ", driver)
     const formattedDriver = { urlName: driver.urlName, type: driver.type, typeCode: driver.typeCode, selectionType: driver.selectionType, label: driver.label, multivalue: driver.multivalue } as IDashboardDatasetDriver
     getFormattedDriverProperties(driver, formattedDriver)
     // console.log(">>>>>>>>> FORMATTED DRIVER: ", formattedDriver)
@@ -134,7 +134,10 @@ const getFormattedManualNumberDriver = (driver: any, formattedDriver: IDashboard
 }
 
 const getFormattedDateDriver = (driver: any, formattedDriver: IDashboardDatasetDriver) => {
-    formattedDriver.parameterValue = [{ value: driver.parameterValue, description: driver.parameterDescription && Array.isArray(driver.parameterDescription) ? driver.parameterDescription[0] : '' }]
+    console.log(" >>>>>>>>>> DATE DRIVER: ", driver)
+    const dateValue = driver.parameterValue ? moment(driver.parameterValue).toDate() : ''
+    formattedDriver.parameterValue = [{ value: dateValue, description: driver.parameterDescription && Array.isArray(driver.parameterDescription) ? driver.parameterDescription[0] : '' }]
+    console.log(" >>>>>>>>>> DATE DRIVER formattedDriver: ", formattedDriver)
 }
 
 const getFormattedListDriver = (driver: any, formattedDriver: IDashboardDatasetDriver) => {
@@ -143,11 +146,9 @@ const getFormattedListDriver = (driver: any, formattedDriver: IDashboardDatasetD
 }
 
 const getFormattedDropdownDriver = (driver: any, formattedDriver: IDashboardDatasetDriver) => {
-    console.log(">>>>>>>>>>> DROPDOWN DRIVER: ", driver)
     formattedDriver.options = driver.defaultValues ? driver.defaultValues.map((option: any) => { return { value: option.value, description: option.description } }) : []
     if (driver.multivalue) {
         formattedDriver.parameterValue = []
-        console.log(">>>>>>>>>>> DROPDOWN parameterValue: ", driver.parameterValue)
         if (driver.parameterValue && Array.isArray(driver.parameterValue)) {
             driver.parameterValue.forEach((value: string) => {
                 const option = formattedDriver.options?.find((option: { value: string, description: string }) => option.value === value)
@@ -180,7 +181,7 @@ const getFormattedPopupDriver = (driver: any, formattedDriver: IDashboardDataset
 
 
 const getFormattedTreeDriver = (driver: any, formattedDriver: IDashboardDatasetDriver) => {
-    console.log(">>>>>>>>>>>> TREEEEE DRIVER: ", driver)
+    // console.log(">>>>>>>>>>>> TREEEEE DRIVER: ", driver)
     if (driver.multivalue) {
         formattedDriver.parameterValue = []
         if (driver.parameterValue && Array.isArray(driver.parameterValue)) {
@@ -194,7 +195,7 @@ const getFormattedTreeDriver = (driver: any, formattedDriver: IDashboardDatasetD
     } else {
         formattedDriver.parameterValue = [{ value: driver.parameterValue ?? '', description: driver.parameterDescription && Array.isArray(driver.parameterDescription) ? driver.parameterDescription[0] : '' }]
     }
-    console.log(">>>>>>>>>>>> TREEEEE DRIVER FORMATTED: ", formattedDriver)
+    // console.log(">>>>>>>>>>>> TREEEEE DRIVER FORMATTED: ", formattedDriver)
 }
 
 

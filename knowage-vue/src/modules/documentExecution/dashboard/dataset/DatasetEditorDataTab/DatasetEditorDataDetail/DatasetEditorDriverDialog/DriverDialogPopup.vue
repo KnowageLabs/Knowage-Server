@@ -1,6 +1,5 @@
 <template>
     <div v-if="driver && driver.parameterValue" class="p-fluid p-formgrid p-grid p-jc-center p-ai-center p-p-5 p-m-0">
-        {{ driver.parameterValue }}
         <DataTable
             :value="rows"
             class="p-datatable-sm kn-table p-col-12"
@@ -107,7 +106,7 @@ export default defineComponent({
 
         setSelectedRows() {
             this.selectedRows = []
-            this.driver?.parameterValue.forEach((parameterValue: { value: string; description: string }) => {
+            this.driver?.parameterValue.forEach((parameterValue: { value: string | number | Date; description: string }) => {
                 const index = this.rows.findIndex((row: any) => row.value === parameterValue.value && row.description == parameterValue.description)
                 if (index !== -1) this.selectedRows.push(this.rows[index])
             })

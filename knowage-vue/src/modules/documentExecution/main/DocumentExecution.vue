@@ -586,7 +586,6 @@ export default defineComponent({
                 })
 
             this.filtersData?.filterStatus?.forEach((el: iParameter) => {
-                console.log('>>>>>>>>>>> EL: ', el)
                 el.parameterValue = !el.multivalue || (el.typeCode === 'MAN_IN' && !el.selectionType) ? [{ value: '', description: '' }] : []
                 if (el.driverDefaultValue?.length > 0) {
                     let valueIndex = '_col0'
@@ -608,7 +607,6 @@ export default defineComponent({
                     }
                 }
                 if (el.data) {
-                    console.log('>>>>>>>> EL DAAAAATA: ', el.data)
                     el.data = el.data.map((data: any) => {
                         return this.formatParameterDataOptions(el, data)
                     })
