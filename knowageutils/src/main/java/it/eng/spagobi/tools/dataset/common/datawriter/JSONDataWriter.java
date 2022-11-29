@@ -239,13 +239,8 @@ public class JSONDataWriter implements IDataWriter {
 	protected Object getFieldValue(IField field, IFieldMetaData fieldMetaData) {
 
 		if (preserveOriginalDataTypes) {
-			Object toReturn;
-			if (BigDecimal.class.isAssignableFrom(fieldMetaData.getType()) && field.getValue() != null) {
-				toReturn = Float.parseFloat(field.getValue().toString());
-			} else {
-				toReturn = field.getValue();
-			}
-			return toReturn;
+
+			return field.getValue();
 
 		} else {
 			Object result = "";
