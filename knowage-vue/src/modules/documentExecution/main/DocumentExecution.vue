@@ -250,6 +250,8 @@ export default defineComponent({
             }
         },
         isParameterSidebarVisible(): boolean {
+            if (!this.userRole) return false
+
             let parameterVisible = false
             for (let i = 0; i < this.filtersData?.filterStatus?.length; i++) {
                 const tempFilter = this.filtersData.filterStatus[i]
@@ -259,7 +261,7 @@ export default defineComponent({
                 }
             }
 
-            return parameterVisible || !this.sessionRole
+            return parameterVisible
         }
     },
     async created() {
