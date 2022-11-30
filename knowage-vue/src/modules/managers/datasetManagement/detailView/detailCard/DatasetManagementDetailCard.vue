@@ -70,6 +70,7 @@
                             :class="{
                                 'p-invalid': v$.dataset.catTypeVn.$invalid && v$.dataset.catTypeVn.$dirty
                             }"
+                            :showClear="dataset.scopeCd === 'USER'"
                             @before-show="v$.dataset.catTypeVn.$touch()"
                             @change="updateIdFromCd(this.categoryTypes, 'catTypeId', $event.value), $emit('touched')"
                             data-test="category-input"
