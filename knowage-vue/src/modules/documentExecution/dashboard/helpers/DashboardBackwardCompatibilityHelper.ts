@@ -1,6 +1,6 @@
 import { formatTableWidget } from './tableWidget/TableWidgetCompatibilityHelper'
 import { formatSelectorWidget } from '@/modules/documentExecution/dashboard/helpers/selectorWidget/SelectorWidgetCompatibilityHelper'
-import { IAssociation, IDashboard, IDashboardConfiguration, IDashboardDatasetDriver, IDataset, IDatasetParameter, ISelection, IVariable, IWidget, IWidgetColumn, IWidgetColumnFilter, IWidgetEditorDataset } from '../Dashboard'
+import { IAssociation, IDashboard, IDashboardConfiguration, IDataset, IDatasetParameter, ISelection, IVariable, IWidget, IWidgetColumn, IWidgetColumnFilter, IWidgetEditorDataset } from '../Dashboard'
 import { formatSelectionWidget } from './selectionWidget/SelectionsWidgetCompatibilityHelper'
 import { setVariableValueFromDataset } from '../generalSettings/VariablesHelper'
 import deepcopy from 'deepcopy'
@@ -8,6 +8,7 @@ import cryptoRandomString from 'crypto-random-string'
 import { formatHTMLWidget } from './htmlWidget/HTMLWidgetCompatibilityHelper'
 import { formatTextWidget } from './textWidget/TextWidgetCompatibilityHelper'
 import { getFormattedDatasetDrivers } from '../dataset/DatasetEditorDataTab/DatasetEditorDataDetail/DatasetEditorDriverDialog/DatasetEditorDatasetDriverFormatterHelper'
+import { formatHighchartsWidget } from './chartWidget/highcharts/HighchartsWidgetCompatibilityHelper'
 
 const datasetIdLabelMap = {}
 
@@ -196,6 +197,9 @@ export const formatWidget = (widget: any, formattedModel: IDashboard) => {
             break
         case 'text':
             formattedWidget = formatTextWidget(widget)
+            break
+        case 'chart':
+            formattedWidget = formatHighchartsWidget(widget)
     }
 
     return formattedWidget

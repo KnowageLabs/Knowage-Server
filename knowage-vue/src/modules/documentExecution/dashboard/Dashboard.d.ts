@@ -1,6 +1,8 @@
 import { ISelectionsWidgetSettings } from '@/modules/documentExecution/dashboard/interfaces/DashboardSelectionsWidget'
+import { IChartJSWidgetSettings } from './interfaces/chartJS/DashboardChartJSWidget'
 import { IHTMLWidgetSettings } from './interfaces/DashboardHTMLWidget'
 import { ITextWidgetSettings } from './interfaces/DashboardTextWidget'
+import { IHighchartsWidgetSettings } from './interfaces/highcharts/DashboardHighchartsWidget'
 
 export interface IDashboard {
     sheets: []
@@ -38,7 +40,7 @@ export interface IWidget {
     dataset: number | null
     type: string
     columns: IWidgetColumn[]
-    settings: ITableWidgetSettings | ISelectionsWidgetSettings | ISelectorWidgetSettings | IHTMLWidgetSettings | ITextWidgetSettings
+    settings: ITableWidgetSettings | ISelectionsWidgetSettings | ISelectorWidgetSettings | IHTMLWidgetSettings | ITextWidgetSettings | IHighchartsWidgetSettings | IChartJSWidgetSettings
     new?: boolean
 }
 
