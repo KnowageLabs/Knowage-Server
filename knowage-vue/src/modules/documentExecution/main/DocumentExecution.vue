@@ -1069,7 +1069,8 @@ export default defineComponent({
         },
         findCrossTargetByCrossName(angularData: any, temp: any[]) {
             if (!angularData || !temp) return
-            const index = temp.findIndex((el: any) => el.crossName === angularData.targetCrossNavigation.crossName)
+            const targetCross = typeof angularData.targetCrossNavigation === 'string' ? angularData.targetCrossNavigation : angularData.targetCrossNavigation.crossName
+            const index = temp.findIndex((el: any) => el.crossName === targetCross)
             return index !== -1 ? temp[index] : null
         },
         async loadCrossNavigation(crossNavigationDocument: any, angularData: any) {
