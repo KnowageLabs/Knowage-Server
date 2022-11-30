@@ -103,7 +103,7 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 						fieldAt.setValue(newValue);
 					} catch (EncryptionOperationNotPossibleException e) {
 						LOGGER.warn("Ignoring field value {} from field {} (with \"{}\" alias): see following message", value, fieldName, fieldAlias);
-						LOGGER.warn(e);
+						LOGGER.warn("Cannot decrypt column: see the previous message", e);
 					} catch (EncryptionInitializationException e) {
 						LOGGER.error("Encryption initialization error: check decryption system properties", e);
 					}
