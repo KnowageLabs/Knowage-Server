@@ -47,6 +47,7 @@ export interface iDocument {
     dsTypeCd?: string
     engine: string
     functionalities: string[]
+    federation_id?: number
     id: number
     label: string
     lockedByUser: string

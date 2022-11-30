@@ -11,7 +11,7 @@
         </Toolbar>
 
         <div class="p-fluid kn-parameter-sidebar-content kn-alternated-rows">
-            <div class="p-field p-my-1 p-p-2" v-if="user && (!sessionRole || sessionRole === $t('role.defaultRolePlaceholder')) && (mode === 'execution' || mode === 'qbeView' || (mode === 'workspaceView' && dataset?.drivers?.length > 0))">
+            <div class="p-field p-my-1 p-p-2" v-if="user && (!sessionRole || sessionRole === $t('role.defaultRolePlaceholder')) && (mode === 'execution' || mode === 'qbeView' || (mode === 'workspaceView' && dataset?.drivers?.length > 0)) && availableRolesForExecution.length > 1">
                 <div class="p-d-flex">
                     <label class="kn-material-input-label">{{ $t('common.roles') }}</label>
                 </div>
@@ -299,12 +299,17 @@ export default defineComponent({
                 this.availableRolesForExecution = this.correctRolesForExecution
             } else {
                 let typeCode = 'DOCUMENT'
+                let id = this.document.id
                 if (this.document.type === 'businessModel') {
                     typeCode = 'DATAMART'
                 } else if (this.document.dsTypeCd) {
                     typeCode = 'DATASET'
+                } else if (this.document.type == 'federatedDataset' && this.document.federation_id) {
+                    typeCode = 'FEDERATED_DATASET'
+                    id = this.document.federation_id
                 }
-                getCorrectRolesForExecutionForType(typeCode, this.document.id, this.document.label).then((response: any) => {
+
+                getCorrectRolesForExecutionForType(typeCode, id, this.document.label).then((response: any) => {
                     this.availableRolesForExecution = response
                     if (!this.role && this.availableRolesForExecution.length == 1) {
                         this.role = this.availableRolesForExecution[0]
