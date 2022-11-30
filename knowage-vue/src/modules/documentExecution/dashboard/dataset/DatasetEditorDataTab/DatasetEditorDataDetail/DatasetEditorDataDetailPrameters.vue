@@ -75,6 +75,7 @@ import { luxonFormatDate } from '@/helpers/commons/localeHelper'
 import { updateDataDependency } from './DatasetEditorDriverDialog/DatasetEditorDriverDependencyHelper'
 import { mapState } from 'pinia'
 import mainStore from '@/App.store'
+import { getFormattedDatasetDrivers } from './DatasetEditorDriverDialog/DatasetEditorDatasetDriverFormatterHelper'
 
 export default defineComponent({
     name: 'dataset-editor-data-detail-info',
@@ -95,13 +96,22 @@ export default defineComponent({
             user: 'user'
         })
     },
+    watch: {
+        selectedDatasetProp() {
+            console.log('>>>>>>>> selectedDatasetProp watcher: ', this.selectedDatasetProp)
+            this.loadDrivers()
+        }
+    },
     async created() {
         console.log('>>>>>>>> selectedDatasetProp: ', this.selectedDatasetProp)
         this.loadDrivers()
     },
     methods: {
         loadDrivers() {
-            this.drivers = deepcopy(mockedDriversReal)
+            // TODO - See with Darko about loading drivers
+
+            this.drivers = this.selectedDatasetProp && this.selectedDatasetProp.drivers ? getFormattedDatasetDrivers(this.selectedDatasetProp) : []
+            // this.drivers = deepcopy(mockedDriversReal)
             this.drivers.forEach((driver: IDashboardDatasetDriver) => {
                 if (driver.type === 'DATE') this.setDateDisplayValue(driver)
             })

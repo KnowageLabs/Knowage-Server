@@ -32,6 +32,8 @@ const getFormattedDateDriver = (driver: any, formattedDrivers: any) => {
     formattedDrivers[driver.urlName] = formattedDate
     formattedDrivers[driver.urlName + '_field_visible_description'] = formattedDate
 }
+
+
 const getFormattedOtherDrivers = (driver: any, formattedDrivers: any) => {
     if (driver.multivalue) {
         const driverValues = [] as string[]
@@ -59,4 +61,3 @@ export const getUserRole = (user: any) => {
         return ''
     }
 }
-

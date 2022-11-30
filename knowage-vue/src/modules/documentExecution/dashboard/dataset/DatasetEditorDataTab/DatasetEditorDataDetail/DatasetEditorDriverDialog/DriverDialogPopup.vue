@@ -98,7 +98,7 @@ export default defineComponent({
             }
 
             await this.$http
-                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/documentExeParameters/getParameters', postData)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/businessModelOpening/getParameters', postData)
                 .then((response: AxiosResponse<any>) => {
                     this.columns = response.data.result.metaData.fields.splice(1, response.data.result.metaData.fields.length - 2)
                     this.columns.forEach((column: { header: string; name: string }) => this.globalFilterFields.push(column.name))

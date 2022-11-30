@@ -3,8 +3,6 @@ import { AxiosResponse } from "axios"
 import { getFormattedDrivers, getUserRole } from "./DatasetEditorDriverHelper"
 
 export const setDataDependency = (formattedDriver: IDashboardDatasetDriver, formattedDrivers: IDashboardDatasetDriver[]) => {
-    console.log(">>>>>>>>> setDataDependency - formattedDriver: ", formattedDriver)
-    console.log(">>>>>>>>> setDataDependency - formattedDrivers: ", formattedDrivers)
     if (formattedDriver.dataDependencies && formattedDriver.dataDependencies.length !== 0) {
         formattedDriver.dataDependencies.forEach((dependency: any) => {
             const index = formattedDrivers.findIndex((tempformattedDriver: IDashboardDatasetDriver) => {
@@ -32,7 +30,7 @@ export const dataDependencyCheck = async (drivers: IDashboardDatasetDriver[], dr
         OBJECT_LABEL: document?.label,
         ROLE: getUserRole(user),
         PARAMETER_ID: driver.urlName,
-        "MODE": "simple",
+        MODE: "simple",
         PARAMETERS: getFormattedDrivers(drivers),
     }
 
