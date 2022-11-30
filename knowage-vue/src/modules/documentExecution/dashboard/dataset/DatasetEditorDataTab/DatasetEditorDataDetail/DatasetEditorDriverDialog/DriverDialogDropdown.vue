@@ -2,7 +2,7 @@
     <div v-if="driver && driver.parameterValue" class="p-fluid p-formgrid p-grid p-jc-center p-ai-center p-p-5 p-m-0">
         <div class="p-field p-col-12">
             <span class="p-float-label">
-                <MultiSelect v-if="driver.multivalue" v-model="driver.parameterValue" :options="driver.options" optionLabel="description" @change="onMultiselectChange" />
+                <MultiSelect v-if="driver.multivalue" v-model="driver.parameterValue" :options="driver.options" optionLabel="description" />
                 <Dropdown v-else class="kn-material-input" v-model="driver.parameterValue[0].value" :options="driver.options" optionValue="value" optionLabel="description" @change="onDropdownChange" />
                 <label class="kn-material-input-label">{{ $t('common.value') }}</label>
             </span>
@@ -46,9 +46,6 @@ export default defineComponent({
             if (!this.driver || !this.driver.parameterValue[0] || !this.driver.options) return
             const index = this.driver.options.findIndex((option: { value: string; description: string }) => option.value === this.driver?.parameterValue[0].value)
             if (index !== -1) this.driver.parameterValue[0].description = this.driver.options[index].description
-        },
-        onMultiselectChange() {
-            console.log('>>>>>> MULTISELECT CHANGED: ', this.driver)
         }
     }
 })

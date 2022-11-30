@@ -1,9 +1,8 @@
 <template>
     <div v-if="driver && driver.parameterValue" class="p-fluid p-formgrid p-grid p-p-5 p-m-0">
-        {{ driver.parameterValue[0].value }}
         <div class="p-field p-col-12">
             <span class="p-float-label">
-                <Calendar v-model="driver.parameterValue[0].value as Date" :showButtonBar="true" :showIcon="true" :manualInput="true" class="kn-material-input custom-timepicker" @change="dateChanged" @date-select="dateChanged" />
+                <Calendar v-model="driver.parameterValue[0].value as Date" :showButtonBar="true" :showIcon="true" :manualInput="true" class="kn-material-input custom-timepicker" />
                 <label class="kn-material-input-label">{{ $t('common.value') }}</label>
             </span>
         </div>
@@ -44,9 +43,6 @@ export default defineComponent({
             if (this.driver && !(this.driver.parameterValue[0].value instanceof Date)) {
                 this.driver.parameterValue[0].value = new Date(this.driver.parameterValue[0].value)
             }
-        },
-        dateChanged() {
-            console.log('>>>>>>> DATE CHANGED: ', this.driver)
         }
     }
 })

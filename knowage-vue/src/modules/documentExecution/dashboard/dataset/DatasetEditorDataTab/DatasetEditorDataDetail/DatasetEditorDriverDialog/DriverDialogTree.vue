@@ -4,7 +4,7 @@
             id="kn-parameter-tree"
             class="p-col-12"
             :value="nodes as any"
-            :selectionMode="driver.multivalue ? 'multiple' : 'single'"
+            :selectionMode="!driver.multivalue ? 'single' : undefined"
             v-model:selectionKeys="selectedValuesKeys"
             :metaKeySelection="false"
             :loading="loading"
@@ -192,6 +192,7 @@ export default defineComponent({
         },
         onNodeChange() {
             this.multipleSelectedValues = [...this.selectedNodes]
+            this.updateDriverValueWithMultipleSelectedValues()
         },
         setSelectedValue(node: iNode) {
             if (!this.driver) return

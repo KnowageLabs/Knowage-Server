@@ -76,6 +76,7 @@ import { updateDataDependency } from './DatasetEditorDriverDialog/DatasetEditorD
 import { mapState } from 'pinia'
 import mainStore from '@/App.store'
 import { getFormattedDatasetDrivers } from './DatasetEditorDriverDialog/DatasetEditorDatasetDriverFormatterHelper'
+import moment from 'moment'
 
 export default defineComponent({
     name: 'dataset-editor-data-detail-info',
@@ -98,19 +99,17 @@ export default defineComponent({
     },
     watch: {
         selectedDatasetProp() {
-            console.log('>>>>>>>> selectedDatasetProp watcher: ', this.selectedDatasetProp)
             this.loadDrivers()
         }
     },
     async created() {
-        console.log('>>>>>>>> selectedDatasetProp: ', this.selectedDatasetProp)
         this.loadDrivers()
     },
     methods: {
         loadDrivers() {
             // TODO - See with Darko about loading drivers
-
             this.drivers = this.selectedDatasetProp && this.selectedDatasetProp.drivers ? getFormattedDatasetDrivers(this.selectedDatasetProp) : []
+            // TODO - remove mocks
             // this.drivers = deepcopy(mockedDriversReal)
             this.drivers.forEach((driver: IDashboardDatasetDriver) => {
                 if (driver.type === 'DATE') this.setDateDisplayValue(driver)
@@ -131,14 +130,16 @@ export default defineComponent({
             this.selectedDatasetProp.parameters.find((parameter) => parameter.name === paramName).value = '$P{' + driverUrl + '}'
         },
         openDriverDialog(driver: IDashboardDatasetDriver) {
-            console.log('>>>>>>>> OPEN DRIVER DIALOG WITH: ', driver)
             this.selectedDriver = driver
             this.driversDialogVisible = true
         },
         resetDefaultValue(driver: IDashboardDatasetDriver) {
-            console.log('>>>>>>>> RESET DEFAULT VALUE: ', driver.defaultValue)
             if (!driver.defaultValue) return
-            driver.parameterValue = driver.defaultValue
+            driver.parameterValue = deepcopy(driver.defaultValue)
+            if (driver.type === 'DATE' && driver.parameterValue && driver.parameterValue[0]) {
+                driver.parameterValue[0].value = moment(driver.parameterValue[0].value).toDate()
+                this.setDateDisplayValue(driver)
+            }
         },
         setDateDisplayValue(driver: IDashboardDatasetDriver) {
             if (!driver.parameterValue[0] || !driver.parameterValue[0].value) return ''
@@ -152,7 +153,7 @@ export default defineComponent({
             this.selectedDriver = null
         },
         async onUpdateDriver(driver: IDashboardDatasetDriver) {
-            console.log('>>>>>>>> ON UPDATE DRIVER: ', driver)
+            // console.log('>>>>>>>> ON UPDATE DRIVER: ', driver)
             this.driversDialogVisible = false
             if (driver.type === 'DATE') this.setDateDisplayValue(driver)
             await updateDataDependency(this.drivers, driver, this.documentDriversProp, this.user, this.$http)
