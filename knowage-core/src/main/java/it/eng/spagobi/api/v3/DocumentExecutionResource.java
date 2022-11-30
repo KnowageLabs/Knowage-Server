@@ -20,7 +20,6 @@ package it.eng.spagobi.api.v3;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -145,29 +144,17 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					IDataSet dataset = null;
 					if (DATASET.equals(typeCode)) {
 						dataset = id != null ? DAOFactory.getDataSetDAO().loadDataSetById(id) : DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
+						Integer categoryId = dataset.getCategoryId();
+						correctRoles = manageRolesByCategory(userRoles, categoryDao, categoryId);
 					} else {
-
 						FederationDefinition federationDefinition = DAOFactory.getFedetatedDatasetDAO().loadFederationDefinition(id);
-
 						Set<IDataSet> fedSourceDatasets = federationDefinition.getSourceDatasets();
-						Optional<IDataSet> fedSourceDataset = fedSourceDatasets.stream().findFirst();
-						if (!fedSourceDataset.isPresent()) {
-							throw new SpagoBIRuntimeException("Error while getting the dataset info");
-						}
-						dataset = fedSourceDataset.get();
-
-					}
-					Integer categoryId = dataset.getCategoryId();
-					if (categoryId != null) {
-						List<String> rolesByCategory = getRolesByCategory(categoryDao, categoryId);
-						userRoles.retainAll(rolesByCategory);
 						correctRoles = userRoles;
-					} else {
-						correctRoles = userRoles.stream().collect(Collectors.toList());
+						for (IDataSet federatedDataset : fedSourceDatasets) {
+							correctRoles = manageRolesByCategory(correctRoles, categoryDao, federatedDataset.getCategoryId());
+						}
 					}
-				}
-
-				else if (QBE_DATASET.equals(typeCode)) {
+				} else if (QBE_DATASET.equals(typeCode)) {
 					IDataSet dataset = id != null ? DAOFactory.getDataSetDAO().loadDataSetById(id) : DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
 
 					String conf = dataset.getConfiguration();
@@ -213,6 +200,25 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		logger.debug("OUT");
 		return Response.ok().entity(correctRoles).build();
+	}
+
+	/**
+	 * @param roles
+	 * @param categoryDao
+	 * @param categoryId
+	 * @return
+	 * @throws EMFUserError
+	 */
+	private List<String> manageRolesByCategory(List<String> roles, ICategoryDAO categoryDao, Integer categoryId) throws EMFUserError {
+		List<String> correctRoles;
+		if (categoryId != null) {
+			List<String> rolesByCategory = getRolesByCategory(categoryDao, categoryId);
+			roles.retainAll(rolesByCategory);
+			correctRoles = roles;
+		} else {
+			correctRoles = roles.stream().collect(Collectors.toList());
+		}
+		return correctRoles;
 	}
 
 	private List<String> getRolesByCategory(ICategoryDAO categoryDao, Integer categoryId) throws EMFUserError {
