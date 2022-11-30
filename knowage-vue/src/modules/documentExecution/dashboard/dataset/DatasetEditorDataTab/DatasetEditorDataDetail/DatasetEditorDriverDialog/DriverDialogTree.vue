@@ -1,6 +1,5 @@
 <template>
     <div v-if="driver && driver.parameterValue" class="p-fluid p-formgrid p-grid p-p-5 p-m-0">
-        {{ driver.parameterValue }}
         <Tree
             id="kn-parameter-tree"
             class="p-col-12"

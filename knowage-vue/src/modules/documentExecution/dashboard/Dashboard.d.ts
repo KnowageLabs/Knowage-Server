@@ -437,7 +437,10 @@ export interface IDashboardDatasetDriver {
     selectionType: string
     options?: { value: string, description: string }[],
     displayDate?: string,
-    allowInternalNodeSelection?: boolean
+    allowInternalNodeSelection?: boolean,
+    dataDependencies?: any,
+    dataDependsOnParameters?: IDashboardDatasetDriver[]
+    dataDependentParameters?: IDashboardDatasetDriver[]
 }
 
 export interface IWidgetPickerType {

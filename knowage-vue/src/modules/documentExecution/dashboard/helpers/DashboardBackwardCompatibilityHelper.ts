@@ -8,6 +8,7 @@ import cryptoRandomString from 'crypto-random-string'
 import { formatHTMLWidget } from './htmlWidget/HTMLWidgetCompatibilityHelper'
 import { formatTextWidget } from './textWidget/TextWidgetCompatibilityHelper'
 import moment from 'moment'
+import { setDataDependency } from '../dataset/DatasetEditorDataTab/DatasetEditorDataDetail/DatasetEditorDriverDialog/DatasetEditorDriverDependencyHelper'
 
 const datasetIdLabelMap = {}
 
@@ -91,6 +92,7 @@ const getFormattedDatasetDrivers = (dataset: any) => {
     dataset.drivers.forEach((driver: any) => formattedDrivers.push(getFormattedDatasetDriver(driver)))
 
     console.log("---------------------- FORMATTED DRIVERS: ", formattedDrivers)
+    formattedDrivers.forEach((formattedDriver: IDashboardDatasetDriver) => setDataDependency(formattedDriver, formattedDrivers))
     return formattedDrivers
 }
 
@@ -98,6 +100,7 @@ const getFormattedDatasetDriver = (driver: any) => {
     // console.log(">>>>>>> DRIVER: ", driver)
     const formattedDriver = { urlName: driver.urlName, type: driver.type, typeCode: driver.typeCode, selectionType: driver.selectionType, label: driver.label, multivalue: driver.multivalue } as IDashboardDatasetDriver
     getFormattedDriverProperties(driver, formattedDriver)
+    if (driver.dataDependencies) formattedDriver.dataDependencies = driver.dataDependencies
     // console.log(">>>>>>>>> FORMATTED DRIVER: ", formattedDriver)
     return formattedDriver
 }

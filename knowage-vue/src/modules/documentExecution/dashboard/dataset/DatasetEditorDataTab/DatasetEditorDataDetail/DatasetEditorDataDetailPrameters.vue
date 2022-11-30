@@ -72,6 +72,9 @@ import mockedDriversReal from './mockedDriversReal.json'
 import mockedDrivers from './mockedDrivers.json'
 import deepcopy from 'deepcopy'
 import { luxonFormatDate } from '@/helpers/commons/localeHelper'
+import { updateDataDependency } from './DatasetEditorDriverDialog/DatasetEditorDriverDependencyHelper'
+import { mapState } from 'pinia'
+import mainStore from '@/App.store'
 
 export default defineComponent({
     name: 'dataset-editor-data-detail-info',
@@ -87,7 +90,11 @@ export default defineComponent({
             selectedDriver: null as IDashboardDatasetDriver | null
         }
     },
-    setup() {},
+    computed: {
+        ...mapState(mainStore, {
+            user: 'user'
+        })
+    },
     async created() {
         console.log('>>>>>>>> selectedDatasetProp: ', this.selectedDatasetProp)
         this.loadDrivers()
@@ -134,10 +141,11 @@ export default defineComponent({
             this.driversDialogVisible = false
             this.selectedDriver = null
         },
-        onUpdateDriver(driver: IDashboardDatasetDriver) {
+        async onUpdateDriver(driver: IDashboardDatasetDriver) {
             console.log('>>>>>>>> ON UPDATE DRIVER: ', driver)
             this.driversDialogVisible = false
             if (driver.type === 'DATE') this.setDateDisplayValue(driver)
+            await updateDataDependency(this.drivers, driver, this.documentDriversProp, this.user, this.$http)
             const index = this.drivers.findIndex((tempDriver: IDashboardDatasetDriver) => tempDriver.urlName === driver.urlName)
             if (index !== -1) this.drivers[index] = driver
         }
