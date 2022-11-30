@@ -15,14 +15,34 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.knowage.meta.generator.jpamapping.wrappers;
+package privacymanager.wrapper;
 
-/**
- * @author Andrea Gioia (andrea.gioia@eng.it)
- *
- */
-public class JpaProperties {
-	public static final String MODEL_PACKAGE = "structural.package";
-	public static final String COLUMN_DATATYPE = "structural.datatype";
-	public static final String DECRYPTABLE = "structural.decrypt";
+public class PMkeyDTO {
+
+	private PMServiceProviderDTO serviceProvider;
+
+	private int keyLength;
+
+	public PMServiceProviderDTO getServiceProvider() {
+		return serviceProvider;
+	}
+
+	public void setServiceProvider(PMServiceProviderDTO serviceProvider) {
+		this.serviceProvider = serviceProvider;
+	}
+
+	public int getKeyLength() {
+		return keyLength;
+	}
+
+	public void setKeyLength(int keyLength) {
+		this.keyLength = keyLength;
+	}
+
+	public PMkeyDTO(PMServiceProviderDTO serviceProvider, int keyLength) {
+		super();
+		this.serviceProvider = serviceProvider;
+		this.keyLength = keyLength;
+	}
+
 }

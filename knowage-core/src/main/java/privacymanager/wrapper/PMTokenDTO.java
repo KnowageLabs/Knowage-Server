@@ -15,14 +15,45 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.knowage.meta.generator.jpamapping.wrappers;
+package privacymanager.wrapper;
 
-/**
- * @author Andrea Gioia (andrea.gioia@eng.it)
- *
- */
-public class JpaProperties {
-	public static final String MODEL_PACKAGE = "structural.package";
-	public static final String COLUMN_DATATYPE = "structural.datatype";
-	public static final String DECRYPTABLE = "structural.decrypt";
+import java.util.Locale;
+
+public class PMTokenDTO {
+
+	private String username;
+	private String password;
+	private Locale lang;
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public Locale getLang() {
+		return lang;
+	}
+
+	public void setLang(Locale lang) {
+		this.lang = lang;
+	}
+
+	public PMTokenDTO(String username, String password, Locale lang) {
+		super();
+		this.username = username;
+		this.password = password;
+		this.lang = lang;
+	}
+
 }
