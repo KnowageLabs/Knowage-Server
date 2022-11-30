@@ -37,12 +37,12 @@ export default defineComponent({
         loadDriver() {
             this.driver = this.propDriver
             if (this.driver?.multivalue) {
-                this.checkedValues = this.driver.parameterValue.map((parameterValue: { value: string; description: string }) => parameterValue.value)
+                this.checkedValues = this.driver.parameterValue.map((parameterValue: { value: string | number | Date; description: string }) => parameterValue.value as string)
             }
         },
         setRadioButtonValue() {
             if (!this.driver || !this.driver.options) return
-            this.driver.parameterValue[0].description = this.getDescriptionForTheValue(this.driver?.parameterValue[0].value) as string
+            this.driver.parameterValue[0].description = this.getDescriptionForTheValue(this.driver?.parameterValue[0].value as string) as string
         },
         setCheckboxValue() {
             if (!this.driver) return

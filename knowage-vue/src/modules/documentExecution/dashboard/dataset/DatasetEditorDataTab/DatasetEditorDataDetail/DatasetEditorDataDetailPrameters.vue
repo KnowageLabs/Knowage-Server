@@ -25,7 +25,7 @@
             </div>
 
             <!-- DRIVERS ---------------- -->
-            <div v-for="(driver, index) of drivers" :key="index" class="p-field p-formgrid p-grid">
+            <div v-for="(driver, index) of drivers" :key="index" class="p-field p-formgrid p-grid p-p-2">
                 <div class="p-field p-col-12 p-lg-4">
                     <span class="p-float-label">
                         <InputText id="label" class="kn-material-input" :disabled="true" v-model="driver.label" />

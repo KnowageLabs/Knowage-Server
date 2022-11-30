@@ -19,13 +19,13 @@ export const getFormattedDrivers = (drivers: IDashboardDatasetDriver[]) => {
 }
 
 const getFormattedManualStringDriver = (driver: any, formattedDrivers: any) => {
-    formattedDrivers[driver.urlName] = driver.parameterValue[0].value
-    formattedDrivers[driver.urlName + '_field_visible_description'] = driver.parameterValue[0].description
+    formattedDrivers[driver.urlName] = driver.parameterValue[0] ? driver.parameterValue[0].value : ''
+    formattedDrivers[driver.urlName + '_field_visible_description'] = driver.parameterValue[0] ? driver.parameterValue[0].description : ''
 }
 
 const getFormattedManualNumberDriver = (driver: any, formattedDrivers: any) => {
-    formattedDrivers[driver.urlName] = driver.parameterValue[0].value ? +driver.parameterValue[0].value : driver.parameterValue[0].value
-    formattedDrivers[driver.urlName + '_field_visible_description'] = driver.parameterValue[0].description
+    formattedDrivers[driver.urlName] = driver.parameterValue[0] && driver.parameterValue[0].value ? +driver.parameterValue[0].value : ''
+    formattedDrivers[driver.urlName + '_field_visible_description'] = driver.parameterValue[0] ? driver.parameterValue[0].description : ''
 }
 const getFormattedDateDriver = (driver: any, formattedDrivers: any) => {
     const formattedDate = moment(driver.parameterValue[0].value).format('MMM DD, YYYY')
