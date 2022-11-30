@@ -198,8 +198,10 @@ public class HibernatePersistenceManager implements IPersistenceManager {
 	}
 
 	private Object getReferencedObject(Session aSession, String entityType, String field, Object value) {
-		Query query = aSession.createQuery(" from " + entityType + " where " + field + " = ?");
-		query.setParameter(0, value);
+		Query query = aSession.createQuery(" from :entityType  where  :field  = :param");
+		query.setParameter("entityType", entityType);
+		query.setParameter("field", field);
+		query.setParameter("param", value);
 		List result = query.list();
 		if (result == null || result.size() == 0) {
 			throw new SpagoBIRuntimeException("Record with " + field + " equals to " + value.toString() + " not found for entity " + entityType);

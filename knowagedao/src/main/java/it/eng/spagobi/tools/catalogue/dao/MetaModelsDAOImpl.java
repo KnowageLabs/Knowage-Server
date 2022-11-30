@@ -403,7 +403,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
-			String queryString = " from SbiMetaModel m where " + filter;
+			String queryString = " from SbiMetaModel m where :filter";
 
 			if (categories != null && categories.size() > 0) {
 				queryString = queryString + " and   m.category in (";
@@ -414,6 +414,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			}
 
 			Query query = session.createQuery(queryString);
+			query.setParameter("filter", filter);
 
 			if (categories != null && categories.size() > 0) {
 				for (int i = 0; i < categories.size(); i++) {
@@ -985,7 +986,8 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				boolean itWasActive = hibContent.getActive();
 				session.delete(hibContent);
 				if (itWasActive) {
-					Query query = session.createQuery(" from SbiMetaModelContent mmc where mmc.model.id = " + modelId + " order by prog desc");
+					Query query = session.createQuery(" from SbiMetaModelContent mmc where mmc.model.id = :modelId order by prog desc");
+					query.setParameter("modelId", modelId);
 					List<SbiMetaModelContent> list = query.list();
 					if (list != null && !list.isEmpty()) {
 						SbiMetaModelContent first = list.get(0);

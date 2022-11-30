@@ -804,24 +804,25 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				Object theQuarter = ifNull(temporalValues.get("QUARTER"), CARDINALITY_ALL);
 				Object theYear = ifNull(temporalValues.get("YEAR"), CARDINALITY_ALL);
 				String insertSql = "INSERT INTO SBI_KPI_VALUE (id, kpi_id, kpi_version, logical_key, time_run, computed_value,"
-						+ " the_day, the_week, the_month, the_quarter, the_year, state) VALUES (" + (++lastId) + ", " + parsedKpi.id + "," + parsedKpi.version
-						+ ",'" + logicalKey.toString().replaceAll("'", "''") + "',?, coalesce(" + (nullValue ? "0" : value) + ", 0) ,'" + theDay + "','"
-						+ theWeek + "','" + theMonth + "','" + theQuarter + "','" + theYear + "','" + (nullValue ? '1' : '0') + "')";
+						+ " the_day, the_week, the_month, the_quarter, the_year, state) VALUES (?,  ?, ?, ?" + ",?, coalesce(? , 0) ,?,?,?,?,?,?)";
 				String whereCondition = "kpi_id = " + parsedKpi.id + " AND kpi_version = " + parsedKpi.version + " AND logical_key = '"
 						+ logicalKey.toString().replaceAll("'", "''") + "'" + " AND the_day = '" + theDay + "' AND the_week = '" + theWeek + "'"
 						+ " AND the_month = '" + theMonth + "' AND the_quarter = '" + theQuarter + "' AND the_year = '" + theYear + "'";
-				String deleteSql = "DELETE FROM SBI_KPI_VALUE WHERE " + whereCondition;
+				String deleteSql = "DELETE FROM SBI_KPI_VALUE WHERE :whereCondition";
 				String updateSql = "UPDATE SBI_KPI_VALUE SET computed_value = coalesce(" + (nullValue ? "0" : value) + ", 0) , time_run = ?, state='"
 						+ (nullValue ? '1' : '0') + "' WHERE " + whereCondition; // Currently unused
 
 				session.beginTransaction();
 				if (replaceMode) {
-					session.createSQLQuery(deleteSql).executeUpdate();
+					session.createSQLQuery(deleteSql).setParameter("whereCondition", whereCondition).executeUpdate();
 				}
 
 				logger.debug("PERFORMING INSERT: " + insertSql);
 
-				session.createSQLQuery(insertSql).setParameter(0, timeRun).executeUpdate();
+				session.createSQLQuery(insertSql).setParameter(0, ++lastId).setParameter(1, parsedKpi.id).setParameter(2, parsedKpi.version)
+						.setParameter(3, logicalKey.toString().replaceAll("'", "''")).setParameter(4, timeRun).setParameter(5, (nullValue ? "0" : value))
+						.setParameter(6, theDay).setParameter(7, theWeek).setParameter(8, theMonth).setParameter(9, theQuarter).setParameter(10, theYear)
+						.setParameter(11, (nullValue ? '1' : '0')).executeUpdate();
 				session.getTransaction().commit();
 				// break; // TODO remove after debug
 			}
@@ -838,16 +839,15 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 	synchronized private static int reserveIds(Session session, String tableName, int newRowsCount) {
 		String escapedSequenceName = tableName.toUpperCase().replaceAll("'", "''");
 		session.beginTransaction();
-		Number lastId = (Number) session.createSQLQuery("SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME = '" + escapedSequenceName + "'")
-				.uniqueResult();
+		Number lastId = (Number) session.createSQLQuery("SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME = :escapedSequenceName")
+				.setParameter("escapedSequenceName", escapedSequenceName).uniqueResult();
 		if (lastId == null) {
-			session.createSQLQuery("INSERT INTO hibernate_sequences (SEQUENCE_NAME, NEXT_VAL) VALUES ('" + escapedSequenceName + "', " + newRowsCount + ")")
-					.executeUpdate();
+			session.createSQLQuery("INSERT INTO hibernate_sequences (SEQUENCE_NAME, NEXT_VAL) VALUES (:escapedSequenceName, :newRowsCount)")
+					.setParameter("escapedSequenceName", escapedSequenceName).setParameter("newRowsCount", newRowsCount).executeUpdate();
 			lastId = 0;
 		} else {
-			session.createSQLQuery(
-					"UPDATE hibernate_sequences SET NEXT_VAL = NEXT_VAL + " + newRowsCount + " WHERE SEQUENCE_NAME = '" + escapedSequenceName + "'")
-					.executeUpdate();
+			session.createSQLQuery("UPDATE hibernate_sequences SET NEXT_VAL = NEXT_VAL :newRowsCount WHERE SEQUENCE_NAME = :escapedSequenceName")
+					.setParameter("escapedSequenceName", escapedSequenceName).setParameter("newRowsCount", newRowsCount).executeUpdate();
 		}
 		session.getTransaction().commit();
 		return lastId.intValue();
