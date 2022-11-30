@@ -2,6 +2,8 @@
     <Toolbar class="kn-toolbar kn-toolbar--primary" :style="mainDescriptor.style.maxWidth">
         <template #start> {{ $t('workspace.federationDefinition.title') }}</template>
         <template #end>
+            <Button class="kn-button p-button-text p-button-rounded federation-button" @click="changeSteps"> {{ step === 0 ? $t('common.next') : $t('common.back') }}</Button>
+            <Button v-if="step === 1" class="kn-button p-button-text p-button-rounded federation-button p-mr-2" @click="saveFederation"> {{ $t('workspace.federationDefinition.saveFederation') }}</Button>
             <Button class="kn-button p-button-text p-button-rounded" @click="closeFederationDefinition"> {{ $t('common.close') }}</Button></template
         >
     </Toolbar>
@@ -15,11 +17,6 @@
         <div v-else class="kn-flex">
             <WorkspaceFederationDefinitionAssociationsEditor class="p-m-2" :selectedDatasets="selectedDatasets" :selectedMetafields="selectedMetafields" :resetSelectedMetafield="resetSelectedMetafield"></WorkspaceFederationDefinitionAssociationsEditor>
             <WorkspaceFederationDefinitionAssociationsList class="p-m-2" :propAssociations="multirelationships" @createAssociationClick="createAssociation()"></WorkspaceFederationDefinitionAssociationsList>
-        </div>
-
-        <div class="p-d-flex p-flex-row p-jc-end p-m-2">
-            <Button class="kn-button kn-button--secondary" @click="changeSteps"> {{ step === 0 ? $t('common.next') : $t('common.back') }}</Button>
-            <Button v-if="step === 1" class="kn-button kn-button--secondary p-mx-2" @click="saveFederation"> {{ $t('workspace.federationDefinition.saveFederation') }}</Button>
         </div>
 
         <WorskpaceFederationDatasetDialog :visible="infoDialogVisible" :dataset="selectedDataset" @close="closeInfoDialog"></WorskpaceFederationDatasetDialog>
@@ -325,3 +322,11 @@ export default defineComponent({
     }
 })
 </script>
+
+<style lang="scss" scoped>
+.federation-button .p-button.p-button-text:enabled:active {
+    background: none;
+    color: inherit;
+    border-color: none;
+}
+</style>

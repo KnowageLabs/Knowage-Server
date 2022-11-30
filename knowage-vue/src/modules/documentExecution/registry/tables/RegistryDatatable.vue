@@ -20,7 +20,10 @@
         :totalRecords="lazyParams.size"
         stripedRows
         showGridlines
+        sortMode="multiple"
+        :multiSortMeta="multiSortMeta"
         @page="onPage($event)"
+        @sort="onSort"
     >
         <template #empty>{{ $t('common.info.noDataFound') }}</template>
         <Column class="kn-truncated" :style="registryDatatableDescriptor.numerationColumn.style" :headerStyle="registryDatatableDescriptor.numerationColumn.style" :field="columns[0].field" :header="columns[0].title"></Column>
@@ -129,7 +132,8 @@ export default defineComponent({
             flagShown: 'flag-shown',
             flagHidden: 'flag-hidden',
             first: 0,
-            loading: false
+            loading: false,
+            multiSortMeta: []
         }
     },
     watch: {
@@ -389,6 +393,9 @@ export default defineComponent({
             const inputType = setInputDataType(column.columnInfo.type)
             const temp = column.format.trim().match(numberFormatRegex)
             return inputType === 'number' && !temp
+        },
+        onSort(event: any) {
+            this.multiSortMeta = event.multiSortMeta
         }
     }
 })
