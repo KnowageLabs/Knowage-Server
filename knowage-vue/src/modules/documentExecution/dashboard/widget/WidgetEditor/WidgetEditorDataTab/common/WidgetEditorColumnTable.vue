@@ -1,6 +1,9 @@
 <template>
     <div class="widget-editor-card p-p-2">
-        <label v-if="settings.label" class="kn-material-input-label">{{ $t(settings.label) }}</label>
+        <div class="p-d-flex p-flex-column">
+            <label v-if="settings.label" class="kn-material-input-label">{{ $t(settings.label) }}</label>
+            <small v-if="settings.hint"> {{ $t(settings.hint) }}</small>
+        </div>
 
         <div :class="{ 'dropzone-active': settings.dropIsActive }" @drop.stop="onDropComplete($event)" @dragover.prevent @dragenter.prevent @dragleave.prevent>
             <div v-if="settings.dropIsActive && rows.length === 0">
@@ -62,6 +65,7 @@ import { filterDefault } from '@/helpers/commons/filterHelper'
 import { IWidget, IWidgetColumn } from '../../../../Dashboard'
 import { createNewWidgetColumn } from '../../helpers/tableWidget/TableWidgetFunctions'
 import { emitter } from '../../../../DashboardHelpers'
+import { addChartColumnToTable } from '../../helpers/chartWidget/ChartWidgetDataTabHelpers'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dropdown from 'primevue/dropdown'
@@ -71,7 +75,7 @@ import descriptor from '../TableWidget/TableWidgetDataDescriptor.json'
 export default defineComponent({
     name: 'widget-editor-column-table',
     components: { Column, DataTable, Dropdown },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, items: { type: Array, required: true }, settings: { type: Object, required: true } },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, items: { type: Array, required: true }, settings: { type: Object, required: true }, chartType: { type: String } },
     emits: ['rowReorder', 'itemUpdated', 'itemSelected', 'itemDeleted', 'itemAdded', 'singleItemReplaced'],
     data() {
         return {
@@ -128,12 +132,14 @@ export default defineComponent({
             if (event.dataTransfer.getData('text/plain') === 'b') return
             const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
             const tempColumn = createNewWidgetColumn(eventData)
-            if (['table', 'html', 'text'].includes(this.widgetModel.type)) {
-                if (this.widgetModel.type === 'table' || !this.checkIfColumnIsAlreadyPresent(tempColumn)) this.rows.push(tempColumn as IWidgetColumn)
+            if (['table', 'html', 'text', 'chart'].includes(this.widgetModel.type)) {
+                if (this.widgetModel.type === 'chart') {
+                    addChartColumnToTable(tempColumn, this.rows, this.chartType, this.settings.attributesOnly, this.settings.measuresOnly)
+                } else if (this.widgetModel.type === 'table' || !this.checkIfColumnIsAlreadyPresent(tempColumn)) this.rows.push(tempColumn as IWidgetColumn)
             } else {
                 this.rows = [tempColumn]
             }
-            this.$emit('itemAdded', { column: tempColumn, rows: this.rows })
+            this.$emit('itemAdded', { column: tempColumn, rows: this.rows, settings: this.settings })
         },
         checkIfColumnIsAlreadyPresent(tempColumn: IWidgetColumn) {
             const index = this.rows.findIndex((row: IWidgetColumn) => row.columnName === tempColumn.columnName)

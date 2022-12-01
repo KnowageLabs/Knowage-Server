@@ -11,7 +11,6 @@
         "attributes": "Attributes",
         "author": "Author",
         "back": "back",
-        "row": "Row",
         "bottom": "bottom",
         "cancel": "cancel",
         "category": "Category",
@@ -112,6 +111,7 @@
         "key": "Key",
         "kpi": "KPI",
         "label": "label",
+        "labels": "Labels",
         "language": "Language",
         "large": "Large",
         "lastChangeDate": "Last change date",
@@ -168,6 +168,7 @@
         "right": "Right",
         "role": "Role",
         "roles": "Roles",
+        "row": "Row",
         "run": "Run",
         "save": "save",
         "saveAs": "Save as",
@@ -430,10 +431,6 @@
             "descending": "Descending",
             "dragColumnsHint": "Drag columns here",
             "editor": "Editor",
-            "htmlParsingError": "HTML Parsing Error",
-            "textParsingError": "Text Parsing Error",
-            "galleryWarning": "Are you sure you want to overwrite changes in editor with the template?",
-
             "editorTags": {
                 "activesel": "Active Selection",
                 "calc": "Calculation",
@@ -480,6 +477,7 @@
             },
             "fontawesome": "Fontawesome",
             "gallery": "Gallery",
+            "galleryWarning": "Are you sure you want to overwrite changes in editor with the template?",
             "headers": {
                 "action": "Action",
                 "enableCustomHeaders": "Enable Custom Headers",
@@ -492,7 +490,14 @@
                 "title": "Headers"
             },
             "hidden": "Hidden",
+            "highcarts": {
+                "piechart": {
+                    "labelsTableHint": "Each different value in the selected column will create a different slice",
+                    "valuesTableHint": "The selected column will be used as values for every slice"
+                }
+            },
             "hint": "Select dataset",
+            "htmlParsingError": "HTML Parsing Error",
             "iconTooltips": {
                 "backgroundColor": "Background color",
                 "bold": "Bold",
@@ -595,6 +600,7 @@
                 "pinnedColumnsOnly": "Pinned columns only",
                 "title": "Summary rows"
             },
+            "textParsingError": "Text Parsing Error",
             "title": "Widget Editor",
             "titles": {
                 "enableTitle": "Enable Title",

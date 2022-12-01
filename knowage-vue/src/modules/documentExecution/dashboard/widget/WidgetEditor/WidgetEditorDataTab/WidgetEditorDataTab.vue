@@ -15,7 +15,7 @@ import WidgetEditorDataList from './WidgetEditorDataList/WidgetEditorDataList.vu
 import WidgetEditorHint from '../WidgetEditorHint.vue'
 import WidgetEditorCommonDataContainer from './common/WidgetEditorCommonDataContainer.vue'
 import SelectorWidgetDataContainer from './SelectorWidget/SelectorWidgetDataContainer.vue'
-import HighchartsWidgetDataContainer from './ChartWidget/highcharts/HighchartsWidgetDataContainer.vue'
+import HighchartsWidgetDataContainer from './ChartWidget/highcharts/HighchartsDataContainer.vue'
 
 export default defineComponent({
     name: 'widget-editor-data-tab',

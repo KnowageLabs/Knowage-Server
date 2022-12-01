@@ -2,7 +2,7 @@ import { ISelectionsWidgetSettings } from '@/modules/documentExecution/dashboard
 import { IChartJSWidgetSettings } from './interfaces/chartJS/DashboardChartJSWidget'
 import { IHTMLWidgetSettings } from './interfaces/DashboardHTMLWidget'
 import { ITextWidgetSettings } from './interfaces/DashboardTextWidget'
-import { IHighchartsWidgetSettings } from './interfaces/highcharts/DashboardHighchartsWidget'
+import { IDrillOrderItem, IHighchartsWidgetSettings } from './interfaces/highcharts/DashboardHighchartsWidget'
 
 export interface IDashboard {
     sheets: []
@@ -408,7 +408,8 @@ export interface IWidgetColumn {
     aggregation: string
     filter: IWidgetColumnFilter
     formula?: string
-    formulaEditor?: string
+    formulaEditor?: string,
+    drillOrder?: IDrillOrderItem
 }
 
 export interface IWidgetColumnFilter {

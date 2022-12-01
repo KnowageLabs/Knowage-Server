@@ -1,0 +1,14 @@
+{
+    "pieChartcolumnTableSettings": [
+        {
+            "attributesOnly": true,
+            "hint": "dashboard.widgetEditor.highcarts.piechart.labelsTableHint",
+            "label": "common.labels"
+        },
+        {
+            "hint": "dashboard.widgetEditor.highcarts.piechart.valuesTableHint",
+            "label": "common.values",
+            "measuresOnly": true
+        }
+    ]
+}

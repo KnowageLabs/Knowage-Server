@@ -11,6 +11,12 @@ export interface IHighchartsWidgetSettings {
     responsive: IWidgetResponsive
 }
 
+export interface IDrillOrderItem {
+    orderColumnId: string
+    orderColumn: string,
+    orderType: "asc" | "desc"
+}
+
 export interface IHighchartsWidgetConfiguration {
     exports: IWidgetExports
 }
