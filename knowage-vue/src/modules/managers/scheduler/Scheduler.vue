@@ -63,9 +63,7 @@ export default defineComponent({
             let tempJobs = [] as iPackage[]
             await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `scheduleree/listAllJobs/`).then((response: AxiosResponse<any>) => (tempJobs = response.data.root))
             tempJobs.forEach((el: iPackage) => {
-                if (el.jobGroup === 'BIObjectExecutions') {
-                    this.jobs.push({ ...el, numberOfDocuments: el.documents.length })
-                }
+                this.jobs.push({ ...el, numberOfDocuments: el.documents.length })
             })
             this.loading = false
         },

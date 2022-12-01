@@ -164,9 +164,8 @@ export default defineComponent({
                 .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '/scheduleree/listAllJobs')
                 .then((response: AxiosResponse<any>) => {
                     let rawList = response.data.root
-                    let filteredList = rawList.filter((x) => x.jobGroup == 'BIObjectExecutions')
 
-                    filteredList.map((item: any) => {
+                    rawList.map((item: any) => {
                         this.packageList.push({
                             id: item.jobName,
                             name: item.jobName,

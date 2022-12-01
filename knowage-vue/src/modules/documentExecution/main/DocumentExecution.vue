@@ -283,6 +283,8 @@ export default defineComponent({
             }
         },
         isParameterSidebarVisible(): boolean {
+            if (!this.userRole) return false
+
             let parameterVisible = false
             for (let i = 0; i < this.filtersData?.filterStatus?.length; i++) {
                 const tempFilter = this.filtersData.filterStatus[i]
@@ -292,7 +294,7 @@ export default defineComponent({
                 }
             }
 
-            return parameterVisible || !this.sessionRole
+            return parameterVisible
         }
     },
     async created() {
@@ -651,7 +653,7 @@ export default defineComponent({
                             this.setCrossNavigationComboParameterDescription(tempParam)
                         } else {
                             tempParam.parameterValue[0].value = this.document.navigationParams[key]
-                            if (this.document.navigationParams[key + '_field_visible_description']) tempParam.parameterValue[0].description = this.document.navigationParams[key + '_field_visible_description']
+                            if (this.document.navigationParams[key + '_field_visible_description']) this.document.navigationParams[key + '_field_visible_description'] = tempParam.parameterValue[0].description
                             if (tempParam.selectionType === 'COMBOBOX') this.setCrossNavigationComboParameterDescription(tempParam)
                             if (tempParam.type === 'DATE' && tempParam.parameterValue[0] && tempParam.parameterValue[0].value) {
                                 tempParam.parameterValue[0].value = new Date(tempParam.parameterValue[0].value)
@@ -1067,7 +1069,8 @@ export default defineComponent({
         },
         findCrossTargetByCrossName(angularData: any, temp: any[]) {
             if (!angularData || !temp) return
-            const index = temp.findIndex((el: any) => el.crossName === angularData.targetCrossNavigation.crossName)
+            const targetCross = typeof angularData.targetCrossNavigation === 'string' ? angularData.targetCrossNavigation : angularData.targetCrossNavigation.crossName
+            const index = temp.findIndex((el: any) => el.crossName === targetCross)
             return index !== -1 ? temp[index] : null
         },
         async loadCrossNavigation(crossNavigationDocument: any, angularData: any) {

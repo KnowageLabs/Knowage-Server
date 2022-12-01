@@ -17,14 +17,6 @@
  */
 package it.eng.spagobi.metadata.dao;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.SpagoBIDAOException;
-import it.eng.spagobi.metadata.metadata.SbiMetaSource;
-import it.eng.spagobi.metadata.metadata.SbiMetaTable;
-import it.eng.spagobi.metadata.metadata.SbiMetaTableColumn;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -43,6 +35,14 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
+import it.eng.spagobi.metadata.metadata.SbiMetaSource;
+import it.eng.spagobi.metadata.metadata.SbiMetaTable;
+import it.eng.spagobi.metadata.metadata.SbiMetaTableColumn;
+
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
  *
@@ -54,13 +54,11 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	/**
 	 * Load table by id.
 	 *
-	 * @param id
-	 *            the table is
+	 * @param id the table is
 	 *
 	 * @return the meta table
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaTableDAOHibImpl#loadTableByID(integer)
 	 */
@@ -105,13 +103,11 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	/**
 	 * Load table by id.
 	 *
-	 * @param id
-	 *            the table is
+	 * @param id the table is
 	 *
 	 * @return the meta table
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaTableDAOHibImpl#loadTableWithColumnByID(integer)
 	 */
@@ -206,13 +202,11 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	/**
 	 * Load table by name.
 	 *
-	 * @param name
-	 *            the table name
+	 * @param name the table name
 	 *
 	 * @return the meta table
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaTableDAOHibImpl#loadTableByName(string)
 	 */
@@ -256,8 +250,7 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	 *
 	 * @return List of meta tables
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaTableDAOHibImpl#loadAllTables()
 	 */
@@ -306,8 +299,7 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	 *
 	 * @return List of meta tables
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaTableDAOHibImpl#loadAllTables()
 	 */
@@ -391,11 +383,9 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	/**
 	 * Modify a metatable.
 	 *
-	 * @param aMetaTable
-	 *            the sbimetatable changed
+	 * @param aMetaTable the sbimetatable changed
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaTableDAOHibImpl#modifyTable(SbiMetaTable)
 	 */
@@ -451,11 +441,9 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	/**
 	 * Insert a metatable.
 	 *
-	 * @param aMetaSource
-	 *            the sbimetatable to insert
+	 * @param aMetaSource the sbimetatable to insert
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaTableDAOHibImpl#insertSource(SbiMetaTable)
 	 */
@@ -514,11 +502,9 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	/**
 	 * Delete a metasource.
 	 *
-	 * @param aMetaSource
-	 *            the sbimetasource to delete
+	 * @param aMetaSource the sbimetasource to delete
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaSourceDAOHibImpl#deleteSource(SbiMetaSource)
 	 */
@@ -580,13 +566,11 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	/**
 	 * Checks for BC associated.
 	 *
-	 * @param bcId
-	 *            the BC id
+	 * @param bcId the BC id
 	 *
 	 * @return true, if checks for BC associated
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaSourceDAOHibImpl#hasBcAssociated(int)
 	 */
@@ -813,8 +797,9 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			String hql = "select count(*) from SbiMetaTable where name like '%" + search + "%'";
+			String hql = "select count(*) from SbiMetaTable where name like :search";
 			Query hqlQuery = aSession.createQuery(hql);
+			hqlQuery.setParameter("search", "%" + search + "%");
 			Long temp = (Long) hqlQuery.uniqueResult();
 			resultNumber = new Integer(temp.intValue());
 

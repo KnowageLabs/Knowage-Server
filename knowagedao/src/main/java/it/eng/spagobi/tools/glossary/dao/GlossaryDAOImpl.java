@@ -886,7 +886,8 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 		Session session = null;
 		try {
 			session = this.getSession();
-			Query q = session.createQuery("select wl.word from SbiGlWlist wl where wl.content.contentId=" + contentId);
+			Query q = session.createQuery("select wl.word from SbiGlWlist wl where wl.content.contentId=:contentId");
+			q.setParameter("contentId", contentId);
 			List<SbiGlWord> a = q.list();
 			return a;
 		} finally {

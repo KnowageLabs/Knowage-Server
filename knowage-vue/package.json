@@ -8,8 +8,7 @@
         "coverage": "vitest run --coverage",
         "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
         "dev": "vite",
-        "build": "vite build",
-        "serve": "vite preview"
+        "build": "vite build"
     },
     "main": "main.ts",
     "dependencies": {

@@ -47,13 +47,11 @@ public class LovDAOHibImpl extends AbstractHibernateDAO implements IModalitiesVa
 	/**
 	 * Load modalities value by id.
 	 *
-	 * @param modalitiesValueID
-	 *            the modalities value id
+	 * @param modalitiesValueID the modalities value id
 	 *
 	 * @return the modalities value
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO#loadModalitiesValueByID(Integer)
 	 */
@@ -93,13 +91,11 @@ public class LovDAOHibImpl extends AbstractHibernateDAO implements IModalitiesVa
 	/**
 	 * Load modalities value by label.
 	 *
-	 * @param label
-	 *            the label
+	 * @param label the label
 	 *
 	 * @return the modalities value
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO#loadModalitiesValueByID(Integer)
 	 */
@@ -134,11 +130,9 @@ public class LovDAOHibImpl extends AbstractHibernateDAO implements IModalitiesVa
 	/**
 	 * Modify modalities value.
 	 *
-	 * @param aModalitiesValue
-	 *            the a modalities value
+	 * @param aModalitiesValue the a modalities value
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO#modifyModalitiesValue(it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue)
 	 */
@@ -180,11 +174,9 @@ public class LovDAOHibImpl extends AbstractHibernateDAO implements IModalitiesVa
 	/**
 	 * Insert modalities value.
 	 *
-	 * @param aModalitiesValue
-	 *            the a modalities value
+	 * @param aModalitiesValue the a modalities value
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO#insertModalitiesValue(it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue)
 	 */
@@ -229,11 +221,9 @@ public class LovDAOHibImpl extends AbstractHibernateDAO implements IModalitiesVa
 	/**
 	 * Erase modalities value.
 	 *
-	 * @param aModalitiesValue
-	 *            the a modalities value
+	 * @param aModalitiesValue the a modalities value
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO#eraseModalitiesValue(it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue)
 	 */
@@ -270,8 +260,7 @@ public class LovDAOHibImpl extends AbstractHibernateDAO implements IModalitiesVa
 	 *
 	 * @return the list
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO#loadAllModalitiesValue()
 	 */
@@ -321,8 +310,8 @@ public class LovDAOHibImpl extends AbstractHibernateDAO implements IModalitiesVa
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			Query hibQuery = aSession.createQuery("select lov from SbiParameters as param " + "inner join param.sbiParuses as paruses "
-					+ "inner join paruses.sbiLov as lov " + "where  param.parId = " + idParameter);
-			;
+					+ "inner join paruses.sbiLov as lov " + "where  param.parId = :idParameter");
+			hibQuery.setParameter("idParameter", idParameter);
 			List hibList = hibQuery.list();
 
 			Iterator it = hibList.iterator();
@@ -362,7 +351,8 @@ public class LovDAOHibImpl extends AbstractHibernateDAO implements IModalitiesVa
 			tx = aSession.beginTransaction();
 			Query hibQuery = aSession
 					.createQuery("select lov from SbiObjects as obj " + "inner join obj.sbiObjPars as objPars " + "inner join objPars.sbiParameter as param "
-							+ "inner join param.sbiParuses as paruses " + "inner join paruses.sbiLov as lov " + "where  obj.label = '" + label + "'");
+							+ "inner join param.sbiParuses as paruses " + "inner join paruses.sbiLov as lov " + "where  obj.label = :label");
+			hibQuery.setParameter("label", label);
 			List hibList = hibQuery.list();
 			Iterator it = hibList.iterator();
 			while (it.hasNext()) {
@@ -395,8 +385,7 @@ public class LovDAOHibImpl extends AbstractHibernateDAO implements IModalitiesVa
 	 *
 	 * @return the list
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO#loadAllModalitiesValueOrderByCode()
 	 */
@@ -439,13 +428,11 @@ public class LovDAOHibImpl extends AbstractHibernateDAO implements IModalitiesVa
 	/**
 	 * Checks for parameters.
 	 *
-	 * @param lovId
-	 *            the lov id
+	 * @param lovId the lov id
 	 *
 	 * @return true, if checks for parameters
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO#hasParameters(java.lang.String)
 	 */
@@ -496,8 +483,7 @@ public class LovDAOHibImpl extends AbstractHibernateDAO implements IModalitiesVa
 	/**
 	 * From the hibernate LOV at input, gives the corrispondent <code>ModalitiesValue</code> object.
 	 *
-	 * @param hiObjPar
-	 *            The hybernate LOV
+	 * @param hiObjPar The hybernate LOV
 	 * @return The corrispondent <code>ModalitiesValue</code> object
 	 */
 	private ModalitiesValue toModalityValue(SbiLov hibLov) {

@@ -58,13 +58,11 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 	/**
 	 * Load BC by id.
 	 *
-	 * @param id
-	 *            the bc is
+	 * @param id the bc is
 	 *
 	 * @return the meta bc
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaBcDAOHibImpl#loadBcByID(integer)
 	 */
@@ -104,13 +102,11 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 	/**
 	 * Load source by name.
 	 *
-	 * @param name
-	 *            the source name
+	 * @param name the source name
 	 *
 	 * @return the meta source
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaBcDAOHibImpl#loadBcByName(string)
 	 */
@@ -147,13 +143,11 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 	/**
 	 * Load source by name.
 	 *
-	 * @param name
-	 *            the source name
+	 * @param name the source name
 	 *
 	 * @return the meta source
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaBcDAOHibImpl#loadBcByName(string)
 	 */
@@ -192,8 +186,7 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 	 *
 	 * @return List of meta bc
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaBcDAOHibImpl#loadAllBCs()
 	 */
@@ -319,11 +312,9 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 	/**
 	 * Modify a metatable.
 	 *
-	 * @param aMetaTable
-	 *            the sbimetatable changed
+	 * @param aMetaTable the sbimetatable changed
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaBcDAOHibImpl#modifyTable(SbiMetaTable)
 	 */
@@ -362,11 +353,9 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 	/**
 	 * Insert a metabc.
 	 *
-	 * @param aMetaSource
-	 *            the sbimetabc to insert
+	 * @param aMetaSource the sbimetabc to insert
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaBcDAOHibImpl#insertBc(SbiMetaBc)
 	 */
@@ -408,11 +397,9 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 	/**
 	 * Delete a metasource.
 	 *
-	 * @param aMetaSource
-	 *            the sbimetasource to delete
+	 * @param aMetaSource the sbimetasource to delete
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaBcDAOHibImpl#deleteSource(SbiMetaSource)
 	 */
@@ -468,13 +455,11 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 	/**
 	 * Checks for tables associated.
 	 *
-	 * @param bcId
-	 *            the BC id
+	 * @param bcId the BC id
 	 *
 	 * @return true, if checks for tables associated
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaBcDAOHibImpl#hasTablesAssociated(int)
 	 */
@@ -519,13 +504,11 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 	/**
 	 * Checks for dataset associated.
 	 *
-	 * @param bcId
-	 *            the BC id
+	 * @param bcId the BC id
 	 *
 	 * @return true, if checks for datasets associated
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaBcDAOHibImpl#hasDsAssociated(int)
 	 */
@@ -570,16 +553,13 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 	/**
 	 * Load source by name.
 	 *
-	 * @param session
-	 *            the session
+	 * @param session the session
 	 *
-	 * @param name
-	 *            the source name
+	 * @param name    the source name
 	 *
 	 * @return the meta source
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaBcDAOHibImpl#loadBcByName(session, string)
 	 */
@@ -606,16 +586,13 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 	/**
 	 * Load source by the unique name.
 	 *
-	 * @param session
-	 *            the session
+	 * @param session the session
 	 *
-	 * @param name
-	 *            the unique name
+	 * @param name    the unique name
 	 *
 	 * @return the meta bc
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaBcDAOHibImpl#loadBcByUniqueName(session, string)
 	 */
@@ -647,11 +624,9 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 	 *
 	 * * @param aSession the hibernate session
 	 *
-	 * @param aMetaBC
-	 *            the sbimetaBC changed
+	 * @param aMetaBC the sbimetaBC changed
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaBcDAOHibImpl#modifyBc(Session, SbiMetaTable)
 	 */
@@ -694,11 +669,9 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 	 *
 	 * * @param aSession the hibernate session
 	 *
-	 * @param aMetaBC
-	 *            the sbimetaBC to insert
+	 * @param aMetaBC the sbimetaBC to insert
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaBcDAOHibImpl#insertBc(Session, SbiMetaTable)
 	 */
@@ -742,8 +715,7 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 	 *
 	 * @return List of meta tables
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaTableDAOHibImpl#loadAllTables()
 	 */
@@ -798,8 +770,9 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			String hql = "select count(*) from SbiMetaBc where name like '%" + search + "%'";
+			String hql = "select count(*) from SbiMetaBc where name like :search";
 			Query hqlQuery = aSession.createQuery(hql);
+			hqlQuery.setParameter("search", "%" + search + "%");
 			Long temp = (Long) hqlQuery.uniqueResult();
 			resultNumber = new Integer(temp.intValue());
 
@@ -822,13 +795,11 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 	/**
 	 * Load BC by id.
 	 *
-	 * @param id
-	 *            the bc is
+	 * @param id the bc is
 	 *
 	 * @return the meta bc
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaBcDAOHibImpl#loadBcByID(integer)
 	 */

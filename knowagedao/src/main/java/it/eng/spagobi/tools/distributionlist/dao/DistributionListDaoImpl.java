@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,25 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.distributionlist.dao;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Expression;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
@@ -32,20 +46,6 @@ import it.eng.spagobi.tools.distributionlist.metadata.SbiDistributionList;
 import it.eng.spagobi.tools.distributionlist.metadata.SbiDistributionListUser;
 import it.eng.spagobi.tools.distributionlist.metadata.SbiDistributionListsObjects;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
-
 /**
  * @author Chiarelli Chiara (chiara.chiarelli@eng.it)
  */
@@ -56,7 +56,7 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO#eraseDistributionList(it.eng.spagobi.tools.distributionlist.bo.DistributionList)
 	 */
 	@Override
@@ -93,7 +93,7 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO#eraseDistributionListObjects(it.eng.spagobi.tools.distributionlist.bo.DistributionList,
 	 * int, java.lang.String)
@@ -152,7 +152,7 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO#eraseAllRelatedDistributionListObjects(java.lang.String)
 	 */
 	@Override
@@ -204,7 +204,7 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO#insertDistributionList(it.eng.spagobi.tools.distributionlist.bo.DistributionList)
 	 */
 	@Override
@@ -246,7 +246,7 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO#loadAllDistributionLists()
 	 */
 	@Override
@@ -290,7 +290,7 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO#loadDistributionListById(java.lang.Integer)
 	 */
 	@Override
@@ -329,7 +329,7 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO#loadDistributionListByName(java.lang.String)
 	 */
 	@Override
@@ -366,7 +366,7 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO#modifyDistributionList(it.eng.spagobi.tools.distributionlist.bo.DistributionList)
 	 */
 	@Override
@@ -385,8 +385,8 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 			updateSbiCommonInfo4Update(hibDistributionList);
 			tx.commit();
 		} catch (HibernateException he) {
-			logger.error(
-					"Error while modifing the distribution list with id " + ((aDistributionList == null) ? "" : String.valueOf(aDistributionList.getId())), he);
+			logger.error("Error while modifing the distribution list with id " + ((aDistributionList == null) ? "" : String.valueOf(aDistributionList.getId())),
+					he);
 
 			if (tx != null)
 				tx.rollback();
@@ -405,10 +405,9 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 
 	/**
 	 * To distribution list.
-	 * 
-	 * @param hibDistributionList
-	 *            the hib distribution list
-	 * 
+	 *
+	 * @param hibDistributionList the hib distribution list
+	 *
 	 * @return the distribution list
 	 */
 	public DistributionList toDistributionList(SbiDistributionList hibDistributionList) {
@@ -459,7 +458,7 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO#hasBIObjAssociated(java.lang.String)
 	 */
 	@Override
@@ -505,7 +504,7 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO#subscribeToDistributionList(it.eng.spagobi.tools.distributionlist.bo.DistributionList,
 	 * it.eng.spagobi.tools.distributionlist.bo.Email)
@@ -531,9 +530,8 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 			aSession.save(hibDistributionListUser);
 			tx.commit();
 		} catch (HibernateException he) {
-			logger.error(
-					"Error while subscribing to the distribution list with id "
-							+ ((aDistributionList == null) ? "" : String.valueOf(aDistributionList.getId())), he);
+			logger.error("Error while subscribing to the distribution list with id "
+					+ ((aDistributionList == null) ? "" : String.valueOf(aDistributionList.getId())), he);
 
 			if (tx != null)
 				tx.rollback();
@@ -551,7 +549,7 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO#unsubscribeFromDistributionList(it.eng.spagobi.tools.distributionlist.bo.DistributionList,
 	 * java.lang.String)
@@ -581,9 +579,8 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 
 			tx.commit();
 		} catch (HibernateException he) {
-			logger.error(
-					"Error while unsubscribing to the distribution list with id "
-							+ ((aDistributionList == null) ? "" : String.valueOf(aDistributionList.getId())), he);
+			logger.error("Error while unsubscribing to the distribution list with id "
+					+ ((aDistributionList == null) ? "" : String.valueOf(aDistributionList.getId())), he);
 
 			if (tx != null)
 				tx.rollback();
@@ -601,7 +598,7 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO#insertDLforDocument(it.eng.spagobi.tools.distributionlist.bo.DistributionList, int,
 	 * java.lang.String)
 	 */
@@ -632,9 +629,10 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 			tx = aSession.beginTransaction();
 			if (otherSchedule == true) {
 
-				String hql = "from SbiDistributionListsObjects sdlo where sdlo.sbiDistributionList.dlId=" + dl.getId() + " and sdlo.sbiObjects.biobjId="
-						+ objId;
+				String hql = "from SbiDistributionListsObjects sdlo where sdlo.sbiDistributionList.dlId=:dlId  and sdlo.sbiObjects.biobjId=:objId";
 				Query query = aSession.createQuery(hql);
+				query.setParameter("dlId", dl.getId());
+				query.setParameter("objId", objId);
 
 				List l = query.list();
 
@@ -687,7 +685,7 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO#isDocScheduleAlreadyLinkedToDL(it.eng.spagobi.tools.distributionlist.bo.DistributionList,
 	 * int, java.lang.String)
@@ -730,7 +728,7 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO#isDocScheduledInOtherTime(it.eng.spagobi.tools.distributionlist.bo.DistributionList,
 	 * int, java.lang.String)
 	 */
@@ -785,7 +783,7 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO#getXmlRelated(it.eng.spagobi.tools.distributionlist.bo.DistributionList, int)
 	 */
 	@Override

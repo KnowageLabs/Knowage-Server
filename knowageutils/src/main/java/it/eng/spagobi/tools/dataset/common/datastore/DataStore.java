@@ -28,15 +28,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -51,13 +48,8 @@ import org.apache.metamodel.query.Query;
 import org.apache.metamodel.query.SelectItem;
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.util.SimpleTableDef;
-import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
-import org.jasypt.exceptions.EncryptionInitializationException;
-import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 
 import gnu.trove.set.hash.TLongHashSet;
-import it.eng.knowage.encryption.EncryptionConfiguration;
-import it.eng.knowage.encryption.EncryptionPreferencesRegistry;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
@@ -95,7 +87,6 @@ public class DataStore implements IDataStore {
 		this.metaData = dataSetMetadata;
 		this.metaData.setProperty(IMetaData.RESULT_NUMBER_PROPERTY, 0);
 		adjustMetadata(dataSetMetadata);
-		setUpDecryption();
 	}
 
 	@Override
@@ -115,19 +106,16 @@ public class DataStore implements IDataStore {
 
 	@Override
 	public void appendRecord(IRecord record) {
-		decryptIfNeeded(record);
 		records.add(record);
 	}
 
 	@Override
 	public void prependRecord(IRecord record) {
-		decryptIfNeeded(record);
 		insertRecord(0, record);
 	}
 
 	@Override
 	public void insertRecord(int position, IRecord record) {
-		decryptIfNeeded(record);
 		records.add(position, record);
 	}
 
@@ -221,8 +209,6 @@ public class DataStore implements IDataStore {
 	@Override
 	public void setMetaData(IMetaData metaData) {
 		this.metaData = metaData;
-		// TODO : Do we need to call adjustMetadata?
-		setUpDecryption();
 	}
 
 	@Override
@@ -788,90 +774,4 @@ public class DataStore implements IDataStore {
 		newDataStoreMetadata.setProperties(dataStoreMetadata.getProperties());
 		setMetaData(newDataStoreMetadata);
 	}
-
-	private boolean needDecryption = false;
-	private List<IFieldMetaData> decryptableField = new ArrayList<>();
-	private Map<Integer, IFieldMetaData> decryptableFieldByIndex = new LinkedHashMap<>();
-	private StandardPBEStringEncryptor encryptor;
-
-	private void setUpDecryption() {
-		IMetaData dataStoreMetadata = getMetaData();
-
-		AtomicInteger index = new AtomicInteger();
-
-		dataStoreMetadata.getFieldsMeta()
-			.stream()
-			.collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e))
-			.entrySet()
-			.stream()
-			.filter(e -> e.getValue().isDecrypt())
-			.forEach(e -> {
-				Integer key = e.getKey();
-				IFieldMetaData value = e.getValue();
-				decryptableField.add(value);
-				decryptableFieldByIndex.put(key, value);
-			});
-
-		needDecryption = !decryptableField.isEmpty();
-
-		if (needDecryption) {
-			EncryptionConfiguration cfg = EncryptionPreferencesRegistry.getInstance()
-					.getConfiguration(EncryptionPreferencesRegistry.DEFAULT_CFG_KEY);
-
-			String algorithm = cfg.getAlgorithm();
-			String password = cfg.getEncryptionPwd();
-
-			encryptor = new StandardPBEStringEncryptor();
-			encryptor.setAlgorithm(algorithm);
-			encryptor.setPassword(password);
-		}
-
-	}
-
-	private void decryptIfNeeded(IRecord record) {
-		if (needDecryption) {
-			List<IField> fields = record.getFields();
-
-			for (int i = 0; i<fields.size(); i++) {
-				if (decryptableFieldByIndex.containsKey(i)) {
-					IFieldMetaData fieldMetaData = decryptableFieldByIndex.get(i);
-					String fieldName = fieldMetaData.getName();
-					String fieldAlias = fieldMetaData.getAlias();
-					IField fieldAt = record.getFieldAt(i);
-					Object value = fieldAt.getValue();
-					String newValue = null;
-
-					try {
-						newValue = encryptor.decrypt(value.toString());
-						fieldAt.setValue(newValue);
-					} catch (EncryptionOperationNotPossibleException e) {
-						LOGGER.warn("Ignoring field value {} from field {} (with \"{}\" alias): see following message", value, fieldName, fieldAlias);
-						LOGGER.warn(e);
-					} catch (EncryptionInitializationException e) {
-						LOGGER.error("Encryption initialization error: check decryption system properties", e);
-					}
-				}
-			}
-		}
-	}
-
-	private String mapFieldKey(IFieldMetaData field) {
-		return field.getName();
-	}
-
-	private Map<String, IFieldMetaData> mapFieldByColumnName(IMetaData metaData) {
-		return metaData.getFieldsMeta()
-			.stream()
-			.collect(Collectors.toMap(e -> mapFieldKey(e), e -> e));
-	}
-
-//	@Override
-//	public IDataSet getDataSet() {
-//		return dataSet;
-//	}
-//
-//	@Override
-//	public void setDataSet(IDataSet dataSet) {
-//		this.dataSet = dataSet;
-//	}
 }
