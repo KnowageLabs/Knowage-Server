@@ -79,7 +79,10 @@ const addDrillColumnsFromCategory = (category: IOldModelCategory, widgetColumNam
 }
 
 const createDrillOrder = (orderColumn: string | null, orderType: string) => {
-    return orderColumn ? { orderColumnId: orderColumn ? getColumnId(orderColumn) : '', orderColumn: orderColumn, orderType: orderType } : { orderColumnId: '', orderColumn: '', orderType: '' }
+    let formattedOrderType = orderType
+    if (orderType === 'asc') formattedOrderType = 'ASC'
+    else if (orderType === 'asc') formattedOrderType = 'DESC'
+    return orderColumn ? { orderColumnId: orderColumn ? getColumnId(orderColumn) : '', orderColumn: orderColumn, orderType: formattedOrderType } : { orderColumnId: '', orderColumn: '', orderType: '' }
 }
 
 

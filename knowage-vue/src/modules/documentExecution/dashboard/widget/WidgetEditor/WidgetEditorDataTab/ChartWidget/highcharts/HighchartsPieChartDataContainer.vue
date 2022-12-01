@@ -33,7 +33,7 @@
             @itemSelected="setSelectedColumn"
             @itemDeleted="onColumnDelete"
         ></WidgetEditorColumnTable>
-        <WidgetEditorFilterForm v-if="selectedColumn" :propColumn="selectedColumn"></WidgetEditorFilterForm>
+        <TableWidgetColumnForm class="p-m-2" :widgetModel="widgetModel" :selectedColumn="selectedColumn"></TableWidgetColumnForm>
     </div>
 </template>
 
@@ -47,11 +47,12 @@ import Dropdown from 'primevue/dropdown'
 import commonDescriptor from '../../common/WidgetCommonDescriptor.json'
 import WidgetEditorColumnTable from '../../common/WidgetEditorColumnTable.vue'
 import WidgetEditorFilterForm from '../../common/WidgetEditorFilterForm.vue'
+import TableWidgetColumnForm from '../../TableWidget/TableWidgetColumnForm.vue'
 import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'highcharts-widget-pie-chart-data-container',
-    components: { Dropdown, WidgetEditorColumnTable, WidgetEditorFilterForm },
+    components: { Dropdown, WidgetEditorColumnTable, WidgetEditorFilterForm, TableWidgetColumnForm },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedDataset: { type: Object as PropType<IDataset | null> } },
     data() {
         return {
@@ -108,8 +109,6 @@ export default defineComponent({
         },
         onColumnDelete(column: IWidgetColumn) {
             const index = this.widgetModel.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === column.id)
-            console.log('INDEX: ', index)
-
             if (index !== -1) {
                 this.widgetModel.columns.splice(index, 1)
                 if (column.id === this.selectedColumn?.id) this.selectedColumn = null
@@ -119,7 +118,6 @@ export default defineComponent({
                 emitter.emit('columnRemoved', column)
                 emitter.emit('refreshWidgetWithData', this.widgetModel.id)
             }
-            console.log('temp: ', deepcopy(this.widgetModel.columns))
         },
         removeColumnFromColumnTableItems(column: IWidgetColumn) {
             const type = column.fieldType == 'MEASURE' ? 'MEASURES' : 'ATTRIBUTES'

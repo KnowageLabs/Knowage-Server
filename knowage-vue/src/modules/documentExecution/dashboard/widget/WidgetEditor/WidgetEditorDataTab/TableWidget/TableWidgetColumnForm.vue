@@ -1,10 +1,33 @@
 <template>
     <div v-if="column" class="widget-editor-card p-p-2">
+        {{ column }}
         <div class="p-my-2">
             <div class="p-d-flex p-flex-row p-ai-center">
                 <div class="p-d-flex p-flex-column kn-flex p-m-2">
                     <label class="kn-material-input-label p-mr-2">{{ $t('common.alias') }}</label>
                     <InputText class="kn-material-input p-inputtext-sm" v-model="column.alias" @change="onColumnAliasRenamed" />
+                </div>
+            </div>
+
+            <div v-if="widgetModel.type === 'chart' && column.drillOrder" class="p-d-flex p-flex-row p-ai-center p-mt-2">
+                <div class="p-d-flex p-flex-column kn-flex-2 p-m-2">
+                    <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.sortingColumn') }}</label>
+                    <Dropdown class="kn-material-input" v-model="column.drillOrder.orderColumnId" :options="sortingColumnOptions" optionValue="id" optionLabel="alias" @change="sortingChanged"> </Dropdown>
+                </div>
+                <div class="p-d-flex p-flex-column kn-flex p-m-2">
+                    <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.sortingOrder') }}</label>
+                    <Dropdown class="kn-material-input" v-model="column.drillOrder.orderType" :options="commonDescriptor.sortingOrderOptions" optionValue="value" @change="selectedColumnUpdated">
+                        <template #value="slotProps">
+                            <div>
+                                <span>{{ slotProps.value }}</span>
+                            </div>
+                        </template>
+                        <template #option="slotProps">
+                            <div>
+                                <span>{{ $t(slotProps.option.label) }}</span>
+                            </div>
+                        </template>
+                    </Dropdown>
                 </div>
             </div>
 
@@ -31,6 +54,7 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget, IWidgetColumn, IWidgetColumnFilter } from '../../../../Dashboard'
 import { emitter } from '../../../../DashboardHelpers'
 import descriptor from './TableWidgetDataDescriptor.json'
+import commonDescriptor from '../common/WidgetCommonDescriptor.json'
 import InputSwitch from 'primevue/inputswitch'
 import Dropdown from 'primevue/dropdown'
 import WidgetEditorFilterForm from '../common/WidgetEditorFilterForm.vue'
@@ -42,7 +66,13 @@ export default defineComponent({
     data() {
         return {
             descriptor,
+            commonDescriptor,
             column: null as IWidgetColumn | null
+        }
+    },
+    computed: {
+        sortingColumnOptions() {
+            return this.widgetModel.columns
         }
     },
     watch: {
@@ -81,6 +111,12 @@ export default defineComponent({
         },
         onColumnAliasRenamed() {
             emitter.emit('columnAliasRenamed', this.column)
+            this.selectedColumnUpdated()
+        },
+        sortingChanged() {
+            if (!this.column || !this.column.drillOrder) return
+            const index = this.sortingColumnOptions.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === this.column?.drillOrder?.orderColumnId)
+            if (index !== -1) this.column.drillOrder.orderColumn = this.sortingColumnOptions[index].columnName
             this.selectedColumnUpdated()
         }
     }
