@@ -1,4 +1,72 @@
 {
+    "attributeColumnFilterOperators": [
+        {
+            "label": "=",
+            "value": "="
+        },
+        {
+            "label": "!=",
+            "value": "!="
+        },
+        {
+            "label": "IN",
+            "value": "IN"
+        },
+        {
+            "label": "like",
+            "value": "like"
+        },
+        {
+            "label": "is null",
+            "value": "is null"
+        },
+        {
+            "label": "is not null",
+            "value": "is not null"
+        },
+        {
+            "label": "min",
+            "value": "min"
+        },
+        {
+            "label": "max",
+            "value": "max"
+        },
+        {
+            "label": "not IN",
+            "value": "not IN"
+        }
+    ],
+    "columnAggregationOptions": [
+        {
+            "label": "NONE",
+            "value": "NONE"
+        },
+        {
+            "label": "SUM",
+            "value": "SUM"
+        },
+        {
+            "label": "AVG",
+            "value": "AVG"
+        },
+        {
+            "label": "MAX",
+            "value": "MAX"
+        },
+        {
+            "label": "MIN",
+            "value": "MIN"
+        },
+        {
+            "label": "COUNT",
+            "value": "COUNT"
+        },
+        {
+            "label": "COUNT_DISTINCT",
+            "value": "COUNT_DISTINCT"
+        }
+    ],
     "columnTableSettings": {
         "buttonColumnStyle": {
             "min-width": "125px",
@@ -25,6 +93,56 @@
             "rowReorderColumnStyle": "width: 3rem"
         }
     },
+    "measureColumnFilterOperators": [
+        {
+            "label": "=",
+            "value": "="
+        },
+        {
+            "label": "<",
+            "value": "<"
+        },
+        {
+            "label": ">",
+            "value": ">"
+        },
+        {
+            "label": "<=",
+            "value": "<="
+        },
+        {
+            "label": ">=",
+            "value": ">="
+        },
+        {
+            "label": "IN",
+            "value": "IN"
+        },
+        {
+            "label": "is null",
+            "value": "is null"
+        },
+        {
+            "label": "is not null",
+            "value": "is not null"
+        },
+        {
+            "label": "min",
+            "value": "min"
+        },
+        {
+            "label": "max",
+            "value": "max"
+        },
+        {
+            "label": "range",
+            "value": "range"
+        },
+        {
+            "label": "not IN",
+            "value": "not IN"
+        }
+    ],
     "sortingOrderOptions": [
         {
             "label": "dashboard.widgetEditor.ascending",

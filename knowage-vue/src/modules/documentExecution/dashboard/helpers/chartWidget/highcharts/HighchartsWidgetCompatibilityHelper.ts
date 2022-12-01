@@ -79,19 +79,20 @@ const addDrillColumnsFromCategory = (category: IOldModelCategory, widgetColumNam
 }
 
 const createDrillOrder = (orderColumn: string | null, orderType: string) => {
-    let formattedOrderType = orderType
-    if (orderType === 'asc') formattedOrderType = 'ASC'
-    else if (orderType === 'asc') formattedOrderType = 'DESC'
-    return orderColumn ? { orderColumnId: orderColumn ? getColumnId(orderColumn) : '', orderColumn: orderColumn, orderType: formattedOrderType } : { orderColumnId: '', orderColumn: '', orderType: '' }
+    return orderColumn ? { orderColumnId: orderColumn ? getColumnId(orderColumn) : '', orderColumn: orderColumn, orderType: orderType ? orderType.toUpperCase() : '' } : { orderColumnId: '', orderColumn: '', orderType: '' }
 }
 
 
 const addSerieColumn = (serie: any, widgetColumNameMap: any, formattedColumns: IWidgetColumn[]) => {
     console.log(">>>>>>>> SERIE: ", serie)
     console.log(">>>>>>>> widgetColumNameMap: ", widgetColumNameMap)
-    const tempColumn = widgetColumNameMap[serie.column]
+    const tempColumn = widgetColumNameMap[serie.column] as IWidgetColumn
+    tempColumn.aggregation = serie.groupingFunction
+    if (serie.orderType) tempColumn.orderType = serie.orderType.toUpperCase()
     formattedColumns.push(tempColumn)
 }
+
+
 
 const getFormattedWidgetSettings = (widget: any) => {
     const formattedSettings = {

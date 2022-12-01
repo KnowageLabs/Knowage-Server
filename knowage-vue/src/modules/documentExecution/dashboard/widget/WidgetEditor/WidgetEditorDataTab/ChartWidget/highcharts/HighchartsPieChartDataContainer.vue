@@ -33,7 +33,7 @@
             @itemSelected="setSelectedColumn"
             @itemDeleted="onColumnDelete"
         ></WidgetEditorColumnTable>
-        <TableWidgetColumnForm class="p-m-2" :widgetModel="widgetModel" :selectedColumn="selectedColumn"></TableWidgetColumnForm>
+        <HighchartsWidgetColumnForm class="p-m-2" :widgetModel="widgetModel" :selectedColumn="selectedColumn"></HighchartsWidgetColumnForm>
     </div>
 </template>
 
@@ -47,12 +47,11 @@ import Dropdown from 'primevue/dropdown'
 import commonDescriptor from '../../common/WidgetCommonDescriptor.json'
 import WidgetEditorColumnTable from '../../common/WidgetEditorColumnTable.vue'
 import WidgetEditorFilterForm from '../../common/WidgetEditorFilterForm.vue'
-import TableWidgetColumnForm from '../../TableWidget/TableWidgetColumnForm.vue'
-import deepcopy from 'deepcopy'
+import HighchartsWidgetColumnForm from './common/HighchartsWidgetColumnForm.vue'
 
 export default defineComponent({
     name: 'highcharts-widget-pie-chart-data-container',
-    components: { Dropdown, WidgetEditorColumnTable, WidgetEditorFilterForm, TableWidgetColumnForm },
+    components: { Dropdown, WidgetEditorColumnTable, WidgetEditorFilterForm, HighchartsWidgetColumnForm },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedDataset: { type: Object as PropType<IDataset | null> } },
     data() {
         return {

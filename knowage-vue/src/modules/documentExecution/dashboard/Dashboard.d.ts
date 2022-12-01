@@ -409,7 +409,8 @@ export interface IWidgetColumn {
     filter: IWidgetColumnFilter
     formula?: string
     formulaEditor?: string,
-    drillOrder?: IDrillOrderItem
+    drillOrder?: IDrillOrderItem,
+    orderType?: string
 }
 
 export interface IWidgetColumnFilter {
