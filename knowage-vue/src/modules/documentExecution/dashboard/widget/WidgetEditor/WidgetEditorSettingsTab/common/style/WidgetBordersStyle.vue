@@ -1,5 +1,6 @@
 <template>
     <div v-if="bordersStyleModel" class="p-grid p-jc-center p-ai-center p-p-4">
+        {{ bordersStyleModel }}
         <div class="p-col-12 p-px-2 p-pb-5">
             <InputSwitch v-model="bordersStyleModel.enabled" @change="bordersStyleChanged"></InputSwitch>
             <label class="kn-material-input-label p-ml-3">{{ $t('dashboard.widgetEditor.borders.enableBorders') }}</label>

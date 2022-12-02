@@ -1,5 +1,6 @@
 <template>
     <div class="color-picker-container">
+        {{ modelValue }}
         <label v-if="label" class="kn-material-input-label p-mr-2">{{ $t(label) }}</label>
         <ColorPicker class="p-ml-auto" v-model="modelValue" :inline="false" :format="'rgb'" :disabled="disabled" @change="onChange"></ColorPicker>
         <!-- <Button class="kn-button kn-button--primary" @click="colorPickerVisible = !colorPickerVisible"> {{ $t('common.close') }}</Button> -->
@@ -51,7 +52,9 @@ export default defineComponent({
         //     }
         // },
         loadValue() {
+            console.log('INITIAL VALUE: ', this.initialValue)
             this.modelValue = this.initialValue ? getRGBColorFromString(this.initialValue) : {}
+            console.log('INITIAL VALUE: ', this.modelValue)
             this.color = this.initialValue ?? ''
         },
         onChange(event: any) {

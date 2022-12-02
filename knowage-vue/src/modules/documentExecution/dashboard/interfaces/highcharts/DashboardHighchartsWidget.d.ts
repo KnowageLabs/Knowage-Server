@@ -31,12 +31,7 @@ export interface IHighchartsWidgetStyle {
 
 export interface HighchartsChartModel {
     chart: {
-        options3d: {
-            enabled: boolean,
-            alpha: any,
-            beta: any,
-            viewDistance: any
-        }
+        options3d: HighchartsOptions3D
         events: any,
         plotBackgroundColor: any,
         plotBorderWidth: any,
@@ -77,6 +72,13 @@ export interface HighchartsChartModel {
         verticalAlign: string,
         layout: string,
     }
+}
+
+export interface HighchartsOptions3D {
+    enabled: boolean,
+    alpha: number,
+    beta: number,
+    viewDistance: number
 }
 
 export interface HighchartsChartSerie {

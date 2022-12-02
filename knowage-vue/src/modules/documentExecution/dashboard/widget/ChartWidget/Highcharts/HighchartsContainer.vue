@@ -5,6 +5,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import Highcharts from 'highcharts'
+import Highcharts3D from 'highcharts/highcharts-3d'
+
+Highcharts3D(Highcharts)
 
 export default defineComponent({
     name: 'highcharts-container',
@@ -17,83 +20,64 @@ export default defineComponent({
     },
     methods: {
         createChart() {
+            // highcharts3D(chart)
             // Create the chart
             Highcharts.chart('container', {
                 chart: {
-                    plotBackgroundColor: '',
-                    plotBorderWidth: null,
-                    plotShadow: false,
-                    type: 'pie'
+                    type: 'pie',
+                    options3d: {
+                        enabled: true,
+                        alpha: 45,
+                        beta: 0
+                    } // HighchartsOptions3D
                 },
                 title: {
-                    text: 'Browser market shares in May, 2020'
+                    text: 'Global smartphone shipments market share, Q1 2022',
+                    align: 'left'
                 },
-                tooltip: {
-                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                subtitle: {
+                    text: 'Source: ' + '<a href="https://www.counterpointresearch.com/global-smartphone-share/"' + 'target="_blank">Counterpoint Research</a>',
+                    align: 'left'
                 },
                 accessibility: {
                     point: {
                         valueSuffix: '%'
                     }
                 },
-                credits: false,
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
                 plotOptions: {
                     pie: {
                         allowPointSelect: true,
                         cursor: 'pointer',
+                        depth: 35, // needed for 3D
                         dataLabels: {
                             enabled: true,
-                            format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                            format: '{point.name}'
                         }
                     }
                 },
                 series: [
                     {
-                        name: 'Brands',
-                        colorByPoint: true,
+                        type: 'pie',
+                        name: 'Share',
                         data: [
+                            ['Samsung', 23],
+                            ['Apple', 18],
                             {
-                                name: 'Chrome',
-                                y: 70.67,
+                                name: 'Xiaomi',
+                                y: 12,
                                 sliced: true,
                                 selected: true
                             },
-                            {
-                                name: 'Edge',
-                                y: 14.77
-                            },
-                            {
-                                name: 'Firefox',
-                                y: 4.86
-                            },
-                            {
-                                name: 'Safari',
-                                y: 2.63
-                            },
-                            {
-                                name: 'Internet Explorer',
-                                y: 1.53
-                            },
-                            {
-                                name: 'Opera',
-                                y: 1.4
-                            },
-                            {
-                                name: 'Sogou Explorer',
-                                y: 0.84
-                            },
-                            {
-                                name: 'QQ',
-                                y: 0.51
-                            },
-                            {
-                                name: 'Other',
-                                y: 2.6
-                            }
+                            ['Oppo*', 9],
+                            ['Vivo', 8],
+                            ['Others', 30]
                         ]
                     }
                 ]
-            } as any)
+            })
         }
     }
 })
