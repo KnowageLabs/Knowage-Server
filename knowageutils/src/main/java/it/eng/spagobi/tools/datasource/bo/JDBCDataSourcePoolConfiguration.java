@@ -208,4 +208,101 @@ public class JDBCDataSourcePoolConfiguration implements Serializable {
 		this.testWhileIdle = testWhileIdle;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((abandonedTimeout == null) ? 0 : abandonedTimeout.hashCode());
+		result = prime * result + ((logAbandoned == null) ? 0 : logAbandoned.hashCode());
+		result = prime * result + ((maxIdle == null) ? 0 : maxIdle.hashCode());
+		result = prime * result + ((maxTotal == null) ? 0 : maxTotal.hashCode());
+		result = prime * result + ((maxWait == null) ? 0 : maxWait.hashCode());
+		result = prime * result + ((minEvictableIdleTimeMillis == null) ? 0 : minEvictableIdleTimeMillis.hashCode());
+		result = prime * result + ((removeAbandonedOnBorrow == null) ? 0 : removeAbandonedOnBorrow.hashCode());
+		result = prime * result + ((removeAbandonedOnMaintenance == null) ? 0 : removeAbandonedOnMaintenance.hashCode());
+		result = prime * result + ((testOnReturn == null) ? 0 : testOnReturn.hashCode());
+		result = prime * result + ((testWhileIdle == null) ? 0 : testWhileIdle.hashCode());
+		result = prime * result + ((timeBetweenEvictionRuns == null) ? 0 : timeBetweenEvictionRuns.hashCode());
+		result = prime * result + ((validationQuery == null) ? 0 : validationQuery.hashCode());
+		result = prime * result + ((validationQueryTimeout == null) ? 0 : validationQueryTimeout.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		JDBCDataSourcePoolConfiguration other = (JDBCDataSourcePoolConfiguration) obj;
+		if (abandonedTimeout == null) {
+			if (other.abandonedTimeout != null)
+				return false;
+		} else if (!abandonedTimeout.equals(other.abandonedTimeout))
+			return false;
+		if (logAbandoned == null) {
+			if (other.logAbandoned != null)
+				return false;
+		} else if (!logAbandoned.equals(other.logAbandoned))
+			return false;
+		if (maxIdle == null) {
+			if (other.maxIdle != null)
+				return false;
+		} else if (!maxIdle.equals(other.maxIdle))
+			return false;
+		if (maxTotal == null) {
+			if (other.maxTotal != null)
+				return false;
+		} else if (!maxTotal.equals(other.maxTotal))
+			return false;
+		if (maxWait == null) {
+			if (other.maxWait != null)
+				return false;
+		} else if (!maxWait.equals(other.maxWait))
+			return false;
+		if (minEvictableIdleTimeMillis == null) {
+			if (other.minEvictableIdleTimeMillis != null)
+				return false;
+		} else if (!minEvictableIdleTimeMillis.equals(other.minEvictableIdleTimeMillis))
+			return false;
+		if (removeAbandonedOnBorrow == null) {
+			if (other.removeAbandonedOnBorrow != null)
+				return false;
+		} else if (!removeAbandonedOnBorrow.equals(other.removeAbandonedOnBorrow))
+			return false;
+		if (removeAbandonedOnMaintenance == null) {
+			if (other.removeAbandonedOnMaintenance != null)
+				return false;
+		} else if (!removeAbandonedOnMaintenance.equals(other.removeAbandonedOnMaintenance))
+			return false;
+		if (testOnReturn == null) {
+			if (other.testOnReturn != null)
+				return false;
+		} else if (!testOnReturn.equals(other.testOnReturn))
+			return false;
+		if (testWhileIdle == null) {
+			if (other.testWhileIdle != null)
+				return false;
+		} else if (!testWhileIdle.equals(other.testWhileIdle))
+			return false;
+		if (timeBetweenEvictionRuns == null) {
+			if (other.timeBetweenEvictionRuns != null)
+				return false;
+		} else if (!timeBetweenEvictionRuns.equals(other.timeBetweenEvictionRuns))
+			return false;
+		if (validationQuery == null) {
+			if (other.validationQuery != null)
+				return false;
+		} else if (!validationQuery.equals(other.validationQuery))
+			return false;
+		if (validationQueryTimeout == null) {
+			if (other.validationQueryTimeout != null)
+				return false;
+		} else if (!validationQueryTimeout.equals(other.validationQueryTimeout))
+			return false;
+		return true;
+	}
+
 }
