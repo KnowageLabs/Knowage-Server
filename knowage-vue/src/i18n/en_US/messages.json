@@ -414,6 +414,9 @@
                 "title": "Conditions"
             },
             "configuration": "Configuration",
+            "configurationOf3D": {
+                "title": "3D"
+            },
             "customHeaderTooltip": "Custom Header Tooltip",
             "customMessages": {
                 "customEmptyRowsMessage": "Custom empty rows message",
@@ -538,6 +541,9 @@
                 "title": "Interactions"
             },
             "itemsPerPage": "Items per page",
+            "legend": {
+                "title": "legend"
+            },
             "manualInput": "Manual input",
             "noSelections": {
                 "customMessage": "Custom Message",
@@ -582,6 +588,9 @@
             "selectedColumns": "Selected Columns",
             "selectorType": {
                 "title": "Selector Type"
+            },
+            "series": {
+                "title": "Series"
             },
             "settingsListOptions": {
                 "tooltip": "Tooltip"

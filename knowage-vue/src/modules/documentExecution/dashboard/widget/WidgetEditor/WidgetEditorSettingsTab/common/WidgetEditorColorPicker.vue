@@ -1,18 +1,16 @@
 <template>
     <div class="color-picker-container">
         <label v-if="label" class="kn-material-input-label p-mr-2">{{ $t(label) }}</label>
-        <!-- <ColorPicker class="p-ml-auto" v-model="modelValue" :inline="false" :format="'rgb'" :disabled="disabled" @change="onChange"></ColorPicker> -->
-        <Button class="kn-button kn-button--primary" @click="colorPickerVisible = !colorPickerVisible"> {{ $t('common.close') }}</Button>
-        <ColorPicker v-if="colorPickerVisible" theme="light" :color="color" :sucker-hide="false" :sucker-canvas="suckerCanvas" :sucker-area="suckerArea" @changeColor="changeColor" @openSucker="openSucker" />
+        <ColorPicker class="p-ml-auto" v-model="modelValue" :inline="false" :format="'rgb'" :disabled="disabled" @change="onChange"></ColorPicker>
+        <!-- <Button class="kn-button kn-button--primary" @click="colorPickerVisible = !colorPickerVisible"> {{ $t('common.close') }}</Button> -->
+        <!-- <ColorPicker v-if="colorPickerVisible" theme="light" :color="color" :sucker-hide="false" :sucker-canvas="suckerCanvas" :sucker-area="suckerArea" @changeColor="changeColor" @openSucker="openSucker" /> -->
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-// import ColorPicker from 'primevue/colorpicker'
+import ColorPicker from 'primevue/colorpicker'
 import { getRGBColorFromString } from '../../helpers/WidgetEditorHelpers'
-import { ColorPicker } from 'vue-color-kit'
-import 'vue-color-kit/dist/vue-color-kit.css'
 
 export default defineComponent({
     name: 'widget-editor-color-picker',
@@ -39,22 +37,22 @@ export default defineComponent({
     },
     mounted() {},
     methods: {
-        changeColor(color) {
-            const { r, g, b, a } = color.rgba
-            this.color = `rgba(${r}, ${g}, ${b}, ${a})`
-        },
-        openSucker(isOpen) {
-            if (isOpen) {
-                // ... canvas be created
-                // this.suckerCanvas = canvas
-                // this.suckerArea = [x1, y1, x2, y2]
-            } else {
-                // this.suckerCanvas && this.suckerCanvas.remove
-            }
-        },
+        // changeColor(color) {
+        //     const { r, g, b, a } = color.rgba
+        //     this.color = `rgba(${r}, ${g}, ${b}, ${a})`
+        // },
+        // openSucker(isOpen) {
+        //     if (isOpen) {
+        //         // ... canvas be created
+        //         // this.suckerCanvas = canvas
+        //         // this.suckerArea = [x1, y1, x2, y2]
+        //     } else {
+        //         // this.suckerCanvas && this.suckerCanvas.remove
+        //     }
+        // },
         loadValue() {
             this.modelValue = this.initialValue ? getRGBColorFromString(this.initialValue) : {}
-            // this.color = this.initialValue ?? ''
+            this.color = this.initialValue ?? ''
         },
         onChange(event: any) {
             if (this.colorPickTimer) {
