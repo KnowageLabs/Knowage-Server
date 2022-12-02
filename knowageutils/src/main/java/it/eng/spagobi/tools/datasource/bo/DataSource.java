@@ -284,7 +284,7 @@ public class DataSource implements Serializable, IDataSource {
 	 */
 	@JsonIgnore
 	private Connection getDirectConnection() throws ClassNotFoundException, SQLException {
-		return DataSourceManager.getConnection(this);
+		return DataSourceManager.getInstance().getConnection(this);
 	}
 
 	/*
