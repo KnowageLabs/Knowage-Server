@@ -17,6 +17,7 @@
             :items="columnTableItems['ATTRIBUTES'] ?? []"
             :settings="{ ...commonDescriptor.columnTableSettings, ...highchartDescriptor.pieChartcolumnTableSettings[0] }"
             chartType="highchartsPieChart"
+            @rowReorder="onColumnsReorder"
             @itemAdded="onColumnAdded"
             @itemUpdated="onColumnItemUpdate"
             @itemSelected="setSelectedColumn"
@@ -83,7 +84,8 @@ export default defineComponent({
             })
         },
         onColumnsReorder(columns: IWidgetColumn[]) {
-            this.widgetModel.columns = columns
+            this.columnTableItems['ATTRIBUTES'] = columns
+            this.widgetModel.columns = this.columnTableItems['ATTRIBUTES'].concat(this.columnTableItems['MEASURES'])
             emitter.emit('columnsReordered', this.widgetModel.columns)
             emitter.emit('refreshWidgetWithData', this.widgetModel.id)
         },
