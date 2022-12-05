@@ -25,7 +25,7 @@
             </div>
 
             <!-- DRIVERS ---------------- -->
-            <div v-for="(driver, index) of drivers" :key="index" class="p-field p-formgrid p-grid p-p-2">
+            <div v-for="(driver, index) of selectedDatasetProp.formattedDrivers" :key="index" class="p-field p-formgrid p-grid p-p-2">
                 <div class="p-field p-col-12 p-lg-4">
                     <span class="p-float-label">
                         <InputText id="label" class="kn-material-input" :disabled="true" v-model="driver.label" />
@@ -53,7 +53,7 @@
     </Accordion>
 
     <Menu id="parameterPickerMenu" ref="parameterPickerMenu" :model="menuButtons" />
-    <DatasetEditorDriverDialog :visible="driversDialogVisible" :propDriver="selectedDriver" :dashboardId="dashboardId" :selectedDatasetProp="selectedDatasetProp" :drivers="drivers" @updateDriver="onUpdateDriver" @close="onDriversDialogClose"></DatasetEditorDriverDialog>
+    <DatasetEditorDriverDialog :visible="driversDialogVisible" :propDriver="selectedDriver" :dashboardId="dashboardId" :selectedDatasetProp="selectedDatasetProp" :drivers="selectedDatasetProp.formattedDrivers" @updateDriver="onUpdateDriver" @close="onDriversDialogClose"></DatasetEditorDriverDialog>
 </template>
 
 <script lang="ts">
@@ -108,10 +108,12 @@ export default defineComponent({
     methods: {
         loadDrivers() {
             // TODO - See with Darko about loading drivers
-            this.drivers = this.selectedDatasetProp && this.selectedDatasetProp.drivers ? getFormattedDatasetDrivers(this.selectedDatasetProp) : []
+            this.selectedDatasetProp.formattedDrivers = this.selectedDatasetProp && this.selectedDatasetProp.drivers ? (getFormattedDatasetDrivers(this.selectedDatasetProp) as IDashboardDatasetDriver[]) : []
             // TODO - remove mocks
-            // this.drivers = deepcopy(mockedDriversReal)
-            this.drivers.forEach((driver: IDashboardDatasetDriver) => {
+            // this.selectedDatasetProp.formattedDrivers = deepcopy(mockedDriversReal)
+            console.log(this.selectedDatasetProp)
+            console.log(this.selectedDatasetProp.formattedDrivers)
+            this.selectedDatasetProp.formattedDrivers.forEach((driver: IDashboardDatasetDriver) => {
                 if (driver.type === 'DATE') this.setDateDisplayValue(driver)
             })
         },
@@ -156,9 +158,9 @@ export default defineComponent({
             // console.log('>>>>>>>> ON UPDATE DRIVER: ', driver)
             this.driversDialogVisible = false
             if (driver.type === 'DATE') this.setDateDisplayValue(driver)
-            await updateDataDependency(this.drivers, driver, this.documentDriversProp, this.user, this.$http)
-            const index = this.drivers.findIndex((tempDriver: IDashboardDatasetDriver) => tempDriver.urlName === driver.urlName)
-            if (index !== -1) this.drivers[index] = driver
+            await updateDataDependency(this.selectedDatasetProp.formattedDrivers, driver, this.documentDriversProp, this.user, this.$http)
+            const index = this.selectedDatasetProp.formattedDrivers.findIndex((tempDriver: IDashboardDatasetDriver) => tempDriver.urlName === driver.urlName)
+            if (index !== -1) this.selectedDatasetProp.formattedDrivers[index] = driver
         }
     }
 })

@@ -185,7 +185,7 @@ export default defineComponent({
             }
         },
         async checkForDatasetAssociations(datasetToDelete) {
-            let datasetAssociations = ((await this.getDatasetAssociations(datasetToDelete.id.dsId)) as unknown) as IAssociation[]
+            let datasetAssociations = (await this.getDatasetAssociations(datasetToDelete.id.dsId)) as unknown as IAssociation[]
             if (datasetAssociations && datasetAssociations.length > 0) this.deleteDatasetAssociations(datasetAssociations)
             this.deleteDataset(datasetToDelete.id.dsId)
         },
@@ -224,6 +224,10 @@ export default defineComponent({
                     return { name: parameter.name, type: parameter.modelType, value: parameter.value, multivalue: parameter.multivalue ?? false } as IModelDatasetParameter
                 })
             } as IModelDataset
+
+            if (datasetToFormat.formattedDrivers && datasetToFormat.formattedDrivers.length > 0) {
+                formattedDataset.drivers = datasetToFormat.formattedDrivers
+            }
 
             return formattedDataset
         }
