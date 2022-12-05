@@ -22,7 +22,7 @@
         "ag-grid-vue3": "^28.1.1",
         "axios": "0.23.0",
         "chart.js": "^3.7.0",
-        "codemirror": "5.59.4",
+        "codemirror": "5.65.10",
         "codemirror-editor-vue3": "^2.1.7",
         "cronstrue": "^2.1.0",
         "crypto-browserify": "^3.12.0",

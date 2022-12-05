@@ -20,7 +20,9 @@ package it.eng.spagobi.tools.datasource;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Semaphore;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.log4j.Logger;
@@ -32,26 +34,84 @@ import it.eng.spagobi.utilities.assertion.Assert;
  * @author Alessandro Portosa (alessandro.portosa@eng.it)
  *
  */
-public abstract class DataSourceManager {
+public class DataSourceManager {
 
 	private static Logger logger = Logger.getLogger(DataSourceManager.class);
 
-	private static ConcurrentHashMap<IDataSource, BasicDataSource> dataSources = new ConcurrentHashMap<>();
+	private static final DataSourceManager INSTANCE = new DataSourceManager();
 
-	public static Connection getConnection(IDataSource dataSource) throws SQLException {
-		if (!dataSources.contains(dataSource)) {
-			logger.debug("Datasource " + dataSource.getLabel() + " not found as connection pool...");
-			createPoolIfAbsent(dataSource);
-		}
-		return dataSources.get(dataSource).getConnection();
+	public static DataSourceManager getInstance() {
+		return INSTANCE;
 	}
 
-	private static void createPoolIfAbsent(IDataSource dataSource) {
+	private final Map<IDataSource, BasicDataSource> dataSources = new HashMap<>();
+	private final Map<Integer, Semaphore> semaphores = new HashMap<>();
+
+	public Connection getConnection(IDataSource dataSource) throws SQLException {
+
+		BasicDataSource ret = null;
+		Semaphore semaphore = null;
+
+		try {
+
+			int dsId = dataSource.getDsId();
+			String label = dataSource.getLabel();
+
+			semaphores.putIfAbsent(dsId, new Semaphore(1));
+			semaphore = semaphores.get(dsId);
+
+			semaphore.acquire();
+
+			boolean containsByKeyId = containsByIdOnly(dataSources, dataSource);
+			boolean containsByKey = dataSources.containsKey(dataSource);
+
+			if (containsByKeyId && containsByKey) {
+				logger.debug("Use old connection pool for datasource " + label);
+			} else if (containsByKeyId && !containsByKey) {
+				logger.debug("Replacing connection for datasource " + label);
+				ret = getByIdOnly(dataSources, dataSource);
+				try {
+					ret.close();
+				} catch (SQLException e) {
+					logger.warn("Non-fatal error closing old connection pool for datasource " + label);
+				}
+				createPoolIfAbsent(dataSource);
+			} else {
+				logger.warn("Creating connection pool for datasource " + label);
+				createPoolIfAbsent(dataSource);
+			}
+			ret = dataSources.get(dataSource);
+		} catch (InterruptedException e) {
+			logger.debug("Datasource " + dataSource.getLabel() + " not found as connection pool...", e);
+		} finally {
+			 semaphore.release();
+		}
+
+		return ret.getConnection();
+	}
+
+	private boolean containsByIdOnly(Map<IDataSource, BasicDataSource> dataSources, IDataSource dataSource) {
+		return dataSources.keySet()
+				.stream()
+				.anyMatch(e -> e.getDsId() == dataSource.getDsId());
+	}
+
+	private BasicDataSource getByIdOnly(Map<IDataSource, BasicDataSource> dataSources, IDataSource dataSource) {
+		return dataSources.entrySet()
+				.stream()
+				.filter(e -> e.getKey().getDsId() == dataSource.getDsId())
+				.findFirst()
+				.get()
+				.getValue();
+	}
+
+	private void createPoolIfAbsent(IDataSource dataSource) {
 		Assert.assertNotNull(dataSource, "Missing input datasource");
 		Assert.assertNotNull(dataSource.getJdbcPoolConfiguration(), "Connection pool information is not provided");
 
 		logger.debug("Creating connection pool for datasource " + dataSource.getLabel());
 		BasicDataSource pool = new BasicDataSource();
+		pool.setJmxName("org.apache.dbcp:DataSource=" + dataSource.getLabel());
 		pool.setDriverClassName(dataSource.getDriver());
 		pool.setUrl(dataSource.getUrlConnection());
 		pool.setUsername(dataSource.getUser());

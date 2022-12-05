@@ -1,12 +1,31 @@
 import { HighchartsPieChartModel } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget"
+import { HighchartsOptions3D } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
 
 export const updatePieChartModel = (oldModel: any, newModel: HighchartsPieChartModel) => {
+    console.log("----------------------------------- OLD MODEL: ", oldModel)
+    console.log("----------------------------------- NEW MODEL: ", newModel)
     newModel.chart.type = "pie"
     newModel.title = oldModel.CHART.TITLE
-    newModel.plotOptions.pie = {
-        cursor: 'pointer'
+
+    if (oldModel.CHART.show3D) {
+        newModel.plotOptions.pie.depth = oldModel.CHART.depth
+        newModel.chart.options3d = {
+            enabled: oldModel.CHART.show3D,
+            alpha: oldModel.CHART.alpha,
+            beta: oldModel.CHART.beta,
+            viewDistance: oldModel.CHART.viewDistance
+        } as HighchartsOptions3D
     }
+
+
+
+
+
+
+    newModel.plotOptions.pie.cursor = 'pointer'
     newModel.settings.colorPalette = oldModel.CHART.COLORPALETTE
+
+
 
     // CATEGORIES
     newModel.settings.categories = [oldModel.CHART.VALUES.CATEGORY.name]
@@ -16,16 +35,7 @@ export const updatePieChartModel = (oldModel: any, newModel: HighchartsPieChartM
         newModel.settings.categories.push(...categoriesArray)
     }
 
-    //3D
-    if (oldModel.CHART.show3D) {
-        newModel.plotOptions.pie.depth = oldModel.CHART.depth
-        newModel.chart.options3d = {
-            enabled: oldModel.CHART.show3D,
-            alpha: oldModel.CHART.alpha,
-            beta: oldModel.CHART.beta,
-            viewDistance: oldModel.CHART.viewDistance
-        }
-    }
+
 
     // LEGEND
     if (oldModel.CHART.LEGEND?.show) {

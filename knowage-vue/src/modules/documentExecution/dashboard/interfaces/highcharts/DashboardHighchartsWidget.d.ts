@@ -1,10 +1,11 @@
 import { IWidgetInteractions, IWidgetResponsive } from "../../Dashboard";
+import { HighchartsPieChart } from "../../widget/ChartWidget/classes/highcharts/KnowageHighchartsPieChart";
 import { HighchartsPieChartModel } from "./DashboardHighchartsPieChartWidget";
 
 export interface IHighchartsWidgetSettings {
     updatable: boolean,
     clickable: boolean,
-    chartModel: HighchartsChartModel,
+    chartModel: HighchartsPieChart | null,
     configuration: IHighchartsWidgetConfiguration,
     interactions: IWidgetInteractions,
     style: IHighchartsWidgetStyle,
@@ -57,12 +58,7 @@ export interface HighchartsChartModel {
     },
     plotOptions: {
         pie: {
-            allowPointSelect: boolean,
-            cursor: string,
-            dataLabels: {
-                enabled: boolean,
-                format: string
-            }
+
         },
         series: HighchartsChartSerie[]
     },
@@ -79,6 +75,16 @@ export interface HighchartsOptions3D {
     alpha: number,
     beta: number,
     viewDistance: number
+}
+
+export interface HighchartsChartPiePlotOptions {
+    depth: string,
+    allowPointSelect: boolean,
+    cursor: string,
+    dataLabels: {
+        enabled: boolean,
+        format: string
+    }
 }
 
 export interface HighchartsChartSerie {

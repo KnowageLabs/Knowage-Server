@@ -1,5 +1,6 @@
 import { IWidget, IWidgetColumn, IWidgetExports, IWidgetInteractions } from "../../../Dashboard"
 import { HighchartsChartModel, IHighchartsWidgetConfiguration, IHighchartsWidgetSettings } from "../../../interfaces/highcharts/DashboardHighchartsWidget"
+import { HighchartsPieChart } from "../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsPieChart"
 import * as widgetCommonDefaultValues from '../../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import { getFormattedWidgetColumn } from "../../common/WidgetColumnHelper"
 import { getFormattedInteractions } from "../../common/WidgetInteractionsHelper"
@@ -31,6 +32,8 @@ export const formatHighchartsWidget = (widget: any) => {
 
     formattedWidget.settings = getFormattedWidgetSettings(widget) as IHighchartsWidgetSettings
     getFiltersForColumns(formattedWidget, widget)
+    formattedWidget.settings.chartModel = new HighchartsPieChart(widget.content.chartTemplate, formattedWidget) // TODO - see about this
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> AAAAAAAAAAAAAAAAAAAA: ", formattedWidget.settings.chartModel.getModel())
     console.log(">>>>>>>>>>> FORMATTED WIDGET: ", widget)
     return formattedWidget
 }
@@ -61,7 +64,12 @@ const addCategoryColumns = (category: IOldModelCategory, formattedColumns: IWidg
 }
 
 const addCategoryColumn = (category: IOldModelCategory, widgetColumNameMap: any, formattedColumns: IWidgetColumn[]) => {
-    if (widgetColumNameMap[category.column]) formattedColumns.push({ ...widgetColumNameMap[category.column], drillOrder: createDrillOrder(category.drillOrder[category.column].orderColumn, category.drillOrder[category.column].orderType) })
+    if (widgetColumNameMap[category.column]) {
+        const tempColumn = { ...widgetColumNameMap[category.column] }
+        if (category.drillOrder) tempColumn.drillOrder = createDrillOrder(category.drillOrder[category.column].orderColumn, category.drillOrder[category.column].orderType)
+        formattedColumns.push(tempColumn)
+
+    }
 }
 
 const addDrillColumnsFromCategory = (category: IOldModelCategory, widgetColumNameMap: any, formattedColumns: IWidgetColumn[]) => {
@@ -70,7 +78,7 @@ const addDrillColumnsFromCategory = (category: IOldModelCategory, widgetColumNam
         const columnNameTrimmed = columnName.trim()
         if (widgetColumNameMap[columnNameTrimmed]) {
             const tempColumn = { ...widgetColumNameMap[columnNameTrimmed], drillOrder: createDrillOrder(null, '') }
-            if (category.drillOrder[columnNameTrimmed]) {
+            if (category.drillOrder && category.drillOrder[columnNameTrimmed]) {
                 tempColumn.drillOrder = createDrillOrder(category.drillOrder[columnNameTrimmed].orderColumn, category.drillOrder[columnNameTrimmed].orderType)
             }
             formattedColumns.push(tempColumn)
@@ -95,10 +103,11 @@ const addSerieColumn = (serie: any, widgetColumNameMap: any, formattedColumns: I
 
 
 const getFormattedWidgetSettings = (widget: any) => {
+
     const formattedSettings = {
         updatable: widget.updateble,
         clickable: widget.cliccable,
-        chartModel: {} as HighchartsChartModel, // TODO
+        chartModel: null, // TODO - see about this
         configuration: getFormattedConfiguration(widget),
         interactions: getFormattedInteractions(widget) as IWidgetInteractions,
         style: getFormattedStyle(widget),

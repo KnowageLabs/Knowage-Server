@@ -3,7 +3,7 @@
         <Button icon="fas fa-square-check" class="p-m-3 p-button-rounded p-button-text p-button-plain" style="position: fixed; right: 0; z-index: 999; background-color: white; box-shadow: 0px 2px 3px #ccc" @click="selectionsDialogVisible = true" />
         <Button icon="fas fa-terminal" class="p-m-3 p-button-rounded p-button-text p-button-plain" style="position: fixed; right: 40px; z-index: 999; background-color: white; box-shadow: 0px 2px 3px #ccc" @click="logStuff" />
         <!-- <ChartJSContainer style="height: 300px; width: 300px"></ChartJSContainer> -->
-        <HighchartsContainer style="height: 300px; width: 300px"></HighchartsContainer>
+        <!-- <HighchartsContainer style="height: 300px; width: 300px"></HighchartsContainer> -->
         <DashboardRenderer v-if="!loading" :model="model" :datasets="datasets" :dashboardId="dashboardId" :documentDrivers="drivers" :variables="model ? model.configuration.variables : []"></DashboardRenderer>
 
         <Transition name="editorEnter" appear>

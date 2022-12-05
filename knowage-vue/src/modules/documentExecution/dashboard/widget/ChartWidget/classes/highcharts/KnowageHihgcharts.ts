@@ -1,3 +1,4 @@
+import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard"
 import { HighchartsChartModel } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
 
 export class KnowageHighcharts {
@@ -5,34 +6,22 @@ export class KnowageHighcharts {
     cardinality: any[]
     range: any[]
 
-    constructor(model: HighchartsChartModel, range: any[] = []) {
-        this.model = model || {
-            chart: {
-                events: {
-                    load: this.loaded
-                }
-            },
-            plotOptions: {},
-            series: [],
-            settings: {},
-            credits: {
-                enabled: false
-            }
-        }
+    constructor(model: any, widgetModel: IWidget) {
+        this.model = this.createNewChartModel()
         this.cardinality = [],
             this.range = []
     }
 
-    loaded(event: any) {
+    loaded = (event: any) => {
         console.log("chart Loaded", event)
     }
 
-    initializeEventsDispatcher() {
+    initializeEventsDispatcher = () => {
         // TODO - add mitt
         if (this.model.settings.drilldown) this.model.chart.events.drilldown = this.dispatchEvent
     }
 
-    async updateCardinality(data: any) {
+    updateCardinality = async (data: any) => {
         let cardinalityObj = {}
         this.model.settings.categories.forEach(category => {
             let tempCategory = data.metaData.fields.filter((i) => i.header === category)
@@ -56,24 +45,24 @@ export class KnowageHighcharts {
     }
 
 
-    getModel() {
+    public getModel = () => {
         return this.model;
     }
 
-    getCardinality() {
+    getCardinality = () => {
         return this.range
     }
 
-    getRange() {
+    getRange = () => {
         return this.range
     }
 
-    dispatchEvent(e) {
+    dispatchEvent = (e: any) => {
         var myCustomEvent = new CustomEvent(e.type, { detail: e });
         document.dispatchEvent(myCustomEvent);
     }
 
-    valueFormatter(value: any, type: string) {
+    valueFormatter = (value: any, type: string) => {
         console.log(">>>>>>> valueFormatter - value: ", value, ', type: ', type)
         switch (type) {
             case 'float':
@@ -83,4 +72,59 @@ export class KnowageHighcharts {
         //number formatter
         //date formatter
     }
+
+    createNewChartModel = () => {
+        return {
+            chart: {
+                options3d: {
+                    enabled: false,
+                    alpha: 0,
+                    beta: 0,
+                    viewDistance: 0
+                },
+                events: {},
+                plotBackgroundColor: '',
+                plotBorderWidth: '',
+                plotShadow: false,
+                type: ''
+            },
+            plotOptions: {
+                pie: {
+                    depth: 0,
+                    allowPointSelect: false,
+                    cursor: '',
+                    dataLabels: {
+                        enabled: false,
+                        format: ''
+                    }
+                }, // move to PIE CHART
+                series: []
+            },
+            series: [],
+            settings: {},
+            credits: {
+                enabled: false
+            },
+            title: {
+                text: ''
+            },
+            tooltip: {
+                pointFormat: ''
+            },
+            accessibility: {
+                point: {
+                    valueSuffix: ''
+                }
+            },
+
+            legend: {
+                enabled: false,
+                align: '',
+                verticalAlign: '',
+                layout: '',
+            }
+        }
+
+    }
+
 }

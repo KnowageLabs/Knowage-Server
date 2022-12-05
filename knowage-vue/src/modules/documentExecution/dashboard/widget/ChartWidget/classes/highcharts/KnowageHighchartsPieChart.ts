@@ -1,17 +1,24 @@
-import { HighchartsPieChartModel } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget"
+import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard"
 import { KnowageHighcharts } from "./KnowageHihgcharts"
 import { updatePieChartModel } from "./updater/HighchartsPieChartUpdater"
 
 export class HighchartsPieChart extends KnowageHighcharts {
-    constructor(model: HighchartsPieChartModel, range: any[]) {
-        super(model, range)
+    constructor(model: any, widgetModel: IWidget) {
+        super(model, widgetModel)
+        if (model && model.CHART) this.updateModel(model)
+        else this.model = model
     }
 
-    updateModel(oldModel: any) {
-        this.model = updatePieChartModel(oldModel, this.model)
+    updateModel = (oldModel: any) => {
+        console.log(" !!!!!!!!!!!!!!!!!!!!! updateModel 2 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        updatePieChartModel(oldModel, this.model)
     }
 
-    setData(data: any, drillDownLevel = 0) {
+    public getModel = () => {
+        return this.model;
+    }
+
+    setData = (data: any, drillDownLevel = 0) => {
         const categoryColumnName = data.metaData.fields.filter((i) => i.header === this.model.settings.categories[drillDownLevel])[0].name
         this.model.series.map((item, serieIndex) => {
             const dataColumn = item.groupingFunction ? item.name + '_' + item.groupingFunction : item.name
