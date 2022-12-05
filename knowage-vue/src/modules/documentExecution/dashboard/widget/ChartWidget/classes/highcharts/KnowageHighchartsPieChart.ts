@@ -1,14 +1,19 @@
-import { HighchartsPieChartModel } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget"
+import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard"
 import { KnowageHighcharts } from "./KnowageHihgcharts"
 import { updatePieChartModel } from "./updater/HighchartsPieChartUpdater"
 
 export class HighchartsPieChart extends KnowageHighcharts {
-    constructor(model: HighchartsPieChartModel, range: any[]) {
-        super(model, range)
+    constructor(model: any, widgetModel: IWidget) {
+        super(model, widgetModel)
+
     }
 
     updateModel(oldModel: any) {
-        this.model = updatePieChartModel(oldModel, this.model)
+        updatePieChartModel(oldModel, this.model)
+    }
+
+    public getModel() {
+        return this.model;
     }
 
     setData(data: any, drillDownLevel = 0) {

@@ -1,3 +1,4 @@
+import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard"
 import { HighchartsChartModel } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
 
 export class KnowageHighcharts {
@@ -5,26 +6,20 @@ export class KnowageHighcharts {
     cardinality: any[]
     range: any[]
 
-    constructor(model: HighchartsChartModel, range: any[] = []) {
-        this.model = model || {
-            chart: {
-                events: {
-                    load: this.loaded
-                }
-            },
-            plotOptions: {},
-            series: [],
-            settings: {},
-            credits: {
-                enabled: false
-            }
-        }
+    constructor(model: any, widgetModel: IWidget) {
+        this.model = this.createNewChartModel()
+        if (model && model.CHART) this.updateModel(model)
+        else this.model = model
         this.cardinality = [],
             this.range = []
     }
 
     loaded(event: any) {
         console.log("chart Loaded", event)
+    }
+
+    updateModel(oldModel: IWidget) {
+
     }
 
     initializeEventsDispatcher() {
@@ -56,7 +51,7 @@ export class KnowageHighcharts {
     }
 
 
-    getModel() {
+    public getModel() {
         return this.model;
     }
 
@@ -83,4 +78,59 @@ export class KnowageHighcharts {
         //number formatter
         //date formatter
     }
+
+    createNewChartModel() {
+        return {
+            chart: {
+                options3d: {
+                    enabled: false,
+                    alpha: 0,
+                    beta: 0,
+                    viewDistance: 0
+                },
+                events: {},
+                plotBackgroundColor: '',
+                plotBorderWidth: '',
+                plotShadow: false,
+                type: ''
+            },
+            plotOptions: {
+                pie: {
+                    depth: 0,
+                    allowPointSelect: false,
+                    cursor: '',
+                    dataLabels: {
+                        enabled: false,
+                        format: ''
+                    }
+                }, // move to PIE CHART
+                series: []
+            },
+            series: [],
+            settings: {},
+            credits: {
+                enabled: false
+            },
+            title: {
+                text: ''
+            },
+            tooltip: {
+                pointFormat: ''
+            },
+            accessibility: {
+                point: {
+                    valueSuffix: ''
+                }
+            },
+
+            legend: {
+                enabled: false,
+                align: '',
+                verticalAlign: '',
+                layout: '',
+            }
+        }
+
+    }
+
 }
