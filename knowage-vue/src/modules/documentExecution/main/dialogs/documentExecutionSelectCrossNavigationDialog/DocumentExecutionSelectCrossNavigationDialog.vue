@@ -12,7 +12,7 @@
             <template #option="slotProps">
                 <div class="kn-list-item" data-test="list-item">
                     <div class="kn-list-item-text">
-                        <span>{{ slotProps.option.crossText }}</span>
+                        <span>{{ slotProps.option.crossName ?? slotProps.option.crossText }}</span>
                     </div>
                 </div>
             </template>
