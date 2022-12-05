@@ -408,8 +408,8 @@ export interface IWidgetColumn {
     aggregation: string
     filter: IWidgetColumnFilter
     formula?: string
-    formulaEditor?: string,
-    drillOrder?: IDrillOrderItem,
+    formulaEditor?: string
+    drillOrder?: IDrillOrderItem
     orderType?: string
 }
 
@@ -431,18 +431,18 @@ export interface IWidgetEditorDataset {
 }
 
 export interface IDashboardDatasetDriver {
-    urlName: string,
-    parameterValue: { value: string | number | Date, description: string }[]
-    type: string,
-    defaultValue: { value: string, description: string }[] | null,
-    label: string,
-    multivalue: boolean,
-    typeCode: string,
+    urlName: string
+    parameterValue: { value: string | number | Date; description: string }[]
+    type: string
+    defaultValue: { value: string; description: string }[] | null
+    label: string
+    multivalue: boolean
+    typeCode: string
     selectionType: string
-    options?: { value: string, description: string }[],
-    displayDate?: string,
-    allowInternalNodeSelection?: boolean,
-    dataDependencies?: any,
+    options?: { value: string; description: string }[]
+    displayDate?: string
+    allowInternalNodeSelection?: boolean
+    dataDependencies?: any
     dataDependsOnParameters?: IDashboardDatasetDriver[]
     dataDependentParameters?: IDashboardDatasetDriver[]
 }
@@ -563,7 +563,7 @@ interface IAssociationField {
 
 export interface IModelDataset {
     id: number
-    dsLabel?: string
+    dsLabel: string
     cache: boolean
     indexes: string[]
     parameters: IModelDatasetParameter[]
@@ -646,7 +646,7 @@ export interface IDashboardDriver {
     type: string
     multivalue: boolean
     value: string
-    urlName: string,
+    urlName: string
 }
 
 export interface IGalleryItem {
