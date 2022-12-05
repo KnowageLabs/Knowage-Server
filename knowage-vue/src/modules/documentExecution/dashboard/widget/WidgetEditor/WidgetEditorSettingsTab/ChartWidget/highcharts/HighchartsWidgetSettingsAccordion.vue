@@ -10,6 +10,7 @@
 
                 <Highcharts3DConfiguration v-if="accordion.type === 'ConfigurationOf3D'" :widgetModel="widgetModel"></Highcharts3DConfiguration>
                 <HighchartsNoDataMessageConfiguration v-else-if="accordion.type === 'NoDataMessageConfiguration'" :widgetModel="widgetModel"></HighchartsNoDataMessageConfiguration>
+                <HighchartsAccessibilitySettings v-else-if="accordion.type === 'AccessibilitySettings'" :widgetModel="widgetModel"></HighchartsAccessibilitySettings>
                 <WidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
                 <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
                 <WidgetRowsStyle v-else-if="accordion.type === 'RowsStyle'" :widgetModel="widgetModel"></WidgetRowsStyle>
@@ -46,6 +47,7 @@ import WidgetPaddingStyle from '../../common/style/WidgetPaddingStyle.vue'
 import WidgetBackgroundColorStyle from '../../common/style/WidgetBackgroundColorStyle.vue'
 import Highcharts3DConfiguration from '../highcharts/configuration/Highcharts3DConfiguration.vue'
 import HighchartsNoDataMessageConfiguration from '../highcharts/configuration/HighchartsNoDataMessageConfiguration.vue'
+import HighchartsAccessibilitySettings from '../highcharts/accessibility/HighchartsAccessibilitySettings.vue'
 
 export default defineComponent({
     name: 'hihgcharts-widget-configuration-container',
@@ -64,7 +66,8 @@ export default defineComponent({
         WidgetInteractionsLinks,
         WidgetPreview,
         Highcharts3DConfiguration,
-        HighchartsNoDataMessageConfiguration
+        HighchartsNoDataMessageConfiguration,
+        HighchartsAccessibilitySettings
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

@@ -9,8 +9,10 @@ import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { IWidget } from '../../../Dashboard'
 import Highcharts from 'highcharts'
 import Highcharts3D from 'highcharts/highcharts-3d'
+import Accessibility from 'highcharts/modules/accessibility'
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display'
 
+Accessibility(Highcharts)
 NoDataToDisplay(Highcharts)
 Highcharts3D(Highcharts)
 

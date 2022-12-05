@@ -55,11 +55,7 @@ export interface HighchartsChartModel {
     tooltip: {
         pointFormat: string
     },
-    accessibility: {
-        point: {
-            valueSuffix: string
-        }
-    },
+    accessibility: HighchartsAccessibilitySettings,
     plotOptions: {
         pie: {
             depth: string
@@ -95,6 +91,16 @@ export interface HighchartsNoDataConfiguration {
         backgroundColor: string
     }
 }
+
+export interface HighchartsAccessibilitySettings {
+    enabled: boolean,
+    description: string,
+    keyboardNavigation: {
+        enabled: boolean,
+        order: string[]
+    }
+}
+
 
 
 export interface HighchartsChartPiePlotOptions {

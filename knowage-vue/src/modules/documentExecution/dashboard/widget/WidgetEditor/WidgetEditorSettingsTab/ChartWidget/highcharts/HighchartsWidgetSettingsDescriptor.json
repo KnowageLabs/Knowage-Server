@@ -17,6 +17,32 @@
             "value": "right"
         }
     ],
+    "keyboardNavigationOrderOptions": [
+        {
+            "label": "dashboard.widgetEditor.accessibility.keyboardNavigationOrderOptions.series",
+            "value": "series"
+        },
+        {
+            "label": "dashboard.widgetEditor.accessibility.keyboardNavigationOrderOptions.zoom",
+            "value": "zoom"
+        },
+        {
+            "label": "dashboard.widgetEditor.accessibility.keyboardNavigationOrderOptions.rangeSelector",
+            "value": "rangeSelector"
+        },
+        {
+            "label": "dashboard.widgetEditor.accessibility.keyboardNavigationOrderOptions.chartMenu",
+            "value": "chartMenu"
+        },
+        {
+            "label": "dashboard.widgetEditor.accessibility.keyboardNavigationOrderOptions.legend",
+            "value": "legend"
+        },
+        {
+            "label": "dashboard.widgetEditor.accessibility.keyboardNavigationOrderOptions.container",
+            "value": "container"
+        }
+    ],
     "noDataToolbarStyleOptions": [
         {
             "type": "font-weight"
@@ -35,6 +61,12 @@
         }
     ],
     "settings": {
+        "Accessibility": [
+            {
+                "title": "dashboard.widgetEditor.accessibility.title",
+                "type": "AccessibilitySettings"
+            }
+        ],
         "Configuration": [
             {
                 "title": "dashboard.widgetEditor.configurationOf3D.title",
@@ -101,6 +133,11 @@
             "icon": "fa fa-cogs",
             "label": "dashboard.widgetEditor.configuration",
             "value": "Configuration"
+        },
+        {
+            "icon": "pi pi-table",
+            "label": "dashboard.widgetEditor.accessibility.title",
+            "value": "Accessibility"
         },
         {
             "icon": "fa fa-paint-brush",

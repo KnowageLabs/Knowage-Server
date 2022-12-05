@@ -76,6 +76,14 @@ export class KnowageHighcharts {
     createNewChartModel = () => {
         return {
             lang: { noData: '' },
+            accessibility: {
+                enabled: false,
+                description: '',
+                keyboardNavigation: {
+                    enabled: false,
+                    order: []
+                }
+            },
             noData: {
                 position: {
                     align: '',
@@ -125,12 +133,6 @@ export class KnowageHighcharts {
             tooltip: {
                 pointFormat: ''
             },
-            accessibility: {
-                point: {
-                    valueSuffix: ''
-                }
-            },
-
             legend: {
                 enabled: false,
                 align: '',
