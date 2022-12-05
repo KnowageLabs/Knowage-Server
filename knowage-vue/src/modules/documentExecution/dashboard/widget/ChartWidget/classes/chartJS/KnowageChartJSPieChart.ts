@@ -1,4 +1,4 @@
-import { ChartJSPieChartModel } from "@/modules/documentExecution/dashboard/interfaces/chartJS/DashboardChartJSPieChartWidget"
+import { ChartJSPieChartModel } from "../../../../interfaces/chartJS/DashboardChartJSPieChartWidget";
 import { KnowageChartJS } from "./KnowageChartJS"
 
 export class ChartJsPieChart extends KnowageChartJS {
@@ -8,11 +8,11 @@ export class ChartJsPieChart extends KnowageChartJS {
         this.model.type = 'pie'
     }
 
-    updateModel(oldModel: any) {
+    updateModel = (oldModel: any) => {
         // chartJsPieChartUpdater(oldModel, this.model)
     }
 
-    setData(data: any) {
+    setData = (data: any) => {
         this.model.data = {
             datasets: [{
                 label: this.model.settings.dimensions[0],

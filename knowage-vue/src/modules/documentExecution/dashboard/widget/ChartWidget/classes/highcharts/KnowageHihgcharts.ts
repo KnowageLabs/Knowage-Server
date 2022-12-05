@@ -8,26 +8,20 @@ export class KnowageHighcharts {
 
     constructor(model: any, widgetModel: IWidget) {
         this.model = this.createNewChartModel()
-        if (model && model.CHART) this.updateModel(model)
-        else this.model = model
         this.cardinality = [],
             this.range = []
     }
 
-    loaded(event: any) {
+    loaded = (event: any) => {
         console.log("chart Loaded", event)
     }
 
-    updateModel(oldModel: IWidget) {
-
-    }
-
-    initializeEventsDispatcher() {
+    initializeEventsDispatcher = () => {
         // TODO - add mitt
         if (this.model.settings.drilldown) this.model.chart.events.drilldown = this.dispatchEvent
     }
 
-    async updateCardinality(data: any) {
+    updateCardinality = async (data: any) => {
         let cardinalityObj = {}
         this.model.settings.categories.forEach(category => {
             let tempCategory = data.metaData.fields.filter((i) => i.header === category)
@@ -55,20 +49,20 @@ export class KnowageHighcharts {
         return this.model;
     }
 
-    getCardinality() {
+    getCardinality = () => {
         return this.range
     }
 
-    getRange() {
+    getRange = () => {
         return this.range
     }
 
-    dispatchEvent(e) {
+    dispatchEvent = (e: any) => {
         var myCustomEvent = new CustomEvent(e.type, { detail: e });
         document.dispatchEvent(myCustomEvent);
     }
 
-    valueFormatter(value: any, type: string) {
+    valueFormatter = (value: any, type: string) => {
         console.log(">>>>>>> valueFormatter - value: ", value, ', type: ', type)
         switch (type) {
             case 'float':
@@ -79,7 +73,7 @@ export class KnowageHighcharts {
         //date formatter
     }
 
-    createNewChartModel() {
+    createNewChartModel = () => {
         return {
             chart: {
                 options3d: {

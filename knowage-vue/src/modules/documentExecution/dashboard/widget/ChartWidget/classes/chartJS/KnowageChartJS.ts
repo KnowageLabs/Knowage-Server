@@ -8,7 +8,7 @@ export class KnowageChartJS {
             settings: {}
         }
     }
-    dispatchEvent(e: any) {
+    dispatchEvent = (e: any) => {
         // TODO - add mitt ???
         const myCustomEvent = new CustomEvent(e.type, { detail: e });
         document.dispatchEvent(myCustomEvent);

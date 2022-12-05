@@ -29,20 +29,8 @@ export default defineComponent({
     },
     methods: {
         loadModel() {
-            class Greeter {
-                public greet() {
-                    console.log('hi!')
-                }
-            }
-            const g = new Greeter()
-            g.greet()
-            console.log('>>>>>>>> blaaaa: ', typeof g)
-            console.log('>>>>>>>> widgetModel: ', this.widgetModel)
-            console.log('>>>>>>>> typeof: ', typeof this.widgetModel.settings.chartModel)
             const object = this.widgetModel.settings.chartModel
-            console.log('>>>>>>>> object', object)
-            const test = new HighchartsPieChart({}, this.widgetModel)
-            console.log('>>>>>>>> TEEEEEEEEEEEEEEEEEEEEEEST', test)
+            console.log('>>>>>>>> object', object.getModel())
         }
     }
 })

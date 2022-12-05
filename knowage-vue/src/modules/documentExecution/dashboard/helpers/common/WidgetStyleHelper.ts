@@ -47,7 +47,7 @@ export const getFormattedBorderStyle = (widget: any) => {
 }
 
 export const getFormattedShadowsStyle = (widget: any) => {
-    if (!widget.style || !widget.style.shadow["box-shadow"]) return widgetCommonDefaultValues.getDefaultShadowsStyle()
+    if (!widget.style || !widget.style.shadow || !widget.style.shadow["box-shadow"]) return widgetCommonDefaultValues.getDefaultShadowsStyle()
 
     return {
         enabled: widget.style.shadows || widget.style.shadow["box-shadow"] !== '',

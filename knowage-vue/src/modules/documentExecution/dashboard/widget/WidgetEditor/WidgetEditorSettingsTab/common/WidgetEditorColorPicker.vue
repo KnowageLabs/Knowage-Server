@@ -52,9 +52,7 @@ export default defineComponent({
         //     }
         // },
         loadValue() {
-            console.log('INITIAL VALUE: ', this.initialValue)
             this.modelValue = this.initialValue ? getRGBColorFromString(this.initialValue) : {}
-            console.log('INITIAL VALUE: ', this.modelValue)
             this.color = this.initialValue ?? ''
         },
         onChange(event: any) {
