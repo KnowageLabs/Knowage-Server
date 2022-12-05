@@ -10,10 +10,14 @@ export async function getCorrectRolesForExecution(document, dataset?) {
 
     if (dataset) {
         typeCode = ''
-        if (dataset.type === 'businessModel' || dataset.dsTypeCd === 'Qbe') {
+        if (dataset.type === 'businessModel') {
             typeCode = 'DATAMART'
         } else if (dataset.dsTypeCd) {
-            typeCode = 'DATASET'
+            if (dataset.dsTypeCd === 'Qbe') {
+                typeCode = 'QBE_DATASET'
+            } else {
+                typeCode = 'DATASET'
+            }
         }
 
         if (dataset.id) {
