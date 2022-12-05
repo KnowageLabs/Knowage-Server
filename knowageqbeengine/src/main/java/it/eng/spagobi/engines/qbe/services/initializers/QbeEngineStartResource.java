@@ -19,6 +19,7 @@
 package it.eng.spagobi.engines.qbe.services.initializers;
 
 import java.util.Base64;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -34,24 +35,21 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang3.StringUtils;
-import org.json.JSONObject;
-
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.QbeEngine;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.api.AbstractQbeEngineResource;
-import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
-import it.eng.spagobi.engines.qbe.registry.serializer.RegistryConfigurationJSONSerializer;
 import it.eng.spagobi.engines.qbe.template.QbeTemplateParseException;
 import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.proxy.ContentServiceProxy;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.services.proxy.DataSourceServiceProxy;
 import it.eng.spagobi.services.proxy.MetamodelServiceProxy;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.ParametersDecoder;
@@ -59,7 +57,6 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 @Path("/start-qbe")
 public class QbeEngineStartResource extends AbstractQbeEngineResource {
@@ -90,7 +87,8 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response startQbe(@QueryParam("datamart") String datamart, @QueryParam("drivers") String drivers, @QueryParam("registryId") String registryId) {
+	public Response startQbe(@QueryParam("datamart") String datamart, @QueryParam("drivers") String drivers, @QueryParam("registryId") String registryId,
+			@QueryParam("sourceDatasetLabel") String sourceDatasetLabel) {
 
 		logger.debug("IN");
 
@@ -98,82 +96,16 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 
 		try {
 
-			try {
-				SourceBean templateBean = null;
-				if (StringUtils.isNotBlank(registryId)) {
-					documentId = registryId;
-					templateBean = getRegistryTemplateAsSourceBean(registryId);
-				} else if (!StringUtils.isBlank(datamart)) {
-					documentId = null;
-					templateBean = getTemplateAsSourceBean(datamart);
-				}
-
-				Map env = getEnv();
-				logger.debug("Creating engine instance ...");
-				env.put("DRIVERS", decodeParameterValue(drivers));
-
-				qbeEngineInstance = QbeEngine.createInstance(templateBean, env);
-
-			} catch (Throwable t) {
-				SpagoBIEngineStartupException serviceException;
-				Throwable rootException = t;
-				while (rootException.getCause() != null) {
-					rootException = rootException.getCause();
-				}
-				String str = rootException.getMessage() != null ? rootException.getMessage() : rootException.getClass().getName();
-				serviceException = new SpagoBIEngineStartupException(ENGINE_NAME, str, t);
-
-				if (rootException instanceof QbeTemplateParseException) {
-					QbeTemplateParseException e = (QbeTemplateParseException) rootException;
-					serviceException.setDescription(e.getDescription());
-					serviceException.setHints(e.getHints());
-				}
-
-				throw serviceException;
-			}
-
-			RegistryConfiguration registryConf = qbeEngineInstance.getRegistryConfiguration();
-			if (registryConf != null) {
-				if (!getUserProfile().isAbleToExecuteAction(SpagoBIConstants.REGISTRY_DATA_ENTRY)) {
-					throw new SpagoBIRuntimeException("It is not allowed to use the Registry document.");
-				}
-				logger.debug("Registry document");
-				// getServiceResponse().setAttribute("DOCTYPE", "REGISTRY");
-				Assert.assertNotNull(registryConf, "Registry configuration not found, check document's template");
-				RegistryConfigurationJSONSerializer serializer = new RegistryConfigurationJSONSerializer();
-				JSONObject registryConfJSON = serializer.serialize(registryConf);
-				setAttribute(REGISTRY_CONFIGURATION, registryConfJSON);
+			if (StringUtilities.isNotEmpty(datamart)) {
+				logger.debug("Starting qbe from datamart [" + datamart + "]");
+				qbeEngineInstance = getEngineInstancefromDatamart(datamart, drivers);
+			} else if (StringUtilities.isNotEmpty(sourceDatasetLabel)) {
+				logger.debug("Starting qbe from dataset [" + sourceDatasetLabel + "]");
+				qbeEngineInstance = getEngineInstancefromDataset(sourceDatasetLabel);
 			} else {
-				logger.debug("Qbe document");
-//				getServiceResponse().setAttribute("DOCTYPE", "QBE");
+				throw new SpagoBIEngineStartupException(ENGINE_NAME, "Cannot start QbE: neither datamart nor dataset are specified");
 			}
-
-//			qbeEngineInstance.setAnalysisMetadata(getAnalysisMetadata());
-//			if (getAnalysisStateRowData() != null) {
-//				logger.debug("Loading subobject [" + qbeEngineInstance.getAnalysisMetadata().getName() + "] ...");
-//				try {
-//					analysisState = new QbeEngineAnalysisState(qbeEngineInstance.getDataSource());
-//					analysisState.load(getAnalysisStateRowData());
-//					qbeEngineInstance.setAnalysisState(analysisState);
-//				} catch (Throwable t) {
-//					SpagoBIEngineStartupException serviceException;
-//					String msg = "Impossible load subobject [" + qbeEngineInstance.getAnalysisMetadata().getName() + "].";
-//					Throwable rootException = t;
-//					while (rootException.getCause() != null) {
-//						rootException = rootException.getCause();
-//					}
-//					String str = rootException.getMessage() != null ? rootException.getMessage() : rootException.getClass().getName();
-//					msg += "\nThe root cause of the error is: " + str;
-//					serviceException = new SpagoBIEngineStartupException(ENGINE_NAME, msg, t);
-//
-//					throw serviceException;
-//				}
-//				logger.debug("Subobject [" + qbeEngineInstance.getAnalysisMetadata().getName() + "] succesfully loaded");
-//			}
-
-			// setAttributeInSession(ENGINE_INSTANCE, qbeEngineInstance);
-			setAttribute(ENGINE_INSTANCE, qbeEngineInstance);
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			SpagoBIEngineStartupException serviceException = null;
 
 			if (e instanceof SpagoBIEngineStartupException) {
@@ -196,6 +128,71 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 		}
 
 		return Response.ok().build();
+	}
+
+	protected QbeEngineInstance getEngineInstancefromDataset(String sourceDatasetLabel) {
+
+		QbeEngineInstance qbeEngineInstance = null;
+
+		IDataSet dataset = this.getDataSetServiceProxy().getDataSetByLabel(sourceDatasetLabel);
+		if (!dataset.isPersisted() && !dataset.isFlatDataset() && !dataset.getDsType().equals("SbiQueryDataSet")
+				&& !dataset.getDsType().equals("SbiFileDataSet")) {
+			logger.error("Dataset [" + sourceDatasetLabel + "] is not persisted. Cannot start qbe.");
+			throw new SpagoBIEngineStartupException(ENGINE_NAME, "Cannot start QbE from a non-persisted dataset");
+		}
+
+		Map env = getEnv();
+
+		env.put(EngineConstants.ENV_DATASETS, Collections.singletonList(dataset));
+
+		logger.debug("Creating engine instance ...");
+		try {
+			qbeEngineInstance = QbeEngine.createInstance(null, env);
+		} catch (Exception t) {
+			SpagoBIEngineStartupException serviceException;
+			Throwable rootException = t;
+			while (rootException.getCause() != null) {
+				rootException = rootException.getCause();
+			}
+			String str = rootException.getMessage() != null ? rootException.getMessage() : rootException.getClass().getName();
+			serviceException = new SpagoBIEngineStartupException(ENGINE_NAME, str, t);
+
+			throw serviceException;
+		}
+		logger.debug("Engine instance succesfully created");
+		return qbeEngineInstance;
+	}
+
+	protected QbeEngineInstance getEngineInstancefromDatamart(String datamart, String drivers) {
+
+		QbeEngineInstance qbeEngineInstance = null;
+
+		SourceBean templateBean = getTemplateAsSourceBean(datamart);
+		logger.debug("Template: " + templateBean);
+		logger.debug("Creating engine instance ...");
+		Map env = getEnv();
+		env.put("DRIVERS", decodeParameterValue(drivers));
+		try {
+			qbeEngineInstance = QbeEngine.createInstance(templateBean, env);
+		} catch (Throwable t) {
+			SpagoBIEngineStartupException serviceException;
+			Throwable rootException = t;
+			while (rootException.getCause() != null) {
+				rootException = rootException.getCause();
+			}
+			String str = rootException.getMessage() != null ? rootException.getMessage() : rootException.getClass().getName();
+			serviceException = new SpagoBIEngineStartupException(ENGINE_NAME, str, t);
+
+			if (rootException instanceof QbeTemplateParseException) {
+				QbeTemplateParseException e = (QbeTemplateParseException) rootException;
+				serviceException.setDescription(e.getDescription());
+				serviceException.setHints(e.getHints());
+			}
+
+			throw serviceException;
+		}
+		logger.debug("Engine instance succesfully created");
+		return qbeEngineInstance;
 	}
 
 	private SourceBean getTemplateAsSourceBean(String modelName) {

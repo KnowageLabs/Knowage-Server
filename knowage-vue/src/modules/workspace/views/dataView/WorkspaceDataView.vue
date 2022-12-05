@@ -539,7 +539,7 @@ export default defineComponent({
             { key: '6', label: this.$t('workspace.myData.cloneDataset'), icon: 'fas fa-clone', command: () => this.cloneDataset(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd == 'Qbe' },
 
             { key: '9', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner },
-            { key: '10', label: this.$t('workspace.myModels.openInQBE'), icon: 'fas fa-pen', command: () => this.openQBEUponDataset(clickedDocument), visible: this.selectedDataset?.isPersisted }
+            { key: '10', label: this.$t('workspace.myModels.openInQBE'), icon: 'fas fa-pen', command: () => this.openQBEUponDataset(clickedDocument)}
         )
 
         if (this.user?.functionalities.includes('DataPreparation')) {

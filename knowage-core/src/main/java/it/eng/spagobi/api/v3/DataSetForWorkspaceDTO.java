@@ -69,9 +69,7 @@ class DataSetForWorkspaceDTO extends AbstractDataSetDTO {
 					boolean multiValue = "true".equalsIgnoreCase((String) row.getAttribute("MULTIVALUE"));
 
 					try {
-						Object defaultValueAsObject = ParameterManagerFactory.getInstance()
-							.defaultManager()
-							.fromBeToFe(type, defaultValue, multiValue);
+						Object defaultValueAsObject = ParameterManagerFactory.getInstance().defaultManager().fromBeToFe(type, defaultValue, multiValue);
 
 						params.add(new DataSetParameterDTO(name, type, defaultValueAsObject, multiValue));
 					} catch (JSONException e) {
@@ -145,6 +143,10 @@ class DataSetForWorkspaceDTO extends AbstractDataSetDTO {
 
 	public ContainerNode<?> getMeta() throws SourceBeanException, JSONException {
 		return meta;
+	}
+
+	public boolean getIsPersisted() {
+		return dataset.isPersisted();
 	}
 
 }
