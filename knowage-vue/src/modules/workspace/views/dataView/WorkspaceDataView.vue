@@ -82,7 +82,7 @@
         :visible="showDetailSidebar"
         :viewType="'dataset'"
         :document="selectedDataset"
-        :isAvroReady="isAvroReady(selectedDataset.id)"
+        :isAvroReady="isAvroReady(selectedDataset?.id)"
         :datasetCategories="datasetCategories"
         @previewDataset="previewDataset"
         @editDataset="editDataset"
@@ -644,10 +644,12 @@ export default defineComponent({
         },
         openDatasetInQBE(dataset: any) {
             this.selectedQbeDataset = dataset
+            this.selectedDataset = null
             this.qbeVisible = true
         },
         openQBEUponDataset(dataset: any) {
             this.selectedDataset = dataset
+            this.selectedQbeDataset = null
             this.qbeVisible = true
         },
         async downloadDatasetFile(dataset: any) {
@@ -897,7 +899,7 @@ export default defineComponent({
     }
 })
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 .model-search {
     flex: 0.3;
 }
@@ -910,5 +912,10 @@ export default defineComponent({
     height: 100%;
     top: 0;
     left: 0;
+}
+
+#optionsMenu .p-submenu-list {
+    right: 100% !important;
+    left: unset !important;
 }
 </style>

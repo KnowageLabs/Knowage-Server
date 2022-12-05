@@ -485,13 +485,14 @@ export default defineComponent({
         async loadQBE() {
             this.loadCalcFieldFunctions()
             await this.initializeQBE()
-            if (!this.sourceDataset) {
+            if (this.sourceDataset) {
+                /* TODO Handle sourceDataset */
+            } else {
                 await this.loadCustomizedDatasetFunctions()
-            }
-            await this.loadEntities()
-
-            if (!this.dataset?.dataSourceLabel) {
-                await this.executeQBEQuery(false)
+                await this.loadEntities()
+                if (!this.dataset?.dataSourceLabel) {
+                    await this.executeQBEQuery(false)
+                }
             }
         },
         loadCalcFieldFunctions() {
