@@ -1,24 +1,42 @@
 <template>
+    {{ 'HIIIIIIIIIIIIGHCHARTS' }}
     <div id="container" style="width:100%; height:400px;"></div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import Highcharts from 'highcharts'
 import Highcharts3D from 'highcharts/highcharts-3d'
+import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
+import { IWidget } from '../../../Dashboard'
 
 Highcharts3D(Highcharts)
 
 export default defineComponent({
     name: 'highcharts-container',
     components: {},
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {}
     },
     mounted() {
+        this.setEventListeners()
         this.createChart()
     },
+    unmounted() {
+        this.removeEventListeners()
+    },
     methods: {
+        setEventListeners() {
+            emitter.on('refreshChart', this.onRefreshChart)
+        },
+        removeEventListeners() {
+            emitter.off('refreshChart', this.onRefreshChart)
+        },
+        onRefreshChart() {
+            const tempModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
+            console.log('>>>>>>>>>> refreshChart: ', tempModel)
+        },
         createChart() {
             // highcharts3D(chart)
             // Create the chart

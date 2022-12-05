@@ -1,4 +1,5 @@
 import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard"
+import { HighchartsPieChartModel } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget"
 import { KnowageHighcharts } from "./KnowageHihgcharts"
 import { updatePieChartModel } from "./updater/HighchartsPieChartUpdater"
 
@@ -10,12 +11,16 @@ export class HighchartsPieChart extends KnowageHighcharts {
     }
 
     updateModel = (oldModel: any) => {
-        console.log(" !!!!!!!!!!!!!!!!!!!!! updateModel 2 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        console.log(" !!!!!!!!!!!!!!!!!!!!! updateModel !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         updatePieChartModel(oldModel, this.model)
     }
 
-    public getModel = () => {
+    getModel = () => {
         return this.model;
+    }
+
+    setModel = (model: HighchartsPieChartModel) => {
+        this.model = model
     }
 
     setData = (data: any, drillDownLevel = 0) => {

@@ -26,6 +26,8 @@
                     :drivers="drivers"
                     :variables="variables"
                 ></WebComponentContainer>
+                <!-- TODO - Add chart conditions -->
+                <HighchartsContainer :widgetModel="propWidget"></HighchartsContainer>
             </div>
         </div>
     </div>
@@ -47,10 +49,11 @@ import { mapState, mapActions } from 'pinia'
 import store from '../../Dashboard.store'
 import deepcopy from 'deepcopy'
 import WebComponentContainer from '../WebComponent/WebComponentContainer.vue'
+import HighchartsContainer from '../ChartWidget/Highcharts/HighchartsContainer.vue'
 
 export default defineComponent({
     name: 'widget-editor-preview',
-    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, ProgressBar, WebComponentContainer },
+    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, ProgressBar, WebComponentContainer, HighchartsContainer },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDataset[]>, required: true },
