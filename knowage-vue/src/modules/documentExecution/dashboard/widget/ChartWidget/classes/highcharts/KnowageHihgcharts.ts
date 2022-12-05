@@ -51,7 +51,7 @@ export class KnowageHighcharts {
     }
 
 
-    public getModel() {
+    public getModel = () => {
         return this.model;
     }
 

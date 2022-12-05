@@ -64,7 +64,12 @@ const addCategoryColumns = (category: IOldModelCategory, formattedColumns: IWidg
 }
 
 const addCategoryColumn = (category: IOldModelCategory, widgetColumNameMap: any, formattedColumns: IWidgetColumn[]) => {
-    if (widgetColumNameMap[category.column]) formattedColumns.push({ ...widgetColumNameMap[category.column], drillOrder: createDrillOrder(category.drillOrder[category.column].orderColumn, category.drillOrder[category.column].orderType) })
+    if (widgetColumNameMap[category.column]) {
+        const tempColumn = { ...widgetColumNameMap[category.column] }
+        if (category.drillOrder) tempColumn.drillOrder = createDrillOrder(category.drillOrder[category.column].orderColumn, category.drillOrder[category.column].orderType)
+        formattedColumns.push(tempColumn)
+
+    }
 }
 
 const addDrillColumnsFromCategory = (category: IOldModelCategory, widgetColumNameMap: any, formattedColumns: IWidgetColumn[]) => {
@@ -73,7 +78,7 @@ const addDrillColumnsFromCategory = (category: IOldModelCategory, widgetColumNam
         const columnNameTrimmed = columnName.trim()
         if (widgetColumNameMap[columnNameTrimmed]) {
             const tempColumn = { ...widgetColumNameMap[columnNameTrimmed], drillOrder: createDrillOrder(null, '') }
-            if (category.drillOrder[columnNameTrimmed]) {
+            if (category.drillOrder && category.drillOrder[columnNameTrimmed]) {
                 tempColumn.drillOrder = createDrillOrder(category.drillOrder[columnNameTrimmed].orderColumn, category.drillOrder[columnNameTrimmed].orderType)
             }
             formattedColumns.push(tempColumn)

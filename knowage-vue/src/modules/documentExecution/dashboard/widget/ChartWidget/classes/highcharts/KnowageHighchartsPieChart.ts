@@ -12,7 +12,7 @@ export class HighchartsPieChart extends KnowageHighcharts {
         updatePieChartModel(oldModel, this.model)
     }
 
-    public getModel() {
+    public getModel = () => {
         return this.model;
     }
 
