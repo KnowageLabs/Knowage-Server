@@ -233,7 +233,7 @@ export default defineComponent({
         KnCalculatedField,
         Dropdown
     },
-    props: { visible: { type: Boolean }, dataset: { type: Object }, returnQueryMode: { type: Boolean }, getQueryFromDatasetProp: { type: Boolean } },
+    props: { visible: { type: Boolean }, dataset: { type: Object }, returnQueryMode: { type: Boolean }, getQueryFromDatasetProp: { type: Boolean }, sourceDataset: { type: Object } },
     emits: ['close', 'querySaved'],
     data() {
         return {
@@ -298,6 +298,9 @@ export default defineComponent({
     watch: {
         async dataset() {
             await this.loadPage()
+        },
+        async sourceDataset() {
+            await this.loadPage()
         }
     },
     setup() {
@@ -347,17 +350,23 @@ export default defineComponent({
 
             if (this.dataset && !this.dataset.dataSourceId && !this.dataset.federation_id) {
                 await this.loadDataset()
+            } else if (this.sourceDataset) {
+                this.qbe = this.getQBEFromSourceDataset()
             } else {
                 this.qbe = this.getQBEFromModel()
             }
             this.loadQuery()
             this.qbeMetadata = this.extractFieldsMetadata(this.qbe?.meta.columns)
             this.generateFieldsAndMetadataId()
-            if (!this.dataset?.federation_id) await this.loadDatasetDrivers()
-            if (this.qbe?.pars?.length === 0 && (this.filtersData?.isReadyForExecution || this.dataset?.federation_id)) {
-                await this.loadQBE()
-            } else if (this.qbe?.pars?.length !== 0 || !this.filtersData?.isReadyForExecution) {
-                this.parameterSidebarVisible = true
+
+            if (this.sourceDataset) {
+            } else {
+                if (!this.dataset?.federation_id) await this.loadDatasetDrivers()
+                if (this.qbe?.pars?.length === 0 && (this.filtersData?.isReadyForExecution || this.dataset?.federation_id)) {
+                    await this.loadQBE()
+                } else if (this.qbe?.pars?.length !== 0 || !this.filtersData?.isReadyForExecution) {
+                    this.parameterSidebarVisible = true
+                }
             }
             this.loading = false
         },
@@ -395,6 +404,28 @@ export default defineComponent({
                       },
                 meta: [],
                 pars: this.dataset.pars ?? [],
+                scopeId: null,
+                scopeCd: '',
+                label: '',
+                name: ''
+            } as any
+        },
+        getQBEFromSourceDataset() {
+            if (!this.sourceDataset) return {}
+
+            //this.smartView = this.dataset.smartView
+            this.smartView = true
+            return {
+                dsTypeCd: 'Qbe',
+                qbeDatamarts: '',
+                qbeDataSource: null,
+                qbeJSONQuery: {
+                    catalogue: {
+                        queries: [{ id: 'q1', name: 'Main', fields: [], distinct: false, filters: [], calendar: {}, expression: {}, isNestedExpression: false, havings: [], graph: [], relationRoles: [], subqueries: [] }]
+                    }
+                },
+                meta: [],
+                pars: [],
                 scopeId: null,
                 scopeCd: '',
                 label: '',
@@ -452,7 +483,9 @@ export default defineComponent({
         async loadQBE() {
             this.loadCalcFieldFunctions()
             await this.initializeQBE()
-            await this.loadCustomizedDatasetFunctions()
+            if (!this.sourceDataset) {
+                await this.loadCustomizedDatasetFunctions()
+            }
             await this.loadEntities()
 
             if (!this.dataset?.dataSourceLabel) {
@@ -463,16 +496,23 @@ export default defineComponent({
             this.calcFieldFunctions = calcFieldDescriptor.availableFunctions
         },
         async initializeQBE() {
-            const label = this.dataset?.dataSourceLabel ? this.dataset.dataSourceLabel : this.qbe?.qbeDataSource
-            const datamart = this.dataset?.dataSourceLabel ? this.dataset.name : this.qbe?.qbeDatamarts
-            const temp = this.getFormattedParameters(this.filtersData)
-            const drivers = encodeURI(JSON.stringify(temp))
-            const url = this.dataset?.federation_id
-                ? `start-federation?federationId=${this.dataset.federation_id}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&drivers=%7B%7D`
-                : `start-qbe?datamart=${datamart}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&DATA_SOURCE_LABEL=${label}&drivers=${drivers}`
             if (this.dataset) {
+                const label = this.dataset?.dataSourceLabel ? this.dataset.dataSourceLabel : this.qbe?.qbeDataSource
+                const datamart = this.dataset?.dataSourceLabel ? this.dataset.name : this.qbe?.qbeDatamarts
+                const temp = this.getFormattedParameters(this.filtersData)
+                const drivers = encodeURI(JSON.stringify(temp))
+                const url = this.dataset?.federation_id
+                    ? `start-federation?federationId=${this.dataset.federation_id}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&drivers=%7B%7D`
+                    : `start-qbe?datamart=${datamart}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&DATA_SOURCE_LABEL=${label}&drivers=${drivers}`
                 await this.$http
                     .get(import.meta.env.VITE_QBE_PATH + url)
+                    .then(() => {
+                        this.qbeLoaded = true
+                    })
+                    .catch(() => {})
+            } else if (this.sourceDataset) {
+                await this.$http
+                    .get(import.meta.env.VITE_QBE_PATH + `start-qbe?sourceDatasetLabel=${this.sourceDataset.label}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}`)
                     .then(() => {
                         this.qbeLoaded = true
                     })
@@ -858,7 +898,7 @@ export default defineComponent({
         checkIfHiddenColumnsExist() {
             if (this.qbe) {
                 this.hiddenColumnsExist = false
-                for (let i = 0; i < this.selectedQuery.fields.length; i++) {
+                for (let i = 0; i < this.selectedQuery.fields.length; i) {
                     if (!this.selectedQuery.fields[i].visible) {
                         this.hiddenColumnsExist = true
                         break

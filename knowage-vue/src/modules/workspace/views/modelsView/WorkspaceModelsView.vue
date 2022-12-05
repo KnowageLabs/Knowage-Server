@@ -55,7 +55,7 @@
         data-test="detail-sidebar"
     />
 
-    <QBE v-if="qbeVisible" :visible="qbeVisible" :dataset="selectedQbeDataset" @close="closeQbe" />
+    <QBE v-if="qbeVisible" :visible="qbeVisible" :dataset="selectedQbeDataset" :sourceDataset="selectedDataset" @close="closeQbe" />
 </template>
 
 <script lang="ts">
