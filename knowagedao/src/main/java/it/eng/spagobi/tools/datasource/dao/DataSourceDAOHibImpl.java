@@ -61,6 +61,7 @@ import it.eng.spagobi.commons.metadata.SbiOrganizationDatasourceId;
 import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.json.Xml;
+import it.eng.spagobi.security.EncryptionPBEWithMD5AndDES;
 import it.eng.spagobi.security.utils.DataSourceJDBCPasswordManager;
 import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
@@ -452,7 +453,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 			// If datasource has a null pwd, get the old value from DB
 			if (StringUtils.isEmpty(aDataSource.getPwd())) {
-				aDataSource.setPwd(EncryptionPBEWithMD5AndDESManager.decrypt(hibDataSource.getPwd()));
+				aDataSource.setPwd(EncryptionPBEWithMD5AndDES.getInstance().decrypt(hibDataSource.getPwd()));
 			}
 
 			if (aDataSource.getLabel() != null && hibDataSource.getLabel() != null) {
