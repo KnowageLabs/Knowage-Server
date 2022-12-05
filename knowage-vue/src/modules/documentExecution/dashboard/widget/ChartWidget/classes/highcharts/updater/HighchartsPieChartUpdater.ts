@@ -71,7 +71,7 @@ const getFormatted3DConfiguration = (oldModel: any, newModel: HighchartsPieChart
             enabled: oldModel.CHART.show3D,
             alpha: oldModel.CHART.alpha,
             beta: oldModel.CHART.beta,
-            viewDistance: oldModel.CHART.viewDistance
+            viewDistance: oldModel.CHART.viewDistance ?? 25
         } as HighchartsOptions3D
     }
 }

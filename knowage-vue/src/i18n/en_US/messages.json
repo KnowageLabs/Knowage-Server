@@ -419,14 +419,14 @@
             "configuration": "Configuration",
             "configurationOf3D": {
                 "alphaAngle": "Alpha Angle",
-                "alphaAngleHint": "Alpha Angle Hint Placeholder",
+                "alphaAngleHint": "One of the two rotation angles for the chart.",
                 "betaAngle": "Beta Angle",
-                "betaAngleHint": "Beta Angle Hint Placeholder",
+                "betaAngleHint": "One of the two rotation angles for the chart.",
                 "title": "3D",
                 "totalDepth": "Total Depth",
-                "totalDepthHint": "Total Depth Hint Placeholder",
+                "totalDepthHint": "The total depth of the chart.",
                 "viewDistance": "View Distance",
-                "viewDistanceHint": "viewDistance Hint Placeholder"
+                "viewDistanceHint": "Defines the distance the viewer is standing in front of the chart, this setting is important to calculate the perspective effect in column and scatter charts. It is not used for 3D pie charts."
             },
             "customHeaderTooltip": "Custom Header Tooltip",
             "customMessages": {

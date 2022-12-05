@@ -94,7 +94,7 @@ export class KnowageHighcharts {
                     enabled: false,
                     alpha: 0,
                     beta: 0,
-                    viewDistance: 0
+                    viewDistance: 25
                 },
                 events: {},
                 plotBackgroundColor: '',
