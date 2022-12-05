@@ -51,7 +51,6 @@ export default defineComponent({
     methods: {
         loadModel() {
             this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
-            console.log('>>>>>> LOADED 3d model: ', this.model)
         },
         modelChanged() {
             emitter.emit('refreshChart', this.widgetModel.id)

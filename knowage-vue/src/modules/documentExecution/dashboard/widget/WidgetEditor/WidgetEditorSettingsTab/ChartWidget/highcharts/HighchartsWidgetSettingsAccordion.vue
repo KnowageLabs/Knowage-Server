@@ -8,7 +8,8 @@
                     </div>
                 </template>
 
-                <Highcharts3DConfiguration v-if="accordion.type === 'configurationOf3D'" :widgetModel="widgetModel"></Highcharts3DConfiguration>
+                <Highcharts3DConfiguration v-if="accordion.type === 'ConfigurationOf3D'" :widgetModel="widgetModel"></Highcharts3DConfiguration>
+                <HighchartsNoDataMessageConfiguration v-else-if="accordion.type === 'NoDataMessageConfiguration'" :widgetModel="widgetModel"></HighchartsNoDataMessageConfiguration>
                 <WidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
                 <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
                 <WidgetRowsStyle v-else-if="accordion.type === 'RowsStyle'" :widgetModel="widgetModel"></WidgetRowsStyle>
@@ -44,6 +45,7 @@ import WidgetTitleStyle from '../../common/style/WidgetTitleStyle.vue'
 import WidgetPaddingStyle from '../../common/style/WidgetPaddingStyle.vue'
 import WidgetBackgroundColorStyle from '../../common/style/WidgetBackgroundColorStyle.vue'
 import Highcharts3DConfiguration from '../highcharts/configuration/Highcharts3DConfiguration.vue'
+import HighchartsNoDataMessageConfiguration from '../highcharts/configuration/HighchartsNoDataMessageConfiguration.vue'
 
 export default defineComponent({
     name: 'hihgcharts-widget-configuration-container',
@@ -61,7 +63,8 @@ export default defineComponent({
         WidgetCrossNavigation,
         WidgetInteractionsLinks,
         WidgetPreview,
-        Highcharts3DConfiguration
+        Highcharts3DConfiguration,
+        HighchartsNoDataMessageConfiguration
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

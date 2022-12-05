@@ -3,7 +3,11 @@
         "Configuration": [
             {
                 "title": "dashboard.widgetEditor.configurationOf3D.title",
-                "type": "configurationOf3D"
+                "type": "ConfigurationOf3D"
+            },
+            {
+                "title": "dashboard.widgetEditor.noData.title",
+                "type": "NoDataMessageConfiguration"
             },
             {
                 "title": "dashboard.widgetEditor.export.title",

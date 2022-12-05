@@ -549,6 +549,9 @@
                 "title": "Legend"
             },
             "manualInput": "Manual input",
+            "noData": {
+                "title": "No data"
+            },
             "noSelections": {
                 "customMessage": "Custom Message",
                 "customMessageHint": "If left empty the message will be 'No Active Selections'",
