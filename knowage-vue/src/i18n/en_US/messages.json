@@ -419,10 +419,14 @@
             "configuration": "Configuration",
             "configurationOf3D": {
                 "alphaAngle": "Alpha Angle",
+                "alphaAngleHint": "Alpha Angle Hint Placeholder",
                 "betaAngle": "Beta Angle",
+                "betaAngleHint": "Beta Angle Hint Placeholder",
                 "title": "3D",
                 "totalDepth": "Total Depth",
-                "viewDistance": "View Distance"
+                "totalDepthHint": "Total Depth Hint Placeholder",
+                "viewDistance": "View Distance",
+                "viewDistanceHint": "viewDistance Hint Placeholder"
             },
             "customHeaderTooltip": "Custom Header Tooltip",
             "customMessages": {

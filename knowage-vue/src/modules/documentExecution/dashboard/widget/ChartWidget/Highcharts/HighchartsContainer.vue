@@ -1,5 +1,5 @@
 <template>
-    <button @click="createChart">Test</button>
+    <button @click="updateChartModel">Test</button>
     <div id="container" style="width:100%; height:400px;"></div>
 </template>
 
@@ -19,11 +19,14 @@ export default defineComponent({
     components: {},
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
-        return {}
+        return {
+            chartModel: {}
+        }
     },
     mounted() {
         this.setEventListeners()
-        this.createChart()
+        this.onRefreshChart()
+        this.updateChartModel()
     },
     unmounted() {
         this.removeEventListeners()
@@ -36,10 +39,11 @@ export default defineComponent({
             emitter.off('refreshChart', this.onRefreshChart)
         },
         onRefreshChart() {
-            const tempModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
-            console.log('>>>>>>>>>> refreshChart: ', tempModel)
+            this.chartModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
+            console.log('>>>>>>>>>> refreshChart: ', this.chartModel)
+            this.updateChartModel()
         },
-        createChart() {
+        updateChartModel() {
             // highcharts3D(chart)
             // Create the chart
             Highcharts.setOptions({
@@ -47,64 +51,67 @@ export default defineComponent({
                     noData: 'No data message'
                 }
             })
-            Highcharts.chart('container', {
-                noData: {
-                    position: {
-                        align: 'right',
-                        verticalAlign: 'middle'
-                    },
-                    style: {
-                        backgroundColor: 'rgb(255, 255, 225)',
-                        color: 'rgb(20, 0, 221)',
-                        textAlign: 'start',
-                        fontSize: '12px',
-                        fontFamily: 'roboto',
-                        fontWeight: 'bold'
-                    }
-                },
-                chart: {
-                    type: 'pie',
-                    options3d: {
-                        enabled: true,
-                        alpha: 45,
-                        beta: 0
-                    } // HighchartsOptions3D
-                },
-                title: {
-                    text: 'Global smartphone shipments market share, Q1 2022',
-                    align: 'left'
-                },
-                subtitle: {
-                    text: 'Source: ' + '<a href="https://www.counterpointresearch.com/global-smartphone-share/"' + 'target="_blank">Counterpoint Research</a>',
-                    align: 'left'
-                },
-                accessibility: {
-                    point: {
-                        valueSuffix: '%'
-                    }
-                },
-                tooltip: {
-                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-                },
-                plotOptions: {
-                    pie: {
-                        allowPointSelect: true,
-                        cursor: 'pointer',
-                        depth: 35, // needed for 3D
-                        dataLabels: {
-                            enabled: true,
-                            format: '{point.name}'
-                        }
-                    }
-                },
-                series: [
-                    {
-                        type: 'pie',
-                        name: 'Share',
-                        data: []
-                    }
-                ]
-            })
+
+            Highcharts.chart('container', this.chartModel)
+
+            // Highcharts.chart('container', {
+            //     noData: {
+            //         position: {
+            //             align: 'right',
+            //             verticalAlign: 'middle'
+            //         },
+            //         style: {
+            //             backgroundColor: 'rgb(255, 255, 225)',
+            //             color: 'rgb(20, 0, 221)',
+            //             textAlign: 'start',
+            //             fontSize: '12px',
+            //             fontFamily: 'roboto',
+            //             fontWeight: 'bold'
+            //         }
+            //     },
+            //     chart: {
+            //         type: 'pie',
+            //         options3d: {
+            //             enabled: true,
+            //             alpha: 45,
+            //             beta: 0
+            //         } // HighchartsOptions3D
+            //     },
+            //     title: {
+            //         text: 'Global smartphone shipments market share, Q1 2022',
+            //         align: 'left'
+            //     },
+            //     subtitle: {
+            //         text: 'Source: ' + '<a href="https://www.counterpointresearch.com/global-smartphone-share/"' + 'target="_blank">Counterpoint Research</a>',
+            //         align: 'left'
+            //     },
+            //     accessibility: {
+            //         point: {
+            //             valueSuffix: '%'
+            //         }
+            //     },
+            //     tooltip: {
+            //         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            //     },
+            //     plotOptions: {
+            //         pie: {
+            //             allowPointSelect: true,
+            //             cursor: 'pointer',
+            //             depth: 35, // needed for 3D
+            //             dataLabels: {
+            //                 enabled: true,
+            //                 format: '{point.name}'
+            //             }
+            //         }
+            //     },
+            //     series: [
+            //         {
+            //             type: 'pie',
+            //             name: 'Share',
+            //             data: []
+            //         }
+            //     ]
+            // })
         }
     }
 })

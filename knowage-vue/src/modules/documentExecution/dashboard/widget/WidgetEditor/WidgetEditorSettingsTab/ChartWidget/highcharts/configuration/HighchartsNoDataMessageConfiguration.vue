@@ -60,7 +60,7 @@ export default defineComponent({
         return {
             descriptor,
             model: null as HighchartsPieChartModel | null,
-            toolbarModel: {} as { 'justify-content': string; 'font-family': string; 'font-size': string; 'font-weight': string; color: string; 'background-color': string },
+            toolbarModel: {} as { 'font-family': string; 'font-size': string; 'font-weight': string; color: string; 'background-color': string },
             getTranslatedLabel
         }
     },
@@ -73,7 +73,6 @@ export default defineComponent({
             this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
             if (this.model && this.model.noData)
                 this.toolbarModel = {
-                    'justify-content': this.model.noData.style.textAlign,
                     'font-family': this.model.noData.style.fontFamily,
                     'font-size': this.model.noData.style.fontSize,
                     'font-weight': this.model.noData.style.fontWeight,
@@ -89,7 +88,6 @@ export default defineComponent({
         onStyleToolbarChange(model: IWidgetStyleToolbarModel) {
             if (!this.model || !this.model.noData.style) return
             this.toolbarModel = {
-                'justify-content': model['justify-content'] ?? 'center',
                 'font-family': model['font-family'] ?? '',
                 'font-size': model['font-size'] ?? '14px',
                 'font-weight': model['font-weight'] ?? '',
@@ -99,7 +97,6 @@ export default defineComponent({
             this.model.noData.style = {
                 backgroundColor: this.toolbarModel['background-color'] ?? '',
                 color: this.toolbarModel.color ?? '',
-                textAlign: this.toolbarModel['justify-content'] ?? 'center',
                 fontSize: this.toolbarModel['font-size'] ?? '14px',
                 fontFamily: this.toolbarModel['font-family'] ?? '',
                 fontWeight: this.toolbarModel['font-weight'] ?? ''

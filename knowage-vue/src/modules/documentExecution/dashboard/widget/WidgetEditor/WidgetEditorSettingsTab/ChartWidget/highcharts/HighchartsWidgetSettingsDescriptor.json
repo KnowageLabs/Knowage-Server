@@ -17,6 +17,23 @@
             "value": "right"
         }
     ],
+    "noDataToolbarStyleOptions": [
+        {
+            "type": "font-weight"
+        },
+        {
+            "type": "font-size"
+        },
+        {
+            "type": "font-family"
+        },
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
+        }
+    ],
     "settings": {
         "Configuration": [
             {
@@ -132,26 +149,6 @@
         {
             "label": "common.top",
             "value": "top"
-        }
-    ],
-    "noDataToolbarStyleOptions": [
-        {
-            "type": "font-weight"
-        },
-        {
-            "type": "font-size"
-        },
-        {
-            "type": "justify-content"
-        },
-        {
-            "type": "font-family"
-        },
-        {
-            "type": "color"
-        },
-        {
-            "type": "background-color"
         }
     ]
 }

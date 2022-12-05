@@ -6,19 +6,31 @@
         </div>
         <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column">
             <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.configurationOf3D.alphaAngle') }}</label>
-            <InputNumber class="kn-material-input p-inputtext-sm" v-model="model.chart.options3d.alpha" :disabled="configurationDisabled" @blur="modelChanged" />
+            <div class="p-d-flex p-flex-row p-ai-center">
+                <InputNumber class="kn-material-input p-inputtext-sm" v-model="model.chart.options3d.alpha" :disabled="configurationDisabled" @blur="modelChanged" />
+                <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.configurationOf3D.alphaAngleHint')"></i>
+            </div>
         </div>
         <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column">
             <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.configurationOf3D.betaAngle') }}</label>
-            <InputNumber class="kn-material-input p-inputtext-sm" v-model="model.chart.options3d.beta" :disabled="configurationDisabled" @blur="modelChanged" />
+            <div class="p-d-flex p-flex-row p-ai-center">
+                <InputNumber class="kn-material-input p-inputtext-sm" v-model="model.chart.options3d.beta" :disabled="configurationDisabled" @blur="modelChanged" />
+                <i class="pi pi-question-circle kn-cursor-pointer  p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.configurationOf3D.betaAngleHint')"></i>
+            </div>
         </div>
         <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column">
             <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.configurationOf3D.viewDistance') }}</label>
-            <InputNumber class="kn-material-input p-inputtext-sm" v-model="model.chart.options3d.viewDistance" :disabled="configurationDisabled" @blur="modelChanged" />
+            <div class="p-d-flex p-flex-row p-ai-center">
+                <InputNumber class="kn-material-input p-inputtext-sm" v-model="model.chart.options3d.viewDistance" :disabled="configurationDisabled" @blur="modelChanged" />
+                <i class="pi pi-question-circle kn-cursor-pointer  p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.configurationOf3D.viewDistanceHint')"></i>
+            </div>
         </div>
         <div v-if="model.plotOptions?.pie" class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column">
             <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.configurationOf3D.totalDepth') }}</label>
-            <InputNumber class="kn-material-input p-inputtext-sm" v-model="model.plotOptions.pie.depth" :disabled="configurationDisabled" @blur="modelChanged" />
+            <div class="p-d-flex p-flex-row p-ai-center">
+                <InputNumber class="kn-material-input p-inputtext-sm" v-model="model.plotOptions.pie.depth" :disabled="configurationDisabled" @blur="modelChanged" />
+                <i class="pi pi-question-circle kn-cursor-pointer  p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.configurationOf3D.totalDepthHint')"></i>
+            </div>
         </div>
     </div>
 </template>

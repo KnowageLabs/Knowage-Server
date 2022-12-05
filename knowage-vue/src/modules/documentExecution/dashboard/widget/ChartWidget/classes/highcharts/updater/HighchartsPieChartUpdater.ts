@@ -84,7 +84,6 @@ const getFormattedNoDataConfiguration = (oldModel: any, newModel: HighchartsPieC
 
         if (oldModel.CHART.EMPTYMESSAGE.style) {
             newModel.noData.style = {
-                textAlign: '',
                 fontFamily: oldModel.CHART.EMPTYMESSAGE.style.fontFamily ?? '',
                 fontSize: oldModel.CHART.EMPTYMESSAGE.style.fontSize ?? '',
                 fontWeight: oldModel.CHART.EMPTYMESSAGE.style.fontWeight,

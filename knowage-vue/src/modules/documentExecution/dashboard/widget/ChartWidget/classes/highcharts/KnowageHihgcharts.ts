@@ -82,7 +82,6 @@ export class KnowageHighcharts {
                     verticalAlign: ''
                 },
                 style: {
-                    textAlign: '',
                     fontFamily: '',
                     fontSize: '',
                     fontWeight: '',

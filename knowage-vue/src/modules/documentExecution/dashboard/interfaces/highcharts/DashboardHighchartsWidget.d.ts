@@ -88,7 +88,6 @@ export interface HighchartsNoDataConfiguration {
         verticalAlign: string
     },
     style: {
-        textAlign: string
         fontFamily: string
         fontSize: string
         fontWeight: string
