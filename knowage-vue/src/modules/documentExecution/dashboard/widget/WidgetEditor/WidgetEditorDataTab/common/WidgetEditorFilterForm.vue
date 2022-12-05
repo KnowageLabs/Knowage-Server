@@ -31,7 +31,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../DashboardHelpers'
-import descriptor from '../TableWidget/TableWidgetDataDescriptor.json'
+import commonDescriptor from './WidgetCommonDescriptor.json'
 import InputSwitch from 'primevue/inputswitch'
 import Dropdown from 'primevue/dropdown'
 
@@ -41,7 +41,7 @@ export default defineComponent({
     props: { propColumn: { type: Object as PropType<IWidgetColumn | null>, required: true } },
     data() {
         return {
-            descriptor,
+            commonDescriptor,
             column: null as IWidgetColumn | null
         }
     },
@@ -61,7 +61,7 @@ export default defineComponent({
             emitter.emit('selectedColumnUpdated', this.column)
         },
         getColumnFilterOptions() {
-            return this.column?.fieldType === 'ATTRIBUTE' ? this.descriptor.attributeColumnFilterOperators : this.descriptor.measureColumnFilterOperators
+            return this.column?.fieldType === 'ATTRIBUTE' ? this.commonDescriptor.attributeColumnFilterOperators : this.commonDescriptor.measureColumnFilterOperators
         },
         onFilterOperatorChange() {
             if (!this.column || !this.column.filter) return

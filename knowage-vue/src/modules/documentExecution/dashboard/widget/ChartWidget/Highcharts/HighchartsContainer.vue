@@ -1,15 +1,17 @@
 <template>
-    {{ 'HIIIIIIIIIIIIGHCHARTS' }}
+    <button @click="createChart">Test</button>
     <div id="container" style="width:100%; height:400px;"></div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import Highcharts from 'highcharts'
-import Highcharts3D from 'highcharts/highcharts-3d'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { IWidget } from '../../../Dashboard'
+import Highcharts from 'highcharts'
+import Highcharts3D from 'highcharts/highcharts-3d'
+import NoDataToDisplay from 'highcharts/modules/no-data-to-display'
 
+NoDataToDisplay(Highcharts)
 Highcharts3D(Highcharts)
 
 export default defineComponent({
@@ -40,7 +42,26 @@ export default defineComponent({
         createChart() {
             // highcharts3D(chart)
             // Create the chart
+            Highcharts.setOptions({
+                lang: {
+                    noData: 'No data message'
+                }
+            })
             Highcharts.chart('container', {
+                noData: {
+                    position: {
+                        align: 'right',
+                        verticalAlign: 'middle'
+                    },
+                    style: {
+                        backgroundColor: 'rgb(255, 255, 225)',
+                        color: 'rgb(20, 0, 221)',
+                        textAlign: 'start',
+                        fontSize: '12px',
+                        fontFamily: 'roboto',
+                        fontWeight: 'bold'
+                    }
+                },
                 chart: {
                     type: 'pie',
                     options3d: {
@@ -80,19 +101,7 @@ export default defineComponent({
                     {
                         type: 'pie',
                         name: 'Share',
-                        data: [
-                            ['Samsung', 23],
-                            ['Apple', 18],
-                            {
-                                name: 'Xiaomi',
-                                y: 12,
-                                sliced: true,
-                                selected: true
-                            },
-                            ['Oppo*', 9],
-                            ['Vivo', 8],
-                            ['Others', 30]
-                        ]
+                        data: []
                     }
                 ]
             })

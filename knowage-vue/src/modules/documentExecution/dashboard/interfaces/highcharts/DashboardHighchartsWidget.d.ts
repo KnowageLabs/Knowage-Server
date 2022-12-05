@@ -31,6 +31,9 @@ export interface IHighchartsWidgetStyle {
 }
 
 export interface HighchartsChartModel {
+    lang: {
+        noData: string
+    },
     chart: {
         options3d: HighchartsOptions3D
         events: any,
@@ -39,6 +42,7 @@ export interface HighchartsChartModel {
         plotShadow: boolean,
         type: string
     },
+    noData: HighchartsNoDataConfiguration,
     plotOptions: any,
     series: any[],
     settings: any,
@@ -58,7 +62,7 @@ export interface HighchartsChartModel {
     },
     plotOptions: {
         pie: {
-
+            depth: string
         },
         series: HighchartsChartSerie[]
     },
@@ -76,6 +80,23 @@ export interface HighchartsOptions3D {
     beta: number,
     viewDistance: number
 }
+
+
+export interface HighchartsNoDataConfiguration {
+    position: {
+        align: string,
+        verticalAlign: string
+    },
+    style: {
+        textAlign: string
+        fontFamily: string
+        fontSize: string
+        fontWeight: string
+        color: string
+        backgroundColor: string
+    }
+}
+
 
 export interface HighchartsChartPiePlotOptions {
     depth: string,

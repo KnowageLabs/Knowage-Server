@@ -1,4 +1,22 @@
 {
+    "alignmentOptions": [
+        {
+            "label": "",
+            "value": ""
+        },
+        {
+            "label": "common.left",
+            "value": "left"
+        },
+        {
+            "label": "common.center",
+            "value": "center"
+        },
+        {
+            "label": "common.right",
+            "value": "right"
+        }
+    ],
     "settings": {
         "Configuration": [
             {
@@ -96,6 +114,44 @@
             "icon": "pi pi-tablet",
             "label": "dashboard.widgetEditor.responsive.title",
             "value": "Responsive"
+        }
+    ],
+    "verticalAlignmentOptions": [
+        {
+            "label": "",
+            "value": ""
+        },
+        {
+            "label": "common.bottom",
+            "value": "bottom"
+        },
+        {
+            "label": "common.middle",
+            "value": "middle"
+        },
+        {
+            "label": "common.top",
+            "value": "top"
+        }
+    ],
+    "noDataToolbarStyleOptions": [
+        {
+            "type": "font-weight"
+        },
+        {
+            "type": "font-size"
+        },
+        {
+            "type": "justify-content"
+        },
+        {
+            "type": "font-family"
+        },
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
         }
     ]
 }

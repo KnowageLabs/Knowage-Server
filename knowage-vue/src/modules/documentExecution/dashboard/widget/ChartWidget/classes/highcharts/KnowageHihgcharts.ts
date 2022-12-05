@@ -75,6 +75,21 @@ export class KnowageHighcharts {
 
     createNewChartModel = () => {
         return {
+            lang: { noData: '' },
+            noData: {
+                position: {
+                    align: '',
+                    verticalAlign: ''
+                },
+                style: {
+                    textAlign: '',
+                    fontFamily: '',
+                    fontSize: '',
+                    fontWeight: '',
+                    color: '',
+                    backgroundColor: '',
+                }
+            },
             chart: {
                 options3d: {
                     enabled: false,
