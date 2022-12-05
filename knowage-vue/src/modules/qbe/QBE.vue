@@ -313,7 +313,8 @@ export default defineComponent({
         this.userRole = this.user.sessionRole && this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
 
         let invalidRole = false
-        getCorrectRolesForExecution(null, this.dataset).then(async (response: any) => {
+        let dataset = this.dataset ?? this.sourceDataset
+        getCorrectRolesForExecution(null, dataset).then(async (response: any) => {
             let correctRolesForExecution = response
 
             if (!this.userRole) {
@@ -360,6 +361,7 @@ export default defineComponent({
             this.generateFieldsAndMetadataId()
 
             if (this.sourceDataset) {
+                await this.loadQBE()
             } else {
                 if (!this.dataset?.federation_id) await this.loadDatasetDrivers()
                 if (this.qbe?.pars?.length === 0 && (this.filtersData?.isReadyForExecution || this.dataset?.federation_id)) {
