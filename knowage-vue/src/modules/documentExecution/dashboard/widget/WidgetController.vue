@@ -58,6 +58,7 @@ export default defineComponent({
     components: { Skeleton, WidgetButtonBar, WidgetRenderer, ProgressSpinner },
     inject: ['dHash'],
     props: {
+        model: { type: Object },
         item: { required: true, type: Object },
         activeSheet: { type: Boolean },
         widget: { type: Object as PropType<IWidget>, required: true },
@@ -148,7 +149,7 @@ export default defineComponent({
 
             this.setWidgetLoading(true)
 
-            this.widgetInitialData = await getWidgetData(this.widgetModel, this.datasets, this.$http, true, this.activeSelections)
+            this.widgetInitialData = await getWidgetData(this.widgetModel, this.model?.configuration?.datasets, this.$http, true, this.activeSelections)
             this.widgetData = this.widgetInitialData
             await this.loadActiveSelections()
 
@@ -180,7 +181,7 @@ export default defineComponent({
             return widgetUsesSelection
         },
         async reloadWidgetData(associativeResponseSelections: any) {
-            this.widgetData = await getWidgetData(this.widgetModel, this.datasets, this.$http, false, this.activeSelections, associativeResponseSelections)
+            this.widgetData = await getWidgetData(this.widgetModel, this.model?.configuration?.datasets, this.$http, false, this.activeSelections, associativeResponseSelections)
         },
         widgetUsesSelections(selections: ISelection[]) {
             let widgetUsesSelection = false

@@ -14,7 +14,7 @@
                 :margin="[2, 2]"
                 @breakpoint-changed="breakpointChangedEvent"
             >
-                <WidgetController :activeSheet="activeSheet(index)" :widget="currentWidget(item.id)" :item="item" v-for="item in sheet.widgets['lg']" :key="item.i" :datasets="datasets" :dashboardId="dashboardId" :drivers="documentDrivers" :variables="variables"></WidgetController>
+                <WidgetController :activeSheet="activeSheet(index)" :widget="currentWidget(item.id)" :item="item" v-for="item in sheet.widgets['lg']" :key="item.i" :datasets="datasets" :dashboardId="dashboardId" :drivers="documentDrivers" :variables="variables" :model="model"></WidgetController>
             </grid-layout>
         </KnDashboardTab>
     </KnDashboardTabsPanel>
