@@ -12,7 +12,7 @@
             <template #option="slotProps">
                 <div class="kn-list-item" data-test="list-item">
                     <div class="kn-list-item-text">
-                        <span>{{ slotProps.option.crossText }}</span>
+                        <span>{{ slotProps.option.crossName ?? slotProps.option.crossText }}</span>
                     </div>
                 </div>
             </template>
@@ -35,7 +35,10 @@ import Listbox from 'primevue/listbox'
 export default defineComponent({
     name: 'document-execution-select-cn-dialog',
     components: { Dialog, Listbox },
-    props: { visible: { type: Boolean }, crossNavigationDocuments: { type: Array } },
+    props: {
+        visible: { type: Boolean },
+        crossNavigationDocuments: { type: Array }
+    },
     emits: ['close', 'selected'],
     data() {
         return {
