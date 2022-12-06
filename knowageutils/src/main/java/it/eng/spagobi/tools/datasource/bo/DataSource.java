@@ -167,6 +167,7 @@ public class DataSource implements Serializable, IDataSource {
 		sbd.setSchemaAttribute(schemaAttribute);
 		sbd.setReadOnly(readOnly);
 		sbd.setWriteDefault(writeDefault);
+
 		if (jdbcPoolConfiguration != null) {
 			sbd.setJdbcPoolConfiguration((String) new JDBCDataSourcePoolConfigurationJSONSerializer().serialize(jdbcPoolConfiguration));
 		}
@@ -277,7 +278,7 @@ public class DataSource implements Serializable, IDataSource {
 	 */
 	@JsonIgnore
 	private Connection getDirectConnection() throws ClassNotFoundException, SQLException {
-		return DataSourceManager.getConnection(this);
+		return DataSourceManager.getInstance().getConnection(this);
 	}
 
 	/*
@@ -598,6 +599,7 @@ public class DataSource implements Serializable, IDataSource {
 		result = prime * result + ((urlConnection == null) ? 0 : urlConnection.hashCode());
 		result = prime * result + ((user == null) ? 0 : user.hashCode());
 		result = prime * result + ((writeDefault == null) ? 0 : writeDefault.hashCode());
+		result = prime * result + ((jdbcPoolConfiguration == null) ? 0 : jdbcPoolConfiguration.hashCode());
 		return result;
 	}
 
@@ -666,6 +668,11 @@ public class DataSource implements Serializable, IDataSource {
 			if (other.user != null)
 				return false;
 		} else if (!user.equals(other.user))
+			return false;
+		if (jdbcPoolConfiguration == null) {
+			if (other.jdbcPoolConfiguration != null)
+				return false;
+		} else if (!jdbcPoolConfiguration.equals(other.jdbcPoolConfiguration))
 			return false;
 		return true;
 	}
