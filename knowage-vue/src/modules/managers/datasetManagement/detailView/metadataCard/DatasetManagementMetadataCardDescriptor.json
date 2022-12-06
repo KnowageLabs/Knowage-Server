@@ -36,22 +36,22 @@
             "value": "Local Date"
         },
         {
-            "disabled": true,
+            "disabled": false,
             "name": "net.minidev.json.JSONArray",
             "value": "JSON"
         },
         {
-            "disabled": true,
+            "disabled": false,
             "name": "java.util.LinkedHashMap",
             "value": "Hash Map"
         },
         {
-            "disabled": true,
+            "disabled": false,
             "name": "java.lang.Boolean",
             "value": "Boolean"
         },
         {
-            "disabled": true,
+            "disabled": false,
             "name": "java.lang.Double",
             "value": "Double"
         },
@@ -61,7 +61,7 @@
             "value": "Integer"
         },
         {
-            "disabled": true,
+            "disabled": false,
             "name": "java.lang.Long",
             "value": "Long"
         },

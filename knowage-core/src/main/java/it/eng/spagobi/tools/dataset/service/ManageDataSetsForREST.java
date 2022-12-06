@@ -1565,30 +1565,19 @@ public class ManageDataSetsForREST {
 	}
 
 	private Class getClassTypeFromColumn(String columnClass) {
-		if (columnClass.equalsIgnoreCase("java.lang.String"))
-			return java.lang.String.class;
-		else if (columnClass.equalsIgnoreCase("java.lang.Long"))
-			return java.lang.Long.class;
-		else if (columnClass.equalsIgnoreCase("java.lang.Integer"))
-			return java.lang.Integer.class;
-		else if (columnClass.equalsIgnoreCase("java.math.BigDecimal"))
-			return java.math.BigDecimal.class;
-		else if (columnClass.equalsIgnoreCase("java.lang.Double"))
-			return java.lang.Double.class;
-		else if (columnClass.equalsIgnoreCase("java.util.Date"))
-			return java.sql.Date.class;
-		else if (columnClass.equalsIgnoreCase("java.util.Timestamp"))
-			return java.sql.Timestamp.class;
-		else if (columnClass.equalsIgnoreCase("java.sql.Timestamp"))
+		if (columnClass.equalsIgnoreCase("java.util.Timestamp"))
 			return java.sql.Timestamp.class;
 		else if (columnClass.equalsIgnoreCase("oracle.sql.TIMESTAMP"))
 			return java.sql.Timestamp.class;
-		else if (columnClass.equalsIgnoreCase("java.sql.Date"))
+		else if (columnClass.equalsIgnoreCase("java.util.Date"))
 			return java.sql.Date.class;
-		else if (columnClass.equalsIgnoreCase("java.lang.Boolean"))
-			return java.lang.Boolean.class;
-		else
-			throw new SpagoBIRuntimeException("Couldn't map class <" + columnClass + ">");
+		else {
+			try {
+				return Class.forName(columnClass);
+			} catch (ClassNotFoundException e) {
+				throw new SpagoBIRuntimeException("Couldn't map class <" + columnClass + ">", e);
+			}
+		}
 	}
 
 	private FieldType getFieldTypeFromColumn(String fieldType) {
