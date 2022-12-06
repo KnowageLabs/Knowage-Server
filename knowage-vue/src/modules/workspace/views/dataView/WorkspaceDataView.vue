@@ -13,19 +13,16 @@
     <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
 
     <div class="p-d-flex p-flex-row p-ai-center p-flex-wrap">
-        <InputText class="kn-material-input p-m-3 model-search" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text"
-            :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
+        <InputText class="kn-material-input p-m-3 model-search" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
         <span class="p-float-label p-mr-auto model-search">
-            <MultiSelect class="kn-material-input kn-width-full" :style="mainDescriptor.style.multiselect" v-model="selectedCategories"
-                :options="datasetCategories" optionLabel="VALUE_CD" @change="searchItems" :filter="true" />
-            <label class="kn-material-input-label"> {{ $t('common.type') }} </label>
+            <MultiSelect class="kn-material-input kn-width-full" :style="mainDescriptor.style.multiselect" v-model="selectedCategories" :options="datasetCategories" optionLabel="VALUE_CD" @change="searchItems" :filter="true" />
+            <label class="kn-material-input-label"> {{ $t('common.category') }} </label>
         </span>
         <SelectButton class="p-mx-2" v-model="tableMode" :options="selectButtonOptions" @click="getDatasetsByFilter" data-test="dataset-select" />
     </div>
 
     <div class="kn-overflow">
-        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table p-mx-2" :value="filteredDatasets" :loading="loading" dataKey="objId"
-            responsiveLayout="stack" breakpoint="600px" data-test="datasets-table">
+        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table p-mx-2" :value="filteredDatasets" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" data-test="datasets-table">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -48,8 +45,7 @@
                 <template #header> &ensp; </template>
                 <template #body="slotProps">
                     <Button icon="fas fa-ellipsis-v" class="p-button-link" @click.stop="showMenu($event, slotProps.data)" />
-                    <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')"
-                        @click.stop="showSidebar(slotProps.data)" :data-test="'info-button-' + slotProps.data.name" />
+                    <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click.stop="showSidebar(slotProps.data)" :data-test="'info-button-' + slotProps.data.name" />
                     <Button icon="fas fa-eye" class="p-button-link" @click.stop="previewDataset(slotProps.data)" />
                 </template>
             </Column>
@@ -59,49 +55,79 @@
                 {{ $t('common.info.noDataFound') }}
             </Message>
             <template v-else>
-                <WorkspaceCard v-for="(dataset, index) of filteredDatasets" :key="index" :viewType="'dataset'" :document="dataset"
-                    :isAvroReady="isAvroReady(dataset.id)" @previewDataset="previewDataset" @editDataset="editDataset"
-                    @openDatasetInQBE="openDatasetInQBE($event)" @exportToXlsx="prepareDatasetForExport($event, 'xls')"
-                    @exportToCsv="prepareDatasetForExport($event, 'csv')" @downloadDatasetFile="downloadDatasetFile" @shareDataset="shareDataset"
-                    @cloneDataset="cloneDataset" @deleteDataset="deleteDatasetConfirm" @openDataPreparation="openDataPreparation" @openSidebar="showSidebar"
-                    @monitoring="showMonitoring = !showMonitoring" />
+                <WorkspaceCard
+                    v-for="(dataset, index) of filteredDatasets"
+                    :key="index"
+                    :viewType="'dataset'"
+                    :document="dataset"
+                    :isAvroReady="isAvroReady(dataset.id)"
+                    @previewDataset="previewDataset"
+                    @editDataset="editDataset"
+                    @openDatasetInQBE="openDatasetInQBE($event)"
+                    @exportToXlsx="prepareDatasetForExport($event, 'xls')"
+                    @exportToCsv="prepareDatasetForExport($event, 'csv')"
+                    @downloadDatasetFile="downloadDatasetFile"
+                    @shareDataset="shareDataset"
+                    @cloneDataset="cloneDataset"
+                    @deleteDataset="deleteDatasetConfirm"
+                    @openDataPreparation="openDataPreparation"
+                    @openSidebar="showSidebar"
+                    @monitoring="showMonitoring = !showMonitoring"
+                />
             </template>
         </div>
     </div>
 
-    <DetailSidebar :visible="showDetailSidebar" :viewType="'dataset'" :document="selectedDataset" :isAvroReady="isAvroReady(selectedDataset?.id)"
-        :datasetCategories="datasetCategories" @previewDataset="previewDataset" @editDataset="editDataset" @openDatasetInQBE="openDatasetInQBE($event)"
-        @exportToXlsx="prepareDatasetForExport($event, 'xls')" @exportToCsv="prepareDatasetForExport($event, 'csv')" @downloadDatasetFile="downloadDatasetFile"
-        @shareDataset="shareDataset" @cloneDataset="cloneDataset" @deleteDataset="deleteDatasetConfirm" @openDataPreparation="openDataPreparation"
-        @close="showDetailSidebar = false" data-test="detail-sidebar" @monitoring="showMonitoring = !showMonitoring" />
+    <DetailSidebar
+        :visible="showDetailSidebar"
+        :viewType="'dataset'"
+        :document="selectedDataset"
+        :isAvroReady="isAvroReady(selectedDataset?.id)"
+        :datasetCategories="datasetCategories"
+        @previewDataset="previewDataset"
+        @editDataset="editDataset"
+        @openDatasetInQBE="openDatasetInQBE($event)"
+        @exportToXlsx="prepareDatasetForExport($event, 'xls')"
+        @exportToCsv="prepareDatasetForExport($event, 'csv')"
+        @downloadDatasetFile="downloadDatasetFile"
+        @shareDataset="shareDataset"
+        @cloneDataset="cloneDataset"
+        @deleteDataset="deleteDatasetConfirm"
+        @openDataPreparation="openDataPreparation"
+        @close="showDetailSidebar = false"
+        data-test="detail-sidebar"
+        @monitoring="showMonitoring = !showMonitoring"
+    />
 
     <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
-    <KnParameterSidebar v-if="parameterSidebarVisible" style="height: 100%; top: 0 !important" class="workspace-parameter-sidebar kn-overflow-y"
-        :filtersData="filtersData" :propDocument="selectedDataset" :propMode="'workspaceView'" :propQBEParameters="selectedDataset.pars" :userRole="userRole"
-        :dataset="selectedDataset" @execute="onExecute" @roleChanged="onRoleChange" />
+    <KnParameterSidebar
+        v-if="parameterSidebarVisible"
+        style="height: 100%; top: 0 !important"
+        class="workspace-parameter-sidebar kn-overflow-y"
+        :filtersData="filtersData"
+        :propDocument="selectedDataset"
+        :propMode="'workspaceView'"
+        :propQBEParameters="selectedDataset.pars"
+        :userRole="userRole"
+        :dataset="selectedDataset"
+        @execute="onExecute"
+        @roleChanged="onRoleChange"
+    />
 
-    <DatasetWizard v-if="showDatasetDialog" :selectedDataset="selectedDataset" :visible="showDatasetDialog" @closeDialog="showDatasetDialog = false"
-        @closeDialogAndReload="closeWizardAndRealod" />
-    <EditPreparedDatasetDialog :dataset="selectedDataset" :visible="showEditPreparedDatasetDialog" @save="updatePreparedDataset"
-        @cancel="showEditPreparedDatasetDialog = false" />
+    <DatasetWizard v-if="showDatasetDialog" :selectedDataset="selectedDataset" :visible="showDatasetDialog" @closeDialog="showDatasetDialog = false" @closeDialogAndReload="closeWizardAndRealod" />
+    <EditPreparedDatasetDialog :dataset="selectedDataset" :visible="showEditPreparedDatasetDialog" @save="updatePreparedDataset" @cancel="showEditPreparedDatasetDialog = false" />
     <TieredMenu class="kn-tieredMenu" id="optionsMenu" ref="optionsMenu" :model="menuButtons" :popup="true" />
     <Menu id="creationMenu" ref="creationMenu" :model="creationMenuButtons" />
 
-    <WorkspaceDataCloneDialog :visible="cloneDialogVisible" :propDataset="selectedDataset" @close="cloneDialogVisible = false" @clone="handleDatasetClone">
-    </WorkspaceDataCloneDialog>
-    <WorkspaceDataShareDialog :visible="shareDialogVisible" :propDataset="selectedDataset" :datasetCategories="datasetCategories"
-        @close="shareDialogVisible = false" @share="handleDatasetShare"></WorkspaceDataShareDialog>
-    <WorkspaceDataPreviewDialog v-if="previewDialogVisible" :visible="previewDialogVisible" :propDataset="selectedDataset" @close="previewDialogVisible = false"
-        previewType="workspace"></WorkspaceDataPreviewDialog>
-    <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.myData.title')" :warningMessage="warningMessage" @close="closeWarningDialog">
-    </WorkspaceWarningDialog>
+    <WorkspaceDataCloneDialog :visible="cloneDialogVisible" :propDataset="selectedDataset" @close="cloneDialogVisible = false" @clone="handleDatasetClone"> </WorkspaceDataCloneDialog>
+    <WorkspaceDataShareDialog :visible="shareDialogVisible" :propDataset="selectedDataset" :datasetCategories="datasetCategories" @close="shareDialogVisible = false" @share="handleDatasetShare"></WorkspaceDataShareDialog>
+    <WorkspaceDataPreviewDialog v-if="previewDialogVisible" :visible="previewDialogVisible" :propDataset="selectedDataset" @close="previewDialogVisible = false" previewType="workspace"></WorkspaceDataPreviewDialog>
+    <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.myData.title')" :warningMessage="warningMessage" @close="closeWarningDialog"> </WorkspaceWarningDialog>
 
-    <DataPreparationAvroHandlingDialog :visible="dataPrepAvroHandlingDialogVisbile" :title="$t('workspace.myData.isPreparing')"
-        :infoMessage="dataPrepAvroHandlingMessage" @close="proceedToDataPrep" :events="events"></DataPreparationAvroHandlingDialog>
+    <DataPreparationAvroHandlingDialog :visible="dataPrepAvroHandlingDialogVisbile" :title="$t('workspace.myData.isPreparing')" :infoMessage="dataPrepAvroHandlingMessage" @close="proceedToDataPrep" :events="events"></DataPreparationAvroHandlingDialog>
 
     <QBE v-if="qbeVisible" :visible="qbeVisible" :dataset="selectedQbeDataset" :sourceDataset="selectedDataset" @close="closeQbe" />
-    <DataPreparationMonitoringDialog v-model:visibility="showMonitoring" @close="showMonitoring = false" @save="updateDatasetWithNewCronExpression"
-        :dataset="selectedDataset"></DataPreparationMonitoringDialog>
+    <DataPreparationMonitoringDialog v-model:visibility="showMonitoring" @close="showMonitoring = false" @save="updateDatasetWithNewCronExpression" :dataset="selectedDataset"></DataPreparationMonitoringDialog>
 </template>
 
 <script lang="ts">
@@ -345,7 +371,7 @@ export default defineComponent({
                     this.setLoadedAvros(response.data)
                     this.setLoadingAvros([])
                 })
-                .catch(() => { })
+                .catch(() => {})
         },
         async getAllData() {
             await this.getDatasetsByFilter()
@@ -365,7 +391,7 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => {
                     this.selectedDataset = response.data[0]
                 })
-                .catch(() => { })
+                .catch(() => {})
             this.loading = false
         },
         async loadDatasetDrivers(dataset) {
@@ -467,7 +493,7 @@ export default defineComponent({
                         msg: this.$t('workspace.myData.exportSuccess')
                     })
                 })
-                .catch(() => { })
+                .catch(() => {})
                 .finally(() => (this.parameterSidebarVisible = false))
         },
         toggleDisplayView() {
@@ -569,7 +595,7 @@ export default defineComponent({
                     if (idx >= 0) this.removeFromLoadedAvros(idx)
                     this.pushEvent(3)
                 })
-                .catch(() => { })
+                .catch(() => {})
 
             // listen on websocket for avro export job to be finished
             if (this.user?.functionalities.includes('DataPreparation') && Object.keys(this.client).length > 0) this.client.publish({ destination: '/app/prepare', body: dsId })
@@ -680,7 +706,7 @@ export default defineComponent({
                     this.shareDialogVisible = false
                     this.getDatasetsByFilter()
                 })
-                .catch(() => { })
+                .catch(() => {})
             this.loading = false
         },
         async cloneDataset(dataset: any) {
@@ -728,7 +754,7 @@ export default defineComponent({
                     this.showDetailSidebar = false
                     this.getDatasetsByFilter()
                 })
-                .catch(() => { })
+                .catch(() => {})
             this.loading = false
         },
         closeWarningDialog() {
