@@ -11,7 +11,6 @@
         "attributes": "Attributes",
         "author": "Author",
         "back": "back",
-        "row": "Row",
         "bottom": "bottom",
         "cancel": "cancel",
         "category": "Category",
@@ -79,7 +78,7 @@
         },
         "execute": "Execute",
         "expand": "expand",
-        "export": "export",
+        "export": "Export",
         "exportCSV": "Export CSV",
         "exportSuccess": "The download has started in background. You will find the result file in your download page.",
         "extraLarge": "Extra Large",
@@ -168,6 +167,7 @@
         "right": "Right",
         "role": "Role",
         "roles": "Roles",
+        "row": "Row",
         "run": "Run",
         "save": "save",
         "saveAs": "Save as",
@@ -430,10 +430,6 @@
             "descending": "Descending",
             "dragColumnsHint": "Drag columns here",
             "editor": "Editor",
-            "htmlParsingError": "HTML Parsing Error",
-            "textParsingError": "Text Parsing Error",
-            "galleryWarning": "Are you sure you want to overwrite changes in editor with the template?",
-
             "editorTags": {
                 "activesel": "Active Selection",
                 "calc": "Calculation",
@@ -480,6 +476,7 @@
             },
             "fontawesome": "Fontawesome",
             "gallery": "Gallery",
+            "galleryWarning": "Are you sure you want to overwrite changes in editor with the template?",
             "headers": {
                 "action": "Action",
                 "enableCustomHeaders": "Enable Custom Headers",
@@ -493,6 +490,7 @@
             },
             "hidden": "Hidden",
             "hint": "Select dataset",
+            "htmlParsingError": "HTML Parsing Error",
             "iconTooltips": {
                 "backgroundColor": "Background color",
                 "bold": "Bold",
@@ -595,6 +593,7 @@
                 "pinnedColumnsOnly": "Pinned columns only",
                 "title": "Summary rows"
             },
+            "textParsingError": "Text Parsing Error",
             "title": "Widget Editor",
             "titles": {
                 "enableTitle": "Enable Title",
@@ -2920,11 +2919,11 @@
             }
         },
         "myData": {
-            "cloneDataset": "Clone Dataset",
+            "cloneDataset": "Clone",
             "clonedDatasetWizard": "Cloned Dataset Wizard",
-            "csvExport": "Export Dataset to CSV",
+            "csvExport": "CSV",
             "datasetPreview": "Dataset Preview",
-            "deleteDataset": "Delete Dataset",
+            "deleteDataset": "Delete",
             "driverable": "Drivable",
             "exportSuccess": "The download has started in background. You will find the result file in your download page.",
             "fileDownload": "Download Dataset file",
@@ -2932,24 +2931,24 @@
             "modified": "Modified",
             "monitoring": "Monitoring",
             "openData": "Import Open Data",
-            "openDataPreparation": "Open Data Preparation",
+            "openDataPreparation": "Open in Data Preparation",
             "parametrical": "Parametrical",
             "parseError": "Impossible to parse file. Check its content and upload it again",
             "prepareData": "Prepare Data",
-            "shareDataset": "Share/Unshare Dataset",
+            "shareDataset": "Share/Unshare",
             "shareDatasetHint": "By selecting a category from the combo box you are sharing the data set for all the users that are able to manage the specified data set category.",
             "tablePrefix": "Table Prefix",
             "title": "My Data",
             "unshareDataset": "Unshare Dataset",
             "userRoleError": "User does not have valid roles for the execution of the selected model",
             "wizardTitle": "Dataset Wizard",
-            "xlsxExport": "Export Dataset to XLSX"
+            "xlsxExport": "XLSX"
         },
         "myModels": {
-            "deleteDataset": "Delete dataset",
-            "editDataset": "Edit dataset",
-            "openInQBE": "Open dataset in QBE",
-            "showInfo": "Show dataset info",
+            "deleteDataset": "Delete",
+            "editDataset": "Edit",
+            "openInQBE": "Open in QBE",
+            "showInfo": "Show info",
             "title": "My Models",
             "userRoleError": "User does not have valid roles for the execution of the selected model"
         },

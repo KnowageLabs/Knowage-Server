@@ -13,16 +13,19 @@
     <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
 
     <div class="p-d-flex p-flex-row p-ai-center p-flex-wrap">
-        <InputText class="kn-material-input p-m-3 model-search" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
+        <InputText class="kn-material-input p-m-3 model-search" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text"
+            :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
         <span class="p-float-label p-mr-auto model-search">
-            <MultiSelect class="kn-material-input kn-width-full" :style="mainDescriptor.style.multiselect" v-model="selectedCategories" :options="datasetCategories" optionLabel="VALUE_CD" @change="searchItems" :filter="true" />
+            <MultiSelect class="kn-material-input kn-width-full" :style="mainDescriptor.style.multiselect" v-model="selectedCategories"
+                :options="datasetCategories" optionLabel="VALUE_CD" @change="searchItems" :filter="true" />
             <label class="kn-material-input-label"> {{ $t('common.type') }} </label>
         </span>
         <SelectButton class="p-mx-2" v-model="tableMode" :options="selectButtonOptions" @click="getDatasetsByFilter" data-test="dataset-select" />
     </div>
 
     <div class="kn-overflow">
-        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table p-mx-2" :value="filteredDatasets" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" data-test="datasets-table">
+        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table p-mx-2" :value="filteredDatasets" :loading="loading" dataKey="objId"
+            responsiveLayout="stack" breakpoint="600px" data-test="datasets-table">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -45,7 +48,8 @@
                 <template #header> &ensp; </template>
                 <template #body="slotProps">
                     <Button icon="fas fa-ellipsis-v" class="p-button-link" @click.stop="showMenu($event, slotProps.data)" />
-                    <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click.stop="showSidebar(slotProps.data)" :data-test="'info-button-' + slotProps.data.name" />
+                    <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')"
+                        @click.stop="showSidebar(slotProps.data)" :data-test="'info-button-' + slotProps.data.name" />
                     <Button icon="fas fa-eye" class="p-button-link" @click.stop="previewDataset(slotProps.data)" />
                 </template>
             </Column>
@@ -55,79 +59,49 @@
                 {{ $t('common.info.noDataFound') }}
             </Message>
             <template v-else>
-                <WorkspaceCard
-                    v-for="(dataset, index) of filteredDatasets"
-                    :key="index"
-                    :viewType="'dataset'"
-                    :document="dataset"
-                    :isAvroReady="isAvroReady(dataset.id)"
-                    @previewDataset="previewDataset"
-                    @editDataset="editDataset"
-                    @openDatasetInQBE="openDatasetInQBE($event)"
-                    @exportToXlsx="prepareDatasetForExport($event, 'xls')"
-                    @exportToCsv="prepareDatasetForExport($event, 'csv')"
-                    @downloadDatasetFile="downloadDatasetFile"
-                    @shareDataset="shareDataset"
-                    @cloneDataset="cloneDataset"
-                    @deleteDataset="deleteDatasetConfirm"
-                    @openDataPreparation="openDataPreparation"
-                    @openSidebar="showSidebar"
-                    @monitoring="showMonitoring = !showMonitoring"
-                />
+                <WorkspaceCard v-for="(dataset, index) of filteredDatasets" :key="index" :viewType="'dataset'" :document="dataset"
+                    :isAvroReady="isAvroReady(dataset.id)" @previewDataset="previewDataset" @editDataset="editDataset"
+                    @openDatasetInQBE="openDatasetInQBE($event)" @exportToXlsx="prepareDatasetForExport($event, 'xls')"
+                    @exportToCsv="prepareDatasetForExport($event, 'csv')" @downloadDatasetFile="downloadDatasetFile" @shareDataset="shareDataset"
+                    @cloneDataset="cloneDataset" @deleteDataset="deleteDatasetConfirm" @openDataPreparation="openDataPreparation" @openSidebar="showSidebar"
+                    @monitoring="showMonitoring = !showMonitoring" />
             </template>
         </div>
     </div>
 
-    <DetailSidebar
-        :visible="showDetailSidebar"
-        :viewType="'dataset'"
-        :document="selectedDataset"
-        :isAvroReady="isAvroReady(selectedDataset?.id)"
-        :datasetCategories="datasetCategories"
-        @previewDataset="previewDataset"
-        @editDataset="editDataset"
-        @openDatasetInQBE="openDatasetInQBE($event)"
-        @exportToXlsx="prepareDatasetForExport($event, 'xls')"
-        @exportToCsv="prepareDatasetForExport($event, 'csv')"
-        @downloadDatasetFile="downloadDatasetFile"
-        @shareDataset="shareDataset"
-        @cloneDataset="cloneDataset"
-        @deleteDataset="deleteDatasetConfirm"
-        @openDataPreparation="openDataPreparation"
-        @close="showDetailSidebar = false"
-        data-test="detail-sidebar"
-        @monitoring="showMonitoring = !showMonitoring"
-    />
+    <DetailSidebar :visible="showDetailSidebar" :viewType="'dataset'" :document="selectedDataset" :isAvroReady="isAvroReady(selectedDataset?.id)"
+        :datasetCategories="datasetCategories" @previewDataset="previewDataset" @editDataset="editDataset" @openDatasetInQBE="openDatasetInQBE($event)"
+        @exportToXlsx="prepareDatasetForExport($event, 'xls')" @exportToCsv="prepareDatasetForExport($event, 'csv')" @downloadDatasetFile="downloadDatasetFile"
+        @shareDataset="shareDataset" @cloneDataset="cloneDataset" @deleteDataset="deleteDatasetConfirm" @openDataPreparation="openDataPreparation"
+        @close="showDetailSidebar = false" data-test="detail-sidebar" @monitoring="showMonitoring = !showMonitoring" />
 
     <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
-    <KnParameterSidebar
-        v-if="parameterSidebarVisible"
-        style="height: 100%; top: 0 !important"
-        class="workspace-parameter-sidebar kn-overflow-y"
-        :filtersData="filtersData"
-        :propDocument="selectedDataset"
-        :propMode="'workspaceView'"
-        :propQBEParameters="selectedDataset.pars"
-        :userRole="userRole"
-        :dataset="selectedDataset"
-        @execute="onExecute"
-        @roleChanged="onRoleChange"
-    />
+    <KnParameterSidebar v-if="parameterSidebarVisible" style="height: 100%; top: 0 !important" class="workspace-parameter-sidebar kn-overflow-y"
+        :filtersData="filtersData" :propDocument="selectedDataset" :propMode="'workspaceView'" :propQBEParameters="selectedDataset.pars" :userRole="userRole"
+        :dataset="selectedDataset" @execute="onExecute" @roleChanged="onRoleChange" />
 
-    <DatasetWizard v-if="showDatasetDialog" :selectedDataset="selectedDataset" :visible="showDatasetDialog" @closeDialog="showDatasetDialog = false" @closeDialogAndReload="closeWizardAndRealod" />
-    <EditPreparedDatasetDialog :dataset="selectedDataset" :visible="showEditPreparedDatasetDialog" @save="updatePreparedDataset" @cancel="showEditPreparedDatasetDialog = false" />
+    <DatasetWizard v-if="showDatasetDialog" :selectedDataset="selectedDataset" :visible="showDatasetDialog" @closeDialog="showDatasetDialog = false"
+        @closeDialogAndReload="closeWizardAndRealod" />
+    <EditPreparedDatasetDialog :dataset="selectedDataset" :visible="showEditPreparedDatasetDialog" @save="updatePreparedDataset"
+        @cancel="showEditPreparedDatasetDialog = false" />
     <TieredMenu class="kn-tieredMenu" id="optionsMenu" ref="optionsMenu" :model="menuButtons" :popup="true" />
     <Menu id="creationMenu" ref="creationMenu" :model="creationMenuButtons" />
 
-    <WorkspaceDataCloneDialog :visible="cloneDialogVisible" :propDataset="selectedDataset" @close="cloneDialogVisible = false" @clone="handleDatasetClone"></WorkspaceDataCloneDialog>
-    <WorkspaceDataShareDialog :visible="shareDialogVisible" :propDataset="selectedDataset" :datasetCategories="datasetCategories" @close="shareDialogVisible = false" @share="handleDatasetShare"></WorkspaceDataShareDialog>
-    <WorkspaceDataPreviewDialog v-if="previewDialogVisible" :visible="previewDialogVisible" :propDataset="selectedDataset" @close="previewDialogVisible = false" previewType="workspace"></WorkspaceDataPreviewDialog>
-    <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.myData.title')" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
+    <WorkspaceDataCloneDialog :visible="cloneDialogVisible" :propDataset="selectedDataset" @close="cloneDialogVisible = false" @clone="handleDatasetClone">
+    </WorkspaceDataCloneDialog>
+    <WorkspaceDataShareDialog :visible="shareDialogVisible" :propDataset="selectedDataset" :datasetCategories="datasetCategories"
+        @close="shareDialogVisible = false" @share="handleDatasetShare"></WorkspaceDataShareDialog>
+    <WorkspaceDataPreviewDialog v-if="previewDialogVisible" :visible="previewDialogVisible" :propDataset="selectedDataset" @close="previewDialogVisible = false"
+        previewType="workspace"></WorkspaceDataPreviewDialog>
+    <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.myData.title')" :warningMessage="warningMessage" @close="closeWarningDialog">
+    </WorkspaceWarningDialog>
 
-    <DataPreparationAvroHandlingDialog :visible="dataPrepAvroHandlingDialogVisbile" :title="$t('workspace.myData.isPreparing')" :infoMessage="dataPrepAvroHandlingMessage" @close="proceedToDataPrep" :events="events"></DataPreparationAvroHandlingDialog>
+    <DataPreparationAvroHandlingDialog :visible="dataPrepAvroHandlingDialogVisbile" :title="$t('workspace.myData.isPreparing')"
+        :infoMessage="dataPrepAvroHandlingMessage" @close="proceedToDataPrep" :events="events"></DataPreparationAvroHandlingDialog>
 
     <QBE v-if="qbeVisible" :visible="qbeVisible" :dataset="selectedQbeDataset" :sourceDataset="selectedDataset" @close="closeQbe" />
-    <DataPreparationMonitoringDialog v-model:visibility="showMonitoring" @close="showMonitoring = false" @save="updateDatasetWithNewCronExpression" :dataset="selectedDataset"></DataPreparationMonitoringDialog>
+    <DataPreparationMonitoringDialog v-model:visibility="showMonitoring" @close="showMonitoring = false" @save="updateDatasetWithNewCronExpression"
+        :dataset="selectedDataset"></DataPreparationMonitoringDialog>
 </template>
 
 <script lang="ts">
@@ -371,7 +345,7 @@ export default defineComponent({
                     this.setLoadedAvros(response.data)
                     this.setLoadingAvros([])
                 })
-                .catch(() => {})
+                .catch(() => { })
         },
         async getAllData() {
             await this.getDatasetsByFilter()
@@ -391,7 +365,7 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => {
                     this.selectedDataset = response.data[0]
                 })
-                .catch(() => {})
+                .catch(() => { })
             this.loading = false
         },
         async loadDatasetDrivers(dataset) {
@@ -493,7 +467,7 @@ export default defineComponent({
                         msg: this.$t('workspace.myData.exportSuccess')
                     })
                 })
-                .catch(() => {})
+                .catch(() => { })
                 .finally(() => (this.parameterSidebarVisible = false))
         },
         toggleDisplayView() {
@@ -518,44 +492,42 @@ export default defineComponent({
         },
         // prettier-ignore
         createMenuItems(clickedDocument: any) {
+            let tmp = [] as any
+            tmp.push({ key: 0, label: this.$t('workspace.myModels.editDataset'), icon: 'fas fa-pen', command: this.editDataset, visible: this.isDatasetOwner && (this.selectedDataset.dsTypeCd == 'File' || this.selectedDataset.dsTypeCd == 'Prepared') })
+            tmp.push({ key: 1, label: this.$t('workspace.myModels.editDataset'), icon: 'fas fa-pen', command: () => this.openDatasetInQBE(clickedDocument), visible: this.showQbeEditButton })
+            tmp.push({ key: 2, label: this.$t('workspace.myModels.openInQBE'), icon: 'fas fa-file-circle-question', command: () => this.openQBEUponDataset(clickedDocument), visible: this.isOpenInQBEVisible(clickedDocument) })
 
-         let tmp = [] as any
-        tmp.push(
-            { key: '0', label: this.$t('workspace.myModels.editDataset'), icon: 'fas fa-pen', command: this.editDataset, visible: this.isDatasetOwner && (this.selectedDataset.dsTypeCd == 'File' || this.selectedDataset.dsTypeCd == 'Prepared') },
-            { key: '1', label: this.$t('workspace.myModels.editDataset'), icon: 'fas fa-pen', command: () => this.openDatasetInQBE(clickedDocument), visible: this.showQbeEditButton },
-            {
-                key:'2',
-                label:this.$t('common.export'),
-                icon:'fa-solid fa-file-export',
-                visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File',
-                items:[
-                {
-                    key: '20', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.prepareDatasetForExport(clickedDocument, 'xls'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' && this.datasetIsIterable },
-                    { key: '21', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: () => this.prepareDatasetForExport(clickedDocument, 'csv'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' },
-                ]
-            },
-            { key: '4', label: this.$t('workspace.myData.fileDownload'), icon: 'fas fa-download', command: () => this.downloadDatasetFile(clickedDocument), visible: this.selectedDataset.dsTypeCd == 'File' },
-            { key: '5', label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: () => this.shareDataset(), visible: this.canLoadData && this.isDatasetOwner && this.selectedDataset.dsTypeCd != 'Prepared' },
-            { key: '6', label: this.$t('workspace.myData.cloneDataset'), icon: 'fas fa-clone', command: () => this.cloneDataset(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd == 'Qbe' },
-
-            { key: '9', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner },
-            { key: '10', label: this.$t('workspace.myModels.openInQBE'), icon: 'fas fa-pen', command: () => this.openQBEUponDataset(clickedDocument), visible: this.isOpenInQBEVisible(clickedDocument) }
-        )
-
-        if (this.user?.functionalities.includes('DataPreparation')) {
-            tmp.push({ key: '7', label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: this.canLoadData && (this.selectedDataset.pars && this.selectedDataset.pars.length == 0) })
-        }
-
-        tmp = tmp.sort((a,b)=>a.key.localeCompare(b.key))
-        tmp.forEach(element => {
-            if(element.items) {
-                element.items = element.items.sort((a,b)=>a.key.localeCompare(b.key))
+            if (this.user?.functionalities.includes('DataPreparation')) {
+                tmp.push({ key: 3, label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: this.canLoadData && (this.selectedDataset.pars && this.selectedDataset.pars.length == 0) })
             }
-        });
 
-        this.menuButtons = tmp 
+            tmp.push({
+                key: 4,
+                label: this.$t('common.export'),
+                icon: 'fa-solid fa-file-export',
+                visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File',
+                items: [
+                    {
+                        key: 40, label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.prepareDatasetForExport(clickedDocument, 'xls'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' && this.datasetIsIterable
+                    },
+                    { key: 41, label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: () => this.prepareDatasetForExport(clickedDocument, 'csv'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' },
+                ]
+            })
+            tmp.push({ key: 5, label: this.$t('workspace.myData.fileDownload'), icon: 'fas fa-download', command: () => this.downloadDatasetFile(clickedDocument), visible: this.selectedDataset.dsTypeCd == 'File' })
+            tmp.push({ key: 6, label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: () => this.shareDataset(), visible: this.canLoadData && this.isDatasetOwner && this.selectedDataset.dsTypeCd != 'Prepared' })
+            tmp.push({ key: 7, label: this.$t('workspace.myData.cloneDataset'), icon: 'fas fa-clone', command: () => this.cloneDataset(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd == 'Qbe' })
+            tmp.push({ key: 100, label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner })
 
-    },
+            tmp = tmp.sort((a, b) => a.key < b.key)
+            tmp.forEach(element => {
+                if (element.items) {
+                    element.items = element.items.sort((a, b) => a.key < b.key)
+                }
+            });
+
+            this.menuButtons = tmp
+
+        },
         createCreationMenuButtons() {
             this.creationMenuButtons = []
             this.creationMenuButtons.push({ key: '0', label: this.$t('managers.businessModelManager.uploadFile'), command: this.toggleDatasetDialog, visible: true }, { key: '1', label: this.$t('workspace.myData.openData'), command: this.openDatasetInQBE, visible: this.showCkanIntegration })
@@ -597,7 +569,7 @@ export default defineComponent({
                     if (idx >= 0) this.removeFromLoadedAvros(idx)
                     this.pushEvent(3)
                 })
-                .catch(() => {})
+                .catch(() => { })
 
             // listen on websocket for avro export job to be finished
             if (this.user?.functionalities.includes('DataPreparation') && Object.keys(this.client).length > 0) this.client.publish({ destination: '/app/prepare', body: dsId })
@@ -708,7 +680,7 @@ export default defineComponent({
                     this.shareDialogVisible = false
                     this.getDatasetsByFilter()
                 })
-                .catch(() => {})
+                .catch(() => { })
             this.loading = false
         },
         async cloneDataset(dataset: any) {
@@ -756,7 +728,7 @@ export default defineComponent({
                     this.showDetailSidebar = false
                     this.getDatasetsByFilter()
                 })
-                .catch(() => {})
+                .catch(() => { })
             this.loading = false
         },
         closeWarningDialog() {
@@ -893,7 +865,7 @@ export default defineComponent({
             setTimeout(this.events.push(message), 1500)
         },
         isOpenInQBEVisible(dataset: any) {
-            return dataset.isPersisted || dataset.dsTypeCd == 'File' || dataset.dsTypeCd == 'Query' || dataset.dsTypeCd == 'Flat'
+            return dataset.pars?.length == 0 && (dataset.isPersisted || dataset.dsTypeCd == 'File' || dataset.dsTypeCd == 'Query' || dataset.dsTypeCd == 'Flat')
         }
     },
     unmounted() {
@@ -908,6 +880,7 @@ export default defineComponent({
 .model-search {
     flex: 0.3;
 }
+
 #document-execution-backdrop {
     background-color: rgba(33, 33, 33, 1);
     opacity: 0.48;
