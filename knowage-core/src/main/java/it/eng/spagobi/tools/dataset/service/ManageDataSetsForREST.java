@@ -1571,6 +1571,8 @@ public class ManageDataSetsForREST {
 			return java.sql.Timestamp.class;
 		else if (columnClass.equalsIgnoreCase("java.util.Date"))
 			return java.sql.Date.class;
+		else if (columnClass.equalsIgnoreCase("java.time.LocalDateTime"))
+			return java.sql.Timestamp.class;
 		else {
 			try {
 				return Class.forName(columnClass);
