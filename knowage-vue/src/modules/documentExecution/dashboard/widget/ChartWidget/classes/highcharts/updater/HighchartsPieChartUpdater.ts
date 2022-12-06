@@ -88,7 +88,8 @@ const getFormattedNoDataConfiguration = (oldModel: any, newModel: HighchartsPieC
 }
 
 const getFormattedSeries = (oldModel: any, newModel: HighchartsPieChartModel) => {
-    oldModel.CHART.VALUES.SERIE.forEach((serie: any) => {
+    if (oldModel.CHART.VALUES.SERIE) {
+        const serie = oldModel.CHART.VALUES.SERIE[0]
         newModel.series.push({
             name: serie.name,
             colorByPoint: false, // TODO
@@ -101,5 +102,6 @@ const getFormattedSeries = (oldModel: any, newModel: HighchartsPieChartModel) =>
                 keyboardNavigation: { enabled: false }
             }
         })
-    })
+    }
+
 }

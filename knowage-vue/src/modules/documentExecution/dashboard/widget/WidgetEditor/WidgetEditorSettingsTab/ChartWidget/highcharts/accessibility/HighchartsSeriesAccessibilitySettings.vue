@@ -14,7 +14,7 @@
             </div>
 
             <div class="p-col-5 p-pt-4 p-px-4">
-                <InputSwitch v-model="serieSetting.accessibility.enabled" @change="onSerieSettingUpdated(serieSetting)"></InputSwitch>
+                <InputSwitch v-model="serieSetting.accessibility.enabled" @change="modelChanged"></InputSwitch>
                 <label class="kn-material-input-label p-m-3">{{ $t('common.enabled') }}</label>
             </div>
             <div class="p-col-1 p-d-flex p-flex-column p-jc-center p-ai-center p-pl-2">
@@ -26,11 +26,11 @@
                 <Textarea class="kn-material-input kn-width-full" rows="4" :autoResize="true" v-model="serieSetting.accessibility.description" maxlength="250" :disabled="!serieSetting.accessibility.enabled" @change="onSerieSettingUpdated(serieSetting)" />
             </div>
             <div class="p-col-6 p-pt-2 p-px-4">
-                <InputSwitch v-model="serieSetting.accessibility.exposeAsGroupOnly" @change="onSerieSettingUpdated(serieSetting)"></InputSwitch>
+                <InputSwitch v-model="serieSetting.accessibility.exposeAsGroupOnly" @change="modelChanged"></InputSwitch>
                 <label class="kn-material-input-label p-m-3">{{ $t('dashboard.widgetEditor.accessibility.exposeAsGroupOnly') }}</label>
             </div>
             <div class="p-col-6 p-pt-2 p-px-4">
-                <InputSwitch v-model="serieSetting.accessibility.keyboardNavigation.enabled" @change="onSerieSettingUpdated(serieSetting)"></InputSwitch>
+                <InputSwitch v-model="serieSetting.accessibility.keyboardNavigation.enabled" @change="modelChanged"></InputSwitch>
                 <label class="kn-material-input-label p-m-3">{{ $t('dashboard.widgetEditor.accessibility.enabelKeyboardNavigation') }}</label>
             </div>
         </div>
@@ -93,10 +93,7 @@ export default defineComponent({
             })
         },
         onSeriesRemovedFromMultiselect(intersection: string[]) {
-            intersection.forEach((serieName: string) => {
-                this.removeSerieAccessibilityFromChartModel(serieName)
-                this.availableSeriesOptions.push(serieName)
-            })
+            intersection.forEach((serieName: string) => this.availableSeriesOptions.push(serieName))
         },
         addSerieSetting() {
             this.seriesSettings.push({
@@ -110,33 +107,10 @@ export default defineComponent({
             })
         },
         removeSerieSetting(index: number) {
-            this.seriesSettings[index].names.forEach((serieName: string) => {
-                this.removeSerieAccessibilityFromChartModel(serieName)
-                this.availableSeriesOptions.push(serieName)
-            })
+            this.seriesSettings[index].names.forEach((serieName: string) => this.availableSeriesOptions.push(serieName))
             this.seriesSettings.splice(index, 1)
         },
-        removeSerieAccessibilityFromChartModel(serieName: string) {
-            if (!this.model) return
-            const index = this.model.series.findIndex((serie: IHighchartsChartSerie) => serie.name === serieName)
-            if (index !== -1)
-                this.model.series[index].accessibility = {
-                    enabled: false,
-                    description: '',
-                    exposeAsGroupOnly: false,
-                    keyboardNavigation: { enabled: false }
-                } // TODO - move to default serie accebility helper
-            this.modelChanged()
-        },
         onSerieSettingUpdated(serieSetting: ISerieAccessibilitySetting) {
-            serieSetting.names.forEach((serieName: string) => {
-                if (this.model) {
-                    const index = this.model.series.findIndex((serie: IHighchartsChartSerie) => serie.name === serieName)
-                    console.log('>>>>>> SETING UPDATED INDEX: ', index)
-                    if (index !== -1) this.model.series[index].accessibility = { ...serieSetting.accessibility }
-                }
-            })
-            console.log('UPDATED MODEL: ', this.model?.series)
             this.modelChanged()
         }
     }

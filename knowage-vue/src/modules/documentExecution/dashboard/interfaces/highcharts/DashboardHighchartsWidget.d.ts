@@ -29,7 +29,7 @@ export interface IHighchartsWidgetAccessibility {
 
 export interface ISerieAccessibilitySetting {
     names: string[]
-    accessibility: HighchartsSerieAccessibility
+    accessibility: IHighchartsSerieAccessibility
 }
 
 export interface IHighchartsWidgetStyle {
@@ -123,10 +123,10 @@ export interface IHighchartsChartSerie {
     colorByPoint: boolean,
     groupingFunction: string,
     data: IHighchartsChartSerieData[]
-    accessibility: HighchartsSerieAccessibility
+    accessibility: IHighchartsSerieAccessibility
 }
 
-export interface HighchartsSerieAccessibility {
+export interface IHighchartsSerieAccessibility {
     enabled: boolean,
     description: string,
     exposeAsGroupOnly: boolean

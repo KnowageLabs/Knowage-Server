@@ -7,6 +7,7 @@
 import { defineComponent, PropType } from 'vue'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { IWidget } from '../../../Dashboard'
+import { IHighchartsChartSerie, IHighchartsSerieAccessibility, ISerieAccessibilitySetting } from '../../../interfaces/highcharts/DashboardHighchartsWidget'
 import Highcharts from 'highcharts'
 import Highcharts3D from 'highcharts/highcharts-3d'
 import Accessibility from 'highcharts/modules/accessibility'
@@ -42,8 +43,8 @@ export default defineComponent({
         },
         onRefreshChart() {
             this.chartModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
-            console.log('>>>>>>>>>> refreshChart: ', this.chartModel)
             this.updateChartModel()
+            console.log('>>>>>>>>>> refreshChart: ', this.chartModel)
         },
         updateChartModel() {
             // TODO - remove this
@@ -77,6 +78,9 @@ export default defineComponent({
                     ]
                 }
             ]
+
+            this.updateSeriesAccessibilitySettings()
+
             Highcharts.chart('container', this.chartModel)
 
             // Highcharts.chart('container', {
@@ -137,6 +141,31 @@ export default defineComponent({
             //         }
             //     ]
             // })
+        },
+        updateSeriesAccessibilitySettings() {
+            if (!this.widgetModel || !this.widgetModel.settings.accesssibility || !this.widgetModel.settings.accesssibility.seriesAccesibilitySettings) return
+
+            this.chartModel.series.forEach((serie: IHighchartsChartSerie) => {
+                if (this.widgetModel.settings.accesssibility.seriesAccesibilitySettings[0].accessibility.enabled) {
+                    serie.accessibility = { ...this.widgetModel.settings.accesssibility.seriesAccesibilitySettings[0].accessibility }
+                } else {
+                    serie.accessibility = {
+                        enabled: false,
+                        description: '',
+                        exposeAsGroupOnly: false,
+                        keyboardNavigation: { enabled: false }
+                    }
+                }
+            })
+
+            for (let i = 1; i < this.widgetModel.settings.accesssibility.seriesAccesibilitySettings.length; i++) {
+                const seriesAccesibilitySetting = this.widgetModel.settings.accesssibility.seriesAccesibilitySettings[i] as ISerieAccessibilitySetting
+                if (seriesAccesibilitySetting.accessibility.enabled) seriesAccesibilitySetting.names.forEach((serieName: string) => this.updateSerieAccessibilitySettings(serieName, seriesAccesibilitySetting.accessibility))
+            }
+        },
+        updateSerieAccessibilitySettings(serieName: string, accessibility: IHighchartsSerieAccessibility) {
+            const index = this.chartModel.series.findIndex((serie: IHighchartsChartSerie) => serie.name === serieName)
+            if (index !== -1) this.chartModel.series[index].accessibility = { ...accessibility }
         }
     }
 })
