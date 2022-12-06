@@ -619,6 +619,9 @@
             "series": {
                 "title": "Series"
             },
+            "seriesAccessibility": {
+                "title": "Series Accessibility"
+            },
             "settingsListOptions": {
                 "tooltip": "Tooltip"
             },
