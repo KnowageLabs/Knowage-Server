@@ -264,7 +264,7 @@ const getSummaryRow = (propWidget: IWidget) => {
 
 //#region ===================== Selector Widget ====================================================
 export const getSelectorWidgetData = async (widget: IWidget, datasets: IModelDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
-    var datasetIndex = datasets.findIndex((dataset: any) => widget.dataset === dataset.id.dsId)
+    var datasetIndex = datasets.findIndex((dataset: any) => widget.dataset === dataset.id)
     var selectedDataset = datasets[datasetIndex]
 
     if (selectedDataset) {
@@ -425,4 +425,36 @@ const getAggregationsModel = (widgetModel, rawHtml, selectedDataset) => {
 
 //#endregion ================================================================================================
 
-const getChartWidgetData = (widget: IWidget, datasets: IModelDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {}
+export const getChartWidgetData = async (widget: IWidget, datasets: IModelDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+    var datasetIndex = datasets.findIndex((dataset: IModelDataset) => widget.dataset === dataset.id)
+    var selectedDataset = datasets[datasetIndex]
+
+    if (selectedDataset) {
+        console.log('', widget)
+        var url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=-1&size=-1&nearRealtime=true`
+
+        let postData = formatWidgetModelForGet(widget, selectedDataset, initialCall, selections, associativeResponseSelections)
+        var tempResponse = null as any
+
+        console.group(`%c Widget ---------------`, 'background: #121212; color: orange')
+        console.log(widget)
+        console.log(postData)
+        console.groupEnd()
+
+        if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
+        await $http
+            .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData, { headers: { 'X-Disable-Errors': 'true' } })
+            .then((response: AxiosResponse<any>) => {
+                tempResponse = response.data
+                tempResponse.initialCall = initialCall
+            })
+            .catch((error: any) => {
+                showGetDataError(error, selectedDataset.dsLabel)
+            })
+            .finally(() => {
+                // TODO - uncomment when realtime dataset example is ready
+                // resetDatasetInterval(widget)
+            })
+        return tempResponse
+    }
+}
