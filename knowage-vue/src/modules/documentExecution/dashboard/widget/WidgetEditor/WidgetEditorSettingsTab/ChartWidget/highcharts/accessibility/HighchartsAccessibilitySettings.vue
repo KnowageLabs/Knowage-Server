@@ -1,6 +1,5 @@
 <template>
     <div v-if="model?.accessibility" class="p-grid p-jc-center p-ai-center p-p-4">
-        {{ model.accessibility }}
         <div class="p-col-12 p-grid p-ai-center p-p-4">
             <label class="kn-material-input-label p-mr-2">{{ $t('common.enabled') }}</label>
             <InputSwitch v-model="model.accessibility.enabled" @change="modelChanged"></InputSwitch>

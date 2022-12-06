@@ -65,6 +65,10 @@
             {
                 "title": "dashboard.widgetEditor.accessibility.title",
                 "type": "AccessibilitySettings"
+            },
+            {
+                "title": "dashboard.widgetEditor.seriesAccessibility.title",
+                "type": "SeriesAccessibilitySettings"
             }
         ],
         "Configuration": [

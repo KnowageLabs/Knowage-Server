@@ -44,7 +44,7 @@ export interface HighchartsChartModel {
     },
     noData: HighchartsNoDataConfiguration,
     plotOptions: any,
-    series: any[],
+    series: HighchartsChartSerie[],
     settings: any,
     credits: {
         enabled: boolean
@@ -57,10 +57,7 @@ export interface HighchartsChartModel {
     },
     accessibility: HighchartsAccessibilitySettings,
     plotOptions: {
-        pie: {
-            depth: string
-        },
-        series: HighchartsChartSerie[]
+        pie: HighchartsChartPiePlotOptions
     },
     legend: {
         enabled: boolean,
@@ -101,8 +98,6 @@ export interface HighchartsAccessibilitySettings {
     }
 }
 
-
-
 export interface HighchartsChartPiePlotOptions {
     depth: string,
     allowPointSelect: boolean,
@@ -116,8 +111,16 @@ export interface HighchartsChartPiePlotOptions {
 export interface HighchartsChartSerie {
     name: string,
     colorByPoint: boolean,
+    groupingFunction: string,
     data: HighchartsChartSerieData[]
+    accessibility: HighchartsSerieAccessibility
+}
 
+export interface HighchartsSerieAccessibility {
+    enabled: boolean,
+    description: string,
+    exposeAsGroupOnly: boolean
+    keyboardNavigation: { enabled: boolean }
 }
 
 export interface HighchartsChartSerieData {
