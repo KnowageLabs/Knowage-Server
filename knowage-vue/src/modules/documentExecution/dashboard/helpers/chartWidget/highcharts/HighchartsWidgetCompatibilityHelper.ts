@@ -33,7 +33,6 @@ export const formatHighchartsWidget = (widget: any) => {
     formattedWidget.settings = getFormattedWidgetSettings(widget) as IHighchartsWidgetSettings
     getFiltersForColumns(formattedWidget, widget)
     formattedWidget.settings.chartModel = new HighchartsPieChart(widget.content.chartTemplate, formattedWidget) // TODO - see about this
-    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> AAAAAAAAAAAAAAAAAAAA: ", formattedWidget.settings.chartModel.getModel())
     console.log(">>>>>>>>>>> FORMATTED WIDGET: ", widget)
     return formattedWidget
 }
@@ -51,7 +50,6 @@ export const getFormattedWidgetColumns = (widget: any) => {
     const serie = widget.content.chartTemplate.CHART.VALUES.SERIE ? widget.content.chartTemplate.CHART.VALUES.SERIE[0] : null
     if (category) addCategoryColumns(category, formattedColumns, widgetColumNameMap)
     if (serie) addSerieColumn(serie, widgetColumNameMap, formattedColumns)
-    console.log(">>>>>>>>>>> formattedColumns: ", formattedColumns)
     return formattedColumns
 }
 
@@ -92,8 +90,6 @@ const createDrillOrder = (orderColumn: string | null, orderType: string) => {
 
 
 const addSerieColumn = (serie: any, widgetColumNameMap: any, formattedColumns: IWidgetColumn[]) => {
-    console.log(">>>>>>>> SERIE: ", serie)
-    console.log(">>>>>>>> widgetColumNameMap: ", widgetColumNameMap)
     const tempColumn = widgetColumNameMap[serie.column] as IWidgetColumn
     tempColumn.aggregation = serie.groupingFunction
     if (serie.orderType) tempColumn.orderType = serie.orderType.toUpperCase()
@@ -109,17 +105,7 @@ const getFormattedWidgetSettings = (widget: any) => {
         chartModel: null, // TODO - see about this
         configuration: getFormattedConfiguration(widget),
         accesssibility: {
-            seriesAccesibilitySettings: [
-                {
-                    names: ['all'],
-                    accessibility: {
-                        enabled: false,
-                        description: '',
-                        exposeAsGroupOnly: false,
-                        keyboardNavigation: { enabled: false }
-                    }
-                }
-            ]
+            seriesAccesibilitySettings: getFormattedSeriesAccesibilitySettings(widget)
         },  // TODO - move to some default helper 
         interactions: getFormattedInteractions(widget) as IWidgetInteractions,
         style: getFormattedStyle(widget),
@@ -134,7 +120,22 @@ const getFormattedConfiguration = (widget: any) => {
     } as IHighchartsWidgetConfiguration
 }
 
+const getFormattedSeriesAccesibilitySettings = (widget: any) => {
+    console.log("AAAAAAAAAAAAAAAAA -  widget.content.chartTemplate", widget.content.chartTemplate)
+    return widget.content.chartTemplate.CHART.type !== 'PIE' ? [
+        {
+            names: ['all'],
+            accessibility: {
+                enabled: false,
+                description: '',
+                exposeAsGroupOnly: false,
+                keyboardNavigation: { enabled: false }
+            }
+        }
+    ] : []
+}
 
 export const getColumnId = (widgetColumnName: string) => {
     return columnNameIdMap[widgetColumnName]
 }
+

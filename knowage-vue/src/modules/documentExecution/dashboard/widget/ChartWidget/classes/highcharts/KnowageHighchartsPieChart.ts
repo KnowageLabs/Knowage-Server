@@ -11,7 +11,6 @@ export class HighchartsPieChart extends KnowageHighcharts {
     }
 
     updateModel = (oldModel: any, widgetModel: IWidget) => {
-        console.log(" !!!!!!!!!!!!!!!!!!!!! updateModel !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         updatePieChartModel(oldModel, this.model, widgetModel)
     }
 

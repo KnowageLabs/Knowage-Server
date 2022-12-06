@@ -144,9 +144,12 @@ export default defineComponent({
         },
         updateSeriesAccessibilitySettings() {
             if (!this.widgetModel || !this.widgetModel.settings.accesssibility || !this.widgetModel.settings.accesssibility.seriesAccesibilitySettings) return
-
+            this.setAllSeriesAccessibilitySettings()
+            this.setSpecificAccessibilitySettings()
+        },
+        setAllSeriesAccessibilitySettings() {
             this.chartModel.series.forEach((serie: IHighchartsChartSerie) => {
-                if (this.widgetModel.settings.accesssibility.seriesAccesibilitySettings[0].accessibility.enabled) {
+                if (this.chartModel.chart.type !== 'pie' && this.widgetModel.settings.accesssibility.seriesAccesibilitySettings[0] && this.widgetModel.settings.accesssibility.seriesAccesibilitySettings[0].accessibility.enabled) {
                     serie.accessibility = { ...this.widgetModel.settings.accesssibility.seriesAccesibilitySettings[0].accessibility }
                 } else {
                     serie.accessibility = {
@@ -157,8 +160,10 @@ export default defineComponent({
                     }
                 }
             })
-
-            for (let i = 1; i < this.widgetModel.settings.accesssibility.seriesAccesibilitySettings.length; i++) {
+        },
+        setSpecificAccessibilitySettings() {
+            const index = this.chartModel.chart.type !== 'pie' ? 1 : 0
+            for (let i = index; i < this.widgetModel.settings.accesssibility.seriesAccesibilitySettings.length; i++) {
                 const seriesAccesibilitySetting = this.widgetModel.settings.accesssibility.seriesAccesibilitySettings[i] as ISerieAccessibilitySetting
                 if (seriesAccesibilitySetting.accessibility.enabled) seriesAccesibilitySetting.names.forEach((serieName: string) => this.updateSerieAccessibilitySettings(serieName, seriesAccesibilitySetting.accessibility))
             }

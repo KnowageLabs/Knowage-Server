@@ -1,23 +1,17 @@
 <template>
     <div v-if="model" class="p-grid p-jc-center p-ai-center p-p-4">
-        {{ seriesSettings }}
-        <br />
-        {{ availableSeriesOptions }}
-        <br />
-        {{ model.series }}
-        <br />
         <div v-for="(serieSetting, index) in seriesSettings" :key="index" class="dynamic-form-item p-grid p-col-12 p-ai-center">
             <div class="p-col-12 p-md-6 p-d-flex p-flex-column p-p-2">
                 <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.series.title') }}</label>
-                <Dropdown v-if="index === 0" class="kn-material-input" v-model="serieSetting.names[0]" :options="descriptor.allSerieOption" optionValue="value" optionLabel="label" :disabled="true"> </Dropdown>
-                <HighchartsSeriesMultiselect v-else :value="serieSetting.names" :availableSeriesOptions="availableSeriesOptions" @change="onSeriesSelected($event, serieSetting)"> </HighchartsSeriesMultiselect>
+                <Dropdown v-if="index === 0 && allSeriesOptionEnabled" class="kn-material-input" v-model="serieSetting.names[0]" :options="descriptor.allSerieOption" optionValue="value" optionLabel="label" :disabled="true"> </Dropdown>
+                <HighchartsSeriesMultiselect v-else :value="serieSetting.names" :availableSeriesOptions="availableSeriesOptions" :disabled="!allSeriesOptionEnabled" @change="onSeriesSelected($event, serieSetting)"> </HighchartsSeriesMultiselect>
             </div>
 
             <div class="p-col-5 p-pt-4 p-px-4">
                 <InputSwitch v-model="serieSetting.accessibility.enabled" @change="modelChanged"></InputSwitch>
                 <label class="kn-material-input-label p-m-3">{{ $t('common.enabled') }}</label>
             </div>
-            <div class="p-col-1 p-d-flex p-flex-column p-jc-center p-ai-center p-pl-2">
+            <div v-if="allSeriesOptionEnabled" class="p-col-1 p-d-flex p-flex-column p-jc-center p-ai-center p-pl-2">
                 <i :class="[index === 0 ? 'pi pi-plus-circle' : 'pi pi-trash']" class="kn-cursor-pointer p-ml-2 p-mt-4" @click="index === 0 ? addSerieSetting() : removeSerieSetting(index)"></i>
             </div>
 
@@ -26,11 +20,11 @@
                 <Textarea class="kn-material-input kn-width-full" rows="4" :autoResize="true" v-model="serieSetting.accessibility.description" maxlength="250" :disabled="!serieSetting.accessibility.enabled" @change="onSerieSettingUpdated(serieSetting)" />
             </div>
             <div class="p-col-6 p-pt-2 p-px-4">
-                <InputSwitch v-model="serieSetting.accessibility.exposeAsGroupOnly" @change="modelChanged"></InputSwitch>
+                <InputSwitch v-model="serieSetting.accessibility.exposeAsGroupOnly" :disabled="!serieSetting.accessibility.enabled" @change="modelChanged"></InputSwitch>
                 <label class="kn-material-input-label p-m-3">{{ $t('dashboard.widgetEditor.accessibility.exposeAsGroupOnly') }}</label>
             </div>
             <div class="p-col-6 p-pt-2 p-px-4">
-                <InputSwitch v-model="serieSetting.accessibility.keyboardNavigation.enabled" @change="modelChanged"></InputSwitch>
+                <InputSwitch v-model="serieSetting.accessibility.keyboardNavigation.enabled" :disabled="!serieSetting.accessibility.enabled" @change="modelChanged"></InputSwitch>
                 <label class="kn-material-input-label p-m-3">{{ $t('dashboard.widgetEditor.accessibility.enabelKeyboardNavigation') }}</label>
             </div>
         </div>
@@ -61,7 +55,11 @@ export default defineComponent({
             availableSeriesOptions: [] as string[]
         }
     },
-    computed: {},
+    computed: {
+        allSeriesOptionEnabled() {
+            return this.model?.chart.type !== 'pie'
+        }
+    },
     created() {
         this.loadModel()
     },
@@ -74,9 +72,22 @@ export default defineComponent({
         },
         loadSeriesOptions() {
             this.availableSeriesOptions = []
-            this.model?.series.forEach((serie: IHighchartsChartSerie) => {
+            if (!this.model) return
+            this.model.series.forEach((serie: IHighchartsChartSerie) => {
                 this.availableSeriesOptions.push(serie.name)
             })
+            if (!this.allSeriesOptionEnabled && this.availableSeriesOptions.length === 1 && this.seriesSettings.length === 0) {
+                this.widgetModel.settings.accesssibility.seriesAccesibilitySettings.push({
+                    names: [this.availableSeriesOptions[0]],
+                    accessibility: {
+                        enabled: false,
+                        description: '',
+                        exposeAsGroupOnly: false,
+                        keyboardNavigation: { enabled: false }
+                    }
+                })
+                this.availableSeriesOptions = []
+            }
         },
         modelChanged() {
             emitter.emit('refreshChart', this.widgetModel.id)
