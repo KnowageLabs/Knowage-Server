@@ -22,7 +22,7 @@
                     @settingChanged="onSettingChanged"
                     @datasetSelected="onDatasetSelected"
                 />
-                <WidgetEditorPreview v-if="selectedSetting != 'Gallery'" :propWidget="widget" :dashboardId="dashboardId" :datasets="datasets" :drivers="documentDrivers" :variables="variables" />
+                <WidgetEditorPreview v-if="selectedSetting != 'Gallery'" :propWidget="widget" :dashboardId="dashboardId" :datasets="selectedModelDatasets" :drivers="documentDrivers" :variables="variables" />
             </div>
         </div>
     </Teleport>

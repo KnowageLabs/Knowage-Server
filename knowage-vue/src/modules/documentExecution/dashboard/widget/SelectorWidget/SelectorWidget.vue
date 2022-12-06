@@ -67,7 +67,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IDataset, ISelection, IWidget } from '../../Dashboard'
+import { IModelDataset, ISelection, IWidget } from '../../Dashboard'
 import { mapActions } from 'pinia'
 import { getWidgetStyleByType } from '../TableWidget/TableWidgetHelper'
 import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
@@ -91,7 +91,7 @@ export default defineComponent({
         widgetInitialData: { type: Object as any, required: true },
         propActiveSelections: { type: Array as PropType<ISelection[]>, required: true },
         dashboardId: { type: String, required: true },
-        datasets: { type: Array as PropType<IDataset[]>, required: true },
+        datasets: { type: Array as PropType<IModelDataset[]>, required: true },
         selectionIsLocked: { type: Boolean, required: true },
         editorMode: { type: Boolean }
     },
@@ -389,8 +389,8 @@ export default defineComponent({
             return { datasetId: this.propWidget.dataset as number, datasetLabel: this.getDatasetLabel(this.propWidget.dataset as number), columnName: this.propWidget.columns[0]?.columnName ?? '', value: value, aggregated: false, timestamp: new Date().getTime() }
         },
         getDatasetLabel(datasetId: number) {
-            const index = this.datasets.findIndex((dataset: IDataset) => dataset.id.dsId == datasetId)
-            return index !== -1 ? this.datasets[index].label : ''
+            const index = this.datasets.findIndex((dataset: IModelDataset) => dataset.id == datasetId)
+            return index !== -1 ? this.datasets[index].dsLabel : ''
         },
         onSelectionsDeleted(selections: any) {
             const index = selections.findIndex((selection: ISelection) => selection.datasetId === this.propWidget.dataset && selection.columnName === this.propWidget.columns[0]?.columnName)
