@@ -53,7 +53,6 @@ export interface HighchartsChartModel {
         type: string
     },
     noData: HighchartsNoDataConfiguration,
-    plotOptions: any,
     series: IHighchartsChartSerie[],
     settings: any,
     credits: {
@@ -67,7 +66,7 @@ export interface HighchartsChartModel {
     },
     accessibility: HighchartsAccessibilitySettings,
     plotOptions: {
-        pie: HighchartsChartPiePlotOptions
+        pie: IHighchartsPieChartPlotOptions
     },
     legend: {
         enabled: boolean,
@@ -108,14 +107,26 @@ export interface HighchartsAccessibilitySettings {
     }
 }
 
-export interface HighchartsChartPiePlotOptions {
-    depth: string,
+export interface IHighchartsPieChartPlotOptions {
+    depth: number,
     allowPointSelect: boolean,
     cursor: string,
-    dataLabels: {
-        enabled: boolean,
-        format: string
+    dataLabels: IHighchartsPieChartDataLabels
+}
+
+export interface IHighchartsPieChartDataLabels {
+    enabled: boolean,
+    distance: number,
+    style: {
+        fontFamily: string
+        fontSize: string
+        fontWeight: string
+        color: string
+        backgroundColor: string
+        textAlign: string
     }
+    format?: string,
+    formatter?: string,
 }
 
 export interface IHighchartsChartSerie {

@@ -386,6 +386,7 @@
             "accessibility": {
                 "enabelKeyboardNavigation": "Enable Keyboard Navigation",
                 "exposeAsGroupOnly": "Expose As Group Only",
+                "exposeAsGroupOnlyHint": "Expose only the series element to screen readers, not its points.",
                 "keyboardNavigationOrder": "Keyboard Navigation Order",
                 "keyboardNavigationOrderHint": "Order of tab navigation in the chart. Determines which elements are tabbed to first. Available elements are: series, zoom, rangeSelector, chartMenu, legend and container. In addition, any custom components can be added here. Adding container first in order will make the keyboard focus stop on the chart container first, requiring the user to tab again to enter the chart.",
                 "keyboardNavigationOrderOptions": {
@@ -504,6 +505,8 @@
                 "title": "Export"
             },
             "fontawesome": "Fontawesome",
+            "format": "Format",
+            "formatter": "Formatter",
             "gallery": "Gallery",
             "galleryWarning": "Are you sure you want to overwrite changes in editor with the template?",
             "headers": {
@@ -519,6 +522,12 @@
             },
             "hidden": "Hidden",
             "highcarts": {
+                "labels": {
+                    "distance": "Distance",
+                    "distanceHint": "The distance of the data label from the pie's edge. Negative numbers put the data label on top of the pie slices. Can also be defined as a percentage of pie's radius. Connectors are only shown for data labels outside the pie.",
+                    "formatHint": "A format string for the data label. Available variables are the same as for formatter.",
+                    "formatterHint": "Callback JavaScript function to format the data label. Note that if a format is defined, the format takes precedence and the formatter is ignored."
+                },
                 "piechart": {
                     "labelsTableHint": "Each different value in the selected column will create a different slice",
                     "valuesTableHint": "The selected column will be used as values for every slice"

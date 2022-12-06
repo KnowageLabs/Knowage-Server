@@ -1,5 +1,6 @@
 <template>
     <button @click="updateChartModel">Test</button>
+    {{ chartModel?.plotOptions?.pie?.dataLabels }}
     <div id="container" style="width:100%; height:400px;"></div>
 </template>
 
@@ -80,6 +81,7 @@ export default defineComponent({
             ]
 
             this.updateSeriesAccessibilitySettings()
+            this.updateLabelSettings()
 
             Highcharts.chart('container', this.chartModel)
 
@@ -171,6 +173,10 @@ export default defineComponent({
         updateSerieAccessibilitySettings(serieName: string, accessibility: IHighchartsSerieAccessibility) {
             const index = this.chartModel.series.findIndex((serie: IHighchartsChartSerie) => serie.name === serieName)
             if (index !== -1) this.chartModel.series[index].accessibility = { ...accessibility }
+        },
+        updateLabelSettings() {
+            if (this.chartModel.plotOptions.pie.dataLabels.format?.trim() === '') delete this.chartModel.plotOptions.pie.dataLabels.format
+            if (this.chartModel.plotOptions.pie.dataLabels.formatter?.trim() === '') delete this.chartModel.plotOptions.pie.dataLabels.formatter
         }
     }
 })

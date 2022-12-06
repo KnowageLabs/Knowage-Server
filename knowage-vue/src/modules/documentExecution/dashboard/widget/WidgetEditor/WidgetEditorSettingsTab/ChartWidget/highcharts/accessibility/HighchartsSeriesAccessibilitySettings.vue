@@ -22,6 +22,7 @@
             <div class="p-col-6 p-pt-2 p-px-4">
                 <InputSwitch v-model="serieSetting.accessibility.exposeAsGroupOnly" :disabled="!serieSetting.accessibility.enabled" @change="modelChanged"></InputSwitch>
                 <label class="kn-material-input-label p-m-3">{{ $t('dashboard.widgetEditor.accessibility.exposeAsGroupOnly') }}</label>
+                <i class="pi pi-question-circle kn-cursor-pointer  p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.accessibility.exposeAsGroupOnlyHint')"></i>
             </div>
             <div class="p-col-6 p-pt-2 p-px-4">
                 <InputSwitch v-model="serieSetting.accessibility.keyboardNavigation.enabled" :disabled="!serieSetting.accessibility.enabled" @change="modelChanged"></InputSwitch>

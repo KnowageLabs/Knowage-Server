@@ -49,6 +49,26 @@
             "value": "container"
         }
     ],
+    "labelsStyleOptions": [
+        {
+            "type": "font-weight"
+        },
+        {
+            "type": "font-size"
+        },
+        {
+            "type": "justify-content"
+        },
+        {
+            "type": "font-family"
+        },
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
+        }
+    ],
     "noDataToolbarStyleOptions": [
         {
             "type": "font-weight"
@@ -107,6 +127,12 @@
             {
                 "title": "dashboard.widgetEditor.interactions.preview",
                 "type": "Preview"
+            }
+        ],
+        "Labels": [
+            {
+                "title": "common.labels",
+                "type": "Labels"
             }
         ],
         "Responsive": [

@@ -117,7 +117,15 @@ export class KnowageHighcharts {
                     cursor: '',
                     dataLabels: {
                         enabled: false,
-                        format: ''
+                        distance: 30,
+                        style: {
+                            fontFamily: '',
+                            fontSize: '14px',
+                            fontWeight: '',
+                            color: '',
+                            backgroundColor: '',
+                            textAlign: '',
+                        }
                     }
                 }, // move to PIE CHART
                 series: []
