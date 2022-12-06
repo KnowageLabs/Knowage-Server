@@ -11,6 +11,7 @@
                 <Highcharts3DConfiguration v-if="accordion.type === 'ConfigurationOf3D'" :widgetModel="widgetModel"></Highcharts3DConfiguration>
                 <HighchartsNoDataMessageConfiguration v-else-if="accordion.type === 'NoDataMessageConfiguration'" :widgetModel="widgetModel"></HighchartsNoDataMessageConfiguration>
                 <HighchartsAccessibilitySettings v-else-if="accordion.type === 'AccessibilitySettings'" :widgetModel="widgetModel"></HighchartsAccessibilitySettings>
+                <HighchartsSeriesAccessibilitySettings v-else-if="accordion.type === 'SeriesAccessibilitySettings'" :widgetModel="widgetModel"></HighchartsSeriesAccessibilitySettings>
                 <WidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
                 <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
                 <WidgetRowsStyle v-else-if="accordion.type === 'RowsStyle'" :widgetModel="widgetModel"></WidgetRowsStyle>
@@ -48,6 +49,7 @@ import WidgetBackgroundColorStyle from '../../common/style/WidgetBackgroundColor
 import Highcharts3DConfiguration from '../highcharts/configuration/Highcharts3DConfiguration.vue'
 import HighchartsNoDataMessageConfiguration from '../highcharts/configuration/HighchartsNoDataMessageConfiguration.vue'
 import HighchartsAccessibilitySettings from '../highcharts/accessibility/HighchartsAccessibilitySettings.vue'
+import HighchartsSeriesAccessibilitySettings from '../highcharts/accessibility/HighchartsSeriesAccessibilitySettings.vue'
 
 export default defineComponent({
     name: 'hihgcharts-widget-configuration-container',
@@ -67,7 +69,8 @@ export default defineComponent({
         WidgetPreview,
         Highcharts3DConfiguration,
         HighchartsNoDataMessageConfiguration,
-        HighchartsAccessibilitySettings
+        HighchartsAccessibilitySettings,
+        HighchartsSeriesAccessibilitySettings
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

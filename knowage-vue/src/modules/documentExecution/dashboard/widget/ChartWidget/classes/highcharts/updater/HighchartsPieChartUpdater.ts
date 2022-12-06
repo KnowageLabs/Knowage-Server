@@ -1,18 +1,18 @@
+import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard"
 import { hexToRgb } from "@/modules/documentExecution/dashboard/helpers/FormattingHelpers"
 import { HighchartsPieChartModel } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget"
 import { HighchartsOptions3D } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
 
-export const updatePieChartModel = (oldModel: any, newModel: HighchartsPieChartModel) => {
+export const updatePieChartModel = (oldModel: any, newModel: HighchartsPieChartModel, widgetModel: IWidget) => {
     console.log("----------------------------------- OLD MODEL: ", oldModel)
     console.log("----------------------------------- NEW MODEL: ", newModel)
+    console.log("----------------------------------- WIDGET MODEL: ", widgetModel)
     newModel.chart.type = "pie"
     newModel.title = oldModel.CHART.TITLE
 
     getFormatted3DConfiguration(oldModel, newModel)
     getFormattedNoDataConfiguration(oldModel, newModel)
-
-
-
+    getFormattedSeries(oldModel, newModel)
 
 
 
@@ -52,16 +52,9 @@ export const updatePieChartModel = (oldModel: any, newModel: HighchartsPieChartM
     //     newModel.settings.drilldown = true
     // }
 
-    // // SERIE
-    // oldModel.CHART.VALUES.SERIE.forEach((item) => {
-    //     newModel.series.push({
-    //         "name": item.name,
-    //         "groupingFunction": item.groupingFunction,
-    //         "turboThreshold": 15000
-    //     })
-    // })
 
-    // return newModel
+
+    return newModel
 }
 
 const getFormatted3DConfiguration = (oldModel: any, newModel: HighchartsPieChartModel) => {
@@ -94,3 +87,21 @@ const getFormattedNoDataConfiguration = (oldModel: any, newModel: HighchartsPieC
     }
 }
 
+const getFormattedSeries = (oldModel: any, newModel: HighchartsPieChartModel) => {
+    if (oldModel.CHART.VALUES.SERIE) {
+        const serie = oldModel.CHART.VALUES.SERIE[0]
+        newModel.series.push({
+            name: serie.name,
+            colorByPoint: false, // TODO
+            groupingFunction: serie.groupingFunction,
+            data: [],
+            accessibility: {
+                enabled: false,
+                description: '',
+                exposeAsGroupOnly: false,
+                keyboardNavigation: { enabled: false }
+            }
+        })
+    }
+
+}

@@ -6,13 +6,12 @@ import { updatePieChartModel } from "./updater/HighchartsPieChartUpdater"
 export class HighchartsPieChart extends KnowageHighcharts {
     constructor(model: any, widgetModel: IWidget) {
         super(model, widgetModel)
-        if (model && model.CHART) this.updateModel(model)
+        if (model && model.CHART) this.updateModel(model, widgetModel)
         else this.model = model
     }
 
-    updateModel = (oldModel: any) => {
-        console.log(" !!!!!!!!!!!!!!!!!!!!! updateModel !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-        updatePieChartModel(oldModel, this.model)
+    updateModel = (oldModel: any, widgetModel: IWidget) => {
+        updatePieChartModel(oldModel, this.model, widgetModel)
     }
 
     getModel = () => {

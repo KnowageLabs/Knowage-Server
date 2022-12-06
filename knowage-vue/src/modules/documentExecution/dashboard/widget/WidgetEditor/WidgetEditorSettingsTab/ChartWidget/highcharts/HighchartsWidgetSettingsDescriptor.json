@@ -17,9 +17,15 @@
             "value": "right"
         }
     ],
+    "allSerieOption": [
+        {
+            "label": "all",
+            "value": "all"
+        }
+    ],
     "keyboardNavigationOrderOptions": [
         {
-            "label": "dashboard.widgetEditor.accessibility.keyboardNavigationOrderOptions.series",
+            "label": "dashboard.widgetEditor.series.title",
             "value": "series"
         },
         {
@@ -65,6 +71,10 @@
             {
                 "title": "dashboard.widgetEditor.accessibility.title",
                 "type": "AccessibilitySettings"
+            },
+            {
+                "title": "dashboard.widgetEditor.seriesAccessibility.title",
+                "type": "SeriesAccessibilitySettings"
             }
         ],
         "Configuration": [

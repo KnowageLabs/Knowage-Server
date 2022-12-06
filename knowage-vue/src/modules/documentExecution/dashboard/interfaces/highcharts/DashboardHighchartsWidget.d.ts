@@ -7,6 +7,7 @@ export interface IHighchartsWidgetSettings {
     clickable: boolean,
     chartModel: HighchartsPieChart | null,
     configuration: IHighchartsWidgetConfiguration,
+    accesssibility: IHighchartsWidgetAccessibility,
     interactions: IWidgetInteractions,
     style: IHighchartsWidgetStyle,
     responsive: IWidgetResponsive
@@ -20,6 +21,15 @@ export interface IDrillOrderItem {
 
 export interface IHighchartsWidgetConfiguration {
     exports: IWidgetExports
+}
+
+export interface IHighchartsWidgetAccessibility {
+    seriesAccesibilitySettings: ISerieAccessibilitySetting[]
+}
+
+export interface ISerieAccessibilitySetting {
+    names: string[]
+    accessibility: IHighchartsSerieAccessibility
 }
 
 export interface IHighchartsWidgetStyle {
@@ -44,7 +54,7 @@ export interface HighchartsChartModel {
     },
     noData: HighchartsNoDataConfiguration,
     plotOptions: any,
-    series: any[],
+    series: IHighchartsChartSerie[],
     settings: any,
     credits: {
         enabled: boolean
@@ -57,10 +67,7 @@ export interface HighchartsChartModel {
     },
     accessibility: HighchartsAccessibilitySettings,
     plotOptions: {
-        pie: {
-            depth: string
-        },
-        series: HighchartsChartSerie[]
+        pie: HighchartsChartPiePlotOptions
     },
     legend: {
         enabled: boolean,
@@ -101,8 +108,6 @@ export interface HighchartsAccessibilitySettings {
     }
 }
 
-
-
 export interface HighchartsChartPiePlotOptions {
     depth: string,
     allowPointSelect: boolean,
@@ -113,14 +118,22 @@ export interface HighchartsChartPiePlotOptions {
     }
 }
 
-export interface HighchartsChartSerie {
+export interface IHighchartsChartSerie {
     name: string,
     colorByPoint: boolean,
-    data: HighchartsChartSerieData[]
-
+    groupingFunction: string,
+    data: IHighchartsChartSerieData[]
+    accessibility: IHighchartsSerieAccessibility
 }
 
-export interface HighchartsChartSerieData {
+export interface IHighchartsSerieAccessibility {
+    enabled: boolean,
+    description: string,
+    exposeAsGroupOnly: boolean
+    keyboardNavigation: { enabled: boolean }
+}
+
+export interface IHighchartsChartSerieData {
     name: string,
     y: number,
     sliced?: boolean,
