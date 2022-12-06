@@ -352,7 +352,14 @@ export default defineComponent({
             if (this.dataset && !this.dataset.dataSourceId && !this.dataset.federation_id) {
                 await this.loadDataset()
             } else if (this.sourceDataset) {
-                this.qbe = this.getQBEFromSourceDataset()
+                await this.loadDataset()
+                if (this.qbe) {
+                    this.qbe.qbeJSONQuery = {
+                        catalogue: {
+                            queries: [this.getQbeJSONQuery(this.sourceDataset)]
+                        }
+                    }
+                }
             } else {
                 this.qbe = this.getQBEFromModel()
             }
@@ -373,21 +380,22 @@ export default defineComponent({
             this.loading = false
         },
         async loadDataset() {
-            if (!this.dataset) {
-                return
-            }
-            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/${this.dataset.label}`).then((response: AxiosResponse<any>) => {
-                this.qbe = response.data[0]
-                if (this.qbe && this.qbe.qbeJSONQuery) this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
-            })
+            let dataset = this.dataset ? this.dataset : this.sourceDataset
 
-            if (this.qbe && this.getQueryFromDatasetProp) {
-                this.qbe = deepcopy(this.dataset) as any
-                if (this.qbe && this.qbe.qbeJSONQuery && typeof this.qbe.qbeJSONQuery === 'string') this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
-            }
+            if (dataset) {
+                await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/${dataset.label}`).then((response: AxiosResponse<any>) => {
+                    this.qbe = response.data[0]
+                    if (this.qbe && this.qbe.qbeJSONQuery) this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
+                })
 
-            if (this.qbe && this.dataset) {
-                this.qbe.pars = this.dataset.pars ?? []
+                if (this.qbe && this.getQueryFromDatasetProp) {
+                    this.qbe = deepcopy(dataset) as any
+                    if (this.qbe && this.qbe.qbeJSONQuery && typeof this.qbe.qbeJSONQuery === 'string') this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
+                }
+
+                if (this.qbe && dataset) {
+                    this.qbe.pars = dataset.pars ?? []
+                }
             }
         },
         getQBEFromModel() {
@@ -401,7 +409,7 @@ export default defineComponent({
                     ? this.dataset.qbeJSONQuery
                     : {
                           catalogue: {
-                              queries: [{ id: 'q1', name: 'Main', fields: [], distinct: false, filters: [], calendar: {}, expression: {}, isNestedExpression: false, havings: [], graph: [], relationRoles: [], subqueries: [] }]
+                              queries: [this.getQbeJSONQuery(this.dataset)]
                           }
                       },
                 meta: [],
@@ -423,7 +431,7 @@ export default defineComponent({
                 qbeDataSource: null,
                 qbeJSONQuery: {
                     catalogue: {
-                        queries: [{ id: 'q1', name: 'Main', fields: [], distinct: false, filters: [], calendar: {}, expression: {}, isNestedExpression: false, havings: [], graph: [], relationRoles: [], subqueries: [] }]
+                        queries: [this.getQbeJSONQuery(this.sourceDataset)]
                     }
                 },
                 meta: [],
@@ -434,9 +442,17 @@ export default defineComponent({
                 name: ''
             } as any
         },
+        getQbeJSONQuery(dataset) {
+            let query = { id: 'q1', name: 'Main', fields: [], distinct: false, filters: [], calendar: {}, expression: {}, isNestedExpression: false, havings: [], graph: [], relationRoles: [], subqueries: [] }
+            return dataset.qbeJSONQuery ?? query
+        },
         loadQuery() {
-            this.mainQuery = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
-            this.selectedQuery = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
+            let query = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
+            if (!query) {
+                query = this.getQbeJSONQuery(this.sourceDataset)
+            }
+            this.mainQuery = query
+            this.selectedQuery = query
         },
         extractFieldsMetadata(array) {
             if (array && array.length > 0) {
@@ -489,7 +505,9 @@ export default defineComponent({
                 await this.loadCustomizedDatasetFunctions()
             }
             await this.loadEntities()
-            if (!this.dataset?.dataSourceLabel) {
+
+            if (this.sourceDataset) {
+            } else if (!this.dataset?.dataSourceLabel) {
                 await this.executeQBEQuery(false)
             }
         },
@@ -558,11 +576,18 @@ export default defineComponent({
         },
         async loadEntities() {
             let datamartName = this.dataset?.dataSourceId ? this.dataset.name : this.qbe?.qbeDatamarts
+
             if (this.dataset?.type === 'federatedDataset') {
                 datamartName = null
             }
+
+            let url = `/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_TREE_ACTION&SBI_EXECUTION_ID=${this.uniqueID}&datamartName=${datamartName}`
+
+            if (this.sourceDataset) {
+                url += '&openDatasetInQbe=true'
+            }
             await this.$http
-                .get(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_TREE_ACTION&SBI_EXECUTION_ID=${this.uniqueID}&datamartName=${datamartName}`)
+                .get(url)
                 .then(async (response: AxiosResponse<any>) => {
                     this.addExpandedProperty(response.data.entities)
                     await this.addSpatialProperty(response.data.entities)

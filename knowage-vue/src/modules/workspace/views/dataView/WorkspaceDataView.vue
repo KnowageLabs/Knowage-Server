@@ -519,19 +519,19 @@ export default defineComponent({
         // prettier-ignore
         createMenuItems(clickedDocument: any) {
 
-        let tmp = [] as any
+         let tmp = [] as any
         tmp.push(
             { key: '0', label: this.$t('workspace.myModels.editDataset'), icon: 'fas fa-pen', command: this.editDataset, visible: this.isDatasetOwner && (this.selectedDataset.dsTypeCd == 'File' || this.selectedDataset.dsTypeCd == 'Prepared') },
             { key: '1', label: this.$t('workspace.myModels.editDataset'), icon: 'fas fa-pen', command: () => this.openDatasetInQBE(clickedDocument), visible: this.showQbeEditButton },
             {
-                key:'100',
+                key:'2',
                 label:this.$t('common.export'),
-                icon:'pi pi-fw pi-plus',
+                icon:'fa-solid fa-file-export',
                 visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File',
                 items:[
                 {
-                    key: '2', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.prepareDatasetForExport(clickedDocument, 'xls'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' && this.datasetIsIterable },
-                    { key: '3', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: () => this.prepareDatasetForExport(clickedDocument, 'csv'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' },
+                    key: '20', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.prepareDatasetForExport(clickedDocument, 'xls'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' && this.datasetIsIterable },
+                    { key: '21', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: () => this.prepareDatasetForExport(clickedDocument, 'csv'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' },
                 ]
             },
             { key: '4', label: this.$t('workspace.myData.fileDownload'), icon: 'fas fa-download', command: () => this.downloadDatasetFile(clickedDocument), visible: this.selectedDataset.dsTypeCd == 'File' },
@@ -547,8 +547,13 @@ export default defineComponent({
         }
 
         tmp = tmp.sort((a,b)=>a.key.localeCompare(b.key))
+        tmp.forEach(element => {
+            if(element.items) {
+                element.items = element.items.sort((a,b)=>a.key.localeCompare(b.key))
+            }
+        });
 
-        this.menuButtons = tmp
+        this.menuButtons = tmp 
 
     },
         createCreationMenuButtons() {

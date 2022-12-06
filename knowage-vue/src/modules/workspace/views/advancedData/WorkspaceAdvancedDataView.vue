@@ -312,9 +312,17 @@ export default defineComponent({
         createMenuItems(clickedDocument: any) {
                 let tmp = [] as any
                 tmp.push(
-                    { key: '0', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.exportDataset(clickedDocument, 'xls'), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'File' },
-                    { key: '1', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: () => this.exportDataset(clickedDocument, 'csv'), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'File' },
-                    { key: '4', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner }
+                { 
+                    key:'1',
+                    label:this.$t('common.export'),
+                    icon:'fa-solid fa-file-export',
+                    visible: this.canLoadData && this.selectedDataset.dsTypeCd && this.selectedDataset.dsTypeCd != 'File',
+                    items:[
+                        { key: '10', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.exportDataset(clickedDocument, 'xls')},
+                        { key: '11', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: () => this.exportDataset(clickedDocument, 'csv')},
+                    ]
+                },
+                { key: '4', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner }
                 )
                 if (this.user?.functionalities.includes('DataPreparation')) {
                     tmp.push(
@@ -323,6 +331,11 @@ export default defineComponent({
                     )
                 }
                 tmp = tmp.sort((a,b)=>a.key.localeCompare(b.key))
+                tmp.forEach(element => {
+                    if(element.items) {
+                        element.items = element.items.sort((a,b)=>a.key.localeCompare(b.key))
+                    }
+                })
                 this.menuButtons = tmp
         },
         createCreationMenuButtons() {
