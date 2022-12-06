@@ -22,7 +22,7 @@ export default defineComponent({
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {
-            chartModel: {}
+            chartModel: {} as any
         }
     },
     mounted() {
@@ -54,6 +54,26 @@ export default defineComponent({
                 }
             })
 
+            // TODO - Remove Hardcoded
+            this.chartModel.series = [
+                {
+                    type: 'pie',
+                    name: 'Share',
+                    data: [
+                        ['Samsung', 23],
+                        ['Apple', 18],
+                        {
+                            name: 'Xiaomi',
+                            y: 12,
+                            sliced: true,
+                            selected: true
+                        },
+                        ['Oppo*', 9],
+                        ['Vivo', 8],
+                        ['Others', 30]
+                    ]
+                }
+            ]
             Highcharts.chart('container', this.chartModel)
 
             // Highcharts.chart('container', {

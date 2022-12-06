@@ -14,12 +14,12 @@
             <InputSwitch v-model="model.accessibility.keyboardNavigation.enabled" :disabled="accessibilityDisabled" @change="modelChanged"></InputSwitch>
         </div>
         <div class="p-col-12 p-d-flex p-flex-column kn-flex p-m-2">
-            <label class="kn-material-input-label">{{ $t('common.verticalAlign') }}</label>
+            <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.accessibility.keyboardNavigationOrder') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center">
-                <MultiSelect class="kn-material-input" v-model="model.accessibility.keyboardNavigation.order" :options="descriptor.keyboardNavigationOrderOptions" optionValue="value" @change="modelChanged">
+                <MultiSelect class="kn-material-input multiselect-keyboardNavigation" v-model="model.accessibility.keyboardNavigation.order" :options="descriptor.keyboardNavigationOrderOptions" optionValue="value" :disabled="accessibilityDisabled" @change="modelChanged">
                     <template #value="slotProps">
-                        <div>
-                            <span>{{ getTranslatedLabel(slotProps.value, descriptor.keyboardNavigationOrderOptions, $t) }}</span>
+                        <div class="option-item-value" v-for="value of slotProps.value" :key="value">
+                            <span> {{ getTranslatedLabel(value, descriptor.keyboardNavigationOrderOptions, $t) }}</span>
                         </div>
                     </template>
                     <template #option="slotProps">
@@ -74,3 +74,25 @@ export default defineComponent({
     }
 })
 </script>
+
+<style lang="scss" scoped>
+.p-multiselect {
+    width: 100%;
+}
+
+::v-deep(.multiselect-keyboardNavigation) {
+    .p-multiselect-label:not(.p-placeholder) {
+        padding-top: 0.25rem;
+        padding-bottom: 0.25rem;
+    }
+
+    .option-item-value {
+        padding: 0.25rem 0.5rem;
+        border-radius: 3px;
+        display: inline-flex;
+        margin-right: 0.5rem;
+        background-color: var(--primary-color);
+        color: var(--primary-color-text);
+    }
+}
+</style>
