@@ -384,6 +384,8 @@
         },
         "widgetEditor": {
             "accessibility": {
+                "enabelKeyboardNavigation": "Enable Keyboard Navigation",
+                "exposeAsGroupOnly": "Expose As Group Only",
                 "keyboardNavigationOrder": "Keyboard Navigation Order",
                 "keyboardNavigationOrderHint": "Order of tab navigation in the chart. Determines which elements are tabbed to first. Available elements are: series, zoom, rangeSelector, chartMenu, legend and container. In addition, any custom components can be added here. Adding container first in order will make the keyboard focus stop on the chart container first, requiring the user to tab again to enter the chart.",
                 "keyboardNavigationOrderOptions": {
@@ -391,7 +393,6 @@
                     "container": "Container",
                     "legend": "Legend",
                     "rangeSelector": "Range Selector",
-                    "series": "Series",
                     "zoom": "Zoom"
                 },
                 "title": "Accessibility"

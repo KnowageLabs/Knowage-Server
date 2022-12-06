@@ -46,6 +46,9 @@ export default defineComponent({
             this.updateChartModel()
         },
         updateChartModel() {
+            // TODO - remove this
+            if (this.widgetModel.type !== 'chart') return
+
             // highcharts3D(chart)
             // Create the chart
             Highcharts.setOptions({

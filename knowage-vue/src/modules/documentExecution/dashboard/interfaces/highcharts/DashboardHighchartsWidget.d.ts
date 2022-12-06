@@ -7,6 +7,7 @@ export interface IHighchartsWidgetSettings {
     clickable: boolean,
     chartModel: HighchartsPieChart | null,
     configuration: IHighchartsWidgetConfiguration,
+    accesssibility: IHighchartsWidgetAccessibility,
     interactions: IWidgetInteractions,
     style: IHighchartsWidgetStyle,
     responsive: IWidgetResponsive
@@ -20,6 +21,15 @@ export interface IDrillOrderItem {
 
 export interface IHighchartsWidgetConfiguration {
     exports: IWidgetExports
+}
+
+export interface IHighchartsWidgetAccessibility {
+    seriesAccesibilitySettings: ISerieAccessibilitySetting[]
+}
+
+export interface ISerieAccessibilitySetting {
+    names: string[]
+    accessibility: HighchartsSerieAccessibility
 }
 
 export interface IHighchartsWidgetStyle {
@@ -44,7 +54,7 @@ export interface HighchartsChartModel {
     },
     noData: HighchartsNoDataConfiguration,
     plotOptions: any,
-    series: HighchartsChartSerie[],
+    series: IHighchartsChartSerie[],
     settings: any,
     credits: {
         enabled: boolean
@@ -108,11 +118,11 @@ export interface HighchartsChartPiePlotOptions {
     }
 }
 
-export interface HighchartsChartSerie {
+export interface IHighchartsChartSerie {
     name: string,
     colorByPoint: boolean,
     groupingFunction: string,
-    data: HighchartsChartSerieData[]
+    data: IHighchartsChartSerieData[]
     accessibility: HighchartsSerieAccessibility
 }
 
@@ -123,7 +133,7 @@ export interface HighchartsSerieAccessibility {
     keyboardNavigation: { enabled: boolean }
 }
 
-export interface HighchartsChartSerieData {
+export interface IHighchartsChartSerieData {
     name: string,
     y: number,
     sliced?: boolean,

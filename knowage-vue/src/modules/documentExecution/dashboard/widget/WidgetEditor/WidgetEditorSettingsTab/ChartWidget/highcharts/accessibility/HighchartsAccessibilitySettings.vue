@@ -9,7 +9,7 @@
             <Textarea class="kn-material-input kn-width-full" rows="4" :autoResize="true" v-model="model.accessibility.description" maxlength="250" :disabled="accessibilityDisabled" @change="modelChanged" />
         </div>
         <div class="p-col-12 p-grid p-ai-center p-p-4">
-            <label class="kn-material-input-label p-mr-2">{{ $t('common.enabled') }}</label>
+            <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.accessibility.enabelKeyboardNavigation') }}</label>
             <InputSwitch v-model="model.accessibility.keyboardNavigation.enabled" :disabled="accessibilityDisabled" @change="modelChanged"></InputSwitch>
         </div>
         <div class="p-col-12 p-d-flex p-flex-column kn-flex p-m-2">

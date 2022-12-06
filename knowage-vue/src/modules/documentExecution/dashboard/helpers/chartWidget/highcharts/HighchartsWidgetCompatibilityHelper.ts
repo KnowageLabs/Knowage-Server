@@ -103,12 +103,24 @@ const addSerieColumn = (serie: any, widgetColumNameMap: any, formattedColumns: I
 
 
 const getFormattedWidgetSettings = (widget: any) => {
-
     const formattedSettings = {
         updatable: widget.updateble,
         clickable: widget.cliccable,
         chartModel: null, // TODO - see about this
         configuration: getFormattedConfiguration(widget),
+        accesssibility: {
+            seriesAccesibilitySettings: [
+                {
+                    names: ['all'],
+                    accessibility: {
+                        enabled: false,
+                        description: '',
+                        exposeAsGroupOnly: false,
+                        keyboardNavigation: { enabled: false }
+                    }
+                }
+            ]
+        },  // TODO - move to some default helper 
         interactions: getFormattedInteractions(widget) as IWidgetInteractions,
         style: getFormattedStyle(widget),
         responsive: widgetCommonDefaultValues.getDefaultResponsivnes()
