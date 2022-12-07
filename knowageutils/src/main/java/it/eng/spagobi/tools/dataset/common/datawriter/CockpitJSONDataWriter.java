@@ -4,6 +4,12 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
+import java.time.ZonedDateTime;
+import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 import java.util.Map;
 
@@ -19,6 +25,12 @@ public class CockpitJSONDataWriter extends JSONDataWriter {
 		super(properties);
 	}
 
+	/**
+	 * TODO Pretty much a copy of {@link JSONDataWriter#getFieldValue(IField, IFieldMetaData)}. Consider
+	 *   merging and deleting this.
+	 * @deprecated Seems a copy of copy of {@link JSONDataWriter#getFieldValue(IField, IFieldMetaData)}
+	 */
+	@Deprecated
 	@Override
 	protected Object getFieldValue(IField field, IFieldMetaData fieldMetaData) {
 		Object result = null;
@@ -73,6 +85,16 @@ public class CockpitJSONDataWriter extends JSONDataWriter {
 				result = Double.valueOf(value.toString());
 			} else if (BigDecimal.class.isAssignableFrom(type)) {
 				result = value;
+			} else if (LocalTime.class.isAssignableFrom(type)) {
+				result = TIMESTAMP_FORMATTER_V2.format((TemporalAccessor) value);
+			} else if (LocalDateTime.class.isAssignableFrom(type)) {
+				result = TIMESTAMP_FORMATTER_V2.format((TemporalAccessor) value);
+			} else if (OffsetTime.class.isAssignableFrom(type)) {
+				result = TIMESTAMP_FORMATTER_V2.format((TemporalAccessor) value);
+			} else if (OffsetDateTime.class.isAssignableFrom(type)) {
+				result = TIMESTAMP_FORMATTER_V2.format((TemporalAccessor) value);
+			} else if (ZonedDateTime.class.isAssignableFrom(type)) {
+				result = TIMESTAMP_FORMATTER_V2.format((TemporalAccessor) value);
 			} else {
 				result = value.toString();
 			}

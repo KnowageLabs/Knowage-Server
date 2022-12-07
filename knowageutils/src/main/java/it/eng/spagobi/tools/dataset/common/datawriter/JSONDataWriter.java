@@ -24,6 +24,13 @@ import java.sql.Clob;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -74,10 +81,29 @@ public class JSONDataWriter implements IDataWriter {
 	private boolean useIdProperty;
 	private boolean preserveOriginalDataTypes = false;
 
+	/**
+	 * @deprecated Replace it with {@link DateTimeFormatter}
+	 */
+	@Deprecated
 	protected final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_FORMAT);
+	/**
+	 * @deprecated Replace it with {@link DateTimeFormatter}
+	 */
+	@Deprecated
 	protected final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat(TIMESTAMP_FORMAT);
+	/**
+	 * @deprecated Replace it with {@link DateTimeFormatter}
+	 */
+	@Deprecated
 	protected final SimpleDateFormat CACHE_TIMESTAMP_FORMATTER = new SimpleDateFormat(CACHE_TIMESTAMP_FORMAT);
+	/**
+	 * @deprecated Replace it with {@link DateTimeFormatter}
+	 */
+	@Deprecated
 	protected final SimpleDateFormat CACHE_TIMEONLY_FORMATTER = new SimpleDateFormat(TIME_FORMAT);
+
+	protected final DateTimeFormatter DATE_FORMATTER_V2 = DateTimeFormatter.ofPattern(DATE_FORMAT);
+	protected final DateTimeFormatter TIMESTAMP_FORMATTER_V2 = DateTimeFormatter.ofPattern(TIMESTAMP_FORMAT);
 
 	// public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS = "options";
 	// public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR = "measureScaleFactor";
@@ -277,6 +303,16 @@ public class JSONDataWriter implements IDataWriter {
 					result = Double.valueOf(field.getValue().toString());
 				} else if (BigDecimal.class.isAssignableFrom(fieldMetaData.getType())) {
 					result = new BigDecimal(field.getValue().toString());
+				} else if (LocalTime.class.isAssignableFrom(fieldMetaData.getType())) {
+					result = TIMESTAMP_FORMATTER_V2.format((TemporalAccessor) field.getValue());
+				} else if (LocalDateTime.class.isAssignableFrom(fieldMetaData.getType())) {
+					result = TIMESTAMP_FORMATTER_V2.format((TemporalAccessor) field.getValue());
+				} else if (OffsetTime.class.isAssignableFrom(fieldMetaData.getType())) {
+					result = TIMESTAMP_FORMATTER_V2.format((TemporalAccessor) field.getValue());
+				} else if (OffsetDateTime.class.isAssignableFrom(fieldMetaData.getType())) {
+					result = TIMESTAMP_FORMATTER_V2.format((TemporalAccessor) field.getValue());
+				} else if (ZonedDateTime.class.isAssignableFrom(fieldMetaData.getType())) {
+					result = TIMESTAMP_FORMATTER_V2.format((TemporalAccessor) field.getValue());
 				} else {
 					result = field.getValue().toString();
 				}
@@ -523,6 +559,31 @@ public class JSONDataWriter implements IDataWriter {
 				} else if (Boolean.class.isAssignableFrom(clazz)) {
 					logger.debug("Column [" + (i + 1) + "] type is equal to [" + "BOOLEAN" + "]");
 					fieldMetaDataJSON.put("type", "boolean");
+				} else if (LocalTime.class.isAssignableFrom(clazz)) {
+					logger.debug("Column [" + (i + 1) + "] type is equal to [" + "LocalTime" + "]");
+					fieldMetaDataJSON.put("type", "time");
+					fieldMetaDataJSON.put("dateFormat", "H:i:s");
+					fieldMetaDataJSON.put("dateFormatJava", "HH:mm:ss");
+				} else if (LocalDateTime.class.isAssignableFrom(clazz)) {
+					logger.debug("Column [" + (i + 1) + "] type is equal to [" + "LocalDateTime" + "]");
+					fieldMetaDataJSON.put("type", "timestamp");
+					fieldMetaDataJSON.put("dateFormat", "d/m/YTH:i:s");
+					fieldMetaDataJSON.put("dateFormatJava", "dd/MM/yyyyTHH:mm:ss");
+				} else if (OffsetTime.class.isAssignableFrom(clazz)) {
+					logger.debug("Column [" + (i + 1) + "] type is equal to [" + "OffsetTime" + "]");
+					fieldMetaDataJSON.put("type", "time");
+					fieldMetaDataJSON.put("dateFormat", "H:i:sXXX");
+					fieldMetaDataJSON.put("dateFormatJava", "HH:mm:ss");
+				} else if (OffsetDateTime.class.isAssignableFrom(clazz)) {
+					logger.debug("Column [" + (i + 1) + "] type is equal to [" + "OffsetDateTime" + "]");
+					fieldMetaDataJSON.put("type", "timestamp");
+					fieldMetaDataJSON.put("dateFormat", "d/m/YTH:i:sXXX");
+					fieldMetaDataJSON.put("dateFormatJava", "dd/MM/yyyyTHH:mm:ss");
+				} else if (ZonedDateTime.class.isAssignableFrom(clazz)) {
+					logger.debug("Column [" + (i + 1) + "] type is equal to [" + "ZonedDateTime" + "]");
+					fieldMetaDataJSON.put("type", "timestamp");
+					fieldMetaDataJSON.put("dateFormat", "d/m/YTH:i:sXXX");
+					fieldMetaDataJSON.put("dateFormatJava", "dd/MM/yyyyTHH:mm:ss");
 				} else {
 					logger.warn("Column [" + (i + 1) + "] type is equal to [" + "???" + "]");
 					fieldMetaDataJSON.put("type", "string");
