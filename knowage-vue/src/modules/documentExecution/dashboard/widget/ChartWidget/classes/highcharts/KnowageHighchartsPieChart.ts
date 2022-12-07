@@ -23,6 +23,7 @@ export class HighchartsPieChart extends KnowageHighcharts {
     }
 
     setData = (data: any, drillDownLevel = 0) => {
+        console.log(">>>>>>>> setData callllllllllllllllllllllllleeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeed")
         const categoryColumnName = data.metaData.fields.filter((i) => i.header === this.model.settings.categories[drillDownLevel])[0].name
         this.model.series.map((item, serieIndex) => {
             const dataColumn = item.groupingFunction ? item.name + '_' + item.groupingFunction : item.name

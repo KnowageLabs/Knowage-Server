@@ -13,6 +13,7 @@ import Highcharts from 'highcharts'
 import Highcharts3D from 'highcharts/highcharts-3d'
 import Accessibility from 'highcharts/modules/accessibility'
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display'
+import deepcopy from 'deepcopy'
 
 Accessibility(Highcharts)
 NoDataToDisplay(Highcharts)
@@ -81,7 +82,9 @@ export default defineComponent({
             ]
 
             this.updateSeriesAccessibilitySettings()
-            this.updateLabelSettings()
+            // this.updateLabelSettings()
+
+            this.widgetModel.settings.chartModel.setData('test')
 
             Highcharts.chart('container', this.chartModel)
 
@@ -176,7 +179,19 @@ export default defineComponent({
         },
         updateLabelSettings() {
             if (this.chartModel.plotOptions.pie.dataLabels.format?.trim() === '') delete this.chartModel.plotOptions.pie.dataLabels.format
-            if (this.chartModel.plotOptions.pie.dataLabels.formatter?.trim() === '') delete this.chartModel.plotOptions.pie.dataLabels.formatter
+            if (!this.chartModel.plotOptions.pie.dataLabels.formatter) return
+            if (this.chartModel.plotOptions.pie.dataLabels.formatter.trim() === '') delete this.chartModel.plotOptions.pie.dataLabels.formatter
+            else {
+                try {
+                    console.log('EVAL 1: ', this.chartModel.plotOptions.pie.dataLabels.formatter)
+                    const fn = eval(`(${this.chartModel.plotOptions.pie.dataLabels.formatter})`)
+                    console.log('EVAL: ', fn)
+                    delete this.chartModel.plotOptions.pie.dataLabels.formatter
+                    // Function(this.chartModel.plotOptions.pie.dataLabels.formatter)
+                } catch (error) {
+                    console.log('error: ', error)
+                }
+            }
         }
     }
 })

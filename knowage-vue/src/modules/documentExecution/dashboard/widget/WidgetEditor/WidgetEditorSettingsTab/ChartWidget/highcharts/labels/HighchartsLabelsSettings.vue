@@ -18,6 +18,7 @@
         <div class="p-col-12 p-py-4">
             <div class="p-d-flex p-flex-row p-jc-center">
                 <label class="kn-material-input-label kn-cursor-pointer" @click="advancedVisible = !advancedVisible">{{ $t('common.advanced') }}<i :class="advancedVisible ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="p-ml-2"></i></label>
+                <i class=""></i>
             </div>
             <Transition>
                 <div v-if="advancedVisible" class="p-d-flex p-flex-column">
@@ -31,7 +32,7 @@
                     <div class="p-col-12">
                         <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.formatter') }}</label>
                         <div class="p-d-flex p-flex-row p-ai-center">
-                            <Textarea class="kn-material-input kn-width-full" rows="20" :autoResize="true" v-model="model.plotOptions.pie.dataLabels.formatter" maxlength="1000" :disabled="labelsConfigurationDisabled" @change="modelChanged" />
+                            <HighchartsFormatterCodeMirror :propCode="model.plotOptions.pie.dataLabels.formatter" @change="onFormatterChange"></HighchartsFormatterCodeMirror>
                             <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcarts.labels.formatterHint')"></i>
                         </div>
                     </div>
@@ -51,10 +52,11 @@ import InputNumber from 'primevue/inputnumber'
 import InputSwitch from 'primevue/inputswitch'
 import WidgetEditorStyleToolbar from '../../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
 import Textarea from 'primevue/textarea'
+import HighchartsFormatterCodeMirror from '../common/HighchartsFormatterCodeMirror.vue'
 
 export default defineComponent({
     name: 'hihgcharts-labels-settings',
-    components: { InputSwitch, InputNumber, WidgetEditorStyleToolbar, Textarea },
+    components: { InputSwitch, InputNumber, WidgetEditorStyleToolbar, Textarea, HighchartsFormatterCodeMirror },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {
@@ -100,7 +102,7 @@ export default defineComponent({
             }
             this.model.plotOptions.pie.dataLabels.style = {
                 textAlign: this.getTextAlignValue(this.toolbarModel['justify-content']),
-                backgroundColor: 'black',
+                backgroundColor: this.toolbarModel['background-color'] ?? '',
                 color: this.toolbarModel.color ?? '',
                 fontSize: this.toolbarModel['font-size'] ?? '14px',
                 fontFamily: this.toolbarModel['font-family'] ?? '',
@@ -118,6 +120,12 @@ export default defineComponent({
                 default:
                     return 'center'
             }
+        },
+        onFormatterChange(newValue: string) {
+            console.log('>>>>>>>>>>> FORMATTER CHANGE CAALLLLLLED!')
+            if (!this.model) return
+            this.model.plotOptions.pie.dataLabels.formatter = newValue
+            this.modelChanged()
         }
     }
 })
