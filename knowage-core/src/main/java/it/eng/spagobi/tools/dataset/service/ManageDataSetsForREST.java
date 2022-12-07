@@ -1399,7 +1399,7 @@ public class ManageDataSetsForREST {
 		if (json.optJSONObject(DataSetConstants.METADATA) != null && json.optJSONObject(DataSetConstants.METADATA).optJSONArray("columns") != null) {
 			JSONArray dsMeta = json.optJSONObject(DataSetConstants.METADATA).getJSONArray("columns");
 			manageDataSetMetadata(dsMeta, dataSet);
-		} else if (json.optJSONArray(DataSetConstants.METADATA).length() > 0) {
+		} else if (json.optJSONArray(DataSetConstants.METADATA) != null && json.optJSONArray(DataSetConstants.METADATA).length() > 0) {
 			JSONArray dsMeta = json.optJSONArray(DataSetConstants.METADATA);
 			manageDataSetMetadataV2(dsMeta, dataSet);
 		}
@@ -1584,7 +1584,21 @@ public class ManageDataSetsForREST {
 		else if (columnClass.equalsIgnoreCase("oracle.sql.TIMESTAMP"))
 			return java.sql.Timestamp.class;
 		else
-			throw new SpagoBIRuntimeException("Couldn't map class <" + columnClass + ">");
+			/*
+			 * This is a fallback for unknown types and also a workaround to fix dataset with strange
+			 * Java types in metadata.
+			 *
+			 * TL;DR
+			 *
+			 * It happened that some datasets were written with java.time.LocalDateTime in type attribute inside
+			 * the XML in the SBI_DATA_SET.DS_METADATA: this was an error. Also, FE sends to BE Java types via REST
+			 * while BE should be autonomous into the management of the real type of a field: during
+			 * dataset saving, all the metadatas and types are inferred and completely rewritten, ignoring what FE
+			 * says.
+			 *
+			 * That said, if we don't know the type, it's not a big problem.
+			 */
+			return java.lang.String.class;
 	}
 
 	private FieldType getFieldTypeFromColumn(String fieldType) {
