@@ -94,6 +94,7 @@
         "group": "Group",
         "height": "Height",
         "home": "Home",
+        "horizontal": "Horizontal",
         "icon": "Icon",
         "id": "id",
         "image": "image",
@@ -116,6 +117,7 @@
         "language": "Language",
         "large": "Large",
         "lastChangeDate": "Last change date",
+        "layout": "Layout",
         "left": "Left",
         "library": "Library",
         "list": "List",
@@ -251,6 +253,7 @@
         "variable": "Variable",
         "variables": "Variables",
         "version": "version",
+        "vertical": "Vertical",
         "verticalAlign": "Vertical Align",
         "view": "View",
         "visibility": "Visibility",
@@ -521,17 +524,22 @@
                 "title": "Headers"
             },
             "hidden": "Hidden",
-            "highcarts": {
+            "highcharts": {
                 "labels": {
                     "distance": "Distance",
                     "distanceHint": "The distance of the data label from the pie's edge. Negative numbers put the data label on top of the pie slices. Can also be defined as a percentage of pie's radius. Connectors are only shown for data labels outside the pie.",
                     "formatHint": "A format string for the data label. Available variables are the same as for formatter.",
                     "formatterHint": "Callback JavaScript function to format the data label. Note that if a format is defined, the format takes precedence and the formatter is ignored."
                 },
+                "legend": {
+                    "alignHint": "The horizontal alignment of the legend box within the chart area. Valid values are left, center and right. In the case that the legend is aligned in a corner position, the layout option will determine whether to place it above/below or on the side of the plot area.",
+                    "layoutHint": "The layout of the legend items. Can be one of horizontal or vertical or proximate. When proximate, the legend items will be placed as close as possible to the graphs they're representing, except in inverted charts or when the legend position doesn't allow it."
+                },
                 "piechart": {
                     "labelsTableHint": "Each different value in the selected column will create a different slice",
                     "valuesTableHint": "The selected column will be used as values for every slice"
-                }
+                },
+                "proximate": "Proximate"
             },
             "hint": "Select dataset",
             "htmlParsingError": "HTML Parsing Error",

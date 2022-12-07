@@ -69,6 +69,24 @@
             "type": "background-color"
         }
     ],
+    "layoutOptions": [
+        {
+            "label": "",
+            "value": ""
+        },
+        {
+            "label": "common.horizontal",
+            "value": "horizontal"
+        },
+        {
+            "label": "common.vertical",
+            "value": "vertical"
+        },
+        {
+            "label": "dashboard.widgetEditor.highcharts.proximate",
+            "value": "proximate"
+        }
+    ],
     "noDataToolbarStyleOptions": [
         {
             "type": "font-weight"
@@ -133,6 +151,12 @@
             {
                 "title": "common.labels",
                 "type": "Labels"
+            }
+        ],
+        "Legend": [
+            {
+                "title": "dashboard.widgetEditor.legend.title",
+                "type": "Legend"
             }
         ],
         "Responsive": [

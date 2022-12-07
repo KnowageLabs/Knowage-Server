@@ -6,10 +6,10 @@
             <InputSwitch v-model="model.plotOptions.pie.dataLabels.enabled" @change="modelChanged"></InputSwitch>
         </div>
         <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column kn-flex">
-            <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.highcarts.labels.distance') }}</label>
+            <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.highcharts.labels.distance') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center">
                 <InputNumber class="kn-material-input p-inputtext-sm" v-model="model.plotOptions.pie.dataLabels.distance" :disabled="labelsConfigurationDisabled" @blur="modelChanged" />
-                <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcarts.labels.distanceHint')"></i>
+                <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.labels.distanceHint')"></i>
             </div>
         </div>
         <div class="p-col-12 p-py-4">
@@ -26,7 +26,7 @@
                         <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.format') }}</label>
                         <div class="p-d-flex p-flex-row p-ai-center">
                             <Textarea class="kn-material-input kn-width-full" rows="2" :autoResize="true" v-model="model.plotOptions.pie.dataLabels.format" maxlength="250" :disabled="labelsConfigurationDisabled" @change="modelChanged" />
-                            <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcarts.labels.formatHint')"></i>
+                            <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.labels.formatHint')"></i>
                         </div>
                     </div>
                     <div class="p-col-12">
@@ -36,7 +36,7 @@
                         </Message>
                         <div class="p-d-flex p-flex-row p-ai-center">
                             <HighchartsFormatterCodeMirror :propCode="model.plotOptions.pie.dataLabels.formatterText" @change="onFormatterChange" @blur="modelChanged"></HighchartsFormatterCodeMirror>
-                            <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcarts.labels.formatterHint')"></i>
+                            <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.labels.formatterHint')"></i>
                         </div>
                     </div>
                 </div>

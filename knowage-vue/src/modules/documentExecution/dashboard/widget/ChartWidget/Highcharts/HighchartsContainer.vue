@@ -1,6 +1,6 @@
 <template>
     <button @click="updateChartModel">Test</button>
-    {{ chartModel?.plotOptions?.pie?.dataLabels }}
+    {{ chartModel?.legend }}
     <div v-show="!error" id="container" style="width:100%; height:400px;"></div>
 </template>
 
@@ -69,6 +69,7 @@ export default defineComponent({
                         ['Samsung', 23],
                         ['Apple', 18],
                         {
+                            showInLegend: true,
                             name: 'Xiaomi',
                             y: 12,
                             sliced: true,
@@ -84,7 +85,9 @@ export default defineComponent({
             this.updateSeriesAccessibilitySettings()
             this.error = this.updateLabelSettings()
             if (this.error) return
-            console.log('>>>>>>>>>>>> ABOUT TO RENDER CHART...')
+
+            this.chartModel.plotOptions.pie.showInLegend = true
+            console.log('>>>>>>>>>>>> ABOUT TO RENDER CHART...', this.chartModel)
             Highcharts.chart('container', this.chartModel)
         },
         updateSeriesAccessibilitySettings() {

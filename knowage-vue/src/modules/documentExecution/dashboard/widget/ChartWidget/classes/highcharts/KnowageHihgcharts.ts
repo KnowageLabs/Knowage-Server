@@ -142,10 +142,18 @@ export class KnowageHighcharts {
                 pointFormat: ''
             },
             legend: {
-                enabled: false,
-                align: '',
-                verticalAlign: '',
-                layout: '',
+                enabled: true,
+                align: 'center',
+                verticalAlign: 'bottom',
+                layout: 'horizontal',
+                itemStyle: {
+                    fontFamily: '',
+                    fontSize: '',
+                    fontWeight: '',
+                    color: ''
+                },
+                backgroundColor: '',
+                borderColor: ''
             }
         }
 

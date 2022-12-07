@@ -12,6 +12,7 @@
                 <HighchartsNoDataMessageConfiguration v-else-if="accordion.type === 'NoDataMessageConfiguration'" :widgetModel="widgetModel"></HighchartsNoDataMessageConfiguration>
                 <HighchartsAccessibilitySettings v-else-if="accordion.type === 'AccessibilitySettings'" :widgetModel="widgetModel"></HighchartsAccessibilitySettings>
                 <HighchartsLabelsSettings v-else-if="accordion.type === 'Labels'" :widgetModel="widgetModel"></HighchartsLabelsSettings>
+                <HighchartsLegendSettings v-else-if="accordion.type === 'Legend'" :widgetModel="widgetModel"></HighchartsLegendSettings>
                 <HighchartsSeriesAccessibilitySettings v-else-if="accordion.type === 'SeriesAccessibilitySettings'" :widgetModel="widgetModel"></HighchartsSeriesAccessibilitySettings>
                 <WidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
                 <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
@@ -52,6 +53,7 @@ import HighchartsNoDataMessageConfiguration from '../highcharts/configuration/Hi
 import HighchartsAccessibilitySettings from '../highcharts/accessibility/HighchartsAccessibilitySettings.vue'
 import HighchartsSeriesAccessibilitySettings from '../highcharts/accessibility/HighchartsSeriesAccessibilitySettings.vue'
 import HighchartsLabelsSettings from '../highcharts/labels/HighchartsLabelsSettings.vue'
+import HighchartsLegendSettings from '../highcharts/legend/HighchartsLegendSettings.vue'
 
 export default defineComponent({
     name: 'hihgcharts-widget-configuration-container',
@@ -73,7 +75,8 @@ export default defineComponent({
         HighchartsNoDataMessageConfiguration,
         HighchartsAccessibilitySettings,
         HighchartsSeriesAccessibilitySettings,
-        HighchartsLabelsSettings
+        HighchartsLabelsSettings,
+        HighchartsLegendSettings
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

@@ -45,14 +45,14 @@ export interface HighchartsChartModel {
         noData: string
     },
     chart: {
-        options3d: HighchartsOptions3D
+        options3d: IHighchartsOptions3D
         events: any,
         plotBackgroundColor: any,
         plotBorderWidth: any,
         plotShadow: boolean,
         type: string
     },
-    noData: HighchartsNoDataConfiguration,
+    noData: IHighchartsNoDataConfiguration,
     series: IHighchartsChartSerie[],
     settings: any,
     credits: {
@@ -64,19 +64,14 @@ export interface HighchartsChartModel {
     tooltip: {
         pointFormat: string
     },
-    accessibility: HighchartsAccessibilitySettings,
+    accessibility: IHighchartsAccessibilitySettings,
     plotOptions: {
         pie: IHighchartsPieChartPlotOptions
     },
-    legend: {
-        enabled: boolean,
-        align: string,
-        verticalAlign: string,
-        layout: string,
-    }
+    legend: IHighchartsLegend
 }
 
-export interface HighchartsOptions3D {
+export interface IHighchartsOptions3D {
     enabled: boolean,
     alpha: number,
     beta: number,
@@ -84,7 +79,7 @@ export interface HighchartsOptions3D {
 }
 
 
-export interface HighchartsNoDataConfiguration {
+export interface IHighchartsNoDataConfiguration {
     position: {
         align: string,
         verticalAlign: string
@@ -98,7 +93,7 @@ export interface HighchartsNoDataConfiguration {
     }
 }
 
-export interface HighchartsAccessibilitySettings {
+export interface IHighchartsAccessibilitySettings {
     enabled: boolean,
     description: string,
     keyboardNavigation: {
@@ -150,5 +145,25 @@ export interface IHighchartsChartSerieData {
     name: string,
     y: number,
     sliced?: boolean,
-    selected?: boolean
+    selected?: boolean,
+    showInLegend?: boolean
+}
+
+export interface IHighchartsLegend {
+    enabled: boolean,
+    align: string,
+    verticalAlign: string,
+    layout: string,
+    itemStyle: {
+        fontFamily: string
+        fontSize: string
+        fontWeight: string
+        color: string
+    },
+    backgroundColor: string,
+    borderColor: string,
+    labelFormat?: string,
+    labelFormatter?: Function,
+    labelFormatterText?: string, // TODO - Remove for BE ???
+    labelFormatterError?: string  // TODO - Remove for BE
 }
