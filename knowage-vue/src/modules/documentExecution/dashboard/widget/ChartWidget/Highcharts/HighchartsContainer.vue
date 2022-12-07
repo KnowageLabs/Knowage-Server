@@ -1,13 +1,13 @@
 <template>
     <button @click="updateChartModel">Test</button>
     {{ chartModel?.plotOptions?.pie?.dataLabels }}
-    <div id="container" style="width:100%; height:400px;"></div>
+    <div id="container" style="width: 100%; height: 400px"></div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
-import { IWidget } from '../../../Dashboard'
+import { IWidget, ISelection } from '../../../Dashboard'
 import { IHighchartsChartSerie, IHighchartsSerieAccessibility, ISerieAccessibilitySetting } from '../../../interfaces/highcharts/DashboardHighchartsWidget'
 import Highcharts from 'highcharts'
 import Highcharts3D from 'highcharts/highcharts-3d'
@@ -22,7 +22,13 @@ Highcharts3D(Highcharts)
 export default defineComponent({
     name: 'highcharts-container',
     components: {},
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
+    props: {
+        widgetModel: { type: Object as PropType<IWidget>, required: true },
+        dataToShow: { type: Object as any, required: true },
+        propActiveSelections: { type: Array as PropType<ISelection[]>, required: true },
+        dashboardId: { type: String, required: true },
+        editorMode: { type: Boolean }
+    },
     data() {
         return {
             chartModel: {} as any
@@ -61,30 +67,30 @@ export default defineComponent({
             })
 
             // TODO - Remove Hardcoded
-            this.chartModel.series = [
-                {
-                    type: 'pie',
-                    name: 'Share',
-                    data: [
-                        ['Samsung', 23],
-                        ['Apple', 18],
-                        {
-                            name: 'Xiaomi',
-                            y: 12,
-                            sliced: true,
-                            selected: true
-                        },
-                        ['Oppo*', 9],
-                        ['Vivo', 8],
-                        ['Others', 30]
-                    ]
-                }
-            ]
+            // this.chartModel.series = [
+            //     {
+            //         type: 'pie',
+            //         name: 'Share',
+            //         data: [
+            //             ['Samsung', 23],
+            //             ['Apple', 18],
+            //             {
+            //                 name: 'Xiaomi',
+            //                 y: 12,
+            //                 sliced: true,
+            //                 selected: true
+            //             },
+            //             ['Oppo*', 9],
+            //             ['Vivo', 8],
+            //             ['Others', 30]
+            //         ]
+            //     }
+            // ]
 
             this.updateSeriesAccessibilitySettings()
             // this.updateLabelSettings()
 
-            this.widgetModel.settings.chartModel.setData('test')
+            this.widgetModel.settings.chartModel.setData(this.dataToShow)
 
             Highcharts.chart('container', this.chartModel)
 

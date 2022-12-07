@@ -433,7 +433,7 @@ export const getChartWidgetData = async (widget: IWidget, datasets: IModelDatase
         console.log('', widget)
         var url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=-1&size=-1&nearRealtime=true`
 
-        let postData = formatWidgetModelForGet(widget, selectedDataset, initialCall, selections, associativeResponseSelections)
+        let postData = formatChartWidgetForGet(widget, selectedDataset, initialCall, selections, associativeResponseSelections)
         var tempResponse = null as any
 
         console.group(`%c Widget ---------------`, 'background: #121212; color: orange')
@@ -457,4 +457,44 @@ export const getChartWidgetData = async (widget: IWidget, datasets: IModelDatase
             })
         return tempResponse
     }
+}
+
+const formatChartWidgetForGet = (propWidget: IWidget, dataset: IModelDataset, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+    var dataToSend = {
+        aggregations: {
+            dataset: '',
+            measures: [],
+            categories: []
+        },
+        parameters: {},
+        selections: {},
+        drivers: {},
+        indexes: []
+    } as any
+
+    addSelectionsToData(dataToSend, propWidget, dataset.dsLabel, initialCall, selections, associativeResponseSelections)
+    dataToSend.aggregations.dataset = dataset.dsLabel
+
+    //MEASURE LOGIC - will ALWAYS HAVE ONE MEASURE
+    var measureIndex = propWidget.columns.findIndex((column: any) => column.fieldType === 'MEASURE')
+    var measure = propWidget.columns[measureIndex]
+
+    let measureToPush = { id: `${measure.alias}_${measure.aggregation}`, alias: `${measure.alias}_${measure.aggregation}`, columnName: measure.columnName, funct: measure.aggregation, orderColumn: measure.alias } as any
+    measure.formula ? (measureToPush.formula = measure.formula) : ''
+    dataToSend.aggregations.measures.push(measureToPush)
+
+    //FIRST CATEGORY LOGIC - TODO: Make it grab the drilldown Category instead of the first one.
+    var categoryIndex = propWidget.columns.findIndex((column: any) => column.fieldType !== 'MEASURE')
+    var category = propWidget.columns[categoryIndex]
+
+    let categoryToPush = { id: category.alias, alias: category.alias, columnName: category.columnName, orderType: '', funct: 'NONE' } as any
+    dataToSend.aggregations.categories.push(categoryToPush)
+
+    if (dataset.drivers && dataset.drivers.length > 0) {
+        dataset.drivers.forEach((driver: IDashboardDatasetDriver) => {
+            dataToSend.drivers[`${driver.urlName}`] = driver.parameterValue
+        })
+    }
+
+    return dataToSend
 }
