@@ -1,7 +1,7 @@
 import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard"
 import { hexToRgb } from "@/modules/documentExecution/dashboard/helpers/FormattingHelpers"
 import { HighchartsPieChartModel } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget"
-import { HighchartsOptions3D } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
+import { IHighchartsOptions3D } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
 
 export const updatePieChartModel = (oldModel: any, newModel: HighchartsPieChartModel, widgetModel: IWidget) => {
     console.log("----------------------------------- OLD MODEL: ", oldModel)
@@ -13,6 +13,7 @@ export const updatePieChartModel = (oldModel: any, newModel: HighchartsPieChartM
     getFormatted3DConfiguration(oldModel, newModel)
     getFormattedNoDataConfiguration(oldModel, newModel)
     getFormattedSeries(oldModel, newModel)
+    getFormattedLegend(oldModel, newModel)
 
 
 
@@ -65,7 +66,7 @@ const getFormatted3DConfiguration = (oldModel: any, newModel: HighchartsPieChart
             alpha: oldModel.CHART.alpha,
             beta: oldModel.CHART.beta,
             viewDistance: oldModel.CHART.viewDistance ?? 25
-        } as HighchartsOptions3D
+        } as IHighchartsOptions3D
     }
 }
 
@@ -103,5 +104,39 @@ const getFormattedSeries = (oldModel: any, newModel: HighchartsPieChartModel) =>
             }
         })
     }
-
 }
+
+const getFormattedLegend = (oldModel: any, newModel: HighchartsPieChartModel) => {
+    if (oldModel.CHART.LEGEND) {
+        console.log(">>>>>>>>>>>>>>>>>> oldModel.CHART.LEGEND: ", oldModel.CHART.LEGEND)
+        newModel.legend = {
+            enabled: oldModel.CHART.LEGEND.show,
+            align: oldModel.CHART.LEGEND.position !== 'top' ? oldModel.CHART.LEGEND.position : 'center',
+            layout: 'horizontal',
+            verticalAlign: oldModel.CHART.LEGEND.position === 'top' ? 'top' : 'middle',
+            itemStyle: {
+                fontFamily: oldModel.CHART.LEGEND.style.fontFamily ?? '',
+                fontSize: oldModel.CHART.LEGEND.style.fontSize ?? '',
+                fontWeight: oldModel.CHART.LEGEND.style.fontWeight ?? '',
+                color: oldModel.CHART.LEGEND.style.color ? hexToRgb(oldModel.CHART.LEGEND.style.color) : ''
+            },
+            backgroundColor: oldModel.CHART.LEGEND.style.backgroundColor ? hexToRgb(oldModel.CHART.LEGEND.style.backgroundColor) : '',
+            borderColor: ''
+        }
+    }
+}
+
+// {
+//     enabled: false,
+//         align: '',
+//             verticalAlign: '',
+//                 layout: '',
+//                     itemStyle: {
+//         fontFamily: '',
+//             fontSize: '',
+//                 fontWeight: '',
+//                     color: ''
+//     },
+//     backgroundColor: '',
+//         borderColor: ''
+// }

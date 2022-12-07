@@ -1,6 +1,6 @@
 <template>
     <div class="kn-width-full">
-        <VCodeMirror ref="codeMirrorEditor" v-model:value="code" :autoHeight="true" :height="200" :options="options" @keyup="onKeyUp" @keyDown="onKeyUp" @change="onKeyUp" @blur="onKeyUp" />
+        <VCodeMirror ref="codeMirrorEditor" v-model:value="code" :autoHeight="true" :height="200" :options="options" @keyup="onKeyUp" @keyDown="onKeyUp" @change="onKeyUp" @blur="$emit('blur')" />
     </div>
 </template>
 
@@ -14,13 +14,13 @@ export default defineComponent({
     props: {
         propCode: { type: Object as PropType<string | undefined>, required: true }
     },
-    emits: ['change'],
+    emits: ['change', 'blur'],
     data() {
         return {
             codeMirrorEditor: null as any,
             code: '' as string,
             options: {
-                mode: '',
+                mode: 'text/javascript',
                 indentWithTabs: true,
                 smartIndent: true,
                 lineWrapping: true,

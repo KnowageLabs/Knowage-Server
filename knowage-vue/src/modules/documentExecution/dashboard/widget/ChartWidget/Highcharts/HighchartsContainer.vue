@@ -1,7 +1,7 @@
 <template>
     <button @click="updateChartModel">Test</button>
-    {{ chartModel?.plotOptions?.pie?.dataLabels }}
-    <div id="container" style="width: 100%; height: 400px"></div>
+    {{ chartModel?.legend }}
+    <div v-show="!error" id="container" style="width: 100%; height: 400px"></div>
 </template>
 
 <script lang="ts">
@@ -31,7 +31,8 @@ export default defineComponent({
     },
     data() {
         return {
-            chartModel: {} as any
+            chartModel: {} as any,
+            error: false
         }
     },
     mounted() {
@@ -58,7 +59,6 @@ export default defineComponent({
             // TODO - remove this
             if (this.widgetModel.type !== 'chart') return
 
-            // highcharts3D(chart)
             // Create the chart
             Highcharts.setOptions({
                 lang: {
@@ -75,6 +75,7 @@ export default defineComponent({
             //             ['Samsung', 23],
             //             ['Apple', 18],
             //             {
+            //                 showInLegend: true,
             //                 name: 'Xiaomi',
             //                 y: 12,
             //                 sliced: true,
@@ -86,72 +87,15 @@ export default defineComponent({
             //         ]
             //     }
             // ]
-
-            this.updateSeriesAccessibilitySettings()
-            // this.updateLabelSettings()
-
             this.widgetModel.settings.chartModel.setData(this.dataToShow)
 
-            Highcharts.chart('container', this.chartModel)
+            this.updateSeriesAccessibilitySettings()
+            this.error = this.updateLabelSettings()
+            if (this.error) return
 
-            // Highcharts.chart('container', {
-            //     noData: {
-            //         position: {
-            //             align: 'right',
-            //             verticalAlign: 'middle'
-            //         },
-            //         style: {
-            //             backgroundColor: 'rgb(255, 255, 225)',
-            //             color: 'rgb(20, 0, 221)',
-            //             textAlign: 'start',
-            //             fontSize: '12px',
-            //             fontFamily: 'roboto',
-            //             fontWeight: 'bold'
-            //         }
-            //     },
-            //     chart: {
-            //         type: 'pie',
-            //         options3d: {
-            //             enabled: true,
-            //             alpha: 45,
-            //             beta: 0
-            //         } // HighchartsOptions3D
-            //     },
-            //     title: {
-            //         text: 'Global smartphone shipments market share, Q1 2022',
-            //         align: 'left'
-            //     },
-            //     subtitle: {
-            //         text: 'Source: ' + '<a href="https://www.counterpointresearch.com/global-smartphone-share/"' + 'target="_blank">Counterpoint Research</a>',
-            //         align: 'left'
-            //     },
-            //     accessibility: {
-            //         point: {
-            //             valueSuffix: '%'
-            //         }
-            //     },
-            //     tooltip: {
-            //         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-            //     },
-            //     plotOptions: {
-            //         pie: {
-            //             allowPointSelect: true,
-            //             cursor: 'pointer',
-            //             depth: 35, // needed for 3D
-            //             dataLabels: {
-            //                 enabled: true,
-            //                 format: '{point.name}'
-            //             }
-            //         }
-            //     },
-            //     series: [
-            //         {
-            //             type: 'pie',
-            //             name: 'Share',
-            //             data: []
-            //         }
-            //     ]
-            // })
+            this.chartModel.plotOptions.pie.showInLegend = true
+            console.log('>>>>>>>>>>>> ABOUT TO RENDER CHART...', this.chartModel)
+            Highcharts.chart('container', this.chartModel)
         },
         updateSeriesAccessibilitySettings() {
             if (!this.widgetModel || !this.widgetModel.settings.accesssibility || !this.widgetModel.settings.accesssibility.seriesAccesibilitySettings) return
@@ -184,20 +128,23 @@ export default defineComponent({
             if (index !== -1) this.chartModel.series[index].accessibility = { ...accessibility }
         },
         updateLabelSettings() {
+            let hasError = false
             if (this.chartModel.plotOptions.pie.dataLabels.format?.trim() === '') delete this.chartModel.plotOptions.pie.dataLabels.format
-            if (!this.chartModel.plotOptions.pie.dataLabels.formatter) return
-            if (this.chartModel.plotOptions.pie.dataLabels.formatter.trim() === '') delete this.chartModel.plotOptions.pie.dataLabels.formatter
-            else {
+            if (!this.chartModel.plotOptions.pie.dataLabels.formatterText) {
+                delete this.chartModel.plotOptions.pie.dataLabels.formatter
+                return hasError
+            } else {
                 try {
-                    console.log('EVAL 1: ', this.chartModel.plotOptions.pie.dataLabels.formatter)
-                    const fn = eval(`(${this.chartModel.plotOptions.pie.dataLabels.formatter})`)
-                    console.log('EVAL: ', fn)
-                    delete this.chartModel.plotOptions.pie.dataLabels.formatter
-                    // Function(this.chartModel.plotOptions.pie.dataLabels.formatter)
+                    const fn = eval(`(${this.chartModel.plotOptions.pie.dataLabels.formatterText})`)
+                    if (typeof fn === 'function') this.chartModel.plotOptions.pie.dataLabels.formatter = fn
+                    this.chartModel.plotOptions.pie.dataLabels.formatterError = ''
                 } catch (error) {
-                    console.log('error: ', error)
+                    this.chartModel.plotOptions.pie.dataLabels.formatterError = (error as any).message
+                    hasError = true
                 }
             }
+
+            return hasError
         }
     }
 })
