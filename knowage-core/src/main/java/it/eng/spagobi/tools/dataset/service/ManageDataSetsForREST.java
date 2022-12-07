@@ -77,6 +77,7 @@ import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
+import it.eng.spagobi.tools.dataset.bo.DerivedDataSet;
 import it.eng.spagobi.tools.dataset.bo.FacetSolrDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
@@ -544,6 +545,8 @@ public class ManageDataSetsForREST {
 			toReturn = manageFlatDataSet(savingDataset, jsonDsConfig, json);
 		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_PREPARED)) {
 			toReturn = managePreparedDataSet(savingDataset, jsonDsConfig, json);
+		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_DERIVED)) {
+			toReturn = manageDerivedDataSet(savingDataset, jsonDsConfig, json);
 		} else {
 			throw new SpagoBIRuntimeException("Cannot find a match with dataset type " + datasetTypeName);
 		}
@@ -1003,6 +1006,12 @@ public class ManageDataSetsForREST {
 		dataSet.setDataSource(dataSource);
 		dataSet.setDataPreparationInstance(dataPrepInstanceId);
 		return dataSet;
+	}
+
+	private DerivedDataSet manageDerivedDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json) throws JSONException, EMFUserError {
+		// KNOWAGE-7575
+		DerivedDataSet dataset = new DerivedDataSet();
+		return dataset;
 	}
 
 	private QbeDataSet manageQbeDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json, UserProfile userProfile)

@@ -758,6 +758,11 @@ public abstract class AbstractDataSet implements IDataSet {
 		return this instanceof PreparedDataSet;
 	}
 
+	@Override
+	public boolean isDerivedDataSet() {
+		return this instanceof DerivedDataSet;
+	}
+
 	/**
 	 * @return the flatTableName
 	 */

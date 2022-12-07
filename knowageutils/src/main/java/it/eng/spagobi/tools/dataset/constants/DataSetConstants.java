@@ -113,6 +113,7 @@ public class DataSetConstants {
 	public static final String DS_CUSTOM = "SbiCustomDataSet";
 	public static final String DS_FLAT = "SbiFlatDataSet";
 	public static final String DS_PREPARED = "SbiPreparedDataSet";
+	public static final String DS_DERIVED = "SbiDerivedDataSet";
 	public static final String DS_REST_TYPE = RESTDataSet.DATASET_TYPE;
 	public static final String DS_PYTHON_TYPE = PythonDataSet.DATASET_TYPE;
 	public static final String DS_SOLR_TYPE = SolrDataSet.DATASET_TYPE;

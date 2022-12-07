@@ -96,6 +96,8 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 			dataset.setQuery("select * from " + getTableNameForReading());
 			dataset.loadData(offset, fetchSize, maxResults);
 			dataStore = dataset.getDataStore();
+		} else if (this.isDerivedDataSet()) {
+			// KNOWAGE-7575
 		} else {
 
 			Map parameters = cleanNullParametersValues(getParamsMap());

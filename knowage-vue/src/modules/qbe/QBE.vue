@@ -279,7 +279,9 @@ export default defineComponent({
             calcFieldFunctions: [] as any,
             calcFieldFunctionsToShow: [] as any,
             qbeMetadata: [] as any,
-            colors: ['#D7263D', '#F46036', '#2E294E', '#1B998B', '#C5D86D', '#3F51B5', '#8BC34A', '#009688', '#F44336']
+            colors: ['#D7263D', '#F46036', '#2E294E', '#1B998B', '#C5D86D', '#3F51B5', '#8BC34A', '#009688', '#F44336'],
+            /* CONST */
+            DERIVED_CONST: 'Derived'
         }
     },
     computed: {
@@ -314,35 +316,37 @@ export default defineComponent({
 
         let invalidRole = false
         let dataset = this.dataset ?? this.sourceDataset
-        getCorrectRolesForExecution(null, dataset).then(async (response: any) => {
-            let correctRolesForExecution = response
+        getCorrectRolesForExecution(null, dataset)
+            .then(async (response: any) => {
+                let correctRolesForExecution = response
 
-            if (!this.userRole) {
-                if (correctRolesForExecution.length == 1) {
-                    this.userRole = correctRolesForExecution[0]
-                } else {
-                    this.parameterSidebarVisible = true
-                }
-            } else if (this.userRole) {
-                if (correctRolesForExecution.length == 1) {
-                    let correctRole = correctRolesForExecution[0]
-                    if (this.userRole !== correctRole) {
-                        this.$store.commit('setError', {
-                            title: this.$t('common.error.generic'),
-                            msg: this.$t('documentExecution.main.userRoleError')
-                        })
-                        invalidRole = true
+                if (!this.userRole) {
+                    if (correctRolesForExecution.length == 1) {
+                        this.userRole = correctRolesForExecution[0]
+                    } else {
+                        this.parameterSidebarVisible = true
+                    }
+                } else if (this.userRole) {
+                    if (correctRolesForExecution.length == 1) {
+                        let correctRole = correctRolesForExecution[0]
+                        if (this.userRole !== correctRole) {
+                            this.$store.commit('setError', {
+                                title: this.$t('common.error.generic'),
+                                msg: this.$t('documentExecution.main.userRoleError')
+                            })
+                            invalidRole = true
+                        }
                     }
                 }
-            }
-            if (!invalidRole) {
-                if (this.userRole) {
-                    await this.loadPage()
-                } else {
-                    this.parameterSidebarVisible = true
+                if (!invalidRole) {
+                    if (this.userRole) {
+                        await this.loadPage()
+                    } else {
+                        this.parameterSidebarVisible = true
+                    }
                 }
-            }
-        })
+            })
+            .catch(() => this.$emit('close'))
     },
     methods: {
         //#region ===================== Load QBE and format data ====================================================
@@ -1098,6 +1102,10 @@ export default defineComponent({
             if (this.returnQueryMode) {
                 this.$emit('querySaved', this.qbe?.qbeJSONQuery)
             } else {
+                if (this.sourceDataset && this.qbe?.dsTypeCd) {
+                    this.qbe.dsTypeCd = this.DERIVED_CONST
+                    this.qbe.name = this.qbe.label = this.qbe.name + ' ' + this.DERIVED_CONST
+                }
                 this.savingDialogVisible = true
             }
         }
