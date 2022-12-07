@@ -67,27 +67,27 @@ export default defineComponent({
             })
 
             // TODO - Remove Hardcoded
-            // this.chartModel.series = [
-            //     {
-            //         type: 'pie',
-            //         name: 'Share',
-            //         data: [
-            //             ['Samsung', 23],
-            //             ['Apple', 18],
-            //             {
-            //                 showInLegend: true,
-            //                 name: 'Xiaomi',
-            //                 y: 12,
-            //                 sliced: true,
-            //                 selected: true
-            //             },
-            //             ['Oppo*', 9],
-            //             ['Vivo', 8],
-            //             ['Others', 30]
-            //         ]
-            //     }
-            // ]
-            this.widgetModel.settings.chartModel.setData(this.dataToShow)
+            this.chartModel.series = [
+                {
+                    type: 'pie',
+                    name: 'Share',
+                    data: [
+                        ['Samsung', 23],
+                        ['Apple', 18],
+                        {
+                            showInLegend: true,
+                            name: 'Xiaomi',
+                            y: 12,
+                            sliced: true,
+                            selected: true
+                        },
+                        ['Oppo*', 9],
+                        ['Vivo', 8],
+                        ['Others', 30]
+                    ]
+                }
+            ]
+            // this.widgetModel.settings.chartModel.setData(this.dataToShow)
 
             this.updateSeriesAccessibilitySettings()
             this.error = this.updateLabelSettings()

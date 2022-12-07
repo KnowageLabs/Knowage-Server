@@ -8,7 +8,7 @@
         <div class="p-col-6 p-d-flex p-flex-column kn-flex p-m-2">
             <label class="kn-material-input-label p-mr-2">{{ $t('common.align') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center">
-                <Dropdown class="kn-material-input" v-model="model.legend.align" :options="descriptor.alignmentOptions" optionValue="value" @change="modelChanged">
+                <Dropdown class="kn-material-input kn-flex" v-model="model.legend.align" :options="descriptor.alignmentOptions" optionValue="value" @change="modelChanged">
                     <template #value="slotProps">
                         <div>
                             <span>{{ getTranslatedLabel(slotProps.value, descriptor.alignmentOptions, $t) }}</span>
@@ -24,9 +24,27 @@
             </div>
         </div>
         <div class="p-col-6 p-d-flex p-flex-column kn-flex p-m-2">
+            <label class="kn-material-input-label p-mr-2">{{ $t('common.verticalAlign') }}</label>
+            <div class="p-d-flex p-flex-row p-ai-center">
+                <Dropdown class="kn-material-input kn-flex" v-model="model.legend.verticalAlign" :options="descriptor.verticalAlignmentOptions" optionValue="value" @change="modelChanged">
+                    <template #value="slotProps">
+                        <div>
+                            <span>{{ getTranslatedLabel(slotProps.value, descriptor.verticalAlignmentOptions, $t) }}</span>
+                        </div>
+                    </template>
+                    <template #option="slotProps">
+                        <div>
+                            <span>{{ $t(slotProps.option.label) }}</span>
+                        </div>
+                    </template>
+                </Dropdown>
+                <i class="pi pi-question-circle kn-cursor-pointer  p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.legend.verticalAlignHint')"></i>
+            </div>
+        </div>
+        <div class="p-col-6 p-d-flex p-flex-column kn-flex p-m-2">
             <label class="kn-material-input-label p-mr-2">{{ $t('common.layout') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center">
-                <Dropdown class="kn-material-input" v-model="model.legend.layout" :options="descriptor.layoutOptions" optionValue="value" @change="modelChanged">
+                <Dropdown class="kn-material-input kn-flex" v-model="model.legend.layout" :options="descriptor.layoutOptions" optionValue="value" @change="modelChanged">
                     <template #value="slotProps">
                         <div>
                             <span>{{ getTranslatedLabel(slotProps.value, descriptor.layoutOptions, $t) }}</span>
@@ -40,6 +58,9 @@
                 </Dropdown>
                 <i class="pi pi-question-circle kn-cursor-pointer  p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.legend.layoutHint')"></i>
             </div>
+        </div>
+        <div class="p-col-12 p-py-4">
+            <WidgetEditorStyleToolbar :options="descriptor.legendStyleOptions" :propModel="toolbarModel" :disabled="legendDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
         </div>
     </div>
 </template>
@@ -83,9 +104,53 @@ export default defineComponent({
     methods: {
         loadModel() {
             this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
+            this.loadToolbarModel()
+        },
+        loadToolbarModel() {
+            if (this.model?.legend) {
+                this.toolbarModel = {
+                    'justify-content': this.model.legend.align,
+                    'font-family': this.model.legend.itemStyle.fontFamily,
+                    'font-size': this.model.legend.itemStyle.fontSize,
+                    'font-weight': this.model.legend.itemStyle.fontWeight,
+                    color: this.model.legend.itemStyle.color,
+                    'background-color': this.model.legend.backgroundColor
+                }
+            }
         },
         modelChanged() {
             emitter.emit('refreshChart', this.widgetModel.id)
+        },
+        onStyleToolbarChange(model: IWidgetStyleToolbarModel) {
+            if (!this.model || !this.model.legend) return
+            this.toolbarModel = {
+                'justify-content': model['justify-content'] ?? '',
+                'font-family': model['font-family'] ?? '',
+                'font-size': model['font-size'] ?? '14px',
+                'font-weight': model['font-weight'] ?? '',
+                color: model.color ?? '',
+                'background-color': model['background-color'] ?? ''
+            }
+            this.model.legend.align = this.getAlignValue(this.toolbarModel['justify-content'])
+            this.model.legend.backgroundColor = this.toolbarModel['background-color'] ?? ''
+            this.model.legend.itemStyle = {
+                color: this.toolbarModel.color ?? '',
+                fontSize: this.toolbarModel['font-size'] ?? '14px',
+                fontFamily: this.toolbarModel['font-family'] ?? '',
+                fontWeight: this.toolbarModel['font-weight'] ?? ''
+            }
+            this.modelChanged()
+        },
+        getAlignValue(toolbarValue: string) {
+            // TODO - Put in helper
+            switch (toolbarValue) {
+                case 'flex-start':
+                    return 'left'
+                case 'flex-end':
+                    return 'right'
+                default:
+                    return 'center'
+            }
         }
     }
 })

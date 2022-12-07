@@ -60,13 +60,27 @@ import HighchartsFormatterCodeMirror from '../common/HighchartsFormatterCodeMirr
 
 export default defineComponent({
     name: 'hihgcharts-labels-settings',
-    components: { InputSwitch, InputNumber, Message, WidgetEditorStyleToolbar, Textarea, HighchartsFormatterCodeMirror },
+    components: {
+        InputSwitch,
+        InputNumber,
+        Message,
+        WidgetEditorStyleToolbar,
+        Textarea,
+        HighchartsFormatterCodeMirror
+    },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {
             descriptor,
             model: null as HighchartsPieChartModel | null,
-            toolbarModel: {} as { 'justify-content': string; 'font-family': string; 'font-size': string; 'font-weight': string; color: string; 'background-color': string },
+            toolbarModel: {} as {
+                'justify-content': string
+                'font-family': string
+                'font-size': string
+                'font-weight': string
+                color: string
+                'background-color': string
+            },
             advancedVisible: false
         }
     },
@@ -116,6 +130,7 @@ export default defineComponent({
             this.modelChanged()
         },
         getTextAlignValue(toolbarValue: string) {
+            // TODO - Put in helper
             switch (toolbarValue) {
                 case 'flex-start':
                     return 'left'
