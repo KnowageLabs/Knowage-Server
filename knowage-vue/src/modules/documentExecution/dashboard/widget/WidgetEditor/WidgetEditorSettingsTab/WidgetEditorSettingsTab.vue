@@ -57,7 +57,7 @@
             :dashboardId="dashboardId"
         ></TextWidgetSettingsContainer>
         <HighchartsWidgetSettingsContainer
-            v-else-if="propWidget.type === 'chart'"
+            v-else-if="propWidget.type === 'highcharts'"
             class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
             :widgetModel="propWidget"
             :selectedSetting="selectedSetting"
@@ -130,7 +130,7 @@ export default defineComponent({
                 case 'text':
                     this.descriptor = textDescriptor
                     break
-                case 'chart':
+                case 'highcharts':
                     this.descriptor = highchartsDescriptor
             }
         },

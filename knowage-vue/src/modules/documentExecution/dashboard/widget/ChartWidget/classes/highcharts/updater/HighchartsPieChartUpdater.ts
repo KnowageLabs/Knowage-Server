@@ -14,7 +14,7 @@ export const updatePieChartModel = (oldModel: any, newModel: HighchartsPieChartM
     getFormattedNoDataConfiguration(oldModel, newModel)
     getFormattedSeries(oldModel, newModel)
     getFormattedLegend(oldModel, newModel)
-
+    getFormattedTooltipSettings(oldModel, newModel)
 
 
 
@@ -35,18 +35,6 @@ export const updatePieChartModel = (oldModel: any, newModel: HighchartsPieChartM
     //     newModel.settings.categories.push(...categoriesArray)
     // }
 
-
-
-    // // LEGEND
-    // if (oldModel.CHART.LEGEND?.show) {
-    //     newModel.plotOptions.pie.showInLegend = true
-    //     newModel.legend = {
-    //         enabled: true,
-    //         align: 'center',
-    //         verticalAlign: 'bottom',
-    //         layout: 'horizontal',
-    //     }
-    // }
 
     // // DRILLDOWN
     // if (oldModel.CHART.drillable && newModel.settings.categories.length > 1) {
@@ -108,7 +96,6 @@ const getFormattedSeries = (oldModel: any, newModel: HighchartsPieChartModel) =>
 
 const getFormattedLegend = (oldModel: any, newModel: HighchartsPieChartModel) => {
     if (oldModel.CHART.LEGEND) {
-        console.log(">>>>>>>>>>>>>>>>>> oldModel.CHART.LEGEND: ", oldModel.CHART.LEGEND)
         newModel.legend = {
             enabled: oldModel.CHART.LEGEND.show,
             align: oldModel.CHART.LEGEND.position !== 'top' ? oldModel.CHART.LEGEND.position : 'center',
@@ -126,17 +113,19 @@ const getFormattedLegend = (oldModel: any, newModel: HighchartsPieChartModel) =>
     }
 }
 
-// {
-//     enabled: false,
-//         align: '',
-//             verticalAlign: '',
-//                 layout: '',
-//                     itemStyle: {
-//         fontFamily: '',
-//             fontSize: '',
-//                 fontWeight: '',
-//                     color: ''
-//     },
-//     backgroundColor: '',
-//         borderColor: ''
-// }
+const getFormattedTooltipSettings = (oldModel: any, newModel: HighchartsPieChartModel) => {
+    if (oldModel.CHART.VALUES.SERIE && oldModel.CHART.VALUES.SERIE[0] && oldModel.CHART.VALUES.SERIE[0].TOOLTIP) {
+        const oldTooltipSettings = oldModel.CHART.VALUES.SERIE[0].TOOLTIP
+        newModel.tooltip = {
+            enabled: true,
+            style: {
+                fontFamily: oldTooltipSettings.style.fontFamily,
+                fontSize: oldTooltipSettings.style.fontSize,
+                fontWeight: oldTooltipSettings.style.fontWeight,
+                color: oldTooltipSettings.style.color ? hexToRgb(oldTooltipSettings.style.color) : ''
+            },
+            backgroundColor: oldTooltipSettings.backgroundColor ? hexToRgb(oldTooltipSettings.backgroundColor) : '',
+
+        }
+    }
+}

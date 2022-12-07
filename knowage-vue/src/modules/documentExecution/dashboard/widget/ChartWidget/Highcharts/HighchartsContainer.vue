@@ -1,6 +1,5 @@
 <template>
-    <button @click="updateChartModel">Test</button>
-    {{ chartModel?.legend }}
+    {{ chartModel?.tooltip }}
     <div v-show="!error" id="container" style="width: 100%; height: 400px"></div>
 </template>
 
@@ -87,16 +86,16 @@ export default defineComponent({
                     ]
                 }
             ]
-            this.widgetModel.settings.chartModel.setData(this.dataToShow)
+            // this.widgetModel.settings.chartModel.setData(this.dataToShow)
 
             this.updateSeriesAccessibilitySettings()
             this.error = this.updateLabelSettings()
             if (this.error) return
             this.error = this.updateLegendSettings()
             if (this.error) return
+            this.error = this.updateTooltipSettings()
+            if (this.error) return
 
-            this.chartModel.plotOptions.pie.showInLegend = true
-            console.log('>>>>>>>>>>>> ABOUT TO RENDER CHART...', this.chartModel)
             Highcharts.chart('container', this.chartModel)
         },
         updateSeriesAccessibilitySettings() {
@@ -150,6 +149,7 @@ export default defineComponent({
             return hasError
         },
         updateLegendSettings() {
+            this.chartModel.plotOptions.pie.showInLegend = true
             let hasError = false
             if (this.chartModel.legend.labelFormat?.trim() === '') delete this.chartModel.legend.labelFormat
             if (!this.chartModel.legend.labelFormatterText || !this.chartModel.legend.labelFormatterText.trim()) {
@@ -163,6 +163,42 @@ export default defineComponent({
                     this.chartModel.legend.labelFormatterError = ''
                 } catch (error) {
                     this.chartModel.legend.labelFormatterError = (error as any).message
+                    hasError = true
+                }
+            }
+
+            return hasError
+        },
+        updateTooltipSettings() {
+            let hasError = false
+            if (!this.chartModel.tooltip.formatterText || !this.chartModel.tooltip.formatterText.trim()) {
+                delete this.chartModel.tooltip.formatter
+                this.chartModel.tooltip.formatterError = ''
+                return hasError
+            } else {
+                try {
+                    const fn = eval(`(${this.chartModel.tooltip.formatterText})`)
+                    if (typeof fn === 'function') this.chartModel.tooltip.formatter = fn
+                    this.chartModel.tooltip.formatterError = ''
+                } catch (error) {
+                    this.chartModel.tooltip.formatterError = (error as any).message
+                    hasError = true
+                }
+            }
+
+            if (!this.chartModel.tooltip.pointFormatterText || !this.chartModel.tooltip.pointFormatterText.trim()) {
+                console.log('EEEEEEEEEEEEENTERED 1: ')
+                delete this.chartModel.tooltip.pointFormatter
+                this.chartModel.tooltip.pointFormatterError = ''
+                return hasError
+            } else {
+                try {
+                    console.log('EEEEEEEEEEEEENTERED 2: ')
+                    const fn = eval(`(${this.chartModel.tooltip.pointFormatterText})`)
+                    if (typeof fn === 'function') this.chartModel.tooltip.pointFormatter = fn
+                    this.chartModel.tooltip.pointFormatterError = ''
+                } catch (error) {
+                    this.chartModel.tooltip.pointFormatterError = (error as any).message
                     hasError = true
                 }
             }

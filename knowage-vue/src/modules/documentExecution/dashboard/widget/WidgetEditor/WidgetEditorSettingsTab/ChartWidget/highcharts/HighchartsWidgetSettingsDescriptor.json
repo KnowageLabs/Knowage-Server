@@ -203,6 +203,12 @@
                 "title": "dashboard.widgetEditor.shadows.title",
                 "type": "ShadowsStyle"
             }
+        ],
+        "Tooltip": [
+            {
+                "title": "dashboard.widgetEditor.tooltip.title",
+                "type": "Tooltip"
+            }
         ]
     },
     "settingsListOptions": [
@@ -233,6 +239,11 @@
         },
         {
             "icon": "pi pi-table",
+            "label": "dashboard.widgetEditor.tooltip.title",
+            "value": "Tooltip"
+        },
+        {
+            "icon": "pi pi-table",
             "label": "dashboard.widgetEditor.series.title",
             "value": "Series"
         },
@@ -245,6 +256,23 @@
             "icon": "pi pi-tablet",
             "label": "dashboard.widgetEditor.responsive.title",
             "value": "Responsive"
+        }
+    ],
+    "tooltipStyleOptions": [
+        {
+            "type": "font-weight"
+        },
+        {
+            "type": "font-size"
+        },
+        {
+            "type": "font-family"
+        },
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
         }
     ],
     "verticalAlignmentOptions": [

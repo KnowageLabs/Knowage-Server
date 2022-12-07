@@ -61,14 +61,12 @@ export interface HighchartsChartModel {
     title: {
         text: string
     },
-    tooltip: {
-        pointFormat: string
-    },
     accessibility: IHighchartsAccessibilitySettings,
     plotOptions: {
         pie: IHighchartsPieChartPlotOptions
     },
-    legend: IHighchartsLegend
+    legend: IHighchartsLegend,
+    tooltip: IHighchartsTooltip
 }
 
 export interface IHighchartsOptions3D {
@@ -145,8 +143,7 @@ export interface IHighchartsChartSerieData {
     name: string,
     y: number,
     sliced?: boolean,
-    selected?: boolean,
-    showInLegend?: boolean
+    selected?: boolean
 }
 
 export interface IHighchartsLegend {
@@ -166,4 +163,21 @@ export interface IHighchartsLegend {
     labelFormatter?: Function,
     labelFormatterText?: string, // TODO - Remove for BE ???
     labelFormatterError?: string  // TODO - Remove for BE
+}
+
+export interface IHighchartsTooltip {
+    enabled: boolean,
+    style: {
+        fontFamily: string
+        fontSize: string
+        fontWeight: string
+        color: string
+    },
+    backgroundColor: string,
+    formatter?: Function,
+    formatterText?: string, // TODO - Remove for BE ???
+    formatterError?: string  // TODO - Remove for BE
+    pointFormatter?: Function,
+    pointFormatterText?: string, // TODO - Remove for BE ???
+    pointFormatterError?: string  // TODO - Remove for BE
 }
