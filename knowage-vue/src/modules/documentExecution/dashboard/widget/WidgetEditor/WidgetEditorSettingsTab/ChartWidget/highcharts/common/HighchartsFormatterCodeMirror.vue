@@ -1,6 +1,6 @@
 <template>
     <div class="kn-width-full">
-        <VCodeMirror ref="codeMirrorEditor" v-model:value="code" :autoHeight="true" :height="200" :options="options" @keyup="onKeyUp" @keyDown="onKeyUp" @change="onKeyUp" @blur="$emit('blur')" />
+        <VCodeMirror ref="codeMirrorEditor" v-model:value="code" :autoHeight="true" :height="200" :options="options" :disabled="disabled" @keyup="onKeyUp" @keyDown="onKeyUp" @change="onKeyUp" @blur="$emit('blur')" />
     </div>
 </template>
 
@@ -12,7 +12,8 @@ export default defineComponent({
     name: 'highcharts-formatter-code-mirror',
     components: { VCodeMirror },
     props: {
-        propCode: { type: Object as PropType<string | undefined>, required: true }
+        propCode: { type: Object as PropType<string | undefined>, required: true },
+        disabled: { type: Boolean }
     },
     emits: ['change', 'blur'],
     data() {
@@ -27,12 +28,17 @@ export default defineComponent({
                 matchBrackets: true,
                 autofocus: true,
                 theme: 'eclipse',
-                lineNumbers: true
+                lineNumbers: true,
+                readOnly: false
             }
         }
     },
     watch: {
         propCode() {
+            this.setupCodeMirror()
+            setTimeout(() => this.codeMirrorEditor.refresh(), 100)
+        },
+        disabled() {
             this.setupCodeMirror()
             setTimeout(() => this.codeMirrorEditor.refresh(), 100)
         }
@@ -45,6 +51,7 @@ export default defineComponent({
             const interval = setInterval(() => {
                 if (!this.$refs.codeMirrorEditor) return
                 this.code = this.propCode ?? ''
+                this.options.readOnly = this.disabled
                 this.codeMirrorEditor = (this.$refs.codeMirrorEditor as any).cminstance as any
                 setTimeout(() => {
                     this.codeMirrorEditor.refresh()

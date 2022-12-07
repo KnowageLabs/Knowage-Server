@@ -533,6 +533,8 @@
                 },
                 "legend": {
                     "alignHint": "The horizontal alignment of the legend box within the chart area. Valid values are left, center and right. In the case that the legend is aligned in a corner position, the layout option will determine whether to place it above/below or on the side of the plot area.",
+                    "formatHint": "A format string for each legend label. Available variables relates to properties on the series, or the point in case of pies.",
+                    "formatterHint": "Callback function to format each of the series' labels. The this keyword refers to the series object, or the point object in case of pie charts. By default the series or point name is printed.",
                     "layoutHint": "The layout of the legend items. Can be one of horizontal or vertical or proximate. When proximate, the legend items will be placed as close as possible to the graphs they're representing, except in inverted charts or when the legend position doesn't allow it.",
                     "verticalAlignHint": "The vertical alignment of the legend box. Can be one of top, middle or bottom. Vertical position can be further determined by the y option. In the case that the legend is aligned in a corner position, the layout option will determine whether to place it above/below or on the side of the plot area. When the layout option is proximate, the verticalAlign option doesn't apply."
                 },

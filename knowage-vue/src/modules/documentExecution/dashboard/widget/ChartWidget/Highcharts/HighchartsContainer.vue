@@ -87,10 +87,12 @@ export default defineComponent({
                     ]
                 }
             ]
-            // this.widgetModel.settings.chartModel.setData(this.dataToShow)
+            this.widgetModel.settings.chartModel.setData(this.dataToShow)
 
             this.updateSeriesAccessibilitySettings()
             this.error = this.updateLabelSettings()
+            if (this.error) return
+            this.error = this.updateLegendSettings()
             if (this.error) return
 
             this.chartModel.plotOptions.pie.showInLegend = true
@@ -130,8 +132,9 @@ export default defineComponent({
         updateLabelSettings() {
             let hasError = false
             if (this.chartModel.plotOptions.pie.dataLabels.format?.trim() === '') delete this.chartModel.plotOptions.pie.dataLabels.format
-            if (!this.chartModel.plotOptions.pie.dataLabels.formatterText) {
+            if (!this.chartModel.plotOptions.pie.dataLabels.formatterText || !this.chartModel.plotOptions.pie.dataLabels.formatterText.trim()) {
                 delete this.chartModel.plotOptions.pie.dataLabels.formatter
+                this.chartModel.plotOptions.pie.dataLabels.formatterError = ''
                 return hasError
             } else {
                 try {
@@ -140,6 +143,26 @@ export default defineComponent({
                     this.chartModel.plotOptions.pie.dataLabels.formatterError = ''
                 } catch (error) {
                     this.chartModel.plotOptions.pie.dataLabels.formatterError = (error as any).message
+                    hasError = true
+                }
+            }
+
+            return hasError
+        },
+        updateLegendSettings() {
+            let hasError = false
+            if (this.chartModel.legend.labelFormat?.trim() === '') delete this.chartModel.legend.labelFormat
+            if (!this.chartModel.legend.labelFormatterText || !this.chartModel.legend.labelFormatterText.trim()) {
+                delete this.chartModel.legend.labelFormatter
+                this.chartModel.legend.labelFormatterError = ''
+                return hasError
+            } else {
+                try {
+                    const fn = eval(`(${this.chartModel.legend.labelFormatterText})`)
+                    if (typeof fn === 'function') this.chartModel.legend.labelFormatter = fn
+                    this.chartModel.legend.labelFormatterError = ''
+                } catch (error) {
+                    this.chartModel.legend.labelFormatterError = (error as any).message
                     hasError = true
                 }
             }
