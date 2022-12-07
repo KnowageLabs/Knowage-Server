@@ -1,5 +1,5 @@
 import { IWidget, IWidgetColumn, IWidgetExports, IWidgetInteractions } from "../../../Dashboard"
-import { HighchartsChartModel, IHighchartsWidgetConfiguration, IHighchartsWidgetSettings } from "../../../interfaces/highcharts/DashboardHighchartsWidget"
+import { IHighchartsWidgetConfiguration, IHighchartsWidgetSettings } from "../../../interfaces/highcharts/DashboardHighchartsWidget"
 import { HighchartsPieChart } from "../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsPieChart"
 import * as widgetCommonDefaultValues from '../../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import { getFormattedWidgetColumn } from "../../common/WidgetColumnHelper"
@@ -24,7 +24,7 @@ export const formatHighchartsWidget = (widget: any) => {
     const formattedWidget = {
         id: widget.id,
         dataset: widget.dataset.dsId ?? null,
-        type: widget.type,
+        type: 'highcharts',
         columns: getFormattedWidgetColumns(widget),
         theme: '',
         settings: {} as IHighchartsWidgetSettings
@@ -32,7 +32,7 @@ export const formatHighchartsWidget = (widget: any) => {
 
     formattedWidget.settings = getFormattedWidgetSettings(widget) as IHighchartsWidgetSettings
     getFiltersForColumns(formattedWidget, widget)
-    formattedWidget.settings.chartModel = new HighchartsPieChart(widget.content.chartTemplate, formattedWidget) // TODO - see about this
+    formattedWidget.settings.chartModel = createChartModel(widget, formattedWidget)
     console.log(">>>>>>>>>>> FORMATTED WIDGET: ", widget)
     return formattedWidget
 }
@@ -137,5 +137,14 @@ const getFormattedSeriesAccesibilitySettings = (widget: any) => {
 
 export const getColumnId = (widgetColumnName: string) => {
     return columnNameIdMap[widgetColumnName]
+}
+
+const createChartModel = (widget: any, formattedWidget: IWidget) => {
+    switch (widget.content.chartTemplate.CHART.type) {
+        case 'PIE':
+            return new HighchartsPieChart(widget.content.chartTemplate, formattedWidget)
+        default:
+            return null
+    }
 }
 

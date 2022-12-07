@@ -7,7 +7,7 @@ export const updatePieChartModel = (oldModel: any, newModel: HighchartsPieChartM
     console.log("----------------------------------- OLD MODEL: ", oldModel)
     console.log("----------------------------------- NEW MODEL: ", newModel)
     console.log("----------------------------------- WIDGET MODEL: ", widgetModel)
-    newModel.chart.type = "pie"
+    newModel.chart.type = "highchartsPie"
     newModel.title = oldModel.CHART.TITLE
 
     getFormatted3DConfiguration(oldModel, newModel)

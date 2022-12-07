@@ -27,7 +27,7 @@
                     :variables="variables"
                 ></WebComponentContainer>
                 <!-- TODO - Add chart conditions -->
-                <HighchartsContainer v-if="!loading" :widgetModel="propWidget" :dataToShow="widgetData" :propActiveSelections="activeSelections" :editorMode="true" :dashboardId="dashboardId"></HighchartsContainer>
+                <HighchartsContainer v-if="propWidget.type === 'highcharts' && !loading" :widgetModel="propWidget" :dataToShow="widgetData" :propActiveSelections="activeSelections" :editorMode="true" :dashboardId="dashboardId"></HighchartsContainer>
             </div>
         </div>
     </div>

@@ -9,10 +9,11 @@ import { formatHTMLWidget } from './htmlWidget/HTMLWidgetCompatibilityHelper'
 import { formatTextWidget } from './textWidget/TextWidgetCompatibilityHelper'
 import { getFormattedDatasetDrivers } from '../dataset/DatasetEditorDataTab/DatasetEditorDataDetail/DatasetEditorDriverDialog/DatasetEditorDatasetDriverFormatterHelper'
 import { formatHighchartsWidget } from './chartWidget/highcharts/HighchartsWidgetCompatibilityHelper'
+import { formatChartJSWidget } from './chartWidget/chartJS/ChartJSWidgetCompatibilityHelper'
 
 const datasetIdLabelMap = {}
 
-export const formatModel = async (model: any, document: any, datasets: IDataset[], drivers: any[], profileAttributes: { name: string, value: string }[], $http: any) => {
+export const formatModel = async (model: any, document: any, datasets: IDataset[], drivers: any[], profileAttributes: { name: string, value: string }[], $http: any, user: any,) => {
     if (!model.sheets) return
 
     console.log(">>>>>>>> LOADED MODEL: ", model)
@@ -26,7 +27,7 @@ export const formatModel = async (model: any, document: any, datasets: IDataset[
         sheets: []
     } as any
     for (let i = 0; i < model.sheets.length; i++) {
-        const formattedSheet = formatSheet(model.sheets[i], formattedModel)
+        const formattedSheet = formatSheet(model.sheets[i], formattedModel, user)
         formattedModel.sheets.push(formattedSheet)
     }
 
@@ -146,7 +147,7 @@ const getFormattedSelections = (model: any) => {
     return formattedSelections
 }
 
-const formatSheet = (sheet: any, formattedModel: any) => {
+const formatSheet = (sheet: any, formattedModel: any, user: any) => {
     if (!sheet.widgets) return
 
     const formattedSheet = deepcopy(sheet)
@@ -155,15 +156,15 @@ const formatSheet = (sheet: any, formattedModel: any) => {
     for (let i = 0; i < sheet.widgets.length; i++) {
         const tempWidget = sheet.widgets[i]
         formattedSheet.widgets.lg.push({ id: tempWidget.id, h: tempWidget.sizeY, w: tempWidget.sizeX, x: tempWidget.col, y: tempWidget.row, i: cryptoRandomString({ length: 16, type: 'base64' }), moved: false })
-        addWidgetToModel(tempWidget, formattedModel)
+        addWidgetToModel(tempWidget, formattedModel, user)
     }
 
     return formattedSheet
 }
 
-const addWidgetToModel = (widget: any, formattedModel: any) => {
+const addWidgetToModel = (widget: any, formattedModel: any, user: any) => {
     if (checkIfWidgetInModel(widget, formattedModel)) return
-    formattedModel.widgets.push(formatWidget(widget, formattedModel))
+    formattedModel.widgets.push(formatWidget(widget, formattedModel, user))
 }
 
 const checkIfWidgetInModel = (widget: any, formattedModel: any) => {
@@ -179,7 +180,7 @@ const checkIfWidgetInModel = (widget: any, formattedModel: any) => {
     return found
 }
 
-export const formatWidget = (widget: any, formattedModel: IDashboard) => {
+export const formatWidget = (widget: any, formattedModel: IDashboard, user: any) => {
     let formattedWidget = {} as any
 
     switch (widget.type) {
@@ -199,7 +200,7 @@ export const formatWidget = (widget: any, formattedModel: IDashboard) => {
             formattedWidget = formatTextWidget(widget)
             break
         case 'chart':
-            formattedWidget = formatHighchartsWidget(widget)
+            formattedWidget = user?.enterprise ? formatHighchartsWidget(widget) : formatChartJSWidget(widget)
     }
 
     return formattedWidget
