@@ -1583,22 +1583,25 @@ public class ManageDataSetsForREST {
 			return java.sql.Timestamp.class;
 		else if (columnClass.equalsIgnoreCase("oracle.sql.TIMESTAMP"))
 			return java.sql.Timestamp.class;
-		else
-			/*
-			 * This is a fallback for unknown types and also a workaround to fix dataset with strange
-			 * Java types in metadata.
-			 *
-			 * TL;DR
-			 *
-			 * It happened that some datasets were written with java.time.LocalDateTime in type attribute inside
-			 * the XML in the SBI_DATA_SET.DS_METADATA: this was an error. Also, FE sends to BE Java types via REST
-			 * while BE should be autonomous into the management of the real type of a field: during
-			 * dataset saving, all the metadatas and types are inferred and completely rewritten, ignoring what FE
-			 * says.
-			 *
-			 * That said, if we don't know the type, it's not a big problem.
-			 */
-			return java.lang.String.class;
+		else if (columnClass.equalsIgnoreCase("java.time.LocalDate"))
+			return java.time.LocalDate.class;
+		else if (columnClass.equalsIgnoreCase("java.time.LocalTime"))
+			return java.time.LocalTime.class;
+		else if (columnClass.equalsIgnoreCase("java.time.LocalDateTime"))
+			return java.time.LocalDateTime.class;
+		else if (columnClass.equalsIgnoreCase("java.time.OffsetTime"))
+			return java.time.OffsetTime.class;
+		else if (columnClass.equalsIgnoreCase("java.time.OffsetDateTime"))
+			return java.time.OffsetDateTime.class;
+		else if (columnClass.equalsIgnoreCase("java.time.ZonedDateTime"))
+			return java.time.ZonedDateTime.class;
+		else {
+			try {
+				return Class.forName(columnClass);
+			} catch (ClassNotFoundException e) {
+				throw new SpagoBIRuntimeException("Couldn't map class <" + columnClass + ">", e);
+			}
+		}
 	}
 
 	private FieldType getFieldTypeFromColumn(String fieldType) {
