@@ -223,5 +223,11 @@
             "label": "common.top",
             "value": "top"
         }
-    ]
+    ],
+    "warningMessageStyle": {
+        "align-items": "center",
+        "display": "flex",
+        "justify-content": "center",
+        "text-align": "center"
+    }
 }

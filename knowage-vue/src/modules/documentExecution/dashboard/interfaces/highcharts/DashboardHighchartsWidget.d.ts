@@ -126,7 +126,9 @@ export interface IHighchartsPieChartDataLabels {
         textAlign: string
     }
     format?: string,
-    formatter?: string,
+    formatter?: Function,
+    formatterText?: string, // TODO - Remove for BE ???
+    formatterError?: string  // TODO - Remove for BE
 }
 
 export interface IHighchartsChartSerie {
