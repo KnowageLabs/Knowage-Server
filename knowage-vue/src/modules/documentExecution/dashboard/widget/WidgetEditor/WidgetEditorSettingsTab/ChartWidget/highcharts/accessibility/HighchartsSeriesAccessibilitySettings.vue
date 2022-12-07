@@ -58,7 +58,7 @@ export default defineComponent({
     },
     computed: {
         allSeriesOptionEnabled() {
-            return this.model?.chart.type !== 'pie'
+            return this.model?.chart.type !== 'highchartsPie'
         }
     },
     created() {

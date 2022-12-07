@@ -31,7 +31,7 @@ export class HighchartsPieChart extends KnowageHighcharts {
             this.range[serieIndex] = { serie: item.name }
             // const dataColumnName = data.metaData.fields.filter((i) => i.header === dataColumn)[0].name
             item.data = []
-            data.rows.forEach((row: any, index: number) => {
+            data?.rows?.forEach((row: any, index: number) => {
                 let serieElement = {
                     id: row.id,
                     name: row['column_1'], //hardcoded because category should always be the first one

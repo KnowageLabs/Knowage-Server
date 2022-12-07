@@ -18,7 +18,7 @@
                 <i class="pi pi-question-circle kn-cursor-pointer  p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.configurationOf3D.betaAngleHint')"></i>
             </div>
         </div>
-        <div v-if="model.chart.type !== 'pie'" class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column kn-flex">
+        <div v-if="model.chart.type !== 'highchartsPie'" class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column kn-flex">
             <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.configurationOf3D.viewDistance') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center">
                 <InputNumber class="kn-material-input p-inputtext-sm" v-model="model.chart.options3d.viewDistance" :disabled="configurationDisabled" @blur="modelChanged" />

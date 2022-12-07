@@ -139,7 +139,14 @@ export class KnowageHighcharts {
                 text: ''
             },
             tooltip: {
-                pointFormat: ''
+                enabled: false,
+                style: {
+                    fontFamily: '',
+                    fontSize: '',
+                    fontWeight: '',
+                    color: ''
+                },
+                backgroundColor: '',
             },
             legend: {
                 enabled: true,

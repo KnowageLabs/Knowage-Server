@@ -1,6 +1,4 @@
 <template>
-    <button @click="updateChartModel">Test</button>
-    {{ chartModel?.legend }}
     <div v-show="!error" id="container" style="width: 100%; height: 400px"></div>
 </template>
 
@@ -25,7 +23,10 @@ export default defineComponent({
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
         dataToShow: { type: Object as any, required: true },
-        propActiveSelections: { type: Array as PropType<ISelection[]>, required: true },
+        propActiveSelections: {
+            type: Array as PropType<ISelection[]>,
+            required: true
+        },
         dashboardId: { type: String, required: true },
         editorMode: { type: Boolean }
     },
@@ -53,11 +54,10 @@ export default defineComponent({
         onRefreshChart() {
             this.chartModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
             this.updateChartModel()
-            console.log('>>>>>>>>>> refreshChart: ', this.chartModel)
         },
         updateChartModel() {
             // TODO - remove this
-            if (this.widgetModel.type !== 'chart') return
+            if (this.widgetModel.type !== 'highcharts') return
 
             // Create the chart
             Highcharts.setOptions({
@@ -90,13 +90,13 @@ export default defineComponent({
             this.widgetModel.settings.chartModel.setData(this.dataToShow)
 
             this.updateSeriesAccessibilitySettings()
-            this.error = this.updateLabelSettings()
+            this.error = this.updateFormatterSettings(this.chartModel.plotOptions.pie.dataLabels, 'format', 'formatter', 'formatterText', 'formatterError')
             if (this.error) return
             this.error = this.updateLegendSettings()
             if (this.error) return
+            this.error = this.updateTooltipSettings()
+            if (this.error) return
 
-            this.chartModel.plotOptions.pie.showInLegend = true
-            console.log('>>>>>>>>>>>> ABOUT TO RENDER CHART...', this.chartModel)
             Highcharts.chart('container', this.chartModel)
         },
         updateSeriesAccessibilitySettings() {
@@ -106,8 +106,10 @@ export default defineComponent({
         },
         setAllSeriesAccessibilitySettings() {
             this.chartModel.series.forEach((serie: IHighchartsChartSerie) => {
-                if (this.chartModel.chart.type !== 'pie' && this.widgetModel.settings.accesssibility.seriesAccesibilitySettings[0] && this.widgetModel.settings.accesssibility.seriesAccesibilitySettings[0].accessibility.enabled) {
-                    serie.accessibility = { ...this.widgetModel.settings.accesssibility.seriesAccesibilitySettings[0].accessibility }
+                if (this.chartModel.chart.type !== 'highchartsPie' && this.widgetModel.settings.accesssibility.seriesAccesibilitySettings[0] && this.widgetModel.settings.accesssibility.seriesAccesibilitySettings[0].accessibility.enabled) {
+                    serie.accessibility = {
+                        ...this.widgetModel.settings.accesssibility.seriesAccesibilitySettings[0].accessibility
+                    }
                 } else {
                     serie.accessibility = {
                         enabled: false,
@@ -119,7 +121,7 @@ export default defineComponent({
             })
         },
         setSpecificAccessibilitySettings() {
-            const index = this.chartModel.chart.type !== 'pie' ? 1 : 0
+            const index = this.chartModel.chart.type !== 'highchartsPie' ? 1 : 0
             for (let i = index; i < this.widgetModel.settings.accesssibility.seriesAccesibilitySettings.length; i++) {
                 const seriesAccesibilitySetting = this.widgetModel.settings.accesssibility.seriesAccesibilitySettings[i] as ISerieAccessibilitySetting
                 if (seriesAccesibilitySetting.accessibility.enabled) seriesAccesibilitySetting.names.forEach((serieName: string) => this.updateSerieAccessibilitySettings(serieName, seriesAccesibilitySetting.accessibility))
@@ -129,20 +131,20 @@ export default defineComponent({
             const index = this.chartModel.series.findIndex((serie: IHighchartsChartSerie) => serie.name === serieName)
             if (index !== -1) this.chartModel.series[index].accessibility = { ...accessibility }
         },
-        updateLabelSettings() {
+        updateFormatterSettings(object: any, formatProperty: string | null, formatterProperty: string, formatterTextProperty: string, formatterErrorProperty: string) {
             let hasError = false
-            if (this.chartModel.plotOptions.pie.dataLabels.format?.trim() === '') delete this.chartModel.plotOptions.pie.dataLabels.format
-            if (!this.chartModel.plotOptions.pie.dataLabels.formatterText || !this.chartModel.plotOptions.pie.dataLabels.formatterText.trim()) {
-                delete this.chartModel.plotOptions.pie.dataLabels.formatter
-                this.chartModel.plotOptions.pie.dataLabels.formatterError = ''
+            if (formatProperty && object[formatProperty]?.trim() === '') delete object[formatProperty]
+            if (!object[formatterTextProperty] || !object[formatterTextProperty].trim()) {
+                delete object[formatterProperty]
+                object[formatterErrorProperty] = ''
                 return hasError
             } else {
                 try {
-                    const fn = eval(`(${this.chartModel.plotOptions.pie.dataLabels.formatterText})`)
-                    if (typeof fn === 'function') this.chartModel.plotOptions.pie.dataLabels.formatter = fn
-                    this.chartModel.plotOptions.pie.dataLabels.formatterError = ''
+                    const fn = eval(`(${object[formatterTextProperty]})`)
+                    if (typeof fn === 'function') object[formatterProperty] = fn
+                    object[formatterErrorProperty] = ''
                 } catch (error) {
-                    this.chartModel.plotOptions.pie.dataLabels.formatterError = (error as any).message
+                    object[formatterErrorProperty] = (error as any).message
                     hasError = true
                 }
             }
@@ -150,23 +152,13 @@ export default defineComponent({
             return hasError
         },
         updateLegendSettings() {
-            let hasError = false
-            if (this.chartModel.legend.labelFormat?.trim() === '') delete this.chartModel.legend.labelFormat
-            if (!this.chartModel.legend.labelFormatterText || !this.chartModel.legend.labelFormatterText.trim()) {
-                delete this.chartModel.legend.labelFormatter
-                this.chartModel.legend.labelFormatterError = ''
-                return hasError
-            } else {
-                try {
-                    const fn = eval(`(${this.chartModel.legend.labelFormatterText})`)
-                    if (typeof fn === 'function') this.chartModel.legend.labelFormatter = fn
-                    this.chartModel.legend.labelFormatterError = ''
-                } catch (error) {
-                    this.chartModel.legend.labelFormatterError = (error as any).message
-                    hasError = true
-                }
-            }
-
+            this.chartModel.plotOptions.pie.showInLegend = true
+            return this.updateFormatterSettings(this.chartModel.legend, 'labelFormat', 'labelFormatter', 'labelFormatterText', 'labelFormatterError')
+        },
+        updateTooltipSettings() {
+            let hasError = this.updateFormatterSettings(this.chartModel.tooltip, null, 'formatter', 'formatterText', 'formatterError')
+            if (hasError) return hasError
+            hasError = this.updateFormatterSettings(this.chartModel.tooltip, null, 'pointFormatter', 'pointFormatterText', 'pointFormatterError')
             return hasError
         }
     }

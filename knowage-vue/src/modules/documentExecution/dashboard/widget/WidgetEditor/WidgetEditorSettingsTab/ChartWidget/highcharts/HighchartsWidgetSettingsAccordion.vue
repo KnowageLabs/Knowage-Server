@@ -11,9 +11,10 @@
                 <Highcharts3DConfiguration v-if="accordion.type === 'ConfigurationOf3D'" :widgetModel="widgetModel"></Highcharts3DConfiguration>
                 <HighchartsNoDataMessageConfiguration v-else-if="accordion.type === 'NoDataMessageConfiguration'" :widgetModel="widgetModel"></HighchartsNoDataMessageConfiguration>
                 <HighchartsAccessibilitySettings v-else-if="accordion.type === 'AccessibilitySettings'" :widgetModel="widgetModel"></HighchartsAccessibilitySettings>
+                <HighchartsSeriesAccessibilitySettings v-else-if="accordion.type === 'SeriesAccessibilitySettings'" :widgetModel="widgetModel"></HighchartsSeriesAccessibilitySettings>
                 <HighchartsLabelsSettings v-else-if="accordion.type === 'Labels'" :widgetModel="widgetModel"></HighchartsLabelsSettings>
                 <HighchartsLegendSettings v-else-if="accordion.type === 'Legend'" :widgetModel="widgetModel"></HighchartsLegendSettings>
-                <HighchartsSeriesAccessibilitySettings v-else-if="accordion.type === 'SeriesAccessibilitySettings'" :widgetModel="widgetModel"></HighchartsSeriesAccessibilitySettings>
+                <HighchartsTooltipSettings v-else-if="accordion.type === 'Tooltip'" :widgetModel="widgetModel"></HighchartsTooltipSettings>
                 <WidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
                 <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
                 <WidgetRowsStyle v-else-if="accordion.type === 'RowsStyle'" :widgetModel="widgetModel"></WidgetRowsStyle>
@@ -54,6 +55,7 @@ import HighchartsAccessibilitySettings from '../highcharts/accessibility/Highcha
 import HighchartsSeriesAccessibilitySettings from '../highcharts/accessibility/HighchartsSeriesAccessibilitySettings.vue'
 import HighchartsLabelsSettings from '../highcharts/labels/HighchartsLabelsSettings.vue'
 import HighchartsLegendSettings from '../highcharts/legend/HighchartsLegendSettings.vue'
+import HighchartsTooltipSettings from '../highcharts/tooltip/HighchartsTooltipSettings.vue'
 
 export default defineComponent({
     name: 'hihgcharts-widget-configuration-container',
@@ -76,7 +78,8 @@ export default defineComponent({
         HighchartsAccessibilitySettings,
         HighchartsSeriesAccessibilitySettings,
         HighchartsLabelsSettings,
-        HighchartsLegendSettings
+        HighchartsLegendSettings,
+        HighchartsTooltipSettings
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
