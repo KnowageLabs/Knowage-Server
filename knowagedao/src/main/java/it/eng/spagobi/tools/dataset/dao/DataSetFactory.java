@@ -413,7 +413,7 @@ public class DataSetFactory {
 				ds.setDataSource(dataSource);
 				ds.setDsType(FEDERATED_DS_TYPE);
 
-			} else if (type.equalsIgnoreCase(DataSetConstants.DS_QBE)) {
+			} else if (type.equalsIgnoreCase(DataSetConstants.DS_QBE) || type.equalsIgnoreCase(DataSetConstants.DS_DERIVED)) {
 				ds = new QbeDataSet();
 				ds.setConfiguration(sbiDataSet.getConfiguration());
 				((QbeDataSet) ds).setJsonQuery(jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));

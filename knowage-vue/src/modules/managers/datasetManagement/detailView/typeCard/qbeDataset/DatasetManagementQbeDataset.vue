@@ -50,7 +50,7 @@
                     />
                 </div>
             </form>
-            <div v-if="dataset.dsTypeCd == 'Qbe' || dataset.dsTypeCd == 'Federated'">
+            <div v-if="dataset.dsTypeCd == 'Qbe' || dataset.dsTypeCd == 'Federated' || dataset.dsTypeCd == 'Derived'">
                 <Button :label="$t('managers.datasetManagement.viewQbeButton')" class="p-col-2 p-mr-2 p-button kn-button--primary" style="max-height: 38px" @click="openQbeQueryDialog" />
                 <Button :label="$t('managers.datasetManagement.openQbeButton')" class="p-col-2 p-button kn-button--primary" :disabled="parentValid" @click="openDatasetInQBE" />
             </div>

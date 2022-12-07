@@ -29,8 +29,9 @@
                             fieldName: $t('managers.datasetManagement.selectDatasetType')
                         }"
                     />
-
-                    <Button :label="$t('workspace.myModels.openInQBE')" class="kn-button kn-button--primary p-d-flex" @click="openDatasetInQbe" v-if="isOpenInQBEVisible(selectedDataset)" :disabled="touched" />
+                    <span class="p-float-label p-d-flex">
+                        <Button :label="$t('workspace.myModels.openInQBE')" class="kn-button kn-button--primary p-d-flex" @click="openDatasetInQbe" v-if="isOpenInQBEVisible(selectedDataset)" :disabled="touched" />
+                    </span>
                 </div>
             </template>
         </Card>
@@ -134,10 +135,14 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss" scoped>
-.dropdownContainer {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
+<style lang="scss">
+.p-card .p-card-content {
+    .dropdownContainer {
+        .p-card-body {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+        }
+    }
 }
 </style>

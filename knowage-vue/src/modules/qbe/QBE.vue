@@ -358,6 +358,8 @@ export default defineComponent({
             } else if (this.sourceDataset) {
                 await this.loadDataset()
                 if (this.qbe) {
+                    this.qbe.dsTypeCd = 'Derived'
+                    this.qbe.qbeDataSource = this.sourceDataset.label
                     this.qbe.qbeJSONQuery = {
                         catalogue: {
                             queries: [this.getQbeJSONQuery(this.sourceDataset)]
@@ -430,9 +432,9 @@ export default defineComponent({
             //this.smartView = this.dataset.smartView
             this.smartView = true
             return {
-                dsTypeCd: 'Qbe',
+                dsTypeCd: 'Derived',
                 qbeDatamarts: '',
-                qbeDataSource: null,
+                qbeDataSource: this.sourceDataset.dataSourceLabel,
                 qbeJSONQuery: {
                     catalogue: {
                         queries: [this.getQbeJSONQuery(this.sourceDataset)]
