@@ -1,5 +1,5 @@
-import { HighchartsChartModel } from "./DashboardHighchartsWidget";
+import { IHighchartsChartModel } from "./DashboardHighchartsWidget";
 
-export interface HighchartsPieChartModel extends HighchartsChartModel {
+export interface HighchartsPieChartModel extends IHighchartsChartModel {
 
 }

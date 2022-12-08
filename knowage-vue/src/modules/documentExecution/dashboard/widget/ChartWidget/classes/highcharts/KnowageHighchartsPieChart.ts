@@ -6,6 +6,7 @@ import { updatePieChartModel } from './updater/HighchartsPieChartUpdater'
 export class HighchartsPieChart extends KnowageHighcharts {
     constructor(model: any, widgetModel: IWidget) {
         super(model, widgetModel)
+        if (!this.model.plotOptions.pie) this.setPiePlotOptions()
         if (model && model.CHART) this.updateModel(model, widgetModel)
         else this.model = model
     }
@@ -44,10 +45,31 @@ export class HighchartsPieChart extends KnowageHighcharts {
                 this.range[serieIndex].min = this.range[serieIndex].min ? Math.min(this.range[serieIndex].min, row['column_2']) : row['column_2']
                 this.range[serieIndex].max = this.range[serieIndex].max ? Math.max(this.range[serieIndex].max, row['column_2']) : row['column_2']
                 if (this.model.settings.drilldown) serieElement.drilldown = true
-                if (this.model.settings.colorPalette?.COLOR[index]?.value) serieElement.color = this.model.settings.colorPalette.COLOR[index].value
+                // TODO - UNCOMMENT/CHANGE FOR COLOR
+                // if (this.model.settings.colorPalette?.COLOR[index]?.value) serieElement.color = this.model.settings.colorPalette.COLOR[index].value
                 item.data.push(serieElement)
             })
         })
         return this.model.series
+    }
+
+    setPiePlotOptions = () => {
+        this.model.plotOptions.pie = {
+            depth: 0,
+            allowPointSelect: false,
+            cursor: '',
+            dataLabels: {
+                enabled: false,
+                distance: 30,
+                style: {
+                    fontFamily: '',
+                    fontSize: '14px',
+                    fontWeight: '',
+                    color: '',
+                    backgroundColor: '',
+                    textAlign: '',
+                }
+            }
+        }
     }
 }

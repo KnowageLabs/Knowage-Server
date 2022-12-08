@@ -1,0 +1,70 @@
+{
+    "default3DOptions": {
+        "alpha": 0,
+        "beta": 0,
+        "enabled": false,
+        "viewDistance": 25
+    },
+    "defaultAccessibilitySettings": {
+        "description": "",
+        "enabled": false,
+        "keyboardNavigation": {
+            "enabled": false,
+            "order": []
+        }
+    },
+    "defaultLegendSettings": {
+        "align": "center",
+        "backgroundColor": "",
+        "borderColor": "",
+        "enabled": true,
+        "itemStyle": {
+            "color": "",
+            "fontFamily": "",
+            "fontSize": "",
+            "fontWeight": ""
+        },
+        "layout": "horizontal",
+        "verticalAlign": "bottom"
+    },
+    "defaultNoDataConfiguration": {
+        "position": {
+            "align": "",
+            "verticalAlign": ""
+        },
+        "style": {
+            "backgroundColor": "",
+            "color": "",
+            "fontFamily": "",
+            "fontSize": "",
+            "fontWeight": ""
+        }
+    },
+    "defaultPieChartPlotOptions": {
+        "allowPointSelect": false,
+        "cursor": "",
+        "dataLabels": {
+            "distance": 30,
+            "enabled": false,
+            "style": {
+                "backgroundColor": "",
+                "color": "",
+                "fontFamily": "",
+                "fontSize": "14px",
+                "fontWeight": "",
+                "textAlign": ""
+            }
+        },
+        "depth": 0
+    },
+    "defaultTooltipSettings": {
+        "backgroundColor": "",
+        "enabled": false,
+        "style": {
+            "color": "",
+            "fontFamily": "",
+            "fontSize": "",
+            "fontWeight": ""
+        }
+    }
+}

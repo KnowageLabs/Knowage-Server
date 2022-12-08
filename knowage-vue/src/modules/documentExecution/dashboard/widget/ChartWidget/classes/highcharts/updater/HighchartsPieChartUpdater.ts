@@ -8,7 +8,6 @@ export const updatePieChartModel = (oldModel: any, newModel: HighchartsPieChartM
     console.log("----------------------------------- NEW MODEL: ", newModel)
     console.log("----------------------------------- WIDGET MODEL: ", widgetModel)
     newModel.chart.type = "pie"
-    newModel.title = oldModel.CHART.TITLE
 
     getFormatted3DConfiguration(oldModel, newModel)
     getFormattedNoDataConfiguration(oldModel, newModel)
@@ -42,7 +41,7 @@ export const updatePieChartModel = (oldModel: any, newModel: HighchartsPieChartM
 
 const getFormatted3DConfiguration = (oldModel: any, newModel: HighchartsPieChartModel) => {
     if (oldModel.CHART.show3D) {
-        newModel.plotOptions.pie.depth = oldModel.CHART.depth
+        if (newModel.plotOptions.pie) newModel.plotOptions.pie.depth = oldModel.CHART.depth
         newModel.chart.options3d = {
             enabled: oldModel.CHART.show3D,
             alpha: oldModel.CHART.alpha,

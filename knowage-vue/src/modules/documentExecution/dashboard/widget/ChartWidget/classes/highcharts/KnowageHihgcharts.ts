@@ -1,8 +1,9 @@
 import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard"
-import { HighchartsChartModel } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
+import { IHighchartsChartModel } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
+import * as  highchartsDefaultValues from "../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues"
 
 export class KnowageHighcharts {
-    model: HighchartsChartModel
+    model: IHighchartsChartModel
     cardinality: any[]
     range: any[]
 
@@ -10,10 +11,6 @@ export class KnowageHighcharts {
         this.model = this.createNewChartModel()
         this.cardinality = [],
             this.range = []
-    }
-
-    loaded = (event: any) => {
-        console.log("chart Loaded", event)
     }
 
     initializeEventsDispatcher = () => {
@@ -76,92 +73,22 @@ export class KnowageHighcharts {
     createNewChartModel = () => {
         return {
             lang: { noData: '' },
-            accessibility: {
-                enabled: false,
-                description: '',
-                keyboardNavigation: {
-                    enabled: false,
-                    order: []
-                }
-            },
-            noData: {
-                position: {
-                    align: '',
-                    verticalAlign: ''
-                },
-                style: {
-                    fontFamily: '',
-                    fontSize: '',
-                    fontWeight: '',
-                    color: '',
-                    backgroundColor: '',
-                }
-            },
             chart: {
-                options3d: {
-                    enabled: false,
-                    alpha: 0,
-                    beta: 0,
-                    viewDistance: 25
-                },
-                events: {},
-                plotBackgroundColor: '',
-                plotBorderWidth: '',
-                plotShadow: false,
+                options3d: highchartsDefaultValues.getDefault3DOptions(),
+                events: {}, // TODO
                 type: ''
             },
-            plotOptions: {
-                pie: {
-                    depth: 0,
-                    allowPointSelect: false,
-                    cursor: '',
-                    dataLabels: {
-                        enabled: false,
-                        distance: 30,
-                        style: {
-                            fontFamily: '',
-                            fontSize: '14px',
-                            fontWeight: '',
-                            color: '',
-                            backgroundColor: '',
-                            textAlign: '',
-                        }
-                    }
-                }, // move to PIE CHART
-                series: []
-            },
+            noData: highchartsDefaultValues.getDefaultNoDataConfiguration(),
+            accessibility: highchartsDefaultValues.getDefaultAccessibilitySettings(),
             series: [],
-            settings: {},
-            credits: {
-                enabled: false
+            settings: {
+                drilldown: {}, // TODO
+                categories: [] // TODO
             },
-            title: {
-                text: ''
-            },
-            tooltip: {
-                enabled: false,
-                style: {
-                    fontFamily: '',
-                    fontSize: '',
-                    fontWeight: '',
-                    color: ''
-                },
-                backgroundColor: '',
-            },
-            legend: {
-                enabled: true,
-                align: 'center',
-                verticalAlign: 'bottom',
-                layout: 'horizontal',
-                itemStyle: {
-                    fontFamily: '',
-                    fontSize: '',
-                    fontWeight: '',
-                    color: ''
-                },
-                backgroundColor: '',
-                borderColor: ''
-            }
+            plotOptions: {},
+            legend: highchartsDefaultValues.getDefaultLegendSettings(),
+            tooltip: highchartsDefaultValues.getDefaultTooltipSettings(),
+            credits: { enabled: false }
         }
 
     }

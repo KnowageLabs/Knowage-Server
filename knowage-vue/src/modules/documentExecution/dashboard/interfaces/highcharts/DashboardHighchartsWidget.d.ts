@@ -68,33 +68,27 @@ export interface IHighchartsWidgetStyle {
     background: IWidgetBackgroundStyle
 }
 
-export interface HighchartsChartModel {
+export interface IHighchartsChartModel {
     lang: {
         noData: string
     },
     chart: {
         options3d: IHighchartsOptions3D
         events: any,
-        plotBackgroundColor: any,
-        plotBorderWidth: any,
-        plotShadow: boolean,
         type: string
     },
     noData: IHighchartsNoDataConfiguration,
-    series: IHighchartsChartSerie[],
-    settings: any,
-    credits: {
-        enabled: boolean
-    },
-    title: {
-        text: string
-    },
     accessibility: IHighchartsAccessibilitySettings,
+    series: IHighchartsChartSerie[],
+    settings: IIHighchartsChartModelSettings,
     plotOptions: {
-        pie: IHighchartsPieChartPlotOptions
+        pie?: IHighchartsPieChartPlotOptions
     },
     legend: IHighchartsLegend,
-    tooltip: IHighchartsTooltip
+    tooltip: IHighchartsTooltip,
+    credits: {
+        enabled: boolean
+    }
 }
 
 export interface IHighchartsOptions3D {
@@ -175,6 +169,11 @@ export interface IHighchartsChartSerieData {
     y: number,
     sliced?: boolean,
     selected?: boolean
+}
+
+export interface IIHighchartsChartModelSettings {
+    drilldown: any, // TODO
+    categories: any // TODO
 }
 
 export interface IHighchartsLegend {
