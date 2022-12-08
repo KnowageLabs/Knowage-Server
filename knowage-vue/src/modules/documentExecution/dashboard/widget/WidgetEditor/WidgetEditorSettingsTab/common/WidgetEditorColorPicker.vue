@@ -78,7 +78,8 @@ export default defineComponent({
     min-width: 100px;
 }
 .dashboard-color-picker {
-    position: fixed;
+    position: absolute;
+    right: 45px;
     width: 220px !important;
 }
 </style>
