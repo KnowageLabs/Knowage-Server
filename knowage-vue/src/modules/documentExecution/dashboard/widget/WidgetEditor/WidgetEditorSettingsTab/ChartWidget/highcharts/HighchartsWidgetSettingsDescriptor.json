@@ -121,6 +121,7 @@
             "type": "background-color"
         }
     ],
+    "scaleOptions": ["empty", "k", "m", "g", "t", "p", "e"],
     "settings": {
         "Accessibility": [
             {
