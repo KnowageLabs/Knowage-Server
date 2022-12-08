@@ -205,7 +205,7 @@ export default defineComponent({
             return hasError
         },
         updateLegendSettings() {
-            this.chartModel.plotOptions.pie.showInLegend = true
+            if (this.chartModel.plotOptions.pie) this.chartModel.plotOptions.pie.showInLegend = true
             return this.updateFormatterSettings(this.chartModel.legend, 'labelFormat', 'labelFormatter', 'labelFormatterText', 'labelFormatterError')
         },
         updateTooltipSettings() {
