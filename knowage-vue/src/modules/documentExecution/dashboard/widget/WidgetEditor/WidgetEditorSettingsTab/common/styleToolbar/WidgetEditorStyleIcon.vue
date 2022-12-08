@@ -8,7 +8,6 @@
             </div>
             <span v-if="option.type === 'font-size'" class="icon-display-value-span p-ml-1">{{ '(' + displayValue + ')' }}</span>
         </div>
-        {{ color }}
         <ColorPicker class="dashboard-color-picker click-outside" v-if="(option.type === 'color' || option.type === 'background-color') && colorPickerVisible" theme="light" :color="color" :sucker-hide="true" @changeColor="changeColor" />
         <WidgetEditorToolbarContextMenu
             class="context-menu"
