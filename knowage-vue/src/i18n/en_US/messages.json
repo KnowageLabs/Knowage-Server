@@ -17,6 +17,7 @@
         "category": "Category",
         "cc": "CC",
         "center": "Center",
+        "chart": "Chart",
         "chipsHint": "Press Enter to confirm the input value",
         "choose": "choose",
         "clean": "Clean",
@@ -422,6 +423,9 @@
                 "title": "Borders"
             },
             "chips": "Chips",
+            "colors": {
+                "title": "Colors"
+            },
             "columnDetails": "Column Details",
             "columnFilterHint": "Select the filter operator and the value for the column. Remember to use the correct database sintax for the value. ie: %LIKE%",
             "columnGroups": {

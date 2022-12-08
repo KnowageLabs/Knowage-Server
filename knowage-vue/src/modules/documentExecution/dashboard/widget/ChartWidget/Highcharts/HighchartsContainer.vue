@@ -11,10 +11,12 @@ import Highcharts from 'highcharts'
 import Highcharts3D from 'highcharts/highcharts-3d'
 import Accessibility from 'highcharts/modules/accessibility'
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display'
+import SeriesLabel from 'highcharts/modules/series-label'
 import deepcopy from 'deepcopy'
 
 Accessibility(Highcharts)
 NoDataToDisplay(Highcharts)
+SeriesLabel(Highcharts)
 Highcharts3D(Highcharts)
 
 export default defineComponent({
@@ -66,28 +68,7 @@ export default defineComponent({
                 }
             })
 
-            // TODO - Remove Hardcoded
-            // this.chartModel.series = [
-            //     {
-            //         type: 'pie',
-            //         name: 'Share',
-            //         data: [
-            //             ['Samsung', 23],
-            //             ['Apple', 18],
-            //             {
-            //                 showInLegend: true,
-            //                 name: 'Xiaomi',
-            //                 y: 12,
-            //                 sliced: true,
-            //                 selected: true
-            //             },
-            //             ['Oppo*', 9],
-            //             ['Vivo', 8],
-            //             ['Others', 30]
-            //         ]
-            //     }
-            // ]
-            this.widgetModel.settings.chartModel.setData(this.dataToShow)
+            // this.widgetModel.settings.chartModel.setData(this.dataToShow)
 
             this.updateSeriesAccessibilitySettings()
             this.updateSeriesLabelSettings()
@@ -98,6 +79,34 @@ export default defineComponent({
             this.error = this.updateTooltipSettings()
             if (this.error) return
 
+            // TODO - Remove Hardcoded
+            this.chartModel.series = [
+                {
+                    type: 'pie',
+                    name: 'Share',
+                    dataLabels: { enabled: true },
+                    label: {
+                        enabled: true,
+                        style: {
+                            fontFamily: '',
+                            fontSize: '',
+                            fontWeight: '',
+                            color: '',
+                            backgroundColor: ''
+                        },
+                        format: 'Prefix + {name} + Suffix'
+                    },
+                    data: [
+                        {
+                            name: 'Xiaomi',
+                            y: 12,
+                            sliced: true,
+                            selected: true
+                        }
+                    ]
+                }
+            ]
+            console.log('>>>>>>>>>>>>>>> CHART TO RENDER: ', this.chartModel)
             Highcharts.chart('container', this.chartModel)
         },
         updateSeriesAccessibilitySettings() {
@@ -146,7 +155,7 @@ export default defineComponent({
                     } // TODO
                 } else {
                     serie.label = {
-                        enabled: false,
+                        enabled: true,
                         style: {
                             fontFamily: '',
                             fontSize: '',
@@ -154,7 +163,7 @@ export default defineComponent({
                             color: '',
                             backgroundColor: ''
                         },
-                        format: ''
+                        format: 'Prefix + {name} + Suffix'
                     }
                 }
             })

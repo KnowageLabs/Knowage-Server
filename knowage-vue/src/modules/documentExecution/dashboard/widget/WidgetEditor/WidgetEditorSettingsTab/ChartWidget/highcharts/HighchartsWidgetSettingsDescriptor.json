@@ -133,6 +133,12 @@
                 "type": "SeriesAccessibilitySettings"
             }
         ],
+        "Chart": [
+            {
+                "title": "dashboard.widgetEditor.colors.title",
+                "type": "Colors"
+            }
+        ],
         "Configuration": [
             {
                 "title": "dashboard.widgetEditor.configurationOf3D.title",
@@ -253,6 +259,11 @@
             "icon": "pi pi-table",
             "label": "dashboard.widgetEditor.series.title",
             "value": "Series"
+        },
+        {
+            "icon": "pi pi-table",
+            "label": "common.chart",
+            "value": "Chart"
         },
         {
             "icon": "fa fa-hand-pointer",

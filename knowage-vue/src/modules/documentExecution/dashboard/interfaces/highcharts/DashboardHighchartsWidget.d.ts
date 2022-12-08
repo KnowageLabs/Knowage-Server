@@ -11,6 +11,7 @@ export interface IHighchartsWidgetSettings {
     series: IIHighchartsSeriesSetting,
     interactions: IWidgetInteractions,
     style: IHighchartsWidgetStyle,
+    chart: IHighchartsChartSettings,
     responsive: IWidgetResponsive
 }
 
@@ -222,4 +223,15 @@ export interface IHighchartsSerieLabel {
         backgroundColor: string
     },
     format: string
+}
+
+export interface IHighchartsChartSettings {
+    colors: IHighchartColor[]
+}
+
+export interface IHighchartColor {
+    gradient: string,
+    name: string,
+    order: string,
+    value: string
 }

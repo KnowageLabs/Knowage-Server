@@ -1,5 +1,5 @@
 import { IWidget, IWidgetColumn, IWidgetExports, IWidgetInteractions } from "../../../Dashboard"
-import { IHighchartsSeriesLabelsSetting, IHighchartsWidgetConfiguration, IHighchartsWidgetSettings } from "../../../interfaces/highcharts/DashboardHighchartsWidget"
+import { IHighchartColor, IHighchartsSeriesLabelsSetting, IHighchartsWidgetConfiguration, IHighchartsWidgetSettings } from "../../../interfaces/highcharts/DashboardHighchartsWidget"
 import { HighchartsPieChart } from "../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsPieChart"
 import * as widgetCommonDefaultValues from '../../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import { getFormattedWidgetColumn } from "../../common/WidgetColumnHelper"
@@ -113,6 +113,9 @@ const getFormattedWidgetSettings = (widget: any) => {
         },
         interactions: getFormattedInteractions(widget) as IWidgetInteractions,
         style: getFormattedStyle(widget),
+        chart: {
+            colors: getFormattedColorSettings(widget)
+        },
         responsive: widgetCommonDefaultValues.getDefaultResponsivnes()
     } as IHighchartsWidgetSettings
     return formattedSettings
@@ -197,4 +200,13 @@ const getFormattedSerieLabelsSettings = (widget: any) => {
 
     }
     return formattedSerieSettings
+}
+
+const getFormattedColorSettings = (widget: any) => {
+    let formattedColors = [] as IHighchartColor[]
+    if (widget.content.chartTemplate.CHART.COLORPALETTE.COLOR) {
+        console.log("EEEEEEEENTERED")
+        formattedColors = { ...widget.content.chartTemplate.CHART.COLORPALETTE.COLOR } // TODO - CHECK THIS
+    }
+    return formattedColors
 }
