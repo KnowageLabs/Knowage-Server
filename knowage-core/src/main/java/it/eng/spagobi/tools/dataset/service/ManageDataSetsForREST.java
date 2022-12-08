@@ -1399,7 +1399,7 @@ public class ManageDataSetsForREST {
 		if (json.optJSONObject(DataSetConstants.METADATA) != null && json.optJSONObject(DataSetConstants.METADATA).optJSONArray("columns") != null) {
 			JSONArray dsMeta = json.optJSONObject(DataSetConstants.METADATA).getJSONArray("columns");
 			manageDataSetMetadata(dsMeta, dataSet);
-		} else if (json.optJSONArray(DataSetConstants.METADATA).length() > 0) {
+		} else if (json.optJSONArray(DataSetConstants.METADATA) != null && json.optJSONArray(DataSetConstants.METADATA).length() > 0) {
 			JSONArray dsMeta = json.optJSONArray(DataSetConstants.METADATA);
 			manageDataSetMetadataV2(dsMeta, dataSet);
 		}
@@ -1583,8 +1583,25 @@ public class ManageDataSetsForREST {
 			return java.sql.Timestamp.class;
 		else if (columnClass.equalsIgnoreCase("oracle.sql.TIMESTAMP"))
 			return java.sql.Timestamp.class;
-		else
-			throw new SpagoBIRuntimeException("Couldn't map class <" + columnClass + ">");
+		else if (columnClass.equalsIgnoreCase("java.time.LocalDate"))
+			return java.time.LocalDate.class;
+		else if (columnClass.equalsIgnoreCase("java.time.LocalTime"))
+			return java.time.LocalTime.class;
+		else if (columnClass.equalsIgnoreCase("java.time.LocalDateTime"))
+			return java.time.LocalDateTime.class;
+		else if (columnClass.equalsIgnoreCase("java.time.OffsetTime"))
+			return java.time.OffsetTime.class;
+		else if (columnClass.equalsIgnoreCase("java.time.OffsetDateTime"))
+			return java.time.OffsetDateTime.class;
+		else if (columnClass.equalsIgnoreCase("java.time.ZonedDateTime"))
+			return java.time.ZonedDateTime.class;
+		else {
+			try {
+				return Class.forName(columnClass);
+			} catch (ClassNotFoundException e) {
+				throw new SpagoBIRuntimeException("Couldn't map class <" + columnClass + ">", e);
+			}
+		}
 	}
 
 	private FieldType getFieldTypeFromColumn(String fieldType) {
