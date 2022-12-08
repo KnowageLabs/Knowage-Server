@@ -8,6 +8,7 @@ export interface IHighchartsWidgetSettings {
     chartModel: HighchartsPieChart | null,
     configuration: IHighchartsWidgetConfiguration,
     accesssibility: IHighchartsWidgetAccessibility,
+    series: IIHighchartsSeriesSetting,
     interactions: IWidgetInteractions,
     style: IHighchartsWidgetStyle,
     responsive: IWidgetResponsive
@@ -30,6 +31,32 @@ export interface IHighchartsWidgetAccessibility {
 export interface ISerieAccessibilitySetting {
     names: string[]
     accessibility: IHighchartsSerieAccessibility
+}
+
+export interface IIHighchartsSeriesSetting {
+    seriesLabelsSettings: IHighchartsSeriesLabelsSetting[]
+}
+
+export interface IHighchartsSeriesLabelsSetting {
+    names: string[],
+    label: IHighchartsSerieLabelSettings
+}
+
+export interface IHighchartsSerieLabelSettings {
+    enabled: boolean,
+    style: {
+        fontFamily: string
+        fontSize: string
+        fontWeight: string
+        color: string
+        backgroundColor: string
+    },
+    prefix: string
+    suffix: string
+    scale: string
+    precision: number
+    absolute: boolean
+    percentage: boolean
 }
 
 export interface IHighchartsWidgetStyle {
@@ -129,8 +156,11 @@ export interface IHighchartsChartSerie {
     colorByPoint: boolean,
     groupingFunction: string,
     data: IHighchartsChartSerieData[]
-    accessibility: IHighchartsSerieAccessibility
+    accessibility: IHighchartsSerieAccessibility,
+    label: IHighchartsSerieLabelSettings
 }
+
+
 
 export interface IHighchartsSerieAccessibility {
     enabled: boolean,
@@ -180,4 +210,16 @@ export interface IHighchartsTooltip {
     pointFormatter?: Function,
     pointFormatterText?: string, // TODO - Remove for BE ???
     pointFormatterError?: string  // TODO - Remove for BE
+}
+
+export interface IHighchartsSerieLabel {
+    enabled: boolean,
+    style: {
+        fontFamily: string
+        fontSize: string
+        fontWeight: string
+        color: string
+        backgroundColor: string
+    },
+    format: string
 }

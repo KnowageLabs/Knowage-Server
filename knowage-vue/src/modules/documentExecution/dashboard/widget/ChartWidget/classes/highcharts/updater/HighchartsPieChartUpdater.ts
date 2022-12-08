@@ -7,7 +7,7 @@ export const updatePieChartModel = (oldModel: any, newModel: HighchartsPieChartM
     console.log("----------------------------------- OLD MODEL: ", oldModel)
     console.log("----------------------------------- NEW MODEL: ", newModel)
     console.log("----------------------------------- WIDGET MODEL: ", widgetModel)
-    newModel.chart.type = "highchartsPie"
+    newModel.chart.type = "pie"
     newModel.title = oldModel.CHART.TITLE
 
     getFormatted3DConfiguration(oldModel, newModel)
@@ -15,12 +15,6 @@ export const updatePieChartModel = (oldModel: any, newModel: HighchartsPieChartM
     getFormattedSeries(oldModel, newModel)
     getFormattedLegend(oldModel, newModel)
     getFormattedTooltipSettings(oldModel, newModel)
-
-
-
-
-
-
 
     // newModel.plotOptions.pie.cursor = 'pointer'
     // newModel.settings.colorPalette = oldModel.CHART.COLORPALETTE
@@ -89,6 +83,17 @@ const getFormattedSeries = (oldModel: any, newModel: HighchartsPieChartModel) =>
                 description: '',
                 exposeAsGroupOnly: false,
                 keyboardNavigation: { enabled: false }
+            },
+            label: {
+                enabled: false,
+                style: {
+                    fontFamily: '',
+                    fontSize: '',
+                    fontWeight: '',
+                    color: '',
+                    backgroundColor: ''
+                },
+                format: ''
             }
         })
     }
@@ -129,3 +134,4 @@ const getFormattedTooltipSettings = (oldModel: any, newModel: HighchartsPieChart
         }
     }
 }
+

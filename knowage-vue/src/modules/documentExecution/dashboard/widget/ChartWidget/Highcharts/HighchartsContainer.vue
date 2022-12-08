@@ -67,26 +67,26 @@ export default defineComponent({
             })
 
             // TODO - Remove Hardcoded
-            this.chartModel.series = [
-                {
-                    type: 'pie',
-                    name: 'Share',
-                    data: [
-                        ['Samsung', 23],
-                        ['Apple', 18],
-                        {
-                            showInLegend: true,
-                            name: 'Xiaomi',
-                            y: 12,
-                            sliced: true,
-                            selected: true
-                        },
-                        ['Oppo*', 9],
-                        ['Vivo', 8],
-                        ['Others', 30]
-                    ]
-                }
-            ]
+            // this.chartModel.series = [
+            //     {
+            //         type: 'pie',
+            //         name: 'Share',
+            //         data: [
+            //             ['Samsung', 23],
+            //             ['Apple', 18],
+            //             {
+            //                 showInLegend: true,
+            //                 name: 'Xiaomi',
+            //                 y: 12,
+            //                 sliced: true,
+            //                 selected: true
+            //             },
+            //             ['Oppo*', 9],
+            //             ['Vivo', 8],
+            //             ['Others', 30]
+            //         ]
+            //     }
+            // ]
             this.widgetModel.settings.chartModel.setData(this.dataToShow)
 
             this.updateSeriesAccessibilitySettings()
@@ -106,7 +106,7 @@ export default defineComponent({
         },
         setAllSeriesAccessibilitySettings() {
             this.chartModel.series.forEach((serie: IHighchartsChartSerie) => {
-                if (this.chartModel.chart.type !== 'highchartsPie' && this.widgetModel.settings.accesssibility.seriesAccesibilitySettings[0] && this.widgetModel.settings.accesssibility.seriesAccesibilitySettings[0].accessibility.enabled) {
+                if (this.chartModel.chart.type !== 'pie' && this.widgetModel.settings.accesssibility.seriesAccesibilitySettings[0] && this.widgetModel.settings.accesssibility.seriesAccesibilitySettings[0].accessibility.enabled) {
                     serie.accessibility = {
                         ...this.widgetModel.settings.accesssibility.seriesAccesibilitySettings[0].accessibility
                     }
@@ -121,7 +121,7 @@ export default defineComponent({
             })
         },
         setSpecificAccessibilitySettings() {
-            const index = this.chartModel.chart.type !== 'highchartsPie' ? 1 : 0
+            const index = this.chartModel.chart.type !== 'pie' ? 1 : 0
             for (let i = index; i < this.widgetModel.settings.accesssibility.seriesAccesibilitySettings.length; i++) {
                 const seriesAccesibilitySetting = this.widgetModel.settings.accesssibility.seriesAccesibilitySettings[i] as ISerieAccessibilitySetting
                 if (seriesAccesibilitySetting.accessibility.enabled) seriesAccesibilitySetting.names.forEach((serieName: string) => this.updateSerieAccessibilitySettings(serieName, seriesAccesibilitySetting.accessibility))

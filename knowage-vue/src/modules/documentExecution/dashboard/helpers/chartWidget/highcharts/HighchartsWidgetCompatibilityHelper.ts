@@ -1,10 +1,11 @@
 import { IWidget, IWidgetColumn, IWidgetExports, IWidgetInteractions } from "../../../Dashboard"
-import { IHighchartsWidgetConfiguration, IHighchartsWidgetSettings } from "../../../interfaces/highcharts/DashboardHighchartsWidget"
+import { IHighchartsSeriesLabelsSetting, IHighchartsWidgetConfiguration, IHighchartsWidgetSettings } from "../../../interfaces/highcharts/DashboardHighchartsWidget"
 import { HighchartsPieChart } from "../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsPieChart"
 import * as widgetCommonDefaultValues from '../../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import { getFormattedWidgetColumn } from "../../common/WidgetColumnHelper"
 import { getFormattedInteractions } from "../../common/WidgetInteractionsHelper"
 import { getFiltersForColumns } from "../../DashboardBackwardCompatibilityHelper"
+import { hexToRgb } from "../../FormattingHelpers"
 import { getFormattedStyle } from "./HighchartsWidgetStyleHelper"
 
 const columnNameIdMap = {}
@@ -107,6 +108,9 @@ const getFormattedWidgetSettings = (widget: any) => {
         accesssibility: {
             seriesAccesibilitySettings: getFormattedSeriesAccesibilitySettings(widget)
         },  // TODO - move to some default helper 
+        series: {
+            seriesLabelsSettings: getFormattedSerieLabelsSettings(widget) // TODO - move to some default helper 
+        },
         interactions: getFormattedInteractions(widget) as IWidgetInteractions,
         style: getFormattedStyle(widget),
         responsive: widgetCommonDefaultValues.getDefaultResponsivnes()
@@ -121,7 +125,6 @@ const getFormattedConfiguration = (widget: any) => {
 }
 
 const getFormattedSeriesAccesibilitySettings = (widget: any) => {
-    console.log("AAAAAAAAAAAAAAAAA -  widget.content.chartTemplate", widget.content.chartTemplate)
     return widget.content.chartTemplate.CHART.type !== 'PIE' ? [
         {
             names: ['all'],
@@ -148,3 +151,50 @@ const createChartModel = (widget: any, formattedWidget: IWidget) => {
     }
 }
 
+const getFormattedSerieLabelsSettings = (widget: any) => {
+    // TODO
+    // widget.content.chartTemplate.CHART.type !== 'PIE'
+    const formattedSerieSettings = [{
+        names: ['all'],
+        label: {
+            enabled: false,
+            style: {
+                fontFamily: '',
+                fontSize: '',
+                fontWeight: '',
+                color: '',
+                backgroundColor: ''
+            },
+            prefix: '',
+            suffix: '',
+            scale: 'empty', // TODO
+            precision: 2,
+            absolute: false,
+            percentage: false
+        }
+    }] as IHighchartsSeriesLabelsSetting[]
+    if (widget.content.chartTemplate.CHART.VALUES.SERIE && widget.content.chartTemplate.CHART.VALUES.SERIE[0]) {
+        const oldModelSerie = widget.content.chartTemplate.CHART.VALUES.SERIE[0]
+        formattedSerieSettings.push({
+            names: [oldModelSerie.name],
+            label: {
+                enabled: true,
+                style: {
+                    fontFamily: oldModelSerie.dataLabels.style.fontFamily,
+                    fontSize: oldModelSerie.dataLabels.style.fontSize,
+                    fontWeight: oldModelSerie.dataLabels.style.fontWeight,
+                    color: oldModelSerie.dataLabels.style.color ? hexToRgb(oldModelSerie.dataLabels.style.color) : '',
+                    backgroundColor: ''
+                },
+                prefix: oldModelSerie.prefixChar ?? '',
+                suffix: oldModelSerie.postfixChar ?? '',
+                scale: oldModelSerie.scaleFactor ?? 'empty', // TODO
+                precision: oldModelSerie.precision ?? 2,
+                absolute: oldModelSerie.showAbsValue,
+                percentage: oldModelSerie.showPercentage
+            }
+        })
+
+    }
+    return formattedSerieSettings
+}

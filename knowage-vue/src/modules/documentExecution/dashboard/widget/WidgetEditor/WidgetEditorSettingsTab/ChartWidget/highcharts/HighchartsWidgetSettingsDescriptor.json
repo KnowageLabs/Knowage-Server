@@ -182,6 +182,12 @@
                 "type": "Responsive"
             }
         ],
+        "Series": [
+            {
+                "title": "dashboard.widgetEditor.series.title",
+                "type": "SriesLabel"
+            }
+        ],
         "Style": [
             {
                 "title": "dashboard.widgetEditor.titles.title",

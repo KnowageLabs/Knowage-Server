@@ -4,7 +4,7 @@
         <WidgetEditorHint v-if="!selectedDataset"></WidgetEditorHint>
         <WidgetEditorCommonDataContainer v-else-if="propWidget.type === 'table' || propWidget.type === 'html' || propWidget.type === 'text'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widgetModel="propWidget" :selectedDataset="selectedDataset"></WidgetEditorCommonDataContainer>
         <SelectorWidgetDataContainer v-else-if="propWidget.type === 'selector'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widgetModel="propWidget" :selectedDataset="selectedDataset"></SelectorWidgetDataContainer>
-        <HighchartsWidgetDataContainer v-else-if="propWidget.type === 'chart'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widgetModel="propWidget" :selectedDataset="selectedDataset"></HighchartsWidgetDataContainer>
+        <HighchartsWidgetDataContainer v-else-if="propWidget.type === 'highcharts'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widgetModel="propWidget" :selectedDataset="selectedDataset"></HighchartsWidgetDataContainer>
     </div>
 </template>
 
