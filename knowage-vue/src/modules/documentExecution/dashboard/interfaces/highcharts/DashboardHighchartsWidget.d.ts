@@ -157,7 +157,7 @@ export interface IHighchartsChartSerie {
     groupingFunction: string,
     data: IHighchartsChartSerieData[]
     accessibility: IHighchartsSerieAccessibility,
-    label: IHighchartsSerieLabelSettings
+    label: IHighchartsSerieLabel
 }
 
 

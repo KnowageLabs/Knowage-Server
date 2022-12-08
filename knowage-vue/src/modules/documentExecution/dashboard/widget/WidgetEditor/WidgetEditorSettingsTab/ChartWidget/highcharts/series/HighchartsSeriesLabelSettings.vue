@@ -16,7 +16,7 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget } from '../../../../../../Dashboard'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { HighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget'
-import { IHighchartsChartSerie, IHighchartsSeriesLabels } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
+import { IHighchartsChartSerie, IHighchartsSeriesLabelsSetting } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import descriptor from '../HighchartsWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
@@ -31,7 +31,7 @@ export default defineComponent({
         return {
             descriptor,
             model: null as HighchartsPieChartModel | null,
-            seriesSettings: [] as IHighchartsSeriesLabels[],
+            seriesSettings: [] as IHighchartsSeriesLabelsSetting[],
             availableSeriesOptions: [] as string[]
         }
     },
