@@ -7,13 +7,24 @@
                 <Dropdown v-if="index === 0 && allSeriesOptionEnabled" class="kn-material-input" v-model="serieSetting.names[0]" :options="descriptor.allSerieOption" optionValue="value" optionLabel="label" :disabled="true"> </Dropdown>
                 <HighchartsSeriesMultiselect v-else :value="serieSetting.names" :availableSeriesOptions="availableSeriesOptions" :disabled="!allSeriesOptionEnabled" @change="onSeriesSelected($event, serieSetting)"> </HighchartsSeriesMultiselect>
             </div>
+
+            <div class="p-col-5 p-pt-4 p-px-4">
+                <InputSwitch v-model="serieSetting.label.enabled" @change="modelChanged"></InputSwitch>
+                <label class="kn-material-input-label p-m-3">{{ $t('common.enabled') }}</label>
+            </div>
+            <div v-if="allSeriesOptionEnabled" class="p-col-1 p-d-flex p-flex-column p-jc-center p-ai-center p-pl-2">
+                <i :class="[index === 0 ? 'pi pi-plus-circle' : 'pi pi-trash']" class="kn-cursor-pointer p-ml-2 p-mt-4" @click="index === 0 ? addSerieSetting() : removeSerieSetting(index)"></i>
+            </div>
+            <div class="p-col-12 p-py-4">
+                <WidgetEditorStyleToolbar :options="descriptor.noDataToolbarStyleOptions" :propModel="toolbarModels[index]" @change="onStyleToolbarChange($event, index)"> </WidgetEditorStyleToolbar>
+            </div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget } from '../../../../../../Dashboard'
+import { IWidget, IWidgetStyleToolbarModel } from '../../../../../../Dashboard'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { HighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget'
 import { IHighchartsChartSerie, IHighchartsSeriesLabelsSetting } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
@@ -22,16 +33,18 @@ import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 import Textarea from 'primevue/textarea'
 import HighchartsSeriesMultiselect from '../common/HighchartsSeriesMultiselect.vue'
+import WidgetEditorStyleToolbar from '../../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
 
 export default defineComponent({
     name: 'hihgcharts-series-label-settings',
-    components: { Dropdown, InputSwitch, Textarea, HighchartsSeriesMultiselect },
+    components: { Dropdown, InputSwitch, Textarea, HighchartsSeriesMultiselect, WidgetEditorStyleToolbar },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {
             descriptor,
             model: null as HighchartsPieChartModel | null,
             seriesSettings: [] as IHighchartsSeriesLabelsSetting[],
+            toolbarModels: [] as { 'font-family': string; 'font-size': string; 'font-weight': string; color: string; 'background-color': string }[],
             availableSeriesOptions: [] as string[]
         }
     },
@@ -52,7 +65,13 @@ export default defineComponent({
             this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
             if (this.widgetModel.settings?.series?.seriesLabelsSettings) this.seriesSettings = this.widgetModel.settings.series.seriesLabelsSettings
             console.log('>>>>>>>>> LOADED WIDHET MODEL SETTINGS: ', this.seriesSettings)
+            this.loadToolbarModels()
             this.loadSeriesOptions()
+        },
+        loadToolbarModels() {
+            this.seriesSettings.forEach((serieSetting: IHighchartsSeriesLabelsSetting) => {
+                this.toolbarModels.push({ 'font-family': serieSetting.label.style.fontFamily, 'font-size': serieSetting.label.style.fontSize, 'font-weight': serieSetting.label.style.fontWeight, color: serieSetting.label.style.color, 'background-color': serieSetting.label.style.backgroundColor })
+            })
         },
         loadSeriesOptions() {
             this.availableSeriesOptions = []
@@ -76,12 +95,12 @@ export default defineComponent({
         modelChanged() {
             emitter.emit('refreshChart', this.widgetModel.id)
         },
-        onSeriesSelected(event: any, serieSetting: IHighchartsSeriesLabels) {
+        onSeriesSelected(event: any, serieSetting: IHighchartsSeriesLabelsSetting) {
             const intersection = serieSetting.names.filter((el: string) => !event.value.includes(el))
             serieSetting.names = event.value
             intersection.length > 0 ? this.onSeriesRemovedFromMultiselect(intersection) : this.onSeriesAddedFromMultiselect(serieSetting)
         },
-        onSeriesAddedFromMultiselect(serieSetting: IHighchartsSeriesLabels) {
+        onSeriesAddedFromMultiselect(serieSetting: IHighchartsSeriesLabelsSetting) {
             serieSetting.names.forEach((serieName: string) => {
                 const index = this.availableSeriesOptions.findIndex((tempSerieName: string) => tempSerieName === serieName)
                 if (index !== -1) this.availableSeriesOptions.splice(index, 1)
@@ -102,15 +121,40 @@ export default defineComponent({
                         color: '',
                         backgroundColor: ''
                     },
-                    format: ''
+                    prefix: '',
+                    suffix: '',
+                    scale: 'empty', // TODO
+                    precision: 2,
+                    absolute: false,
+                    percentage: false
                 } // TODO - move to default serie accebility helper
             })
+            this.toolbarModels.push({ 'font-family': '', 'font-size': '', 'font-weight': '', color: '', 'background-color': '' })
         },
         removeSerieSetting(index: number) {
             this.seriesSettings[index].names.forEach((serieName: string) => this.availableSeriesOptions.push(serieName))
             this.seriesSettings.splice(index, 1)
+            this.toolbarModels.splice(index, 1)
         },
-        onSerieSettingUpdated(serieSetting: IHighchartsSeriesLabels) {
+        onSerieSettingUpdated(serieSetting: IHighchartsSeriesLabelsSetting) {
+            this.modelChanged()
+        },
+        onStyleToolbarChange(model: IWidgetStyleToolbarModel, index: number) {
+            if (!this.model || !this.toolbarModels[index]) return
+            this.toolbarModels[index] = {
+                'font-family': model['font-family'] ?? '',
+                'font-size': model['font-size'] ?? '14px',
+                'font-weight': model['font-weight'] ?? '',
+                color: model.color ?? '',
+                'background-color': model['background-color'] ?? ''
+            }
+            this.seriesSettings[index].label.style = {
+                backgroundColor: this.toolbarModels[index]['background-color'] ?? '',
+                color: this.toolbarModels[index].color ?? '',
+                fontSize: this.toolbarModels[index]['font-size'] ?? '14px',
+                fontFamily: this.toolbarModels[index]['font-family'] ?? '',
+                fontWeight: this.toolbarModels[index]['font-weight'] ?? ''
+            }
             this.modelChanged()
         }
     }
