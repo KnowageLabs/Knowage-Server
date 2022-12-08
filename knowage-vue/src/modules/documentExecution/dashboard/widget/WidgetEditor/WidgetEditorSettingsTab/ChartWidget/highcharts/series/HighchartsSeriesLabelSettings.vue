@@ -10,13 +10,43 @@
 
             <div class="p-col-5 p-pt-4 p-px-4">
                 <InputSwitch v-model="serieSetting.label.enabled" @change="modelChanged"></InputSwitch>
-                <label class="kn-material-input-label p-m-3">{{ $t('common.enabled') }}</label>
+                <label class="kn-material-input-label p-m-3">{{ $t('dashboard.widgetEditor.showLabel') }}</label>
             </div>
+
             <div v-if="allSeriesOptionEnabled" class="p-col-1 p-d-flex p-flex-column p-jc-center p-ai-center p-pl-2">
                 <i :class="[index === 0 ? 'pi pi-plus-circle' : 'pi pi-trash']" class="kn-cursor-pointer p-ml-2 p-mt-4" @click="index === 0 ? addSerieSetting() : removeSerieSetting(index)"></i>
             </div>
             <div class="p-col-12 p-py-4">
-                <WidgetEditorStyleToolbar :options="descriptor.noDataToolbarStyleOptions" :propModel="toolbarModels[index]" @change="onStyleToolbarChange($event, index)"> </WidgetEditorStyleToolbar>
+                <WidgetEditorStyleToolbar :options="descriptor.noDataToolbarStyleOptions" :propModel="toolbarModels[index]" :disabled="!serieSetting.label.enabled" @change="onStyleToolbarChange($event, index)"> </WidgetEditorStyleToolbar>
+            </div>
+
+            <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column kn-flex">
+                <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.prefix') }}</label>
+                <InputText class="kn-material-input p-inputtext-sm" v-model="serieSetting.label.prefix" :disabled="!serieSetting.label.enabled" @change="modelChanged" />
+            </div>
+            <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column kn-flex">
+                <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.suffix') }}</label>
+                <InputText class="kn-material-input p-inputtext-sm" v-model="serieSetting.label.suffix" :disabled="!serieSetting.label.enabled" @change="modelChanged" />
+            </div>
+            <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column kn-flex">
+                <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.precision') }}</label>
+                <InputNumber class="kn-material-input p-inputtext-sm" v-model="serieSetting.label.precision" :disabled="!serieSetting.label.enabled" @blur="modelChanged" />
+            </div>
+            <div class="p-col-6 p-d-flex p-flex-column kn-flex p-m-2">
+                <label class="kn-material-input-label p-mr-2">{{ $t('common.align') }}</label>
+                <div class="p-d-flex p-flex-row p-ai-center">
+                    <Dropdown class="kn-material-input" v-model="serieSetting.label.scale" :options="descriptor.scaleOptions" @change="modelChanged"> </Dropdown>
+                    <i class="pi pi-question-circle kn-cursor-pointer  p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.series.scaleHint')"></i>
+                </div>
+            </div>
+
+            <div class="p-col-12 p-md-4 p-lg-4 p-pt-4 p-px-4">
+                <InputSwitch v-model="serieSetting.label.percentage" @change="modelChanged"></InputSwitch>
+                <label class="kn-material-input-label p-m-3">{{ $t('dashboard.widgetEditor.percentage') }}</label>
+            </div>
+            <div class="p-col-12 p-md-4 p-lg-4 p-pt-4 p-px-4">
+                <InputSwitch v-model="serieSetting.label.absolute" @change="modelChanged"></InputSwitch>
+                <label class="kn-material-input-label p-m-3">{{ $t('dashboard.widgetEditor.absolute') }}</label>
             </div>
         </div>
     </div>
@@ -28,8 +58,10 @@ import { IWidget, IWidgetStyleToolbarModel } from '../../../../../../Dashboard'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { HighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget'
 import { IHighchartsChartSerie, IHighchartsSeriesLabelsSetting } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
+import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import descriptor from '../HighchartsWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
+import InputNumber from 'primevue/inputnumber'
 import InputSwitch from 'primevue/inputswitch'
 import Textarea from 'primevue/textarea'
 import HighchartsSeriesMultiselect from '../common/HighchartsSeriesMultiselect.vue'
@@ -37,7 +69,7 @@ import WidgetEditorStyleToolbar from '../../../common/styleToolbar/WidgetEditorS
 
 export default defineComponent({
     name: 'hihgcharts-series-label-settings',
-    components: { Dropdown, InputSwitch, Textarea, HighchartsSeriesMultiselect, WidgetEditorStyleToolbar },
+    components: { Dropdown, InputNumber, InputSwitch, Textarea, HighchartsSeriesMultiselect, WidgetEditorStyleToolbar },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {
@@ -45,7 +77,8 @@ export default defineComponent({
             model: null as HighchartsPieChartModel | null,
             seriesSettings: [] as IHighchartsSeriesLabelsSetting[],
             toolbarModels: [] as { 'font-family': string; 'font-size': string; 'font-weight': string; color: string; 'background-color': string }[],
-            availableSeriesOptions: [] as string[]
+            availableSeriesOptions: [] as string[],
+            getTranslatedLabel
         }
     },
     computed: {
@@ -123,7 +156,7 @@ export default defineComponent({
                     },
                     prefix: '',
                     suffix: '',
-                    scale: 'empty', // TODO
+                    scale: 'empty',
                     precision: 2,
                     absolute: false,
                     percentage: false

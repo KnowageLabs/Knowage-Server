@@ -6,7 +6,7 @@
 import { defineComponent, PropType } from 'vue'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { IWidget, ISelection } from '../../../Dashboard'
-import { IHighchartsChartSerie, IHighchartsSerieAccessibility, ISerieAccessibilitySetting } from '../../../interfaces/highcharts/DashboardHighchartsWidget'
+import { IHighchartsChartSerie, IHighchartsSerieAccessibility, IHighchartsSerieLabel, IHighchartsSerieLabelSettings, IHighchartsSeriesLabelsSetting, ISerieAccessibilitySetting } from '../../../interfaces/highcharts/DashboardHighchartsWidget'
 import Highcharts from 'highcharts'
 import Highcharts3D from 'highcharts/highcharts-3d'
 import Accessibility from 'highcharts/modules/accessibility'
@@ -90,6 +90,7 @@ export default defineComponent({
             this.widgetModel.settings.chartModel.setData(this.dataToShow)
 
             this.updateSeriesAccessibilitySettings()
+            this.updateSeriesLabelSettings()
             this.error = this.updateFormatterSettings(this.chartModel.plotOptions.pie.dataLabels, 'format', 'formatter', 'formatterText', 'formatterError')
             if (this.error) return
             this.error = this.updateLegendSettings()
@@ -130,6 +131,49 @@ export default defineComponent({
         updateSerieAccessibilitySettings(serieName: string, accessibility: IHighchartsSerieAccessibility) {
             const index = this.chartModel.series.findIndex((serie: IHighchartsChartSerie) => serie.name === serieName)
             if (index !== -1) this.chartModel.series[index].accessibility = { ...accessibility }
+        },
+        updateSeriesLabelSettings() {
+            if (!this.widgetModel || !this.widgetModel.settings.series || !this.widgetModel.settings.series.seriesLabelsSettings) return
+            this.setAllSeriesLabelSettings()
+            this.setSpecificLabelSettings()
+        },
+        setAllSeriesLabelSettings() {
+            console.log('-------- setAllSeriesLabelSettings: ')
+            this.chartModel.series.forEach((serie: IHighchartsChartSerie) => {
+                if (this.chartModel.chart.type !== 'pie' && this.widgetModel.settings.series.seriesLabelsSettings[0] && this.widgetModel.settings.series.seriesLabelsSettings[0].label.enabled) {
+                    serie.label = {
+                        ...this.widgetModel.settings.series.seriesLabelsSettings
+                    } // TODO
+                } else {
+                    serie.label = {
+                        enabled: false,
+                        style: {
+                            fontFamily: '',
+                            fontSize: '',
+                            fontWeight: '',
+                            color: '',
+                            backgroundColor: ''
+                        },
+                        format: ''
+                    }
+                }
+            })
+        },
+        setSpecificLabelSettings() {
+            // const index = this.chartModel.chart.type !== 'pie' ? 1 : 0
+            console.log('-------- setSpecificLabelSettings: ')
+            const index = 0
+            for (let i = index; i < this.widgetModel.settings.series.seriesLabelsSettings.length; i++) {
+                const seriesLabelSetting = this.widgetModel.settings.series.seriesLabelsSettings[i] as IHighchartsSeriesLabelsSetting
+                if (seriesLabelSetting.label.enabled) seriesLabelSetting.names.forEach((serieName: string) => this.updateSerieLabelSettings(serieName, seriesLabelSetting.label))
+            }
+        },
+        updateSerieLabelSettings(serieName: string, label: IHighchartsSerieLabelSettings) {
+            const index = this.chartModel.series.findIndex((serie: IHighchartsChartSerie) => serie.name === serieName)
+            if (index !== -1) {
+                console.log('---------------------------------------------- TODO: label: ', label)
+                console.log('---------------------------------------------- TODO: serie: ', this.chartModel.series[index])
+            }
         },
         updateFormatterSettings(object: any, formatProperty: string | null, formatterProperty: string, formatterTextProperty: string, formatterErrorProperty: string) {
             let hasError = false

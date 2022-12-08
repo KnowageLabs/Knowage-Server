@@ -386,6 +386,7 @@
             "launchSelection": "LAUNCH SELECTION"
         },
         "widgetEditor": {
+            "absolute": "Absolute",
             "accessibility": {
                 "enabelKeyboardNavigation": "Enable Keyboard Navigation",
                 "exposeAsGroupOnly": "Expose As Group Only",
@@ -615,6 +616,7 @@
                 "unlinkAllHint": "Unink all paddings"
             },
             "pagination": "Pagination",
+            "percentage": "Percentage",
             "precision": "Precision",
             "prefix": "Prefix",
             "responsive": {
@@ -643,6 +645,7 @@
                 "title": "Selector Type"
             },
             "series": {
+                "scaleHint": "Scale Hint Placeholder",
                 "title": "Series"
             },
             "seriesAccessibility": {
@@ -656,6 +659,7 @@
                 "shadowSize": "Shadow Size",
                 "title": "Shadows"
             },
+            "showLabel": "Show Label",
             "sortingColumn": "Sorting column",
             "sortingOrder": "Sorting order",
             "suffix": "Suffix",
