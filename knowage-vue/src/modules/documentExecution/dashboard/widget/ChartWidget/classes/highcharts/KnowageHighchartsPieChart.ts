@@ -2,6 +2,7 @@ import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
 import { HighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget'
 import { KnowageHighcharts } from './KnowageHihgcharts'
 import { updatePieChartModel } from './updater/HighchartsPieChartUpdater'
+import * as  highchartsDefaultValues from "../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues"
 
 export class HighchartsPieChart extends KnowageHighcharts {
     constructor(model: any, widgetModel: IWidget) {
@@ -54,22 +55,6 @@ export class HighchartsPieChart extends KnowageHighcharts {
     }
 
     setPiePlotOptions = () => {
-        this.model.plotOptions.pie = {
-            depth: 0,
-            allowPointSelect: false,
-            cursor: '',
-            dataLabels: {
-                enabled: false,
-                distance: 30,
-                style: {
-                    fontFamily: '',
-                    fontSize: '14px',
-                    fontWeight: '',
-                    color: '',
-                    backgroundColor: '',
-                    textAlign: '',
-                }
-            }
-        }
+        this.model.plotOptions.pie = highchartsDefaultValues.getDafaultPieChartPlotOptions()
     }
 }

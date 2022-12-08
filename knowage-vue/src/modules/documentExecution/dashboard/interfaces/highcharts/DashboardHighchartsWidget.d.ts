@@ -69,6 +69,7 @@ export interface IHighchartsWidgetStyle {
 }
 
 export interface IHighchartsChartModel {
+    title: '',
     lang: {
         noData: string
     },
@@ -123,6 +124,7 @@ export interface IHighchartsAccessibilitySettings {
 }
 
 export interface IHighchartsPieChartPlotOptions {
+    showInLegend: boolean,
     depth: number,
     allowPointSelect: boolean,
     cursor: string,

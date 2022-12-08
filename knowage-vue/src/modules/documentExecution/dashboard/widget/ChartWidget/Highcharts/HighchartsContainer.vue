@@ -6,7 +6,7 @@
 import { defineComponent, PropType } from 'vue'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { IWidget, ISelection } from '../../../Dashboard'
-import { IHighchartsChartSerie, IHighchartsSerieAccessibility, IHighchartsSerieLabel, IHighchartsSerieLabelSettings, IHighchartsSeriesLabelsSetting, ISerieAccessibilitySetting } from '../../../interfaces/highcharts/DashboardHighchartsWidget'
+import { IHighchartsChartModel, IHighchartsChartSerie, IHighchartsSerieAccessibility, IHighchartsSerieLabel, IHighchartsSerieLabelSettings, IHighchartsSeriesLabelsSetting, ISerieAccessibilitySetting } from '../../../interfaces/highcharts/DashboardHighchartsWidget'
 import Highcharts from 'highcharts'
 import Highcharts3D from 'highcharts/highcharts-3d'
 import Accessibility from 'highcharts/modules/accessibility'
@@ -34,7 +34,7 @@ export default defineComponent({
     },
     data() {
         return {
-            chartModel: {} as any,
+            chartModel: {} as IHighchartsChartModel,
             error: false
         }
     },
@@ -64,50 +64,50 @@ export default defineComponent({
             // Create the chart
             Highcharts.setOptions({
                 lang: {
-                    noData: 'No data message'
+                    noData: this.chartModel.lang.noData
                 }
             })
 
-            // this.widgetModel.settings.chartModel.setData(this.dataToShow)
+            this.widgetModel.settings.chartModel.setData(this.dataToShow)
 
             this.updateSeriesAccessibilitySettings()
             this.updateSeriesLabelSettings()
-            this.error = this.updateFormatterSettings(this.chartModel.plotOptions.pie.dataLabels, 'format', 'formatter', 'formatterText', 'formatterError')
+            this.error = this.updateFormatterSettings(this.chartModel.plotOptions.pie?.dataLabels, 'format', 'formatter', 'formatterText', 'formatterError')
             if (this.error) return
             this.error = this.updateLegendSettings()
             if (this.error) return
             this.error = this.updateTooltipSettings()
             if (this.error) return
 
-            // TODO - Remove Hardcoded
-            this.chartModel.series = [
-                {
-                    type: 'pie',
-                    name: 'Share',
-                    dataLabels: { enabled: true },
-                    label: {
-                        enabled: true,
-                        style: {
-                            fontFamily: '',
-                            fontSize: '',
-                            fontWeight: '',
-                            color: '',
-                            backgroundColor: ''
-                        },
-                        format: 'Prefix + {name} + Suffix'
-                    },
-                    data: [
-                        {
-                            name: 'Xiaomi',
-                            y: 12,
-                            sliced: true,
-                            selected: true
-                        }
-                    ]
-                }
-            ]
+            // // TODO - Remove Hardcoded
+            // this.chartModel.series = [
+            //     {
+            //         type: 'pie',
+            //         name: 'Share',
+            //         dataLabels: { enabled: true },
+            //         label: {
+            //             enabled: true,
+            //             style: {
+            //                 fontFamily: '',
+            //                 fontSize: '',
+            //                 fontWeight: '',
+            //                 color: '',
+            //                 backgroundColor: ''
+            //             },
+            //             format: 'Prefix + {name} + Suffix'
+            //         },
+            //         data: [
+            //             {
+            //                 name: 'Xiaomi',
+            //                 y: 12,
+            //                 sliced: true,
+            //                 selected: true
+            //             }
+            //         ]
+            //     }
+            // ]
             console.log('>>>>>>>>>>>>>>> CHART TO RENDER: ', this.chartModel)
-            Highcharts.chart('container', this.chartModel)
+            Highcharts.chart('container', this.chartModel as any)
         },
         updateSeriesAccessibilitySettings() {
             if (!this.widgetModel || !this.widgetModel.settings.accesssibility || !this.widgetModel.settings.accesssibility.seriesAccesibilitySettings) return

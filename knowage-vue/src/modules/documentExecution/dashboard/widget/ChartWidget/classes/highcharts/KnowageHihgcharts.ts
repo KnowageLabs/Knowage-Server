@@ -72,6 +72,7 @@ export class KnowageHighcharts {
 
     createNewChartModel = () => {
         return {
+            title: '',
             lang: { noData: '' },
             chart: {
                 options3d: highchartsDefaultValues.getDefault3DOptions(),

@@ -55,7 +55,8 @@
                 "textAlign": ""
             }
         },
-        "depth": 0
+        "depth": 0,
+        "showInLegend": true
     },
     "defaultTooltipSettings": {
         "backgroundColor": "",
