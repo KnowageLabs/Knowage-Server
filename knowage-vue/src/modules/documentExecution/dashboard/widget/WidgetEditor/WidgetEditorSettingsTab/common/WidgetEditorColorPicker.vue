@@ -1,16 +1,21 @@
 <template>
     <div class="color-picker-container">
-        {{ modelValue }}
+        <!-- {{ modelValue }} -->
         <label v-if="label" class="kn-material-input-label p-mr-2">{{ $t(label) }}</label>
-        <ColorPicker class="p-ml-auto" v-model="modelValue" :inline="false" :format="'rgb'" :disabled="disabled" @change="onChange"></ColorPicker>
+        <!-- <ColorPicker class="p-ml-auto" v-model="modelValue" :inline="false" :format="'rgb'" :disabled="disabled" @change="onChange"></ColorPicker> -->
         <!-- <Button class="kn-button kn-button--primary" @click="colorPickerVisible = !colorPickerVisible"> {{ $t('common.close') }}</Button> -->
-        <!-- <ColorPicker v-if="colorPickerVisible" theme="light" :color="color" :sucker-hide="false" :sucker-canvas="suckerCanvas" :sucker-area="suckerArea" @changeColor="changeColor" @openSucker="openSucker" /> -->
+        <Button class="kn-button kn-button--primary" :style="`background-color:${color}; padding: 0`" @click="colorPickerVisible = !colorPickerVisible"></Button>
+        <ColorPicker v-if="colorPickerVisible" class="dashboard-color-picker" theme="light" :color="color" :sucker-hide="true" @changeColor="changeColor" />
+        <!-- <div style="width: 35px; height: 35px; background-color: orange">test</div> -->
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import ColorPicker from 'primevue/colorpicker'
+// import ColorPicker from 'primevue/colorpicker'
+import 'vue-color-kit/dist/vue-color-kit.css'
+
+import { ColorPicker } from 'vue-color-kit'
 import { getRGBColorFromString } from '../../helpers/WidgetEditorHelpers'
 
 export default defineComponent({
@@ -26,9 +31,6 @@ export default defineComponent({
         return {
             modelValue: null as any,
             color: '#59c7f9',
-            suckerCanvas: null,
-            suckerArea: [],
-            isSucking: false,
             colorPickerVisible: false,
             colorPickTimer: null as any
         }
@@ -38,19 +40,20 @@ export default defineComponent({
     },
     mounted() {},
     methods: {
-        // changeColor(color) {
-        //     const { r, g, b, a } = color.rgba
-        //     this.color = `rgba(${r}, ${g}, ${b}, ${a})`
-        // },
-        // openSucker(isOpen) {
-        //     if (isOpen) {
-        //         // ... canvas be created
-        //         // this.suckerCanvas = canvas
-        //         // this.suckerArea = [x1, y1, x2, y2]
-        //     } else {
-        //         // this.suckerCanvas && this.suckerCanvas.remove
-        //     }
-        // },
+        changeColor(color) {
+            const { r, g, b, a } = color.rgba
+            // this.color = `rgba(${r}, ${g}, ${b}, ${a})`
+
+            if (this.colorPickTimer) {
+                clearTimeout(this.colorPickTimer)
+                this.colorPickTimer = null
+            }
+            this.colorPickTimer = setTimeout(() => {
+                if (!this.modelValue) return
+                this.color = `rgba(${r}, ${g}, ${b}, ${a})`
+                this.$emit('change', this.color)
+            }, 200)
+        },
         loadValue() {
             this.modelValue = this.initialValue ? getRGBColorFromString(this.initialValue) : {}
             this.color = this.initialValue ?? ''
@@ -80,5 +83,10 @@ export default defineComponent({
     justify-content: space-around;
     align-items: center;
     min-width: 100px;
+}
+.dashboard-color-picker {
+    position: fixed;
+    width: 220px !important;
+    top: 7%;
 }
 </style>
