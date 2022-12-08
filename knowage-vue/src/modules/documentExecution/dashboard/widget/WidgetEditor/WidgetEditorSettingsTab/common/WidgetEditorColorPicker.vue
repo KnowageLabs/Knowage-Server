@@ -66,7 +66,7 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .color-picker-container {
     border: 1px solid #c2c2c2;
     border-radius: 4px;
@@ -80,6 +80,5 @@ export default defineComponent({
 .dashboard-color-picker {
     position: fixed;
     width: 220px !important;
-    // margin-left: 420px;
 }
 </style>

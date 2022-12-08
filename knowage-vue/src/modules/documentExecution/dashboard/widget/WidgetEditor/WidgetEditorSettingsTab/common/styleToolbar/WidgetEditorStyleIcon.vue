@@ -8,7 +8,8 @@
             </div>
             <span v-if="option.type === 'font-size'" class="icon-display-value-span p-ml-1">{{ '(' + displayValue + ')' }}</span>
         </div>
-        <ColorPicker class="style-icon-color-picker" v-if="(option.type === 'color' || option.type === 'background-color') && colorPickerVisible" v-model="color" :inline="true" format="rgb" @change="onColorPickerChange" />
+        {{ color }}
+        <ColorPicker class="dashboard-color-picker click-outside" v-if="(option.type === 'color' || option.type === 'background-color') && colorPickerVisible" theme="light" :color="color" :sucker-hide="true" @changeColor="changeColor" />
         <WidgetEditorToolbarContextMenu
             class="context-menu"
             v-show="(option.type === 'font-size' || option.type === 'justify-content' || option.type === 'font-family') && contextMenuVisible"
@@ -25,7 +26,8 @@ import { IWidgetStyleToolbarModel } from '@/modules/documentExecution/dashboard/
 import { emitter } from '../../../../../DashboardHelpers'
 import { getRGBColorFromString } from '../../../helpers/WidgetEditorHelpers'
 import { useClickOutside } from './useClickOutside'
-import ColorPicker from 'primevue/colorpicker'
+import 'vue-color-kit/dist/vue-color-kit.css'
+import { ColorPicker } from 'vue-color-kit'
 import descriptor from './WidgetEditorStyleToolbarDescriptor.json'
 import WidgetEditorToolbarContextMenu from './WidgetEditorToolbarContextMenu.vue'
 
@@ -41,7 +43,7 @@ export default defineComponent({
             active: false,
             iconPickerDialogVisible: false,
             displayValue: '',
-            color: null as { r: number; g: number; b: number } | null,
+            color: null as { r: number; g: number; b: number; a: number } | null,
             newColor: 'rgb(255, 255, 255)',
             colorPickTimer: null as any,
             useClickOutside
@@ -125,6 +127,20 @@ export default defineComponent({
             this.colorPickTimer = setTimeout(() => {
                 if (!event.value || !this.model) return
                 this.newColor = `rgb(${event.value.r}, ${event.value.g}, ${event.value.b})`
+                this.option.type === 'color' ? (this.model.color = this.newColor) : (this.model['background-color'] = this.newColor)
+                this.$emit('change')
+            }, 200)
+        },
+        changeColor(color) {
+            const { r, g, b, a } = color.rgba
+
+            if (this.colorPickTimer) {
+                clearTimeout(this.colorPickTimer)
+                this.colorPickTimer = null
+            }
+            this.colorPickTimer = setTimeout(() => {
+                if (!color || !this.model) return
+                this.newColor = `rgba(${r}, ${g}, ${b}, ${a})`
                 this.option.type === 'color' ? (this.model.color = this.newColor) : (this.model['background-color'] = this.newColor)
                 this.$emit('change')
             }, 200)
@@ -249,13 +265,6 @@ export default defineComponent({
 
 .icon-display-value-span {
     font-size: 0.7rem;
-}
-
-.style-icon-color-picker {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    z-index: 100000;
 }
 
 .icon-disabled {
