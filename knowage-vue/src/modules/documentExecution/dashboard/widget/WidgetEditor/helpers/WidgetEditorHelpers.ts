@@ -15,9 +15,7 @@ export function createNewWidget(type: string) {
         type: type,
         dataset: null,
         columns: [],
-        settings: {
-        }
-
+        settings: {}
     } as IWidget
 
     createNewWidgetSettings(widget)
@@ -45,14 +43,14 @@ const createNewWidgetSettings = (widget: IWidget) => {
     }
 }
 
-
 export function formatWidgetForSave(tempWidget: IWidget) {
     if (!tempWidget) return null
 
     const widget = deepcopy(tempWidget)
 
     switch (widget.type) {
-        case 'table': formatTableWidgetForSave(widget)
+        case 'table':
+            formatTableWidgetForSave(widget)
     }
 
     return widget
@@ -61,10 +59,10 @@ export function formatWidgetForSave(tempWidget: IWidget) {
 export function getRGBColorFromString(color: string) {
     const temp = color
         ?.trim()
-        ?.substring(4, color.length - 1)
+        ?.substring(5, color.length - 1)
         ?.split(',')
 
     if (temp) {
-        return { r: +temp[0], g: +temp[1], b: +temp[2] }
-    } else return { r: 0, g: 0, b: 0 }
+        return { r: +temp[0], g: +temp[1], b: +temp[2], a: +temp[3] }
+    } else return { r: 0, g: 0, b: 0, a: 0 }
 }
