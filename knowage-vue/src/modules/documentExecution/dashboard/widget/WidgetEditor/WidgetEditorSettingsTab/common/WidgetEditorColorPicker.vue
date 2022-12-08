@@ -1,7 +1,7 @@
 <template>
     <div ref="knowageStyleIcon" class="color-picker-container">
         <label v-if="label" class="kn-material-input-label p-mr-2">{{ $t(label) }}</label>
-        <Button class="kn-button kn-button--primary click-outside" :style="`background-color:${color}; padding: 0`" @click="colorPickerVisible = !colorPickerVisible"></Button>
+        <Button :disabled="disabled" class="kn-button kn-button--primary click-outside" :style="`background-color:${color}; padding: 0`" @click="colorPickerVisible = !colorPickerVisible"></Button>
         <ColorPicker v-if="colorPickerVisible" class="dashboard-color-picker click-outside" theme="light" :color="color" :sucker-hide="true" @changeColor="changeColor" />
     </div>
 </template>
