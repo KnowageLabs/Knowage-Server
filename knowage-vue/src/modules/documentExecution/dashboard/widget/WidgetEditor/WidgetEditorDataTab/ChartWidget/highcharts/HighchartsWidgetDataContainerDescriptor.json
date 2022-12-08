@@ -2,11 +2,11 @@
     "pieChartcolumnTableSettings": [
         {
             "attributesOnly": true,
-            "hint": "dashboard.widgetEditor.highcarts.piechart.labelsTableHint",
-            "label": "common.labels"
+            "hint": "dashboard.widgetEditor.highcharts.piechart.labelsTableHint",
+            "label": "dashboard.widgetEditor.dimensions"
         },
         {
-            "hint": "dashboard.widgetEditor.highcarts.piechart.valuesTableHint",
+            "hint": "dashboard.widgetEditor.highcharts.piechart.valuesTableHint",
             "label": "common.values",
             "measuresOnly": true
         }

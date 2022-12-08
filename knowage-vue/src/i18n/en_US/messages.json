@@ -529,6 +529,7 @@
                 "title": "Headers"
             },
             "hidden": "Hidden",
+            "dimensions": "Dimensions",
             "highcharts": {
                 "labels": {
                     "distance": "Distance",
@@ -544,8 +545,8 @@
                     "verticalAlignHint": "The vertical alignment of the legend box. Can be one of top, middle or bottom. Vertical position can be further determined by the y option. In the case that the legend is aligned in a corner position, the layout option will determine whether to place it above/below or on the side of the plot area. When the layout option is proximate, the verticalAlign option doesn't apply."
                 },
                 "piechart": {
-                    "labelsTableHint": "Each different value in the selected column will create a different slice",
-                    "valuesTableHint": "The selected column will be used as values for every slice"
+                    "labelsTableHint": "Attributes only. Each different value in the selected column will create a different slice. If more than one dimension is present, the list will be the drill-down sequence.",
+                    "valuesTableHint": "Measures only. The selected column will be used as values for every slice."
                 },
                 "proximate": "Proximate",
                 "tooltip": {
