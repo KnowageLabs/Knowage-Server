@@ -59,7 +59,24 @@ export default {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    title: { display: true, text: 'TEEEEEEEEEEEST' }
+                    title: { display: true, text: 'TEEEEEEEEEEEST' },
+                    tooltip: {
+                        enabled: true,
+                        titleColor: '#245425',
+                        titleFont: {
+                            family: 'Roboto',
+                            size: 14,
+                            style: 'italic',
+                            weight: 'bold'
+                        },
+                        backgroundColor: '#ff93ff',
+                        titleAlign: 'left'
+                    },
+                    legend: {
+                        display: true,
+                        align: 'right',
+                        position: 'bottom'
+                    }
                 }
             }
         }

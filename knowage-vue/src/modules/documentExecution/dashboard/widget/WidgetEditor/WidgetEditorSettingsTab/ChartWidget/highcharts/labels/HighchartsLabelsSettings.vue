@@ -86,7 +86,7 @@ export default defineComponent({
     },
     computed: {
         labelsConfigurationDisabled(): boolean {
-            return !this.model || !this.model.plotOptions.pie.dataLabels.enabled
+            return !this.model || !this.model.plotOptions.pie?.dataLabels.enabled
         }
     },
     created() {
@@ -109,7 +109,7 @@ export default defineComponent({
             emitter.emit('refreshChart', this.widgetModel.id)
         },
         onStyleToolbarChange(model: IWidgetStyleToolbarModel) {
-            if (!this.model || !this.model.plotOptions.pie.dataLabels) return
+            if (!this.model || !this.model.plotOptions.pie || !this.model.plotOptions.pie.dataLabels) return
             this.toolbarModel = {
                 'justify-content': model['justify-content'] ?? '',
                 'font-family': model['font-family'] ?? '',
@@ -141,7 +141,7 @@ export default defineComponent({
             }
         },
         onFormatterChange(newValue: string) {
-            if (!this.model) return
+            if (!this.model || !this.model.plotOptions.pie) return
             this.model.plotOptions.pie.dataLabels.formatterText = newValue
         }
     }
