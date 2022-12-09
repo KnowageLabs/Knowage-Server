@@ -4,13 +4,12 @@
         <br />
         {{ widgetModel.columns }}
         <br />
+
         {{ 'ATTRIBUTES' }}
         <br />
         {{ columnTableItems['ATTRIBUTES'] }}
         <br />
-        {{ 'MEASURES' }}
-        <br />
-        {{ columnTableItems['MEASURES'] }}
+
         <WidgetEditorColumnTable
             class="p-m-2"
             :widgetModel="widgetModel"
@@ -23,6 +22,9 @@
             @itemSelected="setSelectedColumn"
             @itemDeleted="onColumnDelete"
         ></WidgetEditorColumnTable>
+        {{ 'MEASURES' }}
+        <br />
+        {{ columnTableItems['MEASURES'] }}
         <WidgetEditorColumnTable
             class="p-m-2"
             :widgetModel="widgetModel"
@@ -42,6 +44,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IDataset, IWidget, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
+import { removeSerieFromWidgetModel } from '../../../helpers/chartWidget/highcharts/HighchartsDataTabHelpers'
 import descriptor from '../../TableWidget/TableWidgetDataDescriptor.json'
 import highchartDescriptor from './HighchartsWidgetDataContainerDescriptor.json'
 import Dropdown from 'primevue/dropdown'
@@ -93,14 +96,12 @@ export default defineComponent({
             const type = payload.settings?.measuresOnly ? 'MEASURES' : 'ATTRIBUTES'
             this.columnTableItems[type] = payload.rows
             this.widgetModel.columns = this.columnTableItems['ATTRIBUTES'].concat(this.columnTableItems['MEASURES'])
-            emitter.emit('columnAdded', payload.column)
             emitter.emit('refreshWidgetWithData', this.widgetModel.id)
         },
         onColumnItemUpdate(column: IWidgetColumn) {
             const index = this.widgetModel.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === column.id)
             if (index !== -1) {
                 this.widgetModel.columns[index] = { ...column }
-                emitter.emit('collumnUpdated', { column: this.widgetModel.columns[index], columnIndex: index })
                 emitter.emit('refreshWidgetWithData', this.widgetModel.id)
                 if (this.widgetModel.columns[index].id === this.selectedColumn?.id) this.selectedColumn = { ...this.widgetModel.columns[index] }
             }
@@ -114,9 +115,7 @@ export default defineComponent({
                 this.widgetModel.columns.splice(index, 1)
                 if (column.id === this.selectedColumn?.id) this.selectedColumn = null
                 this.removeColumnFromColumnTableItems(column)
-
-                // removeColumnFromModel(this.widgetModel, column)
-                emitter.emit('columnRemoved', column)
+                removeSerieFromWidgetModel(this.widgetModel, column, 'highchartsPieChart')
                 emitter.emit('refreshWidgetWithData', this.widgetModel.id)
             }
         },

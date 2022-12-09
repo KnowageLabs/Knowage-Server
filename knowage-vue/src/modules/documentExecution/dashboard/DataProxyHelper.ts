@@ -33,7 +33,8 @@ export const getWidgetData = async (widget: IWidget, datasets: IModelDataset[], 
         case 'text':
             return await getTextWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         case 'highcharts':
-            return await getChartWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
+        // TODO - uncomment
+        // return await getChartWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         default:
             break
     }

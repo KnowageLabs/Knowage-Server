@@ -68,7 +68,7 @@ export default defineComponent({
                 }
             })
 
-            this.widgetModel.settings.chartModel.setData(this.dataToShow)
+            // this.widgetModel.settings.chartModel.setData(this.dataToShow)
 
             this.updateSeriesAccessibilitySettings()
             this.updateSeriesLabelSettings()
@@ -147,7 +147,6 @@ export default defineComponent({
             this.setSpecificLabelSettings()
         },
         setAllSeriesLabelSettings() {
-            console.log('-------- setAllSeriesLabelSettings: ')
             this.chartModel.series.forEach((serie: IHighchartsChartSerie) => {
                 if (this.chartModel.chart.type !== 'pie' && this.widgetModel.settings.series.seriesLabelsSettings[0] && this.widgetModel.settings.series.seriesLabelsSettings[0].label.enabled) {
                     serie.label = {
@@ -170,7 +169,6 @@ export default defineComponent({
         },
         setSpecificLabelSettings() {
             // const index = this.chartModel.chart.type !== 'pie' ? 1 : 0
-            console.log('-------- setSpecificLabelSettings: ')
             const index = 0
             for (let i = index; i < this.widgetModel.settings.series.seriesLabelsSettings.length; i++) {
                 const seriesLabelSetting = this.widgetModel.settings.series.seriesLabelsSettings[i] as IHighchartsSeriesLabelsSetting
@@ -180,8 +178,7 @@ export default defineComponent({
         updateSerieLabelSettings(serieName: string, label: IHighchartsSerieLabelSettings) {
             const index = this.chartModel.series.findIndex((serie: IHighchartsChartSerie) => serie.name === serieName)
             if (index !== -1) {
-                console.log('---------------------------------------------- TODO: label: ', label)
-                console.log('---------------------------------------------- TODO: serie: ', this.chartModel.series[index])
+                // TODO
             }
         },
         updateFormatterSettings(object: any, formatProperty: string | null, formatterProperty: string, formatterTextProperty: string, formatterErrorProperty: string) {
