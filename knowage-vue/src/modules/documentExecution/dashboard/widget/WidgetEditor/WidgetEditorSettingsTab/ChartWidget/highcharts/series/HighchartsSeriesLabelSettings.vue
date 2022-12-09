@@ -1,6 +1,8 @@
 <template>
     <div v-if="model" class="p-grid p-jc-center p-ai-center p-p-4">
         {{ seriesSettings }}
+        <br />
+        {{ widgetModel.settings.series.seriesLabelsSettings }}
         <div v-for="(serieSetting, index) in seriesSettings" :key="index" class="dynamic-form-item p-grid p-col-12 p-ai-center">
             <div class="p-col-12 p-md-6 p-d-flex p-flex-column p-p-2">
                 <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.series.title') }}</label>
@@ -86,14 +88,21 @@ export default defineComponent({
             return this.model ? this.model.series.map((serie: IHighchartsChartSerie) => serie.name) : []
         },
         allSeriesOptionEnabled() {
-            //  return this.model?.chart.type !== 'pie'
-            return true
+            return this.model?.chart.type !== 'pie'
         }
     },
     created() {
         this.loadModel()
     },
     methods: {
+        setEventListeners() {
+            emitter.on('seriesAdded', this.loadModel)
+            emitter.on('seriesRemoved', this.loadModel)
+        },
+        removeEventListeners() {
+            emitter.off('seriesAdded', this.loadModel)
+            emitter.off('seriesRemoved', this.loadModel)
+        },
         loadModel() {
             this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
             if (this.widgetModel.settings?.series?.seriesLabelsSettings) this.seriesSettings = this.widgetModel.settings.series.seriesLabelsSettings

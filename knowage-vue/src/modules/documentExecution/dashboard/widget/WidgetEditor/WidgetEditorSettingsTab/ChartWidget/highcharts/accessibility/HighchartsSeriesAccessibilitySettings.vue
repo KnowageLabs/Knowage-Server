@@ -2,7 +2,7 @@
     <div v-if="model" class="p-grid p-jc-center p-ai-center p-p-4">
         {{ seriesSettings }}
         <br />
-        {{ widgetModel?.columns?.map((column) => column.columnName) }}
+        {{ widgetModel.settings.accesssibility.seriesAccesibilitySettings }}
         <div v-for="(serieSetting, index) in seriesSettings" :key="index" class="dynamic-form-item p-grid p-col-12 p-ai-center">
             <div class="p-col-12 p-md-6 p-d-flex p-flex-column p-p-2">
                 <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.series.title') }}</label>

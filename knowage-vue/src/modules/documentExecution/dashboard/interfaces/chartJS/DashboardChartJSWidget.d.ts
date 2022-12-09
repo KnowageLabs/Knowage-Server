@@ -23,5 +23,46 @@ export interface IChartJSWidgetStyle {
     background: IWidgetBackgroundStyle
 }
 
+export interface IChartJSChartModel {
+    data: IChartJSData,
+    options: IChartJSOptions
+}
 
+export interface IChartJSOptions {
+    options: {
+        plugin: {
+            display: boolean,
+            align: string,
+            position: string,
+        },
+        tooltip: {
+            enabled: boolean
+        },
+    },
+    tooltip: {
+        style: {
+            'justify-content': string
+            'font-family': string
+            'font-size': string
+            'font-style': string
+            'font-weight': string
+            color: string
+        },
+        backgroundColor: string
+    },
 
+}
+
+export interface IChartJSData {
+    labels: string[],
+    datasets: [
+        {
+            backgroundColor: string[],
+            data: number[]
+        }
+    ]
+}
+
+export interface IChartJSSerie {
+
+}

@@ -155,9 +155,7 @@ const createChartModel = (widget: any, formattedWidget: IWidget) => {
 }
 
 const getFormattedSerieLabelsSettings = (widget: any) => {
-    // TODO
-    // widget.content.chartTemplate.CHART.type !== 'PIE'
-    const formattedSerieSettings = [{
+    const formattedSerieSettings = widget.content.chartTemplate.CHART.type !== 'PIE' ? [{
         names: ['all'],
         label: {
             enabled: false,
@@ -175,7 +173,7 @@ const getFormattedSerieLabelsSettings = (widget: any) => {
             absolute: false,
             percentage: false
         }
-    }] as IHighchartsSeriesLabelsSetting[]
+    }] : [] as IHighchartsSeriesLabelsSetting[]
     if (widget.content.chartTemplate.CHART.VALUES.SERIE && widget.content.chartTemplate.CHART.VALUES.SERIE[0]) {
         const oldModelSerie = widget.content.chartTemplate.CHART.VALUES.SERIE[0]
         formattedSerieSettings.push({
@@ -205,7 +203,6 @@ const getFormattedSerieLabelsSettings = (widget: any) => {
 const getFormattedColorSettings = (widget: any) => {
     let formattedColors = [] as IHighchartColor[]
     if (widget.content.chartTemplate.CHART.COLORPALETTE.COLOR) {
-        console.log("EEEEEEEENTERED")
         formattedColors = { ...widget.content.chartTemplate.CHART.COLORPALETTE.COLOR } // TODO - CHECK THIS
     }
     return formattedColors

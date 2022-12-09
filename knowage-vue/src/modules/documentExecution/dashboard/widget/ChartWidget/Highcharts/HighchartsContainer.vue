@@ -68,7 +68,7 @@ export default defineComponent({
                 }
             })
 
-            // this.widgetModel.settings.chartModel.setData(this.dataToShow)
+            this.widgetModel.settings.chartModel.setData(this.dataToShow)
 
             this.updateSeriesAccessibilitySettings()
             this.updateSeriesLabelSettings()
