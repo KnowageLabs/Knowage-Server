@@ -201,8 +201,6 @@ public interface IDataSet extends Iterable<IRecord> {
 
 	boolean isPreparedDataSet();
 
-	boolean isDerivedDataSet();
-
 	String getFlatTableName();
 
 	String getPreparedTableName();

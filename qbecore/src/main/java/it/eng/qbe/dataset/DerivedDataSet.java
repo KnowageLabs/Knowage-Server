@@ -19,26 +19,31 @@
 /**
  *
  */
-package it.eng.spagobi.tools.dataset.bo;
+package it.eng.qbe.dataset;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
 
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.dataset.common.iterator.ResultSetIterator;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Alberto Nale
  */
-public class DerivedDataSet extends ConfigurableDataSet {
+public class DerivedDataSet extends QbeDataSet {
 
 	public static final String DS_TYPE = "SbiDerivedDataSet";
 
@@ -72,16 +77,6 @@ public class DerivedDataSet extends ConfigurableDataSet {
 	}
 
 	@Override
-	public void setDataSource(IDataSource dataSource) {
-		this.dataSource = dataSource;
-	}
-
-	@Override
-	public void setMetadata(IMetaData metadata) {
-		this.metadata = metadata;
-	}
-
-	@Override
 	public IMetaData getMetadata() {
 		return this.metadata;
 	}
@@ -93,25 +88,36 @@ public class DerivedDataSet extends ConfigurableDataSet {
 
 	@Override
 	public SpagoBiDataSet toSpagoBiDataSet() {
-		SpagoBiDataSet toReturn;
+		SpagoBiDataSet sbd;
 
-		toReturn = super.toSpagoBiDataSet();
+		sbd = super.toSpagoBiDataSet();
 
-		toReturn.setType(DS_TYPE);
-
-		toReturn.setDataSource(this.getDataSource().toSpagoBiDataSource());
-
-		try {
-			JSONObject jsonConf = new JSONObject();
-			jsonConf.put(TABLE_NAME, (this.getTableName() == null) ? "" : this.getTableName());
-			jsonConf.put(DATA_SOURCE, (this.getDataSource() == null) ? "" : this.getDataSource().getLabel());
-			toReturn.setConfiguration(jsonConf.toString());
-		} catch (Exception e) {
-			LOGGER.error("Error while defining dataset configuration. Error:", e);
-			throw new SpagoBIRuntimeException("Error while defining dataset configuration. Error:", e);
+		sbd.setType(DS_TYPE);
+		if (getDataSource() != null) {
+			sbd.setDataSource(getDataSource().toSpagoBiDataSource());
 		}
 
-		return toReturn;
+		return sbd;
+	}
+
+	@Override
+	public it.eng.qbe.datasource.IDataSource getQbeDataSource() {
+		Map<String, Object> dataSourceProperties = new HashMap<String, Object>();
+
+		String modelName = getDatamarts();
+		List<String> modelNames = new ArrayList<String>();
+		modelNames.add(modelName);
+		dataSourceProperties.put("datasource", dataSource);
+		dataSourceProperties.put("dblinkMap", new HashMap());
+
+		if (this.getSourceDataset() != null) {
+			List<IDataSet> dataSets = new ArrayList<IDataSet>();
+			dataSets.add(this.getSourceDataset());
+			dataSourceProperties.put(EngineConstants.ENV_DATASETS, dataSets);
+		}
+
+		return getDataSourceFromDataSet(dataSourceProperties, useCache);
+
 	}
 
 	@Override

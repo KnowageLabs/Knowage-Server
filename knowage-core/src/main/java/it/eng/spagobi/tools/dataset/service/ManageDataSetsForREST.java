@@ -49,6 +49,7 @@ import org.json.JSONObjectDeserializator;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.knowage.parameter.ParameterManagerFactory;
+import it.eng.qbe.dataset.DerivedDataSet;
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
@@ -77,7 +78,6 @@ import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
-import it.eng.spagobi.tools.dataset.bo.DerivedDataSet;
 import it.eng.spagobi.tools.dataset.bo.FacetSolrDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
@@ -546,7 +546,7 @@ public class ManageDataSetsForREST {
 		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_PREPARED)) {
 			toReturn = managePreparedDataSet(savingDataset, jsonDsConfig, json);
 		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_DERIVED)) {
-			toReturn = manageDerivedDataSet(savingDataset, jsonDsConfig, json);
+			toReturn = manageDerivedDataSet(savingDataset, jsonDsConfig, json, userProfile);
 		} else {
 			throw new SpagoBIRuntimeException("Cannot find a match with dataset type " + datasetTypeName);
 		}
@@ -1008,9 +1008,11 @@ public class ManageDataSetsForREST {
 		return dataSet;
 	}
 
-	private DerivedDataSet manageDerivedDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json) throws JSONException, EMFUserError {
+	private DerivedDataSet manageDerivedDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json, UserProfile userProfile)
+			throws JSONException, EMFUserError, IOException {
 		// KNOWAGE-7575
 		DerivedDataSet dataset = new DerivedDataSet();
+		createQbeOrDerivedDataset(jsonDsConfig, json, dataset);
 		return dataset;
 	}
 
@@ -1031,9 +1033,15 @@ public class ManageDataSetsForREST {
 		} else {
 			dataSet = new QbeDataSet();
 		}
+		createQbeOrDerivedDataset(jsonDsConfig, json, dataSet);
+		return dataSet;
+	}
+
+	private void createQbeOrDerivedDataset(JSONObject jsonDsConfig, JSONObject json, QbeDataSet dataSet) throws JSONException, IOException, EMFUserError {
 		manageDataSetMetadata(json, dataSet);
 		String qbeDatamarts = json.optString(DataSetConstants.QBE_DATAMARTS);
 		String dataSourceLabel = json.optString(DataSetConstants.QBE_DATA_SOURCE);
+		String dataSetLabel = json.optString(DataSetConstants.DATASET_LABEL);
 		String jsonQuery = json.optString(DataSetConstants.QBE_JSON_QUERY);
 		HashMap<String, Object> driversMap = null;
 		JSONObject driversJSON = json.optJSONObject(DRIVERS);
@@ -1076,7 +1084,12 @@ public class ManageDataSetsForREST {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot retrieve source dataset information", e);
 			}
 		}
-		return dataSet;
+		if (StringUtils.isNotEmpty(dataSetLabel)) {
+			IDataSet ds = DAOFactory.getDataSetDAO().loadDataSetByLabel(dataSetLabel);
+			IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(ds.getDataSource().getLabel());
+			dataSet.setDataSource(dataSource);
+			dataSet.setSourceDataset(dataSource);
+		}
 	}
 
 	private IDataSet manageCustomDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json) throws JSONException {

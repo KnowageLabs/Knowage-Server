@@ -42,6 +42,7 @@ public class DataSetConstants {
 	public static final String DATASET_DELETE = "DATASET_DELETE";
 	public static final String DATASET_TEST = "DATASET_TEST";
 	public static final String DATASET_EXEC = "DATASET_EXEC";
+	public static final String DATASET_LABEL = "DATASET_LABEL";
 
 	public static final String DATASET_VERSION_RESTORE = "DATASET_VERSION_RESTORE";
 	public static final String DATASET_VERSION_DELETE = "DATASET_VERSION_DELETE";

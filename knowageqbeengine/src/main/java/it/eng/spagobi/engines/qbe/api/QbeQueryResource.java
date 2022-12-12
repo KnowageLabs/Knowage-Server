@@ -267,6 +267,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		IStatement statement = qbeDataSet.getStatement();
 
 		Map<String, String> envs = getEnv();
+
 		String stringDrivers = envs.get(DRIVERS);
 		Map<String, Object> drivers = null;
 		try {
@@ -409,10 +410,8 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 				throw new RuntimeException("Output type not supported: " + outputType);
 			}
 
-			return Response.ok(stream, mediaType)
-				.cacheControl(CacheControl.valueOf("no-cache"))
-				.header("Content-Disposition", "attachment;filename=" + "report" + "." + outputType + "\";")
-				.build();
+			return Response.ok(stream, mediaType).cacheControl(CacheControl.valueOf("no-cache"))
+					.header("Content-Disposition", "attachment;filename=" + "report" + "." + outputType + "\";").build();
 		} catch (Exception e) {
 			if (iterator != null) {
 				iterator.close();
@@ -714,14 +713,9 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 				/**
 				 * This block of code:
 				 *
-				 * boolean multivalue = false;
-				 * if (tempVal != null && tempVal.contains(",")) {
-				 * 	multivalue = true;
-				 * }
+				 * boolean multivalue = false; if (tempVal != null && tempVal.contains(",")) { multivalue = true; }
 				 *
-				 * Was replaced by the following because the user has the ability
-				 * to say if the value is multivalue or not, we don't need to do
-				 * any logic.
+				 * Was replaced by the following because the user has the ability to say if the value is multivalue or not, we don't need to do any logic.
 				 */
 				boolean multivalue = obj.optBoolean(MULTI_PARAM);
 

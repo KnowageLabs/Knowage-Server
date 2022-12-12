@@ -804,12 +804,6 @@ public class DataStoreListenerOperatorTest extends TestCase {
 
 		}
 
-		@Override
-		public boolean isDerivedDataSet() {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
 	}
 
 }

@@ -414,11 +414,6 @@ public class VersionedDataSet implements IDataSet {
 	}
 
 	@Override
-	public boolean isDerivedDataSet() {
-		return wrappedDataset.isDerivedDataSet();
-	}
-
-	@Override
 	public String getFlatTableName() {
 		return wrappedDataset.getFlatTableName();
 	}
