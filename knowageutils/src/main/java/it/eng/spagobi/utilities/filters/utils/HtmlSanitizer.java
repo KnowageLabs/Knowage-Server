@@ -46,6 +46,8 @@ public class HtmlSanitizer {
 		Property strokeLineJoinProperty = new Property(1, ImmutableSet.of("miter"), ImmutableMap.of());
 		Property strokeOpacityProperty = new Property(1, ImmutableSet.of(), ImmutableMap.of());
 		Property strokeWidthProperty = new Property(1, ImmutableSet.of("auto", "inherit"), ImmutableMap.of());
+		Property cursorProperty = new Property(8, ImmutableSet.of("pointer","default","move","not-allowed","grab","help","progress","grab"), ImmutableMap.of());
+		Property flexProperty = new Property(4, ImmutableSet.of("0","1","2","3","4","unset","inherit"), ImmutableMap.of());
 
 		stylePropertiesInSVGMap.put("fill", allValsProperty);
 		stylePropertiesInSVGMap.put("fill-opacity", fillOpacityProperty);
@@ -56,6 +58,8 @@ public class HtmlSanitizer {
 		stylePropertiesInSVGMap.put("stroke-linejoin", strokeLineJoinProperty);
 		stylePropertiesInSVGMap.put("stroke-opacity", strokeOpacityProperty);
 		stylePropertiesInSVGMap.put("stroke-width", strokeWidthProperty);
+		stylePropertiesInSVGMap.put("cursor", cursorProperty);
+		stylePropertiesInSVGMap.put("flex", flexProperty);
 
 		CssSchema stylePropertiesInSVG = CssSchema.withProperties(stylePropertiesInSVGMap);
 
