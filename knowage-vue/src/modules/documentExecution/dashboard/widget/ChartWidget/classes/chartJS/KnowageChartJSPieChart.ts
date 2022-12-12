@@ -1,9 +1,9 @@
-import { ChartJSPieChartModel } from "../../../../interfaces/chartJS/DashboardChartJSPieChartWidget";
+import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard";
 import { KnowageChartJS } from "./KnowageChartJS"
 
-export class ChartJsPieChart extends KnowageChartJS {
+export class ChartJSPieChart extends KnowageChartJS {
 
-    constructor(model: ChartJSPieChartModel) {
+    constructor(model: any, widgetModel: IWidget) {
         super(model)
         this.model.type = 'pie'
     }

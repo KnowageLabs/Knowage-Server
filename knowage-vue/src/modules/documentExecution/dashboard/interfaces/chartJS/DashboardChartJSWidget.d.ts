@@ -4,7 +4,7 @@ import { ChartJSPieChartModel } from "./DashboardChartJSPieChartWidget";
 export interface IChartJSWidgetSettings {
     updatable: boolean,
     clickable: boolean,
-    chartModel: ChartJSPieChartModel,
+    chartModel: ChartJSPieChartModel | null,
     configuration: IChartJSWidgetConfiguration,
     interactions: IWidgetInteractions,
     style: IChartJSWidgetStyle,
