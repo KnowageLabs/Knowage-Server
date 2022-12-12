@@ -1,30 +1,35 @@
-export default function updateModel(oldModel, newModel) {
-    newModel.type = "pie"
+import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard"
+import { IChartJSChartModel } from "@/modules/documentExecution/dashboard/interfaces/chartJS/DashboardChartJSWidget"
 
-    if (oldModel.CHART.COLORPALETTE?.COLOR) {
-        newModel.colors = oldModel.CHART.COLORPALETTE.COLOR.map(item => item.value)
-    }
+export const updatePieChartModel = (oldModel: any, newModel: IChartJSChartModel, widgetModel: IWidget) => {
+    console.log("----------------------------------- OLD MODEL: ", oldModel)
+    console.log("----------------------------------- NEW MODEL: ", newModel)
 
-    //CATEGORIES
-    newModel.settings.dimensions = [oldModel.CHART.VALUES.CATEGORY.name]
+    newModel.chart.type = "pie"
+    // if (oldModel.CHART.COLORPALETTE?.COLOR) {
+    //     newModel.colors = oldModel.CHART.COLORPALETTE.COLOR.map(item => item.value)
+    // }
 
-    //SERIE
-    newModel.settings.values = [{
-        name: oldModel.CHART.VALUES.SERIE[0].name,
-        aggregation: oldModel.CHART.VALUES.SERIE[0].groupingFunction
-    }]
+    // //CATEGORIES
+    // newModel.settings.dimensions = [oldModel.CHART.VALUES.CATEGORY.name]
 
-    //LEGEND
-    if (!newModel.options) newModel.options = {}
-    if (oldModel.CHART.LEGEND?.show) {
+    // //SERIE
+    // newModel.settings.values = [{
+    //     name: oldModel.CHART.VALUES.SERIE[0].name,
+    //     aggregation: oldModel.CHART.VALUES.SERIE[0].groupingFunction
+    // }]
 
-        newModel.options.legend = {
-            display: true,
-            align: oldModel.CHART.LEGEND.style?.align || 'center',
-            verticalAlign: oldModel.CHART.LEGEND.position,
-            layout: 'horizontal',
-        }
-    } else newModel.options.legend = { display: false }
+    // //LEGEND
+    // if (!newModel.options) newModel.options = {}
+    // if (oldModel.CHART.LEGEND?.show) {
+
+    //     newModel.options.legend = {
+    //         display: true,
+    //         align: oldModel.CHART.LEGEND.style?.align || 'center',
+    //         verticalAlign: oldModel.CHART.LEGEND.position,
+    //         layout: 'horizontal',
+    //     }
+    // } else newModel.options.legend = { display: false }
 
     return newModel
 }

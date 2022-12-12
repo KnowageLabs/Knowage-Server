@@ -25,10 +25,6 @@ export default defineComponent({
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
         dataToShow: { type: Object as any, required: true },
-        propActiveSelections: {
-            type: Array as PropType<ISelection[]>,
-            required: true
-        },
         dashboardId: { type: String, required: true },
         editorMode: { type: Boolean }
     },
@@ -58,9 +54,6 @@ export default defineComponent({
             this.updateChartModel()
         },
         updateChartModel() {
-            // TODO - remove this
-            if (this.widgetModel.type !== 'highcharts') return
-
             // Create the chart
             Highcharts.setOptions({
                 lang: {

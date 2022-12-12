@@ -24,47 +24,41 @@ export interface IChartJSWidgetStyle {
 }
 
 export interface IChartJSChartModel {
+    chart: { type: string },
     data: IChartJSData,
     options: IChartJSOptions
 }
 
 export interface IChartJSOptions {
-    options: {
-        plugins: {
-            tooltip: {
-                enabled: boolean,
-                titleColor: string,
-                titleFont: {
-                    family: string,
-                    size: number,
-                    style: string,
-                    weight: string
-                },
-                backgroundColor: string,
-                titleAlign: string,
-
+    plugins: {
+        title: { display: boolean },
+        tooltip: {
+            enabled: boolean,
+            titleColor: string,
+            titleFont: {
+                family: string,
+                size: number,
+                style: string,
+                weight: string
             },
-            legend: {
-                display: boolean,
-                align: string,
-                position: string,
-            }
+            backgroundColor: string,
+            titleAlign: string,
+
+        },
+        legend: {
+            display: boolean,
+            align: string,
+            position: string,
         }
-
     }
-
 }
 
 export interface IChartJSData {
     labels: string[],
-    datasets: [
-        {
-            backgroundColor: string[],
-            data: number[]
-        }
-    ]
+    datasets: IChartJSSerie[]
 }
 
 export interface IChartJSSerie {
-
+    backgroundColor: string[],
+    data: number[]
 }

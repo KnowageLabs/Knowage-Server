@@ -1,12 +1,11 @@
-import { IWidget, IWidgetColumn, IWidgetExports, IWidgetInteractions } from "../../../Dashboard"
+import { IWidget, IWidgetExports, IWidgetInteractions } from "../../../Dashboard"
 import { IHighchartColor, IHighchartsSeriesLabelsSetting, IHighchartsWidgetConfiguration, IHighchartsWidgetSettings } from "../../../interfaces/highcharts/DashboardHighchartsWidget"
 import { HighchartsPieChart } from "../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsPieChart"
 import * as widgetCommonDefaultValues from '../../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
-import { getFormattedWidgetColumn } from "../../common/WidgetColumnHelper"
 import { getFormattedInteractions } from "../../common/WidgetInteractionsHelper"
 import { getFiltersForColumns } from "../../DashboardBackwardCompatibilityHelper"
 import { hexToRgb } from "../../FormattingHelpers"
-import { addCategoryColumns, addSerieColumn, getFormattedWidgetColumns } from "../CommonChartCompatibilityHelper"
+import { getFormattedWidgetColumns } from "../CommonChartCompatibilityHelper"
 import { getFormattedStyle } from "./HighchartsWidgetStyleHelper"
 
 const columnNameIdMap = {}

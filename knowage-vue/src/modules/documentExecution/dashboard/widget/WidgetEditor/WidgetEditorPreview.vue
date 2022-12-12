@@ -26,9 +26,10 @@
                     :drivers="drivers"
                     :variables="variables"
                 ></WebComponentContainer>
-                <!-- TODO - Add chart conditions -->
                 <HighchartsContainer v-if="propWidget.type === 'highcharts' && !loading" :widgetModel="propWidget" :dataToShow="widgetData" :propActiveSelections="activeSelections" :editorMode="true" :dashboardId="dashboardId"></HighchartsContainer>
+                <ChartJSContainer v-if="propWidget.type === 'chartJS' && !loading" :widgetModel="propWidget" :dataToShow="widgetData" :editorMode="true" :dashboardId="dashboardId"></ChartJSContainer>
             </div>
+            C
         </div>
     </div>
 </template>
@@ -50,10 +51,11 @@ import store from '../../Dashboard.store'
 import deepcopy from 'deepcopy'
 import WebComponentContainer from '../WebComponent/WebComponentContainer.vue'
 import HighchartsContainer from '../ChartWidget/Highcharts/HighchartsContainer.vue'
+import ChartJSContainer from '../ChartWidget/ChartJS/ChartJSContainer.vue'
 
 export default defineComponent({
     name: 'widget-editor-preview',
-    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, ProgressBar, WebComponentContainer, HighchartsContainer },
+    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, ProgressBar, WebComponentContainer, HighchartsContainer, ChartJSContainer },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IModelDataset[]>, required: true },

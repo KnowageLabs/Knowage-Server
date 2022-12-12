@@ -1,85 +1,68 @@
 <template>
-    <Pie :chart-options="chartOptions" :chart-data="chartData" :chart-id="chartId" :dataset-id-key="datasetIdKey" :plugins="plugins" :css-classes="cssClasses" :styles="styles" :width="width" :height="height" />
+    <div>
+        {{ 'CHART JS CONTAINER' }}
+        <Pie :chart-options="chartOptions" :chart-data="chartData" :chart-id="'pie-chart'" :dataset-id-key="'label'" :width="200" :height="200" />
+    </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent, PropType } from 'vue'
+import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { Pie } from 'vue-chartjs'
-
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale } from 'chart.js'
+import { IWidget } from '../../../Dashboard'
+import { IChartJSChartModel, IChartJSData } from '../../../interfaces/chartJS/DashboardChartJSWidget'
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale)
 
-export default {
-    name: 'PieChart',
-    components: {
-        Pie
-    },
-    props: {
-        chartId: {
-            type: String,
-            default: 'pie-chart'
-        },
-        datasetIdKey: {
-            type: String,
-            default: 'label'
-        },
-        width: {
-            type: Number,
-            default: 400
-        },
-        height: {
-            type: Number,
-            default: 400
-        },
-        cssClasses: {
-            default: '',
-            type: String
-        },
-        styles: {
-            type: Object,
-            default: () => {}
-        },
-        plugins: {
-            type: Array,
-            default: () => []
-        }
-    },
+export default defineComponent({
+    name: 'chartJS-container',
+    components: { Pie },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, dataToShow: { type: Object as any, required: true }, dashboardId: { type: String, required: true }, editorMode: { type: Boolean } },
     data() {
         return {
-            chartData: {
-                labels: ['VueJs', 'EmberJs', 'ReactJs', 'AngularJs'],
-                datasets: [
-                    {
-                        backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
-                        data: [40, 20, 80, 10]
-                    }
-                ]
-            },
-            chartOptions: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    title: { display: true, text: 'TEEEEEEEEEEEST' },
-                    tooltip: {
-                        enabled: true,
-                        titleColor: '#245425',
-                        titleFont: {
-                            family: 'Roboto',
-                            size: 14,
-                            style: 'italic',
-                            weight: 'bold'
-                        },
-                        backgroundColor: '#ff93ff',
-                        titleAlign: 'left'
-                    },
-                    legend: {
-                        display: true,
-                        align: 'right',
-                        position: 'bottom'
-                    }
-                }
-            }
+            chartData: { labels: [], datasets: [] } as IChartJSData,
+            chartOptions: {} as any,
+            chartModel: {} as IChartJSChartModel,
+            error: false
+        }
+    },
+    mounted() {
+        this.setEventListeners()
+        this.onRefreshChart()
+        this.updateChartModel()
+    },
+    unmounted() {
+        this.removeEventListeners()
+    },
+    methods: {
+        setEventListeners() {
+            emitter.on('refreshChart', this.onRefreshChart)
+        },
+        removeEventListeners() {
+            emitter.off('refreshChart', this.onRefreshChart)
+        },
+        onRefreshChart() {
+            this.chartModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
+            this.updateChartModel()
+        },
+        updateChartModel() {
+            console.log('>>>>>>>>> UPDATE CHART MODEL: ', this.chartModel)
+            // TODO - see if error
+            if (!this.chartModel) return
+            this.updateChartOptions()
+            this.updateChartData()
+        },
+        updateChartOptions() {
+            // TODO see if responsive is needed
+            this.chartOptions = { ...this.chartModel.options, responsive: true }
+        },
+        updateChartData() {
+            this.chartData = this.chartModel.data
+
+            // TODO - Darko
+            this.widgetModel.settings.chartModel.setData(this.dataToShow)
         }
     }
-}
+})
 </script>

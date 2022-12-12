@@ -51,6 +51,7 @@ const getFormattedConfiguration = (widget: any) => {
 const createChartModel = (widget: any, formattedWidget: IWidget) => {
     switch (widget.content.chartTemplate.CHART.type) {
         case 'PIE':
+            console.log("CREATING !")
             return new ChartJSPieChart(widget.content.chartTemplate, formattedWidget)
         default:
             return null

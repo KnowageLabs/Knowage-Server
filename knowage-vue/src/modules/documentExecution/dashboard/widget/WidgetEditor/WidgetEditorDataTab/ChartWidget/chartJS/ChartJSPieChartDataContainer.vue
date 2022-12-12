@@ -44,7 +44,6 @@
 import { defineComponent, PropType } from 'vue'
 import { IDataset, IWidget, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
-import { removeSerieFromWidgetModel } from '../../../helpers/chartWidget/highcharts/HighchartsDataTabHelpers'
 import descriptor from '../../TableWidget/TableWidgetDataDescriptor.json'
 import chartJSDescriptor from './ChartJSDataContainerDescriptor.json'
 import Dropdown from 'primevue/dropdown'
@@ -115,7 +114,8 @@ export default defineComponent({
                 this.widgetModel.columns.splice(index, 1)
                 if (column.id === this.selectedColumn?.id) this.selectedColumn = null
                 this.removeColumnFromColumnTableItems(column)
-                removeSerieFromWidgetModel(this.widgetModel, column, 'chartJSPieChart')
+                // TODO - if needed
+                // removeSerieFromWidgetModel(this.widgetModel, column, 'chartJSPieChart')
                 emitter.emit('refreshWidgetWithData', this.widgetModel.id)
             }
         },

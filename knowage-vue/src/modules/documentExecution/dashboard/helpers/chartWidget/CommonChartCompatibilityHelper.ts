@@ -25,8 +25,6 @@ export const getFormattedWidgetColumns = (widget: any, chartLibrary: 'chartJS' |
     const serie = widget.content.chartTemplate.CHART.VALUES.SERIE ? widget.content.chartTemplate.CHART.VALUES.SERIE[0] : null
     if (category) addCategoryColumns(category, formattedColumns, widgetColumNameMap, widget, chartLibrary)
     if (serie) addSerieColumn(serie, widgetColumNameMap, formattedColumns)
-
-    console.log("FORMATTED COLUMNS: ", formattedColumns)
     return formattedColumns
 }
 
@@ -43,7 +41,6 @@ const addCategoryColumn = (category: IOldModelCategory, widgetColumNameMap: any,
     if (widgetColumNameMap[category.column]) {
         const tempColumn = { ...widgetColumNameMap[category.column] }
         if (chartHasDrilldown(widget, chartLibrary) && category.drillOrder) tempColumn.drillOrder = createDrillOrder(category.drillOrder[category.column].orderColumn, category.drillOrder[category.column].orderType)
-        console.log(">>>>>>>>> TEMP COLUMN 1: ", tempColumn)
         formattedColumns.push(tempColumn)
 
     }
@@ -66,7 +63,6 @@ const addDrillColumnsFromCategory = (category: IOldModelCategory, widgetColumNam
             if (category.drillOrder && category.drillOrder[columnNameTrimmed]) {
                 tempColumn.drillOrder = createDrillOrder(category.drillOrder[columnNameTrimmed].orderColumn, category.drillOrder[columnNameTrimmed].orderType)
             }
-            console.log(">>>>>>>>> TEMP COLUMN 2: ", tempColumn)
             formattedColumns.push(tempColumn)
         }
     })
@@ -81,7 +77,6 @@ export const addSerieColumn = (serie: any, widgetColumNameMap: any, formattedCol
     const tempColumn = widgetColumNameMap[serie.column] as IWidgetColumn
     tempColumn.aggregation = serie.groupingFunction
     if (serie.orderType) tempColumn.orderType = serie.orderType.toUpperCase()
-    console.log(">>>>>>>>> TEMP COLUMN 3: ", tempColumn)
     formattedColumns.push(tempColumn)
 }
 
