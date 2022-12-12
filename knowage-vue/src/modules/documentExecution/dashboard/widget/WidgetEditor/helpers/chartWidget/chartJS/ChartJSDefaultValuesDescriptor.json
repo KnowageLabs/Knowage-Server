@@ -6,14 +6,14 @@
     },
     "defaultTooltipSettings": {
         "backgroundColor": "",
-        "enabled": true,
-        "titleAlign": "left",
-        "titleColor": "",
-        "titleFont": {
+        "bodyAlign": "left",
+        "bodyColor": "",
+        "bodyFont": {
             "family": "",
             "size": 14,
             "style": "",
             "weight": ""
-        }
+        },
+        "enabled": true
     }
 }

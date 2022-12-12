@@ -9,6 +9,7 @@
                 </template>
 
                 <ChartJSLegendSettings v-if="accordion.type === 'Legend'" :widgetModel="widgetModel"></ChartJSLegendSettings>
+                <ChartJSTooltipSettings v-else-if="accordion.type === 'Tooltip'" :widgetModel="widgetModel"></ChartJSTooltipSettings>
                 <WidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
                 <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
                 <WidgetRowsStyle v-else-if="accordion.type === 'RowsStyle'" :widgetModel="widgetModel"></WidgetRowsStyle>
@@ -44,6 +45,7 @@ import WidgetTitleStyle from '../../common/style/WidgetTitleStyle.vue'
 import WidgetPaddingStyle from '../../common/style/WidgetPaddingStyle.vue'
 import WidgetBackgroundColorStyle from '../../common/style/WidgetBackgroundColorStyle.vue'
 import ChartJSLegendSettings from './legend/ChartJSLegendSettings.vue'
+import ChartJSTooltipSettings from './tooltip/ChartJSTooltipSettings.vue'
 
 export default defineComponent({
     name: 'chartJS-widget-configuration-container',
@@ -61,7 +63,8 @@ export default defineComponent({
         WidgetCrossNavigation,
         WidgetInteractionsLinks,
         WidgetPreview,
-        ChartJSLegendSettings
+        ChartJSLegendSettings,
+        ChartJSTooltipSettings
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

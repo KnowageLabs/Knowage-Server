@@ -41,15 +41,15 @@ export interface IChartJSOptions {
 
 export interface IChartJSTooltipSettings {
     enabled: boolean,
-    titleColor: string,
-    titleFont: {
+    bodyColor: string,
+    bodyFont: {
         family: string,
-        size: number,
+        size: number | string,
         style: string,
         weight: string
     },
     backgroundColor: string,
-    titleAlign: string,
+    bodyeAlign: string,
 }
 
 export interface IChartJSLegendSettings {
