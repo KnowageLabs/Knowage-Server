@@ -8,7 +8,8 @@
                     </div>
                 </template>
 
-                <WidgetExport v-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
+                <ChartJSLegendSettings v-if="accordion.type === 'Legend'" :widgetModel="widgetModel"></ChartJSLegendSettings>
+                <WidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
                 <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
                 <WidgetRowsStyle v-else-if="accordion.type === 'RowsStyle'" :widgetModel="widgetModel"></WidgetRowsStyle>
                 <WidgetBackgroundColorStyle v-else-if="accordion.type === 'BackgroundColorStyle'" :widgetModel="widgetModel"></WidgetBackgroundColorStyle>
@@ -42,6 +43,7 @@ import WidgetPreview from '../../common/interactions/preview/WidgetPreview.vue'
 import WidgetTitleStyle from '../../common/style/WidgetTitleStyle.vue'
 import WidgetPaddingStyle from '../../common/style/WidgetPaddingStyle.vue'
 import WidgetBackgroundColorStyle from '../../common/style/WidgetBackgroundColorStyle.vue'
+import ChartJSLegendSettings from './legend/ChartJSLegendSettings.vue'
 
 export default defineComponent({
     name: 'chartJS-widget-configuration-container',
@@ -58,7 +60,8 @@ export default defineComponent({
         WidgetBackgroundColorStyle,
         WidgetCrossNavigation,
         WidgetInteractionsLinks,
-        WidgetPreview
+        WidgetPreview,
+        ChartJSLegendSettings
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

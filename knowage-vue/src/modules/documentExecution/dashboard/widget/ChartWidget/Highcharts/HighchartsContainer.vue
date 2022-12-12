@@ -79,28 +79,29 @@ export default defineComponent({
             //     {
             //         type: 'pie',
             //         name: 'Share',
-            //         dataLabels: { enabled: true },
-            //         label: {
-            //             enabled: true,
-            //             style: {
-            //                 fontFamily: '',
-            //                 fontSize: '',
-            //                 fontWeight: '',
-            //                 color: '',
-            //                 backgroundColor: ''
-            //             },
-            //             format: 'Prefix + {name} + Suffix'
-            //         },
+            //         dataLabels: { enabled: true, format: '{point.percentage}' },
             //         data: [
             //             {
             //                 name: 'Xiaomi',
             //                 y: 12,
             //                 sliced: true,
             //                 selected: true
+            //             },
+            //             {
+            //                 name: 'Samsung',
+            //                 y: 10,
+            //                 sliced: true,
+            //                 selected: true
+            //             },
+            //             {
+            //                 name: 'Motorola',
+            //                 y: 5,
+            //                 sliced: true,
+            //                 selected: true
             //             }
             //         ]
             //     }
-            // ]
+            // ] as any[]
             console.log('>>>>>>>>>>>>>>> CHART TO RENDER: ', this.chartModel)
             Highcharts.chart('container', this.chartModel as any)
         },

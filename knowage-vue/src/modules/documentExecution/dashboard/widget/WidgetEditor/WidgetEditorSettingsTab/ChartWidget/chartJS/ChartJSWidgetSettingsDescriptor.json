@@ -1,4 +1,36 @@
 {
+    "alignmentOptions": [
+        {
+            "label": "common.start",
+            "value": "start"
+        },
+        {
+            "label": "common.center",
+            "value": "center"
+        },
+        {
+            "label": "common.end",
+            "value": "end"
+        }
+    ],
+    "positionOptions": [
+        {
+            "label": "common.top",
+            "value": "top"
+        },
+        {
+            "label": "common.left",
+            "value": "left"
+        },
+        {
+            "label": "common.bottom",
+            "value": "bottom"
+        },
+        {
+            "label": "common.right",
+            "value": "right"
+        }
+    ],
     "settings": {
         "Chart": [
             {

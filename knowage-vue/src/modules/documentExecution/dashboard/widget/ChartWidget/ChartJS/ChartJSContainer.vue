@@ -1,5 +1,7 @@
 <template>
     <div>
+        {{ chartOptions?.plugins?.legend }}
+        {{ 'it works' }}
         <Pie :chart-options="chartOptions" :chart-data="chartData" :chart-id="'pie-chart'" :dataset-id-key="'label'" :width="200" :height="200" />
     </div>
 </template>
@@ -10,7 +12,7 @@ import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { Pie } from 'vue-chartjs'
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale } from 'chart.js'
 import { IWidget } from '../../../Dashboard'
-import { IChartJSChartModel, IChartJSData } from '../../../interfaces/chartJS/DashboardChartJSWidget'
+import { IChartJSChartModel, IChartJSData, IChartJSOptions } from '../../../interfaces/chartJS/DashboardChartJSWidget'
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale)
 
@@ -21,7 +23,7 @@ export default defineComponent({
     data() {
         return {
             chartData: { labels: [], datasets: [] } as IChartJSData,
-            chartOptions: {} as any,
+            chartOptions: {} as IChartJSOptions,
             chartModel: {} as IChartJSChartModel,
             error: false
         }
@@ -54,13 +56,23 @@ export default defineComponent({
         },
         updateChartOptions() {
             // TODO see if responsive is needed
-            this.chartOptions = { ...this.chartModel.options, responsive: true }
+            this.chartOptions = { ...this.chartModel.options, responsive: true, maintainAspectRatio: false }
         },
         updateChartData() {
-            this.chartData = this.chartModel.data
-
             // TODO - Darko
             this.widgetModel.settings.chartModel.setData(this.dataToShow)
+            this.chartData = this.chartModel.data
+
+            // TODO REMOVE MOCK
+            this.chartData = {
+                labels: ['VueJs', 'EmberJs', 'ReactJs', 'AngularJs'],
+                datasets: [
+                    {
+                        backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
+                        data: [40, 20, 80, 10]
+                    }
+                ]
+            }
         }
     }
 })

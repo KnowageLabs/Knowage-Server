@@ -32,12 +32,14 @@ export interface IChartJSChartModel {
 export interface IChartJSOptions {
     plugins: {
         title: { display: boolean },
-        tooltip: IChartJSDefaultTooltipSettings,
-        legend: IChartJSDefaultLegendSettings
-    }
+        tooltip: IChartJSTooltipSettings,
+        legend: IChartJSLegendSettings
+    },
+    responsive?: boolean // TODO - see if needed,
+    maintainAspectRatio?: boolean // TODO - see if needed
 }
 
-export interface IChartJSDefaultTooltipSettings {
+export interface IChartJSTooltipSettings {
     enabled: boolean,
     titleColor: string,
     titleFont: {
@@ -50,7 +52,7 @@ export interface IChartJSDefaultTooltipSettings {
     titleAlign: string,
 }
 
-export interface IChartJSDefaultLegendSettings {
+export interface IChartJSLegendSettings {
     display: boolean,
     align: string,
     position: string,

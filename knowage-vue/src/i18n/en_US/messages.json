@@ -63,6 +63,7 @@
         "edit": "edit",
         "enable": "Enable",
         "enabled": "Enabled",
+        "end": "End",
         "environment": "Environment",
         "error": {
             "allowedFileTypes": "File type allowed are {types}",
@@ -423,6 +424,10 @@
                 "title": "Borders"
             },
             "chartJS": {
+                "legend": {
+                    "alignHint": "Alignment of the legend",
+                    "positionHint": "Position of the legend."
+                },
                 "piechart": {
                     "labelsTableHint": "Attributes only.",
                     "valuesTableHint": "Measures only."

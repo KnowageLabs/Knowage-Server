@@ -2,7 +2,7 @@
     "defaultLegendSettings": {
         "align": "center",
         "display": true,
-        "position": "center"
+        "position": "top"
     },
     "defaultTooltipSettings": {
         "backgroundColor": "",
