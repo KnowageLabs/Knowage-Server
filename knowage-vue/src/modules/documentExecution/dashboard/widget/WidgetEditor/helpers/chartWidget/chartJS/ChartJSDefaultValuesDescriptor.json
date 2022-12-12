@@ -1,0 +1,19 @@
+{
+    "defaultLegendSettings": {
+        "align": "center",
+        "display": true,
+        "position": "center"
+    },
+    "defaultTooltipSettings": {
+        "backgroundColor": "",
+        "enabled": true,
+        "titleAlign": "left",
+        "titleColor": "",
+        "titleFont": {
+            "family": "",
+            "size": 14,
+            "style": "",
+            "weight": ""
+        }
+    }
+}

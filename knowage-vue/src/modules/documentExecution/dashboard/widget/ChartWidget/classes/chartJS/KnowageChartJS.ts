@@ -1,5 +1,6 @@
 import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard";
 import { IChartJSChartModel } from "@/modules/documentExecution/dashboard/interfaces/chartJS/DashboardChartJSWidget";
+import * as  chartJSDefaultValues from "../../../WidgetEditor/helpers/chartWidget/chartJS/ChartJSDefaultValues"
 
 export class KnowageChartJS {
     model: IChartJSChartModel
@@ -22,34 +23,14 @@ export class KnowageChartJS {
         return {
             chart: { type: '' },
             data: {
-                labels: ['VueJs', 'EmberJs', 'ReactJs', 'AngularJs'],
-                datasets: [
-                    {
-                        backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
-                        data: [40, 20, 80, 10]
-                    }
-                ]
+                labels: [],
+                datasets: [{ backgroundColor: [], data: [] }]
             },
             options: {
                 plugins: {
                     title: { display: false },
-                    tooltip: {
-                        enabled: true,
-                        titleColor: '#245425',
-                        titleFont: {
-                            family: 'Roboto',
-                            size: 14,
-                            style: 'italic',
-                            weight: 'bold'
-                        },
-                        backgroundColor: '#ff93ff',
-                        titleAlign: 'left'
-                    },
-                    legend: {
-                        display: true,
-                        align: 'right',
-                        position: 'bottom'
-                    }
+                    tooltip: chartJSDefaultValues.getDefaultTooltipSettings(),
+                    legend: chartJSDefaultValues.getDefaultLegendSettings()
                 }
             }
         }

@@ -68,6 +68,18 @@
             :dashboardId="dashboardId"
         >
         </HighchartsWidgetSettingsContainer>
+        <ChartJSWidgetSettingsContainer
+            v-else-if="propWidget.type === 'chartJS'"
+            class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
+            :widgetModel="propWidget"
+            :selectedSetting="selectedSetting"
+            :datasets="datasets"
+            :selectedDatasets="selectedDatasets"
+            :drivers="drivers"
+            :variables="variables"
+            :dashboardId="dashboardId"
+        >
+        </ChartJSWidgetSettingsContainer>
     </div>
 </template>
 
@@ -81,16 +93,18 @@ import SelectionsWidgetSettingsContainer from './SelectionsWidget/SelectionsWidg
 import HTMLWidgetSettingsContainer from './HTMLWidget/HTMLWidgetSettingsContainer.vue'
 import TextWidgetSettingsContainer from './TextWidget/TextWidgetSettingsContainer.vue'
 import HighchartsWidgetSettingsContainer from './ChartWidget/highcharts/HighchartsWidgetSettingsContainer.vue'
+import ChartJSWidgetSettingsContainer from './ChartWidget/chartJS/ChartJSWidgetSettingsContainer.vue'
 import selectorDescriptor from './SelectorWidget/SelectorWidgetSettingsDescriptor.json'
 import selectionsDescriptor from './SelectionsWidget/SelectionsWidgetSettingsDescriptor.json'
 import WidgetEditorSettingsList from './WidgetEditorSettingsList.vue'
 import htmlDescriptor from './HTMLWidget/HTMLWidgetSettingsDescriptor.json'
 import textDescriptor from './TextWidget/TextWidgetSettingsDescriptor.json'
 import highchartsDescriptor from './ChartWidget/highcharts/HighchartsWidgetSettingsDescriptor.json'
+import chartJSDescriptor from './ChartWidget/chartJS/ChartJSWidgetSettingsDescriptor.json'
 
 export default defineComponent({
     name: 'widget-editor-settings-tab',
-    components: { TableWidgetSettingsContainer, WidgetEditorSettingsList, SelectorWidgetSettingsContainer, SelectionsWidgetSettingsContainer, HTMLWidgetSettingsContainer, TextWidgetSettingsContainer, HighchartsWidgetSettingsContainer },
+    components: { TableWidgetSettingsContainer, WidgetEditorSettingsList, SelectorWidgetSettingsContainer, SelectionsWidgetSettingsContainer, HTMLWidgetSettingsContainer, TextWidgetSettingsContainer, HighchartsWidgetSettingsContainer, ChartJSWidgetSettingsContainer },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDataset[]> },
@@ -132,6 +146,9 @@ export default defineComponent({
                     break
                 case 'highcharts':
                     this.descriptor = highchartsDescriptor
+                    break
+                case 'chartJS':
+                    this.descriptor = chartJSDescriptor
             }
         },
         onItemClicked(item: any) {

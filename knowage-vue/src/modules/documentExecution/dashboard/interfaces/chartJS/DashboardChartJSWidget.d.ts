@@ -32,25 +32,28 @@ export interface IChartJSChartModel {
 export interface IChartJSOptions {
     plugins: {
         title: { display: boolean },
-        tooltip: {
-            enabled: boolean,
-            titleColor: string,
-            titleFont: {
-                family: string,
-                size: number,
-                style: string,
-                weight: string
-            },
-            backgroundColor: string,
-            titleAlign: string,
-
-        },
-        legend: {
-            display: boolean,
-            align: string,
-            position: string,
-        }
+        tooltip: IChartJSDefaultTooltipSettings,
+        legend: IChartJSDefaultLegendSettings
     }
+}
+
+export interface IChartJSDefaultTooltipSettings {
+    enabled: boolean,
+    titleColor: string,
+    titleFont: {
+        family: string,
+        size: number,
+        style: string,
+        weight: string
+    },
+    backgroundColor: string,
+    titleAlign: string,
+}
+
+export interface IChartJSDefaultLegendSettings {
+    display: boolean,
+    align: string,
+    position: string,
 }
 
 export interface IChartJSData {
