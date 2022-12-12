@@ -19,6 +19,7 @@
             <SelectorWidget v-if="widget.type == 'selector'" :propWidget="widget" :dataToShow="dataToShow" :widgetInitialData="widgetInitialData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" :datasets="datasets" :selectionIsLocked="selectionIsLocked" />
             <ActiveSelectionsWidget v-if="widget.type == 'selection'" :propWidget="widget" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" />
             <WebComponentContainer v-if="widget.type == 'html' || widget.type == 'text'" :propWidget="widget" :widgetData="dataToShow" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" :drivers="drivers" :variables="variables"></WebComponentContainer>
+            <HighchartsContainer v-if="widget.type === 'highcharts'" :widgetModel="widget" :dataToShow="widgetData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId"></HighchartsContainer>
         </div>
     </div>
 </template>
@@ -35,11 +36,12 @@ import ActiveSelectionsWidget from './ActiveSelectionsWidget/ActiveSelectionsWid
 import mock from '../dataset/DatasetEditorTestMocks.json'
 import { IDashboardDriver, IDataset, ISelection, IVariable } from '../Dashboard'
 import WebComponentContainer from './WebComponent/WebComponentContainer.vue'
+import HighchartsContainer from '../widget/ChartWidget/Highcharts/HighchartsContainer.vue'
 
 export default defineComponent({
     name: 'widget-renderer',
     emits: ['interaction', 'pageChanged', 'launchSelection', 'sortingChanged'],
-    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, WebComponentContainer },
+    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, WebComponentContainer, HighchartsContainer },
     props: {
         widget: { required: true, type: Object as any },
         widgetData: { required: true, type: Object },

@@ -1,5 +1,5 @@
 <template>
-    <grid-item class="p-d-flex widget-grid-item" :key="item.id" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" drag-allow-from=".drag-handle">
+    <grid-item class="p-d-flex widget-grid-item" :key="item.id" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" drag-allow-from=".drag-handle" @resized="resizedEvent">
         <div v-if="initialized" class="drag-handle"></div>
         <ProgressSpinner v-if="loading" class="kn-progress-spinner" />
         <Skeleton shape="rectangle" v-if="!initialized" height="100%" border-radius="0" />
@@ -247,6 +247,10 @@ export default defineComponent({
             } else {
                 this.inFocus = false
             }
+        },
+        resizedEvent: function (i, newH, newW, newHPx, newWPx) {
+            console.log('RESIZED i=' + i + ', H=' + newH + ', W=' + newW + ', H(px)=' + newHPx + ', W(px)=' + newWPx)
+            emitter.emit('chartWidgetResized', this.widget)
         }
     }
 })

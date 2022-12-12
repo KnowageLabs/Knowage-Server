@@ -49,9 +49,11 @@ export default defineComponent({
     methods: {
         setEventListeners() {
             emitter.on('refreshChart', this.onRefreshChart)
+            emitter.on('chartWidgetResized', (widget) => this.onRefreshChart())
         },
         removeEventListeners() {
             emitter.off('refreshChart', this.onRefreshChart)
+            emitter.on('chartWidgetResized', (widget) => this.onRefreshChart())
         },
         onRefreshChart() {
             this.chartModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
