@@ -200,7 +200,9 @@ export const formatWidget = (widget: any, formattedModel: IDashboard, user: any)
             formattedWidget = formatTextWidget(widget)
             break
         case 'chart':
-            formattedWidget = user?.enterprise ? formatHighchartsWidget(widget) : formatChartJSWidget(widget)
+            // TODO
+            // formattedWidget = user?.enterprise ? formatHighchartsWidget(widget) : formatChartJSWidget(widget)
+            formattedWidget = false ? formatHighchartsWidget(widget) : formatChartJSWidget(widget)
     }
 
     return formattedWidget

@@ -1,17 +1,19 @@
 <template>
     <div v-if="widgetModel">
-        <HighchartsPieChartDataContainer :widgetModel="widgetModel" :selectedDataset="selectedDataset"></HighchartsPieChartDataContainer>
+        <ChartJSPieChartDataContainer :widgetModel="widgetModel" :selectedDataset="selectedDataset"></ChartJSPieChartDataContainer>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IDataset, IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
-import HighchartsPieChartDataContainer from './HighchartsPieChartDataContainer.vue'
+import ChartJSPieChartDataContainer from './ChartJSPieChartDataContainer.vue'
+
+// TODO - add chart type
 
 export default defineComponent({
-    name: 'highcharts-widget-data-container',
-    components: { HighchartsPieChartDataContainer },
+    name: 'chartJS-widget-data-container',
+    components: { ChartJSPieChartDataContainer },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedDataset: { type: Object as PropType<IDataset | null> } },
     data() {
         return {}

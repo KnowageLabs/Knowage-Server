@@ -1,0 +1,14 @@
+{
+    "pieChartColumnTableSettings": [
+        {
+            "attributesOnly": true,
+            "hint": "dashboard.widgetEditor.chartJS.piechart.labelsTableHint",
+            "label": "dashboard.widgetEditor.dimensions"
+        },
+        {
+            "hint": "dashboard.widgetEditor.chartJS.piechart.valuesTableHint",
+            "label": "common.values",
+            "measuresOnly": true
+        }
+    ]
+}

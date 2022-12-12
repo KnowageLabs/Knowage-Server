@@ -64,12 +64,12 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IWidgetColumn, IWidgetColumnFilter } from '../../../../../../Dashboard'
-import { emitter } from '../../../../../../DashboardHelpers'
-import commonDescriptor from '../../../common/WidgetCommonDescriptor.json'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter } from '../../../../../Dashboard'
+import { emitter } from '../../../../../DashboardHelpers'
+import commonDescriptor from '../../common/WidgetCommonDescriptor.json'
 import InputSwitch from 'primevue/inputswitch'
 import Dropdown from 'primevue/dropdown'
-import WidgetEditorFilterForm from '../../../common/WidgetEditorFilterForm.vue'
+import WidgetEditorFilterForm from '../../common/WidgetEditorFilterForm.vue'
 
 export default defineComponent({
     name: 'table-widget-column-form',

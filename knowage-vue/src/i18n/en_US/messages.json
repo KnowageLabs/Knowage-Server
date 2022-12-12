@@ -422,6 +422,12 @@
                 "solid": "Solid",
                 "title": "Borders"
             },
+            "chartJS": {
+                "piechart": {
+                    "labelsTableHint": "Attributes only.",
+                    "valuesTableHint": "Measures only."
+                }
+            },
             "chips": "Chips",
             "colors": {
                 "title": "Colors"
@@ -466,6 +472,7 @@
                 "title": "Default Values"
             },
             "descending": "Descending",
+            "dimensions": "Dimensions",
             "dragColumnsHint": "Drag columns here",
             "editor": "Editor",
             "editorTags": {
@@ -529,7 +536,6 @@
                 "title": "Headers"
             },
             "hidden": "Hidden",
-            "dimensions": "Dimensions",
             "highcharts": {
                 "labels": {
                     "distance": "Distance",
