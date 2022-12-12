@@ -14,8 +14,8 @@
             class="p-m-2"
             :widgetModel="widgetModel"
             :items="columnTableItems['ATTRIBUTES'] ?? []"
-            :settings="{ ...commonDescriptor.columnTableSettings, ...highchartDescriptor.pieChartcolumnTableSettings[0] }"
-            chartType="highchartsPieChart"
+            :settings="{ ...commonDescriptor.columnTableSettings, ...chartJSDescriptor.pieChartColumnTableSettings[0] }"
+            chartType="chartJSPieChart"
             @rowReorder="onColumnsReorder"
             @itemAdded="onColumnAdded"
             @itemUpdated="onColumnItemUpdate"
@@ -29,8 +29,8 @@
             class="p-m-2"
             :widgetModel="widgetModel"
             :items="columnTableItems['MEASURES'] ?? []"
-            :settings="{ ...commonDescriptor.columnTableSettings, ...highchartDescriptor.pieChartcolumnTableSettings[1] }"
-            chartType="highchartsPieChart"
+            :settings="{ ...commonDescriptor.columnTableSettings, ...chartJSDescriptor.pieChartColumnTableSettings[1] }"
+            chartType="chartJSPieChart"
             @itemAdded="onColumnAdded"
             @itemUpdated="onColumnItemUpdate"
             @itemSelected="setSelectedColumn"
@@ -46,7 +46,7 @@ import { IDataset, IWidget, IWidgetColumn } from '@/modules/documentExecution/Da
 import { emitter } from '../../../../../DashboardHelpers'
 import { removeSerieFromWidgetModel } from '../../../helpers/chartWidget/highcharts/HighchartsDataTabHelpers'
 import descriptor from '../../TableWidget/TableWidgetDataDescriptor.json'
-import highchartDescriptor from './HighchartsWidgetDataContainerDescriptor.json'
+import chartJSDescriptor from './ChartJSDataContainerDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import commonDescriptor from '../../common/WidgetCommonDescriptor.json'
 import WidgetEditorColumnTable from '../../common/WidgetEditorColumnTable.vue'
@@ -54,13 +54,13 @@ import WidgetEditorFilterForm from '../../common/WidgetEditorFilterForm.vue'
 import ChartWidgetColumnForm from '../common/ChartWidgetColumnForm.vue'
 
 export default defineComponent({
-    name: 'highcharts-widget-pie-chart-data-container',
+    name: 'chartJS-widget-pie-chart-data-container',
     components: { Dropdown, WidgetEditorColumnTable, WidgetEditorFilterForm, ChartWidgetColumnForm },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedDataset: { type: Object as PropType<IDataset | null> } },
     data() {
         return {
             descriptor,
-            highchartDescriptor,
+            chartJSDescriptor,
             commonDescriptor,
             columnTableItems: {} as any,
             selectedColumn: null as IWidgetColumn | null
@@ -82,7 +82,7 @@ export default defineComponent({
             this.columnTableItems['MEASURES'] = []
             this.widgetModel.columns.forEach((column: IWidgetColumn) => {
                 const type = column.fieldType == 'MEASURE' ? 'MEASURES' : 'ATTRIBUTES'
-                if (type === 'MEASURES' && this.columnTableItems['MEASURES'].length === 1) return
+                if ((type === 'MEASURES' && this.columnTableItems['MEASURES'].length === 1) || (type === 'ATTRIBUTES' && this.columnTableItems['ATTRIBUTES'].length === 1)) return
                 this.columnTableItems[type].push(column)
             })
         },
@@ -115,7 +115,7 @@ export default defineComponent({
                 this.widgetModel.columns.splice(index, 1)
                 if (column.id === this.selectedColumn?.id) this.selectedColumn = null
                 this.removeColumnFromColumnTableItems(column)
-                removeSerieFromWidgetModel(this.widgetModel, column, 'highchartsPieChart')
+                removeSerieFromWidgetModel(this.widgetModel, column, 'chartJSPieChart')
                 emitter.emit('refreshWidgetWithData', this.widgetModel.id)
             }
         },

@@ -6,7 +6,7 @@ import { getFormattedWidgetColumn } from "../../common/WidgetColumnHelper"
 import { getFormattedInteractions } from "../../common/WidgetInteractionsHelper"
 import { getFiltersForColumns } from "../../DashboardBackwardCompatibilityHelper"
 import { hexToRgb } from "../../FormattingHelpers"
-import { addCategoryColumns, addSerieColumn } from "../CommonChartCompatibilityHelper"
+import { addCategoryColumns, addSerieColumn, getFormattedWidgetColumns } from "../CommonChartCompatibilityHelper"
 import { getFormattedStyle } from "./HighchartsWidgetStyleHelper"
 
 const columnNameIdMap = {}
@@ -17,7 +17,7 @@ export const formatHighchartsWidget = (widget: any) => {
         id: widget.id,
         dataset: widget.dataset.dsId ?? null,
         type: 'highcharts',
-        columns: getFormattedWidgetColumns(widget),
+        columns: getFormattedWidgetColumns(widget, 'highcharts'),
         theme: '',
         settings: {} as IHighchartsWidgetSettings
     } as IWidget
@@ -25,25 +25,10 @@ export const formatHighchartsWidget = (widget: any) => {
     formattedWidget.settings = getFormattedWidgetSettings(widget) as IHighchartsWidgetSettings
     getFiltersForColumns(formattedWidget, widget)
     formattedWidget.settings.chartModel = createChartModel(widget, formattedWidget)
-    console.log(">>>>>>>>>>> FORMATTED WIDGET: ", widget)
+    console.log(">>>>>>>>>>> FORMATTED WIDGET: ", formattedWidget)
     return formattedWidget
 }
 
-// TODO - add condition for pie widget, see about the property columnSelectedOfDatasetAggregations
-export const getFormattedWidgetColumns = (widget: any) => {
-    if (!widget.content || !widget.content.columnSelectedOfDatasetAggregations || !widget.content.chartTemplate || !widget.content.chartTemplate.CHART || !widget.content.chartTemplate.CHART.VALUES) return []
-    const widgetColumNameMap = {}
-    for (let i = 0; i < widget.content.columnSelectedOfDatasetAggregations.length; i++) {
-        if (!widgetColumNameMap[widget.content.columnSelectedOfDatasetAggregations[i].name]) widgetColumNameMap[widget.content.columnSelectedOfDatasetAggregations[i].name] = getFormattedWidgetColumn(widget.content.columnSelectedOfDatasetAggregations[i], columnNameIdMap)
-    }
-
-    const formattedColumns = [] as IWidgetColumn[]
-    const category = widget.content.chartTemplate.CHART.VALUES.CATEGORY
-    const serie = widget.content.chartTemplate.CHART.VALUES.SERIE ? widget.content.chartTemplate.CHART.VALUES.SERIE[0] : null
-    if (category) addCategoryColumns(category, formattedColumns, widgetColumNameMap)
-    if (serie) addSerieColumn(serie, widgetColumNameMap, formattedColumns)
-    return formattedColumns
-}
 
 const getFormattedWidgetSettings = (widget: any) => {
     const formattedSettings = {
