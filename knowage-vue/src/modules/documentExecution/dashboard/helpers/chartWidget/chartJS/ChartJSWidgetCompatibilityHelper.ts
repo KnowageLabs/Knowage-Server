@@ -5,6 +5,7 @@ import { getFormattedStyle } from "./ChartJSWidgetStyleHelper"
 import { ChartJSPieChart } from "../../../widget/ChartWidget/classes/chartJS/KnowageChartJSPieChart"
 import * as widgetCommonDefaultValues from '../../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import { getFormattedWidgetColumn } from "../../common/WidgetColumnHelper"
+import { addCategoryColumns, addSerieColumn } from "../CommonChartCompatibilityHelper"
 
 const columnNameIdMap = {}
 
@@ -36,8 +37,8 @@ export const getFormattedWidgetColumns = (widget: any) => {
     const formattedColumns = [] as IWidgetColumn[]
     const category = widget.content.chartTemplate.CHART.VALUES.CATEGORY
     const serie = widget.content.chartTemplate.CHART.VALUES.SERIE ? widget.content.chartTemplate.CHART.VALUES.SERIE[0] : null
-    // if (category) addCategoryColumns(category, formattedColumns, widgetColumNameMap)
-    //if (serie) addSerieColumn(serie, widgetColumNameMap, formattedColumns)
+    if (category) addCategoryColumns(category, formattedColumns, widgetColumNameMap)
+    if (serie) addSerieColumn(serie, widgetColumNameMap, formattedColumns)
     return formattedColumns
 }
 
