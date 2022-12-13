@@ -128,7 +128,8 @@ export interface IHighchartsPieChartPlotOptions {
     depth: number,
     allowPointSelect: boolean,
     cursor: string,
-    dataLabels: IHighchartsPieChartDataLabels
+    dataLabels: IHighchartsPieChartDataLabels,
+    colors: string[]
 }
 
 export interface IHighchartsPieChartDataLabels {
