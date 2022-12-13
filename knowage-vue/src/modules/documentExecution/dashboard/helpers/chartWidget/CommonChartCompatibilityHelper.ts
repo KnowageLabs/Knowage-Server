@@ -1,13 +1,14 @@
-import { IWidget, IWidgetColumn } from "../../Dashboard"
-import { getFormattedWidgetColumn } from "../common/WidgetColumnHelper"
+import { IWidget, IWidgetColumn } from '../../Dashboard'
+import { getFormattedWidgetColumn } from '../common/WidgetColumnHelper'
+import { hexToRgba } from '@/modules/documentExecution/dashboard/helpers/FormattingHelpers'
 
 interface IOldModelCategory {
     column: string
     groupby: string
-    groupbyNames: string,
-    name: string,
-    orderColumn: string,
-    orderType: string,
+    groupbyNames: string
+    name: string
+    orderColumn: string
+    orderType: string
     drillOrder: any
 }
 
@@ -28,7 +29,6 @@ export const getFormattedWidgetColumns = (widget: any, chartLibrary: 'chartJS' |
     return formattedColumns
 }
 
-
 export const addCategoryColumns = (category: IOldModelCategory, formattedColumns: IWidgetColumn[], widgetColumNameMap: any, widget: IWidget, chartLibrary: 'chartJS' | 'highcharts') => {
     addCategoryColumn(category, widgetColumNameMap, formattedColumns, widget, chartLibrary)
     if (!chartCanHaveOnlyOneAttribute(widget, chartLibrary) && category.groupbyNames) {
@@ -36,13 +36,11 @@ export const addCategoryColumns = (category: IOldModelCategory, formattedColumns
     }
 }
 
-
 const addCategoryColumn = (category: IOldModelCategory, widgetColumNameMap: any, formattedColumns: IWidgetColumn[], widget: IWidget, chartLibrary: 'chartJS' | 'highcharts') => {
     if (widgetColumNameMap[category.column]) {
         const tempColumn = { ...widgetColumNameMap[category.column] }
         if (chartHasDrilldown(widget, chartLibrary) && category.drillOrder) tempColumn.drillOrder = createDrillOrder(category.drillOrder[category.column].orderColumn, category.drillOrder[category.column].orderType)
         formattedColumns.push(tempColumn)
-
     }
 }
 
@@ -72,7 +70,6 @@ const createDrillOrder = (orderColumn: string | null, orderType: string) => {
     return orderColumn ? { orderColumnId: orderColumn ? getColumnId(orderColumn) : '', orderColumn: orderColumn, orderType: orderType ? orderType.toUpperCase() : '' } : { orderColumnId: '', orderColumn: '', orderType: '' }
 }
 
-
 export const addSerieColumn = (serie: any, widgetColumNameMap: any, formattedColumns: IWidgetColumn[]) => {
     const tempColumn = widgetColumNameMap[serie.column] as IWidgetColumn
     tempColumn.aggregation = serie.groupingFunction
@@ -87,7 +84,7 @@ export const getColumnId = (widgetColumnName: string) => {
 export const getFormattedColorSettings = (widget: any) => {
     let formattedColors = [] as string[]
     if (widget.content.chartTemplate.CHART.COLORPALETTE.COLOR) {
-        formattedColors = widget.content.chartTemplate.CHART.COLORPALETTE.COLOR.map((oldColor: any) => oldColor.value)
+        formattedColors = widget.content.chartTemplate.CHART.COLORPALETTE.COLOR.map((oldColor: any) => hexToRgba(oldColor.value))
     }
     return formattedColors
 }

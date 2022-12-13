@@ -1,17 +1,17 @@
-import { IWidget, IWidgetExports, IWidgetInteractions } from "../../../Dashboard"
-import { IHighchartColor, IHighchartsSeriesLabelsSetting, IHighchartsWidgetConfiguration, IHighchartsWidgetSettings } from "../../../interfaces/highcharts/DashboardHighchartsWidget"
-import { HighchartsPieChart } from "../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsPieChart"
+import { IWidget, IWidgetExports, IWidgetInteractions } from '../../../Dashboard'
+import { IHighchartsSeriesLabelsSetting, IHighchartsWidgetConfiguration, IHighchartsWidgetSettings } from '../../../interfaces/highcharts/DashboardHighchartsWidget'
+import { HighchartsPieChart } from '../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsPieChart'
 import * as widgetCommonDefaultValues from '../../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
-import { getFormattedInteractions } from "../../common/WidgetInteractionsHelper"
-import { getFiltersForColumns } from "../../DashboardBackwardCompatibilityHelper"
-import { hexToRgb } from "../../FormattingHelpers"
-import { getFormattedWidgetColumns } from "../CommonChartCompatibilityHelper"
-import { getFormattedStyle } from "./HighchartsWidgetStyleHelper"
+import { getFormattedInteractions } from '../../common/WidgetInteractionsHelper'
+import { getFiltersForColumns } from '../../DashboardBackwardCompatibilityHelper'
+import { hexToRgb } from '../../FormattingHelpers'
+import { getFormattedWidgetColumns, getFormattedColorSettings } from '../CommonChartCompatibilityHelper'
+import { getFormattedStyle } from './HighchartsWidgetStyleHelper'
 
 const columnNameIdMap = {}
 
 export const formatHighchartsWidget = (widget: any) => {
-    console.log(">>>>>>>>>>> OLD WIDGET: ", widget)
+    console.log('>>>>>>>>>>> OLD WIDGET: ', widget)
     const formattedWidget = {
         id: widget.id,
         dataset: widget.dataset.dsId ?? null,
@@ -24,10 +24,9 @@ export const formatHighchartsWidget = (widget: any) => {
     formattedWidget.settings = getFormattedWidgetSettings(widget) as IHighchartsWidgetSettings
     getFiltersForColumns(formattedWidget, widget)
     formattedWidget.settings.chartModel = createChartModel(widget, formattedWidget)
-    console.log(">>>>>>>>>>> FORMATTED WIDGET: ", formattedWidget)
+    console.log('>>>>>>>>>>> FORMATTED WIDGET: ', formattedWidget)
     return formattedWidget
 }
-
 
 const getFormattedWidgetSettings = (widget: any) => {
     const formattedSettings = {
@@ -37,14 +36,14 @@ const getFormattedWidgetSettings = (widget: any) => {
         configuration: getFormattedConfiguration(widget),
         accesssibility: {
             seriesAccesibilitySettings: getFormattedSeriesAccesibilitySettings(widget)
-        },  // TODO - move to some default helper 
+        }, // TODO - move to some default helper
         series: {
-            seriesLabelsSettings: getFormattedSerieLabelsSettings(widget) // TODO - move to some default helper 
+            seriesLabelsSettings: getFormattedSerieLabelsSettings(widget) // TODO - move to some default helper
         },
         interactions: getFormattedInteractions(widget) as IWidgetInteractions,
         style: getFormattedStyle(widget),
         chart: {
-            colors: getFormattedColorSettings(widget)
+            colors: getFormattedColorSettings(widget) as any
         },
         responsive: widgetCommonDefaultValues.getDefaultResponsivnes()
     } as IHighchartsWidgetSettings
@@ -58,17 +57,19 @@ const getFormattedConfiguration = (widget: any) => {
 }
 
 const getFormattedSeriesAccesibilitySettings = (widget: any) => {
-    return widget.content.chartTemplate.CHART.type !== 'PIE' ? [
-        {
-            names: ['all'],
-            accessibility: {
-                enabled: false,
-                description: '',
-                exposeAsGroupOnly: false,
-                keyboardNavigation: { enabled: false }
-            }
-        }
-    ] : []
+    return widget.content.chartTemplate.CHART.type !== 'PIE'
+        ? [
+              {
+                  names: ['all'],
+                  accessibility: {
+                      enabled: false,
+                      description: '',
+                      exposeAsGroupOnly: false,
+                      keyboardNavigation: { enabled: false }
+                  }
+              }
+          ]
+        : []
 }
 
 export const getColumnId = (widgetColumnName: string) => {
@@ -85,25 +86,30 @@ const createChartModel = (widget: any, formattedWidget: IWidget) => {
 }
 
 const getFormattedSerieLabelsSettings = (widget: any) => {
-    const formattedSerieSettings = widget.content.chartTemplate.CHART.type !== 'PIE' ? [{
-        names: ['all'],
-        label: {
-            enabled: false,
-            style: {
-                fontFamily: '',
-                fontSize: '',
-                fontWeight: '',
-                color: '',
-                backgroundColor: ''
-            },
-            prefix: '',
-            suffix: '',
-            scale: 'empty', // TODO
-            precision: 2,
-            absolute: false,
-            percentage: false
-        }
-    }] : [] as IHighchartsSeriesLabelsSetting[]
+    const formattedSerieSettings =
+        widget.content.chartTemplate.CHART.type !== 'PIE'
+            ? [
+                  {
+                      names: ['all'],
+                      label: {
+                          enabled: false,
+                          style: {
+                              fontFamily: '',
+                              fontSize: '',
+                              fontWeight: '',
+                              color: '',
+                              backgroundColor: ''
+                          },
+                          prefix: '',
+                          suffix: '',
+                          scale: 'empty', // TODO
+                          precision: 2,
+                          absolute: false,
+                          percentage: false
+                      }
+                  }
+              ]
+            : ([] as IHighchartsSeriesLabelsSetting[])
     if (widget.content.chartTemplate.CHART.VALUES.SERIE && widget.content.chartTemplate.CHART.VALUES.SERIE[0]) {
         const oldModelSerie = widget.content.chartTemplate.CHART.VALUES.SERIE[0]
         formattedSerieSettings.push({
@@ -125,15 +131,6 @@ const getFormattedSerieLabelsSettings = (widget: any) => {
                 percentage: oldModelSerie.showPercentage
             }
         })
-
     }
     return formattedSerieSettings
-}
-
-const getFormattedColorSettings = (widget: any) => {
-    let formattedColors = [] as IHighchartColor[]
-    if (widget.content.chartTemplate.CHART.COLORPALETTE.COLOR) {
-        formattedColors = { ...widget.content.chartTemplate.CHART.COLORPALETTE.COLOR } // TODO - CHECK THIS
-    }
-    return formattedColors
 }
