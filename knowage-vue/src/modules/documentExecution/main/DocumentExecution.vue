@@ -1079,6 +1079,8 @@ export default defineComponent({
 
             const popupOptions = crossNavigationDocument.popupOptions ? JSON.parse(crossNavigationDocument.popupOptions) : null
 
+            this.checkIfParameterHasFixedValue(navigationParams, crossNavigationDocument)
+
             if (crossNavigationDocument?.crossType !== 2) {
                 this.document = {
                     ...crossNavigationDocument?.document,
@@ -1111,6 +1113,16 @@ export default defineComponent({
                 await this.loadPage()
             }
             this.documentMode = 'VIEW'
+        },
+        checkIfParameterHasFixedValue(navigationParams: any, crossNavigationDocument: any) {
+            if (!crossNavigationDocument || !crossNavigationDocument.navigationParams) return
+            Object.keys(crossNavigationDocument.navigationParams).forEach((key: string) => {
+                const tempParam = crossNavigationDocument.navigationParams[key]
+                if (tempParam.fixed) {
+                    navigationParams[key] = tempParam.value
+                    navigationParams[key + '_field_visible_description'] = tempParam.value
+                }
+            })
         },
         getCrossBeadcrumb(crossNavigationDocument: any, angularData: any) {
             let tempCrossBreadcrumb = crossNavigationDocument.crossBreadcrumb
