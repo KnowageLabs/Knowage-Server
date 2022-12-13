@@ -6,28 +6,29 @@
                 <label for="fileName" class="kn-material-input-label"> Custom color </label>
             </span>
         </div>
-        <Button class="kn-button kn-button--primary click-outside p-mx-1" :style="`background-color:${customColorValue}; padding: 0; flex: 1`" @click="colorPickerVisible = !colorPickerVisible"></Button>
+        <Button class="kn-button kn-button--primary click-outside p-mx-1 p-p-0 kn-flex" :style="`background-color:${customColorValue}`" @click="toggleColorPicker(-1)"></Button>
         <Button icon="fas fa-plus fa-1x" class="p-button-text p-button-plain p-ml-2" @click="addColor" />
     </div>
 
     <ColorPicker v-if="colorPickerVisible" class="dashboard-color-picker click-outside" theme="light" :color="customColorValue" :colors-default="descriptor.defaultColors" :sucker-hide="true" @changeColor="changeColor" />
 
-    <DataTable class="pallete-table p-m-2" style="border: 1px solid" :value="arrayColors" :reorderableColumns="false" responsiveLayout="scroll" @rowReorder="onRowReorder">
-        <Column :rowReorder="true" :reorderableColumn="false" style="padding: 0 !important; border: none !important">
+    <DataTable class="pallete-table p-m-2" :style="descriptor.colorPalleteStyle.table" :value="colors" :reorderableColumns="false" responsiveLayout="scroll" @rowReorder="onRowReorder">
+        <Column :rowReorder="true" :reorderableColumn="false" :style="descriptor.colorPalleteStyle.column">
             <template #body="slotProps">
-                <span :style="`background-color: ${slotProps.data.value}; height:100%`">
+                <span class="kn-height-full" :style="`background-color: ${slotProps.data}; color:${getContrastYIQ(slotProps.data)}`">
                     <i class="p-datatable-reorderablerow-handle pi pi-bars p-m-2"></i>
                 </span>
             </template>
         </Column>
-        <Column :sortable="false" style="padding: 0 !important; border: none !important; display: flex">
+        <Column :sortable="false" :style="descriptor.colorPalleteStyle.columnMain">
             <template #body="slotProps">
-                <span :style="`background-color: ${slotProps.data.value}; flex: 1`">{{ slotProps.data }}</span>
+                <span class="kn-flex" :style="`background-color: ${slotProps.data}; color:${getContrastYIQ(slotProps.data)}`">{{ slotProps.data }}</span>
             </template>
         </Column>
-        <Column :rowReorder="true" :reorderableColumn="false" style="padding: 0 !important; border: none !important">
+        <Column :rowReorder="true" :reorderableColumn="false" :style="descriptor.colorPalleteStyle.column">
             <template #body="slotProps">
-                <span :style="`background-color: ${slotProps.data.value}; height:100%`">
+                <span class="kn-height-full" :style="`background-color: ${slotProps.data}; color:${getContrastYIQ(slotProps.data)}`">
+                    <i class="pi pi-pencil p-mr-2 click-outside" @click="toggleColorPicker(slotProps.index)"></i>
                     <i class="pi pi-trash p-mr-2" @click="deleteColor(slotProps.index)"></i>
                 </span>
             </template>
@@ -41,7 +42,6 @@
 import { defineComponent, PropType, ref } from 'vue'
 import { IWidget } from '../../../../../../Dashboard'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
-import { IHighchartColor } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import { useClickOutside } from '../../../common/styleToolbar/useClickOutside'
 import { ColorPicker } from 'vue-color-kit'
 import 'vue-color-kit/dist/vue-color-kit.css'
@@ -56,9 +56,9 @@ export default defineComponent({
     data() {
         return {
             descriptor,
-            colors: [] as IHighchartColor[],
-            arrayColors: [] as IHighchartColor[],
+            colors: [] as string[],
             customColorValue: '#8D8D8D',
+            editIndex: -1,
             useClickOutside
         }
     },
@@ -78,27 +78,47 @@ export default defineComponent({
     methods: {
         loadColorSettings() {
             if (this.widgetModel.settings.chart.colors) this.colors = this.widgetModel.settings.chart.colors
-            if (this.widgetModel.settings.chart.colors) this.arrayColors = Object.values(this.widgetModel.settings.chart.colors)
         },
         modelChanged() {
             emitter.emit('refreshChart', this.widgetModel.id)
         },
         onRowReorder(event) {
-            this.arrayColors = event.value
+            this.colors = event.value
+        },
+        toggleColorPicker(index) {
+            this.colorPickerVisible = !this.colorPickerVisible
+            this.editIndex = index
+            this.customColorValue = this.colors[this.editIndex]
         },
         addColor() {
-            console.log('toadd', this.customColorValue)
-            const colorToAdd = { gradient: '', name: this.customColorValue.replace('#', ''), order: `${this.arrayColors.length + 1}`, value: this.customColorValue }
-            this.arrayColors.push(colorToAdd)
-        },
-        deleteColor(index) {
-            this.arrayColors.splice(index, 1)
+            this.colors.push(this.customColorValue)
         },
         changeColor(color) {
-            //TODO: RGBA ili HEX? Dal moram da prevodim unutar objekta RGBA u HEX?
             const { r, g, b, a } = color.rgba
-            // this.customColorValue = `rgba(${r}, ${g}, ${b}, ${a})`
-            this.customColorValue = color.hex
+
+            if (this.editIndex != -1) this.colors[this.editIndex] = `rgba(${r}, ${g}, ${b}, ${a})`
+            else this.customColorValue = `rgba(${r}, ${g}, ${b}, ${a})`
+        },
+        deleteColor(index) {
+            this.colors.splice(index, 1)
+        },
+        getContrastYIQ(hexcolor) {
+            var getRGBA = function (string) {
+                var match = string.match(/^rgba\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3}),\s*(\d*(?:\.\d+)?)\)$/)
+                return match
+                    ? {
+                          r: Number(match[1]),
+                          g: Number(match[2]),
+                          b: Number(match[3]),
+                          a: Number(match[4])
+                      }
+                    : {}
+            }
+
+            var rgba = getRGBA(hexcolor) as any
+
+            var yiq = (rgba.r * 299 + rgba.g * 587 + rgba.b * 114) / 1000
+            return yiq >= 128 ? 'black' : 'white'
         }
     }
 })
