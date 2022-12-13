@@ -9,7 +9,8 @@
                 </template>
                 <template #option="slotProps">
                     <div>
-                        <div :style="getImageSource(slotProps.option.value)"></div>
+                        <!-- <div :style="{ 'background-image': 'url(./images/dashboard/chartTypes/' + slotProps.option.value + '.png' + ')' }"></div> -->
+                        <div :style="getImageSource(slotProps.option.data)"></div>
                         <span>{{ $t(slotProps.option.label) }}</span>
                     </div>
                 </template>
@@ -48,7 +49,9 @@ export default defineComponent({
         },
         getImageSource(chartValue: string) {
             // return { 'background-image': 'url(../../../images/dashboard/chartTypes/' + slotProps.option.value + '.png' + ')' }
-            return { 'background-image': `url(${require('@/assets/images/dashboard/chartTypes/' + chartValue)})` }
+            // return { 'background-image': `url(${require('@/assets/images/dashboard/chartTypes/' + chartValue)})` }
+            //  return { 'background-image': `url(..../images/functionCatalog/' + ${chartValue} + '.png' + ')` }
+            return ''
         },
         onChange() {
             this.$emit('selectedChartTypeChanged', this.selectedType)
