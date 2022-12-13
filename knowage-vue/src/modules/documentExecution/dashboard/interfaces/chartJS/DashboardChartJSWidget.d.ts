@@ -44,12 +44,12 @@ export interface IChartJSTooltipSettings {
     bodyColor: string,
     bodyFont: {
         family: string,
-        size: number | string,
+        size: number,
         style: string,
         weight: string
     },
     backgroundColor: string,
-    bodyeAlign: string,
+    bodyAlign: string,
 }
 
 export interface IChartJSLegendSettings {

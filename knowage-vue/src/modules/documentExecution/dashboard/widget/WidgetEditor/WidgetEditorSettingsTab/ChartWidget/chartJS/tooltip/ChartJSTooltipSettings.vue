@@ -1,6 +1,5 @@
 <template>
     <div v-if="model?.options?.plugins?.tooltip" class="p-grid p-jc-center p-ai-center p-p-4">
-        {{ model.options.plugins.tooltip }}
         <div class="p-col-12 p-grid p-ai-center p-p-4">
             <label class="kn-material-input-label p-mr-2">{{ $t('common.enabled') }}</label>
             <InputSwitch v-model="model.options.plugins.tooltip.enabled" @change="modelChanged"></InputSwitch>
@@ -45,7 +44,6 @@ export default defineComponent({
     methods: {
         loadModel() {
             this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
-            console.log('>>>>>>>> LOADED MODEL: ', this.model)
             this.loadToolbarModel()
         },
         loadToolbarModel() {
@@ -53,7 +51,7 @@ export default defineComponent({
                 this.toolbarModel = {
                     'font-family': this.model.options.plugins.tooltip.bodyFont.family ?? '',
                     'font-style': this.model.options.plugins.tooltip.bodyFont.style ?? 'normal',
-                    'font-size': '' + this.model.options.plugins.tooltip.bodyFont.size,
+                    'font-size': this.model.options.plugins.tooltip.bodyFont.size + 'px',
                     'font-weight': this.model.options.plugins.tooltip.bodyFont.weight,
                     color: this.model.options.plugins.tooltip.bodyColor,
                     'background-color': this.model.options.plugins.tooltip.backgroundColor
@@ -78,10 +76,15 @@ export default defineComponent({
             this.model.options.plugins.tooltip.bodyFont = {
                 family: this.toolbarModel['font-family'] ?? '',
                 style: this.toolbarModel['font-style'] ?? 'normal',
-                size: this.toolbarModel['font-size'] ?? '14px',
+                size: this.getFormattedFontSize(this.toolbarModel['font-size']),
                 weight: this.toolbarModel['font-weight'] ?? ''
             }
             this.modelChanged()
+        },
+        getFormattedFontSize(fontSize: string) {
+            if (!fontSize) return 0
+            const formattedFontSize = fontSize.substring(0, fontSize.lastIndexOf('p'))
+            return formattedFontSize ? +formattedFontSize : 0
         }
     }
 })
