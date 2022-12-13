@@ -102,9 +102,7 @@ export default defineComponent({
             //         ]
             //     }
             // ] as any[]
-            // this.chartModel.chart.colors = this.widgetModel.settings.chart.colors
-            // this.chartModel.chart.colors = ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970', '#f28f43', '#77a1e5', '#c42525', '#a6c96a']
-            // this.chartModel.plotOptions.pie.colors = ['#a6c96a', '#a6c96a', '#a6c96a', '#a6c96a', '#a6c96a', '#a6c96a', '#a6c96a', '#a6c96a', '#c42525', '#a6c96a']
+            this.chartModel.plotOptions.pie.colors = this.widgetModel.settings.chart.colors
 
             console.log('>>>>>>>>>>>>>>> CHART TO RENDER: ', this.chartModel)
             Highcharts.chart('container', this.chartModel as any)

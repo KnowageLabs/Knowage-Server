@@ -59,6 +59,7 @@ export default defineComponent({
             colors: [] as string[],
             customColorValue: '#8D8D8D',
             editIndex: -1,
+            colorPickTimer: null as any,
             useClickOutside
         }
     },
@@ -79,28 +80,36 @@ export default defineComponent({
         loadColorSettings() {
             if (this.widgetModel.settings.chart.colors) this.colors = this.widgetModel.settings.chart.colors
         },
-        modelChanged() {
-            emitter.emit('refreshChart', this.widgetModel.id)
-        },
-        onRowReorder(event) {
-            this.colors = event.value
-        },
         toggleColorPicker(index) {
             this.colorPickerVisible = !this.colorPickerVisible
             this.editIndex = index
             this.customColorValue = this.colors[this.editIndex]
         },
+        onRowReorder(event) {
+            this.colors = event.value
+            emitter.emit('refreshChart', this.widgetModel.id)
+        },
         addColor() {
             this.colors.push(this.customColorValue)
+            emitter.emit('refreshChart', this.widgetModel.id)
         },
         changeColor(color) {
             const { r, g, b, a } = color.rgba
 
-            if (this.editIndex != -1) this.colors[this.editIndex] = `rgba(${r}, ${g}, ${b}, ${a})`
-            else this.customColorValue = `rgba(${r}, ${g}, ${b}, ${a})`
+            if (this.colorPickTimer) {
+                clearTimeout(this.colorPickTimer)
+                this.colorPickTimer = null
+            }
+            this.colorPickTimer = setTimeout(() => {
+                if (!this.customColorValue) return
+                if (this.editIndex != -1) this.colors[this.editIndex] = `rgba(${r}, ${g}, ${b}, ${a})`
+                else this.customColorValue = `rgba(${r}, ${g}, ${b}, ${a})`
+                emitter.emit('refreshChart', this.widgetModel.id)
+            }, 200)
         },
         deleteColor(index) {
             this.colors.splice(index, 1)
+            emitter.emit('refreshChart', this.widgetModel.id)
         },
         getContrastYIQ(hexcolor) {
             var getRGBA = function (string) {

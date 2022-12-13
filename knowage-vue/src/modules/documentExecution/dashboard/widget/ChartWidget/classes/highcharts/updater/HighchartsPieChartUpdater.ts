@@ -74,7 +74,7 @@ const getFormattedSeries = (oldModel: any, newModel: HighchartsPieChartModel) =>
         const serie = oldModel.CHART.VALUES.SERIE[0]
         newModel.series.push({
             name: serie.name,
-            colorByPoint: false, // TODO
+            colorByPoint: true,
             groupingFunction: serie.groupingFunction,
             data: [],
             accessibility: {
