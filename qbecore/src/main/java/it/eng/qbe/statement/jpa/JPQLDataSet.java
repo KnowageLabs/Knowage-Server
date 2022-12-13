@@ -33,7 +33,8 @@ import java.util.Set;
 
 import javax.persistence.EntityManager;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.hibernate.type.Type;
@@ -58,7 +59,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 public class JPQLDataSet extends AbstractQbeDataSet {
 
 	/** Logger component. */
-	public static transient Logger logger = Logger.getLogger(JPQLDataSet.class);
+	private static final Logger LOGGER = LogManager.getLogger(JPQLDataSet.class);
 
 	public JPQLDataSet(JPQLStatement statement) {
 		super(statement);
@@ -79,9 +80,9 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	}
 
 	private IStatement getLoadingStatement(EntityManager entityManager) {
-		logger.debug("Getting filtered statement...");
+		LOGGER.debug("Getting filtered statement...");
 		IStatement filteredStatement = getFilteredStatement();
-		logger.debug("Filtered statement retrieved");
+		LOGGER.debug("Filtered statement retrieved");
 
 		it.eng.qbe.query.Query query = getFilteredStatement().getQuery();
 		Map params = this.getParamsMap();
@@ -101,12 +102,12 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 
 		IStatement filteredStatement = this.getStatement();
 		String statementStr = filteredStatement.getQueryString();
-		logger.debug("Compiling query statement [" + statementStr + "]");
+		LOGGER.debug("Compiling query statement [" + statementStr + "]");
 		javax.persistence.Query jpqlQuery = entityManager.createQuery(statementStr);
 
 		if (this.isCalculateResultNumberOnLoadEnabled()) {
 			resultNumber = getResultNumber(filteredStatement);
-			logger.info("Number of fetched records: " + resultNumber + " for query " + filteredStatement.getQueryString());
+			LOGGER.info("Number of fetched records: " + resultNumber + " for query " + filteredStatement.getQueryString());
 			overflow = (maxResults > 0) && (resultNumber >= maxResults);
 		}
 
@@ -120,7 +121,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 			if (maxResults > 0) {
 				fetchSize = (fetchSize > 0) ? Math.min(fetchSize, maxResults) : maxResults;
 			}
-			logger.debug("Executing query " + filteredStatement.getQueryString() + " with offset = " + offset + " and fetch size = " + fetchSize);
+			LOGGER.debug("Executing query " + filteredStatement.getQueryString() + " with offset = " + offset + " and fetch size = " + fetchSize);
 			jpqlQuery.setFirstResult(offset);
 			if (fetchSize > 0) {
 				jpqlQuery.setMaxResults(fetchSize);
@@ -132,7 +133,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 				throw new RuntimeException("Impossible to execute statement [" + statementStr + "]", t);
 			}
 
-			logger.debug("Query " + filteredStatement.getQueryString() + " with offset = " + offset + " and fetch size = " + fetchSize + " executed");
+			LOGGER.debug("Query " + filteredStatement.getQueryString() + " with offset = " + offset + " and fetch size = " + fetchSize + " executed");
 		}
 
 		dataStore = toDataStore(result, getDataStoreMeta(statement.getQuery()));
@@ -152,8 +153,9 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	 */
 	private void enableFilters(Session session) {
 		Map<String, Object> drivers = this.getDrivers();
+		LOGGER.info("Drivers: {}", drivers);
 		if (drivers != null) {
-			if (drivers.isEmpty() == false) {
+			if (!drivers.isEmpty()) {
 				Filter filter = null;
 				Set<String> filterNames = session.getSessionFactory().getDefinedFilterNames();
 				Iterator<String> it = filterNames.iterator();
@@ -171,34 +173,38 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 						Class<?> wantedClass = parameterType.getReturnedClass();
 						try {
 							List<?> valueList = (List<?>) drivers.get(driverName);
-							if (valueList.size() == 1) {
-								Map<?, ?> valueDescriptionMap = (Map<?, ?>) valueList.get(0);
-								if (!valueDescriptionMap.isEmpty()) {
-									value = valueDescriptionMap.get("value");
-									valueAfterConversion = mapValueToRequiredType(wantedClass, value);
-									if (valueAfterConversion instanceof List) {
-										filter.setParameterList(driverName, (List) valueAfterConversion);
-									} else {
-										filter.setParameter(driverName, valueAfterConversion);
+							LOGGER.info("Values for driver name {} of type {} ({}): {}", parameterName, parameterType, wantedClass, valueList);
+							if (valueList != null) {
+								if (valueList.size() == 1) {
+									Map<?, ?> valueDescriptionMap = (Map<?, ?>) valueList.get(0);
+									if (!valueDescriptionMap.isEmpty()) {
+										value = valueDescriptionMap.get("value");
+										valueAfterConversion = mapValueToRequiredType(wantedClass, value);
+										if (valueAfterConversion instanceof List) {
+											filter.setParameterList(driverName, (List) valueAfterConversion);
+										} else {
+											filter.setParameter(driverName, valueAfterConversion);
+										}
+										LOGGER.info("Actual value for driver name {} of type {} ({}): {}", parameterName, parameterType, wantedClass, valueAfterConversion);
 									}
+								} else if (valueList.size() > 1) {
+									List<Object> multivalueList = new ArrayList<Object>();
+									for (int i = 0; i < valueList.size(); i++) {
+										Map<?, ?> valueDescriptionMap = (Map<?, ?>) valueList.get(i);
+										value = valueDescriptionMap.get("value");
+										valueAfterConversion = mapValueToRequiredType(wantedClass, value);
+										multivalueList.add(valueAfterConversion);
+									}
+									filter.setParameterList(driverName, multivalueList);
+									LOGGER.info("Actual value for driver name {} of type {} ({}): {}", parameterName, parameterType, wantedClass, multivalueList);
 								}
-							}
-							if (valueList.size() > 1) {
-								List<Object> multivalueList = new ArrayList<Object>();
-								for (int i = 0; i < valueList.size(); i++) {
-									Map<?, ?> valueDescriptionMap = (Map<?, ?>) valueList.get(i);
-									value = valueDescriptionMap.get("value");
-									valueAfterConversion = mapValueToRequiredType(wantedClass, value);
-									multivalueList.add(valueAfterConversion);
-								}
-								filter.setParameterList(driverName, multivalueList);
 							}
 							value = null;
 							valueAfterConversion = null;
 						} catch (Exception e) {
 							String msg = String.format("Error during conversion for driver %s from value %s of class %s to %s of class %s", driverName, value,
 									value != null ? value.getClass().getName() : "N.D.", valueAfterConversion, wantedClass.getName());
-							logger.error(msg, e);
+							LOGGER.error(msg, e);
 							throw new SpagoBIRuntimeException(msg, e);
 						}
 					}
@@ -294,7 +300,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	}
 
 	public IStatement getFilteredStatement() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		// we create a new query adding filters defined by profile attributes
 		IModelAccessModality accessModality = this.getStatement().getDataSource().getModelAccessModality();
 		it.eng.qbe.query.Query query = accessModality.getFilteredStatement(this.getStatement().getQuery(), this.getStatement().getDataSource(),
@@ -303,13 +309,13 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		IStatement filteredStatement = this.getStatement().getDataSource().createStatement(query);
 		filteredStatement.setParameters(params);
 		filteredStatement.setProfileAttributes(this.getStatement().getProfileAttributes());
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return filteredStatement;
 	}
 
 	@Override
 	public String getSQLQuery(boolean includeInjectedFilters) {
-		logger.debug("IN: includeInjectedFilters = " + includeInjectedFilters);
+		LOGGER.debug("IN: includeInjectedFilters = " + includeInjectedFilters);
 		String toReturn = null;
 		if (includeInjectedFilters) {
 			IStatement filteredStatement = this.getFilteredStatement();
@@ -317,13 +323,13 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		} else {
 			toReturn = statement.getSqlQueryString();
 		}
-		logger.debug("OUT: returning [" + toReturn + "]");
+		LOGGER.debug("OUT: returning [" + toReturn + "]");
 		return toReturn;
 	}
 
 	@Override
 	public DataIterator iterator() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		try {
 
 			EntityManager entityManager = ((IJpaDataSource) statement.getDataSource()).getEntityManager();
@@ -333,7 +339,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 
 			IStatement filteredStatement = getStatement();
 			String statementStr = filteredStatement.getQueryString();
-			logger.debug("Compiling query statement [" + statementStr + "]");
+			LOGGER.debug("Compiling query statement [" + statementStr + "]");
 
 			javax.persistence.Query jpqlQuery = entityManager.createQuery(statementStr);
 			jpqlQuery.setMaxResults(JpaQueryIterator.FETCH_SIZE);
@@ -343,7 +349,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 			DataIterator iterator = new JpaQueryIterator(jpqlQuery, metadata);
 			return iterator;
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 	}
 
