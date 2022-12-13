@@ -1,3 +1,4 @@
+import { IWidgetSelection } from "@/modules/documentExecution/dashboard/Dashboard"
 import { IHighchartsAccessibilitySettings, IHighchartsLegend, IHighchartsNoDataConfiguration, IHighchartsOptions3D, IHighchartsPieChartPlotOptions, IHighchartsTooltip } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
 import deepcopy from "deepcopy"
 import descriptor from './HighchartsDefaultValuesDescriptor.json'
@@ -27,3 +28,6 @@ export const getDafaultPieChartPlotOptions = () => {
     return deepcopy(descriptor.defaultPieChartPlotOptions) as IHighchartsPieChartPlotOptions
 }
 
+export const getDefaultHighchartsSelections = () => {
+    return deepcopy(descriptor.defaultHighchartsSelection) as IWidgetSelection
+} 

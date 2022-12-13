@@ -2,6 +2,8 @@ import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard"
 import { IChartJSWidgetSettings } from "@/modules/documentExecution/dashboard/interfaces/chartJS/DashboardChartJSWidget"
 import { ChartJSPieChart } from "../../../../ChartWidget/classes/chartJS/KnowageChartJSPieChart"
 import * as widgetCommonDefaultValues from '../../common/WidgetCommonDefaultValues'
+import * as  chartJSDefaultValues from "../chartJS/ChartJSDefaultValues"
+import descriptor from '../../../WidgetEditorSettingsTab/ChartWidget/common/ChartColorSettingsDescriptor.json'
 
 export const createNewChartJSSettings = (widget: IWidget) => {
     const settings = {
@@ -13,9 +15,9 @@ export const createNewChartJSSettings = (widget: IWidget) => {
             crosssNavigation: widgetCommonDefaultValues.getDefaultCrossNavigation(),
             link: widgetCommonDefaultValues.getDefaultLinks(),
             preview: widgetCommonDefaultValues.getDefaultPreview(),
-            // selection: tableWidgetDefaultValues.getDefaultSelection(), // TODO
+            selection: chartJSDefaultValues.getDefaultChartJSSelections(),
         },
-        chart: { colors: [] }, // TODO
+        chart: { colors: descriptor.defaultColors },
         style: {
             title: widgetCommonDefaultValues.getDefaultTitleStyle(),
             padding: widgetCommonDefaultValues.getDefaultPaddingStyle(),

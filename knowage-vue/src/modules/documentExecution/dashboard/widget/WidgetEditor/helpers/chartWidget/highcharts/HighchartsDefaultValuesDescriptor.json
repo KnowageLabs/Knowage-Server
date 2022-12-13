@@ -1,4 +1,8 @@
 {
+    "defaultHighchartsSelection": {
+        "enabled": true,
+        "modalColumn": ""
+    },
     "default3DOptions": {
         "alpha": 0,
         "beta": 0,

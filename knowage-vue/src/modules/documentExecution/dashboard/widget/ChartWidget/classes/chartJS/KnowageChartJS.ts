@@ -9,11 +9,6 @@ export class KnowageChartJS {
         this.model = this.createNewChartModel()
     }
 
-    dispatchEvent = (e: any) => {
-        // TODO - add mitt ???
-        const myCustomEvent = new CustomEvent(e.type, { detail: e });
-        document.dispatchEvent(myCustomEvent);
-    }
     getModel = () => {
         return this.model;
     }

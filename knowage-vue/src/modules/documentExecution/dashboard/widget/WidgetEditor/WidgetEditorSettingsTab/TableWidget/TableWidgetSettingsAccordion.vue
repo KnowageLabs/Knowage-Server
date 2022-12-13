@@ -28,7 +28,7 @@
                 <TableWidgetConditions v-else-if="accordion.type === 'Conditions'" :widgetModel="widgetModel" :drivers="drivers" :variables="variables"></TableWidgetConditions>
                 <TableWidgetTooltips v-else-if="accordion.type === 'Tooltips'" :widgetModel="widgetModel"></TableWidgetTooltips>
                 <WidgetResponsive v-else-if="accordion.type === 'Responsive'" :widgetModel="widgetModel"></WidgetResponsive>
-                <TableWidgetSelection v-else-if="accordion.type === 'Selection'" :widgetModel="widgetModel"></TableWidgetSelection>
+                <WidgetSelection v-else-if="accordion.type === 'Selection'" :widgetModel="widgetModel"></WidgetSelection>
                 <WidgetCrossNavigation v-else-if="accordion.type === 'CrossNavigation'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :dashboardId="dashboardId"></WidgetCrossNavigation>
                 <WidgetInteractionsLinks v-else-if="accordion.type === 'Link'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :drivers="drivers"></WidgetInteractionsLinks>
                 <WidgetPreview v-else-if="accordion.type === 'Preview'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :drivers="drivers" :dashboardId="dashboardId"></WidgetPreview>
@@ -61,7 +61,7 @@ import WidgetShadowsStyle from '../common/style/WidgetShadowsStyle.vue'
 import TableWidgetConditions from './conditionalStyle/TableWidgetConditions.vue'
 import TableWidgetTooltips from './tooltips/TableWidgetTooltips.vue'
 import WidgetResponsive from '../common/responsive/WidgetResponsive.vue'
-import TableWidgetSelection from './interactions/selection/TableWidgetSelection.vue'
+import WidgetSelection from '../common/interactions/selection/WidgetSelection.vue'
 import WidgetCrossNavigation from '../common/interactions/crossNavigation/WidgetCrossNavigation.vue'
 import WidgetInteractionsLinks from '../common/interactions/link/WidgetInteractionsLinks.vue'
 import WidgetPreview from '../common/interactions/preview/WidgetPreview.vue'
@@ -92,7 +92,7 @@ export default defineComponent({
         TableWidgetConditions,
         TableWidgetTooltips,
         WidgetResponsive,
-        TableWidgetSelection,
+        WidgetSelection,
         WidgetPaddingStyle,
         WidgetBackgroundColorStyle,
         WidgetCrossNavigation,

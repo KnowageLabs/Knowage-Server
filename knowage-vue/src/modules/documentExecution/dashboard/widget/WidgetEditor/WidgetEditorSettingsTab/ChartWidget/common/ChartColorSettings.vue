@@ -40,12 +40,12 @@
 
 <script lang="ts">
 import { defineComponent, PropType, ref } from 'vue'
-import { IWidget } from '../../../../../../Dashboard'
+import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
-import { useClickOutside } from '../../../common/styleToolbar/useClickOutside'
 import { ColorPicker } from 'vue-color-kit'
+import { useClickOutside } from '../../common/styleToolbar/useClickOutside'
 import 'vue-color-kit/dist/vue-color-kit.css'
-import descriptor from '../HighchartsWidgetSettingsDescriptor.json'
+import descriptor from './ChartColorSettingsDescriptor.json'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 
@@ -112,7 +112,7 @@ export default defineComponent({
             emitter.emit('refreshChart', this.widgetModel.id)
         },
         getContrastYIQ(hexcolor) {
-            var getRGBA = function (string) {
+            var getRGBA = function(string) {
                 var match = string.match(/^rgba\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3}),\s*(\d*(?:\.\d+)?)\)$/)
                 return match
                     ? {

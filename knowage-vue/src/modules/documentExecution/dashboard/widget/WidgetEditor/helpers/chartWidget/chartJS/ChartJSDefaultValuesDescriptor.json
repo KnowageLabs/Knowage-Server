@@ -1,4 +1,8 @@
 {
+    "defaultChartJSSelection": {
+        "enabled": true,
+        "modalColumn": ""
+    },
     "defaultLegendSettings": {
         "align": "center",
         "display": true,

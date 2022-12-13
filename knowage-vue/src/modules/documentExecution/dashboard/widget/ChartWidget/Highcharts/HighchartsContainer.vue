@@ -5,14 +5,13 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
-import { IWidget, ISelection } from '../../../Dashboard'
-import { IHighchartsChartModel, IHighchartsChartSerie, IHighchartsSerieAccessibility, IHighchartsSerieLabel, IHighchartsSerieLabelSettings, IHighchartsSeriesLabelsSetting, ISerieAccessibilitySetting } from '../../../interfaces/highcharts/DashboardHighchartsWidget'
+import { IWidget } from '../../../Dashboard'
+import { IHighchartsChartModel, IHighchartsChartSerie, IHighchartsSerieAccessibility, IHighchartsSerieLabelSettings, IHighchartsSeriesLabelsSetting, ISerieAccessibilitySetting } from '../../../interfaces/highcharts/DashboardHighchartsWidget'
 import Highcharts from 'highcharts'
 import Highcharts3D from 'highcharts/highcharts-3d'
 import Accessibility from 'highcharts/modules/accessibility'
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display'
 import SeriesLabel from 'highcharts/modules/series-label'
-import deepcopy from 'deepcopy'
 
 Accessibility(Highcharts)
 NoDataToDisplay(Highcharts)
@@ -74,6 +73,8 @@ export default defineComponent({
             this.error = this.updateTooltipSettings()
             if (this.error) return
 
+            this.updateChartColorSettings()
+
             // // TODO - Remove Hardcoded
             // this.chartModel.series = [
             //     {
@@ -102,7 +103,6 @@ export default defineComponent({
             //         ]
             //     }
             // ] as any[]
-            this.chartModel.plotOptions.pie.colors = this.widgetModel.settings.chart.colors
 
             console.log('>>>>>>>>>>>>>>> CHART TO RENDER: ', this.chartModel)
             Highcharts.chart('container', this.chartModel as any)
@@ -208,6 +208,10 @@ export default defineComponent({
             if (hasError) return hasError
             hasError = this.updateFormatterSettings(this.chartModel.tooltip, null, 'pointFormatter', 'pointFormatterText', 'pointFormatterError')
             return hasError
+        },
+        updateChartColorSettings() {
+            if (!this.chartModel.plotOptions.pie) return
+            this.chartModel.plotOptions.pie.colors = this.widgetModel.settings.chart.colors
         }
     }
 })

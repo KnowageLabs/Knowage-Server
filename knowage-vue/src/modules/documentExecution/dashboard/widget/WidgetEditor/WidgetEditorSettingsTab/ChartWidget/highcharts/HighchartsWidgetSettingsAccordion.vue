@@ -16,7 +16,7 @@
                 <HighchartsLegendSettings v-else-if="accordion.type === 'Legend'" :widgetModel="widgetModel"></HighchartsLegendSettings>
                 <HighchartsTooltipSettings v-else-if="accordion.type === 'Tooltip'" :widgetModel="widgetModel"></HighchartsTooltipSettings>
                 <HighchartsSeriesLabelSettings v-else-if="accordion.type === 'SriesLabel'" :widgetModel="widgetModel"></HighchartsSeriesLabelSettings>
-                <HighchartsColorSettings v-else-if="accordion.type === 'Colors'" :widgetModel="widgetModel"></HighchartsColorSettings>
+                <ChartColorSettings v-else-if="accordion.type === 'Colors'" :widgetModel="widgetModel"></ChartColorSettings>
                 <WidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
                 <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
                 <WidgetRowsStyle v-else-if="accordion.type === 'RowsStyle'" :widgetModel="widgetModel"></WidgetRowsStyle>
@@ -59,7 +59,7 @@ import HighchartsLabelsSettings from '../highcharts/labels/HighchartsLabelsSetti
 import HighchartsLegendSettings from '../highcharts/legend/HighchartsLegendSettings.vue'
 import HighchartsTooltipSettings from '../highcharts/tooltip/HighchartsTooltipSettings.vue'
 import HighchartsSeriesLabelSettings from '../highcharts/series/HighchartsSeriesLabelSettings.vue'
-import HighchartsColorSettings from '../highcharts/chart/HighchartsColorSettings.vue'
+import ChartColorSettings from '../common/ChartColorSettings.vue'
 
 export default defineComponent({
     name: 'hihgcharts-widget-configuration-container',
@@ -85,7 +85,7 @@ export default defineComponent({
         HighchartsLegendSettings,
         HighchartsTooltipSettings,
         HighchartsSeriesLabelSettings,
-        HighchartsColorSettings
+        ChartColorSettings
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

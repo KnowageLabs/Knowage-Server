@@ -10,7 +10,7 @@
 
                 <ChartJSLegendSettings v-if="accordion.type === 'Legend'" :widgetModel="widgetModel"></ChartJSLegendSettings>
                 <ChartJSTooltipSettings v-else-if="accordion.type === 'Tooltip'" :widgetModel="widgetModel"></ChartJSTooltipSettings>
-                <HighchartsColorSettings v-else-if="accordion.type === 'Colors'" :widgetModel="widgetModel"></HighchartsColorSettings>
+                <ChartColorSettings v-else-if="accordion.type === 'Colors'" :widgetModel="widgetModel"></ChartColorSettings>
                 <WidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
                 <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
                 <WidgetRowsStyle v-else-if="accordion.type === 'RowsStyle'" :widgetModel="widgetModel"></WidgetRowsStyle>
@@ -19,6 +19,7 @@
                 <WidgetPaddingStyle v-else-if="accordion.type === 'PaddingStyle'" :widgetModel="widgetModel"></WidgetPaddingStyle>
                 <WidgetShadowsStyle v-else-if="accordion.type === 'ShadowsStyle'" :widgetModel="widgetModel"></WidgetShadowsStyle>
                 <WidgetResponsive v-else-if="accordion.type === 'Responsive'" :widgetModel="widgetModel"></WidgetResponsive>
+                <WidgetSelection v-else-if="accordion.type === 'Selection'" :widgetModel="widgetModel"></WidgetSelection>
                 <WidgetCrossNavigation v-else-if="accordion.type === 'CrossNavigation'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :dashboardId="dashboardId"></WidgetCrossNavigation>
                 <WidgetInteractionsLinks v-else-if="accordion.type === 'Link'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :drivers="drivers"></WidgetInteractionsLinks>
                 <WidgetPreview v-else-if="accordion.type === 'Preview'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :drivers="drivers" :dashboardId="dashboardId"></WidgetPreview>
@@ -39,6 +40,7 @@ import WidgetRowsStyle from '../../common/style/WidgetRowsStyle.vue'
 import WidgetBordersStyle from '../../common/style/WidgetBordersStyle.vue'
 import WidgetShadowsStyle from '../../common/style/WidgetShadowsStyle.vue'
 import WidgetResponsive from '../../common/responsive/WidgetResponsive.vue'
+import WidgetSelection from '../../common/interactions/selection/WidgetSelection.vue'
 import WidgetCrossNavigation from '../../common/interactions/crossNavigation/WidgetCrossNavigation.vue'
 import WidgetInteractionsLinks from '../../common/interactions/link/WidgetInteractionsLinks.vue'
 import WidgetPreview from '../../common/interactions/preview/WidgetPreview.vue'
@@ -47,7 +49,7 @@ import WidgetPaddingStyle from '../../common/style/WidgetPaddingStyle.vue'
 import WidgetBackgroundColorStyle from '../../common/style/WidgetBackgroundColorStyle.vue'
 import ChartJSLegendSettings from './legend/ChartJSLegendSettings.vue'
 import ChartJSTooltipSettings from './tooltip/ChartJSTooltipSettings.vue'
-import HighchartsColorSettings from '../highcharts/chart/HighchartsColorSettings.vue'
+import ChartColorSettings from '../common/ChartColorSettings.vue'
 
 export default defineComponent({
     name: 'chartJS-widget-configuration-container',
@@ -67,7 +69,8 @@ export default defineComponent({
         WidgetPreview,
         ChartJSLegendSettings,
         ChartJSTooltipSettings,
-        HighchartsColorSettings
+        ChartColorSettings,
+        WidgetSelection
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

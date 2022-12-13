@@ -220,7 +220,7 @@ export interface IWidgetPreview {
 export interface IWidgetSelection {
     enabled: boolean
     modalColumn: string
-    multiselection: {
+    multiselection?: {
         enabled: boolean
         properties: {
             'background-color': string

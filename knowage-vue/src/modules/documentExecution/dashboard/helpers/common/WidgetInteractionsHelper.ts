@@ -2,17 +2,29 @@ import { ITableWidgetLink, IWidget, IWidgetCrossNavigation, IWidgetInteractionPa
 import { getColumnId } from "../tableWidget/TableWidgetCompatibilityHelper"
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import * as  tableWidgetDefaultValues from '../../widget/WidgetEditor/helpers/tableWidget/TableWidgetDefaultValues'
+import * as  chartJSDefaultValues from "../../widget/WidgetEditor/helpers/chartWidget/chartJS/ChartJSDefaultValues"
+import * as  highchartsDefaultValues from "../../widget/WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues"
+import mainStore from '@/App.store'
 
 export const getFormattedInteractions = (widget: any) => {
+    console.log("WIDGET: ", widget)
     const interactions = {} as IWidgetInteractions
-    if (['table'].includes(widget.type)) interactions.selection = getFormattedSelection(widget) as IWidgetSelection
-    if (['table', 'html', 'text'].includes(widget.type)) interactions.crosssNavigation = getFormattedCrossNavigation(widget) as IWidgetCrossNavigation
-    if (['table'].includes(widget.type)) interactions.link = getFormattedLinkInteraction(widget) as IWidgetLinks
-    if (['table', 'html', 'text'].includes(widget.type)) interactions.preview = getFormattedPreview(widget) as IWidgetPreview
+    if (['table', 'chart'].includes(widget.type)) interactions.selection = getFormattedSelection(widget) as IWidgetSelection
+    if (['table', 'html', 'text', 'chart'].includes(widget.type)) interactions.crosssNavigation = getFormattedCrossNavigation(widget) as IWidgetCrossNavigation
+    if (['table', 'chart'].includes(widget.type)) interactions.link = getFormattedLinkInteraction(widget) as IWidgetLinks
+    if (['table', 'html', 'text', 'chart'].includes(widget.type)) interactions.preview = getFormattedPreview(widget) as IWidgetPreview
     return interactions
 }
 
-const getFormattedSelection = (widget: IWidget) => {
+const getFormattedSelection = (widget: any) => {
+    if (widget.type === 'table') {
+        return getFormattedTableSelection(widget)
+    } else if (widget.type === 'chart') {
+        return getFormattedChartSelection(widget)
+    }
+}
+
+const getFormattedTableSelection = (widget: any) => {
     if (!widget.settings.multiselectable && !widget.settings.multiselectablecolor && !widget.settings.modalSelectionColumn) return tableWidgetDefaultValues.getDefaultSelection() as IWidgetSelection
     const formattedSelection = {
         enabled: true,
@@ -28,6 +40,18 @@ const getFormattedSelection = (widget: IWidget) => {
 
     return formattedSelection
 }
+
+const getFormattedChartSelection = (widget: IWidget) => {
+    const store = mainStore()
+    console.log(">>>>>>> MAIN STORE: ", store)
+    const user = store.getUser()
+    console.log(">>>>>>> USER: ", user)
+    // TODO
+    // return user?.enterprise ? chartJSDefaultValues.getDefaultChartJSSelections : highchartsDefaultValues.getDefaultHighchartsSelections()
+    return false ? chartJSDefaultValues.getDefaultChartJSSelections : highchartsDefaultValues.getDefaultHighchartsSelections()
+
+}
+
 
 export const getFormattedCrossNavigation = (widget: any) => {
     if (!widget.cross || !widget.cross.cross) return widgetCommonDefaultValues.getDefaultCrossNavigation()
