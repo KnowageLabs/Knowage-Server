@@ -519,7 +519,9 @@ export default defineComponent({
         toggle(event: Event, trOp: string): void {
             // eslint-disable-next-line
             // @ts-ignore
-            this.$refs[trOp].toggle(event)
+            const temp = this.$refs[trOp] as any
+
+            temp[0].toggle(event)
         },
         getMenuForToolbar(): Array<any> {
             let tmp = this.descriptorTransformations
