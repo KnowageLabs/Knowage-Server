@@ -24,6 +24,8 @@
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
 import { IWidgetPickerType } from '../../Dashboard'
+import { mapState } from 'pinia'
+import appStore from '@/App.store'
 import Dialog from 'primevue/dialog'
 import WidgetCard from './WidgetPickerCard.vue'
 import descriptor from './WidgetPickerDescriptor.json'
@@ -40,15 +42,23 @@ export default defineComponent({
             widgetTypes: [] as IWidgetPickerType[]
         }
     },
+    computed: {
+        ...mapState(appStore, {
+            user: 'user'
+        })
+    },
     created() {
         this.getWidgetTypes()
     },
-    computed: {},
     methods: {
         async getWidgetTypes() {
             await this.$http.get(import.meta.env.VITE_DASHBOARD_PATH + `1.0/engine/widget`).then((response: AxiosResponse<any>) => (this.widgetTypes = response.data))
         },
         openWidgetEditor(widget) {
+            console.log('---------------- widget: ', widget)
+            // TODO - change for other lib
+            //if (widget.type === 'chart') widget.type = this.user?.enterprise ? 'highcharts' : 'chartJS'
+            if (widget.type === 'chart') widget.type = false ? 'highcharts' : 'chartJS'
             this.$emit('openNewWidgetEditor', widget)
         }
     }

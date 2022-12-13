@@ -89,6 +89,7 @@ export default defineComponent({
     methods: {
         loadWidget() {
             if (!this.propWidget) return
+            console.log('---------- PROPWIDGET:', this.propWidget)
             this.widget = this.propWidget.new ? createNewWidget(this.propWidget.type) : deepcopy(this.propWidget)
         },
         loadSelectedModelDatasets() {

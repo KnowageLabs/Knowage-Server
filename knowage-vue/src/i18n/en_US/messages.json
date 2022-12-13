@@ -433,6 +433,22 @@
                     "valuesTableHint": "Measures only."
                 }
             },
+            "chartTypes": {
+                "areaChart": "Area Chart",
+                "barChart": "Bar Chart",
+                "bubbleChart": "Bubble Chart",
+                "columnsChart": "Columns Chart",
+                "donutChart": "Donut Chart",
+                "funnelChart": "Funnel Chart",
+                "gauge": "Gauge",
+                "lineChart": "Line Chart",
+                "parallelChart": "Parallel Chart",
+                "pieChart": "Pie Chart",
+                "radar": "Radar",
+                "scatterChart": "Scatter Chart",
+                "stackedColumnsChart": "Stacked Columns Chart",
+                "treemap": "Treemap"
+            },
             "chips": "Chips",
             "colors": {
                 "title": "Colors"

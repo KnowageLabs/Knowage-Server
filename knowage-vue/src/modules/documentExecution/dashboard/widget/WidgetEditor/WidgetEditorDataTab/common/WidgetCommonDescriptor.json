@@ -37,6 +37,73 @@
             "value": "not IN"
         }
     ],
+    "chartTypeOptions": [
+        {
+            "label": "dashboard.widgetEditor.chartTypes.pieChart",
+            "url": "",
+            "value": "pie"
+        },
+        {
+            "label": "dashboard.widgetEditor.chartTypes.donutChart",
+            "url": "",
+            "value": "donut"
+        },
+        {
+            "label": "dashboard.widgetEditor.chartTypes.columnsChart",
+            "url": "",
+            "value": "columns"
+        },
+        {
+            "label": "dashboard.widgetEditor.chartTypes.stackedColumnsChart",
+            "url": "",
+            "value": "stackedColumns"
+        },
+        {
+            "label": "dashboard.widgetEditor.chartTypes.barChart",
+            "url": "",
+            "value": "bar"
+        },
+        {
+            "label": "dashboard.widgetEditor.chartTypes.scatterChart",
+            "url": "",
+            "value": "scatter"
+        },
+        {
+            "label": "dashboard.widgetEditor.chartTypes.areaChart",
+            "url": "",
+            "value": "area"
+        },
+        {
+            "label": "dashboard.widgetEditor.chartTypes.radar",
+            "url": "",
+            "value": "radar"
+        },
+        {
+            "label": "dashboard.widgetEditor.chartTypes.funnelChart",
+            "url": "",
+            "value": "funnel"
+        },
+        {
+            "label": "dashboard.widgetEditor.chartTypes.parallelChart",
+            "url": "",
+            "value": "parallel"
+        },
+        {
+            "label": "dashboard.widgetEditor.chartTypes.gauge",
+            "url": "",
+            "value": "gauge"
+        },
+        {
+            "label": "dashboard.widgetEditor.chartTypes.lineChart",
+            "url": "",
+            "value": "line"
+        },
+        {
+            "label": "dashboard.widgetEditor.chartTypes.treemap",
+            "url": "",
+            "value": "treemap"
+        }
+    ],
     "columnAggregationOptions": [
         {
             "label": "NONE",

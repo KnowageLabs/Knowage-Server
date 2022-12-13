@@ -7,12 +7,17 @@ export interface IChartJSWidgetSettings {
     chartModel: ChartJSPieChartModel | null,
     configuration: IChartJSWidgetConfiguration,
     interactions: IWidgetInteractions,
+    chart: IChartJSChartSettings,
     style: IChartJSWidgetStyle,
     responsive: IWidgetResponsive
 }
 
 export interface IChartJSWidgetConfiguration {
     exports: IWidgetExports
+}
+
+export interface IChartJSChartSettings {
+    colors: string[]
 }
 
 export interface IChartJSWidgetStyle {

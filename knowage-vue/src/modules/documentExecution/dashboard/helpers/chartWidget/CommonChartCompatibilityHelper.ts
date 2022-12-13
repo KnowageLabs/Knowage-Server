@@ -84,4 +84,10 @@ export const getColumnId = (widgetColumnName: string) => {
     return columnNameIdMap[widgetColumnName]
 }
 
-
+export const getFormattedColorSettings = (widget: any) => {
+    let formattedColors = [] as string[]
+    if (widget.content.chartTemplate.CHART.COLORPALETTE.COLOR) {
+        formattedColors = widget.content.chartTemplate.CHART.COLORPALETTE.COLOR.map((oldColor: any) => oldColor.value)
+    }
+    return formattedColors
+}

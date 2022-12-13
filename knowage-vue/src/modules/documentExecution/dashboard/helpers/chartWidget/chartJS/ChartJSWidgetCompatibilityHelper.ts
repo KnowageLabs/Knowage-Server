@@ -4,7 +4,7 @@ import { getFormattedInteractions } from "../../common/WidgetInteractionsHelper"
 import { getFormattedStyle } from "./ChartJSWidgetStyleHelper"
 import { ChartJSPieChart } from "../../../widget/ChartWidget/classes/chartJS/KnowageChartJSPieChart"
 import * as widgetCommonDefaultValues from '../../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
-import { getFormattedWidgetColumns } from "../CommonChartCompatibilityHelper"
+import { getFormattedColorSettings, getFormattedWidgetColumns } from "../CommonChartCompatibilityHelper"
 import { getFiltersForColumns } from "../../DashboardBackwardCompatibilityHelper"
 
 
@@ -34,6 +34,9 @@ const getFormattedWidgetSettings = (widget: any) => {
         chartModel: null,
         configuration: getFormattedConfiguration(widget),
         interactions: getFormattedInteractions(widget) as IWidgetInteractions,
+        chart: {
+            colors: getFormattedColorSettings(widget)
+        },
         style: getFormattedStyle(widget),
         responsive: widgetCommonDefaultValues.getDefaultResponsivnes()
     } as IChartJSWidgetSettings
@@ -51,7 +54,6 @@ const getFormattedConfiguration = (widget: any) => {
 const createChartModel = (widget: any, formattedWidget: IWidget) => {
     switch (widget.content.chartTemplate.CHART.type) {
         case 'PIE':
-            console.log("CREATING !")
             return new ChartJSPieChart(widget.content.chartTemplate, formattedWidget)
         default:
             return null

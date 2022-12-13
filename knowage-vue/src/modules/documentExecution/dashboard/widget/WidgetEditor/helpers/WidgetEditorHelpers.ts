@@ -5,6 +5,7 @@ import { createNewSelectorWidgetSettings } from '../helpers/selectorWidget/Selec
 import { createNewSelectionsWidgetSettings } from '../helpers/selectionsWidget/SelectionsWidgetFunctions'
 import { createNewHtmlWidgetSettings } from './htmlWidget/HTMLWidgetFunctions'
 import { createNewTextWidgetSettings } from './textWidget/TextWidgetFunctions'
+import { createNewChartJSSettings } from './chartWidget/chartJS/ChartJSHelpers'
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
 
@@ -40,6 +41,8 @@ const createNewWidgetSettings = (widget: IWidget) => {
         case 'text':
             widget.settings = createNewTextWidgetSettings()
             break
+        case 'chartJS':
+            widget.settings = createNewChartJSSettings(widget)
     }
 }
 

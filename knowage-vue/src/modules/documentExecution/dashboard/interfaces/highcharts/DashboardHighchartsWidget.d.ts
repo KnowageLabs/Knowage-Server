@@ -10,8 +10,8 @@ export interface IHighchartsWidgetSettings {
     accesssibility: IHighchartsWidgetAccessibility,
     series: IIHighchartsSeriesSetting,
     interactions: IWidgetInteractions,
-    style: IHighchartsWidgetStyle,
     chart: IHighchartsChartSettings,
+    style: IHighchartsWidgetStyle,
     responsive: IWidgetResponsive
 }
 

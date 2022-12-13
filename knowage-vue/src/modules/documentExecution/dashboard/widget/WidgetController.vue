@@ -248,7 +248,7 @@ export default defineComponent({
                 this.inFocus = false
             }
         },
-        resizedEvent: function (i, newH, newW, newHPx, newWPx) {
+        resizedEvent: function(i, newH, newW, newHPx, newWPx) {
             console.log('RESIZED i=' + i + ', H=' + newH + ', W=' + newW + ', H(px)=' + newHPx + ', W(px)=' + newWPx)
             emitter.emit('chartWidgetResized', this.widget)
         }
