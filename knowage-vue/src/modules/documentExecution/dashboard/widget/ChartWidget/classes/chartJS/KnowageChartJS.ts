@@ -13,7 +13,6 @@ export class KnowageChartJS {
         return this.model;
     }
 
-
     createNewChartModel = () => {
         return {
             chart: { type: '' },
