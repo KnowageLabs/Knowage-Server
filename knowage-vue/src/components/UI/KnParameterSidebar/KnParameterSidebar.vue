@@ -29,6 +29,7 @@
                             <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="qbeParameter.value = qbeParameter.defaultValue"></i>
                         </div>
                         <Chips v-if="qbeParameter.multiValue" v-model="qbeParameter.value" />
+                        <small v-if="qbeParameter.multiValue" id="chips-help">{{ $t('common.chipsHint') }}</small>
                         <InputText
                             v-else
                             class="kn-material-input p-inputtext-sm"
