@@ -5,7 +5,7 @@ import * as  chartJSDefaultValues from "../../../WidgetEditor/helpers/chartWidge
 export class KnowageChartJS {
     model: IChartJSChartModel
 
-    constructor(model: any, widgetModel: IWidget) {
+    constructor() {
         this.model = this.createNewChartModel()
     }
 

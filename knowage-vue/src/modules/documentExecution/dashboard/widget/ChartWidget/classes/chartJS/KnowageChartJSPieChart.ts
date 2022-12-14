@@ -4,14 +4,14 @@ import { KnowageChartJS } from "./KnowageChartJS"
 
 export class ChartJSPieChart extends KnowageChartJS {
 
-    constructor(model: any, widgetModel: IWidget) {
-        super(model, widgetModel)
-        if (model && model.CHART) this.updateModel(model, widgetModel)
+    constructor(model: any) {
+        super()
+        if (model && model.CHART) this.updateModel(model)
         else this.model = model
     }
 
-    updateModel = (oldModel: any, widgetModel: IWidget) => {
-        updatePieChartModel(oldModel, this.model, widgetModel)
+    updateModel = (oldModel: any) => {
+        updatePieChartModel(oldModel, this.model)
     }
 
     getModel = () => {

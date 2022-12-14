@@ -27,8 +27,11 @@ export const createNewChartJSSettings = (widget: IWidget) => {
         },
         responsive: widgetCommonDefaultValues.getDefaultResponsivnes()
     } as IChartJSWidgetSettings
-    settings.chartModel = new ChartJSPieChart(null, widget)  // TODO - see about this (when creating dropdown)
-
+    settings.chartModel = new ChartJSPieChart(null)
     return settings
 }
 
+export const formatChartJSWidget = (widget: IWidget) => {
+    console.log(">>>>>>>>>> !!!!!!!! >>>>>>>>>>> WIDGET: ", widget)
+    // if (!widget.settings.chartModel) widget.settings.chartModel = new ChartJSPieChart(null)
+}

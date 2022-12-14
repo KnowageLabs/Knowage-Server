@@ -6,7 +6,7 @@ import { IDrillOrderItem, IHighchartsWidgetSettings } from './interfaces/highcha
 
 export interface IDashboard {
     sheets: []
-    widgets: ITableWidget[]
+    widgets: IWidget[]
     configuration: IDashboardConfiguration
     version: string
 }

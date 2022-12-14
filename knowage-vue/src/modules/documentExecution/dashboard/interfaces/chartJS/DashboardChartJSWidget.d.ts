@@ -40,8 +40,8 @@ export interface IChartJSOptions {
         tooltip: IChartJSTooltipSettings,
         legend: IChartJSLegendSettings
     },
-    responsive?: boolean // TODO - see if needed,
-    maintainAspectRatio?: boolean // TODO - see if needed
+    responsive?: boolean
+    maintainAspectRatio?: boolean
 }
 
 export interface IChartJSTooltipSettings {

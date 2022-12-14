@@ -1,35 +1,39 @@
-import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard"
+import { hexToRgb } from "@/modules/documentExecution/dashboard/helpers/FormattingHelpers"
 import { IChartJSChartModel } from "@/modules/documentExecution/dashboard/interfaces/chartJS/DashboardChartJSWidget"
 
-export const updatePieChartModel = (oldModel: any, newModel: IChartJSChartModel, widgetModel: IWidget) => {
-    console.log("----------------------------------- OLD MODEL: ", oldModel)
-    console.log("----------------------------------- NEW MODEL: ", newModel)
-
+export const updatePieChartModel = (oldModel: any, newModel: IChartJSChartModel) => {
     newModel.chart.type = "pie"
-    // if (oldModel.CHART.COLORPALETTE?.COLOR) {
-    //     newModel.colors = oldModel.CHART.COLORPALETTE.COLOR.map(item => item.value)
-    // }
-
-    // //CATEGORIES
-    // newModel.settings.dimensions = [oldModel.CHART.VALUES.CATEGORY.name]
-
-    // //SERIE
-    // newModel.settings.values = [{
-    //     name: oldModel.CHART.VALUES.SERIE[0].name,
-    //     aggregation: oldModel.CHART.VALUES.SERIE[0].groupingFunction
-    // }]
-
-    // //LEGEND
-    // if (!newModel.options) newModel.options = {}
-    // if (oldModel.CHART.LEGEND?.show) {
-
-    //     newModel.options.legend = {
-    //         display: true,
-    //         align: oldModel.CHART.LEGEND.style?.align || 'center',
-    //         verticalAlign: oldModel.CHART.LEGEND.position,
-    //         layout: 'horizontal',
-    //     }
-    // } else newModel.options.legend = { display: false }
+    getFormattedLegend(oldModel, newModel)
+    getFormattedTooltipSettings(oldModel, newModel)
 
     return newModel
+}
+
+const getFormattedLegend = (oldModel: any, newModel: IChartJSChartModel) => {
+    if (oldModel.CHART.LEGEND) {
+        newModel.options.plugins.legend = {
+            display: oldModel.CHART.LEGEND.show,
+            position: oldModel.CHART.LEGEND.position,
+            align: 'center',
+        }
+    }
+}
+
+const getFormattedTooltipSettings = (oldModel: any, newModel: IChartJSChartModel) => {
+    if (oldModel.CHART.VALUES.SERIE && oldModel.CHART.VALUES.SERIE[0] && oldModel.CHART.VALUES.SERIE[0].TOOLTIP) {
+        const oldTooltipSettings = oldModel.CHART.VALUES.SERIE[0].TOOLTIP
+        newModel.options.plugins.tooltip = {
+            enabled: true,
+            bodyColor: oldTooltipSettings.style.color ? hexToRgb(oldTooltipSettings.style.color) : '',
+            bodyFont: {
+                family: oldTooltipSettings.style.fontFamily,
+                size: oldTooltipSettings.style.fontSize ? oldTooltipSettings.style.fontSize.substring(0, oldTooltipSettings.style.fontSize.lastIndexOf('p')) : 0,
+                style: '',
+                weight: oldTooltipSettings.style.fontWeight,
+            },
+            backgroundColor: oldTooltipSettings.backgroundColor ? hexToRgb(oldTooltipSettings.backgroundColor) : '',
+            bodyAlign: oldTooltipSettings.style.align ?? 'center'
+
+        }
+    }
 }

@@ -46,11 +46,13 @@ export default defineComponent({
             this.updateChartModel()
         },
         updateChartModel() {
-            console.log('>>>>>>>>> UPDATE CHART MODEL: ', this.chartModel)
-            // TODO - see if error
-            if (!this.chartModel) return
+            if (!this.chartModel) {
+                this.resetChart()
+                return
+            }
             this.updateChartOptions()
             this.updateChartData()
+            console.log('>>>>>>>>> UPDATE CHART MODEL: ', this.chartModel)
         },
         updateChartOptions() {
             // TODO see if responsive is needed
@@ -71,6 +73,10 @@ export default defineComponent({
                     }
                 ]
             }
+        },
+        resetChart() {
+            this.chartData = { labels: [], datasets: [] }
+            this.chartOptions = {} as IChartJSOptions
         }
     }
 })

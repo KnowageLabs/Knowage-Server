@@ -21,7 +21,7 @@ export const formatChartJSWidget = (widget: any) => {
 
     formattedWidget.settings = getFormattedWidgetSettings(widget) as IChartJSWidgetSettings
     getFiltersForColumns(formattedWidget, widget)
-    formattedWidget.settings.chartModel = createChartModel(widget, formattedWidget)
+    formattedWidget.settings.chartModel = createChartModel(widget)
     console.log(">>>>>>>>>>> FORMATTED WIDGET: ", formattedWidget)
     return formattedWidget
 }
@@ -51,10 +51,10 @@ const getFormattedConfiguration = (widget: any) => {
 }
 
 
-const createChartModel = (widget: any, formattedWidget: IWidget) => {
+const createChartModel = (widget: any) => {
     switch (widget.content.chartTemplate.CHART.type) {
         case 'PIE':
-            return new ChartJSPieChart(widget.content.chartTemplate, formattedWidget)
+            return new ChartJSPieChart(widget.content.chartTemplate)
         default:
             return null
     }

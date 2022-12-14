@@ -63,6 +63,7 @@ export default defineComponent({
         },
         onStyleToolbarChange(model: IWidgetStyleToolbarModel) {
             if (!this.model || !this.model.options.plugins.tooltip) return
+            console.log('>>>>> MODEL: ', model)
             this.toolbarModel = {
                 'font-family': model['font-family'] ?? '',
                 'font-style': model['font-style'] ?? 'normal',

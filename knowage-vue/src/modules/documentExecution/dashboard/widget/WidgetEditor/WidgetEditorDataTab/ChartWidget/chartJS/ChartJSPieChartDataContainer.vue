@@ -1,15 +1,5 @@
 <template>
     <div v-if="widgetModel">
-        {{ 'WIDGET COLUMNS' }}
-        <br />
-        {{ widgetModel.columns }}
-        <br />
-
-        {{ 'ATTRIBUTES' }}
-        <br />
-        {{ columnTableItems['ATTRIBUTES'] }}
-        <br />
-
         <WidgetEditorColumnTable
             class="p-m-2"
             :widgetModel="widgetModel"
@@ -22,9 +12,6 @@
             @itemSelected="setSelectedColumn"
             @itemDeleted="onColumnDelete"
         ></WidgetEditorColumnTable>
-        {{ 'MEASURES' }}
-        <br />
-        {{ columnTableItems['MEASURES'] }}
         <WidgetEditorColumnTable
             class="p-m-2"
             :widgetModel="widgetModel"
