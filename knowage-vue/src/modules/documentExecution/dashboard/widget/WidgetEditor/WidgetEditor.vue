@@ -22,8 +22,8 @@
                     @settingChanged="onSettingChanged"
                     @datasetSelected="onDatasetSelected"
                 />
-                <!-- <WidgetEditorPreview v-if="selectedSetting != 'Gallery'" :propWidget="widget" :dashboardId="dashboardId" :datasets="selectedModelDatasets" :drivers="documentDrivers" :variables="variables" /> -->
-                <WidgetEditorPreview v-if="selectedSetting != 'Gallery' && false" :propWidget="widget" :dashboardId="dashboardId" :datasets="selectedModelDatasets" :drivers="documentDrivers" :variables="variables" />
+                <WidgetEditorPreview v-if="selectedSetting != 'Gallery'" :propWidget="widget" :dashboardId="dashboardId" :datasets="selectedModelDatasets" :drivers="documentDrivers" :variables="variables" />
+                <!-- <WidgetEditorPreview v-if="selectedSetting != 'Gallery' && false" :propWidget="widget" :dashboardId="dashboardId" :datasets="selectedModelDatasets" :drivers="documentDrivers" :variables="variables" /> -->
             </div>
         </div>
     </Teleport>

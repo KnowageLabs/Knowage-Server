@@ -33,8 +33,8 @@ export const getWidgetData = async (widget: IWidget, datasets: IModelDataset[], 
         case 'text':
             return await getTextWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         case 'highcharts':
-        // TODO
-        // return await getChartWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
+            // TODO
+            return await getChartWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         default:
             break
     }
@@ -430,7 +430,10 @@ export const getChartWidgetData = async (widget: IWidget, datasets: IModelDatase
     var datasetIndex = datasets.findIndex((dataset: IModelDataset) => widget.dataset === dataset.id)
     var selectedDataset = datasets[datasetIndex]
 
-    if (selectedDataset) {
+    var measureCheck = widget.columns.findIndex((column: any) => column.fieldType === 'MEASURE') != -1
+    var categoryCheck = widget.columns.findIndex((column: any) => column.fieldType !== 'MEASURE') != -1
+
+    if (selectedDataset && measureCheck && categoryCheck) {
         console.log('', widget)
         var url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=-1&size=-1&nearRealtime=true`
 
