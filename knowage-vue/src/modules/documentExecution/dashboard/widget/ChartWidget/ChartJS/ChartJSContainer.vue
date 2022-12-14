@@ -43,6 +43,7 @@ export default defineComponent({
         },
         onRefreshChart() {
             this.chartModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
+            this.widgetModel.settings.chartModel.model = this.chartModel
             this.updateChartModel()
         },
         updateChartModel() {

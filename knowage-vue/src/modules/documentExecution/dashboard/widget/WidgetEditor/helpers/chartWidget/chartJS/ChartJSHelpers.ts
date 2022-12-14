@@ -32,6 +32,5 @@ export const createNewChartJSSettings = (widget: IWidget) => {
 }
 
 export const formatChartJSWidget = (widget: IWidget) => {
-    console.log(">>>>>>>>>> !!!!!!!! >>>>>>>>>>> WIDGET: ", widget)
-    // if (!widget.settings.chartModel) widget.settings.chartModel = new ChartJSPieChart(null)
+    widget.settings.chartModel = new ChartJSPieChart(widget.settings.chartModel.model)
 }

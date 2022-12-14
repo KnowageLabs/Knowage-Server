@@ -10,6 +10,7 @@ export class HighchartsPieChart extends KnowageHighcharts {
         if (!this.model.plotOptions.pie) this.setPiePlotOptions()
         if (model && model.CHART) this.updateModel(model, widgetModel)
         else this.model = model
+        this.model.chart.type = "pie"
     }
 
     updateModel = (oldModel: any, widgetModel: IWidget) => {

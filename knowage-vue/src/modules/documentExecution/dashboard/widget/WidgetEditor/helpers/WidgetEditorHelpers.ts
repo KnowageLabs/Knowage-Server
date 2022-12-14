@@ -55,7 +55,8 @@ export function formatWidgetForSave(tempWidget: IWidget) {
         case 'table':
             formatTableWidgetForSave(widget)
     }
-
+    console.log('........................ formatWidgetForSave tempWidget: ', tempWidget)
+    console.log('........................ formatWidgetForSave: ', widget)
     return widget
 }
 

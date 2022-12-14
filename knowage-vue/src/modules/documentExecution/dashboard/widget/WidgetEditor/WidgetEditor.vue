@@ -90,6 +90,8 @@ export default defineComponent({
         loadWidget() {
             if (!this.propWidget) return
             this.widget = this.propWidget.new ? createNewWidget(this.propWidget.type) : deepcopy(this.propWidget)
+            console.log('>>>>>>>>>> LOADED WIDGET: ', this.widget)
+            console.log('>>>>>>>>>> LOADED WIDGET MODEL: ', this.widget.settings.chartModel.getModel())
         },
         loadSelectedModelDatasets() {
             this.selectedModelDatasets = this.dashboardId ? this.dashboardStore.getDashboardSelectedDatasets(this.dashboardId) : {}
@@ -131,9 +133,11 @@ export default defineComponent({
             if (tempWidget.new) {
                 delete tempWidget.new
                 this.dashboardStore.createNewWidget(this.dashboardId, tempWidget)
+                console.log('>>>>>>>>>>>>>>> TEMP WIDGET: ', tempWidget)
                 this.$emit('widgetSaved')
             } else {
                 this.dashboardStore.updateWidget(this.dashboardId, tempWidget)
+                console.log('>>>>>>>>>>>>>>> TEMP WIDGET: ', tempWidget)
                 this.$emit('widgetUpdated')
             }
         },

@@ -8,6 +8,7 @@ export class ChartJSPieChart extends KnowageChartJS {
         super()
         if (model && model.CHART) this.updateModel(model)
         else this.model = model
+        this.model.chart.type = "pie"
     }
 
     updateModel = (oldModel: any) => {
