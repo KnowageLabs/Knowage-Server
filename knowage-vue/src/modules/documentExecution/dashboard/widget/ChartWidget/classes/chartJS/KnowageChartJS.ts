@@ -1,4 +1,3 @@
-import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard";
 import { IChartJSChartModel } from "@/modules/documentExecution/dashboard/interfaces/chartJS/DashboardChartJSWidget";
 import * as  chartJSDefaultValues from "../../../WidgetEditor/helpers/chartWidget/chartJS/ChartJSDefaultValues"
 

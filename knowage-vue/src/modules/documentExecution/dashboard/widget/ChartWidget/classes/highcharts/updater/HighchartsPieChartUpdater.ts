@@ -1,40 +1,13 @@
-import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard"
 import { hexToRgb } from "@/modules/documentExecution/dashboard/helpers/FormattingHelpers"
 import { HighchartsPieChartModel } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget"
 import { IHighchartsOptions3D } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
 
-export const updatePieChartModel = (oldModel: any, newModel: HighchartsPieChartModel, widgetModel: IWidget) => {
-    console.log("----------------------------------- OLD MODEL: ", oldModel)
-    console.log("----------------------------------- NEW MODEL: ", newModel)
-    console.log("----------------------------------- WIDGET MODEL: ", widgetModel)
-    newModel.chart.type = "pie"
-
+export const updatePieChartModel = (oldModel: any, newModel: HighchartsPieChartModel) => {
     getFormatted3DConfiguration(oldModel, newModel)
     getFormattedNoDataConfiguration(oldModel, newModel)
     getFormattedSeries(oldModel, newModel)
     getFormattedLegend(oldModel, newModel)
     getFormattedTooltipSettings(oldModel, newModel)
-
-    // newModel.plotOptions.pie.cursor = 'pointer'
-    // newModel.settings.colorPalette = oldModel.CHART.COLORPALETTE
-
-
-
-    // // CATEGORIES
-    // newModel.settings.categories = [oldModel.CHART.VALUES.CATEGORY.name]
-    // if (oldModel.CHART.VALUES.CATEGORY.groupby) {
-    //     let categoriesArray = oldModel.CHART.VALUES.CATEGORY.groupby.split(',')
-    //     categoriesArray = categoriesArray.map(element => element.trim())
-    //     newModel.settings.categories.push(...categoriesArray)
-    // }
-
-
-    // // DRILLDOWN
-    // if (oldModel.CHART.drillable && newModel.settings.categories.length > 1) {
-    //     newModel.settings.drilldown = true
-    // }
-
-
 
     return newModel
 }
@@ -50,7 +23,6 @@ const getFormatted3DConfiguration = (oldModel: any, newModel: HighchartsPieChart
         } as IHighchartsOptions3D
     }
 }
-
 
 const getFormattedNoDataConfiguration = (oldModel: any, newModel: HighchartsPieChartModel) => {
     if (oldModel.CHART.EMPTYMESSAGE) {

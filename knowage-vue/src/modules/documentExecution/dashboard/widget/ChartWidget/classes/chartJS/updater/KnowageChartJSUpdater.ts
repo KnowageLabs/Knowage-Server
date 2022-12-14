@@ -2,7 +2,6 @@ import { hexToRgb } from "@/modules/documentExecution/dashboard/helpers/Formatti
 import { IChartJSChartModel } from "@/modules/documentExecution/dashboard/interfaces/chartJS/DashboardChartJSWidget"
 
 export const updatePieChartModel = (oldModel: any, newModel: IChartJSChartModel) => {
-    newModel.chart.type = "pie"
     getFormattedLegend(oldModel, newModel)
     getFormattedTooltipSettings(oldModel, newModel)
 

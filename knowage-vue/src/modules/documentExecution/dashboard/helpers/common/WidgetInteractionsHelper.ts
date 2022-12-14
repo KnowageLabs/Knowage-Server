@@ -47,9 +47,8 @@ const getFormattedChartSelection = (widget: IWidget) => {
     const user = store.getUser()
     console.log(">>>>>>> USER: ", user)
     // TODO widgetChange
-    // return user?.enterprise ? chartJSDefaultValues.getDefaultChartJSSelections : highchartsDefaultValues.getDefaultHighchartsSelections()
-    return false ? chartJSDefaultValues.getDefaultChartJSSelections : highchartsDefaultValues.getDefaultHighchartsSelections()
-
+    return user?.enterprise ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections
+    // return false ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections
 }
 
 

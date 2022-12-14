@@ -11,8 +11,6 @@ import { IDataset, IWidget } from '@/modules/documentExecution/Dashboard/Dashboa
 import ChartJSPieChartDataContainer from './ChartJSPieChartDataContainer.vue'
 import ChartWidgetChartTypeDropdown from '../common/ChartWidgetChartTypeDropdown.vue'
 
-// TODO - add chart type
-
 export default defineComponent({
     name: 'chartJS-widget-data-container',
     components: { ChartWidgetChartTypeDropdown, ChartJSPieChartDataContainer },

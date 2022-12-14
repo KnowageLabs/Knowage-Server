@@ -5,7 +5,7 @@ import * as widgetCommonDefaultValues from '../../common/WidgetCommonDefaultValu
 import * as  chartJSDefaultValues from "../chartJS/ChartJSDefaultValues"
 import descriptor from '../../../WidgetEditorSettingsTab/ChartWidget/common/ChartColorSettingsDescriptor.json'
 
-export const createNewChartJSSettings = (widget: IWidget) => {
+export const createNewChartJSSettings = () => {
     const settings = {
         updatable: true,
         clickable: true,
@@ -32,6 +32,5 @@ export const createNewChartJSSettings = (widget: IWidget) => {
 }
 
 export const formatChartJSWidget = (widget: IWidget) => {
-    console.log(">>>>>>>>>> !!!!!!!! >>>>>>>>>>> WIDGET: ", widget)
-    // if (!widget.settings.chartModel) widget.settings.chartModel = new ChartJSPieChart(null)
+    widget.settings.chartModel = new ChartJSPieChart(widget.settings.chartModel.model)
 }

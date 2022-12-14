@@ -75,7 +75,6 @@ export interface IHighchartsChartModel {
     },
     chart: {
         options3d: IHighchartsOptions3D
-        events: any,
         type: string
     },
     noData: IHighchartsNoDataConfiguration,
@@ -228,12 +227,5 @@ export interface IHighchartsSerieLabel {
 }
 
 export interface IHighchartsChartSettings {
-    colors: IHighchartColor[]
-}
-
-export interface IHighchartColor {
-    gradient: string,
-    name: string,
-    order: string,
-    value: string
+    colors: string[]
 }

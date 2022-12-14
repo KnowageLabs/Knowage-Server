@@ -1,5 +1,5 @@
 import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard"
-import { IHighchartsChartModel } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
+import { IHighchartsChartModel, IHighchartsChartSerie, IHighchartsSerieAccessibility, IHighchartsSerieLabelSettings, IHighchartsSeriesLabelsSetting, ISerieAccessibilitySetting } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
 import * as  highchartsDefaultValues from "../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues"
 
 export class KnowageHighcharts {
@@ -7,15 +7,10 @@ export class KnowageHighcharts {
     cardinality: any[]
     range: any[]
 
-    constructor(model: any, widgetModel: IWidget) {
+    constructor() {
         this.model = this.createNewChartModel()
         this.cardinality = [],
             this.range = []
-    }
-
-    initializeEventsDispatcher = () => {
-        // TODO - add mitt
-        if (this.model.settings.drilldown) this.model.chart.events.drilldown = this.dispatchEvent
     }
 
     updateCardinality = async (data: any) => {
@@ -42,7 +37,7 @@ export class KnowageHighcharts {
     }
 
 
-    public getModel = () => {
+    getModel = () => {
         return this.model;
     }
 
@@ -59,16 +54,16 @@ export class KnowageHighcharts {
         document.dispatchEvent(myCustomEvent);
     }
 
+    // TODO
     valueFormatter = (value: any, type: string) => {
         console.log(">>>>>>> valueFormatter - value: ", value, ', type: ', type)
         switch (type) {
             case 'float':
                 new Intl.NumberFormat('it-IT', { notation: 'compact', minimumFractionDigits: 2, maximumFractionDigits: 2, }).format(value)
         }
-        //scale factor
-        //number formatter
-        //date formatter
     }
+
+
 
     createNewChartModel = () => {
         return {
@@ -76,7 +71,6 @@ export class KnowageHighcharts {
             lang: { noData: '' },
             chart: {
                 options3d: highchartsDefaultValues.getDefault3DOptions(),
-                events: {}, // TODO
                 type: ''
             },
             noData: highchartsDefaultValues.getDefaultNoDataConfiguration(),
@@ -92,6 +86,123 @@ export class KnowageHighcharts {
             credits: { enabled: false }
         }
 
+    }
+
+    updateSeriesAccessibilitySettings = (widgetModel: IWidget) => {
+        if (!widgetModel || !widgetModel.settings.accesssibility || !widgetModel.settings.accesssibility.seriesAccesibilitySettings) return
+        this.setAllSeriesAccessibilitySettings(widgetModel)
+        this.setSpecificAccessibilitySettings(widgetModel)
+    }
+
+    setAllSeriesAccessibilitySettings = (widgetModel: IWidget) => {
+        this.model.series.forEach((serie: IHighchartsChartSerie) => {
+            if (this.model.chart.type !== 'pie' && widgetModel.settings.accesssibility.seriesAccesibilitySettings[0] && widgetModel.settings.accesssibility.seriesAccesibilitySettings[0].accessibility.enabled) {
+                serie.accessibility = {
+                    ...widgetModel.settings.accesssibility.seriesAccesibilitySettings[0].accessibility
+                }
+            } else {
+                serie.accessibility = {
+                    enabled: false,
+                    description: '',
+                    exposeAsGroupOnly: false,
+                    keyboardNavigation: { enabled: false }
+                }
+            }
+        })
+    }
+
+    setSpecificAccessibilitySettings = (widgetModel: IWidget) => {
+        const index = this.model.chart.type !== 'pie' ? 1 : 0
+        for (let i = index; i < widgetModel.settings.accesssibility.seriesAccesibilitySettings.length; i++) {
+            const seriesAccesibilitySetting = widgetModel.settings.accesssibility.seriesAccesibilitySettings[i] as ISerieAccessibilitySetting
+            if (seriesAccesibilitySetting.accessibility.enabled) seriesAccesibilitySetting.names.forEach((serieName: string) => this.updateSerieAccessibilitySettings(serieName, seriesAccesibilitySetting.accessibility))
+        }
+    }
+
+    updateSerieAccessibilitySettings = (serieName: string, accessibility: IHighchartsSerieAccessibility) => {
+        const index = this.model.series.findIndex((serie: IHighchartsChartSerie) => serie.name === serieName)
+        if (index !== -1) this.model.series[index].accessibility = { ...accessibility }
+    }
+
+    updateSeriesLabelSettings = (widgetModel: IWidget) => {
+        if (!widgetModel || !widgetModel.settings.series || !widgetModel.settings.series.seriesLabelsSettings) return
+        this.setAllSeriesLabelSettings(widgetModel)
+        this.setSpecificLabelSettings(widgetModel)
+    }
+
+    setAllSeriesLabelSettings = (widgetModel: IWidget) => {
+        this.model.series.forEach((serie: IHighchartsChartSerie) => {
+            if (this.model.chart.type !== 'pie' && widgetModel.settings.series.seriesLabelsSettings[0] && widgetModel.settings.series.seriesLabelsSettings[0].label.enabled) {
+                serie.label = {
+                    ...widgetModel.settings.series.seriesLabelsSettings
+                } // TODO
+            } else {
+                serie.label = {
+                    enabled: true,
+                    style: {
+                        fontFamily: '',
+                        fontSize: '',
+                        fontWeight: '',
+                        color: '',
+                        backgroundColor: ''
+                    },
+                    format: 'Prefix + {name} + Suffix'
+                }
+            }
+        })
+    }
+
+    setSpecificLabelSettings = (widgetModel: IWidget) => {
+        const index = this.model.chart.type !== 'pie' ? 1 : 0
+        for (let i = index; i < widgetModel.settings.series.seriesLabelsSettings.length; i++) {
+            const seriesLabelSetting = widgetModel.settings.series.seriesLabelsSettings[i] as IHighchartsSeriesLabelsSetting
+            if (seriesLabelSetting.label.enabled) seriesLabelSetting.names.forEach((serieName: string) => this.updateSerieLabelSettings(serieName, seriesLabelSetting.label))
+        }
+    }
+
+    updateSerieLabelSettings = (serieName: string, label: IHighchartsSerieLabelSettings) => {
+        const index = this.model.series.findIndex((serie: IHighchartsChartSerie) => serie.name === serieName)
+        if (index !== -1) {
+            // TODO - put formatting here
+        }
+    }
+
+    updateFormatterSettings = (object: any, formatProperty: string | null, formatterProperty: string, formatterTextProperty: string, formatterErrorProperty: string) => {
+        let hasError = false
+        if (formatProperty && object[formatProperty]?.trim() === '') delete object[formatProperty]
+        if (!object[formatterTextProperty] || !object[formatterTextProperty].trim()) {
+            delete object[formatterProperty]
+            object[formatterErrorProperty] = ''
+            return hasError
+        } else {
+            try {
+                const fn = eval(`(${object[formatterTextProperty]})`)
+                if (typeof fn === 'function') object[formatterProperty] = fn
+                object[formatterErrorProperty] = ''
+            } catch (error) {
+                object[formatterErrorProperty] = (error as any).message
+                hasError = true
+            }
+        }
+
+        return hasError
+    }
+
+    updateLegendSettings = () => {
+        if (this.model.plotOptions.pie) this.model.plotOptions.pie.showInLegend = true
+        return this.updateFormatterSettings(this.model.legend, 'labelFormat', 'labelFormatter', 'labelFormatterText', 'labelFormatterError')
+    }
+
+    updateTooltipSettings = () => {
+        let hasError = this.updateFormatterSettings(this.model.tooltip, null, 'formatter', 'formatterText', 'formatterError')
+        if (hasError) return hasError
+        hasError = this.updateFormatterSettings(this.model.tooltip, null, 'pointFormatter', 'pointFormatterText', 'pointFormatterError')
+        return hasError
+    }
+
+    updateChartColorSettings = (widgetModel: IWidget) => {
+        if (!this.model.plotOptions.pie) return
+        this.model.plotOptions.pie.colors = widgetModel.settings.chart.colors
     }
 
 }

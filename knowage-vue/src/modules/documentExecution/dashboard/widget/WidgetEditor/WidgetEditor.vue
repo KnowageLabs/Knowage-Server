@@ -132,9 +132,11 @@ export default defineComponent({
             if (tempWidget.new) {
                 delete tempWidget.new
                 this.dashboardStore.createNewWidget(this.dashboardId, tempWidget)
+                console.log('>>>>>>>>>>>>>>> TEMP WIDGET: ', tempWidget)
                 this.$emit('widgetSaved')
             } else {
                 this.dashboardStore.updateWidget(this.dashboardId, tempWidget)
+                console.log('>>>>>>>>>>>>>>> TEMP WIDGET: ', tempWidget)
                 this.$emit('widgetUpdated')
             }
         },
