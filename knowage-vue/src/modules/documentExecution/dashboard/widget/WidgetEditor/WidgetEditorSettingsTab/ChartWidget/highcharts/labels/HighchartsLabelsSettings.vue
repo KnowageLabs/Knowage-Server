@@ -1,6 +1,5 @@
 <template>
     <div v-if="model?.plotOptions?.pie?.dataLabels" class="p-grid p-jc-center p-ai-center p-p-4">
-        {{ model.plotOptions.pie.dataLabels }}
         <div class="p-col-12 p-grid p-ai-center p-p-4">
             <label class="kn-material-input-label p-mr-2">{{ $t('common.enabled') }}</label>
             <InputSwitch v-model="model.plotOptions.pie.dataLabels.enabled" @change="modelChanged"></InputSwitch>
@@ -102,7 +101,7 @@ export default defineComponent({
                     'font-size': this.model.plotOptions.pie.dataLabels.style.fontSize,
                     'font-weight': this.model.plotOptions.pie.dataLabels.style.fontWeight,
                     color: this.model.plotOptions.pie.dataLabels.style.color,
-                    'background-color': this.model.plotOptions.pie.dataLabels.style.backgroundColor
+                    'background-color': this.model.plotOptions.pie.dataLabels.backgroundColor
                 }
         },
         modelChanged() {
@@ -118,9 +117,9 @@ export default defineComponent({
                 color: model.color ?? '',
                 'background-color': model['background-color'] ?? ''
             }
+            this.model.plotOptions.pie.dataLabels.backgroundColor = this.toolbarModel['background-color'] ?? ''
             this.model.plotOptions.pie.dataLabels.style = {
                 textAlign: this.getTextAlignValue(this.toolbarModel['justify-content']),
-                backgroundColor: this.toolbarModel['background-color'] ?? '',
                 color: this.toolbarModel.color ?? '',
                 fontSize: this.toolbarModel['font-size'] ?? '14px',
                 fontFamily: this.toolbarModel['font-family'] ?? '',

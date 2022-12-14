@@ -50,8 +50,6 @@ export default defineComponent({
             emitter.on('chartWidgetResized', (widget) => this.onRefreshChart())
         },
         onRefreshChart() {
-            console.log('>>>>>>>>>>> this.widgetModel.settings', this.widgetModel.settings)
-            if (!this.widgetModel.settings.chartModel) return
             this.chartModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
             this.widgetModel.settings.chartModel.model = this.chartModel
             this.updateChartModel()
@@ -76,34 +74,34 @@ export default defineComponent({
 
             this.widgetModel.settings.chartModel.updateChartColorSettings(this.widgetModel)
 
-            // TODO - Remove Hardcoded
-            // this.chartModel.series = [
-            //     {
-            //         type: 'pie',
-            //         name: 'Share',
-            //         dataLabels: { enabled: true, format: '{point.percentage}' },
-            //         data: [
-            //             {
-            //                 name: 'Xiaomi',
-            //                 y: 12,
-            //                 sliced: true,
-            //                 selected: true
-            //             },
-            //             {
-            //                 name: 'Samsung',
-            //                 y: 10,
-            //                 sliced: true,
-            //                 selected: true
-            //             },
-            //             {
-            //                 name: 'Motorola',
-            //                 y: 5,
-            //                 sliced: true,
-            //                 selected: true
-            //             }
-            //         ]
-            //     }
-            // ] as any[]
+            //TODO - Remove Hardcoded
+            this.chartModel.series = [
+                {
+                    type: 'pie',
+                    name: 'Share',
+                    // dataLabels: { enabled: true, format: '{point.percentage}' },
+                    data: [
+                        {
+                            name: 'Xiaomi',
+                            y: 12,
+                            sliced: true,
+                            selected: true
+                        },
+                        {
+                            name: 'Samsung',
+                            y: 10,
+                            sliced: true,
+                            selected: true
+                        },
+                        {
+                            name: 'Motorola',
+                            y: 5,
+                            sliced: true,
+                            selected: true
+                        }
+                    ]
+                }
+            ] as any[]
 
             console.log('>>>>>>>>>>>>>>> CHART TO RENDER: ', this.chartModel)
             Highcharts.chart('container', this.chartModel as any)

@@ -114,7 +114,7 @@ export default defineComponent({
         return {
             descriptor,
             model: null as HighchartsPieChartModel | null,
-            toolbarModel: {} as { 'font-family': string; 'font-size': string; 'font-weight': string; color: string; 'background-color': string },
+            toolbarModel: {} as { 'font-family': string; 'font-size': string; 'font-weight': string; 'border-color': string; color: string; 'background-color': string },
             advancedVisible: false,
             getTranslatedLabel
         }
@@ -138,6 +138,7 @@ export default defineComponent({
                     'font-family': this.model.legend.itemStyle.fontFamily,
                     'font-size': this.model.legend.itemStyle.fontSize,
                     'font-weight': this.model.legend.itemStyle.fontWeight,
+                    'border-color': '',
                     color: this.model.legend.itemStyle.color,
                     'background-color': this.model.legend.backgroundColor
                 }
@@ -147,14 +148,17 @@ export default defineComponent({
             emitter.emit('refreshChart', this.widgetModel.id)
         },
         onStyleToolbarChange(model: IWidgetStyleToolbarModel) {
+            console.log('>>>>> ON CHANGE MODEL ', model)
             if (!this.model || !this.model.legend) return
             this.toolbarModel = {
                 'font-family': model['font-family'] ?? '',
                 'font-size': model['font-size'] ?? '14px',
                 'font-weight': model['font-weight'] ?? '',
+                'border-color': model['border-color'] ?? '',
                 color: model.color ?? '',
                 'background-color': model['background-color'] ?? ''
             }
+            this.model.legend.borderColor = this.toolbarModel['border-color'] ?? ''
             this.model.legend.backgroundColor = this.toolbarModel['background-color'] ?? ''
             this.model.legend.itemStyle = {
                 color: this.toolbarModel.color ?? '',

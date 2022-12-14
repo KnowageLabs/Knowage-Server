@@ -87,6 +87,7 @@
     },
     "icons": {
         "background-color": "fas fa-paint-roller",
+        "border-color": "fas fa-border-top-left",
         "color": "fas fa-fill-drip",
         "font-family": "fas fa-font",
         "font-size": "fas fa-text-height",
@@ -15669,6 +15670,7 @@
     ],
     "tooltips": {
         "background-color": "dashboard.widgetEditor.iconTooltips.backgroundColor",
+        "border-color": "dashboard.widgetEditor.iconTooltips.borderColor",
         "color": "dashboard.widgetEditor.iconTooltips.fontColor",
         "font-family": "dashboard.widgetEditor.iconTooltips.fontFamily",
         "font-size": "dashboard.widgetEditor.iconTooltips.fontSize",

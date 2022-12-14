@@ -139,9 +139,9 @@ export interface IHighchartsPieChartDataLabels {
         fontSize: string
         fontWeight: string
         color: string
-        backgroundColor: string
         textAlign: string
     }
+    backgroundColor: string,
     format?: string,
     formatter?: Function,
     formatterText?: string, // TODO - Remove for BE ???
@@ -154,7 +154,6 @@ export interface IHighchartsChartSerie {
     groupingFunction: string,
     data: IHighchartsChartSerieData[]
     accessibility: IHighchartsSerieAccessibility,
-    label: IHighchartsSerieLabel
 }
 
 
@@ -189,6 +188,7 @@ export interface IHighchartsLegend {
         fontWeight: string
         color: string
     },
+    borderWidth: number,
     backgroundColor: string,
     borderColor: string,
     labelFormat?: string,
@@ -212,18 +212,6 @@ export interface IHighchartsTooltip {
     pointFormatter?: Function,
     pointFormatterText?: string, // TODO - Remove for BE ???
     pointFormatterError?: string  // TODO - Remove for BE
-}
-
-export interface IHighchartsSerieLabel {
-    enabled: boolean,
-    style: {
-        fontFamily: string
-        fontSize: string
-        fontWeight: string
-        color: string
-        backgroundColor: string
-    },
-    format: string
 }
 
 export interface IHighchartsChartSettings {

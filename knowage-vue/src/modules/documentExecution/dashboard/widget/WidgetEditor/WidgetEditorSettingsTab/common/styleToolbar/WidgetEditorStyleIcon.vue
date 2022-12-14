@@ -8,7 +8,7 @@
             </div>
             <span v-if="option.type === 'font-size'" class="icon-display-value-span p-ml-1">{{ '(' + displayValue + ')' }}</span>
         </div>
-        <ColorPicker class="dashboard-color-picker click-outside" v-if="(option.type === 'color' || option.type === 'background-color') && colorPickerVisible" theme="light" :color="color" :sucker-hide="true" @changeColor="changeColor" />
+        <ColorPicker class="dashboard-color-picker click-outside" v-if="['border-color', 'color', 'background-color'].includes(option.type) && colorPickerVisible" theme="light" :color="color" :sucker-hide="true" @changeColor="changeColor" />
         <WidgetEditorToolbarContextMenu
             class="context-menu"
             v-show="(option.type === 'font-size' || option.type === 'justify-content' || option.type === 'font-family') && contextMenuVisible"
@@ -50,10 +50,10 @@ export default defineComponent({
     },
     computed: {
         showArowDown() {
-            return ['font-size', 'justify-content', 'color', 'background-color', 'font-family'].includes(this.option.type)
+            return ['font-size', 'justify-content', 'border-color', 'color', 'background-color', 'font-family'].includes(this.option.type)
         },
         showCircleIcon() {
-            return ['color', 'background-color'].includes(this.option.type)
+            return ['border-color', 'color', 'background-color'].includes(this.option.type)
         }
     },
     watch: {
@@ -103,6 +103,10 @@ export default defineComponent({
                 case 'font-size':
                     this.displayValue = this.model['font-size'] ?? ''
                     break
+                case 'border-color':
+                    this.color = this.model['border-color'] ? getRGBColorFromString(this.model['border-color']) : null
+                    this.newColor = this.model['border-color'] ?? ''
+                    break
                 case 'color':
                     this.color = this.model.color ? getRGBColorFromString(this.model.color) : null
                     this.newColor = this.model.color ?? ''
@@ -140,7 +144,7 @@ export default defineComponent({
             this.colorPickTimer = setTimeout(() => {
                 if (!color || !this.model) return
                 this.newColor = `rgba(${r}, ${g}, ${b}, ${a})`
-                this.option.type === 'color' ? (this.model.color = this.newColor) : (this.model['background-color'] = this.newColor)
+                this.model[this.option.type] = this.newColor
                 this.$emit('change')
             }, 200)
         },
@@ -165,6 +169,7 @@ export default defineComponent({
         openAdditionalComponents() {
             if (this.disabled) return
             switch (this.option.type) {
+                case 'border-color':
                 case 'color':
                 case 'background-color':
                     this.changeColorPickerVisibility()

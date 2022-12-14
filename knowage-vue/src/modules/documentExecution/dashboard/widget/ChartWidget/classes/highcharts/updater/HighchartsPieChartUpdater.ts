@@ -3,6 +3,8 @@ import { HighchartsPieChartModel } from "@/modules/documentExecution/dashboard/i
 import { IHighchartsOptions3D } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
 
 export const updatePieChartModel = (oldModel: any, newModel: HighchartsPieChartModel) => {
+    console.log(">>>>>>>>>> OLD MODEL: ", oldModel)
+    console.log(">>>>>>>>>> NEW MODEL: ", newModel)
     getFormatted3DConfiguration(oldModel, newModel)
     getFormattedNoDataConfiguration(oldModel, newModel)
     getFormattedSeries(oldModel, newModel)
@@ -54,17 +56,6 @@ const getFormattedSeries = (oldModel: any, newModel: HighchartsPieChartModel) =>
                 description: '',
                 exposeAsGroupOnly: false,
                 keyboardNavigation: { enabled: false }
-            },
-            label: {
-                enabled: false,
-                style: {
-                    fontFamily: '',
-                    fontSize: '',
-                    fontWeight: '',
-                    color: '',
-                    backgroundColor: ''
-                },
-                format: ''
             }
         })
     }
@@ -84,6 +75,7 @@ const getFormattedLegend = (oldModel: any, newModel: HighchartsPieChartModel) =>
                 color: oldModel.CHART.LEGEND.style.color ? hexToRgb(oldModel.CHART.LEGEND.style.color) : ''
             },
             backgroundColor: oldModel.CHART.LEGEND.style.backgroundColor ? hexToRgb(oldModel.CHART.LEGEND.style.backgroundColor) : '',
+            borderWidth: 1,
             borderColor: ''
         }
     }

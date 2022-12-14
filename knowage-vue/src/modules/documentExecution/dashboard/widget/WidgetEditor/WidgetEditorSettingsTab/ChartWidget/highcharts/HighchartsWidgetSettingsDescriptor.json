@@ -1,10 +1,6 @@
 {
     "alignmentOptions": [
         {
-            "label": "",
-            "value": ""
-        },
-        {
             "label": "common.left",
             "value": "left"
         },
@@ -71,10 +67,6 @@
     ],
     "layoutOptions": [
         {
-            "label": "",
-            "value": ""
-        },
-        {
             "label": "common.horizontal",
             "value": "horizontal"
         },
@@ -96,6 +88,9 @@
         },
         {
             "type": "font-family"
+        },
+        {
+            "type": "border-color"
         },
         {
             "type": "color"
@@ -294,10 +289,6 @@
         }
     ],
     "verticalAlignmentOptions": [
-        {
-            "label": "",
-            "value": ""
-        },
         {
             "label": "common.bottom",
             "value": "bottom"

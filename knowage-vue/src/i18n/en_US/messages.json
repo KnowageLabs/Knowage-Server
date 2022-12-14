@@ -587,6 +587,7 @@
             "iconTooltips": {
                 "backgroundColor": "Background color",
                 "bold": "Bold",
+                "borderColor": "Border color",
                 "fontColor": "Font color",
                 "fontFamily": "Font family",
                 "fontSize": "Font size",

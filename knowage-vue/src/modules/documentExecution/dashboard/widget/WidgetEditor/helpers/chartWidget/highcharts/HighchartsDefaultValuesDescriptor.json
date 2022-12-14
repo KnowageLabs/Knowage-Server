@@ -21,6 +21,7 @@
         "align": "center",
         "backgroundColor": "",
         "borderColor": "",
+        "borderWidth": 1,
         "enabled": true,
         "itemStyle": {
             "color": "",
@@ -29,12 +30,12 @@
             "fontWeight": ""
         },
         "layout": "horizontal",
-        "verticalAlign": "bottom"
+        "verticalAlign": "top"
     },
     "defaultNoDataConfiguration": {
         "position": {
-            "align": "",
-            "verticalAlign": ""
+            "align": "left",
+            "verticalAlign": "top"
         },
         "style": {
             "backgroundColor": "",
@@ -48,10 +49,10 @@
         "allowPointSelect": false,
         "cursor": "",
         "dataLabels": {
+            "backgroundColor": "",
             "distance": 30,
             "enabled": false,
             "style": {
-                "backgroundColor": "",
                 "color": "",
                 "fontFamily": "",
                 "fontSize": "14px",
