@@ -1088,7 +1088,7 @@ public class ManageDataSetsForREST {
 			IDataSet ds = DAOFactory.getDataSetDAO().loadDataSetByLabel(dataSetLabel);
 			IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(ds.getDataSource().getLabel());
 			dataSet.setDataSource(dataSource);
-			dataSet.setSourceDataset(dataSource);
+//			dataSet.setSourceDataset(dataSource);
 		}
 	}
 

@@ -74,6 +74,7 @@ import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.iterator.CsvStreamingOutput;
@@ -270,8 +271,12 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 		String stringDrivers = envs.get(DRIVERS);
 		Map<String, Object> drivers = null;
+		Map<String, Object> datasets = null;
+		Map<String, Object> envs2 = getEnv();
+		List<Object> listDatasets = (List<Object>) envs2.get("DATASETS");
 		try {
 			drivers = JSONObjectDeserializator.getHashMapFromString(stringDrivers);
+
 		} catch (Exception e) {
 			logger.debug("Drivers cannot be transformed from string to map");
 			throw new SpagoBIRestServiceException("Drivers cannot be transformed from string to map", buildLocaleFromSession(), e);
@@ -289,6 +294,14 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			logger.debug("Executing query ...");
 			Integer maxSize = QbeEngineConfig.getInstance().getResultLimit();
 			logger.debug("Configuration setting  [" + "QBE.QBE-SQL-RESULT-LIMIT.value" + "] is equals to [" + (maxSize != null ? maxSize : "none") + "]");
+
+			if (listDatasets.get(0) instanceof JDBCDataSet) {
+				JDBCDataSet dsInitial = (JDBCDataSet) listDatasets.get(0);
+				statement.setInitialDataset(dsInitial);
+				qbeDataSet.setStatement(statement);
+				dataSet = getActiveQueryAsDataSet(q, statement);
+				dataSet.setDrivers(drivers);
+			}
 			String jpaQueryStr = statement.getQueryString();
 
 			logger.debug("Executable query (HQL/JPQL): [" + jpaQueryStr + "]");
@@ -902,6 +915,34 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 	private IDataSet getActiveQueryAsDataSet(Query q) {
 		IStatement statement = getEngineInstance().getDataSource().createStatement(q);
+		IDataSet dataSet;
+		try {
+
+			dataSet = QbeDatasetFactory.createDataSet(statement);
+			boolean isMaxResultsLimitBlocking = QbeEngineConfig.getInstance().isMaxResultLimitBlocking();
+			dataSet.setAbortOnOverflow(isMaxResultsLimitBlocking);
+
+			Map userAttributes = new HashMap();
+			UserProfile userProfile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+			userAttributes.putAll(userProfile.getUserAttributes());
+			userAttributes.put(SsoServiceInterface.USER_ID, userProfile.getUserId().toString());
+
+			dataSet.addBinding("attributes", userAttributes);
+			dataSet.addBinding("parameters", this.getEnv());
+			dataSet.setUserProfileAttributes(userAttributes);
+
+			dataSet.setParamsMap(this.getEnv());
+
+		} catch (Exception e) {
+			logger.debug("Error getting the data set from the query");
+			throw new SpagoBIRuntimeException("Error getting the data set from the query", e);
+		}
+		logger.debug("Dataset correctly taken from the query ");
+		return dataSet;
+
+	}
+
+	private IDataSet getActiveQueryAsDataSet(Query q, IStatement statement) {
 		IDataSet dataSet;
 		try {
 

@@ -103,7 +103,7 @@ public class SQLStatement extends AbstractStatement {
 
 		whereClause = SQLStatementWhereClause.injectAutoJoins(this, whereClause, query, entityAliasesMaps);
 
-		fromClause = SQLStatementFromClause.build(this, query, entityAliasesMaps);
+		fromClause = SQLStatementFromClause.build(this, query, entityAliasesMaps, initialDataset);
 
 		queryStr = selectClause + " " + fromClause + " " + whereClause + " " + groupByClause + " " + havingClause + " " + orderByClause;
 
