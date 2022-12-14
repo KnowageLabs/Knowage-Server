@@ -52,10 +52,10 @@ export default defineComponent({
         },
         onRefreshChart() {
             this.chartModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
+            this.widgetModel.settings.chartModel.model = this.chartModel
             this.updateChartModel()
         },
         updateChartModel() {
-            // Create the chart
             Highcharts.setOptions({
                 lang: {
                     noData: this.chartModel.lang.noData
@@ -64,154 +64,19 @@ export default defineComponent({
 
             this.widgetModel.settings.chartModel.setData(this.dataToShow, this.widgetModel)
 
-            this.updateSeriesAccessibilitySettings()
-            this.updateSeriesLabelSettings()
-            this.error = this.updateFormatterSettings(this.chartModel.plotOptions.pie?.dataLabels, 'format', 'formatter', 'formatterText', 'formatterError')
+            this.widgetModel.settings.chartModel.updateSeriesAccessibilitySettings(this.widgetModel)
+            this.widgetModel.settings.chartModel.updateSeriesLabelSettings(this.widgetModel)
+            this.error = this.widgetModel.settings.chartModel.updateFormatterSettings(this.chartModel.plotOptions.pie?.dataLabels, 'format', 'formatter', 'formatterText', 'formatterError')
             if (this.error) return
-            this.error = this.updateLegendSettings()
+            this.error = this.widgetModel.settings.chartModel.updateLegendSettings()
             if (this.error) return
-            this.error = this.updateTooltipSettings()
+            this.error = this.widgetModel.settings.chartModel.updateTooltipSettings()
             if (this.error) return
 
-            this.updateChartColorSettings()
-
-            // // TODO - Remove Hardcoded
-            // this.chartModel.series = [
-            //     {
-            //         type: 'pie',
-            //         name: 'Share',
-            //         dataLabels: { enabled: true, format: '{point.percentage}' },
-            //         data: [
-            //             {
-            //                 name: 'Xiaomi',
-            //                 y: 12,
-            //                 sliced: true,
-            //                 selected: true
-            //             },
-            //             {
-            //                 name: 'Samsung',
-            //                 y: 10,
-            //                 sliced: true,
-            //                 selected: true
-            //             },
-            //             {
-            //                 name: 'Motorola',
-            //                 y: 5,
-            //                 sliced: true,
-            //                 selected: true
-            //             }
-            //         ]
-            //     }
-            // ] as any[]
+            this.widgetModel.settings.chartModel.updateChartColorSettings(this.widgetModel)
 
             console.log('>>>>>>>>>>>>>>> CHART TO RENDER: ', this.chartModel)
             Highcharts.chart('container', this.chartModel as any)
-        },
-        updateSeriesAccessibilitySettings() {
-            if (!this.widgetModel || !this.widgetModel.settings.accesssibility || !this.widgetModel.settings.accesssibility.seriesAccesibilitySettings) return
-            this.setAllSeriesAccessibilitySettings()
-            this.setSpecificAccessibilitySettings()
-        },
-        setAllSeriesAccessibilitySettings() {
-            this.chartModel.series.forEach((serie: IHighchartsChartSerie) => {
-                if (this.chartModel.chart.type !== 'pie' && this.widgetModel.settings.accesssibility.seriesAccesibilitySettings[0] && this.widgetModel.settings.accesssibility.seriesAccesibilitySettings[0].accessibility.enabled) {
-                    serie.accessibility = {
-                        ...this.widgetModel.settings.accesssibility.seriesAccesibilitySettings[0].accessibility
-                    }
-                } else {
-                    serie.accessibility = {
-                        enabled: false,
-                        description: '',
-                        exposeAsGroupOnly: false,
-                        keyboardNavigation: { enabled: false }
-                    }
-                }
-            })
-        },
-        setSpecificAccessibilitySettings() {
-            const index = this.chartModel.chart.type !== 'pie' ? 1 : 0
-            for (let i = index; i < this.widgetModel.settings.accesssibility.seriesAccesibilitySettings.length; i++) {
-                const seriesAccesibilitySetting = this.widgetModel.settings.accesssibility.seriesAccesibilitySettings[i] as ISerieAccessibilitySetting
-                if (seriesAccesibilitySetting.accessibility.enabled) seriesAccesibilitySetting.names.forEach((serieName: string) => this.updateSerieAccessibilitySettings(serieName, seriesAccesibilitySetting.accessibility))
-            }
-        },
-        updateSerieAccessibilitySettings(serieName: string, accessibility: IHighchartsSerieAccessibility) {
-            const index = this.chartModel.series.findIndex((serie: IHighchartsChartSerie) => serie.name === serieName)
-            if (index !== -1) this.chartModel.series[index].accessibility = { ...accessibility }
-        },
-        updateSeriesLabelSettings() {
-            if (!this.widgetModel || !this.widgetModel.settings.series || !this.widgetModel.settings.series.seriesLabelsSettings) return
-            this.setAllSeriesLabelSettings()
-            this.setSpecificLabelSettings()
-        },
-        setAllSeriesLabelSettings() {
-            this.chartModel.series.forEach((serie: IHighchartsChartSerie) => {
-                if (this.chartModel.chart.type !== 'pie' && this.widgetModel.settings.series.seriesLabelsSettings[0] && this.widgetModel.settings.series.seriesLabelsSettings[0].label.enabled) {
-                    serie.label = {
-                        ...this.widgetModel.settings.series.seriesLabelsSettings
-                    } // TODO
-                } else {
-                    serie.label = {
-                        enabled: true,
-                        style: {
-                            fontFamily: '',
-                            fontSize: '',
-                            fontWeight: '',
-                            color: '',
-                            backgroundColor: ''
-                        },
-                        format: 'Prefix + {name} + Suffix'
-                    }
-                }
-            })
-        },
-        setSpecificLabelSettings() {
-            // const index = this.chartModel.chart.type !== 'pie' ? 1 : 0
-            const index = 0
-            for (let i = index; i < this.widgetModel.settings.series.seriesLabelsSettings.length; i++) {
-                const seriesLabelSetting = this.widgetModel.settings.series.seriesLabelsSettings[i] as IHighchartsSeriesLabelsSetting
-                if (seriesLabelSetting.label.enabled) seriesLabelSetting.names.forEach((serieName: string) => this.updateSerieLabelSettings(serieName, seriesLabelSetting.label))
-            }
-        },
-        updateSerieLabelSettings(serieName: string, label: IHighchartsSerieLabelSettings) {
-            const index = this.chartModel.series.findIndex((serie: IHighchartsChartSerie) => serie.name === serieName)
-            if (index !== -1) {
-                // TODO
-            }
-        },
-        updateFormatterSettings(object: any, formatProperty: string | null, formatterProperty: string, formatterTextProperty: string, formatterErrorProperty: string) {
-            let hasError = false
-            if (formatProperty && object[formatProperty]?.trim() === '') delete object[formatProperty]
-            if (!object[formatterTextProperty] || !object[formatterTextProperty].trim()) {
-                delete object[formatterProperty]
-                object[formatterErrorProperty] = ''
-                return hasError
-            } else {
-                try {
-                    const fn = eval(`(${object[formatterTextProperty]})`)
-                    if (typeof fn === 'function') object[formatterProperty] = fn
-                    object[formatterErrorProperty] = ''
-                } catch (error) {
-                    object[formatterErrorProperty] = (error as any).message
-                    hasError = true
-                }
-            }
-
-            return hasError
-        },
-        updateLegendSettings() {
-            if (this.chartModel.plotOptions.pie) this.chartModel.plotOptions.pie.showInLegend = true
-            return this.updateFormatterSettings(this.chartModel.legend, 'labelFormat', 'labelFormatter', 'labelFormatterText', 'labelFormatterError')
-        },
-        updateTooltipSettings() {
-            let hasError = this.updateFormatterSettings(this.chartModel.tooltip, null, 'formatter', 'formatterText', 'formatterError')
-            if (hasError) return hasError
-            hasError = this.updateFormatterSettings(this.chartModel.tooltip, null, 'pointFormatter', 'pointFormatterText', 'pointFormatterError')
-            return hasError
-        },
-        updateChartColorSettings() {
-            if (!this.chartModel.plotOptions.pie) return
-            this.chartModel.plotOptions.pie.colors = this.widgetModel.settings.chart.colors
         }
     }
 })
