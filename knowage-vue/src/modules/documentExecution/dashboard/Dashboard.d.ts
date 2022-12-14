@@ -669,3 +669,9 @@ interface IGalleryitemCode {
     python: string
     css: string
 }
+
+export interface IChartType {
+    label: string
+    value: string
+    url: string
+}

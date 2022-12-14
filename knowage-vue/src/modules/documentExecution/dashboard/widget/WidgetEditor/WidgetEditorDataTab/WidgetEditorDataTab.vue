@@ -1,12 +1,13 @@
 <template>
     <WidgetEditorDataList :widgetModel="propWidget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="setSelectDataset"></WidgetEditorDataList>
-    <div class="p-d-flex kn-flex kn-overflow" v-if="propWidget">
+    <div class="p-d-flex kn-flex kn-overflow" v-if="propWidget && false">
         <WidgetEditorHint v-if="!selectedDataset"></WidgetEditorHint>
         <WidgetEditorCommonDataContainer v-else-if="propWidget.type === 'table' || propWidget.type === 'html' || propWidget.type === 'text'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widgetModel="propWidget" :selectedDataset="selectedDataset"></WidgetEditorCommonDataContainer>
         <SelectorWidgetDataContainer v-else-if="propWidget.type === 'selector'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widgetModel="propWidget" :selectedDataset="selectedDataset"></SelectorWidgetDataContainer>
         <HighchartsWidgetDataContainer v-else-if="propWidget.type === 'highcharts'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widgetModel="propWidget" :selectedDataset="selectedDataset"></HighchartsWidgetDataContainer>
         <ChartJSDataContainer v-else-if="propWidget.type === 'chartJS'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widgetModel="propWidget" :selectedDataset="selectedDataset"></ChartJSDataContainer>
     </div>
+    <ChartGallery :widgetModel="propWidget" />
 </template>
 
 <script lang="ts">
@@ -18,10 +19,11 @@ import WidgetEditorCommonDataContainer from './common/WidgetEditorCommonDataCont
 import SelectorWidgetDataContainer from './SelectorWidget/SelectorWidgetDataContainer.vue'
 import HighchartsWidgetDataContainer from './ChartWidget/highcharts/HighchartsDataContainer.vue'
 import ChartJSDataContainer from './ChartWidget/chartJS/ChartJSDataContainer.vue'
+import ChartGallery from '../WidgetEditorDataTab/ChartWidget/common/ChartWidgetGallery.vue'
 
 export default defineComponent({
     name: 'widget-editor-data-tab',
-    components: { WidgetEditorDataList, WidgetEditorHint, WidgetEditorCommonDataContainer, SelectorWidgetDataContainer, HighchartsWidgetDataContainer, ChartJSDataContainer },
+    components: { WidgetEditorDataList, WidgetEditorHint, WidgetEditorCommonDataContainer, SelectorWidgetDataContainer, HighchartsWidgetDataContainer, ChartJSDataContainer, ChartGallery },
     props: { propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array as PropType<IDataset[]> }, selectedDatasets: { type: Array as PropType<IDataset[]> } },
     emits: ['datasetSelected'],
     data() {
