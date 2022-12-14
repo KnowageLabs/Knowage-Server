@@ -1,8 +1,4 @@
 {
-    "defaultHighchartsSelection": {
-        "enabled": true,
-        "modalColumn": ""
-    },
     "default3DOptions": {
         "alpha": 0,
         "beta": 0,
@@ -16,6 +12,10 @@
             "enabled": false,
             "order": []
         }
+    },
+    "defaultHighchartsSelection": {
+        "enabled": true,
+        "modalColumn": ""
     },
     "defaultLegendSettings": {
         "align": "center",
@@ -59,7 +59,7 @@
                 "textAlign": ""
             }
         },
-        "depth": 0,
+        "depth": 100,
         "showInLegend": true
     },
     "defaultTooltipSettings": {

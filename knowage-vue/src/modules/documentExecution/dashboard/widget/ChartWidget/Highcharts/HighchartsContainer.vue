@@ -62,7 +62,7 @@ export default defineComponent({
                 }
             })
 
-            this.widgetModel.settings.chartModel.setData(this.dataToShow, this.widgetModel)
+            // this.widgetModel.settings.chartModel.setData(this.dataToShow, this.widgetModel)
 
             this.widgetModel.settings.chartModel.updateSeriesAccessibilitySettings(this.widgetModel)
             this.widgetModel.settings.chartModel.updateSeriesLabelSettings(this.widgetModel)
@@ -74,6 +74,35 @@ export default defineComponent({
             if (this.error) return
 
             this.widgetModel.settings.chartModel.updateChartColorSettings(this.widgetModel)
+
+            // TODO - Remove Hardcoded
+            this.chartModel.series = [
+                {
+                    type: 'pie',
+                    name: 'Share',
+                    dataLabels: { enabled: true, format: '{point.percentage}' },
+                    data: [
+                        {
+                            name: 'Xiaomi',
+                            y: 12,
+                            sliced: true,
+                            selected: true
+                        },
+                        {
+                            name: 'Samsung',
+                            y: 10,
+                            sliced: true,
+                            selected: true
+                        },
+                        {
+                            name: 'Motorola',
+                            y: 5,
+                            sliced: true,
+                            selected: true
+                        }
+                    ]
+                }
+            ] as any[]
 
             console.log('>>>>>>>>>>>>>>> CHART TO RENDER: ', this.chartModel)
             Highcharts.chart('container', this.chartModel as any)
