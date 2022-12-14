@@ -650,15 +650,14 @@ export default defineComponent({
                             tempParam.parameterValue = this.document.navigationParams[key].map((value: string) => {
                                 return { value: value, description: '' }
                             })
-                            this.setCrossNavigationComboParameterDescription(tempParam)
                         } else {
                             tempParam.parameterValue[0].value = this.document.navigationParams[key]
                             if (this.document.navigationParams[key + '_field_visible_description']) this.document.navigationParams[key + '_field_visible_description'] = tempParam.parameterValue[0].description
-                            if (tempParam.selectionType === 'COMBOBOX') this.setCrossNavigationComboParameterDescription(tempParam)
                             if (tempParam.type === 'DATE' && tempParam.parameterValue[0] && tempParam.parameterValue[0].value) {
                                 tempParam.parameterValue[0].value = new Date(tempParam.parameterValue[0].value)
                             }
                         }
+                        if (tempParam.selectionType === 'COMBOBOX') this.setCrossNavigationComboParameterDescription(tempParam)
                     }
                 }
             })
