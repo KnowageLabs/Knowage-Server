@@ -22,8 +22,7 @@
                     @settingChanged="onSettingChanged"
                     @datasetSelected="onDatasetSelected"
                 />
-                <!-- <WidgetEditorPreview v-if="selectedSetting != 'Gallery'" :propWidget="widget" :dashboardId="dashboardId" :datasets="selectedModelDatasets" :drivers="documentDrivers" :variables="variables" /> -->
-                <WidgetEditorPreview v-if="selectedSetting != 'Gallery' && false" :propWidget="widget" :dashboardId="dashboardId" :datasets="selectedModelDatasets" :drivers="documentDrivers" :variables="variables" />
+                <WidgetEditorPreview v-if="selectedSetting != 'Gallery' && !chartPickerVisible" :propWidget="widget" :dashboardId="dashboardId" :datasets="selectedModelDatasets" :drivers="documentDrivers" :variables="variables" />
             </div>
         </div>
     </Teleport>
@@ -36,7 +35,8 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidgetEditorDataset, IWidget, IDataset, IModelDataset, IVariable, IDashboardDriver, IGalleryItem } from '../../Dashboard'
 import { AxiosResponse } from 'axios'
-import { createNewWidget, formatWidgetForSave } from './helpers/WidgetEditorHelpers'
+import { createNewWidget } from './helpers/WidgetEditorHelpers'
+import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import WidgetEditorPreview from './WidgetEditorPreview.vue'
 import WidgetEditorTabs from './WidgetEditorTabs.vue'
 import mainStore from '../../../../../App.store'
@@ -68,7 +68,8 @@ export default defineComponent({
             selectedModelDatasets: [] as IModelDataset[],
             selectedDatasets: [] as IDataset[],
             drivers: [] as any[],
-            selectedSetting: ''
+            selectedSetting: '',
+            chartPickerVisible: false
         }
     },
     watch: {
@@ -82,12 +83,22 @@ export default defineComponent({
         return { store, dashboardStore }
     },
     created() {
+        this.setEventListeners()
         this.loadWidget()
         this.loadSelectedModelDatasets()
         this.loadSelectedModel()
         this.loadDrivers()
     },
+    unmounted() {
+        this.removeEventListeners()
+    },
     methods: {
+        setEventListeners() {
+            emitter.on('chartPickerVisible', this.changeChartPickerVisbility)
+        },
+        removeEventListeners() {
+            emitter.off('chartPickerVisible', this.changeChartPickerVisbility)
+        },
         loadWidget() {
             if (!this.propWidget) return
             this.widget = this.propWidget.new ? createNewWidget(this.propWidget.type) : deepcopy(this.propWidget)
@@ -145,6 +156,9 @@ export default defineComponent({
         },
         onSettingChanged(setting: string) {
             this.selectedSetting = setting
+        },
+        changeChartPickerVisbility(value: any) {
+            this.chartPickerVisible = value
         }
     }
 })

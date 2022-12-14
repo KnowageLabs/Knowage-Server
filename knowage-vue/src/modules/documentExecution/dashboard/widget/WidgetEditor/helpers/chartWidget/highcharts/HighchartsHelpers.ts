@@ -29,10 +29,19 @@ export const createNewHighchartsSettings = () => {
         },
         responsive: widgetCommonDefaultValues.getDefaultResponsivnes()
     } as IHighchartsWidgetSettings
-    settings.chartModel = new HighchartsPieChart(null)
+    settings.chartModel = null
     return settings
 }
 
 export const formatHighchartsWidget = (widget: IWidget) => {
     widget.settings.chartModel = new HighchartsPieChart(widget.settings.chartModel.model)
+}
+
+export const createNewHighchartsModel = (chartType: string) => {
+    switch (chartType) {
+        case 'pie':
+            return new HighchartsPieChart(null)
+        default:
+            return null
+    }
 }

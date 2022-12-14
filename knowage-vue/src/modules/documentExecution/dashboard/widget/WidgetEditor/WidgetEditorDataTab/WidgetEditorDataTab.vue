@@ -1,18 +1,21 @@
 <template>
     <WidgetEditorDataList :widgetModel="propWidget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="setSelectDataset"></WidgetEditorDataList>
-    <div class="p-d-flex kn-flex kn-overflow" v-if="propWidget && false">
+    <ChartGallery v-if="chartPickerVisible" :widgetModel="propWidget" @selectedChartTypeChanged="onChartTypeChanged" />
+    <div class="p-d-flex kn-flex kn-overflow" v-else-if="propWidget">
         <WidgetEditorHint v-if="!selectedDataset"></WidgetEditorHint>
         <WidgetEditorCommonDataContainer v-else-if="propWidget.type === 'table' || propWidget.type === 'html' || propWidget.type === 'text'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widgetModel="propWidget" :selectedDataset="selectedDataset"></WidgetEditorCommonDataContainer>
         <SelectorWidgetDataContainer v-else-if="propWidget.type === 'selector'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widgetModel="propWidget" :selectedDataset="selectedDataset"></SelectorWidgetDataContainer>
         <HighchartsWidgetDataContainer v-else-if="propWidget.type === 'highcharts'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widgetModel="propWidget" :selectedDataset="selectedDataset"></HighchartsWidgetDataContainer>
         <ChartJSDataContainer v-else-if="propWidget.type === 'chartJS'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widgetModel="propWidget" :selectedDataset="selectedDataset"></ChartJSDataContainer>
     </div>
-    <ChartGallery :widgetModel="propWidget" />
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IDataset } from '../../../Dashboard'
+import { createNewHighchartsModel } from '../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsHelpers'
+import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
+
 import WidgetEditorDataList from './WidgetEditorDataList/WidgetEditorDataList.vue'
 import WidgetEditorHint from '../WidgetEditorHint.vue'
 import WidgetEditorCommonDataContainer from './common/WidgetEditorCommonDataContainer.vue'
@@ -31,11 +34,24 @@ export default defineComponent({
             selectedDataset: null as IDataset | null
         }
     },
-    async created() {},
+    computed: {
+        chartPickerVisible() {
+            let visible = false
+            if (!this.propWidget || !['highcharts', 'chartJS'].includes(this.propWidget.type)) return false
+            const model = this.propWidget.settings.chartModel?.getModel()
+            visible = !model?.chart?.type
+            emitter.emit('chartPickerVisible', visible)
+            return visible
+        }
+    },
+    created() {},
     methods: {
         setSelectDataset(dataset: IDataset) {
             this.$emit('datasetSelected', dataset)
             this.selectedDataset = dataset as IDataset
+        },
+        onChartTypeChanged(chartType: string) {
+            this.propWidget.settings.chartModel = createNewHighchartsModel(chartType)
         }
     }
 })

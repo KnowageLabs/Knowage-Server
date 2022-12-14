@@ -36,7 +36,6 @@ export default defineComponent({
     mounted() {
         this.setEventListeners()
         this.onRefreshChart()
-        this.updateChartModel()
     },
     unmounted() {
         this.removeEventListeners()
@@ -51,6 +50,8 @@ export default defineComponent({
             emitter.on('chartWidgetResized', (widget) => this.onRefreshChart())
         },
         onRefreshChart() {
+            console.log('>>>>>>>>>>> this.widgetModel.settings', this.widgetModel.settings)
+            if (!this.widgetModel.settings.chartModel) return
             this.chartModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
             this.widgetModel.settings.chartModel.model = this.chartModel
             this.updateChartModel()

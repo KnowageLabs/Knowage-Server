@@ -29,7 +29,6 @@ export default defineComponent({
     mounted() {
         this.setEventListeners()
         this.onRefreshChart()
-        this.updateChartModel()
     },
     unmounted() {
         this.removeEventListeners()

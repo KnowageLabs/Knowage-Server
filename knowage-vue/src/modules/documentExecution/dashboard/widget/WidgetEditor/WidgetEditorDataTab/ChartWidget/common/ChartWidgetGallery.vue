@@ -6,7 +6,7 @@
 
         <MasonryWall class="p-mx-4 p-my-2 kn-flex kn-overflow dashboard-scrollbar" :items="filteredChartTypes" :column-width="200" :gap="6">
             <template #default="{ chart, index }">
-                <div class="gallery-card" :style="galleryDescriptor.style.galleryCard">
+                <div class="gallery-card" :style="galleryDescriptor.style.galleryCard" @click="onChange(filteredChartTypes[index].value)">
                     <label class="kn-material-input-label p-ml-2 p-mt-1">{{ $t(`${filteredChartTypes[index].label}`) }}</label>
                     <!-- <img :src="getImageUrl('pie')" /> -->
                 </div>
@@ -49,7 +49,8 @@ export default defineComponent({
                 this.selectedType = chartModel.chart.type
             }
         },
-        onChange() {
+        onChange(selectedType: string) {
+            this.selectedType = 'pie' // TODO - remove hardcoded
             this.$emit('selectedChartTypeChanged', this.selectedType)
         },
         searchItems() {
@@ -64,7 +65,7 @@ export default defineComponent({
             }, 250)
         },
         getImageUrl(name) {
-            return new URL(`@/assets/pie.png`, import.meta.url).href //Radi ali kao url :/
+            return new URL(`@/assets/pie.png`, import.meta.url).href //TODO - Radi ali kao url :/
         }
     }
 })
