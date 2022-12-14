@@ -1595,6 +1595,8 @@ public class ManageDataSetsForREST {
 			return java.time.OffsetDateTime.class;
 		else if (columnClass.equalsIgnoreCase("java.time.ZonedDateTime"))
 			return java.time.ZonedDateTime.class;
+		else if (columnClass.equalsIgnoreCase("java.lang.Boolean"))
+			return java.lang.Boolean.class;
 		else {
 			try {
 				return Class.forName(columnClass);
