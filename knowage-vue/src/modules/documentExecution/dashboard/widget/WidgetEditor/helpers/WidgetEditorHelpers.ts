@@ -6,6 +6,7 @@ import { createNewSelectionsWidgetSettings } from '../helpers/selectionsWidget/S
 import { createNewHtmlWidgetSettings } from './htmlWidget/HTMLWidgetFunctions'
 import { createNewTextWidgetSettings } from './textWidget/TextWidgetFunctions'
 import { createNewChartJSSettings } from './chartWidget/chartJS/ChartJSHelpers'
+import { createNewHighchartsSettings } from './chartWidget/highcharts/HighchartsHelpers'
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
 
@@ -42,7 +43,10 @@ const createNewWidgetSettings = (widget: IWidget) => {
             widget.settings = createNewTextWidgetSettings()
             break
         case 'chartJS':
-            widget.settings = createNewChartJSSettings(widget)
+            widget.settings = createNewChartJSSettings()
+            break
+        case 'highcharts':
+            widget.settings = createNewHighchartsSettings()
     }
 }
 
@@ -55,8 +59,6 @@ export function formatWidgetForSave(tempWidget: IWidget) {
         case 'table':
             formatTableWidgetForSave(widget)
     }
-    console.log('........................ formatWidgetForSave tempWidget: ', tempWidget)
-    console.log('........................ formatWidgetForSave: ', widget)
     return widget
 }
 

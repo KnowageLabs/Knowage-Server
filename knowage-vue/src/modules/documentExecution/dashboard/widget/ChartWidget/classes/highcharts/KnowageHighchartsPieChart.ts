@@ -1,20 +1,20 @@
-import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
 import { HighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget'
 import { KnowageHighcharts } from './KnowageHihgcharts'
 import { updatePieChartModel } from './updater/HighchartsPieChartUpdater'
 import * as highchartsDefaultValues from '../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
 
 export class HighchartsPieChart extends KnowageHighcharts {
-    constructor(model: any, widgetModel: IWidget) {
-        super(model, widgetModel)
+    constructor(model: any) {
+        super()
         if (!this.model.plotOptions.pie) this.setPiePlotOptions()
-        if (model && model.CHART) this.updateModel(model, widgetModel)
-        else this.model = model
+        if (model && model.CHART) this.updateModel(model)
+        else if (model) this.model = model
+        console.log(">>>>>>>> LOADED MODEL: ", this.model)
         this.model.chart.type = "pie"
     }
 
-    updateModel = (oldModel: any, widgetModel: IWidget) => {
-        updatePieChartModel(oldModel, this.model, widgetModel)
+    updateModel = (oldModel: any) => {
+        updatePieChartModel(oldModel, this.model)
     }
 
     getModel = () => {

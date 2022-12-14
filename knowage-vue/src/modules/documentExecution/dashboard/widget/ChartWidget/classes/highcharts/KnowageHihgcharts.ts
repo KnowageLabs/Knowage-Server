@@ -1,4 +1,3 @@
-import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard"
 import { IHighchartsChartModel } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
 import * as  highchartsDefaultValues from "../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues"
 
@@ -7,15 +6,10 @@ export class KnowageHighcharts {
     cardinality: any[]
     range: any[]
 
-    constructor(model: any, widgetModel: IWidget) {
+    constructor() {
         this.model = this.createNewChartModel()
         this.cardinality = [],
             this.range = []
-    }
-
-    initializeEventsDispatcher = () => {
-        // TODO - add mitt
-        if (this.model.settings.drilldown) this.model.chart.events.drilldown = this.dispatchEvent
     }
 
     updateCardinality = async (data: any) => {
@@ -42,7 +36,7 @@ export class KnowageHighcharts {
     }
 
 
-    public getModel = () => {
+    getModel = () => {
         return this.model;
     }
 
@@ -59,15 +53,13 @@ export class KnowageHighcharts {
         document.dispatchEvent(myCustomEvent);
     }
 
+    // TODO
     valueFormatter = (value: any, type: string) => {
         console.log(">>>>>>> valueFormatter - value: ", value, ', type: ', type)
         switch (type) {
             case 'float':
                 new Intl.NumberFormat('it-IT', { notation: 'compact', minimumFractionDigits: 2, maximumFractionDigits: 2, }).format(value)
         }
-        //scale factor
-        //number formatter
-        //date formatter
     }
 
     createNewChartModel = () => {
@@ -76,7 +68,6 @@ export class KnowageHighcharts {
             lang: { noData: '' },
             chart: {
                 options3d: highchartsDefaultValues.getDefault3DOptions(),
-                events: {}, // TODO
                 type: ''
             },
             noData: highchartsDefaultValues.getDefaultNoDataConfiguration(),

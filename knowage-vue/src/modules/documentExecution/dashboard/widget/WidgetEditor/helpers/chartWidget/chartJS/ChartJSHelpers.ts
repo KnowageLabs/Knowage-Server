@@ -5,7 +5,7 @@ import * as widgetCommonDefaultValues from '../../common/WidgetCommonDefaultValu
 import * as  chartJSDefaultValues from "../chartJS/ChartJSDefaultValues"
 import descriptor from '../../../WidgetEditorSettingsTab/ChartWidget/common/ChartColorSettingsDescriptor.json'
 
-export const createNewChartJSSettings = (widget: IWidget) => {
+export const createNewChartJSSettings = () => {
     const settings = {
         updatable: true,
         clickable: true,

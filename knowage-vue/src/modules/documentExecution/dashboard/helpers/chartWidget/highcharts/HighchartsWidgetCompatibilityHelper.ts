@@ -23,7 +23,7 @@ export const formatHighchartsWidget = (widget: any) => {
 
     formattedWidget.settings = getFormattedWidgetSettings(widget) as IHighchartsWidgetSettings
     getFiltersForColumns(formattedWidget, widget)
-    formattedWidget.settings.chartModel = createChartModel(widget, formattedWidget)
+    formattedWidget.settings.chartModel = createChartModel(widget)
     console.log('>>>>>>>>>>> FORMATTED WIDGET: ', formattedWidget)
     return formattedWidget
 }
@@ -59,16 +59,16 @@ const getFormattedConfiguration = (widget: any) => {
 const getFormattedSeriesAccesibilitySettings = (widget: any) => {
     return widget.content.chartTemplate.CHART.type !== 'PIE'
         ? [
-              {
-                  names: ['all'],
-                  accessibility: {
-                      enabled: false,
-                      description: '',
-                      exposeAsGroupOnly: false,
-                      keyboardNavigation: { enabled: false }
-                  }
-              }
-          ]
+            {
+                names: ['all'],
+                accessibility: {
+                    enabled: false,
+                    description: '',
+                    exposeAsGroupOnly: false,
+                    keyboardNavigation: { enabled: false }
+                }
+            }
+        ]
         : []
 }
 
@@ -76,10 +76,10 @@ export const getColumnId = (widgetColumnName: string) => {
     return columnNameIdMap[widgetColumnName]
 }
 
-const createChartModel = (widget: any, formattedWidget: IWidget) => {
+const createChartModel = (widget: any) => {
     switch (widget.content.chartTemplate.CHART.type) {
         case 'PIE':
-            return new HighchartsPieChart(widget.content.chartTemplate, formattedWidget)
+            return new HighchartsPieChart(widget.content.chartTemplate)
         default:
             return null
     }
@@ -89,26 +89,26 @@ const getFormattedSerieLabelsSettings = (widget: any) => {
     const formattedSerieSettings =
         widget.content.chartTemplate.CHART.type !== 'PIE'
             ? [
-                  {
-                      names: ['all'],
-                      label: {
-                          enabled: false,
-                          style: {
-                              fontFamily: '',
-                              fontSize: '',
-                              fontWeight: '',
-                              color: '',
-                              backgroundColor: ''
-                          },
-                          prefix: '',
-                          suffix: '',
-                          scale: 'empty', // TODO
-                          precision: 2,
-                          absolute: false,
-                          percentage: false
-                      }
-                  }
-              ]
+                {
+                    names: ['all'],
+                    label: {
+                        enabled: false,
+                        style: {
+                            fontFamily: '',
+                            fontSize: '',
+                            fontWeight: '',
+                            color: '',
+                            backgroundColor: ''
+                        },
+                        prefix: '',
+                        suffix: '',
+                        scale: 'empty', // TODO
+                        precision: 2,
+                        absolute: false,
+                        percentage: false
+                    }
+                }
+            ]
             : ([] as IHighchartsSeriesLabelsSetting[])
     if (widget.content.chartTemplate.CHART.VALUES.SERIE && widget.content.chartTemplate.CHART.VALUES.SERIE[0]) {
         const oldModelSerie = widget.content.chartTemplate.CHART.VALUES.SERIE[0]

@@ -1,5 +1,6 @@
 <template>
     <div class="widget-editor-card p-p-2">
+        {{ rowReorderEnabled }}
         <div class="p-d-flex p-flex-column">
             <label v-if="settings.label" class="kn-material-input-label">{{ $t(settings.label) }}</label>
             <small v-if="settings.hint"> {{ $t(settings.hint) }}</small>
@@ -22,7 +23,7 @@
                     {{ $t('common.info.noDataFound') }}
                 </template>
                 <Column v-if="rowReorderEnabled" :rowReorder="rowReorderEnabled" :style="settings.rowReorder.rowReorderColumnStyle" />
-                <Column v-if="widgetModel.type !== 'chart'">
+                <Column v-if="widgetModel.type !== 'highcharts' && widgetModel.type !== 'chartJS'">
                     <template #body="slotProps">
                         <i :class="getIcon(slotProps.data)"></i>
                     </template>
@@ -87,7 +88,7 @@ export default defineComponent({
     },
     computed: {
         rowReorderEnabled(): boolean {
-            return this.widgetModel && ['table', 'html', 'text', 'chart'].includes(this.widgetModel.type)
+            return this.widgetModel && ['table', 'html', 'text', 'highcharts'].includes(this.widgetModel.type) && this.rows.length > 1
         }
     },
     watch: {
