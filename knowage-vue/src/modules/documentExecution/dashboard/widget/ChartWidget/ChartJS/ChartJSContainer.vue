@@ -45,7 +45,7 @@ export default defineComponent({
         this.removeEventListeners()
     },
     methods: {
-        ...mapActions(store, ['setSelections', 'getAllDatasets']),
+        ...mapActions(store, ['setSelections', 'getDatasetLabel']),
         setEventListeners() {
             emitter.on('refreshChart', this.onRefreshChart)
             emitter.on('chartWidgetResized', (newHeight) => this.onChartResize(newHeight as number))
@@ -91,14 +91,9 @@ export default defineComponent({
             return value ?? ''
         },
         createNewSelection(value: (string | number)[]) {
-            const measureColumn = this.widgetModel.columns.find((column: IWidgetColumn) => column.fieldType === 'MEASURE')
+            const measureColumn = this.widgetModel.columns.find((column: IWidgetColumn) => column.fieldType === 'ATTRIBUTE')
             const selection = { datasetId: this.widgetModel.dataset as number, datasetLabel: this.getDatasetLabel(this.widgetModel.dataset as number), columnName: measureColumn?.columnName ?? '', value: value, aggregated: false, timestamp: new Date().getTime() }
             return selection
-        },
-        getDatasetLabel(datasetId: number) {
-            const datasets = this.getAllDatasets()
-            const index = datasets.findIndex((dataset: IDataset) => dataset.id.dsId == datasetId)
-            return index !== -1 ? datasets[index].label : ''
         },
         onChartResize(newHeight: number) {
             this.chartHeight = newHeight

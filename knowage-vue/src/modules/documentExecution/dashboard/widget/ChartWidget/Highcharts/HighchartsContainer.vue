@@ -5,14 +5,17 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
-import { IWidget } from '../../../Dashboard'
+import { ISelection, IWidget, IWidgetColumn } from '../../../Dashboard'
 import { IHighchartsChartModel } from '../../../interfaces/highcharts/DashboardHighchartsWidget'
+import { mapActions } from 'pinia'
 import Highcharts from 'highcharts'
 import Highcharts3D from 'highcharts/highcharts-3d'
 import Accessibility from 'highcharts/modules/accessibility'
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display'
 import SeriesLabel from 'highcharts/modules/series-label'
 import cryptoRandomString from 'crypto-random-string'
+import store from '../../../Dashboard.store'
+import { updateStoreSelections } from '../../interactionsHelpers/InteractionHelper'
 
 Accessibility(Highcharts)
 NoDataToDisplay(Highcharts)
@@ -26,7 +29,8 @@ export default defineComponent({
         widgetModel: { type: Object as PropType<IWidget>, required: true },
         dataToShow: { type: Object as any, required: true },
         dashboardId: { type: String, required: true },
-        editorMode: { type: Boolean }
+        editorMode: { type: Boolean },
+        propActiveSelections: { type: Array as PropType<ISelection[]>, required: true }
     },
     data() {
         return {
@@ -43,6 +47,7 @@ export default defineComponent({
         this.removeEventListeners()
     },
     methods: {
+        ...mapActions(store, ['setSelections', 'getDatasetLabel']),
         setEventListeners() {
             emitter.on('refreshChart', this.onRefreshChart)
             emitter.on('chartWidgetResized', (widget) => this.onRefreshChart()) // TODO
@@ -107,12 +112,7 @@ export default defineComponent({
             //     }
             // ] as any[]
 
-            // if (this.chartModel.plotOptions.series) {
-            //     this.chartModel.plotOptions.series.events = { click: this.setSelection }
-            // } else
-            //     this.chartModel.plotOptions.series = {
-            //         events: { click: this.setSelection }
-            //     }
+            this.setSeriesEvents()
 
             console.log('>>>>>>>>>>>>>>> CHART TO RENDER: ', this.chartModel)
             Highcharts.chart(this.chartID, this.chartModel as any)
@@ -127,8 +127,24 @@ export default defineComponent({
             hasError = this.widgetModel.settings.chartModel.updateFormatterSettings(this.chartModel.tooltip, null, 'pointFormatter', 'pointFormatterText', 'pointFormatterError')
             return hasError
         },
+        setSeriesEvents() {
+            if (this.chartModel.plotOptions.series) {
+                this.chartModel.plotOptions.series.events = { click: this.setSelection }
+            } else
+                this.chartModel.plotOptions.series = {
+                    events: { click: this.setSelection }
+                }
+        },
         setSelection(event: any) {
-            console.log('SET SELECTION: ', event.point.options)
+            if (this.editorMode) return
+            const serieClicked = event.point?.options
+            if (!serieClicked || !serieClicked.name) return
+            updateStoreSelections(this.createNewSelection([serieClicked.name]), this.propActiveSelections, this.dashboardId, this.setSelections, this.$http)
+        },
+        createNewSelection(value: (string | number)[]) {
+            const attributeColumn = this.widgetModel.columns.find((column: IWidgetColumn) => column.fieldType === 'ATTRIBUTE')
+            const selection = { datasetId: this.widgetModel.dataset as number, datasetLabel: this.getDatasetLabel(this.widgetModel.dataset as number), columnName: attributeColumn?.columnName ?? '', value: value, aggregated: false, timestamp: new Date().getTime() }
+            return selection
         }
     }
 })

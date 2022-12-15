@@ -111,7 +111,11 @@ const store = defineStore('dashboardStore', {
         },
         setAllDatasets(datasets: IDataset[]) {
             this.allDatasets = datasets
-        }
+        },
+        getDatasetLabel(datasetId: number) {
+            const index = this.allDatasets.findIndex((dataset: IDataset) => dataset.id.dsId == datasetId)
+            return index !== -1 ? this.allDatasets[index].label : ''
+        },
     }
 })
 

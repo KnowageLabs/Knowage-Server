@@ -80,7 +80,9 @@ export class KnowageHighcharts {
                 drilldown: {}, // TODO
                 categories: [] // TODO
             },
-            plotOptions: {},
+            plotOptions: {
+                series: { events: {} }
+            },
             legend: highchartsDefaultValues.getDefaultLegendSettings(),
             tooltip: highchartsDefaultValues.getDefaultTooltipSettings(),
             credits: { enabled: false }

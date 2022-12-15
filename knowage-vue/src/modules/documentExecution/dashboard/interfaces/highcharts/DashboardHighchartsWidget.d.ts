@@ -83,7 +83,7 @@ export interface IHighchartsChartModel {
     settings: IIHighchartsChartModelSettings,
     plotOptions: {
         pie?: IHighchartsPieChartPlotOptions,
-        series?: any
+        series?: { events: any }
     },
     legend: IHighchartsLegend,
     tooltip: IHighchartsTooltip,
@@ -156,8 +156,6 @@ export interface IHighchartsChartSerie {
     data: IHighchartsChartSerieData[]
     accessibility: IHighchartsSerieAccessibility,
 }
-
-
 
 export interface IHighchartsSerieAccessibility {
     enabled: boolean,
