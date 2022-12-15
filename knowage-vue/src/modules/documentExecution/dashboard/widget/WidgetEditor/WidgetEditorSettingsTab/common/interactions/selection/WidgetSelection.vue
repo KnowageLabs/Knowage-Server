@@ -1,5 +1,6 @@
 <template>
     <div v-if="selectionModel" class="p-grid p-jc-center p-ai-center p-p-4">
+        {{ selectionModel }}
         <div class="p-col-12 p-grid">
             <div class="p-col-12 p-grid p-ai-center">
                 <div class="p-col-12 p-md-4 p-pt-4 p-pr-4">
@@ -22,7 +23,7 @@
                     ></WidgetEditorStyleToolbar>
                 </div>
             </div>
-            <div class="p-col-12 p-d-flex p-flex-row p-ai-center p-p-3">
+            <div v-if="selectionModel.modalColumn || selectionModel.modalColumn === ''" class="p-col-12 p-d-flex p-flex-row p-ai-center p-p-3">
                 <div class="p-d-flex p-flex-column kn-flex p-m-2">
                     <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.interactions.modalColumn') }}</label>
                     <Dropdown class="kn-material-input" v-model="selectionModel.modalColumn" :options="widgetModel.columns" :showClear="true" optionLabel="alias" optionValue="id" @change="selectionChanged"> </Dropdown>

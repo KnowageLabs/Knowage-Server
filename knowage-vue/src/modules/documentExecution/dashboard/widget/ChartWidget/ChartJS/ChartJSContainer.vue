@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Pie :chart-options="chartOptions" :chart-data="chartData" :chart-id="'pie-chart'" :dataset-id-key="'label'" :width="200" :height="200" />
+        <Pie ref="pie" :chart-options="chartOptions" :chart-data="chartData" :chart-id="'pie-chart'" :dataset-id-key="'label'" :width="200" :height="200" />
     </div>
 </template>
 
@@ -9,8 +9,11 @@ import { defineComponent, PropType } from 'vue'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { Pie } from 'vue-chartjs'
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale } from 'chart.js'
-import { IWidget } from '../../../Dashboard'
+import { IWidget, IDataset } from '../../../Dashboard'
 import { IChartJSChartModel, IChartJSData, IChartJSOptions } from '../../../interfaces/chartJS/DashboardChartJSWidget'
+import { mapActions } from 'pinia'
+import { updateStoreSelections } from '../../interactionsHelpers/InteractionHelper'
+import store from '../../../Dashboard.store'
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale)
 
@@ -21,7 +24,7 @@ export default defineComponent({
     data() {
         return {
             chartData: { labels: [], datasets: [] } as IChartJSData,
-            chartOptions: {} as IChartJSOptions,
+            chartOptions: {} as any,
             chartModel: {} as IChartJSChartModel,
             error: false
         }
@@ -34,6 +37,7 @@ export default defineComponent({
         this.removeEventListeners()
     },
     methods: {
+        ...mapActions(store, ['setSelections', 'getAllDatasets']),
         setEventListeners() {
             emitter.on('refreshChart', this.onRefreshChart)
         },
@@ -56,7 +60,7 @@ export default defineComponent({
         },
         updateChartOptions() {
             // TODO see if responsive is needed
-            this.chartOptions = { ...this.chartModel.options, responsive: true, maintainAspectRatio: false }
+            this.chartOptions = { ...this.chartModel.options, responsive: true, maintainAspectRatio: false, events: ['click'], onClick: this.testFunction }
         },
         updateChartData() {
             // TODO - Darko
@@ -77,6 +81,22 @@ export default defineComponent({
         resetChart() {
             this.chartData = { labels: [], datasets: [] }
             this.chartOptions = {} as IChartJSOptions
+        },
+        testFunction(event: any, test: any) {
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>> ON CLICK EVENT: ', event)
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>> ON CLICK TEST: ', test)
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> WIDGET MODEL: ', this.widgetModel)
+            const value = [2]
+            // updateStoreSelections(this.createNewSelection(value), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
+        },
+        createNewSelection(value: (string | number)[]) {
+            const selection = { datasetId: this.widgetModel.dataset as number, datasetLabel: this.getDatasetLabel(this.widgetModel.dataset as number), columnName: this.widgetModel.columns[0]?.columnName ?? '', value: value, aggregated: false, timestamp: new Date().getTime() }
+            return selection
+        },
+        getDatasetLabel(datasetId: number) {
+            const datasets = this.getAllDatasets()
+            const index = datasets.findIndex((dataset: IDataset) => dataset.id.dsId == datasetId)
+            return index !== -1 ? datasets[index].label : ''
         }
     }
 })
