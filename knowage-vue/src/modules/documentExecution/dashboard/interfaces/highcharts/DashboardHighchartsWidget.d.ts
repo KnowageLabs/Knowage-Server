@@ -82,7 +82,8 @@ export interface IHighchartsChartModel {
     series: IHighchartsChartSerie[],
     settings: IIHighchartsChartModelSettings,
     plotOptions: {
-        pie?: IHighchartsPieChartPlotOptions
+        pie?: IHighchartsPieChartPlotOptions,
+        series?: { events: any }
     },
     legend: IHighchartsLegend,
     tooltip: IHighchartsTooltip,

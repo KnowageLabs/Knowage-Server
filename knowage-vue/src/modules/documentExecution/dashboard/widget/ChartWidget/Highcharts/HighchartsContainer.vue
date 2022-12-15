@@ -1,5 +1,5 @@
 <template>
-    <div v-show="!error" id="container" style="width: 100%; height: 400px"></div>
+    <div v-show="!error" :id="chartID" style="width: 100%; height: 500;"></div>
 </template>
 
 <script lang="ts">
@@ -12,6 +12,7 @@ import Highcharts3D from 'highcharts/highcharts-3d'
 import Accessibility from 'highcharts/modules/accessibility'
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display'
 import SeriesLabel from 'highcharts/modules/series-label'
+import cryptoRandomString from 'crypto-random-string'
 
 Accessibility(Highcharts)
 NoDataToDisplay(Highcharts)
@@ -29,6 +30,7 @@ export default defineComponent({
     },
     data() {
         return {
+            chartID: cryptoRandomString({ length: 16, type: 'base64' }),
             chartModel: {} as IHighchartsChartModel,
             error: false
         }
@@ -43,11 +45,11 @@ export default defineComponent({
     methods: {
         setEventListeners() {
             emitter.on('refreshChart', this.onRefreshChart)
-            emitter.on('chartWidgetResized', (widget) => this.onRefreshChart())
+            emitter.on('chartWidgetResized', (widget) => this.onRefreshChart()) // TODO
         },
         removeEventListeners() {
             emitter.off('refreshChart', this.onRefreshChart)
-            emitter.off('chartWidgetResized', (widget) => this.onRefreshChart())
+            emitter.off('chartWidgetResized', (widget) => this.onRefreshChart()) // TODO
         },
         onRefreshChart() {
             this.chartModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
@@ -103,8 +105,11 @@ export default defineComponent({
                 }
             ] as any[]
 
+            if (this.chartModel.plotOptions.series) this.chartModel.plotOptions.series.events = { click: this.setSelection }
+            else this.chartModel.plotOptions.series = { events: { click: this.setSelection } }
+
             console.log('>>>>>>>>>>>>>>> CHART TO RENDER: ', this.chartModel)
-            Highcharts.chart('container', this.chartModel as any)
+            Highcharts.chart(this.chartID, this.chartModel as any)
         },
         updateLegendSettings() {
             if (this.chartModel.plotOptions.pie) this.chartModel.plotOptions.pie.showInLegend = true
@@ -115,6 +120,9 @@ export default defineComponent({
             if (hasError) return hasError
             hasError = this.widgetModel.settings.chartModel.updateFormatterSettings(this.chartModel.tooltip, null, 'pointFormatter', 'pointFormatterText', 'pointFormatterError')
             return hasError
+        },
+        setSelection(event: any) {
+            console.log('SET SELECTION: ', event.point.options)
         }
     }
 })
