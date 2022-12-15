@@ -68,29 +68,17 @@ export default defineComponent({
             this.chartModel.data.datasets[0].backgroundColor = this.widgetModel.settings.chart.colors
 
             this.chartData = this.chartModel.data
-
-            // TODO REMOVE MOCK
-            // this.chartData = {
-            //     labels: ['VueJs', 'EmberJs', 'ReactJs', 'AngularJs'],
-            //     datasets: [
-            //         {
-            //             backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
-            //             data: [40, 20, 80, 10]
-            //         }
-            //     ]
-            // }
         },
         resetChart() {
             this.chartData = { labels: [], datasets: [] }
             this.chartOptions = {} as IChartJSOptions
         },
         setSelection(event: any, selectionEvent: any[]) {
-            if (this.editorMode) return
+            if (this.editorMode || !selectionEvent || !selectionEvent[0]) return
             const value = this.getSelectionValue(selectionEvent)
             updateStoreSelections(this.createNewSelection([value]), this.propActiveSelections, this.dashboardId, this.setSelections, this.$http)
         },
         getSelectionValue(selectionEvent: any[]) {
-            if (!selectionEvent || !selectionEvent[0]) return ''
             const value = this.chartData.datasets[selectionEvent[0].datasetIndex].data[selectionEvent[0].index]
             return value ?? ''
         },
