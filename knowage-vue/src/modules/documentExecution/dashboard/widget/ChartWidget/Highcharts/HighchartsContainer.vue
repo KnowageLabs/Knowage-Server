@@ -1,5 +1,5 @@
 <template>
-    <div v-show="!error" :id="chartID" style="width: 100%; height: 500;"></div>
+    <div v-show="!error" :id="chartID" style="flex: 1"></div>
 </template>
 
 <script lang="ts">
@@ -77,33 +77,33 @@ export default defineComponent({
             this.widgetModel.settings.chartModel.updateChartColorSettings(this.widgetModel)
 
             //TODO - Remove Hardcoded
-            this.chartModel.series = [
-                {
-                    type: 'pie',
-                    name: 'Share',
-                    // dataLabels: { enabled: true, format: '{point.percentage}' },
-                    data: [
-                        {
-                            name: 'Xiaomi',
-                            y: 12,
-                            sliced: true,
-                            selected: true
-                        },
-                        {
-                            name: 'Samsung',
-                            y: 10,
-                            sliced: true,
-                            selected: true
-                        },
-                        {
-                            name: 'Motorola',
-                            y: 5,
-                            sliced: true,
-                            selected: true
-                        }
-                    ]
-                }
-            ] as any[]
+            // this.chartModel.series = [
+            //     {
+            //         type: 'pie',
+            //         name: 'Share',
+            //         // dataLabels: { enabled: true, format: '{point.percentage}' },
+            //         data: [
+            //             {
+            //                 name: 'Xiaomi',
+            //                 y: 12,
+            //                 sliced: true,
+            //                 selected: true
+            //             },
+            //             {
+            //                 name: 'Samsung',
+            //                 y: 10,
+            //                 sliced: true,
+            //                 selected: true
+            //             },
+            //             {
+            //                 name: 'Motorola',
+            //                 y: 5,
+            //                 sliced: true,
+            //                 selected: true
+            //             }
+            //         ]
+            //     }
+            // ] as any[]
 
             if (this.chartModel.plotOptions.series) this.chartModel.plotOptions.series.events = { click: this.setSelection }
             else this.chartModel.plotOptions.series = { events: { click: this.setSelection } }
