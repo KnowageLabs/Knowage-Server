@@ -567,7 +567,7 @@ public class JSONDataWriter implements IDataWriter {
 				} else if (LocalDateTime.class.isAssignableFrom(clazz)) {
 					logger.debug("Column [" + (i + 1) + "] type is equal to [" + "LocalDateTime" + "]");
 					fieldMetaDataJSON.put("type", "timestamp");
-					fieldMetaDataJSON.put("dateFormat", "d/m/Y H:i:s.SSS");
+					fieldMetaDataJSON.put("dateFormat", "dd/MM/yyyy H:i:s.SSS");
 					fieldMetaDataJSON.put("dateFormatJava", "dd/MM/yyyy HH:mm:ss.SSS");
 				} else if (OffsetTime.class.isAssignableFrom(clazz)) {
 					logger.debug("Column [" + (i + 1) + "] type is equal to [" + "OffsetTime" + "]");
@@ -582,8 +582,8 @@ public class JSONDataWriter implements IDataWriter {
 				} else if (ZonedDateTime.class.isAssignableFrom(clazz)) {
 					logger.debug("Column [" + (i + 1) + "] type is equal to [" + "ZonedDateTime" + "]");
 					fieldMetaDataJSON.put("type", "timestamp");
-					fieldMetaDataJSON.put("dateFormat", "d/m/YTH:i:sXXX");
-					fieldMetaDataJSON.put("dateFormatJava", "dd/MM/yyyyTHH:mm:ss");
+					fieldMetaDataJSON.put("dateFormat", "dd/MM/yyyy H:i:s.SSSXXX");
+					fieldMetaDataJSON.put("dateFormatJava", "dd/MM/yyyy HH:mm:ss.SSSXXX");
 				} else {
 					logger.warn("Column [" + (i + 1) + "] type is equal to [" + "???" + "]");
 					fieldMetaDataJSON.put("type", "string");
