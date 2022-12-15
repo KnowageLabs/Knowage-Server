@@ -1,14 +1,14 @@
-import { ITableWidgetLink, IWidget, IWidgetCrossNavigation, IWidgetInteractionParameter, IWidgetInteractions, IWidgetLinks, IWidgetPreview, IWidgetSelection } from "../../Dashboard"
-import { getColumnId } from "../tableWidget/TableWidgetCompatibilityHelper"
-import { IHighchartsDrilldown } from "../../interfaces/highcharts/DashboardHighchartsWidget"
+import { ITableWidgetLink, IWidget, IWidgetCrossNavigation, IWidgetInteractionParameter, IWidgetInteractions, IWidgetLinks, IWidgetPreview, IWidgetSelection } from '../../Dashboard'
+import { getColumnId } from '../tableWidget/TableWidgetCompatibilityHelper'
+import { IHighchartsDrilldown } from '../../interfaces/highcharts/DashboardHighchartsWidget'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
-import * as  tableWidgetDefaultValues from '../../widget/WidgetEditor/helpers/tableWidget/TableWidgetDefaultValues'
-import * as  chartJSDefaultValues from "../../widget/WidgetEditor/helpers/chartWidget/chartJS/ChartJSDefaultValues"
-import * as  highchartsDefaultValues from "../../widget/WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues"
+import * as tableWidgetDefaultValues from '../../widget/WidgetEditor/helpers/tableWidget/TableWidgetDefaultValues'
+import * as chartJSDefaultValues from '../../widget/WidgetEditor/helpers/chartWidget/chartJS/ChartJSDefaultValues'
+import * as highchartsDefaultValues from '../../widget/WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
 import mainStore from '@/App.store'
 
 export const getFormattedInteractions = (widget: any) => {
-    console.log("WIDGET: ", widget)
+    console.log('WIDGET: ', widget)
     const interactions = {} as IWidgetInteractions
     if (['table', 'chart'].includes(widget.type)) interactions.selection = getFormattedSelection(widget) as IWidgetSelection
     if (['table', 'html', 'text', 'chart'].includes(widget.type)) interactions.crosssNavigation = getFormattedCrossNavigation(widget) as IWidgetCrossNavigation
@@ -45,14 +45,13 @@ const getFormattedTableSelection = (widget: any) => {
 
 const getFormattedChartSelection = (widget: IWidget) => {
     const store = mainStore()
-    console.log(">>>>>>> MAIN STORE: ", store)
+    console.log('>>>>>>> MAIN STORE: ', store)
     const user = store.getUser()
-    console.log(">>>>>>> USER: ", user)
+    console.log('>>>>>>> USER: ', user)
     // TODO widgetChange
-    return user?.enterprise ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections
-    // return false ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections
+    // return user?.enterprise ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections
+    return false ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections
 }
-
 
 export const getFormattedCrossNavigation = (widget: any) => {
     if (!widget.cross || !widget.cross.cross) return widgetCommonDefaultValues.getDefaultCrossNavigation()
@@ -169,7 +168,6 @@ const getFormattedPreviewParameters = (previewParameters: any) => {
 
         formattedParameters.push(formattedParameter)
     })
-
 
     return formattedParameters
 }
