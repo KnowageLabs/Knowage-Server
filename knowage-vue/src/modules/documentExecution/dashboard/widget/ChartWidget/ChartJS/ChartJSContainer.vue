@@ -22,7 +22,7 @@ export default defineComponent({
     data() {
         return {
             chartData: { labels: [], datasets: [] } as IChartJSData,
-            chartOptions: {} as any,
+            chartOptions: {} as IChartJSOptions,
             chartModel: {} as IChartJSChartModel,
             error: false
         }
@@ -58,15 +58,11 @@ export default defineComponent({
         },
         updateChartOptions() {
             // TODO see if responsive is needed
-            this.chartOptions = { ...this.chartModel.options, responsive: true, maintainAspectRatio: false, events: ['click'], onClick: this.setSelection }
+            this.chartOptions = { ...this.chartModel.options, responsive: true, maintainAspectRatio: false, events: ['click', 'mousemove'], onClick: this.setSelection }
         },
         updateChartData() {
-            // TODO - Darko
             this.widgetModel.settings.chartModel.setData(this.dataToShow)
-
-            //TODO - Find better place for color settings
-            this.chartModel.data.datasets[0].backgroundColor = this.widgetModel.settings.chart.colors
-
+            this.widgetModel.settings.chartModel.updateChartColorSettings(this.widgetModel)
             this.chartData = this.chartModel.data
         },
         resetChart() {

@@ -40,6 +40,8 @@ export interface IChartJSOptions {
         tooltip: IChartJSTooltipSettings,
         legend: IChartJSLegendSettings
     },
+    events: any[],
+    onClick: any,
     responsive?: boolean
     maintainAspectRatio?: boolean
 }

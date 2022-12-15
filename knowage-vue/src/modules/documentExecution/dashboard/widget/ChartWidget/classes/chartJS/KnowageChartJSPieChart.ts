@@ -43,4 +43,9 @@ export class ChartJSPieChart extends KnowageChartJS {
 
         return this.model.data
     }
+
+    updateChartColorSettings = (widgetModel: IWidget) => {
+        if (!this.model.data.datasets || !this.model.data.datasets[0]) return
+        this.model.data.datasets[0].backgroundColor = widgetModel.settings.chart.colors
+    }
 }
