@@ -1,7 +1,5 @@
 <template>
-    <div>
-        <Pie :chart-options="chartOptions" :chart-data="chartData" :chart-id="'pie-chart'" :dataset-id-key="'label'" :width="200" :height="200" />
-    </div>
+    <Pie :chart-options="chartOptions" :chart-data="chartData" :chart-id="'pie-chart'" :dataset-id-key="'label'" :width="200" :height="200" />
 </template>
 
 <script lang="ts">

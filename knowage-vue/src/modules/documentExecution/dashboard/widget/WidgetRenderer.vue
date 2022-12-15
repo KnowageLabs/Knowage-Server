@@ -20,6 +20,7 @@
             <ActiveSelectionsWidget v-if="widget.type == 'selection'" :propWidget="widget" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" />
             <WebComponentContainer v-if="widget.type == 'html' || widget.type == 'text'" :propWidget="widget" :widgetData="dataToShow" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" :drivers="drivers" :variables="variables"></WebComponentContainer>
             <!-- <HighchartsContainer v-if="widget.type === 'highcharts'" :widgetModel="widget" :dataToShow="widgetData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId"></HighchartsContainer> -->
+            <ChartJSContainer v-if="widget.type === 'chartJS'" :widgetModel="widget" :dataToShow="widgetData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId"></ChartJSContainer>
         </div>
     </div>
 </template>
@@ -37,11 +38,12 @@ import mock from '../dataset/DatasetEditorTestMocks.json'
 import { IDashboardDriver, IDataset, ISelection, IVariable } from '../Dashboard'
 import WebComponentContainer from './WebComponent/WebComponentContainer.vue'
 import HighchartsContainer from '../widget/ChartWidget/Highcharts/HighchartsContainer.vue'
+import ChartJSContainer from '../widget/ChartWidget/ChartJS/ChartJSContainer.vue'
 
 export default defineComponent({
     name: 'widget-renderer',
     emits: ['interaction', 'pageChanged', 'launchSelection', 'sortingChanged'],
-    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, WebComponentContainer, HighchartsContainer },
+    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, WebComponentContainer, HighchartsContainer, ChartJSContainer },
     props: {
         widget: { required: true, type: Object as any },
         widgetData: { required: true, type: Object },
