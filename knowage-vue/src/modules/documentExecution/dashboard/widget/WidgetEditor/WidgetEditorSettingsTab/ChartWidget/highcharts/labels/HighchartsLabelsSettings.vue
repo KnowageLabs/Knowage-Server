@@ -128,7 +128,6 @@ export default defineComponent({
             this.modelChanged()
         },
         getTextAlignValue(toolbarValue: string) {
-            // TODO - Put in helper
             switch (toolbarValue) {
                 case 'flex-start':
                     return 'left'

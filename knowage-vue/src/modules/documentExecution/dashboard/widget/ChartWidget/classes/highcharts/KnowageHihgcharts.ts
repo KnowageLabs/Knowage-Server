@@ -1,5 +1,5 @@
 import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard"
-import { IHighchartsChartModel, IHighchartsChartSerie, IHighchartsSerieAccessibility, IHighchartsSerieLabelSettings, IHighchartsSeriesLabelsSetting, ISerieAccessibilitySetting } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
+import { IHighchartsChartModel, IHighchartsChartSerie, IHighchartsSerieAccessibility, ISerieAccessibilitySetting } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
 import * as  highchartsDefaultValues from "../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues"
 
 export class KnowageHighcharts {
@@ -122,37 +122,6 @@ export class KnowageHighcharts {
     updateSerieAccessibilitySettings = (serieName: string, accessibility: IHighchartsSerieAccessibility) => {
         const index = this.model.series.findIndex((serie: IHighchartsChartSerie) => serie.name === serieName)
         if (index !== -1) this.model.series[index].accessibility = { ...accessibility }
-    }
-
-    updateSeriesLabelSettings = (widgetModel: IWidget) => {
-        if (!widgetModel || !widgetModel.settings.series || !widgetModel.settings.series.seriesLabelsSettings) return
-        this.setAllSeriesLabelSettings(widgetModel)
-        this.setSpecificLabelSettings(widgetModel)
-    }
-
-    setAllSeriesLabelSettings = (widgetModel: IWidget) => {
-        this.model.series.forEach((serie: IHighchartsChartSerie) => {
-            if (this.model.chart.type !== 'pie' && widgetModel.settings.series.seriesLabelsSettings[0] && widgetModel.settings.series.seriesLabelsSettings[0].label.enabled) {
-                // TODO - formatting
-            } else {
-                // TODO - formatting
-            }
-        })
-    }
-
-    setSpecificLabelSettings = (widgetModel: IWidget) => {
-        const index = this.model.chart.type !== 'pie' ? 1 : 0
-        for (let i = index; i < widgetModel.settings.series.seriesLabelsSettings.length; i++) {
-            const seriesLabelSetting = widgetModel.settings.series.seriesLabelsSettings[i] as IHighchartsSeriesLabelsSetting
-            if (seriesLabelSetting.label.enabled) seriesLabelSetting.names.forEach((serieName: string) => this.updateSerieLabelSettings(serieName, seriesLabelSetting.label))
-        }
-    }
-
-    updateSerieLabelSettings = (serieName: string, label: IHighchartsSerieLabelSettings) => {
-        const index = this.model.series.findIndex((serie: IHighchartsChartSerie) => serie.name === serieName)
-        if (index !== -1) {
-            // TODO - put formatting here
-        }
     }
 
     updateFormatterSettings = (object: any, formatProperty: string | null, formatterProperty: string, formatterTextProperty: string, formatterErrorProperty: string) => {

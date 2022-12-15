@@ -681,6 +681,7 @@
                 "title": "Selector Type"
             },
             "series": {
+                "scale": "Scale",
                 "scaleHint": "Scale Hint Placeholder",
                 "title": "Series"
             },

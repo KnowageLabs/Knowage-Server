@@ -50,8 +50,8 @@ export interface IHighchartsSerieLabelSettings {
         fontSize: string
         fontWeight: string
         color: string
-        backgroundColor: string
     },
+    backgroundColor: string
     prefix: string
     suffix: string
     scale: string
@@ -83,7 +83,7 @@ export interface IHighchartsChartModel {
     settings: IIHighchartsChartModelSettings,
     plotOptions: {
         pie?: IHighchartsPieChartPlotOptions,
-        series?: { events: any }
+        series?: any
     },
     legend: IHighchartsLegend,
     tooltip: IHighchartsTooltip,
@@ -170,7 +170,8 @@ export interface IHighchartsChartSerieData {
     name: string,
     y: number,
     sliced?: boolean,
-    selected?: boolean
+    selected?: boolean,
+    dataLabels?: IHighchartsPieChartDataLabels
 }
 
 export interface IIHighchartsChartModelSettings {

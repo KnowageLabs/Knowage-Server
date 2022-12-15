@@ -1,6 +1,8 @@
 import { HighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget'
 import { KnowageHighcharts } from './KnowageHihgcharts'
 import { updatePieChartModel } from './updater/HighchartsPieChartUpdater'
+import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IHighchartsChartSerie, IHighchartsChartSerieData } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import * as highchartsDefaultValues from '../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
 
 export class HighchartsPieChart extends KnowageHighcharts {
@@ -54,5 +56,27 @@ export class HighchartsPieChart extends KnowageHighcharts {
 
     setPiePlotOptions = () => {
         this.model.plotOptions.pie = highchartsDefaultValues.getDafaultPieChartPlotOptions()
+    }
+
+
+    updateSeriesLabelSettings = (widgetModel: IWidget) => {
+        if (!widgetModel || !widgetModel.settings.series || !widgetModel.settings.series.seriesLabelsSettings || !widgetModel.settings.series.seriesLabelsSettings[0]) return
+        const seriesLabelSetting = widgetModel.settings.series.seriesLabelsSettings[0]
+        if (!seriesLabelSetting.label.enabled) return
+        this.model.series.forEach((serie: IHighchartsChartSerie) => {
+            serie.data.forEach((data: IHighchartsChartSerieData) => {
+                data.dataLabels = {
+                    backgroundColor: seriesLabelSetting.label.backgroundColor ?? '',
+                    distance: 30,
+                    enabled: true,
+                    position: "",
+                    style: {
+                        fontFamily: seriesLabelSetting.label.style.fontFamily, fontSize: seriesLabelSetting.label.style.fontSize, fontWeight: seriesLabelSetting.label.style.fontWeight, color: seriesLabelSetting.label.style.color ?? ''
+                    },
+                    format: 'Test from claassss'  // TODO - Darko here comes the formatting
+                }
+            })
+
+        })
     }
 }

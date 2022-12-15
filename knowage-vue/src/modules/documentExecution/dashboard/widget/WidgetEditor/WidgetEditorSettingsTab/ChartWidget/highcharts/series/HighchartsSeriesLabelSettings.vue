@@ -1,8 +1,5 @@
 <template>
     <div v-if="model" class="p-grid p-jc-center p-ai-center p-p-4">
-        {{ seriesSettings }}
-        <br />
-        {{ widgetModel.settings.series.seriesLabelsSettings }}
         <div v-for="(serieSetting, index) in seriesSettings" :key="index" class="dynamic-form-item p-grid p-col-12 p-ai-center">
             <div class="p-col-12 p-md-6 p-d-flex p-flex-column p-p-2">
                 <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.series.title') }}</label>
@@ -35,19 +32,19 @@
                 <InputNumber class="kn-material-input p-inputtext-sm" v-model="serieSetting.label.precision" :disabled="!serieSetting.label.enabled" @blur="modelChanged" />
             </div>
             <div class="p-col-6 p-d-flex p-flex-column kn-flex p-m-2">
-                <label class="kn-material-input-label p-mr-2">{{ $t('common.align') }}</label>
+                <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.series.scale') }}</label>
                 <div class="p-d-flex p-flex-row p-ai-center">
-                    <Dropdown class="kn-material-input" v-model="serieSetting.label.scale" :options="descriptor.scaleOptions" @change="modelChanged"> </Dropdown>
+                    <Dropdown class="kn-material-input" v-model="serieSetting.label.scale" :options="descriptor.scaleOptions" :disabled="!serieSetting.label.enabled" @change="modelChanged"> </Dropdown>
                     <i class="pi pi-question-circle kn-cursor-pointer  p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.series.scaleHint')"></i>
                 </div>
             </div>
 
             <div class="p-col-12 p-md-4 p-lg-4 p-pt-4 p-px-4">
-                <InputSwitch v-model="serieSetting.label.percentage" @change="modelChanged"></InputSwitch>
+                <InputSwitch v-model="serieSetting.label.percentage" :disabled="!serieSetting.label.enabled" @change="modelChanged"></InputSwitch>
                 <label class="kn-material-input-label p-m-3">{{ $t('dashboard.widgetEditor.percentage') }}</label>
             </div>
             <div class="p-col-12 p-md-4 p-lg-4 p-pt-4 p-px-4">
-                <InputSwitch v-model="serieSetting.label.absolute" @change="modelChanged"></InputSwitch>
+                <InputSwitch v-model="serieSetting.label.absolute" :disabled="!serieSetting.label.enabled" @change="modelChanged"></InputSwitch>
                 <label class="kn-material-input-label p-m-3">{{ $t('dashboard.widgetEditor.absolute') }}</label>
             </div>
         </div>
@@ -112,7 +109,7 @@ export default defineComponent({
         },
         loadToolbarModels() {
             this.seriesSettings.forEach((serieSetting: IHighchartsSeriesLabelsSetting) => {
-                this.toolbarModels.push({ 'font-family': serieSetting.label.style.fontFamily, 'font-size': serieSetting.label.style.fontSize, 'font-weight': serieSetting.label.style.fontWeight, color: serieSetting.label.style.color, 'background-color': serieSetting.label.style.backgroundColor })
+                this.toolbarModels.push({ 'font-family': serieSetting.label.style.fontFamily, 'font-size': serieSetting.label.style.fontSize, 'font-weight': serieSetting.label.style.fontWeight, color: serieSetting.label.style.color, 'background-color': serieSetting.label.backgroundColor })
             })
         },
         loadSeriesOptions() {
@@ -160,16 +157,16 @@ export default defineComponent({
                         fontFamily: '',
                         fontSize: '',
                         fontWeight: '',
-                        color: '',
-                        backgroundColor: ''
+                        color: ''
                     },
+                    backgroundColor: '',
                     prefix: '',
                     suffix: '',
                     scale: 'empty',
                     precision: 2,
                     absolute: false,
                     percentage: false
-                } // TODO - move to default serie accebility helper
+                }
             })
             this.toolbarModels.push({ 'font-family': '', 'font-size': '', 'font-weight': '', color: '', 'background-color': '' })
         },
@@ -190,13 +187,13 @@ export default defineComponent({
                 color: model.color ?? '',
                 'background-color': model['background-color'] ?? ''
             }
-            this.seriesSettings[index].label.style = {
-                backgroundColor: this.toolbarModels[index]['background-color'] ?? '',
-                color: this.toolbarModels[index].color ?? '',
-                fontSize: this.toolbarModels[index]['font-size'] ?? '14px',
-                fontFamily: this.toolbarModels[index]['font-family'] ?? '',
-                fontWeight: this.toolbarModels[index]['font-weight'] ?? ''
-            }
+            ;(this.seriesSettings[index].label.backgroundColor = this.toolbarModels[index]['background-color'] ?? ''),
+                (this.seriesSettings[index].label.style = {
+                    color: this.toolbarModels[index].color ?? '',
+                    fontSize: this.toolbarModels[index]['font-size'] ?? '14px',
+                    fontFamily: this.toolbarModels[index]['font-family'] ?? '',
+                    fontWeight: this.toolbarModels[index]['font-weight'] ?? ''
+                })
             this.modelChanged()
         }
     }
