@@ -200,6 +200,16 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 
 		env.put(EngineConstants.ENV_DATASETS, Collections.singletonList(dataset));
 
+		if (dataset.getDsType() != null && dataset.getDsType().equals("SbiFileDataSet") && dataset.getPersistTableName() == null) {
+
+//			IDataSet cachedDataSet = FederationUtils.createDatasetOnCache(mapNameTable.get(dsLabel), originalDataset, cachedDataSource);
+//			cachedDataSet.setUserProfileAttributes(userAttributes);
+//			cachedDataSet.setPersistTableName(mapNameTable.get(dsLabel));
+//			cachedDataSet.setParamsMap(env);
+//			cachedDataSet.setDsMetadata(originalDataset.getDsMetadata());
+//			cachedDataSet.setDataSourceForReading(cachedDataSource);
+		}
+
 	}
 
 	private SourceBean getTemplateAsSourceBean(String modelName) {
@@ -445,5 +455,10 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 		return SpagoBIConstants.QBE_ENGINE_LABEL;
 	}
 
-	/**** REGISTRY END ****/
+	private IDataSource getCacheDataSource() {
+		logger.debug("Loading the cache datasource");
+		IDataSource dataSource = getDataSourceServiceProxy().getDataSourceForCache();
+		logger.debug("cache datasource loaded");
+		return dataSource;
+	}
 }

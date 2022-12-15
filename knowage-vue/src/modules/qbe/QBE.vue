@@ -567,7 +567,7 @@ export default defineComponent({
 
             let url = `/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_TREE_ACTION&SBI_EXECUTION_ID=${this.uniqueID}`
 
-            if (this.dataset && datamartName) url = `&datamartName=${datamartName}`
+            if (this.dataset && datamartName) url += `&datamartName=${datamartName}`
             if (this.sourceDataset) url += '&openDatasetInQbe=true'
 
             await this.$http

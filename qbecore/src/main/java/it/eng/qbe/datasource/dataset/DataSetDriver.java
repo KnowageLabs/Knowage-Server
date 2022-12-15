@@ -65,8 +65,7 @@ public class DataSetDriver implements IDriver {
 		dataSourceName = namingStrategy.getDataSourceName(configuration);
 		if (dataSourceCacheEnabled) {
 			dataSource = cache.containsKey(dataSourceName) ? cache.get(dataSourceName) : new DataSetDataSource(dataSourceName, configuration);
-			cache.put(dataSourceName, dataSource); // persiste il dataset in cache, operazione va fatta solo se serve, cioè no per i ds sql (vanno persistiti
-													// solo i file)
+			cache.put(dataSourceName, dataSource);
 		} else {
 			dataSource = new DataSetDataSource(dataSourceName, configuration);
 		}

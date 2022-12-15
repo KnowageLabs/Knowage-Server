@@ -45,6 +45,8 @@ public class SQLStatement extends AbstractStatement {
 
 	public static transient Logger logger = Logger.getLogger(SQLStatement.class);
 
+	private String initialDatasetQuery;
+
 	protected SQLStatement(IDataSource dataSource) {
 		super(dataSource);
 	}
@@ -103,7 +105,7 @@ public class SQLStatement extends AbstractStatement {
 
 		whereClause = SQLStatementWhereClause.injectAutoJoins(this, whereClause, query, entityAliasesMaps);
 
-		fromClause = SQLStatementFromClause.build(this, query, entityAliasesMaps, initialDataset);
+		fromClause = SQLStatementFromClause.build(this, query, entityAliasesMaps, initialDatasetQuery);
 
 		queryStr = selectClause + " " + fromClause + " " + whereClause + " " + groupByClause + " " + havingClause + " " + orderByClause;
 
@@ -168,6 +170,16 @@ public class SQLStatement extends AbstractStatement {
 	}
 
 	@Override
+	public String getQuerySQLString(String initialDatasetQuery) {
+		if (initialDatasetQuery != null) {
+			this.setInitialDatasetQuery(initialDatasetQuery);
+			this.prepare();
+		}
+		return super.getQueryString();
+
+	}
+
+	@Override
 	public String getSqlQueryString() {
 
 		// ISQLDataSource ds = ((ISQLDataSource)getDataSource());
@@ -191,6 +203,14 @@ public class SQLStatement extends AbstractStatement {
 		DataSetDataSource datasetDatasource = (DataSetDataSource) this.getDataSource();
 		it.eng.spagobi.tools.datasource.bo.IDataSource datasourceForReading = datasetDatasource.getDataSourceForReading();
 		return rootEntityAlias + "." + AbstractJDBCDataset.encapsulateColumnName(queryName, datasourceForReading);
+	}
+
+	public String getInitialDatasetQuery() {
+		return initialDatasetQuery;
+	}
+
+	public void setInitialDatasetQuery(String initialDatasetQuery) {
+		this.initialDatasetQuery = initialDatasetQuery;
 	}
 
 }

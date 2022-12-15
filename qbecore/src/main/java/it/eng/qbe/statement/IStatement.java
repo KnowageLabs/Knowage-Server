@@ -26,7 +26,6 @@ import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.IQueryField;
 import it.eng.qbe.query.Query;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
 
 /**
  * The Interface IStatement.
@@ -103,8 +102,6 @@ public interface IStatement {
 
 	public String buildFromEntityAliasWithRoles(IModelEntity me, String rel, String entityAlias);
 
-	public IDataSet getInitialDataset();
-
-	public void setInitialDataset(IDataSet initialDataset);
+	public String getQuerySQLString(String wrappedDatasetQuery);
 
 }

@@ -27,8 +27,6 @@ import org.apache.log4j.Logger;
 
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.query.Query;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
@@ -39,10 +37,10 @@ public class SQLStatementFromClause extends AbstractStatementFromClause {
 
 	public static transient Logger logger = Logger.getLogger(SQLStatementFromClause.class);
 
-	public static String build(SQLStatement parentStatement, Query query, Map<String, Map<String, String>> entityAliasesMaps, IDataSet initialDataset) {
+	public static String build(SQLStatement parentStatement, Query query, Map<String, Map<String, String>> entityAliasesMaps, String initialDatasetQuery) {
 		SQLStatementFromClause clause = new SQLStatementFromClause(parentStatement);
-		if (initialDataset != null) {
-			return clause.buildClauseWithDataset(query, entityAliasesMaps, initialDataset);
+		if (initialDatasetQuery != null) {
+			return clause.buildClauseWithDataset(query, entityAliasesMaps, initialDatasetQuery);
 		}
 		return clause.buildClause(query, entityAliasesMaps);
 	}
@@ -58,7 +56,7 @@ public class SQLStatementFromClause extends AbstractStatementFromClause {
 		return name;
 	}
 
-	public String buildClauseWithDataset(Query query, Map entityAliasesMaps, IDataSet initialDataset) {
+	public String buildClauseWithDataset(Query query, Map entityAliasesMaps, String initialDatasetQuery) {
 		StringBuffer buffer;
 
 		logger.debug("IN");
@@ -91,12 +89,12 @@ public class SQLStatementFromClause extends AbstractStatementFromClause {
 
 			}
 
-			addEntityAliasesWithDataset(cubes, buffer, entityAliases, initialDataset);
+			addEntityAliasesWithDataset(cubes, buffer, entityAliases, initialDatasetQuery);
 
 			if (normalEntities.size() > 0 && cubes.size() > 0)
 				buffer.append(",");
 
-			addEntityAliasesWithDataset(normalEntities, buffer, entityAliases, initialDataset);
+			addEntityAliasesWithDataset(normalEntities, buffer, entityAliases, initialDatasetQuery);
 
 		} finally {
 			logger.debug("OUT");
@@ -105,7 +103,7 @@ public class SQLStatementFromClause extends AbstractStatementFromClause {
 		return buffer.toString().trim();
 	}
 
-	private void addEntityAliasesWithDataset(List<IModelEntity> entities, StringBuffer buffer, Map entityAliases, IDataSet initialDataset) {
+	private void addEntityAliasesWithDataset(List<IModelEntity> entities, StringBuffer buffer, Map entityAliases, String initialDatasetQuery) {
 		if (entities != null) {
 			for (int i = 0; i < entities.size(); i++) {
 				IModelEntity me = entities.get(i);
@@ -134,10 +132,9 @@ public class SQLStatementFromClause extends AbstractStatementFromClause {
 				} else {
 					// for Cassandra dont add the entityAlias
 					String fromClauseElement = "";
-					if (initialDataset instanceof JDBCDataSet) {
-						JDBCDataSet datasetJDBC = (JDBCDataSet) initialDataset;
-						String queryJDBC = datasetJDBC.getQuery().toString();
-						fromClauseElement = " (select * from ( " + queryJDBC + " )) " + entityAlias;
+					if (initialDatasetQuery != null) {
+
+						fromClauseElement = " (select * from ( " + initialDatasetQuery + " )) " + entityAlias;
 					}
 
 					buffer.append(fromClauseElement);

@@ -33,7 +33,6 @@ import it.eng.qbe.query.Query;
 import it.eng.qbe.query.filters.SqlFilterModelAccessModality;
 import it.eng.qbe.statement.graph.GraphManager;
 import it.eng.qbe.statement.graph.bean.QueryGraph;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.objects.Couple;
 
 /**
@@ -64,8 +63,6 @@ public abstract class AbstractStatement implements IStatement {
 
 	/** The offset. */
 	int offset;
-
-	protected IDataSet initialDataset;
 
 	/**
 	 * Instantiates a new basic statement.
@@ -460,16 +457,6 @@ public abstract class AbstractStatement implements IStatement {
 
 	protected String buildFieldQueryNameWithEntityAlias(String rootEntityAlias, String queryName) {
 		return rootEntityAlias + "." + queryName;
-	}
-
-	@Override
-	public IDataSet getInitialDataset() {
-		return initialDataset;
-	}
-
-	@Override
-	public void setInitialDataset(IDataSet initialDataset) {
-		this.initialDataset = initialDataset;
 	}
 
 }

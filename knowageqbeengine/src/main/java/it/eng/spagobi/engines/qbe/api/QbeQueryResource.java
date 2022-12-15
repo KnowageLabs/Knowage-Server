@@ -74,7 +74,6 @@ import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.iterator.CsvStreamingOutput;
@@ -295,13 +294,6 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			Integer maxSize = QbeEngineConfig.getInstance().getResultLimit();
 			logger.debug("Configuration setting  [" + "QBE.QBE-SQL-RESULT-LIMIT.value" + "] is equals to [" + (maxSize != null ? maxSize : "none") + "]");
 
-			if (listDatasets.get(0) instanceof JDBCDataSet) {
-				JDBCDataSet dsInitial = (JDBCDataSet) listDatasets.get(0);
-				statement.setInitialDataset(dsInitial);
-				qbeDataSet.setStatement(statement);
-				dataSet = getActiveQueryAsDataSet(q, statement);
-				dataSet.setDrivers(drivers);
-			}
 			String jpaQueryStr = statement.getQueryString();
 
 			logger.debug("Executable query (HQL/JPQL): [" + jpaQueryStr + "]");
