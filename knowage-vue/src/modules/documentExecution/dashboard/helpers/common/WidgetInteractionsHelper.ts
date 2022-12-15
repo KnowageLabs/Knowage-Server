@@ -22,7 +22,7 @@ const getFormattedSelection = (widget: any) => {
     if (widget.type === 'table') {
         return getFormattedTableSelection(widget)
     } else if (widget.type === 'chart') {
-        return getFormattedChartSelection(widget)
+        return getFormattedChartSelection()
     }
 }
 
@@ -43,14 +43,12 @@ const getFormattedTableSelection = (widget: any) => {
     return formattedSelection
 }
 
-const getFormattedChartSelection = (widget: IWidget) => {
+const getFormattedChartSelection = () => {
     const store = mainStore()
-    console.log('>>>>>>> MAIN STORE: ', store)
     const user = store.getUser()
-    console.log('>>>>>>> USER: ', user)
     // TODO widgetChange
-    // return user?.enterprise ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections
-    return false ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections
+    //return user?.enterprise ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections
+    return false ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections()
 }
 
 export const getFormattedCrossNavigation = (widget: any) => {

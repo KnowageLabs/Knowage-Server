@@ -220,7 +220,7 @@ export interface IWidgetPreview {
 
 export interface IWidgetSelection {
     enabled: boolean
-    modalColumn: string
+    modalColumn?: string
     multiselection?: {
         enabled: boolean
         properties: {
