@@ -1,10 +1,10 @@
-import { hexToRgb } from "@/modules/documentExecution/dashboard/helpers/FormattingHelpers"
-import { HighchartsPieChartModel } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget"
-import { IHighchartsOptions3D } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
+import { hexToRgba } from '@/modules/documentExecution/dashboard/helpers/FormattingHelpers'
+import { HighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget'
+import { IHighchartsOptions3D } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 
 export const updatePieChartModel = (oldModel: any, newModel: HighchartsPieChartModel) => {
-    console.log(">>>>>>>>>> OLD MODEL: ", oldModel)
-    console.log(">>>>>>>>>> NEW MODEL: ", newModel)
+    console.log('>>>>>>>>>> OLD MODEL: ', oldModel)
+    console.log('>>>>>>>>>> NEW MODEL: ', newModel)
     getFormatted3DConfiguration(oldModel, newModel)
     getFormattedNoDataConfiguration(oldModel, newModel)
     getFormattedLegend(oldModel, newModel)
@@ -37,7 +37,7 @@ const getFormattedNoDataConfiguration = (oldModel: any, newModel: HighchartsPieC
                 fontFamily: oldModel.CHART.EMPTYMESSAGE.style.fontFamily ?? '',
                 fontSize: oldModel.CHART.EMPTYMESSAGE.style.fontSize ?? '',
                 fontWeight: oldModel.CHART.EMPTYMESSAGE.style.fontWeight,
-                color: oldModel.CHART.EMPTYMESSAGE.style.color ? hexToRgb(oldModel.CHART.EMPTYMESSAGE.style.color) : '',
+                color: oldModel.CHART.EMPTYMESSAGE.style.color ? hexToRgba(oldModel.CHART.EMPTYMESSAGE.style.color) : '',
                 backgroundColor: ''
             }
         }
@@ -73,9 +73,9 @@ const getFormattedLegend = (oldModel: any, newModel: HighchartsPieChartModel) =>
                 fontFamily: oldModel.CHART.LEGEND.style.fontFamily ?? '',
                 fontSize: oldModel.CHART.LEGEND.style.fontSize ?? '',
                 fontWeight: oldModel.CHART.LEGEND.style.fontWeight ?? '',
-                color: oldModel.CHART.LEGEND.style.color ? hexToRgb(oldModel.CHART.LEGEND.style.color) : ''
+                color: oldModel.CHART.LEGEND.style.color ? hexToRgba(oldModel.CHART.LEGEND.style.color) : ''
             },
-            backgroundColor: oldModel.CHART.LEGEND.style.backgroundColor ? hexToRgb(oldModel.CHART.LEGEND.style.backgroundColor) : '',
+            backgroundColor: oldModel.CHART.LEGEND.style.backgroundColor ? hexToRgba(oldModel.CHART.LEGEND.style.backgroundColor) : '',
             borderWidth: 1,
             borderColor: ''
         }
@@ -92,8 +92,7 @@ const getForamttedLabels = (oldModel: any, newModel: HighchartsPieChartModel) =>
                 fontFamily: oldDataLabelsSettings.style.fontFamily,
                 fontSize: oldDataLabelsSettings.style.fontSize,
                 fontWeight: oldDataLabelsSettings.style.fontWeight,
-                color: oldDataLabelsSettings.style.color ? hexToRgb(oldDataLabelsSettings.style.color) : '',
-
+                color: oldDataLabelsSettings.style.color ? hexToRgba(oldDataLabelsSettings.style.color) : ''
             },
             position: '',
             backgroundColor: ''
@@ -110,11 +109,9 @@ const getFormattedTooltipSettings = (oldModel: any, newModel: HighchartsPieChart
                 fontFamily: oldTooltipSettings.style.fontFamily,
                 fontSize: oldTooltipSettings.style.fontSize,
                 fontWeight: oldTooltipSettings.style.fontWeight,
-                color: oldTooltipSettings.style.color ? hexToRgb(oldTooltipSettings.style.color) : ''
+                color: oldTooltipSettings.style.color ? hexToRgba(oldTooltipSettings.style.color) : ''
             },
-            backgroundColor: oldTooltipSettings.backgroundColor ? hexToRgb(oldTooltipSettings.backgroundColor) : '',
-
+            backgroundColor: oldTooltipSettings.backgroundColor ? hexToRgba(oldTooltipSettings.backgroundColor) : ''
         }
     }
 }
-

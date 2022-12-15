@@ -1,5 +1,5 @@
 import { IDashboard, ITableWidgetColumnGroup, ITableWidgetConditionalStyle, ITableWidgetHeadersRule, ITableWidgetVisibilityCondition, ITableWidgetVisualizationType, IVariable, IWidget } from '../../Dashboard'
-import { hexToRgb } from '../FormattingHelpers'
+import { hexToRgba } from '../FormattingHelpers'
 import { getColumnId } from './TableWidgetCompatibilityHelper'
 
 export const getSettingsFromWidgetColumns = (formattedWidget: IWidget, widget: any, formattedDashboardModel: IDashboard) => {
@@ -49,7 +49,7 @@ const getVisibilityConditionsFromColumn = (formattedWidget: IWidget, tempColumn:
 
 const getVisibilityConditionVariable = (formattedWidget: IWidget, column: any, tempVisibiilityCondition: ITableWidgetVisibilityCondition, formattedDashboardModel: IDashboard) => {
     const modelVariables = formattedDashboardModel?.configuration?.variables ?? []
-    column.variables.forEach((variable: { action: string; variable: string; condition: string; value: string, key?: string }) => {
+    column.variables.forEach((variable: { action: string; variable: string; condition: string; value: string; key?: string }) => {
         if (variable.action === 'hide') {
             const modelVariable = modelVariables.find((tempVariable: IVariable) => tempVariable.name === variable.variable)
             tempVisibiilityCondition.condition = {
@@ -73,7 +73,7 @@ const setVisibilityConditionValueFromVariable = (tempVisibiilityCondition: ITabl
         case 'profile':
         case 'driver':
             tempVisibiilityCondition.condition.value = modelVariable.value
-            break;
+            break
         case 'dataset':
             if (modelVariable.column) {
                 tempVisibiilityCondition.condition.value = modelVariable.value
@@ -164,7 +164,7 @@ const setConditionalStyleValueFromVariable = (conditionStyle: ITableWidgetCondit
         case 'profile':
         case 'driver':
             conditionStyle.condition.value = modelVariable.value
-            break;
+            break
         case 'dataset':
             if (modelVariable.column) {
                 conditionStyle.condition.value = modelVariable.value
@@ -175,7 +175,6 @@ const setConditionalStyleValueFromVariable = (conditionStyle: ITableWidgetCondit
             }
     }
 }
-
 
 const getTooltipFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
     if (tempColumn.hasOwnProperty('hideTooltip') || tempColumn.style?.hasOwnProperty('tooltip')) {
@@ -213,8 +212,8 @@ const addVisualisationTypeMeasureColumn = (formattedWidget: IWidget, tempColumn:
         tempVisualizationType.min = tempColumn.barchart.minValue ?? 0
         tempVisualizationType.max = tempColumn.barchart.maxValue ?? 0
         tempVisualizationType.alignment = tempColumn.barchart.style ? tempColumn.barchart.style['justify-content'] ?? '' : ''
-        tempVisualizationType.color = tempColumn.barchart.style ? hexToRgb(tempColumn.barchart.style.color) : ''
-        tempVisualizationType['background-color'] = tempColumn.barchart.style ? hexToRgb(tempColumn.barchart.style['background-color']) ?? '' : ''
+        tempVisualizationType.color = tempColumn.barchart.style ? hexToRgba(tempColumn.barchart.style.color) : ''
+        tempVisualizationType['background-color'] = tempColumn.barchart.style ? hexToRgba(tempColumn.barchart.style['background-color']) ?? '' : ''
     }
     formattedWidget.settings.visualization.visualizationTypes.types.push(tempVisualizationType)
 }
@@ -253,7 +252,6 @@ const getHeaderConfigurationFromWidgetColumn = (formattedWidget: IWidget, column
 const getHeaderConfigurationFromColumnVariable = (formattedWidget: IWidget, column: any, formattedDashboardModel: IDashboard) => {
     const modelVariables = formattedDashboardModel?.configuration?.variables ?? []
     column.variables.forEach((variable: { action: string; variable: string; condition: string; value: string }) => {
-
         if (variable.action === 'header') {
             const modelVariable = modelVariables.find((tempVariable: IVariable) => tempVariable.name === variable.variable)
             const tempHeadersConfigurationRule = { target: [getColumnId(column.name)], action: 'setLabel', compareType: 'variable', variable: variable.variable } as ITableWidgetHeadersRule
@@ -263,14 +261,14 @@ const getHeaderConfigurationFromColumnVariable = (formattedWidget: IWidget, colu
     })
 }
 
-const setHeaderConfigurationRuleValueFromVariable = (rule: ITableWidgetHeadersRule, modelVariable: IVariable | undefined, variable: { action: string; variable: string; condition: string; value: string, key?: string }) => {
+const setHeaderConfigurationRuleValueFromVariable = (rule: ITableWidgetHeadersRule, modelVariable: IVariable | undefined, variable: { action: string; variable: string; condition: string; value: string; key?: string }) => {
     if (!modelVariable) return
     switch (modelVariable.type) {
         case 'static':
         case 'profile':
         case 'driver':
             rule.value = modelVariable.value
-            break;
+            break
         case 'dataset':
             if (modelVariable.column) {
                 rule.value = modelVariable.value
