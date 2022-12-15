@@ -95,6 +95,7 @@ public class DataSetConstants {
 	public static final String DS_PYTHON_NAME = "Python/R";
 	public static final String DS_SOLR_NAME = "Solr";
 	public static final String SPARQL = "SPARQL";
+	public static final String DERIVED = "Derived";
 
 	public static final String TRASFORMER_TYPE_CD = "trasfTypeCd";
 	public static final String PIVOT_COL_NAME = "pivotColName";
