@@ -33,7 +33,8 @@ export const getWidgetData = async (widget: IWidget, datasets: IModelDataset[], 
         case 'text':
             return await getTextWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         case 'highcharts':
-            // TODO
+            return await getChartWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
+        case 'chartJS':
             return await getChartWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         default:
             break
@@ -439,11 +440,6 @@ export const getChartWidgetData = async (widget: IWidget, datasets: IModelDatase
 
         let postData = formatChartWidgetForGet(widget, selectedDataset, initialCall, selections, associativeResponseSelections)
         var tempResponse = null as any
-
-        console.group(`%c Widget ---------------`, 'background: #121212; color: orange')
-        console.log(widget)
-        console.log(postData)
-        console.groupEnd()
 
         if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
         await $http

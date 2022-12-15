@@ -1,7 +1,5 @@
 <template>
-    <div>
-        <Pie ref="pie" :chart-options="chartOptions" :chart-data="chartData" :chart-id="'pie-chart'" :dataset-id-key="'label'" :width="200" :height="200" />
-    </div>
+    <Pie :chart-options="chartOptions" :chart-data="chartData" :chart-id="'pie-chart'" :dataset-id-key="'label'" :width="200" :height="200" />
 </template>
 
 <script lang="ts">
@@ -67,16 +65,19 @@ export default defineComponent({
             this.widgetModel.settings.chartModel.setData(this.dataToShow)
             this.chartData = this.chartModel.data
 
+            //TODO - Find better place for color settings
+            this.chartModel.data.datasets[0].backgroundColor = this.widgetModel.settings.chart.colors
+
             // TODO REMOVE MOCK
-            this.chartData = {
-                labels: ['VueJs', 'EmberJs', 'ReactJs', 'AngularJs'],
-                datasets: [
-                    {
-                        backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
-                        data: [40, 20, 80, 10]
-                    }
-                ]
-            }
+            // this.chartData = {
+            //     labels: ['VueJs', 'EmberJs', 'ReactJs', 'AngularJs'],
+            //     datasets: [
+            //         {
+            //             backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
+            //             data: [40, 20, 80, 10]
+            //         }
+            //     ]
+            // }
         },
         resetChart() {
             this.chartData = { labels: [], datasets: [] }
