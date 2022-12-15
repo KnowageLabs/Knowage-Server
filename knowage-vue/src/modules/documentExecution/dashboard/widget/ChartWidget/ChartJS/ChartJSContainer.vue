@@ -7,7 +7,7 @@ import { defineComponent, PropType } from 'vue'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { Pie } from 'vue-chartjs'
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale } from 'chart.js'
-import { IWidget, IDataset } from '../../../Dashboard'
+import { IWidget, IDataset, IWidgetColumn, ISelection } from '../../../Dashboard'
 import { IChartJSChartModel, IChartJSData, IChartJSOptions } from '../../../interfaces/chartJS/DashboardChartJSWidget'
 import { mapActions } from 'pinia'
 import { updateStoreSelections } from '../../interactionsHelpers/InteractionHelper'
@@ -18,7 +18,7 @@ ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale)
 export default defineComponent({
     name: 'chartJS-container',
     components: { Pie },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, dataToShow: { type: Object as any, required: true }, dashboardId: { type: String, required: true }, editorMode: { type: Boolean } },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, dataToShow: { type: Object as any, required: true }, dashboardId: { type: String, required: true }, editorMode: { type: Boolean }, propActiveSelections: { type: Array as PropType<ISelection[]>, required: true } },
     data() {
         return {
             chartData: { labels: [], datasets: [] } as IChartJSData,
@@ -58,15 +58,16 @@ export default defineComponent({
         },
         updateChartOptions() {
             // TODO see if responsive is needed
-            this.chartOptions = { ...this.chartModel.options, responsive: true, maintainAspectRatio: false, events: ['click'], onClick: this.testFunction }
+            this.chartOptions = { ...this.chartModel.options, responsive: true, maintainAspectRatio: false, events: ['click'], onClick: this.setSelection }
         },
         updateChartData() {
             // TODO - Darko
             this.widgetModel.settings.chartModel.setData(this.dataToShow)
-            this.chartData = this.chartModel.data
 
             //TODO - Find better place for color settings
             this.chartModel.data.datasets[0].backgroundColor = this.widgetModel.settings.chart.colors
+
+            this.chartData = this.chartModel.data
 
             // TODO REMOVE MOCK
             // this.chartData = {
@@ -83,15 +84,19 @@ export default defineComponent({
             this.chartData = { labels: [], datasets: [] }
             this.chartOptions = {} as IChartJSOptions
         },
-        testFunction(event: any, test: any) {
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>> ON CLICK EVENT: ', event)
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>> ON CLICK TEST: ', test)
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> WIDGET MODEL: ', this.widgetModel)
-            const value = [2]
-            // updateStoreSelections(this.createNewSelection(value), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
+        setSelection(event: any, selectionEvent: any[]) {
+            if (this.editorMode) return
+            const value = this.getSelectionValue(selectionEvent)
+            updateStoreSelections(this.createNewSelection([value]), this.propActiveSelections, this.dashboardId, this.setSelections, this.$http)
+        },
+        getSelectionValue(selectionEvent: any[]) {
+            if (!selectionEvent || !selectionEvent[0]) return ''
+            const value = this.chartData.datasets[selectionEvent[0].datasetIndex].data[selectionEvent[0].index]
+            return value ?? ''
         },
         createNewSelection(value: (string | number)[]) {
-            const selection = { datasetId: this.widgetModel.dataset as number, datasetLabel: this.getDatasetLabel(this.widgetModel.dataset as number), columnName: this.widgetModel.columns[0]?.columnName ?? '', value: value, aggregated: false, timestamp: new Date().getTime() }
+            const measureColumn = this.widgetModel.columns.find((column: IWidgetColumn) => column.fieldType === 'MEASURE')
+            const selection = { datasetId: this.widgetModel.dataset as number, datasetLabel: this.getDatasetLabel(this.widgetModel.dataset as number), columnName: measureColumn?.columnName ?? '', value: value, aggregated: false, timestamp: new Date().getTime() }
             return selection
         },
         getDatasetLabel(datasetId: number) {
