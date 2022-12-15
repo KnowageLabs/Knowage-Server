@@ -6,7 +6,7 @@
 import { defineComponent, PropType } from 'vue'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { IWidget } from '../../../Dashboard'
-import { IHighchartsChartModel, IHighchartsChartSerie, IHighchartsSerieAccessibility, IHighchartsSerieLabelSettings, IHighchartsSeriesLabelsSetting, ISerieAccessibilitySetting } from '../../../interfaces/highcharts/DashboardHighchartsWidget'
+import { IHighchartsChartModel } from '../../../interfaces/highcharts/DashboardHighchartsWidget'
 import Highcharts from 'highcharts'
 import Highcharts3D from 'highcharts/highcharts-3d'
 import Accessibility from 'highcharts/modules/accessibility'
@@ -67,9 +67,9 @@ export default defineComponent({
             this.widgetModel.settings.chartModel.updateSeriesLabelSettings(this.widgetModel)
             this.error = this.widgetModel.settings.chartModel.updateFormatterSettings(this.chartModel.plotOptions.pie?.dataLabels, 'format', 'formatter', 'formatterText', 'formatterError')
             if (this.error) return
-            this.error = this.widgetModel.settings.chartModel.updateLegendSettings()
+            this.error = this.updateLegendSettings()
             if (this.error) return
-            this.error = this.widgetModel.settings.chartModel.updateTooltipSettings()
+            this.error = this.updateTooltipSettings()
             if (this.error) return
 
             this.widgetModel.settings.chartModel.updateChartColorSettings(this.widgetModel)
@@ -105,6 +105,16 @@ export default defineComponent({
 
             console.log('>>>>>>>>>>>>>>> CHART TO RENDER: ', this.chartModel)
             Highcharts.chart('container', this.chartModel as any)
+        },
+        updateLegendSettings() {
+            if (this.chartModel.plotOptions.pie) this.chartModel.plotOptions.pie.showInLegend = true
+            return this.widgetModel.settings.chartModel.updateFormatterSettings(this.chartModel.legend, 'labelFormat', 'labelFormatter', 'labelFormatterText', 'labelFormatterError')
+        },
+        updateTooltipSettings() {
+            let hasError = this.widgetModel.settings.chartModel.updateFormatterSettings(this.chartModel.tooltip, null, 'formatter', 'formatterText', 'formatterError')
+            if (hasError) return hasError
+            hasError = this.widgetModel.settings.chartModel.updateFormatterSettings(this.chartModel.tooltip, null, 'pointFormatter', 'pointFormatterText', 'pointFormatterError')
+            return hasError
         }
     }
 })
