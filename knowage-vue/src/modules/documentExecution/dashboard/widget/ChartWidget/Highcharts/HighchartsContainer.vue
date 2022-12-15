@@ -1,5 +1,5 @@
 <template>
-    <div v-show="!error" :id="chartID" style="width: 100%; height: 500;"></div>
+    <div v-show="!error" :id="chartID" style="flex: 1"></div>
 </template>
 
 <script lang="ts">
