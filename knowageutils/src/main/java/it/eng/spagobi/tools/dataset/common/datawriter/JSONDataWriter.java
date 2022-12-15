@@ -562,13 +562,13 @@ public class JSONDataWriter implements IDataWriter {
 				} else if (LocalTime.class.isAssignableFrom(clazz)) {
 					logger.debug("Column [" + (i + 1) + "] type is equal to [" + "LocalTime" + "]");
 					fieldMetaDataJSON.put("type", "time");
-					fieldMetaDataJSON.put("dateFormat", "H:i:s");
-					fieldMetaDataJSON.put("dateFormatJava", "HH:mm:ss");
+					fieldMetaDataJSON.put("dateFormat", "H:i:s.SSS");
+					fieldMetaDataJSON.put("dateFormatJava", "HH:mm:ss.SSS");
 				} else if (LocalDateTime.class.isAssignableFrom(clazz)) {
 					logger.debug("Column [" + (i + 1) + "] type is equal to [" + "LocalDateTime" + "]");
 					fieldMetaDataJSON.put("type", "timestamp");
-					fieldMetaDataJSON.put("dateFormat", "d/m/YTH:i:s");
-					fieldMetaDataJSON.put("dateFormatJava", "dd/MM/yyyyTHH:mm:ss");
+					fieldMetaDataJSON.put("dateFormat", "d/m/Y H:i:s.SSS");
+					fieldMetaDataJSON.put("dateFormatJava", "dd/MM/yyyy HH:mm:ss.SSS");
 				} else if (OffsetTime.class.isAssignableFrom(clazz)) {
 					logger.debug("Column [" + (i + 1) + "] type is equal to [" + "OffsetTime" + "]");
 					fieldMetaDataJSON.put("type", "time");
