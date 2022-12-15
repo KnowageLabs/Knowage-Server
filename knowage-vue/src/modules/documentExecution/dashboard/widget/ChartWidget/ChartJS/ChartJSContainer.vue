@@ -1,5 +1,6 @@
 <template>
-    <Pie :chart-options="chartOptions" :chart-data="chartData" :chart-id="'pie-chart'" :dataset-id-key="'label'" :width="200" :height="200" />
+    <!-- <Pie :style="`flex: 1; position: relative`" :chart-options="chartOptions" :chart-data="chartData" :chart-id="'pie-chart'" :dataset-id-key="'label'" /> -->
+    <Pie :style="myStyles" :chart-options="chartOptions" :chart-data="chartData" :chart-id="'pie-chart'" :dataset-id-key="'label'" />
 </template>
 
 <script lang="ts">
@@ -19,12 +20,21 @@ export default defineComponent({
     name: 'chartJS-container',
     components: { Pie },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, dataToShow: { type: Object as any, required: true }, dashboardId: { type: String, required: true }, editorMode: { type: Boolean }, propActiveSelections: { type: Array as PropType<ISelection[]>, required: true } },
+    computed: {
+        myStyles(): any {
+            return {
+                height: this.editorMode ? '100%' : `${this.chartHeight}px`,
+                position: 'relative'
+            }
+        }
+    },
     data() {
         return {
             chartData: { labels: [], datasets: [] } as IChartJSData,
             chartOptions: {} as IChartJSOptions,
             chartModel: {} as IChartJSChartModel,
-            error: false
+            error: false,
+            chartHeight: 0 as number
         }
     },
     mounted() {
@@ -38,9 +48,11 @@ export default defineComponent({
         ...mapActions(store, ['setSelections', 'getAllDatasets']),
         setEventListeners() {
             emitter.on('refreshChart', this.onRefreshChart)
+            emitter.on('chartWidgetResized', (newHeight) => this.onChartResize(newHeight as number))
         },
         removeEventListeners() {
             emitter.off('refreshChart', this.onRefreshChart)
+            emitter.off('chartWidgetResized', (newHeight) => this.onChartResize(newHeight as number))
         },
         onRefreshChart() {
             this.chartModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
@@ -87,6 +99,9 @@ export default defineComponent({
             const datasets = this.getAllDatasets()
             const index = datasets.findIndex((dataset: IDataset) => dataset.id.dsId == datasetId)
             return index !== -1 ? datasets[index].label : ''
+        },
+        onChartResize(newHeight: number) {
+            this.chartHeight = newHeight
         }
     }
 })
