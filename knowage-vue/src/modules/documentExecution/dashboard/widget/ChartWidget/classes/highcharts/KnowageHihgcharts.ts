@@ -156,28 +156,22 @@ export class KnowageHighcharts {
     }
 
     updateFormatterSettings = (object: any, formatProperty: string | null, formatterProperty: string, formatterTextProperty: string, formatterErrorProperty: string) => {
-        console.log("CAAAAAAAAAAAAAAAAAAAAAAAAAAALED")
         let hasError = false
         if (formatProperty && object[formatProperty]?.trim() === '') delete object[formatProperty]
         if (!object[formatterTextProperty] || !object[formatterTextProperty].trim()) {
             delete object[formatterProperty]
             object[formatterErrorProperty] = ''
-            console.log("EEEEEEEEENTERED 1 removing prop")
             return hasError
         } else {
             try {
                 const fn = eval(`(${object[formatterTextProperty]})`)
                 if (typeof fn === 'function') object[formatterProperty] = fn
                 object[formatterErrorProperty] = ''
-                console.log("EEEEEEEEENTERED 2 correct path")
             } catch (error) {
-                console.log("EEEEEEEEENTERED 3 with error")
                 object[formatterErrorProperty] = (error as any).message
                 hasError = true
             }
         }
-
-        console.log(">>>>>>> OBJECT: ", object)
 
         return hasError
     }

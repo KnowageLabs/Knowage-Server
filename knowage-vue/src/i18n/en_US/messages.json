@@ -495,6 +495,9 @@
             "descending": "Descending",
             "dimensions": "Dimensions",
             "dragColumnsHint": "Drag columns here",
+            "drilldown": {
+                "title": "Drilldown"
+            },
             "editor": "Editor",
             "editorTags": {
                 "activesel": "Active Selection",

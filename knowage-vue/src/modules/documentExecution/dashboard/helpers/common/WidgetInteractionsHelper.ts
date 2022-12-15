@@ -1,5 +1,6 @@
 import { ITableWidgetLink, IWidget, IWidgetCrossNavigation, IWidgetInteractionParameter, IWidgetInteractions, IWidgetLinks, IWidgetPreview, IWidgetSelection } from "../../Dashboard"
 import { getColumnId } from "../tableWidget/TableWidgetCompatibilityHelper"
+import { IHighchartsDrilldown } from "../../interfaces/highcharts/DashboardHighchartsWidget"
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import * as  tableWidgetDefaultValues from '../../widget/WidgetEditor/helpers/tableWidget/TableWidgetDefaultValues'
 import * as  chartJSDefaultValues from "../../widget/WidgetEditor/helpers/chartWidget/chartJS/ChartJSDefaultValues"
@@ -13,6 +14,7 @@ export const getFormattedInteractions = (widget: any) => {
     if (['table', 'html', 'text', 'chart'].includes(widget.type)) interactions.crosssNavigation = getFormattedCrossNavigation(widget) as IWidgetCrossNavigation
     if (['table', 'chart'].includes(widget.type)) interactions.link = getFormattedLinkInteraction(widget) as IWidgetLinks
     if (['table', 'html', 'text', 'chart'].includes(widget.type)) interactions.preview = getFormattedPreview(widget) as IWidgetPreview
+    if (['chart'].includes(widget.type)) interactions.drilldown = { enabled: false } as IHighchartsDrilldown
     return interactions
 }
 
@@ -149,8 +151,6 @@ export const getFormattedPreview = (widget: any) => {
 
     return formattedPreview
 }
-
-
 
 const getFormattedPreviewParameters = (previewParameters: any) => {
     const formattedParameters = [] as IWidgetInteractionParameter[]

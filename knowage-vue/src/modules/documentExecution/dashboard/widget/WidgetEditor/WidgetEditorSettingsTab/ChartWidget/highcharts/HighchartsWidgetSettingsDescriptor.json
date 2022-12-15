@@ -150,6 +150,10 @@
         ],
         "Interactions": [
             {
+                "title": "dashboard.widgetEditor.drilldown.title",
+                "type": "Drilldown"
+            },
+            {
                 "title": "dashboard.widgetEditor.interactions.selection",
                 "type": "Selection"
             },

@@ -217,3 +217,7 @@ export interface IHighchartsTooltip {
 export interface IHighchartsChartSettings {
     colors: string[]
 }
+
+export interface IHighchartsDrilldown {
+    enabled: boolean
+}
