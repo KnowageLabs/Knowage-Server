@@ -7,8 +7,9 @@ export const updatePieChartModel = (oldModel: any, newModel: HighchartsPieChartM
     console.log(">>>>>>>>>> NEW MODEL: ", newModel)
     getFormatted3DConfiguration(oldModel, newModel)
     getFormattedNoDataConfiguration(oldModel, newModel)
-    getFormattedSeries(oldModel, newModel)
     getFormattedLegend(oldModel, newModel)
+    getForamttedLabels(oldModel, newModel)
+    getFormattedSeries(oldModel, newModel)
     getFormattedTooltipSettings(oldModel, newModel)
 
     return newModel
@@ -77,6 +78,25 @@ const getFormattedLegend = (oldModel: any, newModel: HighchartsPieChartModel) =>
             backgroundColor: oldModel.CHART.LEGEND.style.backgroundColor ? hexToRgb(oldModel.CHART.LEGEND.style.backgroundColor) : '',
             borderWidth: 1,
             borderColor: ''
+        }
+    }
+}
+
+const getForamttedLabels = (oldModel: any, newModel: HighchartsPieChartModel) => {
+    if (oldModel.CHART.VALUES.SERIE && oldModel.CHART.VALUES.SERIE[0] && oldModel.CHART.VALUES.SERIE[0].dataLabels && newModel.plotOptions.pie) {
+        const oldDataLabelsSettings = oldModel.CHART.VALUES.SERIE[0].dataLabels
+        newModel.plotOptions.pie.dataLabels = {
+            enabled: true,
+            distance: 30,
+            style: {
+                fontFamily: oldDataLabelsSettings.style.fontFamily,
+                fontSize: oldDataLabelsSettings.style.fontSize,
+                fontWeight: oldDataLabelsSettings.style.fontWeight,
+                color: oldDataLabelsSettings.style.color ? hexToRgb(oldDataLabelsSettings.style.color) : '',
+
+            },
+            position: '',
+            backgroundColor: ''
         }
     }
 }

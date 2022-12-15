@@ -139,8 +139,8 @@ export interface IHighchartsPieChartDataLabels {
         fontSize: string
         fontWeight: string
         color: string
-        textAlign: string
-    }
+    },
+    position: string
     backgroundColor: string,
     format?: string,
     formatter?: Function,

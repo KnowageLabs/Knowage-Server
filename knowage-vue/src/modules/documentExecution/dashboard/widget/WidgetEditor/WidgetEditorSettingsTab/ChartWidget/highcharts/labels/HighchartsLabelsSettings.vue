@@ -96,7 +96,7 @@ export default defineComponent({
             this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
             if (this.model?.plotOptions?.pie?.dataLabels)
                 this.toolbarModel = {
-                    'justify-content': this.model.plotOptions.pie.dataLabels.style.textAlign,
+                    'justify-content': this.model.plotOptions.pie.dataLabels.position,
                     'font-family': this.model.plotOptions.pie.dataLabels.style.fontFamily,
                     'font-size': this.model.plotOptions.pie.dataLabels.style.fontSize,
                     'font-weight': this.model.plotOptions.pie.dataLabels.style.fontWeight,
@@ -117,9 +117,8 @@ export default defineComponent({
                 color: model.color ?? '',
                 'background-color': model['background-color'] ?? ''
             }
-            this.model.plotOptions.pie.dataLabels.backgroundColor = this.toolbarModel['background-color'] ?? ''
+            ;(this.model.plotOptions.pie.dataLabels.position = this.getTextAlignValue(this.toolbarModel['justify-content'])), (this.model.plotOptions.pie.dataLabels.backgroundColor = this.toolbarModel['background-color'] ?? '')
             this.model.plotOptions.pie.dataLabels.style = {
-                textAlign: this.getTextAlignValue(this.toolbarModel['justify-content']),
                 color: this.toolbarModel.color ?? '',
                 fontSize: this.toolbarModel['font-size'] ?? '14px',
                 fontFamily: this.toolbarModel['font-family'] ?? '',

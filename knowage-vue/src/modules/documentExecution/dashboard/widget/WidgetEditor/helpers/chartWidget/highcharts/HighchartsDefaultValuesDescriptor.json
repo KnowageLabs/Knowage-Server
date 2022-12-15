@@ -52,12 +52,12 @@
             "backgroundColor": "",
             "distance": 30,
             "enabled": false,
+            "position": "",
             "style": {
                 "color": "",
                 "fontFamily": "",
                 "fontSize": "14px",
-                "fontWeight": "",
-                "textAlign": ""
+                "fontWeight": ""
             }
         },
         "depth": 100,
