@@ -39,6 +39,11 @@ export default defineComponent({
             error: false
         }
     },
+    watch: {
+        dataToShow() {
+            this.onRefreshChart()
+        }
+    },
     mounted() {
         this.setEventListeners()
         this.onRefreshChart()

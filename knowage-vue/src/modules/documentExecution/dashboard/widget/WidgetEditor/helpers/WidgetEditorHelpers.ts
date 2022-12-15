@@ -9,6 +9,7 @@ import { createNewChartJSSettings } from './chartWidget/chartJS/ChartJSHelpers'
 import { createNewHighchartsSettings } from './chartWidget/highcharts/HighchartsHelpers'
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
+import { formatHighchartsWidgetForSave } from './chartWidget/highcharts/HighchartsBackendSaveHelper'
 
 export function createNewWidget(type: string) {
     const widget = {
@@ -58,6 +59,9 @@ export function formatWidgetForSave(tempWidget: IWidget) {
     switch (widget.type) {
         case 'table':
             formatTableWidgetForSave(widget)
+            break;
+        case 'highcharts':
+            formatHighchartsWidgetForSave(widget)
     }
     return widget
 }

@@ -47,18 +47,7 @@ const getFormattedNoDataConfiguration = (oldModel: any, newModel: HighchartsPieC
 const getFormattedSeries = (oldModel: any, newModel: HighchartsPieChartModel) => {
     if (oldModel.CHART.VALUES.SERIE) {
         const serie = oldModel.CHART.VALUES.SERIE[0]
-        newModel.series.push({
-            name: serie.name,
-            colorByPoint: true,
-            groupingFunction: serie.groupingFunction,
-            data: [],
-            accessibility: {
-                enabled: false,
-                description: '',
-                exposeAsGroupOnly: false,
-                keyboardNavigation: { enabled: false }
-            }
-        })
+        newModel.series.push(createSerie(serie.name, serie.groupingFunction))
     }
 }
 
@@ -112,6 +101,21 @@ const getFormattedTooltipSettings = (oldModel: any, newModel: HighchartsPieChart
                 color: oldTooltipSettings.style.color ? hexToRgba(oldTooltipSettings.style.color) : ''
             },
             backgroundColor: oldTooltipSettings.backgroundColor ? hexToRgba(oldTooltipSettings.backgroundColor) : ''
+        }
+    }
+}
+
+export const createSerie = (serieName: string, groupingFunction: string) => {
+    return {
+        name: serieName,
+        colorByPoint: true,
+        groupingFunction: groupingFunction,
+        data: [],
+        accessibility: {
+            enabled: false,
+            description: '',
+            exposeAsGroupOnly: false,
+            keyboardNavigation: { enabled: false }
         }
     }
 }

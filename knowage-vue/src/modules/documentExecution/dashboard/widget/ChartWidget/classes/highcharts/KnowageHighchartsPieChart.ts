@@ -1,17 +1,17 @@
 import { HighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget'
 import { KnowageHighcharts } from './KnowageHihgcharts'
-import { updatePieChartModel } from './updater/HighchartsPieChartUpdater'
-import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
+import { createSerie, updatePieChartModel } from './updater/HighchartsPieChartUpdater'
+import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
 import { IHighchartsChartSerie, IHighchartsChartSerieData } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import * as highchartsDefaultValues from '../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
 
 export class HighchartsPieChart extends KnowageHighcharts {
     constructor(model: any) {
         super()
+        console.log(">>>>>>>> LOADED MODEL: ", this.model)
         if (!this.model.plotOptions.pie) this.setPiePlotOptions()
         if (model && model.CHART) this.updateModel(model)
         else if (model) this.model = model
-        console.log(">>>>>>>> LOADED MODEL: ", this.model)
         this.model.chart.type = "pie"
     }
 
@@ -27,9 +27,10 @@ export class HighchartsPieChart extends KnowageHighcharts {
         this.model = model
     }
 
-    setData = (data: any, model: any, drillDownLevel = 0) => {
+    setData = (data: any, widgetModel: IWidget, drillDownLevel = 0) => {
         //hardcoding column values because we will always have one measure and one category, by hardcoding the values, we are saving resourcces on forEach and filter methods
         // const categoryColumnName = data.metaData.fields.filter((i) => i.header === this.model.settings.categories[drillDownLevel])[0].name
+        if (this.model.series.length === 0) this.getSeriesFromWidgetModel(widgetModel)
 
         this.model.series.map((item, serieIndex) => {
             // const dataColumn = item.groupingFunction ? item.name + '_' + item.groupingFunction : item.name
@@ -52,6 +53,12 @@ export class HighchartsPieChart extends KnowageHighcharts {
             })
         })
         return this.model.series
+    }
+
+    getSeriesFromWidgetModel = (widgetModel: IWidget) => {
+        const measureColumn = widgetModel.columns.find((column: IWidgetColumn) => column.fieldType === 'MEASURE')
+        if (!measureColumn) return
+        this.model.series = [createSerie(measureColumn.columnName, measureColumn.aggregation)]
     }
 
     setPiePlotOptions = () => {

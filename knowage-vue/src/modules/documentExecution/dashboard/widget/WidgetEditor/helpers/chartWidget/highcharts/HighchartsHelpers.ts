@@ -34,8 +34,10 @@ export const createNewHighchartsSettings = () => {
 }
 
 export const formatHighchartsWidget = (widget: IWidget) => {
-    widget.settings.chartModel = new HighchartsPieChart(widget.settings.chartModel.model)
+    widget.settings.chartModel = new HighchartsPieChart(widget.settings.chartModel)
+
 }
+
 
 export const createNewHighchartsModel = (chartType: string) => {
     switch (chartType) {
