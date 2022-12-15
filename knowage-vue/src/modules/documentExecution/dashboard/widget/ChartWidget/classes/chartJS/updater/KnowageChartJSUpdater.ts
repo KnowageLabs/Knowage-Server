@@ -1,5 +1,5 @@
-import { hexToRgb } from "@/modules/documentExecution/dashboard/helpers/FormattingHelpers"
-import { IChartJSChartModel } from "@/modules/documentExecution/dashboard/interfaces/chartJS/DashboardChartJSWidget"
+import { hexToRgba } from '@/modules/documentExecution/dashboard/helpers/FormattingHelpers'
+import { IChartJSChartModel } from '@/modules/documentExecution/dashboard/interfaces/chartJS/DashboardChartJSWidget'
 
 export const updatePieChartModel = (oldModel: any, newModel: IChartJSChartModel) => {
     getFormattedLegend(oldModel, newModel)
@@ -13,7 +13,7 @@ const getFormattedLegend = (oldModel: any, newModel: IChartJSChartModel) => {
         newModel.options.plugins.legend = {
             display: oldModel.CHART.LEGEND.show,
             position: oldModel.CHART.LEGEND.position,
-            align: 'center',
+            align: 'center'
         }
     }
 }
@@ -23,16 +23,15 @@ const getFormattedTooltipSettings = (oldModel: any, newModel: IChartJSChartModel
         const oldTooltipSettings = oldModel.CHART.VALUES.SERIE[0].TOOLTIP
         newModel.options.plugins.tooltip = {
             enabled: true,
-            bodyColor: oldTooltipSettings.style.color ? hexToRgb(oldTooltipSettings.style.color) : '',
+            bodyColor: oldTooltipSettings.style.color ? hexToRgba(oldTooltipSettings.style.color) : '',
             bodyFont: {
                 family: oldTooltipSettings.style.fontFamily,
                 size: oldTooltipSettings.style.fontSize ? oldTooltipSettings.style.fontSize.substring(0, oldTooltipSettings.style.fontSize.lastIndexOf('p')) : 0,
                 style: '',
-                weight: oldTooltipSettings.style.fontWeight,
+                weight: oldTooltipSettings.style.fontWeight
             },
-            backgroundColor: oldTooltipSettings.backgroundColor ? hexToRgb(oldTooltipSettings.backgroundColor) : '',
+            backgroundColor: oldTooltipSettings.backgroundColor ? hexToRgba(oldTooltipSettings.backgroundColor) : '',
             bodyAlign: oldTooltipSettings.style.align ?? 'center'
-
         }
     }
 }

@@ -4,7 +4,7 @@ import { HighchartsPieChart } from '../../../widget/ChartWidget/classes/highchar
 import * as widgetCommonDefaultValues from '../../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import { getFormattedInteractions } from '../../common/WidgetInteractionsHelper'
 import { getFiltersForColumns } from '../../DashboardBackwardCompatibilityHelper'
-import { hexToRgb } from '../../FormattingHelpers'
+import { hexToRgba } from '../../FormattingHelpers'
 import { getFormattedWidgetColumns, getFormattedColorSettings } from '../CommonChartCompatibilityHelper'
 import { getFormattedStyle } from './HighchartsWidgetStyleHelper'
 
@@ -59,16 +59,16 @@ const getFormattedConfiguration = (widget: any) => {
 const getFormattedSeriesAccesibilitySettings = (widget: any) => {
     return widget.content.chartTemplate.CHART.type !== 'PIE'
         ? [
-            {
-                names: ['all'],
-                accessibility: {
-                    enabled: false,
-                    description: '',
-                    exposeAsGroupOnly: false,
-                    keyboardNavigation: { enabled: false }
-                }
-            }
-        ]
+              {
+                  names: ['all'],
+                  accessibility: {
+                      enabled: false,
+                      description: '',
+                      exposeAsGroupOnly: false,
+                      keyboardNavigation: { enabled: false }
+                  }
+              }
+          ]
         : []
 }
 
@@ -89,26 +89,26 @@ const getFormattedSerieLabelsSettings = (widget: any) => {
     const formattedSerieSettings =
         widget.content.chartTemplate.CHART.type !== 'PIE'
             ? [
-                {
-                    names: ['all'],
-                    label: {
-                        enabled: false,
-                        style: {
-                            fontFamily: '',
-                            fontSize: '',
-                            fontWeight: '',
-                            color: '',
-                            backgroundColor: ''
-                        },
-                        prefix: '',
-                        suffix: '',
-                        scale: 'empty', // TODO
-                        precision: 2,
-                        absolute: false,
-                        percentage: false
-                    }
-                }
-            ]
+                  {
+                      names: ['all'],
+                      label: {
+                          enabled: false,
+                          style: {
+                              fontFamily: '',
+                              fontSize: '',
+                              fontWeight: '',
+                              color: '',
+                              backgroundColor: ''
+                          },
+                          prefix: '',
+                          suffix: '',
+                          scale: 'empty', // TODO
+                          precision: 2,
+                          absolute: false,
+                          percentage: false
+                      }
+                  }
+              ]
             : ([] as IHighchartsSeriesLabelsSetting[])
     if (widget.content.chartTemplate.CHART.VALUES.SERIE && widget.content.chartTemplate.CHART.VALUES.SERIE[0]) {
         const oldModelSerie = widget.content.chartTemplate.CHART.VALUES.SERIE[0]
@@ -120,7 +120,7 @@ const getFormattedSerieLabelsSettings = (widget: any) => {
                     fontFamily: oldModelSerie.dataLabels.style.fontFamily,
                     fontSize: oldModelSerie.dataLabels.style.fontSize,
                     fontWeight: oldModelSerie.dataLabels.style.fontWeight,
-                    color: oldModelSerie.dataLabels.style.color ? hexToRgb(oldModelSerie.dataLabels.style.color) : '',
+                    color: oldModelSerie.dataLabels.style.color ? hexToRgba(oldModelSerie.dataLabels.style.color) : '',
                     backgroundColor: ''
                 },
                 prefix: oldModelSerie.prefixChar ?? '',
