@@ -720,10 +720,12 @@ export default defineComponent({
                                 return { value: value, description: '' }
                             })
                         } else {
-                            tempParam.parameterValue[0].value = this.document.navigationParams[key]
-                            if (this.document.navigationParams[key + '_field_visible_description']) this.document.navigationParams[key + '_field_visible_description'] = tempParam.parameterValue[0].description
-                            if (tempParam.type === 'DATE' && tempParam.parameterValue[0] && tempParam.parameterValue[0].value) {
-                                tempParam.parameterValue[0].value = new Date(tempParam.parameterValue[0].value)
+                            if (tempParam.parameterValue[0]) {
+                                tempParam.parameterValue[0].value = this.document.navigationParams[key]
+                                if (this.document.navigationParams[key + '_field_visible_description']) this.document.navigationParams[key + '_field_visible_description'] = tempParam.parameterValue[0].description
+                                if (tempParam.type === 'DATE' && tempParam.parameterValue[0] && tempParam.parameterValue[0].value) {
+                                    tempParam.parameterValue[0].value = new Date(tempParam.parameterValue[0].value)
+                                }
                             }
                         }
                     }
@@ -1271,7 +1273,9 @@ export default defineComponent({
         getParameterValueForCrossNavigation(parameterLabel: string) {
             if (!parameterLabel) return
             const index = this.filtersData.filterStatus?.findIndex((param: any) => param.label === parameterLabel)
-            return index !== -1 ? this.filtersData.filterStatus[index].parameterValue[0].value : ''
+            if (index !== -1 && this.filtersData.filterStatus[index].parameterValue[0]) {
+                return this.filtersData.filterStatus[index].parameterValue[0].value
+            } else return ''
         },
         formatNavigationParams(otherOutputParameters: any[], navigationParams: any) {
             let formatedParams = {} as any
