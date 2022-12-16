@@ -16,16 +16,7 @@
                 <TableWidget v-if="propWidget.type == 'table'" :propWidget="propWidget" :datasets="datasets" :dataToShow="widgetData" :editorMode="true" :dashboardId="dashboardId" :propActiveSelections="activeSelections" @pageChanged="getWidgetData" />
                 <SelectorWidget v-if="propWidget.type == 'selector'" :propWidget="propWidget" :dataToShow="widgetData" :widgetInitialData="widgetData" :editorMode="true" :propActiveSelections="activeSelections" :datasets="datasets" :selectionIsLocked="false" :dashboardId="dashboardId" />
                 <ActiveSelectionsWidget v-if="propWidget.type == 'selection'" :propWidget="propWidget" :propActiveSelections="activeSelections" :editorMode="true" :dashboardId="dashboardId" />
-                <WebComponentContainer
-                    v-if="(propWidget.type == 'html' || propWidget.type == 'text') && !loading"
-                    :propWidget="propWidget"
-                    :widgetData="widgetData"
-                    :propActiveSelections="activeSelections"
-                    :editorMode="true"
-                    :dashboardId="dashboardId"
-                    :drivers="drivers"
-                    :variables="variables"
-                ></WebComponentContainer>
+                <WebComponentContainer v-if="(propWidget.type == 'html' || propWidget.type == 'text') && !loading" :propWidget="propWidget" :widgetData="widgetData" :propActiveSelections="activeSelections" :editorMode="true" :dashboardId="dashboardId" :variables="variables"></WebComponentContainer>
                 <HighchartsContainer v-if="propWidget.type === 'highcharts' && !loading" :widgetModel="propWidget" :dataToShow="widgetData" :propActiveSelections="activeSelections" :editorMode="true" :dashboardId="dashboardId"></HighchartsContainer>
                 <ChartJSContainer v-if="propWidget.type === 'chartJS' && !loading" :widgetModel="propWidget" :dataToShow="widgetData" :editorMode="true" :dashboardId="dashboardId" :propActiveSelections="activeSelections"></ChartJSContainer>
             </div>
@@ -35,7 +26,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IDashboardDriver, IDashboardDataset, ISelection, IVariable, IWidget } from '../../Dashboard'
+import { IDashboardDataset, ISelection, IVariable, IWidget } from '../../Dashboard'
 import { getWidgetStyleByType } from '../TableWidget/TableWidgetHelper'
 import mock from '../../dataset/DatasetEditorTestMocks.json'
 import descriptor from '../../dataset/DatasetEditorDescriptor.json'
@@ -59,7 +50,6 @@ export default defineComponent({
         propWidget: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDashboardDataset[]>, required: true },
         dashboardId: { type: String, required: true },
-        drivers: { type: Array as PropType<IDashboardDriver[]>, required: true },
         variables: { type: Array as PropType<IVariable[]>, required: true }
     },
     data() {

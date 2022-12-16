@@ -104,16 +104,18 @@ import { IWidget, ITableWidgetConditionalStyle, IWidgetStyleToolbarModel, ITable
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import { emitter } from '../../../../../DashboardHelpers'
 import { getDefaultConditionalStyle } from '../../../helpers/tableWidget/TableWidgetDefaultValues'
+import { getSelectedVariable } from '@/modules/documentExecution/dashboard/generalSettings/VariablesHelper'
+import { mapActions } from 'pinia'
+import dashboardStore from '@/modules/documentExecution/dashboard/Dashboard.store'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 import WidgetEditorStyleToolbar from '../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
-import { getSelectedVariable } from '@/modules/documentExecution/dashboard/generalSettings/VariablesHelper'
 
 export default defineComponent({
     name: 'table-widget-conditions',
     components: { Dropdown, InputSwitch, WidgetEditorStyleToolbar },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, drivers: { type: Array as PropType<IDashboardDriver[]> }, variables: { type: Array as PropType<IVariable[]>, required: true } },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, variables: { type: Array as PropType<IVariable[]>, required: true }, dashboardId: { type: String, required: true } },
     data() {
         return {
             descriptor,
@@ -122,6 +124,7 @@ export default defineComponent({
             variableValuesMap: {},
             dropzoneTopVisible: {},
             dropzoneBottomVisible: {},
+            drivers: [] as IDashboardDriver[],
             getTranslatedLabel
         }
     },
@@ -132,6 +135,7 @@ export default defineComponent({
     },
     created() {
         this.setEventListeners()
+        this.loadDrivers()
         this.loadParameterValuesMap()
         this.loadVariableValuesMap()
         this.loadConditionalStyles()
@@ -140,11 +144,16 @@ export default defineComponent({
         this.removeEventListeners()
     },
     methods: {
+        ...mapActions(dashboardStore, ['getDashboardDrivers']),
         setEventListeners() {
             emitter.on('columnRemovedFromConditionalStyles', this.onColumnRemovedFromConditionalStyles)
         },
         removeEventListeners() {
             emitter.off('columnRemovedFromConditionalStyles', this.onColumnRemovedFromConditionalStyles)
+        },
+
+        loadDrivers() {
+            this.drivers = this.getDashboardDrivers(this.dashboardId)
         },
         onColumnRemovedFromConditionalStyles() {
             this.onColumnRemoved()

@@ -39,7 +39,7 @@
  * ! this component will be in charge of managing the widget behaviour related to data and interactions, not related to view elements.
  */
 import { defineComponent, PropType } from 'vue'
-import { IDashboardDriver, IDataset, ISelection, IVariable, IWidget } from '../Dashboard'
+import { IDataset, ISelection, IVariable, IWidget } from '../Dashboard'
 import { emitter } from '../DashboardHelpers'
 import { mapState, mapActions } from 'pinia'
 import { getWidgetData } from '../DataProxyHelper'
@@ -64,7 +64,6 @@ export default defineComponent({
         widget: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDataset[]>, required: true },
         dashboardId: { type: String, required: true },
-        drivers: { type: Array as PropType<IDashboardDriver[]>, required: true },
         variables: { type: Array as PropType<IVariable[]>, required: true }
     },
     watch: {
@@ -248,7 +247,7 @@ export default defineComponent({
                 this.inFocus = false
             }
         },
-        resizedEvent: function (i, newH, newW, newHPx, newWPx) {
+        resizedEvent: function(i, newH, newW, newHPx, newWPx) {
             console.log('RESIZED i=' + i + ', H=' + newH + ', W=' + newW + ', H(px)=' + newHPx + ', W(px)=' + newWPx)
             emitter.emit('chartWidgetResized', newHPx)
         }

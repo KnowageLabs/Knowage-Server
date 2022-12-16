@@ -9,7 +9,7 @@
                 </template>
                 <TableWidgetRows v-if="accordion.type === 'Rows'" :widgetModel="widgetModel"></TableWidgetRows>
                 <TableWidgetSummaryRows v-else-if="accordion.type === 'SummaryRows'" :widgetModel="widgetModel"></TableWidgetSummaryRows>
-                <TableWidgetHeader v-else-if="accordion.type === 'Header'" :widgetModel="widgetModel" :drivers="drivers" :variables="variables"></TableWidgetHeader>
+                <TableWidgetHeader v-else-if="accordion.type === 'Header'" :widgetModel="widgetModel" :variables="variables"></TableWidgetHeader>
                 <TableWidgetColumnGroups v-else-if="accordion.type === 'ColumnGroups'" :widgetModel="widgetModel"></TableWidgetColumnGroups>
                 <WidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
                 <TableWidgetCustomMessages v-else-if="accordion.type === 'CustomMessages'" :widgetModel="widgetModel"></TableWidgetCustomMessages>
@@ -25,13 +25,13 @@
                 <WidgetBordersStyle v-else-if="accordion.type === 'BordersStyle'" :widgetModel="widgetModel"></WidgetBordersStyle>
                 <WidgetPaddingStyle v-else-if="accordion.type === 'PaddingStyle'" :widgetModel="widgetModel"></WidgetPaddingStyle>
                 <WidgetShadowsStyle v-else-if="accordion.type === 'ShadowsStyle'" :widgetModel="widgetModel"></WidgetShadowsStyle>
-                <TableWidgetConditions v-else-if="accordion.type === 'Conditions'" :widgetModel="widgetModel" :drivers="drivers" :variables="variables"></TableWidgetConditions>
+                <TableWidgetConditions v-else-if="accordion.type === 'Conditions'" :widgetModel="widgetModel" :variables="variables"></TableWidgetConditions>
                 <TableWidgetTooltips v-else-if="accordion.type === 'Tooltips'" :widgetModel="widgetModel"></TableWidgetTooltips>
                 <WidgetResponsive v-else-if="accordion.type === 'Responsive'" :widgetModel="widgetModel"></WidgetResponsive>
                 <WidgetSelection v-else-if="accordion.type === 'Selection'" :widgetModel="widgetModel"></WidgetSelection>
                 <WidgetCrossNavigation v-else-if="accordion.type === 'CrossNavigation'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :dashboardId="dashboardId"></WidgetCrossNavigation>
-                <WidgetInteractionsLinks v-else-if="accordion.type === 'Link'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :drivers="drivers"></WidgetInteractionsLinks>
-                <WidgetPreview v-else-if="accordion.type === 'Preview'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :drivers="drivers" :dashboardId="dashboardId"></WidgetPreview>
+                <WidgetInteractionsLinks v-else-if="accordion.type === 'Link'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets"></WidgetInteractionsLinks>
+                <WidgetPreview v-else-if="accordion.type === 'Preview'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :dashboardId="dashboardId"></WidgetPreview>
             </AccordionTab>
         </Accordion>
     </div>
@@ -39,7 +39,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IDataset, IVariable, IDashboardDriver } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IWidget, IDataset, IVariable } from '@/modules/documentExecution/dashboard/Dashboard'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import descriptor from './TableWidgetSettingsDescriptor.json'
@@ -104,7 +104,6 @@ export default defineComponent({
         settings: { type: Array as PropType<{ title: string; type: string }[]> },
         datasets: { type: Array as PropType<IDataset[]> },
         selectedDatasets: { type: Array as PropType<IDataset[]> },
-        drivers: { type: Array as PropType<IDashboardDriver[]> },
         variables: { type: Array as PropType<IVariable[]>, required: true },
         dashboardId: { type: String, required: true }
     },

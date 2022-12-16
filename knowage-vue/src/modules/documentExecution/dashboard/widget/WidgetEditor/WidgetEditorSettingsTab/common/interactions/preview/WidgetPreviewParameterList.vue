@@ -63,6 +63,8 @@
 import { IWidgetInteractionParameter, IWidget, IDashboardDriver } from '@/modules/documentExecution/dashboard/Dashboard'
 import { defineComponent, PropType } from 'vue'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
+import { mapActions } from 'pinia'
+import dashboardStore from '@/modules/documentExecution/dashboard/Dashboard.store'
 import descriptor from '../WidgetInteractionsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
@@ -74,7 +76,7 @@ export default defineComponent({
         widgetModel: { type: Object as PropType<IWidget>, required: true },
         propParameters: { type: Array as PropType<IWidgetInteractionParameter[]>, required: true },
         selectedDatasetsColumnsMap: { type: Object },
-        drivers: { type: Array as PropType<IDashboardDriver[]> },
+        dashboardId: { type: String, required: true },
         disabled: { type: Boolean }
     },
     emits: ['change'],
@@ -83,6 +85,7 @@ export default defineComponent({
             descriptor,
             parameters: [] as IWidgetInteractionParameter[],
             selectedDatasetNames: [] as string[],
+            drivers: [] as IDashboardDriver[],
             getTranslatedLabel
         }
     },
@@ -96,6 +99,10 @@ export default defineComponent({
         this.loadSelectedDatasetNames()
     },
     methods: {
+        ...mapActions(dashboardStore, ['getDashboardDrivers']),
+        loadDrivers() {
+            this.drivers = this.getDashboardDrivers(this.dashboardId)
+        },
         loadParameters() {
             this.parameters = this.propParameters
         },

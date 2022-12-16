@@ -9,21 +9,28 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import Dropdown from 'primevue/dropdown'
 import { IDashboardDriver } from '@/modules/documentExecution/dashboard/Dashboard'
+import { mapActions } from 'pinia'
+import dashboardStore from '@/modules/documentExecution/dashboard/Dashboard.store'
+import Dropdown from 'primevue/dropdown'
 
 export default defineComponent({
     name: 'widget-editor-parameters',
     components: { Dropdown },
-    props: { drivers: { type: Array as PropType<IDashboardDriver[]>, required: true } },
+    props: { dashboardId: { type: String, required: true } },
     emits: ['insertChanged'],
     data() {
         return {
-            selectedDriver: ''
+            selectedDriver: '',
+            drivers: [] as IDashboardDriver[]
         }
     },
     created() {},
     methods: {
+        ...mapActions(dashboardStore, ['getDashboardDrivers']),
+        loadDrivers() {
+            this.drivers = this.getDashboardDrivers(this.dashboardId)
+        },
         onDriverValueChanged() {
             const forInsert = `[kn-parameter='${this.selectedDriver}']`
             this.$emit('insertChanged', forInsert)

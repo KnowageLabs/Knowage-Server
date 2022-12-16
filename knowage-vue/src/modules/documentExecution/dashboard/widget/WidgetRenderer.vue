@@ -18,7 +18,7 @@
             />
             <SelectorWidget v-if="widget.type == 'selector'" :propWidget="widget" :dataToShow="dataToShow" :widgetInitialData="widgetInitialData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" :datasets="datasets" :selectionIsLocked="selectionIsLocked" />
             <ActiveSelectionsWidget v-if="widget.type == 'selection'" :propWidget="widget" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" />
-            <WebComponentContainer v-if="widget.type == 'html' || widget.type == 'text'" :propWidget="widget" :widgetData="dataToShow" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" :drivers="drivers" :variables="variables"></WebComponentContainer>
+            <WebComponentContainer v-if="widget.type == 'html' || widget.type == 'text'" :propWidget="widget" :widgetData="dataToShow" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" :variables="variables"></WebComponentContainer>
             <HighchartsContainer v-if="widget.type === 'highcharts'" :widgetModel="widget" :dataToShow="widgetData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId"></HighchartsContainer>
             <ChartJSContainer v-if="widget.type === 'chartJS'" :widgetModel="widget" :dataToShow="widgetData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId"></ChartJSContainer>
         </div>
@@ -31,11 +31,11 @@
  */
 import { defineComponent, PropType } from 'vue'
 import { getWidgetStyleByType } from '../widget/TableWidget/TableWidgetHelper'
+import { IDataset, ISelection, IVariable } from '../Dashboard'
 import TableWidget from './TableWidget/TableWidget.vue'
 import SelectorWidget from './SelectorWidget/SelectorWidget.vue'
 import ActiveSelectionsWidget from './ActiveSelectionsWidget/ActiveSelectionsWidget.vue'
 import mock from '../dataset/DatasetEditorTestMocks.json'
-import { IDashboardDriver, IDataset, ISelection, IVariable } from '../Dashboard'
 import WebComponentContainer from './WebComponent/WebComponentContainer.vue'
 import HighchartsContainer from '../widget/ChartWidget/Highcharts/HighchartsContainer.vue'
 import ChartJSContainer from '../widget/ChartWidget/ChartJS/ChartJSContainer.vue'
@@ -52,7 +52,6 @@ export default defineComponent({
         dashboardId: { type: String, required: true },
         selectionIsLocked: { type: Boolean, required: true },
         propActiveSelections: { type: Array as PropType<ISelection[]>, required: true },
-        drivers: { type: Array as PropType<IDashboardDriver[]>, required: true },
         variables: { type: Array as PropType<IVariable[]>, required: true }
     },
     data() {

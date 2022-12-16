@@ -14,7 +14,7 @@
  * ! this component will be in charge of managing the widget editing sections.
  */
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IDataset, IVariable, IDashboardDriver, IGalleryItem } from '../../Dashboard'
+import { IWidget, IDataset, IVariable, IGalleryItem } from '../../Dashboard'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import WidgetEditorDataTab from './WidgetEditorDataTab/WidgetEditorDataTab.vue'
@@ -27,7 +27,6 @@ export default defineComponent({
         propWidget: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDataset[]> },
         selectedDatasets: { type: Array as PropType<IDataset[]> },
-        drivers: { type: Array as PropType<IDashboardDriver[]>, required: true },
         variables: { type: Array as PropType<IVariable[]>, required: true },
         htmlGalleryProp: { type: Array as PropType<IGalleryItem[]>, required: true },
         dashboardId: { type: String, required: true }

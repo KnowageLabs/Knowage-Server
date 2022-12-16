@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IDataset, IVariable, IDashboardDriver } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget, IDataset, IVariable } from '@/modules/documentExecution/Dashboard/Dashboard'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import descriptor from './SelectionsWidgetSettingsDescriptor.json'
@@ -65,7 +65,6 @@ export default defineComponent({
         settings: { type: Array as PropType<{ title: string; type: string }[]> },
         datasets: { type: Array as PropType<IDataset[]> },
         selectedDatasets: { type: Array as PropType<IDataset[]> },
-        drivers: { type: Array as PropType<IDashboardDriver[]> },
         variables: { type: Array as PropType<IVariable[]> }
     },
 

@@ -43,22 +43,14 @@
             </div>
         </div>
         <div v-if="previewModel.parameters.length > 0" class="p-col-12 p-p-2">
-            <TableWidgetPreviewParameterList
-                class="kn-flex p-mr-2"
-                :widgetModel="widgetModel"
-                :propParameters="previewModel.parameters"
-                :selectedDatasetsColumnsMap="selectedDatasetColumnNameMap"
-                :drivers="drivers"
-                :disabled="previewDisabled"
-                @change="onParametersChanged"
-            ></TableWidgetPreviewParameterList>
+            <TableWidgetPreviewParameterList class="kn-flex p-mr-2" :widgetModel="widgetModel" :propParameters="previewModel.parameters" :selectedDatasetsColumnsMap="selectedDatasetColumnNameMap" :disabled="previewDisabled" @change="onParametersChanged"></TableWidgetPreviewParameterList>
         </div>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IWidgetInteractionParameter, IDataset, IDatasetParameter, IWidgetStyleToolbarModel, IWidgetPreview, IDashboardDriver } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IWidget, IWidgetInteractionParameter, IDataset, IDatasetParameter, IWidgetStyleToolbarModel, IWidgetPreview } from '@/modules/documentExecution/dashboard/Dashboard'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import { emitter } from '../../../../../../DashboardHelpers'
 import descriptor from '../WidgetInteractionsDescriptor.json'
@@ -82,7 +74,6 @@ export default defineComponent({
         widgetModel: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDataset[]> },
         selectedDatasets: { type: Array as PropType<IDataset[]> },
-        drivers: { type: Array as PropType<IDashboardDriver[]> },
         dashboardId: { type: String, required: true }
     },
     data() {
