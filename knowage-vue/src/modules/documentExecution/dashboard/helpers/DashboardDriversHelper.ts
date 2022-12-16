@@ -3,16 +3,17 @@ import { IDashboard, IDashboardDatasetDriver, IDashboardDriver, IDashboardDatase
 
 export const loadDrivers = (filtersData: { filterStatus: iParameter[]; isReadyForExecution: boolean }, dashboardModel: IDashboard) => {
     console.log("dashboardModel: ", dashboardModel)
-    const drivers = [] as IDashboardDriver[]
     const dataset = datasetWithDriversExists(dashboardModel)
     if (dataset && dataset.drivers) {
         updateDatasetDrivers(dataset, filtersData)
-        getFormattedDashboardDrivers(dataset.drivers, drivers)
+        return getFormattedDashboardDrivers(dataset.drivers)
     }
     else if (filtersData?.filterStatus) {
-        getFormattedDashboardDrivers(filtersData.filterStatus, drivers)
+        return getFormattedDashboardDrivers(filtersData.filterStatus)
+    } else {
+
+        return []
     }
-    return drivers
 }
 
 
@@ -42,7 +43,8 @@ const updateDatasetDefaultValue = (datasetDriver: IDashboardDatasetDriver, drive
     })
 }
 
-const getFormattedDashboardDrivers = (dashboardDrivers: (iParameter | IDashboardDatasetDriver)[], drivers: IDashboardDriver[]) => {
+export const getFormattedDashboardDrivers = (dashboardDrivers: (iParameter | IDashboardDatasetDriver)[]) => {
+    const drivers = [] as IDashboardDriver[]
     dashboardDrivers?.forEach((driver: iParameter | IDashboardDatasetDriver) => {
         const formattedDriver = {
             name: driver.label,
@@ -53,6 +55,7 @@ const getFormattedDashboardDrivers = (dashboardDrivers: (iParameter | IDashboard
         } as IDashboardDriver
         drivers.push(formattedDriver)
     })
+    return drivers
 }
 
 
