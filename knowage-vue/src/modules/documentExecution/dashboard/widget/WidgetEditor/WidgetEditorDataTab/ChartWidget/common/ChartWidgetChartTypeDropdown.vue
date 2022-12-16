@@ -41,7 +41,6 @@ export default defineComponent({
     },
     methods: {
         loadSelectedType() {
-            console.log('............. this model: ', this.widgetModel)
             const chartModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
             if (chartModel?.chart.type) {
                 this.selectedType = chartModel.chart.type

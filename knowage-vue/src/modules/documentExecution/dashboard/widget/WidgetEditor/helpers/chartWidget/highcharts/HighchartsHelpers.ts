@@ -11,8 +11,8 @@ export const createNewHighchartsSettings = () => {
         clickable: true,
         chartModel: null,
         configuration: { exports: { showExcelExport: true, showScreenshot: true } },
-        accesssibility: { seriesAccesibilitySettings: [] },
-        series: { seriesLabelsSettings: [] },
+        accesssibility: { seriesAccesibilitySettings: getSeriesAccesibilitySettings() },
+        series: { seriesLabelsSettings: getSerieLabelsSettings() },
         interactions: {
             crosssNavigation: widgetCommonDefaultValues.getDefaultCrossNavigation(),
             link: widgetCommonDefaultValues.getDefaultLinks(),
@@ -46,4 +46,43 @@ export const createNewHighchartsModel = (chartType: string) => {
         default:
             return null
     }
+}
+
+const getSeriesAccesibilitySettings = () => {
+    return [
+        {
+            names: [],
+            accessibility: {
+                enabled: false,
+                description: '',
+                exposeAsGroupOnly: false,
+                keyboardNavigation: { enabled: false }
+            }
+        }
+    ]
+}
+
+
+const getSerieLabelsSettings = () => {
+    return [
+        {
+            names: [],
+            label: {
+                enabled: false,
+                style: {
+                    fontFamily: '',
+                    fontSize: '',
+                    fontWeight: '',
+                    color: '',
+                },
+                backgroundColor: '',
+                prefix: '',
+                suffix: '',
+                scale: 'empty',
+                precision: 2,
+                absolute: false,
+                percentage: false
+            }
+        }
+    ]
 }

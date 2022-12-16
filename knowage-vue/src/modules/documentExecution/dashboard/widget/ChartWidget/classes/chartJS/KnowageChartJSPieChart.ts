@@ -30,7 +30,7 @@ export class ChartJSPieChart extends KnowageChartJS {
         }
 
         if (data && data.rows) {
-            data.rows.forEach((row, index) => {
+            data.rows.forEach((row) => {
                 this.model.data.labels.push(row['column_1'])
                 this.model.data.datasets[0].data.push(row['column_2'])
             })

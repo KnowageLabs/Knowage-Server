@@ -66,7 +66,6 @@ export default defineComponent({
             }
             this.updateChartOptions()
             this.updateChartData()
-            console.log('>>>>>>>>> UPDATE CHART MODEL: ', this.chartModel)
         },
         updateChartOptions() {
             // TODO see if responsive is needed

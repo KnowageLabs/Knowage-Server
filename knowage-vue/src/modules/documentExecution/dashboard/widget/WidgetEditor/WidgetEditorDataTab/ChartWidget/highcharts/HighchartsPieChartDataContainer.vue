@@ -80,8 +80,14 @@ export default defineComponent({
             emitter.emit('refreshWidgetWithData', this.widgetModel.id)
         },
         onColumnAdded(payload: { column: IWidgetColumn; rows: IWidgetColumn[]; settings: any }) {
-            const type = payload.settings?.measuresOnly ? 'MEASURES' : 'ATTRIBUTES'
-            this.columnTableItems[type] = payload.rows
+            if (!payload.rows) this.columnTableItems['MEASURES'] = [payload]
+            else {
+                const type = payload.settings?.measuresOnly ? 'MEASURES' : 'ATTRIBUTES'
+                this.columnTableItems[type] = payload.rows
+            }
+            this.updateWidgetColumns()
+        },
+        updateWidgetColumns() {
             this.widgetModel.columns = this.columnTableItems['ATTRIBUTES'].concat(this.columnTableItems['MEASURES'])
             emitter.emit('refreshWidgetWithData', this.widgetModel.id)
         },

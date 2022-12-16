@@ -4,6 +4,7 @@ import { ChartJSPieChart } from "../../../../ChartWidget/classes/chartJS/Knowage
 import * as widgetCommonDefaultValues from '../../common/WidgetCommonDefaultValues'
 import * as  chartJSDefaultValues from "../chartJS/ChartJSDefaultValues"
 import descriptor from '../../../WidgetEditorSettingsTab/ChartWidget/common/ChartColorSettingsDescriptor.json'
+import deepcopy from "deepcopy"
 
 export const createNewChartJSSettings = () => {
     const settings = {
@@ -27,10 +28,19 @@ export const createNewChartJSSettings = () => {
         },
         responsive: widgetCommonDefaultValues.getDefaultResponsivnes()
     } as IChartJSWidgetSettings
-    settings.chartModel = new ChartJSPieChart(null)
+    settings.chartModel = null
     return settings
 }
 
 export const formatChartJSWidget = (widget: IWidget) => {
-    widget.settings.chartModel = new ChartJSPieChart(widget.settings.chartModel.model)
+    widget.settings.chartModel = new ChartJSPieChart(widget.settings.chartModel)
+}
+
+export const createChartJSModel = (chartType: string) => {
+    switch (chartType) {
+        case 'pie':
+            return new ChartJSPieChart(null)
+        default:
+            return null
+    }
 }

@@ -86,40 +86,7 @@ export default defineComponent({
 
             this.widgetModel.settings.chartModel.updateChartColorSettings(this.widgetModel)
 
-            //TODO - Remove Hardcoded
-            // this.chartModel.series = [
-            //     {
-            //         type: 'pie',
-            //         name: 'Share',
-            //         //  dataLabels: { enabled: true, style: { fontFamily: 'Roboto', fontSize: '16px', fontWeight: 'Bold', color: 'rgba(69,54,86,1)', backgroundColor: '' }, format: '{point.percentage}' },
-            //         // dataLabels: { enabled: true, style: { fontFamily: 'Roboto', fontSize: '16px', fontWeight: 'Bold', color: 'rgba(69,54,86,1)', backgroundColor: '' }, format: 'test 1' },
-            //         data: [
-            //             {
-            //                 name: 'Xiaomi',
-            //                 y: 12,
-            //                 sliced: true,
-            //                 selected: true
-            //                 // dataLabels: { enabled: true, style: { fontFamily: 'Roboto', fontSize: '16px', fontWeight: 'Bold', color: 'rgba(69,54,86,1)', backgroundColor: '' }, format: 'test 2' }
-            //             },
-            //             {
-            //                 name: 'Samsung',
-            //                 y: 10,
-            //                 sliced: true,
-            //                 selected: true
-            //             },
-            //             {
-            //                 name: 'Motorola',
-            //                 y: 5,
-            //                 sliced: true,
-            //                 selected: true
-            //             }
-            //         ]
-            //     }
-            // ] as any[]
-
             this.setSeriesEvents()
-
-            console.log('>>>>>>>>>>>>>>> CHART TO RENDER: ', this.chartModel)
             Highcharts.chart(this.chartID, this.chartModel as any)
         },
         updateLegendSettings() {

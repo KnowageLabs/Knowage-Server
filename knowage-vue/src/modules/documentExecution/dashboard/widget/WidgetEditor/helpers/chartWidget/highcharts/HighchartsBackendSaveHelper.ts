@@ -1,5 +1,5 @@
 import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard"
-import { IHighchartsChartModel, IHighchartsChartSerie } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
+import { IHighchartsChartModel } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
 
 export const formatHighchartsWidgetForSave = (widget: IWidget) => {
     widget.settings.chartModel = widget.settings.chartModel.getModel()

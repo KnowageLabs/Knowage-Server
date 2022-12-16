@@ -14,8 +14,10 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IDataset } from '../../../Dashboard'
 import { createNewHighchartsModel } from '../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsHelpers'
+import { createChartJSModel } from '../helpers/chartWidget/chartJS/ChartJSHelpers'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
-
+import { mapState } from 'pinia'
+import mainStore from '@/App.store'
 import WidgetEditorDataList from './WidgetEditorDataList/WidgetEditorDataList.vue'
 import WidgetEditorHint from '../WidgetEditorHint.vue'
 import WidgetEditorCommonDataContainer from './common/WidgetEditorCommonDataContainer.vue'
@@ -35,6 +37,9 @@ export default defineComponent({
         }
     },
     computed: {
+        ...mapState(mainStore, {
+            user: 'user'
+        }),
         chartPickerVisible() {
             let visible = false
             if (!this.propWidget || !['highcharts', 'chartJS'].includes(this.propWidget.type)) return false
@@ -51,7 +56,9 @@ export default defineComponent({
             this.selectedDataset = dataset as IDataset
         },
         onChartTypeChanged(chartType: string) {
-            this.propWidget.settings.chartModel = createNewHighchartsModel(chartType)
+            // TODO widgetChange
+            // this.propWidget.settings.chartModel = this.user?.enterprise ? createNewHighchartsModel(chartType) : createChartJSModel(chartType)
+            this.propWidget.settings.chartModel = false ? createNewHighchartsModel(chartType) : createChartJSModel(chartType)
         }
     }
 })

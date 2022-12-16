@@ -3,8 +3,6 @@ import { HighchartsPieChartModel } from '@/modules/documentExecution/dashboard/i
 import { IHighchartsOptions3D } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 
 export const updatePieChartModel = (oldModel: any, newModel: HighchartsPieChartModel) => {
-    console.log('>>>>>>>>>> OLD MODEL: ', oldModel)
-    console.log('>>>>>>>>>> NEW MODEL: ', newModel)
     getFormatted3DConfiguration(oldModel, newModel)
     getFormattedNoDataConfiguration(oldModel, newModel)
     getFormattedLegend(oldModel, newModel)

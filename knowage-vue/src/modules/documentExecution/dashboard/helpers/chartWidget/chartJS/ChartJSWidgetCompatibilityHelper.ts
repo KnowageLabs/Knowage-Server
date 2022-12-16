@@ -9,7 +9,6 @@ import { getFiltersForColumns } from "../../DashboardBackwardCompatibilityHelper
 
 
 export const formatChartJSWidget = (widget: any) => {
-    console.log(">>>>>>>>>>> OLD WIDGET: ", widget)
     const formattedWidget = {
         id: widget.id,
         dataset: widget.dataset.dsId ?? null,
@@ -22,7 +21,6 @@ export const formatChartJSWidget = (widget: any) => {
     formattedWidget.settings = getFormattedWidgetSettings(widget) as IChartJSWidgetSettings
     getFiltersForColumns(formattedWidget, widget)
     formattedWidget.settings.chartModel = createChartModel(widget)
-    console.log(">>>>>>>>>>> FORMATTED WIDGET: ", formattedWidget)
     return formattedWidget
 }
 

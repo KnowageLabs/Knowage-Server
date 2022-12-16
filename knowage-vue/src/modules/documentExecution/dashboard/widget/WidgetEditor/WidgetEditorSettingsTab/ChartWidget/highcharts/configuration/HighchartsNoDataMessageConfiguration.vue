@@ -79,8 +79,6 @@ export default defineComponent({
                     color: this.model.noData.style.color,
                     'background-color': this.model.noData.style.backgroundColor
                 }
-
-            console.log('>>>>>> LOADED model: ', this.model)
         },
         modelChanged() {
             emitter.emit('refreshChart', this.widgetModel.id)
