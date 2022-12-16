@@ -1261,7 +1261,6 @@ export default defineComponent({
             const startDocumentInputParameters = deepcopy(this.document.drivers)
             const keys = [] as any[]
             otherOutputParameters.forEach((parameter: any) => keys.push(Object.keys(parameter)[0]))
-
             for (let i = 0; i < startDocumentInputParameters.length; i++) {
                 if (!keys.includes(startDocumentInputParameters[i].label)) {
                     const tempObject = {} as any

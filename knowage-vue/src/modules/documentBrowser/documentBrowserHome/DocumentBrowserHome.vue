@@ -151,7 +151,7 @@ export default defineComponent({
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/folders/`).then((response: AxiosResponse<any>) => {
                 this.folders = response.data
                 this.folders?.sort((a: any, b: any) => {
-                    return a.prog - b.prog
+                    return a.id - b.id
                 })
             })
 
