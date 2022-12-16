@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,8 +37,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import it.eng.qbe.dataset.FederationUtils;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -48,6 +53,7 @@ import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.api.AbstractQbeEngineResource;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
 import it.eng.spagobi.engines.qbe.registry.serializer.RegistryConfigurationJSONSerializer;
+import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.proxy.ContentServiceProxy;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
@@ -198,17 +204,53 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 			throw new SpagoBIEngineStartupException(ENGINE_NAME, "Cannot start QbE from a non-persisted dataset");
 		}
 
-		env.put(EngineConstants.ENV_DATASETS, Collections.singletonList(dataset));
+		if (dataset.toSpagoBiDataSet().getType().equals("SbiFileDataSet") && dataset.getPersistTableName() == null) {
+			JSONObject datasetPersistedLabels = null;
+			try {
 
-		if (dataset.getDsType() != null && dataset.getDsType().equals("SbiFileDataSet") && dataset.getPersistTableName() == null) {
+				datasetPersistedLabels = FederationUtils.createDatasetsOnCache(this.getDataSetRelationKeysMap(dataset), getUserIdentifier());
+				if (datasetPersistedLabels != null) {
+					IDataSource cachedDataSource = getCacheDataSource();
+					// update profile attributes into dataset
+					Map<String, Object> userAttributes = new HashMap<String, Object>();
+					Map<String, String> mapNameTable = new HashMap<String, String>();
+					UserProfile profile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+					userAttributes.putAll(profile.getUserAttributes());
+					userAttributes.put(SsoServiceInterface.USER_ID, profile.getUserId().toString());
+					IDataSet cachedDataSet = FederationUtils.createDatasetOnCache(datasetPersistedLabels.getString(dataset.getLabel()), dataset,
+							cachedDataSource);
+					cachedDataSet.setUserProfileAttributes(userAttributes);
+					cachedDataSet.setPersistTableName(datasetPersistedLabels.getString(dataset.getLabel()));
+					cachedDataSet.setParamsMap(env);
+					cachedDataSet.setDsMetadata(dataset.getDsMetadata());
+					cachedDataSet.setDataSourceForReading(cachedDataSource);
+					env.put(EngineConstants.ENV_DATASETS, Collections.singletonList(cachedDataSet));
 
-//			IDataSet cachedDataSet = FederationUtils.createDatasetOnCache(mapNameTable.get(dsLabel), originalDataset, cachedDataSource);
-//			cachedDataSet.setUserProfileAttributes(userAttributes);
-//			cachedDataSet.setPersistTableName(mapNameTable.get(dsLabel));
-//			cachedDataSet.setParamsMap(env);
-//			cachedDataSet.setDsMetadata(originalDataset.getDsMetadata());
-//			cachedDataSet.setDataSourceForReading(cachedDataSource);
+				}
+			} catch (JSONException e1) {
+				logger.error("Error loading the dataset. Please check that all the dataset linked to this federation are still working", e1);
+				throw new SpagoBIEngineRuntimeException(
+						"Error loading the dataset. Please check that all the dataset linked to this federation are still working", e1);
+			}
+		} else {
+			env.put(EngineConstants.ENV_DATASETS, Collections.singletonList(dataset));
 		}
+
+	}
+
+	/**
+	 * Creates a map dataset-->columns in order to create object for caching
+	 *
+	 * @return
+	 * @throws JSONException
+	 */
+	@JsonIgnore
+	public JSONObject getDataSetRelationKeysMap(IDataSet dataset) throws JSONException {
+		Map<String, Set<String>> datasetKeyColumnMap = new HashMap<String, Set<String>>();
+
+		datasetKeyColumnMap.put(dataset.getLabel(), null); // TODO: add all dataset columns to indexes?
+
+		return new JSONObject(datasetKeyColumnMap);
 
 	}
 

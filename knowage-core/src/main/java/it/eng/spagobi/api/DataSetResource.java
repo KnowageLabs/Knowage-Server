@@ -1121,14 +1121,16 @@ public class DataSetResource extends AbstractDataSetResource {
 					tableName = dataSetManagementAPI.persistDataset(label);
 					Monitor monitorIdx = MonitorFactory.start("spagobi.dataset.persist.indixes");
 					if (tableName != null) {
-						JSONArray columnsArray = labels.getJSONArray(label);
-						Set<String> columns = new HashSet<String>(columnsArray.length());
-						for (int i = 0; i < columnsArray.length(); i++) {
-							String column = columnsArray.getString(i);
-							columns.add(column);
-						}
-						if (columns.size() > 0) {
-							dataSetManagementAPI.createIndexes(label, columns);
+						if (!labels.isNull(label)) {
+							JSONArray columnsArray = labels.getJSONArray(label);
+							Set<String> columns = new HashSet<String>(columnsArray.length());
+							for (int i = 0; i < columnsArray.length(); i++) {
+								String column = columnsArray.getString(i);
+								columns.add(column);
+							}
+							if (columns.size() > 0) {
+								dataSetManagementAPI.createIndexes(label, columns);
+							}
 						}
 					}
 					monitorIdx.stop();
