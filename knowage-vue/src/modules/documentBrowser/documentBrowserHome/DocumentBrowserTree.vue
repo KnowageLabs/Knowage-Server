@@ -78,6 +78,7 @@ export default defineComponent({
                 key: 'Personal_Folders',
                 icon: 'pi pi-folder',
                 id: -1,
+                prog: 0,
                 parentId: null,
                 label: 'Personal_Folders',
                 children: [] as iNode[],
@@ -96,9 +97,16 @@ export default defineComponent({
             this.nodes = [personalFolder]
             const foldersWithMissingParent = [] as iNode[]
             this.folders.forEach((folder: any) => {
-                const node = { key: folder.name, icon: 'pi pi-folder', id: folder.id, parentId: folder.parentId, label: folder.name, children: [] as iNode[], data: folder }
+                const node = { key: folder.name, icon: 'pi pi-folder', id: folder.id, prog: folder.prog, parentId: folder.parentId, label: folder.name, children: [] as iNode[], data: folder }
                 node.children = foldersWithMissingParent.filter((folder: iNode) => node.id === folder.parentId && folder.data.codType !== 'LOW_FUNCT')
                 this.attachFolderToTree(node, foldersWithMissingParent, personalFolder)
+            })
+            this.sortNodesAndChildren(this.nodes)
+        },
+        sortNodesAndChildren(nodes: iNode[]) {
+            nodes.sort((a: iNode, b: iNode) => a.prog - b.prog)
+            nodes.forEach((node: iNode) => {
+                if (node.children) this.sortNodesAndChildren(node.children)
             })
         },
         attachFolderToTree(folder: iNode, foldersWithMissingParent: iNode[], personalFolder: iNode) {
