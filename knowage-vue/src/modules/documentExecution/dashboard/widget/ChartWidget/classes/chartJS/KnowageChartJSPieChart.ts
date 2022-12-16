@@ -19,11 +19,6 @@ export class ChartJSPieChart extends KnowageChartJS {
     }
 
     setData = (data: any) => {
-        console.group(`%c Widget ---------------`, 'background: #121212; color: orange')
-        console.log(this.model)
-        console.log(data)
-        console.groupEnd()
-
         this.model.data = {
             datasets: [
                 {
