@@ -8,7 +8,6 @@
             :selectedSetting="selectedSetting"
             :datasets="datasets"
             :selectedDatasets="selectedDatasets"
-            :drivers="drivers"
             :variables="variables"
             :dashboardId="dashboardId"
         ></TableWidgetSettingsContainer>
@@ -19,7 +18,6 @@
             :selectedSetting="selectedSetting"
             :datasets="datasets"
             :selectedDatasets="selectedDatasets"
-            :drivers="drivers"
             :variables="variables"
         ></SelectorWidgetSettingsContainer>
         <SelectionsWidgetSettingsContainer
@@ -29,7 +27,6 @@
             :selectedSetting="selectedSetting"
             :datasets="datasets"
             :selectedDatasets="selectedDatasets"
-            :drivers="drivers"
             :variables="variables"
         ></SelectionsWidgetSettingsContainer>
         <HTMLWidgetSettingsContainer
@@ -39,7 +36,6 @@
             :selectedSetting="selectedSetting"
             :datasets="datasets"
             :selectedDatasets="selectedDatasets"
-            :drivers="drivers"
             :variables="variables"
             :dashboardId="dashboardId"
             :htmlGalleryProp="htmlGalleryProp"
@@ -52,7 +48,6 @@
             :selectedSetting="selectedSetting"
             :datasets="datasets"
             :selectedDatasets="selectedDatasets"
-            :drivers="drivers"
             :variables="variables"
             :dashboardId="dashboardId"
         ></TextWidgetSettingsContainer>
@@ -63,7 +58,6 @@
             :selectedSetting="selectedSetting"
             :datasets="datasets"
             :selectedDatasets="selectedDatasets"
-            :drivers="drivers"
             :variables="variables"
             :dashboardId="dashboardId"
         >
@@ -75,7 +69,6 @@
             :selectedSetting="selectedSetting"
             :datasets="datasets"
             :selectedDatasets="selectedDatasets"
-            :drivers="drivers"
             :variables="variables"
             :dashboardId="dashboardId"
         >
@@ -109,7 +102,6 @@ export default defineComponent({
         propWidget: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDataset[]> },
         selectedDatasets: { type: Array as PropType<IDataset[]> },
-        drivers: { type: Array as PropType<IDashboardDriver[]>, required: true },
         variables: { type: Array as PropType<IVariable[]>, required: true },
         htmlGalleryProp: { type: Array as PropType<IGalleryItem[]>, required: true },
         dashboardId: { type: String, required: true }

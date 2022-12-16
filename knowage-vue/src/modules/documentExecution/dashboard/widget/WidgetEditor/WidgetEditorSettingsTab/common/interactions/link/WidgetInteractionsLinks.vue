@@ -64,6 +64,7 @@
                     :propParameters="link.parameters"
                     :selectedDatasetsColumnsMap="selectedDatasetColumnNameMap"
                     :disabled="linksDisabled"
+                    :dashboardId="dashboardId"
                     @change="onParametersChanged($event, link)"
                     @addParameter="onAddParameter(link)"
                     @delete="onParameterDelete($event, link)"
@@ -91,7 +92,8 @@ export default defineComponent({
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDataset[]> },
-        selectedDatasets: { type: Array as PropType<IDataset[]> }
+        selectedDatasets: { type: Array as PropType<IDataset[]> },
+        dashboardId: { type: String, required: true }
     },
     data() {
         return {

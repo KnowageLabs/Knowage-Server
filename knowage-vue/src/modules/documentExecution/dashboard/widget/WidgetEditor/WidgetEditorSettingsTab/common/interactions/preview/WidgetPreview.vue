@@ -43,7 +43,15 @@
             </div>
         </div>
         <div v-if="previewModel.parameters.length > 0" class="p-col-12 p-p-2">
-            <TableWidgetPreviewParameterList class="kn-flex p-mr-2" :widgetModel="widgetModel" :propParameters="previewModel.parameters" :selectedDatasetsColumnsMap="selectedDatasetColumnNameMap" :disabled="previewDisabled" @change="onParametersChanged"></TableWidgetPreviewParameterList>
+            <TableWidgetPreviewParameterList
+                class="kn-flex p-mr-2"
+                :widgetModel="widgetModel"
+                :propParameters="previewModel.parameters"
+                :selectedDatasetsColumnsMap="selectedDatasetColumnNameMap"
+                :dashboardId="dashboardId"
+                :disabled="previewDisabled"
+                @change="onParametersChanged"
+            ></TableWidgetPreviewParameterList>
         </div>
     </div>
 </template>

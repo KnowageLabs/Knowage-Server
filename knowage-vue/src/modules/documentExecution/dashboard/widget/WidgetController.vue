@@ -12,7 +12,6 @@
             :dashboardId="dashboardId"
             :selectionIsLocked="selectionIsLocked"
             :propActiveSelections="activeSelections"
-            :drivers="drivers"
             :variables="variables"
             @pageChanged="reloadWidgetData"
             @sortingChanged="reloadWidgetData"

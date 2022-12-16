@@ -14,7 +14,6 @@
                     :propWidget="widget"
                     :datasets="datasets"
                     :selectedDatasets="selectedDatasets"
-                    :drivers="drivers"
                     :variables="variables"
                     :dashboardId="dashboardId"
                     :selectedSettingProp="selectedSetting"
@@ -22,7 +21,7 @@
                     @settingChanged="onSettingChanged"
                     @datasetSelected="onDatasetSelected"
                 />
-                <WidgetEditorPreview v-if="selectedSetting != 'Gallery' && !chartPickerVisible" :propWidget="widget" :dashboardId="dashboardId" :datasets="selectedModelDatasets" :drivers="documentDrivers" :variables="variables" />
+                <WidgetEditorPreview v-if="selectedSetting != 'Gallery' && !chartPickerVisible" :propWidget="widget" :dashboardId="dashboardId" :datasets="selectedModelDatasets" :variables="variables" />
             </div>
         </div>
     </Teleport>

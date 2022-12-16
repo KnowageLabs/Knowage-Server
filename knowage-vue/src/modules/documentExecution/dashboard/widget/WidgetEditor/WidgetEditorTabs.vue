@@ -4,7 +4,7 @@
             <WidgetEditorDataTab :propWidget="propWidget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="$emit('datasetSelected', $event)" data-test="data-tab"></WidgetEditorDataTab>
         </TabPanel>
         <TabPanel :header="$t('common.settings')">
-            <WidgetEditorSettingsTab :propWidget="propWidget" :datasets="datasets" :selectedDatasets="selectedDatasets" :drivers="drivers" :variables="variables" :dashboardId="dashboardId" :htmlGalleryProp="htmlGalleryProp" @settingChanged="$emit('settingChanged', $event)"></WidgetEditorSettingsTab>
+            <WidgetEditorSettingsTab :propWidget="propWidget" :datasets="datasets" :selectedDatasets="selectedDatasets" :variables="variables" :dashboardId="dashboardId" :htmlGalleryProp="htmlGalleryProp" @settingChanged="$emit('settingChanged', $event)"></WidgetEditorSettingsTab>
         </TabPanel>
     </TabView>
 </template>

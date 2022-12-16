@@ -15,7 +15,7 @@
                 <WidgetHtmlEditor v-else-if="accordion.type === 'HTML'" :activeIndex="activeIndex" :widgetModel="widgetModel" :variables="variables" :dashboardId="dashboardId" :selectedDatasets="selectedDatasets"></WidgetHtmlEditor>
                 <WidgetCssEditor v-else-if="accordion.type === 'CSS'" :activeIndex="activeIndex" :widgetModel="widgetModel"></WidgetCssEditor>
                 <WidgetCrossNavigation v-else-if="accordion.type === 'CrossNavigation'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :dashboardId="dashboardId"></WidgetCrossNavigation>
-                <WidgetInteractionsLinks v-else-if="accordion.type === 'Link'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets"></WidgetInteractionsLinks>
+                <WidgetInteractionsLinks v-else-if="accordion.type === 'Link'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :dashboardId="dashboardId"></WidgetInteractionsLinks>
                 <WidgetPreview v-else-if="accordion.type === 'Preview'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :dashboardId="dashboardId"></WidgetPreview>
             </AccordionTab>
         </Accordion>
