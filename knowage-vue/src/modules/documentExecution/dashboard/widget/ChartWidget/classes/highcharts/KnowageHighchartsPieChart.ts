@@ -11,7 +11,6 @@ export class HighchartsPieChart extends KnowageHighcharts {
         if (!this.model.plotOptions.pie) this.setPiePlotOptions()
         if (model && model.CHART) this.updateModel(model)
         else if (model) this.model = model
-        console.log(">>>>>>>> LOADED MODEL: ", this.model)
         this.model.chart.type = "pie"
     }
 

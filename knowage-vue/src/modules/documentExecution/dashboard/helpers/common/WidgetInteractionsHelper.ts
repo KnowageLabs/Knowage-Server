@@ -8,7 +8,6 @@ import * as highchartsDefaultValues from '../../widget/WidgetEditor/helpers/char
 import mainStore from '@/App.store'
 
 export const getFormattedInteractions = (widget: any) => {
-    console.log('WIDGET: ', widget)
     const interactions = {} as IWidgetInteractions
     if (['table', 'chart'].includes(widget.type)) interactions.selection = getFormattedSelection(widget) as IWidgetSelection
     if (['table', 'html', 'text', 'chart'].includes(widget.type)) interactions.crosssNavigation = getFormattedCrossNavigation(widget) as IWidgetCrossNavigation

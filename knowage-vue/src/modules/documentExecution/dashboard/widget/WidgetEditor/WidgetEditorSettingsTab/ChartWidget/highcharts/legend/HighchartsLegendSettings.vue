@@ -148,7 +148,6 @@ export default defineComponent({
             emitter.emit('refreshChart', this.widgetModel.id)
         },
         onStyleToolbarChange(model: IWidgetStyleToolbarModel) {
-            console.log('>>>>> ON CHANGE MODEL ', model)
             if (!this.model || !this.model.legend) return
             this.toolbarModel = {
                 'font-family': model['font-family'] ?? '',

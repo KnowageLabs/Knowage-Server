@@ -103,7 +103,6 @@ export default defineComponent({
         loadModel() {
             this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
             if (this.widgetModel.settings?.series?.seriesLabelsSettings) this.seriesSettings = this.widgetModel.settings.series.seriesLabelsSettings
-            console.log('>>>>>>>>> LOADED WIDHET MODEL SETTINGS: ', this.seriesSettings)
             this.loadToolbarModels()
             this.loadSeriesOptions()
         },

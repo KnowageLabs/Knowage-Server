@@ -7,7 +7,6 @@ export class ChartJSPieChart extends KnowageChartJS {
         super()
         if (model && model.CHART) this.updateModel(model)
         else if (model) this.model = model
-        console.log(">>>>>>>> LOADED MODEL: ", this.model)
         this.model.chart.type = 'pie'
     }
 
@@ -20,11 +19,6 @@ export class ChartJSPieChart extends KnowageChartJS {
     }
 
     setData = (data: any) => {
-        console.group(`%c Widget ---------------`, 'background: #121212; color: orange')
-        console.log(this.model)
-        console.log(data)
-        console.groupEnd()
-
         this.model.data = {
             datasets: [
                 {
@@ -36,7 +30,7 @@ export class ChartJSPieChart extends KnowageChartJS {
         }
 
         if (data && data.rows) {
-            data.rows.forEach((row, index) => {
+            data.rows.forEach((row) => {
                 this.model.data.labels.push(row['column_1'])
                 this.model.data.datasets[0].data.push(row['column_2'])
             })

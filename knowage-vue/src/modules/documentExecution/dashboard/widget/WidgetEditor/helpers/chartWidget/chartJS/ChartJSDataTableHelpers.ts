@@ -11,8 +11,6 @@ export const addChartJSColumnToTable = (tempColumn: IWidgetColumn, rows: IWidget
 }
 
 const addChartJSPieChartColumnToTable = (tempColumn: IWidgetColumn, rows: IWidgetColumn[], chartType: string | undefined, mode: string, widgetModel: IWidget) => {
-    console.log('----- add column: ', tempColumn)
-    console.log('----- add column mode: ', mode)
     if (mode === 'attributesOnly' && rows.length <= 1) {
         if (tempColumn.fieldType === 'MEASURE') {
             tempColumn.fieldType = 'ATTRIBUTE'

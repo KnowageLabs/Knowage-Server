@@ -9,6 +9,5 @@ export const formatChartJSForSave = (widget: IWidget) => {
 }
 
 const removeChartData = (chartModel: IChartJSChartModel) => {
-    console.log("CHART MODEL: ", chartModel)
     chartModel.data = { datasets: [], labels: [] }
 }

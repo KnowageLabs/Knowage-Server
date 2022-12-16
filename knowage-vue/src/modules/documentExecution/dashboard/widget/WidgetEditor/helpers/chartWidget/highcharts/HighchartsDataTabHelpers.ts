@@ -13,8 +13,6 @@ export const addHighchartsColumnToTable = (tempColumn: IWidgetColumn, rows: IWid
 }
 
 const addHighchartsPieChartColumnToTable = (tempColumn: IWidgetColumn, rows: IWidgetColumn[], chartType: string | undefined, mode: string, widgetModel: IWidget) => {
-    console.log('----- add column: ', tempColumn)
-    console.log('----- add column mode: ', mode)
     if (mode === 'attributesOnly' && rows.length < 4) {
         const index = rows.findIndex((column: IWidgetColumn) => column.columnName === tempColumn.columnName)
         if (tempColumn.fieldType === 'MEASURE') {
@@ -44,14 +42,12 @@ const updateSerieInWidgetModel = (widgetModel: IWidget, column: IWidgetColumn) =
 
 const updateFirstSeriesOption = (array: any[], column: IWidgetColumn) => {
     if (array && array[0]) {
-        console.log(">>>>>>>>>>>>>>>>>> updateFirstSeriesOption: array: ", array)
         array[0].names[0] = column.columnName
     }
 }
 
 export const removeSerieFromWidgetModel = (widgetModel: IWidget, column: IWidgetColumn, chartType: string | undefined) => {
     const allSeriesOption = chartType !== 'highchartsPieChart'
-    console.log("------------- deepcopy MODEL", deepcopy(widgetModel))
     removeColumnFromSubmodel(column, widgetModel.settings.accesssibility.seriesAccesibilitySettings, allSeriesOption)
     removeColumnFromSubmodel(column, widgetModel.settings.series.seriesLabelsSettings, allSeriesOption)
     emitter.emit('seriesRemoved', column)
@@ -61,13 +57,10 @@ const removeColumnFromSubmodel = (column: IWidgetColumn, array: any[], allSeries
     for (let i = array.length - 1; i >= 0; i--) {
         for (let j = array[i].names.length - 1; j >= 0; j--) {
             const serieName = array[i].names[j]
-            console.log(serieName + ' === ' + column.columnName)
             if (serieName === column.columnName) {
-                console.log('Entered: ', array)
                 array[i].names.splice(j, 1)
             }
             if (!allSeriesOption && array[i].names === 0) array.splice(i, 1)
         }
     }
-    console.log(">>>>>>>>>>>>>>>>>>>>> removeColumnFromSubmodel: ", array)
 }

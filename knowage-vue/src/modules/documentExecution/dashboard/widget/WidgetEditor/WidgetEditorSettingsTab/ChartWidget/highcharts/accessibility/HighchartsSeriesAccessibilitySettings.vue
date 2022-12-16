@@ -79,7 +79,6 @@ export default defineComponent({
         },
         loadModel() {
             this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
-            console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!! LOADED WIDHET MODEL SETTINGS: ', this.widgetModel.settings.accesssibility.seriesAccesibilitySettings)
             if (this.widgetModel.settings?.accesssibility?.seriesAccesibilitySettings) this.seriesSettings = this.widgetModel.settings.accesssibility.seriesAccesibilitySettings
             this.loadSeriesOptions()
         },
