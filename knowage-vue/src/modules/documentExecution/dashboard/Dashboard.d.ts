@@ -17,7 +17,7 @@ export interface IDashboardConfiguration {
     label: string
     description: string
     associations: IAssociation[]
-    datasets: IModelDataset[]
+    datasets: IDashboardDataset[]
     variables: IVariable[]
     selections: ISelection[]
     themes: any
@@ -421,7 +421,7 @@ export interface IWidgetColumnFilter {
     value2?: string
 }
 
-export interface IWidgetEditorDataset {
+export interface IDashboardDataset {
     id: number
     label: string
     cache: boolean
@@ -430,6 +430,7 @@ export interface IWidgetEditorDataset {
     drivers?: IDashboardDatasetDriver[]
     indexes?: any[]
 }
+
 
 export interface IDashboardDatasetDriver {
     urlName: string
@@ -562,16 +563,7 @@ interface IAssociationField {
     dataset: number
 }
 
-export interface IModelDataset {
-    id: number
-    dsLabel: string
-    cache: boolean
-    indexes: string[]
-    parameters: IModelDatasetParameter[]
-    drivers: any[]
-}
-
-interface IModelDatasetParameter {
+interface IDashboardDatasetParameter {
     multivalue: boolean
     name: string
     type: string

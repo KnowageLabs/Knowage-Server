@@ -41,7 +41,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidgetEditorDataset, IDatasetColumn, IDataset, IWidget } from '../../../../Dashboard'
+import { IDashboardDataset, IDatasetColumn, IDataset, IWidget } from '../../../../Dashboard'
 import { emitter } from '../../../../DashboardHelpers'
 import descriptor from './WidgetEditorDataListDescriptor.json'
 import Dropdown from 'primevue/dropdown'
@@ -63,8 +63,8 @@ export default defineComponent({
             descriptor,
             dataListDescriptor,
             model: null as IWidget | null,
-            datasetOptions: [] as IWidgetEditorDataset[],
-            selectedDataset: null as IWidgetEditorDataset | null,
+            datasetOptions: [] as IDashboardDataset[],
+            selectedDataset: null as IDashboardDataset | null,
             selectedDatasetColumns: [] as IDatasetColumn[],
             calcFieldDescriptor,
             calcFieldDialogVisible: false,
@@ -115,7 +115,7 @@ export default defineComponent({
             this.loadDatasetColumns()
         },
         loadSelectedDataset() {
-            const index = this.datasetOptions?.findIndex((dataset: IWidgetEditorDataset) => dataset.id === this.model?.dataset)
+            const index = this.datasetOptions?.findIndex((dataset: IDashboardDataset) => dataset.id === this.model?.dataset)
             if (index !== -1) {
                 this.selectedDataset = this.datasetOptions[index]
                 this.$emit('datasetSelected', this.selectedDataset)

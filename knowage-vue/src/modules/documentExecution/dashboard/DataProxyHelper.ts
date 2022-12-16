@@ -10,7 +10,7 @@ import store from '@/App.store.js'
 import { AxiosResponse } from 'axios'
 import { setDatasetInterval, clearDatasetInterval } from './helpers/datasetRefresh/DatasetRefreshHelpers'
 import { aggregationRegex, aggregationsRegex, limitRegex, rowsRegex } from './helpers/common/DashboardRegexHelper'
-import { IDataset, ISelection, IVariable, IWidget, IModelDataset, IDashboardDatasetDriver } from './Dashboard'
+import { IDataset, ISelection, IVariable, IWidget, IDashboardDataset, IDashboardDatasetDriver } from './Dashboard'
 
 const { t } = i18n.global
 const mainStore = store()
@@ -22,7 +22,7 @@ export const getData = (item) =>
         }, 1000)
     })
 
-export const getWidgetData = async (widget: IWidget, datasets: IModelDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+export const getWidgetData = async (widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
     switch (widget.type) {
         case 'table':
             return await getTableWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
@@ -42,7 +42,7 @@ export const getWidgetData = async (widget: IWidget, datasets: IModelDataset[], 
 }
 
 //#region ===================== Common Methods - Formatting Model, Drivers, Parameters, Selections Management ====================================================
-const formatWidgetModelForGet = (propWidget: IWidget, dataset: IModelDataset, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+const formatWidgetModelForGet = (propWidget: IWidget, dataset: IDashboardDataset, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
     var dataToSend = {
         aggregations: {
             dataset: '',
@@ -196,8 +196,8 @@ const getVariableDatasetLabel = (variable: IVariable, datasets: IDataset[]) => {
 //#endregion ================================================================================================
 
 //#region ===================== Table Widget ====================================================
-export const getTableWidgetData = async (widget: IWidget, datasets: IModelDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
-    var datasetIndex = datasets.findIndex((dataset: IModelDataset) => widget.dataset === dataset.id)
+export const getTableWidgetData = async (widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+    var datasetIndex = datasets.findIndex((dataset: IDashboardDataset) => widget.dataset === dataset.id)
     var selectedDataset = datasets[datasetIndex]
 
     if (selectedDataset) {
@@ -265,7 +265,7 @@ const getSummaryRow = (propWidget: IWidget) => {
 //#endregion ================================================================================================
 
 //#region ===================== Selector Widget ====================================================
-export const getSelectorWidgetData = async (widget: IWidget, datasets: IModelDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+export const getSelectorWidgetData = async (widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
     var datasetIndex = datasets.findIndex((dataset: any) => widget.dataset === dataset.id)
     var selectedDataset = datasets[datasetIndex]
 
@@ -295,7 +295,7 @@ export const getSelectorWidgetData = async (widget: IWidget, datasets: IModelDat
 //#endregion ================================================================================================
 
 //#region ===================== Text & HTML Widget ====================================================
-export const getTextWidgetData = async (widget: IWidget, datasets: IModelDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+export const getTextWidgetData = async (widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
     var datasetIndex = datasets.findIndex((dataset: any) => widget.dataset === dataset.id.dsId)
     var selectedDataset = datasets[datasetIndex]
 
@@ -339,7 +339,7 @@ export const getTextWidgetData = async (widget: IWidget, datasets: IModelDataset
     }
 }
 
-export const getHtmlWidgetData = async (widget: IWidget, datasets: IModelDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+export const getHtmlWidgetData = async (widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
     var datasetIndex = datasets.findIndex((dataset: any) => widget.dataset === dataset.id.dsId)
     var selectedDataset = datasets[datasetIndex]
 
@@ -427,8 +427,8 @@ const getAggregationsModel = (widgetModel, rawHtml, selectedDataset) => {
 
 //#endregion ================================================================================================
 
-export const getChartWidgetData = async (widget: IWidget, datasets: IModelDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
-    var datasetIndex = datasets.findIndex((dataset: IModelDataset) => widget.dataset === dataset.id)
+export const getChartWidgetData = async (widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+    var datasetIndex = datasets.findIndex((dataset: IDashboardDataset) => widget.dataset === dataset.id)
     var selectedDataset = datasets[datasetIndex]
 
     var measureCheck = widget.columns.findIndex((column: any) => column.fieldType === 'MEASURE') != -1
@@ -459,7 +459,7 @@ export const getChartWidgetData = async (widget: IWidget, datasets: IModelDatase
     }
 }
 
-const formatChartWidgetForGet = (propWidget: IWidget, dataset: IModelDataset, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+const formatChartWidgetForGet = (propWidget: IWidget, dataset: IDashboardDataset, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
     var dataToSend = {
         aggregations: {
             dataset: '',

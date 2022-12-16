@@ -1,9 +1,9 @@
-import { IDataset, IModelDataset } from "@/modules/documentExecution/dashboard/Dashboard";
+import { IDataset, IDashboardDataset } from "@/modules/documentExecution/dashboard/Dashboard";
 import { emitter } from '../../DashboardHelpers'
 
 let dataSetIntervals = {}
 
-export const setDatasetIntervals = (modelDatasets: IModelDataset[], datasets: IDataset[]) => {
+export const setDatasetIntervals = (modelDatasets: IDashboardDataset[], datasets: IDataset[]) => {
     if (!modelDatasets || !datasets) return
 
     for (let i = 0; i < modelDatasets.length; i++) {
@@ -23,10 +23,10 @@ export const setDatasetInterval = (modelDatasetId: number, interval: number) => 
 
 }
 
-const removeUnusedDatasetIntervals = (modelDatasets: IModelDataset[]) => {
+const removeUnusedDatasetIntervals = (modelDatasets: IDashboardDataset[]) => {
     const keysToRemove = [] as string[]
     Object.keys(dataSetIntervals).forEach((key: string) => {
-        const index = modelDatasets.findIndex((dataset: IModelDataset) => '' + dataset.id === key)
+        const index = modelDatasets.findIndex((dataset: IDashboardDataset) => '' + dataset.id === key)
         if (index === -1) keysToRemove.push(key)
     })
     keysToRemove.forEach((key: string) => clearDatasetInterval(+key))

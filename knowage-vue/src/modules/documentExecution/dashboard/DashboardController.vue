@@ -47,11 +47,12 @@ import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import { v4 as uuidv4 } from 'uuid'
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
-import { IModelDataset, ISelection, IWidget, IDashboardDriver, IGalleryItem } from './Dashboard'
+import { IDashboardDataset, ISelection, IWidget, IDashboardDriver, IGalleryItem } from './Dashboard'
 import { emitter, createNewDashboardModel, formatDashboardForSave, formatNewModel } from './DashboardHelpers'
 import { mapActions, mapState } from 'pinia'
 import { formatModel } from './helpers/DashboardBackwardCompatibilityHelper'
 import { setDatasetIntervals, clearAllDatasetIntervals } from './helpers/datasetRefresh/DatasetRefreshHelpers'
+import { loadDrivers } from './helpers/DashboardDriversHelper'
 import DashboardRenderer from './DashboardRenderer.vue'
 import WidgetPickerDialog from './widget/WidgetPicker/WidgetPickerDialog.vue'
 import dashboardStore from './Dashboard.store'
@@ -109,7 +110,7 @@ export default defineComponent({
     async created() {
         this.setEventListeners()
         await this.getData()
-        this.$watch('model.configuration.datasets', (modelDatasets: IModelDataset[]) => {
+        this.$watch('model.configuration.datasets', (modelDatasets: IDashboardDataset[]) => {
             setDatasetIntervals(modelDatasets, this.datasets)
         })
     },
@@ -118,15 +119,18 @@ export default defineComponent({
         clearAllDatasetIntervals()
     },
     methods: {
-        ...mapActions(dashboardStore, ['removeSelections', 'setAllDatasets', 'getSelections', 'setInternationalization', 'getInternationalization', 'setDashboardDocument']),
+        ...mapActions(dashboardStore, ['removeSelections', 'setAllDatasets', 'getSelections', 'setInternationalization', 'getInternationalization', 'setDashboardDocument', 'setDashboardDrivers']),
         async getData() {
             this.loading = true
             await this.loadDatasets()
-            await Promise.all([this.loadDrivers(), this.loadProfileAttributes(), this.loadModel(), this.loadInternationalization()])
-            this.loading = false
-
+            await Promise.all([this.loadProfileAttributes(), this.loadModel(), this.loadInternationalization()])
+            if (this.filtersData) {
+                const drivers = loadDrivers(this.filtersData, this.model)
+                this.setDashboardDrivers(this.dashboardId, drivers)
+            }
             //lazy lodaded data
             this.loadHtmlGallery()
+            this.loading = false
         },
         async loadModel() {
             let tempModel = null as any
@@ -189,30 +193,7 @@ export default defineComponent({
             const mockedParameters = descriptor.mockedOutputParameters
             this.store.setOutputParameters(this.dashboardId, mockedParameters)
         },
-        loadDrivers() {
-            this.drivers = []
-            if (this.filtersData?.filterStatus) {
-                this.filtersData.filterStatus.forEach((filter: iParameter) => {
-                    const formattedDriver = {
-                        name: filter.label,
-                        type: filter.type,
-                        multivalue: filter.multivalue,
-                        value: this.getFormattedDriverValue(filter),
-                        urlName: filter.urlName
-                    } as IDashboardDriver
-                    this.drivers.push(formattedDriver)
-                })
-            }
-        },
-        getFormattedDriverValue(filter: iParameter) {
-            if (!filter || !filter.parameterValue) return ''
-            let value = ''
-            for (let i = 0; i < filter.parameterValue.length; i++) {
-                value += filter.parameterValue[i].value
-                value += i === filter.parameterValue.length ? '  ' : '; '
-            }
-            return value.substring(0, value.length - 2)
-        },
+
         loadProfileAttributes() {
             this.profileAttributes = []
             const user = this.appStore.getUser()
@@ -263,6 +244,8 @@ export default defineComponent({
             this.store.setCrosssNavigations(this.dashboardId, [])
             this.store.setOutputParameters(this.dashboardId, [])
             this.store.setSelections(this.dashboardId, [], this.$http)
+            this.store.setSelections(this.dashboardId, [], this.$http)
+            this.setDashboardDrivers(this.dashboardId, [])
         },
         closeWidgetEditor() {
             this.widgetEditorVisible = false

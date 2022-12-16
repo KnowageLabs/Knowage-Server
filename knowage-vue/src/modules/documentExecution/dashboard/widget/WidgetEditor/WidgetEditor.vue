@@ -33,7 +33,7 @@
  * ! this component will be in charge of managing the widget editing.
  */
 import { defineComponent, PropType } from 'vue'
-import { IWidgetEditorDataset, IWidget, IDataset, IModelDataset, IVariable, IDashboardDriver, IGalleryItem } from '../../Dashboard'
+import { IWidgetEditorDataset, IWidget, IDataset, IDashboardDataset, IVariable, IDashboardDriver, IGalleryItem } from '../../Dashboard'
 import { AxiosResponse } from 'axios'
 import { createNewWidget } from './helpers/WidgetEditorHelpers'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
@@ -65,7 +65,7 @@ export default defineComponent({
                 availableFunctions: string[]
                 nullifFunction: string[]
             },
-            selectedModelDatasets: [] as IModelDataset[],
+            selectedModelDatasets: [] as IDashboardDataset[],
             selectedDatasets: [] as IDataset[],
             drivers: [] as any[],
             selectedSetting: '',

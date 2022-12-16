@@ -48,7 +48,7 @@
  */
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
-import { IAssociation, IModelDataset, IModelDatasetParameter, IAssociationField } from '../Dashboard'
+import { IAssociation, IDashboardDataset, IDashboardDatasetParameter, IAssociationField } from '../Dashboard'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import DataTab from './DatasetEditorDataTab/DatasetEditorDataTab.vue'
@@ -69,7 +69,7 @@ export default defineComponent({
             loading: false,
             warningDialogVisible: false,
             availableDatasets: {} as any,
-            dashboardDatasets: [] as IModelDataset[],
+            dashboardDatasets: [] as IDashboardDataset[],
             selectedDatasets: [] as any,
             dashboardAssociations: [] as IAssociation[],
             selectedAssociation: {} as any,
@@ -154,7 +154,7 @@ export default defineComponent({
                         drivers: [],
                         cache: true,
                         parameters: []
-                    } as IModelDataset
+                    } as IDashboardDataset
                     this.dashboardDatasets.push(formattedDatasetForDashboard)
                 })
             }
@@ -185,7 +185,7 @@ export default defineComponent({
             }
         },
         async checkForDatasetAssociations(datasetToDelete) {
-            let datasetAssociations = (await this.getDatasetAssociations(datasetToDelete.id.dsId)) as unknown as IAssociation[]
+            let datasetAssociations = ((await this.getDatasetAssociations(datasetToDelete.id.dsId)) as unknown) as IAssociation[]
             if (datasetAssociations && datasetAssociations.length > 0) this.deleteDatasetAssociations(datasetAssociations)
             this.deleteDataset(datasetToDelete.id.dsId)
         },
@@ -203,7 +203,7 @@ export default defineComponent({
         },
 
         saveDatasetsToModel() {
-            let formattedDatasets = [] as IModelDataset[]
+            let formattedDatasets = [] as IDashboardDataset[]
 
             this.selectedDatasets.forEach((dataset) => {
                 formattedDatasets.push(this.formatDatasetForModel(dataset))
@@ -221,9 +221,9 @@ export default defineComponent({
                 cache: datasetToFormat.modelCache ?? false,
                 indexes: datasetToFormat.modelCache ? datasetToFormat.modelIndexes : [],
                 parameters: datasetToFormat.parameters.map((parameter) => {
-                    return { name: parameter.name, type: parameter.modelType, value: parameter.value, multivalue: parameter.multivalue ?? false } as IModelDatasetParameter
+                    return { name: parameter.name, type: parameter.modelType, value: parameter.value, multivalue: parameter.multivalue ?? false } as IDashboardDatasetParameter
                 })
-            } as IModelDataset
+            } as IDashboardDataset
 
             if (datasetToFormat.formattedDrivers && datasetToFormat.formattedDrivers.length > 0) {
                 formattedDataset.drivers = datasetToFormat.formattedDrivers

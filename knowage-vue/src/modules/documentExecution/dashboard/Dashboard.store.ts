@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { deleteWidgetHelper, emitter, updateWidgetHelper } from './DashboardHelpers'
-import { IDataset, ISelection, IWidget } from './Dashboard'
+import { IDashboardDriver, IDataset, ISelection, IWidget } from './Dashboard'
 import { selectionsUseDatasetWithAssociation } from './widget/interactionsHelpers/DatasetAssociationsHelper'
 import { loadAssociativeSelections } from './widget/interactionsHelpers/InteractionHelper'
 import cryptoRandomString from 'crypto-random-string'
@@ -115,6 +115,12 @@ const store = defineStore('dashboardStore', {
         getDatasetLabel(datasetId: number) {
             const index = this.allDatasets.findIndex((dataset: IDataset) => dataset.id.dsId == datasetId)
             return index !== -1 ? this.allDatasets[index].label : ''
+        },
+        getDashboardDrivers(dashboardId: string) {
+            return this.dashboards[dashboardId].drivers
+        },
+        setDashboardDrivers(dashboardId: string, drivers: IDashboardDriver[]) {
+            this.dashboards[dashboardId].drivers = drivers
         },
     }
 })

@@ -35,7 +35,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IDashboardDriver, IModelDataset, ISelection, IVariable, IWidget } from '../../Dashboard'
+import { IDashboardDriver, IDashboardDataset, ISelection, IVariable, IWidget } from '../../Dashboard'
 import { getWidgetStyleByType } from '../TableWidget/TableWidgetHelper'
 import mock from '../../dataset/DatasetEditorTestMocks.json'
 import descriptor from '../../dataset/DatasetEditorDescriptor.json'
@@ -57,7 +57,7 @@ export default defineComponent({
     components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, ProgressBar, WebComponentContainer, HighchartsContainer, ChartJSContainer },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
-        datasets: { type: Array as PropType<IModelDataset[]>, required: true },
+        datasets: { type: Array as PropType<IDashboardDataset[]>, required: true },
         dashboardId: { type: String, required: true },
         drivers: { type: Array as PropType<IDashboardDriver[]>, required: true },
         variables: { type: Array as PropType<IVariable[]>, required: true }

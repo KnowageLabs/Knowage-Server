@@ -1,6 +1,6 @@
 import { formatTableWidget } from './tableWidget/TableWidgetCompatibilityHelper'
 import { formatSelectorWidget } from '@/modules/documentExecution/dashboard/helpers/selectorWidget/SelectorWidgetCompatibilityHelper'
-import { IAssociation, IDashboard, IDashboardConfiguration, IDataset, IDatasetParameter, ISelection, IVariable, IWidget, IWidgetColumn, IWidgetColumnFilter, IWidgetEditorDataset } from '../Dashboard'
+import { IAssociation, IDashboard, IDashboardConfiguration, IDataset, IDatasetParameter, ISelection, IVariable, IWidget, IWidgetColumn, IWidgetColumnFilter, IDashboardDataset } from '../Dashboard'
 import { formatSelectionWidget } from './selectionWidget/SelectionsWidgetCompatibilityHelper'
 import { setVariableValueFromDataset } from '../generalSettings/VariablesHelper'
 import deepcopy from 'deepcopy'
@@ -79,7 +79,7 @@ const getFormattedAssociation = (association: any) => {
 
 const getFormattedDatasets = (model: any) => {
     if (!model.configuration || !model.configuration.datasets) return
-    const formattedDatasets = [] as IWidgetEditorDataset[]
+    const formattedDatasets = [] as IDashboardDataset[]
     for (let i = 0; i < model.configuration.datasets.length; i++) {
         formattedDatasets.push(getFormattedDataset(model.configuration.datasets[i]))
     }
@@ -88,7 +88,7 @@ const getFormattedDatasets = (model: any) => {
 }
 
 const getFormattedDataset = (dataset: any) => {
-    const formattedDataset = { id: dataset.dsId, dsLabel: dataset.dsLabel, cache: dataset.useCache } as IWidgetEditorDataset
+    const formattedDataset = { id: dataset.dsId, dsLabel: dataset.dsLabel, cache: dataset.useCache } as IDashboardDataset
     if (dataset.indexes) formattedDataset.indexes = dataset.indexes
     if (dataset.parameters) formattedDataset.parameters = getFormattedDatasetParameters(dataset)
     if (dataset.drivers) formattedDataset.drivers = getFormattedDatasetDrivers(dataset)
