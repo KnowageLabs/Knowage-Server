@@ -147,6 +147,7 @@
         "right": "right",
         "role": "Role",
         "roles": "Roles",
+        "rotateDevice": "Please rotate your device!",
         "run": "Run",
         "save": "save",
         "saveAs": "Save as",
