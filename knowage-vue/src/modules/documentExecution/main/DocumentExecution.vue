@@ -1022,8 +1022,8 @@ export default defineComponent({
             if (index !== -1) this.schedulations.splice(index, 1)
         },
         getFormattedDate(date: any, useDefaultFormat?: boolean) {
-            const format = date instanceof Date ? undefined : this.configurations['SPAGOBI.DATE-FORMAT-SERVER.format']
-            return luxonFormatDate(date, format, useDefaultFormat ? undefined : this.dateFormat)
+            const format = date instanceof Date ? undefined : 'dd/MM/yyyy'
+            return luxonFormatDate(date, format, useDefaultFormat ? undefined : this.configurations['SPAGOBI.DATE-FORMAT-SERVER.format'])
         },
         async onBreadcrumbClick(item: any) {
             this.document = item.document
@@ -1076,7 +1076,7 @@ export default defineComponent({
             const navigationParams = this.formatNavigationParams(angularData.otherOutputParameters, crossNavigationDocument ? crossNavigationDocument.navigationParams : [])
             this.addDocumentOtherParametersToNavigationParamas(navigationParams, angularData, crossNavigationDocument)
 
-            const popupOptions = crossNavigationDocument.popupOptions ? JSON.parse(crossNavigationDocument.popupOptions) : null
+            const popupOptions = crossNavigationDocument?.popupOptions ? JSON.parse(crossNavigationDocument.popupOptions) : null
 
             this.checkIfParameterHasFixedValue(navigationParams, crossNavigationDocument)
 
@@ -1124,7 +1124,7 @@ export default defineComponent({
             })
         },
         getCrossBeadcrumb(crossNavigationDocument: any, angularData: any) {
-            let tempCrossBreadcrumb = crossNavigationDocument.crossBreadcrumb
+            let tempCrossBreadcrumb = crossNavigationDocument?.crossBreadcrumb
             if (tempCrossBreadcrumb?.includes('$P{')) {
                 tempCrossBreadcrumb = this.updateCrossBreadCrumbWithParameterValues(tempCrossBreadcrumb, angularData)
             }
@@ -1300,12 +1300,8 @@ export default defineComponent({
             this.loading = false
         },
         async loadUserConfig() {
-            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/user-configs`).then((response: AxiosResponse<any>) => {
-                if (response.data) {
-                    this.sessionEnabled = response.data['SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled'] === 'false' ? false : true
-                    this.dateFormat = response.data['SPAGOBI.DATE-FORMAT-SERVER.format'] === '%Y-%m-%d' ? 'dd/MM/yyyy' : response.data['SPAGOBI.DATE-FORMAT-SERVER.format']
-                }
-            })
+            this.sessionEnabled = this.configurations['SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled'] === 'false' ? false : true
+            this.dateFormat = this.configurations['SPAGOBI.DATE-FORMAT-SERVER.format'] === '%Y-%m-%d' ? 'dd/MM/yyyy' : this.configurations['SPAGOBI.DATE-FORMAT-SERVER.format']
         },
         saveParametersInSession() {
             const tempFilters = deepcopy(this.filtersData)

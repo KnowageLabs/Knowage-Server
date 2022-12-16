@@ -246,6 +246,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							tempCol.valueFormatter = dateTimeFormatter;
 							tempCol.comparator = dateComparator;
 						}
+						if(tempCol.fieldType == 'time') {
+							tempCol.valueFormatter = dateTimeFormatter;
+							tempCol.comparator = dateComparator;
+						}
 						if(tempCol.fieldType == 'float' || tempCol.fieldType == 'integer' || (tempCol.fieldType == 'string' && tempCol.measure == 'MEASURE' && ["COUNT","COUNT_DISTINCT"].indexOf(tempCol.aggregationSelected) != -1) ) {
 							tempCol.valueFormatter = numberFormatter;
 							// When server-side pagination is disabled
@@ -980,6 +984,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if($scope.ngModel.content.columnSelectedOfDataset[k].aliasToShow && $scope.ngModel.content.columnSelectedOfDataset[k].aliasToShow == colAlias) return $scope.ngModel.content.columnSelectedOfDataset[k].name;
 			}
 		}
+		
+		function getColumnFromTableMetadata(colId){
+			if(colId){
+				for(var m in $scope.metadata.fields){
+					if($scope.metadata.fields[m].name && $scope.metadata.fields[m].name == colId) return $scope.metadata.fields[m];
+				}
+			}
+		}
 
 		function onCellClicked(node){
 			var interactionType = $scope.interaction && ($scope.interaction.crossType || $scope.interaction.previewType || $scope.interaction.interactionType);
@@ -1069,9 +1081,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						newValue.push(rows[k][tempAlias]);
 					}
 				}
+				if(['timestamp','time','date'].includes(node.colDef.fieldType)){
+					newValue = luxon.DateTime.fromFormat(node.value, getColumnFromTableMetadata(node.colDef.field).dateFormat).toISO()
+				}
 				else {
 					newValue = null;
 				}
+				
 				$scope.doSelection(getColumnNameFromTableMetadata(node.colDef.headerName, node.colDef.field), node.value, $scope.ngModel.settings.modalSelectionColumn, newValue, mapRow(node.data));
 			}
 		}
