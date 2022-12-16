@@ -4,6 +4,7 @@ import { createSerie, updatePieChartModel } from './updater/HighchartsPieChartUp
 import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
 import { IHighchartsChartSerie, IHighchartsChartSerieData } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import * as highchartsDefaultValues from '../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
+import Highcharts from 'highcharts'
 
 export class HighchartsPieChart extends KnowageHighcharts {
     constructor(model: any) {
@@ -11,7 +12,7 @@ export class HighchartsPieChart extends KnowageHighcharts {
         if (!this.model.plotOptions.pie) this.setPiePlotOptions()
         if (model && model.CHART) this.updateModel(model)
         else if (model) this.model = model
-        this.model.chart.type = "pie"
+        this.model.chart.type = 'pie'
     }
 
     updateModel = (oldModel: any) => {
@@ -64,7 +65,6 @@ export class HighchartsPieChart extends KnowageHighcharts {
         this.model.plotOptions.pie = highchartsDefaultValues.getDafaultPieChartPlotOptions()
     }
 
-
     updateSeriesLabelSettings = (widgetModel: IWidget) => {
         if (!widgetModel || !widgetModel.settings.series || !widgetModel.settings.series.seriesLabelsSettings || !widgetModel.settings.series.seriesLabelsSettings[0]) return
         const seriesLabelSetting = widgetModel.settings.series.seriesLabelsSettings[0]
@@ -75,14 +75,66 @@ export class HighchartsPieChart extends KnowageHighcharts {
                     backgroundColor: seriesLabelSetting.label.backgroundColor ?? '',
                     distance: 30,
                     enabled: true,
-                    position: "",
+                    position: '',
                     style: {
-                        fontFamily: seriesLabelSetting.label.style.fontFamily, fontSize: seriesLabelSetting.label.style.fontSize, fontWeight: seriesLabelSetting.label.style.fontWeight, color: seriesLabelSetting.label.style.color ?? ''
+                        fontFamily: seriesLabelSetting.label.style.fontFamily,
+                        fontSize: seriesLabelSetting.label.style.fontSize,
+                        fontWeight: seriesLabelSetting.label.style.fontWeight,
+                        color: seriesLabelSetting.label.style.color ?? ''
                     },
-                    format: 'Test from claassss'  // TODO - Darko here comes the formatting
+                    formatter: function () {
+                        return HighchartsPieChart.prototype.handleFormatter(this, seriesLabelSetting.label)
+                    }
                 }
             })
-
         })
+    }
+
+    handleFormatter(that, seriesLabelSetting) {
+        var prefix = seriesLabelSetting.prefix
+        var suffix = seriesLabelSetting.suffix
+        var precision = seriesLabelSetting.precision
+        var decimalPoints = Highcharts.getOptions().lang?.decimalPoint
+        var thousandsSep = Highcharts.getOptions().lang?.thousandsSep
+
+        var absoluteValue = ''
+        var showAbsolute = seriesLabelSetting.absolute
+        if (showAbsolute) absoluteValue = this.createAbsoluteValue(seriesLabelSetting.scale, that.y, precision, decimalPoints, thousandsSep)
+
+        var percentValue = ''
+        var showPercentage = seriesLabelSetting.percentage
+        if (showPercentage) var percentValue = this.createPercentageValue(that.point.percentage, precision, decimalPoints, thousandsSep)
+
+        // var categoryName = '' //CR: is category name needed?
+        // displayValue = categoryName
+
+        var showBrackets = showAbsolute && showPercentage
+
+        return `${prefix} ${absoluteValue} ${showBrackets ? `(${percentValue})` : `${percentValue}`}  ${suffix}`
+    }
+
+    createAbsoluteValue(scaleFactor, value, precision, decimalPoints, thousandsSep) {
+        switch (scaleFactor.toUpperCase()) {
+            case 'EMPTY':
+                return Highcharts.numberFormat(value, precision, decimalPoints, thousandsSep)
+            case 'K':
+                return Highcharts.numberFormat(value / Math.pow(10, 3), precision, decimalPoints, thousandsSep) + 'k'
+            case 'M':
+                return Highcharts.numberFormat(value / Math.pow(10, 6), precision, decimalPoints, thousandsSep) + 'M'
+            case 'G':
+                return Highcharts.numberFormat(value / Math.pow(10, 9), precision, decimalPoints, thousandsSep) + 'G'
+            case 'T':
+                return Highcharts.numberFormat(value / Math.pow(10, 12), precision, decimalPoints, thousandsSep) + 'T'
+            case 'P':
+                return Highcharts.numberFormat(value / Math.pow(10, 15), precision, decimalPoints, thousandsSep) + 'P'
+            case 'E':
+                return Highcharts.numberFormat(value / Math.pow(10, 18), precision, decimalPoints, thousandsSep) + 'E'
+            default:
+                return Highcharts.numberFormat(value, precision, decimalPoints, thousandsSep)
+        }
+    }
+
+    createPercentageValue(value, precision, decimalPoints, thousandsSep) {
+        return `${Highcharts.numberFormat(value, precision, decimalPoints, thousandsSep)}%`
     }
 }
