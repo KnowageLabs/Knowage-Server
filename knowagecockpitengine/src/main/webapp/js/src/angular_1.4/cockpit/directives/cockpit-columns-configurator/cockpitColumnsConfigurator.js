@@ -567,7 +567,7 @@ function cockpitStyleColumnFunction(
 	}
 
 	$scope.isDateColumn = function(type){
-		if(type == 'oracle.sql.TIMESTAMP' || type == 'java.sql.Timestamp' || type == 'java.util.Date' || type == 'java.sql.Date' || type == 'java.sql.Time'){
+		if(["date","timestamp","time"].includes(cockpitModule_generalOptions.typesMap[type]?.label)){
 			return true;
 		}
 		return false;

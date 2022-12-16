@@ -1042,11 +1042,15 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 							else if(content.type == 'dynamic'){
 								if(content.column){
 									if(model.type!='static-pivot-table'){
-										var valToAdd = '';
-										var columnNameToSearch = columnAliasesMap[content.column] ?  columnAliasesMap[content.column] : content.column;
-										if(row[columnNameToSearch]) valToAdd = row[columnNameToSearch].value || row[columnNameToSearch];
-										if(content.column == 'column_name_mode'){
-											valToAdd = modalColumn || columnName;
+										if(modalValue){
+											var valToAdd = modalValue
+										}else{
+											var valToAdd = '';
+											var columnNameToSearch = columnAliasesMap[content.column] ?  columnAliasesMap[content.column] : content.column;
+											if(row[columnNameToSearch]) valToAdd = row[columnNameToSearch].value || row[columnNameToSearch];
+											if(content.column == 'column_name_mode'){
+												valToAdd = modalColumn || columnName;
+											}
 										}
 									}else {
 										if(content.column == 'MEASURE_COLUMN_NAME' && modalColumn){
