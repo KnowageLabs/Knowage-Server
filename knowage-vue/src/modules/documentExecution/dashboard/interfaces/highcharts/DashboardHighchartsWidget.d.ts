@@ -145,8 +145,8 @@ export interface IHighchartsPieChartDataLabels {
     backgroundColor: string,
     format?: string,
     formatter?: Function,
-    formatterText?: string, // TODO - Remove for BE ???
-    formatterError?: string  // TODO - Remove for BE
+    formatterText?: string,
+    formatterError?: string
 }
 
 export interface IHighchartsChartSerie {
@@ -193,8 +193,8 @@ export interface IHighchartsLegend {
     borderColor: string,
     labelFormat?: string,
     labelFormatter?: Function,
-    labelFormatterText?: string, // TODO - Remove for BE ???
-    labelFormatterError?: string  // TODO - Remove for BE
+    labelFormatterText?: string,
+    labelFormatterError?: string
 }
 
 export interface IHighchartsTooltip {
@@ -207,11 +207,11 @@ export interface IHighchartsTooltip {
     },
     backgroundColor: string,
     formatter?: Function,
-    formatterText?: string, // TODO - Remove for BE ???
-    formatterError?: string  // TODO - Remove for BE
+    formatterText?: string,
+    formatterError?: string
     pointFormatter?: Function,
-    pointFormatterText?: string, // TODO - Remove for BE ???
-    pointFormatterError?: string  // TODO - Remove for BE
+    pointFormatterText?: string,
+    pointFormatterError?: string
 }
 
 export interface IHighchartsChartSettings {
