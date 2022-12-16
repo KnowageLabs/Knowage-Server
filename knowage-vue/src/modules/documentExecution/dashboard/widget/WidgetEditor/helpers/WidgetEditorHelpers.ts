@@ -7,9 +7,10 @@ import { createNewHtmlWidgetSettings } from './htmlWidget/HTMLWidgetFunctions'
 import { createNewTextWidgetSettings } from './textWidget/TextWidgetFunctions'
 import { createNewChartJSSettings } from './chartWidget/chartJS/ChartJSHelpers'
 import { createNewHighchartsSettings } from './chartWidget/highcharts/HighchartsHelpers'
+import { formatHighchartsWidgetForSave } from './chartWidget/highcharts/HighchartsBackendSaveHelper'
+import { formatChartJSForSave } from './chartWidget/chartJS/ChartJSBackendSaveHelper'
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
-import { formatHighchartsWidgetForSave } from './chartWidget/highcharts/HighchartsBackendSaveHelper'
 
 export function createNewWidget(type: string) {
     const widget = {
@@ -62,6 +63,10 @@ export function formatWidgetForSave(tempWidget: IWidget) {
             break;
         case 'highcharts':
             formatHighchartsWidgetForSave(widget)
+            break;
+        case 'chartJS':
+            formatChartJSForSave(widget)
+
     }
     return widget
 }

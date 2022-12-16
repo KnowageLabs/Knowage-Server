@@ -8,10 +8,10 @@ import * as highchartsDefaultValues from '../../../WidgetEditor/helpers/chartWid
 export class HighchartsPieChart extends KnowageHighcharts {
     constructor(model: any) {
         super()
-        console.log(">>>>>>>> LOADED MODEL: ", this.model)
         if (!this.model.plotOptions.pie) this.setPiePlotOptions()
         if (model && model.CHART) this.updateModel(model)
         else if (model) this.model = model
+        console.log(">>>>>>>> LOADED MODEL: ", this.model)
         this.model.chart.type = "pie"
     }
 
