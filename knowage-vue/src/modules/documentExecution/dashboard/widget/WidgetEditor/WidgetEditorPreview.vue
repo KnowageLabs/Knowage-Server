@@ -115,7 +115,9 @@ export default defineComponent({
         toggleExpandPreview() {
             const widgetPreviewContainerRef = this.$refs.widgetPreviewContainer as any
             widgetPreviewContainerRef.classList.toggle('expand')
-            emitter.emit('chartWidgetResized', this.propWidget)
+            setTimeout(() => {
+                emitter.emit('chartWidgetResized', this.propWidget)
+            }, 250)
         },
         logWidget() {
             console.log('widget', this.propWidget)

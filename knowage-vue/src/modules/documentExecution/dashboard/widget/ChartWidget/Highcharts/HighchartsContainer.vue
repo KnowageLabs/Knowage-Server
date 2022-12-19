@@ -1,5 +1,5 @@
 <template>
-    <div v-show="!error" :id="chartID" style="flex: 1"></div>
+    <div v-show="!error" :id="chartID" style="width: 100%; height: 100%; margin: 0 auto"></div>
 </template>
 
 <script lang="ts">
@@ -36,7 +36,8 @@ export default defineComponent({
         return {
             chartID: cryptoRandomString({ length: 16, type: 'base64' }),
             chartModel: {} as IHighchartsChartModel,
-            error: false
+            error: false,
+            reflowChart: {} as any
         }
     },
     watch: {
@@ -55,11 +56,11 @@ export default defineComponent({
         ...mapActions(store, ['setSelections', 'getDatasetLabel']),
         setEventListeners() {
             emitter.on('refreshChart', this.onRefreshChart)
-            emitter.on('chartWidgetResized', (widget) => this.onRefreshChart()) // TODO
+            emitter.on('chartWidgetResized', () => this.resizeChart()) // TODO
         },
         removeEventListeners() {
             emitter.off('refreshChart', this.onRefreshChart)
-            emitter.off('chartWidgetResized', (widget) => this.onRefreshChart()) // TODO
+            emitter.off('chartWidgetResized', () => this.resizeChart()) // TODO
         },
         onRefreshChart() {
             this.chartModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
@@ -87,7 +88,11 @@ export default defineComponent({
             this.widgetModel.settings.chartModel.updateChartColorSettings(this.widgetModel)
 
             this.setSeriesEvents()
-            Highcharts.chart(this.chartID, this.chartModel as any)
+
+            //TODO - Darko, mozda je ovo lose, videti sa Bojanom
+            this.reflowChart = Highcharts.chart(this.chartID, this.chartModel as any)
+
+            this.reflowChart.reflow()
         },
         updateLegendSettings() {
             if (this.chartModel.plotOptions.pie) this.chartModel.plotOptions.pie.showInLegend = true
@@ -117,6 +122,11 @@ export default defineComponent({
             const attributeColumn = this.widgetModel.columns.find((column: IWidgetColumn) => column.fieldType === 'ATTRIBUTE')
             const selection = { datasetId: this.widgetModel.dataset as number, datasetLabel: this.getDatasetLabel(this.widgetModel.dataset as number), columnName: attributeColumn?.columnName ?? '', value: value, aggregated: false, timestamp: new Date().getTime() }
             return selection
+        },
+        resizeChart() {
+            setTimeout(() => {
+                this.reflowChart.reflow()
+            }, 100)
         }
     }
 })
