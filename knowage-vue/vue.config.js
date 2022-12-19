@@ -83,6 +83,7 @@ module.exports = {
     pwa: {
         manifestOptions: {
             id: '/knowage-vue/',
+            scope: '/knowage-vue/',
             name: 'Knowage',
             short_name: 'Knowage',
             display: 'standalone',
@@ -94,6 +95,11 @@ module.exports = {
         themeColor: '#3b678c',
         msTileColor: '#3b678c',
         appleMobileWebAppCapable: 'yes',
-        appleMobileWebAppStatusBarStyle: 'black'
+        appleMobileWebAppStatusBarStyle: 'black',
+        workboxPluginMode: 'InjectManifest',
+        workboxOptions: {
+            swSrc: 'src/knowage-sw.js'
+        },
+        manifestCrossorigin: 'use-credentials'
     }
 }
