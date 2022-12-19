@@ -46,7 +46,7 @@ export default defineComponent({
     #dataset-editor-preview {
         -webkit-transition: width 0.3s;
         transition: flex 0.3s;
-        flex: 1.5;
+        flex: 1;
     }
 }
 </style>
