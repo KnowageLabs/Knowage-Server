@@ -864,7 +864,7 @@ export default defineComponent({
                 const parameter = this.filtersData.filterStatus[key]
 
                 if (parameter.parameterValue) {
-                    if (parameter.type === 'DATE') {
+                    if (parameter.type === 'DATE' && parameter.parameterValue[0] && parameter.parameterValue[0].value) {
                         parameters[parameter.urlName] = this.getFormattedDate(parameter.parameterValue[0].value)
                         parameters[parameter.urlName + '_field_visible_description'] = this.getFormattedDate(parameter.parameterValue[0].value, true)
                     } else if (parameter.valueSelection === 'man_in') {
@@ -1181,7 +1181,6 @@ export default defineComponent({
             const startDocumentInputParameters = deepcopy(this.document.drivers)
             const keys = [] as any[]
             otherOutputParameters.forEach((parameter: any) => keys.push(Object.keys(parameter)[0]))
-
             for (let i = 0; i < startDocumentInputParameters.length; i++) {
                 if (!keys.includes(startDocumentInputParameters[i].label)) {
                     const tempObject = {} as any
