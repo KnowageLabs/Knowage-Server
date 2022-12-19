@@ -48,7 +48,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  * This class implement the authentication method on LDAP but the authorization method on Knowage Repository
  *
  */
-public class LdapSecurityServiceSupplier implements ISecurityServiceSupplier {
+public class LdapSecurityServiceSupplier extends InternalSecurityServiceSupplierImpl implements ISecurityServiceSupplier {
 
 	static private Logger logger = Logger.getLogger(LdapSecurityServiceSupplier.class);
 
@@ -308,11 +308,6 @@ public class LdapSecurityServiceSupplier implements ISecurityServiceSupplier {
 
 	@Override
 	public boolean checkAuthorization(String userId, String function) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public SpagoBIUserProfile checkAuthenticationToken(String token) {
 		throw new UnsupportedOperationException();
 	}
 
