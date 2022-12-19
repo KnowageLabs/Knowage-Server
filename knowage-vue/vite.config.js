@@ -29,6 +29,7 @@ export default defineConfig((command, mode) => {
                 devOptions: {
                     enabled: true
                 },
+                useCredentials: true,
                 manifest: {
                     name: 'Knowage',
                     short_name: 'Knowage',
