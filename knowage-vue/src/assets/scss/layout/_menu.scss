@@ -5,7 +5,8 @@
         transform: translateX(var(--kn-mainmenu-width)) translateY(41px);
     }
 }
-@media only screen and (max-width: 768px) {
+
+.isMobileDevice {
     .menu-scroll-content {
         .p-scrollpanel-content {
             width: 100%;

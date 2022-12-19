@@ -2,7 +2,7 @@
     <Toast></Toast>
     <ConfirmDialog></ConfirmDialog>
     <KnOverlaySpinnerPanel />
-    <div class="layout-wrapper-content" :class="{ 'layout-wrapper-content-embed': documentExecution.embed }">
+    <div class="layout-wrapper-content" :class="{ 'layout-wrapper-content-embed': documentExecution.embed, isMobileDevice: isMobileDevice }">
         <MainMenu @menuItemSelected="setSelectedMenuItem"></MainMenu>
 
         <div class="layout-main">
@@ -87,7 +87,7 @@ export default defineComponent({
                 )
                 this.store.setLoading(false)
             })
-            .catch(function(error) {
+            .catch(function (error) {
                 if (error.response) {
                     console.log(error.response.data)
                     console.log(error.response.status)
@@ -144,7 +144,7 @@ export default defineComponent({
                     this.newsDownloadHandler()
                     this.loadInternationalization()
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     if (error.response) {
                         console.log(error.response.data)
                         console.log(error.response.status)
@@ -169,7 +169,7 @@ export default defineComponent({
             console.log('Starting connection to WebSocket Server')
             const store = this.store
 
-            WEB_SOCKET.update = function(event) {
+            WEB_SOCKET.update = function (event) {
                 if (event.data) {
                     let json = JSON.parse(event.data)
                     if (json.news) {
@@ -180,7 +180,7 @@ export default defineComponent({
                     }
                 }
             }
-            WEB_SOCKET.onopen = function(event) {
+            WEB_SOCKET.onopen = function (event) {
                 if (event.data) {
                     let json = JSON.parse(event.data)
                     if (json.news) {
@@ -191,7 +191,7 @@ export default defineComponent({
                     }
                 }
             }
-            WEB_SOCKET.onmessage = function(event) {
+            WEB_SOCKET.onmessage = function (event) {
                 if (event.data) {
                     let json = JSON.parse(event.data)
                     if (json.news) {
