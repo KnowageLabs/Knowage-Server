@@ -143,7 +143,7 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 
 	@Override
 	public List<String> getJobGroupNames() {
-		final List<String> jobGroupNames = new ArrayList<>();
+		List<String> jobGroupNames = new ArrayList<>();
 
 		logger.debug("IN");
 
@@ -151,7 +151,7 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 			List<String> names = scheduler.getJobGroupNames();
 			jobGroupNames.addAll(names);
 			if (!global) {
-				jobGroupNames.removeAll(filterForTenant(jobGroupNames));
+				jobGroupNames = filterForTenant(jobGroupNames);
 			}
 		} catch (Throwable t) {
 			throw new SpagoBIDAOException("An unexpected error occured while loading job group names", t);

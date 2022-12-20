@@ -82,7 +82,8 @@
         "rollup-plugin-node-builtins": "^2.1.2",
         "sass": "^1.42.1",
         "typescript": "^3.9.9",
-        "vite": "^2.5.4",
+        "vite": "4.0.2",
+        "vite-plugin-pwa": "^0.14.0",
         "vitest": "^0.15.2",
         "vue-jest": "^5.0.0-alpha.9",
         "vue3-jest": "^27.0.0-alpha.1"
