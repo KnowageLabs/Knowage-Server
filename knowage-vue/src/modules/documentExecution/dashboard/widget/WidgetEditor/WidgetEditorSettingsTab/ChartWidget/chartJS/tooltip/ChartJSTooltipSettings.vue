@@ -43,7 +43,7 @@ export default defineComponent({
     },
     methods: {
         loadModel() {
-            this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
+            this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.model : null
             this.loadToolbarModel()
         },
         loadToolbarModel() {

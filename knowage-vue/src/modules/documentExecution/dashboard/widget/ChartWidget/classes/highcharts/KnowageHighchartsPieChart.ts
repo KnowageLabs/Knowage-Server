@@ -5,13 +5,14 @@ import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Da
 import { IHighchartsChartSerie, IHighchartsChartSerieData } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import * as highchartsDefaultValues from '../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
 import Highcharts from 'highcharts'
+import deepcopy from 'deepcopy'
 
 export class HighchartsPieChart extends KnowageHighcharts {
     constructor(model: any) {
         super()
         if (!this.model.plotOptions.pie) this.setPiePlotOptions()
-        if (model && model.CHART) this.updateModel(model)
-        else if (model) this.model = model
+        if (model && model.CHART) this.updateModel(deepcopy(model))
+        else if (model) this.model = deepcopy(model)
         this.model.chart.type = 'pie'
     }
 

@@ -1,6 +1,6 @@
 <template>
     <div v-if="widgetModel">
-        <div class="p-d-flex p-flex-row p-ai-center">
+        <div class="p-d-flex p-flex-row p-ai-center p-p-4">
             <Dropdown class="kn-material-input kn-flex" v-model="selectedType" :options="commonDescriptor.chartTypeOptions" optionValue="value" @change="onChange">
                 <template #value="slotProps">
                     <div>
@@ -41,7 +41,7 @@ export default defineComponent({
     },
     methods: {
         loadSelectedType() {
-            const chartModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
+            const chartModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.model : null
             if (chartModel?.chart.type) {
                 this.selectedType = chartModel.chart.type
             }

@@ -43,7 +43,7 @@ export default defineComponent({
     },
     methods: {
         loadSelectedType() {
-            const chartModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
+            const chartModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.model : null
             this.filteredChartTypes = [...this.chartTypes] as IChartType[]
             if (chartModel?.chart.type) {
                 this.selectedType = chartModel.chart.type

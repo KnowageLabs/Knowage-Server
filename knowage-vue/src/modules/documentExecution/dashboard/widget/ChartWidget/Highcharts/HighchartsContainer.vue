@@ -63,8 +63,7 @@ export default defineComponent({
             emitter.off('chartWidgetResized', () => this.resizeChart()) // TODO
         },
         onRefreshChart() {
-            this.chartModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
-            this.widgetModel.settings.chartModel.model = this.chartModel
+            this.chartModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.model : null
             this.updateChartModel()
         },
         updateChartModel() {

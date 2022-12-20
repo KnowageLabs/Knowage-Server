@@ -8,10 +8,6 @@ export class KnowageChartJS {
         this.model = this.createNewChartModel()
     }
 
-    getModel = () => {
-        return this.model;
-    }
-
     createNewChartModel = () => {
         return {
             chart: { type: '' },
@@ -20,6 +16,8 @@ export class KnowageChartJS {
                 datasets: [{ backgroundColor: [], data: [] }]
             },
             options: {
+                events: [],
+                onClick: {},
                 plugins: {
                     title: { display: false },
                     tooltip: chartJSDefaultValues.getDefaultTooltipSettings(),

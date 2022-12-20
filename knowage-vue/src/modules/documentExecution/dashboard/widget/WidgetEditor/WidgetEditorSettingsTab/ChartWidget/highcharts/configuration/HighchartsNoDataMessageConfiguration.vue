@@ -70,7 +70,7 @@ export default defineComponent({
     },
     methods: {
         loadModel() {
-            this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
+            this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.model : null
             if (this.model && this.model.noData)
                 this.toolbarModel = {
                     'font-family': this.model.noData.style.fontFamily,

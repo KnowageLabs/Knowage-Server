@@ -4,7 +4,6 @@ import { ChartJSPieChart } from "../../../../ChartWidget/classes/chartJS/Knowage
 import * as widgetCommonDefaultValues from '../../common/WidgetCommonDefaultValues'
 import * as  chartJSDefaultValues from "../chartJS/ChartJSDefaultValues"
 import descriptor from '../../../WidgetEditorSettingsTab/ChartWidget/common/ChartColorSettingsDescriptor.json'
-import deepcopy from "deepcopy"
 
 export const createNewChartJSSettings = () => {
     const settings = {

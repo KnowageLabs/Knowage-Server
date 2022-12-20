@@ -35,7 +35,7 @@
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.series.scale') }}</label>
                 <div class="p-d-flex p-flex-row p-ai-center">
                     <Dropdown class="kn-material-input" v-model="serieSetting.label.scale" :options="descriptor.scaleOptions" :disabled="!serieSetting.label.enabled" @change="modelChanged"> </Dropdown>
-                    <i class="pi pi-question-circle kn-cursor-pointer  p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.series.scaleHint')"></i>
+                    <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.series.scaleHint')"></i>
                 </div>
             </div>
 
@@ -101,7 +101,7 @@ export default defineComponent({
             emitter.off('seriesRemoved', this.loadModel)
         },
         loadModel() {
-            this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
+            this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.model : null
             if (this.widgetModel.settings?.series?.seriesLabelsSettings) this.seriesSettings = this.widgetModel.settings.series.seriesLabelsSettings
             this.loadToolbarModels()
             this.loadSeriesOptions()

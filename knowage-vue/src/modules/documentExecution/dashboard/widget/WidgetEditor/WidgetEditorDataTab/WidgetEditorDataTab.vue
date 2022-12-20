@@ -43,7 +43,7 @@ export default defineComponent({
         chartPickerVisible() {
             let visible = false
             if (!this.propWidget || !['highcharts', 'chartJS'].includes(this.propWidget.type)) return false
-            const model = this.propWidget.settings.chartModel?.getModel()
+            const model = this.propWidget.settings.chartModel?.model
             visible = !model?.chart?.type
             emitter.emit('chartPickerVisible', visible)
             return visible
@@ -57,8 +57,8 @@ export default defineComponent({
         },
         onChartTypeChanged(chartType: string) {
             // TODO widgetChange
-            // this.propWidget.settings.chartModel = this.user?.enterprise ? createNewHighchartsModel(chartType) : createChartJSModel(chartType)
-            this.propWidget.settings.chartModel = false ? createNewHighchartsModel(chartType) : createChartJSModel(chartType)
+            this.propWidget.settings.chartModel = this.user?.enterprise ? createNewHighchartsModel(chartType) : createChartJSModel(chartType)
+            // this.propWidget.settings.chartModel = false ? createNewHighchartsModel(chartType) : createChartJSModel(chartType)
         }
     }
 })

@@ -1,21 +1,19 @@
 import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
 import { updatePieChartModel } from './updater/KnowageChartJSUpdater'
 import { KnowageChartJS } from './KnowageChartJS'
+import deepcopy from 'deepcopy'
 
 export class ChartJSPieChart extends KnowageChartJS {
     constructor(model: any) {
         super()
-        if (model && model.CHART) this.updateModel(model)
-        else if (model) this.model = model
+        console.log(">>>>>>> CREATING MODEL IN CONSTRUCTOR FROM MODEL: ", deepcopy(model))
+        if (model && model.CHART) this.updateModel(deepcopy(model))
+        else if (model) this.model = deepcopy(model)
         this.model.chart.type = 'pie'
     }
 
     updateModel = (oldModel: any) => {
         updatePieChartModel(oldModel, this.model)
-    }
-
-    getModel = () => {
-        return this.model
     }
 
     setData = (data: any) => {

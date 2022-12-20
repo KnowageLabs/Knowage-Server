@@ -15,21 +15,21 @@
             <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.configurationOf3D.betaAngle') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center">
                 <InputNumber class="kn-material-input p-inputtext-sm" v-model="model.chart.options3d.beta" :disabled="configurationDisabled" @blur="modelChanged" />
-                <i class="pi pi-question-circle kn-cursor-pointer  p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.configurationOf3D.betaAngleHint')"></i>
+                <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.configurationOf3D.betaAngleHint')"></i>
             </div>
         </div>
         <div v-if="model.chart.type !== 'pie'" class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column kn-flex">
             <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.configurationOf3D.viewDistance') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center">
                 <InputNumber class="kn-material-input p-inputtext-sm" v-model="model.chart.options3d.viewDistance" :disabled="configurationDisabled" @blur="modelChanged" />
-                <i class="pi pi-question-circle kn-cursor-pointer  p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.configurationOf3D.viewDistanceHint')"></i>
+                <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.configurationOf3D.viewDistanceHint')"></i>
             </div>
         </div>
         <div v-if="model.plotOptions?.pie" class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column kn-flex">
             <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.configurationOf3D.totalDepth') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center">
                 <InputNumber class="kn-material-input p-inputtext-sm" v-model="model.plotOptions.pie.depth" :disabled="configurationDisabled" @blur="modelChanged" />
-                <i class="pi pi-question-circle kn-cursor-pointer  p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.configurationOf3D.totalDepthHint')"></i>
+                <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.configurationOf3D.totalDepthHint')"></i>
             </div>
         </div>
     </div>
@@ -62,7 +62,7 @@ export default defineComponent({
     },
     methods: {
         loadModel() {
-            this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
+            this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.model : null
         },
         modelChanged() {
             emitter.emit('refreshChart', this.widgetModel.id)

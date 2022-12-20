@@ -79,7 +79,7 @@ export default defineComponent({
             emitter.off('seriesRemoved', this.loadModel)
         },
         loadModel() {
-            this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
+            this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.model : null
             if (this.widgetModel.settings?.accesssibility?.seriesAccesibilitySettings) this.seriesSettings = this.widgetModel.settings.accesssibility.seriesAccesibilitySettings
             this.loadSeriesOptions()
         },

@@ -19,7 +19,7 @@
                         </div>
                     </template>
                 </Dropdown>
-                <i class="pi pi-question-circle kn-cursor-pointer  p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.chartJS.legend.alignHint')"></i>
+                <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.chartJS.legend.alignHint')"></i>
             </div>
         </div>
         <div class="p-col-12 p-md-6 p-lg-4 p-d-flex p-flex-column kn-flex p-m-2">
@@ -37,7 +37,7 @@
                         </div>
                     </template>
                 </Dropdown>
-                <i class="pi pi-question-circle kn-cursor-pointer  p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.chartJS.legend.positionHint')"></i>
+                <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.chartJS.legend.positionHint')"></i>
             </div>
         </div>
     </div>
@@ -74,7 +74,7 @@ export default defineComponent({
     },
     methods: {
         loadModel() {
-            this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
+            this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.model : null
         },
         modelChanged() {
             emitter.emit('refreshChart', this.widgetModel.id)

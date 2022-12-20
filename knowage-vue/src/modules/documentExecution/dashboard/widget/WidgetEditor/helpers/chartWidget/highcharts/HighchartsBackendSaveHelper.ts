@@ -2,7 +2,7 @@ import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard"
 import { IHighchartsChartModel } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
 
 export const formatHighchartsWidgetForSave = (widget: IWidget) => {
-    widget.settings.chartModel = widget.settings.chartModel.getModel()
+    widget.settings.chartModel = widget.settings.chartModel.model
     if (!widget.settings.chartModel) return
     removeChartData(widget.settings.chartModel)
     formatPiePlotOptions(widget.settings.chartModel)

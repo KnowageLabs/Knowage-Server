@@ -1,5 +1,11 @@
 <template>
     <!-- <Pie :style="`flex: 1; position: relative`" :chart-options="chartOptions" :chart-data="chartData" :chart-id="'pie-chart'" :dataset-id-key="'label'" /> -->
+    {{ 'CHART MODEL' }}
+    {{ chartModel?.options?.plugins }}
+    <br />
+    {{ 'widgetModel.settings.chartModel.model' }}
+    {{ widgetModel.settings.chartModel.model.options?.plugins }}
+    <br />
     <Pie :style="myStyles" :chart-options="chartOptions" :chart-data="chartData" :chart-id="'pie-chart'" :dataset-id-key="'label'" />
 </template>
 
@@ -13,6 +19,7 @@ import { IChartJSChartModel, IChartJSData, IChartJSOptions } from '../../../inte
 import { mapActions } from 'pinia'
 import { updateStoreSelections } from '../../interactionsHelpers/InteractionHelper'
 import store from '../../../Dashboard.store'
+import deepcopy from 'deepcopy'
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale)
 
@@ -40,6 +47,9 @@ export default defineComponent({
     watch: {
         dataToShow() {
             this.onRefreshChart()
+        },
+        editorMode() {
+            this.onRefreshChart()
         }
     },
     mounted() {
@@ -59,9 +69,12 @@ export default defineComponent({
             emitter.off('refreshChart', this.onRefreshChart)
             emitter.off('chartWidgetResized', (newHeight) => this.onChartResize(newHeight as number))
         },
-        onRefreshChart() {
-            this.chartModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
-            this.widgetModel.settings.chartModel.model = this.chartModel
+        onRefreshChart(chartModel: any = null) {
+            this.chartModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.model : null
+            // this.chartModel = deepcopy(chartModel) ?? deepcopy(this.widgetModel.settings.chartModel.model)
+            // this.chartModel = chartModel
+            // console.log('>>>>>> CHART MODEL: ', chartModel)
+            // this.widgetModel.settings.chartModel.model = this.chartModel
             this.updateChartModel()
         },
         updateChartModel() {

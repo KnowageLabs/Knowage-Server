@@ -27,7 +27,7 @@
                         </div>
                     </template>
                 </MultiSelect>
-                <i class="pi pi-question-circle kn-cursor-pointer  p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.accessibility.keyboardNavigationOrderHint')"></i>
+                <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.accessibility.keyboardNavigationOrderHint')"></i>
             </div>
         </div>
     </div>
@@ -65,7 +65,7 @@ export default defineComponent({
     },
     methods: {
         loadModel() {
-            this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.getModel() : null
+            this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.model : null
         },
         modelChanged() {
             emitter.emit('refreshChart', this.widgetModel.id)
