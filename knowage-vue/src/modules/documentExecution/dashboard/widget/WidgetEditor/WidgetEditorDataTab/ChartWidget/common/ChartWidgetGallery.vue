@@ -8,7 +8,7 @@
             <template #default="{ chart, index }">
                 <div class="gallery-card" :style="galleryDescriptor.style.galleryCard" @click="onChange(filteredChartTypes[index].value)">
                     <label class="kn-material-input-label p-ml-2 p-mt-1">{{ $t(`${filteredChartTypes[index].label}`) }}</label>
-                    <!-- <img :src="getImageUrl('pie')" /> -->
+                    <img :src="getImageSource(filteredChartTypes[index].value)" />
                 </div>
             </template>
         </MasonryWall>
@@ -50,7 +50,7 @@ export default defineComponent({
             }
         },
         onChange(selectedType: string) {
-            this.selectedType = 'pie' // TODO - remove hardcoded
+            this.selectedType = 'pie' // TODO - remove hardcoded after implementing other chart types
             this.$emit('selectedChartTypeChanged', this.selectedType)
         },
         searchItems() {
@@ -64,8 +64,8 @@ export default defineComponent({
                 }
             }, 250)
         },
-        getImageUrl(name) {
-            return new URL(`@/assets/pie.png`, import.meta.url).href //TODO - Radi ali kao url :/
+        getImageSource(chartValue: string) {
+            return `${import.meta.env.VITE_PUBLIC_PATH}images/dashboard/chartTypes/${chartValue}.png`
         }
     }
 })

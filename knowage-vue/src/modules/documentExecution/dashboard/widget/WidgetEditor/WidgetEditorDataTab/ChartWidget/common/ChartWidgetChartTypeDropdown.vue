@@ -3,14 +3,14 @@
         <div class="p-d-flex p-flex-row p-ai-center p-p-4">
             <Dropdown class="kn-material-input kn-flex" v-model="selectedType" :options="commonDescriptor.chartTypeOptions" optionValue="value" @change="onChange">
                 <template #value="slotProps">
-                    <div>
+                    <div class="p-d-flex p-flex-row p-ai-center">
+                        <img class="chart-type-image p-mr-2" :src="getImageSource(slotProps.value)" />
                         <span>{{ slotProps.value }}</span>
                     </div>
                 </template>
                 <template #option="slotProps">
-                    <div>
-                        <!-- <div :style="{ 'background-image': 'url(./images/dashboard/chartTypes/' + slotProps.option.value + '.png' + ')' }"></div> -->
-                        <div :style="getImageSource(slotProps.option.data)"></div>
+                    <div class="p-d-flex p-flex-row p-ai-center">
+                        <img class="chart-type-image p-mr-2" :src="getImageSource(slotProps.option.value)" />
                         <span>{{ $t(slotProps.option.label) }}</span>
                     </div>
                 </template>
@@ -47,10 +47,7 @@ export default defineComponent({
             }
         },
         getImageSource(chartValue: string) {
-            // return { 'background-image': 'url(../../../images/dashboard/chartTypes/' + slotProps.option.value + '.png' + ')' }
-            // return { 'background-image': `url(${require('@/assets/images/dashboard/chartTypes/' + chartValue)})` }
-            //  return { 'background-image': `url(..../images/functionCatalog/' + ${chartValue} + '.png' + ')` }
-            return ''
+            return `${import.meta.env.VITE_PUBLIC_PATH}images/dashboard/chartTypes/${chartValue}.png`
         },
         onChange() {
             this.$emit('selectedChartTypeChanged', this.selectedType)
@@ -58,3 +55,10 @@ export default defineComponent({
     }
 })
 </script>
+
+<style lang="scss" scoped>
+.chart-type-image {
+    width: 20px;
+    height: 20px;
+}
+</style>
