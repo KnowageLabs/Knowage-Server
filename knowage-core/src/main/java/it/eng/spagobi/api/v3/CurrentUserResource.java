@@ -25,6 +25,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -34,6 +37,9 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 @Path("2.0/currentuser")
 
 public class CurrentUserResource extends AbstractSpagoBIResource {
+
+	private static final Logger LOGGER = LogManager.getLogger(CurrentUserResource.class);
+
 	private final String charset = "; charset=UTF-8";
 
 	@GET
@@ -45,7 +51,7 @@ public class CurrentUserResource extends AbstractSpagoBIResource {
 
 		if (userProfile == null) {
 			String message = "UserProfile is null";
-			logger.error(message);
+			LOGGER.error(message);
 			throw new SpagoBIEngineRuntimeException(message);
 		}
 

@@ -27,6 +27,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -37,6 +40,9 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 
 @Path("/2.0/authorizations")
 public class AuthorizationsResource extends AbstractSpagoBIResource {
+
+	private static final Logger LOGGER = LogManager.getLogger(AuthorizationsResource.class);
+
 	private final String charset = "; charset=UTF-8";
 
 	@GET
@@ -54,7 +60,7 @@ public class AuthorizationsResource extends AbstractSpagoBIResource {
 			fullList = rolesDao.loadAllAuthorizations();
 			return Response.ok(fullList).build();
 		} catch (Exception e) {
-			logger.error("Error with loading resource", e);
+			LOGGER.error("Error with loading resource", e);
 			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
 		}
 	}
@@ -74,7 +80,7 @@ public class AuthorizationsResource extends AbstractSpagoBIResource {
 			categories = rolesDao.getMetaModelCategoriesForRole(id);
 			return Response.ok(categories).build();
 		} catch (Exception e) {
-			logger.error("Error with loading resource", e);
+			LOGGER.error("Error with loading resource", e);
 			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
 		}
 	}

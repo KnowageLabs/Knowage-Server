@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.naming.AuthenticationException;
 import javax.naming.Context;
@@ -39,12 +40,14 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
-import com.mongodb.DB;
 import com.mongodb.MongoClient;
+import com.mongodb.client.MongoDatabase;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -67,29 +70,16 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 @Path("/2.0/datasources")
 public class DataSourceResource extends AbstractSpagoBIResource {
 
-	public static final String SERVICE_NAME = "2.0/datasources/";
-
-	static protected Logger logger = Logger.getLogger(DataSourceResource.class);
+	private static final Logger LOGGER = LogManager.getLogger(DataSourceResource.class);
 
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_READ })
 	public List<IDataSource> getDataSources(@QueryParam("type") String type) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		try {
-			IDataSourceDAO dataSourceDAO;
-			List<IDataSource> dataSources;
-			UserProfile profile = getUserProfile();
-
-			dataSourceDAO = DAOFactory.getDataSourceDAO();
-			dataSourceDAO.setUserProfile(profile);
-
-			if (profile.getIsSuperadmin()) {
-				dataSources = dataSourceDAO.loadDataSourcesForSuperAdmin();
-			} else {
-				dataSources = dataSourceDAO.loadAllDataSources();
-			}
+			List<IDataSource> dataSources = getDataSources();
 
 			if ("cache".equals(type)) {
 				return getCacheDataSources(dataSources);
@@ -99,33 +89,11 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 				return dataSources;
 			}
 		} catch (Exception exception) {
-			logger.error("Error while getting the list of DS", exception);
+			LOGGER.error("Error while getting the list of DS", exception);
 			throw new SpagoBIRestServiceException("Error while getting the list of DS", buildLocaleFromSession(), exception);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
-	}
-
-	private List<IDataSource> getMetaDataSources(List<IDataSource> datasources) throws EMFUserError, DataBaseException {
-		List<IDataSource> metaDataSources = new ArrayList<>();
-		for (IDataSource dataSource : datasources) {
-			IDataBase database = DataBaseFactory.getDataBase(dataSource);
-			if (database.isMetaSupported()) {
-				metaDataSources.add(dataSource);
-			}
-		}
-		return metaDataSources;
-	}
-
-	private List<IDataSource> getCacheDataSources(List<IDataSource> datasources) throws EMFUserError, DataBaseException {
-		List<IDataSource> cacheDataSources = new ArrayList<>();
-		for (IDataSource dataSource : datasources) {
-			IDataBase database = DataBaseFactory.getDataBase(dataSource);
-			if (database.isCacheSupported()) {
-				cacheDataSources.add(dataSource);
-			}
-		}
-		return cacheDataSources;
 	}
 
 	@GET
@@ -133,7 +101,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_READ })
 	public String getDataSourceById(@PathParam("dsId") Integer dsId) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		try {
 			IDataSourceDAO dataSourceDAO;
 			IDataSource dataSource;
@@ -142,12 +110,14 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			dataSourceDAO.setUserProfile(getUserProfile());
 			dataSource = dataSourceDAO.loadDataSourceByID(dsId);
 
+			checkAuthorizationToManageCacheDataSource(dataSource);
+
 			return JsonConverter.objectToJson(dataSource, null);
 		} catch (Exception e) {
-			logger.error("Error while loading a single data source", e);
+			LOGGER.error("Error while loading a single data source", e);
 			throw new SpagoBIRestServiceException("Error while loading a single data source", buildLocaleFromSession(), e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 	}
 
@@ -156,13 +126,13 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
 	public String postDataSource(IDataSource dataSource) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		try {
-			IDataSourceDAO dataSourceDAO;
+			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
+			UserProfile userProfile = getUserProfile();
 
-			logger.debug(dataSource);
-			dataSourceDAO = DAOFactory.getDataSourceDAO();
-			dataSourceDAO.setUserProfile(getUserProfile());
+			dataSourceDAO.setUserProfile(userProfile);
+
 			IDataSource existingDS = dataSourceDAO.findDataSourceByLabel(dataSource.getLabel());
 
 			if (existingDS != null && dataSource.getLabel().equals(existingDS.getLabel())) {
@@ -170,7 +140,9 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 				throw new SpagoBIRestServiceException(msgBuilder.getMessage("sbi.datasource.exists"), buildLocaleFromSession(), new Throwable());
 			}
 
-			dataSourceDAO.insertDataSource(dataSource, getUserProfile().getOrganization());
+			checkAuthorizationToManageCacheDataSource(dataSource);
+
+			dataSourceDAO.insertDataSource(dataSource, userProfile.getOrganization());
 
 			IDataSource newLabel = dataSourceDAO.loadDataSourceByLabel(dataSource.getLabel());
 			int newId = newLabel.getDsId();
@@ -180,10 +152,10 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		} catch (SpagoBIRestServiceException e) {
 			throw e;
 		} catch (Exception exception) {
-			logger.error("Error while posting DS", exception);
+			LOGGER.error("Error while posting DS", exception);
 			throw new SpagoBIRestServiceException("Error while posting DS", buildLocaleFromSession(), exception);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 	}
 
@@ -192,10 +164,11 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
 	public List<IDataSource> putDataSource(IDataSource dataSource) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		try {
-			IDataSourceDAO dataSourceDAO;
-			dataSourceDAO = DAOFactory.getDataSourceDAO();
+			checkAuthorizationToManageCacheDataSource(dataSource);
+
+			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
 
 			dataSourceDAO.setUserProfile(getUserProfile());
 			IDataSource oldDataSource = dataSourceDAO.loadDataSourceWriteDefault();
@@ -209,12 +182,12 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 				dataSourceDAO.modifyDataSource(oldDataSource);
 			}
 			dataSourceDAO.modifyDataSource(dataSource);
-			return DAOFactory.getDataSourceDAO().loadAllDataSources();
+			return getDataSources();
 		} catch (Exception e) {
-			logger.error("Error while updating data source", e);
+			LOGGER.error("Error while updating data source", e);
 			throw new SpagoBIRestServiceException("Error while updating data source", buildLocaleFromSession(), e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 	}
 
@@ -223,13 +196,13 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
 	public List<IDataSource> deleteDataSourceById(@PathParam("dsId") Integer dsId) throws EMFUserError {
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		// if the ds is associated with any BIEngine or BIObjects, creates an error
 		Map<String, List<String>> objNames = DAOFactory.getDataSourceDAO().returnEntitiesAssociated(dsId);
 
 		if (objNames.size() > 0) {
-			logger.warn("datasource is in use, build message");
+			LOGGER.warn("datasource is in use, build message");
 
 			String[] dependsBy = new String[] { "sbi.datasource.usedby.biobject", "sbi.datasource.usedby.metamodel", "sbi.datasource.usedby.dataset",
 					"sbi.datasource.usedby.lov" };
@@ -268,18 +241,21 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			dataSource.setDsId(dsId);
 			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
 			dataSourceDAO.setUserProfile(getUserProfile());
+
+			checkAuthorizationToManageCacheDataSource(dataSource);
+
 			dataSourceDAO.eraseDataSource(dataSource);
 
-			return DAOFactory.getDataSourceDAO().loadAllDataSources();
+			return getDataSources();
 
 		} catch (Exception e) {
 
-			logger.error("Error while deleting data source", e);
+			LOGGER.error("Error while deleting data source", e);
 			throw new SpagoBIRestServiceException("Error while deleting data source", buildLocaleFromSession(), e);
 
 		} finally {
 
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 
 		}
 	}
@@ -288,7 +264,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@Path("/")
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
 	public List<IDataSource> deleteMultiple(@QueryParam("id") List<Integer> ids) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		try {
 			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
 			dataSourceDAO.setUserProfile(getUserProfile());
@@ -296,14 +272,17 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			for (int i = 0; i < ids.size(); i++) {
 				IDataSource ds = DataSourceFactory.getDataSource();
 				ds.setDsId(ids.get(i));
+
+				checkAuthorizationToManageCacheDataSource(ds);
+
 				dataSourceDAO.eraseDataSource(ds);
 			}
-			return dataSourceDAO.loadAllDataSources();
+			return getDataSources();
 		} catch (Exception e) {
-			logger.error("Error while deleting multiple data sources", e);
+			LOGGER.error("Error while deleting multiple data sources", e);
 			throw new SpagoBIRestServiceException("Error while deleting multiple data sources", buildLocaleFromSession(), e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 	}
 
@@ -314,7 +293,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	public String getDataSourceStruct(@PathParam("dsId") Integer dsId, @QueryParam("tablePrefixLike") String tablePrefixLike,
 			@QueryParam("tablePrefixNotLike") String tablePrefixNotLike) {
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		JSONObject tableContent = new JSONObject();
 		try {
 
@@ -322,16 +301,18 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			dataSourceDAO.setUserProfile(getUserProfile());
 			IDataSource dataSource = dataSourceDAO.loadDataSourceByID(dsId);
 
+			checkAuthorizationToManageCacheDataSource(dataSource);
+
 			IDataBase dataBase = DataBaseFactory.getDataBase(dataSource);
 			Map<String, Map<String, String>> structure = dataBase.getStructure(tablePrefixLike, tablePrefixNotLike);
 
 			tableContent = new JSONObject(structure);
 
 		} catch (Exception e) {
-			logger.error("Error while getting structure of data source by id", e);
+			LOGGER.error("Error while getting structure of data source by id", e);
 			throw new SpagoBIRestServiceException("Error while getting structure of data source by id", buildLocaleFromSession(), e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return tableContent.toString();
 	}
@@ -340,9 +321,9 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@Path("/test")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
-	public String testDataSource(IDataSource dataSource) throws Exception {
+	public Response testDataSource(IDataSource dataSource) throws Exception {
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		String url = dataSource.getUrlConnection();
 		String user = dataSource.getUser();
@@ -354,73 +335,120 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		IEngUserProfile profile = getUserProfile();
 
 		String schema = (String) profile.getUserAttribute(schemaAttr);
-		logger.debug("schema:" + schema);
+		LOGGER.debug("schema: {}", schema);
 
 		if (jndi != null && jndi.length() > 0) {
 			String jndiName = schema == null ? jndi : jndi + schema;
 
 			try {
-				logger.debug("Lookup JNDI name:" + jndiName);
+				LOGGER.debug("Lookup JNDI name: {}", jndiName);
 				Context ctx = new InitialContext();
 				javax.sql.DataSource ds = (javax.sql.DataSource) ctx.lookup(jndiName);
 				try (Connection connection = ds.getConnection()) {
-					logger.debug("Connection performed successfully");
+					LOGGER.debug("Connection performed successfully");
 				}
 			} catch (AuthenticationException e) {
-				logger.error("Error while attempting to reacquire the authentication information on provided JNDI name", e);
-				throw new SpagoBIServiceException(SERVICE_NAME, e);
+				LOGGER.error("Error while attempting to reacquire the authentication information on provided JNDI name", e);
+				throw new SpagoBIServiceException("Authentication error", e);
 			} catch (NamingException e) {
-				logger.error("Error with provided JNDI name. Can't find the database with that name.", e);
-				throw new SpagoBIServiceException(SERVICE_NAME, e);
+				LOGGER.error("Error with provided JNDI name. Can't find the database with that name.", e);
+				throw new SpagoBIServiceException("JNDI error", e);
 			} catch (Exception e) {
-				logger.error("Error with provided JNDI name.", e);
-				throw new SpagoBIServiceException(SERVICE_NAME, e);
+				LOGGER.error("Error with provided JNDI name.", e);
+				throw new SpagoBIServiceException("Generic exception", e);
 			}
 
 		} else {
 
 			if (driver.toLowerCase().contains("mongo")) {
-				logger.debug("Checking the connection for MONGODB");
-				MongoClient mongoClient = null;
-				try {
-					int databaseNameStart = url.lastIndexOf("/");
-					if (databaseNameStart < 0) {
-						logger.error("Error connecting to the mongoDB. No database selected");
-					}
-					String databaseUrl = url.substring(0, databaseNameStart);
-					String databaseName = url.substring(databaseNameStart + 1);
+				LOGGER.debug("Checking the connection for MONGODB");
+				int databaseNameStart = url.lastIndexOf("/");
+				if (databaseNameStart < 0) {
+					LOGGER.error("Error connecting to the mongoDB. No database selected");
+				}
+				String databaseUrl = url.substring(0, databaseNameStart);
+				String databaseName = url.substring(databaseNameStart + 1);
 
-					mongoClient = new MongoClient(databaseUrl);
-					DB database = mongoClient.getDB(databaseName);
-					database.getCollectionNames();
-
-					logger.debug("Connection OK");
-					return new JSONObject().toString();
+				try(MongoClient mongoClient = new MongoClient(databaseUrl)) {
+					MongoDatabase database = mongoClient.getDatabase(databaseName);
+					database.listCollectionNames();
+					LOGGER.debug("Connection OK");
+					return Response.ok().build();
 				} catch (Exception e) {
-					logger.error("Error connecting to the mongoDB", e);
+					LOGGER.error("Error connecting to the mongoDB", e);
 				} finally {
-					if (mongoClient != null) {
-						mongoClient.close();
-					}
 				}
 			} else {
-
 				try {
 					Class.forName(driver);
 				} catch (ClassNotFoundException e) {
-					logger.error("Driver not found", e);
+					LOGGER.error("Driver not found", e);
 					throw new SpagoBIRestServiceException("Driver not found: " + driver, buildLocaleFromSession(), e);
 				}
 
 				try (Connection connection = DriverManager.getConnection(url, user, pwd)) {
-					logger.debug("Connection performed successfully");
+					LOGGER.debug("Connection performed successfully");
 				}
-
 			}
 
 		}
 
-		return new JSONObject().toString();
+		return Response.ok().build();
 
 	}
+
+	private List<IDataSource> getDataSources() throws EMFUserError {
+		IDataSourceDAO dataSourceDAO;
+		List<IDataSource> dataSources;
+		UserProfile profile = getUserProfile();
+
+		dataSourceDAO = DAOFactory.getDataSourceDAO();
+		dataSourceDAO.setUserProfile(profile);
+
+		if (Boolean.TRUE.equals(profile.getIsSuperadmin())) {
+			dataSources = dataSourceDAO.loadDataSourcesForSuperAdmin();
+		} else {
+			// @formatter:off
+			dataSources = dataSourceDAO.loadAllDataSources()
+					.stream()
+					// Remove cache datasource for non-super-admin users
+					.filter(e -> !e.checkIsWriteDefault())
+					.collect(Collectors.toList());
+			// @formatter:on
+		}
+		return dataSources;
+	}
+
+	private List<IDataSource> getMetaDataSources(List<IDataSource> datasources) throws DataBaseException {
+		List<IDataSource> metaDataSources = new ArrayList<>();
+		for (IDataSource dataSource : datasources) {
+			IDataBase database = DataBaseFactory.getDataBase(dataSource);
+			if (database.isMetaSupported()) {
+				metaDataSources.add(dataSource);
+			}
+		}
+		return metaDataSources;
+	}
+
+	private List<IDataSource> getCacheDataSources(List<IDataSource> datasources) throws DataBaseException {
+		List<IDataSource> cacheDataSources = new ArrayList<>();
+		for (IDataSource dataSource : datasources) {
+			IDataBase database = DataBaseFactory.getDataBase(dataSource);
+			if (database.isCacheSupported()) {
+				cacheDataSources.add(dataSource);
+			}
+		}
+		return cacheDataSources;
+	}
+
+	private void checkAuthorizationToManageCacheDataSource(IDataSource dataSource) {
+		UserProfile userProfile = getUserProfile();
+
+		if (Boolean.TRUE.equals(!userProfile.getIsSuperadmin()) && Boolean.TRUE.equals(dataSource.checkIsWriteDefault())) {
+			MessageBuilder msgBuilder = new MessageBuilder();
+			throw new SpagoBIRestServiceException(msgBuilder.getMessage("sbi.datasource.notAuthorizedToManageCacheDataSource"), buildLocaleFromSession(), new Throwable());
+		}
+	}
 }
+
+

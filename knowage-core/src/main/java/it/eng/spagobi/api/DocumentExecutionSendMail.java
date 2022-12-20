@@ -25,6 +25,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,6 +47,8 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 @Path("/1.0/documentexecutionmail")
 @ManageAuthorization
 public class DocumentExecutionSendMail extends AbstractSpagoBIResource {
+
+	private static final Logger LOGGER = LogManager.getLogger(DocumentExecutionSendMail.class);
 
 	@POST
 	@Path("/sendMail")
@@ -67,7 +71,7 @@ public class DocumentExecutionSendMail extends AbstractSpagoBIResource {
 
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		final String OK = "10";
 		String ERROR = "Error. Mail not sent";
@@ -79,7 +83,7 @@ public class DocumentExecutionSendMail extends AbstractSpagoBIResource {
 			if (to.equals("")) {
 				// retCode = TONOTFOUND;
 				ERROR = "To Address not found";
-				logger.error("To Address not found");
+				LOGGER.error("To Address not found");
 				throw new Exception("To Address not found");
 			}
 
@@ -194,7 +198,7 @@ public class DocumentExecutionSendMail extends AbstractSpagoBIResource {
 			resultAsMap.put("success", "Mail Sent");
 
 		} catch (Exception e) {
-			logger.error("Error while executing and sending object ", e);
+			LOGGER.error("Error while executing and sending object ", e);
 			resultAsMap.put("errors", ERROR);
 		} finally {
 			// try {
@@ -204,7 +208,7 @@ public class DocumentExecutionSendMail extends AbstractSpagoBIResource {
 			// logger.error("Error while sending response to client", ex);
 			// }
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 
 		return Response.ok(resultAsMap).build();
 	}
