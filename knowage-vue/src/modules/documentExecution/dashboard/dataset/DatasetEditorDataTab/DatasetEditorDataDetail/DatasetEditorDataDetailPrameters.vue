@@ -68,10 +68,6 @@ import Dropdown from 'primevue/dropdown'
 import Menu from 'primevue/contextmenu'
 import Chips from 'primevue/chips'
 import DatasetEditorDriverDialog from './DatasetEditorDriverDialog/DatasetEditorDriverDialog.vue'
-
-import mockedDriversReal from './mockedDriversReal.json'
-
-import mockedDrivers from './mockedDrivers.json'
 import deepcopy from 'deepcopy'
 import { luxonFormatDate } from '@/helpers/commons/localeHelper'
 import { updateDataDependency } from './DatasetEditorDriverDialog/DatasetEditorDriverDependencyHelper'
@@ -111,12 +107,11 @@ export default defineComponent({
     },
     methods: {
         loadDrivers() {
-            // TODO - See with Darko about loading drivers
-            this.selectedDatasetProp.formattedDrivers = this.selectedDatasetProp && this.selectedDatasetProp.drivers ? (getFormattedDatasetDrivers(this.selectedDatasetProp) as IDashboardDatasetDriver[]) : []
-            // TODO - remove mocks
-            // this.selectedDatasetProp.formattedDrivers = deepcopy(mockedDriversReal)
-            console.log(this.selectedDatasetProp)
-            console.log(this.selectedDatasetProp.formattedDrivers)
+            if (!this.selectedDatasetProp.formattedDrivers) {
+                this.selectedDatasetProp.formattedDrivers = this.selectedDatasetProp && this.selectedDatasetProp.drivers ? (getFormattedDatasetDrivers(this.selectedDatasetProp) as IDashboardDatasetDriver[]) : []
+            }
+            //console.log('selectedDatasetProp', this.selectedDatasetProp)
+            //console.log('selectedDatasetProp FORMATED DRIVERS', this.selectedDatasetProp.formattedDrivers)
             this.selectedDatasetProp.formattedDrivers.forEach((driver: IDashboardDatasetDriver) => {
                 if (driver.type === 'DATE') this.setDateDisplayValue(driver)
             })

@@ -80,7 +80,7 @@ export default defineComponent({
     watch: {
         selectedDatasets: {
             handler() {
-                console.log('SELECTED DATASETS CHANGED', this.selectedDatasets)
+                // console.log('SELECTED DATASETS CHANGED', this.selectedDatasets)
             },
             deep: true
         }
@@ -101,6 +101,13 @@ export default defineComponent({
     },
     async created() {
         await this.setDatasetsData()
+
+        console.group('%cDatasetEditor -----------', 'color: white; background-color: #282b30;')
+        console.log('availableDatasetsProp', this.availableDatasetsProp)
+        console.log('dashboardDatasets', this.dashboardDatasets)
+        console.log('selectedDatasets', this.selectedDatasets)
+        console.log('filtersDataProp', this.filtersDataProp)
+        console.groupEnd()
     },
 
     methods: {
@@ -110,12 +117,14 @@ export default defineComponent({
             this.dashboardAssociations = deepcopy(this.dashboardStore.$state.dashboards[this.dashboardIdProp].configuration.associations)
             this.selectedDatasets = this.selectModelDatasetsFromAvailable()
             this.setDatasetParametersFromModel()
+            this.setDatasetDriversFromModel()
         },
         selectModelDatasetsFromAvailable() {
             return this.availableDatasets?.filter((responseDataset) => {
                 return this.dashboardDatasets?.find((dashboardDataset) => {
                     if (responseDataset.id.dsId === dashboardDataset.id) {
                         responseDataset.modelParams = dashboardDataset.parameters
+                        responseDataset.modelDrivers = dashboardDataset.drivers ? dashboardDataset.drivers : []
                         responseDataset.modelCache = dashboardDataset.cache
                         responseDataset.modelIndexes = dashboardDataset.indexes
 
@@ -138,6 +147,13 @@ export default defineComponent({
                 }
             })
         },
+        setDatasetDriversFromModel() {
+            this.selectedDatasets.forEach((dataset) => {
+                if (dataset.drivers && dataset.modelDrivers) {
+                    dataset.formattedDrivers = dataset.modelDrivers
+                }
+            })
+        },
         addSelectedDatasets(datasetsToAdd) {
             this.setDatasetCache(datasetsToAdd)
             if ((this.selectedDatasets.some((dataset) => dataset.drivers?.length > 0) && datasetsToAdd.some((dataset) => dataset.drivers?.length > 0)) || datasetsToAdd.filter((dataset) => dataset.drivers?.length > 0).length > 1) {
@@ -149,6 +165,7 @@ export default defineComponent({
                     this.selectedDatasets.push(dataset)
                     const formattedDatasetForDashboard = {
                         id: dataset.id.dsId,
+                        label: dataset.label,
                         dsLabel: dataset.label,
                         indexes: [],
                         drivers: [],
@@ -185,7 +202,7 @@ export default defineComponent({
             }
         },
         async checkForDatasetAssociations(datasetToDelete) {
-            let datasetAssociations = ((await this.getDatasetAssociations(datasetToDelete.id.dsId)) as unknown) as IAssociation[]
+            let datasetAssociations = (await this.getDatasetAssociations(datasetToDelete.id.dsId)) as unknown as IAssociation[]
             if (datasetAssociations && datasetAssociations.length > 0) this.deleteDatasetAssociations(datasetAssociations)
             this.deleteDataset(datasetToDelete.id.dsId)
         },
