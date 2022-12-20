@@ -77,7 +77,7 @@ export default defineComponent({
             if (index !== -1) {
                 this.widgetModel.columns.splice(index, 1)
                 if (column.id === this.selectedColumn?.id) this.selectedColumn = null
-                removeColumnFromModel(this.widgetModel, column)
+                if (this.widgetModel.type === 'table') removeColumnFromModel(this.widgetModel, column)
                 emitter.emit('columnRemoved', column)
                 emitter.emit('refreshWidgetWithData', this.widgetModel.id)
             }
