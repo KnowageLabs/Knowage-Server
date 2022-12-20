@@ -423,7 +423,7 @@ export default defineComponent({
         },
 
         async testDataSource() {
-            var url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'datasourcestest/2.0/test/'
+            var url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/datasources/test'
             var dsToTest = {} as any
             dsToTest = { ...this.datasource }
             dsToTest.type = this.jdbcOrJndi.type

@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,12 +11,18 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package it.eng.spagobi.api;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Context;
+
+import org.apache.log4j.Logger;
 
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.UserUtilities;
@@ -24,12 +30,6 @@ import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.engines.rest.AbstractRestService;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Context;
-
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -43,7 +43,12 @@ public class AbstractSpagoBIResource extends AbstractRestService {
 	@Context
 	protected HttpServletResponse response;
 
-	public static transient Logger logger = Logger.getLogger(AbstractSpagoBIResource.class);
+	/**
+	 * @deprecated Substitute this with a specific logger in evert subclass.
+	 * TODO Delete
+	 */
+	@Deprecated
+	public static final Logger logger = Logger.getLogger(AbstractSpagoBIResource.class);
 
 	public EngineStartServletIOManager getIOManager() {
 		EngineStartServletIOManager ioManager = null;

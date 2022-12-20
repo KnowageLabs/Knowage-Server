@@ -42,6 +42,7 @@ import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.api.v2.DataSourceResource;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -68,16 +69,18 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
- *
+ * @deprecated Merge this with {@link DataSourceResource}.
+ * TODO Merge with {@link DataSourceResource} and delete
  */
 @Path("/datasources")
+@Deprecated
 public class DataSourceCRUD extends AbstractSpagoBIResource {
 
-	static private Logger logger = Logger.getLogger(DataSourceCRUD.class);
-	static private String deleteNullIdDataSourceError = "error.mesage.description.data.source.cannot.be.null";
-	static private String deleteInUseDSError = "error.mesage.description.data.source.deleting.inuse";
-	static private String canNotFillResponseError = "error.mesage.description.generic.can.not.responce";
-	static private String saveDuplicatedDSError = "error.mesage.description.data.source.saving.duplicated";
+	private static Logger logger = Logger.getLogger(DataSourceCRUD.class);
+	private static String deleteNullIdDataSourceError = "error.mesage.description.data.source.cannot.be.null";
+	private static String deleteInUseDSError = "error.mesage.description.data.source.deleting.inuse";
+	private static String canNotFillResponseError = "error.mesage.description.generic.can.not.responce";
+	private static String saveDuplicatedDSError = "error.mesage.description.data.source.saving.duplicated";
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
