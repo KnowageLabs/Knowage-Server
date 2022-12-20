@@ -1,18 +1,17 @@
 import { IWidget, IWidgetColumn } from "@/modules/documentExecution/dashboard/Dashboard";
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
-import deepcopy from "deepcopy";
 
 export const addHighchartsColumnToTable = (tempColumn: IWidgetColumn, rows: IWidgetColumn[], chartType: string | undefined, attributesOnly: boolean, measuresOnly: boolean, widgetModel: IWidget) => {
     let mode = ''
     if (attributesOnly) mode = 'attributesOnly'
     else if (measuresOnly) mode = 'measuresOnly'
     switch (chartType) {
-        case 'highchartsPieChart':
-            addHighchartsPieChartColumnToTable(tempColumn, rows, chartType, mode, widgetModel)
+        case 'IHighchartsPieChart':
+            addIHighchartsPieChartColumnToTable(tempColumn, rows, chartType, mode, widgetModel)
     }
 }
 
-const addHighchartsPieChartColumnToTable = (tempColumn: IWidgetColumn, rows: IWidgetColumn[], chartType: string | undefined, mode: string, widgetModel: IWidget) => {
+const addIHighchartsPieChartColumnToTable = (tempColumn: IWidgetColumn, rows: IWidgetColumn[], chartType: string | undefined, mode: string, widgetModel: IWidget) => {
     if (mode === 'attributesOnly' && rows.length < 4) {
         const index = rows.findIndex((column: IWidgetColumn) => column.columnName === tempColumn.columnName)
         if (tempColumn.fieldType === 'MEASURE') {
@@ -29,7 +28,7 @@ const addHighchartsPieChartColumnToTable = (tempColumn: IWidgetColumn, rows: IWi
             removeSerieFromWidgetModel(widgetModel, rows[0], chartType)
         }
         rows[0] = tempColumn
-        if (chartType === 'highchartsPieChart') updateSerieInWidgetModel(widgetModel, tempColumn)
+        if (chartType === 'IHighchartsPieChart') updateSerieInWidgetModel(widgetModel, tempColumn)
 
     }
 }
@@ -47,7 +46,7 @@ const updateFirstSeriesOption = (array: any[], column: IWidgetColumn) => {
 }
 
 export const removeSerieFromWidgetModel = (widgetModel: IWidget, column: IWidgetColumn, chartType: string | undefined) => {
-    const allSeriesOption = chartType !== 'highchartsPieChart'
+    const allSeriesOption = chartType !== 'IHighchartsPieChart'
     removeColumnFromSubmodel(column, widgetModel.settings.accesssibility.seriesAccesibilitySettings, allSeriesOption)
     removeColumnFromSubmodel(column, widgetModel.settings.series.seriesLabelsSettings, allSeriesOption)
     emitter.emit('seriesRemoved', column)

@@ -1,13 +1,13 @@
-import { HighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget'
+import { IHighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget'
 import { KnowageHighcharts } from './KnowageHihgcharts'
-import { createSerie, updatePieChartModel } from './updater/HighchartsPieChartUpdater'
+import { createSerie, updatePieChartModel } from './updater/KnowageHighchartsPieChartUpdater'
 import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
 import { IHighchartsChartSerie, IHighchartsChartSerieData } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import * as highchartsDefaultValues from '../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
 import Highcharts from 'highcharts'
 import deepcopy from 'deepcopy'
 
-export class HighchartsPieChart extends KnowageHighcharts {
+export class KnowageHighchartsPieChart extends KnowageHighcharts {
     constructor(model: any) {
         super()
         if (!this.model.plotOptions.pie) this.setPiePlotOptions()
@@ -24,7 +24,7 @@ export class HighchartsPieChart extends KnowageHighcharts {
         return this.model
     }
 
-    setModel = (model: HighchartsPieChartModel) => {
+    setModel = (model: IHighchartsPieChartModel) => {
         this.model = model
     }
 
@@ -84,7 +84,7 @@ export class HighchartsPieChart extends KnowageHighcharts {
                         color: seriesLabelSetting.label.style.color ?? ''
                     },
                     formatter: function () {
-                        return HighchartsPieChart.prototype.handleFormatter(this, seriesLabelSetting.label)
+                        return KnowageHighchartsPieChart.prototype.handleFormatter(this, seriesLabelSetting.label)
                     }
                 }
             })

@@ -1,6 +1,6 @@
 import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard"
 import { IChartJSWidgetSettings } from "@/modules/documentExecution/dashboard/interfaces/chartJS/DashboardChartJSWidget"
-import { ChartJSPieChart } from "../../../../ChartWidget/classes/chartJS/KnowageChartJSPieChart"
+import { KnowageChartJSPieChart } from "../../../../ChartWidget/classes/chartJS/KnowageChartJSPieChart"
 import * as widgetCommonDefaultValues from '../../common/WidgetCommonDefaultValues'
 import * as  chartJSDefaultValues from "../chartJS/ChartJSDefaultValues"
 import descriptor from '../../../WidgetEditorSettingsTab/ChartWidget/common/ChartColorSettingsDescriptor.json'
@@ -32,13 +32,13 @@ export const createNewChartJSSettings = () => {
 }
 
 export const formatChartJSWidget = (widget: IWidget) => {
-    widget.settings.chartModel = new ChartJSPieChart(widget.settings.chartModel)
+    widget.settings.chartModel = new KnowageChartJSPieChart(widget.settings.chartModel)
 }
 
 export const createChartJSModel = (chartType: string) => {
     switch (chartType) {
         case 'pie':
-            return new ChartJSPieChart(null)
+            return new KnowageChartJSPieChart(null)
         default:
             return null
     }

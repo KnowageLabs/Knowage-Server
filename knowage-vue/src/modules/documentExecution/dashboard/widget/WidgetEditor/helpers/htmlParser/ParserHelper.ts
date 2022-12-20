@@ -3,7 +3,7 @@ import { formatSelectionForDisplay } from '../../../ActiveSelectionsWidget/Activ
 import deepcopy from 'deepcopy'
 import { formatNumberWithLocale } from '@/helpers/commons/localeHelper'
 import i18n from '@/App.i18n'
-import * as sanitizeHtml from 'sanitize-html'
+import sanitizeHtml from 'sanitize-html'
 import { activeSelectionsRegex, advancedCalcRegex, calcRegex, columnRegex, gt, i18nRegex, lt, paramsRegex, repeatIndexRegex, variablesRegex, widgetIdRegex } from '@/modules/documentExecution/dashboard/helpers/common/DashboardRegexHelper'
 
 const { t } = i18n.global

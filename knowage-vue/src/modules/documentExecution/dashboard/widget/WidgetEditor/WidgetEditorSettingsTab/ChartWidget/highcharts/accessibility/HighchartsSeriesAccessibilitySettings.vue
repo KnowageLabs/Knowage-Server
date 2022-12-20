@@ -36,7 +36,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget } from '../../../../../../Dashboard'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
-import { HighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget'
+import { IHighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget'
 import { IHighchartsChartSerie, ISerieAccessibilitySetting } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import descriptor from '../HighchartsWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
@@ -52,7 +52,7 @@ export default defineComponent({
     data() {
         return {
             descriptor,
-            model: null as HighchartsPieChartModel | null,
+            model: null as IHighchartsPieChartModel | null,
             seriesSettings: [] as ISerieAccessibilitySetting[],
             availableSeriesOptions: [] as string[]
         }

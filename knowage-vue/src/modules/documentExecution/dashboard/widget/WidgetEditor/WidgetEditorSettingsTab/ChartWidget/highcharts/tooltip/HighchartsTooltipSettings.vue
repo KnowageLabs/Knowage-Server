@@ -43,7 +43,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IWidgetStyleToolbarModel } from '../../../../../../Dashboard'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
-import { HighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget'
+import { IHighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget'
 import descriptor from '../HighchartsWidgetSettingsDescriptor.json'
 import InputNumber from 'primevue/inputnumber'
 import InputSwitch from 'primevue/inputswitch'
@@ -64,7 +64,7 @@ export default defineComponent({
     data() {
         return {
             descriptor,
-            model: null as HighchartsPieChartModel | null,
+            model: null as IHighchartsPieChartModel | null,
             toolbarModel: {} as {
                 'font-family': string
                 'font-size': string

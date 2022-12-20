@@ -5,7 +5,7 @@
             :widgetModel="widgetModel"
             :items="columnTableItems['ATTRIBUTES'] ?? []"
             :settings="{ ...commonDescriptor.columnTableSettings, ...highchartDescriptor.pieChartcolumnTableSettings[0] }"
-            chartType="highchartsPieChart"
+            chartType="IHighchartsPieChart"
             @rowReorder="onColumnsReorder"
             @itemAdded="onColumnAdded"
             @itemUpdated="onColumnItemUpdate"
@@ -17,7 +17,7 @@
             :widgetModel="widgetModel"
             :items="columnTableItems['MEASURES'] ?? []"
             :settings="{ ...commonDescriptor.columnTableSettings, ...highchartDescriptor.pieChartcolumnTableSettings[1] }"
-            chartType="highchartsPieChart"
+            chartType="IHighchartsPieChart"
             @itemAdded="onColumnAdded"
             @itemUpdated="onColumnItemUpdate"
             @itemSelected="setSelectedColumn"
@@ -33,7 +33,7 @@ import { IDataset, IWidget, IWidgetColumn } from '@/modules/documentExecution/Da
 import { emitter } from '../../../../../DashboardHelpers'
 import { removeSerieFromWidgetModel } from '../../../helpers/chartWidget/highcharts/HighchartsDataTabHelpers'
 import descriptor from '../../TableWidget/TableWidgetDataDescriptor.json'
-import highchartDescriptor from './HighchartsWidgetDataContainerDescriptor.json'
+import highchartDescriptor from './HighchartsDataContainerDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import commonDescriptor from '../../common/WidgetCommonDescriptor.json'
 import WidgetEditorColumnTable from '../../common/WidgetEditorColumnTable.vue'
@@ -108,7 +108,7 @@ export default defineComponent({
                 this.widgetModel.columns.splice(index, 1)
                 if (column.id === this.selectedColumn?.id) this.selectedColumn = null
                 this.removeColumnFromColumnTableItems(column)
-                removeSerieFromWidgetModel(this.widgetModel, column, 'highchartsPieChart')
+                removeSerieFromWidgetModel(this.widgetModel, column, 'IHighchartsPieChart')
                 emitter.emit('refreshWidgetWithData', this.widgetModel.id)
             }
         },

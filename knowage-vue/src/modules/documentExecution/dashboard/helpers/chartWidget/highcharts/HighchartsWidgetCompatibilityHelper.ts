@@ -1,6 +1,6 @@
 import { IWidget, IWidgetExports, IWidgetInteractions } from '../../../Dashboard'
 import { IHighchartsSeriesLabelsSetting, IHighchartsWidgetConfiguration, IHighchartsWidgetSettings } from '../../../interfaces/highcharts/DashboardHighchartsWidget'
-import { HighchartsPieChart } from '../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsPieChart'
+import { KnowageHighchartsPieChart } from '../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsPieChart'
 import { getFormattedInteractions } from '../../common/WidgetInteractionsHelper'
 import { getFiltersForColumns } from '../../DashboardBackwardCompatibilityHelper'
 import { hexToRgba } from '../../FormattingHelpers'
@@ -60,7 +60,7 @@ export const getColumnId = (widgetColumnName: string) => {
 const createChartModel = (widget: any) => {
     switch (widget.content.chartTemplate.CHART.type) {
         case 'PIE':
-            return new HighchartsPieChart(widget.content.chartTemplate)
+            return new KnowageHighchartsPieChart(widget.content.chartTemplate)
         default:
             return null
     }

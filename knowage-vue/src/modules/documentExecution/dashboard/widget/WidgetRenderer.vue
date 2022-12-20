@@ -31,7 +31,7 @@
  */
 import { defineComponent, PropType } from 'vue'
 import { getWidgetStyleByType } from '../widget/TableWidget/TableWidgetHelper'
-import { IDataset, ISelection, IVariable } from '../Dashboard'
+import { IDashboardDataset, IDataset, ISelection, IVariable } from '../Dashboard'
 import TableWidget from './TableWidget/TableWidget.vue'
 import SelectorWidget from './SelectorWidget/SelectorWidget.vue'
 import ActiveSelectionsWidget from './ActiveSelectionsWidget/ActiveSelectionsWidget.vue'
@@ -48,7 +48,7 @@ export default defineComponent({
         widget: { required: true, type: Object as any },
         widgetData: { required: true, type: Object },
         widgetInitialData: { required: true, type: Object },
-        datasets: { type: Array as PropType<IDataset[]>, required: true },
+        datasets: { type: Array as PropType<IDashboardDataset[]>, required: true },
         dashboardId: { type: String, required: true },
         selectionIsLocked: { type: Boolean, required: true },
         propActiveSelections: { type: Array as PropType<ISelection[]>, required: true },
