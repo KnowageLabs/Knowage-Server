@@ -57,8 +57,8 @@ export default defineComponent({
         },
         onChartTypeChanged(chartType: string) {
             // TODO widgetChange
-            this.propWidget.settings.chartModel = this.user?.enterprise ? createNewHighchartsModel(chartType) : createChartJSModel(chartType)
-            // this.propWidget.settings.chartModel = false ? createNewHighchartsModel(chartType) : createChartJSModel(chartType)
+            // this.propWidget.settings.chartModel = this.user?.enterprise ? createNewHighchartsModel(chartType) : createChartJSModel(chartType)
+            this.propWidget.settings.chartModel = false ? createNewHighchartsModel(chartType) : createChartJSModel(chartType)
         }
     }
 })

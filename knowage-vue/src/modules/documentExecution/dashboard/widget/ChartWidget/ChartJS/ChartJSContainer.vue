@@ -37,6 +37,11 @@ export default defineComponent({
             chartHeight: 0 as number
         }
     },
+    watch: {
+        dataToShow() {
+            this.onRefreshChart()
+        }
+    },
     mounted() {
         this.setEventListeners()
         this.onRefreshChart()
@@ -68,7 +73,6 @@ export default defineComponent({
             this.updateChartData()
         },
         updateChartOptions() {
-            // TODO see if responsive is needed
             this.chartOptions = { ...this.chartModel.options, responsive: true, maintainAspectRatio: false, events: ['click', 'mousemove'], onClick: this.setSelection }
         },
         updateChartData() {
@@ -86,12 +90,12 @@ export default defineComponent({
             updateStoreSelections(this.createNewSelection([value]), this.propActiveSelections, this.dashboardId, this.setSelections, this.$http)
         },
         getSelectionValue(selectionEvent: any[]) {
-            const value = this.chartData.datasets[selectionEvent[0].datasetIndex].data[selectionEvent[0].index]
+            const value = this.chartData.labels[selectionEvent[0].index]
             return value ?? ''
         },
         createNewSelection(value: (string | number)[]) {
-            const measureColumn = this.widgetModel.columns.find((column: IWidgetColumn) => column.fieldType === 'ATTRIBUTE')
-            const selection = { datasetId: this.widgetModel.dataset as number, datasetLabel: this.getDatasetLabel(this.widgetModel.dataset as number), columnName: measureColumn?.columnName ?? '', value: value, aggregated: false, timestamp: new Date().getTime() }
+            const attributeColumn = this.widgetModel.columns.find((column: IWidgetColumn) => column.fieldType === 'ATTRIBUTE')
+            const selection = { datasetId: this.widgetModel.dataset as number, datasetLabel: this.getDatasetLabel(this.widgetModel.dataset as number), columnName: attributeColumn?.columnName ?? '', value: value, aggregated: false, timestamp: new Date().getTime() }
             return selection
         },
         onChartResize(newHeight: number) {
