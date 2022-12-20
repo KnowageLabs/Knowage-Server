@@ -19,11 +19,13 @@ package it.eng.spagobi.api.v2;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.naming.AuthenticationException;
@@ -46,6 +48,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 
@@ -56,10 +61,13 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
+import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.metasql.query.SelectQuery;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.bo.JDBCDataSourcePoolConfiguration;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.database.DataBaseFactory;
@@ -100,7 +108,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@Path("/{dsId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_READ })
-	public String getDataSourceById(@PathParam("dsId") Integer dsId) {
+	public IDataSource getDataSourceById(@PathParam("dsId") Integer dsId) {
 		LOGGER.debug("IN");
 		try {
 			IDataSourceDAO dataSourceDAO;
@@ -112,7 +120,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 			checkAuthorizationToManageCacheDataSource(dataSource);
 
-			return JsonConverter.objectToJson(dataSource, null);
+			return dataSource;
 		} catch (Exception e) {
 			LOGGER.error("Error while loading a single data source", e);
 			throw new SpagoBIRestServiceException("Error while loading a single data source", buildLocaleFromSession(), e);
@@ -413,6 +421,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 					.stream()
 					// Remove cache datasource for non-super-admin users
 					.filter(e -> !e.checkIsWriteDefault())
+					.map(this::toOwnedOrNotOwned)
 					.collect(Collectors.toList());
 			// @formatter:on
 		}
@@ -449,6 +458,525 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRestServiceException(msgBuilder.getMessage("sbi.datasource.notAuthorizedToManageCacheDataSource"), buildLocaleFromSession(), new Throwable());
 		}
 	}
+
+	private IDataSource toOwnedOrNotOwned(IDataSource dataSource) {
+
+		if (!isOwnedByTheUser(dataSource)) {
+			dataSource = new _NotOwnedDataSource(dataSource);
+		}
+
+		return dataSource;
+	}
+
+	private boolean isOwnedByTheUser(IDataSource dataSource) {
+		return getUserProfile().getUserName().toString().equals(dataSource.getOwner());
+	}
+
 }
 
+@JsonInclude(Include.NON_NULL)
+class _NotOwnedDataSource implements IDataSource {
+
+	private final IDataSource wrapped;
+
+	public _NotOwnedDataSource(IDataSource wrapped) {
+		this.wrapped = wrapped;
+	}
+
+	/**
+	 * @return
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#toSpagoBiDataSource()
+	 */
+	@Override
+	@JsonIgnore
+	public SpagoBiDataSource toSpagoBiDataSource() {
+		return wrapped.toSpagoBiDataSource();
+	}
+
+	/**
+	 * @return
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#checkIsMultiSchema()
+	 */
+	@Override
+	public boolean checkIsMultiSchema() {
+		return wrapped.checkIsMultiSchema();
+	}
+
+	/**
+	 * @return
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#checkIsJndi()
+	 */
+	@Override
+	public boolean checkIsJndi() {
+		return wrapped.checkIsJndi();
+	}
+
+	/**
+	 * @return
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getSchemaAttribute()
+	 */
+	@Override
+	@JsonIgnore
+	public String getSchemaAttribute() {
+		return wrapped.getSchemaAttribute();
+	}
+
+	/**
+	 * @param schemaAttribute
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setSchemaAttribute(java.lang.String)
+	 */
+	@Override
+	public void setSchemaAttribute(String schemaAttribute) {
+		wrapped.setSchemaAttribute(schemaAttribute);
+	}
+
+	/**
+	 * @return
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getMultiSchema()
+	 */
+	@Override
+	@JsonIgnore
+	public Boolean getMultiSchema() {
+		return wrapped.getMultiSchema();
+	}
+
+	/**
+	 * @param multiSchema
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setMultiSchema(java.lang.Boolean)
+	 */
+	@Override
+	public void setMultiSchema(Boolean multiSchema) {
+		wrapped.setMultiSchema(multiSchema);
+	}
+
+	/**
+	 * @return
+	 * @throws NamingException
+	 * @throws SQLException
+	 * @throws ClassNotFoundException
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getConnection()
+	 */
+	@Override
+	@JsonIgnore
+	public Connection getConnection() throws NamingException, SQLException, ClassNotFoundException {
+		return wrapped.getConnection();
+	}
+
+	/**
+	 * @param profile
+	 * @return
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getConnectionByUserProfile(it.eng.spago.security.IEngUserProfile)
+	 */
+	@Override
+	@JsonIgnore
+	public Connection getConnectionByUserProfile(IEngUserProfile profile) {
+		return wrapped.getConnectionByUserProfile(profile);
+	}
+
+	/**
+	 * @param profile
+	 * @return
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getJNDIRunTime(it.eng.spago.security.IEngUserProfile)
+	 */
+	@Override
+	@JsonIgnore
+	public String getJNDIRunTime(IEngUserProfile profile) {
+		return wrapped.getJNDIRunTime(profile);
+	}
+
+	/**
+	 * @return
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getDsId()
+	 */
+	@Override
+	public int getDsId() {
+		return wrapped.getDsId();
+	}
+
+	/**
+	 * @param dsId
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setDsId(int)
+	 */
+	@Override
+	public void setDsId(int dsId) {
+		wrapped.setDsId(dsId);
+	}
+
+	/**
+	 * @return
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getDescr()
+	 */
+	@Override
+	public String getDescr() {
+		return wrapped.getDescr();
+	}
+
+	/**
+	 * @param descr
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setDescr(java.lang.String)
+	 */
+	@Override
+	public void setDescr(String descr) {
+		wrapped.setDescr(descr);
+	}
+
+	/**
+	 * @return
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getLabel()
+	 */
+	@Override
+	public String getLabel() {
+		return wrapped.getLabel();
+	}
+
+	/**
+	 * @param label
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setLabel(java.lang.String)
+	 */
+	@Override
+	public void setLabel(String label) {
+		wrapped.setLabel(label);
+	}
+
+	/**
+	 * @return
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getJndi()
+	 */
+	@Override
+	@JsonIgnore
+	public String getJndi() {
+		return wrapped.getJndi();
+	}
+
+	/**
+	 * @param jndi
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setJndi(java.lang.String)
+	 */
+	@Override
+	public void setJndi(String jndi) {
+		wrapped.setJndi(jndi);
+	}
+
+	/**
+	 * @return
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getUrlConnection()
+	 */
+	@Override
+	@JsonIgnore
+	public String getUrlConnection() {
+		return wrapped.getUrlConnection();
+	}
+
+	/**
+	 * @param url_connection
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setUrlConnection(java.lang.String)
+	 */
+	@Override
+	public void setUrlConnection(String url_connection) {
+		wrapped.setUrlConnection(url_connection);
+	}
+
+	/**
+	 * @return
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getUser()
+	 */
+	@Override
+	@JsonIgnore
+	public String getUser() {
+		return wrapped.getUser();
+	}
+
+	/**
+	 * @param user
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setUser(java.lang.String)
+	 */
+	@Override
+	public void setUser(String user) {
+		wrapped.setUser(user);
+	}
+
+	/**
+	 * @return
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getPwd()
+	 */
+	@Override
+	@JsonIgnore
+	public String getPwd() {
+		return wrapped.getPwd();
+	}
+
+	/**
+	 * @param pwd
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setPwd(java.lang.String)
+	 */
+	@Override
+	public void setPwd(String pwd) {
+		wrapped.setPwd(pwd);
+	}
+
+	/**
+	 * @return
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getDriver()
+	 */
+	@Override
+	@JsonIgnore
+	public String getDriver() {
+		return wrapped.getDriver();
+	}
+
+	/**
+	 * @param driver
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setDriver(java.lang.String)
+	 */
+	@Override
+	public void setDriver(String driver) {
+		wrapped.setDriver(driver);
+	}
+
+	/**
+	 * @return
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getDialectName()
+	 */
+	@Override
+	public String getDialectName() {
+		return wrapped.getDialectName();
+	}
+
+	/**
+	 * @param dialectName
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setDialectName(java.lang.String)
+	 */
+	@Override
+	public void setDialectName(String dialectName) {
+		wrapped.setDialectName(dialectName);
+	}
+
+	/**
+	 * @return
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getEngines()
+	 */
+	@Override
+	@JsonIgnore
+	public Set getEngines() {
+		return wrapped.getEngines();
+	}
+
+	/**
+	 * @param engines
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setEngines(java.util.Set)
+	 */
+	@Override
+	public void setEngines(Set engines) {
+		wrapped.setEngines(engines);
+	}
+
+	/**
+	 * @return
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getObjects()
+	 */
+	@Override
+	@JsonIgnore
+	public Set getObjects() {
+		return wrapped.getObjects();
+	}
+
+	/**
+	 * @param objects
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setObjects(java.util.Set)
+	 */
+	@Override
+	public void setObjects(Set objects) {
+		wrapped.setObjects(objects);
+	}
+
+	/**
+	 * @return
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getJdbcPoolConfiguration()
+	 */
+	@Override
+	@JsonIgnore
+	public JDBCDataSourcePoolConfiguration getJdbcPoolConfiguration() {
+		return wrapped.getJdbcPoolConfiguration();
+	}
+
+	/**
+	 * @param jDBCPoolConfiguration
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setJdbcPoolConfiguration(it.eng.spagobi.tools.datasource.bo.JDBCDataSourcePoolConfiguration)
+	 */
+	@Override
+	public void setJdbcPoolConfiguration(JDBCDataSourcePoolConfiguration jDBCPoolConfiguration) {
+		wrapped.setJdbcPoolConfiguration(jDBCPoolConfiguration);
+	}
+
+	/**
+	 * @return
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getOwner()
+	 */
+	@Override
+	@JsonIgnore
+	public String getOwner() {
+		return wrapped.getOwner();
+	}
+
+	/**
+	 * @param owner
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setOwner(java.lang.String)
+	 */
+	@Override
+	public void setOwner(String owner) {
+		wrapped.setOwner(owner);
+	}
+
+	/**
+	 * @return
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getHibDialectClass()
+	 */
+	@Override
+	@JsonIgnore
+	public String getHibDialectClass() {
+		return wrapped.getHibDialectClass();
+	}
+
+	/**
+	 * @param hibDialectClass
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setHibDialectClass(java.lang.String)
+	 */
+	@Override
+	public void setHibDialectClass(String hibDialectClass) {
+		wrapped.setHibDialectClass(hibDialectClass);
+	}
+
+	/**
+	 * @return
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#checkIsReadOnly()
+	 */
+	@Override
+	@JsonIgnore
+	public Boolean checkIsReadOnly() {
+		return wrapped.checkIsReadOnly();
+	}
+
+	/**
+	 * @return
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#checkIsWriteDefault()
+	 */
+	@Override
+	@JsonIgnore
+	public Boolean checkIsWriteDefault() {
+		return wrapped.checkIsWriteDefault();
+	}
+
+	/**
+	 * @param writeDefault
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setWriteDefault(java.lang.Boolean)
+	 */
+	@Override
+	public void setWriteDefault(Boolean writeDefault) {
+		wrapped.setWriteDefault(writeDefault);
+	}
+
+	/**
+	 * @param readOnly
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setReadOnly(java.lang.Boolean)
+	 */
+	@Override
+	public void setReadOnly(Boolean readOnly) {
+		wrapped.setReadOnly(readOnly);
+	}
+
+	/**
+	 * @param statement
+	 * @param start
+	 * @param limit
+	 * @return
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#executeStatement(java.lang.String, java.lang.Integer, java.lang.Integer)
+	 */
+	@Override
+	public IDataStore executeStatement(String statement, Integer start, Integer limit) {
+		return wrapped.executeStatement(statement, start, limit);
+	}
+
+	/**
+	 * @param statement
+	 * @param start
+	 * @param limit
+	 * @param calculateTotalResultsNumber
+	 * @return
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#executeStatement(java.lang.String, java.lang.Integer, java.lang.Integer, boolean)
+	 */
+	@Override
+	public IDataStore executeStatement(String statement, Integer start, Integer limit, boolean calculateTotalResultsNumber) {
+		return wrapped.executeStatement(statement, start, limit, calculateTotalResultsNumber);
+	}
+
+	/**
+	 * @param statement
+	 * @param start
+	 * @param limit
+	 * @param maxRowCount
+	 * @param calculateTotalResultsNumber
+	 * @return
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#executeStatement(java.lang.String, java.lang.Integer, java.lang.Integer, java.lang.Integer, boolean)
+	 */
+	@Override
+	public IDataStore executeStatement(String statement, Integer start, Integer limit, Integer maxRowCount, boolean calculateTotalResultsNumber) {
+		return wrapped.executeStatement(statement, start, limit, maxRowCount, calculateTotalResultsNumber);
+	}
+
+	/**
+	 * @param selectQuery
+	 * @param start
+	 * @param limit
+	 * @param maxRowCount
+	 * @param calculateTotalResultsNumber
+	 * @return
+	 * @throws DataBaseException
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#executeStatement(it.eng.spagobi.tools.dataset.metasql.query.SelectQuery, java.lang.Integer, java.lang.Integer, java.lang.Integer, boolean)
+	 */
+	@Override
+	public IDataStore executeStatement(SelectQuery selectQuery, Integer start, Integer limit, Integer maxRowCount, boolean calculateTotalResultsNumber)
+			throws DataBaseException {
+		return wrapped.executeStatement(selectQuery, start, limit, maxRowCount, calculateTotalResultsNumber);
+	}
+
+	/**
+	 * @param profile
+	 * @return
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getSignature(it.eng.spago.security.IEngUserProfile)
+	 */
+	@Override
+	@JsonIgnore
+	public String getSignature(IEngUserProfile profile) {
+		return wrapped.getSignature(profile);
+	}
+
+	/**
+	 * @param useForDataprep
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setUseForDataprep(java.lang.Boolean)
+	 */
+	@Override
+	public void setUseForDataprep(Boolean useForDataprep) {
+		wrapped.setUseForDataprep(useForDataprep);
+	}
+
+	/**
+	 * @return
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#checkUseForDataprep()
+	 */
+	@Override
+	public Boolean checkUseForDataprep() {
+		return wrapped.checkUseForDataprep();
+	}
+
+	/**
+	 * @return
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getReadOnly()
+	 */
+	@Override
+	@JsonIgnore
+	public Boolean getReadOnly() {
+		return wrapped.getReadOnly();
+	}
+
+}
 
