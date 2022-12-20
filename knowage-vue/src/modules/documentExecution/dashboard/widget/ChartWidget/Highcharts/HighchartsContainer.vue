@@ -37,7 +37,7 @@ export default defineComponent({
             chartID: cryptoRandomString({ length: 16, type: 'base64' }),
             chartModel: {} as IHighchartsChartModel,
             error: false,
-            reflowChart: {} as any
+            highchartsInstance: {} as any
         }
     },
     watch: {
@@ -88,10 +88,8 @@ export default defineComponent({
 
             this.setSeriesEvents()
 
-            //TODO - Darko, mozda je ovo lose, videti sa Bojanom
-            this.reflowChart = Highcharts.chart(this.chartID, this.chartModel as any)
-
-            this.reflowChart.reflow()
+            this.highchartsInstance = Highcharts.chart(this.chartID, this.chartModel as any)
+            this.highchartsInstance.reflow()
         },
         updateLegendSettings() {
             if (this.chartModel.plotOptions.pie) this.chartModel.plotOptions.pie.showInLegend = true
@@ -124,7 +122,7 @@ export default defineComponent({
         },
         resizeChart() {
             setTimeout(() => {
-                this.reflowChart.reflow()
+                this.highchartsInstance.reflow()
             }, 100)
         }
     }
