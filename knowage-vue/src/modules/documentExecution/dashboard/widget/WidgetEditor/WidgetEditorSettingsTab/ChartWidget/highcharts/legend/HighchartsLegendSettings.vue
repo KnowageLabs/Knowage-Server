@@ -19,10 +19,10 @@
                         </div>
                     </template>
                 </Dropdown>
-                <i class="pi pi-question-circle kn-cursor-pointer  p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.legend.alignHint')"></i>
+                <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.legend.alignHint')"></i>
             </div>
         </div>
-        <div class="p-col-12  p-md-6 p-lg-4 p-d-flex p-flex-column kn-flex p-m-2">
+        <div class="p-col-12 p-md-6 p-lg-4 p-d-flex p-flex-column kn-flex p-m-2">
             <label class="kn-material-input-label p-mr-2">{{ $t('common.verticalAlign') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center">
                 <Dropdown class="kn-material-input kn-flex" v-model="model.legend.verticalAlign" :options="descriptor.verticalAlignmentOptions" optionValue="value" :disabled="legendDisabled" @change="modelChanged">
@@ -37,7 +37,7 @@
                         </div>
                     </template>
                 </Dropdown>
-                <i class="pi pi-question-circle kn-cursor-pointer  p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.legend.verticalAlignHint')"></i>
+                <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.legend.verticalAlignHint')"></i>
             </div>
         </div>
         <div class="p-col-12 p-md-6 p-lg-4 p-d-flex p-flex-column kn-flex p-m-2">
@@ -55,7 +55,7 @@
                         </div>
                     </template>
                 </Dropdown>
-                <i class="pi pi-question-circle kn-cursor-pointer  p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.legend.layoutHint')"></i>
+                <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.legend.layoutHint')"></i>
             </div>
         </div>
         <div class="p-col-12 p-py-4">
@@ -168,7 +168,6 @@ export default defineComponent({
             this.modelChanged()
         },
         getAlignValue(toolbarValue: string) {
-            // TODO - Put in helper
             switch (toolbarValue) {
                 case 'flex-start':
                     return 'left'

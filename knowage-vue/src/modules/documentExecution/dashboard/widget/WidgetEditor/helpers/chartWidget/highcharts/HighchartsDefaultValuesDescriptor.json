@@ -13,6 +13,19 @@
             "order": []
         }
     },
+    "defaultAllSeriesAccessibilitySettings": [
+        {
+            "accessibility": {
+                "description": "",
+                "enabled": false,
+                "exposeAsGroupOnly": false,
+                "keyboardNavigation": {
+                    "enabled": false
+                }
+            },
+            "names": ["all"]
+        }
+    ],
     "defaultHighchartsSelection": {
         "enabled": true,
         "modalColumn": ""
@@ -62,6 +75,38 @@
         },
         "depth": 100,
         "showInLegend": true
+    },
+    "defaultSerieLabelSettings": [
+        {
+            "label": {
+                "absolute": false,
+                "backgroundColor": "",
+                "enabled": false,
+                "percentage": false,
+                "precision": 2,
+                "prefix": "",
+                "scale": "empty",
+                "style": {
+                    "color": "",
+                    "fontFamily": "",
+                    "fontSize": "",
+                    "fontWeight": ""
+                },
+                "suffix": ""
+            },
+            "names": ["all"]
+        }
+    ],
+    "defaultSeriesAccessibilitySettings": {
+        "accessibility": {
+            "description": "",
+            "enabled": true,
+            "exposeAsGroupOnly": false,
+            "keyboardNavigation": {
+                "enabled": false
+            }
+        },
+        "names": []
     },
     "defaultTooltipSettings": {
         "backgroundColor": "",

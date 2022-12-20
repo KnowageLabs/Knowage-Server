@@ -17,12 +17,12 @@
 
             <div class="p-col-12">
                 <label class="kn-material-input-label">{{ $t('common.description') }}</label>
-                <Textarea class="kn-material-input kn-width-full" rows="4" :autoResize="true" v-model="serieSetting.accessibility.description" maxlength="250" :disabled="!serieSetting.accessibility.enabled" @change="onSerieSettingUpdated(serieSetting)" />
+                <Textarea class="kn-material-input kn-width-full" rows="4" :autoResize="true" v-model="serieSetting.accessibility.description" maxlength="250" :disabled="!serieSetting.accessibility.enabled" @change="modelChanged" />
             </div>
             <div class="p-col-6 p-pt-2 p-px-4">
                 <InputSwitch v-model="serieSetting.accessibility.exposeAsGroupOnly" :disabled="!serieSetting.accessibility.enabled" @change="modelChanged"></InputSwitch>
                 <label class="kn-material-input-label p-m-3">{{ $t('dashboard.widgetEditor.accessibility.exposeAsGroupOnly') }}</label>
-                <i class="pi pi-question-circle kn-cursor-pointer  p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.accessibility.exposeAsGroupOnlyHint')"></i>
+                <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.accessibility.exposeAsGroupOnlyHint')"></i>
             </div>
             <div class="p-col-6 p-pt-2 p-px-4">
                 <InputSwitch v-model="serieSetting.accessibility.keyboardNavigation.enabled" :disabled="!serieSetting.accessibility.enabled" @change="modelChanged"></InputSwitch>
@@ -43,6 +43,7 @@ import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 import Textarea from 'primevue/textarea'
 import HighchartsSeriesMultiselect from '../common/HighchartsSeriesMultiselect.vue'
+import * as highchartsDefaultValues from '../../../../helpers/chartWidget/highcharts/HighchartsDefaultValues'
 
 export default defineComponent({
     name: 'hihgcharts-series-accessibility-settings',
@@ -119,22 +120,11 @@ export default defineComponent({
             intersection.forEach((serieName: string) => this.availableSeriesOptions.push(serieName))
         },
         addSerieSetting() {
-            this.seriesSettings.push({
-                names: [],
-                accessibility: {
-                    enabled: true,
-                    description: '',
-                    exposeAsGroupOnly: false,
-                    keyboardNavigation: { enabled: false }
-                } // TODO - move to default serie accebility helper
-            })
+            this.seriesSettings.push(highchartsDefaultValues.getDefaultSeriesAccessibilitySettings())
         },
         removeSerieSetting(index: number) {
             this.seriesSettings[index].names.forEach((serieName: string) => this.availableSeriesOptions.push(serieName))
             this.seriesSettings.splice(index, 1)
-        },
-        onSerieSettingUpdated(serieSetting: ISerieAccessibilitySetting) {
-            this.modelChanged()
         }
     }
 })

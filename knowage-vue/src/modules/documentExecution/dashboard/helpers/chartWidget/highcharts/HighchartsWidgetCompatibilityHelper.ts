@@ -1,12 +1,13 @@
 import { IWidget, IWidgetExports, IWidgetInteractions } from '../../../Dashboard'
 import { IHighchartsSeriesLabelsSetting, IHighchartsWidgetConfiguration, IHighchartsWidgetSettings } from '../../../interfaces/highcharts/DashboardHighchartsWidget'
 import { HighchartsPieChart } from '../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsPieChart'
-import * as widgetCommonDefaultValues from '../../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import { getFormattedInteractions } from '../../common/WidgetInteractionsHelper'
 import { getFiltersForColumns } from '../../DashboardBackwardCompatibilityHelper'
 import { hexToRgba } from '../../FormattingHelpers'
 import { getFormattedWidgetColumns, getFormattedColorSettings } from '../CommonChartCompatibilityHelper'
 import { getFormattedStyle } from './HighchartsWidgetStyleHelper'
+import * as widgetCommonDefaultValues from '../../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
+import * as highchartsDefaultValues from '../../../widget/WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
 
 const columnNameIdMap = {}
 
@@ -30,19 +31,13 @@ const getFormattedWidgetSettings = (widget: any) => {
     const formattedSettings = {
         updatable: widget.updateble,
         clickable: widget.cliccable,
-        chartModel: null, // TODO - see about this
+        chartModel: null,
         configuration: getFormattedConfiguration(widget),
-        accesssibility: {
-            seriesAccesibilitySettings: getFormattedSeriesAccesibilitySettings(widget)
-        }, // TODO - move to some default helper
-        series: {
-            seriesLabelsSettings: getFormattedSerieLabelsSettings(widget) // TODO - move to some default helper
-        },
+        accesssibility: { seriesAccesibilitySettings: getFormattedSeriesAccesibilitySettings(widget) },
+        series: { seriesLabelsSettings: getFormattedSerieLabelsSettings(widget) },
         interactions: getFormattedInteractions(widget) as IWidgetInteractions,
         style: getFormattedStyle(widget),
-        chart: {
-            colors: getFormattedColorSettings(widget) as any
-        },
+        chart: { colors: getFormattedColorSettings(widget) as any },
         responsive: widgetCommonDefaultValues.getDefaultResponsivnes()
     } as IHighchartsWidgetSettings
     return formattedSettings
@@ -55,19 +50,7 @@ const getFormattedConfiguration = (widget: any) => {
 }
 
 const getFormattedSeriesAccesibilitySettings = (widget: any) => {
-    return widget.content.chartTemplate.CHART.type !== 'PIE'
-        ? [
-            {
-                names: ['all'],
-                accessibility: {
-                    enabled: false,
-                    description: '',
-                    exposeAsGroupOnly: false,
-                    keyboardNavigation: { enabled: false }
-                }
-            }
-        ]
-        : []
+    return widget.content.chartTemplate.CHART.type !== 'PIE' ? highchartsDefaultValues.getDefaultAllSeriesAccessibilitySettings() : []
 }
 
 export const getColumnId = (widgetColumnName: string) => {
@@ -84,31 +67,8 @@ const createChartModel = (widget: any) => {
 }
 
 const getFormattedSerieLabelsSettings = (widget: any) => {
-    // TODO
     const formattedSerieSettings =
-        widget.content.chartTemplate.CHART.type !== 'PIE'
-            ? [
-                {
-                    names: ['all'],
-                    label: {
-                        enabled: false,
-                        style: {
-                            fontFamily: '',
-                            fontSize: '',
-                            fontWeight: '',
-                            color: '',
-                        },
-                        backgroundColor: '',
-                        prefix: '',
-                        suffix: '',
-                        scale: 'empty',
-                        precision: 2,
-                        absolute: false,
-                        percentage: false
-                    }
-                }
-            ]
-            : ([] as IHighchartsSeriesLabelsSetting[])
+        widget.content.chartTemplate.CHART.type !== 'PIE' ? highchartsDefaultValues.getDefaultSerieLabelSettings() : ([] as IHighchartsSeriesLabelsSetting[])
     if (widget.content.chartTemplate.CHART.VALUES.SERIE && widget.content.chartTemplate.CHART.VALUES.SERIE[0]) {
         const oldModelSerie = widget.content.chartTemplate.CHART.VALUES.SERIE[0]
         formattedSerieSettings.push({

@@ -107,8 +107,6 @@ export default defineComponent({
                 this.widgetModel.columns.splice(index, 1)
                 if (column.id === this.selectedColumn?.id) this.selectedColumn = null
                 this.removeColumnFromColumnTableItems(column)
-                // TODO - if needed
-                // removeSerieFromWidgetModel(this.widgetModel, column, 'chartJSPieChart')
                 emitter.emit('refreshWidgetWithData', this.widgetModel.id)
             }
         },
