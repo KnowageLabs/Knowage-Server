@@ -484,6 +484,10 @@ public class UserProfile implements IEngUserProfile {
 		toReturn.setRoles(new ArrayList());
 		toReturn.setAttributes(new HashMap());
 		toReturn.setFunctionalities(getSchedulerUserFunctionalities());
+		String[] roles = null;
+		SpagoBIUserProfile spagoBiUserProfile = new SpagoBIUserProfile(new HashMap(), getSchedulerUserFunctionalitiesAsArray(), new Boolean(false),
+				organization, roles, userUniqueIdentifier, userId, userId);
+		toReturn.setSpagoBIUserProfile(spagoBiUserProfile);
 		logger.debug("OUT");
 		return toReturn;
 	}
@@ -519,6 +523,22 @@ public class UserProfile implements IEngUserProfile {
 				"SelfServiceDatasetManagement", "SelfServiceMetaModelManagement", "SharedDevelopment", "StaticWidget", "SyncronizeRolesManagement",
 				"UserSaveDocumentFunctionality", "ViewMyFolderAdmin", "WorklistManagement", "WorkspaceManagement", "ReadRoles" };
 		return Arrays.asList(functionalities);
+	}
+
+	private static String[] getSchedulerUserFunctionalitiesAsArray() {
+		String[] functionalities = { "AlertManagement", "AnalyticalWidget", "ArtifactCatalogueManagement", "ChartWidget", "CkanIntegrationFunctionality",
+				"ConstraintManagement", "ConstraintView", "CreateChartFunctionality", "CreateCockpitFunctionality", "CreateDatasetsAsFinalUser",
+				"DatasetManagement", "DataSourceBigData", "DataSourceManagement", "DataSourceRead", "DistributionListManagement", "DistributionListUser",
+				"DocumentAdministration", "DocumentAdminManagement", "DocumentDeleteManagement", "DocumentDetailManagement", "DocumentDevManagement",
+				"DocumentManagement", "DocumentMetadataManagement", "DocumentMoveDownState", "DocumentMoveUpState", "DocumentStateManagement",
+				"DocumentTestManagement", "DocumentUserManagement", "DomainWrite", "EventsManagement", "ExecuteCrossNavigation", "FederationDefinition",
+				"FunctionalitiesManagement", "FunctionsCatalogManagement", "GeoLayersManagement", "GisWebDesigner", "HotLinkManagement", "ImagesManagement",
+				"KpiManagement", "KpiSchedulation", "LovsManagement", "LovsView", "ManageCrossNavigation", "MapCatalogueManagement", "MenuManagement",
+				"MetaModelLifecycleManagement", "MetaModelsCatalogueManagement", "ModifyRefresh", "MultisheetCockpit", "NotifyContextBrokerAction",
+				"ParameterManagement", "ParameterView", "ProfileAttributeManagement", "ProfileManagement", "ReadEnginesManagement", "RegistryDataEntry",
+				"SelfServiceDatasetManagement", "SelfServiceMetaModelManagement", "SharedDevelopment", "StaticWidget", "SyncronizeRolesManagement",
+				"UserSaveDocumentFunctionality", "ViewMyFolderAdmin", "WorklistManagement", "WorkspaceManagement", "ReadRoles" };
+		return functionalities;
 	}
 
 	private static Collection getDataPreparationUserFunctionalities() {
