@@ -1,6 +1,5 @@
 <template>
     <div v-if="selectionModel" class="p-grid p-jc-center p-ai-center p-p-4">
-        {{ selectionModel }}
         <div class="p-col-12 p-grid">
             <div class="p-col-12 p-grid p-ai-center">
                 <div class="p-col-12 p-md-4 p-pt-4 p-pr-4">
