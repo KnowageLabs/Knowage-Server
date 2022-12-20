@@ -1,8 +1,8 @@
 import { hexToRgba } from '@/modules/documentExecution/dashboard/helpers/FormattingHelpers'
-import { HighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget'
+import { IHighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardIHighchartsPieChartWidget'
 import { IHighchartsOptions3D } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 
-export const updatePieChartModel = (oldModel: any, newModel: HighchartsPieChartModel) => {
+export const updatePieChartModel = (oldModel: any, newModel: IHighchartsPieChartModel) => {
     getFormatted3DConfiguration(oldModel, newModel)
     getFormattedNoDataConfiguration(oldModel, newModel)
     getFormattedLegend(oldModel, newModel)
@@ -13,7 +13,7 @@ export const updatePieChartModel = (oldModel: any, newModel: HighchartsPieChartM
     return newModel
 }
 
-const getFormatted3DConfiguration = (oldModel: any, newModel: HighchartsPieChartModel) => {
+const getFormatted3DConfiguration = (oldModel: any, newModel: IHighchartsPieChartModel) => {
     if (oldModel.CHART.show3D) {
         if (newModel.plotOptions.pie) newModel.plotOptions.pie.depth = oldModel.CHART.depth
         newModel.chart.options3d = {
@@ -25,7 +25,7 @@ const getFormatted3DConfiguration = (oldModel: any, newModel: HighchartsPieChart
     }
 }
 
-const getFormattedNoDataConfiguration = (oldModel: any, newModel: HighchartsPieChartModel) => {
+const getFormattedNoDataConfiguration = (oldModel: any, newModel: IHighchartsPieChartModel) => {
     if (oldModel.CHART.EMPTYMESSAGE) {
         newModel.lang.noData = oldModel.CHART.EMPTYMESSAGE.text
         newModel.noData.position = oldModel.CHART.EMPTYMESSAGE.position ? { align: oldModel.CHART.EMPTYMESSAGE.position.align, verticalAlign: oldModel.CHART.EMPTYMESSAGE.position.verticalAlign } : { align: '', verticalAlign: '' }
@@ -42,14 +42,14 @@ const getFormattedNoDataConfiguration = (oldModel: any, newModel: HighchartsPieC
     }
 }
 
-const getFormattedSeries = (oldModel: any, newModel: HighchartsPieChartModel) => {
+const getFormattedSeries = (oldModel: any, newModel: IHighchartsPieChartModel) => {
     if (oldModel.CHART.VALUES.SERIE) {
         const serie = oldModel.CHART.VALUES.SERIE[0]
         newModel.series.push(createSerie(serie.name, serie.groupingFunction))
     }
 }
 
-const getFormattedLegend = (oldModel: any, newModel: HighchartsPieChartModel) => {
+const getFormattedLegend = (oldModel: any, newModel: IHighchartsPieChartModel) => {
     if (oldModel.CHART.LEGEND) {
         newModel.legend = {
             enabled: oldModel.CHART.LEGEND.show,
@@ -69,7 +69,7 @@ const getFormattedLegend = (oldModel: any, newModel: HighchartsPieChartModel) =>
     }
 }
 
-const getForamttedLabels = (oldModel: any, newModel: HighchartsPieChartModel) => {
+const getForamttedLabels = (oldModel: any, newModel: IHighchartsPieChartModel) => {
     if (oldModel.CHART.VALUES.SERIE && oldModel.CHART.VALUES.SERIE[0] && oldModel.CHART.VALUES.SERIE[0].dataLabels && newModel.plotOptions.pie) {
         const oldDataLabelsSettings = oldModel.CHART.VALUES.SERIE[0].dataLabels
         newModel.plotOptions.pie.dataLabels = {
@@ -87,7 +87,7 @@ const getForamttedLabels = (oldModel: any, newModel: HighchartsPieChartModel) =>
     }
 }
 
-const getFormattedTooltipSettings = (oldModel: any, newModel: HighchartsPieChartModel) => {
+const getFormattedTooltipSettings = (oldModel: any, newModel: IHighchartsPieChartModel) => {
     if (oldModel.CHART.VALUES.SERIE && oldModel.CHART.VALUES.SERIE[0] && oldModel.CHART.VALUES.SERIE[0].TOOLTIP) {
         const oldTooltipSettings = oldModel.CHART.VALUES.SERIE[0].TOOLTIP
         newModel.tooltip = {

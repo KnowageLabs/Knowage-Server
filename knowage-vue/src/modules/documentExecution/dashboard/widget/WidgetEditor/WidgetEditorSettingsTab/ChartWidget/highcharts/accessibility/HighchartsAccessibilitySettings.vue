@@ -38,7 +38,7 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget } from '../../../../../../Dashboard'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
-import { HighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget'
+import { IHighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardIHighchartsPieChartWidget'
 import descriptor from '../HighchartsWidgetSettingsDescriptor.json'
 import InputSwitch from 'primevue/inputswitch'
 import MultiSelect from 'primevue/multiselect'
@@ -51,7 +51,7 @@ export default defineComponent({
     data() {
         return {
             descriptor,
-            model: null as HighchartsPieChartModel | null,
+            model: null as IHighchartsPieChartModel | null,
             getTranslatedLabel
         }
     },

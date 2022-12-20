@@ -5,7 +5,7 @@
             :widgetModel="widgetModel"
             :items="columnTableItems['ATTRIBUTES'] ?? []"
             :settings="{ ...commonDescriptor.columnTableSettings, ...highchartDescriptor.pieChartcolumnTableSettings[0] }"
-            chartType="highchartsPieChart"
+            chartType="IHighchartsPieChart"
             @rowReorder="onColumnsReorder"
             @itemAdded="onColumnAdded"
             @itemUpdated="onColumnItemUpdate"
@@ -17,7 +17,7 @@
             :widgetModel="widgetModel"
             :items="columnTableItems['MEASURES'] ?? []"
             :settings="{ ...commonDescriptor.columnTableSettings, ...highchartDescriptor.pieChartcolumnTableSettings[1] }"
-            chartType="highchartsPieChart"
+            chartType="IHighchartsPieChart"
             @itemAdded="onColumnAdded"
             @itemUpdated="onColumnItemUpdate"
             @itemSelected="setSelectedColumn"
@@ -108,7 +108,7 @@ export default defineComponent({
                 this.widgetModel.columns.splice(index, 1)
                 if (column.id === this.selectedColumn?.id) this.selectedColumn = null
                 this.removeColumnFromColumnTableItems(column)
-                removeSerieFromWidgetModel(this.widgetModel, column, 'highchartsPieChart')
+                removeSerieFromWidgetModel(this.widgetModel, column, 'IHighchartsPieChart')
                 emitter.emit('refreshWidgetWithData', this.widgetModel.id)
             }
         },

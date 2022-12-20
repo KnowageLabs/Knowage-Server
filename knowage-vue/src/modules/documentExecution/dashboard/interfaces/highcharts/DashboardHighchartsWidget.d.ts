@@ -1,11 +1,11 @@
 import { IWidgetInteractions, IWidgetResponsive } from "../../Dashboard";
-import { HighchartsPieChart } from "../../widget/ChartWidget/classes/highcharts/KnowageHighchartsPieChart";
-import { HighchartsPieChartModel } from "./DashboardHighchartsPieChartWidget";
+import { IHighchartsPieChart } from "../../widget/ChartWidget/classes/highcharts/KnowageIHighchartsPieChart";
+import { IHighchartsPieChartModel } from "./DashboardIHighchartsPieChartWidget";
 
 export interface IHighchartsWidgetSettings {
     updatable: boolean,
     clickable: boolean,
-    chartModel: HighchartsPieChart | null,
+    chartModel: IHighchartsPieChart | null,
     configuration: IHighchartsWidgetConfiguration,
     accesssibility: IHighchartsWidgetAccessibility,
     series: IIHighchartsSeriesSetting,
@@ -82,7 +82,7 @@ export interface IHighchartsChartModel {
     series: IHighchartsChartSerie[],
     settings: IIHighchartsChartModelSettings,
     plotOptions: {
-        pie?: IHighchartsPieChartPlotOptions,
+        pie?: IIHighchartsPieChartPlotOptions,
         series?: { events: any }
     },
     legend: IHighchartsLegend,
@@ -123,16 +123,16 @@ export interface IHighchartsAccessibilitySettings {
     }
 }
 
-export interface IHighchartsPieChartPlotOptions {
+export interface IIHighchartsPieChartPlotOptions {
     showInLegend: boolean,
     depth: number,
     allowPointSelect: boolean,
     cursor: string,
-    dataLabels: IHighchartsPieChartDataLabels,
+    dataLabels: IIHighchartsPieChartDataLabels,
     colors: string[]
 }
 
-export interface IHighchartsPieChartDataLabels {
+export interface IIHighchartsPieChartDataLabels {
     enabled: boolean,
     distance: number,
     style: {
@@ -169,7 +169,7 @@ export interface IHighchartsChartSerieData {
     y: number,
     sliced?: boolean,
     selected?: boolean,
-    dataLabels?: IHighchartsPieChartDataLabels
+    dataLabels?: IIHighchartsPieChartDataLabels
 }
 
 export interface IIHighchartsChartModelSettings {
