@@ -33,7 +33,7 @@ import { IDataset, IWidget, IWidgetColumn } from '@/modules/documentExecution/Da
 import { emitter } from '../../../../../DashboardHelpers'
 import { removeSerieFromWidgetModel } from '../../../helpers/chartWidget/highcharts/HighchartsDataTabHelpers'
 import descriptor from '../../TableWidget/TableWidgetDataDescriptor.json'
-import highchartDescriptor from './HighchartsWidgetDataContainerDescriptor.json'
+import highchartDescriptor from './HighchartsDataContainerDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import commonDescriptor from '../../common/WidgetCommonDescriptor.json'
 import WidgetEditorColumnTable from '../../common/WidgetEditorColumnTable.vue'
