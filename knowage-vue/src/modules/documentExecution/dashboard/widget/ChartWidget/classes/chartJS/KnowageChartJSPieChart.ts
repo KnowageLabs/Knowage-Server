@@ -6,7 +6,6 @@ import deepcopy from 'deepcopy'
 export class ChartJSPieChart extends KnowageChartJS {
     constructor(model: any) {
         super()
-        console.log(">>>>>>> CREATING MODEL IN CONSTRUCTOR FROM MODEL: ", deepcopy(model))
         if (model && model.CHART) this.updateModel(deepcopy(model))
         else if (model) this.model = deepcopy(model)
         this.model.chart.type = 'pie'

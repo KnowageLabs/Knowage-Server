@@ -74,7 +74,6 @@ const formatVariablesForSave = (dashboardConfiguration: IDashboardConfiguration)
 }
 
 export const formatNewModel = async (dashboard: IDashboard, datasets: IDataset[], $http: any) => {
-    console.log(">>>>>>>>> FORMAT NEW MODEL: ", dashboard)
     for (let i = 0; i < dashboard.configuration.variables.length; i++) {
         if (dashboard.configuration.variables[i].type === 'dataset') await setVariableValueFromDataset(dashboard.configuration.variables[i], datasets, $http)
     }

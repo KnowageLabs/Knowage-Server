@@ -54,17 +54,6 @@ export class KnowageHighcharts {
         document.dispatchEvent(myCustomEvent);
     }
 
-    // TODO
-    valueFormatter = (value: any, type: string) => {
-        console.log(">>>>>>> valueFormatter - value: ", value, ', type: ', type)
-        switch (type) {
-            case 'float':
-                new Intl.NumberFormat('it-IT', { notation: 'compact', minimumFractionDigits: 2, maximumFractionDigits: 2, }).format(value)
-        }
-    }
-
-
-
     createNewChartModel = () => {
         return {
             title: '',

@@ -1,11 +1,4 @@
 <template>
-    <!-- <Pie :style="`flex: 1; position: relative`" :chart-options="chartOptions" :chart-data="chartData" :chart-id="'pie-chart'" :dataset-id-key="'label'" /> -->
-    {{ 'CHART MODEL' }}
-    {{ chartModel?.options?.plugins }}
-    <br />
-    {{ 'widgetModel.settings.chartModel.model' }}
-    {{ widgetModel.settings.chartModel.model.options?.plugins }}
-    <br />
     <Pie :style="myStyles" :chart-options="chartOptions" :chart-data="chartData" :chart-id="'pie-chart'" :dataset-id-key="'label'" />
 </template>
 
@@ -14,12 +7,11 @@ import { defineComponent, PropType } from 'vue'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { Pie } from 'vue-chartjs'
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale } from 'chart.js'
-import { IWidget, IDataset, IWidgetColumn, ISelection } from '../../../Dashboard'
+import { IWidget, IWidgetColumn, ISelection } from '../../../Dashboard'
 import { IChartJSChartModel, IChartJSData, IChartJSOptions } from '../../../interfaces/chartJS/DashboardChartJSWidget'
 import { mapActions } from 'pinia'
 import { updateStoreSelections } from '../../interactionsHelpers/InteractionHelper'
 import store from '../../../Dashboard.store'
-import deepcopy from 'deepcopy'
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale)
 
@@ -71,10 +63,6 @@ export default defineComponent({
         },
         onRefreshChart(chartModel: any = null) {
             this.chartModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.model : null
-            // this.chartModel = deepcopy(chartModel) ?? deepcopy(this.widgetModel.settings.chartModel.model)
-            // this.chartModel = chartModel
-            // console.log('>>>>>> CHART MODEL: ', chartModel)
-            // this.widgetModel.settings.chartModel.model = this.chartModel
             this.updateChartModel()
         },
         updateChartModel() {

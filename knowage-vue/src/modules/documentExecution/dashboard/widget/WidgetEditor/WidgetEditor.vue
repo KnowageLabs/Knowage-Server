@@ -133,8 +133,6 @@ export default defineComponent({
             const tempWidget = deepcopy(this.widget)
             if (!tempWidget) return
 
-            console.log('>>>>>> TEST model save: ', this.widget.settings.chartModel.model)
-
             if (tempWidget.new) {
                 delete tempWidget.new
                 this.dashboardStore.createNewWidget(this.dashboardId, tempWidget)
@@ -145,8 +143,6 @@ export default defineComponent({
             }
         },
         close() {
-            console.log('>>>>>>>>>>> WIDGET ON CLOSE: ', this.widget)
-            console.log('>>>>>> TEST model cancel: ', this.widget.settings.chartModel.model)
             this.$emit('close')
         },
         onSettingChanged(setting: string) {

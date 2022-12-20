@@ -149,8 +149,6 @@ export default defineComponent({
         },
         setDateDisplayValue(driver: IDashboardDatasetDriver) {
             if (!driver.parameterValue[0] || !driver.parameterValue[0].value) return ''
-
-            // TODO - See if we need this after we remove the mocked drivers
             const tempDate = new Date(driver.parameterValue[0].value)
             driver.displayDate = luxonFormatDate(tempDate, undefined, undefined)
         },
@@ -159,7 +157,6 @@ export default defineComponent({
             this.selectedDriver = null
         },
         async onUpdateDriver(driver: IDashboardDatasetDriver) {
-            // console.log('>>>>>>>> ON UPDATE DRIVER: ', driver)
             this.driversDialogVisible = false
             if (driver.type === 'DATE') this.setDateDisplayValue(driver)
             await updateDataDependency(this.selectedDatasetProp.formattedDrivers, driver, this.documentDriversProp, this.user, this.$http)

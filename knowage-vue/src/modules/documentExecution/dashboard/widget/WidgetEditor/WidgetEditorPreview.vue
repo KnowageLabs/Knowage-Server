@@ -90,7 +90,6 @@ export default defineComponent({
         loadWebComponentData() {},
         async getWidgetData() {
             this.loading = true
-            console.log('PREVIEW PROP WIDGET', this.propWidget)
             this.widgetData = await getWidgetData(this.propWidget, this.datasets, this.$http, false, this.activeSelections)
             this.activeSelections = deepcopy(this.getSelections(this.dashboardId))
             this.loading = false

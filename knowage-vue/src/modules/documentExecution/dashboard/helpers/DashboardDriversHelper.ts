@@ -2,7 +2,6 @@ import { iParameter } from "@/components/UI/KnParameterSidebar/KnParameterSideba
 import { IDashboard, IDashboardDatasetDriver, IDashboardDriver, IDashboardDataset } from "../Dashboard";
 
 export const loadDrivers = (filtersData: { filterStatus: iParameter[]; isReadyForExecution: boolean }, dashboardModel: IDashboard) => {
-    console.log("dashboardModel: ", dashboardModel)
     const dataset = datasetWithDriversExists(dashboardModel)
     if (dataset && dataset.drivers) {
         updateDatasetDrivers(dataset, filtersData)

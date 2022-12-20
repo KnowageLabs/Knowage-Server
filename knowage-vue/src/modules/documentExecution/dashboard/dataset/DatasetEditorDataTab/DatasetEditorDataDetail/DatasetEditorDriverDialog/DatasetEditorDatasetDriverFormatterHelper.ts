@@ -4,11 +4,8 @@ import moment from "moment"
 
 export const getFormattedDatasetDrivers = (dataset: any) => {
     if (!dataset.drivers || dataset.drivers.length === 0) return []
-    // console.log("---------------------- DATASET DRIVERS: ", dataset.drivers)
     const formattedDrivers = [] as IDashboardDatasetDriver[]
     dataset.drivers.forEach((driver: any) => formattedDrivers.push(getFormattedDatasetDriver(driver)))
-
-    // console.log("---------------------- FORMATTED DRIVERS: ", formattedDrivers)
     formattedDrivers.forEach((formattedDriver: IDashboardDatasetDriver) => setDataDependency(formattedDriver, formattedDrivers))
     return formattedDrivers
 }
