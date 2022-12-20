@@ -190,7 +190,7 @@ export const getVariableData = async (variable: IVariable, datasets: IDataset[],
 }
 
 const getVariableDatasetLabel = (variable: IVariable, datasets: IDataset[]) => {
-    var datasetIndex = datasets.findIndex((dataset: IDataset) => variable.dataset === dataset.id.dsId)
+    var datasetIndex = datasets.findIndex((dataset: IDataset) => variable.dataset === dataset.id)
     return datasetIndex !== -1 ? datasets[datasetIndex] : null
 }
 //#endregion ================================================================================================
@@ -296,7 +296,7 @@ export const getSelectorWidgetData = async (widget: IWidget, datasets: IDashboar
 
 //#region ===================== Text & HTML Widget ====================================================
 export const getTextWidgetData = async (widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
-    var datasetIndex = datasets.findIndex((dataset: any) => widget.dataset === dataset.id.dsId)
+    var datasetIndex = datasets.findIndex((dataset: any) => widget.dataset === dataset.id)
     var selectedDataset = datasets[datasetIndex]
 
     if (selectedDataset && widget.settings.editor.text) {
@@ -340,7 +340,7 @@ export const getTextWidgetData = async (widget: IWidget, datasets: IDashboardDat
 }
 
 export const getHtmlWidgetData = async (widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
-    var datasetIndex = datasets.findIndex((dataset: any) => widget.dataset === dataset.id.dsId)
+    var datasetIndex = datasets.findIndex((dataset: any) => widget.dataset === dataset.id)
     var selectedDataset = datasets[datasetIndex]
 
     if (selectedDataset && widget.settings.editor.html) {
