@@ -1,5 +1,5 @@
 import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard"
-import { IHighchartsPieChart } from "../../../../ChartWidget/classes/highcharts/KnowageIHighchartsPieChart"
+import { KnowageHighchartsPieChart } from "../../../../ChartWidget/classes/highcharts/KnowageHighchartsPieChart"
 import { IHighchartsWidgetSettings } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
 import * as widgetCommonDefaultValues from '../../common/WidgetCommonDefaultValues'
 import * as  highchartsDefaultValues from "../highcharts/HighchartsDefaultValues"
@@ -34,7 +34,7 @@ export const createNewHighchartsSettings = () => {
 }
 
 export const formatHighchartsWidget = (widget: IWidget) => {
-    widget.settings.chartModel = new IHighchartsPieChart(widget.settings.chartModel)
+    widget.settings.chartModel = new KnowageHighchartsPieChart(widget.settings.chartModel)
 
 }
 
@@ -42,7 +42,7 @@ export const formatHighchartsWidget = (widget: IWidget) => {
 export const createNewHighchartsModel = (chartType: string) => {
     switch (chartType) {
         case 'pie':
-            return new IHighchartsPieChart(null)
+            return new KnowageHighchartsPieChart(null)
         default:
             return null
     }

@@ -3,7 +3,7 @@ import { updatePieChartModel } from './updater/KnowageChartJSUpdater'
 import { KnowageChartJS } from './KnowageChartJS'
 import deepcopy from 'deepcopy'
 
-export class ChartJSPieChart extends KnowageChartJS {
+export class KnowageChartJSPieChart extends KnowageChartJS {
     constructor(model: any) {
         super()
         if (model && model.CHART) this.updateModel(deepcopy(model))

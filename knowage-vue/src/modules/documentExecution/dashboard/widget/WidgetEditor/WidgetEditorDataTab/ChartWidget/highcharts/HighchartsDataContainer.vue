@@ -1,19 +1,19 @@
 <template>
     <div v-if="widgetModel">
         <ChartWidgetChartTypeDropdown :widgetModel="widgetModel"></ChartWidgetChartTypeDropdown>
-        <IHighchartsPieChartDataContainer :widgetModel="widgetModel" :selectedDataset="selectedDataset"></IHighchartsPieChartDataContainer>
+        <HighchartsPieChartDataContainer :widgetModel="widgetModel" :selectedDataset="selectedDataset"></HighchartsPieChartDataContainer>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IDataset, IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
-import IHighchartsPieChartDataContainer from './IHighchartsPieChartDataContainer.vue'
+import HighchartsPieChartDataContainer from './HighchartsPieChartDataContainer.vue'
 import ChartWidgetChartTypeDropdown from '../common/ChartWidgetChartTypeDropdown.vue'
 
 export default defineComponent({
     name: 'highcharts-widget-data-container',
-    components: { ChartWidgetChartTypeDropdown, IHighchartsPieChartDataContainer },
+    components: { ChartWidgetChartTypeDropdown, HighchartsPieChartDataContainer },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedDataset: { type: Object as PropType<IDataset | null> } },
     data() {
         return {}

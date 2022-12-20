@@ -1,6 +1,5 @@
 import { IWidget, IWidgetColumn } from "@/modules/documentExecution/dashboard/Dashboard";
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
-import deepcopy from "deepcopy";
 
 export const addHighchartsColumnToTable = (tempColumn: IWidgetColumn, rows: IWidgetColumn[], chartType: string | undefined, attributesOnly: boolean, measuresOnly: boolean, widgetModel: IWidget) => {
     let mode = ''

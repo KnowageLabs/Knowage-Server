@@ -2,7 +2,7 @@ import { IWidget, IWidgetExports, IWidgetInteractions } from "../../../Dashboard
 import { IChartJSWidgetConfiguration, IChartJSWidgetSettings } from "../../../interfaces/chartJS/DashboardChartJSWidget"
 import { getFormattedInteractions } from "../../common/WidgetInteractionsHelper"
 import { getFormattedStyle } from "./ChartJSWidgetStyleHelper"
-import { ChartJSPieChart } from "../../../widget/ChartWidget/classes/chartJS/KnowageChartJSPieChart"
+import { KnowageChartJSPieChart } from "../../../widget/ChartWidget/classes/chartJS/KnowageChartJSPieChart"
 import * as widgetCommonDefaultValues from '../../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import { getFormattedColorSettings, getFormattedWidgetColumns } from "../CommonChartCompatibilityHelper"
 import { getFiltersForColumns } from "../../DashboardBackwardCompatibilityHelper"
@@ -52,7 +52,7 @@ const getFormattedConfiguration = (widget: any) => {
 const createChartModel = (widget: any) => {
     switch (widget.content.chartTemplate.CHART.type) {
         case 'PIE':
-            return new ChartJSPieChart(widget.content.chartTemplate)
+            return new KnowageChartJSPieChart(widget.content.chartTemplate)
         default:
             return null
     }

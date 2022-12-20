@@ -1,5 +1,5 @@
 import { hexToRgba } from '@/modules/documentExecution/dashboard/helpers/FormattingHelpers'
-import { IHighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardIHighchartsPieChartWidget'
+import { IHighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget'
 import { IHighchartsOptions3D } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 
 export const updatePieChartModel = (oldModel: any, newModel: IHighchartsPieChartModel) => {
