@@ -194,8 +194,6 @@ export default defineComponent({
             schedulerTimingOutputOutputTabDescriptor,
             document: null as any,
             drivers: [],
-            subjectDirty: false,
-            mailTextDirty: false,
             fixedRecipientsListDirty: false,
             expressionDirty: false,
             datasetLabelDirty: false,
