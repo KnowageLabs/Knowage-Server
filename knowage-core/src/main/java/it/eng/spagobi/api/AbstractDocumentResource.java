@@ -27,6 +27,8 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.clerezza.jaxrs.utils.form.FormFile;
 import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -43,6 +45,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
+
+	private static final Logger LOGGER = LogManager.getLogger(AbstractDocumentResource.class);
 
 	public Response insertDocument(String body) {
 		BIObject document = (BIObject) JsonConverter.jsonToValidObject(body, BIObject.class);
@@ -77,7 +81,7 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 			encodedLabel = encodedLabel.replaceAll("\\+", "%20");
 			return Response.created(new URI("1.0/documents/" + encodedLabel)).build();
 		} catch (Exception e) {
-			logger.error("Error while creating url of the new resource", e);
+			LOGGER.error("Error while creating url of the new resource", e);
 			throw new SpagoBIRuntimeException("Error while creating url of the new resource", e);
 		}
 	}
@@ -100,10 +104,10 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 		} catch (SpagoBIRuntimeException e) {
 			throw e;
 		} catch (EMFInternalError e) {
-			logger.error("Error while looking for authorizations", e);
+			LOGGER.error("Error while looking for authorizations", e);
 			throw new SpagoBIRuntimeException("Error while looking for authorizations", e);
 		} catch (Exception e) {
-			logger.error("Error while converting document in Json", e);
+			LOGGER.error("Error while converting document in Json", e);
 			throw new SpagoBIRuntimeException("Error while converting document in Json", e);
 		}
 
@@ -139,7 +143,7 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 				CockpitStatisticsTablesUtils.deleteCockpitWidgetsTable(document, HibernateSessionManager.getCurrentSession());
 				DAOFactory.getBIObjectDAO().eraseBIObject(document, null);
 			} catch (EMFUserError e) {
-				logger.error("Error while deleting the specified document", e);
+				LOGGER.error("Error while deleting the specified document", e);
 				throw new SpagoBIRuntimeException("Error while deleting the specified document", e);
 			}
 
@@ -154,10 +158,10 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 			Integer id = Integer.parseInt(labelOrId);
 			documentIdentifier = id;
 		} catch (NumberFormatException e) {
-			logger.debug("Cannot parse input parameter [" + labelOrId + "] as an integer");
+			LOGGER.debug("Cannot parse input parameter [{}] as an integer", labelOrId);
 			documentIdentifier = labelOrId;
 		}
-		logger.debug("Document identifier [" + documentIdentifier + "]");
+		LOGGER.debug("Document identifier [{}]", documentIdentifier);
 		return documentIdentifier;
 	}
 
@@ -180,7 +184,7 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 		try {
 			rb = Response.ok(template.getContent());
 		} catch (Exception e) {
-			logger.error("Error while getting document template", e);
+			LOGGER.error("Error while getting document template", e);
 			throw new SpagoBIRuntimeException("Error while getting document template", e);
 		}
 
@@ -217,7 +221,7 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 		} catch (SpagoBIRuntimeException e) {
 			throw e;
 		} catch (Exception e) {
-			logger.error("Error while getting the template", e);
+			LOGGER.error("Error while getting the template", e);
 			throw new SpagoBIRuntimeException("Error while getting the template", e);
 		}
 
@@ -241,11 +245,11 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 				templateDAO.setPreviousTemplateActive(document.getId(), template.getId());
 				templateDAO.deleteBIObjectTemplate(template.getId());
 			} else {
-				logger.debug("Document with label [" + documentLabel + "] has no active template, nothing to delete...");
+				LOGGER.debug("Document with label [{}] has no active template, nothing to delete...", documentLabel);
 			}
 
 		} catch (Exception e) {
-			logger.error("Error with deleting current template for document with label: " + documentLabel, e);
+			LOGGER.error("Error with deleting current template for document with label: {}", documentLabel, e);
 			throw new SpagoBIRestServiceException("Error with deleting template for document with label: " + documentLabel, buildLocaleFromSession(), e);
 		}
 		return Response.ok().build();
@@ -270,7 +274,7 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 			templateDAO.deleteBIObjectTemplate(templateId);
 
 		} catch (Exception e) {
-			logger.error("Error with deleting template with id: " + templateId, e);
+			LOGGER.error("Error with deleting template with id: {}", templateId, e);
 			throw new SpagoBIRestServiceException("Error with deleting template with id: " + templateId, buildLocaleFromSession(), e);
 		}
 		return Response.ok().build();

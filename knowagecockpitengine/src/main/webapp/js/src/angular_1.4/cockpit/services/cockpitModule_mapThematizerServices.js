@@ -512,13 +512,13 @@
 
 			var prefix = "";
 			var suffix = "";
-			var precision = 1;
+			var precision = 6;
 
 			if (style && style.format && style.format.precision) precision = style.format.precision;
 			if (style && style.format && style.format.prefix) prefix = style.format.prefix;
 			if (style && style.format && style.format.suffix) suffix = style.format.suffix;
 
-			var decimalFormatted = val.toFixed(precision);
+			var decimalFormatted = val.toFixed(precision).replace(/0{0,6}$/, "").replace(/\.0?$/, "");
 			var localeFormatted = decimalFormatted.toLocaleString(sbiModule_config.curr_language);
 			return prefix + localeFormatted + suffix;
 		}

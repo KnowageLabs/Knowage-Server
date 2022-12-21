@@ -28,6 +28,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -71,6 +73,8 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/businessModelOpening")
 public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
+
+	private static final Logger LOGGER = LogManager.getLogger(BusinessModelOpenParameters.class);
 
 	public static final String SERVICE_NAME = "GET BUSINESS MODEL PARAMETERS ";
 
@@ -417,7 +421,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 				jsonObj.put("result", obj);
 			}
 		} catch (JSONException e) {
-			logger.error("Error build Json Result Business Model Open Parameter : " + e.getMessage());
+			LOGGER.error("Error build Json Result Business Model Open Parameter", e);
 		}
 
 		return jsonObj;
@@ -500,7 +504,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 	public Response getBusinessModelExecutionFilters(@Context HttpServletRequest req)
 			throws BusinessModelExecutionException, EMFUserError, IOException, JSONException {
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		RequestContainer aRequestContainer = RequestContainerAccess.getRequestContainer(req);
 		JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
@@ -604,9 +608,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 
 							}
 						} catch (UnsupportedEncodingException e) {
-							// TODO Auto-generated catch block
-							// e.printStackTrace();
-							logger.debug("An error occured while decoding parameter with value[" + itemVal + "]" + e);
+							LOGGER.debug("An error occured while decoding parameter with value[{}]", itemVal, e);
 						}
 					}
 				} else if (paramValues instanceof String) {
@@ -667,7 +669,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 					ArrayList<HashMap<String, Object>> defaultValues = manageDataRange(businessModel, role, objParameter.getId());
 					parameterAsMap.put("defaultValues", defaultValues);
 				} catch (SerializationException e) {
-					logger.debug("Filters DATE RANGE ERRORS ", e);
+					LOGGER.debug("Filters DATE RANGE ERRORS ", e);
 				}
 
 			}
@@ -783,7 +785,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 
 		resultAsMap.put("isReadyForExecution", isReadyForExecution(parameters));
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return Response.ok(resultAsMap).build();
 	}
 
@@ -845,7 +847,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 				sessionParametersMap.put(key, parJson);
 			}
 		} catch (Exception e) {
-			logger.error("Error converting session parameters to JSON: ", e);
+			LOGGER.error("Error converting session parameters to JSON", e);
 		}
 
 		return sessionParametersMap;
@@ -857,7 +859,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 		List<BIMetaModelParameter> parameters = businessModel.getDrivers();
 		for (BIMetaModelParameter parameter : parameters) {
 			if (crossNavigationParametesMap.has(parameter.getParameterUrlName())) {
-				logger.debug("Found value from request for parmaeter [" + parameter.getParameterUrlName() + "]");
+				LOGGER.debug("Found value from request for parmaeter [{}]", parameter.getParameterUrlName());
 				dum.refreshParameterForFilters(parameter, crossNavigationParametesMap);
 				parsFromCross.add(parameter.getParameterUrlName());
 				continue;
@@ -893,7 +895,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 	private DefaultValuesList buildParameterSessionValueList(String sessionParameterValue, String sessionParameterDescription,
 			BIMetaModelParameter metaModelParameter) {
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		DefaultValuesList valueList = new DefaultValuesList();
 
@@ -916,7 +918,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 				valueList.add(valueDef);
 				return valueList;
 			} catch (ParseException e) {
-				logger.error("Error while building default Value List Date Type ", e);
+				LOGGER.error("Error while building default Value List Date Type ", e);
 				return null;
 			}
 		} else if (metaModelParameter.getParameter().getType().equals("DATE_RANGE")) {
@@ -938,13 +940,13 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 				valueList.add(valueDef);
 				return valueList;
 			} catch (ParseException e) {
-				logger.error("Error while building default Value List Date Type ", e);
+				LOGGER.error("Error while building default Value List Date Type ", e);
 				return null;
 			}
 		}
 
 		else if (metaModelParameter.isMultivalue()) {
-			logger.debug("Multivalue case");
+			LOGGER.debug("Multivalue case");
 			try {
 				// split sessionValue
 				JSONArray valuesArray = new JSONArray(sessionParameterValue);
@@ -975,11 +977,11 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 				}
 
 			} catch (Exception e) {
-				logger.error("Error in converting multivalue session values", e);
+				LOGGER.error("Error in converting multivalue session values", e);
 			}
 
 		} else {
-			logger.debug("NOT - multivalue case");
+			LOGGER.debug("NOT - multivalue case");
 			// value could be String or array
 
 			try {
@@ -999,11 +1001,11 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 				valueList.add(valueDef);
 
 			} catch (Exception e) {
-				logger.error("Error in converting single value session values", e);
+				LOGGER.error("Error in converting single value session values", e);
 			}
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return valueList;
 	}
 
@@ -1046,7 +1048,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 
 		try {
 			if (DateRangeDAOUtilities.isDateRange(biMetaModelParameter)) {
-				logger.debug("loading date range combobox");
+				LOGGER.debug("loading date range combobox");
 
 			}
 		} catch (Exception e) {
@@ -1103,7 +1105,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 			List values = parameter.getDriver().getParameterValues();
 			// if parameter is mandatory and has no value, execution cannot start automatically
 			if (parameter.isMandatory() && (values == null || values.isEmpty())) {
-				logger.debug("Parameter [" + parameter.getId() + "] is mandatory but has no values. Execution cannot start automatically");
+				LOGGER.debug("Parameter [{}] is mandatory but has no values. Execution cannot start automatically", parameter.getId());
 				return false;
 			}
 		}
@@ -1183,7 +1185,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 			resultAsMap.put("errors", errorList);
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return Response.ok(resultAsMap).build();
 	}
 

@@ -17,6 +17,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,6 +40,8 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 @ManageAuthorization
 public class DocumentExecutionViewpoint extends AbstractSpagoBIResource {
 
+	private static final Logger LOGGER = LogManager.getLogger(DocumentExecutionViewpoint.class);
+
 	// request parameters
 	private static final String NAME = "NAME";
 	private static final String DESCRIPTION = "DESCRIPTION";
@@ -51,7 +55,7 @@ public class DocumentExecutionViewpoint extends AbstractSpagoBIResource {
 	@Path("/addViewpoint")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response addViewpoint(@Context HttpServletRequest req) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
 		List errorList = new ArrayList<>();
 		String viewpointOwner;
@@ -80,8 +84,8 @@ public class DocumentExecutionViewpoint extends AbstractSpagoBIResource {
 			BIObject obj;
 			try {
 				obj = DriversRuntimeLoaderFactory.getDriversRuntimeLoader().loadBIObjectForExecutionByLabelAndRole(label, role);
-				logger.debug("User: [" + ((UserProfile) userProfile).getUserId() + "]");
-				logger.debug("Document Id:  [" + obj.getId() + "]");
+				LOGGER.debug("User: [{}]", ((UserProfile) userProfile).getUserId());
+				LOGGER.debug("Document Id:  [{}]", obj.getId());
 				viewpointOwner = (String) ((UserProfile) userProfile).getUserId();
 				Iterator it = viewpointJSON.keys();
 				Assert.assertTrue(it.hasNext(), "Viewpoint's content cannot be empty");
@@ -98,7 +102,7 @@ public class DocumentExecutionViewpoint extends AbstractSpagoBIResource {
 				if (viewpointString.endsWith("%26")) {
 					viewpointString = viewpointString.substring(0, viewpointString.length() - 3);
 				}
-				logger.debug("Viewpoint's content will be saved on database as: [" + viewpointString + "]");
+				LOGGER.debug("Viewpoint's content will be saved on database as: [{}]", viewpointString);
 				viewpointDAO = DAOFactory.getViewpointDAO();
 				viewpoint = viewpointDAO.loadViewpointByNameAndBIObjectId(viewpointName, obj.getId());
 				Assert.assertTrue(viewpoint == null, "A viewpoint with the name [" + viewpointName + "] alredy exist");
@@ -143,17 +147,16 @@ public class DocumentExecutionViewpoint extends AbstractSpagoBIResource {
 		try {
 			obj = DriversRuntimeLoaderFactory.getDriversRuntimeLoader().loadBIObjectForExecutionByLabelAndRole(label, role);
 			biobjectId = obj.getId();
-			logger.debug("User: [" + ((UserProfile) userProfile).getUserId() + "]");
-			logger.debug("Document Id:  [" + biobjectId + "]");
+			LOGGER.debug("User: [{}]", ((UserProfile) userProfile).getUserId());
+			LOGGER.debug("Document Id:  [{}]", biobjectId);
 			try {
 				viewpointDAO = DAOFactory.getViewpointDAO();
 				viewpoints = viewpointDAO.loadAccessibleViewpointsByObjId(biobjectId, getUserProfile());
 			} catch (EMFUserError e) {
-				logger.error("Cannot load viewpoints for document [" + biobjectId + "]", e);
+				LOGGER.error("Cannot load viewpoints for document [{}]", biobjectId, e);
 				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot load viewpoints for document [" + biobjectId + "]", e);
 			}
-			logger.debug("Document [" + biobjectId + "] have " + (viewpoints == null ? "0" : "" + viewpoints.size()) + " valid viewpoints for user ["
-					+ ((UserProfile) userProfile).getUserId() + "]");
+			LOGGER.debug("Document [{}] have {} valid viewpoints for user [{}]", biobjectId, (viewpoints == null ? "0" : "" + viewpoints.size()), ((UserProfile) userProfile).getUserId());
 			resultAsMap.put("viewpoints", viewpoints);
 		} catch (EMFUserError e1) {
 			throw new SpagoBIServiceException(SERVICE_NAME, e1.getMessage());
@@ -188,7 +191,7 @@ public class DocumentExecutionViewpoint extends AbstractSpagoBIResource {
 					Assert.assertNotNull(viewpoint, "Viewpoint [" + ids[i] + "] does not exist on the database");
 					viewpointDAO.eraseViewpoint(viewpoint.getVpId());
 				} catch (EMFUserError e) {
-					logger.error("Impossible to delete viewpoint with name [" + ids[i] + "] already exists", e);
+					LOGGER.error("Impossible to delete viewpoint with name [{}] already exists", ids[i], e);
 					throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to delete viewpoint with name [" + ids[i] + "] already exists", e);
 				}
 			}

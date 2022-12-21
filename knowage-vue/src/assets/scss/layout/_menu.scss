@@ -5,3 +5,11 @@
         transform: translateX(var(--kn-mainmenu-width)) translateY(41px);
     }
 }
+
+.isMobileDevice {
+    .menu-scroll-content {
+        .p-scrollpanel-content {
+            width: 100%;
+        }
+    }
+}
