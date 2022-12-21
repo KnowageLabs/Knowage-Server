@@ -1,51 +1,51 @@
 <template>
-    <Accordion class="p-mb-3">
+    <Accordion class="p-mb-3 p-mr-3">
         <AccordionTab :header="$t('common.parameters')">
-            <div :style="descriptor.accordionOverflowDiv">
-                <!-- PARAMETERS ---------------- -->
-                <div v-for="(parameter, index) of selectedDatasetProp.parameters" :key="index" class="p-fluid p-formgrid p-grid">
-                    <div class="p-field p-col-12 p-lg-4">
-                        <span class="p-float-label">
-                            <InputText id="label" class="kn-material-input" type="text" :disabled="true" v-model="parameter.name" />
-                            <label for="label" class="kn-material-input-label"> {{ $t('common.parameter') }} </label>
-                        </span>
-                    </div>
-                    <div class="p-field p-col-12 p-lg-4">
-                        <span class="p-float-label">
-                            <Dropdown id="type" class="kn-material-input" :options="parameterTypes" v-model="parameter.modelType" />
-                            <label for="type" class="kn-material-input-label"> {{ $t('common.type') }}</label>
-                        </span>
-                    </div>
-                    <div class="p-field p-col-12 p-lg-4 p-d-flex">
-                        <span class="p-float-label kn-flex">
-                            <InputText id="label" class="kn-material-input" type="text" v-model="parameter.value" />
-                            <label for="label" class="kn-material-input-label"> {{ $t('common.value') }} </label>
-                        </span>
-                        <Button v-if="parameter.modelType === 'dynamic' && documentDriversProp && documentDriversProp.filterStatus.length > 0" icon="fa-solid fa-link" class="p-button-text p-button-rounded p-button-plain p-as-end" @click.stop="showMenu($event, parameter.name)" />
-                    </div>
+            <!-- PARAMETERS ---------------- -->
+            <div v-for="(parameter, index) of selectedDatasetProp.parameters" :key="index" class="p-fluid p-formgrid p-grid p-mx-2 p-mt-2">
+                <div class="p-field p-col-4">
+                    <span class="p-float-label">
+                        <InputText id="label" class="kn-material-input" type="text" :disabled="true" v-model="parameter.name" />
+                        <label for="label" class="kn-material-input-label"> {{ $t('common.parameter') }} </label>
+                    </span>
                 </div>
+                <div class="p-field p-col-4">
+                    <span class="p-float-label">
+                        <Dropdown id="type" class="kn-material-input" :options="parameterTypes" v-model="parameter.modelType" />
+                        <label for="type" class="kn-material-input-label"> {{ $t('common.type') }}</label>
+                    </span>
+                </div>
+                <div class="p-field p-d-flex p-col-4">
+                    <span class="p-float-label kn-flex">
+                        <InputText id="label" class="kn-material-input" type="text" v-model="parameter.value" />
+                        <label for="label" class="kn-material-input-label"> {{ $t('common.value') }} </label>
+                    </span>
+                    <Button v-if="parameter.modelType === 'dynamic' && documentDriversProp && documentDriversProp.filterStatus.length > 0" icon="fa-solid fa-link" class="p-button-text p-button-rounded p-button-plain p-as-end" @click.stop="showMenu($event, parameter.name)" />
+                </div>
+            </div>
 
-                <!-- DRIVERS ---------------- -->
-                <div v-for="(driver, index) of selectedDatasetProp.formattedDrivers" :key="index" class="p-field p-formgrid p-grid p-p-2">
-                    <div class="p-field p-col-12 p-lg-4">
-                        <span class="p-float-label">
-                            <InputText id="label" class="kn-material-input" :disabled="true" v-model="driver.label" />
-                            <label for="label" class="kn-material-input-label"> {{ $t('common.driver') }} </label>
-                        </span>
-                    </div>
-                    <div class="p-field p-col-12 p-lg-8 p-d-flex">
-                        <span class="p-float-label kn-flex">
-                            <InputText v-if="driver.type === 'DATE'" class="kn-material-input" v-model="driver.displayDate" :disabled="true" />
-                            <InputText v-else-if="!driver.multivalue || (driver.typeCode === 'MAN_IN' && (driver.type === 'NUM' || driver.type === 'STRING') && driver.parameterValue[0])" class="kn-material-input" v-model="driver.parameterValue[0].value as string" :disabled="true" />
-                            <Chips v-else v-model="driver.parameterValue" :disabled="true">
-                                <template #chip="slotProps">
-                                    <div>
-                                        <span>{{ slotProps.value.value }}</span>
-                                    </div>
-                                </template>
-                            </Chips>
-                            <label class="kn-material-input-label"> {{ $t('common.value') }} </label>
-                        </span>
+            <!-- DRIVERS ---------------- -->
+            <div v-for="(driver, index) of selectedDatasetProp.formattedDrivers" :key="index" class="p-fluid p-formgrid p-grid p-mx-2">
+                <div class="p-field p-col-4">
+                    <span class="p-float-label">
+                        <InputText id="label" class="kn-material-input" :disabled="true" v-model="driver.label" />
+                        <label for="label" class="kn-material-input-label"> {{ $t('common.driver') }} </label>
+                    </span>
+                </div>
+                <div class="p-field p-col-8 p-d-flex">
+                    <span class="p-float-label kn-flex">
+                        <InputText v-if="driver.type === 'DATE'" class="kn-material-input" v-model="driver.displayDate" :disabled="true" />
+                        <InputText v-else-if="!driver.multivalue || (driver.typeCode === 'MAN_IN' && (driver.type === 'NUM' || driver.type === 'STRING') && driver.parameterValue[0])" class="kn-material-input" v-model="driver.parameterValue[0].value as string" :disabled="true" />
+                        <Chips v-else v-model="driver.parameterValue" :disabled="true">
+                            <template #chip="slotProps">
+                                <div>
+                                    <span>{{ slotProps.value.value }}</span>
+                                </div>
+                            </template>
+                        </Chips>
+                        <label class="kn-material-input-label"> {{ $t('common.value') }} </label>
+                    </span>
+                    <div class="p-js-end">
                         <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain" @click.stop="openDriverDialog(driver)" />
                         <Button icon="fa fa-eraser" class="p-button-text p-button-rounded p-button-plain" @click="resetDefaultValue(driver)" />
                     </div>
