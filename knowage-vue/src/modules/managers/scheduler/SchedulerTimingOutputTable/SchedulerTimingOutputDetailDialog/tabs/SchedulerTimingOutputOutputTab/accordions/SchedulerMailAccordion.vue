@@ -145,24 +145,10 @@
 
                 <div class="p-m-4">
                     <span>
-                        <label class="kn-material-input-label">{{ $t('managers.scheduler.mailSubject') }} *</label>
-                        <InputText
-                            class="kn-material-input p-inputtext-sm"
-                            v-model="document.mailsubj"
-                            :class="{
-                                'p-invalid': subjectDirty && (!document.mailsubj || document.mailsubj.length === 0)
-                            }"
-                            :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.mail.mailSubjectMaxLength"
-                            @input="validateDocument('subjectDirty')"
-                            @blur="validateDocument('subjectDirty')"
-                        />
+                        <label class="kn-material-input-label">{{ $t('managers.scheduler.mailSubject') }}</label>
+                        <InputText class="kn-material-input p-inputtext-sm" v-model="document.mailsubj" :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.mail.mailSubjectMaxLength" />
                     </span>
                     <div class="p-d-flex p-flex-row p-jc-between">
-                        <div>
-                            <div v-show="subjectDirty && (!document.mailsubj || document.mailsubj.length === 0)" class="p-error p-grid p-m-4">
-                                {{ $t('common.validation.required', { fieldName: $t('managers.scheduler.mailSubject') }) }}
-                            </div>
-                        </div>
                         <p class="max-length-help p-m-0">{{ mailSubjectHelp }}</p>
                     </div>
                 </div>
@@ -179,25 +165,10 @@
 
                 <div class="p-m-4">
                     <span>
-                        <label class="kn-material-input-label">{{ $t('managers.scheduler.mailText') }} *</label>
-                        <InputText
-                            class="kn-material-input p-inputtext-sm"
-                            v-model="document.mailtxt"
-                            :class="{
-                                'p-invalid': mailTextDirty && (!document.mailtxt || document.mailtxt.length === 0)
-                            }"
-                            :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.mail.mailTextMaxLength"
-                            :placeholder="$t('managers.scheduler.mailTextMessage')"
-                            @input="validateDocument('mailTextDirty')"
-                            @blur="validateDocument('mailTextDirty')"
-                        />
+                        <label class="kn-material-input-label">{{ $t('managers.scheduler.mailText') }}</label>
+                        <InputText class="kn-material-input p-inputtext-sm" v-model="document.mailtxt" :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.mail.mailTextMaxLength" :placeholder="$t('managers.scheduler.mailTextMessage')" />
                     </span>
                     <div class="p-d-flex p-flex-row p-jc-between">
-                        <div>
-                            <div v-show="mailTextDirty && (!document.mailtxt || document.mailtxt.length === 0)" class="p-error p-grid p-m-4">
-                                {{ $t('common.validation.required', { fieldName: $t('managers.scheduler.mailMessage') }) }}
-                            </div>
-                        </div>
                         <p class="max-length-help p-m-0">{{ mailTextHelp }}</p>
                     </div>
                 </div>
@@ -322,13 +293,11 @@ export default defineComponent({
             if (dirty) {
                 this[dirty] = true
             }
-            const subjectInvalid = !this.document.mailsubj || this.document.mailsubj.length === 0
-            const mailTextInvalid = !this.document.mailtxt || this.document.mailtxt.length === 0
             const fixedRecipientsListInvalid = this.document.useFixedRecipients && (!this.document.mailtos || this.document.mailtos.length === 0)
             const expressionInvalid = this.document.useExpression && (!this.document.expression || this.document.expression.length === 0)
             const datasetInvalid = this.document.useDataset && (!this.document.datasetLabel || this.document.datasetLabel?.length === 0 || !this.document.datasetParameter || this.document.datasetParameter?.length === 0)
 
-            this.document.invalid.invalidMail = subjectInvalid || mailTextInvalid || fixedRecipientsListInvalid || expressionInvalid || datasetInvalid
+            this.document.invalid.invalidMail = fixedRecipientsListInvalid || expressionInvalid || datasetInvalid
         }
     }
 })
