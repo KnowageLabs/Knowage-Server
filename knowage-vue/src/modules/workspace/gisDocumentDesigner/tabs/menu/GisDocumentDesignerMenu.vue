@@ -48,7 +48,7 @@
     </Card>
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-p-0 p-m-0 p-col-12" v-if="documentData.selectedDataset.length > 0">
         <template #start>{{ $t('common.filters') }}</template>
-        <template #end> <Button class="p-button-link" :label="$t('workspace.gis.dsj.addButton')" @click="addFilterRow" /> </template>
+        <template #end> <Button class="p-button-link" :label="$t('workspace.gis.dsj.addFilter')" @click="addFilterRow" /> </template>
     </Toolbar>
     <div id="informations-content" class="kn-flex kn-relative kn-height-full" v-if="documentData.selectedDataset.length > 0">
         <div :style="styleDescriptor.style.absoluteScroll">
