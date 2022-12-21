@@ -22,7 +22,7 @@
                             <span>{{ $t('qbe.entities.title') }}</span>
                         </template>
                         <template #end>
-                            <Chip style="background-color:white"> {{ entities?.entities?.length }} </Chip>
+                            <Chip style="background-color: white"> {{ entities?.entities?.length }} </Chip>
                         </template>
                     </Toolbar>
                     <div class="kn-flex kn-overflow-hidden">
@@ -38,7 +38,7 @@
                         </template>
                         <template #end>
                             <Button v-if="showEntitiesLists" icon="fas fa-plus-circle" class="p-button-text p-button-rounded p-button-plain" v-tooltip.top="$t('common.add')" @click="createSubquery" />
-                            <Chip style="background-color:white"> {{ mainQuery?.subqueries?.length }} </Chip>
+                            <Chip style="background-color: white"> {{ mainQuery?.subqueries?.length }} </Chip>
                             <Button v-if="showDerivedList" icon="pi pi-chevron-down" class="p-button-text p-button-rounded p-button-plain" @click="collapseDerivedList" />
                             <Button v-else icon="pi pi-chevron-up" class="p-button-text p-button-rounded p-button-plain" @click="collapseDerivedList" />
                         </template>
@@ -135,13 +135,13 @@
         >
             <template #additionalInputs>
                 <div class="p-field" :class="[selectedCalcField.type === 'DATE' ? 'p-col-3' : 'p-col-4']">
-                    <span class="p-float-label ">
+                    <span class="p-float-label">
                         <Dropdown id="type" class="kn-material-input" v-model="selectedCalcField.type" :options="qbeDescriptor.types" optionLabel="label" optionValue="name" />
                         <label for="type" class="kn-material-input-label"> {{ $t('components.knCalculatedField.type') }} </label>
                     </span>
                 </div>
                 <div v-if="selectedCalcField.type === 'DATE'" class="p-field p-col-3">
-                    <span class="p-float-label ">
+                    <span class="p-float-label">
                         <Dropdown id="type" class="kn-material-input" v-model="selectedCalcField.format" :options="qbeDescriptor.admissibleDateFormats">
                             <template #value>
                                 <span>{{ selectedCalcField.format ? moment().format(selectedCalcField.format) : '' }}</span>
@@ -154,7 +154,7 @@
                     </span>
                 </div>
                 <div class="p-field" :class="[selectedCalcField.type === 'DATE' ? 'p-col-3' : 'p-col-4']">
-                    <span class="p-float-label ">
+                    <span class="p-float-label">
                         <Dropdown id="columnType" class="kn-material-input" v-model="selectedCalcField.nature" :options="qbeDescriptor.columnTypes" optionLabel="label" optionValue="name" />
                         <label for="columnType" class="kn-material-input-label"> {{ $t('managers.functionsCatalog.columnType') }} </label>
                     </span>
@@ -550,6 +550,8 @@ export default defineComponent({
             this.loading = true
 
             if (!this.qbe) return
+            if (this.qbe.qbeJSONQuery && this.qbe.qbeJSONQuery.catalogue.queries[0].fields.length == 0) return
+            this.loading = true
 
             const postData = { catalogue: this.qbe?.qbeJSONQuery?.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
             await this.$http
@@ -778,7 +780,7 @@ export default defineComponent({
 
             let conf = {} as any
             conf.headers = { 'Content-Type': 'application/x-www-form-urlencoded' } as any
-            conf.transformRequest = function(obj) {
+            conf.transformRequest = function (obj) {
                 var str = [] as any
                 for (var p in obj) str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
                 return str.join('&')
@@ -800,7 +802,7 @@ export default defineComponent({
 
             let conf = {} as any
             conf.headers = { 'Content-Type': 'application/x-www-form-urlencoded' } as any
-            conf.transformRequest = function(obj) {
+            conf.transformRequest = function (obj) {
                 var str = [] as any
                 for (var p in obj) str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
                 return str.join('&')
