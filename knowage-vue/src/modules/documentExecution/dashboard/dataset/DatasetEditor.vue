@@ -101,13 +101,6 @@ export default defineComponent({
     },
     async created() {
         await this.setDatasetsData()
-
-        console.group('%cDatasetEditor -----------', 'color: white; background-color: #282b30;')
-        console.log('availableDatasetsProp', this.availableDatasetsProp)
-        console.log('dashboardDatasets', this.dashboardDatasets)
-        console.log('selectedDatasets', this.selectedDatasets)
-        console.log('filtersDataProp', this.filtersDataProp)
-        console.groupEnd()
     },
 
     methods: {

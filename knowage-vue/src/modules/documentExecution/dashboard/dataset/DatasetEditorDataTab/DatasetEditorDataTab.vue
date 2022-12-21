@@ -25,8 +25,6 @@ export default defineComponent({
     methods: {
         selectDataset(datasetId) {
             this.selectedDataset = this.availableDatasetsProp.find((dataset) => dataset.id.dsId === datasetId)
-            console.log('>>>>>>>>>>>> SELECTED DATASET: ', this.selectedDataset)
-            //  if (this.selectDataset)
         },
         addSelectedDatasets(datasetsToAdd) {
             this.$emit('addSelectedDatasets', datasetsToAdd)

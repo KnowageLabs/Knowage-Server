@@ -110,8 +110,6 @@ export default defineComponent({
             if (!this.selectedDatasetProp.formattedDrivers) {
                 this.selectedDatasetProp.formattedDrivers = this.selectedDatasetProp && this.selectedDatasetProp.drivers ? (getFormattedDatasetDrivers(this.selectedDatasetProp) as IDashboardDatasetDriver[]) : []
             }
-            //console.log('selectedDatasetProp', this.selectedDatasetProp)
-            //console.log('selectedDatasetProp FORMATED DRIVERS', this.selectedDatasetProp.formattedDrivers)
             this.selectedDatasetProp.formattedDrivers.forEach((driver: IDashboardDatasetDriver) => {
                 if (driver.type === 'DATE') this.setDateDisplayValue(driver)
             })
