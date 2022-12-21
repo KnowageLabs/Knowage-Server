@@ -2873,9 +2873,11 @@
                 "openMapWarning": "Opening the map will undo all unsaved modifications, are you sure you want to continue?"
             },
             "dsj": {
-                "addButton": "Add join column",
+                "addButton": "add join column",
                 "dsJoinCol": "Dataset join column",
-                "lyrJoinCol": "Layer join column"
+                "lyrJoinCol": "Layer join column",
+                "addIndicator": "add indicator",
+                "addFilter": "add filter"
             },
             "editMap": "Edit Map",
             "fieldRequired": "Field required",
