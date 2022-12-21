@@ -66,11 +66,11 @@ export class KnowageHighchartsPieChart extends KnowageHighcharts {
         this.model.plotOptions.pie = highchartsDefaultValues.getDafaultPieChartPlotOptions()
     }
 
-    updateSeriesLabelSettings = (widgetModel: IWidget) => {
+    updateSeriesLabelSettings = (widgetModel: IWidget, model: any,) => {
         if (!widgetModel || !widgetModel.settings.series || !widgetModel.settings.series.seriesLabelsSettings || !widgetModel.settings.series.seriesLabelsSettings[0]) return
         const seriesLabelSetting = widgetModel.settings.series.seriesLabelsSettings[0]
         if (!seriesLabelSetting.label.enabled) return
-        this.model.series.forEach((serie: IHighchartsChartSerie) => {
+        model.series.forEach((serie: IHighchartsChartSerie) => {
             serie.data.forEach((data: IHighchartsChartSerieData) => {
                 data.dataLabels = {
                     backgroundColor: seriesLabelSetting.label.backgroundColor ?? '',

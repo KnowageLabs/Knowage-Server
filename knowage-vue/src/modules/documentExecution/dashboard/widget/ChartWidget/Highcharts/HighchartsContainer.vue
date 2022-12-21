@@ -16,6 +16,7 @@ import SeriesLabel from 'highcharts/modules/series-label'
 import cryptoRandomString from 'crypto-random-string'
 import store from '../../../Dashboard.store'
 import { updateStoreSelections } from '../../interactionsHelpers/InteractionHelper'
+import deepEqual from 'deep-equal'
 
 Accessibility(Highcharts)
 NoDataToDisplay(Highcharts)
@@ -56,11 +57,11 @@ export default defineComponent({
         ...mapActions(store, ['setSelections', 'getDatasetLabel']),
         setEventListeners() {
             emitter.on('refreshChart', this.onRefreshChart)
-            emitter.on('chartWidgetResized', () => this.resizeChart()) // TODO
+            emitter.on('chartWidgetResized', this.resizeChart)
         },
         removeEventListeners() {
             emitter.off('refreshChart', this.onRefreshChart)
-            emitter.off('chartWidgetResized', () => this.resizeChart()) // TODO
+            emitter.off('chartWidgetResized', this.resizeChart)
         },
         onRefreshChart() {
             this.chartModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.model : null
@@ -76,7 +77,7 @@ export default defineComponent({
             this.widgetModel.settings.chartModel.setData(this.dataToShow, this.widgetModel)
 
             this.widgetModel.settings.chartModel.updateSeriesAccessibilitySettings(this.widgetModel)
-            this.widgetModel.settings.chartModel.updateSeriesLabelSettings(this.widgetModel)
+            this.widgetModel.settings.chartModel.updateSeriesLabelSettings(this.widgetModel, this.chartModel)
             this.error = this.widgetModel.settings.chartModel.updateFormatterSettings(this.chartModel.plotOptions.pie?.dataLabels, 'format', 'formatter', 'formatterText', 'formatterError')
             if (this.error) return
             this.error = this.updateLegendSettings()
