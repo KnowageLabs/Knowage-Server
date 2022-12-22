@@ -1129,7 +1129,6 @@ export default defineComponent({
         },
         async loadCrossNavigationByDocument(angularData: any) {
             if (!this.document) return
-
             let temp = {} as any
 
             this.loading = true
@@ -1247,8 +1246,23 @@ export default defineComponent({
                 }
                 if (newKey) navigationParams[newKey] = angularData.outputParameters[tempKey]
             }
-        },
 
+            this.addSourceDocumentParameterValuesFromDocumentNavigationParameters(navigationParams, crossNavigationDocument)
+        },
+        addSourceDocumentParameterValuesFromDocumentNavigationParameters(navigationParams: any[], crossNavigationDocument: any) {
+            const documentNavigationParamsKeys = Object.keys(crossNavigationDocument.navigationParams)
+            documentNavigationParamsKeys.forEach((key: string) => {
+                if (!navigationParams[key]) {
+                    const sourceParameter = this.filtersData.filterStatus.find((parameter: iParameter) => {
+                        return parameter.urlName === crossNavigationDocument.navigationParams[key].value.label
+                    })
+                    if (sourceParameter) {
+                        navigationParams[key] = sourceParameter.parameterValue[0].value ?? ''
+                        navigationParams[key + '_field_visible_description'] = sourceParameter.parameterValue[0].description ?? ''
+                    }
+                }
+            })
+        },
         openCrossNavigationInNewWindow(popupOptions: any, crossNavigationDocument: any, navigationParams: any) {
             if (!crossNavigationDocument || !crossNavigationDocument.document) return
             const parameters = encodeURI(JSON.stringify(navigationParams))
@@ -1305,7 +1319,7 @@ export default defineComponent({
             const formattedParametersKeys = formattedParameters ? Object.keys(formattedParameters) : []
             if (navigationParamsKeys.length > 0 && formattedParametersKeys.length > 0) {
                 for (let i = 0; i < navigationParamsKeys.length; i++) {
-                    const index = formattedParametersKeys.findIndex((key: string) => key === navigationParamsKeys[i])
+                    const index = formattedParametersKeys.findIndex((key: string) => key === navigationParams[navigationParamsKeys[i]].value.label)
                     if (index !== -1) {
                         formatedParams[navigationParamsKeys[i]] = formattedParameters[formattedParametersKeys[index]]
                         formatedParams[navigationParamsKeys[i] + '_field_visible_description'] = formattedParameters[formattedParametersKeys[index] + '_field_visible_description'] ? formattedParameters[formattedParametersKeys[index] + '_field_visible_description'] : ''
