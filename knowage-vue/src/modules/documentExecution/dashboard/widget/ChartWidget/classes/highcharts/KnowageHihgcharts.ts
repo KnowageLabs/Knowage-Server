@@ -79,10 +79,10 @@ export class KnowageHighcharts {
 
     }
 
-    updateSeriesAccessibilitySettings = (widgetModel: IWidget) => {
+    updateSeriesAccessibilitySettings = (widgetModel: IWidget, model: any) => {
         if (!widgetModel || !widgetModel.settings.accesssibility || !widgetModel.settings.accesssibility.seriesAccesibilitySettings) return
         this.setAllSeriesAccessibilitySettings(widgetModel)
-        this.setSpecificAccessibilitySettings(widgetModel)
+        this.setSpecificAccessibilitySettings(widgetModel, model)
     }
 
     setAllSeriesAccessibilitySettings = (widgetModel: IWidget) => {
@@ -102,17 +102,17 @@ export class KnowageHighcharts {
         })
     }
 
-    setSpecificAccessibilitySettings = (widgetModel: IWidget) => {
+    setSpecificAccessibilitySettings = (widgetModel: IWidget, model: any) => {
         const index = this.model.chart.type !== 'pie' ? 1 : 0
         for (let i = index; i < widgetModel.settings.accesssibility.seriesAccesibilitySettings.length; i++) {
             const seriesAccesibilitySetting = widgetModel.settings.accesssibility.seriesAccesibilitySettings[i] as ISerieAccessibilitySetting
-            if (seriesAccesibilitySetting.accessibility.enabled) seriesAccesibilitySetting.names.forEach((serieName: string) => this.updateSerieAccessibilitySettings(serieName, seriesAccesibilitySetting.accessibility))
+            if (seriesAccesibilitySetting.accessibility.enabled) seriesAccesibilitySetting.names.forEach((serieName: string) => this.updateSerieAccessibilitySettings(serieName, seriesAccesibilitySetting.accessibility, model))
         }
     }
 
-    updateSerieAccessibilitySettings = (serieName: string, accessibility: IHighchartsSerieAccessibility) => {
-        const index = this.model.series.findIndex((serie: IHighchartsChartSerie) => serie.name === serieName)
-        if (index !== -1) this.model.series[index].accessibility = { ...accessibility }
+    updateSerieAccessibilitySettings = (serieName: string, accessibility: IHighchartsSerieAccessibility, model: any) => {
+        const index = model.series.findIndex((serie: IHighchartsChartSerie) => serie.name === serieName)
+        if (index !== -1) model.series[index].accessibility = { ...accessibility }
     }
 
     updateFormatterSettings = (object: any, formatProperty: string | null, formatterProperty: string, formatterTextProperty: string, formatterErrorProperty: string) => {

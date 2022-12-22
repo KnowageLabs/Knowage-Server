@@ -75,7 +75,7 @@ export default defineComponent({
 
             this.widgetModel.settings.chartModel.setData(this.dataToShow, this.widgetModel)
 
-            this.widgetModel.settings.chartModel.updateSeriesAccessibilitySettings(this.widgetModel)
+            this.widgetModel.settings.chartModel.updateSeriesAccessibilitySettings(this.widgetModel, this.chartModel)
             this.widgetModel.settings.chartModel.updateSeriesLabelSettings(this.widgetModel, this.chartModel)
             this.error = this.widgetModel.settings.chartModel.updateFormatterSettings(this.chartModel.plotOptions.pie?.dataLabels, 'format', 'formatter', 'formatterText', 'formatterError')
             if (this.error) return
@@ -88,6 +88,7 @@ export default defineComponent({
 
             this.setSeriesEvents()
 
+            console.log('>>>> CHART TO RENDER: ', this.chartModel)
             this.highchartsInstance = Highcharts.chart(this.chartID, this.chartModel as any)
             this.highchartsInstance.reflow()
         },
