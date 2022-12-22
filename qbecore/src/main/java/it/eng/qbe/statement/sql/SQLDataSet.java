@@ -73,8 +73,8 @@ public class SQLDataSet extends AbstractQbeDataSet {
 		IMetaData merged = mergeMetadata(jdbcMetadata, qbeQueryMetaData);
 		((DataStore)dataStore).setMetaData(merged);
 
-		if(hasDataStoreTransformer()) {
-			getDataStoreTransformer().transform(dataStore);
+		if(hasDataStoreTransformers()) {
+			executeDataStoreTransformers(dataStore);
 		}
 
 

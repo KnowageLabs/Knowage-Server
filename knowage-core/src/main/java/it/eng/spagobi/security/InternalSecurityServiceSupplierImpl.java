@@ -27,7 +27,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.metadata.SbiCommonInfo;
@@ -126,15 +125,6 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 		SpagoBIUserProfile profile = null;
 
 		SbiUser user = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(userId);
-
-		if (user == null) {
-			if (UserProfile.isDataPreparationUser(jwtToken)) {
-				user = createDataPrepUser();
-			} else {
-				logger.error("UserName [" + userId + "] not found!!");
-				return null;
-			}
-		}
 
 		profile = new SpagoBIUserProfile();
 		profile.setUniqueIdentifier(jwtToken);

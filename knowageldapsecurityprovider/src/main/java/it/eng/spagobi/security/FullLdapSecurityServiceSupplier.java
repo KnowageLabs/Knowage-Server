@@ -271,4 +271,9 @@ public class FullLdapSecurityServiceSupplier extends LdapSecurityServiceSupplier
 		return jwtToken;
 	}
 
+	@Override
+	public SpagoBIUserProfile checkAuthenticationToken(String token) {
+		return this.createUserProfile(token);
+	}
+
 }

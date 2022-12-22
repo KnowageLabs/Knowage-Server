@@ -17,7 +17,8 @@
  */
 package it.eng.spagobi.tools.scheduler.init;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quartz.Scheduler;
 
 import it.eng.spago.base.SourceBean;
@@ -36,7 +37,7 @@ public class CleanCacheQuartzInitializer implements InitializerIFace {
 	public static final String DEFAULT_TRIGGER_NAME = "schedule_full_cache_cleaning";
 
 	private final SourceBean _config = null;
-	private transient Logger logger = Logger.getLogger(CleanCacheQuartzInitializer.class);
+	private static final Logger LOGGER = LogManager.getLogger(CleanCacheQuartzInitializer.class);
 
 	/*
 	 * (non-Javadoc)
@@ -45,13 +46,13 @@ public class CleanCacheQuartzInitializer implements InitializerIFace {
 	 */
 	@Override
 	public void init(SourceBean config) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		try {
 			initCleanForDefaultTenant();
 		} catch (Exception e) {
-			logger.debug("NO WRITE DATASOURCE AVAILABLE.", e);
+			LOGGER.debug("NO WRITE DATASOURCE AVAILABLE.", e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 	}
 
@@ -59,10 +60,16 @@ public class CleanCacheQuartzInitializer implements InitializerIFace {
 
 		ISchedulerDAO schedulerDAO = null;
 		try {
-			logger.debug("IN");
+			LOGGER.debug("IN");
 			schedulerDAO = DAOFactory.getSchedulerDAO();
 			schedulerDAO.setTenant("DEFAULT_TENANT");
 			schedulerDAO.setGlobal(true);
+
+			// WORKAROUND : Fix the past
+			// TODO : could be deleted in version 9
+			schedulerDAO.deleteTriggerWhereNameLikes(DEFAULT_TRIGGER_NAME);
+			schedulerDAO.deleteJobWhereNameLikes(DEFAULT_JOB_NAME);
+
 			Job jobDetail = schedulerDAO.loadJob(DEFAULT_JOB_NAME, DEFAULT_JOB_NAME);
 			if (jobDetail == null) {
 				// CREATE JOB DETAIL
@@ -76,7 +83,7 @@ public class CleanCacheQuartzInitializer implements InitializerIFace {
 				jobDetail.setJobClass(CleanCacheJob.class);
 
 				schedulerDAO.insertJob(jobDetail);
-				logger.debug("Added job with name " + DEFAULT_JOB_NAME);
+				LOGGER.debug("Added job with name " + DEFAULT_JOB_NAME);
 			}
 			String valueCheck = SpagoBICacheConfiguration.getInstance().getCacheSchedulingFullClean();
 			String cronExpression = getCronExpression(valueCheck);
@@ -91,14 +98,14 @@ public class CleanCacheQuartzInitializer implements InitializerIFace {
 				simpleTrigger.setRunImmediately(false);
 
 				schedulerDAO.insertTrigger(simpleTrigger);
-				logger.debug("Added trigger with name " + DEFAULT_TRIGGER_NAME);
+				LOGGER.debug("Added trigger with name " + DEFAULT_TRIGGER_NAME);
 			} else {
-				logger.debug("The value " + valueCheck
+				LOGGER.debug("The value " + valueCheck
 						+ " is not a valid value for schedule cache cleaning trigger. Please provide a valid one and restart the Server. PERIODIC CACHE CLEANING DISABLED.");
 			}
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		} catch (Exception e) {
-			logger.error("Error while initializing scheduler ", e);
+			LOGGER.error("Error while initializing scheduler ", e);
 		} finally {
 			if (schedulerDAO != null) {
 				schedulerDAO.setTenant(null);
@@ -118,18 +125,18 @@ public class CleanCacheQuartzInitializer implements InitializerIFace {
 
 	private String getCronExpression(String valueCheck) {
 		if (valueCheck == null) {
-			logger.debug("This value is [" + valueCheck + "]");
+			LOGGER.debug("This value is [" + valueCheck + "]");
 			return null;
 		}
 
 		for (PredefinedCronExpression value : PredefinedCronExpression.values()) {
 			if (valueCheck.equalsIgnoreCase(value.getLabel())) {
-				logger.debug("Found a predefined cron expression with label equals to [" + valueCheck + "]");
-				logger.debug("The cron expression is equals to [" + value.getExpression() + "]");
+				LOGGER.debug("Found a predefined cron expression with label equals to [" + valueCheck + "]");
+				LOGGER.debug("The cron expression is equals to [" + value.getExpression() + "]");
 				return value.getExpression();
 			}
 		}
-		logger.debug("No predefined cron expression found with label equals to [" + valueCheck + "]. Returning null.");
+		LOGGER.debug("No predefined cron expression found with label equals to [" + valueCheck + "]. Returning null.");
 		return null;
 	}
 }

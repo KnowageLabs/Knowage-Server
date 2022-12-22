@@ -452,7 +452,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 			// If datasource has a null pwd, get the old value from DB
 			if (StringUtils.isEmpty(aDataSource.getPwd())) {
-				aDataSource.setPwd(hibDataSource.getPwd());
+				aDataSource.setPwd(DataSourceJDBCPasswordManager.decrypt(hibDataSource.getPwd()));
 			}
 
 			if (aDataSource.getLabel() != null && hibDataSource.getLabel() != null) {

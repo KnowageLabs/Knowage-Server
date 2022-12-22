@@ -484,6 +484,11 @@ public class UserProfile implements IEngUserProfile {
 		toReturn.setRoles(new ArrayList());
 		toReturn.setAttributes(new HashMap());
 		toReturn.setFunctionalities(getSchedulerUserFunctionalities());
+		String[] roles = null;
+		ArrayList<String[]> newList = new ArrayList<>(getSchedulerUserFunctionalities());
+		SpagoBIUserProfile spagoBiUserProfile = new SpagoBIUserProfile(new HashMap(), Arrays.stream(newList.toArray()).toArray(String[]::new),
+				new Boolean(false), organization, roles, userUniqueIdentifier, userId, userId);
+		toReturn.setSpagoBIUserProfile(spagoBiUserProfile);
 		logger.debug("OUT");
 		return toReturn;
 	}

@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
-		<version>8.1.3-SNAPSHOT</version>
+		<version>8.1.4-SNAPSHOT</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
 
@@ -71,7 +71,7 @@
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-utils</artifactId>
-			<version>8.1.3-SNAPSHOT</version>
+			<version>8.1.4-SNAPSHOT</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -84,14 +84,14 @@
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-dao</artifactId>
-			<version>8.1.3-SNAPSHOT</version>
+			<version>8.1.4-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>qbe-core</artifactId>
-			<version>8.1.3-SNAPSHOT</version>
+			<version>8.1.4-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 		
@@ -173,6 +173,15 @@
 			<version>1.13</version>
 		</dependency>
 
+
+		<dependency>
+			<groupId>org.jasypt</groupId>
+			<artifactId>jasypt</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jasypt</groupId>
+			<artifactId>jasypt-hibernate3</artifactId>
+		</dependency>
 
 		<!-- Provides support for Graylog in log4j2 -->
 		<dependency>

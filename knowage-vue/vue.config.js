@@ -79,5 +79,27 @@ module.exports = {
                 additionalData: '@import "@/assets/scss/main.scss";'
             }
         }
+    },
+    pwa: {
+        manifestOptions: {
+            id: '/knowage-vue/',
+            scope: '/knowage-vue/',
+            name: 'Knowage',
+            short_name: 'Knowage',
+            display: 'standalone',
+            orientation: 'landscape',
+            background_color: '#3b678c',
+            theme_color: '#3b678c',
+            description: 'The business intelligence open-source solution'
+        },
+        themeColor: '#3b678c',
+        msTileColor: '#3b678c',
+        appleMobileWebAppCapable: 'yes',
+        appleMobileWebAppStatusBarStyle: 'black',
+        workboxPluginMode: 'InjectManifest',
+        workboxOptions: {
+            swSrc: 'src/knowage-sw.js'
+        },
+        manifestCrossorigin: 'use-credentials'
     }
 }

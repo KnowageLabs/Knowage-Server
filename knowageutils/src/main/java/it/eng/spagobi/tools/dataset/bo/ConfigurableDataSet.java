@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import it.eng.knowage.encryption.DecryptionDataStoreTransformer;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
@@ -149,8 +150,10 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 
 			dataStore = dataProxy.load(dataReader);
 
-			if (hasDataStoreTransformer()) {
-				getDataStoreTransformer().transform(dataStore);
+			addDataStoreTransformer(new DecryptionDataStoreTransformer(this));
+
+			if (hasDataStoreTransformers()) {
+				executeDataStoreTransformers(dataStore);
 			}
 
 		}

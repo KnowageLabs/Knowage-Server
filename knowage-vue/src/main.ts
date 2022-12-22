@@ -7,6 +7,8 @@ import store from './App.store.js'
 import VueAxios from 'vue-axios'
 import interceptor from './axios.js'
 
+import './registerServiceWorker'
+
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/monokai.css'
 import 'codemirror/theme/eclipse.css'

@@ -148,7 +148,7 @@ export default defineComponent({
             return status ? this.$t(documentBrowserTableDescriptor.status[status] ?? '') : ''
         },
         executeDocument(document: any) {
-            getCorrectRolesForExecution('DOCUMENT', document.id, document.label).then(() => {
+            getCorrectRolesForExecution(document).then(() => {
                 this.$emit('itemSelected', { item: document, mode: 'execute' })
             })
         }
