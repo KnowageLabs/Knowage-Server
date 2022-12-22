@@ -14,6 +14,7 @@ export const createNewHighchartsSettings = () => {
         accesssibility: { seriesAccesibilitySettings: getSeriesAccesibilitySettings() },
         series: { seriesLabelsSettings: getSerieLabelsSettings() },
         interactions: {
+            drilldown: { enabled: false },
             crosssNavigation: widgetCommonDefaultValues.getDefaultCrossNavigation(),
             link: widgetCommonDefaultValues.getDefaultLinks(),
             preview: widgetCommonDefaultValues.getDefaultPreview(),

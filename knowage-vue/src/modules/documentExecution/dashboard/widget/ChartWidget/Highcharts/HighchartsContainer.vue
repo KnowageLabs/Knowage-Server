@@ -8,6 +8,7 @@ import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { ISelection, IWidget, IWidgetColumn } from '../../../Dashboard'
 import { IHighchartsChartModel } from '../../../interfaces/highcharts/DashboardHighchartsWidget'
 import { mapActions } from 'pinia'
+import { updateStoreSelections } from '../../interactionsHelpers/InteractionHelper'
 import Highcharts from 'highcharts'
 import Highcharts3D from 'highcharts/highcharts-3d'
 import Accessibility from 'highcharts/modules/accessibility'
@@ -15,8 +16,6 @@ import NoDataToDisplay from 'highcharts/modules/no-data-to-display'
 import SeriesLabel from 'highcharts/modules/series-label'
 import cryptoRandomString from 'crypto-random-string'
 import store from '../../../Dashboard.store'
-import { updateStoreSelections } from '../../interactionsHelpers/InteractionHelper'
-import deepEqual from 'deep-equal'
 
 Accessibility(Highcharts)
 NoDataToDisplay(Highcharts)

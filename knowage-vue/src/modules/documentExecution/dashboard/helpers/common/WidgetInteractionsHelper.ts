@@ -1,4 +1,4 @@
-import { ITableWidgetLink, IWidget, IWidgetCrossNavigation, IWidgetInteractionParameter, IWidgetInteractions, IWidgetLinks, IWidgetPreview, IWidgetSelection } from '../../Dashboard'
+import { ITableWidgetLink, IWidgetCrossNavigation, IWidgetInteractionParameter, IWidgetInteractions, IWidgetLinks, IWidgetPreview, IWidgetSelection } from '../../Dashboard'
 import { getColumnId } from '../tableWidget/TableWidgetCompatibilityHelper'
 import { IHighchartsDrilldown } from '../../interfaces/highcharts/DashboardHighchartsWidget'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
@@ -46,8 +46,8 @@ const getFormattedChartSelection = () => {
     const store = mainStore()
     const user = store.getUser()
     // TODO widgetChange
-    // return user?.enterprise ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections
-    return false ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections()
+    return user?.enterprise ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections
+    // return false ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections()
 }
 
 export const getFormattedCrossNavigation = (widget: any) => {
