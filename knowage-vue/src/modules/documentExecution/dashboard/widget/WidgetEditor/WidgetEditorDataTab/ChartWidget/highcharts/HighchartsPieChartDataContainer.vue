@@ -1,6 +1,5 @@
 <template>
     <div v-if="widgetModel">
-        {{ columnTableItems['ATTRIBUTES'] }}
         <WidgetEditorColumnTable
             class="p-m-2"
             :widgetModel="widgetModel"

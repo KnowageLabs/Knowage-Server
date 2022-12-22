@@ -18,6 +18,11 @@ const addIHighchartsPieChartColumnToTable = (tempColumn: IWidgetColumn, rows: IW
             tempColumn.fieldType = 'ATTRIBUTE'
             tempColumn.aggregation = ''
         }
+        tempColumn.drillOrder = {
+            "orderColumn": "",
+            "orderColumnId": "",
+            "orderType": ""
+        }
         if (index === -1) rows.push(tempColumn)
     } else if (mode === 'measuresOnly' && rows.length <= 1) {
         if (tempColumn.fieldType === 'ATTRIBUTE') {

@@ -18,7 +18,7 @@ export interface IHighchartsWidgetSettings {
 export interface IDrillOrderItem {
     orderColumnId: string
     orderColumn: string,
-    orderType: "ASC" | "DESC"
+    orderType: "ASC" | "DESC" | ""
 }
 
 export interface IHighchartsWidgetConfiguration {
