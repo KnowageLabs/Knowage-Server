@@ -27,7 +27,7 @@
     }
 }
 
-@media screen and (max-width: 812px) and (orientation: portrait) {
+@media only screen and (max-width: 812px) and (orientation: portrait) {
     .knRotate {
         display: flex;
     }
