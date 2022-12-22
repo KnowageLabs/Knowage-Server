@@ -58,7 +58,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  * serialization only.
  */
 @JsonInclude(Include.NON_NULL)
-@JsonIgnoreProperties(value = { "pwd" }, allowGetters = false, allowSetters = true)
+@JsonIgnoreProperties(value = { "pwd", "type" }, allowGetters = false, allowSetters = true, ignoreUnknown = true)
 public class DataSource implements Serializable, IDataSource {
 
 	private static transient Logger logger = Logger.getLogger(DataSource.class);
@@ -119,6 +119,7 @@ public class DataSource implements Serializable, IDataSource {
 	// Owner of DataSource - UserIn column in Database
 	private String owner;
 
+	@Override
 	public Boolean getReadOnly() {
 		return readOnly;
 	}

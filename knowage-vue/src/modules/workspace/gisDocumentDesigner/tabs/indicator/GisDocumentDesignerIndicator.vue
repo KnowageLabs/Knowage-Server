@@ -1,7 +1,7 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-p-0 p-m-0 p-col-12">
         <template #start>{{ $t('workspace.gis.indicators') }}</template>
-        <template #end> <Button class="p-button-link" :label="$t('workspace.gis.dsj.addButton')" @click="addIndicatorRow" /> </template>
+        <template #end> <Button class="p-button-link" :label="$t('workspace.gis.dsj.addIndicator')" @click="addIndicatorRow" /> </template>
     </Toolbar>
     <div id="informations-content" class="kn-flex kn-relative kn-height-full">
         <div :style="styleDescriptor.style.absoluteScroll">

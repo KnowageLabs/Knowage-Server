@@ -576,7 +576,9 @@ export default defineComponent({
                     role: this.userRole,
                     parameters: this.document.navigationParams ?? {}
                 })
-                .then((response: AxiosResponse<any>) => (this.filtersData = response.data))
+                .then((response: AxiosResponse<any>) => {
+                    this.filtersData = response.data
+                })
                 .catch((error: any) => {
                     if (error.response?.status === 500) {
                         this.setError({
@@ -682,12 +684,14 @@ export default defineComponent({
             }
         },
         async loadURL(olapParameters: any, documentLabel: string | null = null, crossNavigationPopupMode: boolean = false) {
+            let error = false
             const postData = {
                 label: this.document.label,
                 role: this.userRole,
                 parameters: olapParameters ? olapParameters : this.getFormattedParameters(),
                 EDIT_MODE: 'null',
-                IS_FOR_EXPORT: true
+                IS_FOR_EXPORT: true,
+                SBI_EXECUTION_ID: ''
             } as any
 
             if (this.sbiExecutionId) {
@@ -701,10 +705,12 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`, postData)
                 .then((response: AxiosResponse<any>) => {
+                    error = false
                     this.urlData = response.data
                     this.sbiExecutionId = this.urlData?.sbiExecutionId as string
                 })
                 .catch((response: AxiosResponse<any>) => {
+                    error = true
                     this.urlData = response.data
                     this.sbiExecutionId = this.urlData?.sbiExecutionId as string
                 })
@@ -715,10 +721,13 @@ export default defineComponent({
                 this.sbiExecutionId = this.urlData?.sbiExecutionId as string
             }
 
+            if (error) return
+
             await this.sendForm(documentLabel, crossNavigationPopupMode)
         },
         async loadExporters() {
-            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/exporters/${this.urlData?.engineLabel}`).then((response: AxiosResponse<any>) => (this.exporters = response.data.exporters))
+            if (!this.urlData || !this.urlData.engineLabel) return
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/exporters/${this.urlData.engineLabel}`).then((response: AxiosResponse<any>) => (this.exporters = response.data.exporters))
         },
         async sendForm(documentLabel: string | null = null, crossNavigationPopupMode: boolean = false) {
             let tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name) as any

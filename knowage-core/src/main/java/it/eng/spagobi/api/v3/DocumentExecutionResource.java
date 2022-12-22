@@ -31,6 +31,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -67,6 +69,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 @Path("/3.0/documentexecution")
 public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
+	private static final Logger LOGGER = LogManager.getLogger(DocumentExecutionResource.class);
+
 	private static final String DOCUMENT = "DOCUMENT";
 	private static final String DATASET = "DATASET";
 	private static final String DATAMART = "DATAMART";
@@ -77,12 +81,12 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@Path("/{id}/templates")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public ObjectNode getDocumentTemplates(@PathParam("id") Integer id) throws JSONException, EMFInternalError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		UserProfile userProfile = getUserProfile();
 		if (userProfile == null) {
 			String message = "Error while loading user profile";
-			logger.error(message);
+			LOGGER.error(message);
 			throw new SpagoBIRuntimeException(message);
 		}
 		byte[] temp = null;
@@ -93,7 +97,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			BIObject document = documentDao.loadBIObjectById(id);
 			if (!ObjectsAccessVerifier.canExec(document, userProfile)) {
 				String message = "User cannot exec the document";
-				logger.error(message);
+				LOGGER.error(message);
 				throw new SpagoBIRuntimeException(message);
 			}
 
@@ -103,10 +107,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			Assert.assertNotNull(documentTemplate, "Document Template can not be null");
 			jsonTemplate = new JSONObject(new String(temp));
 		} catch (EMFUserError e) {
-			logger.debug("Could not get content from template", e);
+			LOGGER.debug("Could not get content from template", e);
 			throw new SpagoBIRestServiceException("Could not get content from template", buildLocaleFromSession(), e);
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return jsonTemplate.getWrappedObject();
 	}
 
@@ -114,7 +118,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@Path("/correctRolesForExecution")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getCorrectRolesForExecution(@QueryParam("typeCode") String typeCode, @QueryParam("id") Integer id, @QueryParam("label") String label) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		UserProfile userProfile = UserProfileManager.getProfile();
 
@@ -172,7 +176,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 							correctRoles.retainAll(rolesByModel);
 						}
 					} catch (JsonSyntaxException | JSONException e) {
-						logger.error("An error occurred while parsing dataset configuration", e);
+						LOGGER.error("An error occurred while parsing dataset configuration", e);
 						throw new SpagoBIRuntimeException(e.getMessage(), e);
 					}
 
@@ -191,14 +195,14 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			}
 
 		} catch (EMFInternalError e) {
-			logger.error("Cannot retrieve correct roles for execution", e);
+			LOGGER.error("Cannot retrieve correct roles for execution", e);
 			throw new SpagoBIRuntimeException(e.getMessage(), e);
 		} catch (EMFUserError e) {
-			logger.error("Cannot retrieve correct roles for execution", e);
+			LOGGER.error("Cannot retrieve correct roles for execution", e);
 			throw new SpagoBIRuntimeException(e.getMessage(), e);
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return Response.ok().entity(correctRoles).build();
 	}
 
@@ -241,8 +245,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 						modelsRoles.add(String.valueOf(role));
 					}
 				} catch (Exception e) {
-					logger.debug(
-							"Role " + role + " is not valid for model [" + model.getName() + "] execution. It will be not added to the available roles list.");
+					LOGGER.debug("Role {} is not valid for model [{}] execution. It will be not added to the available roles list.", role, model.getName());
 				}
 
 			}

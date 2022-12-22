@@ -146,6 +146,16 @@ export default defineComponent({
             if (this.filtersData.filterStatus?.length > 0) {
                 postData.DRIVERS = this.formatDriversForPreviewData()
             }
+            if (Array.isArray(postData.restRequestHeaders)) {
+                if (postData.restRequestHeaders.length == 0) {
+                    postData.restRequestHeaders = {}
+                } else {
+                    postData.restRequestHeaders = postData.restRequestHeaders.reduce((acc, curr) => {
+                        acc[curr['name']] = curr['value']
+                        return acc
+                    }, {})
+                }
+            }
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/preview`, postData, { headers: { 'X-Disable-Errors': 'true' } })
                 .then((response: AxiosResponse<any>) => {
