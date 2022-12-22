@@ -4,6 +4,6 @@ import { addHighchartsColumnToTable } from "./highcharts/HighchartsDataTabHelper
 
 
 export const addChartColumnToTable = (tempColum: IWidgetColumn, rows: IWidgetColumn[], chartType: string | undefined, attributesOnly: boolean, measuresOnly: boolean, widgetModel: IWidget) => {
-    if (chartType === 'IHighchartsPieChart') addHighchartsColumnToTable(tempColum, rows, chartType, attributesOnly, measuresOnly, widgetModel)
+    if (chartType === 'highchartsPieChart') addHighchartsColumnToTable(tempColum, rows, chartType, attributesOnly, measuresOnly, widgetModel)
     else if (chartType === 'chartJSPieChart') addChartJSColumnToTable(tempColum, rows, chartType, attributesOnly, measuresOnly, widgetModel)
 }
