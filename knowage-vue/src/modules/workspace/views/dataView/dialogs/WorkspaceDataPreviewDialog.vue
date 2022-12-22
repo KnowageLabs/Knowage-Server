@@ -159,9 +159,14 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/preview`, postData, { headers: { 'X-Disable-Errors': 'true' } })
                 .then((response: AxiosResponse<any>) => {
-                    this.setPreviewColumns(response.data)
-                    this.rows = response.data.rows
-                    this.pagination.size = response.data.results
+                    let fields = response.data?.metaData?.fields
+                    if (this.dataset.dsTypeCd == 'REST' && fields?.length == 1 && fields[0] === 'recNo') {
+                        this.rows = []
+                    } else {
+                        this.setPreviewColumns(response.data)
+                        this.rows = response.data.rows
+                        this.pagination.size = response.data.results
+                    }
                 })
                 .catch((error) => {
                     this.errorMessage = error.message
