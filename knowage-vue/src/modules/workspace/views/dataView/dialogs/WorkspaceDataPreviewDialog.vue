@@ -146,6 +146,9 @@ export default defineComponent({
             if (this.filtersData.filterStatus?.length > 0) {
                 postData.DRIVERS = this.formatDriversForPreviewData()
             }
+            if (Array.isArray(postData.restRequestHeaders) && postData.restRequestHeaders.length == 0) {
+                postData.restRequestHeaders = {}
+            }
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/preview`, postData, { headers: { 'X-Disable-Errors': 'true' } })
                 .then((response: AxiosResponse<any>) => {
