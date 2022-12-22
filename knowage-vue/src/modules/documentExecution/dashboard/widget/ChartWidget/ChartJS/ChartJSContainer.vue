@@ -86,7 +86,7 @@ export default defineComponent({
             this.chartOptions = {} as IChartJSOptions
         },
         setSelection(event: any, selectionEvent: any[]) {
-            if (this.editorMode || !selectionEvent || !selectionEvent[0]) return
+            if (this.editorMode || !selectionEvent || !selectionEvent[0] || !this.widgetModel.settings.interactions.selection || !this.widgetModel.settings.interactions.selection.enabled) return
             const value = this.getSelectionValue(selectionEvent)
             updateStoreSelections(this.createNewSelection([value]), this.propActiveSelections, this.dashboardId, this.setSelections, this.$http)
         },

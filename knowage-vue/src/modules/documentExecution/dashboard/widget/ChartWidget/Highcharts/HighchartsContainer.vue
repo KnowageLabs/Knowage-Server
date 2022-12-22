@@ -110,7 +110,7 @@ export default defineComponent({
                 }
         },
         setSelection(event: any) {
-            if (this.editorMode) return
+            if (this.editorMode || !this.widgetModel.settings.interactions.selection || !this.widgetModel.settings.interactions.selection.enabled) return
             const serieClicked = event.point?.options
             if (!serieClicked || !serieClicked.name) return
             updateStoreSelections(this.createNewSelection([serieClicked.name]), this.propActiveSelections, this.dashboardId, this.setSelections, this.$http)
