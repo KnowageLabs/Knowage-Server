@@ -83,7 +83,6 @@ export function getRGBColorFromString(color: string) {
 }
 
 export const recreateKnowageChartModel = (widget: IWidget) => {
-    console.log("WIDGET: ", widget)
     if (widget.type === 'chartJS') formatChartJSWidget(widget)
     else if (widget.type === 'highcharts') formatHighchartsWidget(widget)
 }

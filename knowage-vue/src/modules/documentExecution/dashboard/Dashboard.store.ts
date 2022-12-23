@@ -5,6 +5,7 @@ import { selectionsUseDatasetWithAssociation } from './widget/interactionsHelper
 import { loadAssociativeSelections } from './widget/interactionsHelpers/InteractionHelper'
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
+import { recreateKnowageChartModel } from './widget/WidgetEditor/helpers/WidgetEditorHelpers'
 
 const store = defineStore('dashboardStore', {
     state() {
@@ -35,6 +36,7 @@ const store = defineStore('dashboardStore', {
             this.dashboards[dashboardId].document = document
         },
         createNewWidget(dashboardId: string, widget: IWidget) {
+            recreateKnowageChartModel(widget)
             this.dashboards[dashboardId].widgets.push(widget)
             if (this.dashboards[dashboardId].sheets[this.selectedSheetIndex]) {
                 this.dashboards[dashboardId].sheets[this.selectedSheetIndex].widgets.lg.push({ id: widget.id, h: 10, i: cryptoRandomString({ length: 16, type: 'base64' }), w: 10, x: 0, y: 0, moved: false })
