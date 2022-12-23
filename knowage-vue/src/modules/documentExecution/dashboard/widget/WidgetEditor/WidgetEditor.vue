@@ -134,8 +134,6 @@ export default defineComponent({
         },
         save() {
             const tempWidget = deepcopy(this.widget)
-            console.log('>>>>>>>>>> tempWidget.settings.chartModel: ', tempWidget.settings.chartModel)
-            tempWidget.settings.chartModel = new KnowageHighchartsPieChart(tempWidget.settings.chartModel.model)
             if (!tempWidget) return
 
             if (tempWidget.new) {
