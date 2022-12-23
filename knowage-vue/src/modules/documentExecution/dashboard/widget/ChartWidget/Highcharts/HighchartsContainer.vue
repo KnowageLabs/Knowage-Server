@@ -74,10 +74,10 @@ export default defineComponent({
                 }
             })
 
-            this.widgetModel.settings.chartModel.setData(this.dataToShow, this.widgetModel, this.chartModel)
+            this.widgetModel.settings.chartModel.setData(this.dataToShow, this.widgetModel)
 
-            this.widgetModel.settings.chartModel.updateSeriesAccessibilitySettings(this.widgetModel, this.chartModel)
-            this.widgetModel.settings.chartModel.updateSeriesLabelSettings(this.widgetModel, this.chartModel)
+            this.widgetModel.settings.chartModel.updateSeriesAccessibilitySettings(this.widgetModel)
+            this.widgetModel.settings.chartModel.updateSeriesLabelSettings(this.widgetModel)
             this.error = this.widgetModel.settings.chartModel.updateFormatterSettings(this.chartModel.plotOptions.pie?.dataLabels, 'format', 'formatter', 'formatterText', 'formatterError')
             if (this.error) return
             this.error = this.updateLegendSettings()
@@ -85,7 +85,7 @@ export default defineComponent({
             this.error = this.updateTooltipSettings()
             if (this.error) return
 
-            this.widgetModel.settings.chartModel.updateChartColorSettings(this.widgetModel, this.chartModel)
+            this.widgetModel.settings.chartModel.updateChartColorSettings(this.widgetModel)
 
             this.setSeriesEvents()
 

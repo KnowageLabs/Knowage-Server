@@ -72,15 +72,15 @@ export class KnowageHighcharts {
         }
     }
 
-    updateSeriesAccessibilitySettings(widgetModel: IWidget, model: any) {
+    updateSeriesAccessibilitySettings(widgetModel: IWidget) {
         if (!widgetModel || !widgetModel.settings.accesssibility || !widgetModel.settings.accesssibility.seriesAccesibilitySettings) return
-        this.setAllSeriesAccessibilitySettings(widgetModel, model)
-        this.setSpecificAccessibilitySettings(widgetModel, model)
+        this.setAllSeriesAccessibilitySettings(widgetModel)
+        this.setSpecificAccessibilitySettings(widgetModel)
     }
 
-    setAllSeriesAccessibilitySettings(widgetModel: IWidget, model: any) {
-        model.series.forEach((serie: IHighchartsChartSerie) => {
-            if (model.chart.type !== 'pie' && widgetModel.settings.accesssibility.seriesAccesibilitySettings[0] && widgetModel.settings.accesssibility.seriesAccesibilitySettings[0].accessibility.enabled) {
+    setAllSeriesAccessibilitySettings(widgetModel: IWidget) {
+        this.model.series.forEach((serie: IHighchartsChartSerie) => {
+            if (this.model.chart.type !== 'pie' && widgetModel.settings.accesssibility.seriesAccesibilitySettings[0] && widgetModel.settings.accesssibility.seriesAccesibilitySettings[0].accessibility.enabled) {
                 serie.accessibility = {
                     ...widgetModel.settings.accesssibility.seriesAccesibilitySettings[0].accessibility
                 }
@@ -95,17 +95,17 @@ export class KnowageHighcharts {
         })
     }
 
-    setSpecificAccessibilitySettings(widgetModel: IWidget, model: any) {
+    setSpecificAccessibilitySettings(widgetModel: IWidget) {
         const index = this.model.chart.type !== 'pie' ? 1 : 0
         for (let i = index; i < widgetModel.settings.accesssibility.seriesAccesibilitySettings.length; i++) {
             const seriesAccesibilitySetting = widgetModel.settings.accesssibility.seriesAccesibilitySettings[i] as ISerieAccessibilitySetting
-            if (seriesAccesibilitySetting.accessibility.enabled) seriesAccesibilitySetting.names.forEach((serieName: string) => this.updateSerieAccessibilitySettings(serieName, seriesAccesibilitySetting.accessibility, model))
+            if (seriesAccesibilitySetting.accessibility.enabled) seriesAccesibilitySetting.names.forEach((serieName: string) => this.updateSerieAccessibilitySettings(serieName, seriesAccesibilitySetting.accessibility))
         }
     }
 
-    updateSerieAccessibilitySettings(serieName: string, accessibility: IHighchartsSerieAccessibility, model: any) {
-        const index = model.series.findIndex((serie: IHighchartsChartSerie) => serie.name === serieName)
-        if (index !== -1) model.series[index].accessibility = { ...accessibility }
+    updateSerieAccessibilitySettings(serieName: string, accessibility: IHighchartsSerieAccessibility) {
+        const index = this.model.series.findIndex((serie: IHighchartsChartSerie) => serie.name === serieName)
+        if (index !== -1) this.model.series[index].accessibility = { ...accessibility }
     }
 
     updateFormatterSettings(object: any, formatProperty: string | null, formatterProperty: string, formatterTextProperty: string, formatterErrorProperty: string) {
@@ -141,8 +141,8 @@ export class KnowageHighcharts {
         return hasError
     }
 
-    updateChartColorSettings(widgetModel: IWidget, model: any) {
-        if (!model.plotOptions.pie) return
-        model.plotOptions.pie.colors = widgetModel.settings.chart.colors
+    updateChartColorSettings(widgetModel: IWidget) {
+        if (!this.model.plotOptions.pie) return
+        this.model.plotOptions.pie.colors = widgetModel.settings.chart.colors
     }
 }

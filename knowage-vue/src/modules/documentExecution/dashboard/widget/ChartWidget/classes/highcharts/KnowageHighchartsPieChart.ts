@@ -9,6 +9,7 @@ import deepcopy from 'deepcopy'
 
 export class KnowageHighchartsPieChart extends KnowageHighcharts {
     constructor(model: any) {
+        console.log(">>>>>>> MODEL IN CONSTRUCTOR: ", model)
         super()
         if (!this.model.plotOptions.pie) this.setPiePlotOptions()
         if (model && model.CHART) this.updateModel(deepcopy(model))
@@ -25,12 +26,12 @@ export class KnowageHighchartsPieChart extends KnowageHighcharts {
         this.model = model
     }
 
-    setData(data: any, widgetModel: IWidget, model: any) {
+    setData(data: any, widgetModel: IWidget) {
         //hardcoding column values because we will always have one measure and one category, by hardcoding the values, we are saving resourcces on forEach and filter methods
         // const categoryColumnName = data.metaData.fields.filter((i) => i.header === this.model.settings.categories[drillDownLevel])[0].name
-        if (model.series.length === 0) this.getSeriesFromWidgetModel(widgetModel, model)
+        if (this.model.series.length === 0) this.getSeriesFromWidgetModel(widgetModel)
 
-        model.series.map((item, serieIndex) => {
+        this.model.series.map((item, serieIndex) => {
             // const dataColumn = item.groupingFunction ? item.name + '_' + item.groupingFunction : item.name
             this.range[serieIndex] = { serie: item.name }
             // const dataColumnName = data.metaData.fields.filter((i) => i.header === dataColumn)[0].name
@@ -46,28 +47,28 @@ export class KnowageHighchartsPieChart extends KnowageHighcharts {
                 // this.range[serieIndex].max = this.range[serieIndex].max ? Math.max(this.range[serieIndex].max, row[dataColumnName]) : row[dataColumnName]
                 this.range[serieIndex].min = this.range[serieIndex].min ? Math.min(this.range[serieIndex].min, row['column_2']) : row['column_2']
                 this.range[serieIndex].max = this.range[serieIndex].max ? Math.max(this.range[serieIndex].max, row['column_2']) : row['column_2']
-                if (model.settings.drilldown) serieElement.drilldown = true
+                if (this.model.settings.drilldown) serieElement.drilldown = true
                 item.data.push(serieElement)
             })
         })
-        return model.series
+        return this.model.series
     }
 
-    getSeriesFromWidgetModel(widgetModel: IWidget, model: any) {
+    getSeriesFromWidgetModel(widgetModel: IWidget) {
         const measureColumn = widgetModel.columns.find((column: IWidgetColumn) => column.fieldType === 'MEASURE')
         if (!measureColumn) return
-        model.series = [createSerie(measureColumn.columnName, measureColumn.aggregation)]
+        this.model.series = [createSerie(measureColumn.columnName, measureColumn.aggregation)]
     }
 
     setPiePlotOptions() {
         this.model.plotOptions.pie = highchartsDefaultValues.getDafaultPieChartPlotOptions()
     }
 
-    updateSeriesLabelSettings(widgetModel: IWidget, model: any) {
+    updateSeriesLabelSettings(widgetModel: IWidget) {
         if (!widgetModel || !widgetModel.settings.series || !widgetModel.settings.series.seriesLabelsSettings || !widgetModel.settings.series.seriesLabelsSettings[0]) return
         const seriesLabelSetting = widgetModel.settings.series.seriesLabelsSettings[0]
         if (!seriesLabelSetting.label.enabled) return
-        model.series.forEach((serie: IHighchartsChartSerie) => {
+        this.model.series.forEach((serie: IHighchartsChartSerie) => {
             serie.data.forEach((data: IHighchartsChartSerieData) => {
                 data.dataLabels = {
                     backgroundColor: seriesLabelSetting.label.backgroundColor ?? '',
