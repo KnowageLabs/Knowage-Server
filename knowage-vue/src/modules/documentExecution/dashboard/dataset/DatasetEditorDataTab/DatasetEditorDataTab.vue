@@ -1,7 +1,7 @@
 <template>
-    <DataList :dashboardDatasetsProp="dashboardDatasetsProp" :availableDatasetsProp="availableDatasetsProp" :selectedDatasetsProp="selectedDatasetsProp" @addSelectedDatasets="addSelectedDatasets" @datasetSelected="selectDataset" @deleteDataset="$emit('deleteDataset', $event)" />
+    <DataList :dashboardDatasetsProp="dashboardDatasetsProp" :availableDatasetsProp="availableDatasetsProp" :selectedDatasetsProp="selectedDatasetsProp" @addSelectedDatasets="addSelectedDatasets" @datasetSelected="selectDataset" @deleteDataset="deleteAndUnselectDataset($event)" />
     <DataDetail :dashboardDatasetsProp="dashboardDatasetsProp" :selectedDatasetProp="selectedDataset" :documentDriversProp="documentDriversProp" :dashboardId="dashboardId" data-test="dataset-detail" />
-    <DatasetEditorPreview v-if="selectedDataset.id" id="dataset-editor-preview" :selectedDatasetProp="selectedDataset" data-test="dataset-preview" />
+    <DatasetEditorPreview v-if="selectedDataset && selectedDataset.id" id="dataset-editor-preview" :selectedDatasetProp="selectedDataset" data-test="dataset-preview" />
 </template>
 
 <script lang="ts">
@@ -28,6 +28,10 @@ export default defineComponent({
         },
         addSelectedDatasets(datasetsToAdd) {
             this.$emit('addSelectedDatasets', datasetsToAdd)
+        },
+        deleteAndUnselectDataset(event) {
+            this.selectedDataset = null
+            this.$emit('deleteDataset', event)
         }
     }
 })
