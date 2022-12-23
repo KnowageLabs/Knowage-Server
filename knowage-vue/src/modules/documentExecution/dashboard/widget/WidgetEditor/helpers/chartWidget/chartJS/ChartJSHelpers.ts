@@ -32,7 +32,7 @@ export const createNewChartJSSettings = () => {
 }
 
 export const formatChartJSWidget = (widget: IWidget) => {
-    widget.settings.chartModel = new KnowageChartJSPieChart(widget.settings.chartModel.model)
+    widget.settings.chartModel = new KnowageChartJSPieChart(widget.settings.chartModel.model ?? widget.settings.chartModel)
 }
 
 export const createChartJSModel = (chartType: string) => {

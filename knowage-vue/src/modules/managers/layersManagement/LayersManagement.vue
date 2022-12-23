@@ -114,7 +114,6 @@ export default defineComponent({
             this.selectedLayer = null
         },
         downloadLayerFile(event: any) {
-            console.log('DOWNLOAD layer: ', event.item)
             this.selectedLayerForDownload = event.item
             this.downloadDialogVisible = true
         },

@@ -149,7 +149,6 @@ export default defineComponent({
             }, import.meta.env.VITE_MENU_FADE_TIMER)
         },
         newsSelection() {
-            console.log('ALLOWED: ', this.allowedUserFunctionalities)
             this.newsDisplay = !this.newsDisplay
         },
         licenseSelection() {

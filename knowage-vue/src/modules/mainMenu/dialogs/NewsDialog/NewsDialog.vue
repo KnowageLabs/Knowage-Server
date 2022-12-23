@@ -101,7 +101,6 @@ export default defineComponent({
                 this.loading = true
                 await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/news/' + id + '?isTechnical=false').then(
                     (response: AxiosResponse<any>) => {
-                        console.log(response)
                         if (response.data.errors) {
                             this.store.setError({ title: this.$t('common.error.news'), msg: this.$t('news.errorGettingSelectedNews') })
                         } else {

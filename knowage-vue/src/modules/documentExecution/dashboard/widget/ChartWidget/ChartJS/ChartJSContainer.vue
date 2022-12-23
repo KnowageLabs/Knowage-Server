@@ -63,7 +63,6 @@ export default defineComponent({
         },
         onRefreshChart() {
             this.chartModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.model : null
-            console.log('>>>>>>>>>> CHART MODEL IN CONTAINER: ', this.chartModel)
             this.updateChartModel()
         },
         updateChartModel() {

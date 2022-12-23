@@ -140,7 +140,6 @@ export default defineComponent({
             this.dataset.xslSheetNumber == null ? (this.dataset.xslSheetNumber = '') : ''
             this.dataset.meta = JSON.stringify(this.dataset.meta)
             this.newFileUploaded ? (this.dataset.fileUploaded = true) : ''
-            console.log(this.dataset)
             this.$http({
                 method: 'POST',
                 url: import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'selfservicedataset/testDataSet',
