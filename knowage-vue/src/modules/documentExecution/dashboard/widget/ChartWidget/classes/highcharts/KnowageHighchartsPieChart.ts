@@ -28,12 +28,12 @@ export class KnowageHighchartsPieChart extends KnowageHighcharts {
         this.model = model
     }
 
-    setData = (data: any, widgetModel: IWidget, drillDownLevel = 0) => {
+    setData = (data: any, widgetModel: IWidget, model: any) => {
         //hardcoding column values because we will always have one measure and one category, by hardcoding the values, we are saving resourcces on forEach and filter methods
         // const categoryColumnName = data.metaData.fields.filter((i) => i.header === this.model.settings.categories[drillDownLevel])[0].name
-        if (this.model.series.length === 0) this.getSeriesFromWidgetModel(widgetModel)
+        if (model.series.length === 0) this.getSeriesFromWidgetModel(widgetModel, model)
 
-        this.model.series.map((item, serieIndex) => {
+        model.series.map((item, serieIndex) => {
             // const dataColumn = item.groupingFunction ? item.name + '_' + item.groupingFunction : item.name
             this.range[serieIndex] = { serie: item.name }
             // const dataColumnName = data.metaData.fields.filter((i) => i.header === dataColumn)[0].name
@@ -49,24 +49,24 @@ export class KnowageHighchartsPieChart extends KnowageHighcharts {
                 // this.range[serieIndex].max = this.range[serieIndex].max ? Math.max(this.range[serieIndex].max, row[dataColumnName]) : row[dataColumnName]
                 this.range[serieIndex].min = this.range[serieIndex].min ? Math.min(this.range[serieIndex].min, row['column_2']) : row['column_2']
                 this.range[serieIndex].max = this.range[serieIndex].max ? Math.max(this.range[serieIndex].max, row['column_2']) : row['column_2']
-                if (this.model.settings.drilldown) serieElement.drilldown = true
+                if (model.settings.drilldown) serieElement.drilldown = true
                 item.data.push(serieElement)
             })
         })
-        return this.model.series
+        return model.series
     }
 
-    getSeriesFromWidgetModel = (widgetModel: IWidget) => {
+    getSeriesFromWidgetModel = (widgetModel: IWidget, model: any) => {
         const measureColumn = widgetModel.columns.find((column: IWidgetColumn) => column.fieldType === 'MEASURE')
         if (!measureColumn) return
-        this.model.series = [createSerie(measureColumn.columnName, measureColumn.aggregation)]
+        model.series = [createSerie(measureColumn.columnName, measureColumn.aggregation)]
     }
 
     setPiePlotOptions = () => {
         this.model.plotOptions.pie = highchartsDefaultValues.getDafaultPieChartPlotOptions()
     }
 
-    updateSeriesLabelSettings = (widgetModel: IWidget, model: any,) => {
+    updateSeriesLabelSettings = (widgetModel: IWidget, model: any) => {
         if (!widgetModel || !widgetModel.settings.series || !widgetModel.settings.series.seriesLabelsSettings || !widgetModel.settings.series.seriesLabelsSettings[0]) return
         const seriesLabelSetting = widgetModel.settings.series.seriesLabelsSettings[0]
         if (!seriesLabelSetting.label.enabled) return

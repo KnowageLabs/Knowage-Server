@@ -1,5 +1,6 @@
 <template>
     <div v-show="!error" :id="chartID" style="width: 100%; height: 100%; margin: 0 auto"></div>
+    <!-- <div style="height: 20px"> {{ dataToShow }}</div> -->
 </template>
 
 <script lang="ts">
@@ -73,7 +74,7 @@ export default defineComponent({
                 }
             })
 
-            this.widgetModel.settings.chartModel.setData(this.dataToShow, this.widgetModel)
+            this.widgetModel.settings.chartModel.setData(this.dataToShow, this.widgetModel, this.chartModel)
 
             this.widgetModel.settings.chartModel.updateSeriesAccessibilitySettings(this.widgetModel, this.chartModel)
             this.widgetModel.settings.chartModel.updateSeriesLabelSettings(this.widgetModel, this.chartModel)
@@ -84,7 +85,7 @@ export default defineComponent({
             this.error = this.updateTooltipSettings()
             if (this.error) return
 
-            this.widgetModel.settings.chartModel.updateChartColorSettings(this.widgetModel)
+            this.widgetModel.settings.chartModel.updateChartColorSettings(this.widgetModel, this.chartModel)
 
             this.setSeriesEvents()
 

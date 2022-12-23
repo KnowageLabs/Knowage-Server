@@ -12,7 +12,7 @@
 
     <ColorPicker v-if="colorPickerVisible" class="dashboard-color-picker click-outside" theme="light" :color="customColorValue" :colors-default="descriptor.defaultColors" :sucker-hide="true" @changeColor="changeColor" />
 
-    <DataTable class="pallete-table p-m-2" :style="descriptor.colorPalleteStyle.table" :value="colors" :reorderableColumns="false" responsiveLayout="scroll" @rowReorder="onRowReorder">
+    <DataTable class="pallete-table p-m-2" :style="descriptor.colorPalleteStyle.table" :value="widgetModel.settings.chart.colors" :reorderableColumns="false" responsiveLayout="scroll" @rowReorder="onRowReorder">
         <Column :rowReorder="true" :reorderableColumn="false" :style="descriptor.colorPalleteStyle.column">
             <template #body="slotProps">
                 <span class="kn-height-full" :style="`background-color: ${slotProps.data}; color:${getContrastYIQ(slotProps.data)}`">
@@ -56,7 +56,6 @@ export default defineComponent({
     data() {
         return {
             descriptor,
-            colors: [] as string[],
             customColorValue: '#8D8D8D',
             editIndex: -1,
             colorPickTimer: null as any,
@@ -78,19 +77,19 @@ export default defineComponent({
     },
     methods: {
         loadColorSettings() {
-            if (this.widgetModel.settings.chart.colors) this.colors = this.widgetModel.settings.chart.colors
+            // if (this.widgetModel.settings.chart.colors) this.colors = this.widgetModel.settings.chart.colors
         },
         toggleColorPicker(index) {
             this.colorPickerVisible = !this.colorPickerVisible
             this.editIndex = index
-            this.customColorValue = this.colors[this.editIndex]
+            this.customColorValue = this.widgetModel.settings.chart.colors[this.editIndex]
         },
         onRowReorder(event) {
-            this.colors = event.value
+            this.widgetModel.settings.chart.colors = event.value
             emitter.emit('refreshChart', this.widgetModel.id)
         },
         addColor() {
-            this.colors.push(this.customColorValue)
+            this.widgetModel.settings.chart.colors.push(this.customColorValue)
             emitter.emit('refreshChart', this.widgetModel.id)
         },
         changeColor(color) {
@@ -102,32 +101,30 @@ export default defineComponent({
             }
             this.colorPickTimer = setTimeout(() => {
                 if (!this.customColorValue) return
-                if (this.editIndex != -1) this.colors[this.editIndex] = `rgba(${r}, ${g}, ${b}, ${a})`
+                if (this.editIndex != -1) this.widgetModel.settings.chart.colors[this.editIndex] = `rgba(${r}, ${g}, ${b}, ${a})`
                 else this.customColorValue = `rgba(${r}, ${g}, ${b}, ${a})`
                 emitter.emit('refreshChart', this.widgetModel.id)
             }, 200)
         },
         deleteColor(index) {
-            this.colors.splice(index, 1)
+            this.widgetModel.settings.chart.colors.splice(index, 1)
             emitter.emit('refreshChart', this.widgetModel.id)
         },
         getContrastYIQ(hexcolor) {
-            var getRGBA = function(string) {
-                var match = string.match(/^rgba\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3}),\s*(\d*(?:\.\d+)?)\)$/)
-                return match
-                    ? {
-                          r: Number(match[1]),
-                          g: Number(match[2]),
-                          b: Number(match[3]),
-                          a: Number(match[4])
-                      }
-                    : {}
-            }
-
-            var rgba = getRGBA(hexcolor) as any
-
-            var yiq = (rgba.r * 299 + rgba.g * 587 + rgba.b * 114) / 1000
-            return yiq >= 128 ? 'black' : 'white'
+            // var getRGBA = function(string) {
+            //     var match = string.match(/^rgba\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3}),\s*(\d*(?:\.\d+)?)\)$/)
+            //     return match
+            //         ? {
+            //               r: Number(match[1]),
+            //               g: Number(match[2]),
+            //               b: Number(match[3]),
+            //               a: Number(match[4])
+            //           }
+            //         : {}
+            // }
+            // var rgba = getRGBA(hexcolor) as any
+            // var yiq = (rgba.r * 299 + rgba.g * 587 + rgba.b * 114) / 1000
+            // return yiq >= 128 ? 'black' : 'white'
         }
     }
 })

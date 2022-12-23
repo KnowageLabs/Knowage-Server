@@ -1,6 +1,6 @@
-import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard"
-import { IHighchartsChartModel, IHighchartsChartSerie, IHighchartsSerieAccessibility, ISerieAccessibilitySetting } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
-import * as  highchartsDefaultValues from "../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues"
+import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IHighchartsChartModel, IHighchartsChartSerie, IHighchartsSerieAccessibility, ISerieAccessibilitySetting } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
+import * as highchartsDefaultValues from '../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
 
 export class KnowageHighcharts {
     model: IHighchartsChartModel
@@ -9,21 +9,20 @@ export class KnowageHighcharts {
 
     constructor() {
         this.model = this.createNewChartModel()
-        this.cardinality = [],
-            this.range = []
+        ;(this.cardinality = []), (this.range = [])
     }
 
     updateCardinality = async (data: any) => {
         let cardinalityObj = {}
-        this.model.settings.categories.forEach(category => {
+        this.model.settings.categories.forEach((category) => {
             let tempCategory = data.metaData.fields.filter((i) => i.header === category)
             if (tempCategory.length > 0) {
                 cardinalityObj[tempCategory[0].name] = {
-                    "category": category,
-                    "set": new Set()
+                    category: category,
+                    set: new Set()
                 }
             }
-        });
+        })
         await data.rows.forEach((row: any, index: number) => {
             for (let k in cardinalityObj) {
                 if (row[k]) cardinalityObj[k].set.add(row[k])
@@ -36,9 +35,8 @@ export class KnowageHighcharts {
         return this.cardinality
     }
 
-
     getModel = () => {
-        return this.model;
+        return this.model
     }
 
     getCardinality = () => {
@@ -50,8 +48,8 @@ export class KnowageHighcharts {
     }
 
     dispatchEvent = (e: any) => {
-        var myCustomEvent = new CustomEvent(e.type, { detail: e });
-        document.dispatchEvent(myCustomEvent);
+        var myCustomEvent = new CustomEvent(e.type, { detail: e })
+        document.dispatchEvent(myCustomEvent)
     }
 
     createNewChartModel = () => {
@@ -76,7 +74,6 @@ export class KnowageHighcharts {
             tooltip: highchartsDefaultValues.getDefaultTooltipSettings(),
             credits: { enabled: false }
         }
-
     }
 
     updateSeriesAccessibilitySettings = (widgetModel: IWidget, model: any) => {
@@ -148,9 +145,8 @@ export class KnowageHighcharts {
         return hasError
     }
 
-    updateChartColorSettings = (widgetModel: IWidget) => {
-        if (!this.model.plotOptions.pie) return
-        this.model.plotOptions.pie.colors = widgetModel.settings.chart.colors
+    updateChartColorSettings = (widgetModel: IWidget, model: any) => {
+        if (!model.plotOptions.pie) return
+        model.plotOptions.pie.colors = widgetModel.settings.chart.colors
     }
-
 }
