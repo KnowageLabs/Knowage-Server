@@ -7,7 +7,6 @@ import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
 import { formatChartJSWidget } from './widget/WidgetEditor/helpers/chartWidget/chartJS/ChartJSHelpers'
 import { formatHighchartsWidget } from './widget/WidgetEditor/helpers/chartWidget/highcharts/HighchartsHelpers'
-import { KnowageHighchartsPieChart } from './widget/ChartWidget/classes/highcharts/KnowageHighchartsPieChart'
 
 
 export const createNewDashboardModel = () => {

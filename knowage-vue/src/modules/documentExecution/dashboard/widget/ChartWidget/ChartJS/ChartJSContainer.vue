@@ -61,8 +61,9 @@ export default defineComponent({
             emitter.off('refreshChart', this.onRefreshChart)
             emitter.off('chartWidgetResized', (newHeight) => this.onChartResize(newHeight as number))
         },
-        onRefreshChart(chartModel: any = null) {
+        onRefreshChart() {
             this.chartModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.model : null
+            console.log('>>>>>>>>>> CHART MODEL IN CONTAINER: ', this.chartModel)
             this.updateChartModel()
         },
         updateChartModel() {
