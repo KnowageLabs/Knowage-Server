@@ -11,11 +11,11 @@ export class KnowageChartJSPieChart extends KnowageChartJS {
         this.model.chart.type = 'pie'
     }
 
-    updateModel = (oldModel: any) => {
+    updateModel(oldModel: any) {
         updatePieChartModel(oldModel, this.model)
     }
 
-    setData = (data: any) => {
+    setData(data: any) {
         this.model.data = {
             datasets: [
                 {
@@ -36,7 +36,7 @@ export class KnowageChartJSPieChart extends KnowageChartJS {
         return this.model.data
     }
 
-    updateChartColorSettings = (widgetModel: IWidget) => {
+    updateChartColorSettings(widgetModel: IWidget) {
         if (!this.model.data.datasets || !this.model.data.datasets[0]) return
         this.model.data.datasets[0].backgroundColor = widgetModel.settings.chart.colors
     }

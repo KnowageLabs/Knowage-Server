@@ -8,7 +8,7 @@ export class KnowageChartJS {
         this.model = this.createNewChartModel()
     }
 
-    createNewChartModel = () => {
+    createNewChartModel() {
         return {
             chart: { type: '' },
             data: {

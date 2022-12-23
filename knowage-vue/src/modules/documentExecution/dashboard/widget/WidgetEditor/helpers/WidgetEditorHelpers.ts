@@ -5,8 +5,8 @@ import { createNewSelectorWidgetSettings } from '../helpers/selectorWidget/Selec
 import { createNewSelectionsWidgetSettings } from '../helpers/selectionsWidget/SelectionsWidgetFunctions'
 import { createNewHtmlWidgetSettings } from './htmlWidget/HTMLWidgetFunctions'
 import { createNewTextWidgetSettings } from './textWidget/TextWidgetFunctions'
-import { createNewChartJSSettings } from './chartWidget/chartJS/ChartJSHelpers'
-import { createNewHighchartsSettings } from './chartWidget/highcharts/HighchartsHelpers'
+import { createNewChartJSSettings, formatChartJSWidget } from './chartWidget/chartJS/ChartJSHelpers'
+import { createNewHighchartsSettings, formatHighchartsWidget } from './chartWidget/highcharts/HighchartsHelpers'
 import { formatHighchartsWidgetForSave } from './chartWidget/highcharts/HighchartsBackendSaveHelper'
 import { formatChartJSForSave } from './chartWidget/chartJS/ChartJSBackendSaveHelper'
 import cryptoRandomString from 'crypto-random-string'
@@ -80,4 +80,9 @@ export function getRGBColorFromString(color: string) {
     if (temp) {
         return { r: +temp[0], g: +temp[1], b: +temp[2], a: +temp[3] }
     } else return { r: 0, g: 0, b: 0, a: 0 }
+}
+
+export const recreateKnowageChartModel = (widget: IWidget) => {
+    if (widget.type === 'chartJS') formatChartJSWidget(widget)
+    else if (widget.type === 'higcharts') formatHighchartsWidget(widget)
 }

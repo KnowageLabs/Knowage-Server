@@ -34,7 +34,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IDataset, IDashboardDataset, IVariable, IGalleryItem } from '../../Dashboard'
 import { AxiosResponse } from 'axios'
-import { createNewWidget } from './helpers/WidgetEditorHelpers'
+import { createNewWidget, recreateKnowageChartModel } from './helpers/WidgetEditorHelpers'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import WidgetEditorPreview from './WidgetEditorPreview.vue'
 import WidgetEditorTabs from './WidgetEditorTabs.vue'
@@ -42,7 +42,6 @@ import mainStore from '../../../../../App.store'
 import descriptor from './WidgetEditorDescriptor.json'
 import dashStore from '../../Dashboard.store'
 import deepcopy from 'deepcopy'
-import { KnowageHighchartsPieChart } from '../ChartWidget/classes/highcharts/KnowageHighchartsPieChart'
 
 export default defineComponent({
     name: 'widget-editor',
@@ -99,8 +98,7 @@ export default defineComponent({
         loadWidget() {
             if (!this.propWidget) return
             this.widget = this.propWidget.new ? createNewWidget(this.propWidget.type) : deepcopy(this.propWidget)
-            this.widget.settings.chartModel = new KnowageHighchartsPieChart(this.widget.settings.chartModel.model)
-            console.log('>>>>>>>>>>>>>>>>> WIDGET IN WIDGET EDITOR: ', this.widget.settings.chartModel)
+            recreateKnowageChartModel(this.widget)
         },
         loadSelectedModelDatasets() {
             this.selectedModelDatasets = this.dashboardId ? this.dashboardStore.getDashboardSelectedDatasets(this.dashboardId) : {}

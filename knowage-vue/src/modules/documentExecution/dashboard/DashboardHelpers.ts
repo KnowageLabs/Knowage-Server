@@ -1,5 +1,5 @@
 import { IDashboard, IDashboardConfiguration, IDataset, IVariable, IWidget } from './Dashboard'
-import { formatWidgetForSave } from './widget/WidgetEditor/helpers/WidgetEditorHelpers'
+import { formatWidgetForSave, recreateKnowageChartModel } from './widget/WidgetEditor/helpers/WidgetEditorHelpers'
 import { setVariableValueFromDataset } from './generalSettings/VariablesHelper'
 import mitt from 'mitt'
 export const emitter = mitt()
@@ -35,7 +35,7 @@ export const updateWidgetHelper = (dashboardId: string, widget: IWidget, dashboa
     for (let i = 0; i < dashboards[dashboardId].widgets.length; i++) {
         if (widget.id === dashboards[dashboardId].widgets[i].id) {
             const tempWidget = deepcopy(widget)
-            tempWidget.settings.chartModel = new KnowageHighchartsPieChart(tempWidget.settings.chartModel.model)
+            recreateKnowageChartModel(tempWidget)
             dashboards[dashboardId].widgets[i] = tempWidget
             emitter.emit("widgetUpdatedFromStore", widget)
         }
