@@ -1,11 +1,14 @@
 <template>
     <div v-if="widgetModel">
+        {{ 'TODO' }}
+        {{ chartType }}
         <WidgetEditorColumnTable
+            v-if="chartType === 'pie'"
             class="p-m-2"
             :widgetModel="widgetModel"
             :items="columnTableItems['ATTRIBUTES'] ?? []"
             :settings="{ ...commonDescriptor.columnTableSettings, ...highchartDescriptor.pieChartcolumnTableSettings[0] }"
-            chartType="highchartsPieChart"
+            :chartType="chartType"
             @rowReorder="onColumnsReorder"
             @itemAdded="onColumnAdded"
             @itemUpdated="onColumnItemUpdate"
@@ -17,7 +20,7 @@
             :widgetModel="widgetModel"
             :items="columnTableItems['MEASURES'] ?? []"
             :settings="{ ...commonDescriptor.columnTableSettings, ...highchartDescriptor.pieChartcolumnTableSettings[1] }"
-            chartType="highchartsPieChart"
+            :chartType="chartType"
             @itemAdded="onColumnAdded"
             @itemUpdated="onColumnItemUpdate"
             @itemSelected="setSelectedColumn"
@@ -41,7 +44,7 @@ import WidgetEditorFilterForm from '../../common/WidgetEditorFilterForm.vue'
 import ChartWidgetColumnForm from '../common/ChartWidgetColumnForm.vue'
 
 export default defineComponent({
-    name: 'highcharts-widget-pie-chart-data-container',
+    name: 'highcharts-widget-common-data-container',
     components: { Dropdown, WidgetEditorColumnTable, WidgetEditorFilterForm, ChartWidgetColumnForm },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedDataset: { type: Object as PropType<IDataset | null> } },
     data() {
@@ -51,6 +54,11 @@ export default defineComponent({
             commonDescriptor,
             columnTableItems: {} as any,
             selectedColumn: null as IWidgetColumn | null
+        }
+    },
+    computed: {
+        chartType() {
+            return this.widgetModel?.settings.chartModel?.model?.chart.type
         }
     },
     watch: {
@@ -69,7 +77,8 @@ export default defineComponent({
             this.columnTableItems['MEASURES'] = []
             this.widgetModel.columns.forEach((column: IWidgetColumn) => {
                 const type = column.fieldType == 'MEASURE' ? 'MEASURES' : 'ATTRIBUTES'
-                if (type === 'MEASURES' && this.columnTableItems['MEASURES'].length === 1) return
+                const maxNumberOfDimensions = this.chartType === 'highchartsPieChart' ? 1 : null
+                if (type === 'MEASURES' && maxNumberOfDimensions && this.columnTableItems['MEASURES'].length === maxNumberOfDimensions) return
                 this.columnTableItems[type].push(column)
             })
         },

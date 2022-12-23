@@ -4,6 +4,7 @@ import { IHighchartsWidgetSettings } from "@/modules/documentExecution/dashboard
 import * as widgetCommonDefaultValues from '../../common/WidgetCommonDefaultValues'
 import * as  highchartsDefaultValues from "../highcharts/HighchartsDefaultValues"
 import descriptor from '../../../WidgetEditorSettingsTab/ChartWidget/common/ChartColorSettingsDescriptor.json'
+import { KnowageHighchartsGaugeChart } from "../../../../ChartWidget/classes/highcharts/KnowageHighchartsGaugeChart"
 
 export const createNewHighchartsSettings = () => {
     const settings = {
@@ -35,7 +36,10 @@ export const createNewHighchartsSettings = () => {
 }
 
 export const formatHighchartsWidget = (widget: IWidget) => {
-    widget.settings.chartModel = new KnowageHighchartsPieChart(widget.settings.chartModel.model ?? widget.settings.chartModel)
+    console.log(">>>>>>> WIDGET: ", widget)
+    const chartModel = widget.settings.chartModel.model ?? widget.settings.chartModel
+    const chartType = chartModel.chart.type
+    widget.settings.chartModel = chartType === 'pie' ? new KnowageHighchartsPieChart(chartModel) : new KnowageHighchartsGaugeChart(chartModel)
 
 }
 
