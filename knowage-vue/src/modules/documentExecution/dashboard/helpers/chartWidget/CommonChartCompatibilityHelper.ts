@@ -16,6 +16,7 @@ const columnNameIdMap = {}
 
 export const getFormattedWidgetColumns = (widget: any, chartLibrary: 'chartJS' | 'highcharts') => {
     if (!widget.content || !widget.content.columnSelectedOfDatasetAggregations || !widget.content.chartTemplate || !widget.content.chartTemplate.CHART || !widget.content.chartTemplate.CHART.VALUES) return []
+    const chartType = widget.content.chartTemplate.CHART.type
     const widgetColumNameMap = {}
     for (let i = 0; i < widget.content.columnSelectedOfDatasetAggregations.length; i++) {
         if (!widgetColumNameMap[widget.content.columnSelectedOfDatasetAggregations[i].name]) widgetColumNameMap[widget.content.columnSelectedOfDatasetAggregations[i].name] = getFormattedWidgetColumn(widget.content.columnSelectedOfDatasetAggregations[i], columnNameIdMap)
@@ -23,10 +24,20 @@ export const getFormattedWidgetColumns = (widget: any, chartLibrary: 'chartJS' |
 
     const formattedColumns = [] as IWidgetColumn[]
     const category = widget.content.chartTemplate.CHART.VALUES.CATEGORY
-    const serie = widget.content.chartTemplate.CHART.VALUES.SERIE ? widget.content.chartTemplate.CHART.VALUES.SERIE[0] : null
     if (category) addCategoryColumns(category, formattedColumns, widgetColumNameMap, widget, chartLibrary)
-    if (serie) addSerieColumn(serie, widgetColumNameMap, formattedColumns)
+    const index = getMaximumNumberOfSeries(chartLibrary, chartType)
+
+    if (widget.content.chartTemplate.CHART.VALUES.SERIE) {
+        const endIndex = index ?? widget.content.chartTemplate.CHART.VALUES.SERIE.length
+        for (let i = 0; i < endIndex; i++) addSerieColumn(widget.content.chartTemplate.CHART.VALUES.SERIE[i], widgetColumNameMap, formattedColumns)
+    }
     return formattedColumns
+}
+
+const getMaximumNumberOfSeries = (chartLibrary: 'chartJS' | 'highcharts', chartType: string) => {
+    if (chartLibrary === 'chartJS') return 1
+    if (chartLibrary === 'highcharts' && chartType === 'PIE') return 1
+    return null
 }
 
 export const addCategoryColumns = (category: IOldModelCategory, formattedColumns: IWidgetColumn[], widgetColumNameMap: any, widget: IWidget, chartLibrary: 'chartJS' | 'highcharts') => {

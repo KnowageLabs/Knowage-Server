@@ -12,12 +12,16 @@ import { mapActions } from 'pinia'
 import { updateStoreSelections } from '../../interactionsHelpers/InteractionHelper'
 import Highcharts from 'highcharts'
 import Highcharts3D from 'highcharts/highcharts-3d'
+import HighchartsMore from 'highcharts/highcharts-more'
+import HighchartsSolidGauge from 'highcharts/modules/solid-gauge'
 import Accessibility from 'highcharts/modules/accessibility'
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display'
 import SeriesLabel from 'highcharts/modules/series-label'
 import cryptoRandomString from 'crypto-random-string'
 import store from '../../../Dashboard.store'
 
+HighchartsMore(Highcharts)
+HighchartsSolidGauge(Highcharts)
 Accessibility(Highcharts)
 NoDataToDisplay(Highcharts)
 SeriesLabel(Highcharts)
@@ -78,8 +82,10 @@ export default defineComponent({
 
             this.widgetModel.settings.chartModel.updateSeriesAccessibilitySettings(this.widgetModel)
             this.widgetModel.settings.chartModel.updateSeriesLabelSettings(this.widgetModel)
-            this.error = this.widgetModel.settings.chartModel.updateFormatterSettings(this.chartModel.plotOptions.pie?.dataLabels, 'format', 'formatter', 'formatterText', 'formatterError')
-            if (this.error) return
+            if (this.widgetModel.settings.plotOptions?.pie) {
+                this.error = this.widgetModel.settings.chartModel.updateFormatterSettings(this.chartModel.plotOptions.pie?.dataLabels, 'format', 'formatter', 'formatterText', 'formatterError')
+                if (this.error) return
+            }
             this.error = this.updateLegendSettings()
             if (this.error) return
             this.error = this.updateTooltipSettings()
@@ -89,6 +95,7 @@ export default defineComponent({
 
             this.setSeriesEvents()
 
+            console.log('>>>>>>> CHART TO RENDER: ', this.chartModel)
             this.highchartsInstance = Highcharts.chart(this.chartID, this.chartModel as any)
             this.highchartsInstance.reflow()
         },

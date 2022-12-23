@@ -11,7 +11,7 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
         super()
         if (model && model.CHART) this.updateModel(deepcopy(model))
         else if (model) this.model = deepcopy(model)
-        this.model.chart.type = 'pie'
+        this.model.chart.type = 'gauge'
     }
 
     updateModel(oldModel: any) {

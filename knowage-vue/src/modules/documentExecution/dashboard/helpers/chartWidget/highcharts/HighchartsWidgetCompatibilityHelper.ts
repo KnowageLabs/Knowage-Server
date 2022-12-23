@@ -61,7 +61,6 @@ export const getColumnId = (widgetColumnName: string) => {
 }
 
 const createChartModel = (widget: any) => {
-    console.log(">>>>>>>>>> widget.content.chartTemplate.CHART.type: ", widget.content.chartTemplate.CHART.type)
     const widgetContentChartTemplate = widget.content.chartTemplate
     switch (widgetContentChartTemplate.CHART.type) {
         case 'PIE':
