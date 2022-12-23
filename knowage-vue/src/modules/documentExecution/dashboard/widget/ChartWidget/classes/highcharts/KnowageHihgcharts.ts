@@ -78,13 +78,13 @@ export class KnowageHighcharts {
 
     updateSeriesAccessibilitySettings = (widgetModel: IWidget, model: any) => {
         if (!widgetModel || !widgetModel.settings.accesssibility || !widgetModel.settings.accesssibility.seriesAccesibilitySettings) return
-        this.setAllSeriesAccessibilitySettings(widgetModel)
+        this.setAllSeriesAccessibilitySettings(widgetModel, model)
         this.setSpecificAccessibilitySettings(widgetModel, model)
     }
 
-    setAllSeriesAccessibilitySettings = (widgetModel: IWidget) => {
-        this.model.series.forEach((serie: IHighchartsChartSerie) => {
-            if (this.model.chart.type !== 'pie' && widgetModel.settings.accesssibility.seriesAccesibilitySettings[0] && widgetModel.settings.accesssibility.seriesAccesibilitySettings[0].accessibility.enabled) {
+    setAllSeriesAccessibilitySettings = (widgetModel: IWidget, model: any) => {
+        model.series.forEach((serie: IHighchartsChartSerie) => {
+            if (model.chart.type !== 'pie' && widgetModel.settings.accesssibility.seriesAccesibilitySettings[0] && widgetModel.settings.accesssibility.seriesAccesibilitySettings[0].accessibility.enabled) {
                 serie.accessibility = {
                     ...widgetModel.settings.accesssibility.seriesAccesibilitySettings[0].accessibility
                 }
