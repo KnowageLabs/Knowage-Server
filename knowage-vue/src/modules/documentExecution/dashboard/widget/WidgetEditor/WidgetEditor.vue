@@ -42,6 +42,7 @@ import mainStore from '../../../../../App.store'
 import descriptor from './WidgetEditorDescriptor.json'
 import dashStore from '../../Dashboard.store'
 import deepcopy from 'deepcopy'
+import { KnowageHighchartsPieChart } from '../ChartWidget/classes/highcharts/KnowageHighchartsPieChart'
 
 export default defineComponent({
     name: 'widget-editor',
@@ -98,6 +99,8 @@ export default defineComponent({
         loadWidget() {
             if (!this.propWidget) return
             this.widget = this.propWidget.new ? createNewWidget(this.propWidget.type) : deepcopy(this.propWidget)
+            this.widget.settings.chartModel = new KnowageHighchartsPieChart(this.widget.settings.chartModel.model)
+            console.log('>>>>>>>>>>>>>>>>> WIDGET IN WIDGET EDITOR: ', this.widget.settings.chartModel)
         },
         loadSelectedModelDatasets() {
             this.selectedModelDatasets = this.dashboardId ? this.dashboardStore.getDashboardSelectedDatasets(this.dashboardId) : {}
@@ -131,6 +134,8 @@ export default defineComponent({
         },
         save() {
             const tempWidget = deepcopy(this.widget)
+            console.log('>>>>>>>>>> tempWidget.settings.chartModel: ', tempWidget.settings.chartModel)
+            tempWidget.settings.chartModel = new KnowageHighchartsPieChart(tempWidget.settings.chartModel.model)
             if (!tempWidget) return
 
             if (tempWidget.new) {

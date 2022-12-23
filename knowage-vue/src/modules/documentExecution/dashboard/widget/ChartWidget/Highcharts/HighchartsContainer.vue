@@ -74,6 +74,7 @@ export default defineComponent({
                 }
             })
 
+            console.log('>>>>>>>>>>>>>>>>>  this.widgetModel.settings.chartModel CONTAINER: ', this.widgetModel.settings.chartModel)
             this.widgetModel.settings.chartModel.setData(this.dataToShow, this.widgetModel, this.chartModel)
 
             this.widgetModel.settings.chartModel.updateSeriesAccessibilitySettings(this.widgetModel, this.chartModel)

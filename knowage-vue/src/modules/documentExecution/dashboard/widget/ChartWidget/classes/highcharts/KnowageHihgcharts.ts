@@ -9,10 +9,10 @@ export class KnowageHighcharts {
 
     constructor() {
         this.model = this.createNewChartModel()
-        ;(this.cardinality = []), (this.range = [])
+            ; (this.cardinality = []), (this.range = [])
     }
 
-    updateCardinality = async (data: any) => {
+    async updateCardinality(data: any) {
         let cardinalityObj = {}
         this.model.settings.categories.forEach((category) => {
             let tempCategory = data.metaData.fields.filter((i) => i.header === category)
@@ -35,24 +35,20 @@ export class KnowageHighcharts {
         return this.cardinality
     }
 
-    getModel = () => {
+    getModel() {
         return this.model
     }
 
-    getCardinality = () => {
+    getCardinality() {
         return this.range
     }
 
-    getRange = () => {
+    getRange() {
         return this.range
     }
 
-    dispatchEvent = (e: any) => {
-        var myCustomEvent = new CustomEvent(e.type, { detail: e })
-        document.dispatchEvent(myCustomEvent)
-    }
 
-    createNewChartModel = () => {
+    createNewChartModel() {
         return {
             title: '',
             lang: { noData: '' },
@@ -76,13 +72,13 @@ export class KnowageHighcharts {
         }
     }
 
-    updateSeriesAccessibilitySettings = (widgetModel: IWidget, model: any) => {
+    updateSeriesAccessibilitySettings(widgetModel: IWidget, model: any) {
         if (!widgetModel || !widgetModel.settings.accesssibility || !widgetModel.settings.accesssibility.seriesAccesibilitySettings) return
         this.setAllSeriesAccessibilitySettings(widgetModel, model)
         this.setSpecificAccessibilitySettings(widgetModel, model)
     }
 
-    setAllSeriesAccessibilitySettings = (widgetModel: IWidget, model: any) => {
+    setAllSeriesAccessibilitySettings(widgetModel: IWidget, model: any) {
         model.series.forEach((serie: IHighchartsChartSerie) => {
             if (model.chart.type !== 'pie' && widgetModel.settings.accesssibility.seriesAccesibilitySettings[0] && widgetModel.settings.accesssibility.seriesAccesibilitySettings[0].accessibility.enabled) {
                 serie.accessibility = {
@@ -99,7 +95,7 @@ export class KnowageHighcharts {
         })
     }
 
-    setSpecificAccessibilitySettings = (widgetModel: IWidget, model: any) => {
+    setSpecificAccessibilitySettings(widgetModel: IWidget, model: any) {
         const index = this.model.chart.type !== 'pie' ? 1 : 0
         for (let i = index; i < widgetModel.settings.accesssibility.seriesAccesibilitySettings.length; i++) {
             const seriesAccesibilitySetting = widgetModel.settings.accesssibility.seriesAccesibilitySettings[i] as ISerieAccessibilitySetting
@@ -107,12 +103,12 @@ export class KnowageHighcharts {
         }
     }
 
-    updateSerieAccessibilitySettings = (serieName: string, accessibility: IHighchartsSerieAccessibility, model: any) => {
+    updateSerieAccessibilitySettings(serieName: string, accessibility: IHighchartsSerieAccessibility, model: any) {
         const index = model.series.findIndex((serie: IHighchartsChartSerie) => serie.name === serieName)
         if (index !== -1) model.series[index].accessibility = { ...accessibility }
     }
 
-    updateFormatterSettings = (object: any, formatProperty: string | null, formatterProperty: string, formatterTextProperty: string, formatterErrorProperty: string) => {
+    updateFormatterSettings(object: any, formatProperty: string | null, formatterProperty: string, formatterTextProperty: string, formatterErrorProperty: string) {
         let hasError = false
         if (formatProperty && object[formatProperty]?.trim() === '') delete object[formatProperty]
         if (!object[formatterTextProperty] || !object[formatterTextProperty].trim()) {
@@ -133,19 +129,19 @@ export class KnowageHighcharts {
         return hasError
     }
 
-    updateLegendSettings = () => {
+    updateLegendSettings() {
         if (this.model.plotOptions.pie) this.model.plotOptions.pie.showInLegend = true
         return this.updateFormatterSettings(this.model.legend, 'labelFormat', 'labelFormatter', 'labelFormatterText', 'labelFormatterError')
     }
 
-    updateTooltipSettings = () => {
+    updateTooltipSettings() {
         let hasError = this.updateFormatterSettings(this.model.tooltip, null, 'formatter', 'formatterText', 'formatterError')
         if (hasError) return hasError
         hasError = this.updateFormatterSettings(this.model.tooltip, null, 'pointFormatter', 'pointFormatterText', 'pointFormatterError')
         return hasError
     }
 
-    updateChartColorSettings = (widgetModel: IWidget, model: any) => {
+    updateChartColorSettings(widgetModel: IWidget, model: any) {
         if (!model.plotOptions.pie) return
         model.plotOptions.pie.colors = widgetModel.settings.chart.colors
     }

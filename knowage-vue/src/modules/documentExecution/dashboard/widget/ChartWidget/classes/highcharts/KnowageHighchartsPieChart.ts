@@ -9,6 +9,7 @@ import deepcopy from 'deepcopy'
 
 export class KnowageHighchartsPieChart extends KnowageHighcharts {
     constructor(model: any) {
+        console.log("------- MODEL IN CONSTRUCTOR: ", model)
         super()
         if (!this.model.plotOptions.pie) this.setPiePlotOptions()
         if (model && model.CHART) this.updateModel(deepcopy(model))
@@ -16,19 +17,16 @@ export class KnowageHighchartsPieChart extends KnowageHighcharts {
         this.model.chart.type = 'pie'
     }
 
-    updateModel = (oldModel: any) => {
+    updateModel(oldModel: any) {
         updatePieChartModel(oldModel, this.model)
     }
 
-    getModel = () => {
-        return this.model
-    }
 
-    setModel = (model: IHighchartsPieChartModel) => {
+    setModel(model: IHighchartsPieChartModel) {
         this.model = model
     }
 
-    setData = (data: any, widgetModel: IWidget, model: any) => {
+    setData(data: any, widgetModel: IWidget, model: any) {
         //hardcoding column values because we will always have one measure and one category, by hardcoding the values, we are saving resourcces on forEach and filter methods
         // const categoryColumnName = data.metaData.fields.filter((i) => i.header === this.model.settings.categories[drillDownLevel])[0].name
         if (model.series.length === 0) this.getSeriesFromWidgetModel(widgetModel, model)
@@ -56,17 +54,17 @@ export class KnowageHighchartsPieChart extends KnowageHighcharts {
         return model.series
     }
 
-    getSeriesFromWidgetModel = (widgetModel: IWidget, model: any) => {
+    getSeriesFromWidgetModel(widgetModel: IWidget, model: any) {
         const measureColumn = widgetModel.columns.find((column: IWidgetColumn) => column.fieldType === 'MEASURE')
         if (!measureColumn) return
         model.series = [createSerie(measureColumn.columnName, measureColumn.aggregation)]
     }
 
-    setPiePlotOptions = () => {
+    setPiePlotOptions() {
         this.model.plotOptions.pie = highchartsDefaultValues.getDafaultPieChartPlotOptions()
     }
 
-    updateSeriesLabelSettings = (widgetModel: IWidget, model: any) => {
+    updateSeriesLabelSettings(widgetModel: IWidget, model: any) {
         if (!widgetModel || !widgetModel.settings.series || !widgetModel.settings.series.seriesLabelsSettings || !widgetModel.settings.series.seriesLabelsSettings[0]) return
         const seriesLabelSetting = widgetModel.settings.series.seriesLabelsSettings[0]
         if (!seriesLabelSetting.label.enabled) return
