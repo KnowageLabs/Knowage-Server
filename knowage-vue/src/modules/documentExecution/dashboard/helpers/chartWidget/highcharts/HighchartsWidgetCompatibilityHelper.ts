@@ -8,10 +8,12 @@ import { getFormattedWidgetColumns, getFormattedColorSettings } from '../CommonC
 import { getFormattedStyle } from './HighchartsWidgetStyleHelper'
 import * as widgetCommonDefaultValues from '../../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import * as highchartsDefaultValues from '../../../widget/WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
+import { KnowageHighchartsGaugeChart } from '../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsGaugeChart'
 
 const columnNameIdMap = {}
 
 export const formatHighchartsWidget = (widget: any) => {
+    console.log(">>>>>>>> LOADED WIDGET: ", widget)
     const formattedWidget = {
         id: widget.id,
         dataset: widget.dataset.dsId ?? null,
@@ -24,6 +26,7 @@ export const formatHighchartsWidget = (widget: any) => {
     formattedWidget.settings = getFormattedWidgetSettings(widget) as IHighchartsWidgetSettings
     getFiltersForColumns(formattedWidget, widget)
     formattedWidget.settings.chartModel = createChartModel(widget)
+    console.log(">>>>>>>> FORMATTED WIDGET: ", formattedWidget)
     return formattedWidget
 }
 
@@ -58,9 +61,13 @@ export const getColumnId = (widgetColumnName: string) => {
 }
 
 const createChartModel = (widget: any) => {
-    switch (widget.content.chartTemplate.CHART.type) {
+    console.log(">>>>>>>>>> widget.content.chartTemplate.CHART.type: ", widget.content.chartTemplate.CHART.type)
+    const widgetContentChartTemplate = widget.content.chartTemplate
+    switch (widgetContentChartTemplate.CHART.type) {
         case 'PIE':
-            return new KnowageHighchartsPieChart(widget.content.chartTemplate)
+            return new KnowageHighchartsPieChart(widgetContentChartTemplate)
+        case 'GAUGE':
+            return new KnowageHighchartsGaugeChart(widgetContentChartTemplate) // TODO - See about other gauge types
         default:
             return null
     }
@@ -76,10 +83,10 @@ const getFormattedSerieLabelsSettings = (widget: any) => {
             label: {
                 enabled: true,
                 style: {
-                    fontFamily: oldModelSerie.dataLabels.style.fontFamily ?? '',
-                    fontSize: oldModelSerie.dataLabels.style.fontSize ?? '',
-                    fontWeight: oldModelSerie.dataLabels.style.fontWeight ?? '',
-                    color: oldModelSerie.dataLabels.style.color ? hexToRgba(oldModelSerie.dataLabels.style.color) : '',
+                    fontFamily: oldModelSerie.dataLabels?.style?.fontFamily ?? '',
+                    fontSize: oldModelSerie.dataLabels?.style?.fontSize ?? '',
+                    fontWeight: oldModelSerie.dataLabels?.style?.fontWeight ?? '',
+                    color: oldModelSerie.dataLabels?.style?.color ? hexToRgba(oldModelSerie.dataLabels.style.color) : '',
                 },
                 backgroundColor: '',
                 prefix: oldModelSerie.prefixChar ?? '',

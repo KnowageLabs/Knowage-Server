@@ -1,24 +1,21 @@
 import { IHighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget'
 import { KnowageHighcharts } from './KnowageHihgcharts'
-import { updatePieChartModel } from './updater/KnowageHighchartsPieChartUpdater'
 import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
 import { IHighchartsChartSerie, IHighchartsChartSerieData } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
-import { createSerie } from './updater/KnowageHighchartsGaugeChartUpdater'
-import * as highchartsDefaultValues from '../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
+import { createSerie, updateGaugeChartModel } from './updater/KnowageHighchartsGaugeChartUpdater'
 import Highcharts from 'highcharts'
 import deepcopy from 'deepcopy'
 
-export class KnowageHighchartsPieChart extends KnowageHighcharts {
+export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
     constructor(model: any) {
         super()
-        if (!this.model.plotOptions.pie) this.setPiePlotOptions()
         if (model && model.CHART) this.updateModel(deepcopy(model))
         else if (model) this.model = deepcopy(model)
         this.model.chart.type = 'pie'
     }
 
     updateModel(oldModel: any) {
-        updatePieChartModel(oldModel, this.model)
+        updateGaugeChartModel(oldModel, this.model)
     }
 
 
@@ -26,6 +23,7 @@ export class KnowageHighchartsPieChart extends KnowageHighcharts {
         this.model = model
     }
 
+    // TODO - Darko
     setData(data: any, widgetModel: IWidget) {
         //hardcoding column values because we will always have one measure and one category, by hardcoding the values, we are saving resourcces on forEach and filter methods
         // const categoryColumnName = data.metaData.fields.filter((i) => i.header === this.model.settings.categories[drillDownLevel])[0].name
@@ -60,10 +58,7 @@ export class KnowageHighchartsPieChart extends KnowageHighcharts {
         this.model.series = [createSerie(measureColumn.columnName, measureColumn.aggregation)]
     }
 
-    setPiePlotOptions() {
-        this.model.plotOptions.pie = highchartsDefaultValues.getDafaultPieChartPlotOptions()
-    }
-
+    // TODO - Darko/Bojan move to superclass???
     updateSeriesLabelSettings(widgetModel: IWidget) {
         if (!widgetModel || !widgetModel.settings.series || !widgetModel.settings.series.seriesLabelsSettings || !widgetModel.settings.series.seriesLabelsSettings[0]) return
         const seriesLabelSetting = widgetModel.settings.series.seriesLabelsSettings[0]
@@ -82,7 +77,7 @@ export class KnowageHighchartsPieChart extends KnowageHighcharts {
                         color: seriesLabelSetting.label.style.color ?? ''
                     },
                     formatter: function () {
-                        return KnowageHighchartsPieChart.prototype.handleFormatter(this, seriesLabelSetting.label)
+                        return KnowageHighchartsGaugeChart.prototype.handleFormatter(this, seriesLabelSetting.label)
                     }
                 }
             })
