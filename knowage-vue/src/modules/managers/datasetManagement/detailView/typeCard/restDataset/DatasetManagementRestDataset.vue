@@ -151,11 +151,11 @@ export default defineComponent({
         }
     },
     created() {
-        this.dataset = this.selectedDataset
+        this.setDatasetToComponent()
     },
     watch: {
         selectedDataset() {
-            this.dataset = this.selectedDataset
+            this.setDatasetToComponent()
         }
     },
     validations() {
@@ -166,6 +166,13 @@ export default defineComponent({
         const validationObject = { dataset: createValidations('dataset', restDescriptor.validations.dataset, customValidators) }
         return validationObject
     },
-    methods: {}
+    methods: {
+        setDatasetToComponent() {
+            this.dataset = this.selectedDataset
+
+            this.dataset.restDirectlyJSONAttributes = Boolean(this.dataset.restDirectlyJSONAttributes)
+            this.dataset.restNGSI = Boolean(this.dataset.restNGSI)
+        }
+    }
 })
 </script>
