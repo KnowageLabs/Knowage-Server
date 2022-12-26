@@ -2,7 +2,7 @@
     "pieChartColumnTableSettings": [
         {
             "attributesOnly": true,
-            "hint": "dashboard.widgetEditor.chartJS.piechart.labelsTableHint",
+            "hint": "dashboard.widgetEditor.chartJS.piechart.dimensionsTableHint",
             "label": "dashboard.widgetEditor.dimensions"
         },
         {

@@ -1,8 +1,15 @@
 {
+    "gaugeChartcolumnTableSettings": [
+        {
+            "hint": "dashboard.widgetEditor.highcharts.gauge.valuesTableHint",
+            "label": "common.values",
+            "measuresOnly": true
+        }
+    ],
     "pieChartcolumnTableSettings": [
         {
             "attributesOnly": true,
-            "hint": "dashboard.widgetEditor.highcharts.piechart.labelsTableHint",
+            "hint": "dashboard.widgetEditor.highcharts.piechart.dimensionsTableHint",
             "label": "dashboard.widgetEditor.dimensions"
         },
         {

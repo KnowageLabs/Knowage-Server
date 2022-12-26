@@ -17,7 +17,7 @@
             class="p-m-2"
             :widgetModel="widgetModel"
             :items="columnTableItems['MEASURES'] ?? []"
-            :settings="{ ...commonDescriptor.columnTableSettings, ...highchartDescriptor.pieChartcolumnTableSettings[1] }"
+            :settings="valuesColumnSettings"
             :chartType="chartType"
             @itemAdded="onColumnAdded"
             @itemUpdated="onColumnItemUpdate"
@@ -57,6 +57,9 @@ export default defineComponent({
     computed: {
         chartType() {
             return this.widgetModel?.settings.chartModel?.model?.chart.type
+        },
+        valuesColumnSettings() {
+            return this.chartType === 'pie' ? { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.pieChartcolumnTableSettings[1] } : { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.gaugeChartcolumnTableSettings[0] }
         }
     },
     watch: {
@@ -115,7 +118,7 @@ export default defineComponent({
                 this.widgetModel.columns.splice(index, 1)
                 if (column.id === this.selectedColumn?.id) this.selectedColumn = null
                 this.removeColumnFromColumnTableItems(column)
-                removeSerieFromWidgetModel(this.widgetModel, column, 'IHighchartsPieChart')
+                removeSerieFromWidgetModel(this.widgetModel, column, this.chartType)
                 emitter.emit('refreshWidgetWithData', this.widgetModel.id)
             }
         },
