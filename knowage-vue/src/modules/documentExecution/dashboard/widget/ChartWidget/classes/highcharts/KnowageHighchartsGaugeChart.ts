@@ -1,14 +1,15 @@
-import { IHighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget'
 import { KnowageHighcharts } from './KnowageHihgcharts'
 import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
-import { IHighchartsChartSerie, IHighchartsChartSerieData } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
+import { IHighchartsChartModel, IHighchartsChartSerie, IHighchartsChartSerieData } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import { createSerie, updateGaugeChartModel } from './updater/KnowageHighchartsGaugeChartUpdater'
+import * as highchartsDefaultValues from '../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
 import Highcharts from 'highcharts'
 import deepcopy from 'deepcopy'
 
 export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
     constructor(model: any) {
         super()
+        if (!this.model.plotOptions.gauge) this.setGaugePlotOptions()
         if (model && model.CHART) this.updateModel(deepcopy(model))
         else if (model) this.model = deepcopy(model)
         this.model.chart.type = 'gauge'
@@ -19,7 +20,7 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
     }
 
 
-    setModel(model: IHighchartsPieChartModel) {
+    setModel(model: IHighchartsChartModel) {
         this.model = model
     }
 
@@ -56,6 +57,10 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
         const measureColumn = widgetModel.columns.find((column: IWidgetColumn) => column.fieldType === 'MEASURE')
         if (!measureColumn) return
         this.model.series = [createSerie(measureColumn.columnName, measureColumn.aggregation)]
+    }
+
+    setGaugePlotOptions() {
+        this.model.plotOptions.gauge = highchartsDefaultValues.getDafaultGaugeChartPlotOptions()
     }
 
     // TODO - Darko/Bojan move to superclass???

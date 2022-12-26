@@ -1,5 +1,5 @@
 import { IWidgetSelection } from "@/modules/documentExecution/dashboard/Dashboard"
-import { IHighchartsAccessibilitySettings, IHighchartsLegend, IHighchartsNoDataConfiguration, IHighchartsOptions3D, IIHighchartsPieChartPlotOptions, IHighchartsSeriesLabelsSetting, IHighchartsTooltip, ISerieAccessibilitySetting } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
+import { IHighchartsAccessibilitySettings, IHighchartsChartPlotOptions, IHighchartsLegend, IHighchartsNoDataConfiguration, IHighchartsOptions3D, IHighchartsSeriesLabelsSetting, IHighchartsTooltip, ISerieAccessibilitySetting } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
 import deepcopy from "deepcopy"
 import descriptor from './HighchartsDefaultValuesDescriptor.json'
 
@@ -25,7 +25,7 @@ export const getDefaultLegendSettings = () => {
 }
 
 export const getDafaultPieChartPlotOptions = () => {
-    return deepcopy(descriptor.defaultPieChartPlotOptions) as IIHighchartsPieChartPlotOptions
+    return deepcopy(descriptor.defaultPieChartPlotOptions) as IHighchartsChartPlotOptions
 }
 
 export const getDefaultHighchartsSelections = () => {
@@ -43,4 +43,8 @@ export const getDefaultAllSeriesAccessibilitySettings = () => {
 
 export const getDefaultSerieLabelSettings = () => {
     return deepcopy(descriptor.defaultSerieLabelSettings) as IHighchartsSeriesLabelsSetting[]
+}
+
+export const getDafaultGaugeChartPlotOptions = () => {
+    return deepcopy(descriptor.defaultGaugeChartPlotOptions) as IHighchartsChartPlotOptions
 }

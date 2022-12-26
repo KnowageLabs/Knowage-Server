@@ -1,7 +1,7 @@
-import { IHighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget'
+import { IHighchartsChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import { getForamttedLabels, getFormattedLegend, getFormattedNoDataConfiguration, getFormattedSeries, getFormattedTooltipSettings } from './KnowageHighchartsCommonUpdater'
 
-export const updateGaugeChartModel = (oldModel: any, newModel: IHighchartsPieChartModel) => {
+export const updateGaugeChartModel = (oldModel: any, newModel: IHighchartsChartModel) => {
     console.log(">>>>>>> OLD MODEL: ", oldModel)
     console.log(">>>>>>> NEW MODEL: ", newModel)
     getFormattedNoDataConfiguration(oldModel, newModel)

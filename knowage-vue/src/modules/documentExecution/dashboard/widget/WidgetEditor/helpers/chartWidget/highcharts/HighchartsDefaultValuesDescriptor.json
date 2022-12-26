@@ -26,6 +26,9 @@
             "names": ["all"]
         }
     ],
+    "defaultGaugeChartPlotOptions": {
+        "showInLegend": true
+    },
     "defaultHighchartsSelection": {
         "enabled": true,
         "modalColumn": ""

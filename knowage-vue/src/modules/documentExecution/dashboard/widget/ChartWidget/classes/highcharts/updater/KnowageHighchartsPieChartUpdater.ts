@@ -1,9 +1,8 @@
-import { IHighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget'
-import { IHighchartsOptions3D } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
+import { IHighchartsChartModel, IHighchartsOptions3D } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import { getForamttedLabels, getFormattedLegend, getFormattedNoDataConfiguration, getFormattedSeries, getFormattedTooltipSettings } from './KnowageHighchartsCommonUpdater'
 
 
-export const updatePieChartModel = (oldModel: any, newModel: IHighchartsPieChartModel) => {
+export const updatePieChartModel = (oldModel: any, newModel: IHighchartsChartModel) => {
     getFormatted3DConfiguration(oldModel, newModel)
     getFormattedNoDataConfiguration(oldModel, newModel)
     getFormattedLegend(oldModel, newModel)
@@ -14,7 +13,7 @@ export const updatePieChartModel = (oldModel: any, newModel: IHighchartsPieChart
     return newModel
 }
 
-const getFormatted3DConfiguration = (oldModel: any, newModel: IHighchartsPieChartModel) => {
+const getFormatted3DConfiguration = (oldModel: any, newModel: IHighchartsChartModel) => {
     if (oldModel.CHART.show3D) {
         if (newModel.plotOptions.pie) newModel.plotOptions.pie.depth = oldModel.CHART.depth
         newModel.chart.options3d = {

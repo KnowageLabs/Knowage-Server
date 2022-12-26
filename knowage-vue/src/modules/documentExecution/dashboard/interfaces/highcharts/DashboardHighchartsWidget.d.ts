@@ -1,5 +1,6 @@
 import { IWidgetInteractions, IWidgetResponsive } from "../../Dashboard";
 import { IHighchartsPieChart } from "../../widget/ChartWidget/classes/highcharts/KnowageIHighchartsPieChart";
+import { IIHighchartsPieChartPlotOptions } from "./DashboardHighchartsPieChartWidget";
 import { IHighchartsPieChartModel } from "./DashboardIHighchartsPieChartWidget";
 
 export interface IHighchartsWidgetSettings {
@@ -82,7 +83,8 @@ export interface IHighchartsChartModel {
     series: IHighchartsChartSerie[],
     settings: IIHighchartsChartModelSettings,
     plotOptions: {
-        pie?: IIHighchartsPieChartPlotOptions,
+        pie?: IHighchartsChartPlotOptions,
+        gauge?: IHighchartsChartPlotOptions,
         series?: { events: any }
     },
     legend: IHighchartsLegend,
@@ -90,6 +92,15 @@ export interface IHighchartsChartModel {
     credits: {
         enabled: boolean
     }
+}
+
+export interface IHighchartsChartPlotOptions {
+    showInLegend: boolean,
+    depth: number,
+    allowPointSelect: boolean,
+    cursor: string,
+    dataLabels: IIHighchartsPieChartDataLabels,
+    colors: string[]
 }
 
 export interface IHighchartsOptions3D {
@@ -123,14 +134,7 @@ export interface IHighchartsAccessibilitySettings {
     }
 }
 
-export interface IIHighchartsPieChartPlotOptions {
-    showInLegend: boolean,
-    depth: number,
-    allowPointSelect: boolean,
-    cursor: string,
-    dataLabels: IIHighchartsPieChartDataLabels,
-    colors: string[]
-}
+
 
 export interface IIHighchartsPieChartDataLabels {
     enabled: boolean,
