@@ -80,6 +80,36 @@ export default defineComponent({
 
             this.widgetModel.settings.chartModel.setData(this.dataToShow, this.widgetModel)
 
+            // TODO
+            this.widgetModel.settings.chartModel.model.series = [
+                {
+                    name: 'Speed',
+                    data: [80],
+                    tooltip: {
+                        valueSuffix: ' km/h'
+                    },
+                    dataLabels: {
+                        format: '{y} km/h',
+                        borderWidth: 0,
+                        color: (Highcharts.defaultOptions.title && Highcharts.defaultOptions.title.style && Highcharts.defaultOptions.title.style.color) || '#333333',
+                        style: {
+                            fontSize: '16px'
+                        }
+                    },
+                    dial: {
+                        radius: '80%',
+                        backgroundColor: 'gray',
+                        baseWidth: 12,
+                        baseLength: '0%',
+                        rearLength: '0%'
+                    },
+                    pivot: {
+                        backgroundColor: 'gray',
+                        radius: 6
+                    }
+                }
+            ]
+
             this.widgetModel.settings.chartModel.updateSeriesAccessibilitySettings(this.widgetModel)
             this.widgetModel.settings.chartModel.updateSeriesLabelSettings(this.widgetModel)
             if (this.widgetModel.settings.plotOptions?.pie) {

@@ -92,8 +92,9 @@ import selectionsDescriptor from './SelectionsWidget/SelectionsWidgetSettingsDes
 import WidgetEditorSettingsList from './WidgetEditorSettingsList.vue'
 import htmlDescriptor from './HTMLWidget/HTMLWidgetSettingsDescriptor.json'
 import textDescriptor from './TextWidget/TextWidgetSettingsDescriptor.json'
-import highchartsDescriptor from './ChartWidget/highcharts/HighchartsWidgetSettingsDescriptor.json'
 import chartJSDescriptor from './ChartWidget/chartJS/ChartJSWidgetSettingsDescriptor.json'
+import HighchartsPieSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsPieSettingsDescriptor.json'
+import HighchartsGaugeSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsGaugeSettingsDescriptor.json'
 
 export default defineComponent({
     name: 'widget-editor-settings-tab',
@@ -137,10 +138,18 @@ export default defineComponent({
                     this.descriptor = textDescriptor
                     break
                 case 'highcharts':
-                    this.descriptor = highchartsDescriptor
+                    this.descriptor = this.getHighchartsDescriptor()
                     break
                 case 'chartJS':
                     this.descriptor = chartJSDescriptor
+            }
+        },
+        getHighchartsDescriptor() {
+            switch (this.propWidget?.settings.chartModel?.model?.chart.type) {
+                case 'pie':
+                    return HighchartsPieSettingsDescriptor
+                case 'gauge':
+                    return HighchartsGaugeSettingsDescriptor
             }
         },
         onItemClicked(item: any) {

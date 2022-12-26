@@ -40,7 +40,6 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget, IDataset, IVariable } from '@/modules/documentExecution/dashboard/Dashboard'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
-import descriptor from './HighchartsWidgetSettingsDescriptor.json'
 import settingsTabDescriptor from '../../WidgetEditorSettingsTabDescriptor.json'
 import WidgetExport from '../../common/configuration/WidgetExport.vue'
 import WidgetRowsStyle from '../../common/style/WidgetRowsStyle.vue'
@@ -99,7 +98,8 @@ export default defineComponent({
         datasets: { type: Array as PropType<IDataset[]> },
         selectedDatasets: { type: Array as PropType<IDataset[]> },
         variables: { type: Array as PropType<IVariable[]>, required: true },
-        dashboardId: { type: String, required: true }
+        dashboardId: { type: String, required: true },
+        descriptor: { type: Object as PropType<any>, required: true }
     },
     watch: {
         settings() {
@@ -109,7 +109,6 @@ export default defineComponent({
     },
     data() {
         return {
-            descriptor,
             settingsTabDescriptor,
             activeIndex: -1
         }

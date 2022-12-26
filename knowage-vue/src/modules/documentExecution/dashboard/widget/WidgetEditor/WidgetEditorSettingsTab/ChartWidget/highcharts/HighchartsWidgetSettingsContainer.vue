@@ -1,6 +1,15 @@
 <template>
     <div v-show="widgetModel">
-        <HighchartsWidgetSettingsAccordion v-show="selectedSetting" :widgetModel="widgetModel" :settings="descriptor.settings[selectedSetting]" :datasets="datasets" :selectedDatasets="selectedDatasets" :variables="variables" :dashboardId="dashboardId"></HighchartsWidgetSettingsAccordion>
+        <HighchartsWidgetSettingsAccordion
+            v-show="selectedSetting"
+            :widgetModel="widgetModel"
+            :settings="descriptor?.settings[selectedSetting]"
+            :datasets="datasets"
+            :selectedDatasets="selectedDatasets"
+            :variables="variables"
+            :dashboardId="dashboardId"
+            :descriptor="descriptor"
+        ></HighchartsWidgetSettingsAccordion>
     </div>
 </template>
 
@@ -8,6 +17,8 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IDataset, IVariable } from '@/modules/documentExecution/dashboard/Dashboard'
 import descriptor from './HighchartsWidgetSettingsDescriptor.json'
+import HighchartsPieSettingsDescriptor from './descriptors/HighchartsPieSettingsDescriptor.json'
+import HighchartsGaugeSettingsDescriptor from './descriptors/HighchartsGaugeSettingsDescriptor.json'
 import HighchartsWidgetSettingsAccordion from './HighchartsWidgetSettingsAccordion.vue'
 
 export default defineComponent({
@@ -22,8 +33,16 @@ export default defineComponent({
         dashboardId: { type: String, required: true }
     },
     data() {
-        return {
-            descriptor
+        return {}
+    },
+    computed: {
+        descriptor() {
+            switch (this.widgetModel?.settings.chartModel?.model?.chart.type) {
+                case 'pie':
+                    return HighchartsPieSettingsDescriptor
+                case 'gauge':
+                    return HighchartsGaugeSettingsDescriptor
+            }
         }
     },
     created() {},
