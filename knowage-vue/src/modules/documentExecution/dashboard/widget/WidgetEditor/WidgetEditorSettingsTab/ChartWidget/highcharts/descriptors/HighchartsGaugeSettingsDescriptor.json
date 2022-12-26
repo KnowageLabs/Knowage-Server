@@ -80,6 +80,10 @@
             {
                 "title": "dashboard.widgetEditor.highcharts.tick.title",
                 "type": "TickSettings"
+            },
+            {
+                "title": "dashboard.widgetEditor.highcharts.bands.title",
+                "type": "BandsSettings"
             }
         ],
         "Style": [

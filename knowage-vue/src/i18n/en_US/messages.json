@@ -562,6 +562,14 @@
             },
             "hidden": "Hidden",
             "highcharts": {
+                "bands": {
+                    "colorHint": "The color of the plot band.",
+                    "fromHint": "The start position of the plot band in axis units.",
+                    "thickness": "Thickness",
+                    "thicknessHint": "In a gauge chart, this option sets the width of the plot band stretching along the perimeter. It can be given as a percentage string, like \"10%\", or as a pixel number, like 10. The default value 10 is the same as the default tickLength, thus making the plot band act as a background for the tick markers.",
+                    "title": "bands",
+                    "toHint": "The end position of the plot band in axis units."
+                },
                 "gauge": {
                     "valuesTableHint": "Measures only."
                 },

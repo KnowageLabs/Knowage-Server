@@ -90,7 +90,7 @@ const getFormattedSerieLabelsSettings = (widget: any) => {
                 backgroundColor: '',
                 prefix: oldModelSerie.prefixChar ?? '',
                 suffix: oldModelSerie.postfixChar ?? '',
-                scale: oldModelSerie.scaleFactor ?? 'empty', // TODO
+                scale: oldModelSerie.scaleFactor ?? 'empty',
                 precision: oldModelSerie.precision ?? 2,
                 absolute: oldModelSerie.showAbsValue,
                 percentage: oldModelSerie.showPercentage

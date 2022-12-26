@@ -6,7 +6,7 @@ export interface IHighchartsWidgetSettings {
     chartModel: IHighchartsChartModel | null,
     configuration: IHighchartsWidgetConfiguration,
     accesssibility: IHighchartsWidgetAccessibility,
-    series: IIHighchartsSeriesSetting,
+    series: IHighchartsSeriesSetting,
     interactions: IWidgetInteractions,
     chart: IHighchartsChartSettings,
     style: IHighchartsWidgetStyle,
@@ -32,7 +32,7 @@ export interface ISerieAccessibilitySetting {
     accessibility: IHighchartsSerieAccessibility
 }
 
-export interface IIHighchartsSeriesSetting {
+export interface IHighchartsSeriesSetting {
     seriesLabelsSettings: IHighchartsSeriesLabelsSetting[]
 }
 

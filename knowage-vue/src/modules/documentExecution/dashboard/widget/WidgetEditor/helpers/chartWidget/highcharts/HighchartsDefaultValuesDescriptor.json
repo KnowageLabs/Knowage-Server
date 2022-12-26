@@ -31,6 +31,12 @@
             "names": ["all"]
         }
     ],
+    "defaultBandsSetting": {
+        "color": "",
+        "from": 0,
+        "thickness": 10,
+        "to": 0
+    },
     "defaultGaugeChartPlotOptions": {
         "dataLabels": {
             "backgroundColor": "rgba(255, 255, 255, 1)",
@@ -49,6 +55,7 @@
         "max": null,
         "min": null,
         "minorTickInterval": null,
+        "plotBands": [],
         "tickColor": "",
         "tickLength": 10,
         "tickPosition": "outside",

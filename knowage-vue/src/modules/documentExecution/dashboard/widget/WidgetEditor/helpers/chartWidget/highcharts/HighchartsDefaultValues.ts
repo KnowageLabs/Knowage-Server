@@ -1,6 +1,6 @@
 import { IWidgetSelection } from "@/modules/documentExecution/dashboard/Dashboard"
 import { IHighchartsAccessibilitySettings, IHighchartsChartPlotOptions, IHighchartsLegend, IHighchartsNoDataConfiguration, IHighchartsOptions3D, IHighchartsSeriesLabelsSetting, IHighchartsTooltip, ISerieAccessibilitySetting } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
-import { IHighchartsGaugeYAxis, IHighchartsModelPane } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget"
+import { IHighchartsBands, IHighchartsGaugeYAxis, IHighchartsModelPane } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget"
 import deepcopy from "deepcopy"
 import descriptor from './HighchartsDefaultValuesDescriptor.json'
 
@@ -56,4 +56,8 @@ export const getDafaultPaneOptions = () => {
 
 export const getDefaultGaugsYAxis = () => {
     return deepcopy(descriptor.defaultGaugsYAxis) as IHighchartsGaugeYAxis
+}
+
+export const getDefaultBandsSetting = () => {
+    return deepcopy(descriptor.defaultBandsSetting) as IHighchartsBands
 }

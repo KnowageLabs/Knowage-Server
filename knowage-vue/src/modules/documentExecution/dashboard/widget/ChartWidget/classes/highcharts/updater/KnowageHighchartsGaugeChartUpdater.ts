@@ -14,6 +14,7 @@ export const updateGaugeChartModel = (oldModel: any, newModel: IHighchartsChartM
     if (oldModel.CHART.AXES_LIST && oldModel.CHART.AXES_LIST.AXIS && oldModel.CHART.AXES_LIST.AXIS[0]) {
         getFormattedScaleSettings(oldModel, newModel)
         getFormattedTickSettings(oldModel, newModel)
+        getFormattedBandsSettings(oldModel, newModel)
     }
 
     return newModel
@@ -58,4 +59,10 @@ const getFormattedTickSettings = (oldModel: any, newModel: IHighchartsChartModel
     newModel.yAxis.tickLength = oldYAxis.tickLength
     newModel.yAxis.tickWidth = oldYAxis.tickWidth
     newModel.yAxis.minorTickInterval = oldYAxis.minorTickInterval
+}
+
+const getFormattedBandsSettings = (oldModel: any, newModel: IHighchartsChartModel) => {
+    const oldYAxis = oldModel.CHART.AXES_LIST.AXIS[0]
+    newModel.yAxis.plotBands = []
+    oldYAxis.PLOTBANDS?.PLOT?.forEach((plot: { from: number, to: number, color: string }) => newModel.yAxis.plotBands.push({ from: plot.from, to: plot.to, color: plot.color ? hexToRgba(plot.color) : '', thickness: 10 }))
 }

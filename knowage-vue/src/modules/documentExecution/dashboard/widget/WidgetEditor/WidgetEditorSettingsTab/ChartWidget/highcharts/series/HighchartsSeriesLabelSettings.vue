@@ -88,7 +88,11 @@ export default defineComponent({
         }
     },
     created() {
+        this.setEventListeners()
         this.loadModel()
+    },
+    unmounted() {
+        this.removeEventListeners()
     },
     methods: {
         setEventListeners() {

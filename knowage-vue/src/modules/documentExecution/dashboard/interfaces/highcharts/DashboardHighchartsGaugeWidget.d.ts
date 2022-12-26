@@ -11,5 +11,12 @@ export interface IHighchartsGaugeYAxis {
     tickColor: string
     tickLength: number
     tickWidth: number,
-    minorTickInterval: number | 'auto' | null
+    minorTickInterval: number | 'auto' | null,
+    plotBands: IHighchartsBands[]
+}
+export interface IHighchartsBands {
+    from: number,
+    to: number,
+    color: string,
+    thickness: number
 }
