@@ -1,7 +1,5 @@
 <template>
     <div v-if="widgetModel">
-        {{ 'TODO' }}
-        {{ chartType }}
         <WidgetEditorColumnTable
             v-if="chartType === 'pie'"
             class="p-m-2"

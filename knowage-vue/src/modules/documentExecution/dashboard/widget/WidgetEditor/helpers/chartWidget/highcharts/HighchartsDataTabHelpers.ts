@@ -2,19 +2,20 @@ import { IWidget, IWidgetColumn } from "@/modules/documentExecution/dashboard/Da
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 
 export const addHighchartsColumnToTable = (tempColumn: IWidgetColumn, rows: IWidgetColumn[], chartType: string | undefined, attributesOnly: boolean, measuresOnly: boolean, widgetModel: IWidget) => {
-    console.log(">>>>>>> CHART TYPE: ", chartType)
     let mode = ''
     if (attributesOnly) mode = 'attributesOnly'
     else if (measuresOnly) mode = 'measuresOnly'
     switch (chartType) {
         case 'pie':
-            addIHighchartsPieChartColumnToTable(tempColumn, rows, chartType, mode, widgetModel)
+            addHighchartsPieChartColumnToTable(tempColumn, rows, chartType, mode, widgetModel)
+            break
+        case 'gauge':
+            addHighchartsGaugeChartColumnToTable(tempColumn, rows, chartType, mode, widgetModel)
     }
 }
 
-const addIHighchartsPieChartColumnToTable = (tempColumn: IWidgetColumn, rows: IWidgetColumn[], chartType: string | undefined, mode: string, widgetModel: IWidget) => {
+const addHighchartsPieChartColumnToTable = (tempColumn: IWidgetColumn, rows: IWidgetColumn[], chartType: string | undefined, mode: string, widgetModel: IWidget) => {
     if (mode === 'attributesOnly' && rows.length < 4) {
-        const index = rows.findIndex((column: IWidgetColumn) => column.columnName === tempColumn.columnName)
         if (tempColumn.fieldType === 'MEASURE') {
             tempColumn.fieldType = 'ATTRIBUTE'
             tempColumn.aggregation = ''
@@ -24,7 +25,7 @@ const addIHighchartsPieChartColumnToTable = (tempColumn: IWidgetColumn, rows: IW
             "orderColumnId": "",
             "orderType": ""
         }
-        if (index === -1) rows.push(tempColumn)
+        addColumnToRows(rows, tempColumn)
     } else if (mode === 'measuresOnly' && rows.length <= 1) {
         if (tempColumn.fieldType === 'ATTRIBUTE') {
             tempColumn.fieldType = 'MEASURE'
@@ -37,6 +38,23 @@ const addIHighchartsPieChartColumnToTable = (tempColumn: IWidgetColumn, rows: IW
         if (chartType === 'pie') updateSerieInWidgetModel(widgetModel, tempColumn)
 
     }
+}
+
+const addHighchartsGaugeChartColumnToTable = (tempColumn: IWidgetColumn, rows: IWidgetColumn[], chartType: string | undefined, mode: string, widgetModel: IWidget) => {
+    if (mode === 'measuresOnly') {
+        if (tempColumn.fieldType === 'ATTRIBUTE') {
+            tempColumn.fieldType = 'MEASURE'
+            tempColumn.aggregation = 'SUM'
+        }
+
+        addColumnToRows(rows, tempColumn)
+
+    }
+}
+
+const addColumnToRows = (rows: IWidgetColumn[], tempColumn: IWidgetColumn) => {
+    const index = rows.findIndex((column: IWidgetColumn) => column.columnName === tempColumn.columnName)
+    if (index === -1) rows.push(tempColumn)
 }
 
 const updateSerieInWidgetModel = (widgetModel: IWidget, column: IWidgetColumn) => {
