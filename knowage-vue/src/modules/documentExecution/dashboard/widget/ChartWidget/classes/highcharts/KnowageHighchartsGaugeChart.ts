@@ -11,6 +11,7 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
         super()
         if (!this.model.plotOptions.gauge) this.setGaugePlotOptions()
         if (!this.model.pane) this.setGaugePaneSettings()
+        if (!this.model.yAxis) this.setGaugeYAxis()
         if (model && model.CHART) this.updateModel(deepcopy(model))
         else if (model) this.model = deepcopy(model)
         this.model.chart.type = 'gauge'
@@ -143,5 +144,9 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
 
     setGaugePaneSettings() {
         this.model.pane = highchartsDefaultValues.getDafaultPaneOptions()
+    }
+
+    setGaugeYAxis() {
+        this.model.yAxis = highchartsDefaultValues.getDefaultGaugsYAxis()
     }
 }

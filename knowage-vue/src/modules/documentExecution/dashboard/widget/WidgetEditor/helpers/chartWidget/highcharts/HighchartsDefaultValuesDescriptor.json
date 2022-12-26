@@ -45,6 +45,14 @@
         },
         "showInLegend": true
     },
+    "defaultGaugsYAxis": {
+        "max": null,
+        "min": null,
+        "tickColor": "",
+        "tickLength": 0,
+        "tickPosition": "",
+        "tickWidth": 0
+    },
     "defaultHighchartsSelection": {
         "enabled": true,
         "modalColumn": ""

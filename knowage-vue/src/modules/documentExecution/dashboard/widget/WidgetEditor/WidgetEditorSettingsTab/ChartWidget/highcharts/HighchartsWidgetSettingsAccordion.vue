@@ -18,6 +18,7 @@
                 <HighchartsSeriesLabelSettings v-else-if="accordion.type === 'SriesLabel'" :widgetModel="widgetModel"></HighchartsSeriesLabelSettings>
                 <HighchartsDrilldownSettings v-else-if="accordion.type === 'Drilldown'" :widgetModel="widgetModel"></HighchartsDrilldownSettings>
                 <HighchartsGaugeGeneralSettings v-else-if="accordion.type === 'GaugeSettings'" :widgetModel="widgetModel"></HighchartsGaugeGeneralSettings>
+                <HighchartsGaugeScaleSettings v-else-if="accordion.type === 'ScaleSettings'" :widgetModel="widgetModel"></HighchartsGaugeScaleSettings>
                 <ChartColorSettings v-else-if="accordion.type === 'Colors'" :widgetModel="widgetModel"></ChartColorSettings>
                 <WidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
                 <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
@@ -64,7 +65,8 @@ import HighchartsTooltipSettings from '../highcharts/tooltip/HighchartsTooltipSe
 import HighchartsSeriesLabelSettings from '../highcharts/series/HighchartsSeriesLabelSettings.vue'
 import ChartColorSettings from '../common/ChartColorSettings.vue'
 import HighchartsDrilldownSettings from './interactions/HighchartsDrilldownSettings.vue'
-import HighchartsGaugeGeneralSettings from './gauge/general/HighchartsGaugeGeneralSettings.vue'
+import HighchartsGaugeGeneralSettings from './gauge/settings/HighchartsGaugeGeneralSettings.vue'
+import HighchartsGaugeScaleSettings from './gauge/settings/HighchartsGaugeScaleSettings.vue'
 
 export default defineComponent({
     name: 'hihgcharts-widget-configuration-container',
@@ -93,7 +95,8 @@ export default defineComponent({
         ChartColorSettings,
         HighchartsDrilldownSettings,
         WidgetSelection,
-        HighchartsGaugeGeneralSettings
+        HighchartsGaugeGeneralSettings,
+        HighchartsGaugeScaleSettings
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

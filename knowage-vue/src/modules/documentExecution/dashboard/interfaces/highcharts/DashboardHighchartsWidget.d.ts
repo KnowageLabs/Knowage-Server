@@ -89,7 +89,8 @@ export interface IHighchartsChartModel {
     credits: {
         enabled: boolean
     },
-    pane?: IHighchartsModelPane
+    pane?: IHighchartsModelPane,
+    yAxis?: IHighchartsGaugeYAxis
 }
 
 export interface IHighchartsChartPlotOptions {

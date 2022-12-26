@@ -39,7 +39,7 @@ import InputSwitch from 'primevue/inputswitch'
 
 export default defineComponent({
     name: 'hihgcharts-gauge-geeneral-settings',
-    components: { InputSwitch, InputNumber },
+    components: { InputNumber },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {

@@ -72,6 +72,10 @@
             {
                 "title": "common.general",
                 "type": "GaugeSettings"
+            },
+            {
+                "title": "dashboard.widgetEditor.series.scale",
+                "type": "ScaleSettings"
             }
         ],
         "Style": [

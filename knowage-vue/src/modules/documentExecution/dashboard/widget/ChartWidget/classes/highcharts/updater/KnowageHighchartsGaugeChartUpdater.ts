@@ -10,6 +10,9 @@ export const updateGaugeChartModel = (oldModel: any, newModel: IHighchartsChartM
     getFormattedSeries(oldModel, newModel)
     getFormattedTooltipSettings(oldModel, newModel)
     getFormattedPaneSettings(oldModel, newModel)
+    if (oldModel.CHART.AXES_LIST && oldModel.CHART.AXIS && oldModel.CHART.AXIS[0]) {
+        getFormattedScaleSettings(oldModel, newModel)
+    }
 
     return newModel
 }
@@ -37,4 +40,12 @@ const getFormattedPaneSettings = (oldModel: any, newModel: IHighchartsChartModel
             center: newModel.pane.center
         }
     }
+}
+
+
+const getFormattedScaleSettings = (oldModel: any, newModel: IHighchartsChartModel) => {
+    const oldYAxis = oldModel.CHART.AXIS[0]
+    console.log(">>>>> NEW MODEL PANE: ", newModel.pane)
+    newModel.yAxis.min = oldYAxis.min
+    newModel.yAxis.max = oldYAxis.max
 }

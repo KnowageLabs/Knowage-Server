@@ -80,8 +80,6 @@ export default defineComponent({
 
             // TODO
             ;(this.widgetModel.settings.chartModel.model.yAxis = {
-                min: 0,
-                max: 200,
                 tickPixelInterval: 72,
                 tickPosition: 'inside',
                 tickColor: '#FFFFFF',
