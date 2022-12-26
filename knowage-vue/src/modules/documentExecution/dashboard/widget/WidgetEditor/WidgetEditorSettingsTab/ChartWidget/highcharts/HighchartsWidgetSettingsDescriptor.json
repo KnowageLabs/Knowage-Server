@@ -117,6 +117,16 @@
         }
     ],
     "scaleOptions": ["empty", "k", "m", "g", "t", "p", "e"],
+    "tickPositionOptions": [
+        {
+            "label": "dashboard.widgetEditor.inside",
+            "value": "inside"
+        },
+        {
+            "label": "dashboard.widgetEditor.outside",
+            "value": "outside"
+        }
+    ],
     "tooltipStyleOptions": [
         {
             "type": "font-weight"

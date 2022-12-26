@@ -10,5 +10,6 @@ export interface IHighchartsGaugeYAxis {
     tickPosition: string
     tickColor: string
     tickLength: number
-    tickWidth: number
+    tickWidth: number,
+    minorTickInterval: number | 'auto' | null
 }

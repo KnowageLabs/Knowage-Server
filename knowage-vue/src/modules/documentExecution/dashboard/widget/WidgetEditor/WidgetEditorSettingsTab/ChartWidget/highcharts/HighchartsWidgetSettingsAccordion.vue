@@ -19,6 +19,7 @@
                 <HighchartsDrilldownSettings v-else-if="accordion.type === 'Drilldown'" :widgetModel="widgetModel"></HighchartsDrilldownSettings>
                 <HighchartsGaugeGeneralSettings v-else-if="accordion.type === 'GaugeSettings'" :widgetModel="widgetModel"></HighchartsGaugeGeneralSettings>
                 <HighchartsGaugeScaleSettings v-else-if="accordion.type === 'ScaleSettings'" :widgetModel="widgetModel"></HighchartsGaugeScaleSettings>
+                <HighchartsGaugeTickSettings v-else-if="accordion.type === 'TickSettings'" :widgetModel="widgetModel"></HighchartsGaugeTickSettings>
                 <ChartColorSettings v-else-if="accordion.type === 'Colors'" :widgetModel="widgetModel"></ChartColorSettings>
                 <WidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
                 <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
@@ -67,6 +68,7 @@ import ChartColorSettings from '../common/ChartColorSettings.vue'
 import HighchartsDrilldownSettings from './interactions/HighchartsDrilldownSettings.vue'
 import HighchartsGaugeGeneralSettings from './gauge/settings/HighchartsGaugeGeneralSettings.vue'
 import HighchartsGaugeScaleSettings from './gauge/settings/HighchartsGaugeScaleSettings.vue'
+import HighchartsGaugeTickSettings from './gauge/settings/HighchartsGaugeTickSettings.vue'
 
 export default defineComponent({
     name: 'hihgcharts-widget-configuration-container',
@@ -96,7 +98,8 @@ export default defineComponent({
         HighchartsDrilldownSettings,
         WidgetSelection,
         HighchartsGaugeGeneralSettings,
-        HighchartsGaugeScaleSettings
+        HighchartsGaugeScaleSettings,
+        HighchartsGaugeTickSettings
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

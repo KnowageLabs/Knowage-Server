@@ -595,6 +595,18 @@
                     "maxHint": "The maximum value of the axis. If null, the max value is automatically calculated.",
                     "minHint": "The minimum value of the axis. If null the min value is automatically calculated."
                 },
+                "tick": {
+                    "minorTickInterval": "Minor Tick Interval",
+                    "minorTickIntervalHint": "Specific tick interval in axis units for the minor ticks. On a linear axis, if \"auto\", the minor tick interval is calculated as a fifth of the tickInterval. If null or undefined, minor ticks are not shown. On logarithmic axes, the unit is the power of the value. For example, setting the minorTickInterval to 1 puts one tick on each of 0.1, 1, 10, 100 etc. Setting the minorTickInterval to 0.1 produces 9 ticks between 1 and 10, 10 and 100 etc. If user settings dictate minor ticks to become too dense, they don't make sense, and will be ignored to prevent performance problems.",
+                    "tickColor": "Tick Color",
+                    "tickLength": "Tick Length",
+                    "tickLengthHint": "The pixel length of the main tick marks.",
+                    "tickPosition": "Tick Position",
+                    "tickPositionHint": "The position of the major tick marks relative to the axis line. Can be one of inside and outside.",
+                    "tickWidth": "Tick Width",
+                    "tickWidthHint": "The pixel width of the major tick marks.",
+                    "title": "Tick"
+                },
                 "tooltip": {
                     "formatterHint": "Callback function to format the text of the tooltip from scratch. In case of single or shared tooltips, a string should be returned. In case of split tooltips, it should return an array where the first item is the header, and subsequent items are mapped to the points. Return false to disable tooltip for a specific point on series. A subset of HTML is supported. Unless useHTML is true, the HTML of the tooltip is parsed and converted to SVG, therefore this isn't a complete HTML renderer. The following HTML tags are supported: b, br, em, i, span, strong. Spans can be styled with a style attribute, but only text-related CSS, that is shared with SVG, is handled. The available data in the formatter differ a bit depending on whether the tooltip is shared or split, or belongs to a single point. In a shared/split tooltip, all properties except x, which is common for all points, are kept in an array, this.points.",
                     "pointFormatter": "Point Formatter",
@@ -615,6 +627,7 @@
                 "textAlignment": "Text alignment"
             },
             "inputHintForPixels": "use px measure unit, ie: 5px",
+            "inside": "Inside",
             "interactions": {
                 "analyticalDriver": "Analytical Driver",
                 "basicUrl": "Basic Url",
@@ -657,6 +670,7 @@
                 "enable": "Enable 'no Selection' message",
                 "title": "No Selection Message"
             },
+            "outside": "Outside",
             "padding": {
                 "enablePadding": "Enable Padding",
                 "linkAllHint": "Link all paddings",

@@ -76,6 +76,10 @@
             {
                 "title": "dashboard.widgetEditor.series.scale",
                 "type": "ScaleSettings"
+            },
+            {
+                "title": "dashboard.widgetEditor.highcharts.tick.title",
+                "type": "TickSettings"
             }
         ],
         "Style": [

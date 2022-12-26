@@ -48,9 +48,10 @@
     "defaultGaugsYAxis": {
         "max": null,
         "min": null,
+        "minorTickInterval": null,
         "tickColor": "",
-        "tickLength": 0,
-        "tickPosition": "",
+        "tickLength": 10,
+        "tickPosition": "outside",
         "tickWidth": 0
     },
     "defaultHighchartsSelection": {

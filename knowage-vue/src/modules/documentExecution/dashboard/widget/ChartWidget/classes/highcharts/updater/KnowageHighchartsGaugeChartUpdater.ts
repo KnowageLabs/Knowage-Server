@@ -1,3 +1,4 @@
+import { hexToRgba } from '@/modules/documentExecution/dashboard/helpers/FormattingHelpers'
 import { IHighchartsChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import { getForamttedLabels, getFormattedLegend, getFormattedNoDataConfiguration, getFormattedSeries, getFormattedTooltipSettings } from './KnowageHighchartsCommonUpdater'
 
@@ -12,6 +13,7 @@ export const updateGaugeChartModel = (oldModel: any, newModel: IHighchartsChartM
     getFormattedPaneSettings(oldModel, newModel)
     if (oldModel.CHART.AXES_LIST && oldModel.CHART.AXES_LIST.AXIS && oldModel.CHART.AXES_LIST.AXIS[0]) {
         getFormattedScaleSettings(oldModel, newModel)
+        getFormattedTickSettings(oldModel, newModel)
     }
 
     return newModel
@@ -47,4 +49,13 @@ const getFormattedScaleSettings = (oldModel: any, newModel: IHighchartsChartMode
     const oldYAxis = oldModel.CHART.AXES_LIST.AXIS[0]
     newModel.yAxis.min = oldYAxis.min
     newModel.yAxis.max = oldYAxis.max
+}
+
+const getFormattedTickSettings = (oldModel: any, newModel: IHighchartsChartModel) => {
+    const oldYAxis = oldModel.CHART.AXES_LIST.AXIS[0]
+    newModel.yAxis.tickPosition = oldYAxis.tickPosition
+    newModel.yAxis.tickColor = oldYAxis.tickColor ? hexToRgba(oldYAxis.tickColor) : ''
+    newModel.yAxis.tickLength = oldYAxis.tickLength
+    newModel.yAxis.tickWidth = oldYAxis.tickWidth
+    newModel.yAxis.minorTickInterval = oldYAxis.minorTickInterval
 }
