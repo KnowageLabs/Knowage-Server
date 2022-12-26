@@ -1,4 +1,5 @@
 <template>
+    {{ chartModel.tooltip }}
     <div v-show="!error" :id="chartID" style="width: 100%; height: 100%; margin: 0 auto"></div>
     <!-- <div style="height: 20px"> {{ dataToShow }}</div> -->
 </template>
@@ -81,41 +82,66 @@ export default defineComponent({
             this.widgetModel.settings.chartModel.setData(this.dataToShow, this.widgetModel)
 
             // TODO
-            this.widgetModel.settings.chartModel.model.series = [
-                {
-                    name: 'Speed',
-                    data: [80],
-                    tooltip: {
-                        valueSuffix: ' km/h'
-                    },
-                    dataLabels: {
-                        format: '{y} km/h',
-                        borderWidth: 0,
-                        color: (Highcharts.defaultOptions.title && Highcharts.defaultOptions.title.style && Highcharts.defaultOptions.title.style.color) || '#333333',
-                        style: {
-                            fontSize: '16px'
-                        }
-                    },
-                    dial: {
-                        radius: '80%',
-                        backgroundColor: 'gray',
-                        baseWidth: 12,
-                        baseLength: '0%',
-                        rearLength: '0%'
-                    },
-                    pivot: {
-                        backgroundColor: 'gray',
-                        radius: 6
+            ;(this.widgetModel.settings.chartModel.model.yAxis = {
+                min: 0,
+                max: 200,
+                tickPixelInterval: 72,
+                tickPosition: 'inside',
+                tickColor: '#FFFFFF',
+                tickLength: 20,
+                tickWidth: 2,
+                minorTickInterval: null,
+                labels: {
+                    distance: 20,
+                    style: {
+                        fontSize: '14px'
                     }
-                }
-            ]
+                },
+                plotBands: [
+                    {
+                        from: 0,
+                        to: 120,
+                        color: '#55BF3B', // green
+                        thickness: 20
+                    },
+                    {
+                        from: 120,
+                        to: 160,
+                        color: '#DDDF0D', // yellow
+                        thickness: 20
+                    },
+                    {
+                        from: 160,
+                        to: 200,
+                        color: '#DF5353', // red
+                        thickness: 20
+                    }
+                ]
+            }),
+                (this.widgetModel.settings.chartModel.model.series = [
+                    {
+                        name: 'Speed',
+                        data: [80],
+                        tooltip: {
+                            valueSuffix: ' km/h'
+                        },
+                        dial: {
+                            radius: '80%',
+                            backgroundColor: 'gray',
+                            baseWidth: 12,
+                            baseLength: '0%',
+                            rearLength: '0%'
+                        },
+                        pivot: {
+                            backgroundColor: 'gray',
+                            radius: 6
+                        }
+                    }
+                ])
 
             this.widgetModel.settings.chartModel.updateSeriesAccessibilitySettings(this.widgetModel)
             this.widgetModel.settings.chartModel.updateSeriesLabelSettings(this.widgetModel)
-            if (this.widgetModel.settings.plotOptions?.pie) {
-                this.error = this.widgetModel.settings.chartModel.updateFormatterSettings(this.chartModel.plotOptions.pie?.dataLabels, 'format', 'formatter', 'formatterText', 'formatterError')
-                if (this.error) return
-            }
+            this.updateDataLabels()
             this.error = this.updateLegendSettings()
             if (this.error) return
             this.error = this.updateTooltipSettings()
@@ -133,6 +159,13 @@ export default defineComponent({
             if (this.chartModel.plotOptions.pie) this.chartModel.plotOptions.pie.showInLegend = true
             if (this.chartModel.plotOptions.gauge) this.chartModel.plotOptions.gauge.showInLegend = true
             return this.widgetModel.settings.chartModel.updateFormatterSettings(this.chartModel.legend, 'labelFormat', 'labelFormatter', 'labelFormatterText', 'labelFormatterError')
+        },
+        updateDataLabels() {
+            const dataLabels = this.chartModel.plotOptions ? this.chartModel.plotOptions[this.chartModel.chart.type].dataLabels : null
+            if (dataLabels) {
+                this.error = this.widgetModel.settings.chartModel.updateFormatterSettings(dataLabels, 'format', 'formatter', 'formatterText', 'formatterError')
+                if (this.error) return
+            }
         },
         updateTooltipSettings() {
             let hasError = this.widgetModel.settings.chartModel.updateFormatterSettings(this.chartModel.tooltip, null, 'formatter', 'formatterText', 'formatterError')

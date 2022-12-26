@@ -1,13 +1,13 @@
 <template>
-    <div v-if="model?.plotOptions?.pie?.dataLabels" class="p-grid p-jc-center p-ai-center p-p-4">
+    <div v-if="dataLabelsModel" class="p-grid p-jc-center p-ai-center p-p-4">
         <div class="p-col-12 p-grid p-ai-center p-p-4">
             <label class="kn-material-input-label p-mr-2">{{ $t('common.enabled') }}</label>
-            <InputSwitch v-model="model.plotOptions.pie.dataLabels.enabled" @change="modelChanged"></InputSwitch>
+            <InputSwitch v-model="dataLabelsModel.enabled" @change="modelChanged"></InputSwitch>
         </div>
-        <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column kn-flex">
+        <div v-if="dataLabelsModel.distance" class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column kn-flex">
             <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.highcharts.labels.distance') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center">
-                <InputNumber class="kn-material-input p-inputtext-sm" v-model="model.plotOptions.pie.dataLabels.distance" :disabled="labelsConfigurationDisabled" @blur="modelChanged" />
+                <InputNumber class="kn-material-input p-inputtext-sm" v-model="dataLabelsModel.distance" :disabled="labelsConfigurationDisabled" @blur="modelChanged" />
                 <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.labels.distanceHint')"></i>
             </div>
         </div>
@@ -24,17 +24,17 @@
                     <div class="p-col-12">
                         <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.format') }}</label>
                         <div class="p-d-flex p-flex-row p-ai-center">
-                            <Textarea class="kn-material-input kn-width-full" rows="2" :autoResize="true" v-model="model.plotOptions.pie.dataLabels.format" maxlength="250" :disabled="labelsConfigurationDisabled" @change="modelChanged" />
+                            <Textarea class="kn-material-input kn-width-full" rows="2" :autoResize="true" v-model="dataLabelsModel.format" maxlength="250" :disabled="labelsConfigurationDisabled" @change="modelChanged" />
                             <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.labels.formatHint')"></i>
                         </div>
                     </div>
                     <div class="p-col-12">
                         <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.formatter') }}</label>
-                        <Message v-if="model.plotOptions.pie.dataLabels.formatterError" class="p-m-2" severity="warn" :closable="false" :style="descriptor.warningMessageStyle">
-                            {{ model.plotOptions.pie.dataLabels.formatterError }}
+                        <Message v-if="dataLabelsModel.formatterError" class="p-m-2" severity="warn" :closable="false" :style="descriptor.warningMessageStyle">
+                            {{ dataLabelsModel.formatterError }}
                         </Message>
                         <div class="p-d-flex p-flex-row p-ai-center">
-                            <HighchartsFormatterCodeMirror :propCode="model.plotOptions.pie.dataLabels.formatterText" @change="onFormatterChange" @blur="modelChanged"></HighchartsFormatterCodeMirror>
+                            <HighchartsFormatterCodeMirror :propCode="dataLabelsModel.formatterText" @change="onFormatterChange" @blur="modelChanged"></HighchartsFormatterCodeMirror>
                             <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.labels.formatterHint')"></i>
                         </div>
                     </div>
@@ -48,7 +48,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IWidgetStyleToolbarModel } from '../../../../../../Dashboard'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
-import { IHighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget'
+import { IHighchartsChartModel, IHighchartsChartDataLabels } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import descriptor from '../HighchartsWidgetSettingsDescriptor.json'
 import InputNumber from 'primevue/inputnumber'
 import InputSwitch from 'primevue/inputswitch'
@@ -71,7 +71,8 @@ export default defineComponent({
     data() {
         return {
             descriptor,
-            model: null as IHighchartsPieChartModel | null,
+            model: null as IHighchartsChartModel | null,
+            dataLabelsModel: null as IHighchartsChartDataLabels | null,
             toolbarModel: {} as {
                 'justify-content': string
                 'font-family': string
@@ -85,7 +86,7 @@ export default defineComponent({
     },
     computed: {
         labelsConfigurationDisabled(): boolean {
-            return !this.model || !this.model.plotOptions.pie?.dataLabels.enabled
+            return !this.dataLabelsModel || !this.dataLabelsModel.enabled
         }
     },
     created() {
@@ -94,21 +95,35 @@ export default defineComponent({
     methods: {
         loadModel() {
             this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.model : null
-            if (this.model?.plotOptions?.pie?.dataLabels)
+            this.loadDataLabelsModel()
+            this.loadToolbarModel()
+        },
+        loadDataLabelsModel() {
+            switch (this.model?.chart.type) {
+                case 'pie':
+                    this.dataLabelsModel = this.model.plotOptions.pie?.dataLabels ?? null
+                    break
+                case 'gauge':
+                    this.dataLabelsModel = this.model.plotOptions.gauge?.dataLabels ?? null
+                    break
+            }
+        },
+        loadToolbarModel() {
+            if (this.dataLabelsModel)
                 this.toolbarModel = {
-                    'justify-content': this.model.plotOptions.pie.dataLabels.position,
-                    'font-family': this.model.plotOptions.pie.dataLabels.style.fontFamily,
-                    'font-size': this.model.plotOptions.pie.dataLabels.style.fontSize,
-                    'font-weight': this.model.plotOptions.pie.dataLabels.style.fontWeight,
-                    color: this.model.plotOptions.pie.dataLabels.style.color,
-                    'background-color': this.model.plotOptions.pie.dataLabels.backgroundColor
+                    'justify-content': this.dataLabelsModel.position,
+                    'font-family': this.dataLabelsModel.style.fontFamily,
+                    'font-size': this.dataLabelsModel.style.fontSize,
+                    'font-weight': this.dataLabelsModel.style.fontWeight,
+                    color: this.dataLabelsModel.style.color,
+                    'background-color': this.dataLabelsModel.backgroundColor
                 }
         },
         modelChanged() {
             emitter.emit('refreshChart', this.widgetModel.id)
         },
         onStyleToolbarChange(model: IWidgetStyleToolbarModel) {
-            if (!this.model || !this.model.plotOptions.pie || !this.model.plotOptions.pie.dataLabels) return
+            if (!this.model || !this.dataLabelsModel) return
             this.toolbarModel = {
                 'justify-content': model['justify-content'] ?? '',
                 'font-family': model['font-family'] ?? '',
@@ -117,8 +132,8 @@ export default defineComponent({
                 color: model.color ?? '',
                 'background-color': model['background-color'] ?? ''
             }
-            ;(this.model.plotOptions.pie.dataLabels.position = this.getTextAlignValue(this.toolbarModel['justify-content'])), (this.model.plotOptions.pie.dataLabels.backgroundColor = this.toolbarModel['background-color'] ?? '')
-            this.model.plotOptions.pie.dataLabels.style = {
+            ;(this.dataLabelsModel.position = this.getTextAlignValue(this.toolbarModel['justify-content'])), (this.dataLabelsModel.backgroundColor = this.toolbarModel['background-color'] ?? '')
+            this.dataLabelsModel.style = {
                 color: this.toolbarModel.color ?? '',
                 fontSize: this.toolbarModel['font-size'] ?? '14px',
                 fontFamily: this.toolbarModel['font-family'] ?? '',
@@ -138,8 +153,8 @@ export default defineComponent({
             }
         },
         onFormatterChange(newValue: string) {
-            if (!this.model || !this.model.plotOptions.pie) return
-            this.model.plotOptions.pie.dataLabels.formatterText = newValue
+            if (!this.model || !this.dataLabelsModel) return
+            this.dataLabelsModel.formatterText = newValue
         }
     }
 })

@@ -99,7 +99,7 @@ export interface IHighchartsChartPlotOptions {
     depth: number,
     allowPointSelect: boolean,
     cursor: string,
-    dataLabels: IIHighchartsPieChartDataLabels,
+    dataLabels: IHighchartsChartDataLabels,
     colors: string[]
 }
 
@@ -136,9 +136,9 @@ export interface IHighchartsAccessibilitySettings {
 
 
 
-export interface IIHighchartsPieChartDataLabels {
+export interface IHighchartsChartDataLabels {
     enabled: boolean,
-    distance: number,
+    distance?: number,
     style: {
         fontFamily: string
         fontSize: string
@@ -173,7 +173,7 @@ export interface IHighchartsChartSerieData {
     y: number,
     sliced?: boolean,
     selected?: boolean,
-    dataLabels?: IIHighchartsPieChartDataLabels
+    dataLabels?: IHighchartsChartDataLabels
 }
 
 export interface IIHighchartsChartModelSettings {
