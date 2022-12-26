@@ -77,62 +77,27 @@ export default defineComponent({
                     noData: this.chartModel.lang.noData
                 }
             })
-
             // TODO
-            ;(this.widgetModel.settings.chartModel.model.yAxis = {
-                tickPixelInterval: 72,
-                tickPosition: 'inside',
-                tickColor: '#FFFFFF',
-                tickLength: 20,
-                tickWidth: 2,
-                minorTickInterval: null,
-                labels: {
-                    distance: 20,
-                    style: {
-                        fontSize: '14px'
-                    }
-                },
-                plotBands: [
-                    {
-                        from: 0,
-                        to: 120,
-                        color: '#55BF3B', // green
-                        thickness: 20
+            this.widgetModel.settings.chartModel.model.series = [
+                {
+                    name: 'Speed',
+                    data: [80],
+                    tooltip: {
+                        valueSuffix: ' km/h'
                     },
-                    {
-                        from: 120,
-                        to: 160,
-                        color: '#DDDF0D', // yellow
-                        thickness: 20
+                    dial: {
+                        radius: '80%',
+                        backgroundColor: 'gray',
+                        baseWidth: 12,
+                        baseLength: '0%',
+                        rearLength: '0%'
                     },
-                    {
-                        from: 160,
-                        to: 200,
-                        color: '#DF5353', // red
-                        thickness: 20
+                    pivot: {
+                        backgroundColor: 'gray',
+                        radius: 6
                     }
-                ]
-            }),
-                (this.widgetModel.settings.chartModel.model.series = [
-                    {
-                        name: 'Speed',
-                        data: [80],
-                        tooltip: {
-                            valueSuffix: ' km/h'
-                        },
-                        dial: {
-                            radius: '80%',
-                            backgroundColor: 'gray',
-                            baseWidth: 12,
-                            baseLength: '0%',
-                            rearLength: '0%'
-                        },
-                        pivot: {
-                            backgroundColor: 'gray',
-                            radius: 6
-                        }
-                    }
-                ])
+                }
+            ]
 
             // TODO - Uncomment
             // this.widgetModel.settings.chartModel.setData(this.dataToShow, this.widgetModel)
