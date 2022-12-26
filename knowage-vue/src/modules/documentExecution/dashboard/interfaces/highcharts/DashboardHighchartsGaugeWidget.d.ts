@@ -20,3 +20,14 @@ export interface IHighchartsBands {
     color: string,
     thickness: number
 }
+
+export interface IHighchartsSeriesDialSettings {
+    radius: number,
+    backgroundColor: string
+}
+
+export interface IHighchartsSeriesPivotSettings {
+    baseWidth: number,
+    radius: number,
+    backgroundColor: string
+}

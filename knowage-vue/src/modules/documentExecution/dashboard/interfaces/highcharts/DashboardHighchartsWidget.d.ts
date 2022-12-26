@@ -38,7 +38,9 @@ export interface IHighchartsSeriesSetting {
 
 export interface IHighchartsSeriesLabelsSetting {
     names: string[],
-    label: IHighchartsSerieLabelSettings
+    label: IHighchartsSerieLabelSettings,
+    dial?: IHighchartsSeriesDialSettings,
+    pivot?: IHighchartsSeriesPivotSettings
 }
 
 export interface IHighchartsSerieLabelSettings {
