@@ -39,9 +39,9 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget } from '../../../../../../Dashboard'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
+import { IHighchartsChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import InputNumber from 'primevue/inputnumber'
 import InputSwitch from 'primevue/inputswitch'
-import { IHighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget'
 
 export default defineComponent({
     name: 'hihgcharts-3d-configuration',
@@ -49,7 +49,7 @@ export default defineComponent({
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {
-            model: null as IHighchartsPieChartModel | null
+            model: null as IHighchartsChartModel | null
         }
     },
     computed: {

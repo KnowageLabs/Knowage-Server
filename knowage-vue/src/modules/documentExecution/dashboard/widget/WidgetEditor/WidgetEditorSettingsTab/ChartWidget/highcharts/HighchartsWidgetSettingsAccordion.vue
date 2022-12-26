@@ -17,6 +17,7 @@
                 <HighchartsTooltipSettings v-else-if="accordion.type === 'Tooltip'" :widgetModel="widgetModel"></HighchartsTooltipSettings>
                 <HighchartsSeriesLabelSettings v-else-if="accordion.type === 'SriesLabel'" :widgetModel="widgetModel"></HighchartsSeriesLabelSettings>
                 <HighchartsDrilldownSettings v-else-if="accordion.type === 'Drilldown'" :widgetModel="widgetModel"></HighchartsDrilldownSettings>
+                <HighchartsGaugeGeneralSettings v-else-if="accordion.type === 'GaugeSettings'" :widgetModel="widgetModel"></HighchartsGaugeGeneralSettings>
                 <ChartColorSettings v-else-if="accordion.type === 'Colors'" :widgetModel="widgetModel"></ChartColorSettings>
                 <WidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
                 <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
@@ -63,6 +64,7 @@ import HighchartsTooltipSettings from '../highcharts/tooltip/HighchartsTooltipSe
 import HighchartsSeriesLabelSettings from '../highcharts/series/HighchartsSeriesLabelSettings.vue'
 import ChartColorSettings from '../common/ChartColorSettings.vue'
 import HighchartsDrilldownSettings from './interactions/HighchartsDrilldownSettings.vue'
+import HighchartsGaugeGeneralSettings from './gauge/general/HighchartsGaugeGeneralSettings.vue'
 
 export default defineComponent({
     name: 'hihgcharts-widget-configuration-container',
@@ -90,7 +92,8 @@ export default defineComponent({
         HighchartsSeriesLabelSettings,
         ChartColorSettings,
         HighchartsDrilldownSettings,
-        WidgetSelection
+        WidgetSelection,
+        HighchartsGaugeGeneralSettings
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

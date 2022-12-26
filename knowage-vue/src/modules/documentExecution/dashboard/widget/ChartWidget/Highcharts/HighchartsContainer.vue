@@ -1,5 +1,4 @@
 <template>
-    {{ chartModel.tooltip }}
     <div v-show="!error" :id="chartID" style="width: 100%; height: 100%; margin: 0 auto"></div>
     <!-- <div style="height: 20px"> {{ dataToShow }}</div> -->
 </template>
@@ -79,8 +78,6 @@ export default defineComponent({
                 }
             })
 
-            this.widgetModel.settings.chartModel.setData(this.dataToShow, this.widgetModel)
-
             // TODO
             ;(this.widgetModel.settings.chartModel.model.yAxis = {
                 min: 0,
@@ -138,6 +135,9 @@ export default defineComponent({
                         }
                     }
                 ])
+
+            // TODO - Uncomment
+            // this.widgetModel.settings.chartModel.setData(this.dataToShow, this.widgetModel)
 
             this.widgetModel.settings.chartModel.updateSeriesAccessibilitySettings(this.widgetModel)
             this.widgetModel.settings.chartModel.updateSeriesLabelSettings(this.widgetModel)

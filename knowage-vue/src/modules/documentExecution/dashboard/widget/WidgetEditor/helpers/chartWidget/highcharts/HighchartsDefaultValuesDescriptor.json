@@ -1,4 +1,9 @@
 {
+    "dafaultPaneOptions": {
+        "center": ["50%", "50%"],
+        "endAngle": 120,
+        "startAngle": -120
+    },
     "default3DOptions": {
         "alpha": 0,
         "beta": 0,

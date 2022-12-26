@@ -1,12 +1,9 @@
 import { IWidgetInteractions, IWidgetResponsive } from "../../Dashboard";
-import { IHighchartsPieChart } from "../../widget/ChartWidget/classes/highcharts/KnowageIHighchartsPieChart";
-import { IIHighchartsPieChartPlotOptions } from "./DashboardHighchartsPieChartWidget";
-import { IHighchartsPieChartModel } from "./DashboardIHighchartsPieChartWidget";
 
 export interface IHighchartsWidgetSettings {
     updatable: boolean,
     clickable: boolean,
-    chartModel: IHighchartsPieChart | null,
+    chartModel: IHighchartsChartModel | null,
     configuration: IHighchartsWidgetConfiguration,
     accesssibility: IHighchartsWidgetAccessibility,
     series: IIHighchartsSeriesSetting,
@@ -91,7 +88,8 @@ export interface IHighchartsChartModel {
     tooltip: IHighchartsTooltip,
     credits: {
         enabled: boolean
-    }
+    },
+    pane?: IHighchartsModelPane
 }
 
 export interface IHighchartsChartPlotOptions {
@@ -133,8 +131,6 @@ export interface IHighchartsAccessibilitySettings {
         order: string[]
     }
 }
-
-
 
 export interface IHighchartsChartDataLabels {
     enabled: boolean,

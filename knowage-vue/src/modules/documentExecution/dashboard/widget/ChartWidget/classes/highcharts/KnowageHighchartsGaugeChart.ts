@@ -10,6 +10,7 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
     constructor(model: any) {
         super()
         if (!this.model.plotOptions.gauge) this.setGaugePlotOptions()
+        if (!this.model.pane) this.setGaugePaneSettings()
         if (model && model.CHART) this.updateModel(deepcopy(model))
         else if (model) this.model = deepcopy(model)
         this.model.chart.type = 'gauge'
@@ -138,5 +139,9 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
     // TODO - Darko move to common file/reuse
     createPercentageValue(value, precision, decimalPoints, thousandsSep) {
         return `${Highcharts.numberFormat(value, precision, decimalPoints, thousandsSep)}%`
+    }
+
+    setGaugePaneSettings() {
+        this.model.pane = highchartsDefaultValues.getDafaultPaneOptions()
     }
 }

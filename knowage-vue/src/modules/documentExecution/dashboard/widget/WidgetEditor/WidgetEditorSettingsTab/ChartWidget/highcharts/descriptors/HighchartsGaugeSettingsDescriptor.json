@@ -68,6 +68,12 @@
                 "type": "SriesLabel"
             }
         ],
+        "Settings": [
+            {
+                "title": "common.general",
+                "type": "GaugeSettings"
+            }
+        ],
         "Style": [
             {
                 "title": "dashboard.widgetEditor.titles.title",
@@ -102,6 +108,11 @@
             "icon": "fa fa-cogs",
             "label": "dashboard.widgetEditor.configuration",
             "value": "Configuration"
+        },
+        {
+            "icon": "fa fa-cogs",
+            "label": "common.settings",
+            "value": "Settings"
         },
         {
             "icon": "pi pi-table",
