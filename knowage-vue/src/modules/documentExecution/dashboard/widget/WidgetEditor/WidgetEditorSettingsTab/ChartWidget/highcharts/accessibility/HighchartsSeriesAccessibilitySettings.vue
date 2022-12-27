@@ -36,8 +36,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget } from '../../../../../../Dashboard'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
-import { IHighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget'
-import { IHighchartsChartSerie, ISerieAccessibilitySetting } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
+import { IHighchartsChartModel, IHighchartsChartSerie, ISerieAccessibilitySetting } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import descriptor from '../HighchartsWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
@@ -52,7 +51,7 @@ export default defineComponent({
     data() {
         return {
             descriptor,
-            model: null as IHighchartsPieChartModel | null,
+            model: null as IHighchartsChartModel | null,
             seriesSettings: [] as ISerieAccessibilitySetting[],
             availableSeriesOptions: [] as string[]
         }
@@ -120,7 +119,7 @@ export default defineComponent({
             intersection.forEach((serieName: string) => this.availableSeriesOptions.push(serieName))
         },
         addSerieSetting() {
-            this.seriesSettings.push(highchartsDefaultValues.getDefaultSeriesAccessibilitySettings())
+            this.seriesSettings.push({ names: [], accessibility: highchartsDefaultValues.getDefaultSeriesAccessibilitySettings() })
         },
         removeSerieSetting(index: number) {
             this.seriesSettings[index].names.forEach((serieName: string) => this.availableSeriesOptions.push(serieName))

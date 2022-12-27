@@ -78,7 +78,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IDataset, IVariable, IDashboardDriver, IGalleryItem } from '../../../Dashboard'
+import { IWidget, IDataset, IVariable, IGalleryItem } from '../../../Dashboard'
 import tableDescriptor from './TableWidget/TableWidgetSettingsDescriptor.json'
 import TableWidgetSettingsContainer from './TableWidget/TableWidgetSettingsContainer.vue'
 import SelectorWidgetSettingsContainer from './SelectorWidget/SelectorWidgetSettingsContainer.vue'
@@ -115,6 +115,16 @@ export default defineComponent({
             selectedSetting: ''
         }
     },
+    computed: {
+        chartType() {
+            return this.propWidget?.settings.chartModel?.model?.chart.type
+        }
+    },
+    watch: {
+        chartType() {
+            this.loadDescriptor()
+        }
+    },
     created() {
         this.loadDescriptor()
     },
@@ -145,7 +155,8 @@ export default defineComponent({
             }
         },
         getHighchartsDescriptor() {
-            switch (this.propWidget?.settings.chartModel?.model?.chart.type) {
+            console.log('---------------------- CHART TYPE: ', this.chartType)
+            switch (this.chartType) {
                 case 'pie':
                     return HighchartsPieSettingsDescriptor
                 case 'gauge':

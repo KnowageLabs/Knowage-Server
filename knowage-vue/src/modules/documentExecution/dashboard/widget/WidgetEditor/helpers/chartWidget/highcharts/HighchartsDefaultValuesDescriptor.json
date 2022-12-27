@@ -59,7 +59,7 @@
         "tickColor": "",
         "tickLength": 10,
         "tickPosition": "outside",
-        "tickWidth": 0
+        "tickWidth": 3
     },
     "defaultHighchartsSelection": {
         "enabled": true,
@@ -137,15 +137,12 @@
         "radius": 5
     },
     "defaultSeriesAccessibilitySettings": {
-        "accessibility": {
-            "description": "",
-            "enabled": true,
-            "exposeAsGroupOnly": false,
-            "keyboardNavigation": {
-                "enabled": false
-            }
-        },
-        "names": []
+        "description": "",
+        "enabled": true,
+        "exposeAsGroupOnly": false,
+        "keyboardNavigation": {
+            "enabled": false
+        }
     },
     "defaultTooltipSettings": {
         "backgroundColor": "rgba(194,194,194, 1)",
