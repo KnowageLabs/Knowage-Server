@@ -81,7 +81,80 @@ export default defineComponent({
             this.widgetModel.settings.chartModel.model.series = [
                 {
                     name: 'Speed',
-                    data: [80],
+                    data: [
+                        {
+                            id: 1,
+                            name: 'Q2',
+                            y: 80,
+                            drilldown: true,
+                            dataLabels: {
+                                backgroundColor: '',
+                                distance: 30,
+                                enabled: true,
+                                position: '',
+                                style: {
+                                    fontFamily: '',
+                                    fontSize: '',
+                                    fontWeight: '',
+                                    color: ''
+                                }
+                            }
+                        },
+                        {
+                            id: 2,
+                            name: 'Q3',
+                            y: 20,
+                            drilldown: true,
+                            dataLabels: {
+                                backgroundColor: '',
+                                distance: 30,
+                                enabled: true,
+                                position: '',
+                                style: {
+                                    fontFamily: '',
+                                    fontSize: '',
+                                    fontWeight: '',
+                                    color: ''
+                                }
+                            }
+                        },
+                        {
+                            id: 3,
+                            name: 'Q1',
+                            y: 10,
+                            drilldown: true,
+                            dataLabels: {
+                                backgroundColor: '',
+                                distance: 30,
+                                enabled: true,
+                                position: '',
+                                style: {
+                                    fontFamily: '',
+                                    fontSize: '',
+                                    fontWeight: '',
+                                    color: ''
+                                }
+                            }
+                        },
+                        {
+                            id: 4,
+                            name: 'Q4',
+                            y: 15,
+                            drilldown: true,
+                            dataLabels: {
+                                backgroundColor: '',
+                                distance: 30,
+                                enabled: true,
+                                position: '',
+                                style: {
+                                    fontFamily: '',
+                                    fontSize: '',
+                                    fontWeight: '',
+                                    color: ''
+                                }
+                            }
+                        }
+                    ],
                     tooltip: {
                         valueSuffix: ' km/h'
                     },

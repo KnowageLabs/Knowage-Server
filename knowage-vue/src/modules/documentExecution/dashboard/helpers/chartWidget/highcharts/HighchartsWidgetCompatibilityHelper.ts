@@ -72,30 +72,49 @@ const createChartModel = (widget: any) => {
     }
 }
 
+// TODO - Refactor
 const getFormattedSerieLabelsSettings = (widget: any) => {
     const formattedSerieSettings =
-        widget.content.chartTemplate.CHART.type !== 'PIE' ? highchartsDefaultValues.getDefaultSerieLabelSettings() : ([] as IHighchartsSeriesLabelsSetting[])
+        widget.content.chartTemplate.CHART.type !== 'PIE' ? highchartsDefaultValues.getDefaultSeriesSettings() : ([] as IHighchartsSeriesLabelsSetting[])
+    if (widget.content.chartTemplate.CHART.type === 'GAUGE') {
+        formattedSerieSettings[0].dial = highchartsDefaultValues.getDefaultSerieDialSettings()
+        formattedSerieSettings[0].pivot = highchartsDefaultValues.getDefaultSeriePivotSettings()
+    }
     if (widget.content.chartTemplate.CHART.VALUES.SERIE && widget.content.chartTemplate.CHART.VALUES.SERIE[0]) {
         const oldModelSerie = widget.content.chartTemplate.CHART.VALUES.SERIE[0]
-        formattedSerieSettings.push({
+        const formattedSettings = {
             names: [oldModelSerie.name],
-            label: {
-                enabled: true,
-                style: {
-                    fontFamily: oldModelSerie.dataLabels?.style?.fontFamily ?? '',
-                    fontSize: oldModelSerie.dataLabels?.style?.fontSize ?? '',
-                    fontWeight: oldModelSerie.dataLabels?.style?.fontWeight ?? '',
-                    color: oldModelSerie.dataLabels?.style?.color ? hexToRgba(oldModelSerie.dataLabels.style.color) : '',
-                },
-                backgroundColor: '',
-                prefix: oldModelSerie.prefixChar ?? '',
-                suffix: oldModelSerie.postfixChar ?? '',
-                scale: oldModelSerie.scaleFactor ?? 'empty',
-                precision: oldModelSerie.precision ?? 2,
-                absolute: oldModelSerie.showAbsValue,
-                percentage: oldModelSerie.showPercentage
-            }
-        })
+        } as IHighchartsSeriesLabelsSetting
+        setFormattedSerieLabelSettings(oldModelSerie, formattedSettings)
+        setSerieSettingsForGaugeChart(oldModelSerie, formattedSettings, widget)
+        formattedSerieSettings.push(formattedSettings)
     }
     return formattedSerieSettings
+}
+
+const setFormattedSerieLabelSettings = (oldModelSerie: any, formattedSettings: IHighchartsSeriesLabelsSetting) => {
+    formattedSettings.label = {
+        enabled: true,
+        style: {
+            fontFamily: oldModelSerie.dataLabels?.style?.fontFamily ?? '',
+            fontSize: oldModelSerie.dataLabels?.style?.fontSize ?? '',
+            fontWeight: oldModelSerie.dataLabels?.style?.fontWeight ?? '',
+            color: oldModelSerie.dataLabels?.style?.color ? hexToRgba(oldModelSerie.dataLabels.style.color) : '',
+        },
+        backgroundColor: '',
+        prefix: oldModelSerie.prefixChar ?? '',
+        suffix: oldModelSerie.postfixChar ?? '',
+        scale: oldModelSerie.scaleFactor ?? 'empty',
+        precision: oldModelSerie.precision ?? 2,
+        absolute: oldModelSerie.showAbsValue,
+        percentage: oldModelSerie.showPercentage
+    }
+}
+
+const setSerieSettingsForGaugeChart = (oldModelSerie: any, formattedSettings: IHighchartsSeriesLabelsSetting, widget: any) => {
+    if (widget.content.chartTemplate.CHART.type === 'GAUGE') {
+        formattedSettings.dial = highchartsDefaultValues.getDefaultSerieDialSettings()
+        formattedSettings.pivot = highchartsDefaultValues.getDefaultSeriePivotSettings()
+        if (oldModelSerie.DIAL?.backgroundColor && formattedSettings.dial) formattedSettings.dial.backgroundColor = hexToRgba(oldModelSerie.DIAL.backgroundColor)
+    }
 }

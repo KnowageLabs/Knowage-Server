@@ -22,12 +22,12 @@ export interface IHighchartsBands {
 }
 
 export interface IHighchartsSeriesDialSettings {
-    radius: number,
+    radius: string,
     backgroundColor: string
+    baseWidth: number,
 }
 
 export interface IHighchartsSeriesPivotSettings {
-    baseWidth: number,
     radius: number,
     backgroundColor: string
 }

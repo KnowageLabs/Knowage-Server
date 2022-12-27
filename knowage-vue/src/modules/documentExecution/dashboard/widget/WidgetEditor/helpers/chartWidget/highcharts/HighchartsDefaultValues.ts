@@ -1,6 +1,6 @@
 import { IWidgetSelection } from "@/modules/documentExecution/dashboard/Dashboard"
-import { IHighchartsAccessibilitySettings, IHighchartsChartPlotOptions, IHighchartsLegend, IHighchartsNoDataConfiguration, IHighchartsOptions3D, IHighchartsSeriesLabelsSetting, IHighchartsTooltip, ISerieAccessibilitySetting } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
-import { IHighchartsBands, IHighchartsGaugeYAxis, IHighchartsModelPane } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget"
+import { IHighchartsAccessibilitySettings, IHighchartsChartPlotOptions, IHighchartsLegend, IHighchartsNoDataConfiguration, IHighchartsOptions3D, IHighchartsSerieLabelSettings, IHighchartsSeriesLabelsSetting, IHighchartsTooltip, ISerieAccessibilitySetting } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
+import { IHighchartsBands, IHighchartsGaugeYAxis, IHighchartsModelPane, IHighchartsSeriesDialSettings, IHighchartsSeriesPivotSettings } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget"
 import deepcopy from "deepcopy"
 import descriptor from './HighchartsDefaultValuesDescriptor.json'
 
@@ -41,9 +41,25 @@ export const getDefaultAllSeriesAccessibilitySettings = () => {
     return deepcopy(descriptor.defaultAllSeriesAccessibilitySettings) as ISerieAccessibilitySetting[]
 }
 
+export const getDefaultSeriesSettings = () => {
+    const defaultSeriesSettings = [{
+        names: ['all'],
+        label: getDefaultSerieLabelSettings()
+    }] as IHighchartsSeriesLabelsSetting[]
+    return defaultSeriesSettings
+}
 
 export const getDefaultSerieLabelSettings = () => {
-    return deepcopy(descriptor.defaultSerieLabelSettings) as IHighchartsSeriesLabelsSetting[]
+    return deepcopy(descriptor.defaultSerieLabelSettings) as IHighchartsSerieLabelSettings
+}
+
+export const getDefaultSerieDialSettings = () => {
+    return deepcopy(descriptor.defaultSerieDialSettings) as IHighchartsSeriesDialSettings
+}
+
+
+export const getDefaultSeriePivotSettings = () => {
+    return deepcopy(descriptor.defaultSeriePivotSettings) as IHighchartsSeriesPivotSettings
 }
 
 export const getDafaultGaugeChartPlotOptions = () => {

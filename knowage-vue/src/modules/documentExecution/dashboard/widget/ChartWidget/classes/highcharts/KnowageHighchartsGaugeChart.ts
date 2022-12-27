@@ -1,6 +1,6 @@
 import { KnowageHighcharts } from './KnowageHihgcharts'
 import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
-import { IHighchartsChartModel, IHighchartsChartSerie, IHighchartsChartSerieData } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
+import { IHighchartsChartModel, IHighchartsChartSerie, IHighchartsChartSerieData, IHighchartsSeriesLabelsSetting } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import { createSerie, updateGaugeChartModel } from './updater/KnowageHighchartsGaugeChartUpdater'
 import * as highchartsDefaultValues from '../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
 import Highcharts from 'highcharts'
@@ -67,28 +67,65 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
 
     // TODO - Darko/Bojan move to superclass???
     updateSeriesLabelSettings(widgetModel: IWidget) {
-        if (!widgetModel || !widgetModel.settings.series || !widgetModel.settings.series.seriesLabelsSettings || !widgetModel.settings.series.seriesLabelsSettings[0]) return
-        const seriesLabelSetting = widgetModel.settings.series.seriesLabelsSettings[0]
-        if (!seriesLabelSetting.label.enabled) return
-        this.model.series.forEach((serie: IHighchartsChartSerie) => {
-            serie.data.forEach((data: IHighchartsChartSerieData) => {
-                data.dataLabels = {
-                    backgroundColor: seriesLabelSetting.label.backgroundColor ?? '',
-                    distance: 30,
-                    enabled: true,
-                    position: '',
-                    style: {
-                        fontFamily: seriesLabelSetting.label.style.fontFamily,
-                        fontSize: seriesLabelSetting.label.style.fontSize,
-                        fontWeight: seriesLabelSetting.label.style.fontWeight,
-                        color: seriesLabelSetting.label.style.color ?? ''
-                    },
-                    formatter: function () {
-                        return KnowageHighchartsGaugeChart.prototype.handleFormatter(this, seriesLabelSetting.label)
-                    }
-                }
+        if (!widgetModel || !widgetModel.settings.series || !widgetModel.settings.series.seriesLabelsSettings) return
+        this.setAllSeriesSettings(widgetModel)
+        this.setSpecificSeriesSettings(widgetModel)
+    }
+
+    setAllSeriesSettings(widgetModel: IWidget) {
+        const allSeriesSettings = widgetModel.settings.series.seriesLabelsSettings[0]
+        if (allSeriesSettings.label.enabled) {
+            this.model.series.forEach((serie: IHighchartsChartSerie) => {
+                this.updateSeriesDataWithSerieSettings(serie, allSeriesSettings)
             })
+        } else {
+            this.model.series.forEach((serie: IHighchartsChartSerie) => {
+                serie.data.forEach((data: IHighchartsChartSerieData) => {
+                    data.dataLabels = { ...highchartsDefaultValues.getDefaultSerieLabelSettings(), position: '' }
+                    data.dataLabels.formatter = function () {
+                        return KnowageHighchartsGaugeChart.prototype.handleFormatter(this, data.name)
+                    }
+                })
+                if (serie.dial) highchartsDefaultValues.getDefaultSerieDialSettings()
+                if (serie.pivot) highchartsDefaultValues.getDefaultSeriePivotSettings()
+            })
+        }
+    }
+
+    setSpecificSeriesSettings(widgetModel: IWidget) {
+        for (let i = 1; i < widgetModel.settings.series.seriesLabelsSettings.length; i++) {
+            const seriesSettings = widgetModel.settings.series.seriesLabelsSettings[i] as IHighchartsSeriesLabelsSetting
+            if (seriesSettings.label.enabled) seriesSettings.names.forEach((serieName: string) => this.updateSpecificSeriesLabelSettings(serieName, seriesSettings))
+        }
+    }
+
+    updateSpecificSeriesLabelSettings(serieName: string, seriesSettings: IHighchartsSeriesLabelsSetting) {
+        const index = this.model.series.findIndex((serie: IHighchartsChartSerie) => serie.name === serieName)
+        if (index !== -1) this.model.series.forEach((serie: IHighchartsChartSerie) => {
+            this.updateSeriesDataWithSerieSettings(serie, seriesSettings)
         })
+    }
+
+    updateSeriesDataWithSerieSettings(serie: IHighchartsChartSerie, seriesSettings: IHighchartsSeriesLabelsSetting) {
+        serie.data.forEach((data: IHighchartsChartSerieData) => {
+            data.dataLabels = {
+                backgroundColor: seriesSettings.label.backgroundColor ?? '',
+                distance: 30,
+                enabled: true,
+                position: '',
+                style: {
+                    fontFamily: seriesSettings.label.style.fontFamily,
+                    fontSize: seriesSettings.label.style.fontSize,
+                    fontWeight: seriesSettings.label.style.fontWeight,
+                    color: seriesSettings.label.style.color ?? ''
+                },
+                formatter: function () {
+                    return KnowageHighchartsGaugeChart.prototype.handleFormatter(this, data.name)
+                }
+            }
+        })
+        if (seriesSettings.dial) serie.dial = seriesSettings.dial
+        if (seriesSettings.pivot) serie.pivot = seriesSettings.pivot
     }
 
     // TODO - Darko move to common file/reuse

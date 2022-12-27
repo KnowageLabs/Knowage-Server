@@ -47,6 +47,18 @@
                 <InputSwitch v-model="serieSetting.label.absolute" :disabled="!serieSetting.label.enabled" @change="modelChanged"></InputSwitch>
                 <label class="kn-material-input-label p-m-3">{{ $t('dashboard.widgetEditor.absolute') }}</label>
             </div>
+
+            <div class="p-col-12 p-py-4">
+                <div class="p-d-flex p-flex-row p-jc-center">
+                    <label class="kn-material-input-label kn-cursor-pointer" @click="advancedVisible = !advancedVisible">{{ $t('common.advanced') }}<i :class="advancedVisible ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="p-ml-2"></i></label>
+                    <i class=""></i>
+                </div>
+                <Transition>
+                    <div v-if="advancedVisible" class="p-d-flex p-flex-column">
+                        <HighchartsGaugeSerieAdvancedSettings :serieSettingsProp="serieSetting" @modelChanged="modelChanged"></HighchartsGaugeSerieAdvancedSettings>
+                    </div>
+                </Transition>
+            </div>
         </div>
     </div>
 </template>
@@ -64,10 +76,11 @@ import InputSwitch from 'primevue/inputswitch'
 import Textarea from 'primevue/textarea'
 import HighchartsSeriesMultiselect from '../common/HighchartsSeriesMultiselect.vue'
 import WidgetEditorStyleToolbar from '../../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
+import HighchartsGaugeSerieAdvancedSettings from './HighchartsGaugeSerieAdvancedSettings.vue'
 
 export default defineComponent({
     name: 'hihgcharts-series-label-settings',
-    components: { Dropdown, InputNumber, InputSwitch, Textarea, HighchartsSeriesMultiselect, WidgetEditorStyleToolbar },
+    components: { Dropdown, InputNumber, InputSwitch, Textarea, HighchartsSeriesMultiselect, WidgetEditorStyleToolbar, HighchartsGaugeSerieAdvancedSettings },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {
@@ -76,6 +89,7 @@ export default defineComponent({
             seriesSettings: [] as IHighchartsSeriesLabelsSetting[],
             toolbarModels: [] as { 'font-family': string; 'font-size': string; 'font-weight': string; color: string; 'background-color': string }[],
             availableSeriesOptions: [] as string[],
+            advancedVisible: false,
             getTranslatedLabel
         }
     },
