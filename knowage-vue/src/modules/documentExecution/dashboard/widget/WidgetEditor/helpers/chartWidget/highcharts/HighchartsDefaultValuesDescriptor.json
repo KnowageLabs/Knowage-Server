@@ -18,6 +18,17 @@
             "order": []
         }
     },
+    "defaultActivityGaugePaneOptions": {
+        "center": ["50%", "50%"],
+        "endAngle": 0,
+        "startAngle": 360
+    },
+    "defaultActivityGaugeYAxis": {
+        "lineWidth": 0,
+        "max": 100,
+        "min": 0,
+        "tickPositions": []
+    },
     "defaultAllSeriesAccessibilitySettings": [
         {
             "accessibility": {
@@ -51,7 +62,7 @@
         },
         "showInLegend": true
     },
-    "defaultGaugsYAxis": {
+    "defaultGaugeYAxis": {
         "max": null,
         "min": null,
         "minorTickInterval": null,
@@ -143,6 +154,22 @@
         "keyboardNavigation": {
             "enabled": false
         }
+    },
+    "defaultSoludGaugeChartPlotOptions": {
+        "dataLabels": {
+            "backgroundColor": "rgba(255, 255, 255, 1)",
+            "enabled": false,
+            "position": "",
+            "style": {
+                "color": "",
+                "fontFamily": "",
+                "fontSize": "14px",
+                "fontWeight": ""
+            }
+        },
+        "linecap": "round",
+        "rounded": true,
+        "stickyTracking": false
     },
     "defaultTooltipSettings": {
         "backgroundColor": "rgba(194,194,194, 1)",

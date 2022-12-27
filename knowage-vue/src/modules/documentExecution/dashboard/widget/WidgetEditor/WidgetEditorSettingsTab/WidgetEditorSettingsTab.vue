@@ -60,6 +60,7 @@
             :selectedDatasets="selectedDatasets"
             :variables="variables"
             :dashboardId="dashboardId"
+            :descriptor="descriptor"
         >
         </HighchartsWidgetSettingsContainer>
         <ChartJSWidgetSettingsContainer
@@ -95,6 +96,7 @@ import textDescriptor from './TextWidget/TextWidgetSettingsDescriptor.json'
 import chartJSDescriptor from './ChartWidget/chartJS/ChartJSWidgetSettingsDescriptor.json'
 import HighchartsPieSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsPieSettingsDescriptor.json'
 import HighchartsGaugeSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsGaugeSettingsDescriptor.json'
+import HighchartsActivityGaugeSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsActivityGaugeSettingsDescriptor.json'
 
 export default defineComponent({
     name: 'widget-editor-settings-tab',
@@ -161,6 +163,8 @@ export default defineComponent({
                     return HighchartsPieSettingsDescriptor
                 case 'gauge':
                     return HighchartsGaugeSettingsDescriptor
+                case 'activitygauge':
+                    return HighchartsActivityGaugeSettingsDescriptor
             }
         },
         onItemClicked(item: any) {

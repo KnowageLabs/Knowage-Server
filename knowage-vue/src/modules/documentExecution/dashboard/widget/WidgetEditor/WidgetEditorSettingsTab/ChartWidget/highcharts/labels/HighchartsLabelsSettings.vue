@@ -1,4 +1,5 @@
 <template>
+    {{ dataLabelsModel }}
     <div v-if="dataLabelsModel" class="p-grid p-jc-center p-ai-center p-p-4">
         <div class="p-col-12 p-grid p-ai-center p-p-4">
             <label class="kn-material-input-label p-mr-2">{{ $t('common.enabled') }}</label>
@@ -105,6 +106,9 @@ export default defineComponent({
                     break
                 case 'gauge':
                     this.dataLabelsModel = this.model.plotOptions.gauge?.dataLabels ?? null
+                    break
+                case 'activitygauge':
+                    this.dataLabelsModel = this.model.plotOptions.soldgauge?.dataLabels ?? null
                     break
             }
         },

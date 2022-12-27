@@ -2,7 +2,7 @@ import { IHighchartsChartModel } from '@/modules/documentExecution/dashboard/int
 import { getFormattedBandsSettings, getFormattedScaleSettings, getFormattedTickSettings } from './KnowageHighchartsCommonGaugeUpdater'
 import { getForamttedLabels, getFormattedLegend, getFormattedNoDataConfiguration, getFormattedSeries, getFormattedTooltipSettings } from './KnowageHighchartsCommonUpdater'
 
-export const updateGaugeChartModel = (oldModel: any, newModel: IHighchartsChartModel) => {
+export const updateActivityGaugeChartModel = (oldModel: any, newModel: IHighchartsChartModel) => {
     console.log(">>>>>>> OLD MODEL: ", oldModel)
     console.log(">>>>>>> NEW MODEL: ", newModel)
     getFormattedNoDataConfiguration(oldModel, newModel)
@@ -44,3 +44,5 @@ const getFormattedPaneSettings = (oldModel: any, newModel: IHighchartsChartModel
         }
     }
 }
+
+

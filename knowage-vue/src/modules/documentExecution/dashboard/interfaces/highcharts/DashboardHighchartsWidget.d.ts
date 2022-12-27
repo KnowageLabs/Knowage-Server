@@ -1,5 +1,5 @@
 import { IWidgetInteractions, IWidgetResponsive } from "../../Dashboard";
-import { IHighchartsSeriesDialSettings, IHighchartsSeriesPivotSettings } from "./DashboardHighchartsGaugeWidget";
+import { IHighchartsSeriesDialSettings, IHighchartsSeriesPivotSettings, IHighchartsSolidGaugePlotOptions } from "./DashboardHighchartsGaugeWidget";
 
 export interface IHighchartsWidgetSettings {
     updatable: boolean,
@@ -85,6 +85,7 @@ export interface IHighchartsChartModel {
     plotOptions: {
         pie?: IHighchartsChartPlotOptions,
         gauge?: IHighchartsChartPlotOptions,
+        soldgauge?: IHighchartsChartPlotOptions
         series?: { events: any }
     },
     legend: IHighchartsLegend,
@@ -147,6 +148,9 @@ export interface IHighchartsChartDataLabels {
     },
     position: string
     backgroundColor: string,
+    linecap?: string,
+    stickyTracking?: boolean,
+    rounded?: boolean,
     format?: string,
     formatter?: Function,
     formatterText?: string,

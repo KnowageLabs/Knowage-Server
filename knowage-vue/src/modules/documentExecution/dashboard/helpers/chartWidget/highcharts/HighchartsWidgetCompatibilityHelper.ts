@@ -7,6 +7,7 @@ import { hexToRgba } from '../../FormattingHelpers'
 import { getFormattedWidgetColumns, getFormattedColorSettings } from '../CommonChartCompatibilityHelper'
 import { getFormattedStyle } from './HighchartsWidgetStyleHelper'
 import { KnowageHighchartsGaugeChart } from '../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsGaugeChart'
+import { KnowageHighchartsActivityGaugeChart } from '../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsActivityGaugeChart'
 import * as widgetCommonDefaultValues from '../../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import * as highchartsDefaultValues from '../../../widget/WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
 
@@ -66,10 +67,23 @@ const createChartModel = (widget: any) => {
         case 'PIE':
             return new KnowageHighchartsPieChart(widgetContentChartTemplate)
         case 'GAUGE':
-            return new KnowageHighchartsGaugeChart(widgetContentChartTemplate) // TODO - See about other gauge types
+            return createGaugeChartInstance(widgetContentChartTemplate)
         default:
             return null
     }
+}
+
+const createGaugeChartInstance = (widgetContentChartTemplate: any) => {
+
+    switch (widgetContentChartTemplate.CHART.subtype) {
+        case 'activity':
+            return new KnowageHighchartsActivityGaugeChart(widgetContentChartTemplate)
+        case 'gauge':
+            return new KnowageHighchartsGaugeChart(widgetContentChartTemplate)
+        case 'solid':
+            return null
+    }
+
 }
 
 // TODO - Refactor

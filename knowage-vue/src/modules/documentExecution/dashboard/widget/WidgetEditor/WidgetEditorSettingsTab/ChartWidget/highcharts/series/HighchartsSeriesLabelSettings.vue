@@ -19,19 +19,19 @@
                 <WidgetEditorStyleToolbar :options="descriptor.noDataToolbarStyleOptions" :propModel="toolbarModels[index]" :disabled="!serieSetting.label.enabled" @change="onStyleToolbarChange($event, index)"> </WidgetEditorStyleToolbar>
             </div>
 
-            <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column kn-flex">
+            <div v-if="formattingSectionAvailable" class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column kn-flex">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.prefix') }}</label>
                 <InputText class="kn-material-input p-inputtext-sm" v-model="serieSetting.label.prefix" :disabled="!serieSetting.label.enabled" @change="modelChanged" />
             </div>
-            <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column kn-flex">
+            <div v-if="formattingSectionAvailable" class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column kn-flex">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.suffix') }}</label>
                 <InputText class="kn-material-input p-inputtext-sm" v-model="serieSetting.label.suffix" :disabled="!serieSetting.label.enabled" @change="modelChanged" />
             </div>
-            <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column kn-flex">
+            <div v-if="formattingSectionAvailable" class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column kn-flex">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.precision') }}</label>
                 <InputNumber class="kn-material-input p-inputtext-sm" v-model="serieSetting.label.precision" :disabled="!serieSetting.label.enabled" @blur="modelChanged" />
             </div>
-            <div class="p-col-6 p-d-flex p-flex-column kn-flex p-m-2">
+            <div v-if="formattingSectionAvailable" class="p-col-6 p-d-flex p-flex-column kn-flex p-m-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.series.scale') }}</label>
                 <div class="p-d-flex p-flex-row p-ai-center">
                     <Dropdown class="kn-material-input" v-model="serieSetting.label.scale" :options="descriptor.scaleOptions" :disabled="!serieSetting.label.enabled" @change="modelChanged"> </Dropdown>
@@ -39,16 +39,16 @@
                 </div>
             </div>
 
-            <div class="p-col-12 p-md-4 p-lg-4 p-pt-4 p-px-4">
+            <div v-if="formattingSectionAvailable" class="p-col-12 p-md-4 p-lg-4 p-pt-4 p-px-4">
                 <InputSwitch v-model="serieSetting.label.percentage" :disabled="!serieSetting.label.enabled" @change="modelChanged"></InputSwitch>
                 <label class="kn-material-input-label p-m-3">{{ $t('dashboard.widgetEditor.percentage') }}</label>
             </div>
-            <div class="p-col-12 p-md-4 p-lg-4 p-pt-4 p-px-4">
+            <div v-if="formattingSectionAvailable" class="p-col-12 p-md-4 p-lg-4 p-pt-4 p-px-4">
                 <InputSwitch v-model="serieSetting.label.absolute" :disabled="!serieSetting.label.enabled" @change="modelChanged"></InputSwitch>
                 <label class="kn-material-input-label p-m-3">{{ $t('dashboard.widgetEditor.absolute') }}</label>
             </div>
 
-            <div class="p-col-12 p-py-4">
+            <div v-if="advancedSectionAvailable" class="p-col-12 p-py-4">
                 <div class="p-d-flex p-flex-row p-jc-center">
                     <label class="kn-material-input-label kn-cursor-pointer" @click="advancedVisible[index] = !advancedVisible[index]">{{ $t('common.advanced') }}<i :class="advancedVisible[index] ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="p-ml-2"></i></label>
                     <i class=""></i>
@@ -81,14 +81,28 @@ import * as highchartsDefaultValues from '../../../../helpers/chartWidget/highch
 
 export default defineComponent({
     name: 'hihgcharts-series-label-settings',
-    components: { Dropdown, InputNumber, InputSwitch, Textarea, HighchartsSeriesMultiselect, WidgetEditorStyleToolbar, HighchartsGaugeSerieAdvancedSettings },
+    components: {
+        Dropdown,
+        InputNumber,
+        InputSwitch,
+        Textarea,
+        HighchartsSeriesMultiselect,
+        WidgetEditorStyleToolbar,
+        HighchartsGaugeSerieAdvancedSettings
+    },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {
             descriptor,
             model: null as IHighchartsChartModel | null,
             seriesSettings: [] as IHighchartsSeriesLabelsSetting[],
-            toolbarModels: [] as { 'font-family': string; 'font-size': string; 'font-weight': string; color: string; 'background-color': string }[],
+            toolbarModels: [] as {
+                'font-family': string
+                'font-size': string
+                'font-weight': string
+                color: string
+                'background-color': string
+            }[],
             availableSeriesOptions: [] as string[],
             advancedVisible: {},
             getTranslatedLabel
@@ -100,6 +114,12 @@ export default defineComponent({
         },
         allSeriesOptionEnabled() {
             return this.model?.chart.type !== 'pie'
+        },
+        formattingSectionAvailable() {
+            return this.model && ['pie', 'gauge'].includes(this.model.chart.type)
+        },
+        advancedSectionAvailable() {
+            return this.model?.chart.type === 'gauge'
         }
     },
     created() {
@@ -126,7 +146,13 @@ export default defineComponent({
         },
         loadToolbarModels() {
             this.seriesSettings.forEach((serieSetting: IHighchartsSeriesLabelsSetting) => {
-                this.toolbarModels.push({ 'font-family': serieSetting.label.style.fontFamily, 'font-size': serieSetting.label.style.fontSize, 'font-weight': serieSetting.label.style.fontWeight, color: serieSetting.label.style.color, 'background-color': serieSetting.label.backgroundColor })
+                this.toolbarModels.push({
+                    'font-family': serieSetting.label.style.fontFamily,
+                    'font-size': serieSetting.label.style.fontSize,
+                    'font-weight': serieSetting.label.style.fontWeight,
+                    color: serieSetting.label.style.color,
+                    'background-color': serieSetting.label.backgroundColor
+                })
             })
         },
         loadSeriesOptions() {
@@ -166,13 +192,22 @@ export default defineComponent({
             intersection.forEach((serieName: string) => this.availableSeriesOptions.push(serieName))
         },
         addSerieSetting() {
-            const newSerieSetting = { names: [], label: highchartsDefaultValues.getDefaultSerieLabelSettings() } as IHighchartsSeriesLabelsSetting
+            const newSerieSetting = {
+                names: [],
+                label: highchartsDefaultValues.getDefaultSerieLabelSettings()
+            } as IHighchartsSeriesLabelsSetting
             if (this.model?.chart.type === 'gauge') {
                 newSerieSetting.dial = highchartsDefaultValues.getDefaultSerieDialSettings()
                 newSerieSetting.pivot = highchartsDefaultValues.getDefaultSeriePivotSettings()
             }
             this.seriesSettings.push(newSerieSetting)
-            this.toolbarModels.push({ 'font-family': '', 'font-size': '', 'font-weight': '', color: '', 'background-color': 'rgba(194,194,194, 1)' })
+            this.toolbarModels.push({
+                'font-family': '',
+                'font-size': '',
+                'font-weight': '',
+                color: '',
+                'background-color': 'rgba(194,194,194, 1)'
+            })
         },
         removeSerieSetting(index: number) {
             this.seriesSettings[index].names.forEach((serieName: string) => this.availableSeriesOptions.push(serieName))

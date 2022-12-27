@@ -16,9 +16,6 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IDataset, IVariable } from '@/modules/documentExecution/dashboard/Dashboard'
-import descriptor from './HighchartsWidgetSettingsDescriptor.json'
-import HighchartsPieSettingsDescriptor from './descriptors/HighchartsPieSettingsDescriptor.json'
-import HighchartsGaugeSettingsDescriptor from './descriptors/HighchartsGaugeSettingsDescriptor.json'
 import HighchartsWidgetSettingsAccordion from './HighchartsWidgetSettingsAccordion.vue'
 
 export default defineComponent({
@@ -30,20 +27,11 @@ export default defineComponent({
         datasets: { type: Array as PropType<IDataset[]> },
         selectedDatasets: { type: Array as PropType<IDataset[]> },
         variables: { type: Array as PropType<IVariable[]>, required: true },
-        dashboardId: { type: String, required: true }
+        dashboardId: { type: String, required: true },
+        descriptor: { type: Object as PropType<any>, required: true }
     },
     data() {
         return {}
-    },
-    computed: {
-        descriptor() {
-            switch (this.widgetModel?.settings.chartModel?.model?.chart.type) {
-                case 'pie':
-                    return HighchartsPieSettingsDescriptor
-                case 'gauge':
-                    return HighchartsGaugeSettingsDescriptor
-            }
-        }
     },
     created() {},
     methods: {}

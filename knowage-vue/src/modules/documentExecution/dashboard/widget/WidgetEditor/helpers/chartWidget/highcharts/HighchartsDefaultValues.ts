@@ -1,6 +1,6 @@
 import { IWidgetSelection } from "@/modules/documentExecution/dashboard/Dashboard"
 import { IHighchartsAccessibilitySettings, IHighchartsChartPlotOptions, IHighchartsLegend, IHighchartsNoDataConfiguration, IHighchartsOptions3D, IHighchartsSerieAccessibility, IHighchartsSerieLabelSettings, IHighchartsSeriesLabelsSetting, IHighchartsTooltip, ISerieAccessibilitySetting } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
-import { IHighchartsBands, IHighchartsGaugeYAxis, IHighchartsModelPane, IHighchartsSeriesDialSettings, IHighchartsSeriesPivotSettings } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget"
+import { IHighchartsBands, IHighchartsGaugeYAxis, IHighchartsModelPane, IHighchartsSeriesDialSettings, IHighchartsSeriesPivotSettings, IHighchartsActivityGaugeYAxis } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget"
 import deepcopy from "deepcopy"
 import descriptor from './HighchartsDefaultValuesDescriptor.json'
 
@@ -66,12 +66,24 @@ export const getDafaultGaugeChartPlotOptions = () => {
     return deepcopy(descriptor.defaultGaugeChartPlotOptions) as IHighchartsChartPlotOptions
 }
 
+export const getDefaultSoludGaugeChartPlotOptions = () => {
+    return deepcopy(descriptor.defaultSoludGaugeChartPlotOptions) as IHighchartsChartPlotOptions
+}
+
 export const getDafaultPaneOptions = () => {
     return deepcopy(descriptor.dafaultPaneOptions) as IHighchartsModelPane
 }
 
-export const getDefaultGaugsYAxis = () => {
-    return deepcopy(descriptor.defaultGaugsYAxis) as IHighchartsGaugeYAxis
+export const getdDefaultActivityGaugePaneOptions = () => {
+    return deepcopy(descriptor.defaultActivityGaugePaneOptions) as IHighchartsModelPane
+}
+
+export const getDefaultGaugeYAxis = () => {
+    return deepcopy(descriptor.defaultGaugeYAxis) as IHighchartsGaugeYAxis
+}
+
+export const getDefaultActivityGaugeYAxis = () => {
+    return deepcopy(descriptor.defaultActivityGaugeYAxis) as IHighchartsActivityGaugeYAxis
 }
 
 export const getDefaultBandsSetting = () => {
