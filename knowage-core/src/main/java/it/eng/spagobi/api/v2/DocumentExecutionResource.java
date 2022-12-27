@@ -913,7 +913,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					List parameterValuesDescription = driver.getParameterValuesDescription();
 					List<?> parameterValueForResponse = (List<?>) parameter.get("parameterValue");
 
-					if (Objects.nonNull(parameterValuesDescription)) {
+					if (Objects.nonNull(parameterValuesDescription) && !parameterValuesDescription.isEmpty()) {
 						List<?> newParameterValuesDescription = new ArrayList<>(parameterValuesDescription);
 						parameter.put("parameterDescription", newParameterValuesDescription);
 

@@ -19,7 +19,11 @@
                                 'p-invalid': v$.dataset.dsTypeCd.$invalid && v$.dataset.dsTypeCd.$dirty
                             }"
                             @before-show="v$.dataset.dsTypeCd.$touch()"
+<<<<<<< HEAD
                             @change="handleTypeChange"
+=======
+                            @change=";((dataset.pars = []), (dataset.restJsonPathAttributes = []), (dataset.restRequestHeaders = [])), $emit('touched')"
+>>>>>>> refs/remotes/origin/master
                         />
                         <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.selectDatasetType') }} * </label>
                     </span>

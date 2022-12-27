@@ -100,7 +100,6 @@ import it.eng.spagobi.utilities.SpagoBIAccessUtils;
 import it.eng.spagobi.utilities.callbacks.audit.AuditAccessUtils;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-
 /**
  * @author Zerbetto (davide.zerbetto@eng.it)
  *
@@ -573,7 +572,7 @@ public class BirtReportServlet extends HttpServlet {
 		boolean containsJQuery = false;
 
 		// check if there is script for progressive pagination inside the report
-		if (result.contains("<script src=\"./js/lib/jquery")) {
+		if (result.contains("<script src=\"./js/infiniteScrolling.js")) {	
 			containsJQuery = true;
 			logger.debug("JQuery to enable progressive viewing is contained");
 		}
@@ -685,12 +684,14 @@ public class BirtReportServlet extends HttpServlet {
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase(IBirtConstants.EXCEL_RENDER_FORMAT)) {
 			renderOption = new EXCELRenderOption();
 			setMSOfficeEmitterId("xls", renderOption);
+			renderOption.setOption("ExcelEmitter.SingleSheetWithPageBreaks", true);
 			response.setContentType("application/vnd.ms-excel");
 			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".xls");
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase("xlsx")) {
 			renderOption = new EXCELRenderOption();
 			renderOption.setOption("excel_native_charts", false);
 			setMSOfficeEmitterId("xlsx", renderOption);
+			renderOption.setOption("ExcelEmitter.SingleSheetWithPageBreaks", true);
 			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".xlsx");
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase("ppt")) {

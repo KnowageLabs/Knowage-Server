@@ -2,18 +2,20 @@
     <Toast></Toast>
     <ConfirmDialog></ConfirmDialog>
     <KnOverlaySpinnerPanel />
-    <div class="layout-wrapper-content" :class="{ 'layout-wrapper-content-embed': documentExecution.embed }">
+    <div class="layout-wrapper-content" :class="{ 'layout-wrapper-content-embed': documentExecution.embed, isMobileDevice: isMobileDevice }">
         <MainMenu @menuItemSelected="setSelectedMenuItem"></MainMenu>
 
         <div class="layout-main">
             <router-view :selectedMenuItem="selectedMenuItem" :menuItemClickedTrigger="menuItemClickedTrigger" />
         </div>
     </div>
+    <KnRotate v-show="isMobileDevice"></KnRotate>
 </template>
 
 <script lang="ts">
 import ConfirmDialog from 'primevue/confirmdialog'
 import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
+import KnRotate from '@/components/UI/KnRotate.vue'
 import MainMenu from '@/modules/mainMenu/MainMenu'
 import Toast from 'primevue/toast'
 import { defineComponent } from 'vue'
@@ -24,11 +26,13 @@ import themeHelper from '@/helpers/themeHelper/themeHelper'
 import { primeVueDate, getLocale } from '@/helpers/commons/localeHelper'
 
 export default defineComponent({
-    components: { ConfirmDialog, KnOverlaySpinnerPanel, MainMenu, Toast },
+    components: { ConfirmDialog, KnOverlaySpinnerPanel, KnRotate, MainMenu, Toast },
+
     data() {
         return {
             themeHelper: new themeHelper(),
             selectedMenuItem: null,
+            isMobileDevice: false,
             menuItemClickedTrigger: false
         }
     },
@@ -83,7 +87,7 @@ export default defineComponent({
                 )
                 this.store.setLoading(false)
             })
-            .catch(function(error) {
+            .catch(function (error) {
                 if (error.response) {
                     console.log(error.response.data)
                     console.log(error.response.status)
@@ -115,6 +119,9 @@ export default defineComponent({
     },
     mounted() {
         this.onLoad()
+        if (/Android|iPhone/i.test(navigator.userAgent)) {
+            this.isMobileDevice = true
+        }
     },
 
     methods: {
@@ -137,7 +144,7 @@ export default defineComponent({
                     this.newsDownloadHandler()
                     this.loadInternationalization()
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     if (error.response) {
                         console.log(error.response.data)
                         console.log(error.response.status)
@@ -162,7 +169,7 @@ export default defineComponent({
             console.log('Starting connection to WebSocket Server')
             const store = this.store
 
-            WEB_SOCKET.update = function(event) {
+            WEB_SOCKET.update = function (event) {
                 if (event.data) {
                     let json = JSON.parse(event.data)
                     if (json.news) {
@@ -173,7 +180,7 @@ export default defineComponent({
                     }
                 }
             }
-            WEB_SOCKET.onopen = function(event) {
+            WEB_SOCKET.onopen = function (event) {
                 if (event.data) {
                     let json = JSON.parse(event.data)
                     if (json.news) {
@@ -184,7 +191,7 @@ export default defineComponent({
                     }
                 }
             }
-            WEB_SOCKET.onmessage = function(event) {
+            WEB_SOCKET.onmessage = function (event) {
                 if (event.data) {
                     let json = JSON.parse(event.data)
                     if (json.news) {

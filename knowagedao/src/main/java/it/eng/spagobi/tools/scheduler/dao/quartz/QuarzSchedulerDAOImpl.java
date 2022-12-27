@@ -25,9 +25,10 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -38,6 +39,7 @@ import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.quartz.ObjectAlreadyExistsException;
 import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.impl.matchers.GroupMatcher;
@@ -72,7 +74,7 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 
 	private boolean global = false;
 
-	static private Logger logger = Logger.getLogger(QuarzSchedulerDAOImpl.class);
+	private static final Logger logger = LogManager.getLogger(QuarzSchedulerDAOImpl.class);
 
 	public QuarzSchedulerDAOImpl() {
 		logger.debug("IN");
@@ -120,36 +122,37 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 	}
 
 	private String applyTenant(String jobGroupName) {
-		LogMF.debug(logger, "IN: jobGroupName = [{0}]", jobGroupName);
+		logger.debug("IN: jobGroupName = [{}]", jobGroupName);
 		String tenant = this.getTenant();
 		if (tenant != null) {
 			jobGroupName = this.getTenantPrefix(tenant) + jobGroupName;
 		}
-		LogMF.debug(logger, "OUT: jobGroupName = [{0}]", jobGroupName);
+		logger.debug("OUT: jobGroupName = [{}]", jobGroupName);
 		return jobGroupName;
 	}
 
 	private String removeTenant(String jobGroupName) {
-		LogMF.debug(logger, "IN: jobGroupName = [{0}]", jobGroupName);
+		logger.debug("IN: jobGroupName = [{}]", jobGroupName);
 		String tenant = this.getTenant();
 		if (tenant != null) {
 			jobGroupName = jobGroupName.substring(this.getTenantPrefix(tenant).length());
 		}
-		LogMF.debug(logger, "OUT: jobGroupName = [{0}]", jobGroupName);
+		logger.debug("OUT: jobGroupName = [{}]", jobGroupName);
 		return jobGroupName;
 	}
 
 	@Override
 	public List<String> getJobGroupNames() {
-		List<String> jobGroupNames;
+		List<String> jobGroupNames = new ArrayList<>();
 
 		logger.debug("IN");
 
-		jobGroupNames = new ArrayList<String>();
 		try {
 			List<String> names = scheduler.getJobGroupNames();
 			jobGroupNames.addAll(names);
-			jobGroupNames = this.filterForTenant(jobGroupNames);
+			if (!global) {
+				jobGroupNames = filterForTenant(jobGroupNames);
+			}
 		} catch (Throwable t) {
 			throw new SpagoBIDAOException("An unexpected error occured while loading job group names", t);
 		} finally {
@@ -160,7 +163,7 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 	}
 
 	private List<String> filterForTenant(List<String> jobGroupNames) {
-		LogMF.debug(logger, "IN: jobGroupNames = [{0}]", jobGroupNames);
+		logger.debug("IN: jobGroupNames = [{}]", jobGroupNames);
 		String tenant = this.getTenant();
 		List<String> toReturn = new ArrayList<String>();
 		if (tenant != null) {
@@ -174,7 +177,7 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 		} else {
 			toReturn = jobGroupNames;
 		}
-		LogMF.debug(logger, "OUT: jobGroupNames = [{0}]", toReturn);
+		logger.debug("OUT: jobGroupNames = [{}]", toReturn);
 		return toReturn;
 	}
 
@@ -216,7 +219,7 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 
 		logger.debug("IN");
 
-		jobs = new ArrayList<Job>();
+		jobs = new ArrayList<>();
 
 		try {
 			Assert.assertNotNull(jobGroupNames, "Input parameter [jobGroupNames] cannot be null");
@@ -244,7 +247,7 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 
 		logger.debug("IN");
 
-		jobs = new ArrayList<Job>();
+		jobs = new ArrayList<>();
 
 		try {
 			Assert.assertTrue(StringUtilities.isNotEmpty(jobGroupName), "Input parameter [jobGroupName] cannot be empty");
@@ -313,9 +316,9 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 		String tenant = this.getTenant();
 		if (tenant != null) {
 			String jobGroupName = job.getGroupName();
-			LogMF.debug(logger, "before: jobGroupName = [{0}]", jobGroupName);
+			logger.debug("before: jobGroupName = [{}]", jobGroupName);
 			job.setGroupName(this.removeTenant(jobGroupName));
-			LogMF.debug(logger, "after: jobGroupName = [{0}]", job.getGroupName());
+			logger.debug("after: jobGroupName = [{}]", job.getGroupName());
 		}
 	}
 
@@ -441,9 +444,9 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 	private void adjustTenant(Trigger spagobiTrigger) {
 		Job job = spagobiTrigger.getJob();
 		String jobGroupName = job.getGroupName();
-		LogMF.debug(logger, "before: jobGroupName = [{0}]", jobGroupName);
+		logger.debug("before: jobGroupName = [{}]", jobGroupName);
 		jobGroupName = this.removeTenant(jobGroupName);
-		LogMF.debug(logger, "after: jobGroupName = [{0}]", jobGroupName);
+		logger.debug("after: jobGroupName = [{}]", jobGroupName);
 		job.setGroupName(jobGroupName);
 	}
 
@@ -552,7 +555,7 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 
 		// if a tenant is set into the DAO object, it wins
 		String tenantId = this.tenant;
-		LogMF.debug(logger, "This DAO object instance tenant = [{0}]", tenantId);
+		logger.debug("This DAO object instance tenant = [{}]", tenantId);
 
 		if (tenantId == null) {
 			logger.debug("Tenant id not find in this DAO object instance nor in the user profile object; " + "looking for it using TenantManager ... ");
@@ -560,7 +563,7 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 			Tenant tenant = TenantManager.getTenant();
 			if (tenant != null) {
 				tenantId = tenant.getName();
-				LogMF.debug(logger, "TenantManager returns tenant = [{0}]", tenantId);
+				logger.debug("TenantManager returns tenant = [{}]", tenantId);
 			} else {
 				logger.debug("TenantManager did not return any Tenant");
 			}
@@ -572,7 +575,7 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 			throw e;
 		}
 
-		LogMF.debug(logger, "OUT: tenant = [{0}]", tenantId);
+		logger.debug("OUT: tenant = [{}]", tenantId);
 		return tenantId;
 	}
 
@@ -589,7 +592,7 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 				throw e;
 			}
 			String tenant = groupName.substring(0, index);
-			LogMF.debug(logger, "Tenant : [{0}]", tenant);
+			logger.debug("Tenant : [{}]", tenant);
 			return new Tenant(tenant);
 		} catch (Throwable t) {
 			throw new SpagoBIDAOException("An unexpected error occured while finding tenant for job [" + jobDetail + "]", t);
@@ -886,5 +889,43 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 	@Override
 	public void setGlobal(boolean value) {
 		this.global = value;
+	}
+
+	@Override
+	public boolean deleteTriggerWhereNameLikes(String name) {
+		boolean ret = true;
+		try {
+			Set<TriggerKey> allTriggers = scheduler.getTriggerKeys(GroupMatcher.anyGroup());
+
+			for (TriggerKey triggerKey : allTriggers) {
+				if (triggerKey.getName().equals(name)) {
+					scheduler.unscheduleJob(triggerKey);
+				}
+			}
+
+		} catch (SchedulerException e) {
+			logger.error(e);
+			ret = false;
+		}
+		return ret;
+	}
+
+	@Override
+	public boolean deleteJobWhereNameLikes(String name) {
+		boolean ret = true;
+		try {
+			Set<JobKey> allTriggers = scheduler.getJobKeys(GroupMatcher.anyGroup());
+
+			for (JobKey jobKey : allTriggers) {
+				if (jobKey.getName().equals(name)) {
+					scheduler.deleteJob(jobKey);
+				}
+			}
+
+		} catch (SchedulerException e) {
+			logger.error(e);
+			ret = false;
+		}
+		return ret;
 	}
 }

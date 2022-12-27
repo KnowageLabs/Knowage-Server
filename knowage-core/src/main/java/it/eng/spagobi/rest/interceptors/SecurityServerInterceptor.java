@@ -136,7 +136,7 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 				}
 			}
 		} catch (Throwable t) {
-			LOGGER.trace("Problem during authentication, returning null", t);
+			LOGGER.error("Problem during authentication, returning null", t);
 		} finally {
 			LOGGER.trace("OUT");
 		}

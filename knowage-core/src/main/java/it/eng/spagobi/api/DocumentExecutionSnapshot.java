@@ -16,6 +16,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -39,6 +41,8 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 @Path("/1.0/documentsnapshot")
 @ManageAuthorization
 public class DocumentExecutionSnapshot extends AbstractSpagoBIResource {
+
+	private static final Logger LOGGER = LogManager.getLogger(DocumentExecutionSnapshot.class);
 
 	public static final String SERVICE_NAME = "SNAPSHOT_SERVICE";
 
@@ -65,7 +69,7 @@ public class DocumentExecutionSnapshot extends AbstractSpagoBIResource {
 			ISnapshotDAO snapdao = DAOFactory.getSnapshotDAO();
 			return snapdao.getSnapshotsBySchedulation(schedulation, true, false);
 		} catch (EMFUserError e) {
-			logger.error(e);
+			LOGGER.error(e);
 			throw new SpagoBIRestServiceException(getLocale(), e);
 		}
 	}
@@ -109,8 +113,7 @@ public class DocumentExecutionSnapshot extends AbstractSpagoBIResource {
 			String contentType = "text/html";
 			try {
 				if (ObjectsAccessVerifier.canSee(obj, profile)) {
-					logger.debug("Current user [" + ((UserProfile) profile).getUserId().toString() + "] can see snapshot with id = " + idSnap
-							+ " of document with id = " + objectId);
+					LOGGER.debug("Current user [{}] can see snapshot with id = {} of document with id = {}", ((UserProfile) profile).getUserId().toString(), idSnap, objectId);
 					ISnapshotDAO snapdao = DAOFactory.getSnapshotDAO();
 					snap = snapdao.loadSnapshot(idSnap);
 					content = snap.getContent();
@@ -118,8 +121,7 @@ public class DocumentExecutionSnapshot extends AbstractSpagoBIResource {
 						contentType = snap.getContentType();
 					}
 				} else {
-					logger.error("Current user [" + ((UserProfile) profile).getUserId().toString() + "] CANNOT see snapshot with id = " + idSnap
-							+ " of document with id = " + objectId);
+					LOGGER.error("Current user [{}] CANNOT see snapshot with id = {} of document with id = {}", ((UserProfile) profile).getUserId().toString(), idSnap, objectId);
 					// content = "You cannot see required snapshot.".getBytes();
 					content = "You cannot see required snapshot.".getBytes("UTF-8");
 				}
@@ -183,7 +185,7 @@ public class DocumentExecutionSnapshot extends AbstractSpagoBIResource {
 					Assert.assertNotNull(snapshot, "Snapshot [" + ids[i] + "] does not exist on the database");
 					snapdao.deleteSnapshot(snapshot.getId());
 				} catch (EMFUserError e) {
-					logger.error("Impossible to delete snapshot with name [" + ids[i] + "] already exists", e);
+					LOGGER.error("Impossible to delete snapshot with name [{}] already exists", ids[i], e);
 					throw new SpagoBIServiceException("Impossible to delete snapshot with name [" + ids[i] + "] already exists", e);
 				}
 			}

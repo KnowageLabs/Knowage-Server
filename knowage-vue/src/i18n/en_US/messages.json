@@ -167,6 +167,7 @@
         "right": "Right",
         "role": "Role",
         "roles": "Roles",
+        "rotateDevice": "Please rotate your device!",
         "row": "Row",
         "run": "Run",
         "save": "save",
@@ -2871,7 +2872,9 @@
                 "openMapWarning": "Opening the map will undo all unsaved modifications, are you sure you want to continue?"
             },
             "dsj": {
-                "addButton": "Add join column",
+                "addButton": "add join column",
+                "addFilter": "add filter",
+                "addIndicator": "add indicator",
                 "dsJoinCol": "Dataset join column",
                 "lyrJoinCol": "Layer join column"
             },
