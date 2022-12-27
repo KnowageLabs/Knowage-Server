@@ -50,12 +50,12 @@
 
             <div class="p-col-12 p-py-4">
                 <div class="p-d-flex p-flex-row p-jc-center">
-                    <label class="kn-material-input-label kn-cursor-pointer" @click="advancedVisible = !advancedVisible">{{ $t('common.advanced') }}<i :class="advancedVisible ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="p-ml-2"></i></label>
+                    <label class="kn-material-input-label kn-cursor-pointer" @click="advancedVisible[index] = !advancedVisible[index]">{{ $t('common.advanced') }}<i :class="advancedVisible[index] ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="p-ml-2"></i></label>
                     <i class=""></i>
                 </div>
                 <Transition>
-                    <div v-if="advancedVisible" class="p-d-flex p-flex-column">
-                        <HighchartsGaugeSerieAdvancedSettings :serieSettingsProp="serieSetting" @modelChanged="modelChanged"></HighchartsGaugeSerieAdvancedSettings>
+                    <div v-if="advancedVisible[index]" class="p-d-flex p-flex-column">
+                        <HighchartsGaugeSerieAdvancedSettings :serieSettingsProp="serieSetting" :disabled="!serieSetting.label.enabled" @modelChanged="modelChanged"></HighchartsGaugeSerieAdvancedSettings>
                     </div>
                 </Transition>
             </div>
@@ -77,6 +77,7 @@ import Textarea from 'primevue/textarea'
 import HighchartsSeriesMultiselect from '../common/HighchartsSeriesMultiselect.vue'
 import WidgetEditorStyleToolbar from '../../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
 import HighchartsGaugeSerieAdvancedSettings from './HighchartsGaugeSerieAdvancedSettings.vue'
+import * as highchartsDefaultValues from '../../../../helpers/chartWidget/highcharts/HighchartsDefaultValues'
 
 export default defineComponent({
     name: 'hihgcharts-series-label-settings',
@@ -89,7 +90,7 @@ export default defineComponent({
             seriesSettings: [] as IHighchartsSeriesLabelsSetting[],
             toolbarModels: [] as { 'font-family': string; 'font-size': string; 'font-weight': string; color: string; 'background-color': string }[],
             availableSeriesOptions: [] as string[],
-            advancedVisible: false,
+            advancedVisible: {},
             getTranslatedLabel
         }
     },
@@ -165,34 +166,19 @@ export default defineComponent({
             intersection.forEach((serieName: string) => this.availableSeriesOptions.push(serieName))
         },
         addSerieSetting() {
-            this.seriesSettings.push({
-                names: [],
-                label: {
-                    enabled: false,
-                    style: {
-                        fontFamily: '',
-                        fontSize: '',
-                        fontWeight: '',
-                        color: ''
-                    },
-                    backgroundColor: '',
-                    prefix: '',
-                    suffix: '',
-                    scale: 'empty',
-                    precision: 2,
-                    absolute: false,
-                    percentage: false
-                }
-            })
-            this.toolbarModels.push({ 'font-family': '', 'font-size': '', 'font-weight': '', color: '', 'background-color': '' })
+            const newSerieSetting = { names: [], label: highchartsDefaultValues.getDefaultSerieLabelSettings() } as IHighchartsSeriesLabelsSetting
+            if (this.model?.chart.type === 'gauge') {
+                newSerieSetting.dial = highchartsDefaultValues.getDefaultSerieDialSettings()
+                newSerieSetting.pivot = highchartsDefaultValues.getDefaultSeriePivotSettings()
+            }
+            this.seriesSettings.push(newSerieSetting)
+            this.toolbarModels.push({ 'font-family': '', 'font-size': '', 'font-weight': '', color: '', 'background-color': 'rgba(194,194,194, 1)' })
         },
         removeSerieSetting(index: number) {
             this.seriesSettings[index].names.forEach((serieName: string) => this.availableSeriesOptions.push(serieName))
+            this.advancedVisible[index] = false
             this.seriesSettings.splice(index, 1)
             this.toolbarModels.splice(index, 1)
-        },
-        onSerieSettingUpdated(serieSetting: IHighchartsSeriesLabelsSetting) {
-            this.modelChanged()
         },
         onStyleToolbarChange(model: IWidgetStyleToolbarModel, index: number) {
             if (!this.model || !this.toolbarModels[index]) return

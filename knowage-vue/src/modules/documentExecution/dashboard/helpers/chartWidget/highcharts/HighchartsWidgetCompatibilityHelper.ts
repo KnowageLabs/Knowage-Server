@@ -6,9 +6,9 @@ import { getFiltersForColumns } from '../../DashboardBackwardCompatibilityHelper
 import { hexToRgba } from '../../FormattingHelpers'
 import { getFormattedWidgetColumns, getFormattedColorSettings } from '../CommonChartCompatibilityHelper'
 import { getFormattedStyle } from './HighchartsWidgetStyleHelper'
+import { KnowageHighchartsGaugeChart } from '../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsGaugeChart'
 import * as widgetCommonDefaultValues from '../../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import * as highchartsDefaultValues from '../../../widget/WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
-import { KnowageHighchartsGaugeChart } from '../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsGaugeChart'
 
 const columnNameIdMap = {}
 
