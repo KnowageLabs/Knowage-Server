@@ -3,7 +3,7 @@
     <ConfirmDialog></ConfirmDialog>
     <KnOverlaySpinnerPanel />
     <div class="layout-wrapper-content" :class="{ 'layout-wrapper-content-embed': documentExecution.embed }">
-        <MainMenu @menuItemSelected="setSelectedMenuItem"></MainMenu>
+        <MainMenu v-if="showMenu" @menuItemSelected="setSelectedMenuItem"></MainMenu>
 
         <div class="layout-main">
             <router-view :selectedMenuItem="selectedMenuItem" :menuItemClickedTrigger="menuItemClickedTrigger" />
@@ -24,6 +24,8 @@ import { mapState } from 'vuex'
 import WEB_SOCKET from '@/services/webSocket.js'
 import themeHelper from '@/helpers/themeHelper/themeHelper'
 import { primeVueDate, getLocale } from '@/helpers/commons/localeHelper'
+import { loadLanguageAsync } from '@/App.i18n.js'
+import auth from '@/helpers/commons/authHelper'
 
 export default defineComponent({
     components: { ConfirmDialog, KnOverlaySpinnerPanel, KnRotate, MainMenu, Toast },
@@ -33,7 +35,8 @@ export default defineComponent({
             themeHelper: new themeHelper(),
             selectedMenuItem: null,
             isMobileDevice: false,
-            menuItemClickedTrigger: false
+            menuItemClickedTrigger: false,
+            showMenu: false
         }
     },
 
@@ -69,22 +72,28 @@ export default defineComponent({
                 let language = this.$i18n
                 let splittedLanguage = language.locale.split('_')
 
-                let url = '/knowage/servlet/AdapterHTTP?'
-                url += 'ACTION_NAME=CHANGE_LANGUAGE'
-                url += '&LANGUAGE_ID=' + splittedLanguage[0]
-                url += '&COUNTRY_ID=' + splittedLanguage[1].toUpperCase()
-                url += '&SCRIPT_ID=' + (splittedLanguage.length > 2 ? splittedLanguage[2].replaceAll('#', '') : '')
-                url += '&THEME_NAME=sbi_default'
+                if (responseLocale !== storedLocale) {
+                    let url = '/knowage/servlet/AdapterHTTP?'
+                    url += 'ACTION_NAME=CHANGE_LANGUAGE'
+                    url += '&LANGUAGE_ID=' + splittedLanguage[0]
+                    url += '&COUNTRY_ID=' + splittedLanguage[1].toUpperCase()
+                    url += '&SCRIPT_ID=' + (splittedLanguage.length > 2 ? splittedLanguage[2].replaceAll('#', '') : '')
+                    url += '&THEME_NAME=sbi_default'
 
-                this.$store.commit('setLoading', true)
-                this.$http.get(url).then(
-                    () => {
-                        store.commit('setLocale', language.locale)
-                        localStorage.setItem('locale', language.locale)
-                        this.$i18n.locale = language.locale
-                    },
-                    (error) => console.error(error)
-                )
+                    this.$store.commit('setLoading', true)
+                    this.$http.get(url).then(
+                        () => {
+                            store.commit('setLocale', language.locale)
+                            localStorage.setItem('locale', language.locale)
+                            this.$i18n.locale = language.locale
+                            this.showMenu = true
+                        },
+                        (error) => console.error(error)
+                    )
+                } else {
+                    this.showMenu = true
+                }
+                loadLanguageAsync(localStorage.getItem('locale'))
                 this.$store.commit('setLoading', false)
             })
             .catch(function(error) {
@@ -141,6 +150,7 @@ export default defineComponent({
                     this.loadInternationalization()
                 })
                 .catch(function(error) {
+                    auth.logout()
                     if (error.response) {
                         console.log(error.response.data)
                         console.log(error.response.status)
