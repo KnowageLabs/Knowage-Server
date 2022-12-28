@@ -20,8 +20,8 @@
     },
     "defaultActivityGaugePaneOptions": {
         "center": ["50%", "50%"],
-        "endAngle": 0,
-        "startAngle": 360
+        "endAngle": 360,
+        "startAngle": 0
     },
     "defaultActivityGaugeYAxis": {
         "lineWidth": 0,
@@ -156,8 +156,12 @@
         }
     },
     "defaultSoludGaugeChartPlotOptions": {
+        "allowPointSelect": false,
+        "colors": [],
+        "cursor": "",
         "dataLabels": {
-            "backgroundColor": "rgba(255, 255, 255, 1)",
+            "backgroundColor": "",
+            "distance": 30,
             "enabled": false,
             "position": "",
             "style": {
@@ -167,8 +171,10 @@
                 "fontWeight": ""
             }
         },
+        "depth": 100,
         "linecap": "round",
         "rounded": true,
+        "showInLegend": true,
         "stickyTracking": false
     },
     "defaultTooltipSettings": {
