@@ -20,7 +20,7 @@ export const createNewTableWidgetSettings = () => {
             customMessages: tableWidgetDefaultValues.getDefaultCustomMessages()
         },
         interactions: {
-            crosssNavigation: widgetCommonDefaultValues.getDefaultCrossNavigation(),
+            crossNavigation: widgetCommonDefaultValues.getDefaultCrossNavigation(),
             link: widgetCommonDefaultValues.getDefaultLinks(),
             preview: widgetCommonDefaultValues.getDefaultPreview(),
             selection: tableWidgetDefaultValues.getDefaultSelection()
@@ -93,7 +93,7 @@ const removeColumnFromSubmodel = (column: IWidgetColumn, array: any[], subProper
 }
 
 const removeColumnFromCrossNavigation = (widgetModel: IWidget, column: IWidgetColumn) => {
-    const crossNavigation = widgetModel.settings.interactions.crosssNavigation
+    const crossNavigation = widgetModel.settings.interactions.crossNavigation
     if (crossNavigation.column === column.id) {
         crossNavigation.enabled = false;
         crossNavigation.parameters.forEach((parameter: IWidgetInteractionParameter) => {

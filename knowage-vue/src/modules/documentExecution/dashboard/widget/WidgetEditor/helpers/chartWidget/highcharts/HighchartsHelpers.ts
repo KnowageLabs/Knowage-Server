@@ -15,7 +15,7 @@ export const createNewHighchartsSettings = () => {
         series: { seriesLabelsSettings: getSerieLabelsSettings() },
         interactions: {
             drilldown: { enabled: false },
-            crosssNavigation: widgetCommonDefaultValues.getDefaultCrossNavigation(),
+            crossNavigation: widgetCommonDefaultValues.getDefaultCrossNavigation(),
             link: widgetCommonDefaultValues.getDefaultLinks(),
             preview: widgetCommonDefaultValues.getDefaultPreview(),
             selection: highchartsDefaultValues.getDefaultHighchartsSelections(),

@@ -107,7 +107,7 @@ export default defineComponent({
             this.onColumnRemoved()
         },
         loadCrossNavigationModel() {
-            if (this.widgetModel?.settings?.interactions?.crosssNavigation) this.crossNavigationModel = this.widgetModel.settings.interactions.crosssNavigation
+            if (this.widgetModel?.settings?.interactions?.crossNavigation) this.crossNavigationModel = this.widgetModel.settings.interactions.crossNavigation
         },
         loadCrossNavigationOptions() {
             const temp = this.store.getCrossNavigations(this.dashboardId)

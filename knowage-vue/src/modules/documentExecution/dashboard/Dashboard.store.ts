@@ -60,7 +60,7 @@ const store = defineStore('dashboardStore', {
         getCrossNavigations(dashboardId: string) {
             return this.dashboards[dashboardId].crossNavigations
         },
-        setCrosssNavigations(dashboardId: string, crossNavigations: any[]) {
+        setCrossNavigations(dashboardId: string, crossNavigations: any[]) {
             this.dashboards[dashboardId].crossNavigations = crossNavigations
         },
         getOutputParameters(dashboardId: string) {

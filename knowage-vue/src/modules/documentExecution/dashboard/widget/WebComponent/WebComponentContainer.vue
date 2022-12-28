@@ -102,7 +102,7 @@ export default defineComponent({
         onCrossNavigation(event: any) {
             if (this.editorMode || !event.detail || !this.propWidget) return
             const crossValue = event.detail.crossValue
-            const crossNavigationConfiguration = this.propWidget.settings.interactions.crosssNavigation
+            const crossNavigationConfiguration = this.propWidget.settings.interactions.crossNavigation
             executeCrossNavigation(crossValue, crossNavigationConfiguration)
         }
     }

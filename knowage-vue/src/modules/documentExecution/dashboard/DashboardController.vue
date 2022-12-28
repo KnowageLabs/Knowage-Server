@@ -177,7 +177,7 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => (this.crossNavigations = response.data))
                 .catch(() => {})
             this.appStore.setLoading(false)
-            this.store.setCrosssNavigations(this.dashboardId, this.crossNavigations)
+            this.store.setCrossNavigations(this.dashboardId, this.crossNavigations)
         },
         async loadHtmlGallery() {
             await this.$http
@@ -239,7 +239,7 @@ export default defineComponent({
         },
         emptyStoreValues() {
             this.store.removeDashboard(this.dashboardId)
-            this.store.setCrosssNavigations(this.dashboardId, [])
+            this.store.setCrossNavigations(this.dashboardId, [])
             this.store.setOutputParameters(this.dashboardId, [])
             this.store.setSelections(this.dashboardId, [], this.$http)
             this.store.setSelections(this.dashboardId, [], this.$http)
