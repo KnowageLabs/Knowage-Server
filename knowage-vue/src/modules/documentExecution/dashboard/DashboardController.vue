@@ -1,7 +1,6 @@
 <template>
     <div v-if="model" class="dashboard-container" :id="`dashboard_${model.configuration.id}`">
         <Button icon="fas fa-square-check" class="p-m-3 p-button-rounded p-button-text p-button-plain" style="position: fixed; right: 0; z-index: 999; background-color: white; box-shadow: 0px 2px 3px #ccc" @click="selectionsDialogVisible = true" />
-        <Button icon="fas fa-terminal" class="p-m-3 p-button-rounded p-button-text p-button-plain" style="position: fixed; right: 40px; z-index: 999; background-color: white; box-shadow: 0px 2px 3px #ccc" @click="logStuff" />
         <DashboardRenderer v-if="!loading" :model="model" :datasets="datasets" :dashboardId="dashboardId" :documentDrivers="drivers" :variables="model ? model.configuration.variables : []"></DashboardRenderer>
 
         <Transition name="editorEnter" appear>
@@ -128,7 +127,6 @@ export default defineComponent({
                 const drivers = loadDrivers(this.filtersData, this.model)
                 this.setDashboardDrivers(this.dashboardId, drivers)
             }
-            //lazy lodaded data
             this.loadHtmlGallery()
             this.loading = false
         },
@@ -316,9 +314,6 @@ export default defineComponent({
         closeGeneralSettings() {
             this.generalSettingsVisible = false
             emitter.emit('dashboardGeneralSettingsClosed')
-        },
-        logStuff() {
-            console.log('model - ', this.model)
         }
     }
 })
@@ -326,11 +321,6 @@ export default defineComponent({
 <style lang="scss">
 .dashboard-container {
     flex: 1;
-    // height: 100%;
-    // width: 100%;
-    // height: 100vh;
-    // overflow-y: auto;
-    // position: relative;
 }
 @media screen and (max-width: 600px) {
     .dashboard-container {
