@@ -1,5 +1,5 @@
 import { IHighchartsChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
-import { getFormattedBandsSettings, getFormattedScaleSettings, getFormattedTickSettings } from './KnowageHighchartsCommonGaugeUpdater'
+import { getFormattedBandsSettings, getFormattedPaneSettings, getFormattedScaleSettings, getFormattedTickSettings } from './KnowageHighchartsCommonGaugeUpdater'
 import { getForamttedLabels, getFormattedLegend, getFormattedNoDataConfiguration, getFormattedSeries, getFormattedTooltipSettings } from './KnowageHighchartsCommonUpdater'
 
 export const updateGaugeChartModel = (oldModel: any, newModel: IHighchartsChartModel) => {
@@ -18,29 +18,4 @@ export const updateGaugeChartModel = (oldModel: any, newModel: IHighchartsChartM
     }
 
     return newModel
-}
-
-export const createSerie = (serieName: string, groupingFunction: string) => {
-    return {
-        name: serieName,
-        colorByPoint: true,
-        groupingFunction: groupingFunction,
-        data: [],
-        accessibility: {
-            enabled: false,
-            description: '',
-            exposeAsGroupOnly: false,
-            keyboardNavigation: { enabled: false }
-        }
-    }
-}
-
-const getFormattedPaneSettings = (oldModel: any, newModel: IHighchartsChartModel) => {
-    if (oldModel.CHART.PANE) {
-        newModel.pane = {
-            startAngle: oldModel.CHART.PANE.startAngle,
-            endAngle: oldModel.CHART.PANE.endAngle,
-            center: newModel.pane.center
-        }
-    }
 }

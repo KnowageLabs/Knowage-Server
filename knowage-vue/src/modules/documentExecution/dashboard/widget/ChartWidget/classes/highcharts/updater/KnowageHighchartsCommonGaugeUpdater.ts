@@ -1,6 +1,17 @@
 import { hexToRgba } from "@/modules/documentExecution/dashboard/helpers/FormattingHelpers"
 import { IHighchartsChartModel } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
 
+
+export const getFormattedPaneSettings = (oldModel: any, newModel: IHighchartsChartModel) => {
+    if (oldModel.CHART.PANE) {
+        newModel.pane = {
+            startAngle: oldModel.CHART.PANE.startAngle,
+            endAngle: oldModel.CHART.PANE.endAngle,
+            center: newModel.pane.center
+        }
+    }
+}
+
 export const getFormattedScaleSettings = (oldModel: any, newModel: IHighchartsChartModel) => {
     const oldYAxis = oldModel.CHART.AXES_LIST.AXIS[0]
     newModel.yAxis.min = oldYAxis.min

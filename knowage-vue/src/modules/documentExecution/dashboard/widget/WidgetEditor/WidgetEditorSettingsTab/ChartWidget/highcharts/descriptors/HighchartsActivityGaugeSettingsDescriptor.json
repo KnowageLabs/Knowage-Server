@@ -44,12 +44,6 @@
                 "type": "Preview"
             }
         ],
-        "Labels": [
-            {
-                "title": "common.labels",
-                "type": "Labels"
-            }
-        ],
         "Legend": [
             {
                 "title": "dashboard.widgetEditor.legend.title",
@@ -95,6 +89,12 @@
                 "title": "dashboard.widgetEditor.shadows.title",
                 "type": "ShadowsStyle"
             }
+        ],
+        "Tooltip": [
+            {
+                "title": "dashboard.widgetEditor.tooltip.title",
+                "type": "Tooltip"
+            }
         ]
     },
     "settingsListOptions": [
@@ -127,6 +127,11 @@
             "icon": "pi pi-table",
             "label": "common.labels",
             "value": "Labels"
+        },
+        {
+            "icon": "pi pi-table",
+            "label": "dashboard.widgetEditor.tooltip.title",
+            "value": "Tooltip"
         },
         {
             "icon": "pi pi-table",

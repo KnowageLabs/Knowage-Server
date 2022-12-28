@@ -13,7 +13,6 @@
             @itemSelected="setSelectedColumn"
             @itemDeleted="onColumnDelete"
         ></WidgetEditorColumnTable>
-        {{ columnTableItems['MEASURES'] }}
         <WidgetEditorColumnTable
             class="p-m-2"
             :widgetModel="widgetModel"

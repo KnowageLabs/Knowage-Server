@@ -239,6 +239,7 @@ export default defineComponent({
         getModelForRender() {
             const formattedChartModel = deepcopy(this.chartModel)
             if (formattedChartModel.chart.type === 'activitygauge') formattedChartModel.chart.type = 'solidgauge'
+
             return formattedChartModel
         }
     }

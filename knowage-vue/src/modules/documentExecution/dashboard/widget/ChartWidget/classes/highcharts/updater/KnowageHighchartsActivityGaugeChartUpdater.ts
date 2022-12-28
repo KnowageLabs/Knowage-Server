@@ -1,5 +1,5 @@
 import { IHighchartsChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
-import { getFormattedBandsSettings, getFormattedScaleSettings, getFormattedTickSettings } from './KnowageHighchartsCommonGaugeUpdater'
+import { getFormattedBandsSettings, getFormattedPaneSettings, getFormattedScaleSettings, getFormattedTickSettings } from './KnowageHighchartsCommonGaugeUpdater'
 import { getForamttedLabels, getFormattedLegend, getFormattedNoDataConfiguration, getFormattedSeries, getFormattedTooltipSettings } from './KnowageHighchartsCommonUpdater'
 
 export const updateActivityGaugeChartModel = (oldModel: any, newModel: IHighchartsChartModel) => {
@@ -12,37 +12,8 @@ export const updateActivityGaugeChartModel = (oldModel: any, newModel: IHighchar
     getFormattedTooltipSettings(oldModel, newModel)
     getFormattedPaneSettings(oldModel, newModel)
     if (oldModel.CHART.AXES_LIST && oldModel.CHART.AXES_LIST.AXIS && oldModel.CHART.AXES_LIST.AXIS[0]) {
-        getFormattedScaleSettings(oldModel, newModel)
         getFormattedTickSettings(oldModel, newModel)
-        getFormattedBandsSettings(oldModel, newModel)
     }
 
     return newModel
 }
-
-export const createSerie = (serieName: string, groupingFunction: string) => {
-    return {
-        name: serieName,
-        colorByPoint: true,
-        groupingFunction: groupingFunction,
-        data: [],
-        accessibility: {
-            enabled: false,
-            description: '',
-            exposeAsGroupOnly: false,
-            keyboardNavigation: { enabled: false }
-        }
-    }
-}
-
-const getFormattedPaneSettings = (oldModel: any, newModel: IHighchartsChartModel) => {
-    if (oldModel.CHART.PANE) {
-        newModel.pane = {
-            startAngle: oldModel.CHART.PANE.startAngle,
-            endAngle: oldModel.CHART.PANE.endAngle,
-            center: newModel.pane.center
-        }
-    }
-}
-
-
