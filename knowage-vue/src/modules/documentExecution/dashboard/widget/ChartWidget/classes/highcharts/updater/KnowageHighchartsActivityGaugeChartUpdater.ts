@@ -8,7 +8,7 @@ export const updateActivityGaugeChartModel = (oldModel: any, newModel: IHighchar
     getFormattedNoDataConfiguration(oldModel, newModel)
     getFormattedLegend(oldModel, newModel)
     getForamttedLabels(oldModel, newModel)
-    getFormattedSeries(oldModel, newModel)
+    getFormattedSeries(oldModel, newModel, 4)
     getFormattedTooltipSettings(oldModel, newModel)
     if (oldModel.CHART.AXES_LIST && oldModel.CHART.AXES_LIST.AXIS && oldModel.CHART.AXES_LIST.AXIS[0]) {
         getFormattedTickSettings(oldModel, newModel)

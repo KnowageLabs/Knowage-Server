@@ -34,10 +34,14 @@ export const getFormattedNoDataConfiguration = (oldModel: any, newModel: IHighch
     }
 }
 
-export const getFormattedSeries = (oldModel: any, newModel: IHighchartsChartModel) => {
+export const getFormattedSeries = (oldModel: any, newModel: IHighchartsChartModel, maxSeries: number | null) => {
     if (oldModel.CHART.VALUES.SERIE) {
-        const serie = oldModel.CHART.VALUES.SERIE[0]
-        newModel.series.push(createSerie(serie.name, serie.groupingFunction))
+        let endIndex = maxSeries ? maxSeries : oldModel.CHART.VALUES.SERIE.length
+        if (endIndex > oldModel.CHART.VALUES.SERIE.length) endIndex = oldModel.CHART.VALUES.SERIE.length
+        for (let i = 0; i < endIndex; i++) {
+            const serie = oldModel.CHART.VALUES.SERIE[i]
+            newModel.series.push(createSerie(serie.name, serie.groupingFunction))
+        }
     }
 }
 

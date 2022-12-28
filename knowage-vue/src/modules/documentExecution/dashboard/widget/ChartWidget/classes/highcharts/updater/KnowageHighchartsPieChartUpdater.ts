@@ -7,7 +7,7 @@ export const updatePieChartModel = (oldModel: any, newModel: IHighchartsChartMod
     getFormattedNoDataConfiguration(oldModel, newModel)
     getFormattedLegend(oldModel, newModel)
     getForamttedLabels(oldModel, newModel)
-    getFormattedSeries(oldModel, newModel)
+    getFormattedSeries(oldModel, newModel, 1)
     getFormattedTooltipSettings(oldModel, newModel)
 
     return newModel

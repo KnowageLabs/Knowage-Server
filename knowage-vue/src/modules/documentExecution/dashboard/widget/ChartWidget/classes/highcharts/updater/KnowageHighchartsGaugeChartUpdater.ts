@@ -8,7 +8,7 @@ export const updateGaugeChartModel = (oldModel: any, newModel: IHighchartsChartM
     getFormattedNoDataConfiguration(oldModel, newModel)
     getFormattedLegend(oldModel, newModel)
     getForamttedLabels(oldModel, newModel)
-    getFormattedSeries(oldModel, newModel)
+    getFormattedSeries(oldModel, newModel, null)
     getFormattedTooltipSettings(oldModel, newModel)
     getFormattedPaneSettings(oldModel, newModel)
     if (oldModel.CHART.AXES_LIST && oldModel.CHART.AXES_LIST.AXIS && oldModel.CHART.AXES_LIST.AXIS[0]) {
