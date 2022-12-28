@@ -25,18 +25,30 @@ export const getFormattedWidgetColumns = (widget: any, chartLibrary: 'chartJS' |
     const formattedColumns = [] as IWidgetColumn[]
     const category = widget.content.chartTemplate.CHART.VALUES.CATEGORY
     if (category) addCategoryColumns(category, formattedColumns, widgetColumNameMap, widget, chartLibrary)
-    const index = getMaximumNumberOfSeries(chartLibrary, chartType)
 
+    const index = getMaximumNumberOfSeries(chartLibrary, chartType, widget)
     if (widget.content.chartTemplate.CHART.VALUES.SERIE) {
         const endIndex = index ?? widget.content.chartTemplate.CHART.VALUES.SERIE.length
-        for (let i = 0; i < endIndex; i++) addSerieColumn(widget.content.chartTemplate.CHART.VALUES.SERIE[i], widgetColumNameMap, formattedColumns)
+        for (let i = 0; i < endIndex && i < widget.content.chartTemplate.CHART.VALUES.SERIE.length; i++) addSerieColumn(widget.content.chartTemplate.CHART.VALUES.SERIE[i], widgetColumNameMap, formattedColumns)
     }
     return formattedColumns
 }
 
-const getMaximumNumberOfSeries = (chartLibrary: 'chartJS' | 'highcharts', chartType: string) => {
+const getMaximumNumberOfSeries = (chartLibrary: 'chartJS' | 'highcharts', chartType: string, widget: any) => {
     if (chartLibrary === 'chartJS') return 1
     if (chartLibrary === 'highcharts' && chartType === 'PIE') return 1
+    if (chartType === 'GAUGE') {
+        const chartSubtype = widget.content.chartTemplate.CHART.subtype
+        console.log("--------------- chart subtype", chartSubtype)
+        switch (chartSubtype) {
+            case 'activity':
+                return 4
+            case 'solid':
+                return 1
+            default:
+                return null
+        }
+    }
     return null
 }
 

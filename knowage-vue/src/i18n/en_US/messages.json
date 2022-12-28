@@ -562,6 +562,9 @@
             },
             "hidden": "Hidden",
             "highcharts": {
+                "activityGauge": {
+                    "valuesTableHint": "Measures only."
+                },
                 "bands": {
                     "colorHint": "The color of the plot band.",
                     "fromHint": "The start position of the plot band in axis units.",
@@ -613,6 +616,9 @@
                 "scale": {
                     "maxHint": "The maximum value of the axis. If null, the max value is automatically calculated.",
                     "minHint": "The minimum value of the axis. If null the min value is automatically calculated."
+                },
+                "solidGauge": {
+                    "valuesTableHint": "Measures only."
                 },
                 "tick": {
                     "minorTickInterval": "Minor Tick Interval",

@@ -7,14 +7,13 @@ export const addHighchartsColumnToTable = (tempColumn: IWidgetColumn, rows: IWid
     else if (measuresOnly) mode = 'measuresOnly'
     switch (chartType) {
         case 'pie':
-            addHighchartsPieChartColumnToTable(tempColumn, rows, chartType, mode, widgetModel)
-            break
         case 'gauge':
-            addHighchartsGaugeChartColumnToTable(tempColumn, rows, chartType, mode, widgetModel)
+        case 'activitygauge':
+            addHighchartsColumnToTableRows(tempColumn, rows, chartType, mode, widgetModel)
     }
 }
 
-const addHighchartsPieChartColumnToTable = (tempColumn: IWidgetColumn, rows: IWidgetColumn[], chartType: string | undefined, mode: string, widgetModel: IWidget) => {
+const addHighchartsColumnToTableRows = (tempColumn: IWidgetColumn, rows: IWidgetColumn[], chartType: string | undefined, mode: string, widgetModel: IWidget) => {
     if (mode === 'attributesOnly' && rows.length < 4) {
         if (tempColumn.fieldType === 'MEASURE') {
             tempColumn.fieldType = 'ATTRIBUTE'
@@ -26,29 +25,36 @@ const addHighchartsPieChartColumnToTable = (tempColumn: IWidgetColumn, rows: IWi
             "orderType": ""
         }
         addColumnToRows(rows, tempColumn)
-    } else if (mode === 'measuresOnly' && rows.length <= 1) {
-        if (tempColumn.fieldType === 'ATTRIBUTE') {
-            tempColumn.fieldType = 'MEASURE'
-            tempColumn.aggregation = 'SUM'
-        }
-        if (rows.length === 1) {
+    } else if (mode === 'measuresOnly') {
+        const maxValues = getMaxValuesNumber(chartType)
+        if (maxValues && maxValues !== 1 && rows.length >= maxValues) return
+        convertColumnToMeasure(tempColumn)
+        if (rows.length === 1 && maxValues === 1) {
             removeSerieFromWidgetModel(widgetModel, rows[0], chartType)
+            rows[0] = tempColumn
         }
-        rows[0] = tempColumn
-        if (chartType === 'pie') updateSerieInWidgetModel(widgetModel, tempColumn)
+        addColumnToRows(rows, tempColumn)
+        updateSerieInWidgetModel(widgetModel, tempColumn, chartType)
 
     }
 }
 
-const addHighchartsGaugeChartColumnToTable = (tempColumn: IWidgetColumn, rows: IWidgetColumn[], chartType: string | undefined, mode: string, widgetModel: IWidget) => {
-    if (mode === 'measuresOnly') {
-        if (tempColumn.fieldType === 'ATTRIBUTE') {
-            tempColumn.fieldType = 'MEASURE'
-            tempColumn.aggregation = 'SUM'
-        }
+const getMaxValuesNumber = (chartType: string | undefined) => {
+    switch (chartType) {
+        case 'pie':
+        case 'solidgauge':
+            return 1
+        case 'activitygauge':
+            return 4
+        default:
+            return null
+    }
+}
 
-        addColumnToRows(rows, tempColumn)
-
+const convertColumnToMeasure = (tempColumn: IWidgetColumn) => {
+    if (tempColumn.fieldType === 'ATTRIBUTE') {
+        tempColumn.fieldType = 'MEASURE'
+        tempColumn.aggregation = 'SUM'
     }
 }
 
@@ -57,8 +63,10 @@ const addColumnToRows = (rows: IWidgetColumn[], tempColumn: IWidgetColumn) => {
     if (index === -1) rows.push(tempColumn)
 }
 
-const updateSerieInWidgetModel = (widgetModel: IWidget, column: IWidgetColumn) => {
-    updateFirstSeriesOption(widgetModel.settings.accesssibility.seriesAccesibilitySettings, column)
+// TODO
+const updateSerieInWidgetModel = (widgetModel: IWidget, column: IWidgetColumn, chartType: string | undefined) => {
+    if (chartType === 'pie')
+        updateFirstSeriesOption(widgetModel.settings.accesssibility.seriesAccesibilitySettings, column)
     updateFirstSeriesOption(widgetModel.settings.series.seriesLabelsSettings, column)
     emitter.emit('seriesAdded', column)
 }

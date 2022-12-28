@@ -13,6 +13,7 @@
             @itemSelected="setSelectedColumn"
             @itemDeleted="onColumnDelete"
         ></WidgetEditorColumnTable>
+        {{ columnTableItems['MEASURES'] }}
         <WidgetEditorColumnTable
             class="p-m-2"
             :widgetModel="widgetModel"
@@ -59,7 +60,18 @@ export default defineComponent({
             return this.widgetModel?.settings.chartModel?.model?.chart.type
         },
         valuesColumnSettings() {
-            return this.chartType === 'pie' ? { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.pieChartcolumnTableSettings[1] } : { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.gaugeChartcolumnTableSettings[0] }
+            switch (this.chartType) {
+                case 'pie':
+                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.pieChartcolumnTableSettings[1] }
+                case 'gauge':
+                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.gaugeChartcolumnTableSettings[0] }
+                case 'activitygauge':
+                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.activityGaugeChartcolumnTableSettings[0] }
+                case 'solidgauge':
+                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.solidGaugeChartcolumnTableSettings[0] }
+                default:
+                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.gaugeChartcolumnTableSettings[0] }
+            }
         }
     },
     watch: {

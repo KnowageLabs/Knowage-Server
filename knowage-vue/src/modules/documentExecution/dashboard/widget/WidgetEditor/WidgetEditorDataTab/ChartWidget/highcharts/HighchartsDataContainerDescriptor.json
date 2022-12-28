@@ -1,4 +1,11 @@
 {
+    "activityGaugeChartcolumnTableSettings": [
+        {
+            "hint": "dashboard.widgetEditor.highcharts.activityGauge.valuesTableHint",
+            "label": "common.values",
+            "measuresOnly": true
+        }
+    ],
     "gaugeChartcolumnTableSettings": [
         {
             "hint": "dashboard.widgetEditor.highcharts.gauge.valuesTableHint",
@@ -14,6 +21,13 @@
         },
         {
             "hint": "dashboard.widgetEditor.highcharts.piechart.valuesTableHint",
+            "label": "common.values",
+            "measuresOnly": true
+        }
+    ],
+    "solidGaugeChartcolumnTableSettings": [
+        {
+            "hint": "dashboard.widgetEditor.highcharts.solidGauge.valuesTableHint",
             "label": "common.values",
             "measuresOnly": true
         }

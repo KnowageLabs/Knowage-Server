@@ -78,10 +78,12 @@ const createGaugeChartInstance = (widgetContentChartTemplate: any) => {
     switch (widgetContentChartTemplate.CHART.subtype) {
         case 'activity':
             return new KnowageHighchartsActivityGaugeChart(widgetContentChartTemplate)
-        case 'gauge':
-            return new KnowageHighchartsGaugeChart(widgetContentChartTemplate)
         case 'solid':
             return null
+        case 'simple':
+        default:
+            return new KnowageHighchartsGaugeChart(widgetContentChartTemplate)
+
     }
 
 }
