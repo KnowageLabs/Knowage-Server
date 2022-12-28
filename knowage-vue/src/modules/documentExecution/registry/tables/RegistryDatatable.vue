@@ -1,5 +1,33 @@
 <template>
-    <DataTable
+    <Button class="p-button kn-button--primary p-mx-1" style="position: absolute; top: -50px" @click="logstuff">{{ $t('documentExecution.registry.clearFilters') }}</Button>
+    <div id="registry-gric-container" class="kn-height-full p-d-flex p-flex-column">
+        <ag-grid-vue
+            v-if="!loading"
+            class="registry-grid ag-theme-alpine"
+            style="height: 100%"
+            :columnDefs="columns"
+            :rowData="rows"
+            :defaultColDef="defaultColDef"
+            animateRows="true"
+            rowSelection="multiple"
+            :paginationPageSize="registryDescriptor.paginationNumberOfItems"
+            :pagination="true"
+            :suppressPaginationPanel="true"
+            :suppressScrollOnNewData="true"
+            @cell-clicked="cellWasClicked"
+            @grid-ready="onGridReady"
+        />
+        <Paginator
+            class="kn-table-widget-paginator"
+            :rows="registryDescriptor.paginationNumberOfItems"
+            :totalRecords="lazyParams.size"
+            template="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+            :currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
+            @page="onPage2($event)"
+        />
+    </div>
+
+    <!-- <DataTable
         v-if="!loading"
         class="p-datatable-sm kn-table"
         :scrollable="true"
@@ -10,13 +38,7 @@
         :lazy="lazyParams.size > registryDescriptor.paginationLimit"
         :paginator="true"
         :rows="registryDescriptor.paginationNumberOfItems"
-        :currentPageReportTemplate="
-            $t('common.table.footer.paginated', {
-                first: '{first}',
-                last: '{last}',
-                totalRecords: '{totalRecords}'
-            })
-        "
+        :currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
         :totalRecords="lazyParams.size"
         stripedRows
         showGridlines
@@ -71,19 +93,22 @@
                 </Button>
             </template>
         </Column>
-    </DataTable>
-
+    </DataTable> -->
     <RegistryDatatableWarningDialog :visible="warningVisible" :columns="dependentColumns" @close="onWarningDialogClose"></RegistryDatatableWarningDialog>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, reactive, onMounted, ref } from 'vue'
 import { luxonFormatDate, formatDateWithLocale, formatNumberWithLocale, localeDate, primeVueDate } from '@/helpers/commons/localeHelper'
 import { setInputDataType, numberFormatRegex } from '@/helpers/commons/tableHelpers'
 import { AxiosResponse } from 'axios'
+import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
+import 'ag-grid-community/styles/ag-grid.css' // Core grid CSS, always needed
+import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
 import Checkbox from 'primevue/checkbox'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
+import Paginator from 'primevue/paginator'
 import registryDescriptor from '../RegistryDescriptor.json'
 import registryDatatableDescriptor from './RegistryDatatableDescriptor.json'
 import RegistryDatatableEditableField from './RegistryDatatableEditableField.vue'
@@ -93,23 +118,8 @@ import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'registry-datatable',
-    components: {
-        Checkbox,
-        Column,
-        DataTable,
-        RegistryDatatableEditableField,
-        RegistryDatatableWarningDialog
-    },
-    props: {
-        propColumns: { type: Array },
-        propRows: { type: Array, required: true },
-        columnMap: { type: Object },
-        propConfiguration: { type: Object },
-        pagination: { type: Object },
-        entity: { type: String },
-        id: { type: String },
-        stopWarningsState: { type: Array }
-    },
+    components: { Checkbox, Column, DataTable, RegistryDatatableEditableField, RegistryDatatableWarningDialog, AgGridVue, Paginator },
+    props: { propColumns: { type: Array }, propRows: { type: Array, required: true }, columnMap: { type: Object }, propConfiguration: { type: Object }, pagination: { type: Object }, entity: { type: String }, id: { type: String }, stopWarningsState: { type: Array } },
     emits: ['rowChanged', 'rowDeleted', 'pageChanged', 'warningChanged'],
     data() {
         return {
@@ -133,12 +143,28 @@ export default defineComponent({
             flagHidden: 'flag-hidden',
             first: 0,
             loading: false,
-            multiSortMeta: []
+            multiSortMeta: [],
+            gridApi: null as any,
+            columnApi: null as any,
+            ctrlDown: false,
+            defaultColDef: {
+                // editable: true,
+                // enableRowGroup: true,
+                // enablePivot: true,
+                editable: true,
+                enableValue: true,
+                sortable: true,
+                resizable: true,
+                width: 55
+                // filter: true,
+                // flex: 1
+            }
         }
     },
     watch: {
         propColumns() {
             this.loadColumns()
+            this.createGridColumns()
         },
         propRows: {
             handler() {
@@ -152,6 +178,7 @@ export default defineComponent({
         pagination: {
             handler() {
                 this.loadPagination()
+                this.createGridColumns()
                 this.first = this.pagination?.start
             },
             deep: true
@@ -396,6 +423,51 @@ export default defineComponent({
         },
         onSort(event: any) {
             this.multiSortMeta = event.multiSortMeta
+        },
+        onGridReady(params) {
+            this.gridApi = params.api
+            this.columnApi = params.columnApi
+
+            // var gridColumns = params.columnApi.getColumns()
+            // gridColumns.forEach((col) => {
+            //     var colDef = col.getColDef()
+            //     col.width = colDef.size
+            //     // console.log(colDef.headerName + ', Column ID = ' + col.getId(), colDef)
+            //     console.group('-----------------------')
+            //     console.log('colDef', colDef)
+            //     console.log('col', col)
+            //     console.groupEnd()
+            // })
+
+            // this.gridApi.setColumnDefs(gridColumns)
+            // // this.gridApi?.setRowData(this.rows)
+            // this.gridApi.refreshCells(params)
+
+            // this.refreshGridConfiguration(true)
+        },
+        cellWasClicked: (event) => {
+            console.log('cell was clicked', event)
+        },
+        logstuff() {
+            // console.log('rows', this.rows)
+            // console.log('columns', this.columns)
+        },
+        createGridColumns() {
+            var columns = [] as any
+            console.log('PROP COLUMNS', this.propColumns)
+            return columns
+        },
+        onPage2(event: any) {
+            console.log(event)
+            this.lazyParams = {
+                paginationStart: event.first,
+                paginationLimit: event.rows,
+                paginationEnd: event.first + event.rows,
+                size: this.lazyParams.size
+            }
+            this.$emit('pageChanged', this.lazyParams)
+
+            this.gridApi.paginationGoToPage(event.page)
         }
     }
 })
@@ -407,12 +479,8 @@ export default defineComponent({
 .flag-hidden {
     opacity: 0;
 }
-.scrollable-table .p-datatable-wrapper {
-    max-width: 93vw;
-    overflow-x: auto;
-}
-.scrollable-table .p-datatable {
-    max-width: 93vw;
+.registry-grid {
+    border: none;
 }
 .editableField {
     width: 100%;

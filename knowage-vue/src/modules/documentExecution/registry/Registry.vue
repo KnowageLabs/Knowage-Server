@@ -146,6 +146,12 @@ export default defineComponent({
                 this.loadColumnsInfo()
                 this.loadRows()
                 this.getFilters()
+                this.createColumnWidthProperty()
+            }
+        },
+        createColumnWidthProperty() {
+            for (let i = 1; i < this.registry.metaData.fields.length; i++) {
+                this.columns[i - 1].width = this.columns[i - 1].size
             }
         },
         loadColumns() {
