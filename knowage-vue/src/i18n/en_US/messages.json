@@ -1654,7 +1654,8 @@
             "typeOrJsonPathValue": "Type or JSON Path Type",
             "viewQbeButton": "View Qbe Query",
             "viewQbeMsg": "The dataset should be saved before viewing the QBE query",
-            "viewQbeWarning": "Cannot open QBE query"
+            "viewQbeWarning": "Cannot open QBE query",
+            "viewSQLButton": "View SQL Query"
         },
         "domainsManagement": {
             "domainCode": "Domain code",

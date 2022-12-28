@@ -1,57 +1,33 @@
 <template>
     <Card class="p-m-2">
         <template #content>
-            <form v-if="dataset.dsTypeCd == 'Qbe'" class="p-fluid p-formgrid p-grid">
+            <form class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-col-6">
                     <span class="p-float-label">
                         <Dropdown
-                            id="qbeDataSource"
+                            id="sourceDatasetLabel"
                             class="kn-material-input"
-                            :options="dataSources"
+                            :options="qbeDatasets"
                             optionLabel="label"
                             optionValue="label"
-                            v-model="v$.dataset.qbeDataSource.$model"
+                            v-model="v$.dataset.sourceDatasetLabel.$model"
                             :class="{
-                                'p-invalid': v$.dataset.qbeDataSource.$invalid && v$.dataset.qbeDataSource.$dirty
+                                'p-invalid': v$.dataset.sourceDatasetLabel.$invalid && v$.dataset.sourceDatasetLabel.$dirty
                             }"
-                            @before-show="v$.dataset.qbeDataSource.$touch()"
+                            @before-show="v$.dataset.sourceDatasetLabel.$touch()"
                         />
-                        <label for="scope" class="kn-material-input-label"> {{ $t('managers.glossary.glossaryUsage.dataSource') }} * </label>
+                        <label for="scope" class="kn-material-input-label"> {{ $t('common.dataset') }} * </label>
                     </span>
                     <KnValidationMessages
-                        :vComp="v$.dataset.qbeDataSource"
+                        :vComp="v$.dataset.sourceDatasetLabel"
                         :additionalTranslateParams="{
-                            fieldName: $t('managers.glossary.glossaryUsage.dataSource')
-                        }"
-                    />
-                </div>
-                <div class="p-field p-col-6">
-                    <span class="p-float-label">
-                        <Dropdown
-                            id="qbeDatamarts"
-                            class="kn-material-input"
-                            :options="businessModels"
-                            optionLabel="name"
-                            optionValue="name"
-                            v-model="v$.dataset.qbeDatamarts.$model"
-                            :class="{
-                                'p-invalid': v$.dataset.qbeDatamarts.$invalid && v$.dataset.qbeDatamarts.$dirty
-                            }"
-                            @change="getDriversData"
-                            @before-show="v$.dataset.qbeDatamarts.$touch()"
-                        />
-                        <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.qbeDatamarts') }} * </label>
-                    </span>
-                    <KnValidationMessages
-                        :vComp="v$.dataset.qbeDatamarts"
-                        :additionalTranslateParams="{
-                            fieldName: $t('managers.datasetManagement.qbeDatamarts')
+                            fieldName: $t('common.dataset')
                         }"
                     />
                 </div>
             </form>
-            <div v-if="dataset.dsTypeCd == 'Qbe' || dataset.dsTypeCd == 'Federated'">
-                <Button :label="$t('managers.datasetManagement.viewQbeButton')" class="p-col-2 p-mr-2 p-button kn-button--primary" style="max-height: 38px" @click="openQbeQueryDialog" />
+            <div>
+                <Button :label="$t('managers.datasetManagement.viewSQLButton')" class="p-col-2 p-mr-2 p-button kn-button--primary" style="max-height: 38px" @click="openQbeQueryDialog" />
                 <Button :label="$t('managers.datasetManagement.openQbeButton')" class="p-col-2 p-button kn-button--primary" :disabled="parentValid" @click="openDatasetInQBE" />
             </div>
         </template>
@@ -61,7 +37,7 @@
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
                 <template #start>
-                    <span>{{ $t('managers.datasetManagement.viewQbeButton') }}</span>
+                    <span>{{ $t('managers.datasetManagement.viewSQLButton') }}</span>
                 </template>
                 <template #end>
                     <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="qbeQueryDialogVisible = false" />
@@ -71,7 +47,7 @@
         <VCodeMirror class="kn-height-full" ref="codeMirror" v-model:value="qbeQuery" :options="codemirrorOptions" />
     </Dialog>
 
-    <QBE v-if="qbeVisible" :visible="qbeVisible" :dataset="qbeDataset" :returnQueryMode="true" :getQueryFromDatasetProp="getQueryFromDataset" @querySaved="onQbeDialogSave" @close="onQbeDialogClose" />
+    <QBE v-if="qbeVisible" :visible="qbeVisible" :dataset="qbeDataset" :returnQueryMode="true" :getQueryFromDatasetProp="getQueryFromDataset" @querySaved="onQbeDialogSave" @close="onQbeDialogClose" :sourceDataset="selectedDataset" />
 </template>
 
 <script lang="ts">
@@ -81,7 +57,7 @@ import { AxiosResponse } from 'axios'
 import VCodeMirror, { CodeMirror } from 'codemirror-editor-vue3'
 import useValidate from '@vuelidate/core'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-import qbeDescriptor from './DatasetManagementQbeDatasetDescriptor.json'
+import qbeDescriptor from './DatasetManagementDerivedDatasetDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import Card from 'primevue/card'
 import Dialog from 'primevue/dialog'
@@ -90,7 +66,7 @@ import deepcopy from 'deepcopy'
 
 export default defineComponent({
     components: { Card, Dropdown, KnValidationMessages, Dialog, VCodeMirror, QBE },
-    props: { parentValid: { type: Boolean }, selectedDataset: { type: Object as any }, dataSources: { type: Array as any }, businessModels: { type: Array as any } },
+    props: { parentValid: { type: Boolean }, selectedDataset: { type: Object as any }, qbeDatasets: { type: Array as any } },
     emits: ['touched', 'qbeDialogClosed', 'qbeDialogSaved'],
     data() {
         return {
@@ -102,6 +78,7 @@ export default defineComponent({
             qbeVisible: false,
             codeMirror: {} as any,
             qbeDataset: {} as any,
+            sourceDataset: {} as any,
             selectedBusinessModel: {} as any,
             datsetBmChanged: false,
             getQueryFromDataset: false,
@@ -148,26 +125,13 @@ export default defineComponent({
             }, 200)
         },
         openQbeQueryDialog() {
-            if (typeof this.dataset.qbeJSONQuery === 'string') {
-                this.qbeQuery = JSON.stringify(JSON.parse(this.dataset.qbeJSONQuery), null, 2)
-            } else {
-                this.qbeQuery = JSON.stringify(this.dataset.qbeJSONQuery, null, 2)
+            if (typeof this.dataset.sqlQuery === 'string') {
+                this.qbeQuery = this.dataset.sqlQuery
             }
             this.qbeQueryDialogVisible = true
         },
-        async getDriversData(event) {
-            this.datsetBmChanged = true
-            this.getQueryFromDataset = false
-            const bmId = this.businessModels.find((bm) => bm.name === event.value).id
-            await this.$http
-                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${bmId}`)
-                .then((response: AxiosResponse<any>) => {
-                    this.selectedBusinessModel = response.data
-                })
-                .catch()
-        },
         openDatasetInQBE() {
-            if (this.$route.name === 'new-dataset') {
+            /*             if (this.$route.name === 'new-dataset') {
                 this.qbeDataset = deepcopy(this.selectedBusinessModel)
                 this.getQueryFromDataset ? (this.qbeDataset.qbeJSONQuery = this.dataset.qbeJSONQuery) : ''
             } else {
@@ -176,8 +140,11 @@ export default defineComponent({
                 } else {
                     this.qbeDataset = deepcopy(this.dataset)
                 }
-            }
-            this.qbeDataset.pars = this.dataset.pars
+            } */
+
+            this.qbeDataset = null
+            this.sourceDataset = this.dataset.sourceDatasetLabel
+
             this.qbeVisible = true
         },
         onQbeDialogClose() {

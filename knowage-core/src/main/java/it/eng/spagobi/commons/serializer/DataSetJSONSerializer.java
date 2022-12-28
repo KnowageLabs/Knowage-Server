@@ -408,7 +408,7 @@ public class DataSetJSONSerializer implements Serializer {
 					result.put(QBE_DATA_SOURCE_ID, dataSourceId);
 					result.put(QBE_DATAMARTS, jsonConf.getString(DataSetConstants.QBE_DATAMARTS));
 				} else if (type.equalsIgnoreCase(DataSetConstants.DERIVED)) {
-					result.put(QUERY, jsonConf.getString(DataSetConstants.QUERY));
+					result.put("sqlQuery", jsonConf.getString("sqlQuery"));
 					result.put("sourceDatasetLabel", jsonConf.getString("sourceDatasetLabel"));
 				} else if (type.equalsIgnoreCase(DataSetConstants.FEDERATED)) {
 					result.put(QBE_JSON_QUERY, jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));

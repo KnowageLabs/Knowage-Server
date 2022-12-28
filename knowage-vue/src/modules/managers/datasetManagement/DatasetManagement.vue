@@ -23,6 +23,7 @@
                     :transformationDataset="transformationDataset"
                     :scriptTypes="scriptTypes"
                     :dataSources="dataSources"
+                    :qbeDatasetsForDerived="qbeDatasetsForDerived"
                     :businessModels="businessModels"
                     :pythonEnvironments="pythonEnvironments"
                     :rEnvironments="rEnvironments"
@@ -74,7 +75,8 @@ export default defineComponent({
             rEnvironments: [] as any,
             metaSourceResource: [] as any,
             tags: [] as any,
-            datasetToCloneId: null
+            datasetToCloneId: null,
+            qbeDatasetsForDerived: [] as any
         }
     },
     setup() {
@@ -114,6 +116,10 @@ export default defineComponent({
         async getDatasources() {
             this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasources`).then((response: AxiosResponse<any>) => (this.dataSources = response.data))
         },
+        async getQbeDatasetsForDerived() {
+            //TODO - Implement BE service
+            this.qbeDatasetsForDerived = this.listOfDatasets.filter((x) => x.dsTypeCd == 'Qbe')
+        },
         async getBusinessModels() {
             this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/businessmodels`).then((response: AxiosResponse<any>) => (this.businessModels = response.data))
         },
@@ -125,7 +131,7 @@ export default defineComponent({
         },
         async getDatasets() {
             let url = '{"reverseOrdering":false,"columnOrdering":""}'
-            this.$http
+            await this.$http
                 .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/datasets/catalog?offset=0&fetchSize=0&ordering=` + encodeURI(url))
                 .then((response: AxiosResponse<any>) => (this.listOfDatasets = [...response.data.root]))
                 .finally(() => (this.loading = false))
@@ -139,6 +145,7 @@ export default defineComponent({
             await this.getBusinessModels()
             await this.getTags()
             await this.getDatasets()
+            await this.getQbeDatasetsForDerived()
         },
         //#endregion ================================================================================================
 

@@ -19,11 +19,7 @@
                                 'p-invalid': v$.dataset.dsTypeCd.$invalid && v$.dataset.dsTypeCd.$dirty
                             }"
                             @before-show="v$.dataset.dsTypeCd.$touch()"
-<<<<<<< HEAD
                             @change="handleTypeChange"
-=======
-                            @change=";((dataset.pars = []), (dataset.restJsonPathAttributes = []), (dataset.restRequestHeaders = [])), $emit('touched')"
->>>>>>> refs/remotes/origin/master
                         />
                         <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.selectDatasetType') }} * </label>
                     </span>
@@ -38,18 +34,19 @@
         </Card>
     </div>
     <FileDataset v-if="dataset.dsTypeCd == 'File'" :selectedDataset="selectedDataset" @fileUploaded="$emit('fileUploaded')" />
-    <QueryDataset v-if="dataset.dsTypeCd == 'Query'" :selectedDataset="selectedDataset" :dataSources="dataSources" :scriptTypes="scriptTypes" :activeTab="activeTab" @queryEdited="$emit('queryEdited')" />
-    <JavaDataset v-if="dataset.dsTypeCd == 'Java Class'" :selectedDataset="selectedDataset" />
-    <ScriptDataset v-if="dataset.dsTypeCd == 'Script'" :selectedDataset="selectedDataset" :scriptTypes="scriptTypes" :activeTab="activeTab" />
-    <QbeDataset v-if="dataset.dsTypeCd == 'Qbe' || dataset.dsTypeCd == 'Federated'" :selectedDataset="selectedDataset" :businessModels="businessModels" :dataSources="dataSources" :parentValid="parentValid" />
-    <FlatDataset v-if="dataset.dsTypeCd == 'Flat'" :selectedDataset="selectedDataset" :dataSources="dataSources" />
-    <CkanDataset v-if="dataset.dsTypeCd == 'Ckan'" :selectedDataset="selectedDataset" />
-    <RestDataset v-if="dataset.dsTypeCd == 'REST'" :selectedDataset="selectedDataset" />
-    <SparqlDataset v-if="dataset.dsTypeCd == 'SPARQL'" :selectedDataset="selectedDataset" />
-    <SolrDataset v-if="dataset.dsTypeCd == 'Solr'" :selectedDataset="selectedDataset" />
-    <PythonDataset v-if="dataset.dsTypeCd == 'Python/R'" :selectedDataset="selectedDataset" :pythonEnvironments="pythonEnvironments" :rEnvironments="rEnvironments" />
+    <QueryDataset v-else-if="dataset.dsTypeCd == 'Query'" :selectedDataset="selectedDataset" :dataSources="dataSources" :scriptTypes="scriptTypes" :activeTab="activeTab" @queryEdited="$emit('queryEdited')" />
+    <JavaDataset v-else-if="dataset.dsTypeCd == 'Java Class'" :selectedDataset="selectedDataset" />
+    <ScriptDataset v-else-if="dataset.dsTypeCd == 'Script'" :selectedDataset="selectedDataset" :scriptTypes="scriptTypes" :activeTab="activeTab" />
+    <QbeDataset v-else-if="dataset.dsTypeCd == 'Qbe' || dataset.dsTypeCd == 'Federated'" :selectedDataset="selectedDataset" :businessModels="businessModels" :dataSources="dataSources" :parentValid="parentValid" />
+    <DerivedDataset v-else-if="dataset.dsTypeCd == 'Derived'" :selectedDataset="selectedDataset" :qbeDatasets="qbeDatasetsForDerived" :parentValid="parentValid" />
+    <FlatDataset v-else-if="dataset.dsTypeCd == 'Flat'" :selectedDataset="selectedDataset" :dataSources="dataSources" />
+    <CkanDataset v-else-if="dataset.dsTypeCd == 'Ckan'" :selectedDataset="selectedDataset" />
+    <RestDataset v-else-if="dataset.dsTypeCd == 'REST'" :selectedDataset="selectedDataset" />
+    <SparqlDataset v-else-if="dataset.dsTypeCd == 'SPARQL'" :selectedDataset="selectedDataset" />
+    <SolrDataset v-else-if="dataset.dsTypeCd == 'Solr'" :selectedDataset="selectedDataset" />
+    <PythonDataset v-else-if="dataset.dsTypeCd == 'Python/R'" :selectedDataset="selectedDataset" :pythonEnvironments="pythonEnvironments" :rEnvironments="rEnvironments" />
 
-    <ParamTable v-if="dataset.dsTypeCd && dataset.dsTypeCd != 'File' && dataset.dsTypeCd != 'Flat' && dataset.dsTypeCd != 'Prepared'" :selectedDataset="selectedDataset" />
+    <ParamTable v-if="dataset.dsTypeCd && dataset.dsTypeCd != 'File' && dataset.dsTypeCd != 'Flat' && dataset.dsTypeCd != 'Prepared' && dataset.dsTypeCd != 'Derived'" :selectedDataset="selectedDataset" />
 </template>
 
 <script lang="ts">
@@ -72,14 +69,16 @@ import RestDataset from './restDataset/DatasetManagementRestDataset.vue'
 import SparqlDataset from './sparqlDataset/DatasetManagementSparqlDataset.vue'
 import SolrDataset from './solrDataset/DatasetManagementSolrDataset.vue'
 import PythonDataset from './pythonDataset/DatasetManagementPythonDataset.vue'
+import DerivedDataset from './derivedDataset/DatasetManagementDerivedDataset.vue'
 
 export default defineComponent({
-    components: { Card, Dropdown, KnValidationMessages, ParamTable, CkanDataset, QbeDataset, RestDataset, JavaDataset, FlatDataset, SolrDataset, QueryDataset, ScriptDataset, SparqlDataset, PythonDataset, FileDataset },
+    components: { Card, Dropdown, KnValidationMessages, ParamTable, CkanDataset, QbeDataset, RestDataset, JavaDataset, FlatDataset, SolrDataset, QueryDataset, ScriptDataset, SparqlDataset, PythonDataset, FileDataset, DerivedDataset },
     props: {
         parentValid: { type: Boolean },
         selectedDataset: { type: Object as any },
         datasetTypes: { type: Array as any },
         dataSources: { type: Array as any },
+        qbeDatasetsForDerived: { type: Array as any },
         businessModels: { type: Array as any },
         scriptTypes: { type: Array as any },
         pythonEnvironments: { type: Array as any },

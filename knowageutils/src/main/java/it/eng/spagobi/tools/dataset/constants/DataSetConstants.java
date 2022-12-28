@@ -220,6 +220,7 @@ public class DataSetConstants {
 		code2name.put(DS_PYTHON_TYPE, DS_PYTHON_NAME);
 		code2name.put(DataSetConstants.DS_SPARQL, "SPARQL");
 		code2name.put(DataSetConstants.DS_PREPARED, "Prepared");
+		code2name.put(DataSetConstants.DS_DERIVED, "Derived");
 	}
 
 }

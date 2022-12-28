@@ -36,6 +36,7 @@
                     :selectedDataset="selectedDataset"
                     :datasetTypes="filteredDatasetTypes"
                     :dataSources="dataSources"
+                    :qbeDatasetsForDerived="qbeDatasetsForDerived"
                     :businessModels="businessModels"
                     :scriptTypes="scriptTypes"
                     :parentValid="v$.$invalid"
@@ -115,6 +116,7 @@ export default defineComponent({
         transformationDataset: { type: Object as any, required: true },
         scriptTypes: { type: Array as any, required: true },
         dataSources: { type: Array as any, required: true },
+        qbeDatasetsForDerived: { type: Array as any, required: true },
         businessModels: { type: Array as any, required: true },
         pythonEnvironments: { type: Array as any, required: true },
         rEnvironments: { type: Array as any, required: true },

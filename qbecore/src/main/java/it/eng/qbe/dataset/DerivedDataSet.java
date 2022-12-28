@@ -153,4 +153,9 @@ public class DerivedDataSet extends QbeDataSet {
 		this.setDataSource(datasourceForReading);
 	}
 
+	@Override
+	public boolean isIterable() {
+		return true;
+	}
+
 }
