@@ -1,6 +1,7 @@
 import { IDashboardDatasetDriver } from "@/modules/documentExecution/dashboard/Dashboard"
 import moment from "moment"
 import i18n from '@/App.i18n'
+import { luxonFormatDate } from "@/helpers/commons/localeHelper"
 
 const { t } = i18n.global
 
@@ -29,6 +30,7 @@ const getFormattedManualNumberDriver = (driver: any, formattedDrivers: any) => {
 }
 const getFormattedDateDriver = (driver: any, formattedDrivers: any) => {
     const formattedDate = moment(driver.parameterValue[0].value).format('MMM DD, YYYY')
+    const formattedDate2 = luxonFormatDate(driver.parameterValue[0].value, 'MMM DD, YYYY')
     formattedDrivers[driver.urlName] = formattedDate
     formattedDrivers[driver.urlName + '_field_visible_description'] = formattedDate
 }
