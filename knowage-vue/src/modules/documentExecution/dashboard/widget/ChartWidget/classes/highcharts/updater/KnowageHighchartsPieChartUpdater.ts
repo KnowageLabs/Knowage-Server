@@ -6,7 +6,7 @@ export const updatePieChartModel = (oldModel: any, newModel: IHighchartsPieChart
     getFormatted3DConfiguration(oldModel, newModel)
     getFormattedNoDataConfiguration(oldModel, newModel)
     getFormattedLegend(oldModel, newModel)
-    getForamttedLabels(oldModel, newModel)
+    getFormattedLabels(oldModel, newModel)
     getFormattedSeries(oldModel, newModel)
     getFormattedTooltipSettings(oldModel, newModel)
 
@@ -69,7 +69,7 @@ const getFormattedLegend = (oldModel: any, newModel: IHighchartsPieChartModel) =
     }
 }
 
-const getForamttedLabels = (oldModel: any, newModel: IHighchartsPieChartModel) => {
+const getFormattedLabels = (oldModel: any, newModel: IHighchartsPieChartModel) => {
     if (oldModel.CHART.VALUES.SERIE && oldModel.CHART.VALUES.SERIE[0] && oldModel.CHART.VALUES.SERIE[0].dataLabels && newModel.plotOptions.pie) {
         const oldDataLabelsSettings = oldModel.CHART.VALUES.SERIE[0].dataLabels
         newModel.plotOptions.pie.dataLabels = {
