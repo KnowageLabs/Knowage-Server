@@ -30,7 +30,6 @@ const getFormattedManualNumberDriver = (driver: any, formattedDrivers: any) => {
 }
 const getFormattedDateDriver = (driver: any, formattedDrivers: any) => {
     const formattedDate = moment(driver.parameterValue[0].value).format('MMM DD, YYYY')
-    const formattedDate2 = luxonFormatDate(driver.parameterValue[0].value, 'MMM DD, YYYY')
     formattedDrivers[driver.urlName] = formattedDate
     formattedDrivers[driver.urlName + '_field_visible_description'] = formattedDate
 }
