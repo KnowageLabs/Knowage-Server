@@ -18,6 +18,17 @@
             "order": []
         }
     },
+    "defaultActivityGaugePaneOptions": {
+        "center": ["50%", "50%"],
+        "endAngle": 0,
+        "startAngle": 360
+    },
+    "defaultActivityGaugeYAxis": {
+        "lineWidth": 0,
+        "max": 100,
+        "min": 0,
+        "tickPositions": []
+    },
     "defaultAllSeriesAccessibilitySettings": [
         {
             "accessibility": {
@@ -51,7 +62,7 @@
         },
         "showInLegend": true
     },
-    "defaultGaugsYAxis": {
+    "defaultGaugeYAxis": {
         "max": null,
         "min": null,
         "minorTickInterval": null,
@@ -59,7 +70,7 @@
         "tickColor": "",
         "tickLength": 10,
         "tickPosition": "outside",
-        "tickWidth": 0
+        "tickWidth": 3
     },
     "defaultHighchartsSelection": {
         "enabled": true,
@@ -111,37 +122,54 @@
         "depth": 100,
         "showInLegend": true
     },
-    "defaultSerieLabelSettings": [
-        {
-            "label": {
-                "absolute": false,
-                "backgroundColor": "",
-                "enabled": false,
-                "percentage": false,
-                "precision": 2,
-                "prefix": "",
-                "scale": "empty",
-                "style": {
-                    "color": "",
-                    "fontFamily": "",
-                    "fontSize": "",
-                    "fontWeight": ""
-                },
-                "suffix": ""
-            },
-            "names": ["all"]
-        }
-    ],
+    "defaultSerieDialSettings": {
+        "backgroundColor": "rgba(194,194,194, 1)",
+        "baseWidth": 3,
+        "radius": "80%"
+    },
+    "defaultSerieLabelSettings": {
+        "absolute": false,
+        "backgroundColor": "rgba(194,194,194, 1)",
+        "enabled": false,
+        "percentage": false,
+        "precision": 2,
+        "prefix": "",
+        "scale": "empty",
+        "style": {
+            "color": "",
+            "fontFamily": "",
+            "fontSize": "",
+            "fontWeight": ""
+        },
+        "suffix": ""
+    },
+    "defaultSeriePivotSettings": {
+        "backgroundColor": "rgba(194,194,194, 1)",
+        "radius": 5
+    },
     "defaultSeriesAccessibilitySettings": {
-        "accessibility": {
-            "description": "",
-            "enabled": true,
-            "exposeAsGroupOnly": false,
-            "keyboardNavigation": {
-                "enabled": false
+        "description": "",
+        "enabled": true,
+        "exposeAsGroupOnly": false,
+        "keyboardNavigation": {
+            "enabled": false
+        }
+    },
+    "defaultSoludGaugeChartPlotOptions": {
+        "dataLabels": {
+            "backgroundColor": "rgba(255, 255, 255, 1)",
+            "enabled": false,
+            "position": "",
+            "style": {
+                "color": "",
+                "fontFamily": "",
+                "fontSize": "14px",
+                "fontWeight": ""
             }
         },
-        "names": []
+        "linecap": "round",
+        "rounded": true,
+        "stickyTracking": false
     },
     "defaultTooltipSettings": {
         "backgroundColor": "rgba(194,194,194, 1)",

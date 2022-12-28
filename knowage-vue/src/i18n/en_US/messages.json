@@ -570,6 +570,12 @@
                     "title": "bands",
                     "toHint": "The end position of the plot band in axis units."
                 },
+                "dial": {
+                    "dialBaseWitdh": "Dial Base Width",
+                    "dialColor": "Dial Color",
+                    "dialRadius": "Dial Radius",
+                    "dialRadiusHint": "The radius or length of the dial, in percentages relative to the radius of the gauge itself."
+                },
                 "gauge": {
                     "valuesTableHint": "Measures only."
                 },
@@ -597,6 +603,11 @@
                 "piechart": {
                     "dimensionsTableHint": "Attributes only. Each different value in the selected column will create a different slice. If more than one dimension is present, the list will be the drill-down sequence.",
                     "valuesTableHint": "Measures only. The selected column will be used as values for every slice."
+                },
+                "pivot": {
+                    "pivotColor": "Pivot Color",
+                    "pivotRadius": "Pivot Radius",
+                    "pivotRadiusHint": "The pixel radius of the pivot."
                 },
                 "proximate": "Proximate",
                 "scale": {

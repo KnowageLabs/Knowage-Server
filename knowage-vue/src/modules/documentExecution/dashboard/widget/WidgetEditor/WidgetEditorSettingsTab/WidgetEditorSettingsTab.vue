@@ -60,6 +60,7 @@
             :selectedDatasets="selectedDatasets"
             :variables="variables"
             :dashboardId="dashboardId"
+            :descriptor="descriptor"
         >
         </HighchartsWidgetSettingsContainer>
         <ChartJSWidgetSettingsContainer
@@ -78,7 +79,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IDataset, IVariable, IDashboardDriver, IGalleryItem } from '../../../Dashboard'
+import { IWidget, IDataset, IVariable, IGalleryItem } from '../../../Dashboard'
 import tableDescriptor from './TableWidget/TableWidgetSettingsDescriptor.json'
 import TableWidgetSettingsContainer from './TableWidget/TableWidgetSettingsContainer.vue'
 import SelectorWidgetSettingsContainer from './SelectorWidget/SelectorWidgetSettingsContainer.vue'
@@ -95,6 +96,7 @@ import textDescriptor from './TextWidget/TextWidgetSettingsDescriptor.json'
 import chartJSDescriptor from './ChartWidget/chartJS/ChartJSWidgetSettingsDescriptor.json'
 import HighchartsPieSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsPieSettingsDescriptor.json'
 import HighchartsGaugeSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsGaugeSettingsDescriptor.json'
+import HighchartsActivityGaugeSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsActivityGaugeSettingsDescriptor.json'
 
 export default defineComponent({
     name: 'widget-editor-settings-tab',
@@ -113,6 +115,16 @@ export default defineComponent({
             descriptor: null as any,
             selectedDescriptor: {},
             selectedSetting: ''
+        }
+    },
+    computed: {
+        chartType() {
+            return this.propWidget?.settings.chartModel?.model?.chart.type
+        }
+    },
+    watch: {
+        chartType() {
+            this.loadDescriptor()
         }
     },
     created() {
@@ -145,11 +157,14 @@ export default defineComponent({
             }
         },
         getHighchartsDescriptor() {
-            switch (this.propWidget?.settings.chartModel?.model?.chart.type) {
+            console.log('---------------------- CHART TYPE: ', this.chartType)
+            switch (this.chartType) {
                 case 'pie':
                     return HighchartsPieSettingsDescriptor
                 case 'gauge':
                     return HighchartsGaugeSettingsDescriptor
+                case 'activitygauge':
+                    return HighchartsActivityGaugeSettingsDescriptor
             }
         },
         onItemClicked(item: any) {

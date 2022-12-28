@@ -6,9 +6,10 @@ import { getFiltersForColumns } from '../../DashboardBackwardCompatibilityHelper
 import { hexToRgba } from '../../FormattingHelpers'
 import { getFormattedWidgetColumns, getFormattedColorSettings } from '../CommonChartCompatibilityHelper'
 import { getFormattedStyle } from './HighchartsWidgetStyleHelper'
+import { KnowageHighchartsGaugeChart } from '../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsGaugeChart'
+import { KnowageHighchartsActivityGaugeChart } from '../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsActivityGaugeChart'
 import * as widgetCommonDefaultValues from '../../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import * as highchartsDefaultValues from '../../../widget/WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
-import { KnowageHighchartsGaugeChart } from '../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsGaugeChart'
 
 const columnNameIdMap = {}
 
@@ -66,36 +67,68 @@ const createChartModel = (widget: any) => {
         case 'PIE':
             return new KnowageHighchartsPieChart(widgetContentChartTemplate)
         case 'GAUGE':
-            return new KnowageHighchartsGaugeChart(widgetContentChartTemplate) // TODO - See about other gauge types
+            return createGaugeChartInstance(widgetContentChartTemplate)
         default:
             return null
     }
 }
 
+const createGaugeChartInstance = (widgetContentChartTemplate: any) => {
+
+    switch (widgetContentChartTemplate.CHART.subtype) {
+        case 'activity':
+            return new KnowageHighchartsActivityGaugeChart(widgetContentChartTemplate)
+        case 'gauge':
+            return new KnowageHighchartsGaugeChart(widgetContentChartTemplate)
+        case 'solid':
+            return null
+    }
+
+}
+
+// TODO - Refactor
 const getFormattedSerieLabelsSettings = (widget: any) => {
     const formattedSerieSettings =
-        widget.content.chartTemplate.CHART.type !== 'PIE' ? highchartsDefaultValues.getDefaultSerieLabelSettings() : ([] as IHighchartsSeriesLabelsSetting[])
+        widget.content.chartTemplate.CHART.type !== 'PIE' ? highchartsDefaultValues.getDefaultSeriesSettings() : ([] as IHighchartsSeriesLabelsSetting[])
+    if (widget.content.chartTemplate.CHART.type === 'GAUGE') {
+        formattedSerieSettings[0].dial = highchartsDefaultValues.getDefaultSerieDialSettings()
+        formattedSerieSettings[0].pivot = highchartsDefaultValues.getDefaultSeriePivotSettings()
+    }
     if (widget.content.chartTemplate.CHART.VALUES.SERIE && widget.content.chartTemplate.CHART.VALUES.SERIE[0]) {
         const oldModelSerie = widget.content.chartTemplate.CHART.VALUES.SERIE[0]
-        formattedSerieSettings.push({
+        const formattedSettings = {
             names: [oldModelSerie.name],
-            label: {
-                enabled: true,
-                style: {
-                    fontFamily: oldModelSerie.dataLabels?.style?.fontFamily ?? '',
-                    fontSize: oldModelSerie.dataLabels?.style?.fontSize ?? '',
-                    fontWeight: oldModelSerie.dataLabels?.style?.fontWeight ?? '',
-                    color: oldModelSerie.dataLabels?.style?.color ? hexToRgba(oldModelSerie.dataLabels.style.color) : '',
-                },
-                backgroundColor: '',
-                prefix: oldModelSerie.prefixChar ?? '',
-                suffix: oldModelSerie.postfixChar ?? '',
-                scale: oldModelSerie.scaleFactor ?? 'empty',
-                precision: oldModelSerie.precision ?? 2,
-                absolute: oldModelSerie.showAbsValue,
-                percentage: oldModelSerie.showPercentage
-            }
-        })
+        } as IHighchartsSeriesLabelsSetting
+        setFormattedSerieLabelSettings(oldModelSerie, formattedSettings)
+        setSerieSettingsForGaugeChart(oldModelSerie, formattedSettings, widget)
+        formattedSerieSettings.push(formattedSettings)
     }
     return formattedSerieSettings
+}
+
+const setFormattedSerieLabelSettings = (oldModelSerie: any, formattedSettings: IHighchartsSeriesLabelsSetting) => {
+    formattedSettings.label = {
+        enabled: true,
+        style: {
+            fontFamily: oldModelSerie.dataLabels?.style?.fontFamily ?? '',
+            fontSize: oldModelSerie.dataLabels?.style?.fontSize ?? '',
+            fontWeight: oldModelSerie.dataLabels?.style?.fontWeight ?? '',
+            color: oldModelSerie.dataLabels?.style?.color ? hexToRgba(oldModelSerie.dataLabels.style.color) : '',
+        },
+        backgroundColor: '',
+        prefix: oldModelSerie.prefixChar ?? '',
+        suffix: oldModelSerie.postfixChar ?? '',
+        scale: oldModelSerie.scaleFactor ?? 'empty',
+        precision: oldModelSerie.precision ?? 2,
+        absolute: oldModelSerie.showAbsValue,
+        percentage: oldModelSerie.showPercentage
+    }
+}
+
+const setSerieSettingsForGaugeChart = (oldModelSerie: any, formattedSettings: IHighchartsSeriesLabelsSetting, widget: any) => {
+    if (widget.content.chartTemplate.CHART.type === 'GAUGE') {
+        formattedSettings.dial = highchartsDefaultValues.getDefaultSerieDialSettings()
+        formattedSettings.pivot = highchartsDefaultValues.getDefaultSeriePivotSettings()
+        if (oldModelSerie.DIAL?.backgroundColor && formattedSettings.dial) formattedSettings.dial.backgroundColor = hexToRgba(oldModelSerie.DIAL.backgroundColor)
+    }
 }

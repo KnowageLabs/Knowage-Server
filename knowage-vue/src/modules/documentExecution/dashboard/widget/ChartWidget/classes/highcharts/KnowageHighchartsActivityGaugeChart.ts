@@ -1,12 +1,13 @@
 import { KnowageHighcharts } from './KnowageHihgcharts'
 import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
 import { IHighchartsChartModel, IHighchartsChartSerie, IHighchartsChartSerieData, IHighchartsSeriesLabelsSetting } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
-import { createSerie, updateGaugeChartModel } from './updater/KnowageHighchartsGaugeChartUpdater'
+import { createSerie } from './updater/KnowageHighchartsGaugeChartUpdater'
+import { updateActivityGaugeChartModel } from './updater/KnowageHighchartsActivityGaugeChartUpdater'
 import * as highchartsDefaultValues from '../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
 import Highcharts from 'highcharts'
 import deepcopy from 'deepcopy'
 
-export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
+export class KnowageHighchartsActivityGaugeChart extends KnowageHighcharts {
     constructor(model: any) {
         super()
         if (!this.model.plotOptions.gauge) this.setGaugePlotOptions()
@@ -14,11 +15,11 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
         if (!this.model.yAxis) this.setGaugeYAxis()
         if (model && model.CHART) this.updateModel(deepcopy(model))
         else if (model) this.model = deepcopy(model)
-        this.model.chart.type = 'gauge'
+        this.model.chart.type = 'activitygauge'
     }
 
     updateModel(oldModel: any) {
-        updateGaugeChartModel(oldModel, this.model)
+        updateActivityGaugeChartModel(oldModel, this.model)
     }
 
 
@@ -61,10 +62,6 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
         this.model.series = [createSerie(measureColumn.columnName, measureColumn.aggregation)]
     }
 
-    setGaugePlotOptions() {
-        this.model.plotOptions.gauge = highchartsDefaultValues.getDafaultGaugeChartPlotOptions()
-    }
-
     // TODO - Darko/Bojan move to superclass???
     updateSeriesLabelSettings(widgetModel: IWidget) {
         if (!widgetModel || !widgetModel.settings.series || !widgetModel.settings.series.seriesLabelsSettings) return
@@ -83,7 +80,7 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
                 serie.data.forEach((data: IHighchartsChartSerieData) => {
                     data.dataLabels = { ...highchartsDefaultValues.getDefaultSerieLabelSettings(), position: '' }
                     data.dataLabels.formatter = function () {
-                        return KnowageHighchartsGaugeChart.prototype.handleFormatter(this, data.name)
+                        return KnowageHighchartsActivityGaugeChart.prototype.handleFormatter(this, data.name)
                     }
                 })
                 if (serie.dial) highchartsDefaultValues.getDefaultSerieDialSettings()
@@ -120,7 +117,7 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
                     color: seriesSettings.label.style.color ?? ''
                 },
                 formatter: function () {
-                    return KnowageHighchartsGaugeChart.prototype.handleFormatter(this, data.name)
+                    return KnowageHighchartsActivityGaugeChart.prototype.handleFormatter(this, data.name)
                 }
             }
         })
@@ -179,8 +176,12 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
         return `${Highcharts.numberFormat(value, precision, decimalPoints, thousandsSep)}%`
     }
 
+    setGaugePlotOptions() {
+        this.model.plotOptions.soldgauge = highchartsDefaultValues.getDefaultSoludGaugeChartPlotOptions()
+    }
+
     setGaugePaneSettings() {
-        this.model.pane = highchartsDefaultValues.getDafaultPaneOptions()
+        this.model.pane = highchartsDefaultValues.getdDefaultActivityGaugePaneOptions()
     }
 
     setGaugeYAxis() {

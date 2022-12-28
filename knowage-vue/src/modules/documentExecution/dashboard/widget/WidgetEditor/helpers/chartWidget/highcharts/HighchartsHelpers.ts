@@ -1,10 +1,11 @@
 import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard"
 import { KnowageHighchartsPieChart } from "../../../../ChartWidget/classes/highcharts/KnowageHighchartsPieChart"
 import { IHighchartsWidgetSettings } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
+import { KnowageHighchartsGaugeChart } from "../../../../ChartWidget/classes/highcharts/KnowageHighchartsGaugeChart"
 import * as widgetCommonDefaultValues from '../../common/WidgetCommonDefaultValues'
 import * as  highchartsDefaultValues from "../highcharts/HighchartsDefaultValues"
 import descriptor from '../../../WidgetEditorSettingsTab/ChartWidget/common/ChartColorSettingsDescriptor.json'
-import { KnowageHighchartsGaugeChart } from "../../../../ChartWidget/classes/highcharts/KnowageHighchartsGaugeChart"
+import { KnowageHighchartsActivityGaugeChart } from "../../../../ChartWidget/classes/highcharts/KnowageHighchartsActivityGaugeChart"
 
 export const createNewHighchartsSettings = () => {
     const settings = {
@@ -36,57 +37,47 @@ export const createNewHighchartsSettings = () => {
 }
 
 export const formatHighchartsWidget = (widget: IWidget) => {
+
     const chartModel = widget.settings.chartModel.model ?? widget.settings.chartModel
     const chartType = chartModel.chart.type
-    widget.settings.chartModel = chartType === 'pie' ? new KnowageHighchartsPieChart(chartModel) : new KnowageHighchartsGaugeChart(chartModel)
+    console.log(">>>>>>> CHART TYPE: ", chartType)
+    switch (chartType) {
+        case 'pie':
+            widget.settings.chartModel = new KnowageHighchartsPieChart(chartModel)
+            break
+        case 'gauge':
+            widget.settings.chartModel = new KnowageHighchartsGaugeChart(chartModel)
+            break
+        case 'activitygauge':
+            widget.settings.chartModel = new KnowageHighchartsActivityGaugeChart(chartModel)
+            break
+    }
 
 }
+
+
+
 
 
 export const createNewHighchartsModel = (chartType: string) => {
     switch (chartType) {
         case 'pie':
             return new KnowageHighchartsPieChart(null)
+        case 'gauge':
+            return new KnowageHighchartsGaugeChart(null)
+        case 'solidgauge':
+            return new KnowageHighchartsActivityGaugeChart(null)
         default:
             return null
     }
 }
 
 const getSeriesAccesibilitySettings = () => {
-    return [
-        {
-            names: [],
-            accessibility: {
-                enabled: false,
-                description: '',
-                exposeAsGroupOnly: false,
-                keyboardNavigation: { enabled: false }
-            }
-        }
-    ]
+    return [{ names: [], accessibility: highchartsDefaultValues.getDefaultSeriesAccessibilitySettings() }]
 }
 
 
 const getSerieLabelsSettings = () => {
-    return [
-        {
-            names: [],
-            label: {
-                enabled: false,
-                style: {
-                    fontFamily: '',
-                    fontSize: '',
-                    fontWeight: '',
-                    color: '',
-                },
-                backgroundColor: '',
-                prefix: '',
-                suffix: '',
-                scale: 'empty',
-                precision: 2,
-                absolute: false,
-                percentage: false
-            }
-        }
-    ]
+    const serieLabelSettings = { names: [], label: highchartsDefaultValues.getDefaultSerieLabelSettings(), dial: highchartsDefaultValues.getDefaultSerieDialSettings(), pivot: highchartsDefaultValues.getDefaultSeriePivotSettings() }
+    return [serieLabelSettings]
 }

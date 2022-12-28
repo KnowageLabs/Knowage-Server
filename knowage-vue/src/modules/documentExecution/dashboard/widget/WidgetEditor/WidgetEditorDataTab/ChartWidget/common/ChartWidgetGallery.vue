@@ -50,7 +50,10 @@ export default defineComponent({
             }
         },
         onChange(selectedType: string) {
-            this.selectedType = 'pie' // TODO - remove hardcoded after implementing other chart types
+            this.selectedType = selectedType
+            // TODO - remove hardcoded after implementing other chart types
+            console.log('>>>>>>>>>> CHART SELECTED TYPE: ', selectedType)
+            if (!['pie', 'gauge'].includes(this.selectedType)) this.selectedType = 'gauge'
             this.$emit('selectedChartTypeChanged', this.selectedType)
         },
         searchItems() {

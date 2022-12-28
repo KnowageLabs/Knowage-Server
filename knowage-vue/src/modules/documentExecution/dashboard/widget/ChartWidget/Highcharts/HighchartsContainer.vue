@@ -19,6 +19,7 @@ import NoDataToDisplay from 'highcharts/modules/no-data-to-display'
 import SeriesLabel from 'highcharts/modules/series-label'
 import cryptoRandomString from 'crypto-random-string'
 import store from '../../../Dashboard.store'
+import deepcopy from 'deepcopy'
 
 HighchartsMore(Highcharts)
 HighchartsSolidGauge(Highcharts)
@@ -81,7 +82,80 @@ export default defineComponent({
             this.widgetModel.settings.chartModel.model.series = [
                 {
                     name: 'Speed',
-                    data: [80],
+                    data: [
+                        {
+                            id: 1,
+                            name: 'Q2',
+                            y: 80,
+                            drilldown: true,
+                            dataLabels: {
+                                backgroundColor: '',
+                                distance: 30,
+                                enabled: true,
+                                position: '',
+                                style: {
+                                    fontFamily: '',
+                                    fontSize: '',
+                                    fontWeight: '',
+                                    color: ''
+                                }
+                            }
+                        },
+                        {
+                            id: 2,
+                            name: 'Q3',
+                            y: 20,
+                            drilldown: true,
+                            dataLabels: {
+                                backgroundColor: '',
+                                distance: 30,
+                                enabled: true,
+                                position: '',
+                                style: {
+                                    fontFamily: '',
+                                    fontSize: '',
+                                    fontWeight: '',
+                                    color: ''
+                                }
+                            }
+                        },
+                        {
+                            id: 3,
+                            name: 'Q1',
+                            y: 10,
+                            drilldown: true,
+                            dataLabels: {
+                                backgroundColor: '',
+                                distance: 30,
+                                enabled: true,
+                                position: '',
+                                style: {
+                                    fontFamily: '',
+                                    fontSize: '',
+                                    fontWeight: '',
+                                    color: ''
+                                }
+                            }
+                        },
+                        {
+                            id: 4,
+                            name: 'Q4',
+                            y: 15,
+                            drilldown: true,
+                            dataLabels: {
+                                backgroundColor: '',
+                                distance: 30,
+                                enabled: true,
+                                position: '',
+                                style: {
+                                    fontFamily: '',
+                                    fontSize: '',
+                                    fontWeight: '',
+                                    color: ''
+                                }
+                            }
+                        }
+                    ],
                     tooltip: {
                         valueSuffix: ' km/h'
                     },
@@ -114,8 +188,8 @@ export default defineComponent({
 
             this.setSeriesEvents()
 
-            console.log('>>>>>>> CHART TO RENDER: ', this.chartModel)
-            this.highchartsInstance = Highcharts.chart(this.chartID, this.chartModel as any)
+            console.log('>>>>>>> CHART TO RENDER: ', this.getModelForRender())
+            this.highchartsInstance = Highcharts.chart(this.chartID, this.getModelForRender() as any)
             this.highchartsInstance.reflow()
         },
         updateLegendSettings() {
@@ -124,7 +198,9 @@ export default defineComponent({
             return this.widgetModel.settings.chartModel.updateFormatterSettings(this.chartModel.legend, 'labelFormat', 'labelFormatter', 'labelFormatterText', 'labelFormatterError')
         },
         updateDataLabels() {
-            const dataLabels = this.chartModel.plotOptions ? this.chartModel.plotOptions[this.chartModel.chart.type].dataLabels : null
+            console.log('>>>>>>> CHART MODEL PLOT OPTIONS: ', this.chartModel.plotOptions)
+            console.log('>>>>>>> this.chartModel.chart.type: ', this.chartModel.chart.type)
+            const dataLabels = this.chartModel.plotOptions && this.chartModel.plotOptions[this.chartModel.chart.type] ? this.chartModel.plotOptions[this.chartModel.chart.type].dataLabels : null
             if (dataLabels) {
                 this.error = this.widgetModel.settings.chartModel.updateFormatterSettings(dataLabels, 'format', 'formatter', 'formatterText', 'formatterError')
                 if (this.error) return
@@ -159,6 +235,11 @@ export default defineComponent({
             setTimeout(() => {
                 this.highchartsInstance.reflow()
             }, 100)
+        },
+        getModelForRender() {
+            const formattedChartModel = deepcopy(this.chartModel)
+            if (formattedChartModel.chart.type === 'activitygauge') formattedChartModel.chart.type = 'solidgauge'
+            return formattedChartModel
         }
     }
 })

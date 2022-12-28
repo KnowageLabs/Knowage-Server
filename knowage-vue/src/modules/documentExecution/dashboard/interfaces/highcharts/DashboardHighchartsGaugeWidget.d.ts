@@ -1,7 +1,9 @@
+import { IHighchartsChartDataLabels } from "./DashboardHighchartsWidget"
+
 export interface IHighchartsModelPane {
     startAngle: number,
     endAngle: number,
-    center: []
+    center?: []
 }
 
 export interface IHighchartsGaugeYAxis {
@@ -22,12 +24,19 @@ export interface IHighchartsBands {
 }
 
 export interface IHighchartsSeriesDialSettings {
+    radius: string,
+    backgroundColor: string
+    baseWidth: number,
+}
+
+export interface IHighchartsSeriesPivotSettings {
     radius: number,
     backgroundColor: string
 }
 
-export interface IHighchartsSeriesPivotSettings {
-    baseWidth: number,
-    radius: number,
-    backgroundColor: string
+export interface IHighchartsActivityGaugeYAxis {
+    lineWidth: 0,
+    max: 100,
+    min: 0,
+    tickPositions: []
 }
