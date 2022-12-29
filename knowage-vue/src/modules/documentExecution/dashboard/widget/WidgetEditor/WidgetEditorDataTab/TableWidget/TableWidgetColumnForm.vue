@@ -1,5 +1,6 @@
 <template>
     <div v-if="column" class="widget-editor-card p-p-2">
+        {{ column }}
         <div class="p-my-2">
             <div class="p-d-flex p-flex-row p-ai-center">
                 <div class="p-d-flex p-flex-column kn-flex p-m-2">
@@ -15,7 +16,7 @@
                 </div>
                 <div v-if="column.fieldType === 'MEASURE'" class="p-d-flex p-flex-column kn-flex p-m-2">
                     <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.aggregation') }}</label>
-                    <Dropdown class="kn-material-input" v-model="column.aggregation" :options="descriptor.columnAggregationOptions" optionValue="value" optionLabel="label" @change="selectedColumnUpdated"> </Dropdown>
+                    <Dropdown class="kn-material-input" v-model="column.aggregation" :options="commonDescriptor.columnAggregationOptions" optionValue="value" optionLabel="label" @change="selectedColumnUpdated"> </Dropdown>
                 </div>
             </div>
         </div>
@@ -31,6 +32,7 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget, IWidgetColumn, IWidgetColumnFilter } from '../../../../Dashboard'
 import { emitter } from '../../../../DashboardHelpers'
 import descriptor from './TableWidgetDataDescriptor.json'
+import commonDescriptor from '../common/WidgetCommonDescriptor.json'
 import InputSwitch from 'primevue/inputswitch'
 import Dropdown from 'primevue/dropdown'
 import WidgetEditorFilterForm from '../common/WidgetEditorFilterForm.vue'
@@ -42,7 +44,13 @@ export default defineComponent({
     data() {
         return {
             descriptor,
+            commonDescriptor,
             column: null as IWidgetColumn | null
+        }
+    },
+    computed: {
+        sortingColumnOptions() {
+            return this.widgetModel.columns
         }
     },
     watch: {
@@ -71,7 +79,7 @@ export default defineComponent({
             this.selectedColumnUpdated()
         },
         getColumnFilterOptions() {
-            return this.column?.fieldType === 'ATTRIBUTE' ? this.descriptor.attributeColumnFilterOperators : this.descriptor.measureColumnFilterOperators
+            return this.column?.fieldType === 'ATTRIBUTE' ? this.commonDescriptor.attributeColumnFilterOperators : this.commonDescriptor.measureColumnFilterOperators
         },
         onFilterOperatorChange() {
             if (!this.column || !this.column.filter) return

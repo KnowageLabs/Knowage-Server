@@ -11,7 +11,15 @@
 
             <TabView v-if="!loading" class="dashboardEditor-tabs">
                 <TabPanel :header="$t('dashboard.datasetEditor.dataTabTitle')">
-                    <DataTab :availableDatasetsProp="availableDatasets" :dashboardDatasetsProp="dashboardDatasets" :selectedDatasetsProp="selectedDatasets" :documentDriversProp="filtersDataProp" @addSelectedDatasets="addSelectedDatasets" @deleteDataset="confirmDeleteDataset" />
+                    <DataTab
+                        :availableDatasetsProp="availableDatasets"
+                        :dashboardDatasetsProp="dashboardDatasets"
+                        :selectedDatasetsProp="selectedDatasets"
+                        :documentDriversProp="filtersDataProp"
+                        :dashboardId="dashboardIdProp"
+                        @addSelectedDatasets="addSelectedDatasets"
+                        @deleteDataset="confirmDeleteDataset"
+                    />
                 </TabPanel>
                 <TabPanel>
                     <template #header>
@@ -40,7 +48,7 @@
  */
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
-import { IAssociation, IModelDataset, IModelDatasetParameter, IAssociationField } from '../Dashboard'
+import { IAssociation, IDashboardDataset, IDashboardDatasetParameter, IAssociationField } from '../Dashboard'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import DataTab from './DatasetEditorDataTab/DatasetEditorDataTab.vue'
@@ -61,7 +69,7 @@ export default defineComponent({
             loading: false,
             warningDialogVisible: false,
             availableDatasets: {} as any,
-            dashboardDatasets: [] as IModelDataset[],
+            dashboardDatasets: [] as IDashboardDataset[],
             selectedDatasets: [] as any,
             dashboardAssociations: [] as IAssociation[],
             selectedAssociation: {} as any,
@@ -72,7 +80,7 @@ export default defineComponent({
     watch: {
         selectedDatasets: {
             handler() {
-                console.log('SELECTED DATASETS CHANGED', this.selectedDatasets)
+                // console.log('SELECTED DATASETS CHANGED', this.selectedDatasets)
             },
             deep: true
         }
@@ -102,12 +110,14 @@ export default defineComponent({
             this.dashboardAssociations = deepcopy(this.dashboardStore.$state.dashboards[this.dashboardIdProp].configuration.associations)
             this.selectedDatasets = this.selectModelDatasetsFromAvailable()
             this.setDatasetParametersFromModel()
+            this.setDatasetDriversFromModel()
         },
         selectModelDatasetsFromAvailable() {
             return this.availableDatasets?.filter((responseDataset) => {
                 return this.dashboardDatasets?.find((dashboardDataset) => {
                     if (responseDataset.id.dsId === dashboardDataset.id) {
                         responseDataset.modelParams = dashboardDataset.parameters
+                        responseDataset.modelDrivers = dashboardDataset.drivers ? dashboardDataset.drivers : []
                         responseDataset.modelCache = dashboardDataset.cache
                         responseDataset.modelIndexes = dashboardDataset.indexes
 
@@ -130,6 +140,13 @@ export default defineComponent({
                 }
             })
         },
+        setDatasetDriversFromModel() {
+            this.selectedDatasets.forEach((dataset) => {
+                if (dataset.drivers && dataset.modelDrivers) {
+                    dataset.formattedDrivers = dataset.modelDrivers
+                }
+            })
+        },
         addSelectedDatasets(datasetsToAdd) {
             this.setDatasetCache(datasetsToAdd)
             if ((this.selectedDatasets.some((dataset) => dataset.drivers?.length > 0) && datasetsToAdd.some((dataset) => dataset.drivers?.length > 0)) || datasetsToAdd.filter((dataset) => dataset.drivers?.length > 0).length > 1) {
@@ -141,12 +158,13 @@ export default defineComponent({
                     this.selectedDatasets.push(dataset)
                     const formattedDatasetForDashboard = {
                         id: dataset.id.dsId,
+                        label: dataset.label,
                         dsLabel: dataset.label,
                         indexes: [],
                         drivers: [],
                         cache: true,
                         parameters: []
-                    } as IModelDataset
+                    } as IDashboardDataset
                     this.dashboardDatasets.push(formattedDatasetForDashboard)
                 })
             }
@@ -195,7 +213,7 @@ export default defineComponent({
         },
 
         saveDatasetsToModel() {
-            let formattedDatasets = [] as IModelDataset[]
+            let formattedDatasets = [] as IDashboardDataset[]
 
             this.selectedDatasets.forEach((dataset) => {
                 formattedDatasets.push(this.formatDatasetForModel(dataset))
@@ -213,9 +231,13 @@ export default defineComponent({
                 cache: datasetToFormat.modelCache ?? false,
                 indexes: datasetToFormat.modelCache ? datasetToFormat.modelIndexes : [],
                 parameters: datasetToFormat.parameters.map((parameter) => {
-                    return { name: parameter.name, type: parameter.modelType, value: parameter.value, multivalue: parameter.multivalue ?? false } as IModelDatasetParameter
+                    return { name: parameter.name, type: parameter.modelType, value: parameter.value, multivalue: parameter.multivalue ?? false } as IDashboardDatasetParameter
                 })
-            } as IModelDataset
+            } as IDashboardDataset
+
+            if (datasetToFormat.formattedDrivers && datasetToFormat.formattedDrivers.length > 0) {
+                formattedDataset.drivers = datasetToFormat.formattedDrivers
+            }
 
             return formattedDataset
         }

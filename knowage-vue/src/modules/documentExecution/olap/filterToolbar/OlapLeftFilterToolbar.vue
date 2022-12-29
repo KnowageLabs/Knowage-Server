@@ -94,7 +94,6 @@ export default defineComponent({
             this.$refs.axisDropzone.classList?.remove('display-axis-dropzone')
         },
         onDrop(event) {
-            console.log('DROPPED _-----------------------')
             // @ts-ignore
             this.$refs.axisDropzone.classList?.remove('display-axis-dropzone')
             var data = JSON.parse(event.dataTransfer.getData('text/plain'))
@@ -127,7 +126,6 @@ export default defineComponent({
             this.$refs.filterItemsContainer.scrollTop += 50
         },
         assignScrollValues() {
-            console.log('CALLED ASSING VALUES --------------------------------')
             // @ts-ignore
             this.scrollContainerHeight = this.$refs?.filterPanelContainer?.clientHeight
             // @ts-ignore

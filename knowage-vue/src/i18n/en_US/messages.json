@@ -6,17 +6,18 @@
         "addNew": "Add new",
         "advanced": "Advanced",
         "alias": "Alias",
+        "align": "Align",
         "apply": "Apply",
         "attachments": "Attachments",
         "attributes": "Attributes",
         "author": "Author",
         "back": "back",
-        "row": "Row",
         "bottom": "bottom",
         "cancel": "cancel",
         "category": "Category",
         "cc": "CC",
         "center": "Center",
+        "chart": "Chart",
         "chipsHint": "Press Enter to confirm the input value",
         "choose": "choose",
         "clean": "Clean",
@@ -62,6 +63,7 @@
         "edit": "edit",
         "enable": "Enable",
         "enabled": "Enabled",
+        "end": "End",
         "environment": "Environment",
         "error": {
             "allowedFileTypes": "File type allowed are {types}",
@@ -94,6 +96,7 @@
         "group": "Group",
         "height": "Height",
         "home": "Home",
+        "horizontal": "Horizontal",
         "icon": "Icon",
         "id": "id",
         "image": "image",
@@ -112,9 +115,11 @@
         "key": "Key",
         "kpi": "KPI",
         "label": "label",
+        "labels": "Labels",
         "language": "Language",
         "large": "Large",
         "lastChangeDate": "Last change date",
+        "layout": "Layout",
         "left": "Left",
         "library": "Library",
         "list": "List",
@@ -127,6 +132,7 @@
         "menu": "Menu",
         "message": "Message",
         "metadata": "Metadata",
+        "middle": "Middle",
         "min": "Min",
         "modify": "modify",
         "move": "Move",
@@ -169,6 +175,7 @@
         "role": "Role",
         "roles": "Roles",
         "rotateDevice": "Please rotate your device!",
+        "row": "Row",
         "run": "Run",
         "save": "save",
         "saveAs": "Save as",
@@ -249,6 +256,8 @@
         "variable": "Variable",
         "variables": "Variables",
         "version": "version",
+        "vertical": "Vertical",
+        "verticalAlign": "Vertical Align",
         "view": "View",
         "visibility": "Visibility",
         "visible": "Visible",
@@ -380,6 +389,22 @@
             "launchSelection": "LAUNCH SELECTION"
         },
         "widgetEditor": {
+            "absolute": "Absolute",
+            "accessibility": {
+                "enabelKeyboardNavigation": "Enable Keyboard Navigation",
+                "exposeAsGroupOnly": "Expose As Group Only",
+                "exposeAsGroupOnlyHint": "Expose only the series element to screen readers, not its points.",
+                "keyboardNavigationOrder": "Keyboard Navigation Order",
+                "keyboardNavigationOrderHint": "Order of tab navigation in the chart. Determines which elements are tabbed to first. Available elements are: series, zoom, rangeSelector, chartMenu, legend and container. In addition, any custom components can be added here. Adding container first in order will make the keyboard focus stop on the chart container first, requiring the user to tab again to enter the chart.",
+                "keyboardNavigationOrderOptions": {
+                    "chartMenu": "Chart Menu",
+                    "container": "Container",
+                    "legend": "Legend",
+                    "rangeSelector": "Range Selector",
+                    "zoom": "Zoom"
+                },
+                "title": "Accessibility"
+            },
             "addWidget": "Add widget",
             "aggregation": "Aggregation",
             "ascending": "Ascending",
@@ -399,7 +424,36 @@
                 "solid": "Solid",
                 "title": "Borders"
             },
+            "chartJS": {
+                "legend": {
+                    "alignHint": "Alignment of the legend",
+                    "positionHint": "Position of the legend."
+                },
+                "piechart": {
+                    "labelsTableHint": "Attributes only.",
+                    "valuesTableHint": "Measures only."
+                }
+            },
+            "chartTypes": {
+                "areaChart": "Area Chart",
+                "barChart": "Bar Chart",
+                "bubbleChart": "Bubble Chart",
+                "columnsChart": "Columns Chart",
+                "donutChart": "Donut Chart",
+                "funnelChart": "Funnel Chart",
+                "gauge": "Gauge",
+                "lineChart": "Line Chart",
+                "parallelChart": "Parallel Chart",
+                "pieChart": "Pie Chart",
+                "radar": "Radar",
+                "scatterChart": "Scatter Chart",
+                "stackedColumnsChart": "Stacked Columns Chart",
+                "treemap": "Treemap"
+            },
             "chips": "Chips",
+            "colors": {
+                "title": "Colors"
+            },
             "columnDetails": "Column Details",
             "columnFilterHint": "Select the filter operator and the value for the column. Remember to use the correct database sintax for the value. ie: %LIKE%",
             "columnGroups": {
@@ -414,6 +468,17 @@
                 "title": "Conditions"
             },
             "configuration": "Configuration",
+            "configurationOf3D": {
+                "alphaAngle": "Alpha Angle",
+                "alphaAngleHint": "One of the two rotation angles for the chart.",
+                "betaAngle": "Beta Angle",
+                "betaAngleHint": "One of the two rotation angles for the chart.",
+                "title": "3D",
+                "totalDepth": "Total Depth",
+                "totalDepthHint": "The total depth of the chart.",
+                "viewDistance": "View Distance",
+                "viewDistanceHint": "Defines the distance the viewer is standing in front of the chart, this setting is important to calculate the perspective effect in column and scatter charts. It is not used for 3D pie charts."
+            },
             "customHeaderTooltip": "Custom Header Tooltip",
             "customMessages": {
                 "customEmptyRowsMessage": "Custom empty rows message",
@@ -429,12 +494,12 @@
                 "title": "Default Values"
             },
             "descending": "Descending",
+            "dimensions": "Dimensions",
             "dragColumnsHint": "Drag columns here",
+            "drilldown": {
+                "title": "Drilldown"
+            },
             "editor": "Editor",
-            "htmlParsingError": "HTML Parsing Error",
-            "textParsingError": "Text Parsing Error",
-            "galleryWarning": "Are you sure you want to overwrite changes in editor with the template?",
-
             "editorTags": {
                 "activesel": "Active Selection",
                 "calc": "Calculation",
@@ -480,7 +545,10 @@
                 "title": "Export"
             },
             "fontawesome": "Fontawesome",
+            "format": "Format",
+            "formatter": "Formatter",
             "gallery": "Gallery",
+            "galleryWarning": "Are you sure you want to overwrite changes in editor with the template?",
             "headers": {
                 "action": "Action",
                 "enableCustomHeaders": "Enable Custom Headers",
@@ -493,10 +561,37 @@
                 "title": "Headers"
             },
             "hidden": "Hidden",
+            "highcharts": {
+                "labels": {
+                    "distance": "Distance",
+                    "distanceHint": "The distance of the data label from the pie's edge. Negative numbers put the data label on top of the pie slices. Can also be defined as a percentage of pie's radius. Connectors are only shown for data labels outside the pie.",
+                    "formatHint": "A format string for the data label. Available variables are the same as for formatter.",
+                    "formatterHint": "Callback JavaScript function to format the data label. Note that if a format is defined, the format takes precedence and the formatter is ignored."
+                },
+                "legend": {
+                    "alignHint": "The horizontal alignment of the legend box within the chart area. Valid values are left, center and right. In the case that the legend is aligned in a corner position, the layout option will determine whether to place it above/below or on the side of the plot area.",
+                    "formatHint": "A format string for each legend label. Available variables relates to properties on the series, or the point in case of pies.",
+                    "formatterHint": "Callback function to format each of the series' labels. The this keyword refers to the series object, or the point object in case of pie charts. By default the series or point name is printed.",
+                    "layoutHint": "The layout of the legend items. Can be one of horizontal or vertical or proximate. When proximate, the legend items will be placed as close as possible to the graphs they're representing, except in inverted charts or when the legend position doesn't allow it.",
+                    "verticalAlignHint": "The vertical alignment of the legend box. Can be one of top, middle or bottom. Vertical position can be further determined by the y option. In the case that the legend is aligned in a corner position, the layout option will determine whether to place it above/below or on the side of the plot area. When the layout option is proximate, the verticalAlign option doesn't apply."
+                },
+                "piechart": {
+                    "labelsTableHint": "Attributes only. Each different value in the selected column will create a different slice. If more than one dimension is present, the list will be the drill-down sequence.",
+                    "valuesTableHint": "Measures only. The selected column will be used as values for every slice."
+                },
+                "proximate": "Proximate",
+                "tooltip": {
+                    "formatterHint": "Callback function to format the text of the tooltip from scratch. In case of single or shared tooltips, a string should be returned. In case of split tooltips, it should return an array where the first item is the header, and subsequent items are mapped to the points. Return false to disable tooltip for a specific point on series. A subset of HTML is supported. Unless useHTML is true, the HTML of the tooltip is parsed and converted to SVG, therefore this isn't a complete HTML renderer. The following HTML tags are supported: b, br, em, i, span, strong. Spans can be styled with a style attribute, but only text-related CSS, that is shared with SVG, is handled. The available data in the formatter differ a bit depending on whether the tooltip is shared or split, or belongs to a single point. In a shared/split tooltip, all properties except x, which is common for all points, are kept in an array, this.points.",
+                    "pointFormatter": "Point Formatter",
+                    "pointFormatterHint": "A callback function for formatting the HTML output for a single point in the tooltip. Like the pointFormat string, but with more flexibility."
+                }
+            },
             "hint": "Select dataset",
+            "htmlParsingError": "HTML Parsing Error",
             "iconTooltips": {
                 "backgroundColor": "Background color",
                 "bold": "Bold",
+                "borderColor": "Border color",
                 "fontColor": "Font color",
                 "fontFamily": "Font family",
                 "fontSize": "Font size",
@@ -534,7 +629,13 @@
                 "title": "Interactions"
             },
             "itemsPerPage": "Items per page",
+            "legend": {
+                "title": "Legend"
+            },
             "manualInput": "Manual input",
+            "noData": {
+                "title": "No data"
+            },
             "noSelections": {
                 "customMessage": "Custom Message",
                 "customMessageHint": "If left empty the message will be 'No Active Selections'",
@@ -552,6 +653,7 @@
                 "unlinkAllHint": "Unink all paddings"
             },
             "pagination": "Pagination",
+            "percentage": "Percentage",
             "precision": "Precision",
             "prefix": "Prefix",
             "responsive": {
@@ -579,6 +681,14 @@
             "selectorType": {
                 "title": "Selector Type"
             },
+            "series": {
+                "scale": "Scale",
+                "scaleHint": "Scale Hint Placeholder",
+                "title": "Series"
+            },
+            "seriesAccessibility": {
+                "title": "Series Accessibility"
+            },
             "settingsListOptions": {
                 "tooltip": "Tooltip"
             },
@@ -587,6 +697,7 @@
                 "shadowSize": "Shadow Size",
                 "title": "Shadows"
             },
+            "showLabel": "Show Label",
             "sortingColumn": "Sorting column",
             "sortingOrder": "Sorting order",
             "suffix": "Suffix",
@@ -596,10 +707,14 @@
                 "pinnedColumnsOnly": "Pinned columns only",
                 "title": "Summary rows"
             },
+            "textParsingError": "Text Parsing Error",
             "title": "Widget Editor",
             "titles": {
                 "enableTitle": "Enable Title",
                 "title": "Title"
+            },
+            "tooltip": {
+                "title": "Tooltip"
             },
             "tooltipTextHint": "This text will overwrite the columns header default tooltip, variables and parameters placeholders ($V{placeholder} and $P{placeholder}) are available.",
             "tooltips": {

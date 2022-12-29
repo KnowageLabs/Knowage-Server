@@ -1,5 +1,5 @@
 <template>
-    <grid-item class="p-d-flex widget-grid-item" :key="item.id" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" drag-allow-from=".drag-handle">
+    <grid-item class="p-d-flex widget-grid-item" :key="item.id" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" drag-allow-from=".drag-handle" @resized="resizedEvent">
         <div v-if="initialized" class="drag-handle"></div>
         <ProgressSpinner v-if="loading" class="kn-progress-spinner" />
         <Skeleton shape="rectangle" v-if="!initialized" height="100%" border-radius="0" />
@@ -12,7 +12,6 @@
             :dashboardId="dashboardId"
             :selectionIsLocked="selectionIsLocked"
             :propActiveSelections="activeSelections"
-            :drivers="drivers"
             :variables="variables"
             @pageChanged="reloadWidgetData"
             @sortingChanged="reloadWidgetData"
@@ -39,7 +38,7 @@
  * ! this component will be in charge of managing the widget behaviour related to data and interactions, not related to view elements.
  */
 import { defineComponent, PropType } from 'vue'
-import { IDashboardDriver, IDataset, ISelection, IVariable, IWidget } from '../Dashboard'
+import { IDataset, ISelection, IVariable, IWidget } from '../Dashboard'
 import { emitter } from '../DashboardHelpers'
 import { mapState, mapActions } from 'pinia'
 import { getWidgetData } from '../DataProxyHelper'
@@ -58,12 +57,12 @@ export default defineComponent({
     components: { Skeleton, WidgetButtonBar, WidgetRenderer, ProgressSpinner },
     inject: ['dHash'],
     props: {
+        model: { type: Object },
         item: { required: true, type: Object },
         activeSheet: { type: Boolean },
         widget: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDataset[]>, required: true },
         dashboardId: { type: String, required: true },
-        drivers: { type: Array as PropType<IDashboardDriver[]>, required: true },
         variables: { type: Array as PropType<IVariable[]>, required: true }
     },
     watch: {
@@ -148,7 +147,7 @@ export default defineComponent({
 
             this.setWidgetLoading(true)
 
-            this.widgetInitialData = await getWidgetData(this.widgetModel, this.datasets, this.$http, true, this.activeSelections)
+            this.widgetInitialData = await getWidgetData(this.widgetModel, this.model?.configuration?.datasets, this.$http, true, this.activeSelections)
             this.widgetData = this.widgetInitialData
             await this.loadActiveSelections()
 
@@ -180,7 +179,7 @@ export default defineComponent({
             return widgetUsesSelection
         },
         async reloadWidgetData(associativeResponseSelections: any) {
-            this.widgetData = await getWidgetData(this.widgetModel, this.datasets, this.$http, false, this.activeSelections, associativeResponseSelections)
+            this.widgetData = await getWidgetData(this.widgetModel, this.model?.configuration?.datasets, this.$http, false, this.activeSelections, associativeResponseSelections)
         },
         widgetUsesSelections(selections: ISelection[]) {
             let widgetUsesSelection = false
@@ -246,6 +245,9 @@ export default defineComponent({
             } else {
                 this.inFocus = false
             }
+        },
+        resizedEvent: function (i, newH, newW, newHPx, newWPx) {
+            emitter.emit('chartWidgetResized', newHPx)
         }
     }
 })

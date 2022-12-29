@@ -589,7 +589,7 @@ export default defineComponent({
                 })
 
             this.filtersData?.filterStatus?.forEach((el: iParameter) => {
-                el.parameterValue = el.multivalue ? [] : [{ value: '', description: '' }]
+                el.parameterValue = !el.multivalue || (el.typeCode === 'MAN_IN' && !el.selectionType) ? [{ value: '', description: '' }] : []
                 if (el.driverDefaultValue?.length > 0) {
                     let valueIndex = '_col0'
                     let descriptionIndex = 'col1'
@@ -672,7 +672,7 @@ export default defineComponent({
             }
         },
         formatParameterDataOptions(parameter: iParameter, data: any) {
-            if (!parameter.metadata) return { value: '', description: '' }
+            if (!parameter.metadata) return { value: data['_col0'] ? data['_col0'] : '', description: data['_col1'] ? data['_col1'] : '' }
             const valueColumn = parameter.metadata.valueColumn
             const descriptionColumn = parameter.metadata.descriptionColumn
             const valueIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === valueColumn)

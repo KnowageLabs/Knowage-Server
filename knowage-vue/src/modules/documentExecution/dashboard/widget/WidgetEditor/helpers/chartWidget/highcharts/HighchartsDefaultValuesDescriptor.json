@@ -1,0 +1,121 @@
+{
+    "default3DOptions": {
+        "alpha": 0,
+        "beta": 0,
+        "enabled": false,
+        "viewDistance": 25
+    },
+    "defaultAccessibilitySettings": {
+        "description": "",
+        "enabled": false,
+        "keyboardNavigation": {
+            "enabled": false,
+            "order": []
+        }
+    },
+    "defaultAllSeriesAccessibilitySettings": [
+        {
+            "accessibility": {
+                "description": "",
+                "enabled": false,
+                "exposeAsGroupOnly": false,
+                "keyboardNavigation": {
+                    "enabled": false
+                }
+            },
+            "names": ["all"]
+        }
+    ],
+    "defaultHighchartsSelection": {
+        "enabled": true,
+        "modalColumn": ""
+    },
+    "defaultLegendSettings": {
+        "align": "center",
+        "backgroundColor": "",
+        "borderColor": "",
+        "borderWidth": 1,
+        "enabled": true,
+        "itemStyle": {
+            "color": "",
+            "fontFamily": "",
+            "fontSize": "",
+            "fontWeight": ""
+        },
+        "layout": "horizontal",
+        "verticalAlign": "top"
+    },
+    "defaultNoDataConfiguration": {
+        "position": {
+            "align": "left",
+            "verticalAlign": "top"
+        },
+        "style": {
+            "backgroundColor": "",
+            "color": "",
+            "fontFamily": "",
+            "fontSize": "",
+            "fontWeight": ""
+        }
+    },
+    "defaultPieChartPlotOptions": {
+        "allowPointSelect": false,
+        "cursor": "",
+        "dataLabels": {
+            "backgroundColor": "",
+            "distance": 30,
+            "enabled": false,
+            "position": "",
+            "style": {
+                "color": "",
+                "fontFamily": "",
+                "fontSize": "14px",
+                "fontWeight": ""
+            }
+        },
+        "depth": 100,
+        "showInLegend": true
+    },
+    "defaultSerieLabelSettings": [
+        {
+            "label": {
+                "absolute": false,
+                "backgroundColor": "",
+                "enabled": false,
+                "percentage": false,
+                "precision": 2,
+                "prefix": "",
+                "scale": "empty",
+                "style": {
+                    "color": "",
+                    "fontFamily": "",
+                    "fontSize": "",
+                    "fontWeight": ""
+                },
+                "suffix": ""
+            },
+            "names": ["all"]
+        }
+    ],
+    "defaultSeriesAccessibilitySettings": {
+        "accessibility": {
+            "description": "",
+            "enabled": true,
+            "exposeAsGroupOnly": false,
+            "keyboardNavigation": {
+                "enabled": false
+            }
+        },
+        "names": []
+    },
+    "defaultTooltipSettings": {
+        "backgroundColor": "",
+        "enabled": false,
+        "style": {
+            "color": "",
+            "fontFamily": "",
+            "fontSize": "",
+            "fontWeight": ""
+        }
+    }
+}

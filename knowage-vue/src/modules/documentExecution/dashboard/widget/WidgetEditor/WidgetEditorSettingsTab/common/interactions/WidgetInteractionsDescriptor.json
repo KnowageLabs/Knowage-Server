@@ -80,5 +80,13 @@
             "label": "dashboard.widgetEditor.interactions.selection",
             "value": "selection"
         }
+    ],
+    "styleToolbarSelectionOptions": [
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
+        }
     ]
 }

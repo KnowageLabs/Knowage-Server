@@ -59,3 +59,13 @@ export function primeVueDate(locale?: any): String {
 export function convertToPrimeVueFormat(format: String) {
     return format.replaceAll('yy', 'y').replaceAll('M', 'm')
 }
+
+export function getJSDateFromDateString(dateString: string, inputFormat: string) {
+    if (!dateString) return
+    return DateTime.fromFormat(dateString, inputFormat).toJSDate()
+}
+
+export function getDateStringFromJSDate(date: Date, outputFormat: string) {
+    if (!date) return
+    return DateTime.fromJSDate(date).toFormat(outputFormat)
+}

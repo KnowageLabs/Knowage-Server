@@ -71,6 +71,8 @@
 import { defineComponent, PropType } from 'vue'
 import { IVariable, IDataset, IDashboardDriver } from '@/modules/documentExecution/dashboard/Dashboard'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
+import { mapActions } from 'pinia'
+import dashboardStore from '@/modules/documentExecution/dashboard/Dashboard.store'
 import KnHint from '@/components/UI/KnHint.vue'
 import descriptor from './DashboardGeneralSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
@@ -83,14 +85,15 @@ export default defineComponent({
         propVariables: { type: Array as PropType<IVariable[]>, required: true },
         selectedDatasets: { type: Array as PropType<IDataset[]>, required: true },
         selectedDatasetsColumnsMap: { type: Object, required: true },
-        drivers: { type: Array as PropType<IDashboardDriver[]>, required: true },
-        profileAttributes: { type: Array as PropType<{ name: string; value: string }[]>, required: true }
+        profileAttributes: { type: Array as PropType<{ name: string; value: string }[]>, required: true },
+        dashboardId: { type: String, required: true }
     },
     data() {
         return {
             descriptor,
             variables: [] as IVariable[],
             selectedDatasetOptions: [] as { id: number; label: string }[],
+            drivers: [] as IDashboardDriver[],
             getTranslatedLabel
         }
     },
@@ -104,6 +107,10 @@ export default defineComponent({
         this.loadSelectedDatasetNames()
     },
     methods: {
+        ...mapActions(dashboardStore, ['getDashboardDrivers']),
+        loadDrivers() {
+            this.drivers = this.getDashboardDrivers(this.dashboardId)
+        },
         loadVariables() {
             this.variables = this.propVariables
         },

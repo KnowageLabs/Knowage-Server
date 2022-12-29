@@ -98,7 +98,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import VCodeMirror, { CodeMirror  } from 'codemirror-editor-vue3'
+import VCodeMirror, { CodeMirror } from 'codemirror-editor-vue3'
 import { AxiosResponse } from 'axios'
 import Chips from 'primevue/chips'
 import { downloadDirect } from '@/helpers/commons/fileHelper'
@@ -146,7 +146,6 @@ export default defineComponent({
     created() {
         this.loadTemplate(this.id)
         window.addEventListener('resize', this.resizeHandler)
-        console.log('OPTIONS: ', this.galleryDescriptor.options['html'])
     },
     methods: {
         downloadTemplate(): void {

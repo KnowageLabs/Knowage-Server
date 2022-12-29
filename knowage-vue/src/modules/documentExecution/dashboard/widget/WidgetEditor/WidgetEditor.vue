@@ -14,7 +14,6 @@
                     :propWidget="widget"
                     :datasets="datasets"
                     :selectedDatasets="selectedDatasets"
-                    :drivers="drivers"
                     :variables="variables"
                     :dashboardId="dashboardId"
                     :selectedSettingProp="selectedSetting"
@@ -22,7 +21,7 @@
                     @settingChanged="onSettingChanged"
                     @datasetSelected="onDatasetSelected"
                 />
-                <WidgetEditorPreview v-if="selectedSetting != 'Gallery'" :propWidget="widget" :dashboardId="dashboardId" :datasets="datasets" :drivers="documentDrivers" :variables="variables" />
+                <WidgetEditorPreview v-if="selectedSetting != 'Gallery' && !chartPickerVisible" :propWidget="widget" :dashboardId="dashboardId" :datasets="selectedModelDatasets" :variables="variables" />
             </div>
         </div>
     </Teleport>
@@ -33,9 +32,10 @@
  * ! this component will be in charge of managing the widget editing.
  */
 import { defineComponent, PropType } from 'vue'
-import { IWidgetEditorDataset, IWidget, IDataset, IModelDataset, IVariable, IDashboardDriver, IGalleryItem } from '../../Dashboard'
+import { IWidget, IDataset, IDashboardDataset, IVariable, IGalleryItem } from '../../Dashboard'
 import { AxiosResponse } from 'axios'
-import { createNewWidget, formatWidgetForSave } from './helpers/WidgetEditorHelpers'
+import { createNewWidget, recreateKnowageChartModel } from './helpers/WidgetEditorHelpers'
+import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import WidgetEditorPreview from './WidgetEditorPreview.vue'
 import WidgetEditorTabs from './WidgetEditorTabs.vue'
 import mainStore from '../../../../../App.store'
@@ -51,7 +51,6 @@ export default defineComponent({
         dashboardId: { type: String, required: true },
         propWidget: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDataset[]>, required: true },
-        documentDrivers: { type: Array as PropType<IDashboardDriver[]>, required: true },
         variables: { type: Array as PropType<IVariable[]>, required: true },
         htmlGalleryProp: { type: Array as PropType<IGalleryItem[]>, required: true }
     },
@@ -64,10 +63,10 @@ export default defineComponent({
                 availableFunctions: string[]
                 nullifFunction: string[]
             },
-            selectedModelDatasets: [] as IModelDataset[],
+            selectedModelDatasets: [] as IDashboardDataset[],
             selectedDatasets: [] as IDataset[],
-            drivers: [] as any[],
-            selectedSetting: ''
+            selectedSetting: '',
+            chartPickerVisible: false
         }
     },
     watch: {
@@ -81,15 +80,25 @@ export default defineComponent({
         return { store, dashboardStore }
     },
     created() {
+        this.setEventListeners()
         this.loadWidget()
         this.loadSelectedModelDatasets()
         this.loadSelectedModel()
-        this.loadDrivers()
+    },
+    unmounted() {
+        this.removeEventListeners()
     },
     methods: {
+        setEventListeners() {
+            emitter.on('chartPickerVisible', this.changeChartPickerVisbility)
+        },
+        removeEventListeners() {
+            emitter.off('chartPickerVisible', this.changeChartPickerVisbility)
+        },
         loadWidget() {
             if (!this.propWidget) return
             this.widget = this.propWidget.new ? createNewWidget(this.propWidget.type) : deepcopy(this.propWidget)
+            if (!this.propWidget.new) recreateKnowageChartModel(this.widget)
         },
         loadSelectedModelDatasets() {
             this.selectedModelDatasets = this.dashboardId ? this.dashboardStore.getDashboardSelectedDatasets(this.dashboardId) : {}
@@ -110,13 +119,10 @@ export default defineComponent({
                     })
             }
         },
-        loadDrivers() {
-            this.drivers = this.documentDrivers as any[]
-        },
-        onDatasetSelected(dataset: IWidgetEditorDataset) {
+        onDatasetSelected(dataset: IDashboardDataset) {
             this.loadAvailableFunctions(dataset)
         },
-        async loadAvailableFunctions(dataset: IWidgetEditorDataset) {
+        async loadAvailableFunctions(dataset: IDashboardDataset) {
             this.store.setLoading(true)
             await this.$http
                 .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasets/availableFunctions/${dataset.id}?useCache=false`)
@@ -142,6 +148,9 @@ export default defineComponent({
         },
         onSettingChanged(setting: string) {
             this.selectedSetting = setting
+        },
+        changeChartPickerVisbility(value: any) {
+            this.chartPickerVisible = value
         }
     }
 })

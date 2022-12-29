@@ -63,8 +63,8 @@
                     :widgetModel="widgetModel"
                     :propParameters="link.parameters"
                     :selectedDatasetsColumnsMap="selectedDatasetColumnNameMap"
-                    :drivers="drivers"
                     :disabled="linksDisabled"
+                    :dashboardId="dashboardId"
                     @change="onParametersChanged($event, link)"
                     @addParameter="onAddParameter(link)"
                     @delete="onParameterDelete($event, link)"
@@ -76,7 +76,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IDataset, IWidgetLinks, ITableWidgetLink, IWidgetStyleToolbarModel, IWidgetInteractionParameter, IDashboardDriver } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IWidget, IDataset, IWidgetLinks, ITableWidgetLink, IWidgetStyleToolbarModel, IWidgetInteractionParameter } from '@/modules/documentExecution/dashboard/Dashboard'
 import { emitter } from '../../../../../../DashboardHelpers'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import descriptor from '../WidgetInteractionsDescriptor.json'
@@ -93,7 +93,7 @@ export default defineComponent({
         widgetModel: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDataset[]> },
         selectedDatasets: { type: Array as PropType<IDataset[]> },
-        drivers: { type: Array as PropType<IDashboardDriver[]> }
+        dashboardId: { type: String, required: true }
     },
     data() {
         return {

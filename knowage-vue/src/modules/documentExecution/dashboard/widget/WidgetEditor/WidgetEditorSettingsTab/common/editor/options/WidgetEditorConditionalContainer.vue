@@ -10,7 +10,7 @@ import { defineComponent } from 'vue'
 import Textarea from 'primevue/textarea'
 
 export default defineComponent({
-    name: 'widget-editor-repeater',
+    name: 'widget-editor-conditional-container',
     components: { Textarea },
     emits: ['insertChanged'],
     data() {

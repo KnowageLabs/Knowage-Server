@@ -2,7 +2,6 @@
     <div ref="widgetPreviewContainer" class="widget-editor-preview-container p-d-flex p-flex-column p-ai-stretch p-jc-center kn-overflow">
         <div class="preview-buttons-container p-d-flex" style="position: absolute; top: 38px; right: 10px">
             <Button icon="fas fa-maximize" class="p-button-rounded p-button-text p-button-plain expand-button" @click="toggleExpandPreview" />
-            <!-- <Button icon="fas fa-terminal" class="p-button-rounded p-button-text p-button-plain" @click="logWidget" /> -->
             <Button icon="fas fa-rotate-right" class="p-button-rounded p-button-text p-button-plain" @click="getWidgetData" />
         </div>
 
@@ -16,16 +15,9 @@
                 <TableWidget v-if="propWidget.type == 'table'" :propWidget="propWidget" :datasets="datasets" :dataToShow="widgetData" :editorMode="true" :dashboardId="dashboardId" :propActiveSelections="activeSelections" @pageChanged="getWidgetData" />
                 <SelectorWidget v-if="propWidget.type == 'selector'" :propWidget="propWidget" :dataToShow="widgetData" :widgetInitialData="widgetData" :editorMode="true" :propActiveSelections="activeSelections" :datasets="datasets" :selectionIsLocked="false" :dashboardId="dashboardId" />
                 <ActiveSelectionsWidget v-if="propWidget.type == 'selection'" :propWidget="propWidget" :propActiveSelections="activeSelections" :editorMode="true" :dashboardId="dashboardId" />
-                <WebComponentContainer
-                    v-if="(propWidget.type == 'html' || propWidget.type == 'text') && !loading"
-                    :propWidget="propWidget"
-                    :widgetData="widgetData"
-                    :propActiveSelections="activeSelections"
-                    :editorMode="true"
-                    :dashboardId="dashboardId"
-                    :drivers="drivers"
-                    :variables="variables"
-                ></WebComponentContainer>
+                <WebComponentContainer v-if="(propWidget.type == 'html' || propWidget.type == 'text') && !loading" :propWidget="propWidget" :widgetData="widgetData" :propActiveSelections="activeSelections" :editorMode="true" :dashboardId="dashboardId" :variables="variables"></WebComponentContainer>
+                <HighchartsContainer v-if="propWidget.type === 'highcharts' && !loading" :widgetModel="propWidget" :dataToShow="widgetData" :propActiveSelections="activeSelections" :editorMode="true" :dashboardId="dashboardId"></HighchartsContainer>
+                <ChartJSContainer v-if="propWidget.type === 'chartJS' && !loading" :widgetModel="propWidget" :dataToShow="widgetData" :editorMode="true" :dashboardId="dashboardId" :propActiveSelections="activeSelections"></ChartJSContainer>
             </div>
         </div>
     </div>
@@ -33,7 +25,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IDashboardDriver, IDataset, ISelection, IVariable, IWidget } from '../../Dashboard'
+import { IDashboardDataset, ISelection, IVariable, IWidget } from '../../Dashboard'
 import { getWidgetStyleByType } from '../TableWidget/TableWidgetHelper'
 import mock from '../../dataset/DatasetEditorTestMocks.json'
 import descriptor from '../../dataset/DatasetEditorDescriptor.json'
@@ -47,15 +39,16 @@ import { mapState, mapActions } from 'pinia'
 import store from '../../Dashboard.store'
 import deepcopy from 'deepcopy'
 import WebComponentContainer from '../WebComponent/WebComponentContainer.vue'
+import HighchartsContainer from '../ChartWidget/Highcharts/HighchartsContainer.vue'
+import ChartJSContainer from '../ChartWidget/ChartJS/ChartJSContainer.vue'
 
 export default defineComponent({
     name: 'widget-editor-preview',
-    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, ProgressBar, WebComponentContainer },
+    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, ProgressBar, WebComponentContainer, HighchartsContainer, ChartJSContainer },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
-        datasets: { type: Array as PropType<IDataset[]>, required: true },
+        datasets: { type: Array as PropType<IDashboardDataset[]>, required: true },
         dashboardId: { type: String, required: true },
-        drivers: { type: Array as PropType<IDashboardDriver[]>, required: true },
         variables: { type: Array as PropType<IVariable[]>, required: true }
     },
     data() {
@@ -120,6 +113,9 @@ export default defineComponent({
         toggleExpandPreview() {
             const widgetPreviewContainerRef = this.$refs.widgetPreviewContainer as any
             widgetPreviewContainerRef.classList.toggle('expand')
+            setTimeout(() => {
+                emitter.emit('chartWidgetResized', this.propWidget)
+            }, 250)
         }
     }
 })

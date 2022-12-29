@@ -5,7 +5,7 @@
                 <InputSwitch v-model="previewModel.enabled"></InputSwitch>
                 <label class="kn-material-input-label p-ml-3">{{ $t('dashboard.widgetEditor.interactions.enablePreview') }}</label>
             </div>
-            <div class="p-col-6 p-sm-12 p-md-6 p-d-flex p-flex-column kn-flex p-px-2">
+            <div v-if="widgetModel.type !== 'chart'" class="p-col-6 p-sm-12 p-md-6 p-d-flex p-flex-column kn-flex p-px-2">
                 <label class="kn-material-input-label"> {{ $t('common.type') }}</label>
                 <Dropdown class="kn-material-input" v-model="previewModel.type" :options="descriptor.interactionTypes" optionValue="value" :disabled="previewDisabled" @change="onInteractionTypeChanged">
                     <template #value="slotProps">
@@ -48,7 +48,7 @@
                 :widgetModel="widgetModel"
                 :propParameters="previewModel.parameters"
                 :selectedDatasetsColumnsMap="selectedDatasetColumnNameMap"
-                :drivers="drivers"
+                :dashboardId="dashboardId"
                 :disabled="previewDisabled"
                 @change="onParametersChanged"
             ></TableWidgetPreviewParameterList>
@@ -58,7 +58,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IWidgetInteractionParameter, IDataset, IDatasetParameter, IWidgetStyleToolbarModel, IWidgetPreview, IDashboardDriver } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IWidget, IWidgetInteractionParameter, IDataset, IDatasetParameter, IWidgetStyleToolbarModel, IWidgetPreview } from '@/modules/documentExecution/dashboard/Dashboard'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import { emitter } from '../../../../../../DashboardHelpers'
 import descriptor from '../WidgetInteractionsDescriptor.json'
@@ -82,7 +82,6 @@ export default defineComponent({
         widgetModel: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDataset[]> },
         selectedDatasets: { type: Array as PropType<IDataset[]> },
-        drivers: { type: Array as PropType<IDashboardDriver[]> },
         dashboardId: { type: String, required: true }
     },
     data() {

@@ -18,7 +18,7 @@ export const getFormattedWidgetColumns = (widget: any, columnNameIdMap: any, all
     return formattedColumns
 }
 
-const getFormattedWidgetColumn = (widgetColumn: any, columnNameIdMap: any) => {
+export const getFormattedWidgetColumn = (widgetColumn: any, columnNameIdMap: any) => {
     const formattedColumn = { id: cryptoRandomString({ length: 16, type: 'base64' }), columnName: widgetColumn.name, alias: widgetColumn.alias, type: widgetColumn.type, fieldType: widgetColumn.fieldType, multiValue: widgetColumn.multiValue, filter: {} } as IWidgetColumn
     if (widgetColumn.isCalculated) {
         formattedColumn.formula = widgetColumn.formula

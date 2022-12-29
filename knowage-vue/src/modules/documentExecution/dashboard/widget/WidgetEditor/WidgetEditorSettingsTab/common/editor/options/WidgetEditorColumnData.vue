@@ -57,7 +57,7 @@ import Message from 'primevue/message'
 import InputSwitch from 'primevue/inputswitch'
 
 export default defineComponent({
-    name: 'widget-editor-active-selections',
+    name: 'widget-editor-column-data',
     components: { Dropdown, Message, InputSwitch },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     emits: ['insertChanged'],

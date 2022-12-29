@@ -1,0 +1,18 @@
+{
+    "colorPalleteStyle": {
+        "column": {
+            "border": "none !important",
+            "padding": "0 !important",
+            "width": "25px"
+        },
+        "columnMain": {
+            "border": "none !important",
+            "display": "flex",
+            "padding": "0 !important"
+        },
+        "table": {
+            "border": "1px solid"
+        }
+    },
+    "defaultColors": ["#FF0000", "#ffc0cb", "#800080", "#4b0082", "#0000FF", "#add8e6", "#00ffff", "#008080", "#008000", "#90ee90", "#00FF00", "#FFFF00", "#ff4500", "#ffa500", "#ff8c00", "#a52a2a", "#808080", "#778899"]
+}

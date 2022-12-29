@@ -1,10 +1,13 @@
 import { IDashboard, IDashboardConfiguration, IDataset, IVariable, IWidget } from './Dashboard'
+import { formatWidgetForSave, recreateKnowageChartModel } from './widget/WidgetEditor/helpers/WidgetEditorHelpers'
+import { setVariableValueFromDataset } from './generalSettings/VariablesHelper'
 import mitt from 'mitt'
 export const emitter = mitt()
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
-import { formatWidgetForSave } from './widget/WidgetEditor/helpers/WidgetEditorHelpers'
-import { setVariableValueFromDataset } from './generalSettings/VariablesHelper'
+import { formatChartJSWidget } from './widget/WidgetEditor/helpers/chartWidget/chartJS/ChartJSHelpers'
+import { formatHighchartsWidget } from './widget/WidgetEditor/helpers/chartWidget/highcharts/HighchartsHelpers'
+
 
 export const createNewDashboardModel = () => {
     const dashboardModel = {
@@ -30,7 +33,9 @@ export const createNewDashboardModel = () => {
 export const updateWidgetHelper = (dashboardId: string, widget: IWidget, dashboards: any) => {
     for (let i = 0; i < dashboards[dashboardId].widgets.length; i++) {
         if (widget.id === dashboards[dashboardId].widgets[i].id) {
-            dashboards[dashboardId].widgets[i] = deepcopy(widget)
+            const tempWidget = deepcopy(widget)
+            recreateKnowageChartModel(tempWidget)
+            dashboards[dashboardId].widgets[i] = tempWidget
             emitter.emit("widgetUpdatedFromStore", widget)
         }
     }
@@ -60,7 +65,7 @@ const deleteWidgetFromSheets = (dashboard: IDashboard, widgetId: string) => {
 
 export const formatDashboardForSave = (dashboard: IDashboard) => {
     for (let i = 0; i < dashboard.widgets.length; i++) {
-        dashboard.widgets[i] = formatWidgetForSave(dashboard.widgets[i])
+        dashboard.widgets[i] = formatWidgetForSave(dashboard.widgets[i]) as IWidget
     }
     formatVariablesForSave(dashboard.configuration)
 }
@@ -74,5 +79,19 @@ export const formatNewModel = async (dashboard: IDashboard, datasets: IDataset[]
     for (let i = 0; i < dashboard.configuration.variables.length; i++) {
         if (dashboard.configuration.variables[i].type === 'dataset') await setVariableValueFromDataset(dashboard.configuration.variables[i], datasets, $http)
     }
+
+    for (let i = 0; i < dashboard.widgets.length; i++) {
+        formatWidget(dashboard.widgets[i])
+    }
     return dashboard
+}
+
+const formatWidget = (widget: IWidget) => {
+    switch (widget.type) {
+        case 'chartJS':
+            formatChartJSWidget(widget)
+            break
+        case 'highcharts':
+            formatHighchartsWidget(widget)
+    }
 }

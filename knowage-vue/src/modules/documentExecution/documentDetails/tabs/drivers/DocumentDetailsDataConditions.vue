@@ -258,8 +258,6 @@ export default defineComponent({
             for (let i = 0; i < this.selectedModes.length; i++) {
                 for (let j = 0; j < modalityKeys.length; j++) {
                     if (this.selectedModes[i] === +modalityKeys[j]) {
-                        console.log('CONDITION -----------', this.condition)
-                        console.log('SEL DRIVER -----------', this.selectedDriver)
                         const conditionForPost = {
                             ...this.condition,
                             parFatherId: this.condition.parFatherId,

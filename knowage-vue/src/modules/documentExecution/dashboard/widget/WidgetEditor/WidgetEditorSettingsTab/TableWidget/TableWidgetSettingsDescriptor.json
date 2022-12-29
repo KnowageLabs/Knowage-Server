@@ -310,14 +310,6 @@
             "value": "Responsive"
         }
     ],
-    "styleToolbarSelectionOptions": [
-        {
-            "type": "color"
-        },
-        {
-            "type": "background-color"
-        }
-    ],
     "styleToolbarVisualizationTypeOptions": [
         {
             "type": "color"

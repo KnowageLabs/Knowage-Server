@@ -1,7 +1,7 @@
-import { IWidgetBordersStyle, IWidgetPaddingStyle, IWidgetShadowsStyle } from "../../Dashboard"
-import { ISelectorWidgetLabelStyle, ISelectorWidgetStyle } from "../../interfaces/DashboardSelectorWidget"
-import { getFormattedBackgroundStyle, getFormattedTitleStyle } from "../common/WidgetStyleHelper"
-import { hexToRgb } from '../FormattingHelpers'
+import { IWidgetBordersStyle, IWidgetPaddingStyle, IWidgetShadowsStyle } from '../../Dashboard'
+import { ISelectorWidgetLabelStyle, ISelectorWidgetStyle } from '../../interfaces/DashboardSelectorWidget'
+import { getFormattedBackgroundStyle, getFormattedTitleStyle } from '../common/WidgetStyleHelper'
+import { hexToRgba } from '../FormattingHelpers'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import * as selectorWidgetDefaultValues from '../../widget/WidgetEditor/helpers/selectorWidget/SelectorWidgetDefaultValues'
 
@@ -16,7 +16,6 @@ export const getFormattedStyle = (widget: any) => {
     } as ISelectorWidgetStyle
 }
 
-
 const getFormattedLabelStyle = (widget) => {
     if (!widget.style) return selectorWidgetDefaultValues.getDefaultLabelStyle()
     const formattedLabelStyle = {
@@ -29,7 +28,7 @@ const getFormattedLabelStyle = (widget) => {
             'font-family': widget.style['font-family'] ?? '',
             'justify-content': widget.style['justify-content'] ?? '',
             color: widget.style.color ?? '',
-            'background-color': widget.style['background-color'] ?? '',
+            'background-color': widget.style['background-color'] ?? ''
         }
     } as ISelectorWidgetLabelStyle
 
@@ -42,10 +41,10 @@ const getFormattedPaddingStyle = (widget: any) => {
     return {
         enabled: true,
         properties: {
-            "padding-top": widget.style.padding['padding-top'],
-            "padding-left": widget.style.padding['padding-left'],
-            "padding-bottom": widget.style.padding['padding-bottom'],
-            "padding-right": widget.style.padding['padding-right'],
+            'padding-top': widget.style.padding['padding-top'],
+            'padding-left': widget.style.padding['padding-left'],
+            'padding-bottom': widget.style.padding['padding-bottom'],
+            'padding-right': widget.style.padding['padding-right'],
             unlinked: widget.style.padding.unlinked
         }
     } as IWidgetPaddingStyle
@@ -63,8 +62,8 @@ const getFormattedShadowsStyle = (widget: any) => {
     return {
         enabled: true,
         properties: {
-            "box-shadow": widget.style.shadow["box-shadow"],
-            "color": hexToRgb(widget.style.backgroundColor)
+            'box-shadow': widget.style.shadow['box-shadow'],
+            color: hexToRgba(widget.style.backgroundColor)
         }
     } as IWidgetShadowsStyle
 }

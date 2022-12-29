@@ -13,7 +13,7 @@
                 {{ $t(`dashboard.widgetEditor.editorTags.hint.${mode}`) }}
             </Message>
 
-            <WidgetEditorParameters v-if="mode === 'parameters'" :drivers="drivers" @insertChanged="onInsertChanged"></WidgetEditorParameters>
+            <WidgetEditorParameters v-if="mode === 'parameters'" :dashboardId="dashboardId" @insertChanged="onInsertChanged"></WidgetEditorParameters>
             <WidgetEditorVariables v-else-if="mode === 'variables'" :variables="variables" @insertChanged="onInsertChanged"></WidgetEditorVariables>
             <WidgetEditorInternationalization v-else-if="mode === 'internationalization'" @insertChanged="onInsertChanged"></WidgetEditorInternationalization>
             <WidgetEditorRepeater v-else-if="mode === 'repeater'" :widgetModel="widgetModel" @insertChanged="onInsertChanged"></WidgetEditorRepeater>
@@ -36,7 +36,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IDashboardDriver, IDataset, IVariable, IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IDataset, IVariable, IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
 import Dialog from 'primevue/dialog'
 import descriptor from './WidgetTagsDialogDescriptor.json'
 import Message from 'primevue/message'
@@ -54,7 +54,7 @@ import WidgetEditorColumnData from './options/WidgetEditorColumnData.vue'
 import WidgetEditorCrossNavigation from './options/WidgetEditorCrossNavigation.vue'
 
 export default defineComponent({
-    name: 'olap-custom-view-save-dialog',
+    name: 'widget-tags-dialog',
     components: {
         Dialog,
         Message,
@@ -76,9 +76,9 @@ export default defineComponent({
         widgetModel: { type: Object as PropType<IWidget>, required: true },
         mode: { type: String, required: true },
         widgetType: String,
-        drivers: { type: Array as PropType<IDashboardDriver[]>, required: true },
         variables: { type: Array as PropType<IVariable[]>, required: true },
-        selectedDatasets: { type: Array as PropType<IDataset[]> }
+        selectedDatasets: { type: Array as PropType<IDataset[]> },
+        dashboardId: { type: String, required: true }
     },
     emited: ['close', 'insert'],
     computed: {},

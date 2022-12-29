@@ -1,4 +1,4 @@
-import { IAssociation, IAssociationField, IDashboard, IDataset, IModelDataset, IModelDatasetParameter, ISelection, IWidget, IWidgetColumn, IWidgetColumnFilter } from "../../Dashboard"
+import { IAssociation, IAssociationField, IDashboard, IDataset, IDashboardDataset, IDashboardDatasetParameter, ISelection, IWidget, IWidgetColumn, IWidgetColumnFilter } from "../../Dashboard"
 import { AxiosResponse } from "axios"
 import { emitter } from '../../DashboardHelpers'
 import { clearDatasetInterval } from "../../helpers/datasetRefresh/DatasetRefreshHelpers"
@@ -55,9 +55,9 @@ const loadDatasetLabelIdMap = (datasets: IDataset[]) => {
     datasets.forEach((dataset: IDataset) => datasetMapById[dataset.id.dsId] = dataset)
 }
 
-const getDatasetsInfoFromModelDatasets = (modelDatasets: IModelDataset[], datasets: IDataset[]) => {
+const getDatasetsInfoFromModelDatasets = (modelDatasets: IDashboardDataset[], datasets: IDataset[]) => {
     const tempDatasets = [] as IDataset[]
-    modelDatasets.forEach((modelDataset: IModelDataset) => {
+    modelDatasets.forEach((modelDataset: IDashboardDataset) => {
         const tempDataset = findDatasetByLabel(modelDataset.dsLabel as string, datasets)
         if (tempDataset) {
             tempDatasets.push(tempDataset)
@@ -121,15 +121,15 @@ const getFormattedSelections = (modelSelections: ISelection[]) => {
     return formattedSelctions
 }
 
-const getFormattedModelDatasets = (modelDatasets: IModelDataset[]) => {
+const getFormattedModelDatasets = (modelDatasets: IDashboardDataset[]) => {
     const formattedDatasets = {}
-    modelDatasets.forEach((dataset: IModelDataset) => formattedDatasets[dataset.dsLabel as string] = getFormattedDatasetParameters(dataset))
+    modelDatasets.forEach((dataset: IDashboardDataset) => formattedDatasets[dataset.dsLabel as string] = getFormattedDatasetParameters(dataset))
     return formattedDatasets
 }
 
-const getFormattedDatasetParameters = (dataset: IModelDataset) => {
+const getFormattedDatasetParameters = (dataset: IDashboardDataset) => {
     const formattedParameters = {}
-    if (dataset.parameters) dataset.parameters.forEach((parameter: IModelDatasetParameter) => formattedParameters[parameter.name] = parameter.value)
+    if (dataset.parameters) dataset.parameters.forEach((parameter: IDashboardDatasetParameter) => formattedParameters[parameter.name] = parameter.value)
     return formattedParameters
 }
 

@@ -121,7 +121,6 @@ export default defineComponent({
 
             this.$http.get(import.meta.env.VITE_API_PATH + '1.0/widgetgallery/image/' + id).then(
                 (response: AxiosResponse<any>) => {
-                    console.log(response)
                     this.currentImage = response.data
                 },
                 (error) => console.error(error)

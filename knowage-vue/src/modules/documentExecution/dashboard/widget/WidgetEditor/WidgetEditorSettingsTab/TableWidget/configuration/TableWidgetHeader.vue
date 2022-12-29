@@ -89,18 +89,20 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget, ITableWidgetHeaders, ITableWidgetHeadersRule, IWidgetColumn, IVariable, IDashboardDriver } from '@/modules/documentExecution/dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
+import { getSelectedVariable } from '@/modules/documentExecution/dashboard/generalSettings/VariablesHelper'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
+import dashboardStore from '@/modules/documentExecution/dashboard/Dashboard.store'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 import WidgetEditorColumnsMultiselect from '../../common/WidgetEditorColumnsMultiselect.vue'
-import { getSelectedVariable } from '@/modules/documentExecution/dashboard/generalSettings/VariablesHelper'
+import { mapActions } from 'pinia'
 
 export default defineComponent({
     name: 'table-widget-headers',
     components: { Dropdown, InputSwitch, WidgetEditorColumnsMultiselect },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
-        drivers: { type: Array as PropType<IDashboardDriver[]> },
+        dashboardId: { type: String, required: true },
         variables: { type: Array as PropType<IVariable[]>, required: true }
     },
     data() {
@@ -111,6 +113,7 @@ export default defineComponent({
             widgetColumnsAliasMap: {} as any,
             parameterValuesMap: {},
             variableValuesMap: {},
+            drivers: [] as IDashboardDriver[],
             getTranslatedLabel
         }
     },
@@ -124,6 +127,7 @@ export default defineComponent({
     },
     created() {
         this.setEventListeners()
+        this.loadDrivers()
         this.loadTargetOptions()
         this.loadHeadersModel()
         this.loadWidgetColumnAliasMap()
@@ -134,6 +138,7 @@ export default defineComponent({
         this.removeEventListeners()
     },
     methods: {
+        ...mapActions(dashboardStore, ['getDashboardDrivers']),
         setEventListeners() {
             emitter.on('headersColumnRemoved', this.onHeadersColumnRemoved)
             emitter.on('columnAliasRenamed', this.onColumnAliasRenamed)
@@ -143,6 +148,9 @@ export default defineComponent({
             emitter.off('headersColumnRemoved', this.onHeadersColumnRemoved)
             emitter.off('columnAliasRenamed', this.onColumnAliasRenamed)
             emitter.off('columnAdded', this.onColumnAdded)
+        },
+        loadDrivers() {
+            this.drivers = this.getDashboardDrivers(this.dashboardId)
         },
         onHeadersColumnRemoved() {
             this.onColumnRemoved()

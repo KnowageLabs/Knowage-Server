@@ -1,0 +1,315 @@
+{
+    "alignmentOptions": [
+        {
+            "label": "common.left",
+            "value": "left"
+        },
+        {
+            "label": "common.center",
+            "value": "center"
+        },
+        {
+            "label": "common.right",
+            "value": "right"
+        }
+    ],
+    "allSerieOption": [
+        {
+            "label": "all",
+            "value": "all"
+        }
+    ],
+    "keyboardNavigationOrderOptions": [
+        {
+            "label": "dashboard.widgetEditor.series.title",
+            "value": "series"
+        },
+        {
+            "label": "dashboard.widgetEditor.accessibility.keyboardNavigationOrderOptions.zoom",
+            "value": "zoom"
+        },
+        {
+            "label": "dashboard.widgetEditor.accessibility.keyboardNavigationOrderOptions.rangeSelector",
+            "value": "rangeSelector"
+        },
+        {
+            "label": "dashboard.widgetEditor.accessibility.keyboardNavigationOrderOptions.chartMenu",
+            "value": "chartMenu"
+        },
+        {
+            "label": "dashboard.widgetEditor.accessibility.keyboardNavigationOrderOptions.legend",
+            "value": "legend"
+        },
+        {
+            "label": "dashboard.widgetEditor.accessibility.keyboardNavigationOrderOptions.container",
+            "value": "container"
+        }
+    ],
+    "labelsStyleOptions": [
+        {
+            "type": "font-weight"
+        },
+        {
+            "type": "font-size"
+        },
+        {
+            "type": "justify-content"
+        },
+        {
+            "type": "font-family"
+        },
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
+        }
+    ],
+    "layoutOptions": [
+        {
+            "label": "common.horizontal",
+            "value": "horizontal"
+        },
+        {
+            "label": "common.vertical",
+            "value": "vertical"
+        },
+        {
+            "label": "dashboard.widgetEditor.highcharts.proximate",
+            "value": "proximate"
+        }
+    ],
+    "legendStyleOptions": [
+        {
+            "type": "font-weight"
+        },
+        {
+            "type": "font-size"
+        },
+        {
+            "type": "font-family"
+        },
+        {
+            "type": "border-color"
+        },
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
+        }
+    ],
+    "noDataToolbarStyleOptions": [
+        {
+            "type": "font-weight"
+        },
+        {
+            "type": "font-size"
+        },
+        {
+            "type": "font-family"
+        },
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
+        }
+    ],
+    "scaleOptions": ["empty", "k", "m", "g", "t", "p", "e"],
+    "settings": {
+        "Accessibility": [
+            {
+                "title": "dashboard.widgetEditor.accessibility.title",
+                "type": "AccessibilitySettings"
+            },
+            {
+                "title": "dashboard.widgetEditor.seriesAccessibility.title",
+                "type": "SeriesAccessibilitySettings"
+            }
+        ],
+        "Chart": [
+            {
+                "title": "dashboard.widgetEditor.colors.title",
+                "type": "Colors"
+            }
+        ],
+        "Configuration": [
+            {
+                "title": "dashboard.widgetEditor.configurationOf3D.title",
+                "type": "ConfigurationOf3D"
+            },
+            {
+                "title": "dashboard.widgetEditor.noData.title",
+                "type": "NoDataMessageConfiguration"
+            },
+            {
+                "title": "dashboard.widgetEditor.export.title",
+                "type": "Export"
+            }
+        ],
+        "Interactions": [
+            {
+                "title": "dashboard.widgetEditor.drilldown.title",
+                "type": "Drilldown"
+            },
+            {
+                "title": "dashboard.widgetEditor.interactions.selection",
+                "type": "Selection"
+            },
+            {
+                "title": "dashboard.widgetEditor.interactions.crossNavigation",
+                "type": "CrossNavigation"
+            },
+            {
+                "title": "dashboard.widgetEditor.interactions.link",
+                "type": "Link"
+            },
+            {
+                "title": "dashboard.widgetEditor.interactions.preview",
+                "type": "Preview"
+            }
+        ],
+        "Labels": [
+            {
+                "title": "common.labels",
+                "type": "Labels"
+            }
+        ],
+        "Legend": [
+            {
+                "title": "dashboard.widgetEditor.legend.title",
+                "type": "Legend"
+            }
+        ],
+        "Responsive": [
+            {
+                "title": "dashboard.widgetEditor.responsive.title",
+                "type": "Responsive"
+            }
+        ],
+        "Series": [
+            {
+                "title": "dashboard.widgetEditor.series.title",
+                "type": "SriesLabel"
+            }
+        ],
+        "Style": [
+            {
+                "title": "dashboard.widgetEditor.titles.title",
+                "type": "Title"
+            },
+            {
+                "title": "dashboard.widgetEditor.background",
+                "type": "BackgroundColorStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.borders.title",
+                "type": "BordersStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.padding.title",
+                "type": "PaddingStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.shadows.title",
+                "type": "ShadowsStyle"
+            }
+        ],
+        "Tooltip": [
+            {
+                "title": "dashboard.widgetEditor.tooltip.title",
+                "type": "Tooltip"
+            }
+        ]
+    },
+    "settingsListOptions": [
+        {
+            "icon": "fa fa-cogs",
+            "label": "dashboard.widgetEditor.configuration",
+            "value": "Configuration"
+        },
+        {
+            "icon": "pi pi-table",
+            "label": "dashboard.widgetEditor.accessibility.title",
+            "value": "Accessibility"
+        },
+        {
+            "icon": "fa fa-paint-brush",
+            "label": "common.style",
+            "value": "Style"
+        },
+        {
+            "icon": "pi pi-table",
+            "label": "dashboard.widgetEditor.legend.title",
+            "value": "Legend"
+        },
+        {
+            "icon": "pi pi-table",
+            "label": "common.labels",
+            "value": "Labels"
+        },
+        {
+            "icon": "pi pi-table",
+            "label": "dashboard.widgetEditor.tooltip.title",
+            "value": "Tooltip"
+        },
+        {
+            "icon": "pi pi-table",
+            "label": "dashboard.widgetEditor.series.title",
+            "value": "Series"
+        },
+        {
+            "icon": "pi pi-table",
+            "label": "common.chart",
+            "value": "Chart"
+        },
+        {
+            "icon": "fa fa-hand-pointer",
+            "label": "dashboard.widgetEditor.interactions.title",
+            "value": "Interactions"
+        },
+        {
+            "icon": "pi pi-tablet",
+            "label": "dashboard.widgetEditor.responsive.title",
+            "value": "Responsive"
+        }
+    ],
+    "tooltipStyleOptions": [
+        {
+            "type": "font-weight"
+        },
+        {
+            "type": "font-size"
+        },
+        {
+            "type": "font-family"
+        },
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
+        }
+    ],
+    "verticalAlignmentOptions": [
+        {
+            "label": "common.bottom",
+            "value": "bottom"
+        },
+        {
+            "label": "common.middle",
+            "value": "middle"
+        },
+        {
+            "label": "common.top",
+            "value": "top"
+        }
+    ],
+    "warningMessageStyle": {
+        "align-items": "center",
+        "display": "flex",
+        "justify-content": "center",
+        "text-align": "center"
+    }
+}

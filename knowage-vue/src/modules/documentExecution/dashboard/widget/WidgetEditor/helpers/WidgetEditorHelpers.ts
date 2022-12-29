@@ -5,6 +5,10 @@ import { createNewSelectorWidgetSettings } from '../helpers/selectorWidget/Selec
 import { createNewSelectionsWidgetSettings } from '../helpers/selectionsWidget/SelectionsWidgetFunctions'
 import { createNewHtmlWidgetSettings } from './htmlWidget/HTMLWidgetFunctions'
 import { createNewTextWidgetSettings } from './textWidget/TextWidgetFunctions'
+import { createNewChartJSSettings, formatChartJSWidget } from './chartWidget/chartJS/ChartJSHelpers'
+import { createNewHighchartsSettings, formatHighchartsWidget } from './chartWidget/highcharts/HighchartsHelpers'
+import { formatHighchartsWidgetForSave } from './chartWidget/highcharts/HighchartsBackendSaveHelper'
+import { formatChartJSForSave } from './chartWidget/chartJS/ChartJSBackendSaveHelper'
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
 
@@ -15,9 +19,7 @@ export function createNewWidget(type: string) {
         type: type,
         dataset: null,
         columns: [],
-        settings: {
-        }
-
+        settings: {}
     } as IWidget
 
     createNewWidgetSettings(widget)
@@ -42,9 +44,13 @@ const createNewWidgetSettings = (widget: IWidget) => {
         case 'text':
             widget.settings = createNewTextWidgetSettings()
             break
+        case 'chartJS':
+            widget.settings = createNewChartJSSettings()
+            break
+        case 'highcharts':
+            widget.settings = createNewHighchartsSettings()
     }
 }
-
 
 export function formatWidgetForSave(tempWidget: IWidget) {
     if (!tempWidget) return null
@@ -52,19 +58,31 @@ export function formatWidgetForSave(tempWidget: IWidget) {
     const widget = deepcopy(tempWidget)
 
     switch (widget.type) {
-        case 'table': formatTableWidgetForSave(widget)
-    }
+        case 'table':
+            formatTableWidgetForSave(widget)
+            break;
+        case 'highcharts':
+            formatHighchartsWidgetForSave(widget)
+            break;
+        case 'chartJS':
+            formatChartJSForSave(widget)
 
+    }
     return widget
 }
 
 export function getRGBColorFromString(color: string) {
     const temp = color
         ?.trim()
-        ?.substring(4, color.length - 1)
+        ?.substring(5, color.length - 1)
         ?.split(',')
 
     if (temp) {
-        return { r: +temp[0], g: +temp[1], b: +temp[2] }
-    } else return { r: 0, g: 0, b: 0 }
+        return { r: +temp[0], g: +temp[1], b: +temp[2], a: +temp[3] }
+    } else return { r: 0, g: 0, b: 0, a: 0 }
+}
+
+export const recreateKnowageChartModel = (widget: IWidget) => {
+    if (widget.type === 'chartJS') formatChartJSWidget(widget)
+    else if (widget.type === 'highcharts') formatHighchartsWidget(widget)
 }

@@ -7,7 +7,6 @@
             :settings="descriptor.settings[selectedSetting]"
             :datasets="datasets"
             :selectedDatasets="selectedDatasets"
-            :drivers="drivers"
             :variables="variables"
             :dashboardId="dashboardId"
         ></HTMLWidgetSettingsAccordion>
@@ -18,7 +17,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IDataset, IVariable, IDashboardDriver, IGalleryItem } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget, IDataset, IVariable, IGalleryItem } from '@/modules/documentExecution/Dashboard/Dashboard'
 import descriptor from './HTMLWidgetSettingsDescriptor.json'
 import HTMLWidgetSettingsAccordion from './HTMLWidgetSettingsAccordion.vue'
 import HTMLWidgetSettingsGallery from './gallery/HTMLWidgetGallery.vue'
@@ -31,7 +30,6 @@ export default defineComponent({
         selectedSetting: { type: String, required: true },
         datasets: { type: Array as PropType<IDataset[]> },
         selectedDatasets: { type: Array as PropType<IDataset[]> },
-        drivers: { type: Array as PropType<IDashboardDriver[]>, required: true },
         variables: { type: Array as PropType<IVariable[]>, required: true },
         htmlGalleryProp: { type: Array as PropType<IGalleryItem[]>, required: true },
         dashboardId: { type: String, required: true }

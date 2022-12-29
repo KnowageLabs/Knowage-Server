@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia'
 import { deleteWidgetHelper, emitter, updateWidgetHelper } from './DashboardHelpers'
-import { IDataset, ISelection, IWidget } from './Dashboard'
+import { IDashboardDriver, IDataset, ISelection, IWidget } from './Dashboard'
 import { selectionsUseDatasetWithAssociation } from './widget/interactionsHelpers/DatasetAssociationsHelper'
 import { loadAssociativeSelections } from './widget/interactionsHelpers/InteractionHelper'
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
+import { recreateKnowageChartModel } from './widget/WidgetEditor/helpers/WidgetEditorHelpers'
 
 const store = defineStore('dashboardStore', {
     state() {
@@ -28,7 +29,14 @@ const store = defineStore('dashboardStore', {
         setDashboardSheet(dashboard: any) {
             this.dashboards[dashboard.id].sheet = dashboard.sheet
         },
+        getDashboardDocument(dashboardId: string) {
+            return this.dashboards[dashboardId].document
+        },
+        setDashboardDocument(dashboardId: string, document: any) {
+            this.dashboards[dashboardId].document = document
+        },
         createNewWidget(dashboardId: string, widget: IWidget) {
+            recreateKnowageChartModel(widget)
             this.dashboards[dashboardId].widgets.push(widget)
             if (this.dashboards[dashboardId].sheets[this.selectedSheetIndex]) {
                 this.dashboards[dashboardId].sheets[this.selectedSheetIndex].widgets.lg.push({ id: widget.id, h: 10, i: cryptoRandomString({ length: 16, type: 'base64' }), w: 10, x: 0, y: 0, moved: false })
@@ -52,7 +60,7 @@ const store = defineStore('dashboardStore', {
         getCrossNavigations(dashboardId: string) {
             return this.dashboards[dashboardId].crossNavigations
         },
-        setCrosssNavigations(dashboardId: string, crossNavigations: any[]) {
+        setCrossNavigations(dashboardId: string, crossNavigations: any[]) {
             this.dashboards[dashboardId].crossNavigations = crossNavigations
         },
         getOutputParameters(dashboardId: string) {
@@ -105,7 +113,17 @@ const store = defineStore('dashboardStore', {
         },
         setAllDatasets(datasets: IDataset[]) {
             this.allDatasets = datasets
-        }
+        },
+        getDatasetLabel(datasetId: number) {
+            const index = this.allDatasets.findIndex((dataset: IDataset) => dataset.id.dsId == datasetId)
+            return index !== -1 ? this.allDatasets[index].label : ''
+        },
+        getDashboardDrivers(dashboardId: string) {
+            return this.dashboards[dashboardId].drivers
+        },
+        setDashboardDrivers(dashboardId: string, drivers: IDashboardDriver[]) {
+            this.dashboards[dashboardId].drivers = drivers
+        },
     }
 })
 

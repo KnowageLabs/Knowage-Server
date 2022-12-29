@@ -10,13 +10,13 @@
 
         <div class="datasetEditor-container kn-overflow">
             <DashboardGeneralSettingsList @selectedOption="setSelectedOption"></DashboardGeneralSettingsList>
-            <DashboardVariables v-if="selectedOption === 'Variables'" :propVariables="variables" :selectedDatasets="selectedDatasets" :selectedDatasetsColumnsMap="selectedDatasetColumnsMap" :drivers="documentDrivers" :profileAttributes="profileAttributes"></DashboardVariables>
+            <DashboardVariables v-if="selectedOption === 'Variables'" :propVariables="variables" :selectedDatasets="selectedDatasets" :selectedDatasetsColumnsMap="selectedDatasetColumnsMap" :profileAttributes="profileAttributes"></DashboardVariables>
         </div>
     </div>
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IVariable, IDataset, IDashboardDriver } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IVariable, IDataset } from '@/modules/documentExecution/dashboard/Dashboard'
 import { mapActions } from 'pinia'
 import DashboardGeneralSettingsList from './DashboardGeneralSettingsList.vue'
 import DashboardVariables from './DashboardVariables.vue'
@@ -31,7 +31,6 @@ export default defineComponent({
     props: {
         dashboardId: { type: String, required: true },
         datasets: { type: Array as PropType<IDataset[]>, required: true },
-        documentDrivers: { type: Array as PropType<IDashboardDriver[]>, required: true },
         profileAttributes: { type: Array as PropType<{ name: string; value: string }[]>, required: true }
     },
     emits: ['closeGeneralSettings'],

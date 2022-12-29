@@ -13,7 +13,7 @@
 import { emitter } from '../../DashboardHelpers'
 import { mapActions } from 'pinia'
 import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
-import { IDataset, ISelection, IWidget } from '../../Dashboard'
+import { IDashboardDataset, ISelection, IWidget } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
 import { getColumnConditionalStyles, isConditionMet } from './TableWidgetHelper'
 import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
@@ -37,7 +37,7 @@ export default defineComponent({
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         editorMode: { type: Boolean, required: false },
-        datasets: { type: Array as any, required: true },
+        datasets: { type: Array as PropType<IDashboardDataset[]>, required: true },
         dataToShow: { type: Object as any, required: true },
         propActiveSelections: { type: Array as PropType<ISelection[]>, required: true },
         dashboardId: { type: String, required: true }
@@ -340,7 +340,6 @@ export default defineComponent({
                     }
                 }
             }
-            console.log('CREATED COLUMNS', columns)
             return columns
         },
         getColumnGroup(col) {
@@ -495,8 +494,8 @@ export default defineComponent({
             return { datasetId: this.propWidget.dataset as number, datasetLabel: this.getDatasetLabel(this.propWidget.dataset as number), columnName: columnName, value: value, aggregated: false, timestamp: new Date().getTime() }
         },
         getDatasetLabel(datasetId: number) {
-            const index = this.datasets.findIndex((dataset: IDataset) => dataset.id.dsId == datasetId)
-            return index !== -1 ? this.datasets[index].label : ''
+            const index = this.datasets.findIndex((dataset: IDashboardDataset) => dataset.id == datasetId)
+            return index !== -1 ? this.datasets[index].dsLabel : ''
         },
         onSelectionsDeleted(selections: any) {
             const index = selections.findIndex((selection: ISelection) => selection.datasetId === this.propWidget.dataset && selection.columnName === this.propWidget.columns[0]?.columnName)

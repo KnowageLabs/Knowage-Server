@@ -1,18 +1,31 @@
-import { ITableWidgetLink, IWidget, IWidgetCrossNavigation, IWidgetInteractionParameter, IWidgetInteractions, IWidgetLinks, IWidgetPreview, IWidgetSelection } from "../../Dashboard"
-import { getColumnId } from "../tableWidget/TableWidgetCompatibilityHelper"
+import { ITableWidgetLink, IWidgetCrossNavigation, IWidgetInteractionParameter, IWidgetInteractions, IWidgetLinks, IWidgetPreview, IWidgetSelection } from '../../Dashboard'
+import { getColumnId } from '../tableWidget/TableWidgetCompatibilityHelper'
+import { IHighchartsDrilldown } from '../../interfaces/highcharts/DashboardHighchartsWidget'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
-import * as  tableWidgetDefaultValues from '../../widget/WidgetEditor/helpers/tableWidget/TableWidgetDefaultValues'
+import * as tableWidgetDefaultValues from '../../widget/WidgetEditor/helpers/tableWidget/TableWidgetDefaultValues'
+import * as chartJSDefaultValues from '../../widget/WidgetEditor/helpers/chartWidget/chartJS/ChartJSDefaultValues'
+import * as highchartsDefaultValues from '../../widget/WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
+import mainStore from '@/App.store'
 
 export const getFormattedInteractions = (widget: any) => {
     const interactions = {} as IWidgetInteractions
-    if (['table'].includes(widget.type)) interactions.selection = getFormattedSelection(widget) as IWidgetSelection
-    if (['table', 'html', 'text'].includes(widget.type)) interactions.crosssNavigation = getFormattedCrossNavigation(widget) as IWidgetCrossNavigation
-    if (['table'].includes(widget.type)) interactions.link = getFormattedLinkInteraction(widget) as IWidgetLinks
-    if (['table', 'html', 'text'].includes(widget.type)) interactions.preview = getFormattedPreview(widget) as IWidgetPreview
+    if (['table', 'chart'].includes(widget.type)) interactions.selection = getFormattedSelection(widget) as IWidgetSelection
+    if (['table', 'html', 'text', 'chart'].includes(widget.type)) interactions.crossNavigation = getFormattedCrossNavigation(widget) as IWidgetCrossNavigation
+    if (['table', 'chart'].includes(widget.type)) interactions.link = getFormattedLinkInteraction(widget) as IWidgetLinks
+    if (['table', 'html', 'text', 'chart'].includes(widget.type)) interactions.preview = getFormattedPreview(widget) as IWidgetPreview
+    if (['chart'].includes(widget.type)) interactions.drilldown = { enabled: false } as IHighchartsDrilldown
     return interactions
 }
 
-const getFormattedSelection = (widget: IWidget) => {
+const getFormattedSelection = (widget: any) => {
+    if (widget.type === 'table') {
+        return getFormattedTableSelection(widget)
+    } else if (widget.type === 'chart') {
+        return getFormattedChartSelection()
+    }
+}
+
+const getFormattedTableSelection = (widget: any) => {
     if (!widget.settings.multiselectable && !widget.settings.multiselectablecolor && !widget.settings.modalSelectionColumn) return tableWidgetDefaultValues.getDefaultSelection() as IWidgetSelection
     const formattedSelection = {
         enabled: true,
@@ -27,6 +40,14 @@ const getFormattedSelection = (widget: IWidget) => {
     } as IWidgetSelection
 
     return formattedSelection
+}
+
+const getFormattedChartSelection = () => {
+    const store = mainStore()
+    const user = store.getUser()
+    // TODO widgetChange
+    return user?.enterprise ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections
+    // return false ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections()
 }
 
 export const getFormattedCrossNavigation = (widget: any) => {
@@ -127,8 +148,6 @@ export const getFormattedPreview = (widget: any) => {
     return formattedPreview
 }
 
-
-
 const getFormattedPreviewParameters = (previewParameters: any) => {
     const formattedParameters = [] as IWidgetInteractionParameter[]
 
@@ -146,7 +165,6 @@ const getFormattedPreviewParameters = (previewParameters: any) => {
 
         formattedParameters.push(formattedParameter)
     })
-
 
     return formattedParameters
 }

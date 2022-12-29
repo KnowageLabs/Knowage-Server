@@ -1,4 +1,126 @@
 {
+    "attributeColumnFilterOperators": [
+        {
+            "label": "=",
+            "value": "="
+        },
+        {
+            "label": "!=",
+            "value": "!="
+        },
+        {
+            "label": "IN",
+            "value": "IN"
+        },
+        {
+            "label": "like",
+            "value": "like"
+        },
+        {
+            "label": "is null",
+            "value": "is null"
+        },
+        {
+            "label": "is not null",
+            "value": "is not null"
+        },
+        {
+            "label": "min",
+            "value": "min"
+        },
+        {
+            "label": "max",
+            "value": "max"
+        },
+        {
+            "label": "not IN",
+            "value": "not IN"
+        }
+    ],
+    "chartTypeOptions": [
+        {
+            "label": "dashboard.widgetEditor.chartTypes.pieChart",
+            "value": "pie"
+        },
+        {
+            "label": "dashboard.widgetEditor.chartTypes.donutChart",
+            "value": "donut"
+        },
+        {
+            "label": "dashboard.widgetEditor.chartTypes.columnsChart",
+            "value": "columns"
+        },
+        {
+            "label": "dashboard.widgetEditor.chartTypes.stackedColumnsChart",
+            "value": "stackedColumns"
+        },
+        {
+            "label": "dashboard.widgetEditor.chartTypes.barChart",
+            "value": "bar"
+        },
+        {
+            "label": "dashboard.widgetEditor.chartTypes.scatterChart",
+            "value": "scatter"
+        },
+        {
+            "label": "dashboard.widgetEditor.chartTypes.areaChart",
+            "value": "area"
+        },
+        {
+            "label": "dashboard.widgetEditor.chartTypes.radar",
+            "value": "radar"
+        },
+        {
+            "label": "dashboard.widgetEditor.chartTypes.funnelChart",
+            "value": "funnel"
+        },
+        {
+            "label": "dashboard.widgetEditor.chartTypes.parallelChart",
+            "value": "parallel"
+        },
+        {
+            "label": "dashboard.widgetEditor.chartTypes.gauge",
+            "value": "gauge"
+        },
+        {
+            "label": "dashboard.widgetEditor.chartTypes.lineChart",
+            "value": "line"
+        },
+        {
+            "label": "dashboard.widgetEditor.chartTypes.treemap",
+            "value": "treeMap"
+        }
+    ],
+    "columnAggregationOptions": [
+        {
+            "label": "NONE",
+            "value": "NONE"
+        },
+        {
+            "label": "SUM",
+            "value": "SUM"
+        },
+        {
+            "label": "AVG",
+            "value": "AVG"
+        },
+        {
+            "label": "MAX",
+            "value": "MAX"
+        },
+        {
+            "label": "MIN",
+            "value": "MIN"
+        },
+        {
+            "label": "COUNT",
+            "value": "COUNT"
+        },
+        {
+            "label": "COUNT_DISTINCT",
+            "value": "COUNT_DISTINCT"
+        }
+    ],
     "columnTableSettings": {
         "buttonColumnStyle": {
             "min-width": "125px",
@@ -25,6 +147,56 @@
             "rowReorderColumnStyle": "width: 3rem"
         }
     },
+    "measureColumnFilterOperators": [
+        {
+            "label": "=",
+            "value": "="
+        },
+        {
+            "label": "<",
+            "value": "<"
+        },
+        {
+            "label": ">",
+            "value": ">"
+        },
+        {
+            "label": "<=",
+            "value": "<="
+        },
+        {
+            "label": ">=",
+            "value": ">="
+        },
+        {
+            "label": "IN",
+            "value": "IN"
+        },
+        {
+            "label": "is null",
+            "value": "is null"
+        },
+        {
+            "label": "is not null",
+            "value": "is not null"
+        },
+        {
+            "label": "min",
+            "value": "min"
+        },
+        {
+            "label": "max",
+            "value": "max"
+        },
+        {
+            "label": "range",
+            "value": "range"
+        },
+        {
+            "label": "not IN",
+            "value": "not IN"
+        }
+    ],
     "sortingOrderOptions": [
         {
             "label": "dashboard.widgetEditor.ascending",

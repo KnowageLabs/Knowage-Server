@@ -2,13 +2,13 @@
     <div v-show="model" ref="knowageStyleIcon" class="click-outside icon-container" :class="{ 'icon-disabled': disabled }">
         <div id="color-picker-target" class="p-d-flex p-flex-row p-jc-center p-ai-center" v-tooltip.top="{ value: option.tooltip ? $t(option.tooltip) : getDefaultTooltip() }" @click="openAdditionalComponents">
             <i :class="[getIconClass(), active ? 'active-icon' : '']" class="widget-editor-icon kn-cursor-pointer p-mr-2" @click="onIconClicked"></i>
-            <div v-show="showArowDown || showCircleIcon">
+            <div v-show="showArrowDown || showCircleIcon">
                 <div v-show="showCircleIcon" class="style-circle-icon" :style="{ 'background-color': newColor }"></div>
-                <i v-show="showArowDown" class="fas fa-arrow-down style-arrow-down-icon"></i>
+                <i v-show="showArrowDown" class="fas fa-arrow-down style-arrow-down-icon"></i>
             </div>
             <span v-if="option.type === 'font-size'" class="icon-display-value-span p-ml-1">{{ '(' + displayValue + ')' }}</span>
         </div>
-        <ColorPicker class="style-icon-color-picker" v-if="(option.type === 'color' || option.type === 'background-color') && colorPickerVisible" v-model="color" :inline="true" format="rgb" @change="onColorPickerChange" />
+        <ColorPicker class="dashboard-color-picker click-outside" v-if="['border-color', 'color', 'background-color'].includes(option.type) && colorPickerVisible" theme="light" :color="color" :sucker-hide="true" @changeColor="changeColor" />
         <WidgetEditorToolbarContextMenu
             class="context-menu"
             v-show="(option.type === 'font-size' || option.type === 'justify-content' || option.type === 'font-family') && contextMenuVisible"
@@ -25,7 +25,8 @@ import { IWidgetStyleToolbarModel } from '@/modules/documentExecution/dashboard/
 import { emitter } from '../../../../../DashboardHelpers'
 import { getRGBColorFromString } from '../../../helpers/WidgetEditorHelpers'
 import { useClickOutside } from './useClickOutside'
-import ColorPicker from 'primevue/colorpicker'
+import 'vue-color-kit/dist/vue-color-kit.css'
+import { ColorPicker } from 'vue-color-kit'
 import descriptor from './WidgetEditorStyleToolbarDescriptor.json'
 import WidgetEditorToolbarContextMenu from './WidgetEditorToolbarContextMenu.vue'
 
@@ -41,18 +42,18 @@ export default defineComponent({
             active: false,
             iconPickerDialogVisible: false,
             displayValue: '',
-            color: null as { r: number; g: number; b: number } | null,
+            color: null as { r: number; g: number; b: number; a: number } | null,
             newColor: 'rgb(255, 255, 255)',
             colorPickTimer: null as any,
             useClickOutside
         }
     },
     computed: {
-        showArowDown() {
-            return ['font-size', 'justify-content', 'color', 'background-color', 'font-family'].includes(this.option.type)
+        showArrowDown() {
+            return ['font-size', 'justify-content', 'border-color', 'color', 'background-color', 'font-family'].includes(this.option.type)
         },
         showCircleIcon() {
-            return ['color', 'background-color'].includes(this.option.type)
+            return ['border-color', 'color', 'background-color'].includes(this.option.type)
         }
     },
     watch: {
@@ -102,6 +103,10 @@ export default defineComponent({
                 case 'font-size':
                     this.displayValue = this.model['font-size'] ?? ''
                     break
+                case 'border-color':
+                    this.color = this.model['border-color'] ? getRGBColorFromString(this.model['border-color']) : null
+                    this.newColor = this.model['border-color'] ?? ''
+                    break
                 case 'color':
                     this.color = this.model.color ? getRGBColorFromString(this.model.color) : null
                     this.newColor = this.model.color ?? ''
@@ -129,6 +134,20 @@ export default defineComponent({
                 this.$emit('change')
             }, 200)
         },
+        changeColor(color) {
+            const { r, g, b, a } = color.rgba
+
+            if (this.colorPickTimer) {
+                clearTimeout(this.colorPickTimer)
+                this.colorPickTimer = null
+            }
+            this.colorPickTimer = setTimeout(() => {
+                if (!color || !this.model) return
+                this.newColor = `rgba(${r}, ${g}, ${b}, ${a})`
+                this.model[this.option.type] = this.newColor
+                this.$emit('change')
+            }, 200)
+        },
         onIconClicked() {
             if (!this.model || this.disabled) return
 
@@ -150,6 +169,7 @@ export default defineComponent({
         openAdditionalComponents() {
             if (this.disabled) return
             switch (this.option.type) {
+                case 'border-color':
                 case 'color':
                 case 'background-color':
                     this.changeColorPickerVisibility()
@@ -249,13 +269,6 @@ export default defineComponent({
 
 .icon-display-value-span {
     font-size: 0.7rem;
-}
-
-.style-icon-color-picker {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    z-index: 100000;
 }
 
 .icon-disabled {

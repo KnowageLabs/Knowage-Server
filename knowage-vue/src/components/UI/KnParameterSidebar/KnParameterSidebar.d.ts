@@ -5,6 +5,7 @@ export interface iParameter {
         valueColumn: string
         descriptionColumn: string
     }
+    typeCode?: string,
     data: any
     visible: boolean
     valueSelection: string
@@ -90,8 +91,8 @@ export interface iAdmissibleTreeValues {
 }
 
 export interface iNode {
-    key: number
-    id: number
+    key: number | string
+    id: number | string
     label: string
     children: iNode[]
     data: { value: string; description: string }

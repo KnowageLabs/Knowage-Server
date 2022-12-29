@@ -22,7 +22,6 @@ export default defineComponent({
         widgetData: { type: Object as any, required: true },
         dashboardId: { type: String, required: true },
         propActiveSelections: { type: Array as PropType<ISelection[]>, required: true },
-        drivers: { type: Array as PropType<IDashboardDriver[]>, required: true },
         variables: { type: Array as PropType<IVariable[]>, required: true },
         editorMode: { type: Boolean }
     },
@@ -32,7 +31,8 @@ export default defineComponent({
             activeSelections: [] as ISelection[],
             htmlContent: '' as string,
             webComponentCss: '' as string,
-            webComponentRef: {} as any
+            webComponentRef: {} as any,
+            drivers: [] as IDashboardDriver[]
         }
     },
     watch: {
@@ -45,12 +45,16 @@ export default defineComponent({
     },
     mounted() {
         this.webComponentRef = this.$refs.webComponent as any
+        this.loadDrivers()
         this.loadActiveSelections()
         this.loadDataToShow()
     },
     methods: {
-        ...mapActions(store, ['getInternationalization', 'setSelections', 'getAllDatasets']),
+        ...mapActions(store, ['getInternationalization', 'setSelections', 'getAllDatasets', 'getDashboardDrivers']),
         ...mapActions(appStore, ['setError']),
+        loadDrivers() {
+            this.drivers = this.getDashboardDrivers(this.dashboardId)
+        },
         async loadDataToShow() {
             this.dataToShow = this.widgetData
             await this.loadHTML()
@@ -98,7 +102,7 @@ export default defineComponent({
         onCrossNavigation(event: any) {
             if (this.editorMode || !event.detail || !this.propWidget) return
             const crossValue = event.detail.crossValue
-            const crossNavigationConfiguration = this.propWidget.settings.interactions.crosssNavigation
+            const crossNavigationConfiguration = this.propWidget.settings.interactions.crossNavigation
             executeCrossNavigation(crossValue, crossNavigationConfiguration)
         }
     }

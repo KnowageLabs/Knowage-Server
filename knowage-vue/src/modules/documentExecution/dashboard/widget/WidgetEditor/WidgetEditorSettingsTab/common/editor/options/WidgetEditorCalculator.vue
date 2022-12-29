@@ -41,7 +41,7 @@ import InputSwitch from 'primevue/inputswitch'
 import Textarea from 'primevue/textarea'
 
 export default defineComponent({
-    name: 'widget-editor-repeater',
+    name: 'widget-editor-calculator',
     components: { Message, Textarea, InputNumber, InputSwitch },
     emits: ['insertChanged'],
     data() {

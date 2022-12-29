@@ -1,10 +1,12 @@
 import { ISelectionsWidgetSettings } from '@/modules/documentExecution/dashboard/interfaces/DashboardSelectionsWidget'
+import { IChartJSWidgetSettings } from './interfaces/chartJS/DashboardChartJSWidget'
 import { IHTMLWidgetSettings } from './interfaces/DashboardHTMLWidget'
 import { ITextWidgetSettings } from './interfaces/DashboardTextWidget'
+import { IDrillOrderItem, IHighchartsDrilldown, IHighchartsWidgetSettings } from './interfaces/highcharts/DashboardHighchartsWidget'
 
 export interface IDashboard {
     sheets: []
-    widgets: ITableWidget[]
+    widgets: IWidget[]
     configuration: IDashboardConfiguration
     version: string
 }
@@ -15,7 +17,7 @@ export interface IDashboardConfiguration {
     label: string
     description: string
     associations: IAssociation[]
-    datasets: IModelDataset[]
+    datasets: IDashboardDataset[]
     variables: IVariable[]
     selections: ISelection[]
     themes: any
@@ -38,7 +40,7 @@ export interface IWidget {
     dataset: number | null
     type: string
     columns: IWidgetColumn[]
-    settings: ITableWidgetSettings | ISelectionsWidgetSettings | ISelectorWidgetSettings | IHTMLWidgetSettings | ITextWidgetSettings
+    settings: ITableWidgetSettings | ISelectionsWidgetSettings | ISelectorWidgetSettings | IHTMLWidgetSettings | ITextWidgetSettings | IHighchartsWidgetSettings | IChartJSWidgetSettings
     new?: boolean
 }
 
@@ -165,10 +167,11 @@ export interface ITableWidgetSummaryRow {
 }
 
 export interface IWidgetInteractions {
-    crosssNavigation: IWidgetCrossNavigation
+    crossNavigation: IWidgetCrossNavigation
     link?: IWidgetLinks
     preview?: IWidgetPreview
-    selection?: IWidgetSelection
+    selection?: IWidgetSelection,
+    drilldown?: IHighchartsDrilldown
 }
 
 export interface IWidgetCrossNavigation {
@@ -217,8 +220,8 @@ export interface IWidgetPreview {
 
 export interface IWidgetSelection {
     enabled: boolean
-    modalColumn: string
-    multiselection: {
+    modalColumn?: string
+    multiselection?: {
         enabled: boolean
         properties: {
             'background-color': string
@@ -407,6 +410,8 @@ export interface IWidgetColumn {
     filter: IWidgetColumnFilter
     formula?: string
     formulaEditor?: string
+    drillOrder?: IDrillOrderItem
+    orderType?: string
 }
 
 export interface IWidgetColumnFilter {
@@ -416,15 +421,34 @@ export interface IWidgetColumnFilter {
     value2?: string
 }
 
-export interface IWidgetEditorDataset {
+export interface IDashboardDataset {
     id: number
     label: string
     cache: boolean
     dsLabel?: string
     parameters?: any[]
-    drivers?: any[]
+    drivers?: IDashboardDatasetDriver[]
     indexes?: any[]
 }
+
+
+export interface IDashboardDatasetDriver {
+    urlName: string
+    parameterValue: { value: string | number | Date; description: string }[]
+    type: string
+    defaultValue: { value: string; description: string }[] | null
+    label: string
+    multivalue: boolean
+    typeCode: string
+    selectionType: string
+    options?: { value: string; description: string }[]
+    displayDate?: string
+    allowInternalNodeSelection?: boolean
+    dataDependencies?: any
+    dataDependsOnParameters?: IDashboardDatasetDriver[]
+    dataDependentParameters?: IDashboardDatasetDriver[]
+}
+
 export interface IWidgetPickerType {
     cssClass: string
     descKey: string
@@ -539,16 +563,7 @@ interface IAssociationField {
     dataset: number
 }
 
-export interface IModelDataset {
-    id: number
-    dsLabel?: string
-    cache: boolean
-    indexes: string[]
-    parameters: IModelDatasetParameter[]
-    drivers: any[]
-}
-
-interface IModelDatasetParameter {
+interface IDashboardDatasetParameter {
     multivalue: boolean
     name: string
     type: string
@@ -572,6 +587,7 @@ export interface IWidgetStyleToolbarModel {
     'font-size'?: string
     'font-family'?: string
     'justify-content'?: string
+    'border-color'?: string
     color?: string
     'background-color'?: string
     icon?: string
@@ -646,4 +662,10 @@ interface IGalleryitemCode {
     javascript: string
     python: string
     css: string
+}
+
+export interface IChartType {
+    label: string
+    value: string
+    url: string
 }
