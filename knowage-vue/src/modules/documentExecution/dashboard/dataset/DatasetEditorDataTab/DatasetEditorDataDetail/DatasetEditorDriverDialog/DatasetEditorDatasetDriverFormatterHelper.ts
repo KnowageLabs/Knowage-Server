@@ -1,6 +1,6 @@
 import { IDashboardDatasetDriver } from "@/modules/documentExecution/dashboard/Dashboard"
 import { setDataDependency } from "./DatasetEditorDriverDependencyHelper"
-import { getJSDateFromString } from "@/helpers/commons/localeHelper"
+import { getJSDateFromDateString } from "@/helpers/commons/localeHelper"
 
 export const getFormattedDatasetDrivers = (dataset: any) => {
     if (!dataset.drivers || dataset.drivers.length === 0) return []
@@ -45,7 +45,7 @@ const getFormattedManualStringDriver = (driver: any, formattedDriver: IDashboard
 }
 
 export const getFormattedDateDriver = (driver: any, formattedDriver: IDashboardDatasetDriver) => {
-    const dateValue = driver.parameterValue ? getJSDateFromString(driver.parameterValue, 'yMMdd') : ''
+    const dateValue = driver.parameterValue ? getJSDateFromDateString(driver.parameterValue, 'yMMdd') : ''
     formattedDriver.parameterValue = [{ value: dateValue ?? '', description: driver.parameterDescription && Array.isArray(driver.parameterDescription) ? driver.parameterDescription[0] : '' }]
 }
 
