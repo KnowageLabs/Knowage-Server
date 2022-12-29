@@ -30,30 +30,42 @@ export class KnowageHighchartsSolidGaugeChart extends KnowageHighcharts {
 
     // TODO - Darko
     setData(data: any, widgetModel: IWidget) {
-        if (this.model.series.length === 0) this.getSeriesFromWidgetModel(widgetModel)
+        console.log(">.>>>>>>>>>>>> DATA: ", data)
+        console.log(">.>>>>>>>>>>>> DATA: ", this.model.series)
+        this.getSeriesFromWidgetModel(widgetModel)
 
-        this.model.series.map((item, serieIndex) => {
-            this.range[serieIndex] = { serie: item.name }
-            item.data = []
+        for (let i = 0; i < this.model.series.length; i++) {
+            const serie = this.model.series[i]
+            serie.data = []
             data?.rows?.forEach((row: any) => {
                 let serieElement = {
-                    id: row.id,
-                    name: row['column_1'],
-                    y: row['column_2'],
-                    drilldown: false
-                }
-                item.data.push(serieElement)
+                    name: serie.name,
+                    y: row[`column_${i + 1}`],
+                } as IHighchartsGaugeSerieData
+                serie.data.push(serieElement)
             })
-        })
+        }
         return this.model.series
     }
 
     getSeriesFromWidgetModel(widgetModel: IWidget) {
-        this.model.series = []
+        const newSeries = [] as IHighchartsGaugeSerie[]
+        let seriesAdded = 0
 
-        widgetModel.columns.forEach((column: IWidgetColumn) => {
-            if (column.fieldType === 'MEASURE') this.model.series.push(createGaugeSerie(column.columnName))
-        })
+        for (let i = 0; i < widgetModel.columns.length; i++) {
+            this.addSerieFromExistingSeriesOrWidgetColumns(widgetModel.columns[i], newSeries)
+            seriesAdded++
+            if (seriesAdded === 1) break
+        }
+        console.log(">>>>>>> THIS> SERSFDFDS: ", newSeries)
+        this.model.series = newSeries
+    }
+
+    addSerieFromExistingSeriesOrWidgetColumns(column: IWidgetColumn, newSeries: IHighchartsGaugeSerie[]) {
+        if (column.fieldType === 'MEASURE') {
+            const index = this.model.series.findIndex((serie: IHighchartsGaugeSerie) => serie.name === column.columnName)
+            index !== -1 ? newSeries.push(this.model.series[index]) : newSeries.push(createGaugeSerie(column.columnName))
+        }
     }
 
     // TODO - Darko/Bojan move to superclass???
