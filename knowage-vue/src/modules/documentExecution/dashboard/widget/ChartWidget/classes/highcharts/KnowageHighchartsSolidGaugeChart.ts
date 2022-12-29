@@ -1,14 +1,14 @@
 import { KnowageHighcharts } from './KnowageHihgcharts'
 import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
 import { IHighchartsChartModel, IHighchartsChartSerieData, IHighchartsSeriesLabelsSetting } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
-import { updateActivityGaugeChartModel } from './updater/KnowageHighchartsActivityGaugeChartUpdater'
-import { createSerie } from './updater/KnowageHighchartsCommonUpdater'
+import { updateSolidGaugeChartModel } from './updater/KnowageHighchartsSolidGaugeChartUpdater'
 import * as highchartsDefaultValues from '../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
+import { IHighchartsGaugeSerie, IHighchartsGaugeSerieData } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget'
+import { createGaugeSerie } from './updater/KnowageHighchartsCommonUpdater'
 import Highcharts from 'highcharts'
 import deepcopy from 'deepcopy'
-import { IHighchartsGaugeSerie, IHighchartsGaugeSerieData } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget'
 
-export class KnowageHighchartsActivityGaugeChart extends KnowageHighcharts {
+export class KnowageHighchartsSolidGaugeChart extends KnowageHighcharts {
     constructor(model: any) {
         super()
         if (!this.model.plotOptions.gauge) this.setGaugePlotOptions()
@@ -16,11 +16,11 @@ export class KnowageHighchartsActivityGaugeChart extends KnowageHighcharts {
         if (!this.model.yAxis) this.setGaugeYAxis()
         if (model && model.CHART) this.updateModel(deepcopy(model))
         else if (model) this.model = deepcopy(model)
-        this.model.chart.type = 'activitygauge'
+        this.model.chart.type = 'solidgauge'
     }
 
     updateModel(oldModel: any) {
-        updateActivityGaugeChartModel(oldModel, this.model)
+        updateSolidGaugeChartModel(oldModel, this.model)
     }
 
 
@@ -30,35 +30,18 @@ export class KnowageHighchartsActivityGaugeChart extends KnowageHighcharts {
 
     // TODO - Darko
     setData(data: any, widgetModel: IWidget) {
-        console.log(">>>>>>>>>>>> DATA: ", data)
-        console.log(">>>>>>>>>>>> widgetModel: ", widgetModel)
-        console.log(">>>>>>>>>>>> this.model.series: ", this.model.series)
         if (this.model.series.length === 0) this.getSeriesFromWidgetModel(widgetModel)
-
-        let startingRadius = 112
-        let startingInnerRadius = 88
 
         this.model.series.map((item, serieIndex) => {
             this.range[serieIndex] = { serie: item.name }
-
             item.data = []
-            data?.rows?.forEach((row: any, index: number) => {
-                console.log(">>>>>>>> ROW: ", row)
-                const highchartsOptions = Highcharts.getOptions()
-                console.log('>>>>>>>>>>>>>> OPTIONS: ', highchartsOptions)
-                const serieElement = {
-                    // color: highchartsOptions.colors ? highchartsOptions.colors[0] : '',
-                    radius: startingRadius + '%',
-                    innerRadius: startingInnerRadius + '%',
+            data?.rows?.forEach((row: any) => {
+                let serieElement = {
+                    id: row.id,
                     name: row['column_1'],
-                    y: row[`column_${index}`]
-                } as IHighchartsGaugeSerieData
-
-                startingRadius -= 25
-                startingInnerRadius -= 25
-
-                this.range[serieIndex].min = this.range[serieIndex].min ? Math.min(this.range[serieIndex].min, row['column_2']) : row['column_2']
-                this.range[serieIndex].max = this.range[serieIndex].max ? Math.max(this.range[serieIndex].max, row['column_2']) : row['column_2']
+                    y: row['column_2'],
+                    drilldown: false
+                }
                 item.data.push(serieElement)
             })
         })
@@ -69,10 +52,8 @@ export class KnowageHighchartsActivityGaugeChart extends KnowageHighcharts {
         this.model.series = []
 
         widgetModel.columns.forEach((column: IWidgetColumn) => {
-            console.log(">>>>>>>> COLUMN: ", column)
-            if (column.fieldType === 'MEASURE') this.model.series.push(createSerie(column.columnName, column.aggregation))
+            if (column.fieldType === 'MEASURE') this.model.series.push(createGaugeSerie(column.columnName))
         })
-
     }
 
     // TODO - Darko/Bojan move to superclass???
@@ -93,7 +74,7 @@ export class KnowageHighchartsActivityGaugeChart extends KnowageHighcharts {
                 serie.data.forEach((data: IHighchartsChartSerieData) => {
                     data.dataLabels = { ...highchartsDefaultValues.getDefaultSerieLabelSettings(), position: '' }
                     data.dataLabels.formatter = function () {
-                        return KnowageHighchartsActivityGaugeChart.prototype.handleFormatter(this, data.name)
+                        return KnowageHighchartsSolidGaugeChart.prototype.handleFormatter(this, data.name)
                     }
                 })
                 if (serie.dial) highchartsDefaultValues.getDefaultSerieDialSettings()
@@ -130,7 +111,7 @@ export class KnowageHighchartsActivityGaugeChart extends KnowageHighcharts {
                     color: seriesSettings.label.style.color ?? ''
                 },
                 formatter: function () {
-                    return KnowageHighchartsActivityGaugeChart.prototype.handleFormatter(this, data.name)
+                    return KnowageHighchartsSolidGaugeChart.prototype.handleFormatter(this, data.name)
                 }
             }
         })

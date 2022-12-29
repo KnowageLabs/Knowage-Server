@@ -20,7 +20,6 @@ export const getDefaultTooltipSettings = () => {
     return deepcopy(descriptor.defaultTooltipSettings) as IHighchartsTooltip
 }
 
-
 export const getDefaultLegendSettings = () => {
     return deepcopy(descriptor.defaultLegendSettings) as IHighchartsLegend
 }

@@ -1,13 +1,13 @@
 import { IHighchartsChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import { getFormattedBandsSettings, getFormattedPaneSettings, getFormattedScaleSettings, getFormattedTickSettings } from './KnowageHighchartsCommonGaugeUpdater'
-import { getForamttedLabels, getFormattedLegend, getFormattedNoDataConfiguration, getFormattedSeries, getFormattedTooltipSettings } from './KnowageHighchartsCommonUpdater'
+import { getFormattedLabels, getFormattedLegend, getFormattedNoDataConfiguration, getFormattedSeries, getFormattedTooltipSettings } from './KnowageHighchartsCommonUpdater'
 
 export const updateGaugeChartModel = (oldModel: any, newModel: IHighchartsChartModel) => {
     console.log(">>>>>>> OLD MODEL: ", oldModel)
     console.log(">>>>>>> NEW MODEL: ", newModel)
     getFormattedNoDataConfiguration(oldModel, newModel)
     getFormattedLegend(oldModel, newModel)
-    getForamttedLabels(oldModel, newModel)
+    getFormattedLabels(oldModel, newModel)
     getFormattedSeries(oldModel, newModel, null)
     getFormattedTooltipSettings(oldModel, newModel)
     getFormattedPaneSettings(oldModel, newModel)

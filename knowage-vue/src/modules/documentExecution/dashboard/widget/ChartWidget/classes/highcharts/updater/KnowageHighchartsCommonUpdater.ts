@@ -1,5 +1,6 @@
 import { hexToRgba } from "@/modules/documentExecution/dashboard/helpers/FormattingHelpers"
 import { IHighchartsChartModel } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
+import * as highchartsDefaultValues from '../../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
 
 export const createSerie = (serieName: string, groupingFunction: string) => {
     return {
@@ -7,12 +8,15 @@ export const createSerie = (serieName: string, groupingFunction: string) => {
         colorByPoint: true,
         groupingFunction: groupingFunction,
         data: [],
-        accessibility: {
-            enabled: false,
-            description: '',
-            exposeAsGroupOnly: false,
-            keyboardNavigation: { enabled: false }
-        }
+        accessibility: highchartsDefaultValues.getDefaultSeriesAccessibilitySettings()
+    }
+}
+
+export const createGaugeSerie = (serieName: string) => {
+    return {
+        name: serieName,
+        data: [],
+        accessibility: highchartsDefaultValues.getDefaultSeriesAccessibilitySettings()
     }
 }
 
@@ -65,7 +69,7 @@ export const getFormattedLegend = (oldModel: any, newModel: IHighchartsChartMode
     }
 }
 
-export const getForamttedLabels = (oldModel: any, newModel: IHighchartsChartModel) => {
+export const getFormattedLabels = (oldModel: any, newModel: IHighchartsChartModel) => {
     if (oldModel.CHART.VALUES.SERIE && oldModel.CHART.VALUES.SERIE[0] && oldModel.CHART.VALUES.SERIE[0].dataLabels && newModel.plotOptions.pie) {
         const oldDataLabelsSettings = oldModel.CHART.VALUES.SERIE[0].dataLabels
         newModel.plotOptions.pie.dataLabels = {

@@ -1,4 +1,4 @@
-import { IHighchartsChartDataLabels } from "./DashboardHighchartsWidget"
+import { IHighchartsChartDataLabels, IHighchartsSerieAccessibility } from "./DashboardHighchartsWidget"
 
 export interface IHighchartsModelPane {
     startAngle: number,
@@ -39,4 +39,21 @@ export interface IHighchartsActivityGaugeYAxis {
     max: 100,
     min: 0,
     tickPositions: []
+}
+
+export interface IHighchartsGaugeSerie {
+    name: string,
+    data: IHighchartsGaugeSerieData[],
+    accessibility?: IHighchartsSerieAccessibility,
+    dial?: IHighchartsSeriesDialSettings,
+    pivot?: IHighchartsSeriesPivotSettings
+}
+
+export interface IHighchartsGaugeSerieData {
+    name: string,
+    y: number,
+    color?: string,
+    radius?: string,
+    innerRadius?: string,
+    dataLabels?: IHighchartsChartDataLabels,
 }

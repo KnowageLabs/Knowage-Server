@@ -1,5 +1,5 @@
 import { IWidgetInteractions, IWidgetResponsive } from "../../Dashboard";
-import { IHighchartsSeriesDialSettings, IHighchartsSeriesPivotSettings, IHighchartsSolidGaugePlotOptions } from "./DashboardHighchartsGaugeWidget";
+import { IHighchartsGaugeSerie, IHighchartsSeriesDialSettings, IHighchartsSeriesPivotSettings, IHighchartsSolidGaugePlotOptions } from "./DashboardHighchartsGaugeWidget";
 
 export interface IHighchartsWidgetSettings {
     updatable: boolean,
@@ -80,7 +80,7 @@ export interface IHighchartsChartModel {
     },
     noData: IHighchartsNoDataConfiguration,
     accessibility: IHighchartsAccessibilitySettings,
-    series: IHighchartsChartSerie[],
+    series: (IHighchartsChartSerie | IHighchartsGaugeSerie)[],
     settings: IIHighchartsChartModelSettings,
     plotOptions: {
         pie?: IHighchartsChartPlotOptions,
@@ -159,19 +159,9 @@ export interface IHighchartsChartDataLabels {
 
 export interface IHighchartsChartSerie {
     name: string,
-    colorByPoint: boolean,
-    groupingFunction: string,
     data: IHighchartsChartSerieData[]
-    accessibility: IHighchartsSerieAccessibility,
-    dial?: IHighchartsSeriesDialSettings,
-    pivot?: IHighchartsSeriesPivotSettings
-}
-
-export interface IHighchartsSerieAccessibility {
-    enabled: boolean,
-    description: string,
-    exposeAsGroupOnly: boolean
-    keyboardNavigation: { enabled: boolean }
+    colorByPoint?: boolean,
+    groupingFunction?: string,
 }
 
 export interface IHighchartsChartSerieData {
@@ -180,6 +170,13 @@ export interface IHighchartsChartSerieData {
     sliced?: boolean,
     selected?: boolean,
     dataLabels?: IHighchartsChartDataLabels,
+}
+
+export interface IHighchartsSerieAccessibility {
+    enabled: boolean,
+    description: string,
+    exposeAsGroupOnly: boolean
+    keyboardNavigation: { enabled: boolean }
 }
 
 export interface IIHighchartsChartModelSettings {

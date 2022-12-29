@@ -2,7 +2,7 @@ import { IHighchartsChartModel } from '@/modules/documentExecution/dashboard/int
 import { getFormattedTickSettings } from './KnowageHighchartsCommonGaugeUpdater'
 import { getFormattedLabels, getFormattedLegend, getFormattedNoDataConfiguration, getFormattedSeries, getFormattedTooltipSettings } from './KnowageHighchartsCommonUpdater'
 
-export const updateActivityGaugeChartModel = (oldModel: any, newModel: IHighchartsChartModel) => {
+export const updateSolidGaugeChartModel = (oldModel: any, newModel: IHighchartsChartModel) => {
     console.log(">>>>>>> OLD MODEL: ", oldModel)
     console.log(">>>>>>> NEW MODEL: ", newModel)
     getFormattedNoDataConfiguration(oldModel, newModel)

@@ -79,104 +79,44 @@ export default defineComponent({
                     noData: this.chartModel.lang.noData
                 }
             })
-            // TODO
-            // this.widgetModel.settings.chartModel.model.series = [
-            //     {
-            //         name: 'Speed',
-            //         data: [
-            //             {
-            //                 id: 1,
-            //                 name: 'Q2',
-            //                 y: 80,
-            //                 drilldown: true,
-            //                 dataLabels: {
-            //                     backgroundColor: '',
-            //                     distance: 30,
-            //                     enabled: true,
-            //                     position: '',
-            //                     style: {
-            //                         fontFamily: '',
-            //                         fontSize: '',
-            //                         fontWeight: '',
-            //                         color: ''
-            //                     }
-            //                 }
-            //             },
-            //             {
-            //                 id: 2,
-            //                 name: 'Q3',
-            //                 y: 20,
-            //                 drilldown: true,
-            //                 dataLabels: {
-            //                     backgroundColor: '',
-            //                     distance: 30,
-            //                     enabled: true,
-            //                     position: '',
-            //                     style: {
-            //                         fontFamily: '',
-            //                         fontSize: '',
-            //                         fontWeight: '',
-            //                         color: ''
-            //                     }
-            //                 }
-            //             },
-            //             {
-            //                 id: 3,
-            //                 name: 'Q1',
-            //                 y: 10,
-            //                 drilldown: true,
-            //                 dataLabels: {
-            //                     backgroundColor: '',
-            //                     distance: 30,
-            //                     enabled: true,
-            //                     position: '',
-            //                     style: {
-            //                         fontFamily: '',
-            //                         fontSize: '',
-            //                         fontWeight: '',
-            //                         color: ''
-            //                     }
-            //                 }
-            //             },
-            //             {
-            //                 id: 4,
-            //                 name: 'Q4',
-            //                 y: 15,
-            //                 drilldown: true,
-            //                 dataLabels: {
-            //                     backgroundColor: '',
-            //                     distance: 30,
-            //                     enabled: true,
-            //                     position: '',
-            //                     style: {
-            //                         fontFamily: '',
-            //                         fontSize: '',
-            //                         fontWeight: '',
-            //                         color: ''
-            //                     }
-            //                 }
-            //             }
-            //         ],
-            //         tooltip: {
-            //             valueSuffix: ' km/h'
-            //         },
-            //         dial: {
-            //             radius: '80%',
-            //             backgroundColor: 'gray',
-            //             baseWidth: 12,
-            //             baseLength: '0%',
-            //             rearLength: '0%'
-            //         },
-            //         pivot: {
-            //             backgroundColor: 'gray',
-            //             radius: 6
-            //         }
-            //     }
-            // ]
 
             // TODO - Uncomment
             // this.widgetModel.settings.chartModel.setData(this.dataToShow, this.widgetModel)
             this.widgetModel.settings.chartModel.setData(mockedData, this.widgetModel)
+
+            // TODO
+            // this.widgetModel.settings.chartModel.model.series = [
+            //     {
+            //         name: 'Move',
+            //         data: [
+            //             {
+            //                 radius: '112%',
+            //                 innerRadius: '88%',
+            //                 y: 80
+            //             }
+            //         ]
+            //     },
+            //     {
+            //         name: 'Exercise',
+            //         data: [
+            //             {
+            //                 radius: '87%',
+            //                 innerRadius: '63%',
+            //                 y: 65
+            //             }
+            //         ]
+            //     },
+            //     {
+            //         name: 'Stand',
+            //         data: [
+            //             {
+            //                 radius: '62%',
+            //                 innerRadius: '38%',
+            //                 y: 50
+            //             }
+            //         ]
+            //     }
+            // ]
 
             this.widgetModel.settings.chartModel.updateSeriesAccessibilitySettings(this.widgetModel)
             this.widgetModel.settings.chartModel.updateSeriesLabelSettings(this.widgetModel)
