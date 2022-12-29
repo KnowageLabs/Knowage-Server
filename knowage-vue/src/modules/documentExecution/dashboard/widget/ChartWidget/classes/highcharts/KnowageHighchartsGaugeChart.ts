@@ -2,6 +2,7 @@ import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Da
 import { IHighchartsGaugeSerie, IHighchartsGaugeSerieData } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget'
 import { KnowageHighcharts } from './KnowageHihgcharts'
 import { createGaugeSerie } from './updater/KnowageHighchartsCommonUpdater'
+import Highcharts from 'highcharts'
 
 export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
     constructor() {
@@ -11,6 +12,9 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
     setGaugeData(data: any, widgetModel: IWidget, maxNumberOfSeries: number | undefined) {
         this.getSeriesFromWidgetModel(widgetModel, maxNumberOfSeries)
 
+        let startingRadius = 112
+        let startingInnerRadius = 88
+
         for (let i = 0; i < this.model.series.length; i++) {
             const serie = this.model.series[i]
             serie.data = []
@@ -19,6 +23,14 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
                     name: serie.name,
                     y: row[`column_${i + 1}`],
                 } as IHighchartsGaugeSerieData
+                if (maxNumberOfSeries === 4) {
+                    const colors = Highcharts.getOptions().colors
+                    serieElement.color = colors ? colors[i] : '',
+                        serieElement.radius = startingRadius + '%',
+                        serieElement.innerRadius = startingInnerRadius + '%',
+                        startingRadius -= 25
+                    startingInnerRadius -= 25
+                }
                 serie.data.push(serieElement)
             })
         }

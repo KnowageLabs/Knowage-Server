@@ -156,6 +156,6 @@ export class KnowageHighchartsActivityGaugeChart extends KnowageHighchartsGaugeC
     }
 
     setGaugeYAxis() {
-        this.model.yAxis = highchartsDefaultValues.getDefaultGaugeYAxis()
+        this.model.yAxis = highchartsDefaultValues.getDefaultActivityGaugeYAxis()
     }
 }

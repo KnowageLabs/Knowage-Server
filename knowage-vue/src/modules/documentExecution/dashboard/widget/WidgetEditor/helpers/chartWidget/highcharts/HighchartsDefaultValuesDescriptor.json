@@ -58,9 +58,14 @@
     },
     "defaultActivityGaugeYAxis": {
         "lineWidth": 0,
-        "max": 100,
-        "min": 0,
-        "tickPositions": []
+        "max": null,
+        "min": null,
+        "minorTickInterval": null,
+        "plotBands": [],
+        "tickColor": "",
+        "tickLength": 0,
+        "tickPosition": "",
+        "tickWidth": 0
     },
     "defaultAllSeriesAccessibilitySettings": [
         {

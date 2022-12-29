@@ -40,13 +40,6 @@ export interface IHighchartsSeriesPivotSettings {
     backgroundColor: string
 }
 
-export interface IHighchartsActivityGaugeYAxis {
-    lineWidth: 0,
-    max: 100,
-    min: 0,
-    tickPositions: []
-}
-
 export interface IHighchartsGaugeSerie {
     name: string,
     data: IHighchartsGaugeSerieData[],
@@ -58,7 +51,7 @@ export interface IHighchartsGaugeSerie {
 export interface IHighchartsGaugeSerieData {
     name: string,
     y: number,
-    color?: string,
+    color?: any,
     radius?: string,
     innerRadius?: string,
     dataLabels?: IHighchartsChartDataLabels,

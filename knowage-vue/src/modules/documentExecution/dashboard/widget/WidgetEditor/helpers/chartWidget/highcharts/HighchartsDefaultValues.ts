@@ -1,6 +1,6 @@
 import { IWidgetSelection } from "@/modules/documentExecution/dashboard/Dashboard"
 import { IHighchartsAccessibilitySettings, IHighchartsChartPlotOptions, IHighchartsLegend, IHighchartsNoDataConfiguration, IHighchartsOptions3D, IHighchartsSerieAccessibility, IHighchartsSerieLabelSettings, IHighchartsSeriesLabelsSetting, IHighchartsTooltip, ISerieAccessibilitySetting } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
-import { IHighchartsBands, IHighchartsGaugeYAxis, IHighchartsModelPane, IHighchartsSeriesDialSettings, IHighchartsSeriesPivotSettings, IHighchartsActivityGaugeYAxis } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget"
+import { IHighchartsBands, IHighchartsGaugeYAxis, IHighchartsModelPane, IHighchartsSeriesDialSettings, IHighchartsSeriesPivotSettings } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget"
 import deepcopy from "deepcopy"
 import descriptor from './HighchartsDefaultValuesDescriptor.json'
 
@@ -86,7 +86,7 @@ export const getDefaultGaugeYAxis = () => {
 }
 
 export const getDefaultActivityGaugeYAxis = () => {
-    return deepcopy(descriptor.defaultActivityGaugeYAxis) as IHighchartsActivityGaugeYAxis
+    return deepcopy(descriptor.defaultActivityGaugeYAxis) as IHighchartsGaugeYAxis
 }
 
 export const getDefaultBandsSetting = () => {
