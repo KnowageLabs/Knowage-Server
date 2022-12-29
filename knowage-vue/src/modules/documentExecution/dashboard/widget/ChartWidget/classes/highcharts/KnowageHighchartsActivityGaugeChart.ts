@@ -1,4 +1,4 @@
-import { KnowageHighcharts } from './KnowageHihgcharts'
+import { KnowageHighchartsGaugeChart } from './KnowageHighchartsGaugeChart'
 import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
 import { IHighchartsChartModel, IHighchartsChartSerieData, IHighchartsSeriesLabelsSetting } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import { updateActivityGaugeChartModel } from './updater/KnowageHighchartsActivityGaugeChartUpdater'
@@ -8,7 +8,7 @@ import Highcharts from 'highcharts'
 import deepcopy from 'deepcopy'
 import { IHighchartsGaugeSerie, IHighchartsGaugeSerieData } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget'
 
-export class KnowageHighchartsActivityGaugeChart extends KnowageHighcharts {
+export class KnowageHighchartsActivityGaugeChart extends KnowageHighchartsGaugeChart {
     constructor(model: any) {
         super()
         if (!this.model.plotOptions.solidgauge) this.setGaugePlotOptions()
@@ -28,52 +28,10 @@ export class KnowageHighchartsActivityGaugeChart extends KnowageHighcharts {
         this.model = model
     }
 
-    // TODO - Darko
     setData(data: any, widgetModel: IWidget) {
-        console.log(">>>>>>>>>>>> DATA: ", data)
-        console.log(">>>>>>>>>>>> widgetModel: ", widgetModel)
-        console.log(">>>>>>>>>>>> this.model.series: ", this.model.series)
-        if (this.model.series.length === 0) this.getSeriesFromWidgetModel(widgetModel)
-
-        let startingRadius = 112
-        let startingInnerRadius = 88
-
-        this.model.series.map((item, serieIndex) => {
-            this.range[serieIndex] = { serie: item.name }
-
-            item.data = []
-            data?.rows?.forEach((row: any, index: number) => {
-                console.log(">>>>>>>> ROW: ", row)
-                const highchartsOptions = Highcharts.getOptions()
-                console.log('>>>>>>>>>>>>>> OPTIONS: ', highchartsOptions)
-                const serieElement = {
-                    // color: highchartsOptions.colors ? highchartsOptions.colors[0] : '',
-                    radius: startingRadius + '%',
-                    innerRadius: startingInnerRadius + '%',
-                    name: row['column_1'],
-                    y: row[`column_${index}`]
-                } as IHighchartsGaugeSerieData
-
-                startingRadius -= 25
-                startingInnerRadius -= 25
-
-                this.range[serieIndex].min = this.range[serieIndex].min ? Math.min(this.range[serieIndex].min, row['column_2']) : row['column_2']
-                this.range[serieIndex].max = this.range[serieIndex].max ? Math.max(this.range[serieIndex].max, row['column_2']) : row['column_2']
-                item.data.push(serieElement)
-            })
-        })
-        return this.model.series
+        this.setGaugeData(data, widgetModel, 4)
     }
 
-    getSeriesFromWidgetModel(widgetModel: IWidget) {
-        this.model.series = []
-
-        widgetModel.columns.forEach((column: IWidgetColumn) => {
-            console.log(">>>>>>>> COLUMN: ", column)
-            if (column.fieldType === 'MEASURE') this.model.series.push(createSerie(column.columnName, column.aggregation))
-        })
-
-    }
 
     // TODO - Darko/Bojan move to superclass???
     updateSeriesLabelSettings(widgetModel: IWidget) {

@@ -47,7 +47,7 @@ export const formatHighchartsWidget = (widget: IWidget) => {
             widget.settings.chartModel = new KnowageHighchartsPieChart(chartModel)
             break
         case 'gauge':
-            widget.settings.chartModel = new KnowageHighchartsGaugeChart(chartModel)
+            widget.settings.chartModel = new KnowageHighchartsGaugeSeriesChart(chartModel)
             break
         case 'activitygauge':
             widget.settings.chartModel = new KnowageHighchartsActivityGaugeChart(chartModel)
@@ -64,7 +64,7 @@ export const createNewHighchartsModel = (chartType: string) => {
         case 'pie':
             return new KnowageHighchartsPieChart(null)
         case 'gauge':
-            return new KnowageHighchartsGaugeChart(null)
+            return new KnowageHighchartsGaugeSeriesChart(null)
         case 'activitygauge':
             return new KnowageHighchartsActivityGaugeChart(null)
         case 'solidgauge':

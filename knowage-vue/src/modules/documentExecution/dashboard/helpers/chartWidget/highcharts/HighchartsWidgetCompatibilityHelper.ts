@@ -6,11 +6,11 @@ import { getFiltersForColumns } from '../../DashboardBackwardCompatibilityHelper
 import { hexToRgba } from '../../FormattingHelpers'
 import { getFormattedWidgetColumns, getFormattedColorSettings } from '../CommonChartCompatibilityHelper'
 import { getFormattedStyle } from './HighchartsWidgetStyleHelper'
-import { KnowageHighchartsGaugeChart } from '../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsGaugeChart'
+import { KnowageHighchartsGaugeSeriesChart } from '../../../widget/ChartWidget/classes/highcharts/KnowaageHighchartsGaugeSeriesChart'
+import { KnowageHighchartsSolidGaugeChart } from '../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsSolidGaugeChart'
 import { KnowageHighchartsActivityGaugeChart } from '../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsActivityGaugeChart'
 import * as widgetCommonDefaultValues from '../../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import * as highchartsDefaultValues from '../../../widget/WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
-import { KnowageHighchartsSolidGaugeChart } from '../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsSolidGaugeChart'
 
 const columnNameIdMap = {}
 
@@ -82,7 +82,7 @@ const createGaugeChartInstance = (widgetContentChartTemplate: any) => {
             return new KnowageHighchartsSolidGaugeChart(widgetContentChartTemplate)
         case 'simple':
         default:
-            return new KnowageHighchartsGaugeChart(widgetContentChartTemplate)
+            return new KnowageHighchartsGaugeSeriesChart(widgetContentChartTemplate)
 
     }
 }
