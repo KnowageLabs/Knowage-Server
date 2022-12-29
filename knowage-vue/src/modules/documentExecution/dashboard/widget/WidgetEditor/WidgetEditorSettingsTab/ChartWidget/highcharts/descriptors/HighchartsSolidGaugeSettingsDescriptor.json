@@ -1,0 +1,179 @@
+{
+    "settings": {
+        "Accessibility": [
+            {
+                "title": "dashboard.widgetEditor.accessibility.title",
+                "type": "AccessibilitySettings"
+            },
+            {
+                "title": "dashboard.widgetEditor.seriesAccessibility.title",
+                "type": "SeriesAccessibilitySettings"
+            }
+        ],
+        "Chart": [
+            {
+                "title": "dashboard.widgetEditor.colors.title",
+                "type": "Colors"
+            }
+        ],
+        "Configuration": [
+            {
+                "title": "dashboard.widgetEditor.noData.title",
+                "type": "NoDataMessageConfiguration"
+            },
+            {
+                "title": "dashboard.widgetEditor.export.title",
+                "type": "Export"
+            }
+        ],
+        "Interactions": [
+            {
+                "title": "dashboard.widgetEditor.interactions.selection",
+                "type": "Selection"
+            },
+            {
+                "title": "dashboard.widgetEditor.interactions.crossNavigation",
+                "type": "CrossNavigation"
+            },
+            {
+                "title": "dashboard.widgetEditor.interactions.link",
+                "type": "Link"
+            },
+            {
+                "title": "dashboard.widgetEditor.interactions.preview",
+                "type": "Preview"
+            }
+        ],
+        "Labels": [
+            {
+                "title": "common.labels",
+                "type": "Labels"
+            }
+        ],
+        "Legend": [
+            {
+                "title": "dashboard.widgetEditor.legend.title",
+                "type": "Legend"
+            }
+        ],
+        "Responsive": [
+            {
+                "title": "dashboard.widgetEditor.responsive.title",
+                "type": "Responsive"
+            }
+        ],
+        "Series": [
+            {
+                "title": "dashboard.widgetEditor.series.title",
+                "type": "SriesLabel"
+            }
+        ],
+        "Settings": [
+            {
+                "title": "common.general",
+                "type": "GaugeSettings"
+            },
+            {
+                "title": "dashboard.widgetEditor.series.scale",
+                "type": "ScaleSettings"
+            },
+            {
+                "title": "dashboard.widgetEditor.highcharts.tick.title",
+                "type": "TickSettings"
+            },
+            {
+                "title": "dashboard.widgetEditor.highcharts.stops.title",
+                "type": "StopsSettomgs"
+            },
+            {
+                "title": "dashboard.widgetEditor.highcharts.bands.title",
+                "type": "BandsSettings"
+            }
+        ],
+        "Style": [
+            {
+                "title": "dashboard.widgetEditor.titles.title",
+                "type": "Title"
+            },
+            {
+                "title": "dashboard.widgetEditor.background",
+                "type": "BackgroundColorStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.borders.title",
+                "type": "BordersStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.padding.title",
+                "type": "PaddingStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.shadows.title",
+                "type": "ShadowsStyle"
+            }
+        ],
+        "Tooltip": [
+            {
+                "title": "dashboard.widgetEditor.tooltip.title",
+                "type": "Tooltip"
+            }
+        ]
+    },
+    "settingsListOptions": [
+        {
+            "icon": "fa fa-cogs",
+            "label": "dashboard.widgetEditor.configuration",
+            "value": "Configuration"
+        },
+        {
+            "icon": "fa fa-cogs",
+            "label": "common.settings",
+            "value": "Settings"
+        },
+        {
+            "icon": "pi pi-table",
+            "label": "dashboard.widgetEditor.accessibility.title",
+            "value": "Accessibility"
+        },
+        {
+            "icon": "fa fa-paint-brush",
+            "label": "common.style",
+            "value": "Style"
+        },
+        {
+            "icon": "pi pi-table",
+            "label": "dashboard.widgetEditor.legend.title",
+            "value": "Legend"
+        },
+        {
+            "icon": "pi pi-table",
+            "label": "common.labels",
+            "value": "Labels"
+        },
+        {
+            "icon": "pi pi-table",
+            "label": "dashboard.widgetEditor.tooltip.title",
+            "value": "Tooltip"
+        },
+        {
+            "icon": "pi pi-table",
+            "label": "dashboard.widgetEditor.series.title",
+            "value": "Series"
+        },
+        {
+            "icon": "pi pi-table",
+            "label": "common.chart",
+            "value": "Chart"
+        },
+        {
+            "icon": "fa fa-hand-pointer",
+            "label": "dashboard.widgetEditor.interactions.title",
+            "value": "Interactions"
+        },
+        {
+            "icon": "pi pi-tablet",
+            "label": "dashboard.widgetEditor.responsive.title",
+            "value": "Responsive"
+        }
+    ]
+}

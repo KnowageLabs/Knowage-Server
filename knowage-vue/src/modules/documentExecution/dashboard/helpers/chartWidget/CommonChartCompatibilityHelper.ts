@@ -39,7 +39,6 @@ const getMaximumNumberOfSeries = (chartLibrary: 'chartJS' | 'highcharts', chartT
     if (chartLibrary === 'highcharts' && chartType === 'PIE') return 1
     if (chartType === 'GAUGE') {
         const chartSubtype = widget.content.chartTemplate.CHART.subtype
-        console.log("--------------- chart subtype", chartSubtype)
         switch (chartSubtype) {
             case 'activity':
                 return 4

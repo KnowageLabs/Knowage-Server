@@ -85,7 +85,7 @@ export interface IHighchartsChartModel {
     plotOptions: {
         pie?: IHighchartsChartPlotOptions,
         gauge?: IHighchartsChartPlotOptions,
-        soldgauge?: IHighchartsChartPlotOptions
+        solidgauge?: IHighchartsChartPlotOptions
         series?: { events: any }
     },
     legend: IHighchartsLegend,
@@ -160,6 +160,7 @@ export interface IHighchartsChartDataLabels {
 export interface IHighchartsChartSerie {
     name: string,
     data: IHighchartsChartSerieData[]
+    accessibility?: IHighchartsSerieAccessibility,
     colorByPoint?: boolean,
     groupingFunction?: string,
 }

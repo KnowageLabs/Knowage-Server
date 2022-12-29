@@ -155,7 +155,7 @@
             "enabled": false
         }
     },
-    "defaultSoludGaugeChartPlotOptions": {
+    "defaultActivityGaugeChartPlotOptions": {
         "allowPointSelect": false,
         "colors": [],
         "cursor": "",

@@ -97,6 +97,7 @@ import chartJSDescriptor from './ChartWidget/chartJS/ChartJSWidgetSettingsDescri
 import HighchartsPieSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsPieSettingsDescriptor.json'
 import HighchartsGaugeSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsGaugeSettingsDescriptor.json'
 import HighchartsActivityGaugeSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsActivityGaugeSettingsDescriptor.json'
+import HighchartsSolidGaugeSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsSolidGaugeSettingsDescriptor.json'
 
 export default defineComponent({
     name: 'widget-editor-settings-tab',
@@ -157,7 +158,6 @@ export default defineComponent({
             }
         },
         getHighchartsDescriptor() {
-            console.log('---------------------- CHART TYPE: ', this.chartType)
             switch (this.chartType) {
                 case 'pie':
                     return HighchartsPieSettingsDescriptor
@@ -165,6 +165,8 @@ export default defineComponent({
                     return HighchartsGaugeSettingsDescriptor
                 case 'activitygauge':
                     return HighchartsActivityGaugeSettingsDescriptor
+                case 'solidgauge':
+                    return HighchartsSolidGaugeSettingsDescriptor
             }
         },
         onItemClicked(item: any) {

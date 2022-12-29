@@ -10,6 +10,7 @@ import { KnowageHighchartsGaugeChart } from '../../../widget/ChartWidget/classes
 import { KnowageHighchartsActivityGaugeChart } from '../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsActivityGaugeChart'
 import * as widgetCommonDefaultValues from '../../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import * as highchartsDefaultValues from '../../../widget/WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
+import { KnowageHighchartsSolidGaugeChart } from '../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsSolidGaugeChart'
 
 const columnNameIdMap = {}
 
@@ -74,18 +75,16 @@ const createChartModel = (widget: any) => {
 }
 
 const createGaugeChartInstance = (widgetContentChartTemplate: any) => {
-
     switch (widgetContentChartTemplate.CHART.subtype) {
         case 'activity':
             return new KnowageHighchartsActivityGaugeChart(widgetContentChartTemplate)
         case 'solid':
-            return null
+            return new KnowageHighchartsSolidGaugeChart(widgetContentChartTemplate)
         case 'simple':
         default:
             return new KnowageHighchartsGaugeChart(widgetContentChartTemplate)
 
     }
-
 }
 
 // TODO - Refactor

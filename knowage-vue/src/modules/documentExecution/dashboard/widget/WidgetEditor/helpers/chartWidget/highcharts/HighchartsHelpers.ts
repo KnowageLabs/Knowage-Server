@@ -6,6 +6,7 @@ import * as widgetCommonDefaultValues from '../../common/WidgetCommonDefaultValu
 import * as  highchartsDefaultValues from "../highcharts/HighchartsDefaultValues"
 import descriptor from '../../../WidgetEditorSettingsTab/ChartWidget/common/ChartColorSettingsDescriptor.json'
 import { KnowageHighchartsActivityGaugeChart } from "../../../../ChartWidget/classes/highcharts/KnowageHighchartsActivityGaugeChart"
+import { KnowageHighchartsSolidGaugeChart } from "../../../../ChartWidget/classes/highcharts/KnowageHighchartsSolidGaugeChart"
 
 export const createNewHighchartsSettings = () => {
     const settings = {
@@ -51,13 +52,12 @@ export const formatHighchartsWidget = (widget: IWidget) => {
         case 'activitygauge':
             widget.settings.chartModel = new KnowageHighchartsActivityGaugeChart(chartModel)
             break
+        case 'solidgauge':
+            widget.settings.chartModel = new KnowageHighchartsSolidGaugeChart(chartModel)
+            break
     }
 
 }
-
-
-
-
 
 export const createNewHighchartsModel = (chartType: string) => {
     switch (chartType) {
@@ -65,8 +65,10 @@ export const createNewHighchartsModel = (chartType: string) => {
             return new KnowageHighchartsPieChart(null)
         case 'gauge':
             return new KnowageHighchartsGaugeChart(null)
-        case 'solidgauge':
+        case 'activitygauge':
             return new KnowageHighchartsActivityGaugeChart(null)
+        case 'solidgauge':
+            return new KnowageHighchartsSolidGaugeChart(null)
         default:
             return null
     }

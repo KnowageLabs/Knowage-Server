@@ -82,41 +82,19 @@ export default defineComponent({
 
             // TODO - Uncomment
             // this.widgetModel.settings.chartModel.setData(this.dataToShow, this.widgetModel)
-            this.widgetModel.settings.chartModel.setData(mockedData, this.widgetModel)
+            //this.widgetModel.settings.chartModel.setData(mockedData, this.widgetModel)
 
             // TODO
-            // this.widgetModel.settings.chartModel.model.series = [
-            //     {
-            //         name: 'Move',
-            //         data: [
-            //             {
-            //                 radius: '112%',
-            //                 innerRadius: '88%',
-            //                 y: 80
-            //             }
-            //         ]
-            //     },
-            //     {
-            //         name: 'Exercise',
-            //         data: [
-            //             {
-            //                 radius: '87%',
-            //                 innerRadius: '63%',
-            //                 y: 65
-            //             }
-            //         ]
-            //     },
-            //     {
-            //         name: 'Stand',
-            //         data: [
-            //             {
-            //                 radius: '62%',
-            //                 innerRadius: '38%',
-            //                 y: 50
-            //             }
-            //         ]
-            //     }
-            // ]
+            this.widgetModel.settings.chartModel.model.series = [
+                {
+                    name: 'Speed',
+                    data: [
+                        {
+                            y: 80
+                        }
+                    ]
+                }
+            ]
 
             this.widgetModel.settings.chartModel.updateSeriesAccessibilitySettings(this.widgetModel)
             this.widgetModel.settings.chartModel.updateSeriesLabelSettings(this.widgetModel)

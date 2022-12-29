@@ -11,7 +11,7 @@ import deepcopy from 'deepcopy'
 export class KnowageHighchartsSolidGaugeChart extends KnowageHighcharts {
     constructor(model: any) {
         super()
-        if (!this.model.plotOptions.gauge) this.setGaugePlotOptions()
+        if (!this.model.plotOptions.solidgauge) this.setGaugePlotOptions()
         if (!this.model.pane) this.setGaugePaneSettings()
         if (!this.model.yAxis) this.setGaugeYAxis()
         if (model && model.CHART) this.updateModel(deepcopy(model))
@@ -171,11 +171,11 @@ export class KnowageHighchartsSolidGaugeChart extends KnowageHighcharts {
     }
 
     setGaugePlotOptions() {
-        this.model.plotOptions.soldgauge = highchartsDefaultValues.getDefaultSoludGaugeChartPlotOptions()
+        this.model.plotOptions.solidgauge = highchartsDefaultValues.getDafaultGaugeChartPlotOptions()
     }
 
     setGaugePaneSettings() {
-        this.model.pane = highchartsDefaultValues.getdDefaultActivityGaugePaneOptions()
+        this.model.pane = highchartsDefaultValues.getDafaultPaneOptions()
     }
 
     setGaugeYAxis() {

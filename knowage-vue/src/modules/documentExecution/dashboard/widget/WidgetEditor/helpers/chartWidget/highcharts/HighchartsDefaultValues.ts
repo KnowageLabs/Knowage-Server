@@ -65,15 +65,15 @@ export const getDafaultGaugeChartPlotOptions = () => {
     return deepcopy(descriptor.defaultGaugeChartPlotOptions) as IHighchartsChartPlotOptions
 }
 
-export const getDefaultSoludGaugeChartPlotOptions = () => {
-    return deepcopy(descriptor.defaultSoludGaugeChartPlotOptions) as IHighchartsChartPlotOptions
+export const getdefaultActivityGaugeChartPlotOptions = () => {
+    return deepcopy(descriptor.defaultActivityGaugeChartPlotOptions) as IHighchartsChartPlotOptions
 }
 
 export const getDafaultPaneOptions = () => {
     return deepcopy(descriptor.dafaultPaneOptions) as IHighchartsModelPane
 }
 
-export const getdDefaultActivityGaugePaneOptions = () => {
+export const getDefaultActivityGaugePaneOptions = () => {
     return deepcopy(descriptor.defaultActivityGaugePaneOptions) as IHighchartsModelPane
 }
 

@@ -9,6 +9,7 @@ export const addHighchartsColumnToTable = (tempColumn: IWidgetColumn, rows: IWid
         case 'pie':
         case 'gauge':
         case 'activitygauge':
+        case 'solidgauge':
             addHighchartsColumnToTableRows(tempColumn, rows, chartType, mode, widgetModel)
     }
 }
