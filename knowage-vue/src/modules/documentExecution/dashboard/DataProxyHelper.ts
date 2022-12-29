@@ -91,13 +91,13 @@ const formatWidgetModelForGet = (propWidget: IWidget, dataset: IDashboardDataset
     return dataToSend
 }
 
-const addSelectionsToData = (dataToSend: any, propWidget: IWidget, datasetLabel: string, initialCall: boolean, selections: ISelection[], associativeResponseSelections: any) => {
+const addSelectionsToData = (dataToSend: any, propWidget: IWidget, datasetLabel: string | undefined, initialCall: boolean, selections: ISelection[], associativeResponseSelections: any) => {
     if (associativeResponseSelections) {
         dataToSend.selections = associativeResponseSelections
     } else if (!initialCall) {
         dataToSend.selections = getFormattedSelections(selections)
     }
-    addFiltersToPostData(propWidget, dataToSend.selections, datasetLabel)
+    if (datasetLabel) addFiltersToPostData(propWidget, dataToSend.selections, datasetLabel)
 }
 
 const addFiltersToPostData = (propWidget: IWidget, selectionsToSend: any, datasetLabel: string) => {
@@ -161,7 +161,7 @@ const getFormattedSelections = (selections: ISelection[]) => {
     return formattedSelections
 }
 
-const showGetDataError = (error: any, datasetLabel: string) => {
+const showGetDataError = (error: any, datasetLabel: string | undefined) => {
     let message = error.message
     if (error.message === '100') {
         message = t('dashboard.getDataError', { datasetLabel: datasetLabel })
