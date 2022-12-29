@@ -175,7 +175,7 @@ export class KnowageHighchartsSolidGaugeChart extends KnowageHighcharts {
     }
 
     setGaugePaneSettings() {
-        this.model.pane = highchartsDefaultValues.getDafaultPaneOptions()
+        this.model.pane = highchartsDefaultValues.getDafaultSolidGaugePaneOptions()
     }
 
     setGaugeYAxis() {
