@@ -3,7 +3,13 @@ import { IHighchartsChartDataLabels, IHighchartsSerieAccessibility } from "./Das
 export interface IHighchartsModelPane {
     startAngle: number,
     endAngle: number,
-    center?: []
+    center?: [],
+    background?: {
+        backgroundColor: string,
+        innerRadius: string,
+        outerRadius: string,
+        shape: string
+    }
 }
 
 export interface IHighchartsGaugeYAxis {

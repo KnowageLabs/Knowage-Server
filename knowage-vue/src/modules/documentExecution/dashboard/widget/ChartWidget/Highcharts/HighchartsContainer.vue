@@ -90,7 +90,7 @@ export default defineComponent({
                     name: 'Speed',
                     data: [
                         {
-                            y: 80
+                            y: 30
                         }
                     ]
                 }
@@ -110,6 +110,155 @@ export default defineComponent({
 
             console.log('>>>>>>> CHART TO RENDER: ', this.getModelForRender())
             this.highchartsInstance = Highcharts.chart(this.chartID, this.getModelForRender() as any)
+            // TODO
+            this.highchartsInstance = Highcharts.chart(this.chartID, {
+                title: '',
+                lang: {
+                    noData: ''
+                },
+                chart: {
+                    options3d: {
+                        alpha: 0,
+                        beta: 0,
+                        enabled: false,
+                        viewDistance: 25
+                    },
+                    type: 'solidgauge'
+                },
+                noData: {
+                    position: {
+                        align: '',
+                        verticalAlign: 'middle'
+                    },
+                    style: {
+                        fontFamily: '',
+                        fontSize: '',
+                        fontWeight: '',
+                        color: '',
+                        backgroundColor: ''
+                    }
+                },
+                accessibility: {
+                    description: '',
+                    enabled: false,
+                    keyboardNavigation: {
+                        enabled: false,
+                        order: []
+                    }
+                },
+                series: [
+                    {
+                        name: 'Speed',
+                        data: [
+                            {
+                                y: 30,
+                                dataLabels: {
+                                    absolute: false,
+                                    backgroundColor: 'rgba(194,194,194, 1)',
+                                    enabled: false,
+                                    percentage: false,
+                                    precision: 2,
+                                    prefix: '',
+                                    scale: 'empty',
+                                    style: {
+                                        color: '',
+                                        fontFamily: '',
+                                        fontSize: '',
+                                        fontWeight: ''
+                                    },
+                                    suffix: '',
+                                    position: ''
+                                }
+                            }
+                        ],
+                        accessibility: {
+                            enabled: false,
+                            description: '',
+                            exposeAsGroupOnly: false,
+                            keyboardNavigation: {
+                                enabled: false
+                            }
+                        }
+                    }
+                ],
+                settings: {
+                    drilldown: {},
+                    categories: []
+                },
+                plotOptions: {
+                    series: {
+                        events: {}
+                    },
+                    solidgauge: {
+                        dataLabels: {
+                            backgroundColor: 'rgba(255, 255, 255, 1)',
+                            enabled: false,
+                            position: '',
+                            style: {
+                                color: '',
+                                fontFamily: '',
+                                fontSize: '14px',
+                                fontWeight: ''
+                            },
+                            formatterError: ''
+                        },
+                        showInLegend: true,
+                        colors: ['rgba(4,45,87,1)', 'rgba(7,83,160,1)', 'rgba(10,121,233,1)', 'rgba(72,159,247,1)', 'rgba(145,197,250,1)', 'rgba(248,70,138,1)', 'rgba(121,133,155,1)', 'rgba(165,173,188,1)', 'rgba(209,213,221,1)', 'rgba(59,2,24,1)', 'rgba(133,5,54,1)', 'rgba(207,8,84,1)']
+                    }
+                },
+                legend: {
+                    align: 'center',
+                    backgroundColor: '',
+                    borderColor: '',
+                    borderWidth: 1,
+                    enabled: true,
+                    itemStyle: {
+                        color: '',
+                        fontFamily: '',
+                        fontSize: '',
+                        fontWeight: ''
+                    },
+                    layout: 'horizontal',
+                    verticalAlign: 'top',
+                    labelFormatterError: ''
+                },
+                tooltip: {
+                    enabled: true,
+                    style: {
+                        fontFamily: '',
+                        fontSize: '',
+                        fontWeight: '',
+                        color: ''
+                    },
+                    backgroundColor: 'rgba(214,214,214,1)',
+                    formatterError: '',
+                    pointFormatterError: ''
+                },
+                credits: {
+                    enabled: false
+                },
+                pane: {
+                    startAngle: -120,
+                    endAngle: 120,
+                    center: ['50%', '50%'],
+                    background: {
+                        backgroundColor: '#EEE',
+                        innerRadius: '60%',
+                        outerRadius: '100%',
+                        shape: 'arc'
+                    }
+                },
+                yAxis: {
+                    max: 40,
+                    min: 2,
+                    minorTickInterval: 'auto',
+                    plotBands: [],
+                    tickColor: '',
+                    tickLength: 0,
+                    tickPosition: '',
+                    tickWidth: 0
+                }
+            } as any)
             this.highchartsInstance.reflow()
         },
         updateLegendSettings() {

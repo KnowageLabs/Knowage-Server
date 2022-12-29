@@ -4,6 +4,17 @@
         "endAngle": 120,
         "startAngle": -120
     },
+    "dafaultSolidGaugePaneOptions": {
+        "background": {
+            "backgroundColor": "#EEE",
+            "innerRadius": "60%",
+            "outerRadius": "100%",
+            "shape": "arc"
+        },
+        "center": ["50%", "50%"],
+        "endAngle": 120,
+        "startAngle": -120
+    },
     "default3DOptions": {
         "alpha": 0,
         "beta": 0,
@@ -17,6 +28,28 @@
             "enabled": false,
             "order": []
         }
+    },
+    "defaultActivityGaugeChartPlotOptions": {
+        "allowPointSelect": false,
+        "colors": [],
+        "cursor": "",
+        "dataLabels": {
+            "backgroundColor": "",
+            "distance": 30,
+            "enabled": false,
+            "position": "",
+            "style": {
+                "color": "",
+                "fontFamily": "",
+                "fontSize": "14px",
+                "fontWeight": ""
+            }
+        },
+        "depth": 100,
+        "linecap": "round",
+        "rounded": true,
+        "showInLegend": true,
+        "stickyTracking": false
     },
     "defaultActivityGaugePaneOptions": {
         "center": ["50%", "50%"],
@@ -154,28 +187,6 @@
         "keyboardNavigation": {
             "enabled": false
         }
-    },
-    "defaultActivityGaugeChartPlotOptions": {
-        "allowPointSelect": false,
-        "colors": [],
-        "cursor": "",
-        "dataLabels": {
-            "backgroundColor": "",
-            "distance": 30,
-            "enabled": false,
-            "position": "",
-            "style": {
-                "color": "",
-                "fontFamily": "",
-                "fontSize": "14px",
-                "fontWeight": ""
-            }
-        },
-        "depth": 100,
-        "linecap": "round",
-        "rounded": true,
-        "showInLegend": true,
-        "stickyTracking": false
     },
     "defaultTooltipSettings": {
         "backgroundColor": "rgba(194,194,194, 1)",

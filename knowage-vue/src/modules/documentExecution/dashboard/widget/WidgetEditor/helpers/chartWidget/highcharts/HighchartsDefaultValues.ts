@@ -77,6 +77,10 @@ export const getDefaultActivityGaugePaneOptions = () => {
     return deepcopy(descriptor.defaultActivityGaugePaneOptions) as IHighchartsModelPane
 }
 
+export const getDafaultSolidGaugePaneOptions = () => {
+    return deepcopy(descriptor.dafaultSolidGaugePaneOptions) as IHighchartsModelPane
+}
+
 export const getDefaultGaugeYAxis = () => {
     return deepcopy(descriptor.defaultGaugeYAxis) as IHighchartsGaugeYAxis
 }
