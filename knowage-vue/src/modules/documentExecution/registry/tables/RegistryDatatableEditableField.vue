@@ -5,7 +5,7 @@
         :type="'text'"
         :step="getStep(column.columnInfo?.type)"
         v-model="row[column.field]"
-        @input="$emit('rowChanged', row)"
+        @blur="updateChangedRow"
     />
     <InputNumber
         class="kn-material-input p-inputtext-sm"
@@ -39,7 +39,7 @@
         :showTime="column.columnInfo?.type === 'timestamp'"
         :showSeconds="column.columnInfo?.type === 'timestamp'"
         :showButtonBar="true"
-        @date-select="$emit('rowChanged', row)"
+        @date-select="updateChangedRow"
         :dateFormat="column.columnInfo?.type === 'date' ? getCurrentLocaleDefaultDateFormat(column) : ''"
     />
 </template>
@@ -53,6 +53,7 @@ import Calendar from 'primevue/calendar'
 import Dropdown from 'primevue/dropdown'
 import InputNumber from 'primevue/inputnumber'
 import registryDatatableDescriptor from './RegistryDatatableDescriptor.json'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'registry-datatable-editable-field',
@@ -98,7 +99,7 @@ export default defineComponent({
     },
     methods: {
         loadRow() {
-            this.row = this.propRow
+            this.row = deepcopy(this.propRow)
             if (this.column && (this.row[this.column.field] || this.row[this.column.field] === 0 || this.row[this.column.field] === '')) {
                 if (this.column.columnInfo?.type === 'date' && typeof this.row[this.column.field] === 'string') {
                     this.row[this.column.field] = this.row[this.column.field] ? new Date(luxonFormatDate(this.row[this.column.field], 'yyyy-MM-dd', 'yyyy-MM-dd')) : null
@@ -110,7 +111,7 @@ export default defineComponent({
             }
         },
         formatNumberConfiguration() {
-                if (this.column?.columnInfo?.type === 'int') {
+            if (this.column?.columnInfo?.type === 'int') {
                 this.useGrouping = false
                 this.minFractionDigits = 0
                 this.maxFractionDigits = 0
@@ -139,8 +140,11 @@ export default defineComponent({
         getFormattedDate(date: any, format: any, incomingFormat?: string) {
             return formatDate(date, format, incomingFormat)
         },
-        onInputNumberChange() {
+        updateChangedRow() {
             setTimeout(() => this.$emit('rowChanged', this.row), 250)
+        },
+        onInputNumberChange() {
+            this.updateChangedRow()
         },
         getOptions(column: any, row: any) {
             let options = this.columnOptions && this.columnOptions[column.field] ? this.columnOptions[column.field][row[column.dependences]] : []

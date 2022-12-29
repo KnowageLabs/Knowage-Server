@@ -45,7 +45,7 @@
                             :column="col"
                             :propRow="slotProps.data"
                             :comboColumnOptions="comboColumnOptions"
-                            @rowChanged="setRowEdited(slotProps.data)"
+                            @rowChanged="setRowEdited($event)"
                             @dropdownChanged="onDropdownChange"
                             @dropdownOpened="addColumnOptions"
                         ></RegistryDatatableEditableField>
@@ -348,8 +348,7 @@ export default defineComponent({
                 }
             }
 
-            row.edited = true
-            this.$emit('rowChanged', row)
+            this.setRowEdited(payload.row)
         },
         onWarningDialogClose(payload: any) {
             if (payload.stopWarnings) {
@@ -379,6 +378,8 @@ export default defineComponent({
         },
         setRowEdited(row: any) {
             row.edited = true
+            const index = this.rows.findIndex((tempRow: any) => tempRow.id === row.id)
+            if (index !== -1) this.rows[index] = { ...row }
             this.$emit('rowChanged', row)
         },
         onCellEditComplete(event: any) {
