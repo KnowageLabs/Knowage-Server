@@ -45,15 +45,13 @@ export default defineComponent({
             this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.model : null
         },
         modelChanged() {
-            emitter.emit('refreshChart', this.widgetModel.id)
+            setTimeout(() => emitter.emit('refreshChart', this.widgetModel.id), 250)
         },
         onInputChanged(type: 'min' | 'max') {
-            setTimeout(() => {
-                if (!this.model) return
-                type === 'min' ? (this.model.yAxis.min = null) : (this.model.yAxis.max = null)
-                this.modelChanged()
-                console.log('DEEEEEEEEEEP COPY: ', deepcopy(this.model))
-            }, 500)
+            if (!this.model) return
+            type === 'min' ? (this.model.yAxis.min = null) : (this.model.yAxis.max = null)
+            this.modelChanged()
+            console.log('DEEEEEEEEEEP COPY: ', deepcopy(this.model))
         }
     }
 })
