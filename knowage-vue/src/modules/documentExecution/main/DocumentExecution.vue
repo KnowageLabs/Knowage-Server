@@ -23,7 +23,6 @@
 
         <div ref="document-execution-view" id="document-execution-view" class="p-d-flex p-flex-row myDivToPrint">
             <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
-
             <template v-if="filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible">
                 <Registry v-if="mode === 'registry'" :id="urlData?.sbiExecutionId" :reloadTrigger="reloadTrigger"></Registry>
                 <Dossier v-else-if="mode === 'dossier'" :id="document.id" :reloadTrigger="reloadTrigger" :filterData="filtersData"></Dossier>
@@ -44,7 +43,7 @@
                 v-for="(item, index) in breadcrumbs"
                 :key="index"
                 ref="documentFrame"
-                :name="'documentFrame' + index"
+                :name="'documentFrame' + item.iframeKey"
                 v-show="mode === 'iframe' && filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible && (item.label === document.name || (crossNavigationContainerData && index === breadcrumbs.length - 1))"
                 class="document-execution-iframe"
             ></iframe>
@@ -103,6 +102,7 @@ import DocumentExecutionSelectCrossNavigationDialog from './dialogs/documentExec
 import DocumentExecutionCNContainerDialog from './dialogs/documentExecutionCNContainerDialog/DocumentExecutionCNContainerDialog.vue'
 import { getCorrectRolesForExecution } from '../../../helpers/commons/roleHelper'
 
+const crypto = require('crypto')
 const deepcopy = require('deepcopy')
 // @ts-ignore
 // eslint-disable-next-line
@@ -611,6 +611,7 @@ export default defineComponent({
                 this.breadcrumbs[index].document = this.document
             } else {
                 this.breadcrumbs.push({
+                    iframeKey: crypto.randomBytes(16).toString('hex'),
                     label: this.document.name,
                     document: this.document
                 })
@@ -798,6 +799,7 @@ export default defineComponent({
         },
         async sendForm(documentLabel: string | null = null, crossNavigationPopupMode: boolean = false) {
             let tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name) as any
+            const iframeKey = tempIndex === -1 ? crypto.randomBytes(16).toString('hex') : this.breadcrumbs[tempIndex].iframeKey
 
             const documentUrl = this.urlData?.url + '&timereloadurl=' + new Date().getTime()
             const postObject = {
@@ -822,7 +824,7 @@ export default defineComponent({
             postForm.action = process.env.VUE_APP_HOST_URL + postObject.url
             postForm.method = 'post'
             const iframeName = crossNavigationPopupMode ? 'documentFramePopup' : 'documentFrame'
-            postForm.target = tempIndex !== -1 ? iframeName + tempIndex : documentLabel
+            postForm.target = tempIndex !== -1 ? iframeName + iframeKey : documentLabel
             postForm.acceptCharset = 'UTF-8'
             document.body.appendChild(postForm)
 
@@ -1186,6 +1188,7 @@ export default defineComponent({
                     this.breadcrumbs[index].document = this.document
                 } else {
                     this.breadcrumbs.push({
+                        iframeKey: crypto.randomBytes(16).toString('hex'),
                         label: this.document.name,
                         document: this.document,
                         crossBreadcrumb: this.getCrossBeadcrumb(crossNavigationDocument, angularData)
@@ -1367,6 +1370,7 @@ export default defineComponent({
                 this.breadcrumbs[index].document = this.document
             } else {
                 this.breadcrumbs.push({
+                    iframeKey: crypto.randomBytes(16).toString('hex'),
                     label: this.document.name,
                     document: this.document
                 })
