@@ -20,14 +20,17 @@ export interface IHighchartsGaugeYAxis {
     tickLength: number
     tickWidth: number,
     minorTickInterval: number | 'auto' | null,
-    plotBands: IHighchartsBands[]
+    plotBands: IHighchartsBands[],
+    stops?: [number, string][] | null
 }
+
 export interface IHighchartsBands {
     from: number,
     to: number,
     color: string,
     thickness: number
 }
+
 
 export interface IHighchartsSeriesDialSettings {
     radius: string,

@@ -105,6 +105,7 @@
         "min": null,
         "minorTickInterval": null,
         "plotBands": [],
+        "stops": null,
         "tickColor": "",
         "tickLength": 10,
         "tickPosition": "outside",

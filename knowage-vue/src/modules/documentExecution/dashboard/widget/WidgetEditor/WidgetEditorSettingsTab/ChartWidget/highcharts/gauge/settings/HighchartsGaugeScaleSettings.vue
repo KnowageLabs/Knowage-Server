@@ -51,7 +51,6 @@ export default defineComponent({
             if (!this.model) return
             type === 'min' ? (this.model.yAxis.min = null) : (this.model.yAxis.max = null)
             this.modelChanged()
-            console.log('DEEEEEEEEEEP COPY: ', deepcopy(this.model))
         }
     }
 })

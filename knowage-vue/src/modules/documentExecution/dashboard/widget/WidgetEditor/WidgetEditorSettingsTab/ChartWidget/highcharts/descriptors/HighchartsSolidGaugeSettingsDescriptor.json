@@ -83,7 +83,7 @@
             },
             {
                 "title": "dashboard.widgetEditor.highcharts.stops.title",
-                "type": "StopsSettomgs"
+                "type": "StopsSettings"
             },
             {
                 "title": "dashboard.widgetEditor.highcharts.bands.title",

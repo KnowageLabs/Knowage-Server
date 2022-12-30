@@ -25,7 +25,7 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
                 } as IHighchartsGaugeSerieData
                 if (maxNumberOfSeries === 4) {
                     const colors = Highcharts.getOptions().colors
-                    serieElement.color = colors ? colors[i] : '',
+                    serieElement.color = colors ? colors[i] : '', // TODO
                         serieElement.radius = startingRadius + '%',
                         serieElement.innerRadius = startingInnerRadius + '%',
                         startingRadius -= 25

@@ -90,6 +90,7 @@ export interface IHighchartsChartModel {
     },
     legend: IHighchartsLegend,
     tooltip: IHighchartsTooltip,
+    colors: string[]
     credits: {
         enabled: boolean
     },
@@ -103,7 +104,6 @@ export interface IHighchartsChartPlotOptions {
     allowPointSelect: boolean,
     cursor: string,
     dataLabels: IHighchartsChartDataLabels,
-    colors: string[]
 }
 
 export interface IHighchartsOptions3D {
