@@ -436,6 +436,7 @@
                 }
             },
             "chartTypes": {
+                "activitygauge": "Activity Gauge",
                 "areaChart": "Area Chart",
                 "barChart": "Bar Chart",
                 "bubbleChart": "Bubble Chart",
@@ -448,6 +449,7 @@
                 "pieChart": "Pie Chart",
                 "radar": "Radar",
                 "scatterChart": "Scatter Chart",
+                "solidgauge": "Solid Gauge",
                 "stackedColumnsChart": "Stacked Columns Chart",
                 "treemap": "Treemap"
             },

@@ -83,6 +83,14 @@
             "value": "gauge"
         },
         {
+            "label": "dashboard.widgetEditor.chartTypes.activitygauge",
+            "value": "activitygauge"
+        },
+        {
+            "label": "dashboard.widgetEditor.chartTypes.solidgauge",
+            "value": "solidgauge"
+        },
+        {
             "label": "dashboard.widgetEditor.chartTypes.lineChart",
             "value": "line"
         },

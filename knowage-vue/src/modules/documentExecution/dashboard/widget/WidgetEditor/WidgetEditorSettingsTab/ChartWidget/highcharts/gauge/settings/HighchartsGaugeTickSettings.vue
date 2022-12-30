@@ -24,14 +24,14 @@
         <div class="p-col-12 p-md-6 p-lg-4 p-d-flex p-flex-column">
             <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.highcharts.tick.tickLength') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center p-fluid">
-                <InputNumber class="kn-material-input p-inputtext-sm" v-model="model.yAxis.tickLength" @blur="modelChanged" />
+                <InputNumber class="kn-material-input p-inputtext-sm" v-model="model.yAxis.tickLength" @blur="onInputNumberChanged" />
                 <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.tick.tickLengthHint')"></i>
             </div>
         </div>
         <div class="p-col-12 p-md-6 p-lg-4 p-d-flex p-flex-column">
             <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.highcharts.tick.tickWidth') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center p-fluid">
-                <InputNumber class="kn-material-input p-inputtext-sm" v-model="model.yAxis.tickWidth" @blur="modelChanged" />
+                <InputNumber class="kn-material-input p-inputtext-sm" v-model="model.yAxis.tickWidth" @blur="onInputNumberChanged" />
                 <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.tick.tickWidthHint')"></i>
             </div>
         </div>
@@ -80,6 +80,9 @@ export default defineComponent({
         },
         modelChanged() {
             emitter.emit('refreshChart', this.widgetModel.id)
+        },
+        onInputNumberChanged() {
+            setTimeout(() => this.modelChanged(), 250)
         },
         onSelectionColorChanged(event: string | null) {
             if (!event || !this.model) return
