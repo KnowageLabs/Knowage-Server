@@ -68,6 +68,7 @@ export class KnowageHighcharts {
             },
             legend: highchartsDefaultValues.getDefaultLegendSettings(),
             tooltip: highchartsDefaultValues.getDefaultTooltipSettings(),
+            colors: [],
             credits: { enabled: false }
         }
     }
@@ -143,7 +144,6 @@ export class KnowageHighcharts {
 
     updateChartColorSettings(widgetModel: IWidget) {
         if (!this.model.plotOptions || !this.model.chart.type) return
-        const chartType = this.model.chart.type === 'activitygauge' ? "solidgauge" : this.model.chart.type
-        this.model.plotOptions[chartType].colors = widgetModel.settings.chart.colors
+        this.model.colors = widgetModel.settings.chart.colors
     }
 }

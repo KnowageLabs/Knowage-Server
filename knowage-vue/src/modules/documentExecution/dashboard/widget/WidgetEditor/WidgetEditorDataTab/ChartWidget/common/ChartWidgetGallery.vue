@@ -6,7 +6,7 @@
 
         <MasonryWall class="p-mx-4 p-my-2 kn-flex kn-overflow dashboard-scrollbar" :items="filteredChartTypes" :column-width="200" :gap="6">
             <template #default="{ chart, index }">
-                <div class="gallery-card" :style="(galleryDescriptor.style.galleryCard as any)" @click="onChange(filteredChartTypes[index].value)">
+                <div class="gallery-card kn-cursor-pointer" :style="(galleryDescriptor.style.galleryCard as any)" @click="onChange(filteredChartTypes[index].value)">
                     <label class="kn-material-input-label p-ml-2 p-mt-1">{{ $t(`${filteredChartTypes[index].label}`) }}</label>
                     <img :src="getImageSource(filteredChartTypes[index].value)" />
                 </div>
@@ -52,8 +52,7 @@ export default defineComponent({
         onChange(selectedType: string) {
             this.selectedType = selectedType
             // TODO - remove hardcoded after implementing other chart types
-            console.log('>>>>>>>>>> CHART SELECTED TYPE: ', selectedType)
-            if (!['pie', 'gauge'].includes(this.selectedType)) this.selectedType = 'gauge'
+            if (!['pie', 'gauge', 'activitygauge', 'solidgauge'].includes(this.selectedType)) this.selectedType = 'pie'
             this.$emit('selectedChartTypeChanged', this.selectedType)
         },
         searchItems() {
@@ -75,6 +74,8 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 .gallery-card {
+    height: 200px;
+    width: 200px;
 }
 .gallery-card:hover {
     border-color: #43749e !important;

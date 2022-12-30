@@ -114,13 +114,13 @@ const formatColumnGroupsColumnIdToName = (columnGroupsConfiguration: ITableWidge
 
 const formatTableInteractions = (widgetInteractions: IWidgetInteractions) => {
     formatSelection(widgetInteractions.selection as IWidgetSelection)
-    formatCrossNavigation(widgetInteractions.crosssNavigation)
+    formatCrossNavigation(widgetInteractions.crossNavigation)
 }
 
 const formatSelection = (selection: IWidgetSelection) => {
     if (selection.modalColumn) selection.modalColumn = getColumnName(selection.modalColumn)
 }
 
-const formatCrossNavigation = (crosssNavigation: IWidgetCrossNavigation) => {
-    if (crosssNavigation.column) crosssNavigation.column = getColumnName(crosssNavigation.column)
+const formatCrossNavigation = (crossNavigation: IWidgetCrossNavigation) => {
+    if (crossNavigation.column) crossNavigation.column = getColumnName(crossNavigation.column)
 }

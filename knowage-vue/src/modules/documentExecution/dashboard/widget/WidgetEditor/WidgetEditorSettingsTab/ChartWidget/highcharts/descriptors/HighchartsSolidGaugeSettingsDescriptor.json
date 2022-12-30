@@ -28,10 +28,6 @@
         ],
         "Interactions": [
             {
-                "title": "dashboard.widgetEditor.interactions.selection",
-                "type": "Selection"
-            },
-            {
                 "title": "dashboard.widgetEditor.interactions.crossNavigation",
                 "type": "CrossNavigation"
             },
@@ -83,7 +79,7 @@
             },
             {
                 "title": "dashboard.widgetEditor.highcharts.stops.title",
-                "type": "StopsSettomgs"
+                "type": "StopsSettings"
             },
             {
                 "title": "dashboard.widgetEditor.highcharts.bands.title",

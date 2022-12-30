@@ -20,14 +20,17 @@ export interface IHighchartsGaugeYAxis {
     tickLength: number
     tickWidth: number,
     minorTickInterval: number | 'auto' | null,
-    plotBands: IHighchartsBands[]
+    plotBands: IHighchartsBands[],
+    stops?: [number, string][] | null
 }
+
 export interface IHighchartsBands {
     from: number,
     to: number,
     color: string,
     thickness: number
 }
+
 
 export interface IHighchartsSeriesDialSettings {
     radius: string,
@@ -40,16 +43,10 @@ export interface IHighchartsSeriesPivotSettings {
     backgroundColor: string
 }
 
-export interface IHighchartsActivityGaugeYAxis {
-    lineWidth: 0,
-    max: 100,
-    min: 0,
-    tickPositions: []
-}
-
 export interface IHighchartsGaugeSerie {
     name: string,
     data: IHighchartsGaugeSerieData[],
+    colorByPoint?: boolean,
     accessibility?: IHighchartsSerieAccessibility,
     dial?: IHighchartsSeriesDialSettings,
     pivot?: IHighchartsSeriesPivotSettings
@@ -58,7 +55,7 @@ export interface IHighchartsGaugeSerie {
 export interface IHighchartsGaugeSerieData {
     name: string,
     y: number,
-    color?: string,
+    color?: any,
     radius?: string,
     innerRadius?: string,
     dataLabels?: IHighchartsChartDataLabels,

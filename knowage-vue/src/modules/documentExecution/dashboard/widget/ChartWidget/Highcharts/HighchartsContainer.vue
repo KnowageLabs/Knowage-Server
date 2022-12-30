@@ -1,6 +1,5 @@
 <template>
     <div v-show="!error" :id="chartID" style="width: 100%; height: 100%; margin: 0 auto"></div>
-    <!-- <div style="height: 20px"> {{ dataToShow }}</div> -->
 </template>
 
 <script lang="ts">
@@ -20,7 +19,6 @@ import SeriesLabel from 'highcharts/modules/series-label'
 import cryptoRandomString from 'crypto-random-string'
 import store from '../../../Dashboard.store'
 import deepcopy from 'deepcopy'
-import mockedData from './mockedData.json' // TODO - Remove
 
 HighchartsMore(Highcharts)
 HighchartsSolidGauge(Highcharts)
@@ -37,7 +35,10 @@ export default defineComponent({
         dataToShow: { type: Object as any, required: true },
         dashboardId: { type: String, required: true },
         editorMode: { type: Boolean },
-        propActiveSelections: { type: Array as PropType<ISelection[]>, required: true }
+        propActiveSelections: {
+            type: Array as PropType<ISelection[]>,
+            required: true
+        }
     },
     data() {
         return {
@@ -80,21 +81,7 @@ export default defineComponent({
                 }
             })
 
-            // TODO - Uncomment
-            // this.widgetModel.settings.chartModel.setData(this.dataToShow, this.widgetModel)
-            //this.widgetModel.settings.chartModel.setData(mockedData, this.widgetModel)
-
-            // TODO
-            this.widgetModel.settings.chartModel.model.series = [
-                {
-                    name: 'Speed',
-                    data: [
-                        {
-                            y: 30
-                        }
-                    ]
-                }
-            ]
+            this.widgetModel.settings.chartModel.setData(this.dataToShow, this.widgetModel)
 
             this.widgetModel.settings.chartModel.updateSeriesAccessibilitySettings(this.widgetModel)
             this.widgetModel.settings.chartModel.updateSeriesLabelSettings(this.widgetModel)
@@ -108,157 +95,9 @@ export default defineComponent({
 
             this.setSeriesEvents()
 
-            console.log('>>>>>>> CHART TO RENDER: ', this.getModelForRender())
-            this.highchartsInstance = Highcharts.chart(this.chartID, this.getModelForRender() as any)
-            // TODO
-            this.highchartsInstance = Highcharts.chart(this.chartID, {
-                title: '',
-                lang: {
-                    noData: ''
-                },
-                chart: {
-                    options3d: {
-                        alpha: 0,
-                        beta: 0,
-                        enabled: false,
-                        viewDistance: 25
-                    },
-                    type: 'solidgauge'
-                },
-                noData: {
-                    position: {
-                        align: '',
-                        verticalAlign: 'middle'
-                    },
-                    style: {
-                        fontFamily: '',
-                        fontSize: '',
-                        fontWeight: '',
-                        color: '',
-                        backgroundColor: ''
-                    }
-                },
-                accessibility: {
-                    description: '',
-                    enabled: false,
-                    keyboardNavigation: {
-                        enabled: false,
-                        order: []
-                    }
-                },
-                series: [
-                    {
-                        name: 'Speed',
-                        data: [
-                            {
-                                y: 30,
-                                dataLabels: {
-                                    absolute: false,
-                                    backgroundColor: 'rgba(194,194,194, 1)',
-                                    enabled: false,
-                                    percentage: false,
-                                    precision: 2,
-                                    prefix: '',
-                                    scale: 'empty',
-                                    style: {
-                                        color: '',
-                                        fontFamily: '',
-                                        fontSize: '',
-                                        fontWeight: ''
-                                    },
-                                    suffix: '',
-                                    position: ''
-                                }
-                            }
-                        ],
-                        accessibility: {
-                            enabled: false,
-                            description: '',
-                            exposeAsGroupOnly: false,
-                            keyboardNavigation: {
-                                enabled: false
-                            }
-                        }
-                    }
-                ],
-                settings: {
-                    drilldown: {},
-                    categories: []
-                },
-                plotOptions: {
-                    series: {
-                        events: {}
-                    },
-                    solidgauge: {
-                        dataLabels: {
-                            backgroundColor: 'rgba(255, 255, 255, 1)',
-                            enabled: false,
-                            position: '',
-                            style: {
-                                color: '',
-                                fontFamily: '',
-                                fontSize: '14px',
-                                fontWeight: ''
-                            },
-                            formatterError: ''
-                        },
-                        showInLegend: true,
-                        colors: ['rgba(4,45,87,1)', 'rgba(7,83,160,1)', 'rgba(10,121,233,1)', 'rgba(72,159,247,1)', 'rgba(145,197,250,1)', 'rgba(248,70,138,1)', 'rgba(121,133,155,1)', 'rgba(165,173,188,1)', 'rgba(209,213,221,1)', 'rgba(59,2,24,1)', 'rgba(133,5,54,1)', 'rgba(207,8,84,1)']
-                    }
-                },
-                legend: {
-                    align: 'center',
-                    backgroundColor: '',
-                    borderColor: '',
-                    borderWidth: 1,
-                    enabled: true,
-                    itemStyle: {
-                        color: '',
-                        fontFamily: '',
-                        fontSize: '',
-                        fontWeight: ''
-                    },
-                    layout: 'horizontal',
-                    verticalAlign: 'top',
-                    labelFormatterError: ''
-                },
-                tooltip: {
-                    enabled: true,
-                    style: {
-                        fontFamily: '',
-                        fontSize: '',
-                        fontWeight: '',
-                        color: ''
-                    },
-                    backgroundColor: 'rgba(214,214,214,1)',
-                    formatterError: '',
-                    pointFormatterError: ''
-                },
-                credits: {
-                    enabled: false
-                },
-                pane: {
-                    startAngle: -120,
-                    endAngle: 120,
-                    center: ['50%', '50%'],
-                    background: {
-                        backgroundColor: '#EEE',
-                        innerRadius: '60%',
-                        outerRadius: '100%',
-                        shape: 'arc'
-                    }
-                },
-                yAxis: {
-                    max: 40,
-                    min: 2,
-                    minorTickInterval: 'auto',
-                    plotBands: [],
-                    tickColor: '',
-                    tickLength: 0,
-                    tickPosition: '',
-                    tickWidth: 0
-                }
-            } as any)
+            const modelToRender = this.getModelForRender()
+            console.log('>>>>>>> CHART TO RENDER: ', modelToRender)
+            this.highchartsInstance = Highcharts.chart(this.chartID, modelToRender as any)
             this.highchartsInstance.reflow()
         },
         updateLegendSettings() {
@@ -267,8 +106,6 @@ export default defineComponent({
             return this.widgetModel.settings.chartModel.updateFormatterSettings(this.chartModel.legend, 'labelFormat', 'labelFormatter', 'labelFormatterText', 'labelFormatterError')
         },
         updateDataLabels() {
-            console.log('>>>>>>> CHART MODEL PLOT OPTIONS: ', this.chartModel.plotOptions)
-            console.log('>>>>>>> this.chartModel.chart.type: ', this.chartModel.chart.type)
             const dataLabels = this.chartModel.plotOptions && this.chartModel.plotOptions[this.chartModel.chart.type] ? this.chartModel.plotOptions[this.chartModel.chart.type].dataLabels : null
             if (dataLabels) {
                 this.error = this.widgetModel.settings.chartModel.updateFormatterSettings(dataLabels, 'format', 'formatter', 'formatterText', 'formatterError')
@@ -283,7 +120,9 @@ export default defineComponent({
         },
         setSeriesEvents() {
             if (this.chartModel.plotOptions.series) {
-                this.chartModel.plotOptions.series.events = { click: this.setSelection }
+                this.chartModel.plotOptions.series.events = {
+                    click: this.setSelection
+                }
             } else
                 this.chartModel.plotOptions.series = {
                     events: { click: this.setSelection }
@@ -297,7 +136,14 @@ export default defineComponent({
         },
         createNewSelection(value: (string | number)[]) {
             const attributeColumn = this.widgetModel.columns.find((column: IWidgetColumn) => column.fieldType === 'ATTRIBUTE')
-            const selection = { datasetId: this.widgetModel.dataset as number, datasetLabel: this.getDatasetLabel(this.widgetModel.dataset as number), columnName: attributeColumn?.columnName ?? '', value: value, aggregated: false, timestamp: new Date().getTime() }
+            const selection = {
+                datasetId: this.widgetModel.dataset as number,
+                datasetLabel: this.getDatasetLabel(this.widgetModel.dataset as number),
+                columnName: attributeColumn?.columnName ?? '',
+                value: value,
+                aggregated: false,
+                timestamp: new Date().getTime()
+            }
             return selection
         },
         resizeChart() {

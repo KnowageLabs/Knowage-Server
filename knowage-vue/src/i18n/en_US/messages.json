@@ -34,6 +34,7 @@
             "python": "python"
         },
         "collapse": "collapse",
+        "color": "Color",
         "column": "Column",
         "columns": "Columns",
         "comment": "Comment",
@@ -435,6 +436,7 @@
                 }
             },
             "chartTypes": {
+                "activitygauge": "Activity Gauge",
                 "areaChart": "Area Chart",
                 "barChart": "Bar Chart",
                 "bubbleChart": "Bubble Chart",
@@ -447,6 +449,7 @@
                 "pieChart": "Pie Chart",
                 "radar": "Radar",
                 "scatterChart": "Scatter Chart",
+                "solidgauge": "Solid Gauge",
                 "stackedColumnsChart": "Stacked Columns Chart",
                 "treemap": "Treemap"
             },
@@ -621,9 +624,9 @@
                     "valuesTableHint": "Measures only."
                 },
                 "stops": {
-                    "colorHint": "",
+                    "colorHint": "Solid gauge series only. Color stops for the solid gauge. Use this in cases where a linear gradient between a minColor and maxColor is not sufficient. The stops is an array of tuples, where the first item is a float between 0 and 1 assigning the relative position in the gradient, and the second item is the color.",
                     "relativePosition": "Relative Position",
-                    "relativePositionHint": "",
+                    "relativePositionHint": "Solid gauge series only. Color stops for the solid gauge. Use this in cases where a linear gradient between a minColor and maxColor is not sufficient. The stops is an array of tuples, where the first item is a float between 0 and 1 assigning the relative position in the gradient, and the second item is the color.",
                     "title": "Stops"
                 },
                 "tick": {

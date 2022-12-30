@@ -9,12 +9,18 @@ import mainStore from '@/App.store'
 
 export const getFormattedInteractions = (widget: any) => {
     const interactions = {} as IWidgetInteractions
-    if (['table', 'chart'].includes(widget.type)) interactions.selection = getFormattedSelection(widget) as IWidgetSelection
-    if (['table', 'html', 'text', 'chart'].includes(widget.type)) interactions.crosssNavigation = getFormattedCrossNavigation(widget) as IWidgetCrossNavigation
+    let chartType = getChartType(widget)
+    if (['table', 'chart'].includes(widget.type) && chartType !== 'GAUGE') interactions.selection = getFormattedSelection(widget) as IWidgetSelection
+    if (['table', 'html', 'text', 'chart'].includes(widget.type)) interactions.crossNavigation = getFormattedCrossNavigation(widget) as IWidgetCrossNavigation
     if (['table', 'chart'].includes(widget.type)) interactions.link = getFormattedLinkInteraction(widget) as IWidgetLinks
     if (['table', 'html', 'text', 'chart'].includes(widget.type)) interactions.preview = getFormattedPreview(widget) as IWidgetPreview
     if (['chart'].includes(widget.type)) interactions.drilldown = { enabled: false } as IHighchartsDrilldown
     return interactions
+}
+
+const getChartType = (widget: any) => {
+
+    return widget.content?.chartTemplate?.CHART?.type ?? null
 }
 
 const getFormattedSelection = (widget: any) => {

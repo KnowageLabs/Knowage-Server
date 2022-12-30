@@ -1,13 +1,12 @@
 <template>
     <div v-if="widgetModel">
         <WidgetEditorColumnTable
-            v-if="chartType === 'pie'"
             class="p-m-2"
             :widgetModel="widgetModel"
             :items="columnTableItems['ATTRIBUTES'] ?? []"
             :settings="{ ...commonDescriptor.columnTableSettings, ...highchartDescriptor.pieChartcolumnTableSettings[0] }"
-            :chartType="chartType"
-            @rowReorder="onColumnsReorder($event, 'ATTRIBUTES')"
+            chartType="highchartsPieChart"
+            @rowReorder="onColumnsReorder"
             @itemAdded="onColumnAdded"
             @itemUpdated="onColumnItemUpdate"
             @itemSelected="setSelectedColumn"
@@ -17,9 +16,8 @@
             class="p-m-2"
             :widgetModel="widgetModel"
             :items="columnTableItems['MEASURES'] ?? []"
-            :settings="valuesColumnSettings"
-            :chartType="chartType"
-            @rowReorder="onColumnsReorder($event, 'MEASURES')"
+            :settings="{ ...commonDescriptor.columnTableSettings, ...highchartDescriptor.pieChartcolumnTableSettings[1] }"
+            chartType="highchartsPieChart"
             @itemAdded="onColumnAdded"
             @itemUpdated="onColumnItemUpdate"
             @itemSelected="setSelectedColumn"
@@ -43,7 +41,7 @@ import WidgetEditorFilterForm from '../../common/WidgetEditorFilterForm.vue'
 import ChartWidgetColumnForm from '../common/ChartWidgetColumnForm.vue'
 
 export default defineComponent({
-    name: 'highcharts-widget-common-data-container',
+    name: 'highcharts-widget-pie-chart-data-container',
     components: { Dropdown, WidgetEditorColumnTable, WidgetEditorFilterForm, ChartWidgetColumnForm },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedDataset: { type: Object as PropType<IDataset | null> } },
     data() {
@@ -53,25 +51,6 @@ export default defineComponent({
             commonDescriptor,
             columnTableItems: {} as any,
             selectedColumn: null as IWidgetColumn | null
-        }
-    },
-    computed: {
-        chartType() {
-            return this.widgetModel?.settings.chartModel?.model?.chart.type
-        },
-        valuesColumnSettings() {
-            switch (this.chartType) {
-                case 'pie':
-                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.pieChartcolumnTableSettings[1] }
-                case 'gauge':
-                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.gaugeChartcolumnTableSettings[0] }
-                case 'activitygauge':
-                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.activityGaugeChartcolumnTableSettings[0] }
-                case 'solidgauge':
-                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.solidGaugeChartcolumnTableSettings[0] }
-                default:
-                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.gaugeChartcolumnTableSettings[0] }
-            }
         }
     },
     watch: {
@@ -90,13 +69,12 @@ export default defineComponent({
             this.columnTableItems['MEASURES'] = []
             this.widgetModel.columns.forEach((column: IWidgetColumn) => {
                 const type = column.fieldType == 'MEASURE' ? 'MEASURES' : 'ATTRIBUTES'
-                const maxNumberOfDimensions = this.chartType === 'highchartsPieChart' ? 1 : null
-                if (type === 'MEASURES' && maxNumberOfDimensions && this.columnTableItems['MEASURES'].length === maxNumberOfDimensions) return
+                if (type === 'MEASURES' && this.columnTableItems['MEASURES'].length === 1) return
                 this.columnTableItems[type].push(column)
             })
         },
-        onColumnsReorder(columns: IWidgetColumn[], type: 'ATTRIBUTES' | 'MEASURES') {
-            this.columnTableItems[type] = columns
+        onColumnsReorder(columns: IWidgetColumn[]) {
+            this.columnTableItems['ATTRIBUTES'] = columns
             this.widgetModel.columns = this.columnTableItems['ATTRIBUTES'].concat(this.columnTableItems['MEASURES'])
             emitter.emit('columnsReordered', this.widgetModel.columns)
             emitter.emit('refreshWidgetWithData', this.widgetModel.id)
@@ -130,7 +108,7 @@ export default defineComponent({
                 this.widgetModel.columns.splice(index, 1)
                 if (column.id === this.selectedColumn?.id) this.selectedColumn = null
                 this.removeColumnFromColumnTableItems(column)
-                removeSerieFromWidgetModel(this.widgetModel, column, this.chartType)
+                removeSerieFromWidgetModel(this.widgetModel, column, 'IHighchartsPieChart')
                 emitter.emit('refreshWidgetWithData', this.widgetModel.id)
             }
         },

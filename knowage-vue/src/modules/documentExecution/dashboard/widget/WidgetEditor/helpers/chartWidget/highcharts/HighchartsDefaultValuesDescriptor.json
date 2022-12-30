@@ -12,8 +12,8 @@
             "shape": "arc"
         },
         "center": ["50%", "50%"],
-        "endAngle": 120,
-        "startAngle": -120
+        "endAngle": 90,
+        "startAngle": -90
     },
     "default3DOptions": {
         "alpha": 0,
@@ -58,9 +58,14 @@
     },
     "defaultActivityGaugeYAxis": {
         "lineWidth": 0,
-        "max": 100,
-        "min": 0,
-        "tickPositions": []
+        "max": null,
+        "min": null,
+        "minorTickInterval": null,
+        "plotBands": [],
+        "tickColor": "",
+        "tickLength": 0,
+        "tickPosition": "",
+        "tickWidth": 0
     },
     "defaultAllSeriesAccessibilitySettings": [
         {
@@ -100,7 +105,8 @@
         "min": null,
         "minorTickInterval": null,
         "plotBands": [],
-        "tickColor": "",
+        "stops": null,
+        "tickColor": "rgba(194,194,194, 1)",
         "tickLength": 10,
         "tickPosition": "outside",
         "tickWidth": 3
@@ -190,7 +196,7 @@
     },
     "defaultTooltipSettings": {
         "backgroundColor": "rgba(194,194,194, 1)",
-        "enabled": false,
+        "enabled": true,
         "style": {
             "color": "",
             "fontFamily": "",

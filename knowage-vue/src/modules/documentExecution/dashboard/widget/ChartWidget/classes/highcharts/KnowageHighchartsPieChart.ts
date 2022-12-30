@@ -10,7 +10,7 @@ import deepcopy from 'deepcopy'
 export class KnowageHighchartsPieChart extends KnowageHighcharts {
     constructor(model: any) {
         super()
-        if (!this.model.plotOptions.pie) this.setPiePlotOptions()
+        if (!this.model.plotOptions.pie || model.chart.type !== 'pie') this.setPiePlotOptions()
         if (model && model.CHART) this.updateModel(deepcopy(model))
         else if (model) this.model = deepcopy(model)
         this.model.chart.type = 'pie'

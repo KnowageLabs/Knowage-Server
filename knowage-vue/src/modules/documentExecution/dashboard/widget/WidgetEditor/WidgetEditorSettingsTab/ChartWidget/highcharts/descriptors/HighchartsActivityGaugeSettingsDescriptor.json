@@ -28,10 +28,6 @@
         ],
         "Interactions": [
             {
-                "title": "dashboard.widgetEditor.interactions.selection",
-                "type": "Selection"
-            },
-            {
                 "title": "dashboard.widgetEditor.interactions.crossNavigation",
                 "type": "CrossNavigation"
             },
@@ -42,6 +38,12 @@
             {
                 "title": "dashboard.widgetEditor.interactions.preview",
                 "type": "Preview"
+            }
+        ],
+        "Labels": [
+            {
+                "title": "common.labels",
+                "type": "Labels"
             }
         ],
         "Legend": [

@@ -14,8 +14,8 @@ export const getFormattedPaneSettings = (oldModel: any, newModel: IHighchartsCha
 
 export const getFormattedScaleSettings = (oldModel: any, newModel: IHighchartsChartModel) => {
     const oldYAxis = oldModel.CHART.AXES_LIST.AXIS[0]
-    newModel.yAxis.min = oldYAxis.min
-    newModel.yAxis.max = oldYAxis.max
+    newModel.yAxis.min = oldYAxis.min && oldYAxis.min !== '' ? oldYAxis.min : null
+    newModel.yAxis.max = oldYAxis.max && oldYAxis.max !== '' ? oldYAxis.max : null
 }
 
 export const getFormattedTickSettings = (oldModel: any, newModel: IHighchartsChartModel) => {

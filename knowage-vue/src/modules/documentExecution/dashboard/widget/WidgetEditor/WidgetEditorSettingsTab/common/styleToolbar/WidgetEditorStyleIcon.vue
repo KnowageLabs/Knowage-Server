@@ -2,9 +2,9 @@
     <div v-show="model" ref="knowageStyleIcon" class="click-outside icon-container" :class="{ 'icon-disabled': disabled }">
         <div id="color-picker-target" class="p-d-flex p-flex-row p-jc-center p-ai-center" v-tooltip.top="{ value: option.tooltip ? $t(option.tooltip) : getDefaultTooltip() }" @click="openAdditionalComponents">
             <i :class="[getIconClass(), active ? 'active-icon' : '']" class="widget-editor-icon kn-cursor-pointer p-mr-2" @click="onIconClicked"></i>
-            <div v-show="showArowDown || showCircleIcon">
+            <div v-show="showArrowDown || showCircleIcon">
                 <div v-show="showCircleIcon" class="style-circle-icon" :style="{ 'background-color': newColor }"></div>
-                <i v-show="showArowDown" class="fas fa-arrow-down style-arrow-down-icon"></i>
+                <i v-show="showArrowDown" class="fas fa-arrow-down style-arrow-down-icon"></i>
             </div>
             <span v-if="option.type === 'font-size'" class="icon-display-value-span p-ml-1">{{ '(' + displayValue + ')' }}</span>
         </div>
@@ -49,7 +49,7 @@ export default defineComponent({
         }
     },
     computed: {
-        showArowDown() {
+        showArrowDown() {
             return ['font-size', 'justify-content', 'border-color', 'color', 'background-color', 'font-family'].includes(this.option.type)
         },
         showCircleIcon() {

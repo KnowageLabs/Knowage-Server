@@ -28,6 +28,10 @@ export default defineComponent({
         },
         addSelectedDatasets(datasetsToAdd) {
             this.$emit('addSelectedDatasets', datasetsToAdd)
+        },
+        deleteAndUnselectDataset(event) {
+            this.selectedDataset = null
+            this.$emit('deleteDataset', event)
         }
     }
 })

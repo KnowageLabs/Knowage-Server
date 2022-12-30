@@ -1,19 +1,18 @@
-import { KnowageHighcharts } from './KnowageHihgcharts'
-import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
-import { IHighchartsChartModel, IHighchartsChartSerieData, IHighchartsSeriesLabelsSetting } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
+import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IHighchartsChartSerieData, IHighchartsSeriesLabelsSetting } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import { updateSolidGaugeChartModel } from './updater/KnowageHighchartsSolidGaugeChartUpdater'
+import { IHighchartsGaugeSerie } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget'
+import { KnowageHighchartsGaugeChart } from './KnowageHighchartsGaugeChart'
 import * as highchartsDefaultValues from '../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
-import { IHighchartsGaugeSerie, IHighchartsGaugeSerieData } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget'
-import { createGaugeSerie } from './updater/KnowageHighchartsCommonUpdater'
 import Highcharts from 'highcharts'
 import deepcopy from 'deepcopy'
 
-export class KnowageHighchartsSolidGaugeChart extends KnowageHighcharts {
+export class KnowageHighchartsSolidGaugeChart extends KnowageHighchartsGaugeChart {
     constructor(model: any) {
         super()
-        if (!this.model.plotOptions.solidgauge) this.setGaugePlotOptions()
-        if (!this.model.pane) this.setGaugePaneSettings()
-        if (!this.model.yAxis) this.setGaugeYAxis()
+        if (!this.model.plotOptions.solidgauge || model.chart.type !== 'solidgauge') this.setGaugePlotOptions()
+        if (!this.model.pane || model.chart.type !== 'solidgauge') this.setGaugePaneSettings()
+        if (!this.model.yAxis || model.chart.type !== 'solidgauge') this.setGaugeYAxis()
         if (model && model.CHART) this.updateModel(deepcopy(model))
         else if (model) this.model = deepcopy(model)
         this.model.chart.type = 'solidgauge'
@@ -23,37 +22,8 @@ export class KnowageHighchartsSolidGaugeChart extends KnowageHighcharts {
         updateSolidGaugeChartModel(oldModel, this.model)
     }
 
-
-    setModel(model: IHighchartsChartModel) {
-        this.model = model
-    }
-
-    // TODO - Darko
     setData(data: any, widgetModel: IWidget) {
-        if (this.model.series.length === 0) this.getSeriesFromWidgetModel(widgetModel)
-
-        this.model.series.map((item, serieIndex) => {
-            this.range[serieIndex] = { serie: item.name }
-            item.data = []
-            data?.rows?.forEach((row: any) => {
-                let serieElement = {
-                    id: row.id,
-                    name: row['column_1'],
-                    y: row['column_2'],
-                    drilldown: false
-                }
-                item.data.push(serieElement)
-            })
-        })
-        return this.model.series
-    }
-
-    getSeriesFromWidgetModel(widgetModel: IWidget) {
-        this.model.series = []
-
-        widgetModel.columns.forEach((column: IWidgetColumn) => {
-            if (column.fieldType === 'MEASURE') this.model.series.push(createGaugeSerie(column.columnName))
-        })
+        this.setGaugeData(data, widgetModel, 1)
     }
 
     // TODO - Darko/Bojan move to superclass???

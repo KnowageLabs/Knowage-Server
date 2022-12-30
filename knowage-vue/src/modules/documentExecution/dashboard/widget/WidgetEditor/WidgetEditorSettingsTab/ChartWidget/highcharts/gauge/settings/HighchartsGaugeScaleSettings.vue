@@ -25,6 +25,7 @@ import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
 import { IHighchartsChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import InputNumber from 'primevue/inputnumber'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'hihgcharts-gauge-scale-settings',
@@ -44,14 +45,12 @@ export default defineComponent({
             this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.model : null
         },
         modelChanged() {
-            emitter.emit('refreshChart', this.widgetModel.id)
+            setTimeout(() => emitter.emit('refreshChart', this.widgetModel.id), 250)
         },
         onInputChanged(type: 'min' | 'max') {
-            setTimeout(() => {
-                if (!this.model) return
-                type === 'min' ? (this.model.yAxis.min = null) : (this.model.yAxis.max = null)
-                this.modelChanged()
-            }, 250)
+            if (!this.model) return
+            type === 'min' ? (this.model.yAxis.min = null) : (this.model.yAxis.max = null)
+            this.modelChanged()
         }
     }
 })
