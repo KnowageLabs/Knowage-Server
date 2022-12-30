@@ -12,7 +12,7 @@ export const createNewTextWidgetSettings = () => {
             exports: { showExcelExport: true, showScreenshot: true }
         },
         interactions: {
-            crosssNavigation: widgetCommonDefaultValues.getDefaultCrossNavigation(),
+            crossNavigation: widgetCommonDefaultValues.getDefaultCrossNavigation(),
             preview: widgetCommonDefaultValues.getDefaultPreview(),
         },
         style: {

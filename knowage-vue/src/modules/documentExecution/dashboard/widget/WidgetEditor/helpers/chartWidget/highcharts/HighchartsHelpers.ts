@@ -1,12 +1,12 @@
 import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard"
 import { KnowageHighchartsPieChart } from "../../../../ChartWidget/classes/highcharts/KnowageHighchartsPieChart"
 import { IHighchartsWidgetSettings } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
-import { KnowageHighchartsGaugeChart } from "../../../../ChartWidget/classes/highcharts/KnowageHighchartsGaugeChart"
+import { KnowageHighchartsActivityGaugeChart } from "../../../../ChartWidget/classes/highcharts/KnowageHighchartsActivityGaugeChart"
+import { KnowageHighchartsSolidGaugeChart } from "../../../../ChartWidget/classes/highcharts/KnowageHighchartsSolidGaugeChart"
+import { KnowageHighchartsGaugeSeriesChart } from "../../../../ChartWidget/classes/highcharts/KnowaageHighchartsGaugeSeriesChart"
 import * as widgetCommonDefaultValues from '../../common/WidgetCommonDefaultValues'
 import * as  highchartsDefaultValues from "../highcharts/HighchartsDefaultValues"
 import descriptor from '../../../WidgetEditorSettingsTab/ChartWidget/common/ChartColorSettingsDescriptor.json'
-import { KnowageHighchartsActivityGaugeChart } from "../../../../ChartWidget/classes/highcharts/KnowageHighchartsActivityGaugeChart"
-import { KnowageHighchartsSolidGaugeChart } from "../../../../ChartWidget/classes/highcharts/KnowageHighchartsSolidGaugeChart"
 
 export const createNewHighchartsSettings = () => {
     const settings = {
@@ -18,7 +18,7 @@ export const createNewHighchartsSettings = () => {
         series: { seriesLabelsSettings: getSerieLabelsSettings() },
         interactions: {
             drilldown: { enabled: false },
-            crosssNavigation: widgetCommonDefaultValues.getDefaultCrossNavigation(),
+            crossNavigation: widgetCommonDefaultValues.getDefaultCrossNavigation(),
             link: widgetCommonDefaultValues.getDefaultLinks(),
             preview: widgetCommonDefaultValues.getDefaultPreview(),
             selection: highchartsDefaultValues.getDefaultHighchartsSelections(),

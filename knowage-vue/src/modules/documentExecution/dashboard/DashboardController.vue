@@ -179,7 +179,7 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => (this.crossNavigations = response.data))
                 .catch(() => {})
             this.appStore.setLoading(false)
-            this.store.setCrosssNavigations(this.dashboardId, this.crossNavigations)
+            this.store.setCrossNavigations(this.dashboardId, this.crossNavigations)
         },
         async loadHtmlGallery() {
             await this.$http
@@ -241,7 +241,7 @@ export default defineComponent({
         },
         emptyStoreValues() {
             this.store.removeDashboard(this.dashboardId)
-            this.store.setCrosssNavigations(this.dashboardId, [])
+            this.store.setCrossNavigations(this.dashboardId, [])
             this.store.setOutputParameters(this.dashboardId, [])
             this.store.setSelections(this.dashboardId, [], this.$http)
             this.store.setSelections(this.dashboardId, [], this.$http)
@@ -326,11 +326,6 @@ export default defineComponent({
 <style lang="scss">
 .dashboard-container {
     flex: 1;
-    // height: 100%;
-    // width: 100%;
-    // height: 100vh;
-    // overflow-y: auto;
-    // position: relative;
 }
 @media screen and (max-width: 600px) {
     .dashboard-container {

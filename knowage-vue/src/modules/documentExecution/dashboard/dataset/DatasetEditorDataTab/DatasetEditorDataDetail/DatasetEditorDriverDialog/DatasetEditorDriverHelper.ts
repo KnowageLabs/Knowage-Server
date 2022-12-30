@@ -1,6 +1,6 @@
 import { IDashboardDatasetDriver } from "@/modules/documentExecution/dashboard/Dashboard"
-import moment from "moment"
 import i18n from '@/App.i18n'
+import { getDateStringFromJSDate } from "@/helpers/commons/localeHelper"
 
 const { t } = i18n.global
 
@@ -28,7 +28,7 @@ const getFormattedManualNumberDriver = (driver: any, formattedDrivers: any) => {
     formattedDrivers[driver.urlName + '_field_visible_description'] = driver.parameterValue[0] ? driver.parameterValue[0].description : ''
 }
 const getFormattedDateDriver = (driver: any, formattedDrivers: any) => {
-    const formattedDate = moment(driver.parameterValue[0].value).format('MMM DD, YYYY')
+    const formattedDate = getDateStringFromJSDate(driver.parameterValue[0].value, 'MMM d, y')
     formattedDrivers[driver.urlName] = formattedDate
     formattedDrivers[driver.urlName + '_field_visible_description'] = formattedDate
 }
