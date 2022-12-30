@@ -1,7 +1,7 @@
 <template>
     <Button class="p-button kn-button--primary p-mx-1" style="position: absolute; top: -50px" @click="logstuff">{{ $t('documentExecution.registry.clearFilters') }}</Button>
     <div id="registry-gric-container" class="kn-height-full p-d-flex p-flex-column">
-        <ag-grid-vue
+        <!-- <ag-grid-vue
             v-if="!loading"
             class="registry-grid ag-theme-alpine"
             style="height: 100%"
@@ -14,17 +14,31 @@
             :pagination="true"
             :suppressPaginationPanel="true"
             :suppressScrollOnNewData="true"
+            @body-scroll="onBodyScroll"
+            @cell-clicked="cellWasClicked"
+            @grid-ready="onGridReady"
+        /> -->
+        <ag-grid-vue
+            class="registry-grid ag-theme-alpine"
+            style="height: 100%"
+            :columnDefs="columns"
+            :rowData="rows"
+            :defaultColDef="defaultColDef"
+            animateRows="true"
+            rowSelection="multiple"
+            :suppressScrollOnNewData="true"
+            @body-scroll="onBodyScroll"
             @cell-clicked="cellWasClicked"
             @grid-ready="onGridReady"
         />
-        <Paginator
+        <!-- <Paginator
             class="kn-table-widget-paginator"
             :rows="registryDescriptor.paginationNumberOfItems"
             :totalRecords="lazyParams.size"
             template="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
             :currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
             @page="onPage2($event)"
-        />
+        /> -->
     </div>
 
     <!-- <DataTable
@@ -119,7 +133,7 @@ import deepcopy from 'deepcopy'
 export default defineComponent({
     name: 'registry-datatable',
     components: { Checkbox, Column, DataTable, RegistryDatatableEditableField, RegistryDatatableWarningDialog, AgGridVue, Paginator },
-    props: { propColumns: { type: Array }, propRows: { type: Array, required: true }, columnMap: { type: Object }, propConfiguration: { type: Object }, pagination: { type: Object }, entity: { type: String }, id: { type: String }, stopWarningsState: { type: Array } },
+    props: { propColumns: { type: Array }, propRows: { type: Array, required: true }, columnMap: { type: Object }, propConfiguration: { type: Object }, pagination: { type: Object }, entity: { type: String }, id: { type: String }, stopWarningsState: { type: Array }, dataLoading: { type: Boolean } },
     emits: ['rowChanged', 'rowDeleted', 'pageChanged', 'warningChanged'],
     data() {
         return {
@@ -148,17 +162,13 @@ export default defineComponent({
             columnApi: null as any,
             ctrlDown: false,
             defaultColDef: {
-                // editable: true,
-                // enableRowGroup: true,
-                // enablePivot: true,
                 editable: true,
                 enableValue: true,
                 sortable: true,
                 resizable: true,
                 width: 55
-                // filter: true,
-                // flex: 1
-            }
+            },
+            timeout: null as any
         }
     },
     watch: {
@@ -174,6 +184,9 @@ export default defineComponent({
         },
         propConfiguration() {
             this.loadConfiguration()
+        },
+        dataLoading() {
+            this.dataLoading ? this.gridApi.showLoadingOverlay() : this.gridApi.hideOverlay()
         },
         pagination: {
             handler() {
@@ -458,7 +471,6 @@ export default defineComponent({
             return columns
         },
         onPage2(event: any) {
-            console.log(event)
             this.lazyParams = {
                 paginationStart: event.first,
                 paginationLimit: event.rows,
@@ -466,8 +478,24 @@ export default defineComponent({
                 size: this.lazyParams.size
             }
             this.$emit('pageChanged', this.lazyParams)
-
             this.gridApi.paginationGoToPage(event.page)
+        },
+        onBodyScroll() {
+            if (this.timeout) clearTimeout(this.timeout)
+            this.timeout = setTimeout(() => {
+                var bottom_px = this.gridApi.getVerticalPixelRange().bottom
+                var grid_height = this.gridApi.getDisplayedRowCount() * this.gridApi.getSizesForCurrentTheme().rowHeight
+                if (bottom_px == grid_height) {
+                    var newPaginationStart = this.lazyParams.start + this.registryDescriptor.paginationNumberOfItems
+                    this.lazyParams = {
+                        paginationStart: newPaginationStart,
+                        paginationLimit: this.registryDescriptor.paginationLimit,
+                        size: this.lazyParams.size
+                    }
+
+                    this.$emit('pageChanged', this.lazyParams)
+                }
+            }, 300)
         }
     }
 })

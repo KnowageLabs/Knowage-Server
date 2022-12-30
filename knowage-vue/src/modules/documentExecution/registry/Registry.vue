@@ -41,6 +41,7 @@
                         :pagination="pagination"
                         :entity="entity"
                         :stopWarningsState="stopWarningsState"
+                        :dataLoading="dataLoading"
                         @rowChanged="onRowChanged"
                         @rowDeleted="onRowDeleted"
                         @pageChanged="updatePagination"
@@ -86,7 +87,8 @@ export default defineComponent({
             entity: null as string | null,
             stopWarningsState: [] as any[],
             isPivot: false,
-            loading: false
+            loading: false,
+            dataLoading: false
         }
     },
     watch: {
@@ -175,7 +177,7 @@ export default defineComponent({
             }
         },
         loadRows() {
-            this.rows = []
+            // this.rows = []
             const limit = this.pagination.size <= registryDescriptor.paginationLimit ? this.registry.rows.length : registryDescriptor.paginationNumberOfItems
             for (let i = 0; i < limit; i++) {
                 const tempRow = {}
@@ -291,8 +293,8 @@ export default defineComponent({
             this.selectedFilters = [...filters]
             this.pagination.start = 0
             this.pagination.size = 0
-            await this.loadRegistry()
-            this.loadRows()
+
+            await this.reloadRegistryData()
         },
         async updatePagination(lazyParams: any) {
             this.updatedRows = []
@@ -303,8 +305,7 @@ export default defineComponent({
             }
 
             if (this.pagination.size > registryDescriptor.paginationLimit) {
-                await this.loadRegistry()
-                this.loadRows()
+                await this.reloadRegistryData()
             }
         },
         formatPivotRows(row: any) {
@@ -316,6 +317,12 @@ export default defineComponent({
         },
         setWarningState(warnings: any[]) {
             this.stopWarningsState = warnings
+        },
+        async reloadRegistryData() {
+            this.dataLoading = true
+            await this.loadRegistry()
+            this.loadRows()
+            this.dataLoading = false
         }
     }
 })
