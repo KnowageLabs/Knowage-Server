@@ -40,12 +40,6 @@
                 "type": "Preview"
             }
         ],
-        "Labels": [
-            {
-                "title": "common.labels",
-                "type": "Labels"
-            }
-        ],
         "Legend": [
             {
                 "title": "dashboard.widgetEditor.legend.title",
@@ -136,11 +130,6 @@
             "icon": "pi pi-table",
             "label": "dashboard.widgetEditor.legend.title",
             "value": "Legend"
-        },
-        {
-            "icon": "pi pi-table",
-            "label": "common.labels",
-            "value": "Labels"
         },
         {
             "icon": "pi pi-table",

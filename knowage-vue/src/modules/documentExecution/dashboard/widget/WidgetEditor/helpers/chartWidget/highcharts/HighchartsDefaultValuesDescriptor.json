@@ -34,7 +34,7 @@
         "colors": [],
         "cursor": "",
         "dataLabels": {
-            "backgroundColor": "",
+            "backgroundColor": "rgba(194,194,194, 1)",
             "distance": 30,
             "enabled": false,
             "position": "",
@@ -88,7 +88,7 @@
     },
     "defaultGaugeChartPlotOptions": {
         "dataLabels": {
-            "backgroundColor": "rgba(255, 255, 255, 1)",
+            "backgroundColor": "rgba(194,194,194, 1)",
             "enabled": false,
             "position": "",
             "style": {
