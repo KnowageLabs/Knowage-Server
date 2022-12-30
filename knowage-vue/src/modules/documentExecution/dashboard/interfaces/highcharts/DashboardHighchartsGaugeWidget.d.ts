@@ -46,6 +46,7 @@ export interface IHighchartsSeriesPivotSettings {
 export interface IHighchartsGaugeSerie {
     name: string,
     data: IHighchartsGaugeSerieData[],
+    colorByPoint?: boolean,
     accessibility?: IHighchartsSerieAccessibility,
     dial?: IHighchartsSeriesDialSettings,
     pivot?: IHighchartsSeriesPivotSettings

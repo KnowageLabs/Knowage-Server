@@ -2,7 +2,6 @@ import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Da
 import { IHighchartsGaugeSerie, IHighchartsGaugeSerieData } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget'
 import { KnowageHighcharts } from './KnowageHihgcharts'
 import { createGaugeSerie } from './updater/KnowageHighchartsCommonUpdater'
-import Highcharts from 'highcharts'
 
 export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
     constructor() {
@@ -24,9 +23,7 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
                     y: row[`column_${i + 1}`],
                 } as IHighchartsGaugeSerieData
                 if (maxNumberOfSeries === 4) {
-                    const colors = Highcharts.getOptions().colors
-                    serieElement.color = colors ? colors[i] : '', // TODO
-                        serieElement.radius = startingRadius + '%',
+                    serieElement.radius = startingRadius + '%',
                         serieElement.innerRadius = startingInnerRadius + '%',
                         startingRadius -= 25
                     startingInnerRadius -= 25
