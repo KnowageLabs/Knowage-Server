@@ -20,7 +20,6 @@ export class KnowageHighchartsPieChart extends KnowageHighcharts {
         updatePieChartModel(oldModel, this.model)
     }
 
-
     setModel(model: IHighchartsChartModel) {
         this.model = model
     }
@@ -56,7 +55,7 @@ export class KnowageHighchartsPieChart extends KnowageHighcharts {
     getSeriesFromWidgetModel(widgetModel: IWidget) {
         const measureColumn = widgetModel.columns.find((column: IWidgetColumn) => column.fieldType === 'MEASURE')
         if (!measureColumn) return
-        this.model.series = [createSerie(measureColumn.columnName, measureColumn.aggregation)]
+        this.model.series = [createSerie(measureColumn.columnName, measureColumn.aggregation, true)]
     }
 
     setPiePlotOptions() {
@@ -96,24 +95,24 @@ export class KnowageHighchartsPieChart extends KnowageHighcharts {
         var decimalPoints = Highcharts.getOptions().lang?.decimalPoint
         var thousandsSep = Highcharts.getOptions().lang?.thousandsSep
 
-        var absoluteValue = ''
         var showAbsolute = seriesLabelSetting.absolute
-        if (showAbsolute) absoluteValue = this.createAbsoluteValue(seriesLabelSetting.scale, that.y, precision, decimalPoints, thousandsSep)
+        var absoluteValue = showAbsolute ? this.createSeriesLabelFromParams(seriesLabelSetting.scale, Math.abs(that.y), precision, decimalPoints, thousandsSep) : ''
 
-        var percentValue = ''
         var showPercentage = seriesLabelSetting.percentage
-        if (showPercentage) var percentValue = this.createPercentageValue(that.point.percentage, precision, decimalPoints, thousandsSep)
+        var percentValue = showPercentage ? this.createPercentageValue(that.point.percentage, precision, decimalPoints, thousandsSep) : ''
+
+        var rawValue = !showAbsolute && !showPercentage ? this.createSeriesLabelFromParams(seriesLabelSetting.scale, that.y, precision, decimalPoints, thousandsSep) : ''
 
         // var categoryName = '' //CR: is category name needed?
         // displayValue = categoryName
 
         var showBrackets = showAbsolute && showPercentage
 
-        return `${prefix} ${absoluteValue} ${showBrackets ? `(${percentValue})` : `${percentValue}`}  ${suffix}`
+        return `${prefix}${rawValue}${absoluteValue} ${showBrackets ? `(${percentValue})` : `${percentValue}`}${suffix}`
     }
 
     // TODO - Darko move to common file/reuse
-    createAbsoluteValue(scaleFactor, value, precision, decimalPoints, thousandsSep) {
+    createSeriesLabelFromParams(scaleFactor, value, precision, decimalPoints, thousandsSep) {
         switch (scaleFactor.toUpperCase()) {
             case 'EMPTY':
                 return Highcharts.numberFormat(value, precision, decimalPoints, thousandsSep)

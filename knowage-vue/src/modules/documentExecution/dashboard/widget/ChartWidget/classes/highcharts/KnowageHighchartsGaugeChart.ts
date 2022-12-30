@@ -23,12 +23,10 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
             data?.rows?.forEach((row: any) => {
                 let serieElement = {
                     name: serie.name,
-                    y: row[`column_${i + 1}`],
+                    y: row[`column_${i + 1}`]
                 } as IHighchartsGaugeSerieData
                 if (maxNumberOfSeries === 4) {
-                    serieElement.radius = startingRadius + '%',
-                        serieElement.innerRadius = startingInnerRadius + '%',
-                        startingRadius -= 25
+                    ;(serieElement.radius = startingRadius + '%'), (serieElement.innerRadius = startingInnerRadius + '%'), (startingRadius -= 25)
                     startingInnerRadius -= 25
                 }
                 serie.data.push(serieElement)
@@ -92,9 +90,10 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
 
     updateSpecificSeriesLabelSettings(serieName: string, seriesSettings: IHighchartsSeriesLabelsSetting) {
         const index = this.model.series.findIndex((serie: IHighchartsGaugeSerie) => serie.name === serieName)
-        if (index !== -1) this.model.series.forEach((serie: IHighchartsGaugeSerie) => {
-            this.updateSeriesDataWithSerieSettings(serie, seriesSettings)
-        })
+        if (index !== -1)
+            this.model.series.forEach((serie: IHighchartsGaugeSerie) => {
+                this.updateSeriesDataWithSerieSettings(serie, seriesSettings)
+            })
     }
 
     updateSeriesDataWithSerieSettings(serie: IHighchartsGaugeSerie, seriesSettings: IHighchartsSeriesLabelsSetting) {
@@ -121,34 +120,30 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
 
     // TODO - Darko move to common file/reuse
     handleFormatter(that, seriesLabelSetting) {
-        console.log(">>>>>>>> THAT: ", that)
-        console.log(">>>>>>>> seriesLabelSetting: ", seriesLabelSetting)
         var prefix = seriesLabelSetting.prefix
         var suffix = seriesLabelSetting.suffix
         var precision = seriesLabelSetting.precision
         var decimalPoints = Highcharts.getOptions().lang?.decimalPoint
         var thousandsSep = Highcharts.getOptions().lang?.thousandsSep
 
-        var absoluteValue = ''
         var showAbsolute = seriesLabelSetting.absolute
-        if (showAbsolute) absoluteValue = this.createAbsoluteValue(seriesLabelSetting.scale, that.y, precision, decimalPoints, thousandsSep)
+        var absoluteValue = showAbsolute ? this.createSeriesLabelFromParams(seriesLabelSetting.scale, Math.abs(that.y), precision, decimalPoints, thousandsSep) : ''
 
-        var percentValue = ''
         var showPercentage = seriesLabelSetting.percentage
-        if (showPercentage) var percentValue = this.createPercentageValue(that.point.percentage, precision, decimalPoints, thousandsSep)
+        var percentValue = showPercentage ? this.createPercentageValue(that.point.percentage, precision, decimalPoints, thousandsSep) : ''
+
+        var rawValue = !showAbsolute && !showPercentage ? this.createSeriesLabelFromParams(seriesLabelSetting.scale, that.y, precision, decimalPoints, thousandsSep) : ''
 
         // var categoryName = '' //CR: is category name needed?
         // displayValue = categoryName
 
         var showBrackets = showAbsolute && showPercentage
 
-        console.log(">>>>>>>> `${prefix} ${absoluteValue} ${showBrackets ? `(${percentValue})` : `${percentValue}`}  ${suffix}`: ", `${prefix} ${absoluteValue} ${showBrackets ? `(${percentValue})` : `${percentValue}`}  ${suffix}`)
-
-        return `${prefix} ${absoluteValue} ${showBrackets ? `(${percentValue})` : `${percentValue}`}  ${suffix}`
+        return `${prefix}${rawValue}${absoluteValue} ${showBrackets ? `(${percentValue})` : `${percentValue}`}${suffix}`
     }
 
     // TODO - Darko move to common file/reuse
-    createAbsoluteValue(scaleFactor, value, precision, decimalPoints, thousandsSep) {
+    createSeriesLabelFromParams(scaleFactor, value, precision, decimalPoints, thousandsSep) {
         switch (scaleFactor.toUpperCase()) {
             case 'EMPTY':
                 return Highcharts.numberFormat(value, precision, decimalPoints, thousandsSep)
@@ -173,5 +168,4 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
     createPercentageValue(value, precision, decimalPoints, thousandsSep) {
         return `${Highcharts.numberFormat(value, precision, decimalPoints, thousandsSep)}%`
     }
-
 }
