@@ -25,7 +25,6 @@ import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
 import { IHighchartsChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import InputNumber from 'primevue/inputnumber'
-import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'hihgcharts-gauge-scale-settings',

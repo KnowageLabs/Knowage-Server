@@ -116,7 +116,7 @@ const setFormattedSerieLabelSettings = (oldModelSerie: any, formattedSettings: I
             fontWeight: oldModelSerie.dataLabels?.style?.fontWeight ?? '',
             color: oldModelSerie.dataLabels?.style?.color ? hexToRgba(oldModelSerie.dataLabels.style.color) : '',
         },
-        backgroundColor: '',
+        backgroundColor: 'rgba(194,194,194, 1)',
         prefix: oldModelSerie.prefixChar ?? '',
         suffix: oldModelSerie.postfixChar ?? '',
         scale: oldModelSerie.scaleFactor ?? 'empty',
