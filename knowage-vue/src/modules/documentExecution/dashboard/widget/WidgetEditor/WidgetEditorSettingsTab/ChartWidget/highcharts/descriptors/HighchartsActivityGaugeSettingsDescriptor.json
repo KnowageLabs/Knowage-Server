@@ -44,6 +44,12 @@
                 "type": "Preview"
             }
         ],
+        "Labels": [
+            {
+                "title": "common.labels",
+                "type": "Labels"
+            }
+        ],
         "Legend": [
             {
                 "title": "dashboard.widgetEditor.legend.title",

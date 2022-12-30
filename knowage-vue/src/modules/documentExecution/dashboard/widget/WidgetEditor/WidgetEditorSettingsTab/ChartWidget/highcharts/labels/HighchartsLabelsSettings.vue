@@ -108,7 +108,8 @@ export default defineComponent({
                     this.dataLabelsModel = this.model.plotOptions.gauge?.dataLabels ?? null
                     break
                 case 'activitygauge':
-                    this.dataLabelsModel = this.model.plotOptions.soldgauge?.dataLabels ?? null
+                case 'solidgauge':
+                    this.dataLabelsModel = this.model.plotOptions.solidgauge?.dataLabels ?? null
                     break
             }
         },
