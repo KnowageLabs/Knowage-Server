@@ -507,7 +507,7 @@ export default defineComponent({
             } else {
                 const tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
                 let tempFrame = window.frames[tempIndex]
-                while (tempFrame && tempFrame.name !== 'documentFrame' + tempIndex) {
+                while (tempFrame && tempFrame.name !== 'documentFrame' + this.breadcrumbs[tempIndex].iframeKey) {
                     tempFrame = tempFrame[0].frames
                 }
                 tempFrame.postMessage({ type: 'export', format: type.toLowerCase() }, '*')
