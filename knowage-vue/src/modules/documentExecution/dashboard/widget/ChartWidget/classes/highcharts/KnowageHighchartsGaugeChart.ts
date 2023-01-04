@@ -2,7 +2,7 @@ import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Da
 import { IHighchartsGaugeSerie, IHighchartsGaugeSerieData } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget'
 import { KnowageHighcharts } from './KnowageHihgcharts'
 import { createGaugeSerie } from './updater/KnowageHighchartsCommonUpdater'
-import { IHighchartsSeriesLabelsSetting } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
+import { IHighchartsSerieLabelSettings, IHighchartsSeriesLabelsSetting } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import * as highchartsDefaultValues from '../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
 import Highcharts from 'highcharts'
 
@@ -26,7 +26,7 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
                     y: row[`column_${i + 1}`]
                 } as IHighchartsGaugeSerieData
                 if (maxNumberOfSeries === 4) {
-                    ;(serieElement.radius = startingRadius + '%'), (serieElement.innerRadius = startingInnerRadius + '%'), (startingRadius -= 25)
+                    ; (serieElement.radius = startingRadius + '%'), (serieElement.innerRadius = startingInnerRadius + '%'), (startingRadius -= 25)
                     startingInnerRadius -= 25
                 }
                 serie.data.push(serieElement)
@@ -68,11 +68,12 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
                 this.updateSeriesDataWithSerieSettings(serie, allSeriesSettings)
             })
         } else {
+            const seriesLabelSetting = widgetModel.settings.series.seriesLabelsSettings[0]
             this.model.series.forEach((serie: IHighchartsGaugeSerie) => {
                 serie.data.forEach((data: IHighchartsGaugeSerieData) => {
                     data.dataLabels = { ...highchartsDefaultValues.getDefaultSerieLabelSettings(), position: '' }
                     data.dataLabels.formatter = function () {
-                        return KnowageHighchartsGaugeChart.prototype.handleFormatter(this, data.name)
+                        return KnowageHighchartsGaugeChart.prototype.handleFormatter(this, seriesLabelSetting.label)
                     }
                 })
                 if (serie.dial) highchartsDefaultValues.getDefaultSerieDialSettings()
@@ -110,7 +111,7 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
                     color: seriesSettings.label.style.color ?? ''
                 },
                 formatter: function () {
-                    return KnowageHighchartsGaugeChart.prototype.handleFormatter(this, data.name)
+                    return KnowageHighchartsGaugeChart.prototype.handleFormatter(this, seriesSettings.label)
                 }
             }
         })
@@ -119,7 +120,8 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
     }
 
     // TODO - Darko move to common file/reuse
-    handleFormatter(that, seriesLabelSetting) {
+    handleFormatter(that: any, seriesLabelSetting: any) {
+        console.log(">>>>>>>>>> SERIES LABEL SETTINGS: ", seriesLabelSetting)
         var prefix = seriesLabelSetting.prefix
         var suffix = seriesLabelSetting.suffix
         var precision = seriesLabelSetting.precision
@@ -144,7 +146,7 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
 
     // TODO - Darko move to common file/reuse
     createSeriesLabelFromParams(scaleFactor, value, precision, decimalPoints, thousandsSep) {
-        switch (scaleFactor.toUpperCase()) {
+        switch (scaleFactor?.toUpperCase()) {
             case 'EMPTY':
                 return Highcharts.numberFormat(value, precision, decimalPoints, thousandsSep)
             case 'K':

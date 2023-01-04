@@ -3,9 +3,7 @@
         <Accordion class="widget-editor-accordion" v-model:activeIndex="activeIndex">
             <AccordionTab v-for="(accordion, index) in settings" :key="index">
                 <template #header>
-                    <div>
-                        <label class="kn-material-input-label">{{ $t(accordion.title) }}</label>
-                    </div>
+                    <TableWidgetSettingsAccordionHeader :widgetModel="widgetModel" :title="accordion.title" :type="accordion.type"></TableWidgetSettingsAccordionHeader>
                 </template>
                 <TableWidgetRows v-if="accordion.type === 'Rows'" :widgetModel="widgetModel"></TableWidgetRows>
                 <TableWidgetSummaryRows v-else-if="accordion.type === 'SummaryRows'" :widgetModel="widgetModel"></TableWidgetSummaryRows>
@@ -44,6 +42,7 @@ import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import descriptor from './TableWidgetSettingsDescriptor.json'
 import settingsTabDescriptor from '../WidgetEditorSettingsTabDescriptor.json'
+import InputSwitch from 'primevue/inputswitch'
 import TableWidgetRows from './configuration/TableWidgetRows.vue'
 import TableWidgetSummaryRows from './configuration/TableWidgetSummaryRows.vue'
 import TableWidgetHeader from './configuration/TableWidgetHeader.vue'
@@ -68,12 +67,14 @@ import WidgetPreview from '../common/interactions/preview/WidgetPreview.vue'
 import WidgetTitleStyle from '../common/style/WidgetTitleStyle.vue'
 import WidgetPaddingStyle from '../common/style/WidgetPaddingStyle.vue'
 import WidgetBackgroundColorStyle from '../common/style/WidgetBackgroundColorStyle.vue'
+import TableWidgetSettingsAccordionHeader from './TableWidgetSettingsAccordionHeader.vue'
 
 export default defineComponent({
     name: 'table-widget-configuration-container',
     components: {
         Accordion,
         AccordionTab,
+        InputSwitch,
         TableWidgetRows,
         TableWidgetSummaryRows,
         TableWidgetHeader,
@@ -97,7 +98,8 @@ export default defineComponent({
         WidgetBackgroundColorStyle,
         WidgetCrossNavigation,
         WidgetInteractionsLinks,
-        WidgetPreview
+        WidgetPreview,
+        TableWidgetSettingsAccordionHeader
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
