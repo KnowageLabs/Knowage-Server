@@ -176,8 +176,8 @@ export default defineComponent({
                 this.columns[i - 1].columnInfo = this.registry.metaData.fields[i]
             }
         },
-        loadRows() {
-            // this.rows = []
+        loadRows(resetRows = false as boolean) {
+            if (resetRows) this.rows = []
             const limit = this.pagination.size <= registryDescriptor.paginationLimit ? this.registry.rows.length : registryDescriptor.paginationNumberOfItems
             for (let i = 0; i < limit; i++) {
                 const tempRow = {}
@@ -240,23 +240,35 @@ export default defineComponent({
                 .finally(() => (this.updatedRows = []))
         },
         async onRowDeleted(row: any) {
+            const postData = new URLSearchParams()
             if (this.isPivot) {
                 this.formatPivotRows(row)
-            }
-            const postData = new URLSearchParams()
-            postData.append('records', '' + JSON.stringify([row]))
+                postData.append('records', '' + JSON.stringify([row]))
+            } else postData.append('records', '' + JSON.stringify(row))
+
             await this.$http
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=DELETE_RECORDS_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
-                .then((response: AxiosResponse<any>) => {
+                .then(async (response: AxiosResponse<any>) => {
                     this.setInfo({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
                     })
 
-                    if (response.data.ids[0]) {
-                        const index = this.rows.findIndex((el: any) => el.id === row.id)
-                        this.rows.splice(index, 1)
-                        this.pagination.size--
+                    //TODO - atm, BE returns unique ID column as value, EG: returnds product_id as deleted index, no way for us to know which column is unique so we can
+                    //          splice the elements in the array, just reloading all data for now
+                    // TODO - pagination doesnt reset in this way, probably wont be needed
+                    if (this.isPivot) {
+                        if (response.data.ids[0]) {
+                            const index = this.rows.findIndex((el: any) => el.id === row.id)
+                            console.log('index found', index)
+                            this.rows.splice(index, 1)
+                            this.pagination.size--
+                        }
+                    } else {
+                        this.dataLoading = true
+                        await this.loadRegistry()
+                        this.loadRows(true)
+                        this.dataLoading = false
                     }
                 })
                 .catch((response: AxiosResponse<any>) => {
