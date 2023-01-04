@@ -1,10 +1,5 @@
 <template>
     <div v-if="linksModel" class="p-grid p-p-4">
-        <div class="p-col-12">
-            <InputSwitch v-model="linksModel.enabled" @change="onLinkEnabledChange"></InputSwitch>
-            <label class="kn-material-input-label p-ml-3">{{ $t('dashboard.widgetEditor.interactions.enableLinkNavigation') }}</label>
-        </div>
-
         <div v-for="(link, index) in linksModel.links" :key="index" class="dynamic-form-item p-grid p-ai-center p-col-12">
             <div class="p-sm-11 p-md-10 p-d-flex p-flex-column">
                 <label class="kn-material-input-label"> {{ $t('common.type') }}</label>

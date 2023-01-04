@@ -1,10 +1,6 @@
 <template>
     <div v-if="previewModel" class="p-grid p-jc-center p-ai-center p-p-4">
         <div class="p-grid p-col-12 p-pt-4 p-ai-center">
-            <div class="p-col-6 p-sm-12 p-md-6">
-                <InputSwitch v-model="previewModel.enabled"></InputSwitch>
-                <label class="kn-material-input-label p-ml-3">{{ $t('dashboard.widgetEditor.interactions.enablePreview') }}</label>
-            </div>
             <div v-if="widgetModel.type !== 'chart'" class="p-col-6 p-sm-12 p-md-6 p-d-flex p-flex-column kn-flex p-px-2">
                 <label class="kn-material-input-label"> {{ $t('common.type') }}</label>
                 <Dropdown class="kn-material-input" v-model="previewModel.type" :options="descriptor.interactionTypes" optionValue="value" :disabled="previewDisabled" @change="onInteractionTypeChanged">
