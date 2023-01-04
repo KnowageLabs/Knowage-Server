@@ -1,6 +1,6 @@
 <template>
     <div class="p-d-flex p-flex-row p-ai-center">
-        <InputSwitch v-if="model" class="p-mr-3" v-model="model.enabled" @click.stop="() => {}"></InputSwitch>
+        <InputSwitch v-if="model" class="p-mr-3" v-model="model.enabled" @click.stop="onModelChange"></InputSwitch>
         <label class="kn-material-input-label">{{ title ? $t(title) : '' }}</label>
     </div>
 </template>
@@ -8,6 +8,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
+import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
@@ -22,6 +23,11 @@ export default defineComponent({
         }
     },
     computed: {},
+    watch: {
+        type() {
+            this.model = this.loadModel()
+        }
+    },
     created() {
         this.model = this.loadModel()
     },
@@ -64,6 +70,16 @@ export default defineComponent({
                     return this.widgetModel.settings.interactions.preview
                 default:
                     return null
+            }
+        },
+        onModelChange() {
+            switch (this.type) {
+                case 'SummaryRows':
+                    emitter.emit('refreshWidgetWithData', this.widgetModel.id)
+                    break
+                case 'Header':
+                case 'ColumnGroups':
+                    emitter.emit('refreshTable', this.widgetModel.id)
             }
         }
     }

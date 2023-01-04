@@ -59,7 +59,6 @@ export default defineComponent({
             if (this.widgetModel?.settings?.configuration) this.summaryRowsModel = this.widgetModel.settings.configuration.summaryRows
         },
         summaryRowsChanged() {
-            emitter.emit('summaryRowsChanged', this.summaryRowsModel)
             emitter.emit('refreshWidgetWithData', this.widgetModel.id)
         },
         onSummarRowEnabledChange() {
