@@ -719,6 +719,7 @@
             "percentage": "Percentage",
             "precision": "Precision",
             "prefix": "Prefix",
+            "recentlyUsed": "Recently Used",
             "responsive": {
                 "extraLargeDevices": "Show On Extra Large Devices",
                 "extraSmallDevices": "Show On Extra Small Devices",
