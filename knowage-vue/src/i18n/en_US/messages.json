@@ -693,7 +693,6 @@
             "noSelections": {
                 "customMessage": "Custom Message",
                 "customMessageHint": "If left empty the message will be 'No Active Selections'",
-                "enable": "Enable 'no Selection' message",
                 "title": "No Selection Message"
             },
             "outside": "Outside",
