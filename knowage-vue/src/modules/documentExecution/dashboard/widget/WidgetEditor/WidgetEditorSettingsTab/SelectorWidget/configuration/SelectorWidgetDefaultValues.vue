@@ -1,14 +1,5 @@
 <template>
     <div v-if="defaultValuesModel" class="p-grid p-jc-center p-ai-center kn-flex p-p-4">
-        <div class="p-col-12 p-grid">
-            <div class="p-col-3 p-sm-12 p-md-3">
-                <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.defaultValues.enableDefaultValues') }}</label>
-            </div>
-            <div class="p-col-9 p-sm-12 p-md-9">
-                <InputSwitch v-model="defaultValuesModel.enabled" @change="defaultValuesChanged"></InputSwitch>
-            </div>
-        </div>
-
         <div class="p-col-12 p-grid p-ai-center">
             <div v-if="isDateType" class="p-col-10 p-lg-11 p-grid">
                 <div class="p-col-12 p-lg-6 p-d-flex p-flex-column">
