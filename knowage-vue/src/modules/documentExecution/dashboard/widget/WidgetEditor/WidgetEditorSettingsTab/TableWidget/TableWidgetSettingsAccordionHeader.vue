@@ -7,7 +7,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { ITableWidgetSummaryRows, IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
+import { ITableWidgetColumnGroups, ITableWidgetHeaders, ITableWidgetSummaryRows, IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
 import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
@@ -18,7 +18,7 @@ export default defineComponent({
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, title: { type: String }, type: { type: String, required: true } },
     data() {
         return {
-            model: null as ITableWidgetSummaryRows | null
+            model: null as ITableWidgetSummaryRows | ITableWidgetHeaders | ITableWidgetColumnGroups | null
         }
     },
     computed: {},
@@ -32,6 +32,12 @@ export default defineComponent({
             switch (this.type) {
                 case 'SummaryRows':
                     this.model = this.widgetModel.settings.configuration.summaryRows
+                    break
+                case 'Header':
+                    this.model = this.widgetModel.settings.configuration.headers
+                    break
+                case 'ColumnGroups':
+                    this.model = this.widgetModel.settings.configuration.columnGroups
                     break
                 default:
                     this.model = null

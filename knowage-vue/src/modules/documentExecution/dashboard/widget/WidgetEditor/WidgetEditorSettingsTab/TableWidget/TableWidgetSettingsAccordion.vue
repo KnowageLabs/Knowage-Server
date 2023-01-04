@@ -3,10 +3,6 @@
         <Accordion class="widget-editor-accordion" v-model:activeIndex="activeIndex">
             <AccordionTab v-for="(accordion, index) in settings" :key="index">
                 <template #header>
-                    <!-- <div>
-                        <InputSwitch class="p-mt-4 p-mr-2" v-model="widgetModel.settings.configuration.summaryRows.enabled" @click.stop="() => {}"></InputSwitch>
-                        <label class="kn-material-input-label">{{ $t(accordion.title) }}</label>
-                    </div> -->
                     <TableWidgetSettingsAccordionHeader :widgetModel="widgetModel" :title="accordion.title" :type="accordion.type"></TableWidgetSettingsAccordionHeader>
                 </template>
                 <TableWidgetRows v-if="accordion.type === 'Rows'" :widgetModel="widgetModel"></TableWidgetRows>

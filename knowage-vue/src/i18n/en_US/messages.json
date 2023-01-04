@@ -460,7 +460,6 @@
             "columnDetails": "Column Details",
             "columnFilterHint": "Select the filter operator and the value for the column. Remember to use the correct database sintax for the value. ie: %LIKE%",
             "columnGroups": {
-                "enableColumnGroups": "Enable Column Groups",
                 "title": "Column Groups"
             },
             "compareValueType": "Compare value type",
@@ -555,7 +554,6 @@
             "headers": {
                 "action": "Action",
                 "enableCustomHeaders": "Enable Custom Headers",
-                "enableHeader": "Enable Header",
                 "enableMultiline": "Enable Multiline",
                 "headerHeight": "Header height",
                 "headerHeightHint": "Header height in px (default is 25px)",
@@ -767,7 +765,6 @@
             "suffix": "Suffix",
             "summary": "Summary",
             "summaryRows": {
-                "enableSummaryRows": "Enable Summary Rows",
                 "pinnedColumnsOnly": "Pinned columns only",
                 "title": "Summary rows"
             },
