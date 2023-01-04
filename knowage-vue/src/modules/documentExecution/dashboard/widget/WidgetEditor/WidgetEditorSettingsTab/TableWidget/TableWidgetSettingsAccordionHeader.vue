@@ -33,7 +33,6 @@ export default defineComponent({
     },
     methods: {
         loadModel() {
-            console.log('>>>>>>>>>> TYPE: ', this.type)
             if (!this.widgetModel || !this.widgetModel.settings) return null
             switch (this.type) {
                 case 'SummaryRows':
@@ -46,6 +45,8 @@ export default defineComponent({
                     return this.widgetModel.settings.visualization.visualizationTypes
                 case 'VisibilityConditions':
                     return this.widgetModel.settings.visualization.visibilityConditions
+                case 'Conditions':
+                    return this.widgetModel.settings.conditionalStyles
                 case 'Title':
                     return this.widgetModel.settings.style.title
                 case 'ColumnStyle':
@@ -75,11 +76,21 @@ export default defineComponent({
         onModelChange() {
             switch (this.type) {
                 case 'SummaryRows':
-                    emitter.emit('refreshWidgetWithData', this.widgetModel.id)
+                    setTimeout(() => emitter.emit('refreshWidgetWithData', this.widgetModel.id), 250)
                     break
                 case 'Header':
                 case 'ColumnGroups':
-                    emitter.emit('refreshTable', this.widgetModel.id)
+                case 'VisualizationType':
+                case 'VisibilityConditions':
+                case 'Conditions':
+                case 'Title':
+                case 'ColumnStyle':
+                case 'ColumnGroupsStyle':
+                case 'BackgroundColorStyle':
+                case 'BordersStyle':
+                case 'PaddingStyle':
+                case 'ShadowsStyle':
+                    setTimeout(() => emitter.emit('refreshTable', this.widgetModel.id), 250)
             }
         }
     }

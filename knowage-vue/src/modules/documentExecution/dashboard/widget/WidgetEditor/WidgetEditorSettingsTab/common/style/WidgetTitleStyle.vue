@@ -51,7 +51,6 @@ export default defineComponent({
             if (this.widgetModel.settings?.style?.title) this.titleStyleModel = this.widgetModel.settings.style.title
         },
         titleStyleChanged() {
-            emitter.emit('titleStyleChanged', this.titleStyleModel)
             switch (this.widgetType) {
                 case 'table':
                     emitter.emit('refreshTable', this.widgetModel.id)

@@ -90,7 +90,6 @@ export default defineComponent({
             if (this.widgetModel?.settings?.style?.borders) this.bordersStyleModel = this.widgetModel.settings.style.borders
         },
         bordersStyleChanged() {
-            emitter.emit('bordersStyleChanged', this.bordersStyleModel)
             switch (this.widgetType) {
                 case 'table':
                     emitter.emit('refreshTable', this.widgetModel.id)

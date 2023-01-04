@@ -44,13 +44,12 @@ export default defineComponent({
             if (this.widgetModel.settings?.style?.background) this.backgroundStyleModel = this.widgetModel.settings.style.background
         },
         backgroundColorStyleChanged() {
-            emitter.emit('backgroundColorStyleChanged', this.backgroundStyleModel)
             switch (this.widgetType) {
+                case 'table':
+                    emitter.emit('refreshTable', this.widgetModel.id)
+                    break
                 case 'selector':
                     emitter.emit('refreshSelector', this.widgetModel.id)
-                    break
-                case 'selection':
-                    emitter.emit('refreshSelection', this.widgetModel.id)
                     break
                 case 'selection':
                     emitter.emit('refreshSelection', this.widgetModel.id)

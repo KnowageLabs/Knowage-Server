@@ -66,7 +66,6 @@ export default defineComponent({
             this.getShadowSize()
         },
         shadowStyleChanged() {
-            emitter.emit('shadowStyleChanged', this.shadowsStyleModel)
             switch (this.widgetType) {
                 case 'table':
                     emitter.emit('refreshTable', this.widgetModel.id)

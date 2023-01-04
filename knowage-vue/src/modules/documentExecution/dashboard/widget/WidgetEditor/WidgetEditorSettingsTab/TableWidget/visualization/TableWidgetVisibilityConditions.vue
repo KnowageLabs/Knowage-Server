@@ -173,7 +173,6 @@ export default defineComponent({
             this.variables?.forEach((variable: any) => (this.variableMap[variable.name] = variable.value))
         },
         visibilityConditionsChanged() {
-            emitter.emit('visibilityConditionsChanged', this.visibilityConditionsModel)
             emitter.emit('refreshTable', this.widgetModel.id)
         },
         onVisibilityConditionsEnabledChange() {
