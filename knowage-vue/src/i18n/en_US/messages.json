@@ -421,7 +421,6 @@
                 "bordersThicknessHint": "px, rem or % measure units are available",
                 "dashed": "Dashed",
                 "dotted": "Dotted",
-                "enableBorders": "Enable Borders",
                 "solid": "Solid",
                 "title": "Borders"
             },
@@ -1160,18 +1159,18 @@
             "column": "Column/s",
             "filter": "Filter",
             "filters": "Filters",
+            "grid": {
+                "addRow": "Add Row",
+                "cloneRows": "Clone Rows",
+                "deleteRows": "Delete Rows"
+            },
             "isEditableField": "Editable column. Click on a cell and select/enter the new value",
             "numberFormatNotSupported": "Number format is not supported.",
             "select": "Select",
             "title": "Registry Document",
             "warning": "Warning",
             "warningCheckbox": "Don't Warn Me Again",
-            "warningDependences": "depend/s from this value. Please check them and set correct values!",
-            "grid": {
-                "deleteRows": "Delete Rows",
-                "cloneRows": "Clone Rows",
-                "addRow": "Add Row"
-            }
+            "warningDependences": "depend/s from this value. Please check them and set correct values!"
         }
     },
     "downloadsDialog": {
@@ -1478,12 +1477,62 @@
     },
     "locale": {
         "dateFormat": "mm/dd/yy",
-        "dayNames": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-        "dayNamesMin": ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
-        "dayNamesShort": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+        "dayNames": [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday"
+        ],
+        "dayNamesMin": [
+            "Su",
+            "Mo",
+            "Tu",
+            "We",
+            "Th",
+            "Fr",
+            "Sa"
+        ],
+        "dayNamesShort": [
+            "Sun",
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat"
+        ],
         "firstDayOfWeek": 0,
-        "monthNames": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-        "monthNamesShort": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        "monthNames": [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"
+        ],
+        "monthNamesShort": [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec"
+        ],
         "today": "Today",
         "weekHeader": "Wk"
     },
