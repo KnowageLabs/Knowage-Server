@@ -23,6 +23,7 @@
             <Button icon="fas fa-clone" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.cloneRows')" @click="" />
             <Button icon="fas fa-trash" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.deleteRows')" @click="rowsDeleteConfirm()" />
         </div>
+        {{ comboColumnOptions }}
         <ag-grid-vue
             class="registry-grid ag-theme-alpine"
             style="height: 100%"
@@ -47,7 +48,7 @@
         /> -->
     </div>
 
-    <!-- <DataTable
+    <DataTable
         v-if="!loading"
         class="p-datatable-sm kn-table"
         :scrollable="true"
@@ -113,7 +114,7 @@
                 </Button>
             </template>
         </Column>
-    </DataTable> -->
+    </DataTable>
     <RegistryDatatableWarningDialog :visible="warningVisible" :columns="dependentColumns" @close="onWarningDialogClose"></RegistryDatatableWarningDialog>
 </template>
 
@@ -133,6 +134,7 @@ import registryDescriptor from '../RegistryDescriptor.json'
 import registryDatatableDescriptor from './RegistryDatatableDescriptor.json'
 import RegistryDatatableEditableField from './RegistryDatatableEditableField.vue'
 import RegistryDatatableWarningDialog from './RegistryDatatableWarningDialog.vue'
+import CellRenderer from './registryCellRenderers/RegistryCellRenderer.vue'
 
 import deepcopy from 'deepcopy'
 
@@ -168,11 +170,13 @@ export default defineComponent({
             columnApi: null as any,
             ctrlDown: false,
             defaultColDef: {
-                editable: true,
+                editable: false,
                 enableValue: true,
                 sortable: true,
                 resizable: true,
-                width: 55
+                width: 100,
+                cellRenderer: CellRenderer,
+                cellRendererParams: { comboColumnOptions: this.comboColumnOptions, test: 'TESTING' }
             },
             timeout: null as any,
             selectedRows: [] as any
