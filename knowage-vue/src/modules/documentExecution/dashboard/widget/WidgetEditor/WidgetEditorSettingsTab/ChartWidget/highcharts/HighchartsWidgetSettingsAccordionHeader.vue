@@ -14,7 +14,7 @@ import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 
 export default defineComponent({
-    name: 'chartJS-widget-settings-accordion-header',
+    name: 'highcharts-widget-settings-accordion-header',
     components: { Checkbox, Dropdown, InputSwitch },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, title: { type: String }, type: { type: String, required: true } },
     data() {
@@ -36,6 +36,14 @@ export default defineComponent({
         loadModel() {
             if (!this.widgetModel || !this.widgetModel.settings || !this.widgetModel.settings.chartModel) return null
             switch (this.type) {
+                case 'ConfigurationOf3D':
+                    return this.widgetModel.settings.chartModel.model?.chart?.options3d
+                case 'AccessibilitySettings':
+                    return this.widgetModel.settings.chartModel.model?.accessibility
+                case 'Legend':
+                    return this.widgetModel.settings.chartModel.model?.legend
+                case 'Tooltip':
+                    return this.widgetModel.settings.chartModel.model?.tooltip
                 case 'Title':
                     return this.widgetModel.settings.style.title
                 case 'ColumnStyle':
@@ -50,11 +58,8 @@ export default defineComponent({
                     return this.widgetModel.settings.style.padding
                 case 'ShadowsStyle':
                     return this.widgetModel.settings.style.shadows
-                case 'Legend':
-                    this.property = 'display'
-                    return this.widgetModel.settings.chartModel.model?.options?.plugins?.legend
-                case 'Tooltip':
-                    return this.widgetModel.settings.chartModel.model?.options?.plugins?.tooltip
+                case 'Drilldown':
+                    return this.widgetModel.settings.interactions.drilldown
                 case 'Selection':
                     return this.widgetModel.settings.interactions.selection
                 case 'CrossNavigation':
@@ -69,6 +74,8 @@ export default defineComponent({
         },
         onModelChange() {
             switch (this.type) {
+                case 'ConfigurationOf3D':
+                case 'AccessibilitySettings':
                 case 'Legend':
                 case 'Tooltip':
                     setTimeout(() => emitter.emit('refreshChart', this.widgetModel.id), 250)

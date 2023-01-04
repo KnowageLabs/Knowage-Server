@@ -3,9 +3,7 @@
         <Accordion class="widget-editor-accordion" v-model:activeIndex="activeIndex">
             <AccordionTab v-for="(accordion, index) in settings" :key="index">
                 <template #header>
-                    <div>
-                        <label class="kn-material-input-label">{{ $t(accordion.title) }}</label>
-                    </div>
+                    <HighchartsWidgetSettingsAccordionHeader :widgetModel="widgetModel" :title="accordion.title" :type="accordion.type"></HighchartsWidgetSettingsAccordionHeader>
                 </template>
 
                 <Highcharts3DConfiguration v-if="accordion.type === 'ConfigurationOf3D'" :widgetModel="widgetModel"></Highcharts3DConfiguration>
@@ -73,6 +71,7 @@ import HighchartsGaugeScaleSettings from './gauge/settings/HighchartsGaugeScaleS
 import HighchartsGaugeTickSettings from './gauge/settings/HighchartsGaugeTickSettings.vue'
 import HighchartsStopsSettings from './gauge/settings/HighchartsStopsSettings.vue'
 import HighchartsGaugeBandsSettings from './gauge/settings/HighchartsGaugeBandsSettings.vue'
+import HighchartsWidgetSettingsAccordionHeader from './HighchartsWidgetSettingsAccordionHeader.vue'
 
 export default defineComponent({
     name: 'hihgcharts-widget-configuration-container',
@@ -105,7 +104,8 @@ export default defineComponent({
         HighchartsGaugeScaleSettings,
         HighchartsGaugeTickSettings,
         HighchartsStopsSettings,
-        HighchartsGaugeBandsSettings
+        HighchartsGaugeBandsSettings,
+        HighchartsWidgetSettingsAccordionHeader
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

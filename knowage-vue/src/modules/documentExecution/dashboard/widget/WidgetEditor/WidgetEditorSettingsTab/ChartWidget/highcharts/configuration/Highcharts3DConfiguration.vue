@@ -1,9 +1,5 @@
 <template>
     <div v-if="model?.chart?.options3d" class="p-grid p-jc-center p-ai-center p-p-4">
-        <div class="p-col-12 p-grid p-ai-center p-p-4">
-            <label class="kn-material-input-label p-mr-2">{{ $t('common.enabled') }}</label>
-            <InputSwitch v-model="model.chart.options3d.enabled" @change="modelChanged"></InputSwitch>
-        </div>
         <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column kn-flex">
             <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.configurationOf3D.alphaAngle') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center">
