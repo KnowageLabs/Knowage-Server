@@ -154,7 +154,8 @@ export interface IHighchartsChartDataLabels {
     format?: string,
     formatter?: Function,
     formatterText?: string,
-    formatterError?: string
+    formatterError?: string,
+    y?: number
 }
 
 export interface IHighchartsChartSerie {

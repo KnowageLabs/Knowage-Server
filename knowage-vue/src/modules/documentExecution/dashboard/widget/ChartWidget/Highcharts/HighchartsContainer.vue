@@ -97,8 +97,8 @@ export default defineComponent({
             this.setSeriesEvents()
 
             const modelToRender = this.getModelForRender()
-            console.log('>>>>>>> CHART TO RENDER PLOT OPTIONS: ', modelToRender.plotOptions)
             console.log('>>>>>>> CHART TO RENDER: ', modelToRender)
+            modelToRender.series?.forEach((serie: any) => console.log('>>>>>>>>SERIE: ', serie.data[0].dataLabels))
             // const temp = {
             //     title: '',
             //     lang: {

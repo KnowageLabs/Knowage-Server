@@ -58,48 +58,47 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
     updateSeriesLabelSettings(widgetModel: IWidget) {
         if (!widgetModel || !widgetModel.settings.series || !widgetModel.settings.series.seriesLabelsSettings) return
         this.setAllSeriesSettings(widgetModel)
-        this.setSpecificSeriesSettings(widgetModel)
+        // this.setSpecificSeriesSettings(widgetModel)
     }
 
     setAllSeriesSettings(widgetModel: IWidget) {
         const allSeriesSettings = widgetModel.settings.series.seriesLabelsSettings[0]
         if (allSeriesSettings.label.enabled) {
-            this.model.series.forEach((serie: IHighchartsGaugeSerie) => {
-                this.updateSeriesDataWithSerieSettings(serie, allSeriesSettings)
-            })
+            this.model.series.forEach((serie: IHighchartsGaugeSerie, index: number) => this.updateSeriesDataWithSerieSettings(serie, allSeriesSettings, index))
         } else {
-            const seriesLabelSetting = widgetModel.settings.series.seriesLabelsSettings[0]
-            this.model.series.forEach((serie: IHighchartsGaugeSerie) => {
-                serie.data.forEach((data: IHighchartsGaugeSerieData) => {
-                    data.dataLabels = { ...highchartsDefaultValues.getDefaultSerieLabelSettings(), position: '' }
-                    data.dataLabels.formatter = function () {
-                        return KnowageHighchartsGaugeChart.prototype.handleFormatter(this, seriesLabelSetting.label)
-                    }
-                })
-                if (serie.dial) highchartsDefaultValues.getDefaultSerieDialSettings()
-                if (serie.pivot) highchartsDefaultValues.getDefaultSeriePivotSettings()
-            })
+            this.resetSeriesSettings()
         }
+    }
+
+    resetSeriesSettings() {
+        this.model.series.forEach((serie: IHighchartsGaugeSerie) => {
+            serie.data.forEach((data: IHighchartsGaugeSerieData) => {
+                data.dataLabels = { ...highchartsDefaultValues.getDefaultSerieLabelSettings(), position: '' }
+                data.dataLabels.formatter = undefined
+            })
+            if (serie.dial) serie.dial = highchartsDefaultValues.getDefaultSerieDialSettings()
+            if (serie.pivot) serie.pivot = highchartsDefaultValues.getDefaultSeriePivotSettings()
+        })
     }
 
     setSpecificSeriesSettings(widgetModel: IWidget) {
         for (let i = 1; i < widgetModel.settings.series.seriesLabelsSettings.length; i++) {
             const seriesSettings = widgetModel.settings.series.seriesLabelsSettings[i] as IHighchartsSeriesLabelsSetting
+            console.log(">>>>>>>>>> seriesSettings: ", seriesSettings)
             if (seriesSettings.label.enabled) seriesSettings.names.forEach((serieName: string) => this.updateSpecificSeriesLabelSettings(serieName, seriesSettings))
         }
     }
 
     updateSpecificSeriesLabelSettings(serieName: string, seriesSettings: IHighchartsSeriesLabelsSetting) {
         const index = this.model.series.findIndex((serie: IHighchartsGaugeSerie) => serie.name === serieName)
-        if (index !== -1)
-            this.model.series.forEach((serie: IHighchartsGaugeSerie) => {
-                this.updateSeriesDataWithSerieSettings(serie, seriesSettings)
-            })
+        console.log(">>>>>>>>>> INDEX: ", index)
+        if (index !== -1) this.updateSeriesDataWithSerieSettings(this.model.series[index], seriesSettings, index)
     }
 
-    updateSeriesDataWithSerieSettings(serie: IHighchartsGaugeSerie, seriesSettings: IHighchartsSeriesLabelsSetting) {
+    updateSeriesDataWithSerieSettings(serie: IHighchartsGaugeSerie, seriesSettings: IHighchartsSeriesLabelsSetting, index: number) {
         serie.data.forEach((data: IHighchartsGaugeSerieData) => {
             data.dataLabels = {
+                y: index * 40,
                 backgroundColor: seriesSettings.label.backgroundColor ?? '',
                 distance: 30,
                 enabled: true,
@@ -121,25 +120,24 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
 
     // TODO - Darko move to common file/reuse
     handleFormatter(that: any, seriesLabelSetting: any) {
-        console.log(">>>>>>>>>> SERIES LABEL SETTINGS: ", seriesLabelSetting)
-        var prefix = seriesLabelSetting.prefix
-        var suffix = seriesLabelSetting.suffix
-        var precision = seriesLabelSetting.precision
-        var decimalPoints = Highcharts.getOptions().lang?.decimalPoint
-        var thousandsSep = Highcharts.getOptions().lang?.thousandsSep
+        const prefix = seriesLabelSetting.prefix
+        const suffix = seriesLabelSetting.suffix
+        const precision = seriesLabelSetting.precision
+        const decimalPoints = Highcharts.getOptions().lang?.decimalPoint
+        const thousandsSep = Highcharts.getOptions().lang?.thousandsSep
 
-        var showAbsolute = seriesLabelSetting.absolute
-        var absoluteValue = showAbsolute ? this.createSeriesLabelFromParams(seriesLabelSetting.scale, Math.abs(that.y), precision, decimalPoints, thousandsSep) : ''
+        const showAbsolute = seriesLabelSetting.absolute
+        const absoluteValue = showAbsolute ? this.createSeriesLabelFromParams(seriesLabelSetting.scale, Math.abs(that.y), precision, decimalPoints, thousandsSep) : ''
 
-        var showPercentage = seriesLabelSetting.percentage
-        var percentValue = showPercentage ? this.createPercentageValue(that.point.percentage, precision, decimalPoints, thousandsSep) : ''
+        const showPercentage = seriesLabelSetting.percentage
+        const percentValue = showPercentage ? this.createPercentageValue(that.point.percentage, precision, decimalPoints, thousandsSep) : ''
 
-        var rawValue = !showAbsolute && !showPercentage ? this.createSeriesLabelFromParams(seriesLabelSetting.scale, that.y, precision, decimalPoints, thousandsSep) : ''
+        const rawValue = !showAbsolute && !showPercentage ? this.createSeriesLabelFromParams(seriesLabelSetting.scale, that.y, precision, decimalPoints, thousandsSep) : ''
 
-        // var categoryName = '' //CR: is category name needed?
+        // const categoryName = '' //CR: is category name needed?
         // displayValue = categoryName
 
-        var showBrackets = showAbsolute && showPercentage
+        const showBrackets = showAbsolute && showPercentage
 
         return `${prefix}${rawValue}${absoluteValue} ${showBrackets ? `(${percentValue})` : `${percentValue}`}${suffix}`
     }
