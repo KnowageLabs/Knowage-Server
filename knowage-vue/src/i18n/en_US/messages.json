@@ -771,7 +771,6 @@
             "textParsingError": "Text Parsing Error",
             "title": "Widget Editor",
             "titles": {
-                "enableTitle": "Enable Title",
                 "title": "Title"
             },
             "tooltip": {

@@ -1,12 +1,5 @@
 <template>
     <div v-if="backgroundStyleModel" class="p-grid p-jc-center p-ai-center kn-flex p-p-4">
-        <div class="p-col-12 p-d-flex p-flex-row p-ai-center p-mb-4">
-            <div class="kn-flex p-m-2">
-                <InputSwitch v-model="backgroundStyleModel.enabled" @change="backgroundColorStyleChanged"></InputSwitch>
-                <label class="kn-material-input-label p-ml-2">{{ $t('common.enable') }}</label>
-            </div>
-        </div>
-
         <div class="p-col-12">
             <WidgetEditorColorPicker :initialValue="backgroundStyleModel.properties['background-color']" :label="$t('dashboard.widgetEditor.iconTooltips.backgroundColor')" :disabled="backgroundStyleDisabled" @change="onBackroundColorChanged"></WidgetEditorColorPicker>
         </div>
