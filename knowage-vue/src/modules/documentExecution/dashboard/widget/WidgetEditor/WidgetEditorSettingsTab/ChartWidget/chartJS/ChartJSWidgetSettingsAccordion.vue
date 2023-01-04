@@ -3,11 +3,8 @@
         <Accordion class="widget-editor-accordion" v-model:activeIndex="activeIndex">
             <AccordionTab v-for="(accordion, index) in settings" :key="index">
                 <template #header>
-                    <div>
-                        <label class="kn-material-input-label">{{ $t(accordion.title) }}</label>
-                    </div>
+                    <ChartJSWidgetSettingsAccordionHeader :widgetModel="widgetModel" :title="accordion.title" :type="accordion.type"></ChartJSWidgetSettingsAccordionHeader>
                 </template>
-
                 <ChartJSLegendSettings v-if="accordion.type === 'Legend'" :widgetModel="widgetModel"></ChartJSLegendSettings>
                 <ChartJSTooltipSettings v-else-if="accordion.type === 'Tooltip'" :widgetModel="widgetModel"></ChartJSTooltipSettings>
                 <ChartColorSettings v-else-if="accordion.type === 'Colors'" :widgetModel="widgetModel"></ChartColorSettings>
@@ -50,6 +47,7 @@ import WidgetBackgroundColorStyle from '../../common/style/WidgetBackgroundColor
 import ChartJSLegendSettings from './legend/ChartJSLegendSettings.vue'
 import ChartJSTooltipSettings from './tooltip/ChartJSTooltipSettings.vue'
 import ChartColorSettings from '../common/ChartColorSettings.vue'
+import ChartJSWidgetSettingsAccordionHeader from './ChartJSWidgetSettingsAccordionHeader.vue'
 
 export default defineComponent({
     name: 'chartJS-widget-configuration-container',
@@ -70,7 +68,8 @@ export default defineComponent({
         ChartJSLegendSettings,
         ChartJSTooltipSettings,
         ChartColorSettings,
-        WidgetSelection
+        WidgetSelection,
+        ChartJSWidgetSettingsAccordionHeader
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
