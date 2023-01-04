@@ -7,7 +7,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { ITableWidgetColumnGroups, ITableWidgetHeaders, ITableWidgetSummaryRows, ITableWidgetVisibilityConditions, ITableWidgetVisualizationTypes, IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
 import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
@@ -51,9 +51,9 @@ export default defineComponent({
                 case 'BordersStyle':
                     return this.widgetModel.settings.style.borders
                 case 'PaddingStyle':
-                    return this.widgetModel.settings.visualization.visibilityConditions
+                    return this.widgetModel.settings.style.padding
                 case 'ShadowsStyle':
-                    return this.widgetModel.settings.visualization.visibilityConditions
+                    return this.widgetModel.settings.style.shadows
                 default:
                     return null
             }
