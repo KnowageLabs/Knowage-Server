@@ -18,6 +18,11 @@
             @cell-clicked="cellWasClicked"
             @grid-ready="onGridReady"
         /> -->
+        <div class="registry-grid-toolbar">
+            <Button icon="fas fa-plus" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.addRow')" @click="" />
+            <Button icon="fas fa-clone" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.cloneRows')" @click="" />
+            <Button icon="fas fa-trash" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.deleteRows')" @click="rowsDeleteConfirm()" />
+        </div>
         <ag-grid-vue
             class="registry-grid ag-theme-alpine"
             style="height: 100%"
@@ -30,6 +35,7 @@
             @body-scroll="onBodyScroll"
             @cell-clicked="cellWasClicked"
             @grid-ready="onGridReady"
+            @selection-changed="onSelectionChanged"
         />
         <!-- <Paginator
             class="kn-table-widget-paginator"
@@ -168,7 +174,8 @@ export default defineComponent({
                 resizable: true,
                 width: 55
             },
-            timeout: null as any
+            timeout: null as any,
+            selectedRows: [] as any
         }
     },
     watch: {
@@ -248,6 +255,7 @@ export default defineComponent({
             }
         },
         loadRows() {
+            console.log('LOAD NEW ROWZ')
             this.rows = deepcopy(this.propRows)
         },
         loadConfiguration() {
@@ -281,16 +289,18 @@ export default defineComponent({
             }
             this.$emit('pageChanged', this.lazyParams)
         },
-        rowDeleteConfirm(index: number, row: any) {
+        rowsDeleteConfirm() {
             this.$confirm.require({
                 message: this.$t('common.toast.deleteMessage'),
                 header: this.$t('common.toast.deleteTitle'),
                 icon: 'pi pi-exclamation-triangle',
-                accept: () => this.deleteRow(index, row)
+                accept: () => this.deleteRows()
             })
         },
-        deleteRow(index: number, row: any) {
-            row.isNew ? this.rows.splice(index, 1) : this.$emit('rowDeleted', row)
+        deleteRows() {
+            //TODO - check for newRows, if there are any, splice them first, then emit old rows for deletion
+            // row.isNew ? this.rows.splice(index, 1) : this.$emit('rowDeleted', row)
+            this.$emit('rowDeleted', this.selectedRows)
         },
         setDataType(columnType: string) {
             switch (columnType) {
@@ -496,6 +506,9 @@ export default defineComponent({
                     this.$emit('pageChanged', this.lazyParams)
                 }
             }, 300)
+        },
+        onSelectionChanged() {
+            this.selectedRows = this.gridApi.getSelectedRows()
         }
     }
 })
@@ -512,5 +525,14 @@ export default defineComponent({
 }
 .editableField {
     width: 100%;
+}
+.registry-grid-toolbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: end;
+    height: 35px;
+    border: 1px solid #babfc7;
+    border-bottom: none;
 }
 </style>
