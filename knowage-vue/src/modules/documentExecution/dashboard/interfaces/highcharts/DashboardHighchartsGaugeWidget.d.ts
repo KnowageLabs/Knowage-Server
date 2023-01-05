@@ -49,7 +49,7 @@ export interface IHighchartsGaugeSerie {
     colorByPoint?: boolean,
     accessibility?: IHighchartsSerieAccessibility,
     dial?: IHighchartsSeriesDialSettings,
-    pivot?: IHighchartsSeriesPivotSettings
+    pivot?: IHighchartsSeriesPivotSettings,
 }
 
 export interface IHighchartsGaugeSerieData {

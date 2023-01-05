@@ -41,7 +41,9 @@ export interface IHighchartsSeriesLabelsSetting {
     names: string[],
     label: IHighchartsSerieLabelSettings,
     dial?: IHighchartsSeriesDialSettings,
-    pivot?: IHighchartsSeriesPivotSettings
+    pivot?: IHighchartsSeriesPivotSettings,
+    serieColor?: string,
+    serieColorEnabled?: boolean
 }
 
 export interface IHighchartsSerieLabelSettings {

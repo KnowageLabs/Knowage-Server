@@ -8,15 +8,24 @@
                 <HighchartsSeriesMultiselect v-else :value="serieSetting.names" :availableSeriesOptions="availableSeriesOptions" :disabled="!allSeriesOptionEnabled" @change="onSeriesSelected($event, serieSetting)"> </HighchartsSeriesMultiselect>
             </div>
 
-            <div class="p-col-5 p-pt-4 p-px-4">
+            <div v-if="labelOptionsVisible" class="p-col-5 p-pt-4 p-px-4">
                 <InputSwitch v-model="serieSetting.label.enabled" @change="modelChanged"></InputSwitch>
                 <label class="kn-material-input-label p-m-3">{{ $t('dashboard.widgetEditor.showLabel') }}</label>
+            </div>
+
+            <div v-if="serieColorPickerVisible" class="p-col-2 p-pt-4 p-px-4">
+                <InputSwitch v-model="serieSetting.serieColorEnabled" @change="modelChanged"></InputSwitch>
+                <label class="kn-material-input-label p-m-3">{{ $t('dashboard.widgetEditor.series.enableColor') }}</label>
+            </div>
+
+            <div v-if="serieColorPickerVisible" class="p-col-3 p-px-2 p-pt-4">
+                <WidgetEditorColorPicker :initialValue="serieSetting.serieColor" :label="$t('common.color')" :disabled="!serieSetting.serieColorEnabled" @change="onSelectionColorChanged($event, serieSetting)"></WidgetEditorColorPicker>
             </div>
 
             <div v-if="allSeriesOptionEnabled" class="p-col-1 p-d-flex p-flex-column p-jc-center p-ai-center p-pl-2">
                 <i :class="[index === 0 ? 'pi pi-plus-circle' : 'pi pi-trash']" class="kn-cursor-pointer p-ml-2 p-mt-4" @click="index === 0 ? addSerieSetting() : removeSerieSetting(index)"></i>
             </div>
-            <div class="p-col-12 p-py-4">
+            <div v-if="styleToolbarVisible" class="p-col-12 p-py-4">
                 <WidgetEditorStyleToolbar :options="descriptor.noDataToolbarStyleOptions" :propModel="toolbarModels[index]" :disabled="!serieSetting.label.enabled" @change="onStyleToolbarChange($event, index)"> </WidgetEditorStyleToolbar>
             </div>
 
@@ -79,6 +88,7 @@ import HighchartsSeriesMultiselect from '../common/HighchartsSeriesMultiselect.v
 import WidgetEditorStyleToolbar from '../../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
 import HighchartsGaugeSerieAdvancedSettings from './HighchartsGaugeSerieAdvancedSettings.vue'
 import * as highchartsDefaultValues from '../../../../helpers/chartWidget/highcharts/HighchartsDefaultValues'
+import WidgetEditorColorPicker from '../../../common/WidgetEditorColorPicker.vue'
 
 export default defineComponent({
     name: 'hihgcharts-series-label-settings',
@@ -89,7 +99,8 @@ export default defineComponent({
         Textarea,
         HighchartsSeriesMultiselect,
         WidgetEditorStyleToolbar,
-        HighchartsGaugeSerieAdvancedSettings
+        HighchartsGaugeSerieAdvancedSettings,
+        WidgetEditorColorPicker
     },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
@@ -121,6 +132,15 @@ export default defineComponent({
         },
         advancedSectionAvailable() {
             return this.model?.chart.type === 'gauge'
+        },
+        styleToolbarVisible() {
+            return this.model && ['pie', 'gauge'].includes(this.model.chart.type)
+        },
+        serieColorPickerVisible() {
+            return this.model?.chart.type === 'activitygauge'
+        },
+        labelOptionsVisible() {
+            return this.model && ['pie', 'gauge'].includes(this.model.chart.type)
         }
     },
     created() {
@@ -234,8 +254,10 @@ export default defineComponent({
         removeSerieSetting(index: number) {
             this.seriesSettings[index].names.forEach((serieName: string) => this.availableSeriesOptions.push(serieName))
             this.advancedVisible[index] = false
+            this.widgetModel.settings.series.seriesLabelsSettings.splice(index, 1)
             this.seriesSettings.splice(index, 1)
             this.toolbarModels.splice(index, 1)
+            this.modelChanged()
         },
         onStyleToolbarChange(model: IWidgetStyleToolbarModel, index: number) {
             if (!this.model || !this.toolbarModels[index]) return
@@ -253,6 +275,11 @@ export default defineComponent({
                     fontFamily: this.toolbarModels[index]['font-family'] ?? '',
                     fontWeight: this.toolbarModels[index]['font-weight'] ?? ''
                 })
+            this.modelChanged()
+        },
+        onSelectionColorChanged(event: string | null, serieSetting: IHighchartsSeriesLabelsSetting) {
+            if (!event) return
+            serieSetting.serieColor = event
             this.modelChanged()
         }
     }

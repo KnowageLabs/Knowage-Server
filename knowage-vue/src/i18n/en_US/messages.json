@@ -737,6 +737,7 @@
                 "title": "Selector Type"
             },
             "series": {
+                "enableColor": "Enable Color",
                 "scale": "Scale",
                 "scaleHint": "Scale Hint Placeholder",
                 "title": "Series"
