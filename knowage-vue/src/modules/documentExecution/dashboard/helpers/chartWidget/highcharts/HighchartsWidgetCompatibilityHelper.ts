@@ -4,7 +4,7 @@ import { KnowageHighchartsPieChart } from '../../../widget/ChartWidget/classes/h
 import { getFormattedInteractions } from '../../common/WidgetInteractionsHelper'
 import { getFiltersForColumns } from '../../DashboardBackwardCompatibilityHelper'
 import { hexToRgba } from '../../FormattingHelpers'
-import { getFormattedWidgetColumns, getFormattedColorSettings } from '../CommonChartCompatibilityHelper'
+import { getFormattedWidgetColumns, getFormattedColorSettings, getMaximumNumberOfSeries } from '../CommonChartCompatibilityHelper'
 import { getFormattedStyle } from './HighchartsWidgetStyleHelper'
 import { KnowageHighchartsGaugeSeriesChart } from '../../../widget/ChartWidget/classes/highcharts/KnowaageHighchartsGaugeSeriesChart'
 import { KnowageHighchartsSolidGaugeChart } from '../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsSolidGaugeChart'
@@ -89,17 +89,15 @@ const createGaugeChartInstance = (widgetContentChartTemplate: any) => {
 
 // TODO - Refactor
 const getFormattedSerieLabelsSettings = (widget: any) => {
-    const formattedSerieSettings =
-        widget.content.chartTemplate.CHART.type !== 'PIE' ? highchartsDefaultValues.getDefaultSeriesSettings() : ([] as IHighchartsSeriesLabelsSetting[])
+    const formattedSerieSettings = widget.content.chartTemplate.CHART.type !== 'PIE' ? highchartsDefaultValues.getDefaultSeriesSettings() : ([] as IHighchartsSeriesLabelsSetting[])
     if (widget.content.chartTemplate.CHART.type === 'GAUGE') {
         formattedSerieSettings[0].dial = highchartsDefaultValues.getDefaultSerieDialSettings()
         formattedSerieSettings[0].pivot = highchartsDefaultValues.getDefaultSeriePivotSettings()
     }
-    if (widget.content.chartTemplate.CHART.VALUES.SERIE && widget.content.chartTemplate.CHART.VALUES.SERIE[0]) {
-        const oldModelSerie = widget.content.chartTemplate.CHART.VALUES.SERIE[0]
-        const formattedSettings = {
-            names: [oldModelSerie.name],
-        } as IHighchartsSeriesLabelsSetting
+    const endIndex = getMaximumNumberOfSeries('highcharts', widget.content.chartTemplate.CHART.type, widget) ?? widget.content.chartTemplate.CHART.VALUES.SERIE.length
+    for (let i = 0; i < endIndex; i++) {
+        const oldModelSerie = widget.content.chartTemplate.CHART.VALUES.SERIE[i]
+        const formattedSettings = { names: [oldModelSerie.name] } as IHighchartsSeriesLabelsSetting
         setFormattedSerieLabelSettings(oldModelSerie, formattedSettings)
         setSerieSettingsForGaugeChart(oldModelSerie, formattedSettings, widget)
         formattedSerieSettings.push(formattedSettings)
@@ -116,7 +114,7 @@ const setFormattedSerieLabelSettings = (oldModelSerie: any, formattedSettings: I
             fontWeight: oldModelSerie.dataLabels?.style?.fontWeight ?? '',
             color: oldModelSerie.dataLabels?.style?.color ? hexToRgba(oldModelSerie.dataLabels.style.color) : '',
         },
-        backgroundColor: 'rgba(194,194,194, 1)',
+        backgroundColor: 'rgba(246,246,246, 1)',
         prefix: oldModelSerie.prefixChar ?? '',
         suffix: oldModelSerie.postfixChar ?? '',
         scale: oldModelSerie.scaleFactor ?? 'empty',

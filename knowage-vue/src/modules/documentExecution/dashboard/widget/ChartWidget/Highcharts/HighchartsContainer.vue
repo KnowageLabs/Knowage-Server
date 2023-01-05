@@ -98,7 +98,7 @@ export default defineComponent({
 
             const modelToRender = this.getModelForRender()
             console.log('>>>>>>> CHART TO RENDER: ', modelToRender)
-            modelToRender.series?.forEach((serie: any) => console.log('>>>>>>>>SERIE: ', serie.data[0].dataLabels))
+            modelToRender.series?.forEach((serie: any) => console.log('>>>>>>>>SERIE: ', serie.dial))
             // const temp = {
             //     title: '',
             //     lang: {

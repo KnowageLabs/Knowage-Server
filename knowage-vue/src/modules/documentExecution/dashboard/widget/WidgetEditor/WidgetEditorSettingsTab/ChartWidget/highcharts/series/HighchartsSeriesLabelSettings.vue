@@ -182,6 +182,7 @@ export default defineComponent({
             const intersection = serieSetting.names.filter((el: string) => !event.value.includes(el))
             serieSetting.names = event.value
             intersection.length > 0 ? this.onSeriesRemovedFromMultiselect(intersection) : this.onSeriesAddedFromMultiselect(serieSetting)
+            this.modelChanged()
         },
         onSeriesAddedFromMultiselect(serieSetting: IHighchartsSeriesLabelsSetting) {
             serieSetting.names.forEach((serieName: string) => {

@@ -34,7 +34,7 @@ export const getFormattedWidgetColumns = (widget: any, chartLibrary: 'chartJS' |
     return formattedColumns
 }
 
-const getMaximumNumberOfSeries = (chartLibrary: 'chartJS' | 'highcharts', chartType: string, widget: any) => {
+export const getMaximumNumberOfSeries = (chartLibrary: 'chartJS' | 'highcharts', chartType: string, widget: any) => {
     if (chartLibrary === 'chartJS') return 1
     if (chartLibrary === 'highcharts' && chartType === 'PIE') return 1
     if (chartType === 'GAUGE') {
