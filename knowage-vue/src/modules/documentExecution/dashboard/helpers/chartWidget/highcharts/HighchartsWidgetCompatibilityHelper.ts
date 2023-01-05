@@ -107,7 +107,7 @@ const getFormattedSerieLabelsSettings = (widget: any) => {
 
 const setFormattedSerieLabelSettings = (oldModelSerie: any, formattedSettings: IHighchartsSeriesLabelsSetting) => {
     formattedSettings.label = {
-        enabled: true,
+        enabled: oldModelSerie.showValue,
         style: {
             fontFamily: oldModelSerie.dataLabels?.style?.fontFamily ?? '',
             fontSize: oldModelSerie.dataLabels?.style?.fontSize ?? '',

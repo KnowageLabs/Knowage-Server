@@ -114,7 +114,7 @@ export default defineComponent({
             return this.model ? this.model.series.map((serie: IHighchartsChartSerie) => serie.name) : []
         },
         allSeriesOptionEnabled() {
-            return this.model?.chart.type !== 'pie'
+            return this.model && this.model.chart.type !== 'pie' && this.model.chart.type !== 'solidgauge'
         },
         formattingSectionAvailable() {
             return this.model && ['pie', 'gauge'].includes(this.model.chart.type)

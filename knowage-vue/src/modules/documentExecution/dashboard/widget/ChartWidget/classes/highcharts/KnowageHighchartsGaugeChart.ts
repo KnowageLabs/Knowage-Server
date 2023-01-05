@@ -54,11 +54,9 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
         }
     }
 
-    // TODO - Darko/Bojan move to superclass???
     updateSeriesLabelSettings(widgetModel: IWidget) {
         if (!widgetModel || !widgetModel.settings.series || !widgetModel.settings.series.seriesLabelsSettings) return
         const chartColors = widgetModel.settings.chart.colors
-        console.log(">>>>>>>>> CHART COLORS", chartColors)
         this.setAllSeriesSettings(widgetModel, chartColors)
         this.setSpecificSeriesSettings(widgetModel, chartColors)
     }

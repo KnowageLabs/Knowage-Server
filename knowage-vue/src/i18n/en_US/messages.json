@@ -599,8 +599,8 @@
                     "centralVerticalPosition": "Centar Vertical Position",
                     "endAngle": "End Angle",
                     "endAngleHint": "The end angle of the polar X axis or gauge value axis, given in degrees where 0 is north.",
-                    "startAgnleHint": "The start angle of the polar X axis or gauge axis, given in degrees where 0 is north.",
-                    "startAngle": "Start Angle"
+                    "startAngle": "Start Angle",
+                    "startAngleHint": "The start angle of the polar X axis or gauge axis, given in degrees where 0 is north."
                 },
                 "piechart": {
                     "dimensionsTableHint": "Attributes only. Each different value in the selected column will create a different slice. If more than one dimension is present, the list will be the drill-down sequence.",

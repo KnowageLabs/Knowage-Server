@@ -1,4 +1,4 @@
-import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
 import { IHighchartsChartModel, IHighchartsChartSerie, IHighchartsSerieAccessibility, IHighchartsSerieLabelSettings, ISerieAccessibilitySetting } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import * as highchartsDefaultValues from '../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
 import Highcharts from 'highcharts'
@@ -61,8 +61,8 @@ export class KnowageHighcharts {
             accessibility: highchartsDefaultValues.getDefaultAccessibilitySettings(),
             series: [],
             settings: {
-                drilldown: {}, // TODO
-                categories: [] // TODO
+                drilldown: {},
+                categories: []
             },
             plotOptions: {
                 series: { events: {} }
@@ -72,6 +72,11 @@ export class KnowageHighcharts {
             colors: [],
             credits: { enabled: false }
         }
+    }
+
+    removeSerie(column: IWidgetColumn) {
+        const index = this.model.series.findIndex((tempSerie: IHighchartsChartSerie) => tempSerie.name === column.columnName)
+        if (index !== -1) this.model.series.splice(index, 1)
     }
 
     updateSeriesAccessibilitySettings(widgetModel: IWidget) {
