@@ -25,6 +25,7 @@ import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -45,7 +46,7 @@ public class SQLDataSet extends AbstractQbeDataSet {
 	@Override
 	public void loadData(int offset, int fetchSize, int maxResults) {
 
-		AbstractJDBCDataset dataset;
+		AbstractJDBCDataset dataset = null;
 		if (persisted) {
 			dataset = new JDBCDataSet();
 			dataset.setDataSource(getDataSourceForReading());
@@ -65,6 +66,22 @@ public class SQLDataSet extends AbstractQbeDataSet {
 				statementStr = statement.getQuerySQLString(queryJDBC);
 
 				dataset.setDataSource(this.getWrappedDataset().getDataSource());
+			} else if (this.getWrappedDataset() instanceof VersionedDataSet) {
+				VersionedDataSet vds = (VersionedDataSet) this.getWrappedDataset();
+				if (vds.getWrappedDataset() instanceof JDBCDataSet) {
+					dataset = new JDBCDataSet();
+					JDBCDataSet datasetJDBC = (JDBCDataSet) vds.getWrappedDataset();
+					String queryJDBC = datasetJDBC.getQuery().toString();
+
+					statementStr = statement.getQuerySQLString(queryJDBC);
+
+					dataset.setDataSource(this.getWrappedDataset().getDataSource());
+				} else {
+					dataset = new JDBCDataSet();
+					dataset.setDataSource(ds.getDataSourceForReading());
+					statementStr = statement.getQueryString();
+				}
+
 			} else {
 				dataset = new JDBCDataSet();
 				dataset.setDataSource(ds.getDataSourceForReading());

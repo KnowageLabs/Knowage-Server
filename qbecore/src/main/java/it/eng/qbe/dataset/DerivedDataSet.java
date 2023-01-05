@@ -26,11 +26,17 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import it.eng.qbe.datasource.DriverManager;
+import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
+import it.eng.qbe.datasource.configuration.DataSetDataSourceConfiguration;
+import it.eng.qbe.datasource.dataset.DataSetDataSource;
+import it.eng.qbe.datasource.dataset.DataSetDriver;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
@@ -83,7 +89,7 @@ public class DerivedDataSet extends QbeDataSet {
 
 	@Override
 	public IDataSource getDataSource() {
-		return dataSource;
+		return this.dataSource;
 	}
 
 	@Override
@@ -107,7 +113,7 @@ public class DerivedDataSet extends QbeDataSet {
 		String modelName = getDatamarts();
 		List<String> modelNames = new ArrayList<String>();
 		modelNames.add(modelName);
-		dataSourceProperties.put("datasource", dataSource);
+		dataSourceProperties.put("datasource", super.dataSource);
 		dataSourceProperties.put("dblinkMap", new HashMap());
 
 		if (this.getSourceDataset() != null) {
@@ -121,10 +127,40 @@ public class DerivedDataSet extends QbeDataSet {
 	}
 
 	@Override
+	public it.eng.qbe.datasource.IDataSource getDataSourceFromDataSet(Map<String, Object> dataSourceProperties, boolean useCache) {
+
+		it.eng.qbe.datasource.IDataSource dataSource;
+		List<IDataSet> dataSets = (List<IDataSet>) dataSourceProperties.get(EngineConstants.ENV_DATASETS);
+		dataSourceProperties.remove(EngineConstants.ENV_DATASETS);
+
+		CompositeDataSourceConfiguration compositeConfiguration = new CompositeDataSourceConfiguration(DataSetDataSource.EMPTY_MODEL_NAME);
+		Iterator<String> it = dataSourceProperties.keySet().iterator();
+		while (it.hasNext()) {
+			String propertyName = it.next();
+			compositeConfiguration.loadDataSourceProperties().put(propertyName, dataSourceProperties.get(propertyName));
+		}
+		if (dataSets != null) {
+			for (int i = 0; i < dataSets.size(); i++) {
+				DataSetDataSourceConfiguration c = new DataSetDataSourceConfiguration((dataSets.get(i)).getLabel(), dataSets.get(i));
+				compositeConfiguration.addSubConfiguration(c);
+			}
+		}
+		dataSource = DriverManager.getDataSource(DataSetDriver.DRIVER_ID, compositeConfiguration, useCache);
+
+		return dataSource;
+	}
+
+//	@Override
+//	public String getSignature() {
+//		return this.getTableName();
+//	}
+
+	@Override
 	public DataIterator iterator() {
 		LOGGER.debug("IN");
 		try {
-			String query = "select * from " + this.getTableName();
+			String table = (this.getTableName() == null ? this.getPersistTableName() : this.getTableName());
+			String query = "select * from " + table;
 			Connection connection = dataSource.getConnection();
 			Statement stmt = connection.createStatement();
 			stmt.setFetchSize(5000);

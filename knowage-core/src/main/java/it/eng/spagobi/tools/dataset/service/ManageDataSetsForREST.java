@@ -319,6 +319,22 @@ public class ManageDataSetsForREST {
 				try {
 					if (ds.getDsType().equals(DataSetConstants.DS_PREPARED)) {
 						currentMetadata = getPreparedDsMeta(meta);
+					} else if (ds.getDsType().equals(DataSetConstants.DS_DERIVED)) {
+						String sourceDatasetLabel = json.optString(DataSetConstants.SOURCE_DS_LABEL);
+						IDataSet sourceDataset = null;
+						if (sourceDatasetLabel != null && !sourceDatasetLabel.trim().equals("")) {
+							try {
+								sourceDataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(sourceDatasetLabel);
+								if (sourceDataset == null) {
+									throw new SpagoBIRuntimeException("Dataset with label [" + sourceDatasetLabel + "] does not exist");
+								}
+								((DerivedDataSet) ds).setSourceDataset(sourceDataset);
+								((DerivedDataSet) ds).setPersisted(false);
+								currentMetadata = getDatasetTestMetadata(dsRecalc, parametersMap, profile, meta);
+							} catch (Exception e) {
+								throw new SpagoBIServiceException(SERVICE_NAME, "Cannot retrieve source dataset information", e);
+							}
+						}
 					} else {
 						currentMetadata = getDatasetTestMetadata(dsRecalc, parametersMap, profile, meta);
 					}
@@ -1088,7 +1104,7 @@ public class ManageDataSetsForREST {
 			IDataSet ds = DAOFactory.getDataSetDAO().loadDataSetByLabel(dataSetLabel);
 			IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(ds.getDataSource().getLabel());
 			dataSet.setDataSource(dataSource);
-//			dataSet.setSourceDataset(dataSource);
+			dataSet.setSourceDataset(ds);
 		}
 	}
 
@@ -1859,6 +1875,19 @@ public class ManageDataSetsForREST {
 
 			IDataSet dataset = iDatasetDao.loadDataSetByLabel(ds.getLabel());
 			checkFileDataset(((VersionedDataSet) dataset).getWrappedDataset());
+
+			if (ds.getDsType().equals(DataSetConstants.DS_DERIVED)) {
+				if (((DerivedDataSet) ds).getSourceDataset() != null) {
+					if (((VersionedDataSet) dataset).getWrappedDataset().getDsType().equals(DataSetConstants.DS_DERIVED)) {
+						DerivedDataSet dsDerived = (DerivedDataSet) ((VersionedDataSet) dataset).getWrappedDataset();
+						dsDerived.setSourceDataset(((DerivedDataSet) ds).getSourceDataset());
+						dsDerived.setJsonQuery((((DerivedDataSet) ds).getJsonQuery()));
+						((VersionedDataSet) dataset).setWrappedDataset(dsDerived);
+
+					}
+
+				}
+			}
 
 			JSONArray parsListJSON = json.optJSONArray(DataSetConstants.PARS);
 			if (parsListJSON != null && parsListJSON.length() > 0) {
