@@ -94,9 +94,11 @@ const getFormattedSerieLabelsSettings = (widget: any) => {
         formattedSerieSettings[0].dial = highchartsDefaultValues.getDefaultSerieDialSettings()
         formattedSerieSettings[0].pivot = highchartsDefaultValues.getDefaultSeriePivotSettings()
     }
-    const endIndex = getMaximumNumberOfSeries('highcharts', widget.content.chartTemplate.CHART.type, widget) ?? widget.content.chartTemplate.CHART.VALUES.SERIE.length
+    let endIndex = getMaximumNumberOfSeries('highcharts', widget.content.chartTemplate.CHART.type, widget) ?? widget.content.chartTemplate.CHART.VALUES.SERIE.length
+    if (endIndex > widget.content.chartTemplate.CHART.VALUES.SERIE.length) endIndex = widget.content.chartTemplate.CHART.VALUES.SERIE.length
     for (let i = 0; i < endIndex; i++) {
         const oldModelSerie = widget.content.chartTemplate.CHART.VALUES.SERIE[i]
+        console.log("")
         const formattedSettings = { names: [oldModelSerie.name] } as IHighchartsSeriesLabelsSetting
         setFormattedSerieLabelSettings(oldModelSerie, formattedSettings)
         setSerieSettingsForGaugeChart(oldModelSerie, formattedSettings, widget)
