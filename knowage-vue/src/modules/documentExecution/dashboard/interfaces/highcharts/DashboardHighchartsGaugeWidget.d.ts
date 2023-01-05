@@ -60,3 +60,18 @@ export interface IHighchartsGaugeSerieData {
     innerRadius?: string,
     dataLabels?: IHighchartsChartDataLabels,
 }
+
+export interface IHighchartsGaugeActivityTooltip {
+    enabled: boolean,
+    backgroundColor: string,
+    borderWidth: number,
+    pointFormat: string,
+    shadow: false,
+    style: {
+        fontFamily: string
+        fontSize: string
+        fontWeight: string
+        color: string
+    },
+    positioner: function
+}

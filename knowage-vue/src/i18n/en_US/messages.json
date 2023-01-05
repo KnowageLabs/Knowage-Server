@@ -638,6 +638,7 @@
                     "title": "Tick"
                 },
                 "tooltip": {
+                    "activityGaugeFormatterHint": "Activity Gauge Formatter Hint Placeholder.",
                     "formatterHint": "Callback function to format the text of the tooltip from scratch. In case of single or shared tooltips, a string should be returned. In case of split tooltips, it should return an array where the first item is the header, and subsequent items are mapped to the points. Return false to disable tooltip for a specific point on series. A subset of HTML is supported. Unless useHTML is true, the HTML of the tooltip is parsed and converted to SVG, therefore this isn't a complete HTML renderer. The following HTML tags are supported: b, br, em, i, span, strong. Spans can be styled with a style attribute, but only text-related CSS, that is shared with SVG, is handled. The available data in the formatter differ a bit depending on whether the tooltip is shared or split, or belongs to a single point. In a shared/split tooltip, all properties except x, which is common for all points, are kept in an array, this.points.",
                     "pointFormatter": "Point Formatter",
                     "pointFormatterHint": "A callback function for formatting the HTML output for a single point in the tooltip. Like the pointFormat string, but with more flexibility."

@@ -89,7 +89,7 @@ export interface IHighchartsChartModel {
         series?: { events: any }
     },
     legend: IHighchartsLegend,
-    tooltip: IHighchartsTooltip,
+    tooltip: IHighchartsTooltip | IHighchartsGaugeActivityTooltip,
     colors: string[]
     credits: {
         enabled: boolean

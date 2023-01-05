@@ -82,12 +82,12 @@ const updateFirstSeriesOption = (array: any[], column: IWidgetColumn) => {
 export const removeSerieFromWidgetModel = (widgetModel: IWidget, column: IWidgetColumn, chartType: string | undefined) => {
     widgetModel.settings.chartModel.removeSerie(column)
     const allSeriesOption = chartType !== 'pie' && chartType !== 'solidgauge'
-    removeColumnFromSubmodel(column, widgetModel.settings.accesssibility.seriesAccesibilitySettings, allSeriesOption)
-    removeColumnFromSubmodel(column, widgetModel.settings.series.seriesLabelsSettings, allSeriesOption)
+    removeColumnFromSubmodel(column, widgetModel.settings.accesssibility.seriesAccesibilitySettings)
+    removeColumnFromSubmodel(column, widgetModel.settings.series.seriesLabelsSettings)
     emitter.emit('seriesRemoved', column)
 }
 
-const removeColumnFromSubmodel = (column: IWidgetColumn, array: any[], allSeriesOption: boolean) => {
+const removeColumnFromSubmodel = (column: IWidgetColumn, array: any[]) => {
     for (let i = array.length - 1; i >= 0; i--) {
         for (let j = array[i].names.length - 1; j >= 0; j--) {
             const serieName = array[i].names[j]

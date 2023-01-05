@@ -13,6 +13,7 @@
                 <HighchartsLabelsSettings v-else-if="accordion.type === 'Labels'" :widgetModel="widgetModel"></HighchartsLabelsSettings>
                 <HighchartsLegendSettings v-else-if="accordion.type === 'Legend'" :widgetModel="widgetModel"></HighchartsLegendSettings>
                 <HighchartsTooltipSettings v-else-if="accordion.type === 'Tooltip'" :widgetModel="widgetModel"></HighchartsTooltipSettings>
+                <HighchartsActivityGaugeTooltipSettings v-else-if="accordion.type === 'ActivityGaugeTooltip'" :widgetModel="widgetModel"></HighchartsActivityGaugeTooltipSettings>
                 <HighchartsSeriesLabelSettings v-else-if="accordion.type === 'SriesLabel'" :widgetModel="widgetModel"></HighchartsSeriesLabelSettings>
                 <HighchartsDrilldownSettings v-else-if="accordion.type === 'Drilldown'" :widgetModel="widgetModel"></HighchartsDrilldownSettings>
                 <HighchartsGaugeGeneralSettings v-else-if="accordion.type === 'GaugeSettings'" :widgetModel="widgetModel"></HighchartsGaugeGeneralSettings>
@@ -63,6 +64,7 @@ import HighchartsSeriesAccessibilitySettings from '../highcharts/accessibility/H
 import HighchartsLabelsSettings from '../highcharts/labels/HighchartsLabelsSettings.vue'
 import HighchartsLegendSettings from '../highcharts/legend/HighchartsLegendSettings.vue'
 import HighchartsTooltipSettings from '../highcharts/tooltip/HighchartsTooltipSettings.vue'
+import HighchartsActivityGaugeTooltipSettings from '../highcharts/tooltip/HighchartsActivityGaugeTooltipSettings.vue'
 import HighchartsSeriesLabelSettings from '../highcharts/series/HighchartsSeriesLabelSettings.vue'
 import ChartColorSettings from '../common/ChartColorSettings.vue'
 import HighchartsDrilldownSettings from './interactions/HighchartsDrilldownSettings.vue'
@@ -96,6 +98,7 @@ export default defineComponent({
         HighchartsLabelsSettings,
         HighchartsLegendSettings,
         HighchartsTooltipSettings,
+        HighchartsActivityGaugeTooltipSettings,
         HighchartsSeriesLabelSettings,
         ChartColorSettings,
         HighchartsDrilldownSettings,
