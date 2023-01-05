@@ -140,10 +140,19 @@ export default defineComponent({
             emitter.off('seriesRemoved', this.loadModel)
         },
         loadModel() {
+            this.seriesSettings = []
             this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.model : null
-            if (this.widgetModel.settings?.series?.seriesLabelsSettings) this.seriesSettings = this.widgetModel.settings.series.seriesLabelsSettings
+            if (this.widgetModel.settings?.series?.seriesLabelsSettings) {
+                this.widgetModel.settings.series.seriesLabelsSettings.forEach((seriesSettings: IHighchartsSeriesLabelsSetting) => {
+                    if (this.model?.chart.type !== 'gauge') {
+                        ;['dial', 'pivot'].forEach((property: string) => delete seriesSettings[property])
+                    }
+                    this.seriesSettings.push(seriesSettings)
+                })
+            }
             this.loadToolbarModels()
             this.loadSeriesOptions()
+            this.removeSeriesFromAvailableOptions()
         },
         loadToolbarModels() {
             this.seriesSettings.forEach((serieSetting: IHighchartsSeriesLabelsSetting) => {
@@ -163,17 +172,28 @@ export default defineComponent({
                 this.availableSeriesOptions.push(serie.name)
             })
             if (!this.allSeriesOptionEnabled && this.availableSeriesOptions.length === 1 && this.seriesSettings.length === 0) {
-                this.widgetModel.settings.accesssibility.seriesAccesibilitySettings.push({
-                    names: [this.availableSeriesOptions[0]],
-                    accessibility: {
-                        enabled: false,
-                        description: '',
-                        exposeAsGroupOnly: false,
-                        keyboardNavigation: { enabled: false }
-                    }
-                })
+                const formattedSeriesSettings = {
+                    names: ['all'],
+                    label: { ...highchartsDefaultValues.getDefaultSerieLabelSettings(), enabled: true }
+                } as IHighchartsSeriesLabelsSetting
+                if (this.model.chart.type === 'gauge') {
+                    formattedSeriesSettings.dial = highchartsDefaultValues.getDefaultSerieDialSettings()
+                    formattedSeriesSettings.pivot = highchartsDefaultValues.getDefaultSeriePivotSettings()
+                }
+                this.widgetModel.settings.series.seriesLabelsSettings.push(formattedSeriesSettings)
                 this.availableSeriesOptions = []
             }
+        },
+        removeSeriesFromAvailableOptions() {
+            for (let i = 1; i < this.widgetModel.settings.series.seriesLabelsSettings.length; i++) {
+                for (let j = 0; j < this.widgetModel.settings.series.seriesLabelsSettings[i].names.length; j++) {
+                    this.removeSerieFromAvailableOptions(this.widgetModel.settings.series.seriesLabelsSettings[i].names[j])
+                }
+            }
+        },
+        removeSerieFromAvailableOptions(seriesName: string) {
+            const index = this.availableSeriesOptions.findIndex((tempSerieName: string) => tempSerieName === seriesName)
+            if (index !== -1) this.availableSeriesOptions.splice(index, 1)
         },
         modelChanged() {
             emitter.emit('refreshChart', this.widgetModel.id)
