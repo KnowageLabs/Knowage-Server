@@ -11,11 +11,16 @@ export class KnowageHighchartsGaugeSeriesChart extends KnowageHighchartsGaugeCha
     constructor(model: any) {
         super()
         console.log(">>>>>>>>>>>> KnowageHighchartsGaugeSeriesChart called with: ", deepcopy(model))
-        if (!this.model.plotOptions.gauge || model.chart.type !== 'gauge') this.setGaugePlotOptions()
-        if (!this.model.pane || model.chart.type !== 'gauge') this.setGaugePaneSettings()
-        if (!this.model.yAxis || model.chart.type !== 'gauge') this.setGaugeYAxis()
-        if (model && model.CHART) this.updateModel(deepcopy(model))
-        else if (model) this.model = deepcopy(model)
+        this.setSpecificOptionsDefaultValues()
+        if (model && model.CHART) {
+            this.updateModel(deepcopy(model))
+        }
+        else if (model) {
+            this.model = deepcopy(model)
+            if (model.chart.type !== 'gauge') {
+                this.setSpecificOptionsDefaultValues()
+            }
+        }
         this.model.chart.type = 'gauge'
     }
 
@@ -24,6 +29,12 @@ export class KnowageHighchartsGaugeSeriesChart extends KnowageHighchartsGaugeCha
     }
     setData(data: any, widgetModel: IWidget) {
         this.setGaugeData(data, widgetModel, undefined)
+    }
+
+    setSpecificOptionsDefaultValues() {
+        this.setGaugePlotOptions()
+        this.setGaugePaneSettings()
+        this.setGaugeYAxis()
     }
 
     setGaugePlotOptions() {

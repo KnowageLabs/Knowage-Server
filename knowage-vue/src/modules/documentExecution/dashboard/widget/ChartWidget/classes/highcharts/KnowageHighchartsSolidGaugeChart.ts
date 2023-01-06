@@ -1,5 +1,5 @@
 import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
-import {  IHighchartsSeriesLabelsSetting } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
+import { IHighchartsSeriesLabelsSetting } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import { updateSolidGaugeChartModel } from './updater/KnowageHighchartsSolidGaugeChartUpdater'
 import { IHighchartsGaugeSerie, IHighchartsGaugeSerieData } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget'
 import { KnowageHighchartsGaugeChart } from './KnowageHighchartsGaugeChart'
@@ -10,11 +10,14 @@ export class KnowageHighchartsSolidGaugeChart extends KnowageHighchartsGaugeChar
     constructor(model: any) {
         super()
         console.log(">>>>>>>>>>>> KnowageHighchartsSolidGaugeChart called with: ", deepcopy(model))
-        if (!this.model.plotOptions.solidgauge || model.chart.type !== 'solidgauge') this.setGaugePlotOptions()
-        if (!this.model.pane || model.chart.type !== 'solidgauge') this.setGaugePaneSettings()
-        if (!this.model.yAxis || model.chart.type !== 'solidgauge') this.setGaugeYAxis()
+        this.setSpecificOptionsDefaultValues()
         if (model && model.CHART) this.updateModel(deepcopy(model))
-        else if (model) this.model = deepcopy(model)
+        else if (model) {
+            this.model = deepcopy(model)
+            if (model.chart.type !== 'solidgauge') {
+                this.setSpecificOptionsDefaultValues()
+            }
+        }
         this.model.chart.type = 'solidgauge'
     }
 
@@ -24,6 +27,12 @@ export class KnowageHighchartsSolidGaugeChart extends KnowageHighchartsGaugeChar
 
     setData(data: any, widgetModel: IWidget) {
         this.setGaugeData(data, widgetModel, 1)
+    }
+
+    setSpecificOptionsDefaultValues() {
+        this.setGaugePlotOptions()
+        this.setGaugePaneSettings()
+        this.setGaugeYAxis()
     }
 
     setGaugePlotOptions() {

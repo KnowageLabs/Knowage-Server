@@ -1,5 +1,6 @@
 import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
 import { IHighchartsGaugeSerie, IHighchartsGaugeSerieData } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget'
+import { IHighchartsChartSerie } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import { KnowageHighcharts } from './KnowageHihgcharts'
 import { createGaugeSerie } from './updater/KnowageHighchartsCommonUpdater'
 

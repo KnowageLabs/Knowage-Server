@@ -173,7 +173,7 @@ export interface IHighchartsChartSerieData {
     y: number,
     sliced?: boolean,
     selected?: boolean,
-    dataLabels?: IHighchartsChartDataLabels,
+    dataLabels?: IHighchartsChartDataLabels
 }
 
 export interface IHighchartsSerieAccessibility {

@@ -10,12 +10,15 @@ export class KnowageHighchartsActivityGaugeChart extends KnowageHighchartsGaugeC
     constructor(model: any) {
         super()
         console.log(">>>>>>>>>>>> KnowageHighchartsActivityGaugeChart called with: ", deepcopy(model))
-        if (!this.model.plotOptions.solidgauge || model.chart.type !== 'activitygauge') this.setGaugePlotOptions()
-        if (!this.model.pane || model.chart.type !== 'activitygauge') this.setGaugePaneSettings()
-        if (!this.model.yAxis || model.chart.type !== 'activitygauge') this.setGaugeYAxis()
+        this.setSpecificOptionsDefaultValues()
         this.setTooltipSettings()
         if (model && model.CHART) this.updateModel(deepcopy(model))
-        else if (model) this.model = deepcopy(model)
+        else if (model) {
+            this.model = deepcopy(model)
+            if (model.chart.type !== 'activitygauge') {
+                this.setSpecificOptionsDefaultValues()
+            }
+        }
         this.model.chart.type = 'activitygauge'
     }
 
@@ -26,6 +29,13 @@ export class KnowageHighchartsActivityGaugeChart extends KnowageHighchartsGaugeC
     setModel(model: IHighchartsChartModel) {
         this.model = model
     }
+
+    setSpecificOptionsDefaultValues() {
+        this.setGaugePlotOptions()
+        this.setGaugePaneSettings()
+        this.setGaugeYAxis()
+    }
+
 
     setData(data: any, widgetModel: IWidget) {
         this.setGaugeData(data, widgetModel, 4)
