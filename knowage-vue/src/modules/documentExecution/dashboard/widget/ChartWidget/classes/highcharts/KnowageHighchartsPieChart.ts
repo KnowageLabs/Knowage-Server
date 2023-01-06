@@ -1,10 +1,11 @@
 import { KnowageHighcharts } from './KnowageHihgcharts'
 import { updatePieChartModel } from './updater/KnowageHighchartsPieChartUpdater'
 import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
-import { IHighchartsChartModel, IHighchartsChartSerie, IHighchartsChartSerieData } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
+import { IHighchartsChartSerie, IHighchartsChartSerieData } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import { createSerie } from './updater/KnowageHighchartsCommonUpdater'
 import * as highchartsDefaultValues from '../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
 import deepcopy from 'deepcopy'
+import { IHighchartsGaugeSerie } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget'
 
 export class KnowageHighchartsPieChart extends KnowageHighcharts {
     constructor(model: any) {
@@ -15,6 +16,7 @@ export class KnowageHighchartsPieChart extends KnowageHighcharts {
         else if (model) {
             this.model = deepcopy(model)
             if (model.chart.type !== 'pie') {
+                this.formatSeriesFromOtherChartTypeSeries()
                 this.setSpecificOptionsDefaultValues()
             }
         }
@@ -84,5 +86,15 @@ export class KnowageHighchartsPieChart extends KnowageHighcharts {
                 }
             })
         })
+    }
+
+    formatSeriesFromOtherChartTypeSeries() {
+        this.model.series = this.model.series.map((serie: IHighchartsGaugeSerie) => { return this.getFormattedSerieFromOtherChartTypeSerie(serie) })
+    }
+
+    getFormattedSerieFromOtherChartTypeSerie(otherChartSerie: IHighchartsGaugeSerie) {
+        const formattedSerie = { name: otherChartSerie.name, data: [], colorByPoint: true } as IHighchartsChartSerie
+        if (otherChartSerie.accessibility) formattedSerie.accessibility
+        return formattedSerie
     }
 }

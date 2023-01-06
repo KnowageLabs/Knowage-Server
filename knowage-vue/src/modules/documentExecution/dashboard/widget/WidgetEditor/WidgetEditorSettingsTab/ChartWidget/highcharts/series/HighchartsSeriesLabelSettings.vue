@@ -156,12 +156,12 @@ export default defineComponent({
         setEventListeners() {
             emitter.on('seriesAdded', this.loadModel)
             emitter.on('seriesRemoved', this.loadModel)
-            emitter.on('chartTypeChanged', this.loadModel)
+            emitter.on('chartTypeChanged', this.onChartTypeChanged)
         },
         removeEventListeners() {
             emitter.off('seriesAdded', this.loadModel)
             emitter.off('seriesRemoved', this.loadModel)
-            emitter.off('chartTypeChanged', this.loadModel)
+            emitter.off('chartTypeChanged', this.onChartTypeChanged)
         },
         loadModel() {
             this.seriesSettings = []
@@ -299,6 +299,10 @@ export default defineComponent({
             if (!event) return
             serieSetting.serieColor = event
             this.modelChanged()
+        },
+        onChartTypeChanged() {
+            this.widgetModel.settings.series.seriesLabelsSettings = []
+            this.loadModel()
         }
     }
 })

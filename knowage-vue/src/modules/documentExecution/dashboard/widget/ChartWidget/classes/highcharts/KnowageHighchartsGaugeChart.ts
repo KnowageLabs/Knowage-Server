@@ -53,4 +53,14 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
             index !== -1 ? newSeries.push(this.model.series[index]) : newSeries.push(createGaugeSerie(column.columnName))
         }
     }
+
+    formatSeriesFromOtherChartTypeSeries() {
+        this.model.series = this.model.series.map((serie: IHighchartsChartSerie) => { return this.getFormattedSerieFromOtherChartTypeSerie(serie) })
+    }
+
+    getFormattedSerieFromOtherChartTypeSerie(otherChartSerie: IHighchartsChartSerie) {
+        const formattedSerie = { name: otherChartSerie.name, data: [], colorByPoint: false } as IHighchartsGaugeSerie
+        if (otherChartSerie.accessibility) formattedSerie.accessibility
+        return formattedSerie
+    }
 }

@@ -18,6 +18,7 @@ export class KnowageHighchartsGaugeSeriesChart extends KnowageHighchartsGaugeCha
         else if (model) {
             this.model = deepcopy(model)
             if (model.chart.type !== 'gauge') {
+                this.formatSeriesFromOtherChartTypeSeries()
                 this.setSpecificOptionsDefaultValues()
             }
         }

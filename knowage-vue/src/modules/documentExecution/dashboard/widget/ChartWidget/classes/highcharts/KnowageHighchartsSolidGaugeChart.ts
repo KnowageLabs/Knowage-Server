@@ -15,6 +15,7 @@ export class KnowageHighchartsSolidGaugeChart extends KnowageHighchartsGaugeChar
         else if (model) {
             this.model = deepcopy(model)
             if (model.chart.type !== 'solidgauge') {
+                this.formatSeriesFromOtherChartTypeSeries()
                 this.setSpecificOptionsDefaultValues()
             }
         }
