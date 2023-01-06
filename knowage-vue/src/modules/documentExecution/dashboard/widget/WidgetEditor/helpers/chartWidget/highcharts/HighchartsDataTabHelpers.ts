@@ -108,3 +108,22 @@ const removeColumnFromSubmodel = (column: IWidgetColumn, array: any[], allSeries
         }
     }
 }
+
+export const updateWidgetModelColumnsAfterChartTypeChange = (widget: IWidget, chartType: string) => {
+    const maxAttributeColumns = chartType === 'pie' ? 4 : 0
+    const maxMeasureColumns = getMaxValuesNumber(chartType) ?? widget.columns.length
+    const updatedColumns = [] as IWidgetColumn[]
+    let attributesAdded = 0
+    let measuresAdded = 0
+    widget.columns.forEach((column: IWidgetColumn) => {
+        if (column.fieldType === 'ATTRIBUTE' && attributesAdded < maxAttributeColumns) {
+            updatedColumns.push(column)
+            attributesAdded++
+        } else if (column.fieldType === 'MEASURE' && measuresAdded < maxMeasureColumns) {
+            updatedColumns.push(column)
+            measuresAdded++
+        }
+    })
+    widget.columns = updatedColumns
+}
+

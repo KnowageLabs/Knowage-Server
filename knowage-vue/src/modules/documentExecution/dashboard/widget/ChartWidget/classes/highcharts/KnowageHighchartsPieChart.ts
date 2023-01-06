@@ -10,9 +10,14 @@ export class KnowageHighchartsPieChart extends KnowageHighcharts {
     constructor(model: any) {
         super()
         console.log(">>>>>>>>>>>> KnowageHighchartsPieChart called with: ", deepcopy(model))
-        if (!this.model.plotOptions.pie || model.chart.type !== 'pie') this.setPiePlotOptions()
+        this.setSpecificOptionsDefaultValues()
         if (model && model.CHART) this.updateModel(deepcopy(model))
-        else if (model) this.model = deepcopy(model)
+        else if (model) {
+            this.model = deepcopy(model)
+            if (model.chart.type !== 'pie') {
+                this.setSpecificOptionsDefaultValues()
+            }
+        }
         this.model.chart.type = 'pie'
     }
 
@@ -20,8 +25,8 @@ export class KnowageHighchartsPieChart extends KnowageHighcharts {
         updatePieChartModel(oldModel, this.model)
     }
 
-    setModel(model: IHighchartsChartModel) {
-        this.model = model
+    setSpecificOptionsDefaultValues() {
+        this.setPiePlotOptions()
     }
 
     setData(data: any, widgetModel: IWidget) {

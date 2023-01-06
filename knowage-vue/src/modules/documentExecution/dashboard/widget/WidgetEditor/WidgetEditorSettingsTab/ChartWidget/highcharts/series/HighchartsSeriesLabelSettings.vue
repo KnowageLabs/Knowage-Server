@@ -164,7 +164,6 @@ export default defineComponent({
             emitter.off('chartTypeChanged', this.loadModel)
         },
         loadModel() {
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>> LOAD MODEL SERIES CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALED: ')
             this.seriesSettings = []
             this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.model : null
             if (this.widgetModel.settings?.series?.seriesLabelsSettings) {
@@ -201,7 +200,6 @@ export default defineComponent({
         loadSeriesOptions() {
             this.availableSeriesOptions = []
             if (!this.model) return
-            console.log('>>>>>> LOAD SERIES OPTIONS: ', deepcopy(this.model.series))
             this.model.series.forEach((serie: IHighchartsChartSerie) => {
                 this.availableSeriesOptions.push(serie.name)
             })
@@ -210,7 +208,6 @@ export default defineComponent({
             if (!this.model) return
             console.log('>>>>>>>>> addFirstSeriesSetting', deepcopy(this.availableSeriesOptions))
             if (this.availableSeriesOptions.length >= 1) {
-                console.log('>>>>>>>>>>>>>>>>>>>>> GOT HERE 1!')
                 const name = this.allSeriesOptionEnabled ? 'all' : this.availableSeriesOptions[0]
                 const formattedSeriesSettings = {
                     names: [name],
@@ -220,7 +217,6 @@ export default defineComponent({
                     formattedSeriesSettings.dial = highchartsDefaultValues.getDefaultSerieDialSettings()
                     formattedSeriesSettings.pivot = highchartsDefaultValues.getDefaultSeriePivotSettings()
                 }
-                console.log('>>>>>>>>>>>>>>>>>>>>> GOT HERE 2!')
                 this.seriesSettings.push(formattedSeriesSettings)
                 this.widgetModel.settings.series.seriesLabelsSettings.push(formattedSeriesSettings)
             }

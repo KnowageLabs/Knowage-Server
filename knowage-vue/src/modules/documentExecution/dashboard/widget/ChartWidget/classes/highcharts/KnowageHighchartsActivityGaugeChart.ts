@@ -65,7 +65,7 @@ export class KnowageHighchartsActivityGaugeChart extends KnowageHighchartsGaugeC
 
     setAllSeriesSettings(widgetModel: IWidget) {
         const allSeriesSettings = widgetModel.settings.series.seriesLabelsSettings[0]
-        if (allSeriesSettings.serieColorEnabled) {
+        if (allSeriesSettings?.serieColorEnabled) {
             this.model.series.forEach((serie: IHighchartsGaugeSerie) => {
                 this.updateSeriesDataWithSerieSettings(serie, allSeriesSettings)
             })

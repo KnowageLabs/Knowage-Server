@@ -15,6 +15,7 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget, IDataset } from '../../../Dashboard'
 import { createNewHighchartsModel } from '../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsHelpers'
 import { createChartJSModel } from '../helpers/chartWidget/chartJS/ChartJSHelpers'
+import { updateWidgetModelColumnsAfterChartTypeChange } from '../helpers/chartWidget/highcharts/HighchartsDataTabHelpers'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { mapState } from 'pinia'
 import mainStore from '@/App.store'
@@ -58,10 +59,11 @@ export default defineComponent({
         onChartTypeChanged(chartType: string) {
             console.log('>>>>>>>>>>>> onChartTypeChanged: ', chartType)
             // TODO widgetChange
+            updateWidgetModelColumnsAfterChartTypeChange(this.propWidget, chartType)
             this.propWidget.settings.chartModel = this.user?.enterprise ? createNewHighchartsModel(chartType, this.propWidget.settings.chartModel?.model) : createChartJSModel(chartType)
             // this.propWidget.settings.chartModel = false ? createNewHighchartsModel(chartType) : createChartJSModel(chartType)
             emitter.emit('chartTypeChanged', this.propWidget.id)
-            emitter.emit('refreshChart', this.propWidget.id)
+            emitter.emit('refreshWidgetWithData', this.propWidget.id)
         }
     }
 })

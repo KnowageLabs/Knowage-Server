@@ -1,5 +1,4 @@
 <template>
-    {{ chartModel?.series }}
     <div v-show="!error" :id="chartID" style="width: 100%; height: 100%; margin: 0 auto"></div>
 </template>
 
@@ -21,8 +20,7 @@ import SeriesLabel from 'highcharts/modules/series-label'
 import cryptoRandomString from 'crypto-random-string'
 import store from '../../../Dashboard.store'
 import deepcopy from 'deepcopy'
-import oldChart from './oldChart.json'
-import myChart from './myChart.json'
+import mainStore from '@/App.store'
 
 HighchartsMore(Highcharts)
 HighchartsSolidGauge(Highcharts)
@@ -66,6 +64,7 @@ export default defineComponent({
     },
     methods: {
         ...mapActions(store, ['setSelections', 'getDatasetLabel']),
+        ...mapActions(mainStore, ['setError']),
         setEventListeners() {
             emitter.on('refreshChart', this.onRefreshChart)
             emitter.on('chartWidgetResized', this.resizeChart)
@@ -105,6 +104,8 @@ export default defineComponent({
                 this.highchartsInstance.reflow()
             } catch (error: any) {
                 console.log('>>>>>>>> CHART ERROR: ', error)
+                console.log('>>>>>>>> CHART ERROR MESSAGE: ', error?.message)
+                this.setError({ title: this.$t('common.toast.errorTitle'), msg: error })
             }
         },
         updateLegendSettings() {
