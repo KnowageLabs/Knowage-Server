@@ -32,11 +32,11 @@ const addHighchartsColumnToTableRows = (tempColumn: IWidgetColumn, rows: IWidget
         convertColumnToMeasure(tempColumn)
         if (rows.length === 1 && maxValues === 1) {
             removeSerieFromWidgetModel(widgetModel, rows[0], chartType)
+            updateSerieInWidgetModel(widgetModel, tempColumn, chartType)
             rows[0] = tempColumn
         }
         addColumnToRows(rows, tempColumn)
-        updateSerieInWidgetModel(widgetModel, tempColumn, chartType)
-
+        emitter.emit('seriesAdded', tempColumn)
     }
 }
 
@@ -55,7 +55,7 @@ const getMaxValuesNumber = (chartType: string | undefined) => {
 const convertColumnToMeasure = (tempColumn: IWidgetColumn) => {
     if (tempColumn.fieldType === 'ATTRIBUTE') {
         tempColumn.fieldType = 'MEASURE'
-        tempColumn.aggregation = 'SUM'
+        tempColumn.aggregation = 'COUNT'
     }
 }
 
@@ -64,16 +64,16 @@ const addColumnToRows = (rows: IWidgetColumn[], tempColumn: IWidgetColumn) => {
     if (index === -1) rows.push(tempColumn)
 }
 
-// TODO
 const updateSerieInWidgetModel = (widgetModel: IWidget, column: IWidgetColumn, chartType: string | undefined) => {
     if (chartType === 'pie' || chartType === 'solidgauge') {
         updateFirstSeriesOption(widgetModel.settings.accesssibility.seriesAccesibilitySettings, column)
         updateFirstSeriesOption(widgetModel.settings.series.seriesLabelsSettings, column)
     }
-    emitter.emit('seriesAdded', column)
 }
 
 const updateFirstSeriesOption = (array: any[], column: IWidgetColumn) => {
+    console.log(">>>>>>>> ARRAY: ", array)
+    console.log(">>>>>>>> column: ", column)
     if (array && array[0]) {
         array[0].names[0] = column.columnName
     }
@@ -82,12 +82,12 @@ const updateFirstSeriesOption = (array: any[], column: IWidgetColumn) => {
 export const removeSerieFromWidgetModel = (widgetModel: IWidget, column: IWidgetColumn, chartType: string | undefined) => {
     widgetModel.settings.chartModel.removeSerie(column)
     const allSeriesOption = chartType !== 'pie' && chartType !== 'solidgauge'
-    removeColumnFromSubmodel(column, widgetModel.settings.accesssibility.seriesAccesibilitySettings)
-    removeColumnFromSubmodel(column, widgetModel.settings.series.seriesLabelsSettings)
+    removeColumnFromSubmodel(column, widgetModel.settings.accesssibility.seriesAccesibilitySettings, allSeriesOption)
+    removeColumnFromSubmodel(column, widgetModel.settings.series.seriesLabelsSettings, allSeriesOption)
     emitter.emit('seriesRemoved', column)
 }
 
-const removeColumnFromSubmodel = (column: IWidgetColumn, array: any[]) => {
+const removeColumnFromSubmodel = (column: IWidgetColumn, array: any[], allSeriesOption: boolean) => {
     for (let i = array.length - 1; i >= 0; i--) {
         for (let j = array[i].names.length - 1; j >= 0; j--) {
             const serieName = array[i].names[j]
@@ -95,7 +95,7 @@ const removeColumnFromSubmodel = (column: IWidgetColumn, array: any[]) => {
             if (serieName === column.columnName) {
                 array[i].names.splice(j, 1)
             }
-            if (array[i].names.length === 0) array.splice(i, 1)
+            if (!allSeriesOption && array[i].names.length === 0) array.splice(i, 1)
         }
     }
 }

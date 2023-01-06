@@ -128,7 +128,7 @@ export default defineComponent({
             return this.model && this.model.chart.type !== 'pie' && this.model.chart.type !== 'solidgauge'
         },
         formattingSectionAvailable() {
-            return this.model && ['pie', 'gauge'].includes(this.model.chart.type)
+            return this.model && ['pie', 'gauge', 'solidgauge'].includes(this.model.chart.type)
         },
         advancedSectionAvailable() {
             return this.model?.chart.type === 'gauge'
@@ -140,7 +140,7 @@ export default defineComponent({
             return this.model?.chart.type === 'activitygauge'
         },
         labelOptionsVisible() {
-            return this.model && ['pie', 'gauge'].includes(this.model.chart.type)
+            return this.model && ['pie', 'gauge', 'solidgauge'].includes(this.model.chart.type)
         }
     },
     created() {
@@ -173,6 +173,13 @@ export default defineComponent({
             this.loadToolbarModels()
             this.loadSeriesOptions()
             this.removeSeriesFromAvailableOptions()
+            this.removeAllSerieSettingsFromModel()
+        },
+        removeAllSerieSettingsFromModel() {
+            if (this.seriesSettings[0]?.names[0] && this.seriesSettings[0].names[0] === 'all' && !this.allSeriesOptionEnabled) {
+                this.seriesSettings.splice(0, 1)
+                this.widgetModel.settings.series.seriesLabelsSettings.splice(0, 1)
+            }
         },
         loadToolbarModels() {
             this.seriesSettings.forEach((serieSetting: IHighchartsSeriesLabelsSetting) => {
@@ -191,6 +198,10 @@ export default defineComponent({
             this.model.series.forEach((serie: IHighchartsChartSerie) => {
                 this.availableSeriesOptions.push(serie.name)
             })
+            this.addAllSeriesSetting()
+        },
+        addAllSeriesSetting() {
+            if (!this.model) return
             if (!this.allSeriesOptionEnabled && this.availableSeriesOptions.length === 1 && this.seriesSettings.length === 0) {
                 const formattedSeriesSettings = {
                     names: ['all'],

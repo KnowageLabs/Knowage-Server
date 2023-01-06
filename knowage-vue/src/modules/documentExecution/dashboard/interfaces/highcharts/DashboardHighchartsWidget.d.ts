@@ -149,7 +149,7 @@ export interface IHighchartsChartDataLabels {
         color: string
     },
     position: string
-    backgroundColor: string,
+    backgroundColor: string | null,
     linecap?: string,
     stickyTracking?: boolean,
     rounded?: boolean,

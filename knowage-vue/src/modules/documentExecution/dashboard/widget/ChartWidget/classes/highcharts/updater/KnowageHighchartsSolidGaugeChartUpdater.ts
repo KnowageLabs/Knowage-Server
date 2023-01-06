@@ -10,7 +10,7 @@ export const updateSolidGaugeChartModel = (oldModel: any, newModel: IHighchartsC
     getFormattedLabels(oldModel, newModel)
     getFormattedSeries(oldModel, newModel, null)
     getFormattedTooltipSettings(oldModel, newModel)
-    getFormattedPaneSettings(oldModel, newModel)
+    getFormattedPaneSettings(oldModel, newModel, 'solidgauge')
     if (oldModel.CHART.AXES_LIST && oldModel.CHART.AXES_LIST.AXIS && oldModel.CHART.AXES_LIST.AXIS[0]) {
         getFormattedScaleSettings(oldModel, newModel)
         getFormattedTickSettings(oldModel, newModel)

@@ -1,5 +1,6 @@
 <template>
     <div v-if="model?.yAxis" class="p-grid p-jc-center p-ai-center p-p-4">
+        {{ model.yAxis }}
         <div class="p-col-12 p-md-6 p-lg-6 p-d-flex p-flex-column">
             <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.highcharts.tick.tickPosition') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center">

@@ -16,12 +16,12 @@
         },
         "type": "solidgauge"
     },
-    "colors": ["rgba(248,70,138,1)", "rgba(4,45,87,1)", "rgba(7,83,160,1)", "rgba(10,121,233,1)", "rgba(72,159,247,1)", "rgba(145,197,250,1)", "rgba(121,133,155,1)", "rgba(165,173,188,1)", "rgba(209,213,221,1)", "rgba(59,2,24,1)", "rgba(133,5,54,1)", "rgba(207,8,84,1)"],
+    "colors": ["rgba(4,45,87,1)", "rgba(7,83,160,1)", "rgba(10,121,233,1)", "rgba(72,159,247,1)", "rgba(145,197,250,1)", "rgba(248,70,138,1)", "rgba(121,133,155,1)", "rgba(165,173,188,1)", "rgba(209,213,221,1)", "rgba(59,2,24,1)", "rgba(133,5,54,1)", "rgba(207,8,84,1)"],
     "credits": {
         "enabled": false
     },
     "lang": {
-        "noData": "No data message"
+        "noData": ""
     },
     "legend": {
         "align": "center",
@@ -41,34 +41,37 @@
     },
     "noData": {
         "position": {
-            "align": "right",
+            "align": "",
             "verticalAlign": "middle"
         },
         "style": {
             "backgroundColor": "",
-            "color": "rgba(189,168,242,1)",
-            "fontFamily": "Roboto",
-            "fontSize": "10px",
-            "fontWeight": "bold"
+            "color": "",
+            "fontFamily": "",
+            "fontSize": "",
+            "fontWeight": ""
         }
     },
     "pane": {
+        "background": {
+            "backgroundColor": "#EEE",
+            "innerRadius": "60%",
+            "outerRadius": "100%",
+            "shape": "arc"
+        },
         "center": ["50%", "50%"],
-        "endAngle": 90,
-        "startAngle": -90
+        "endAngle": 120,
+        "startAngle": -120
     },
     "plotOptions": {
         "series": {
             "events": {}
         },
         "solidgauge": {
-            "allowPointSelect": false,
-            "colors": [],
-            "cursor": "",
             "dataLabels": {
                 "backgroundColor": "rgba(194,194,194, 1)",
-                "distance": 30,
                 "enabled": false,
+                "formatterError": "",
                 "position": "",
                 "style": {
                     "color": "",
@@ -77,11 +80,7 @@
                     "fontWeight": ""
                 }
             },
-            "depth": 100,
-            "linecap": "round",
-            "rounded": true,
-            "showInLegend": true,
-            "stickyTracking": false
+            "showInLegend": true
         }
     },
     "series": [
@@ -97,67 +96,24 @@
             "colorByPoint": false,
             "data": [
                 {
-                    "background": [
-                        {
-                            "backgroundColor": "red",
-                            "boolean": "112%",
-                            "borderWidth": 0,
-                            "innerRadius": "88%"
+                    "dataLabels": {
+                        "backgroundColor": null,
+                        "distance": 30,
+                        "enabled": true,
+                        "position": "",
+                        "style": {
+                            "color": "",
+                            "fontFamily": "",
+                            "fontSize": "",
+                            "fontWeight": ""
                         }
-                    ],
-                    "color": "",
-                    "innerRadius": "88%",
+                    },
                     "name": "UNITS_ORDERED",
-                    "radius": "112%",
                     "y": 441
                 }
             ],
             "groupingFunction": "COUNT",
             "name": "UNITS_ORDERED"
-        },
-        {
-            "accessibility": {
-                "description": "",
-                "enabled": false,
-                "exposeAsGroupOnly": false,
-                "keyboardNavigation": {
-                    "enabled": false
-                }
-            },
-            "colorByPoint": false,
-            "data": [
-                {
-                    "color": "",
-                    "innerRadius": "63%",
-                    "name": "UNITS_SHIPPED",
-                    "radius": "87%",
-                    "y": 239
-                }
-            ],
-            "groupingFunction": "MIN",
-            "name": "UNITS_SHIPPED"
-        },
-        {
-            "accessibility": {
-                "description": "",
-                "enabled": false,
-                "exposeAsGroupOnly": false,
-                "keyboardNavigation": {
-                    "enabled": false
-                }
-            },
-            "colorByPoint": false,
-            "data": [
-                {
-                    "color": "",
-                    "innerRadius": "38%",
-                    "name": "SUPPLY_TIME",
-                    "radius": "62%",
-                    "y": 1163.9615
-                }
-            ],
-            "groupingFunction": "SUM",
-            "name": "SUPPLY_TIME"
         }
     ],
     "settings": {
@@ -166,13 +122,10 @@
     },
     "title": "",
     "tooltip": {
-        "backgroundColor": "",
-        "borderWidth": 0,
-        "enabled": true,
+        "backgroundColor": "rgba(214,214,214,1)",
+        "enabled": false,
         "formatterError": "",
-        "pointFormat": "{series.name}<br><span>{point.y}</span>",
         "pointFormatterError": "",
-        "shadow": false,
         "style": {
             "color": "",
             "fontFamily": "",
@@ -181,14 +134,11 @@
         }
     },
     "yAxis": {
-        "labels": {
-            "enabled": false
-        },
-        "lineWidth": 0,
-        "max": null,
-        "min": null,
-        "minorTickInterval": null,
+        "max": 600,
+        "min": 2,
+        "minorTickInterval": "auto",
         "plotBands": [],
+        "stops": null,
         "tickColor": "",
         "tickLength": 0,
         "tickPosition": "",

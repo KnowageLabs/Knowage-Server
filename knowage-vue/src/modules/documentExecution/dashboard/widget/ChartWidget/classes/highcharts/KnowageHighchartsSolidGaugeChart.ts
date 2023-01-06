@@ -36,105 +36,39 @@ export class KnowageHighchartsSolidGaugeChart extends KnowageHighchartsGaugeChar
 
     setGaugeYAxis() {
         this.model.yAxis = highchartsDefaultValues.getDefaultGaugeYAxis()
+        this.model.yAxis.tickWidth = 0
     }
 
     updateSeriesLabelSettings(widgetModel: IWidget) {
         if (!widgetModel || !widgetModel.settings.series || !widgetModel.settings.series.seriesLabelsSettings) return
-        const chartColors = widgetModel.settings.chart.colors
-        this.setAllSeriesSettings(widgetModel, chartColors)
-        this.setSpecificSeriesSettings(widgetModel, chartColors)
+        const seriesSettings = widgetModel.settings.series.seriesLabelsSettings[0]
+        this.updateSeriesDataWithSerieSettings(this.model.series[0], seriesSettings)
     }
 
-    setAllSeriesSettings(widgetModel: IWidget, chartColors: string[]) {
-        const allSeriesSettings = widgetModel.settings.series.seriesLabelsSettings[0]
-        this.resetSeriesSettings(chartColors)
-        this.model.series.forEach((serie: IHighchartsGaugeSerie, index: number) => {
-            const color = chartColors[index % chartColors.length] ?? ''
-            this.updateSeriesDataWithSerieSettings(serie, allSeriesSettings, index, color)
-        })
 
-    }
-
-    resetSeriesSettings(chartColors: string[]) {
-        this.model.series.forEach((serie: IHighchartsGaugeSerie, index: number) => {
-            const color = chartColors[index % chartColors.length] ?? ''
-            serie.data.forEach((data: IHighchartsGaugeSerieData) => {
-                if (this.model.chart.type === 'activitygauge') {
-                    data.color = ''
-                    delete data.dataLabels
-                }
-                else {
-                    data.dataLabels = { ...highchartsDefaultValues.getDefaultSerieLabelSettings(), position: '' }
-                    data.dataLabels.formatter = undefined
-                }
-            })
-            this.resetDialAndPivotSerieSettings(serie, color)
-        })
-    }
-
-    resetDialAndPivotSerieSettings(serie: IHighchartsGaugeSerie, color: string) {
-        if (serie.dial) {
-            serie.dial = highchartsDefaultValues.getDefaultSerieDialSettings()
-            serie.dial.backgroundColor = color
-        }
-        if (serie.pivot) {
-            serie.pivot = highchartsDefaultValues.getDefaultSeriePivotSettings()
-            serie.pivot.backgroundColor = color
-        }
-    }
-
-    setSpecificSeriesSettings(widgetModel: IWidget, chartColors: string[]) {
-        for (let i = 1; i < widgetModel.settings.series.seriesLabelsSettings.length; i++) {
-            const seriesSettings = widgetModel.settings.series.seriesLabelsSettings[i] as IHighchartsSeriesLabelsSetting
-            seriesSettings.names.forEach((serieName: string) => this.updateSpecificSeriesLabelSettings(serieName, seriesSettings, chartColors))
-        }
-    }
-
-    updateSpecificSeriesLabelSettings(serieName: string, seriesSettings: IHighchartsSeriesLabelsSetting, chartColors: string[]) {
-        const index = this.model.series.findIndex((serie: IHighchartsGaugeSerie) => serie.name === serieName)
-        if (index !== -1) {
-            const color = chartColors[index % chartColors.length] ?? ''
-            this.updateSeriesDataWithSerieSettings(this.model.series[index], seriesSettings, index, color)
-        }
-    }
-
-    updateSeriesDataWithSerieSettings(serie: IHighchartsGaugeSerie, seriesSettings: IHighchartsSeriesLabelsSetting, index: number, color: string) {
+    updateSeriesDataWithSerieSettings(serie: IHighchartsGaugeSerie, seriesSettings: IHighchartsSeriesLabelsSetting) {
+        if (!serie || !seriesSettings) return
         console.log(">>>>>>>>>>>> SERIES SETTING: ", seriesSettings)
         serie.data.forEach((data: IHighchartsGaugeSerieData) => {
-            if (this.model.chart.type === 'activitygauge') {
-                delete data.dataLabels
-                data.color = seriesSettings.serieColorEnabled ? seriesSettings.serieColor : ''
-            }
-            else if (seriesSettings.label.enabled) {
-                data.dataLabels = {
-                    y: index * 40,
-                    backgroundColor: seriesSettings.label.backgroundColor ?? color,
-                    distance: 30,
-                    enabled: true,
-                    position: '',
-                    style: {
-                        fontFamily: seriesSettings.label.style.fontFamily,
-                        fontSize: seriesSettings.label.style.fontSize,
-                        fontWeight: seriesSettings.label.style.fontWeight,
-                        color: seriesSettings.label.style.color ?? color
-                    },
-                    formatter: function () {
-                        return KnowageHighchartsGaugeChart.prototype.handleFormatter(this, seriesSettings.label)
-                    }
+            data.dataLabels = {
+                backgroundColor: null,
+                distance: 30,
+                enabled: seriesSettings.label.enabled,
+                position: '',
+                style: {
+                    fontFamily: seriesSettings.label.style.fontFamily,
+                    fontSize: seriesSettings.label.style.fontSize,
+                    fontWeight: seriesSettings.label.style.fontWeight,
+                    color: seriesSettings.label.style.color ?? ''
+                },
+                formatter: function () {
+                    return KnowageHighchartsGaugeChart.prototype.handleFormatter(this, seriesSettings.label)
                 }
             }
         })
-        if (this.model.chart.type !== 'activitygauge') this.updateSeriesDialAndPivotSettings(serie, seriesSettings, color)
-    }
+        if (seriesSettings.label.enabled) {
 
-    updateSeriesDialAndPivotSettings(serie: IHighchartsGaugeSerie, seriesSettings: IHighchartsSeriesLabelsSetting, color: string) {
-        if (seriesSettings.dial) {
-            serie.dial = { ...seriesSettings.dial }
-            if (!seriesSettings.dial.backgroundColor) serie.dial.backgroundColor = color
         }
-        if (seriesSettings.pivot) {
-            serie.pivot = { ...seriesSettings.pivot }
-            if (!seriesSettings.pivot.backgroundColor) serie.pivot.backgroundColor = color
-        }
+
     }
 }
