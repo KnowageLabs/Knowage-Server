@@ -4,12 +4,12 @@ import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Da
 import { IHighchartsChartModel, IHighchartsChartSerie, IHighchartsChartSerieData } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import { createSerie } from './updater/KnowageHighchartsCommonUpdater'
 import * as highchartsDefaultValues from '../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
-import Highcharts from 'highcharts'
 import deepcopy from 'deepcopy'
 
 export class KnowageHighchartsPieChart extends KnowageHighcharts {
     constructor(model: any) {
         super()
+        console.log(">>>>>>>>>>>> KnowageHighchartsPieChart called with: ", deepcopy(model))
         if (!this.model.plotOptions.pie || model.chart.type !== 'pie') this.setPiePlotOptions()
         if (model && model.CHART) this.updateModel(deepcopy(model))
         else if (model) this.model = deepcopy(model)
@@ -30,7 +30,7 @@ export class KnowageHighchartsPieChart extends KnowageHighcharts {
         this.model.series.map((item, serieIndex) => {
             this.range[serieIndex] = { serie: item.name }
             item.data = []
-            data?.rows?.forEach((row: any, index: number) => {
+            data?.rows?.forEach((row: any) => {
                 let serieElement = {
                     id: row.id,
                     name: row['column_1'],

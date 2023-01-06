@@ -16,28 +16,37 @@ export const addHighchartsColumnToTable = (tempColumn: IWidgetColumn, rows: IWid
 
 const addHighchartsColumnToTableRows = (tempColumn: IWidgetColumn, rows: IWidgetColumn[], chartType: string | undefined, mode: string, widgetModel: IWidget) => {
     if (mode === 'attributesOnly' && rows.length < 4) {
-        if (tempColumn.fieldType === 'MEASURE') {
-            tempColumn.fieldType = 'ATTRIBUTE'
-            tempColumn.aggregation = ''
-        }
-        tempColumn.drillOrder = {
-            "orderColumn": "",
-            "orderColumnId": "",
-            "orderType": ""
-        }
-        addColumnToRows(rows, tempColumn)
+        addAttributeColumnToTableRows(tempColumn, rows)
     } else if (mode === 'measuresOnly') {
-        const maxValues = getMaxValuesNumber(chartType)
-        if (maxValues && maxValues !== 1 && rows.length >= maxValues) return
-        convertColumnToMeasure(tempColumn)
-        if (rows.length === 1 && maxValues === 1) {
-            removeSerieFromWidgetModel(widgetModel, rows[0], chartType)
-            updateSerieInWidgetModel(widgetModel, tempColumn, chartType)
-            rows[0] = tempColumn
-        }
-        addColumnToRows(rows, tempColumn)
-        emitter.emit('seriesAdded', tempColumn)
+        addMeasureColumnToTableRows(tempColumn, rows, chartType, widgetModel)
     }
+}
+
+const addAttributeColumnToTableRows = (tempColumn: IWidgetColumn, rows: IWidgetColumn[]) => {
+    if (tempColumn.fieldType === 'MEASURE') {
+        tempColumn.fieldType = 'ATTRIBUTE'
+        tempColumn.aggregation = ''
+    }
+    tempColumn.drillOrder = {
+        "orderColumn": "",
+        "orderColumnId": "",
+        "orderType": ""
+    }
+    addColumnToRows(rows, tempColumn)
+}
+
+const addMeasureColumnToTableRows = (tempColumn: IWidgetColumn, rows: IWidgetColumn[], chartType: string | undefined, widgetModel: IWidget) => {
+    const maxValues = getMaxValuesNumber(chartType)
+    if (maxValues && maxValues !== 1 && rows.length >= maxValues) return
+    convertColumnToMeasure(tempColumn)
+    if (rows.length === 1 && maxValues === 1) {
+        removeSerieFromWidgetModel(widgetModel, rows[0], chartType)
+        updateSerieInWidgetModel(widgetModel, tempColumn, chartType)
+        rows[0] = tempColumn
+    }
+    addColumnToRows(rows, tempColumn)
+    widgetModel.settings.chartModel.addSerie(tempColumn)
+    emitter.emit('seriesAdded', tempColumn)
 }
 
 const getMaxValuesNumber = (chartType: string | undefined) => {

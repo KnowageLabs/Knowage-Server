@@ -1,5 +1,6 @@
 import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
 import { IHighchartsChartModel, IHighchartsChartSerie, IHighchartsSerieAccessibility, IHighchartsSerieLabelSettings, ISerieAccessibilitySetting } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
+import { createSerie, createGaugeSerie } from './updater/KnowageHighchartsCommonUpdater'
 import * as highchartsDefaultValues from '../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
 import Highcharts from 'highcharts'
 
@@ -71,6 +72,17 @@ export class KnowageHighcharts {
             tooltip: highchartsDefaultValues.getDefaultTooltipSettings(),
             colors: [],
             credits: { enabled: false }
+        }
+    }
+
+    addSerie(column: IWidgetColumn, serieType: 'pie' | 'gauge') {
+        switch (serieType) {
+            case 'pie':
+                this.model.series.push(createSerie(column.columnName, column.aggregation, true))
+                break
+            case 'gauge':
+                this.model.series.push(createGaugeSerie(column.columnName))
+                break
         }
     }
 

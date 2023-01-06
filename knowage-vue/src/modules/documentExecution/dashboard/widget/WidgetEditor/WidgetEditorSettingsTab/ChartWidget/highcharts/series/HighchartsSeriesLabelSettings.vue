@@ -2,6 +2,7 @@
     <div v-if="model" class="p-grid p-jc-center p-ai-center p-p-4">
         <div v-for="(serieSetting, index) in seriesSettings" :key="index" class="dynamic-form-item p-grid p-col-12 p-ai-center">
             {{ serieSetting }}
+
             <div class="p-col-12 p-md-6 p-d-flex p-flex-column p-p-2">
                 <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.series.title') }}</label>
                 <Dropdown v-if="index === 0 && allSeriesOptionEnabled" class="kn-material-input" v-model="serieSetting.names[0]" :options="descriptor.allSerieOption" optionValue="value" optionLabel="label" :disabled="true"> </Dropdown>
@@ -89,6 +90,7 @@ import WidgetEditorStyleToolbar from '../../../common/styleToolbar/WidgetEditorS
 import HighchartsGaugeSerieAdvancedSettings from './HighchartsGaugeSerieAdvancedSettings.vue'
 import * as highchartsDefaultValues from '../../../../helpers/chartWidget/highcharts/HighchartsDefaultValues'
 import WidgetEditorColorPicker from '../../../common/WidgetEditorColorPicker.vue'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'hihgcharts-series-label-settings',
@@ -154,12 +156,15 @@ export default defineComponent({
         setEventListeners() {
             emitter.on('seriesAdded', this.loadModel)
             emitter.on('seriesRemoved', this.loadModel)
+            emitter.on('chartTypeChanged', this.loadModel)
         },
         removeEventListeners() {
             emitter.off('seriesAdded', this.loadModel)
             emitter.off('seriesRemoved', this.loadModel)
+            emitter.off('chartTypeChanged', this.loadModel)
         },
         loadModel() {
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>> LOAD MODEL SERIES CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALED: ')
             this.seriesSettings = []
             this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.model : null
             if (this.widgetModel.settings?.series?.seriesLabelsSettings) {
@@ -174,6 +179,7 @@ export default defineComponent({
             this.loadSeriesOptions()
             this.removeSeriesFromAvailableOptions()
             this.removeAllSerieSettingsFromModel()
+            if (this.seriesSettings.length === 0) this.addFirstSeriesSetting()
         },
         removeAllSerieSettingsFromModel() {
             if (this.seriesSettings[0]?.names[0] && this.seriesSettings[0].names[0] === 'all' && !this.allSeriesOptionEnabled) {
@@ -195,24 +201,28 @@ export default defineComponent({
         loadSeriesOptions() {
             this.availableSeriesOptions = []
             if (!this.model) return
+            console.log('>>>>>> LOAD SERIES OPTIONS: ', deepcopy(this.model.series))
             this.model.series.forEach((serie: IHighchartsChartSerie) => {
                 this.availableSeriesOptions.push(serie.name)
             })
-            this.addAllSeriesSetting()
         },
-        addAllSeriesSetting() {
+        addFirstSeriesSetting() {
             if (!this.model) return
-            if (!this.allSeriesOptionEnabled && this.availableSeriesOptions.length === 1 && this.seriesSettings.length === 0) {
+            console.log('>>>>>>>>> addFirstSeriesSetting', deepcopy(this.availableSeriesOptions))
+            if (this.availableSeriesOptions.length >= 1) {
+                console.log('>>>>>>>>>>>>>>>>>>>>> GOT HERE 1!')
+                const name = this.allSeriesOptionEnabled ? 'all' : this.availableSeriesOptions[0]
                 const formattedSeriesSettings = {
-                    names: ['all'],
+                    names: [name],
                     label: { ...highchartsDefaultValues.getDefaultSerieLabelSettings(), enabled: true }
                 } as IHighchartsSeriesLabelsSetting
                 if (this.model.chart.type === 'gauge') {
                     formattedSeriesSettings.dial = highchartsDefaultValues.getDefaultSerieDialSettings()
                     formattedSeriesSettings.pivot = highchartsDefaultValues.getDefaultSeriePivotSettings()
                 }
+                console.log('>>>>>>>>>>>>>>>>>>>>> GOT HERE 2!')
+                this.seriesSettings.push(formattedSeriesSettings)
                 this.widgetModel.settings.series.seriesLabelsSettings.push(formattedSeriesSettings)
-                this.availableSeriesOptions = []
             }
         },
         removeSeriesFromAvailableOptions() {
@@ -254,6 +264,7 @@ export default defineComponent({
                 newSerieSetting.pivot = highchartsDefaultValues.getDefaultSeriePivotSettings()
             }
             this.seriesSettings.push(newSerieSetting)
+            this.widgetModel.settings.series.seriesLabelsSettings.push(newSerieSetting)
             this.toolbarModels.push({
                 'font-family': '',
                 'font-size': '',

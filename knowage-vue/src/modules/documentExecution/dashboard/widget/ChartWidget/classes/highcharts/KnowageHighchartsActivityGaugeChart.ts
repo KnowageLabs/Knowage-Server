@@ -9,6 +9,7 @@ import deepcopy from 'deepcopy'
 export class KnowageHighchartsActivityGaugeChart extends KnowageHighchartsGaugeChart {
     constructor(model: any) {
         super()
+        console.log(">>>>>>>>>>>> KnowageHighchartsActivityGaugeChart called with: ", deepcopy(model))
         if (!this.model.plotOptions.solidgauge || model.chart.type !== 'activitygauge') this.setGaugePlotOptions()
         if (!this.model.pane || model.chart.type !== 'activitygauge') this.setGaugePaneSettings()
         if (!this.model.yAxis || model.chart.type !== 'activitygauge') this.setGaugeYAxis()

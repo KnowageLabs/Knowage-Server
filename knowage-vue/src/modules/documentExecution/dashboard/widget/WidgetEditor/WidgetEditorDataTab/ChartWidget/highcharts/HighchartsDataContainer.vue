@@ -1,6 +1,6 @@
 <template>
     <div v-if="widgetModel">
-        <ChartWidgetChartTypeDropdown :widgetModel="widgetModel"></ChartWidgetChartTypeDropdown>
+        <ChartWidgetChartTypeDropdown :widgetModel="widgetModel" @selectedChartTypeChanged="$emit('selectedChartTypeChanged', $event)"></ChartWidgetChartTypeDropdown>
         <HighchartsCommonDataContainer :widgetModel="widgetModel" :selectedDataset="selectedDataset"></HighchartsCommonDataContainer>
     </div>
 </template>
@@ -15,6 +15,7 @@ export default defineComponent({
     name: 'highcharts-widget-data-container',
     components: { ChartWidgetChartTypeDropdown, HighchartsCommonDataContainer },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedDataset: { type: Object as PropType<IDataset | null> } },
+    emits: ['selectedChartTypeChanged'],
     data() {
         return {}
     },

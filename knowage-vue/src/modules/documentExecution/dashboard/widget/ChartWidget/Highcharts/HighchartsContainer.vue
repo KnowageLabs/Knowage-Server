@@ -1,4 +1,5 @@
 <template>
+    {{ chartModel?.series }}
     <div v-show="!error" :id="chartID" style="width: 100%; height: 100%; margin: 0 auto"></div>
 </template>
 

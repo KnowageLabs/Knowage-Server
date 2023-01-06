@@ -1,15 +1,15 @@
 import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
-import { IHighchartsChartSerieData, IHighchartsSeriesLabelsSetting } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
+import {  IHighchartsSeriesLabelsSetting } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import { updateSolidGaugeChartModel } from './updater/KnowageHighchartsSolidGaugeChartUpdater'
 import { IHighchartsGaugeSerie, IHighchartsGaugeSerieData } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget'
 import { KnowageHighchartsGaugeChart } from './KnowageHighchartsGaugeChart'
 import * as highchartsDefaultValues from '../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
-import Highcharts from 'highcharts'
 import deepcopy from 'deepcopy'
 
 export class KnowageHighchartsSolidGaugeChart extends KnowageHighchartsGaugeChart {
     constructor(model: any) {
         super()
+        console.log(">>>>>>>>>>>> KnowageHighchartsSolidGaugeChart called with: ", deepcopy(model))
         if (!this.model.plotOptions.solidgauge || model.chart.type !== 'solidgauge') this.setGaugePlotOptions()
         if (!this.model.pane || model.chart.type !== 'solidgauge') this.setGaugePaneSettings()
         if (!this.model.yAxis || model.chart.type !== 'solidgauge') this.setGaugeYAxis()

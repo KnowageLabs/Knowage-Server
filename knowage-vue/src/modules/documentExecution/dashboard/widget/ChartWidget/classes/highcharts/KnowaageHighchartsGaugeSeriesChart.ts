@@ -10,6 +10,7 @@ import { IHighchartsGaugeSerie, IHighchartsGaugeSerieData } from '@/modules/docu
 export class KnowageHighchartsGaugeSeriesChart extends KnowageHighchartsGaugeChart {
     constructor(model: any) {
         super()
+        console.log(">>>>>>>>>>>> KnowageHighchartsGaugeSeriesChart called with: ", deepcopy(model))
         if (!this.model.plotOptions.gauge || model.chart.type !== 'gauge') this.setGaugePlotOptions()
         if (!this.model.pane || model.chart.type !== 'gauge') this.setGaugePaneSettings()
         if (!this.model.yAxis || model.chart.type !== 'gauge') this.setGaugeYAxis()
