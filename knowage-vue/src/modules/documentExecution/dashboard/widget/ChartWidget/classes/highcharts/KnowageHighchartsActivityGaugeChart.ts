@@ -80,6 +80,7 @@ export class KnowageHighchartsActivityGaugeChart extends KnowageHighchartsGaugeC
 
     updateSpecificSeriesSettings(serieName: string, seriesSettings: IHighchartsSeriesLabelsSetting) {
         const index = this.model.series.findIndex((serie: IHighchartsGaugeSerie) => serie.name === serieName)
+        console.log(">>>>>>>> INDEX: ", index)
         if (index !== -1) this.updateSeriesDataWithSerieSettings(this.model.series[index], seriesSettings)
     }
 

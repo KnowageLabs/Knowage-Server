@@ -1,7 +1,7 @@
 <template>
     <div v-if="model" class="p-grid p-jc-center p-ai-center p-p-4">
         <div class="p-col-12 p-py-4">
-            <WidgetEditorStyleToolbar :options="descriptor.tooltipStyleOptions" :propModel="toolbarModel" :disabled="tooltipDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
+            <WidgetEditorStyleToolbar :options="descriptor.activityGaugeTooltipStyleOptions" :propModel="toolbarModel" :disabled="tooltipDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
         </div>
     </div>
 </template>
@@ -30,7 +30,6 @@ export default defineComponent({
                 'font-family': string
                 'font-size': string
                 'font-weight': string
-                color: string
                 'background-color': string
             },
             advancedVisible: false
@@ -52,7 +51,6 @@ export default defineComponent({
                     'font-family': this.model.tooltip.style.fontFamily,
                     'font-size': this.model.tooltip.style.fontSize,
                     'font-weight': this.model.tooltip.style.fontWeight,
-                    color: this.model.tooltip.style.color,
                     'background-color': this.model.tooltip.backgroundColor
                 }
         },
@@ -65,15 +63,13 @@ export default defineComponent({
                 'font-family': model['font-family'] ?? '',
                 'font-size': model['font-size'] ?? '',
                 'font-weight': model['font-weight'] ?? '',
-                color: model.color ?? '',
                 'background-color': model['background-color'] ?? ''
             }
             ;(this.model.tooltip.backgroundColor = this.toolbarModel['background-color'] ?? ''),
                 (this.model.tooltip.style = {
                     fontFamily: this.toolbarModel['font-family'] ?? '',
                     fontSize: this.toolbarModel['font-size'] ?? '14px',
-                    fontWeight: this.toolbarModel['font-weight'] ?? '',
-                    color: this.toolbarModel.color ?? ''
+                    fontWeight: this.toolbarModel['font-weight'] ?? ''
                 })
             this.modelChanged()
         }

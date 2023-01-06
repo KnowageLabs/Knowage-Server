@@ -2,8 +2,6 @@ import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Da
 import { IHighchartsGaugeSerie, IHighchartsGaugeSerieData } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget'
 import { KnowageHighcharts } from './KnowageHihgcharts'
 import { createGaugeSerie } from './updater/KnowageHighchartsCommonUpdater'
-import { IHighchartsSeriesLabelsSetting } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
-import * as highchartsDefaultValues from '../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
 
 export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
     constructor() {
@@ -17,7 +15,7 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
         let startingInnerRadius = 88
 
         for (let i = 0; i < this.model.series.length; i++) {
-            const serie = this.model.series[i]
+            const serie = this.model.series[i] as IHighchartsGaugeSerie
             serie.data = []
             data?.rows?.forEach((row: any) => {
                 let serieElement = {
@@ -25,7 +23,9 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
                     y: row[`column_${i + 1}`]
                 } as IHighchartsGaugeSerieData
                 if (this.model.chart.type === 'activitygauge') {
-                    ; (serieElement.radius = startingRadius + '%'), (serieElement.innerRadius = startingInnerRadius + '%'), (startingRadius -= 25)
+                    serieElement.radius = startingRadius + '%'
+                    serieElement.innerRadius = startingInnerRadius + '%'
+                    startingRadius -= 25
                     startingInnerRadius -= 25
                 }
                 serie.data.push(serieElement)

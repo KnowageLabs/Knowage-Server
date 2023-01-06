@@ -21,7 +21,8 @@ export interface IHighchartsGaugeYAxis {
     tickWidth: number,
     minorTickInterval: number | 'auto' | null,
     plotBands: IHighchartsBands[],
-    stops?: [number, string][] | null
+    stops?: [number, string][] | null,
+    labels?: { enabled: boolean }
 }
 
 export interface IHighchartsBands {
@@ -71,7 +72,6 @@ export interface IHighchartsGaugeActivityTooltip {
         fontFamily: string
         fontSize: string
         fontWeight: string
-        color: string
     },
     positioner: function
 }
