@@ -8,7 +8,7 @@
         <ag-grid-vue v-if="!loading" class="registry-grid ag-theme-alpine" style="height: 100%" :gridOptions="gridOptions" :context="context" />
     </div>
 
-    <DataTable
+    <!-- <DataTable
         v-if="!loading"
         class="p-datatable-sm kn-table"
         :scrollable="true"
@@ -74,7 +74,7 @@
                 </Button>
             </template>
         </Column>
-    </DataTable>
+    </DataTable> -->
     <RegistryDatatableWarningDialog :visible="warningVisible" :columns="dependentColumns" @close="onWarningDialogClose"></RegistryDatatableWarningDialog>
 </template>
 
@@ -190,25 +190,29 @@ export default defineComponent({
             ]
             this.propColumns?.forEach((el: any) => {
                 if (el.isVisible) {
-                    // console.log('column def', el)
+                    console.log('column def', el)
                     // NOTE - Applying renderer here, so it could actually receive comboColumnOptions parameter that it needs, wont work in coldef
                     el.editable = el.isEditable
 
-                    //EXAMPLE - cell editor only on editable fields
-                    // if (el.editable) {
-                    //     el.cellEditor = CellEditor
-                    //     el.cellEditorParams = { comboColumnOptions: this.comboColumnOptions }
-                    // }
+                    if (el.editable) {
+                        el.cellEditor = CellEditor
+                        el.cellEditorParams = { comboColumnOptions: this.comboColumnOptions }
+                    } else {
+                        el.cellStyle = (params) => {
+                            return { color: 'black', backgroundColor: 'rgba(231, 231, 231, 0.8)', opacity: 0.8 }
+                        }
+                    }
 
-                    //EXAMPLE - cell editor and cell renderer on all editables checkboxes
-                    // if (el.editorType == 'TEXT' && el.columnInfo.type === 'boolean') {
-                    //     el.cellRenderer = CellRenderer
-                    //     el.cellRendererParams = { comboColumnOptions: this.comboColumnOptions }
+                    // TODO - Formatting logic for dates, not working when editing date
+                    // if (el.columnInfo?.type === 'date') {
+                    //     el.valueFormatter = (params) => {
+                    //         this.getFormattedDate(params.value, 'yyyy-MM-dd', this.getCurrentLocaleDefaultDateFormat(el))
+                    //     }
+                    // } else if (el.columnInfo?.type === 'timestamp') {
+                    //     el.valueFormatter = (params) => {
+                    //         this.getFormattedDateTime(params.value, { dateStyle: 'short', timeStyle: 'medium' }, true)
+                    //     }
                     // }
-
-                    // EXAMPLE - all cell renderer
-                    el.cellRenderer = CellRenderer
-                    el.cellRendererParams = { comboColumnOptions: this.comboColumnOptions }
 
                     this.columns.push(el)
                 }
@@ -475,16 +479,6 @@ export default defineComponent({
 
         cellWasClicked: (event) => {
             console.log('cell was clicked', event)
-        },
-        onPage2(event: any) {
-            this.lazyParams = {
-                paginationStart: event.first,
-                paginationLimit: event.rows,
-                paginationEnd: event.first + event.rows,
-                size: this.lazyParams.size
-            }
-            this.$emit('pageChanged', this.lazyParams)
-            this.gridApi.paginationGoToPage(event.page)
         },
         onBodyScroll() {
             if (this.timeout) clearTimeout(this.timeout)

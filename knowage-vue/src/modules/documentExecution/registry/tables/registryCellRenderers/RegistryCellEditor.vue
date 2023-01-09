@@ -1,16 +1,16 @@
 <template>
     <Checkbox v-if="params.colDef.editorType == 'TEXT' && params.colDef.columnInfo.type === 'boolean'" :disabled="!params.colDef.isEditable" v-model="value" :binary="true" @change=""></Checkbox>
     <InputText
-        class="kn-material-input"
         v-if="column && column.editorType !== 'COMBO' && column.columnInfo?.type !== 'date' && column.columnInfo?.type !== 'timestamp' && getDataType(column.columnInfo?.type) === 'text'"
+        class="kn-material-input"
         :type="'text'"
         :step="getStep(column.columnInfo?.type)"
         v-model="value"
         @input="onRowChanged(row)"
     />
     <InputNumber
-        class="kn-material-input p-inputtext-sm"
         v-if="column && column.editorType !== 'COMBO' && column.columnInfo?.type !== 'date' && column.columnInfo?.type !== 'timestamp' && getDataType(column.columnInfo?.type) === 'number'"
+        class="kn-material-input p-inputtext-sm"
         v-model="value"
         :useGrouping="useGrouping"
         :locale="locale"
@@ -21,8 +21,8 @@
     >
     </InputNumber>
     <Dropdown
-        class="kn-material-input"
         v-else-if="column && column.editorType === 'COMBO'"
+        class="kn-material-input"
         v-model="value"
         :options="getOptions(column, row)"
         optionValue="column_1"
@@ -33,9 +33,9 @@
     >
     </Dropdown>
     <Calendar
-        :style="registryDatatableDescriptor.pivotStyles.inputFields"
-        class="pivot-calendar"
         v-else-if="column && (column.columnInfo?.type === 'date' || column.columnInfo?.type === 'timestamp')"
+        class="pivot-calendar"
+        :style="registryDatatableDescriptor.pivotStyles.inputFields"
         v-model="value"
         :showTime="column.columnInfo?.type === 'timestamp'"
         :showSeconds="column.columnInfo?.type === 'timestamp'"
