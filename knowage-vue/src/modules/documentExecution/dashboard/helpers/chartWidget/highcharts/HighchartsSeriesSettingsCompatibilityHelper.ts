@@ -13,7 +13,6 @@ export const getFormattedSerieLabelsSettings = (widget: any) => {
     if (endIndex > widget.content.chartTemplate.CHART.VALUES.SERIE.length) endIndex = widget.content.chartTemplate.CHART.VALUES.SERIE.length
     for (let i = 0; i < endIndex; i++) {
         const oldModelSerie = widget.content.chartTemplate.CHART.VALUES.SERIE[i]
-        console.log("")
         const formattedSettings = { names: [oldModelSerie.name] } as IHighchartsSeriesLabelsSetting
         setFormattedSerieLabelSettings(oldModelSerie, formattedSettings)
         setSerieSettingsForGaugeChart(oldModelSerie, formattedSettings, widget)

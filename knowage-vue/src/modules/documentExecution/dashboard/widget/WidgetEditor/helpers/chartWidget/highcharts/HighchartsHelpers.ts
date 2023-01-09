@@ -38,10 +38,8 @@ export const createNewHighchartsSettings = () => {
 }
 
 export const formatHighchartsWidget = (widget: IWidget) => {
-
     const chartModel = widget.settings.chartModel.model ?? widget.settings.chartModel
     const chartType = chartModel.chart.type
-    console.log(">>>>>>> CHART TYPE: ", chartType)
     switch (chartType) {
         case 'pie':
             widget.settings.chartModel = new KnowageHighchartsPieChart(chartModel)
