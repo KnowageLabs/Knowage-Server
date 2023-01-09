@@ -204,6 +204,7 @@ export default defineComponent({
         },
         addFirstSeriesSetting() {
             if (!this.model) return
+            this.seriesSettings = []
             if (this.availableSeriesOptions.length >= 1) {
                 const name = this.allSeriesOptionEnabled ? 'all' : this.availableSeriesOptions[0]
                 const formattedSeriesSettings = {

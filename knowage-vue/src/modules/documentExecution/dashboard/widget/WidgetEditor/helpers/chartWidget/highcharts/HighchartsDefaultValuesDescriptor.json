@@ -176,6 +176,14 @@
         "depth": 100,
         "showInLegend": true
     },
+    "defaultSerieAccessibilitySetting": {
+        "description": "",
+        "enabled": false,
+        "exposeAsGroupOnly": false,
+        "keyboardNavigation": {
+            "enabled": false
+        }
+    },
     "defaultSerieDialSettings": {
         "backgroundColor": "",
         "baseWidth": 3,

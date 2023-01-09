@@ -12,6 +12,10 @@ export const getDefaultAccessibilitySettings = () => {
     return deepcopy(descriptor.defaultAccessibilitySettings) as IHighchartsAccessibilitySettings
 }
 
+export const getDefaultSerieAccessibilitySetting = () => {
+    return deepcopy(descriptor.defaultSerieAccessibilitySetting) as IHighchartsSerieAccessibility
+}
+
 export const getDefault3DOptions = () => {
     return deepcopy(descriptor.default3DOptions) as IHighchartsOptions3D
 }

@@ -99,17 +99,12 @@ export class KnowageHighcharts {
 
     setAllSeriesAccessibilitySettings(widgetModel: IWidget) {
         this.model.series.forEach((serie: IHighchartsChartSerie) => {
-            if (this.model.chart.type !== 'pie' && widgetModel.settings.accesssibility.seriesAccesibilitySettings[0] && widgetModel.settings.accesssibility.seriesAccesibilitySettings[0].accessibility.enabled) {
+            if (this.model.chart.type !== 'pie' && this.model.chart.type !== 'solidgauge' && widgetModel.settings.accesssibility.seriesAccesibilitySettings[0] && widgetModel.settings.accesssibility.seriesAccesibilitySettings[0].accessibility.enabled) {
                 serie.accessibility = {
                     ...widgetModel.settings.accesssibility.seriesAccesibilitySettings[0].accessibility
                 }
             } else {
-                serie.accessibility = {
-                    enabled: false,
-                    description: '',
-                    exposeAsGroupOnly: false,
-                    keyboardNavigation: { enabled: false }
-                }
+                serie.accessibility = highchartsDefaultValues.getDefaultSerieAccessibilitySetting()
             }
         })
     }
