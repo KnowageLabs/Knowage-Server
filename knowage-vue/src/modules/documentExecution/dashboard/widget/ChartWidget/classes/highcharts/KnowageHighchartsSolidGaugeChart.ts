@@ -9,7 +9,6 @@ import deepcopy from 'deepcopy'
 export class KnowageHighchartsSolidGaugeChart extends KnowageHighchartsGaugeChart {
     constructor(model: any) {
         super()
-        console.log(">>>>>>>>>>>> KnowageHighchartsSolidGaugeChart called with: ", deepcopy(model))
         this.setSpecificOptionsDefaultValues()
         if (model && model.CHART) this.updateModel(deepcopy(model))
         else if (model) {
@@ -58,7 +57,6 @@ export class KnowageHighchartsSolidGaugeChart extends KnowageHighchartsGaugeChar
 
     updateSeriesDataWithSerieSettings(serie: IHighchartsGaugeSerie, seriesSettings: IHighchartsSeriesLabelsSetting) {
         if (!serie || !seriesSettings) return
-        console.log(">>>>>>>>>>>> SERIES SETTING: ", seriesSettings)
         serie.data.forEach((data: IHighchartsGaugeSerieData) => {
             data.dataLabels = {
                 backgroundColor: null,

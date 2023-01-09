@@ -15,7 +15,6 @@ import * as highchartsDefaultValues from '../../../widget/WidgetEditor/helpers/c
 const columnNameIdMap = {}
 
 export const formatHighchartsWidget = (widget: any) => {
-    console.log(">>>>>>>> LOADED WIDGET: ", widget)
     const formattedWidget = {
         id: widget.id,
         dataset: widget.dataset.dsId ?? null,
@@ -28,7 +27,6 @@ export const formatHighchartsWidget = (widget: any) => {
     formattedWidget.settings = getFormattedWidgetSettings(widget) as IHighchartsWidgetSettings
     getFiltersForColumns(formattedWidget, widget)
     formattedWidget.settings.chartModel = createChartModel(widget)
-    console.log(">>>>>>>> FORMATTED WIDGET: ", formattedWidget)
     return formattedWidget
 }
 

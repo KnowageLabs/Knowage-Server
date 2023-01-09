@@ -16,8 +16,6 @@ const datasetIdLabelMap = {}
 export const formatModel = async (model: any, document: any, datasets: IDataset[], drivers: any[], profileAttributes: { name: string; value: string }[], $http: any, user: any) => {
     if (!model.sheets) return
 
-    console.log('>>>>>>>> LOADED MODEL: ', model)
-
     loadDatasetIdNameMap(datasets)
     const formattedModel = {
         id: cryptoRandomString({ length: 16, type: 'base64' }),
@@ -31,7 +29,6 @@ export const formatModel = async (model: any, document: any, datasets: IDataset[
         formattedModel.sheets.push(formattedSheet)
     }
 
-    console.log('>>>>>>>> LOADED FORMATTED MODEL: ', formattedModel)
     return formattedModel
 }
 

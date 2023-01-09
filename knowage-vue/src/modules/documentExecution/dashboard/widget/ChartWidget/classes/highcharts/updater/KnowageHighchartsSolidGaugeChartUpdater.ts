@@ -3,8 +3,6 @@ import { getFormattedBandsSettings, getFormattedPaneSettings, getFormattedScaleS
 import { getFormattedLabels, getFormattedLegend, getFormattedNoDataConfiguration, getFormattedSeries, getFormattedTooltipSettings } from './KnowageHighchartsCommonUpdater'
 
 export const updateSolidGaugeChartModel = (oldModel: any, newModel: IHighchartsChartModel) => {
-    console.log(">>>>>>> OLD MODEL: ", oldModel)
-    console.log(">>>>>>> NEW MODEL: ", newModel)
     getFormattedNoDataConfiguration(oldModel, newModel)
     getFormattedLegend(oldModel, newModel)
     getFormattedLabels(oldModel, newModel)

@@ -57,10 +57,10 @@ export default defineComponent({
             this.selectedDataset = dataset as IDataset
         },
         onChartTypeChanged(chartType: string) {
-            console.log('>>>>>>>>>>>> onChartTypeChanged: ', chartType)
+            if (!this.user) return
+            if (this.user.enterprise) updateWidgetModelColumnsAfterChartTypeChange(this.propWidget, chartType)
             // TODO widgetChange
-            updateWidgetModelColumnsAfterChartTypeChange(this.propWidget, chartType)
-            this.propWidget.settings.chartModel = this.user?.enterprise ? createNewHighchartsModel(chartType, this.propWidget.settings.chartModel?.model) : createChartJSModel(chartType)
+            this.propWidget.settings.chartModel = this.user.enterprise ? createNewHighchartsModel(chartType, this.propWidget.settings.chartModel?.model) : createChartJSModel(chartType)
             // this.propWidget.settings.chartModel = false ? createNewHighchartsModel(chartType) : createChartJSModel(chartType)
             emitter.emit('chartTypeChanged', this.propWidget.id)
             emitter.emit('refreshWidgetWithData', this.propWidget.id)

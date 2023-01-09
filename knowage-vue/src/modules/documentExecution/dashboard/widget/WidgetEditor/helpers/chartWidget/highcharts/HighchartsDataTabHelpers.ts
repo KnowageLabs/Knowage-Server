@@ -81,8 +81,6 @@ const updateSerieInWidgetModel = (widgetModel: IWidget, column: IWidgetColumn, c
 }
 
 const updateFirstSeriesOption = (array: any[], column: IWidgetColumn) => {
-    console.log(">>>>>>>> ARRAY: ", array)
-    console.log(">>>>>>>> column: ", column)
     if (array && array[0]) {
         array[0].names[0] = column.columnName
     }
@@ -100,7 +98,6 @@ const removeColumnFromSubmodel = (column: IWidgetColumn, array: any[], allSeries
     for (let i = array.length - 1; i >= 0; i--) {
         for (let j = array[i].names.length - 1; j >= 0; j--) {
             const serieName = array[i].names[j]
-            console.log(serieName + " === " + column.columnName)
             if (serieName === column.columnName) {
                 array[i].names.splice(j, 1)
             }

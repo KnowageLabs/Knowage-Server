@@ -9,7 +9,6 @@ import deepcopy from 'deepcopy'
 export class KnowageHighchartsActivityGaugeChart extends KnowageHighchartsGaugeChart {
     constructor(model: any) {
         super()
-        console.log(">>>>>>>>>>>> KnowageHighchartsActivityGaugeChart called with: ", deepcopy(model))
         this.setSpecificOptionsDefaultValues()
         this.setTooltipSettings()
         if (model && model.CHART) this.updateModel(deepcopy(model))
@@ -92,7 +91,6 @@ export class KnowageHighchartsActivityGaugeChart extends KnowageHighchartsGaugeC
 
     updateSpecificSeriesSettings(serieName: string, seriesSettings: IHighchartsSeriesLabelsSetting) {
         const index = this.model.series.findIndex((serie: IHighchartsGaugeSerie) => serie.name === serieName)
-        console.log(">>>>>>>> INDEX: ", index)
         if (index !== -1) this.updateSeriesDataWithSerieSettings(this.model.series[index], seriesSettings)
     }
 
