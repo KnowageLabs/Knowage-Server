@@ -89,7 +89,11 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		IBIObjectDAO documentDao = null;
 		Assert.assertNotNull(document, "Document can not be null");
 		document.setCreationUser((String) getUserProfile().getUserId());
+		if (document.getFunctionalities().isEmpty()) {
+			logger.error("Error while inserting document. Document saved with no specified functionalities (folders)!");
+			throw new SpagoBIRuntimeException("Error while inserting document. Document has no specified functionalities!");
 
+		}
 		if (documentLabelNameControl(document, "INSERT", "label")) {
 			logger.error("Error while inserting document. Document with the same label already exists!");
 			throw new SpagoBIRuntimeException("Error while inserting document. Document with the same label already exists!");
