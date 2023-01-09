@@ -180,12 +180,16 @@ export default defineComponent({
             this.loading = true
             this.columns = [
                 {
-                    field: 'id',
-                    title: '',
-                    size: '',
+                    colId: 'indexColumn',
+                    valueGetter: `node.rowIndex + 1`,
+                    headerName: 'id',
+                    pinned: 'left',
                     isVisible: true,
                     isEditable: false,
-                    columnInfo: { type: 'int' }
+                    columnInfo: { type: 'int' },
+                    cellStyle: (params) => {
+                        return { color: 'black', backgroundColor: 'rgba(231, 231, 231, 0.8)', opacity: 0.8 }
+                    }
                 }
             ]
             this.propColumns?.forEach((el: any) => {
