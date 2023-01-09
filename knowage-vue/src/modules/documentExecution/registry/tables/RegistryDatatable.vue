@@ -1,14 +1,14 @@
 <template>
     <div id="registry-gric-container" class="kn-height-full p-d-flex p-flex-column">
         <div class="registry-grid-toolbar">
-            <Button icon="fas fa-plus" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.addRow')" @click="" />
+            <Button icon="fas fa-plus" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.addRow')" @click="addNewRow" />
             <Button icon="fas fa-clone" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.cloneRows')" @click="" />
             <Button icon="fas fa-trash" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.deleteRows')" @click="rowsDeleteConfirm()" />
         </div>
-        <ag-grid-vue v-if="!loading" class="registry-grid ag-theme-alpine" style="height: 100%" :gridOptions="gridOptions" :context="context" />
+        <ag-grid-vue v-if="!loading" class="registry-grid ag-theme-alpine" style="height: 100%" :rowData="rows" :gridOptions="gridOptions" :context="context" />
     </div>
 
-    <DataTable
+    <!-- <DataTable
         v-if="!loading"
         class="p-datatable-sm kn-table"
         :scrollable="true"
@@ -74,7 +74,7 @@
                 </Button>
             </template>
         </Column>
-    </DataTable>
+    </DataTable> -->
     <RegistryDatatableWarningDialog :visible="warningVisible" :columns="dependentColumns" @close="onWarningDialogClose"></RegistryDatatableWarningDialog>
 </template>
 
@@ -176,39 +176,67 @@ export default defineComponent({
         }
     },
     methods: {
+        setupDatatableOptions() {
+            this.gridOptions = {
+                // PROPERTIES
+                columnDefs: this.columns,
+                tooltipShowDelay: 100,
+                tooltipMouseTrack: true,
+                defaultColDef: { editable: false, enableValue: true, sortable: true, resizable: true, width: 100 },
+                rowSelection: 'multiple',
+                animateRows: true,
+                suppressScrollOnNewData: true,
+
+                // EVENTS
+                onCellClicked: this.cellWasClicked,
+                onBodyScroll: this.onBodyScroll,
+                onSelectionChanged: this.onSelectionChanged,
+
+                // CALLBACKS
+                onGridReady: this.onGridReady
+            }
+        },
         async loadColumns() {
             this.loading = true
             this.columns = [
                 {
-                    field: 'id',
-                    title: '',
-                    size: '',
+                    colId: 'indexColumn',
+                    valueGetter: `node.rowIndex + 1`,
+                    headerName: 'id',
+                    pinned: 'left',
                     isVisible: true,
                     isEditable: false,
-                    columnInfo: { type: 'int' }
+                    columnInfo: { type: 'int' },
+                    cellStyle: (params) => {
+                        return { color: 'black', backgroundColor: 'rgba(231, 231, 231, 0.8)', opacity: 0.8 }
+                    }
                 }
             ]
             this.propColumns?.forEach((el: any) => {
                 if (el.isVisible) {
-                    // console.log('column def', el)
+                    console.log('column def', el)
                     // NOTE - Applying renderer here, so it could actually receive comboColumnOptions parameter that it needs, wont work in coldef
                     el.editable = el.isEditable
 
-                    //EXAMPLE - cell editor only on editable fields
-                    // if (el.editable) {
-                    //     el.cellEditor = CellEditor
-                    //     el.cellEditorParams = { comboColumnOptions: this.comboColumnOptions }
-                    // }
+                    if (el.editable) {
+                        el.cellEditor = CellEditor
+                        el.cellEditorParams = { comboColumnOptions: this.comboColumnOptions }
+                    } else {
+                        el.cellStyle = (params) => {
+                            return { color: 'black', backgroundColor: 'rgba(231, 231, 231, 0.8)', opacity: 0.8 }
+                        }
+                    }
 
-                    //EXAMPLE - cell editor and cell renderer on all editables checkboxes
-                    // if (el.editorType == 'TEXT' && el.columnInfo.type === 'boolean') {
-                    //     el.cellRenderer = CellRenderer
-                    //     el.cellRendererParams = { comboColumnOptions: this.comboColumnOptions }
+                    // TODO - Formatting logic for dates, not working when editing date
+                    // if (el.columnInfo?.type === 'date') {
+                    //     el.valueFormatter = (params) => {
+                    //         this.getFormattedDate(params.value, 'yyyy-MM-dd', this.getCurrentLocaleDefaultDateFormat(el))
+                    //     }
+                    // } else if (el.columnInfo?.type === 'timestamp') {
+                    //     el.valueFormatter = (params) => {
+                    //         this.getFormattedDateTime(params.value, { dateStyle: 'short', timeStyle: 'medium' }, true)
+                    //     }
                     // }
-
-                    // EXAMPLE - all cell renderer
-                    el.cellRenderer = CellRenderer
-                    el.cellRendererParams = { comboColumnOptions: this.comboColumnOptions }
 
                     this.columns.push(el)
                 }
@@ -267,31 +295,10 @@ export default defineComponent({
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
                 .then((response: AxiosResponse<any>) => (this.comboColumnOptions[column.field][row[column.dependences] ?? 'All'] = response.data.rows))
         },
-        setupDatatableOptions() {
-            this.gridOptions = {
-                // PROPERTIES
-                rowData: this.rows,
-                columnDefs: this.columns,
-                tooltipShowDelay: 100,
-                tooltipMouseTrack: true,
-                defaultColDef: { editable: false, enableValue: true, sortable: true, resizable: true, width: 100 },
-                rowSelection: 'multiple',
-                animateRows: true,
-                suppressScrollOnNewData: true,
-
-                // EVENTS
-                onCellClicked: this.cellWasClicked,
-                onBodyScroll: this.onBodyScroll,
-                onSelectionChanged: this.onSelectionChanged,
-
-                // CALLBACKS
-                onGridReady: this.onGridReady
-            }
-        },
         loadRows() {
-            this.rows = deepcopy(this.propRows)
+            this.rows = this.propRows
             // this.gridApi?.setRowData(this.rows)
-            console.log('ROWS -----------------', this.rows)
+            console.log('PROP ROWS -----------------', this.rows)
         },
         loadConfiguration() {
             this.configuration = this.propConfiguration
@@ -385,12 +392,17 @@ export default defineComponent({
                     newRow[el.field] = el.defaultValue ?? ''
                 }
             })
+
             this.rows.unshift(newRow)
+            // NOTE - applyTransaction alone wont add new row to this.rows, thats why we do both, to force table to refresh itself
+            this.gridApi.applyTransaction({ addIndex: 0, add: [newRow] })
 
             if (this.lazyParams.size <= registryDescriptor.paginationLimit) {
                 this.first = 0
             }
             this.$emit('rowChanged', newRow)
+
+            console.log(this.rows)
         },
 
         onDropdownChange(payload: any) {
@@ -470,21 +482,11 @@ export default defineComponent({
         refreshGridConfiguration() {
             this.gridApi.setColumnDefs(this.columns)
             this.gridApi.setRowData(this.rows)
-            this.gridApi.redrawRows()
+            // this.gridApi.redrawRows()
         },
 
         cellWasClicked: (event) => {
             console.log('cell was clicked', event)
-        },
-        onPage2(event: any) {
-            this.lazyParams = {
-                paginationStart: event.first,
-                paginationLimit: event.rows,
-                paginationEnd: event.first + event.rows,
-                size: this.lazyParams.size
-            }
-            this.$emit('pageChanged', this.lazyParams)
-            this.gridApi.paginationGoToPage(event.page)
         },
         onBodyScroll() {
             if (this.timeout) clearTimeout(this.timeout)
