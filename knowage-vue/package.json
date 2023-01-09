@@ -33,7 +33,7 @@
         "fast-json-patch": "^3.1.0",
         "highcharts": "^10.3.1",
         "js-base64": "3.6.1",
-        "luxon": "^2.3.1",
+        "luxon": "^2.5.2",
         "mitt": "^3.0.0",
         "moment": "2.29.4",
         "parchment": "^2.0.1",
