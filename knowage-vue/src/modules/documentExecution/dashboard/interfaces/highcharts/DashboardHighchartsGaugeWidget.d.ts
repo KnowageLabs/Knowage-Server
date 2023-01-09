@@ -21,7 +21,8 @@ export interface IHighchartsGaugeYAxis {
     tickWidth: number,
     minorTickInterval: number | 'auto' | null,
     plotBands: IHighchartsBands[],
-    stops?: [number, string][] | null
+    stops?: [number, string][] | null,
+    labels?: { enabled: boolean }
 }
 
 export interface IHighchartsBands {
@@ -49,7 +50,7 @@ export interface IHighchartsGaugeSerie {
     colorByPoint?: boolean,
     accessibility?: IHighchartsSerieAccessibility,
     dial?: IHighchartsSeriesDialSettings,
-    pivot?: IHighchartsSeriesPivotSettings
+    pivot?: IHighchartsSeriesPivotSettings,
 }
 
 export interface IHighchartsGaugeSerieData {
@@ -59,4 +60,18 @@ export interface IHighchartsGaugeSerieData {
     radius?: string,
     innerRadius?: string,
     dataLabels?: IHighchartsChartDataLabels,
+}
+
+export interface IHighchartsGaugeActivityTooltip {
+    enabled: boolean,
+    backgroundColor: string,
+    borderWidth: number,
+    pointFormat: string,
+    shadow: false,
+    style: {
+        fontFamily: string
+        fontSize: string
+        fontWeight: string
+    },
+    positioner: function
 }

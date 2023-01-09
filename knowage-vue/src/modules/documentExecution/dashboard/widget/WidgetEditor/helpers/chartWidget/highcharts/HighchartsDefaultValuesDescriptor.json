@@ -56,7 +56,22 @@
         "endAngle": 360,
         "startAngle": 0
     },
+    "defaultActivityGaugeTooltip": {
+        "backgroundColor": "",
+        "borderWidth": 0,
+        "enabled": true,
+        "pointFormat": "{series.name}<br><span style=\"color: {point.color};\">{point.y}</span>",
+        "shadow": false,
+        "style": {
+            "fontFamily": "",
+            "fontSize": "",
+            "fontWeight": "bold"
+        }
+    },
     "defaultActivityGaugeYAxis": {
+        "labels": {
+            "enabled": false
+        },
         "lineWidth": 0,
         "max": null,
         "min": null,
@@ -162,13 +177,13 @@
         "showInLegend": true
     },
     "defaultSerieDialSettings": {
-        "backgroundColor": "rgba(194,194,194, 1)",
+        "backgroundColor": "",
         "baseWidth": 3,
         "radius": "80%"
     },
     "defaultSerieLabelSettings": {
         "absolute": false,
-        "backgroundColor": "rgba(194,194,194, 1)",
+        "backgroundColor": "rgba(246,246,246, 1)",
         "enabled": false,
         "percentage": false,
         "precision": 2,
@@ -183,7 +198,7 @@
         "suffix": ""
     },
     "defaultSeriePivotSettings": {
-        "backgroundColor": "rgba(194,194,194, 1)",
+        "backgroundColor": "",
         "radius": 5
     },
     "defaultSeriesAccessibilitySettings": {

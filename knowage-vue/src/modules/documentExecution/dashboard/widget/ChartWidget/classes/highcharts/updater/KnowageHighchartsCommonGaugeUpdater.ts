@@ -2,12 +2,19 @@ import { hexToRgba } from "@/modules/documentExecution/dashboard/helpers/Formatt
 import { IHighchartsChartModel } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
 
 
-export const getFormattedPaneSettings = (oldModel: any, newModel: IHighchartsChartModel) => {
+export const getFormattedPaneSettings = (oldModel: any, newModel: IHighchartsChartModel, chartType: 'gauge' | 'activitygauge' | 'solidgauge') => {
     if (oldModel.CHART.PANE) {
         newModel.pane = {
             startAngle: oldModel.CHART.PANE.startAngle,
             endAngle: oldModel.CHART.PANE.endAngle,
             center: newModel.pane.center
+        }
+
+        if (chartType === 'solidgauge') newModel.pane.background = {
+            "backgroundColor": "#EEE",
+            "innerRadius": "60%",
+            "outerRadius": "100%",
+            "shape": "arc"
         }
     }
 }

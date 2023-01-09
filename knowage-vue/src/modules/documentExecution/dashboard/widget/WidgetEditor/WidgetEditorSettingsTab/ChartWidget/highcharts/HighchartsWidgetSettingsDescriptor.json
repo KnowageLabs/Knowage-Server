@@ -1,4 +1,18 @@
 {
+    "activityGaugeTooltipStyleOptions": [
+        {
+            "type": "font-weight"
+        },
+        {
+            "type": "font-size"
+        },
+        {
+            "type": "font-family"
+        },
+        {
+            "type": "background-color"
+        }
+    ],
     "alignmentOptions": [
         {
             "label": "common.left",

@@ -1,6 +1,6 @@
 import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard"
 import { KnowageHighchartsPieChart } from "../../../../ChartWidget/classes/highcharts/KnowageHighchartsPieChart"
-import { IHighchartsWidgetSettings } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
+import { IHighchartsChartModel, IHighchartsWidgetSettings } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
 import { KnowageHighchartsActivityGaugeChart } from "../../../../ChartWidget/classes/highcharts/KnowageHighchartsActivityGaugeChart"
 import { KnowageHighchartsSolidGaugeChart } from "../../../../ChartWidget/classes/highcharts/KnowageHighchartsSolidGaugeChart"
 import { KnowageHighchartsGaugeSeriesChart } from "../../../../ChartWidget/classes/highcharts/KnowaageHighchartsGaugeSeriesChart"
@@ -59,27 +59,27 @@ export const formatHighchartsWidget = (widget: IWidget) => {
 
 }
 
-export const createNewHighchartsModel = (chartType: string) => {
+export const createNewHighchartsModel = (chartType: string, model: IHighchartsChartModel | null = null) => {
     switch (chartType) {
         case 'pie':
-            return new KnowageHighchartsPieChart(null)
+            return new KnowageHighchartsPieChart(model)
         case 'gauge':
-            return new KnowageHighchartsGaugeSeriesChart(null)
+            return new KnowageHighchartsGaugeSeriesChart(model)
         case 'activitygauge':
-            return new KnowageHighchartsActivityGaugeChart(null)
+            return new KnowageHighchartsActivityGaugeChart(model)
         case 'solidgauge':
-            return new KnowageHighchartsSolidGaugeChart(null)
+            return new KnowageHighchartsSolidGaugeChart(model)
         default:
             return null
     }
 }
 
 const getSeriesAccesibilitySettings = () => {
-    return [{ names: [], accessibility: highchartsDefaultValues.getDefaultSeriesAccessibilitySettings() }]
+    return [{ names: ['all'], accessibility: highchartsDefaultValues.getDefaultSeriesAccessibilitySettings() }]
 }
 
 
 const getSerieLabelsSettings = () => {
-    const serieLabelSettings = { names: [], label: highchartsDefaultValues.getDefaultSerieLabelSettings(), dial: highchartsDefaultValues.getDefaultSerieDialSettings(), pivot: highchartsDefaultValues.getDefaultSeriePivotSettings() }
+    const serieLabelSettings = { names: ['all'], label: { ...highchartsDefaultValues.getDefaultSerieLabelSettings(), enabled: true }, dial: highchartsDefaultValues.getDefaultSerieDialSettings(), pivot: highchartsDefaultValues.getDefaultSeriePivotSettings() }
     return [serieLabelSettings]
 }

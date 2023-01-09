@@ -41,7 +41,9 @@ export interface IHighchartsSeriesLabelsSetting {
     names: string[],
     label: IHighchartsSerieLabelSettings,
     dial?: IHighchartsSeriesDialSettings,
-    pivot?: IHighchartsSeriesPivotSettings
+    pivot?: IHighchartsSeriesPivotSettings,
+    serieColor?: string,
+    serieColorEnabled?: boolean
 }
 
 export interface IHighchartsSerieLabelSettings {
@@ -89,7 +91,7 @@ export interface IHighchartsChartModel {
         series?: { events: any }
     },
     legend: IHighchartsLegend,
-    tooltip: IHighchartsTooltip,
+    tooltip: IHighchartsTooltip | IHighchartsGaugeActivityTooltip,
     colors: string[]
     credits: {
         enabled: boolean
@@ -147,7 +149,7 @@ export interface IHighchartsChartDataLabels {
         color: string
     },
     position: string
-    backgroundColor: string,
+    backgroundColor: string | null,
     linecap?: string,
     stickyTracking?: boolean,
     rounded?: boolean,
@@ -171,7 +173,7 @@ export interface IHighchartsChartSerieData {
     y: number,
     sliced?: boolean,
     selected?: boolean,
-    dataLabels?: IHighchartsChartDataLabels,
+    dataLabels?: IHighchartsChartDataLabels
 }
 
 export interface IHighchartsSerieAccessibility {

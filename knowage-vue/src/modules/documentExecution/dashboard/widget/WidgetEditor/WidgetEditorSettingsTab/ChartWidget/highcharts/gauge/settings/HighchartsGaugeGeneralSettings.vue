@@ -35,7 +35,6 @@ import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
 import { IHighchartsChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import InputNumber from 'primevue/inputnumber'
-import InputSwitch from 'primevue/inputswitch'
 
 export default defineComponent({
     name: 'hihgcharts-gauge-geeneral-settings',
@@ -59,7 +58,7 @@ export default defineComponent({
             this.loadHorizontalPosition('vertical')
         },
         modelChanged() {
-            emitter.emit('refreshChart', this.widgetModel.id)
+            setTimeout(() => emitter.emit('refreshChart', this.widgetModel.id), 250)
         },
         loadHorizontalPosition(type: 'horizontal' | 'vertical') {
             if (!this.model || !this.model.pane.center || this.model.pane.center.length === 0) return

@@ -1,6 +1,6 @@
 import { IWidgetSelection } from "@/modules/documentExecution/dashboard/Dashboard"
 import { IHighchartsAccessibilitySettings, IHighchartsChartPlotOptions, IHighchartsLegend, IHighchartsNoDataConfiguration, IHighchartsOptions3D, IHighchartsSerieAccessibility, IHighchartsSerieLabelSettings, IHighchartsSeriesLabelsSetting, IHighchartsTooltip, ISerieAccessibilitySetting } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
-import { IHighchartsBands, IHighchartsGaugeYAxis, IHighchartsModelPane, IHighchartsSeriesDialSettings, IHighchartsSeriesPivotSettings } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget"
+import { IHighchartsBands, IHighchartsGaugeYAxis, IHighchartsModelPane, IHighchartsSeriesDialSettings, IHighchartsSeriesPivotSettings, IHighchartsGaugeActivityTooltip } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget"
 import deepcopy from "deepcopy"
 import descriptor from './HighchartsDefaultValuesDescriptor.json'
 
@@ -56,7 +56,6 @@ export const getDefaultSerieDialSettings = () => {
     return deepcopy(descriptor.defaultSerieDialSettings) as IHighchartsSeriesDialSettings
 }
 
-
 export const getDefaultSeriePivotSettings = () => {
     return deepcopy(descriptor.defaultSeriePivotSettings) as IHighchartsSeriesPivotSettings
 }
@@ -77,6 +76,18 @@ export const getDefaultActivityGaugePaneOptions = () => {
     return deepcopy(descriptor.defaultActivityGaugePaneOptions) as IHighchartsModelPane
 }
 
+export const getDefaultActivityGaugeTooltip = () => {
+    const defaultTooltipSettings = deepcopy(descriptor.defaultActivityGaugeTooltip) as IHighchartsGaugeActivityTooltip
+    defaultTooltipSettings.positioner = function (labelWidth) {
+        return {
+            x: ((this as any).chart.chartWidth - labelWidth) / 2,
+            y: (this as any).chart.plotHeight / 2 + 15
+        }
+    }
+    return defaultTooltipSettings
+}
+
+
 export const getDafaultSolidGaugePaneOptions = () => {
     return deepcopy(descriptor.dafaultSolidGaugePaneOptions) as IHighchartsModelPane
 }
@@ -92,3 +103,5 @@ export const getDefaultActivityGaugeYAxis = () => {
 export const getDefaultBandsSetting = () => {
     return deepcopy(descriptor.defaultBandsSetting) as IHighchartsBands
 }
+
+

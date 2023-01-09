@@ -9,6 +9,7 @@ import { ISelection, IWidget, IWidgetColumn } from '../../../Dashboard'
 import { IHighchartsChartModel } from '../../../interfaces/highcharts/DashboardHighchartsWidget'
 import { mapActions } from 'pinia'
 import { updateStoreSelections } from '../../interactionsHelpers/InteractionHelper'
+import { formatActivityGauge } from './HighchartsModelFormattingHelpers'
 import Highcharts from 'highcharts'
 import Highcharts3D from 'highcharts/highcharts-3d'
 import HighchartsMore from 'highcharts/highcharts-more'
@@ -19,6 +20,7 @@ import SeriesLabel from 'highcharts/modules/series-label'
 import cryptoRandomString from 'crypto-random-string'
 import store from '../../../Dashboard.store'
 import deepcopy from 'deepcopy'
+import mainStore from '@/App.store'
 
 HighchartsMore(Highcharts)
 HighchartsSolidGauge(Highcharts)
@@ -62,6 +64,7 @@ export default defineComponent({
     },
     methods: {
         ...mapActions(store, ['setSelections', 'getDatasetLabel']),
+        ...mapActions(mainStore, ['setError']),
         setEventListeners() {
             emitter.on('refreshChart', this.onRefreshChart)
             emitter.on('chartWidgetResized', this.resizeChart)
@@ -76,11 +79,7 @@ export default defineComponent({
             this.updateChartModel()
         },
         updateChartModel() {
-            Highcharts.setOptions({
-                lang: {
-                    noData: this.chartModel.lang.noData
-                }
-            })
+            Highcharts.setOptions({ lang: { noData: this.chartModel.lang.noData } })
 
             this.widgetModel.settings.chartModel.setData(this.dataToShow, this.widgetModel)
 
@@ -98,202 +97,16 @@ export default defineComponent({
 
             const modelToRender = this.getModelForRender()
             console.log('>>>>>>> CHART TO RENDER: ', modelToRender)
-            modelToRender.series?.forEach((serie: any) => console.log('>>>>>>>>SERIE: ', serie.data[0].dataLabels))
-            // const temp = {
-            //     title: '',
-            //     lang: {
-            //         noData: 'No Data message'
-            //     },
-            //     chart: {
-            //         options3d: {
-            //             alpha: 0,
-            //             beta: 0,
-            //             enabled: false,
-            //             viewDistance: 25
-            //         },
-            //         type: 'gauge'
-            //     },
-            //     noData: {
-            //         position: {
-            //             align: 'left',
-            //             verticalAlign: 'middle'
-            //         },
-            //         style: {
-            //             fontFamily: 'Roboto',
-            //             fontSize: '14px',
-            //             fontWeight: 'bold',
-            //             color: '',
-            //             backgroundColor: ''
-            //         }
-            //     },
-            //     accessibility: {
-            //         description: '',
-            //         enabled: false,
-            //         keyboardNavigation: {
-            //             enabled: false,
-            //             order: []
-            //         }
-            //     },
-            //     series: [
-            //         {
-            //             name: 'UNITS_ORDERED',
-            //             data: [
-            //                 {
-            //                     name: 'UNITS_ORDERED',
-            //                     y: 2330
-            //                 }
-            //             ],
-            //             dataLabels: {
-            //                 backgroundColor: 'green',
-            //                 distance: 30,
-            //                 enabled: true,
-            //                 position: '',
-            //                 y: 40,
-            //                 style: {
-            //                     fontFamily: '',
-            //                     fontSize: '',
-            //                     fontWeight: '',
-            //                     color: ''
-            //                 }
-            //             },
-            //             colorByPoint: false,
-            //             groupingFunction: 'MIN',
-            //             accessibility: {
-            //                 enabled: false,
-            //                 description: '',
-            //                 exposeAsGroupOnly: false,
-            //                 keyboardNavigation: {
-            //                     enabled: false
-            //                 }
-            //             },
-            //             dial: {
-            //                 backgroundColor: 'rgba(194,194,194, 1)',
-            //                 baseWidth: 3,
-            //                 radius: '80%'
-            //             },
-            //             pivot: {
-            //                 backgroundColor: 'rgba(194,194,194, 1)',
-            //                 radius: 5
-            //             }
-            //         },
-            //         {
-            //             name: 'UNITS_SHIPPED',
-            //             data: [
-            //                 {
-            //                     name: 'UNITS_SHIPPED',
-            //                     y: 239
-            //                 }
-            //             ],
-            //             dataLabels: {
-            //                 backgroundColor: 'red',
-            //                 distance: 60,
-            //                 enabled: true,
-            //                 position: '',
-            //                 style: {
-            //                     fontFamily: '',
-            //                     fontSize: '',
-            //                     fontWeight: '',
-            //                     color: ''
-            //                 },
-            //                 y: 80
-            //             },
-            //             colorByPoint: false,
-            //             groupingFunction: 'MIN',
-            //             accessibility: {
-            //                 enabled: false,
-            //                 description: '',
-            //                 exposeAsGroupOnly: false,
-            //                 keyboardNavigation: {
-            //                     enabled: false
-            //                 }
-            //             },
-            //             dial: {
-            //                 backgroundColor: 'rgba(194,194,194, 1)',
-            //                 baseWidth: 3,
-            //                 radius: '80%'
-            //             },
-            //             pivot: {
-            //                 backgroundColor: 'rgba(194,194,194, 1)',
-            //                 radius: 5
-            //             }
-            //         }
-            //     ],
-            //     settings: {
-            //         drilldown: {},
-            //         categories: []
-            //     },
-            //     plotOptions: {
-            //         series: {
-            //             events: {}
-            //         },
-            //         gauge: {
-            //             dataLabels: {
-            //                 allowOverlap: false,
-            //                 backgroundColor: 'rgba(194,194,194, 1)',
-            //                 enabled: true,
-            //                 position: '',
-            //                 style: {
-            //                     color: '',
-            //                     fontFamily: '',
-            //                     fontSize: '14px',
-            //                     fontWeight: ''
-            //                 },
-            //                 formatterError: ''
-            //             },
-            //             showInLegend: true
-            //         }
-            //     },
-            //     legend: {
-            //         align: 'center',
-            //         backgroundColor: '',
-            //         borderColor: '',
-            //         borderWidth: 1,
-            //         enabled: true,
-            //         itemStyle: {
-            //             color: '',
-            //             fontFamily: '',
-            //             fontSize: '',
-            //             fontWeight: ''
-            //         },
-            //         layout: 'horizontal',
-            //         verticalAlign: 'top',
-            //         labelFormatterError: ''
-            //     },
-            //     tooltip: {
-            //         enabled: true,
-            //         style: {
-            //             fontFamily: 'Roboto',
-            //             fontSize: '14px',
-            //             fontWeight: 'bold',
-            //             color: 'rgba(215,15,230,1)'
-            //         },
-            //         backgroundColor: 'rgba(160,245,15,1)',
-            //         formatterError: '',
-            //         pointFormatterError: ''
-            //     },
-            //     colors: ['rgba(4,45,87,1)', 'rgba(133,5,54,1)', 'rgba(165,173,188,1)', 'rgba(7,83,160,1)', 'rgba(10,121,233,1)', 'rgba(72,159,247,1)', 'rgba(145,197,250,1)', 'rgba(121,133,155,1)', 'rgba(209,213,221,1)', 'rgba(59,2,24,1)', 'rgba(207,8,84,1)', 'rgba(248,70,138,1)'],
-            //     credits: {
-            //         enabled: false
-            //     },
-            //     pane: {
-            //         startAngle: -120,
-            //         endAngle: 120,
-            //         center: ['50%', '50%']
-            //     },
-            //     yAxis: {
-            //         max: null,
-            //         min: null,
-            //         minorTickInterval: 'auto',
-            //         plotBands: [],
-            //         stops: null,
-            //         tickColor: 'rgba(24,223,145,1)',
-            //         tickLength: 10,
-            //         tickPosition: 'outside',
-            //         tickWidth: 5
-            //     }
-            // }
-            this.highchartsInstance = Highcharts.chart(this.chartID, modelToRender as any)
-            this.highchartsInstance.reflow()
+
+            try {
+                this.highchartsInstance = Highcharts.chart(this.chartID, modelToRender as any)
+                // this.highchartsInstance = Highcharts.chart(this.chartID, myChart as any)
+                this.highchartsInstance.reflow()
+            } catch (error: any) {
+                console.log('>>>>>>>> CHART ERROR: ', error)
+                console.log('>>>>>>>> CHART ERROR MESSAGE: ', error?.message)
+                this.setError({ title: this.$t('common.toast.errorTitle'), msg: error })
+            }
         },
         updateLegendSettings() {
             if (this.chartModel.plotOptions.pie) this.chartModel.plotOptions.pie.showInLegend = true
@@ -348,8 +161,9 @@ export default defineComponent({
         },
         getModelForRender() {
             const formattedChartModel = deepcopy(this.chartModel)
-            if (formattedChartModel.chart.type === 'activitygauge') formattedChartModel.chart.type = 'solidgauge'
-
+            if (formattedChartModel.chart.type === 'activitygauge') {
+                formatActivityGauge(formattedChartModel, this.widgetModel)
+            }
             return formattedChartModel
         }
     }

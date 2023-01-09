@@ -43,6 +43,7 @@ export default defineComponent({
                 case 'Legend':
                     return this.widgetModel.settings.chartModel.model?.legend
                 case 'Tooltip':
+                case 'ActivityGaugeTooltip':
                     return this.widgetModel.settings.chartModel.model?.tooltip
                 case 'Title':
                     return this.widgetModel.settings.style.title
@@ -78,6 +79,7 @@ export default defineComponent({
                 case 'AccessibilitySettings':
                 case 'Legend':
                 case 'Tooltip':
+                case 'ActivityGaugeTooltip':
                     setTimeout(() => emitter.emit('refreshChart', this.widgetModel.id), 250)
             }
         }

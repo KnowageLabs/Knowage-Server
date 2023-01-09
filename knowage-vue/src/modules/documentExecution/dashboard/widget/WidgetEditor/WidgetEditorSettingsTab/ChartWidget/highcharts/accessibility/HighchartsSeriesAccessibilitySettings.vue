@@ -58,7 +58,7 @@ export default defineComponent({
     },
     computed: {
         allSeriesOptionEnabled() {
-            return this.model?.chart.type !== 'pie'
+            return this.model && this.model.chart.type !== 'pie' && this.model.chart.type !== 'solidgauge'
         }
     },
     created() {

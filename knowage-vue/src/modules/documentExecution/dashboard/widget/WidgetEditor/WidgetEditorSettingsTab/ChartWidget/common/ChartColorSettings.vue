@@ -72,13 +72,8 @@ export default defineComponent({
         })
         return { colorPickerVisible, contextMenuVisible, knowageStyleIcon }
     },
-    created() {
-        this.loadColorSettings()
-    },
+    created() {},
     methods: {
-        loadColorSettings() {
-            // if (this.widgetModel.settings.chart.colors) this.colors = this.widgetModel.settings.chart.colors
-        },
         toggleColorPicker(index) {
             this.colorPickerVisible = !this.colorPickerVisible
             this.editIndex = index

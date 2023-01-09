@@ -1,6 +1,8 @@
-import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
-import { IHighchartsChartModel, IHighchartsChartSerie, IHighchartsSerieAccessibility, ISerieAccessibilitySetting } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
+import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IHighchartsChartModel, IHighchartsChartSerie, IHighchartsSerieAccessibility, IHighchartsSerieLabelSettings, ISerieAccessibilitySetting } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
+import { createSerie, createGaugeSerie } from './updater/KnowageHighchartsCommonUpdater'
 import * as highchartsDefaultValues from '../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
+import Highcharts from 'highcharts'
 
 export class KnowageHighcharts {
     model: IHighchartsChartModel
@@ -60,8 +62,8 @@ export class KnowageHighcharts {
             accessibility: highchartsDefaultValues.getDefaultAccessibilitySettings(),
             series: [],
             settings: {
-                drilldown: {}, // TODO
-                categories: [] // TODO
+                drilldown: {},
+                categories: []
             },
             plotOptions: {
                 series: { events: {} }
@@ -71,6 +73,22 @@ export class KnowageHighcharts {
             colors: [],
             credits: { enabled: false }
         }
+    }
+
+    addSerie(column: IWidgetColumn, serieType: 'pie' | 'gauge') {
+        switch (serieType) {
+            case 'pie':
+                this.model.series.push(createSerie(column.columnName, column.aggregation, true))
+                break
+            case 'gauge':
+                this.model.series.push(createGaugeSerie(column.columnName))
+                break
+        }
+    }
+
+    removeSerie(column: IWidgetColumn) {
+        const index = this.model.series.findIndex((tempSerie: IHighchartsChartSerie) => tempSerie.name === column.columnName)
+        if (index !== -1) this.model.series.splice(index, 1)
     }
 
     updateSeriesAccessibilitySettings(widgetModel: IWidget) {
@@ -145,5 +163,50 @@ export class KnowageHighcharts {
     updateChartColorSettings(widgetModel: IWidget) {
         if (!this.model.plotOptions || !this.model.chart.type) return
         this.model.colors = widgetModel.settings.chart.colors
+    }
+
+    handleFormatter(that: any, seriesLabelSetting: IHighchartsSerieLabelSettings) {
+        const prefix = seriesLabelSetting.prefix
+        const suffix = seriesLabelSetting.suffix
+        const precision = seriesLabelSetting.precision
+        const decimalPoints = Highcharts.getOptions().lang?.decimalPoint
+        const thousandsSep = Highcharts.getOptions().lang?.thousandsSep
+
+        const showAbsolute = seriesLabelSetting.absolute
+        const absoluteValue = showAbsolute ? this.createSeriesLabelFromParams(seriesLabelSetting.scale, Math.abs(that.y), precision, decimalPoints, thousandsSep) : ''
+
+        const showPercentage = seriesLabelSetting.percentage
+        const percentValue = showPercentage ? this.createPercentageValue(that.point.percentage, precision, decimalPoints, thousandsSep) : ''
+
+        const rawValue = !showAbsolute && !showPercentage ? this.createSeriesLabelFromParams(seriesLabelSetting.scale, that.y, precision, decimalPoints, thousandsSep) : ''
+
+        const showBrackets = showAbsolute && showPercentage
+
+        return `${prefix}${rawValue}${absoluteValue} ${showBrackets ? `(${percentValue})` : `${percentValue}`}${suffix}`
+    }
+
+    createSeriesLabelFromParams(scaleFactor: string, value: number, precision: number, decimalPoints: string | undefined, thousandsSep: string | undefined) {
+        switch (scaleFactor?.toUpperCase()) {
+            case 'EMPTY':
+                return Highcharts.numberFormat(value, precision, decimalPoints, thousandsSep)
+            case 'K':
+                return Highcharts.numberFormat(value / Math.pow(10, 3), precision, decimalPoints, thousandsSep) + 'k'
+            case 'M':
+                return Highcharts.numberFormat(value / Math.pow(10, 6), precision, decimalPoints, thousandsSep) + 'M'
+            case 'G':
+                return Highcharts.numberFormat(value / Math.pow(10, 9), precision, decimalPoints, thousandsSep) + 'G'
+            case 'T':
+                return Highcharts.numberFormat(value / Math.pow(10, 12), precision, decimalPoints, thousandsSep) + 'T'
+            case 'P':
+                return Highcharts.numberFormat(value / Math.pow(10, 15), precision, decimalPoints, thousandsSep) + 'P'
+            case 'E':
+                return Highcharts.numberFormat(value / Math.pow(10, 18), precision, decimalPoints, thousandsSep) + 'E'
+            default:
+                return Highcharts.numberFormat(value, precision, decimalPoints, thousandsSep)
+        }
+    }
+
+    createPercentageValue(value: number, precision: number, decimalPoints: string | undefined, thousandsSep: string | undefined) {
+        return `${Highcharts.numberFormat(value, precision, decimalPoints, thousandsSep)}%`
     }
 }
