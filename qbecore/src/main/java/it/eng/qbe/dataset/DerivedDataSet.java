@@ -41,7 +41,6 @@ import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.dataset.common.iterator.ResultSetIterator;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -60,7 +59,6 @@ public class DerivedDataSet extends QbeDataSet {
 
 	private String tableName = null;
 	private IDataSource dataSource = null;
-	private IMetaData metadata;
 
 	public DerivedDataSet() {
 		super();
@@ -80,11 +78,6 @@ public class DerivedDataSet extends QbeDataSet {
 
 	public void setTableName(String tableName) {
 		this.tableName = tableName;
-	}
-
-	@Override
-	public IMetaData getMetadata() {
-		return this.metadata;
 	}
 
 	@Override

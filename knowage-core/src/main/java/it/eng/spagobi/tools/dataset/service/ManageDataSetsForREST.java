@@ -331,6 +331,13 @@ public class ManageDataSetsForREST {
 								((DerivedDataSet) ds).setSourceDataset(sourceDataset);
 								((DerivedDataSet) ds).setPersisted(false);
 								currentMetadata = getDatasetTestMetadata(dsRecalc, parametersMap, profile, meta);
+
+								JSONObject sourceJsonConfig = new JSONObject(sourceDataset.getConfiguration());
+								JSONObject dsJsonConfig = new JSONObject(ds.getConfiguration());
+								String sqlQuery = ((DerivedDataSet) ds).getStatement().getQuerySQLString(sourceJsonConfig.getString("Query"));
+								dsJsonConfig.put("sqlQuery", sqlQuery);
+								dsJsonConfig.put(DataSetConstants.SOURCE_DS_LABEL, sourceDatasetLabel);
+								ds.setConfiguration(dsJsonConfig.toString());
 							} catch (Exception e) {
 								throw new SpagoBIServiceException(SERVICE_NAME, "Cannot retrieve source dataset information", e);
 							}

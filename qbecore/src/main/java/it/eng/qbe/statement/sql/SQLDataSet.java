@@ -18,6 +18,7 @@
 
 package it.eng.qbe.statement.sql;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import it.eng.qbe.datasource.dataset.DataSetDataSource;
@@ -25,10 +26,12 @@ import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCPostgreSQLDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
@@ -58,9 +61,20 @@ public class SQLDataSet extends AbstractQbeDataSet {
 			// SpagoBiDataSet dataSetConfig = new SpagoBiDataSet();
 			// dataSetConfig.setDataSource( ds.getSpagoBiDataSource() );
 			// dataSetConfig.setQuery(statementStr);
-			if (this.getWrappedDataset() instanceof JDBCDataSet && this.getWrappedDataset().getPersistTableName() == null) {
-				dataset = new JDBCDataSet();
-				JDBCDataSet datasetJDBC = (JDBCDataSet) this.getWrappedDataset();
+			if (this.getWrappedDataset() instanceof AbstractJDBCDataset && StringUtils.isEmpty(this.getWrappedDataset().getPersistTableName())) {
+				AbstractJDBCDataset datasetJDBC = null;
+				if (this.getWrappedDataset() instanceof JDBCDataSet) {
+					dataset = new JDBCDataSet();
+					datasetJDBC = (JDBCDataSet) this.getWrappedDataset();
+				} else if (this.getWrappedDataset() instanceof JDBCPostgreSQLDataSet) {
+					dataset = new JDBCPostgreSQLDataSet();
+					datasetJDBC = (JDBCPostgreSQLDataSet) this.getWrappedDataset();
+				} else {
+					logger.error("Dataset type is not handled [" + this.getWrappedDataset().getClass().getName() + "]");
+					String message = "Dataset type is not handled";
+					throw new SpagoBIRuntimeException(message);
+				}
+
 				String queryJDBC = datasetJDBC.getQuery().toString();
 
 				statementStr = statement.getQuerySQLString(queryJDBC);
@@ -68,13 +82,20 @@ public class SQLDataSet extends AbstractQbeDataSet {
 				dataset.setDataSource(this.getWrappedDataset().getDataSource());
 			} else if (this.getWrappedDataset() instanceof VersionedDataSet) {
 				VersionedDataSet vds = (VersionedDataSet) this.getWrappedDataset();
+				AbstractJDBCDataset datasetJDBC = null;
 				if (vds.getWrappedDataset() instanceof JDBCDataSet) {
 					dataset = new JDBCDataSet();
-					JDBCDataSet datasetJDBC = (JDBCDataSet) vds.getWrappedDataset();
+					datasetJDBC = (JDBCDataSet) vds.getWrappedDataset();
 					String queryJDBC = datasetJDBC.getQuery().toString();
 
 					statementStr = statement.getQuerySQLString(queryJDBC);
+					dataset.setDataSource(this.getWrappedDataset().getDataSource());
+				} else if (vds.getWrappedDataset() instanceof JDBCPostgreSQLDataSet) {
+					dataset = new JDBCPostgreSQLDataSet();
+					datasetJDBC = (JDBCPostgreSQLDataSet) vds.getWrappedDataset();
+					String queryJDBC = datasetJDBC.getQuery().toString();
 
+					statementStr = statement.getQuerySQLString(queryJDBC);
 					dataset.setDataSource(this.getWrappedDataset().getDataSource());
 				} else {
 					dataset = new JDBCDataSet();

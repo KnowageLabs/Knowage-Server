@@ -134,7 +134,7 @@ public class SQLStatementFromClause extends AbstractStatementFromClause {
 					String fromClauseElement = "";
 					if (initialDatasetQuery != null) {
 
-						fromClauseElement = " (select * from ( " + initialDatasetQuery + " )) " + entityAlias;
+						fromClauseElement = " (select * from ( " + initialDatasetQuery + " ) starAlias) " + entityAlias;
 					}
 
 					buffer.append(fromClauseElement);
