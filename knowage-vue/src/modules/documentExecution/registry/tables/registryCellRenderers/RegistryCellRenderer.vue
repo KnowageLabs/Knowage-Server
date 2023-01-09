@@ -1,18 +1,15 @@
 <template>
-    <!-- <div class="custom-cell-container p-d-flex kn-height-full">{{ params.value }}</div> -->
-    <!-- <div class=""> -->
-    <Checkbox v-if="params.colDef.editorType == 'TEXT' && params.colDef.columnInfo?.type === 'boolean'" :disabled="!params.colDef.isEditable" v-model="params.value" :binary="true" @change=""></Checkbox>
-    <div v-else class="custom-cell-container p-d-flex kn-height-full">{{ params.value }}</div>
-    <!-- <RegistryDatatableEditableField
-            v-else-if="params.colDef.isEditable || params.colDef.columnInfo?.type === 'int' || params.colDef.columnInfo?.type === 'float'"
-            :column="params.colDef"
-            :propRow="params.data"
-            :comboColumnOptions="comboColumnOptions"
-            @rowChanged=""
-            @dropdownChanged="onDropdownChange"
-            @dropdownOpened="addColumnOptions"
-        ></RegistryDatatableEditableField> -->
-    <!-- </div> -->
+    <Checkbox v-if="params.colDef.editorType == 'TEXT' && params.colDef.columnInfo?.type === 'boolean'" :disabled="!params.colDef.isEditable" v-model="value" :binary="true" @change=""></Checkbox>
+    <RegistryDatatableEditableField
+        v-else-if="params.colDef.isEditable || params.colDef.columnInfo?.type === 'int' || params.colDef.columnInfo?.type === 'float'"
+        :valueToChange="value"
+        :column="params.colDef"
+        :propRow="params.data"
+        :comboColumnOptions="params.comboColumnOptions"
+        @rowChanged="onRowChanged"
+        @dropdownChanged="onDropdownChange"
+        @dropdownOpened="addColumnOptions"
+    ></RegistryDatatableEditableField>
 </template>
 
 <script lang="ts">
@@ -28,16 +25,40 @@ export default defineComponent({
             type: Object as any
         }
     },
-    watch: {
-        params: {
-            async handler() {},
-            deep: true
+    data() {
+        return {
+            value: null as any
         }
     },
-    data() {
-        return {}
+    created() {
+        this.value = this.getInitialValue()
     },
-    created() {},
-    methods: {}
+    methods: {
+        getValue() {
+            return this.value
+        },
+        getInitialValue() {
+            let startValue = this.params.value
+            const isBackspaceOrDelete = this.params.eventKey === 'Backspace' || this.params.eventKey === 'Delete'
+            if (isBackspaceOrDelete) startValue = null
+            if (startValue !== null && startValue !== undefined) return startValue
+            return null
+        },
+        onRowChanged(payload: any) {
+            console.log('onRowChanged', payload)
+            this.params.context.componentParent.setRowEdited(payload)
+            // this.value = payload.row[this.params.colDef.field]
+        },
+        onDropdownChange(payload: any) {
+            console.log('onDropdownChange', payload)
+            this.params.context.componentParent.onDropdownChange(payload)
+            // this.value = payload.row[this.params.colDef.field]
+        },
+        addColumnOptions(payload: any) {
+            console.log('addColumnOptions', payload)
+            this.params.context.componentParent.addColumnOptions(payload)
+            // this.value = payload.row[this.params.colDef.field]
+        }
+    }
 })
 </script>
