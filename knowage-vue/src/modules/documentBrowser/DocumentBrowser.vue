@@ -227,11 +227,11 @@ export default defineComponent({
             const index = this.iFrameContainers.findIndex((iframe: any) => iframe.item?.routerId === this.selectedItem?.item.routerId)
             if (index !== -1) this.iFrameContainers.splice(index, 1)
         },
-        loadSavedCockpit(cockpit: any) {
+        async loadSavedCockpit(cockpit: any) {
             this.closeIframe()
             this.selectedItem = { item: { ...cockpit, routerId: crypto.randomBytes(16).toString('hex'), name: cockpit.DOCUMENT_NAME, label: cockpit.DOCUMENT_LABEL, showMode: 'execute' }, mode: 'execute' }
             this.tabs[this.activeIndex - 1] = this.selectedItem
-            this.$router.push(`/document-browser/document-composite/${cockpit.DOCUMENT_LABEL}`)
+            await this.$router.push(`/document-browser/document-composite/${cockpit.DOCUMENT_LABEL}`)
         },
         getTabName(tab: any) {
             if (tab.item && tab.item.name) {
