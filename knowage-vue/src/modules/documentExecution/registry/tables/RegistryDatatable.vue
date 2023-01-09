@@ -1,11 +1,11 @@
 <template>
     <div id="registry-gric-container" class="kn-height-full p-d-flex p-flex-column">
         <div class="registry-grid-toolbar">
-            <Button icon="fas fa-plus" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.addRow')" @click="" />
+            <Button icon="fas fa-plus" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.addRow')" @click="addNewRow" />
             <Button icon="fas fa-clone" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.cloneRows')" @click="" />
             <Button icon="fas fa-trash" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.deleteRows')" @click="rowsDeleteConfirm()" />
         </div>
-        <ag-grid-vue v-if="!loading" class="registry-grid ag-theme-alpine" style="height: 100%" :gridOptions="gridOptions" :context="context" />
+        <ag-grid-vue v-if="!loading" class="registry-grid ag-theme-alpine" style="height: 100%" :rowData="rows" :gridOptions="gridOptions" :context="context" />
     </div>
 
     <!-- <DataTable
@@ -176,6 +176,26 @@ export default defineComponent({
         }
     },
     methods: {
+        setupDatatableOptions() {
+            this.gridOptions = {
+                // PROPERTIES
+                columnDefs: this.columns,
+                tooltipShowDelay: 100,
+                tooltipMouseTrack: true,
+                defaultColDef: { editable: false, enableValue: true, sortable: true, resizable: true, width: 100 },
+                rowSelection: 'multiple',
+                animateRows: true,
+                suppressScrollOnNewData: true,
+
+                // EVENTS
+                onCellClicked: this.cellWasClicked,
+                onBodyScroll: this.onBodyScroll,
+                onSelectionChanged: this.onSelectionChanged,
+
+                // CALLBACKS
+                onGridReady: this.onGridReady
+            }
+        },
         async loadColumns() {
             this.loading = true
             this.columns = [
@@ -275,31 +295,10 @@ export default defineComponent({
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
                 .then((response: AxiosResponse<any>) => (this.comboColumnOptions[column.field][row[column.dependences] ?? 'All'] = response.data.rows))
         },
-        setupDatatableOptions() {
-            this.gridOptions = {
-                // PROPERTIES
-                rowData: this.rows,
-                columnDefs: this.columns,
-                tooltipShowDelay: 100,
-                tooltipMouseTrack: true,
-                defaultColDef: { editable: false, enableValue: true, sortable: true, resizable: true, width: 100 },
-                rowSelection: 'multiple',
-                animateRows: true,
-                suppressScrollOnNewData: true,
-
-                // EVENTS
-                onCellClicked: this.cellWasClicked,
-                onBodyScroll: this.onBodyScroll,
-                onSelectionChanged: this.onSelectionChanged,
-
-                // CALLBACKS
-                onGridReady: this.onGridReady
-            }
-        },
         loadRows() {
-            this.rows = deepcopy(this.propRows)
+            this.rows = this.propRows
             // this.gridApi?.setRowData(this.rows)
-            console.log('ROWS -----------------', this.rows)
+            console.log('PROP ROWS -----------------', this.rows)
         },
         loadConfiguration() {
             this.configuration = this.propConfiguration
@@ -393,12 +392,17 @@ export default defineComponent({
                     newRow[el.field] = el.defaultValue ?? ''
                 }
             })
+
             this.rows.unshift(newRow)
+            // NOTE - applyTransaction alone wont add new row to this.rows, thats why we do both, to force table to refresh itself
+            this.gridApi.applyTransaction({ addIndex: 0, add: [newRow] })
 
             if (this.lazyParams.size <= registryDescriptor.paginationLimit) {
                 this.first = 0
             }
             this.$emit('rowChanged', newRow)
+
+            console.log(this.rows)
         },
 
         onDropdownChange(payload: any) {
@@ -478,7 +482,7 @@ export default defineComponent({
         refreshGridConfiguration() {
             this.gridApi.setColumnDefs(this.columns)
             this.gridApi.setRowData(this.rows)
-            this.gridApi.redrawRows()
+            // this.gridApi.redrawRows()
         },
 
         cellWasClicked: (event) => {

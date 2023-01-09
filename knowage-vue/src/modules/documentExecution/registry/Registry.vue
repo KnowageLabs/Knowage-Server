@@ -186,6 +186,8 @@ export default defineComponent({
                 })
                 this.rows.push(tempRow)
             }
+
+            this.rows = [...this.rows]
         },
         loadConfiguration() {
             this.configuration = this.registry.registryConfig.configurations
@@ -306,7 +308,7 @@ export default defineComponent({
             this.pagination.start = 0
             this.pagination.size = 0
 
-            await this.reloadRegistryData()
+            await this.reloadRegistryData(true)
         },
         async updatePagination(lazyParams: any) {
             this.updatedRows = []
@@ -330,10 +332,10 @@ export default defineComponent({
         setWarningState(warnings: any[]) {
             this.stopWarningsState = warnings
         },
-        async reloadRegistryData() {
+        async reloadRegistryData(resetRows = false as boolean) {
             this.dataLoading = true
             await this.loadRegistry()
-            this.loadRows()
+            this.loadRows(resetRows)
             this.dataLoading = false
         }
     }
