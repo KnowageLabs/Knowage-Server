@@ -27,6 +27,7 @@ export class KnowageHighchartsGaugeSeriesChart extends KnowageHighchartsGaugeCha
     updateModel(oldModel: any) {
         updateGaugeChartModel(oldModel, this.model)
     }
+
     setData(data: any, widgetModel: IWidget) {
         this.setGaugeData(data, widgetModel, undefined)
     }

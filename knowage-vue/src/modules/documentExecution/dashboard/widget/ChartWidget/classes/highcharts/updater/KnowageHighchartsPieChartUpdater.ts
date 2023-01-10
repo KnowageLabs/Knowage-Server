@@ -1,7 +1,6 @@
 import { IHighchartsChartModel, IHighchartsOptions3D } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import { getFormattedLabels, getFormattedLegend, getFormattedNoDataConfiguration, getFormattedSeries, getFormattedTooltipSettings } from './KnowageHighchartsCommonUpdater'
 
-
 export const updatePieChartModel = (oldModel: any, newModel: IHighchartsChartModel) => {
     getFormatted3DConfiguration(oldModel, newModel)
     getFormattedNoDataConfiguration(oldModel, newModel)

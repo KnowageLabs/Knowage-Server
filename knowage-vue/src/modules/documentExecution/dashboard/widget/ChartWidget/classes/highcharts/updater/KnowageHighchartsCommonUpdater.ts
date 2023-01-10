@@ -3,22 +3,11 @@ import { IHighchartsChartModel } from "@/modules/documentExecution/dashboard/int
 import * as highchartsDefaultValues from '../../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
 
 export const createSerie = (serieName: string, groupingFunction: string, colorByPoint: boolean) => {
-    return {
-        name: serieName,
-        data: [],
-        colorByPoint: colorByPoint,
-        groupingFunction: groupingFunction,
-        accessibility: highchartsDefaultValues.getDefaultSeriesAccessibilitySettings()
-    }
+    return { name: serieName, data: [], colorByPoint: colorByPoint, groupingFunction: groupingFunction, accessibility: highchartsDefaultValues.getDefaultSeriesAccessibilitySettings() }
 }
 
 export const createGaugeSerie = (serieName: string) => {
-    return {
-        name: serieName,
-        data: [],
-        colorByPoint: false,
-        accessibility: highchartsDefaultValues.getDefaultSeriesAccessibilitySettings()
-    }
+    return { name: serieName, data: [], colorByPoint: false, accessibility: highchartsDefaultValues.getDefaultSeriesAccessibilitySettings() }
 }
 
 

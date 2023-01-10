@@ -113,7 +113,7 @@ export default defineComponent({
                     'font-size': this.dataLabelsModel.style.fontSize,
                     'font-weight': this.dataLabelsModel.style.fontWeight,
                     color: this.dataLabelsModel.style.color,
-                    'background-color': this.dataLabelsModel.backgroundColor
+                    'background-color': this.dataLabelsModel.backgroundColor ?? ''
                 }
         },
         modelChanged() {

@@ -17,6 +17,7 @@ export class KnowageHighchartsActivityGaugeChart extends KnowageHighchartsGaugeC
             if (model.chart.type !== 'activitygauge') {
                 this.formatSeriesFromOtherChartTypeSeries()
                 this.setSpecificOptionsDefaultValues()
+                this.setTooltipSettings()
             }
         }
         this.model.chart.type = 'activitygauge'
@@ -35,7 +36,6 @@ export class KnowageHighchartsActivityGaugeChart extends KnowageHighchartsGaugeC
         this.setGaugePaneSettings()
         this.setGaugeYAxis()
     }
-
 
     setData(data: any, widgetModel: IWidget) {
         this.setGaugeData(data, widgetModel, 4)
