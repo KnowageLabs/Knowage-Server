@@ -227,6 +227,12 @@ export default defineComponent({
                         }
                     }
 
+                    if (el.editorType == 'TEXT' && el.columnInfo.type === 'boolean') {
+                        el.cellRenderer = (params) => {
+                            return `<input  type='checkbox' ${params.value ? 'checked' : ''} />`
+                        }
+                    }
+
                     // TODO - Formatting logic for dates, not working when editing date
                     // if (el.columnInfo?.type === 'date') {
                     //     el.valueFormatter = (params) => {
@@ -386,6 +392,7 @@ export default defineComponent({
         },
 
         addNewRow() {
+            //TODO - Bojan - Add crypto as uniqueID for adding new rows
             const newRow = { id: this.rows.length + 1, isNew: true }
             this.columns.forEach((el: any) => {
                 if (el.isVisible && el.field !== 'id') {
