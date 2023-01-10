@@ -73,6 +73,10 @@
             "value": "not contains"
         },
         {
+            "name": "not equals",
+            "value": "not equals"
+        },
+        {
             "name": "starts with",
             "value": "starts with"
         },
