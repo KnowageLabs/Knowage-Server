@@ -24,7 +24,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,7 +34,6 @@ import org.json.JSONObject;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
-import it.eng.qbe.query.serializer.SerializerFactory;
 import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.statement.StatementCompositionException;
 import it.eng.qbe.statement.StatementTockenizer;
@@ -43,7 +41,6 @@ import it.eng.qbe.statement.graph.bean.QueryGraph;
 import it.eng.spagobi.tools.dataset.common.query.IQuery;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -1211,20 +1208,6 @@ public class Query implements IQuery {
 
 	public Map<String, String> getCurrentPeriodValuyesByType() {
 		return currentPeriodValuyesByType;
-	}
-
-	public boolean hasGrouping() {
-		return !this.getGroupByFields().isEmpty();
-	}
-
-	public Query clone(it.eng.qbe.datasource.IDataSource dataSource, Locale locale) {
-		try {
-			String store = ((JSONObject) SerializerFactory.getSerializer("application/json").serialize(this, dataSource, locale)).toString();
-			Query clonedQuery = SerializerFactory.getDeserializer("application/json").deserializeQuery(store, dataSource);
-			return clonedQuery;
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("An error occurred while applying deterministic sorting", e);
-		}
 	}
 
 }
