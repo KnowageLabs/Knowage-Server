@@ -20,25 +20,26 @@ package it.eng.spagobi.services.security.service;
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 
 /**
  * Factory class for the security supplier
- * 
+ *
  * @author Bernabei Angelo
  *
  */
 public class SecurityServiceSupplierFactory {
-	
+
 	/**
 	 * Decorate instance of {@link SecurityServiceSupplierFactory} to add functionalites to authentication.
-	 * 
+	 *
 	 * @author Marco Libanori
 	 */
 	private static class _SecurityServiceSupplierDecorator implements ISecurityServiceSupplier {
-		
+
 		final private ISecurityServiceSupplier instance;
 
 		public _SecurityServiceSupplierDecorator(ISecurityServiceSupplier instance) {
@@ -70,20 +71,20 @@ public class SecurityServiceSupplierFactory {
 		public boolean checkAuthorization(String userId, String function) {
 			return instance.checkAuthorization(userId, function);
 		}
-		
+
 	}
-	
+
 	/**
 	 * Check user failed login counter before authentication.
-	 * 
+	 *
 	 * @author Marco Libanori
 	 */
 	private static class TooMuchFailedLoginAttemtpsDecorator extends _SecurityServiceSupplierDecorator {
-		
+
 		public TooMuchFailedLoginAttemtpsDecorator(ISecurityServiceSupplier instance) {
 			super(instance);
 		}
-		
+
 		private boolean isLoginAttemtpsCounterBelowLimit(String userId) {
 			String configValue =
 					SingletonConfig.getInstance().getConfigValue("internal.security.login.maxFailedLoginAttempts");
@@ -138,14 +139,42 @@ public class SecurityServiceSupplierFactory {
 			}
 			return authorized;
 		}
-		
+
+	}
+
+	/**
+	 * Manage technical users.
+	 *
+	 * @author Marco Libanori
+	 */
+	private static class TechnicalUserDecorator extends _SecurityServiceSupplierDecorator {
+
+		public TechnicalUserDecorator(ISecurityServiceSupplier instance) {
+			super(instance);
+		}
+
+		@Override
+		public SpagoBIUserProfile checkAuthenticationToken(String token) {
+			SpagoBIUserProfile ret = null;
+
+			if (UserProfile.isSchedulerUser(token)) {
+				ret = UserProfile.createSchedulerUserProfile(token).getSpagoBIUserProfile();
+			} else if (UserProfile.isDataPreparationUser(token)) {
+				ret = UserProfile.createDataPreparationUserProfile(token).getSpagoBIUserProfile();
+			} else {
+				ret = super.checkAuthenticationToken(token);
+			}
+
+			return ret;
+		}
+
 	}
 
 	static Logger logger = Logger.getLogger(SecurityServiceSupplierFactory.class);
 
 	/**
 	 * Creates a new SecurityServiceSupplier object.
-	 * 
+	 *
 	 * @return the i security service supplier
 	 */
 	public static ISecurityServiceSupplier createISecurityServiceSupplier() {
@@ -161,9 +190,12 @@ public class SecurityServiceSupplierFactory {
 			String configValue =
 					SingletonConfig.getInstance().getConfigValue("internal.security.login.checkForMaxFailedLoginAttempts");
 			Boolean enableFailedLoginAttemptsFilter = Boolean.parseBoolean(configValue);
-			
+
 			Class<?> clazz = Class.forName(engUserProfileFactoryClass);
 			ISecurityServiceSupplier newInstance = (ISecurityServiceSupplier) clazz.newInstance();
+
+			newInstance = new TechnicalUserDecorator(newInstance);
+
 			if (enableFailedLoginAttemptsFilter) {
 				newInstance = new TooMuchFailedLoginAttemtpsDecorator(newInstance);
 			}

@@ -71,7 +71,7 @@ import WorkspaceModelsTable from './tables/WorkspaceModelsTable.vue'
 import { AxiosResponse } from 'axios'
 import QBE from '@/modules/qbe/QBE.vue'
 import MultiSelect from 'primevue/multiselect'
-import { getCorrectRolesForExecution } from '@/helpers/commons/roleHelper'
+import { getCorrectRolesForExecutionForType } from '@/helpers/commons/roleHelper'
 
 export default defineComponent({
     name: 'workspace-models-view',
@@ -191,7 +191,17 @@ export default defineComponent({
             this.searchWord = ''
         },
         openDatasetInQBE(dataset: any) {
-            getCorrectRolesForExecution('DATAMART', dataset.id, dataset.label)
+            let id = null
+            let typeCode = ''
+            if (dataset.federation_id) {
+                typeCode = 'FEDERATED_DATASET'
+                id = dataset.federation_id
+            } else {
+                id = dataset.id
+                typeCode = 'DATAMART'
+            }
+
+            getCorrectRolesForExecutionForType(typeCode, id, dataset.label)
                 .then(() => {
                     if (process.env.VUE_APP_USE_OLD_QBE_IFRAME == 'true') {
                         this.$emit('showQbeDialog', dataset)

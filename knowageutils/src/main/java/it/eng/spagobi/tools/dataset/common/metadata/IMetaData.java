@@ -105,6 +105,6 @@ public interface IMetaData {
 
 	void changeFieldAlias(int fieldIndex, String newAlias);
 
-	List getFieldsMeta();
+	List<IFieldMetaData> getFieldsMeta();
 
 }

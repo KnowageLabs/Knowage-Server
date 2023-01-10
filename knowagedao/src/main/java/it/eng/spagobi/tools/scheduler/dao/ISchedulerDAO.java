@@ -109,4 +109,15 @@ public interface ISchedulerDAO {
 	boolean getGlobal();
 
 	void setGlobal(boolean value);
+
+	/**
+	 * WORKAROUND used to fix the past.
+	 * TODO : could be deleted in version 9
+	 */
+	boolean deleteTriggerWhereNameLikes(String name);
+	/**
+	 * WORKAROUND used to fix the past.
+	 * TODO : could be deleted in version 9
+	 */
+	boolean deleteJobWhereNameLikes(String name);
 }

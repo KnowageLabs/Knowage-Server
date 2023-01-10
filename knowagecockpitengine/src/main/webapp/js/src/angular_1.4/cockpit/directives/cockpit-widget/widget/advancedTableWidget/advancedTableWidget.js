@@ -166,7 +166,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							var previousValue;
 							var previousIndex;
 							for(var r in $scope.tempRows){
-								if(previousValue != $scope.tempRows[r][fields[f].name]){
+								if(previousValue != $scope.tempRows[r][fields[f].name] || ($scope.ngModel.settings?.summary?.enabled && r >= ($scope.tempRows.length - $scope.ngModel.settings?.summary?.list.length))){
 									previousValue = $scope.tempRows[r][fields[f].name];
 									previousIndex = r;
 									$scope.tempRows[r].span = 1;
@@ -243,6 +243,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							tempCol.comparator = dateComparator;
 						}
 						if(tempCol.fieldType == 'timestamp') {
+							tempCol.valueFormatter = dateTimeFormatter;
+							tempCol.comparator = dateComparator;
+						}
+						if(tempCol.fieldType == 'time') {
 							tempCol.valueFormatter = dateTimeFormatter;
 							tempCol.comparator = dateComparator;
 						}

@@ -44,7 +44,7 @@
                 </div>
                 <div class="p-field">
                     <span class="p-float-label">
-                        <KnInputFile label="" :changeFunction="onVersionUpload" accept=".csv" :visibility="true" />
+                        <KnInputFile label="" :changeFunction="onVersionUpload" accept=".xml,.csv" :visibility="true" />
                     </span>
                 </div>
             </form>

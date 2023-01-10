@@ -56,6 +56,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import it.eng.knowage.encryption.DecryptionDataStoreTransformer;
 import it.eng.knowage.functionscatalog.utils.CatalogFunctionException;
 import it.eng.knowage.functionscatalog.utils.CatalogFunctionRuntimeConfigDTO;
 import it.eng.knowage.functionscatalog.utils.CatalogFunctionTransformer;
@@ -291,6 +292,9 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				IDataStoreTransformer functionTransformer = new CatalogFunctionTransformer(getUserProfile(), catalogFuncId, catalogFunctionConfig);
 				functionTransformer.transform(dataStore);
 			}
+
+			DecryptionDataStoreTransformer ddt = new DecryptionDataStoreTransformer(dataSet);
+			ddt.transform(dataStore);
 
 			IDataWriter dataWriter = getDataStoreWriter();
 
@@ -1191,12 +1195,12 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		dataSet = dataSet instanceof VersionedDataSet ? ((VersionedDataSet) dataSet).getWrappedDataset() : dataSet;
 		if (dataSet instanceof AbstractJDBCDataset) {
 			IDataBase database = DataBaseFactory.getDataBase(dataSet.getDataSource());
-			isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported() && !dataSet.hasDataStoreTransformer();
+			isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported() && !dataSet.hasDataStoreTransformers();
 		} else if (dataSet instanceof FederatedDataSet) {
 			isNearRealtimeSupported = false;
 		} else if (dataSet instanceof QbeDataSet) {
 			IDataBase database = DataBaseFactory.getDataBase(dataSet.getDataSource());
-			isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported() && !dataSet.hasDataStoreTransformer();
+			isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported() && !dataSet.hasDataStoreTransformers();
 		} else if (dataSet instanceof FlatDataSet || dataSet.isPersisted() || dataSet instanceof PreparedDataSet
 				|| dataSet.getClass().equals(SolrDataSet.class)) {
 			isNearRealtimeSupported = true;

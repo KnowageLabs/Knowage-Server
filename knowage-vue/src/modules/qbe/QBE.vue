@@ -306,13 +306,7 @@ export default defineComponent({
         this.userRole = this.user.sessionRole && this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
 
         let invalidRole = false
-        let id = null
-        let label = null
-        if (this.dataset) {
-            id = this.dataset.id
-            label = this.dataset.label
-        }
-        getCorrectRolesForExecution('DATAMART', id, label).then((response: any) => {
+        getCorrectRolesForExecution(null, this.dataset).then(async (response: any) => {
             let correctRolesForExecution = response
 
             if (!this.userRole) {
@@ -335,7 +329,7 @@ export default defineComponent({
             }
             if (!invalidRole) {
                 if (this.userRole) {
-                    this.loadPage()
+                    await this.loadPage()
                 } else {
                     this.parameterSidebarVisible = true
                 }

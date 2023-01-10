@@ -250,6 +250,8 @@ export default defineComponent({
             }
         },
         isParameterSidebarVisible(): boolean {
+            if (!this.userRole) return false
+
             let parameterVisible = false
             for (let i = 0; i < this.filtersData?.filterStatus?.length; i++) {
                 const tempFilter = this.filtersData.filterStatus[i]
@@ -259,7 +261,7 @@ export default defineComponent({
                 }
             }
 
-            return parameterVisible || !this.sessionRole
+            return parameterVisible
         }
     },
     async created() {
@@ -282,7 +284,7 @@ export default defineComponent({
         this.userRole = this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
 
         let invalidRole = false
-        getCorrectRolesForExecution('DOCUMENT', this.document.id, this.document.label).then((response: any) => {
+        getCorrectRolesForExecution(this.document).then(async (response: any) => {
             let correctRolesForExecution = response
 
             if (!this.userRole) {
@@ -305,7 +307,7 @@ export default defineComponent({
             }
             if (!invalidRole) {
                 if (this.userRole) {
-                    this.loadPage(true)
+                    await this.loadPage(true)
                 } else {
                     this.parameterSidebarVisible = true
                 }
@@ -500,6 +502,8 @@ export default defineComponent({
         export(type: string) {
             if (this.document.typeCode === 'OLAP') {
                 this.exportOlap(type)
+            } else if (this.document.typeCode === 'REPORT') {
+                window.open(this.urlData?.url + '&outputType=' + type, 'name', 'resizable=1,height=750,width=1000')
             } else {
                 const tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
                 let tempFrame = window.frames[tempIndex]
@@ -1148,7 +1152,8 @@ export default defineComponent({
         },
         findCrossTargetByCrossName(angularData: any, temp: any[]) {
             if (!angularData || !temp) return
-            const index = temp.findIndex((el: any) => el.crossName === angularData.targetCrossNavigation.crossName)
+            const targetCross = typeof angularData.targetCrossNavigation === 'string' ? angularData.targetCrossNavigation : angularData.targetCrossNavigation.crossName
+            const index = temp.findIndex((el: any) => el.crossName === targetCross)
             return index !== -1 ? temp[index] : null
         },
         async loadCrossNavigation(crossNavigationDocument: any, angularData: any) {
@@ -1278,7 +1283,6 @@ export default defineComponent({
             const startDocumentInputParameters = deepcopy(this.document.drivers)
             const keys = [] as any[]
             otherOutputParameters.forEach((parameter: any) => keys.push(Object.keys(parameter)[0]))
-
             for (let i = 0; i < startDocumentInputParameters.length; i++) {
                 if (!keys.includes(startDocumentInputParameters[i].label)) {
                     const tempObject = {} as any
@@ -1290,7 +1294,9 @@ export default defineComponent({
         getParameterValueForCrossNavigation(parameterLabel: string) {
             if (!parameterLabel) return
             const index = this.filtersData.filterStatus?.findIndex((param: any) => param.label === parameterLabel)
-            return index !== -1 ? this.filtersData.filterStatus[index].parameterValue[0].value : ''
+            if (index !== -1 && this.filtersData.filterStatus[index].parameterValue[0]) {
+                return this.filtersData.filterStatus[index].parameterValue[0].value
+            } else return ''
         },
         formatNavigationParams(otherOutputParameters: any[], navigationParams: any) {
             let formatedParams = {} as any

@@ -1,20 +1,23 @@
 {
-	"columnDefs": [
-		{
-			"field": "filename",
-			"headerName": "downloadsDialog.columns.fileName"
-		},
-		{
-			"field": "startDate",
-			"headerName": "downloadsDialog.columns.creationDate",
-			"type": "date"
-		},
-		{
-			"bodyStyle": {
-				"text-align": "right"
-			},
-			"headerName": "",
-			"template": "downloadButton"
-		}
-	]
+    "columnDefs": [
+        {
+            "bodyStyle": {
+                "max-width": "340px"
+            },
+            "field": "filename",
+            "headerName": "downloadsDialog.columns.fileName"
+        },
+        {
+            "field": "startDate",
+            "headerName": "downloadsDialog.columns.creationDate",
+            "type": "date"
+        },
+        {
+            "bodyStyle": {
+                "text-align": "right"
+            },
+            "headerName": "",
+            "template": "downloadButton"
+        }
+    ]
 }

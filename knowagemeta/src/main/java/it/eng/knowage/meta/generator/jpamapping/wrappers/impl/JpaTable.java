@@ -339,4 +339,16 @@ public class JpaTable extends AbstractJpaTable {
 
 	}
 
+	public String getModelName() {
+		return getModel().getName();
+	}
+
+	public String getEncryptedColTypeName() {
+		return getModel().getName() + "_encryptedString";
+	}
+
+	public String getEncryptorName() {
+		return getModel().getName() + "_encryptor";
+	}
+
 }

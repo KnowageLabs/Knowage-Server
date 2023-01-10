@@ -179,15 +179,7 @@ export default defineComponent({
         )
     },
         executeAnalysisDocument(document: any) {
-            let typeCode = 'DOCUMENT'
-
-            if (document.type === 'businessModel') {
-                typeCode = 'DATAMART'
-            } else if (document.dsTypeCd) {
-                typeCode = 'DATASET'
-            }
-
-            getCorrectRolesForExecution(typeCode, document.id, document.label).then(() => {
+            getCorrectRolesForExecution(document).then(() => {
                 this.$emit('execute', document)
             })
         },

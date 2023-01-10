@@ -33,6 +33,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.naming.NamingException;
 
@@ -836,7 +837,6 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 * @throws Exception
 	 */
 	public List validateValues(IEngUserProfile profile, AbstractDriver driver) throws Exception {
-		List toReturn = new ArrayList();
 		List<String> values = driver.getParameterValues();
 		List parameterValuesDescription = new ArrayList();
 		DataConnection dataConnection = null;
@@ -870,14 +870,73 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		// END converting the SourceBean into a string and then into SourceBean
 		// again:
 
-		String valueColName = getValueColumnName();
-		String descColName = getDescriptionColumnName();
+		if (!lovType.equals("treeinner")) {
+			// we need to search for the values on a single column
+			return searchValuesForRegularLOVs(profile, driver, parameterValuesDescription, result);
+		} else {
+			// we need to search for the values on all tree levels
+			return searchValuesForTreeInnerSelectionLOVs(profile, driver, parameterValuesDescription, result);
+		}
+
+	}
+
+	protected List searchValuesForRegularLOVs(IEngUserProfile profile, AbstractDriver driver, List parameterValuesDescription, SourceBean result) {
+		List toReturn = new ArrayList();
+		List<String> values = driver.getParameterValues();
 
 		Iterator<String> it = values.iterator();
 		while (it.hasNext()) {
 			String description = null;
 			String aValue = it.next();
-			Object obj = result.getFilteredSourceBeanAttribute(DataRow.ROW_TAG, valueColName, aValue);
+			Object obj = result.getFilteredSourceBeanAttribute(DataRow.ROW_TAG, VALUE_ALIAS, aValue);
+			if (obj == null) {
+				// value was not found!!
+				logger.error("Parameter '" + driver.getLabel() + "' cannot assume value '" + aValue + "'" + " for user '"
+						+ ((UserProfile) profile).getUserId().toString() + "'.");
+				List l = new ArrayList();
+				l.add(driver.getLabel());
+				l.add(aValue);
+				EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 1077, l);
+				toReturn.add(userError);
+				description = "NOT ADMISSIBLE";
+			} else {
+				// value was found, retrieve description
+				if (obj instanceof SourceBean) {
+					SourceBean sb = (SourceBean) obj;
+					Object descriptionObj = sb.getAttribute(DESCRIPTION_ALIAS);
+					description = descriptionObj != null ? descriptionObj.toString() : null;
+				} else {
+					List l = (List) obj;
+					Object descriptionObj = ((SourceBean) l.get(0)).getAttribute(DESCRIPTION_ALIAS);
+					description = descriptionObj != null ? descriptionObj.toString() : null;
+				}
+			}
+			parameterValuesDescription.add(description);
+		}
+		driver.setParameterValuesDescription(parameterValuesDescription);
+		return toReturn;
+	}
+
+	protected List searchValuesForTreeInnerSelectionLOVs(IEngUserProfile profile, AbstractDriver driver, List parameterValuesDescription, SourceBean result) {
+		List toReturn = new ArrayList();
+		List<String> values = driver.getParameterValues();
+		List<Couple<String, String>> levels = this.getTreeLevelsColumns();
+
+		values.forEach(aValue -> {
+			String description = null;
+			String descColName = null;
+			Object obj = null;
+			Iterator<Couple<String, String>> it = levels.iterator();
+			while (it.hasNext()) {
+				Couple<String, String> level = it.next();
+				String valueColName = level.getFirst();
+				descColName = level.getSecond();
+				obj = result.getFilteredSourceBeanAttribute(DataRow.ROW_TAG, valueColName, aValue);
+				if (obj != null) {
+					break;
+				}
+			}
+
 			if (obj == null) {
 				// value was not found!!
 				logger.error("Parameter '" + driver.getLabel() + "' cannot assume value '" + aValue + "'" + " for user '"
@@ -901,8 +960,9 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 				}
 			}
 			parameterValuesDescription.add(description);
-		}
+		});
 		driver.setParameterValuesDescription(parameterValuesDescription);
+
 		return toReturn;
 	}
 
@@ -910,28 +970,64 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 * This methods builds the validation query, see validateValues method.
 	 */
 	private String getValidationQuery(IEngUserProfile profile, AbstractDriver driver, List<String> values) throws Exception {
+		if (!lovType.equals("treeinner")) {
+			return getValidationQueryForRegularLOVs(profile, driver, values);
+		} else {
+			return getValidationQueryForRegularTreeInnerSelectionLOVs(profile, driver, values);
+		}
+	}
+
+	/**
+	 * This methods builds the validation query for regular LOVs, i.e. for all LOVs that are NOT trees with inner nodes selection
+	 */
+	private String getValidationQueryForRegularLOVs(IEngUserProfile profile, AbstractDriver driver, List<String> values) throws Exception {
 		String statement = getQueryDefinition();
 		statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
 		StringBuffer buffer = new StringBuffer();
+		buffer.append("SELECT ");
+		buffer.append(getColumnSQLName(this.valueColumnName) + " AS \"" + VALUE_ALIAS + "\", ");
+		buffer.append(getColumnSQLName(this.descriptionColumnName) + " AS \"" + DESCRIPTION_ALIAS + "\" ");
+		buffer.append("FROM (");
+		buffer.append(statement);
+		buffer.append(") " + getRandomAlias() + " WHERE ");
 
-		if (!lovType.equals("treeinner")) {
-			buffer.append("SELECT ");
-			buffer.append(getColumnSQLName(this.valueColumnName) + " AS \"" + VALUE_ALIAS + "\", ");
-			buffer.append(getColumnSQLName(this.descriptionColumnName) + " AS \"" + DESCRIPTION_ALIAS + "\" ");
-			buffer.append("FROM (");
-			buffer.append(statement);
-			buffer.append(") " + getRandomAlias() + " WHERE ");
-
-			if (values.size() == 1) {
-				buffer.append(getColumnSQLName(this.valueColumnName) + " = ");
-				buffer.append(getSQLValue(driver, values.get(0)));
-			} else {
-				buffer.append(getColumnSQLName(this.valueColumnName) + " IN (");
-				buffer.append(concatenateValues(driver, values));
-				buffer.append(")");
-			}
+		if (values.size() == 1) {
+			buffer.append(getColumnSQLName(this.valueColumnName) + " = ");
+			buffer.append(getSQLValue(driver, values.get(0)));
+		} else {
+			buffer.append(getColumnSQLName(this.valueColumnName) + " IN (");
+			buffer.append(concatenateValues(driver, values));
+			buffer.append(")");
 		}
+		return buffer.toString();
+	}
 
+	/**
+	 * This methods builds the validation query for LOVs that are trees with inner nodes selection
+	 */
+	private String getValidationQueryForRegularTreeInnerSelectionLOVs(IEngUserProfile profile, AbstractDriver driver, List<String> values) throws Exception {
+		List<Couple<String, String>> levels = this.getTreeLevelsColumns();
+
+		String statement = getQueryDefinition();
+		statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("SELECT ");
+		// we select both value and description for every tree level
+		buffer.append(levels.stream().map(level -> getColumnSQLName(level.getFirst()) + ", " + getColumnSQLName(level.getSecond()))
+				.collect(Collectors.joining(", ")));
+		buffer.append(" FROM (");
+		buffer.append(statement);
+		buffer.append(") " + getRandomAlias() + " WHERE ");
+
+		if (values.size() == 1) {
+			// we put a EQUAL filter on each level, in OR between them
+			buffer.append(levels.stream().map(level -> getColumnSQLName(level.getFirst()) + " = " + getSQLValue(driver, values.get(0)))
+					.collect(Collectors.joining(" OR ")));
+		} else {
+			// we put an IN filter on each level, in OR between them
+			buffer.append(levels.stream().map(level -> getColumnSQLName(level.getFirst()) + " IN ( " + concatenateValues(driver, values) + " )")
+					.collect(Collectors.joining(" OR ")));
+		}
 		return buffer.toString();
 	}
 

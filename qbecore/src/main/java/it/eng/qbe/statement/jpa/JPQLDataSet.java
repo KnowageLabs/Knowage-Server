@@ -141,8 +141,8 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 			dataStore.getMetaData().setProperty("resultNumber", resultNumber);
 		}
 
-		if (hasDataStoreTransformer()) {
-			getDataStoreTransformer().transform(dataStore);
+		if (hasDataStoreTransformers()) {
+			executeDataStoreTransformers(dataStore);
 		}
 	}
 
