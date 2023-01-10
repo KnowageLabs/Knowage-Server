@@ -1,8 +1,8 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-2 p-mx-2">
         <template #start>
-            <Button v-if="!expandParamsCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandParamsCard = true" />
-            <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandParamsCard = false" />
+            <Button v-if="!expandParamsCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color: white" @click="expandParamsCard = true" />
+            <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color: white" @click="expandParamsCard = false" />
             {{ $t('managers.datasetManagement.params') }}
         </template>
         <template #end>
@@ -17,38 +17,27 @@
                     {{ $t('managers.datasetManagement.tableEmpty') }}
                 </template>
                 <Column field="name" :header="$t('kpi.alert.name')" :sortable="true">
-                    <template #editor="{data}">
+                    <template #body="{ data }">
                         <InputText class="kn-material-input" :style="tableDescriptor.style.columnStyle" v-model="data.name" />
                     </template>
                 </Column>
                 <Column field="type" :header="$t('kpi.alert.type')" :sortable="true">
-                    <template #editor="{data}">
+                    <template #body="{ data }">
                         <Dropdown id="scope" class="kn-material-input" :style="tableDescriptor.style.columnStyle" :options="datasetParamTypes" optionLabel="value" optionValue="value" v-model="data.type" />
                     </template>
                 </Column>
                 <Column field="defaultValue" :header="$t('managers.driversManagement.useModes.defaultValue')" :sortable="true">
-                    <template #editor="{data}">
+                    <template #body="{ data }">
                         <InputText v-if="data.multiValue === false" class="kn-material-input" :style="tableDescriptor.style.columnStyle" v-model="data.defaultValue" />
                         <div v-else class="p-d-flex p-flex-column chipsContainer">
-                            <Chips class="kn-border-none"  v-model="data.defaultValue"/>
-                            <small id="chips-help">{{$t('common.chipsHint')}}</small>
-                        </div>
-                        
-                    </template>
-                    <template #body="{data}">
-                        <InputText v-if="data.multiValue === false" class="kn-material-input" :style="tableDescriptor.style.columnStyle" v-model="data.defaultValue" />
-                        <div v-else class="p-d-flex p-flex-column chipsContainer">
-                            <Chips class="kn-border-none"  v-model="data.defaultValue"/>
-                            <small id="chips-help">{{$t('common.chipsHint')}}</small>
+                            <Chips class="kn-border-none" v-model="data.defaultValue" />
+                            <small id="chips-help">{{ $t('common.chipsHint') }}</small>
                         </div>
                     </template>
                 </Column>
                 <Column field="multiValue" :header="$t('managers.profileAttributesManagement.form.multiValue')" :sortable="true">
-                    <template #body="{data}">
-                        <Checkbox v-model="data.multiValue" :binary="true" @change="checkboxChange(data)"/>
-                    </template>
-                    <template #editor="{data}">
-                        <Checkbox v-model="data.multiValue" :binary="true" @change="checkboxChange(data)"/>
+                    <template #body="{ data }">
+                        <Checkbox v-model="data.multiValue" :binary="true" @change="checkboxChange(data)" />
                     </template>
                 </Column>
                 <Column @rowClick="false">
@@ -119,11 +108,11 @@ export default defineComponent({
                 this.insertParameter()
             }
         },
-        checkboxChange(data){
-            if(data.multiValue){
-                if(data.defaultValue) data.defaultValue = [data.defaultValue]
-            }else if(data.defaultValue) data.defaultValue = data.defaultValue.join('')  
-            this.$forceUpdate()       
+        checkboxChange(data) {
+            if (data.multiValue) {
+                if (data.defaultValue) data.defaultValue = [data.defaultValue]
+            } else if (data.defaultValue) data.defaultValue = data.defaultValue.join('')
+            this.$forceUpdate()
         },
         insertParameter() {
             this.dataset.pars ? '' : (this.dataset.pars = [])
@@ -153,15 +142,13 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped>
-    .chipsContainer {
+.chipsContainer {
+    width: 100%;
+    &:deep(.p-chips) {
         width: 100%;
-        &:deep(.p-chips) {
-            width: 100%;
-        .p-chips-multiple-container{
+        .p-chips-multiple-container {
             width: 100%;
         }
     }
-    }
-    
-
+}
 </style>
