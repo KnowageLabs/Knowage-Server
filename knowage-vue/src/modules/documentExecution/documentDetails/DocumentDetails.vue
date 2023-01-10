@@ -5,7 +5,7 @@
                 {{ $t('documentExecution.documentDetails.title') }}
             </template>
             <template #end>
-                <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDocument" :disabled="invalidDrivers > 0 || invalidOutputParams > 0 || v$.$invalid" />
+                <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDocument" :disabled="invalidDrivers > 0 || invalidOutputParams > 0 || invalidFunctionalities == 0 || v$.$invalid" />
                 <Button v-if="propMode === 'execution'" icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeDocument" />
             </template>
         </Toolbar>
@@ -153,6 +153,9 @@ export default defineComponent({
                 return this.selectedDocument.drivers.filter((parameter: any) => parameter.numberOfErrors > 0).length
             }
             return 0
+        },
+        invalidFunctionalities() {
+            return this.selectedDocument.functionalities.length
         },
         showDataLineageTab(): boolean {
             return (this.store.$state as any).user.functionalities.includes('DataSourceManagement')
