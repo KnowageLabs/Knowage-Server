@@ -31,6 +31,7 @@ module.exports = function(grunt) {
 					knowageContext + 'node_modules/ag-grid-community/dist/ag-grid-community.min.js',
 					knowageContext + 'node_modules/toastify-js/src/toastify.js',		
 					knowageContext + 'node_modules/moment/min/moment-with-locales.min.js',
+					knowageContext + 'node_modules/luxon/build/global/luxon.min.js',
 					knowageContext + 'node_modules/canvg/dist/browser/canvg.min.js',
 					knowageContext + 'node_modules/html2canvas/dist/html2canvas.min.js',
 					knowageContext + 'node_modules/jspdf/dist/jspdf.min.js',

@@ -1109,7 +1109,8 @@ export default defineComponent({
             if (index !== -1) this.schedulations.splice(index, 1)
         },
         getFormattedDate(date: any, useDefaultFormat?: boolean) {
-            const format = date instanceof Date ? undefined : 'dd/MM/yyyy'
+            const configurations = (this.$store.state as any).configurations
+            const format = date instanceof Date ? undefined : configurations['SPAGOBI.DATE-FORMAT-SERVER.format']
             return luxonFormatDate(date, format, useDefaultFormat ? undefined : this.dateFormat)
         },
         async onBreadcrumbClick(item: any) {
