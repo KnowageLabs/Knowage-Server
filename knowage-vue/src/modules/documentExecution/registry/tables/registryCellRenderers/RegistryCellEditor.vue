@@ -7,6 +7,7 @@
         :step="getStep(column.columnInfo?.type)"
         v-model="value"
         @input="onRowChanged(row)"
+        ref="input"
     />
     <InputNumber
         v-if="column && column.editorType !== 'COMBO' && column.columnInfo?.type !== 'date' && column.columnInfo?.type !== 'timestamp' && getDataType(column.columnInfo?.type) === 'number'"
@@ -18,8 +19,8 @@
         :maxFractionDigits="maxFractionDigits"
         :disabled="!column.isEditable"
         @blur="onInputNumberChange"
-    >
-    </InputNumber>
+        ref="input"
+    />
     <Dropdown
         v-else-if="column && column.editorType === 'COMBO'"
         class="kn-material-input"
@@ -30,8 +31,8 @@
         @change="onDropdownChange({ row: row, column: column })"
         @before-show="addColumnOptions({ row: row, column: column })"
         :filter="true"
-    >
-    </Dropdown>
+        ref="input"
+    />
     <Calendar
         v-else-if="column && (column.columnInfo?.type === 'date' || column.columnInfo?.type === 'timestamp')"
         class="pivot-calendar"
@@ -42,11 +43,12 @@
         :showButtonBar="true"
         @date-select="onRowChanged(row)"
         :dateFormat="column.columnInfo?.type === 'date' ? getCurrentLocaleDefaultDateFormat(column) : ''"
+        ref="input"
     />
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, nextTick } from 'vue'
 import { setInputDataType, getInputStep, formatNumber } from '@/helpers/commons/tableHelpers'
 import { formatDate, getLocale } from '@/helpers/commons/localeHelper'
 import { luxonFormatDate, primeVueDate } from '@/helpers/commons/localeHelper'
@@ -93,6 +95,14 @@ export default defineComponent({
             },
             deep: true
         }
+    },
+    mounted() {
+        //TODO - add different refs for input components because PV focus is retarded
+        // https://forum.primefaces.org/viewtopic.php?p=196916 - source
+        this.$nextTick(() => {
+            const inputFocus = this.$refs['input'] as any
+            inputFocus.$el.focus()
+        })
     },
     created() {
         this.setDefaultLocale()
@@ -150,7 +160,10 @@ export default defineComponent({
             return formatDate(date, format, incomingFormat)
         },
         onInputNumberChange() {
-            setTimeout(() => this.onRowChanged(this.row), 250)
+            setTimeout(() => {
+                this.row[this.column.field] = this.value
+                this.onRowChanged(this.row)
+            }, 250)
         },
         getOptions(column: any, row: any) {
             let options = this.columnOptions && this.columnOptions[column.field] ? this.columnOptions[column.field][row[column.dependences]] : []

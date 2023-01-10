@@ -186,8 +186,6 @@ export default defineComponent({
                 })
                 this.rows.push(tempRow)
             }
-
-            this.rows = [...this.rows]
         },
         loadConfiguration() {
             this.configuration = this.registry.registryConfig.configurations

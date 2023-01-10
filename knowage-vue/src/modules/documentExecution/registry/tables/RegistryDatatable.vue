@@ -83,6 +83,7 @@ import { defineComponent, reactive, onMounted, ref } from 'vue'
 import { luxonFormatDate, formatDateWithLocale, formatNumberWithLocale, localeDate, primeVueDate } from '@/helpers/commons/localeHelper'
 import { setInputDataType, numberFormatRegex } from '@/helpers/commons/tableHelpers'
 import { AxiosResponse } from 'axios'
+import { mapActions } from 'pinia'
 import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
 import 'ag-grid-community/styles/ag-grid.css' // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
@@ -96,8 +97,8 @@ import RegistryDatatableEditableField from './RegistryDatatableEditableField.vue
 import RegistryDatatableWarningDialog from './RegistryDatatableWarningDialog.vue'
 import CellRenderer from './registryCellRenderers/RegistryCellRenderer.vue'
 import CellEditor from './registryCellRenderers/RegistryCellEditor.vue'
-
 import deepcopy from 'deepcopy'
+import store from '../../../../App.store'
 
 export default defineComponent({
     name: 'registry-datatable',
@@ -132,13 +133,18 @@ export default defineComponent({
             timeout: null as any,
             selectedRows: [] as any,
             gridOptions: null as any,
-            context: null as any
+            context: null as any,
+            ctrlDown: false
         }
     },
     watch: {
         propColumns() {
             this.loadColumns()
         },
+        //TODO - load rows using MITT because reactivity is dumb af
+        // propRows() {
+        //     this.loadRows()
+        // },
         propRows: {
             handler() {
                 this.loadRows()
@@ -176,6 +182,7 @@ export default defineComponent({
         }
     },
     methods: {
+        ...mapActions(store, ['setInfo', 'setError']),
         setupDatatableOptions() {
             this.gridOptions = {
                 // PROPERTIES
@@ -189,6 +196,7 @@ export default defineComponent({
 
                 // EVENTS
                 onCellClicked: this.cellWasClicked,
+                onCellKeyDown: this.pasteTest,
                 onBodyScroll: this.onBodyScroll,
                 onSelectionChanged: this.onSelectionChanged,
 
@@ -234,15 +242,15 @@ export default defineComponent({
                     }
 
                     // TODO - Formatting logic for dates, not working when editing date
-                    // if (el.columnInfo?.type === 'date') {
-                    //     el.valueFormatter = (params) => {
-                    //         this.getFormattedDate(params.value, 'yyyy-MM-dd', this.getCurrentLocaleDefaultDateFormat(el))
-                    //     }
-                    // } else if (el.columnInfo?.type === 'timestamp') {
-                    //     el.valueFormatter = (params) => {
-                    //         this.getFormattedDateTime(params.value, { dateStyle: 'short', timeStyle: 'medium' }, true)
-                    //     }
-                    // }
+                    if (el.columnInfo?.type === 'date') {
+                        el.valueFormatter = (params) => {
+                            this.getFormattedDate(params.value, 'yyyy-MM-dd', this.getCurrentLocaleDefaultDateFormat(el))
+                        }
+                    } else if (el.columnInfo?.type === 'timestamp') {
+                        el.valueFormatter = (params) => {
+                            this.getFormattedDateTime(params.value, { dateStyle: 'short', timeStyle: 'medium' }, true)
+                        }
+                    }
 
                     this.columns.push(el)
                 }
@@ -514,6 +522,90 @@ export default defineComponent({
         },
         onSelectionChanged() {
             this.selectedRows = this.gridApi.getSelectedRows()
+        },
+        pasteTest(ev) {
+            const myCell = this.getFocusedCell(ev)
+
+            if (ev.event.which === 17) {
+                // 17 - ctrl
+                this.ctrlDown = true
+            } else if (ev.event.which == 67 && this.ctrlDown == true) {
+                // 67 - c
+                //TODO - copy styling here
+                window.navigator.clipboard
+                    .writeText(ev.value)
+                    // .then(() => {
+                    //     // myCell.cell.column.colDef.cellStyle = { border: '1px dashed #2196f3' }
+                    //     ev.api.refreshCells({ force: true, columns: [myCell.column], rowNodes: [myCell.row] })
+                    // })
+                    .catch((er) => console.log(er))
+            } else if (ev.event.which == 86 && this.ctrlDown == true) {
+                // 67 - v
+                window.navigator.clipboard.readText().then((value) => {
+                    //TODO - paste validation here
+                    // myCell.row.setDataValue(myCell.column, value)
+                    this.setCellValue(myCell, value)
+                })
+            }
+        },
+        getFocusedCell(ev) {
+            const focusedCell = ev.api.getFocusedCell()
+            const rowNode = ev.api.getRowNode(focusedCell.rowIndex)
+            const column = focusedCell.column.colDef.field
+            return { cell: focusedCell, column: column, row: rowNode }
+        },
+        setCellValue(selectedCell, pasteValue) {
+            var colDef = selectedCell.cell.column.colDef
+            var cellType = this.getCellType(colDef)
+
+            if (this.cellAcceptsPasteValue(colDef, cellType)) {
+                switch (cellType) {
+                    case 'text':
+                        selectedCell.row.setDataValue(selectedCell.column, pasteValue)
+                        break
+                    case 'number':
+                        console.log('IS NUMBER', pasteValue)
+                        break
+                    case 'dropdown':
+                        //TODO  - dropdown valiodation, call BE service to see if pasted value is in the filtered array
+                        break
+
+                    default:
+                        break
+                }
+            }
+        },
+        //TODO - ask if we want custom cell warnings for each case, or just a generic one
+        cellAcceptsPasteValue(colDef, cellType) {
+            if (colDef.editable == false || colDef.isEditable == false) {
+                this.setInfo({
+                    //TODO - add cannot paste non editable cell warning
+                    title: 'NotEditable Warning',
+                    msg: 'Cannot paste NotEditable values :)))))'
+                })
+                return false
+            } else if (cellType === 'checkbox') {
+                this.setInfo({
+                    //TODO - add cannot paste checkbox cell warning
+                    title: 'Checkbox Warning',
+                    msg: 'Cannot paste checkbox values :)))))'
+                })
+                return false
+            } else if (cellType === 'temporal') {
+                this.setInfo({
+                    //TODO - add cannot paste checkbox cell warning
+                    title: 'Temporal Warning',
+                    msg: 'Cannot paste temporal values :)))))'
+                })
+                return false
+            } else return true
+        },
+        getCellType(colDef) {
+            if (colDef.editorType == 'TEXT' && colDef.columnInfo.type === 'boolean') return 'checkbox'
+            if (colDef.editorType !== 'COMBO' && colDef.columnInfo?.type !== 'date' && colDef.columnInfo?.type !== 'timestamp' && setInputDataType(colDef.columnInfo?.type) === 'text') return 'text'
+            if (colDef.editorType !== 'COMBO' && colDef.columnInfo?.type !== 'date' && colDef.columnInfo?.type !== 'timestamp' && setInputDataType(colDef.columnInfo?.type) === 'number') return 'number'
+            if (colDef.editorType === 'COMBO') return 'dropdown'
+            if (colDef.columnInfo?.type === 'date' || colDef.columnInfo?.type === 'timestamp') return 'temporal'
         }
     }
 })
