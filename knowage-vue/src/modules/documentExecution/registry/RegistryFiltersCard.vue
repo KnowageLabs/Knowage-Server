@@ -27,7 +27,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import Card from 'primevue/card'
 import RegistryFilterCard from './RegistryFilterCard.vue'
 import registryDescriptor from './RegistryDescriptor.json'
@@ -37,7 +37,7 @@ export default defineComponent({
     components: { Card, RegistryFilterCard },
     props: {
         propFilters: { type: Array },
-        entity: { type: String },
+        entity: { type: Object as PropType<String | null> },
         id: { type: String }
     },
     emits: ['filter'],

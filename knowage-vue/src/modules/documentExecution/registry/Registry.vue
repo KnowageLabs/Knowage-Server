@@ -64,6 +64,8 @@ import { formatDate } from '@/helpers/commons/localeHelper'
 import { mapActions } from 'pinia'
 import store from '../../../App.store'
 
+import cryptoRandomString from 'crypto-random-string'
+
 export default defineComponent({
     name: 'registry',
     components: {
@@ -180,10 +182,11 @@ export default defineComponent({
             if (resetRows) this.rows = []
             const limit = this.pagination.size <= registryDescriptor.paginationLimit ? this.registry.rows.length : registryDescriptor.paginationNumberOfItems
             for (let i = 0; i < limit; i++) {
-                const tempRow = {}
-                Object.keys(this.registry.rows[i]).forEach((key) => {
+                const tempRow = {} as any
+                Object.keys(this.registry.rows[i]).forEach((key: string) => {
                     tempRow[this.columnMap[key]] = this.registry.rows[i][key]
                 })
+                tempRow.uniqueId = cryptoRandomString({ length: 16, type: 'base64' })
                 this.rows.push(tempRow)
             }
 

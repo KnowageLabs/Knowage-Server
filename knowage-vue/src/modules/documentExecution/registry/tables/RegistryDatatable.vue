@@ -2,7 +2,7 @@
     <div id="registry-gric-container" class="kn-height-full p-d-flex p-flex-column">
         <div class="registry-grid-toolbar">
             <Button icon="fas fa-plus" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.addRow')" @click="addNewRow" />
-            <Button icon="fas fa-clone" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.cloneRows')" @click="" />
+            <Button icon="fas fa-clone" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.cloneRows')" @click="cloneRows" />
             <Button icon="fas fa-trash" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.deleteRows')" @click="rowsDeleteConfirm()" />
         </div>
         <ag-grid-vue v-if="!loading" class="registry-grid ag-theme-alpine" style="height: 100%" :rowData="rows" :gridOptions="gridOptions" :context="context" />
@@ -79,7 +79,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, onMounted, ref } from 'vue'
+import { defineComponent, PropType, reactive, onMounted, ref } from 'vue'
 import { luxonFormatDate, formatDateWithLocale, formatNumberWithLocale, localeDate, primeVueDate } from '@/helpers/commons/localeHelper'
 import { setInputDataType, numberFormatRegex } from '@/helpers/commons/tableHelpers'
 import { AxiosResponse } from 'axios'
@@ -98,11 +98,22 @@ import CellRenderer from './registryCellRenderers/RegistryCellRenderer.vue'
 import CellEditor from './registryCellRenderers/RegistryCellEditor.vue'
 
 import deepcopy from 'deepcopy'
+import cryptoRandomString from 'crypto-random-string'
 
 export default defineComponent({
     name: 'registry-datatable',
     components: { Checkbox, Column, DataTable, RegistryDatatableEditableField, RegistryDatatableWarningDialog, AgGridVue, Paginator },
-    props: { propColumns: { type: Array }, propRows: { type: Array, required: true }, columnMap: { type: Object }, propConfiguration: { type: Object }, pagination: { type: Object }, entity: { type: String }, id: { type: String }, stopWarningsState: { type: Array }, dataLoading: { type: Boolean } },
+    props: {
+        propColumns: { type: Array },
+        propRows: { type: Array, required: true },
+        columnMap: { type: Object },
+        propConfiguration: { type: Object },
+        pagination: { type: Object },
+        entity: { type: Object as PropType<String | null> },
+        id: { type: String },
+        stopWarningsState: { type: Array },
+        dataLoading: { type: Boolean }
+    },
     emits: ['rowChanged', 'rowDeleted', 'pageChanged', 'warningChanged'],
     data() {
         return {
@@ -351,32 +362,6 @@ export default defineComponent({
             this.$emit('rowDeleted', this.selectedRows)
         },
 
-        //TODO - Not used? Ask Bojan
-        setDataType(columnType: string) {
-            switch (columnType) {
-                case 'int':
-                case 'float':
-                case 'decimal':
-                case 'long':
-                    return 'number'
-                case 'date':
-                    return 'date'
-                default:
-                    return 'text'
-            }
-        },
-
-        //TODO - Not used? Ask Bojan
-        getStep(dataType: string) {
-            if (dataType === 'float') {
-                return '.01'
-            } else if (dataType === 'int') {
-                return '1'
-            } else {
-                return 'any'
-            }
-        },
-
         //TODO - Has to be in renderer, can cause issues because i cannot format cell data without it
         //      test- maybe i can use agGrid value-formatter? https://www.ag-grid.com/vue-data-grid/value-formatters/
         getFormattedDate(date: any, format: any, incomingFormat?: string) {
@@ -385,15 +370,8 @@ export default defineComponent({
         getFormattedDateTime(date: any, format?: any, keepNull?: boolean) {
             return formatDateWithLocale(date, format, keepNull)
         },
-
-        //TODO - Not used? Ask Bojan
-        getFormattedNumber(number: number, column: any) {
-            return formatNumberWithLocale(number, undefined, null)
-        },
-
         addNewRow() {
-            //TODO - Bojan - Add crypto as uniqueID for adding new rows
-            const newRow = { id: this.rows.length + 1, isNew: true }
+            const newRow = { uniqueId: cryptoRandomString({ length: 16, type: 'base64' }), id: this.rows.length + 1, isNew: true }
             this.columns.forEach((el: any) => {
                 if (el.isVisible && el.field !== 'id') {
                     newRow[el.field] = el.defaultValue ?? ''
@@ -411,7 +389,10 @@ export default defineComponent({
 
             console.log(this.rows)
         },
-
+        cloneRows() {
+            console.log('-------------- SELECTED ROWS: ', this.selectedRows)
+            this.selectedRows.forEach((row: any) => (row.uniqueId = cryptoRandomString({ length: 16, type: 'base64' })))
+        },
         onDropdownChange(payload: any) {
             const column = payload.column
             const row = payload.row
