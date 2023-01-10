@@ -2,7 +2,7 @@
     <Toast></Toast>
     <ConfirmDialog></ConfirmDialog>
     <KnOverlaySpinnerPanel />
-    <div class="layout-wrapper-content" :class="{ 'layout-wrapper-content-embed': documentExecution.embed }">
+    <div class="layout-wrapper-content" :class="{ 'layout-wrapper-content-embed': documentExecution.embed, isMobileDevice: isMobileDevice }">
         <MainMenu v-if="showMenu" @menuItemSelected="setSelectedMenuItem"></MainMenu>
 
         <div class="layout-main">
