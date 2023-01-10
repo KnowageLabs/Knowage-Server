@@ -721,6 +721,7 @@ export default defineComponent({
                                 return { value: value, description: '' }
                             })
                         } else {
+                            if (tempParam.parameterValue.length === 0) tempParam.parameterValue.push({ value: '', description: '' })
                             tempParam.parameterValue[0].value = Array.isArray(this.document.navigationParams[key]) && this.document.navigationParams[key][0] ? this.document.navigationParams[key][0] : this.document.navigationParams[key]
                             if (this.document.navigationParams[key + '_field_visible_description']) this.document.navigationParams[key + '_field_visible_description'] = tempParam.parameterValue[0].description
                             if (tempParam.type === 'DATE' && tempParam.parameterValue[0] && tempParam.parameterValue[0].value) {
@@ -1140,6 +1141,8 @@ export default defineComponent({
             this.loading = true
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${this.document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
             this.loading = false
+
+            if (temp.length === 0) return
 
             const crossTarget = this.findCrossTargetByCrossName(angularData, temp)
 
