@@ -154,7 +154,7 @@ export default defineComponent({
             }
             return 0
         },
-        invalidFunctionalities() {
+        invalidFunctionalities(): number {
             return this.selectedDocument.functionalities.length
         },
         showDataLineageTab(): boolean {
