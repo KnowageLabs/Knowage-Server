@@ -378,9 +378,7 @@ export default defineComponent({
                 }
             })
 
-            this.rows.unshift(newRow)
-            // NOTE - applyTransaction alone wont add new row to this.rows, thats why we do both, to force table to refresh itself
-            this.gridApi.applyTransaction({ addIndex: 0, add: [newRow] })
+            this.addRowToTheFirstPlace(newRow)
 
             if (this.lazyParams.size <= registryDescriptor.paginationLimit) {
                 this.first = 0
@@ -390,8 +388,17 @@ export default defineComponent({
             console.log(this.rows)
         },
         cloneRows() {
-            console.log('-------------- SELECTED ROWS: ', this.selectedRows)
-            this.selectedRows.forEach((row: any) => (row.uniqueId = cryptoRandomString({ length: 16, type: 'base64' })))
+            for (let i = this.selectedRows.length - 1; i >= 0; i--) {
+                const tempRow = this.selectedRows[i]
+                tempRow.uniqueId = cryptoRandomString({ length: 16, type: 'base64' })
+                delete tempRow.id
+                this.addRowToTheFirstPlace(tempRow)
+            }
+        },
+        addRowToTheFirstPlace(newRow: any) {
+            this.rows.unshift(newRow)
+            // NOTE - applyTransaction alone wont add new row to this.rows, thats why we do both, to force table to refresh itself
+            this.gridApi.applyTransaction({ addIndex: 0, add: [newRow] })
         },
         onDropdownChange(payload: any) {
             const column = payload.column
