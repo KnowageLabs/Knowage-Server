@@ -38,10 +38,8 @@ import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
-import it.eng.qbe.query.AbstractSelectField;
 import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.IQueryField;
-import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.TimeAggregationHandler;
 import it.eng.qbe.query.WhereField;
@@ -367,11 +365,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		IModelAccessModality accessModality = getEngineInstance().getDataSource().getModelAccessModality();
 		Query filteredQuery = accessModality.getFilteredStatement(query, this.getEngineInstance().getDataSource(), userProfile.getUserAttributes());
 
-		Query clone = filteredQuery.clone(this.getEngineInstance().getDataSource(), getLocale());
-
-		Query finalQuery = applyDeterministicSorting(clone);
-
-		IDataSet dataSet = getActiveQueryAsDataSet(finalQuery);
+		IDataSet dataSet = getActiveQueryAsDataSet(filteredQuery);
 		dataSet.setUserProfileAttributes(getUserProfile().getUserAttributes());
 
 		Map<String, Object> envs = getEnv();
@@ -414,36 +408,6 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			logger.debug("Query results cannot be exported");
 			throw new SpagoBIRestServiceException("Query results cannot be exported", buildLocaleFromSession(), e);
 		}
-	}
-
-	private Query applyDeterministicSorting(Query query) {
-		try {
-			List<ISelectField> fields = query.getSelectFields(true);
-			if (query.hasGrouping()) {
-				applySortOnGroupingFields(fields);
-			} else {
-				applySortOnAllFields(fields);
-			}
-			return query;
-		} catch (Exception e) {
-			throw new SpagoBIRestServiceException("An error occurred while applying deterministic sorting", buildLocaleFromSession(), e);
-		}
-	}
-
-	private void applySortOnGroupingFields(List<ISelectField> fields) {
-		fields.forEach((field) -> {
-			if (field.isGroupByField() && !field.isOrderByField()) {
-				field.setOrderType(AbstractSelectField.ORDER_ASC);
-			}
-		});
-	}
-
-	private void applySortOnAllFields(List<ISelectField> fields) {
-		fields.forEach((field) -> {
-			if (!field.isOrderByField()) {
-				field.setOrderType(AbstractSelectField.ORDER_ASC);
-			}
-		});
 	}
 
 	public Set<ModelFieldPaths> getAmbiguousFields(Query filteredQuery) {
@@ -687,9 +651,14 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 				/**
 				 * This block of code:
 				 *
-				 * boolean multivalue = false; if (tempVal != null && tempVal.contains(",")) { multivalue = true; }
+				 * boolean multivalue = false;
+				 * if (tempVal != null && tempVal.contains(",")) {
+				 * 	multivalue = true;
+				 * }
 				 *
-				 * Was replaced by the following because the user has the ability to say if the value is multivalue or not, we don't need to do any logic.
+				 * Was replaced by the following because the user has the ability
+				 * to say if the value is multivalue or not, we don't need to do
+				 * any logic.
 				 */
 				boolean multivalue = obj.optBoolean(MULTI_PARAM);
 
