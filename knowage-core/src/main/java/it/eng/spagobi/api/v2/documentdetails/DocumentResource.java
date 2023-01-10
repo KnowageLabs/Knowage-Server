@@ -124,7 +124,11 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	public BIObject updateDocument(@PathParam("id") Integer id, @Valid BIObject document) {
 		logger.debug("IN");
 		IBIObjectDAO documentDao = null;
+		if (document.getFunctionalities().isEmpty()) {
+			logger.error("Error while inserting document. Document saved with no specified functionalities (folders)!");
+			throw new SpagoBIRuntimeException("Error while inserting document. Document has no specified functionalities!");
 
+		}
 		try {
 			documentDao = DAOFactory.getBIObjectDAO();
 
