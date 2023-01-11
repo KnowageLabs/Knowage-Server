@@ -5,6 +5,7 @@ import Button from 'primevue/button'
 import Registry from './Registry.vue'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
+import cryptoRandomString from 'crypto-random-string'
 
 const mockedRegistry = {
     metaData: {
@@ -100,6 +101,14 @@ const $confirm = {
     require: vi.fn()
 }
 
+const crypto = require('crypto')
+
+Object.defineProperty(global.self, 'crypto', {
+    value: {
+        getRandomValues: (arr) => crypto.randomBytes(arr.length)
+    }
+})
+
 const factory = () => {
     return mount(Registry, {
         props: {
@@ -117,7 +126,8 @@ const factory = () => {
             mocks: {
                 $t: (msg) => msg,
                 $confirm,
-                $http
+                $http,
+                cryptoRandomString
             }
         }
     })
