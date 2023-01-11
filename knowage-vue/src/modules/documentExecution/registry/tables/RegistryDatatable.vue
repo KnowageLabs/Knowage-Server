@@ -248,7 +248,7 @@ export default defineComponent({
 
                     if (el.editorType == 'TEXT' && el.columnInfo.type === 'boolean') {
                         el.cellRenderer = (params) => {
-                            return `<input  type='checkbox' ${params.value ? 'checked' : ''} />`
+                            return `<i class="fas fa-${params.value ? 'check' : 'times'}"/>`
                         }
                     }
 
@@ -487,7 +487,7 @@ export default defineComponent({
             this.gridApi.setRowData(this.rows)
             // this.gridApi.redrawRows()
         },
-        cellWasClicked: (event) => {
+        cellWasClicked(event) {
             console.log('cell was clicked', event)
             console.log('%c event.colDef', 'background: #222; color: #bada55', event.colDef)
             if (!event.colDef) return

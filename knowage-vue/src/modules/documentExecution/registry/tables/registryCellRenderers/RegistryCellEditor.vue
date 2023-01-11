@@ -1,50 +1,44 @@
 <template>
-    <Checkbox v-if="params.colDef.editorType == 'TEXT' && params.colDef.columnInfo.type === 'boolean'" :disabled="!params.colDef.isEditable" v-model="value" :binary="true" @change=""></Checkbox>
-    <InputText
-        v-if="column && column.editorType !== 'COMBO' && column.columnInfo?.type !== 'date' && column.columnInfo?.type !== 'timestamp' && getDataType(column.columnInfo?.type) === 'text'"
-        class="kn-material-input"
-        :type="'text'"
-        :step="getStep(column.columnInfo?.type)"
-        v-model="value"
-        @input="onRowChanged(row)"
-        ref="input"
-    />
-    <InputNumber
-        v-if="column && column.editorType !== 'COMBO' && column.columnInfo?.type !== 'date' && column.columnInfo?.type !== 'timestamp' && getDataType(column.columnInfo?.type) === 'number'"
-        class="kn-material-input p-inputtext-sm"
-        v-model="value"
-        :useGrouping="useGrouping"
-        :locale="locale"
-        :minFractionDigits="minFractionDigits"
-        :maxFractionDigits="maxFractionDigits"
-        :disabled="!column.isEditable"
-        @blur="onInputNumberChange"
-        ref="input"
-    />
-    <Dropdown
-        v-else-if="column && column.editorType === 'COMBO'"
-        class="kn-material-input"
-        v-model="value"
-        :options="getOptions(column, row)"
-        optionValue="column_1"
-        optionLabel="column_1"
-        @change="onDropdownChange({ row: row, column: column })"
-        @before-show="addColumnOptions({ row: row, column: column })"
-        :filter="true"
-        ref="input"
-    />
-    <Calendar
-        v-else-if="column && (column.columnInfo?.type === 'date' || column.columnInfo?.type === 'timestamp')"
-        class="pivot-calendar"
-        :style="registryDatatableDescriptor.pivotStyles.inputFields"
-        v-model="value"
-        :showTime="column.columnInfo?.type === 'timestamp'"
-        :showSeconds="column.columnInfo?.type === 'timestamp'"
-        :showButtonBar="true"
-        @date-select="onRowChanged(row)"
-        :dateFormat="column.columnInfo?.type === 'date' ? getCurrentLocaleDefaultDateFormat(column) : ''"
-        ref="input"
-    />
+    <div class="kn-height-full p-d-flex p-flex-row p-ai-center">
+        <Checkbox v-if="getCellType(column) === 'checkbox'" v-model="value" class="p-ml-2" :binary="true" ref="input" />
+        <Textarea v-if="getCellType(column) === 'text'" class="kn-material-input kn-width-full" rows="4" v-model="value" :step="getStep(column.columnInfo?.type)" maxlength="250" @input="onRowChanged(row)" ref="input" />
+        <InputNumber
+            v-if="getCellType(column) === 'number'"
+            class="kn-material-input p-inputtext-sm kn-width-full kn-height-full"
+            v-model="value"
+            :useGrouping="useGrouping"
+            :locale="locale"
+            :minFractionDigits="minFractionDigits"
+            :maxFractionDigits="maxFractionDigits"
+            :disabled="!column.isEditable"
+            @blur="onInputNumberChange"
+            ref="input"
+        />
+        <Dropdown
+            v-else-if="getCellType(column) === 'dropdown'"
+            class="kn-material-input kn-width-full"
+            v-model="value"
+            :options="getOptions(column, row)"
+            optionValue="column_1"
+            optionLabel="column_1"
+            @change="onDropdownChange({ row: row, column: column })"
+            @before-show="addColumnOptions({ row: row, column: column })"
+            :filter="true"
+            ref="input"
+        />
+        <Calendar
+            v-else-if="getCellType(column) === 'temporal'"
+            class="registry-no-borders kn-width-full kn-height-full"
+            :style="registryDatatableDescriptor.pivotStyles.inputFields"
+            v-model="value"
+            :showTime="column.columnInfo?.type === 'timestamp'"
+            :showSeconds="column.columnInfo?.type === 'timestamp'"
+            :showButtonBar="true"
+            @date-select="onRowChanged(row)"
+            :dateFormat="column.columnInfo?.type === 'date' ? getCurrentLocaleDefaultDateFormat(column) : ''"
+            ref="input"
+        />
+    </div>
 </template>
 
 <script lang="ts">
@@ -57,10 +51,11 @@ import Dropdown from 'primevue/dropdown'
 import InputNumber from 'primevue/inputnumber'
 import Checkbox from 'primevue/checkbox'
 import registryDatatableDescriptor from '../RegistryDatatableDescriptor.json'
+import Textarea from 'primevue/textarea'
 
 export default defineComponent({
     name: 'registry-datatable-editable-field',
-    components: { Calendar, Dropdown, InputNumber, Checkbox },
+    components: { Calendar, Dropdown, InputNumber, Checkbox, Textarea },
     props: {
         // column: { type: Object },
         // propRow: { type: Object },
@@ -101,6 +96,7 @@ export default defineComponent({
         // https://forum.primefaces.org/viewtopic.php?p=196916 - source
         this.$nextTick(() => {
             const inputFocus = this.$refs['input'] as any
+            console.log('FOCUS >>>>>>>>>>>>>', inputFocus.innerHTML)
             inputFocus.$el.focus()
         })
     },
@@ -173,6 +169,14 @@ export default defineComponent({
         getValue() {
             return this.value
         },
+        isPopup() {
+            switch (this.getCellType(this.params.colDef)) {
+                case 'text':
+                    return true
+                default:
+                    return false
+            }
+        },
         getInitialValue() {
             let startValue = this.params.value
             const isBackspaceOrDelete = this.params.eventKey === 'Backspace' || this.params.eventKey === 'Delete'
@@ -194,29 +198,16 @@ export default defineComponent({
             console.log('addColumnOptions', payload)
             this.params.context.componentParent.addColumnOptions(payload)
             // this.value = payload.row[this.params.colDef.field]
+        },
+        getCellType(colDef) {
+            if (colDef.editorType == 'TEXT' && colDef.columnInfo.type === 'boolean') return 'checkbox'
+            if (colDef.editorType !== 'COMBO' && colDef.columnInfo?.type !== 'date' && colDef.columnInfo?.type !== 'timestamp' && setInputDataType(colDef.columnInfo?.type) === 'text') return 'text'
+            if (colDef.editorType !== 'COMBO' && colDef.columnInfo?.type !== 'date' && colDef.columnInfo?.type !== 'timestamp' && setInputDataType(colDef.columnInfo?.type) === 'number') return 'number'
+            if (colDef.editorType === 'COMBO') return 'dropdown'
+            if (colDef.columnInfo?.type === 'date' || colDef.columnInfo?.type === 'timestamp') return 'temporal'
         }
     }
 })
 </script>
 
-<style scoped lang="scss">
-.p-component {
-    &.pivot-calendar,
-    &.p-inputtext,
-    &.p-dropdown,
-    &.p-datepicker {
-        border: none !important;
-        background-color: transparent !important;
-        width: 100% !important;
-    }
-}
-
-.p-inputnumber,
-.p-calendar {
-    &:deep(.p-inputtext) {
-        border: none !important;
-        background-color: transparent !important;
-        width: 100% !important;
-    }
-}
-</style>
+<style lang="scss"></style>
