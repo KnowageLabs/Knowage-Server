@@ -487,9 +487,13 @@ export default defineComponent({
             this.gridApi.setRowData(this.rows)
             // this.gridApi.redrawRows()
         },
-
         cellWasClicked: (event) => {
             console.log('cell was clicked', event)
+            console.log('%c event.colDef', 'background: #222; color: #bada55', event.colDef)
+            if (!event.colDef) return
+            if (event.colDef.editorType === 'COMBO') {
+                this.addColumnOptions({ column: event.colDef, row: {} }).bind(this)
+            }
         },
         onBodyScroll() {
             if (this.timeout) clearTimeout(this.timeout)
