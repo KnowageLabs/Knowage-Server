@@ -1,7 +1,7 @@
 <template>
     <div id="registry-gric-container" class="kn-height-full p-d-flex p-flex-column">
         <div class="registry-grid-toolbar">
-            <Button icon="fas fa-plus" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.addRow')" @click="addNewRow" />
+            <Button icon="fas fa-plus" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.addRow')" data-test="new-row-button" @click="addNewRow" />
             <Button icon="fas fa-clone" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.cloneRows')" @click="cloneRows" />
             <Button icon="fas fa-trash" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.deleteRows')" @click="rowsDeleteConfirm()" />
         </div>
@@ -103,7 +103,15 @@ import cryptoRandomString from 'crypto-random-string'
 
 export default defineComponent({
     name: 'registry-datatable',
-    components: { Checkbox, Column, DataTable, RegistryDatatableEditableField, RegistryDatatableWarningDialog, AgGridVue, Paginator },
+    components: {
+        Checkbox,
+        Column,
+        DataTable,
+        RegistryDatatableEditableField,
+        RegistryDatatableWarningDialog,
+        AgGridVue,
+        Paginator
+    },
     props: {
         propColumns: { type: Array },
         propRows: { type: Array, required: true },
@@ -200,7 +208,13 @@ export default defineComponent({
                 columnDefs: this.columns,
                 tooltipShowDelay: 100,
                 tooltipMouseTrack: true,
-                defaultColDef: { editable: false, enableValue: true, sortable: true, resizable: true, width: 100 },
+                defaultColDef: {
+                    editable: false,
+                    enableValue: true,
+                    sortable: true,
+                    resizable: true,
+                    width: 100
+                },
                 rowSelection: 'multiple',
                 animateRows: true,
                 suppressScrollOnNewData: true,
@@ -227,22 +241,32 @@ export default defineComponent({
                     isEditable: false,
                     columnInfo: { type: 'int' },
                     cellStyle: (params) => {
-                        return { color: 'black', backgroundColor: 'rgba(231, 231, 231, 0.8)', opacity: 0.8 }
+                        return {
+                            color: 'black',
+                            backgroundColor: 'rgba(231, 231, 231, 0.8)',
+                            opacity: 0.8
+                        }
                     }
                 }
             ]
             this.propColumns?.forEach((el: any) => {
                 if (el.isVisible) {
-                    console.log('column def', el)
+                    // console.log('column def', el)
                     // NOTE - Applying renderer here, so it could actually receive comboColumnOptions parameter that it needs, wont work in coldef
                     el.editable = el.isEditable
 
                     if (el.editable) {
                         el.cellEditor = CellEditor
-                        el.cellEditorParams = { comboColumnOptions: this.comboColumnOptions }
+                        el.cellEditorParams = {
+                            comboColumnOptions: this.comboColumnOptions
+                        }
                     } else {
                         el.cellStyle = (params) => {
-                            return { color: 'black', backgroundColor: 'rgba(231, 231, 231, 0.8)', opacity: 0.8 }
+                            return {
+                                color: 'black',
+                                backgroundColor: 'rgba(231, 231, 231, 0.8)',
+                                opacity: 0.8
+                            }
                         }
                     }
 
@@ -325,7 +349,7 @@ export default defineComponent({
         loadRows() {
             this.rows = this.propRows
             // this.gridApi?.setRowData(this.rows)
-            console.log('PROP ROWS -----------------', this.rows)
+            // console.log('PROP ROWS -----------------', this.rows)
         },
         loadConfiguration() {
             this.configuration = this.propConfiguration
@@ -381,7 +405,11 @@ export default defineComponent({
             return formatDateWithLocale(date, format, keepNull)
         },
         addNewRow() {
-            const newRow = { uniqueId: cryptoRandomString({ length: 16, type: 'base64' }), id: this.rows.length + 1, isNew: true }
+            const newRow = {
+                uniqueId: cryptoRandomString({ length: 16, type: 'base64' }),
+                id: this.rows.length + 1,
+                isNew: true
+            }
             this.columns.forEach((el: any) => {
                 if (el.isVisible && el.field !== 'id') {
                     newRow[el.field] = el.defaultValue ?? ''
@@ -395,7 +423,7 @@ export default defineComponent({
             }
             this.$emit('rowChanged', newRow)
 
-            console.log(this.rows)
+            // console.log(this.rows)
         },
         cloneRows() {
             for (let i = this.selectedRows.length - 1; i >= 0; i--) {
@@ -490,7 +518,7 @@ export default defineComponent({
             // this.gridApi.redrawRows()
         },
         cellWasClicked(event) {
-            console.log('cell was clicked', event)
+            // console.log('cell was clicked', event)
         },
         onBodyScroll() {
             if (this.timeout) clearTimeout(this.timeout)
@@ -553,7 +581,7 @@ export default defineComponent({
                         selectedCell.row.setDataValue(selectedCell.column, pasteValue)
                         break
                     case 'number':
-                        console.log('IS NUMBER', pasteValue)
+                        //  console.log('IS NUMBER', pasteValue)
                         break
                     case 'dropdown':
                         await this.setDropdownCellValue(colDef, selectedCell, pasteValue)
@@ -564,7 +592,10 @@ export default defineComponent({
             }
         },
         async setDropdownCellValue(colDef: any, selectedCell: any, pasteValue: string) {
-            await this.addColumnOptions({ column: colDef, row: selectedCell.row.data })
+            await this.addColumnOptions({
+                column: colDef,
+                row: selectedCell.row.data
+            })
             if (!this.validateDropdownValueAfterCopyPaste(colDef, pasteValue, selectedCell)) {
                 this.setInfo({
                     //TODO - add cannot paste dropdon cell warning
