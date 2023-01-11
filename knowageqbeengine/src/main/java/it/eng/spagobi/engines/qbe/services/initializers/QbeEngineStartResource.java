@@ -204,7 +204,7 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 			throw new SpagoBIEngineStartupException(ENGINE_NAME, "Cannot start QbE from a non-persisted dataset");
 		}
 
-		if (dataset.toSpagoBiDataSet().getType().equals("SbiFileDataSet") && dataset.getPersistTableName() == null) {
+		if (dataset.toSpagoBiDataSet().getType().equals("SbiFileDataSet") && StringUtils.isEmpty(dataset.getPersistTableName())) {
 			JSONObject datasetPersistedLabels = null;
 			try {
 
@@ -219,6 +219,8 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 					userAttributes.put(SsoServiceInterface.USER_ID, profile.getUserId().toString());
 					IDataSet cachedDataSet = FederationUtils.createDatasetOnCache(datasetPersistedLabels.getString(dataset.getLabel()), dataset,
 							cachedDataSource);
+					// label has been reset to the source label because
+					cachedDataSet.setLabel(dataset.getLabel());
 					cachedDataSet.setUserProfileAttributes(userAttributes);
 					cachedDataSet.setPersistTableName(datasetPersistedLabels.getString(dataset.getLabel()));
 					cachedDataSet.setParamsMap(env);

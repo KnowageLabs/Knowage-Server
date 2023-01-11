@@ -9,7 +9,7 @@ export interface iQBE {
     dsTypeCd: string
     dsVersions: any[]
     endDate: string | Date | null
-    id: number
+    id: number | null
     isIterable: boolean
     isPersisted: boolean
     isPersistedHDFS: boolean
@@ -38,6 +38,7 @@ export interface iQBE {
     usedByNDocs: number
     userIn: string
     versNum: number
+    sourceDatasetLabel: string | null
 }
 
 export interface iQuery {

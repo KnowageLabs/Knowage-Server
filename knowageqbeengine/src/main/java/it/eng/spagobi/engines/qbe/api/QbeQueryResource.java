@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -72,6 +73,7 @@ import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -528,15 +530,19 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 	}
 
 	@GET
-	@Path("/envQbe")
+	@Path("/persistTableName")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getEnvQbe(@QueryParam("sourceDatasetName") String sourceDatasetName) {
+	public String getPersistTableName(@javax.ws.rs.core.Context HttpServletRequest req, @QueryParam("sourceDatasetName") String sourceDatasetName) {
 		logger.debug("IN");
-		String userId = (String) getUserProfile().getUserUniqueIdentifier();
-		String envs = null;
+		String persistTableName = null;
 		try {
 
-			envs = getEnv().get("DATASETS").toString();
+			Optional<AbstractJDBCDataset> opt = ((List) getEnv().get("DATASETS")).stream()
+					.filter((x) -> ((AbstractJDBCDataset) x).getName().equals(sourceDatasetName)).findFirst();
+
+			if (opt.isPresent())
+				persistTableName = opt.get().getPersistTableName();
+
 		} catch (Throwable t) {
 			logger.error("An unexpected error occured while executing service: QbeQueryResource.getDomainScopes", t);
 			throw new SpagoBIServiceException(this.request.getPathInfo(),
@@ -544,7 +550,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		} finally {
 			logger.debug("OUT");
 		}
-		return envs;
+		return persistTableName;
 
 	}
 

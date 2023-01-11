@@ -358,7 +358,6 @@ export default defineComponent({
             } else if (this.sourceDataset) {
                 await this.loadDataset()
                 if (this.qbe) {
-                    this.qbe.dsTypeCd = 'Derived'
                     this.qbe.datasetLabel = this.sourceDataset.label
                     this.qbe.qbeJSONQuery = {
                         catalogue: {
@@ -1078,13 +1077,29 @@ export default defineComponent({
             if (!this.dataset?.federation_id) await this.loadDatasetDrivers()
         },
         //#endregion ================================================================================================
-        openSavingDialog() {
+        async openSavingDialog() {
             if (this.returnQueryMode) {
                 this.$emit('querySaved', this.qbe?.qbeJSONQuery)
             } else {
                 if (this.sourceDataset && this.qbe?.dsTypeCd) {
+                    if (this.qbe?.dsTypeCd === 'File' && !this.qbe.persistTableName) {
+                        await this.$http
+                            .get(import.meta.env.VITE_QBE_PATH + `qbequery/persistTableName?sourceDatasetName=${this.qbe.label}&SBI_EXECUTION_ID=${this.uniqueID}`)
+                            .then((response: AxiosResponse<any>) => {
+                                if (this.qbe) this.qbe.persistTableName = response.data
+                            })
+                            .catch(() => {})
+                    }
+                    if (this.qbe?.dsTypeCd !== 'Derived') {
+                        this.qbe.id = null
+                    }
                     this.qbe.dsTypeCd = this.DERIVED_CONST
                     this.qbe.name = this.qbe.label = this.qbe.name + ' ' + this.DERIVED_CONST
+
+                    this.qbe.isPersisted = false
+
+                    this.qbe.qbeDataSource = this.sourceDataset?.dataSource
+                    this.qbe.sourceDatasetLabel = this.sourceDataset?.label
                 }
                 this.savingDialogVisible = true
             }
