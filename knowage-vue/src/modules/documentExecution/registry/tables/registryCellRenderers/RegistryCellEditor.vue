@@ -97,8 +97,18 @@ export default defineComponent({
         this.$nextTick(() => {
             const inputFocus = this.$refs['input'] as any
             console.log('inputFocus >>>>>>>>>>>>>', inputFocus)
-            console.log('FOCUS >>>>>>>>>>>>>', inputFocus.innerHTML)
-            inputFocus.$el.focus()
+            console.log('FOCUS >>>>>>>>>>>>>', inputFocus.$el.children[0])
+            switch (this.getCellType(this.params.colDef)) {
+                case 'text':
+                    return inputFocus.$el.focus()
+                case 'checkbox':
+                case 'dropdown':
+                case 'temporal':
+                case 'number':
+                    return inputFocus.$el.children[0].focus()
+                default:
+                    return inputFocus.$el.focus()
+            }
         })
     },
     created() {
