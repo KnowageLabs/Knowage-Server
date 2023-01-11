@@ -555,14 +555,12 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			return getSQLValue(fatherPar, "%" + firstValue);
 		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.CONTAIN_FILTER)) {
 			return getSQLValue(fatherPar, "%" + firstValue + "%");
-		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.EQUAL_FILTER)) {
+		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.EQUAL_FILTER) || typeFilter.equalsIgnoreCase(SpagoBIConstants.NOT_EQUAL_FILTER)) {
 			if (values.size() > 1) {
 				return "(" + concatenateValues(fatherPar, values) + ")";
 			} else {
 				return getSQLValue(fatherPar, firstValue);
 			}
-		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.NOT_EQUAL_FILTER) && values.size() == 1) {
-			return getSQLValue(fatherPar, firstValue);
 		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.LESS_FILTER)) {
 			return getSQLValue(fatherPar, firstValue);
 		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.LESS_OR_EQUAL_FILTER)) {
