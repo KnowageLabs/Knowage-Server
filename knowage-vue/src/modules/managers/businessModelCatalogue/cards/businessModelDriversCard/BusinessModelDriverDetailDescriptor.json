@@ -49,6 +49,10 @@
             "value": "equal"
         },
         {
+            "name": "not equals",
+            "value": "not equals"
+        },
+        {
             "name": "greater",
             "value": "greater"
         },
