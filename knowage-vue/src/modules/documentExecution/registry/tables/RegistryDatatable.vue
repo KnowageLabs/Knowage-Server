@@ -491,11 +491,6 @@ export default defineComponent({
         },
         cellWasClicked(event) {
             console.log('cell was clicked', event)
-            console.log('%c event.colDef', 'background: #222; color: #bada55', event.colDef)
-            if (!event.colDef) return
-            if (event.colDef.editorType === 'COMBO') {
-                this.addColumnOptions({ column: event.colDef, row: {} })
-            }
         },
         onBodyScroll() {
             if (this.timeout) clearTimeout(this.timeout)
@@ -561,35 +556,30 @@ export default defineComponent({
                         console.log('IS NUMBER', pasteValue)
                         break
                     case 'dropdown':
-                        //TODO  - dropdown valiodation, call BE service to see if pasted value is in the filtered array
-                        await this.addColumnOptions({ column: colDef, row: {} })
-                        if (!this.validateDropdownValueAfterCopyPaste(colDef, pasteValue)) {
-                            this.setInfo({
-                                //TODO - add cannot paste dropdon cell warning
-                                title: 'Dropdown Warning',
-                                msg: "Dropdown options doesn't contain pasted value!"
-                            })
-                        } else {
-                            selectedCell.row.setDataValue(selectedCell.column, pasteValue)
-                        }
+                        await this.setDropdownCellValue(colDef, selectedCell, pasteValue)
                         break
                     default:
                         break
                 }
             }
         },
-        validateDropdownValueAfterCopyPaste(colDef: any, pasteValue: string) {
-            console.log('%c Col Def ', 'background: #222; color: #bada55', colDef)
-            // console.log('%c Col Def AB das edited 2', 'background: #222; color: #bada55', colDef.field)
-            console.log('%c pasteValue! ', 'background: #222; color: #bada55', pasteValue)
-            console.log('%c comboColumnOptions! ', 'background: #222; color: #bada55', this.comboColumnOptions)
-            let options = this.comboColumnOptions && this.comboColumnOptions[colDef.field] ? this.comboColumnOptions[colDef.field][colDef.dependences] : []
-            console.log('%c options 1', 'background: #222; color: #bada55', options)
-            if (!options || options.length === 0) options = this.comboColumnOptions[colDef.field]['All']
-            console.log('%c options 2', 'background: #222; color: #bada55', options)
+        async setDropdownCellValue(colDef: any, selectedCell: any, pasteValue: string) {
+            await this.addColumnOptions({ column: colDef, row: selectedCell.row.data })
+            if (!this.validateDropdownValueAfterCopyPaste(colDef, pasteValue, selectedCell)) {
+                this.setInfo({
+                    //TODO - add cannot paste dropdon cell warning
+                    title: 'Dropdown Warning',
+                    msg: "Dropdown options doesn't contain pasted value!"
+                })
+            } else {
+                selectedCell.row.setDataValue(selectedCell.column, pasteValue)
+            }
+        },
+        validateDropdownValueAfterCopyPaste(colDef: any, pasteValue: string, selectedCell: any) {
+            const parentCellValue = selectedCell.row.data[colDef.dependences]
+            let options = this.comboColumnOptions && this.comboColumnOptions[colDef.field] ? this.comboColumnOptions[colDef.field][parentCellValue ?? 'All'] : []
             if (!options) return false
             const index = options.findIndex((dropdownOption: any) => dropdownOption['column_1'] === pasteValue)
-            console.log('%c index ', 'background: #222; color: #bada55', index)
             return index !== -1
         },
         //TODO - ask if we want custom cell warnings for each case, or just a generic one
