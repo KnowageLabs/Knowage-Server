@@ -213,7 +213,12 @@ export default defineComponent({
                     enableValue: true,
                     sortable: true,
                     resizable: true,
-                    width: 100
+                    width: 100,
+                    cellClassRules: {
+                        'green-bg': (params) => {
+                            return params.data.isEdited === params.colDef.field
+                        }
+                    }
                 },
                 rowSelection: 'multiple',
                 animateRows: true,
@@ -224,6 +229,7 @@ export default defineComponent({
                 onCellKeyDown: this.pasteTest,
                 onBodyScroll: this.onBodyScroll,
                 onSelectionChanged: this.onSelectionChanged,
+                onCellValueChanged: this.onCellValueChanged,
 
                 // CALLBACKS
                 onGridReady: this.onGridReady
@@ -581,7 +587,8 @@ export default defineComponent({
                         selectedCell.row.setDataValue(selectedCell.column, pasteValue)
                         break
                     case 'number':
-                        //  console.log('IS NUMBER', pasteValue)
+                        //TODO - NUMBER INPUT VALIDAITOn
+                        // console.log('IS NUMBER', pasteValue)
                         break
                     case 'dropdown':
                         await this.setDropdownCellValue(colDef, selectedCell, pasteValue)
@@ -644,6 +651,13 @@ export default defineComponent({
             if (colDef.editorType !== 'COMBO' && colDef.columnInfo?.type !== 'date' && colDef.columnInfo?.type !== 'timestamp' && setInputDataType(colDef.columnInfo?.type) === 'number') return 'number'
             if (colDef.editorType === 'COMBO') return 'dropdown'
             if (colDef.columnInfo?.type === 'date' || colDef.columnInfo?.type === 'timestamp') return 'temporal'
+        },
+        onCellValueChanged(params) {
+            console.log('im changed', params)
+            if (params.oldValue !== params.newValue) {
+                params.data.isEdited = params.colDef.field // set the flag
+            }
+            params.api.refreshCells() //causes styles to be reapplied based on cellClassRules
         }
     }
 })
@@ -669,5 +683,8 @@ export default defineComponent({
     height: 35px;
     border: 1px solid #babfc7;
     border-bottom: none;
+}
+.green-bg {
+    background-color: olivedrab;
 }
 </style>

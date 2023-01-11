@@ -57,8 +57,6 @@ export default defineComponent({
     name: 'registry-datatable-editable-field',
     components: { Calendar, Dropdown, InputNumber, Checkbox, Textarea },
     props: {
-        // column: { type: Object },
-        // propRow: { type: Object },
         comboColumnOptions: { type: Array },
         params: {
             required: true,
@@ -92,8 +90,6 @@ export default defineComponent({
         }
     },
     mounted() {
-        //TODO - add different refs for input components because PV focus is retarded
-        // https://forum.primefaces.org/viewtopic.php?p=196916 - source
         this.$nextTick(() => {
             const inputFocus = this.$refs['input'] as any
             switch (this.getCellType(this.params.colDef)) {
@@ -196,17 +192,14 @@ export default defineComponent({
         onRowChanged(payload: any) {
             console.log('onRowChanged', payload)
             this.params.context.componentParent.setRowEdited(payload)
-            // this.value = payload.row[this.params.colDef.field]
         },
         onDropdownChange(payload: any) {
             console.log('onDropdownChange', payload)
             this.params.context.componentParent.onDropdownChange(payload)
-            // this.value = payload.row[this.params.colDef.field]
         },
         addColumnOptions(payload: any) {
             console.log('addColumnOptions', payload)
             this.params.context.componentParent.addColumnOptions(payload)
-            // this.value = payload.row[this.params.colDef.field]
         },
         getCellType(colDef) {
             if (colDef.editorType == 'TEXT' && colDef.columnInfo.type === 'boolean') return 'checkbox'
