@@ -1253,7 +1253,7 @@ export default defineComponent({
             const formattedParametersKeys = formattedParameters ? Object.keys(formattedParameters) : []
             if (navigationParamsKeys.length > 0 && formattedParametersKeys.length > 0) {
                 for (let i = 0; i < navigationParamsKeys.length; i++) {
-                    const index = formattedParametersKeys.findIndex((key: string) => key === navigationParams[navigationParamsKeys[i]].value.label)
+                    const index = formattedParametersKeys.findIndex((key: string) => key === navigationParams[navigationParamsKeys[i]].value.label && navigationParams[navigationParamsKeys[i]].value.isInput)
                     if (index !== -1) {
                         formatedParams[navigationParamsKeys[i]] = formattedParameters[formattedParametersKeys[index]]
                         formatedParams[navigationParamsKeys[i] + '_field_visible_description'] = formattedParameters[formattedParametersKeys[index] + '_field_visible_description'] ? formattedParameters[formattedParametersKeys[index] + '_field_visible_description'] : ''
