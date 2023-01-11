@@ -74,6 +74,7 @@ import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
@@ -334,8 +335,15 @@ public class ManageDataSetsForREST {
 
 								JSONObject sourceJsonConfig = new JSONObject(sourceDataset.getConfiguration());
 								JSONObject dsJsonConfig = new JSONObject(ds.getConfiguration());
-								String sqlQuery = ((DerivedDataSet) ds).getStatement().getQuerySQLString(sourceJsonConfig.getString("Query"));
-								dsJsonConfig.put("sqlQuery", sqlQuery);
+								if (sourceDataset instanceof VersionedDataSet) {
+									VersionedDataSet vds = (VersionedDataSet) sourceDataset;
+									if (vds.getWrappedDataset() instanceof AbstractJDBCDataset) {
+										String sqlQuery = ((DerivedDataSet) ds).getStatement().getQuerySQLString(sourceJsonConfig.getString("Query"));
+										dsJsonConfig.put("sqlQuery", sqlQuery);
+									} else {
+										dsJsonConfig.put("sqlQuery", ((DerivedDataSet) ds).getStatement().getQueryString());
+									}
+								}
 								dsJsonConfig.put(DataSetConstants.SOURCE_DS_LABEL, sourceDatasetLabel);
 								ds.setConfiguration(dsJsonConfig.toString());
 							} catch (Exception e) {
