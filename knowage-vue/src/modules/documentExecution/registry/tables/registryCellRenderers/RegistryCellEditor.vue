@@ -96,6 +96,7 @@ export default defineComponent({
         // https://forum.primefaces.org/viewtopic.php?p=196916 - source
         this.$nextTick(() => {
             const inputFocus = this.$refs['input'] as any
+            console.log('inputFocus >>>>>>>>>>>>>', inputFocus)
             console.log('FOCUS >>>>>>>>>>>>>', inputFocus.innerHTML)
             inputFocus.$el.focus()
         })

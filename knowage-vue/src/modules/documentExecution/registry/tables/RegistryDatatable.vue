@@ -301,6 +301,7 @@ export default defineComponent({
             }
         },
         async loadColumnOptions(column: any, row: any) {
+            this.gridApi?.showLoadingOverlay()
             const subEntity = column.subEntity ? '::' + column.subEntity + '(' + column.foreignKey + ')' : ''
 
             const entityId = this.entity + subEntity + ':' + column.field
@@ -319,6 +320,7 @@ export default defineComponent({
             await this.$http
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
                 .then((response: AxiosResponse<any>) => (this.comboColumnOptions[column.field][row[column.dependences] ?? 'All'] = response.data.rows))
+            this.gridApi?.hideOverlay()
         },
         loadRows() {
             this.rows = this.propRows
@@ -492,7 +494,7 @@ export default defineComponent({
             console.log('%c event.colDef', 'background: #222; color: #bada55', event.colDef)
             if (!event.colDef) return
             if (event.colDef.editorType === 'COMBO') {
-                this.addColumnOptions({ column: event.colDef, row: {} }).bind(this)
+                this.addColumnOptions({ column: event.colDef, row: {} })
             }
         },
         onBodyScroll() {
@@ -515,7 +517,7 @@ export default defineComponent({
         onSelectionChanged() {
             this.selectedRows = this.gridApi.getSelectedRows()
         },
-        pasteTest(ev) {
+        async pasteTest(ev) {
             const myCell = this.getFocusedCell(ev)
 
             if (ev.event.which === 17) {
@@ -533,10 +535,10 @@ export default defineComponent({
                     .catch((er) => console.log(er))
             } else if (ev.event.which == 86 && this.ctrlDown == true) {
                 // 67 - v
-                window.navigator.clipboard.readText().then((value) => {
+                await window.navigator.clipboard.readText().then(async (value) => {
                     //TODO - paste validation here
                     // myCell.row.setDataValue(myCell.column, value)
-                    this.setCellValue(myCell, value)
+                    await this.setCellValue(myCell, value)
                 })
             }
         },
@@ -546,7 +548,7 @@ export default defineComponent({
             const column = focusedCell.column.colDef.field
             return { cell: focusedCell, column: column, row: rowNode }
         },
-        setCellValue(selectedCell, pasteValue) {
+        async setCellValue(selectedCell, pasteValue) {
             var colDef = selectedCell.cell.column.colDef
             var cellType = this.getCellType(colDef)
 
@@ -560,12 +562,15 @@ export default defineComponent({
                         break
                     case 'dropdown':
                         //TODO  - dropdown valiodation, call BE service to see if pasted value is in the filtered array
+                        await this.addColumnOptions({ column: colDef, row: {} })
                         if (!this.validateDropdownValueAfterCopyPaste(colDef, pasteValue)) {
                             this.setInfo({
                                 //TODO - add cannot paste dropdon cell warning
                                 title: 'Dropdown Warning',
                                 msg: "Dropdown options doesn't contain pasted value!"
                             })
+                        } else {
+                            selectedCell.row.setDataValue(selectedCell.column, pasteValue)
                         }
                         break
                     default:
@@ -574,14 +579,17 @@ export default defineComponent({
             }
         },
         validateDropdownValueAfterCopyPaste(colDef: any, pasteValue: string) {
-            // console.log('%c Col Def ', 'background: #222; color: #bada55', colDef)
+            console.log('%c Col Def ', 'background: #222; color: #bada55', colDef)
             // console.log('%c Col Def AB das edited 2', 'background: #222; color: #bada55', colDef.field)
-            // console.log('%c pasteValue! ', 'background: #222; color: #bada55', pasteValue)
-            // console.log('%c comboColumnOptions! ', 'background: #222; color: #bada55', this.comboColumnOptions)
-            // console.log('%c comboColumnOptions field! ', 'background: #222; color: #bada55', this.comboColumnOptions[colDef.field]['All'])
-            if (!this.comboColumnOptions[colDef.field] && !this.comboColumnOptions[colDef.field]['All']) return false
-            const index = this.comboColumnOptions[colDef.field]['All'].findIndex((dropdownOption: any) => dropdownOption['column_1'] === pasteValue)
-            // console.log('%c index ', 'background: #222; color: #bada55', index)
+            console.log('%c pasteValue! ', 'background: #222; color: #bada55', pasteValue)
+            console.log('%c comboColumnOptions! ', 'background: #222; color: #bada55', this.comboColumnOptions)
+            let options = this.comboColumnOptions && this.comboColumnOptions[colDef.field] ? this.comboColumnOptions[colDef.field][colDef.dependences] : []
+            console.log('%c options 1', 'background: #222; color: #bada55', options)
+            if (!options || options.length === 0) options = this.comboColumnOptions[colDef.field]['All']
+            console.log('%c options 2', 'background: #222; color: #bada55', options)
+            if (!options) return false
+            const index = options.findIndex((dropdownOption: any) => dropdownOption['column_1'] === pasteValue)
+            console.log('%c index ', 'background: #222; color: #bada55', index)
             return index !== -1
         },
         //TODO - ask if we want custom cell warnings for each case, or just a generic one
