@@ -527,6 +527,27 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 	}
 
+	@GET
+	@Path("/envQbe")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getEnvQbe(@QueryParam("sourceDatasetName") String sourceDatasetName) {
+		logger.debug("IN");
+		String userId = (String) getUserProfile().getUserUniqueIdentifier();
+		String envs = null;
+		try {
+
+			envs = getEnv().get("DATASETS").toString();
+		} catch (Throwable t) {
+			logger.error("An unexpected error occured while executing service: QbeQueryResource.getDomainScopes", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service: JsonChartTemplateService.getDomainScopes", t);
+		} finally {
+			logger.debug("OUT");
+		}
+		return envs;
+
+	}
+
 	@POST
 	@Path("/saveDataSet")
 	@Produces(MediaType.APPLICATION_JSON)

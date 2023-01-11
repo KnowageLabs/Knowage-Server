@@ -211,4 +211,10 @@ public class JPQLStatement extends AbstractStatement {
 		return clause.getValueBounded(operandValueToBound, operandType);
 	}
 
+	@Override
+	public String getQuerySQLString(String wrappedDatasetQuery) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
