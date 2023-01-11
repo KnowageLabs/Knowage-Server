@@ -555,7 +555,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			return getSQLValue(fatherPar, "%" + firstValue);
 		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.CONTAIN_FILTER)) {
 			return getSQLValue(fatherPar, "%" + firstValue + "%");
-		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.EQUAL_FILTER)) {
+		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.EQUAL_FILTER) || typeFilter.equalsIgnoreCase(SpagoBIConstants.NOT_EQUAL_FILTER)) {
 			if (values.size() > 1) {
 				return "(" + concatenateValues(fatherPar, values) + ")";
 			} else {
@@ -742,6 +742,15 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			} else {
 				return "=";
 			}
+		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.NOT_EQUAL_FILTER)) {
+			AbstractDriver fatherPar = getFatherParameter(dependency, drivers);
+			Assert.assertNotNull(fatherPar, "Parent parameter cannot be null");
+			List values = fatherPar.getParameterValues();
+			if (values != null && values.size() > 1) {
+				return "NOT IN";
+			} else {
+				return "=";
+			}
 		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.LESS_FILTER)) {
 			return "<";
 		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.LESS_OR_EQUAL_FILTER)) {
@@ -883,14 +892,12 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	protected List searchValuesForRegularLOVs(IEngUserProfile profile, AbstractDriver driver, List parameterValuesDescription, SourceBean result) {
 		List toReturn = new ArrayList();
 		List<String> values = driver.getParameterValues();
-		String valueColName = getValueColumnName();
-		String descColName = getDescriptionColumnName();
 
 		Iterator<String> it = values.iterator();
 		while (it.hasNext()) {
 			String description = null;
 			String aValue = it.next();
-			Object obj = result.getFilteredSourceBeanAttribute(DataRow.ROW_TAG, valueColName, aValue);
+			Object obj = result.getFilteredSourceBeanAttribute(DataRow.ROW_TAG, VALUE_ALIAS, aValue);
 			if (obj == null) {
 				// value was not found!!
 				logger.error("Parameter '" + driver.getLabel() + "' cannot assume value '" + aValue + "'" + " for user '"
@@ -905,11 +912,11 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 				// value was found, retrieve description
 				if (obj instanceof SourceBean) {
 					SourceBean sb = (SourceBean) obj;
-					Object descriptionObj = sb.getAttribute(descColName);
+					Object descriptionObj = sb.getAttribute(DESCRIPTION_ALIAS);
 					description = descriptionObj != null ? descriptionObj.toString() : null;
 				} else {
 					List l = (List) obj;
-					Object descriptionObj = ((SourceBean) l.get(0)).getAttribute(descColName);
+					Object descriptionObj = ((SourceBean) l.get(0)).getAttribute(DESCRIPTION_ALIAS);
 					description = descriptionObj != null ? descriptionObj.toString() : null;
 				}
 			}

@@ -648,6 +648,9 @@ export default defineComponent({
             })
         },
         onDropdownChange(parameter: any) {
+            parameter.dataDependentParameters?.forEach((element) => {
+                this.selectedParameterCheckbox[element.id] = []
+            })
             this.updateParameterDescriptionOnDropdownChange(parameter)
             this.updateDependency(parameter)
         },
