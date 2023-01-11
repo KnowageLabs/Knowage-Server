@@ -541,8 +541,6 @@ export default defineComponent({
             })
         },
         async executeQBEQuery(showPreview: boolean) {
-            this.loading = true
-
             if (!this.qbe) return
             if (this.qbe.qbeJSONQuery && this.qbe.qbeJSONQuery.catalogue.queries[0].fields.length == 0) return
             this.loading = true
