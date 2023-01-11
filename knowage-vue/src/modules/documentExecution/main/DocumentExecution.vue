@@ -692,7 +692,7 @@ export default defineComponent({
                     el.visible = false
                 }
 
-                if (!el.parameterValue) {
+                if (!el.multivalue && !el.parameterValue) {
                     el.parameterValue = [{ value: '', description: '' }]
                 }
 
