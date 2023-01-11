@@ -1095,7 +1095,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                         }
                                     }
                                 }
-                            }
+                            }else{
+								if(!content.type && content.dataType === "date" && modalValue){
+                                        outputParameter[par] = modalValue
+								}
+							}
                         }
 
                         // temporary section needed as a workaround to get vue instance
