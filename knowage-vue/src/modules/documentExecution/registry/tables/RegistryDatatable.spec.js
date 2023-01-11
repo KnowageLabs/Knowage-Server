@@ -308,7 +308,9 @@ const factory = (rows) => {
             id: '1',
             stopWarningsState: [],
             dataLoading: false,
-            pagination: {}
+            pagination: {
+                paginationLimit: 10
+            }
         },
         global: {
             plugins: [createTestingPinia()],
@@ -342,6 +344,16 @@ describe('Registry loading', () => {
 
         expect(wrapper.html()).toContain('common.info.noDataFound')
     })
+    // it("adds a new row on top when the '+' button is clicked", async () => {
+    //     const wrapper = factory(mockedRows)
+
+    //     expect(wrapper.vm.rows.length).toBe(5)
+
+    //     await wrapper.find('[data-test="new-row-button"]').trigger('click')
+
+    //     expect(wrapper.vm.rows[0]).toStrictEqual({ id: 5, isNew: true, store_name: '', store_type: '', store_city: '', store_state: '', florist: '', coffee_bar: '', video_store: '', first_opened_date: '', store_sqft: '', sales_city: '' })
+    //     expect(wrapper.vm.rows.length).toBe(6)
+    // })
 
     it('shows a checkbox if the editable field is boolean type', () => {
         const wrapper = factory(mockedRows)
