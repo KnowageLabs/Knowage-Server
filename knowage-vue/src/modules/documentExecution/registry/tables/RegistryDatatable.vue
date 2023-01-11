@@ -556,12 +556,29 @@ export default defineComponent({
                         break
                     case 'dropdown':
                         //TODO  - dropdown valiodation, call BE service to see if pasted value is in the filtered array
+                        if (!this.validateDropdownValueAfterCopyPaste(colDef, pasteValue)) {
+                            this.setInfo({
+                                //TODO - add cannot paste dropdon cell warning
+                                title: 'Dropdown Warning',
+                                msg: "Dropdown options doesn't contain pasted value!"
+                            })
+                        }
                         break
-
                     default:
                         break
                 }
             }
+        },
+        validateDropdownValueAfterCopyPaste(colDef: any, pasteValue: string) {
+            // console.log('%c Col Def ', 'background: #222; color: #bada55', colDef)
+            // console.log('%c Col Def AB das edited 2', 'background: #222; color: #bada55', colDef.field)
+            // console.log('%c pasteValue! ', 'background: #222; color: #bada55', pasteValue)
+            // console.log('%c comboColumnOptions! ', 'background: #222; color: #bada55', this.comboColumnOptions)
+            // console.log('%c comboColumnOptions field! ', 'background: #222; color: #bada55', this.comboColumnOptions[colDef.field]['All'])
+            if (!this.comboColumnOptions[colDef.field] && !this.comboColumnOptions[colDef.field]['All']) return false
+            const index = this.comboColumnOptions[colDef.field]['All'].findIndex((dropdownOption: any) => dropdownOption['column_1'] === pasteValue)
+            // console.log('%c index ', 'background: #222; color: #bada55', index)
+            return index !== -1
         },
         //TODO - ask if we want custom cell warnings for each case, or just a generic one
         cellAcceptsPasteValue(colDef, cellType) {

@@ -48,7 +48,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, nextTick } from 'vue'
+import { defineComponent } from 'vue'
 import { setInputDataType, getInputStep, formatNumber } from '@/helpers/commons/tableHelpers'
 import { formatDate, getLocale } from '@/helpers/commons/localeHelper'
 import { luxonFormatDate, primeVueDate } from '@/helpers/commons/localeHelper'
@@ -64,7 +64,7 @@ export default defineComponent({
     props: {
         // column: { type: Object },
         // propRow: { type: Object },
-        // comboColumnOptions: { type: Array },
+        comboColumnOptions: { type: Array },
         params: {
             required: true,
             type: Object as any
