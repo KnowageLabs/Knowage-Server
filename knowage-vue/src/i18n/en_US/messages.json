@@ -1151,6 +1151,12 @@
         "registry": {
             "clearFilters": "Clear",
             "column": "Column/s",
+            "copyPasteValidationErrors": {
+                "checkbox": "Cannot paste checkbox values",
+                "dropdown": "Dropdown options doesn't contain pasted value",
+                "notEditable": "Cannot paste in not editable column",
+                "temporal": "Cannot paste temporal values"
+            },
             "filter": "Filter",
             "filters": "Filters",
             "grid": {

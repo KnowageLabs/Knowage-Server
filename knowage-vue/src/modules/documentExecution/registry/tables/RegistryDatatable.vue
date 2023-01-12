@@ -604,11 +604,7 @@ export default defineComponent({
                 row: selectedCell.row.data
             })
             if (!this.validateDropdownValueAfterCopyPaste(colDef, pasteValue, selectedCell)) {
-                this.setInfo({
-                    //TODO - add cannot paste dropdon cell warning
-                    title: 'Dropdown Warning',
-                    msg: "Dropdown options doesn't contain pasted value!"
-                })
+                this.setCannotPasteWarning('dropdown')
             } else {
                 selectedCell.row.setDataValue(selectedCell.column, pasteValue)
             }
@@ -620,30 +616,35 @@ export default defineComponent({
             const index = options.findIndex((dropdownOption: any) => dropdownOption['column_1'] === pasteValue)
             return index !== -1
         },
-        //TODO - ask if we want custom cell warnings for each case, or just a generic one
         cellAcceptsPasteValue(colDef, cellType) {
             if (colDef.editable == false || colDef.isEditable == false) {
-                this.setInfo({
-                    //TODO - add cannot paste non editable cell warning
-                    title: 'NotEditable Warning',
-                    msg: 'Cannot paste NotEditable values :)))))'
-                })
+                this.setCannotPasteWarning('notEditable')
                 return false
             } else if (cellType === 'checkbox') {
-                this.setInfo({
-                    //TODO - add cannot paste checkbox cell warning
-                    title: 'Checkbox Warning',
-                    msg: 'Cannot paste checkbox values :)))))'
-                })
+                this.setCannotPasteWarning('checkbox')
                 return false
             } else if (cellType === 'temporal') {
-                this.setInfo({
-                    //TODO - add cannot paste checkbox cell warning
-                    title: 'Temporal Warning',
-                    msg: 'Cannot paste temporal values :)))))'
-                })
+                this.setCannotPasteWarning('temporal')
                 return false
             } else return true
+        },
+        setCannotPasteWarning(type: string) {
+            let message = ''
+            switch (type) {
+                case 'notEditable':
+                    message = this.$t('documentExecution.registry.copyPasteValidationErrors.notEditable')
+                    break
+                case 'dropdown':
+                    message = this.$t('documentExecution.registry.copyPasteValidationErrors.dropdown')
+                    break
+                case 'checkbox':
+                    message = this.$t('documentExecution.registry.copyPasteValidationErrors.checkbox')
+                    break
+                case 'temporal':
+                    message = this.$t('documentExecution.registry.copyPasteValidationErrors.temporal')
+                    break
+            }
+            this.setInfo({ title: this.$t('common.error.generic'), msg: message })
         },
         getCellType(colDef) {
             if (colDef.editorType == 'TEXT' && colDef.columnInfo.type === 'boolean') return 'checkbox'
