@@ -178,6 +178,7 @@ export default defineComponent({
             this.propColumns?.forEach((el: any) => {
                 if (el.isVisible) {
                     el.editable = el.isEditable
+                    el.headerName = el.title ?? el.columnInfo.header
 
                     this.addColumnEditableProps(el)
                     this.addColumnCheckboxRendererProps(el)
