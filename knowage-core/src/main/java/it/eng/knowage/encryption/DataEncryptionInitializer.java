@@ -65,61 +65,69 @@ public class DataEncryptionInitializer implements InitializerIFace {
 	@Override
 	public void init(SourceBean config) {
 
-		String pmUrl = getValue(PROPERTY_PM_URL);
-		String pmUser = getValue(PROPERTY_PM_USER);
-		String pmPwd = getValue(PROPERTY_PM_PWD);
-		String pmApp = getValue(PROPERTY_PM_APPLICATION);
-		String pmAlgo = getValue(PROPERTY_PM_ALGO);
+		try {
+			String pmUrl = getValue(PROPERTY_PM_URL);
+			String pmUser = getValue(PROPERTY_PM_USER);
+			String pmPwd = getValue(PROPERTY_PM_PWD);
+			String pmApp = getValue(PROPERTY_PM_APPLICATION);
+			String pmAlgo = getValue(PROPERTY_PM_ALGO);
 
-		String genAlgo = getValue(PROPERTY_GENERIC_ALGO);
-		String genPwd = getValue(PROPERTY_GENERIC_PWD);
+			String genAlgo = getValue(PROPERTY_GENERIC_ALGO);
+			String genPwd = getValue(PROPERTY_GENERIC_PWD);
 
-		LOGGER.warn("Reading encryption configuration: the system properties will take precedence over environment variables");
+			LOGGER.warn("Reading encryption configuration: the system properties will take precedence over environment variables");
 
-		if (ObjectUtils.anyNotNull(pmUrl, pmUser, pmPwd, pmApp, pmAlgo, genAlgo, genPwd)) {
-			LOGGER.warn("Found some encryption configuration");
+			if (ObjectUtils.anyNotNull(pmUrl, pmUser, pmPwd, pmApp, pmAlgo, genAlgo, genPwd)) {
+				LOGGER.warn("Found some encryption configuration");
 
-			String cfgKey = DEFAULT_CFG_KEY;
-			EncryptionConfiguration cfg = null;
+				String cfgKey = DEFAULT_CFG_KEY;
+				EncryptionConfiguration cfg = null;
 
-			if (anyNull(pmUrl, pmUser, pmPwd, pmApp, pmAlgo)) {
-				LOGGER.error("Failing to read Privacy Manager configuration from both system properties and system environment: you must provide all the configuration values listed in the documentation.");
-				LOGGER.error("Trying with a generic algorithm");
+				if (anyNull(pmUrl, pmUser, pmPwd, pmApp, pmAlgo)) {
+					LOGGER.error("Failing to read Privacy Manager configuration from both system properties and system environment: you must provide all the configuration values listed in the documentation.");
+					LOGGER.error("Trying with a generic algorithm");
 
-				if (anyNull(genAlgo, genPwd)) {
-					LOGGER.error("Failing to read generic encryption algorithm configuration from both system properties and system environment: you must provide all the configuration values listed in the documentation.");
+					if (anyNull(genAlgo, genPwd)) {
+						LOGGER.error("Failing to read generic encryption algorithm configuration from both system properties and system environment: you must provide all the configuration values listed in the documentation.");
+					} else {
+						cfg = new EncryptionConfiguration(GENERIC);
+
+						cfg.setEncryptionPwd(genPwd);
+
+						cfg.setAlgorithm(genAlgo);
+
+						try {
+							DataEncryptionCfgForExternalEngines decfee = DataEncryptionCfgForExternalEngines.getInstance();
+							decfee.setKeyTemplateForAlgorithm(cfgKey, genAlgo);
+							decfee.setKeyTemplateForPassword(cfgKey, genPwd);
+						} catch (Exception e) {
+							LOGGER.warn("Error initializing data encryption for external engines", e);
+						}
+
+						LOGGER.warn("Generic encryption algorithm configuration created");
+					}
 				} else {
-					cfg = new EncryptionConfiguration(GENERIC);
+					cfg = new EncryptionConfiguration(PRIVACY_MANAGER);
 
-					cfg.setEncryptionPwd(genPwd);
+					cfg.setPmUrl(pmUrl);
+					cfg.setPmUser(pmUser);
+					cfg.setPmPwd(pmPwd);
+					cfg.setPmApplication(pmApp);
 
-					cfg.setAlgorithm(genAlgo);
+					cfg.setAlgorithm(pmAlgo);
 
-					DataEncryptionCfgForExternalEngines decfee = DataEncryptionCfgForExternalEngines.getInstance();
-					decfee.setKeyTemplateForAlgorithm(cfgKey, genAlgo);
-					decfee.setKeyTemplateForPassword(cfgKey, genPwd);
-
-					LOGGER.warn("Generic encryption algorithm configuration created");
+					LOGGER.warn("Privacy Manager configuration created");
 				}
-			} else {
-				cfg = new EncryptionConfiguration(PRIVACY_MANAGER);
 
-				cfg.setPmUrl(pmUrl);
-				cfg.setPmUser(pmUser);
-				cfg.setPmPwd(pmPwd);
-				cfg.setPmApplication(pmApp);
+				EncryptionPreferencesRegistry.getInstance()
+					.addConfiguration(cfgKey, cfg);
 
-				cfg.setAlgorithm(pmAlgo);
-
-				LOGGER.warn("Privacy Manager configuration created");
+				if (PRIVACY_MANAGER.equals(cfg.getType())) {
+					scheduleJobToRetrieveThePassword(cfg);
+				}
 			}
-
-			EncryptionPreferencesRegistry.getInstance()
-				.addConfiguration(cfgKey, cfg);
-
-			if (PRIVACY_MANAGER.equals(cfg.getType())) {
-				scheduleJobToRetrieveThePassword(cfg);
-			}
+		} catch (Exception e) {
+			LOGGER.warn("Error initializing data encryption", e);
 		}
 
 	}
