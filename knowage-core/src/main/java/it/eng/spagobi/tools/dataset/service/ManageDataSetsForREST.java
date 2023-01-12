@@ -329,8 +329,16 @@ public class ManageDataSetsForREST {
 								if (sourceDataset == null) {
 									throw new SpagoBIRuntimeException("Dataset with label [" + sourceDatasetLabel + "] does not exist");
 								}
+								String persistTableName = null;
+								if (json.has("persistTableName")) {
+									persistTableName = json.getString("persistTableName");
+									sourceDataset.setPersistTableName(persistTableName);
+									sourceDataset.setPersisted(true);
+									((DerivedDataSet) dsRecalc).setSourceDataset(sourceDataset);
+								}
 								((DerivedDataSet) ds).setSourceDataset(sourceDataset);
 								((DerivedDataSet) ds).setPersisted(false);
+
 								currentMetadata = getDatasetTestMetadata(dsRecalc, parametersMap, profile, meta);
 
 								JSONObject sourceJsonConfig = new JSONObject(sourceDataset.getConfiguration());

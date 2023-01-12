@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 import it.eng.qbe.datasource.dataset.DataSetDataSource;
 import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
+import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCPostgreSQLDataSet;
@@ -97,6 +98,11 @@ public class SQLDataSet extends AbstractQbeDataSet {
 
 					statementStr = statement.getQuerySQLString(queryJDBC);
 					dataset.setDataSource(this.getWrappedDataset().getDataSource());
+				} else if (vds.getWrappedDataset() instanceof FileDataSet && StringUtils.isNotEmpty(vds.getWrappedDataset().getPersistTableName())) {
+					dataset = new JDBCDataSet();
+					dataset.setPersistTableName(vds.getWrappedDataset().getPersistTableName());
+					dataset.setDataSource(vds.getWrappedDataset().getDataSourceForWriting());
+					statementStr = statement.getQueryString();
 				} else {
 					dataset = new JDBCDataSet();
 					dataset.setDataSource(ds.getDataSourceForReading());
