@@ -63,8 +63,8 @@ import RegistryFiltersCard from './RegistryFiltersCard.vue'
 import { formatDate } from '@/helpers/commons/localeHelper'
 import { mapActions } from 'pinia'
 import store from '../../../App.store'
-
 import cryptoRandomString from 'crypto-random-string'
+import { emitter } from './tables/RegistryDatatableHelper'
 
 export default defineComponent({
     name: 'registry',
@@ -151,6 +151,7 @@ export default defineComponent({
                 this.loadRows()
                 this.getFilters()
                 this.createColumnWidthProperty()
+                emitter.emit('refreshTableWithData')
             }
         },
         createColumnWidthProperty() {
@@ -338,6 +339,7 @@ export default defineComponent({
             await this.loadRegistry()
             this.loadRows(resetRows)
             this.dataLoading = false
+            emitter.emit('refreshTableWithData')
         }
     }
 })

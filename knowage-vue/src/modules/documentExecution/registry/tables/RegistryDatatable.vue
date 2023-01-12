@@ -95,11 +95,10 @@ import registryDescriptor from '../RegistryDescriptor.json'
 import registryDatatableDescriptor from './RegistryDatatableDescriptor.json'
 import RegistryDatatableEditableField from './RegistryDatatableEditableField.vue'
 import RegistryDatatableWarningDialog from './RegistryDatatableWarningDialog.vue'
-import CellRenderer from './registryCellRenderers/RegistryCellRenderer.vue'
 import CellEditor from './registryCellRenderers/RegistryCellEditor.vue'
-import deepcopy from 'deepcopy'
 import store from '../../../../App.store'
 import cryptoRandomString from 'crypto-random-string'
+import { emitter } from './RegistryDatatableHelper'
 
 export default defineComponent({
     name: 'registry-datatable',
@@ -164,12 +163,12 @@ export default defineComponent({
         // propRows() {
         //     this.loadRows()
         // },
-        propRows: {
-            handler() {
-                this.loadRows()
-            },
-            deep: true
-        },
+        // propRows: {
+        //     handler() {
+        //         this.loadRows()
+        //     },
+        //     deep: true
+        // },
         propConfiguration() {
             this.loadConfiguration()
         },
@@ -194,6 +193,10 @@ export default defineComponent({
         this.loadPagination()
         this.loadWarningState()
         this.setupDatatableOptions()
+
+        emitter.on('refreshTableWithData', () => {
+            this.loadRows()
+        })
     },
     computed: {
         getCurrentLocaleDefaultDateFormat() {
@@ -354,7 +357,8 @@ export default defineComponent({
         },
         loadRows() {
             this.rows = this.propRows
-            // this.gridApi?.setRowData(this.rows)
+            this.gridApi?.setRowData(this.rows)
+            // this.gridApi?.redrawRows()
             // console.log('PROP ROWS -----------------', this.rows)
         },
         loadConfiguration() {
