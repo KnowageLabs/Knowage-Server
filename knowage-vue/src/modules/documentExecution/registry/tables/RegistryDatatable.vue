@@ -282,16 +282,7 @@ export default defineComponent({
                         }
                     }
 
-                    // TODO - Formatting logic for dates, not working when editing date
-                    if (el.columnInfo?.type === 'date') {
-                        el.valueFormatter = (params) => {
-                            this.getFormattedDate(params.value, 'yyyy-MM-dd', this.getCurrentLocaleDefaultDateFormat(el))
-                        }
-                    } else if (el.columnInfo?.type === 'timestamp') {
-                        el.valueFormatter = (params) => {
-                            this.getFormattedDateTime(params.value, { dateStyle: 'short', timeStyle: 'medium' }, true)
-                        }
-                    }
+                    this.addFormatting(el)
 
                     this.columns.push(el)
                 }
@@ -299,6 +290,24 @@ export default defineComponent({
             this.setColumnDependencies()
             await this.loadInitialDropdownOptions()
             this.loading = false
+        },
+        addFormatting(el: any) {
+            // TODO - Formatting logic for dates, not working when editing date
+            if (el.columnInfo?.type === 'date') {
+                el.valueFormatter = (params) => {
+                    this.getFormattedDate(params.value, 'yyyy-MM-dd', this.getCurrentLocaleDefaultDateFormat(el))
+                }
+            } else if (el.columnInfo?.type === 'timestamp') {
+                el.valueFormatter = (params) => {
+                    this.getFormattedDateTime(params.value, { dateStyle: 'short', timeStyle: 'medium' }, true)
+                }
+            } else if (['int', 'float', 'decimal', 'long'].includes(el.columnInfo.type)) {
+                console.log('>>>>>>>>> params.value: ', el)
+                el.valueFormatter = (params) => {
+                    // console.log('>>>>>>>> PARAMS: ', params)
+                    return params.value
+                }
+            }
         },
         setColumnDependencies() {
             this.columns.forEach((column: any) => {
