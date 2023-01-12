@@ -8,73 +8,6 @@
         <ag-grid-vue v-if="!loading" class="registry-grid ag-theme-alpine" style="height: 100%" :rowData="rows" :gridOptions="gridOptions" :context="context" />
     </div>
 
-    <!-- <DataTable
-        v-if="!loading"
-        class="p-datatable-sm kn-table"
-        :scrollable="true"
-        v-model:first="first"
-        :value="rows"
-        dataKey="id"
-        paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-        :lazy="lazyParams.size > registryDescriptor.paginationLimit"
-        :paginator="true"
-        :rows="registryDescriptor.paginationNumberOfItems"
-        :currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
-        :totalRecords="lazyParams.size"
-        stripedRows
-        showGridlines
-        sortMode="multiple"
-        :multiSortMeta="multiSortMeta"
-        @page="onPage($event)"
-        @sort="onSort"
-    >
-        <template #empty>{{ $t('common.info.noDataFound') }}</template>
-        <Column class="kn-truncated" :style="registryDatatableDescriptor.numerationColumn.style" :headerStyle="registryDatatableDescriptor.numerationColumn.style" :field="columns[0].field" :header="columns[0].title"></Column>
-
-        <template v-for="col of columns.slice(1)" :key="col.field">
-            <Column class="kn-truncated" :field="col.field" :style="`min-width:${col.size}px`" :sortable="col.columnInfo?.type !== 'timestamp' && col.columnInfo?.type !== 'date'">
-                <template #header>
-                    <div class="table-header">
-                        <i v-if="showDefaultNumberFormatIcon(col)" v-tooltip.top="$t('documentExecution.registry.numberFormatNotSupported')" class="pi pi-exclamation-triangle kn-cursor-pointer"></i>
-                        {{ col.title }}
-                        <i v-if="col.isEditable && col.columnInfo?.type !== 'boolean'" class="pi pi-pencil edit-icon p-ml-2" :data-test="col.field + '-icon'" v-tooltip.bottom="$t('documentExecution.registry.isEditableField')" />
-                    </div>
-                </template>
-                <template #body="slotProps">
-                    <div class="p-d-flex p-flex-row editableField" :data-test="col.field + '-body'">
-                        <Checkbox v-if="col.editorType == 'TEXT' && col.columnInfo?.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="setRowEdited(slotProps.data)" :disabled="!col.isEditable"></Checkbox>
-                        <RegistryDatatableEditableField
-                            v-else-if="col.isEditable || col.columnInfo?.type === 'int' || col.columnInfo?.type === 'float'"
-                            :column="col"
-                            :propRow="slotProps.data"
-                            :comboColumnOptions="comboColumnOptions"
-                            @rowChanged="setRowEdited(slotProps.data)"
-                            @dropdownChanged="onDropdownChange"
-                            @dropdownOpened="addColumnOptions"
-                        ></RegistryDatatableEditableField>
-                        <span v-else-if="!col.isEditable">
-                            <span v-if="slotProps.data[col.field] && col.columnInfo?.type === 'date'">
-                                {{ getFormattedDate(slotProps.data[col.field], 'yyyy-MM-dd', getCurrentLocaleDefaultDateFormat(col)) }}
-                            </span>
-                            <span v-else-if="slotProps.data[col.field] && col.columnInfo?.type === 'timestamp'"> {{ getFormattedDateTime(slotProps.data[col.field], { dateStyle: 'short', timeStyle: 'medium' }, true) }}</span>
-                            <span v-else>{{ slotProps.data[col.field] }}</span>
-                        </span>
-                    </div>
-                </template>
-            </Column>
-        </template>
-        <Column :style="registryDatatableDescriptor.iconColumn.style" :headerStyle="registryDatatableDescriptor.iconColumn.style">
-            <template #header>
-                <Button class="kn-button" :label="$t('managers.businessModelManager.add')" v-if="buttons.enableButtons || buttons.enableAddRecords" @click="addNewRow" data-test="new-row-button" />
-            </template>
-            <template #body="slotProps">
-                <Button v-if="buttons.enableButtons || buttons.enableDeleteRecords" class="p-button-link" @click="rowDeleteConfirm(slotProps.index, slotProps.data)">
-                    <i class="pi pi-flag" :class="[slotProps.data.edited ? flagShown : flagHidden]" :style="registryDatatableDescriptor.primevueTableStyles.trashNormal" />
-                    <i class="p-button-link pi pi-trash p-ml-2" :style="registryDatatableDescriptor.primevueTableStyles.trashNormal" />
-                </Button>
-            </template>
-        </Column>
-    </DataTable> -->
     <RegistryDatatableWarningDialog :visible="warningVisible" :columns="dependentColumns" @close="onWarningDialogClose"></RegistryDatatableWarningDialog>
 </template>
 
@@ -84,33 +17,19 @@ import { luxonFormatDate, formatDateWithLocale, formatNumberWithLocale, localeDa
 import { setInputDataType, numberFormatRegex, formatNumber } from '@/helpers/commons/tableHelpers'
 import { AxiosResponse } from 'axios'
 import { mapActions } from 'pinia'
+import { emitter } from './RegistryDatatableHelper'
 import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
 import 'ag-grid-community/styles/ag-grid.css' // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
-import Checkbox from 'primevue/checkbox'
-import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
-import Paginator from 'primevue/paginator'
 import registryDescriptor from '../RegistryDescriptor.json'
-import registryDatatableDescriptor from './RegistryDatatableDescriptor.json'
-import RegistryDatatableEditableField from './RegistryDatatableEditableField.vue'
 import RegistryDatatableWarningDialog from './RegistryDatatableWarningDialog.vue'
 import CellEditor from './registryCellRenderers/RegistryCellEditor.vue'
 import store from '../../../../App.store'
 import cryptoRandomString from 'crypto-random-string'
-import { emitter } from './RegistryDatatableHelper'
 
 export default defineComponent({
     name: 'registry-datatable',
-    components: {
-        Checkbox,
-        Column,
-        DataTable,
-        RegistryDatatableEditableField,
-        RegistryDatatableWarningDialog,
-        AgGridVue,
-        Paginator
-    },
+    components: { RegistryDatatableWarningDialog, AgGridVue },
     props: {
         propColumns: { type: Array },
         propRows: { type: Array, required: true },
@@ -126,7 +45,6 @@ export default defineComponent({
     data() {
         return {
             registryDescriptor,
-            registryDatatableDescriptor,
             columns: [] as any[],
             rows: [] as any[],
             configuration: {} as any,
@@ -157,18 +75,8 @@ export default defineComponent({
     },
     watch: {
         propColumns() {
-            this.loadColumns()
+            this.loadColumnDefinitions()
         },
-        //TODO - load rows using MITT because reactivity is dumb af
-        // propRows() {
-        //     this.loadRows()
-        // },
-        // propRows: {
-        //     handler() {
-        //         this.loadRows()
-        //     },
-        //     deep: true
-        // },
         propConfiguration() {
             this.loadConfiguration()
         },
@@ -187,7 +95,7 @@ export default defineComponent({
         this.context = { componentParent: this }
     },
     created() {
-        this.loadColumns()
+        this.loadColumnDefinitions()
         this.loadRows()
         this.loadConfiguration()
         this.loadPagination()
@@ -205,6 +113,16 @@ export default defineComponent({
     },
     methods: {
         ...mapActions(store, ['setInfo', 'setError']),
+        onGridReady(params) {
+            this.gridApi = params.api
+            this.columnApi = params.columnApi
+
+            this.refreshGridConfiguration()
+        },
+        refreshGridConfiguration() {
+            this.gridApi.setColumnDefs(this.columns)
+            this.gridApi.setRowData(this.rows)
+        },
         setupDatatableOptions() {
             this.gridOptions = {
                 // PROPERTIES
@@ -228,8 +146,8 @@ export default defineComponent({
                 suppressScrollOnNewData: true,
 
                 // EVENTS
-                onCellClicked: this.cellWasClicked,
-                onCellKeyDown: this.pasteTest,
+                onCellClicked: this.onCellClicked,
+                onCellKeyDown: this.onCellKeyDown,
                 onBodyScroll: this.onBodyScroll,
                 onSelectionChanged: this.onSelectionChanged,
                 onCellValueChanged: this.onCellValueChanged,
@@ -238,7 +156,8 @@ export default defineComponent({
                 onGridReady: this.onGridReady
             }
         },
-        async loadColumns() {
+
+        async loadColumnDefinitions() {
             this.loading = true
             this.columns = [
                 {
@@ -250,42 +169,17 @@ export default defineComponent({
                     isEditable: false,
                     columnInfo: { type: 'int' },
                     cellStyle: (params) => {
-                        return {
-                            color: 'black',
-                            backgroundColor: 'rgba(231, 231, 231, 0.8)',
-                            opacity: 0.8
-                        }
+                        return { color: 'black', backgroundColor: 'rgba(231, 231, 231, 0.8)', opacity: 0.8 }
                     }
                 }
             ]
             this.propColumns?.forEach((el: any) => {
                 if (el.isVisible) {
-                    // console.log('column def', el)
-                    // NOTE - Applying renderer here, so it could actually receive comboColumnOptions parameter that it needs, wont work in coldef
                     el.editable = el.isEditable
 
-                    if (el.editable) {
-                        el.cellEditor = CellEditor
-                        el.cellEditorParams = {
-                            comboColumnOptions: this.comboColumnOptions
-                        }
-                    } else {
-                        el.cellStyle = (params) => {
-                            return {
-                                color: 'black',
-                                backgroundColor: 'rgba(231, 231, 231, 0.8)',
-                                opacity: 0.8
-                            }
-                        }
-                    }
-
-                    if (el.editorType == 'TEXT' && el.columnInfo.type === 'boolean') {
-                        el.cellRenderer = (params) => {
-                            return `<i class="fas fa-${params.value ? 'check' : 'times'}"/>`
-                        }
-                    }
-
-                    this.addFormatting(el)
+                    this.addColumnEditableProps(el)
+                    this.addColumnCheckboxRendererProps(el)
+                    this.addColumnFormattingProps(el)
 
                     this.columns.push(el)
                 }
@@ -294,7 +188,26 @@ export default defineComponent({
             await this.loadInitialDropdownOptions()
             this.loading = false
         },
-        addFormatting(el: any) {
+        addColumnEditableProps(el: any) {
+            if (el.editable) {
+                el.cellEditor = CellEditor
+                el.cellEditorParams = {
+                    comboColumnOptions: this.comboColumnOptions
+                }
+            } else {
+                el.cellStyle = (params) => {
+                    return { color: 'black', backgroundColor: 'rgba(231, 231, 231, 0.8)', opacity: 0.8 }
+                }
+            }
+        },
+        addColumnCheckboxRendererProps(el) {
+            if (el.editorType == 'TEXT' && el.columnInfo.type === 'boolean') {
+                el.cellRenderer = (params) => {
+                    return `<i class="fas fa-${params.value ? 'check' : 'times'}"/>`
+                }
+            }
+        },
+        addColumnFormattingProps(el: any) {
             let locale = getLocale()
             locale = locale ? locale.replace('_', '-') : ''
             // TODO - Formatting logic for dates, not working when editing date
@@ -366,12 +279,6 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => (this.comboColumnOptions[column.field][row[column.dependences] ?? 'All'] = response.data.rows))
             this.gridApi?.hideOverlay()
         },
-        loadRows() {
-            this.rows = this.propRows
-            this.gridApi?.setRowData(this.rows)
-            // this.gridApi?.redrawRows()
-            // console.log('PROP ROWS -----------------', this.rows)
-        },
         loadConfiguration() {
             this.configuration = this.propConfiguration
 
@@ -387,6 +294,11 @@ export default defineComponent({
                     }
                 }
             }
+        },
+        loadRows() {
+            this.rows = this.propRows
+            this.gridApi?.setRowData(this.rows)
+            // console.log('PROP ROWS -----------------', this.rows)
         },
         loadPagination() {
             this.lazyParams = { ...this.pagination } as any
@@ -426,35 +338,29 @@ export default defineComponent({
             return formatDateWithLocale(date, format, keepNull)
         },
         addNewRow() {
-            const newRow = {
-                uniqueId: cryptoRandomString({ length: 16, type: 'base64' }),
-                id: this.rows.length + 1,
-                isNew: true
-            }
+            const newRow = { uniqueId: cryptoRandomString({ length: 16, type: 'base64' }), id: this.rows.length + 1, isNew: true }
             this.columns.forEach((el: any) => {
                 if (el.isVisible && el.field !== 'id') {
                     newRow[el.field] = el.defaultValue ?? ''
                 }
             })
 
-            this.addRowToTheFirstPlace(newRow)
+            this.addRowToFirstPosition(newRow)
 
             if (this.lazyParams.size <= registryDescriptor.paginationLimit) {
                 this.first = 0
             }
             this.$emit('rowChanged', newRow)
-
-            // console.log(this.rows)
         },
         cloneRows() {
             for (let i = this.selectedRows.length - 1; i >= 0; i--) {
                 const tempRow = this.selectedRows[i]
                 tempRow.uniqueId = cryptoRandomString({ length: 16, type: 'base64' })
                 delete tempRow.id
-                this.addRowToTheFirstPlace(tempRow)
+                this.addRowToFirstPosition(tempRow)
             }
         },
-        addRowToTheFirstPlace(newRow: any) {
+        addRowToFirstPosition(newRow: any) {
             this.rows.unshift(newRow)
             // NOTE - applyTransaction alone wont add new row to this.rows, thats why we do both, to force table to refresh itself
             this.gridApi.applyTransaction({ addIndex: 0, add: [newRow] })
@@ -469,17 +375,22 @@ export default defineComponent({
                 this.setDependentColumns(column)
                 if (!this.stopWarnings[column.field]) {
                     this.dependentColumns.forEach((el: any) => {
-                        if (this.selectedRow[el.field]) {
-                            this.warningVisible = true
-                        }
+                        if (this.selectedRow[el.field]) this.warningVisible = true
                     })
-                } else {
-                    this.clearDependentColumnsValues()
-                }
+                } else this.clearDependentColumnsValues()
             }
 
             row.edited = true
             this.$emit('rowChanged', row)
+        },
+        setDependentColumns(column: any) {
+            let tempColumn = column
+            if (!tempColumn.hasDependencies) return
+
+            tempColumn.hasDependencies.forEach((el: any) => {
+                this.dependentColumns.push(el)
+                this.setDependentColumns(el)
+            })
         },
         onWarningDialogClose(payload: any) {
             if (payload.stopWarnings) {
@@ -495,18 +406,6 @@ export default defineComponent({
             this.selectedRow.edited = true
             this.$emit('rowChanged', this.selectedRow)
         },
-        setDependentColumns(column: any) {
-            let tempColumn = column
-
-            if (!tempColumn.hasDependencies) {
-                return
-            }
-
-            tempColumn.hasDependencies.forEach((el: any) => {
-                this.dependentColumns.push(el)
-                this.setDependentColumns(el)
-            })
-        },
         setRowEdited(row: any) {
             row.edited = true
             this.$emit('rowChanged', row)
@@ -518,28 +417,11 @@ export default defineComponent({
                 this.rows[foundIndex] = event.newData
             }
         },
-        showDefaultNumberFormatIcon(column: any) {
-            if (!column || !column.columnInfo || !column.format) return false
-            const inputType = setInputDataType(column.columnInfo.type)
-            const temp = column.format.trim().match(numberFormatRegex)
-            return inputType === 'number' && !temp
-        },
-        onSort(event: any) {
-            this.multiSortMeta = event.multiSortMeta
-        },
-        onGridReady(params) {
-            this.gridApi = params.api
-            this.columnApi = params.columnApi
-
-            this.refreshGridConfiguration()
-        },
-        refreshGridConfiguration() {
-            this.gridApi.setColumnDefs(this.columns)
-            this.gridApi.setRowData(this.rows)
-            // this.gridApi.redrawRows()
-        },
-        cellWasClicked(event) {
+        onCellClicked(event) {
             // console.log('cell was clicked', event)
+        },
+        onSelectionChanged() {
+            this.selectedRows = this.gridApi.getSelectedRows()
         },
         onBodyScroll() {
             if (this.timeout) clearTimeout(this.timeout)
@@ -558,10 +440,7 @@ export default defineComponent({
                 }
             }, 300)
         },
-        onSelectionChanged() {
-            this.selectedRows = this.gridApi.getSelectedRows()
-        },
-        async pasteTest(ev) {
+        async onCellKeyDown(ev) {
             const myCell = this.getFocusedCell(ev)
 
             if (ev.event.which === 17) {
