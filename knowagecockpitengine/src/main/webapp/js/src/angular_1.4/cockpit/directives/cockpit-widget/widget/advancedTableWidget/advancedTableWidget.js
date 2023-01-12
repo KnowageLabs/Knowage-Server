@@ -978,6 +978,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.doSelection(column, row[column], undefined, undefined, row);
 			}
 		}
+		
+		function getColumnFromTableMetadata(colId){
+			if(colId){
+				for(var m in $scope.metadata.fields){
+					if($scope.metadata.fields[m].name && $scope.metadata.fields[m].name == colId) return $scope.metadata.fields[m];
+				}
+			}
+		}
 
 		function getColumnNameFromTableMetadata(colAlias, colId){
 			if(colId){
@@ -1077,6 +1085,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					for(var k in rows){
 						newValue.push(rows[k][tempAlias]);
 					}
+				}
+				if(['timestamp','time','date'].includes(node.colDef.fieldType)){
+					newValue = luxon.DateTime.fromFormat(node.value, getColumnFromTableMetadata(node.colDef.field).dateFormatJava).toISO()
 				}
 				else {
 					newValue = null;

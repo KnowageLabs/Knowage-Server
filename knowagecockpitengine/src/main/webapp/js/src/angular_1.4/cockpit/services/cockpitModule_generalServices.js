@@ -126,10 +126,21 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 						        .action('X')
 						        .hideDelay(3000));
 						cockpitModule_properties.DOCUMENT_ID=response.data.id;
-						window.parent.postMessage(cockpitModule_properties);
-						if(window.parent.document.getElementById('_KNOWAGE_VUE')){
-							window.parent.postMessage({"type":"saveCockpit","model":cockpitModule_properties}, '*');
+						
+						// temporary section needed as a workaround to get vue instance
+                        var hasVueParent = false
+                        if (window.parent.document.getElementById('_KNOWAGE_VUE')) {
+                            hasVueParent = window.parent
+                        } else if (window.parent.parent.document.getElementById('_KNOWAGE_VUE')) {
+                            hasVueParent = window.parent.parent
+                        }
+
+                        if (hasVueParent) {
+							hasVueParent.postMessage({"type":"saveCockpit","model":cockpitModule_properties}, '*');
+						}else {
+							window.parent.postMessage(cockpitModule_properties);
 						}
+						
 					},
 					function(response){
 						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.generic.error"));
