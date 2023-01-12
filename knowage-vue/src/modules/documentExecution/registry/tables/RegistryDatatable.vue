@@ -81,7 +81,7 @@
 <script lang="ts">
 import { defineComponent, PropType, reactive, onMounted, ref } from 'vue'
 import { luxonFormatDate, formatDateWithLocale, formatNumberWithLocale, localeDate, primeVueDate } from '@/helpers/commons/localeHelper'
-import { setInputDataType, numberFormatRegex } from '@/helpers/commons/tableHelpers'
+import { setInputDataType, numberFormatRegex, formatNumber } from '@/helpers/commons/tableHelpers'
 import { AxiosResponse } from 'axios'
 import { mapActions } from 'pinia'
 import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
@@ -302,9 +302,12 @@ export default defineComponent({
                     this.getFormattedDateTime(params.value, { dateStyle: 'short', timeStyle: 'medium' }, true)
                 }
             } else if (['int', 'float', 'decimal', 'long'].includes(el.columnInfo.type)) {
-                console.log('>>>>>>>>> params.value: ', el)
-                el.valueFormatter = (params) => {
-                    // console.log('>>>>>>>> PARAMS: ', params)
+                //console.log('>>>>>>>>> el: ', el)
+                el.valueFormatter = (params: any) => {
+                    // const configuration = formatNumber(el)
+                    //console.log('>>>>>>>> PARAMS: ', params)
+                    // console.log('>>>>>>>> configuration: ', configuration)
+                    // console.log('>>>>>>>> FORMATTED PARAMS: ', params)
                     return params.value
                 }
             }

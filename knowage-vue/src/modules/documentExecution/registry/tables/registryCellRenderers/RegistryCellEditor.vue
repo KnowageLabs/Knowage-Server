@@ -107,8 +107,8 @@ export default defineComponent({
     },
     created() {
         this.setDefaultLocale()
-        this.loadRow()
         this.column = this.params.colDef
+        this.loadRow()
         this.loadColumnOptions()
         this.value = this.getInitialValue()
     },
@@ -131,6 +131,7 @@ export default defineComponent({
             }
         },
         formatNumberConfiguration() {
+            console.log('>>>>>>>>>> LOADED COLUMN: ', this.column)
             if (this.column?.columnInfo?.type === 'int') {
                 this.useGrouping = false
                 this.minFractionDigits = 0
