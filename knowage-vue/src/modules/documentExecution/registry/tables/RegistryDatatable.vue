@@ -1,6 +1,7 @@
 <template>
     <div id="registry-gric-container" class="kn-height-full p-d-flex p-flex-column">
         <div class="registry-grid-toolbar">
+            <Button icon="fas fa-terminal" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.addRow')" data-test="new-row-button" @click="logStuff" />
             <Button icon="fas fa-plus" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.addRow')" data-test="new-row-button" @click="addNewRow" />
             <Button icon="fas fa-clone" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.cloneRows')" @click="cloneRows" />
             <Button icon="fas fa-trash" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.deleteRows')" @click="rowsDeleteConfirm()" />
@@ -153,7 +154,8 @@ export default defineComponent({
                 onCellValueChanged: this.onCellValueChanged,
 
                 // CALLBACKS
-                onGridReady: this.onGridReady
+                onGridReady: this.onGridReady,
+                getRowId: this.getRowId
             }
         },
 
@@ -301,6 +303,9 @@ export default defineComponent({
             this.gridApi?.setRowData(this.rows)
             // console.log('PROP ROWS -----------------', this.rows)
         },
+        getRowId(params) {
+            return params.data.uniqueId
+        },
         loadPagination() {
             this.lazyParams = { ...this.pagination } as any
         },
@@ -325,13 +330,18 @@ export default defineComponent({
             })
         },
         deleteRows() {
-            //TODO - check for newRows, if there are any, splice them first, then emit old rows for deletion
-            // row.isNew ? this.rows.splice(index, 1) : this.$emit('rowDeleted', row)
-            this.$emit('rowDeleted', this.selectedRows)
-        },
+            var rowsForTableDeletion = this.selectedRows.filter((row) => row.isNew)
+            if (rowsForTableDeletion.length > 0) {
+                rowsForTableDeletion.forEach((val) => {
+                    var foundIndex = this.rows.indexOf(val)
+                    if (foundIndex != -1) this.rows.splice(foundIndex, 1)
+                })
+                this.gridApi.applyTransaction({ remove: rowsForTableDeletion })
+            }
 
-        //TODO - Has to be in renderer, can cause issues because i cannot format cell data without it
-        //      test- maybe i can use agGrid value-formatter? https://www.ag-grid.com/vue-data-grid/value-formatters/
+            var rowsForServiceDeletion = this.selectedRows.filter((row) => !row.isNew)
+            if (rowsForServiceDeletion.length > 0) this.$emit('rowDeleted', rowsForServiceDeletion)
+        },
         getFormattedDate(date: any, format: any, incomingFormat?: string) {
             return luxonFormatDate(date, format, incomingFormat)
         },
@@ -345,7 +355,6 @@ export default defineComponent({
                     newRow[el.field] = el.defaultValue ?? ''
                 }
             })
-
             this.addRowToFirstPosition(newRow)
 
             if (this.lazyParams.size <= registryDescriptor.paginationLimit) {
@@ -354,16 +363,16 @@ export default defineComponent({
             this.$emit('rowChanged', newRow)
         },
         cloneRows() {
-            for (let i = this.selectedRows.length - 1; i >= 0; i--) {
-                const tempRow = this.selectedRows[i]
+            this.selectedRows.forEach((row) => {
+                const tempRow = { ...row }
                 tempRow.uniqueId = cryptoRandomString({ length: 16, type: 'base64' })
+                tempRow.isNew = true
                 delete tempRow.id
                 this.addRowToFirstPosition(tempRow)
-            }
+            })
         },
         addRowToFirstPosition(newRow: any) {
             this.rows.unshift(newRow)
-            // NOTE - applyTransaction alone wont add new row to this.rows, thats why we do both, to force table to refresh itself
             this.gridApi.applyTransaction({ addIndex: 0, add: [newRow] })
         },
         onDropdownChange(payload: any) {
@@ -419,7 +428,10 @@ export default defineComponent({
             }
         },
         onCellClicked(event) {
+            // console.group()
             // console.log('cell was clicked', event)
+            // console.log(event.data.uniqueId)
+            // console.groupEnd()
         },
         onSelectionChanged() {
             this.selectedRows = this.gridApi.getSelectedRows()
@@ -554,6 +566,9 @@ export default defineComponent({
                 params.data.isEdited = params.colDef.field // set the flag
             }
             params.api.refreshCells() //causes styles to be reapplied based on cellClassRules
+        },
+        logStuff() {
+            console.log(this.rows)
         }
     }
 })

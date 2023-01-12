@@ -11,6 +11,7 @@
             </template>
         </Toolbar>
         <div class="p-d-flex p-flex-column kn-overflow kn-flex">
+            {{ rows.length }}
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
             <div class="">
                 <RegistryFiltersCard v-if="filters.length > 0" :id="id" :propFilters="filters" :entity="entity" @filter="filterRegistry" class=""></RegistryFiltersCard>
