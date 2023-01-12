@@ -191,6 +191,11 @@ export default defineComponent({
                 tempRow.uniqueId = cryptoRandomString({ length: 16, type: 'base64' })
                 this.rows.push(tempRow)
             }
+
+            //have to timeout, mitt fires event too fast, and vue props doenst have time to update
+            setTimeout(() => {
+                emitter.emit('refreshTableWithData')
+            }, 250)
         },
         loadConfiguration() {
             this.configuration = this.registry.registryConfig.configurations
@@ -259,9 +264,6 @@ export default defineComponent({
                         msg: this.$t('common.toast.deleteSuccess')
                     })
 
-                    //TODO - atm, BE returns unique ID column as value, EG: returnds product_id as deleted index, no way for us to know which column is unique so we can
-                    //          splice the elements in the array, just reloading all data for now
-                    // TODO - pagination doesnt reset in this way, probably wont be needed
                     if (this.isPivot) {
                         if (response.data.ids[0]) {
                             const index = this.rows.findIndex((el: any) => el.id === row.id)
@@ -270,10 +272,7 @@ export default defineComponent({
                             this.pagination.size--
                         }
                     } else {
-                        this.dataLoading = true
-                        await this.loadRegistry()
-                        this.loadRows(true)
-                        this.dataLoading = false
+                        await this.reloadRegistryData(true)
                     }
                 })
                 .catch((response: AxiosResponse<any>) => {
@@ -340,7 +339,6 @@ export default defineComponent({
             await this.loadRegistry()
             this.loadRows(resetRows)
             this.dataLoading = false
-            emitter.emit('refreshTableWithData')
         }
     }
 })
