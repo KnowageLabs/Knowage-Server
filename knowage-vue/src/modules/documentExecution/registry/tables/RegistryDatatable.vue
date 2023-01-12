@@ -138,7 +138,7 @@ export default defineComponent({
                     width: 100,
                     cellClassRules: {
                         'green-bg': (params) => {
-                            return params.data.isEdited === params.colDef.field
+                            if (params.data.isEdited) return params.data.isEdited.includes(params.colDef.field)
                         }
                     }
                 },
@@ -430,7 +430,7 @@ export default defineComponent({
         onCellClicked(event) {
             // console.group()
             // console.log('cell was clicked', event)
-            // console.log(event.data.uniqueId)
+            // // console.log(event.data.uniqueId)
             // console.groupEnd()
         },
         onSelectionChanged() {
@@ -499,8 +499,8 @@ export default defineComponent({
             } else {
                 console.log(
                     !isNaN(pasteValue) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
-                        !isNaN(parseFloat(pasteValue))
-                ) // ...and ensure strings of whitespace fail
+                        !isNaN(parseFloat(pasteValue)) // ...and ensure strings of whitespace fail
+                )
                 this.setCannotPasteWarning('nan')
             }
         },
@@ -565,7 +565,9 @@ export default defineComponent({
         onCellValueChanged(params) {
             console.log('im changed', params)
             if (params.oldValue !== params.newValue) {
-                params.data.isEdited = params.colDef.field // set the flag
+                if (params.data.isEdited) {
+                    params.data.isEdited.push(params.colDef.field)
+                } else params.data.isEdited = [params.colDef.field] // set the flags
             }
             params.api.refreshCells() //causes styles to be reapplied based on cellClassRules
         },
