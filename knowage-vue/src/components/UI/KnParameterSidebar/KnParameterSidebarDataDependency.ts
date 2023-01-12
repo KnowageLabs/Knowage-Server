@@ -16,15 +16,16 @@ export function setDataDependency(loadedParameters: { filterStatus: iParameter[]
     }
 }
 
-export async function updateDataDependency(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string) {
+export async function updateDataDependency(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string, resetValue: boolean) {
     if (parameter && parameter.dataDependentParameters) {
         for (let i = 0; i < parameter.dataDependentParameters.length; i++) {
-            await dataDependencyCheck(loadedParameters, parameter.dataDependentParameters[i], loading, document, sessionRole, $http, mode)
+            await dataDependencyCheck(loadedParameters, parameter.dataDependentParameters[i], loading, document, sessionRole, $http, mode, resetValue)
+
         }
     }
 }
 
-export async function dataDependencyCheck(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string) {
+export async function dataDependencyCheck(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string, resetValue: boolean) {
     loading = true
 
     const postData = { label: document?.label, parameters: getFormattedParameters(loadedParameters), paramId: parameter.urlName, role: sessionRole }
@@ -37,13 +38,13 @@ export async function dataDependencyCheck(loadedParameters: { filterStatus: iPar
     await $http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData).then((response: AxiosResponse<any>) => {
         parameter.data = response.data.result.data
         parameter.metadata = response.data.result.metadata
-        formatParameterAfterDataDependencyCheck(parameter)
+        formatParameterAfterDataDependencyCheck(parameter, resetValue)
     })
     loading = false
 }
 
-export function formatParameterAfterDataDependencyCheck(parameter: any) {
-    if (!checkIfParameterDataContainsNewValue(parameter)) {
+export function formatParameterAfterDataDependencyCheck(parameter: any, resetValue: boolean) {
+    if (resetValue || !checkIfParameterDataContainsNewValue(parameter)) {
         parameter.parameterValue = parameter.multivalue ? [] : [{ value: '', description: '' }]
     }
 
