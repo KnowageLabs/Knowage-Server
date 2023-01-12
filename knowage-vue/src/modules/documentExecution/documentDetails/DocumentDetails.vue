@@ -155,7 +155,7 @@ export default defineComponent({
             return 0
         },
         invalidFunctionalities(): number {
-            return this.selectedDocument.functionalities.length
+            return this.selectedDocument?.functionalities?.length
         },
         showDataLineageTab(): boolean {
             return (this.store.$state as any).user.functionalities.includes('DataSourceManagement')
@@ -175,6 +175,7 @@ export default defineComponent({
         await this.isForEdit()
     },
     activated() {
+        this.setDocumentAndFolderIds()
         this.resetNewDocumentData()
         if (this.propFolderId) {
             this.getFunctionalities()
@@ -191,13 +192,16 @@ export default defineComponent({
         }
     },
     methods: {
-        async isForEdit() {
+        setDocumentAndFolderIds() {
             if (this.propMode === 'execution') {
                 this.docId = this.propDocId
                 this.folderId = this.propFolderId
             } else {
                 this.$route.params.docId ? (this.docId = this.$route.params.docId) : (this.folderId = this.$route.params.folderId)
             }
+        },
+        async isForEdit() {
+            this.setDocumentAndFolderIds()
             await this.loadPage(this.docId)
         },
         resetNewDocumentData() {
