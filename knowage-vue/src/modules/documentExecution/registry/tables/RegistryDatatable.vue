@@ -13,9 +13,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, reactive, onMounted, ref } from 'vue'
-import { luxonFormatDate, formatDateWithLocale, formatNumberWithLocale, localeDate, primeVueDate, getLocale } from '@/helpers/commons/localeHelper'
-import { setInputDataType, numberFormatRegex, formatNumber } from '@/helpers/commons/tableHelpers'
+import { defineComponent, PropType } from 'vue'
+import { luxonFormatDate, formatDateWithLocale, localeDate, primeVueDate, getLocale } from '@/helpers/commons/localeHelper'
+import { setInputDataType, formatRegistryNumber } from '@/helpers/commons/tableHelpers'
 import { AxiosResponse } from 'axios'
 import { mapActions } from 'pinia'
 import { emitter } from './RegistryDatatableHelper'
@@ -225,7 +225,7 @@ export default defineComponent({
             } else if (['int', 'float', 'decimal', 'long'].includes(el.columnInfo.type)) {
                 el.valueFormatter = (params: any) => {
                     let configuration = { useGrouping: false, minFractionDigits: 0, maxFractionDigits: 0 } as { useGrouping: boolean; minFractionDigits: number; maxFractionDigits: number } | null
-                    if (el.columnInfo.type !== 'int') configuration = formatNumber(el)
+                    configuration = formatRegistryNumber(el)
                     return Intl.NumberFormat(locale, { useGrouping: configuration?.useGrouping, minimumFractionDigits: configuration?.minFractionDigits, maximumFractionDigits: configuration?.maxFractionDigits ?? 2 }).format(params.value)
                 }
             }
@@ -568,6 +568,13 @@ export default defineComponent({
                 params.data.isEdited = params.colDef.field // set the flag
             }
             params.api.refreshCells() //causes styles to be reapplied based on cellClassRules
+        },
+        showDefaultNumberFormatIcon(column: any) {
+            if (!column || !column.columnInfo || !column.format) return false
+            const inputType = setInputDataType(column.columnInfo.type)
+            if (inputType !== 'number') return false
+            const configuration = formatRegistryNumber(column)
+            return !configuration || (column.columnInfo.type === 'int' && !['####', '#,###', '#.###'].includes(column.format))
         },
         logStuff() {
             console.log(this.rows)
