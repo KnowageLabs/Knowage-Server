@@ -212,7 +212,7 @@ export default defineComponent({
                 this.selectedDataset = { ...detailViewDescriptor.newDataset }
                 this.selectedDatasetVersions = []
                 this.filteredDatasetTypes = this.datasetTypes.filter((cd) => {
-                    return cd.VALUE_CD != 'Prepared'
+                    return cd.VALUE_CD != 'Prepared' && cd.VALUE_CD != 'Derived'
                 })
             }
         },
@@ -543,7 +543,7 @@ export default defineComponent({
             this.$refs.optionsMenu.toggle(event)
         },
         isOpenInQBEVisible(dataset: any) {
-            return dataset.pars?.length == 0 && (dataset.isPersisted || dataset.dsTypeCd == 'File' || dataset.dsTypeCd == 'Query' || dataset.dsTypeCd == 'Flat')
+            return dataset.pars?.length == 0 && ((dataset.isPersisted && dataset.dsTypeCd == 'File') || dataset.dsTypeCd == 'Query' || dataset.dsTypeCd == 'Flat')
         },
         openDatasetInQbe() {
             this.qbeVisible = true

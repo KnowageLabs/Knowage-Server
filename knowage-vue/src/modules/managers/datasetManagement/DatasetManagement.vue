@@ -118,7 +118,7 @@ export default defineComponent({
         },
         async getQbeDatasetsForDerived() {
             //TODO - Implement BE service
-            this.qbeDatasetsForDerived = this.listOfDatasets.filter((x) => x.dsTypeCd == 'Qbe')
+            this.qbeDatasetsForDerived = this.listOfDatasets.filter((dataset) => dataset.dsTypeCd !== 'Derived' && dataset.pars?.length == 0 && ((dataset.isPersisted && dataset.dsTypeCd == 'File') || dataset.dsTypeCd == 'Query' || dataset.dsTypeCd == 'Flat'))
         },
         async getBusinessModels() {
             this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/businessmodels`).then((response: AxiosResponse<any>) => (this.businessModels = response.data))

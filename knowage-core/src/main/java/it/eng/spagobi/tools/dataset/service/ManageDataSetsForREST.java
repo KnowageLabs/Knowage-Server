@@ -329,13 +329,15 @@ public class ManageDataSetsForREST {
 								if (sourceDataset == null) {
 									throw new SpagoBIRuntimeException("Dataset with label [" + sourceDatasetLabel + "] does not exist");
 								}
-								String persistTableName = null;
-								if (json.has("persistTableName")) {
-									persistTableName = json.getString("persistTableName");
-									sourceDataset.setPersistTableName(persistTableName);
-									sourceDataset.setPersisted(true);
-									((DerivedDataSet) dsRecalc).setSourceDataset(sourceDataset);
-								}
+
+								// TODO Add file not persisted management. Use another variable instead of persistTableName
+//								String persistTableName = null;
+//								if (json.has("persistTableName") && StringUtils.isNotEmpty(json.getString("persistTableName"))) {
+//									persistTableName = json.getString("persistTableName");
+//									sourceDataset.setPersistTableName(persistTableName);
+//									sourceDataset.setPersisted(true);
+//									((DerivedDataSet) dsRecalc).setSourceDataset(sourceDataset);
+//								}
 								((DerivedDataSet) ds).setSourceDataset(sourceDataset);
 								((DerivedDataSet) ds).setPersisted(false);
 

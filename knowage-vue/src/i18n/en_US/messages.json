@@ -189,6 +189,7 @@
         "snapshot": "Snapshot",
         "sort": "sort",
         "source": "Source",
+        "sourceDataset": "Source dataset",
         "sqlExpression": "SQL expression",
         "start": "Start",
         "state": "State",

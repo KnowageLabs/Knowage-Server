@@ -34,6 +34,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.DataSetMetadataJSONSerializer;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.tag.SbiTag;
 
@@ -147,6 +148,15 @@ class DataSetForWorkspaceDTO extends AbstractDataSetDTO {
 
 	public boolean getIsPersisted() {
 		return dataset.isPersisted();
+	}
+
+	public String getSourceDatasetLabel() throws JSONException {
+		String sourceDatasetLabel = null;
+		if (dataset.getType().equals(DataSetConstants.DS_DERIVED)) {
+			JSONObject dsJsonConfig = new JSONObject(dataset.getConfiguration());
+			sourceDatasetLabel = dsJsonConfig.getString(DataSetConstants.SOURCE_DS_LABEL);
+		}
+		return sourceDatasetLabel;
 	}
 
 }

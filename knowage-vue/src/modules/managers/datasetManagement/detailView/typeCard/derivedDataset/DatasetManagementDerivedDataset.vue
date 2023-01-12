@@ -3,7 +3,7 @@
         <template #content>
             <form class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-col-6">
-                    <span class="p-float-label">
+                    <!-- <span class="p-float-label">
                         <Dropdown
                             id="sourceDatasetLabel"
                             class="kn-material-input"
@@ -23,7 +23,12 @@
                         :additionalTranslateParams="{
                             fieldName: $t('common.dataset')
                         }"
-                    />
+                    /> -->
+
+                    <span class="p-float-label">
+                        <InputText id="label" class="kn-material-input" type="text" maxLength="40" v-model="v$.dataset.sourceDatasetLabel.$model" disabled />
+                        <label for="label" class="kn-material-input-label"> {{ $t('common.sourceDataset') }} * </label>
+                    </span>
                 </div>
             </form>
             <div>

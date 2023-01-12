@@ -359,9 +359,11 @@ export default defineComponent({
                 await this.loadDataset()
                 if (this.qbe) {
                     this.qbe.datasetLabel = this.sourceDataset.label
-                    this.qbe.qbeJSONQuery = {
-                        catalogue: {
-                            queries: [this.getQbeJSONQuery(this.sourceDataset)]
+                    if (!this.qbe.qbeJSONQuery) {
+                        this.qbe.qbeJSONQuery = {
+                            catalogue: {
+                                queries: [this.getQbeJSONQuery(this.sourceDataset)]
+                            }
                         }
                     }
                 }
@@ -490,6 +492,7 @@ export default defineComponent({
             await this.loadEntities()
 
             if (this.sourceDataset) {
+                if (this.sourceDataset.dsTypeCd == 'Derived') await this.executeQBEQuery(false)
             } else if (!this.dataset?.dataSourceLabel) {
                 await this.executeQBEQuery(false)
             }
@@ -513,8 +516,10 @@ export default defineComponent({
                     })
                     .catch(() => {})
             } else if (this.sourceDataset) {
+                // Derived
+                let sourceDatasetLabel = this.sourceDataset.dsTypeCd !== 'Derived' ? this.sourceDataset.label : this.sourceDataset.sourceDatasetLabel
                 await this.$http
-                    .get(import.meta.env.VITE_QBE_PATH + `start-qbe?sourceDatasetLabel=${this.sourceDataset.label}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}`)
+                    .get(import.meta.env.VITE_QBE_PATH + `start-qbe?sourceDatasetLabel=${sourceDatasetLabel}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}`)
                     .then(() => {
                         this.qbeLoaded = true
                     })
@@ -1090,16 +1095,19 @@ export default defineComponent({
                             })
                             .catch(() => {})
                     }
-                    if (this.qbe?.dsTypeCd !== 'Derived') {
+
+                    // Insert - IN
+                    if (this.qbe?.dsTypeCd !== this.DERIVED_CONST) {
                         this.qbe.id = null
+                        this.qbe.name = this.qbe.name + ' ' + this.DERIVED_CONST
+                        this.qbe.label = this.qbe.label + ' ' + this.DERIVED_CONST
+                        this.qbe.sourceDatasetLabel = this.sourceDataset?.label
                     }
+                    // Insert - OUT
+
                     this.qbe.dsTypeCd = this.DERIVED_CONST
-                    this.qbe.name = this.qbe.label = this.qbe.name + ' ' + this.DERIVED_CONST
-
                     this.qbe.isPersisted = false
-
                     this.qbe.qbeDataSource = this.sourceDataset?.dataSource
-                    this.qbe.sourceDatasetLabel = this.sourceDataset?.label
                 }
                 this.savingDialogVisible = true
             }

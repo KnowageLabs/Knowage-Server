@@ -226,7 +226,7 @@ export default defineComponent({
             return () => this.$emit(event, this.document)
         },
         isOpenInQBEVisible(dataset: any) {
-            return dataset.pars?.length == 0 && (dataset.isPersisted || dataset.dsTypeCd == 'File' || dataset.dsTypeCd == 'Query' || dataset.dsTypeCd == 'Flat')
+            return dataset.pars?.length == 0 && ((dataset.isPersisted && dataset.dsTypeCd == 'File') || dataset.dsTypeCd == 'Query' || dataset.dsTypeCd == 'Flat')
         }
     }
 })

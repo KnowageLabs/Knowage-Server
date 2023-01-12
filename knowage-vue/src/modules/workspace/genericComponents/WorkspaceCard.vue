@@ -13,9 +13,7 @@
                 </div>
                 <div class="detail-buttons">
                     <template v-for="(button, index) of documentButtons" :key="index">
-                        <Button :id="button.id" v-if="button.visible" :icon="button.icon"
-                            class="p-mx-1 p-button-text p-button-rounded p-button-plain p-button-lg" @click="button.command" v-tooltip="$t(button.label)"
-                            :aria-label="$t(button.label)" />
+                        <Button :id="button.id" v-if="button.visible" :icon="button.icon" class="p-mx-1 p-button-text p-button-rounded p-button-plain p-button-lg" @click="button.command" v-tooltip="$t(button.label)" :aria-label="$t(button.label)" />
                     </template>
                 </div>
             </span>
@@ -228,7 +226,7 @@ export default defineComponent({
             }
         },
         isOpenInQBEVisible(dataset: any) {
-            return dataset.pars?.length == 0 && (dataset.isPersisted || dataset.dsTypeCd == 'File' || dataset.dsTypeCd == 'Query' || dataset.dsTypeCd == 'Flat')
+            return dataset.pars?.length == 0 && ((dataset.isPersisted && dataset.dsTypeCd == 'File') || dataset.dsTypeCd == 'Query' || dataset.dsTypeCd == 'Flat')
         }
     }
 })

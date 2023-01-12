@@ -201,7 +201,7 @@ export default defineComponent({
             return this.user.functionalities.indexOf('CkanIntegrationFunctionality') > -1
         },
         showQbeEditButton(): any {
-            return this.user.userId === this.selectedDataset.owner && (this.selectedDataset.dsTypeCd == 'Federated' || this.selectedDataset.dsTypeCd == 'Qbe' || this.selectedDataset.dsTypeCd == 'Derived')
+            return this.user.userId === this.selectedDataset.owner && (this.selectedDataset.dsTypeCd == 'Federated' || this.selectedDataset.dsTypeCd == 'Qbe')
         },
         datasetHasDrivers(): any {
             return this.selectedDataset.drivers && this.selectedDataset.length > 0
@@ -521,27 +521,30 @@ export default defineComponent({
             let tmp = [] as any
             tmp.push({ key: 0, label: this.$t('workspace.myModels.editDataset'), icon: 'fas fa-pen', command: this.editDataset, visible: this.isDatasetOwner && (this.selectedDataset.dsTypeCd == 'File' || this.selectedDataset.dsTypeCd == 'Prepared') })
             tmp.push({ key: 1, label: this.$t('workspace.myModels.editDataset'), icon: 'fas fa-pen', command: () => this.openDatasetInQBE(clickedDocument), visible: this.showQbeEditButton })
-            tmp.push({ key: 2, label: this.$t('workspace.myModels.openInQBE'), icon: 'fas fa-file-circle-question', command: () => this.openQBEUponDataset(clickedDocument), visible: this.isOpenInQBEVisible(clickedDocument) })
+
+            tmp.push({ key: 2, label: this.$t('workspace.myModels.editDataset'), icon: 'fas fa-pen', command: () => this.openQBEUponDataset(clickedDocument), visible: this.selectedDataset.dsTypeCd == 'Derived' })
+
+            tmp.push({ key: 3, label: this.$t('workspace.myModels.openInQBE'), icon: 'fas fa-file-circle-question', command: () => this.openQBEUponDataset(clickedDocument), visible: this.isOpenInQBEVisible(clickedDocument) })
 
             if (this.user?.functionalities.includes('DataPreparation')) {
-                tmp.push({ key: 3, label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: this.canLoadData && (this.selectedDataset.pars && this.selectedDataset.pars.length == 0) })
+                tmp.push({ key: 4, label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: this.canLoadData && (this.selectedDataset.pars && this.selectedDataset.pars.length == 0) })
             }
 
             tmp.push({
-                key: 4,
+                key: 5,
                 label: this.$t('common.export'),
                 icon: 'fa-solid fa-file-export',
                 visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File',
                 items: [
                     {
-                        key: 40, label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.prepareDatasetForExport(clickedDocument, 'xls'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' && this.datasetIsIterable
+                        key: 50, label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.prepareDatasetForExport(clickedDocument, 'xls'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' && this.datasetIsIterable
                     },
-                    { key: 41, label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: () => this.prepareDatasetForExport(clickedDocument, 'csv'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' },
+                    { key: 51, label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: () => this.prepareDatasetForExport(clickedDocument, 'csv'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' },
                 ]
             })
-            tmp.push({ key: 5, label: this.$t('workspace.myData.fileDownload'), icon: 'fas fa-download', command: () => this.downloadDatasetFile(clickedDocument), visible: this.selectedDataset.dsTypeCd == 'File' })
-            tmp.push({ key: 6, label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: () => this.shareDataset(), visible: this.canLoadData && this.isDatasetOwner && this.selectedDataset.dsTypeCd != 'Prepared' })
-            tmp.push({ key: 7, label: this.$t('workspace.myData.cloneDataset'), icon: 'fas fa-clone', command: () => this.cloneDataset(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd == 'Qbe' })
+            tmp.push({ key: 6, label: this.$t('workspace.myData.fileDownload'), icon: 'fas fa-download', command: () => this.downloadDatasetFile(clickedDocument), visible: this.selectedDataset.dsTypeCd == 'File' })
+            tmp.push({ key: 7, label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: () => this.shareDataset(), visible: this.canLoadData && this.isDatasetOwner && this.selectedDataset.dsTypeCd != 'Prepared' })
+            tmp.push({ key: 8, label: this.$t('workspace.myData.cloneDataset'), icon: 'fas fa-clone', command: () => this.cloneDataset(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd == 'Qbe' })
             tmp.push({ key: 100, label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner })
 
             tmp = tmp.sort((a, b) => a.key < b.key)
@@ -891,7 +894,7 @@ export default defineComponent({
             setTimeout(this.events.push(message), 1500)
         },
         isOpenInQBEVisible(dataset: any) {
-            return dataset.pars?.length == 0 && (dataset.isPersisted || dataset.dsTypeCd == 'File' || dataset.dsTypeCd == 'Query' || dataset.dsTypeCd == 'Flat')
+            return dataset.pars?.length == 0 && ((dataset.isPersisted && dataset.dsTypeCd == 'File') || dataset.dsTypeCd == 'Query' || dataset.dsTypeCd == 'Flat')
         }
     },
     unmounted() {
