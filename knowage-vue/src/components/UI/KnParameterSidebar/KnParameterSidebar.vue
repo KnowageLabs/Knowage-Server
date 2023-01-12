@@ -355,7 +355,7 @@ export default defineComponent({
                 } else {
                     parameter.parameterValue[0] = { value: '', description: '' }
                 }
-                this.parameters.filterStatus.forEach((el: any) => this.updateDependency(el))
+                this.parameters.filterStatus.forEach((el: any) => this.updateDependency(el, true))
                 return
             }
 
@@ -528,10 +528,10 @@ export default defineComponent({
             this.updateVisualDependency(parameter)
             this.treeDialogVisible = false
         },
-        updateDependency(parameter: iParameter) {
+        updateDependency(parameter: iParameter, resetValue: boolean = false) {
             const role = this.sessionRole && this.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.sessionRole : this.role
             this.updateVisualDependency(parameter)
-            updateDataDependency(this.parameters, parameter, this.loading, this.document, role, this.$http, this.mode)
+            updateDataDependency(this.parameters, parameter, this.loading, this.document, role, this.$http, this.mode, resetValue)
             updateLovDependency(this.parameters, parameter, this.loading, this.document, role, this.$http, this.mode)
             this.$emit('parametersChanged', { parameters: this.parameters, document: this.propDocument })
         },
