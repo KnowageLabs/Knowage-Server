@@ -454,32 +454,21 @@ export default defineComponent({
         },
         async onCellKeyDown(ev) {
             const myCell = this.getFocusedCell(ev)
+            const [ctrlKey, cKey, vKey] = [17, 67, 86]
 
-            if (ev.event.which === 17) {
-                // 17 - ctrl
+            if (ev.event.which === ctrlKey) {
                 this.ctrlDown = true
-            } else if (ev.event.which == 67 && this.ctrlDown == true) {
-                // 67 - c
-                //TODO - copy styling here
-                window.navigator.clipboard
-                    .writeText(ev.value)
-                    // .then(() => {
-                    //     // myCell.cell.column.colDef.cellStyle = { border: '1px dashed #2196f3' }
-                    //     ev.api.refreshCells({ force: true, columns: [myCell.column], rowNodes: [myCell.row] })
-                    // })
-                    .catch((er) => console.log(er))
-            } else if (ev.event.which == 86 && this.ctrlDown == true) {
-                // 67 - v
+            } else if (ev.event.which == cKey && this.ctrlDown == true) {
+                window.navigator.clipboard.writeText(ev.value).catch((er) => console.log(er))
+            } else if (ev.event.which == vKey && this.ctrlDown == true) {
                 await window.navigator.clipboard.readText().then(async (value) => {
-                    //TODO - paste validation here
-                    // myCell.row.setDataValue(myCell.column, value)
                     await this.setCellValue(myCell, value)
                 })
             }
         },
         getFocusedCell(ev) {
             const focusedCell = ev.api.getFocusedCell()
-            const rowNode = ev.api.getRowNode(focusedCell.rowIndex)
+            const rowNode = ev.api.getRowNode(ev.data.uniqueId)
             const column = focusedCell.column.colDef.field
             return { cell: focusedCell, column: column, row: rowNode }
         },
@@ -493,8 +482,7 @@ export default defineComponent({
                         selectedCell.row.setDataValue(selectedCell.column, pasteValue)
                         break
                     case 'number':
-                        //TODO - NUMBER INPUT VALIDAITOn
-                        // console.log('IS NUMBER', pasteValue)
+                        this.setNumbericCellValue(selectedCell, pasteValue)
                         break
                     case 'dropdown':
                         await this.setDropdownCellValue(colDef, selectedCell, pasteValue)
@@ -504,7 +492,18 @@ export default defineComponent({
                 }
             }
         },
-        async setDropdownCellValue(colDef: any, selectedCell: any, pasteValue: string) {
+        setNumbericCellValue(selectedCell: any, pasteValue: any) {
+            if (!isNaN(pasteValue)) {
+                selectedCell.row.setDataValue(selectedCell.column, pasteValue)
+            } else {
+                console.log(
+                    !isNaN(pasteValue) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+                        !isNaN(parseFloat(pasteValue))
+                ) // ...and ensure strings of whitespace fail
+                this.setCannotPasteWarning('nan')
+            }
+        },
+        async setDropdownCellValue(colDef: any, selectedCell: any, pasteValue: any) {
             await this.addColumnOptions({
                 column: colDef,
                 row: selectedCell.row.data
@@ -548,6 +547,9 @@ export default defineComponent({
                     break
                 case 'temporal':
                     message = this.$t('documentExecution.registry.copyPasteValidationErrors.temporal')
+                    break
+                case 'nan':
+                    message = 'NOT A NUMBER'
                     break
             }
             this.setInfo({ title: this.$t('common.error.generic'), msg: message })
