@@ -25,7 +25,7 @@ export function getInputStep(dataType: string) {
 export const numberFormatRegex = '^(####|#\.###|#\,###){1}([,.]?)(#*)$'
 
 export const formatNumber = (column: any) => {
-    //console.log(">>>>>>> FORMAT NUMBER COLUMN: ", column)
+    console.log(">>>>>>> FORMAT NUMBER COLUMN: ", column)
     if (!column.format) return null
 
     const result = column.format.trim().match(numberFormatRegex)

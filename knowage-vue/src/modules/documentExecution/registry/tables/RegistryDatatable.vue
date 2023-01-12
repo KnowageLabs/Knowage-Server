@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType, reactive, onMounted, ref } from 'vue'
-import { luxonFormatDate, formatDateWithLocale, formatNumberWithLocale, localeDate, primeVueDate } from '@/helpers/commons/localeHelper'
+import { luxonFormatDate, formatDateWithLocale, formatNumberWithLocale, localeDate, primeVueDate, getLocale } from '@/helpers/commons/localeHelper'
 import { setInputDataType, numberFormatRegex, formatNumber } from '@/helpers/commons/tableHelpers'
 import { AxiosResponse } from 'axios'
 import { mapActions } from 'pinia'
@@ -210,6 +210,8 @@ export default defineComponent({
             }
         },
         addColumnFormattingProps(el: any) {
+            let locale = getLocale()
+            locale = locale ? locale.replace('_', '-') : ''
             // TODO - Formatting logic for dates, not working when editing date
             if (el.columnInfo?.type === 'date') {
                 el.valueFormatter = (params) => {
@@ -220,13 +222,10 @@ export default defineComponent({
                     this.getFormattedDateTime(params.value, { dateStyle: 'short', timeStyle: 'medium' }, true)
                 }
             } else if (['int', 'float', 'decimal', 'long'].includes(el.columnInfo.type)) {
-                //console.log('>>>>>>>>> el: ', el)
                 el.valueFormatter = (params: any) => {
-                    // const configuration = formatNumber(el)
-                    //console.log('>>>>>>>> PARAMS: ', params)
-                    // console.log('>>>>>>>> configuration: ', configuration)
-                    // console.log('>>>>>>>> FORMATTED PARAMS: ', params)
-                    return params.value
+                    let configuration = { useGrouping: false, minFractionDigits: 0, maxFractionDigits: 0 } as { useGrouping: boolean; minFractionDigits: number; maxFractionDigits: number } | null
+                    if (el.columnInfo.type !== 'int') configuration = formatNumber(el)
+                    return Intl.NumberFormat(locale, { useGrouping: configuration?.useGrouping, minimumFractionDigits: configuration?.minFractionDigits, maximumFractionDigits: configuration?.maxFractionDigits ?? 2 }).format(params.value)
                 }
             }
         },

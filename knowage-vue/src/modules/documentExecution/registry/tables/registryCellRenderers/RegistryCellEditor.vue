@@ -131,7 +131,6 @@ export default defineComponent({
             }
         },
         formatNumberConfiguration() {
-            console.log('>>>>>>>>>> LOADED COLUMN: ', this.column)
             if (this.column?.columnInfo?.type === 'int') {
                 this.useGrouping = false
                 this.minFractionDigits = 0
