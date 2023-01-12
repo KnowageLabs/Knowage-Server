@@ -78,8 +78,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { luxonFormatDate, formatDateWithLocale, formatNumberWithLocale, localeDate, primeVueDate } from '@/helpers/commons/localeHelper'
-import { setInputDataType, numberFormatRegex } from '@/helpers/commons/tableHelpers'
+import { luxonFormatDate, formatDateWithLocale, localeDate, primeVueDate } from '@/helpers/commons/localeHelper'
+import { setInputDataType, formatRegistryNumber } from '@/helpers/commons/tableHelpers'
 import { AxiosResponse } from 'axios'
 import Checkbox from 'primevue/checkbox'
 import Column from 'primevue/column'
@@ -280,9 +280,6 @@ export default defineComponent({
         getFormattedDateTime(date: any, format?: any, keepNull?: boolean) {
             return formatDateWithLocale(date, format, keepNull)
         },
-        getFormattedNumber(number: number) {
-            return formatNumberWithLocale(number, undefined, null)
-        },
         async addColumnOptions(payload: any) {
             const column = payload.column
             const row = payload.row
@@ -392,8 +389,9 @@ export default defineComponent({
         showDefaultNumberFormatIcon(column: any) {
             if (!column || !column.columnInfo || !column.format) return false
             const inputType = setInputDataType(column.columnInfo.type)
-            const temp = column.format.trim().match(numberFormatRegex)
-            return inputType === 'number' && !temp
+            if (inputType !== 'number') return false
+            const configuration = formatRegistryNumber(column)
+            return !configuration || (column.columnInfo.type === 'int' && !['####', '#,###', '#.###'].includes(column.format))
         },
         onSort(event: any) {
             this.multiSortMeta = event.multiSortMeta

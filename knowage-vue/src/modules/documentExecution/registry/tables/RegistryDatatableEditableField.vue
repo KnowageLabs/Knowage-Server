@@ -46,7 +46,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { setInputDataType, getInputStep, formatNumber } from '@/helpers/commons/tableHelpers'
+import { setInputDataType, getInputStep, formatRegistryNumber } from '@/helpers/commons/tableHelpers'
 import { formatDate, getLocale } from '@/helpers/commons/localeHelper'
 import { luxonFormatDate, primeVueDate } from '@/helpers/commons/localeHelper'
 import Calendar from 'primevue/calendar'
@@ -111,13 +111,7 @@ export default defineComponent({
             }
         },
         formatNumberConfiguration() {
-            if (this.column?.columnInfo?.type === 'int') {
-                this.useGrouping = false
-                this.minFractionDigits = 0
-                this.maxFractionDigits = 0
-                return
-            }
-            const configuration = formatNumber(this.column)
+            const configuration = formatRegistryNumber(this.column)
             if (configuration) {
                 this.useGrouping = configuration.useGrouping
                 this.minFractionDigits = configuration.minFractionDigits
