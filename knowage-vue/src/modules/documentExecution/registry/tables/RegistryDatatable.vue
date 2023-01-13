@@ -27,6 +27,7 @@ import CellEditor from './registryCellRenderers/RegistryCellEditor.vue'
 import HeaderRenderer from './registryCellRenderers/RegistryHeaderRenderer.vue'
 import store from '../../../../App.store'
 import cryptoRandomString from 'crypto-random-string'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'registry-datatable',
