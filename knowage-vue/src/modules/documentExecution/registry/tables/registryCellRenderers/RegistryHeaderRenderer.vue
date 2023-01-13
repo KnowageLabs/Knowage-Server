@@ -16,10 +16,6 @@ export default defineComponent({
             type: Object
         }
     },
-    created() {
-        console.log(this.params)
-    },
-    computed: {},
     data() {
         return {}
     },
