@@ -1,7 +1,6 @@
 <template>
     <div id="registry-gric-container" class="kn-height-full p-d-flex p-flex-column">
         <div class="registry-grid-toolbar">
-            <Button icon="fas fa-terminal" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.addRow')" data-test="new-row-button" @click="logStuff" />
             <Button icon="fas fa-plus" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.addRow')" data-test="new-row-button" @click="addNewRow" />
             <Button icon="fas fa-clone" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.cloneRows')" @click="cloneRows" />
             <Button icon="fas fa-trash" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.deleteRows')" @click="rowsDeleteConfirm()" />
@@ -304,7 +303,6 @@ export default defineComponent({
         loadRows() {
             this.rows = this.propRows
             this.gridApi?.setRowData(this.rows)
-            // console.log('PROP ROWS -----------------', this.rows)
         },
         getRowId(params) {
             return params.data.uniqueId
@@ -500,10 +498,7 @@ export default defineComponent({
             if (!isNaN(pasteValue)) {
                 selectedCell.row.setDataValue(selectedCell.column, pasteValue)
             } else {
-                console.log(
-                    !isNaN(pasteValue) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
-                        !isNaN(parseFloat(pasteValue)) // ...and ensure strings of whitespace fail
-                )
+                // console.log(!isNaN(pasteValue) && !isNaN(parseFloat(pasteValue)))
                 this.setCannotPasteWarning('nan')
             }
         },
@@ -570,13 +565,9 @@ export default defineComponent({
             if (params.oldValue !== params.newValue) {
                 if (params.data.isEdited) {
                     params.data.isEdited.push(params.colDef.field)
-                } else params.data.isEdited = [params.colDef.field] // set the flags
+                } else params.data.isEdited = [params.colDef.field]
             }
-            params.api.refreshCells() //causes styles to be reapplied based on cellClassRules
-        },
-
-        logStuff() {
-            console.log(this.rows)
+            params.api.refreshCells()
         }
     }
 })
