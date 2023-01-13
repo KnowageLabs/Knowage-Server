@@ -29,11 +29,11 @@ export default defineComponent({
             // } else this.params.context.componentParent.sortingChanged({ colId: this.params.colId, order: 'ASC' })
         },
         showDefaultNumberFormatIcon() {
-            if (!this.params.colDef || !this.params.colDef.columnInfo || !this.params.colDef.format) return false
-            const inputType = setInputDataType(this.params.colDef.columnInfo.type)
+            if (!this.params.column.colDef || !this.params.column.colDef.columnInfo || !this.params.column.colDef.format) return false
+            const inputType = setInputDataType(this.params.column.colDef.columnInfo.type)
             if (inputType !== 'number') return false
-            const configuration = formatRegistryNumber(this.params.colDef)
-            return !configuration || (this.params.colDef.columnInfo.type === 'int' && !['####', '#,###', '#.###'].includes(this.params.colDef.format))
+            const configuration = formatRegistryNumber(this.params.column.colDef)
+            return !configuration || (this.params.column.colDef.columnInfo.type === 'int' && !['####', '#,###', '#.###'].includes(this.params.column.colDef.format))
         }
     }
 })
