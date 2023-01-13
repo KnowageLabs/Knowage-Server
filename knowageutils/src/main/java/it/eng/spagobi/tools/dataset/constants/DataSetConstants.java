@@ -78,6 +78,7 @@ public class DataSetConstants {
 	public static final String QUERY_SCRIPT = "queryScript";
 	public static final String QUERY_SCRIPT_LANGUAGE = "queryScriptLanguage";
 	public static final String DATA_SOURCE = "dataSource";
+	public static final String SOURCE_DATA_SOURCE = "sourceDataSource";
 	public static final String WS_ADDRESS = "wsAddress";
 	public static final String WS_OPERATION = "wsOperation";
 	public static final String SCRIPT = "Script";

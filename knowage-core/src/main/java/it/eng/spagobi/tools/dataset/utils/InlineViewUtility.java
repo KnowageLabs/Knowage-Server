@@ -17,7 +17,12 @@
  */
 package it.eng.spagobi.tools.dataset.utils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import it.eng.qbe.dataset.DerivedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -28,6 +33,7 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.database.DataBaseFactory;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  *
@@ -55,16 +61,40 @@ public class InlineViewUtility {
 			QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
 			tableName = "(\n" + querableBehaviour.getStatement().replace(";", "") + "\n) " + subQueryAlias;
 		} else {
-			QbeDataSet qbeDataSet = (QbeDataSet) dataSet;
-			tableName = qbeDataSet.getStatement().getSqlQueryString();
-			IMetaData metadata = qbeDataSet.getMetadata();
-			for (int i = 0; i < metadata.getFieldCount(); i++) {
-				IFieldMetaData fieldMeta = metadata.getFieldMeta(i);
-				String alias = fieldMeta.getAlias();
-				int col = tableName.indexOf(" as col_");
-				int com = tableName.indexOf("_,") > -1 ? tableName.indexOf("_,") : tableName.indexOf("_ ");
-				tableName = tableName.replace(tableName.substring(col, com + 1), " as " + aliasDelimiter + alias + aliasDelimiter);
+			if (dataSet instanceof DerivedDataSet) {
+				String sqlQuery;
+				DerivedDataSet derivedDataSet = (DerivedDataSet) dataSet;
+				JSONObject sourceJsonConfig;
+				try {
+					sourceJsonConfig = new JSONObject(derivedDataSet.getConfiguration());
+//					if (sourceJsonConfig.has("sourceDatasetLabel") && StringUtils.isNotEmpty(sourceJsonConfig.getString("sourceDatasetLabel"))) {
+//						IDataSet sourceDataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(sourceJsonConfig.getString("sourceDatasetLabel"));
+//						derivedDataSet.setSourceDataset(sourceDataset);
+//
+//					}
+//					if (StringUtils.isEmpty(derivedDataSet.getJsonQuery())) {
+//						String jsonQuery = sourceJsonConfig.getString("jsonQuery");
+//						derivedDataSet.setJsonQuery(jsonQuery);
+//
+//					}
+					sqlQuery = sourceJsonConfig.getString("sqlQuery");
+				} catch (JSONException e) {
+					throw new SpagoBIRuntimeException("sourceJsonConfig no longer exists for " + derivedDataSet.getLabel() + " Dataset");
+				}
 
+				tableName = sqlQuery;
+			} else {
+				QbeDataSet qbeDataSet = (QbeDataSet) dataSet;
+				tableName = qbeDataSet.getStatement().getSqlQueryString();
+				IMetaData metadata = qbeDataSet.getMetadata();
+				for (int i = 0; i < metadata.getFieldCount(); i++) {
+					IFieldMetaData fieldMeta = metadata.getFieldMeta(i);
+					String alias = fieldMeta.getAlias();
+					int col = tableName.indexOf(" as col_");
+					int com = tableName.indexOf("_,") > -1 ? tableName.indexOf("_,") : tableName.indexOf("_ ");
+					tableName = tableName.replace(tableName.substring(col, com + 1), " as " + aliasDelimiter + alias + aliasDelimiter);
+
+				}
 			}
 			tableName = "(\n" + tableName + "\n) " + subQueryAlias;
 		}
@@ -73,6 +103,20 @@ public class InlineViewUtility {
 	}
 
 	public static IDataSource getDataSource(IDataSet dataset) {
+		if (dataset instanceof VersionedDataSet) {
+			VersionedDataSet vds = (VersionedDataSet) dataset;
+			if (vds.getWrappedDataset() instanceof DerivedDataSet) {
+				JSONObject sourceJsonConfig;
+				try {
+					sourceJsonConfig = new JSONObject(vds.getWrappedDataset().getConfiguration());
+					String datasourceLabel = sourceJsonConfig.getString("sourceDataSource");
+					return DAOFactory.getDataSourceDAO().findDataSourceByLabel(datasourceLabel);
+				} catch (JSONException e) {
+					throw new SpagoBIRuntimeException("sourceJsonConfig no longer exists for " + vds.getWrappedDataset().getLabel() + " Dataset");
+				}
+
+			}
+		}
 		return dataset.getDataSource();
 	}
 }
