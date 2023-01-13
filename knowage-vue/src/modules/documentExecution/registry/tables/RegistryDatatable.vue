@@ -75,6 +75,11 @@ export default defineComponent({
             ctrlDown: false
         }
     },
+    computed: {
+        getCurrentLocaleDefaultDateFormat() {
+            return (column) => (column.isEditable ? column.format || primeVueDate() : localeDate())
+        }
+    },
     watch: {
         propColumns() {
             this.loadColumnDefinitions()
@@ -97,24 +102,25 @@ export default defineComponent({
         this.context = { componentParent: this }
     },
     created() {
+        this.setEventListeners()
         this.loadColumnDefinitions()
         this.loadRows()
         this.loadConfiguration()
         this.loadPagination()
         this.loadWarningState()
         this.setupDatatableOptions()
-
-        emitter.on('refreshTableWithData', () => {
-            this.loadRows()
-        })
     },
-    computed: {
-        getCurrentLocaleDefaultDateFormat() {
-            return (column) => (column.isEditable ? column.format || primeVueDate() : localeDate())
-        }
+    unmounted() {
+        this.removeEventListeners()
     },
     methods: {
         ...mapActions(store, ['setInfo', 'setError']),
+        setEventListeners() {
+            emitter.on('refreshTableWithData', this.loadRows)
+        },
+        removeEventListeners() {
+            emitter.off('refreshTableWithData', this.loadRows)
+        },
         onGridReady(params) {
             this.gridApi = params.api
             this.columnApi = params.columnApi
