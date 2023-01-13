@@ -23,7 +23,6 @@
                     :transformationDataset="transformationDataset"
                     :scriptTypes="scriptTypes"
                     :dataSources="dataSources"
-                    :qbeDatasetsForDerived="qbeDatasetsForDerived"
                     :businessModels="businessModels"
                     :pythonEnvironments="pythonEnvironments"
                     :rEnvironments="rEnvironments"
@@ -75,8 +74,7 @@ export default defineComponent({
             rEnvironments: [] as any,
             metaSourceResource: [] as any,
             tags: [] as any,
-            datasetToCloneId: null,
-            qbeDatasetsForDerived: [] as any
+            datasetToCloneId: null
         }
     },
     setup() {
@@ -102,23 +100,18 @@ export default defineComponent({
             return this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=${type}`)
         },
         async getDomainData() {
-            this.getDomainByType('DS_SCOPE').then((response: AxiosResponse<any>) => (this.scopeTypes = response.data))
-            this.getDomainByType('DATASET_CATEGORY').then((response: AxiosResponse<any>) => (this.categoryTypes = response.data))
-            this.getDomainByType('DATA_SET_TYPE').then(
-                (response: AxiosResponse<any>) =>
-                    (this.datasetTypes = response.data.filter((cd) => {
-                        return cd.VALUE_CD != 'Custom' && cd.VALUE_CD != 'Federated'
-                    }))
-            )
-            this.getDomainByType('TRANSFORMER_TYPE').then((response: AxiosResponse<any>) => (this.transformationDataset = response.data[0]))
-            this.getDomainByType('SCRIPT_TYPE').then((response: AxiosResponse<any>) => (this.scriptTypes = response.data))
+            await this.getDomainByType('DS_SCOPE').then((response: AxiosResponse<any>) => (this.scopeTypes = response.data))
+            await this.getDomainByType('DATASET_CATEGORY').then((response: AxiosResponse<any>) => (this.categoryTypes = response.data))
+            await this.getDomainByType('DATA_SET_TYPE').then((response: AxiosResponse<any>) => {
+                this.datasetTypes = response.data.filter((cd) => {
+                    return cd.VALUE_CD != 'Custom' && cd.VALUE_CD != 'Federated'
+                })
+            })
+            await this.getDomainByType('TRANSFORMER_TYPE').then((response: AxiosResponse<any>) => (this.transformationDataset = response.data[0]))
+            await this.getDomainByType('SCRIPT_TYPE').then((response: AxiosResponse<any>) => (this.scriptTypes = response.data))
         },
         async getDatasources() {
             this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasources`).then((response: AxiosResponse<any>) => (this.dataSources = response.data))
-        },
-        async getQbeDatasetsForDerived() {
-            //TODO - Implement BE service
-            this.qbeDatasetsForDerived = this.listOfDatasets.filter((dataset) => dataset.dsTypeCd !== 'Derived' && dataset.pars?.length == 0 && ((dataset.isPersisted && dataset.dsTypeCd == 'File') || dataset.dsTypeCd == 'Query' || dataset.dsTypeCd == 'Flat'))
         },
         async getBusinessModels() {
             this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/businessmodels`).then((response: AxiosResponse<any>) => (this.businessModels = response.data))
@@ -145,7 +138,6 @@ export default defineComponent({
             await this.getBusinessModels()
             await this.getTags()
             await this.getDatasets()
-            await this.getQbeDatasetsForDerived()
         },
         //#endregion ================================================================================================
 
@@ -207,11 +199,13 @@ export default defineComponent({
         onCreate(event) {
             this.touched = false
             this.getDatasets()
+            this.getDomainData()
             this.$router.push(`/dataset-management/${event.data.id}`)
         },
         onUpdate() {
             this.touched = false
             this.getDatasets()
+            this.getDomainData()
         }
     }
 })

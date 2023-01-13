@@ -11,7 +11,7 @@
                             id="scope"
                             class="kn-material-input"
                             :style="typeTabDescriptor.style.maxWidth"
-                            :options="datasetTypes"
+                            :options="getAllowed"
                             optionLabel="VALUE_CD"
                             optionValue="VALUE_CD"
                             v-model="v$.dataset.dsTypeCd.$model"
@@ -20,6 +20,7 @@
                             }"
                             @before-show="v$.dataset.dsTypeCd.$touch()"
                             @change="handleTypeChange"
+                            :disabled="dataset.dsTypeCd == 'Prepared' || dataset.dsTypeCd == 'Derived'"
                         />
                         <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.selectDatasetType') }} * </label>
                     </span>
@@ -38,7 +39,7 @@
     <JavaDataset v-else-if="dataset.dsTypeCd == 'Java Class'" :selectedDataset="selectedDataset" />
     <ScriptDataset v-else-if="dataset.dsTypeCd == 'Script'" :selectedDataset="selectedDataset" :scriptTypes="scriptTypes" :activeTab="activeTab" />
     <QbeDataset v-else-if="dataset.dsTypeCd == 'Qbe' || dataset.dsTypeCd == 'Federated'" :selectedDataset="selectedDataset" :businessModels="businessModels" :dataSources="dataSources" :parentValid="parentValid" />
-    <DerivedDataset v-else-if="dataset.dsTypeCd == 'Derived'" :selectedDataset="selectedDataset" :qbeDatasets="qbeDatasetsForDerived" :parentValid="parentValid" />
+    <DerivedDataset v-else-if="dataset.dsTypeCd == 'Derived'" :selectedDataset="selectedDataset" :parentValid="parentValid" />
     <FlatDataset v-else-if="dataset.dsTypeCd == 'Flat'" :selectedDataset="selectedDataset" :dataSources="dataSources" />
     <CkanDataset v-else-if="dataset.dsTypeCd == 'Ckan'" :selectedDataset="selectedDataset" />
     <RestDataset v-else-if="dataset.dsTypeCd == 'REST'" :selectedDataset="selectedDataset" />
@@ -78,14 +79,23 @@ export default defineComponent({
         selectedDataset: { type: Object as any },
         datasetTypes: { type: Array as any },
         dataSources: { type: Array as any },
-        qbeDatasetsForDerived: { type: Array as any },
         businessModels: { type: Array as any },
         scriptTypes: { type: Array as any },
         pythonEnvironments: { type: Array as any },
         rEnvironments: { type: Array as any },
         activeTab: { type: Number as any }
     },
-    computed: {},
+    computed: {
+        getAllowed() {
+            return this.datasetTypes.filter((cd) => {
+                if (this.selectedDataset.dsTypeCd == 'Derived' || this.selectedDataset.dsTypeCd == 'Prepared') {
+                    return cd.VALUE_CD == this.selectedDataset.dsTypeCd
+                } else {
+                    return cd.VALUE_CD != 'Derived' && cd.VALUE_CD != 'Prepared'
+                }
+            })
+        }
+    },
     emits: ['touched', 'fileUploaded', 'qbeSaved', 'queryEdited'],
     data() {
         return {

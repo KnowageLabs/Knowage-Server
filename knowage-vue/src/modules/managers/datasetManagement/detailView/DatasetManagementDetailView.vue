@@ -36,7 +36,6 @@
                     :selectedDataset="selectedDataset"
                     :datasetTypes="filteredDatasetTypes"
                     :dataSources="dataSources"
-                    :qbeDatasetsForDerived="qbeDatasetsForDerived"
                     :businessModels="businessModels"
                     :scriptTypes="scriptTypes"
                     :parentValid="v$.$invalid"
@@ -116,7 +115,6 @@ export default defineComponent({
         transformationDataset: { type: Object as any, required: true },
         scriptTypes: { type: Array as any, required: true },
         dataSources: { type: Array as any, required: true },
-        qbeDatasetsForDerived: { type: Array as any, required: true },
         businessModels: { type: Array as any, required: true },
         pythonEnvironments: { type: Array as any, required: true },
         rEnvironments: { type: Array as any, required: true },
@@ -207,14 +205,11 @@ export default defineComponent({
                 await this.getSelectedDataset()
                 await this.getSelectedDatasetVersions()
                 this.insertCurrentVersion()
-                this.filteredDatasetTypes = this.datasetTypes
             } else {
                 this.selectedDataset = { ...detailViewDescriptor.newDataset }
                 this.selectedDatasetVersions = []
-                this.filteredDatasetTypes = this.datasetTypes.filter((cd) => {
-                    return cd.VALUE_CD != 'Prepared' && cd.VALUE_CD != 'Derived'
-                })
             }
+            this.filteredDatasetTypes = this.datasetTypes
         },
         insertCurrentVersion() {
             if (this.selectedDatasetVersions.length === 0) {
@@ -509,33 +504,36 @@ export default defineComponent({
         toggleMenu(event: Event, dataset: any): void {
             this.menuButtons = [] as any
 
-            if (dataset.dsTypeCd == 'Prepared') {
+            if (this.isOpenInQBEVisible(this.selectedDataset)) {
                 this.menuButtons.push({
+                    key: 1,
+                    label: this.$t('workspace.myModels.openInQBE'),
+                    icon: 'fas fa-file-circle-question',
+                    command: () => {
+                        this.openDatasetInQbe()
+                    }
+                })
+            }
+
+            if (dataset.pars && dataset.pars?.length == 0) {
+                this.menuButtons.push({
+                    key: 2,
                     label: this.$t('managers.datasetManagement.openDP'),
                     icon: 'fas fa-cogs',
                     command: () => {
                         this.showDataPreparation = true
                     }
                 })
+            }
+            if (dataset.dsTypeCd == 'Prepared') {
                 this.menuButtons.push({
+                    key: 3,
                     label: this.$t('managers.datasetManagement.monitoring'),
                     icon: 'pi pi-chart-line',
                     command: () => {
                         this.showMonitoringDialog = true
                     }
                 })
-            }
-
-            if (this.isOpenInQBEVisible(this.selectedDataset)) {
-                this.menuButtons = [
-                    {
-                        label: this.$t('workspace.myModels.openInQBE'),
-                        icon: 'fas fa-file-circle-question',
-                        command: () => {
-                            this.openDatasetInQbe()
-                        }
-                    }
-                ]
             }
 
             // eslint-disable-next-line
