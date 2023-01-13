@@ -659,16 +659,18 @@ export default defineComponent({
                                 tempParam.parameterValue[0].value = new Date(tempParam.parameterValue[0].value)
                             }
                         }
-                        if (tempParam.selectionType === 'COMBOBOX') this.setCrossNavigationComboParameterDescription(tempParam)
+                        if (tempParam.selectionType === 'COMBOBOX') this.formatCrossNavigationComboParameterDescription(tempParam)
                     }
                 }
             })
         },
-        setCrossNavigationComboParameterDescription(tempParam: any) {
-            for (let i = 0; i < tempParam.parameterValue.length; i++) {
+        formatCrossNavigationComboParameterDescription(tempParam: any) {
+            for (let i = tempParam.parameterValue.length - 1; i >= 0; i--) {
                 if (tempParam.parameterValue[i].value) {
-                    const index = tempParam.data.findIndex((option: any) => option.value === tempParam.parameterValue[i].value)
-                    if (index !== -1) tempParam.parameterValue[i].description = tempParam.data[index].description
+                    const index = tempParam.data.findIndex((option: any) => option.value == tempParam.parameterValue[i].value)
+                    if (index !== -1) {
+                        tempParam.parameterValue[i] = { value: tempParam.data[index].value, description: tempParam.data[index].description }
+                    } else tempParam.parameterValue.splice(i, 1)
                 }
             }
         },
