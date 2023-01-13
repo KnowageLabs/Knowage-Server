@@ -738,7 +738,8 @@ export default defineComponent({
                 params: { document: null } as any,
                 url: documentUrl.split('?')[0]
             }
-            postObject.params.documentMode = this.$route.query.documentMode === 'edit' ? 'EDIT' : this.documentMode
+            if (this.$route.query.documentMode === 'edit') this.documentMode = 'EDIT'
+            postObject.params.documentMode = this.documentMode
             this.hiddenFormUrl = postObject.url
             const paramsFromUrl = documentUrl?.split('?')[1]?.split('&')
 
