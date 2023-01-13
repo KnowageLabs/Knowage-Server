@@ -137,7 +137,7 @@ export default defineComponent({
         }
     },
     created() {
-        this.()
+        this.setEventListeners()
         this.loadActiveSelections()
         this.loadInitialValues()
         this.loadActiveSelectionValue()
