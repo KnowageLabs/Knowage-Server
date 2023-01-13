@@ -38,6 +38,7 @@ import it.eng.qbe.datasource.configuration.DataSetDataSourceConfiguration;
 import it.eng.qbe.datasource.dataset.DataSetDataSource;
 import it.eng.qbe.datasource.dataset.DataSetDriver;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
+import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategyType;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.dataset.common.iterator.ResultSetIterator;
@@ -117,6 +118,11 @@ public class DerivedDataSet extends QbeDataSet {
 
 		return getDataSourceFromDataSet(dataSourceProperties, useCache);
 
+	}
+
+	@Override
+	public DatasetEvaluationStrategyType getEvaluationStrategy(boolean isNearRealtime) {
+		return DatasetEvaluationStrategyType.INLINE_VIEW;
 	}
 
 	@Override
