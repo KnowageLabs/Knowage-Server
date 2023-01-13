@@ -184,8 +184,8 @@ export default defineComponent({
             return null
         },
         onRowChanged(payload: any) {
-            console.log('onRowChanged', payload)
             this.params.context.componentParent.setRowEdited(payload)
+            this.params.api.refreshCells()
         },
         onDropdownChange(payload: any) {
             console.log('onDropdownChange', payload)
