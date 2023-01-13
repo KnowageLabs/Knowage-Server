@@ -25,13 +25,14 @@ import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
 import registryDescriptor from '../RegistryDescriptor.json'
 import RegistryDatatableWarningDialog from './RegistryDatatableWarningDialog.vue'
 import CellEditor from './registryCellRenderers/RegistryCellEditor.vue'
+import HeaderRenderer from './registryCellRenderers/RegistryHeaderRenderer.vue'
 import store from '../../../../App.store'
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'registry-datatable',
-    components: { RegistryDatatableWarningDialog, AgGridVue },
+    components: { RegistryDatatableWarningDialog, AgGridVue, HeaderRenderer },
     props: {
         propColumns: { type: Array },
         propRows: { type: Array, required: true },
@@ -194,6 +195,7 @@ export default defineComponent({
         },
         addColumnEditableProps(el: any) {
             if (el.editable) {
+                el.headerComponent = HeaderRenderer
                 el.cellEditor = CellEditor
                 el.cellEditorParams = {
                     comboColumnOptions: this.comboColumnOptions
@@ -572,13 +574,7 @@ export default defineComponent({
             }
             params.api.refreshCells() //causes styles to be reapplied based on cellClassRules
         },
-        showDefaultNumberFormatIcon(column: any) {
-            if (!column || !column.columnInfo || !column.format) return false
-            const inputType = setInputDataType(column.columnInfo.type)
-            if (inputType !== 'number') return false
-            const configuration = formatRegistryNumber(column)
-            return !configuration || (column.columnInfo.type === 'int' && !['####', '#,###', '#.###'].includes(column.format))
-        },
+
         logStuff() {
             console.log(this.rows)
         }
