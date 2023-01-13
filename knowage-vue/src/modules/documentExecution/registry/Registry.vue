@@ -149,7 +149,7 @@ export default defineComponent({
                 this.loadColumns()
                 this.loadColumnMap()
                 this.loadColumnsInfo()
-                this.loadRows()
+                this.loadRows(true)
                 this.getFilters()
                 this.createColumnWidthProperty()
                 emitter.emit('refreshTableWithData')
