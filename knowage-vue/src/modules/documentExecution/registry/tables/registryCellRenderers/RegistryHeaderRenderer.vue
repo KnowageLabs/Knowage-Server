@@ -1,6 +1,6 @@
 <template>
-    <div v-if="showDefaultNumberFormatIcon()" id="custom-header-container" class="p-d-flex p-flex-row">
-        <i class="pi pi-exclamation-triangle p-mr-1 p-mt-1" />
+    <div id="custom-header-container" class="p-d-flex p-flex-row">
+        <i v-if="showDefaultNumberFormatIcon()" class="pi pi-exclamation-triangle p-mr-1 p-mt-1" />
         <div class="custom-header-label" @click="onSortRequested">{{ params.displayName }}</div>
     </div>
 </template>
