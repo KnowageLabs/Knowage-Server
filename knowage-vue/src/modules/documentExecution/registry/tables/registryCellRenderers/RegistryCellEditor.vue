@@ -188,11 +188,9 @@ export default defineComponent({
             this.params.api.refreshCells()
         },
         onDropdownChange(payload: any) {
-            console.log('onDropdownChange', payload)
             this.params.context.componentParent.onDropdownChange(payload)
         },
         addColumnOptions(payload: any) {
-            console.log('addColumnOptions', payload)
             this.params.context.componentParent.addColumnOptions(payload)
         },
         getCellType(colDef) {

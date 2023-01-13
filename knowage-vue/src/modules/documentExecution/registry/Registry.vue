@@ -214,7 +214,7 @@ export default defineComponent({
                     this.formatPivotRows(el)
                 }
 
-                ;['id', 'isNew', 'edited', 'uniqueId'].forEach((property: string) => delete el[property])
+                ;['id', 'isNew', 'edited', 'uniqueId', 'isEdited'].forEach((property: string) => delete el[property])
             })
 
             const updatedRowsToIsoStrings = JSON.parse(JSON.stringify(this.updatedRows))
@@ -265,7 +265,6 @@ export default defineComponent({
                     if (this.isPivot) {
                         if (response.data.ids[0]) {
                             const index = this.rows.findIndex((el: any) => el.id === row.id)
-                            console.log('index found', index)
                             this.rows.splice(index, 1)
                             this.pagination.size--
                         }

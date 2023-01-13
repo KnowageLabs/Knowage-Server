@@ -561,11 +561,11 @@ export default defineComponent({
             if (colDef.columnInfo?.type === 'date' || colDef.columnInfo?.type === 'timestamp') return 'temporal'
         },
         onCellValueChanged(params) {
-            console.log('im changed', params)
             if (params.oldValue !== params.newValue) {
                 if (params.data.isEdited) {
                     params.data.isEdited.push(params.colDef.field)
                 } else params.data.isEdited = [params.colDef.field]
+                this.$emit('rowChanged', params.data)
             }
             params.api.refreshCells()
         }
