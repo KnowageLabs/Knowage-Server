@@ -271,7 +271,8 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 			IDataSource dataSource = jdbcDataProxy.getDataSource();
 			Assert.assertNotNull(dataSource, "Invalid datasource");
 			Connection connection = dataSource.getConnection();
-			Statement stmt = connection.createStatement();
+			Statement stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			connection.setAutoCommit(false); // PostgreSQL requires disabling auto-commit for setFetchSize to work
 			stmt.setFetchSize(5000);
 			ResultSet rs = (ResultSet) dataProxy.getData(dataReader, stmt);
 			DataIterator iterator = new ResultSetIterator(connection, stmt, rs);
