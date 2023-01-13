@@ -216,11 +216,11 @@ export default defineComponent({
             // TODO - Formatting logic for dates, not working when editing date
             if (el.columnInfo?.type === 'date') {
                 el.valueFormatter = (params) => {
-                    this.getFormattedDate(params.value, 'yyyy-MM-dd', this.getCurrentLocaleDefaultDateFormat(el))
+                    return this.getFormattedDate(params.value, 'yyyy-MM-dd', this.getCurrentLocaleDefaultDateFormat(el))
                 }
             } else if (el.columnInfo?.type === 'timestamp') {
                 el.valueFormatter = (params) => {
-                    this.getFormattedDateTime(params.value, { dateStyle: 'short', timeStyle: 'medium' }, true)
+                    return this.getFormattedDateTime(params.value, { dateStyle: 'short', timeStyle: 'medium' }, true)
                 }
             } else if (['int', 'float', 'decimal', 'long'].includes(el.columnInfo.type)) {
                 el.valueFormatter = (params: any) => {
