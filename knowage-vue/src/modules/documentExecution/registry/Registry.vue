@@ -214,9 +214,7 @@ export default defineComponent({
                     this.formatPivotRows(el)
                 }
 
-                delete el.id
-                delete el.isNew
-                delete el.edited
+                ;['id', 'isNew', 'edited', 'uniqueId'].forEach((property: string) => delete el[property])
             })
 
             const updatedRowsToIsoStrings = JSON.parse(JSON.stringify(this.updatedRows))
