@@ -1089,6 +1089,10 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 									}
 								}
 							}
+						}else{
+							if(!content.type && content.dataType === "date" && modalValue){
+									outputParameter[par] = modalValue
+							}
 						}
 					}
 

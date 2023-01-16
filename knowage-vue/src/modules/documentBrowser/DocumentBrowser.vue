@@ -60,13 +60,13 @@ export default defineComponent({
         }
     },
     watch: {
-        menuItemClickedTrigger() {
+        async menuItemClickedTrigger() {
             if (!this.selectedMenuItem) return
             if (this.selectedMenuItem.to === '/document-browser') {
                 this.selectedItem = null
                 this.activeIndex = 0
             } else if (this.selectedMenuItem.to && this.selectedMenuItem.to.includes('document-browser')) {
-                this.loadPage()
+                await this.loadPage()
             }
         }
     },
@@ -75,9 +75,9 @@ export default defineComponent({
     },
     methods: {
         async loadPage() {
-            window.addEventListener('message', (event) => {
-                if (event.data.type === 'saveCockpit' && this.$router.currentRoute.value.name === 'new-dashboard') {
-                    this.loadSavedCockpit(event.data.model)
+            window.addEventListener('message', async (event) => {
+                if (event.data.type === 'saveCockpit' && this.$router.currentRoute.value.name === 'new-cockpit') {
+                    await this.loadSavedCockpit(event.data.model)
                     this.documentSaved = event.data.model
                     this.documentSavedTrigger = !this.documentSavedTrigger
                 }
@@ -228,11 +228,12 @@ export default defineComponent({
             const index = this.iFrameContainers.findIndex((iframe: any) => iframe.item?.routerId === this.selectedItem?.item.routerId)
             if (index !== -1) this.iFrameContainers.splice(index, 1)
         },
-        loadSavedCockpit(cockpit: any) {
+        async loadSavedCockpit(cockpit: any) {
             this.closeIframe()
+            await this.$router.push(`/document-browser/document-composite/${cockpit.DOCUMENT_LABEL}?documentMode=edit`)
+            setTimeout(() => {}, 2000)
             this.selectedItem = { item: { ...cockpit, routerId: cryptoRandomString({ length: 16, type: 'base64' }), name: cockpit.DOCUMENT_NAME, label: cockpit.DOCUMENT_LABEL, showMode: 'execute' }, mode: 'execute' }
             this.tabs[this.activeIndex - 1] = this.selectedItem
-            this.$router.push(`/document-browser/document-composite/${cockpit.DOCUMENT_LABEL}`)
         },
         getTabName(tab: any) {
             if (tab.item && tab.item.name) {

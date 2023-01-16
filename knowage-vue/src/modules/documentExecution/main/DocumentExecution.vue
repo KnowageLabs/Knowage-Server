@@ -652,22 +652,26 @@ export default defineComponent({
                                 return { value: value, description: '' }
                             })
                         } else {
+                            if (tempParam.parameterValue.length === 0) tempParam.parameterValue.push({ value: '', description: '' })
                             tempParam.parameterValue[0].value = Array.isArray(this.document.navigationParams[key]) && this.document.navigationParams[key][0] ? this.document.navigationParams[key][0] : this.document.navigationParams[key]
+                            if (tempParam.parameterValue[0].value === '') tempParam.parameterValue = []
                             if (this.document.navigationParams[key + '_field_visible_description']) this.document.navigationParams[key + '_field_visible_description'] = tempParam.parameterValue[0].description
                             if (tempParam.type === 'DATE' && tempParam.parameterValue[0] && tempParam.parameterValue[0].value) {
                                 tempParam.parameterValue[0].value = new Date(tempParam.parameterValue[0].value)
                             }
                         }
-                        if (tempParam.selectionType === 'COMBOBOX') this.setCrossNavigationComboParameterDescription(tempParam)
+                        if (tempParam.selectionType === 'COMBOBOX') this.formatCrossNavigationComboParameterDescription(tempParam)
                     }
                 }
             })
         },
-        setCrossNavigationComboParameterDescription(tempParam: any) {
-            for (let i = 0; i < tempParam.parameterValue.length; i++) {
+        formatCrossNavigationComboParameterDescription(tempParam: any) {
+            for (let i = tempParam.parameterValue.length - 1; i >= 0; i--) {
                 if (tempParam.parameterValue[i].value) {
-                    const index = tempParam.data.findIndex((option: any) => option.value === tempParam.parameterValue[i].value)
-                    if (index !== -1) tempParam.parameterValue[i].description = tempParam.data[index].description
+                    const index = tempParam.data.findIndex((option: any) => option.value == tempParam.parameterValue[i].value)
+                    if (index !== -1) {
+                        tempParam.parameterValue[i] = { value: tempParam.data[index].value, description: tempParam.data[index].description }
+                    } else tempParam.parameterValue.splice(i, 1)
                 }
             }
         },
@@ -737,6 +741,7 @@ export default defineComponent({
                 params: { document: null } as any,
                 url: documentUrl.split('?')[0]
             }
+            if (this.$route.query.documentMode === 'edit') this.documentMode = 'EDIT'
             postObject.params.documentMode = this.documentMode
             this.hiddenFormUrl = postObject.url
             const paramsFromUrl = documentUrl?.split('?')[1]?.split('&')
@@ -1065,6 +1070,8 @@ export default defineComponent({
             await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${this.document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
             this.loading = false
 
+            if (temp.length === 0) return
+
             const crossTarget = this.findCrossTargetByCrossName(angularData, temp)
 
             if (!crossTarget && temp.length > 1) {
@@ -1250,7 +1257,7 @@ export default defineComponent({
             const formattedParametersKeys = formattedParameters ? Object.keys(formattedParameters) : []
             if (navigationParamsKeys.length > 0 && formattedParametersKeys.length > 0) {
                 for (let i = 0; i < navigationParamsKeys.length; i++) {
-                    const index = formattedParametersKeys.findIndex((key: string) => key === navigationParams[navigationParamsKeys[i]].value.label)
+                    const index = formattedParametersKeys.findIndex((key: string) => key === navigationParams[navigationParamsKeys[i]].value.label && navigationParams[navigationParamsKeys[i]].value.isInput)
                     if (index !== -1) {
                         formatedParams[navigationParamsKeys[i]] = formattedParameters[formattedParametersKeys[index]]
                         formatedParams[navigationParamsKeys[i] + '_field_visible_description'] = formattedParameters[formattedParametersKeys[index] + '_field_visible_description'] ? formattedParameters[formattedParametersKeys[index] + '_field_visible_description'] : ''
