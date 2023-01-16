@@ -654,6 +654,7 @@ export default defineComponent({
                         } else {
                             if (tempParam.parameterValue.length === 0) tempParam.parameterValue.push({ value: '', description: '' })
                             tempParam.parameterValue[0].value = Array.isArray(this.document.navigationParams[key]) && this.document.navigationParams[key][0] ? this.document.navigationParams[key][0] : this.document.navigationParams[key]
+                            if (tempParam.parameterValue[0].value === '') tempParam.parameterValue = []
                             if (this.document.navigationParams[key + '_field_visible_description']) this.document.navigationParams[key + '_field_visible_description'] = tempParam.parameterValue[0].description
                             if (tempParam.type === 'DATE' && tempParam.parameterValue[0] && tempParam.parameterValue[0].value) {
                                 tempParam.parameterValue[0].value = new Date(tempParam.parameterValue[0].value)
