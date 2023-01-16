@@ -5,6 +5,7 @@
         "buttonsContainer": {
             "flex-grow": 0
         },
+        "disabledCellColor": "rgba(231, 231, 231, 0.8)",
         "fieldsContainer": {
             "flex-grow": 1
         },
