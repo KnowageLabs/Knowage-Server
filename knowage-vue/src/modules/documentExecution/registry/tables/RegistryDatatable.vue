@@ -175,8 +175,7 @@ export default defineComponent({
                     pinned: 'left',
                     isVisible: true,
                     isEditable: false,
-                    sortable: false,
-                    suppressSorting: true,
+                    suppressMovable: true,
                     resizable: false,
                     columnInfo: { type: 'int' },
                     cellStyle: (params) => {
