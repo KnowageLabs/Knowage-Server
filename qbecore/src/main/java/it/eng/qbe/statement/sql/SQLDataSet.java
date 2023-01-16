@@ -27,9 +27,11 @@ import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
 import it.eng.spagobi.tools.dataset.bo.JDBCPostgreSQLDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -161,6 +163,25 @@ public class SQLDataSet extends AbstractQbeDataSet {
 		DataSetDataSource ds = (DataSetDataSource) statement.getDataSource();
 		IDataSet toReturn = ds.getRootEntities().get(0);
 		return toReturn;
+	}
+
+	@Override
+	public boolean isIterable() {
+		return true;
+	}
+
+	@Override
+	public DataIterator iterator() {
+		logger.debug("IN");
+		try {
+
+			JDBCDataSet jdbcDataset = (JDBCDataSet) JDBCDatasetFactory.getJDBCDataSet(this.getDataSource());
+			jdbcDataset.setDataSource(this.getDataSource());
+			jdbcDataset.setQuery(statement.getQueryString());
+			return jdbcDataset.iterator();
+		} finally {
+			logger.debug("OUT");
+		}
 	}
 
 }

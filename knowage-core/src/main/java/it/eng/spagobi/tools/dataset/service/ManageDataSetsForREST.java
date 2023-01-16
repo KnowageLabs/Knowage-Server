@@ -347,6 +347,11 @@ public class ManageDataSetsForREST {
 								JSONObject dsJsonConfig = new JSONObject(ds.getConfiguration());
 								if (sourceDataset instanceof VersionedDataSet) {
 									VersionedDataSet vds = (VersionedDataSet) sourceDataset;
+									if (!(vds.getWrappedDataset() instanceof FileDataSet)) {
+										dsJsonConfig.put(DataSetConstants.SOURCE_DATA_SOURCE, sourceDataset.getDataSource().getLabel());
+									} else {
+										dsJsonConfig.put(DataSetConstants.SOURCE_DATA_SOURCE, sourceDataset.getDataSourceForReading().getLabel());
+									}
 									if (vds.getWrappedDataset() instanceof AbstractJDBCDataset) {
 										String sqlQuery = ((DerivedDataSet) ds).getStatement().getQuerySQLString(sourceJsonConfig.getString("Query"));
 										dsJsonConfig.put("sqlQuery", sqlQuery);
@@ -357,7 +362,6 @@ public class ManageDataSetsForREST {
 									}
 								}
 								dsJsonConfig.put(DataSetConstants.SOURCE_DS_LABEL, sourceDatasetLabel);
-								dsJsonConfig.put(DataSetConstants.SOURCE_DATA_SOURCE, sourceDataset.getDataSource().getLabel());
 								ds.setConfiguration(dsJsonConfig.toString());
 							} catch (Exception e) {
 								throw new SpagoBIServiceException(SERVICE_NAME, "Cannot retrieve source dataset information", e);
