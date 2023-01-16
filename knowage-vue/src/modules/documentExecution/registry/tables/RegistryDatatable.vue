@@ -25,13 +25,13 @@ import registryDescriptor from '../RegistryDescriptor.json'
 import RegistryDatatableWarningDialog from './RegistryDatatableWarningDialog.vue'
 import CellEditor from './registryCellRenderers/RegistryCellEditor.vue'
 import HeaderRenderer from './registryCellRenderers/RegistryHeaderRenderer.vue'
+import TooltipRenderer from './registryCellRenderers/RegistryTooltipRenderer.vue'
 import store from '../../../../App.store'
 import cryptoRandomString from 'crypto-random-string'
-import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'registry-datatable',
-    components: { RegistryDatatableWarningDialog, AgGridVue, HeaderRenderer },
+    components: { RegistryDatatableWarningDialog, AgGridVue, HeaderRenderer, TooltipRenderer },
     props: {
         propColumns: { type: Array },
         propRows: { type: Array, required: true },
@@ -154,7 +154,6 @@ export default defineComponent({
                 suppressScrollOnNewData: true,
 
                 // EVENTS
-                onCellClicked: this.onCellClicked,
                 onCellKeyDown: this.onCellKeyDown,
                 onBodyScroll: this.onBodyScroll,
                 onSelectionChanged: this.onSelectionChanged,
@@ -176,9 +175,12 @@ export default defineComponent({
                     pinned: 'left',
                     isVisible: true,
                     isEditable: false,
+                    sortable: false,
+                    suppressSorting: true,
+                    resizable: false,
                     columnInfo: { type: 'int' },
                     cellStyle: (params) => {
-                        return { color: 'black', backgroundColor: 'rgba(231, 231, 231, 0.8)', opacity: 0.8 }
+                        return { color: 'black', backgroundColor: registryDescriptor.styles.disabledCellColor, opacity: 0.8 }
                     }
                 }
             ]
@@ -216,12 +218,13 @@ export default defineComponent({
                 el.cellRenderer = (params) => {
                     return `<i class="fas fa-${params.value ? 'check' : 'times'}"/>`
                 }
+                el.tooltipComponent = TooltipRenderer
+                el.tooltipField = el.field
             }
         },
         addColumnFormattingProps(el: any) {
             let locale = getLocale()
             locale = locale ? locale.replace('_', '-') : ''
-            // TODO - Formatting logic for dates, not working when editing date
             if (el.columnInfo?.type === 'date') {
                 el.valueFormatter = (params) => {
                     return this.getFormattedDate(params.value, 'yyyy-MM-dd', this.getCurrentLocaleDefaultDateFormat(el))
@@ -422,6 +425,7 @@ export default defineComponent({
             this.dependentColumns.forEach((el: any) => (this.selectedRow[el.field] = ''))
             this.selectedRow.edited = true
             this.$emit('rowChanged', this.selectedRow)
+            this.gridApi.refreshCells()
         },
         setRowEdited(row: any) {
             row.edited = true
@@ -433,12 +437,6 @@ export default defineComponent({
                 var foundIndex = this.rows.findIndex((x) => x.id == id)
                 this.rows[foundIndex] = event.newData
             }
-        },
-        onCellClicked(event) {
-            // console.group()
-            // console.log('cell was clicked', event)
-            // // console.log(event.data.uniqueId)
-            // console.groupEnd()
         },
         onSelectionChanged() {
             this.selectedRows = this.gridApi.getSelectedRows()
@@ -504,7 +502,6 @@ export default defineComponent({
             if (!isNaN(pasteValue)) {
                 selectedCell.row.setDataValue(selectedCell.column, pasteValue)
             } else {
-                // console.log(!isNaN(pasteValue) && !isNaN(parseFloat(pasteValue)))
                 this.setCannotPasteWarning('nan')
             }
         },
@@ -517,6 +514,7 @@ export default defineComponent({
                 this.setCannotPasteWarning('dropdown')
             } else {
                 selectedCell.row.setDataValue(selectedCell.column, pasteValue)
+                this.onDropdownChange({ row: selectedCell.row.data, column: selectedCell.cell.column.userProvidedColDef })
             }
         },
         validateDropdownValueAfterCopyPaste(colDef: any, pasteValue: string, selectedCell: any) {
