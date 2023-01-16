@@ -366,6 +366,7 @@ export default defineComponent({
                             }
                         }
                     }
+                    if (this.sourceDataset.dsTypeCd !== 'Derived') this.qbe.meta.columns = []
                 }
             } else {
                 this.qbe = this.getQBEFromModel()
