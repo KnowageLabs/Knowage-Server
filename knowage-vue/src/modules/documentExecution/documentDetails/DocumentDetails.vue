@@ -5,7 +5,7 @@
                 {{ $t('documentExecution.documentDetails.title') }}
             </template>
             <template #end>
-                <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDocument" :disabled="invalidDrivers > 0 || invalidOutputParams > 0 || v$.$invalid" />
+                <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDocument" :disabled="invalidDrivers > 0 || invalidOutputParams > 0 || invalidFunctionalities == 0 || v$.$invalid" />
                 <Button v-if="propMode === 'execution'" icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeDocument" />
             </template>
         </Toolbar>
@@ -154,6 +154,9 @@ export default defineComponent({
             }
             return 0
         },
+        invalidFunctionalities(): number {
+            return this.selectedDocument?.functionalities?.length
+        },
         showDataLineageTab(): boolean {
             return (this.store.$state as any).user.functionalities.includes('DataSourceManagement')
         }
@@ -172,6 +175,7 @@ export default defineComponent({
         await this.isForEdit()
     },
     activated() {
+        this.setDocumentAndFolderIds()
         this.resetNewDocumentData()
         if (this.propFolderId) {
             this.getFunctionalities()
@@ -188,13 +192,16 @@ export default defineComponent({
         }
     },
     methods: {
-        async isForEdit() {
+        setDocumentAndFolderIds() {
             if (this.propMode === 'execution') {
                 this.docId = this.propDocId
                 this.folderId = this.propFolderId
             } else {
                 this.$route.params.docId ? (this.docId = this.$route.params.docId) : (this.folderId = this.$route.params.folderId)
             }
+        },
+        async isForEdit() {
+            this.setDocumentAndFolderIds()
             await this.loadPage(this.docId)
         },
         resetNewDocumentData() {

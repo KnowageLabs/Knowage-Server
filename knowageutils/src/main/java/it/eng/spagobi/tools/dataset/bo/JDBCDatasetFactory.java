@@ -76,6 +76,8 @@ public class JDBCDatasetFactory {
 			dataSet = new JDBCDataSet();
 		}
 
+		dataSet.setDataSource(dataSource);
+
 		return dataSet;
 	}
 }

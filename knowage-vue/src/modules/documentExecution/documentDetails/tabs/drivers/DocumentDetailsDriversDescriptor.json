@@ -1,7 +1,7 @@
 {
     "availableOperators": ["contains", "not contains"],
     "connectingOperators": ["AND", "OR"],
-    "dataOperators": ["equal", "greater", "greaterequal", "less", "lessequal", "contains", "not contains", "starts with", "ends with"],
+    "dataOperators": ["equal", "greater", "greaterequal", "less", "lessequal", "contains", "not contains", "not equals", "starts with", "ends with"],
     "knListSettings": {
         "buttons": [
             {
