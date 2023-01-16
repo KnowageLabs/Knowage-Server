@@ -45,11 +45,15 @@ import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.qbe.statement.IStatement;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
 import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
-import it.eng.spagobi.tools.dataset.common.iterator.JpaQueryIterator;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.database.DataBaseException;
+import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -95,14 +99,12 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		boolean overflow = false;
 		int resultNumber = -1;
 
-		EntityManager entityManager = getEntityMananger();
-		Session session = entityManager.unwrap(Session.class);
-		enableFilters(session);
+		enableFilters();
 
 		IStatement filteredStatement = this.getStatement();
 		String statementStr = filteredStatement.getQueryString();
 		logger.debug("Compiling query statement [" + statementStr + "]");
-		javax.persistence.Query jpqlQuery = entityManager.createQuery(statementStr);
+		javax.persistence.Query jpqlQuery = getEntityMananger().createQuery(statementStr);
 
 		if (this.isCalculateResultNumberOnLoadEnabled()) {
 			resultNumber = getResultNumber(filteredStatement);
@@ -144,6 +146,12 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		if (hasDataStoreTransformers()) {
 			executeDataStoreTransformers(dataStore);
 		}
+	}
+
+	protected void enableFilters() {
+		EntityManager entityManager = getEntityMananger();
+		Session session = entityManager.unwrap(Session.class);
+		enableFilters(session);
 	}
 
 	/**
@@ -323,28 +331,40 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 
 	@Override
 	public DataIterator iterator() {
-		logger.debug("IN");
+
+		enableFilters();
+
+		String sqlQueryString = this.getSQLQuery(true);
+		sqlQueryString = adjustActualAliases(sqlQueryString);
+		logger.debug("Executing query: " + sqlQueryString);
+		JDBCDataSet jdbcDataset = (JDBCDataSet) JDBCDatasetFactory.getJDBCDataSet(this.getDataSource());
+		jdbcDataset.setQuery(sqlQueryString);
+		return jdbcDataset.iterator();
+	}
+
+	protected String adjustActualAliases(String sqlQueryString) {
+		logger.debug("IN: input query is " + sqlQueryString);
+		IDataSource dataSource = ((JPADataSource) getStatement().getDataSource()).getToolsDataSource();
+
+		String aliasDelimiter;
 		try {
-
-			EntityManager entityManager = ((IJpaDataSource) statement.getDataSource()).getEntityManager();
-
-			Session session = entityManager.unwrap(Session.class);
-			enableFilters(session);
-
-			IStatement filteredStatement = getStatement();
-			String statementStr = filteredStatement.getQueryString();
-			logger.debug("Compiling query statement [" + statementStr + "]");
-
-			javax.persistence.Query jpqlQuery = entityManager.createQuery(statementStr);
-			jpqlQuery.setMaxResults(JpaQueryIterator.FETCH_SIZE);
-
-			IMetaData metadata = getDataStoreMeta(statement.getQuery());
-
-			DataIterator iterator = new JpaQueryIterator(jpqlQuery, metadata);
-			return iterator;
-		} finally {
-			logger.debug("OUT");
+			aliasDelimiter = DataBaseFactory.getDataBase(dataSource).getAliasDelimiter();
+		} catch (DataBaseException e) {
+			throw new SpagoBIRuntimeException("An error occurred while getting datasource alias delimiter", e);
 		}
+
+		IMetaData metadata = getDataStoreMeta(statement.getQuery());
+
+		for (int i = 0; i < metadata.getFieldCount(); i++) {
+			IFieldMetaData fieldMeta = metadata.getFieldMeta(i);
+			String alias = fieldMeta.getAlias();
+			int col = sqlQueryString.indexOf(" as col_");
+			int com = sqlQueryString.indexOf("_,") > -1 ? sqlQueryString.indexOf("_,") : sqlQueryString.indexOf("_ ");
+			sqlQueryString = sqlQueryString.replace(sqlQueryString.substring(col, com + 1), " as " + aliasDelimiter + alias + aliasDelimiter);
+		}
+
+		logger.debug("OUT: output query is " + sqlQueryString);
+		return sqlQueryString;
 	}
 
 	@Override
@@ -371,9 +391,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	public void setDrivers(Map<String, Object> drivers) {
 		super.setDrivers(drivers);
 
-		EntityManager entityManager = getEntityMananger();
-		Session session = entityManager.unwrap(Session.class);
-		enableFilters(session);
+		enableFilters();
 	}
 
 }
