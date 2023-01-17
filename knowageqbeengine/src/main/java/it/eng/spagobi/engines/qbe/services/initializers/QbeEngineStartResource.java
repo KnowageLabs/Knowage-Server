@@ -197,7 +197,7 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 
 	protected void addDatasetToEnvEngine(String sourceDatasetLabel, Map env) {
 
-		IDataSet dataset = this.getDataSetServiceProxy().getDataSetByLabel(sourceDatasetLabel);
+		IDataSet dataset = this.getDataSetServiceProxy().getDataSetByLabelAndUserCategories(sourceDatasetLabel);
 		if (!dataset.isPersisted() && !dataset.isFlatDataset() && !dataset.toSpagoBiDataSet().getType().equals("SbiFileDataSet") && dataset.getDsType() != null
 				&& !dataset.getDsType().equals("SbiQueryDataSet")) {
 			logger.error("Dataset [" + sourceDatasetLabel + "] is not persisted. Cannot start qbe.");

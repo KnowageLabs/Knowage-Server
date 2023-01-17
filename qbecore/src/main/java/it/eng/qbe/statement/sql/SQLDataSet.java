@@ -177,6 +177,13 @@ public class SQLDataSet extends AbstractQbeDataSet {
 
 			JDBCDataSet jdbcDataset = (JDBCDataSet) JDBCDatasetFactory.getJDBCDataSet(this.getDataSource());
 			jdbcDataset.setDataSource(this.getDataSource());
+			if (this.getWrappedDataset() instanceof VersionedDataSet) {
+				VersionedDataSet vds = (VersionedDataSet) this.getWrappedDataset();
+				if ((vds.getWrappedDataset() instanceof JDBCDataSet)) {
+					JDBCDataSet jDataset = (JDBCDataSet) vds.getWrappedDataset();
+					statement.getQuerySQLString(jDataset.getQuery().toString());
+				}
+			}
 			jdbcDataset.setQuery(statement.getQueryString());
 			return jdbcDataset.iterator();
 		} finally {
