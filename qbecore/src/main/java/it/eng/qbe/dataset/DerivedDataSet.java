@@ -21,9 +21,6 @@
  */
 package it.eng.qbe.dataset;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -40,11 +37,8 @@ import it.eng.qbe.datasource.dataset.DataSetDriver;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategyType;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
-import it.eng.spagobi.tools.dataset.common.iterator.ResultSetIterator;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Alberto Nale
@@ -153,25 +147,6 @@ public class DerivedDataSet extends QbeDataSet {
 //	public String getSignature() {
 //		return this.getTableName();
 //	}
-
-	@Override
-	public DataIterator iterator() {
-		LOGGER.debug("IN");
-		try {
-			String table = (this.getTableName() == null ? this.getPersistTableName() : this.getTableName());
-			String query = "select * from " + table;
-			Connection connection = dataSource.getConnection();
-			Statement stmt = connection.createStatement();
-			stmt.setFetchSize(5000);
-			ResultSet rs = stmt.executeQuery(query);
-			DataIterator iterator = new ResultSetIterator(connection, stmt, rs);
-			return iterator;
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException(e);
-		} finally {
-			LOGGER.debug("OUT");
-		}
-	}
 
 	@Override
 	public String getDsType() {

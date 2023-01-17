@@ -338,8 +338,10 @@ public class ManageDataSetsForREST {
 //									sourceDataset.setPersisted(true);
 //									((DerivedDataSet) dsRecalc).setSourceDataset(sourceDataset);
 //								}
+								if (sourceDataset.getDataSourceForReading() == null && sourceDataset.getDataSourceForWriting() != null) {
+									sourceDataset.setDataSourceForReading(sourceDataset.getDataSource());
+								}
 								((DerivedDataSet) ds).setSourceDataset(sourceDataset);
-								((DerivedDataSet) ds).setPersisted(false);
 
 								currentMetadata = getDatasetTestMetadata(dsRecalc, parametersMap, profile, meta);
 
@@ -355,10 +357,8 @@ public class ManageDataSetsForREST {
 									if (vds.getWrappedDataset() instanceof AbstractJDBCDataset) {
 										String sqlQuery = ((DerivedDataSet) ds).getStatement().getQuerySQLString(sourceJsonConfig.getString("Query"));
 										dsJsonConfig.put("sqlQuery", sqlQuery);
-//										dsJsonConfig.put("jsonQuery", ((DerivedDataSet) ds).getJsonQuery());
 									} else {
 										dsJsonConfig.put("sqlQuery", ((DerivedDataSet) ds).getStatement().getQueryString());
-//										dsJsonConfig.put("jsonQuery", ((DerivedDataSet) ds).getJsonQuery());
 									}
 								}
 								dsJsonConfig.put(DataSetConstants.SOURCE_DS_LABEL, sourceDatasetLabel);

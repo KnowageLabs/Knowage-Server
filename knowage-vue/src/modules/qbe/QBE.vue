@@ -110,12 +110,12 @@
             <KnParameterSidebar v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="dataset" :userRole="userRole" :propMode="'qbeView'" :propQBEParameters="qbe?.pars" @execute="onExecute" @roleChanged="onRoleChange"></KnParameterSidebar>
         </div>
 
-        <QBEPreviewDialog v-show="!loading && qbePreviewDialogVisible" :id="uniqueID" :queryPreviewData="queryPreviewData" :pagination="pagination" :entities="entities?.entities" :selectedQuery="selectedQuery" @close="closePreview" @pageChanged="updatePagination($event)"></QBEPreviewDialog>
+        <QBEPreviewDialog v-show="!loading && qbePreviewDialogVisible" :id="uniqueID" :queryPreviewData="queryPreviewData" :pagination="pagination" :entities="entities?.entities" :selectedQuery="selectedQuery" @close="closePreview" @pageChanged="updatePagination($event)"> </QBEPreviewDialog>
         <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" :id="uniqueID" :entities="entities?.entities" :propParameters="qbe?.pars" :propExpression="selectedQuery?.expression" @close="filterDialogVisible = false" @save="onFiltersSave"></QBEFilterDialog>
         <QBESqlDialog :visible="sqlDialogVisible" :sqlData="sqlData" @close="sqlDialogVisible = false" />
         <QBERelationDialog :visible="relationDialogVisible" :propEntity="relationEntity" @close="relationDialogVisible = false" />
         <QBEParamDialog v-if="paramDialogVisible" :visible="paramDialogVisible" :propDataset="qbe" @close="paramDialogVisible = false" @save="onParametersSave" />
-        <QBEHavingDialog :visible="havingDialogVisible" :havingDialogData="havingDialogData" :entities="selectedQuery?.fields" @close="havingDialogVisible = false" @save="onHavingsSave"></QBEHavingDialog>
+        <QBEHavingDialog :visible="havingDialogVisible" :havingDialogData="havingDialogData" :entities="selectedQuery?.fields" @close="havingDialogVisible = false" @save="onHavingsSave"> </QBEHavingDialog>
         <QBEAdvancedFilterDialog :visible="advancedFilterDialogVisible" :query="selectedQuery" @close="advancedFilterDialogVisible = false" @save="onAdvancedFiltersSave"></QBEAdvancedFilterDialog>
         <QBESavingDialog :visible="savingDialogVisible" :propDataset="qbe" :propMetadata="qbeMetadata" @close="savingDialogVisible = false" @datasetSaved="$emit('datasetSaved')" />
         <QBEJoinDefinitionDialog v-if="joinDefinitionDialogVisible" :visible="joinDefinitionDialogVisible" :qbe="qbe" :propEntities="entities?.entities" :id="uniqueID" :selectedQuery="selectedQuery" @close="onJoinDefinitionDialogClose"></QBEJoinDefinitionDialog>
@@ -1103,11 +1103,11 @@ export default defineComponent({
                         this.qbe.name = this.qbe.name + ' ' + this.DERIVED_CONST
                         this.qbe.label = this.qbe.label + ' ' + this.DERIVED_CONST
                         this.qbe.sourceDatasetLabel = this.sourceDataset?.label
+                        this.qbe.isPersisted = false
                     }
                     // Insert - OUT
 
                     this.qbe.dsTypeCd = this.DERIVED_CONST
-                    this.qbe.isPersisted = false
                     this.qbe.qbeDataSource = this.sourceDataset?.dataSource
                 }
                 this.savingDialogVisible = true
@@ -1122,28 +1122,34 @@ export default defineComponent({
     height: 100vh;
     width: calc(100vw - #{54px});
     margin: 0;
+
     .p-dialog-content {
         padding: 0;
         margin: 0;
         flex: 1;
         overflow: hidden;
     }
+
     .p-dialog-header {
         padding: 0;
         margin: 0;
     }
 }
+
 .qbe-detail-view {
     display: flex;
     flex-direction: column;
     flex: 3;
 }
+
 .derived-entities-toggle {
     height: 25%;
 }
+
 .qbe-scroll-panel .p-scrollpanel-content {
     padding: 0 !important;
 }
+
 .qbe-scroll-panel .p-scrollpanel-bar {
     background-color: #43749eb6;
     width: 5px;
