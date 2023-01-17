@@ -366,7 +366,8 @@
 
 			var parametersO = driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters);
 			//var parameters = encodeURIComponent(JSON.stringify(parametersO)).replace(/'/g,"%27").replace(/"/g,"%22").replace(/%3D/g,"=").replace(/%26/g,"&");
-			var parameters = $httpParamSerializer(parametersO);
+			// var parameters = $httpParamSerializer(parametersO);
+			var parameters = Object.keys(parametersO).map(e => "" + e + "=" + parametersO[e]).join("&");
 
 			var passToService = {};
 			passToService.label = label;
