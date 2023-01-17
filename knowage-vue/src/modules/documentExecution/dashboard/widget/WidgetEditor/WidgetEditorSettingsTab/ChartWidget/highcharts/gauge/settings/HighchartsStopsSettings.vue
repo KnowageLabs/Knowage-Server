@@ -77,7 +77,6 @@ export default defineComponent({
             this.model.yAxis.stops.push([0, 'rgba(0, 0, 0, 1)'])
         },
         deleteStop(index: number) {
-            console.log('>>>>>>>> INDEX: ', index)
             if (!this.model) return
             this.model.yAxis.stops.splice(index, 1)
             if (this.model.yAxis.stops.length === 0) this.model.yAxis.stops = null

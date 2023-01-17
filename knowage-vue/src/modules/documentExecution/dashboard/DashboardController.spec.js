@@ -71,8 +71,6 @@ describe('DashboardController', () => {
         const wrapper = factory()
         wrapper.vm.openNewWidgetEditor({ name: 'Table', type: 'table' })
 
-        console.log('WRAPPER: ', wrapper.html())
-
         await nextTick()
 
         expect(wrapper.vm.widgetEditorVisible).toBe(true)
@@ -83,8 +81,6 @@ describe('DashboardController', () => {
     it('should open up when clicking on edit widget button', async () => {
         const wrapper = factory()
         emitter.emit('openWidgetEditor', { name: 'Table', type: 'table' })
-
-        console.log('WRAPPER: ', wrapper.html())
 
         await nextTick()
 

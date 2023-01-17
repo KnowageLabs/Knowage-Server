@@ -96,15 +96,11 @@ export default defineComponent({
             this.setSeriesEvents()
 
             const modelToRender = this.getModelForRender()
-            console.log('>>>>>>> CHART TO RENDER: ', modelToRender)
 
             try {
                 this.highchartsInstance = Highcharts.chart(this.chartID, modelToRender as any)
-                // this.highchartsInstance = Highcharts.chart(this.chartID, myChart as any)
                 this.highchartsInstance.reflow()
             } catch (error: any) {
-                console.log('>>>>>>>> CHART ERROR: ', error)
-                console.log('>>>>>>>> CHART ERROR MESSAGE: ', error?.message)
                 this.setError({ title: this.$t('common.toast.errorTitle'), msg: error })
             }
         },
