@@ -48,11 +48,11 @@
                 </div>
             </div>
 
-            <div v-if="formattingSectionAvailable" class="p-col-12 p-md-4 p-lg-2 p-pt-4 p-px-4">
+            <div v-if="formattingSectionAvailable" class="p-col-12 p-md-4 p-lg-2 p-pt-4 p-px-4 p-d-flex p-flex-column">
                 <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.percentage') }}</label>
                 <InputSwitch v-model="serieSetting.label.percentage" :disabled="!serieSetting.label.enabled" @change="modelChanged"></InputSwitch>
             </div>
-            <div v-if="formattingSectionAvailable" class="p-col-12 p-md-4 p-lg-2 p-pt-4 p-px-4">
+            <div v-if="formattingSectionAvailable" class="p-col-12 p-md-4 p-lg-2 p-pt-4 p-px-4 p-d-flex p-flex-column">
                 <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.absolute') }}</label>
                 <InputSwitch v-model="serieSetting.label.absolute" :disabled="!serieSetting.label.enabled" @change="modelChanged"></InputSwitch>
             </div>
