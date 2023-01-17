@@ -5,7 +5,11 @@
         "buttonsContainer": {
             "flex-grow": 0
         },
-        "disabledCellColor": "rgba(231, 231, 231, 0.8)",
+        "colors": {
+            "disabledCellColor": "rgba(231, 231, 231, 0.8)",
+            "newRowColor": "#a8ca81",
+            "editedCellColor": "#749e43"
+        },
         "fieldsContainer": {
             "flex-grow": 1
         },
@@ -15,6 +19,14 @@
         "filtersButton": {
             "height": "40px",
             "width": "100px"
+        },
+        "tableToolbar": {
+            "border": "1px solid #babfc7",
+            "border-bottom": "none",
+            "height": "35px"
+        },
+        "tableToolbarButtonContainer": {
+            "border-right": "1px solid #babfc7"
         }
     }
 }

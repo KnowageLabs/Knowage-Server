@@ -1,6 +1,6 @@
 <template>
     <div class="p-d-flex p-flex-column kn-width-full kn-height-full">
-        <Toolbar class="kn-toolbar kn-toolbar--secondary kn-width-full">
+        <!-- <Toolbar class="kn-toolbar kn-toolbar--secondary kn-width-full">
             <template #start>
                 {{ $t('documentExecution.registry.title') }}
             </template>
@@ -9,7 +9,7 @@
                     <Button class="kn-button p-button-text" @click="saveRegistry">{{ $t('common.save') }}</Button>
                 </div>
             </template>
-        </Toolbar>
+        </Toolbar> -->
         <div class="p-d-flex p-flex-column kn-overflow kn-flex">
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
             <div class="">
@@ -42,6 +42,7 @@
                         :entity="entity"
                         :stopWarningsState="stopWarningsState"
                         :dataLoading="dataLoading"
+                        @saveRegistry="saveRegistry"
                         @rowChanged="onRowChanged"
                         @rowDeleted="onRowDeleted"
                         @pageChanged="updatePagination"

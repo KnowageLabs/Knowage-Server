@@ -1162,7 +1162,8 @@
             "grid": {
                 "addRow": "Add Row",
                 "cloneRows": "Clone Rows",
-                "deleteRows": "Delete Rows"
+                "deleteRows": "Delete Rows",
+                "rowsSelected": " rows selected"
             },
             "isEditableField": "Editable column. Click on a cell and select/enter the new value",
             "numberFormatNotSupported": "Number format is not supported.",
