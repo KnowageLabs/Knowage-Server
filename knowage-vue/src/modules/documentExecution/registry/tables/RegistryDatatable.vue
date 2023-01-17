@@ -137,6 +137,7 @@ export default defineComponent({
                 columnDefs: this.columns,
                 tooltipShowDelay: 100,
                 tooltipMouseTrack: true,
+                rowHeight: 35,
                 defaultColDef: {
                     editable: false,
                     enableValue: true,
