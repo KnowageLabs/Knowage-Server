@@ -230,7 +230,8 @@ export default defineComponent({
         propQBEParameters: { type: Array },
         dateFormat: { type: String },
         dataset: { type: Object },
-        correctRolesForExecution: []
+        correctRolesForExecution: { type: Array },
+        loadFromDatasetManagement: { type: Boolean, default: false }
     },
     emits: ['execute', 'exportCSV', 'roleChanged', 'parametersChanged'],
     data() {
