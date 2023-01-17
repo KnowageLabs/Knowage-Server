@@ -24,19 +24,19 @@
             <div v-if="allSeriesOptionEnabled" class="p-col-1 p-d-flex p-flex-column p-jc-center p-ai-center p-pl-2">
                 <i :class="[index === 0 ? 'pi pi-plus-circle' : 'pi pi-trash']" class="kn-cursor-pointer p-ml-2 p-mt-4" @click="index === 0 ? addSerieSetting() : removeSerieSetting(index)"></i>
             </div>
-            <div v-if="styleToolbarVisible" class="p-col-12 p-py-4">
+            <div v-if="styleToolbarVisible" class="p-col-12 p-pt-4 p-pb-2">
                 <WidgetEditorStyleToolbar :options="descriptor.noDataToolbarStyleOptions" :propModel="toolbarModels[index]" :disabled="!serieSetting.label.enabled" @change="onStyleToolbarChange($event, index)"> </WidgetEditorStyleToolbar>
             </div>
 
-            <div v-if="formattingSectionAvailable" class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column kn-flex">
+            <div v-if="formattingSectionAvailable" class="p-col-12 p-md-6 p-lg-2 p-d-flex p-flex-column kn-flex">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.prefix') }}</label>
                 <InputText class="kn-material-input p-inputtext-sm" v-model="serieSetting.label.prefix" :disabled="!serieSetting.label.enabled" @change="modelChanged" />
             </div>
-            <div v-if="formattingSectionAvailable" class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column kn-flex">
+            <div v-if="formattingSectionAvailable" class="p-col-12 p-md-6 p-lg-2 p-d-flex p-flex-column kn-flex">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.suffix') }}</label>
                 <InputText class="kn-material-input p-inputtext-sm" v-model="serieSetting.label.suffix" :disabled="!serieSetting.label.enabled" @change="modelChanged" />
             </div>
-            <div v-if="formattingSectionAvailable" class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column kn-flex">
+            <div v-if="formattingSectionAvailable" class="p-col-12 p-md-6 p-lg-2 p-d-flex p-flex-column kn-flex">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.precision') }}</label>
                 <InputNumber class="kn-material-input p-inputtext-sm" v-model="serieSetting.label.precision" :disabled="!serieSetting.label.enabled" @blur="modelChanged" />
             </div>
@@ -48,13 +48,13 @@
                 </div>
             </div>
 
-            <div v-if="formattingSectionAvailable" class="p-col-12 p-md-4 p-lg-4 p-pt-4 p-px-4">
+            <div v-if="formattingSectionAvailable" class="p-col-12 p-md-4 p-lg-2 p-pt-4 p-px-4">
+                <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.percentage') }}</label>
                 <InputSwitch v-model="serieSetting.label.percentage" :disabled="!serieSetting.label.enabled" @change="modelChanged"></InputSwitch>
-                <label class="kn-material-input-label p-m-3">{{ $t('dashboard.widgetEditor.percentage') }}</label>
             </div>
-            <div v-if="formattingSectionAvailable" class="p-col-12 p-md-4 p-lg-4 p-pt-4 p-px-4">
+            <div v-if="formattingSectionAvailable" class="p-col-12 p-md-4 p-lg-2 p-pt-4 p-px-4">
+                <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.absolute') }}</label>
                 <InputSwitch v-model="serieSetting.label.absolute" :disabled="!serieSetting.label.enabled" @change="modelChanged"></InputSwitch>
-                <label class="kn-material-input-label p-m-3">{{ $t('dashboard.widgetEditor.absolute') }}</label>
             </div>
 
             <div v-if="advancedSectionAvailable" class="p-col-12 p-py-4">
