@@ -156,22 +156,36 @@ export default defineComponent({
                     }, {})
                 }
             }
-            await this.$http
-                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/preview`, postData, { headers: { 'X-Disable-Errors': 'true' } })
-                .then((response: AxiosResponse<any>) => {
-                    let fields = response.data?.metaData?.fields
-                    if (this.dataset.dsTypeCd == 'REST' && fields?.length == 1 && fields[0] === 'recNo') {
-                        this.rows = []
-                    } else {
+            if (postData.dsTypeCd === 'Prepared') {
+                await this.$http
+                    .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasets/${this.dataset.label}/preview`, postData, { headers: { 'X-Disable-Errors': 'true' } })
+                    .then((response: AxiosResponse<any>) => {
+                        let fields = response.data?.metaData?.fields
+                        if (this.dataset.dsTypeCd == 'REST' && fields?.length == 1 && fields[0] === 'recNo') {
+                            this.rows = []
+                        } else {
+                            this.setPreviewColumns(response.data)
+                            this.rows = response.data.rows
+                            this.pagination.size = response.data.results
+                        }
+                    })
+                    .catch((error) => {
+                        this.errorMessage = error.message
+                        this.errorMessageVisible = true
+                    })
+            } else {
+                await this.$http
+                    .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/preview`, postData, { headers: { 'X-Disable-Errors': 'true' } })
+                    .then((response: AxiosResponse<any>) => {
                         this.setPreviewColumns(response.data)
                         this.rows = response.data.rows
                         this.pagination.size = response.data.results
-                    }
-                })
-                .catch((error) => {
-                    this.errorMessage = error.message
-                    this.errorMessageVisible = true
-                })
+                    })
+                    .catch((error) => {
+                        this.errorMessage = error.message
+                        this.errorMessageVisible = true
+                    })
+            }
             this.loading = false
         },
         async loadPreviewData() {
