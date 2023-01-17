@@ -565,6 +565,7 @@
                     "valuesTableHint": "Measures only."
                 },
                 "bands": {
+                    "bandsHint": "An array of colored bands stretching across the plot area marking an interval on the axis. In a gauge, a plot band on the Y axis (value axis) will stretch along the perimeter of the gauge.",
                     "colorHint": "The color of the plot band.",
                     "fromHint": "The start position of the plot band in axis units.",
                     "thickness": "Thickness",
@@ -623,6 +624,7 @@
                     "colorHint": "Solid gauge series only. Color stops for the solid gauge. Use this in cases where a linear gradient between a minColor and maxColor is not sufficient. The stops is an array of tuples, where the first item is a float between 0 and 1 assigning the relative position in the gradient, and the second item is the color.",
                     "relativePosition": "Relative Position",
                     "relativePositionHint": "Solid gauge series only. Color stops for the solid gauge. Use this in cases where a linear gradient between a minColor and maxColor is not sufficient. The stops is an array of tuples, where the first item is a float between 0 and 1 assigning the relative position in the gradient, and the second item is the color.",
+                    "stopsHint": "Color stops for the solid gauge. Use this in cases where a linear gradient between a minColor and maxColor is not sufficient. The stops is an array of tuples, where the first item is a float between 0 and 1 assigning the relative position in the gradient, and the second item is the color.",
                     "title": "Stops"
                 },
                 "tick": {

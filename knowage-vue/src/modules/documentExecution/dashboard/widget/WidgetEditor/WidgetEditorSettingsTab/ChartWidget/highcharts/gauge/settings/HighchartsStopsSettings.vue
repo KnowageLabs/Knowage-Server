@@ -1,26 +1,33 @@
 <template>
     <div v-if="model" class="p-grid p-jc-center p-ai-center p-p-4">
-        <div class="p-col-12 p-text-right">
-            <Button class="kn-button kn-button--primary" @click="addStop"> {{ $t('common.add') }}</Button>
+        <div v-if="!model.yAxis.stops || model.yAxis.stops.length === 0" class="p-grid p-col-12 p-pl-2">
+            <Message class="p-col-11" :closable="false">{{ $t('dashboard.widgetEditor.highcharts.stops.stopsHint') }}</Message>
+            <div class="p-col-1 p-text-right">
+                <i class="pi pi-plus-circle kn-cursor-pointer p-pt-4" @click="addStop()"></i>
+            </div>
         </div>
-        <div v-for="(stop, index) in model.yAxis.stops" :key="index" class="p-grid p-col-12 p-ai-center p-ai-center p-pt-2">
-            <div class="p-col-12 p-md-6 p-lg-6 p-d-flex p-flex-column kn-flex">
-                <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.highcharts.stops.relativePosition') }}</label>
-                <div class="p-d-flex p-flex-row p-ai-center">
-                    <InputNumber class="kn-material-input p-inputtext-sm" v-model="stop[0]" mode="decimal" :min="0" :max="1" :minFractionDigits="2" @blur="onRelativePositionChange" />
-                    <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.stops.relativePositionHint')"></i>
+
+        <template v-else>
+            <div v-for="(stop, index) in model.yAxis.stops" :key="index" class="p-grid p-col-12 p-ai-center p-ai-center p-pt-2">
+                <div class="p-col-12 p-md-6 p-lg-6 p-d-flex p-flex-column kn-flex">
+                    <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.highcharts.stops.relativePosition') }}</label>
+                    <div class="p-d-flex p-flex-row p-ai-center">
+                        <InputNumber class="kn-material-input p-inputtext-sm" v-model="stop[0]" mode="decimal" :min="0" :max="1" :minFractionDigits="2" @blur="onRelativePositionChange" />
+                        <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.stops.relativePositionHint')"></i>
+                    </div>
+                </div>
+
+                <div class="p-col-12 p-md-6 p-lg-6 p-d-flex p-flex-row p-ai-center p-px-2 p-pt-3">
+                    <WidgetEditorColorPicker class="kn-flex" :initialValue="stop[1]" :label="$t('common.color')" @change="onSelectionColorChanged($event, stop)"></WidgetEditorColorPicker>
+                    <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.stops.colorHint')"></i>
+                </div>
+
+                <div class="p-col-1 p-d-flex p-flex-row p-jc-center p-ai-center p-pl-2">
+                    <i v-if="index === 0" class="pi pi-plus-circle kn-cursor-pointer p-pr-4 p-pt-2" @click="addStop()"></i>
+                    <i :class="'pi pi-trash'" class="kn-cursor-pointer p-pt-2" @click="deleteStop(index)"></i>
                 </div>
             </div>
-
-            <div class="p-col-12 p-md-6 p-lg-6 p-d-flex p-flex-row p-ai-center p-px-2 p-pt-2">
-                <WidgetEditorColorPicker class="kn-flex" :initialValue="stop[1]" :label="$t('common.color')" @change="onSelectionColorChanged($event, stop)"></WidgetEditorColorPicker>
-                <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.stops.colorHint')"></i>
-            </div>
-
-            <div class="p-col-1 p-d-flex p-flex-column p-jc-center p-ai-center p-pl-2">
-                <i :class="'pi pi-trash'" class="kn-cursor-pointer" @click="deleteStop(index)"></i>
-            </div>
-        </div>
+        </template>
     </div>
 </template>
 
@@ -31,11 +38,12 @@ import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
 import { IHighchartsChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import descriptor from '../../HighchartsWidgetSettingsDescriptor.json'
 import InputNumber from 'primevue/inputnumber'
+import Message from 'primevue/message'
 import WidgetEditorColorPicker from '../../../../common/WidgetEditorColorPicker.vue'
 
 export default defineComponent({
     name: 'hihgcharts-stops-settings',
-    components: { InputNumber, WidgetEditorColorPicker },
+    components: { InputNumber, Message, WidgetEditorColorPicker },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {
@@ -70,7 +78,7 @@ export default defineComponent({
         },
         deleteStop(index: number) {
             if (!this.model) return
-            this.model.yAxis.stops.splice(1, index)
+            this.model.yAxis.stops.splice(index, 1)
             if (this.model.yAxis.stops.length === 0) this.model.yAxis.stops = null
             this.modelChanged()
         }

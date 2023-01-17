@@ -80,8 +80,6 @@ const formatWidgetModelForGet = (propWidget: IWidget, dataset: IDashboardDataset
         }
     })
 
-    console.log('USED DATASET , ', dataset)
-
     if (dataset.drivers && dataset.drivers.length > 0) {
         dataset.drivers.forEach((driver: IDashboardDatasetDriver) => {
             dataToSend.drivers[`${driver.urlName}`] = driver.parameterValue
@@ -428,7 +426,6 @@ const getAggregationsModel = (widgetModel, rawHtml, selectedDataset) => {
 //#endregion ================================================================================================
 export const getHighchartsWidgetData = async (widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
     const chartType = widget.settings.chartModel?.model?.chart.type
-    console.log('WIDGET AAA', widget)
     switch (chartType) {
         case 'pie':
             return await getPieChartData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
