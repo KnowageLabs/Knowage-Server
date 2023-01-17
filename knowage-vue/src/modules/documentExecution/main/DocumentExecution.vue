@@ -652,8 +652,10 @@ export default defineComponent({
                                 return { value: value, description: '' }
                             })
                         } else {
+                            const crossNavigationValue = Array.isArray(this.document.navigationParams[key]) && this.document.navigationParams[key][0] ? this.document.navigationParams[key][0] : this.document.navigationParams[key]
+                            if (!this.checkIfMultivalueDriverContainsCrossNavigationValue(tempParam, crossNavigationValue)) return
                             if (tempParam.parameterValue.length === 0) tempParam.parameterValue.push({ value: '', description: '' })
-                            tempParam.parameterValue[0].value = Array.isArray(this.document.navigationParams[key]) && this.document.navigationParams[key][0] ? this.document.navigationParams[key][0] : this.document.navigationParams[key]
+                            tempParam.parameterValue[0].value = crossNavigationValue
                             if (tempParam.parameterValue[0].value === '') tempParam.parameterValue = []
                             if (this.document.navigationParams[key + '_field_visible_description']) this.document.navigationParams[key + '_field_visible_description'] = tempParam.parameterValue[0].description
                             if (tempParam.type === 'DATE' && tempParam.parameterValue[0] && tempParam.parameterValue[0].value) {
@@ -664,6 +666,10 @@ export default defineComponent({
                     }
                 }
             })
+        },
+        checkIfMultivalueDriverContainsCrossNavigationValue(tempParam: any, crossNavigationValue: any) {
+            const index = tempParam.data?.findIndex((option: { value: string; description: string }) => option.value == crossNavigationValue)
+            return index && index !== -1
         },
         formatCrossNavigationComboParameterDescription(tempParam: any) {
             for (let i = tempParam.parameterValue.length - 1; i >= 0; i--) {
