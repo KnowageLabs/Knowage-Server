@@ -561,7 +561,8 @@ public class DataSetJSONSerializer implements Serializer {
 		for (String ja : RESTDataSetConstants.REST_JSON_OBJECT_ATTRIBUTES) {
 			Object prop = conf.get(ja);
 			if (prop != null) {
-				result.put(ja, new JSONObject(prop));
+				// All REST parameters need to be strings
+				result.put(ja, new JSONObject(prop).toString());
 			}
 		}
 
