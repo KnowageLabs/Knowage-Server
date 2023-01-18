@@ -695,7 +695,7 @@ export default defineComponent({
                 fieldType: calculatedField.id.nature.toUpperCase(),
                 decrypt: false,
                 personal: false,
-                subjectid: false
+                subjectId: false
             } as any
 
             switch (calculatedField.id.type) {
