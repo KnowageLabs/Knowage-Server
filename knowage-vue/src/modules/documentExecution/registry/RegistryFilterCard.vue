@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import Dropdown from 'primevue/dropdown'
 import useValidate from '@vuelidate/core'
@@ -34,7 +34,7 @@ import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 export default defineComponent({
     name: 'registry-filter-card',
     components: { Dropdown, KnValidationMessages },
-    props: { propFilter: { type: Object }, filterOptions: { type: Array }, entity: { type: String }, clearTrigger: { type: Boolean }, id: { type: String } },
+    props: { propFilter: { type: Object }, filterOptions: { type: Array }, entity: { type: Object as PropType<String | null> }, clearTrigger: { type: Boolean }, id: { type: String } },
     emits: ['changed', 'valid'],
     data() {
         return {

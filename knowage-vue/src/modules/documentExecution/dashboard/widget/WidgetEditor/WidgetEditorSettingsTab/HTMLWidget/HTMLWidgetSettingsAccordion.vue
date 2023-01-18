@@ -1,9 +1,9 @@
 <template>
     <div v-show="widgetModel">
-        <Accordion class="selectorAccordion" v-model:activeIndex="activeIndex">
+        <Accordion class="widget-editor-accordion" v-model:activeIndex="activeIndex">
             <AccordionTab v-for="(accordion, index) in settings" :key="index">
                 <template #header>
-                    <label class="kn-material-input-label">{{ $t(accordion.title) }}</label>
+                    <HTMLWidgetSettingsAccordionHeader :widgetModel="widgetModel" :title="accordion.title" :type="accordion.type"></HTMLWidgetSettingsAccordionHeader>
                 </template>
                 <WidgetExport v-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
                 <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
@@ -41,6 +41,7 @@ import WidgetCssEditor from './editor/WidgetCssEditor.vue'
 import WidgetCrossNavigation from '../common/interactions/crossNavigation/WidgetCrossNavigation.vue'
 import WidgetInteractionsLinks from '../common/interactions/link/WidgetInteractionsLinks.vue'
 import WidgetPreview from '../common/interactions/preview/WidgetPreview.vue'
+import HTMLWidgetSettingsAccordionHeader from './HTMLWidgetSettingsAccordionHeader.vue'
 
 export default defineComponent({
     name: 'html-widget-settings-container',
@@ -58,7 +59,8 @@ export default defineComponent({
         WidgetCssEditor,
         WidgetCrossNavigation,
         WidgetInteractionsLinks,
-        WidgetPreview
+        WidgetPreview,
+        HTMLWidgetSettingsAccordionHeader
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
@@ -95,12 +97,13 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.selectorAccordion {
+.widget-editor-accordion {
     ::v-deep(.p-accordion-tab-active) {
         margin: 0;
     }
-    .p-accordion-content {
-        display: flex;
-    }
+}
+
+.p-accordion-content {
+    padding: 0 !important;
 }
 </style>

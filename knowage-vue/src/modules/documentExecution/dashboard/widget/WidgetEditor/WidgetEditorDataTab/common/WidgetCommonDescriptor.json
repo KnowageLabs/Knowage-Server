@@ -39,54 +39,77 @@
     ],
     "chartTypeOptions": [
         {
+            "disabled": false,
             "label": "dashboard.widgetEditor.chartTypes.pieChart",
             "value": "pie"
         },
         {
+            "disabled": true,
             "label": "dashboard.widgetEditor.chartTypes.donutChart",
             "value": "donut"
         },
         {
+            "disabled": true,
             "label": "dashboard.widgetEditor.chartTypes.columnsChart",
             "value": "columns"
         },
         {
+            "disabled": true,
             "label": "dashboard.widgetEditor.chartTypes.stackedColumnsChart",
             "value": "stackedColumns"
         },
         {
+            "disabled": true,
             "label": "dashboard.widgetEditor.chartTypes.barChart",
             "value": "bar"
         },
         {
+            "disabled": true,
             "label": "dashboard.widgetEditor.chartTypes.scatterChart",
             "value": "scatter"
         },
         {
+            "disabled": true,
             "label": "dashboard.widgetEditor.chartTypes.areaChart",
             "value": "area"
         },
         {
+            "disabled": true,
             "label": "dashboard.widgetEditor.chartTypes.radar",
             "value": "radar"
         },
         {
+            "disabled": true,
             "label": "dashboard.widgetEditor.chartTypes.funnelChart",
             "value": "funnel"
         },
         {
+            "disabled": true,
             "label": "dashboard.widgetEditor.chartTypes.parallelChart",
             "value": "parallel"
         },
         {
+            "disabled": false,
             "label": "dashboard.widgetEditor.chartTypes.gauge",
             "value": "gauge"
         },
         {
+            "disabled": false,
+            "label": "dashboard.widgetEditor.chartTypes.activitygauge",
+            "value": "activitygauge"
+        },
+        {
+            "disabled": false,
+            "label": "dashboard.widgetEditor.chartTypes.solidgauge",
+            "value": "solidgauge"
+        },
+        {
+            "disabled": true,
             "label": "dashboard.widgetEditor.chartTypes.lineChart",
             "value": "line"
         },
         {
+            "disabled": true,
             "label": "dashboard.widgetEditor.chartTypes.treemap",
             "value": "treeMap"
         }

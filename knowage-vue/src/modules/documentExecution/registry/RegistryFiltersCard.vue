@@ -10,7 +10,7 @@
         <template #content>
             <div class="filter-container" :style="registryDescriptor.styles.filterContainer">
                 <div class="fields-container" :style="registryDescriptor.styles.fieldsContainer">
-                    <form class="p-fluid p-formgrid p-grid">
+                    <form class="p-fluid p-formgrid p-grid" v-on:submit="filterRegistry">
                         <template v-for="(filter, index) in filters" :key="index">
                             <RegistryFilterCard class="kn-flex p-mx-2" :id="id" :propFilter="filter" :entity="entity" :clearTrigger="clearFiltersTrigger" @changed="setFilterValue($event, index)" @valid="setFilterButtonDisabled"> </RegistryFilterCard>
                         </template>
@@ -27,7 +27,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import Card from 'primevue/card'
 import RegistryFilterCard from './RegistryFilterCard.vue'
 import registryDescriptor from './RegistryDescriptor.json'
@@ -37,7 +37,7 @@ export default defineComponent({
     components: { Card, RegistryFilterCard },
     props: {
         propFilters: { type: Array },
-        entity: { type: String },
+        entity: { type: Object as PropType<String | null> },
         id: { type: String }
     },
     emits: ['filter'],
@@ -69,7 +69,8 @@ export default defineComponent({
             this.clearFiltersTrigger = !this.clearFiltersTrigger
             this.$emit('filter', this.filters)
         },
-        filterRegistry() {
+        filterRegistry(e) {
+            e.preventDefault()
             this.$emit('filter', this.filters)
         },
         setFilterButtonDisabled(valid) {

@@ -1,9 +1,5 @@
 <template>
     <div v-if="model?.accessibility" class="p-grid p-jc-center p-ai-center p-p-4">
-        <div class="p-col-12 p-grid p-ai-center p-p-4">
-            <label class="kn-material-input-label p-mr-2">{{ $t('common.enabled') }}</label>
-            <InputSwitch v-model="model.accessibility.enabled" @change="modelChanged"></InputSwitch>
-        </div>
         <div class="p-col-12">
             <label class="kn-material-input-label">{{ $t('common.description') }}</label>
             <Textarea class="kn-material-input kn-width-full" rows="4" :autoResize="true" v-model="model.accessibility.description" maxlength="250" :disabled="accessibilityDisabled" @change="modelChanged" />

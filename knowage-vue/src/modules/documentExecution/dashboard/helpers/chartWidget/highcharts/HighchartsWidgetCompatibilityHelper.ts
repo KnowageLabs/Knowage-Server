@@ -1,11 +1,14 @@
 import { IWidget, IWidgetExports, IWidgetInteractions } from '../../../Dashboard'
-import { IHighchartsSeriesLabelsSetting, IHighchartsWidgetConfiguration, IHighchartsWidgetSettings } from '../../../interfaces/highcharts/DashboardHighchartsWidget'
+import { IHighchartsWidgetConfiguration, IHighchartsWidgetSettings } from '../../../interfaces/highcharts/DashboardHighchartsWidget'
 import { KnowageHighchartsPieChart } from '../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsPieChart'
 import { getFormattedInteractions } from '../../common/WidgetInteractionsHelper'
 import { getFiltersForColumns } from '../../DashboardBackwardCompatibilityHelper'
-import { hexToRgba } from '../../FormattingHelpers'
 import { getFormattedWidgetColumns, getFormattedColorSettings } from '../CommonChartCompatibilityHelper'
 import { getFormattedStyle } from './HighchartsWidgetStyleHelper'
+import { KnowageHighchartsGaugeSeriesChart } from '../../../widget/ChartWidget/classes/highcharts/KnowaageHighchartsGaugeSeriesChart'
+import { KnowageHighchartsSolidGaugeChart } from '../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsSolidGaugeChart'
+import { KnowageHighchartsActivityGaugeChart } from '../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsActivityGaugeChart'
+import { getFormattedSerieLabelsSettings } from './HighchartsSeriesSettingsCompatibilityHelper'
 import * as widgetCommonDefaultValues from '../../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import * as highchartsDefaultValues from '../../../widget/WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
 
@@ -58,38 +61,26 @@ export const getColumnId = (widgetColumnName: string) => {
 }
 
 const createChartModel = (widget: any) => {
-    switch (widget.content.chartTemplate.CHART.type) {
+    const widgetContentChartTemplate = widget.content.chartTemplate
+    switch (widgetContentChartTemplate.CHART.type) {
         case 'PIE':
-            return new KnowageHighchartsPieChart(widget.content.chartTemplate)
+            return new KnowageHighchartsPieChart(widgetContentChartTemplate)
+        case 'GAUGE':
+            return createGaugeChartInstance(widgetContentChartTemplate)
         default:
             return null
     }
 }
 
-const getFormattedSerieLabelsSettings = (widget: any) => {
-    const formattedSerieSettings =
-        widget.content.chartTemplate.CHART.type !== 'PIE' ? highchartsDefaultValues.getDefaultSerieLabelSettings() : ([] as IHighchartsSeriesLabelsSetting[])
-    if (widget.content.chartTemplate.CHART.VALUES.SERIE && widget.content.chartTemplate.CHART.VALUES.SERIE[0]) {
-        const oldModelSerie = widget.content.chartTemplate.CHART.VALUES.SERIE[0]
-        formattedSerieSettings.push({
-            names: [oldModelSerie.name],
-            label: {
-                enabled: true,
-                style: {
-                    fontFamily: oldModelSerie.dataLabels.style.fontFamily ?? '',
-                    fontSize: oldModelSerie.dataLabels.style.fontSize ?? '',
-                    fontWeight: oldModelSerie.dataLabels.style.fontWeight ?? '',
-                    color: oldModelSerie.dataLabels.style.color ? hexToRgba(oldModelSerie.dataLabels.style.color) : '',
-                },
-                backgroundColor: '',
-                prefix: oldModelSerie.prefixChar ?? '',
-                suffix: oldModelSerie.postfixChar ?? '',
-                scale: oldModelSerie.scaleFactor ?? 'empty', // TODO
-                precision: oldModelSerie.precision ?? 2,
-                absolute: oldModelSerie.showAbsValue,
-                percentage: oldModelSerie.showPercentage
-            }
-        })
+const createGaugeChartInstance = (widgetContentChartTemplate: any) => {
+    switch (widgetContentChartTemplate.CHART.subtype) {
+        case 'activity':
+            return new KnowageHighchartsActivityGaugeChart(widgetContentChartTemplate)
+        case 'solid':
+            return new KnowageHighchartsSolidGaugeChart(widgetContentChartTemplate)
+        case 'simple':
+        default:
+            return new KnowageHighchartsGaugeSeriesChart(widgetContentChartTemplate)
+
     }
-    return formattedSerieSettings
 }

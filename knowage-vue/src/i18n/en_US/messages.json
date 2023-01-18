@@ -34,6 +34,7 @@
             "python": "python"
         },
         "collapse": "collapse",
+        "color": "Color",
         "column": "Column",
         "columns": "Columns",
         "comment": "Comment",
@@ -420,7 +421,6 @@
                 "bordersThicknessHint": "px, rem or % measure units are available",
                 "dashed": "Dashed",
                 "dotted": "Dotted",
-                "enableBorders": "Enable Borders",
                 "solid": "Solid",
                 "title": "Borders"
             },
@@ -430,11 +430,12 @@
                     "positionHint": "Position of the legend."
                 },
                 "piechart": {
-                    "labelsTableHint": "Attributes only.",
+                    "dimensionsTableHint": "Attributes only.",
                     "valuesTableHint": "Measures only."
                 }
             },
             "chartTypes": {
+                "activitygauge": "Activity Gauge",
                 "areaChart": "Area Chart",
                 "barChart": "Bar Chart",
                 "bubbleChart": "Bubble Chart",
@@ -447,6 +448,7 @@
                 "pieChart": "Pie Chart",
                 "radar": "Radar",
                 "scatterChart": "Scatter Chart",
+                "solidgauge": "Solid Gauge",
                 "stackedColumnsChart": "Stacked Columns Chart",
                 "treemap": "Treemap"
             },
@@ -457,7 +459,6 @@
             "columnDetails": "Column Details",
             "columnFilterHint": "Select the filter operator and the value for the column. Remember to use the correct database sintax for the value. ie: %LIKE%",
             "columnGroups": {
-                "enableColumnGroups": "Enable Column Groups",
                 "title": "Column Groups"
             },
             "compareValueType": "Compare value type",
@@ -488,7 +489,6 @@
             "defaultValues": {
                 "columnsFirstItem": "Main column's first item",
                 "columnsLastItem": "Main column's last item",
-                "enableDefaultValues": "Enable Default Values",
                 "hint": "Default values hint placeholder",
                 "selectDafaultValue": "Select Default Value",
                 "title": "Default Values"
@@ -552,7 +552,6 @@
             "headers": {
                 "action": "Action",
                 "enableCustomHeaders": "Enable Custom Headers",
-                "enableHeader": "Enable Header",
                 "enableMultiline": "Enable Multiline",
                 "headerHeight": "Header height",
                 "headerHeightHint": "Header height in px (default is 25px)",
@@ -562,6 +561,27 @@
             },
             "hidden": "Hidden",
             "highcharts": {
+                "activityGauge": {
+                    "valuesTableHint": "Measures only."
+                },
+                "bands": {
+                    "bandsHint": "An array of colored bands stretching across the plot area marking an interval on the axis. In a gauge, a plot band on the Y axis (value axis) will stretch along the perimeter of the gauge.",
+                    "colorHint": "The color of the plot band.",
+                    "fromHint": "The start position of the plot band in axis units.",
+                    "thickness": "Thickness",
+                    "thicknessHint": "In a gauge chart, this option sets the width of the plot band stretching along the perimeter. It can be given as a percentage string, like \"10%\", or as a pixel number, like 10. The default value 10 is the same as the default tickLength, thus making the plot band act as a background for the tick markers.",
+                    "title": "bands",
+                    "toHint": "The end position of the plot band in axis units."
+                },
+                "dial": {
+                    "dialBaseWitdh": "Dial Base Width",
+                    "dialColor": "Dial Color",
+                    "dialRadius": "Dial Radius",
+                    "dialRadiusHint": "The radius or length of the dial, in percentages relative to the radius of the gauge itself."
+                },
+                "gauge": {
+                    "valuesTableHint": "Measures only."
+                },
                 "labels": {
                     "distance": "Distance",
                     "distanceHint": "The distance of the data label from the pie's edge. Negative numbers put the data label on top of the pie slices. Can also be defined as a percentage of pie's radius. Connectors are only shown for data labels outside the pie.",
@@ -575,12 +595,52 @@
                     "layoutHint": "The layout of the legend items. Can be one of horizontal or vertical or proximate. When proximate, the legend items will be placed as close as possible to the graphs they're representing, except in inverted charts or when the legend position doesn't allow it.",
                     "verticalAlignHint": "The vertical alignment of the legend box. Can be one of top, middle or bottom. Vertical position can be further determined by the y option. In the case that the legend is aligned in a corner position, the layout option will determine whether to place it above/below or on the side of the plot area. When the layout option is proximate, the verticalAlign option doesn't apply."
                 },
+                "paneSettings": {
+                    "centralHorizontalPosition": "Centar Horizontal Position",
+                    "centralVerticalPosition": "Centar Vertical Position",
+                    "endAngle": "End Angle",
+                    "endAngleHint": "The end angle of the polar X axis or gauge value axis, given in degrees where 0 is north.",
+                    "startAngle": "Start Angle",
+                    "startAngleHint": "The start angle of the polar X axis or gauge axis, given in degrees where 0 is north."
+                },
                 "piechart": {
-                    "labelsTableHint": "Attributes only. Each different value in the selected column will create a different slice. If more than one dimension is present, the list will be the drill-down sequence.",
+                    "dimensionsTableHint": "Attributes only. Each different value in the selected column will create a different slice. If more than one dimension is present, the list will be the drill-down sequence.",
                     "valuesTableHint": "Measures only. The selected column will be used as values for every slice."
                 },
+                "pivot": {
+                    "pivotColor": "Pivot Color",
+                    "pivotRadius": "Pivot Radius",
+                    "pivotRadiusHint": "The pixel radius of the pivot."
+                },
                 "proximate": "Proximate",
+                "scale": {
+                    "maxHint": "The maximum value of the axis. If null, the max value is automatically calculated.",
+                    "minHint": "The minimum value of the axis. If null the min value is automatically calculated."
+                },
+                "solidGauge": {
+                    "valuesTableHint": "Measures only."
+                },
+                "stops": {
+                    "colorHint": "Solid gauge series only. Color stops for the solid gauge. Use this in cases where a linear gradient between a minColor and maxColor is not sufficient. The stops is an array of tuples, where the first item is a float between 0 and 1 assigning the relative position in the gradient, and the second item is the color.",
+                    "relativePosition": "Relative Position",
+                    "relativePositionHint": "Solid gauge series only. Color stops for the solid gauge. Use this in cases where a linear gradient between a minColor and maxColor is not sufficient. The stops is an array of tuples, where the first item is a float between 0 and 1 assigning the relative position in the gradient, and the second item is the color.",
+                    "stopsHint": "Color stops for the solid gauge. Use this in cases where a linear gradient between a minColor and maxColor is not sufficient. The stops is an array of tuples, where the first item is a float between 0 and 1 assigning the relative position in the gradient, and the second item is the color.",
+                    "title": "Stops"
+                },
+                "tick": {
+                    "minorTickInterval": "Minor Tick Interval",
+                    "minorTickIntervalHint": "Specific tick interval in axis units for the minor ticks. On a linear axis, if \"auto\", the minor tick interval is calculated as a fifth of the tickInterval. If null or undefined, minor ticks are not shown. On logarithmic axes, the unit is the power of the value. For example, setting the minorTickInterval to 1 puts one tick on each of 0.1, 1, 10, 100 etc. Setting the minorTickInterval to 0.1 produces 9 ticks between 1 and 10, 10 and 100 etc. If user settings dictate minor ticks to become too dense, they don't make sense, and will be ignored to prevent performance problems.",
+                    "tickColor": "Tick Color",
+                    "tickLength": "Tick Length",
+                    "tickLengthHint": "The pixel length of the main tick marks.",
+                    "tickPosition": "Tick Position",
+                    "tickPositionHint": "The position of the major tick marks relative to the axis line. Can be one of inside and outside.",
+                    "tickWidth": "Tick Width",
+                    "tickWidthHint": "The pixel width of the major tick marks.",
+                    "title": "Tick"
+                },
                 "tooltip": {
+                    "activityGaugeFormatterHint": "Activity Gauge Formatter Hint Placeholder.",
                     "formatterHint": "Callback function to format the text of the tooltip from scratch. In case of single or shared tooltips, a string should be returned. In case of split tooltips, it should return an array where the first item is the header, and subsequent items are mapped to the points. Return false to disable tooltip for a specific point on series. A subset of HTML is supported. Unless useHTML is true, the HTML of the tooltip is parsed and converted to SVG, therefore this isn't a complete HTML renderer. The following HTML tags are supported: b, br, em, i, span, strong. Spans can be styled with a style attribute, but only text-related CSS, that is shared with SVG, is handled. The available data in the formatter differ a bit depending on whether the tooltip is shared or split, or belongs to a single point. In a shared/split tooltip, all properties except x, which is common for all points, are kept in an array, this.points.",
                     "pointFormatter": "Point Formatter",
                     "pointFormatterHint": "A callback function for formatting the HTML output for a single point in the tooltip. Like the pointFormat string, but with more flexibility."
@@ -600,6 +660,7 @@
                 "textAlignment": "Text alignment"
             },
             "inputHintForPixels": "use px measure unit, ie: 5px",
+            "inside": "Inside",
             "interactions": {
                 "analyticalDriver": "Analytical Driver",
                 "basicUrl": "Basic Url",
@@ -610,11 +671,7 @@
                 "enableClickOnIcon": "Enable click on an icon",
                 "enableClickOnSingleColumn": "Enable click on a single column",
                 "enableClickOnWholeRow": "Enable click on whole row",
-                "enableCrossNavigation": "Enable Cross-navigation",
-                "enableLinkNavigation": "Enable Link navigation",
                 "enableMultiselection": "Enable Multiselection",
-                "enablePreview": "Enable Preview",
-                "enableSelection": "Enable Selection",
                 "json": "JSON",
                 "jwt": "JWT",
                 "link": "Link",
@@ -639,11 +696,10 @@
             "noSelections": {
                 "customMessage": "Custom Message",
                 "customMessageHint": "If left empty the message will be 'No Active Selections'",
-                "enable": "Enable 'no Selection' message",
                 "title": "No Selection Message"
             },
+            "outside": "Outside",
             "padding": {
-                "enablePadding": "Enable Padding",
                 "linkAllHint": "Link all paddings",
                 "paddingBottom": "Padding Bottom",
                 "paddingLeft": "Padding Left",
@@ -656,6 +712,7 @@
             "percentage": "Percentage",
             "precision": "Precision",
             "prefix": "Prefix",
+            "recentlyUsed": "Recently Used",
             "responsive": {
                 "extraLargeDevices": "Show On Extra Large Devices",
                 "extraSmallDevices": "Show On Extra Small Devices",
@@ -682,6 +739,7 @@
                 "title": "Selector Type"
             },
             "series": {
+                "enableColor": "Enable Color",
                 "scale": "Scale",
                 "scaleHint": "Scale Hint Placeholder",
                 "title": "Series"
@@ -693,7 +751,6 @@
                 "tooltip": "Tooltip"
             },
             "shadows": {
-                "enableShadows": "Enable Shadows",
                 "shadowSize": "Shadow Size",
                 "title": "Shadows"
             },
@@ -703,14 +760,12 @@
             "suffix": "Suffix",
             "summary": "Summary",
             "summaryRows": {
-                "enableSummaryRows": "Enable Summary Rows",
                 "pinnedColumnsOnly": "Pinned columns only",
                 "title": "Summary rows"
             },
             "textParsingError": "Text Parsing Error",
             "title": "Widget Editor",
             "titles": {
-                "enableTitle": "Enable Title",
                 "title": "Title"
             },
             "tooltip": {
@@ -1098,8 +1153,20 @@
         "registry": {
             "clearFilters": "Clear",
             "column": "Column/s",
+            "copyPasteValidationErrors": {
+                "checkbox": "Cannot paste checkbox values",
+                "dropdown": "Dropdown options doesn't contain pasted value",
+                "notEditable": "Cannot paste in not editable column",
+                "temporal": "Cannot paste temporal values"
+            },
             "filter": "Filter",
             "filters": "Filters",
+            "grid": {
+                "addRow": "Add Row",
+                "cloneRows": "Clone Rows",
+                "deleteRows": "Delete Rows",
+                "rowsSelected": " rows selected"
+            },
             "isEditableField": "Editable column. Click on a cell and select/enter the new value",
             "numberFormatNotSupported": "Number format is not supported.",
             "select": "Select",
@@ -2989,10 +3056,10 @@
             },
             "dsj": {
                 "addButton": "add join column",
-                "dsJoinCol": "Dataset join column",
-                "lyrJoinCol": "Layer join column",
+                "addFilter": "add filter",
                 "addIndicator": "add indicator",
-                "addFilter": "add filter"
+                "dsJoinCol": "Dataset join column",
+                "lyrJoinCol": "Layer join column"
             },
             "editMap": "Edit Map",
             "fieldRequired": "Field required",

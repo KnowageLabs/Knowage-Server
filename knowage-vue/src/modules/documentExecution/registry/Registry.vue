@@ -1,6 +1,6 @@
 <template>
     <div class="p-d-flex p-flex-column kn-width-full kn-height-full">
-        <Toolbar class="kn-toolbar kn-toolbar--secondary kn-width-full">
+        <!-- <Toolbar class="kn-toolbar kn-toolbar--secondary kn-width-full">
             <template #start>
                 {{ $t('documentExecution.registry.title') }}
             </template>
@@ -9,7 +9,7 @@
                     <Button class="kn-button p-button-text" @click="saveRegistry">{{ $t('common.save') }}</Button>
                 </div>
             </template>
-        </Toolbar>
+        </Toolbar> -->
         <div class="p-d-flex p-flex-column kn-overflow kn-flex">
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
             <div class="">
@@ -41,6 +41,8 @@
                         :pagination="pagination"
                         :entity="entity"
                         :stopWarningsState="stopWarningsState"
+                        :dataLoading="dataLoading"
+                        @saveRegistry="saveRegistry"
                         @rowChanged="onRowChanged"
                         @rowDeleted="onRowDeleted"
                         @pageChanged="updatePagination"
@@ -62,6 +64,8 @@ import RegistryFiltersCard from './RegistryFiltersCard.vue'
 import { formatDate } from '@/helpers/commons/localeHelper'
 import { mapActions } from 'pinia'
 import store from '../../../App.store'
+import cryptoRandomString from 'crypto-random-string'
+import { emitter } from './tables/RegistryDatatableHelper'
 
 export default defineComponent({
     name: 'registry',
@@ -86,7 +90,8 @@ export default defineComponent({
             entity: null as string | null,
             stopWarningsState: [] as any[],
             isPivot: false,
-            loading: false
+            loading: false,
+            dataLoading: false
         }
     },
     watch: {
@@ -144,8 +149,15 @@ export default defineComponent({
                 this.loadColumns()
                 this.loadColumnMap()
                 this.loadColumnsInfo()
-                this.loadRows()
+                this.loadRows(true)
                 this.getFilters()
+                this.createColumnWidthProperty()
+                emitter.emit('refreshTableWithData')
+            }
+        },
+        createColumnWidthProperty() {
+            for (let i = 1; i < this.registry.metaData.fields.length; i++) {
+                this.columns[i - 1].width = this.columns[i - 1].size
             }
         },
         loadColumns() {
@@ -168,16 +180,22 @@ export default defineComponent({
                 this.columns[i - 1].columnInfo = this.registry.metaData.fields[i]
             }
         },
-        loadRows() {
-            this.rows = []
+        loadRows(resetRows = false as boolean) {
+            if (resetRows) this.rows = []
             const limit = this.pagination.size <= registryDescriptor.paginationLimit ? this.registry.rows.length : registryDescriptor.paginationNumberOfItems
             for (let i = 0; i < limit; i++) {
-                const tempRow = {}
-                Object.keys(this.registry.rows[i]).forEach((key) => {
+                const tempRow = {} as any
+                Object.keys(this.registry.rows[i]).forEach((key: string) => {
                     tempRow[this.columnMap[key]] = this.registry.rows[i][key]
                 })
+                tempRow.uniqueId = cryptoRandomString({ length: 16, type: 'base64' })
                 this.rows.push(tempRow)
             }
+
+            //have to timeout, mitt fires event too fast, and vue props doenst have time to update
+            setTimeout(() => {
+                emitter.emit('refreshTableWithData')
+            }, 250)
         },
         loadConfiguration() {
             this.configuration = this.registry.registryConfig.configurations
@@ -196,9 +214,7 @@ export default defineComponent({
                     this.formatPivotRows(el)
                 }
 
-                delete el.id
-                delete el.isNew
-                delete el.edited
+                ;['id', 'isNew', 'edited', 'uniqueId', 'isEdited'].forEach((property: string) => delete el[property])
             })
 
             const updatedRowsToIsoStrings = JSON.parse(JSON.stringify(this.updatedRows))
@@ -232,23 +248,28 @@ export default defineComponent({
                 .finally(() => (this.updatedRows = []))
         },
         async onRowDeleted(row: any) {
+            const postData = new URLSearchParams()
             if (this.isPivot) {
                 this.formatPivotRows(row)
-            }
-            const postData = new URLSearchParams()
-            postData.append('records', '' + JSON.stringify([row]))
+                postData.append('records', '' + JSON.stringify([row]))
+            } else postData.append('records', '' + JSON.stringify(row))
+
             await this.$http
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=DELETE_RECORDS_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
-                .then((response: AxiosResponse<any>) => {
+                .then(async (response: AxiosResponse<any>) => {
                     this.setInfo({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
                     })
 
-                    if (response.data.ids[0]) {
-                        const index = this.rows.findIndex((el: any) => el.id === row.id)
-                        this.rows.splice(index, 1)
-                        this.pagination.size--
+                    if (this.isPivot) {
+                        if (response.data.ids[0]) {
+                            const index = this.rows.findIndex((el: any) => el.id === row.id)
+                            this.rows.splice(index, 1)
+                            this.pagination.size--
+                        }
+                    } else {
+                        await this.reloadRegistryData(true)
                     }
                 })
                 .catch((response: AxiosResponse<any>) => {
@@ -285,8 +306,8 @@ export default defineComponent({
             this.selectedFilters = [...filters]
             this.pagination.start = 0
             this.pagination.size = 0
-            await this.loadRegistry()
-            this.loadRows()
+
+            await this.reloadRegistryData(true)
         },
         async updatePagination(lazyParams: any) {
             this.updatedRows = []
@@ -297,8 +318,7 @@ export default defineComponent({
             }
 
             if (this.pagination.size > registryDescriptor.paginationLimit) {
-                await this.loadRegistry()
-                this.loadRows()
+                await this.reloadRegistryData()
             }
         },
         formatPivotRows(row: any) {
@@ -310,6 +330,12 @@ export default defineComponent({
         },
         setWarningState(warnings: any[]) {
             this.stopWarningsState = warnings
+        },
+        async reloadRegistryData(resetRows = false as boolean) {
+            this.dataLoading = true
+            await this.loadRegistry()
+            this.loadRows(resetRows)
+            this.dataLoading = false
         }
     }
 })

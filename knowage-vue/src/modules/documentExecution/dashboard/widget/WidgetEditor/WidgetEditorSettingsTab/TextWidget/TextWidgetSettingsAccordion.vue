@@ -1,9 +1,9 @@
 <template>
     <div v-show="widgetModel">
-        <Accordion class="selectorAccordion" v-model:activeIndex="activeIndex">
+        <Accordion class="widget-editor-accordion" v-model:activeIndex="activeIndex">
             <AccordionTab v-for="(accordion, index) in settings" :key="index">
                 <template #header>
-                    <label class="kn-material-input-label">{{ $t(accordion.title) }}</label>
+                    <TextWidgetSettingsAccordionHeader :widgetModel="widgetModel" :title="accordion.title" :type="accordion.type"></TextWidgetSettingsAccordionHeader>
                 </template>
                 <WidgetExport v-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
                 <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
@@ -14,7 +14,6 @@
                 <WidgetResponsive v-else-if="accordion.type === 'Responsive'" :widgetModel="widgetModel"></WidgetResponsive>
                 <TextWidgetEditor v-else-if="accordion.type === 'Editor'" :activeIndex="activeIndex" :widgetModel="widgetModel" :variables="variables" :dashboardId="dashboardId" :selectedDatasets="selectedDatasets"></TextWidgetEditor>
                 <WidgetCrossNavigation v-else-if="accordion.type === 'CrossNavigation'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :dashboardId="dashboardId"></WidgetCrossNavigation>
-                <WidgetInteractionsLinks v-else-if="accordion.type === 'Link'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :dashboardId="dashboardId"></WidgetInteractionsLinks>
                 <WidgetPreview v-else-if="accordion.type === 'Preview'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :dashboardId="dashboardId"></WidgetPreview>
             </AccordionTab>
         </Accordion>
@@ -39,6 +38,7 @@ import WidgetCrossNavigation from '../common/interactions/crossNavigation/Widget
 import WidgetInteractionsLinks from '../common/interactions/link/WidgetInteractionsLinks.vue'
 import WidgetPreview from '../common/interactions/preview/WidgetPreview.vue'
 import TextWidgetEditor from './editor/TextWidgetEditor.vue'
+import TextWidgetSettingsAccordionHeader from './TextWidgetSettingsAccordionHeader.vue'
 
 export default defineComponent({
     name: 'text-widget-settings-container',
@@ -55,7 +55,8 @@ export default defineComponent({
         WidgetCrossNavigation,
         WidgetInteractionsLinks,
         WidgetPreview,
-        TextWidgetEditor
+        TextWidgetEditor,
+        TextWidgetSettingsAccordionHeader
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
@@ -90,12 +91,13 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.selectorAccordion {
+.widget-editor-accordion {
     ::v-deep(.p-accordion-tab-active) {
         margin: 0;
     }
-    .p-accordion-content {
-        display: flex;
-    }
+}
+
+.p-accordion-content {
+    padding: 0 !important;
 }
 </style>

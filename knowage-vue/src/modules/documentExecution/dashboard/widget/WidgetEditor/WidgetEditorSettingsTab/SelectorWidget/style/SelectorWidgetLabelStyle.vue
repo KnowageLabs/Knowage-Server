@@ -1,9 +1,5 @@
 <template>
     <div v-if="labelStyleModel" class="p-grid p-jc-center p-ai-center kn-flex p-p-4">
-        <div class="p-col-12">
-            <InputSwitch v-model="labelStyleModel.enabled" @change="labelStyleChanged"></InputSwitch>
-            <label class="kn-material-input-label p-ml-3">{{ $t('common.enable') }}</label>
-        </div>
         <div class="p-col-6 p-mt-1">
             <InputSwitch v-model="labelStyleModel.wrapText" :disabled="labelStyleDisabled" @change="labelStyleChanged"></InputSwitch>
             <label class="kn-material-input-label p-ml-3">{{ $t('dashboard.widgetEditor.valuesManagement.wrapText') }}</label>
@@ -47,7 +43,6 @@ export default defineComponent({
             if (this.widgetModel.settings.style?.label) this.labelStyleModel = this.widgetModel.settings.style.label
         },
         labelStyleChanged() {
-            emitter.emit('labelStyleChanged', this.labelStyleModel)
             emitter.emit('refreshSelector', this.widgetModel.id)
         },
         onStyleToolbarChange(model: IWidgetStyleToolbarModel) {

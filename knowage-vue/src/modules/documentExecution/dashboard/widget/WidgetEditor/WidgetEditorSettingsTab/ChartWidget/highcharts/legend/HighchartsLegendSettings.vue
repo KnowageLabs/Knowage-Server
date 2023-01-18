@@ -1,9 +1,5 @@
 <template>
     <div v-if="model?.legend" class="p-grid p-jc-center p-ai-center p-p-4">
-        <div class="p-col-12 p-grid p-ai-center p-p-4">
-            <label class="kn-material-input-label p-mr-2">{{ $t('common.enabled') }}</label>
-            <InputSwitch v-model="model.legend.enabled" @change="modelChanged"></InputSwitch>
-        </div>
         <div class="p-col-12 p-md-6 p-lg-4 p-d-flex p-flex-column kn-flex p-m-2">
             <label class="kn-material-input-label p-mr-2">{{ $t('common.align') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center">
@@ -94,8 +90,8 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IWidgetStyleToolbarModel } from '../../../../../../Dashboard'
+import { IHighchartsChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
-import { IHighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import descriptor from '../HighchartsWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
@@ -113,7 +109,7 @@ export default defineComponent({
     data() {
         return {
             descriptor,
-            model: null as IHighchartsPieChartModel | null,
+            model: null as IHighchartsChartModel | null,
             toolbarModel: {} as { 'font-family': string; 'font-size': string; 'font-weight': string; 'border-color': string; color: string; 'background-color': string },
             advancedVisible: false,
             getTranslatedLabel

@@ -31,6 +31,11 @@ export default defineComponent({
             useClickOutside
         }
     },
+    watch: {
+        initialValue() {
+            this.loadValue()
+        }
+    },
     setup() {
         const knowageStyleIcon = ref(null)
         let colorPickerVisible = ref(false)

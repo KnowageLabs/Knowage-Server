@@ -1,9 +1,5 @@
 <template>
     <div v-if="columnStyles" class="p-grid p-p-4">
-        <div class="p-col-12">
-            <InputSwitch v-model="columnStyles.enabled" @change="columnStylesChanged"></InputSwitch>
-            <label class="kn-material-input-label p-ml-3">{{ $t('common.enable') }}</label>
-        </div>
         <div v-for="(columnStyle, index) in columnStyles.styles" :key="index" class="dynamic-form-item p-col-12 p-grid p-ai-center">
             <div v-if="mode !== 'columnGroups'" class="p-col-12 p-grid">
                 <div class="p-col-4 p-d-flex p-flex-column kn-flex">

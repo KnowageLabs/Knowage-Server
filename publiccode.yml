@@ -19,53 +19,74 @@ description:
   it:
     apiDocumentation: 'https://knowage.docs.apiary.io/'
     awards:
-      - OW2CON '18 Best Project - Market award
+      - OW2CON '18 Best Project - Market Award
+      - OW2CON '20 best Project - Technology Award
     documentation: 'https://knowage-suite.readthedocs.io/'
     features:
-      - >-
-        La suite è composta da diversi moduli, ognuno concepito per uno
-        specifico dominio analitico
-      - >-
-        Sono utilizzabili singolarmente o combinati garantendo maggior copertura
-        dei requisiti dell'utente
-      - >-
-        BIG DATA per unire i dati strutturati aziendali con quelli esterni multi
-        strutturati
-      - >-
-        SMART INTELLIGENCE per la tipica BI su dati strutturati, incentrata su
-        selfservice/ad-hoc reporting
+      - 'KNOWAGE è compost di due moduli autonomi:'
       - ENTERPRISE REPORTING per la produzione e distribuzione di report statici
-      - >-
-        LOCATION INTELLIGENCE per unire business data con informazioni
-        geografiche o spaziali
-      - >-
-        PERFORMANCE MANAGEMENT per gestire i KPI e organizzare scorecards, per
-        il monitoraggio in realtime
-      - >-
-        PREDICTIVE ANALYSIS per analisi avanzate, ad esempio previsionali o
-        prescrittive
+      - |-
+        SMART INTELLIGENCE per la tipica BI su dati strutturati, incentrata su
+        self-service/ad-hoc reporting
+      - |-
+        Questi moduli possono essere utilizzati singolarmente o combinati tra
+        loro.
+      - |-
+        Il modulo SMART INTELLIGENCE può essere arricchito con 4 diversi
+        plugins:
+      - |-
+        LOCATION INTELLIGENCE: combina i dati di business con informazioni
+        spaziali o geografiche
+      - |-
+        PERFORMANCE MANAGEMENT: gestisce KPI e relative soglie, organizza
+        scorecard con alert in real time
+      - |-
+        CUSTOM ANALYTICS: svolge analisi avanzate, dalla simulazione what-if
+        all’embed di script R e Python
+      - |-
+        SMART DATA: combina indici Solr con altre fonti dati e abilita faceted
+        views e full text search
     genericName: Business Analytics suite
-    longDescription: >
-      Knowage è la suite open source per la business analytics moderna che
+    longDescription: |
+      KNOWAGE è la suite open source per la business analytics moderna che
       affianca alle tradizionali capacità di business intelligence, strumenti
       agili che promuovono l’autonomia degli utenti business e funzionalità
       avanzate rivolte al segmento emergente dei data scientist. E’ quindi un
       prodotto per la piena valorizzazione del patrimonio dati aziendale, anche
       in relazione a sorgenti informative esterne ed eterogenee, cogliendo in
-      pieno il significato del fenomeno dei big data. La suite Knowage è
-      supportata dal Gruppo Engineering, uno dei principali players nel campo
-      della digital transformation per il settore pubblico e privato, con oltre
-      12.000 professionisti e 65 sedi nel mondo.
+      pieno il significato del fenomeno dei big data. La suite KNOWAGE è
+      supportata dal Gruppo Engineering, la Digital Transformation Company,
+      leader in Italia e in continua espansione nel mondo, con circa 12.000
+      dipendenti e oltre 60 sedi distribuite in Europa, Stati Uniti e Sud
+      America.
     screenshots:
-      - >-
+      - |-
+        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage_market_cockpit.jpg
+      - |-
+        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-advanced-analytics.jpg
+      - |-
+        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-alert.jpg
+      - |-
+        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-customization.jpg
+      - |-
+        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-dashboard-transportation.jpg
+      - |-
+        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-healthcare1-cockpit.jpg
+      - |-
+        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-retail-cockpit.jpg
+      - |-
+        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-sintesi-homenergia.jpg
+      - |-
+        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-developments-homenergia.jpg
+      - |-
         https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-covid-italy-regional.png
-      - >-
+      - |-
         https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-cockpit2.jpg
-      - >-
+      - |-
         https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-cockpit.jpg
-      - >-
+      - |-
         https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-map.jpg
-      - >-
+      - |-
         https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-responsive2.jpg
     shortDescription: Suite open source completa per la moderna Business Analytics
     videos:
@@ -117,8 +138,19 @@ localisation:
     - en
     - fr
     - es
+    - de
+    - bg
+    - da
+    - hu
+    - ja
+    - ar
+    - ko
+    - tr
+    - pt
+    - zh
+    - ru
   localisationReady: true
-logo: >-
+logo: |-
   https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/logo/logo.svg
 maintenance:
   contacts:
@@ -137,10 +169,10 @@ platforms:
   - windows
   - mac
   - linux
-releaseDate: '2021-04-06'
+releaseDate: '2022-07-16'
 roadmap: 'https://github.com/KnowageLabs/Knowage-Server/blob/master/ROADMAP.md'
 softwareType: standalone/web
-softwareVersion: 7.4.2
+softwareVersion: '8.1'
 url: 'https://github.com/KnowageLabs/Knowage-Server.git'
 usedBy:
   - Azienda Unità Locale Sanitaria di Modena

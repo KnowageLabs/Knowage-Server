@@ -13,6 +13,13 @@
                 <InputText class="p-inputtext p-component kn-material-input" v-model="searchWord" :placeholder="$t('common.search')" @input="filterIcons()" />
             </div>
 
+            <label class="kn-material-input-label p-my-3"> {{ $t('dashboard.widgetEditor.recentlyUsed') }}</label>
+            <div class="widget-editor-icon-picker-icons-container">
+                <div v-for="(icon, index) in recentlyUsedIcons" :key="index" :class="{ 'widget-editor-selected-icon-container': selectedIcon?.className === icon.className }" class="widget-editor-icon-container kn-cursor-pointer" @click.stop="setSelectedIcon(icon)">
+                    <i :class="icon.className"></i>
+                </div>
+            </div>
+
             <label class="kn-material-input-label p-my-3"> {{ $t('dashboard.widgetEditor.fontawesome') }}</label>
             <div class="widget-editor-icon-picker-icons-container">
                 <div v-for="(icon, index) in filteredIcons" :key="index" :class="{ 'widget-editor-selected-icon-container': selectedIcon?.className === icon.className }" class="widget-editor-icon-container kn-cursor-pointer" @click.stop="setSelectedIcon(icon)">
@@ -45,12 +52,14 @@ export default defineComponent({
             icons: [] as IIcon[],
             filteredIcons: [] as IIcon[],
             selectedIcon: null as IIcon | null,
-            searchWord: ''
+            searchWord: '',
+            recentlyUsedIcons: [] as IIcon[]
         }
     },
-    async created() {
+    created() {
         this.loadIcons()
         this.getSelectedIcon()
+        this.loadRecentlyUsedIcons()
     },
     methods: {
         loadIcons() {
@@ -62,6 +71,10 @@ export default defineComponent({
             const index = this.icons.findIndex((icon: IIcon) => icon.className === this.propModel?.icon)
             if (index !== -1) this.selectedIcon = { ...this.icons[index] }
         },
+        loadRecentlyUsedIcons() {
+            const temp = sessionStorage.getItem('widgetEditorRecentlyUsedIcons')
+            this.recentlyUsedIcons = temp ? JSON.parse(temp) : []
+        },
         setSelectedIcon(icon: IIcon) {
             this.selectedIcon = icon
         },
@@ -71,7 +84,15 @@ export default defineComponent({
         },
         save() {
             this.$emit('save', { ...this.selectedIcon })
+            this.updateSessionRecentlyUsedIcons()
             this.selectedIcon = null
+        },
+        updateSessionRecentlyUsedIcons() {
+            if (!this.selectedIcon) return
+            const index = this.recentlyUsedIcons.findIndex((icon: IIcon) => icon.id === this.selectedIcon?.id)
+            if (index === -1) this.recentlyUsedIcons.push(this.selectedIcon)
+            if (this.recentlyUsedIcons.length > 10) this.recentlyUsedIcons.splice(0, 1)
+            sessionStorage.setItem('widgetEditorRecentlyUsedIcons', JSON.stringify(this.recentlyUsedIcons))
         },
         filterIcons() {
             setTimeout(() => {

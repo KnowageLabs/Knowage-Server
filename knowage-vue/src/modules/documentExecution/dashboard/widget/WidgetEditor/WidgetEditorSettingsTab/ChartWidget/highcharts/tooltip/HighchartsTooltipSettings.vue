@@ -1,9 +1,5 @@
 <template>
     <div v-if="model" class="p-grid p-jc-center p-ai-center p-p-4">
-        <div class="p-col-12 p-grid p-ai-center p-p-4">
-            <label class="kn-material-input-label p-mr-2">{{ $t('common.enabled') }}</label>
-            <InputSwitch v-model="model.tooltip.enabled" @change="modelChanged"></InputSwitch>
-        </div>
         <div class="p-col-12 p-py-4">
             <WidgetEditorStyleToolbar :options="descriptor.tooltipStyleOptions" :propModel="toolbarModel" :disabled="tooltipDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
         </div>
@@ -43,7 +39,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IWidgetStyleToolbarModel } from '../../../../../../Dashboard'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
-import { IHighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget'
+import { IHighchartsChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import descriptor from '../HighchartsWidgetSettingsDescriptor.json'
 import InputNumber from 'primevue/inputnumber'
 import InputSwitch from 'primevue/inputswitch'
@@ -64,7 +60,7 @@ export default defineComponent({
     data() {
         return {
             descriptor,
-            model: null as IHighchartsPieChartModel | null,
+            model: null as IHighchartsChartModel | null,
             toolbarModel: {} as {
                 'font-family': string
                 'font-size': string
@@ -86,7 +82,7 @@ export default defineComponent({
     methods: {
         loadModel() {
             this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.model : null
-            if (this.model?.plotOptions?.pie?.dataLabels)
+            if (this.model?.tooltip)
                 this.toolbarModel = {
                     'font-family': this.model.tooltip.style.fontFamily,
                     'font-size': this.model.tooltip.style.fontSize,

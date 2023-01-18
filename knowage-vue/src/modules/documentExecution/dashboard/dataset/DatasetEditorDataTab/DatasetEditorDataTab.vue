@@ -1,7 +1,7 @@
 <template>
-    <DataList :dashboardDatasetsProp="dashboardDatasetsProp" :availableDatasetsProp="availableDatasetsProp" :selectedDatasetsProp="selectedDatasetsProp" @addSelectedDatasets="addSelectedDatasets" @datasetSelected="selectDataset" @deleteDataset="deleteAndUnselectDataset($event)" />
+    <DataList :dashboardDatasetsProp="dashboardDatasetsProp" :availableDatasetsProp="availableDatasetsProp" :selectedDatasetsProp="selectedDatasetsProp" @addSelectedDatasets="addSelectedDatasets" @datasetSelected="selectDataset" @deleteDataset="$emit('deleteDataset', $event)" />
     <DataDetail :dashboardDatasetsProp="dashboardDatasetsProp" :selectedDatasetProp="selectedDataset" :documentDriversProp="documentDriversProp" :dashboardId="dashboardId" data-test="dataset-detail" />
-    <DatasetEditorPreview v-if="selectedDataset && selectedDataset.id" id="dataset-editor-preview" :selectedDatasetProp="selectedDataset" data-test="dataset-preview" />
+    <DatasetEditorPreview v-if="selectedDataset.id" id="dataset-editor-preview" :selectedDatasetProp="selectedDataset" data-test="dataset-preview" />
 </template>
 
 <script lang="ts">

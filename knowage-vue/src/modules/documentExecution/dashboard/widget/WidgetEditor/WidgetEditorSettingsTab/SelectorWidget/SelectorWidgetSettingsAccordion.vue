@@ -3,7 +3,7 @@
         <Accordion class="selectorAccordion" v-model:activeIndex="activeIndex">
             <AccordionTab v-for="(accordion, index) in settings" :key="index" :disabled="accordion.type === 'LabelStyle' && labelStyleAccordionDisabled">
                 <template #header>
-                    <label class="kn-material-input-label">{{ $t(accordion.title) }}</label>
+                    <SelectorWidgetSettingsAccordionHeader :widgetModel="widgetModel" :title="accordion.title" :type="accordion.type"></SelectorWidgetSettingsAccordionHeader>
                 </template>
                 <SelectorWidgetType v-if="accordion.type === 'SelectorType'" :widgetModel="widgetModel"></SelectorWidgetType>
                 <SelectorWidgetDefaultValues v-else-if="accordion.type === 'DefaultValues'" :widgetModel="widgetModel"></SelectorWidgetDefaultValues>
@@ -39,6 +39,7 @@ import WidgetPaddingStyle from '../common/style/WidgetPaddingStyle.vue'
 import WidgetBordersStyle from '../common/style/WidgetBordersStyle.vue'
 import WidgetShadowsStyle from '../common/style/WidgetShadowsStyle.vue'
 import WidgetResponsive from '../common/responsive/WidgetResponsive.vue'
+import SelectorWidgetSettingsAccordionHeader from './SelectorWidgetSettingsAccordionHeader.vue'
 
 export default defineComponent({
     name: 'selector-widget-settings-container',
@@ -55,7 +56,8 @@ export default defineComponent({
         WidgetPaddingStyle,
         WidgetBordersStyle,
         WidgetShadowsStyle,
-        WidgetResponsive
+        WidgetResponsive,
+        SelectorWidgetSettingsAccordionHeader
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

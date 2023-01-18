@@ -1,12 +1,5 @@
 <template>
     <div v-if="paddingStyleModel" class="p-grid p-jc-center p-ai-center kn-flex p-p-4">
-        <div class="p-col-12 p-d-flex p-flex-row p-ai-center p-pt-2 p-pb-4">
-            <div class="kn-flex p-m-2">
-                <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.padding.enablePadding') }}</label>
-                <InputSwitch v-model="paddingStyleModel.enabled" @change="paddingStyleChanged"></InputSwitch>
-            </div>
-        </div>
-
         <div class="p-col-12 p-grid p-ai-center">
             <div class="p-d-flex p-jc-center p-ai-center">
                 <i
@@ -74,7 +67,6 @@ export default defineComponent({
             if (this.widgetModel.settings?.style?.padding) this.paddingStyleModel = this.widgetModel.settings.style.padding
         },
         paddingStyleChanged() {
-            emitter.emit('paddingStyleChanged', this.paddingStyleModel)
             switch (this.widgetType) {
                 case 'table':
                     emitter.emit('refreshTable', this.widgetModel.id)

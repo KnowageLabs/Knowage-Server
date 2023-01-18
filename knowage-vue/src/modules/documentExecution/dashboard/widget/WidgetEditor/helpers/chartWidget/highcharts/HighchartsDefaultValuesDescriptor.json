@@ -1,4 +1,20 @@
 {
+    "dafaultPaneOptions": {
+        "center": ["50%", "50%"],
+        "endAngle": 120,
+        "startAngle": -120
+    },
+    "dafaultSolidGaugePaneOptions": {
+        "background": {
+            "backgroundColor": "#EEE",
+            "innerRadius": "60%",
+            "outerRadius": "100%",
+            "shape": "arc"
+        },
+        "center": ["50%", "50%"],
+        "endAngle": 90,
+        "startAngle": -90
+    },
     "default3DOptions": {
         "alpha": 0,
         "beta": 0,
@@ -13,6 +29,59 @@
             "order": []
         }
     },
+    "defaultActivityGaugeChartPlotOptions": {
+        "allowPointSelect": false,
+        "colors": [],
+        "cursor": "",
+        "dataLabels": {
+            "backgroundColor": "rgba(194,194,194, 1)",
+            "distance": 30,
+            "enabled": false,
+            "position": "",
+            "style": {
+                "color": "",
+                "fontFamily": "",
+                "fontSize": "14px",
+                "fontWeight": ""
+            }
+        },
+        "depth": 100,
+        "linecap": "round",
+        "rounded": true,
+        "showInLegend": true,
+        "stickyTracking": false
+    },
+    "defaultActivityGaugePaneOptions": {
+        "center": ["50%", "50%"],
+        "endAngle": 360,
+        "startAngle": 0
+    },
+    "defaultActivityGaugeTooltip": {
+        "backgroundColor": "",
+        "borderWidth": 0,
+        "enabled": true,
+        "pointFormat": "{series.name}<br><span style=\"color: {point.color};\">{point.y}</span>",
+        "shadow": false,
+        "style": {
+            "fontFamily": "",
+            "fontSize": "",
+            "fontWeight": "bold"
+        }
+    },
+    "defaultActivityGaugeYAxis": {
+        "labels": {
+            "enabled": false
+        },
+        "lineWidth": 0,
+        "max": null,
+        "min": null,
+        "minorTickInterval": null,
+        "plotBands": [],
+        "tickColor": "",
+        "tickLength": 0,
+        "tickPosition": "",
+        "tickWidth": 0
+    },
     "defaultAllSeriesAccessibilitySettings": [
         {
             "accessibility": {
@@ -26,6 +95,37 @@
             "names": ["all"]
         }
     ],
+    "defaultBandsSetting": {
+        "color": "",
+        "from": 0,
+        "thickness": 10,
+        "to": 0
+    },
+    "defaultGaugeChartPlotOptions": {
+        "dataLabels": {
+            "backgroundColor": "rgba(194,194,194, 1)",
+            "enabled": false,
+            "position": "",
+            "style": {
+                "color": "",
+                "fontFamily": "",
+                "fontSize": "14px",
+                "fontWeight": ""
+            }
+        },
+        "showInLegend": true
+    },
+    "defaultGaugeYAxis": {
+        "max": null,
+        "min": null,
+        "minorTickInterval": null,
+        "plotBands": [],
+        "stops": null,
+        "tickColor": "rgba(194,194,194, 1)",
+        "tickLength": 10,
+        "tickPosition": "outside",
+        "tickWidth": 3
+    },
     "defaultHighchartsSelection": {
         "enabled": true,
         "modalColumn": ""
@@ -76,41 +176,50 @@
         "depth": 100,
         "showInLegend": true
     },
-    "defaultSerieLabelSettings": [
-        {
-            "label": {
-                "absolute": false,
-                "backgroundColor": "",
-                "enabled": false,
-                "percentage": false,
-                "precision": 2,
-                "prefix": "",
-                "scale": "empty",
-                "style": {
-                    "color": "",
-                    "fontFamily": "",
-                    "fontSize": "",
-                    "fontWeight": ""
-                },
-                "suffix": ""
-            },
-            "names": ["all"]
+    "defaultSerieAccessibilitySetting": {
+        "description": "",
+        "enabled": false,
+        "exposeAsGroupOnly": false,
+        "keyboardNavigation": {
+            "enabled": false
         }
-    ],
-    "defaultSeriesAccessibilitySettings": {
-        "accessibility": {
-            "description": "",
-            "enabled": true,
-            "exposeAsGroupOnly": false,
-            "keyboardNavigation": {
-                "enabled": false
-            }
+    },
+    "defaultSerieDialSettings": {
+        "backgroundColor": "",
+        "baseWidth": 3,
+        "radius": "80%"
+    },
+    "defaultSerieLabelSettings": {
+        "absolute": false,
+        "backgroundColor": "rgba(246,246,246, 1)",
+        "enabled": false,
+        "percentage": false,
+        "precision": 2,
+        "prefix": "",
+        "scale": "empty",
+        "style": {
+            "color": "",
+            "fontFamily": "",
+            "fontSize": "",
+            "fontWeight": ""
         },
-        "names": []
+        "suffix": ""
+    },
+    "defaultSeriePivotSettings": {
+        "backgroundColor": "",
+        "radius": 5
+    },
+    "defaultSeriesAccessibilitySettings": {
+        "description": "",
+        "enabled": true,
+        "exposeAsGroupOnly": false,
+        "keyboardNavigation": {
+            "enabled": false
+        }
     },
     "defaultTooltipSettings": {
-        "backgroundColor": "",
-        "enabled": false,
+        "backgroundColor": "rgba(194,194,194, 1)",
+        "enabled": true,
         "style": {
             "color": "",
             "fontFamily": "",
