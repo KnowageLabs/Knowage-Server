@@ -10,6 +10,7 @@ import { formatTextWidget } from './textWidget/TextWidgetCompatibilityHelper'
 import { getFormattedDatasetDrivers } from '../dataset/DatasetEditorDataTab/DatasetEditorDataDetail/DatasetEditorDriverDialog/DatasetEditorDatasetDriverFormatterHelper'
 import { formatHighchartsWidget } from './chartWidget/highcharts/HighchartsWidgetCompatibilityHelper'
 import { formatChartJSWidget } from './chartWidget/chartJS/ChartJSWidgetCompatibilityHelper'
+import { formatImageWidget } from './imageWidget/ImageWidgetCompatibilityHelper'
 
 const datasetIdLabelMap = {}
 
@@ -210,7 +211,10 @@ export const formatWidget = (widget: any, formattedModel: IDashboard, user: any)
         case 'chart':
             // TODO widgetChange
             formattedWidget = user?.enterprise ? formatHighchartsWidget(widget) : formatChartJSWidget(widget)
-        //  formattedWidget = false ? formatHighchartsWidget(widget) : formatChartJSWidget(widget)
+            //  formattedWidget = false ? formatHighchartsWidget(widget) : formatChartJSWidget(widget)
+            break
+        case 'image':
+            formattedWidget = formatImageWidget(widget)
     }
 
     return formattedWidget
