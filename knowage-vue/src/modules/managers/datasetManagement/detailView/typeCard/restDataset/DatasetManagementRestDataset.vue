@@ -171,7 +171,7 @@ export default defineComponent({
             this.dataset = this.selectedDataset
 
             this.dataset.restDirectlyJSONAttributes = Boolean(this.dataset.restDirectlyJSONAttributes)
-            this.dataset.restNGSI = Boolean(this.dataset.restNGSI)
+            this.dataset.restNGSI = this.dataset.restNGSI === 'true'
         }
     }
 })
