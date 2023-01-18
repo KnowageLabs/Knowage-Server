@@ -180,6 +180,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.mouseWheelZoomInteraction = undefined; // Manage the mouse wheel on map
 		$scope.isShowLegend = true; //legend is on by default
 		$scope.i18n = sbiModule_i18n;
+		$scope.dataSetStats = {};
 
 		$scope.i18n.loadI18nMap();
 
@@ -338,8 +339,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.getTemplateUrl = function(template){
-	  		return cockpitModule_generalServices.getTemplateUrl('mapWidget',template);
-	  	}
+			return cockpitModule_generalServices.getTemplateUrl('mapWidget',template);
+		}
 
 		$scope.addAllLayers = function() {
 			$scope.addBaseLayer();
@@ -432,7 +433,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.thematizeMeasure(layerName, null);
 		}
 
-	    $scope.getOptions =function(){
+		$scope.getOptions =function(){
 			var obj = {};
 			var targetLayer = $scope.getTargetDataset();
 			obj["type"] = $scope.ngModel.type;
@@ -440,7 +441,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return obj;
 		}
 
-	    $scope.editWidget=function(index){
+		$scope.editWidget=function(index){
 			var finishEdit=$q.defer();
 			var config = {
 					attachTo:  angular.element(document.body),
@@ -598,7 +599,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			layerDef.layerID = layerID;
 			var featuresSource = cockpitModule_mapServices.getFeaturesDetails(geoColumn, selectedMeasure, layerDef, columnsForData, data);
 			if (featuresSource == null){
-				//creates a fake layer for internal object (becasue isn't the first loop anymore)
+				// creates a fake layer for internal object (because isn't the first loop anymore)
 				layer = {};
 				layer.name = layerDef.name;
 				layer.dsId = layerDef.dsId;
@@ -619,22 +620,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				var clusterSource = new ol.source.Cluster({source: featuresSource
 														  });
 				layer = new ol.layer.Vector({source: clusterSource,
-										  	  style: cockpitModule_mapThematizerServices.layerStyle
-										});
+					style: cockpitModule_mapThematizerServices.layerStyle
+				});
 			} else if (isHeatmap) {
 				layer = new ol.layer.Heatmap({source: featuresSource,
-												blur: layerDef.heatmapConf.blur,
-												radius: layerDef.heatmapConf.radius,
-												weight: cockpitModule_mapThematizerServices.setHeatmapWeight
-											});
+					blur: layerDef.heatmapConf.blur,
+					radius: layerDef.heatmapConf.radius,
+					weight: cockpitModule_mapThematizerServices.setHeatmapWeight
+				});
 			} else {
 				layer = new ol.layer.Vector({source: featuresSource,
-											 style: cockpitModule_mapThematizerServices.layerStyle
-											});
+					style: cockpitModule_mapThematizerServices.layerStyle
+				});
 			}
 
 			// Reference to the original layer
 			layer.set("originalLayer", layerDef);
+			layer.set("stats", $scope.dataSetStats[layerDef.name]);
 
 			//add decoration to layer element
 			layer.name = layerDef.name;
@@ -649,13 +651,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			layer.filterBy = {};
 
 			if ($scope.map){
-				$scope.map.addLayer(layer); 			//add layer to ol.Map
+				$scope.map.addLayer(layer); // add layer to ol.Map
 			}
 			else{
-//				sbiModule_messaging.showInfoMessage("The map object isn't available for adding layer, please reload the document.", 'Title', 3000);
-//				$timeout(function() {
-//					$scope.hideWidgetSpinner();
-//				}, 3000)
 				$timeout(function() {
 					 console.log("Waiting 3000 ms for creation object map!");
 					 if ($scope.map){
@@ -977,11 +975,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			//get the dataset columns values
 			cockpitModule_datasetServices.loadDatasetRecordsById(layerDef.dsId, undefined, undefined, undefined, undefined, model).then(
-				function(allDatasetRecords){
+				function(response){
 
-					$scope.createLayerWithData(layerDef.name, allDatasetRecords, isCluster, isHeatmap);
+					fields = response.metaData.fields;
+					stat = $scope.dataSetStats[layerDef.name] = {}
+					for (i in fields) {
+						var curr = fields[i];
+						
+						if (typeof curr === 'object') {
+							stat[i] = response.stats[i];
+							stat[i].name = curr.name;
+							stat[i].header = curr.header;
+						}
+					}
+
+					$scope.createLayerWithData(layerDef.name, response, isCluster, isHeatmap);
 					$scope.hideWidgetSpinner();
-
+					
 					$scope.map.render();
 					// Seams to fix invisible layer problem before the first map interaction
 					$scope.map.updateSize();

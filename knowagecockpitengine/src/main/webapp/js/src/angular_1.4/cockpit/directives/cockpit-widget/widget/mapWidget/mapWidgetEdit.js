@@ -42,7 +42,13 @@ function mapWidgetEditControllerFunction(
 	$scope.availableBackgroundLayers = [];
 	$scope.availableOperators = [{'label':'==','value':'=='},{'label':'!=','value':'!='},{'label':'<','value':'<','range':true},{'label':'>','value':'>','range':true},{'label':'<=','value':'<=','range':true},{'label':'>=','value':'>=','range':true}];
 	$scope.availableChoroplethOperators = [{'label':'>=','value':'>='},{'label':'<','value':'<'}];
-	$scope.visualizationTypes = [{"name":"markers","enabled":true,"class":"markers"},{"name":"clusters","enabled":true,"class":"clusters"},{"name":"heatmap","enabled":true,"class":"heatmap"},{"name":"choropleth","enabled":true,"class":"choropleth"}];
+	$scope.visualizationTypes = [
+		{"name":"markers","enabled":true,"class":"markers"},
+		{"name":"balloons","enabled":true,"class":"balloons"},
+		{"name":"clusters","enabled":true,"class":"clusters"},
+		{"name":"heatmap","enabled":true,"class":"heatmap"},
+		{"name":"choropleth","enabled":true,"class":"choropleth"}
+	];
 	$scope.uploadImg = {};
 	$scope.widgetSpinner = false;
 	$scope.availableLegendAlignments = [{'label':$scope.translate.load('sbi.cockpit.style.textAlign.left'),'value':'left'},{'label':$scope.translate.load('sbi.cockpit.style.textAlign.center'),'value':'center'},{'label':$scope.translate.load('sbi.cockpit.style.textAlign.right'),'value':'right'}];
@@ -618,13 +624,8 @@ function mapWidgetEditControllerFunction(
 	}
 
 	$scope.needsBorderColor = function(layer) {
-		return layer.content
-			.columnSelectedOfDataset
-			.find(function(e) {
-					return e.fieldType == "SPATIAL_ATTRIBUTE";
-				})
-			.properties
-			.coordType != "string";
+		return layer.content.columnSelectedOfDataset.find(function(e) { return e.fieldType == "SPATIAL_ATTRIBUTE"; }).properties.coordType != "string"
+			|| layer.visualizationType == "balloons";
 	}
 
 	$scope.changeCoordType = function(layer) {

@@ -42,6 +42,7 @@
     "angular-tree-control": "0.2.30",
     "angular-ui-codemirror": "0.3.0",
     "angular-xregexp": "1.0.0",
+    "angularjs-slider": "^7.1.0",
     "bootstrap": "4.3.1",
     "canvg": "1.5.3",
     "codemirror": "5.32.0",

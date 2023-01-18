@@ -104,4 +104,6 @@ public interface IDataStore {
 
 	void adjustMetadata(IMetaData dataSetMetadata);
 
+	DataStoreStats getStats();
+
 }
