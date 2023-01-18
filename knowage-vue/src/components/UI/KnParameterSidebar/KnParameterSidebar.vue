@@ -209,7 +209,17 @@ import { getCorrectRolesForExecutionForType } from '../../../helpers/commons/rol
 export default defineComponent({
     name: 'kn-parameter-sidebar',
     components: { Calendar, Chip, Chips, Checkbox, Dropdown, KnParameterPopupDialog, KnParameterTreeDialog, KnParameterSaveDialog, KnParameterSavedParametersDialog, Menu, MultiSelect, RadioButton, ScrollPanel },
-    props: { filtersData: { type: Object }, propDocument: { type: Object }, userRole: { type: Object as PropType<String | null> }, propMode: { type: String }, propQBEParameters: { type: Array }, dateFormat: { type: String }, dataset: { type: Object }, correctRolesForExecution: [] },
+    props: {
+        filtersData: { type: Object },
+        propDocument: { type: Object },
+        userRole: { type: Object as PropType<String | null> },
+        propMode: { type: String },
+        propQBEParameters: { type: Array },
+        dateFormat: { type: String },
+        dataset: { type: Object },
+        correctRolesForExecution: { type: Array },
+        loadFromDatasetManagement: { type: Boolean, default: false }
+    },
     emits: ['execute', 'exportCSV', 'roleChanged', 'parametersChanged'],
     data() {
         return {
