@@ -11,7 +11,7 @@ import descriptor from './DiscoveryWidgetSettingsDescriptor.json'
 import DiscoveryWidgetSettingsAccordion from './DiscoveryWidgetSettingsAccordion.vue'
 
 export default defineComponent({
-    name: 'table-widget-settings-container',
+    name: 'discovery-widget-settings-container',
     components: { DiscoveryWidgetSettingsAccordion },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

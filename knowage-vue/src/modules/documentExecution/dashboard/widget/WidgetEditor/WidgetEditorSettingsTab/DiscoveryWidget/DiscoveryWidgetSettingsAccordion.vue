@@ -46,7 +46,7 @@ import WidgetBackgroundColorStyle from '../common/style/WidgetBackgroundColorSty
 import DiscoveryWidgetSettingsAccordionHeader from './DiscoveryWidgetSettingsAccordionHeader.vue'
 
 export default defineComponent({
-    name: 'table-widget-configuration-container',
+    name: 'discovery-widget-configuration-container',
     components: {
         Accordion,
         AccordionTab,

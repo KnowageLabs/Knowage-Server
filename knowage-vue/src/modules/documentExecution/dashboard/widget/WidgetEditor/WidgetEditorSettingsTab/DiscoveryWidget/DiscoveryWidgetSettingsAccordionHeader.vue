@@ -14,7 +14,7 @@ import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 
 export default defineComponent({
-    name: 'table-widget-settings-accordion-header',
+    name: 'discovery-widget-settings-accordion-header',
     components: { Checkbox, Dropdown, InputSwitch },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, title: { type: String }, type: { type: String, required: true } },
     data() {

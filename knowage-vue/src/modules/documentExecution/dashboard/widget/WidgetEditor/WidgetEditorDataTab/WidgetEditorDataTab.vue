@@ -3,7 +3,12 @@
     <ChartGallery v-if="chartPickerVisible" :widgetModel="propWidget" @selectedChartTypeChanged="onChartTypeChanged" />
     <div class="p-d-flex kn-flex kn-overflow" v-else-if="propWidget">
         <WidgetEditorHint v-if="!selectedDataset"></WidgetEditorHint>
-        <WidgetEditorCommonDataContainer v-else-if="propWidget.type === 'table' || propWidget.type === 'html' || propWidget.type === 'text'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widgetModel="propWidget" :selectedDataset="selectedDataset"></WidgetEditorCommonDataContainer>
+        <WidgetEditorCommonDataContainer
+            v-else-if="propWidget.type === 'table' || propWidget.type === 'html' || propWidget.type === 'text' || propWidget.type === 'discovery'"
+            class="kn-flex model-div kn-overflow p-mx-2 p-my-3"
+            :widgetModel="propWidget"
+            :selectedDataset="selectedDataset"
+        ></WidgetEditorCommonDataContainer>
         <SelectorWidgetDataContainer v-else-if="propWidget.type === 'selector'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widgetModel="propWidget" :selectedDataset="selectedDataset"></SelectorWidgetDataContainer>
         <HighchartsDataContainer v-else-if="propWidget.type === 'highcharts'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widgetModel="propWidget" :selectedDataset="selectedDataset" @selectedChartTypeChanged="onChartTypeChanged"></HighchartsDataContainer>
         <ChartJSDataContainer v-else-if="propWidget.type === 'chartJS'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widgetModel="propWidget" :selectedDataset="selectedDataset"></ChartJSDataContainer>
