@@ -71,9 +71,9 @@ const getFormattedRowsStyle = (widget: any) => {
         multiselectable: widget.settings.multiselectable ?? false,
         selectionColor: widget.settings.multiselectablecolor ?? '',
         alternatedRows: {
-            enabled: widget.settings.alternateRows.enabled ?? false,
-            evenBackgroundColor: widget.settings.alternateRows.evenRowsColor ?? 'rgb(228, 232, 236)',
-            oddBackgroundColor: widget.settings.alternateRows.oddRowsColor ?? ''
+            enabled: widget.settings.alternateRows?.enabled ?? false,
+            evenBackgroundColor: widget.settings.alternateRows?.evenRowsColor ?? 'rgb(228, 232, 236)',
+            oddBackgroundColor: widget.settings.alternateRows?.oddRowsColor ?? ''
 
         }
     }
