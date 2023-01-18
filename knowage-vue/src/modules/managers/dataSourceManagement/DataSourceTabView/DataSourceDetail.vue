@@ -346,7 +346,9 @@ export default defineComponent({
             this.jdbcOrJndi.type = 'JDBC'
             this.jdbcPoolConfiguration = { ...dataSourceDescriptor.newDataSourceValues.jdbcPoolConfiguration }
             this.datasource = { ...dataSourceDescriptor.newDataSourceValues }
+            this.datasource.owner = this.user?.userId
             this.disableLabelField = false
+            this.showOwnerMessage = false
             this.checkIfReadOnly()
         },
 
@@ -486,7 +488,7 @@ export default defineComponent({
             this.$emit('closed')
         },
         isVisible() {
-            return (this.datasource.owner && this.datasource.owner == this.user?.userId) || this.user?.isSuperadmin
+            return this.datasource.owner == this.user?.userId || this.user?.isSuperadmin
         }
     }
 })
