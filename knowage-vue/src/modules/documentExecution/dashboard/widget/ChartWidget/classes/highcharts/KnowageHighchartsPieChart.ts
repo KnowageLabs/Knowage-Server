@@ -1,4 +1,4 @@
-import { KnowageHighcharts } from './KnowageHihgcharts'
+import { KnowageHighcharts } from './KnowageHighcharts'
 import { updatePieChartModel } from './updater/KnowageHighchartsPieChartUpdater'
 import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
 import { IHighchartsChartSerie, IHighchartsChartSerieData } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
