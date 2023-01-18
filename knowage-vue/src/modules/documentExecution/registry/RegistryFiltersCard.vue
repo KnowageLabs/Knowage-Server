@@ -10,7 +10,7 @@
         <template #content>
             <div class="filter-container" :style="registryDescriptor.styles.filterContainer">
                 <div class="fields-container" :style="registryDescriptor.styles.fieldsContainer">
-                    <form class="p-fluid p-formgrid p-grid">
+                    <form class="p-fluid p-formgrid p-grid" v-on:submit="filterRegistry">
                         <template v-for="(filter, index) in filters" :key="index">
                             <RegistryFilterCard class="kn-flex p-mx-2" :id="id" :propFilter="filter" :entity="entity" :clearTrigger="clearFiltersTrigger" @changed="setFilterValue($event, index)" @valid="setFilterButtonDisabled"> </RegistryFilterCard>
                         </template>
@@ -69,7 +69,8 @@ export default defineComponent({
             this.clearFiltersTrigger = !this.clearFiltersTrigger
             this.$emit('filter', this.filters)
         },
-        filterRegistry() {
+        filterRegistry(e) {
+            e.preventDefault()
             this.$emit('filter', this.filters)
         },
         setFilterButtonDisabled(valid) {

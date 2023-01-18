@@ -1,11 +1,15 @@
 <template>
     <div id="registry-gric-container" class="kn-height-full p-d-flex p-flex-column">
-        <div class="registry-grid-toolbar">
-            <Button icon="fas fa-plus" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.addRow')" data-test="new-row-button" @click="addNewRow" />
-            <Button icon="fas fa-clone" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.cloneRows')" @click="cloneRows" />
-            <Button icon="fas fa-trash" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.deleteRows')" @click="rowsDeleteConfirm()" />
+        <div id="registry-grid-toolbar" class="p-d-flex p-flex-row p-ai-center" :style="registryDescriptor.styles.tableToolbar">
+            <div v-if="selectedRows.length > 0" class="p-ml-1">{{ selectedRows.length }} {{ $t('documentExecution.registry.grid.rowsSelected') }}</div>
+            <div id="operation-buttons-containter" class="p-ml-auto" :style="registryDescriptor.styles.tableToolbarButtonContainer">
+                <Button icon="fas fa-plus" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.addRow')" data-test="new-row-button" @click="addNewRow" />
+                <Button icon="fas fa-clone" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.cloneRows')" @click="cloneRows" />
+                <Button icon="fas fa-trash" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.deleteRows')" @click="rowsDeleteConfirm()" />
+            </div>
+            <Button icon="fas fa-save" class="p-button-text p-button-rounded p-button-plain kn-button-light" @click="$emit('saveRegistry')" />
         </div>
-        <ag-grid-vue v-if="!loading" class="registry-grid ag-theme-alpine" style="height: 100%" :rowData="rows" :gridOptions="gridOptions" :context="context" />
+        <ag-grid-vue v-if="!loading" class="registry-grid ag-theme-alpine kn-height-full" :rowData="rows" :gridOptions="gridOptions" :context="context" />
     </div>
 
     <RegistryDatatableWarningDialog :visible="warningVisible" :columns="dependentColumns" @close="onWarningDialogClose"></RegistryDatatableWarningDialog>
@@ -43,7 +47,7 @@ export default defineComponent({
         stopWarningsState: { type: Array },
         dataLoading: { type: Boolean }
     },
-    emits: ['rowChanged', 'rowDeleted', 'pageChanged', 'warningChanged'],
+    emits: ['rowChanged', 'rowDeleted', 'pageChanged', 'warningChanged', 'saveRegistry'],
     data() {
         return {
             registryDescriptor,
@@ -144,8 +148,9 @@ export default defineComponent({
                     sortable: true,
                     resizable: true,
                     width: 100,
+                    tooltipComponent: TooltipRenderer,
                     cellClassRules: {
-                        'green-bg': (params) => {
+                        'edited-cell-color-class': (params) => {
                             if (params.data.isEdited) return params.data.isEdited.includes(params.colDef.field)
                         }
                     }
@@ -162,6 +167,7 @@ export default defineComponent({
 
                 // CALLBACKS
                 onGridReady: this.onGridReady,
+                getRowStyle: this.getRowStyle,
                 getRowId: this.getRowId
             }
         },
@@ -180,7 +186,7 @@ export default defineComponent({
                     resizable: false,
                     columnInfo: { type: 'int' },
                     cellStyle: (params) => {
-                        return { color: 'black', backgroundColor: registryDescriptor.styles.disabledCellColor, opacity: 0.8 }
+                        return { color: 'black', backgroundColor: registryDescriptor.styles.colors.disabledCellColor, opacity: 0.8 }
                     }
                 }
             ]
@@ -188,6 +194,7 @@ export default defineComponent({
                 if (el.isVisible) {
                     el.editable = el.isEditable
                     el.headerName = el.title ?? el.columnInfo.header
+                    el.tooltipField = el.field
 
                     this.addColumnEditableProps(el)
                     this.addColumnCheckboxRendererProps(el)
@@ -218,8 +225,6 @@ export default defineComponent({
                 el.cellRenderer = (params) => {
                     return `<i class="fas fa-${params.value ? 'check' : 'times'}"/>`
                 }
-                el.tooltipComponent = TooltipRenderer
-                el.tooltipField = el.field
             }
         },
         addColumnFormattingProps(el: any) {
@@ -572,6 +577,9 @@ export default defineComponent({
                 this.$emit('rowChanged', params.data)
             }
             params.api.refreshCells()
+        },
+        getRowStyle(params) {
+            if (params.data.isNew) return { 'background-color': registryDescriptor.styles.colors.newRowColor }
         }
     }
 })
@@ -586,19 +594,7 @@ export default defineComponent({
 .registry-grid {
     border: none;
 }
-.editableField {
-    width: 100%;
-}
-.registry-grid-toolbar {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: end;
-    height: 35px;
-    border: 1px solid #babfc7;
-    border-bottom: none;
-}
-.green-bg {
-    background-color: olivedrab;
+.edited-cell-color-class {
+    background-color: #749e43;
 }
 </style>
