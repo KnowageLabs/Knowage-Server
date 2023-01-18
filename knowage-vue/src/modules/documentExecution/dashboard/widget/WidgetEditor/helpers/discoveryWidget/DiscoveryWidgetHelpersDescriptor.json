@@ -1,0 +1,9 @@
+{
+    "defaultSearchSettings": {
+        "columns": [],
+        "default": false,
+        "defaultType": "static",
+        "defaultValue": "",
+        "enabled": true
+    }
+}

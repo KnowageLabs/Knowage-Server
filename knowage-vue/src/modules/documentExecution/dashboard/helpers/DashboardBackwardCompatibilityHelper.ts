@@ -1,6 +1,6 @@
 import { formatTableWidget } from './tableWidget/TableWidgetCompatibilityHelper'
 import { formatSelectorWidget } from '@/modules/documentExecution/dashboard/helpers/selectorWidget/SelectorWidgetCompatibilityHelper'
-import { IAssociation, IDashboard, IDashboardConfiguration, IDataset, IDatasetParameter, ISelection, IVariable, IWidget, IWidgetColumn, IWidgetColumnFilter, IDashboardDataset } from '../Dashboard'
+import { IAssociation, IDashboard, IDashboardConfiguration, IDataset, IDatasetParameter, ISelection, IVariable, IWidget, IWidgetColumn, IWidgetColumnFilter, IDashboardDataset, IDashboardDatasetDriver } from '../Dashboard'
 import { formatSelectionWidget } from './selectionWidget/SelectionsWidgetCompatibilityHelper'
 import { setVariableValueFromDataset } from '../generalSettings/VariablesHelper'
 import deepcopy from 'deepcopy'
@@ -27,7 +27,7 @@ export const formatModel = async (model: any, document: any, datasets: IDataset[
         sheets: []
     } as any
     for (let i = 0; i < model.sheets.length; i++) {
-        const formattedSheet = formatSheet(model.sheets[i], formattedModel, user)
+        const formattedSheet = formatSheet(model.sheets[i], formattedModel, user, drivers)
         formattedModel.sheets.push(formattedSheet)
     }
 
@@ -157,7 +157,7 @@ const getFormattedSelections = (model: any) => {
     return formattedSelections
 }
 
-const formatSheet = (sheet: any, formattedModel: any, user: any) => {
+const formatSheet = (sheet: any, formattedModel: any, user: any, drivers: IDashboardDatasetDriver[]) => {
     if (!sheet.widgets) return
 
     const formattedSheet = deepcopy(sheet)
@@ -166,15 +166,15 @@ const formatSheet = (sheet: any, formattedModel: any, user: any) => {
     for (let i = 0; i < sheet.widgets.length; i++) {
         const tempWidget = sheet.widgets[i]
         formattedSheet.widgets.lg.push({ id: tempWidget.id, h: tempWidget.sizeY, w: tempWidget.sizeX, x: tempWidget.col, y: tempWidget.row, i: cryptoRandomString({ length: 16, type: 'base64' }), moved: false })
-        addWidgetToModel(tempWidget, formattedModel, user)
+        addWidgetToModel(tempWidget, formattedModel, user, drivers)
     }
 
     return formattedSheet
 }
 
-const addWidgetToModel = (widget: any, formattedModel: any, user: any) => {
+const addWidgetToModel = (widget: any, formattedModel: any, user: any, drivers: IDashboardDatasetDriver[]) => {
     if (checkIfWidgetInModel(widget, formattedModel)) return
-    formattedModel.widgets.push(formatWidget(widget, formattedModel, user))
+    formattedModel.widgets.push(formatWidget(widget, formattedModel, user, drivers))
 }
 
 const checkIfWidgetInModel = (widget: any, formattedModel: any) => {
@@ -190,7 +190,7 @@ const checkIfWidgetInModel = (widget: any, formattedModel: any) => {
     return found
 }
 
-export const formatWidget = (widget: any, formattedModel: IDashboard, user: any) => {
+export const formatWidget = (widget: any, formattedModel: IDashboard, user: any, drivers: IDashboardDatasetDriver[]) => {
     let formattedWidget = {} as any
 
     console.log(">>>>>>> WIDGET TYPE: ", widget.type)
@@ -220,7 +220,7 @@ export const formatWidget = (widget: any, formattedModel: IDashboard, user: any)
             formattedWidget = formatImageWidget(widget)
             break;
         case 'discovery':
-            formattedWidget = formatDiscoveryWidget(widget, formattedModel)
+            formattedWidget = formatDiscoveryWidget(widget, drivers)
 
     }
 

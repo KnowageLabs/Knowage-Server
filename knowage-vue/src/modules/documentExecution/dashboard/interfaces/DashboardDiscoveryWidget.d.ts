@@ -24,7 +24,12 @@ export interface IDiscoveryWidgetFacetsSettings {
 }
 
 export interface IDiscoveryWidgetSearchSettings {
-
+    columns: string[],
+    enabled: boolean,
+    default: boolean,
+    defaultType: "static" | "driver",
+    defaultValue: string,
+    driverId?: string
 }
 
 export interface IDiscoveryWidgetConfiguration {

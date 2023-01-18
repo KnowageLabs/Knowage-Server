@@ -439,6 +439,7 @@ export interface IDashboardDatasetDriver {
     type: string
     defaultValue: { value: string; description: string }[] | null
     label: string
+    driverLabel: string
     multivalue: boolean
     typeCode: string
     selectionType: string
