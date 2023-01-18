@@ -11,6 +11,7 @@ import { getFormattedDatasetDrivers } from '../dataset/DatasetEditorDataTab/Data
 import { formatHighchartsWidget } from './chartWidget/highcharts/HighchartsWidgetCompatibilityHelper'
 import { formatChartJSWidget } from './chartWidget/chartJS/ChartJSWidgetCompatibilityHelper'
 import { formatImageWidget } from './imageWidget/ImageWidgetCompatibilityHelper'
+import { formatDiscoveryWidget } from './discoveryWidget/DiscoveryWidgetCompatibilityHelper'
 
 const datasetIdLabelMap = {}
 
@@ -192,6 +193,8 @@ const checkIfWidgetInModel = (widget: any, formattedModel: any) => {
 export const formatWidget = (widget: any, formattedModel: IDashboard, user: any) => {
     let formattedWidget = {} as any
 
+    console.log(">>>>>>> WIDGET TYPE: ", widget.type)
+
     switch (widget.type) {
         case 'table':
             formattedWidget = formatTableWidget(widget, formattedModel)
@@ -215,6 +218,10 @@ export const formatWidget = (widget: any, formattedModel: IDashboard, user: any)
             break
         case 'image':
             formattedWidget = formatImageWidget(widget)
+            break;
+        case 'discovery':
+            formattedWidget = formatDiscoveryWidget(widget, formattedModel)
+
     }
 
     return formattedWidget
