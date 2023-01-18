@@ -36,14 +36,14 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget } from '../../../../../../Dashboard'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
-import { IHighchartsPieChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget'
-import { IHighchartsChartSerie, ISerieAccessibilitySetting } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
+import { IHighchartsChartModel, IHighchartsChartSerie, ISerieAccessibilitySetting } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import descriptor from '../HighchartsWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 import Textarea from 'primevue/textarea'
 import HighchartsSeriesMultiselect from '../common/HighchartsSeriesMultiselect.vue'
 import * as highchartsDefaultValues from '../../../../helpers/chartWidget/highcharts/HighchartsDefaultValues'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'hihgcharts-series-accessibility-settings',
@@ -52,14 +52,14 @@ export default defineComponent({
     data() {
         return {
             descriptor,
-            model: null as IHighchartsPieChartModel | null,
+            model: null as IHighchartsChartModel | null,
             seriesSettings: [] as ISerieAccessibilitySetting[],
             availableSeriesOptions: [] as string[]
         }
     },
     computed: {
         allSeriesOptionEnabled() {
-            return this.model?.chart.type !== 'pie'
+            return this.model && this.model.chart.type !== 'pie' && this.model.chart.type !== 'solidgauge'
         }
     },
     created() {
@@ -73,15 +73,37 @@ export default defineComponent({
         setEventListeners() {
             emitter.on('seriesAdded', this.loadModel)
             emitter.on('seriesRemoved', this.loadModel)
+            emitter.on('chartTypeChanged', this.onChartTypeChanged)
         },
         removeEventListeners() {
             emitter.off('seriesAdded', this.loadModel)
             emitter.off('seriesRemoved', this.loadModel)
+            emitter.off('chartTypeChanged', this.onChartTypeChanged)
         },
         loadModel() {
             this.model = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.model : null
             if (this.widgetModel.settings?.accesssibility?.seriesAccesibilitySettings) this.seriesSettings = this.widgetModel.settings.accesssibility.seriesAccesibilitySettings
             this.loadSeriesOptions()
+            this.removeSeriesFromAvailableOptions()
+            this.removeAllSerieSettingsFromModel()
+            if (this.seriesSettings.length === 0) this.addFirstSeriesSetting()
+        },
+        removeAllSerieSettingsFromModel() {
+            if (this.seriesSettings[0]?.names[0] && this.seriesSettings[0].names[0] === 'all' && !this.allSeriesOptionEnabled) {
+                this.seriesSettings.splice(0, 1)
+                this.widgetModel.settings.accesssibility.seriesAccesibilitySettings.splice(0, 1)
+            }
+        },
+        removeSeriesFromAvailableOptions() {
+            for (let i = 1; i < this.widgetModel.settings.accesssibility.seriesAccesibilitySettings.length; i++) {
+                for (let j = 0; j < this.widgetModel.settings.accesssibility.seriesAccesibilitySettings[i].names.length; j++) {
+                    this.removeSerieFromAvailableOptions(this.widgetModel.settings.accesssibility.seriesAccesibilitySettings[i].names[j])
+                }
+            }
+        },
+        removeSerieFromAvailableOptions(seriesName: string) {
+            const index = this.availableSeriesOptions.findIndex((tempSerieName: string) => tempSerieName === seriesName)
+            if (index !== -1) this.availableSeriesOptions.splice(index, 1)
         },
         loadSeriesOptions() {
             this.availableSeriesOptions = []
@@ -89,17 +111,19 @@ export default defineComponent({
             this.model.series.forEach((serie: IHighchartsChartSerie) => {
                 this.availableSeriesOptions.push(serie.name)
             })
-            if (!this.allSeriesOptionEnabled && this.availableSeriesOptions.length === 1 && this.seriesSettings.length === 0) {
-                this.widgetModel.settings.accesssibility.seriesAccesibilitySettings.push({
-                    names: [this.availableSeriesOptions[0]],
-                    accessibility: {
-                        enabled: false,
-                        description: '',
-                        exposeAsGroupOnly: false,
-                        keyboardNavigation: { enabled: false }
-                    }
-                })
-                this.availableSeriesOptions = []
+        },
+        addFirstSeriesSetting() {
+            if (!this.model) return
+            this.seriesSettings = []
+            if (this.availableSeriesOptions.length >= 1) {
+                const name = this.allSeriesOptionEnabled ? 'all' : this.availableSeriesOptions[0]
+                const formattedSeriesSettings = {
+                    names: [name],
+                    accessibility: highchartsDefaultValues.getDefaultSerieAccessibilitySetting()
+                } as ISerieAccessibilitySetting
+
+                this.seriesSettings.push(formattedSeriesSettings)
+                this.widgetModel.settings.accesssibility.seriesAccesibilitySettings.push(formattedSeriesSettings)
             }
         },
         modelChanged() {
@@ -109,6 +133,7 @@ export default defineComponent({
             const intersection = serieSetting.names.filter((el: string) => !event.value.includes(el))
             serieSetting.names = event.value
             intersection.length > 0 ? this.onSeriesRemovedFromMultiselect(intersection) : this.onSeriesAddedFromMultiselect(serieSetting)
+            this.modelChanged()
         },
         onSeriesAddedFromMultiselect(serieSetting: ISerieAccessibilitySetting) {
             serieSetting.names.forEach((serieName: string) => {
@@ -120,11 +145,19 @@ export default defineComponent({
             intersection.forEach((serieName: string) => this.availableSeriesOptions.push(serieName))
         },
         addSerieSetting() {
-            this.seriesSettings.push(highchartsDefaultValues.getDefaultSeriesAccessibilitySettings())
+            const serieSetting = { names: [], accessibility: highchartsDefaultValues.getDefaultSeriesAccessibilitySettings() }
+            this.widgetModel.settings.accesssibility.seriesAccesibilitySettings.push(serieSetting)
+            this.seriesSettings.push(serieSetting)
         },
         removeSerieSetting(index: number) {
             this.seriesSettings[index].names.forEach((serieName: string) => this.availableSeriesOptions.push(serieName))
+            this.widgetModel.settings.accesssibility.seriesAccesibilitySettings.splice(index, 1)
             this.seriesSettings.splice(index, 1)
+            this.modelChanged()
+        },
+        onChartTypeChanged() {
+            this.widgetModel.settings.accesssibility.seriesAccesibilitySettings = []
+            this.loadModel()
         }
     }
 })

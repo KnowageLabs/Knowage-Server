@@ -667,5 +667,5 @@ interface IGalleryitemCode {
 export interface IChartType {
     label: string
     value: string
-    url: string
+    disabled: boolean
 }

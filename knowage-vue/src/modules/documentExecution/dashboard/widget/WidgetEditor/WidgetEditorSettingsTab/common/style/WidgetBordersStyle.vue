@@ -1,10 +1,5 @@
 <template>
     <div v-if="bordersStyleModel" class="p-grid p-jc-center p-ai-center p-p-4">
-        <div class="p-col-12 p-px-2 p-pb-5">
-            <InputSwitch v-model="bordersStyleModel.enabled" @change="bordersStyleChanged"></InputSwitch>
-            <label class="kn-material-input-label p-ml-3">{{ $t('dashboard.widgetEditor.borders.enableBorders') }}</label>
-        </div>
-
         <div class="p-col-12 p-grid p-ai-center">
             <div class="p-col-12 p-md-4 p-d-flex p-flex-column p-px-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.borders.bordersStyle') }}</label>
@@ -95,7 +90,6 @@ export default defineComponent({
             if (this.widgetModel?.settings?.style?.borders) this.bordersStyleModel = this.widgetModel.settings.style.borders
         },
         bordersStyleChanged() {
-            emitter.emit('bordersStyleChanged', this.bordersStyleModel)
             switch (this.widgetType) {
                 case 'table':
                     emitter.emit('refreshTable', this.widgetModel.id)

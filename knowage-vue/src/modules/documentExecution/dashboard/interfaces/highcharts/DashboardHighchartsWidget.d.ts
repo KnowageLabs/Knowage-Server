@@ -1,14 +1,13 @@
 import { IWidgetInteractions, IWidgetResponsive } from "../../Dashboard";
-import { IHighchartsPieChart } from "../../widget/ChartWidget/classes/highcharts/KnowageIHighchartsPieChart";
-import { IHighchartsPieChartModel } from "./DashboardIHighchartsPieChartWidget";
+import { IHighchartsGaugeSerie, IHighchartsSeriesDialSettings, IHighchartsSeriesPivotSettings, IHighchartsSolidGaugePlotOptions } from "./DashboardHighchartsGaugeWidget";
 
 export interface IHighchartsWidgetSettings {
     updatable: boolean,
     clickable: boolean,
-    chartModel: IHighchartsPieChart | null,
+    chartModel: IHighchartsChartModel | null,
     configuration: IHighchartsWidgetConfiguration,
     accesssibility: IHighchartsWidgetAccessibility,
-    series: IIHighchartsSeriesSetting,
+    series: IHighchartsSeriesSetting,
     interactions: IWidgetInteractions,
     chart: IHighchartsChartSettings,
     style: IHighchartsWidgetStyle,
@@ -34,13 +33,17 @@ export interface ISerieAccessibilitySetting {
     accessibility: IHighchartsSerieAccessibility
 }
 
-export interface IIHighchartsSeriesSetting {
+export interface IHighchartsSeriesSetting {
     seriesLabelsSettings: IHighchartsSeriesLabelsSetting[]
 }
 
 export interface IHighchartsSeriesLabelsSetting {
     names: string[],
-    label: IHighchartsSerieLabelSettings
+    label: IHighchartsSerieLabelSettings,
+    dial?: IHighchartsSeriesDialSettings,
+    pivot?: IHighchartsSeriesPivotSettings,
+    serieColor?: string,
+    serieColorEnabled?: boolean
 }
 
 export interface IHighchartsSerieLabelSettings {
@@ -79,17 +82,30 @@ export interface IHighchartsChartModel {
     },
     noData: IHighchartsNoDataConfiguration,
     accessibility: IHighchartsAccessibilitySettings,
-    series: IHighchartsChartSerie[],
+    series: (IHighchartsChartSerie | IHighchartsGaugeSerie)[],
     settings: IIHighchartsChartModelSettings,
     plotOptions: {
-        pie?: IIHighchartsPieChartPlotOptions,
+        pie?: IHighchartsChartPlotOptions,
+        gauge?: IHighchartsChartPlotOptions,
+        solidgauge?: IHighchartsChartPlotOptions
         series?: { events: any }
     },
     legend: IHighchartsLegend,
-    tooltip: IHighchartsTooltip,
+    tooltip: IHighchartsTooltip | IHighchartsGaugeActivityTooltip,
+    colors: string[]
     credits: {
         enabled: boolean
-    }
+    },
+    pane?: IHighchartsModelPane,
+    yAxis?: IHighchartsGaugeYAxis
+}
+
+export interface IHighchartsChartPlotOptions {
+    showInLegend: boolean,
+    depth: number,
+    allowPointSelect: boolean,
+    cursor: string,
+    dataLabels: IHighchartsChartDataLabels,
 }
 
 export interface IHighchartsOptions3D {
@@ -123,18 +139,9 @@ export interface IHighchartsAccessibilitySettings {
     }
 }
 
-export interface IIHighchartsPieChartPlotOptions {
-    showInLegend: boolean,
-    depth: number,
-    allowPointSelect: boolean,
-    cursor: string,
-    dataLabels: IIHighchartsPieChartDataLabels,
-    colors: string[]
-}
-
-export interface IIHighchartsPieChartDataLabels {
+export interface IHighchartsChartDataLabels {
     enabled: boolean,
-    distance: number,
+    distance?: number,
     style: {
         fontFamily: string
         fontSize: string
@@ -142,26 +149,23 @@ export interface IIHighchartsPieChartDataLabels {
         color: string
     },
     position: string
-    backgroundColor: string,
+    backgroundColor: string | null,
+    linecap?: string,
+    stickyTracking?: boolean,
+    rounded?: boolean,
     format?: string,
     formatter?: Function,
     formatterText?: string,
-    formatterError?: string
+    formatterError?: string,
+    y?: number
 }
 
 export interface IHighchartsChartSerie {
     name: string,
-    colorByPoint: boolean,
-    groupingFunction: string,
     data: IHighchartsChartSerieData[]
-    accessibility: IHighchartsSerieAccessibility,
-}
-
-export interface IHighchartsSerieAccessibility {
-    enabled: boolean,
-    description: string,
-    exposeAsGroupOnly: boolean
-    keyboardNavigation: { enabled: boolean }
+    accessibility?: IHighchartsSerieAccessibility,
+    colorByPoint?: boolean,
+    groupingFunction?: string,
 }
 
 export interface IHighchartsChartSerieData {
@@ -169,7 +173,14 @@ export interface IHighchartsChartSerieData {
     y: number,
     sliced?: boolean,
     selected?: boolean,
-    dataLabels?: IIHighchartsPieChartDataLabels
+    dataLabels?: IHighchartsChartDataLabels
+}
+
+export interface IHighchartsSerieAccessibility {
+    enabled: boolean,
+    description: string,
+    exposeAsGroupOnly: boolean
+    keyboardNavigation: { enabled: boolean }
 }
 
 export interface IIHighchartsChartModelSettings {

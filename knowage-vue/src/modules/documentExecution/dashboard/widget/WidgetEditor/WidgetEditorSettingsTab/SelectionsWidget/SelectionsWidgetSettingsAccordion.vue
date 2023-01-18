@@ -3,7 +3,7 @@
         <Accordion class="selectorAccordion" v-model:activeIndex="activeIndex">
             <AccordionTab v-for="(accordion, index) in settings" :key="index" :disabled="accordionIsDisabled(accordion.type)">
                 <template #header>
-                    <label class="kn-material-input-label">{{ $t(accordion.title) }}</label>
+                    <SelectionsWidgetSettingsAccordionHeader :widgetModel="widgetModel" :title="accordion.title" :type="accordion.type"></SelectionsWidgetSettingsAccordionHeader>
                 </template>
                 <SelectorWidgetType v-if="accordion.type === 'SelectorType'" :widgetModel="widgetModel"></SelectorWidgetType>
                 <SelectionsWidgetValuesManagement v-if="accordion.type === 'ValuesManagement'" :widgetModel="widgetModel"></SelectionsWidgetValuesManagement>
@@ -41,6 +41,7 @@ import WidgetPaddingStyle from '../common/style/WidgetPaddingStyle.vue'
 import WidgetBordersStyle from '../common/style/WidgetBordersStyle.vue'
 import WidgetShadowsStyle from '../common/style/WidgetShadowsStyle.vue'
 import WidgetResponsive from '../common/responsive/WidgetResponsive.vue'
+import SelectionsWidgetSettingsAccordionHeader from './SelectionsWidgetSettingsAccordionHeader.vue'
 
 export default defineComponent({
     name: 'selections-widget-settings-container',
@@ -58,7 +59,8 @@ export default defineComponent({
         WidgetPaddingStyle,
         WidgetBordersStyle,
         WidgetShadowsStyle,
-        WidgetResponsive
+        WidgetResponsive,
+        SelectionsWidgetSettingsAccordionHeader
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

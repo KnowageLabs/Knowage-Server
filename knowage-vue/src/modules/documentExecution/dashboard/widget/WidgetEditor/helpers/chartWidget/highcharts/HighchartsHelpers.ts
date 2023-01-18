@@ -1,6 +1,9 @@
 import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard"
 import { KnowageHighchartsPieChart } from "../../../../ChartWidget/classes/highcharts/KnowageHighchartsPieChart"
-import { IHighchartsWidgetSettings } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
+import { IHighchartsChartModel, IHighchartsWidgetSettings } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
+import { KnowageHighchartsActivityGaugeChart } from "../../../../ChartWidget/classes/highcharts/KnowageHighchartsActivityGaugeChart"
+import { KnowageHighchartsSolidGaugeChart } from "../../../../ChartWidget/classes/highcharts/KnowageHighchartsSolidGaugeChart"
+import { KnowageHighchartsGaugeSeriesChart } from "../../../../ChartWidget/classes/highcharts/KnowaageHighchartsGaugeSeriesChart"
 import * as widgetCommonDefaultValues from '../../common/WidgetCommonDefaultValues'
 import * as  highchartsDefaultValues from "../highcharts/HighchartsDefaultValues"
 import descriptor from '../../../WidgetEditorSettingsTab/ChartWidget/common/ChartColorSettingsDescriptor.json'
@@ -35,55 +38,46 @@ export const createNewHighchartsSettings = () => {
 }
 
 export const formatHighchartsWidget = (widget: IWidget) => {
-    widget.settings.chartModel = new KnowageHighchartsPieChart(widget.settings.chartModel.model ?? widget.settings.chartModel)
+    const chartModel = widget.settings.chartModel.model ?? widget.settings.chartModel
+    const chartType = chartModel.chart.type
+    switch (chartType) {
+        case 'pie':
+            widget.settings.chartModel = new KnowageHighchartsPieChart(chartModel)
+            break
+        case 'gauge':
+            widget.settings.chartModel = new KnowageHighchartsGaugeSeriesChart(chartModel)
+            break
+        case 'activitygauge':
+            widget.settings.chartModel = new KnowageHighchartsActivityGaugeChart(chartModel)
+            break
+        case 'solidgauge':
+            widget.settings.chartModel = new KnowageHighchartsSolidGaugeChart(chartModel)
+            break
+    }
 
 }
 
-
-export const createNewHighchartsModel = (chartType: string) => {
+export const createNewHighchartsModel = (chartType: string, model: IHighchartsChartModel | null = null) => {
     switch (chartType) {
         case 'pie':
-            return new KnowageHighchartsPieChart(null)
+            return new KnowageHighchartsPieChart(model)
+        case 'gauge':
+            return new KnowageHighchartsGaugeSeriesChart(model)
+        case 'activitygauge':
+            return new KnowageHighchartsActivityGaugeChart(model)
+        case 'solidgauge':
+            return new KnowageHighchartsSolidGaugeChart(model)
         default:
             return null
     }
 }
 
 const getSeriesAccesibilitySettings = () => {
-    return [
-        {
-            names: [],
-            accessibility: {
-                enabled: false,
-                description: '',
-                exposeAsGroupOnly: false,
-                keyboardNavigation: { enabled: false }
-            }
-        }
-    ]
+    return [{ names: ['all'], accessibility: highchartsDefaultValues.getDefaultSeriesAccessibilitySettings() }]
 }
 
 
 const getSerieLabelsSettings = () => {
-    return [
-        {
-            names: [],
-            label: {
-                enabled: false,
-                style: {
-                    fontFamily: '',
-                    fontSize: '',
-                    fontWeight: '',
-                    color: '',
-                },
-                backgroundColor: '',
-                prefix: '',
-                suffix: '',
-                scale: 'empty',
-                precision: 2,
-                absolute: false,
-                percentage: false
-            }
-        }
-    ]
+    const serieLabelSettings = { names: ['all'], label: { ...highchartsDefaultValues.getDefaultSerieLabelSettings(), enabled: true }, dial: highchartsDefaultValues.getDefaultSerieDialSettings(), pivot: highchartsDefaultValues.getDefaultSeriePivotSettings() }
+    return [serieLabelSettings]
 }

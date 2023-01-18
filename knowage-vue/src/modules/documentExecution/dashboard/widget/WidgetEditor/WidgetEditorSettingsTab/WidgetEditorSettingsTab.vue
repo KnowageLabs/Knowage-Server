@@ -60,6 +60,7 @@
             :selectedDatasets="selectedDatasets"
             :variables="variables"
             :dashboardId="dashboardId"
+            :descriptor="descriptor"
         >
         </HighchartsWidgetSettingsContainer>
         <ChartJSWidgetSettingsContainer
@@ -78,7 +79,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IDataset, IVariable, IDashboardDriver, IGalleryItem } from '../../../Dashboard'
+import { IWidget, IDataset, IVariable, IGalleryItem } from '../../../Dashboard'
 import tableDescriptor from './TableWidget/TableWidgetSettingsDescriptor.json'
 import TableWidgetSettingsContainer from './TableWidget/TableWidgetSettingsContainer.vue'
 import SelectorWidgetSettingsContainer from './SelectorWidget/SelectorWidgetSettingsContainer.vue'
@@ -92,8 +93,11 @@ import selectionsDescriptor from './SelectionsWidget/SelectionsWidgetSettingsDes
 import WidgetEditorSettingsList from './WidgetEditorSettingsList.vue'
 import htmlDescriptor from './HTMLWidget/HTMLWidgetSettingsDescriptor.json'
 import textDescriptor from './TextWidget/TextWidgetSettingsDescriptor.json'
-import highchartsDescriptor from './ChartWidget/highcharts/HighchartsWidgetSettingsDescriptor.json'
 import chartJSDescriptor from './ChartWidget/chartJS/ChartJSWidgetSettingsDescriptor.json'
+import HighchartsPieSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsPieSettingsDescriptor.json'
+import HighchartsGaugeSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsGaugeSettingsDescriptor.json'
+import HighchartsActivityGaugeSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsActivityGaugeSettingsDescriptor.json'
+import HighchartsSolidGaugeSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsSolidGaugeSettingsDescriptor.json'
 
 export default defineComponent({
     name: 'widget-editor-settings-tab',
@@ -112,6 +116,16 @@ export default defineComponent({
             descriptor: null as any,
             selectedDescriptor: {},
             selectedSetting: ''
+        }
+    },
+    computed: {
+        chartType() {
+            return this.propWidget?.settings.chartModel?.model?.chart.type
+        }
+    },
+    watch: {
+        chartType() {
+            this.loadDescriptor()
         }
     },
     created() {
@@ -137,10 +151,22 @@ export default defineComponent({
                     this.descriptor = textDescriptor
                     break
                 case 'highcharts':
-                    this.descriptor = highchartsDescriptor
+                    this.descriptor = this.getHighchartsDescriptor()
                     break
                 case 'chartJS':
                     this.descriptor = chartJSDescriptor
+            }
+        },
+        getHighchartsDescriptor() {
+            switch (this.chartType) {
+                case 'pie':
+                    return HighchartsPieSettingsDescriptor
+                case 'gauge':
+                    return HighchartsGaugeSettingsDescriptor
+                case 'activitygauge':
+                    return HighchartsActivityGaugeSettingsDescriptor
+                case 'solidgauge':
+                    return HighchartsSolidGaugeSettingsDescriptor
             }
         },
         onItemClicked(item: any) {

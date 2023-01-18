@@ -11,7 +11,7 @@ const columnNameIdMap = {}
 export const formatTextWidget = (widget: any) => {
     const formattedWidget = {
         id: widget.id,
-        dataset: widget.dataset.dsId ? widget.dataset.dsId[0] : null,
+        dataset: widget.dataset?.dsId ? widget.dataset.dsId[0] : null,
         type: widget.type,
         columns: getFormattedWidgetColumns(widget, columnNameIdMap, false),
         theme: '',

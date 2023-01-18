@@ -54,7 +54,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { formatNumberWithLocale, primeVueDate, localeDate } from '@/helpers/commons/localeHelper'
 import { luxonFormatDate, formatDateWithLocale } from '@/helpers/commons/localeHelper'
 import Checkbox from 'primevue/checkbox'
@@ -72,7 +72,7 @@ export default defineComponent({
         columns: [] as any,
         rows: [] as any,
         propConfiguration: { type: Object },
-        entity: { type: String },
+        entity: { type: Object as PropType<String | null> },
         id: { type: String },
         pagination: { type: Object },
         comboColumnOptions: { type: Array },

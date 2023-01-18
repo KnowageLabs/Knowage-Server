@@ -1,124 +1,60 @@
 <template>
-    <DataTable
-        v-if="!loading"
-        class="p-datatable-sm kn-table"
-        :scrollable="true"
-        v-model:first="first"
-        :value="rows"
-        dataKey="id"
-        paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-        :lazy="lazyParams.size > registryDescriptor.paginationLimit"
-        :paginator="true"
-        :rows="registryDescriptor.paginationNumberOfItems"
-        :currentPageReportTemplate="
-            $t('common.table.footer.paginated', {
-                first: '{first}',
-                last: '{last}',
-                totalRecords: '{totalRecords}'
-            })
-        "
-        :totalRecords="lazyParams.size"
-        stripedRows
-        showGridlines
-        sortMode="multiple"
-        :multiSortMeta="multiSortMeta"
-        @page="onPage($event)"
-        @sort="onSort"
-    >
-        <template #empty>{{ $t('common.info.noDataFound') }}</template>
-        <Column class="kn-truncated" :style="registryDatatableDescriptor.numerationColumn.style" :headerStyle="registryDatatableDescriptor.numerationColumn.style" :field="columns[0].field" :header="columns[0].title"></Column>
-
-        <template v-for="col of columns.slice(1)" :key="col.field">
-            <Column class="kn-truncated" :field="col.field" :style="`min-width:${col.size}px`" :sortable="col.columnInfo?.type !== 'timestamp' && col.columnInfo?.type !== 'date'">
-                <template #header>
-                    <div class="table-header">
-                        <i v-if="showDefaultNumberFormatIcon(col)" v-tooltip.top="$t('documentExecution.registry.numberFormatNotSupported')" class="pi pi-exclamation-triangle kn-cursor-pointer"></i>
-                        {{ col.title }}
-                        <i v-if="col.isEditable && col.columnInfo?.type !== 'boolean'" class="pi pi-pencil edit-icon p-ml-2" :data-test="col.field + '-icon'" v-tooltip.bottom="$t('documentExecution.registry.isEditableField')" />
-                    </div>
-                </template>
-                <template #body="slotProps">
-                    <div class="p-d-flex p-flex-row editableField" :data-test="col.field + '-body'">
-                        <Checkbox v-if="col.editorType == 'TEXT' && col.columnInfo?.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="setRowEdited(slotProps.data)" :disabled="!col.isEditable"></Checkbox>
-                        <RegistryDatatableEditableField
-                            v-else-if="col.isEditable || col.columnInfo?.type === 'int' || col.columnInfo?.type === 'float'"
-                            :column="col"
-                            :propRow="slotProps.data"
-                            :comboColumnOptions="comboColumnOptions"
-                            @rowChanged="setRowEdited(slotProps.data)"
-                            @dropdownChanged="onDropdownChange"
-                            @dropdownOpened="addColumnOptions"
-                        ></RegistryDatatableEditableField>
-                        <span v-else-if="!col.isEditable">
-                            <span v-if="slotProps.data[col.field] && col.columnInfo?.type === 'date'">
-                                {{ getFormattedDate(slotProps.data[col.field], 'yyyy-MM-dd', getCurrentLocaleDefaultDateFormat(col)) }}
-                            </span>
-                            <span v-else-if="slotProps.data[col.field] && col.columnInfo?.type === 'timestamp'"> {{ getFormattedDateTime(slotProps.data[col.field], { dateStyle: 'short', timeStyle: 'medium' }, true) }}</span>
-                            <span v-else>{{ slotProps.data[col.field] }}</span>
-                        </span>
-                    </div>
-                </template>
-            </Column>
-        </template>
-        <Column :style="registryDatatableDescriptor.iconColumn.style" :headerStyle="registryDatatableDescriptor.iconColumn.style">
-            <template #header>
-                <Button class="kn-button" :label="$t('managers.businessModelManager.add')" v-if="buttons.enableButtons || buttons.enableAddRecords" @click="addNewRow" data-test="new-row-button" />
-            </template>
-            <template #body="slotProps">
-                <Button v-if="buttons.enableButtons || buttons.enableDeleteRecords" class="p-button-link" @click="rowDeleteConfirm(slotProps.index, slotProps.data)">
-                    <i class="pi pi-flag" :class="[slotProps.data.edited ? flagShown : flagHidden]" :style="registryDatatableDescriptor.primevueTableStyles.trashNormal" />
-                    <i class="p-button-link pi pi-trash p-ml-2" :style="registryDatatableDescriptor.primevueTableStyles.trashNormal" />
-                </Button>
-            </template>
-        </Column>
-    </DataTable>
+    <div id="registry-gric-container" class="kn-height-full p-d-flex p-flex-column">
+        <div id="registry-grid-toolbar" class="p-d-flex p-flex-row p-ai-center" :style="registryDescriptor.styles.tableToolbar">
+            <div v-if="selectedRows.length > 0" class="p-ml-1">{{ selectedRows.length }} {{ $t('documentExecution.registry.grid.rowsSelected') }}</div>
+            <div id="operation-buttons-containter" class="p-ml-auto" :style="registryDescriptor.styles.tableToolbarButtonContainer">
+                <Button icon="fas fa-plus" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.addRow')" data-test="new-row-button" @click="addNewRow" />
+                <Button icon="fas fa-clone" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.cloneRows')" @click="cloneRows" />
+                <Button icon="fas fa-trash" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.deleteRows')" @click="rowsDeleteConfirm()" />
+            </div>
+            <Button icon="fas fa-save" class="p-button-text p-button-rounded p-button-plain kn-button-light" @click="$emit('saveRegistry')" />
+        </div>
+        <ag-grid-vue v-if="!loading" class="registry-grid ag-theme-alpine kn-height-full" :rowData="rows" :gridOptions="gridOptions" :context="context" />
+    </div>
 
     <RegistryDatatableWarningDialog :visible="warningVisible" :columns="dependentColumns" @close="onWarningDialogClose"></RegistryDatatableWarningDialog>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { luxonFormatDate, formatDateWithLocale, formatNumberWithLocale, localeDate, primeVueDate } from '@/helpers/commons/localeHelper'
-import { setInputDataType, numberFormatRegex } from '@/helpers/commons/tableHelpers'
+import { defineComponent, PropType } from 'vue'
+import { luxonFormatDate, formatDateWithLocale, localeDate, primeVueDate, getLocale } from '@/helpers/commons/localeHelper'
+import { setInputDataType, formatRegistryNumber } from '@/helpers/commons/tableHelpers'
 import { AxiosResponse } from 'axios'
-import Checkbox from 'primevue/checkbox'
-import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
+import { mapActions } from 'pinia'
+import { emitter } from './RegistryDatatableHelper'
+import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
+import 'ag-grid-community/styles/ag-grid.css' // Core grid CSS, always needed
+import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
 import registryDescriptor from '../RegistryDescriptor.json'
-import registryDatatableDescriptor from './RegistryDatatableDescriptor.json'
-import RegistryDatatableEditableField from './RegistryDatatableEditableField.vue'
 import RegistryDatatableWarningDialog from './RegistryDatatableWarningDialog.vue'
-
-import deepcopy from 'deepcopy'
+import CellEditor from './registryCellRenderers/RegistryCellEditor.vue'
+import HeaderRenderer from './registryCellRenderers/RegistryHeaderRenderer.vue'
+import TooltipRenderer from './registryCellRenderers/RegistryTooltipRenderer.vue'
+import store from '../../../../App.store'
+import cryptoRandomString from 'crypto-random-string'
 
 export default defineComponent({
     name: 'registry-datatable',
-    components: {
-        Checkbox,
-        Column,
-        DataTable,
-        RegistryDatatableEditableField,
-        RegistryDatatableWarningDialog
-    },
+    components: { RegistryDatatableWarningDialog, AgGridVue, HeaderRenderer, TooltipRenderer },
     props: {
         propColumns: { type: Array },
         propRows: { type: Array, required: true },
         columnMap: { type: Object },
         propConfiguration: { type: Object },
         pagination: { type: Object },
-        entity: { type: String },
+        entity: { type: Object as PropType<String | null> },
         id: { type: String },
-        stopWarningsState: { type: Array }
+        stopWarningsState: { type: Array },
+        dataLoading: { type: Boolean }
     },
-    emits: ['rowChanged', 'rowDeleted', 'pageChanged', 'warningChanged'],
+    emits: ['rowChanged', 'rowDeleted', 'pageChanged', 'warningChanged', 'saveRegistry'],
     data() {
         return {
             registryDescriptor,
-            registryDatatableDescriptor,
             columns: [] as any[],
             rows: [] as any[],
             configuration: {} as any,
-            comboColumnOptions: [] as any[],
+            comboColumnOptions: {} as any,
             buttons: {
                 enableButtons: false,
                 enableDeleteRecords: false,
@@ -133,21 +69,30 @@ export default defineComponent({
             flagHidden: 'flag-hidden',
             first: 0,
             loading: false,
-            multiSortMeta: []
+            multiSortMeta: [],
+            gridApi: null as any,
+            columnApi: null as any,
+            timeout: null as any,
+            selectedRows: [] as any,
+            gridOptions: null as any,
+            context: null as any,
+            ctrlDown: false
+        }
+    },
+    computed: {
+        getCurrentLocaleDefaultDateFormat() {
+            return (column) => (column.isEditable ? column.format || primeVueDate() : localeDate())
         }
     },
     watch: {
         propColumns() {
-            this.loadColumns()
-        },
-        propRows: {
-            handler() {
-                this.loadRows()
-            },
-            deep: true
+            this.loadColumnDefinitions()
         },
         propConfiguration() {
             this.loadConfiguration()
+        },
+        dataLoading() {
+            this.dataLoading ? this.gridApi.showLoadingOverlay() : this.gridApi.hideOverlay()
         },
         pagination: {
             handler() {
@@ -157,37 +102,149 @@ export default defineComponent({
             deep: true
         }
     },
+    beforeMount() {
+        this.context = { componentParent: this }
+    },
     created() {
-        this.loadColumns()
+        this.setEventListeners()
+        this.loadColumnDefinitions()
         this.loadRows()
         this.loadConfiguration()
         this.loadPagination()
         this.loadWarningState()
+        this.setupDatatableOptions()
     },
-    computed: {
-        getCurrentLocaleDefaultDateFormat() {
-            return (column) => (column.isEditable ? column.format || primeVueDate() : localeDate())
-        }
+    unmounted() {
+        this.removeEventListeners()
     },
     methods: {
-        async loadColumns() {
+        ...mapActions(store, ['setInfo', 'setError']),
+        setEventListeners() {
+            emitter.on('refreshTableWithData', this.loadRows)
+        },
+        removeEventListeners() {
+            emitter.off('refreshTableWithData', this.loadRows)
+        },
+        onGridReady(params) {
+            this.gridApi = params.api
+            this.columnApi = params.columnApi
+
+            this.refreshGridConfiguration()
+        },
+        refreshGridConfiguration() {
+            this.gridApi.setColumnDefs(this.columns)
+            this.gridApi.setRowData(this.rows)
+        },
+        setupDatatableOptions() {
+            this.gridOptions = {
+                // PROPERTIES
+                columnDefs: this.columns,
+                tooltipShowDelay: 100,
+                tooltipMouseTrack: true,
+                rowHeight: 35,
+                defaultColDef: {
+                    editable: false,
+                    enableValue: true,
+                    sortable: true,
+                    resizable: true,
+                    width: 100,
+                    tooltipComponent: TooltipRenderer,
+                    cellClassRules: {
+                        'edited-cell-color-class': (params) => {
+                            if (params.data.isEdited) return params.data.isEdited.includes(params.colDef.field)
+                        }
+                    }
+                },
+                rowSelection: 'multiple',
+                animateRows: true,
+                suppressScrollOnNewData: true,
+
+                // EVENTS
+                onCellKeyDown: this.onCellKeyDown,
+                onBodyScroll: this.onBodyScroll,
+                onSelectionChanged: this.onSelectionChanged,
+                onCellValueChanged: this.onCellValueChanged,
+
+                // CALLBACKS
+                onGridReady: this.onGridReady,
+                getRowStyle: this.getRowStyle,
+                getRowId: this.getRowId
+            }
+        },
+
+        async loadColumnDefinitions() {
             this.loading = true
             this.columns = [
                 {
-                    field: 'id',
-                    title: '',
-                    size: '',
+                    colId: 'indexColumn',
+                    valueGetter: `node.rowIndex + 1`,
+                    headerName: 'id',
+                    pinned: 'left',
                     isVisible: true,
                     isEditable: false,
-                    columnInfo: { type: 'int' }
+                    suppressMovable: true,
+                    resizable: false,
+                    columnInfo: { type: 'int' },
+                    cellStyle: (params) => {
+                        return { color: 'black', backgroundColor: registryDescriptor.styles.colors.disabledCellColor, opacity: 0.8 }
+                    }
                 }
             ]
             this.propColumns?.forEach((el: any) => {
-                if (el.isVisible) this.columns.push(el)
+                if (el.isVisible) {
+                    el.editable = el.isEditable
+                    el.headerName = el.title ?? el.columnInfo.header
+                    el.tooltipField = el.field
+
+                    this.addColumnEditableProps(el)
+                    this.addColumnCheckboxRendererProps(el)
+                    this.addColumnFormattingProps(el)
+
+                    this.columns.push(el)
+                }
             })
             this.setColumnDependencies()
             await this.loadInitialDropdownOptions()
             this.loading = false
+        },
+        addColumnEditableProps(el: any) {
+            if (el.editable) {
+                el.headerComponent = HeaderRenderer
+                el.cellEditor = CellEditor
+                el.cellEditorParams = {
+                    comboColumnOptions: this.comboColumnOptions
+                }
+            } else {
+                el.cellStyle = (params) => {
+                    return { color: 'black', backgroundColor: 'rgba(231, 231, 231, 0.8)', opacity: 0.8 }
+                }
+            }
+        },
+        addColumnCheckboxRendererProps(el) {
+            if (el.editorType == 'TEXT' && el.columnInfo.type === 'boolean') {
+                el.cellRenderer = (params) => {
+                    return `<i class="fas fa-${params.value ? 'check' : 'times'}"/>`
+                }
+            }
+        },
+        addColumnFormattingProps(el: any) {
+            let locale = getLocale()
+            locale = locale ? locale.replace('_', '-') : ''
+            if (el.columnInfo?.type === 'date') {
+                el.valueFormatter = (params) => {
+                    return this.getFormattedDate(params.value, 'yyyy-MM-dd', this.getCurrentLocaleDefaultDateFormat(el))
+                }
+            } else if (el.columnInfo?.type === 'timestamp') {
+                el.valueFormatter = (params) => {
+                    return this.getFormattedDateTime(params.value, { dateStyle: 'short', timeStyle: 'medium' }, true)
+                }
+            } else if (['int', 'float', 'decimal', 'long'].includes(el.columnInfo.type)) {
+                el.valueFormatter = (params: any) => {
+                    let configuration = { useGrouping: false, minFractionDigits: 0, maxFractionDigits: 0 } as { useGrouping: boolean; minFractionDigits: number; maxFractionDigits: number } | null
+                    configuration = formatRegistryNumber(el)
+                    return Intl.NumberFormat(locale, { useGrouping: configuration?.useGrouping, minimumFractionDigits: configuration?.minFractionDigits, maximumFractionDigits: configuration?.maxFractionDigits ?? 2 }).format(params.value)
+                }
+            }
         },
         setColumnDependencies() {
             this.columns.forEach((column: any) => {
@@ -207,82 +264,6 @@ export default defineComponent({
                 }
             }
         },
-        loadRows() {
-            this.rows = deepcopy(this.propRows)
-        },
-        loadConfiguration() {
-            this.configuration = this.propConfiguration
-
-            for (let i = 0; i < this.configuration.length; i++) {
-                if (this.configuration[i].name === 'enableButtons') {
-                    this.buttons.enableButtons = this.configuration[i].value === 'true'
-                } else {
-                    if (this.configuration[i].name === 'enableDeleteRecords') {
-                        this.buttons.enableDeleteRecords = this.configuration[i].value === 'true'
-                    }
-                    if (this.configuration[i].name === 'enableAddRecords') {
-                        this.buttons.enableAddRecords = this.configuration[i].value === 'true'
-                    }
-                }
-            }
-        },
-        loadPagination() {
-            this.lazyParams = { ...this.pagination } as any
-        },
-        loadWarningState() {
-            this.stopWarnings = this.stopWarningsState as any[]
-        },
-        onPage(event: any) {
-            this.lazyParams = {
-                paginationStart: event.first,
-                paginationLimit: event.rows,
-                paginationEnd: event.first + event.rows,
-                size: this.lazyParams.size
-            }
-            this.$emit('pageChanged', this.lazyParams)
-        },
-        rowDeleteConfirm(index: number, row: any) {
-            this.$confirm.require({
-                message: this.$t('common.toast.deleteMessage'),
-                header: this.$t('common.toast.deleteTitle'),
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => this.deleteRow(index, row)
-            })
-        },
-        deleteRow(index: number, row: any) {
-            row.isNew ? this.rows.splice(index, 1) : this.$emit('rowDeleted', row)
-        },
-        setDataType(columnType: string) {
-            switch (columnType) {
-                case 'int':
-                case 'float':
-                case 'decimal':
-                case 'long':
-                    return 'number'
-                case 'date':
-                    return 'date'
-                default:
-                    return 'text'
-            }
-        },
-        getStep(dataType: string) {
-            if (dataType === 'float') {
-                return '.01'
-            } else if (dataType === 'int') {
-                return '1'
-            } else {
-                return 'any'
-            }
-        },
-        getFormattedDate(date: any, format: any, incomingFormat?: string) {
-            return luxonFormatDate(date, format, incomingFormat)
-        },
-        getFormattedDateTime(date: any, format?: any, keepNull?: boolean) {
-            return formatDateWithLocale(date, format, keepNull)
-        },
-        getFormattedNumber(number: number, column: any) {
-            return formatNumberWithLocale(number, undefined, null)
-        },
         async addColumnOptions(payload: any) {
             const column = payload.column
             const row = payload.row
@@ -296,6 +277,7 @@ export default defineComponent({
             }
         },
         async loadColumnOptions(column: any, row: any) {
+            this.gridApi?.showLoadingOverlay()
             const subEntity = column.subEntity ? '::' + column.subEntity + '(' + column.foreignKey + ')' : ''
 
             const entityId = this.entity + subEntity + ':' + column.field
@@ -314,20 +296,99 @@ export default defineComponent({
             await this.$http
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
                 .then((response: AxiosResponse<any>) => (this.comboColumnOptions[column.field][row[column.dependences] ?? 'All'] = response.data.rows))
+            this.gridApi?.hideOverlay()
+        },
+        loadConfiguration() {
+            this.configuration = this.propConfiguration
+
+            for (let i = 0; i < this.configuration.length; i++) {
+                if (this.configuration[i].name === 'enableButtons') {
+                    this.buttons.enableButtons = this.configuration[i].value === 'true'
+                } else {
+                    if (this.configuration[i].name === 'enableDeleteRecords') {
+                        this.buttons.enableDeleteRecords = this.configuration[i].value === 'true'
+                    }
+                    if (this.configuration[i].name === 'enableAddRecords') {
+                        this.buttons.enableAddRecords = this.configuration[i].value === 'true'
+                    }
+                }
+            }
+        },
+        loadRows() {
+            this.rows = this.propRows
+            this.gridApi?.setRowData(this.rows)
+        },
+        getRowId(params) {
+            return params.data.uniqueId
+        },
+        loadPagination() {
+            this.lazyParams = { ...this.pagination } as any
+        },
+        loadWarningState() {
+            this.stopWarnings = this.stopWarningsState as any[]
+        },
+        onPage(event: any) {
+            this.lazyParams = {
+                paginationStart: event.first,
+                paginationLimit: event.rows,
+                paginationEnd: event.first + event.rows,
+                size: this.lazyParams.size
+            }
+            this.$emit('pageChanged', this.lazyParams)
+        },
+        rowsDeleteConfirm() {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.deleteRows()
+            })
+        },
+        deleteRows() {
+            var rowsForTableDeletion = this.selectedRows.filter((row) => row.isNew)
+            if (rowsForTableDeletion.length > 0) {
+                rowsForTableDeletion.forEach((val) => {
+                    var foundIndex = this.rows.indexOf(val)
+                    if (foundIndex != -1) this.rows.splice(foundIndex, 1)
+                })
+                this.gridApi.applyTransaction({ remove: rowsForTableDeletion })
+            }
+
+            var rowsForServiceDeletion = this.selectedRows.filter((row) => !row.isNew)
+            if (rowsForServiceDeletion.length > 0) this.$emit('rowDeleted', rowsForServiceDeletion)
+        },
+        getFormattedDate(date: any, format: any, incomingFormat?: string) {
+            return luxonFormatDate(date, format, incomingFormat)
+        },
+        getFormattedDateTime(date: any, format?: any, keepNull?: boolean) {
+            return formatDateWithLocale(date, format, keepNull)
         },
         addNewRow() {
-            const newRow = { id: this.rows.length + 1, isNew: true }
+            const newRow = { uniqueId: cryptoRandomString({ length: 16, type: 'base64' }), id: this.rows.length + 1, isNew: true }
             this.columns.forEach((el: any) => {
                 if (el.isVisible && el.field !== 'id') {
                     newRow[el.field] = el.defaultValue ?? ''
                 }
             })
-            this.rows.unshift(newRow)
+            this.addRowToFirstPosition(newRow)
 
             if (this.lazyParams.size <= registryDescriptor.paginationLimit) {
                 this.first = 0
             }
             this.$emit('rowChanged', newRow)
+        },
+        cloneRows() {
+            this.selectedRows.forEach((row) => {
+                const tempRow = { ...row }
+                tempRow.uniqueId = cryptoRandomString({ length: 16, type: 'base64' })
+                tempRow.isNew = true
+                delete tempRow.id
+                this.addRowToFirstPosition(tempRow)
+            })
+        },
+        addRowToFirstPosition(newRow: any) {
+            this.rows.unshift(newRow)
+            this.gridApi.applyTransaction({ addIndex: 0, add: [newRow] })
         },
         onDropdownChange(payload: any) {
             const column = payload.column
@@ -339,17 +400,22 @@ export default defineComponent({
                 this.setDependentColumns(column)
                 if (!this.stopWarnings[column.field]) {
                     this.dependentColumns.forEach((el: any) => {
-                        if (this.selectedRow[el.field]) {
-                            this.warningVisible = true
-                        }
+                        if (this.selectedRow[el.field]) this.warningVisible = true
                     })
-                } else {
-                    this.clearDependentColumnsValues()
-                }
+                } else this.clearDependentColumnsValues()
             }
 
             row.edited = true
             this.$emit('rowChanged', row)
+        },
+        setDependentColumns(column: any) {
+            let tempColumn = column
+            if (!tempColumn.hasDependencies) return
+
+            tempColumn.hasDependencies.forEach((el: any) => {
+                this.dependentColumns.push(el)
+                this.setDependentColumns(el)
+            })
         },
         onWarningDialogClose(payload: any) {
             if (payload.stopWarnings) {
@@ -364,18 +430,7 @@ export default defineComponent({
             this.dependentColumns.forEach((el: any) => (this.selectedRow[el.field] = ''))
             this.selectedRow.edited = true
             this.$emit('rowChanged', this.selectedRow)
-        },
-        setDependentColumns(column: any) {
-            let tempColumn = column
-
-            if (!tempColumn.hasDependencies) {
-                return
-            }
-
-            tempColumn.hasDependencies.forEach((el: any) => {
-                this.dependentColumns.push(el)
-                this.setDependentColumns(el)
-            })
+            this.gridApi.refreshCells()
         },
         setRowEdited(row: any) {
             row.edited = true
@@ -388,14 +443,143 @@ export default defineComponent({
                 this.rows[foundIndex] = event.newData
             }
         },
-        showDefaultNumberFormatIcon(column: any) {
-            if (!column || !column.columnInfo || !column.format) return false
-            const inputType = setInputDataType(column.columnInfo.type)
-            const temp = column.format.trim().match(numberFormatRegex)
-            return inputType === 'number' && !temp
+        onSelectionChanged() {
+            this.selectedRows = this.gridApi.getSelectedRows()
         },
-        onSort(event: any) {
-            this.multiSortMeta = event.multiSortMeta
+        onBodyScroll() {
+            if (this.timeout) clearTimeout(this.timeout)
+            this.timeout = setTimeout(() => {
+                var bottom_px = this.gridApi.getVerticalPixelRange().bottom
+                var grid_height = this.gridApi.getDisplayedRowCount() * this.gridApi.getSizesForCurrentTheme().rowHeight
+                if (bottom_px == grid_height) {
+                    var newPaginationStart = this.lazyParams.start + this.registryDescriptor.paginationNumberOfItems
+                    this.lazyParams = {
+                        paginationStart: newPaginationStart,
+                        paginationLimit: this.registryDescriptor.paginationLimit,
+                        size: this.lazyParams.size
+                    }
+
+                    this.$emit('pageChanged', this.lazyParams)
+                }
+            }, 300)
+        },
+        async onCellKeyDown(ev) {
+            const myCell = this.getFocusedCell(ev)
+            const [ctrlKey, cKey, vKey] = [17, 67, 86]
+
+            if (ev.event.which === ctrlKey) {
+                this.ctrlDown = true
+            } else if (ev.event.which == cKey && this.ctrlDown == true) {
+                window.navigator.clipboard.writeText(ev.value).catch((er) => console.log(er))
+            } else if (ev.event.which == vKey && this.ctrlDown == true) {
+                await window.navigator.clipboard.readText().then(async (value) => {
+                    await this.setCellValue(myCell, value)
+                })
+            }
+        },
+        getFocusedCell(ev) {
+            const focusedCell = ev.api.getFocusedCell()
+            const rowNode = ev.api.getRowNode(ev.data.uniqueId)
+            const column = focusedCell.column.colDef.field
+            return { cell: focusedCell, column: column, row: rowNode }
+        },
+        async setCellValue(selectedCell, pasteValue) {
+            var colDef = selectedCell.cell.column.colDef
+            var cellType = this.getCellType(colDef)
+
+            if (this.cellAcceptsPasteValue(colDef, cellType)) {
+                switch (cellType) {
+                    case 'text':
+                        selectedCell.row.setDataValue(selectedCell.column, pasteValue)
+                        break
+                    case 'number':
+                        this.setNumbericCellValue(selectedCell, pasteValue)
+                        break
+                    case 'dropdown':
+                        await this.setDropdownCellValue(colDef, selectedCell, pasteValue)
+                        break
+                    default:
+                        break
+                }
+            }
+        },
+        setNumbericCellValue(selectedCell: any, pasteValue: any) {
+            if (!isNaN(pasteValue)) {
+                selectedCell.row.setDataValue(selectedCell.column, pasteValue)
+            } else {
+                this.setCannotPasteWarning('nan')
+            }
+        },
+        async setDropdownCellValue(colDef: any, selectedCell: any, pasteValue: any) {
+            await this.addColumnOptions({
+                column: colDef,
+                row: selectedCell.row.data
+            })
+            if (!this.validateDropdownValueAfterCopyPaste(colDef, pasteValue, selectedCell)) {
+                this.setCannotPasteWarning('dropdown')
+            } else {
+                selectedCell.row.setDataValue(selectedCell.column, pasteValue)
+                this.onDropdownChange({ row: selectedCell.row.data, column: selectedCell.cell.column.userProvidedColDef })
+            }
+        },
+        validateDropdownValueAfterCopyPaste(colDef: any, pasteValue: string, selectedCell: any) {
+            const parentCellValue = selectedCell.row.data[colDef.dependences]
+            let options = this.comboColumnOptions && this.comboColumnOptions[colDef.field] ? this.comboColumnOptions[colDef.field][parentCellValue ?? 'All'] : []
+            if (!options) return false
+            const index = options.findIndex((dropdownOption: any) => dropdownOption['column_1'] === pasteValue)
+            return index !== -1
+        },
+        cellAcceptsPasteValue(colDef, cellType) {
+            if (colDef.editable == false || colDef.isEditable == false) {
+                this.setCannotPasteWarning('notEditable')
+                return false
+            } else if (cellType === 'checkbox') {
+                this.setCannotPasteWarning('checkbox')
+                return false
+            } else if (cellType === 'temporal') {
+                this.setCannotPasteWarning('temporal')
+                return false
+            } else return true
+        },
+        setCannotPasteWarning(type: string) {
+            let message = ''
+            switch (type) {
+                case 'notEditable':
+                    message = this.$t('documentExecution.registry.copyPasteValidationErrors.notEditable')
+                    break
+                case 'dropdown':
+                    message = this.$t('documentExecution.registry.copyPasteValidationErrors.dropdown')
+                    break
+                case 'checkbox':
+                    message = this.$t('documentExecution.registry.copyPasteValidationErrors.checkbox')
+                    break
+                case 'temporal':
+                    message = this.$t('documentExecution.registry.copyPasteValidationErrors.temporal')
+                    break
+                case 'nan':
+                    message = 'NOT A NUMBER'
+                    break
+            }
+            this.setInfo({ title: this.$t('common.error.generic'), msg: message })
+        },
+        getCellType(colDef) {
+            if (colDef.editorType == 'TEXT' && colDef.columnInfo.type === 'boolean') return 'checkbox'
+            if (colDef.editorType !== 'COMBO' && colDef.columnInfo?.type !== 'date' && colDef.columnInfo?.type !== 'timestamp' && setInputDataType(colDef.columnInfo?.type) === 'text') return 'text'
+            if (colDef.editorType !== 'COMBO' && colDef.columnInfo?.type !== 'date' && colDef.columnInfo?.type !== 'timestamp' && setInputDataType(colDef.columnInfo?.type) === 'number') return 'number'
+            if (colDef.editorType === 'COMBO') return 'dropdown'
+            if (colDef.columnInfo?.type === 'date' || colDef.columnInfo?.type === 'timestamp') return 'temporal'
+        },
+        onCellValueChanged(params) {
+            if (params.oldValue !== params.newValue) {
+                if (params.data.isEdited) {
+                    params.data.isEdited.push(params.colDef.field)
+                } else params.data.isEdited = [params.colDef.field]
+                this.$emit('rowChanged', params.data)
+            }
+            params.api.refreshCells()
+        },
+        getRowStyle(params) {
+            if (params.data.isNew) return { 'background-color': registryDescriptor.styles.colors.newRowColor }
         }
     }
 })
@@ -407,14 +591,10 @@ export default defineComponent({
 .flag-hidden {
     opacity: 0;
 }
-.scrollable-table .p-datatable-wrapper {
-    max-width: 93vw;
-    overflow-x: auto;
+.registry-grid {
+    border: none;
 }
-.scrollable-table .p-datatable {
-    max-width: 93vw;
-}
-.editableField {
-    width: 100%;
+.edited-cell-color-class {
+    background-color: #749e43;
 }
 </style>

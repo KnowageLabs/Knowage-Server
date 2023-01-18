@@ -127,6 +127,7 @@ export default defineComponent({
                 const drivers = loadDrivers(this.filtersData, this.model)
                 this.setDashboardDrivers(this.dashboardId, drivers)
             }
+            //lazy lodaded data
             this.loadHtmlGallery()
             this.loading = false
         },

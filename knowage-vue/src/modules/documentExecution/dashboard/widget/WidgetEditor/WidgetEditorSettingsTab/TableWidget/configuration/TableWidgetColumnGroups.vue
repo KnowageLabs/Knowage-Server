@@ -1,10 +1,5 @@
 <template>
     <div v-if="columnGroupsModel" class="p-grid p-jc-center p-ai-center p-p-4">
-        <div class="p-col-12 p-px-2 p-pb-4">
-            <InputSwitch v-model="columnGroupsModel.enabled" @change="onEnableColumnGroupsChanged"></InputSwitch>
-            <label class="kn-material-input-label p-ml-3">{{ $t('dashboard.widgetEditor.columnGroups.enableColumnGroups') }}</label>
-        </div>
-
         <div v-for="(columnGroup, index) in columnGroupsModel.groups" :key="index" class="p-grid p-col-12 p-ai-center p-ai-center p-pt-2">
             <div class="p-col-12 p-sm-12 p-md-4 p-d-flex p-flex-column p-p-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('common.label') }}</label>
@@ -47,6 +42,11 @@ export default defineComponent({
     computed: {
         columnGroupsDisabled() {
             return !this.columnGroupsModel || !this.columnGroupsModel.enabled
+        }
+    },
+    watch: {
+        columnGroupsDisabled() {
+            this.onEnableColumnGroupsChanged()
         }
     },
     created() {
@@ -105,7 +105,6 @@ export default defineComponent({
             })
         },
         columnGroupsConfigurationChanged() {
-            emitter.emit('columnGroupsConfigurationChanged', this.columnGroupsModel)
             emitter.emit('refreshTable', this.widgetModel.id)
         },
         onEnableColumnGroupsChanged() {

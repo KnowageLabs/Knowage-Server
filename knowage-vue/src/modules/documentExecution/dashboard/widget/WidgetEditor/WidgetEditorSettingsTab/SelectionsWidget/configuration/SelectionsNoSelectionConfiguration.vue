@@ -1,10 +1,5 @@
 <template>
     <div v-if="noSelectionsModel" class="p-grid p-jc-center p-ai-center kn-flex p-p-4">
-        <div class="p-col-12">
-            <InputSwitch v-model="noSelectionsModel.enabled" @change="noSelectionsConfigurationChanged"></InputSwitch>
-            <label class="kn-material-input-label p-ml-2">{{ $t('dashboard.widgetEditor.noSelections.enable') }}</label>
-        </div>
-
         <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column kn-flex p-px-2 p-pt-4">
             <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.noSelections.customMessage') }}</label>
             <InputText class="kn-material-input p-inputtext-sm" v-model="noSelectionsModel.customText" :disabled="noSelectionsDisabled" @change="noSelectionsConfigurationChanged" />
@@ -44,7 +39,6 @@ export default defineComponent({
             if (this.widgetModel.settings?.configuration?.noSelections) this.noSelectionsModel = this.widgetModel.settings.configuration.noSelections
         },
         noSelectionsConfigurationChanged() {
-            emitter.emit('noSelectionsConfigurationChanged', this.noSelectionsModel)
             emitter.emit('refreshSelections', this.widgetModel.id)
         }
     }

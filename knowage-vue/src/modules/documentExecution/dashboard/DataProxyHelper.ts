@@ -33,9 +33,9 @@ export const getWidgetData = async (widget: IWidget, datasets: IDashboardDataset
         case 'text':
             return await getTextWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         case 'highcharts':
-            return await getChartWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
+            return await getHighchartsWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         case 'chartJS':
-            return await getChartWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
+            return await getPieChartData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         default:
             break
     }
@@ -80,8 +80,6 @@ const formatWidgetModelForGet = (propWidget: IWidget, dataset: IDashboardDataset
         }
     })
 
-    console.log('USED DATASET , ', dataset)
-
     if (dataset.drivers && dataset.drivers.length > 0) {
         dataset.drivers.forEach((driver: IDashboardDatasetDriver) => {
             dataToSend.drivers[`${driver.urlName}`] = driver.parameterValue
@@ -91,13 +89,13 @@ const formatWidgetModelForGet = (propWidget: IWidget, dataset: IDashboardDataset
     return dataToSend
 }
 
-const addSelectionsToData = (dataToSend: any, propWidget: IWidget, datasetLabel: string, initialCall: boolean, selections: ISelection[], associativeResponseSelections: any) => {
+const addSelectionsToData = (dataToSend: any, propWidget: IWidget, datasetLabel: string | undefined, initialCall: boolean, selections: ISelection[], associativeResponseSelections: any) => {
     if (associativeResponseSelections) {
         dataToSend.selections = associativeResponseSelections
     } else if (!initialCall) {
         dataToSend.selections = getFormattedSelections(selections)
     }
-    addFiltersToPostData(propWidget, dataToSend.selections, datasetLabel)
+    if (datasetLabel) addFiltersToPostData(propWidget, dataToSend.selections, datasetLabel)
 }
 
 const addFiltersToPostData = (propWidget: IWidget, selectionsToSend: any, datasetLabel: string) => {
@@ -161,7 +159,7 @@ const getFormattedSelections = (selections: ISelection[]) => {
     return formattedSelections
 }
 
-const showGetDataError = (error: any, datasetLabel: string) => {
+const showGetDataError = (error: any, datasetLabel: string | undefined) => {
     let message = error.message
     if (error.message === '100') {
         message = t('dashboard.getDataError', { datasetLabel: datasetLabel })
@@ -426,8 +424,23 @@ const getAggregationsModel = (widgetModel, rawHtml, selectedDataset) => {
 }
 
 //#endregion ================================================================================================
+export const getHighchartsWidgetData = async (widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+    const chartType = widget.settings.chartModel?.model?.chart.type
+    switch (chartType) {
+        case 'pie':
+            return await getPieChartData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
+        case 'gauge':
+            return await getGaugeChartData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
+        case 'activitygauge':
+            return await getGaugeChartData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
+        case 'solidgauge':
+            return await getGaugeChartData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
+        default:
+            return ''
+    }
+}
 
-export const getChartWidgetData = async (widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+const getPieChartData = async (widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
     var datasetIndex = datasets.findIndex((dataset: IDashboardDataset) => widget.dataset === dataset.id)
     var selectedDataset = datasets[datasetIndex]
 
@@ -435,7 +448,36 @@ export const getChartWidgetData = async (widget: IWidget, datasets: IDashboardDa
     var categoryCheck = widget.columns.findIndex((column: any) => column.fieldType !== 'MEASURE') != -1
 
     if (selectedDataset && measureCheck && categoryCheck) {
-        console.log('', widget)
+        var url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=-1&size=-1&nearRealtime=true`
+
+        let postData = formatChartWidgetForGet(widget, selectedDataset, initialCall, selections, associativeResponseSelections)
+        var tempResponse = null as any
+
+        if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
+        await $http
+            .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData, { headers: { 'X-Disable-Errors': 'true' } })
+            .then((response: AxiosResponse<any>) => {
+                tempResponse = response.data
+                tempResponse.initialCall = initialCall
+            })
+            .catch((error: any) => {
+                showGetDataError(error, selectedDataset.dsLabel)
+            })
+            .finally(() => {
+                // TODO - uncomment when realtime dataset example is ready
+                // resetDatasetInterval(widget)
+            })
+        return tempResponse
+    }
+}
+
+export const getGaugeChartData = async (widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+    var datasetIndex = datasets.findIndex((dataset: IDashboardDataset) => widget.dataset === dataset.id)
+    var selectedDataset = datasets[datasetIndex]
+
+    var measureCheck = widget.columns.findIndex((column: any) => column.fieldType === 'MEASURE') != -1
+
+    if (selectedDataset && measureCheck) {
         var url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=-1&size=-1&nearRealtime=true`
 
         let postData = formatChartWidgetForGet(widget, selectedDataset, initialCall, selections, associativeResponseSelections)
@@ -475,20 +517,29 @@ const formatChartWidgetForGet = (propWidget: IWidget, dataset: IDashboardDataset
     addSelectionsToData(dataToSend, propWidget, dataset.dsLabel, initialCall, selections, associativeResponseSelections)
     dataToSend.aggregations.dataset = dataset.dsLabel
 
-    //MEASURE LOGIC - will ALWAYS HAVE ONE MEASURE
-    var measureIndex = propWidget.columns.findIndex((column: any) => column.fieldType === 'MEASURE')
-    var measure = propWidget.columns[measureIndex]
+    const chartType = propWidget.settings.chartModel?.model?.chart.type
+    if (chartType == 'gauge' || chartType == 'activitygauge' || chartType == 'solidgauge') {
+        propWidget.columns.forEach((measure) => {
+            let measureToPush = { id: `${measure.alias}_${measure.aggregation}`, alias: `${measure.alias}_${measure.aggregation}`, columnName: measure.columnName, funct: measure.aggregation, orderColumn: measure.alias } as any
+            measure.formula ? (measureToPush.formula = measure.formula) : ''
+            dataToSend.aggregations.measures.push(measureToPush)
+        })
+    } else {
+        //MEASURE LOGIC - will ALWAYS HAVE ONE MEASURE
+        var measureIndex = propWidget.columns.findIndex((column: any) => column.fieldType === 'MEASURE')
+        var measure = propWidget.columns[measureIndex]
 
-    let measureToPush = { id: `${measure.alias}_${measure.aggregation}`, alias: `${measure.alias}_${measure.aggregation}`, columnName: measure.columnName, funct: measure.aggregation, orderColumn: measure.alias } as any
-    measure.formula ? (measureToPush.formula = measure.formula) : ''
-    dataToSend.aggregations.measures.push(measureToPush)
+        let measureToPush = { id: `${measure.alias}_${measure.aggregation}`, alias: `${measure.alias}_${measure.aggregation}`, columnName: measure.columnName, funct: measure.aggregation, orderColumn: measure.alias } as any
+        measure.formula ? (measureToPush.formula = measure.formula) : ''
+        dataToSend.aggregations.measures.push(measureToPush)
 
-    //FIRST CATEGORY LOGIC - TODO: Make it grab the drilldown Category instead of the first one.
-    var categoryIndex = propWidget.columns.findIndex((column: any) => column.fieldType !== 'MEASURE')
-    var category = propWidget.columns[categoryIndex]
+        //FIRST CATEGORY LOGIC - TODO: Make it grab the drilldown Category instead of the first one.
+        var categoryIndex = propWidget.columns.findIndex((column: any) => column.fieldType !== 'MEASURE')
+        var category = propWidget.columns[categoryIndex]
 
-    let categoryToPush = { id: category.alias, alias: category.alias, columnName: category.columnName, orderType: '', funct: 'NONE' } as any
-    dataToSend.aggregations.categories.push(categoryToPush)
+        let categoryToPush = { id: category.alias, alias: category.alias, columnName: category.columnName, orderType: '', funct: 'NONE' } as any
+        dataToSend.aggregations.categories.push(categoryToPush)
+    }
 
     if (dataset.drivers && dataset.drivers.length > 0) {
         dataset.drivers.forEach((driver: IDashboardDatasetDriver) => {

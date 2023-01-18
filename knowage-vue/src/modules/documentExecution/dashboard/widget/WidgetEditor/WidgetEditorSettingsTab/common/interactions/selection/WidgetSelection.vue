@@ -2,10 +2,6 @@
     <div v-if="selectionModel" class="p-grid p-jc-center p-ai-center p-p-4">
         <div class="p-col-12 p-grid">
             <div class="p-col-12 p-grid p-ai-center">
-                <div class="p-col-12 p-md-4 p-pt-4 p-pr-4">
-                    <InputSwitch v-model="selectionModel.enabled" @change="selectionChanged"></InputSwitch>
-                    <label class="kn-material-input-label p-m-3">{{ $t('dashboard.widgetEditor.interactions.enableSelection') }}</label>
-                </div>
                 <div v-if="selectionModel.multiselection" class="p-col-12 p-md-4 p-pt-4 p-pr-4">
                     <InputSwitch v-model="selectionModel.multiselection.enabled" @change="selectionChanged"></InputSwitch>
                     <label class="kn-material-input-label p-m-3">{{ $t('dashboard.widgetEditor.interactions.enableMultiselection') }}</label>

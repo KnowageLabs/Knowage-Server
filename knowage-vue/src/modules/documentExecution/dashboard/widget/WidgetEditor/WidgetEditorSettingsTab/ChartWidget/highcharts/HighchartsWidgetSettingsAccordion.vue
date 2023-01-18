@@ -3,9 +3,7 @@
         <Accordion class="widget-editor-accordion" v-model:activeIndex="activeIndex">
             <AccordionTab v-for="(accordion, index) in settings" :key="index">
                 <template #header>
-                    <div>
-                        <label class="kn-material-input-label">{{ $t(accordion.title) }}</label>
-                    </div>
+                    <HighchartsWidgetSettingsAccordionHeader :widgetModel="widgetModel" :title="accordion.title" :type="accordion.type"></HighchartsWidgetSettingsAccordionHeader>
                 </template>
 
                 <Highcharts3DConfiguration v-if="accordion.type === 'ConfigurationOf3D'" :widgetModel="widgetModel"></Highcharts3DConfiguration>
@@ -15,8 +13,14 @@
                 <HighchartsLabelsSettings v-else-if="accordion.type === 'Labels'" :widgetModel="widgetModel"></HighchartsLabelsSettings>
                 <HighchartsLegendSettings v-else-if="accordion.type === 'Legend'" :widgetModel="widgetModel"></HighchartsLegendSettings>
                 <HighchartsTooltipSettings v-else-if="accordion.type === 'Tooltip'" :widgetModel="widgetModel"></HighchartsTooltipSettings>
+                <HighchartsActivityGaugeTooltipSettings v-else-if="accordion.type === 'ActivityGaugeTooltip'" :widgetModel="widgetModel"></HighchartsActivityGaugeTooltipSettings>
                 <HighchartsSeriesLabelSettings v-else-if="accordion.type === 'SriesLabel'" :widgetModel="widgetModel"></HighchartsSeriesLabelSettings>
                 <HighchartsDrilldownSettings v-else-if="accordion.type === 'Drilldown'" :widgetModel="widgetModel"></HighchartsDrilldownSettings>
+                <HighchartsGaugeGeneralSettings v-else-if="accordion.type === 'GaugeSettings'" :widgetModel="widgetModel"></HighchartsGaugeGeneralSettings>
+                <HighchartsGaugeScaleSettings v-else-if="accordion.type === 'ScaleSettings'" :widgetModel="widgetModel"></HighchartsGaugeScaleSettings>
+                <HighchartsGaugeTickSettings v-else-if="accordion.type === 'TickSettings'" :widgetModel="widgetModel"></HighchartsGaugeTickSettings>
+                <HighchartsStopsSettings v-else-if="accordion.type === 'StopsSettings'" :widgetModel="widgetModel"></HighchartsStopsSettings>
+                <HighchartsGaugeBandsSettings v-else-if="accordion.type === 'BandsSettings'" :widgetModel="widgetModel"></HighchartsGaugeBandsSettings>
                 <ChartColorSettings v-else-if="accordion.type === 'Colors'" :widgetModel="widgetModel"></ChartColorSettings>
                 <WidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
                 <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
@@ -40,7 +44,6 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget, IDataset, IVariable } from '@/modules/documentExecution/dashboard/Dashboard'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
-import descriptor from './HighchartsWidgetSettingsDescriptor.json'
 import settingsTabDescriptor from '../../WidgetEditorSettingsTabDescriptor.json'
 import WidgetExport from '../../common/configuration/WidgetExport.vue'
 import WidgetRowsStyle from '../../common/style/WidgetRowsStyle.vue'
@@ -61,9 +64,16 @@ import HighchartsSeriesAccessibilitySettings from '../highcharts/accessibility/H
 import HighchartsLabelsSettings from '../highcharts/labels/HighchartsLabelsSettings.vue'
 import HighchartsLegendSettings from '../highcharts/legend/HighchartsLegendSettings.vue'
 import HighchartsTooltipSettings from '../highcharts/tooltip/HighchartsTooltipSettings.vue'
+import HighchartsActivityGaugeTooltipSettings from '../highcharts/tooltip/HighchartsActivityGaugeTooltipSettings.vue'
 import HighchartsSeriesLabelSettings from '../highcharts/series/HighchartsSeriesLabelSettings.vue'
 import ChartColorSettings from '../common/ChartColorSettings.vue'
 import HighchartsDrilldownSettings from './interactions/HighchartsDrilldownSettings.vue'
+import HighchartsGaugeGeneralSettings from './gauge/settings/HighchartsGaugeGeneralSettings.vue'
+import HighchartsGaugeScaleSettings from './gauge/settings/HighchartsGaugeScaleSettings.vue'
+import HighchartsGaugeTickSettings from './gauge/settings/HighchartsGaugeTickSettings.vue'
+import HighchartsStopsSettings from './gauge/settings/HighchartsStopsSettings.vue'
+import HighchartsGaugeBandsSettings from './gauge/settings/HighchartsGaugeBandsSettings.vue'
+import HighchartsWidgetSettingsAccordionHeader from './HighchartsWidgetSettingsAccordionHeader.vue'
 
 export default defineComponent({
     name: 'hihgcharts-widget-configuration-container',
@@ -88,10 +98,17 @@ export default defineComponent({
         HighchartsLabelsSettings,
         HighchartsLegendSettings,
         HighchartsTooltipSettings,
+        HighchartsActivityGaugeTooltipSettings,
         HighchartsSeriesLabelSettings,
         ChartColorSettings,
         HighchartsDrilldownSettings,
-        WidgetSelection
+        WidgetSelection,
+        HighchartsGaugeGeneralSettings,
+        HighchartsGaugeScaleSettings,
+        HighchartsGaugeTickSettings,
+        HighchartsStopsSettings,
+        HighchartsGaugeBandsSettings,
+        HighchartsWidgetSettingsAccordionHeader
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
@@ -99,7 +116,8 @@ export default defineComponent({
         datasets: { type: Array as PropType<IDataset[]> },
         selectedDatasets: { type: Array as PropType<IDataset[]> },
         variables: { type: Array as PropType<IVariable[]>, required: true },
-        dashboardId: { type: String, required: true }
+        dashboardId: { type: String, required: true },
+        descriptor: { type: Object as PropType<any>, required: true }
     },
     watch: {
         settings() {
@@ -109,7 +127,6 @@ export default defineComponent({
     },
     data() {
         return {
-            descriptor,
             settingsTabDescriptor,
             activeIndex: -1
         }

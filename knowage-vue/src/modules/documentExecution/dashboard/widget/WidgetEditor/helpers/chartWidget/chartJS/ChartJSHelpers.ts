@@ -12,7 +12,7 @@ export const createNewChartJSSettings = () => {
         chartModel: null,
         configuration: { exports: { showExcelExport: true, showScreenshot: true } },
         interactions: {
-            crossNavigation: widgetCommonDefaultValues.getDefaultCrossNavigation(),
+            crosssNavigation: widgetCommonDefaultValues.getDefaultCrossNavigation(),
             link: widgetCommonDefaultValues.getDefaultLinks(),
             preview: widgetCommonDefaultValues.getDefaultPreview(),
             selection: chartJSDefaultValues.getDefaultChartJSSelections(),

@@ -1,9 +1,5 @@
 <template>
     <div v-if="model?.options?.plugins?.tooltip" class="p-grid p-jc-center p-ai-center p-p-4">
-        <div class="p-col-12 p-grid p-ai-center p-p-4">
-            <label class="kn-material-input-label p-mr-2">{{ $t('common.enabled') }}</label>
-            <InputSwitch v-model="model.options.plugins.tooltip.enabled" @change="modelChanged"></InputSwitch>
-        </div>
         <div class="p-col-12 p-py-4">
             <WidgetEditorStyleToolbar :options="descriptor.tooltipStyleOptions" :propModel="toolbarModel" :disabled="tooltipDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
         </div>

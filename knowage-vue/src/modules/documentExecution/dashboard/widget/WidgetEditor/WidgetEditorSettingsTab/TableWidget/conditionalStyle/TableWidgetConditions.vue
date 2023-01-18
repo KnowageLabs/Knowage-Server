@@ -1,9 +1,5 @@
 <template>
     <div v-if="conditionalStylesModel" class="p-grid p-jc-center p-ai-center p-p-4">
-        <div class="p-col-12 p-px-2 p-pb-1">
-            <InputSwitch v-model="conditionalStylesModel.enabled" @change="onConditionalStylesEnabledChange"></InputSwitch>
-            <label class="kn-material-input-label p-ml-2">{{ $t('common.enable') }}</label>
-        </div>
         <div v-for="(conditionalStyle, index) in conditionalStylesModel.conditions" :key="index" class="dynamic-form-item p-grid p-col-12 p-ai-center p-pt-2">
             <div class="p-grid p-col-12 p-ai-center">
                 <div v-show="dropzoneTopVisible[index]" class="p-col-12 form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'before', index)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
@@ -131,6 +127,11 @@ export default defineComponent({
     computed: {
         conditionalStylesDisabled() {
             return !this.conditionalStylesModel || !this.conditionalStylesModel.enabled
+        }
+    },
+    watch: {
+        conditionalStylesDisabled() {
+            this.onConditionalStylesEnabledChange()
         }
     },
     created() {
