@@ -1,4 +1,4 @@
-import { IWidgetInteractions, IWidgetResponsive } from "../Dashboard";
+import { ITableWidgetCustomMessages, IWidgetBackgroundStyle, IWidgetBordersStyle, IWidgetExports, IWidgetInteractions, IWidgetPaddingStyle, IWidgetResponsive, IWidgetShadowsStyle, IWidgetTitle } from "../Dashboard";
 
 export interface IDiscoveryWidgetSettings {
     updatable: boolean
@@ -7,8 +7,7 @@ export interface IDiscoveryWidgetSettings {
     facets: IDiscoveryWidgetFacetsSettings
     search: IDiscoveryWidgetSearchSettings,
     interactions: IWidgetInteractions
-    style: ITableWidgetStyle
-    tooltips: ITableWidgetTooltipStyle[]
+    style: IDiscoveryWidgetStyle,
     responsive: IWidgetResponsive
 }
 
