@@ -132,7 +132,7 @@ export default defineComponent({
                 }
             }
 
-            if (this.loadFromDatasetManagement) this.correctRolesForExecution = (this.$store.state as any).user.roles
+            if (this.loadFromDatasetManagement) this.correctRolesForExecution = (this.store.$state as any).user.roles
 
             if (this.dataset.label && this.dataset.pars.length === 0 && (this.filtersData.isReadyForExecution === undefined || this.filtersData.isReadyForExecution)) {
                 this.loadFromDatasetManagement ? await this.loadPreSavePreview() : await this.loadPreviewData()
