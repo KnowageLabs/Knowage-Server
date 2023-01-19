@@ -1,11 +1,12 @@
 <template>
-    <div class="discovery-container p-m-2">
-        <span class="discovery-search-container p-m-2">
+    <div ref="discoveryContainer" class="discovery-container p-m-2" v-resize="onWidgetSizeChange">
+        <div class="kn-width-full p-d-flex">
             <!-- <InputText class="kn-material-input p-m-3 model-search"  v-model="test" type="text" :placeholder="$t('common.search')" @input="searchItems"  /> -->
+            <Button v-if="widgetWidth < 600" :icon="burgerIcon" class="p-button-text p-button-rounded p-button-plain p-as-center" @click="toggleFacets" />
             <InputText class="kn-material-input p-mx-2 p-my-1 kn-flex" v-model="test" type="text" :placeholder="$t('common.search')" @input="" />
-        </span>
+        </div>
         <div class="discovery-content">
-            <div class="facets-container dashboard-scrollbar p-m-2">
+            <div ref="facetsContainer" :class="[widgetWidth < 600 ? 'sidenav' : '']" class="facets-container dashboard-scrollbar p-m-2">
                 <div v-for="(facet, index) in tableData.facets" :key="index" class="facet-accordion">
                     <Toolbar class="kn-toolbar kn-toolbar--primary facet-accordion-header">
                         <template #start> {{ index }}</template>
@@ -31,7 +32,7 @@
                     </div>
                 </div>
             </div>
-            <div class="table-container p-m-2">tableTest</div>
+            <div class="table-container p-m-2">tableTest: {{ widgetWidth }}</div>
         </div>
     </div>
 </template>
@@ -76,6 +77,12 @@ export default defineComponent({
             // this.loadActiveSelections()
         }
     },
+    computed: {
+        burgerIcon(): string {
+            if (this.facetSidenavShown) return 'fas fa-x'
+            else return 'fas fa-bars'
+        }
+    },
     data() {
         return {
             gridOptions: null as any,
@@ -92,7 +99,9 @@ export default defineComponent({
             selectedColumn: false as any,
             selectedColumnArray: [] as any,
             context: null as any,
-            test: ''
+            test: '',
+            widgetWidth: 0 as number,
+            facetSidenavShown: false
         }
     },
     setup() {
@@ -113,7 +122,9 @@ export default defineComponent({
     unmounted() {
         this.removeEventListeners()
     },
-    mounted() {},
+    mounted() {
+        this.setInitialWidgetWidth()
+    },
 
     methods: {
         loadActiveSelections() {
@@ -130,6 +141,19 @@ export default defineComponent({
         getFacetAlias(facetIndex) {
             var facetKeys = Object.keys(this.tableData.facets)
             return facetKeys[facetIndex]
+        },
+        setInitialWidgetWidth() {
+            const temp = this.$refs['discoveryContainer'] as any
+            this.widgetWidth = temp.clientHeight
+        },
+        onWidgetSizeChange({ width, height, offsetWidth, offsetHeight }) {
+            this.widgetWidth = width
+            if (width > 600) this.facetSidenavShown = false
+        },
+        toggleFacets() {
+            const temp = this.$refs['facetsContainer'] as any
+            this.facetSidenavShown = !this.facetSidenavShown
+            this.facetSidenavShown ? temp.classList.add('open') : temp.classList.remove('open')
         }
     }
 })
@@ -155,13 +179,27 @@ export default defineComponent({
         }
         .facets-container {
             flex: 1;
+            &.sidenav {
+                // max-width: 0;
+                transition: width 0.25s linear;
+                position: absolute;
+                margin-left: 0;
+                margin-right: 0;
+                width: 0px;
+                height: calc(100% - 75px);
+                &.open {
+                    width: 40%;
+                    border: 1px solid rgba(172, 172, 172, 0.8);
+                }
+            }
             display: flex;
             flex-direction: column;
             overflow: auto;
             background-color: #fff;
             color: black;
             box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
-            border-radius: 4px;
+            // border-radius: 4px;
+            transition: flex 0.3s linear;
             .facet-accordion {
                 margin-bottom: 1px;
                 .facet-accordion-header {
