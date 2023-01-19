@@ -75,7 +75,7 @@ const getFormattedSearchSettings = (widget: any, drivers: IDashboardDriver[]) =>
 const formattSearchSettingsWithDriverValue = (driverLabel: string | undefined, drivers: IDashboardDriver[], formattedSearchSettings: IDiscoveryWidgetSearchSettings) => {
     const index = drivers.findIndex((driver: IDashboardDriver) => driver.driverLabel === driverLabel)
     if (index !== -1) {
-        formattedSearchSettings.driverId = drivers[index].urlName
+        formattedSearchSettings.driverLabel = drivers[index].driverLabel
         formattedSearchSettings.defaultValue = drivers[index].value ? drivers[index].value : ''
     }
 }

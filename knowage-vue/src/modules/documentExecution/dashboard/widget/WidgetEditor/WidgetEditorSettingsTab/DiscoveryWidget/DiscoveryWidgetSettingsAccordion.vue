@@ -5,7 +5,8 @@
                 <template #header>
                     <DiscoveryWidgetSettingsAccordionHeader :widgetModel="widgetModel" :title="accordion.title" :type="accordion.type"></DiscoveryWidgetSettingsAccordionHeader>
                 </template>
-                <WidgetExport v-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
+                <DiscoveryWidgetSearchSettings v-if="accordion.type === 'SearchSettings'" :widgetModel="widgetModel" :dashboardId="dashboardId"></DiscoveryWidgetSearchSettings>
+                <WidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
                 <TableWidgetCustomMessages v-else-if="accordion.type === 'CustomMessages'" :widgetModel="widgetModel"></TableWidgetCustomMessages>
                 <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
                 <TableWidgetColumnStyle v-else-if="accordion.type === 'ColumnStyle'" :widgetModel="widgetModel"></TableWidgetColumnStyle>
@@ -44,6 +45,7 @@ import WidgetTitleStyle from '../common/style/WidgetTitleStyle.vue'
 import WidgetPaddingStyle from '../common/style/WidgetPaddingStyle.vue'
 import WidgetBackgroundColorStyle from '../common/style/WidgetBackgroundColorStyle.vue'
 import DiscoveryWidgetSettingsAccordionHeader from './DiscoveryWidgetSettingsAccordionHeader.vue'
+import DiscoveryWidgetSearchSettings from './configuration/DiscoveryWidgetSearchSettings.vue'
 
 export default defineComponent({
     name: 'discovery-widget-configuration-container',
@@ -63,7 +65,8 @@ export default defineComponent({
         WidgetCrossNavigation,
         WidgetInteractionsLinks,
         WidgetPreview,
-        DiscoveryWidgetSettingsAccordionHeader
+        DiscoveryWidgetSettingsAccordionHeader,
+        DiscoveryWidgetSearchSettings
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
