@@ -1,6 +1,5 @@
 <template>
     <div class="widget-editor-card p-p-2">
-        {{ items }}
         <div class="p-d-flex p-flex-column">
             <label v-if="settings.label" class="kn-material-input-label">{{ $t(settings.label) }}</label>
             <small v-if="settings.hint"> {{ $t(settings.hint) }}</small>
