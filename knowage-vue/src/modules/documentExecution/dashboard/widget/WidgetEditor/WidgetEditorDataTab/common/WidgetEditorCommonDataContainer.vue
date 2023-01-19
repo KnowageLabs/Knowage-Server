@@ -1,6 +1,6 @@
 <template>
     <div v-if="widgetModel">
-        <TableWidgetDataForm class="p-m-2" :widgetModel="widgetModel" :sortingColumnOptions="columnTableItems"></TableWidgetDataForm>
+        <TableWidgetDataForm v-if="widgetType !== 'discovery'" class="p-m-2" :widgetModel="widgetModel" :sortingColumnOptions="columnTableItems"></TableWidgetDataForm>
         <WidgetEditorColumnTable
             class="p-m-2"
             :widgetModel="widgetModel"
@@ -35,6 +35,11 @@ export default defineComponent({
             descriptor,
             columnTableItems: [] as IWidgetColumn[],
             selectedColumn: null as IWidgetColumn | null
+        }
+    },
+    computed: {
+        widgetType() {
+            return this.widgetModel.type
         }
     },
     watch: {

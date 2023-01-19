@@ -50,7 +50,7 @@
                         <div>
                             <Button v-if="slotProps.data.formula" icon="fas fa-calculator" class="p-button-link" v-tooltip.top="$t('common.edit')" @click.stop="openCalculatedFieldDialog(slotProps.data)"></Button>
                             <Button icon="fas fa-cog" class="p-button-link" v-tooltip.top="$t('common.edit')" @click.stop="$emit('itemSelected', slotProps.data)"></Button>
-                            <Button icon="pi pi-trash" class="p-button-link" v-tooltip.top="$t('common.delete')" @click.stop="deleteItem(slotProps.data, slotProps.index)"></Button>
+                            <Button v-if="widgetType !== 'discovery'" icon="pi pi-trash" class="p-button-link" v-tooltip.top="$t('common.delete')" @click.stop="deleteItem(slotProps.data, slotProps.index)"></Button>
                         </div>
                     </template>
                 </Column>
@@ -86,8 +86,11 @@ export default defineComponent({
         }
     },
     computed: {
+        widgetType() {
+            return this.widgetModel.type
+        },
         rowReorderEnabled(): boolean {
-            return this.widgetModel && ['table', 'html', 'text', 'highcharts'].includes(this.widgetModel.type) && this.rows.length > 1
+            return this.widgetModel && ['table', 'html', 'text', 'highcharts', 'widgetType'].includes(this.widgetModel.type) && this.rows.length > 1
         }
     },
     watch: {
@@ -132,10 +135,10 @@ export default defineComponent({
             if (event.dataTransfer.getData('text/plain') === 'b') return
             const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
             const tempColumn = createNewWidgetColumn(eventData)
-            if (['table', 'html', 'text', 'highcharts', 'chartJS'].includes(this.widgetModel.type)) {
+            if (['table', 'html', 'text', 'highcharts', 'chartJS', 'discovery'].includes(this.widgetModel.type)) {
                 if (['chartJS', 'highcharts'].includes(this.widgetModel.type)) {
                     addChartColumnToTable(tempColumn, this.rows, this.chartType, this.settings.attributesOnly, this.settings.measuresOnly, this.widgetModel)
-                } else if (this.widgetModel.type === 'table' || !this.checkIfColumnIsAlreadyPresent(tempColumn)) this.rows.push(tempColumn as IWidgetColumn)
+                } else if (['table'].includes(this.widgetModel.type) || !this.checkIfColumnIsAlreadyPresent(tempColumn)) this.rows.push(tempColumn as IWidgetColumn)
             } else {
                 this.rows = [tempColumn]
             }
@@ -150,7 +153,7 @@ export default defineComponent({
             this.$emit('itemDeleted', item)
         },
         aggregationDropdownIsVisible(row: any) {
-            return row.fieldType === 'MEASURE'
+            return row.fieldType === 'MEASURE' && this.widgetType !== 'discovery'
         },
         updateSelectedColumn(selectedColumn: IWidgetColumn) {
             const index = this.rows.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === selectedColumn.id)
