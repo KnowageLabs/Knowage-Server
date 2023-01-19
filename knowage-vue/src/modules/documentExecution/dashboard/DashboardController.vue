@@ -122,12 +122,9 @@ export default defineComponent({
         async getData() {
             this.loading = true
             await this.loadDatasets()
+            if (this.filtersData) this.drivers = loadDrivers(this.filtersData, this.model)
             await Promise.all([this.loadProfileAttributes(), this.loadModel(), this.loadInternationalization()])
-            if (this.filtersData) {
-                const drivers = loadDrivers(this.filtersData, this.model)
-                this.setDashboardDrivers(this.dashboardId, drivers)
-            }
-            //lazy lodaded data
+            this.setDashboardDrivers(this.dashboardId, this.drivers)
             this.loadHtmlGallery()
             this.loading = false
         },

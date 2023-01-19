@@ -643,6 +643,7 @@ export interface IDashboardDriver {
     multivalue: boolean
     value: string
     urlName: string
+    driverLabel: string
 }
 
 export interface IGalleryItem {

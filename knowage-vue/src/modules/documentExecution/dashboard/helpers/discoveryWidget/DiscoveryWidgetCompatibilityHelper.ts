@@ -1,4 +1,4 @@
-import { IDashboard, ITableWidgetStyle, IWidget, IDashboardDatasetDriver, IWidgetInteractions, IWidgetResponsive } from "../../Dashboard"
+import { IDashboard, ITableWidgetStyle, IWidget, IDashboardDriver, IWidgetInteractions, IWidgetResponsive } from "../../Dashboard"
 import { IDiscoveryWidgetSettings, IDiscoveryWidgetConfiguration, IDiscoveryWidgetFacetsSettings, IDiscoveryWidgetSearchSettings } from "../../interfaces/DashboardDiscoveryWidget"
 import { getFormattedWidgetColumns } from "../common/WidgetColumnHelper"
 import { getFormattedInteractions } from "../common/WidgetInteractionsHelper"
@@ -11,7 +11,7 @@ import * as  discoveryWidgetDefaultValues from '../../widget/WidgetEditor/helper
 
 const columnNameIdMap = {}
 
-export const formatDiscoveryWidget = (widget: any, drivers: IDashboardDatasetDriver[]) => {
+export const formatDiscoveryWidget = (widget: any, drivers: IDashboardDriver[]) => {
 
     console.log(">>>>>>>>>>> OLD WIDGET MODEL: ", widget)
 
@@ -34,7 +34,7 @@ export const formatDiscoveryWidget = (widget: any, drivers: IDashboardDatasetDri
 }
 
 
-const getFormattedWidgetSettings = (widget: any, drivers: IDashboardDatasetDriver[]) => {
+const getFormattedWidgetSettings = (widget: any, drivers: IDashboardDriver[]) => {
     const formattedSettings = {
         updatable: widget.updateble,
         clickable: widget.cliccable,
@@ -52,8 +52,7 @@ const getFormattedFacetsSettings = (widget: any) => {
     return {}
 }
 
-const getFormattedSearchSettings = (widget: any, drivers: IDashboardDatasetDriver[]) => {
-    console.log(">>>>>>>> drivers: ", drivers)
+const getFormattedSearchSettings = (widget: any, drivers: IDashboardDriver[]) => {
     const formattedSearchSettings = discoveryWidgetDefaultValues.getDefaultSearchSettings()
     if (!widget.search) return formattedSearchSettings
     formattedSearchSettings.columns = widget.search.columns
@@ -67,11 +66,11 @@ const getFormattedSearchSettings = (widget: any, drivers: IDashboardDatasetDrive
     return formattedSearchSettings
 }
 
-const formattSearchSettingsWithDriverValue = (driverLabel: string | undefined, drivers: IDashboardDatasetDriver[], formattedSearchSettings: IDiscoveryWidgetSearchSettings) => {
-    const index = drivers.findIndex((driver: IDashboardDatasetDriver) => driver.driverLabel === driverLabel)
+const formattSearchSettingsWithDriverValue = (driverLabel: string | undefined, drivers: IDashboardDriver[], formattedSearchSettings: IDiscoveryWidgetSearchSettings) => {
+    const index = drivers.findIndex((driver: IDashboardDriver) => driver.driverLabel === driverLabel)
     if (index !== -1) {
         formattedSearchSettings.driverId = drivers[index].urlName
-        formattedSearchSettings.defaultValue = drivers[index].parameterValue[0] ? "" + drivers[index].parameterValue[0].value : ''
+        formattedSearchSettings.defaultValue = drivers[index].value ? drivers[index].value : ''
     }
 }
 
