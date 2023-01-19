@@ -42,6 +42,7 @@ public class DataSetConstants {
 	public static final String DATASET_DELETE = "DATASET_DELETE";
 	public static final String DATASET_TEST = "DATASET_TEST";
 	public static final String DATASET_EXEC = "DATASET_EXEC";
+	public static final String DATASET_LABEL = "DATASET_LABEL";
 
 	public static final String DATASET_VERSION_RESTORE = "DATASET_VERSION_RESTORE";
 	public static final String DATASET_VERSION_DELETE = "DATASET_VERSION_DELETE";
@@ -77,6 +78,7 @@ public class DataSetConstants {
 	public static final String QUERY_SCRIPT = "queryScript";
 	public static final String QUERY_SCRIPT_LANGUAGE = "queryScriptLanguage";
 	public static final String DATA_SOURCE = "dataSource";
+	public static final String SOURCE_DATA_SOURCE = "sourceDataSource";
 	public static final String WS_ADDRESS = "wsAddress";
 	public static final String WS_OPERATION = "wsOperation";
 	public static final String SCRIPT = "Script";
@@ -94,6 +96,7 @@ public class DataSetConstants {
 	public static final String DS_PYTHON_NAME = "Python/R";
 	public static final String DS_SOLR_NAME = "Solr";
 	public static final String SPARQL = "SPARQL";
+	public static final String DERIVED = "Derived";
 
 	public static final String TRASFORMER_TYPE_CD = "trasfTypeCd";
 	public static final String PIVOT_COL_NAME = "pivotColName";
@@ -113,6 +116,7 @@ public class DataSetConstants {
 	public static final String DS_CUSTOM = "SbiCustomDataSet";
 	public static final String DS_FLAT = "SbiFlatDataSet";
 	public static final String DS_PREPARED = "SbiPreparedDataSet";
+	public static final String DS_DERIVED = "SbiDerivedDataSet";
 	public static final String DS_REST_TYPE = RESTDataSet.DATASET_TYPE;
 	public static final String DS_PYTHON_TYPE = PythonDataSet.DATASET_TYPE;
 	public static final String DS_SOLR_TYPE = SolrDataSet.DATASET_TYPE;
@@ -217,6 +221,7 @@ public class DataSetConstants {
 		code2name.put(DS_PYTHON_TYPE, DS_PYTHON_NAME);
 		code2name.put(DataSetConstants.DS_SPARQL, "SPARQL");
 		code2name.put(DataSetConstants.DS_PREPARED, "Prepared");
+		code2name.put(DataSetConstants.DS_DERIVED, "Derived");
 	}
 
 }

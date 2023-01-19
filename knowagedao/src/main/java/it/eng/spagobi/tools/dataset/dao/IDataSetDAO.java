@@ -216,4 +216,8 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	public SbiDataSet copyDataSet(SbiDataSet hibDataSet);
 
 	public List<IDataSet> loadFilteredDatasetByTypeList(String string, String qbeDsType);
+
+	IDataSet loadDataSetByLabelAndUserCategories(String label);
+
+	List<IDataSet> loadDerivedDataSetByLabel(String label);
 }

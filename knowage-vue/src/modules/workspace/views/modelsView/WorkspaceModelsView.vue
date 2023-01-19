@@ -16,7 +16,7 @@
         <InputText class="kn-material-input p-m-3 model-search" v-model="searchWord" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
         <span class="p-float-label p-mr-auto model-search">
             <MultiSelect class="kn-material-input kn-width-full" :style="mainDescriptor.style.multiselect" v-model="selectedCategories" :options="modelCategories" optionLabel="VALUE_CD" @change="searchItems" :filter="true" />
-            <label class="kn-material-input-label"> {{ $t('common.type') }} </label>
+            <label class="kn-material-input-label"> {{ $t('common.category') }} </label>
         </span>
         <SelectButton class="p-mx-2" v-model="tableMode" :options="selectButtonOptions" @click="onTableModeChange" />
     </div>

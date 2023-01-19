@@ -1,5 +1,6 @@
 <template>
-    <DataPreparationMonitoringDialog v-model:visibility="showMonitoring" @close="showMonitoring = false" @save="updateDatasetAndSave" :dataset="selectedDataset"></DataPreparationMonitoringDialog>
+    <DataPreparationMonitoringDialog v-model:visibility="showMonitoring" @close="showMonitoring = false" @save="updateDatasetAndSave"
+        :dataset="selectedDataset"></DataPreparationMonitoringDialog>
     <Toolbar class="kn-toolbar kn-toolbar--secondary">
         <template #start>
             {{ $t('workspace.advancedData.title') }}
@@ -11,14 +12,17 @@
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
-    <KnDatasetList :visibility="showDatasetList" :items="availableDatasets" @selected="newDataPrep" @save="handleSave(selectedDsForDataPrep)" @cancel="hideDataSetCatalog" />
+    <KnDatasetList :visibility="showDatasetList" :items="availableDatasets" @selected="newDataPrep" @save="handleSave(selectedDsForDataPrep)"
+        @cancel="hideDataSetCatalog" />
 
     <div class="p-d-flex p-flex-row p-ai-center">
-        <InputText class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
+        <InputText class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')"
+            @input="searchItems" data-test="search-input" />
     </div>
 
     <div class="kn-overflow">
-        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table p-mx-2" :value="preparedDatasets" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" data-test="datasets-table">
+        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table p-mx-2" :value="preparedDatasets" :loading="loading" dataKey="objId"
+            responsiveLayout="stack" breakpoint="600px" data-test="datasets-table">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -36,7 +40,8 @@
                 <template #header> &ensp; </template>
                 <template #body="slotProps">
                     <Button icon="fas fa-ellipsis-v" class="p-button-link" @click.stop="showMenu($event, slotProps.data)" />
-                    <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click.stop="showSidebar(slotProps.data)" :data-test="'info-button-' + slotProps.data.name" />
+                    <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')"
+                        @click.stop="showSidebar(slotProps.data)" :data-test="'info-button-' + slotProps.data.name" />
                     <Button icon="fas fa-eye" class="p-button-link" @click.stop="previewDataset(slotProps.data)" />
                 </template>
             </Column>
@@ -46,52 +51,33 @@
                 {{ $t('common.info.noDataFound') }}
             </Message>
             <template v-else>
-                <WorkspaceCard
-                    v-for="(dataset, index) of preparedDatasets"
-                    :key="index"
-                    :viewType="'dataset'"
-                    :document="dataset"
-                    @previewDataset="previewDataset"
-                    @editDataset="editDataset"
-                    @exportToXlsx="exportDataset($event, 'xls')"
-                    @exportToCsv="exportDataset($event, 'csv')"
-                    @shareDataset="shareDataset"
-                    @cloneDataset="cloneDataset"
-                    @deleteDataset="deleteDatasetConfirm"
-                    @openDataPreparation="openDataPreparation"
-                    @openSidebar="showSidebar"
-                    @monitoring="showMonitoring = !showMonitoring"
-                />
+                <WorkspaceCard v-for="(dataset, index) of preparedDatasets" :key="index" :viewType="'dataset'" :document="dataset"
+                    @previewDataset="previewDataset" @editDataset="editDataset" @exportToXlsx="exportDataset($event, 'xls')"
+                    @exportToCsv="exportDataset($event, 'csv')" @shareDataset="shareDataset" @cloneDataset="cloneDataset" @deleteDataset="deleteDatasetConfirm"
+                    @openDataPreparation="openDataPreparation" @openSidebar="showSidebar" @monitoring="showMonitoring = !showMonitoring" />
             </template>
         </div>
     </div>
 
-    <DetailSidebar
-        :visible="showDetailSidebar"
-        :viewType="'dataset'"
-        :document="selectedDataset"
-        @previewDataset="previewDataset"
-        @editDataset="editDataset"
-        @exportToXlsx="exportDataset($event, 'xls')"
-        @exportToCsv="exportDataset($event, 'csv')"
-        @shareDataset="shareDataset"
-        @cloneDataset="cloneDataset"
-        @deleteDataset="deleteDatasetConfirm"
-        @openDataPreparation="openDataPreparation"
-        @close="showDetailSidebar = false"
-        @monitoring="showMonitoring = !showMonitoring"
-        data-test="detail-sidebar"
-    />
+    <DetailSidebar :visible="showDetailSidebar" :viewType="'dataset'" :document="selectedDataset" @previewDataset="previewDataset" @editDataset="editDataset"
+        @exportToXlsx="exportDataset($event, 'xls')" @exportToCsv="exportDataset($event, 'csv')" @shareDataset="shareDataset" @cloneDataset="cloneDataset"
+        @deleteDataset="deleteDatasetConfirm" @openDataPreparation="openDataPreparation" @close="showDetailSidebar = false"
+        @monitoring="showMonitoring = !showMonitoring" data-test="detail-sidebar" />
 
-    <EditPreparedDatasetDialog :dataset="selectedDataset" :visible="showEditPreparedDatasetDialog" @save="updatePreparedDataset" @cancel="showEditPreparedDatasetDialog = false" />
+    <EditPreparedDatasetDialog :dataset="selectedDataset" :visible="showEditPreparedDatasetDialog" @save="updatePreparedDataset"
+        @cancel="showEditPreparedDatasetDialog = false" />
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     <Menu id="creationMenu" ref="creationMenu" :model="creationMenuButtons" />
 
-    <WorkspaceDataCloneDialog :visible="cloneDialogVisible" :propDataset="selectedDataset" @close="cloneDialogVisible = false" @clone="handleDatasetClone"></WorkspaceDataCloneDialog>
-    <WorkspaceDataPreviewDialog :visible="previewDialogVisible" :propDataset="selectedDataset" @close="previewDialogVisible = false"></WorkspaceDataPreviewDialog>
-    <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.advancedData.title')" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
+    <WorkspaceDataCloneDialog :visible="cloneDialogVisible" :propDataset="selectedDataset" @close="cloneDialogVisible = false" @clone="handleDatasetClone">
+    </WorkspaceDataCloneDialog>
+    <WorkspaceDataPreviewDialog :visible="previewDialogVisible" :propDataset="selectedDataset" @close="previewDialogVisible = false">
+    </WorkspaceDataPreviewDialog>
+    <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.advancedData.title')" :warningMessage="warningMessage"
+        @close="closeWarningDialog"></WorkspaceWarningDialog>
 
-    <DataPreparationAvroHandlingDialog :visible="dataPrepAvroHandlingDialogVisbile" :title="$t('workspace.myData.isPreparing')" :infoMessage="dataPrepAvroHandlingMessage" @close="proceedToDataPrep" :events="events"></DataPreparationAvroHandlingDialog>
+    <DataPreparationAvroHandlingDialog :visible="dataPrepAvroHandlingDialogVisbile" :title="$t('workspace.myData.isPreparing')"
+        :infoMessage="dataPrepAvroHandlingMessage" @close="proceedToDataPrep" :events="events"></DataPreparationAvroHandlingDialog>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -273,7 +259,7 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => {
                     this.selectedDataset = response.data[0]
                 })
-                .catch(() => {})
+                .catch(() => { })
             this.loading = false
         },
         toggleDisplayView() {
@@ -310,20 +296,34 @@ export default defineComponent({
         },
         // prettier-ignore
         createMenuItems(clickedDocument: any) {
-                let tmp = [] as any
+            let tmp = [] as any
+
+            if (this.user?.functionalities.includes('DataPreparation')) {
                 tmp.push(
-                    { key: '0', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.exportDataset(clickedDocument, 'xls'), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'File' },
-                    { key: '1', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: () => this.exportDataset(clickedDocument, 'csv'), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'File' },
-                    { key: '4', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner }
+                    { key: 1, label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: true },
+                    { key: 2, label: this.$t('workspace.myData.monitoring'), icon: 'pi pi-chart-line', command: () => this.handleMonitoring(clickedDocument), visible: true }
                 )
-                if (this.user?.functionalities.includes('DataPreparation')) {
-                    tmp.push(
-                        { key: '2', label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: true },
-                        { key: '3', label: this.$t('workspace.myData.monitoring'), icon: 'pi pi-chart-line', command: () => this.handleMonitoring(clickedDocument), visible: true }
-                    )
+            }
+            tmp.push(
+                {
+                    key: 3,
+                    label: this.$t('common.export'),
+                    icon: 'fa-solid fa-file-export',
+                    visible: this.canLoadData && this.selectedDataset.dsTypeCd && this.selectedDataset.dsTypeCd != 'File',
+                    items: [
+                        { key: '10', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.exportDataset(clickedDocument, 'xls') },
+                        { key: '11', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: () => this.exportDataset(clickedDocument, 'csv') },
+                    ]
+                })
+            tmp.push({ key: 100, label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner })
+
+            tmp = tmp.sort((a, b) => a.key < b.key)
+            tmp.forEach(element => {
+                if (element.items) {
+                    element.items = element.items.sort((a, b) => a.key < b.key)
                 }
-                tmp = tmp.sort((a,b)=>a.key.localeCompare(b.key))
-                this.menuButtons = tmp
+            })
+            this.menuButtons = tmp
         },
         createCreationMenuButtons() {
             this.creationMenuButtons = []
@@ -409,7 +409,7 @@ export default defineComponent({
                     if (idx >= 0) this.removeFromLoadedAvros(idx)
                     this.pushEvent(3)
                 })
-                .catch(() => {})
+                .catch(() => { })
 
             // listen on websocket for avro export job to be finished
             if (this.user?.functionalities.includes('DataPreparation') && this.client && Object.keys(this.client).length > 0) this.client.publish({ destination: '/app/prepare', body: dsId })
@@ -422,7 +422,7 @@ export default defineComponent({
                     this.setLoadedAvros(response.data)
                     this.setLoadingAvros([])
                 })
-                .catch(() => {})
+                .catch(() => { })
         },
         async exportDataset(dataset: any, format: string) {
             this.loading = true
@@ -444,7 +444,7 @@ export default defineComponent({
                         msg: this.$t('workspace.myData.exportSuccess')
                     })
                 })
-                .catch(() => {})
+                .catch(() => { })
             this.loading = false
         },
         getFileType(type: string) {
@@ -474,7 +474,7 @@ export default defineComponent({
                     this.shareDialogVisible = false
                     this.getDatasets()
                 })
-                .catch(() => {})
+                .catch(() => { })
             this.loading = false
         },
         async cloneDataset(dataset: any) {
@@ -521,7 +521,7 @@ export default defineComponent({
                     this.showDetailSidebar = false
                     this.getDatasets()
                 })
-                .catch(() => {})
+                .catch(() => { })
             this.loading = false
         },
         closeWarningDialog() {

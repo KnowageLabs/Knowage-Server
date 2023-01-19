@@ -687,10 +687,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					String roleName = itRoles.next();
 					role = rolesDao.loadByName(roleName);
 					List<RoleMetaModelCategory> ds = rolesDao.getMetaModelCategoriesForRole(role.getId());
-					List<Domain> array = categoryDao.getCategoriesForDataset()
-						.stream()
-						.map(Domain::fromCategory)
-						.collect(toList());
+					List<Domain> array = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(toList());
 					for (RoleMetaModelCategory r : ds) {
 						for (Domain dom : array) {
 							if (r.getCategoryId().equals(dom.getValueId())) {
@@ -701,10 +698,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				}
 				return categoriesDev;
 			} else {
-				return categoryDao.getCategoriesForDataset()
-						.stream()
-						.map(Domain::fromCategory)
-						.collect(toList());
+				return categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(toList());
 			}
 		} catch (Exception e) {
 			logger.error("Role with selected id: " + role.getId() + " doesn't exists", e);
@@ -1399,7 +1393,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			}
 		}
 
-		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_QBE)) {
+		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_QBE) || datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_DERIVED)) {
 
 			dataSet = new QbeDataSet();
 			QbeDataSet qbeDataSet = (QbeDataSet) dataSet;

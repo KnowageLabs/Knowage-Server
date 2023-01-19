@@ -1,18 +1,5 @@
 <template>
-    <Card class="p-m-2">
-        <template #content>
-            <form class="p-fluid p-formgrid p-grid">
-                <div class="p-field p-col-4">
-                    <Button :label="$t('managers.datasetManagement.monitoring')" class="kn-button kn-button--primary" @click="showMonitoringDialog = true" />
-                </div>
-                <div class="p-field p-col-4">
-                    <Button :label="$t('managers.datasetManagement.openDP')" class="kn-button kn-button--primary" @click="prepareForDataPreparation" />
-                </div>
-            </form>
-        </template>
-    </Card>
-
-    <MonitoringDialog :visibility="showMonitoringDialog" :dataset="selectedDataset" @close="showMonitoringDialog = false" @save="updateDatasetAndSave" />
+    <MonitoringDialog :visibility="showMonitoringDialog" :dataset="selectedDataset" @close="closeDialog" @save="updateDatasetAndSave" />
 </template>
 
 <script lang="ts">
@@ -21,19 +8,18 @@ import { AxiosResponse } from 'axios'
 import descriptor from './DatasetManagementPreparedDataset.json'
 import Card from 'primevue/card'
 import MonitoringDialog from '@/modules/workspace/dataPreparation/DataPreparationMonitoring/DataPreparationMonitoringDialog.vue'
-import mainStore from '../../../../../../App.store'
+import mainStore from '@/App.store'
 
 export default defineComponent({
     components: { Card, MonitoringDialog },
-    props: { selectedDataset: { type: Object as any }, dataSources: { type: Array as any } },
-    emits: ['touched'],
+    props: { selectedDataset: { type: Object as any }, dataSources: { type: Array as any }, showMonitoringDialog: Boolean, showDataPreparation: Boolean },
+    emits: ['touched', 'closeMonitoringDialog', 'closeDataPreparation'],
     data() {
         return {
             descriptor,
             dataset: {} as any,
             availableDatasets: [] as any,
-            avroDatasets: [] as any,
-            showMonitoringDialog: false
+            avroDatasets: [] as any
         }
     },
     setup() {
@@ -46,6 +32,11 @@ export default defineComponent({
     watch: {
         selectedDataset() {
             this.dataset = this.selectedDataset
+        },
+        showDataPreparation(newValue) {
+            if (newValue) {
+                this.prepareForDataPreparation()
+            }
         }
     },
     methods: {
@@ -131,7 +122,7 @@ export default defineComponent({
             }
         },
         async updateDatasetAndSave(newConfig) {
-            this.showMonitoringDialog = false
+            this.closeDialog()
 
             await this.$http.patch(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/instance/' + newConfig.instanceId, { config: newConfig.config }, { headers: { Accept: 'application/json, */*' } }).then(
                 () => {
@@ -141,6 +132,12 @@ export default defineComponent({
                     this.store.setError({ title: this.$t('common.error.saving'), msg: this.$t('managers.workspaceManagement.dataPreparation.errors.updatingSchedulation') })
                 }
             )
+        },
+        closeDialog() {
+            this.$emit('closeMonitoringDialog')
+        },
+        closeDataPreparation() {
+            this.$emit('closeDataPreparation')
         }
     }
 })
