@@ -36,6 +36,8 @@ export const getWidgetData = async (widget: IWidget, datasets: IDashboardDataset
             return await getHighchartsWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         case 'chartJS':
             return await getPieChartData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
+        case 'discovery':
+            return await getDiscoveryChartData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         default:
             break
     }
@@ -440,6 +442,7 @@ export const getHighchartsWidgetData = async (widget: IWidget, datasets: IDashbo
     }
 }
 
+//#region ===================== Chart Widget ====================================================
 const getPieChartData = async (widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
     var datasetIndex = datasets.findIndex((dataset: IDashboardDataset) => widget.dataset === dataset.id)
     var selectedDataset = datasets[datasetIndex]
@@ -547,5 +550,89 @@ const formatChartWidgetForGet = (propWidget: IWidget, dataset: IDashboardDataset
         })
     }
 
+    return dataToSend
+}
+//#endregion ================================================================================================
+
+const getDiscoveryChartData = async (widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+    console.log('widgetModel', widget)
+    var datasetIndex = datasets.findIndex((dataset: IDashboardDataset) => widget.dataset === dataset.id)
+    var selectedDataset = datasets[datasetIndex]
+
+    if (selectedDataset) {
+        var url = ''
+        // let pagination = widget.settings.pagination
+        let pagination = { enabled: false }
+        if (pagination.enabled) {
+            // url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=${pagination.properties.offset}&size=${pagination.properties.itemsNumber}&nearRealtime=true`
+        } else url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=0&size=10&nearRealtime=true&widgetName=widget_discovery_1674120861663`
+
+        let postData = formatDiscoveryModelForGet(widget, selectedDataset, initialCall, selections, associativeResponseSelections)
+        var tempResponse = null as any
+
+        if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
+        await $http
+            .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData, { headers: { 'X-Disable-Errors': 'true', Connection: 'keep-alive', Accept: 'application/json, text/plain, */*' } })
+            .then((response: AxiosResponse<any>) => {
+                tempResponse = response.data
+                if (pagination.enabled) widget.settings.pagination.properties.totalItems = response.data.results
+            })
+            .catch((error: any) => {
+                showGetDataError(error, selectedDataset.dsLabel)
+            })
+            .finally(() => {
+                // TODO - uncomment when realtime dataset example is ready
+                // resetDatasetInterval(widget)
+            })
+
+        return tempResponse
+    }
+}
+
+const formatDiscoveryModelForGet = (propWidget: IWidget, dataset: IDashboardDataset, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+    var dataToSend = {
+        aggregations: {
+            dataset: '',
+            measures: [],
+            categories: []
+        },
+        parameters: {},
+        selections: {},
+        drivers: {},
+        indexes: []
+    } as any
+
+    addSelectionsToData(dataToSend, propWidget, dataset.dsLabel, initialCall, selections, associativeResponseSelections)
+
+    dataToSend.aggregations.dataset = dataset.dsLabel
+
+    //summary rows - exclusive to table
+    if (propWidget.type === 'table' && propWidget.settings.configuration.summaryRows.enabled) {
+        dataToSend.summaryRow = getSummaryRow(propWidget)
+    }
+    // { "id": "the_date", "alias": "the_date", "columnName": "the_date", "orderType": "", "funct": "COUNT", "functColumn": "the_date" }
+    propWidget.columns.forEach((column) => {
+        if (column.fieldType === 'MEASURE') {
+            let measureToPush = { id: column.alias, alias: column.alias, columnName: column.columnName, funct: 'NONE', orderColumn: column.alias, functColumn: column.alias, orderType: '' } as any
+            column.formula ? (measureToPush.formula = column.formula) : ''
+            dataToSend.aggregations.measures.push(measureToPush)
+        } else {
+            let attributeToPush = { id: column.alias, alias: column.alias, columnName: column.columnName, orderType: '', funct: 'COUNT', functColumn: column.alias } as any
+
+            //sort logic - to be changed by other widgets
+            if (propWidget.type === 'table' || propWidget.type === 'html' || propWidget.type === 'text') column.id === propWidget.settings.sortingColumn ? (attributeToPush.orderType = propWidget.settings.sortingOrder) : ''
+            else attributeToPush.orderType = propWidget.settings.sortingOrder
+
+            attributeToPush.orderType = ''
+            dataToSend.aggregations.categories.push(attributeToPush)
+        }
+    })
+
+    if (dataset.drivers && dataset.drivers.length > 0) {
+        dataset.drivers.forEach((driver: IDashboardDatasetDriver) => {
+            dataToSend.drivers[`${driver.urlName}`] = driver.parameterValue
+        })
+    }
+    delete dataToSend.drivers
     return dataToSend
 }
