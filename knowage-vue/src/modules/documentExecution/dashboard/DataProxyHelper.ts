@@ -572,7 +572,7 @@ const getDiscoveryChartData = async (widget: IWidget, datasets: IDashboardDatase
 
         if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
         await $http
-            .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData, { headers: { 'X-Disable-Errors': 'true', Connection: 'keep-alive', Accept: 'application/json, text/plain, */*' } })
+            .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData, { headers: { 'X-Disable-Errors': 'true' } })
             .then((response: AxiosResponse<any>) => {
                 tempResponse = response.data
                 if (pagination.enabled) widget.settings.pagination.properties.totalItems = response.data.results

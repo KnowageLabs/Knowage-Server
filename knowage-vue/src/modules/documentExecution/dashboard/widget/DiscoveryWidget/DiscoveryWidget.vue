@@ -1,6 +1,38 @@
 <template>
-    <div>
-        {{ tableData }}
+    <div class="discovery-container p-m-2">
+        <span class="discovery-search-container p-m-2">
+            <!-- <InputText class="kn-material-input p-m-3 model-search"  v-model="test" type="text" :placeholder="$t('common.search')" @input="searchItems"  /> -->
+            <InputText class="kn-material-input p-mx-2 p-my-1 kn-flex" v-model="test" type="text" :placeholder="$t('common.search')" @input="" />
+        </span>
+        <div class="discovery-content">
+            <div class="facets-container dashboard-scrollbar p-m-2">
+                <div v-for="(facet, index) in tableData.facets" :key="index" class="facet-accordion">
+                    <Toolbar class="kn-toolbar kn-toolbar--primary facet-accordion-header">
+                        <template #start> {{ index }}</template>
+                        <template #end>
+                            <Button v-if="facet.closed" class="p-button-text p-button-rounded p-button-plain" icon="fas fa-chevron-down" style="color: white" @click="facet.closed = false" />
+                            <Button v-else class="p-button-text p-button-rounded p-button-plain" icon="fas fa-chevron-up" style="color: white" @click="facet.closed = true" />
+                        </template>
+                    </Toolbar>
+                    <div v-if="!facet.closed">
+                        <div v-for="(row, index) in facet.rows" class="facet-accordion-content selectable" v-tooltip.top="facet.column_1">
+                            <!-- <span v-if="facet.metaData.type == 'date'" class="kn-truncated">
+                                    TODO: Set Date Format
+                                    {{ setTimeFormat(item.column_1, facet.metaData.dateFormat) }}
+                                </span> -->
+                            <span class="kn-truncated">
+                                {{ row.column_1 }}
+                            </span>
+                            <div class="facet-chip p-ml-auto">
+                                {{ row.column_2 }}
+                                <!-- {{facet.column_2 | number:getDecimalPlaces("column_2", item.column_2, facet.metaData.fields)}} -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="table-container p-m-2">tableTest</div>
+        </div>
     </div>
 </template>
 
@@ -59,7 +91,8 @@ export default defineComponent({
             multiSelectedCells: [] as any,
             selectedColumn: false as any,
             selectedColumnArray: [] as any,
-            context: null as any
+            context: null as any,
+            test: ''
         }
     },
     setup() {
@@ -93,8 +126,75 @@ export default defineComponent({
         removeEventListeners() {
             // emitter.off('refreshTable', this.refreshGridConfigurationWithoutData)
             // emitter.off('selectionsDeleted', this.onSelectionsDeleted)
+        },
+        getFacetAlias(facetIndex) {
+            var facetKeys = Object.keys(this.tableData.facets)
+            return facetKeys[facetIndex]
         }
     }
 })
 </script>
-<style lang="scss"></style>
+<style lang="scss">
+.discovery-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    .discovery-search-container {
+        display: flex;
+        box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
+        border-radius: 4px;
+    }
+    .discovery-content {
+        flex: 1;
+        display: flex;
+        flex-direction: row;
+        overflow: auto;
+        .table-container {
+            flex: 2;
+        }
+        .facets-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: auto;
+            background-color: #fff;
+            color: black;
+            box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
+            border-radius: 4px;
+            .facet-accordion {
+                margin-bottom: 1px;
+                .facet-accordion-header {
+                    text-transform: none;
+                }
+                .facet-accordion-content {
+                    display: flex;
+                    align-items: center;
+                    border-bottom: 1px solid #ccc;
+                    padding: 0 8px;
+                    min-height: 24px;
+                    height: 24px;
+                    .facet-chip {
+                        background-color: rgb(238, 238, 238);
+                        border: 1px solid #ccc;
+                        border-radius: 15px;
+                        min-width: 30px;
+                        padding: 0 4px;
+                        text-align: center;
+                        font-size: 0.8rem;
+                    }
+                }
+                .selectable {
+                    &:hover {
+                        background-color: #eceff1;
+                    }
+                    &.selected {
+                        .chip {
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+</style>
