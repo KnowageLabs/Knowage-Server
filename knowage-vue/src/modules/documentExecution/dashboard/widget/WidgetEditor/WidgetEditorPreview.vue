@@ -18,6 +18,7 @@
                 <WebComponentContainer v-if="(propWidget.type == 'html' || propWidget.type == 'text') && !loading" :propWidget="propWidget" :widgetData="widgetData" :propActiveSelections="activeSelections" :editorMode="true" :dashboardId="dashboardId" :variables="variables"></WebComponentContainer>
                 <HighchartsContainer v-if="propWidget.type === 'highcharts' && !loading" :widgetModel="propWidget" :dataToShow="widgetData" :propActiveSelections="activeSelections" :editorMode="true" :dashboardId="dashboardId"></HighchartsContainer>
                 <ChartJSContainer v-if="propWidget.type === 'chartJS' && !loading" :widgetModel="propWidget" :dataToShow="widgetData" :editorMode="true" :dashboardId="dashboardId" :propActiveSelections="activeSelections"></ChartJSContainer>
+                <DiscoveryWidget v-if="propWidget.type == 'discovery'" :propWidget="propWidget" :datasets="datasets" :dataToShow="widgetData" :editorMode="true" :dashboardId="dashboardId" :propActiveSelections="activeSelections" @pageChanged="getWidgetData" />
             </div>
         </div>
     </div>
@@ -41,10 +42,11 @@ import deepcopy from 'deepcopy'
 import WebComponentContainer from '../WebComponent/WebComponentContainer.vue'
 import HighchartsContainer from '../ChartWidget/Highcharts/HighchartsContainer.vue'
 import ChartJSContainer from '../ChartWidget/ChartJS/ChartJSContainer.vue'
+import DiscoveryWidget from '..//DiscoveryWidget/DiscoveryWidget.vue'
 
 export default defineComponent({
     name: 'widget-editor-preview',
-    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, ProgressBar, WebComponentContainer, HighchartsContainer, ChartJSContainer },
+    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, ProgressBar, WebComponentContainer, HighchartsContainer, ChartJSContainer, DiscoveryWidget },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDashboardDataset[]>, required: true },
