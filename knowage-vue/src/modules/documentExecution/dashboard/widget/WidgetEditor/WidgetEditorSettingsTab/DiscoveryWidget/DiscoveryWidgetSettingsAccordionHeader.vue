@@ -35,6 +35,8 @@ export default defineComponent({
         loadModel() {
             if (!this.widgetModel || !this.widgetModel.settings) return null
             switch (this.type) {
+                case 'FacetsSettings':
+                    return this.widgetModel.settings.facets
                 case 'SearchSettings':
                     return this.widgetModel.settings.search
                 case 'Title':
@@ -61,6 +63,7 @@ export default defineComponent({
         },
         onModelChange() {
             switch (this.type) {
+                case 'FacetsSettings':
                 case 'SearchSettings':
                 case 'Title':
                 case 'ColumnStyle':

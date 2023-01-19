@@ -12,6 +12,10 @@
     "settings": {
         "Configuration": [
             {
+                "title": "dashboard.widgetEditor.discoveryWidget.facets.title",
+                "type": "FacetsSettings"
+            },
+            {
                 "title": "dashboard.widgetEditor.discoveryWidget.search.title",
                 "type": "SearchSettings"
             },

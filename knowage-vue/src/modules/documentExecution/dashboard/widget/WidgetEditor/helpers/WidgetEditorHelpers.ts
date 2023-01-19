@@ -1,4 +1,4 @@
-import { IWidget } from '../../../Dashboard'
+import { IWidget, IWidgetColumn } from '../../../Dashboard'
 import { formatTableWidgetForSave } from './tableWidget/TableWidgetBackendSaveHelper'
 import { createNewTableWidgetSettings } from '../helpers/tableWidget/TableWidgetFunctions'
 import { createNewSelectorWidgetSettings } from '../helpers/selectorWidget/SelectorWidgetFunctions'
@@ -26,6 +26,21 @@ export function createNewWidget(type: string) {
 
     return widget
 }
+
+export const createNewWidgetColumn = (eventData: any, widgetType: string) => {
+    const tempColumn = {
+        id: cryptoRandomString({ length: 16, type: 'base64' }),
+        columnName: eventData.name,
+        alias: eventData.alias,
+        type: eventData.type,
+        fieldType: eventData.fieldType,
+        filter: {}
+    } as IWidgetColumn
+    if (tempColumn.fieldType === 'MEASURE') tempColumn.aggregation = 'SUM'
+    else if (widgetType === 'discovery' && tempColumn.fieldType === 'ATTRIBUTE') tempColumn.aggregation = 'COUNT'
+    return tempColumn
+}
+
 
 const createNewWidgetSettings = (widget: IWidget) => {
     switch (widget.type) {

@@ -5,7 +5,8 @@
                 <template #header>
                     <DiscoveryWidgetSettingsAccordionHeader :widgetModel="widgetModel" :title="accordion.title" :type="accordion.type"></DiscoveryWidgetSettingsAccordionHeader>
                 </template>
-                <DiscoveryWidgetSearchSettings v-if="accordion.type === 'SearchSettings'" :widgetModel="widgetModel" :dashboardId="dashboardId"></DiscoveryWidgetSearchSettings>
+                <DiscoveryWidgetFacetsSettings v-if="accordion.type === 'FacetsSettings'" :widgetModel="widgetModel" :dashboardId="dashboardId"></DiscoveryWidgetFacetsSettings>
+                <DiscoveryWidgetSearchSettings v-else-if="accordion.type === 'SearchSettings'" :widgetModel="widgetModel" :dashboardId="dashboardId"></DiscoveryWidgetSearchSettings>
                 <WidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
                 <TableWidgetCustomMessages v-else-if="accordion.type === 'CustomMessages'" :widgetModel="widgetModel"></TableWidgetCustomMessages>
                 <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
@@ -47,6 +48,7 @@ import WidgetTitleStyle from '../common/style/WidgetTitleStyle.vue'
 import WidgetPaddingStyle from '../common/style/WidgetPaddingStyle.vue'
 import WidgetBackgroundColorStyle from '../common/style/WidgetBackgroundColorStyle.vue'
 import DiscoveryWidgetSettingsAccordionHeader from './DiscoveryWidgetSettingsAccordionHeader.vue'
+import DiscoveryWidgetFacetsSettings from './configuration/DiscoveryWidgetFacetsSettings.vue'
 import DiscoveryWidgetSearchSettings from './configuration/DiscoveryWidgetSearchSettings.vue'
 
 export default defineComponent({
@@ -69,6 +71,7 @@ export default defineComponent({
         WidgetInteractionsLinks,
         WidgetPreview,
         DiscoveryWidgetSettingsAccordionHeader,
+        DiscoveryWidgetFacetsSettings,
         DiscoveryWidgetSearchSettings
     },
     props: {

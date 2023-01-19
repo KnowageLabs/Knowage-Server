@@ -3,15 +3,15 @@
         {{ searchSettings }}
         <div class="p-col-12 p-d-flex p-flex-column p-p-2">
             <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
-            <MultiSelect v-model="searchSettings.columns" :options="widgetModel.columns" optionLabel="columnName" optionValue="columnName" :disabled="searchSettingsDisabled" @change="onDefaultTypeChanged"> </MultiSelect>
+            <MultiSelect v-model="searchSettings.columns" :options="widgetModel.columns" optionLabel="columnName" optionValue="columnName" :disabled="searchSettingsDisabled" @change="searchSettingsChanged"> </MultiSelect>
         </div>
 
-        <div class="p-col-3 p-grid p-ai-center p-pt-4">
+        <div class="p-col-12 p-md-3 p-grid p-ai-center p-pt-4">
             <InputSwitch v-model="searchSettings.default" :disabled="searchSettingsDisabled" @change="searchSettingsChanged"></InputSwitch>
             <label class="kn-material-input-label p-ml-2">{{ $t('dashboard.widgetEditor.discoveryWidget.search.defaultTextSearch') }}</label>
         </div>
 
-        <div class="p-col-9 p-grid p-ai-center">
+        <div class="p-col-12 p-md-9 p-grid p-ai-center">
             <div class="p-sm-12 p-md-4 p-lg-2 p-d-flex p-flex-column p-p-2 value-type-dropdown">
                 <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.conditions.compareValueType') }}</label>
                 <Dropdown class="kn-material-input" v-model="searchSettings.defaultType" :options="descriptor.searchSettingsTypes" optionValue="value" :disabled="defaultSearchDisabled" @change="onDefaultTypeChanged">
@@ -117,24 +117,11 @@ export default defineComponent({
             this.searchSettingsChanged()
         },
         onColumnAdded(column: any) {
-            console.log('>>>>>>>>>>>>>>>>>>>>> COLUMN ADDED: ', column)
-            if (!column || !column.columnName || !this.searchSettings) return
-            this.searchSettings.columns.push(column.columnName)
-            this.searchSettingsChanged()
+            this.loadSearchSettings()
         },
         onColumnRemoved(column: any) {
-            console.log('>>>>>>>>>>>>>>>>>>>>> COLUMN REMOVED: ', column)
-            if (!column || !column.columnName || !this.searchSettings) return
-            const index = this.searchSettings.columns.findIndex((columnName: string) => columnName === column.columnName)
-            if (index !== -1) this.searchSettings.columns.splice(index, 1)
-            this.searchSettingsChanged()
+            this.loadSearchSettings()
         }
     }
 })
 </script>
-
-<style lang="scss" scoped>
-#input-switches-container {
-    border-bottom: 1px solid #c2c2c2;
-}
-</style>

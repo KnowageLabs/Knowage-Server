@@ -63,13 +63,12 @@
 import { defineComponent, PropType } from 'vue'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import { IWidget, IWidgetColumn } from '../../../../Dashboard'
-import { createNewWidgetColumn } from '../../helpers/tableWidget/TableWidgetFunctions'
 import { emitter } from '../../../../DashboardHelpers'
 import { addChartColumnToTable } from '../../helpers/chartWidget/ChartWidgetDataTabHelpers'
+import { createNewWidgetColumn } from '../../helpers/WidgetEditorHelpers'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dropdown from 'primevue/dropdown'
-import deepcopy from 'deepcopy'
 import commonDescriptor from '../common/WidgetCommonDescriptor.json'
 
 export default defineComponent({
@@ -134,7 +133,7 @@ export default defineComponent({
         onDropComplete(event: any) {
             if (event.dataTransfer.getData('text/plain') === 'b') return
             const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
-            const tempColumn = createNewWidgetColumn(eventData)
+            const tempColumn = createNewWidgetColumn(eventData, this.widgetType)
             if (['table', 'html', 'text', 'highcharts', 'chartJS', 'discovery'].includes(this.widgetModel.type)) {
                 if (['chartJS', 'highcharts'].includes(this.widgetModel.type)) {
                     addChartColumnToTable(tempColumn, this.rows, this.chartType, this.settings.attributesOnly, this.settings.measuresOnly, this.widgetModel)
