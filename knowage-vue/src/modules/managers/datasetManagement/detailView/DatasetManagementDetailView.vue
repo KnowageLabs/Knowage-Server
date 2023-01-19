@@ -255,19 +255,38 @@ export default defineComponent({
                                 icon: 'pi pi-exclamation-triangle',
                                 message: this.$t('managers.datasetManagement.dataPreparation.datasetInvolvedIntoDataPrep'),
                                 header: this.$t('managers.datasetManagement.saveTitle'),
-                                accept: () => this.proceedOnSaving(dsToSave)
+                                accept: () => this.checkDerived(dsToSave)
                             })
                         } else {
-                            this.proceedOnSaving(dsToSave)
+                            this.checkDerived(dsToSave)
                         }
                     })
                     .catch((err) => {
-                        if (err.response.status === 404) this.proceedOnSaving(dsToSave)
-                        else this.setError({ title: 'Server error', msg: err.data.errors[0].message })
+                        this.setError({ title: 'Server error', msg: err.data.errors[0].message })
                     })
             } else {
-                this.proceedOnSaving(dsToSave)
+                this.checkDerived(dsToSave)
             }
+        },
+        async checkDerived(dsToSave) {
+            await this.$http
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/datasets/dataset/' + dsToSave.label + '/derived', { headers: { 'X-Disable-Interceptor': 'true' } })
+                .then((response: AxiosResponse<any>) => {
+                    if (response.data) {
+                        this.$confirm.require({
+                            icon: 'pi pi-exclamation-triangle',
+                            message: this.$t('managers.datasetManagement.derived.checkForExistingDerivedDatasets'),
+                            header: this.$t('managers.datasetManagement.saveTitle'),
+                            accept: () => this.proceedOnSaving(dsToSave)
+                        })
+                    } else {
+                        this.proceedOnSaving(dsToSave)
+                    }
+                })
+                .catch((err) => {
+                    if (err.response.status === 404) this.proceedOnSaving(dsToSave)
+                    else this.setError({ title: 'Server error', msg: err.data.errors[0].message })
+                })
         },
         async proceedOnSaving(dsToSave) {
             this.$emit('showSavingSpinner')

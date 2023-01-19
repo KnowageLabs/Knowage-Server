@@ -218,4 +218,6 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	public List<IDataSet> loadFilteredDatasetByTypeList(String string, String qbeDsType);
 
 	IDataSet loadDataSetByLabelAndUserCategories(String label);
+
+	List<IDataSet> loadDerivedDataSetByLabel(String label);
 }

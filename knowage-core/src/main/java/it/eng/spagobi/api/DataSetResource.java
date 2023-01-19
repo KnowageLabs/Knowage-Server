@@ -386,6 +386,23 @@ public class DataSetResource extends AbstractDataSetResource {
 		}
 	}
 
+	@GET
+	@Path("/dataset/{dsLabel}/derived")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public boolean getDerivedDataSetByDsLabel(@PathParam("dsLabel") String dsLabel) {
+		try {
+			IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
+			datasetDao.setUserProfile(getUserProfile());
+			List<IDataSet> dataset = datasetDao.loadDerivedDataSetByLabel(dsLabel);
+			if (!dataset.isEmpty())
+				return true;
+			return false;
+		} catch (Exception e) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
+		}
+	}
+
 	/**
 	 * Acquire required version of the dataset
 	 *

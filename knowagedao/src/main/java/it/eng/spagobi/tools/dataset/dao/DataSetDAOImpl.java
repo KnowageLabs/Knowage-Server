@@ -998,6 +998,61 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	}
 
 	@Override
+	public List<IDataSet> loadDerivedDataSetByLabel(String sourceLabel) {
+		List<IDataSet> toReturn;
+		Session session;
+		Transaction transaction;
+
+		logger.debug("IN");
+
+		toReturn = new ArrayList<IDataSet>();
+		session = null;
+		transaction = null;
+		try {
+			if (sourceLabel == null) {
+				throw new IllegalArgumentException("Input parameter [label] cannot be null");
+			}
+
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+				transaction = session.beginTransaction();
+				Assert.assertNotNull(transaction, "transaction cannot be null");
+			} catch (Throwable t) {
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
+			}
+
+			Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.configuration like :sourceLabel and type = :derivedType");
+			hibQuery.setBoolean(0, true);
+			hibQuery.setParameter("sourceLabel", "%" + sourceLabel + "%");
+			hibQuery.setParameter("derivedType", DataSetConstants.DS_DERIVED);
+			List<SbiDataSet> sbiDataSet = hibQuery.list();
+			if (sbiDataSet != null) {
+				for (SbiDataSet sbiDataSetitem : sbiDataSet) {
+					toReturn.add(DataSetFactory.toDataSet(sbiDataSetitem, this.getUserProfile()));
+				}
+
+			} else {
+				logger.debug("Impossible to load dataset with label [" + sourceLabel + "].");
+			}
+
+			transaction.commit();
+
+		} catch (Throwable t) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDAOException("An unexpected error occured while loading dataset whose label is equal to [" + sourceLabel + "]", t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		return toReturn;
+	}
+
+	@Override
 	public IDataSet loadDataSetByLabel(String label) {
 		IDataSet toReturn;
 		Session session;
