@@ -1,5 +1,5 @@
 import { IDashboard, ITableWidgetStyle, IWidget, IDashboardDriver, IWidgetInteractions, IWidgetResponsive } from "../../Dashboard"
-import { IDiscoveryWidgetSettings, IDiscoveryWidgetConfiguration, IDiscoveryWidgetFacetsSettings, IDiscoveryWidgetSearchSettings } from "../../interfaces/DashboardDiscoveryWidget"
+import { IDiscoveryWidgetSettings, IDiscoveryWidgetConfiguration, IDiscoveryWidgetFacetsSettings, IDiscoveryWidgetSearchSettings, IDiscoveryWidgetFacetsColumnSettings } from "../../interfaces/DashboardDiscoveryWidget"
 import { getFormattedWidgetColumns } from "../common/WidgetColumnHelper"
 import { getFormattedInteractions } from "../common/WidgetInteractionsHelper"
 import { getFiltersForColumns } from "../DashboardBackwardCompatibilityHelper"
@@ -26,7 +26,7 @@ export const formatDiscoveryWidget = (widget: any, drivers: IDashboardDriver[]) 
     } as IWidget
     formattedWidget.settings = getFormattedWidgetSettings(widget, drivers)
     getFiltersForColumns(formattedWidget, widget)
-    // getSettingsFromWidgetColumns(formattedWidget, widget, formattedDashboardModel)
+    getSettingsFromWidgetColumns(formattedWidget, widget)
 
     console.log(">>>>>>>>>>> FORMATTED WIDGET MODEL: ", formattedWidget)
 
@@ -49,7 +49,13 @@ const getFormattedWidgetSettings = (widget: any, drivers: IDashboardDriver[]) =>
 }
 
 const getFormattedFacetsSettings = (widget: any) => {
-    return {}
+    const formattedFacetSettings = { enabled: true, columns: [{ ...discoveryWidgetDefaultValues.getDefaultFacetsColumnSettings(), names: 'all' }] } as IDiscoveryWidgetFacetsSettings
+    if (!widget.settings.facets) return formattedFacetSettings
+    formattedFacetSettings.enabled = widget.settings.facets.enabled
+    formattedFacetSettings.columns[0].limit = widget.settings.facets.limit
+    formattedFacetSettings.columns[0].precision = widget.settings.facets.precision
+    formattedFacetSettings.columns[0].selection = widget.settings.facets.selection
+    return formattedFacetSettings
 }
 
 const getFormattedSearchSettings = (widget: any, drivers: IDashboardDriver[]) => {
@@ -73,6 +79,30 @@ const formattSearchSettingsWithDriverValue = (driverLabel: string | undefined, d
         formattedSearchSettings.defaultValue = drivers[index].value ? drivers[index].value : ''
     }
 }
+
+const getSettingsFromWidgetColumns = (formattedWidget: IWidget, widget: any) => {
+    const allColumnsFacetsSettings = formattedWidget.settings.facets.columns[0] as IDiscoveryWidgetFacetsColumnSettings
+    for (let i = 0; i < widget.content.columnSelectedOfDataset.length; i++) {
+        const tempColumn = widget.content.columnSelectedOfDataset[i]
+        if (tempColumn.facet) getFacetsSettingsFromWidgetColumn(formattedWidget, tempColumn, allColumnsFacetsSettings)
+    }
+}
+
+const getFacetsSettingsFromWidgetColumn = (formattedWidget: IWidget, tempColumn: any, allColumnsFacetsSettings: IDiscoveryWidgetFacetsColumnSettings) => {
+    const formattedFacetSettings = {
+        names: [getColumnId(tempColumn.name)],
+        selection: allColumnsFacetsSettings.selection,
+        closedByDefault: allColumnsFacetsSettings.closedByDefault,
+        width: allColumnsFacetsSettings.width,
+        limit: allColumnsFacetsSettings.limit,
+        precision: allColumnsFacetsSettings.precision,
+        aggregationSelected: tempColumn.aggregationSelected,
+        aggregationColumn: tempColumn.aggregationColumn
+    }
+    formattedWidget.settings.facets.columns.push(formattedFacetSettings)
+}
+
+
 
 const getColumnId = (widgetColumnName: string) => {
     return columnNameIdMap[widgetColumnName]

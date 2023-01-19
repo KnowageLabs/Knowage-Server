@@ -1,4 +1,14 @@
 {
+    "defaultFacetsColumnSettings": {
+        "aggregationColumn": null,
+        "aggregationSelected": "COUNT",
+        "closedByDefault": false,
+        "limit": null,
+        "names": [],
+        "precision": null,
+        "selection": true,
+        "width": ""
+    },
     "defaultSearchSettings": {
         "columns": [],
         "default": false,

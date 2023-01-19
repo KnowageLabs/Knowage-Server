@@ -20,7 +20,19 @@ export interface IDiscoveryWidgetStyle {
 }
 
 export interface IDiscoveryWidgetFacetsSettings {
+    enabled: true,
+    columns: IDiscoveryWidgetFacetsColumnSettings[]
+}
 
+export interface IDiscoveryWidgetFacetsColumnSettings {
+    names: string | string[],
+    selection: boolean,
+    closedByDefault: boolean,
+    width: string,
+    limit: number | null,
+    precision: number | null,
+    aggregationSelected: "COUNT" | "SUM" | "AVG"
+    aggregationColumn: string | null
 }
 
 export interface IDiscoveryWidgetSearchSettings {
