@@ -72,6 +72,20 @@
 	</dependencies>
 
 	<build>
+
+		<sourceDirectory>${project.basedir}/src-mvn/main/java</sourceDirectory>
+		<testSourceDirectory>${project.basedir}/src-mvn/test/java</testSourceDirectory>
+		<resources>
+			<resource>
+				<directory>${project.basedir}/src-mvn/main/resources</directory>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+				<directory>${project.basedir}/src-mvn/test/resources</directory>
+			</testResource>
+		</testResources>
+
 		<finalName>knowage-vue</finalName>
 		<plugins>
 
@@ -87,6 +101,7 @@
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 					<attachClasses>true</attachClasses>
 					<classesClassifier>classes</classesClassifier>
+					<warSourceDirectory>${project.basedir}/src-mvn/main/webapp</warSourceDirectory>
 				</configuration>
 			</plugin>
 
