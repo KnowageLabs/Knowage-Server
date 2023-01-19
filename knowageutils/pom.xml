@@ -89,14 +89,14 @@
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-jdbc-core</artifactId>
-			<version>8.1.5-SNAPSHOT</version>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-utils-json</artifactId>
-			<version>8.1.5-SNAPSHOT</version>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
 

@@ -29,7 +29,7 @@
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-utils</artifactId>
-			<version>8.1.5-SNAPSHOT</version>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -42,14 +42,14 @@
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>qbe-core</artifactId>
-			<version>8.1.5-SNAPSHOT</version>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-dao</artifactId>
-			<version>8.1.5-SNAPSHOT</version>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
