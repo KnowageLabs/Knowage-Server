@@ -1,6 +1,20 @@
 {
+    "searchSettingsTypes": [
+        {
+            "label": "common.static",
+            "value": "static"
+        },
+        {
+            "label": "common.driver",
+            "value": "driver"
+        }
+    ],
     "settings": {
         "Configuration": [
+            {
+                "title": "dashboard.widgetEditor.discoveryWidget.search.title",
+                "type": "SearchSettings"
+            },
             {
                 "title": "dashboard.widgetEditor.export.title",
                 "type": "Export"

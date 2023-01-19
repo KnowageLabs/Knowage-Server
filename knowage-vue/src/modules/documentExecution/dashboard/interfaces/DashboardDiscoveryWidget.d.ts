@@ -41,7 +41,7 @@ export interface IDiscoveryWidgetSearchSettings {
     default: boolean,
     defaultType: "static" | "driver",
     defaultValue: string,
-    driverId?: string
+    driverLabel?: string
 }
 
 export interface IDiscoveryWidgetConfiguration {
