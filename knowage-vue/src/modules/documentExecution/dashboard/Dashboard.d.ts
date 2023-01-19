@@ -408,6 +408,7 @@ export interface IWidgetColumn {
     fieldType: string
     multiValue: boolean
     aggregation: string
+    aggregationColumn?: string | null
     filter: IWidgetColumnFilter
     formula?: string
     formulaEditor?: string

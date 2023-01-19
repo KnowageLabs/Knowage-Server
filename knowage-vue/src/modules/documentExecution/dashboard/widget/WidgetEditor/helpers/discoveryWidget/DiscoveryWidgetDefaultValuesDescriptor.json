@@ -1,10 +1,9 @@
 {
-    "defaultFacetsColumnSettings": {
-        "aggregationColumn": null,
-        "aggregationSelected": "COUNT",
+    "defaultFacetsSettings": {
         "closedByDefault": false,
+        "columns": [],
+        "enabled": true,
         "limit": null,
-        "names": [],
         "precision": null,
         "selection": true,
         "width": ""

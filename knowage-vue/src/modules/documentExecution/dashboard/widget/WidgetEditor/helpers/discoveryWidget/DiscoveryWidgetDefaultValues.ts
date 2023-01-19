@@ -1,9 +1,9 @@
-import { IDiscoveryWidgetFacetsColumnSettings, IDiscoveryWidgetSearchSettings } from "@/modules/documentExecution/dashboard/interfaces/DashboardDiscoveryWidget"
+import { IDiscoveryWidgetFacetsSettings, IDiscoveryWidgetSearchSettings } from "@/modules/documentExecution/dashboard/interfaces/DashboardDiscoveryWidget"
 import deepcopy from "deepcopy"
-import descriptor from './DiscoveryWidgetHelpersDescriptor.json'
+import descriptor from './DiscoveryWidgetDefaultValuesDescriptor.json'
 
-export const getDefaultFacetsColumnSettings = () => {
-    return deepcopy(descriptor.defaultFacetsColumnSettings) as IDiscoveryWidgetFacetsColumnSettings
+export const getDefaultFacetsSettings = () => {
+    return deepcopy(descriptor.defaultFacetsSettings) as IDiscoveryWidgetFacetsSettings
 }
 
 export const getDefaultSearchSettings = () => {
