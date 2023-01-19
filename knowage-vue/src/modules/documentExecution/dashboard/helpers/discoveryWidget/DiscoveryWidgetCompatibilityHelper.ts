@@ -1,4 +1,4 @@
-import { IDashboard, ITableWidgetStyle, IWidget, IDashboardDriver, IWidgetInteractions, IWidgetResponsive } from "../../Dashboard"
+import { IDashboard, ITableWidgetStyle, IWidget, IDashboardDriver, IWidgetInteractions, IWidgetResponsive, ITableWidgetTooltipStyle } from "../../Dashboard"
 import { IDiscoveryWidgetSettings, IDiscoveryWidgetConfiguration, IDiscoveryWidgetFacetsSettings, IDiscoveryWidgetSearchSettings, IDiscoveryWidgetFacetsColumnSettings } from "../../interfaces/DashboardDiscoveryWidget"
 import { getFormattedWidgetColumns } from "../common/WidgetColumnHelper"
 import { getFormattedInteractions } from "../common/WidgetInteractionsHelper"
@@ -7,6 +7,8 @@ import { getFormattedStyle } from "../tableWidget/TableWidgetStyleHelper"
 import { getFormattedDiscoveryConfiguration } from "./DiscoveryWidgetConfigurationHelper"
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import * as  discoveryWidgetDefaultValues from '../../widget/WidgetEditor/helpers/discoveryWidget/DiscoveryWidgetDefaultValues'
+import * as tableWidgetDefaultValues from '../../widget/WidgetEditor/helpers/tableWidget/TableWidgetDefaultValues'
+import { getTooltipFromColumn } from "../tableWidget/TableWidgetColumnSettingsHelper"
 
 
 const columnNameIdMap = {}
@@ -43,6 +45,7 @@ const getFormattedWidgetSettings = (widget: any, drivers: IDashboardDriver[]) =>
         configuration: getFormattedDiscoveryConfiguration(widget) as IDiscoveryWidgetConfiguration,
         interactions: getFormattedInteractions(widget) as IWidgetInteractions,
         style: getFormattedStyle(widget) as ITableWidgetStyle,
+        tooltips: tableWidgetDefaultValues.getDefaultTooltips() as ITableWidgetTooltipStyle[],
         responsive: widgetCommonDefaultValues.getDefaultResponsivnes() as IWidgetResponsive
     } as IDiscoveryWidgetSettings
     return formattedSettings
@@ -85,6 +88,7 @@ const getSettingsFromWidgetColumns = (formattedWidget: IWidget, widget: any) => 
     for (let i = 0; i < widget.content.columnSelectedOfDataset.length; i++) {
         const tempColumn = widget.content.columnSelectedOfDataset[i]
         if (tempColumn.facet) getFacetsSettingsFromWidgetColumn(formattedWidget, tempColumn, allColumnsFacetsSettings)
+        getTooltipFromColumn(formattedWidget, tempColumn)
     }
 }
 
@@ -101,8 +105,6 @@ const getFacetsSettingsFromWidgetColumn = (formattedWidget: IWidget, tempColumn:
     }
     formattedWidget.settings.facets.columns.push(formattedFacetSettings)
 }
-
-
 
 const getColumnId = (widgetColumnName: string) => {
     return columnNameIdMap[widgetColumnName]
