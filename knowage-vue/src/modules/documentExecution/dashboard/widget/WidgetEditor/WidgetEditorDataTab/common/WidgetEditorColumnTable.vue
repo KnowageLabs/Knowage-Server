@@ -50,7 +50,7 @@
                         <div>
                             <Button v-if="slotProps.data.formula" icon="fas fa-calculator" class="p-button-link" v-tooltip.top="$t('common.edit')" @click.stop="openCalculatedFieldDialog(slotProps.data)"></Button>
                             <Button icon="fas fa-cog" class="p-button-link" v-tooltip.top="$t('common.edit')" @click.stop="$emit('itemSelected', slotProps.data)"></Button>
-                            <Button v-if="widgetType !== 'discovery'" icon="pi pi-trash" class="p-button-link" v-tooltip.top="$t('common.delete')" @click.stop="deleteItem(slotProps.data, slotProps.index)"></Button>
+                            <Button icon="pi pi-trash" class="p-button-link" v-tooltip.top="$t('common.delete')" @click.stop="deleteItem(slotProps.data, slotProps.index)"></Button>
                         </div>
                     </template>
                 </Column>
@@ -76,7 +76,7 @@ export default defineComponent({
     name: 'widget-editor-column-table',
     components: { Column, DataTable, Dropdown },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, items: { type: Array, required: true }, settings: { type: Object, required: true }, chartType: { type: String } },
-    emits: ['rowReorder', 'itemUpdated', 'itemSelected', 'itemDeleted', 'itemAdded', 'singleItemReplaced', 'allColumnsAdded'],
+    emits: ['rowReorder', 'itemUpdated', 'itemSelected', 'itemDeleted', 'itemAdded', 'singleItemReplaced'],
     data() {
         return {
             commonDescriptor,
@@ -90,7 +90,7 @@ export default defineComponent({
             return this.widgetModel.type
         },
         rowReorderEnabled(): boolean {
-            return this.widgetModel && ['table', 'html', 'text', 'highcharts', 'widgetType'].includes(this.widgetModel.type) && this.rows.length > 1
+            return this.widgetModel && ['table', 'html', 'text', 'highcharts', 'discovery'].includes(this.widgetModel.type) && this.rows.length > 1
         }
     },
     watch: {
@@ -110,12 +110,10 @@ export default defineComponent({
         setEventListeners() {
             emitter.on('selectedColumnUpdated', this.onSelectedColumnUpdated)
             emitter.on('addNewCalculatedField', this.onCalcFieldAdded)
-            emitter.on('addAllDatasetColumns', this.onAddAllDatasetColumns)
         },
         removeEventListeners() {
             emitter.off('selectedColumnUpdated', this.onSelectedColumnUpdated)
             emitter.off('addNewCalculatedField', this.onCalcFieldAdded)
-            emitter.off('addAllDatasetColumns', this.onAddAllDatasetColumns)
         },
         onSelectedColumnUpdated(column: any) {
             this.updateSelectedColumn(column)
@@ -174,14 +172,6 @@ export default defineComponent({
         onCalcFieldAdded(field) {
             this.rows.push(field as IWidgetColumn)
             this.$emit('itemAdded', field)
-        },
-        onAddAllDatasetColumns(selectedDatasetColumns: any) {
-            this.rows = []
-            selectedDatasetColumns.forEach((datasetColumn: IDatasetColumn) => {
-                const tempColumn = createNewWidgetColumn(datasetColumn)
-                this.rows.push(tempColumn as IWidgetColumn)
-            })
-            this.$emit('allColumnsAdded', this.rows)
         }
     }
 })

@@ -8,7 +8,6 @@
             :settings="descriptor.columnTableSettings"
             @rowReorder="onColumnsReorder"
             @itemAdded="onColumnAdded"
-            @allColumnsAdded="onAllColumnsAdded"
             @itemUpdated="onColumnItemUpdate"
             @itemSelected="setSelectedColumn"
             @itemDeleted="onColumnDelete"
@@ -64,11 +63,6 @@ export default defineComponent({
         onColumnAdded(payload: { column: IWidgetColumn; rows: IWidgetColumn[] }) {
             this.widgetModel.columns = payload.rows
             emitter.emit('columnAdded', payload.column)
-            emitter.emit('refreshWidgetWithData', this.widgetModel.id)
-        },
-        onAllColumnsAdded(rows: IWidgetColumn[]) {
-            this.widgetModel.columns = rows
-            this.widgetModel.columns.forEach((column: IWidgetColumn) => emitter.emit('columnAdded', column))
             emitter.emit('refreshWidgetWithData', this.widgetModel.id)
         },
         onColumnItemUpdate(column: IWidgetColumn) {
