@@ -284,8 +284,7 @@ export default defineComponent({
                     }
                 })
                 .catch((err) => {
-                    if (err.response.status === 404) this.proceedOnSaving(dsToSave)
-                    else this.setError({ title: 'Server error', msg: err.data.errors[0].message })
+                    this.setError({ title: 'Server error', msg: err.data.errors[0].message })
                 })
         },
         async proceedOnSaving(dsToSave) {
