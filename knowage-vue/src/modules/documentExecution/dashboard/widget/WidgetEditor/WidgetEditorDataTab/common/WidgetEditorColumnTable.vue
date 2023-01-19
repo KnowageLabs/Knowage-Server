@@ -62,7 +62,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { filterDefault } from '@/helpers/commons/filterHelper'
-import { IWidget, IWidgetColumn } from '../../../../Dashboard'
+import { IDatasetColumn, IWidget, IWidgetColumn } from '../../../../Dashboard'
 import { createNewWidgetColumn } from '../../helpers/tableWidget/TableWidgetFunctions'
 import { emitter } from '../../../../DashboardHelpers'
 import { addChartColumnToTable } from '../../helpers/chartWidget/ChartWidgetDataTabHelpers'
@@ -76,7 +76,7 @@ export default defineComponent({
     name: 'widget-editor-column-table',
     components: { Column, DataTable, Dropdown },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, items: { type: Array, required: true }, settings: { type: Object, required: true }, chartType: { type: String } },
-    emits: ['rowReorder', 'itemUpdated', 'itemSelected', 'itemDeleted', 'itemAdded', 'singleItemReplaced'],
+    emits: ['rowReorder', 'itemUpdated', 'itemSelected', 'itemDeleted', 'itemAdded', 'singleItemReplaced', 'allColumnsAdded'],
     data() {
         return {
             commonDescriptor,
@@ -110,10 +110,12 @@ export default defineComponent({
         setEventListeners() {
             emitter.on('selectedColumnUpdated', this.onSelectedColumnUpdated)
             emitter.on('addNewCalculatedField', this.onCalcFieldAdded)
+            emitter.on('addAllDatasetColumns', this.onAddAllDatasetColumns)
         },
         removeEventListeners() {
             emitter.off('selectedColumnUpdated', this.onSelectedColumnUpdated)
             emitter.off('addNewCalculatedField', this.onCalcFieldAdded)
+            emitter.off('addAllDatasetColumns', this.onAddAllDatasetColumns)
         },
         onSelectedColumnUpdated(column: any) {
             this.updateSelectedColumn(column)
@@ -172,6 +174,14 @@ export default defineComponent({
         onCalcFieldAdded(field) {
             this.rows.push(field as IWidgetColumn)
             this.$emit('itemAdded', field)
+        },
+        onAddAllDatasetColumns(selectedDatasetColumns: any) {
+            this.rows = []
+            selectedDatasetColumns.forEach((datasetColumn: IDatasetColumn) => {
+                const tempColumn = createNewWidgetColumn(datasetColumn)
+                this.rows.push(tempColumn as IWidgetColumn)
+            })
+            this.$emit('allColumnsAdded', this.rows)
         }
     }
 })

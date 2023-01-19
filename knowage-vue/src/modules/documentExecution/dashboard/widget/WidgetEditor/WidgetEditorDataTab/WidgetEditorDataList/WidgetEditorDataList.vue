@@ -128,6 +128,7 @@ export default defineComponent({
             this.removeSelectedColumnsFromModel()
             this.widgetModel.dataset = this.selectedDataset ? this.selectedDataset.id : null
             this.$emit('datasetSelected', this.selectedDataset)
+            if (this.widgetModel.type === 'discovery') emitter.emit('addAllDatasetColumns', this.selectedDatasetColumns)
             emitter.emit('clearWidgetData', this.widgetModel.id)
         },
         removeSelectedColumnsFromModel() {
