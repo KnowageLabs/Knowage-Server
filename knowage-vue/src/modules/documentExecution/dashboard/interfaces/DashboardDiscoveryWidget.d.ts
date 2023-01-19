@@ -8,6 +8,7 @@ export interface IDiscoveryWidgetSettings {
     search: IDiscoveryWidgetSearchSettings,
     interactions: IWidgetInteractions
     style: IDiscoveryWidgetStyle,
+    tooltips: ITableWidgetTooltipStyle[],
     responsive: IWidgetResponsive
 }
 

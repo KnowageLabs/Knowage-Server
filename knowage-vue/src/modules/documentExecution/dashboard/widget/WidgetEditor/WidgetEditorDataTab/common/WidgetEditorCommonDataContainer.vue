@@ -1,6 +1,6 @@
 <template>
     <div v-if="widgetModel">
-        <TableWidgetDataForm class="p-m-2" :widgetModel="widgetModel" :sortingColumnOptions="columnTableItems"></TableWidgetDataForm>
+        <TableWidgetDataForm v-if="widgetType !== 'discovery'" class="p-m-2" :widgetModel="widgetModel" :sortingColumnOptions="columnTableItems"></TableWidgetDataForm>
         <WidgetEditorColumnTable
             class="p-m-2"
             :widgetModel="widgetModel"
@@ -8,6 +8,7 @@
             :settings="descriptor.columnTableSettings"
             @rowReorder="onColumnsReorder"
             @itemAdded="onColumnAdded"
+            @allColumnsAdded="onAllColumnsAdded"
             @itemUpdated="onColumnItemUpdate"
             @itemSelected="setSelectedColumn"
             @itemDeleted="onColumnDelete"
@@ -37,6 +38,11 @@ export default defineComponent({
             selectedColumn: null as IWidgetColumn | null
         }
     },
+    computed: {
+        widgetType() {
+            return this.widgetModel.type
+        }
+    },
     watch: {
         selectedDataset() {
             this.selectedColumn = null
@@ -58,6 +64,11 @@ export default defineComponent({
         onColumnAdded(payload: { column: IWidgetColumn; rows: IWidgetColumn[] }) {
             this.widgetModel.columns = payload.rows
             emitter.emit('columnAdded', payload.column)
+            emitter.emit('refreshWidgetWithData', this.widgetModel.id)
+        },
+        onAllColumnsAdded(rows: IWidgetColumn[]) {
+            this.widgetModel.columns = rows
+            this.widgetModel.columns.forEach((column: IWidgetColumn) => emitter.emit('columnAdded', column))
             emitter.emit('refreshWidgetWithData', this.widgetModel.id)
         },
         onColumnItemUpdate(column: IWidgetColumn) {

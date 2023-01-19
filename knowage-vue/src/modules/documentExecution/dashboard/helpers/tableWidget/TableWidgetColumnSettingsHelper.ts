@@ -176,7 +176,7 @@ const setConditionalStyleValueFromVariable = (conditionStyle: ITableWidgetCondit
     }
 }
 
-const getTooltipFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
+export const getTooltipFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
     if (tempColumn.hasOwnProperty('hideTooltip') || tempColumn.style?.hasOwnProperty('tooltip')) {
         const tempTooltipStyle = {
             target: [getColumnId(tempColumn.name)],
