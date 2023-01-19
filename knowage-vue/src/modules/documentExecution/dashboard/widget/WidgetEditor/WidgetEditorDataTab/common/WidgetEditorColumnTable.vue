@@ -1,5 +1,6 @@
 <template>
     <div class="widget-editor-card p-p-2">
+        {{ items }}
         <div class="p-d-flex p-flex-column">
             <label v-if="settings.label" class="kn-material-input-label">{{ $t(settings.label) }}</label>
             <small v-if="settings.hint"> {{ $t(settings.hint) }}</small>
@@ -62,7 +63,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { filterDefault } from '@/helpers/commons/filterHelper'
-import { IDatasetColumn, IWidget, IWidgetColumn } from '../../../../Dashboard'
+import { IWidget, IWidgetColumn } from '../../../../Dashboard'
 import { createNewWidgetColumn } from '../../helpers/tableWidget/TableWidgetFunctions'
 import { emitter } from '../../../../DashboardHelpers'
 import { addChartColumnToTable } from '../../helpers/chartWidget/ChartWidgetDataTabHelpers'
@@ -119,7 +120,7 @@ export default defineComponent({
             this.updateSelectedColumn(column)
         },
         loadItems() {
-            this.rows = deepcopy(this.items) as IWidgetColumn[]
+            this.rows = this.items as IWidgetColumn[]
         },
         setFilters() {
             if (this.settings?.globalFilterFields?.length) this.filters.global = [filterDefault]

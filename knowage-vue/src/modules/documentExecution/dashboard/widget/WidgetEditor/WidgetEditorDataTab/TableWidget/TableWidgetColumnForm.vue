@@ -1,6 +1,5 @@
 <template>
     <div v-if="column" class="widget-editor-card p-p-2">
-        {{ column }}
         <div class="p-my-2">
             <div class="p-d-flex p-flex-row p-ai-center">
                 <div class="p-d-flex p-flex-column kn-flex p-m-2">
@@ -87,6 +86,7 @@ export default defineComponent({
         },
         columnTypeChanged() {
             if (!this.column) return
+
             this.column.aggregation = this.widgetType === 'discovery' ? 'COUNT' : 'NONE'
             if (this.column.filter) {
                 this.column.filter.operator = ''
