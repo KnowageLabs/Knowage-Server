@@ -31,7 +31,7 @@ export default defineComponent({
     name: 'image-widget-gallery',
     components: { ImageWidgetGalleryCard, KnInputFile, Message },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, imagesListProp: { type: Array as PropType<IImage[]>, required: true } },
-    emits: [],
+    emits: ['uploadedImage'],
     data() {
         return {
             descriptor,
@@ -58,9 +58,7 @@ export default defineComponent({
         },
         async setImageForUpload(event: any) {
             this.setLoading(true)
-            console.log('>>>>> EVENT: ', event)
             const imageToUpload = event.target.files[0]
-            console.log('>>>>> imageToUpload: ', imageToUpload)
 
             if (imageToUpload) {
                 var formData = new FormData()
@@ -68,15 +66,34 @@ export default defineComponent({
                 await this.$http
                     .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/images/addImage`, formData, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
                     .then((response: AxiosResponse<any>) => {
-                        if (response.data.success) this.setInfo({ title: this.$t('common.toast.success'), msg: this.$t('common.toast.uploadSuccess') })
-                        else this.onImageUploadError(response.data.msg)
+                        if (response.data.success) {
+                            this.$emit('uploadedImage')
+                            this.setInfo({ title: this.$t('common.toast.success'), msg: this.$t('common.toast.uploadSuccess') })
+                        } else this.onImageUploadError(response.data.msg)
                     })
-                    .catch(() => this.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.info.imageUploadError') }))
+                    .catch(() => this.onImageUploadError(''))
             }
             this.setLoading(false)
         },
         onImageUploadError(errorMessageKey: string) {
-            console.log('>>>>>>>>> errorMessageKey: ', errorMessageKey)
+            let message = this.$t('documentExecution.documentDetails.info.imageUploadError')
+            switch (errorMessageKey) {
+                case 'sbi.cockpit.widgets.image.imageWidgetDesigner.tooBigImage':
+                    message = this.$t('dashboard.widgetEditor.imageWidget.imageUploadErrors.tooBigImage')
+                    break
+                case 'sbi.cockpit.widgets.image.imageWidgetDesigner.tooImageForTenant':
+                    message = this.$t('dashboard.widgetEditor.imageWidget.imageUploadErrors.noMoreImages')
+                    break
+                case 'sbi.cockpit.widgets.image.imageWidgetDesigner.tooImageForUser':
+                    message = this.$t('dashboard.widgetEditor.imageWidget.imageUploadErrors.tooManyUserImages')
+                    break
+                case 'sbi.cockpit.widgets.image.imageWidgetDesigner.fileIsNotAnImage':
+                    message = this.$t('dashboard.widgetEditor.imageWidget.imageUploadErrors.fileIsNotAnImage')
+                    break
+                case 'sbi.cockpit.widgets.image.imageWidgetDesigner.fileTypeIsNotAllowed':
+                    message = this.$t('dashboard.widgetEditor.imageWidget.imageUploadErrors.fileTypeIsNotAllowed')
+            }
+            this.setError({ title: this.$t('common.toast.errorTitle'), msg: message })
         },
         async onImageDelete(image: IImage) {
             await this.deleteImage(image)

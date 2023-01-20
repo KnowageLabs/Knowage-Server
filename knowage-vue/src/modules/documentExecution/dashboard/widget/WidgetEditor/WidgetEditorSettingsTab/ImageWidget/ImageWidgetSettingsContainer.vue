@@ -2,7 +2,7 @@
     <div v-show="widgetModel">
         <ImageWidgetSettingsAccordion v-if="selectedSetting != 'Gallery'" :widgetModel="widgetModel" :settings="descriptor.settings[selectedSetting]" :datasets="datasets" :selectedDatasets="selectedDatasets" :variables="variables" :dashboardId="dashboardId"></ImageWidgetSettingsAccordion>
 
-        <ImageWidgetGallery v-if="selectedSetting == 'Gallery'" :widgetModel="widgetModel" :imagesListProp="imagesList"></ImageWidgetGallery>
+        <ImageWidgetGallery v-if="selectedSetting == 'Gallery'" :widgetModel="widgetModel" :imagesListProp="imagesList" @uploadedImage="loadImages"></ImageWidgetGallery>
     </div>
 </template>
 
