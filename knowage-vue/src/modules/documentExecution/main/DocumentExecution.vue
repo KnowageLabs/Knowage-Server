@@ -731,6 +731,7 @@ export default defineComponent({
                             }
                         }
                         if (tempParam.selectionType === 'COMBOBOX') this.formatCrossNavigationComboParameterDescription(tempParam)
+                        console.log('')
                     }
                 }
             })
