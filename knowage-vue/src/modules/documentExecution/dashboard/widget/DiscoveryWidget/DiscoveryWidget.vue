@@ -1,22 +1,22 @@
 <template>
     <div ref="discoveryContainer" class="discovery-container p-m-2" v-resize="onWidgetSizeChange">
         <div class="kn-width-full p-d-flex">
-            <!-- <InputText class="kn-material-input p-m-3 model-search"  v-model="test" type="text" :placeholder="$t('common.search')" @input="searchItems"  /> -->
+            <!-- <InputText class="kn-material-input p-m-3 model-search"  v-model="searchInput" type="text" :placeholder="$t('common.search')" @input="searchItems"  /> -->
             <Button v-if="widgetWidth < 600" :icon="burgerIcon" class="p-button-text p-button-rounded p-button-plain p-as-center" @click="toggleFacets" />
-            <InputText class="kn-material-input p-mx-2 p-my-1 kn-flex" v-model="test" type="text" :placeholder="$t('common.search')" @input="" />
+            <InputText class="kn-material-input p-mx-2 p-my-1 kn-flex" v-model="searchInput" type="text" :placeholder="$t('common.search')" @input="" />
         </div>
         <div class="discovery-content">
-            <div ref="facetsContainer" :class="[widgetWidth < 600 ? 'sidenav' : '']" class="facets-container dashboard-scrollbar p-m-2">
-                <div v-for="(facet, index) in tableData.facets" :key="index" class="facet-accordion">
+            <div ref="facetsContainer" :class="[widgetWidth < 600 ? 'sidenav' : '']" class="facets-container dashboard-scrollbar p-m-2" :style="getFacetWidth()">
+                <div v-for="(facet, facetName) in tableData.facets" :key="facetName" class="facet-accordion">
                     <Toolbar class="kn-toolbar kn-toolbar--primary facet-accordion-header">
-                        <template #start> {{ index }}</template>
+                        <template #start> {{ facetName }}</template>
                         <template #end>
                             <Button v-if="facet.closed" class="p-button-text p-button-rounded p-button-plain" icon="fas fa-chevron-down" style="color: white" @click="facet.closed = false" />
                             <Button v-else class="p-button-text p-button-rounded p-button-plain" icon="fas fa-chevron-up" style="color: white" @click="facet.closed = true" />
                         </template>
                     </Toolbar>
                     <div v-if="!facet.closed">
-                        <div v-for="(row, index) in facet.rows" class="facet-accordion-content selectable" v-tooltip.top="facet.column_1">
+                        <div v-for="row in facet.rows.slice(0, propWidget.settings.facets.limit)" :class="{ selected: isFacetSelected(facetName, row) }" class="facet-accordion-content selectable" v-tooltip.top="facet.column_1" @click="selectFacet(facetName, row)">
                             <!-- <span v-if="facet.metaData.type == 'date'" class="kn-truncated">
                                     TODO: Set Date Format
                                     {{ setTimeFormat(item.column_1, facet.metaData.dateFormat) }}
@@ -85,23 +85,12 @@ export default defineComponent({
     },
     data() {
         return {
-            gridOptions: null as any,
-            columnsNameArray: [] as any,
-            rowData: [] as any,
-            columnDefs: [] as any,
-            gridApi: null as any,
-            columnApi: null as any,
-            overlayNoRowsTemplateTest: null as any,
             tableData: [] as any,
-            showPaginator: false,
             activeSelections: [] as ISelection[],
-            multiSelectedCells: [] as any,
-            selectedColumn: false as any,
-            selectedColumnArray: [] as any,
-            context: null as any,
-            test: '',
+            searchInput: '',
             widgetWidth: 0 as number,
-            facetSidenavShown: false
+            facetSidenavShown: false,
+            facetsToDisplay: []
         }
     },
     setup() {
@@ -109,15 +98,14 @@ export default defineComponent({
         const appStore = mainStore()
         return { store, appStore }
     },
-    beforeMount() {
-        this.context = { componentParent: this }
-    },
+    beforeMount() {},
     created() {
+        this.tableData = this.dataToShow
         this.setEventListeners()
         this.loadActiveSelections()
         // this.setupDatatableOptions()
         // this.loadActiveSelectionValue()
-        this.tableData = this.dataToShow
+        this.setFacetAccordionState()
     },
     unmounted() {
         this.removeEventListeners()
@@ -138,10 +126,6 @@ export default defineComponent({
             // emitter.off('refreshTable', this.refreshGridConfigurationWithoutData)
             // emitter.off('selectionsDeleted', this.onSelectionsDeleted)
         },
-        getFacetAlias(facetIndex) {
-            var facetKeys = Object.keys(this.tableData.facets)
-            return facetKeys[facetIndex]
-        },
         setInitialWidgetWidth() {
             const temp = this.$refs['discoveryContainer'] as any
             this.widgetWidth = temp.clientHeight
@@ -154,7 +138,61 @@ export default defineComponent({
             const temp = this.$refs['facetsContainer'] as any
             this.facetSidenavShown = !this.facetSidenavShown
             this.facetSidenavShown ? temp.classList.add('open') : temp.classList.remove('open')
+        },
+
+        //#region ===================== Facet Logic ====================================================
+        isFacetSelected(facetName, row) {
+            let facetSearchParams = this.propWidget.settings.search.facetSearchParams
+            if (facetSearchParams[facetName] && facetSearchParams[facetName].includes(row.column_1)) return true
+            else return false
+        },
+        getFacetAlias(facetIndex) {
+            var facetKeys = Object.keys(this.tableData.facets)
+            return facetKeys[facetIndex]
+        },
+        getFacetWidth() {
+            let facetSettings = this.propWidget.settings.facets
+            if (this.widgetWidth >= 600) return { width: facetSettings.width }
+            else return {}
+        },
+        setFacetAccordionState() {
+            if (this.editorMode) return
+            let facetSettings = this.propWidget.settings.facets
+            let facetSearchParams = this.propWidget.settings.search.facetSearchParams
+
+            if (facetSettings.closedByDefault) {
+                Object.keys(this.tableData.facets).forEach((facet) => {
+                    //check if facet parameter is used in filters/selection, if it is, remain opened
+                    if (facetSearchParams[facet]) this.tableData.facets[facet].closed = false
+                    else this.tableData.facets[facet].closed = true
+                })
+            }
+        },
+        selectFacet(facetName, row) {
+            console.group('facet selected ------------------------------------')
+            console.log('facetName ', facetName)
+            console.log('row ', row)
+            console.groupEnd()
+            //if there are no values for that facet, dont even call BE
+            if (row.column_2 == 0) return
+            let facetSettings = this.propWidget.settings.facets
+            if (facetSettings.selection) {
+                //if there are any search params, empty them, now we are doing selection not search
+                this.propWidget.settings.search.facetSearchParams = {}
+                //TODO: Selection logic
+            } else {
+                let facetSearchParams = this.propWidget.settings.search.facetSearchParams
+                if (facetSearchParams[facetName] && !facetSearchParams[facetName].includes(row.column_1)) {
+                    facetSearchParams[facetName].push(row.column_1)
+                } else if (facetSearchParams[facetName] && facetSearchParams[facetName].includes(row.column_1)) {
+                    const index = facetSearchParams[facetName].indexOf(row.column_1)
+                    facetSearchParams[facetName].splice(index, 1)
+                } else {
+                    facetSearchParams[facetName] = [row.column_1]
+                }
+            }
         }
+        //#endregion ================================================================================================
     }
 })
 </script>
@@ -178,7 +216,7 @@ export default defineComponent({
             flex: 2;
         }
         .facets-container {
-            flex: 1;
+            // flex: 1;
             &.sidenav {
                 // max-width: 0;
                 transition: width 0.25s linear;
@@ -188,7 +226,7 @@ export default defineComponent({
                 width: 0px;
                 height: calc(100% - 75px);
                 &.open {
-                    width: 40%;
+                    width: 50%;
                     border: 1px solid rgba(172, 172, 172, 0.8);
                 }
             }
@@ -227,8 +265,7 @@ export default defineComponent({
                         background-color: #eceff1;
                     }
                     &.selected {
-                        .chip {
-                        }
+                        background-color: #ced1d3;
                     }
                 }
             }
