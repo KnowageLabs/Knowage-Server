@@ -5,15 +5,15 @@
                 {{ $t('common.info.noDataFound') }}
             </Message>
             <div v-else id="image-widget-gallery-content" class="p-grid p-m-2 kn-flex kn-overflow dashboard-scrollbar">
-                <div v-if="selectedImage" id="image-widget-gallery-backdrop" class="kn-flex" @click="selectedImage = null"></div>
+                <div v-if="sidebarVisible" id="image-widget-gallery-backdrop" class="kn-flex" @click="sidebarVisible = false"></div>
                 <div class="p-col-12 p-d-flex p-jc-center">
                     <Button icon="fas fa-upload fa-1x" class="p-button-text p-button-plain p-ml-2" @click="setImageUploadType" />
                     <KnInputFile :changeFunction="setImageForUpload" accept=".png, .jpg, .jpeg" :triggerInput="triggerImageUpload" />
                 </div>
-                <ImageWidgetGalleryCard v-for="(image, index) of images" :key="index" class="kn-cursor-pointer" :imageProp="image" @click="setSelectedImage(image)" @delete="onImageDelete" />
+                <ImageWidgetGalleryCard v-for="(image, index) of images" :key="index" class="p-col-12 p-md-6 p-lg-4 kn-cursor-pointer" :isSelected="selectedImage?.imgId === image.imgId" :imageProp="image" @click="setSelectedImage(image)" @delete="onImageDelete" />
 
-                <div v-if="selectedImage" id="image-widget-gallery-card-sidebar-container">
-                    <ImageWidgetGallerySidebar :selectedImage="selectedImage" @close="selectedImage = null"></ImageWidgetGallerySidebar>
+                <div v-if="sidebarVisible" id="image-widget-gallery-card-sidebar-container">
+                    <ImageWidgetGallerySidebar :selectedImage="selectedImage" @close="sidebarVisible = false"></ImageWidgetGallerySidebar>
                 </div>
             </div>
         </div>
@@ -43,7 +43,8 @@ export default defineComponent({
             descriptor,
             images: [] as IImage[],
             triggerImageUpload: false,
-            selectedImage: null as IImage | null
+            selectedImage: null as IImage | null,
+            sidebarVisible: false
         }
     },
     watch: {
@@ -58,6 +59,13 @@ export default defineComponent({
         ...mapActions(appStore, ['setInfo', 'setError', 'setLoading']),
         loadImages() {
             this.images = this.imagesListProp
+            this.loadSelectedImage()
+        },
+        loadSelectedImage() {
+            if (this.widgetModel.settings.configuration?.image) {
+                const index = this.images.findIndex((image: IImage) => image.imgId === this.widgetModel.settings.configuration.image.id)
+                if (index !== -1) this.selectedImage = this.images[index]
+            }
         },
         setImageUploadType() {
             this.triggerImageUpload = false
@@ -125,6 +133,7 @@ export default defineComponent({
         },
         setSelectedImage(image: IImage) {
             this.selectedImage = image
+            this.sidebarVisible = true
         }
     }
 })

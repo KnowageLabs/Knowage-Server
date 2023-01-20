@@ -1,5 +1,6 @@
 {
     "common": {
+        "horizontalAlign": "Horizontal Align",
         "active": "Active",
         "add": "Add",
         "addColumn": "Add column",

@@ -56,7 +56,7 @@ export default defineComponent({
                 case 'BordersStyle':
                 case 'PaddingStyle':
                 case 'ShadowsStyle':
-                    setTimeout(() => emitter.emit('refreshImage', this.widgetModel.id), 250)
+                    setTimeout(() => emitter.emit('refreshImageWidget', this.widgetModel.id), 250)
             }
         }
     }

@@ -1,5 +1,5 @@
 <template>
-    <div class="p-col-12 p-md-6 p-lg-4">
+    <div>
         <div class="card-container">
             <Toolbar class="kn-toolbar kn-toolbar--secondary p-p-0 p-m-0 p-col-12">
                 <template #start> {{ imageProp.name }} </template>
@@ -7,7 +7,7 @@
                     <Button icon="pi pi-trash" class="p-button-link" v-tooltip.top="$t('common.delete')" @click="deleteImageConfirm" />
                 </template>
             </Toolbar>
-            <div class="p-d-flex p-flex-column p-jc-center p-ai-center kn-flex card-image-container">
+            <div class="p-d-flex p-flex-column p-jc-center p-ai-center kn-flex" :class="[isSelected ? 'selected-card-image-container' : 'card-image-container ']">
                 <img class="card-image" :src="getImageUrl(imageProp)" :alt="imageProp.name" />
             </div>
         </div>
@@ -20,7 +20,7 @@ import { IImage } from '@/modules/documentExecution/dashboard/interfaces/Dashboa
 export default defineComponent({
     name: 'image-widget-gallery-card',
     components: {},
-    props: { imageProp: { type: Object as PropType<IImage>, required: true } },
+    props: { imageProp: { type: Object as PropType<IImage>, required: true }, isSelected: { type: Boolean, required: true } },
     emits: ['delete'],
     data() {
         return {}
@@ -58,6 +58,10 @@ export default defineComponent({
 
 .card-image-container {
     background-color: rgb(236, 239, 241);
+}
+
+.selected-card-image-container {
+    background-color: #a9c3db;
 }
 
 .card-image {

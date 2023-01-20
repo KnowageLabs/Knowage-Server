@@ -1,6 +1,24 @@
 {
+    "horizontalAlignmentOptions": [
+        {
+            "label": "common.center",
+            "value": "center"
+        },
+        {
+            "label": "common.left",
+            "value": "left"
+        },
+        {
+            "label": "common.right",
+            "value": "right"
+        }
+    ],
     "settings": {
         "Configuration": [
+            {
+                "title": "common.image",
+                "type": "ImageSettings"
+            },
             {
                 "title": "dashboard.widgetEditor.export.title",
                 "type": "Export"
@@ -72,6 +90,20 @@
             "icon": "pi pi-tablet",
             "label": "dashboard.widgetEditor.responsive.title",
             "value": "Responsive"
+        }
+    ],
+    "verticalAlignmentOptions": [
+        {
+            "label": "common.center",
+            "value": "center"
+        },
+        {
+            "label": "common.top",
+            "value": "top"
+        },
+        {
+            "label": "common.bottom",
+            "value": "bottom"
         }
     ]
 }

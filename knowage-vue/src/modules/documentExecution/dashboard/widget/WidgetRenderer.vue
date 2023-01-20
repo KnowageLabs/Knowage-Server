@@ -22,6 +22,7 @@
             <HighchartsContainer v-if="widget.type === 'highcharts'" :widgetModel="widget" :dataToShow="widgetData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId"></HighchartsContainer>
             <ChartJSContainer v-if="widget.type === 'chartJS'" :widgetModel="widget" :dataToShow="widgetData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId"></ChartJSContainer>
             <DiscoveryWidget v-if="widget.type === 'discovery'" :propWidget="widget" :datasets="datasets" :dataToShow="dataToShow" :editorMode="false" :propActiveSelections="activeSelections" :dashboardId="dashboardId" />
+            <ImageWidget v-if="widget.type === 'image'" :widgetModel="widget" :dashboardId="dashboardId" :editorMode="false" />
         </div>
     </div>
 </template>
@@ -41,11 +42,12 @@ import WebComponentContainer from './WebComponent/WebComponentContainer.vue'
 import HighchartsContainer from '../widget/ChartWidget/Highcharts/HighchartsContainer.vue'
 import ChartJSContainer from '../widget/ChartWidget/ChartJS/ChartJSContainer.vue'
 import DiscoveryWidget from '../widget/DiscoveryWidget/DiscoveryWidget.vue'
+import ImageWidget from '../widget/ImageWidget/ImageWidget.vue'
 
 export default defineComponent({
     name: 'widget-renderer',
     emits: ['interaction', 'pageChanged', 'launchSelection', 'sortingChanged'],
-    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, WebComponentContainer, HighchartsContainer, ChartJSContainer, DiscoveryWidget },
+    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, WebComponentContainer, HighchartsContainer, ChartJSContainer, DiscoveryWidget, ImageWidget },
     props: {
         widget: { required: true, type: Object as any },
         widgetData: { required: true, type: Object },

@@ -12,8 +12,8 @@ export interface IImageWidgetSettings {
 export interface IImageWidgetImageSettings {
     id: number,
     style: {
-        height: number,
-        width: number,
+        height: string,
+        width: string,
         "background-position-x": "left" | "center" | "right",
         "background-position-y": "top" | "center" | "bottom"
     },

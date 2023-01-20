@@ -5,7 +5,8 @@
                 <template #header>
                     <ImageWidgetSettingsAccordionHeader :widgetModel="widgetModel" :title="accordion.title" :type="accordion.type"></ImageWidgetSettingsAccordionHeader>
                 </template>
-                <WidgetExport v-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
+                <ImageWidgetImageSettings v-if="accordion.type === 'ImageSettings'" :widgetModel="widgetModel"></ImageWidgetImageSettings>
+                <WidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
                 <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
                 <WidgetBackgroundColorStyle v-else-if="accordion.type === 'BackgroundColorStyle'" :widgetModel="widgetModel"></WidgetBackgroundColorStyle>
                 <WidgetBordersStyle v-else-if="accordion.type === 'BordersStyle'" :widgetModel="widgetModel"></WidgetBordersStyle>
@@ -25,6 +26,7 @@ import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import descriptor from './ImageWidgetSettingsDescriptor.json'
 import settingsTabDescriptor from '../WidgetEditorSettingsTabDescriptor.json'
+import ImageWidgetImageSettings from './configuration/ImageWidgetImageSettings.vue'
 import WidgetExport from '../common/configuration/WidgetExport.vue'
 import WidgetBordersStyle from '../common/style/WidgetBordersStyle.vue'
 import WidgetShadowsStyle from '../common/style/WidgetShadowsStyle.vue'
@@ -40,6 +42,7 @@ export default defineComponent({
     components: {
         Accordion,
         AccordionTab,
+        ImageWidgetImageSettings,
         WidgetExport,
         WidgetTitleStyle,
         WidgetBordersStyle,

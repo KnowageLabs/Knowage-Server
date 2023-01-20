@@ -43,14 +43,14 @@ const getFormattedConfiguration = (widget: any) => {
 
 const getFormattedImageSettings = (widget: any) => {
     const formattedImageSettings = {
-        id: -1,
+        id: widget.content.imgId ?? -1,
         style: imageWidgetDefaultValues.getdefaultImageStyleSettings()
     } as IImageWidgetImageSettings
 
     if (widget.style) {
         formattedImageSettings.style = {
-            height: widget.style.heightPerc ? +widget.style.heightPerc : 50,
-            width: widget.style.widthPerc ? +widget.style.widthPerc : 50,
+            height: widget.style.heightPerc ?? '',
+            width: widget.style.widthPerc ?? '',
             "background-position-x": widget.style.hAlign ?? 'center',
             "background-position-y": widget.style.vAlign ?? 'center',
 
