@@ -23,7 +23,7 @@ description:
       - OW2CON '20 best Project - Technology Award
     documentation: 'https://knowage-suite.readthedocs.io/'
     features:
-      - 'KNOWAGE è compost di due moduli autonomi:'
+      - 'KNOWAGE è composto di due moduli autonomi:'
       - ENTERPRISE REPORTING per la produzione e distribuzione di report statici
       - |-
         SMART INTELLIGENCE per la tipica BI su dati strutturati, incentrata su
