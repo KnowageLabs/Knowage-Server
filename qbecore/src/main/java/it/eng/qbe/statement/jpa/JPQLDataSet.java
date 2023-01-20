@@ -37,6 +37,7 @@ import org.hibernate.Session;
 import org.hibernate.type.Type;
 
 import it.eng.qbe.datasource.jpa.IJpaDataSource;
+import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.qbe.statement.IStatement;
@@ -210,26 +211,17 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	/**
 	 * Map value from driver to the required value from Hibernate's filter.
 	 *
-	 * @param wantedClass
-	 *            Type wanted by Hibernate
-	 * @param value
-	 *            Actual value
+	 * @param wantedClass Type wanted by Hibernate
+	 * @param value       Actual value
 	 * @return The mapped value
 	 *
-	 * @throws NoSuchMethodException
-	 *             When the wanted class has no constructor with only one string as parameter
-	 * @throws SecurityException
-	 *             When constructor with only one string as parameter is private
-	 * @throws InstantiationException
-	 *             When you can't instantiate the required class
-	 * @throws IllegalAccessException
-	 *             When you can't access the required constructor
-	 * @throws IllegalArgumentException
-	 *             Shouldn't happen
-	 * @throws InvocationTargetException
-	 *             Shouldn't happen
-	 * @throws ParseException
-	 *             When the date string is invalid
+	 * @throws NoSuchMethodException     When the wanted class has no constructor with only one string as parameter
+	 * @throws SecurityException         When constructor with only one string as parameter is private
+	 * @throws InstantiationException    When you can't instantiate the required class
+	 * @throws IllegalAccessException    When you can't access the required constructor
+	 * @throws IllegalArgumentException  Shouldn't happen
+	 * @throws InvocationTargetException Shouldn't happen
+	 * @throws ParseException            When the date string is invalid
 	 */
 	private Object mapValueToRequiredType(Class<?> wantedClass, Object value) throws NoSuchMethodException, SecurityException, InstantiationException,
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException, ParseException {
@@ -249,7 +241,8 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		int resultNumber = 0;
 		try {
 			String sqlQueryString = filteredStatement.getSqlQueryString();
-			Number singleResult = (Number) getEntityMananger().createNativeQuery("SELECT COUNT(*) FROM (" + sqlQueryString + ") COUNT_INLINE_VIEW").getSingleResult();
+			Number singleResult = (Number) getEntityMananger().createNativeQuery("SELECT COUNT(*) FROM (" + sqlQueryString + ") COUNT_INLINE_VIEW")
+					.getSingleResult();
 			resultNumber = singleResult.intValue();
 		} catch (Exception e) {
 			throw new RuntimeException("Impossible to get result number", e);
