@@ -1015,6 +1015,16 @@ export default defineComponent({
                 if (this.dataset && !this.dataset.dataSourceId && !this.dataset.federation_id) {
                     await this.loadDataset()
                 } else if (this.sourceDataset) {
+                    await this.loadDataset()
+                    this.qbe.datasetLabel = this.sourceDataset.label
+                    if (!this.qbe.qbeJSONQuery) {
+                        this.qbe.qbeJSONQuery = {
+                            catalogue: {
+                                queries: [this.getQbeJSONQuery(this.sourceDataset)]
+                            }
+                        }
+                    }
+                    if (this.sourceDataset.dsTypeCd !== 'Derived') this.qbe.meta.columns = []
                 } else {
                     this.qbe = this.getQBEFromModel()
                 }

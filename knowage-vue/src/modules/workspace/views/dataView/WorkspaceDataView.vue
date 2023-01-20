@@ -114,7 +114,7 @@
         @roleChanged="onRoleChange"
     />
 
-    <DatasetWizard v-if="showDatasetDialog" :selectedDataset="selectedDataset" :visible="showDatasetDialog" @closeDialog="showDatasetDialog = false" @closeDialogAndReload="closeWizardAndRealod" />
+    <DatasetWizard v-if="showDatasetDialog" :selectedDataset="selectedDataset" :visible="showDatasetDialog" @closeDialog="showDatasetDialog = false" @closeDialogAndReload="closeWizardAndReload" />
     <EditPreparedDatasetDialog :dataset="selectedDataset" :visible="showEditPreparedDatasetDialog" @save="updatePreparedDataset" @cancel="showEditPreparedDatasetDialog = false" />
     <TieredMenu class="kn-tieredMenu" id="optionsMenu" ref="optionsMenu" :model="menuButtons" :popup="true" />
     <Menu id="creationMenu" ref="creationMenu" :model="creationMenuButtons" />
@@ -770,7 +770,7 @@ export default defineComponent({
 
             if (this.isAvroReady(this.selectedDataset.id)) this.openDataPreparation(this.selectedDataset)
         },
-        closeWizardAndRealod() {
+        closeWizardAndReload() {
             this.showDatasetDialog = false
             this.getDatasetsByFilter()
         },
