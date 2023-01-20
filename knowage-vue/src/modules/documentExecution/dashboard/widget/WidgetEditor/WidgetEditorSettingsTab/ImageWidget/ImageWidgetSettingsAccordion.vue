@@ -76,7 +76,8 @@ export default defineComponent({
     },
     methods: {
         setActiveAccordion() {
-            if (this.settings?.length === 1) this.activeIndex = 0
+            if (!this.settings) return
+            if (this.settings.length === 1) this.activeIndex = 0
         }
     }
 })

@@ -32,3 +32,11 @@ export interface IImageWidgetStyle {
     background: IWidgetBackgroundStyle
 }
 
+export interface IImage {
+    imgId: number,
+    lastmod: string,
+    name: string,
+    size: number,
+    url: string,
+    urlPreview: string
+}
