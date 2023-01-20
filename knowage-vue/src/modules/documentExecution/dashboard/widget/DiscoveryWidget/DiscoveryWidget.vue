@@ -297,6 +297,7 @@ export default defineComponent({
         border-radius: 4px;
     }
     .discovery-content {
+        position: relative;
         flex: 1;
         display: flex;
         flex-direction: row;
@@ -310,13 +311,14 @@ export default defineComponent({
             display: flex;
             flex-direction: column;
             overflow: auto;
-            // border: 1px solid #babfc7;
+            border: 1px solid #babfc7;
             background-color: #fff;
             color: black;
             transition: flex 0.3s linear;
             &.sidenav {
+                border: none;
                 width: 0px;
-                height: calc(100% - 62px);
+                height: 100%;
                 position: absolute;
                 margin-left: 0;
                 margin-right: 0;

@@ -130,7 +130,7 @@ export default defineComponent({
         display: flex;
         flex-direction: column;
         overflow: hidden;
-        // flex: 1;
+        flex: 1;
         max-height: 50%;
         .widget-container-renderer {
             flex: 1;
