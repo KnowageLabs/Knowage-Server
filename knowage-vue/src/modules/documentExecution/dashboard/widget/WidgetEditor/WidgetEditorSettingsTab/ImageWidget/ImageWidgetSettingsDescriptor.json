@@ -6,6 +6,7 @@
                 "type": "Export"
             }
         ],
+        "Gallery": [],
         "Interactions": [
             {
                 "title": "dashboard.widgetEditor.interactions.crossNavigation",
@@ -46,6 +47,12 @@
         ]
     },
     "settingsListOptions": [
+        {
+            "disabled": false,
+            "icon": "fa fa-book",
+            "label": "dashboard.widgetEditor.gallery",
+            "value": "Gallery"
+        },
         {
             "icon": "fa fa-cogs",
             "label": "dashboard.widgetEditor.configuration",
