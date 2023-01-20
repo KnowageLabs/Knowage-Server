@@ -5,10 +5,10 @@ import { getFormattedInteractions } from "../common/WidgetInteractionsHelper"
 import { getFiltersForColumns } from "../DashboardBackwardCompatibilityHelper"
 import { getFormattedStyle } from "../tableWidget/TableWidgetStyleHelper"
 import { getFormattedDiscoveryConfiguration } from "./DiscoveryWidgetConfigurationHelper"
+import { getStyleFromColumn, getTooltipFromColumn } from "../tableWidget/TableWidgetColumnSettingsHelper"
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import * as  discoveryWidgetDefaultValues from '../../widget/WidgetEditor/helpers/discoveryWidget/DiscoveryWidgetDefaultValues'
 import * as tableWidgetDefaultValues from '../../widget/WidgetEditor/helpers/tableWidget/TableWidgetDefaultValues'
-import { getTooltipFromColumn } from "../tableWidget/TableWidgetColumnSettingsHelper"
 
 
 const columnNameIdMap = {}
@@ -90,5 +90,6 @@ const getSettingsFromWidgetColumns = (formattedWidget: IWidget, widget: any) => 
         const tempColumn = widget.content.columnSelectedOfDataset[i]
         if (tempColumn.facet) formattedWidget.settings.facets.columns.push(tempColumn.name)
         getTooltipFromColumn(formattedWidget, tempColumn)
+        getStyleFromColumn(formattedWidget, tempColumn, columnNameIdMap)
     }
 }

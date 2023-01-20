@@ -67,7 +67,7 @@ const getFormattedHeadersStyle = (widget: any) => {
 
 const getFormattedRowsStyle = (widget: any) => {
     const formattedRowsStyle = {
-        height: widget.style.tr?.height ?? 25,
+        height: getPixelValueAsNumber(widget.style.tr?.height) ?? 25,
         multiselectable: widget.settings.multiselectable ?? false,
         selectionColor: widget.settings.multiselectablecolor ?? '',
         alternatedRows: {
@@ -78,6 +78,11 @@ const getFormattedRowsStyle = (widget: any) => {
         }
     }
     return formattedRowsStyle as IWidgetRowsStyle
+}
+
+const getPixelValueAsNumber = (pixelValue: string | number | undefined) => {
+    if (!pixelValue || typeof pixelValue === 'number') return pixelValue
+    else if (typeof pixelValue === 'string') return +pixelValue.substring(0, pixelValue.indexOf('px'))
 }
 
 const getFormattedSummaryStyle = (widget: any) => {

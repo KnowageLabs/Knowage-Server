@@ -38,7 +38,7 @@
             </div>
         </div>
         <div class="p-grid p-col-12">
-            <div v-if="['table', 'html', 'text', 'chartJS', 'highcharts'].includes(widgetType)" class="p-col-12 p-lg-6">
+            <div v-if="['table', 'html', 'text', 'chartJS', 'highcharts', 'discovery'].includes(widgetType)" class="p-col-12 p-lg-6">
                 <InputSwitch v-model="exportModel.showScreenshot" @change="onEnableExportChanged"></InputSwitch>
                 <label class="kn-material-input-label p-ml-4">{{ $t('dashboard.widgetEditor.export.enableScreenshots') }}</label>
             </div>

@@ -22,7 +22,7 @@ export const formatTableWidget = (widget: any, formattedDashboardModel: IDashboa
     } as IWidget
     formattedWidget.settings = getFormattedWidgetSettings(widget, formattedDashboardModel)
     getFiltersForColumns(formattedWidget, widget)
-    getSettingsFromWidgetColumns(formattedWidget, widget, formattedDashboardModel)
+    getSettingsFromWidgetColumns(formattedWidget, widget, formattedDashboardModel, columnNameIdMap)
     return formattedWidget
 }
 

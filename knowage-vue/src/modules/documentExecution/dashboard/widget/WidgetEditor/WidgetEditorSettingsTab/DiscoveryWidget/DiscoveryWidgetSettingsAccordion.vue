@@ -9,6 +9,7 @@
                 <DiscoveryWidgetSearchSettings v-else-if="accordion.type === 'SearchSettings'" :widgetModel="widgetModel" :dashboardId="dashboardId"></DiscoveryWidgetSearchSettings>
                 <WidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
                 <TableWidgetCustomMessages v-else-if="accordion.type === 'CustomMessages'" :widgetModel="widgetModel"></TableWidgetCustomMessages>
+                <TableWidgetHeaders v-else-if="accordion.type === 'Headers'" :widgetModel="widgetModel"></TableWidgetHeaders>
                 <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
                 <TableWidgetColumnStyle v-else-if="accordion.type === 'ColumnStyle'" :widgetModel="widgetModel"></TableWidgetColumnStyle>
                 <WidgetRowsStyle v-else-if="accordion.type === 'RowsStyle'" :widgetModel="widgetModel"></WidgetRowsStyle>
@@ -44,6 +45,7 @@ import TableWidgetTooltips from '../TableWidget/tooltips/TableWidgetTooltips.vue
 import WidgetCrossNavigation from '../common/interactions/crossNavigation/WidgetCrossNavigation.vue'
 import WidgetInteractionsLinks from '../common/interactions/link/WidgetInteractionsLinks.vue'
 import WidgetPreview from '../common/interactions/preview/WidgetPreview.vue'
+import TableWidgetHeaders from '../TableWidget/style/TableWidgetHeaders.vue'
 import WidgetTitleStyle from '../common/style/WidgetTitleStyle.vue'
 import WidgetPaddingStyle from '../common/style/WidgetPaddingStyle.vue'
 import WidgetBackgroundColorStyle from '../common/style/WidgetBackgroundColorStyle.vue'
@@ -58,6 +60,7 @@ export default defineComponent({
         AccordionTab,
         WidgetExport,
         TableWidgetCustomMessages,
+        TableWidgetHeaders,
         WidgetTitleStyle,
         TableWidgetColumnStyle,
         WidgetRowsStyle,
