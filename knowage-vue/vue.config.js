@@ -2,7 +2,7 @@ process.env.VUE_APP_VERSION = process.env.npm_package_version
 
 module.exports = {
     publicPath: process.env.VUE_APP_PUBLIC_PATH,
-    outputDir: './src/main/webapp',
+    outputDir: './target/knowage-vue',
     devServer: {
         https: process.env.VUE_APP_HOST_HTTPS === 'true',
         proxy: {

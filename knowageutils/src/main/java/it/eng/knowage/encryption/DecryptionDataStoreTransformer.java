@@ -35,7 +35,11 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 	public DecryptionDataStoreTransformer(IDataSet dataSet) {
 		super();
 		this.dataSet = dataSet;
-		setUpDecryption();
+		try {
+			setUpDecryption();
+		} catch (Exception e) {
+			LOGGER.error("Encryption initialization error: check setUpDecryption method", e);
+		}
 	}
 
 	@Override
@@ -56,24 +60,18 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 
 		AtomicInteger index = new AtomicInteger();
 
-		dataStoreMetadata.getFieldsMeta()
-			.stream()
-			.collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e))
-			.entrySet()
-			.stream()
-			.filter(e -> e.getValue().isDecrypt())
-			.forEach(e -> {
-				Integer key = e.getKey();
-				IFieldMetaData value = e.getValue();
-				decryptableField.add(value);
-				decryptableFieldByIndex.put(key, value);
-			});
+		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e)).entrySet().stream()
+				.filter(e -> e.getValue().isDecrypt()).forEach(e -> {
+					Integer key = e.getKey();
+					IFieldMetaData value = e.getValue();
+					decryptableField.add(value);
+					decryptableFieldByIndex.put(key, value);
+				});
 
 		needDecryption = !decryptableField.isEmpty();
 
 		if (needDecryption) {
-			EncryptionConfiguration cfg = EncryptionPreferencesRegistry.getInstance()
-					.getConfiguration(EncryptionPreferencesRegistry.DEFAULT_CFG_KEY);
+			EncryptionConfiguration cfg = EncryptionPreferencesRegistry.getInstance().getConfiguration(EncryptionPreferencesRegistry.DEFAULT_CFG_KEY);
 
 			String algorithm = cfg.getAlgorithm();
 			String password = cfg.getEncryptionPwd();
@@ -89,7 +87,7 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 		if (needDecryption) {
 			List<IField> fields = record.getFields();
 
-			for (int i = 0; i<fields.size(); i++) {
+			for (int i = 0; i < fields.size(); i++) {
 				if (decryptableFieldByIndex.containsKey(i)) {
 					IFieldMetaData fieldMetaData = decryptableFieldByIndex.get(i);
 					String fieldName = fieldMetaData.getName();
@@ -117,9 +115,7 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 	}
 
 	private Map<String, IFieldMetaData> mapFieldByColumnName(IMetaData metaData) {
-		return metaData.getFieldsMeta()
-			.stream()
-			.collect(Collectors.toMap(e -> mapFieldKey(e), e -> e));
+		return metaData.getFieldsMeta().stream().collect(Collectors.toMap(e -> mapFieldKey(e), e -> e));
 	}
 
 	private IMetaData getMetaData() {

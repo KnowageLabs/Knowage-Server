@@ -44,6 +44,7 @@ import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.HavingField.Operand;
 import it.eng.qbe.query.IQueryField;
+import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.TimeAggregationHandler;
