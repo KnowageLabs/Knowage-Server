@@ -1,12 +1,12 @@
 <template>
-    <div ref="discoveryContainer" class="discovery-container p-m-2" v-resize="onWidgetSizeChange">
-        <div class="kn-width-full p-d-flex">
+    <div ref="discoveryContainer" class="discovery-container" v-resize="onWidgetSizeChange">
+        <div class="kn-width-full p-d-flex p-mb-2">
             <!-- <InputText class="kn-material-input p-m-3 model-search"  v-model="searchInput" type="text" :placeholder="$t('common.search')" @input="searchItems"  /> -->
             <Button v-if="widgetWidth < 600" :icon="burgerIcon" class="p-button-text p-button-rounded p-button-plain p-as-center" @click="toggleFacets" />
-            <InputText class="kn-material-input p-mx-2 p-my-1 kn-flex" v-model="searchInput" type="text" :placeholder="$t('common.search')" @input="" />
+            <InputText class="kn-material-input kn-flex" v-model="searchInput" type="text" :placeholder="$t('common.search')" @input="" />
         </div>
         <div class="discovery-content">
-            <div ref="facetsContainer" :class="[widgetWidth < 600 ? 'sidenav' : '']" class="facets-container dashboard-scrollbar p-m-2" :style="getFacetWidth()">
+            <div ref="facetsContainer" :class="[widgetWidth < 600 ? 'sidenav' : '']" class="facets-container dashboard-scrollbar" :style="getFacetWidth()">
                 <div v-for="(facet, facetName) in tableData.facets" :key="facetName" class="facet-accordion">
                     <Toolbar class="kn-toolbar kn-toolbar--primary facet-accordion-header">
                         <template #start> {{ facetName }}</template>
@@ -32,7 +32,9 @@
                     </div>
                 </div>
             </div>
-            <div class="table-container p-m-2">tableTest: {{ widgetWidth }}</div>
+            <div class="table-container p-ml-2">
+                <ag-grid-vue v-if="!gridLoading" class="kn-table-widget-grid ag-theme-alpine kn-flex discovery-grid-scrollbar" :gridOptions="gridOptions"></ag-grid-vue>
+            </div>
         </div>
     </div>
 </template>
@@ -42,13 +44,16 @@ import { emitter } from '../../DashboardHelpers'
 import { mapActions } from 'pinia'
 import { IDashboardDataset, ISelection, IWidget } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
+import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
+import 'ag-grid-community/styles/ag-grid.css' // Core grid CSS, always needed
+import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
 import mainStore from '../../../../../App.store'
 import dashboardStore from '../../Dashboard.store'
 
 export default defineComponent({
     name: 'table-widget',
     emits: ['pageChanged', 'sortingChanged', 'launchSelection'],
-    components: {},
+    components: { AgGridVue },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         editorMode: { type: Boolean, required: false },
@@ -90,7 +95,14 @@ export default defineComponent({
             searchInput: '',
             widgetWidth: 0 as number,
             facetSidenavShown: false,
-            facetsToDisplay: []
+            facetsToDisplay: [],
+            //ag-grid-stuff
+            gridColumns: [] as any[],
+            gridRows: [] as any[],
+            gridOptions: null as any,
+            gridApi: null as any,
+            columnApi: null as any,
+            gridLoading: false
         }
     },
     setup() {
@@ -98,14 +110,14 @@ export default defineComponent({
         const appStore = mainStore()
         return { store, appStore }
     },
-    beforeMount() {},
     created() {
         this.tableData = this.dataToShow
         this.setEventListeners()
         this.loadActiveSelections()
-        // this.setupDatatableOptions()
+        this.setupDatatableOptions()
         // this.loadActiveSelectionValue()
         this.setFacetAccordionState()
+        this.createColumnDefinitions(this.tableData?.metaData?.fields)
     },
     unmounted() {
         this.removeEventListeners()
@@ -115,9 +127,6 @@ export default defineComponent({
     },
 
     methods: {
-        loadActiveSelections() {
-            this.activeSelections = this.propActiveSelections
-        },
         setEventListeners() {
             // emitter.on('refreshTable', this.refreshGridConfigurationWithoutData)
             // emitter.on('selectionsDeleted', this.onSelectionsDeleted)
@@ -130,17 +139,20 @@ export default defineComponent({
             const temp = this.$refs['discoveryContainer'] as any
             this.widgetWidth = temp.clientHeight
         },
+        loadActiveSelections() {
+            this.activeSelections = this.propActiveSelections
+        },
         onWidgetSizeChange({ width, height, offsetWidth, offsetHeight }) {
             this.widgetWidth = width
             if (width > 600) this.facetSidenavShown = false
         },
+        //#region ===================== Facet Logic ====================================================
+        //TODO: dont show hidden facets - settings.facets.columns - if thy are not in array, hide
         toggleFacets() {
             const temp = this.$refs['facetsContainer'] as any
             this.facetSidenavShown = !this.facetSidenavShown
             this.facetSidenavShown ? temp.classList.add('open') : temp.classList.remove('open')
         },
-
-        //#region ===================== Facet Logic ====================================================
         isFacetSelected(facetName, row) {
             let facetSearchParams = this.propWidget.settings.search.facetSearchParams
             if (facetSearchParams[facetName] && facetSearchParams[facetName].includes(row.column_1)) return true
@@ -191,6 +203,83 @@ export default defineComponent({
                     facetSearchParams[facetName] = [row.column_1]
                 }
             }
+        },
+        //#endregion ================================================================================================
+
+        //#region ===================== Ag Grid Logic ====================================================
+        setupDatatableOptions() {
+            this.gridOptions = {
+                // PROPERTIES
+                // tooltipShowDelay: 100,
+                // tooltipMouseTrack: true,
+                suppressScrollOnNewData: true,
+                animateRows: true,
+                headerHeight: 35,
+                rowHeight: 30,
+                defaultColDef: {
+                    editable: false,
+                    sortable: true,
+                    resizable: true,
+                    width: 100
+                    // tooltipComponent: TooltipRenderer,
+                    // cellClassRules: {
+                    //     'edited-cell-color-class': (params) => {
+                    //         if (params.data.isEdited) return params.data.isEdited.includes(params.colDef.field)
+                    //     }
+                    // }
+                },
+
+                // EVENTS
+                // onCellKeyDown: this.onCellKeyDown,
+                // onSelectionChanged: this.onSelectionChanged,
+
+                // CALLBACKS
+                onGridReady: this.onGridReady
+                // getRowStyle: this.getRowStyle,
+                // getRowId: this.getRowId
+            }
+        },
+        onGridReady(params) {
+            this.gridApi = params.api
+            this.columnApi = params.columnApi
+
+            this.refreshGridConfiguration()
+        },
+        async refreshGridConfiguration() {
+            this.gridApi.setColumnDefs(this.gridColumns)
+            this.gridApi.setRowData(this.tableData.rows)
+        },
+        async createColumnDefinitions(responseFields) {
+            this.gridLoading = true
+            var columns = [] as any
+            var dataset = { type: 'SbiFileDataSet' }
+
+            for (var datasetColumn in this.propWidget.columns) {
+                for (var responseField in responseFields) {
+                    let modelColumn = this.propWidget.columns[datasetColumn]
+                    let responseColumn = responseFields[responseField]
+
+                    if (typeof responseFields[responseField] == 'object' && ((dataset.type == 'SbiSolrDataSet' && modelColumn.alias.toLowerCase() === responseFields[responseField].header) || modelColumn.alias.toLowerCase() === responseFields[responseField].header.toLowerCase())) {
+                        console.log('responseColumn', responseColumn)
+                        console.log('modelColumn HIDE : ', modelColumn)
+
+                        var tempCol = {
+                            hide: false, //TODO: implement hide condition
+                            colId: modelColumn.id,
+                            headerName: modelColumn.alias,
+                            columnName: modelColumn.columnName,
+                            field: responseFields[responseField].name,
+                            measure: modelColumn.fieldType
+                        } as any
+
+                        columns.push(tempCol)
+                    }
+                }
+            }
+            this.gridColumns = columns
+
+            console.log(columns)
+            this.gridLoading = false
         }
         //#endregion ================================================================================================
     }
@@ -214,30 +303,30 @@ export default defineComponent({
         overflow: auto;
         .table-container {
             flex: 2;
+            display: flex;
+            flex-direction: row;
         }
         .facets-container {
-            // flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: auto;
+            // border: 1px solid #babfc7;
+            background-color: #fff;
+            color: black;
+            transition: flex 0.3s linear;
             &.sidenav {
-                // max-width: 0;
-                transition: width 0.25s linear;
+                width: 0px;
+                height: calc(100% - 62px);
                 position: absolute;
                 margin-left: 0;
                 margin-right: 0;
-                width: 0px;
-                height: calc(100% - 75px);
+                transition: width 0.25s linear;
+                z-index: 999;
                 &.open {
                     width: 50%;
                     border: 1px solid rgba(172, 172, 172, 0.8);
                 }
             }
-            display: flex;
-            flex-direction: column;
-            overflow: auto;
-            background-color: #fff;
-            color: black;
-            box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
-            // border-radius: 4px;
-            transition: flex 0.3s linear;
             .facet-accordion {
                 margin-bottom: 1px;
                 .facet-accordion-header {
@@ -269,6 +358,22 @@ export default defineComponent({
                     }
                 }
             }
+        }
+    }
+    // has to be here, dashboard-scrollbar class doesnt work for some reason
+    .discovery-grid-scrollbar {
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
         }
     }
 }
