@@ -1,21 +1,19 @@
-import { ITableWidgetStyle, IWidget, IDashboardDriver, IWidgetInteractions, IWidgetResponsive, ITableWidgetTooltipStyle } from "../../Dashboard"
-import { IDiscoveryWidgetSettings, IDiscoveryWidgetConfiguration, IDiscoveryWidgetFacetsSettings, IDiscoveryWidgetSearchSettings } from "../../interfaces/DashboardDiscoveryWidget"
-import { getFormattedWidgetColumns } from "../common/WidgetColumnHelper"
-import { getFormattedInteractions } from "../common/WidgetInteractionsHelper"
-import { getFiltersForColumns } from "../DashboardBackwardCompatibilityHelper"
-import { getFormattedStyle } from "../tableWidget/TableWidgetStyleHelper"
-import { getFormattedDiscoveryConfiguration } from "./DiscoveryWidgetConfigurationHelper"
-import { getStyleFromColumn, getTooltipFromColumn } from "../tableWidget/TableWidgetColumnSettingsHelper"
+import { ITableWidgetStyle, IWidget, IDashboardDriver, IWidgetInteractions, IWidgetResponsive, ITableWidgetTooltipStyle } from '../../Dashboard'
+import { IDiscoveryWidgetSettings, IDiscoveryWidgetConfiguration, IDiscoveryWidgetFacetsSettings, IDiscoveryWidgetSearchSettings } from '../../interfaces/DashboardDiscoveryWidget'
+import { getFormattedWidgetColumns } from '../common/WidgetColumnHelper'
+import { getFormattedInteractions } from '../common/WidgetInteractionsHelper'
+import { getFiltersForColumns } from '../DashboardBackwardCompatibilityHelper'
+import { getFormattedStyle } from '../tableWidget/TableWidgetStyleHelper'
+import { getFormattedDiscoveryConfiguration } from './DiscoveryWidgetConfigurationHelper'
+import { getStyleFromColumn, getTooltipFromColumn } from '../tableWidget/TableWidgetColumnSettingsHelper'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
-import * as  discoveryWidgetDefaultValues from '../../widget/WidgetEditor/helpers/discoveryWidget/DiscoveryWidgetDefaultValues'
+import * as discoveryWidgetDefaultValues from '../../widget/WidgetEditor/helpers/discoveryWidget/DiscoveryWidgetDefaultValues'
 import * as tableWidgetDefaultValues from '../../widget/WidgetEditor/helpers/tableWidget/TableWidgetDefaultValues'
-
 
 const columnNameIdMap = {}
 
 export const formatDiscoveryWidget = (widget: any, drivers: IDashboardDriver[]) => {
-
-    console.log(">>>>>>>>>>> OLD WIDGET MODEL: ", widget)
+    console.log('>>>>>>>>>>> OLD WIDGET MODEL: ', widget)
 
     const formattedWidget = {
         id: widget.id,
@@ -30,11 +28,10 @@ export const formatDiscoveryWidget = (widget: any, drivers: IDashboardDriver[]) 
     getFiltersForColumns(formattedWidget, widget)
     getSettingsFromWidgetColumns(formattedWidget, widget)
 
-    console.log(">>>>>>>>>>> FORMATTED WIDGET MODEL: ", formattedWidget)
+    console.log('>>>>>>>>>>> FORMATTED WIDGET MODEL: ', formattedWidget)
 
     return formattedWidget
 }
-
 
 const getFormattedWidgetSettings = (widget: any, drivers: IDashboardDriver[]) => {
     const formattedSettings = {
@@ -70,9 +67,11 @@ const getFormattedSearchSettings = (widget: any, drivers: IDashboardDriver[]) =>
     formattedSearchSettings.default = widget.settings.defaultTextSearch
     formattedSearchSettings.defaultType = widget.settings.defaultTextSearchType
 
-    if (widget.settings.defaultTextSearchType === 'static')
-        formattedSearchSettings.defaultValue = widget.search.text
+    if (widget.settings.defaultTextSearchType === 'static') formattedSearchSettings.defaultValue = widget.search.text
     else formattSearchSettingsWithDriverValue(widget.settings.defaultTextSearchValue, drivers, formattedSearchSettings)
+
+    if (widget.search.facets) formatFacetSearchParams(widget, formattedSearchSettings)
+    else formattedSearchSettings.facetSearchParams = {}
 
     return formattedSearchSettings
 }
@@ -92,4 +91,13 @@ const getSettingsFromWidgetColumns = (formattedWidget: IWidget, widget: any) => 
         getTooltipFromColumn(formattedWidget, tempColumn)
         getStyleFromColumn(formattedWidget, tempColumn, columnNameIdMap)
     }
+}
+
+const formatFacetSearchParams = (widget, formattedSearchSettings: IDiscoveryWidgetSearchSettings) => {
+    formattedSearchSettings.facetSearchParams = {}
+    Object.keys(widget.search.facets).forEach((facet) => {
+        if (widget.search.facets[facet].filterVals.length > 0) {
+            formattedSearchSettings.facetSearchParams[facet] = widget.search.facets[facet].filterVals
+        }
+    })
 }
