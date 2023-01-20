@@ -1,9 +1,9 @@
-import { IWidgetInteractions, IWidgetResponsive } from "../Dashboard";
+import { IWidgetExports, IWidgetInteractions, IWidgetResponsive } from "../Dashboard";
 
 export interface IImageWidgetSettings {
     updatable: boolean,
     clickable: boolean,
-    image: IImageWidgetImageSettings
+    configuration: IImageWidgetConfiguration
     style: IImageWidgetStyle,
     interactions: IWidgetInteractions,
     responsive: IWidgetResponsive
@@ -17,6 +17,11 @@ export interface IImageWidgetImageSettings {
         "background-position-x": "left" | "center" | "right",
         "background-position-y": "top" | "center" | "bottom"
     },
+}
+
+export interface IImageWidgetConfiguration {
+    image: IImageWidgetImageSettings,
+    exports: IWidgetExports
 }
 
 export interface IImageWidgetStyle {

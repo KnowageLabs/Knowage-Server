@@ -1,5 +1,5 @@
-import { IWidget, IWidgetInteractions } from "../../Dashboard"
-import { IImageWidgetImageSettings, IImageWidgetSettings } from "../../interfaces/DashboardImageWidget"
+import { IWidget, IWidgetExports, IWidgetInteractions } from "../../Dashboard"
+import { IImageWidgetImageSettings, IImageWidgetSettings, IImageWidgetConfiguration } from "../../interfaces/DashboardImageWidget"
 import { getFormattedInteractions } from "../common/WidgetInteractionsHelper"
 import { getFormattedStyle } from "./ImageWidgetStyleHelper"
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
@@ -28,7 +28,7 @@ const getFormattedWidgetSettings = (widget: any) => {
     const formattedSettings = {
         updatable: widget.updateble,
         clickable: widget.cliccable,
-        image: getFormattedImageSettings(widget),
+        configuration: getFormattedConfiguration(widget),
         style: getFormattedStyle(widget),
         interactions: getFormattedInteractions(widget) as IWidgetInteractions,
         responsive: widgetCommonDefaultValues.getDefaultResponsivnes()
@@ -36,8 +36,12 @@ const getFormattedWidgetSettings = (widget: any) => {
     return formattedSettings
 }
 
+const getFormattedConfiguration = (widget: any) => {
+    return { image: getFormattedImageSettings(widget), exports: { showExcelExport: widget.style?.showExcelExport ?? false } as IWidgetExports } as IImageWidgetConfiguration
+}
+
+
 const getFormattedImageSettings = (widget: any) => {
-    // TODO - move to default
     const formattedImageSettings = {
         id: -1,
         style: imageWidgetDefaultValues.getdefaultImageStyleSettings()

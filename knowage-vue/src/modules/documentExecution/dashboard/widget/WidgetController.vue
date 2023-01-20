@@ -109,7 +109,7 @@ export default defineComponent({
     computed: {
         ...mapState(store, ['dashboards']),
         playSelectionButtonVisible(): boolean {
-            if (!this.widget || !this.widget.settings.configuration.selectorType) return false
+            if (!this.widget || !this.widget.settings.configuration || !this.widget.settings.configuration.selectorType) return false
             return this.widget.type === 'selector' && ['multiValue', 'multiDropdown', 'dateRange'].includes(this.widget.settings.configuration.selectorType.modality) && !this.selectionIsLocked
         }
     },

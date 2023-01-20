@@ -84,6 +84,8 @@
             :variables="variables"
             :dashboardId="dashboardId"
         ></DiscoveryWidgetSettingsContainer>
+        <ImageWidgetSettingsContainer v-else-if="propWidget.type === 'image'" class="model-div kn-flex kn-overflow p-py-3 p-pr-3" :widgetModel="propWidget" :selectedSetting="selectedSetting" :datasets="datasets" :selectedDatasets="selectedDatasets" :variables="variables" :dashboardId="dashboardId">
+        </ImageWidgetSettingsContainer>
     </div>
 </template>
 
@@ -99,6 +101,7 @@ import TextWidgetSettingsContainer from './TextWidget/TextWidgetSettingsContaine
 import HighchartsWidgetSettingsContainer from './ChartWidget/highcharts/HighchartsWidgetSettingsContainer.vue'
 import ChartJSWidgetSettingsContainer from './ChartWidget/chartJS/ChartJSWidgetSettingsContainer.vue'
 import DiscoveryWidgetSettingsContainer from './DiscoveryWidget/DiscoveryWidgetSettingsContainer.vue'
+import ImageWidgetSettingsContainer from './ImageWidget/ImageWidgetSettingsContainer.vue'
 import selectorDescriptor from './SelectorWidget/SelectorWidgetSettingsDescriptor.json'
 import selectionsDescriptor from './SelectionsWidget/SelectionsWidgetSettingsDescriptor.json'
 import WidgetEditorSettingsList from './WidgetEditorSettingsList.vue'
@@ -110,6 +113,7 @@ import HighchartsGaugeSettingsDescriptor from './ChartWidget/highcharts/descript
 import HighchartsActivityGaugeSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsActivityGaugeSettingsDescriptor.json'
 import HighchartsSolidGaugeSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsSolidGaugeSettingsDescriptor.json'
 import discoveryDescriptor from './DiscoveryWidget/DiscoveryWidgetSettingsDescriptor.json'
+import imageDescriptor from './ImageWidget/ImageWidgetSettingsDescriptor.json'
 
 export default defineComponent({
     name: 'widget-editor-settings-tab',
@@ -122,7 +126,8 @@ export default defineComponent({
         TextWidgetSettingsContainer,
         HighchartsWidgetSettingsContainer,
         ChartJSWidgetSettingsContainer,
-        DiscoveryWidgetSettingsContainer
+        DiscoveryWidgetSettingsContainer,
+        ImageWidgetSettingsContainer
     },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
@@ -180,6 +185,9 @@ export default defineComponent({
                     break
                 case 'discovery':
                     this.descriptor = discoveryDescriptor
+                    break
+                case 'image':
+                    this.descriptor = imageDescriptor
             }
         },
         getHighchartsDescriptor() {
