@@ -673,6 +673,15 @@
                 "italic": "Italic",
                 "textAlignment": "Text alignment"
             },
+            "imageWidget": {
+                "imageUploadErrors": {
+                    "fileIsNotAnImage": "File is not an image",
+                    "fileTypeIsNotAllowed": "File type is not allowed",
+                    "noMoreImages": "No more images can be added",
+                    "tooBigImage": "Image is too big",
+                    "tooManyUserImages": "No more images can be added by this user. Delete some or ask the administrator to put an higher limit"
+                }
+            },
             "inputHintForPixels": "use px measure unit, ie: 5px",
             "inside": "Inside",
             "interactions": {

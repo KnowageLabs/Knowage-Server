@@ -5,6 +5,10 @@
                 {{ $t('common.info.noDataFound') }}
             </Message>
             <template v-else>
+                <div class="p-col-12 p-d-flex p-jc-center">
+                    <Button icon="fas fa-upload fa-1x" class="p-button-text p-button-plain p-ml-2" @click="setImageUploadType" />
+                    <KnInputFile :changeFunction="setImageForUpload" accept=".png, .jpg, .jpeg" :triggerInput="triggerImageUpload" />
+                </div>
                 <ImageWidgetGalleryCard v-for="(image, index) of images" :key="index" :imageProp="image" @delete="onImageDelete" />
             </template>
         </div>
@@ -20,17 +24,19 @@ import { AxiosResponse } from 'axios'
 import appStore from '@/App.store'
 import descriptor from './ImageWidgetGalleryDescriptor.json'
 import ImageWidgetGalleryCard from './ImageWidgetGalleryCard.vue'
+import KnInputFile from '@/components/UI/KnInputFile.vue'
 import Message from 'primevue/message'
 
 export default defineComponent({
     name: 'image-widget-gallery',
-    components: { ImageWidgetGalleryCard, Message },
+    components: { ImageWidgetGalleryCard, KnInputFile, Message },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, imagesListProp: { type: Array as PropType<IImage[]>, required: true } },
     emits: [],
     data() {
         return {
             descriptor,
-            images: [] as IImage[]
+            images: [] as IImage[],
+            triggerImageUpload: false
         }
     },
     watch: {
@@ -45,6 +51,32 @@ export default defineComponent({
         ...mapActions(appStore, ['setInfo', 'setError', 'setLoading']),
         loadImages() {
             this.images = this.imagesListProp
+        },
+        setImageUploadType() {
+            this.triggerImageUpload = false
+            setTimeout(() => (this.triggerImageUpload = true), 200)
+        },
+        async setImageForUpload(event: any) {
+            this.setLoading(true)
+            console.log('>>>>> EVENT: ', event)
+            const imageToUpload = event.target.files[0]
+            console.log('>>>>> imageToUpload: ', imageToUpload)
+
+            if (imageToUpload) {
+                var formData = new FormData()
+                formData.append('uploadedImage', imageToUpload)
+                await this.$http
+                    .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/images/addImage`, formData, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
+                    .then((response: AxiosResponse<any>) => {
+                        if (response.data.success) this.setInfo({ title: this.$t('common.toast.success'), msg: this.$t('common.toast.uploadSuccess') })
+                        else this.onImageUploadError(response.data.msg)
+                    })
+                    .catch(() => this.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.info.imageUploadError') }))
+            }
+            this.setLoading(false)
+        },
+        onImageUploadError(errorMessageKey: string) {
+            console.log('>>>>>>>>> errorMessageKey: ', errorMessageKey)
         },
         async onImageDelete(image: IImage) {
             await this.deleteImage(image)
