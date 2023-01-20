@@ -107,7 +107,7 @@
                     </div>
                 </div>
             </div>
-            <KnParameterSidebar v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="dataset" :userRole="userRole" :propMode="'qbeView'" :propQBEParameters="qbe?.pars" @execute="onExecute" @roleChanged="onRoleChange"></KnParameterSidebar>
+            <KnParameterSidebar v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="dataset || sourceDataset" :userRole="userRole" :propMode="'qbeView'" :propQBEParameters="qbe?.pars" @execute="onExecute" @roleChanged="onRoleChange"></KnParameterSidebar>
         </div>
 
         <QBEPreviewDialog v-show="!loading && qbePreviewDialogVisible" :id="uniqueID" :queryPreviewData="queryPreviewData" :pagination="pagination" :entities="entities?.entities" :selectedQuery="selectedQuery" @close="closePreview" @pageChanged="updatePagination($event)"> </QBEPreviewDialog>
@@ -1014,6 +1014,7 @@ export default defineComponent({
                 this.qbe.pars = [...qbeParameters]
                 if (this.dataset && !this.dataset.dataSourceId && !this.dataset.federation_id) {
                     await this.loadDataset()
+                } else if (this.sourceDataset) {
                 } else {
                     this.qbe = this.getQBEFromModel()
                 }
