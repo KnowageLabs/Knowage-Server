@@ -1,16 +1,21 @@
 <template>
-    <div v-if="widgetModel" class="dashboard-card-shadow kn-height-full p-ml-1 p-d-flex p-flex-column">
+    <div v-if="widgetModel" class="dashboard-card-shadow kn-height-full p-ml-1 p-d-flex p-flex-row">
         <div class="p-grid p-m-2 kn-flex kn-overflow dashboard-scrollbar">
             <Message v-if="images.length == 0" class="kn-flex p-m-2" severity="info" :closable="false">
                 {{ $t('common.info.noDataFound') }}
             </Message>
-            <template v-else>
+            <div v-else id="image-widget-gallery-content" class="p-grid p-m-2 kn-flex kn-overflow dashboard-scrollbar">
+                <div v-if="selectedImage" id="image-widget-gallery-backdrop" class="kn-flex" @click="selectedImage = null"></div>
                 <div class="p-col-12 p-d-flex p-jc-center">
                     <Button icon="fas fa-upload fa-1x" class="p-button-text p-button-plain p-ml-2" @click="setImageUploadType" />
                     <KnInputFile :changeFunction="setImageForUpload" accept=".png, .jpg, .jpeg" :triggerInput="triggerImageUpload" />
                 </div>
-                <ImageWidgetGalleryCard v-for="(image, index) of images" :key="index" :imageProp="image" @delete="onImageDelete" />
-            </template>
+                <ImageWidgetGalleryCard v-for="(image, index) of images" :key="index" class="kn-cursor-pointer" :imageProp="image" @click="setSelectedImage(image)" @delete="onImageDelete" />
+
+                <div v-if="selectedImage" id="image-widget-gallery-card-sidebar-container">
+                    <ImageWidgetGallerySidebar :selectedImage="selectedImage" @close="selectedImage = null"></ImageWidgetGallerySidebar>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -26,17 +31,19 @@ import descriptor from './ImageWidgetGalleryDescriptor.json'
 import ImageWidgetGalleryCard from './ImageWidgetGalleryCard.vue'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 import Message from 'primevue/message'
+import ImageWidgetGallerySidebar from './ImageWidgetGallerySidebar.vue'
 
 export default defineComponent({
     name: 'image-widget-gallery',
-    components: { ImageWidgetGalleryCard, KnInputFile, Message },
+    components: { ImageWidgetGalleryCard, KnInputFile, Message, ImageWidgetGallerySidebar },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, imagesListProp: { type: Array as PropType<IImage[]>, required: true } },
     emits: ['uploadedImage'],
     data() {
         return {
             descriptor,
             images: [] as IImage[],
-            triggerImageUpload: false
+            triggerImageUpload: false,
+            selectedImage: null as IImage | null
         }
     },
     watch: {
@@ -115,6 +122,9 @@ export default defineComponent({
                 this.images.splice(index, 1)
                 this.setInfo({ title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
             }
+        },
+        setSelectedImage(image: IImage) {
+            this.selectedImage = image
         }
     }
 })
@@ -127,5 +137,29 @@ export default defineComponent({
 }
 .gallery-card:hover {
     border-color: #43749e !important;
+}
+
+#image-widget-gallery-card-sidebar-container {
+    position: absolute;
+    max-width: 350px;
+    height: 100%;
+    right: 0;
+    top: 0;
+    z-index: 150;
+}
+
+#image-widget-gallery-backdrop {
+    background-color: rgba(33, 33, 33, 1);
+    opacity: 0.48;
+    z-index: 50;
+    position: absolute;
+    width: 100%;
+    min-height: 100%;
+    top: 0;
+    left: 0;
+}
+
+#image-widget-gallery-content {
+    position: relative;
 }
 </style>

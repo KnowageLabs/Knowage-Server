@@ -244,6 +244,7 @@
         "uploadFileSuccess": "File uploaded",
         "uploading": "Uploading",
         "uppercaseDelete": "Delete",
+        "url": "URL",
         "validation": {
             "maxLength": "This field must have less then {max} characters",
             "maximumCharacters": "The maximum length allowed is {max}",
