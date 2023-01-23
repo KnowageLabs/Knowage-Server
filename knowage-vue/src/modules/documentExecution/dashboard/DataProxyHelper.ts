@@ -554,7 +554,6 @@ const formatChartWidgetForGet = (propWidget: IWidget, dataset: IDashboardDataset
 //#endregion ================================================================================================
 
 const getDiscoveryChartData = async (widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
-    console.log('widgetModel', widget)
     var datasetIndex = datasets.findIndex((dataset: IDashboardDataset) => widget.dataset === dataset.id)
     var selectedDataset = datasets[datasetIndex]
 

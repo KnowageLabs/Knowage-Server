@@ -1,6 +1,7 @@
 <template>
     <div ref="widgetPreviewContainer" class="widget-editor-preview-container p-d-flex p-flex-column p-ai-stretch p-jc-center kn-overflow">
         <div class="preview-buttons-container p-d-flex" style="position: absolute; top: 38px; right: 10px">
+            <Button icon="fas fa-terminal" class="p-button-rounded p-button-text p-button-plain expand-button" @click="logStuff" />
             <Button icon="fas fa-maximize" class="p-button-rounded p-button-text p-button-plain expand-button" @click="toggleExpandPreview" />
             <Button icon="fas fa-rotate-right" class="p-button-rounded p-button-text p-button-plain" @click="getWidgetData" />
         </div>
@@ -120,6 +121,12 @@ export default defineComponent({
             setTimeout(() => {
                 emitter.emit('chartWidgetResized', this.propWidget)
             }, 250)
+        },
+        logStuff() {
+            console.group('facet selected ------------------------------------')
+            console.log('WIDGET', this.propWidget)
+            console.log('DATA', this.widgetData)
+            console.groupEnd()
         }
     }
 })
@@ -145,18 +152,18 @@ export default defineComponent({
 .widget-editor-preview-container.expand {
     flex: 10000;
 }
-@media screen and (max-width: 1199px) {
-    .widget-editor-preview-container {
-        -webkit-transition: width 0.3s;
-        transition: flex 0.3s;
-        flex: 0;
-    }
-}
-@media screen and (min-width: 1200px) {
-    .widget-editor-preview-container {
-        -webkit-transition: width 0.3s;
-        transition: flex 0.3s;
-        flex: 0.5;
-    }
-}
+// @media screen and (max-width: 1199px) {
+//     .widget-editor-preview-container {
+//         -webkit-transition: width 0.3s;
+//         transition: flex 0.3s;
+//         flex: 0;
+//     }
+// }
+// @media screen and (min-width: 1200px) {
+//     .widget-editor-preview-container {
+//         -webkit-transition: width 0.3s;
+//         transition: flex 0.3s;
+//         flex: 0.5;
+//     }
+// }
 </style>
