@@ -118,6 +118,7 @@ export default defineComponent({
     created() {
         this.tableData = this.dataToShow
         this.setEventListeners()
+        this.loadSearchValue()
         this.setFacetData()
         this.loadActiveSelections()
         this.setupDatatableOptions()
@@ -140,6 +141,9 @@ export default defineComponent({
         removeEventListeners() {
             // emitter.off('refreshTable', this.refreshGridConfigurationWithoutData)
             // emitter.off('selectionsDeleted', this.onSelectionsDeleted)
+        },
+        loadSearchValue() {
+            this.searchWord = this.propWidget.settings.search.defaultValue ?? ''
         },
         setInitialWidgetWidth() {
             const temp = this.$refs['discoveryContainer'] as any
