@@ -169,7 +169,7 @@ export default defineComponent({
         setFacetData() {
             if (!this.tableData.facets) return
             let facetSettings = this.propWidget.settings.facets
-            var facetKeys = Object.keys(this.tableData?.facets)
+            var facetKeys = Object.keys(this.tableData.facets)
             if (facetSettings.enabled && facetKeys) {
                 facetKeys.forEach((facetName) => {
                     if (facetSettings.columns.includes(facetName)) this.facetsToDisplay[facetName] = { ...this.tableData.facets[facetName] }

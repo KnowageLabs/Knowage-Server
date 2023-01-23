@@ -6,6 +6,7 @@ import { getFiltersForColumns } from '../DashboardBackwardCompatibilityHelper'
 import { getFormattedStyle } from '../tableWidget/TableWidgetStyleHelper'
 import { getFormattedDiscoveryConfiguration } from './DiscoveryWidgetConfigurationHelper'
 import { getStyleFromColumn, getTooltipFromColumn } from '../tableWidget/TableWidgetColumnSettingsHelper'
+import { getFormattedPaginations } from '../tableWidget/TableWidgetCompatibilityHelper'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import * as discoveryWidgetDefaultValues from '../../widget/WidgetEditor/helpers/discoveryWidget/DiscoveryWidgetDefaultValues'
 import * as tableWidgetDefaultValues from '../../widget/WidgetEditor/helpers/tableWidget/TableWidgetDefaultValues'
@@ -41,6 +42,7 @@ const getFormattedWidgetSettings = (widget: any, drivers: IDashboardDriver[]) =>
         search: getFormattedSearchSettings(widget, drivers) as IDiscoveryWidgetSearchSettings,
         configuration: getFormattedDiscoveryConfiguration(widget) as IDiscoveryWidgetConfiguration,
         interactions: getFormattedInteractions(widget) as IWidgetInteractions,
+        pagination: getFormattedPaginations(widget),
         style: getFormattedStyle(widget) as ITableWidgetStyle,
         tooltips: tableWidgetDefaultValues.getDefaultTooltips() as ITableWidgetTooltipStyle[],
         responsive: widgetCommonDefaultValues.getDefaultResponsivnes() as IWidgetResponsive

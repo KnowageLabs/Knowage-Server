@@ -1,8 +1,8 @@
 <template>
     <div v-show="widgetModel">
-        <ImageWidgetSettingsAccordion v-if="selectedSetting != 'Gallery'" :widgetModel="widgetModel" :settings="descriptor.settings[selectedSetting]" :datasets="datasets" :selectedDatasets="selectedDatasets" :variables="variables" :dashboardId="dashboardId"></ImageWidgetSettingsAccordion>
+        <ImageWidgetSettingsAccordion v-if="setting != 'Gallery'" :widgetModel="widgetModel" :settings="descriptor.settings[setting]" :datasets="datasets" :selectedDatasets="selectedDatasets" :variables="variables" :dashboardId="dashboardId"></ImageWidgetSettingsAccordion>
 
-        <ImageWidgetGallery v-if="selectedSetting == 'Gallery'" :widgetModel="widgetModel" :imagesListProp="imagesList" @uploadedImage="loadImages"></ImageWidgetGallery>
+        <ImageWidgetGallery v-if="setting == 'Gallery'" :widgetModel="widgetModel" :imagesListProp="imagesList" @uploadedImage="loadImages"></ImageWidgetGallery>
     </div>
 </template>
 
@@ -28,17 +28,33 @@ export default defineComponent({
         variables: { type: Array as PropType<IVariable[]>, required: true },
         dashboardId: { type: String, required: true }
     },
+    emits: ['settingSelected'],
     data() {
         return {
             descriptor,
-            imagesList: [] as IImage[]
+            imagesList: [] as IImage[],
+            setting: ''
+        }
+    },
+    watch: {
+        selectedSetting() {
+            this.loadSelectedSetting()
         }
     },
     created() {
         this.loadImages()
+        this.loadSelectedSetting()
     },
     methods: {
         ...mapActions(appStore, ['setLoading']),
+        loadSelectedSetting() {
+            if (!this.selectedSetting) {
+                this.setting = 'Gallery'
+                this.$emit('settingSelected', this.setting)
+            } else {
+                this.setting = this.selectedSetting
+            }
+        },
         async loadImages() {
             this.setLoading(true)
             await this.$http

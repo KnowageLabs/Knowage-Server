@@ -195,7 +195,7 @@ export const formatWidget = (widget: any, formattedModel: IDashboard, user: any,
 
     switch (widget.type) {
         case 'table':
-            formattedWidget = formatTableWidget(widget, formattedModel)
+            formattedWidget = formatTableWidget(widget, formattedModel, drivers)
             break
         case 'selector':
             formattedWidget = formatSelectorWidget(widget)

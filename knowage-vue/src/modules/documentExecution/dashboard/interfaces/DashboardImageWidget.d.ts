@@ -9,11 +9,11 @@ export interface IImageWidgetSettings {
     responsive: IWidgetResponsive
 }
 
-
 export interface IImageWidgetConfiguration {
     image: IImageWidgetImageSettings,
     exports: IWidgetExports
 }
+
 export interface IImageWidgetImageSettings {
     id: number,
     style: {

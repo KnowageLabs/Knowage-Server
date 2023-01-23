@@ -1,4 +1,4 @@
-import { ITableWidgetCustomMessages, IWidgetBackgroundStyle, IWidgetBordersStyle, IWidgetExports, IWidgetInteractions, IWidgetPaddingStyle, IWidgetResponsive, IWidgetShadowsStyle, IWidgetTitle } from '../Dashboard'
+import { ITableWidgetColumnStyles, ITableWidgetCustomMessages, ITableWidgetPagination, IWidgetBackgroundStyle, IWidgetBordersStyle, IWidgetExports, IWidgetInteractions, IWidgetPaddingStyle, IWidgetResponsive, IWidgetShadowsStyle, IWidgetTitle } from '../Dashboard'
 
 export interface IDiscoveryWidgetSettings {
     updatable: boolean
@@ -7,6 +7,7 @@ export interface IDiscoveryWidgetSettings {
     facets: IDiscoveryWidgetFacetsSettings
     search: IDiscoveryWidgetSearchSettings
     interactions: IWidgetInteractions
+    pagination: ITableWidgetPagination
     style: IDiscoveryWidgetStyle
     tooltips: ITableWidgetTooltipStyle[]
     responsive: IWidgetResponsive
@@ -14,8 +15,10 @@ export interface IDiscoveryWidgetSettings {
 
 export interface IDiscoveryWidgetStyle {
     title: IWidgetTitle
-    padding: IWidgetPaddingStyle
     borders: IWidgetBordersStyle
+    columns: ITableWidgetColumnStyles
+    padding: IWidgetPaddingStyle
+    rows: IWidgetRowsStyle
     shadows: IWidgetShadowsStyle
     background: IWidgetBackgroundStyle
 }
