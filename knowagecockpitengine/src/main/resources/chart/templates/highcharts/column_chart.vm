@@ -1637,7 +1637,8 @@
 		                      	
 		                      	var precision = '${relatedSerie.precision}';
 		                      	var showPercentage = ${relatedSerie.showPercentage};
-		                      	
+		                      	var showValue = ${relatedSerie.showValue};
+		                      		
 		                      	switch(scaleFactor.toUpperCase()) {
 		                      	
 		                      		case "EMPTY":
@@ -1676,11 +1677,15 @@
 		                 				   percentage = 100 * value/groupTotal;	
 		                 				     
 		                 				   var precisePercentage = percentage.toFixed(precision);		
-		                 				   
+		                 				    if (showPercentage && showValue) {
+		                 				   		 return prefixValue + ' ' + newValue + sufixValue +  ' ( ' + prefixValue + precisePercentage + '%' + sufixValue + ' ) ' ;
+		                 				    }
 		                 					if(showPercentage){
 												return prefixValue + ' ' + precisePercentage + '%' + sufixValue;										
 											} else {
+												if (showValue) {
 												return prefixValue + ' ' + newValue + ' ' + sufixValue;
+												}
 											}	                       
 	                   
 			            	},
