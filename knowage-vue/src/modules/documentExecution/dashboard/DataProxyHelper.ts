@@ -216,7 +216,6 @@ export const getTableWidgetData = async (widget: IWidget, datasets: IDashboardDa
             .then((response: AxiosResponse<any>) => {
                 tempResponse = response.data
                 if (pagination.enabled) widget.settings.pagination.properties.totalItems = response.data.results
-                // pagination.totalItems = response.data.results
             })
             .catch((error: any) => {
                 showGetDataError(error, selectedDataset.dsLabel)
@@ -561,11 +560,12 @@ const getDiscoveryChartData = async (widget: IWidget, datasets: IDashboardDatase
 
     if (selectedDataset) {
         var url = ''
-        // let pagination = widget.settings.pagination
-        let pagination = { enabled: false }
-        if (pagination.enabled) {
-            // url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=${pagination.properties.offset}&size=${pagination.properties.itemsNumber}&nearRealtime=true`
-        } else url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=0&size=10&nearRealtime=true&widgetName=widget_discovery_1674120861663`
+        if (!widget.settings.pagination) {
+            let pagination = { enabled: true, properties: { offset: 0, itemsNumber: 10, totalItems: null } }
+            widget.settings.pagination = pagination
+        }
+
+        url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=${widget.settings.pagination.properties.offset}&size=${widget.settings.pagination.properties.itemsNumber}&nearRealtime=true`
 
         let postData = formatDiscoveryModelForGet(widget, selectedDataset, initialCall, selections, associativeResponseSelections)
         var tempResponse = null as any
@@ -575,7 +575,7 @@ const getDiscoveryChartData = async (widget: IWidget, datasets: IDashboardDatase
             .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData, { headers: { 'X-Disable-Errors': 'true' } })
             .then((response: AxiosResponse<any>) => {
                 tempResponse = response.data
-                if (pagination.enabled) widget.settings.pagination.properties.totalItems = response.data.results
+                if (widget.settings.pagination.enabled) widget.settings.pagination.properties.totalItems = response.data.results
             })
             .catch((error: any) => {
                 showGetDataError(error, selectedDataset.dsLabel)
