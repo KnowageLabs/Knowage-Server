@@ -1,7 +1,5 @@
 <template>
-    <div class="p-d-flex p-flex-column kn-flex kn-overflow-y dashboard-scrollbar">
-        <img :src="imageUrl" alt="Image Widget" :style="{ height: height, width: width }" />
-    </div>
+    <div id="container" :style="imageUrl"></div>
 </template>
 
 <script lang="ts">
@@ -16,13 +14,19 @@ export default defineComponent({
     emits: ['close'],
     data() {
         return {
-            height: 'auto',
-            width: 'auto'
+            height: '',
+            width: '',
+            backgroundPositionX: 'center',
+            backgroundPositionY: 'center'
         }
     },
     computed: {
         imageUrl() {
-            return this.widgetModel.settings.configuration?.image?.id ? import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/images/getImage?IMAGES_ID=${this.widgetModel.settings.configuration.image.id}&preview=true` : ''
+            return {
+                'background-size': this.width + ' ' + this.height,
+                'background-position': this.backgroundPositionX + ' ' + this.backgroundPositionY,
+                'background-image': `url(/knowage/restful-services/1.0/images/getImage?IMAGES_ID=${this.widgetModel.settings.configuration.image.id})`
+            }
         }
     },
     created() {
@@ -40,12 +44,22 @@ export default defineComponent({
             emitter.off('refreshImageWidget', this.onRefreshImageWidget)
         },
         onRefreshImageWidget(widgetId: any | null = null) {
-            console.log('------------- onRefreshImageWidget!!!!', this.widgetModel)
             if (widgetId && widgetId !== this.widgetModel.id) return
-            console.log('------------- GOT HERE!!!!')
             this.height = this.widgetModel.settings.configuration.image.style.height
             this.width = this.widgetModel.settings.configuration.image.style.width
+            this.backgroundPositionX = this.widgetModel.settings.configuration.image.style['background-position-x']
+            this.backgroundPositionY = this.widgetModel.settings.configuration.image.style['background-position-y']
         }
     }
 })
 </script>
+
+<style lang="scss" scoped>
+#container {
+    outline: none;
+    height: 100%;
+    width: 100%;
+    background-repeat: no-repeat;
+    position: relative;
+}
+</style>
