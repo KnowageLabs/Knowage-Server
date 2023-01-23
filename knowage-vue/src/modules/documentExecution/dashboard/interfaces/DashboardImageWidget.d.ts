@@ -9,6 +9,11 @@ export interface IImageWidgetSettings {
     responsive: IWidgetResponsive
 }
 
+
+export interface IImageWidgetConfiguration {
+    image: IImageWidgetImageSettings,
+    exports: IWidgetExports
+}
 export interface IImageWidgetImageSettings {
     id: number,
     style: {
@@ -17,11 +22,6 @@ export interface IImageWidgetImageSettings {
         "background-position-x": "left" | "center" | "right",
         "background-position-y": "top" | "center" | "bottom"
     },
-}
-
-export interface IImageWidgetConfiguration {
-    image: IImageWidgetImageSettings,
-    exports: IWidgetExports
 }
 
 export interface IImageWidgetStyle {

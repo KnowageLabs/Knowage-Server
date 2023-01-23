@@ -6,9 +6,10 @@
             </Message>
             <div v-else id="image-widget-gallery-content" class="p-grid p-m-2 kn-flex kn-overflow dashboard-scrollbar">
                 <div v-if="sidebarVisible" id="image-widget-gallery-backdrop" class="kn-flex" @click="sidebarVisible = false"></div>
-                <div class="p-col-12 p-d-flex p-jc-center">
+                <div class="p-col-12 p-d-flex p-jc-center p-ai-center">
                     <Button icon="fas fa-upload fa-1x" class="p-button-text p-button-plain p-ml-2" @click="setImageUploadType" />
                     <KnInputFile :changeFunction="setImageForUpload" accept=".png, .jpg, .jpeg" :triggerInput="triggerImageUpload" />
+                    <label class="kn-material-input-label p-mr-5"> {{ $t('dashboard.widgetEditor.imageWidget.uploadImage') }} </label>
                 </div>
                 <ImageWidgetGalleryCard v-for="(image, index) of images" :key="index" class="p-col-12 p-md-6 p-lg-4 kn-cursor-pointer" :isSelected="selectedImage?.imgId === image.imgId" :imageProp="image" @click="setSelectedImage(image)" @delete="onImageDelete" />
 
@@ -133,7 +134,9 @@ export default defineComponent({
         },
         setSelectedImage(image: IImage) {
             this.selectedImage = image
+            this.widgetModel.settings.configuration.image.id = image.imgId
             this.sidebarVisible = true
+            console.log('>>>>> CAAAAAAAAALED !!!: ')
         }
     }
 })
