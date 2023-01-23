@@ -32,6 +32,7 @@
                 :widgetLoading="widgetLoading"
                 @pageChanged="$emit('reloadData')"
                 @facetsChanged="$emit('reloadData')"
+                @searchWordChanged="$emit('reloadData')"
             />
             <ImageWidget v-if="widget.type === 'image'" :widgetModel="widget" :dashboardId="dashboardId" :editorMode="false" />
         </div>

@@ -599,9 +599,11 @@ const formatDiscoveryModelForGet = (propWidget: IWidget, dataset: IDashboardData
         parameters: {},
         selections: {},
         drivers: {},
-        indexes: []
+        indexes: [],
+        likeSelections: {}
     } as any
 
+    dataToSend.likeSelections[dataset.dsLabel] = {}
     addSelectionsToData(dataToSend, propWidget, dataset.dsLabel, initialCall, selections, associativeResponseSelections)
 
     dataToSend.aggregations.dataset = dataset.dsLabel
@@ -629,12 +631,16 @@ const formatDiscoveryModelForGet = (propWidget: IWidget, dataset: IDashboardData
         })
     }
 
+    let searchWordSettings = propWidget.settings.search
+    if (searchWordSettings.enabled && searchWordSettings.searchWord && searchWordSettings.columns.length > 0) {
+        var searchPropName = searchWordSettings.columns.join(',')
+        dataToSend.likeSelections[dataset.dsLabel][searchPropName] = searchWordSettings.searchWord.trim()
+    }
+
     let facetSearchParams = propWidget.settings.search.facetSearchParams
     if (facetSearchParams) {
         var facetKeys = Object.keys(facetSearchParams)
         if (facetKeys.length > 0) {
-            dataToSend.likeSelections = {}
-            dataToSend.likeSelections[dataset.dsLabel] = {}
             facetKeys.forEach((facetName) => {
                 dataToSend.likeSelections[dataset.dsLabel][facetName] = facetSearchParams[facetName][0]
             })

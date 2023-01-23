@@ -2,9 +2,8 @@
     <div ref="discoveryContainer" class="discovery-container" v-resize="onWidgetSizeChange">
         <ProgressSpinner v-if="widgetLoading" class="kn-progress-spinner" />
         <div class="kn-width-full p-d-flex p-mb-2">
-            <!-- <InputText class="kn-material-input p-m-3 model-search"  v-model="searchInput" type="text" :placeholder="$t('common.search')" @input="searchItems"  /> -->
             <Button v-if="widgetWidth < 600" :icon="burgerIcon" class="p-button-text p-button-rounded p-button-plain p-as-center" @click="toggleFacets" />
-            <InputText class="kn-material-input kn-flex" v-model="searchInput" type="text" :placeholder="$t('common.search')" @input="" />
+            <InputText class="kn-material-input kn-flex" v-model="searchWord" type="text" :placeholder="$t('common.search')" @blur="searchItems" />
         </div>
         <div class="discovery-content">
             <div ref="facetsContainer" :class="[widgetWidth < 600 ? 'sidenav' : '']" class="facets-container dashboard-scrollbar" :style="getFacetWidth()">
@@ -47,6 +46,7 @@ import { mapActions } from 'pinia'
 import { IDashboardDataset, ISelection, IWidget } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
 import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
+import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
 import 'ag-grid-community/styles/ag-grid.css' // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
 import mainStore from '../../../../../App.store'
@@ -56,7 +56,7 @@ import ProgressSpinner from 'primevue/progressspinner'
 
 export default defineComponent({
     name: 'table-widget',
-    emits: ['pageChanged', 'facetsChanged', 'launchSelection'],
+    emits: ['pageChanged', 'facetsChanged', 'searchWordChanged', 'launchSelection'],
     components: { AgGridVue, PaginationRenderer, ProgressSpinner },
     props: {
         widgetLoading: { type: Boolean, required: true },
@@ -70,17 +70,14 @@ export default defineComponent({
     watch: {
         propWidget: {
             handler() {
-                // if (!this.editorMode) this.refreshGridConfiguration(true)
+                if (!this.editorMode) this.refreshGridConfiguration()
             },
             deep: true
         },
         dataToShow: {
             handler() {
                 console.log('WIDGET DATA TO SHOW', this.dataToShow)
-                this.tableData = this.dataToShow
-                this.gridApi?.setRowData(this.tableData.rows)
-                this.setFacetAccordionState()
-                // this.loadActiveSelectionValue()
+                this.reloadWidgetData()
             },
             deep: true
         },
@@ -98,7 +95,7 @@ export default defineComponent({
         return {
             tableData: [] as any,
             activeSelections: [] as ISelection[],
-            searchInput: '',
+            searchWord: '',
             widgetWidth: 0 as number,
             facetSidenavShown: false,
             facetsToDisplay: {} as any,
@@ -108,7 +105,8 @@ export default defineComponent({
             gridOptions: null as any,
             gridApi: null as any,
             columnApi: null as any,
-            gridLoading: false
+            gridLoading: false,
+            selectedColumn: false as any
         }
     },
     setup() {
@@ -152,11 +150,27 @@ export default defineComponent({
             this.widgetWidth = width
             if (width > 600) this.facetSidenavShown = false
         },
+        reloadWidgetData() {
+            this.tableData = this.dataToShow
+            this.gridApi?.setRowData(this.tableData.rows)
+            this.setFacetAccordionState()
+            // this.loadActiveSelectionValue()
+        },
+        searchItems() {
+            if (this.editorMode) return
+            let searchSettings = this.propWidget.settings.search
+            if (searchSettings.columns.length > 0) {
+                console.log('HAVE COLUMNS')
+                searchSettings.searchWord = this.searchWord
+                this.$emit('searchWordChanged')
+            } else console.log('NO SEARCH COLUMNS')
+        },
         //#region ===================== Facet Logic ====================================================
         setFacetData() {
+            if (!this.tableData.facets) return
             let facetSettings = this.propWidget.settings.facets
-            if (facetSettings.enabled) {
-                var facetKeys = Object.keys(this.tableData.facets)
+            var facetKeys = Object.keys(this.tableData?.facets)
+            if (facetSettings.enabled && facetKeys) {
                 facetKeys.forEach((facetName) => {
                     if (facetSettings.columns.includes(facetName)) this.facetsToDisplay[facetName] = { ...this.tableData.facets[facetName] }
                 })
@@ -196,13 +210,12 @@ export default defineComponent({
             console.log('facetName ', facetName)
             console.log('row ', row)
             console.groupEnd()
-            //if there are no values for that facet, dont even call BE
             if (row.column_2 == 0) return
             let facetSettings = this.propWidget.settings.facets
             if (facetSettings.selection) {
-                //TODO: Selection logic
                 //if there are any search params, empty them, now we are doing selection not search
                 this.propWidget.settings.search.facetSearchParams = {}
+                //TODO: Selection logic
             } else {
                 let facetSearchParams = this.propWidget.settings.search.facetSearchParams
                 if (facetSearchParams[facetName] && !facetSearchParams[facetName].includes(row.column_1)) {
@@ -241,6 +254,8 @@ export default defineComponent({
                     //     }
                     // }
                 },
+                // EVENTS
+                // onCellClicked: this.onCellClicked,
                 // CALLBACKS
                 onGridReady: this.onGridReady
             }
@@ -286,6 +301,16 @@ export default defineComponent({
 
             console.log(columns)
             this.gridLoading = false
+        },
+        onCellClicked(node) {
+            if (!this.editorMode) {
+                if (node.colDef.measure == 'MEASURE' || node.colDef.pinned || node.value === '' || node.value == undefined) return
+                //TODO: SELECTION LOGIC -------------------------------------------------------------------
+                // updateStoreSelections(this.createNewSelection([node.value], node.colDef.columnName), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
+
+                // var params = { force: true }
+                // this.gridApi?.refreshCells(params)
+            }
         }
         //#endregion ================================================================================================
     }
