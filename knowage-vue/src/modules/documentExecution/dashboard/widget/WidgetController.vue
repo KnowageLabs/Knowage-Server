@@ -13,8 +13,8 @@
             :selectionIsLocked="selectionIsLocked"
             :propActiveSelections="activeSelections"
             :variables="variables"
-            @pageChanged="reloadWidgetData"
-            @sortingChanged="reloadWidgetData"
+            :widgetLoading="widgetLoading"
+            @reloadData="reloadWidgetData"
             @launchSelection="launchSelection"
             @mouseover="toggleFocus"
             @mouseleave="startUnfocusTimer(500)"
@@ -91,7 +91,8 @@ export default defineComponent({
             },
             inFocus: false,
             selectionIsLocked: false,
-            playDisabledButtonTimeout: null as any
+            playDisabledButtonTimeout: null as any,
+            widgetLoading: false
         }
     },
     async created() {
@@ -179,7 +180,9 @@ export default defineComponent({
             return widgetUsesSelection
         },
         async reloadWidgetData(associativeResponseSelections: any) {
+            this.widgetLoading = true
             this.widgetData = await getWidgetData(this.widgetModel, this.model?.configuration?.datasets, this.$http, false, this.activeSelections, associativeResponseSelections)
+            this.widgetLoading = false
         },
         widgetUsesSelections(selections: ISelection[]) {
             let widgetUsesSelection = false

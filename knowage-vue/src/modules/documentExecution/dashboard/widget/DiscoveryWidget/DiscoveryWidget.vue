@@ -1,5 +1,6 @@
 <template>
     <div ref="discoveryContainer" class="discovery-container" v-resize="onWidgetSizeChange">
+        <ProgressSpinner v-if="widgetLoading" class="kn-progress-spinner" />
         <div class="kn-width-full p-d-flex p-mb-2">
             <!-- <InputText class="kn-material-input p-m-3 model-search"  v-model="searchInput" type="text" :placeholder="$t('common.search')" @input="searchItems"  /> -->
             <Button v-if="widgetWidth < 600" :icon="burgerIcon" class="p-button-text p-button-rounded p-button-plain p-as-center" @click="toggleFacets" />
@@ -7,7 +8,7 @@
         </div>
         <div class="discovery-content">
             <div ref="facetsContainer" :class="[widgetWidth < 600 ? 'sidenav' : '']" class="facets-container dashboard-scrollbar" :style="getFacetWidth()">
-                <div v-for="(facet, facetName) in tableData.facets" :key="facetName" class="facet-accordion">
+                <div v-for="(facet, facetName) in facetsToDisplay" :key="facetName" class="facet-accordion">
                     <Toolbar class="kn-toolbar kn-toolbar--primary facet-accordion-header">
                         <template #start> {{ facetName }}</template>
                         <template #end>
@@ -33,7 +34,8 @@
                 </div>
             </div>
             <div class="table-container p-ml-2">
-                <ag-grid-vue v-if="!gridLoading" class="kn-table-widget-grid ag-theme-alpine kn-flex discovery-grid-scrollbar" :gridOptions="gridOptions"></ag-grid-vue>
+                <ag-grid-vue v-if="!gridLoading" class="discovery-grid ag-theme-alpine kn-flex discovery-grid-scrollbar" :gridOptions="gridOptions"></ag-grid-vue>
+                <PaginationRenderer class="discovery-pagination" :propWidgetPagination="propWidget.settings.pagination" @pageChanged="$emit('pageChanged')" />
             </div>
         </div>
     </div>
@@ -49,12 +51,15 @@ import 'ag-grid-community/styles/ag-grid.css' // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
 import mainStore from '../../../../../App.store'
 import dashboardStore from '../../Dashboard.store'
+import PaginationRenderer from '../TableWidget/PaginatorRenderer.vue'
+import ProgressSpinner from 'primevue/progressspinner'
 
 export default defineComponent({
     name: 'table-widget',
-    emits: ['pageChanged', 'sortingChanged', 'launchSelection'],
-    components: { AgGridVue },
+    emits: ['pageChanged', 'facetsChanged', 'launchSelection'],
+    components: { AgGridVue, PaginationRenderer, ProgressSpinner },
     props: {
+        widgetLoading: { type: Boolean, required: true },
         propWidget: { type: Object as PropType<IWidget>, required: true },
         editorMode: { type: Boolean, required: false },
         datasets: { type: Array as PropType<IDashboardDataset[]>, required: true },
@@ -71,9 +76,10 @@ export default defineComponent({
         },
         dataToShow: {
             handler() {
-                this.tableData = this.dataToShow
                 console.log('WIDGET DATA TO SHOW', this.dataToShow)
-                // this.refreshGridConfiguration(true)
+                this.tableData = this.dataToShow
+                this.gridApi?.setRowData(this.tableData.rows)
+                this.setFacetAccordionState()
                 // this.loadActiveSelectionValue()
             },
             deep: true
@@ -95,7 +101,7 @@ export default defineComponent({
             searchInput: '',
             widgetWidth: 0 as number,
             facetSidenavShown: false,
-            facetsToDisplay: [],
+            facetsToDisplay: {} as any,
             //ag-grid-stuff
             gridColumns: [] as any[],
             gridRows: [] as any[],
@@ -113,11 +119,11 @@ export default defineComponent({
     created() {
         this.tableData = this.dataToShow
         this.setEventListeners()
+        this.setFacetData()
         this.loadActiveSelections()
         this.setupDatatableOptions()
-        // this.loadActiveSelectionValue()
-        this.setFacetAccordionState()
         this.createColumnDefinitions(this.tableData?.metaData?.fields)
+        // this.loadActiveSelectionValue()
     },
     unmounted() {
         this.removeEventListeners()
@@ -147,7 +153,16 @@ export default defineComponent({
             if (width > 600) this.facetSidenavShown = false
         },
         //#region ===================== Facet Logic ====================================================
-        //TODO: dont show hidden facets - settings.facets.columns - if thy are not in array, hide
+        setFacetData() {
+            let facetSettings = this.propWidget.settings.facets
+            if (facetSettings.enabled) {
+                var facetKeys = Object.keys(this.tableData.facets)
+                facetKeys.forEach((facetName) => {
+                    if (facetSettings.columns.includes(facetName)) this.facetsToDisplay[facetName] = { ...this.tableData.facets[facetName] }
+                })
+                this.setFacetAccordionState()
+            }
+        },
         toggleFacets() {
             const temp = this.$refs['facetsContainer'] as any
             this.facetSidenavShown = !this.facetSidenavShown
@@ -157,10 +172,6 @@ export default defineComponent({
             let facetSearchParams = this.propWidget.settings.search.facetSearchParams
             if (facetSearchParams[facetName] && facetSearchParams[facetName].includes(row.column_1)) return true
             else return false
-        },
-        getFacetAlias(facetIndex) {
-            var facetKeys = Object.keys(this.tableData.facets)
-            return facetKeys[facetIndex]
         },
         getFacetWidth() {
             let facetSettings = this.propWidget.settings.facets
@@ -173,10 +184,10 @@ export default defineComponent({
             let facetSearchParams = this.propWidget.settings.search.facetSearchParams
 
             if (facetSettings.closedByDefault) {
-                Object.keys(this.tableData.facets).forEach((facet) => {
+                Object.keys(this.facetsToDisplay).forEach((facet) => {
                     //check if facet parameter is used in filters/selection, if it is, remain opened
-                    if (facetSearchParams[facet]) this.tableData.facets[facet].closed = false
-                    else this.tableData.facets[facet].closed = true
+                    if (facetSearchParams[facet] && facetSearchParams[facet].length > 0) this.facetsToDisplay[facet].closed = false
+                    else this.facetsToDisplay[facet].closed = true
                 })
             }
         },
@@ -189,9 +200,9 @@ export default defineComponent({
             if (row.column_2 == 0) return
             let facetSettings = this.propWidget.settings.facets
             if (facetSettings.selection) {
+                //TODO: Selection logic
                 //if there are any search params, empty them, now we are doing selection not search
                 this.propWidget.settings.search.facetSearchParams = {}
-                //TODO: Selection logic
             } else {
                 let facetSearchParams = this.propWidget.settings.search.facetSearchParams
                 if (facetSearchParams[facetName] && !facetSearchParams[facetName].includes(row.column_1)) {
@@ -202,6 +213,8 @@ export default defineComponent({
                 } else {
                     facetSearchParams[facetName] = [row.column_1]
                 }
+
+                this.$emit('facetsChanged')
             }
         },
         //#endregion ================================================================================================
@@ -228,15 +241,8 @@ export default defineComponent({
                     //     }
                     // }
                 },
-
-                // EVENTS
-                // onCellKeyDown: this.onCellKeyDown,
-                // onSelectionChanged: this.onSelectionChanged,
-
                 // CALLBACKS
                 onGridReady: this.onGridReady
-                // getRowStyle: this.getRowStyle,
-                // getRowId: this.getRowId
             }
         },
         onGridReady(params) {
@@ -260,8 +266,8 @@ export default defineComponent({
                     let responseColumn = responseFields[responseField]
 
                     if (typeof responseFields[responseField] == 'object' && ((dataset.type == 'SbiSolrDataSet' && modelColumn.alias.toLowerCase() === responseFields[responseField].header) || modelColumn.alias.toLowerCase() === responseFields[responseField].header.toLowerCase())) {
-                        console.log('responseColumn', responseColumn)
-                        console.log('modelColumn HIDE : ', modelColumn)
+                        // console.log('responseColumn', responseColumn)
+                        // console.log('modelColumn HIDE : ', modelColumn)
 
                         var tempCol = {
                             hide: false, //TODO: implement hide condition
@@ -305,7 +311,17 @@ export default defineComponent({
         .table-container {
             flex: 2;
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
+            .discovery-grid .ag-root-wrapper {
+                border-bottom: none;
+            }
+            .discovery-pagination {
+                border-left: 1px solid #babfc7;
+                border-right: 1px solid #babfc7;
+                border-bottom: 1px solid #babfc7;
+                padding: 0 !important;
+                border-radius: 0;
+            }
         }
         .facets-container {
             display: flex;

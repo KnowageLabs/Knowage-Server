@@ -12,8 +12,8 @@
                 :editorMode="false"
                 :propActiveSelections="activeSelections"
                 :dashboardId="dashboardId"
-                @pageChanged="$emit('pageChanged')"
-                @sortingChanged="$emit('sortingChanged')"
+                @pageChanged="$emit('reloadData')"
+                @sortingChanged="$emit('reloadData')"
                 @launchSelection="$emit('launchSelection', $event)"
             />
             <SelectorWidget v-if="widget.type == 'selector'" :propWidget="widget" :dataToShow="dataToShow" :widgetInitialData="widgetInitialData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" :datasets="datasets" :selectionIsLocked="selectionIsLocked" />
@@ -21,7 +21,18 @@
             <WebComponentContainer v-if="widget.type == 'html' || widget.type == 'text'" :propWidget="widget" :widgetData="dataToShow" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" :variables="variables"></WebComponentContainer>
             <HighchartsContainer v-if="widget.type === 'highcharts'" :widgetModel="widget" :dataToShow="widgetData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId"></HighchartsContainer>
             <ChartJSContainer v-if="widget.type === 'chartJS'" :widgetModel="widget" :dataToShow="widgetData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId"></ChartJSContainer>
-            <DiscoveryWidget v-if="widget.type === 'discovery'" :propWidget="widget" :datasets="datasets" :dataToShow="dataToShow" :editorMode="false" :propActiveSelections="activeSelections" :dashboardId="dashboardId" />
+            <DiscoveryWidget
+                v-if="widget.type === 'discovery'"
+                :propWidget="widget"
+                :datasets="datasets"
+                :dataToShow="dataToShow"
+                :editorMode="false"
+                :propActiveSelections="activeSelections"
+                :dashboardId="dashboardId"
+                :widgetLoading="widgetLoading"
+                @pageChanged="$emit('reloadData')"
+                @facetsChanged="$emit('reloadData')"
+            />
             <ImageWidget v-if="widget.type === 'image'" :widgetModel="widget" :dashboardId="dashboardId" :editorMode="false" />
         </div>
     </div>
@@ -46,10 +57,11 @@ import ImageWidget from '../widget/ImageWidget/ImageWidget.vue'
 
 export default defineComponent({
     name: 'widget-renderer',
-    emits: ['interaction', 'pageChanged', 'launchSelection', 'sortingChanged'],
+    emits: ['interaction', 'launchSelection', 'reloadData'],
     components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, WebComponentContainer, HighchartsContainer, ChartJSContainer, DiscoveryWidget, ImageWidget },
     props: {
         widget: { required: true, type: Object as any },
+        widgetLoading: { required: true, type: Boolean as any },
         widgetData: { required: true, type: Object },
         widgetInitialData: { required: true, type: Object },
         datasets: { type: Array as PropType<IDashboardDataset[]>, required: true },

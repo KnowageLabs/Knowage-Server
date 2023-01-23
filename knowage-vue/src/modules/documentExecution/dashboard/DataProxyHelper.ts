@@ -606,11 +606,6 @@ const formatDiscoveryModelForGet = (propWidget: IWidget, dataset: IDashboardData
 
     dataToSend.aggregations.dataset = dataset.dsLabel
 
-    //summary rows - exclusive to table
-    if (propWidget.type === 'table' && propWidget.settings.configuration.summaryRows.enabled) {
-        dataToSend.summaryRow = getSummaryRow(propWidget)
-    }
-    // { "id": "the_date", "alias": "the_date", "columnName": "the_date", "orderType": "", "funct": "COUNT", "functColumn": "the_date" }
     propWidget.columns.forEach((column) => {
         if (column.fieldType === 'MEASURE') {
             let measureToPush = { id: column.alias, alias: column.alias, columnName: column.columnName, funct: 'NONE', orderColumn: column.alias, functColumn: column.alias, orderType: '' } as any
@@ -633,6 +628,18 @@ const formatDiscoveryModelForGet = (propWidget: IWidget, dataset: IDashboardData
             dataToSend.drivers[`${driver.urlName}`] = driver.parameterValue
         })
     }
-    delete dataToSend.drivers
+
+    let facetSearchParams = propWidget.settings.search.facetSearchParams
+    if (facetSearchParams) {
+        var facetKeys = Object.keys(facetSearchParams)
+        if (facetKeys.length > 0) {
+            dataToSend.likeSelections = {}
+            dataToSend.likeSelections[dataset.dsLabel] = {}
+            facetKeys.forEach((facetName) => {
+                dataToSend.likeSelections[dataset.dsLabel][facetName] = facetSearchParams[facetName][0]
+            })
+        }
+    }
+
     return dataToSend
 }
