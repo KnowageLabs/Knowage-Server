@@ -43,10 +43,11 @@
 <script lang="ts">
 import { emitter } from '../../DashboardHelpers'
 import { mapActions } from 'pinia'
-import { IDashboardDataset, ISelection, IWidget } from '../../Dashboard'
+import { IDashboardDataset, IDataset, ISelection, IWidget } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
 import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
 import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
+import { createNewTableSelection } from '../TableWidget/TableWidgetHelper'
 import 'ag-grid-community/styles/ag-grid.css' // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
 import mainStore from '../../../../../App.store'
@@ -62,7 +63,7 @@ export default defineComponent({
         widgetLoading: { type: Boolean, required: true },
         propWidget: { type: Object as PropType<IWidget>, required: true },
         editorMode: { type: Boolean, required: false },
-        datasets: { type: Array as PropType<IDashboardDataset[]>, required: true },
+        datasets: { type: Array as PropType<IDataset[]>, required: true },
         dataToShow: { type: Object as any, required: true },
         propActiveSelections: { type: Array as PropType<ISelection[]>, required: true },
         dashboardId: { type: String, required: true }
@@ -131,6 +132,7 @@ export default defineComponent({
     },
 
     methods: {
+        ...mapActions(dashboardStore, ['setSelections']),
         setEventListeners() {
             // emitter.on('refreshTable', this.refreshGridConfigurationWithoutData)
             // emitter.on('selectionsDeleted', this.onSelectionsDeleted)
@@ -255,7 +257,7 @@ export default defineComponent({
                     // }
                 },
                 // EVENTS
-                // onCellClicked: this.onCellClicked,
+                onCellClicked: this.onCellClicked,
                 // CALLBACKS
                 onGridReady: this.onGridReady
             }
@@ -303,15 +305,15 @@ export default defineComponent({
             this.gridLoading = false
         },
         onCellClicked(node) {
+            console.log('>>>>>>>>> NODE CLICKED: ', node)
             if (!this.editorMode) {
                 if (node.colDef.measure == 'MEASURE' || node.colDef.pinned || node.value === '' || node.value == undefined) return
-                //TODO: SELECTION LOGIC -------------------------------------------------------------------
-                // updateStoreSelections(this.createNewSelection([node.value], node.colDef.columnName), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
 
-                // var params = { force: true }
-                // this.gridApi?.refreshCells(params)
+                updateStoreSelections(createNewTableSelection([node.value], node.colDef.columnName, this.propWidget, this.datasets), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
+                this.gridApi?.refreshCells({ force: true })
             }
         }
+
         //#endregion ================================================================================================
     }
 })
