@@ -7,7 +7,6 @@ export interface IDiscoveryWidgetSettings {
     facets: IDiscoveryWidgetFacetsSettings
     search: IDiscoveryWidgetSearchSettings
     interactions: IWidgetInteractions
-    pagination: ITableWidgetPagination
     style: IDiscoveryWidgetStyle
     tooltips: ITableWidgetTooltipStyle[]
     responsive: IWidgetResponsive
