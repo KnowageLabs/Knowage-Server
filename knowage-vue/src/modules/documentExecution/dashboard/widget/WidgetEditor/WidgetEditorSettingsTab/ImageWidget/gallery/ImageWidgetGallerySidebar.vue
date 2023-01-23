@@ -70,15 +70,13 @@ export default defineComponent({
         async copyToBase64() {
             console.log('>>>>>>>>>>>> THIS IMAGE: ', this.image)
             if (!this.image) return
-            this.toDataURL(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/images/getImage?IMAGES_ID=${this.image.imgId}`, (dataUrl) => console.log('RESULT:', dataUrl))
+            this.toDataURL(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/images/getImage?IMAGES_ID=${this.image.imgId}`, async (dataUrl: string) => await navigator.clipboard.writeText(dataUrl))
         },
         toDataURL(url: string, callback: Function) {
             const xhr = new XMLHttpRequest()
             xhr.onload = () => {
                 const reader = new FileReader()
-                reader.onloadend = () => {
-                    callback(reader.result)
-                }
+                reader.onloadend = () => callback(reader.result)
                 reader.readAsDataURL(xhr.response)
             }
             xhr.open('GET', url)
