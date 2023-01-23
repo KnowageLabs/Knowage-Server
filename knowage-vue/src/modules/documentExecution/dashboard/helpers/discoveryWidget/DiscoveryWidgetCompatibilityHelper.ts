@@ -42,7 +42,6 @@ const getFormattedWidgetSettings = (widget: any, drivers: IDashboardDriver[]) =>
         search: getFormattedSearchSettings(widget, drivers) as IDiscoveryWidgetSearchSettings,
         configuration: getFormattedDiscoveryConfiguration(widget) as IDiscoveryWidgetConfiguration,
         interactions: getFormattedInteractions(widget) as IWidgetInteractions,
-        pagination: getFormattedPaginations(widget),
         style: getFormattedStyle(widget) as ITableWidgetStyle,
         tooltips: tableWidgetDefaultValues.getDefaultTooltips() as ITableWidgetTooltipStyle[],
         responsive: widgetCommonDefaultValues.getDefaultResponsivnes() as IWidgetResponsive

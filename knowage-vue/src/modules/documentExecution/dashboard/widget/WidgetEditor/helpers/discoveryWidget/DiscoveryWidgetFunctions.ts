@@ -19,7 +19,6 @@ export const createNewDiscoveryWidgetSettings = () => {
             link: widgetCommonDefaultValues.getDefaultLinks(),
             preview: widgetCommonDefaultValues.getDefaultPreview(),
         },
-        pagination: tableWidgetDefaultValues.getDefaultPagination(),
         style: {
             title: widgetCommonDefaultValues.getDefaultTitleStyle(),
             borders: widgetCommonDefaultValues.getDefaultBordersStyle(),
