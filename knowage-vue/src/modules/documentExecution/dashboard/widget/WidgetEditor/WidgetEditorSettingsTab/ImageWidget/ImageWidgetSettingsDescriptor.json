@@ -43,10 +43,6 @@
                 "type": "Title"
             },
             {
-                "title": "dashboard.widgetEditor.headers.title",
-                "type": "Headers"
-            },
-            {
                 "title": "dashboard.widgetEditor.background",
                 "type": "BackgroundColorStyle"
             },
