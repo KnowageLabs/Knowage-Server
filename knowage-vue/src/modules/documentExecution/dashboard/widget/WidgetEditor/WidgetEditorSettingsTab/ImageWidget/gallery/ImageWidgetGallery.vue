@@ -136,7 +136,6 @@ export default defineComponent({
             this.selectedImage = image
             this.widgetModel.settings.configuration.image.id = image.imgId
             this.sidebarVisible = true
-            console.log('>>>>> CAAAAAAAAALED !!!: ')
         }
     }
 })
