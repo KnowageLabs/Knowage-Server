@@ -1,6 +1,6 @@
 <template>
     <div v-if="widgetModel" class="widget-editor-card p-p-2">
-        <div v-if="widgetModel.type === 'table'" class="p-d-flex p-flex-row p-ai-center">
+        <div v-if="widgetModel.type === 'table' || widgetModel.type === 'discovery'" class="p-d-flex p-flex-row p-ai-center p-my-1">
             <div class="kn-flex p-m-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.pagination') }}</label>
                 <InputSwitch v-model="paginationEnabled" @change="paginationChanged"></InputSwitch>
@@ -12,7 +12,7 @@
             </div>
         </div>
 
-        <div class="p-d-flex p-flex-row p-ai-center p-mt-2">
+        <div v-if="widgetModel.type !== 'discovery'" class="p-d-flex p-flex-row p-ai-center p-mt-2">
             <div class="p-d-flex p-flex-column kn-flex-2 p-m-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.sortingColumn') }}</label>
                 <Dropdown class="kn-material-input" v-model="sortingColumn" :options="sortingColumnOptions" optionValue="id" optionLabel="alias" @change="sortingChanged"> </Dropdown>
