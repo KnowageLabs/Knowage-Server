@@ -211,13 +211,16 @@ export default defineComponent({
             console.group('facet selected ------------------------------------')
             console.log('facetName ', facetName)
             console.log('row ', row)
+
             console.groupEnd()
             if (row.column_2 == 0) return
             let facetSettings = this.propWidget.settings.facets
+            console.log('facetSettings ', facetSettings)
             if (facetSettings.selection) {
                 //if there are any search params, empty them, now we are doing selection not search
                 this.propWidget.settings.search.facetSearchParams = {}
                 //TODO: Selection logic
+                updateStoreSelections(createNewTableSelection([row['column_1']], facetName, this.propWidget, this.datasets), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
             } else {
                 let facetSearchParams = this.propWidget.settings.search.facetSearchParams
                 if (facetSearchParams[facetName] && !facetSearchParams[facetName].includes(row.column_1)) {
@@ -305,7 +308,6 @@ export default defineComponent({
             this.gridLoading = false
         },
         onCellClicked(node) {
-            console.log('>>>>>>>>> NODE CLICKED: ', node)
             if (!this.editorMode) {
                 if (node.colDef.measure == 'MEASURE' || node.colDef.pinned || node.value === '' || node.value == undefined) return
 
