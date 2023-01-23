@@ -9,6 +9,7 @@ import { createNewChartJSSettings, formatChartJSWidget } from './chartWidget/cha
 import { createNewHighchartsSettings, formatHighchartsWidget } from './chartWidget/highcharts/HighchartsHelpers'
 import { formatHighchartsWidgetForSave } from './chartWidget/highcharts/HighchartsBackendSaveHelper'
 import { formatChartJSForSave } from './chartWidget/chartJS/ChartJSBackendSaveHelper'
+import { createNewImageWidgetSettings } from './imageWidget/ImageWidgetFunctions'
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
 
@@ -64,6 +65,10 @@ const createNewWidgetSettings = (widget: IWidget) => {
             break
         case 'highcharts':
             widget.settings = createNewHighchartsSettings()
+            break
+        case 'image':
+            widget.settings = createNewImageWidgetSettings()
+            break
     }
 }
 

@@ -84,7 +84,17 @@
             :variables="variables"
             :dashboardId="dashboardId"
         ></DiscoveryWidgetSettingsContainer>
-        <ImageWidgetSettingsContainer v-else-if="propWidget.type === 'image'" class="model-div kn-flex kn-overflow p-py-3 p-pr-3" :widgetModel="propWidget" :selectedSetting="selectedSetting" :datasets="datasets" :selectedDatasets="selectedDatasets" :variables="variables" :dashboardId="dashboardId">
+        <ImageWidgetSettingsContainer
+            v-else-if="propWidget.type === 'image'"
+            class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
+            :widgetModel="propWidget"
+            :selectedSetting="selectedSetting"
+            :datasets="datasets"
+            :selectedDatasets="selectedDatasets"
+            :variables="variables"
+            :dashboardId="dashboardId"
+            @settingSelected="$emit('settingChanged', $event)"
+        >
         </ImageWidgetSettingsContainer>
     </div>
 </template>
