@@ -37,7 +37,7 @@ const getFormattedWidgetSettings = (widget: any) => {
 }
 
 const getFormattedConfiguration = (widget: any) => {
-    return { image: getFormattedImageSettings(widget), exports: { showExcelExport: widget.style?.showExcelExport ?? false } as IWidgetExports } as IImageWidgetConfiguration
+    return { image: getFormattedImageSettings(widget), exports: { showExcelExport: widget.style?.showExcelExport ?? false, showScreenshot: widget.style?.showScreenshot ?? false } as IWidgetExports } as IImageWidgetConfiguration
 }
 
 
@@ -53,8 +53,6 @@ const getFormattedImageSettings = (widget: any) => {
             width: widget.style.widthPerc ?? '',
             "background-position-x": widget.style.hAlign ?? 'center',
             "background-position-y": widget.style.vAlign ?? 'center',
-
-
         }
     }
     return formattedImageSettings

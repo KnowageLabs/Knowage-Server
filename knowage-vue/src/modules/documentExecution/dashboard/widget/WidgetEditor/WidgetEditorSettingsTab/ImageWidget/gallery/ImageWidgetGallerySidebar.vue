@@ -37,7 +37,6 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IImage } from '@/modules/documentExecution/dashboard/interfaces/DashboardImageWidget'
-import { AxiosResponse } from 'axios'
 
 export default defineComponent({
     name: 'image-widget-gallery-sidebar',
