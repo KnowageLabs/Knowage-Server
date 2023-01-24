@@ -14,9 +14,12 @@
  */
 package it.eng.knowage.engine.cockpit.api.export.excel;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -122,8 +125,20 @@ public class ExcelExporter extends AbstractFormatExporter {
 			URI url = UriBuilder.fromUri(requestURL).replaceQueryParam("outputType_description", "HTML").replaceQueryParam("outputType", "HTML").build();
 
 			ProcessBuilder processBuilder = new ProcessBuilder("node", exportScriptFullPath.toString(), encodedUserId, outputDir.toString(), url.toString());
+
+			setWorkingDirectory(cockpitExportScriptPath, processBuilder);
+
+			logger.info("Node complete command line: " + processBuilder.command());
+
+			logger.info("Starting export script");
 			Process exec = processBuilder.start();
+
+			logger.info("Waiting...");
 			exec.waitFor();
+			logger.warn("Exit value: " + exec.exitValue());
+
+			logOutputToCoreLog(exec);
+
 			// the script creates the resulting xls and saves it to outputFile
 			Path outputFile = outputDir.resolve(documentLabel + ".xlsx");
 			return getByteArrayFromFile(outputFile, outputDir);
@@ -1052,6 +1067,21 @@ public class ExcelExporter extends AbstractFormatExporter {
 	private JSONObject getDatastore(String datasetLabel, Map<String, Object> map, String selections) {
 		// if pagination is disabled offset = 0, fetchSize = -1
 		return getDatastore(datasetLabel, map, selections, 0, -1);
+	}
+
+	private void logOutputToCoreLog(Process exec) throws IOException {
+		InputStreamReader isr = new InputStreamReader(exec.getInputStream());
+		BufferedReader b = new BufferedReader(isr);
+		String line = null;
+		logger.warn("Process output");
+		while((line = b.readLine()) != null) {
+			logger.warn(line);
+		}
+	}
+
+	private void setWorkingDirectory(String cockpitExportScriptPath, ProcessBuilder processBuilder) {
+		// Required by puppeteer v19
+		processBuilder.directory(new File(cockpitExportScriptPath));
 	}
 
 }
