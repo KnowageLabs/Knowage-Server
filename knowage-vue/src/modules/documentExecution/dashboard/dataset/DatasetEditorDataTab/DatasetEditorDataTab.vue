@@ -1,5 +1,5 @@
 <template>
-    <DataList :dashboardDatasetsProp="dashboardDatasetsProp" :availableDatasetsProp="availableDatasetsProp" :selectedDatasetsProp="selectedDatasetsProp" @addSelectedDatasets="addSelectedDatasets" @datasetSelected="selectDataset" @deleteDataset="$emit('deleteDataset', $event)" />
+    <DataList :dashboardDatasetsProp="dashboardDatasetsProp" :availableDatasetsProp="availableDatasetsProp" :selectedDatasetsProp="selectedDatasets" @addSelectedDatasets="addSelectedDatasets" @datasetSelected="selectDataset" @deleteDataset="$emit('deleteDataset', $event)" />
     <DataDetail :dashboardDatasetsProp="dashboardDatasetsProp" :selectedDatasetProp="selectedDataset" :documentDriversProp="documentDriversProp" :dashboardId="dashboardId" data-test="dataset-detail" />
     <DatasetEditorPreview v-if="selectedDataset.id" id="dataset-editor-preview" :selectedDatasetProp="selectedDataset" data-test="dataset-preview" />
 </template>
@@ -18,13 +18,24 @@ export default defineComponent({
     data() {
         return {
             selectedDataset: {} as any,
+            selectedDatasets: [] as any,
             datasetDriversMap: {}
         }
     },
-    async created() {},
+    watch: {
+        selectedDatasetsProp() {
+            this.loadSelectedDatasets()
+        }
+    },
+    created() {
+        this.loadSelectedDatasets()
+    },
     methods: {
         selectDataset(datasetId) {
             this.selectedDataset = this.availableDatasetsProp.find((dataset) => dataset.id.dsId === datasetId)
+        },
+        loadSelectedDatasets() {
+            this.selectedDatasets = this.selectedDatasetsProp
         },
         addSelectedDatasets(datasetsToAdd) {
             this.$emit('addSelectedDatasets', datasetsToAdd)

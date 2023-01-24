@@ -108,6 +108,7 @@ export default defineComponent({
             this.dashboardDatasets = deepcopy(this.dashboardStore.$state.dashboards[this.dashboardIdProp].configuration.datasets)
             this.dashboardAssociations = deepcopy(this.dashboardStore.$state.dashboards[this.dashboardIdProp].configuration.associations)
             this.selectedDatasets = this.selectModelDatasetsFromAvailable()
+            console.log('----------- selectedDatasets', this.selectedDatasets)
             this.setDatasetParametersFromModel()
             this.setDatasetDriversFromModel()
         },

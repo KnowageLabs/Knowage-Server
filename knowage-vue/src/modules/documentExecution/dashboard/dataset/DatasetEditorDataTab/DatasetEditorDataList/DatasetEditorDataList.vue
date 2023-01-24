@@ -49,7 +49,7 @@ export default defineComponent({
         }
     },
     watch: {
-        selectedDatasets() {
+        selectedDatasetsProp() {
             this.loadSelectedDatasets()
         }
     },
