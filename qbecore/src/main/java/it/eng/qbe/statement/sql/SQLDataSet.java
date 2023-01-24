@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 
 import it.eng.qbe.datasource.dataset.DataSetDataSource;
 import it.eng.qbe.statement.AbstractQbeDataSet;
+import it.eng.qbe.statement.AbstractStatement;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
@@ -35,15 +36,12 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 public class SQLDataSet extends AbstractQbeDataSet {
 
-
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(SQLDataSet.class);
-
+	public static transient Logger logger = Logger.getLogger(SQLDataSet.class);
 
 	public SQLDataSet(SQLStatement statement) {
 		super(statement);
 	}
-
 
 	@Override
 	public void loadData(int offset, int fetchSize, int maxResults) {
@@ -57,9 +55,9 @@ public class SQLDataSet extends AbstractQbeDataSet {
 		} else {
 			DataSetDataSource ds = (DataSetDataSource) statement.getDataSource();
 			String statementStr = statement.getQueryString();
-			//SpagoBiDataSet dataSetConfig = new SpagoBiDataSet();
-			//dataSetConfig.setDataSource( ds.getSpagoBiDataSource() );
-			//dataSetConfig.setQuery(statementStr);
+			// SpagoBiDataSet dataSetConfig = new SpagoBiDataSet();
+			// dataSetConfig.setDataSource( ds.getSpagoBiDataSource() );
+			// dataSetConfig.setQuery(statementStr);
 			dataset = new JDBCDataSet();
 			dataset.setDataSource(ds.getDataSourceForReading());
 			dataset.setQuery(statementStr);
@@ -69,14 +67,13 @@ public class SQLDataSet extends AbstractQbeDataSet {
 		dataStore = dataset.getDataStore();
 
 		IMetaData jdbcMetadata = dataStore.getMetaData();
-		IMetaData qbeQueryMetaData = getDataStoreMeta(this.getStatement().getQuery());
+		IMetaData qbeQueryMetaData = ((AbstractStatement) this.getStatement()).getDataStoreMeta();
 		IMetaData merged = mergeMetadata(jdbcMetadata, qbeQueryMetaData);
-		((DataStore)dataStore).setMetaData(merged);
+		((DataStore) dataStore).setMetaData(merged);
 
-		if(hasDataStoreTransformers()) {
+		if (hasDataStoreTransformers()) {
 			executeDataStoreTransformers(dataStore);
 		}
-
 
 	}
 
@@ -85,32 +82,30 @@ public class SQLDataSet extends AbstractQbeDataSet {
 		// TODO Auto-generated method stub
 	}
 
-
 	@Override
 	public IDataSource getDataSourceForReading() {
 		SQLStatement statement = (SQLStatement) this.getStatement();
-		DataSetDataSource ds = (DataSetDataSource)statement.getDataSource();
+		DataSetDataSource ds = (DataSetDataSource) statement.getDataSource();
 		return ds.getDataSourceForReading();
 	}
 
 	@Override
 	public Integer getCategoryId() {
 		IDataSet wrapped = this.getWrappedDataset();
-    	return wrapped.getCategoryId();
+		return wrapped.getCategoryId();
 	}
 
 	@Override
 	public String getCategoryCd() {
 		IDataSet wrapped = this.getWrappedDataset();
-    	return wrapped.getCategoryCd();
+		return wrapped.getCategoryCd();
 	}
 
 	private IDataSet getWrappedDataset() {
 		SQLStatement statement = (SQLStatement) this.getStatement();
-		DataSetDataSource ds = (DataSetDataSource)statement.getDataSource();
+		DataSetDataSource ds = (DataSetDataSource) statement.getDataSource();
 		IDataSet toReturn = ds.getRootEntities().get(0);
 		return toReturn;
 	}
-
 
 }

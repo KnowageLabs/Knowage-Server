@@ -43,17 +43,14 @@ import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.qbe.statement.AbstractQbeDataSet;
+import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.statement.IStatement;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
 import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.database.DataBaseException;
-import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -137,7 +134,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 			logger.debug("Query " + filteredStatement.getQueryString() + " with offset = " + offset + " and fetch size = " + fetchSize + " executed");
 		}
 
-		dataStore = toDataStore(result, getDataStoreMeta(statement.getQuery()));
+		dataStore = toDataStore(result, ((AbstractStatement) statement).getDataStoreMeta());
 
 		if (this.isCalculateResultNumberOnLoadEnabled()) {
 			dataStore.getMetaData().setProperty("resultNumber", resultNumber);
@@ -335,36 +332,10 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		enableFilters();
 
 		String sqlQueryString = this.getSQLQuery(true);
-		sqlQueryString = adjustActualAliases(sqlQueryString);
 		logger.debug("Executing query: " + sqlQueryString);
 		JDBCDataSet jdbcDataset = (JDBCDataSet) JDBCDatasetFactory.getJDBCDataSet(this.getDataSource());
 		jdbcDataset.setQuery(sqlQueryString);
 		return jdbcDataset.iterator();
-	}
-
-	protected String adjustActualAliases(String sqlQueryString) {
-		logger.debug("IN: input query is " + sqlQueryString);
-		IDataSource dataSource = ((JPADataSource) getStatement().getDataSource()).getToolsDataSource();
-
-		String aliasDelimiter;
-		try {
-			aliasDelimiter = DataBaseFactory.getDataBase(dataSource).getAliasDelimiter();
-		} catch (DataBaseException e) {
-			throw new SpagoBIRuntimeException("An error occurred while getting datasource alias delimiter", e);
-		}
-
-		IMetaData metadata = getDataStoreMeta(statement.getQuery());
-
-		for (int i = 0; i < metadata.getFieldCount(); i++) {
-			IFieldMetaData fieldMeta = metadata.getFieldMeta(i);
-			String alias = fieldMeta.getAlias();
-			int col = sqlQueryString.indexOf(" as col_");
-			int com = sqlQueryString.indexOf("_,") > -1 ? sqlQueryString.indexOf("_,") : sqlQueryString.indexOf("_ ");
-			sqlQueryString = sqlQueryString.replace(sqlQueryString.substring(col, com + 1), " as " + aliasDelimiter + alias + aliasDelimiter);
-		}
-
-		logger.debug("OUT: output query is " + sqlQueryString);
-		return sqlQueryString;
 	}
 
 	@Override

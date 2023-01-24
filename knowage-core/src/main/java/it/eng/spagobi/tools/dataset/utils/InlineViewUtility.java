@@ -22,8 +22,6 @@ import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.database.DataBaseException;
@@ -49,23 +47,12 @@ public class InlineViewUtility {
 
 		String subQueryAlias = DataBaseFactory.getDataBase(getDataSource(dataSet)).getSubQueryAlias();
 
-		String aliasDelimiter = DataBaseFactory.getDataBase(getDataSource(dataSet)).getAliasDelimiter();
-
 		if (dataSet instanceof AbstractJDBCDataset) {
 			QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
 			tableName = "(\n" + querableBehaviour.getStatement().replace(";", "") + "\n) " + subQueryAlias;
 		} else {
 			QbeDataSet qbeDataSet = (QbeDataSet) dataSet;
 			tableName = qbeDataSet.getStatement().getSqlQueryString();
-			IMetaData metadata = qbeDataSet.getMetadata();
-			for (int i = 0; i < metadata.getFieldCount(); i++) {
-				IFieldMetaData fieldMeta = metadata.getFieldMeta(i);
-				String alias = fieldMeta.getAlias();
-				int col = tableName.indexOf(" as col_");
-				int com = tableName.indexOf("_,") > -1 ? tableName.indexOf("_,") : tableName.indexOf("_ ");
-				tableName = tableName.replace(tableName.substring(col, com + 1), " as " + aliasDelimiter + alias + aliasDelimiter);
-
-			}
 			tableName = "(\n" + tableName + "\n) " + subQueryAlias;
 		}
 
