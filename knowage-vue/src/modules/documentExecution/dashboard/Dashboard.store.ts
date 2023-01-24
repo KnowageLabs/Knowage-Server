@@ -124,6 +124,12 @@ const store = defineStore('dashboardStore', {
         setDashboardDrivers(dashboardId: string, drivers: IDashboardDriver[]) {
             this.dashboards[dashboardId].drivers = drivers
         },
+        getAllDatasetLoadedFlag(dashboardId: string) {
+            return this.dashboards[dashboardId].allDatasetsLoaded
+        },
+        setAllDatasetLoadedFlag(dashboardId: string, value: boolean) {
+            this.dashboards[dashboardId].allDatasetsLoaded = value
+        },
     }
 })
 

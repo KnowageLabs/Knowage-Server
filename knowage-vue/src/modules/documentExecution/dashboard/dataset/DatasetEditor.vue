@@ -47,8 +47,9 @@
  * ! this component will be in charge of managing the dataset.
  */
 import { defineComponent } from 'vue'
-import { AxiosResponse } from 'axios'
-import { IAssociation, IDashboardDataset, IDashboardDatasetParameter, IAssociationField } from '../Dashboard'
+import { IAssociation, IDashboardDataset, IDashboardDatasetParameter } from '../Dashboard'
+import { loadDatasets } from '../DashboardHelpers'
+import { mapActions } from 'pinia'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import DataTab from './DatasetEditorDataTab/DatasetEditorDataTab.vue'
@@ -61,8 +62,8 @@ import deepcopy from 'deepcopy'
 export default defineComponent({
     name: 'dataset-editor',
     components: { TabView, TabPanel, DataTab, AssociationsTab, DriverWarningDialog },
-    props: { availableDatasetsProp: { required: true, type: Array }, filtersDataProp: { type: Object }, dashboardIdProp: { type: String, required: true } },
-    emits: ['closeDatasetEditor', 'datasetEditorSaved'],
+    props: { availableDatasetsProp: { required: true, type: Array }, filtersDataProp: { type: Object }, dashboardIdProp: { type: String, required: true }, dashboardId: { type: String, required: true } },
+    emits: ['closeDatasetEditor', 'datasetEditorSaved', 'allDatasetsLoaded'],
     data() {
         return {
             activeIndex: 0,
@@ -104,13 +105,22 @@ export default defineComponent({
     },
 
     methods: {
+        ...mapActions(dashStore, ['setAllDatasets', 'getAllDatasetLoadedFlag', 'setAllDatasetLoadedFlag']),
         async setDatasetsData() {
-            this.availableDatasets = deepcopy(this.availableDatasetsProp)
+            await this.loadAvailableDatasets()
             this.dashboardDatasets = deepcopy(this.dashboardStore.$state.dashboards[this.dashboardIdProp].configuration.datasets)
             this.dashboardAssociations = deepcopy(this.dashboardStore.$state.dashboards[this.dashboardIdProp].configuration.associations)
             this.selectedDatasets = this.selectModelDatasetsFromAvailable()
             this.setDatasetParametersFromModel()
             this.setDatasetDriversFromModel()
+        },
+        async loadAvailableDatasets() {
+            this.availableDatasets = deepcopy(this.availableDatasetsProp)
+            if (this.getAllDatasetLoadedFlag(this.dashboardId)) return
+            this.availableDatasets = await loadDatasets(null, this.store, this.setAllDatasets, this.$http)
+            this.$emit('allDatasetsLoaded', this.availableDatasets)
+            console.log('__________ AVAILABLE DATASETS: ', this.availableDatasets)
+            this.setAllDatasetLoadedFlag(this.dashboardId, true)
         },
         selectModelDatasetsFromAvailable() {
             return this.availableDatasets?.filter((responseDataset) => {

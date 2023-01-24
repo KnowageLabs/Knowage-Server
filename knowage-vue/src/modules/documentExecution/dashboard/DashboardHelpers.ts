@@ -7,6 +7,7 @@ import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
 import { formatChartJSWidget } from './widget/WidgetEditor/helpers/chartWidget/chartJS/ChartJSHelpers'
 import { formatHighchartsWidget } from './widget/WidgetEditor/helpers/chartWidget/highcharts/HighchartsHelpers'
+import { AxiosResponse } from 'axios'
 
 
 export const createNewDashboardModel = () => {
@@ -94,4 +95,35 @@ const formatWidget = (widget: IWidget) => {
         case 'highcharts':
             formatHighchartsWidget(widget)
     }
+}
+
+
+export const loadDatasets = async (dashboardModel: IDashboard | any, appStore: any, setAllDatasets: Function, $http: any) => {
+    appStore.setLoading(true)
+    let url = `2.0/datasets/?asPagedList=true&seeTechnical=true`
+    if (dashboardModel) {
+        const datasetIdsAsString = getDatasetIdsFromDashboardModel(dashboardModel)
+        url += `&ids=${datasetIdsAsString}`
+    }
+    let datasets = []
+    await $http
+        .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url)
+        .then((response: AxiosResponse<any>) => (datasets = response.data ? response.data.item : []))
+        .catch(() => { })
+    setAllDatasets(datasets)
+    appStore.setLoading(false)
+    return datasets
+}
+
+const getDatasetIdsFromDashboardModel = (dashboardModel: IDashboard | any) => {
+    console.log('----------- dashboard model: ', dashboardModel)
+    const datasetIds = [] as string[]
+    dashboardModel.configuration?.datasets?.forEach((dataset: any) => {
+        console.log("--------- DATASET: ", dataset)
+        dashboardModel.hasOwnProperty('id') ? datasetIds.push(dataset.id) : datasetIds.push(dataset.dsId)
+    })
+
+
+    console.log('----------- datasetIds: ', datasetIds)
+    return datasetIds.join(',')
 }
