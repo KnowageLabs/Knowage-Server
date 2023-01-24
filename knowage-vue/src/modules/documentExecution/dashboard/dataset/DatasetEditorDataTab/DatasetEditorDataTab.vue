@@ -5,7 +5,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
+import { IDataset } from '../../Dashboard'
 import DataList from './DatasetEditorDataList/DatasetEditorDataList.vue'
 import DataDetail from './DatasetEditorDataDetail/DatasetEditorDataDetail.vue'
 import DatasetEditorPreview from '../DatasetEditorPreview.vue'
@@ -13,12 +14,18 @@ import DatasetEditorPreview from '../DatasetEditorPreview.vue'
 export default defineComponent({
     name: 'dataset-editor-data-tab',
     components: { DataList, DataDetail, DatasetEditorPreview },
-    props: { dashboardDatasetsProp: { required: true, type: Array as any }, availableDatasetsProp: { required: true, type: Array as any }, selectedDatasetsProp: { type: Array as any }, documentDriversProp: { required: true, type: Array as any }, dashboardId: { type: String, required: true } },
+    props: {
+        dashboardDatasetsProp: { required: true, type: Array as any },
+        availableDatasetsProp: { required: true, type: Array as PropType<IDataset[]> },
+        selectedDatasetsProp: { type: Array as any },
+        documentDriversProp: { required: true, type: Array as any },
+        dashboardId: { type: String, required: true }
+    },
     emits: ['addSelectedDatasets', 'deleteDataset'],
     data() {
         return {
             selectedDataset: {} as any,
-            selectedDatasets: [] as any,
+            selectedDatasets: [] as any[],
             datasetDriversMap: {}
         }
     },

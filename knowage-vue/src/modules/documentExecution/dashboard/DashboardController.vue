@@ -46,7 +46,7 @@ import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import { v4 as uuidv4 } from 'uuid'
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
-import { IDashboardDataset, ISelection, IWidget, IGalleryItem } from './Dashboard'
+import { IDashboardDataset, ISelection, IWidget, IGalleryItem, IDataset } from './Dashboard'
 import { emitter, createNewDashboardModel, formatDashboardForSave, formatNewModel, loadDatasets } from './DashboardHelpers'
 import { mapActions, mapState } from 'pinia'
 import { formatModel } from './helpers/DashboardBackwardCompatibilityHelper'
@@ -76,7 +76,7 @@ export default defineComponent({
             model: null as any,
             widgetPickerVisible: false,
             datasetEditorVisible: false,
-            datasets: [] as any[],
+            datasets: [] as IDataset[],
             widgetEditorVisible: false,
             selectedWidget: null as any,
             crossNavigations: [] as any[],

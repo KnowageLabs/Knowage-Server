@@ -56,24 +56,25 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dialog from 'primevue/dialog'
 import Chip from 'primevue/chip'
 import dataDialogDescriptor from './DatasetEditorDataDialogDescriptor.json'
 import dashStore from '../../../Dashboard.store'
+import { IDataset } from '../../../Dashboard'
 
 export default defineComponent({
     name: 'datasets-catalog-datatable',
     components: { Column, DataTable, Dialog, Chip },
-    props: { selectedDatasetsProp: { required: true, type: Array as any }, availableDatasetsProp: { required: true, type: Array as any } },
+    props: { selectedDatasetsProp: { required: true, type: Array as any }, availableDatasetsProp: { required: true, type: Array as PropType<IDataset[]> } },
     emits: ['close', 'addSelectedDatasets'],
     data() {
         return {
             dataDialogDescriptor,
             datasets: [] as any[],
-            filteredDatasets: [] as any[],
+            filteredDatasets: [] as IDataset[],
             selectedDatasets: [] as any,
             searchWord: '',
             loading: false

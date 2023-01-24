@@ -46,8 +46,8 @@
 /**
  * ! this component will be in charge of managing the dataset.
  */
-import { defineComponent } from 'vue'
-import { IAssociation, IDashboardDataset, IDashboardDatasetParameter } from '../Dashboard'
+import { defineComponent, PropType } from 'vue'
+import { IAssociation, IDashboardDataset, IDashboardDatasetParameter, IDataset } from '../Dashboard'
 import { loadDatasets } from '../DashboardHelpers'
 import { mapActions } from 'pinia'
 import TabView from 'primevue/tabview'
@@ -62,7 +62,7 @@ import deepcopy from 'deepcopy'
 export default defineComponent({
     name: 'dataset-editor',
     components: { TabView, TabPanel, DataTab, AssociationsTab, DriverWarningDialog },
-    props: { availableDatasetsProp: { required: true, type: Array }, filtersDataProp: { type: Object }, dashboardIdProp: { type: String, required: true } },
+    props: { availableDatasetsProp: { required: true, type: Array as PropType<IDataset[]> }, filtersDataProp: { type: Object }, dashboardIdProp: { type: String, required: true } },
     emits: ['closeDatasetEditor', 'datasetEditorSaved', 'allDatasetsLoaded'],
     data() {
         return {
@@ -108,7 +108,6 @@ export default defineComponent({
             this.dashboardDatasets = deepcopy(this.dashboardStore.$state.dashboards[this.dashboardIdProp].configuration.datasets)
             this.dashboardAssociations = deepcopy(this.dashboardStore.$state.dashboards[this.dashboardIdProp].configuration.associations)
             this.selectedDatasets = this.selectModelDatasetsFromAvailable()
-            console.log('----------- selectedDatasets', this.selectedDatasets)
             this.setDatasetParametersFromModel()
             this.setDatasetDriversFromModel()
         },

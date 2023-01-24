@@ -29,7 +29,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
+import { IDataset } from '../../../Dashboard'
 import Card from 'primevue/card'
 import Listbox from 'primevue/listbox'
 import DataDialog from '../DatasetEditorDataDialog/DatasetEditorDataDialog.vue'
@@ -39,7 +40,7 @@ import dataListDescriptor from './DatasetEditorDataListDescriptor.json'
 export default defineComponent({
     name: 'dataset-editor-data-list',
     components: { Card, Listbox, DataDialog },
-    props: { dashboardDatasetsProp: { required: true, type: Array as any }, availableDatasetsProp: { required: true, type: Array as any }, selectedDatasetsProp: { required: true, type: Array as any } },
+    props: { dashboardDatasetsProp: { required: true, type: Array as any }, availableDatasetsProp: { required: true, type: Array as PropType<IDataset[]> }, selectedDatasetsProp: { required: true, type: Array as any } },
     emits: ['datasetSelected', 'addSelectedDatasets', 'deleteDataset'],
     data() {
         return {
@@ -63,7 +64,6 @@ export default defineComponent({
     methods: {
         loadSelectedDatasets() {
             this.selectedDatasets = this.selectedDatasetsProp
-            console.log('----------- selectedDatasetsProp', this.selectedDatasetsProp)
         },
         toggleDataDialog() {
             this.dataDialogVisible = !this.dataDialogVisible
