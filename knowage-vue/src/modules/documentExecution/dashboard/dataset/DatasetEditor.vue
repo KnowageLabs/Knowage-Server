@@ -62,7 +62,7 @@ import deepcopy from 'deepcopy'
 export default defineComponent({
     name: 'dataset-editor',
     components: { TabView, TabPanel, DataTab, AssociationsTab, DriverWarningDialog },
-    props: { availableDatasetsProp: { required: true, type: Array }, filtersDataProp: { type: Object }, dashboardIdProp: { type: String, required: true }, dashboardId: { type: String, required: true } },
+    props: { availableDatasetsProp: { required: true, type: Array }, filtersDataProp: { type: Object }, dashboardIdProp: { type: String, required: true } },
     emits: ['closeDatasetEditor', 'datasetEditorSaved', 'allDatasetsLoaded'],
     data() {
         return {
@@ -116,11 +116,11 @@ export default defineComponent({
         },
         async loadAvailableDatasets() {
             this.availableDatasets = deepcopy(this.availableDatasetsProp)
-            if (this.getAllDatasetLoadedFlag(this.dashboardId)) return
+            if (this.getAllDatasetLoadedFlag(this.dashboardIdProp)) return
             this.availableDatasets = await loadDatasets(null, this.store, this.setAllDatasets, this.$http)
             this.$emit('allDatasetsLoaded', this.availableDatasets)
             console.log('__________ AVAILABLE DATASETS: ', this.availableDatasets)
-            this.setAllDatasetLoadedFlag(this.dashboardId, true)
+            this.setAllDatasetLoadedFlag(this.dashboardIdProp, true)
         },
         selectModelDatasetsFromAvailable() {
             return this.availableDatasets?.filter((responseDataset) => {
