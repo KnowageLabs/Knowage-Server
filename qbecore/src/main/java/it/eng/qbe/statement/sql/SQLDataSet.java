@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 
 import it.eng.qbe.datasource.dataset.DataSetDataSource;
 import it.eng.qbe.statement.AbstractQbeDataSet;
+import it.eng.qbe.statement.AbstractStatement;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -124,7 +125,7 @@ public class SQLDataSet extends AbstractQbeDataSet {
 		dataStore = dataset.getDataStore();
 
 		IMetaData jdbcMetadata = dataStore.getMetaData();
-		IMetaData qbeQueryMetaData = getDataStoreMeta(this.getStatement().getQuery());
+		IMetaData qbeQueryMetaData = ((AbstractStatement) this.getStatement()).getDataStoreMeta();
 		IMetaData merged = mergeMetadata(jdbcMetadata, qbeQueryMetaData);
 		((DataStore) dataStore).setMetaData(merged);
 

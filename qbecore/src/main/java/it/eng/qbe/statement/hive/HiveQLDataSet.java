@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 
 import it.eng.qbe.datasource.dataset.DataSetDataSource;
 import it.eng.qbe.statement.AbstractQbeDataSet;
+import it.eng.qbe.statement.AbstractStatement;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
@@ -56,8 +57,7 @@ public class HiveQLDataSet extends AbstractQbeDataSet {
 			dataset.setQuery("select * from " + getTableNameForReading());
 			dataset.loadData(offset, fetchSize, maxResults);
 		} else {
-			DataSetDataSource ds = (DataSetDataSource) statement
-					.getDataSource();
+			DataSetDataSource ds = (DataSetDataSource) statement.getDataSource();
 			String statementStr = statement.getQueryString();
 			dataset = new JDBCHiveDataSet();
 			dataset.setDataSource(ds.getDataSourceForReading());
@@ -67,17 +67,14 @@ public class HiveQLDataSet extends AbstractQbeDataSet {
 
 		dataStore = dataset.getDataStore();
 
-
 		IMetaData jdbcMetadata = dataStore.getMetaData();
-		IMetaData qbeQueryMetaData = getDataStoreMeta(this.getStatement().getQuery());
+		IMetaData qbeQueryMetaData = ((AbstractStatement) this.getStatement()).getDataStoreMeta();
 		IMetaData merged = mergeMetadata(jdbcMetadata, qbeQueryMetaData);
-		((DataStore)dataStore).setMetaData(merged);
+		((DataStore) dataStore).setMetaData(merged);
 
-
-		if(hasDataStoreTransformers()) {
+		if (hasDataStoreTransformers()) {
 			executeDataStoreTransformers(dataStore);
 		}
-
 
 	}
 

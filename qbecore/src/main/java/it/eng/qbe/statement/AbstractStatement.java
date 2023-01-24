@@ -24,21 +24,35 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import it.eng.qbe.datasource.AbstractDataSource;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
+import it.eng.qbe.query.CalculatedSelectField;
 import it.eng.qbe.query.IQueryField;
 import it.eng.qbe.query.ISelectField;
+import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Query;
+import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.filters.SqlFilterModelAccessModality;
+import it.eng.qbe.query.serializer.json.QueryJSONSerializer;
+import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.qbe.statement.graph.GraphManager;
 import it.eng.qbe.statement.graph.bean.QueryGraph;
+import it.eng.spagobi.tools.dataset.bo.DataSetVariable;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.utilities.objects.Couple;
 
 /**
  * @author Andrea Gioia
  */
 public abstract class AbstractStatement implements IStatement {
+
+	public static final String PROPERTY_IS_SEGMENT_ATTRIBUTE = "isSegmentAttribute";
+	public static final String PROPERTY_IS_MANDATORY_MEASURE = "isMandatoryMeasure";
 
 	IDataSource dataSource;
 
@@ -457,6 +471,101 @@ public abstract class AbstractStatement implements IStatement {
 
 	protected String buildFieldQueryNameWithEntityAlias(String rootEntityAlias, String queryName) {
 		return rootEntityAlias + "." + queryName;
+	}
+
+	public IMetaData getDataStoreMeta() {
+		IMetaData dataStoreMeta;
+		ISelectField queryField;
+		FieldMetadata dataStoreFieldMeta;
+
+		Map<String, String> aliasSelectedFields = QueryJSONSerializer.getFieldsNature(this.getQuery(), this.getDataSource());
+		dataStoreMeta = new MetaData();
+
+		Iterator fieldsIterator = query.getSelectFields(true).iterator();
+		while (fieldsIterator.hasNext()) {
+			queryField = (ISelectField) fieldsIterator.next();
+
+			dataStoreFieldMeta = new FieldMetadata();
+			dataStoreFieldMeta.setAlias(queryField.getAlias());
+			if (queryField.isSimpleField()) {
+				SimpleSelectField dataMartSelectField = (SimpleSelectField) queryField;
+				dataStoreFieldMeta.setName(((SimpleSelectField) queryField).getAlias());
+				dataStoreFieldMeta.setProperty("calculated", new Boolean(false));
+				dataStoreFieldMeta.setProperty("uniqueName", dataMartSelectField.getUniqueName());
+
+				if (dataMartSelectField.getFunction().getName().equals("NONE") && dataMartSelectField.getJavaClass() != null) {
+					dataStoreFieldMeta.setType(dataMartSelectField.getJavaClass());
+				} else {
+					dataStoreFieldMeta.setType(Object.class);
+				}
+
+				String format = dataMartSelectField.getPattern();
+				if (format != null && !format.trim().equals("")) {
+					dataStoreFieldMeta.setProperty("format", format);
+				}
+
+				IModelField datamartField = ((AbstractDataSource) dataSource).getModelStructure().getField(dataMartSelectField.getUniqueName());
+				String iconCls = datamartField.getPropertyAsString("type");
+				String nature = dataMartSelectField.getNature();
+				dataStoreFieldMeta.setProperty("aggregationFunction", dataMartSelectField.getFunction().getName());
+
+				if (nature.equals(QuerySerializationConstants.FIELD_NATURE_MANDATORY_MEASURE)) {
+					dataStoreFieldMeta.setFieldType(FieldType.MEASURE);
+					dataStoreFieldMeta.getProperties().put(PROPERTY_IS_MANDATORY_MEASURE, Boolean.TRUE);
+				} else if (nature.equals(QuerySerializationConstants.FIELD_NATURE_MEASURE)) {
+					dataStoreFieldMeta.setFieldType(FieldType.MEASURE);
+				} else if (nature.equals(QuerySerializationConstants.FIELD_NATURE_SEGMENT_ATTRIBUTE)) {
+					dataStoreFieldMeta.setFieldType(FieldType.ATTRIBUTE);
+					dataStoreFieldMeta.getProperties().put(PROPERTY_IS_SEGMENT_ATTRIBUTE, Boolean.TRUE);
+				} else if (nature.equals(QuerySerializationConstants.FIELD_NATURE_ATTRIBUTE)) {
+					dataStoreFieldMeta.setFieldType(FieldType.ATTRIBUTE);
+				} else {
+					dataStoreFieldMeta.setFieldType(FieldType.ATTRIBUTE);
+				}
+
+			} else if (queryField.isCalculatedField()) {
+				CalculatedSelectField calculatedQueryField = (CalculatedSelectField) queryField;
+				dataStoreFieldMeta.setName(calculatedQueryField.getAlias());
+				dataStoreFieldMeta.setProperty("calculated", new Boolean(true));
+				dataStoreFieldMeta.setProperty("calculatedExpert", new Boolean(true));
+				// FIXME also calculated field must have uniquename for
+				// uniformity
+				dataStoreFieldMeta.setProperty("uniqueName", calculatedQueryField.getAlias());
+				DataSetVariable variable = new DataSetVariable(calculatedQueryField.getAlias(), calculatedQueryField.getType(),
+						calculatedQueryField.getExpression());
+				dataStoreFieldMeta.setProperty("variable", variable);
+				dataStoreFieldMeta.setType(variable.getTypeClass());
+
+			} else if (queryField.isInLineCalculatedField()) {
+				InLineCalculatedSelectField calculatedQueryField = (InLineCalculatedSelectField) queryField;
+				dataStoreFieldMeta.setName(calculatedQueryField.getAlias());
+				dataStoreFieldMeta.setProperty("calculated", new Boolean(false));
+				// FIXME also calculated field must have uniquename for
+				// uniformity
+				dataStoreFieldMeta.setProperty("uniqueName", calculatedQueryField.getAlias());
+				DataSetVariable variable = new DataSetVariable(calculatedQueryField.getAlias(), calculatedQueryField.getType(),
+						calculatedQueryField.getExpression());
+				dataStoreFieldMeta.setProperty("variable", variable);
+				dataStoreFieldMeta.setType(variable.getTypeClass());
+
+				String nature = queryField.getNature();
+				if (nature == null) {
+					nature = QueryJSONSerializer.getInLinecalculatedFieldNature(calculatedQueryField.getExpression(), aliasSelectedFields);
+				}
+				dataStoreFieldMeta.setProperty("nature", nature);
+				if (nature.equalsIgnoreCase(QuerySerializationConstants.FIELD_NATURE_MANDATORY_MEASURE)
+						|| nature.equalsIgnoreCase(QuerySerializationConstants.FIELD_NATURE_MEASURE)) {
+					dataStoreFieldMeta.setFieldType(FieldType.MEASURE);
+				} else {
+					dataStoreFieldMeta.setFieldType(FieldType.ATTRIBUTE);
+				}
+			}
+			dataStoreFieldMeta.setProperty("visible", new Boolean(queryField.isVisible()));
+
+			dataStoreMeta.addFiedMeta(dataStoreFieldMeta);
+		}
+
+		return dataStoreMeta;
 	}
 
 }
