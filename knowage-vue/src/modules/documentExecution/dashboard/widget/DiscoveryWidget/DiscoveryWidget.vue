@@ -59,6 +59,8 @@ import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
 import mainStore from '../../../../../App.store'
 import dashboardStore from '../../Dashboard.store'
 import PaginationRenderer from '../TableWidget/PaginatorRenderer.vue'
+import HeaderRenderer from '../TableWidget/HeaderRenderer.vue'
+import TooltipRenderer from '../TableWidget/TooltipRenderer.vue'
 import ProgressSpinner from 'primevue/progressspinner'
 
 export default defineComponent({
@@ -185,6 +187,8 @@ export default defineComponent({
             this.createColumnDefinitions()
             this.setFacetData()
             this.gridApi.setColumnDefs(this.gridColumns)
+            this.setHeaderHeight()
+            this.gridApi.redrawRows()
         },
         loadResponseData() {
             this.tableData = this.dataToShow
@@ -293,28 +297,21 @@ export default defineComponent({
         setupDatatableOptions() {
             this.gridOptions = {
                 // PROPERTIES
-                // tooltipShowDelay: 100,
-                // tooltipMouseTrack: true,
+                tooltipShowDelay: 100,
+                tooltipMouseTrack: true,
                 suppressScrollOnNewData: true,
                 animateRows: true,
                 headerHeight: 35,
                 rowHeight: 30,
                 defaultColDef: {
-                    editable: false,
-                    sortable: true,
-                    resizable: true,
-                    width: 100
-                    // tooltipComponent: TooltipRenderer,
-                    // cellClassRules: {
-                    //     'edited-cell-color-class': (params) => {
-                    //         if (params.data.isEdited) return params.data.isEdited.includes(params.colDef.field)
-                    //     }
-                    // }
+                    width: 150
                 },
                 // EVENTS
                 onCellClicked: this.onCellClicked,
                 // CALLBACKS
                 onGridReady: this.onGridReady,
+                getRowHeight: this.getRowHeight,
+                getRowStyle: this.getRowStyle,
                 getRowId: this.getRowId
             }
         },
@@ -328,6 +325,28 @@ export default defineComponent({
             console.groupEnd()
 
             this.setGridData()
+            this.setHeaderHeight()
+        },
+        setHeaderHeight() {
+            let headerConfig = this.propWidget.settings.style.headers
+            this.gridApi?.setHeaderHeight(this.propWidget.settings.style.headers.height)
+        },
+        getRowHeight() {
+            const rowsConfiguration = this.propWidget.settings.style.rows
+            if (rowsConfiguration.height && rowsConfiguration.height != 0) return rowsConfiguration.height
+            else return 25
+        },
+        getRowStyle(params) {
+            var rowStyles = this.propWidget.settings.style.rows
+
+            if (rowStyles.alternatedRows && rowStyles.alternatedRows.enabled) {
+                if (rowStyles.alternatedRows.oddBackgroundColor && params.node.rowIndex % 2 === 0) {
+                    return { background: rowStyles.alternatedRows.oddBackgroundColor }
+                }
+                if (rowStyles.alternatedRows.evenBackgroundColor && params.node.rowIndex % 2 != 0) {
+                    return { background: rowStyles.alternatedRows.evenBackgroundColor }
+                }
+            }
         },
         async setGridData() {
             this.gridApi.setRowData(this.tableData.rows)
@@ -354,8 +373,22 @@ export default defineComponent({
                             headerName: modelColumn.alias,
                             columnName: modelColumn.columnName,
                             field: responseFields[responseField].name,
-                            measure: modelColumn.fieldType
+                            measure: modelColumn.fieldType,
+                            headerComponent: HeaderRenderer,
+                            headerComponentParams: { propWidget: this.propWidget },
+                            suppressMovable: true
                         } as any
+
+                        // TOOLTIP CONFIGURATION  -----------------------------------------------------------------
+                        var tooltipConfig = this.getColumnTooltipConfig(tempCol.colId)
+                        if (tooltipConfig !== null) {
+                            tempCol.tooltipComponent = TooltipRenderer
+                            tempCol.tooltipField = tempCol.field
+                            tempCol.headerTooltip = tooltipConfig.header.enabled ? tooltipConfig.header.text : null
+                            tempCol.tooltipComponentParams = { tooltipConfig: tooltipConfig }
+                        } else {
+                            tempCol.headerTooltip = null
+                        }
 
                         columns.push(tempCol)
                     }
@@ -364,6 +397,16 @@ export default defineComponent({
             this.gridColumns = columns
 
             this.gridLoading = false
+        },
+        getColumnTooltipConfig(colId) {
+            var tooltipConfig = this.propWidget.settings.tooltips
+            var columntooltipConfig = null as any
+            tooltipConfig[0].enabled ? (columntooltipConfig = tooltipConfig[0]) : ''
+            tooltipConfig.forEach((config) => {
+                config.target.includes(colId) ? (columntooltipConfig = config) : ''
+            })
+
+            return columntooltipConfig
         },
         onCellClicked(node) {
             if (!this.editorMode) {
@@ -398,8 +441,29 @@ export default defineComponent({
             flex: 2;
             display: flex;
             flex-direction: column;
-            .discovery-grid .ag-root-wrapper {
-                border-bottom: none;
+            .discovery-grid {
+                .ag-root-wrapper {
+                    border-bottom: none;
+                }
+                .ag-header-cell-comp-wrapper {
+                    height: 100%;
+                    display: flex;
+                }
+                .ag-row,
+                .ag-header-cell,
+                .ag-cell-value,
+                .ag-header-group-cell,
+                .ag-floating-bottom-container .ag-cell {
+                    padding: 0 !important;
+                    border: none;
+                }
+                .custom-header-container,
+                .custom-header-group-container {
+                    display: flex;
+                    align-items: center;
+                    width: 100%;
+                    height: 100%;
+                }
             }
             .discovery-pagination {
                 border-left: 1px solid #babfc7;
