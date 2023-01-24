@@ -69,7 +69,9 @@ export default defineComponent({
         },
         onColumnItemUpdate(column: IWidgetColumn) {
             const index = this.widgetModel.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === column.id)
-            if (this.widgetType === 'discovery' && column.fieldType === 'ATTRIBUTE') this.clearDiscoveryWidgetAggregatedColumnValuesForSpecificColumn(column)
+            if (this.widgetType === 'discovery' && column.fieldType === 'ATTRIBUTE') {
+                this.clearDiscoveryWidgetAggregatedColumnValuesForSpecificColumn(column)
+            }
             if (index !== -1) {
                 this.widgetModel.columns[index] = { ...column }
                 emitter.emit('collumnUpdated', { column: this.widgetModel.columns[index], columnIndex: index })
