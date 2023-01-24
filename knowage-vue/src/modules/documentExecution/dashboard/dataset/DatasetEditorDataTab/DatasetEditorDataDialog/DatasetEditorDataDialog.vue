@@ -79,6 +79,11 @@ export default defineComponent({
             loading: false
         }
     },
+    watch: {
+        availableDatasetsProp() {
+            this.setDatasetList()
+        }
+    },
     setup() {
         const dashboardStore = dashStore()
         return { dashboardStore }

@@ -116,14 +116,8 @@ export const loadDatasets = async (dashboardModel: IDashboard | any, appStore: a
 }
 
 const getDatasetIdsFromDashboardModel = (dashboardModel: IDashboard | any) => {
-    console.log('----------- dashboard model: ', dashboardModel)
     const datasetIds = [] as string[]
-    dashboardModel.configuration?.datasets?.forEach((dataset: any) => {
-        console.log("--------- DATASET: ", dataset)
-        dashboardModel.hasOwnProperty('id') ? datasetIds.push(dataset.id) : datasetIds.push(dataset.dsId)
-    })
+    dashboardModel.configuration?.datasets?.forEach((dataset: any) => dashboardModel.hasOwnProperty('id') ? datasetIds.push(dataset.id) : datasetIds.push(dataset.dsId))
 
-
-    console.log('----------- datasetIds: ', datasetIds)
     return datasetIds.join(',')
 }

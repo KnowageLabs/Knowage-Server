@@ -4,7 +4,7 @@
         <DashboardRenderer v-if="!loading" :model="model" :datasets="datasets" :dashboardId="dashboardId" :documentDrivers="drivers" :variables="model ? model.configuration.variables : []"></DashboardRenderer>
 
         <Transition name="editorEnter" appear>
-            <DatasetEditor v-if="datasetEditorVisible" :dashboardIdProp="dashboardId" :availableDatasetsProp="datasets" :filtersDataProp="filtersData" @closeDatasetEditor="closeDatasetEditor" @datasetEditorSaved="closeDatasetEditor" />
+            <DatasetEditor v-if="datasetEditorVisible" :dashboardIdProp="dashboardId" :availableDatasetsProp="datasets" :filtersDataProp="filtersData" @closeDatasetEditor="closeDatasetEditor" @datasetEditorSaved="closeDatasetEditor" @allDatasetsLoaded="datasets = $event" />
         </Transition>
 
         <Transition name="editorEnter" appear>
@@ -16,7 +16,6 @@
                 :profileAttributes="profileAttributes"
                 @closeGeneralSettings="closeGeneralSettings"
                 @saveGeneralSettings="generalSettingsVisible = false"
-                @allDatasetsLoaded="datasets = $event"
             ></DashboardGeneralSettings>
         </Transition>
 

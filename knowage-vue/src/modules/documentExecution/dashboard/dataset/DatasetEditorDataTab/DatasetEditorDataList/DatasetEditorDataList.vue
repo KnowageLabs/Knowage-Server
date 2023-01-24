@@ -48,14 +48,23 @@ export default defineComponent({
             dataDialogVisible: false
         }
     },
+    watch: {
+        selectedDatasets() {
+            this.loadSelectedDatasets()
+        }
+    },
     setup() {
         const dashboardStore = dashStore()
         return { dashboardStore }
     },
     created() {
-        this.selectedDatasets = this.selectedDatasetsProp
+        this.loadSelectedDatasets()
     },
     methods: {
+        loadSelectedDatasets() {
+            this.selectedDatasets = this.selectedDatasetsProp
+            console.log('----------- selectedDatasetsProp', this.selectedDatasetsProp)
+        },
         toggleDataDialog() {
             this.dataDialogVisible = !this.dataDialogVisible
         },

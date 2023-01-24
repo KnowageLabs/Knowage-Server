@@ -79,11 +79,8 @@ export default defineComponent({
         }
     },
     watch: {
-        selectedDatasets: {
-            handler() {
-                // console.log('SELECTED DATASETS CHANGED', this.selectedDatasets)
-            },
-            deep: true
+        async availableDatasetsProp() {
+            await this.setDatasetsData()
         }
     },
     computed: {
@@ -119,7 +116,6 @@ export default defineComponent({
             if (this.getAllDatasetLoadedFlag(this.dashboardIdProp)) return
             this.availableDatasets = await loadDatasets(null, this.store, this.setAllDatasets, this.$http)
             this.$emit('allDatasetsLoaded', this.availableDatasets)
-            console.log('__________ AVAILABLE DATASETS: ', this.availableDatasets)
             this.setAllDatasetLoadedFlag(this.dashboardIdProp, true)
         },
         selectModelDatasetsFromAvailable() {
