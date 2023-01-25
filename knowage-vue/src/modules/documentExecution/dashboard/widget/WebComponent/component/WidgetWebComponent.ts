@@ -22,6 +22,8 @@ class WidgetWebComponent extends HTMLElement {
         shadow.appendChild(wrapper)
 
         console.log('>>>>>>>>>>>>>>>>>>> TEST:', document)
+        console.log('>>>>>>>>>>>>>>>>>>> TEST 2:', shadow)
+        console.log('>>>>>>>>>>>>>>>>>>> TEST 3:', this)
         const scr = document.createElement('script')
         scr.type = 'text/javascript'
         scr.text = 'alert("ALERT 1")'

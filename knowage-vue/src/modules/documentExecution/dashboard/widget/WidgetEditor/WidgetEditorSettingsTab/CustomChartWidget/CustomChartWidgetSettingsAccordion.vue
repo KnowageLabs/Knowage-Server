@@ -3,23 +3,17 @@
         <Accordion class="widget-editor-accordion" v-model:activeIndex="activeIndex">
             <AccordionTab v-for="(accordion, index) in settings" :key="index">
                 <template #header>
-                    <DiscoveryWidgetSettingsAccordionHeader :widgetModel="widgetModel" :title="accordion.title" :type="accordion.type"></DiscoveryWidgetSettingsAccordionHeader>
+                    <CustomChartWidgetSettingsAccordionHeader :widgetModel="widgetModel" :title="accordion.title" :type="accordion.type"></CustomChartWidgetSettingsAccordionHeader>
                 </template>
-                <DiscoveryWidgetFacetsSettings v-if="accordion.type === 'FacetsSettings'" :widgetModel="widgetModel" :dashboardId="dashboardId"></DiscoveryWidgetFacetsSettings>
-                <DiscoveryWidgetSearchSettings v-else-if="accordion.type === 'SearchSettings'" :widgetModel="widgetModel" :dashboardId="dashboardId"></DiscoveryWidgetSearchSettings>
-                <WidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
-                <TableWidgetCustomMessages v-else-if="accordion.type === 'CustomMessages'" :widgetModel="widgetModel"></TableWidgetCustomMessages>
-                <TableWidgetHeaders v-else-if="accordion.type === 'Headers'" :widgetModel="widgetModel"></TableWidgetHeaders>
+                <WidgetExport v-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
                 <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
-                <TableWidgetColumnStyle v-else-if="accordion.type === 'ColumnStyle'" :widgetModel="widgetModel"></TableWidgetColumnStyle>
-                <WidgetRowsStyle v-else-if="accordion.type === 'RowsStyle'" :widgetModel="widgetModel"></WidgetRowsStyle>
                 <WidgetBackgroundColorStyle v-else-if="accordion.type === 'BackgroundColorStyle'" :widgetModel="widgetModel"></WidgetBackgroundColorStyle>
                 <WidgetBordersStyle v-else-if="accordion.type === 'BordersStyle'" :widgetModel="widgetModel"></WidgetBordersStyle>
                 <WidgetPaddingStyle v-else-if="accordion.type === 'PaddingStyle'" :widgetModel="widgetModel"></WidgetPaddingStyle>
                 <WidgetShadowsStyle v-else-if="accordion.type === 'ShadowsStyle'" :widgetModel="widgetModel"></WidgetShadowsStyle>
                 <WidgetResponsive v-else-if="accordion.type === 'Responsive'" :widgetModel="widgetModel"></WidgetResponsive>
-                <TableWidgetTooltips v-else-if="accordion.type === 'Tooltips'" :widgetModel="widgetModel"></TableWidgetTooltips>
                 <WidgetCrossNavigation v-else-if="accordion.type === 'CrossNavigation'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :dashboardId="dashboardId"></WidgetCrossNavigation>
+                <WidgetInteractionsLinks v-else-if="accordion.type === 'Link'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :dashboardId="dashboardId"></WidgetInteractionsLinks>
                 <WidgetPreview v-else-if="accordion.type === 'Preview'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :dashboardId="dashboardId"></WidgetPreview>
             </AccordionTab>
         </Accordion>
@@ -31,49 +25,36 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget, IDataset, IVariable } from '@/modules/documentExecution/dashboard/Dashboard'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
-import descriptor from './DiscoveryWidgetSettingsDescriptor.json'
+import descriptor from './CustomChartWidgetSettingsDescriptor.json'
 import settingsTabDescriptor from '../WidgetEditorSettingsTabDescriptor.json'
 import WidgetExport from '../common/configuration/WidgetExport.vue'
-import TableWidgetCustomMessages from '../TableWidget/configuration/TableWidgetCustomMessages.vue'
-import TableWidgetColumnStyle from '../TableWidget/style/TableWidgetColumnStyle.vue'
-import WidgetRowsStyle from '../common/style/WidgetRowsStyle.vue'
 import WidgetBordersStyle from '../common/style/WidgetBordersStyle.vue'
 import WidgetShadowsStyle from '../common/style/WidgetShadowsStyle.vue'
 import WidgetResponsive from '../common/responsive/WidgetResponsive.vue'
-import TableWidgetTooltips from '../TableWidget/tooltips/TableWidgetTooltips.vue'
 import WidgetCrossNavigation from '../common/interactions/crossNavigation/WidgetCrossNavigation.vue'
+import WidgetInteractionsLinks from '../common/interactions/link/WidgetInteractionsLinks.vue'
 import WidgetPreview from '../common/interactions/preview/WidgetPreview.vue'
-import TableWidgetHeaders from '../TableWidget/style/TableWidgetHeaders.vue'
 import WidgetTitleStyle from '../common/style/WidgetTitleStyle.vue'
 import WidgetPaddingStyle from '../common/style/WidgetPaddingStyle.vue'
 import WidgetBackgroundColorStyle from '../common/style/WidgetBackgroundColorStyle.vue'
-import DiscoveryWidgetSettingsAccordionHeader from './DiscoveryWidgetSettingsAccordionHeader.vue'
-import DiscoveryWidgetFacetsSettings from './configuration/DiscoveryWidgetFacetsSettings.vue'
-import DiscoveryWidgetSearchSettings from './configuration/DiscoveryWidgetSearchSettings.vue'
+import CustomChartWidgetSettingsAccordionHeader from './CustomChartWidgetSettingsAccordionHeader.vue'
 
 export default defineComponent({
-    name: 'discovery-widget-configuration-container',
+    name: 'custom-chart-widget-settings-container',
     components: {
         Accordion,
         AccordionTab,
         WidgetExport,
-        TableWidgetCustomMessages,
-        TableWidgetHeaders,
         WidgetTitleStyle,
-        TableWidgetColumnStyle,
-        WidgetRowsStyle,
         WidgetBordersStyle,
         WidgetShadowsStyle,
         WidgetResponsive,
         WidgetPaddingStyle,
         WidgetBackgroundColorStyle,
-        TableWidgetTooltips,
         WidgetCrossNavigation,
         WidgetInteractionsLinks,
         WidgetPreview,
-        DiscoveryWidgetSettingsAccordionHeader,
-        DiscoveryWidgetFacetsSettings,
-        DiscoveryWidgetSearchSettings
+        CustomChartWidgetSettingsAccordionHeader
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

@@ -12,6 +12,7 @@ import { formatHighchartsWidget } from './chartWidget/highcharts/HighchartsWidge
 import { formatChartJSWidget } from './chartWidget/chartJS/ChartJSWidgetCompatibilityHelper'
 import { formatImageWidget } from './imageWidget/ImageWidgetCompatibilityHelper'
 import { formatDiscoveryWidget } from './discoveryWidget/DiscoveryWidgetCompatibilityHelper'
+import { formatCustomChartWidget } from './customChart/CustomChartWidgetCompatibilityHelper'
 
 const datasetIdLabelMap = {}
 
@@ -216,6 +217,9 @@ export const formatWidget = (widget: any, formattedModel: IDashboard, user: any,
             break
         case 'image':
             formattedWidget = formatImageWidget(widget)
+            break;
+        case 'customchart':
+            formattedWidget = formatCustomChartWidget(widget)
             break;
         case 'discovery':
             formattedWidget = formatDiscoveryWidget(widget, drivers)

@@ -41,7 +41,7 @@ export interface IWidget {
     dataset: number | null
     type: string
     columns: IWidgetColumn[]
-    settings: ITableWidgetSettings | ISelectionsWidgetSettings | ISelectorWidgetSettings | IHTMLWidgetSettings | ITextWidgetSettings | IHighchartsWidgetSettings | IChartJSWidgetSettings | IImageWidgetSettings
+    settings: ITableWidgetSettings | ISelectionsWidgetSettings | ISelectorWidgetSettings | IHTMLWidgetSettings | ITextWidgetSettings | IHighchartsWidgetSettings | IChartJSWidgetSettings | IImageWidgetSettings | ICustomChartWidgetSettings
     new?: boolean
 }
 
