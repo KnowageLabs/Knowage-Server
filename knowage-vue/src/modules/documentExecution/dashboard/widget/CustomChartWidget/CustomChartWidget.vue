@@ -31,9 +31,9 @@ export default defineComponent({
             activeSelections: [] as ISelection[],
             htmlContent: '' as string,
             webComponentCss: '' as string,
+            webComponentJs: '' as string,
             webComponentRef: {} as any,
-            drivers: [] as IDashboardDriver[],
-            bojanTest: 'bojanTest value'
+            drivers: [] as IDashboardDriver[]
         }
     },
     watch: {
@@ -54,31 +54,28 @@ export default defineComponent({
         ...mapActions(store, ['getInternationalization', 'setSelections', 'getAllDatasets', 'getDashboardDrivers']),
         ...mapActions(appStore, ['setError']),
         loadDrivers() {
-            this.drivers = this.getDashboardDrivers(this.dashboardId)
+            this.drivers = this.getDashboardDrivers(this.dashboardId) // TODO
         },
         async loadDataToShow() {
             this.dataToShow = this.widgetData
             await this.loadHTML()
         },
         loadActiveSelections() {
-            this.activeSelections = this.propActiveSelections
+            this.activeSelections = this.propActiveSelections // TODO
         },
         async loadHTML() {
-            if (this.propWidget.type !== 'html' && this.propWidget.type !== 'text') return
-            let temp = {} as any
-            if (this.propWidget.type === 'html') {
-                temp = parseHtml(this.propWidget, this.drivers, this.variables, this.activeSelections, this.getInternationalization(), this.dataToShow, this.$toast)
-                this.htmlContent = temp.html
-                this.webComponentCss = temp.css
-            } else {
-                this.htmlContent = parseText(this.propWidget, this.drivers, this.variables, this.activeSelections, this.getInternationalization(), this.dataToShow, this.$toast)
-            }
+            if (!this.propWidget.settings || !this.propWidget.settings.editor) return
+            this.htmlContent = this.propWidget.settings.editor.html
+            this.webComponentCss = this.propWidget.settings.editor.css
+            this.webComponentJs = this.propWidget.settings.editor.js
 
             if (!this.webComponentRef) return
             this.webComponentRef.htmlContent = this.propWidget.type === 'text' ? '<div style="position: absolute;height: 100%;width: 100%;">' + this.htmlContent + '</div>' : this.htmlContent
             this.webComponentRef.webComponentCss = this.webComponentCss
+            this.webComponentRef.webComponentJs = this.webComponentJs
         },
         onSelect(event: any) {
+            // TODO
             if (this.editorMode || !event.detail) return
             const value = event.detail.selectionValue
             const selectionColumnName = event.detail.selectionColumn
