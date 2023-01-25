@@ -12,6 +12,7 @@ import store from '../../Dashboard.store'
 import appStore from '../../../../../App.store'
 import { IWidget } from '../../Dashboard'
 import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
+import { CustomChartDatastore } from '../WidgetEditor/WidgetEditorSettingsTab/CustomChartWidget/datastore/CustomChartWidgetDatastore'
 
 export default defineComponent({
     name: 'widget-component-container',
@@ -33,7 +34,8 @@ export default defineComponent({
             webComponentCss: '' as string,
             webComponentJs: '' as string,
             webComponentRef: {} as any,
-            drivers: [] as IDashboardDriver[]
+            drivers: [] as IDashboardDriver[],
+            datastore: new CustomChartDatastore(null)
         }
     },
     watch: {
@@ -49,6 +51,7 @@ export default defineComponent({
         this.loadDrivers()
         this.loadActiveSelections()
         this.loadDataToShow()
+        console.log('DATASTORE ---------------', this.datastore)
     },
     methods: {
         ...mapActions(store, ['getInternationalization', 'setSelections', 'getAllDatasets', 'getDashboardDrivers']),
