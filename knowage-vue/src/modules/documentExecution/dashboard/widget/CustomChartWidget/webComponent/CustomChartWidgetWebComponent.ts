@@ -29,12 +29,12 @@ class CustomChartWidgetWebComponent extends HTMLElement {
     set htmlContent(value: string) {
         if (this.shadowRoot) {
             const temp = this.shadowRoot.querySelector('.component-wrapper')
-            if (temp) temp.innerHTML = '<script src="https://code.highcharts.com/highcharts.js"></script>' + value
+            if (temp) temp.innerHTML = value
         }
     }
 
     get webComponentCss() {
-        return this.htmlContent
+        return this.webComponentCss
     }
 
     set webComponentCss(value: string) {
@@ -45,22 +45,24 @@ class CustomChartWidgetWebComponent extends HTMLElement {
     }
 
     get webComponentJs() {
-        return this.htmlContent
+        return this.webComponentJs
     }
 
     set webComponentJs(value: string) {
         if (this.shadowRoot) {
-            console.log("-------- js value: ", value)
             console.log('>>>>>>>>>>>>>>>>>>> TEST:', document)
-            console.log('>>>>>>>>>>>>>>>>>>> TEST 2:', this)
-            const scr = document.createElement('script')
-            scr.type = 'text/javascript'
-            scr.text = 'alert("ALERT 1")'
-            scr.addEventListener('onload', () => {
-                console.log("IT'S LOADED")
-            })
+            console.log('>>>>>>>>>>>>>>>>>>> shadowRoot:', this.shadowRoot)
+
+
             var webCompEl = document.getElementById('webComponent')
-            console.log('>>>>>>>>>>>>>>>>>>> webCompEl:', webCompEl)
+            // console.log('>>>>>>>>>>>>>>>>>>> webCompEl:', webCompEl)
+
+            const testJS = document.createElement('script')
+            testJS.setAttribute('src', 'https://code.highcharts.com/highcharts.js');
+            testJS.addEventListener("load", () => alert('LOADED SCRIPT!'));
+            // testJS.setAttribute('src', 'https://code.highcharts.com/highcharts/modules/drilldown.js');
+            document.body.appendChild(testJS)
+
             var JS = document.createElement('script')
             // window.bojanTest = 'bojan test web component'
             // window.bojanFunction = function () {
@@ -74,7 +76,12 @@ class CustomChartWidgetWebComponent extends HTMLElement {
 
             //JS.text = "function test() {console.log('stil working')} test()"
             JS.text = value
-            document.body.appendChild(JS)
+            console.log(">>>>>>>>>>>>> DOCUMENT BODY: ", document.body)
+            console.log("this.shadowRoot.querySelector('#container_1'): ", this.shadowRoot.querySelector('#container_1'))
+            console.log("document.getElementById('container_1') ", document.getElementById('container_1'))
+            // setTimeout(() => document.body.appendChild(JS), 2000)
+            setTimeout(() => this.shadowRoot?.appendChild(JS), 2000)
+            // document.body.appendChild(JS)
             // webCompEl?.body.appendChild(JS)
             //  eval(`alert(dataToShow)`)
         }
