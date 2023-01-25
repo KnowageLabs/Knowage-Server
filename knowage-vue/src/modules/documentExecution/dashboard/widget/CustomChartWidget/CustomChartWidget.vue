@@ -1,6 +1,6 @@
 <template>
-    <custom-chart-widget-web-component class="kn-flex" ref="webComponent"></custom-chart-widget-web-component>
-    <div id="container_1"></div>
+    <!-- <custom-chart-widget-web-component class="kn-flex" ref="webComponent"></custom-chart-widget-web-component> -->
+    <div id="containerElement"></div>
 </template>
 
 <script lang="ts">
@@ -14,7 +14,7 @@ import { IWidget } from '../../Dashboard'
 import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
 
 export default defineComponent({
-    name: 'widget-component-container',
+    name: 'custom-chart-widget',
     emits: ['interaction', 'pageChanged', 'launchSelection', 'sortingChanged'],
     components: {},
     props: {
@@ -90,18 +90,21 @@ export default defineComponent({
             return { datasetId: this.propWidget.dataset as number, datasetLabel: this.getDatasetLabel(this.propWidget.dataset as number), columnName: columnName, value: value, aggregated: false, timestamp: new Date().getTime() }
         },
         test() {
-            // const element = document.getElementById('bojanTest')
-            // const shadow = this.attachShadow({ mode: 'open' })
-            // const style = document.createElement('style')
-            // style.classList.add('style-wrapper')
-            // const wrapper = document.createElement('div')
-            // wrapper.classList.add('component-wrapper')
-            // wrapper.style.position = 'relative'
-            // wrapper.style.overflow = 'auto'
-            // wrapper.style.height = '100%'
-            // wrapper.textContent = ''
-            // shadow.appendChild(style)
-            // shadow.appendChild(wrapper)
+            const containerElement = document.getElementById('customChartContainerElement')
+
+            const style = document.createElement('style')
+            style.classList.add('style-wrapper')
+
+            const wrapper = document.createElement('div')
+            wrapper.classList.add('component-wrapper')
+
+            wrapper.style.position = 'relative'
+            wrapper.style.overflow = 'auto'
+            wrapper.style.height = '100%'
+
+            wrapper.textContent = ''
+            containerElement.appendChild(style)
+            containerElement.appendChild(wrapper)
         }
     }
 })
