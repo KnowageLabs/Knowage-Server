@@ -1,17 +1,17 @@
 <template>
-    <widget-web-component id="webComponent" class="kn-flex" ref="webComponent"></widget-web-component>
+    <custom-chart-widget-web-component id="webComponent" class="kn-flex" ref="webComponent"></custom-chart-widget-web-component>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IDashboardDriver, IDataset, ISelection, IVariable } from '../../Dashboard'
-import './component/WidgetWebComponent'
+import './webComponent/CustomChartWidgetWebComponent'
 import { mapActions } from 'pinia'
 import store from '../../Dashboard.store'
 import appStore from '../../../../../App.store'
 import { IWidget } from '../../Dashboard'
 import { parseHtml, parseText } from '../WidgetEditor/helpers/htmlParser/ParserHelper'
-import { executeCrossNavigation, executePreview, updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
+import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
 
 export default defineComponent({
     name: 'widget-component-container',
@@ -32,7 +32,8 @@ export default defineComponent({
             htmlContent: '' as string,
             webComponentCss: '' as string,
             webComponentRef: {} as any,
-            drivers: [] as IDashboardDriver[]
+            drivers: [] as IDashboardDriver[],
+            bojanTest: 'bojanTest value'
         }
     },
     watch: {
@@ -76,9 +77,6 @@ export default defineComponent({
             if (!this.webComponentRef) return
             this.webComponentRef.htmlContent = this.propWidget.type === 'text' ? '<div style="position: absolute;height: 100%;width: 100%;">' + this.htmlContent + '</div>' : this.htmlContent
             this.webComponentRef.webComponentCss = this.webComponentCss
-            this.webComponentRef.addEventListener('selectEvent', this.onSelect)
-            this.webComponentRef.addEventListener('previewEvent', this.onPreview)
-            this.webComponentRef.addEventListener('crossNavEvent', this.onCrossNavigation)
         },
         onSelect(event: any) {
             if (this.editorMode || !event.detail) return
@@ -93,21 +91,11 @@ export default defineComponent({
         },
         createNewSelection(value: (string | number)[], columnName: string) {
             return { datasetId: this.propWidget.dataset as number, datasetLabel: this.getDatasetLabel(this.propWidget.dataset as number), columnName: columnName, value: value, aggregated: false, timestamp: new Date().getTime() }
-        },
-        onPreview(event: any) {
-            if (this.editorMode || !event.detail) return
-            const datasetLabel = event.detail.datasetLabel
-            executePreview(datasetLabel)
-        },
-        onCrossNavigation(event: any) {
-            if (this.editorMode || !event.detail || !this.propWidget) return
-            const crossValue = event.detail.crossValue
-            const crossNavigationConfiguration = this.propWidget.settings.interactions.crossNavigation
-            executeCrossNavigation(crossValue, crossNavigationConfiguration)
         }
     }
 })
 </script>
+
 <style lang="scss" scoped>
 .widget-container {
     width: 100%;

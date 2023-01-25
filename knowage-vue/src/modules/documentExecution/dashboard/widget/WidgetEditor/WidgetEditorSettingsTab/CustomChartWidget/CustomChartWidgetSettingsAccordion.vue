@@ -5,7 +5,10 @@
                 <template #header>
                     <CustomChartWidgetSettingsAccordionHeader :widgetModel="widgetModel" :title="accordion.title" :type="accordion.type"></CustomChartWidgetSettingsAccordionHeader>
                 </template>
-                <WidgetExport v-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
+                <CustomChartHTMLEditor v-if="accordion.type === 'HTML'" :activeIndex="activeIndex" :widgetModel="widgetModel"></CustomChartHTMLEditor>
+                <CustomChartCSSEditor v-if="accordion.type === 'CSS'" :activeIndex="activeIndex" :widgetModel="widgetModel"></CustomChartCSSEditor>
+                <CustomChartJSEditor v-if="accordion.type === 'JS'" :activeIndex="activeIndex" :widgetModel="widgetModel"></CustomChartJSEditor>
+                <WidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
                 <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
                 <WidgetBackgroundColorStyle v-else-if="accordion.type === 'BackgroundColorStyle'" :widgetModel="widgetModel"></WidgetBackgroundColorStyle>
                 <WidgetBordersStyle v-else-if="accordion.type === 'BordersStyle'" :widgetModel="widgetModel"></WidgetBordersStyle>
@@ -38,6 +41,9 @@ import WidgetTitleStyle from '../common/style/WidgetTitleStyle.vue'
 import WidgetPaddingStyle from '../common/style/WidgetPaddingStyle.vue'
 import WidgetBackgroundColorStyle from '../common/style/WidgetBackgroundColorStyle.vue'
 import CustomChartWidgetSettingsAccordionHeader from './CustomChartWidgetSettingsAccordionHeader.vue'
+import CustomChartHTMLEditor from './editor/CustomChartHtmlEditor.vue'
+import CustomChartCSSEditor from './editor/CustomChartCSSEditor.vue'
+import CustomChartJSEditor from './editor/CustomChartJSEditor.vue'
 
 export default defineComponent({
     name: 'custom-chart-widget-settings-container',
@@ -54,7 +60,10 @@ export default defineComponent({
         WidgetCrossNavigation,
         WidgetInteractionsLinks,
         WidgetPreview,
-        CustomChartWidgetSettingsAccordionHeader
+        CustomChartWidgetSettingsAccordionHeader,
+        CustomChartHTMLEditor,
+        CustomChartCSSEditor,
+        CustomChartJSEditor
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

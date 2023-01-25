@@ -6,6 +6,20 @@
                 "type": "Export"
             }
         ],
+        "Editor": [
+            {
+                "title": "CSS",
+                "type": "CSS"
+            },
+            {
+                "title": "HTML",
+                "type": "HTML"
+            },
+            {
+                "title": "JS",
+                "type": "JS"
+            }
+        ],
         "Interactions": [
             {
                 "title": "dashboard.widgetEditor.interactions.crossNavigation",
@@ -50,6 +64,17 @@
         ]
     },
     "settingsListOptions": [
+        {
+            "disabled": false,
+            "icon": "fa fa-book",
+            "label": "dashboard.widgetEditor.gallery",
+            "value": "Gallery"
+        },
+        {
+            "icon": "fa fa-code",
+            "label": "dashboard.widgetEditor.editor",
+            "value": "Editor"
+        },
         {
             "icon": "fa fa-cogs",
             "label": "dashboard.widgetEditor.configuration",

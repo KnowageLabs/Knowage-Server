@@ -3,10 +3,18 @@ import { IWidgetBackgroundStyle, IWidgetBordersStyle, IWidgetExports, IWidgetPad
 export interface ICustomChartWidgetSettings {
     updatable: boolean
     clickable: boolean
+    editor: ICustomChartWidgetEditor
     configuration: ICustomChartWidgetConfiguration
     interactions: IWidgetInteractions
     style: ICustomChartStyle
     responsive: IWidgetResponsive
+}
+
+
+export interface ICustomChartWidgetEditor {
+    css: string,
+    html: string,
+    js: string
 }
 
 export interface ICustomChartWidgetConfiguration {
