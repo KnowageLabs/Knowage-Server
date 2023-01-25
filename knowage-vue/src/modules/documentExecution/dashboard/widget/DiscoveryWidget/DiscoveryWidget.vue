@@ -1,12 +1,12 @@
 <template>
     <div ref="discoveryContainer" class="discovery-container" v-resize="onWidgetSizeChange">
         <ProgressSpinner v-if="widgetLoading" class="kn-progress-spinner" />
-        <div class="kn-width-full p-d-flex p-mb-2">
-            <Button v-if="widgetWidth < 600" :icon="burgerIcon" class="p-button-text p-button-rounded p-button-plain p-as-center" @click="toggleFacets" />
-            <InputText class="kn-material-input kn-flex" v-model="searchWord" type="text" :placeholder="$t('common.search')" @blur="searchItems" />
+        <div class="kn-width-full p-d-flex">
+            <Button v-if="widgetWidth < 600 && displayFacets" :icon="burgerIcon" class="p-button-text p-button-rounded p-button-plain p-as-center" @click="toggleFacets" />
+            <InputText v-if="displaySearch" class="discovery-search kn-material-input kn-flex p-mb-2" v-model="searchWord" type="text" :placeholder="$t('common.search')" @keyup.enter="searchItems" />
         </div>
         <div class="discovery-content">
-            <div ref="facetsContainer" :class="[widgetWidth < 600 ? 'sidenav' : '']" class="facets-container dashboard-scrollbar" :style="getFacetWidth()">
+            <div v-if="displayFacets" ref="facetsContainer" :class="{ sidenav: widgetWidth < 600 }" class="facets-container dashboard-scrollbar p-mr-2" :style="getFacetWidth()">
                 <div v-for="(facet, facetName) in facetsToDisplay" :key="facetName" class="facet-accordion">
                     <Toolbar class="kn-toolbar kn-toolbar--primary facet-accordion-header">
                         <template #start> {{ facetName }}</template>
@@ -16,7 +16,13 @@
                         </template>
                     </Toolbar>
                     <div v-if="!facet.closed">
-                        <div v-for="row in facet.rows.slice(0, propWidget.settings.facets.limit)" :class="{ selected: isFacetSelected(facetName, row) }" class="facet-accordion-content selectable" v-tooltip.top="facet.column_1" @click="selectFacet(facetName, row)">
+                        <div
+                            v-for="row in facet.rows.slice(0, propWidget.settings.facets.limit)"
+                            :class="{ selected: isFacetSelected(facetName, row), blocked: isFacetBlocked(facetName, row) }"
+                            class="facet-accordion-content selectable"
+                            v-tooltip.top="facet.column_1"
+                            @click="selectFacet(facetName, row)"
+                        >
                             <!-- <span v-if="facet.metaData.type == 'date'" class="kn-truncated">
                                     TODO: Set Date Format
                                     {{ setTimeFormat(item.column_1, facet.metaData.dateFormat) }}
@@ -32,7 +38,7 @@
                     </div>
                 </div>
             </div>
-            <div class="table-container p-ml-2">
+            <div class="table-container">
                 <ag-grid-vue v-if="!gridLoading" class="discovery-grid ag-theme-alpine kn-flex discovery-grid-scrollbar" :gridOptions="gridOptions"></ag-grid-vue>
                 <PaginationRenderer class="discovery-pagination" :propWidgetPagination="propWidget.settings.pagination" @pageChanged="$emit('pageChanged')" />
             </div>
@@ -53,6 +59,8 @@ import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
 import mainStore from '../../../../../App.store'
 import dashboardStore from '../../Dashboard.store'
 import PaginationRenderer from '../TableWidget/PaginatorRenderer.vue'
+import HeaderRenderer from '../TableWidget/HeaderRenderer.vue'
+import TooltipRenderer from '../TableWidget/TooltipRenderer.vue'
 import ProgressSpinner from 'primevue/progressspinner'
 
 export default defineComponent({
@@ -71,13 +79,19 @@ export default defineComponent({
     watch: {
         propWidget: {
             handler() {
-                if (!this.editorMode) this.refreshGridConfiguration()
+                // console.group('PROP WIDGET PROP HANDLER ------------------------------------')
+                // console.log('propWidget ', this.propWidget)
+                // console.groupEnd()
+                // if (!this.editorMode) this.setGridData()
             },
             deep: true
         },
         dataToShow: {
             handler() {
-                console.log('WIDGET DATA TO SHOW', this.dataToShow)
+                console.group('DATA TO SHOW PROP HANDLER ------------------------------------')
+                console.log('dataToShow ', this.dataToShow)
+                console.groupEnd()
+
                 this.reloadWidgetData()
             },
             deep: true
@@ -90,6 +104,16 @@ export default defineComponent({
         burgerIcon(): string {
             if (this.facetSidenavShown) return 'fas fa-x'
             else return 'fas fa-bars'
+        },
+        displayFacets(): boolean {
+            let facetSettings = this.propWidget.settings.facets
+            if (facetSettings.enabled) return true
+            else return false
+        },
+        displaySearch(): boolean {
+            let searchSettings = this.propWidget.settings.search
+            if (searchSettings.enabled) return true
+            else return false
         }
     },
     data() {
@@ -107,7 +131,8 @@ export default defineComponent({
             gridApi: null as any,
             columnApi: null as any,
             gridLoading: false,
-            selectedColumn: false as any
+            selectedColumn: false as any,
+            getRowId: null as any
         }
     },
     setup() {
@@ -116,110 +141,137 @@ export default defineComponent({
         return { store, appStore }
     },
     created() {
-        this.tableData = this.dataToShow
-        this.setEventListeners()
-        this.loadSearchValue()
-        this.setFacetData()
-        this.loadActiveSelections()
-        this.setupDatatableOptions()
-        this.createColumnDefinitions(this.tableData?.metaData?.fields)
-        // this.loadActiveSelectionValue()
-    },
-    unmounted() {
-        this.removeEventListeners()
+        console.group('CREATED HOOK ------------------------------------')
+        console.log('propWidget ', this.propWidget)
+        console.log('dataToShow ', this.dataToShow)
+        console.groupEnd()
+        this.prepareWidget()
     },
     mounted() {
         this.setInitialWidgetWidth()
+    },
+    unmounted() {
+        this.removeEventListeners()
     },
 
     methods: {
         ...mapActions(dashboardStore, ['setSelections']),
         setEventListeners() {
-            // emitter.on('refreshTable', this.refreshGridConfigurationWithoutData)
+            if (this.editorMode) emitter.on('refreshTable', this.reloadWidgetWithoutData)
             // emitter.on('selectionsDeleted', this.onSelectionsDeleted)
         },
         removeEventListeners() {
-            // emitter.off('refreshTable', this.refreshGridConfigurationWithoutData)
+            if (this.editorMode) emitter.off('refreshTable', this.reloadWidgetWithoutData)
             // emitter.off('selectionsDeleted', this.onSelectionsDeleted)
+        },
+        prepareWidget() {
+            this.getRowId = (params) => params.data.id
+            this.loadResponseData()
+            this.createColumnDefinitions()
+            this.setEventListeners()
+            this.setupDatatableOptions()
+            this.loadSearchValue()
+            this.loadActiveSelections()
+        },
+        reloadWidgetData() {
+            this.loadResponseData()
+            this.createColumnDefinitions()
+            this.setGridData()
+        },
+        reloadWidgetWithoutData() {
+            console.group('reloadWidgetWithoutData ------------------------------------')
+            console.log('propWidget ', this.propWidget)
+            console.log('dataToShow ', this.dataToShow)
+            console.groupEnd()
+
+            this.createColumnDefinitions()
+            this.setFacetData()
+            this.gridApi.setColumnDefs(this.gridColumns)
+            this.setHeaderHeight()
+            this.gridApi.redrawRows()
+        },
+        loadResponseData() {
+            this.tableData = this.dataToShow
+            this.setFacetData()
         },
         loadSearchValue() {
             this.searchWord = this.propWidget.settings.search.defaultValue ?? ''
+        },
+        loadActiveSelections() {
+            this.activeSelections = this.propActiveSelections
         },
         setInitialWidgetWidth() {
             const temp = this.$refs['discoveryContainer'] as any
             this.widgetWidth = temp.clientHeight
         },
-        loadActiveSelections() {
-            this.activeSelections = this.propActiveSelections
-        },
         onWidgetSizeChange({ width, height, offsetWidth, offsetHeight }) {
             this.widgetWidth = width
             if (width > 600) this.facetSidenavShown = false
-        },
-        reloadWidgetData() {
-            this.tableData = this.dataToShow
-            this.gridApi?.setRowData(this.tableData.rows)
-            this.setFacetAccordionState()
-            // this.loadActiveSelectionValue()
         },
         searchItems() {
             if (this.editorMode) return
             let searchSettings = this.propWidget.settings.search
             if (searchSettings.columns.length > 0) {
-                console.log('HAVE COLUMNS')
                 searchSettings.searchWord = this.searchWord
                 this.$emit('searchWordChanged')
-            } else console.log('NO SEARCH COLUMNS')
-        },
-        //#region ===================== Facet Logic ====================================================
-        setFacetData() {
-            if (!this.tableData.facets) return
-            let facetSettings = this.propWidget.settings.facets
-            var facetKeys = Object.keys(this.tableData.facets)
-            if (facetSettings.enabled && facetKeys) {
-                facetKeys.forEach((facetName) => {
-                    if (facetSettings.columns.includes(facetName)) this.facetsToDisplay[facetName] = { ...this.tableData.facets[facetName] }
-                })
-                this.setFacetAccordionState()
             }
         },
-        toggleFacets() {
-            const temp = this.$refs['facetsContainer'] as any
-            this.facetSidenavShown = !this.facetSidenavShown
-            this.facetSidenavShown ? temp.classList.add('open') : temp.classList.remove('open')
+        //#region ===================== Facet Logic ====================================================
+        getFacetWidth() {
+            let facetSettings = this.propWidget.settings.facets
+            if (this.widgetWidth >= 600) return { width: facetSettings.width }
+            else return {}
+        },
+        setFacetData() {
+            if (this.displayFacets && this.tableData.facets) {
+                let facetSettings = this.propWidget.settings.facets
+
+                var facetKeys = Object.keys(this.tableData.facets)
+                if (facetKeys) {
+                    facetKeys.forEach((facetName) => {
+                        if (facetSettings.columns.includes(facetName)) {
+                            this.facetsToDisplay[facetName] = { ...this.tableData.facets[facetName] }
+                        } else delete this.facetsToDisplay[facetName]
+                    })
+                    this.setFacetAccordionState()
+                }
+            }
+        },
+        setFacetAccordionState() {
+            let facetSettings = this.propWidget.settings.facets
+            let facetSearchParams = this.propWidget.settings.search.facetSearchParams
+
+            if (facetSettings.closedByDefault) {
+                Object.keys(this.facetsToDisplay).forEach((facet) => {
+                    if (this.editorMode) {
+                        this.facetsToDisplay[facet].closed = true
+                        return
+                    }
+                    if (facetSearchParams[facet] && facetSearchParams[facet].length > 0) this.facetsToDisplay[facet].closed = false
+                    else this.facetsToDisplay[facet].closed = true
+                })
+            }
         },
         isFacetSelected(facetName, row) {
             let facetSearchParams = this.propWidget.settings.search.facetSearchParams
             if (facetSearchParams[facetName] && facetSearchParams[facetName].includes(row.column_1)) return true
             else return false
         },
-        getFacetWidth() {
-            let facetSettings = this.propWidget.settings.facets
-            if (this.widgetWidth >= 600) return { width: facetSettings.width }
-            else return {}
-        },
-        setFacetAccordionState() {
-            if (this.editorMode) return
-            let facetSettings = this.propWidget.settings.facets
+        isFacetBlocked(facetName, row) {
             let facetSearchParams = this.propWidget.settings.search.facetSearchParams
+            let facetBrotherSelected = facetSearchParams[facetName] && facetSearchParams[facetName].length > 0 && !facetSearchParams[facetName].includes(row.column_1)
 
-            if (facetSettings.closedByDefault) {
-                Object.keys(this.facetsToDisplay).forEach((facet) => {
-                    //check if facet parameter is used in filters/selection, if it is, remain opened
-                    if (facetSearchParams[facet] && facetSearchParams[facet].length > 0) this.facetsToDisplay[facet].closed = false
-                    else this.facetsToDisplay[facet].closed = true
-                })
-            }
+            if (row.column_2 == 0 || facetBrotherSelected) return true
+            else return false
+        },
+        toggleFacets() {
+            const temp = this.$refs['facetsContainer'] as any
+            this.facetSidenavShown = !this.facetSidenavShown
+            this.facetSidenavShown ? temp.classList.add('open') : temp.classList.remove('open')
         },
         selectFacet(facetName, row) {
-            console.group('facet selected ------------------------------------')
-            console.log('facetName ', facetName)
-            console.log('row ', row)
-
-            console.groupEnd()
-            if (row.column_2 == 0) return
+            if (this.isFacetBlocked(facetName, row)) return
             let facetSettings = this.propWidget.settings.facets
-            console.log('facetSettings ', facetSettings)
             if (facetSettings.selection) {
                 //if there are any search params, empty them, now we are doing selection not search
                 this.propWidget.settings.search.facetSearchParams = {}
@@ -245,44 +297,66 @@ export default defineComponent({
         setupDatatableOptions() {
             this.gridOptions = {
                 // PROPERTIES
-                // tooltipShowDelay: 100,
-                // tooltipMouseTrack: true,
+                tooltipShowDelay: 100,
+                tooltipMouseTrack: true,
                 suppressScrollOnNewData: true,
                 animateRows: true,
                 headerHeight: 35,
                 rowHeight: 30,
                 defaultColDef: {
-                    editable: false,
-                    sortable: true,
-                    resizable: true,
-                    width: 100
-                    // tooltipComponent: TooltipRenderer,
-                    // cellClassRules: {
-                    //     'edited-cell-color-class': (params) => {
-                    //         if (params.data.isEdited) return params.data.isEdited.includes(params.colDef.field)
-                    //     }
-                    // }
+                    width: 150
                 },
                 // EVENTS
                 onCellClicked: this.onCellClicked,
                 // CALLBACKS
-                onGridReady: this.onGridReady
+                onGridReady: this.onGridReady,
+                getRowHeight: this.getRowHeight,
+                getRowStyle: this.getRowStyle,
+                getRowId: this.getRowId
             }
         },
         onGridReady(params) {
             this.gridApi = params.api
             this.columnApi = params.columnApi
 
-            this.refreshGridConfiguration()
+            console.group('ON GRID READY HOOK ------------------------------------')
+            console.log('propWidget ', this.propWidget)
+            console.log('dataToShow ', this.dataToShow)
+            console.groupEnd()
+
+            this.setGridData()
+            this.setHeaderHeight()
         },
-        async refreshGridConfiguration() {
-            this.gridApi.setColumnDefs(this.gridColumns)
+        setHeaderHeight() {
+            let headerConfig = this.propWidget.settings.style.headers
+            this.gridApi?.setHeaderHeight(this.propWidget.settings.style.headers.height)
+        },
+        getRowHeight() {
+            const rowsConfiguration = this.propWidget.settings.style.rows
+            if (rowsConfiguration.height && rowsConfiguration.height != 0) return rowsConfiguration.height
+            else return 25
+        },
+        getRowStyle(params) {
+            var rowStyles = this.propWidget.settings.style.rows
+
+            if (rowStyles.alternatedRows && rowStyles.alternatedRows.enabled) {
+                if (rowStyles.alternatedRows.oddBackgroundColor && params.node.rowIndex % 2 === 0) {
+                    return { background: rowStyles.alternatedRows.oddBackgroundColor }
+                }
+                if (rowStyles.alternatedRows.evenBackgroundColor && params.node.rowIndex % 2 != 0) {
+                    return { background: rowStyles.alternatedRows.evenBackgroundColor }
+                }
+            }
+        },
+        async setGridData() {
             this.gridApi.setRowData(this.tableData.rows)
+            this.gridApi.setColumnDefs(this.gridColumns)
         },
-        async createColumnDefinitions(responseFields) {
+        async createColumnDefinitions() {
             this.gridLoading = true
             var columns = [] as any
             var dataset = { type: 'SbiFileDataSet' }
+            var responseFields = this.tableData?.metaData?.fields
 
             for (var datasetColumn in this.propWidget.columns) {
                 for (var responseField in responseFields) {
@@ -299,8 +373,44 @@ export default defineComponent({
                             headerName: modelColumn.alias,
                             columnName: modelColumn.columnName,
                             field: responseFields[responseField].name,
-                            measure: modelColumn.fieldType
+                            measure: modelColumn.fieldType,
+                            headerComponent: HeaderRenderer,
+                            headerComponentParams: { propWidget: this.propWidget },
+                            suppressMovable: true
                         } as any
+
+                        // COLUMN STYLE ---------------------------------------------------------------------------
+                        var columnStyles = this.propWidget.settings.style.columns
+
+                        if (columnStyles.enabled) {
+                            var columnStyleString = null as any
+                            columnStyleString = Object.entries(columnStyles.styles[0].properties)
+                                .map(([k, v]) => `${k}:${v}`)
+                                .join(';')
+
+                            columnStyles.styles.forEach((group) => {
+                                if (group.target.includes(tempCol.colId)) {
+                                    columnStyleString = Object.entries(group.properties)
+                                        .map(([k, v]) => `${k}:${v}`)
+                                        .join(';')
+                                }
+                            })
+
+                            tempCol.cellStyle = (params) => {
+                                return columnStyles.styles[0].properties
+                            }
+                        }
+
+                        // TOOLTIP CONFIGURATION  -----------------------------------------------------------------
+                        var tooltipConfig = this.getColumnTooltipConfig(tempCol.colId)
+                        if (tooltipConfig !== null) {
+                            tempCol.tooltipComponent = TooltipRenderer
+                            tempCol.tooltipField = tempCol.field
+                            tempCol.headerTooltip = tooltipConfig.header.enabled ? tooltipConfig.header.text : null
+                            tempCol.tooltipComponentParams = { tooltipConfig: tooltipConfig }
+                        } else {
+                            tempCol.headerTooltip = null
+                        }
 
                         columns.push(tempCol)
                     }
@@ -308,8 +418,17 @@ export default defineComponent({
             }
             this.gridColumns = columns
 
-            console.log(columns)
             this.gridLoading = false
+        },
+        getColumnTooltipConfig(colId) {
+            var tooltipConfig = this.propWidget.settings.tooltips
+            var columntooltipConfig = null as any
+            tooltipConfig[0].enabled ? (columntooltipConfig = tooltipConfig[0]) : ''
+            tooltipConfig.forEach((config) => {
+                config.target.includes(colId) ? (columntooltipConfig = config) : ''
+            })
+
+            return columntooltipConfig
         },
         onCellClicked(node) {
             if (!this.editorMode) {
@@ -330,10 +449,9 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     overflow: auto;
-    .discovery-search-container {
-        display: flex;
-        box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
-        border-radius: 4px;
+    .discovery-search {
+        border: 1px solid var(--kn-color-borders);
+        border-radius: 2px;
     }
     .discovery-content {
         position: relative;
@@ -345,8 +463,29 @@ export default defineComponent({
             flex: 2;
             display: flex;
             flex-direction: column;
-            .discovery-grid .ag-root-wrapper {
-                border-bottom: none;
+            .discovery-grid {
+                .ag-root-wrapper {
+                    border-bottom: none;
+                }
+                .ag-header-cell-comp-wrapper {
+                    height: 100%;
+                    display: flex;
+                }
+                .ag-row,
+                .ag-header-cell,
+                .ag-cell-value,
+                .ag-header-group-cell,
+                .ag-floating-bottom-container .ag-cell {
+                    padding: 0 !important;
+                    border: none;
+                }
+                .custom-header-container,
+                .custom-header-group-container {
+                    display: flex;
+                    align-items: center;
+                    width: 100%;
+                    height: 100%;
+                }
             }
             .discovery-pagination {
                 border-left: 1px solid #babfc7;
@@ -406,6 +545,9 @@ export default defineComponent({
                     }
                     &.selected {
                         background-color: #ced1d3;
+                    }
+                    &.blocked {
+                        cursor: not-allowed;
                     }
                 }
             }
