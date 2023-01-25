@@ -69,7 +69,6 @@ export default defineComponent({
         WidgetBackgroundColorStyle,
         TableWidgetTooltips,
         WidgetCrossNavigation,
-        WidgetInteractionsLinks,
         WidgetPreview,
         DiscoveryWidgetSettingsAccordionHeader,
         DiscoveryWidgetFacetsSettings,
