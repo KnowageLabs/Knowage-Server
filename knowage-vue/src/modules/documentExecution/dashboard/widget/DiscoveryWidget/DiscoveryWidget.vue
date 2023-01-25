@@ -379,6 +379,28 @@ export default defineComponent({
                             suppressMovable: true
                         } as any
 
+                        // COLUMN STYLE ---------------------------------------------------------------------------
+                        var columnStyles = this.propWidget.settings.style.columns
+
+                        if (columnStyles.enabled) {
+                            var columnStyleString = null as any
+                            columnStyleString = Object.entries(columnStyles.styles[0].properties)
+                                .map(([k, v]) => `${k}:${v}`)
+                                .join(';')
+
+                            columnStyles.styles.forEach((group) => {
+                                if (group.target.includes(tempCol.colId)) {
+                                    columnStyleString = Object.entries(group.properties)
+                                        .map(([k, v]) => `${k}:${v}`)
+                                        .join(';')
+                                }
+                            })
+
+                            tempCol.cellStyle = (params) => {
+                                return columnStyles.styles[0].properties
+                            }
+                        }
+
                         // TOOLTIP CONFIGURATION  -----------------------------------------------------------------
                         var tooltipConfig = this.getColumnTooltipConfig(tempCol.colId)
                         if (tooltipConfig !== null) {
