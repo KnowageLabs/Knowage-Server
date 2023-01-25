@@ -68,10 +68,14 @@ export default defineComponent({
         },
         async loadHTML() {
             if (!this.propWidget.settings || !this.propWidget.settings.editor) return
+
             this.htmlContent = this.propWidget.settings.editor.html
             this.webComponentCss = this.propWidget.settings.editor.css
             this.webComponentJs = this.propWidget.settings.editor.js
 
+            this.test()
+
+            // TODO
             if (!this.webComponentRef) return
             this.webComponentRef.htmlContent = this.propWidget.type === 'text' ? '<div style="position: absolute;height: 100%;width: 100%;">' + this.htmlContent + '</div>' : this.htmlContent
             this.webComponentRef.webComponentCss = this.webComponentCss
@@ -93,7 +97,9 @@ export default defineComponent({
             return { datasetId: this.propWidget.dataset as number, datasetLabel: this.getDatasetLabel(this.propWidget.dataset as number), columnName: columnName, value: value, aggregated: false, timestamp: new Date().getTime() }
         },
         test() {
-            const containerElement = document.getElementById('customChartContainerElement')
+            const containerElement = document.getElementById('containerElement')
+            console.log('----------- CONTAINER ELEMENT: ', containerElement)
+            if (!containerElement) return
 
             const style = document.createElement('style')
             style.classList.add('style-wrapper')
@@ -108,6 +114,38 @@ export default defineComponent({
             wrapper.textContent = ''
             containerElement.appendChild(style)
             containerElement.appendChild(wrapper)
+
+            const temp = document.querySelector('.component-wrapper')
+            console.log('------------- TEMP: ', temp)
+            if (temp) temp.innerHTML = this.htmlContent
+
+            const temp2 = document.querySelector('.style-wrapper')
+            console.log('------------- TEMP 2: ', temp2)
+            if (temp2) temp2.innerHTML = this.webComponentCss
+
+            const testJS = document.createElement('script')
+            testJS.setAttribute('src', 'https://code.highcharts.com/highcharts.js')
+            testJS.setAttribute('src', 'https://code.highcharts.com/modules/drilldown.js')
+            testJS.addEventListener('load', () => alert('LOADED SCRIPT!'))
+            // testJS.setAttribute('src', 'https://code.highcharts.com/highcharts/modules/drilldown.js');
+            document.body.appendChild(testJS)
+
+            var JS = document.createElement('script')
+            // window.bojanTest = 'bojan test web component'
+            // window.bojanFunction = function () {
+            //     console.log('THIS IS ALSO WORKING')
+            // }
+
+            // console.log('>>>>>>>> TYPE OF: ', typeof window.bojanFunction)
+            // JS.text = `alert('test')`
+            // JS.text = `alert(bojanTest)`
+            //   JS.text = `console.log(bojanFunction())`
+
+            //JS.text = "function test() {console.log('stil working')} test()"
+            JS.text = this.webComponentJs
+            console.log('>>>>>>>>>>>>> DOCUMENT BODY: ', document.body)
+
+            setTimeout(() => document.body.appendChild(JS), 2000)
         }
     }
 })
