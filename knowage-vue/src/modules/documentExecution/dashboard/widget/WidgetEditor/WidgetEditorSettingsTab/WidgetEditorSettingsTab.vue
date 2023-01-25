@@ -105,6 +105,7 @@
             :selectedDatasets="selectedDatasets"
             :variables="variables"
             :dashboardId="dashboardId"
+            :customChartGalleryProp="customChartGalleryProp"
         ></CustomChartWidgetSettingsContainer>
     </div>
 </template>
@@ -158,6 +159,7 @@ export default defineComponent({
         selectedDatasets: { type: Array as PropType<IDataset[]> },
         variables: { type: Array as PropType<IVariable[]>, required: true },
         htmlGalleryProp: { type: Array as PropType<IGalleryItem[]>, required: true },
+        customChartGalleryProp: { type: Array as PropType<IGalleryItem[]>, required: true },
         dashboardId: { type: String, required: true }
     },
     emits: ['settingChanged'],

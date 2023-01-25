@@ -31,6 +31,7 @@
         :documentDrivers="drivers"
         :variables="model ? model.configuration.variables : []"
         :htmlGalleryProp="htmlGallery"
+        :customChartGalleryProp="customChartGallery"
         @close="closeWidgetEditor"
         @widgetSaved="closeWidgetEditor"
         @widgetUpdated="closeWidgetEditor"
@@ -88,7 +89,8 @@ export default defineComponent({
             selectionsDialogVisible: false,
             generalSettingsVisible: false,
             loading: false,
-            htmlGallery: [] as IGalleryItem[]
+            htmlGallery: [] as IGalleryItem[],
+            customChartGallery: [] as IGalleryItem[]
         }
     },
     provide() {
@@ -126,6 +128,7 @@ export default defineComponent({
             await Promise.all([this.loadProfileAttributes(), this.loadModel(), this.loadInternationalization()])
             this.setDashboardDrivers(this.dashboardId, this.drivers)
             this.loadHtmlGallery()
+            this.loadCustomChartGallery()
             this.loading = false
         },
         async loadModel() {
@@ -173,6 +176,12 @@ export default defineComponent({
             await this.$http
                 .get(import.meta.env.VITE_API_PATH + `1.0/widgetgallery/widgets/html`)
                 .then((response: AxiosResponse<any>) => (this.htmlGallery = response.data))
+                .catch(() => {})
+        },
+        async loadCustomChartGallery() {
+            await this.$http
+                .get(import.meta.env.VITE_API_PATH + `1.0/widgetgallery/widgets/chart`)
+                .then((response: AxiosResponse<any>) => (this.customChartGallery = response.data))
                 .catch(() => {})
         },
         loadOutputParameters() {

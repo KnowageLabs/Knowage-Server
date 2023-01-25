@@ -4,7 +4,16 @@
             <WidgetEditorDataTab :propWidget="propWidget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="$emit('datasetSelected', $event)" data-test="data-tab"></WidgetEditorDataTab>
         </TabPanel>
         <TabPanel :header="$t('common.settings')">
-            <WidgetEditorSettingsTab :propWidget="propWidget" :datasets="datasets" :selectedDatasets="selectedDatasets" :variables="variables" :dashboardId="dashboardId" :htmlGalleryProp="htmlGalleryProp" @settingChanged="$emit('settingChanged', $event)"></WidgetEditorSettingsTab>
+            <WidgetEditorSettingsTab
+                :propWidget="propWidget"
+                :datasets="datasets"
+                :selectedDatasets="selectedDatasets"
+                :variables="variables"
+                :dashboardId="dashboardId"
+                :htmlGalleryProp="htmlGalleryProp"
+                :customChartGalleryProp="customChartGalleryProp"
+                @settingChanged="$emit('settingChanged', $event)"
+            ></WidgetEditorSettingsTab>
         </TabPanel>
     </TabView>
 </template>
@@ -29,6 +38,7 @@ export default defineComponent({
         selectedDatasets: { type: Array as PropType<IDataset[]> },
         variables: { type: Array as PropType<IVariable[]>, required: true },
         htmlGalleryProp: { type: Array as PropType<IGalleryItem[]>, required: true },
+        customChartGalleryProp: { type: Array as PropType<IGalleryItem[]>, required: true },
         dashboardId: { type: String, required: true }
     },
     emits: ['datasetSelected', 'settingChanged'],
