@@ -1,5 +1,6 @@
 <template>
-    <custom-chart-widget-web-component id="webComponent" class="kn-flex" ref="webComponent"></custom-chart-widget-web-component>
+    <custom-chart-widget-web-component class="kn-flex" ref="webComponent"></custom-chart-widget-web-component>
+    <div id="container_1"></div>
 </template>
 
 <script lang="ts">
@@ -10,7 +11,6 @@ import { mapActions } from 'pinia'
 import store from '../../Dashboard.store'
 import appStore from '../../../../../App.store'
 import { IWidget } from '../../Dashboard'
-import { parseHtml, parseText } from '../WidgetEditor/helpers/htmlParser/ParserHelper'
 import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
 
 export default defineComponent({
@@ -88,6 +88,20 @@ export default defineComponent({
         },
         createNewSelection(value: (string | number)[], columnName: string) {
             return { datasetId: this.propWidget.dataset as number, datasetLabel: this.getDatasetLabel(this.propWidget.dataset as number), columnName: columnName, value: value, aggregated: false, timestamp: new Date().getTime() }
+        },
+        test() {
+            // const element = document.getElementById('bojanTest')
+            // const shadow = this.attachShadow({ mode: 'open' })
+            // const style = document.createElement('style')
+            // style.classList.add('style-wrapper')
+            // const wrapper = document.createElement('div')
+            // wrapper.classList.add('component-wrapper')
+            // wrapper.style.position = 'relative'
+            // wrapper.style.overflow = 'auto'
+            // wrapper.style.height = '100%'
+            // wrapper.textContent = ''
+            // shadow.appendChild(style)
+            // shadow.appendChild(wrapper)
         }
     }
 })
