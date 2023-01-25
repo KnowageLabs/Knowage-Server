@@ -4,7 +4,7 @@
         <DashboardRenderer v-if="!loading" :model="model" :datasets="datasets" :dashboardId="dashboardId" :documentDrivers="drivers" :variables="model ? model.configuration.variables : []"></DashboardRenderer>
 
         <Transition name="editorEnter" appear>
-            <DatasetEditor v-if="datasetEditorVisible" :dashboardIdProp="dashboardId" :availableDatasetsProp="datasets" :filtersDataProp="filtersData" @closeDatasetEditor="closeDatasetEditor" @datasetEditorSaved="closeDatasetEditor" />
+            <DatasetEditor v-if="datasetEditorVisible" :dashboardIdProp="dashboardId" :availableDatasetsProp="datasets" :filtersDataProp="filtersData" @closeDatasetEditor="closeDatasetEditor" @datasetEditorSaved="closeDatasetEditor" @allDatasetsLoaded="datasets = $event" />
         </Transition>
 
         <Transition name="editorEnter" appear>
@@ -46,8 +46,8 @@ import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import { v4 as uuidv4 } from 'uuid'
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
-import { IDashboardDataset, ISelection, IWidget, IGalleryItem } from './Dashboard'
-import { emitter, createNewDashboardModel, formatDashboardForSave, formatNewModel } from './DashboardHelpers'
+import { IDashboardDataset, ISelection, IWidget, IGalleryItem, IDataset } from './Dashboard'
+import { emitter, createNewDashboardModel, formatDashboardForSave, formatNewModel, loadDatasets } from './DashboardHelpers'
 import { mapActions, mapState } from 'pinia'
 import { formatModel } from './helpers/DashboardBackwardCompatibilityHelper'
 import { setDatasetIntervals, clearAllDatasetIntervals } from './helpers/datasetRefresh/DatasetRefreshHelpers'
@@ -76,7 +76,7 @@ export default defineComponent({
             model: null as any,
             widgetPickerVisible: false,
             datasetEditorVisible: false,
-            datasets: [] as any[],
+            datasets: [] as IDataset[],
             widgetEditorVisible: false,
             selectedWidget: null as any,
             crossNavigations: [] as any[],
@@ -121,7 +121,7 @@ export default defineComponent({
         ...mapActions(dashboardStore, ['removeSelections', 'setAllDatasets', 'getSelections', 'setInternationalization', 'getInternationalization', 'setDashboardDocument', 'setDashboardDrivers']),
         async getData() {
             this.loading = true
-            await this.loadDatasets()
+
             if (this.filtersData) this.drivers = loadDrivers(this.filtersData, this.model)
             await Promise.all([this.loadProfileAttributes(), this.loadModel(), this.loadInternationalization()])
             this.setDashboardDrivers(this.dashboardId, this.drivers)
@@ -138,21 +138,13 @@ export default defineComponent({
                     .then((response: AxiosResponse<any>) => (tempModel = response.data))
                     .catch(() => {})
             }
+            this.datasets = await loadDatasets(tempModel, this.appStore, this.setAllDatasets, this.$http)
             this.model = (tempModel && this.newDashboardMode) || tempModel.hasOwnProperty('id') ? await formatNewModel(tempModel, this.datasets, this.$http) : await (formatModel(tempModel, this.document, this.datasets, this.drivers, this.profileAttributes, this.$http, this.user) as any)
             setDatasetIntervals(this.model?.configuration.datasets, this.datasets)
             this.dashboardId = cryptoRandomString({ length: 16, type: 'base64' })
             this.store.setDashboard(this.dashboardId, this.model)
             this.store.setSelections(this.dashboardId, this.model.configuration.selections, this.$http)
             this.store.setDashboardDocument(this.dashboardId, this.document)
-        },
-        async loadDatasets() {
-            this.appStore.setLoading(true)
-            await this.$http
-                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasets/?asPagedList=true&seeTechnical=true`)
-                .then((response: AxiosResponse<any>) => (this.datasets = response.data ? response.data.item : []))
-                .catch(() => {})
-            this.setAllDatasets(this.datasets)
-            this.appStore.setLoading(false)
         },
         async loadInternationalization() {
             this.appStore.setLoading(true)

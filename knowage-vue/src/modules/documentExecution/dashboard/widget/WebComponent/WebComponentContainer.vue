@@ -1,5 +1,5 @@
 <template>
-    <widget-web-component class="kn-flex" ref="webComponent"></widget-web-component>
+    <widget-web-component id="webComponent" class="kn-flex" ref="webComponent"></widget-web-component>
 </template>
 
 <script lang="ts">
@@ -32,7 +32,8 @@ export default defineComponent({
             htmlContent: '' as string,
             webComponentCss: '' as string,
             webComponentRef: {} as any,
-            drivers: [] as IDashboardDriver[]
+            drivers: [] as IDashboardDriver[],
+            bojanTest: 'bojanTest value'
         }
     },
     watch: {
@@ -48,8 +49,35 @@ export default defineComponent({
         this.loadDrivers()
         this.loadActiveSelections()
         this.loadDataToShow()
+        //  this.test()
     },
     methods: {
+        test() {
+            console.log('>>>>>>>>>>>>>>>>>>> TEST:')
+            const scr = document.createElement('script')
+            scr.type = 'text/javascript'
+            scr.text = 'alert("ALERT 1")'
+            scr.addEventListener('onload', () => {
+                console.log("IT'S LOADED")
+            })
+            var webCompEl = document.getElementById('webComponent')
+            console.log('>>>>>>>>>>>>>>>>>>> webCompEl:', webCompEl)
+            var JS = document.createElement('script')
+            window.bojanTest = this.bojanTest
+            window.bojanFunction = function () {
+                alert('THIS IS ALSO WORKING')
+            }
+
+            console.log('>>>>>>>> TYPE OF: ', typeof window.bojanFunction)
+            // JS.text = `alert('test')`
+            // JS.text = `alert(bojanTest)`
+            JS.text = `alert(bojanFunction())`
+
+            JS.text = "function test() {alert('stil working')} test()"
+            document.body.appendChild(JS)
+            // webCompEl?.body.appendChild(JS)
+            //  eval(`alert(dataToShow)`)
+        },
         ...mapActions(store, ['getInternationalization', 'setSelections', 'getAllDatasets', 'getDashboardDrivers']),
         ...mapActions(appStore, ['setError']),
         loadDrivers() {

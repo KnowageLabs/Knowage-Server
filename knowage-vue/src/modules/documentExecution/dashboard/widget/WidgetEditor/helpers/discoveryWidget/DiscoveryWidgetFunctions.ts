@@ -34,7 +34,7 @@ export const createNewDiscoveryWidgetSettings = () => {
 }
 
 export const addColumnToDiscoveryWidgetModel = (widgetModel: IWidget, column: IWidgetColumn) => {
-    widgetModel.settings.facets.columns.push(column.columnName)
+    if (column.fieldType === 'ATTRIBUTE') widgetModel.settings.facets.columns.push(column.columnName)
     widgetModel.settings.search.columns.push(column.columnName)
 }
 
@@ -43,7 +43,7 @@ export const removeColumnFromDiscoveryWidgetModel = (widgetModel: IWidget, colum
     removeColumnNameFromStringArray(widgetModel.settings.search.columns, column.columnName)
 }
 
-const removeColumnNameFromStringArray = (array: string[], columnName: string) => {
+export const removeColumnNameFromStringArray = (array: string[], columnName: string) => {
     const index = array.findIndex((element: string) => element === columnName)
     if (index !== -1) array.splice(index, 1)
 }
