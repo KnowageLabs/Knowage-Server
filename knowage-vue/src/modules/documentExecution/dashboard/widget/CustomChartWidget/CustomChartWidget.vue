@@ -126,7 +126,7 @@ export default defineComponent({
             const testJS = document.createElement('script')
             testJS.setAttribute('src', 'https://code.highcharts.com/highcharts.js')
             testJS.setAttribute('src', 'https://code.highcharts.com/modules/drilldown.js')
-            testJS.addEventListener('load', () => alert('LOADED SCRIPT!'))
+            // testJS.addEventListener('load', () => alert('LOADED SCRIPT!'))
             // testJS.setAttribute('src', 'https://code.highcharts.com/highcharts/modules/drilldown.js');
             document.body.appendChild(testJS)
 
