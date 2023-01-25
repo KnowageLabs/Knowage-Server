@@ -46,13 +46,37 @@
 		</pluginManagement>
 		<plugins>
 			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.2.0</version>
+				<executions>
+					<execution>
+						<id>clean-node_modules-and-dist</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+						<configuration>
+							<filesets>
+								<fileset>
+									<directory>${basedir}/src/main/webapp</directory>
+									<includes>
+										<include>dist</include>
+										<include>node_modules</include>
+									</includes>
+								</fileset>
+							</filesets>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
 				<version>1.6.0</version>
 				<executions>
 					<execution>
 						<id>npm-update-version</id>
-						<phase>process-sources</phase>
+						<phase>process-resources</phase>
 						<goals>
 							<goal>exec</goal>
 						</goals>
@@ -68,7 +92,7 @@
 					</execution>
 					<execution>
 						<id>npm-package-install</id>
-						<phase>process-sources</phase>
+						<phase>process-resources</phase>
 						<goals>
 							<goal>exec</goal>
 						</goals>
@@ -177,27 +201,6 @@
 							</configuration>
 						</plugin>
 
-						<plugin>
-							<groupId>org.codehaus.mojo</groupId>
-							<artifactId>exec-maven-plugin</artifactId>
-							<version>1.6.0</version>
-							<executions>
-								<execution>
-									<id>npm-package-install</id>
-									<phase>prepare-package</phase>
-									<goals>
-										<goal>exec</goal>
-									</goals>
-								</execution>
-							</executions>
-							<configuration>
-								<executable>npm</executable>
-								<arguments>
-									<argument>install</argument>
-								</arguments>
-								<workingDirectory>${basedir}/src/main/webapp</workingDirectory>
-							</configuration>
-						</plugin>
 					</plugins>
 				</pluginManagement>
 				<resources>
