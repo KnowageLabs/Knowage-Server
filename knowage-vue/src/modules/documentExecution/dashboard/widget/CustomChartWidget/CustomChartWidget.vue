@@ -1,6 +1,7 @@
 <template>
     <!-- <custom-chart-widget-web-component class="kn-flex" ref="webComponent"></custom-chart-widget-web-component> -->
-    <div id="containerElement"></div>
+    <!-- <div id="containerElement"></div> -->
+    <iframe name="iframe" id="iframe" width="100%" height="100%" src="about:blank"></iframe>
 </template>
 
 <script lang="ts">
@@ -35,7 +36,8 @@ export default defineComponent({
             webComponentJs: '' as string,
             webComponentRef: {} as any,
             drivers: [] as IDashboardDriver[],
-            datastore: new CustomChartDatastore(null)
+            datastore: new CustomChartDatastore(null),
+            loadedScriptsCount: 0
         }
     },
     watch: {
@@ -51,7 +53,7 @@ export default defineComponent({
         this.loadDrivers()
         this.loadActiveSelections()
         this.loadDataToShow()
-        console.log('DATASTORE ---------------', this.datastore)
+        //  console.log('DATASTORE ---------------', this.datastore)
     },
     methods: {
         ...mapActions(store, ['getInternationalization', 'setSelections', 'getAllDatasets', 'getDashboardDrivers']),
@@ -73,13 +75,13 @@ export default defineComponent({
             this.webComponentCss = this.propWidget.settings.editor.css
             this.webComponentJs = this.propWidget.settings.editor.js
 
-            this.test()
+            this.renderCustomWidget()
 
-            // TODO
-            if (!this.webComponentRef) return
-            this.webComponentRef.htmlContent = this.propWidget.type === 'text' ? '<div style="position: absolute;height: 100%;width: 100%;">' + this.htmlContent + '</div>' : this.htmlContent
-            this.webComponentRef.webComponentCss = this.webComponentCss
-            this.webComponentRef.webComponentJs = this.webComponentJs
+            // TODO - remove
+            // if (!this.webComponentRef) return
+            // this.webComponentRef.htmlContent = this.propWidget.type === 'text' ? '<div style="position: absolute;height: 100%;width: 100%;">' + this.htmlContent + '</div>' : this.htmlContent
+            // this.webComponentRef.webComponentCss = this.webComponentCss
+            // this.webComponentRef.webComponentJs = this.webComponentJs
         },
         onSelect(event: any) {
             // TODO
@@ -96,17 +98,36 @@ export default defineComponent({
         createNewSelection(value: (string | number)[], columnName: string) {
             return { datasetId: this.propWidget.dataset as number, datasetLabel: this.getDatasetLabel(this.propWidget.dataset as number), columnName: columnName, value: value, aggregated: false, timestamp: new Date().getTime() }
         },
-        test() {
-            const containerElement = document.getElementById('containerElement')
-            console.log('----------- CONTAINER ELEMENT: ', containerElement)
-            if (!containerElement) return
+        //#region ===================== IFRAME Logic ====================================================
+        renderCustomWidget() {
+            const iframe = document.getElementById('iframe') as any
+            const iframeDocument = iframe.contentWindow.document
+            iframeDocument.body.innerHTML = `<html>
+                <head></head>
+                <body>
+                    <div id="containerElement">
+                    </div>
+                </body>
+            </html>`
 
+            const containerElement = iframeDocument.getElementById('containerElement')
+            console.log('--------- containerElement: ', containerElement)
+            this.createWrapperDiv(containerElement)
+            this.insertUsersHtmlContent(iframeDocument)
+            this.insertUsersCssContent(iframeDocument)
+            this.createScriptTagFromUsersJSScript(iframeDocument)
+
+            const userImportScript = document.createElement('script')
+            userImportScript.setAttribute('src', 'https://code.highcharts.com/highcharts.js')
+
+            iframeDocument.body.appendChild(userImportScript)
+        },
+        createWrapperDiv(containerElement: Element) {
             const style = document.createElement('style')
             style.classList.add('style-wrapper')
 
             const wrapper = document.createElement('div')
             wrapper.classList.add('component-wrapper')
-
             wrapper.style.position = 'relative'
             wrapper.style.overflow = 'auto'
             wrapper.style.height = '100%'
@@ -114,41 +135,101 @@ export default defineComponent({
             wrapper.textContent = ''
             containerElement.appendChild(style)
             containerElement.appendChild(wrapper)
+        },
+        insertUsersHtmlContent(iframeDocument: any) {
+            const tempEl = iframeDocument.querySelector('.component-wrapper')
+            if (tempEl) tempEl.innerHTML = this.htmlContent
+        },
+        insertUsersCssContent(iframeDocument: any) {
+            const tempEl = iframeDocument.querySelector('.style-wrapper')
+            if (tempEl) tempEl.innerHTML = this.webComponentCss
+        },
+        createScriptTagFromUsersJSScript(iframeDocument: any) {
+            const userScript = document.createElement('script')
+            userScript.text = 'try {' + this.webComponentJs + '} catch (error) {}'
+            setTimeout(() => iframeDocument.body.appendChild(userScript), 10000)
+        },
+        createUserImportScripts(scriptURLs: string[]) {
+            scriptURLs.forEach((scriptURL: string) => this.createUserImportScript(scriptURL))
+        },
+        createUserImportScript(scriptURL: string) {
+            let loaded = false
+            const userImportScript = document.createElement('script')
+            userImportScript.setAttribute('src', scriptURL)
+            userImportScript.addEventListener('load', () => {
+                console.log('SCRIPT LOADED!')
+                loaded = true
+                this.loadedScriptsCount++
+            })
 
-            const temp = document.querySelector('.component-wrapper')
-            console.log('------------- TEMP: ', temp)
-            if (temp) temp.innerHTML = this.htmlContent
-
-            const temp2 = document.querySelector('.style-wrapper')
-            console.log('------------- TEMP 2: ', temp2)
-            if (temp2) temp2.innerHTML = this.webComponentCss
-
-            const testJS = document.createElement('script')
-            testJS.setAttribute('src', 'https://code.highcharts.com/highcharts.js')
-            document.body.appendChild(testJS)
-            const testJS2 = document.createElement('script')
-            testJS2.setAttribute('src', 'https://code.highcharts.com/modules/drilldown.js')
-            document.body.appendChild(testJS2)
-            // testJS.addEventListener('load', () => alert('LOADED SCRIPT!'))
-            // testJS.setAttribute('src', 'https://code.highcharts.com/highcharts/modules/drilldown.js');
-
-            var JS = document.createElement('script')
-            // window.bojanTest = 'bojan test web component'
-            // window.bojanFunction = function () {
-            //     console.log('THIS IS ALSO WORKING')
+            document.body.appendChild(userImportScript)
+            // while (true) {
+            //     if (loaded) break
+            //     setTimeout(() => console.log('-------- not loaded YET'), 1000)
             // }
-
-            // console.log('>>>>>>>> TYPE OF: ', typeof window.bojanFunction)
-            // JS.text = `alert('test')`
-            // JS.text = `alert(bojanTest)`
-            //   JS.text = `console.log(bojanFunction())`
-
-            //JS.text = "function test() {console.log('stil working')} test()"
-            JS.text = this.webComponentJs
-            console.log('>>>>>>>>>>>>> DOCUMENT BODY: ', document.body)
-
-            setTimeout(() => document.body.appendChild(JS), 2000)
         }
+        //#endregion
+        //#region ===================== WEB COMOPONENT Logic ====================================================
+        // renderCustomWidget() {
+        //     this.loadedScriptsCount = 0
+        //     const containerElement = document.getElementById('containerElement')
+        //     console.log('----------- CONTAINER ELEMENT: ', containerElement)
+        //     if (!containerElement) return
+
+        //     this.createWrapperDiv(containerElement)
+        //     this.insertUsersHtmlContent()
+        //     this.insertUsersCssContent()
+        //     this.createUserImportScripts(['https://code.highcharts.com/highcharts.js', 'https://code.highcharts.com/modules/drilldown.js'])
+        //     console.log('-------------- loadedScriptsCount: ', this.loadedScriptsCount)
+        //     this.createScriptTagFromUsersJSScript()
+        // },
+        // createWrapperDiv(containerElement: Element) {
+        //     const style = document.createElement('style')
+        //     style.classList.add('style-wrapper')
+
+        //     const wrapper = document.createElement('div')
+        //     wrapper.classList.add('component-wrapper')
+        //     wrapper.style.position = 'relative'
+        //     wrapper.style.overflow = 'auto'
+        //     wrapper.style.height = '100%'
+
+        //     wrapper.textContent = ''
+        //     containerElement.appendChild(style)
+        //     containerElement.appendChild(wrapper)
+        // },
+        // insertUsersHtmlContent() {
+        //     const tempEl = document.querySelector('.component-wrapper')
+        //     if (tempEl) tempEl.innerHTML = this.htmlContent
+        // },
+        // insertUsersCssContent() {
+        //     const tempEl = document.querySelector('.style-wrapper')
+        //     if (tempEl) tempEl.innerHTML = this.webComponentCss
+        // },
+        // createScriptTagFromUsersJSScript() {
+        //     const userScript = document.createElement('script')
+        //     userScript.text = 'try {' + this.webComponentJs + '} catch (error) {}'
+        //     setTimeout(() => document.body.appendChild(userScript), 10000)
+        // },
+        // createUserImportScripts(scriptURLs: string[]) {
+        //     scriptURLs.forEach((scriptURL: string) => this.createUserImportScript(scriptURL))
+        // },
+        // createUserImportScript(scriptURL: string) {
+        //     let loaded = false
+        //     const userImportScript = document.createElement('script')
+        //     userImportScript.setAttribute('src', scriptURL)
+        //     userImportScript.addEventListener('load', () => {
+        //         console.log('SCRIPT LOADED!')
+        //         loaded = true
+        //         this.loadedScriptsCount++
+        //     })
+
+        //     document.body.appendChild(userImportScript)
+        //     while (true) {
+        //         if (loaded) break
+        //         setTimeout(() => console.log('-------- not loaded YET'), 1000)
+        //     }
+        // }
+        //#endregion
     }
 })
 </script>
