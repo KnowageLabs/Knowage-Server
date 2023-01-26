@@ -125,10 +125,12 @@ export default defineComponent({
 
             const testJS = document.createElement('script')
             testJS.setAttribute('src', 'https://code.highcharts.com/highcharts.js')
-            testJS.setAttribute('src', 'https://code.highcharts.com/modules/drilldown.js')
+            document.body.appendChild(testJS)
+            const testJS2 = document.createElement('script')
+            testJS2.setAttribute('src', 'https://code.highcharts.com/modules/drilldown.js')
+            document.body.appendChild(testJS2)
             // testJS.addEventListener('load', () => alert('LOADED SCRIPT!'))
             // testJS.setAttribute('src', 'https://code.highcharts.com/highcharts/modules/drilldown.js');
-            document.body.appendChild(testJS)
 
             var JS = document.createElement('script')
             // window.bojanTest = 'bojan test web component'
