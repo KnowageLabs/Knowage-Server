@@ -1,0 +1,2 @@
+import{K as e}from"./KnHint-6d455703.js";import{_ as t,d as o,r as a,o as s,h as r}from"./index-1e676509.js";const i=o({name:"lovs-management-hint",components:{KnHint:e}});function m(c,p,l,_,f,d){const n=a("KnHint");return s(),r(n,{title:"managers.lovsManagement.title",hint:"managers.lovsManagement.hint"},null,8,["title","hint"])}var v=t(i,[["render",m]]);export{v as default};
+//# sourceMappingURL=LovesManagementHint-3d13f964.js.map

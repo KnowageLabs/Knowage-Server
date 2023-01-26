@@ -1,0 +1,2 @@
+import{K as n}from"./KnHint-6d455703.js";import{_ as t,d as e,r as o,o as a,h as r}from"./index-1e676509.js";const i=e({name:"glossary-usage-hint",components:{KnHint:n}});function l(c,p,m,g,_,f){const s=o("KnHint");return a(),r(s,{title:"managers.glossary.glossaryUsage.title",hint:"managers.glossary.glossaryUsage.hint"},null,8,["title","hint"])}var u=t(i,[["render",l]]);export{u as default};
+//# sourceMappingURL=GlossaryUsageHint-9dffae2e.js.map

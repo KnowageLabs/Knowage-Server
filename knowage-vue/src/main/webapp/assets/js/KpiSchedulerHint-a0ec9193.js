@@ -1,0 +1,2 @@
+import{K as n}from"./KnHint-6d455703.js";import{_ as t,d as o,r as i,o as r,h as p}from"./index-1e676509.js";const c=o({name:"kpi-scheduler-hint",components:{KnHint:n}});function s(a,l,_,d,h,m){const e=i("KnHint");return r(),p(e,{title:"kpi.kpiScheduler.title",hint:"kpi.kpiScheduler.hint"},null,8,["title","hint"])}var k=t(c,[["render",s]]);export{k as default};
+//# sourceMappingURL=KpiSchedulerHint-a0ec9193.js.map

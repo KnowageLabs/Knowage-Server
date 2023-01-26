@@ -1,0 +1,2 @@
+import{K as e}from"./KnHint-6d455703.js";import{_ as t,d as a,r as o,o as r,h as i}from"./index-1e676509.js";const s=a({name:"gallery-hint",components:{KnHint:e}});function l(c,m,p,_,d,f){const n=o("KnHint");return r(),i(n,{title:"managers.widgetGallery.title",hint:"managers.widgetGallery.hint"},null,8,["title","hint"])}var u=t(s,[["render",l]]);export{u as default};
+//# sourceMappingURL=GalleryManagementHint-b1d483e0.js.map

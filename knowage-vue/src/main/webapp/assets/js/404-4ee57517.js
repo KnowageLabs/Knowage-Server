@@ -1,0 +1,2 @@
+import{_ as n,r as _,o as s,h as r,w as c,p as d,b as p,a as o}from"./index-1e676509.js";const l={name:"NotFound"},t=e=>(d("data-v-6d00fb5b"),e=e(),p(),e),u=t(()=>o("h1",null,"Not Found!",-1)),f=t(()=>o("p",null,[o("a",{href:"/knowage"},"Go home?")],-1));function h(e,i,v,b,m,w){const a=_("center");return s(),r(a,null,{default:c(()=>[u,f]),_:1})}var I=n(l,[["render",h],["__scopeId","data-v-6d00fb5b"]]);export{I as default};
+//# sourceMappingURL=404-4ee57517.js.map

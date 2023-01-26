@@ -1,0 +1,2 @@
+import{K as t}from"./KnHint-6d455703.js";import{_ as e,d as a,r as o,o as r,h as s}from"./index-1e676509.js";const c=a({name:"datasource-management-hint",components:{KnHint:t}});function i(m,p,_,d,l,u){const n=o("KnHint");return r(),s(n,{title:"managers.dataSourceManagement.title",hint:"managers.dataSourceManagement.hint"},null,8,["title","hint"])}var h=e(c,[["render",i]]);export{h as default};
+//# sourceMappingURL=DataSourceManagementHint-a27a3054.js.map

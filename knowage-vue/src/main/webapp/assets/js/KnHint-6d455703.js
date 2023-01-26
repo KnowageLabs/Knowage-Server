@@ -1,0 +1,2 @@
+import{d as s,_ as a,r as i,o as r,c,f as l,w as t,g as d,t as p,a as e}from"./index-1e676509.js";const _=s({name:"kn-hint",props:{title:String,hint:String}}),h={class:"kn-hint hint"},f=e("i",{class:"far fa-life-ring kn-hintIcon"},null,-1),m=["innerHTML"];function k(n,C,$,g,u,v){const o=i("Card");return r(),c("div",h,[l(o,{class:"kn-hintContent"},{title:t(()=>[f,d(" "+p(n.$t(n.title)),1)]),content:t(()=>[e("div",{innerHTML:n.$t(n.hint)},null,8,m)]),_:1})])}var H=a(_,[["render",k]]);export{H as K};
+//# sourceMappingURL=KnHint-6d455703.js.map
