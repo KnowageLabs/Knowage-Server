@@ -1,2 +1,0 @@
-import{K as t}from"./KnHint-6d455703.js";import{_ as o,d as e,r as s,o as i,h as a}from"./index-1e676509.js";const r=e({name:"glossary-definition-hint",components:{KnHint:t}});function l(c,p,f,m,_,g){const n=s("KnHint");return i(),a(n,{title:"managers.glossary.glossaryDefinition.title",hint:"managers.glossary.glossaryDefinition.hint",style:{height:"auto"}},null,8,["title","hint"])}var y=o(r,[["render",l]]);export{y as default};
-//# sourceMappingURL=GlossaryDefinitionHint-d997d63d.js.map

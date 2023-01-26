@@ -1,2 +1,0 @@
-import{K as e}from"./KnHint-6d455703.js";import{_ as a,d as o,r as s,o as i,h as r}from"./index-1e676509.js";const m=o({name:"kpi-definition-hint",components:{KnHint:e}});function p(n,c,d,f,l,_){const t=s("KnHint");return i(),r(t,{title:n.$t("managers.datasetManagement.title"),hint:n.$t("managers.datasetManagement.hint")},null,8,["title","hint"])}var g=a(m,[["render",p]]);export{g as default};
-//# sourceMappingURL=DatasetManagementHint-eefe52d7.js.map

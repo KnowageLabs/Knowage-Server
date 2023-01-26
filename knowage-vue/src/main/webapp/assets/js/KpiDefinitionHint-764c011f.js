@@ -1,2 +1,0 @@
-import{K as t}from"./KnHint-6d455703.js";import{_ as i,d as e,r as o,o as p,h as r}from"./index-1e676509.js";const s=e({name:"kpi-definition-hint",components:{KnHint:t}});function a(c,f,_,m,l,d){const n=o("KnHint");return p(),r(n,{title:"kpi.kpiDefinition.title",hint:"kpi.kpiDefinition.hint"},null,8,["title","hint"])}var u=i(s,[["render",a]]);export{u as default};
-//# sourceMappingURL=KpiDefinitionHint-764c011f.js.map

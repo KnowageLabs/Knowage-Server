@@ -1,2 +1,0 @@
-import{K as e}from"./KnHint-6d455703.js";import{_ as t,d as a,r as o,o as s,h as i}from"./index-1e676509.js";const c=a({name:"schedulation-agenda-management-hint",components:{KnHint:e}});function r(d,m,l,p,h,_){const n=o("KnHint");return s(),i(n,{title:"managers.schedulationAgendaManagement.title",hint:"managers.schedulationAgendaManagement.hint","data-test":"schedulation-agenda-hint"},null,8,["title","hint"])}var f=t(c,[["render",r]]);export{f as default};
-//# sourceMappingURL=SchedulationAgendaHint-3a68f4ef.js.map

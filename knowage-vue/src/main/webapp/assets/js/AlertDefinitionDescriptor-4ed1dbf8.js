@@ -1,2 +1,0 @@
-const t=["name"],e={insert:{toastTitle:"common.toast.createTitle"},success:"common.toast.success",update:{toastTitle:"common.toast.updateTitle"}},s={basicCard:{width:"100%"},inputFields:{width:"45%"},menuButton:{height:"24px",width:"24px"},message:{"align-items":"center",display:"flex","justify-content":"center","text-align":"center",width:"100%"}};var i={filterFields:t,operation:e,styles:s};export{i as a};
-//# sourceMappingURL=AlertDefinitionDescriptor-4ed1dbf8.js.map

@@ -1,2 +1,0 @@
-import{K as n}from"./KnHint-6d455703.js";import{_ as e,d as i,r as o,o as r,h as a}from"./index-1e676509.js";const s=i({name:"target-definition-hint",components:{KnHint:n}});function p(c,f,_,m,l,d){const t=o("KnHint");return r(),a(t,{title:"kpi.targetDefinition.title",hint:"kpi.targetDefinition.hint"},null,8,["title","hint"])}var g=e(s,[["render",p]]);export{g as default};
-//# sourceMappingURL=TargetDefinitionHint-ef92d346.js.map

@@ -1,2 +1,0 @@
-import{K as e}from"./KnHint-6d455703.js";import{_ as t,d as a,r as o,o as s,h as r}from"./index-1e676509.js";const i=a({name:"news-hint",components:{KnHint:e}});function m(c,p,_,l,f,d){const n=o("KnHint");return s(),r(n,{title:"managers.newsManagement.title",hint:"managers.newsManagement.hint"},null,8,["title","hint"])}var u=t(i,[["render",m]]);export{u as default};
-//# sourceMappingURL=NewsManagementHint-06c51347.js.map

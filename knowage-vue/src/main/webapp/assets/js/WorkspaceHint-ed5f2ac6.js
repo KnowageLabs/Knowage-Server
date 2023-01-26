@@ -1,2 +1,0 @@
-import{K as e}from"./KnHint-6d455703.js";import{_ as t,d as o,r as s,o as r,h as a}from"./index-1e676509.js";const c=o({name:"workspace-hint",components:{KnHint:e}});function i(p,m,_,l,f,u){const n=s("KnHint");return r(),a(n,{title:"workspace.menuLabels.menuTitle",hint:"workspace.hint"},null,8,["title","hint"])}var k=t(c,[["render",i]]);export{k as default};
-//# sourceMappingURL=WorkspaceHint-ed5f2ac6.js.map

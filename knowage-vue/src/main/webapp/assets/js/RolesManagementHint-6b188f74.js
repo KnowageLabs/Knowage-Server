@@ -1,2 +1,0 @@
-import{K as e}from"./KnHint-6d455703.js";import{_ as t,d as o,r as a,o as s,h as r}from"./index-1e676509.js";const i=o({name:"roles-management-hint",components:{KnHint:e}});function m(c,l,p,_,f,d){const n=a("KnHint");return s(),r(n,{title:"managers.rolesManagement.title",hint:"managers.rolesManagement.hint"},null,8,["title","hint"])}var u=t(i,[["render",m]]);export{u as default};
-//# sourceMappingURL=RolesManagementHint-6b188f74.js.map

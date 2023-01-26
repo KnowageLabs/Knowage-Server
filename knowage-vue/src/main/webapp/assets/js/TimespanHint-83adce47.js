@@ -1,2 +1,0 @@
-import{K as t}from"./KnHint-6d455703.js";import{_ as e,d as o,r as a,o as s,h as i}from"./index-1e676509.js";const r=o({name:"lovs-management-hint",components:{KnHint:t}});function m(p,c,_,l,f,d){const n=a("KnHint");return s(),i(n,{title:"managers.timespan.title",hint:"managers.timespan.hint"},null,8,["title","hint"])}var H=e(r,[["render",m]]);export{H as default};
-//# sourceMappingURL=TimespanHint-83adce47.js.map

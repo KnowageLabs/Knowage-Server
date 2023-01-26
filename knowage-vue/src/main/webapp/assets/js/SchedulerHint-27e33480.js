@@ -1,2 +1,0 @@
-import{K as n}from"./KnHint-6d455703.js";import{_ as t,d as o,r,o as s,h as a}from"./index-1e676509.js";const c=o({name:"scheduler-hint",components:{KnHint:n}});function i(l,p,m,_,d,h){const e=r("KnHint");return s(),a(e,{title:"managers.scheduler.title",hint:"managers.scheduler.hint"},null,8,["title","hint"])}var H=t(c,[["render",i]]);export{H as default};
-//# sourceMappingURL=SchedulerHint-27e33480.js.map
