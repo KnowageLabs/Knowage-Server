@@ -37,6 +37,8 @@ export default defineComponent({
             webComponentRef: {} as any,
             drivers: [] as IDashboardDriver[],
             datastore: new CustomChartDatastore(null),
+            userScriptsURLs: ['https://code.highcharts.com/highcharts.js', 'https://code.highcharts.com/modules/drilldown.js'],
+            iframeDocument: null as any,
             loadedScriptsCount: 0
         }
     },
@@ -54,10 +56,12 @@ export default defineComponent({
         this.loadDrivers()
         this.loadActiveSelections()
         this.loadDataToShow()
-        //  console.log('DATASTORE ---------------', this.datastore)
     },
     unmounted() {
         this.removeEventListeners()
+        this.userScriptsURLs = []
+        this.iframeDocument = null
+        this.loadedScriptsCount = 0
     },
     methods: {
         ...mapActions(store, ['getInternationalization', 'setSelections', 'getAllDatasets', 'getDashboardDrivers']),
@@ -114,9 +118,10 @@ export default defineComponent({
         },
         //#region ===================== IFRAME Logic ====================================================
         renderCustomWidget() {
+            this.loadedScriptsCount = 0
             const iframe = document.getElementById('iframe') as any
-            const iframeDocument = iframe.contentWindow.document
-            iframeDocument.body.innerHTML = `<html>
+            this.iframeDocument = iframe.contentWindow.document
+            this.iframeDocument.body.innerHTML = `<html>
                 <head></head>
                 <body>
                     <div id="containerElement">
@@ -124,27 +129,13 @@ export default defineComponent({
                 </body>
             </html>`
 
-            const containerElement = iframeDocument.getElementById('containerElement')
+            const containerElement = this.iframeDocument.getElementById('containerElement')
             console.log('--------- containerElement: ', containerElement)
             this.createWrapperDiv(containerElement)
-            this.insertUsersHtmlContent(iframeDocument)
-            this.insertUsersCssContent(iframeDocument)
-            iframe.contentWindow.datastore = this.datastore
-            this.createScriptTagFromUsersJSScript(iframeDocument)
-
-            const userImportScript = document.createElement('script')
-            userImportScript.setAttribute('src', 'https://code.highcharts.com/highcharts.js')
-
-            iframeDocument.body.appendChild(userImportScript)
-
-            // bla
-
-            // const userScript = document.createElement('script')
-            // userScript.text = `console.log('------- WINDOW PARENT: ', window.parent)
-            //     window.parent.postMessage('message', '*')
-            // `
-            // // userScript.setAttribute('src', iframeScript)
-            //setTimeout(() => iframeDocument.body.appendChild(userScript), 10000)
+            this.insertUsersHtmlContent()
+            this.insertUsersCssContent()
+            this.setDatastoreObjectInFrame(iframe)
+            this.loadUserImportScripts()
         },
         createWrapperDiv(containerElement: Element) {
             const style = document.createElement('style')
@@ -160,33 +151,39 @@ export default defineComponent({
             containerElement.appendChild(style)
             containerElement.appendChild(wrapper)
         },
-        insertUsersHtmlContent(iframeDocument: any) {
-            const tempEl = iframeDocument.querySelector('.component-wrapper')
+        insertUsersHtmlContent() {
+            const tempEl = this.iframeDocument.querySelector('.component-wrapper')
             if (tempEl) tempEl.innerHTML = this.htmlContent
         },
-        insertUsersCssContent(iframeDocument: any) {
-            const tempEl = iframeDocument.querySelector('.style-wrapper')
+        insertUsersCssContent() {
+            const tempEl = this.iframeDocument.querySelector('.style-wrapper')
             if (tempEl) tempEl.innerHTML = this.webComponentCss
         },
-        createScriptTagFromUsersJSScript(iframeDocument: any) {
+        setDatastoreObjectInFrame(iframe: any) {
+            iframe.contentWindow.datastore = this.datastore
+        },
+        createScriptTagFromUsersJSScript() {
+            console.log('LOADING USER SCRIPT!!!!!!!!!!!!!!!!!: ')
             const userScript = document.createElement('script')
-            userScript.text = 'try {' + this.webComponentJs + `} catch (error) {      window.parent.postMessage({type: 'error', error: error}, '*')}`
-            setTimeout(() => iframeDocument.body.appendChild(userScript), 10000)
+            userScript.text = 'try {' + this.webComponentJs + `} catch (error) {window.parent.postMessage({type: 'error', error: error}, '*')}`
+            setTimeout(() => this.iframeDocument.body.appendChild(userScript), 10000)
         },
-        createUserImportScripts(scriptURLs: string[]) {
-            scriptURLs.forEach((scriptURL: string) => this.createUserImportScript(scriptURL))
+        loadUserImportScripts() {
+            console.log('THIS LOADED SCRIPT COUNT: ', this.loadedScriptsCount)
+            if (this.loadedScriptsCount === 2) this.createScriptTagFromUsersJSScript()
+            else this.loadUserImportScript(this.userScriptsURLs[this.loadedScriptsCount])
+            //scriptURLs.forEach((scriptURL: string) => this.loadUserImportScript(scriptURL))
         },
-        createUserImportScript(scriptURL: string) {
-            let loaded = false
+        loadUserImportScript(scriptURL: string) {
             const userImportScript = document.createElement('script')
             userImportScript.setAttribute('src', scriptURL)
             userImportScript.addEventListener('load', () => {
                 console.log('SCRIPT LOADED!')
-                loaded = true
                 this.loadedScriptsCount++
+                this.loadUserImportScripts()
             })
 
-            document.body.appendChild(userImportScript)
+            this.iframeDocument.body.appendChild(userImportScript)
             // while (true) {
             //     if (loaded) break
             //     setTimeout(() => console.log('-------- not loaded YET'), 1000)
