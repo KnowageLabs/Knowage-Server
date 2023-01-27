@@ -577,11 +577,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				var curr = fields[i];
 				
 				if (typeof curr === 'object') {
+					var otherMetaData = layerDef.dataset
+						.metadata
+						.fieldsMeta
+						.find(function(e) { return e.name == curr.header })
+				
 					stat[i] = data.stats[i];
 					stat[i].name = curr.name;
 					stat[i].header = curr.header;
+					stat[i].fieldType = otherMetaData ? otherMetaData.fieldType : "MEASURE";
 				}
 			}
+		}
+
+		$scope.checkLayer = function(layerDef) {
+			var itsOk = true;
+			
+			if (layerDef.visualizationType == "pies") {
+				var layerName = layerDef.alias;
+				var categorizeBy = layerDef.pieConf && layerDef.pieConf.categorizeBy;
+				var categoryColumn = layerDef.content.columnSelectedOfDataset.find(function(e) { return e.name == categorizeBy; })
+				if (categoryColumn == null || categoryColumn.fieldType != "ATTRIBUTE") {
+					var message = sbiModule_translate.load('sbi.cockpit.map.edit.visualization.pie.errorMissingCategory');
+					message = message.replace("{0}", categorizeBy)
+					message = message.replace("{1}", layerName)
+					sbiModule_messaging.showInfoMessage(message, 'Title', 0);
+					itsOk = false;
+				} 
+			}
+			
+			return itsOk;
 		}
 
 		$scope.createLayerWithData = function(label, data, isCluster, isHeatmap){
@@ -596,6 +621,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.fixStats(layerDef, data);
 
 			columnsForData = $scope.getColumnSelectedOfDataset(layerDef.dsId) || [];
+
+			if (!$scope.checkLayer(layerDef)) {
+				return;
+			}
 
 			//remove old layer
 			var previousLayer = $scope.getLayerByName(label);
@@ -613,6 +642,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 
 			layerDef.layerID = layerID;
+			cockpitModule_mapServices.clearCache(layerID);
 			var featuresSource = cockpitModule_mapServices.getFeaturesDetails(geoColumn, selectedMeasure, layerDef, columnsForData, data);
 			if (featuresSource == null){
 				// creates a fake layer for internal object (because isn't the first loop anymore)
