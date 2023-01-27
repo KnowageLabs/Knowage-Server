@@ -1,3 +1,5 @@
+import moment from 'moment'
+
 export function findCrossTargetByCrossName(angularData: any, temp: any[]) {
     if (!angularData || !temp) return
     const targetCross = typeof angularData.targetCrossNavigation === 'string' ? angularData.targetCrossNavigation : angularData.targetCrossNavigation.crossName
@@ -20,11 +22,11 @@ export function loadNavigationParamsInitialValue(vueComponent: any) {
                     if (!checkIfMultivalueDriverContainsCrossNavigationValue(tempParam, crossNavigationValue)) return
                     if (crossNavigationValue) {
                         if (tempParam.parameterValue[0]) tempParam.parameterValue[0].value = crossNavigationValue
-                        else tempParam.parameterValue = { value: crossNavigationValue, description: '' }
+                        else tempParam.parameterValue[0] = { value: crossNavigationValue, description: '' }
                     }
                     if (vueComponent.document.navigationParams[key + '_field_visible_description']) vueComponent.document.navigationParams[key + '_field_visible_description'] = tempParam.parameterValue[0].description
                     if (tempParam.type === 'DATE' && tempParam.parameterValue[0] && tempParam.parameterValue[0].value) {
-                        tempParam.parameterValue[0].value = new Date(tempParam.parameterValue[0].value)
+                        tempParam.parameterValue[0].value = moment(tempParam.parameterValue[0].value, 'DD/MM/YYYY').toDate()
                     }
                 }
                 if (tempParam.selectionType === 'COMBOBOX') formatCrossNavigationComboParameterDescription(tempParam)
@@ -39,6 +41,7 @@ function checkIfMultivalueDriverContainsCrossNavigationValue(tempParam: any, cro
 }
 
 function formatCrossNavigationComboParameterDescription(tempParam: any) {
+    if (!['LIST', 'COMBOBOX', 'LOOKUP', 'TREE'].includes(tempParam.selectionType)) return true
     for (let i = tempParam.parameterValue.length - 1; i >= 0; i--) {
         if (tempParam.parameterValue[i].value) {
             const index = tempParam.data.findIndex((option: any) => option.value == tempParam.parameterValue[i].value)
