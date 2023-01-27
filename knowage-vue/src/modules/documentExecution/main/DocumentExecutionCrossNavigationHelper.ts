@@ -1,3 +1,5 @@
+import moment from 'moment'
+
 export function findCrossTargetByCrossName(angularData: any, temp: any[]) {
     if (!angularData || !temp) return
     const targetCross = typeof angularData.targetCrossNavigation === 'string' ? angularData.targetCrossNavigation : angularData.targetCrossNavigation.crossName
@@ -20,11 +22,11 @@ export function loadNavigationParamsInitialValue(vueComponent: any) {
                     if (!checkIfMultivalueDriverContainsCrossNavigationValue(tempParam, crossNavigationValue)) return
                     if (crossNavigationValue) {
                         if (tempParam.parameterValue[0]) tempParam.parameterValue[0].value = crossNavigationValue
-                        else tempParam.parameterValue = { value: crossNavigationValue, description: '' }
+                        else tempParam.parameterValue[0] = { value: crossNavigationValue, description: '' }
                     }
                     if (vueComponent.document.navigationParams[key + '_field_visible_description']) vueComponent.document.navigationParams[key + '_field_visible_description'] = tempParam.parameterValue[0].description
                     if (tempParam.type === 'DATE' && tempParam.parameterValue[0] && tempParam.parameterValue[0].value) {
-                        tempParam.parameterValue[0].value = new Date(tempParam.parameterValue[0].value)
+                        tempParam.parameterValue[0].value = moment(tempParam.parameterValue[0].value, 'DD/MM/YYYY').toDate()
                     }
                 }
                 if (tempParam.selectionType === 'COMBOBOX') formatCrossNavigationComboParameterDescription(tempParam)
@@ -34,6 +36,7 @@ export function loadNavigationParamsInitialValue(vueComponent: any) {
 }
 
 function checkIfMultivalueDriverContainsCrossNavigationValue(tempParam: any, crossNavigationValue: any) {
+    if (!['LIST', 'COMBOBOX', 'LOOKUP', 'TREE'].includes(tempParam.selectionType)) return true
     const index = tempParam.data?.findIndex((option: { value: string; description: string }) => option.value == crossNavigationValue)
     return index && index !== -1
 }
