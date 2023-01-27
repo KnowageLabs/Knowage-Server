@@ -49,15 +49,28 @@ export default defineComponent({
         }
     },
     mounted() {
+        this.setEventListeners()
         this.webComponentRef = this.$refs.webComponent as any
         this.loadDrivers()
         this.loadActiveSelections()
         this.loadDataToShow()
         //  console.log('DATASTORE ---------------', this.datastore)
     },
+    unmounted() {
+        this.removeEventListeners()
+    },
     methods: {
         ...mapActions(store, ['getInternationalization', 'setSelections', 'getAllDatasets', 'getDashboardDrivers']),
         ...mapActions(appStore, ['setError']),
+        setEventListeners() {
+            window.addEventListener('message', this.iframeEventsListener)
+        },
+        removeEventListeners() {
+            window.removeEventListener('message', this.iframeEventsListener)
+        },
+        iframeEventsListener(event) {
+            console.log('EVENT FROM IFRAME: ', event)
+        },
         loadDrivers() {
             this.drivers = this.getDashboardDrivers(this.dashboardId) // TODO
         },
