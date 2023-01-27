@@ -502,6 +502,9 @@
     			&.choropleth {
     				@include custom-mask-image('../img/cockpit/mapWidget/choropleth.svg');
     			}
+    			&.balloons {
+    				@include custom-mask-image('../img/cockpit/mapWidget/balloons.svg');
+    			}
     		}
     	}
 
@@ -589,6 +592,35 @@
 	    		}
 	    	}
 	    }
+		.rz-slider-container {
+			margin-left: 8px;
+
+			.rzslider {
+				top: 8px;
+				color: rgba(0,0,0,0.87);
+				
+				.rz-bar {
+					height: 1px;
+				}
+				.rz-bubble {
+					top: 0.5rem;
+					z-index: 4;
+				}
+				.rz-pointer {
+					width: 20px;
+					height: 20px;
+					top: -10;
+					background-color: $baseColor;
+					
+					&:after {
+						width: 5px;
+						height: 5px;
+						top: 8px;
+						left: 8px;
+					}
+				}
+			}
+		}
     }
     
     

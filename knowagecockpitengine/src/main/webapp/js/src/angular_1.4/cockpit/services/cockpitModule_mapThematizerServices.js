@@ -12,39 +12,49 @@
 				$rootScope,
 				$location){
 
-		var mts = this; //mapThematizerServices
+		var mts = this; // mapThematizerServices
 
 		var cacheSymbolMinMax;
 		var activeInd, activeConf, activeLegend;
 
 
 		var styleCache = {};
-	    mts.layerStyle = function(feature, resolution){
-	    	var featureType = feature.getGeometry().getType();
+		mts.layerStyle = function(feature, resolution){
+			var featureType = feature.getGeometry().getType();
 
-	    	var localFeature;
-			if (Array.isArray(feature.get('features')))
+			var localFeature;
+			if (Array.isArray(feature.get('features'))) {
 				localFeature = feature.get('features')[0];
-	    	else
-	    		localFeature = feature;
+			} else {
+				localFeature = feature;
+			}
 
 			var props  = localFeature.getProperties();
-			var parentLayer = localFeature.get('parentLayer');
+			var parentLayer = props["parentLayer"];
 			var config = mts.getActiveConf(parentLayer) || {};
+			var defaultIndicator = config.defaultIndicator;
+
+			mts.setActiveIndicator(defaultIndicator);
+
 			var configThematizer = config.analysisConf || {};
 			var configMarker = config.markerConf || {};
 			var configCluster = config.clusterConf || {};
 			var useCache = false; //cache isn't use for analysis, just with fixed marker
+			var isSimpleMarker = props["isSimpleMarker"];
 			var isCluster = (Array.isArray(feature.get('features'))) ? true : false;
+			var stats = Object.values(props["stats"])
+			var measureStat = stats.find(function(e) {
+				return e.header == defaultIndicator;
+			});
+			var visualizationType = config.visualizationType;
+			var isBalloon = visualizationType == "balloons";
 			var value;
 			var style;
-
-			mts.setActiveIndicator(config.defaultIndicator);
 
 			if (isCluster){
 				value = mts.getClusteredValue(feature);
 			}else{
-				value =  (props[mts.getActiveIndicator()])  ? props[mts.getActiveIndicator()].value : undefined;
+				value = (props[mts.getActiveIndicator()])  ? props[mts.getActiveIndicator()].value : undefined;
 			}
 
 			var thematized = false;
@@ -52,7 +62,7 @@
 			if (config.visualizationType == 'choropleth') {
 				configThematizer.parentLayer = parentLayer;
 				if (!configMarker.style) configMarker.style = {};
-				if (localFeature.get('isSimpleMarker'))
+				if (isSimpleMarker)
 					configMarker.style.color = mts.getChoroplethColor(value, parentLayer) || "grey";
 				else{
 					style = mts.getChoroplethStyles(value, parentLayer, null);
@@ -60,7 +70,7 @@
 				}
 			}
 
-			if (!localFeature.get('isSimpleMarker')){
+			if (!isSimpleMarker){
 				var fillColor   = (configMarker.style && configMarker.style.color)       ? configMarker.style.color       : "grey";
 				var borderColor = (configMarker.style && configMarker.style.borderColor) ? configMarker.style.borderColor : undefined;
 
@@ -78,19 +88,21 @@
 			if (!thematized && isCluster && feature.get('features').length > 1 ){
 				style = mts.getClusterStyles(value, props, configCluster);
 				useCache = false;
-			}
-			else if (!thematized){
+			} else if (!thematized && isBalloon) {
+				style = mts.getBalloonStyles(value, props, configMarker, measureStat);
+				useCache = false;
+			} else if (!thematized) {
 				style = mts.getOnlyMarkerStyles(value, props, configMarker);
 				useCache = true;
 			}
 
 			if (useCache && !styleCache[parentLayer]) {
-		          styleCache[parentLayer] = style;
-		          return styleCache[parentLayer] ;
+				styleCache[parentLayer] = style;
+				return styleCache[parentLayer] ;
 			} else {
 				return style;
 			}
-	    }
+		}
 
 	    mts.trim = function (str) {
 	    	return str.replace(/^\s+|\s+$/gm,'');
@@ -287,6 +299,33 @@
 				break;
 
 			}
+			return style;
+		}
+
+		mts.getBalloonStyles = function (value, props, config, measureStat){
+			
+			var style;
+			var color;
+			var borderColor = (config.style && config.style.borderColor) ? config.style.borderColor : "rgba(0, 0, 0, 0.5)";
+			var minSize = config.minSize || 5;
+			var maxSize = config.maxSize || 35;
+			
+			if (props[mts.getActiveIndicator()] && props[mts.getActiveIndicator()].thresholdsConfig) color = mts.getColorByThresholds(value, props);
+			if (!color)	color = (config.style && config.style.color) ? config.style.color : "rgba(127, 127, 127, 0.5)";
+			
+			var unitSize = (maxSize - minSize) / measureStat.cardinality;
+			var perValueSize = minSize + (measureStat.distinct.indexOf(value) * unitSize);
+
+			var size = perValueSize;
+
+			style = new ol.style.Style({
+				image: new ol.style.Circle({
+						radius: size,
+						fill: new ol.style.Fill({color: color}),
+						stroke: new ol.style.Stroke({color: borderColor, width: 1})
+					}),
+			});
+
 			return style;
 		}
 

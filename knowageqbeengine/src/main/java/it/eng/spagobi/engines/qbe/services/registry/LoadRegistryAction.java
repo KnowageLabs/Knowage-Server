@@ -67,6 +67,7 @@ import it.eng.spagobi.engines.qbe.services.initializers.RegistryEngineStartActio
 import it.eng.spagobi.engines.qbe.template.QbeTemplate;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStoreStats;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
@@ -1157,6 +1158,12 @@ class DecoratedDataStore implements IDataStore {
 
 	public RegistryConfiguration getRegistryConfiguration() {
 		return registryConfiguration;
+	}
+
+	@Override
+	public DataStoreStats getStats() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
