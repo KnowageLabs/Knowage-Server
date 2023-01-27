@@ -68,8 +68,9 @@ export default defineComponent({
         removeEventListeners() {
             window.removeEventListener('message', this.iframeEventsListener)
         },
-        iframeEventsListener(event) {
+        iframeEventsListener(event: any) {
             console.log('EVENT FROM IFRAME: ', event)
+            if (event.data.type === 'error') this.setError({ title: this.$t('common.error.generic'), msg: event.data.error?.message ?? '' })
         },
         loadDrivers() {
             this.drivers = this.getDashboardDrivers(this.dashboardId) // TODO
@@ -128,12 +129,22 @@ export default defineComponent({
             this.createWrapperDiv(containerElement)
             this.insertUsersHtmlContent(iframeDocument)
             this.insertUsersCssContent(iframeDocument)
+            iframe.contentWindow.datastore = this.datastore
             this.createScriptTagFromUsersJSScript(iframeDocument)
 
             const userImportScript = document.createElement('script')
             userImportScript.setAttribute('src', 'https://code.highcharts.com/highcharts.js')
 
             iframeDocument.body.appendChild(userImportScript)
+
+            // bla
+
+            // const userScript = document.createElement('script')
+            // userScript.text = `console.log('------- WINDOW PARENT: ', window.parent)
+            //     window.parent.postMessage('message', '*')
+            // `
+            // // userScript.setAttribute('src', iframeScript)
+            //setTimeout(() => iframeDocument.body.appendChild(userScript), 10000)
         },
         createWrapperDiv(containerElement: Element) {
             const style = document.createElement('style')
@@ -159,7 +170,7 @@ export default defineComponent({
         },
         createScriptTagFromUsersJSScript(iframeDocument: any) {
             const userScript = document.createElement('script')
-            userScript.text = 'try {' + this.webComponentJs + '} catch (error) {}'
+            userScript.text = 'try {' + this.webComponentJs + `} catch (error) {      window.parent.postMessage({type: 'error', error: error}, '*')}`
             setTimeout(() => iframeDocument.body.appendChild(userScript), 10000)
         },
         createUserImportScripts(scriptURLs: string[]) {

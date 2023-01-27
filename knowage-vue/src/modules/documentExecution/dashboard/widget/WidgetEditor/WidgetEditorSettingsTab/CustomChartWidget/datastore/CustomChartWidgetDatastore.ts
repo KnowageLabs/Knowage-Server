@@ -350,7 +350,7 @@ class node {
         return contains
     }
     traverseDF(tree, callback) {
-        ;(function recurse(currentNode) {
+        ; (function recurse(currentNode) {
             callback(currentNode)
             if (!Array.isArray(currentNode)) {
                 for (var i = 0; i < currentNode.children.length; i++) {
