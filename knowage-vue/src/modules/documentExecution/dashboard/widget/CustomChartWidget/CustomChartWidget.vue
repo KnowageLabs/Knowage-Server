@@ -44,6 +44,9 @@ export default defineComponent({
         },
         propActiveSelections() {
             this.loadActiveSelections()
+        },
+        editorMode() {
+            this.renderCustomWidget()
         }
     },
     mounted() {
@@ -150,6 +153,7 @@ export default defineComponent({
         getUserImportScripts(componentWrapperElement: any) {
             // TODO - remove hardcoded imports
             this.userScriptsURLs = ['https://code.highcharts.com/highcharts.js', 'https://code.highcharts.com/modules/drilldown.js']
+            console.log('------------ test ', this.iframeDocument.getElementsByTagName('script'))
             const userImports = componentWrapperElement.getElementsByTagName('kn-import') ?? []
             for (let i = 0; i < userImports.length; i++) {
                 console.log('--------- userImport src: ', userImports.item(i).attributes.src.textContent)
