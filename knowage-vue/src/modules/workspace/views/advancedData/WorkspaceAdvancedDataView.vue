@@ -346,6 +346,9 @@ export default defineComponent({
         },
         async generateAvro(dsId: Number) {
             this.pushEvent(1)
+            // listen on websocket for avro export job to be finished
+            if (this.user?.functionalities.includes('DataPreparation') && Object.keys(this.client).length > 0) this.client.publish({ destination: '/app/prepare', body: dsId })
+
             // launch avro export job
             this.$http
                 .post(
@@ -365,11 +368,8 @@ export default defineComponent({
                     this.pushEvent(3)
                 })
                 .catch(() => {})
-
-            // listen on websocket for avro export job to be finished
-            if (this.user?.functionalities.includes('DataPreparation') && Object.keys(this.client).length > 0) this.client.publish({ destination: '/app/prepare', body: dsId })
         },
-        openDataPreparation(dataset: any) {
+        async openDataPreparation(dataset: any) {
             this.events = []
             this.pushEvent(0)
             if (dataset.dsTypeCd == 'Prepared') {
@@ -385,8 +385,8 @@ export default defineComponent({
                                 if (!this.isAvroReady(datasetId)) {
                                     this.dataPrepAvroHandlingDialogVisbile = true
                                     this.dataPrepAvroHandlingMessage = this.$t('managers.workspaceManagement.dataPreparation.info.dataPrepIsLoadingAndWillBeOpened')
-                                    this.existingPreparedDatasetId = datasetId
                                     this.generateAvro(datasetId)
+                                    this.existingPreparedDatasetId = datasetId
                                 } else {
                                     this.$router.push({ name: 'data-preparation', params: { id: datasetId, transformations: JSON.stringify(transformations), processId: processId, instanceId: instanceId, dataset: JSON.stringify(dataset) } })
                                 }
@@ -408,7 +408,8 @@ export default defineComponent({
             } else {
                 this.dataPrepAvroHandlingDialogVisbile = true
                 this.dataPrepAvroHandlingMessage = this.$t('managers.workspaceManagement.dataPreparation.info.dataPrepIsLoadingAndWillBeOpened')
-                this.generateAvro(dataset.id)
+                await this.generateAvro(dataset.id)
+                this.existingPreparedDatasetId = dataset.id
             }
         },
         async getAllAvroDataSets() {
