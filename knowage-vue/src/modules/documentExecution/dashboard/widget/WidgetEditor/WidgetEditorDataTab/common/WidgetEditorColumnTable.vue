@@ -89,7 +89,7 @@ export default defineComponent({
             return this.widgetModel.type
         },
         rowReorderEnabled(): boolean {
-            return this.widgetModel && ['table', 'html', 'text', 'highcharts', 'discovery'].includes(this.widgetModel.type) && this.rows.length > 1
+            return this.widgetModel && ['table', 'html', 'text', 'highcharts', 'discovery', 'customchart'].includes(this.widgetModel.type) && this.rows.length > 1
         }
     },
     watch: {
@@ -134,7 +134,7 @@ export default defineComponent({
             if (event.dataTransfer.getData('text/plain') === 'b') return
             const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
             const tempColumn = createNewWidgetColumn(eventData, this.widgetType)
-            if (['table', 'html', 'text', 'highcharts', 'chartJS', 'discovery'].includes(this.widgetModel.type)) {
+            if (['table', 'html', 'text', 'highcharts', 'chartJS', 'discovery', 'customchart'].includes(this.widgetModel.type)) {
                 if (['chartJS', 'highcharts'].includes(this.widgetModel.type)) {
                     addChartColumnToTable(tempColumn, this.rows, this.chartType, this.settings.attributesOnly, this.settings.measuresOnly, this.widgetModel)
                 } else if (['table'].includes(this.widgetModel.type) || !this.checkIfColumnIsAlreadyPresent(tempColumn)) this.rows.push(tempColumn as IWidgetColumn)
