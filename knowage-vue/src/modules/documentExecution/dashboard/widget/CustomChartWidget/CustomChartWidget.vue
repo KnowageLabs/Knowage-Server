@@ -80,6 +80,7 @@ export default defineComponent({
         async loadDataToShow() {
             console.log('dataToShow ------------', this.widgetData)
             this.dataToShow = this.widgetData
+            this.datastore.setData(this.widgetData)
             await this.loadHTML()
         },
         loadActiveSelections() {
