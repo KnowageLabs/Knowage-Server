@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IDashboardDriver, IDataset, ISelection, IVariable } from '../../Dashboard'
+import { IDataset, ISelection, IVariable } from '../../Dashboard'
 import { mapActions } from 'pinia'
 import { IWidget } from '../../Dashboard'
 import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
@@ -13,6 +13,7 @@ import store from '../../Dashboard.store'
 import appStore from '../../../../../App.store'
 
 import cryptoRandomString from 'crypto-random-string'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'custom-chart-widget',
@@ -147,8 +148,7 @@ export default defineComponent({
         },
         getUserImportScripts(componentWrapperElement: any) {
             // TODO - remove hardcoded imports
-            this.userScriptsURLs = ['https://code.highcharts.com/highcharts.js', 'https://code.highcharts.com/modules/drilldown.js']
-            // console.log('--------------- TEST: ', this.iframeDocument.getElementsByTagName('scrpipt'))
+            this.userScriptsURLs = ['https://code.highcharts.com/highcharts.js', 'https://code.highcharts.com/modules/drilldown.js', 'https://code.highcharts.com/highcharts.js']
             const userImports = componentWrapperElement.getElementsByTagName('kn-import') ?? []
             for (let i = 0; i < userImports.length; i++) {
                 if (userImports.item(i)?.attributes?.src?.textContent) {
@@ -168,13 +168,20 @@ export default defineComponent({
         createScriptTagFromUsersJSScript() {
             const userScript = document.createElement('script')
             userScript.text = 'try {' + this.webComponentJs + `} catch (error) {window.parent.postMessage({type: 'error', error: error}, '*')}`
-            setTimeout(() => this.iframeDocument.body.appendChild(userScript), 10000)
+            setTimeout(() => this.iframeDocument?.body?.appendChild(userScript), 10000)
         },
         loadUserImportScripts() {
             if (this.loadedScriptsCount === this.userScriptsURLs.length) this.createScriptTagFromUsersJSScript()
             else this.loadUserImportScript(this.userScriptsURLs[this.loadedScriptsCount])
         },
         loadUserImportScript(scriptURL: string) {
+            setTimeout(() => {}, 3000)
+            if (this.isUserScriptAlreadLoaded(scriptURL)) {
+                this.loadedScriptsCount++
+                this.loadUserImportScripts()
+                return
+            }
+
             const userImportScript = document.createElement('script')
             userImportScript.setAttribute('src', scriptURL)
             userImportScript.addEventListener('load', () => {
@@ -183,6 +190,18 @@ export default defineComponent({
             })
 
             this.iframeDocument.body.appendChild(userImportScript)
+        },
+        isUserScriptAlreadLoaded(scriptURL: string) {
+            let loaded = false
+            const loadedScriptElements = this.iframeDocument.getElementsByTagName('script')
+            const test = deepcopy(loadedScriptElements)
+            for (let i = 0; i < loadedScriptElements.length; i++) {
+                if (loadedScriptElements.item(i).attributes?.src?.textContent == scriptURL) {
+                    loaded = true
+                    break
+                }
+            }
+            return loaded
         },
         onClickManager(columnName: string, columnValue: string | number) {
             if (this.editorMode || !columnName) return
