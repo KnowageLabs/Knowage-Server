@@ -13,7 +13,8 @@ const store = defineStore('dashboardStore', {
             dashboards: {},
             selectedSheetIndex: 0,
             allDatasets: [] as IDataset[],
-            internationalization: {}
+            internationalization: {},
+            profileAttributes: [] as { name: string; value: string }[]
         }
     },
     actions: {
@@ -129,6 +130,12 @@ const store = defineStore('dashboardStore', {
         },
         setAllDatasetLoadedFlag(dashboardId: string, value: boolean) {
             this.dashboards[dashboardId].allDatasetsLoaded = value
+        },
+        getProfileAttributes() {
+            return this.profileAttributes
+        },
+        setProfileAttributes(profileAttributes: { name: string; value: string }[]) {
+            this.profileAttributes = profileAttributes
         },
     }
 })

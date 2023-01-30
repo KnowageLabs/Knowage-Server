@@ -34,7 +34,6 @@ export default defineComponent({
             htmlContent: '' as string,
             webComponentCss: '' as string,
             webComponentJs: '' as string,
-            drivers: [] as IDashboardDriver[],
             datastore: new CustomChartDatastore(null),
             userScriptsURLs: [] as string[],
             iframeDocument: null as any,
@@ -55,9 +54,10 @@ export default defineComponent({
     },
     mounted() {
         this.setEventListeners()
-        this.loadDrivers()
         this.loadActiveSelections()
         this.loadDataToShow()
+        this.loadProfileAttributesToDatastore()
+        this.loadVariablesToDatastore()
     },
     unmounted() {
         this.removeEventListeners()
@@ -66,7 +66,7 @@ export default defineComponent({
         this.loadedScriptsCount = 0
     },
     methods: {
-        ...mapActions(store, ['getInternationalization', 'setSelections', 'getAllDatasets', 'getDashboardDrivers']),
+        ...mapActions(store, ['getInternationalization', 'setSelections', 'getAllDatasets', 'getDashboardDrivers', 'getProfileAttributes']),
         ...mapActions(appStore, ['setError']),
         setEventListeners() {
             window.addEventListener('message', this.iframeEventsListener)
@@ -79,8 +79,12 @@ export default defineComponent({
             if (event.data.type === 'error') this.setError({ title: this.$t('common.error.generic'), msg: event.data.error?.message ?? '' })
             else if (event.data.type === 'clickManager') this.onClickManager(event.data.payload.columnName, event.data.payload.columnValue)
         },
-        loadDrivers() {
-            this.drivers = this.getDashboardDrivers(this.dashboardId) // TODO
+        loadProfileAttributesToDatastore() {
+            const profileAttributes = this.getProfileAttributes()
+            this.datastore.setProfileAttributes(profileAttributes)
+        },
+        loadVariablesToDatastore() {
+            this.datastore.setVariables(this.variables)
         },
         async loadDataToShow() {
             this.loading = true
@@ -90,7 +94,7 @@ export default defineComponent({
             this.loading = false
         },
         loadActiveSelections() {
-            this.activeSelections = this.propActiveSelections // TODO
+            this.activeSelections = this.propActiveSelections
         },
         async loadHTML() {
             this.loading = true
@@ -144,7 +148,7 @@ export default defineComponent({
         getUserImportScripts(componentWrapperElement: any) {
             // TODO - remove hardcoded imports
             this.userScriptsURLs = ['https://code.highcharts.com/highcharts.js', 'https://code.highcharts.com/modules/drilldown.js']
-            console.log('--------------- TEST: ', this.iframeDocument.getElementsByTagName('scrpipt'))
+            // console.log('--------------- TEST: ', this.iframeDocument.getElementsByTagName('scrpipt'))
             const userImports = componentWrapperElement.getElementsByTagName('kn-import') ?? []
             for (let i = 0; i < userImports.length; i++) {
                 if (userImports.item(i)?.attributes?.src?.textContent) {
@@ -181,8 +185,6 @@ export default defineComponent({
             this.iframeDocument.body.appendChild(userImportScript)
         },
         onClickManager(columnName: string, columnValue: string | number) {
-            console.log('------------ COLUMN NAME: ', columnName)
-            console.log('------------ COLUMN VALUE: ', columnValue)
             if (this.editorMode || !columnName) return
             updateStoreSelections(this.createNewSelection([columnValue], columnName), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
         },

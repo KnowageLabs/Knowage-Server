@@ -1,9 +1,12 @@
+import { IVariable } from '@/modules/documentExecution/dashboard/Dashboard'
 import deepcopy from 'deepcopy'
 import { filter } from './CustomChartWidgetFilter'
 
 export class CustomChartDatastore {
     data: any = {}
     globalTree: any[] = []
+    variables: any = {}
+    profile: any = {}
 
     constructor(data) {
         this.data = data
@@ -11,6 +14,16 @@ export class CustomChartDatastore {
 
     setData(data) {
         this.data = this.transformDataStore(data)
+    }
+
+    setVariables(variables: IVariable[]) {
+        this.variables = {}
+        variables?.forEach((variable: IVariable) => this.variables[variable.name] = variable.value)
+    }
+
+    setProfileAttributes(profileAttributes: { name: string; value: string }[]) {
+        this.profile = {}
+        profileAttributes?.forEach((profileAttribute: { name: string; value: string }) => this.profile[profileAttribute.name] = profileAttribute.value)
     }
 
     transformDataStore(data) {

@@ -120,7 +120,7 @@ export default defineComponent({
         clearAllDatasetIntervals()
     },
     methods: {
-        ...mapActions(dashboardStore, ['removeSelections', 'setAllDatasets', 'getSelections', 'setInternationalization', 'getInternationalization', 'setDashboardDocument', 'setDashboardDrivers']),
+        ...mapActions(dashboardStore, ['removeSelections', 'setAllDatasets', 'getSelections', 'setInternationalization', 'getInternationalization', 'setDashboardDocument', 'setDashboardDrivers', 'setProfileAttributes']),
         async getData() {
             this.loading = true
 
@@ -197,6 +197,7 @@ export default defineComponent({
             if (user && user.attributes) {
                 Object.keys(user.attributes).forEach((key: string) => this.profileAttributes.push({ name: key, value: user.attributes[key] }))
             }
+            this.setProfileAttributes(this.profileAttributes)
         },
         setEventListeners() {
             emitter.on('openNewWidgetPicker', () => {
@@ -243,6 +244,7 @@ export default defineComponent({
             this.store.setSelections(this.dashboardId, [], this.$http)
             this.store.setSelections(this.dashboardId, [], this.$http)
             this.setDashboardDrivers(this.dashboardId, [])
+            this.setProfileAttributes([])
         },
         closeWidgetEditor() {
             this.widgetEditorVisible = false
