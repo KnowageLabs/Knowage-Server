@@ -13,7 +13,7 @@ import CustomChartWidgetSettingsAccordion from './CustomChartWidgetSettingsAccor
 import CustomChartWidgetSettingsGallery from './gallery/CustomChartWidgetGallery.vue'
 
 export default defineComponent({
-    name: 'discovery-widget-settings-container',
+    name: 'custom-chart-widget-settings-container',
     components: { CustomChartWidgetSettingsAccordion, CustomChartWidgetSettingsGallery },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

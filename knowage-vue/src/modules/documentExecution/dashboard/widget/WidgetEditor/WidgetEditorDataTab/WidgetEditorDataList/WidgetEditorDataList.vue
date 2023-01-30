@@ -52,7 +52,6 @@ import dataListDescriptor from '../../../../dataset/DatasetEditorDataTab/Dataset
 import KnCalculatedField from '@/components/functionalities/KnCalculatedField/KnCalculatedField.vue'
 import calcFieldDescriptor from './WidgetEditorCalcFieldDescriptor.json'
 import cryptoRandomString from 'crypto-random-string'
-import { removeColumnFromDiscoveryWidgetModel } from '../../helpers/discoveryWidget/DiscoveryWidgetFunctions'
 
 export default defineComponent({
     name: 'widget-editor-data-list',
@@ -135,7 +134,7 @@ export default defineComponent({
             if (!this.model?.columns) return
             for (let i = 0; i < this.model.columns.length; i++) {
                 emitter.emit('columnRemoved', this.model.columns[i])
-                if (this.widgetModel.type === 'discovery') removeColumnFromDiscoveryWidgetModel(this.widgetModel, this.model.columns[i])
+                // if (this.widgetModel.type === 'discovery') removeColumnFromDiscoveryWidgetModel(this.widgetModel, this.model.columns[i])
             }
             emitter.emit('refreshWidgetWithData', this.widgetModel.id)
             this.model.columns = []

@@ -20,7 +20,6 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IDataset, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
 import { removeColumnFromTableWidgetModel } from '../../helpers/tableWidget/TableWidgetFunctions'
-import { addColumnToDiscoveryWidgetModel, removeColumnFromDiscoveryWidgetModel } from '../../helpers/discoveryWidget/DiscoveryWidgetFunctions'
 import { emitter } from '../../../../DashboardHelpers'
 import descriptor from './WidgetCommonDescriptor.json'
 import TableWidgetDataForm from '../TableWidget/TableWidgetDataForm.vue'
@@ -63,7 +62,7 @@ export default defineComponent({
         },
         onColumnAdded(payload: { column: IWidgetColumn; rows: IWidgetColumn[] }) {
             this.widgetModel.columns = payload.rows
-            if (this.widgetType === 'discovery') addColumnToDiscoveryWidgetModel(this.widgetModel, payload.column)
+            // if (this.widgetType === 'discovery') addColumnToDiscoveryWidgetModel(this.widgetModel, payload.column)
             emitter.emit('columnAdded', payload.column)
             emitter.emit('refreshWidgetWithData', this.widgetModel.id)
         },
@@ -96,7 +95,7 @@ export default defineComponent({
                     break
                 case 'discovery':
                     if (column.fieldType === 'MEASURE') this.clearDiscoveryWidgetAggregatedColumnValuesForSpecificColumn(column)
-                    removeColumnFromDiscoveryWidgetModel(this.widgetModel, column)
+                // removeColumnFromDiscoveryWidgetModel(this.widgetModel, column)
             }
         },
         clearDiscoveryWidgetAggregatedColumnValuesForSpecificColumn(column: IWidgetColumn) {

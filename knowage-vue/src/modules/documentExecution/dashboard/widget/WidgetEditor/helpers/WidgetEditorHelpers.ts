@@ -10,10 +10,9 @@ import { createNewHighchartsSettings, formatHighchartsWidget } from './chartWidg
 import { formatHighchartsWidgetForSave } from './chartWidget/highcharts/HighchartsBackendSaveHelper'
 import { formatChartJSForSave } from './chartWidget/chartJS/ChartJSBackendSaveHelper'
 import { createNewImageWidgetSettings } from './imageWidget/ImageWidgetFunctions'
-import { createNewDiscoveryWidgetSettings } from './discoveryWidget/DiscoveryWidgetFunctions'
+import { createNewCustomChartSettings } from './customchart/CustomChartFunctions'
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
-import { createNewCustomChartSettings } from './customchart/CustomChartFunctions'
 
 export function createNewWidget(type: string) {
     const widget = {
@@ -73,9 +72,6 @@ const createNewWidgetSettings = (widget: IWidget) => {
             break
         case 'customchart':
             widget.settings = createNewCustomChartSettings()
-            break
-        case 'discovery':
-            widget.settings = createNewDiscoveryWidgetSettings()
             break
     }
 }

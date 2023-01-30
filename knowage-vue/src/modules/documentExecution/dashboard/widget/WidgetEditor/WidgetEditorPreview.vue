@@ -19,7 +19,6 @@
                 <WebComponentContainer v-if="(propWidget.type == 'html' || propWidget.type == 'text') && !loading" :propWidget="propWidget" :widgetData="widgetData" :propActiveSelections="activeSelections" :editorMode="true" :dashboardId="dashboardId" :variables="variables"></WebComponentContainer>
                 <HighchartsContainer v-if="propWidget.type === 'highcharts' && !loading" :widgetModel="propWidget" :dataToShow="widgetData" :propActiveSelections="activeSelections" :editorMode="true" :dashboardId="dashboardId"></HighchartsContainer>
                 <ChartJSContainer v-if="propWidget.type === 'chartJS' && !loading" :widgetModel="propWidget" :dataToShow="widgetData" :editorMode="true" :dashboardId="dashboardId" :propActiveSelections="activeSelections"></ChartJSContainer>
-                <DiscoveryWidget v-if="propWidget.type == 'discovery'" :propWidget="propWidget" :datasets="datasets" :dataToShow="widgetData" :editorMode="true" :dashboardId="dashboardId" :propActiveSelections="activeSelections" @pageChanged="getWidgetData" />
                 <ImageWidget v-if="propWidget.type === 'image'" :widgetModel="propWidget" :dashboardId="dashboardId" :editorMode="true" />
                 <CustomChartWidget v-if="propWidget.type == 'customchart' && !loading" :propWidget="propWidget" :widgetData="widgetData" :propActiveSelections="activeSelections" :editorMode="true" :dashboardId="dashboardId" :variables="variables"></CustomChartWidget>
             </div>
@@ -45,13 +44,12 @@ import deepcopy from 'deepcopy'
 import WebComponentContainer from '../WebComponent/WebComponentContainer.vue'
 import HighchartsContainer from '../ChartWidget/Highcharts/HighchartsContainer.vue'
 import ChartJSContainer from '../ChartWidget/ChartJS/ChartJSContainer.vue'
-import DiscoveryWidget from '../DiscoveryWidget/DiscoveryWidget.vue'
 import ImageWidget from '../ImageWidget/ImageWidget.vue'
 import CustomChartWidget from '../CustomChartWidget/CustomChartWidget.vue'
 
 export default defineComponent({
     name: 'widget-editor-preview',
-    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, ProgressBar, WebComponentContainer, HighchartsContainer, ChartJSContainer, DiscoveryWidget, ImageWidget, CustomChartWidget },
+    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, ProgressBar, WebComponentContainer, HighchartsContainer, ChartJSContainer, ImageWidget, CustomChartWidget },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDashboardDataset[]>, required: true },

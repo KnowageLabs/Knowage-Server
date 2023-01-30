@@ -74,16 +74,6 @@
             :dashboardId="dashboardId"
         >
         </ChartJSWidgetSettingsContainer>
-        <DiscoveryWidgetSettingsContainer
-            v-else-if="propWidget.type === 'discovery'"
-            class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
-            :widgetModel="propWidget"
-            :selectedSetting="selectedSetting"
-            :datasets="datasets"
-            :selectedDatasets="selectedDatasets"
-            :variables="variables"
-            :dashboardId="dashboardId"
-        ></DiscoveryWidgetSettingsContainer>
         <ImageWidgetSettingsContainer
             v-else-if="propWidget.type === 'image'"
             class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
@@ -121,7 +111,6 @@ import HTMLWidgetSettingsContainer from './HTMLWidget/HTMLWidgetSettingsContaine
 import TextWidgetSettingsContainer from './TextWidget/TextWidgetSettingsContainer.vue'
 import HighchartsWidgetSettingsContainer from './ChartWidget/highcharts/HighchartsWidgetSettingsContainer.vue'
 import ChartJSWidgetSettingsContainer from './ChartWidget/chartJS/ChartJSWidgetSettingsContainer.vue'
-import DiscoveryWidgetSettingsContainer from './DiscoveryWidget/DiscoveryWidgetSettingsContainer.vue'
 import ImageWidgetSettingsContainer from './ImageWidget/ImageWidgetSettingsContainer.vue'
 import CustomChartWidgetSettingsContainer from './CustomChartWidget/CustomChartWidgetSettingsContainer.vue'
 import selectorDescriptor from './SelectorWidget/SelectorWidgetSettingsDescriptor.json'
@@ -134,7 +123,6 @@ import HighchartsPieSettingsDescriptor from './ChartWidget/highcharts/descriptor
 import HighchartsGaugeSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsGaugeSettingsDescriptor.json'
 import HighchartsActivityGaugeSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsActivityGaugeSettingsDescriptor.json'
 import HighchartsSolidGaugeSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsSolidGaugeSettingsDescriptor.json'
-import discoveryDescriptor from './DiscoveryWidget/DiscoveryWidgetSettingsDescriptor.json'
 import imageDescriptor from './ImageWidget/ImageWidgetSettingsDescriptor.json'
 import customChartDescriptor from './CustomChartWidget/CustomChartWidgetSettingsDescriptor.json'
 
@@ -149,7 +137,6 @@ export default defineComponent({
         TextWidgetSettingsContainer,
         HighchartsWidgetSettingsContainer,
         ChartJSWidgetSettingsContainer,
-        DiscoveryWidgetSettingsContainer,
         ImageWidgetSettingsContainer,
         CustomChartWidgetSettingsContainer
     },
@@ -207,9 +194,6 @@ export default defineComponent({
                     break
                 case 'chartJS':
                     this.descriptor = chartJSDescriptor
-                    break
-                case 'discovery':
-                    this.descriptor = discoveryDescriptor
                     break
                 case 'image':
                     this.descriptor = imageDescriptor

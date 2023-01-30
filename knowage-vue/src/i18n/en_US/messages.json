@@ -497,20 +497,6 @@
             },
             "descending": "Descending",
             "dimensions": "Dimensions",
-            "discoveryWidget": {
-                "facets": {
-                    "closedByDefault": "Closed by default",
-                    "columnWidth": "Column width",
-                    "decimalPrecision": "Decimal precision",
-                    "enableSelection": "Enable Selection",
-                    "maxNumber": "Max number",
-                    "title": "Facets"
-                },
-                "search": {
-                    "defaultTextSearch": "Discovery Text Search",
-                    "title": "Text Search"
-                }
-            },
             "dragColumnsHint": "Drag columns here",
             "drilldown": {
                 "title": "Drilldown"
