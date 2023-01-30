@@ -35,7 +35,8 @@ export default defineComponent({
             datastore: new CustomChartDatastore(null),
             userScriptsURLs: [] as string[],
             iframeDocument: null as any,
-            loadedScriptsCount: 0
+            loadedScriptsCount: 0,
+            loading: false
         }
     },
     watch: {
@@ -78,10 +79,11 @@ export default defineComponent({
             this.drivers = this.getDashboardDrivers(this.dashboardId) // TODO
         },
         async loadDataToShow() {
-            console.log('dataToShow ------------', this.widgetData)
+            this.loading = true
             this.dataToShow = this.widgetData
             this.datastore.setData(this.widgetData)
             await this.loadHTML()
+            this.loading = false
         },
         loadActiveSelections() {
             this.activeSelections = this.propActiveSelections // TODO
@@ -111,7 +113,6 @@ export default defineComponent({
             return { datasetId: this.propWidget.dataset as number, datasetLabel: this.getDatasetLabel(this.propWidget.dataset as number), columnName: columnName, value: value, aggregated: false, timestamp: new Date().getTime() }
         },
         renderCustomWidget() {
-            console.log('>>>>>>> HTML CONTENT: ', this.htmlContent)
             this.loadedScriptsCount = 0
             const iframe = document.getElementById('iframe') as any
             this.iframeDocument = iframe.contentWindow.document
@@ -124,7 +125,6 @@ export default defineComponent({
             </html>`
 
             const containerElement = this.iframeDocument.getElementById('containerElement')
-            console.log('--------- containerElement: ', containerElement)
             this.createWrapperDiv(containerElement)
             this.insertUsersHtmlContent()
             this.insertUsersCssContent()
@@ -148,16 +148,13 @@ export default defineComponent({
         insertUsersHtmlContent() {
             const tempEl = this.iframeDocument.querySelector('.component-wrapper')
             if (tempEl) tempEl.innerHTML = this.htmlContent
-            console.log('>>>>>>> tempEl: ', tempEl)
             this.getUserImportScripts(tempEl)
         },
         getUserImportScripts(componentWrapperElement: any) {
             // TODO - remove hardcoded imports
             this.userScriptsURLs = ['https://code.highcharts.com/highcharts.js', 'https://code.highcharts.com/modules/drilldown.js']
-            console.log('------------ test ', this.iframeDocument.getElementsByTagName('script'))
             const userImports = componentWrapperElement.getElementsByTagName('kn-import') ?? []
             for (let i = 0; i < userImports.length; i++) {
-                console.log('--------- userImport src: ', userImports.item(i).attributes.src.textContent)
                 if (userImports.item(i)?.attributes?.src?.textContent) {
                     const textContent = userImports.item(i).attributes.src.textContent
                     const url = textContent.startsWith('http') ? textContent : import.meta.env.VITE_HOST_URL + '/' + userImports.item(i).attributes.src.textContent
@@ -173,13 +170,11 @@ export default defineComponent({
             iframe.contentWindow.datastore = this.datastore
         },
         createScriptTagFromUsersJSScript() {
-            console.log('LOADING USER SCRIPT!!!!!!!!!!!!!!!!!: ')
             const userScript = document.createElement('script')
             userScript.text = 'try {' + this.webComponentJs + `} catch (error) {window.parent.postMessage({type: 'error', error: error}, '*')}`
             setTimeout(() => this.iframeDocument.body.appendChild(userScript), 10000)
         },
         loadUserImportScripts() {
-            console.log('THIS LOADED SCRIPT COUNT: ', this.loadedScriptsCount)
             if (this.loadedScriptsCount === this.userScriptsURLs.length) this.createScriptTagFromUsersJSScript()
             else this.loadUserImportScript(this.userScriptsURLs[this.loadedScriptsCount])
         },
