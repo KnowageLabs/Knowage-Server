@@ -75,6 +75,7 @@ export default defineComponent({
             this.drivers = this.getDashboardDrivers(this.dashboardId) // TODO
         },
         async loadDataToShow() {
+            console.log('dataToShow ------------', this.widgetData)
             this.dataToShow = this.widgetData
             await this.loadHTML()
         },

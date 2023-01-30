@@ -36,8 +36,8 @@ export const getWidgetData = async (widget: IWidget, datasets: IDashboardDataset
             return await getHighchartsWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         case 'chartJS':
             return await getPieChartData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
-        case 'discovery':
-            return await getDiscoveryChartData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
+        case 'customchart':
+            return await getCustomChartData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         default:
             break
     }
@@ -553,6 +553,41 @@ const formatChartWidgetForGet = (propWidget: IWidget, dataset: IDashboardDataset
 }
 //#endregion ================================================================================================
 
+//#region ===================== Custom Chart Widget ====================================================
+const getCustomChartData = async (widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+    var datasetIndex = datasets.findIndex((dataset: IDashboardDataset) => widget.dataset === dataset.id)
+    var selectedDataset = datasets[datasetIndex]
+
+    // var measureCheck = widget.columns.findIndex((column: any) => column.fieldType === 'MEASURE') != -1
+    // var categoryCheck = widget.columns.findIndex((column: any) => column.fieldType !== 'MEASURE') != -1
+
+    // if (selectedDataset && measureCheck && categoryCheck) {
+    if (selectedDataset && widget.settings.editor.html) {
+        var url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=-1&size=-1&nearRealtime=true`
+
+        let postData = formatWidgetModelForGet(widget, selectedDataset, initialCall, selections, associativeResponseSelections)
+        var tempResponse = null as any
+
+        if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
+        await $http
+            .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData, { headers: { 'X-Disable-Errors': 'true' } })
+            .then((response: AxiosResponse<any>) => {
+                tempResponse = response.data
+                tempResponse.initialCall = initialCall
+            })
+            .catch((error: any) => {
+                showGetDataError(error, selectedDataset.dsLabel)
+            })
+            .finally(() => {
+                // TODO - uncomment when realtime dataset example is ready
+                // resetDatasetInterval(widget)
+            })
+        return tempResponse
+    }
+}
+//#endregion ================================================================================================
+
+//#region ===================== Discovery Widget ====================================================
 const getDiscoveryChartData = async (widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
     var datasetIndex = datasets.findIndex((dataset: IDashboardDataset) => widget.dataset === dataset.id)
     var selectedDataset = datasets[datasetIndex]
@@ -588,7 +623,7 @@ const getDiscoveryChartData = async (widget: IWidget, datasets: IDashboardDatase
     }
 }
 
-const formatDiscoveryModelForGet = (propWidget: IWidget, dataset: IDashboardDataset, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+const formatDiscoveryModelForGet = (propWidget: IWidget, dataset: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
     var dataToSend = {
         aggregations: {
             dataset: '',
@@ -648,3 +683,4 @@ const formatDiscoveryModelForGet = (propWidget: IWidget, dataset: IDashboardData
 
     return dataToSend
 }
+//#endregion ================================================================================================

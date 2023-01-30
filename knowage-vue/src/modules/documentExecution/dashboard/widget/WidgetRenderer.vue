@@ -35,6 +35,7 @@
                 @searchWordChanged="$emit('reloadData')"
             />
             <ImageWidget v-if="widget.type === 'image'" :widgetModel="widget" :dashboardId="dashboardId" :editorMode="false" />
+            <CustomChartWidget v-if="widget.type == 'customchart'" :propWidget="widget" :widgetData="widgetData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" :variables="variables"></CustomChartWidget>
         </div>
     </div>
 </template>
@@ -55,11 +56,12 @@ import HighchartsContainer from '../widget/ChartWidget/Highcharts/HighchartsCont
 import ChartJSContainer from '../widget/ChartWidget/ChartJS/ChartJSContainer.vue'
 import DiscoveryWidget from '../widget/DiscoveryWidget/DiscoveryWidget.vue'
 import ImageWidget from '../widget/ImageWidget/ImageWidget.vue'
+import CustomChartWidget from '../widget/CustomChartWidget/CustomChartWidget.vue'
 
 export default defineComponent({
     name: 'widget-renderer',
     emits: ['interaction', 'launchSelection', 'reloadData'],
-    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, WebComponentContainer, HighchartsContainer, ChartJSContainer, DiscoveryWidget, ImageWidget },
+    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, WebComponentContainer, HighchartsContainer, ChartJSContainer, DiscoveryWidget, ImageWidget, CustomChartWidget },
     props: {
         widget: { required: true, type: Object as any },
         widgetLoading: { required: true, type: Boolean as any },
