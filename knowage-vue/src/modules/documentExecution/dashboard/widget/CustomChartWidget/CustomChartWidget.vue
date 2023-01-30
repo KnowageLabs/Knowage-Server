@@ -1,5 +1,5 @@
 <template>
-    <iframe name="iframe" id="iframe" width="100%" height="100%" src="about:blank"></iframe>
+    <iframe :id="'iframe-' + id" :name="'iframe-' + id" class="custom-chart-widget-iframe" width="100%" height="100%" src="about:blank"></iframe>
 </template>
 
 <script lang="ts">
@@ -11,6 +11,8 @@ import appStore from '../../../../../App.store'
 import { IWidget } from '../../Dashboard'
 import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
 import { CustomChartDatastore } from '../WidgetEditor/WidgetEditorSettingsTab/CustomChartWidget/datastore/CustomChartWidgetDatastore'
+
+import cryptoRandomString from 'crypto-random-string'
 
 export default defineComponent({
     name: 'custom-chart-widget',
@@ -26,6 +28,7 @@ export default defineComponent({
     },
     data() {
         return {
+            id: cryptoRandomString({ length: 16, type: 'base64' }),
             dataToShow: {} as any,
             activeSelections: [] as ISelection[],
             htmlContent: '' as string,
@@ -114,7 +117,7 @@ export default defineComponent({
         },
         renderCustomWidget() {
             this.loadedScriptsCount = 0
-            const iframe = document.getElementById('iframe') as any
+            const iframe = document.getElementById('iframe-' + this.id) as any
             this.iframeDocument = iframe.contentWindow.document
             this.iframeDocument.body.innerHTML = `<html>
                 <head></head>
@@ -193,7 +196,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-#iframe {
+.custom-chart-widget-iframe {
     border: 0;
 }
 </style>
