@@ -47,8 +47,6 @@ export default defineComponent({
                     return this.widgetModel.settings.style.shadows
                 case 'CrossNavigation':
                     return this.widgetModel.settings.interactions.crossNavigation
-                case 'Link':
-                    return this.widgetModel.settings.interactions.link
                 case 'Preview':
                     return this.widgetModel.settings.interactions.preview
                 default:

@@ -16,7 +16,6 @@
                 <WidgetShadowsStyle v-else-if="accordion.type === 'ShadowsStyle'" :widgetModel="widgetModel"></WidgetShadowsStyle>
                 <WidgetResponsive v-else-if="accordion.type === 'Responsive'" :widgetModel="widgetModel"></WidgetResponsive>
                 <WidgetCrossNavigation v-else-if="accordion.type === 'CrossNavigation'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :dashboardId="dashboardId"></WidgetCrossNavigation>
-                <WidgetInteractionsLinks v-else-if="accordion.type === 'Link'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :dashboardId="dashboardId"></WidgetInteractionsLinks>
                 <WidgetPreview v-else-if="accordion.type === 'Preview'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :dashboardId="dashboardId"></WidgetPreview>
             </AccordionTab>
         </Accordion>
@@ -35,7 +34,6 @@ import WidgetBordersStyle from '../common/style/WidgetBordersStyle.vue'
 import WidgetShadowsStyle from '../common/style/WidgetShadowsStyle.vue'
 import WidgetResponsive from '../common/responsive/WidgetResponsive.vue'
 import WidgetCrossNavigation from '../common/interactions/crossNavigation/WidgetCrossNavigation.vue'
-import WidgetInteractionsLinks from '../common/interactions/link/WidgetInteractionsLinks.vue'
 import WidgetPreview from '../common/interactions/preview/WidgetPreview.vue'
 import WidgetTitleStyle from '../common/style/WidgetTitleStyle.vue'
 import WidgetPaddingStyle from '../common/style/WidgetPaddingStyle.vue'
@@ -58,7 +56,6 @@ export default defineComponent({
         WidgetPaddingStyle,
         WidgetBackgroundColorStyle,
         WidgetCrossNavigation,
-        WidgetInteractionsLinks,
         WidgetPreview,
         CustomChartWidgetSettingsAccordionHeader,
         CustomChartHTMLEditor,
