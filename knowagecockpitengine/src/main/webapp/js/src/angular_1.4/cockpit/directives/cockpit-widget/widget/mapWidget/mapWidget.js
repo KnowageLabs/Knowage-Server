@@ -569,6 +569,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if (!$scope.ngModel.content.hasOwnProperty("enableBaseLayer")) $scope.ngModel.content.enableBaseLayer = true;
 
 		}
+		
+		$scope.fixStats = function(layerDef, data) {
+			var fields = data.metaData.fields;
+			stat = $scope.dataSetStats[layerDef.name] = {}
+			for (i in fields) {
+				var curr = fields[i];
+				
+				if (typeof curr === 'object') {
+					stat[i] = data.stats[i];
+					stat[i].name = curr.name;
+					stat[i].header = curr.header;
+				}
+			}
+		}
 
 		$scope.createLayerWithData = function(label, data, isCluster, isHeatmap){
 			//prepare object with metadata for desiderata dataset columns
@@ -578,6 +592,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var layerDef =  $scope.configs[layerID];
 
 			if (!layerDef) return;
+			
+			$scope.fixStats(layerDef, data);
 
 			columnsForData = $scope.getColumnSelectedOfDataset(layerDef.dsId) || [];
 
@@ -977,18 +993,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			cockpitModule_datasetServices.loadDatasetRecordsById(layerDef.dsId, undefined, undefined, undefined, undefined, model).then(
 				function(response){
 
-					fields = response.metaData.fields;
-					stat = $scope.dataSetStats[layerDef.name] = {}
-					for (i in fields) {
-						var curr = fields[i];
-						
-						if (typeof curr === 'object') {
-							stat[i] = response.stats[i];
-							stat[i].name = curr.name;
-							stat[i].header = curr.header;
-						}
-					}
-
 					$scope.createLayerWithData(layerDef.name, response, isCluster, isHeatmap);
 					$scope.hideWidgetSpinner();
 					
@@ -1004,7 +1008,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			});
 		}
-
+		
 		$scope.createMap = function (){
 
 			var layers = [];

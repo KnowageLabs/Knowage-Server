@@ -78,6 +78,13 @@ function mapWidgetEditControllerFunction(
 			layer.heatmapConf = layer.heatmapConf || {};
 			layer.heatmapConf.enabled = true;
 		}
+		if(type == "balloons"){
+			layer.balloonConf             = layer.balloonConf             || {};
+			layer.balloonConf.borderColor = layer.balloonConf.borderColor || "rgba(0, 0, 0, 0.5)";
+			layer.balloonConf.color       = layer.balloonConf.color       || "rgba(127, 127, 127, 0.5)";
+			layer.balloonConf.minSize     = layer.balloonConf.minSize     || 5;
+			layer.balloonConf.maxSize     = layer.balloonConf.maxSize     || 35;
+		}
 	}
 
 	$scope.expandRow = function(layer,content){
