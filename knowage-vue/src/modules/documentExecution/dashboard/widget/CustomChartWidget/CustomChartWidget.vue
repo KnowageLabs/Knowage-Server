@@ -1,16 +1,16 @@
 <template>
-    <iframe :id="'iframe-' + id" :name="'iframe-' + id" class="custom-chart-widget-iframe" width="100%" height="100%" src="about:blank"></iframe>
+    <iframe v-if="!loading" :id="'iframe-' + id" :name="'iframe-' + id" class="custom-chart-widget-iframe" width="100%" height="100%" src="about:blank"></iframe>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IDashboardDriver, IDataset, ISelection, IVariable } from '../../Dashboard'
 import { mapActions } from 'pinia'
-import store from '../../Dashboard.store'
-import appStore from '../../../../../App.store'
 import { IWidget } from '../../Dashboard'
 import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
 import { CustomChartDatastore } from '../WidgetEditor/WidgetEditorSettingsTab/CustomChartWidget/datastore/CustomChartWidgetDatastore'
+import store from '../../Dashboard.store'
+import appStore from '../../../../../App.store'
 
 import cryptoRandomString from 'crypto-random-string'
 
@@ -77,6 +77,7 @@ export default defineComponent({
         iframeEventsListener(event: any) {
             console.log('EVENT FROM IFRAME: ', event)
             if (event.data.type === 'error') this.setError({ title: this.$t('common.error.generic'), msg: event.data.error?.message ?? '' })
+            else if (event.data.type === 'clickManager') this.onClickManager(event.data.payload.columnName, event.data.payload.columnValue)
         },
         loadDrivers() {
             this.drivers = this.getDashboardDrivers(this.dashboardId) // TODO
@@ -92,28 +93,15 @@ export default defineComponent({
             this.activeSelections = this.propActiveSelections // TODO
         },
         async loadHTML() {
+            this.loading = true
             if (!this.propWidget.settings || !this.propWidget.settings.editor) return
 
             this.htmlContent = this.propWidget.settings.editor.html
             this.webComponentCss = this.propWidget.settings.editor.css
             this.webComponentJs = this.propWidget.settings.editor.js
+            this.loading = false
 
             this.renderCustomWidget()
-        },
-        onSelect(event: any) {
-            // TODO
-            if (this.editorMode || !event.detail) return
-            const value = event.detail.selectionValue
-            const selectionColumnName = event.detail.selectionColumn
-            updateStoreSelections(this.createNewSelection([value], selectionColumnName), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
-        },
-        getDatasetLabel(datasetId: number) {
-            const datasets = this.getAllDatasets()
-            const index = datasets.findIndex((dataset: IDataset) => dataset.id.dsId == datasetId)
-            return index !== -1 ? datasets[index].label : ''
-        },
-        createNewSelection(value: (string | number)[], columnName: string) {
-            return { datasetId: this.propWidget.dataset as number, datasetLabel: this.getDatasetLabel(this.propWidget.dataset as number), columnName: columnName, value: value, aggregated: false, timestamp: new Date().getTime() }
         },
         renderCustomWidget() {
             this.loadedScriptsCount = 0
@@ -156,6 +144,7 @@ export default defineComponent({
         getUserImportScripts(componentWrapperElement: any) {
             // TODO - remove hardcoded imports
             this.userScriptsURLs = ['https://code.highcharts.com/highcharts.js', 'https://code.highcharts.com/modules/drilldown.js']
+            console.log('--------------- TEST: ', this.iframeDocument.getElementsByTagName('scrpipt'))
             const userImports = componentWrapperElement.getElementsByTagName('kn-import') ?? []
             for (let i = 0; i < userImports.length; i++) {
                 if (userImports.item(i)?.attributes?.src?.textContent) {
@@ -190,6 +179,20 @@ export default defineComponent({
             })
 
             this.iframeDocument.body.appendChild(userImportScript)
+        },
+        onClickManager(columnName: string, columnValue: string | number) {
+            console.log('------------ COLUMN NAME: ', columnName)
+            console.log('------------ COLUMN VALUE: ', columnValue)
+            if (this.editorMode || !columnName) return
+            updateStoreSelections(this.createNewSelection([columnValue], columnName), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
+        },
+        createNewSelection(value: (string | number)[], columnName: string) {
+            return { datasetId: this.propWidget.dataset as number, datasetLabel: this.getDatasetLabel(this.propWidget.dataset as number), columnName: columnName, value: value, aggregated: false, timestamp: new Date().getTime() }
+        },
+        getDatasetLabel(datasetId: number) {
+            const datasets = this.getAllDatasets()
+            const index = datasets.findIndex((dataset: IDataset) => dataset.id.dsId == datasetId)
+            return index !== -1 ? datasets[index].label : ''
         }
     }
 })

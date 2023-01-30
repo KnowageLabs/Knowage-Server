@@ -232,12 +232,13 @@ export class CustomChartDatastore {
                 }, 0)
             }
         }
-
-        function clickManager(columnName: string, columnValue: string | number) {
-            console.log("------ COLUMN NAME: ", columnName)
-            console.log("------ COLUMN VALUE: ", columnValue)
-        }
     }
+
+
+    clickManager(columnName: string, columnValue: string | number) {
+        window?.parent?.postMessage({ type: 'clickManager', payload: { columnName: columnName, columnValue: columnValue } }, '*')
+    }
+
 }
 
 class hierarchy {
