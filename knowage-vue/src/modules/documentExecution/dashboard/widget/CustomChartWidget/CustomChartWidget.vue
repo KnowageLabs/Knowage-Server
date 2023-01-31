@@ -1,5 +1,6 @@
 <template>
-    <iframe v-if="!loading" :id="'iframe-' + id" :name="'iframe-' + id" class="custom-chart-widget-iframe" width="100%" height="100%" src="about:blank"></iframe>
+    <ProgressSpinner v-if="loading" class="kn-progress-spinner" />
+    <iframe :id="'iframe-' + id" :name="'iframe-' + id" class="custom-chart-widget-iframe" width="100%" height="100%" src="about:blank"></iframe>
 </template>
 
 <script lang="ts">
@@ -11,14 +12,14 @@ import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
 import { CustomChartDatastore } from '../WidgetEditor/WidgetEditorSettingsTab/CustomChartWidget/datastore/CustomChartWidgetDatastore'
 import store from '../../Dashboard.store'
 import appStore from '../../../../../App.store'
-
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
+import ProgressSpinner from 'primevue/progressspinner'
 
 export default defineComponent({
     name: 'custom-chart-widget',
     emits: ['interaction', 'pageChanged', 'launchSelection', 'sortingChanged'],
-    components: {},
+    components: { ProgressSpinner },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         widgetData: { type: Object as any, required: true },
@@ -68,7 +69,7 @@ export default defineComponent({
     },
     methods: {
         ...mapActions(store, ['getInternationalization', 'setSelections', 'getAllDatasets', 'getDashboardDrivers', 'getProfileAttributes']),
-        ...mapActions(appStore, ['setError', 'setLoading']),
+        ...mapActions(appStore, ['setError']),
         setEventListeners() {
             window.addEventListener('message', this.iframeEventsListener)
         },
@@ -88,11 +89,9 @@ export default defineComponent({
             this.datastore.setVariables(this.variables)
         },
         async loadDataToShow() {
-            this.loading = true
             this.dataToShow = this.widgetData
             this.datastore.setData(this.widgetData)
             await this.loadHTML()
-            this.loading = false
         },
         loadActiveSelections() {
             this.activeSelections = this.propActiveSelections
@@ -167,41 +166,34 @@ export default defineComponent({
         },
         createScriptTagFromUsersJSScript() {
             const userScript = document.createElement('script')
-            // userScript.text = "try { window.parent.postMessage({ type: 'loading', loading: true}, '*'); " + this.webComponentJs + ` window.parent.postMessage({ type: 'loading', loading: false}, '*'); } catch (error) {window.parent.postMessage({type: 'error', error: error}, '*')}`
             userScript.text = 'try {' + this.webComponentJs + `} catch (error) {window.parent.postMessage({type: 'error', error: error}, '*')}`
 
             setTimeout(() => {
                 this.iframeDocument?.body?.appendChild(userScript)
-                console.log('----- LOADING: ', false)
-                this.setLoading(false)
+                this.loading = false
             }, 1000)
-            this.setLoading(false)
         },
         loadUserImportScripts() {
-            console.log('----- LOADING: ', true)
-            this.setLoading(true)
+            this.loading = true
             if (this.loadedScriptsCount === this.userScriptsURLs.length) this.createScriptTagFromUsersJSScript()
             else this.loadUserImportScript(this.userScriptsURLs[this.loadedScriptsCount])
         },
         loadUserImportScript(scriptURL: string) {
             if (this.isUserScriptAlreadLoaded(scriptURL)) {
-                this.loadedScriptsCount++
-                this.loadUserImportScripts()
+                this.onScriptLoaded()
                 return
             }
 
             const userImportScript = document.createElement('script')
             userImportScript.setAttribute('src', scriptURL)
             userImportScript.async = false
-            userImportScript.addEventListener('load', () => {
-                this.loadedScriptsCount++
-                this.loadUserImportScripts()
-            })
-            userImportScript.addEventListener('error', () => {
-                console.log('----- LOADING: ', false)
-                this.setLoading(false)
-            })
+            userImportScript.addEventListener('load', () => this.onScriptLoaded())
+            this.setScriptOnErrorListener(userImportScript)
             this.iframeDocument.body.appendChild(userImportScript)
+        },
+        onScriptLoaded() {
+            this.loadedScriptsCount++
+            this.loadUserImportScripts()
         },
         isUserScriptAlreadLoaded(scriptURL: string) {
             let loaded = false
@@ -214,6 +206,9 @@ export default defineComponent({
                 }
             }
             return loaded
+        },
+        setScriptOnErrorListener(script: any) {
+            script.addEventListener('error', () => (this.loading = false))
         },
         onClickManager(columnName: string, columnValue: string | number) {
             if (this.editorMode || !columnName) return
