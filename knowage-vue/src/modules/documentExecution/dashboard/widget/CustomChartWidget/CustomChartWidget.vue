@@ -78,10 +78,7 @@ export default defineComponent({
         iframeEventsListener(event: any) {
             console.log('EVENT FROM IFRAME: ', event)
             if (event.data.type === 'error') this.setError({ title: this.$t('common.error.generic'), msg: event.data.error?.message ?? '' })
-            else if (event.data.type === 'loading') {
-                console.log('LOADING FROM USER CODE: ', event.data.loading)
-                this.setLoading(event.data.loading)
-            } else if (event.data.type === 'clickManager') this.onClickManager(event.data.payload.columnName, event.data.payload.columnValue)
+            else if (event.data.type === 'clickManager') this.onClickManager(event.data.payload.columnName, event.data.payload.columnValue)
         },
         loadProfileAttributesToDatastore() {
             const profileAttributes = this.getProfileAttributes()
@@ -170,18 +167,23 @@ export default defineComponent({
         },
         createScriptTagFromUsersJSScript() {
             const userScript = document.createElement('script')
-            userScript.text = "try { window.parent.postMessage({ type: 'loading', loading: true}, '*'); " + this.webComponentJs + ` window.parent.postMessage({ type: 'loading', loading: false}, '*'); } catch (error) {window.parent.postMessage({type: 'error', error: error}, '*')}`
-            setTimeout(() => this.iframeDocument?.body?.appendChild(userScript), 10000)
+            // userScript.text = "try { window.parent.postMessage({ type: 'loading', loading: true}, '*'); " + this.webComponentJs + ` window.parent.postMessage({ type: 'loading', loading: false}, '*'); } catch (error) {window.parent.postMessage({type: 'error', error: error}, '*')}`
+            userScript.text = 'try {' + this.webComponentJs + `} catch (error) {window.parent.postMessage({type: 'error', error: error}, '*')}`
+
+            setTimeout(() => {
+                this.iframeDocument?.body?.appendChild(userScript)
+                console.log('----- LOADING: ', false)
+                this.setLoading(false)
+            }, 1000)
+            this.setLoading(false)
         },
         loadUserImportScripts() {
+            console.log('----- LOADING: ', true)
             this.setLoading(true)
             if (this.loadedScriptsCount === this.userScriptsURLs.length) this.createScriptTagFromUsersJSScript()
             else this.loadUserImportScript(this.userScriptsURLs[this.loadedScriptsCount])
-            console.log('------- loading false!')
-            this.setLoading(false)
         },
         loadUserImportScript(scriptURL: string) {
-            // setTimeout(() => {}, 3000)
             if (this.isUserScriptAlreadLoaded(scriptURL)) {
                 this.loadedScriptsCount++
                 this.loadUserImportScripts()
@@ -195,7 +197,10 @@ export default defineComponent({
                 this.loadedScriptsCount++
                 this.loadUserImportScripts()
             })
-            userImportScript.addEventListener('error', () => this.setLoading(false))
+            userImportScript.addEventListener('error', () => {
+                console.log('----- LOADING: ', false)
+                this.setLoading(false)
+            })
             this.iframeDocument.body.appendChild(userImportScript)
         },
         isUserScriptAlreadLoaded(scriptURL: string) {
