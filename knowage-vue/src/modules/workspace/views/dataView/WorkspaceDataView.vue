@@ -473,7 +473,7 @@ export default defineComponent({
             this.exportFormat = format
             await this.loadDataset(dataset.label)
             await this.loadDatasetDrivers(this.selectedDataset)
-            if (this.selectedDataset.pars.length > 0 || this.filtersData.filterStatus.length > 0) {
+            if (this.selectedDataset.pars.length > 0 || this.filtersData?.filterStatus?.length > 0) {
                 this.parameterSidebarVisible = true
             } else this.exportDataset()
         },
@@ -797,7 +797,7 @@ export default defineComponent({
                         )
                     })
                 } else {
-                    this.filteredDatasets = this.datasetList.filter((el: any) => {
+                    this.filteredDatasets = this.datasetList?.filter((el: any) => {
                         return el.label?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.name?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.dsTypeCd?.toLowerCase().includes(this.searchWord.toLowerCase()) || this.datasetTagFound(el)
                     })
                 }
