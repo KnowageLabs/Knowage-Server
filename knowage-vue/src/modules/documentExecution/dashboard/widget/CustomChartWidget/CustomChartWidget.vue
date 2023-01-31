@@ -147,7 +147,19 @@ export default defineComponent({
         },
         getUserImportScripts(componentWrapperElement: any) {
             // TODO - remove hardcoded imports
-            this.userScriptsURLs = ['https://code.highcharts.com/highcharts.js', 'https://code.highcharts.com/modules/drilldown.js', 'https://code.highcharts.com/highcharts.js', 'https://code.highcharts.com/modules/funnel.js']
+
+            this.userScriptsURLs = [
+                'https://code.highcharts.com/highcharts.js',
+                'https://code.highcharts.com/modules/drilldown.js',
+                'https://code.highcharts.com/highcharts.js',
+                'https://code.highcharts.com/modules/funnel.js',
+                'https://code.highcharts.com/modules/sankey.js',
+                'https://code.highcharts.com/modules/organization.js',
+                'https://code.highcharts.com/modules/exporting.js',
+                'https://code.highcharts.com/modules/accessibility.js',
+                'https://code.highcharts.com/highcharts-more.js',
+                'https://code.highcharts.com/modules/export-data.js'
+            ]
             const userImports = componentWrapperElement.getElementsByTagName('kn-import') ?? []
             for (let i = 0; i < userImports.length; i++) {
                 if (userImports.item(i)?.attributes?.src?.textContent) {
