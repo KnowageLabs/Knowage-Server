@@ -36,8 +36,9 @@ export function loadNavigationParamsInitialValue(vueComponent: any) {
 }
 
 function checkIfMultivalueDriverContainsCrossNavigationValue(tempParam: any, crossNavigationValue: any) {
-    const index = tempParam.data?.findIndex((option: { value: string; description: string }) => option.value == crossNavigationValue)
-    return index && index !== -1
+    if (!['LIST', 'COMBOBOX'].includes(tempParam.selectionType)) return true
+    const index = tempParam.data.findIndex((option: { value: string; description: string }) => option.value == crossNavigationValue)
+    return index !== -1
 }
 
 function formatCrossNavigationComboParameterDescription(tempParam: any) {
