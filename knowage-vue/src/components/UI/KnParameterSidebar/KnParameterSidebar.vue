@@ -63,7 +63,8 @@
                         :class="{
                             'p-invalid': parameter.mandatory && parameter.parameterValue && !parameter.parameterValue[0]?.value
                         }"
-                        @input="updateDependency(parameter)"
+                        @blur="updateDependency(parameter)"
+                        @keypress.enter="updateDependency(parameter)"
                         :data-test="'parameter-input-' + parameter.id"
                     />
                 </div>
