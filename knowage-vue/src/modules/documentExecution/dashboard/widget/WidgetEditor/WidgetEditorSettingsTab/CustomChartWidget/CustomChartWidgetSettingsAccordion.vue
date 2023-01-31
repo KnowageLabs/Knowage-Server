@@ -88,7 +88,9 @@ export default defineComponent({
     },
     methods: {
         setActiveAccordion() {
-            if (this.settings?.length === 1) this.activeIndex = 0
+            if (!this.settings) return
+            if (this.settings.length === 1) this.activeIndex = 0
+            else if (this.activeIndex === -1 && this.settings.length === 3 && this.settings[1].type === 'HTML') this.activeIndex = 1
         }
     }
 })

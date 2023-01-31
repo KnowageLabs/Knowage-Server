@@ -68,7 +68,7 @@ export default defineComponent({
             return tagFound
         },
         checkForTemplateContent(galleryItem: IGalleryItem) {
-            if (this.widgetModel.settings.editor.html.length > 0 || this.widgetModel.settings.editor.css.length > 0 || this.widgetModel.settings.editor.javascript.length > 0) {
+            if (this.widgetModel.settings.editor.html.length > 0 || this.widgetModel.settings.editor.css.length > 0 || this.widgetModel.settings.editor.js.length > 0) {
                 this.$confirm.require({
                     message: this.$t('dashboard.widgetEditor.galleryWarning'),
                     header: this.$t('common.toast.warning'),
@@ -80,7 +80,7 @@ export default defineComponent({
         loadGalleryItem(galleryItem: IGalleryItem) {
             this.templateEditor.html = galleryItem.code.html
             this.templateEditor.css = galleryItem.code.css
-            this.templateEditor.javascript = galleryItem.code.javascript
+            this.templateEditor.js = galleryItem.code.javascript
             this.$emit('galleryItemSelected')
         }
     }

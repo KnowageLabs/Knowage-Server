@@ -96,6 +96,7 @@
             :variables="variables"
             :dashboardId="dashboardId"
             :customChartGalleryProp="customChartGalleryProp"
+            @galleryItemSelected="onGalleryItemSelected"
         ></CustomChartWidgetSettingsContainer>
     </div>
 </template>
