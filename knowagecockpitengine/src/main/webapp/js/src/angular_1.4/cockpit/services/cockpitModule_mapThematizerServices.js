@@ -39,6 +39,7 @@
 			var configThematizer = config.analysisConf || {};
 			var configMarker = config.markerConf || {};
 			var configCluster = config.clusterConf || {};
+			var configBalloon = config.balloonConf || {};
 			var useCache = false; //cache isn't use for analysis, just with fixed marker
 			var isSimpleMarker = props["isSimpleMarker"];
 			var isCluster = (Array.isArray(feature.get('features'))) ? true : false;
@@ -89,7 +90,7 @@
 				style = mts.getClusterStyles(value, props, configCluster);
 				useCache = false;
 			} else if (!thematized && isBalloon) {
-				style = mts.getBalloonStyles(value, props, configMarker, measureStat);
+				style = mts.getBalloonStyles(value, props, configBalloon, measureStat);
 				useCache = false;
 			} else if (!thematized) {
 				style = mts.getOnlyMarkerStyles(value, props, configMarker);
@@ -303,15 +304,15 @@
 		}
 
 		mts.getBalloonStyles = function (value, props, config, measureStat){
-			
+
 			var style;
 			var color;
-			var borderColor = (config.style && config.style.borderColor) ? config.style.borderColor : "rgba(0, 0, 0, 0.5)";
-			var minSize = config.minSize || 5;
-			var maxSize = config.maxSize || 35;
+			var borderColor = config.borderColor ? config.borderColor : "rgba(0, 0, 0, 0.5)";
+			var minSize = config.minSize;
+			var maxSize = config.maxSize;
 			
 			if (props[mts.getActiveIndicator()] && props[mts.getActiveIndicator()].thresholdsConfig) color = mts.getColorByThresholds(value, props);
-			if (!color)	color = (config.style && config.style.color) ? config.style.color : "rgba(127, 127, 127, 0.5)";
+			if (!color)	color = (config.color) ? config.color : "rgba(127, 127, 127, 0.5)";
 			
 			var unitSize = (maxSize - minSize) / measureStat.cardinality;
 			var perValueSize = minSize + (measureStat.distinct.indexOf(value) * unitSize);
