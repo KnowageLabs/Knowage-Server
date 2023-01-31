@@ -18,12 +18,12 @@ export class CustomChartDatastore {
 
     setVariables(variables: IVariable[]) {
         this.variables = {}
-        variables?.forEach((variable: IVariable) => this.variables[variable.name] = variable.value)
+        variables?.forEach((variable: IVariable) => (this.variables[variable.name] = variable.value))
     }
 
     setProfileAttributes(profileAttributes: { name: string; value: string }[]) {
         this.profile = {}
-        profileAttributes?.forEach((profileAttribute: { name: string; value: string }) => this.profile[profileAttribute.name] = profileAttribute.value)
+        profileAttributes?.forEach((profileAttribute: { name: string; value: string }) => (this.profile[profileAttribute.name] = profileAttribute.value))
     }
 
     transformDataStore(data) {
@@ -95,11 +95,40 @@ export class CustomChartDatastore {
     //     return new CustomChartDatastore(newData)
     // }
 
-    // filter(filterObject, strict) {
-    //     var newData = deepcopy(this.data)
-    //     newData.rows = filter('filter')(newData.rows, filterObject, strict)
-    //     return new CustomChartDatastore(newData)
-    // }
+    // sort({key, order = 'asc'}) {
+    sort(sortParams) {
+        var key = ''
+        var order = 'asc'
+
+        if (typeof sortParams == 'object') {
+            key = Object.keys(sortParams)[0]
+            order = sortParams[Object.keys(sortParams)[0]]
+        } else if (typeof sortParams == 'string') key = sortParams
+
+        return function innerSort(a, b) {
+            if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) {
+                // property doesn't exist on either object
+                return 0
+            }
+
+            const varA = typeof a[key] === 'string' ? a[key].toUpperCase() : a[key]
+            const varB = typeof b[key] === 'string' ? b[key].toUpperCase() : b[key]
+
+            let comparison = 0
+            if (varA > varB) {
+                comparison = 1
+            } else if (varA < varB) {
+                comparison = -1
+            }
+            return order === 'desc' ? comparison * -1 : comparison
+        }
+    }
+
+    filter(filterObject, strict) {
+        var newData = deepcopy(this.data)
+        newData.rows = filter()(newData.rows, filterObject, strict)
+        return new CustomChartDatastore(newData)
+    }
 
     hierarchy(config) {
         var args = [] as any[]
@@ -247,11 +276,9 @@ export class CustomChartDatastore {
         }
     }
 
-
     clickManager(columnName: string, columnValue: string | number) {
         window?.parent?.postMessage({ type: 'clickManager', payload: { columnName: columnName, columnValue: columnValue } }, '*')
     }
-
 }
 
 class hierarchy {
@@ -369,7 +396,7 @@ class node {
         return contains
     }
     traverseDF(tree, callback) {
-        ; (function recurse(currentNode) {
+        ;(function recurse(currentNode) {
             callback(currentNode)
             if (!Array.isArray(currentNode)) {
                 for (var i = 0; i < currentNode.children.length; i++) {
