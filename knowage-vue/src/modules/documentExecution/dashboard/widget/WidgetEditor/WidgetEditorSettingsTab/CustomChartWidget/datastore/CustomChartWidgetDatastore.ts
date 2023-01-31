@@ -95,8 +95,36 @@ export class CustomChartDatastore {
             order = sortParams[Object.keys(sortParams)[0]]
         } else if (typeof sortParams == 'string') key = sortParams
 
-        if (order == 'asc') newData.rows.sort((a, b) => parseFloat(a[key]) - parseFloat(b[key]))
-        else if (order == 'desc') newData.rows.sort((a, b) => parseFloat(b[key]) - parseFloat(a[key]))
+        var fieldType = typeof newData.rows[0][key]
+        console.log(fieldType)
+
+        switch (fieldType) {
+            case 'string':
+                if (order === 'asc') {
+                    newData.rows.sort((a, b) => {
+                        const nameA = a[key].toUpperCase()
+                        const nameB = b[key].toUpperCase()
+                        if (nameA < nameB) return -1
+                        if (nameA > nameB) return 1
+                        return 0
+                    })
+                } else {
+                    newData.rows.sort((a, b) => {
+                        const nameA = a[key].toUpperCase()
+                        const nameB = b[key].toUpperCase()
+                        if (nameA < nameB) return 1
+                        if (nameA > nameB) return -1
+                        return 0
+                    })
+                }
+
+            case 'number':
+                if (order === 'asc') newData.rows.sort((a, b) => a[key] - b[key])
+                else if (order === 'desc') newData.rows.sort((a, b) => b[key] - a[key])
+
+            default:
+                break
+        }
 
         return new CustomChartDatastore(newData)
     }
