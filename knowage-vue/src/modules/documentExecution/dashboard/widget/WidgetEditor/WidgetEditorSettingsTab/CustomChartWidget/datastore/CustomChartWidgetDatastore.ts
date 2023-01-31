@@ -85,18 +85,6 @@ export class CustomChartDatastore {
         return series
     }
 
-    // TODO ------------------------- implement angular sort
-    // sort(sortingObject) {
-    //     var newData =deepcopy(this.data)
-    //     if (typeof sortingObject == 'object') {
-    //         sortingObject = (sortingObject[Object.keys(sortingObject)[0]] == 'desc' ? '-' : '') + Object.keys(sortingObject)[0]
-    //     }
-    //     newData.rows = filter('orderBy')(newData.rows, sortingObject)
-    //     return new CustomChartDatastore(newData)
-    // }
-
-    // sort({key, order = 'asc'}) {
-
     sort(sortParams) {
         var key = ''
         var order = 'asc'
