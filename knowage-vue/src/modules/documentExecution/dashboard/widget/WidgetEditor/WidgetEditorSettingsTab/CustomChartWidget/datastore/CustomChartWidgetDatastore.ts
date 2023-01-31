@@ -96,8 +96,6 @@ export class CustomChartDatastore {
         } else if (typeof sortParams == 'string') key = sortParams
 
         var fieldType = typeof newData.rows[0][key]
-        console.log(fieldType)
-
         switch (fieldType) {
             case 'string':
                 if (order === 'asc') {
