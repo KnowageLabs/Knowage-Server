@@ -22,7 +22,7 @@
             <HighchartsContainer v-if="widget.type === 'highcharts'" :widgetModel="widget" :dataToShow="widgetData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId"></HighchartsContainer>
             <ChartJSContainer v-if="widget.type === 'chartJS'" :widgetModel="widget" :dataToShow="widgetData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId"></ChartJSContainer>
             <ImageWidget v-if="widget.type === 'image'" :widgetModel="widget" :dashboardId="dashboardId" :editorMode="false" />
-            <CustomChartWidget v-if="widget.type == 'customchart'" :propWidget="widget" :widgetData="widgetData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" :variables="variables"></CustomChartWidget>
+            <CustomChartWidget v-if="widget.type == 'customchart'" :propWidget="widget" :widgetData="widgetData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" :variables="variables" @loading="$emit('loading', $event)"></CustomChartWidget>
         </div>
     </div>
 </template>
@@ -46,7 +46,7 @@ import CustomChartWidget from '../widget/CustomChartWidget/CustomChartWidget.vue
 
 export default defineComponent({
     name: 'widget-renderer',
-    emits: ['interaction', 'launchSelection', 'reloadData'],
+    emits: ['interaction', 'launchSelection', 'reloadData', 'loading'],
     components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, WebComponentContainer, HighchartsContainer, ChartJSContainer, ImageWidget, CustomChartWidget },
     props: {
         widget: { required: true, type: Object as any },

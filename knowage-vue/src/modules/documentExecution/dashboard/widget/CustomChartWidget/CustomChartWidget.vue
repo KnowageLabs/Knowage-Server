@@ -1,5 +1,4 @@
 <template>
-    <ProgressSpinner v-if="loading" class="kn-progress-spinner" />
     <iframe :id="'iframe-' + id" :name="'iframe-' + id" class="custom-chart-widget-iframe" width="100%" height="100%" src="about:blank"></iframe>
 </template>
 
@@ -14,12 +13,10 @@ import store from '../../Dashboard.store'
 import appStore from '../../../../../App.store'
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
-import ProgressSpinner from 'primevue/progressspinner'
 
 export default defineComponent({
     name: 'custom-chart-widget',
-    emits: ['interaction', 'pageChanged', 'launchSelection', 'sortingChanged'],
-    components: { ProgressSpinner },
+    components: {},
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         widgetData: { type: Object as any, required: true },
@@ -28,6 +25,7 @@ export default defineComponent({
         variables: { type: Array as PropType<IVariable[]>, required: true },
         editorMode: { type: Boolean }
     },
+    emits: ['loading'],
     data() {
         return {
             id: cryptoRandomString({ length: 16, type: 'base64' }),
@@ -97,13 +95,13 @@ export default defineComponent({
             this.activeSelections = this.propActiveSelections
         },
         async loadHTML() {
-            this.loading = true
+            this.$emit('loading', true)
             if (!this.propWidget.settings || !this.propWidget.settings.editor) return
 
             this.htmlContent = this.propWidget.settings.editor.html
             this.webComponentCss = this.propWidget.settings.editor.css
             this.webComponentJs = this.propWidget.settings.editor.js
-            this.loading = false
+            this.$emit('loading', false)
 
             this.renderCustomWidget()
         },
@@ -147,7 +145,6 @@ export default defineComponent({
         },
         getUserImportScripts(componentWrapperElement: any) {
             // TODO - remove hardcoded imports
-
             this.userScriptsURLs = [
                 'https://code.highcharts.com/highcharts.js',
                 'https://code.highcharts.com/modules/drilldown.js',
@@ -182,11 +179,11 @@ export default defineComponent({
 
             setTimeout(() => {
                 this.iframeDocument?.body?.appendChild(userScript)
-                this.loading = false
+                this.$emit('loading', false)
             }, 1000)
         },
         loadUserImportScripts() {
-            this.loading = true
+            this.$emit('loading', true)
             if (this.loadedScriptsCount === this.userScriptsURLs.length) this.createScriptTagFromUsersJSScript()
             else this.loadUserImportScript(this.userScriptsURLs[this.loadedScriptsCount])
         },
@@ -220,7 +217,7 @@ export default defineComponent({
             return loaded
         },
         setScriptOnErrorListener(script: any) {
-            script.addEventListener('error', () => (this.loading = false))
+            script.addEventListener('error', () => this.$emit('loading', false))
         },
         onClickManager(columnName: string, columnValue: string | number) {
             if (this.editorMode || !columnName) return

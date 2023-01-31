@@ -6,7 +6,7 @@
             <Button icon="fas fa-rotate-right" class="p-button-rounded p-button-text p-button-plain" @click="getWidgetData" />
         </div>
 
-        <ProgressBar v-if="loading" class="p-mx-2" mode="indeterminate" />
+        <ProgressBar v-if="loading || customChartLoading" class="p-mx-2" mode="indeterminate" />
         <div class="widget-container p-mx-2" :style="getWidgetContainerStyle()">
             <div v-if="widgetTitle && widgetTitle.enabled" class="p-d-flex p-ai-center" style="border-radius: 0px" :style="getWidgetTitleStyle()">
                 {{ widgetTitle?.text }}
@@ -20,7 +20,16 @@
                 <HighchartsContainer v-if="propWidget.type === 'highcharts' && !loading" :widgetModel="propWidget" :dataToShow="widgetData" :propActiveSelections="activeSelections" :editorMode="true" :dashboardId="dashboardId"></HighchartsContainer>
                 <ChartJSContainer v-if="propWidget.type === 'chartJS' && !loading" :widgetModel="propWidget" :dataToShow="widgetData" :editorMode="true" :dashboardId="dashboardId" :propActiveSelections="activeSelections"></ChartJSContainer>
                 <ImageWidget v-if="propWidget.type === 'image'" :widgetModel="propWidget" :dashboardId="dashboardId" :editorMode="true" />
-                <CustomChartWidget v-if="propWidget.type == 'customchart' && !loading" :propWidget="propWidget" :widgetData="widgetData" :propActiveSelections="activeSelections" :editorMode="true" :dashboardId="dashboardId" :variables="variables"></CustomChartWidget>
+                <CustomChartWidget
+                    v-if="propWidget.type == 'customchart' && !loading"
+                    :propWidget="propWidget"
+                    :widgetData="widgetData"
+                    :propActiveSelections="activeSelections"
+                    :editorMode="true"
+                    :dashboardId="dashboardId"
+                    :variables="variables"
+                    @loading="customChartLoading = $event"
+                ></CustomChartWidget>
             </div>
         </div>
     </div>
@@ -66,7 +75,8 @@ export default defineComponent({
             activeSelections: [] as ISelection[],
             htmlContent: '',
             webComponentCss: '',
-            textModel: ''
+            textModel: '',
+            customChartLoading: false
         }
     },
     computed: {
