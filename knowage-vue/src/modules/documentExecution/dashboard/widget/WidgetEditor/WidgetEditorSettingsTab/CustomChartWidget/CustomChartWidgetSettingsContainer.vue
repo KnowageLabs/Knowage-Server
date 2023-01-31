@@ -24,6 +24,7 @@ export default defineComponent({
         dashboardId: { type: String, required: true },
         customChartGalleryProp: { type: Array as PropType<IGalleryItem[]>, required: true }
     },
+    emits: ['galleryItemSelected'],
     data() {
         return {
             descriptor
