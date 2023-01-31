@@ -542,8 +542,8 @@ export default defineComponent({
         updateDependency(parameter: iParameter, resetValue: boolean = false) {
             const role = this.sessionRole && this.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.sessionRole : this.role
             this.updateVisualDependency(parameter)
-            updateDataDependency(this.parameters, parameter, this.loading, this.document, role, this.$http, this.mode, resetValue)
-            updateLovDependency(this.parameters, parameter, this.loading, this.document, role, this.$http, this.mode)
+            updateDataDependency(this.parameters, parameter, this.loading, this.document, role, this.$http, this.mode, resetValue, this.userDateFormat)
+            updateLovDependency(this.parameters, parameter, this.loading, this.document, role, this.$http, this.mode, this.userDateFormat)
             this.$emit('parametersChanged', { parameters: this.parameters, document: this.propDocument })
         },
         openSaveParameterDialog() {

@@ -1,3 +1,4 @@
+import { luxonFormatDate } from '@/helpers/commons/localeHelper';
 import { AxiosResponse } from 'axios'
 import { iParameter } from './KnParameterSidebar'
 
@@ -16,19 +17,19 @@ export function setDataDependency(loadedParameters: { filterStatus: iParameter[]
     }
 }
 
-export async function updateDataDependency(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string, resetValue: boolean) {
+export async function updateDataDependency(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string, resetValue: boolean, userDateFormat: string) {
     if (parameter && parameter.dataDependentParameters) {
         for (let i = 0; i < parameter.dataDependentParameters.length; i++) {
-            await dataDependencyCheck(loadedParameters, parameter.dataDependentParameters[i], loading, document, sessionRole, $http, mode, resetValue)
+            await dataDependencyCheck(loadedParameters, parameter.dataDependentParameters[i], loading, document, sessionRole, $http, mode, resetValue, userDateFormat)
 
         }
     }
 }
 
-export async function dataDependencyCheck(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string, resetValue: boolean) {
+export async function dataDependencyCheck(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string, resetValue: boolean, userDateFormat: string) {
     loading = true
 
-    const postData = { label: document?.label, parameters: getFormattedParameters(loadedParameters), paramId: parameter.urlName, role: sessionRole }
+    const postData = { label: document?.label, parameters: getFormattedParameters(loadedParameters, userDateFormat), paramId: parameter.urlName, role: sessionRole }
     let url = '2.0/documentExeParameters/admissibleValues'
 
     if (mode !== 'execution' && document) {
@@ -77,13 +78,18 @@ export function formatParameterDataOptions(parameter: iParameter, data: any) {
     return { value: valueIndex ? data[valueIndex] : '', description: descriptionIndex ? data[descriptionIndex] : '' }
 }
 
-export function getFormattedParameters(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }) {
+export function getFormattedParameters(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }, userDateFormat: string) {
     let parameters = [] as any[]
 
     Object.keys(loadedParameters.filterStatus).forEach((key: any) => {
         const parameter = loadedParameters.filterStatus[key]
 
-        if (!parameter.multivalue) {
+
+        if (parameter.type === 'DATE') {
+            const dateValue = getFormattedDateParameterValue(parameter, userDateFormat)
+            parameters.push({ label: parameter.label, value: dateValue, description: dateValue })
+        }
+        else if (!parameter.multivalue) {
             parameters.push({ label: parameter.label, value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description })
         } else {
             parameters.push({ label: parameter.label, value: parameter.parameterValue?.map((el: any) => el.value), description: parameter.parameterDescription ?? '' })
@@ -91,6 +97,10 @@ export function getFormattedParameters(loadedParameters: { filterStatus: iParame
     })
 
     return parameters
+}
+
+function getFormattedDateParameterValue(parameter: iParameter, userDateFormat: string) {
+    return parameter.parameterValue[0] && parameter.parameterValue[0].value ? luxonFormatDate(parameter.parameterValue[0].value, undefined, userDateFormat) : null
 }
 
 function checkIfParameterDataContainsNewValue(parameter: iParameter) {

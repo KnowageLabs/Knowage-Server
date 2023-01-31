@@ -1,5 +1,6 @@
 import { AxiosResponse } from 'axios'
 import { iParameter } from './KnParameterSidebar'
+import { getFormattedParameters } from './KnParameterSidebarDataDependency';
 
 export function setLovsDependency(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }, parameter: iParameter) {
     if (parameter.dependencies.lov.length !== 0) {
@@ -16,15 +17,15 @@ export function setLovsDependency(loadedParameters: { filterStatus: iParameter[]
     }
 }
 
-export async function updateLovDependency(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string) {
+export async function updateLovDependency(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string, userDateFormat: string) {
     if (parameter && parameter.lovDependentParameters) {
         for (let i = 0; i < parameter.lovDependentParameters.length; i++) {
-            await lovDependencyCheck(loadedParameters, parameter.lovDependentParameters[i], loading, document, sessionRole, $http, mode)
+            await lovDependencyCheck(loadedParameters, parameter.lovDependentParameters[i], loading, document, sessionRole, $http, mode, userDateFormat)
         }
     }
 }
 
-export async function lovDependencyCheck(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string) {
+export async function lovDependencyCheck(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string, userDateFormat: string) {
     loading = true
     if (parameter.parameterValue[0]) {
         parameter.parameterValue[0] = { value: '', description: '' }
@@ -32,7 +33,7 @@ export async function lovDependencyCheck(loadedParameters: { filterStatus: iPara
         parameter.parameterValue = [{ value: '', description: '' }]
     }
 
-    const postData = { label: document?.label, parameters: getFormattedParameters(loadedParameters), paramId: parameter.urlName, role: sessionRole }
+    const postData = { label: document?.label, parameters: getFormattedParameters(loadedParameters, userDateFormat), paramId: parameter.urlName, role: sessionRole }
     let url = '2.0/documentExeParameters/admissibleValues'
 
     if (mode !== 'execution' && document) {
@@ -46,7 +47,7 @@ export async function lovDependencyCheck(loadedParameters: { filterStatus: iPara
             parameter.metadata = response.data.result.metadata
             formatParameterAfterDataDependencyCheck(parameter)
         })
-        .catch(() => {})
+        .catch(() => { })
     loading = false
 }
 
@@ -79,20 +80,4 @@ export function formatParameterDataOptions(parameter: iParameter, data: any) {
     const descriptionIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === descriptionColumn)
 
     return { value: valueIndex ? data[valueIndex] : '', description: descriptionIndex ? data[descriptionIndex] : '' }
-}
-
-export function getFormattedParameters(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }) {
-    let parameters = [] as any[]
-
-    Object.keys(loadedParameters.filterStatus).forEach((key: any) => {
-        const parameter = loadedParameters.filterStatus[key]
-
-        if (!parameter.multivalue) {
-            parameters.push({ label: parameter.label, value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description })
-        } else {
-            parameters.push({ label: parameter.label, value: parameter.parameterValue?.map((el: any) => el.value), description: parameter.parameterDescription ?? '' })
-        }
-    })
-
-    return parameters
 }
