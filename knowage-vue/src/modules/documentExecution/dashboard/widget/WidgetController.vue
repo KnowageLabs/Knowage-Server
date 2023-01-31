@@ -1,7 +1,7 @@
 <template>
     <grid-item class="p-d-flex widget-grid-item" :key="item.id" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" drag-allow-from=".drag-handle" @resized="resizedEvent">
         <div v-if="initialized" class="drag-handle"></div>
-        <ProgressSpinner v-if="loading" class="kn-progress-spinner" />
+        <ProgressSpinner v-if="loading || customChartLoading" class="kn-progress-spinner" />
         <Skeleton shape="rectangle" v-if="!initialized" height="100%" border-radius="0" />
         <WidgetRenderer
             v-if="!loading"
@@ -18,6 +18,7 @@
             @launchSelection="launchSelection"
             @mouseover="toggleFocus"
             @mouseleave="startUnfocusTimer(500)"
+            @loading="customChartLoading = $event"
         ></WidgetRenderer>
         <WidgetButtonBar
             :widget="widget"
@@ -92,7 +93,8 @@ export default defineComponent({
             inFocus: false,
             selectionIsLocked: false,
             playDisabledButtonTimeout: null as any,
-            widgetLoading: false
+            widgetLoading: false,
+            customChartLoading: false
         }
     },
     async created() {
