@@ -78,7 +78,7 @@ export default defineComponent({
         },
         iframeEventsListener(event: any) {
             console.log('EVENT FROM IFRAME: ', event)
-            if (event.data.type === 'error') this.setError({ title: this.$t('common.error.generic'), msg: event.data.error?.message ?? '' })
+            if (event.data.type === 'error' && event.data.editorMode === this.editorMode) this.setError({ title: this.$t('common.error.generic'), msg: event.data.error?.message ?? '' })
             else if (event.data.type === 'clickManager') this.onClickManager(event.data.payload.columnName, event.data.payload.columnValue)
         },
         loadProfileAttributesToDatastore() {
@@ -166,7 +166,7 @@ export default defineComponent({
         },
         createScriptTagFromUsersJSScript() {
             const userScript = document.createElement('script')
-            userScript.text = 'try {' + this.webComponentJs + `} catch (error) {window.parent.postMessage({type: 'error', error: error}, '*')}`
+            userScript.text = 'try {' + this.webComponentJs + `} catch (error) {window.parent.postMessage({type: 'error', error: error, editorMode: ${this.editorMode}}, '*')}`
 
             setTimeout(() => {
                 this.iframeDocument?.body?.appendChild(userScript)
