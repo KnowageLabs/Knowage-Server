@@ -48,7 +48,7 @@ export class CustomChartDatastore {
         return deepcopy(this.data.rows)
     }
 
-    getDataArray(getDataArrayFn) {
+    getDataArray(getDataArrayFn: Function) {
         var dataArray = [] as any[]
         for (var i = 0; i < this.data.rows.length; i++) {
             var dataObj = getDataArrayFn(this.data.rows[i])
@@ -96,32 +96,21 @@ export class CustomChartDatastore {
     // }
 
     // sort({key, order = 'asc'}) {
+
     sort(sortParams) {
         var key = ''
         var order = 'asc'
+        var newData = deepcopy(this.data)
 
         if (typeof sortParams == 'object') {
             key = Object.keys(sortParams)[0]
             order = sortParams[Object.keys(sortParams)[0]]
         } else if (typeof sortParams == 'string') key = sortParams
 
-        return function innerSort(a, b) {
-            if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) {
-                // property doesn't exist on either object
-                return 0
-            }
+        if (order == 'asc') newData.rows.sort((a, b) => parseFloat(a[key]) - parseFloat(b[key]))
+        else if (order == 'desc') newData.rows.sort((a, b) => parseFloat(b[key]) - parseFloat(a[key]))
 
-            const varA = typeof a[key] === 'string' ? a[key].toUpperCase() : a[key]
-            const varB = typeof b[key] === 'string' ? b[key].toUpperCase() : b[key]
-
-            let comparison = 0
-            if (varA > varB) {
-                comparison = 1
-            } else if (varA < varB) {
-                comparison = -1
-            }
-            return order === 'desc' ? comparison * -1 : comparison
-        }
+        return new CustomChartDatastore(newData)
     }
 
     filter(filterObject, strict) {
