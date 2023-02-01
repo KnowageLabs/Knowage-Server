@@ -385,7 +385,8 @@ class node {
 
     nodeExistingCheck(tree, node) {
         if (!this.contains(tree, node)) {
-            throw new Error('Node does not exist.')
+            return null
+            // throw new Error('Node does not exist.')
         }
     }
 
@@ -399,7 +400,7 @@ class node {
         return contains
     }
     traverseDF(tree, callback) {
-        ;(function recurse(currentNode) {
+        ; (function recurse(currentNode) {
             callback(currentNode)
             if (!Array.isArray(currentNode)) {
                 for (var i = 0; i < currentNode.children.length; i++) {

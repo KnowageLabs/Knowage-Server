@@ -76,8 +76,10 @@ export default defineComponent({
         },
         iframeEventsListener(event: any) {
             console.log('EVENT FROM IFRAME: ', event)
-            if (event.data.type === 'error' && event.data.editorMode === this.editorMode) this.setError({ title: this.$t('common.error.generic'), msg: event.data.error?.message ?? '' })
-            else if (event.data.type === 'clickManager') this.onClickManager(event.data.payload.columnName, event.data.payload.columnValue)
+            if (event.data.type === 'error' && event.data.editorMode === this.editorMode) {
+                console.log('!!!!!!!!!!!!!!!!!! EROR FROM IFRAME: ', event.data.error)
+                this.setError({ title: this.$t('common.error.generic'), msg: event.data.error?.message ?? '' })
+            } else if (event.data.type === 'clickManager') this.onClickManager(event.data.payload.columnName, event.data.payload.columnValue)
         },
         loadProfileAttributesToDatastore() {
             const profileAttributes = this.getProfileAttributes()
@@ -147,6 +149,7 @@ export default defineComponent({
             // TODO - remove hardcoded imports
             this.userScriptsURLs = [
                 'https://code.highcharts.com/highcharts.js',
+                'https://code.highcharts.com/highcharts-more.js',
                 'https://code.highcharts.com/modules/drilldown.js',
                 'https://code.highcharts.com/highcharts.js',
                 'https://code.highcharts.com/modules/funnel.js',
@@ -154,8 +157,9 @@ export default defineComponent({
                 'https://code.highcharts.com/modules/organization.js',
                 'https://code.highcharts.com/modules/exporting.js',
                 'https://code.highcharts.com/modules/accessibility.js',
-                'https://code.highcharts.com/highcharts-more.js',
-                'https://code.highcharts.com/modules/export-data.js'
+                'https://code.highcharts.com/modules/export-data.js',
+                'https://code.highcharts.com/modules/no-data-to-display.js',
+                'https://code.highcharts.com/modules/networkgraph.js'
             ]
             const userImports = componentWrapperElement.getElementsByTagName('kn-import') ?? []
             for (let i = 0; i < userImports.length; i++) {
