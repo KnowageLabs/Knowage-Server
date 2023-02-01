@@ -16,7 +16,6 @@ export default defineComponent({
     data() {
         return {
             codeMirrorJsEditor: null as any,
-            datasourceStructure: { test1: {}, test2: {} },
             scriptOptions: {
                 cursor: true,
                 line: false,
@@ -28,7 +27,7 @@ export default defineComponent({
                 extraKeys: {
                     'Ctrl-Space': this.keyAssistFunc
                 } as any,
-                hintOptions: { tables: this.datasourceStructure }
+                hintOptions: { test1: 'test1', test2: 'test2' }
             },
             code: ''
         }
@@ -40,7 +39,6 @@ export default defineComponent({
     },
     created() {
         this.setupCodeMirror()
-        this.loadCodeMirrorHintData()
     },
     methods: {
         setupCodeMirror() {
@@ -54,7 +52,7 @@ export default defineComponent({
                 clearInterval(interval)
             }, 200)
 
-            CodeMirror.registerHelper('hint', 'autocomplete', () => {
+            CodeMirror.registerHelper('hint', 'placeholder', () => {
                 const cur = this.codeMirrorJsEditor.getCursor()
                 const tok = this.codeMirrorJsEditor.getTokenAt(cur)
                 const start = tok.string.trim() == '' ? tok.start + 1 : tok.start
@@ -69,24 +67,22 @@ export default defineComponent({
                 return { list: hintList, from: CodeMirror.Pos(cur.line, start), to: CodeMirror.Pos(cur.line, end) }
             })
         },
-        loadCodeMirrorHintData() {
-            if (this.codeMirrorJsEditor && this.codeMirrorJsEditor.options) {
-                this.codeMirrorJsEditor.options.hintOptions = { tables: { test1: {}, test2: {} } }
-            }
-        },
         onKeyUp() {
             this.widgetModel.settings.editor.js = this.code
 
             const cur = this.codeMirrorJsEditor.getCursor()
             const tok = this.codeMirrorJsEditor.getTokenAt(cur)
             if (tok.string == '@') {
-                CodeMirror.showHint(this.codeMirrorJsEditor, CodeMirror.hint.autocomplete)
+                CodeMirror.showHint(this.codeMirrorJsEditor, CodeMirror.hint.placeholder)
             }
         },
         keyAssistFunc() {
             if (this.isDatastore()) {
-                console.log('IS DATASTORE')
-                CodeMirror.showHint(this.codeMirrorJsEditor, CodeMirror.hint.autocomplete)
+                console.log('IS DATASTORE', CodeMirror.hint.placeholder)
+                console.log(' this.codeMirror.options.hintOptions ', this.codeMirrorJsEditor.options.hintOptions)
+                console.log(' this.codeMirrorJsEditor', this.codeMirrorJsEditor)
+                console.log('  CodeMirror.hint.placeholder', CodeMirror.hint.placeholder())
+                CodeMirror.showHint(this.codeMirrorJsEditor, CodeMirror.hint.placeholder)
             }
         },
         isDatastore() {
