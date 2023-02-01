@@ -7,6 +7,7 @@
 import i18n from '@/App.i18n'
 import deepcopy from 'deepcopy'
 import store from '@/App.store.js'
+import dashboardStore from '@/modules/documentExecution/dashboard/Dashboard.store'
 import { AxiosResponse } from 'axios'
 import { setDatasetInterval, clearDatasetInterval } from './helpers/datasetRefresh/DatasetRefreshHelpers'
 import { aggregationRegex, aggregationsRegex, limitRegex, rowsRegex } from './helpers/common/DashboardRegexHelper'
@@ -14,6 +15,7 @@ import { IDataset, ISelection, IVariable, IWidget, IDashboardDataset, IDashboard
 
 const { t } = i18n.global
 const mainStore = store()
+const dashStore = dashboardStore()
 
 export const getData = (item) =>
     new Promise((resolve) => {
@@ -22,29 +24,29 @@ export const getData = (item) =>
         }, 1000)
     })
 
-export const getWidgetData = async (widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+export const getWidgetData = async (dashboardId: any, widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
     switch (widget.type) {
         case 'table':
-            return await getTableWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
+            return await getTableWidgetData(dashboardId, widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         case 'selector':
-            return await getSelectorWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
+            return await getSelectorWidgetData(dashboardId, widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         case 'html':
-            return await getHtmlWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
+            return await getHtmlWidgetData(dashboardId, widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         case 'text':
-            return await getTextWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
+            return await getTextWidgetData(dashboardId, widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         case 'highcharts':
             return await getHighchartsWidgetData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         case 'chartJS':
             return await getPieChartData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         case 'customchart':
-            return await getCustomChartData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
+            return await getCustomChartData(dashboardId, widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         default:
             break
     }
 }
 
 //#region ===================== Common Methods - Formatting Model, Drivers, Parameters, Selections Management ====================================================
-const formatWidgetModelForGet = (propWidget: IWidget, dataset: IDashboardDataset, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+const formatWidgetModelForGet = (dashboardId: any, propWidget: IWidget, dataset: IDashboardDataset, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
     var dataToSend = {
         aggregations: {
             dataset: '',
@@ -85,6 +87,22 @@ const formatWidgetModelForGet = (propWidget: IWidget, dataset: IDashboardDataset
     if (dataset.drivers && dataset.drivers.length > 0) {
         dataset.drivers.forEach((driver: IDashboardDatasetDriver) => {
             dataToSend.drivers[`${driver.urlName}`] = driver.parameterValue
+        })
+    }
+
+    if (dataset.parameters && dataset.parameters.length > 0) {
+        var paramRegex = /[^\$P{]+(?=\})/
+        dataset.parameters.forEach((param: any) => {
+            var matched = paramRegex.exec(param.value)
+            if (matched && matched[0]) {
+                const documentDrivers = dashStore.dashboards[dashboardId].drivers
+                for (let index = 0; index < documentDrivers.length; index++) {
+                    const driver = documentDrivers[index]
+                    if (driver.urlName == matched[0]) {
+                        dataToSend.parameters[`${param.name}`] = driver.value
+                    }
+                }
+            } else dataToSend.parameters[`${param.name}`] = param.value
         })
     }
 
@@ -196,7 +214,7 @@ const getVariableDatasetLabel = (variable: IVariable, datasets: IDataset[]) => {
 //#endregion ================================================================================================
 
 //#region ===================== Table Widget ====================================================
-export const getTableWidgetData = async (widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+export const getTableWidgetData = async (dashboardId: any, widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
     var datasetIndex = datasets.findIndex((dataset: IDashboardDataset) => widget.dataset === dataset.id)
     var selectedDataset = datasets[datasetIndex]
 
@@ -207,7 +225,7 @@ export const getTableWidgetData = async (widget: IWidget, datasets: IDashboardDa
             url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=${pagination.properties.offset}&size=${pagination.properties.itemsNumber}&nearRealtime=true`
         } else url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=0&size=-1&nearRealtime=true`
 
-        let postData = formatWidgetModelForGet(widget, selectedDataset, initialCall, selections, associativeResponseSelections)
+        let postData = formatWidgetModelForGet(dashboardId, widget, selectedDataset, initialCall, selections, associativeResponseSelections)
         var tempResponse = null as any
 
         if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
@@ -264,14 +282,14 @@ const getSummaryRow = (propWidget: IWidget) => {
 //#endregion ================================================================================================
 
 //#region ===================== Selector Widget ====================================================
-export const getSelectorWidgetData = async (widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+export const getSelectorWidgetData = async (dashboardId: any, widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
     var datasetIndex = datasets.findIndex((dataset: any) => widget.dataset === dataset.id)
     var selectedDataset = datasets[datasetIndex]
 
     if (selectedDataset) {
         var url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=-1&size=-1&nearRealtime=true`
 
-        let postData = formatWidgetModelForGet(widget, selectedDataset, initialCall, selections, associativeResponseSelections)
+        let postData = formatWidgetModelForGet(dashboardId, widget, selectedDataset, initialCall, selections, associativeResponseSelections)
         var tempResponse = null as any
 
         if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
@@ -294,7 +312,7 @@ export const getSelectorWidgetData = async (widget: IWidget, datasets: IDashboar
 //#endregion ================================================================================================
 
 //#region ===================== Text & HTML Widget ====================================================
-export const getTextWidgetData = async (widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+export const getTextWidgetData = async (dashboardId: any, widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
     var datasetIndex = datasets.findIndex((dataset: any) => widget.dataset === dataset.id)
     var selectedDataset = datasets[datasetIndex]
 
@@ -306,7 +324,7 @@ export const getTextWidgetData = async (widget: IWidget, datasets: IDashboardDat
         var aggregationsModel = getAggregationsModel(widget, text, selectedDataset)
         var aggregationDataset = null as any
         if (aggregationsModel) {
-            let aggregationsPostData = formatWidgetModelForGet(aggregationsModel, selectedDataset, initialCall, selections, associativeResponseSelections)
+            let aggregationsPostData = formatWidgetModelForGet(dashboardId, aggregationsModel, selectedDataset, initialCall, selections, associativeResponseSelections)
             await $http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, aggregationsPostData, { headers: { 'X-Disable-Errors': 'true' } })
                 .then((response: AxiosResponse<any>) => {
@@ -317,7 +335,7 @@ export const getTextWidgetData = async (widget: IWidget, datasets: IDashboardDat
                 })
         }
 
-        let postData = formatWidgetModelForGet(widget, selectedDataset, initialCall, selections, associativeResponseSelections)
+        let postData = formatWidgetModelForGet(null, widget, selectedDataset, initialCall, selections, associativeResponseSelections)
         var tempResponse = null as any
         if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
         await $http
@@ -338,7 +356,7 @@ export const getTextWidgetData = async (widget: IWidget, datasets: IDashboardDat
     }
 }
 
-export const getHtmlWidgetData = async (widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+export const getHtmlWidgetData = async (dashboardId: any, widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
     var datasetIndex = datasets.findIndex((dataset: any) => widget.dataset === dataset.id)
     var selectedDataset = datasets[datasetIndex]
 
@@ -350,7 +368,7 @@ export const getHtmlWidgetData = async (widget: IWidget, datasets: IDashboardDat
         var aggregationsModel = getAggregationsModel(widget, html, selectedDataset)
         var aggregationDataset = null as any
         if (aggregationsModel) {
-            let aggregationsPostData = formatWidgetModelForGet(aggregationsModel, selectedDataset, initialCall, selections, associativeResponseSelections)
+            let aggregationsPostData = formatWidgetModelForGet(dashboardId, aggregationsModel, selectedDataset, initialCall, selections, associativeResponseSelections)
             await $http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, aggregationsPostData, { headers: { 'X-Disable-Errors': 'true' } })
                 .then((response: AxiosResponse<any>) => {
@@ -361,7 +379,7 @@ export const getHtmlWidgetData = async (widget: IWidget, datasets: IDashboardDat
                 })
         }
 
-        let postData = formatWidgetModelForGet(widget, selectedDataset, initialCall, selections, associativeResponseSelections)
+        let postData = formatWidgetModelForGet(null, widget, selectedDataset, initialCall, selections, associativeResponseSelections)
         var tempResponse = null as any
         if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
         await $http
@@ -554,7 +572,7 @@ const formatChartWidgetForGet = (propWidget: IWidget, dataset: IDashboardDataset
 //#endregion ================================================================================================
 
 //#region ===================== Custom Chart Widget ====================================================
-const getCustomChartData = async (widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+const getCustomChartData = async (dashboardId, widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
     var datasetIndex = datasets.findIndex((dataset: IDashboardDataset) => widget.dataset === dataset.id)
     var selectedDataset = datasets[datasetIndex]
 
@@ -565,7 +583,7 @@ const getCustomChartData = async (widget: IWidget, datasets: IDashboardDataset[]
     if (selectedDataset && widget.settings.editor.html) {
         var url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=-1&size=-1&nearRealtime=true`
 
-        let postData = formatWidgetModelForGet(widget, selectedDataset, initialCall, selections, associativeResponseSelections)
+        let postData = formatWidgetModelForGet(dashboardId, widget, selectedDataset, initialCall, selections, associativeResponseSelections)
         var tempResponse = null as any
 
         if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)

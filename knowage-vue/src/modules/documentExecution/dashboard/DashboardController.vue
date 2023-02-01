@@ -1,6 +1,7 @@
 <template>
     <div v-if="model" class="dashboard-container" :id="`dashboard_${model.configuration.id}`">
         <Button icon="fas fa-square-check" class="p-m-3 p-button-rounded p-button-text p-button-plain" style="position: fixed; right: 0; z-index: 999; background-color: white; box-shadow: 0px 2px 3px #ccc" @click="selectionsDialogVisible = true" />
+        <Button icon="fas fa-terminal" class="p-m-3 p-button-rounded p-button-text p-button-plain" style="position: fixed; right: 50px; z-index: 999; background-color: white; box-shadow: 0px 2px 3px #ccc" @click="logme()" />
         <DashboardRenderer v-if="!loading" :model="model" :datasets="datasets" :dashboardId="dashboardId" :documentDrivers="drivers" :variables="model ? model.configuration.variables : []"></DashboardRenderer>
 
         <Transition name="editorEnter" appear>
@@ -315,6 +316,9 @@ export default defineComponent({
         closeGeneralSettings() {
             this.generalSettingsVisible = false
             emitter.emit('dashboardGeneralSettingsClosed')
+        },
+        logme(){
+            console.log('model', this.model)
         }
     }
 })

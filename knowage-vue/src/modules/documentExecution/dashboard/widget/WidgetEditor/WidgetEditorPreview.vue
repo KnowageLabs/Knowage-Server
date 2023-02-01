@@ -104,7 +104,7 @@ export default defineComponent({
         loadWebComponentData() {},
         async getWidgetData() {
             this.loading = true
-            this.widgetData = await getWidgetData(this.propWidget, this.datasets, this.$http, false, this.activeSelections)
+            this.widgetData = await getWidgetData(this.dashboardId, this.propWidget, this.datasets, this.$http, false, this.activeSelections)
             this.activeSelections = deepcopy(this.getSelections(this.dashboardId))
             this.loading = false
         },
