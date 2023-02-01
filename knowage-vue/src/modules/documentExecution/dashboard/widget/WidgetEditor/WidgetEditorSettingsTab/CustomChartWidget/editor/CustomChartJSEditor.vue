@@ -8,6 +8,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
 import VCodeMirror, { CodeMirror } from 'codemirror-editor-vue3'
+import descriptor from './CustomChartWidgetAutocomplete.json'
 
 export default defineComponent({
     name: 'custom-chart-js-editor',
@@ -15,6 +16,7 @@ export default defineComponent({
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, activeIndex: { type: Number, required: true } },
     data() {
         return {
+            descriptor,
             codeMirrorJsEditor: null as any,
             scriptOptions: {
                 cursor: true,
@@ -26,8 +28,7 @@ export default defineComponent({
                 matchBrackets: true,
                 extraKeys: {
                     'Ctrl-Space': this.keyAssistFunc
-                } as any,
-                hintOptions: { test1: 'test1', test2: 'test2' }
+                } as any
             },
             code: ''
         }
@@ -57,38 +58,22 @@ export default defineComponent({
                 const tok = this.codeMirrorJsEditor.getTokenAt(cur)
                 const start = tok.string.trim() == '' ? tok.start + 1 : tok.start
                 const end = tok.end
-                const hintList = [] as any
-                // for (const key in this.aliases) {
-                //     if (tok.string.trim() == '' || this.aliases[key].name.startsWith(tok.string)) {
-                hintList.push('test1')
-                hintList.push('test2')
-                // }
-                // }
-                return { list: hintList, from: CodeMirror.Pos(cur.line, start), to: CodeMirror.Pos(cur.line, end) }
+                const hintList = descriptor.cmAutocomplete as any
+
+                return { list: hintList, from: CodeMirror.Pos(cur.line, end), to: CodeMirror.Pos(cur.line, end) }
             })
         },
         onKeyUp() {
             this.widgetModel.settings.editor.js = this.code
-
-            const cur = this.codeMirrorJsEditor.getCursor()
-            const tok = this.codeMirrorJsEditor.getTokenAt(cur)
-            if (tok.string == '@') {
-                CodeMirror.showHint(this.codeMirrorJsEditor, CodeMirror.hint.placeholder)
-            }
         },
         keyAssistFunc() {
             if (this.isDatastore()) {
-                console.log('IS DATASTORE', CodeMirror.hint.placeholder)
-                console.log(' this.codeMirror.options.hintOptions ', this.codeMirrorJsEditor.options.hintOptions)
-                console.log(' this.codeMirrorJsEditor', this.codeMirrorJsEditor)
-                console.log('  CodeMirror.hint.placeholder', CodeMirror.hint.placeholder())
                 CodeMirror.showHint(this.codeMirrorJsEditor, CodeMirror.hint.placeholder)
             }
         },
         isDatastore() {
             const cursor = this.codeMirrorJsEditor.getCursor()
             const token = this.codeMirrorJsEditor.getTokenAt(cursor)
-            console.log('TOKEEEN', token)
             if (token.string == 'datastore') {
                 return true
             }
