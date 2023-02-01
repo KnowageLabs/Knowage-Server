@@ -1,6 +1,5 @@
 <template>
-    <div id="wrapper"></div>
-    <!-- <iframe :id="'iframe-' + id" :name="'iframe-' + id" class="custom-chart-widget-iframe" width="100%" height="100%" src="about:blank"></iframe> -->
+    <div :id="'wrapper-' + id" class="wrapper"></div>
 </template>
 
 <script lang="ts">
@@ -112,6 +111,7 @@ export default defineComponent({
         renderCustomWidget() {
             this.loadedScriptsCount = 0
             const iframe = this.recreateIframeElement()
+            console.log('-------- iframe: ', iframe)
             this.iframeDocument = iframe.contentWindow.document
             this.iframeDocument.body.innerHTML = `<html>
                 <head></head>
@@ -129,7 +129,7 @@ export default defineComponent({
             this.loadUserImportScripts()
         },
         recreateIframeElement() {
-            const wrapper = document.getElementById('wrapper') as any
+            const wrapper = document.getElementById('wrapper-' + this.id) as any
             if (document.getElementById('iframe-' + this.id)) wrapper.innerHTML = ''
             const iframe = document.createElement('iframe') as any
             iframe.id = 'iframe-' + this.id
@@ -252,7 +252,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-#wrapper {
+.wrapper {
     height: 100%;
     width: 100%;
 }
