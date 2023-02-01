@@ -274,7 +274,7 @@ export default defineComponent({
             return (this.store.$state as any).user.sessionRole
         },
         buttonsDisabled(): boolean {
-            return this.requiredFiledMissing()
+            return this.loading || this.requiredFiledMissing()
         },
         positionClass(): string {
             return this.document?.parametersRegion ? 'kn-parameter-sidebar-' + this.document.parametersRegion : 'kn-parameter-sidebar'
@@ -438,7 +438,7 @@ export default defineComponent({
 
             for (let i = 0; i < this.parameters.filterStatus.length; i++) {
                 const parameter = this.parameters.filterStatus[i]
-                if (parameter.mandatory && parameter.showOnPanel == 'true') {
+                if (parameter.mandatory) {
                     if (!parameter.parameterValue || parameter.parameterValue.length === 0) {
                         return true
                     } else {
@@ -539,12 +539,14 @@ export default defineComponent({
             this.updateVisualDependency(parameter)
             this.treeDialogVisible = false
         },
-        updateDependency(parameter: iParameter, resetValue: boolean = false) {
+        async updateDependency(parameter: iParameter, resetValue: boolean = false) {
+            this.loading = true
             const role = this.sessionRole && this.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.sessionRole : this.role
             this.updateVisualDependency(parameter)
-            updateDataDependency(this.parameters, parameter, this.loading, this.document, role, this.$http, this.mode, resetValue, this.userDateFormat)
-            updateLovDependency(this.parameters, parameter, this.loading, this.document, role, this.$http, this.mode, this.userDateFormat)
+            await updateDataDependency(this.parameters, parameter, this.loading, this.document, role, this.$http, this.mode, resetValue, this.userDateFormat)
+            await updateLovDependency(this.parameters, parameter, this.loading, this.document, role, this.$http, this.mode, this.userDateFormat)
             this.$emit('parametersChanged', { parameters: this.parameters, document: this.propDocument })
+            this.loading = false
         },
         openSaveParameterDialog() {
             this.parameterSaveDialogVisible = true
