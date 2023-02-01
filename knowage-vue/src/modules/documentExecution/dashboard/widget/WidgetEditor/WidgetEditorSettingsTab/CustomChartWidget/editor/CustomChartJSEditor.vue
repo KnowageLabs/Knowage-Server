@@ -96,3 +96,9 @@ export default defineComponent({
     }
 })
 </script>
+
+<style lang="scss">
+.CodeMirror-hints {
+    z-index: 99999;
+}
+</style>
