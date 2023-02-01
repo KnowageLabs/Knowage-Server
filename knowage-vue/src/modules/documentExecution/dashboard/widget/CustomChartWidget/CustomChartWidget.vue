@@ -1,5 +1,6 @@
 <template>
-    <iframe :id="'iframe-' + id" :name="'iframe-' + id" class="custom-chart-widget-iframe" width="100%" height="100%" src="about:blank"></iframe>
+    <div id="wrapper"></div>
+    <!-- <iframe :id="'iframe-' + id" :name="'iframe-' + id" class="custom-chart-widget-iframe" width="100%" height="100%" src="about:blank"></iframe> -->
 </template>
 
 <script lang="ts">
@@ -91,6 +92,7 @@ export default defineComponent({
         async loadDataToShow() {
             this.dataToShow = this.widgetData
             if (this.widgetData) this.datastore.setData(this.widgetData)
+            setTimeout(() => {}, 250)
             await this.loadHTML()
         },
         loadActiveSelections() {
@@ -109,7 +111,7 @@ export default defineComponent({
         },
         renderCustomWidget() {
             this.loadedScriptsCount = 0
-            const iframe = document.getElementById('iframe-' + this.id) as any
+            const iframe = this.recreateIframeElement()
             this.iframeDocument = iframe.contentWindow.document
             this.iframeDocument.body.innerHTML = `<html>
                 <head></head>
@@ -125,6 +127,16 @@ export default defineComponent({
             this.insertUsersCssContent()
             this.setDatastoreObjectInFrame(iframe)
             this.loadUserImportScripts()
+        },
+        recreateIframeElement() {
+            const wrapper = document.getElementById('wrapper') as any
+            if (document.getElementById('iframe-' + this.id)) wrapper.innerHTML = ''
+            const iframe = document.createElement('iframe') as any
+            iframe.id = 'iframe-' + this.id
+            iframe.src = 'about:blank'
+            iframe.style = 'width: 100%; height: 100%; border: none;'
+            wrapper.appendChild(iframe)
+            return iframe
         },
         createWrapperDiv(containerElement: Element) {
             const style = document.createElement('style')
@@ -240,7 +252,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.custom-chart-widget-iframe {
-    border: 0;
+#wrapper {
+    height: 100%;
+    width: 100%;
 }
 </style>
