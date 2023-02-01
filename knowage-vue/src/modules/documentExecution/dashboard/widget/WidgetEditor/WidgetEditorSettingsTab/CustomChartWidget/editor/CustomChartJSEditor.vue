@@ -7,7 +7,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
-import VCodeMirror from 'codemirror-editor-vue3'
+import VCodeMirror, { CodeMirror } from 'codemirror-editor-vue3'
 
 export default defineComponent({
     name: 'custom-chart-js-editor',
@@ -16,13 +16,19 @@ export default defineComponent({
     data() {
         return {
             codeMirrorJsEditor: null as any,
+            datasourceStructure: { test1: {}, test2: {} },
             scriptOptions: {
                 cursor: true,
                 line: false,
                 lineNumbers: true,
                 mode: 'javascript',
                 tabSize: 4,
-                theme: 'eclipse'
+                theme: 'eclipse',
+                matchBrackets: true,
+                extraKeys: {
+                    'Ctrl-Space': this.keyAssistFunc
+                } as any,
+                hintOptions: { tables: this.datasourceStructure }
             },
             code: ''
         }
@@ -34,6 +40,7 @@ export default defineComponent({
     },
     created() {
         this.setupCodeMirror()
+        this.loadCodeMirrorHintData()
     },
     methods: {
         setupCodeMirror() {
@@ -46,9 +53,49 @@ export default defineComponent({
                 }, 0)
                 clearInterval(interval)
             }, 200)
+
+            CodeMirror.registerHelper('hint', 'autocomplete', () => {
+                const cur = this.codeMirrorJsEditor.getCursor()
+                const tok = this.codeMirrorJsEditor.getTokenAt(cur)
+                const start = tok.string.trim() == '' ? tok.start + 1 : tok.start
+                const end = tok.end
+                const hintList = [] as any
+                // for (const key in this.aliases) {
+                //     if (tok.string.trim() == '' || this.aliases[key].name.startsWith(tok.string)) {
+                hintList.push('test1')
+                hintList.push('test2')
+                // }
+                // }
+                return { list: hintList, from: CodeMirror.Pos(cur.line, start), to: CodeMirror.Pos(cur.line, end) }
+            })
+        },
+        loadCodeMirrorHintData() {
+            if (this.codeMirrorJsEditor && this.codeMirrorJsEditor.options) {
+                this.codeMirrorJsEditor.options.hintOptions = { tables: { test1: {}, test2: {} } }
+            }
         },
         onKeyUp() {
             this.widgetModel.settings.editor.js = this.code
+
+            const cur = this.codeMirrorJsEditor.getCursor()
+            const tok = this.codeMirrorJsEditor.getTokenAt(cur)
+            if (tok.string == '@') {
+                CodeMirror.showHint(this.codeMirrorJsEditor, CodeMirror.hint.autocomplete)
+            }
+        },
+        keyAssistFunc() {
+            if (this.isDatastore()) {
+                console.log('IS DATASTORE')
+                CodeMirror.showHint(this.codeMirrorJsEditor, CodeMirror.hint.autocomplete)
+            }
+        },
+        isDatastore() {
+            const cursor = this.codeMirrorJsEditor.getCursor()
+            const token = this.codeMirrorJsEditor.getTokenAt(cursor)
+            console.log('TOKEEEN', token)
+            if (token.string == 'datastore') {
+                return true
+            }
         }
     }
 })
