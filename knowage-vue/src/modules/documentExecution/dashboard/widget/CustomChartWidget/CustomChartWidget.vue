@@ -90,7 +90,7 @@ export default defineComponent({
         },
         async loadDataToShow() {
             this.dataToShow = this.widgetData
-            this.datastore.setData(this.widgetData)
+            if (this.widgetData) this.datastore.setData(this.widgetData)
             await this.loadHTML()
         },
         loadActiveSelections() {
