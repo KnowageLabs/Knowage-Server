@@ -29,6 +29,7 @@ import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.datasource.transaction.hibernate.HibernateTransaction;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statement.AbstractQbeDataSet;
+import it.eng.qbe.statement.AbstractStatement;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.JDBCSharedConnectionDataProxy;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -92,7 +93,7 @@ public class HQLDataSet extends AbstractQbeDataSet {
 				logger.debug("Query " + statement.getQueryString() + " with offset = " + offset + " and fetch size = " + fetchSize + " executed");
 			}
 
-			dataStore = toDataStore(result, getDataStoreMeta(statement.getQuery()));
+			dataStore = toDataStore(result, ((AbstractStatement) this.getStatement()).getDataStoreMeta());
 			if (this.isCalculateResultNumberOnLoadEnabled()) {
 				dataStore.getMetaData().setProperty("resultNumber", resultNumber);
 			}

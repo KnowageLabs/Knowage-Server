@@ -128,6 +128,7 @@ import { mapState, mapActions } from 'pinia'
 import deepcopy from 'deepcopy'
 import DashboardController from '../dashboard/DashboardController.vue'
 import { getCorrectRolesForExecution } from '../../../helpers/commons/roleHelper'
+import { findCrossTargetByCrossName, loadNavigationParamsInitialValue } from './DocumentExecutionAngularCrossNavigationHelper'
 
 // @ts-ignore
 // eslint-disable-next-line
@@ -633,7 +634,7 @@ export default defineComponent({
             })
 
             if (this.document.navigationParams) {
-                this.loadNavigationParamsInitialValue()
+                loadNavigationParamsInitialValue(this)
             }
 
             this.setFiltersForBreadcrumbItem()
@@ -641,45 +642,6 @@ export default defineComponent({
         setFiltersForBreadcrumbItem() {
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
             if (index !== -1) this.breadcrumbs[index].filtersData = this.filtersData
-        },
-        loadNavigationParamsInitialValue() {
-            Object.keys(this.document.navigationParams).forEach((key: string) => {
-                for (let i = 0; i < this.filtersData.filterStatus.length; i++) {
-                    const tempParam = this.filtersData.filterStatus[i]
-                    if (key === tempParam.urlName || key === tempParam.label) {
-                        if (tempParam.multivalue && Array.isArray(this.document.navigationParams[key])) {
-                            tempParam.parameterValue = this.document.navigationParams[key].map((value: string) => {
-                                return { value: value, description: '' }
-                            })
-                        } else {
-                            const crossNavigationValue = Array.isArray(this.document.navigationParams[key]) && this.document.navigationParams[key][0] ? this.document.navigationParams[key][0] : this.document.navigationParams[key]
-                            if (!this.checkIfMultivalueDriverContainsCrossNavigationValue(tempParam, crossNavigationValue)) return
-                            if (tempParam.parameterValue.length === 0) tempParam.parameterValue.push({ value: '', description: '' })
-                            tempParam.parameterValue[0].value = crossNavigationValue
-                            if (tempParam.parameterValue[0].value === '') tempParam.parameterValue = []
-                            if (this.document.navigationParams[key + '_field_visible_description']) this.document.navigationParams[key + '_field_visible_description'] = tempParam.parameterValue[0].description
-                            if (tempParam.type === 'DATE' && tempParam.parameterValue[0] && tempParam.parameterValue[0].value) {
-                                tempParam.parameterValue[0].value = new Date(tempParam.parameterValue[0].value)
-                            }
-                        }
-                        if (tempParam.selectionType === 'COMBOBOX') this.formatCrossNavigationComboParameterDescription(tempParam)
-                    }
-                }
-            })
-        },
-        checkIfMultivalueDriverContainsCrossNavigationValue(tempParam: any, crossNavigationValue: any) {
-            const index = tempParam.data?.findIndex((option: { value: string; description: string }) => option.value == crossNavigationValue)
-            return index && index !== -1
-        },
-        formatCrossNavigationComboParameterDescription(tempParam: any) {
-            for (let i = tempParam.parameterValue.length - 1; i >= 0; i--) {
-                if (tempParam.parameterValue[i].value) {
-                    const index = tempParam.data.findIndex((option: any) => option.value == tempParam.parameterValue[i].value)
-                    if (index !== -1) {
-                        tempParam.parameterValue[i] = { value: tempParam.data[index].value, description: tempParam.data[index].description }
-                    } else tempParam.parameterValue.splice(i, 1)
-                }
-            }
         },
         formatParameterDataOptions(parameter: iParameter, data: any) {
             if (!parameter.metadata) return { value: data['_col0'] ? data['_col0'] : '', description: data['_col1'] ? data['_col1'] : '' }
@@ -1078,7 +1040,7 @@ export default defineComponent({
 
             if (temp.length === 0) return
 
-            const crossTarget = this.findCrossTargetByCrossName(angularData, temp)
+            const crossTarget = findCrossTargetByCrossName(angularData, temp)
 
             if (!crossTarget && temp.length > 1) {
                 this.crossNavigationDocuments = temp
@@ -1086,12 +1048,6 @@ export default defineComponent({
             } else {
                 this.loadCrossNavigation(crossTarget ?? temp[0], angularData)
             }
-        },
-        findCrossTargetByCrossName(angularData: any, temp: any[]) {
-            if (!angularData || !temp) return
-            const targetCross = typeof angularData.targetCrossNavigation === 'string' ? angularData.targetCrossNavigation : angularData.targetCrossNavigation.crossName
-            const index = temp.findIndex((el: any) => el.crossName === targetCross)
-            return index !== -1 ? temp[index] : null
         },
         async loadCrossNavigation(crossNavigationDocument: any, angularData: any) {
             this.formatAngularOutputParameters(angularData.otherOutputParameters)

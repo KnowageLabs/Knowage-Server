@@ -107,15 +107,15 @@
                     </div>
                 </div>
             </div>
-            <KnParameterSidebar v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="dataset" :userRole="userRole" :propMode="'qbeView'" :propQBEParameters="qbe?.pars" @execute="onExecute" @roleChanged="onRoleChange"></KnParameterSidebar>
+            <KnParameterSidebar v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="dataset || sourceDataset" :userRole="userRole" :propMode="'qbeView'" :propQBEParameters="qbe?.pars" @execute="onExecute" @roleChanged="onRoleChange"></KnParameterSidebar>
         </div>
 
-        <QBEPreviewDialog v-show="!loading && qbePreviewDialogVisible" :id="uniqueID" :queryPreviewData="queryPreviewData" :pagination="pagination" :entities="entities?.entities" :selectedQuery="selectedQuery" @close="closePreview" @pageChanged="updatePagination($event)"></QBEPreviewDialog>
+        <QBEPreviewDialog v-show="!loading && qbePreviewDialogVisible" :id="uniqueID" :queryPreviewData="queryPreviewData" :pagination="pagination" :entities="entities?.entities" :selectedQuery="selectedQuery" @close="closePreview" @pageChanged="updatePagination($event)"> </QBEPreviewDialog>
         <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" :id="uniqueID" :entities="entities?.entities" :propParameters="qbe?.pars" :propExpression="selectedQuery?.expression" @close="filterDialogVisible = false" @save="onFiltersSave"></QBEFilterDialog>
         <QBESqlDialog :visible="sqlDialogVisible" :sqlData="sqlData" @close="sqlDialogVisible = false" />
         <QBERelationDialog :visible="relationDialogVisible" :propEntity="relationEntity" @close="relationDialogVisible = false" />
         <QBEParamDialog v-if="paramDialogVisible" :visible="paramDialogVisible" :propDataset="qbe" @close="paramDialogVisible = false" @save="onParametersSave" />
-        <QBEHavingDialog :visible="havingDialogVisible" :havingDialogData="havingDialogData" :entities="selectedQuery?.fields" @close="havingDialogVisible = false" @save="onHavingsSave"></QBEHavingDialog>
+        <QBEHavingDialog :visible="havingDialogVisible" :havingDialogData="havingDialogData" :entities="selectedQuery?.fields" @close="havingDialogVisible = false" @save="onHavingsSave"> </QBEHavingDialog>
         <QBEAdvancedFilterDialog :visible="advancedFilterDialogVisible" :query="selectedQuery" @close="advancedFilterDialogVisible = false" @save="onAdvancedFiltersSave"></QBEAdvancedFilterDialog>
         <QBESavingDialog :visible="savingDialogVisible" :propDataset="qbe" :propMetadata="qbeMetadata" @close="savingDialogVisible = false" @datasetSaved="$emit('datasetSaved')" />
         <QBEJoinDefinitionDialog v-if="joinDefinitionDialogVisible" :visible="joinDefinitionDialogVisible" :qbe="qbe" :propEntities="entities?.entities" :id="uniqueID" :selectedQuery="selectedQuery" @close="onJoinDefinitionDialogClose"></QBEJoinDefinitionDialog>
@@ -233,7 +233,7 @@ export default defineComponent({
         KnCalculatedField,
         Dropdown
     },
-    props: { visible: { type: Boolean }, dataset: { type: Object }, returnQueryMode: { type: Boolean }, getQueryFromDatasetProp: { type: Boolean } },
+    props: { visible: { type: Boolean }, dataset: { type: Object }, returnQueryMode: { type: Boolean }, getQueryFromDatasetProp: { type: Boolean }, sourceDataset: { type: Object } },
     emits: ['close', 'querySaved'],
     data() {
         return {
@@ -279,7 +279,9 @@ export default defineComponent({
             calcFieldFunctions: [] as any,
             calcFieldFunctionsToShow: [] as any,
             qbeMetadata: [] as any,
-            colors: ['#D7263D', '#F46036', '#2E294E', '#1B998B', '#C5D86D', '#3F51B5', '#8BC34A', '#009688', '#F44336']
+            colors: ['#D7263D', '#F46036', '#2E294E', '#1B998B', '#C5D86D', '#3F51B5', '#8BC34A', '#009688', '#F44336'],
+            /* CONST */
+            DERIVED_CONST: 'Derived'
         }
     },
     computed: {
@@ -298,6 +300,9 @@ export default defineComponent({
     watch: {
         async dataset() {
             await this.loadPage()
+        },
+        async sourceDataset() {
+            await this.loadPage()
         }
     },
     setup() {
@@ -310,35 +315,38 @@ export default defineComponent({
         this.userRole = this.user.sessionRole && this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
 
         let invalidRole = false
-        getCorrectRolesForExecution(null, this.dataset).then(async (response: any) => {
-            let correctRolesForExecution = response
+        let dataset = this.dataset ?? this.sourceDataset
+        getCorrectRolesForExecution(null, dataset)
+            .then(async (response: any) => {
+                let correctRolesForExecution = response
 
-            if (!this.userRole) {
-                if (correctRolesForExecution.length == 1) {
-                    this.userRole = correctRolesForExecution[0]
-                } else {
-                    this.parameterSidebarVisible = true
-                }
-            } else if (this.userRole) {
-                if (correctRolesForExecution.length == 1) {
-                    let correctRole = correctRolesForExecution[0]
-                    if (this.userRole !== correctRole) {
-                        this.$store.commit('setError', {
-                            title: this.$t('common.error.generic'),
-                            msg: this.$t('documentExecution.main.userRoleError')
-                        })
-                        invalidRole = true
+                if (!this.userRole) {
+                    if (correctRolesForExecution.length == 1) {
+                        this.userRole = correctRolesForExecution[0]
+                    } else {
+                        this.parameterSidebarVisible = true
+                    }
+                } else if (this.userRole) {
+                    if (correctRolesForExecution.length == 1) {
+                        let correctRole = correctRolesForExecution[0]
+                        if (this.userRole !== correctRole) {
+                            this.$store.commit('setError', {
+                                title: this.$t('common.error.generic'),
+                                msg: this.$t('documentExecution.main.userRoleError')
+                            })
+                            invalidRole = true
+                        }
                     }
                 }
-            }
-            if (!invalidRole) {
-                if (this.userRole) {
-                    await this.loadPage()
-                } else {
-                    this.parameterSidebarVisible = true
+                if (!invalidRole) {
+                    if (this.userRole) {
+                        await this.loadPage()
+                    } else {
+                        this.parameterSidebarVisible = true
+                    }
                 }
-            }
-        })
+            })
+            .catch(() => this.$emit('close'))
     },
     methods: {
         //#region ===================== Load QBE and format data ====================================================
@@ -347,36 +355,55 @@ export default defineComponent({
 
             if (this.dataset && !this.dataset.dataSourceId && !this.dataset.federation_id) {
                 await this.loadDataset()
+            } else if (this.sourceDataset) {
+                await this.loadDataset()
+                if (this.qbe) {
+                    this.qbe.datasetLabel = this.sourceDataset.label
+                    if (!this.qbe.qbeJSONQuery) {
+                        this.qbe.qbeJSONQuery = {
+                            catalogue: {
+                                queries: [this.getQbeJSONQuery(this.sourceDataset)]
+                            }
+                        }
+                    }
+                    if (this.sourceDataset.dsTypeCd !== 'Derived') this.qbe.meta.columns = []
+                }
             } else {
                 this.qbe = this.getQBEFromModel()
             }
             this.loadQuery()
             this.qbeMetadata = this.extractFieldsMetadata(this.qbe?.meta.columns)
             this.generateFieldsAndMetadataId()
-            if (!this.dataset?.federation_id) await this.loadDatasetDrivers()
-            if (this.qbe?.pars?.length === 0 && (this.filtersData?.isReadyForExecution || this.dataset?.federation_id)) {
+
+            if (this.sourceDataset) {
                 await this.loadQBE()
-            } else if (this.qbe?.pars?.length !== 0 || !this.filtersData?.isReadyForExecution) {
-                this.parameterSidebarVisible = true
+            } else {
+                if (!this.dataset?.federation_id) await this.loadDatasetDrivers()
+                if (this.qbe?.pars?.length === 0 && (this.filtersData?.isReadyForExecution || this.dataset?.federation_id)) {
+                    await this.loadQBE()
+                } else if (this.qbe?.pars?.length !== 0 || !this.filtersData?.isReadyForExecution) {
+                    this.parameterSidebarVisible = true
+                }
             }
             this.loading = false
         },
         async loadDataset() {
-            if (!this.dataset) {
-                return
-            }
-            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/${this.dataset.label}`).then((response: AxiosResponse<any>) => {
-                this.qbe = response.data[0]
-                if (this.qbe && this.qbe.qbeJSONQuery) this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
-            })
+            let dataset = this.dataset ? this.dataset : this.sourceDataset
 
-            if (this.qbe && this.getQueryFromDatasetProp) {
-                this.qbe = deepcopy(this.dataset) as any
-                if (this.qbe && this.qbe.qbeJSONQuery && typeof this.qbe.qbeJSONQuery === 'string') this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
-            }
+            if (dataset) {
+                await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/${dataset.label}`).then((response: AxiosResponse<any>) => {
+                    this.qbe = response.data[0]
+                    if (this.qbe && this.qbe.qbeJSONQuery) this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
+                })
 
-            if (this.qbe && this.dataset) {
-                this.qbe.pars = this.dataset.pars ?? []
+                if (this.qbe && this.getQueryFromDatasetProp) {
+                    this.qbe = deepcopy(dataset) as any
+                    if (this.qbe && this.qbe.qbeJSONQuery && typeof this.qbe.qbeJSONQuery === 'string') this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
+                }
+
+                if (this.qbe && dataset) {
+                    this.qbe.pars = dataset.pars ?? []
+                }
             }
         },
         getQBEFromModel() {
@@ -390,7 +417,7 @@ export default defineComponent({
                     ? this.dataset.qbeJSONQuery
                     : {
                           catalogue: {
-                              queries: [{ id: 'q1', name: 'Main', fields: [], distinct: false, filters: [], calendar: {}, expression: {}, isNestedExpression: false, havings: [], graph: [], relationRoles: [], subqueries: [] }]
+                              queries: [this.getQbeJSONQuery(this.dataset)]
                           }
                       },
                 meta: [],
@@ -401,9 +428,17 @@ export default defineComponent({
                 name: ''
             } as any
         },
+        getQbeJSONQuery(dataset) {
+            let query = { id: 'q1', name: 'Main', fields: [], distinct: false, filters: [], calendar: {}, expression: {}, isNestedExpression: false, havings: [], graph: [], relationRoles: [], subqueries: [] }
+            return dataset.qbeJSONQuery ?? query
+        },
         loadQuery() {
-            this.mainQuery = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
-            this.selectedQuery = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
+            let query = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
+            if (!query) {
+                query = this.getQbeJSONQuery(this.sourceDataset)
+            }
+            this.mainQuery = query
+            this.selectedQuery = query
         },
         extractFieldsMetadata(array) {
             if (array && array.length > 0) {
@@ -452,10 +487,14 @@ export default defineComponent({
         async loadQBE() {
             this.loadCalcFieldFunctions()
             await this.initializeQBE()
-            await this.loadCustomizedDatasetFunctions()
+            if (!this.sourceDataset) {
+                await this.loadCustomizedDatasetFunctions()
+            }
             await this.loadEntities()
 
-            if (!this.dataset?.dataSourceLabel) {
+            if (this.sourceDataset) {
+                if (this.sourceDataset.dsTypeCd == 'Derived') await this.executeQBEQuery(false)
+            } else if (!this.dataset?.dataSourceLabel) {
                 await this.executeQBEQuery(false)
             }
         },
@@ -463,16 +502,25 @@ export default defineComponent({
             this.calcFieldFunctions = calcFieldDescriptor.availableFunctions
         },
         async initializeQBE() {
-            const label = this.dataset?.dataSourceLabel ? this.dataset.dataSourceLabel : this.qbe?.qbeDataSource
-            const datamart = this.dataset?.dataSourceLabel ? this.dataset.name : this.qbe?.qbeDatamarts
-            const temp = this.getFormattedParameters(this.filtersData)
-            const drivers = encodeURI(JSON.stringify(temp))
-            const url = this.dataset?.federation_id
-                ? `start-federation?federationId=${this.dataset.federation_id}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&drivers=%7B%7D`
-                : `start-qbe?datamart=${datamart}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&DATA_SOURCE_LABEL=${label}&drivers=${drivers}`
             if (this.dataset) {
+                const label = this.dataset?.dataSourceLabel ? this.dataset.dataSourceLabel : this.qbe?.qbeDataSource
+                const datamart = this.dataset?.dataSourceLabel ? this.dataset.name : this.qbe?.qbeDatamarts
+                const temp = this.getFormattedParameters(this.filtersData)
+                const drivers = encodeURI(JSON.stringify(temp))
+                const url = this.dataset?.federation_id
+                    ? `start-federation?federationId=${this.dataset.federation_id}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&drivers=%7B%7D`
+                    : `start-qbe?datamart=${datamart}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&DATA_SOURCE_LABEL=${label}&drivers=${drivers}`
                 await this.$http
                     .get(import.meta.env.VITE_QBE_PATH + url)
+                    .then(() => {
+                        this.qbeLoaded = true
+                    })
+                    .catch(() => {})
+            } else if (this.sourceDataset) {
+                // Derived
+                let sourceDatasetLabel = this.sourceDataset.dsTypeCd !== 'Derived' ? this.sourceDataset.label : this.sourceDataset.sourceDatasetLabel
+                await this.$http
+                    .get(import.meta.env.VITE_QBE_PATH + `start-qbe?sourceDatasetLabel=${sourceDatasetLabel}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}`)
                     .then(() => {
                         this.qbeLoaded = true
                     })
@@ -517,11 +565,18 @@ export default defineComponent({
         },
         async loadEntities() {
             let datamartName = this.dataset?.dataSourceId ? this.dataset.name : this.qbe?.qbeDatamarts
+
             if (this.dataset?.type === 'federatedDataset') {
                 datamartName = null
             }
+
+            let url = `/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_TREE_ACTION&SBI_EXECUTION_ID=${this.uniqueID}`
+
+            if (this.dataset && datamartName) url += `&datamartName=${datamartName}`
+            if (this.sourceDataset) url += '&openDatasetInQbe=true'
+
             await this.$http
-                .get(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_TREE_ACTION&SBI_EXECUTION_ID=${this.uniqueID}&datamartName=${datamartName}`)
+                .get(url)
                 .then(async (response: AxiosResponse<any>) => {
                     this.addExpandedProperty(response.data.entities)
                     await this.addSpatialProperty(response.data.entities)
@@ -695,7 +750,7 @@ export default defineComponent({
                 fieldType: calculatedField.id.nature.toUpperCase(),
                 decrypt: false,
                 personal: false,
-                subjectid: false
+                subjectId: false
             } as any
 
             switch (calculatedField.id.type) {
@@ -858,7 +913,7 @@ export default defineComponent({
         checkIfHiddenColumnsExist() {
             if (this.qbe) {
                 this.hiddenColumnsExist = false
-                for (let i = 0; i < this.selectedQuery.fields.length; i++) {
+                for (let i = 0; i < this.selectedQuery.fields.length; i) {
                     if (!this.selectedQuery.fields[i].visible) {
                         this.hiddenColumnsExist = true
                         break
@@ -959,6 +1014,17 @@ export default defineComponent({
                 this.qbe.pars = [...qbeParameters]
                 if (this.dataset && !this.dataset.dataSourceId && !this.dataset.federation_id) {
                     await this.loadDataset()
+                } else if (this.sourceDataset) {
+                    await this.loadDataset()
+                    this.qbe.datasetLabel = this.sourceDataset.label
+                    if (!this.qbe.qbeJSONQuery) {
+                        this.qbe.qbeJSONQuery = {
+                            catalogue: {
+                                queries: [this.getQbeJSONQuery(this.sourceDataset)]
+                            }
+                        }
+                    }
+                    if (this.sourceDataset.dsTypeCd !== 'Derived') this.qbe.meta.columns = []
                 } else {
                     this.qbe = this.getQBEFromModel()
                 }
@@ -1028,10 +1094,33 @@ export default defineComponent({
             if (!this.dataset?.federation_id) await this.loadDatasetDrivers()
         },
         //#endregion ================================================================================================
-        openSavingDialog() {
+        async openSavingDialog() {
             if (this.returnQueryMode) {
                 this.$emit('querySaved', this.qbe?.qbeJSONQuery)
             } else {
+                if (this.sourceDataset && this.qbe?.dsTypeCd) {
+                    if (this.qbe?.dsTypeCd === 'File' && !this.qbe.persistTableName) {
+                        await this.$http
+                            .get(import.meta.env.VITE_QBE_PATH + `qbequery/persistTableName?sourceDatasetName=${this.qbe.label}&SBI_EXECUTION_ID=${this.uniqueID}`)
+                            .then((response: AxiosResponse<any>) => {
+                                if (this.qbe) this.qbe.persistTableName = response.data
+                            })
+                            .catch(() => {})
+                    }
+
+                    // Insert - IN
+                    if (this.qbe?.dsTypeCd !== this.DERIVED_CONST) {
+                        this.qbe.id = null
+                        this.qbe.name = this.qbe.name + ' ' + this.DERIVED_CONST
+                        this.qbe.label = this.qbe.label + ' ' + this.DERIVED_CONST
+                        this.qbe.sourceDatasetLabel = this.sourceDataset?.label
+                        this.qbe.isPersisted = false
+                    }
+                    // Insert - OUT
+
+                    this.qbe.dsTypeCd = this.DERIVED_CONST
+                    this.qbe.qbeDataSource = this.sourceDataset?.dataSource
+                }
                 this.savingDialogVisible = true
             }
         }
@@ -1044,28 +1133,34 @@ export default defineComponent({
     height: 100vh;
     width: calc(100vw - #{54px});
     margin: 0;
+
     .p-dialog-content {
         padding: 0;
         margin: 0;
         flex: 1;
         overflow: hidden;
     }
+
     .p-dialog-header {
         padding: 0;
         margin: 0;
     }
 }
+
 .qbe-detail-view {
     display: flex;
     flex-direction: column;
     flex: 3;
 }
+
 .derived-entities-toggle {
     height: 25%;
 }
+
 .qbe-scroll-panel .p-scrollpanel-content {
     padding: 0 !important;
 }
+
 .qbe-scroll-panel .p-scrollpanel-bar {
     background-color: #43749eb6;
     width: 5px;

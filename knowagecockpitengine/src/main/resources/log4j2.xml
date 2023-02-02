@@ -39,6 +39,17 @@
 		<logger name="it.eng.spagobi.commons.utilities.urls.WebUrlBuilder" level="error" additivity="false">
 			<AppenderRef ref="KNOWAGE_COCKPIT_ENGINE" />
 		</logger>
+
+		<logger name="it.eng.knowage.engine.cockpit.api.export.pdf.nodejs.PdfExporterV2" level="info" additivity="false">
+			<AppenderRef ref="KNOWAGE_COCKPIT_ENGINE" />
+		</logger>
+		<logger name="it.eng.knowage.engine.cockpit.api.export.pdf.nodejs.AbstractNodeJSBasedExporter" level="info" additivity="false">
+			<AppenderRef ref="KNOWAGE_COCKPIT_ENGINE" />
+		</logger>
+		<logger name="it.eng.knowage.engine.cockpit.api.export.excel.ExcelExporter" level="info" additivity="false">
+			<AppenderRef ref="KNOWAGE_COCKPIT_ENGINE" />
+		</logger>
+
 		<Root level="error">
 			<AppenderRef ref="KNOWAGE_COCKPIT_ENGINE" />
 		</Root>

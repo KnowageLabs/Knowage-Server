@@ -100,16 +100,15 @@ export default defineComponent({
             return this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=${type}`)
         },
         async getDomainData() {
-            this.getDomainByType('DS_SCOPE').then((response: AxiosResponse<any>) => (this.scopeTypes = response.data))
-            this.getDomainByType('DATASET_CATEGORY').then((response: AxiosResponse<any>) => (this.categoryTypes = response.data))
-            this.getDomainByType('DATA_SET_TYPE').then(
-                (response: AxiosResponse<any>) =>
-                    (this.datasetTypes = response.data.filter((cd) => {
-                        return cd.VALUE_CD != 'Custom' && cd.VALUE_CD != 'Federated'
-                    }))
-            )
-            this.getDomainByType('TRANSFORMER_TYPE').then((response: AxiosResponse<any>) => (this.transformationDataset = response.data[0]))
-            this.getDomainByType('SCRIPT_TYPE').then((response: AxiosResponse<any>) => (this.scriptTypes = response.data))
+            await this.getDomainByType('DS_SCOPE').then((response: AxiosResponse<any>) => (this.scopeTypes = response.data))
+            await this.getDomainByType('DATASET_CATEGORY').then((response: AxiosResponse<any>) => (this.categoryTypes = response.data))
+            await this.getDomainByType('DATA_SET_TYPE').then((response: AxiosResponse<any>) => {
+                this.datasetTypes = response.data.filter((cd) => {
+                    return cd.VALUE_CD != 'Custom' && cd.VALUE_CD != 'Federated'
+                })
+            })
+            await this.getDomainByType('TRANSFORMER_TYPE').then((response: AxiosResponse<any>) => (this.transformationDataset = response.data[0]))
+            await this.getDomainByType('SCRIPT_TYPE').then((response: AxiosResponse<any>) => (this.scriptTypes = response.data))
         },
         async getDatasources() {
             this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasources`).then((response: AxiosResponse<any>) => (this.dataSources = response.data))
@@ -125,7 +124,7 @@ export default defineComponent({
         },
         async getDatasets() {
             let url = '{"reverseOrdering":false,"columnOrdering":""}'
-            this.$http
+            await this.$http
                 .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/datasets/catalog?offset=0&fetchSize=0&ordering=` + encodeURI(url))
                 .then((response: AxiosResponse<any>) => (this.listOfDatasets = [...response.data.root]))
                 .finally(() => (this.loading = false))
@@ -200,11 +199,13 @@ export default defineComponent({
         onCreate(event) {
             this.touched = false
             this.getDatasets()
+            this.getDomainData()
             this.$router.push(`/dataset-management/${event.data.id}`)
         },
         onUpdate() {
             this.touched = false
             this.getDatasets()
+            this.getDomainData()
         }
     }
 })

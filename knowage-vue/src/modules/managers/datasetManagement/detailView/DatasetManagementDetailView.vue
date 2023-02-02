@@ -69,6 +69,19 @@
             </TabPanel>
         </TabView>
 
+        <Button v-if="selectedDataset.dsTypeCd == 'Prepared' || isOpenInQBEVisible(selectedDataset)" icon="far fa-share-from-square" class="p-button-text p-button-rounded p-button-plain advancedTransformations" @click="toggleMenu($event, selectedDataset)"></Button>
+        <PreparedDataset
+            v-if="selectedDataset.dsTypeCd == 'Prepared'"
+            :selectedDataset="selectedDataset"
+            :showMonitoringDialog="showMonitoringDialog"
+            @closeMonitoringDialog="showMonitoringDialog = false"
+            :showDataPreparation="showDataPreparation"
+            @closeDataPreparation="showDataPreparation = false"
+        />
+        <QBE v-if="qbeVisible" :sourceDataset="selectedDataset" @close="closeQbe" />
+
+        <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" :popup="true" />
+
         <WorkspaceDataPreviewDialog :visible="showPreviewDialog" :propDataset="previewDataset" @close="showPreviewDialog = false" :previewType="'dataset'" :loadFromDatasetManagement="true"></WorkspaceDataPreviewDialog>
     </div>
 </template>
@@ -88,9 +101,12 @@ import TabPanel from 'primevue/tabpanel'
 import WorkspaceDataPreviewDialog from '@/modules/workspace/views/dataView/dialogs/WorkspaceDataPreviewDialog.vue'
 import mainStore from '../../../../App.store'
 import { mapState, mapActions } from 'pinia'
+import Menu from 'primevue/menu'
+import PreparedDataset from '@/modules/managers/datasetManagement/detailView/preparedDataset/DatasetManagementPreparedDataset.vue'
+import QBE from '@/modules/qbe/QBE.vue'
 
 export default defineComponent({
-    components: { TabView, TabPanel, DetailCard, AdvancedCard, LinkCard, TypeCard, MetadataCard, WorkspaceDataPreviewDialog },
+    components: { TabView, TabPanel, DetailCard, AdvancedCard, LinkCard, TypeCard, MetadataCard, WorkspaceDataPreviewDialog, Menu, PreparedDataset, QBE },
     props: {
         id: { type: String, required: false },
         scopeTypes: { type: Array as any, required: true },
@@ -133,7 +149,11 @@ export default defineComponent({
             loadingVersion: false,
             showPreviewDialog: false,
             showMetadataQueryInfo: false,
-            activeTab: 0
+            activeTab: 0,
+            qbeVisible: false,
+            menuButtons: [] as any,
+            showMonitoringDialog: false,
+            showDataPreparation: false
         }
     },
     created() {
@@ -185,14 +205,11 @@ export default defineComponent({
                 await this.getSelectedDataset()
                 await this.getSelectedDatasetVersions()
                 this.insertCurrentVersion()
-                this.filteredDatasetTypes = this.datasetTypes
             } else {
                 this.selectedDataset = { ...detailViewDescriptor.newDataset }
                 this.selectedDatasetVersions = []
-                this.filteredDatasetTypes = this.datasetTypes.filter((cd) => {
-                    return cd.VALUE_CD != 'Prepared'
-                })
             }
+            this.filteredDatasetTypes = this.datasetTypes
         },
         insertCurrentVersion() {
             if (this.selectedDatasetVersions.length === 0) {
@@ -238,19 +255,37 @@ export default defineComponent({
                                 icon: 'pi pi-exclamation-triangle',
                                 message: this.$t('managers.datasetManagement.dataPreparation.datasetInvolvedIntoDataPrep'),
                                 header: this.$t('managers.datasetManagement.saveTitle'),
-                                accept: () => this.proceedOnSaving(dsToSave)
+                                accept: () => this.checkDerived(dsToSave)
                             })
                         } else {
-                            this.proceedOnSaving(dsToSave)
+                            this.checkDerived(dsToSave)
                         }
                     })
                     .catch((err) => {
-                        if (err.response.status === 404) this.proceedOnSaving(dsToSave)
-                        else this.setError({ title: 'Server error', msg: err.data.errors[0].message })
+                        this.setError({ title: 'Server error', msg: err.data.errors[0].message })
                     })
             } else {
-                this.proceedOnSaving(dsToSave)
+                this.checkDerived(dsToSave)
             }
+        },
+        async checkDerived(dsToSave) {
+            await this.$http
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/datasets/dataset/' + dsToSave.label + '/derived', { headers: { 'X-Disable-Interceptor': 'true' } })
+                .then((response: AxiosResponse<any>) => {
+                    if (response.data) {
+                        this.$confirm.require({
+                            icon: 'pi pi-exclamation-triangle',
+                            message: this.$t('managers.datasetManagement.derived.checkForExistingDerivedDatasets'),
+                            header: this.$t('managers.datasetManagement.saveTitle'),
+                            accept: () => this.proceedOnSaving(dsToSave)
+                        })
+                    } else {
+                        this.proceedOnSaving(dsToSave)
+                    }
+                })
+                .catch((err) => {
+                    this.setError({ title: 'Server error', msg: err.data.errors[0].message })
+                })
         },
         async proceedOnSaving(dsToSave) {
             this.$emit('showSavingSpinner')
@@ -483,6 +518,54 @@ export default defineComponent({
         onOlderVersionLoaded(event) {
             this.$emit('olderVersionLoaded')
             this.selectedDataset = { ...event }
+        },
+        toggleMenu(event: Event, dataset: any): void {
+            this.menuButtons = [] as any
+
+            if (this.isOpenInQBEVisible(this.selectedDataset)) {
+                this.menuButtons.push({
+                    key: 1,
+                    label: this.$t('workspace.myModels.openInQBE'),
+                    icon: 'fas fa-file-circle-question',
+                    command: () => {
+                        this.openDatasetInQbe()
+                    }
+                })
+            }
+
+            if (dataset.pars && dataset.pars?.length == 0) {
+                this.menuButtons.push({
+                    key: 2,
+                    label: this.$t('managers.datasetManagement.openDP'),
+                    icon: 'fas fa-cogs',
+                    command: () => {
+                        this.showDataPreparation = true
+                    }
+                })
+            }
+            if (dataset.dsTypeCd == 'Prepared') {
+                this.menuButtons.push({
+                    key: 3,
+                    label: this.$t('managers.datasetManagement.monitoring'),
+                    icon: 'pi pi-chart-line',
+                    command: () => {
+                        this.showMonitoringDialog = true
+                    }
+                })
+            }
+
+            // eslint-disable-next-line
+            // @ts-ignore
+            this.$refs.optionsMenu.toggle(event)
+        },
+        isOpenInQBEVisible(dataset: any) {
+            return dataset.pars?.length == 0 && ((dataset.isPersisted && dataset.dsTypeCd == 'File') || dataset.dsTypeCd == 'Query' || dataset.dsTypeCd == 'Flat')
+        },
+        openDatasetInQbe() {
+            this.qbeVisible = true
+        },
+        closeQbe() {
+            this.qbeVisible = false
         }
     }
 })
@@ -493,5 +576,12 @@ export default defineComponent({
     flex: 1;
     display: flex;
     flex-direction: column;
+}
+
+.advancedTransformations {
+    position: fixed;
+    right: 20px;
+    top: 40px;
+    z-index: 1000;
 }
 </style>

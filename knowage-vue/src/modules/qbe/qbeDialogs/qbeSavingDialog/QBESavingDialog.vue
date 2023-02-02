@@ -104,6 +104,7 @@ export default defineComponent({
         async saveDataset() {
             let dsToSave = { ...this.selectedDataset } as any
             dsToSave.pars ? '' : (dsToSave.pars = [])
+
             dsToSave.pythonEnvironment ? (dsToSave.pythonEnvironment = JSON.stringify(dsToSave.pythonEnvironment)) : ''
             dsToSave.meta ? (dsToSave.meta = await this.manageDatasetFieldMetadata(this.propMetadata)) : (dsToSave.meta = [])
 

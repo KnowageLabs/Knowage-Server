@@ -83,10 +83,11 @@ router.beforeEach((to, from, next) => {
     const checkRequired = !('/' == to.fullPath && '/' == from.fullPath)
     const loggedIn = localStorage.getItem('token')
 
-    const routes = ['registry', 'document-composite', 'report', 'office-doc', 'olap', 'map', 'report', '/kpi/', 'dossier', 'etl']
+    const validRoutes = ['registry', 'document-composite', 'report', 'office-doc', 'olap', 'map', 'report', '/kpi/', 'dossier', 'etl']
+    const invalidRoutes = ['olap-designer']
     if (checkRequired && !loggedIn) {
         authHelper.handleUnauthorized()
-    } else if (routes.some((el) => to.fullPath.includes(el))) {
+    } else if (validRoutes.some((el) => to.fullPath.includes(el)) && !invalidRoutes.some((el) => to.fullPath.includes(el))) {
         getCorrectRolesForExecutionForType('DOCUMENT', null, to.params.id).then(() => {
             next()
         })

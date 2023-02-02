@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogMF;
@@ -60,6 +61,7 @@ import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.commons.dao.dto.SbiCategory;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.container.ObjectUtils;
@@ -996,6 +998,61 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	}
 
 	@Override
+	public List<IDataSet> loadDerivedDataSetByLabel(String sourceLabel) {
+		List<IDataSet> toReturn;
+		Session session;
+		Transaction transaction;
+
+		logger.debug("IN");
+
+		toReturn = new ArrayList<IDataSet>();
+		session = null;
+		transaction = null;
+		try {
+			if (sourceLabel == null) {
+				throw new IllegalArgumentException("Input parameter [label] cannot be null");
+			}
+
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+				transaction = session.beginTransaction();
+				Assert.assertNotNull(transaction, "transaction cannot be null");
+			} catch (Throwable t) {
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
+			}
+
+			Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.configuration like :sourceLabel and type = :derivedType");
+			hibQuery.setBoolean(0, true);
+			hibQuery.setParameter("sourceLabel", "%" + sourceLabel + "%");
+			hibQuery.setParameter("derivedType", DataSetConstants.DS_DERIVED);
+			List<SbiDataSet> sbiDataSet = hibQuery.list();
+			if (sbiDataSet != null) {
+				for (SbiDataSet sbiDataSetitem : sbiDataSet) {
+					toReturn.add(DataSetFactory.toDataSet(sbiDataSetitem, this.getUserProfile()));
+				}
+
+			} else {
+				logger.debug("Impossible to load dataset with label [" + sourceLabel + "].");
+			}
+
+			transaction.commit();
+
+		} catch (Throwable t) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDAOException("An unexpected error occured while loading dataset whose label is equal to [" + sourceLabel + "]", t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		return toReturn;
+	}
+
+	@Override
 	public IDataSet loadDataSetByLabel(String label) {
 		IDataSet toReturn;
 		Session session;
@@ -1043,6 +1100,23 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			logger.debug("OUT");
 		}
 		return toReturn;
+	}
+
+	@Override
+	public IDataSet loadDataSetByLabelAndUserCategories(String label) {
+		ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
+		IDataSet datasetToReturn = this.loadDataSetByLabel(label);
+		Integer categoryId = datasetToReturn.getCategoryId();
+		List<String> result;
+		try {
+			result = manageRolesByCategory((List<String>) this.getUserProfile().getRoles(), categoryDao, categoryId);
+		} catch (EMFUserError | EMFInternalError e) {
+			throw new SpagoBIDAOException("An unexpected error occured while loading dataset whose label is equal to [" + label + "]", e);
+		}
+		if (result != null && !result.isEmpty())
+			return datasetToReturn;
+
+		return null;
 	}
 
 	@Override
@@ -2948,5 +3022,29 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		}
 
 		return ret;
+	}
+
+	/**
+	 * @param roles
+	 * @param categoryDao
+	 * @param categoryId
+	 * @return
+	 * @throws EMFUserError
+	 */
+	private List<String> manageRolesByCategory(List<String> roles, ICategoryDAO categoryDao, Integer categoryId) throws EMFUserError {
+		List<String> correctRoles;
+		if (categoryId != null) {
+			List<String> rolesByCategory = getRolesByCategory(categoryDao, categoryId);
+			roles.retainAll(rolesByCategory);
+			correctRoles = roles;
+		} else {
+			correctRoles = roles.stream().collect(Collectors.toList());
+		}
+		return correctRoles;
+	}
+
+	private List<String> getRolesByCategory(ICategoryDAO categoryDao, Integer categoryId) throws EMFUserError {
+		List<String> rolesByCategory = categoryDao.getRolesByCategory(categoryId).stream().map(SbiExtRoles::getName).collect(Collectors.toList());
+		return rolesByCategory;
 	}
 }

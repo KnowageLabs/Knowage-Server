@@ -92,6 +92,7 @@ import it.eng.spagobi.tools.dataset.common.datawriter.IDataWriter;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
+import it.eng.spagobi.tools.dataset.common.transformer.DataStoreStatsTransformer;
 import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
@@ -293,8 +294,10 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				functionTransformer.transform(dataStore);
 			}
 
-			DecryptionDataStoreTransformer ddt = new DecryptionDataStoreTransformer(dataSet);
-			ddt.transform(dataStore);
+			IDataStoreTransformer transformer = new DecryptionDataStoreTransformer(dataSet);
+			transformer.transform(dataStore);
+			transformer = new DataStoreStatsTransformer();
+			transformer.transform(dataStore);
 
 			IDataWriter dataWriter = getDataStoreWriter();
 

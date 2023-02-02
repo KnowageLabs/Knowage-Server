@@ -1,7 +1,10 @@
 package it.eng.knowage.engine.cockpit.api.export.pdf.nodejs;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
@@ -274,6 +277,8 @@ public abstract class AbstractNodeJSBasedExporter {
 				Integer.toString(sheetCount), Integer.toString(sheetWidth), Integer.toString(sheetHeight), Double.toString(deviceScaleFactor),
 				Boolean.toString(isMultiSheet));
 
+		setWorkingDirectory(cockpitExportScriptPath, processBuilder);
+
 		logger.info("Node complete command line: " + processBuilder.command());
 
 		logger.info("Starting export script");
@@ -283,7 +288,9 @@ public abstract class AbstractNodeJSBasedExporter {
 		exec.waitFor();
 		logger.warn("Exit value: " + exec.exitValue());
 
-		final List<InputStream> imagesInputStreams = new ArrayList<InputStream>();
+		logOutputToCoreLog(exec);
+
+		final List<InputStream> imagesInputStreams = new ArrayList<>();
 
 		try {
 			Files.walkFileTree(outputDir, new SheetImageFileVisitor(imagesInputStreams));
@@ -306,4 +313,20 @@ public abstract class AbstractNodeJSBasedExporter {
 			}
 		}
 	}
+
+	private void logOutputToCoreLog(Process exec) throws IOException {
+		InputStreamReader isr = new InputStreamReader(exec.getInputStream());
+		BufferedReader b = new BufferedReader(isr);
+		String line = null;
+		logger.warn("Process output");
+		while((line = b.readLine()) != null) {
+			logger.warn(line);
+		}
+	}
+
+	private void setWorkingDirectory(String cockpitExportScriptPath, ProcessBuilder processBuilder) {
+		// Required by puppeteer v19
+		processBuilder.directory(new File(cockpitExportScriptPath));
+	}
+
 }

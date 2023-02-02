@@ -212,9 +212,7 @@ public class DataSetJSONSerializer implements Serializer {
 						jsonPar.put("type", type);
 						jsonPar.put("multiValue", multiValue);
 
-						Object defaultValueAsObject = ParameterManagerFactory.getInstance()
-								.defaultManager()
-								.fromBeToFe(type, defaultValue, multiValue);
+						Object defaultValueAsObject = ParameterManagerFactory.getInstance().defaultManager().fromBeToFe(type, defaultValue, multiValue);
 
 						jsonPar.put(ManageDatasets.DEFAULT_VALUE_PARAM, defaultValueAsObject);
 
@@ -409,6 +407,10 @@ public class DataSetJSONSerializer implements Serializer {
 					Integer dataSourceId = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE)).getDsId();
 					result.put(QBE_DATA_SOURCE_ID, dataSourceId);
 					result.put(QBE_DATAMARTS, jsonConf.getString(DataSetConstants.QBE_DATAMARTS));
+				} else if (type.equalsIgnoreCase(DataSetConstants.DERIVED)) {
+					result.put("sqlQuery", jsonConf.getString("sqlQuery"));
+					result.put("sourceDatasetLabel", jsonConf.getString("sourceDatasetLabel"));
+					result.put(QBE_JSON_QUERY, jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
 				} else if (type.equalsIgnoreCase(DataSetConstants.FEDERATED)) {
 					result.put(QBE_JSON_QUERY, jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
 					result.put(QBE_DATA_SOURCE, jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));
@@ -561,7 +563,7 @@ public class DataSetJSONSerializer implements Serializer {
 		for (String ja : RESTDataSetConstants.REST_JSON_OBJECT_ATTRIBUTES) {
 			Object prop = conf.get(ja);
 			if (prop != null) {
-				result.put(ja, new JSONObject(prop));
+				result.put(ja, new JSONObject(prop).toString());
 			}
 		}
 

@@ -112,7 +112,9 @@ public class GetTreeAction extends AbstractQbeEngineAction {
 
 			datamartName = getAttributeAsString(DATAMART_NAME);
 
-			if (datamartName != null && !datamartName.equals("null")) {
+			boolean openDatasetInQbe = getAttributeAsBoolean("openDatasetInQbe");
+
+			if (!openDatasetInQbe && datamartName != null && !datamartName.equals("null")) {
 				// if(datamartName.equals("null"))
 				// datamartName="";
 				nodes = qbeBuilder.getQbeTree(getDataSource(), getLocale(), datamartName, userProfile);

@@ -57,7 +57,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * The Class HQLStatement.
-  * @deprecated Used in the old QBE
+ *
+ * @deprecated Used in the old QBE
  */
 @Deprecated
 public class HQLStatement extends AbstractStatement {
@@ -80,8 +81,7 @@ public class HQLStatement extends AbstractStatement {
 
 			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
-				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null,
-						"Operand cannot be null when the operator is " + getName());
+				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
 				return leftHandValue + "=" + rightHandValues[0];
 			}
 		});
@@ -92,8 +92,7 @@ public class HQLStatement extends AbstractStatement {
 
 			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
-				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null,
-						"Operand cannot be null when the operator is " + getName());
+				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
 				return leftHandValue + "!=" + rightHandValues[0];
 			}
 		});
@@ -104,8 +103,7 @@ public class HQLStatement extends AbstractStatement {
 
 			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
-				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null,
-						"Operand cannot be null when the operator is " + getName());
+				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
 				return leftHandValue + ">" + rightHandValues[0];
 			}
 		});
@@ -116,8 +114,7 @@ public class HQLStatement extends AbstractStatement {
 
 			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
-				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null,
-						"Operand cannot be null when the operator is " + getName());
+				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
 				return leftHandValue + ">=" + rightHandValues[0];
 			}
 		});
@@ -128,8 +125,7 @@ public class HQLStatement extends AbstractStatement {
 
 			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
-				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null,
-						"Operand cannot be null when the operator is " + getName());
+				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
 				return leftHandValue + "<" + rightHandValues[0];
 			}
 		});
@@ -140,8 +136,7 @@ public class HQLStatement extends AbstractStatement {
 
 			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
-				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null,
-						"Operand cannot be null when the operator is " + getName());
+				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
 				return leftHandValue + "<=" + rightHandValues[0];
 			}
 		});
@@ -152,8 +147,7 @@ public class HQLStatement extends AbstractStatement {
 
 			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
-				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null,
-						"Operand cannot be null when the operator is " + getName());
+				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
 				String rightHandValue = rightHandValues[0].trim();
 				rightHandValue = rightHandValue.substring(1, rightHandValue.length() - 1);
 				rightHandValue = rightHandValue + "%";
@@ -167,8 +161,7 @@ public class HQLStatement extends AbstractStatement {
 
 			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
-				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null,
-						"Operand cannot be null when the operator is " + getName());
+				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
 				String rightHandValue = rightHandValues[0].trim();
 				rightHandValue = rightHandValue.substring(1, rightHandValue.length() - 1);
 				rightHandValue = rightHandValue + "%";
@@ -182,8 +175,7 @@ public class HQLStatement extends AbstractStatement {
 
 			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
-				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null,
-						"Operand cannot be null when the operator is " + getName());
+				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
 				String rightHandValue = rightHandValues[0].trim();
 				rightHandValue = rightHandValue.substring(1, rightHandValue.length() - 1);
 				rightHandValue = "%" + rightHandValue;
@@ -197,8 +189,7 @@ public class HQLStatement extends AbstractStatement {
 
 			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
-				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null,
-						"Operand cannot be null when the operator is " + getName());
+				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
 				String rightHandValue = rightHandValues[0].trim();
 				rightHandValue = rightHandValue.substring(1, rightHandValue.length() - 1);
 				rightHandValue = "%" + rightHandValue;
@@ -212,8 +203,7 @@ public class HQLStatement extends AbstractStatement {
 
 			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
-				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null,
-						"Operand cannot be null when the operator is " + getName());
+				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
 				String rightHandValue = rightHandValues[0].trim();
 				rightHandValue = rightHandValue.substring(1, rightHandValue.length() - 1);
 				rightHandValue = "%" + rightHandValue + "%";
@@ -227,8 +217,7 @@ public class HQLStatement extends AbstractStatement {
 
 			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
-				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null,
-						"Operand cannot be null when the operator is " + getName());
+				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
 				String rightHandValue = rightHandValues[0].trim();
 				rightHandValue = rightHandValue.substring(1, rightHandValue.length() - 1);
 				rightHandValue = "%" + rightHandValue + "%";
@@ -516,8 +505,8 @@ public class HQLStatement extends AbstractStatement {
 		try {
 
 			targetQueryEntityAliasesMap = (Map) entityAliasesMaps.get(query.getId());
-			Assert.assertNotNull(targetQueryEntityAliasesMap, "Entity aliases map for query [" + query.getId()
-					+ "] cannot be null in order to execute method [buildUserProvidedWhereField]");
+			Assert.assertNotNull(targetQueryEntityAliasesMap,
+					"Entity aliases map for query [" + query.getId() + "] cannot be null in order to execute method [buildUserProvidedWhereField]");
 
 			datamartField = getDataSource().getModelStructure().getField(operand.values[0]);
 			Assert.assertNotNull(datamartField, "DataMart does not cantain a field named [" + operand.values[0] + "]");
@@ -572,8 +561,8 @@ public class HQLStatement extends AbstractStatement {
 			logger.debug("operand  is equals to [" + operand.values[0] + "]");
 
 			chunks = operand.values[0].split(" ");
-			Assert.assertTrue(chunks.length >= 2, "Operand [" + chunks.toString()
-					+ "] does not contains enougth informations in order to resolve the reference to parent field");
+			Assert.assertTrue(chunks.length >= 2,
+					"Operand [" + chunks.toString() + "] does not contains enougth informations in order to resolve the reference to parent field");
 
 			parentQueryId = chunks[0];
 			logger.debug("where right-hand field belonging query [" + parentQueryId + "]");
@@ -592,15 +581,13 @@ public class HQLStatement extends AbstractStatement {
 			Map parentEntityAliases = (Map) entityAliasesMaps.get(parentQueryId);
 			if (parentEntityAliases != null) {
 				if (!parentEntityAliases.containsKey(rootEntity.getUniqueName())) {
-					Assert.assertUnreachable(
-							"Filter of subquery [" + query.getId() + "] refers to a non " + "existing parent query ["
-									+ parentQueryId + "] entity [" + rootEntity.getUniqueName() + "]");
+					Assert.assertUnreachable("Filter of subquery [" + query.getId() + "] refers to a non " + "existing parent query [" + parentQueryId
+							+ "] entity [" + rootEntity.getUniqueName() + "]");
 				}
 				rootEntityAlias = (String) parentEntityAliases.get(rootEntity.getUniqueName());
 			} else {
 				rootEntityAlias = "unresoved_alias";
-				logger.warn("Impossible to get aliases map for parent query [" + parentQueryId
-						+ "]. Probably the parent query ha not been compiled yet");
+				logger.warn("Impossible to get aliases map for parent query [" + parentQueryId + "]. Probably the parent query ha not been compiled yet");
 				logger.warn("Query [" + query.getId() + "] refers entities of its parent query [" + parentQueryId
 						+ "] so the generated statement wont be executable until the parent query will be compiled");
 			}
@@ -644,16 +631,14 @@ public class HQLStatement extends AbstractStatement {
 		logger.debug("IN");
 
 		try {
-			Assert.assertNotNull(operand,
-					"Input parameter [operand] cannot be null in order to execute method [buildUserProvidedWhereField]");
+			Assert.assertNotNull(operand, "Input parameter [operand] cannot be null in order to execute method [buildUserProvidedWhereField]");
 			operandElement = new String[] { "" };
 
 			if (OPERAND_TYPE_STATIC.equalsIgnoreCase(operand.type) || "Static Value".equalsIgnoreCase(operand.type)) {
 				operandElement = buildStaticOperand(operand);
 			} else if (OPERAND_TYPE_SUBQUERY.equalsIgnoreCase(operand.type)) {
 				operandElement = new String[] { buildQueryOperand(operand) };
-			} else if (OPERAND_TYPE_SIMPLE_FIELD.equalsIgnoreCase(operand.type)
-					|| OPERAND_TYPE_INLINE_CALCULATED_FIELD.equalsIgnoreCase(operand.type)) {
+			} else if (OPERAND_TYPE_SIMPLE_FIELD.equalsIgnoreCase(operand.type) || OPERAND_TYPE_INLINE_CALCULATED_FIELD.equalsIgnoreCase(operand.type)) {
 				operandElement = new String[] { buildFieldOperand(operand, query, entityAliasesMaps) };
 			} else if (OPERAND_TYPE_PARENT_FIELD.equalsIgnoreCase(operand.type)) {
 				operandElement = new String[] { buildParentFieldOperand(operand, query, entityAliasesMaps) };
@@ -679,8 +664,7 @@ public class HQLStatement extends AbstractStatement {
 				int endType = leadOperand.values[0].indexOf("\"", startType);
 				String type = leadOperand.values[0].substring(startType, endType);
 				boundedValue = getValueBounded(operandValueToBound, type);
-			} else if (OPERAND_TYPE_SIMPLE_FIELD.equalsIgnoreCase(leadOperand.type)
-					|| OPERAND_TYPE_PARENT_FIELD.equalsIgnoreCase(leadOperand.type)) {
+			} else if (OPERAND_TYPE_SIMPLE_FIELD.equalsIgnoreCase(leadOperand.type) || OPERAND_TYPE_PARENT_FIELD.equalsIgnoreCase(leadOperand.type)) {
 
 				IModelField datamartField = getDataSource().getModelStructure().getField(leadOperand.values[0]);
 				boundedValue = getValueBounded(operandValueToBound, datamartField.getType());
@@ -700,8 +684,7 @@ public class HQLStatement extends AbstractStatement {
 
 		boundedValue = operandValueToBound;
 
-		if (operandType.equalsIgnoreCase("STRING") || operandType.equalsIgnoreCase("CHARACTER")
-				|| operandType.equalsIgnoreCase("java.lang.String")
+		if (operandType.equalsIgnoreCase("STRING") || operandType.equalsIgnoreCase("CHARACTER") || operandType.equalsIgnoreCase("java.lang.String")
 				|| operandType.equalsIgnoreCase("java.lang.Character")) {
 			// if the value is already surrounded by quotes, does not neither
 			// add quotes nor escape quotes
@@ -711,15 +694,14 @@ public class HQLStatement extends AbstractStatement {
 				operandValueToBound = StringUtils.escapeQuotes(operandValueToBound);
 				return StringUtils.bound(operandValueToBound, "'");
 			}
-		} else if (operandType.equalsIgnoreCase("TIMESTAMP") || operandType.equalsIgnoreCase("DATE")
-				|| operandType.equalsIgnoreCase("java.sql.TIMESTAMP") || operandType.equalsIgnoreCase("java.sql.date")
-				|| operandType.equalsIgnoreCase("java.util.date")) {
+		} else if (operandType.equalsIgnoreCase("TIMESTAMP") || operandType.equalsIgnoreCase("DATE") || operandType.equalsIgnoreCase("java.sql.TIMESTAMP")
+				|| operandType.equalsIgnoreCase("java.sql.date") || operandType.equalsIgnoreCase("java.util.date")) {
 
 			if (operandValueToBound == null || operandValueToBound.equals("")) {
 				boundedValue = operandValueToBound;
 			} else {
-				it.eng.spagobi.tools.datasource.bo.IDataSource connection = (it.eng.spagobi.tools.datasource.bo.IDataSource) getDataSource()
-						.getConfiguration().loadDataSourceProperties().get("datasource");
+				it.eng.spagobi.tools.datasource.bo.IDataSource connection = (it.eng.spagobi.tools.datasource.bo.IDataSource) getDataSource().getConfiguration()
+						.loadDataSourceProperties().get("datasource");
 				String dbDialect = connection.getHibDialectClass();
 
 				String userDateFormatPattern = (String) getParameters().get(EngineConstants.ENV_USER_DATE_FORMAT);
@@ -728,8 +710,8 @@ public class HQLStatement extends AbstractStatement {
 					operandValueToBoundDate = userDataFormat.parse(operandValueToBound);
 				} catch (ParseException e) {
 					logger.error("Error parsing the date " + operandValueToBound);
-					throw new SpagoBIRuntimeException("Error parsing the date " + operandValueToBound
-							+ ". Check the format, it should be " + userDateFormatPattern);
+					throw new SpagoBIRuntimeException(
+							"Error parsing the date " + operandValueToBound + ". Check the format, it should be " + userDateFormatPattern);
 				}
 
 				boundedValue = composeStringToDt(dbDialect, operandValueToBoundDate);
@@ -797,11 +779,9 @@ public class HQLStatement extends AbstractStatement {
 				}
 			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_TERADATA)) {
 				/*
-				 * Unfortunately we cannot use neither CAST(" + dateStr + " AS
-				 * DATE FORMAT 'dd/mm/yyyy') nor CAST((" + dateStr + "
-				 * (Date,Format 'dd/mm/yyyy')) As Date) because Hibernate does
-				 * not recognize (and validate) those SQL functions. Therefore
-				 * we must use a predefined date format (yyyy-MM-dd).
+				 * Unfortunately we cannot use neither CAST(" + dateStr + " AS DATE FORMAT 'dd/mm/yyyy') nor CAST((" + dateStr + " (Date,Format 'dd/mm/yyyy'))
+				 * As Date) because Hibernate does not recognize (and validate) those SQL functions. Therefore we must use a predefined date format
+				 * (yyyy-MM-dd).
 				 */
 				try {
 					DateFormat dateFormat;
@@ -834,20 +814,17 @@ public class HQLStatement extends AbstractStatement {
 		try {
 			IConditionalOperator conditionalOperator = null;
 			conditionalOperator = (IConditionalOperator) conditionalOperators.get(whereField.getOperator());
-			Assert.assertNotNull(conditionalOperator,
-					"Unsopported operator " + whereField.getOperator() + " used in query definition");
+			Assert.assertNotNull(conditionalOperator, "Unsopported operator " + whereField.getOperator() + " used in query definition");
 
 			if (whereField.getLeftOperand().values[0].contains("expression")) {
-				whereClauseElement = buildInLineCalculatedFieldClause(whereField.getOperator(),
-						whereField.getLeftOperand(), whereField.isPromptable(), whereField.getRightOperand(), query,
-						entityAliasesMaps, conditionalOperator);
+				whereClauseElement = buildInLineCalculatedFieldClause(whereField.getOperator(), whereField.getLeftOperand(), whereField.isPromptable(),
+						whereField.getRightOperand(), query, entityAliasesMaps, conditionalOperator);
 			} else {
 
 				leftOperandElements = buildOperand(whereField.getLeftOperand(), query, entityAliasesMaps);
 
 				if ((OPERAND_TYPE_STATIC.equalsIgnoreCase(whereField.getRightOperand().type)
-						|| "Static Value".equalsIgnoreCase(whereField.getRightOperand().type))
-						&& whereField.isPromptable()) {
+						|| "Static Value".equalsIgnoreCase(whereField.getRightOperand().type)) && whereField.isPromptable()) {
 					// get last value first (the last value edited by the user)
 					rightOperandElements = whereField.getRightOperand().lastValues;
 				} else {
@@ -857,14 +834,12 @@ public class HQLStatement extends AbstractStatement {
 
 				if (OPERAND_TYPE_STATIC.equalsIgnoreCase(whereField.getLeftOperand().type)
 						|| "Static Value".equalsIgnoreCase(whereField.getLeftOperand().type)) {
-					leftOperandElements = getTypeBoundedStaticOperand(whereField.getRightOperand(),
-							whereField.getOperator(), leftOperandElements);
+					leftOperandElements = getTypeBoundedStaticOperand(whereField.getRightOperand(), whereField.getOperator(), leftOperandElements);
 				}
 
 				if (OPERAND_TYPE_STATIC.equalsIgnoreCase(whereField.getRightOperand().type)
 						|| "Static Value".equalsIgnoreCase(whereField.getRightOperand().type)) {
-					rightOperandElements = getTypeBoundedStaticOperand(whereField.getLeftOperand(),
-							whereField.getOperator(), rightOperandElements);
+					rightOperandElements = getTypeBoundedStaticOperand(whereField.getLeftOperand(), whereField.getOperator(), rightOperandElements);
 				}
 
 				whereClauseElement = conditionalOperator.apply(leftOperandElements[0], rightOperandElements);
@@ -880,32 +855,25 @@ public class HQLStatement extends AbstractStatement {
 	}
 
 	/**
-	 * Builds the sql statement (for the having or the where clause) for the
-	 * calculate fields.
+	 * Builds the sql statement (for the having or the where clause) for the calculate fields.
 	 *
-	 * @param operator
-	 *            the operator of the clause
-	 * @param leftOperand
-	 *            the left operand
+	 * @param operator          the operator of the clause
+	 * @param leftOperand       the left operand
 	 * @param isPromptable
-	 * @param rightOperand
-	 *            right operand
-	 * @param query
-	 *            the sql query
-	 * @param entityAliasesMaps
-	 *            the map of the entity involved in the query
+	 * @param rightOperand      right operand
+	 * @param query             the sql query
+	 * @param entityAliasesMaps the map of the entity involved in the query
 	 * @return
 	 */
-	private String buildInLineCalculatedFieldClause(String operator, Operand leftOperand, boolean isPromptable,
-			Operand rightOperand, Query query, Map entityAliasesMaps, IConditionalOperator conditionalOperator) {
+	private String buildInLineCalculatedFieldClause(String operator, Operand leftOperand, boolean isPromptable, Operand rightOperand, Query query,
+			Map entityAliasesMaps, IConditionalOperator conditionalOperator) {
 		String[] rightOperandElements;
 
 		String expr = leftOperand.values[0].substring(leftOperand.values[0].indexOf("\"expression\":\"") + 14);// .replace("\'",
 																												// "");
 		expr = expr.substring(0, expr.indexOf("\""));
 
-		logger.debug("Left operand (of a inline calculated field) for the filter clause of the query: "
-				+ leftOperand.values[0]);
+		logger.debug("Left operand (of a inline calculated field) for the filter clause of the query: " + leftOperand.values[0]);
 		logger.debug("Expression of a inline calculated field for the filter clause of the query: " + expr);
 
 		// String expr =
@@ -916,16 +884,14 @@ public class HQLStatement extends AbstractStatement {
 
 		logger.debug("IN");
 
-		if ((OPERAND_TYPE_STATIC.equalsIgnoreCase(rightOperand.type)
-				|| "Static Value".equalsIgnoreCase(rightOperand.type)) && isPromptable) {
+		if ((OPERAND_TYPE_STATIC.equalsIgnoreCase(rightOperand.type) || "Static Value".equalsIgnoreCase(rightOperand.type)) && isPromptable) {
 			// get last value first (the last value edited by the user)
 			rightOperandElements = rightOperand.lastValues;
 		} else {
 			rightOperandElements = buildOperand(rightOperand, query, entityAliasesMaps);
 		}
 
-		if (OPERAND_TYPE_STATIC.equalsIgnoreCase(rightOperand.type)
-				|| "Static Value".equalsIgnoreCase(rightOperand.type)) {
+		if (OPERAND_TYPE_STATIC.equalsIgnoreCase(rightOperand.type) || "Static Value".equalsIgnoreCase(rightOperand.type)) {
 			rightOperandElements = getTypeBoundedStaticOperand(leftOperand, operator, rightOperandElements);
 		}
 
@@ -960,8 +926,7 @@ public class HQLStatement extends AbstractStatement {
 					queryName = (String) datamartField.getQueryName().getFirst();
 					rootEntity = datamartField.getParent().getRoot();
 					rootEntityAlias = (String) entityAliases.get(rootEntity.getUniqueName());
-					queryName = ((SimpleSelectField) allSelectFields.get(i)).getFunction()
-							.apply(rootEntityAlias + "." + queryName);
+					queryName = ((SimpleSelectField) allSelectFields.get(i)).getFunction().apply(rootEntityAlias + "." + queryName);
 					aliasEntityMapping.add(queryName);
 					aliases.add(cfExpressionField);
 					break;
@@ -981,8 +946,7 @@ public class HQLStatement extends AbstractStatement {
 			}
 			pos = freshExpr.indexOf(alias, pos);
 			if (ind < aliases.size() && aliases.get(ind).equals(alias)) {
-				freshExpr = freshExpr.substring(0, pos) + aliasEntityMapping.get(ind)
-						+ freshExpr.substring(pos + alias.length());
+				freshExpr = freshExpr.substring(0, pos) + aliasEntityMapping.get(ind) + freshExpr.substring(pos + alias.length());
 				pos = pos + aliasEntityMapping.get(ind).length();
 				ind++;
 			} else {
@@ -1029,12 +993,10 @@ public class HQLStatement extends AbstractStatement {
 				if (field.getLeftOperand().values[0].contains("expression")) {
 					IConditionalOperator conditionalOperator = null;
 					conditionalOperator = (IConditionalOperator) conditionalOperators.get(field.getOperator());
-					Assert.assertNotNull(conditionalOperator,
-							"Unsopported operator " + field.getOperator() + " used in query definition");
+					Assert.assertNotNull(conditionalOperator, "Unsopported operator " + field.getOperator() + " used in query definition");
 
-					String havingClauseElement = buildInLineCalculatedFieldClause(field.getOperator(),
-							field.getLeftOperand(), field.isPromptable(), field.getRightOperand(), query,
-							entityAliasesMaps, conditionalOperator);
+					String havingClauseElement = buildInLineCalculatedFieldClause(field.getOperator(), field.getLeftOperand(), field.isPromptable(),
+							field.getRightOperand(), query, entityAliasesMaps, conditionalOperator);
 					buffer.append(havingClauseElement);
 				} else {
 					buffer.append(buildHavingClauseElement(field, query, entityAliasesMaps));
@@ -1060,14 +1022,12 @@ public class HQLStatement extends AbstractStatement {
 		try {
 			IConditionalOperator conditionalOperator = null;
 			conditionalOperator = (IConditionalOperator) conditionalOperators.get(havingField.getOperator());
-			Assert.assertNotNull(conditionalOperator,
-					"Unsopported operator " + havingField.getOperator() + " used in query definition");
+			Assert.assertNotNull(conditionalOperator, "Unsopported operator " + havingField.getOperator() + " used in query definition");
 
 			leftOperandElements = buildOperand(havingField.getLeftOperand(), query, entityAliasesMaps);
 
 			if ((OPERAND_TYPE_STATIC.equalsIgnoreCase(havingField.getRightOperand().type)
-					|| "Static Value".equalsIgnoreCase(havingField.getRightOperand().type))
-					&& havingField.isPromptable()) {
+					|| "Static Value".equalsIgnoreCase(havingField.getRightOperand().type)) && havingField.isPromptable()) {
 				// get last value first (the last value edited by the user)
 				rightOperandElements = havingField.getRightOperand().lastValues;
 			} else {
@@ -1076,14 +1036,12 @@ public class HQLStatement extends AbstractStatement {
 
 			if ((OPERAND_TYPE_STATIC.equalsIgnoreCase(havingField.getLeftOperand().type)
 					|| "Static Value".equalsIgnoreCase(havingField.getLeftOperand().type))) {
-				leftOperandElements = getTypeBoundedStaticOperand(havingField.getRightOperand(),
-						havingField.getOperator(), leftOperandElements);
+				leftOperandElements = getTypeBoundedStaticOperand(havingField.getRightOperand(), havingField.getOperator(), leftOperandElements);
 			}
 
 			if (OPERAND_TYPE_STATIC.equalsIgnoreCase(havingField.getRightOperand().type)
 					|| "Static Value".equalsIgnoreCase(havingField.getRightOperand().type)) {
-				rightOperandElements = getTypeBoundedStaticOperand(havingField.getLeftOperand(),
-						havingField.getOperator(), rightOperandElements);
+				rightOperandElements = getTypeBoundedStaticOperand(havingField.getLeftOperand(), havingField.getOperator(), rightOperandElements);
 			}
 
 			havingClauseElement = conditionalOperator.apply(leftOperandElements[0], rightOperandElements);
@@ -1274,8 +1232,7 @@ public class HQLStatement extends AbstractStatement {
 		while (it.hasNext()) {
 			selectField = (SimpleSelectField) it.next();
 
-			Assert.assertTrue(selectField.isOrderByField(),
-					"Field [" + selectField.getUniqueName() + "] is not an orderBy filed");
+			Assert.assertTrue(selectField.isOrderByField(), "Field [" + selectField.getUniqueName() + "] is not an orderBy filed");
 
 			IModelField datamartField = getDataSource().getModelStructure().getField(selectField.getUniqueName());
 			IModelEntity entity = datamartField.getParent().getRoot();
@@ -1338,10 +1295,8 @@ public class HQLStatement extends AbstractStatement {
 	}
 
 	/*
-	 * internally used to generate the parametric statement string. Shared by
-	 * the prepare method and the buildWhereClause method in order to
-	 * recursively generate subquery statement string to be embedded in the
-	 * parent query.
+	 * internally used to generate the parametric statement string. Shared by the prepare method and the buildWhereClause method in order to recursively
+	 * generate subquery statement string to be embedded in the parent query.
 	 */
 	private String compose(Query query, Map entityAliasesMaps) {
 		String queryStr;
@@ -1365,8 +1320,7 @@ public class HQLStatement extends AbstractStatement {
 		fromClause = buildFromClause(query, entityAliasesMaps);
 		havingClause = buildHavingClause(query, entityAliasesMaps);
 
-		queryStr = selectClause + " " + fromClause + " " + whereClause + " " + groupByClause + " " + havingClause + " "
-				+ orderByClause;
+		queryStr = selectClause + " " + fromClause + " " + whereClause + " " + groupByClause + " " + havingClause + " " + orderByClause;
 
 		Set subqueryIds;
 		try {
@@ -1439,5 +1393,11 @@ public class HQLStatement extends AbstractStatement {
 	@Override
 	public String toString() {
 		return this.getQueryString();
+	}
+
+	@Override
+	public String getQuerySQLString(String wrappedDatasetQuery) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

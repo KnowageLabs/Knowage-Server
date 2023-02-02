@@ -36,6 +36,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -43,7 +45,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.spagobi.tools.dataset.bo.DataSetVariable;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStoreStats;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
+import it.eng.spagobi.tools.dataset.common.datastore.FieldStats;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
@@ -182,6 +186,62 @@ public class JSONDataWriter implements IDataWriter {
 			throw new RuntimeException(e);
 		}
 		return result;
+	}
+
+	private Object write(DataStoreStats stats) {
+		JSONObject ret = new JSONObject();
+		Map<Integer, FieldStats> fields = stats.getFields();
+
+		for (Entry<Integer, FieldStats> entry : fields.entrySet()) {
+
+			Integer key = entry.getKey();
+			FieldStats value = entry.getValue();
+
+			try {
+				ret.put(Integer.toString(key + 1 /* because we add the recNo */), write(value));
+			} catch (JSONException e) {
+				// I put in a JSONObject, it should not generate any error
+			}
+		}
+
+		return ret;
+	}
+
+	private JSONObject write(FieldStats stats) {
+		JSONObject ret = new JSONObject();
+
+		Object max = stats.getMax();
+		Object min = stats.getMin();
+		Set<Object> distinct = stats.getDistinct();
+		int cardinality = stats.getCardinality();
+
+		try {
+			ret.put("max", max);
+		} catch (JSONException e) {
+			// TODO: handle exception
+		}
+
+		try {
+			ret.put("min", min);
+		} catch(JSONException e) {
+			// TODO: handle exception
+		}
+
+		try {
+			for (Object i : distinct) {
+				ret.append("distinct", i);
+			}
+		} catch (JSONException e) {
+			// TODO: handle exception
+		}
+
+		try {
+			ret.put("cardinality", cardinality);
+		} catch (JSONException e) {
+			// TODO: handle exception
+		}
+
+		return ret;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -363,6 +423,7 @@ public class JSONDataWriter implements IDataWriter {
 
 			recordsJSON = new JSONArray();
 			result.put(ROOT, recordsJSON);
+			result.put("stats", write(dataStore.getStats()));
 
 			// records
 			recNo = 0;

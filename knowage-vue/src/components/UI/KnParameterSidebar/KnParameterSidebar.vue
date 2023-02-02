@@ -63,7 +63,8 @@
                         :class="{
                             'p-invalid': parameter.mandatory && parameter.parameterValue && !parameter.parameterValue[0]?.value
                         }"
-                        @input="updateDependency(parameter)"
+                        @blur="updateDependency(parameter)"
+                        @keypress.enter="updateDependency(parameter)"
                         :data-test="'parameter-input-' + parameter.id"
                     />
                 </div>
@@ -209,7 +210,17 @@ import { getCorrectRolesForExecutionForType } from '../../../helpers/commons/rol
 export default defineComponent({
     name: 'kn-parameter-sidebar',
     components: { Calendar, Chip, Chips, Checkbox, Dropdown, KnParameterPopupDialog, KnParameterTreeDialog, KnParameterSaveDialog, KnParameterSavedParametersDialog, Menu, MultiSelect, RadioButton, ScrollPanel },
-    props: { filtersData: { type: Object }, propDocument: { type: Object }, userRole: { type: Object as PropType<String | null> }, propMode: { type: String }, propQBEParameters: { type: Array }, dateFormat: { type: String }, dataset: { type: Object }, correctRolesForExecution: [] },
+    props: {
+        filtersData: { type: Object },
+        propDocument: { type: Object },
+        userRole: { type: Object as PropType<String | null> },
+        propMode: { type: String },
+        propQBEParameters: { type: Array },
+        dateFormat: { type: String },
+        dataset: { type: Object },
+        correctRolesForExecution: { type: Array },
+        loadFromDatasetManagement: { type: Boolean, default: false }
+    },
     emits: ['execute', 'exportCSV', 'roleChanged', 'parametersChanged'],
     data() {
         return {
@@ -263,7 +274,7 @@ export default defineComponent({
             return (this.store.$state as any).user.sessionRole
         },
         buttonsDisabled(): boolean {
-            return this.requiredFiledMissing()
+            return this.loading || this.requiredFiledMissing()
         },
         positionClass(): string {
             return this.document?.parametersRegion ? 'kn-parameter-sidebar-' + this.document.parametersRegion : 'kn-parameter-sidebar'
@@ -427,7 +438,7 @@ export default defineComponent({
 
             for (let i = 0; i < this.parameters.filterStatus.length; i++) {
                 const parameter = this.parameters.filterStatus[i]
-                if (parameter.mandatory && parameter.showOnPanel == 'true') {
+                if (parameter.mandatory) {
                     if (!parameter.parameterValue || parameter.parameterValue.length === 0) {
                         return true
                     } else {
@@ -528,12 +539,14 @@ export default defineComponent({
             this.updateVisualDependency(parameter)
             this.treeDialogVisible = false
         },
-        updateDependency(parameter: iParameter, resetValue: boolean = false) {
+        async updateDependency(parameter: iParameter, resetValue: boolean = false) {
+            this.loading = true
             const role = this.sessionRole && this.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.sessionRole : this.role
             this.updateVisualDependency(parameter)
-            updateDataDependency(this.parameters, parameter, this.loading, this.document, role, this.$http, this.mode, resetValue)
-            updateLovDependency(this.parameters, parameter, this.loading, this.document, role, this.$http, this.mode)
+            await updateDataDependency(this.parameters, parameter, this.loading, this.document, role, this.$http, this.mode, resetValue, this.userDateFormat)
+            await updateLovDependency(this.parameters, parameter, this.loading, this.document, role, this.$http, this.mode, this.userDateFormat)
             this.$emit('parametersChanged', { parameters: this.parameters, document: this.propDocument })
+            this.loading = false
         },
         openSaveParameterDialog() {
             this.parameterSaveDialogVisible = true

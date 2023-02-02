@@ -6,16 +6,19 @@
         </template>
         <template #end>
             <Button v-if="toggleCardDisplay" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="$emit('toggleDisplayView')" />
-            <Button v-if="!toggleCardDisplay" icon="fas fa-th-large" class="p-button-text p-button-rounded p-button-plain" @click="$emit('toggleDisplayView')" />
+            <Button v-if="!toggleCardDisplay" icon="fas fa-th-large" class="p-button-text p-button-rounded p-button-plain"
+                @click="$emit('toggleDisplayView')" />
             <KnFabButton v-if="addButtonIsVisible" icon="fas fa-plus" data-test="new-folder-button" @click="showCreationMenu" />
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
 
-    <InputText class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
+    <InputText class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')"
+        @input="searchItems" data-test="search-input" />
 
     <div class="p-m-2 kn-overflow">
-        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table p-mx-2" :value="filteredAnalysisDocuments" :loading="loading" dataKey="id" responsiveLayout="stack" breakpoint="600px" data-test="analysis-table">
+        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table p-mx-2" :value="filteredAnalysisDocuments" :loading="loading" dataKey="id"
+            responsiveLayout="stack" breakpoint="600px" data-test="analysis-table">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -32,51 +35,38 @@
             <Column :style="mainDescriptor.style.iconColumn">
                 <template #body="slotProps">
                     <Button icon="fas fa-ellipsis-v" class="p-button-link" @click="showMenu($event, slotProps.data)" />
-                    <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click="showSidebar(slotProps.data)" :data-test="'info-button-' + slotProps.data.name" />
+                    <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')"
+                        @click="showSidebar(slotProps.data)" :data-test="'info-button-' + slotProps.data.name" />
                     <Button icon="fas fa-play-circle" class="p-button-link" @click="executeAnalysisDocument(slotProps.data)" />
                 </template>
             </Column>
         </DataTable>
         <div v-if="toggleCardDisplay" class="p-grid p-m-2" data-test="card-container">
-            <Message v-if="filteredAnalysisDocuments.length === 0" class="kn-flex p-m-2" severity="info" :closable="false" :style="mainDescriptor.style.message">
+            <Message v-if="filteredAnalysisDocuments.length === 0" class="kn-flex p-m-2" severity="info" :closable="false"
+                :style="mainDescriptor.style.message">
                 {{ $t('common.info.noDataFound') }}
             </Message>
             <template v-else>
-                <WorkspaceCard
-                    v-for="(document, index) of filteredAnalysisDocuments"
-                    :key="index"
-                    :viewType="'analysis'"
-                    :document="document"
-                    @executeAnalysisDocument="executeAnalysisDocument"
-                    @editAnalysisDocument="openKpiDesigner"
-                    @shareAnalysisDocument="shareAnalysisDocument"
-                    @cloneAnalysisDocument="cloneAnalysisDocument"
-                    @deleteAnalysisDocument="deleteAnalysisDocumentConfirm"
-                    @uploadAnalysisPreviewFile="uploadAnalysisPreviewFile"
-                    @openSidebar="showSidebar"
-                />
+                <WorkspaceCard v-for="(document, index) of filteredAnalysisDocuments" :key="index" :viewType="'analysis'" :document="document"
+                    @executeAnalysisDocument="executeAnalysisDocument" @editAnalysisDocument="openKpiDesigner" @shareAnalysisDocument="shareAnalysisDocument"
+                    @cloneAnalysisDocument="cloneAnalysisDocument" @deleteAnalysisDocument="deleteAnalysisDocumentConfirm"
+                    @uploadAnalysisPreviewFile="uploadAnalysisPreviewFile" @openSidebar="showSidebar" />
             </template>
         </div>
     </div>
-    <DetailSidebar
-        :visible="showDetailSidebar"
-        :viewType="'analysis'"
-        :document="selectedAnalysis"
-        @executeAnalysisDocument="executeAnalysisDocument"
-        @editAnalysisDocument="editAnalysisDocument"
-        @shareAnalysisDocument="shareAnalysisDocument"
-        @cloneAnalysisDocument="cloneAnalysisDocumentConfirm"
-        @deleteAnalysisDocument="deleteAnalysisDocumentConfirm"
-        @uploadAnalysisPreviewFile="uploadAnalysisPreviewFile"
-        @close="showDetailSidebar = false"
-        data-test="detail-sidebar"
-    />
+    <DetailSidebar :visible="showDetailSidebar" :viewType="'analysis'" :document="selectedAnalysis" @executeAnalysisDocument="executeAnalysisDocument"
+        @editAnalysisDocument="editAnalysisDocument" @shareAnalysisDocument="shareAnalysisDocument" @cloneAnalysisDocument="cloneAnalysisDocumentConfirm"
+        @deleteAnalysisDocument="deleteAnalysisDocumentConfirm" @uploadAnalysisPreviewFile="uploadAnalysisPreviewFile" @close="showDetailSidebar = false"
+        data-test="detail-sidebar" />
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     <Menu id="creationMenu" ref="creationMenu" :model="creationMenuButtons" />
 
-    <WorkspaceAnalysisViewShareDialog :visible="shareDialogVisible" :propFolders="folders" @close="shareDialogVisible = false" @share="handleAnalysShared($event, false)"></WorkspaceAnalysisViewShareDialog>
-    <WorkspaceAnalysisViewEditDialog :visible="editDialogVisible" :propAnalysis="selectedAnalysis" @close="editDialogVisible = false" @save="handleEditAnalysis"></WorkspaceAnalysisViewEditDialog>
-    <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.menuLabels.myAnalysis')" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
+    <WorkspaceAnalysisViewShareDialog :visible="shareDialogVisible" :propFolders="folders" @close="shareDialogVisible = false"
+        @share="handleAnalysShared($event, false)"></WorkspaceAnalysisViewShareDialog>
+    <WorkspaceAnalysisViewEditDialog :visible="editDialogVisible" :propAnalysis="selectedAnalysis" @close="editDialogVisible = false"
+        @save="handleEditAnalysis"></WorkspaceAnalysisViewEditDialog>
+    <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.menuLabels.myAnalysis')" :warningMessage="warningMessage"
+        @close="closeWarningDialog"></WorkspaceWarningDialog>
 
     <KnInputFile v-if="!uploading" :changeFunction="uploadAnalysisFile" accept="image/*" :triggerInput="triggerUpload" />
     <WorkspaceCockpitDialog :visible="cockpitDialogVisible" @close="closeCockpitDialog"></WorkspaceCockpitDialog>
@@ -177,16 +167,16 @@ export default defineComponent({
         },
         // prettier-ignore
         createMenuItems() {
-        this.menuButtons = []
-        this.menuButtons.push(
-            { key: '0', label: this.$t('workspace.myAnalysis.menuItems.edit'), icon: 'fas fa-edit', command: () => { this.editAnalysisDocument(this.selectedAnalysis) }, visible: this.isOwner},
-            { key: '1', label: this.$t('workspace.myAnalysis.menuItems.share'), icon: 'fas fa-share-alt', command: () => { this.shareAnalysisDocument(this.selectedAnalysis) }, visible: !this.isShared},
-            { key: '1', label: this.$t('workspace.myAnalysis.menuItems.unshare'), icon: 'fas fa-times-circle', command: () => { this.shareAnalysisDocument(this.selectedAnalysis) }, visible: this.isShared},
-            { key: '2', label: this.$t('workspace.myAnalysis.menuItems.clone'), icon: 'fas fa-clone', command: () => { this.cloneAnalysisDocument(this.selectedAnalysis) }},
-            { key: '3', label: this.$t('workspace.myAnalysis.menuItems.delete'), icon: 'fas fa-trash', command: () => { this.deleteAnalysisDocumentConfirm(this.selectedAnalysis) }},
-            { key: '4', label: this.$t('workspace.myAnalysis.menuItems.upload'), icon: 'fas fa-upload', command: () => { this.uploadAnalysisPreviewFile(this.selectedAnalysis) }}
-        )
-    },
+            this.menuButtons = []
+            this.menuButtons.push({ key: '0', label: this.$t('workspace.myAnalysis.menuItems.edit'), icon: 'fas fa-edit', command: () => { this.editAnalysisDocument(this.selectedAnalysis) }, visible: this.isOwner })
+            this.menuButtons.push({ key: '1', label: this.$t('workspace.myAnalysis.menuItems.share'), icon: 'fas fa-share-alt', command: () => { this.shareAnalysisDocument(this.selectedAnalysis) }, visible: !this.isShared })
+            this.menuButtons.push({ key: '1', label: this.$t('workspace.myAnalysis.menuItems.unshare'), icon: 'fas fa-times-circle', command: () => { this.shareAnalysisDocument(this.selectedAnalysis) }, visible: this.isShared })
+            this.menuButtons.push({ key: '2', label: this.$t('workspace.myAnalysis.menuItems.clone'), icon: 'fas fa-clone', command: () => { this.cloneAnalysisDocument(this.selectedAnalysis) } })
+
+            this.menuButtons.push({ key: '3', label: this.$t('workspace.myAnalysis.menuItems.upload'), icon: 'fas fa-upload', command: () => { this.uploadAnalysisPreviewFile(this.selectedAnalysis) } })
+            this.menuButtons.push({ key: '4', label: this.$t('workspace.myAnalysis.menuItems.delete'), icon: 'fas fa-trash', command: () => { this.deleteAnalysisDocumentConfirm(this.selectedAnalysis) } })
+
+        },
         executeAnalysisDocument(document: any) {
             let typeCode = 'DOCUMENT'
             if (document.type === 'businessModel') {
@@ -265,7 +255,7 @@ export default defineComponent({
                     this.showDetailSidebar = false
                     this.getAnalysisDocs()
                 })
-                .catch(() => {})
+                .catch(() => { })
 
             this.loading = false
         },
@@ -287,7 +277,7 @@ export default defineComponent({
                     this.showDetailSidebar = false
                     this.getAnalysisDocs()
                 })
-                .catch(() => {})
+                .catch(() => { })
             this.loading = true
         },
         deleteAnalysisDocumentConfirm(analysis: any) {
@@ -310,7 +300,7 @@ export default defineComponent({
                     this.showDetailSidebar = false
                     this.getAnalysisDocs()
                 })
-                .catch(() => {})
+                .catch(() => { })
             this.loading = false
         },
         uploadAnalysisPreviewFile(analysis: any) {
