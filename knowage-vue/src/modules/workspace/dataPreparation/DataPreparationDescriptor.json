@@ -261,12 +261,12 @@
                 "class": "material-icons",
                 "name": "padding"
             },
+            "incompatibleDataTypes": ["java.lang.Double", "java.lang.Integer", "java.lang.Long", "java.math.BigDecimal", "java.sql.Date", "java.sql.Timestamp", "oracle.sql.TIMESTAMP"],
             "label": "managers.workspaceManagement.dataPreparation.transformations.padding.label",
             "name": "padding",
             "position": 6,
             "toolbar": true,
-            "type": "simple",
-            "incompatibleDataTypes": ["java.lang.Double","java.math.BigDecimal","java.lang.Long","java.lang.Float","java.lang.Integer"]
+            "type": "simple"
         },
         {
             "category": "cleaning",
