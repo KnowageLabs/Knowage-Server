@@ -7,7 +7,7 @@
                     <Button icon="pi pi-trash" class="p-button-link" v-tooltip.top="$t('common.delete')" @click="deleteImageConfirm" />
                 </template>
             </Toolbar>
-            <div class="p-d-flex p-flex-column p-jc-center p-ai-center kn-flex" :class="[isSelected ? 'selected-card-image-container' : 'card-image-container ']">
+            <div class="p-d-flex p-flex-column p-jc-center p-ai-center kn-flex image-container" :class="[isSelected ? 'selected-card-image-container' : 'card-image-container ']">
                 <img class="card-image" :src="getImageUrl(imageProp)" :alt="imageProp.name" />
             </div>
         </div>
@@ -27,7 +27,7 @@ export default defineComponent({
     },
     methods: {
         getImageUrl(image: IImage) {
-            return import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/images/getImage?IMAGES_ID=${image.imgId}&preview=true`
+            return import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/images/getImage?IMAGES_ID=${image.imgId}`
         },
         deleteImageConfirm() {
             this.$confirm.require({
@@ -66,6 +66,10 @@ export default defineComponent({
 
 .card-image {
     max-width: 100%;
-    max-height: 100%;
+    height: auto;
+}
+
+.image-container {
+    overflow: hidden;
 }
 </style>

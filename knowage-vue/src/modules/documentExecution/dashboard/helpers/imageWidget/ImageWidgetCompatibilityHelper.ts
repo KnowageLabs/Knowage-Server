@@ -6,8 +6,6 @@ import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/co
 import * as  imageWidgetDefaultValues from '../../widget/WidgetEditor/helpers/imageWidget/ImageWidgetDefaultValues'
 
 export const formatImageWidget = (widget: any) => {
-    console.log(">>>>>>>> LOAEDED OLD WIDGET: ", widget)
-
     const formattedWidget = {
         id: widget.id,
         dataset: null,
@@ -17,9 +15,6 @@ export const formatImageWidget = (widget: any) => {
         settings: {} as IImageWidgetSettings
     } as IWidget
     formattedWidget.settings = getFormattedWidgetSettings(widget) as IImageWidgetSettings
-
-    console.log(">>>>>>>> FORMATTED NEW WIDGET: ", formattedWidget)
-
     return formattedWidget
 }
 

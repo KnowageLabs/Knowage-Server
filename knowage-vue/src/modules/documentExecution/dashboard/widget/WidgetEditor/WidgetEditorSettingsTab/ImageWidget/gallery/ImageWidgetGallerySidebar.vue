@@ -67,7 +67,6 @@ export default defineComponent({
             this.image = this.selectedImage
         },
         async copyToBase64() {
-            console.log('>>>>>>>>>>>> THIS IMAGE: ', this.image)
             if (!this.image) return
             this.toDataURL(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/images/getImage?IMAGES_ID=${this.image.imgId}`, async (dataUrl: string) => await navigator.clipboard.writeText(dataUrl))
         },
