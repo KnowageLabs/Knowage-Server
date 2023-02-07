@@ -74,7 +74,7 @@ public class HtmlSanitizer {
 				.allowAttributes("colspan","rowspan").onElements("td","th")
 				.allowAttributes("height", "width").globally()
 				.allowAttributes("class").globally()
-				.allowAttributes("id").onElements("div")
+				.allowAttributes("id").onElements("div","button","input","select")
 				.allowAttributes("href").matching(this::isHrefAttributeInWhitelist).onElements("a")
 				.allowAttributes("src").matching(this::isSrcAttributeInWhitelist).onElements("audio", "iframe", "img", "kn-import", "video")
 				.allowAttributes("title").globally()
