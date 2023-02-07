@@ -75,7 +75,6 @@ export default defineComponent({
             window.removeEventListener('message', this.iframeEventsListener)
         },
         iframeEventsListener(event: any) {
-            console.log('test')
             if (event.data.type === 'error' && event.data.editorMode === this.editorMode) {
                 this.setError({ title: this.$t('common.error.generic'), msg: event.data.error?.message ?? '' })
             } else if (event.data.type === 'clickManager') this.onClickManager(event.data.payload.columnName, event.data.payload.columnValue)
