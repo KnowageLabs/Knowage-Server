@@ -91,9 +91,11 @@ function mapWidgetEditControllerFunction(
 			layer.pieConf.categorizeBy = layer.pieConf.categorizeBy || getFirstAttribute(layer);
 			layer.pieConf.type         = layer.pieConf.type         || "pie"; 
 			layer.pieConf.borderColor  = layer.pieConf.borderColor  || "rgba(0, 0, 0, 0.5)";
-			layer.pieConf.color        = layer.pieConf.color        || "rgba(127, 127, 127, 0.5)";
+			layer.pieConf.fromColor    = layer.pieConf.fromColor    || "rgba(63, 63, 63, 0.5)";
+			layer.pieConf.toColor      = layer.pieConf.toColor      || "rgba(191, 191, 191, 0.5)";
 			layer.pieConf.minSize      = layer.pieConf.minSize      || 5;
 			layer.pieConf.maxSize      = layer.pieConf.maxSize      || 35;
+			delete layer.pieConf.color;
 		}
 	}
 
@@ -202,6 +204,18 @@ function mapWidgetEditControllerFunction(
 		for(var i in columnsList){
 			if(columnsList[i].alias !== column.alias){
 				columnsList[i].properties.modal = false;
+			}
+		}
+
+	}
+
+	$scope.setAnimateOn = function(column, layer){
+		var columnsList = layer.content.columnSelectedOfDataset;
+		layer.animateOnColumn = (column.properties.animateOn) ? column.alias : undefined;
+
+		for(var i in columnsList){
+			if(columnsList[i].alias !== column.alias){
+				columnsList[i].properties.animateOn = false;
 			}
 		}
 
