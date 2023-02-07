@@ -39,7 +39,7 @@ import WidgetTitleStyle from '../common/style/WidgetTitleStyle.vue'
 import WidgetPaddingStyle from '../common/style/WidgetPaddingStyle.vue'
 import WidgetBackgroundColorStyle from '../common/style/WidgetBackgroundColorStyle.vue'
 import CustomChartWidgetSettingsAccordionHeader from './CustomChartWidgetSettingsAccordionHeader.vue'
-import CustomChartHTMLEditor from './editor/CustomChartHtmlEditor.vue'
+import CustomChartHTMLEditor from './editor/CustomChartHTMLEditor.vue'
 import CustomChartCSSEditor from './editor/CustomChartCSSEditor.vue'
 import CustomChartJSEditor from './editor/CustomChartJSEditor.vue'
 
