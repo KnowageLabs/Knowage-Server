@@ -12,7 +12,7 @@ export const getFormattedDatasetDrivers = (dataset: any) => {
 
 
 const getFormattedDatasetDriver = (driver: any) => {
-    const formattedDriver = { urlName: driver.urlName, type: driver.type, typeCode: driver.typeCode, selectionType: driver.selectionType, label: driver.label, multivalue: driver.multivalue } as IDashboardDatasetDriver
+    const formattedDriver = { urlName: driver.urlName, type: driver.type, typeCode: driver.typeCode, selectionType: driver.selectionType, label: driver.label, driverLabel: driver.driverLabel, multivalue: driver.multivalue } as IDashboardDatasetDriver
     getFormattedDriverProperties(driver, formattedDriver)
     if (driver.dataDependencies) formattedDriver.dataDependencies = driver.dataDependencies
     return formattedDriver

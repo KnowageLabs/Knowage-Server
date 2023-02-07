@@ -8,7 +8,7 @@
         @associationSelected="associationSelected"
         @addIndexesOnAssociations="addIndexesOnAssociations"
     />
-    <AssociationsDetail v-if="selectedAssociation" :dashboardAssociationsProp="dashboardAssociationsProp" :selectedDatasetsProp="selectedDatasetsProp" :selectedAssociationProp="selectedAssociation" @fieldSelected="manageAssociationField" @fieldUnselected="unselectAssociationField" />
+    <AssociationsDetail v-if="selectedAssociation" :dashboardAssociationsProp="dashboardAssociationsProp" :selectedDatasetsProp="selectedDatasets" :selectedAssociationProp="selectedAssociation" @fieldSelected="manageAssociationField" @fieldUnselected="unselectAssociationField" />
     <KnHint v-else class="p-as-center" :title="'dashboard.datasetEditor.associationsDetailTitle'" :hint="'dashboard.datasetEditor.associationsDetailMsg'"></KnHint>
 </template>
 
@@ -28,7 +28,8 @@ export default defineComponent({
     emits: ['createNewAssociation', 'associationDeleted', 'addIndexesOnAssociations', 'associationSelected'],
     data() {
         return {
-            selectedAssociation: null as any
+            selectedAssociation: null as any,
+            selectedDatasets: [] as any[]
         }
     },
     watch: {
@@ -37,13 +38,22 @@ export default defineComponent({
                 this.selectedAssociation = this.selectedAssociationProp as IAssociation
             },
             deep: true
+        },
+        selectedDatasetsProp() {
+            this.loadSelectedDatasets()
         }
+    },
+    created() {
+        this.loadSelectedDatasets()
     },
     setup() {
         const store = mainStore()
         return { store }
     },
     methods: {
+        loadSelectedDatasets() {
+            this.selectedDatasets = this.selectedDatasetsProp
+        },
         createNewAssociation() {
             this.selectedAssociation = { fields: [], id: cryptoRandomString({ length: 16, type: 'base64' }) } as IAssociation
             this.dashboardAssociationsProp.push(this.selectedAssociation)

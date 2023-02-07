@@ -1,5 +1,5 @@
 <template>
-    <widget-web-component class="kn-flex" ref="webComponent"></widget-web-component>
+    <widget-web-component id="webComponent" class="kn-flex" ref="webComponent"></widget-web-component>
 </template>
 
 <script lang="ts">

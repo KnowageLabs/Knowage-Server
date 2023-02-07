@@ -12,8 +12,8 @@
                 :editorMode="false"
                 :propActiveSelections="activeSelections"
                 :dashboardId="dashboardId"
-                @pageChanged="$emit('pageChanged')"
-                @sortingChanged="$emit('sortingChanged')"
+                @pageChanged="$emit('reloadData')"
+                @sortingChanged="$emit('reloadData')"
                 @launchSelection="$emit('launchSelection', $event)"
             />
             <SelectorWidget v-if="widget.type == 'selector'" :propWidget="widget" :dataToShow="dataToShow" :widgetInitialData="widgetInitialData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" :datasets="datasets" :selectionIsLocked="selectionIsLocked" />
@@ -21,6 +21,8 @@
             <WebComponentContainer v-if="widget.type == 'html' || widget.type == 'text'" :propWidget="widget" :widgetData="dataToShow" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" :variables="variables"></WebComponentContainer>
             <HighchartsContainer v-if="widget.type === 'highcharts'" :widgetModel="widget" :dataToShow="widgetData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId"></HighchartsContainer>
             <ChartJSContainer v-if="widget.type === 'chartJS'" :widgetModel="widget" :dataToShow="widgetData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId"></ChartJSContainer>
+            <ImageWidget v-if="widget.type === 'image'" :widgetModel="widget" :dashboardId="dashboardId" :editorMode="false" />
+            <CustomChartWidget v-if="widget.type == 'customchart'" :propWidget="widget" :widgetData="widgetData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" :variables="variables" @loading="$emit('loading', $event)"></CustomChartWidget>
         </div>
     </div>
 </template>
@@ -39,13 +41,16 @@ import mock from '../dataset/DatasetEditorTestMocks.json'
 import WebComponentContainer from './WebComponent/WebComponentContainer.vue'
 import HighchartsContainer from '../widget/ChartWidget/Highcharts/HighchartsContainer.vue'
 import ChartJSContainer from '../widget/ChartWidget/ChartJS/ChartJSContainer.vue'
+import ImageWidget from '../widget/ImageWidget/ImageWidget.vue'
+import CustomChartWidget from '../widget/CustomChartWidget/CustomChartWidget.vue'
 
 export default defineComponent({
     name: 'widget-renderer',
-    emits: ['interaction', 'pageChanged', 'launchSelection', 'sortingChanged'],
-    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, WebComponentContainer, HighchartsContainer, ChartJSContainer },
+    emits: ['interaction', 'launchSelection', 'reloadData', 'loading'],
+    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, WebComponentContainer, HighchartsContainer, ChartJSContainer, ImageWidget, CustomChartWidget },
     props: {
         widget: { required: true, type: Object as any },
+        widgetLoading: { required: true, type: Boolean as any },
         widgetData: { required: true, type: Object },
         widgetInitialData: { required: true, type: Object },
         datasets: { type: Array as PropType<IDashboardDataset[]>, required: true },

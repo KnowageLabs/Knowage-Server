@@ -1,11 +1,12 @@
 <template>
-    <DataList :dashboardDatasetsProp="dashboardDatasetsProp" :availableDatasetsProp="availableDatasetsProp" :selectedDatasetsProp="selectedDatasetsProp" @addSelectedDatasets="addSelectedDatasets" @datasetSelected="selectDataset" @deleteDataset="$emit('deleteDataset', $event)" />
+    <DataList :dashboardDatasetsProp="dashboardDatasetsProp" :availableDatasetsProp="availableDatasetsProp" :selectedDatasetsProp="selectedDatasets" @addSelectedDatasets="addSelectedDatasets" @datasetSelected="selectDataset" @deleteDataset="$emit('deleteDataset', $event)" />
     <DataDetail :dashboardDatasetsProp="dashboardDatasetsProp" :selectedDatasetProp="selectedDataset" :documentDriversProp="documentDriversProp" :dashboardId="dashboardId" data-test="dataset-detail" />
     <DatasetEditorPreview v-if="selectedDataset.id" id="dataset-editor-preview" :selectedDatasetProp="selectedDataset" data-test="dataset-preview" />
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
+import { IDataset } from '../../Dashboard'
 import DataList from './DatasetEditorDataList/DatasetEditorDataList.vue'
 import DataDetail from './DatasetEditorDataDetail/DatasetEditorDataDetail.vue'
 import DatasetEditorPreview from '../DatasetEditorPreview.vue'
@@ -13,18 +14,35 @@ import DatasetEditorPreview from '../DatasetEditorPreview.vue'
 export default defineComponent({
     name: 'dataset-editor-data-tab',
     components: { DataList, DataDetail, DatasetEditorPreview },
-    props: { dashboardDatasetsProp: { required: true, type: Array as any }, availableDatasetsProp: { required: true, type: Array as any }, selectedDatasetsProp: { type: Array as any }, documentDriversProp: { required: true, type: Array as any }, dashboardId: { type: String, required: true } },
+    props: {
+        dashboardDatasetsProp: { required: true, type: Array as any },
+        availableDatasetsProp: { required: true, type: Array as PropType<IDataset[]> },
+        selectedDatasetsProp: { type: Array as any },
+        documentDriversProp: { required: true, type: Array as any },
+        dashboardId: { type: String, required: true }
+    },
     emits: ['addSelectedDatasets', 'deleteDataset'],
     data() {
         return {
             selectedDataset: {} as any,
+            selectedDatasets: [] as any[],
             datasetDriversMap: {}
         }
     },
-    async created() {},
+    watch: {
+        selectedDatasetsProp() {
+            this.loadSelectedDatasets()
+        }
+    },
+    created() {
+        this.loadSelectedDatasets()
+    },
     methods: {
         selectDataset(datasetId) {
             this.selectedDataset = this.availableDatasetsProp.find((dataset) => dataset.id.dsId === datasetId)
+        },
+        loadSelectedDatasets() {
+            this.selectedDatasets = this.selectedDatasetsProp
         },
         addSelectedDatasets(datasetsToAdd) {
             this.$emit('addSelectedDatasets', datasetsToAdd)

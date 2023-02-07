@@ -1,6 +1,5 @@
 import { IWidget, IWidgetColumn, ITableWidgetColumnGroup, IWidgetInteractionParameter, ITableWidgetSettings } from "../../../../Dashboard"
 import { emitter } from '../../../../DashboardHelpers'
-import cryptoRandomString from 'crypto-random-string'
 import * as  tableWidgetDefaultValues from './TableWidgetDefaultValues'
 import * as widgetCommonDefaultValues from '../common/WidgetCommonDefaultValues'
 
@@ -44,21 +43,7 @@ export const createNewTableWidgetSettings = () => {
     } as ITableWidgetSettings
 }
 
-export const createNewWidgetColumn = (eventData: any) => {
-    const tempColumn = {
-        id: cryptoRandomString({ length: 16, type: 'base64' }),
-        columnName: eventData.name,
-        alias: eventData.alias,
-        type: eventData.type,
-        fieldType: eventData.fieldType,
-        filter: {}
-    } as IWidgetColumn
-    if (tempColumn.fieldType === 'MEASURE') tempColumn.aggregation = 'SUM'
-    return tempColumn
-}
-
-
-export const removeColumnFromModel = (widgetModel: IWidget, column: IWidgetColumn) => {
+export const removeColumnFromTableWidgetModel = (widgetModel: IWidget, column: IWidgetColumn) => {
     removeColumnFromRows(widgetModel, column)
     removeColumnFromSubmodel(column, widgetModel.settings.configuration.headers.custom.rules, 'target', 'headersColumnRemoved', false)
     removeColumnFromSubmodel(column, widgetModel.settings.configuration.columnGroups.groups, 'columns', 'columnRemovedFromColumnGroups', false)
@@ -119,6 +104,6 @@ export const removeColumnGroupFromModel = (widgetModel: IWidget, columnGroup: IT
     if (removed) emitter.emit('columnGroupRemoved')
 }
 
-export default removeColumnFromModel
+export default removeColumnFromTableWidgetModel
 
 

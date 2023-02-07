@@ -13,9 +13,19 @@
                     <label class="kn-material-input-label p-mr-2">{{ $t('common.type') }}</label>
                     <Dropdown class="kn-material-input" v-model="column.fieldType" :options="descriptor.columnTypeOptions" optionValue="value" optionLabel="label" :disabled="column.formula !== undefined" @change="columnTypeChanged"> </Dropdown>
                 </div>
-                <div v-if="column.fieldType === 'MEASURE'" class="p-d-flex p-flex-column kn-flex p-m-2">
+                <div v-if="column.fieldType === 'MEASURE' && widgetType !== 'discovery'" class="p-d-flex p-flex-column kn-flex p-m-2">
                     <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.aggregation') }}</label>
                     <Dropdown class="kn-material-input" v-model="column.aggregation" :options="commonDescriptor.columnAggregationOptions" optionValue="value" optionLabel="label" @change="selectedColumnUpdated"> </Dropdown>
+                </div>
+                <div v-else-if="column.fieldType === 'ATTRIBUTE' && widgetType === 'discovery'" class="p-d-flex p-flex-row kn-flex-2">
+                    <div class="p-d-flex p-flex-column kn-flex p-m-2">
+                        <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.aggregation') }}</label>
+                        <Dropdown class="kn-material-input" v-model="column.aggregation" :options="commonDescriptor.discoveryWidgetColumnAggregationOptions" optionValue="value" optionLabel="label" @change="onDiscoveryWidgetColumnAggregationChanged"> </Dropdown>
+                    </div>
+                    <div v-if="column.aggregation !== 'COUNT'" class="p-d-flex p-flex-column kn-flex p-m-2">
+                        <label class="kn-material-input-label p-mr-2">{{ $t('common.column') }}</label>
+                        <Dropdown class="kn-material-input" v-model="column.aggregationColumn" :options="widgetMeasureColumns" optionValue="columnName" optionLabel="columnName" @change="selectedColumnUpdated"> </Dropdown>
+                    </div>
                 </div>
             </div>
         </div>
@@ -48,8 +58,14 @@ export default defineComponent({
         }
     },
     computed: {
+        widgetType() {
+            return this.widgetModel.type
+        },
         sortingColumnOptions() {
             return this.widgetModel.columns
+        },
+        widgetMeasureColumns() {
+            return this.widgetModel.columns.filter((column: IWidgetColumn) => column.fieldType === 'MEASURE')
         }
     },
     watch: {
@@ -70,7 +86,8 @@ export default defineComponent({
         },
         columnTypeChanged() {
             if (!this.column) return
-            this.column.aggregation = 'NONE'
+
+            this.column.aggregation = this.widgetType === 'discovery' ? 'COUNT' : 'NONE'
             if (this.column.filter) {
                 this.column.filter.operator = ''
                 this.column.filter.value = ''
@@ -88,6 +105,10 @@ export default defineComponent({
         },
         onColumnAliasRenamed() {
             emitter.emit('columnAliasRenamed', this.column)
+            this.selectedColumnUpdated()
+        },
+        onDiscoveryWidgetColumnAggregationChanged() {
+            if (this.column && this.column.aggregation === 'COUNT') this.column.aggregationColumn = ''
             this.selectedColumnUpdated()
         }
     }

@@ -1,6 +1,6 @@
 <template>
     <div v-if="widgetModel">
-        <TableWidgetDataForm class="p-m-2" :widgetModel="widgetModel" :sortingColumnOptions="columnTableItems"></TableWidgetDataForm>
+        <TableWidgetDataForm v-if="widgetType !== 'discovery'" class="p-m-2" :widgetModel="widgetModel" :sortingColumnOptions="columnTableItems"></TableWidgetDataForm>
         <WidgetEditorColumnTable
             class="p-m-2"
             :widgetModel="widgetModel"
@@ -19,7 +19,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IDataset, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
-import { removeColumnFromModel } from '../../helpers/tableWidget/TableWidgetFunctions'
+import { removeColumnFromTableWidgetModel } from '../../helpers/tableWidget/TableWidgetFunctions'
 import { emitter } from '../../../../DashboardHelpers'
 import descriptor from './WidgetCommonDescriptor.json'
 import TableWidgetDataForm from '../TableWidget/TableWidgetDataForm.vue'
@@ -35,6 +35,11 @@ export default defineComponent({
             descriptor,
             columnTableItems: [] as IWidgetColumn[],
             selectedColumn: null as IWidgetColumn | null
+        }
+    },
+    computed: {
+        widgetType() {
+            return this.widgetModel.type
         }
     },
     watch: {
@@ -57,30 +62,49 @@ export default defineComponent({
         },
         onColumnAdded(payload: { column: IWidgetColumn; rows: IWidgetColumn[] }) {
             this.widgetModel.columns = payload.rows
+            // if (this.widgetType === 'discovery') addColumnToDiscoveryWidgetModel(this.widgetModel, payload.column)
             emitter.emit('columnAdded', payload.column)
             emitter.emit('refreshWidgetWithData', this.widgetModel.id)
         },
         onColumnItemUpdate(column: IWidgetColumn) {
             const index = this.widgetModel.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === column.id)
+            if (this.widgetType === 'discovery' && column.fieldType === 'ATTRIBUTE') {
+                this.clearDiscoveryWidgetAggregatedColumnValuesForSpecificColumn(column)
+            }
             if (index !== -1) {
                 this.widgetModel.columns[index] = { ...column }
                 emitter.emit('collumnUpdated', { column: this.widgetModel.columns[index], columnIndex: index })
                 emitter.emit('refreshWidgetWithData', this.widgetModel.id)
                 if (this.widgetModel.columns[index].id === this.selectedColumn?.id) this.selectedColumn = { ...this.widgetModel.columns[index] }
             }
+            this.loadColumnTableItems()
         },
         setSelectedColumn(column: IWidgetColumn) {
             this.selectedColumn = { ...column }
         },
         onColumnDelete(column: IWidgetColumn) {
-            const index = this.widgetModel.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === column.id)
-            if (index !== -1) {
-                this.widgetModel.columns.splice(index, 1)
-                if (column.id === this.selectedColumn?.id) this.selectedColumn = null
-                if (this.widgetModel.type === 'table') removeColumnFromModel(this.widgetModel, column)
-                emitter.emit('columnRemoved', column)
-                emitter.emit('refreshWidgetWithData', this.widgetModel.id)
+            if (column.id === this.selectedColumn?.id) this.selectedColumn = null
+            this.removeColumnFromModel(column)
+            emitter.emit('columnRemoved', column)
+            emitter.emit('refreshWidgetWithData', this.widgetModel.id)
+        },
+        removeColumnFromModel(column: IWidgetColumn) {
+            switch (this.widgetType) {
+                case 'table':
+                    removeColumnFromTableWidgetModel(this.widgetModel, column)
+                    break
+                case 'discovery':
+                    if (column.fieldType === 'MEASURE') this.clearDiscoveryWidgetAggregatedColumnValuesForSpecificColumn(column)
+                // removeColumnFromDiscoveryWidgetModel(this.widgetModel, column)
             }
+        },
+        clearDiscoveryWidgetAggregatedColumnValuesForSpecificColumn(column: IWidgetColumn) {
+            this.widgetModel.columns.forEach((tempColumn: IWidgetColumn) => {
+                if (tempColumn.aggregationColumn === column?.columnName) {
+                    tempColumn.aggregation = 'COUNT'
+                    tempColumn.aggregationColumn = ''
+                }
+            })
         }
     }
 })

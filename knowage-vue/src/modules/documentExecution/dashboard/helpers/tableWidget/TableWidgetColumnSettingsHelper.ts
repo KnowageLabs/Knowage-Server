@@ -2,7 +2,7 @@ import { IDashboard, ITableWidgetColumnGroup, ITableWidgetConditionalStyle, ITab
 import { hexToRgba } from '../FormattingHelpers'
 import { getColumnId } from './TableWidgetCompatibilityHelper'
 
-export const getSettingsFromWidgetColumns = (formattedWidget: IWidget, widget: any, formattedDashboardModel: IDashboard) => {
+export const getSettingsFromWidgetColumns = (formattedWidget: IWidget, widget: any, formattedDashboardModel: IDashboard, columnNameIdMap: any) => {
     for (let i = 0; i < widget.content.columnSelectedOfDataset.length; i++) {
         const tempColumn = widget.content.columnSelectedOfDataset[i]
         getRowConfigurationFromWidgetColumn(formattedWidget, tempColumn)
@@ -10,7 +10,7 @@ export const getSettingsFromWidgetColumns = (formattedWidget: IWidget, widget: a
         if (tempColumn.group) addColumnToColumnGroup(formattedWidget, tempColumn)
         getVisualizationTypeConfigurationsFromColumn(formattedWidget, tempColumn)
         getVisibilityConditionsFromColumn(formattedWidget, tempColumn, formattedDashboardModel)
-        getStyleFromColumn(formattedWidget, tempColumn)
+        getStyleFromColumn(formattedWidget, tempColumn, columnNameIdMap)
         getConditionalStyleFromColumn(formattedWidget, tempColumn, formattedDashboardModel)
         getTooltipFromColumn(formattedWidget, tempColumn)
     }
@@ -92,7 +92,7 @@ const addVisibilityConditionToTheModel = (rule: ITableWidgetVisibilityCondition,
     formattedWidget.settings.visualization.visibilityConditions.conditions.push(rule)
 }
 
-const getStyleFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
+export const getStyleFromColumn = (formattedWidget: IWidget, tempColumn: any, columnNameIdMap: any) => {
     if (!tempColumn.style) return
     let hasStyle = false
     let fields = ['background-color', 'color', 'justify-content', 'font-size', 'font-family', 'font-style', 'font-weight']
@@ -105,7 +105,7 @@ const getStyleFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
 
     if (hasStyle)
         formattedWidget.settings.style.columns.styles.push({
-            target: [getColumnId(tempColumn.name)],
+            target: [columnNameIdMap[tempColumn.name]],
             properties: {
                 width: tempColumn.style.width,
                 'background-color': tempColumn.style['background-color'] ?? 'rgb(0, 0, 0)',
@@ -176,7 +176,7 @@ const setConditionalStyleValueFromVariable = (conditionStyle: ITableWidgetCondit
     }
 }
 
-const getTooltipFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
+export const getTooltipFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
     if (tempColumn.hasOwnProperty('hideTooltip') || tempColumn.style?.hasOwnProperty('tooltip')) {
         const tempTooltipStyle = {
             target: [getColumnId(tempColumn.name)],

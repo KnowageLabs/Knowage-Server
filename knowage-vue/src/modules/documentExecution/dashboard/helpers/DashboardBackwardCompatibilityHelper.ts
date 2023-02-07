@@ -1,6 +1,6 @@
 import { formatTableWidget } from './tableWidget/TableWidgetCompatibilityHelper'
 import { formatSelectorWidget } from '@/modules/documentExecution/dashboard/helpers/selectorWidget/SelectorWidgetCompatibilityHelper'
-import { IAssociation, IDashboard, IDashboardConfiguration, IDataset, IDatasetParameter, ISelection, IVariable, IWidget, IWidgetColumn, IWidgetColumnFilter, IDashboardDataset } from '../Dashboard'
+import { IAssociation, IDashboard, IDashboardConfiguration, IDataset, IDatasetParameter, ISelection, IVariable, IWidget, IWidgetColumn, IWidgetColumnFilter, IDashboardDataset, IDashboardDatasetDriver, IDashboardDriver } from '../Dashboard'
 import { formatSelectionWidget } from './selectionWidget/SelectionsWidgetCompatibilityHelper'
 import { setVariableValueFromDataset } from '../generalSettings/VariablesHelper'
 import deepcopy from 'deepcopy'
@@ -10,10 +10,12 @@ import { formatTextWidget } from './textWidget/TextWidgetCompatibilityHelper'
 import { getFormattedDatasetDrivers } from '../dataset/DatasetEditorDataTab/DatasetEditorDataDetail/DatasetEditorDriverDialog/DatasetEditorDatasetDriverFormatterHelper'
 import { formatHighchartsWidget } from './chartWidget/highcharts/HighchartsWidgetCompatibilityHelper'
 import { formatChartJSWidget } from './chartWidget/chartJS/ChartJSWidgetCompatibilityHelper'
+import { formatImageWidget } from './imageWidget/ImageWidgetCompatibilityHelper'
+import { formatCustomChartWidget } from './customChart/CustomChartWidgetCompatibilityHelper'
 
 const datasetIdLabelMap = {}
 
-export const formatModel = async (model: any, document: any, datasets: IDataset[], drivers: any[], profileAttributes: { name: string; value: string }[], $http: any, user: any) => {
+export const formatModel = async (model: any, document: any, datasets: IDataset[], drivers: IDashboardDriver[], profileAttributes: { name: string; value: string }[], $http: any, user: any) => {
     if (!model.sheets) return
 
     loadDatasetIdNameMap(datasets)
@@ -25,7 +27,7 @@ export const formatModel = async (model: any, document: any, datasets: IDataset[
         sheets: []
     } as any
     for (let i = 0; i < model.sheets.length; i++) {
-        const formattedSheet = formatSheet(model.sheets[i], formattedModel, user)
+        const formattedSheet = formatSheet(model.sheets[i], formattedModel, user, drivers)
         formattedModel.sheets.push(formattedSheet)
     }
 
@@ -155,7 +157,7 @@ const getFormattedSelections = (model: any) => {
     return formattedSelections
 }
 
-const formatSheet = (sheet: any, formattedModel: any, user: any) => {
+const formatSheet = (sheet: any, formattedModel: any, user: any, drivers: IDashboardDriver[]) => {
     if (!sheet.widgets) return
 
     const formattedSheet = deepcopy(sheet)
@@ -164,15 +166,15 @@ const formatSheet = (sheet: any, formattedModel: any, user: any) => {
     for (let i = 0; i < sheet.widgets.length; i++) {
         const tempWidget = sheet.widgets[i]
         formattedSheet.widgets.lg.push({ id: tempWidget.id, h: tempWidget.sizeY, w: tempWidget.sizeX, x: tempWidget.col, y: tempWidget.row, i: cryptoRandomString({ length: 16, type: 'base64' }), moved: false })
-        addWidgetToModel(tempWidget, formattedModel, user)
+        addWidgetToModel(tempWidget, formattedModel, user, drivers)
     }
 
     return formattedSheet
 }
 
-const addWidgetToModel = (widget: any, formattedModel: any, user: any) => {
+const addWidgetToModel = (widget: any, formattedModel: any, user: any, drivers: IDashboardDriver[]) => {
     if (checkIfWidgetInModel(widget, formattedModel)) return
-    formattedModel.widgets.push(formatWidget(widget, formattedModel, user))
+    formattedModel.widgets.push(formatWidget(widget, formattedModel, user, drivers))
 }
 
 const checkIfWidgetInModel = (widget: any, formattedModel: any) => {
@@ -188,12 +190,12 @@ const checkIfWidgetInModel = (widget: any, formattedModel: any) => {
     return found
 }
 
-export const formatWidget = (widget: any, formattedModel: IDashboard, user: any) => {
+export const formatWidget = (widget: any, formattedModel: IDashboard, user: any, drivers: IDashboardDriver[]) => {
     let formattedWidget = {} as any
 
     switch (widget.type) {
         case 'table':
-            formattedWidget = formatTableWidget(widget, formattedModel)
+            formattedWidget = formatTableWidget(widget, formattedModel, drivers)
             break
         case 'selector':
             formattedWidget = formatSelectorWidget(widget)
@@ -210,7 +212,14 @@ export const formatWidget = (widget: any, formattedModel: IDashboard, user: any)
         case 'chart':
             // TODO widgetChange
             formattedWidget = user?.enterprise ? formatHighchartsWidget(widget) : formatChartJSWidget(widget)
-        //  formattedWidget = false ? formatHighchartsWidget(widget) : formatChartJSWidget(widget)
+            //  formattedWidget = false ? formatHighchartsWidget(widget) : formatChartJSWidget(widget)
+            break
+        case 'image':
+            formattedWidget = formatImageWidget(widget)
+            break;
+        case 'customchart':
+            formattedWidget = formatCustomChartWidget(widget)
+            break;
     }
 
     return formattedWidget

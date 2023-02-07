@@ -93,17 +93,19 @@ export default defineComponent({
             emitter.off('editCalculatedField', this.editCalcField)
         },
         loadDatasets() {
-            this.datasetOptions = this.selectedDatasets
-                ? this.selectedDatasets.map((dataset: any) => {
-                      return {
-                          id: dataset.id.dsId,
-                          label: dataset.label,
-                          cache: dataset.cache,
-                          indexes: dataset.indexes,
-                          parameters: dataset.parameters
-                      }
-                  })
-                : []
+            this.datasetOptions = []
+            this.selectedDatasets?.forEach((dataset: IDataset) => {
+                if ((this.widgetModel.type !== 'discovery' && dataset.type !== 'SbiSolrDataSet') || (this.widgetModel.type === 'discovery' && dataset.type === 'SbiSolrDataSet')) {
+                    this.datasetOptions.push({
+                        id: dataset.id.dsId,
+                        label: dataset.label,
+                        cache: dataset.cache ?? false,
+                        indexes: dataset.indexes,
+                        parameters: dataset.parameters
+                    })
+                }
+            })
+
             if (this.datasetOptions.length === 1) {
                 this.selectedDataset = this.datasetOptions[0]
                 this.onDatasetSelected()
@@ -132,6 +134,7 @@ export default defineComponent({
             if (!this.model?.columns) return
             for (let i = 0; i < this.model.columns.length; i++) {
                 emitter.emit('columnRemoved', this.model.columns[i])
+                // if (this.widgetModel.type === 'discovery') removeColumnFromDiscoveryWidgetModel(this.widgetModel, this.model.columns[i])
             }
             emitter.emit('refreshWidgetWithData', this.widgetModel.id)
             this.model.columns = []

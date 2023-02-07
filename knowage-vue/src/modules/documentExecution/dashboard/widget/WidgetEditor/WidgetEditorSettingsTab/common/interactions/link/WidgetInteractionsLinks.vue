@@ -103,6 +103,11 @@ export default defineComponent({
             return !this.linksModel || !this.linksModel.enabled
         }
     },
+    watch: {
+        linksDisabled() {
+            this.onLinkEnabledChange()
+        }
+    },
     created() {
         this.setEventListeners()
         this.loadLinksModel()

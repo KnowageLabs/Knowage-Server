@@ -170,6 +170,20 @@
             "rowReorderColumnStyle": "width: 3rem"
         }
     },
+    "discoveryWidgetColumnAggregationOptions": [
+        {
+            "label": "COUNT",
+            "value": "COUNT"
+        },
+        {
+            "label": "SUM",
+            "value": "SUM"
+        },
+        {
+            "label": "AVG",
+            "value": "AVG"
+        }
+    ],
     "measureColumnFilterOperators": [
         {
             "label": "=",

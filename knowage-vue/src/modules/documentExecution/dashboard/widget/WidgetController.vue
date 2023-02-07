@@ -1,7 +1,7 @@
 <template>
     <grid-item class="p-d-flex widget-grid-item" :key="item.id" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" drag-allow-from=".drag-handle" @resized="resizedEvent">
         <div v-if="initialized" class="drag-handle"></div>
-        <ProgressSpinner v-if="loading" class="kn-progress-spinner" />
+        <ProgressSpinner v-if="loading || customChartLoading" class="kn-progress-spinner" />
         <Skeleton shape="rectangle" v-if="!initialized" height="100%" border-radius="0" />
         <WidgetRenderer
             v-if="!loading"
@@ -13,11 +13,12 @@
             :selectionIsLocked="selectionIsLocked"
             :propActiveSelections="activeSelections"
             :variables="variables"
-            @pageChanged="reloadWidgetData"
-            @sortingChanged="reloadWidgetData"
+            :widgetLoading="widgetLoading"
+            @reloadData="reloadWidgetData"
             @launchSelection="launchSelection"
             @mouseover="toggleFocus"
             @mouseleave="startUnfocusTimer(500)"
+            @loading="customChartLoading = $event"
         ></WidgetRenderer>
         <WidgetButtonBar
             :widget="widget"
@@ -91,7 +92,9 @@ export default defineComponent({
             },
             inFocus: false,
             selectionIsLocked: false,
-            playDisabledButtonTimeout: null as any
+            playDisabledButtonTimeout: null as any,
+            widgetLoading: false,
+            customChartLoading: false
         }
     },
     async created() {
@@ -109,7 +112,7 @@ export default defineComponent({
     computed: {
         ...mapState(store, ['dashboards']),
         playSelectionButtonVisible(): boolean {
-            if (!this.widget || !this.widget.settings.configuration.selectorType) return false
+            if (!this.widget || !this.widget.settings.configuration || !this.widget.settings.configuration.selectorType) return false
             return this.widget.type === 'selector' && ['multiValue', 'multiDropdown', 'dateRange'].includes(this.widget.settings.configuration.selectorType.modality) && !this.selectionIsLocked
         }
     },
@@ -147,7 +150,7 @@ export default defineComponent({
 
             this.setWidgetLoading(true)
 
-            this.widgetInitialData = await getWidgetData(this.widgetModel, this.model?.configuration?.datasets, this.$http, true, this.activeSelections)
+            this.widgetInitialData = await getWidgetData(this.dashboardId, this.widgetModel, this.model?.configuration?.datasets, this.$http, true, this.activeSelections)
             this.widgetData = this.widgetInitialData
             await this.loadActiveSelections()
 
@@ -179,7 +182,9 @@ export default defineComponent({
             return widgetUsesSelection
         },
         async reloadWidgetData(associativeResponseSelections: any) {
-            this.widgetData = await getWidgetData(this.widgetModel, this.model?.configuration?.datasets, this.$http, false, this.activeSelections, associativeResponseSelections)
+            this.widgetLoading = true
+            this.widgetData = await getWidgetData(this.dashboardId, this.widgetModel, this.model?.configuration?.datasets, this.$http, false, this.activeSelections, associativeResponseSelections)
+            this.widgetLoading = false
         },
         widgetUsesSelections(selections: ISelection[]) {
             let widgetUsesSelection = false

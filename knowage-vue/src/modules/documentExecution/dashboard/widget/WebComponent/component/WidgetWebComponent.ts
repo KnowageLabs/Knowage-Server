@@ -130,4 +130,4 @@ class WidgetWebComponent extends HTMLElement {
 
 customElements.define('widget-web-component', WidgetWebComponent)
 
-export {}
+export { }

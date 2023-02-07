@@ -114,7 +114,6 @@ import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import InputNumber from 'primevue/inputnumber'
-import InputSwitch from 'primevue/inputswitch'
 import WidgetEditorColumnsMultiselect from '../../common/WidgetEditorColumnsMultiselect.vue'
 import WidgetEditorStyleToolbar from '../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
 
@@ -123,7 +122,6 @@ export default defineComponent({
     components: {
         Dropdown,
         InputNumber,
-        InputSwitch,
         WidgetEditorColumnsMultiselect,
         WidgetEditorStyleToolbar
     },
