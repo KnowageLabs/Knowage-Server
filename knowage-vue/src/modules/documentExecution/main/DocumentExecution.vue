@@ -132,7 +132,7 @@ import { findCrossTargetByCrossName, loadNavigationParamsInitialValue } from './
 
 // @ts-ignore
 // eslint-disable-next-line
-window.execExternalCrossNavigation = function (outputParameters, otherOutputParameters, crossNavigationLabel) {
+window.execExternalCrossNavigation = function(outputParameters, otherOutputParameters, crossNavigationLabel) {
     postMessage(
         {
             type: 'crossNavigation',
@@ -862,8 +862,8 @@ export default defineComponent({
                         }
                         parameters[parameter.urlName + '_field_visible_description'] = tempString
                     } else {
-                        parameters[parameter.urlName] = parameter.parameterValue[0].value
-                        parameters[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0].description
+                        parameters[parameter.urlName] = parameter.parameterValue[0] ? parameter.parameterValue[0].value : ''
+                        parameters[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0] ? parameter.parameterValue[0].description : ''
                     }
                 }
             })
@@ -871,9 +871,7 @@ export default defineComponent({
             return parameters
         },
         getFormattedParametersForCSVExport() {
-            if (!this.filtersData) {
-                return {}
-            }
+            if (!this.filtersData) return {}
 
             let parameters = {} as any
 
