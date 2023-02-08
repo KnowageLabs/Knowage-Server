@@ -100,10 +100,10 @@ export default defineComponent({
             } else {
                 if (this.embedHTML) {
                     this.publicUrl =
-                        '<iframe width="600" height="600" src=' +
+                        '<iframe width="600" height="600" src="' +
                         location.origin +
                         `/knowage${this.linkInfo?.isPublic ? '/public' : '/'}/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&OBJECT_LABEL=${this.document.label}&TOOLBAR_VISIBLE=true&ORGANIZATION=${tenet}&NEW_SESSION=true&PARAMETERS=${qs.stringify(this.linkParameters)}` +
-                        ' frameborder="0"></iframe>'
+                        '" frameborder="0"></iframe>'
                 } else {
                     this.publicUrl =
                         location.origin + `/knowage${this.linkInfo?.isPublic ? '/public' : '/'}/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&OBJECT_LABEL=${this.document.label}&TOOLBAR_VISIBLE=true&ORGANIZATION=${tenet}&NEW_SESSION=true&PARAMETERS=${qs.stringify(this.linkParameters)}`
