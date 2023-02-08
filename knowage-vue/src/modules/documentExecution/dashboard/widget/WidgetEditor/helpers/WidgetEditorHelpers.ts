@@ -1,4 +1,4 @@
-import { IWidget } from '../../../Dashboard'
+import { IWidget, IWidgetColumn } from '../../../Dashboard'
 import { formatTableWidgetForSave } from './tableWidget/TableWidgetBackendSaveHelper'
 import { createNewTableWidgetSettings } from '../helpers/tableWidget/TableWidgetFunctions'
 import { createNewSelectorWidgetSettings } from '../helpers/selectorWidget/SelectorWidgetFunctions'
@@ -9,6 +9,8 @@ import { createNewChartJSSettings, formatChartJSWidget } from './chartWidget/cha
 import { createNewHighchartsSettings, formatHighchartsWidget } from './chartWidget/highcharts/HighchartsHelpers'
 import { formatHighchartsWidgetForSave } from './chartWidget/highcharts/HighchartsBackendSaveHelper'
 import { formatChartJSForSave } from './chartWidget/chartJS/ChartJSBackendSaveHelper'
+import { createNewImageWidgetSettings } from './imageWidget/ImageWidgetFunctions'
+import { createNewCustomChartSettings } from './customchart/CustomChartFunctions'
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
 
@@ -26,6 +28,21 @@ export function createNewWidget(type: string) {
 
     return widget
 }
+
+export const createNewWidgetColumn = (eventData: any, widgetType: string) => {
+    const tempColumn = {
+        id: cryptoRandomString({ length: 16, type: 'base64' }),
+        columnName: eventData.name,
+        alias: eventData.alias,
+        type: eventData.type,
+        fieldType: eventData.fieldType,
+        filter: {}
+    } as IWidgetColumn
+    if (tempColumn.fieldType === 'MEASURE') tempColumn.aggregation = 'SUM'
+    else if (widgetType === 'discovery' && tempColumn.fieldType === 'ATTRIBUTE') tempColumn.aggregation = 'COUNT'
+    return tempColumn
+}
+
 
 const createNewWidgetSettings = (widget: IWidget) => {
     switch (widget.type) {
@@ -49,6 +66,13 @@ const createNewWidgetSettings = (widget: IWidget) => {
             break
         case 'highcharts':
             widget.settings = createNewHighchartsSettings()
+            break
+        case 'image':
+            widget.settings = createNewImageWidgetSettings()
+            break
+        case 'customchart':
+            widget.settings = createNewCustomChartSettings()
+            break
     }
 }
 

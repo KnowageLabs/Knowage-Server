@@ -1,6 +1,7 @@
 import { ISelectionsWidgetSettings } from '@/modules/documentExecution/dashboard/interfaces/DashboardSelectionsWidget'
 import { IChartJSWidgetSettings } from './interfaces/chartJS/DashboardChartJSWidget'
 import { IHTMLWidgetSettings } from './interfaces/DashboardHTMLWidget'
+import { IImageWidgetSettings } from './interfaces/DashboardImageWidget'
 import { ITextWidgetSettings } from './interfaces/DashboardTextWidget'
 import { IDrillOrderItem, IHighchartsDrilldown, IHighchartsWidgetSettings } from './interfaces/highcharts/DashboardHighchartsWidget'
 
@@ -40,7 +41,7 @@ export interface IWidget {
     dataset: number | null
     type: string
     columns: IWidgetColumn[]
-    settings: ITableWidgetSettings | ISelectionsWidgetSettings | ISelectorWidgetSettings | IHTMLWidgetSettings | ITextWidgetSettings | IHighchartsWidgetSettings | IChartJSWidgetSettings
+    settings: ITableWidgetSettings | ISelectionsWidgetSettings | ISelectorWidgetSettings | IHTMLWidgetSettings | ITextWidgetSettings | IHighchartsWidgetSettings | IChartJSWidgetSettings | IImageWidgetSettings | ICustomChartWidgetSettings
     new?: boolean
 }
 
@@ -407,6 +408,7 @@ export interface IWidgetColumn {
     fieldType: string
     multiValue: boolean
     aggregation: string
+    aggregationColumn?: string | null
     filter: IWidgetColumnFilter
     formula?: string
     formulaEditor?: string
@@ -438,6 +440,7 @@ export interface IDashboardDatasetDriver {
     type: string
     defaultValue: { value: string; description: string }[] | null
     label: string
+    driverLabel: string
     multivalue: boolean
     typeCode: string
     selectionType: string
@@ -641,6 +644,7 @@ export interface IDashboardDriver {
     multivalue: boolean
     value: string
     urlName: string
+    driverLabel: string
 }
 
 export interface IGalleryItem {

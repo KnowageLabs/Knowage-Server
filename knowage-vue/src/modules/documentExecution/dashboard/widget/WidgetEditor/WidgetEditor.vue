@@ -18,6 +18,7 @@
                     :dashboardId="dashboardId"
                     :selectedSettingProp="selectedSetting"
                     :htmlGalleryProp="htmlGalleryProp"
+                    :customChartGalleryProp="customChartGalleryProp"
                     @settingChanged="onSettingChanged"
                     @datasetSelected="onDatasetSelected"
                 />
@@ -52,7 +53,8 @@ export default defineComponent({
         propWidget: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDataset[]>, required: true },
         variables: { type: Array as PropType<IVariable[]>, required: true },
-        htmlGalleryProp: { type: Array as PropType<IGalleryItem[]>, required: true }
+        htmlGalleryProp: { type: Array as PropType<IGalleryItem[]>, required: true },
+        customChartGalleryProp: { type: Array as PropType<IGalleryItem[]>, required: true }
     },
     data() {
         return {

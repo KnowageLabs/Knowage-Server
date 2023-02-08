@@ -12,7 +12,7 @@ public class WhiteListTest implements IWhiteList {
 
 	@Override
 	public List<String> getExternalServices() {
-		return Arrays.asList("https://www.youtube.com", "https://vimeo.com", "https://www.flickr.com", "https://fonts.googleapis.com", "https://code.highcharts.com");
+		return Arrays.asList("https://cdn.jsdelivr.net", "https://www.youtube.com", "https://vimeo.com", "https://www.flickr.com", "https://fonts.googleapis.com", "https://code.highcharts.com");
 	}
 
 }

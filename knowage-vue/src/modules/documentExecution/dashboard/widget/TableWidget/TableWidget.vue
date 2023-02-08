@@ -13,9 +13,9 @@
 import { emitter } from '../../DashboardHelpers'
 import { mapActions } from 'pinia'
 import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
-import { IDashboardDataset, ISelection, IWidget } from '../../Dashboard'
+import { IDataset, ISelection, IWidget } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
-import { getColumnConditionalStyles, isConditionMet } from './TableWidgetHelper'
+import { createNewTableSelection, getColumnConditionalStyles, isConditionMet } from './TableWidgetHelper'
 import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
 import mainStore from '../../../../../App.store'
 import dashboardStore from '../../Dashboard.store'
@@ -37,7 +37,7 @@ export default defineComponent({
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         editorMode: { type: Boolean, required: false },
-        datasets: { type: Array as PropType<IDashboardDataset[]>, required: true },
+        datasets: { type: Array as PropType<IDataset[]>, required: true },
         dataToShow: { type: Object as any, required: true },
         propActiveSelections: { type: Array as PropType<ISelection[]>, required: true },
         dashboardId: { type: String, required: true }
@@ -438,9 +438,9 @@ export default defineComponent({
                         if (modalSelection.modalColumn) {
                             const modalColumnIndex = this.propWidget.columns.findIndex((column) => column.id == modalSelection.modalColumn)
                             const modalColumnValue = node.data[`column_${modalColumnIndex + 1}`]
-                            updateStoreSelections(this.createNewSelection([modalColumnValue], this.propWidget.columns[modalColumnIndex].columnName), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
+                            updateStoreSelections(createNewTableSelection([modalColumnValue], this.propWidget.columns[modalColumnIndex].columnName, this.propWidget, this.datasets), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
                         } else {
-                            updateStoreSelections(this.createNewSelection([node.value], node.colDef.columnName), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
+                            updateStoreSelections(createNewTableSelection([node.value], node.colDef.columnName, this.propWidget, this.datasets), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
                         }
                     }
                 }
@@ -459,10 +459,10 @@ export default defineComponent({
             if (modalSelection.modalColumn) {
                 const modalColumnIndex = this.propWidget.columns.findIndex((column) => column.id == modalSelection.modalColumn)
                 const modalColumnName = this.propWidget.columns[modalColumnIndex].columnName
-                tempSelection = this.createNewSelection(this.multiSelectedCells, modalColumnName)
+                tempSelection = createNewTableSelection(this.multiSelectedCells, modalColumnName, this.propWidget, this.datasets)
             } else {
                 const columnIndex = this.selectedColumn?.split('_')[1]
-                if (columnIndex || columnIndex === 0) tempSelection = this.createNewSelection(this.multiSelectedCells, this.propWidget.columns[columnIndex - 1].columnName)
+                if (columnIndex || columnIndex === 0) tempSelection = createNewTableSelection(this.multiSelectedCells, this.propWidget.columns[columnIndex - 1].columnName, this.propWidget, this.datasets)
             }
             if (tempSelection) {
                 this.updateActiveSelectionsWithMultivalueSelection(tempSelection)
@@ -489,13 +489,6 @@ export default defineComponent({
                 }
             }
             return keyMap
-        },
-        createNewSelection(value: (string | number)[], columnName: string) {
-            return { datasetId: this.propWidget.dataset as number, datasetLabel: this.getDatasetLabel(this.propWidget.dataset as number), columnName: columnName, value: value, aggregated: false, timestamp: new Date().getTime() }
-        },
-        getDatasetLabel(datasetId: number) {
-            const index = this.datasets.findIndex((dataset: IDashboardDataset) => dataset.id == datasetId)
-            return index !== -1 ? this.datasets[index].dsLabel : ''
         },
         onSelectionsDeleted(selections: any) {
             const index = selections.findIndex((selection: ISelection) => selection.datasetId === this.propWidget.dataset && selection.columnName === this.propWidget.columns[0]?.columnName)

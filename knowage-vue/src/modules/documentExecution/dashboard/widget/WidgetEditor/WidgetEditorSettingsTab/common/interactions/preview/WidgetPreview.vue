@@ -1,7 +1,7 @@
 <template>
     <div v-if="previewModel" class="p-grid p-jc-center p-ai-center p-p-4">
         <div class="p-grid p-col-12 p-pt-4 p-ai-center">
-            <div v-if="widgetModel.type !== 'chart'" class="p-col-6 p-sm-12 p-md-6 p-d-flex p-flex-column kn-flex p-px-2">
+            <div v-if="widgetModel.type !== 'chart' && widgetModel.type !== 'customchart'" class="p-col-6 p-sm-12 p-md-6 p-d-flex p-flex-column kn-flex p-px-2">
                 <label class="kn-material-input-label"> {{ $t('common.type') }}</label>
                 <Dropdown class="kn-material-input" v-model="previewModel.type" :options="descriptor.interactionTypes" optionValue="value" :disabled="previewDisabled" @change="onInteractionTypeChanged">
                     <template #value="slotProps">
@@ -17,7 +17,7 @@
                 </Dropdown>
             </div>
         </div>
-        <div class="p-grid p-col-12 p-mt-2">
+        <div class="p-grid p-col-12">
             <div class="p-sm-12 p-md-6 p-px-2">
                 <div class="p-d-flex p-flex-column kn-flex p-mx-2">
                     <label class="kn-material-input-label"> {{ $t('common.dataset') }}</label>

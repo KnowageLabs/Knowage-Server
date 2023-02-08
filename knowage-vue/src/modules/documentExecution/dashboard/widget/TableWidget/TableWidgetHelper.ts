@@ -1,4 +1,4 @@
-import { IWidget, ITableWidgetColumnGroup } from '../../Dashboard'
+import { IWidget, ITableWidgetColumnGroup, IDataset } from '../../Dashboard'
 
 export const getColumnGroup = (propWidget: IWidget, col: ITableWidgetColumnGroup) => {
     var modelGroups = propWidget.settings.configuration.columnGroups.groups
@@ -77,4 +77,14 @@ export const isConditionMet = (condition, valueToCompare) => {
             break
     }
     return fullfilledCondition
+}
+
+
+export const createNewTableSelection = (value: (string | number)[], columnName: string, widget: IWidget, datasets: IDataset[]) => {
+    return { datasetId: widget.dataset as number, datasetLabel: getDatasetLabel(widget.dataset as number, datasets) as string, columnName: columnName, value: value, aggregated: false, timestamp: new Date().getTime() }
+}
+
+const getDatasetLabel = (datasetId: number, datasets: IDataset[]) => {
+    const index = datasets.findIndex((dataset: IDataset) => dataset.id.dsId == datasetId)
+    return index !== -1 ? datasets[index].label : ''
 }

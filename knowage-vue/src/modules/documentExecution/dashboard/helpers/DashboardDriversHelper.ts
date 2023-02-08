@@ -50,7 +50,8 @@ export const getFormattedDashboardDrivers = (dashboardDrivers: (iParameter | IDa
             type: driver.type,
             multivalue: driver.multivalue,
             value: getFormattedDriverValue(driver),
-            urlName: driver.urlName
+            urlName: driver.urlName,
+            driverLabel: driver.driverLabel
         } as IDashboardDriver
         drivers.push(formattedDriver)
     })

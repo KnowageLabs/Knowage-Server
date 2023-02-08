@@ -63,13 +63,12 @@
 import { defineComponent, PropType } from 'vue'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import { IWidget, IWidgetColumn } from '../../../../Dashboard'
-import { createNewWidgetColumn } from '../../helpers/tableWidget/TableWidgetFunctions'
 import { emitter } from '../../../../DashboardHelpers'
 import { addChartColumnToTable } from '../../helpers/chartWidget/ChartWidgetDataTabHelpers'
+import { createNewWidgetColumn } from '../../helpers/WidgetEditorHelpers'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dropdown from 'primevue/dropdown'
-import deepcopy from 'deepcopy'
 import commonDescriptor from '../common/WidgetCommonDescriptor.json'
 
 export default defineComponent({
@@ -86,8 +85,11 @@ export default defineComponent({
         }
     },
     computed: {
+        widgetType() {
+            return this.widgetModel.type
+        },
         rowReorderEnabled(): boolean {
-            return this.widgetModel && ['table', 'html', 'text', 'highcharts'].includes(this.widgetModel.type) && this.rows.length > 1
+            return this.widgetModel && ['table', 'html', 'text', 'highcharts', 'discovery', 'customchart'].includes(this.widgetModel.type) && this.rows.length > 1
         }
     },
     watch: {
@@ -116,7 +118,7 @@ export default defineComponent({
             this.updateSelectedColumn(column)
         },
         loadItems() {
-            this.rows = deepcopy(this.items) as IWidgetColumn[]
+            this.rows = this.items as IWidgetColumn[]
         },
         setFilters() {
             if (this.settings?.globalFilterFields?.length) this.filters.global = [filterDefault]
@@ -131,11 +133,11 @@ export default defineComponent({
         onDropComplete(event: any) {
             if (event.dataTransfer.getData('text/plain') === 'b') return
             const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
-            const tempColumn = createNewWidgetColumn(eventData)
-            if (['table', 'html', 'text', 'highcharts', 'chartJS'].includes(this.widgetModel.type)) {
+            const tempColumn = createNewWidgetColumn(eventData, this.widgetType)
+            if (['table', 'html', 'text', 'highcharts', 'chartJS', 'discovery', 'customchart'].includes(this.widgetModel.type)) {
                 if (['chartJS', 'highcharts'].includes(this.widgetModel.type)) {
                     addChartColumnToTable(tempColumn, this.rows, this.chartType, this.settings.attributesOnly, this.settings.measuresOnly, this.widgetModel)
-                } else if (this.widgetModel.type === 'table' || !this.checkIfColumnIsAlreadyPresent(tempColumn)) this.rows.push(tempColumn as IWidgetColumn)
+                } else if (['table'].includes(this.widgetModel.type) || !this.checkIfColumnIsAlreadyPresent(tempColumn)) this.rows.push(tempColumn as IWidgetColumn)
             } else {
                 this.rows = [tempColumn]
             }
@@ -150,7 +152,7 @@ export default defineComponent({
             this.$emit('itemDeleted', item)
         },
         aggregationDropdownIsVisible(row: any) {
-            return row.fieldType === 'MEASURE'
+            return row.fieldType === 'MEASURE' && this.widgetType !== 'discovery'
         },
         updateSelectedColumn(selectedColumn: IWidgetColumn) {
             const index = this.rows.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === selectedColumn.id)

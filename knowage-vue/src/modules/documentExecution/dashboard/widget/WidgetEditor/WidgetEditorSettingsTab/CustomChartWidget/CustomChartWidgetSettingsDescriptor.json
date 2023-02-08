@@ -1,0 +1,95 @@
+{
+    "settings": {
+        "Configuration": [
+            {
+                "title": "dashboard.widgetEditor.export.title",
+                "type": "Export"
+            }
+        ],
+        "Editor": [
+            {
+                "title": "CSS",
+                "type": "CSS"
+            },
+            {
+                "title": "HTML",
+                "type": "HTML"
+            },
+            {
+                "title": "JS",
+                "type": "JS"
+            }
+        ],
+        "Interactions": [
+            {
+                "title": "dashboard.widgetEditor.interactions.crossNavigation",
+                "type": "CrossNavigation"
+            },
+            {
+                "title": "dashboard.widgetEditor.interactions.preview",
+                "type": "Preview"
+            }
+        ],
+        "Responsive": [
+            {
+                "title": "dashboard.widgetEditor.responsive.title",
+                "type": "Responsive"
+            }
+        ],
+        "Style": [
+            {
+                "title": "dashboard.widgetEditor.titles.title",
+                "type": "Title"
+            },
+            {
+                "title": "dashboard.widgetEditor.background",
+                "type": "BackgroundColorStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.borders.title",
+                "type": "BordersStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.padding.title",
+                "type": "PaddingStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.shadows.title",
+                "type": "ShadowsStyle"
+            }
+        ]
+    },
+    "settingsListOptions": [
+        {
+            "disabled": false,
+            "icon": "fa fa-book",
+            "label": "dashboard.widgetEditor.gallery",
+            "value": "Gallery"
+        },
+        {
+            "icon": "fa fa-code",
+            "label": "dashboard.widgetEditor.editor",
+            "value": "Editor"
+        },
+        {
+            "icon": "fa fa-cogs",
+            "label": "dashboard.widgetEditor.configuration",
+            "value": "Configuration"
+        },
+        {
+            "icon": "fa fa-paint-brush",
+            "label": "common.style",
+            "value": "Style"
+        },
+        {
+            "icon": "fa fa-hand-pointer",
+            "label": "dashboard.widgetEditor.interactions.title",
+            "value": "Interactions"
+        },
+        {
+            "icon": "pi pi-tablet",
+            "label": "dashboard.widgetEditor.responsive.title",
+            "value": "Responsive"
+        }
+    ]
+}

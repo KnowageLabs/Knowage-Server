@@ -5,7 +5,7 @@
             <Button icon="fas fa-rotate-right" class="p-button-rounded p-button-text p-button-plain" @click="getWidgetData" />
         </div>
 
-        <ProgressBar v-if="loading" class="p-mx-2" mode="indeterminate" />
+        <ProgressBar v-if="loading || customChartLoading" class="p-mx-2" mode="indeterminate" />
         <div class="widget-container p-mx-2" :style="getWidgetContainerStyle()">
             <div v-if="widgetTitle && widgetTitle.enabled" class="p-d-flex p-ai-center" style="border-radius: 0px" :style="getWidgetTitleStyle()">
                 {{ widgetTitle?.text }}
@@ -18,6 +18,17 @@
                 <WebComponentContainer v-if="(propWidget.type == 'html' || propWidget.type == 'text') && !loading" :propWidget="propWidget" :widgetData="widgetData" :propActiveSelections="activeSelections" :editorMode="true" :dashboardId="dashboardId" :variables="variables"></WebComponentContainer>
                 <HighchartsContainer v-if="propWidget.type === 'highcharts' && !loading" :widgetModel="propWidget" :dataToShow="widgetData" :propActiveSelections="activeSelections" :editorMode="true" :dashboardId="dashboardId"></HighchartsContainer>
                 <ChartJSContainer v-if="propWidget.type === 'chartJS' && !loading" :widgetModel="propWidget" :dataToShow="widgetData" :editorMode="true" :dashboardId="dashboardId" :propActiveSelections="activeSelections"></ChartJSContainer>
+                <ImageWidget v-if="propWidget.type === 'image'" :widgetModel="propWidget" :dashboardId="dashboardId" :editorMode="true" />
+                <CustomChartWidget
+                    v-if="propWidget.type == 'customchart' && !loading"
+                    :propWidget="propWidget"
+                    :widgetData="widgetData"
+                    :propActiveSelections="activeSelections"
+                    :editorMode="true"
+                    :dashboardId="dashboardId"
+                    :variables="variables"
+                    @loading="customChartLoading = $event"
+                ></CustomChartWidget>
             </div>
         </div>
     </div>
@@ -41,10 +52,12 @@ import deepcopy from 'deepcopy'
 import WebComponentContainer from '../WebComponent/WebComponentContainer.vue'
 import HighchartsContainer from '../ChartWidget/Highcharts/HighchartsContainer.vue'
 import ChartJSContainer from '../ChartWidget/ChartJS/ChartJSContainer.vue'
+import ImageWidget from '../ImageWidget/ImageWidget.vue'
+import CustomChartWidget from '../CustomChartWidget/CustomChartWidget.vue'
 
 export default defineComponent({
     name: 'widget-editor-preview',
-    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, ProgressBar, WebComponentContainer, HighchartsContainer, ChartJSContainer },
+    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, ProgressBar, WebComponentContainer, HighchartsContainer, ChartJSContainer, ImageWidget, CustomChartWidget },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDashboardDataset[]>, required: true },
@@ -61,7 +74,8 @@ export default defineComponent({
             activeSelections: [] as ISelection[],
             htmlContent: '',
             webComponentCss: '',
-            textModel: ''
+            textModel: '',
+            customChartLoading: false
         }
     },
     computed: {
@@ -89,7 +103,7 @@ export default defineComponent({
         loadWebComponentData() {},
         async getWidgetData() {
             this.loading = true
-            this.widgetData = await getWidgetData(this.propWidget, this.datasets, this.$http, false, this.activeSelections)
+            this.widgetData = await getWidgetData(this.dashboardId, this.propWidget, this.datasets, this.$http, false, this.activeSelections)
             this.activeSelections = deepcopy(this.getSelections(this.dashboardId))
             this.loading = false
         },
@@ -128,7 +142,7 @@ export default defineComponent({
         display: flex;
         flex-direction: column;
         overflow: hidden;
-        // flex: 1;
+        flex: 1;
         max-height: 50%;
         .widget-container-renderer {
             flex: 1;
@@ -140,19 +154,5 @@ export default defineComponent({
 }
 .widget-editor-preview-container.expand {
     flex: 10000;
-}
-@media screen and (max-width: 1199px) {
-    .widget-editor-preview-container {
-        -webkit-transition: width 0.3s;
-        transition: flex 0.3s;
-        flex: 0;
-    }
-}
-@media screen and (min-width: 1200px) {
-    .widget-editor-preview-container {
-        -webkit-transition: width 0.3s;
-        transition: flex 0.3s;
-        flex: 0.5;
-    }
 }
 </style>

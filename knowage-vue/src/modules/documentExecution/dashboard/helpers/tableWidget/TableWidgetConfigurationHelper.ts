@@ -13,7 +13,7 @@ const getDefaultColumnGroups = (widget: any) => {
 
 }
 
-const getFormattedExport = (widget: any) => {
+export const getFormattedExport = (widget: any) => {
     const formattedExport = tableWidgetDefaultValues.getDefaultExportsConfiguration()
     if (widget.settings.exportpdf) formattedExport.pdf = widget.settings.exportpdf
     if (widget.style) {
@@ -39,7 +39,7 @@ const getFormattedSummaryRows = (widget: any) => {
     return formattedSummaryRows as ITableWidgetSummaryRows
 }
 
-const getFormattedCustomMessages = (widget: any) => {
+export const getFormattedCustomMessages = (widget: any) => {
     if (!widget.settings || !widget.settings.norows) return tableWidgetDefaultValues.getDefaultCustomMessages()
 
     return { hideNoRowsMessage: widget.settings.norows.hide, noRowsMessage: widget.settings.norows.message } as ITableWidgetCustomMessages

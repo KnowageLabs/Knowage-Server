@@ -24,7 +24,7 @@ import Dropdown from 'primevue/dropdown'
 import MasonryWall from '@yeger/vue-masonry-wall'
 
 export default defineComponent({
-    name: 'chart-widget-chart-type-dropdown',
+    name: 'chart-widget-gallery',
     components: { Dropdown, MasonryWall },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     emits: ['selectedChartTypeChanged'],

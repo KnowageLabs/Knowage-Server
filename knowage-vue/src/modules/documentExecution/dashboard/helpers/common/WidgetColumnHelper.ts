@@ -26,5 +26,6 @@ export const getFormattedWidgetColumn = (widgetColumn: any, columnNameIdMap: any
     }
     columnNameIdMap[formattedColumn.columnName] = formattedColumn.id
     if (widgetColumn.aggregationSelected) formattedColumn.aggregation = widgetColumn.aggregationSelected
+    if (widgetColumn.aggregationColumn) formattedColumn.aggregationColumn = widgetColumn.aggregationSelected !== 'COUNT' ? widgetColumn.aggregationColumn : ""
     return formattedColumn
 }

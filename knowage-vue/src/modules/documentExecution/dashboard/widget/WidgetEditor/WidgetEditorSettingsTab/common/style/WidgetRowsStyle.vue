@@ -53,6 +53,7 @@ export default defineComponent({
             emitter.emit('rowsStyleChanged', this.rowsStyleModel)
             switch (this.widgetType) {
                 case 'table':
+                case 'discovery':
                     emitter.emit('refreshTable', this.widgetModel.id)
                     break
                 case 'selection':

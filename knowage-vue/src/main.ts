@@ -55,6 +55,8 @@ if (import.meta.env.DEV) document.domain = 'localhost'
 
 import VueGridLayout from 'vue-grid-layout'
 
+import ResizeObserver from '@vue-toys/resize-observer'
+
 const pinia = createPinia()
 
 const app = createApp(App).use(pinia)
@@ -71,6 +73,7 @@ app.use(VueAxios, interceptor)
     .use(internationalizationPlugin, mainStore.$state.internationalization)
     .use(GlobalCmComponent)
     .use(VueGridLayout)
+    .use(ResizeObserver)
 
     .directive('badge', BadgeDirective)
     .directive('tooltip', Tooltip)
