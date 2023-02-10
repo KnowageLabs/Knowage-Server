@@ -179,6 +179,7 @@ export default defineComponent({
             let valid = true
 
             for (let i = 0; i < this.selectedFunction.inputColumns.length; i++) {
+                delete this.selectedFunction.inputColumns[i].dsColumn
                 if (!this.selectedFunction.inputColumns[i].name) {
                     valid = this.addMissingFields(setMessages, this.$t('managers.functionsCatalog.missingFields.inputColumnName', { number: i + 1 }))
                 }
