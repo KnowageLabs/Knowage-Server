@@ -128,7 +128,7 @@ import { mapState, mapActions } from 'pinia'
 import deepcopy from 'deepcopy'
 import DashboardController from '../dashboard/DashboardController.vue'
 import { getCorrectRolesForExecution } from '../../../helpers/commons/roleHelper'
-import { findCrossTargetByCrossName, loadNavigationParamsInitialValue } from './DocumentExecutionAngularCrossNavigationHelper'
+import { executeCrossNavigation, loadNavigationParamsInitialValue, loadCrossNavigation } from './DocumentExecutionAngularCrossNavigationHelper'
 
 // @ts-ignore
 // eslint-disable-next-line
@@ -363,7 +363,7 @@ export default defineComponent({
         ...mapActions(mainStore, ['setInfo', 'setError', 'setDocumentExecutionEmbed']),
         iframeEventsListener(event) {
             if (event.data.type === 'crossNavigation') {
-                this.executeCrossNavigation(event)
+                executeCrossNavigation(this, event, this.$http)
             } else if (event.data.type === 'cockpitExecuted') {
                 this.loading = false
             }
@@ -1023,82 +1023,6 @@ export default defineComponent({
             this.exporters = null
             await this.loadPage()
         },
-        async executeCrossNavigation(event: any) {
-            this.angularData = event.data
-            await this.loadCrossNavigationByDocument(event.data)
-        },
-        async loadCrossNavigationByDocument(angularData: any) {
-            if (!this.document) return
-
-            let temp = {} as any
-
-            this.loading = true
-            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${this.document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
-            this.loading = false
-
-            if (temp.length === 0) return
-
-            const crossTarget = findCrossTargetByCrossName(angularData, temp)
-
-            if (!crossTarget && temp.length > 1) {
-                this.crossNavigationDocuments = temp
-                this.destinationSelectDialogVisible = true
-            } else {
-                this.loadCrossNavigation(crossTarget ?? temp[0], angularData)
-            }
-        },
-        async loadCrossNavigation(crossNavigationDocument: any, angularData: any) {
-            this.formatAngularOutputParameters(angularData.otherOutputParameters)
-            const navigationParams = this.formatNavigationParams(angularData.otherOutputParameters, crossNavigationDocument ? crossNavigationDocument.navigationParams : [])
-            this.addDocumentOtherParametersToNavigationParamas(navigationParams, angularData, crossNavigationDocument)
-
-            const popupOptions = crossNavigationDocument?.popupOptions ? JSON.parse(crossNavigationDocument.popupOptions) : null
-
-            this.checkIfParameterHasFixedValue(navigationParams, crossNavigationDocument)
-
-            if (crossNavigationDocument?.crossType !== 2) {
-                this.document = {
-                    ...crossNavigationDocument?.document,
-                    navigationParams: navigationParams
-                }
-            }
-
-            if (crossNavigationDocument?.crossType === 2) {
-                this.openCrossNavigationInNewWindow(popupOptions, crossNavigationDocument, navigationParams)
-            } else if (crossNavigationDocument?.crossType === 1) {
-                const documentLabel = crossNavigationDocument?.document.label
-                this.crossNavigationContainerData = {
-                    documentLabel: documentLabel,
-                    iFrameName: documentLabel
-                }
-                this.crossNavigationContainerVisible = true
-                await this.loadPage(false, documentLabel, true)
-            } else {
-                const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
-                if (index !== -1) {
-                    this.breadcrumbs[index].document = this.document
-                } else {
-                    this.breadcrumbs.push({
-                        label: this.document.name,
-                        document: this.document,
-                        crossBreadcrumb: this.getCrossBeadcrumb(crossNavigationDocument, angularData)
-                    })
-                }
-
-                await this.loadPage()
-            }
-            this.documentMode = 'VIEW'
-        },
-        checkIfParameterHasFixedValue(navigationParams: any, crossNavigationDocument: any) {
-            if (!crossNavigationDocument || !crossNavigationDocument.navigationParams) return
-            Object.keys(crossNavigationDocument.navigationParams).forEach((key: string) => {
-                const tempParam = crossNavigationDocument.navigationParams[key]
-                if (tempParam.fixed) {
-                    navigationParams[key] = tempParam.value
-                    navigationParams[key + '_field_visible_description'] = tempParam.value
-                }
-            })
-        },
         getCrossBeadcrumb(crossNavigationDocument: any, angularData: any) {
             let tempCrossBreadcrumb = crossNavigationDocument?.crossBreadcrumb
             if (tempCrossBreadcrumb?.includes('$P{')) {
@@ -1129,101 +1053,6 @@ export default defineComponent({
             }
 
             return finalString
-        },
-        addDocumentOtherParametersToNavigationParamas(navigationParams: any[], angularData: any, crossNavigationDocument: any) {
-            if (!angularData.outputParameters || angularData.outputParameters.length === 0 || !crossNavigationDocument?.navigationParams) return
-            const keys = Object.keys(angularData.outputParameters)
-            const documentNavigationParamsKeys = Object.keys(crossNavigationDocument.navigationParams)
-            for (let i = 0; i < keys.length; i++) {
-                const tempKey = keys[i]
-                let newKey = ''
-                for (let j = 0; j < documentNavigationParamsKeys.length; j++) {
-                    if (crossNavigationDocument.navigationParams[documentNavigationParamsKeys[j]].value?.label === tempKey) {
-                        newKey = documentNavigationParamsKeys[j]
-                    }
-                }
-                if (newKey) navigationParams[newKey] = angularData.outputParameters[tempKey]
-            }
-
-            this.addSourceDocumentParameterValuesFromDocumentNavigationParameters(navigationParams, crossNavigationDocument)
-        },
-        addSourceDocumentParameterValuesFromDocumentNavigationParameters(navigationParams: any[], crossNavigationDocument: any) {
-            const documentNavigationParamsKeys = Object.keys(crossNavigationDocument.navigationParams)
-            documentNavigationParamsKeys.forEach((key: string) => {
-                if (!navigationParams[key]) {
-                    const sourceParameter = this.filtersData.filterStatus.find((parameter: iParameter) => {
-                        return parameter.urlName === crossNavigationDocument.navigationParams[key].value.label
-                    })
-                    if (sourceParameter) {
-                        navigationParams[key] = sourceParameter.parameterValue[0].value ?? ''
-                        navigationParams[key + '_field_visible_description'] = sourceParameter.parameterValue[0].description ?? ''
-                    }
-                }
-            })
-        },
-        openCrossNavigationInNewWindow(popupOptions: any, crossNavigationDocument: any, navigationParams: any) {
-            if (!crossNavigationDocument || !crossNavigationDocument.document) return
-            const parameters = encodeURI(JSON.stringify(navigationParams))
-            const url =
-                import.meta.env.VITE_HOST_URL +
-                `/knowage/restful-services/publish?PUBLISHER=documentExecutionNg&OBJECT_ID=${crossNavigationDocument.document.id}&OBJECT_LABEL=${crossNavigationDocument.document.label}&SELECTED_ROLE=${this.sessionRole}&SBI_EXECUTION_ID=null&OBJECT_NAME=${crossNavigationDocument.document.name}&CROSS_PARAMETER=${parameters}`
-            window.open(url, '_blank', `toolbar=0,status=0,menubar=0,width=${popupOptions.width || '800'},height=${popupOptions.height || '600'}`)
-        },
-        formatAngularOutputParameters(otherOutputParameters: any[]) {
-            const startDocumentInputParameters = deepcopy(this.document.drivers)
-            const keys = [] as any[]
-            otherOutputParameters.forEach((parameter: any) => keys.push(Object.keys(parameter)[0]))
-            for (let i = 0; i < startDocumentInputParameters.length; i++) {
-                if (!keys.includes(startDocumentInputParameters[i].label)) {
-                    const tempObject = {} as any
-                    tempObject[startDocumentInputParameters[i].label] = this.getParameterValueForCrossNavigation(startDocumentInputParameters[i].label)
-                    otherOutputParameters.push(tempObject)
-                }
-            }
-        },
-        getParameterValueForCrossNavigation(parameterLabel: string) {
-            if (!parameterLabel) return
-            const index = this.filtersData.filterStatus?.findIndex((param: any) => param.label === parameterLabel)
-            return index !== -1 ? this.filtersData.filterStatus[index].parameterValue[0].value : ''
-        },
-        formatNavigationParams(otherOutputParameters: any[], navigationParams: any) {
-            let formatedParams = {} as any
-
-            otherOutputParameters.forEach((el: any) => {
-                let found = false
-                let label = ''
-
-                for (let i = 0; i < Object.keys(navigationParams).length; i++) {
-                    if (navigationParams[Object.keys(navigationParams)[i]].value.label === Object.keys(el)[0]) {
-                        found = true
-                        label = Object.keys(navigationParams)[i]
-                        break
-                    }
-                }
-
-                if (found) {
-                    formatedParams[label] = el[Object.keys(el)[0]]
-                    formatedParams[label + '_field_visible_description'] = el[Object.keys(el)[0]]
-                }
-            })
-
-            this.setNavigationParametersFromCurrentFilters(formatedParams, navigationParams)
-
-            return formatedParams
-        },
-        setNavigationParametersFromCurrentFilters(formatedParams: any, navigationParams: any) {
-            const navigationParamsKeys = navigationParams ? Object.keys(navigationParams) : []
-            const formattedParameters = this.getFormattedParameters()
-            const formattedParametersKeys = formattedParameters ? Object.keys(formattedParameters) : []
-            if (navigationParamsKeys.length > 0 && formattedParametersKeys.length > 0) {
-                for (let i = 0; i < navigationParamsKeys.length; i++) {
-                    const index = formattedParametersKeys.findIndex((key: string) => key === navigationParams[navigationParamsKeys[i]].value.label && navigationParams[navigationParamsKeys[i]].value.isInput)
-                    if (index !== -1) {
-                        formatedParams[navigationParamsKeys[i]] = formattedParameters[formattedParametersKeys[index]]
-                        formatedParams[navigationParamsKeys[i] + '_field_visible_description'] = formattedParameters[formattedParametersKeys[index] + '_field_visible_description'] ? formattedParameters[formattedParametersKeys[index] + '_field_visible_description'] : ''
-                    }
-                }
-            }
         },
         showOLAPCustomView() {
             this.olapCustomViewVisible = true
@@ -1325,7 +1154,7 @@ export default defineComponent({
         },
         async onCrossNavigationSelected(event: any) {
             this.destinationSelectDialogVisible = false
-            await this.loadCrossNavigation(event, this.angularData)
+            await loadCrossNavigation(event, this.angularData)
         },
         onCrossNavigationContainerClose() {
             this.crossNavigationContainerData = null
