@@ -4,6 +4,7 @@ import { IHTMLWidgetSettings } from './interfaces/DashboardHTMLWidget'
 import { IImageWidgetSettings } from './interfaces/DashboardImageWidget'
 import { ITextWidgetSettings } from './interfaces/DashboardTextWidget'
 import { IDrillOrderItem, IHighchartsDrilldown, IHighchartsWidgetSettings } from './interfaces/highcharts/DashboardHighchartsWidget'
+import { IPivotTableSettings } from './interfaces/pivotTable/DashboardPivotTableWidget'
 
 export interface IDashboard {
     sheets: []
@@ -41,7 +42,7 @@ export interface IWidget {
     dataset: number | null
     type: string
     columns: IWidgetColumn[]
-    settings: ITableWidgetSettings | ISelectionsWidgetSettings | ISelectorWidgetSettings | IHTMLWidgetSettings | ITextWidgetSettings | IHighchartsWidgetSettings | IChartJSWidgetSettings | IImageWidgetSettings | ICustomChartWidgetSettings
+    settings: ITableWidgetSettings | ISelectionsWidgetSettings | ISelectorWidgetSettings | IHTMLWidgetSettings | ITextWidgetSettings | IHighchartsWidgetSettings | IChartJSWidgetSettings | IImageWidgetSettings | ICustomChartWidgetSettings | IPivotTableSettings
     new?: boolean
 }
 

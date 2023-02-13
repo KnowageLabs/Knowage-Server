@@ -12,6 +12,7 @@ import { formatHighchartsWidget } from './chartWidget/highcharts/HighchartsWidge
 import { formatChartJSWidget } from './chartWidget/chartJS/ChartJSWidgetCompatibilityHelper'
 import { formatImageWidget } from './imageWidget/ImageWidgetCompatibilityHelper'
 import { formatCustomChartWidget } from './customChart/CustomChartWidgetCompatibilityHelper'
+import { formatPivotTabletWidget } from './pivotWidget/PivotTableCompatibilityHelper'
 
 const datasetIdLabelMap = {}
 
@@ -220,6 +221,8 @@ export const formatWidget = (widget: any, formattedModel: IDashboard, user: any,
         case 'customchart':
             formattedWidget = formatCustomChartWidget(widget)
             break;
+        case 'pivot':
+            formattedWidget = formatPivotTabletWidget(widget, formattedModel, drivers)
     }
 
     return formattedWidget

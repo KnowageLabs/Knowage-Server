@@ -1,0 +1,20 @@
+{
+    "defaultColumnStyles": {
+        "enabled": true,
+        "styles": [
+            {
+                "properties": {
+                    "background-color": "",
+                    "color": "",
+                    "font-family": "",
+                    "font-size": "",
+                    "font-style": "",
+                    "font-weight": "",
+                    "justify-content": "",
+                    "width": ""
+                },
+                "target": "all"
+            }
+        ]
+    }
+}
