@@ -505,6 +505,9 @@
     			&.balloons {
     				@include custom-mask-image('../img/cockpit/mapWidget/balloons.svg');
     			}
+    			&.pies {
+    				@include custom-mask-image('../img/cockpit/mapWidget/pies.svg');
+    			}
     		}
     	}
 
