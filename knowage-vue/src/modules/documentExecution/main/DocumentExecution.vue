@@ -1154,7 +1154,7 @@ export default defineComponent({
         },
         async onCrossNavigationSelected(event: any) {
             this.destinationSelectDialogVisible = false
-            await loadCrossNavigation(event, this.angularData)
+            await loadCrossNavigation(this, event, this.angularData)
         },
         onCrossNavigationContainerClose() {
             this.crossNavigationContainerData = null
