@@ -1,6 +1,6 @@
+import { IWidgetExports } from "../../Dashboard"
 import { IPivotTableConfiguration } from "../../interfaces/pivotTable/DashboardPivotTableWidget"
-import { getFormattedExport } from "../tableWidget/TableWidgetConfigurationHelper"
 
 export const getFormattedConfiguration = (widget: any) => {
-    return { exports: getFormattedExport(widget) } as IPivotTableConfiguration
+    return { exports: { showExcelExport: widget.style?.showExcelExport ?? false, showScreenshot: widget.style?.showScreenshot ?? false } as IWidgetExports } as IPivotTableConfiguration
 }

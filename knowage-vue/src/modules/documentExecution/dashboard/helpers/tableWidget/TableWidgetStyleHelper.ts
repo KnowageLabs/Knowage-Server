@@ -48,7 +48,7 @@ const getDefaultColumnGroupsStyle = (widget: any) => {
     return formattedColumnGroupsStyles
 }
 
-export const getFormattedHeadersStyle = (widget: any) => {
+const getFormattedHeadersStyle = (widget: any) => {
     if (!widget.style?.th) return tableWidgetDefaultValues.getDefaultHeadersStyle()
 
     return {
@@ -65,7 +65,7 @@ export const getFormattedHeadersStyle = (widget: any) => {
     }
 }
 
-export const getFormattedRowsStyle = (widget: any) => {
+const getFormattedRowsStyle = (widget: any) => {
     const formattedRowsStyle = {
         height: getPixelValueAsNumber(widget.style.tr?.height) ?? 25,
         multiselectable: widget.settings.multiselectable ?? false,

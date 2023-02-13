@@ -3,17 +3,17 @@ import { hexToRgba } from '../FormattingHelpers'
 import { getColumnId } from './PivotTableCompatibilityHelper'
 
 export const getSettingsFromWidgetColumns = (formattedWidget: IWidget, widget: any, formattedDashboardModel: IDashboard, columnNameIdMap: any) => {
-    for (let i = 0; i < widget.content.columnSelectedOfDataset.length; i++) {
-        const tempColumn = widget.content.columnSelectedOfDataset[i]
-        getRowConfigurationFromWidgetColumn(formattedWidget, tempColumn)
-        getHeaderConfigurationFromWidgetColumn(formattedWidget, tempColumn, formattedDashboardModel)
-        // if (tempColumn.group) addColumnToColumnGroup(formattedWidget, tempColumn)
-        //  getVisualizationTypeConfigurationsFromColumn(formattedWidget, tempColumn)
-        // getVisibilityConditionsFromColumn(formattedWidget, tempColumn, formattedDashboardModel)
-        // getStyleFromColumn(formattedWidget, tempColumn, columnNameIdMap)
-        // getConditionalStyleFromColumn(formattedWidget, tempColumn, formattedDashboardModel)
-        // getTooltipFromColumn(formattedWidget, tempColumn)
-    }
+    // for (let i = 0; i < widget.content.columnSelectedOfDataset.length; i++) {
+    //     const tempColumn = widget.content.columnSelectedOfDataset[i]
+    //     getRowConfigurationFromWidgetColumn(formattedWidget, tempColumn)
+    //     getHeaderConfigurationFromWidgetColumn(formattedWidget, tempColumn, formattedDashboardModel)
+    //     // if (tempColumn.group) addColumnToColumnGroup(formattedWidget, tempColumn)
+    //     //  getVisualizationTypeConfigurationsFromColumn(formattedWidget, tempColumn)
+    //     // getVisibilityConditionsFromColumn(formattedWidget, tempColumn, formattedDashboardModel)
+    //     // getStyleFromColumn(formattedWidget, tempColumn, columnNameIdMap)
+    //     // getConditionalStyleFromColumn(formattedWidget, tempColumn, formattedDashboardModel)
+    //     // getTooltipFromColumn(formattedWidget, tempColumn)
+    // }
 }
 
 const addColumnToColumnGroup = (formattedWidget: IWidget, tempColumn: any) => {

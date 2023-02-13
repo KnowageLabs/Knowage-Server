@@ -5,15 +5,16 @@ import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/co
 import { getFiltersForColumns } from '../DashboardBackwardCompatibilityHelper'
 import { getFormattedInteractions } from '../common/WidgetInteractionsHelper'
 import { getFormattedWidgetColumns } from '../common/WidgetColumnHelper'
-import { getFormattedStyle } from '../tableWidget/TableWidgetStyleHelper'
 import { IPivotTableConfiguration, IPivotTableSettings } from '../../interfaces/pivotTable/DashboardPivotTableWidget'
 import { getSettingsFromWidgetColumns } from './PivotTableColumnSettingsHelper'
 import { getFormattedConfiguration } from './PivotTableConfigurationHelper'
+import { getFormattedStyle } from './PivotTabletStyleHelper'
 
 
 const columnNameIdMap = {}
 
 export const formatPivotTabletWidget = (widget: any, formattedDashboardModel: IDashboard, drivers: IDashboardDriver[]) => {
+    console.log('----------- ORIGINAL WIDGET: ', widget)
     const formattedWidget = {
         id: widget.id,
         dataset: widget.dataset.dsId,
@@ -26,6 +27,7 @@ export const formatPivotTabletWidget = (widget: any, formattedDashboardModel: ID
     formattedWidget.settings = getFormattedWidgetSettings(widget, formattedDashboardModel, drivers)
     getFiltersForColumns(formattedWidget, widget)
     getSettingsFromWidgetColumns(formattedWidget, widget, formattedDashboardModel, columnNameIdMap)
+    console.log('----------- FORMATTED WIDGET: ', formattedWidget)
     return formattedWidget
 }
 
@@ -47,7 +49,7 @@ const getFormattedWidgetSettings = (widget: any, formattedDashboardModel: IDashb
 // TODO - Darko see if needed or it needs to be changed 
 const getFormattedConditionalStyles = (widget: any, formattedDashboardModel: IDashboard, drivers: IDashboardDriver[]) => {
     const formattedStyles = { enabled: false, conditions: [] } as ITableWidgetConditionalStyles
-    if (widget.settings.rowThresholds?.enabled) {
+    if (widget.settings?.rowThresholds?.enabled) {
         widget.settings.rowThresholds.list.forEach((rowThreshold: any) => {
             formattedStyles.conditions.push(createConditionFromRowThreshold(rowThreshold, formattedDashboardModel, drivers))
         })

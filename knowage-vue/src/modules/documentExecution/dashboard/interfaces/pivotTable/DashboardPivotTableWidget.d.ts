@@ -16,12 +16,11 @@ export interface IPivotTableConfiguration {
 
 export interface IPivotTableStyle {
     title: IWidgetTitle
-    borders: IWidgetBordersStyle
-    columns: ITableWidgetColumnStyles
     headers: ITawbleWidgetHeadersStyle
-    padding: IWidgetPaddingStyle
+    columns: ITableWidgetColumnStyles
     rows: IWidgetRowsStyle
-    shadows: IWidgetShadowsStyle
-    summary: ITableWidgetSummaryStyle
     background: IWidgetBackgroundStyle
+    borders: IWidgetBordersStyle
+    padding: IWidgetPaddingStyle
+    shadows: IWidgetShadowsStyle
 }

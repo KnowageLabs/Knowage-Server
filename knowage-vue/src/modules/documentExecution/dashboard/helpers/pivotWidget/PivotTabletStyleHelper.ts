@@ -1,6 +1,5 @@
 import { IPivotTableStyle } from "../../interfaces/pivotTable/DashboardPivotTableWidget"
 import { getFormattedBorderStyle, getFormattedPaddingStyle, getFormattedShadowsStyle, getFormattedTitleStyle, getFormattedBackgroundStyle } from "../common/WidgetStyleHelper"
-import { getFormattedHeadersStyle, getFormattedRowsStyle } from '../tableWidget/TableWidgetStyleHelper'
 import * as pivotTalbeDefaultValues from '../../widget/WidgetEditor/helpers/pivotTableWidget/PivotTableDefaultValues'
 
 export const getFormattedStyle = (widget: any) => {
@@ -14,4 +13,14 @@ export const getFormattedStyle = (widget: any) => {
         shadows: getFormattedShadowsStyle(widget),
         background: getFormattedBackgroundStyle(widget)
     } as IPivotTableStyle
+}
+
+
+// TODO - Darko
+const getFormattedHeadersStyle = (widget: any) => {
+
+}
+
+const getFormattedRowsStyle = (widget: any) => {
+
 }

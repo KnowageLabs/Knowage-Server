@@ -194,6 +194,8 @@ const checkIfWidgetInModel = (widget: any, formattedModel: any) => {
 export const formatWidget = (widget: any, formattedModel: IDashboard, user: any, drivers: IDashboardDriver[]) => {
     let formattedWidget = {} as any
 
+    console.log('widget;', widget)
+
     switch (widget.type) {
         case 'table':
             formattedWidget = formatTableWidget(widget, formattedModel, drivers)
@@ -221,7 +223,7 @@ export const formatWidget = (widget: any, formattedModel: IDashboard, user: any,
         case 'customchart':
             formattedWidget = formatCustomChartWidget(widget)
             break;
-        case 'pivot':
+        case 'static-pivot-table':
             formattedWidget = formatPivotTabletWidget(widget, formattedModel, drivers)
     }
 
