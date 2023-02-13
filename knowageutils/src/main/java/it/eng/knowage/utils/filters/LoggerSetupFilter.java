@@ -1,5 +1,7 @@
 package it.eng.knowage.utils.filters;
 
+import static java.util.Objects.isNull;
+
 import java.io.IOException;
 import java.util.UUID;
 
@@ -20,6 +22,7 @@ public class LoggerSetupFilter implements Filter {
 
 	private static final Logger LOGGER = LogManager.getLogger(LoggerSetupFilter.class);
 
+	private static final String HTTP_HEADER_NGINX_CORRELATION_ID = "X-Request-ID";
 	private static final String HTTP_HEADER_X_KN_CORRELATION_ID = "X-Kn-Correlation-Id";
 	private static final String HTTP_HEADER_X_FORWARDED_HOST = "X-Forwarded-Host";
 
@@ -74,21 +77,24 @@ public class LoggerSetupFilter implements Filter {
 	}
 
 	private void preDoFilterForCorrelationId(HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
-		String header = httpRequest.getHeader(HTTP_HEADER_X_KN_CORRELATION_ID);
-		UUID uuid = null;
 
-		try {
-			uuid = UUID.fromString(header);
-		} catch (Exception e) {
-			uuid = UUID.randomUUID();
-			LOGGER.debug("Invalid correlation id value: " + header + ". We will use: " + uuid);
+		String header1 = httpRequest.getHeader(HTTP_HEADER_NGINX_CORRELATION_ID);
+		String header2 = httpRequest.getHeader(HTTP_HEADER_X_KN_CORRELATION_ID);
+		String correlationId = null;
+
+		correlationId = header1;
+		if (isNull(correlationId)) {
+			correlationId = header2;
+		}
+		if (isNull(correlationId)) {
+			correlationId = UUID.randomUUID().toString();
 		}
 
-		header = uuid.toString();
+		LOGGER.debug("Correlation id is {}", correlationId);
 
-		ThreadContext.put(THREAD_CONTEXT_KEY_CORRELATION_ID, header);
+		ThreadContext.put(THREAD_CONTEXT_KEY_CORRELATION_ID, correlationId);
 
-		httpResponse.setHeader(HTTP_HEADER_X_KN_CORRELATION_ID, header);
+		httpResponse.setHeader(HTTP_HEADER_X_KN_CORRELATION_ID, correlationId);
 	}
 
 	private void postDoFilterForTenant() {
@@ -101,7 +107,7 @@ public class LoggerSetupFilter implements Filter {
 
 	@Override
 	public void destroy() {
-
+		// No ops needed
 	}
 
 }
