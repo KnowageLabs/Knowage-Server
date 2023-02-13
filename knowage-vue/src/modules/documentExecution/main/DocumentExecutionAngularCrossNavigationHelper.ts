@@ -24,7 +24,9 @@ export function loadNavigationParamsInitialValue(vueComponent: any) {
                     if (crossNavigationValue) tempParam.parameterValue[0] = { value: crossNavigationValue, description: parameterDescription }
                     if (vueComponent.document.navigationParams[key + '_field_visible_description']) vueComponent.document.navigationParams[key + '_field_visible_description'] = tempParam.parameterValue[0].description
                     if (tempParam.type === 'DATE' && tempParam.parameterValue[0] && tempParam.parameterValue[0].value) {
-                        tempParam.parameterValue[0].value = moment(tempParam.parameterValue[0].value, 'DD/MM/YYYY').toDate()
+                        const date = moment(tempParam.parameterValue[0].value, 'DD/MM/YYYY HH:mm:ss.SSS') as any
+                        const isValidDate = date.isValid()
+                        tempParam.parameterValue[0].value = isValidDate ? date.toDate() : moment(tempParam.parameterValue[0].value, 'DD/MM/YYYY').toDate()
                     }
                 }
                 if (tempParam.selectionType === 'COMBOBOX') formatCrossNavigationComboParameterDescription(tempParam)
