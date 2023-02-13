@@ -46,9 +46,9 @@ description:
       - |-
         SMART DATA: combina indici Solr con altre fonti dati e abilita faceted
         views e full text search
-    genericName: Business Analytics suite
+    genericName: Suite per la Business Intelligence e gli Analytics
     longDescription: |
-      KNOWAGE è la suite open source per la business analytics moderna che
+      KNOWAGE è la suite open source per la business intelligence e gli analytics che
       affianca alle tradizionali capacità di business intelligence, strumenti
       agili che promuovono l’autonomia degli utenti business e funzionalità
       avanzate rivolte al segmento emergente dei data scientist. E’ quindi un
@@ -88,7 +88,7 @@ description:
         https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-map.jpg
       - |-
         https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-responsive2.jpg
-    shortDescription: Suite open source completa per la moderna Business Analytics
+    shortDescription: Suite open source completa per la Business Intelligence e gli Analytics
     videos:
       - 'https://www.youtube.com/watch?v=-fZIsVh_qsc'
       - 'https://www.youtube.com/watch?v=59SAgrY_Hoo'
