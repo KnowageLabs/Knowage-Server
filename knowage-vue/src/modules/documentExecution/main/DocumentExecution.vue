@@ -134,6 +134,7 @@ import DashboardController from '../dashboard/DashboardController.vue'
 import { getCorrectRolesForExecution } from '../../../helpers/commons/roleHelper'
 import { executeAngularCrossNavigation, loadNavigationParamsInitialValue, loadCrossNavigation } from './DocumentExecutionAngularCrossNavigationHelper'
 import { executeCrossNavigation } from './DocumentExecutionCrossNavigationHelper'
+import { loadFilters } from './DocumentExecutionDirverHelpers'
 
 // @ts-ignore
 // eslint-disable-next-line
@@ -514,8 +515,9 @@ export default defineComponent({
         },
         async loadPage(initialLoading: boolean = false, documentLabel: string | null = null, crossNavigationPopupMode: boolean = false) {
             this.loading = true
-
-            await this.loadFilters(initialLoading)
+            // TODO
+            //await this.loadFilters(initialLoading)
+            this.filtersData = loadFilters(initialLoading, this.filtersData, this.document, this.breadcrumbs, this.userRole, this.parameterValuesMap, this.tabKey, this.sessionEnabled, this.$http)
             if (this.filtersData?.isReadyForExecution) {
                 this.parameterSidebarVisible = false
                 await this.loadURL(null, documentLabel, crossNavigationPopupMode)

@@ -107,3 +107,4 @@ const removeEmptyToolbarItems = (toolbarMenuItems: any[]) => {
         }
     }
 }
+
