@@ -17,7 +17,7 @@ export const executeCrossNavigation = (payload: any, document: any) => {
 }
 
 const getFormattedCrossNavigationParameters = (documentCrossNavigation: IDashboardCrossNavigation) => {
-    const formattedCrossNavigationParameters = [] as ICrossNavigationParameter[] // TODO
+    const formattedCrossNavigationParameters = [] as ICrossNavigationParameter[]
     const documentCrossNavigationParameters = getFormattedDocumentCrossNavigationParameters(documentCrossNavigation.navigationParams)
     documentCrossNavigationParameters.forEach((documentCrossNavigationParameter: IDocumentNavigationParameter) => {
         if (documentCrossNavigationParameter.fixed) {

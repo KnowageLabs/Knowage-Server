@@ -517,7 +517,7 @@ export default defineComponent({
             this.loading = true
             // TODO
             //await this.loadFilters(initialLoading)
-            this.filtersData = loadFilters(initialLoading, this.filtersData, this.document, this.breadcrumbs, this.userRole, this.parameterValuesMap, this.tabKey, this.sessionEnabled, this.$http)
+            this.filtersData = loadFilters(initialLoading, this.filtersData, this.document, this.breadcrumbs, this.userRole, this.parameterValuesMap, this.tabKey as string, this.sessionEnabled, this.$http)
             if (this.filtersData?.isReadyForExecution) {
                 this.parameterSidebarVisible = false
                 await this.loadURL(null, documentLabel, crossNavigationPopupMode)

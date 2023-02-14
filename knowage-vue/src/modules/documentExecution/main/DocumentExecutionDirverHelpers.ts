@@ -8,7 +8,7 @@ import { AxiosResponse } from 'axios'
 const { t } = i18n.global
 const mainStore = store()
 
-export const loadFilters = async (initialLoading: boolean, filtersData: { filterStatus: iParameter[], isReadyForExecution: boolean } | null, document: any, breadcrumbs: any[], userRole: string, parameterValuesMap: any, tabKey: string, sessionEnabled: boolean, $http: any) => {
+export const loadFilters = async (initialLoading: boolean, filtersData: { filterStatus: iParameter[], isReadyForExecution: boolean } | null, document: any, breadcrumbs: any[], userRole: string | null, parameterValuesMap: any, tabKey: string, sessionEnabled: boolean, $http: any) => {
     if (parameterValuesMap && parameterValuesMap[document.label + '-' + tabKey] && initialLoading) return loadFiltersFromParametersMap(parameterValuesMap, document, tabKey, filtersData, breadcrumbs)
     if (sessionEnabled && !document.navigationParams) return loadFiltersFromSession(document, filtersData, breadcrumbs)
 
@@ -45,7 +45,8 @@ const loadFiltersFromSession = (document: any, filtersData: { filterStatus: iPar
     }
 }
 
-const getFilters = async (document: any, userRole: string, $http: any) => {
+const getFilters = async (document: any, userRole: string | null, $http: any) => {
+    let filtersData = null
     await $http
         .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentexecution/filters`, {
             label: document.label,
@@ -53,7 +54,7 @@ const getFilters = async (document: any, userRole: string, $http: any) => {
             parameters: document.navigationParams ?? {}
         })
         .then((response: AxiosResponse<any>) => {
-            return response.data
+            filtersData = response.data
         })
         .catch((error: any) => {
             if (error.response?.status === 500) {
@@ -63,7 +64,7 @@ const getFilters = async (document: any, userRole: string, $http: any) => {
                 })
             }
         })
-    return null
+    return filtersData
 }
 
 const formatDrivers = (filtersData: { filterStatus: iParameter[], isReadyForExecution: boolean } | null) => {
