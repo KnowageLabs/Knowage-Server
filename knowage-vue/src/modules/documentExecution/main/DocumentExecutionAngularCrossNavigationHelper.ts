@@ -2,7 +2,7 @@ import { AxiosResponse } from 'axios'
 import deepcopy from 'deepcopy'
 import moment from 'moment'
 
-export const executeCrossNavigation = async (vueComponent: any, event: any, $http: any) => {
+export const executeAngularCrossNavigation = async (vueComponent: any, event: any, $http: any) => {
     vueComponent.angularData = event.data
     await loadCrossNavigationByDocument(vueComponent, event.data, $http)
 }

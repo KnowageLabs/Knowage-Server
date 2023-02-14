@@ -46,3 +46,35 @@ export interface iMetadata {
     longText: { id: number, name: string, value: string }[],
     file: { id: number, name: string, value: any, fileToSave?: { file: {}, fileName: string } }[],
 }
+
+export interface IDocumentNavigationParameter {
+    id: string,
+    value: IDocumentNavigationParameterValue | string,
+    fixed: boolean
+}
+
+export interface IDocumentNavigationParameterValue {
+    label: string,
+    type: IDocumentNavigationParameterValueType,
+    inputParameterType: any,
+    dateFormat: any,
+    isInput: boolean
+}
+
+export interface IDocumentNavigationParameterValueType {
+    valueId: number,
+    valueCd: string,
+    valueName: string,
+    valueDescription: string,
+    domainCode: string,
+    domainName: string,
+    translatedValueDescription: string,
+    translatedValueName: string
+}
+
+export interface ICrossNavigationParameter {
+    targetDriverUrlName: string,
+    parameterValue: { value: string | number, description: string }[],
+    multivalue: boolean,
+    type: 'fixed'
+}

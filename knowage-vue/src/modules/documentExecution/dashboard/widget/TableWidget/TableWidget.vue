@@ -16,7 +16,7 @@ import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
 import { IDataset, ISelection, IWidget } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
 import { createNewTableSelection, getColumnConditionalStyles, isConditionMet } from './TableWidgetHelper'
-import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
+import { executeCrossNavigation, updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
 import mainStore from '../../../../../App.store'
 import dashboardStore from '../../Dashboard.store'
 import descriptor from '../../dataset/DatasetEditorDescriptor.json'
@@ -252,7 +252,7 @@ export default defineComponent({
                                 } else return 1
                             }
                             tempCol.cellClassRules = {
-                                'cell-span': function (params) {
+                                'cell-span': function(params) {
                                     return tempRows[params.rowIndex].span > 1
                                 }
                             }
@@ -410,10 +410,13 @@ export default defineComponent({
             }
         },
         onCellClicked(node) {
+            executeCrossNavigation('testValue', 713)
             if (!this.editorMode) {
                 if (node.colDef.measure == 'MEASURE' || node.colDef.pinned || node.value === '' || node.value == undefined) return
                 //SELECTION LOGIC -------------------------------------------------------------------
                 var modalSelection = this.propWidget.settings.interactions.selection
+                // TODO - remove hardcoded
+
                 if (modalSelection.enabled) {
                     if (modalSelection.multiselection.enabled) {
                         //first check to see it the column selected is the same, if not clear the past selections

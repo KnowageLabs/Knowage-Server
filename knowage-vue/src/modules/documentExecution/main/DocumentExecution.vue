@@ -49,16 +49,20 @@
                     @applyCustomView="executeOlapCustomView"
                     @executeCrossNavigation="executeOLAPCrossNavigation"
                 ></Olap>
-                <DashboardController
-                    v-else-if="mode === 'dashboard' || newDashboardMode"
-                    :sbiExecutionId="urlData?.sbiExecutionId"
-                    :document="document"
-                    :reloadTrigger="reloadTrigger"
-                    :hiddenFormData="hiddenFormData"
-                    :filtersData="filtersData"
-                    :newDashboardMode="newDashboardMode"
-                    @newDashboardSaved="onNewDashboardSaved"
-                ></DashboardController>
+                <template v-else-if="mode === 'dashboard' || newDashboardMode">
+                    <DashboardController
+                        v-for="(item, index) in breadcrumbs"
+                        :key="index"
+                        :sbiExecutionId="urlData?.sbiExecutionId"
+                        :document="item.document"
+                        :reloadTrigger="reloadTrigger"
+                        :hiddenFormData="item.hiddenFormData"
+                        :filtersData="item.filtersData"
+                        :newDashboardMode="newDashboardMode"
+                        @newDashboardSaved="onNewDashboardSaved"
+                        @executeCrossNavigation="onExecuteCrossNavigation"
+                    ></DashboardController>
+                </template>
             </template>
             <iframe
                 v-for="(item, index) in breadcrumbs"
@@ -128,7 +132,8 @@ import { mapState, mapActions } from 'pinia'
 import deepcopy from 'deepcopy'
 import DashboardController from '../dashboard/DashboardController.vue'
 import { getCorrectRolesForExecution } from '../../../helpers/commons/roleHelper'
-import { executeCrossNavigation, loadNavigationParamsInitialValue, loadCrossNavigation } from './DocumentExecutionAngularCrossNavigationHelper'
+import { executeAngularCrossNavigation, loadNavigationParamsInitialValue, loadCrossNavigation } from './DocumentExecutionAngularCrossNavigationHelper'
+import { executeCrossNavigation } from './DocumentExecutionCrossNavigationHelper'
 
 // @ts-ignore
 // eslint-disable-next-line
@@ -355,6 +360,7 @@ export default defineComponent({
                 }
             }
         })
+        console.log('------------ BREADCRUMBS: ', this.breadcrumbs)
     },
     unmounted() {
         this.removeEventListeners()
@@ -363,7 +369,7 @@ export default defineComponent({
         ...mapActions(mainStore, ['setInfo', 'setError', 'setDocumentExecutionEmbed']),
         iframeEventsListener(event) {
             if (event.data.type === 'crossNavigation') {
-                executeCrossNavigation(this, event, this.$http)
+                executeAngularCrossNavigation(this, event, this.$http)
             } else if (event.data.type === 'cockpitExecuted') {
                 this.loading = false
             }
@@ -547,6 +553,8 @@ export default defineComponent({
                 })
             }
         },
+
+        // TODO - FILTER SERVICE
         async loadFilters(initialLoading: boolean = false) {
             if (this.parameterValuesMap && this.parameterValuesMap[this.document.label + '-' + this.tabKey] && initialLoading) {
                 this.filtersData = this.parameterValuesMap[this.document.label + '-' + this.tabKey]
@@ -772,7 +780,10 @@ export default defineComponent({
             }
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
+            console.log('----- index: ', index)
             if (index !== -1) this.breadcrumbs[index].hiddenFormData = this.hiddenFormData
+
+            console.log('>>>>> BLA: ', this.breadcrumbs)
         },
         async sendHiddenFormData() {
             await this.$http
@@ -1211,6 +1222,9 @@ export default defineComponent({
                 this.parameterSidebarVisible = true
             }
             this.newDashboardMode = false
+        },
+        onExecuteCrossNavigation(payload: any) {
+            executeCrossNavigation(payload, this.document)
         }
     }
 })

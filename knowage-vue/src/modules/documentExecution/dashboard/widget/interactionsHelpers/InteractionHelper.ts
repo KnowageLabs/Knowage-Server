@@ -14,9 +14,18 @@ export const updateStoreSelections = (newSelection: ISelection, currentActiveSel
     updateSelectionFunction(dashboardId, currentActiveSelections, $http)
 }
 
-export const executeCrossNavigation = (dynamicValue: string, crossNavigation: IWidgetCrossNavigation) => {
-    console.log("TODO: executeCrossNavigation() - dynamicValue: ", dynamicValue, ', crossNavigation: ', crossNavigation)
+export const executeCrossNavigation = (dynamicValue: string, crossNavigationId: number) => {
+    console.log("TODO: executeCrossNavigation() - dynamicValue: ", dynamicValue)
+    console.log("TODO: executeCrossNavigation() - crossNavigationId: ", crossNavigationId)
+    const payload = { dynamicValue: dynamicValue, crossNavigationId: crossNavigationId }
+    emitter.emit('executeCrossNavigation', payload)
 }
+
+
+// export const executeCrossNavigation = (dynamicValue: string, crossNavigation: IWidgetCrossNavigation) => {
+//     console.log("TODO: executeCrossNavigation() - dynamicValue: ", dynamicValue, ', crossNavigation: ', crossNavigation)
+//     emitter.emit('executeCrossNavigation',)
+// }
 
 export const executePreview = (datasetLabel: string) => {
     console.log("TODO: executePreview() - datasetLabel: ", datasetLabel)

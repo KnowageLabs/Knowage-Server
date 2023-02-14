@@ -1,6 +1,7 @@
 <template>
     <div v-if="model" class="dashboard-container" :id="`dashboard_${model.configuration.id}`">
         <Button icon="fas fa-square-check" class="p-m-3 p-button-rounded p-button-text p-button-plain" style="position: fixed; right: 0; z-index: 999; background-color: white; box-shadow: 0px 2px 3px #ccc" @click="selectionsDialogVisible = true" />
+        <Button icon="fas fa-square-check" class="p-m-3 p-button-rounded p-button-text p-button-plain" style="position: fixed; top: 150px; right: 0; z-index: 999; background-color: blue; box-shadow: 0px 2px 3px #ccc" @click="executeCrossNavigation" />
         <DashboardRenderer v-if="!loading" :model="model" :datasets="datasets" :dashboardId="dashboardId" :documentDrivers="drivers" :variables="model ? model.configuration.variables : []"></DashboardRenderer>
 
         <Transition name="editorEnter" appear>
@@ -70,7 +71,7 @@ export default defineComponent({
     name: 'dashboard-manager',
     components: { DashboardRenderer, WidgetPickerDialog, DatasetEditor, WidgetEditor, DashboardControllerSaveDialog, SelectionsListDialog, DashboardGeneralSettings },
     props: { sbiExecutionId: { type: String }, document: { type: Object }, reloadTrigger: { type: Boolean }, hiddenFormData: { type: Object }, filtersData: { type: Object as PropType<{ filterStatus: iParameter[]; isReadyForExecution: boolean }> }, newDashboardMode: { type: Boolean } },
-    emits: ['newDashboardSaved'],
+    emits: ['newDashboardSaved', 'executeCrossNavigation'],
     data() {
         return {
             descriptor,
@@ -120,7 +121,7 @@ export default defineComponent({
         clearAllDatasetIntervals()
     },
     methods: {
-        ...mapActions(dashboardStore, ['removeSelections', 'setAllDatasets', 'getSelections', 'setInternationalization', 'getInternationalization', 'setDashboardDocument', 'setDashboardDrivers', 'setProfileAttributes']),
+        ...mapActions(dashboardStore, ['removeSelections', 'setAllDatasets', 'getSelections', 'setInternationalization', 'getInternationalization', 'setDashboardDocument', 'setDashboardDrivers', 'setProfileAttributes', 'getCrossNavigations']),
         async getData() {
             this.loading = true
 
@@ -129,6 +130,7 @@ export default defineComponent({
             this.setDashboardDrivers(this.dashboardId, this.drivers)
             this.loadHtmlGallery()
             this.loadCustomChartGallery()
+             await this.loadCrossNavigations()
             this.loading = false
         },
         async loadModel() {
@@ -170,6 +172,7 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => (this.crossNavigations = response.data))
                 .catch(() => {})
             this.appStore.setLoading(false)
+            console.log('------- loaded cross navigations: ', this.crossNavigations)
             this.store.setCrossNavigations(this.dashboardId, this.crossNavigations)
         },
         async loadHtmlGallery() {
@@ -200,21 +203,12 @@ export default defineComponent({
             this.setProfileAttributes(this.profileAttributes)
         },
         setEventListeners() {
-            emitter.on('openNewWidgetPicker', () => {
-                this.openNewWidgetPicker()
-            })
-            emitter.on('openDatasetManagement', () => {
-                this.openDatasetManagementDialog()
-            })
-            emitter.on('openWidgetEditor', (widget) => {
-                this.openWidgetEditor(widget as IWidget)
-            })
-            emitter.on('saveDashboard', () => {
-                this.onSaveDashboardClicked()
-            })
-            emitter.on('openDashboardGeneralSettings', () => {
-                this.openGeneralSettings()
-            })
+            emitter.on('openNewWidgetPicker', () => this.openNewWidgetPicker())
+            emitter.on('openDatasetManagement', () => this.openDatasetManagementDialog())
+            emitter.on('openWidgetEditor', (widget) => this.openWidgetEditor(widget as IWidget))
+            emitter.on('saveDashboard', () => this.onSaveDashboardClicked())
+            emitter.on('openDashboardGeneralSettings', () => this.openGeneralSettings())
+            emitter.on('executeCrossNavigation', this.executeCrossNavigation)
         },
         openNewWidgetPicker() {
             this.widgetPickerVisible = true
@@ -315,6 +309,13 @@ export default defineComponent({
         closeGeneralSettings() {
             this.generalSettingsVisible = false
             emitter.emit('dashboardGeneralSettingsClosed')
+        },
+        executeCrossNavigation(payload: any) {
+            console.log('------- CROSS NAVIGATION PAYLOAD: ', payload)
+            const crossNavigations = this.getCrossNavigations(this.dashboardId)
+            console.log('------- CROSS NAVIGATION crossNavigations: ', crossNavigations)
+            payload.crossNavigations = crossNavigations
+            this.$emit('executeCrossNavigation', payload)
         }
     }
 })

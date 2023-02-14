@@ -674,3 +674,15 @@ export interface IChartType {
     value: string
     disabled: boolean
 }
+
+export interface IDashboardCrossNavigation {
+    crossBreadcrumb: string,
+    crossId: number,
+    crossName: string,
+    crossText: string,
+    crossType: number,
+    document: any,
+    documentId: number,
+    navigationParams: any,
+    popupOptions: any
+}
