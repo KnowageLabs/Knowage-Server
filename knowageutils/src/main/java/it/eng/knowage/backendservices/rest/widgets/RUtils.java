@@ -66,7 +66,7 @@ public class RUtils extends MLEngineUtils {
 		List<IConfiguration> allRConfigs = SingletonConfig.getInstance().getConfigsValueByCategory("R_CONFIGURATION");
 		for (IConfiguration cfg : allRConfigs) {
 			if (cfg.getLabel().equals(envLabel)) {
-				return "http://" + cfg.getValueCheck() + "/";
+				return fixUrl(cfg.getValueCheck() + "/");
 			}
 		}
 		throw new SpagoBIRuntimeException("Cannot retrieve R address from label [" + envLabel + "]");

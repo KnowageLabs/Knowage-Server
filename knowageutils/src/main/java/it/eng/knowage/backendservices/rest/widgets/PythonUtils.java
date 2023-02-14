@@ -39,7 +39,7 @@ public class PythonUtils extends MLEngineUtils {
 		List<IConfiguration> allPythonConfigs = SingletonConfig.getInstance().getConfigsValueByCategory(PYTHON_ENVIRONMENT_CATEGORY);
 		for (IConfiguration cfg : allPythonConfigs) {
 			if (cfg.getLabel().equals(envLabel)) {
-				return cfg.getValueCheck() + "/";
+				return fixUrl(cfg.getValueCheck() + "/");
 			}
 		}
 		throw new ConfigurationException("Cannot retrieve Python address from label [" + envLabel + "]");
