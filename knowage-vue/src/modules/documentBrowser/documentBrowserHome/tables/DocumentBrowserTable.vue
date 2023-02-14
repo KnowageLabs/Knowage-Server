@@ -48,7 +48,7 @@
                     <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
                 </template>
                 <template #body="slotProps">
-                    <span class="kn-truncated" v-tooltip.top="slotProps.data[col.field]">{{ getTranlatedValue(slotProps.data[col.field], col.field) }}</span>
+                    <span class="kn-truncated" v-tooltip.top="slotProps.data[col.field]">{{ getTranslatedValue(slotProps.data[col.field], col.field) }}</span>
                 </template>
             </Column>
             <Column v-if="isAdmin" :header="$t('common.status')" field="stateCodeStr" sortField="stateCodeStr" :sortable="true" :style="documentBrowserTableDescriptor.table.smallmessage">
@@ -157,7 +157,7 @@ export default defineComponent({
                 this.$emit('itemSelected', { item: document, mode: 'execute' })
             })
         },
-        getTranlatedValue(value: string, fieldType: string) {
+        getTranslatedValue(value: string, fieldType: string) {
             if (fieldType !== 'name' && fieldType !== 'label') return value
             return (this as any).$internationalization(value)
         }
