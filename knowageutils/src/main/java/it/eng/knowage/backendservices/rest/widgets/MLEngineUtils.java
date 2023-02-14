@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
@@ -35,6 +36,9 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 public abstract class MLEngineUtils {
 
 	private static Logger logger = Logger.getLogger(MLEngineUtils.class);
+
+	private static Pattern urlPattern = Pattern.compile("^https?:\\/\\/.*");
+
 
 	static String dataStore2DataFrame(String knowageDs) {
 		JSONObject oldDataset;
@@ -98,5 +102,14 @@ public abstract class MLEngineUtils {
 		Date expiresAt = calendar.getTime();
 		String jwtToken = JWTSsoService.pythonScript2jwtToken(script, expiresAt);
 		return jwtToken;
+	}
+
+	static String fixUrl(String url) {
+
+		if (!urlPattern.matcher(url).matches()) {
+			url = "http://" + url;
+		}
+
+		return url;
 	}
 }
