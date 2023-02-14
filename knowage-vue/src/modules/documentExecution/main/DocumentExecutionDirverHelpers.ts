@@ -8,11 +8,13 @@ import { AxiosResponse } from 'axios'
 const { t } = i18n.global
 const mainStore = store()
 
-export const loadFilters = async (initialLoading: boolean, filtersData: { filterStatus: iParameter[], isReadyForExecution: boolean } | null, document: any, breadcrumbs: any[], userRole: string | null, parameterValuesMap: any, tabKey: string, sessionEnabled: boolean, $http: any) => {
+export const loadFilters = async (initialLoading: boolean, filtersData: { filterStatus: iParameter[], isReadyForExecution: boolean }, document: any, breadcrumbs: any[], userRole: string | null, parameterValuesMap: any, tabKey: string, sessionEnabled: boolean, $http: any) => {
     if (parameterValuesMap && parameterValuesMap[document.label + '-' + tabKey] && initialLoading) return loadFiltersFromParametersMap(parameterValuesMap, document, tabKey, filtersData, breadcrumbs)
     if (sessionEnabled && !document.navigationParams) return loadFiltersFromSession(document, filtersData, breadcrumbs)
 
     filtersData = await getFilters(document, userRole, $http)
+
+    console.log('--------- FILTERS DATA: ', filtersData)
 
     formatDrivers(filtersData)
 
@@ -22,13 +24,13 @@ export const loadFilters = async (initialLoading: boolean, filtersData: { filter
     return filtersData
 }
 
-const loadFiltersFromParametersMap = (parameterValuesMap: any, document: any, tabKey: string, filtersData: { filterStatus: iParameter[], isReadyForExecution: boolean } | null, breadcrumbs: any) => {
+const loadFiltersFromParametersMap = (parameterValuesMap: any, document: any, tabKey: string, filtersData: { filterStatus: iParameter[], isReadyForExecution: boolean }, breadcrumbs: any) => {
     filtersData = parameterValuesMap[document.label + '-' + tabKey]
     setFiltersForBreadcrumbItem(breadcrumbs, filtersData, document)
     return filtersData
 }
 
-const loadFiltersFromSession = (document: any, filtersData: { filterStatus: iParameter[], isReadyForExecution: boolean } | null, breadcrumbs: any[]) => {
+const loadFiltersFromSession = (document: any, filtersData: { filterStatus: iParameter[], isReadyForExecution: boolean }, breadcrumbs: any[]) => {
     const tempFilters = sessionStorage.getItem(document.label)
     if (tempFilters) {
         filtersData = JSON.parse(tempFilters) as {
@@ -41,12 +43,12 @@ const loadFiltersFromSession = (document: any, filtersData: { filterStatus: iPar
             }
         })
         setFiltersForBreadcrumbItem(breadcrumbs, filtersData, document)
-        return filtersData
     }
+    return filtersData
 }
 
 const getFilters = async (document: any, userRole: string | null, $http: any) => {
-    let filtersData = null
+    let filtersData = {} as { filterStatus: iParameter[], isReadyForExecution: boolean }
     await $http
         .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentexecution/filters`, {
             label: document.label,
@@ -113,7 +115,7 @@ const formatDrivers = (filtersData: { filterStatus: iParameter[], isReadyForExec
     })
 }
 
-const setFiltersForBreadcrumbItem = (breadcrumbs: any[], filtersData: { filterStatus: iParameter[], isReadyForExecution: boolean } | null, document: any) => {
+const setFiltersForBreadcrumbItem = (breadcrumbs: any[], filtersData: { filterStatus: iParameter[], isReadyForExecution: boolean }, document: any) => {
     const index = breadcrumbs.findIndex((el: any) => el.label === document.name)
     if (index !== -1) breadcrumbs[index].filtersData = filtersData
 }
