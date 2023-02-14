@@ -31,7 +31,7 @@
                 </span>
             </div>
             <div class="p-field p-col-12">
-                <span class="p-float-label ">
+                <span class="p-float-label">
                     <Dropdown id="driver" class="kn-material-input" v-model="tmpBusinessModel.physicalModel" :filter="true" :options="physicalModels" optionLabel="name" />
                     <label for="driver" class="kn-material-input-label"> {{ $t('metaweb.businessModel.physTable') }}</label>
                 </span>
@@ -87,7 +87,7 @@ import Column from 'primevue/column'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import bsDescriptor from '../MetawebBusinessModelDescriptor.json'
 
-const { generate, applyPatch } = require('fast-json-patch')
+import { generate, applyPatch } from 'fast-json-patch'
 
 export default defineComponent({
     name: 'document-drivers',
@@ -153,7 +153,7 @@ export default defineComponent({
             })
             const postData = { data: objToSend, diff: generate(this.observer) }
             await this.$http
-                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/addBusinessClass`, postData)
+                .post(import.meta.env.VITE_META_API_URL + `/1.0/metaWeb/addBusinessClass`, postData)
                 .then(async (response: AxiosResponse<any>) => {
                     this.metaObserve = applyPatch(this.metaObserve, response.data)
                     generate(this.observer)

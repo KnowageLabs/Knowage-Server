@@ -16,7 +16,7 @@
                     <template #header>
                         <span>{{ $t('metaweb.businessModel.title') }}</span>
                     </template>
-                    <BusinessModelTab :propMeta="meta" :observer="observer" :metaUpdated="metaUpdated" @metaUpdated="onMetaUpdated" />
+                    <BusinessModelTab :businessModelId="businessModel.dataSourceId" :propMeta="meta" :observer="observer" :metaUpdated="metaUpdated" @metaUpdated="onMetaUpdated" />
                 </TabPanel>
                 <TabPanel>
                     <template #header>
@@ -42,8 +42,9 @@ import TabPanel from 'primevue/tabpanel'
 import BusinessModelTab from './businessModel/MetawebBusinessModel.vue'
 import MetawebPhysicalModel from './physicalModel/MetawebPhysicalModel.vue'
 import MetawebInvalidRelationshipsDialog from './invalidRelationshipsDialog/MetawebInvalidRelationshipsDialog.vue'
-
-const { observe, generate, applyPatch } = require('fast-json-patch')
+import { mapActions } from 'pinia'
+import mainStore from '@/App.store'
+import { observe, generate, applyPatch } from 'fast-json-patch'
 
 export default defineComponent({
     name: 'metaweb',
@@ -72,6 +73,7 @@ export default defineComponent({
         this.loadMeta()
     },
     methods: {
+        ...mapActions(mainStore, ['setInfo']),
         loadMeta() {
             this.meta = this.propMeta
 
@@ -92,7 +94,7 @@ export default defineComponent({
             this.loading = true
             const postData = { data: { name: this.businessModel?.name, id: this.businessModel?.id }, diff: generate(this.observer) }
             await this.$http
-                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/checkRelationships`, postData)
+                .post(import.meta.env.VITE_META_API_URL + `/1.0/metaWeb/checkRelationships`, postData)
                 .then(async (response: AxiosResponse<any>) => {
                     this.observer = applyPatch(this.observer, response.data).newDocument
                     this.observer = observe(this.meta)
@@ -111,9 +113,9 @@ export default defineComponent({
         async generateModel() {
             const postData = { data: { name: this.businessModel?.name, id: this.businessModel?.id }, diff: generate(this.observer) }
             await this.$http
-                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/generateModel`, postData)
+                .post(import.meta.env.VITE_META_API_URL + `/1.0/metaWeb/generateModel`, postData)
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.setInfo({
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.toast.success')
                     })

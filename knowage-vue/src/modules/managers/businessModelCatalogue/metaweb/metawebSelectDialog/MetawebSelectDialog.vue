@@ -13,7 +13,7 @@
         </template>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
 
-        <DataTable v-else :value="rows" class="p-datatable-sm kn-table p-ml-1" :scrollable="true" scrollHeight="100%" v-model:filters="filters" :globalFilterFields="metawebSelectDialogDescriptor.globalFilterFields">
+        <DataTable v-else :value="rows" class="p-datatable-sm kn-table p-ml-1" :scrollable="true" scrollHeight="100%" v-model:filters="filters" :globalFilterFields="metawebSelectDialogDescriptor.globalFilterFields" @filter="onRowsFiltered">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -27,7 +27,7 @@
                 </div>
             </template>
 
-            <Column field="value" :header="$t('metaweb.selectDialog.tableName')" style="flex:5"></Column>
+            <Column field="value" :header="$t('metaweb.selectDialog.tableName')" style="flex: 5"></Column>
             <Column :header="$t('metaweb.physicalModel.title')">
                 <template #header>
                     <Checkbox class="p-mr-2" v-model="allPhysicalSelected" :binary="true" @change="setAllChecked('physical')" />
@@ -58,6 +58,7 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dialog from 'primevue/dialog'
 import metawebSelectDialogDescriptor from '@/modules/managers/businessModelCatalogue/metaweb/metawebSelectDialog/MetawebSelectDialogDescriptor.json'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'metaweb-select-dialog',
@@ -76,6 +77,7 @@ export default defineComponent({
             filters: {
                 global: [filterDefault]
             } as Object,
+            filteredRows: [] as { value: string }[],
             loading: false
         }
     },
@@ -91,6 +93,10 @@ export default defineComponent({
                 this.loading = false
             }
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadData()
@@ -112,7 +118,7 @@ export default defineComponent({
                 const urlParams = {} as any
                 if (this.businessModel.tablePrefixLike) urlParams.tablePrefixLike = this.businessModel.tablePrefixLike
                 if (this.businessModel.tablePrefixNotLike) urlParams.tablePrefixNotLike = this.businessModel.tablePrefixNotLike
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, { params: urlParams }).then((response: AxiosResponse<any>) => (this.datasourceStructure = response.data))
+                await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, { params: urlParams }).then((response: AxiosResponse<any>) => (this.datasourceStructure = response.data))
             }
         },
         loadRows() {
@@ -133,30 +139,37 @@ export default defineComponent({
         },
         setAllChecked(typeChecked: string) {
             Object.keys(this.selected).forEach((key: string) => {
-                if (typeChecked === 'business') {
-                    this.selected[key].business = this.allBusinessSelected
-                    if (this.allBusinessSelected) {
-                        this.selected[key].physical = true
-                        this.allPhysicalSelected = true
-                    }
-                } else {
-                    this.selected[key].physical = this.allPhysicalSelected
-                    if (!this.allPhysicalSelected) {
-                        this.selected[key].business = false
-                        this.allBusinessSelected = false
+                if (this.checkIfTheSelectedIsInFilteredRows(key)) {
+                    if (typeChecked === 'business') {
+                        this.selected[key].business = this.allBusinessSelected
+                        if (this.allBusinessSelected) {
+                            this.selected[key].physical = true
+                            this.allPhysicalSelected = true
+                        }
+                    } else {
+                        this.selected[key].physical = this.allPhysicalSelected
+                        if (!this.allPhysicalSelected) {
+                            this.selected[key].business = false
+                            this.allBusinessSelected = false
+                        }
                     }
                 }
             })
         },
+        checkIfTheSelectedIsInFilteredRows(key: string) {
+            const index = this.filteredRows.findIndex((el: { value: string }) => el.value === key)
+            return index !== -1
+        },
         closeDialog() {
             this.$emit('close')
+            this.filters['global'].value = ''
             this.selected = {}
             this.allPhysicalSelected = false
             this.allBusinessSelected = false
         },
         async onContinue() {
             if (!this.checkIfPhysicalModelIsSelected()) {
-                this.$store.commit('setError', {
+                this.store.setError({
                     title: this.$t('common.error.generic'),
                     msg: this.$t('metaweb.selectDialog.noPhysicalModelsSelectedError')
                 })
@@ -173,7 +186,7 @@ export default defineComponent({
             this.prepareDataForPost(physicalModels, businessModels)
 
             await this.$http
-                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/create`, { datasourceId: '' + this.businessModel?.dataSourceId, physicalModels: physicalModels, businessModels: businessModels, modelName: this.businessModel?.name })
+                .post(import.meta.env.VITE_META_API_URL + `/1.0/metaWeb/create`, { datasourceId: '' + this.businessModel?.dataSourceId, physicalModels: physicalModels, businessModels: businessModels, modelName: this.businessModel?.name })
                 .then((response: AxiosResponse<any>) => {
                     this.$emit('metaSelected', response.data)
                 })
@@ -199,6 +212,25 @@ export default defineComponent({
             }
 
             return isSelected
+        },
+        onRowsFiltered(event: any) {
+            this.filteredRows = event.filteredValue
+            this.allPhysicalSelected = true
+            this.allBusinessSelected = true
+
+            if (this.filteredRows.length === 0) {
+                this.allPhysicalSelected = false
+                this.allBusinessSelected = false
+            }
+
+            for (let i = 0; i < this.filteredRows.length; i++) {
+                if (!this.selected[this.filteredRows[i].value].physical) {
+                    this.allPhysicalSelected = false
+                }
+                if (!this.selected[this.filteredRows[i].value].business) {
+                    this.allBusinessSelected = false
+                }
+            }
         }
     }
 })

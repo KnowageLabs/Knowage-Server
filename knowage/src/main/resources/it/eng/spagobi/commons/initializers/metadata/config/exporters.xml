@@ -22,6 +22,8 @@
 	<EXPORTER domain="CSV" engine="knowageqbeengine" defaultValue="false" />
 	<EXPORTER domain="XLSX" engine="knowagecockpitengine" defaultValue="false" />
 	<EXPORTER domain="PDF" engine="knowagecockpitengine" defaultValue="true" />
+	<EXPORTER domain="XLSX" engine="knowagedashboardengine" defaultValue="false" />
+	<EXPORTER domain="PDF" engine="knowagedashboardengine" defaultValue="true" />
 	<EXPORTER domain="XLS" engine="knowageolapengine" defaultValue="true" />
     <EXPORTER domain="XLS" engine="knowagewhatifengine" defaultValue="true" />
 </EXPORTERS>

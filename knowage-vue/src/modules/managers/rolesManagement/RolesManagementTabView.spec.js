@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
 import Card from 'primevue/card'
@@ -14,6 +15,7 @@ import ProgressBar from 'primevue/progressbar'
 import TabPanel from 'primevue/tabpanel'
 import TabView from 'primevue/tabview'
 import Toolbar from 'primevue/toolbar'
+import mainStore from '../../../App.store'
 
 const mockedBuissnesModelList = [
     {
@@ -106,41 +108,38 @@ const mockedRole = {
     ableToManageUsers: true
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=BM_CATEGORY`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=BM_CATEGORY`:
                 return Promise.resolve({ data: mockedBuissnesModelList })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=CATEGORY_TYPE`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=CATEGORY_TYPE`:
                 return Promise.resolve({ data: mockedDataSetList })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=KPI_KPI_CATEGORY`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=KPI_KPI_CATEGORY`:
                 return Promise.resolve({ data: mockedKpiCategoriesList })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=ROLE_TYPE`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=ROLE_TYPE`:
                 return Promise.resolve({ data: mockedRoleTypes })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/roles/categories/1`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/roles/categories/1`:
                 return Promise.resolve({ data: mockedRoleCategories })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'authorizations':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'authorizations':
                 return Promise.resolve({ data: { root: mockedAuthorizations } })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/roles/1`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/roles/1`:
                 return Promise.resolve({ data: mockedRole })
         }
     }),
-    post: axios.post.mockImplementation(() => Promise.resolve())
-}
-
-const $store = {
-    commit: jest.fn()
+    post: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 const $router = {
-    replace: jest.fn()
+    replace: vi.fn()
 }
 
 const factory = () => {
     return mount(RolesManagementTabView, {
         global: {
+            plugins: [createTestingPinia],
             stubs: {
                 Button,
                 Column,
@@ -157,7 +156,6 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $router,
                 $http
             }
@@ -166,7 +164,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Roles Management Tab View', () => {
@@ -176,8 +174,8 @@ describe('Roles Management Tab View', () => {
         await flushPromises()
         await wrapper.find('.p-tabview-nav li:nth-child(2)').trigger('click')
 
-        expect(wrapper.find('[role="tabpanel"]:nth-child(2)').html()).toContain('managers.rolesManagement.authorizations.name.createDocuments')
-        expect(wrapper.find('[role="tabpanel"]:nth-child(2)').html()).toContain('managers.rolesManagement.authorizations.name.seeDocBrowser')
+        expect(wrapper.find('[role="tabpanel"]:nth-child(2)').html()).toContain('managers.rolesManagement.authorizations.createDocuments')
+        expect(wrapper.find('[role="tabpanel"]:nth-child(2)').html()).toContain('managers.rolesManagement.authorizations.viewDocBrowser')
         expect(wrapper.vm.authorizationList).toStrictEqual(mockedAuthorizations)
     })
     it('switches to Business Models tab if Business Models is clicked', async () => {
@@ -234,6 +232,7 @@ describe('Roles Management Tab View', () => {
 
     it('loads correct role and shows succes info if it is saved', async () => {
         const wrapper = factory()
+        const store = mainStore()
         wrapper.setProps({ id: '1' })
 
         await flushPromises()
@@ -248,15 +247,16 @@ describe('Roles Management Tab View', () => {
 
         await flushPromises()
 
-        expect(axios.post).toHaveBeenCalledTimes(1)
-        expect(axios.post).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles/1', { ...mockedRole, roleMetaModelCategories: [{ categoryId: 172 }, { categoryId: 152 }, { categoryId: 256 }] })
-        expect($store.commit).toHaveBeenCalledTimes(1)
+        expect($http.post).toHaveBeenCalledTimes(1)
+        expect($http.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/roles/1', { ...mockedRole, roleMetaModelCategories: [{ categoryId: 172 }, { categoryId: 152 }, { categoryId: 256 }] })
+        expect(store.setInfo).toHaveBeenCalledTimes(1)
         expect(wrapper.emitted()).toHaveProperty('inserted')
         expect($router.replace).toHaveBeenCalledWith('/roles-management')
     })
 
     it('shows success info if new data is saved', async () => {
         const wrapper = factory()
+        const store = mainStore()
         wrapper.vm.selectedRole = mockedRole
         wrapper.vm.selectedBusinessModels = [{ categoryId: 172 }]
         wrapper.vm.selectedDataSets = [{ categoryId: 152 }]
@@ -267,9 +267,9 @@ describe('Roles Management Tab View', () => {
 
         await flushPromises()
 
-        expect(axios.post).toHaveBeenCalledTimes(1)
-        expect(axios.post).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles/', { ...mockedRole, roleMetaModelCategories: [{ categoryId: 172 }, { categoryId: 152 }, { categoryId: 256 }] })
-        expect($store.commit).toHaveBeenCalledTimes(1)
+        expect($http.post).toHaveBeenCalledTimes(1)
+        expect($http.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/roles/', { ...mockedRole, roleMetaModelCategories: [{ categoryId: 172 }, { categoryId: 152 }, { categoryId: 256 }] })
+        expect(store.setInfo).toHaveBeenCalledTimes(1)
         expect(wrapper.emitted()).toHaveProperty('inserted')
         expect($router.replace).toHaveBeenCalledWith('/roles-management')
     })

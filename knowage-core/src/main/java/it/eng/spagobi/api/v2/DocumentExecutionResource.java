@@ -40,6 +40,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.StringTokenizer;
 import java.util.stream.Collectors;
@@ -88,6 +89,7 @@ import it.eng.spagobi.analiticalmodel.document.handlers.BusinessModelRuntime;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentDriverRuntime;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentRuntime;
 import it.eng.spagobi.analiticalmodel.document.handlers.DriversRuntimeLoaderFactory;
+import it.eng.spagobi.analiticalmodel.document.handlers.DriversValidationAPI;
 import it.eng.spagobi.analiticalmodel.execution.bo.LovValue;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
@@ -526,8 +528,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 		// decode requestVal parameters
 		JSONObject requestValParams = requestVal.getJSONObject("parameters");
-		if (requestValParams != null && requestValParams.length() > 0)
+		if (requestValParams != null && requestValParams.length() > 0) {
 			requestVal.put("parameters", decodeRequestParameters(requestValParams));
+		}
 		String label = requestVal.getString("label");
 		String role = requestVal.getString("role");
 		JSONObject jsonCrossParameters = requestVal.getJSONObject("parameters");
@@ -557,6 +560,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		ArrayList<HashMap<String, Object>> datasetParametersArrayList = new ArrayList<>();
 		datasetParametersArrayList = getQbeDrivers(biObject);
+
+		UserProfile profile = getUserProfile();
 
 		if (!datasetParametersArrayList.isEmpty()) {
 			parametersArrayList.addAll(datasetParametersArrayList);
@@ -662,10 +667,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				boolean showParameterLov = true;
 
 				// Parameters NO TREE
-				if ("lov".equalsIgnoreCase(parameterUse.getValueSelection())
-						&& !objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_TREE)) {
+				if ("lov".equalsIgnoreCase(parameterUse.getValueSelection())) {
 
-					ArrayList<HashMap<String, Object>> admissibleValues = objParameter.getAdmissibleValues();
+					ArrayList<HashMap<String, Object>> admissibleValues = filterNullValues(objParameter.getAdmissibleValues());
 
 					metadata.put("colsMap", colPlaceholder2ColName);
 					metadata.put("descriptionColumn", lovDescriptionColumnName);
@@ -688,7 +692,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 					// if parameterValue is not null and is array, check if all element are present in lov
 					Object values = parameterAsMap.get("parameterValue");
-					if (values != null && admissibleValues != null) {
+					if (!DocumentExecutionUtils.SELECTION_TYPE_LOOKUP.equals(parameterUse.getSelectionType())
+							&& !DocumentExecutionUtils.SELECTION_TYPE_TREE.equals(parameterUse.getSelectionType())
+							&& values != null && admissibleValues != null) {
 						checkIfValuesAreAdmissible(values, admissibleValues);
 					}
 
@@ -770,28 +776,26 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					valueList = objParameter.getDefaultValues();
 
 					if (!valueList.isEmpty()) {
-						defValue = valueList.stream()
-							.map(e -> {
+						defValue = valueList.stream().map(e -> {
 
-								BiMap<String, String> inverse = colPlaceholder2ColName.inverse();
-								String valColName = inverse.get(lovValueColumnName);
-								String descColName = inverse.get(lovDescriptionColumnName);
+							BiMap<String, String> inverse = colPlaceholder2ColName.inverse();
+							String valColName = inverse.get(lovValueColumnName);
+							String descColName = inverse.get(lovDescriptionColumnName);
 
-								// TODO : workaround
-								valColName = Optional.ofNullable(valColName).orElse("value");
-								descColName = Optional.ofNullable(descColName).orElse("desc");
+							// TODO : workaround
+							valColName = Optional.ofNullable(valColName).orElse("value");
+							descColName = Optional.ofNullable(descColName).orElse("desc");
 
-								Map<String, Object> ret = new LinkedHashMap<>();
+							Map<String, Object> ret = new LinkedHashMap<>();
 
-								ret.put(valColName, e.getValue());
+							ret.put(valColName, e.getValue());
 
-								if (!valColName.equals(descColName)) {
-									ret.put(descColName, e.getDescription());
-								}
+							if (!valColName.equals(descColName)) {
+								ret.put(descColName, e.getDescription());
+							}
 
-								return ret;
-							})
-							.collect(Collectors.toList());
+							return ret;
+						}).collect(Collectors.toList());
 					}
 
 					if (jsonCrossParameters.isNull(objParameter.getId())
@@ -822,6 +826,25 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 			}
 		}
+
+		/*
+		 * !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!!
+		 *
+		 * This code only retrieves descriptions of LOVs. Errors are ignored by purpose.
+		 *
+		 * You are free to show the errors on the response, if you want.
+		 *
+		 * !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!!
+		 */
+		try {
+			DriversValidationAPI validation = new DriversValidationAPI(profile, locale);
+			validation.getParametersErrors(biObject, role, dum);
+		} catch(Exception e) {
+			throw new SpagoBIRuntimeException(e);
+		}
+
+		reconcileDescriptionInLovValues(parameters, parametersArrayList);
+
 		for (int z = 0; z < parametersArrayList.size(); z++) {
 
 			Map docP = parametersArrayList.get(z);
@@ -841,8 +864,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		for (int i = 0; i < parametersArrayList.size(); i++) {
 			Map<String, Object> parameter = parametersArrayList.get(i);
 			List<Map<String, Object>> defaultValuesList = (List<Map<String, Object>>) parameter.get(PROPERTY_DATA);
-
-			parameter.remove("parameterValue");
 
 			if (defaultValuesList != null) {
 				// Filter out null values
@@ -879,6 +900,83 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		logger.debug("OUT");
 		return Response.ok(resultAsMap).build();
+	}
+
+	private void reconcileDescriptionInLovValues(List<DocumentDriverRuntime> parameters, final ArrayList<HashMap<String, Object>> parametersArrayList) {
+		for (DocumentDriverRuntime objParameter : parameters) {
+			Integer objParamId = objParameter.getBiObjectId();
+			for (HashMap<String, Object> parameter : parametersArrayList) {
+				Integer paramId = (Integer) parameter.get("id");
+				if (objParamId.equals(paramId)) {
+					BIObjectParameter driver = objParameter.getDriver();
+					List parameterValues = driver.getParameterValues();
+					List parameterValuesDescription = driver.getParameterValuesDescription();
+					List<?> parameterValueForResponse = (List<?>) parameter.get("parameterValue");
+
+					if (Objects.nonNull(parameterValuesDescription) && !parameterValuesDescription.isEmpty()) {
+						List<?> newParameterValuesDescription = new ArrayList<>(parameterValuesDescription);
+						parameter.put("parameterDescription", newParameterValuesDescription);
+
+						if (Objects.nonNull(parameterValues) && parameterValueForResponse instanceof DefaultValuesList) {
+							DefaultValuesList docValList = (DefaultValuesList) parameterValueForResponse;
+
+							for (int i = 0; i < docValList.size(); i++) {
+								LovValue lovValue = docValList.get(i);
+
+								lovValue.setDescription(parameterValuesDescription.get(i));
+							}
+						}
+
+					}
+
+					break;
+				}
+			}
+		}
+	}
+
+	private ArrayList<HashMap<String, Object>> filterNullValues(ArrayList<HashMap<String, Object>> admissibleValues) {
+		ArrayList<HashMap<String, Object>> filteredValues = new ArrayList<HashMap<String, Object>>();
+		if (admissibleValues != null && !admissibleValues.isEmpty()) {
+			for (Map<String, Object> v : admissibleValues) {
+				if (isNull(v)) {
+					logger.debug("Skipping null value " + v.get("label"));
+				} else {
+					filteredValues.add((HashMap<String, Object>) v);
+				}
+			}
+		}
+		return filteredValues;
+	}
+
+	private boolean isNull(Map<String, Object> v) {
+
+		boolean result = false;
+
+		String value = String.valueOf(v.get("value"));
+		if (value != null) {
+			result = value.equals("null");
+		} else {
+			value = String.valueOf(v.get("VALUE"));
+			if (value != null) {
+				result = value.equals("null");
+			}
+		}
+
+		if (!result) {
+
+			String description = String.valueOf(v.get("description"));
+			if (description != null) {
+				result = description.equals("null");
+			} else {
+				description = String.valueOf(v.get("DESCRIPTION"));
+				if (description != null) {
+					result = description.equals("null");
+				}
+
+			}
+		}
+		return result;
 	}
 
 	// private List<AbstractDriverRuntime<AbstractDriver>>
@@ -1112,6 +1210,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		}
 		return defaultValues;
 	}
+
 	@POST
 	@Path("/admissibleValuesTree")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")

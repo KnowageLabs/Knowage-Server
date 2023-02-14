@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import it.eng.knowage.encryption.DecryptionDataStoreTransformer;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
@@ -31,6 +32,7 @@ import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.FileDatasetCsvDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.transformer.DataStoreStatsTransformer;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -149,8 +151,11 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 
 			dataStore = dataProxy.load(dataReader);
 
-			if (hasDataStoreTransformer()) {
-				getDataStoreTransformer().transform(dataStore);
+			addDataStoreTransformer(new DecryptionDataStoreTransformer(this));
+			addDataStoreTransformer(new DataStoreStatsTransformer());
+
+			if (hasDataStoreTransformers()) {
+				executeDataStoreTransformers(dataStore);
 			}
 
 		}

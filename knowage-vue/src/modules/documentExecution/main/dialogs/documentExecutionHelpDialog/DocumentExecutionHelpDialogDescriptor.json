@@ -5,5 +5,6 @@
             "padding": 0,
             "width": "80vw"
         }
-    }
+    },
+    "filterFields": ["WORD"]
 }

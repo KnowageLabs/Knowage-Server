@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Card from 'primevue/card'
 import flushPromises from 'flush-promises'
 import InputText from 'primevue/inputtext'
@@ -16,10 +17,10 @@ const mockedSchema = {
     type: 'MONDRIAN_SCHEMA'
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation(() =>
+    get: vi.fn().mockImplementation(() =>
         Promise.resolve({
             data: []
         })
@@ -29,6 +30,7 @@ const $http = {
 const factory = () => {
     return mount(MondrianSchemasDetailTab, {
         global: {
+            plugins: [createTestingPinia()],
             stubs: {
                 Card,
                 ProgressBar,

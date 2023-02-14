@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
+import { describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import { nextTick } from 'vue'
-import axios from 'axios'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import MetawebPhysicalModel from './MetawebPhysicalModel.vue'
@@ -278,9 +279,9 @@ const mockedPhysicalModel = {
     foreignKeys: []
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
-const $http = { get: axios.get.mockImplementation(() => Promise.resolve({ data: [] })) }
+const $http = { get: vi.fn().mockImplementation(() => Promise.resolve({ data: [] })) }
 
 const factory = () => {
     return mount(MetawebPhysicalModel, {
@@ -289,7 +290,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 InputText,

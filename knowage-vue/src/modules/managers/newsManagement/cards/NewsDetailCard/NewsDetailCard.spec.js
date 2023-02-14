@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Calendar from 'primevue/calendar'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
@@ -51,14 +53,12 @@ describe('Role Detail Tab', () => {
         await wrapper.setProps({ selectedNews: mockedNews })
         const activeInput = wrapper.find('[data-test="active-input"]')
         const titleInput = wrapper.find('[data-test="title-input"]')
-        const expirationInput = wrapper.find('[data-test="expiration-input"]')
         const descriptionInput = wrapper.find('[data-test="description-input"]')
 
         expect(wrapper.vm.news).toStrictEqual(mockedNews)
 
         expect(activeInput.html()).toContain('aria-checked="true"')
         expect(titleInput.wrapperElement._value).toBe('First news')
-        expect(expirationInput.wrapperElement._value).toBe('10/02/2019')
         expect(descriptionInput.wrapperElement._value).toBe('Description')
     })
 

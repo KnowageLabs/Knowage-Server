@@ -422,6 +422,14 @@ public class Signup {
 		Locale locale = msgBuilder.getLocale(request);
 
 		String name = signupDTO.getName();
+
+		String strActiveSignup = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY");
+		boolean activeSignup = "true".equalsIgnoreCase(strActiveSignup);
+		if (!activeSignup) {
+			logger.error(String.format("Attempt to register with signup not active for the user [%s]", name));
+			throw new SpagoBIServiceException(this.request.getPathInfo(), msgBuilder.getMessage("signup.check.error", "messages", locale));
+		}
+
 		String surname = signupDTO.getSurname();
 		String username = signupDTO.getUsername();
 		if (username == null || username.equals("")) {
@@ -667,8 +675,8 @@ public class Signup {
 		String url = "/themes/" + currTheme + "/jsp/signup/signup.jsp";
 		logger.debug("url for signup: " + url);
 
-		MessageBuilder msgBuilder = new MessageBuilder();
-		Locale locale = msgBuilder.getLocale(req);
+		// TODO : do we need to use the request locale?
+		Locale locale = Locale.getDefault();
 		logger.debug("locale for signup: " + locale);
 		try {
 			List communities = DAOFactory.getCommunityDAO().loadAllSbiCommunities();

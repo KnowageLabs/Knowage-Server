@@ -34,8 +34,8 @@ import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import LayersManagementDetailView from './detailView/LayersManagementDetailView.vue'
 import LayersManagementHint from './LayersManagementHint.vue'
 import LayersManagementDownloadDialog from './downloadDialog/LayersManagementDownloadDialog.vue'
-
-const deepcopy = require('deepcopy')
+import mainStore from '../../../App.store'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'roles-management',
@@ -53,6 +53,10 @@ export default defineComponent({
             selectedLayerForDownload: null
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     async created() {
         this.loadPage()
     },
@@ -64,13 +68,13 @@ export default defineComponent({
             this.loading = false
         },
         async getAllLayers() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `layers`).then((response: AxiosResponse<any>) => (this.allLayers = response.data.root))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `layers`).then((response: AxiosResponse<any>) => (this.allLayers = response.data.root))
         },
         async getAllRoles() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `layers/getroles?`).then((response: AxiosResponse<any>) => (this.allRoles = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `layers/getroles?`).then((response: AxiosResponse<any>) => (this.allRoles = response.data))
         },
         async getAllCategories() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=GEO_CATEGORY`).then((response: AxiosResponse<any>) => (this.allCategories = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=GEO_CATEGORY`).then((response: AxiosResponse<any>) => (this.allCategories = response.data))
         },
         showDetail(event) {
             if (!this.touched) {
@@ -96,11 +100,12 @@ export default defineComponent({
             })
         },
         async deleteLayer(layerId: number) {
-            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `layers/deleteLayer?id=${layerId}`).then(() => {
-                this.$store.commit('setInfo', {
+            await this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `layers/deleteLayer?id=${layerId}`).then(() => {
+                this.store.setInfo({
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
                 })
+                layerId == this.selectedLayer?.layerId ? this.onDetailClose() : ''
                 this.getAllLayers()
             })
         },
@@ -109,7 +114,6 @@ export default defineComponent({
             this.selectedLayer = null
         },
         downloadLayerFile(event: any) {
-            console.log('DOWNLOAD layer: ', event.item)
             this.selectedLayerForDownload = event.item
             this.downloadDialogVisible = true
         },

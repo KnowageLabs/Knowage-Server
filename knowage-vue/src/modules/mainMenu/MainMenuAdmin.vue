@@ -53,7 +53,6 @@ export default defineComponent({
         this.tmpModel = this.model || []
     },
     updated() {
-        console.log('update')
         //@ts-ignore
         if (this.$refs.megamenu) this.$refs.megamenu.style.top = this.openedPanelEvent.target.getBoundingClientRect().top + 'px'
     },

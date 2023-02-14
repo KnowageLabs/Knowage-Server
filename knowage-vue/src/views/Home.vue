@@ -1,10 +1,10 @@
-<template
-    ><iframe v-if="homePage.label && completeUrl" :src="`${completeUrl}`"></iframe>
+<template>
+    <iframe v-if="homePage.label && completeUrl" :src="`${completeUrl}`"></iframe>
     <div v-else class="homeContainer">
         <div class="upperSection p-d-flex">
             <div class="p-d-flex p-flex-column kn-flex">
                 <div class="logo">
-                    <img src="../assets/images/home/logo-knowage8.svg" />
+                    <img src="/images/home/logo-knowage8.svg" />
                 </div>
                 <div class="text p-grid">
                     <h2 class="p-col-12 p-m-0">{{ $t('home.welcome') }}</h2>
@@ -19,19 +19,19 @@
         <div class="lowerSection">
             <div class="border-container">
                 <div class="image">
-                    <img src="../assets/images/home/kn_arrow_right.svg" />
+                    <img src="/images/home/kn_arrow_right.svg" />
                     <p>{{ $t('home.connectYourData') }}</p>
                 </div>
                 <div class="image">
-                    <img src="../assets/images/home/kn_bubble.svg" />
+                    <img src="/images/home/kn_bubble.svg" />
                     <p>{{ $t('home.queryYourData') }}</p>
                 </div>
                 <div class="image">
-                    <img src="../assets/images/home/kn_add.svg" />
+                    <img src="/images/home/kn_add.svg" />
                     <p>{{ $t('home.createYourAnalysis') }}</p>
                 </div>
                 <div class="image">
-                    <img src="../assets/images/home/kn_flag.svg" />
+                    <img src="/images/home/kn_flag.svg" />
                     <p>{{ $t('home.saveAndShare') }}</p>
                 </div>
             </div>
@@ -41,7 +41,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { mapState } from 'vuex'
+import { mapState } from 'pinia'
+import mainStore from '../App.store.js'
 
 export default defineComponent({
     name: 'Home',
@@ -52,16 +53,35 @@ export default defineComponent({
             completeUrl: false
         }
     },
-    mounted() {
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
+    beforeMounted() {
         this.setCompleteUrl()
     },
     methods: {
         setCompleteUrl() {
-            this.completeUrl = this.homePage.to ? process.env.VUE_APP_HOST_URL + this.homePage.to.replaceAll('\\/', '/') : this.homePage.url
+            if (Object.keys(this.homePage).length > 0) {
+                this.completeUrl = this.homePage.url
+                if (this.homePage.to) {
+                    let to = this.homePage.to?.replaceAll('\\/', '/')
+                    if (this.isFunctionality(to) || this.isADocument(to)) this.$router.push(to)
+                    else this.completeUrl = import.meta.env.VITE_HOST_URL + this.homePage.to.replaceAll('\\/', '/')
+                }
+            } else {
+                this.completeUrl = false
+            }
+        },
+        isFunctionality(to: String): Boolean {
+            return to.startsWith('/document-browser') || to.startsWith('/workspace')
+        },
+        isADocument(to: String): Boolean {
+            return to.startsWith('/dossier/') || to.startsWith('/map/') || to.startsWith('/kpi/') || to.startsWith('/office-doc/') || to.startsWith('/document-composite/')
         }
     },
     computed: {
-        ...mapState({
+        ...mapState(mainStore, {
             homePage: 'homePage',
             user: 'user'
         })
@@ -79,7 +99,7 @@ $knowageBlueColor: #042d5f;
 .homeContainer {
     height: 100vh;
     padding: 64px;
-    background: url('../assets/images/home/home-background.png') no-repeat;
+    background: url('/images/home/home-background.png') no-repeat;
     background-position: bottom right;
     background-size: 120%;
     display: flex;

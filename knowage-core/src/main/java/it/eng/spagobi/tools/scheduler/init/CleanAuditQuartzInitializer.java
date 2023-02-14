@@ -17,19 +17,17 @@
  */
 package it.eng.spagobi.tools.scheduler.init;
 
-import java.util.List;
-
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quartz.Scheduler;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.init.InitializerIFace;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
-import it.eng.spagobi.tools.scheduler.jobs.RestEventJob;
+import it.eng.spagobi.tools.scheduler.jobs.CleanAuditJob;
 import it.eng.spagobi.tools.scheduler.utils.PredefinedCronExpression;
 
 public class CleanAuditQuartzInitializer implements InitializerIFace {
@@ -38,7 +36,7 @@ public class CleanAuditQuartzInitializer implements InitializerIFace {
 	public final String DEFAULT_TRIGGER_NAME = "schedule_clean_audit";
 
 	private final SourceBean _config = null;
-	private transient Logger logger = Logger.getLogger(CleanAuditQuartzInitializer.class);
+	private static final Logger LOGGER = LogManager.getLogger(CleanAuditQuartzInitializer.class);
 
 	/*
 	 * (non-Javadoc)
@@ -47,23 +45,31 @@ public class CleanAuditQuartzInitializer implements InitializerIFace {
 	 */
 	@Override
 	public void init(SourceBean config) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
-		List<SbiTenant> tenants = DAOFactory.getTenantsDAO().loadAllTenants();
-		for (SbiTenant tenant : tenants) {
-			initAuditForTenant(tenant);
+		try {
+			initCleanForDefaultTenant();
+		} catch (Exception e) {
+		} finally {
+			LOGGER.debug("OUT");
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 	}
 
-	public void initAuditForTenant(SbiTenant tenant) {
-		logger.debug("IN");
+	public void initCleanForDefaultTenant() {
+		LOGGER.debug("IN");
 
 		ISchedulerDAO schedulerDAO = null;
 		try {
 			schedulerDAO = DAOFactory.getSchedulerDAO();
-			schedulerDAO.setTenant(tenant.getName());
+			schedulerDAO.setTenant("DEFAULT_TENANT");
+			schedulerDAO.setGlobal(true);
+
+			// WORKAROUND : Fix the past
+			// TODO : could be deleted in version 9
+			schedulerDAO.deleteTriggerWhereNameLikes(DEFAULT_TRIGGER_NAME);
+			schedulerDAO.deleteJobWhereNameLikes(DEFAULT_JOB_NAME);
 
 			Job jobDetail = schedulerDAO.loadJob(DEFAULT_JOB_NAME, DEFAULT_JOB_NAME);
 			if (jobDetail == null) { // create job detail
@@ -74,10 +80,10 @@ public class CleanAuditQuartzInitializer implements InitializerIFace {
 				jobDetail.setDurable(true);
 				jobDetail.setVolatile(false);
 				jobDetail.setRequestsRecovery(true);
-				jobDetail.setJobClass(RestEventJob.class);
+				jobDetail.setJobClass(CleanAuditJob.class);
 
 				schedulerDAO.insertJob(jobDetail);
-				logger.debug("Added job with name " + DEFAULT_JOB_NAME);
+				LOGGER.debug("Added job with name " + DEFAULT_JOB_NAME);
 			}
 
 			String cronExpression = PredefinedCronExpression.DAILY.getExpression();
@@ -92,11 +98,11 @@ public class CleanAuditQuartzInitializer implements InitializerIFace {
 			simpleTrigger.setRunImmediately(false);
 
 			schedulerDAO.insertTrigger(simpleTrigger);
-			logger.debug("Added trigger with name " + DEFAULT_TRIGGER_NAME);
+			LOGGER.debug("Added trigger with name " + DEFAULT_TRIGGER_NAME);
 
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		} catch (Exception e) {
-			logger.error("Error while initializing scheduler ", e);
+			LOGGER.error("Error while initializing scheduler ", e);
 		} finally {
 			if (schedulerDAO != null) {
 				schedulerDAO.setTenant(null);

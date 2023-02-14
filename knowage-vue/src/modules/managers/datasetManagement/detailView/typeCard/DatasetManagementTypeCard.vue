@@ -1,6 +1,6 @@
 <template>
     <div v-if="dataset.dsTypeCd == 'Federated'">
-        <label>{{ $t('managers.datasetManagement.selectDatasetType') }}: </label> <b>Federated</b>
+        <label>{{ $t('managers.datasetManagement.selectDatasetType') }}: </label> <b>{{ dataset.dsTypeCd }}</b>
     </div>
     <div id="is-not-federated" v-else>
         <Card class="p-m-2">
@@ -11,7 +11,7 @@
                             id="scope"
                             class="kn-material-input"
                             :style="typeTabDescriptor.style.maxWidth"
-                            :options="datasetTypes"
+                            :options="getAllowed"
                             optionLabel="VALUE_CD"
                             optionValue="VALUE_CD"
                             v-model="v$.dataset.dsTypeCd.$model"
@@ -19,7 +19,8 @@
                                 'p-invalid': v$.dataset.dsTypeCd.$invalid && v$.dataset.dsTypeCd.$dirty
                             }"
                             @before-show="v$.dataset.dsTypeCd.$touch()"
-                            @change=";((this.dataset.pars = []), (this.dataset.restJsonPathAttributes = []), (this.dataset.restRequestHeaders = [])), $emit('touched')"
+                            @change="handleTypeChange"
+                            :disabled="dataset.dsTypeCd == 'Prepared' || dataset.dsTypeCd == 'Derived'"
                         />
                         <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.selectDatasetType') }} * </label>
                     </span>
@@ -34,17 +35,19 @@
         </Card>
     </div>
     <FileDataset v-if="dataset.dsTypeCd == 'File'" :selectedDataset="selectedDataset" @fileUploaded="$emit('fileUploaded')" />
-    <QueryDataset v-if="dataset.dsTypeCd == 'Query'" :selectedDataset="selectedDataset" :dataSources="dataSources" :scriptTypes="scriptTypes" />
-    <JavaDataset v-if="dataset.dsTypeCd == 'Java Class'" :selectedDataset="selectedDataset" />
-    <ScriptDataset v-if="dataset.dsTypeCd == 'Script'" :selectedDataset="selectedDataset" :scriptTypes="scriptTypes" />
-    <QbeDataset v-if="dataset.dsTypeCd == 'Qbe' || dataset.dsTypeCd == 'Federated'" :selectedDataset="selectedDataset" :businessModels="businessModels" :dataSources="dataSources" :parentValid="parentValid" @qbeSaved="$emit('qbeSaved')" />
-    <FlatDataset v-if="dataset.dsTypeCd == 'Flat'" :selectedDataset="selectedDataset" :dataSources="dataSources" />
-    <CkanDataset v-if="dataset.dsTypeCd == 'Ckan'" :selectedDataset="selectedDataset" />
-    <RestDataset v-if="dataset.dsTypeCd == 'REST'" :selectedDataset="selectedDataset" />
-    <SparqlDataset v-if="dataset.dsTypeCd == 'SPARQL'" :selectedDataset="selectedDataset" />
-    <SolrDataset v-if="dataset.dsTypeCd == 'Solr'" :selectedDataset="selectedDataset" />
-    <PythonDataset v-if="dataset.dsTypeCd == 'Python/R'" :selectedDataset="selectedDataset" :pythonEnvironments="pythonEnvironments" :rEnvironments="rEnvironments" />
-    <ParamTable v-if="dataset.dsTypeCd && dataset.dsTypeCd != 'File' && dataset.dsTypeCd != 'Flat'" :selectedDataset="selectedDataset" />
+    <QueryDataset v-else-if="dataset.dsTypeCd == 'Query'" :selectedDataset="selectedDataset" :dataSources="dataSources" :scriptTypes="scriptTypes" :activeTab="activeTab" @queryEdited="$emit('queryEdited')" />
+    <JavaDataset v-else-if="dataset.dsTypeCd == 'Java Class'" :selectedDataset="selectedDataset" />
+    <ScriptDataset v-else-if="dataset.dsTypeCd == 'Script'" :selectedDataset="selectedDataset" :scriptTypes="scriptTypes" :activeTab="activeTab" />
+    <QbeDataset v-else-if="dataset.dsTypeCd == 'Qbe' || dataset.dsTypeCd == 'Federated'" :selectedDataset="selectedDataset" :businessModels="businessModels" :dataSources="dataSources" :parentValid="parentValid" />
+    <DerivedDataset v-else-if="dataset.dsTypeCd == 'Derived'" :selectedDataset="selectedDataset" :parentValid="parentValid" />
+    <FlatDataset v-else-if="dataset.dsTypeCd == 'Flat'" :selectedDataset="selectedDataset" :dataSources="dataSources" />
+    <CkanDataset v-else-if="dataset.dsTypeCd == 'Ckan'" :selectedDataset="selectedDataset" />
+    <RestDataset v-else-if="dataset.dsTypeCd == 'REST'" :selectedDataset="selectedDataset" />
+    <SparqlDataset v-else-if="dataset.dsTypeCd == 'SPARQL'" :selectedDataset="selectedDataset" />
+    <SolrDataset v-else-if="dataset.dsTypeCd == 'Solr'" :selectedDataset="selectedDataset" />
+    <PythonDataset v-else-if="dataset.dsTypeCd == 'Python/R'" :selectedDataset="selectedDataset" :pythonEnvironments="pythonEnvironments" :rEnvironments="rEnvironments" />
+
+    <ParamTable v-if="dataset.dsTypeCd && dataset.dsTypeCd != 'File' && dataset.dsTypeCd != 'Flat' && dataset.dsTypeCd != 'Prepared' && dataset.dsTypeCd != 'Derived'" :selectedDataset="selectedDataset" />
 </template>
 
 <script lang="ts">
@@ -67,8 +70,10 @@ import RestDataset from './restDataset/DatasetManagementRestDataset.vue'
 import SparqlDataset from './sparqlDataset/DatasetManagementSparqlDataset.vue'
 import SolrDataset from './solrDataset/DatasetManagementSolrDataset.vue'
 import PythonDataset from './pythonDataset/DatasetManagementPythonDataset.vue'
+import DerivedDataset from './derivedDataset/DatasetManagementDerivedDataset.vue'
+
 export default defineComponent({
-    components: { Card, Dropdown, KnValidationMessages, ParamTable, CkanDataset, QbeDataset, RestDataset, JavaDataset, FlatDataset, SolrDataset, QueryDataset, ScriptDataset, SparqlDataset, PythonDataset, FileDataset },
+    components: { Card, Dropdown, KnValidationMessages, ParamTable, CkanDataset, QbeDataset, RestDataset, JavaDataset, FlatDataset, SolrDataset, QueryDataset, ScriptDataset, SparqlDataset, PythonDataset, FileDataset, DerivedDataset },
     props: {
         parentValid: { type: Boolean },
         selectedDataset: { type: Object as any },
@@ -77,16 +82,29 @@ export default defineComponent({
         businessModels: { type: Array as any },
         scriptTypes: { type: Array as any },
         pythonEnvironments: { type: Array as any },
-        rEnvironments: { type: Array as any }
+        rEnvironments: { type: Array as any },
+        activeTab: { type: Number as any }
     },
-    computed: {},
-    emits: ['touched', 'fileUploaded', 'qbeSaved'],
+    computed: {
+        getAllowed() {
+            return this.datasetTypes.filter((cd) => {
+                if (this.selectedDataset.dsTypeCd == 'Derived' || this.selectedDataset.dsTypeCd == 'Prepared') {
+                    return cd.VALUE_CD == this.selectedDataset.dsTypeCd
+                } else {
+                    return cd.VALUE_CD != 'Derived' && cd.VALUE_CD != 'Prepared'
+                }
+            })
+        }
+    },
+    emits: ['touched', 'fileUploaded', 'qbeSaved', 'queryEdited'],
     data() {
         return {
             typeTabDescriptor,
             dataset: {} as any,
             v$: useValidate() as any,
-            expandParamsCard: true
+            expandParamsCard: true,
+            touched: false,
+            qbeVisible: false
         }
     },
     created() {
@@ -103,6 +121,14 @@ export default defineComponent({
         }
         return validationObject
     },
-    methods: {}
+    methods: {
+        handleTypeChange() {
+            this.touched = true
+            this.dataset.pars = []
+            this.dataset.restJsonPathAttributes = []
+            this.dataset.restRequestHeaders = []
+            this.$emit('touched')
+        }
+    }
 })
 </script>

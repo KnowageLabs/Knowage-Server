@@ -14,9 +14,12 @@
  */
 package it.eng.knowage.engine.cockpit.api.export.excel;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,8 +29,10 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.core.UriBuilder;
 
@@ -41,9 +46,12 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.google.gson.Gson;
 
 import it.eng.knowage.engine.cockpit.api.export.AbstractFormatExporter;
 import it.eng.knowage.engine.cockpit.api.export.ExporterClient;
@@ -72,8 +80,6 @@ public class ExcelExporter extends AbstractFormatExporter {
 	private final boolean isSingleWidgetExport;
 	private int uniqueId = 0;
 	private String requestURL = "";
-
-	private Map<String, CellStyle> format2CellStyle = new HashMap<String, CellStyle>();
 
 	private static final String[] WIDGETS_TO_IGNORE = { "image", "text", "selector", "selection", "html" };
 	private static final String SCRIPT_NAME = "cockpit-export-xls.js";
@@ -119,8 +125,20 @@ public class ExcelExporter extends AbstractFormatExporter {
 			URI url = UriBuilder.fromUri(requestURL).replaceQueryParam("outputType_description", "HTML").replaceQueryParam("outputType", "HTML").build();
 
 			ProcessBuilder processBuilder = new ProcessBuilder("node", exportScriptFullPath.toString(), encodedUserId, outputDir.toString(), url.toString());
+
+			setWorkingDirectory(cockpitExportScriptPath, processBuilder);
+
+			logger.info("Node complete command line: " + processBuilder.command());
+
+			logger.info("Starting export script");
 			Process exec = processBuilder.start();
+
+			logger.info("Waiting...");
 			exec.waitFor();
+			logger.warn("Exit value: " + exec.exitValue());
+
+			logOutputToCoreLog(exec);
+
 			// the script creates the resulting xls and saves it to outputFile
 			Path outputFile = outputDir.resolve(documentLabel + ".xlsx");
 			return getByteArrayFromFile(outputFile, outputDir);
@@ -186,6 +204,17 @@ public class ExcelExporter extends AbstractFormatExporter {
 					optionsObj = new JSONObject(options);
 				IWidgetExporter widgetExporter = WidgetExporterFactory.getExporter(this, widgetType, templateString, widgetId, wb, optionsObj);
 				exportedSheets = widgetExporter.export();
+				HashMap<String, HashMap<String, Object>> selectionsMap = new HashMap<String, HashMap<String, Object>>();
+				try {
+					selectionsMap = createSelectionsMap();
+				} catch (JSONException e) {
+					throw new SpagoBIRuntimeException("Unable to get selection map: ", e);
+				}
+				if (!selectionsMap.isEmpty()) {
+					Sheet selectionsSheet = createUniqueSafeSheetForSelections(wb, "Active Selections");
+					fillSelectionsSheetWithData(selectionsMap, wb, selectionsSheet, "Selections");
+					exportedSheets++;
+				}
 			} else {
 				// export whole cockpit
 				JSONArray widgetsJson = getWidgetsJson(templateString);
@@ -333,9 +362,21 @@ public class ExcelExporter extends AbstractFormatExporter {
 				IWidgetExporter widgetExporter = WidgetExporterFactory.getExporter(this, widgetType, templateString, Long.parseLong(widgetId), wb,
 						currWidgetOptions);
 				exportedSheets += widgetExporter.export();
+
 			} catch (Exception e) {
 				logger.error("Error while exporting widget [" + widgetId + "]", e);
 			}
+		}
+		HashMap<String, HashMap<String, Object>> selectionsMap = new HashMap<String, HashMap<String, Object>>();
+		try {
+			selectionsMap = createSelectionsMap();
+		} catch (JSONException e) {
+			throw new SpagoBIRuntimeException("Unable to get selection map: ", e);
+		}
+		if (!selectionsMap.isEmpty()) {
+			Sheet selectionsSheet = createUniqueSafeSheetForSelections(wb, "Active Selections");
+			fillSelectionsSheetWithData(selectionsMap, wb, selectionsSheet, "Selections");
+			exportedSheets++;
 		}
 		return exportedSheets;
 	}
@@ -443,16 +484,53 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 	public void createAndFillExcelSheet(JSONObject dataStore, Workbook wb, String widgetName, String cockpitSheetName) {
 		Sheet newSheet = createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
-		fillSheetWithData(dataStore, wb, newSheet, widgetName, 0);
+		fillSheetWithData(dataStore, wb, newSheet, widgetName, 0, null);
 	}
 
-	public void fillSheetWithData(JSONObject dataStore, Workbook wb, Sheet sheet, String widgetName, int offset) {
+	public void fillSelectionsSheetWithData(HashMap<String, HashMap<String, Object>> selectionsMap, Workbook wb, Sheet sheet, String widgetName) {
+
+		Row newheader = sheet.createRow((short) 0);
+		Cell cell = newheader.createCell(0);
+		cell.setCellValue("Dataset");
+		Cell cell2 = newheader.createCell(1);
+		cell2.setCellValue("Field");
+		Cell cell3 = newheader.createCell(2);
+		cell3.setCellValue("Values");
+
+		int j = 1;
+		for (String key : selectionsMap.keySet()) {
+
+			for (String selectionskey : selectionsMap.get(key).keySet()) {
+
+				Row row = sheet.createRow(j++);
+
+				Cell cellData0 = row.createCell(0);
+				cellData0.setCellValue(key);
+
+				Cell cellData1 = row.createCell(1);
+				cellData1.setCellValue(selectionskey);
+
+				Cell cellData2 = row.createCell(2);
+
+				cellData2.setCellValue(extractSelectionValues("" + selectionsMap.get(key).get(selectionskey)));
+
+			}
+
+		}
+
+	}
+
+	public String extractSelectionValues(String selectionValues) {
+		return selectionValues = selectionValues.replace("[\"(", "").replace(")\"]", "");
+	}
+
+	public void fillSheetWithData(JSONObject dataStore, Workbook wb, Sheet sheet, String widgetName, int offset, JSONObject settings) {
 		try {
 			JSONObject metadata = dataStore.getJSONObject("metaData");
 			JSONArray columns = metadata.getJSONArray("fields");
 			columns = filterDataStoreColumns(columns);
 			JSONArray rows = dataStore.getJSONArray("rows");
-
+			HashMap<String, Object> variablesMap = new HashMap<String, Object>();
 			JSONObject widgetData = dataStore.getJSONObject("widgetData");
 			JSONObject widgetContent = widgetData.getJSONObject("content");
 			HashMap<String, String> arrayHeader = new HashMap<String, String>();
@@ -474,6 +552,29 @@ public class ExcelExporter extends AbstractFormatExporter {
 					if (column.has("aggregationSelected") && column.has("alias")) {
 						String col = column.getString("alias");
 						String aggregation = column.getString("aggregationSelected");
+						if (col.contains("$V")) {
+							if (body.has("COCKPIT_VARIABLES")) {
+								String columnAlias = "";
+								Pattern patt = Pattern.compile("(\\$V\\{)([\\w\\s]+)(\\})");
+								Matcher matcher = patt.matcher(col);
+								if (body.get("COCKPIT_VARIABLES") instanceof JSONObject) {
+									JSONObject variableOBJ = body.getJSONObject("COCKPIT_VARIABLES");
+									while (matcher.find()) {
+										columnAlias = matcher.group(2);
+									}
+									col = col.replace("$V{" + columnAlias + "}", variableOBJ.getString(columnAlias));
+								} else {
+									JSONArray arr = body.getJSONArray("COCKPIT_VARIABLES");
+									for (int j = 0; j < arr.length(); j++) {
+										JSONObject variableOBJ = arr.getJSONObject(j);
+										while (matcher.find()) {
+											columnAlias = matcher.group(2);
+										}
+										col = col.replace("$V{" + columnAlias + "}", variableOBJ.getString(columnAlias));
+									}
+								}
+							}
+						}
 						chartAggregationsMap.put(col, aggregation);
 					}
 				}
@@ -496,7 +597,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 			}
 
 			try {
-				mapGroupsAndColumns = getMapFromGroupsArray(groupsArray, widgetContent.getJSONArray("columnSelectedOfDataset"));
+				if (widgetContent.get("columnSelectedOfDataset") instanceof JSONArray)
+					mapGroupsAndColumns = getMapFromGroupsArray(groupsArray, widgetContent.getJSONArray("columnSelectedOfDataset"));
 			} catch (JSONException e) {
 				logger.error("Couldn't retrieve groups", e);
 			}
@@ -542,23 +644,32 @@ public class ExcelExporter extends AbstractFormatExporter {
 			// Cell styles for int and float
 			CreationHelper createHelper = wb.getCreationHelper();
 
-			CellStyle intCellStyle = wb.createCellStyle();
+			XSSFCellStyle intCellStyle = (XSSFCellStyle) wb.createCellStyle();
 			intCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("0"));
 
-			CellStyle floatCellStyle = wb.createCellStyle();
+			XSSFCellStyle floatCellStyle = (XSSFCellStyle) wb.createCellStyle();
 			floatCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
 
 			DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, getLocale());
-			CellStyle dateCellStyle = wb.createCellStyle();
+			XSSFCellStyle dateCellStyle = (XSSFCellStyle) wb.createCellStyle();
 			dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(DATE_FORMAT));
 
 			SimpleDateFormat timeStampFormat = new SimpleDateFormat(TIMESTAMP_FORMAT, getLocale());
-			CellStyle tsCellStyle = wb.createCellStyle();
+			XSSFCellStyle tsCellStyle = (XSSFCellStyle) wb.createCellStyle();
 			tsCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(TIMESTAMP_FORMAT));
 
 			// cell styles for table widget
-			JSONObject[] columnStyles = getColumnsStyles(columnsOrdered, widgetContent);
-
+			JSONObject[] columnStyles = new JSONObject[columnsOrdered.length() + 10];
+			HashMap<String, String> mapColumns = new HashMap<String, String>();
+			HashMap<String, String> mapColumnsTypes = new HashMap<String, String>();
+			HashMap<String, Object> mapParameters = new HashMap<String, Object>();
+			if (widgetData.getString("type").equalsIgnoreCase("table")) {
+				columnStyles = getColumnsStyles(columnsOrdered, widgetContent);
+				mapColumns = getColumnsMap(columnsOrdered);
+				mapColumnsTypes = getColumnsMapTypes(columnsOrdered);
+				mapParameters = createMapParameters(mapParameters);
+			}
+			variablesMap = createMapVariables(variablesMap);
 			// FILL RECORDS
 			int isGroup = mapGroupsAndColumns.isEmpty() ? 0 : 1;
 			for (int r = 0; r < rows.length(); r++) {
@@ -582,25 +693,36 @@ public class ExcelExporter extends AbstractFormatExporter {
 						switch (type) {
 						case "string":
 							cell.setCellValue(s);
+							cell.setCellStyle(getStringCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle, settings, s, rowObject, mapColumns,
+									mapColumnsTypes, variablesMap, mapParameters));
 							break;
 						case "int":
 							if (!s.trim().isEmpty()) {
 								cell.setCellValue(Double.parseDouble(s));
+								cell.setCellStyle(getIntCellStyle(wb, createHelper, column, columnStyles[c], intCellStyle, settings, Integer.parseInt(s),
+										rowObject, mapColumns, mapColumnsTypes, variablesMap, mapParameters));
+							} else {
+								cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], intCellStyle, settings, rowObject, mapColumns,
+										mapColumnsTypes, variablesMap, mapParameters));
 							}
-							cell.setCellStyle(getCellStyle(wb, createHelper, column, columnStyles[c], intCellStyle));
 							break;
 						case "float":
 							if (!s.trim().isEmpty()) {
 								cell.setCellValue(Double.parseDouble(s));
+								cell.setCellStyle(getDoubleCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle, settings, Double.parseDouble(s),
+										rowObject, mapColumns, mapColumnsTypes, variablesMap, mapParameters));
+							} else {
+								cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle, settings, rowObject,
+										mapColumns, mapColumnsTypes, variablesMap, mapParameters));
 							}
-							cell.setCellStyle(getCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle));
 							break;
 						case "date":
 							try {
 								if (!s.trim().isEmpty()) {
 									Date date = dateFormat.parse(s);
 									cell.setCellValue(date);
-									cell.setCellStyle(dateCellStyle);
+									cell.setCellStyle(getDateCellStyle(wb, createHelper, column, columnStyles[c], dateCellStyle, settings, rowObject,
+											mapColumns, mapColumnsTypes, variablesMap, mapParameters));
 								}
 							} catch (Exception e) {
 								logger.debug("Date will be exported as string due to error: ", e);
@@ -613,6 +735,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 									Date ts = timeStampFormat.parse(s);
 									cell.setCellValue(ts);
 									cell.setCellStyle(tsCellStyle);
+									cell.setCellStyle(getDateCellStyle(wb, createHelper, column, columnStyles[c], tsCellStyle, settings, rowObject, mapColumns,
+											mapColumnsTypes, variablesMap, mapParameters));
 								}
 							} catch (Exception e) {
 								logger.debug("Timestamp will be exported as string due to error: ", e);
@@ -632,48 +756,225 @@ public class ExcelExporter extends AbstractFormatExporter {
 		}
 	}
 
-	private String getCellType(JSONObject column, String colName, JSONObject colStyle) {
-		try {
-			String toReturn = column.getString("type");
-			if (colStyle != null && colStyle.has("asString")) {
-				if (colStyle.getBoolean("asString")) {
-					toReturn = "string";
+	private HashMap<String, Object> createMapVariables(HashMap<String, Object> variablesMap) throws JSONException {
+		if (body.has("COCKPIT_VARIABLES")) {
+			if (body.get("COCKPIT_VARIABLES") instanceof JSONObject) {
+				JSONObject variableOBJ = body.getJSONObject("COCKPIT_VARIABLES");
+				variablesMap = new Gson().fromJson(variableOBJ.toString(), HashMap.class);
+
+			} else if (body.get("COCKPIT_VARIABLES") instanceof JSONArray) {
+
+				for (int j = 0; j < body.getJSONArray("COCKPIT_VARIABLES").length(); j++) {
+					JSONObject variableOBJ = body.getJSONArray("COCKPIT_VARIABLES").getJSONObject(j);
+					variablesMap = new Gson().fromJson(variableOBJ.toString(), HashMap.class);
+
+				}
+
+			}
+
+		}
+		return variablesMap;
+	}
+
+	private HashMap<String, Object> createMapParameters(HashMap<String, Object> mapParameters) throws JSONException {
+		if (body.has("COCKPIT_SELECTIONS") && body.get("COCKPIT_SELECTIONS") instanceof JSONObject && body.getJSONObject("COCKPIT_SELECTIONS").has("drivers")) {
+			mapParameters = getParametersMap(body.getJSONObject("COCKPIT_SELECTIONS").getJSONObject("drivers"));
+		} else if (body.has("COCKPIT_SELECTIONS") && body.get("COCKPIT_SELECTIONS") instanceof JSONArray) {
+			for (int j = 0; j < body.getJSONArray("COCKPIT_SELECTIONS").length(); j++) {
+				if ((body.getJSONArray("COCKPIT_SELECTIONS").get(j) instanceof JSONArray)
+						&& (!(body.getJSONArray("COCKPIT_SELECTIONS").get(j) instanceof JSONArray))
+						&& body.getJSONArray("COCKPIT_SELECTIONS").getJSONObject(j).has("drivers")) {
+					mapParameters = getParametersMap(body.getJSONArray("COCKPIT_SELECTIONS").getJSONObject(j).getJSONObject("drivers"));
 				}
 			}
-			return toReturn;
+		}
+		return mapParameters;
+	}
+
+	private HashMap<String, String> getColumnsMap(JSONArray columnsOrdered) {
+		HashMap<String, String> mapp = new HashMap<String, String>();
+		for (int c = 0; c < columnsOrdered.length(); c++) {
+			try {
+				JSONObject column = columnsOrdered.getJSONObject(c);
+
+				mapp.put(column.getString("header"), column.getString("name"));
+			} catch (JSONException e) {
+				throw new SpagoBIRuntimeException("Couldn't create columns map", e);
+			}
+		}
+		return mapp;
+	}
+
+	private HashMap<String, String> getColumnsMapTypes(JSONArray columnsOrdered) {
+		HashMap<String, String> mapp = new HashMap<String, String>();
+		for (int c = 0; c < columnsOrdered.length(); c++) {
+			try {
+				JSONObject column = columnsOrdered.getJSONObject(c);
+
+				mapp.put(column.getString("name"), column.getString("type"));
+			} catch (JSONException e) {
+				throw new SpagoBIRuntimeException("Couldn't create columns map", e);
+			}
+		}
+		return mapp;
+	}
+
+	private HashMap<String, Object> getParametersMap(JSONObject drivers) {
+		HashMap<String, Object> mapp = new HashMap<String, Object>();
+
+		Iterator<String> keys = drivers.keys();
+
+		while (keys.hasNext()) {
+			String key = keys.next();
+			try {
+				if (drivers.get(key) instanceof JSONArray) {
+					JSONArray parameterArray = drivers.getJSONArray(key);
+					for (int c = 0; c < parameterArray.length(); c++) {
+
+						JSONObject paramValueOBJ = parameterArray.getJSONObject(c);
+
+						Iterator<String> paramkeys = paramValueOBJ.keys();
+						while (paramkeys.hasNext()) {
+							String paramkey = paramkeys.next();
+							mapp.put(key, paramValueOBJ.get(paramkey));
+
+						}
+
+					}
+
+				}
+			} catch (JSONException e) {
+				throw new SpagoBIRuntimeException("Couldn't create parameter map", e);
+			}
+		}
+
+		return mapp;
+	}
+
+	private HashMap<String, HashMap<String, Object>> createSelectionsMap() throws JSONException {
+		HashMap<String, HashMap<String, Object>> selectionsMap = new HashMap<String, HashMap<String, Object>>();
+		if (body.has("COCKPIT_SELECTIONS") && body.get("COCKPIT_SELECTIONS") instanceof JSONArray) {
+			JSONArray cockpitSelections = body.getJSONArray("COCKPIT_SELECTIONS");
+
+			for (int i = 0; i < cockpitSelections.length(); i++) {
+				if (!(cockpitSelections.get(i) instanceof JSONArray)) {
+					JSONObject cockpitSelection = cockpitSelections.getJSONObject(i);
+
+					if (cockpitSelection.has("userSelections")) {
+						JSONObject selections = cockpitSelection.getJSONObject("userSelections");
+
+						Iterator<String> keys = selections.keys();
+
+						while (keys.hasNext()) {
+							String key = keys.next();
+							if (selections.get(key) instanceof JSONObject) {
+								JSONObject selection = (JSONObject) selections.get(key);
+								Iterator<String> selectionKeys = selection.keys();
+								HashMap<String, Object> selects = new HashMap<String, Object>();
+
+								while (selectionKeys.hasNext()) {
+									String selKey = selectionKeys.next();
+									Object select = selection.get(selKey);
+									if (!selKey.contains(",")) {
+										if (select instanceof JSONObject) {
+											if (((JSONObject) select).has("filterOperator")) {
+												continue;
+											}
+										} else {
+											if (select instanceof JSONArray) {
+												JSONArray selectArray = (JSONArray) select;
+												for (int j = 0; j < selectArray.length(); j++) {
+													Object selObj = selectArray.get(j);
+													if (selObj instanceof JSONObject) {
+														if (((JSONObject) selObj).has("filterOperator")) {
+															continue;
+														} else {
+															selects.put(selKey, selObj);
+														}
+
+													} else {
+														selects.put(selKey, selObj);
+													}
+												}
+											} else {
+												selects.put(selKey, select);
+											}
+										}
+									}
+								}
+								if (!selects.isEmpty())
+									selectionsMap.put(key, selects);
+							}
+						}
+					}
+				}
+			}
+		} else if (body.has("COCKPIT_SELECTIONS") && body.get("COCKPIT_SELECTIONS") instanceof JSONObject) {
+
+			JSONObject cockpitSelection = body.getJSONObject("COCKPIT_SELECTIONS");
+			if (cockpitSelection.has("userSelections")) {
+				JSONObject selections = cockpitSelection.getJSONObject("userSelections");
+
+				Iterator<String> keys = selections.keys();
+
+				while (keys.hasNext()) {
+					String key = keys.next();
+					if (selections.get(key) instanceof JSONObject) {
+						JSONObject selection = (JSONObject) selections.get(key);
+						Iterator<String> selectionKeys = selection.keys();
+						HashMap<String, Object> selects = new HashMap<String, Object>();
+						while (selectionKeys.hasNext()) {
+							String selKey = selectionKeys.next();
+							Object select = selection.get(selKey);
+							if (!selKey.contains(",")) {
+								if (select instanceof JSONObject) {
+									if (((JSONObject) select).has("filterOperator")) {
+										continue;
+									}
+								} else {
+									if (select instanceof JSONArray) {
+										JSONArray selectArray = (JSONArray) select;
+										for (int j = 0; j < selectArray.length(); j++) {
+											Object selObj = selectArray.get(j);
+											if (selObj instanceof JSONObject) {
+												if (((JSONObject) selObj).has("filterOperator")) {
+													continue;
+												} else {
+													selects.put(selKey, selObj);
+												}
+
+											} else {
+												selects.put(selKey, selObj);
+											}
+										}
+									} else {
+										selects.put(selKey, select);
+									}
+								}
+							}
+						}
+						if (!selects.isEmpty())
+							selectionsMap.put(key, selects);
+					}
+				}
+			}
+		}
+
+		return selectionsMap;
+	}
+
+	private String getCellType(JSONObject column, String colName, JSONObject colStyle) {
+		try {
+			return column.getString("type");
 		} catch (Exception e) {
 			logger.error("Error while retrieving column {" + colName + "} type. It will be treated as string.", e);
 			return "string";
 		}
 	}
 
-	private CellStyle getCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle, CellStyle defaultStyle) {
-		String colName = null;
-		try {
-			colName = column.getString("name");
-			CellStyle toReturn = defaultStyle;
-			// precision (i.e. number of digits to right of the decimal point) that is specified on dashboard design wins
-			if (colStyle != null && colStyle.has("precision")) {
-				int precision = colStyle.getInt("precision");
-				String format = getNumberFormatByPrecision(precision);
-				toReturn = getCellStyleByFormat(wb, helper, format);
-			} else {
-				// if column has scale (the same as precision but in JDBC/SQL terms, consider for example ORACLE NUMBER(38,0) where 0 is the scale) we apply it
-				if (column.has("scale")) {
-					int precision = column.getInt("scale");
-					String format = getNumberFormatByPrecision(precision);
-					toReturn = getCellStyleByFormat(wb, helper, format);
-				}
-			}
-			return toReturn;
-		} catch (Exception e) {
-			logger.error("Error while building column {" + colName + "} CellStyle. Default style will be used.", e);
-			return defaultStyle;
-		}
-	}
-
-	protected String getNumberFormatByPrecision(int precision) {
-		String format = "#,##0";
+	@Override
+	protected String getNumberFormatByPrecision(int precision, String initialFormat) {
+		String format = initialFormat;
 		if (precision > 0) {
 			format += ".";
 			for (int j = 0; j < precision; j++) {
@@ -687,6 +988,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 	 * This method avoids cell style objects number to increase by rows number (see https://production.eng.it/jira/browse/KNOWAGE-6692 and
 	 * https://production.eng.it/jira/browse/KNOWAGE-6693)
 	 */
+	@Override
 	protected CellStyle getCellStyleByFormat(Workbook wb, CreationHelper helper, String format) {
 		if (!format2CellStyle.containsKey(format)) {
 			// if cell style does not exist
@@ -740,6 +1042,17 @@ public class ExcelExporter extends AbstractFormatExporter {
 		}
 	}
 
+	public Sheet createUniqueSafeSheetForSelections(Workbook wb, String widgetName) {
+		Sheet sheet;
+		String sheetName;
+		try {
+			sheet = wb.createSheet(widgetName);
+			return sheet;
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Couldn't create sheet", e);
+		}
+	}
+
 	public static String[] toStringArray(JSONArray array) {
 		if (array == null)
 			return null;
@@ -754,6 +1067,21 @@ public class ExcelExporter extends AbstractFormatExporter {
 	private JSONObject getDatastore(String datasetLabel, Map<String, Object> map, String selections) {
 		// if pagination is disabled offset = 0, fetchSize = -1
 		return getDatastore(datasetLabel, map, selections, 0, -1);
+	}
+
+	private void logOutputToCoreLog(Process exec) throws IOException {
+		InputStreamReader isr = new InputStreamReader(exec.getInputStream());
+		BufferedReader b = new BufferedReader(isr);
+		String line = null;
+		logger.warn("Process output");
+		while((line = b.readLine()) != null) {
+			logger.warn(line);
+		}
+	}
+
+	private void setWorkingDirectory(String cockpitExportScriptPath, ProcessBuilder processBuilder) {
+		// Required by puppeteer v19
+		processBuilder.directory(new File(cockpitExportScriptPath));
 	}
 
 }

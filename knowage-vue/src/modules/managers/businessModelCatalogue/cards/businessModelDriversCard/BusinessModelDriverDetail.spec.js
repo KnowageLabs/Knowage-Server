@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import BusinessModelDriverDetail from './BusinessModelDriverDetail.vue'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
@@ -21,10 +22,10 @@ const mockedDriver = {
     priority: 2
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation(() => Promise.resolve({ data: [] }))
+    get: vi.fn().mockImplementation(() => Promise.resolve({ data: [] }))
 }
 
 const factory = () => {
@@ -35,6 +36,7 @@ const factory = () => {
             businessModelDrivers: []
         },
         global: {
+            plugins: [createTestingPinia()],
             stubs: {
                 Card,
                 Button,

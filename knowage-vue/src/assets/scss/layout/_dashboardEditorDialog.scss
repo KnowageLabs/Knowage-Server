@@ -1,0 +1,127 @@
+.dashboardEditor {
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-color: white;
+    position: absolute;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+
+    .datasetEditor-container {
+        flex: 1;
+        display: flex;
+    }
+
+    .datasetEditor-container {
+        .kn-material-input {
+            border: 1px solid var(--kn-color-borders);
+            border-radius: 2px;
+            .p-inputtext {
+                width: 100%;
+                border-radius: 0;
+                border: 0;
+            }
+            &.p-dropdown,
+            .p-dropdown {
+                .p-dropdown-label {
+                    min-height: 38px;
+                }
+            }
+        }
+    }
+
+    .dashboardEditor-tabs.p-tabview {
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        .p-tabview-panels {
+            overflow: auto;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            .p-tabview-panel {
+                overflow: auto;
+                display: flex;
+                flex-direction: row;
+                flex: 1;
+                .kn-overflow {
+                    overflow-x: hidden;
+                }
+                .color-picker-container {
+                    border-radius: 2px;
+                    height: 40px;
+                }
+                .p-accordion {
+                    .p-accordion-header {
+                        padding: 0;
+                        .p-accordion-header-link {
+                            padding: 1rem;
+                        }
+                    }
+                    .p-accordion-tab {
+                        border: 1px solid var(--kn-color-borders);
+                        border-bottom: 0 !important;
+                    }
+                }
+                .dropzone-active {
+                    border: 1.5px var(--kn-color-primary) dashed;
+                    border-radius: 6px;
+                    padding: 1rem;
+                    padding-bottom: 1.5rem;
+                }
+                .kn-material-input {
+                    border: 1px solid var(--kn-color-borders);
+                    border-radius: 2px;
+                    .p-inputtext {
+                        width: 100%;
+                        border-radius: 0;
+                        border: 0;
+                    }
+                    &.p-dropdown,
+                    .p-dropdown {
+                        .p-dropdown-label {
+                            min-height: 38px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .dashboard-editor-list-card-container {
+        display: flex;
+        flex-direction: column;
+        width: 300px;
+        background: #ffffff;
+        color: rgba(0, 0, 0, 0.87);
+        box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
+        border-radius: 4px;
+        .dashboard-editor-list-card,
+        .dashboard-editor-list {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+            border-radius: 4px !important;
+            .kn-list-item-text {
+                text-overflow: ellipsis;
+                max-width: 190px;
+                overflow: hidden;
+                white-space: nowrap;
+            }
+        }
+    }
+
+    .dashboard-card-shadow {
+        box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
+        border-radius: 4px;
+    }
+
+    .details-warning-color {
+        color: red;
+    }
+}

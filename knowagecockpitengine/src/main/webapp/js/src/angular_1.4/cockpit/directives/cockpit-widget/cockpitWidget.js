@@ -291,6 +291,13 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		return availableTypes.indexOf(type) != -1;
 	}
 
+	$scope.isExportPdfEnabled = function(){
+		toReturn = true;
+		if ($scope.ngModel.settings && $scope.ngModel.settings.exportpdf) toReturn = $scope.ngModel.settings.exportpdf.enabled;
+		toReturn = typeof(toReturn) != 'undefined' ? toReturn : true;
+		return toReturn;
+	}
+
 	$scope.checkChartType = function(model, notAvailableCharts){
 		return !(notAvailableCharts.indexOf(model.content.chartTemplate.CHART.type.toLowerCase()) != -1);
 	}
@@ -1035,11 +1042,15 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 							else if(content.type == 'dynamic'){
 								if(content.column){
 									if(model.type!='static-pivot-table'){
-										var valToAdd = '';
-										var columnNameToSearch = columnAliasesMap[content.column] ?  columnAliasesMap[content.column] : content.column;
-										if(row[columnNameToSearch]) valToAdd = row[columnNameToSearch].value || row[columnNameToSearch];
-										if(content.column == 'column_name_mode'){
-											valToAdd = modalColumn || columnName;
+										if(modalValue){
+											var valToAdd = modalValue
+										}else{
+											var valToAdd = '';
+											var columnNameToSearch = columnAliasesMap[content.column] ?  columnAliasesMap[content.column] : content.column;
+											if(row[columnNameToSearch]) valToAdd = row[columnNameToSearch].value || row[columnNameToSearch];
+											if(content.column == 'column_name_mode'){
+												valToAdd = modalColumn || columnName;
+											}
 										}
 									}else {
 										if(content.column == 'MEASURE_COLUMN_NAME' && modalColumn){
@@ -1078,6 +1089,10 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 									}
 								}
 							}
+						}else{
+							if(!content.type && content.dataType === "date" && modalValue){
+									outputParameter[par] = modalValue
+							}
 						}
 					}
 
@@ -1092,6 +1107,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 					
 					if(hasVueParent){
 						hasVueParent.postMessage({"type":"crossNavigation","outputParameters":outputParameter,"inputParameters":{},"targetCrossNavigation":crossSettings,"docLabel":null, "otherOutputParameters":otherOutputParameters}, '*')
+						return;
 					}else{
 						// if destination document is specified don't ask
 						if(crossSettings.crossName != undefined){

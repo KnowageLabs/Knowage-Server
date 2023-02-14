@@ -1,28 +1,52 @@
-// CAN'T MOUNT/RUN BECAUSE OF CODE MIRROR
+import { mount } from '@vue/test-utils'
+import { createTestingPinia } from '@pinia/testing'
+import Button from 'primevue/button'
+import Card from 'primevue/card'
+import DriversManagementDetail from './DriversManagementDetail.vue'
 
-// import { mount } from '@vue/test-utils'
-// import Button from 'primevue/button'
-// import Card from 'primevue/card'
-// import DriversManagementDetail from './DriversManagementDetail.vue'
 
-// const factory = () => {
-//     return mount(DriversManagementDetail, {
-//         global: {
-//             stubs: {
-//                 Button,
-//                 Card
-//             },
-//             mocks: {
-//                 $t: (msg) => msg
-//             }
-//         }
-//     })
-// }
+vi.mock('axios')
 
-// describe('Drivers Management Detail', () => {
-//     it('save button is disabled if one of the mandatory input is invalid', () => {
-//         const wrapper = factory()
-//         expect(wrapper.vm.driver).toStrictEqual({})
-//         expect(wrapper.vm.buttonDisabled).toBe(true)
-//     })
-// })
+const $http = {
+    get: vi.fn().mockImplementation(() =>
+        Promise.resolve({
+            data: []
+        })
+    )
+}
+
+
+const factory = () => {
+    return mount(DriversManagementDetail, {
+        global: {
+            plugins: [createTestingPinia({
+                initialState: {
+                    store: {
+                        user: {
+                            functionalities: ['MapDriverManagement']
+                        }
+                    }
+                }
+            })
+            
+            ],
+            stubs: {
+                Button,
+                Card
+            },
+            mocks: {
+                $t: (msg) => msg,
+                $http
+            }
+        }
+    })
+}
+
+
+describe('Drivers Management Detail', () => {
+    it('save button is disabled if one of the mandatory input is invalid', () => {
+        const wrapper = factory()
+        expect(wrapper.vm.driver).toStrictEqual({})
+        expect(wrapper.vm.buttonDisabled).toBe(true)
+    })
+})

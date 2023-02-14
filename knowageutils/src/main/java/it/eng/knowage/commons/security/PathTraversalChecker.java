@@ -87,4 +87,31 @@ public class PathTraversalChecker {
 		return toReturn;
 	}
 
+	/**
+	 * Sanitize file names
+	 */
+	public static final String REGEX_PATTERN = "^[^\\/\\\\]{1,255}$";
+
+	private static boolean validateStringFilenameUsingRegex(String filename, String regex) {
+		if (filename == null) {
+			return false;
+		}
+		return filename.matches(regex != null ? regex : REGEX_PATTERN);
+	}
+
+	public static void isValidFileName(String filename, String regex) {
+
+		if (!validateStringFilenameUsingRegex(filename, regex)) {
+			throw new SpagoBIRuntimeException("Filename not valid [" + filename + "]");
+		}
+
+	}
+
+	public static void isValidFileName(String filename) {
+
+		if (!validateStringFilenameUsingRegex(filename, null)) {
+			throw new SpagoBIRuntimeException("Filename not valid [" + filename + "]");
+		}
+
+	}
 }

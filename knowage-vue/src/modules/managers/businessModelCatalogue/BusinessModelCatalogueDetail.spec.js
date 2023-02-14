@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { createTestingPinia } from '@pinia/testing'
 import Badge from 'primevue/badge'
 import Button from 'primevue/button'
 import BusinessModelCatalogueDetail from './BusinessModelCatalogueDetail.vue'
@@ -16,34 +16,34 @@ const mockedBusinessModel = {
     description: 'test'
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/1`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/businessmodels/1`:
                 return Promise.resolve({ data: mockedBusinessModel })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/1/versions/`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/businessmodels/1/versions/`:
                 return Promise.resolve({ data: { versions: [] } })
             default:
                 return Promise.resolve({ data: [] })
         }
     }),
-    post: axios.post.mockImplementation(() => Promise.resolve())
-}
-
-const $store = {
-    commit: jest.fn()
+    post: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 const $router = {
-    push: jest.fn(),
-    replace: jest.fn()
+    push: vi.fn(),
+    replace: vi.fn()
 }
 
-const factory = () => {
+const factory = (id) => {
     return mount(BusinessModelCatalogueDetail, {
+        props: {
+            id: id
+        },
         global: {
+            plugins: [createTestingPinia()],
             stubs: {
                 Badge,
                 BusinessModelDetailsCard: true,
@@ -59,7 +59,6 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $router,
                 $http
             }
@@ -67,8 +66,10 @@ const factory = () => {
     })
 }
 
+window.HTMLElement.prototype.scrollIntoView = function() {}
+
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Business Model Catalogue Detail', () => {
@@ -86,15 +87,14 @@ describe('Business Model Catalogue Detail', () => {
 
         expect($router.push).toHaveBeenCalledWith('/business-model-catalogue')
         expect(wrapper.emitted().closed).toBeTruthy()
-        expect(axios.post).toHaveBeenCalledTimes(0)
+        expect($http.post).toHaveBeenCalledTimes(0)
     })
 })
 
 describe('Business Model Catalogue Detail', () => {
     it('clicking on metadata tab the metadata page is opened', async () => {
-        const wrapper = factory()
-
-        await wrapper.setProps({ id: 1 })
+        const wrapper = factory(1)
+        
         await flushPromises()
         await wrapper.find('.p-tabview-nav li:nth-child(2) a').trigger('click')
 
@@ -102,9 +102,8 @@ describe('Business Model Catalogue Detail', () => {
         expect(wrapper.find('.p-tabview-nav li:nth-child(2)').html()).toContain('aria-selected="true"')
     })
     it('clicking on saved versions tab the saved version page is opened', async () => {
-        const wrapper = factory()
+        const wrapper = factory(1)
 
-        await wrapper.setProps({ id: 1 })
         await flushPromises()
         await wrapper.find('.p-tabview-nav li:nth-child(3) a').trigger('click')
 
@@ -112,9 +111,8 @@ describe('Business Model Catalogue Detail', () => {
         expect(wrapper.find('.p-tabview-nav li:nth-child(3)').html()).toContain('aria-selected="true"')
     })
     it('clicking on drivers tab the drivers page is opened', async () => {
-        const wrapper = factory()
+        const wrapper = factory(1)
 
-        await wrapper.setProps({ id: 1 })
         await flushPromises()
         await wrapper.find('.p-tabview-nav li:nth-child(4) a').trigger('click')
 

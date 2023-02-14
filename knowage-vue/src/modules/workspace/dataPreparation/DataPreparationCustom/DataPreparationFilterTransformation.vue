@@ -1,36 +1,36 @@
 <template>
     <div class="data-prep-custom-transformation">
         <div class="p-d-flex" v-for="(filter, index) in localTransformation" v-bind:key="index">
-            <span class="p-float-label p-field p-ml-2 kn-flex">
+            <span class="p-float-label p-field kn-flex">
                 <Dropdown v-model="filter.column" :options="columns" class="kn-material-input" optionLabel="fieldAlias" :filter="true" :disabled="col || readOnly" />
                 <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.column') }}</label>
             </span>
-            <span v-if="filter.column" class="p-float-label p-field p-ml-2 kn-flex">
+            <span v-if="filter.column" class="p-float-label p-field p-mx-2">
                 <Dropdown v-model="filter.condition" :disabled="readOnly" :options="getAvailableConditions(index)" optionLabel="label" optionValue="code" class="kn-material-input" />
                 <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.conditions') }}</label>
             </span>
-            <span v-if="showStartDate(index)" class="p-float-label p-field p-ml-2 kn-flex">
+            <span v-if="showStartDate(index)" class="p-float-label p-field kn-flex">
                 <Calendar v-model="filter.startDate" :disabled="readOnly" class="kn-material-input" />
                 <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.startDate') }}</label>
             </span>
-            <span v-if="showEndDate(index)" class="p-float-label p-field p-ml-2 kn-flex">
+            <span v-if="showEndDate(index)" class="p-float-label p-field kn-flex">
                 <Calendar v-model="filter.endDate" :disabled="readOnly" class="kn-material-input" />
                 <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.endDate') }}</label>
             </span>
-            <span v-if="showInputText(index)" class="p-float-label p-field p-ml-2 kn-flex">
+            <span v-if="showInputText(index)" class="p-float-label p-field kn-flex">
                 <InputText type="text" v-model="filter.text" :disabled="readOnly" class="kn-material-input" />
                 <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.text') }}</label>
             </span>
-            <span v-if="showInputNumber(index)" class="p-float-label p-field p-ml-2 kn-flex">
+            <span v-if="showInputNumber(index)" class="p-float-label p-field kn-flex">
                 <InputText type="number" v-model="filter.number" :disabled="readOnly" class="kn-material-input" />
                 <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.number') }}</label>
             </span>
-            <span v-if="showValuesList(index)" class="p-field p-ml-2 kn-flex">
+            <span v-if="showValuesList(index)" class="kn-flex">
                 <span class="p-float-label kn-material-input">
-                    <Chips class="p-inputtext-sm" :multiple="true" v-model="filter.valuesList" />
+                    <Chips class="kn-width-full" :multiple="true" v-model="filter.valuesList" />
                     <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.values') }}</label>
-                    <small id="username1-help">{{ $t('managers.workspaceManagement.dataPreparation.transformations.valuesHint') }}</small>
                 </span>
+                <small id="chips-help">{{ $t('common.chipsHint') }}</small>
             </span>
             <span> <Button icon="pi pi-trash" :class="'p-button-text p-button-rounded p-button-plain'" @click="deleteRow(index)" v-if="!readOnly && localTransformation.length > 1"/></span>
         </div>
@@ -67,10 +67,25 @@ export default defineComponent({
         this.localTransformation = [{}] as Array<IFilterTransformationParameter>
         if (this.transformation && this.transformation.parameters) {
             for (let i = 0; i < this.transformation.parameters.length; i++) {
-                if (this.transformation.parameters[i]['name'] == 'condition') this.localTransformation[0].condition = this.transformation.parameters[i]['value']
-                else if (this.transformation.parameters[i]['name'] == 'text') this.localTransformation[0].text = this.transformation.parameters[i]['value']
-                else if (this.transformation.parameters[i]['name'] == 'startDate') this.localTransformation[0].startDate = this.transformation.parameters[i]['value']
-                else if (this.transformation.parameters[i]['name'] == 'endDate') this.localTransformation[0].endDate = this.transformation.parameters[i]['value']
+                let name = this.transformation.parameters[i]['name']
+                let value = this.transformation.parameters[i]['value']
+                switch (name) {
+                    case 'condition':
+                        this.localTransformation[0].condition = value
+                        break
+                    case 'text':
+                        this.localTransformation[0].text = value
+                        break
+                    case 'startDate':
+                        this.localTransformation[0].startDate = value
+                        break
+                    case 'endDate':
+                        this.localTransformation[0].endDate = value
+                        break
+                    case 'number':
+                        this.localTransformation[0].number = value
+                        break
+                }
             }
         }
         if (this.col && this.columns) this.localTransformation[0].column = this.columns.filter((item) => item.header === this.col)[0]
@@ -138,10 +153,8 @@ export default defineComponent({
     },
     watch: {
         localTransformation: {
-            handler(newValue, oldValue) {
-                if (oldValue !== newValue) {
-                    this.$emit('update:transformation', newValue)
-                }
+            handler(newValue) {
+                this.$emit('update:transformation', newValue)
             },
             deep: true
         }

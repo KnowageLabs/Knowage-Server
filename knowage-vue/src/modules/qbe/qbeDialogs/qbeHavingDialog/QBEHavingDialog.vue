@@ -39,7 +39,7 @@ import Message from 'primevue/message'
 import QBEHavingDialogDescriptor from './QBEHavingDialogDescriptor.json'
 import QBEHavingCard from './QBEHavingCard.vue'
 
-const crypto = require('crypto')
+import cryptoRandomString from 'crypto-random-string';
 
 export default defineComponent({
     name: 'qbe-having-dialog',
@@ -50,7 +50,7 @@ export default defineComponent({
         return {
             QBEHavingDialogDescriptor,
             havings: [] as any[],
-            nextHavingIndex: -1
+            nextHavingIndex: '-1' as string
         }
     },
     watch: {
@@ -65,8 +65,13 @@ export default defineComponent({
         loadData() {
             if (!this.havingDialogData || !this.havingDialogData.field || !this.havingDialogData.query) return
 
-            this.havings = this.havingDialogData.query.havings ? [...this.havingDialogData.query.havings] : []
-            this.nextHavingIndex = crypto.randomBytes(16).toString('hex')
+            this.havings = []
+            this.havingDialogData.query.havings.forEach((having: iFilter) => {
+                if (having.leftOperandValue === this.havingDialogData?.field.id) {
+                    this.havings.push({ ...having })
+                }
+            })
+            this.nextHavingIndex = cryptoRandomString({length: 16, type: 'base64'})
         },
         addNewHaving() {
             const field = this.havingDialogData?.field
@@ -80,7 +85,7 @@ export default defineComponent({
                     leftOperandValue: field.id,
                     leftOperandDescription: field.entity + ': ' + field.funct + ' (' + field.alias + ')',
                     leftOperandLongDescription: field.entity + ': ' + field.funct + ' (' + field.alias + ')',
-                    leftOperandType: 'Field Content',
+                    leftOperandType: field.type === 'inline.calculated.field' || field.attributes?.type === 'inLineCalculatedField' ? 'inline.calculated.field' : 'Field Content',
                     leftOperandDefaultValue: null,
                     leftOperandLastValue: null,
                     operator: 'EQUALS TO',
@@ -97,7 +102,7 @@ export default defineComponent({
                     color: '',
                     entity: field.entity
                 })
-                this.nextHavingIndex = crypto.randomBytes(16).toString('hex')
+                this.nextHavingIndex = cryptoRandomString({length: 16, type: 'base64'})
             }
         },
         removeHaving(having: iFilter) {

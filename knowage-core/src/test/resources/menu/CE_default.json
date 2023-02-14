@@ -1,0 +1,186 @@
+{
+    "technicalUserFunctionalities": [
+        {
+            "label": "Data Providers",
+            "iconCls": "storage",
+            "items": [
+                {
+                    "label": "Data source",
+                    "to": "/datasource-management"
+                },
+                {
+                    "label": "Data set",
+                    "to": "/dataset-management"
+                }
+            ]
+        },
+        {
+            "label": "Profile Management",
+            "iconCls": "fa fa-2x fa-id-card-o",
+            "items": [
+                {
+                    "label": "Profile Attributes",
+                    "to": "/profile-attributes-management"
+                },
+                {
+                    "label": "Roles",
+                    "to": "/roles-management"
+                },
+                {
+                    "label": "Users",
+                    "to": "/users-management"
+                },
+                {
+                    "label": "Menu configuration",
+                    "to": "/menu-management"
+                },
+                {
+                    "label": "Functionalities",
+                    "to": "/functionalities-management"
+                }
+            ]
+        },
+        {
+            "label": "Behavioural model",
+            "iconCls": "fa fa-2x fa-users",
+            "items": [
+                {
+                    "label": "Lovs",
+                    "to": "/lovs-management"
+                },
+                {
+                    "label": "Analytical drivers",
+                    "to": "/drivers-management"
+                },
+                {
+                    "label": "Constraints",
+                    "to": "/constraint-management"
+                }
+            ]
+        },
+        {
+            "label": "Catalogs",
+            "iconCls": "fa fa-2x fa-paint-brush",
+            "items": [
+                {
+                    "label": "Business Models",
+                    "to": "/business-model-catalogue"
+                },
+                {
+                    "label": "Mondrian schemas",
+                    "to": "/mondrian-schemas-management"
+                },
+                {
+                    "label": "Svg",
+                    "to": "/knowage/servlet/AdapterHTTP?PAGE=ListMapsPage&LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+                },
+                {
+                    "label": "Layers",
+                    "to": "/layers-management"
+                }
+            ]
+        },
+        {
+            "label": "Tools",
+            "iconCls": "fa fa-2x fa-tasks",
+            "items": [
+                {
+                    "label": "Cross Navigation",
+                    "to": "/cross-navigation-management"
+                },
+                {
+                    "label": "Alert",
+                    "to": "/alert"
+                },
+                {
+                    "label": "menu.modelCatalogResourceManagement",
+                    "to": "/models-management",
+                    "toBeLicensed": "KnowagePA"
+                }
+            ]
+        },
+        {
+            "label": "Kpi Model",
+            "iconCls": "traffic",
+            "items": [
+                {
+                    "label": "KPI",
+                    "to": "/kpi-definition"
+                },
+                {
+                    "label": "Measure/Rule",
+                    "to": "/measure-definition"
+                },
+                {
+                    "label": "KPI Scheduler",
+                    "to": "/kpi-scheduler"
+                }
+            ]
+        },
+        {
+            "label": "Server Settings",
+            "iconCls": "fa fa-2x fa-cogs",
+            "items": [
+                {
+                    "label": "Configuration",
+                    "to": "/configuration-management"
+                },
+                {
+                    "label": "Domain",
+                    "to": "/domains-management"
+                },
+                {
+                    "label": "Exporters menu",
+                    "to": "/knowage/restful-services/publish?PUBLISHER=exportersCatalogue"
+                }
+            ]
+        }
+    ],
+    "commonUserFunctionalities": [
+        {
+            "label": "Home",
+            "iconCls": "pi pi-fw pi-home",
+            "to": "/"
+        },
+        {
+            "label": "Languages",
+            "iconCls": "fab fa-font-awesome-flag",
+            "command": "languageSelection"
+        },
+        {
+            "label": "My roles",
+            "iconCls": "fas fa-users-cog",
+            "command": "roleSelection",
+            "conditionedView": "roleSelection"
+        },
+        {
+            "label": "Info",
+            "iconCls": "fas fa-info-circle",
+            "command": "info"
+        },
+        {
+            "label": "Logout",
+            "command": "logout",
+            "iconCls": "fas fa-sign-out-alt"
+        }
+    ],
+    "allowedUserFunctionalities": [
+        {
+            "label": "Documents browser",
+            "to": "/document-browser",
+            "iconCls": "far fa-folder-open"
+        },
+        {
+            "label": "My workspace",
+            "to": "/workspace",
+            "iconCls": "fas fa-briefcase"
+        },
+        {
+            "label": "Downloads",
+            "conditionedView": "downloads",
+            "iconCls": "fas fa-download",
+            "command": "downloadsSelection"
+        }
+    ],
+    "dynamicUserFunctionalities": []
+}

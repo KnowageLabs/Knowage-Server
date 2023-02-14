@@ -17,16 +17,16 @@
                         <Card>
                             <template #content>
                                 <div class="p-field p-col-12">
-                                    <span class="p-float-label ">
-                                        <Dropdown id="dataSource" class="kn-material-input" v-model="dataSource" :options="metaSourceResource" @change="getTablesBySourceID" optionLabel="name" />
+                                    <span class="p-float-label">
+                                        <Dropdown id="dataSource" class="kn-material-input kn-width-full" v-model="dataSource" :options="metaSourceResource" @change="getTablesBySourceID" optionLabel="name" />
                                         <label for="dataSource" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.dataLineage.selectSource') }} </label>
                                     </span>
                                 </div>
                                 <div v-if="metaSourceResource.length == 0">
-                                    <InlineMessage severity="info">{{ $t('documentExecution.documentDetails.dataLineage.noDatasources') }}</InlineMessage>
+                                    <InlineMessage severity="info" class="kn-width-full">{{ $t('documentExecution.documentDetails.dataLineage.noDatasources') }}</InlineMessage>
                                 </div>
                                 <div v-if="dataSource && tablesList.length == 0 && metaSourceResource.length != 0">
-                                    <InlineMessage severity="info">{{ $t('documentExecution.documentDetails.dataLineage.noTables') }}</InlineMessage>
+                                    <InlineMessage severity="info" class="kn-width-full">{{ $t('documentExecution.documentDetails.dataLineage.noTables') }}</InlineMessage>
                                 </div>
                                 <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
                                 <DataTable
@@ -71,6 +71,7 @@ import Dropdown from 'primevue/dropdown'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import InlineMessage from 'primevue/inlinemessage'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'data-lineage',
@@ -88,13 +89,16 @@ export default defineComponent({
             globalFilterFields: ['name']
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {},
-
     methods: {
         async getTablesBySourceID() {
             this.loading = true
             this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/${this.dataSource.sourceId}/metatables`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/${this.dataSource.sourceId}/metatables`)
                 .then((response: AxiosResponse<any>) => {
                     this.tablesList = response.data as iTableSmall[]
                     this.setCheckedTables()
@@ -112,19 +116,19 @@ export default defineComponent({
         },
         peristTable(event) {
             this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaDocumetRelationResource/${this.selectedDocument.id}`, event.data, {
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/metaDocumetRelationResource/${this.selectedDocument.id}`, event.data, {
                     headers: { 'X-Disable-Errors': 'true' }
                 })
-                .then(() => this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('documentExecution.documentDetails.dataLineage.persistOk') }))
-                .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.dataLineage.persistError') }))
+                .then(() => this.store.setInfo({ title: this.$t('common.save'), msg: this.$t('documentExecution.documentDetails.dataLineage.persistOk') }))
+                .catch(() => this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.dataLineage.persistError') }))
         },
         deleteTable(event) {
             this.$http
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaDocumetRelationResource/${this.selectedDocument.id}/${event.data.tableId}`, {
+                .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/metaDocumetRelationResource/${this.selectedDocument.id}/${event.data.tableId}`, {
                     headers: { 'X-Disable-Errors': 'true' }
                 })
-                .then(() => this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('documentExecution.documentDetails.dataLineage.deleteOk') }))
-                .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.dataLineage.deleteError') }))
+                .then(() => this.store.setInfo({ title: this.$t('common.save'), msg: this.$t('documentExecution.documentDetails.dataLineage.deleteOk') }))
+                .catch(() => this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.dataLineage.deleteError') }))
         }
     }
 })

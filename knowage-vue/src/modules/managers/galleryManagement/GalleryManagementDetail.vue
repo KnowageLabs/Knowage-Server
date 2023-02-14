@@ -41,7 +41,7 @@
                             </div>
                             <div class="p-col-12">
                                 <span class="p-float-label">
-                                    <Textarea v-model="template.description" class="kn-material-input" style="resize:none" id="description" rows="3" @change="setDirty" />
+                                    <Textarea v-model="template.description" class="kn-material-input" style="resize: none" id="description" rows="3" @change="setDirty" />
                                     <label class="kn-material-input-label" for="description">{{ $t('common.description') }}</label>
                                 </span>
                             </div>
@@ -74,17 +74,17 @@
             </div>
         </div>
         <div class="p-grid p-m-2 flex" v-if="template.type && windowWidth < windowWidthBreakPoint">
-            <TabView class="tabview-custom" style="width:100%" @tab-change="tabChange">
+            <TabView class="tabview-custom" style="width: 100%" @tab-change="tabChange">
                 <TabPanel v-for="(allowedEditor, index) in galleryDescriptor.allowedEditors[template.type]" v-bind:key="allowedEditor">
                     <template #header>
-                        <i :class="['icon', galleryDescriptor.editor[allowedEditor].icon]"></i>&nbsp;<span style="text-transform:uppercase">{{ $t('common.codingLanguages.' + allowedEditor) }}</span>
+                        <i :class="['icon', galleryDescriptor.editor[allowedEditor].icon]"></i>&nbsp;<span style="text-transform: uppercase">{{ $t('common.codingLanguages.' + allowedEditor) }}</span>
                     </template>
                     <VCodeMirror :ref="'editor_' + index" class="flex" v-model:value="template.code[allowedEditor]" :options="galleryDescriptor.options[allowedEditor]" @update:value="onCmCodeChange" />
                 </TabPanel>
             </TabView>
         </div>
         <div class="p-grid p-m-0 flex" v-if="template.type && windowWidth >= windowWidthBreakPoint">
-            <div :class="'p-col-' + 12 / galleryDescriptor.allowedEditors[template.type].length" v-for="allowedEditor in galleryDescriptor.allowedEditors[template.type]" v-bind:key="allowedEditor" style="height:100%;display:flex;flex-direction:column">
+            <div :class="'p-col-' + 12 / galleryDescriptor.allowedEditors[template.type].length" v-for="allowedEditor in galleryDescriptor.allowedEditors[template.type]" v-bind:key="allowedEditor" style="height: 100%; display: flex; flex-direction: column">
                 <h4>
                     <i :class="['icon', galleryDescriptor.editor[allowedEditor].icon]"></i>
                     {{ $t('common.codingLanguages.' + allowedEditor) }}
@@ -98,7 +98,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { VCodeMirror } from 'vue3-code-mirror'
+import VCodeMirror, { CodeMirror } from 'codemirror-editor-vue3'
 import { AxiosResponse } from 'axios'
 import Chips from 'primevue/chips'
 import { downloadDirect } from '@/helpers/commons/fileHelper'
@@ -109,6 +109,7 @@ import TabPanel from 'primevue/tabpanel'
 import Textarea from 'primevue/textarea'
 import galleryDescriptor from './GalleryManagementDescriptor.json'
 import { IGalleryTemplate } from './GalleryManagement'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'gallery-management-detail',
@@ -138,10 +139,13 @@ export default defineComponent({
             windowWidthBreakPoint: 1500
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.loadTemplate(this.id)
         window.addEventListener('resize', this.resizeHandler)
-        console.log('OPTIONS: ', this.galleryDescriptor.options['html'])
     },
     methods: {
         downloadTemplate(): void {
@@ -165,7 +169,7 @@ export default defineComponent({
             this.loading = true
             if (id) {
                 this.$http
-                    .get(process.env.VUE_APP_API_PATH + '1.0/widgetgallery/' + (id || this.id))
+                    .get(import.meta.env.VITE_API_PATH + '1.0/widgetgallery/' + (id || this.id))
                     .then((response: AxiosResponse<any>) => {
                         this.template = response.data
                     })
@@ -187,9 +191,9 @@ export default defineComponent({
             if (this.validateTags()) {
                 let postUrl = this.id ? '1.0/widgetgallery/' + this.id : '1.0/widgetgallery'
                 this.$http
-                    .post(process.env.VUE_APP_API_PATH + postUrl, this.template)
+                    .post(import.meta.env.VITE_API_PATH + postUrl, this.template)
                     .then((response: AxiosResponse<any>) => {
-                        this.$store.commit('setInfo', { title: this.$t('managers.widgetGallery.saveTemplate'), msg: this.$t('managers.widgetGallery.templateSuccessfullySaved') })
+                        this.store.setInfo({ title: this.$t('managers.widgetGallery.saveTemplate'), msg: this.$t('managers.widgetGallery.templateSuccessfullySaved') })
                         this.$router.push('/gallery-management/' + response.data.id)
                         this.$emit('saved')
                     })
@@ -204,15 +208,15 @@ export default defineComponent({
             let self = this
             reader.addEventListener(
                 'load',
-                function() {
+                function () {
                     self.template.image = reader.result || ''
                 },
                 false
             )
-            if (event.srcElement.files[0] && event.srcElement.files[0].size < process.env.VUE_APP_MAX_UPLOAD_IMAGE_SIZE) {
+            if (event.srcElement.files[0] && event.srcElement.files[0].size < import.meta.env.VITE_MAX_UPLOAD_IMAGE_SIZE) {
                 reader.readAsDataURL(event.srcElement.files[0])
                 this.setDirty()
-            } else this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('common.error.exceededSize', { size: '(200KB)' }) })
+            } else this.store.setError({ title: this.$t('common.error.uploading'), msg: this.$t('common.error.exceededSize', { size: '(200KB)' }) })
         },
         resizeHandler(): void {
             this.windowWidth = window.innerWidth
@@ -223,7 +227,7 @@ export default defineComponent({
                 let currentTag = this.template.tags[idx]
                 const valid = currentTag.match(validationRegex)
                 if (!valid) {
-                    this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('common.error.tags.tagIsNotValid', { tag: currentTag }) })
+                    this.store.setError({ title: this.$t('common.error.uploading'), msg: this.$t('common.error.tags.tagIsNotValid', { tag: currentTag }) })
                     return false
                 }
             }
@@ -237,7 +241,7 @@ export default defineComponent({
         }
     },
     watch: {
-        '$route.params.id': function(id) {
+        '$route.params.id': function (id) {
             this.loadTemplate(id)
         }
     },

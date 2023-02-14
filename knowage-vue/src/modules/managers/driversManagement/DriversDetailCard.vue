@@ -12,6 +12,7 @@
                             :class="{
                                 'p-invalid': v$.driver.label.$invalid && v$.driver.label.$dirty
                             }"
+                            maxLength="20"
                             @blur="v$.driver.label.$touch()"
                             @change="setDirty"
                         />
@@ -29,6 +30,7 @@
                             :class="{
                                 'p-invalid': v$.driver.name.$invalid && v$.driver.name.$dirty
                             }"
+                            maxLength="20"
                             @blur="v$.driver.name.$touch()"
                             @change="setDirty"
                         />
@@ -57,7 +59,7 @@
                 </div>
                 <div class="p-field p-col-8">
                     <span class="p-float-label">
-                        <InputText id="description" class="kn-material-input" type="text" v-model="driver.description" @change="setDirty" />
+                        <InputText id="description" class="kn-material-input" type="text" v-model="driver.description" @change="setDirty" maxLength="100" />
                         <label for="description" class="kn-material-input-label">{{ $t('common.description') }} </label>
                     </span>
                 </div>

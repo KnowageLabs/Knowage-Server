@@ -18,9 +18,10 @@
 package it.eng.spagobi.tools.dataset.common.datareader;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -95,93 +96,36 @@ public class MongoDataReader extends AbstractDataReader {
 		}
 		logger.debug("the bounds of the result are: [" + start + ", " + end + "]");
 
-		// this map, maps the name of the mongo's document field with the index
-		// of the field in the metadata..
-		// we need to use this map because there is no constraint in the fields
-		// order. Furthermore the fields are sparse so a field
-		// can exist in a document and not in the other documents
-		Map<String, Integer> fields2ColumnsMap = new HashMap<String, Integer>();
-
 		logger.debug("Processing the result");
 		try {
 
-			int maxObjectLength = 0;
-			// calculate the number of columns.. It is the maximum of the documents length
+			Set<String> allFieldsNames = new LinkedHashSet<String>();
 			for (int i = start; i < end; i++) {
 				JSONObject document = resultArray.getJSONObject(i);
-				maxObjectLength = Math.max(maxObjectLength, document.length());
+				allFieldsNames.addAll(Arrays.asList(JSONObject.getNames(document)));
 			}
 
-			for (int i = 0; i < maxObjectLength; i++) {
-				FieldMetadata fieldMeta = new FieldMetadata("temp" + i, String.class);
-				dataStoreMeta.addFiedMeta(fieldMeta);
-			}
+			allFieldsNames.forEach((String name) -> {
+				dataStoreMeta.addFiedMeta(new FieldMetadata(name, String.class));
+			});
 
 			for (int i = start; i < end; i++) {
 
 				IRecord record = new Record(dataStore);
 
-				// prepare the fields list..
-				// suppose the query returns 2 documents [{a:1,b:2},{a:1,c:3}]
-				// the dataset should be something like:
-				// | a | b | c |
-				// | 1 | 2 | _ |
-				// | 1 | _ | 3 |
-				// To create the second line we should prepare a list of fields
-				// with the same length of the result set. In this way we can
-				// fill the indexes where we have a fields and leave the others
-				// empty
-
-				IField emptyField = new Field("");
 				List<IField> fieldsCollection = new ArrayList<IField>();
-				for (int k = 0; k < fields2ColumnsMap.size(); k++) {
-					fieldsCollection.add(emptyField);
-				}
 
 				JSONObject document = resultArray.getJSONObject(i);
 
-				String[] keys = JSONObject.getNames(document);
-
-				logger.debug("Parse the document " + i);
-				logger.debug("It has " + keys.length + " fields");
-
-				for (int j = 0; j < keys.length; j++) {
-					String fieldName = keys[j];
-					String fieldValue = document.get(fieldName).toString();
-					IField field = new Field(fieldValue);
-
-					Integer fieldIndex = fields2ColumnsMap.get(fieldName);
-
-					if (fieldIndex == null) {
-
-						fieldIndex = fields2ColumnsMap.size();
-						logger.debug("New field. Name: " + fieldValue + " Position: " + fieldIndex);
-						fields2ColumnsMap.put(fieldName, fieldIndex);
-
-						FieldMetadata fieldMeta = new FieldMetadata();
-						fieldMeta.setName(fieldName);
-						setFieldType(field, fieldMeta, fieldValue);
-
-						dataStoreMeta.getFieldsMeta().set(fieldIndex, fieldMeta);
-
-						// add the new field at the end of the fields array
-						fieldsCollection.add(field);
-					} else {
-						IFieldMetaData fieldMeta = dataStoreMeta.getFieldMeta(fieldIndex);
-
-						// check for each value if the type of the field is
-						// String or number..
-						// if one field of the collection is not number the type
-						// is String
-						setFieldType(field, fieldMeta, fieldValue);
-
-						// insert the field in the correct position
-						fieldsCollection.set(fieldIndex, field);
+				allFieldsNames.forEach(fieldName -> {
+					Object value = document.opt(fieldName);
+					if (value != null) {
+						value = value.toString();
 					}
-				}
-				for (int j = keys.length; j < maxObjectLength; j++) {
-					fieldsCollection.add(new Field(null));
-				}
+					IField field = new Field(value);
+					setFieldType(field, dataStoreMeta.getFieldMeta(dataStoreMeta.getFieldIndex(fieldName)));
+					fieldsCollection.add(field);
+				});
 
 				record.setFields(fieldsCollection);
 				dataStore.appendRecord(record);
@@ -260,12 +204,10 @@ public class MongoDataReader extends AbstractDataReader {
 		return resultArray;
 	}
 
-	private void setFieldType(IField field, IFieldMetaData fieldMeta, String fieldValue) {
-		// if one field of the collection is not number the type
-		// is String
-		if (fieldMeta.getType() == null || !fieldMeta.getType().equals(String.class)) {
+	private void setFieldType(IField field, IFieldMetaData fieldMeta) {
+		if (field.getValue() != null && (fieldMeta.getType() == null || !fieldMeta.getType().equals(String.class))) {
 			try {
-				Object value = new Double(fieldValue);
+				Object value = new Double(field.getValue().toString());
 				fieldMeta.setType(Double.class);
 				logger.debug("Double type");
 				field.setValue(value);

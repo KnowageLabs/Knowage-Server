@@ -1,0 +1,131 @@
+{
+    "knListSettings": {
+        "buttons": [
+            {
+                "emits": "delete",
+                "icon": "fas fa-trash-alt",
+                "label": "common.delete"
+            }
+        ],
+        "defaultSortField": "label",
+        "interaction": {
+            "type": "event"
+        },
+        "titleField": "label"
+    },
+    "listboxSettings": {
+        "avatar": {
+            "property": "type",
+            "values": {
+                "SbiCkanDataSet": {
+                    "icon": "fas fa-database",
+                    "style": {
+                        "background-color": "#ffc107",
+                        "color": "white"
+                    }
+                },
+                "SbiCustomDataSet": {
+                    "icon": "fas fa-database",
+                    "style": {
+                        "background-color": "#607d8b",
+                        "color": "white"
+                    }
+                },
+                "SbiFederatedDataSet": {
+                    "icon": "fas fa-database",
+                    "style": {
+                        "background-color": "#795548",
+                        "color": "white"
+                    }
+                },
+                "SbiFileDataSet": {
+                    "icon": "fas fa-file",
+                    "style": {
+                        "background-color": "#2196f3",
+                        "color": "white"
+                    }
+                },
+                "SbiFlatDataSet": {
+                    "icon": "fas fa-database",
+                    "style": {
+                        "background-color": "#9e9e9e",
+                        "color": "white"
+                    }
+                },
+                "SbiJClassDataSet": {
+                    "icon": "fab fa-java",
+                    "style": {
+                        "background-color": "#ffcc80",
+                        "color": "white"
+                    }
+                },
+                "SbiPreparedDataSet": {
+                    "icon": "fas fa-database",
+                    "style": {
+                        "background-color": "#673ab7",
+                        "color": "white"
+                    }
+                },
+                "SbiPythonDataSet": {
+                    "icon": "fab fa-python",
+                    "style": {
+                        "background-color": "#ffb300",
+                        "color": "white"
+                    }
+                },
+                "SbiQbeDataSet": {
+                    "icon": "fas fa-list",
+                    "style": {
+                        "background-color": "#ffc107",
+                        "color": "white"
+                    }
+                },
+                "SbiQueryDataSet": {
+                    "icon": "fas fa-table",
+                    "style": {
+                        "background-color": "#004ba0",
+                        "color": "white"
+                    }
+                },
+                "SbiRESTDataSet": {
+                    "icon": "fas fa-exchange-alt",
+                    "style": {
+                        "background-color": "#3f51b5",
+                        "color": "white"
+                    }
+                },
+                "SbiSPARQLDataSet": {
+                    "icon": "fas fa-database",
+                    "style": {
+                        "background-color": "#009688",
+                        "color": "white"
+                    }
+                },
+                "SbiScriptDataSet": {
+                    "icon": "fab fa-js-square",
+                    "style": {
+                        "background-color": "#fdd835",
+                        "color": "white"
+                    }
+                },
+                "SbiSolrDataSet": {
+                    "icon": "fas fa-database",
+                    "style": {
+                        "background-color": "#673ab7",
+                        "color": "white"
+                    }
+                }
+            }
+        }
+    },
+    "style": {
+        "list": {
+            "listIcon": {
+                "color": "#929292"
+            },
+            "listItem": {
+                "height": "30px"
+            }
+        }
+    }
+}

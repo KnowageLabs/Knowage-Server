@@ -210,8 +210,8 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 								);
 				});
 			}
-			if(event.data.format && event.data.format === 'pdf') {
-				$scope.exportExcel(message).then(function(){},
+			if(event.data.format && (event.data.format === 'xls' || event.data.format === 'xlsx')) {
+				$scope.exportExcel('xlsxExport').then(function(){},
 					function(error){
 						$mdDialog.show(
 						  $mdDialog.alert()
@@ -305,7 +305,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 				requestUrl.widget[i] = widget;
 				if (!angular.equals(cockpitModule_properties.VARIABLES,{})) {
 					for (var k in widget.content.columnSelectedOfDataset) {
-						if(Array.isArray(widget.content.columnSelectedOfDataset[k].variables) && widget.content.columnSelectedOfDataset[k].variables.length) {
+						if(Array.isArray(widget.content.columnSelectedOfDataset[k].variables) && widget.content.columnSelectedOfDataset[k].variables.length >0) {
 							if (widget.type == "table" && widget.content.columnSelectedOfDataset[k].variables[0].action == 'header') {
 								for (var j in cockpitModule_properties.VARIABLES) {
 									if (j == widget.content.columnSelectedOfDataset[k].variables[0].variable){
@@ -347,12 +347,15 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 						requestUrl.COCKPIT_SELECTIONS[i][k].drivers = drivers;
 						requestUrl.COCKPIT_SELECTIONS[i][k].selections = selections;
 					}
-					requestUrl.COCKPIT_VARIABLES[i] = cockpitModule_properties.VARIABLES;
+					
 				}
 				else if (widget.dataset && Object.keys(widget.dataset).length != 0) {
 					var dsId = widget.dataset.dsId
 					var dataset = cockpitModule_datasetServices.getDatasetById(dsId);
 					var aggregation;
+					if (widget.type == "chart") {
+						widget = replaceStringVariables(widget);
+					}
 					if (widget.settings) {
 						aggregation = cockpitModule_widgetSelection.getAggregation(widget, dataset, widget.settings.sortingColumn,widget.settings.sortingOrder);
 					}
@@ -361,15 +364,17 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 					}
 					var loadDomainValues = widget.type == "selector" ? true : false;
 					var selections = cockpitModule_datasetServices.getWidgetSelectionsAndFilters(widget, dataset, loadDomainValues);
+					var userSelections = cockpitModule_widgetSelection.getUserSelections(dataset.label);
 					var parameters = cockpitModule_datasetServices.getDatasetParameters(dsId);
 					var parametersString = cockpitModule_datasetServices.getParametersAsString(parameters);
 					var paramsToSend = angular.fromJson(parametersString);
 					requestUrl.COCKPIT_SELECTIONS[i].aggregations = aggregation;
 					requestUrl.COCKPIT_SELECTIONS[i].parameters = paramsToSend;
-					requestUrl.COCKPIT_SELECTIONS[i].drivers = drivers;
+					requestUrl.COCKPIT_SELECTIONS[i].drivers = drivers;					
 					requestUrl.COCKPIT_SELECTIONS[i].selections = selections;
-					requestUrl.COCKPIT_VARIABLES[i] = cockpitModule_properties.VARIABLES;
+					requestUrl.COCKPIT_SELECTIONS[i].userSelections = userSelections;
 				}
+				requestUrl.COCKPIT_VARIABLES= cockpitModule_properties.VARIABLES;
 			}
 
 			var config = {"responseType": "arraybuffer"};
@@ -393,6 +398,16 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 		})
 	}
 
+	var replaceStringVariables = function (obj){
+		var objString = angular.copy(obj);
+		objString = JSON.stringify(objString);
+  		  objString = objString.replace(/\$V\{([a-zA-Z0-9\-\_]*){1}(?:.([a-zA-Z0-9\-\_]*){1})?\}/g,function(match,p1,p2){
+					return p2 ? cockpitModule_properties.VARIABLES[p1][p2] : cockpitModule_properties.VARIABLES[p1];
+				})
+				
+	return JSON.parse(objString);
+	}
+	
 	var getSpatialAttributesToFilter = function (layers) {
 		toReturn = {};
 		if (layers) {
@@ -462,7 +477,9 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 				 clickOutsideToClose:false
 				 })
 
-			cockpitModule_properties.LOADING_SCREENSHOT = true;
+				 $timeout(function(){
+					cockpitModule_properties.LOADING_SCREENSHOT = true;
+				},0)
 
 			var abortTimeout;
 			function resetTimeout(){

@@ -74,11 +74,13 @@
 				to="/layers-management" />
 			<ITEM id="4007" label="menu.glossary.technical"
 				requiredFunctionality="ManageGlossaryTechnical"
+				toBeAuthorized="MANAGE_GLOSSARY_TECHNICAL"
 				to="/glossary-usage"
 				iconCls="fa fa-2x fa-book" />
 			<ITEM id="4008" label="menu.glossary.business"
 				requiredFunctionality="ManageGlossaryBusiness"
 				to="/glossary-definition"
+				toBeAuthorized="MANAGE_GLOSSARY_BUSINESS"
 				iconCls="fa fa-2x fa-building" />
 			<ITEM id="4009" label="menu.timespan"
 				requiredFunctionality="Timespan"
@@ -87,11 +89,9 @@
 				requiredFunctionality="Calendar"
 				to="/calendar-management" />
 			<ITEM id="4011" label="menu.FunctionsCatalog"
-				toBeLicensed="KnowagePA"
 				requiredFunctionality="FunctionsCatalogManagement"
 				to="/functions-catalog" />
 			<ITEM id="4012" label="menu.WidgetGalleryManagement"
-				toBeLicensed="KnowageSI"
 				requiredFunctionality="WidgetGalleryManagement"
 				to="/gallery-management" />
 		</GROUP_ITEM>
@@ -142,7 +142,7 @@
 				to="/kpi-scheduler" />
 			<ITEM id="6005" label="menu.kpi.scorecard"
 				requiredFunctionality="ScorecardsManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=scorecardKpi" />
+				to="/scorecards" />
 		</GROUP_ITEM>
 
 		<GROUP_ITEM id="7000" label="menu.ServerSettings"
@@ -153,10 +153,6 @@
 			<ITEM id="7002" label="menu.Domain"
 				requiredFunctionality="DomainManagement"
 				to="/domains-management" />
-
-			<ITEM id="7003" label="Exporters menu"
-				requiredFunctionality="ExportersCatalogue"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=exportersCatalogue" />
 			<ITEM id="7004" label="menu.MetadataMan"
 				requiredFunctionality="ObjMetadataManagement"
 				to="/metadata-management" />
@@ -183,7 +179,7 @@
 				requiredFunctionality="LicenseManagement" command="licenseSelection"/>
 			<ITEM id="8006" label="menu.event"
 				requiredFunctionality="EventsManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=eventLogsApp" />
+				to="/events-management" />
 		</GROUP_ITEM>
 
 		<GROUP_ITEM id="9000" label="menu.i18n"
@@ -278,10 +274,12 @@
 		<ITEM id="11007" label="menu.glossary.technical"
 			requiredFunctionality="ManageGlossaryTechnical"
 			to="/glossary-definition"
+			toBeAuthorized="MANAGE_GLOSSARY_TECHNICAL"
 			iconCls="fas fa-book" />
 		<ITEM id="11008" label="menu.glossary.business"
 			requiredFunctionality="ManageGlossaryBusiness"
 			to="/glossary-usage"
+			toBeAuthorized="MANAGE_GLOSSARY_BUSINESS"
 			iconCls="fas fa-building" />
 		<ITEM id="11009" label="menu.cross.definition"
 			requiredFunctionality="ManageCrossNavigation"

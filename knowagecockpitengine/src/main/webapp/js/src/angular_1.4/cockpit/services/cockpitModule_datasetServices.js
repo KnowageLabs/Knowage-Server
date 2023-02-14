@@ -466,7 +466,8 @@ $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_ut
 			for(var j=0;j<sheet.widgets.length;j++){
 				var widget = sheet.widgets[j];
 				if(widget.dataset !=undefined){
-					array.push(widget.dataset.dsId);
+					if(Array.isArray(widget.dataset.dsId)) array.push(...widget.dataset.dsId)
+					else array.push(widget.dataset.dsId)
 				}
 			}
 		}
@@ -1229,7 +1230,11 @@ $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_ut
 			if (parameters.hasOwnProperty(parameter)){
 				if (parameters[parameter] == null || parameters[parameter] == undefined) {
 					output += delim + "\"" + parameter + "\":null";
-				}else{
+				}
+				else if (!cockpitModule_properties.PARAMETERS[parameter].multiValue){
+					output += delim + "\"" + parameter + "\":"+ "\""+parameters[parameter]+ "\"";
+				}
+				else{
 //					var tempJSN = JSON.stringify(parameters[parameter]);
 					var tempJSN = '"';
 					if(Array.isArray(parameters[parameter])) {
@@ -1621,7 +1626,7 @@ $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_ut
 								$scope.$destroy();
 
 							}
-							cockpitModule_properties.PARAMETERS = this.returnParametersArray();
+							cockpitModule_properties.PARAMETERS = ds.returnParametersArray();
 						}
 					}
 

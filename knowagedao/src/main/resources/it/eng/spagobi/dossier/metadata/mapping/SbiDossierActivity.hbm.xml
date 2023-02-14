@@ -65,6 +65,9 @@
 		<property name="docBinContent" type="binary">
             <column name="DOC" sql-type="longvarbinary"/>
         </property>
+		<property name="pptV2BinContent" type="binary">
+            <column name="PPT_V2" sql-type="longvarbinary"/>
+        </property>
         <property name="configContent" type="string">
             <column length="4000" name="CONFIG" />
         </property>

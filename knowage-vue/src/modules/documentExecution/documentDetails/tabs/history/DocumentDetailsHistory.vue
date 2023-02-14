@@ -32,14 +32,15 @@
                     {{ $t('documentExecution.documentDetails.history.template') }}
                 </template>
                 <template #end>
-                    <Button :label="$t('documentExecution.olap.openDesigner')" class="p-button-text p-button-rounded p-button-plain kn-white-color" @click="openDesignerConfirm" />
+                    <Button v-if="designerButtonVisible" :label="$t('documentExecution.olap.openDesigner')" class="p-button-text p-button-rounded p-button-plain kn-white-color" @click="openDesignerConfirm" />
                 </template>
             </Toolbar>
             <div id="driver-details-container" class="kn-flex kn-relative">
-                <div :style="mainDescriptor.style.absoluteScroll">
+                <div id="codemirror-container" :style="mainDescriptor.style.absoluteScroll">
+                    {{ this.scriptOptions.mode }}
                     <VCodeMirror v-if="showTemplateContent" ref="codeMirrorScriptType" class="kn-height-full" v-model:value="selectedTemplateContent" :options="scriptOptions" @keyup="$emit('touched')" />
                     <div v-else>
-                        <InlineMessage severity="info" class="p-m-2"> {{ $t('documentExecution.documentDetails.history.templateHint') }}</InlineMessage>
+                        <InlineMessage severity="info" class="p-m-2 kn-width-full"> {{ $t('documentExecution.documentDetails.history.templateHint') }}</InlineMessage>
                     </div>
                 </div>
             </div>
@@ -53,13 +54,19 @@ import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import { iDocument } from '@/modules/documentExecution/documentDetails/DocumentDetails'
 import { downloadDirect } from '@/helpers/commons/fileHelper'
-import { VCodeMirror } from 'vue3-code-mirror'
+import VCodeMirror from 'codemirror-editor-vue3'
+import { mapState } from 'pinia'
+import { startOlap } from '../../dialogs/olapDesignerDialog/DocumentDetailOlapHelpers'
 import mainDescriptor from '@/modules/documentExecution/documentDetails/DocumentDetailsDescriptor.json'
 import driversDescriptor from '@/modules/documentExecution/documentDetails/tabs/drivers/DocumentDetailsDriversDescriptor.json'
 import historyDescriptor from './DocumentDetailsHistory.json'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 import InlineMessage from 'primevue/inlinemessage'
+import mainStore from '../../../../../App.store'
+
+import cryptoRandomString from 'crypto-random-string'
+
 export default defineComponent({
     name: 'document-drivers',
     components: { KnListBox, KnInputFile, VCodeMirror, InlineMessage },
@@ -82,7 +89,13 @@ export default defineComponent({
                 default:
                     return false
             }
-        }
+        },
+        designerButtonVisible(): boolean {
+            return this.selectedDocument.typeCode == 'OLAP' || this.selectedDocument.typeCode == 'KPI' || this.selectedDocument.engine == 'knowagegisengine'
+        },
+        ...mapState(mainStore, {
+            user: 'user'
+        })
     },
     data() {
         return {
@@ -97,10 +110,9 @@ export default defineComponent({
             triggerUpload: false,
             uploading: false,
             codeMirrorScriptType: {} as any,
-            tst: '',
             scriptOptions: {
                 readOnly: true,
-                mode: 'text/javascript',
+                mode: '',
                 indentWithTabs: true,
                 smartIndent: true,
                 lineWrapping: true,
@@ -111,29 +123,30 @@ export default defineComponent({
             }
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
+        const interval = setInterval(() => {
+            if (!this.$refs.codeMirrorScriptType) return
+            this.codeMirrorScriptType = (this.$refs.codeMirrorScriptType as any).cminstance as any
+            clearInterval(interval)
+        }, 200)
         this.getAllTemplates()
-        this.setupCodeMirror()
     },
     methods: {
         async getAllTemplates() {
             this.loading = true
             this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates`)
                 .then((response: AxiosResponse<any>) => (this.listOfTemplates = response.data as iTemplate[]))
                 .finally(() => (this.loading = false))
         },
         async getSelectedTemplate(templateId) {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates/selected/${templateId}`, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } }).then((response: AxiosResponse<any>) => {
+            this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates/selected/${templateId}`, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } }).then((response: AxiosResponse<any>) => {
                 this.selectedTemplateFileType == 'sbicockpit' || this.selectedTemplateFileType == 'json' || this.selectedTemplateFileType == 'sbigeoreport' ? (this.selectedTemplateContent = JSON.stringify(response.data, null, 4)) : (this.selectedTemplateContent = response.data)
             })
-        },
-        setupCodeMirror() {
-            const interval = setInterval(() => {
-                if (!this.$refs.codeMirrorScriptType) return
-                this.codeMirrorScriptType = (this.$refs.codeMirrorScriptType as any).editor as any
-                clearInterval(interval)
-            }, 200)
         },
         changeCodemirrorMode() {
             let mode = ''
@@ -157,7 +170,6 @@ export default defineComponent({
                     mode = 'text/javascript'
             }
             setTimeout(() => {
-                this.setupCodeMirror()
                 this.codeMirrorScriptType.setOption('mode', mode)
             }, 250)
         },
@@ -187,34 +199,35 @@ export default defineComponent({
             var formData = new FormData()
             formData.append('file', uploadedFile)
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates`, formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
-                .then(() => {
-                    this.$store.commit('setInfo', { title: this.$t('common.toast.success'), msg: this.$t('common.toast.uploadSuccess') })
-                    this.getAllTemplates()
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates`, formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
+                .then(async () => {
+                    this.store.setInfo({ title: this.$t('common.toast.success'), msg: this.$t('common.toast.uploadSuccess') })
+                    await this.getAllTemplates()
+                    this.selectTemplate(this.listOfTemplates[0])
                 })
-                .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.history.uploadError') }))
+                .catch(() => this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.history.uploadError') }))
                 .finally(() => (this.triggerUpload = false))
         },
         setActiveTemplate(template) {
             this.$http
-                .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates/${template.id}`, { headers: { 'X-Disable-Errors': 'true' } })
+                .put(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates/${template.id}`, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
-                    this.$store.commit('setInfo', { title: this.$t('common.toast.success'), msg: this.$t('documentExecution.documentDetails.history.activeOk') })
+                    this.store.setInfo({ title: this.$t('common.toast.success'), msg: this.$t('documentExecution.documentDetails.history.activeOk') })
                     this.getAllTemplates()
                 })
-                .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.history.activeError') }))
+                .catch(() => this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.history.activeError') }))
         },
         async downloadTemplate(template) {
             let fileType = template.name.split('.')
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates/${template.id}/${fileType[fileType.length - 1]}/file`, {
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates/${template.id}/${fileType[fileType.length - 1]}/file`, {
                     headers: { Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9', 'X-Disable-Errors': 'true' }
                 })
                 .then((response: AxiosResponse<any>) => {
                     if (response.data.errors) {
-                        this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('common.error.errorCreatingPackage') })
+                        this.store.setError({ title: this.$t('common.error.downloading'), msg: this.$t('common.error.errorCreatingPackage') })
                     } else {
-                        this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
+                        this.store.setInfo({ title: this.$t('common.toast.success') })
                         if (response.headers) {
                             var contentDisposition = response.headers['content-disposition']
                             var contentDispositionMatcher = contentDisposition.match(/filename[^;\n=]*=((['"]).*?\2|[^;\n]*)/i)
@@ -230,7 +243,7 @@ export default defineComponent({
                         }
                     }
                 })
-                .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
+                .catch((error) => this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: error.message }))
         },
         deleteTemplateConfirm(template) {
             this.$confirm.require({
@@ -242,24 +255,63 @@ export default defineComponent({
         },
         async deleteTemplate(template) {
             await this.$http
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates/${template.id}`, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+                .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates/${template.id}`, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
                 .then(() => {
-                    this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+                    this.store.setInfo({ title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
                     this.getAllTemplates()
                 })
-                .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
+                .catch((error) => this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: error.message }))
         },
         openDesignerConfirm() {
             this.$confirm.require({
                 header: this.$t('common.toast.warning'),
                 message: this.$t('documentExecution.olap.openDesignerMsg'),
                 icon: 'pi pi-exclamation-triangle',
-                accept: () => this.openDesigner()
+                accept: () => {
+                    switch (this.selectedDocument.typeCode) {
+                        case 'KPI':
+                            this.openKpiDocumentDesigner()
+                            break
+                        case 'MAP': {
+                            this.openGis()
+                            break
+                        }
+                        default:
+                            this.openDesigner()
+                    }
+                }
             })
         },
-        openDesigner() {
-            this.$router.push(`/olap-designer/${this.selectedDocument.id}`)
+        async openDesigner() {
+            if (this.listOfTemplates.length === 0) {
+                this.$emit('openDesignerDialog')
+            } else {
+                const activeTemplate = this.findActiveTemplate()
+                const sbiExecutionId = cryptoRandomString({ length: 16, type: 'base64' })
+                await startOlap(this.$http, this.user, sbiExecutionId, this.selectedDocument, activeTemplate, this.$router)
+            }
+        },
+        findActiveTemplate() {
+            let activeTemplate = null as any
+            for (let i = 0; i < this.listOfTemplates.length; i++) {
+                if (this.listOfTemplates[i].active) {
+                    activeTemplate = this.listOfTemplates[i]
+                    break
+                }
+            }
+            return activeTemplate
+        },
+        openGis() {
+            this.$router.push(`/gis/edit?documentId=${this.selectedDocument.id}`)
+        },
+        openKpiDocumentDesigner() {
+            this.$router.push(`/kpi-edit/${this.selectedDocument.id}?from=documentDetail`)
         }
     }
 })
 </script>
+<style lang="scss">
+#codemirror-container {
+    overflow: hidden !important;
+}
+</style>

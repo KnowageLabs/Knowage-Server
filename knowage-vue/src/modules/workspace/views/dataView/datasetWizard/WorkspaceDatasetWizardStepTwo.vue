@@ -3,15 +3,15 @@
         <template #content>
             <DataTable v-if="dataset.meta" class="p-datatable-sm kn-table" :scrollable="true" scrollHeight="40vh" :value="fieldsMetadata" stripedRows rowHover>
                 <Column field="fieldAlias" :header="$t('managers.datasetManagement.fieldAlias')" :sortable="true">
-                    <template #body="{data}"> {{ data.fieldAlias }} </template>
+                    <template #body="{ data }"> {{ data.fieldAlias }} </template>
                 </Column>
                 <Column field="Type" :header="$t('importExport.catalogFunction.column.type')" :sortable="true">
-                    <template #body="{data}">
-                        <Dropdown class="kn-material-input" :style="wizardDescriptor.style.maxwidth" v-model="data.Type" :options="valueTypes" optionLabel="value" optionValue="name" @change="saveFieldsMetadata" />
+                    <template #body="{ data }">
+                        <Dropdown class="kn-material-input" :style="wizardDescriptor.style.maxwidth" v-model="data.Type" :options="valueTypes" optionLabel="value" optionValue="name" @change="saveFieldsMetadata" :disabled="true" />
                     </template>
                 </Column>
                 <Column field="fieldType" :header="$t('managers.datasetManagement.fieldType')" :sortable="true">
-                    <template #body="{data}">
+                    <template #body="{ data }">
                         <Dropdown class="kn-material-input" :style="wizardDescriptor.style.maxwidth" v-model="data.fieldType" :options="fieldMetadataTypes" optionLabel="value" optionValue="value" @change="saveFieldsMetadata" />
                     </template>
                 </Column>
@@ -31,6 +31,7 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Message from 'primevue/message'
 import Dropdown from 'primevue/dropdown'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     components: { Card, Column, DataTable, Message, Dropdown },
@@ -48,6 +49,10 @@ export default defineComponent({
             fieldsMetadata: [] as any
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.dataset = this.selectedDataset
         this.dataset.meta ? this.exctractFieldsMetadata(this.dataset.meta.columns) : ''
@@ -58,7 +63,6 @@ export default defineComponent({
             this.dataset.meta ? this.exctractFieldsMetadata(this.dataset.meta.columns) : ''
         }
     },
-
     methods: {
         exctractFieldsMetadata(array) {
             var object = {}
@@ -87,7 +91,7 @@ export default defineComponent({
                 if (this.fieldsMetadata[i].fieldType == 'SPATIAL_ATTRIBUTE') {
                     numberOfSpatialAttribute++
                     if (numberOfSpatialAttribute > 1) {
-                        this.$store.commit('setError', { title: this.$t('common.error.saving'), msg: this.$t('managers.datasetManagement.duplicateSpatialAttribute') })
+                        this.store.setError({ title: this.$t('common.error.saving'), msg: this.$t('managers.datasetManagement.duplicateSpatialAttribute') })
                         return
                     }
                 }

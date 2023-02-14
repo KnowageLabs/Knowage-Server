@@ -5,7 +5,7 @@
             <span>{{ searchMode ? $t('documentBrowser.documentsSearch') : $t('documentBrowser.title') }}</span>
             <span v-show="searchMode" class="p-mx-4">
                 <i class="fa fa-arrow-left search-pointer p-mx-4" @click="exitSearchMode" />
-                <InputText id="document-search" class="kn-material-input p-inputtext-sm p-mx-2" ref="searchBar" @keyup.enter="loadDocuments" v-model="searchWord" :placeholder="$t('common.search')" autofocus />
+                <InputText id="document-search" class="kn-material-input p-inputtext-sm p-mx-2 searchInput" ref="searchBar" @keyup.enter="loadDocuments" v-model="searchWord" :placeholder="$t('common.search')" autofocus />
                 <i class="fa fa-times search-pointer p-mx-4" @click="searchWord = ''" />
                 <i class="pi pi-search search-pointer p-mx-4" @click="loadDocuments" />
             </span>
@@ -25,8 +25,8 @@
     <div id="document-browser-detail" class="p-d-flex p-flex-row kn-flex p-m-0">
         <div v-if="sidebarVisible && windowWidth < 1024" id="document-browser-sidebar-backdrop" @click="sidebarVisible = false"></div>
 
-        <div v-show="!searchMode" class="document-sidebar kn-flex" style="width:350px" :class="{ 'sidebar-hidden': isSidebarHidden, 'document-sidebar-absolute': sidebarVisible && windowWidth < 1024 }">
-            <DocumentBrowserTree :propFolders="folders" :selectedBreadcrumb="selectedBreadcrumb" @folderSelected="setSelectedFolder"></DocumentBrowserTree>
+        <div v-show="!searchMode" class="document-sidebar kn-flex" style="width: 350px" :class="{ 'sidebar-hidden': isSidebarHidden, 'document-sidebar-absolute': sidebarVisible && windowWidth < 1024 }">
+            <DocumentBrowserTree :propFolders="folders" :selectedBreadcrumb="selectedBreadcrumb" :selectedFolderProp="selectedFolder" @folderSelected="setSelectedFolder"></DocumentBrowserTree>
         </div>
 
         <div id="detail-container" class="p-d-flex p-flex-column">
@@ -39,28 +39,27 @@
                 @documentCloned="loadDocuments"
                 @documentStateChanged="loadDocuments"
                 @itemSelected="$emit('itemSelected', $event)"
-                @showDocumentDetails="showDocumentDetailsDialog"
+                @showDocumentDetails="openDocumentDetails"
             ></DocumentBrowserDetail>
             <DocumentBrowserHint v-else data-test="document-browser-hint"></DocumentBrowserHint>
         </div>
     </div>
-
-    <DocumentDetails v-if="showDocumentDetails" :docId="documentId" :selectedDocument="selectedDocument" :selectedFolder="selectedFolder" :visible="showDocumentDetails" @closeDetails="onCloseDetails" @reloadDocument="getSelectedDocument" />
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import DocumentBrowserHint from './DocumentBrowserHint.vue'
 import DocumentBrowserTree from './DocumentBrowserTree.vue'
 import DocumentBrowserDetail from './DocumentBrowserDetail.vue'
-import DocumentDetails from '@/modules/documentExecution/documentDetails/DocumentDetails.vue'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import Menu from 'primevue/menu'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'document-browser-home',
-    components: { DocumentBrowserHint, DocumentBrowserTree, DocumentBrowserDetail, KnFabButton, Menu, DocumentDetails },
+    components: { DocumentBrowserHint, DocumentBrowserTree, DocumentBrowserDetail, KnFabButton, Menu },
+    props: { documentSaved: { type: Object as PropType<any> }, documentSavedTrigger: { type: Boolean } },
     emits: ['itemSelected'],
     data() {
         return {
@@ -87,10 +86,10 @@ export default defineComponent({
             return this.user?.isSuperadmin
         },
         canAddNewDocument(): boolean {
-            return this.user?.functionalities.includes('DocumentManagement')
+            return this.user?.functionalities?.includes('DocumentManagement')
         },
         hasCreateCockpitFunctionality(): boolean {
-            return this.user.functionalities.includes('CreateCockpitFunctionality')
+            return this.user.functionalities?.includes('CreateCockpitFunctionality')
         },
         isSidebarHidden(): boolean {
             if (this.sidebarVisible) {
@@ -100,25 +99,64 @@ export default defineComponent({
             }
         }
     },
+    watch: {
+        documentSavedTrigger() {
+            if (!this.documentSaved) return
+
+            if (this.documentSaved.folderId) this.selectedFolder.id = this.documentSaved.folderId
+            this.loadDocumentsWithBreadcrumbs()
+        }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     async created() {
         window.addEventListener('resize', this.onResize)
 
         await this.loadFolders()
-        this.user = (this.$store.state as any).user
+        this.user = (this.store.$state as any).user
+
+        if (this.$route.name === 'document-browser-functionality') {
+            this.setFolderFromRoute()
+        }
+
+        this.setRouterWatcher()
     },
     beforeUnmount() {
         window.removeEventListener('resize', this.onResize)
     },
     methods: {
+        setRouterWatcher() {
+            this.$watch(
+                () => this.$route.params.pathMatch,
+                (toParams) => {
+                    if (this.$route.name === 'document-browser-functionality' && toParams.length > 0) this.setFolderFromRoute()
+                }
+            )
+        },
         onResize() {
             this.windowWidth = window.innerWidth
         },
+        async setFolderFromRoute() {
+            if (this.$route.params.pathMatch.length > 0) {
+                this.selectedFolder = this.findSelectedFolder()
+                if (!this.selectedFolder) return
+                localStorage.setItem('documentSelectedFolderId', JSON.stringify(this.selectedFolder.id))
+                await this.loadDocumentsWithBreadcrumbs()
+            }
+        },
+        findSelectedFolder() {
+            const id = this.$route.params.pathMatch[this.$route.params.pathMatch.length - 1]
+            const index = this.folders.findIndex((folder: any) => folder.id == id)
+            return index !== -1 ? this.folders[index] : null
+        },
         async loadFolders() {
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/folders/`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/folders/`).then((response: AxiosResponse<any>) => {
                 this.folders = response.data
                 this.folders?.sort((a: any, b: any) => {
-                    return !a.parentId || a.parentId < b.parentId ? -1 : 1
+                    return a.id - b.id
                 })
             })
 
@@ -127,7 +165,7 @@ export default defineComponent({
         async loadDocuments() {
             this.loading = true
             const url = this.searchMode ? `2.0/documents?searchAttributes=all&searchKey=${this.searchWord}` : `2.0/documents?folderId=${this.selectedFolder?.id}`
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url).then((response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url).then((response: AxiosResponse<any>) => {
                 this.searchMode ? (this.searchedDocuments = response.data) : (this.documents = response.data)
             })
             this.loading = false
@@ -136,9 +174,21 @@ export default defineComponent({
             if (this.selectedFolder?.id === folder.id) {
                 return
             }
-
             this.selectedFolder = folder
+            this.changeFolderRotue()
             await this.loadDocumentsWithBreadcrumbs()
+        },
+        changeFolderRotue() {
+            const tempPath = this.selectedFolder.path?.substring(1)?.split('/')
+            if (!tempPath) return
+            let temp = ''
+            for (let i = 0; i < tempPath.length; i++) {
+                const index = this.folders.findIndex((folder: any) => folder.code == tempPath[i])
+                if (index !== -1) {
+                    temp += `/${this.folders[index].id}`
+                }
+            }
+            history.pushState({}, '', import.meta.env.VITE_PUBLIC_PATH + 'document-browser' + temp)
         },
         async loadDocumentsWithBreadcrumbs() {
             if (this.selectedFolder && this.selectedFolder.id !== -1) {
@@ -149,6 +199,7 @@ export default defineComponent({
             }
         },
         createBreadcrumbs() {
+            if (!this.selectedFolder) return
             let currentFolder = { key: this.selectedFolder.name, label: this.selectedFolder.name, data: this.selectedFolder } as any
             this.breadcrumbs = [] as any[]
             do {
@@ -178,18 +229,22 @@ export default defineComponent({
             this.items.push({ label: this.$t('documentBrowser.genericDocument'), command: () => this.createNewDocument() })
             if (this.hasCreateCockpitFunctionality) {
                 this.items.push({ label: this.$t('common.cockpit'), command: () => this.createNewCockpit() })
+                this.items.push({ label: this.$t('dashboard.dashboardBeta'), command: () => this.createNewDashboard() })
             }
         },
         createNewDocument() {
             this.documentId = null
-            this.showDocumentDetails = true
+            this.$emit('itemSelected', { item: null, mode: 'documentDetail', functionalityId: this.selectedFolder.id })
         },
-        async showDocumentDetailsDialog(event) {
+        async openDocumentDetails(event) {
             this.documentId = event.id
-            this.showDocumentDetails = true
+            this.$emit('itemSelected', { item: event, mode: 'documentDetail', functionalityId: null })
         },
         createNewCockpit() {
             this.$emit('itemSelected', { item: null, mode: 'createCockpit', functionalityId: this.selectedFolder.id })
+        },
+        createNewDashboard() {
+            this.$emit('itemSelected', { item: null, mode: 'createDashboard', functionalityId: this.selectedFolder.id })
         },
         toggleSidebarView() {
             this.sidebarVisible = !this.sidebarVisible
@@ -279,5 +334,9 @@ export default defineComponent({
     overflow: auto;
     max-height: calc(100vh - 71px);
     flex: 3;
+}
+
+.searchInput {
+    background-color: transparent;
 }
 </style>

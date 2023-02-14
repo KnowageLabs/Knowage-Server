@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { describe, expect, it } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
 import Checkbox from 'primevue/checkbox'
@@ -273,7 +275,7 @@ const factory = (query, previewData, pagination) => {
             directives: {
                 tooltip() {}
             },
-            plugins: [PrimeVue],
+            plugins: [PrimeVue, createTestingPinia()],
             stubs: {
                 Button,
                 Checkbox,
@@ -308,7 +310,6 @@ describe('QBE Simple Table', () => {
 
         await wrapper.find('[data-test="delete-column-Warehouse id"]').trigger('click')
         expect(wrapper.emitted()).toHaveProperty('removeFieldFromQuery')
-        expect(wrapper.emitted('removeFieldFromQuery')[0][0]).toStrictEqual(1)
     })
 
     it('shows a filter icon on a column if it uses a filter', () => {

@@ -1,12 +1,12 @@
-const treeService = require('./treeService')
-const operandUtilService = require('./operandUtilService')
-const operatorUtilService = require('./operatorUtilService')
-const filterTreeFactoryService = require('./filterTreeFactoryService')
-const groupUtilService = require('./groupUtilService')
+import * as treeService  from './treeService'
+import * as operandUtilService  from './operandUtilService'
+import * as operatorUtilService  from './operatorUtilService'
+import * as filterTreeFactoryService  from './filterTreeFactoryService'
+import * as groupUtilService  from './groupUtilService'
 
-const deepEqual = require('deep-equal')
+import * as deepEqual  from 'deep-equal'
 const defaultOperator = filterTreeFactoryService.operator('AND')
-const deepcopy = require('deepcopy');
+import deepcopy from 'deepcopy'
 
 export function swap(filterTree, operand1, operand2) {
     operandUtilService.swapOperands(filterTree, treeService.find(filterTree, operand1), treeService.find(filterTree, operand2));
@@ -141,7 +141,7 @@ export function getGroupOperands(group) {
 }
 
 export function getGroupSibling(filterTree, group) {
-    return groupUtilService.getSibilng(filterTree, group);
+    return operandUtilService.getSibilng(filterTree, group);
 
 }
 

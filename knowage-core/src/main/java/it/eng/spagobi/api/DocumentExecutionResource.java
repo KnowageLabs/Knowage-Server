@@ -29,6 +29,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.file.Paths;
 import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -57,6 +58,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.clerezza.jaxrs.utils.form.FormFile;
 import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
@@ -70,6 +72,7 @@ import org.safehaus.uuid.UUIDGenerator;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.RequestContainerAccess;
 import it.eng.spago.base.SessionContainer;
@@ -202,6 +205,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		JSONObject jsonParameters = requestVal.optJSONObject("parameters");
 
 		RequestContainer aRequestContainer = RequestContainerAccess.getRequestContainer(req);
+		if (aRequestContainer == null)
+			return Response.status(Status.UNAUTHORIZED).build();
+
 		SessionContainer aSessionContainer = aRequestContainer.getSessionContainer();
 		SessionContainer permanentSession = aSessionContainer.getPermanentContainer();
 
@@ -1224,16 +1230,17 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 			if (input != null) {
 
-				String saveDirectoryPath = SpagoBIUtilities.getResourcePath() + "/" + METADATA_DIR + "/" + getUserProfile().getUserName().toString();
+				java.nio.file.Path saveDirectoryPath = Paths.get(SpagoBIUtilities.getResourcePath(), METADATA_DIR, getUserProfile().getUserId().toString());
 				final FormFile file = input.getFormFileParameterValues("file")[0];
 				bytes = file.getContent();
 
-				File saveDirectory = new File(saveDirectoryPath);
+				File saveDirectory = saveDirectoryPath.toFile();
 				if (!(saveDirectory.exists() && saveDirectory.isDirectory())) {
 					saveDirectory.mkdirs();
 				}
-				String tempFile = saveDirectoryPath + "/" + file.getFileName();
+				String tempFile = Paths.get(saveDirectoryPath.toString(), file.getFileName()).toString();
 				File tempFileToSave = new File(tempFile);
+				PathTraversalChecker.preventPathTraversalAttack(tempFileToSave, saveDirectory);
 				tempFileToSave.createNewFile();
 				DataOutputStream os = new DataOutputStream(new FileOutputStream(tempFileToSave));
 				os.write(bytes);

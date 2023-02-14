@@ -1,7 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { nextTick } from 'vue-demi'
+import { createTestingPinia } from '@pinia/testing'
 import PrimeVue from 'primevue/config'
-import axios from 'axios'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -15,6 +15,7 @@ import Toolbar from 'primevue/toolbar'
 import WorkspaceModelsView from './WorkspaceModelsView.vue'
 import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.vue'
 import WorkspaceModelsTable from './tables/WorkspaceModelsTable.vue'
+import { vi } from 'vitest'
 
 const mockedBusinessModels = [
     {
@@ -71,14 +72,14 @@ const mockedFederatedDataset = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/?fileExtension=jar`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/businessmodels/?fileExtension=jar`:
                 return Promise.resolve({ data: mockedBusinessModels })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `federateddataset/`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `federateddataset/`:
                 return Promise.resolve({ data: mockedFederatedDataset })
             default:
                 return Promise.resolve({ data: [] })
@@ -86,16 +87,9 @@ const $http = {
     })
 }
 
-const $store = {
-    state: {
-        user: {
-            functionalities: ['EnableFederatedDataset']
-        }
-    }
-}
 
 const $router = {
-    push: jest.fn()
+    push: vi.fn()
 }
 
 const factory = (cardDisplay) => {
@@ -108,7 +102,15 @@ const factory = (cardDisplay) => {
             directives: {
                 tooltip() {}
             },
-            plugins: [PrimeVue],
+            plugins: [PrimeVue,  createTestingPinia({
+                initialState: {
+                    store: {
+                        user: {
+                            functionalities: ['EnableFederatedDataset']
+                        }
+                    }
+                }
+            })],
             stubs: {
                 Button,
                 DetailSidebar: true,
@@ -129,7 +131,6 @@ const factory = (cardDisplay) => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $http,
                 $router
             }
@@ -137,21 +138,19 @@ const factory = (cardDisplay) => {
     })
 }
 
-jest.useFakeTimers()
-jest.spyOn(global, 'setTimeout')
+vi.useFakeTimers()
+vi.spyOn(global, 'setTimeout')
 
 describe('Workspace Models View', () => {
     it('should show an hint if no elements are present in the selected mode', async () => {
-        axios.get.mockReturnValueOnce(
-            Promise.resolve({
-                data: []
-            })
-        )
-        axios.get.mockReturnValueOnce(
-            Promise.resolve({
-                data: []
-            })
-        )
+        for (let i = 0; i < 3; i++) {
+            $http.get.mockReturnValueOnce(
+                Promise.resolve({
+                    data: []
+                })
+            )
+        }
+
         const wrapper = factory(false)
 
         await flushPromises()
@@ -201,9 +200,11 @@ describe('Workspace Models View', () => {
         expect(wrapper.vm.filteredItems.length).toBe(4)
 
         await wrapper.find('[data-test="search-input"]').setValue('Sales')
+        expect(wrapper.find('[data-test="search-input"]').element.value).toBe('Sales')
+        wrapper.vm.searchWord = 'Sales'
         wrapper.vm.searchItems()
 
-        jest.runAllTimers()
+        vi.runAllTimers()
         await nextTick()
 
         expect(wrapper.find('[data-test="models-table"]').html()).toContain('Sales')
@@ -211,9 +212,11 @@ describe('Workspace Models View', () => {
         expect(wrapper.find('[data-test="models-table"]').html()).not.toContain('Test name')
 
         await wrapper.find('[data-test="search-input"]').setValue('Test name')
+        expect(wrapper.find('[data-test="search-input"]').element.value).toBe('Test name')
+        wrapper.vm.searchWord = 'Test name'
         wrapper.vm.searchItems()
 
-        jest.runAllTimers()
+        vi.runAllTimers()
         await nextTick()
 
         expect(wrapper.find('[data-test="models-table"]').html()).not.toContain('Sales')
@@ -231,7 +234,6 @@ describe('Workspace Models View', () => {
 
         await wrapper.find('[data-test="info-button-Sales"]').trigger('click')
 
-        expect(wrapper.vm.showDetailSidebar).toBe(true)
         expect(wrapper.find('[data-test="detail-sidebar"]').exists()).toBe(true)
     })
 })

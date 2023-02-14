@@ -1,0 +1,247 @@
+{
+    "attributeColumnFilterOperators": [
+        {
+            "label": "=",
+            "value": "="
+        },
+        {
+            "label": "!=",
+            "value": "!="
+        },
+        {
+            "label": "IN",
+            "value": "IN"
+        },
+        {
+            "label": "like",
+            "value": "like"
+        },
+        {
+            "label": "is null",
+            "value": "is null"
+        },
+        {
+            "label": "is not null",
+            "value": "is not null"
+        },
+        {
+            "label": "min",
+            "value": "min"
+        },
+        {
+            "label": "max",
+            "value": "max"
+        },
+        {
+            "label": "not IN",
+            "value": "not IN"
+        }
+    ],
+    "chartTypeOptions": [
+        {
+            "disabled": false,
+            "label": "dashboard.widgetEditor.chartTypes.pieChart",
+            "value": "pie"
+        },
+        {
+            "disabled": true,
+            "label": "dashboard.widgetEditor.chartTypes.donutChart",
+            "value": "donut"
+        },
+        {
+            "disabled": true,
+            "label": "dashboard.widgetEditor.chartTypes.columnsChart",
+            "value": "columns"
+        },
+        {
+            "disabled": true,
+            "label": "dashboard.widgetEditor.chartTypes.stackedColumnsChart",
+            "value": "stackedColumns"
+        },
+        {
+            "disabled": true,
+            "label": "dashboard.widgetEditor.chartTypes.barChart",
+            "value": "bar"
+        },
+        {
+            "disabled": true,
+            "label": "dashboard.widgetEditor.chartTypes.scatterChart",
+            "value": "scatter"
+        },
+        {
+            "disabled": true,
+            "label": "dashboard.widgetEditor.chartTypes.areaChart",
+            "value": "area"
+        },
+        {
+            "disabled": true,
+            "label": "dashboard.widgetEditor.chartTypes.radar",
+            "value": "radar"
+        },
+        {
+            "disabled": true,
+            "label": "dashboard.widgetEditor.chartTypes.funnelChart",
+            "value": "funnel"
+        },
+        {
+            "disabled": true,
+            "label": "dashboard.widgetEditor.chartTypes.parallelChart",
+            "value": "parallel"
+        },
+        {
+            "disabled": false,
+            "label": "dashboard.widgetEditor.chartTypes.gauge",
+            "value": "gauge"
+        },
+        {
+            "disabled": false,
+            "label": "dashboard.widgetEditor.chartTypes.activitygauge",
+            "value": "activitygauge"
+        },
+        {
+            "disabled": false,
+            "label": "dashboard.widgetEditor.chartTypes.solidgauge",
+            "value": "solidgauge"
+        },
+        {
+            "disabled": true,
+            "label": "dashboard.widgetEditor.chartTypes.lineChart",
+            "value": "line"
+        },
+        {
+            "disabled": true,
+            "label": "dashboard.widgetEditor.chartTypes.treemap",
+            "value": "treeMap"
+        }
+    ],
+    "columnAggregationOptions": [
+        {
+            "label": "NONE",
+            "value": "NONE"
+        },
+        {
+            "label": "SUM",
+            "value": "SUM"
+        },
+        {
+            "label": "AVG",
+            "value": "AVG"
+        },
+        {
+            "label": "MAX",
+            "value": "MAX"
+        },
+        {
+            "label": "MIN",
+            "value": "MIN"
+        },
+        {
+            "label": "COUNT",
+            "value": "COUNT"
+        },
+        {
+            "label": "COUNT_DISTINCT",
+            "value": "COUNT_DISTINCT"
+        }
+    ],
+    "columnTableSettings": {
+        "buttonColumnStyle": {
+            "min-width": "125px",
+            "text-align": "end"
+        },
+        "columns": [
+            {
+                "field": "alias",
+                "style": "max-width: 200px"
+            },
+            {
+                "field": "columnName"
+            },
+            {
+                "field": "aggregation",
+                "style": "max-width: 100px"
+            }
+        ],
+        "dataKey": "columnName",
+        "dragColumnsHint": "dashboard.widgetEditor.dragColumnsHint",
+        "dropIsActive": true,
+        "label": "dashboard.widgetEditor.selectedColumns",
+        "rowReorder": {
+            "rowReorderColumnStyle": "width: 3rem"
+        }
+    },
+    "discoveryWidgetColumnAggregationOptions": [
+        {
+            "label": "COUNT",
+            "value": "COUNT"
+        },
+        {
+            "label": "SUM",
+            "value": "SUM"
+        },
+        {
+            "label": "AVG",
+            "value": "AVG"
+        }
+    ],
+    "measureColumnFilterOperators": [
+        {
+            "label": "=",
+            "value": "="
+        },
+        {
+            "label": "<",
+            "value": "<"
+        },
+        {
+            "label": ">",
+            "value": ">"
+        },
+        {
+            "label": "<=",
+            "value": "<="
+        },
+        {
+            "label": ">=",
+            "value": ">="
+        },
+        {
+            "label": "IN",
+            "value": "IN"
+        },
+        {
+            "label": "is null",
+            "value": "is null"
+        },
+        {
+            "label": "is not null",
+            "value": "is not null"
+        },
+        {
+            "label": "min",
+            "value": "min"
+        },
+        {
+            "label": "max",
+            "value": "max"
+        },
+        {
+            "label": "range",
+            "value": "range"
+        },
+        {
+            "label": "not IN",
+            "value": "not IN"
+        }
+    ],
+    "sortingOrderOptions": [
+        {
+            "label": "dashboard.widgetEditor.ascending",
+            "value": "ASC"
+        },
+        {
+            "label": "dashboard.widgetEditor.descending",
+            "value": "DESC"
+        }
+    ]
+}

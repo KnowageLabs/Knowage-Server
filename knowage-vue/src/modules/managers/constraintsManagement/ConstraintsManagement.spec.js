@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Avatar from 'primevue/avatar'
 import Button from 'primevue/button'
@@ -78,36 +80,30 @@ const customMocks = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/predefinedChecks`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/predefinedChecks`:
                 return Promise.resolve({ data: predefinedMocks })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/customChecks`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/customChecks`:
                 return Promise.resolve({ data: customMocks })
             default:
                 return Promise.resolve({ data: [] })
         }
     }),
-    post: axios.post.mockImplementation(() => Promise.resolve())
+    post: vi.fn().mockImplementation(() => Promise.resolve())
 }
-
-axios.post.mockImplementation(() => Promise.resolve())
 
 const $confirm = {
-    require: jest.fn()
-}
-
-const $store = {
-    commit: jest.fn()
+    require: vi.fn()
 }
 
 const factory = () => {
     return mount(ConstraintsManagement, {
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Avatar,
                 Button,
@@ -121,7 +117,7 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $confirm,
                 $http
             }
@@ -130,7 +126,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Constraints Management loading', () => {
@@ -141,7 +137,7 @@ describe('Constraints Management loading', () => {
         expect(wrapper.find('[data-test="progress-bar"]').exists()).toBe(true)
     })
     it('the list shows an hint component when loaded empty', async () => {
-        axios.get
+        $http.get
             .mockReturnValueOnce(
                 Promise.resolve({
                     data: []

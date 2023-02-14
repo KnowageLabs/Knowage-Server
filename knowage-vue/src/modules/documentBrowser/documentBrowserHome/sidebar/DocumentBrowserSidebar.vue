@@ -2,7 +2,7 @@
     <div id="document-browser-sidebar">
         <Toolbar id="document-detail-toolbar" class="kn-toolbar kn-toolbar--secondary">
             <template #start>
-                <div id="document-icons-container" class="p-d-flex p-flex-row p-jc-around ">
+                <div id="document-icons-container" class="p-d-flex p-flex-row p-jc-around">
                     <i class="fa fa-play-circle document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.executeDocument')" @click="executeDocument" v-if="user?.functionalities.includes('DocumentUserManagement')" />
                     <template v-if="canEditDocument">
                         <i class="pi pi-pencil document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.editDocument')" @click="$emit('showDocumentDetails', document)" />
@@ -23,7 +23,6 @@
             <div v-if="selectedDocument?.previewFile" class="p-text-center">
                 <img id="image-preview" :src="getImageUrl" />
             </div>
-
             <div v-if="document.functionalities && document.functionalities.length > 0" class="p-m-4">
                 <h3 class="p-m-0">{{ $t('common.path') }}</h3>
                 <p v-for="(path, index) in document.functionalities" :key="index" class="p-m-0">{{ path }}</p>
@@ -67,6 +66,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { formatDate } from '@/helpers/commons/localeHelper'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     name: 'document-browser-sidebar',
@@ -88,19 +88,32 @@ export default defineComponent({
             return this.user?.isSuperadmin
         },
         getImageUrl(): string {
-            return process.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=${this.selectedDocument?.previewFile}`
+            return import.meta.env.VITE_HOST_URL + `/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=${this.selectedDocument?.previewFile}`
         },
         canEditDocument(): boolean {
-            if (this.document.stateCode === 'TEST') return this.user?.functionalities.includes('DocumentTestManagement')
-            if (this.document.stateCode === 'DEV') return this.user?.functionalities.includes('DocumentDevManagement')
-            if (this.document.stateCode === 'REL') return this.user?.functionalities.includes('DocumentAdminManagement')
-            if (this.document.stateCode === 'SUSPENDED') return this.user?.functionalities.includes('DocumentAdminManagement')
-            return false
+            if (!this.user) return false
+            switch (this.document.stateCode) {
+                case 'TEST':
+                    return this.user.functionalities.includes('DocumentTestManagement')
+                case 'DEV':
+                    return this.user.functionalities.includes('DocumentDevManagement')
+                case 'REL':
+                    return this.user.functionalities.includes('DocumentAdminManagement')
+                case 'SUSPENDED':
+                case 'SUSP':
+                    return this.user.functionalities.includes('DocumentAdminManagement')
+                default:
+                    return false
+            }
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadDocument()
-        this.user = (this.$store.state as any).user
+        this.user = (this.store.$state as any).user
     },
     methods: {
         loadDocument() {
@@ -137,25 +150,20 @@ export default defineComponent({
     }
 })
 </script>
-
 <style lang="scss" scoped>
 #document-detail-toolbar .p-toolbar-group-left {
     width: 100%;
 }
-
 #document-icons-container {
     width: 100%;
 }
-
 .document-pointer:hover {
     cursor: pointer;
 }
-
 #image-preview {
     max-width: 100%;
     max-height: 200px;
 }
-
 #document-browser-sidebar {
     z-index: 150;
     background-color: white;

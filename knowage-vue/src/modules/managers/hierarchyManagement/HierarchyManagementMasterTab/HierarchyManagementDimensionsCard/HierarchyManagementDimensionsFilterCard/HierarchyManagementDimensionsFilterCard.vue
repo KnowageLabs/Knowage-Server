@@ -38,7 +38,7 @@ import Calendar from 'primevue/calendar'
 import Checkbox from 'primevue/checkbox'
 import Card from 'primevue/card'
 
-const deepcopy = require('deepcopy')
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'hierarchy-management-dimensions-filter-card',

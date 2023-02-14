@@ -21,7 +21,18 @@
     --kn-app-background-color: #ffffff;
 
     // BREADCRUMBS
-    --kn-breadcrumb-border-color: #cccccc;
+    --kn-breadcrumb-height: 38px;
+    --kn-breadcrumb-items-color: #000000de;
+    --kn-breadcrumb-items-border: 0;
+    --kn-breadcrumb-items-padding: 0px;
+    --kn-breadcrumb-selected-item-color: #000000de;
+    --kn-breadcrumb-selected-item-border: 0;
+    --kn-breadcrumb-toolbar-items-color: #fff;
+    --kn-breadcrumb-toolbar-items-border: 0;
+    --kn-breadcrumb-toolbar-items-padding: 0px;
+    --kn-breadcrumb-toolbar-selected-item-color: #fff;
+    --kn-breadcrumb-toolbar-selected-item-border: 0;
+    --kn-breadcrumb-background: #f3f3f3;
 
     // BUTTONS
     --kn-button-border-radius: 2px;
@@ -47,10 +58,12 @@
 
     // LIST
     --kn-list-border-color: #cccccc;
+    --kn-list-item-hover-background-color: #bbd6ed60;
     --kn-list-item-selected-background-color: #bbd6ed;
     --kn-list-item-text-secondary-color: #a7a7a7;
     --kn-list-item-text-secondary-font-size: 0.8rem;
     --kn-list-item-alternated-background-color: #dcdcdc;
+    --kn-list-item-height: 45px;
 
     // MENU
     --kn-mainmenu-background-color: #43749e;
@@ -58,6 +71,8 @@
     --kn-adminmenu-hover-background-color: #cbdeef;
     --kn-mainmenu-box-shadow: 0px 4px 8px #484848;
     --kn-mainmenu-highlight-color: #ce0651;
+    --kn-mainmenu-avatar-background-color: #fff;
+    --kn-mainmenu-avatar-border-radius: 50%;
     --kn-mainmenu-icon-color: #fff;
     --kn-mainmenu-panel-color: #f0f8ff;
     --kn-mainmenu-panel-text-color: #43749e;

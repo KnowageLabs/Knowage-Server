@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import DocumentBrowserTree from './DocumentBrowserTree.vue'
 import Tree from 'primevue/tree'
 
@@ -9,6 +11,23 @@ const mockedFolders = [
         name: 'Functionalities',
         codType: 'LOW_FUNCT',
         code: 'Functionalities',
+        biObjects: []
+    },
+    {
+        id: 601,
+        parentId: 538,
+        name: 'Analytical Documents',
+        codType: 'LOW_FUNCT',
+        code: 'Analytical Documents',
+        biObjects: []
+    },
+
+    {
+        id: 724,
+        parentId: 538,
+        name: 'Demo Analytical Documents',
+        codType: 'LOW_FUNCT',
+        code: 'Demo Analytical Documents',
         biObjects: []
     },
     {
@@ -25,22 +44,6 @@ const mockedFolders = [
         name: 'demo_user',
         codType: 'USER_FUNCT',
         code: 'ufr_demo_user',
-        biObjects: []
-    },
-    {
-        id: 601,
-        parentId: 538,
-        name: 'Analytical Documents',
-        codType: 'LOW_FUNCT',
-        code: 'Analytical Documents',
-        biObjects: []
-    },
-    {
-        id: 724,
-        parentId: 538,
-        name: 'Demo Analytical Documents',
-        codType: 'LOW_FUNCT',
-        code: 'Demo Analytical Documents',
         biObjects: []
     }
 ]
@@ -61,7 +64,7 @@ const factory = (folders) => {
             directives: {
                 tooltip() {}
             },
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Tree
             },
@@ -92,9 +95,9 @@ describe('Document Browser Tree', () => {
 
         await wrapper.find('.p-treenode-label').trigger('click')
 
-        expect(wrapper.vm.selectedFolder).toStrictEqual({ codType: 'LOW_FUNCT', code: 'Personal_Folders', createRoles: [], description: 'Personal Folders', id: 1, name: 'Personal_Folders', parentId: null, path: '/Personal-Folders', subfolders: [] })
+        expect(wrapper.vm.selectedFolder).toStrictEqual({ codType: 'LOW_FUNCT', code: 'Personal_Folders', createRoles: [], description: 'Personal Folders', id: -1, name: 'Personal_Folders', parentId: null, path: '/Personal-Folders', subfolders: [] })
         expect(wrapper.emitted()).toHaveProperty('folderSelected')
-        expect(wrapper.emitted()['folderSelected'][0][0]).toStrictEqual({ codType: 'LOW_FUNCT', code: 'Personal_Folders', createRoles: [], description: 'Personal Folders', id: 1, name: 'Personal_Folders', parentId: null, path: '/Personal-Folders', subfolders: [] })
+        expect(wrapper.emitted()['folderSelected'][0][0]).toStrictEqual({ codType: 'LOW_FUNCT', code: 'Personal_Folders', createRoles: [], description: 'Personal Folders', id: -1, name: 'Personal_Folders', parentId: null, path: '/Personal-Folders', subfolders: [] })
     })
     it('should show the personal folder folder if the user is an administrator', async () => {
         const wrapper = factory(mockedFolders)

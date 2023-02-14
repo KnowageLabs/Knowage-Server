@@ -87,18 +87,26 @@ function cockpitCustomChartControllerFunction(
 		if(scrajs.length > 0){
 			var toLoad = scrajs.length;
 			var loaded = 0;
+			var initializedIndex = 0;
 			var updateLoaded = function(){
 				loaded++;
+				scriptSemaphore();
 			}
-			for(var k = 0; k < scrajs.length; k++) {
-		        var scr = document.createElement("script");
-		        scr.type = "text/javascript";
-		        scr.src = scrajs[k].attributes[0].textContent;
-				scr.addEventListener("load", updateLoaded);
-		        thisElement.appendChild(scr);          
-		    }
-		}	 
-	    
+			scriptSemaphore()
+		}	
+		function scriptSemaphore(){
+			if(loaded === initializedIndex){
+				if(loaded === scrajs.length) setJs()
+				else {
+					var scr = document.createElement("script");
+					scr.type = "text/javascript";
+					scr.src = scrajs[loaded].attributes[0].textContent;
+					scr.addEventListener("load", updateLoaded);
+					thisElement.appendChild(scr); 
+					initializedIndex ++;
+				}
+			}		
+		}
 		function setJs(){
 			try {
 				var tempJS = $sce.trustAs($sce.JS, $scope.ngModel.js.code).$$unwrapTrustedValue();
@@ -124,21 +132,12 @@ function cockpitCustomChartControllerFunction(
 			}
 		}
 		
-		function jsLoadSemaphore(){
-			if(loaded == toLoad){
-				setJs();
-			}else {
-				$timeout(function(){
-					jsLoadSemaphore();
-				},1000)
-			}
-		}
 	
 		if(datasetRecords || nature == 'fullExpand' || nature == 'resize'){
 			if(datasetRecords) datastore.setData(datasetRecords);
 			if($scope.ngModel.js) {
 				if(toLoad){
-					jsLoadSemaphore();
+					scriptSemaphore();
 				}else setJs();
 			}
 		}

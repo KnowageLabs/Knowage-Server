@@ -3,28 +3,49 @@
         <InputText class="kn-material-input p-mx-2" v-model="filter.filterValue" disabled />
     </div>
     <div v-else-if="!filter.static" class="p-mx-2">
-        <span class="p-float-label">
-            <InputText v-if="filter.presentation === 'MANUAL'" class="kn-material-input" v-model="filter.filterValue" @blur="filterChanged" />
-            <Dropdown v-else-if="filter.presentation === 'COMBO'" class="kn-material-input" v-model="filter.filterValue" :options="options" optionValue="column_1" optionLabel="column_1" @change="filterChanged" :filter="true"> </Dropdown>
-            <label v-if="filter.presentation !== 'DRIVER'" class="kn-material-input-label"> {{ filter.title }}</label>
+        <span v-if="filter.presentation === 'MANUAL'" class="p-float-label">
+            <InputText
+                class="kn-material-input"
+                v-model="v$.filter.filterValue.$model"
+                @input="filterChanged"
+                :class="{
+                    'p-invalid': v$.filter.filterValue.$invalid
+                }"
+            />
+            <label class="kn-material-input-label"> {{ filter.title }}</label>
         </span>
+        <span v-else-if="filter.presentation === 'COMBO'" class="p-float-label">
+            <Dropdown class="kn-material-input" v-model="v$.filter.filterValue.$model" :options="options" optionValue="column_1" optionLabel="column_1" @change="filterChanged" :filter="true"> </Dropdown>
+            <label class="kn-material-input-label"> {{ filter.title }}</label>
+        </span>
+        <KnValidationMessages :vComp="v$.filter.filterValue"></KnValidationMessages>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import Dropdown from 'primevue/dropdown'
+import useValidate from '@vuelidate/core'
+import { createValidations } from '@/helpers/commons/validationHelper'
+import validationDescriptor from './RegistryFilterCardValidationDescriptor.json'
+import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 
 export default defineComponent({
     name: 'registry-filter-card',
-    components: { Dropdown },
-    props: { propFilter: { type: Object }, filterOptions: { type: Array }, entity: { type: String }, clearTrigger: { type: Boolean }, id: { type: String } },
-    emits: ['changed'],
+    components: { Dropdown, KnValidationMessages },
+    props: { propFilter: { type: Object }, filterOptions: { type: Array }, entity: { type: Object as PropType<String | null> }, clearTrigger: { type: Boolean }, id: { type: String } },
+    emits: ['changed', 'valid'],
     data() {
         return {
             filter: {} as any,
-            options: [] as any
+            options: [] as any,
+            v$: useValidate() as any
+        }
+    },
+    validations() {
+        return {
+            filter: createValidations('filter', validationDescriptor.validations.configuration)
         }
     },
     watch: {
@@ -56,6 +77,7 @@ export default defineComponent({
         },
         filterChanged() {
             this.$emit('changed', this.filter.filterValue)
+            this.$emit('valid', !this.v$.filter.filterValue.$invalid)
         }
     }
 })

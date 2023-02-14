@@ -8,18 +8,33 @@
             </Toolbar>
         </template>
         <template #content>
-            <DataTable v-if="dataset.meta && (dataset.meta.ccolumns || dataset.meta.dataset)" class="p-datatable-sm kn-table kn-table-small-input" :scrollable="true" scrollHeight="750px" :value="fieldsMetadata" responsiveLayout="stack" breakpoint="960px">
+            <DataTable v-if="dataset.meta && (dataset.meta.ccolumns || dataset.meta.dataset)" class="p-datatable-sm kn-table kn-table-small-input" :autoLayout="true" :value="fieldsMetadata" responsiveLayout="stack" breakpoint="960px">
                 <Column field="fieldAlias" :header="$t('managers.datasetManagement.fieldAlias')" :sortable="true">
-                    <template #body="{data}"> {{ data.fieldAlias }} </template>
+                    <template #body="{ data }"> {{ data.fieldAlias }} </template>
                 </Column>
                 <Column field="Type" :header="$t('importExport.catalogFunction.column.type')" :sortable="true">
-                    <template #body="{data}">
-                        <Dropdown class="kn-material-input" :style="linkTabDescriptor.style.maxwidth" v-model="data.Type" :options="valueTypes" optionDisabled="disabled" optionLabel="value" optionValue="name" @change="saveFieldsMetadata" />
+                    <template #body="{ data }">
+                        <Dropdown class="kn-material-input" :style="linkTabDescriptor.style.maxwidth" v-model="data.Type" :options="valueTypes" optionDisabled="disabled" optionLabel="value" optionValue="name" @change="saveFieldsMetadata" :disabled="true" />
                     </template>
                 </Column>
                 <Column field="fieldType" :header="$t('managers.datasetManagement.fieldType')" :sortable="true">
-                    <template #body="{data}">
-                        <Dropdown class="kn-material-input" :style="linkTabDescriptor.style.maxwidth" v-model="data.fieldType" :options="fieldMetadataTypes" optionLabel="value" optionValue="value" @change="saveFieldsMetadata" />
+                    <template #body="{ data }">
+                        <Dropdown class="kn-material-input" :style="linkTabDescriptor.style.maxwidth" v-model="data.fieldType" :options="fieldMetadataTypes" optionLabel="value" optionValue="value" @change="saveFieldsMetadata('fieldType')" />
+                    </template>
+                </Column>
+                <Column field="personal" :header="$t('managers.datasetManagement.personal')" :sortable="true">
+                    <template #body="{ data }">
+                        <Checkbox id="personal" v-model="data.personal" :binary="true" @change="saveFieldsMetadata('personal')" />
+                    </template>
+                </Column>
+                <Column field="decrypt" :header="$t('managers.datasetManagement.decrypt')" :sortable="true">
+                    <template #body="{ data }">
+                        <Checkbox id="decrypt" v-model="data.decrypt" :binary="true" @change="saveFieldsMetadata('decrypt')" />
+                    </template>
+                </Column>
+                <Column field="subjectId" :header="$t('managers.datasetManagement.subjectId')" :sortable="true">
+                    <template #body="{ data }">
+                        <Checkbox id="subjectId" v-model="data.subjectId" :binary="true" @change="saveFieldsMetadata('subjectId')" />
                     </template>
                 </Column>
             </DataTable>
@@ -38,9 +53,12 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Message from 'primevue/message'
 import Dropdown from 'primevue/dropdown'
+import Checkbox from 'primevue/checkbox'
+import mainStore from '../../../../../App.store'
+import { mapActions } from 'pinia'
 
 export default defineComponent({
-    components: { Card, Column, DataTable, Message, Dropdown },
+    components: { Card, Column, DataTable, Message, Dropdown, Checkbox },
     props: {
         selectedDataset: { type: Object as any }
     },
@@ -67,6 +85,7 @@ export default defineComponent({
     },
 
     methods: {
+        ...mapActions(mainStore, ['setInfo', 'setError']),
         exctractFieldsMetadata(array) {
             var object = {}
 
@@ -88,28 +107,27 @@ export default defineComponent({
 
             this.fieldsMetadata = fieldsMetadata
         },
-        saveFieldsMetadata() {
+        saveFieldsMetadata(fieldName) {
+            this.warnForDuplicateSpatialFields()
+            this.applyMetadataChangesToFields(fieldName)
+        },
+        applyMetadataChangesToFields(fieldName) {
+            for (let i = 0; i < this.fieldsMetadata.length; i++) {
+                for (let j = 0; j < this.dataset.meta.columns.length; j++) {
+                    if (this.fieldsMetadata[i].column == this.dataset.meta.columns[j].column && this.dataset.meta.columns[j].pname == fieldName) {
+                        this.dataset.meta.columns[j].pvalue = this.fieldsMetadata[i][fieldName]
+                    }
+                }
+            }
+        },
+        warnForDuplicateSpatialFields() {
             var numberOfSpatialAttribute = 0
             for (let i = 0; i < this.fieldsMetadata.length; i++) {
                 if (this.fieldsMetadata[i].fieldType == 'SPATIAL_ATTRIBUTE') {
                     numberOfSpatialAttribute++
                     if (numberOfSpatialAttribute > 1) {
-                        this.$store.commit('setError', { title: this.$t('common.error.saving'), msg: this.$t('managers.datasetManagement.duplicateSpatialAttribute') })
+                        this.setError({ title: this.$t('common.error.saving'), msg: this.$t('managers.datasetManagement.duplicateSpatialAttribute') })
                         return
-                    }
-                }
-            }
-            for (let i = 0; i < this.fieldsMetadata.length; i++) {
-                for (let j = 0; j < this.dataset.meta.columns.length; j++) {
-                    if (this.fieldsMetadata[i].column == this.dataset.meta.columns[j].column && this.dataset.meta.columns[j].pname == 'fieldType') {
-                        this.dataset.meta.columns[j].pvalue = this.fieldsMetadata[i].fieldType
-                    }
-                }
-            }
-            for (let i = 0; i < this.fieldsMetadata.length; i++) {
-                for (let j = 0; j < this.dataset.meta.columns.length; j++) {
-                    if (this.fieldsMetadata[i].column == this.dataset.meta.columns[j].column && this.dataset.meta.columns[j].pname == 'Type') {
-                        this.dataset.meta.columns[j].pvalue = this.fieldsMetadata[i].Type
                     }
                 }
             }

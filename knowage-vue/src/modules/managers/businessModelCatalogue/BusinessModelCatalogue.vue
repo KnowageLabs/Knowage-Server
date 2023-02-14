@@ -30,6 +30,7 @@ import businessModelCatalogueDescriptor from './BusinessModelCatalogueDescriptor
 import FabButton from '@/components/UI/KnFabButton.vue'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import KnHint from '@/components/UI/KnHint.vue'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'business-model-catalogue',
@@ -47,6 +48,10 @@ export default defineComponent({
             loading: false
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     async created() {
         if (this.$route.path !== '/business-model-catalogue') {
             this.showHint = false
@@ -57,7 +62,7 @@ export default defineComponent({
         async loadAllCatalogues() {
             this.loading = true
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/businessmodels')
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/businessmodels')
                 .then((response: AxiosResponse<any>) => (this.businessModelList = response.data))
                 .finally(() => (this.loading = false))
         },
@@ -90,8 +95,8 @@ export default defineComponent({
             })
         },
         async deleteBusinessModel(businessModelId: number) {
-            await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/businessmodels/' + businessModelId).then(() => {
-                this.$store.commit('setInfo', {
+            await this.$http.delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/businessmodels/' + businessModelId).then(() => {
+                this.store.setInfo({
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
                 })

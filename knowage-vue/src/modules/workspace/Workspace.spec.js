@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
+import { describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import { nextTick } from 'vue'
-import axios from 'axios'
 import Button from 'primevue/button'
 import Sidebar from 'primevue/sidebar'
 import Accordion from 'primevue/accordion'
@@ -11,15 +12,17 @@ import ProgressBar from 'primevue/progressbar'
 import Workspace from './Workspace.vue'
 import Toolbar from 'primevue/toolbar'
 
-jest.mock('axios')
+vi.mock('axios')
 
-const $http = { get: axios.get.mockImplementation(() => Promise.resolve({ data: [] })) }
+const crypto = require('crypto')
 
-const $store = {
-    state: {
-        user: { isSuperadmin: true, functionalities: ['SaveIntoFolderFunctionality'] }
+Object.defineProperty(global.self, 'crypto', {
+    value: {
+        getRandomValues: (arr) => crypto.randomBytes(arr.length)
     }
-}
+})
+
+const $http = { get: vi.fn().mockImplementation(() => Promise.resolve({ data: [] })) }
 
 const $router = {
     currentRoute: {
@@ -27,7 +30,7 @@ const $router = {
             fullPath: '/workspace/'
         }
     },
-    push: jest.fn()
+    push: vi.fn()
 }
 
 const factory = () => {
@@ -37,7 +40,15 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [],
+            plugins: [
+                createTestingPinia({
+                    initialState: {
+                        store: {
+                            user: { isSuperadmin: true, functionalities: ['SaveIntoFolderFunctionality', 'CreateDocument', 'BuildQbeQueriesFunctionality'] }
+                        }
+                    }
+                })
+            ],
             stubs: {
                 Button,
                 Accordion,
@@ -51,7 +62,7 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $http,
                 $router
             }

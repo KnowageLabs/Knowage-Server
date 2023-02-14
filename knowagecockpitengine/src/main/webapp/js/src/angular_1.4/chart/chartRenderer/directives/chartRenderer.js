@@ -17,7 +17,7 @@
  */
 angular.module('chartRendererModule')
 
-.directive('chartRenderer',function(chartInitializerRetriver,jsonChartTemplate,highchartsDrilldownHelper,sbiModule_config, sbiModule_i18n){
+.directive('chartRenderer',function(chartInitializerRetriver,jsonChartTemplate,highchartsDrilldownHelper,sbiModule_config, sbiModule_i18n,$timeout){
 
 	return{
 		restrict:'E',
@@ -164,8 +164,13 @@ angular.module('chartRendererModule')
 				scope.updateChart = function(widgetData,data){
 					var updateWidgetData = angular.copy(widgetData);
 					updateWidgetData.jsonData = data;
-					scope.chartInitializer.updateData(updateWidgetData);
-
+				
+					if (widgetData.chartTemplate.CHART.seriesStacking === true) {
+						scope.renderChart(scope.chartConf, data);
+					}
+					else {
+							scope.chartInitializer.updateData(updateWidgetData);
+					}
 				}
 
 			scope.$on('refresh',function(event,data,isRealtime,changedChartType,chartConf,selectionsAndParams, shouldUpdate){
@@ -244,7 +249,7 @@ angular.module('chartRendererModule')
 
 				if((scope.chartConf.chart.type == "bar" || scope.chartConf.chart.type == "column" ||
 				   scope.chartConf.chart.type == "line" || scope.chartConf.chart.type == "radar" ||
-				   scope.chartConf.chart.type == "scatter")  && scope.chartConf.series.length > 0){
+				   scope.chartConf.chart.type == "scatter")  && scope.chartConf.series && scope.chartConf.series.length > 0){
 					for( var i=0 ; i < scope.chartConf.series.length ; i++ ){
 
 						if(scope.chartConf.series[i].data[0].dataLabels){
@@ -254,7 +259,10 @@ angular.module('chartRendererModule')
 					}
 				}
 
+			$timeout(function(){
 				scope.renderChart(scope.chartConf,data,selectionsAndParams);
+			},100)
+				
 
 
 			})

@@ -3,7 +3,7 @@
         <Listbox class="countryList" :options="languages" optionDisabled="disabled">
             <template #option="slotProps">
                 <div :class="['p-d-flex', 'p-ai-center', 'countryItem', slotProps.option.locale]" class="p-my-1" @click="changeLanguage(slotProps.option)">
-                    <img :alt="slotProps.option.locale" :src="require('@/assets/images/flags/' + slotProps.option.locale.toLowerCase().substring(3, 5) + '.svg')" width="40" />
+                    <img :alt="slotProps.option.locale" :src="`${publicPath}/images/flags/${slotProps.option.locale.toLowerCase().substring(3, 5)}.svg`" width="40" />
                     <div class="countryLabel">{{ $t(`language.${slotProps.option.locale}`) }}</div>
                     <span class="kn-flex"></span>
                     <i class="fas fa-check" v-if="slotProps.option.locale === $i18n.locale"></i>
@@ -20,9 +20,8 @@
 import { defineComponent } from 'vue'
 import Dialog from 'primevue/dialog'
 import Listbox from 'primevue/listbox'
-import { mapState } from 'vuex'
-import store from '@/App.store'
-import { usePrimeVue } from 'primevue/config'
+import { mapState } from 'pinia'
+import mainStore from '@/App.store'
 
 import { AxiosResponse } from 'axios'
 
@@ -39,21 +38,19 @@ export default defineComponent({
     },
     data() {
         return {
-            languages: Array<Language>()
+            languages: Array<Language>(),
+            publicPath: import.meta.env.VITE_PUBLIC_PATH
         }
     },
-    created() {
-        const primevue = usePrimeVue() as any
-        // @ts-ignore
-        if (this.$i18n.messages[this.$i18n.locale.replaceAll('-', '_')]) {
-            // @ts-ignore
-            primevue.config.locale = { ...primevue.config.locale, ...this.$i18n.messages[this.$i18n.locale.replaceAll('-', '_')].locale }
-        }
-    },
+
     props: {
         visibility: Boolean
     },
     emits: ['update:visibility', 'update:loading'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     methods: {
         changeLanguage(language) {
             let splittedLanguage = language.locale.split('_')
@@ -68,7 +65,7 @@ export default defineComponent({
             this.$emit('update:loading', true)
             this.$http.get(url).then(
                 () => {
-                    store.commit('setLocale', language.locale)
+                    this.store.setLocale(language.locale)
                     localStorage.setItem('locale', language.locale)
                     this.$i18n.locale = language.locale
 
@@ -85,14 +82,14 @@ export default defineComponent({
         }
     },
     computed: {
-        ...mapState({
+        ...mapState(mainStore, {
             locale: 'locale'
         })
     },
     watch: {
         visibility(newVisibility) {
             if (newVisibility && this.languages.length == 0) {
-                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/languages').then(
+                this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/languages').then(
                     (response: AxiosResponse<any>) => {
                         let languagesArray = response.data.sort()
 

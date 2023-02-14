@@ -136,6 +136,32 @@ public final class DataSetServiceProxy extends AbstractServiceProxy {
 		return dataSet;
 	}
 
+	public IDataSet getDataSetByLabelAndUserCategories(String label) {
+		IDataSet dataSet = null;
+		SpagoBiDataSet dataSetConfig = null;
+
+		logger.debug("IN.dataset.label=" + label);
+
+		if (label == null || label.length() == 0) {
+			logger.error("dataset label is NULL");
+			return null;
+		}
+		try {
+			dataSetConfig = lookUp().getDataSetByLabelAndUserCategories(readTicket(), userId, label);
+			if (dataSetConfig != null) {
+				// added userId and session parameters to manage correctly Qbe dataset configuration in DataSetFactory
+				dataSet = DataSetFactory.getDataSet(dataSetConfig, userId, this.session);
+				addMetaModelProxy(dataSet);
+			}
+		} catch (Exception e) {
+			logger.error("Error during Service LookUp", e);
+			throw new IllegalStateException(e);
+		} finally {
+			logger.debug("OUT");
+		}
+		return dataSet;
+	}
+
 	public IDataSet saveDataSet(IDataSet dataset) {
 		IDataSet toReturn = null;
 		SpagoBiDataSet dataSetConfig = null;

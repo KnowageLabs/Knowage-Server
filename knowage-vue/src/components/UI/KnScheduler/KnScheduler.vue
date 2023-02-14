@@ -70,7 +70,7 @@
                                         </template>
                                     </i18n-t>
 
-                                    <span class="p-mr-2" style="white-space:nowrap">
+                                    <span class="p-mr-2" style="white-space: nowrap">
                                         {{ $t('knScheduler.startingIn') }}
                                     </span>
                                     <Dropdown
@@ -105,44 +105,13 @@
                             <div v-else-if="selectedRefreshRate === 'monthly'">
                                 <i18n-t keypath="knScheduler.everyMonth" tag="div" class="p-d-flex p-ai-center p-mr-2">
                                     <template #month>
-                                        <Dropdown
-                                            id="selectedMonth"
-                                            :class="descriptor.style.dropdown"
-                                            v-model="selectedMonth"
-                                            optionLabel="name"
-                                            optionValue="id"
-                                            :options="getNumberOptions(5)"
-                                            maxLength="100"
-                                            @change="
-                                                () => {
-                                                    updateFormula()
-                                                    $emit('touched')
-                                                }
-                                            "
-                                            :disabled="isDisabled"
-                                        />
+                                        <Dropdown id="selectedMonth" :class="descriptor.style.dropdown" v-model="selectedMonth" optionLabel="name" optionValue="id" :options="getNumberOptions(5)" maxLength="100" :disabled="isDisabled" />
                                     </template>
                                 </i18n-t>
 
                                 <div class="p-d-flex p-ai-center">
                                     {{ $t('knScheduler.startingIn') }}
-                                    <Dropdown
-                                        id="selectedMonthExtended"
-                                        :class="descriptor.style.dropdown"
-                                        v-model="selectedMonthExtended"
-                                        dataKey="id"
-                                        optionLabel="name"
-                                        optionValue="id"
-                                        :options="months"
-                                        maxLength="100"
-                                        @change="
-                                            () => {
-                                                updateFormula()
-                                                $emit('touched')
-                                            }
-                                        "
-                                        :disabled="isDisabled"
-                                    />
+                                    <Dropdown id="selectedMonthExtended" :class="descriptor.style.dropdown" v-model="selectedMonthExtended" dataKey="id" optionLabel="name" optionValue="id" :options="months" maxLength="100" :disabled="isDisabled" />
                                 </div>
 
                                 <div class="p-d-flex p-ai-center p-flex-wrap itemClass">
@@ -160,7 +129,6 @@
                                         @change="
                                             () => {
                                                 monthConf = 'theDay'
-                                                $emit('touched')
                                             }
                                         "
                                         :disabled="isDisabled"
@@ -182,7 +150,6 @@
                                         @change="
                                             () => {
                                                 monthConf = 'theOrdinalDay'
-                                                $emit('touched')
                                             }
                                         "
                                         :disabled="isDisabled"
@@ -200,7 +167,6 @@
                                         @change="
                                             () => {
                                                 monthConf = 'theOrdinalDay'
-                                                $emit('touched')
                                             }
                                         "
                                         :disabled="isDisabled"
@@ -210,46 +176,14 @@
                             <div v-else-if="selectedRefreshRate === 'yearly'">
                                 <i18n-t keypath="knScheduler.everyYear" tag="div" class="p-d-flex p-ai-center p-mr-2">
                                     <template #year>
-                                        <Dropdown
-                                            id="selectedYear"
-                                            :class="descriptor.style.dropdown"
-                                            v-model="selectedYear"
-                                            dataKey="id"
-                                            optionLabel="name"
-                                            optionValue="code"
-                                            :options="getNumberOptions(5)"
-                                            maxLength="100"
-                                            @change="
-                                                () => {
-                                                    updateFormula()
-                                                    $emit('touched')
-                                                }
-                                            "
-                                            :disabled="isDisabled"
-                                        />
+                                        <Dropdown id="selectedYear" :class="descriptor.style.dropdown" v-model="selectedYear" dataKey="id" optionLabel="name" optionValue="code" :options="getNumberOptions(5)" maxLength="100" :disabled="isDisabled" />
                                     </template>
                                 </i18n-t>
 
                                 <div class="p-d-flex p-ai-center">
                                     {{ $t('knScheduler.in') }}
 
-                                    <Dropdown
-                                        id="selectedMonth"
-                                        :class="descriptor.style.dropdown"
-                                        v-model="selectedMonth"
-                                        dataKey="id"
-                                        optionLabel="name"
-                                        optionValue="code"
-                                        :options="months"
-                                        maxLength="100"
-                                        @change="
-                                            () => {
-                                                updateFormula()
-                                                $emit('touched')
-                                            }
-                                        "
-                                        :disabled="isDisabled"
-                                    />
+                                    <Dropdown id="selectedMonth" :class="descriptor.style.dropdown" v-model="selectedMonth" dataKey="id" optionLabel="name" optionValue="code" :options="months" maxLength="100" :disabled="isDisabled" />
                                 </div>
 
                                 <div class="p-d-flex p-ai-center p-flex-wrap itemClass">
@@ -267,7 +201,6 @@
                                         @change="
                                             () => {
                                                 yearConf = 'theDay'
-                                                $emit('touched')
                                             }
                                         "
                                         :disabled="isDisabled"
@@ -289,7 +222,6 @@
                                         @change="
                                             () => {
                                                 yearConf = 'theOrdinalDay'
-                                                $emit('touched')
                                             }
                                         "
                                         :disabled="isDisabled"
@@ -307,7 +239,6 @@
                                         @change="
                                             () => {
                                                 yearConf = 'theOrdinalDay'
-                                                $emit('touched')
                                             }
                                         "
                                         :disabled="isDisabled"
@@ -315,7 +246,17 @@
                                 </div>
                             </div>
                             <div v-else-if="selectedRefreshRate === 'custom'">
-                                <span class="p-float-label p-col-12"> <InputText :id="name" type="text" v-model="localCronExpression" v-bind="$attrs" :class="[cssClass ? cssClass + ' kn-truncated' : 'kn-material-input kn-truncated', required && !modelValue ? 'p-invalid' : '']"/></span>
+                                <span class="p-float-label p-col-12">
+                                    <InputText
+                                        :id="name"
+                                        type="text"
+                                        v-model="localCronExpression"
+                                        v-bind="$attrs"
+                                        :class="[cssClass ? cssClass + ' kn-truncated' : 'kn-material-input kn-truncated', required && !modelValue ? 'p-invalid' : '']"
+                                        @change="$emit('update:currentCronExpression', localCronExpression)"
+                                        :disabled="isDisabled"
+                                /></span>
+                                <small id="custom-cron-hint" v-html="$t('knScheduler.customCronHint')"></small>
                             </div>
                         </div>
 
@@ -324,7 +265,7 @@
                             <label for="endDate" class="kn-material-input-label"> {{ $t('kpi.targetDefinition.endDate') }} </label>
                         </div>
 
-                        <Message v-if="!readOnly" :class="['p-col-12 messageClass', readOnly ? 'p-message-disabled' : '']" severity="info" :closable="false">
+                        <Message v-if="!readOnly" :class="['p-col-12 messageClass', readOnly ? 'p-message-disabled' : '']" :severity="'info'">
                             <template v-if="paused">{{ $t('knScheduler.schedulationPaused') }} </template><template v-else>{{ getCronstrueFormula }} </template></Message
                         >
                     </div></template
@@ -379,7 +320,7 @@
 
                         <Column class="kn-truncated" field="errorFile" :header="''" :sortable="false" :selectionMode="false" :exportable="false">
                             <template #body="slotProps">
-                                <span><Button icon="pi pi-download" class="p-button-link" v-if="slotProps.data['status'] === 'KO'" @click="downloadLog(slotProps.data)"/></span> </template
+                                <span><Button icon="pi pi-download" class="p-button-link" v-if="slotProps.data['status'] === 'KO'" @click="downloadLog(slotProps.data)" /></span> </template
                         ></Column> </DataTable
                 ></template>
             </Card>
@@ -398,13 +339,14 @@ import InputText from 'primevue/inputtext'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import InputSwitch from 'primevue/inputswitch'
-
 import moment from 'moment'
 import { luxonFormatDate } from '@/helpers/commons/localeHelper'
 import cronstrue from 'cronstrue/i18n'
 import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
 import { IDataPrepLog } from '@/modules/workspace/dataPreparation/DataPreparationMonitoring/DataPreparationMonitoring'
 import { AxiosResponse } from 'axios'
+import { mapState } from 'pinia'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'kn-scheduler',
@@ -423,6 +365,7 @@ export default defineComponent({
         descriptor: Object,
         readOnly: { type: Boolean, default: false },
         cronExpression: String,
+        cronExpressionType: String,
         logs: [] as any,
         schedulerVisible: { type: Boolean, default: true },
         logsVisible: { type: Boolean, default: true },
@@ -430,12 +373,12 @@ export default defineComponent({
         schedulationPaused: Boolean,
         loadingLogs: { type: Boolean, default: false }
     },
-    emits: ['touched', 'update:schedulationPaused', 'update:schedulationEnabled', 'update:currentCronExpression'],
+    emits: ['touched', 'update:schedulationPaused', 'update:schedulationEnabled', 'update:currentCronExpression', 'update:cronExpressionType'],
     data() {
         return {
             startDate: null as Date | null,
             endDate: null as Date | null,
-            selectedRefreshRate: null,
+            selectedRefreshRate: '',
             selectedMonth: null,
             selectedYear: null,
             selectedDay: null,
@@ -460,19 +403,24 @@ export default defineComponent({
             allValues: '*',
             noSpecificValue: '?',
             enableSchedulation: true,
-            paused: false
+            paused: false,
+            validCronExpression: true
         }
     },
     computed: {
+        ...mapState(mainStore, {
+            configuration: 'configuration'
+        }),
         getCronstrueFormula(): String {
             let locale = localStorage.getItem('locale')
             let cronLocale = ''
             if (locale) {
                 let splitted = locale.split('_')
-
                 cronLocale = locale.includes('#') ? (cronLocale = splitted[0] + '_' + splitted[2]) : (cronLocale = splitted[0])
             }
-            return cronstrue.toString(this.localCronExpression, { locale: cronLocale })
+            let verboseDescription = cronstrue.toString(this.localCronExpression, { locale: cronLocale })
+            if (verboseDescription.includes('undefined')) verboseDescription = this.$t('knScheduler.invalidCronExpression')
+            return verboseDescription
         },
         getSchedulerClass(): String {
             if (this.logsVisible) {
@@ -482,7 +430,7 @@ export default defineComponent({
                     return 'p-col-0'
                 }
             } else {
-                return 'p-col-12'
+                return 'p-col'
             }
         },
         getLogsTableClass(): String {
@@ -501,47 +449,42 @@ export default defineComponent({
         }
     },
     async created() {
-        await this.loadUserConfig()
+        if (!this.configuration || (!this.configuration && !this.configuration['SPAGOBI.TIMESTAMP-FORMAT.format'])) await this.loadUserConfig()
         this.startDateEnabled = this.descriptor?.config.startDateEnabled
         if (this.startDateEnabled) {
             this.startDate = new Date()
         }
-
         this.descriptor?.refreshRate.options.forEach((x) => {
             this.refreshRates.push({ code: x.code, id: x.id, name: this.$t(x.name) })
         })
-
         this.descriptor?.days.forEach((x) => {
             this.days.push({ code: x.code, id: x.id, name: this.$t(x.name) })
         })
-
         this.descriptor?.months.forEach((x) => {
             this.months.push({ code: x.code, id: x.id, name: this.$t(x.name) })
         })
-
         this.descriptor?.monthly.ordinal.options.forEach((x) => {
             this.ordinal.push({ code: x.code, id: x.id, name: this.$t(x.name) })
         })
-
         this.localCronExpression = this.cronExpression || '0 0 0 * * ? *'
-
-        this.selectedRefreshRate = this.descriptor?.refreshRate.options[0].code
-
         if (this.schedulationEnabled) this.enableSchedulation = this.schedulationEnabled
+        this.selectedRefreshRate = this.descriptor?.refreshRate.options[0].code
+        if (this.cronExpressionType) {
+            this.selectedRefreshRate = this.cronExpressionType
+        }
     },
     updated() {
         this.enableSchedulation = this.schedulationEnabled
-
         this.paused = this.schedulationPaused
     },
     methods: {
         async downloadLog(item: IDataPrepLog) {
-            await this.$http.post(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/' + item.id + '/log/download').then((response: AxiosResponse<any>) => {
+            await this.$http.post(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/process/' + item.id + '/log/download').then((response: AxiosResponse<any>) => {
                 downloadDirectFromResponse(response)
             })
         },
         getFormattedDate(date: any): String {
-            return luxonFormatDate(date, undefined, this.dateFormat)
+            return luxonFormatDate(new Date(date), undefined, this.dateFormat)
         },
         getNumberOptions(max: Number) {
             let tmp = [] as any
@@ -549,19 +492,20 @@ export default defineComponent({
             return tmp
         },
         isSet(cronExpressionToken): Boolean {
-            return cronExpressionToken !== this.allValues && cronExpressionToken !== this.noSpecificValue
+            return cronExpressionToken && cronExpressionToken !== this.allValues && cronExpressionToken !== this.noSpecificValue
         },
         async loadUserConfig() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/user-configs`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/user-configs`).then((response: AxiosResponse<any>) => {
                 if (response.data) {
-                    this.dateFormat = response.data['SPAGOBI.TIMESTAMP-FORMAT.format'] ? response.data['SPAGOBI.TIMESTAMP-FORMAT.format'] : response.data['SPAGOBI.DATE-FORMAT-SERVER.format']
+                    this.dateFormat = response.data['SPAGOBI.TIMESTAMP-FORMAT.format'] ? response.data['SPAGOBI.TIMESTAMP-FORMAT.format'] : response.data['SPAGOBI.DATE-FORMAT-SERVER.format'] === '%Y-%m-%d' ? 'dd/MM/yyyy' : response.data['SPAGOBI.DATE-FORMAT-SERVER.format']
                 }
             })
         },
         parseFormula(cronExpression) {
+            if (this.selectedRefreshRate == 'custom') {
+                return
+            }
             if (cronExpression === '0 0 0 ? * MON,TUE,WED,THU,FRI *') {
-                // @ts-ignore
-                this.selectedRefreshRate = 'daily'
                 // @ts-ignore
                 this.dayConf = 'everyNotWorkingDays'
             } else {
@@ -599,7 +543,6 @@ export default defineComponent({
                             if (splitted.length > 0) {
                                 for (var index in splitted) {
                                     let day = this.descriptor?.days.filter((x) => x.code === splitted[index].toLowerCase())[0]
-
                                     this.selectedWeekdays[day.id] = [day.code]
                                 }
                             }
@@ -610,28 +553,17 @@ export default defineComponent({
                     // @ts-ignore
                     this.selectedYear = cronExpressionArr[6].split('/')[1]
                 }
-
                 if (this.selectedYear) {
-                    // @ts-ignore
-                    this.selectedRefreshRate = 'yearly'
-
                     if (this.selectedDayExtended)
                         // @ts-ignore
                         this.yearConf = 'theOrdinalDay'
                     // @ts-ignore
                     else this.yearConf = 'theDay'
-                } else if (Object.keys(this.selectedWeekdays).length > 0) {
-                    // @ts-ignore
-                    this.selectedRefreshRate = 'weekly'
                 } else {
                     if (this.selectedDay) {
                         // @ts-ignore
-                        this.selectedRefreshRate = 'daily'
-                        // @ts-ignore
                         this.dayConf = 'everyDay'
                     } else if (this.selectedMonth) {
-                        // @ts-ignore
-                        this.selectedRefreshRate = 'monthly'
                         if (this.selectedDayNumber) {
                             // @ts-ignore
                             this.monthConf = 'theDay'
@@ -645,7 +577,6 @@ export default defineComponent({
         },
         resetFormula() {
             this.localCronExpression = '0 0 0 * * ? *'
-
             this.selectedMonth = null
             this.selectedYear = null
             this.selectedDay = null
@@ -655,16 +586,18 @@ export default defineComponent({
             this.dayConf = null
             this.monthConf = null
             this.yearConf = null
-
             this.$emit('update:currentCronExpression', this.localCronExpression)
+            this.$emit('update:cronExpressionType', this.selectedRefreshRate)
         },
         updateFormula() {
+            if (this.selectedRefreshRate === 'custom') {
+                return
+            }
             let cronExpressionArr = this.localCronExpression.split(' ')
             cronExpressionArr[0] = cronExpressionArr[1] = cronExpressionArr[2] = '0'
             if (this.selectedRefreshRate === 'daily') {
                 if (this.dayConf === 'everyDay') {
                     cronExpressionArr[3] = this.noSpecificValue
-
                     if (this.selectedDay && this.selectedDayExtended) {
                         cronExpressionArr[5] = this.selectedDayExtended + '/' + this.selectedDay
                     }
@@ -676,7 +609,6 @@ export default defineComponent({
                 let weekdayKeys = Object.keys(this.selectedWeekdays)
                 if (weekdayKeys.length > 0) {
                     let set = new Set()
-
                     for (var day in this.selectedWeekdays) {
                         if (this.selectedWeekdays[day][0]) {
                             set.add(this.selectedWeekdays[day][0].toUpperCase())
@@ -686,24 +618,18 @@ export default defineComponent({
                 } else {
                     t += this.allValues
                 }
-
                 cronExpressionArr[5] = t
-
                 cronExpressionArr[3] = '?'
-
                 cronExpressionArr[4] = this.allValues
             } else if (this.selectedRefreshRate === 'monthly') {
                 if (this.selectedMonthExtended && this.selectedMonth) {
                     cronExpressionArr[4] = this.selectedMonthExtended + '/' + this.selectedMonth
                 }
-
                 if (this.monthConf === 'theDay') {
                     cronExpressionArr[3] = this.selectedDayNumber ? this.selectedDayNumber! : this.allValues
-
                     cronExpressionArr[5] = this.noSpecificValue
                 } else if (this.monthConf === 'theOrdinalDay') {
                     cronExpressionArr[3] = this.noSpecificValue
-
                     if (this.selectedDayExtended && this.selectedDayOrdinal) {
                         cronExpressionArr[5] = this.selectedDayExtended + '#' + this.selectedDayOrdinal
                     }
@@ -711,17 +637,14 @@ export default defineComponent({
                 cronExpressionArr[6] = this.allValues
             } else if (this.selectedRefreshRate === 'yearly') {
                 cronExpressionArr[4] = this.selectedMonth ? this.selectedMonth! : this.allValues
-
                 if (this.yearConf === 'theDay') {
                     cronExpressionArr[3] = this.selectedDayNumber ? this.selectedDayNumber! : this.allValues
                 } else if (this.yearConf === 'theOrdinalDay') {
                     cronExpressionArr[3] = this.noSpecificValue
-
                     if (this.selectedDayExtended && this.selectedDayOrdinal) {
                         cronExpressionArr[5] = this.selectedDayExtended + '#' + this.selectedDayOrdinal
                     }
                 }
-
                 if (this.selectedYear) {
                     cronExpressionArr[6] = moment().year() + '/' + this.selectedYear
                 } else {
@@ -729,7 +652,6 @@ export default defineComponent({
                 }
             }
             this.localCronExpression = cronExpressionArr.join(' ')
-
             this.$emit('update:currentCronExpression', this.localCronExpression)
         },
         togglePause() {
@@ -743,10 +665,9 @@ export default defineComponent({
         }
     },
     watch: {
-        selectedRefreshRate() {
-            this.updateFormula()
+        selectedRefreshRate(newValue) {
+            this.$emit('update:cronExpressionType', newValue)
         },
-
         selectedMonth() {
             this.updateFormula()
         },
@@ -783,8 +704,17 @@ export default defineComponent({
                 this.parseFormula(this.localCronExpression)
             }
         },
+        cronExpressionType(newCronExpressionType) {
+            this.selectedRefreshRate = newCronExpressionType
+            if (this.localCronExpression) {
+                this.parseFormula(this.localCronExpression)
+            }
+        },
         localCronExpression() {
-            this.parseFormula(this.localCronExpression)
+            if (this.localCronExpression !== this.cronExpression) this.$emit('touched')
+            if (this.localCronExpression) {
+                this.parseFormula(this.localCronExpression)
+            }
         },
         schedulationPaused(newSchedulationPaused) {
             this.paused = newSchedulationPaused
@@ -796,7 +726,7 @@ export default defineComponent({
 })
 </script>
 
-<style lang="css">
+<style lang="css" scoped>
 .knScheduler {
     min-width: 200px;
     min-height: 100px;
@@ -806,11 +736,9 @@ export default defineComponent({
 .dayCheckbox {
     width: 100px;
 }
-
 .messageClass {
     height: 50px;
 }
-
 .itemClass {
     width: 100%;
 }

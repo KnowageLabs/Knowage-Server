@@ -51,9 +51,13 @@
 				});
 		}
 
+	
+
 		objToReturn.exportWidgetToExcel = function (type, widget, options) {
-
-
+	
+		if (widget.type == "chart") {
+			widget = replaceStringVariables(widget);
+		}
 			/**
 			 * Last parameter is set to TRUE for exporting only one widget, rather than whole document (all table and chart widgets in cockpit)
 			 */
@@ -78,6 +82,16 @@
 						});
 				});
 		}
+		
+	var replaceStringVariables = function (obj){
+		var objString = angular.copy(obj);
+		objString = JSON.stringify(objString);
+  		  objString = objString.replace(/\$V\{([a-zA-Z0-9\-\_]*){1}(?:.([a-zA-Z0-9\-\_]*){1})?\}/g,function(match,p1,p2){
+					return p2 ? cockpitModule_properties.VARIABLES[p1][p2] : cockpitModule_properties.VARIABLES[p1];
+				})
+				
+	return JSON.parse(objString);
+	}
 
 
 		var createRequest = function (type, widget, exportWidget, options) {
@@ -151,16 +165,19 @@
 				else {
 					aggregation = cockpitModule_widgetSelection.getAggregation(widget, dataset)
 				}
+				var userSelections = cockpitModule_widgetSelection.getAllUserSelections();
 				var loadDomainValues = widget.type == "selector" ? true : false;
 				var selections = cockpitModule_datasetServices.getWidgetSelectionsAndFilters(widget, dataset, loadDomainValues);
 				var parameters = cockpitModule_datasetServices.getDatasetParameters(dsId);
 				var parametersString = cockpitModule_datasetServices.getParametersAsString(parameters);
 				var paramsToSend = angular.fromJson(parametersString);
+				
 				requestUrl.COCKPIT_SELECTIONS = {};
 				requestUrl.COCKPIT_SELECTIONS.aggregations = aggregation;
 				requestUrl.COCKPIT_SELECTIONS.parameters = paramsToSend;
 				requestUrl.COCKPIT_SELECTIONS.drivers = drivers;
 				requestUrl.COCKPIT_SELECTIONS.selections = selections;
+				requestUrl.COCKPIT_SELECTIONS.userSelections = (userSelections.length >0) ? userSelections[0] : selections;
 				requestUrl.COCKPIT_VARIABLES = cockpitModule_properties.VARIABLES;
 				requestUrl.options = options;
 			}
@@ -208,6 +225,7 @@
 			else {
 				aggregation = cockpitModule_widgetSelection.getAggregation(widget, dataset)
 			}
+
 			var selections = cockpitModule_datasetServices.getWidgetSelectionsAndFilters(widget, dataset, false);
 			var parameters = cockpitModule_datasetServices.getDatasetParameters(dsId);
 			var parametersString = cockpitModule_datasetServices.getParametersAsString(parameters);

@@ -43,6 +43,8 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
 import it.eng.spagobi.behaviouralmodel.check.dao.ICheckDAO;
 import it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO;
 import it.eng.spagobi.cache.dao.ICacheDAO;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.dao.es.EventToDatabaseEmittingCommand;
 import it.eng.spagobi.community.dao.ISbiCommunityDAO;
 import it.eng.spagobi.dossier.dao.ISbiDossierActivityDAO;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
@@ -113,7 +115,9 @@ import it.eng.spagobi.workspace.dao.IObjFuncOrganizerDAO;
  */
 public class DAOFactory {
 
-	static private Logger logger = Logger.getLogger(DAOFactory.class);
+	private static final Logger LOGGER = Logger.getLogger(DAOFactory.class);
+
+	private static final String CONFIG_EMIT_AUTHORIZATION_EVENTS = "KNOWAGE.EMIT_AUTHORIZATION_EVENTS";
 
 	private static String getDAOClass(String daoName) {
 		return DAOConfig.getMappings().get(daoName);
@@ -192,6 +196,16 @@ public class DAOFactory {
 	}
 
 	/**
+	 * Creates a DAO instance for a categories.
+	 *
+	 * @return a DAO instance for categories
+	 *
+	 */
+	public static ICategoryDAO getCategoryDAO() {
+		return (ICategoryDAO) createDAOInstance("CategoryDAO");
+	}
+
+	/**
 	 * Creates a DAO instance for an engine.
 	 *
 	 * @return a DAO instance for the engine
@@ -248,7 +262,14 @@ public class DAOFactory {
 	 *
 	 */
 	public static IRoleDAO getRoleDAO() {
-		return (IRoleDAO) createDAOInstance("RoleDAO");
+		IRoleDAO ret = (IRoleDAO) createDAOInstance("RoleDAO");
+
+		if (isAuthorizationEventsEmissionEnable()) {
+			EventToDatabaseEmittingCommand eventToDatabaseEmittingCommand = new EventToDatabaseEmittingCommand();
+			ret.setEventEmittingCommand(eventToDatabaseEmittingCommand);
+		}
+
+		return ret;
 	}
 
 	/**
@@ -543,7 +564,14 @@ public class DAOFactory {
 	 * @throws EMFUserError If an Exception occurred
 	 */
 	public static ISbiUserDAO getSbiUserDAO() {
-		return (ISbiUserDAO) createDAOInstance("SbiUserDAO");
+		ISbiUserDAO ret = (ISbiUserDAO) createDAOInstance("SbiUserDAO");
+
+		if (isAuthorizationEventsEmissionEnable()) {
+			EventToDatabaseEmittingCommand eventToDatabaseEmittingCommand = new EventToDatabaseEmittingCommand();
+			ret.setEventEmittingCommand(eventToDatabaseEmittingCommand);
+		}
+
+		return ret;
 	}
 
 	/**
@@ -964,5 +992,11 @@ public class DAOFactory {
 
 	public static ISbiTagDAO getSbiTagDao() {
 		return (ISbiTagDAO) createDAOInstance("ISbiTagDAO");
+	}
+
+	private static boolean isAuthorizationEventsEmissionEnable() {
+		SingletonConfig config = SingletonConfig.getInstance();
+		String configValue = config.getConfigValue(CONFIG_EMIT_AUTHORIZATION_EVENTS);
+		return Boolean.parseBoolean(configValue);
 	}
 }

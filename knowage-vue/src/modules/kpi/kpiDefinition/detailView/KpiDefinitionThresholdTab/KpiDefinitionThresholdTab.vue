@@ -71,13 +71,13 @@
                 <Column :rowReorder="true" headerStyle="width: 3rem" :reorderableColumn="false" />
 
                 <Column field="label" :header="$t('common.label')">
-                    <template #editor="slotProps">
+                    <template #body="slotProps">
                         <InputText :style="tresholdTabDescriptor.styles.input" v-model="slotProps.data['label']" @change="$emit('touched')" />
                     </template>
                 </Column>
 
                 <Column field="minValue" :header="$t('kpi.kpiDefinition.min')">
-                    <template #editor="slotProps">
+                    <template #body="slotProps">
                         <InputText :style="tresholdTabDescriptor.styles.input" v-model="slotProps.data['minValue']" type="number" @change="$emit('touched')" />
                     </template>
                 </Column>
@@ -89,7 +89,7 @@
                 </Column>
 
                 <Column field="maxValue" :header="$t('kpi.kpiDefinition.max')">
-                    <template #editor="slotProps">
+                    <template #body="slotProps">
                         <InputText :style="tresholdTabDescriptor.styles.input" v-model="slotProps.data['maxValue']" type="number" @change="$emit('touched')" />
                     </template>
                 </Column>
@@ -101,14 +101,13 @@
                 </Column>
 
                 <Column field="severityId" header="Severity">
-                    <template #editor="slotProps">
+                    <template #body="slotProps">
                         <Dropdown v-model="slotProps.data['severityId']" :style="tresholdTabDescriptor.styles.input" :options="severityOptions" optionLabel="valueCd" optionValue="valueId" @change="setSeverityCd($event, slotProps.data)">
                             <template #option="slotProps">
                                 <span>{{ slotProps.option.valueCd }}</span>
                             </template>
                         </Dropdown>
                     </template>
-                    <template #body="slotProps">{{ slotProps.data['severityCd'] }} </template>
                 </Column>
 
                 <Column field="color" :header="$t('kpi.kpiDefinition.color')">
@@ -118,7 +117,7 @@
                     </template>
                 </Column>
 
-                <Column header style="text-align:right">
+                <Column header style="text-align: right">
                     <template #header>
                         <Button :label="$t('kpi.kpiDefinition.thresholdsListTitle')" class="p-button-link" @click="thresholdListVisible = true" />
                     </template>
@@ -264,7 +263,7 @@ export default defineComponent({
         loadSelectedThreshold(event) {
             this.thresholdToClone = []
             let url = ''
-            this.kpi.id ? (url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${event.value.id}/loadThreshold?kpiId=${this.selectedKpi.id}`) : (url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${event.value.id}/loadThreshold`)
+            this.kpi.id ? (url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpi/${event.value.id}/loadThreshold?kpiId=${this.selectedKpi.id}`) : (url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpi/${event.value.id}/loadThreshold`)
 
             return this.$http.get(url).then((response: AxiosResponse<any>) => {
                 this.thresholdToClone = { ...response.data }

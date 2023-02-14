@@ -69,6 +69,16 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	public BIObject loadBIObjectByLabel(String label) throws EMFUserError;
 
 	/**
+	 * Loads all detail information for a BI Object identified by its <code>name</code> identifier. All these information, achived by a query to the DB, are
+	 * stored into a <code>BIObject</code> object, which is returned.
+	 *
+	 * @param name The BI object name identifier
+	 * @return The BI object detail information, stored into a <code>BIObject</code>
+	 * @throws EMFUserError If an Exception occurs
+	 */
+	public BIObject loadBIObjectByName(String name) throws EMFUserError;
+
+	/**
 	 * Loads all detail information for a BI Object identified by its <code>biObjectID</code> identifier. All these information, achived by a query to the DB,
 	 * are stored into a <code>BIObject</code> object, which is returned.
 	 *

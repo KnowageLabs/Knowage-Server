@@ -31,6 +31,11 @@ public class FieldMetadata implements IFieldMetaData, Cloneable {
 	int precision;
 	int scale;
 
+	boolean personal;
+	boolean masked;
+	boolean decrypt;
+	boolean subjectId;
+
 	public FieldMetadata() {
 		super();
 		this.properties = new HashMap();
@@ -201,6 +206,70 @@ public class FieldMetadata implements IFieldMetaData, Cloneable {
 	public int getScale() {
 		// TODO Auto-generated method stub
 		return scale;
+	}
+
+	/**
+	 * @return the personal
+	 */
+	@Override
+	public boolean isPersonal() {
+		return personal;
+	}
+
+	/**
+	 * @param personal the personal to set
+	 */
+	@Override
+	public void setPersonal(boolean personal) {
+		this.personal = personal;
+	}
+
+//	/**
+//	 * @return the masked
+//	 */
+//	@Override
+//	public boolean isMasked() {
+//		return masked;
+//	}
+//
+//	/**
+//	 * @param masked the masked to set
+//	 */
+//	@Override
+//	public void setMasked(boolean masked) {
+//		this.masked = masked;
+//	}
+
+	/**
+	 * @return the decrypt
+	 */
+	@Override
+	public boolean isDecrypt() {
+		return decrypt;
+	}
+
+	/**
+	 * @param decrypt the decrypt to set
+	 */
+	@Override
+	public void setDecrypt(boolean decrypt) {
+		this.decrypt = decrypt;
+	}
+
+	/**
+	 * @return the subjectId
+	 */
+	@Override
+	public boolean isSubjectId() {
+		return subjectId;
+	}
+
+	/**
+	 * @param subjectId the subjectId to set
+	 */
+	@Override
+	public void setSubjectId(boolean subjectId) {
+		this.subjectId = subjectId;
 	}
 
 }

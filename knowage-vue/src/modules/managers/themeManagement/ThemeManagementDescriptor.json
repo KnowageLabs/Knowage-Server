@@ -5,6 +5,22 @@
         "themeName": "New Custom Theme"
     },
     "examples": {
+        "breadcrumbs": {
+            "home": {
+                "icon": "pi pi-home"
+            },
+            "items": [
+                {
+                    "label": "First"
+                },
+                {
+                    "label": "Second"
+                },
+                {
+                    "label": "Last"
+                }
+            ]
+        },
         "dataTable": [
             {
                 "category": "Accessories",

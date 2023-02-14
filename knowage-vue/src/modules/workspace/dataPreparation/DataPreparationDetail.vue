@@ -1,13 +1,43 @@
 <template>
     <div class="kn-page kn-data-preparation">
-        <KnCalculatedField v-model:visibility="showCFDialog" @save="saveCFDialog" @cancel="cancelCFDialog" :fields="columns" :descriptor="cfDescriptor" :readOnly="readOnly" @update:readOnly="updateReadOnly" v-model:template="selectedTransformation" />
+        <KnCalculatedField
+            v-model:visibility="showCFDialog"
+            @save="saveCFDialog"
+            @cancel="cancelCFDialog"
+            :fields="columns"
+            :descriptor="cfDescriptor"
+            :propCalcFieldFunctions="cfDescriptor.availableFunctions"
+            :readOnly="readOnly"
+            @update:readOnly="updateReadOnly"
+            v-model:template="selectedTransformation"
+            :valid="cfType !== ''"
+        >
+            <template #additionalInputs>
+                <div class="p-col-4">
+                    <span v-if="cfDescriptor.availableTypes" class="p-float-label p-field p-ml-2 kn-flex">
+                        <Dropdown
+                            v-model="cfType"
+                            :options="cfDescriptor.availableTypes"
+                            :disabled="readOnly"
+                            class="kn-material-input"
+                            optionLabel="label"
+                            optionValue="code"
+                            :class="{
+                                'p-invalid': !cfType
+                            }"
+                        />
+                        <label class="kn-material-input-label"> {{ $t('components.knCalculatedField.type') }} </label>
+                    </span>
+                </div>
+            </template>
+        </KnCalculatedField>
         <DataPreparationDialog v-model:transformation="selectedTransformation" @send-transformation="handleTransformation" :columns="columns" v-model:col="col" :readOnly="readOnly" @update:readOnly="updateReadOnly" />
         <DataPreparationSaveDialog v-model:visibility="showSaveDialog" :originalDataset="dataset" :config="dataset.config" :columns="columns" :instanceId="instanceId" @update:instanceId="updateInstanceId" :processId="processId" @update:processId="updateprocessId" :preparedDsMeta="preparedDsMeta" />
         <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
-            <template #start> {{ $t('managers.workspaceManagement.dataPreparation.label') }} ({{ $t('managers.workspaceManagement.dataPreparation.originalDataset') }}: {{ dataset.label }})</template>
+            <template #start> {{ $t('managers.workspaceManagement.dataPreparation.label') }} ({{ $t('managers.workspaceManagement.dataPreparation.originalDataset') }}: {{ dataset.name }})</template>
             <template #end>
-                <Button icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.refresh')" @click="refreshOriginalDataset" />
-                <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDataset" />
+                <Button icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.refresh')" @click="refreshOriginalDataset" :disabled="loading > 0" />
+                <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDataset" :disabled="loading > 0" />
                 <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeTemplate()" /> </template
         ></Toolbar>
         <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0 toolbarCustomConfig">
@@ -27,31 +57,34 @@
                 </div>
             </template>
         </Toolbar>
-        <Divider class="kn-divider" />
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading > 0" />
+        <template v-if="loading > 0">
+            <template v-if="progressMode === 'indeterminate'">
+                <ProgressBar class="kn-progress-bar" :mode="progressMode" :value="getProgressValue()" />
+            </template>
+            <template v-else><ProgressBar class="kn-progress-bar" :value="getProgressValue()" /> </template>
+        </template>
+        <Divider class="kn-divider dividerCustomConfig" />
         <div class="kn-page-content p-grid p-m-0 managerDetail">
             <Sidebar v-model:visible="visibleRight" position="right" class="kn-data-preparation-sidenav">
                 <div class="info-container">
                     <div class="original-dataset">
-                        <i class="fa fa-database"></i><span>{{ $t('managers.workspaceManagement.dataPreparation.originalDataset') }}</span
+                        <i class="fa fa-database p-mr-2"></i><span>{{ $t('managers.workspaceManagement.dataPreparation.originalDataset') }}</span
                         >: {{ dataset.label }}
                     </div>
-                    <div class="original-dataset" v-if="dataset.refreshRate">
-                        <i class="fas fa-stopwatch"></i><span>{{ $t('managers.workspaceManagement.dataPreparation.dataset.refreshRate.label') }}</span
-                        >: {{ dataset.refreshRate }}
-                    </div>
+                </div>
+
+                <div class="titleContainer">
+                    <h4 class="kn-truncated">{{ $t('managers.workspaceManagement.dataPreparation.transformations.label') }}</h4>
                 </div>
                 <Divider class="p-m-0 p-p-0 dividerCustomConfig" />
-                <div class="kn-truncated">{{ $t('managers.workspaceManagement.dataPreparation.transformations.label') }}</div>
-
-                <Listbox class="kn-list kn-flex kn-list-no-border-right" :options="dataset.config.transformations" optionLabel="type" listStyle="max-height:200px"
+                <Listbox class="kn-list kn-flex kn-list-no-border-right" :options="reverseTransformations()" optionLabel="type"
                     ><template #option="slotProps">
                         <div class="p-text-uppercase kn-list-item transformationSidebarElement">
                             <div v-if="slotProps.option.type != 'calculatedField'">{{ slotProps.option.type }} - {{ slotProps.option.parameters[0].columns[0] }}</div>
                             <div v-else>{{ slotProps.option.type }} - {{ slotProps.option.parameters[0].colName }}</div>
                             <div>
                                 <Button v-if="slotProps.option.type != 'trim' && slotProps.option.type != 'drop'" icon="fas fa-eye" :class="descriptor.css.buttonClassHeader" @click="openTransformationDetail(slotProps.option)" v-tooltip="$t('common.preview')" />
-                                <Button v-if="slotProps.index == dataset.config.transformations.length - 1" icon="p-jc-end pi pi-trash" :class="descriptor.css.buttonClassHeader" @click="deleteTransformation()" v-tooltip="$t('common.delete')" />
+                                <Button v-if="slotProps.index == 0" icon="p-jc-end pi pi-trash" :class="descriptor.css.buttonClassHeader" @click="deleteTransformation()" v-tooltip="$t('common.delete')" :disabled="loading > 0" />
                             </div>
                         </div> </template
                 ></Listbox>
@@ -92,20 +125,24 @@
                                 <Dropdown v-model="col.fieldType" :options="translateRoles()" optionLabel="label" optionValue="code" class="kn-material-input" />
                             </span>
                         </OverlayPanel>
-                        <div style="display: flex; flex-direction: column; flex:1;">
+                        <div class="aliasAndType p-ml-2">
                             <input class="kn-input-text-sm" type="text" v-model="col.fieldAlias" v-if="col.editing" @blur="changeAlias(col)" @keydown.enter="changeAlias(col)" />
                             <span v-else class="kn-clickable" @click="changeAlias(col)">{{ col.fieldAlias }}</span>
                             <span class="kn-list-item-text-secondary kn-truncated roleType">{{ $t(removePrefixFromType(col.Type)) }}</span>
                         </div>
                         <Button icon="pi pi-ellipsis-v" :class="descriptor.css.buttonClassHeader" @click="toggle($event, 'trOpType-' + colIndex)" />
                         <Menu :model="getTransformationsMenu(col)" :ref="'trOpType-' + colIndex" :popup="true">
-                            <template #item="{item}">
+                            <template #item="{ item }">
                                 <span :class="['p-menuitem-link', 'toolbarCustomConfig', descriptor.css.buttonClassHeader]" @click="callFunction(item, col)">
                                     <span :class="item.icon.class" class="menu-icon" v-if="item.icon.class">{{ item.icon.name }}</span>
                                     <i v-else :class="item.icon"></i> <span class="p-ml-2"> {{ $t(item.label) }}</span>
                                 </span>
                             </template>
-                        </Menu>
+                        </Menu> </template
+                    ><template #body="{ data }">
+                        <span v-if="col.Type.toLowerCase().includes('time')"> {{ getFormattedDate(data[col.header], { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }) }}</span>
+                        <span v-else-if="col.Type.toLowerCase().includes('date')"> {{ getFormattedDate(data[col.header], { year: 'numeric', month: '2-digit', day: '2-digit' }) }}</span>
+                        <span v-else> {{ data[col.header] }}</span>
                     </template></Column
                 >
             </DataTable>
@@ -135,14 +172,16 @@ import { IDataPreparationColumn } from '@/modules/workspace/dataPreparation/Data
 import KnCalculatedField from '@/components/functionalities/KnCalculatedField/KnCalculatedField.vue'
 import DataPreparationSimpleDescriptor from '@/modules/workspace/dataPreparation/DataPreparationSimple/DataPreparationSimpleDescriptor.json'
 import DataPreparationSplitDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCustom/DataPreparationSplitDescriptor.json'
-import calculatedFieldDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCalculatedField.json'
+import calculatedFieldDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCalculatedFieldDescriptor.json'
 
 import { Client } from '@stomp/stompjs'
+import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'data-preparation-detail',
     props: {
-        id: String,
+        id: Number,
         transformations: Array as PropType<any[]>,
         existingProcessId: String,
         existingInstanceId: String,
@@ -173,21 +212,35 @@ export default defineComponent({
             instanceId: '' as string,
             processId: '' as string,
             readOnly: false as boolean,
-            preparedDsMeta: {}
+            preparedDsMeta: {},
+            progressMode: 'indeterminate',
+            cfType: ''
         }
     },
-
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     async created() {
         this.loading++
         this.descriptorTransformations = Object.assign([], this.descriptor.transformations)
 
-        await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datasets/' + this.id).then((response: AxiosResponse<any>) => {
+        await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/datasets/dataset/id/' + this.id).then((response: AxiosResponse<any>) => {
             this.dataset = response.data[0]
         })
         if (this.dataset) {
-            this.initDsMetadata()
+            await this.initDsMetadata()
             this.initTransformations()
-            this.initWebsocket()
+
+            var url = new URL(window.location.origin)
+            url.protocol = url.protocol.replace('http', 'ws')
+            var uri = url + 'knowage-data-preparation/ws?' + import.meta.env.VITE_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
+            this.client = new Client({
+                brokerURL: uri,
+                connectHeaders: {},
+                heartbeatIncoming: 4000,
+                heartbeatOutgoing: 4000
+            })
 
             this.client.onConnect = () => {
                 this.client.subscribe(
@@ -202,7 +255,7 @@ export default defineComponent({
                         this.loading--
                     },
                     {
-                        dsLabel: this.dataset.label
+                        dsId: this.dataset.id
                     }
                 )
 
@@ -210,11 +263,11 @@ export default defineComponent({
                     // called when the client receives a STOMP message from the server
                     if (error.body) {
                         let message = JSON.parse(error.body)
-                        this.$store.commit('setError', { title: 'Error', msg: message.message })
+                        this.store.setError({ title: 'Error', msg: message.message })
                     } else {
-                        this.$store.commit('setError', { title: 'Error' })
+                        this.store.setError({ title: 'Error' })
                     }
-                    this.dataset.config.transformations.splice(-1)
+                    if (this.dataset.config && this.dataset.config.transformations?.length > 0) this.dataset.config.transformations.splice(-1)
                     this.loading--
                 })
 
@@ -224,30 +277,55 @@ export default defineComponent({
                         // called when the client receives a STOMP message from the server
                         if (message.body) {
                             let avroJobResponse = JSON.parse(message.body)
-                            if (avroJobResponse.statusOk) this.$store.commit('setInfo', { title: 'Dataset ' + avroJobResponse.dsLabel + ' prepared successfully' })
-                            else this.$store.commit('setError', { title: 'Cannot prepare dataset ' + avroJobResponse.dsLabel, msg: avroJobResponse.errorMessage })
+                            if (avroJobResponse.statusOk) this.store.setInfo({ title: 'Dataset prepared successfully' })
+                            else this.store.setError({ title: 'Cannot prepare dataset', msg: avroJobResponse.errorMessage })
                             //TODO: refresh data?
                         } else {
-                            this.$store.commit('setError', { title: 'Websocket error', msg: 'got empty message' })
+                            this.store.setError({ title: 'Websocket error', msg: 'got empty message' })
                         }
                     },
                     {
-                        dsLabel: this.dataset.label
+                        dsId: this.dataset.id
                     }
                 )
 
                 if (this.transformations) {
-                    this.client.publish({ destination: '/app/preview', headers: { dsLabel: this.dataset.label }, body: JSON.stringify(this.dataset.config.transformations) })
+                    this.client.publish({ destination: '/app/preview', headers: { dsId: this.dataset.id }, body: JSON.stringify(this.dataset.config.transformations) })
                 }
             }
 
             this.client.activate()
         }
     },
+
     methods: {
+        getFormattedDate(date: any, format: any) {
+            return formatDateWithLocale(date, format, true)
+        },
+        getProgressValue() {
+            if (this.dataset.config && this.dataset.config.transformations && this.dataset.config.transformations.length && this.dataset.config.transformations.length > 1) {
+                this.progressMode = ''
+                let tot = this.dataset.config.transformations.length
+
+                return (100 * (tot - this.loading)) / tot
+            }
+
+            this.progressMode = 'indeterminate'
+
+            return 0
+        },
+        reverseTransformations() {
+            if (this.dataset.config && this.dataset.config.transformations) {
+                let transformations = [...this.dataset.config.transformations]
+                return transformations.reverse()
+            }
+
+            return []
+        },
         cancelCFDialog(): void {
             this.selectedTransformation = null
             this.showCFDialog = false
+            this.cfType = ''
         },
         saveCFDialog(t): void {
             let convertedTransformation = this.convertCFTransformation(t)
@@ -261,10 +339,14 @@ export default defineComponent({
                 if (key === 'column') par.columns.push(t[key].header)
                 else par[key] = t[key]
             })
+            if (this.cfDescriptor.availableTypes) {
+                par['type'] = this.cfType
+            }
             transformation.parameters.push(par)
             return transformation
         },
         calculateDisabledProperty(menu): Boolean {
+            if (this.loading > 0) return true
             let disabled = false
             if (menu.type === 'advancedFilter') {
                 if (!this.dataset.config) disabled = true
@@ -283,7 +365,7 @@ export default defineComponent({
             // launch avro export job
             this.$http
                 .post(
-                    process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/data-preparation/prepare/${this.dataset.id}`,
+                    import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/data-preparation/prepare/${this.dataset.id}`,
                     {},
                     {
                         headers: {
@@ -293,14 +375,14 @@ export default defineComponent({
                     }
                 )
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('workspace.myData.isPreparing')
                     })
                 })
                 .catch(() => {})
 
             // listen on websocket for avro export job to be finished
-            this.client.publish({ destination: '/app/prepare', body: this.dataset.label })
+            this.client.publish({ destination: '/app/prepare', body: this.dataset.id })
         },
         openTransformationDetail(t) {
             this.readOnly = true
@@ -320,8 +402,14 @@ export default defineComponent({
                 } else {
                     obj['value'] = param[key]
                 }
+
+                if (t.type === 'calculatedField' && this.cfDescriptor.availableTypes) {
+                    this.cfType = t.parameters[0].type
+                }
+
                 selectedTransformation['parameters'].push(obj)
             })
+
             if (t.type == 'filter' || t.type == 'split') {
                 let col = this.columns.filter((x) => x.fieldAlias.toUpperCase() === t.parameters[0].columns[0].toUpperCase())[0]
                 this.callFunction(selectedTransformation, col)
@@ -342,36 +430,28 @@ export default defineComponent({
                 this.loading++
             }
         },
-        initWebsocket(): void {
-            var url = new URL(window.location.origin)
-            url.protocol = url.protocol.replace('http', 'ws')
-            var uri = url + 'knowage-data-preparation/ws?' + process.env.VUE_APP_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
-            this.client = new Client({
-                brokerURL: uri,
-                connectHeaders: {},
-                heartbeatIncoming: 4000,
-                heartbeatOutgoing: 4000
-            })
-        },
         async initDsMetadata() {
             if (this.existingProcessId) this.processId = this.existingProcessId
             if (this.existingInstanceId) this.instanceId = this.existingInstanceId
             if (this.existingDataset) {
                 let dsMeta = JSON.parse(this.existingDataset)
-                this.preparedDsMeta = {}
-                this.preparedDsMeta['label'] = dsMeta.label
-                this.preparedDsMeta['name'] = dsMeta.name
-                this.preparedDsMeta['description'] = dsMeta.description
-                await this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/by-destination-data-set/' + dsMeta.label).then((response: AxiosResponse<any>) => {
+                let tmp = {}
+                tmp['label'] = dsMeta.label
+                tmp['name'] = dsMeta.name
+                tmp['description'] = dsMeta.description
+                tmp['id'] = dsMeta.id
+                await this.$http.get(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/process/by-destination-data-set/' + dsMeta.id).then((response: AxiosResponse<any>) => {
                     let instance = response.data.instance
                     if (instance.config) {
-                        this.preparedDsMeta['config'] = instance.config
+                        tmp['config'] = instance.config
                     }
                 })
+
+                this.preparedDsMeta = tmp
             }
         },
         getColHeader(metadata: Array<any>, idx: Number): string {
-            let columnMapping = 'Column_' + idx
+            let columnMapping = 'column_' + idx
             let toReturn = metadata.filter((x) => x.mappedTo == columnMapping)[0].alias
             return toReturn
         },
@@ -422,7 +502,7 @@ export default defineComponent({
             if (!this.dataset.config.transformations) this.dataset.config.transformations = []
             this.dataset.config.transformations.push(t)
             this.loading++
-            this.client.publish({ destination: '/app/preview', headers: { dsLabel: this.dataset.label }, body: JSON.stringify(this.dataset.config.transformations) })
+            this.client.publish({ destination: '/app/preview', headers: { dsId: this.dataset.id }, body: JSON.stringify(this.dataset.config.transformations) })
         },
         toggleSidebarVisibility() {
             this.visibleRight = true
@@ -431,7 +511,7 @@ export default defineComponent({
             if (index) this.dataset.config.transformations.splice(index, 1)
             else this.dataset.config.transformations.splice(-1) // remove last element
             this.loading++
-            this.client.publish({ destination: '/app/preview', headers: { dsLabel: this.dataset.label }, body: JSON.stringify(this.dataset.config.transformations) })
+            this.client.publish({ destination: '/app/preview', headers: { dsId: this.dataset.id }, body: JSON.stringify(this.dataset.config.transformations) })
         },
         getCompatibilityType(col: IDataPreparationColumn): void {
             return this.descriptor.compatibilityMap[col.Type].values
@@ -439,12 +519,14 @@ export default defineComponent({
         toggle(event: Event, trOp: string): void {
             // eslint-disable-next-line
             // @ts-ignore
-            this.$refs[trOp].toggle(event)
+            const temp = this.$refs[trOp] as any
+
+            temp[0].toggle(event)
         },
         getMenuForToolbar(): Array<any> {
             let tmp = this.descriptorTransformations
                 .filter((x) => x.toolbar && !x.hidden)
-                .sort(function(a, b) {
+                .sort(function (a, b) {
                     if (a.position > b.position) return 1
                     if (a.position < b.position) return -1
                     return 0
@@ -517,7 +599,10 @@ export default defineComponent({
         }
     },
     unmounted() {
-        if (this.client) this.client.deactivate()
+        if (Object.keys(this.client).length > 0) {
+            this.client.deactivate()
+            this.client = {}
+        }
     }
 })
 </script>
@@ -588,6 +673,11 @@ export default defineComponent({
         .transformation-icon {
             min-width: 24px;
         }
+    }
+}
+.p-column-header-content {
+    .p-button {
+        min-width: 0;
     }
 }
 
@@ -663,5 +753,17 @@ export default defineComponent({
 }
 .sidebarClass {
     flex-direction: column-reverse;
+}
+
+.titleContainer {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.aliasAndType {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 </style>

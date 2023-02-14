@@ -1,0 +1,553 @@
+{
+    "availableDatasetsMock": [
+        {
+            "active": true,
+            "categoryId": 409,
+            "configuration": {
+                "Query": "SELECT DATE_FORMAT(TIME_IN, \"%Y %m %d\") as date,COUNT(*) as documents \nFROM SBI_AUDIT \nwhere TIME_IN > ADDDATE(curdate(), -60)\nGROUP BY DATE_FORMAT(TIME_IN, \"%Y %m %d\")\norder by  DATE_FORMAT(TIME_IN, \"%Y %m %d\") asc",
+                "dataSource": "knowage",
+                "queryScript": "",
+                "queryScriptLanguage": ""
+            },
+            "description": "AUDIT_01",
+            "federation": null,
+            "id": {
+                "dsId": 116,
+                "organization": "DEMO",
+                "versionNum": 5
+            },
+            "isCachingSupported": true,
+            "isIterable": true,
+            "isNearRealtimeSupported": true,
+            "isRealtime": false,
+            "label": "AUDIT_01",
+            "metaVersion": null,
+            "metadata": {
+                "fieldsMeta": [
+                    {
+                        "alias": "date",
+                        "decrypt": false,
+                        "fieldType": "ATTRIBUTE",
+                        "multiValue": false,
+                        "name": "date",
+                        "personal": false,
+                        "precision": 0,
+                        "properties": {},
+                        "scale": 0,
+                        "subjectId": false,
+                        "type": "java.lang.String"
+                    },
+                    {
+                        "alias": "documents",
+                        "decrypt": false,
+                        "fieldType": "ATTRIBUTE",
+                        "multiValue": false,
+                        "name": "documents",
+                        "personal": false,
+                        "precision": 0,
+                        "properties": {},
+                        "scale": 0,
+                        "subjectId": false,
+                        "type": "java.lang.Long"
+                    }
+                ],
+                "properties": {
+                    "resultNumber": "1"
+                }
+            },
+            "modelCache": false,
+            "name": "AUDIT_01",
+            "numRows": false,
+            "owner": "demo_admin",
+            "parameters": [],
+            "persistTableName": "",
+            "persisted": false,
+            "persistedHDFS": false,
+            "pivotColumnName": null,
+            "pivotColumnValue": null,
+            "pivotRowName": null,
+            "sbiVersionDe": null,
+            "sbiVersionIn": null,
+            "sbiVersionUp": null,
+            "scope": {
+                "domainCd": "DS_SCOPE",
+                "domainNm": "Dataset scope",
+                "valueCd": "TECHNICAL",
+                "valueDs": "Dataset scope",
+                "valueId": 188,
+                "valueNm": "TECHNICAL"
+            },
+            "scopeId": 188,
+            "tags": [],
+            "timeDe": null,
+            "timeIn": null,
+            "timeUp": null,
+            "transformerId": null,
+            "type": "SbiQueryDataSet",
+            "userDe": null,
+            "userIn": null,
+            "userUp": null
+        }
+    ],
+    "mockResponse": {
+        "metaData": {
+            "cacheDate": "2022-09-07 12:07:44.000",
+            "fields": [
+                "recNo",
+                {
+                    "dataIndex": "column_1",
+                    "header": "FID",
+                    "multiValue": false,
+                    "name": "column_1",
+                    "type": "string"
+                },
+                {
+                    "dataIndex": "column_2",
+                    "header": "the_geom",
+                    "multiValue": false,
+                    "name": "column_2",
+                    "type": "string"
+                },
+                {
+                    "dataIndex": "column_3",
+                    "header": "store_id",
+                    "multiValue": false,
+                    "name": "column_3",
+                    "type": "string"
+                },
+                {
+                    "dataIndex": "column_4",
+                    "header": "region_id",
+                    "multiValue": false,
+                    "name": "column_4",
+                    "precision": 0,
+                    "scale": 0,
+                    "type": "float"
+                }
+            ],
+            "id": "id",
+            "root": "rows",
+            "totalProperty": "results"
+        },
+        "results": 25,
+        "rows": [
+            {
+                "column_1": "store.12",
+                "column_2": "-122.7497184 45.527440511",
+                "column_3": "Supermarket",
+                "column_4": 22,
+                "id": 1
+            },
+            {
+                "column_1": "store.12",
+                "column_2": "-102.5152609 22.752039312",
+                "column_3": "Deluxe Supermarket",
+                "column_4": 25,
+                "id": 2
+            },
+            {
+                "column_1": "store.12",
+                "column_2": "-123.0362824 44.937496713",
+                "column_3": "Deluxe Supermarket",
+                "column_4": 23,
+                "id": 3
+            },
+            {
+                "column_1": "store.15",
+                "column_2": "-122.4531371 37.75781514",
+                "column_3": "Small Grocery",
+                "column_4": 1,
+                "id": 4
+            },
+            {
+                "column_1": "store.16",
+                "column_2": "-122.3101131 47.682903715",
+                "column_3": "Supermarket",
+                "column_4": 18,
+                "id": 5
+            },
+            {
+                "column_1": "store.17",
+                "column_2": "-117.4948579 47.675041516",
+                "column_3": "Supermarket",
+                "column_4": 87,
+                "id": 6
+            },
+            {
+                "column_1": "store.18",
+                "column_2": "-122.553689 47.242860817",
+                "column_3": "Deluxe Supermarket",
+                "column_4": 6,
+                "id": 7
+            },
+            {
+                "column_1": "store.19",
+                "column_2": "-103.012048 21.633049718",
+                "column_3": "Mid-Size Grocery",
+                "column_4": 6,
+                "id": 8
+            },
+            {
+                "column_1": "store.20",
+                "column_2": "-123.1848491 49.268665519",
+                "column_3": "Deluxe Supermarket",
+                "column_4": 6,
+                "id": 9
+            },
+            {
+                "column_1": "store.21",
+                "column_2": "-123.4355336 48.428274120",
+                "column_3": "Mid-Size Grocery",
+                "column_4": 5,
+                "id": 10
+            },
+            {
+                "column_1": "test1",
+                "column_2": "",
+                "column_3": "",
+                "column_4": 901,
+                "id": 11
+            },
+            {
+                "column_1": "",
+                "column_2": "test2",
+                "column_3": "",
+                "column_4": 36.04,
+                "id": 12
+            },
+            {
+                "column_1": "test3",
+                "column_2": "",
+                "column_3": "test3",
+                "column_4": 555,
+                "id": 12
+            }
+        ]
+    },
+    "previewMock": {
+        "metaData": {
+            "fields": [
+                "recNo",
+                {
+                    "dataIndex": "column_1",
+                    "header": "Full name",
+                    "multiValue": false,
+                    "name": "column_1",
+                    "type": "string"
+                },
+                {
+                    "dataIndex": "column_2",
+                    "dateFormat": "d/m/Y",
+                    "dateFormatJava": "dd/MM/yyyy",
+                    "header": "Date Big",
+                    "multiValue": false,
+                    "name": "column_2",
+                    "type": "date"
+                },
+                {
+                    "dataIndex": "column_3",
+                    "dateFormat": "d/m/Y",
+                    "dateFormatJava": "dd/MM/yyyy",
+                    "header": "Date Med",
+                    "multiValue": false,
+                    "name": "column_3",
+                    "type": "date"
+                },
+                {
+                    "dataIndex": "column_4",
+                    "dateFormat": "d/m/Y",
+                    "dateFormatJava": "dd/MM/yyyy",
+                    "header": "Date Short",
+                    "multiValue": false,
+                    "name": "column_4",
+                    "type": "date"
+                }
+            ],
+            "id": "id",
+            "root": "rows",
+            "totalProperty": "results"
+        },
+        "results": 1154,
+        "rows": [
+            {
+                "column_1": "Sheri Nowmer",
+                "column_2": "03/08/2022",
+                "column_3": "03/08/2022",
+                "column_4": "03/08/2022",
+                "id": 1
+            },
+            {
+                "column_1": "Derrick Whelply",
+                "column_2": "03/08/2022",
+                "column_3": "03/08/2022",
+                "column_4": "03/08/2022",
+                "id": 2
+            },
+            {
+                "column_1": "Michael Spence",
+                "column_2": "03/08/2022",
+                "column_3": "03/08/2022",
+                "column_4": "03/08/2022",
+                "id": 3
+            },
+            {
+                "column_1": "Maya Gutierrez",
+                "column_2": "03/08/2022",
+                "column_3": "03/08/2022",
+                "column_4": "03/08/2022",
+                "id": 4
+            },
+            {
+                "column_1": "Roberta Damstra",
+                "column_2": "03/08/2022",
+                "column_3": "03/08/2022",
+                "column_4": "03/08/2022",
+                "id": 5
+            },
+            {
+                "column_1": "Rebecca Kanagaki",
+                "column_2": "03/08/2022",
+                "column_3": "03/08/2022",
+                "column_4": "03/08/2022",
+                "id": 6
+            },
+            {
+                "column_1": "Kim Brunner",
+                "column_2": "03/08/2022",
+                "column_3": "03/08/2022",
+                "column_4": "03/08/2022",
+                "id": 7
+            },
+            {
+                "column_1": "Brenda Blumberg",
+                "column_2": "03/08/2022",
+                "column_3": "03/08/2022",
+                "column_4": "03/08/2022",
+                "id": 8
+            },
+            {
+                "column_1": "Darren Stanz",
+                "column_2": "03/08/2022",
+                "column_3": "03/08/2022",
+                "column_4": "03/08/2022",
+                "id": 9
+            },
+            {
+                "column_1": "Jonathan Murraiin",
+                "column_2": "03/08/2022",
+                "column_3": "03/08/2022",
+                "column_4": "03/08/2022",
+                "id": 10
+            },
+            {
+                "column_1": "Jewel Creek",
+                "column_2": "03/08/2022",
+                "column_3": "03/08/2022",
+                "column_4": "03/08/2022",
+                "id": 11
+            },
+            {
+                "column_1": "Peggy Medina",
+                "column_2": "03/08/2022",
+                "column_3": "03/08/2022",
+                "column_4": "03/08/2022",
+                "id": 12
+            },
+            {
+                "column_1": "Bryan Rutledge",
+                "column_2": "03/08/2022",
+                "column_3": "03/08/2022",
+                "column_4": "03/08/2022",
+                "id": 13
+            },
+            {
+                "column_1": "Walter Cavestany",
+                "column_2": "03/08/2022",
+                "column_3": "03/08/2022",
+                "column_4": "03/08/2022",
+                "id": 14
+            },
+            {
+                "column_1": "Peggy Planck",
+                "column_2": "03/08/2022",
+                "column_3": "03/08/2022",
+                "column_4": "03/08/2022",
+                "id": 15
+            }
+        ]
+    },
+    "selectionMockedResponse": [
+        {
+            "aggregated": false,
+            "columnAlias": "data",
+            "columnName": "data",
+            "ds": "AUDIT_02",
+            "value": "2021 12 29"
+        },
+        {
+            "aggregated": false,
+            "columnAlias": "mete",
+            "columnName": "mete",
+            "ds": "AUDIT_03",
+            "value": "150"
+        },
+        {
+            "aggregated": false,
+            "columnAlias": "test",
+            "columnName": "test",
+            "ds": "AUDIT_04",
+            "value": "halou"
+        },
+        {
+            "aggregated": false,
+            "columnAlias": "gada",
+            "columnName": "gada",
+            "ds": "AUDIT_05",
+            "value": "value smts"
+        },
+        {
+            "aggregated": false,
+            "columnAlias": "halp me",
+            "columnName": "halp me",
+            "ds": "AUDIT_06",
+            "value": "oh boi"
+        }
+    ],
+    "selectorMockedResponse": {
+        "metaData": {
+            "cacheDate": "2021-11-22 11:32:04.000",
+            "fields": [
+                "recNo",
+                {
+                    "dataIndex": "column_1",
+                    "header": "data",
+                    "multiValue": false,
+                    "name": "column_1",
+                    "type": "string"
+                }
+            ],
+            "id": "id",
+            "root": "rows",
+            "totalProperty": "results"
+        },
+        "results": 29,
+        "rows": [
+            {
+                "column_1": "2021 12 29",
+                "id": 1
+            },
+            {
+                "column_1": "2021 12 28",
+                "id": 2
+            },
+            {
+                "column_1": "2021 12 27",
+                "id": 3
+            },
+            {
+                "column_1": "2021 12 24",
+                "id": 4
+            },
+            {
+                "column_1": "2021 12 23",
+                "id": 5
+            },
+            {
+                "column_1": "2021 12 21",
+                "id": 6
+            },
+            {
+                "column_1": "2021 12 20",
+                "id": 7
+            },
+            {
+                "column_1": "2021 12 17",
+                "id": 8
+            },
+            {
+                "column_1": "2021 12 16",
+                "id": 9
+            },
+            {
+                "column_1": "2021 12 15",
+                "id": 10
+            },
+            {
+                "column_1": "2021 12 14",
+                "id": 11
+            },
+            {
+                "column_1": "2021 12 10",
+                "id": 12
+            },
+            {
+                "column_1": "2021 12 09",
+                "id": 13
+            },
+            {
+                "column_1": "2021 12 08",
+                "id": 14
+            },
+            {
+                "column_1": "2021 12 07",
+                "id": 15
+            },
+            {
+                "column_1": "2021 12 06",
+                "id": 16
+            },
+            {
+                "column_1": "2021 12 03",
+                "id": 17
+            },
+            {
+                "column_1": "2021 12 02",
+                "id": 18
+            },
+            {
+                "column_1": "2021 12 01",
+                "id": 19
+            },
+            {
+                "column_1": "2021 11 30",
+                "id": 20
+            },
+            {
+                "column_1": "2021 11 29",
+                "id": 21
+            },
+            {
+                "column_1": "2021 11 26",
+                "id": 22
+            },
+            {
+                "column_1": "2021 11 25",
+                "id": 23
+            },
+            {
+                "column_1": "2021 11 24",
+                "id": 24
+            },
+            {
+                "column_1": "2021 11 23",
+                "id": 25
+            },
+            {
+                "column_1": "2021 11 22",
+                "id": 26
+            },
+            {
+                "column_1": "2021 11 19",
+                "id": 27
+            },
+            {
+                "column_1": "2021 11 18",
+                "id": 28
+            },
+            {
+                "column_1": "2021 11 15",
+                "id": 29
+            }
+        ]
+    }
+}

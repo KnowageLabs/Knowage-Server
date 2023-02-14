@@ -51,6 +51,7 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Message from 'primevue/message'
 import workspaceSchedulationOldSchedulationsTableDescriptor from './WorkspaceSchedulationOldSchedulationsTableDescriptor.json'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'workspace-schedulation-old-schedulations-table',
@@ -60,7 +61,7 @@ export default defineComponent({
         return {
             workspaceSchedulationOldSchedulationsTableDescriptor,
             schedulations: [] as ISchedulation[],
-            filters: { global: [filterDefault] } as Object,
+            filters: { global: [filterDefault] } as any,
             user: null as any
         }
     },
@@ -69,8 +70,12 @@ export default defineComponent({
             this.loadSchedulations()
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
-        this.user = (this.$store.state as any).user
+        this.user = (this.store.$state as any).user
         this.loadSchedulations()
     },
     methods: {
@@ -81,7 +86,7 @@ export default defineComponent({
             return formatDate(date, format)
         },
         downloadSnapshot(schedulation: ISchedulation) {
-            const url = process.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?NEW_SESSION=TRUE&user_id=${this.user?.userUniqueIdentifier}&ACTION_NAME=GET_SNAPSHOT_CONTENT&SNAPSHOT_ID=${schedulation.id}&LIGHT_NAVIGATOR_DISABLED=TRUE&OBJECT_ID=${schedulation.biobjId}`
+            const url = import.meta.env.VITE_HOST_URL + `/knowage/servlet/AdapterHTTP?NEW_SESSION=TRUE&user_id=${this.user?.userUniqueIdentifier}&ACTION_NAME=GET_SNAPSHOT_CONTENT&SNAPSHOT_ID=${schedulation.id}&LIGHT_NAVIGATOR_DISABLED=TRUE&OBJECT_ID=${schedulation.biobjId}`
             window.open(url, '_blank')
         }
     }

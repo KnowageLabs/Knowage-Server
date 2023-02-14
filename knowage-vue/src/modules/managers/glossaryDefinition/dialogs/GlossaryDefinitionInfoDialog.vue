@@ -25,7 +25,7 @@
                     </li>
                 </ul>
             </div>
-            <div v-else-if="contentInfo.WORD_ID">
+            <div v-else-if="contentInfo?.WORD_ID">
                 <ul>
                     <li>
                         <span>{{ $tc('managers.glossary.common.word', 1) }}:</span>
@@ -48,15 +48,10 @@
                         <span>{{ contentInfo.FORMULA }}</span>
                     </li>
                     <li>
-                        <span>{{ $t('managers.glossary.common.link') }}:</span>
-                        <ul>
-                            <li v-for="(link, index) in contentInfo.LINK" :key="index">
-                                <span>
-                                    <span>{{ link.WORD }}</span>
-                                    <a v-if="index != contentInfo.LINK.length - 1">-</a>
-                                </span>
-                            </li>
-                        </ul>
+                        <span class="p-mr-2">{{ $t('managers.glossary.common.link') }}:</span>
+                        <div class="p-d-flex p-flex-row p-flex-wrap">
+                            <Chip class="p-m-1" v-for="(link, index) in contentInfo.LINK" :key="index">{{ link.WORD }}</Chip>
+                        </div>
                     </li>
                     <li>
                         <span>{{ $t('managers.glossary.common.attributes') }}:</span>
@@ -65,7 +60,10 @@
                                 <span>{{ attribute.ATTRIBUTE_NM }}:</span>
                                 <span></span>
                                 <ul>
-                                    <li>{{ attribute.VALUE }}</li>
+                                    <li class="p-mr-2">{{ attribute.VALUE }}</li>
+                                    <div class="p-d-flex p-flex-row p-flex-wrap">
+                                        <Chip class="p-m-1" v-for="(link, index) in contentInfo.LINK" :key="index">{{ link.WORD }}</Chip>
+                                    </div>
                                 </ul>
                             </li>
                         </ul>
@@ -81,13 +79,14 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import Chip from 'primevue/chip'
 import Dialog from 'primevue/dialog'
 import glossaryDefinitionDescriptor from '../GlossaryDefinitionDescriptor.json'
 import glossaryDefinitionDialogDescriptor from './GlossaryDefinitionDialogDescriptor.json'
 
 export default defineComponent({
     name: 'glossary-definition-info-dialog',
-    components: { Dialog },
+    components: { Chip, Dialog },
     emits: ['close'],
     props: {
         visible: { type: Boolean },
@@ -104,30 +103,34 @@ export default defineComponent({
 
 <style lang="scss">
 .glossaryDefinitionDetail {
-    ul {
-        list-style: none;
-        padding: 0;
-        li {
-            display: inline-flex;
-            justify-content: flex-start;
-            height: 40px;
-            &:nth-child(even) {
-                background-color: var(--kn-list-item-alternated-background-color);
-            }
-            span {
-                height: 40px;
-                display: flex;
+    div {
+        ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            li {
+                display: inline-flex;
                 justify-content: flex-start;
-                align-items: center;
-                &:first-child {
-                    font-weight: 600;
-                    padding-left: 10px;
-                    text-transform: capitalize;
-                    width: 150px;
-                    align-items: center;
+                min-height: 40px;
+                &:nth-child(even) {
+                    background-color: var(--kn-list-item-alternated-background-color);
                 }
-                &:nth-child(2) {
-                    flex: 1;
+                span {
+                    height: 40px;
+                    display: flex;
+                    justify-content: flex-start;
+                    align-items: center;
+                    &:first-child {
+                        font-weight: 600;
+                        padding-left: 10px;
+                        text-transform: capitalize;
+                        width: 150px;
+                        align-items: center;
+                    }
+                    &:nth-child(2) {
+                        flex: 1;
+                    }
                 }
             }
         }

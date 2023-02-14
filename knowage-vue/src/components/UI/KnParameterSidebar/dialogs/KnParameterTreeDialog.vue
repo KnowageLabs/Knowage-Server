@@ -12,7 +12,7 @@
         <Tree
             id="kn-parameter-tree"
             :value="nodes"
-            :selectionMode="multivalue ? 'checkbox' : 'single'"
+            :selectionMode="!multivalue ? 'single' : null"
             v-model:selectionKeys="selectedValuesKeys"
             :metaKeySelection="false"
             @node-select="setSelectedValue($event)"
@@ -20,6 +20,10 @@
             @nodeExpand="loadLeaf($event)"
             @node-collapse="setClosedFolderIcon($event)"
         >
+            <template #default="slotProps">
+                <Checkbox v-if="multivalue && slotProps.node.selectable" class="p-ml-2" v-model="selectedNodes" :value="slotProps.node.data" @change="onNodeChange($event)" />
+                <span>{{ slotProps.node.label }}</span>
+            </template>
         </Tree>
 
         <template #footer>
@@ -35,16 +39,18 @@
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
 import { iNode, iParameter } from '../KnParameterSidebar'
+import Checkbox from 'primevue/checkbox'
 import Dialog from 'primevue/dialog'
 import knParameterTreeDialogDescriptor from './KnParameterTreeDialogDescriptor.json'
 import Tree from 'primevue/tree'
-
-const deepcopy = require('deepcopy')
+import deepcopy from 'deepcopy'
+import { mapState } from 'pinia'
+import mainStore from '@/App.store'
 
 export default defineComponent({
     name: 'kn-parameter-tree-dialog',
-    components: { Dialog, Tree },
-    props: { visible: { type: Boolean }, selectedParameter: { type: Object }, formatedParameterValues: { type: Object }, document: { type: Object }, mode: { type: String } },
+    components: { Checkbox, Dialog, Tree },
+    props: { visible: { type: Boolean }, selectedParameter: { type: Object }, formatedParameterValues: { type: Object }, document: { type: Object }, mode: { type: String }, selectedRole: { type: String } },
     emits: ['close', 'save'],
     data() {
         return {
@@ -55,8 +61,14 @@ export default defineComponent({
             selectedValue: null as any,
             multipleSelectedValues: [] as any[],
             multivalue: false,
+            selectedNodes: [] as any[],
             loading: false
         }
+    },
+    computed: {
+        ...mapState(mainStore, {
+            user: 'user'
+        })
     },
     watch: {
         async visible() {
@@ -83,6 +95,7 @@ export default defineComponent({
                 this.setMultipleSelectedRows()
             } else {
                 this.selectedValue = this.selectedParameter?.parameterValue[0]
+                this.selectedNodes = [this.selectedValue]
                 if (this.selectedValue) {
                     this.selectedValuesKeys[this.selectedValue.description] = true
                 }
@@ -91,6 +104,7 @@ export default defineComponent({
         setMultipleSelectedRows() {
             if (!this.selectedParameter) return
             this.multipleSelectedValues = deepcopy(this.selectedParameter.parameterValue)
+            this.selectedNodes = [...this.multipleSelectedValues]
         },
         async loadLeaf(parent: any) {
             this.loading = true
@@ -102,15 +116,18 @@ export default defineComponent({
                 return
             }
 
+            const sessionRole = this.user.sessionRole
+            const role = sessionRole && sessionRole !== this.$t('role.defaultRolePlaceholder') ? sessionRole : this.selectedRole
+
             let url = '2.0/documentexecution/admissibleValuesTree'
             if (this.mode !== 'execution') {
                 url = this.document.type === 'businessModel' ? `1.0/businessmodel/${this.document.name}/admissibleValuesTree` : `/3.0/datasets/${this.document.label}/admissibleValuesTree`
             }
 
-            const postData = { label: this.document.label ?? this.document.name, role: (this.$store.state as any).user.sessionRole, parameterId: this.parameter?.urlName, mode: 'complete', treeLovNode: parent ? parent.id : 'lovroot', parameters: this.formatedParameterValues }
+            const postData = { label: this.document.label ?? this.document.name, role: role, parameterId: this.parameter?.urlName, mode: 'complete', treeLovNode: parent ? parent.id : 'lovroot', parameters: this.formatedParameterValues }
             let content = [] as any[]
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, postData)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData)
                 .then((response: AxiosResponse<any>) =>
                     response.data.rows.forEach((el: any) => {
                         content.push(this.createNode(el, parent))
@@ -166,15 +183,18 @@ export default defineComponent({
             }
         },
         isNodeSelectable(el) {
-            if (!this.multivalue) return true
+            if (!this.multivalue || !this.parameter) return true
 
-            return el.leaf
+            return this.parameter.allowInternalNodeSelection || el.leaf
         },
         setOpenFolderIcon(node: iNode) {
             node.icon = 'pi pi-folder-open'
         },
         setClosedFolderIcon(node: iNode) {
             node.icon = 'pi pi-folder'
+        },
+        onNodeChange() {
+            this.multipleSelectedValues = [...this.selectedNodes]
         },
         setSelectedValue(node: iNode) {
             if (!this.multivalue) {

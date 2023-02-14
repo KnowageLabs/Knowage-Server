@@ -214,8 +214,13 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 
 						if (AggregationFunctions.get(funct).equals(AggregationFunctions.NONE_FUNCTION)) {
 							pattern = null;// pattern = field.getPropertyAsString("format");
+							group = Boolean.TRUE.toString();
 						} else {
 							pattern = null;
+						}
+
+						if (Boolean.TRUE.toString().equals(group)) {
+							funct = AggregationFunctions.NONE;
 						}
 
 						// if (StringUtilities.isEmpty(temporalOperand)) {

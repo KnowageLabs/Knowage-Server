@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
+import { createTestingPinia } from '@pinia/testing'
 import BusinessModelDetailsCard from './BusinessModelDetailsCard.vue'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
@@ -28,13 +29,9 @@ const mockedBusinessModel = {
     tablePrefixNotLike: 'tablePrefixNotLike'
 }
 
-const $store = {
-    commit: jest.fn()
-}
-
 const $router = {
-    push: jest.fn(),
-    replace: jest.fn()
+    push: vi.fn(),
+    replace: vi.fn()
 }
 
 const factory = () => {
@@ -46,6 +43,7 @@ const factory = () => {
             user: {}
         },
         global: {
+            plugins: [createTestingPinia()],
             directives: {
                 tooltip() {}
             },
@@ -60,13 +58,13 @@ const factory = () => {
                 GenerateDatamartCard: true,
                 KnInputFile: true,
                 KnValidationMessages,
+                KnOverlaySpinnerPanel: true,
                 ProgressBar,
                 Toolbar,
                 Tooltip
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $router
             }
         }
@@ -125,7 +123,7 @@ describe('Business Model Detail', () => {
 
         await wrapper.setProps({ selectedBusinessModel: mockedBusinessModel })
         expect(wrapper.vm.metaWebVisible).toBe(false)
-        expect(wrapper.find('[data-test="metaweb-button"]').exists()).toBe(false)
+        expect(wrapper.find('[data-test="metaweb-button"]').isVisible()).toBe(false)
     })
 
     it('should show a generate button exiting from meta when something is changed and saved in the model', async () => {

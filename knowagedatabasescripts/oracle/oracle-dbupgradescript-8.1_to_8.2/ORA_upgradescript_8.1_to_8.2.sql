@@ -1,0 +1,1 @@
+DELETE FROM SBI_CONFIG WHERE LABEL = 'internal.security.encript.password';

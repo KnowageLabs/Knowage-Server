@@ -63,9 +63,11 @@ import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Filter;
 import it.eng.spagobi.engines.qbe.registry.parser.RegistryConfigurationXMLParser;
 import it.eng.spagobi.engines.qbe.registry.serializer.RegistryJSONDataWriter;
 import it.eng.spagobi.engines.qbe.services.core.ExecuteQueryAction;
+import it.eng.spagobi.engines.qbe.services.initializers.RegistryEngineStartAction;
 import it.eng.spagobi.engines.qbe.template.QbeTemplate;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStoreStats;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
@@ -87,8 +89,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 public class LoadRegistryAction extends ExecuteQueryAction {
 
 	private static final long serialVersionUID = -642121076148276452L;
-	private final String ID_COLUMN = "ID_COLUMN";
 	private final String REGISTRY_QUERY_ID = "q9";
+	private static final String KEY_COLUMN = "keyColumn";
 
 	private final JSONArray mandatories = new JSONArray();
 	private final JSONArray columnsInfos = new JSONArray();
@@ -243,6 +245,7 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 		setSummaryInfos(gridDataFeed);
 		setSummaryColorInfos(gridDataFeed);
 		setFieldsDefaultValue(gridDataFeed);
+		setFieldsKeyColumnProperty(gridDataFeed);
 
 		if (dataStore instanceof DecoratedDataStore) {
 			DecoratedDataStore _dataStore = (DecoratedDataStore) dataStore;
@@ -606,6 +609,31 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 
 	}
 
+	private void setFieldsKeyColumnProperty(JSONObject gridDataFeed) {
+
+		QbeEngineInstance qbeEngineInstance = (QbeEngineInstance) getAttributeFromSession(RegistryEngineStartAction.ENGINE_INSTANCE);
+		Assert.assertNotNull(qbeEngineInstance,
+				"It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
+		RegistryConfiguration registryConf = qbeEngineInstance.getRegistryConfiguration();
+		IDataSource genericDatasource = qbeEngineInstance.getDataSource();
+		String keyColumn = genericDatasource.getPersistenceManager().getKeyColumn(registryConf);
+
+		String fieldHeader = null;
+		try {
+			JSONArray fieldsArray = gridDataFeed.getJSONObject("metaData").getJSONArray("fields");
+			for (int i = 0; i < fieldsArray.length(); i++) {
+				if (fieldsArray.get(i).equals("recNo"))
+					continue;
+				JSONObject field = (JSONObject) fieldsArray.get(i);
+				fieldHeader = field.getString("header");
+				field.put("keyColumn", fieldHeader.equals(keyColumn));
+			}
+		} catch (JSONException e) {
+			logger.error("Error during adding keyColumn attribute for column " + fieldHeader);
+		}
+
+	}
+
 	private Object getDefaultValueForColumn(String columnName) {
 
 		List<Column> columnList = registryConfig.getColumns();
@@ -829,6 +857,10 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 				value = getAttribute(filter.getField()).toString();
 			}
 			if (value != null && !value.equalsIgnoreCase("")) {
+
+				if (value.contains("?")) {
+					throw new SpagoBIEngineServiceException(getActionName(), "Character '?' not allowed in query filter");
+				}
 				logger.debug("Set filter " + filter.getField() + "=" + value);
 
 				String fieldId = fieldNameIdMap.get(filter.getField());
@@ -1110,11 +1142,6 @@ class DecoratedDataStore implements IDataStore {
 	}
 
 	@Override
-	public SourceBean toSourceBean() throws SourceBeanException {
-		return dataStore.toSourceBean();
-	}
-
-	@Override
 	public Date getCacheDate() {
 		return dataStore.getCacheDate();
 	}
@@ -1133,5 +1160,10 @@ class DecoratedDataStore implements IDataStore {
 		return registryConfiguration;
 	}
 
+	@Override
+	public DataStoreStats getStats() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

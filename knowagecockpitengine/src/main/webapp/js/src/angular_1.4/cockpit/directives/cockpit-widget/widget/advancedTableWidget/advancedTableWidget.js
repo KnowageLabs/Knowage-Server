@@ -166,7 +166,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							var previousValue;
 							var previousIndex;
 							for(var r in $scope.tempRows){
-								if(previousValue != $scope.tempRows[r][fields[f].name]){
+								if(previousValue != $scope.tempRows[r][fields[f].name] || ($scope.ngModel.settings?.summary?.enabled && r >= ($scope.tempRows.length - $scope.ngModel.settings?.summary?.list.length))){
 									previousValue = $scope.tempRows[r][fields[f].name];
 									previousIndex = r;
 									$scope.tempRows[r].span = 1;
@@ -246,11 +246,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							tempCol.valueFormatter = dateTimeFormatter;
 							tempCol.comparator = dateComparator;
 						}
+						if(tempCol.fieldType == 'time') {
+							tempCol.valueFormatter = dateTimeFormatter;
+							tempCol.comparator = dateComparator;
+						}
 						if(tempCol.fieldType == 'float' || tempCol.fieldType == 'integer' || (tempCol.fieldType == 'string' && tempCol.measure == 'MEASURE' && ["COUNT","COUNT_DISTINCT"].indexOf(tempCol.aggregationSelected) != -1) ) {
 							tempCol.valueFormatter = numberFormatter;
-							if (typeof fields[f].scale !== 'undefined') {
-								tempCol.scale = Math.min(fields[f].scale,$scope.maxScaleValue);
-							}
 							// When server-side pagination is disabled
 							tempCol.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
 								return valueA - valueB;
@@ -415,13 +416,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		};
 
 		function getCellStyle(params){
+			
 			var tempStyle = params.colDef.style || {};
 			if(params.colDef.ranges && params.colDef.ranges.length > 0){
-				for(var k in params.colDef.ranges){
-					if (params.value!="" && eval(params.value + params.colDef.ranges[k].operator + params.colDef.ranges[k].value)) {
-						tempStyle['background-color'] = params.colDef.ranges[k]['background-color'] || (tempStyle['background-color'] || '');
-						tempStyle['color'] = params.colDef.ranges[k]['color'] || (tempStyle['color'] || '');
-                        if (params.colDef.ranges[k].operator == '==') break;
+				for(const range of params.colDef.ranges){
+					var valueToCompare;
+					if(range.compareValueType == 'static') valueToCompare = range.value;
+					if(range.compareValueType == 'variable') {
+						if(range.compareValueKey) valueToCompare = cockpitModule_properties.VARIABLES[range.value][range.compareValueKey];
+						else valueToCompare = cockpitModule_properties.VARIABLES[range.value];
+					}
+					if(range.compareValueType == 'parameter') {
+						var parameterKey = cockpitModule_analyticalDrivers[range.value+'_description'] ? range.value+'_description' : range.value;
+						valueToCompare = cockpitModule_analyticalDrivers[parameterKey];
+					}
+					if (params.value!="" && eval(params.value + range.operator + valueToCompare)) {
+						tempStyle['background-color'] = range['background-color'] || (tempStyle['background-color'] || '');
+						tempStyle['color'] = range['color'] || (tempStyle['color'] || '');
+                        if (range.operator == '==') break;
                     }
 				}
 			}
@@ -461,10 +473,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 * In case of a returning empty string that one will be displayed.
 		 */
 		function numberFormatter(params){
-			var tempScale = typeof params.colDef.scale !== 'undefined' ? params.colDef.scale : 2;
-			if(params.value != "" && (!params.colDef.style || (params.colDef.style && !params.colDef.style.asString))) {
-				var defaultPrecision = (params.colDef.fieldType == 'float') ? tempScale : 0;
-				return $filter('number')(params.value, (params.colDef.style && typeof params.colDef.style.precision != 'undefined') ? params.colDef.style.precision : defaultPrecision);
+			if(typeof params.value === "number") {
+				var useSeparator = (params.colDef.style && params.colDef.style.asString)? false : true;
+				var defaultPrecision = (params.colDef.fieldType == 'float') ? 2 : 0;
+				var precision = (params.colDef.style && params.colDef.style.precision != undefined) ? params.colDef.style.precision : defaultPrecision;
+				var locale = `${sbiModule_config.curr_language}-${sbiModule_config.curr_country}`;
+				return new Intl.NumberFormat(locale, { minimumFractionDigits:precision, maximumFractionDigits:precision,useGrouping:useSeparator}).format(params.value);
 			}else return params.value;
 		}
 
@@ -506,19 +520,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					this.eGui.innerHTML = '<div class="inner-chart-bar" style="justify-content:'+tempStyle['justify-content']+'"><div class="bar" style="justify-content:'+tempStyle['justify-content']+';background-color:'+tempStyle['background-color']+';width:'+percentage+'%">'+(params.colDef.visType.toLowerCase() == 'text & chart' ? '<span style="color:'+tempStyle.color+'">'+tempValue+'</span>' : '')+'</div></div>';
 				}
 				if(params.colDef.ranges && params.colDef.ranges.length > 0){
-					for(var k in params.colDef.ranges){
-						if (typeof params.value != "undefined" && typeof params.value != "string" && eval(params.value + params.colDef.ranges[k].operator + params.colDef.ranges[k].value)) {
-							if(params.colDef.ranges[k]['background-color']) {
+					
+					for(const range of params.colDef.ranges){
+						var valueToCompare;
+						if(range.compareValueType == 'static') valueToCompare = range.value;
+						if(range.compareValueType == 'variable') {
+							if(range.compareValueKey) valueToCompare = cockpitModule_properties.VARIABLES[range.value][range.compareValueKey];
+							else valueToCompare = cockpitModule_properties.VARIABLES[range.value];
+						}
+						if(range.compareValueType == 'parameter') {
+							var parameterKey = cockpitModule_analyticalDrivers[range.value+'_description'] ? range.value+'_description' : range.value;
+							valueToCompare = cockpitModule_analyticalDrivers[parameterKey];
+						}
+						if(typeof valueToCompare != "undefined" && typeof valueToCompare === 'string') valueToCompare = "'"+valueToCompare+"'";
+						if(range.operator === "IN"){
+							if(range.valueArray.includes(params.value.toString())){
+								if(range['background-color']) params.eParentOfValue.style.backgroundColor = range['background-color'];
+								if(range['color']) params.eParentOfValue.style.color = range['color'];
+								if(params.colDef.visType && params.colDef.visType.toLowerCase() == 'icon only') tempValue = '<i class="'+range.icon+'"></i>';
+							}
+							break;
+						}
+						if (typeof params.value != "undefined" && eval((typeof params.value == 'string' ? "'"+params.value+"'": params.value) + range.operator + valueToCompare)) {
+							if(range['background-color']) {
 								if(params.colDef.visType && (params.colDef.visType.toLowerCase() == 'chart' || params.colDef.visType.toLowerCase() == 'text & chart')) {
 									this.eGui.innerHTML = this.eGui.innerHTML.replace(/background-color:([\#a-z0-9\(\)\,]+);/g,function(match,p1){
-										return 'background-color:'+params.colDef.ranges[k]['background-color']+';';
+										return 'background-color:'+range['background-color']+';';
 									})
-								}else params.eParentOfValue.style.backgroundColor = params.colDef.ranges[k]['background-color'];
+								}else params.eParentOfValue.style.backgroundColor = range['background-color'];
 							}
-							if(params.colDef.ranges[k]['color']) params.eParentOfValue.style.color = params.colDef.ranges[k]['color'];
-							if(params.colDef.visType && params.colDef.visType.toLowerCase() == 'icon only') tempValue = '<i class="'+params.colDef.ranges[k].icon+'"></i>';
-							else tempValue += '<i class="'+params.colDef.ranges[k].icon+'"></i>';
-	                        if (params.colDef.ranges[k].operator == '==') break;
+							if(range['color']) params.eParentOfValue.style.color = range['color'];
+							if(params.colDef.visType && params.colDef.visType.toLowerCase() == 'icon only') tempValue = '<i class="'+range.icon+'"></i>';
+							else tempValue += '<i class="'+range.icon+'"></i>';
+	                        if (range.operator == '==') break;
 	                    }
 					}
 				}
@@ -950,6 +984,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if($scope.ngModel.content.columnSelectedOfDataset[k].aliasToShow && $scope.ngModel.content.columnSelectedOfDataset[k].aliasToShow == colAlias) return $scope.ngModel.content.columnSelectedOfDataset[k].name;
 			}
 		}
+		
+		function getColumnFromTableMetadata(colId){
+			if(colId){
+				for(var m in $scope.metadata.fields){
+					if($scope.metadata.fields[m].name && $scope.metadata.fields[m].name == colId) return $scope.metadata.fields[m];
+				}
+			}
+		}
 
 		function onCellClicked(node){
 			var interactionType = $scope.interaction && ($scope.interaction.crossType || $scope.interaction.previewType || $scope.interaction.interactionType);
@@ -1039,9 +1081,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						newValue.push(rows[k][tempAlias]);
 					}
 				}
+				if(['timestamp','time','date'].includes(node.colDef.fieldType)){
+					newValue = luxon.DateTime.fromFormat(node.value, getColumnFromTableMetadata(node.colDef.field).dateFormat).toISO()
+				}
 				else {
 					newValue = null;
 				}
+				
 				$scope.doSelection(getColumnNameFromTableMetadata(node.colDef.headerName, node.colDef.field), node.value, $scope.ngModel.settings.modalSelectionColumn, newValue, mapRow(node.data));
 			}
 		}

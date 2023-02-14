@@ -69,9 +69,14 @@ public class JDBCDatasetFactory {
 		case SPANNER:
 			dataSet = new JDBCSpannerDataSet();
 			break;
+		case POSTGRESQL:
+			dataSet = new JDBCPostgreSQLDataSet();
+			break;
 		default:
 			dataSet = new JDBCDataSet();
 		}
+
+		dataSet.setDataSource(dataSource);
 
 		return dataSet;
 	}

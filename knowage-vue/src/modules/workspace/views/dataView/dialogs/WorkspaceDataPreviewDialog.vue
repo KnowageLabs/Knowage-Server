@@ -3,7 +3,7 @@
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12" :style="mainDescriptor.style.maxWidth">
                 <template #start>
-                    <span>{{ dataset.label }}</span>
+                    <span>{{ dataset?.label }}</span>
                 </template>
                 <template #end>
                     <Button v-if="isParameterSidebarVisible" icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.filter')" @click="parameterSidebarVisible = !parameterSidebarVisible" />
@@ -20,7 +20,21 @@
             </Message>
 
             <DatasetPreviewTable v-else class="p-d-flex p-flex-column kn-flex p-m-2" :previewColumns="columns" :previewRows="rows" :pagination="pagination" :previewType="previewType" @pageChanged="updatePagination($event)" @sort="onSort" @filter="onFilter"></DatasetPreviewTable>
-            <KnParameterSidebar v-if="parameterSidebarVisible" style="height:calc(100% - 35px)" class="workspace-parameter-sidebar kn-overflow-y" :filtersData="filtersData" :propDocument="dataset" :propMode="sidebarMode" :propQBEParameters="dataset.pars" @execute="onExecute"></KnParameterSidebar>
+            <KnParameterSidebar
+                v-if="parameterSidebarVisible && dataset"
+                style="height: calc(100% - 35px)"
+                class="workspace-parameter-sidebar kn-overflow-y"
+                :filtersData="filtersData"
+                :propDocument="dataset"
+                :propMode="sidebarMode"
+                :propQBEParameters="dataset.pars"
+                :userRole="userRole"
+                :dataset="dataset"
+                @execute="onExecute"
+                @roleChanged="onRoleChange"
+                :loadFromDatasetManagement="loadFromDatasetManagement"
+                :correctRolesForExecution="correctRolesForExecution"
+            ></KnParameterSidebar>
         </div>
     </Dialog>
 </template>
@@ -35,6 +49,8 @@ import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
 import workspaceDataPreviewDialogDescriptor from './WorkspaceDataPreviewDialogDescriptor.json'
 import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
 import moment from 'moment'
+import mainStore from '../../../../../App.store'
+
 export default defineComponent({
     name: 'kpi-scheduler-save-dialog',
     components: { Dialog, DatasetPreviewTable, Message, KnParameterSidebar },
@@ -56,7 +72,8 @@ export default defineComponent({
             loading: false,
             filtersData: {} as any,
             userRole: null,
-            sidebarMode: 'workspaceView'
+            sidebarMode: 'workspaceView',
+            correctRolesForExecution: null
         }
     },
     computed: {
@@ -69,7 +86,13 @@ export default defineComponent({
                     break
                 }
             }
-            return parameterVisible || this.dataset.pars.length !== 0
+            let pars = false
+            if (this.dataset && this.dataset.pars) {
+                if (this.dataset.pars.length !== 0) {
+                    pars = this.dataset.pars.length !== 0
+                }
+            }
+            return parameterVisible || pars
         }
     },
     watch: {
@@ -87,15 +110,30 @@ export default defineComponent({
             this.setSidebarMode()
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     async created() {
-        this.userRole = (this.$store.state as any).user.sessionRole !== 'No default role selected' ? (this.$store.state as any).user.sessionRole : null
+        this.userRole = (this.store.$state as any).user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? (this.store.$state as any).user.sessionRole : null
         await this.loadPreview()
         this.setSidebarMode()
     },
     methods: {
         async loadPreview() {
             this.loadDataset()
-            await this.loadDatasetDrivers()
+
+            if (this.dataset.drivers && this.dataset.drivers.length > 0) {
+                if (this.userRole) {
+                    await this.loadDatasetDrivers()
+                } else {
+                    this.parameterSidebarVisible = true
+                    return
+                }
+            }
+
+            if (this.loadFromDatasetManagement) this.correctRolesForExecution = (this.store.$state as any).user.roles
+
             if (this.dataset.label && this.dataset.pars.length === 0 && (this.filtersData.isReadyForExecution === undefined || this.filtersData.isReadyForExecution)) {
                 this.loadFromDatasetManagement ? await this.loadPreSavePreview() : await this.loadPreviewData()
                 this.parameterSidebarVisible = false
@@ -113,17 +151,46 @@ export default defineComponent({
             if (this.filtersData.filterStatus?.length > 0) {
                 postData.DRIVERS = this.formatDriversForPreviewData()
             }
-            await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/preview`, postData)
-                .then((response: AxiosResponse<any>) => {
-                    this.setPreviewColumns(response.data)
-                    this.rows = response.data.rows
-                    this.pagination.size = response.data.results
-                })
-                .catch((error) => {
-                    this.errorMessage = error.message
-                    this.errorMessageVisible = true
-                })
+            if (Array.isArray(postData.restRequestHeaders)) {
+                if (postData.restRequestHeaders.length == 0) {
+                    postData.restRequestHeaders = {}
+                } else {
+                    postData.restRequestHeaders = postData.restRequestHeaders.reduce((acc, curr) => {
+                        acc[curr['name']] = curr['value']
+                        return acc
+                    }, {})
+                }
+            }
+            if (postData.dsTypeCd === 'Prepared') {
+                await this.$http
+                    .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasets/${this.dataset.label}/preview`, postData, { headers: { 'X-Disable-Errors': 'true' } })
+                    .then((response: AxiosResponse<any>) => {
+                        let fields = response.data?.metaData?.fields
+                        if (this.dataset.dsTypeCd == 'REST' && fields?.length == 1 && fields[0] === 'recNo') {
+                            this.rows = []
+                        } else {
+                            this.setPreviewColumns(response.data)
+                            this.rows = response.data.rows
+                            this.pagination.size = response.data.results
+                        }
+                    })
+                    .catch((error) => {
+                        this.errorMessage = error.message
+                        this.errorMessageVisible = true
+                    })
+            } else {
+                await this.$http
+                    .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/preview`, postData, { headers: { 'X-Disable-Errors': 'true' } })
+                    .then((response: AxiosResponse<any>) => {
+                        this.setPreviewColumns(response.data)
+                        this.rows = response.data.rows
+                        this.pagination.size = response.data.results
+                    })
+                    .catch((error) => {
+                        this.errorMessage = error.message
+                        this.errorMessageVisible = true
+                    })
+            }
             this.loading = false
         },
         async loadPreviewData() {
@@ -142,7 +209,7 @@ export default defineComponent({
                 postData.drivers = this.formatDriversForPreviewData()
             }
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/${this.dataset.label}/preview`, postData)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasets/${this.dataset.label}/preview`, postData, { headers: { 'X-Disable-Errors': 'true' } })
                 .then((response: AxiosResponse<any>) => {
                     this.setPreviewColumns(response.data)
                     this.rows = response.data.rows
@@ -155,18 +222,22 @@ export default defineComponent({
             this.loading = false
         },
         async loadDatasetDrivers() {
-            if (this.dataset.label && this.dataset.id && this.dataset.dsTypeCd != 'Prepared') {
+            let hasError = false
+            if (this.dataset.label && this.dataset.id && this.dataset.dsTypeCd !== 'Prepared') {
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/${this.dataset.label}/filters`, { role: this.userRole })
+                    .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/datasets/${this.dataset.label}/filters`, { role: this.userRole })
                     .then((response: AxiosResponse<any>) => {
                         this.filtersData = response.data
                         if (this.filtersData.filterStatus) {
                             this.filtersData.filterStatus = this.filtersData.filterStatus.filter((filter: any) => filter.id)
                         }
                     })
-                    .catch(() => {})
+                    .catch(() => {
+                        hasError = true
+                    })
                 this.formatDrivers()
             }
+            return hasError
         },
         formatDrivers() {
             this.filtersData?.filterStatus?.forEach((el: any) => {
@@ -219,7 +290,6 @@ export default defineComponent({
             return formattedDrivers
         },
         async updatePagination(lazyParams: any) {
-            console.log('PAGINATION OBJECT ', lazyParams)
             this.pagination.start = lazyParams.paginationStart
             this.pagination.limit = lazyParams.paginationLimit
             this.loadFromDatasetManagement ? await this.loadPreSavePreview() : await this.loadPreviewData()
@@ -252,12 +322,26 @@ export default defineComponent({
             this.$emit('close')
         },
         async onExecute(datasetParameters: any[]) {
+            if (!this.dataset.pars) this.dataset.pars = []
             this.dataset.pars = datasetParameters
+
             this.loadFromDatasetManagement ? await this.loadPreSavePreview() : await this.loadPreviewData()
             this.parameterSidebarVisible = false
         },
         setSidebarMode() {
             this.sidebarMode = this.loadFromDatasetManagement ? 'datasetManagement' : 'workspaceView'
+        },
+        async onRoleChange(role: string) {
+            this.userRole = role as any
+            this.filtersData = {}
+            let hasError = false
+            if (this.dataset.drivers && this.dataset.drivers.length > 0) hasError = await this.loadDatasetDrivers()
+            if (!hasError && this.dataset.label && this.dataset.pars.length === 0 && (this.filtersData.isReadyForExecution === undefined || this.filtersData.isReadyForExecution)) {
+                this.loadFromDatasetManagement ? await this.loadPreSavePreview() : await this.loadPreviewData()
+                this.parameterSidebarVisible = false
+            } else {
+                this.parameterSidebarVisible = true
+            }
         }
     }
 })

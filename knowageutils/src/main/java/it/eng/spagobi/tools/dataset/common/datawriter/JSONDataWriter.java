@@ -24,11 +24,20 @@ import java.sql.Clob;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -36,7 +45,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.spagobi.tools.dataset.bo.DataSetVariable;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStoreStats;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
+import it.eng.spagobi.tools.dataset.common.datastore.FieldStats;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
@@ -74,10 +85,29 @@ public class JSONDataWriter implements IDataWriter {
 	private boolean useIdProperty;
 	private boolean preserveOriginalDataTypes = false;
 
+	/**
+	 * @deprecated Replace it with {@link DateTimeFormatter}
+	 */
+	@Deprecated
 	protected final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_FORMAT);
+	/**
+	 * @deprecated Replace it with {@link DateTimeFormatter}
+	 */
+	@Deprecated
 	protected final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat(TIMESTAMP_FORMAT);
+	/**
+	 * @deprecated Replace it with {@link DateTimeFormatter}
+	 */
+	@Deprecated
 	protected final SimpleDateFormat CACHE_TIMESTAMP_FORMATTER = new SimpleDateFormat(CACHE_TIMESTAMP_FORMAT);
+	/**
+	 * @deprecated Replace it with {@link DateTimeFormatter}
+	 */
+	@Deprecated
 	protected final SimpleDateFormat CACHE_TIMEONLY_FORMATTER = new SimpleDateFormat(TIME_FORMAT);
+
+	protected final DateTimeFormatter DATE_FORMATTER_V2 = DateTimeFormatter.ofPattern(DATE_FORMAT);
+	protected final DateTimeFormatter TIMESTAMP_FORMATTER_V2 = DateTimeFormatter.ofPattern(TIMESTAMP_FORMAT);
 
 	// public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS = "options";
 	// public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR = "measureScaleFactor";
@@ -156,6 +186,62 @@ public class JSONDataWriter implements IDataWriter {
 			throw new RuntimeException(e);
 		}
 		return result;
+	}
+
+	private Object write(DataStoreStats stats) {
+		JSONObject ret = new JSONObject();
+		Map<Integer, FieldStats> fields = stats.getFields();
+
+		for (Entry<Integer, FieldStats> entry : fields.entrySet()) {
+
+			Integer key = entry.getKey();
+			FieldStats value = entry.getValue();
+
+			try {
+				ret.put(Integer.toString(key + 1 /* because we add the recNo */), write(value));
+			} catch (JSONException e) {
+				// I put in a JSONObject, it should not generate any error
+			}
+		}
+
+		return ret;
+	}
+
+	private JSONObject write(FieldStats stats) {
+		JSONObject ret = new JSONObject();
+
+		Object max = stats.getMax();
+		Object min = stats.getMin();
+		Set<Object> distinct = stats.getDistinct();
+		int cardinality = stats.getCardinality();
+
+		try {
+			ret.put("max", max);
+		} catch (JSONException e) {
+			// TODO: handle exception
+		}
+
+		try {
+			ret.put("min", min);
+		} catch(JSONException e) {
+			// TODO: handle exception
+		}
+
+		try {
+			for (Object i : distinct) {
+				ret.append("distinct", i);
+			}
+		} catch (JSONException e) {
+			// TODO: handle exception
+		}
+
+		try {
+			ret.put("cardinality", cardinality);
+		} catch (JSONException e) {
+			// TODO: handle exception
+		}
+
+		return ret;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -239,13 +325,8 @@ public class JSONDataWriter implements IDataWriter {
 	protected Object getFieldValue(IField field, IFieldMetaData fieldMetaData) {
 
 		if (preserveOriginalDataTypes) {
-			Object toReturn;
-			if (BigDecimal.class.isAssignableFrom(fieldMetaData.getType()) && field.getValue() != null) {
-				toReturn = Float.parseFloat(field.getValue().toString());
-			} else {
-				toReturn = field.getValue();
-			}
-			return toReturn;
+
+			return field.getValue();
 
 		} else {
 			Object result = "";
@@ -282,6 +363,16 @@ public class JSONDataWriter implements IDataWriter {
 					result = Double.valueOf(field.getValue().toString());
 				} else if (BigDecimal.class.isAssignableFrom(fieldMetaData.getType())) {
 					result = new BigDecimal(field.getValue().toString());
+				} else if (LocalTime.class.isAssignableFrom(fieldMetaData.getType())) {
+					result = TIMESTAMP_FORMATTER_V2.format((TemporalAccessor) field.getValue());
+				} else if (LocalDateTime.class.isAssignableFrom(fieldMetaData.getType())) {
+					result = TIMESTAMP_FORMATTER_V2.format((TemporalAccessor) field.getValue());
+				} else if (OffsetTime.class.isAssignableFrom(fieldMetaData.getType())) {
+					result = TIMESTAMP_FORMATTER_V2.format((TemporalAccessor) field.getValue());
+				} else if (OffsetDateTime.class.isAssignableFrom(fieldMetaData.getType())) {
+					result = TIMESTAMP_FORMATTER_V2.format((TemporalAccessor) field.getValue());
+				} else if (ZonedDateTime.class.isAssignableFrom(fieldMetaData.getType())) {
+					result = TIMESTAMP_FORMATTER_V2.format((TemporalAccessor) field.getValue());
 				} else {
 					result = field.getValue().toString();
 				}
@@ -332,6 +423,7 @@ public class JSONDataWriter implements IDataWriter {
 
 			recordsJSON = new JSONArray();
 			result.put(ROOT, recordsJSON);
+			result.put("stats", write(dataStore.getStats()));
 
 			// records
 			recNo = 0;
@@ -528,6 +620,31 @@ public class JSONDataWriter implements IDataWriter {
 				} else if (Boolean.class.isAssignableFrom(clazz)) {
 					logger.debug("Column [" + (i + 1) + "] type is equal to [" + "BOOLEAN" + "]");
 					fieldMetaDataJSON.put("type", "boolean");
+				} else if (LocalTime.class.isAssignableFrom(clazz)) {
+					logger.debug("Column [" + (i + 1) + "] type is equal to [" + "LocalTime" + "]");
+					fieldMetaDataJSON.put("type", "time");
+					fieldMetaDataJSON.put("dateFormat", "HH:mm:ss.SSS");
+					fieldMetaDataJSON.put("dateFormatJava", "HH:mm:ss.SSS");
+				} else if (LocalDateTime.class.isAssignableFrom(clazz)) {
+					logger.debug("Column [" + (i + 1) + "] type is equal to [" + "LocalDateTime" + "]");
+					fieldMetaDataJSON.put("type", "timestamp");
+					fieldMetaDataJSON.put("dateFormat", "dd/MM/yyyy HH:mm:ss.SSS");
+					fieldMetaDataJSON.put("dateFormatJava", "dd/MM/yyyy HH:mm:ss.SSS");
+				} else if (OffsetTime.class.isAssignableFrom(clazz)) {
+					logger.debug("Column [" + (i + 1) + "] type is equal to [" + "OffsetTime" + "]");
+					fieldMetaDataJSON.put("type", "time");
+					fieldMetaDataJSON.put("dateFormat", "H:i:sZZ");
+					fieldMetaDataJSON.put("dateFormatJava", "HH:mm:ssXXX");
+				} else if (OffsetDateTime.class.isAssignableFrom(clazz)) {
+					logger.debug("Column [" + (i + 1) + "] type is equal to [" + "OffsetDateTime" + "]");
+					fieldMetaDataJSON.put("type", "timestamp");
+					fieldMetaDataJSON.put("dateFormat", "d/m/YTH:i:sZZ");
+					fieldMetaDataJSON.put("dateFormatJava", "dd/MM/yyyyTHH:mm:ssXXX");
+				} else if (ZonedDateTime.class.isAssignableFrom(clazz)) {
+					logger.debug("Column [" + (i + 1) + "] type is equal to [" + "ZonedDateTime" + "]");
+					fieldMetaDataJSON.put("type", "timestamp");
+					fieldMetaDataJSON.put("dateFormat", "dd/MM/yyyy HH:mm:ss.SSSZZ");
+					fieldMetaDataJSON.put("dateFormatJava", "dd/MM/yyyy HH:mm:ss.SSSXXX");
 				} else {
 					logger.warn("Column [" + (i + 1) + "] type is equal to [" + "???" + "]");
 					fieldMetaDataJSON.put("type", "string");

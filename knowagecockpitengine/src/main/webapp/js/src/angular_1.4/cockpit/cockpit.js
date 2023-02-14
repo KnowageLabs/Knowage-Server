@@ -41,7 +41,8 @@ var cockpitApp= angular.module("cockpitModule",[
 	'agGrid',
 	'driversExecutionModule',
 	'chartDesignerManager',
-	'customWidgetAPI'
+	'customWidgetAPI',
+	'rzSlider'
 	]);
 cockpitApp.config(function($mdThemingProvider,$mdGestureProvider,$compileProvider,$mdInkRippleProvider,$mdAriaProvider, $mdDateLocaleProvider) {
     $mdThemingProvider.theme('knowage')
@@ -126,6 +127,7 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 	$scope.cockpitModule_widgetServices=cockpitModule_widgetServices;
 	$scope.imageBackgroundUrl=cockpitModule_template.configuration.style.imageBackgroundUrl;
 	cockpitModule_template = cockpitModule_backwardCompatibility.updateCockpitModel(cockpitModule_template);
+	cockpitModule_template.getSelections();
 	
 	function getAssociatedDatasetIds(label){
 		var tempIds = [];
@@ -225,6 +227,14 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 	                    }
 	                }
 	            }
+				// temporary section needed as a workaround to get vue instance
+				var hasVueParent = false
+				if(window.parent.document.getElementById('_KNOWAGE_VUE')){
+					hasVueParent = window.parent
+				}else if(window.parent.parent.document.getElementById('_KNOWAGE_VUE')){
+					hasVueParent = window.parent.parent
+				}
+				if(hasVueParent) hasVueParent.postMessage({"type":"cockpitExecuted"}, '*')
 	        }
 	    })
 		

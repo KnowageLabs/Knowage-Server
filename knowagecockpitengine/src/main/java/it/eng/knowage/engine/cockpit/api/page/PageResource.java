@@ -85,6 +85,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 	private static final String PDF_HEIGHT = "pdfHeight";
 	private static final String PDF_DEVICE_SCALE_FACTOR = "pdfDeviceScaleFactor";
 	private static final String PDF_WAIT_TIME = "pdfWaitTime";
+	private static final String IS_MULTI_SHEET = "isMultiSheet";
 	static private final List<String> PDF_PARAMETERS = Arrays
 			.asList(new String[] { OUTPUT_TYPE, PDF_WIDTH, PDF_HEIGHT, PDF_WAIT_TIME, PDF_ZOOM, PDF_PAGE_ORIENTATION });
 	static private final List<String> JPG_PARAMETERS = Arrays.asList(new String[] { OUTPUT_TYPE });
@@ -295,10 +296,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 		PdfExporterV2 pdfExporter = new PdfExporterV2(documentId, userId, requestURL, renderOptions, pdfPageOrientation, pdfFrontPage, pdfBackPage);
 		byte[] data = pdfExporter.getBinaryData();
 
-		return Response.ok(data, "application/pdf")
-				.header("Content-Length", Integer.toString(data.length))
-				.header("Content-Disposition", "attachment; fileName=" + request.getParameter("DOCUMENT_LABEL") + ".pdf")
-				.build();
+		return Response.ok(data, "application/pdf").header("Content-Length", Integer.toString(data.length))
+				.header("Content-Disposition", "attachment; fileName=" + request.getParameter("DOCUMENT_LABEL") + ".pdf").build();
 	}
 
 	private Response openPageSpreadsheetInternal(String pageName) throws EMFUserError, IOException, InterruptedException {
@@ -308,7 +307,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 		String outputType = request.getParameter("outputType");
 		String userId = request.getParameter("user_id");
-		Map<String,String[]> parameterMap = request.getParameterMap();
+		Map<String, String[]> parameterMap = request.getParameterMap();
 
 		String documentLabel = request.getParameter("DOCUMENT_LABEL");
 
@@ -316,10 +315,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 		String mimeType = excelExporter.getMimeType();
 		byte[] data = excelExporter.getBinaryData(documentLabel);
 
-		return Response.ok(data, mimeType)
-				.header("Content-length", Integer.toString(data.length))
-				.header("Content-Disposition", "attachment; fileName=" + documentLabel + ".xlsx")
-				.build();
+		return Response.ok(data, mimeType).header("Content-length", Integer.toString(data.length))
+				.header("Content-Disposition", "attachment; fileName=" + documentLabel + ".xlsx").build();
 	}
 
 	private Response openPagePngInternal(String pageName) throws EMFUserError, IOException, InterruptedException {
@@ -348,10 +345,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 			contentDisposition = "attachment; fileName=" + request.getParameter("DOCUMENT_LABEL") + ".zip";
 		}
 
-		return Response.ok(data, mimeType)
-				.header("Content-length", Integer.toString(data.length))
-				.header("Content-Disposition", contentDisposition)
-				.build();
+		return Response.ok(data, mimeType).header("Content-length", Integer.toString(data.length)).header("Content-Disposition", contentDisposition).build();
 	}
 
 	private RenderOptions getRenderOptionsForPdfExporter(HttpServletRequest request) throws UnsupportedEncodingException {
@@ -373,6 +367,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 		String deviceScaleFactorVal = request.getParameter(PDF_DEVICE_SCALE_FACTOR);
 		String jsRenderingWaitParameterVal = request.getParameter(PDF_WAIT_TIME);
 
+		Boolean isMultiSheet = Boolean.parseBoolean(request.getParameter(IS_MULTI_SHEET));
+
 		if (widthParameterVal != null) {
 			pdfWidth = Integer.valueOf(widthParameterVal);
 		}
@@ -388,7 +384,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 		}
 
 		ViewportDimensions dimensions = ViewportDimensions.builder().withWidth(pdfWidth).withHeight(pdfHeight).withDeviceScaleFactor(pdfDeviceScaleFactor)
-				.build();
+				.withIsMultiSheet(isMultiSheet).build();
 		RenderOptions renderOptions = defaultRenderOptions.withDimensions(dimensions).withJavaScriptExecutionDetails(pdfRenderingWaitTime, 5000L);
 		return renderOptions;
 	}

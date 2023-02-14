@@ -1,7 +1,7 @@
 <template>
-    <Breadcrumb :home="home" :model="items">
-        <template #item="{item}">
-            <span class="breadcrumbs-item" @click="selectBreadcrumb">{{ item.label }}</span>
+    <Breadcrumb :home="home" :model="items" class="kn-breadcrumb-toolbar">
+        <template #item="{ item }">
+            <span class="breadcrumbs-item" @click="selectBreadcrumb">{{ item.crossBreadcrumb ? item.crossBreadcrumb : item.label }}</span>
         </template>
     </Breadcrumb>
 </template>
@@ -34,7 +34,7 @@ export default defineComponent({
             this.items = this.breadcrumbs as any[]
         },
         selectBreadcrumb(event: any) {
-            const index = this.items.findIndex((el: any) => el.label === event.target.textContent)
+            const index = this.items.findIndex((el: any) => el.label === event.target.textContent || el.crossBreadcrumb === event.target.textContent)
             if (index !== -1) {
                 this.$emit('breadcrumbClicked', this.items[index])
                 this.items.splice(index + 1)

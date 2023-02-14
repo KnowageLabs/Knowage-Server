@@ -2,5 +2,6 @@ angular.module('cockpitModule').factory('cockpitModule_widgetSelectionUtils',fun
 	return{
 		associations:[],
 		responseCurrentSelection:[],
-		dsNotInCache : []
+		dsNotInCache : [],
+		userSelections : []
 	}});

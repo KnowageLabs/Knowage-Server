@@ -28,6 +28,7 @@ import { AxiosResponse } from 'axios'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import timespanDescriptor from './TimespanDescriptor.json'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'timespan',
@@ -40,6 +41,10 @@ export default defineComponent({
             loading: false
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     async created() {
         await this.loadTimespans()
         await this.loadCategories()
@@ -47,7 +52,7 @@ export default defineComponent({
     methods: {
         async loadTimespans() {
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/timespan/listDynTimespan`).then(
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/timespan/listDynTimespan`).then(
                 (response: AxiosResponse<any>) =>
                     (this.timespans = response.data?.map((timespan: iTimespan) => {
                         return { ...timespan, isCloneable: timespan.type === 'temporal' }
@@ -57,7 +62,7 @@ export default defineComponent({
         },
         async loadCategories() {
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=TIMESPAN_CATEGORY`).then((response: AxiosResponse<any>) => (this.categories = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=TIMESPAN_CATEGORY`).then((response: AxiosResponse<any>) => (this.categories = response.data))
             this.loading = false
         },
         showTimespanDetails(event: any, clone: boolean) {
@@ -77,10 +82,10 @@ export default defineComponent({
         async deleteTimespan(id: number) {
             this.loading = true
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/timespan/deleteTimespan?ID=${id}`)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/timespan/deleteTimespan?ID=${id}`)
                 .then((response: AxiosResponse<any>) => {
                     if (response.data?.Status === 'OK') {
-                        this.$store.commit('setInfo', {
+                        this.store.setInfo({
                             title: this.$t('common.toast.deleteTitle'),
                             msg: this.$t('common.toast.deleteSuccess')
                         })
@@ -89,7 +94,7 @@ export default defineComponent({
                     }
                 })
                 .catch((error) => {
-                    this.$store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: error?.message
                     })

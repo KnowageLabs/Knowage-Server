@@ -20,10 +20,16 @@
                         @dropdownChanged="onDropdownChange"
                         @dropdownOpened="$emit('dropdownOpened', $event)"
                     ></KnPivotTableEditableField>
+
                     <Checkbox v-else-if="column.editorType === 'TEXT' && column.columnInfo.type === 'boolean'" v-model="row[column.field].data" :binary="true" :disabled="!column.isEditable || column.type === 'merge'" @change="setRowEdited(row)"></Checkbox>
-                    <span v-else-if="!column.isEditable && column.columnInfo.type === 'date'">{{ getFormattedDate(row[column.field].data, 'MM/DD/YYYY HH:mm:ss') }} </span>
-                    <span v-else-if="!column.isEditable && row[column.field].data && (column.columnInfo.type === 'int' || column.columnInfo.type === 'float')">{{ getFormattedNumber(row[column.field].data) }}</span>
-                    <span v-else>{{ row[column.field].data }}</span>
+                    <span v-if="!column.isEditable">
+                        <span v-if="row[column.field].data && column.columnInfo?.type === 'date'">
+                            {{ getFormattedDate(row[column.field].data, 'yyyy-MM-dd', getCurrentLocaleDefaultDateFormat(column)) }}
+                        </span>
+                        <span v-else-if="row[column.field].data && column.columnInfo?.type === 'timestamp'"> {{ getFormattedDateTime(row[column.field].data, { dateStyle: 'short', timeStyle: 'medium' }, true) }}</span>
+
+                        <span v-else>{{ row[column.field].data }}</span>
+                    </span>
                 </td>
             </template>
             <td class="pivot-data"><i v-if="row.edited" class="pi pi-flag" :style="descriptor.pivotStyles.iconColumn"></i></td>
@@ -48,9 +54,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { formatNumberWithLocale } from '@/helpers/commons/localeHelper'
-import { formatDate } from '@/helpers/commons/localeHelper'
+import { defineComponent, PropType } from 'vue'
+import { formatNumberWithLocale, primeVueDate, localeDate } from '@/helpers/commons/localeHelper'
+import { luxonFormatDate, formatDateWithLocale } from '@/helpers/commons/localeHelper'
 import Checkbox from 'primevue/checkbox'
 import KnPivotTableEditableField from './KnPivotTableEditableField.vue'
 import Paginator from 'primevue/paginator'
@@ -66,7 +72,7 @@ export default defineComponent({
         columns: [] as any,
         rows: [] as any,
         propConfiguration: { type: Object },
-        entity: { type: String },
+        entity: { type: Object as PropType<String | null> },
         id: { type: String },
         pagination: { type: Object },
         comboColumnOptions: { type: Array },
@@ -117,7 +123,12 @@ export default defineComponent({
             first: 0
         }
     },
-    computed: {},
+    computed: {
+        getCurrentLocaleDefaultDateFormat() {
+            return (column) => (column.isEditable ? column.format || primeVueDate() : localeDate())
+        }
+    },
+
     methods: {
         mapRows() {
             this.mappedRows = this.rows.map((row) => {
@@ -228,8 +239,11 @@ export default defineComponent({
         loadColumnOptions() {
             this.columnOptions = this.comboColumnOptions as any[]
         },
-        getFormattedDate(date: any, format: any) {
-            return formatDate(date, format)
+        getFormattedDate(date: any, inputFormat?: any, outputFormat?: string) {
+            return luxonFormatDate(date, inputFormat, outputFormat)
+        },
+        getFormattedDateTime(date: any, format?: any, keepNull?: boolean) {
+            return formatDateWithLocale(date, format, keepNull)
         }
     }
 })

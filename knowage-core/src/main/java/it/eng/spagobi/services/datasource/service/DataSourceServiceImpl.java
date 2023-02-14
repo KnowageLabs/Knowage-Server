@@ -181,5 +181,24 @@ public class DataSourceServiceImpl extends AbstractServiceImpl implements
 
 	}
 
+	@Override
+	public SpagoBiDataSource getDataSourceForCache(String token, String user) {
+		logger.debug("IN");
+		Monitor monitor = MonitorFactory
+				.start("spagobi.service.datasource.getAllDataSource");
+		try {
+			validateTicket(token, user);
+			this.setTenantByUserId(user);
+			return supplier.getDataSourceForCache();
+		} catch (Exception e) {
+			logger.error("Error while getting all datasources", e);
+			return null;
+		} finally {
+			this.unsetTenant();
+			monitor.stop();
+			logger.debug("OUT");
+		}
+
+	}
 
 }

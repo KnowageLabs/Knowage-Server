@@ -48,7 +48,7 @@
                         </template>
 
                         <Column v-for="col in getData(functionality.type)" :field="col.field" :header="$t(col.header)" :key="col.field" :style="col.style" :selectionMode="col.field == 'selectionMode' ? 'multiple' : ''" :exportable="col.field == 'selectionMode' ? false : ''">
-                            <template #body="{data}" v-if="col.displayType">
+                            <template #body="{ data }" v-if="col.displayType">
                                 <span class="p-float-label kn-material-input">
                                     <div v-if="col.displayType == 'widgetTags'">
                                         <Tag class="importExportTags p-mr-1" v-for="(tag, index) in data.tags" v-bind:key="index" rounded :value="tag"> </Tag>
@@ -72,7 +72,7 @@
 
             <Button v-if="step == 0" v-bind:visible="visibility" class="kn-button kn-button--primary" v-t="'common.next'" :disabled="uploadedFiles && uploadedFiles.length == 0" @click="goToChooseElement(uploadedFiles)" />
             <span v-if="step == 1">
-                <Button v-bind:visible="visibility" class="kn-button kn-button--secondary" v-t="'common.back'" @click="resetToFirstStep"/>
+                <Button v-bind:visible="visibility" class="kn-button kn-button--secondary" v-t="'common.back'" @click="resetToFirstStep" />
                 <Button v-bind:visible="visibility" class="kn-button kn-button--primary" v-t="'common.import'" :disabled="isImportDisabled()" @click="startImport"
             /></span>
         </template>
@@ -97,6 +97,7 @@ import Message from 'primevue/message'
 import TabPanel from 'primevue/tabpanel'
 import TabView from 'primevue/tabview'
 import Tag from 'primevue/tag'
+import mainStore from '../../App.store'
 
 export default defineComponent({
     name: 'import-dialog',
@@ -124,6 +125,10 @@ export default defineComponent({
         }
     },
     emits: ['update:visibility', 'import'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.filters = {
             global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -136,7 +141,7 @@ export default defineComponent({
         async cleanTempDirectory() {
             if (this.token != '') {
                 this.uploadedFiles = []
-                await this.$http.get(process.env.VUE_APP_API_PATH + '1.0/import/cleanup', { params: { token: this.token } }).then(
+                await this.$http.get(import.meta.env.VITE_API_PATH + '1.0/import/cleanup', { params: { token: this.token } }).then(
                     () => {
                         this.token = ''
                         this.packageItems = {
@@ -156,7 +161,7 @@ export default defineComponent({
         },
         getData(type): Array<ITableColumn> {
             let columns = this.importExportDescriptor['import'][type]['column']
-            columns.sort(function(a, b) {
+            columns.sort(function (a, b) {
                 if (a.position > b.position) return 1
                 if (a.position < b.position) return -1
                 return 0
@@ -180,7 +185,7 @@ export default defineComponent({
                 var formData = new FormData()
                 formData.append('file', uploadedFiles[0])
                 await this.$http
-                    .post(process.env.VUE_APP_API_PATH + '1.0/import/upload', formData, {
+                    .post(import.meta.env.VITE_API_PATH + '1.0/import/upload', formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data'
                         }
@@ -191,11 +196,11 @@ export default defineComponent({
                             this.token = response.data.token
                             this.step = 1
                         },
-                        () => this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('importExport.import.completedWithErrors') })
+                        () => this.store.setError({ title: this.$t('common.error.uploading'), msg: this.$t('importExport.import.completedWithErrors') })
                     )
                 this.loading = false
             } else {
-                this.$store.commit('setWarning', { title: this.$t('common.uploading'), msg: this.$t('managers.widgetGallery.noFileProvided') })
+                this.store.setWarning({ title: this.$t('common.uploading'), msg: this.$t('managers.widgetGallery.noFileProvided') })
             }
         },
         isImportDisabled(): Boolean {
@@ -233,9 +238,9 @@ export default defineComponent({
         },
 
         startImport() {
-            this.$store.commit('setLoading', true)
+            this.store.setLoading(true)
             this.$http
-                .post(process.env.VUE_APP_API_PATH + '1.0/import/bulk', this.streamlineSelectedItemsArray(), {
+                .post(import.meta.env.VITE_API_PATH + '1.0/import/bulk', this.streamlineSelectedItemsArray(), {
                     headers: {
                         // Overwrite Axios's automatically set Content-Type
                         'Content-Type': 'application/json'
@@ -243,11 +248,11 @@ export default defineComponent({
                 })
                 .then(
                     () => {
-                        this.$store.commit('setInfo', { title: this.$t('common.import'), msg: this.$t('importExport.import.successfullyCompleted') })
+                        this.store.setInfo({ title: this.$t('common.import'), msg: this.$t('importExport.import.successfullyCompleted') })
 
-                        this.$store.commit('setLoading', false)
+                        this.store.setLoading(false)
                     },
-                    () => this.$store.commit('setError', { title: this.$t('common.error.import'), msg: this.$t('importExport.import.completedWithErrors') })
+                    () => this.store.setError({ title: this.$t('common.error.import'), msg: this.$t('importExport.import.completedWithErrors') })
                 )
             this.token = ''
             this.resetAndClose()

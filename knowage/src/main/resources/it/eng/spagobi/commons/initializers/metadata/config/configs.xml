@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIGS>
-	<CONFIG label="internal.security.encript.password" name="encript password"
-		description="Enable the password encription" isActive="false"
-		valueCheck="true" valueType="NUM" category="SECURITY" />
 	<CONFIG label="changepwdmodule.len_min" name="Password Len Min"
 		description="Minimum length" isActive="false" valueCheck="8"
 		valueType="NUM" category="SECURITY" />
@@ -627,6 +624,44 @@
 		description="Set retention period for audit table cleaning"
 		isActive="true" valueCheck="180" valueType="NUM"
 		category="GENERIC_CONFIGURATION" />
+
+	<CONFIG label="KNOWAGE.EMIT_AUTHORIZATION_EVENTS" name="KNOWAGE.EMIT_AUTHORIZATION_EVENTS"
+		description="Enable or disable events emission for authorization changes"
+		isActive="true" valueCheck="false" valueType="STRING"
+		category="GENERIC_CONFIGURATION" />		
+		
+	<CONFIG label="document.exporter.knowagekpiengine" name="document.exporter.knowagekpiengine"
+		description="Adds exporters file format"
+		isActive="true" valueCheck="PDF" valueType="STRING"
+		category="EXPORTER_CONFIGURATION" />
+	<CONFIG label="document.exporter.knowagejasperreporte" name="document.exporter.knowagejasperreporte"
+		description="Adds exporters file format"
+		isActive="true" valueCheck="PDF,XLS,RTF,JPG" valueType="STRING"
+		category="EXPORTER_CONFIGURATION" />
+	<CONFIG label="document.exporter.knowagebirtreporteng" name="document.exporter.knowagebirtreporteng"
+		description="Adds exporters file format"
+		isActive="true" valueCheck="PDF,XLS,XLSX,RTF,DOC,DOCX,PPTX,CSV,XML,JPG,TXT,PPT" valueType="STRING"
+		category="EXPORTER_CONFIGURATION" />
+	<CONFIG label="document.exporter.knowageqbeengine" name="document.exporter.knowageqbeengine"
+		description="Adds exporters file format"
+		isActive="true" valueCheck="XLS,XLSX,CSV" valueType="STRING"
+		category="EXPORTER_CONFIGURATION" />
+	<CONFIG label="document.exporter.knowagewhatifengine" name="document.exporter.knowagewhatifengine"
+		description="Adds exporters file format"
+		isActive="true" valueCheck="XLS" valueType="STRING"
+		category="EXPORTER_CONFIGURATION" />
+	<CONFIG label="document.exporter.knowagecockpitengine" name="document.exporter.knowagecockpitengine"
+		description="Adds exporters file format"
+		isActive="true" valueCheck="XLSX,PDF" valueType="STRING"
+		category="EXPORTER_CONFIGURATION" />
+	<CONFIG label="document.exporter.knowageolapengine" name="document.exporter.knowageolapengine"
+		description="Adds exporters file format"
+		isActive="true" valueCheck="XLS" valueType="STRING"
+		category="EXPORTER_CONFIGURATION" />				
+	<CONFIG label="ZIP_MIN_INFLATE_RATIO" name="ZIP_MIN_INFLATE_RATIO"
+		description="Sets the ratio between de- and inflated bytes to detect zipbomb. It defaults to 0.0009"
+		isActive="true" valueCheck="0.0009" valueType="NUM"
+		category="GENERIC_CONFIGURATION" />	
 
 </CONFIGS>
 

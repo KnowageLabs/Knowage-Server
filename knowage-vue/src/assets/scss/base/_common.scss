@@ -1,6 +1,14 @@
 #app {
     background-color: var(--kn-app-background-color);
 }
+
+.kn-border-none {
+    border: 0;
+    .p-chips-multiple-container {
+        border: 0;
+    }
+}
+
 .kn-decoration-none {
     text-decoration: none;
     color: inherit;
@@ -65,6 +73,14 @@
     flex: 0;
 }
 
+.kn-flex-2 {
+    flex: 2;
+}
+
+.kn-flex-3 {
+    flex: 3;
+}
+
 .kn-absolute {
     position: absolute;
 }
@@ -87,6 +103,10 @@
 
 .kn-overflow-hidden {
     overflow: hidden;
+}
+
+.kn-overflow-x-hidden {
+    overflow-x: hidden;
 }
 
 .kn-uppercase {

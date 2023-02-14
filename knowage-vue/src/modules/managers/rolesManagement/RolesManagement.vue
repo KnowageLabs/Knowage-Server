@@ -11,7 +11,7 @@
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <KnListBox class="kn-height-full" :options="roles" :settings="rolesDecriptor.knListSettings" @click="showForm" @delete.stop="deleteRoleConfirm(slotProps.option.id)"></KnListBox>
+                <KnListBox class="kn-height-full" :options="roles" :settings="rolesDecriptor.knListSettings" @click="showForm" @delete.stop="deleteRoleConfirm"></KnListBox>
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
@@ -28,6 +28,7 @@ import { AxiosResponse } from 'axios'
 import rolesDecriptor from './RolesManagementDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'roles-management',
@@ -43,6 +44,10 @@ export default defineComponent({
             publicRole: null as any
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     async created() {
         await this.loadAllRoles()
     },
@@ -50,7 +55,7 @@ export default defineComponent({
         async loadAllRoles() {
             this.loading = true
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles')
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/roles')
                 .then((response: AxiosResponse<any>) => {
                     this.roles = response.data
                     this.checkAllRolesForPublicRole()
@@ -66,7 +71,6 @@ export default defineComponent({
             })
         },
         showForm(event: any) {
-            console.log(event)
             const path = event.item ? `/roles-management/${event.item.id}` : '/roles-management/new-role'
 
             if (!this.touched) {
@@ -83,19 +87,20 @@ export default defineComponent({
                 })
             }
         },
-        deleteRoleConfirm(roleId: number) {
+        deleteRoleConfirm(event: any) {
+            if (!event.item) return
             this.$confirm.require({
                 message: this.$t('common.toast.deleteMessage'),
                 header: this.$t('common.toast.deleteTitle'),
                 icon: 'pi pi-exclamation-triangle',
-                accept: () => this.deleteRole(roleId)
+                accept: () => this.deleteRole(event.item.id)
             })
         },
         async deleteRole(roleId: number) {
             await this.$http
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles/' + roleId, { headers: { 'X-Disable-Errors': 'true' } })
+                .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/roles/' + roleId, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
                     })
@@ -104,7 +109,7 @@ export default defineComponent({
                 })
                 .catch((error) => {
                     if (error) {
-                        this.$store.commit('setError', {
+                        this.store.setError({
                             title: this.$t('common.toast.deleteTitle'),
                             msg: this.$t('common.error.deleting')
                         })

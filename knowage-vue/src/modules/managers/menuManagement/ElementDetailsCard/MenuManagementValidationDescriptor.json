@@ -10,10 +10,10 @@
                     {
                         "key": "maximumCharacters",
                         "validator": {
-                            "type": "maxLength",
                             "params": {
                                 "max": 100
-                            }
+                            },
+                            "type": "maxLength"
                         }
                     },
                     {
@@ -33,10 +33,10 @@
                     {
                         "key": "maximumCharacters",
                         "validator": {
-                            "type": "maxLength",
                             "params": {
                                 "max": 100
-                            }
+                            },
+                            "type": "maxLength"
                         }
                     },
                     {
@@ -65,10 +65,10 @@
                     {
                         "key": "maximumCharacters",
                         "validator": {
-                            "type": "maxLength",
                             "params": {
-                                "max": 100
-                            }
+                                "max": 1000
+                            },
+                            "type": "maxLength"
                         }
                     }
                 ]
@@ -87,10 +87,10 @@
                     {
                         "key": "maximumCharacters",
                         "validator": {
-                            "type": "maxLength",
                             "params": {
                                 "max": 100
-                            }
+                            },
+                            "type": "maxLength"
                         }
                     }
                 ]
@@ -101,10 +101,10 @@
                     {
                         "key": "maximumCharacters",
                         "validator": {
-                            "type": "maxLength",
                             "params": {
                                 "max": 1000
-                            }
+                            },
+                            "type": "maxLength"
                         }
                     }
                 ]

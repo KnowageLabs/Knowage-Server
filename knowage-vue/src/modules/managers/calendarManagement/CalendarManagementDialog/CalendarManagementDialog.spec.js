@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import CalendarManagementDialog from './CalendarManagementDialog.vue'
 import Dialog from 'primevue/dialog'
@@ -7,6 +8,7 @@ import InputText from 'primevue/inputtext'
 import PrimeVue from 'primevue/config'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
+import mainStore from '../../../../App.store'
 
 const mockedCalendar = {
     realDateGenerated: [],
@@ -17,34 +19,35 @@ const mockedCalendar = {
     calType: ''
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    post: axios.post.mockImplementation(() => Promise.resolve({ data: [] }))
-}
-
-const $store = {
-    state: {
-        user: {
-            functionalities: ['ManageCalendar']
-        }
-    },
-    commit: jest.fn()
+    post: vi.fn().mockImplementation(() => Promise.resolve({ data: [] }))
 }
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 
 const factory = () => {
     return mount(CalendarManagementDialog, {
         props: { visible: true, propCalendar: mockedCalendar, domains: [] },
         global: {
-            plugins: [PrimeVue],
+            plugins: [
+                PrimeVue,
+                createTestingPinia({
+                    initialState: {
+                        store: {
+                            user: {
+                                functionalities: ['ManageCalendar']
+                            }
+                        }
+                    }
+                })
+            ],
             stubs: { Button, Dialog, InputText, CalendarManagementDetailForm: true, CalendarManagementDetailTable: true, ProgressBar, Toolbar },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $http,
                 $confirm
             }
@@ -53,7 +56,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Calendar Management Dialog', () => {
@@ -68,6 +71,7 @@ describe('Calendar Management Dialog', () => {
 
     it('Should show a message if the saving is succesful', async () => {
         const wrapper = factory()
+        const store = mainStore()
 
         wrapper.vm.calendar.name = 'Test'
         wrapper.vm.calendar.calStartDay = 1498867200000
@@ -75,9 +79,9 @@ describe('Calendar Management Dialog', () => {
 
         await wrapper.vm.saveCalendar()
 
-        expect(axios.post).toHaveBeenCalledTimes(1)
-        expect(axios.post).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'calendar/saveCalendar', { ...mockedCalendar, name: 'Test', calStartDay: 1498867200000, calEndDay: 1500336000000 })
-        expect($store.commit).toHaveBeenCalledTimes(1)
+        expect($http.post).toHaveBeenCalledTimes(1)
+        expect($http.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'calendar/saveCalendar', { ...mockedCalendar, name: 'Test', calStartDay: 1498867200000, calEndDay: 1500336000000 })
+        expect(store.setInfo).toHaveBeenCalledTimes(1)
     })
 
     it('hould inform the user that the generation may take some time', async () => {

@@ -95,14 +95,17 @@
                     }"
                 ></KnValidationMessages>
             </div>
-
             <div class="p-field" :style="configurationManagementDescriptor.pField.style">
-                <span class="p-float-label">
+                <span class="p-float-label" v-if="configuration?.label?.toLowerCase().endsWith('.password')">
+                    <InputText id="description" class="kn-material-input" type="password" v-model.trim="v$.configuration.valueCheck.$model" @blur="v$.configuration.valueCheck.$touch()" />
+                    <label v-if="configuration.id" for="pwd" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.pwd') }}</label>
+                    <label v-else for="description" class="kn-material-input-label"> {{ $t('managers.configurationManagement.headers.valueCheck') }} </label>
+                </span>
+                <span v-else class="p-float-label">
                     <InputText id="description" class="kn-material-input" type="text" v-model.trim="v$.configuration.valueCheck.$model" @blur="v$.configuration.valueCheck.$touch()" />
                     <label for="description" class="kn-material-input-label"> {{ $t('managers.configurationManagement.headers.valueCheck') }} </label>
                 </span>
             </div>
-
             <div class="p-field" :style="configurationManagementDescriptor.pField.style">
                 <div class="p-field-checkbox">
                     <Checkbox id="isActive" v-model="v$.configuration.active.$model" :binary="true" />
@@ -119,89 +122,94 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { createValidations } from '@/helpers/commons/validationHelper'
-    import { iConfiguration } from './ConfigurationManagement'
-    import configurationManagementDescriptor from './ConfigurationManagementDescriptor.json'
-    import configurationManagementValidationDescriptor from './ConfigurationManagementValidationDescriptor.json'
-    import useValidate from '@vuelidate/core'
-    import Dialog from 'primevue/dialog'
-    import Dropdown from 'primevue/dropdown'
-    import Checkbox from 'primevue/checkbox'
-    import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import { defineComponent } from 'vue'
+import { createValidations } from '@/helpers/commons/validationHelper'
+import { iConfiguration } from './ConfigurationManagement'
+import configurationManagementDescriptor from './ConfigurationManagementDescriptor.json'
+import configurationManagementValidationDescriptor from './ConfigurationManagementValidationDescriptor.json'
+import useValidate from '@vuelidate/core'
+import Dialog from 'primevue/dialog'
+import Dropdown from 'primevue/dropdown'
+import Checkbox from 'primevue/checkbox'
+import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import mainStore from '../../../App.store'
 
-    export default defineComponent({
-        name: 'configuration-management-dialog',
-        components: { Dialog, Dropdown, Checkbox, KnValidationMessages },
-        props: {
-            model: {
-                type: Object,
-                requried: false
-            }
-        },
-        emits: ['close', 'created'],
-        data() {
-            return {
-                configurationManagementDescriptor: configurationManagementDescriptor,
-                configurationManagementValidationDescriptor: configurationManagementValidationDescriptor,
-                configuration: {} as iConfiguration,
-                v$: useValidate() as any,
-                operation: 'insert',
-                dirty: false,
-                options: [true, false]
-            }
-        },
-        validations() {
-            return {
-                configuration: createValidations('configuration', configurationManagementValidationDescriptor.validations.configuration)
-            }
-        },
-        computed: {
-            formHeader(): any {
-                return this.configuration.id ? this.configuration.name : this.$t('managers.configurationManagement.createNewHeader')
-            },
-            buttonDisabled(): any {
-                return this.v$.$invalid
-            }
-        },
-        mounted() {
-            if (this.model) {
-                this.configuration = { ...this.model } as iConfiguration
-            }
-        },
-        watch: {
-            model() {
-                this.configuration = { ...this.model } as iConfiguration
-            }
-        },
-        methods: {
-            async handleSubmit() {
-                if (this.v$.$invalid) {
-                    return
-                }
-                let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs'
-                if (this.configuration.id) {
-                    this.operation = 'update'
-                    url += '/' + this.configuration.id
-                }
-                await this.sendRequest(url).then(() => {
-                    this.$store.commit('setInfo', {
-                        title: this.$t(this.configurationManagementDescriptor.operation[this.operation].toastTitle),
-                        msg: this.$t(this.configurationManagementDescriptor.operation.success)
-                    })
-                    this.$emit('created')
-                })
-            },
-            sendRequest(url: string) {
-                if (this.operation === 'insert') {
-                    return this.$http.post(url, this.configuration)
-                } else {
-                    return this.$http.put(url, this.configuration)
-                }
-            },
-            closeTemplate() {
-                this.$emit('close')
-            }
+export default defineComponent({
+    name: 'configuration-management-dialog',
+    components: { Dialog, Dropdown, Checkbox, KnValidationMessages },
+    props: {
+        model: {
+            type: Object,
+            requried: false
         }
-    })
+    },
+    emits: ['close', 'created'],
+    data() {
+        return {
+            configurationManagementDescriptor: configurationManagementDescriptor,
+            configurationManagementValidationDescriptor: configurationManagementValidationDescriptor,
+            configuration: {} as iConfiguration,
+            v$: useValidate() as any,
+            operation: 'insert',
+            dirty: false,
+            options: [true, false]
+        }
+    },
+    validations() {
+        return {
+            configuration: createValidations('configuration', configurationManagementValidationDescriptor.validations.configuration)
+        }
+    },
+    computed: {
+        formHeader(): any {
+            return this.configuration.id ? this.configuration.name : this.$t('managers.configurationManagement.createNewHeader')
+        },
+        buttonDisabled(): any {
+            return this.v$.$invalid
+        }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
+    mounted() {
+        if (this.model) {
+            this.configuration = { ...this.model } as iConfiguration
+        }
+    },
+    watch: {
+        model() {
+            this.configuration = { ...this.model } as iConfiguration
+        }
+    },
+    methods: {
+        async handleSubmit() {
+            if (this.v$.$invalid) {
+                return
+            }
+            let url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/configs'
+            if (this.configuration.id) {
+                this.operation = 'update'
+                url += '/' + this.configuration.id
+            }
+            await this.sendRequest(url).then(() => {
+                this.store.setInfo({
+                    title: this.$t(this.configurationManagementDescriptor.operation[this.operation].toastTitle),
+                    msg: this.$t(this.configurationManagementDescriptor.operation.success)
+                })
+                this.$emit('created')
+            })
+        },
+        sendRequest(url: string) {
+            if (this.operation === 'insert') {
+                return this.$http.post(url, this.configuration)
+            } else {
+                return this.$http.put(url, this.configuration)
+            }
+        },
+        closeTemplate() {
+            this.$emit('close')
+        }
+    }
+})
 </script>

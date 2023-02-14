@@ -137,6 +137,7 @@ public class SpagoBIConstants {
 	public static final String START_FILTER = "start";
 	public static final String END_FILTER = "end";
 	public static final String EQUAL_FILTER = "equal";
+	public static final String NOT_EQUAL_FILTER = "not equals";
 	public static final String CONTAIN_FILTER = "contains";
 	public static final String NOT_CONTAIN_FILTER = "notcontains";
 	public static final String LESS_FILTER = "less";
@@ -450,6 +451,7 @@ public class SpagoBIConstants {
 	// for management of DOCUMENT COMPOSITION
 	public static final String DOCUMENT_COMPOSITION = "DOCUMENT_COMPOSITION";
 	public static final String DOCUMENT_COMPOSITE_TYPE = "DOCUMENT_COMPOSITE";
+	public static final String DASHBOARD_TYPE = "DASHBOARD";
 	// to modify refresh time
 	public static final String MODIFY_REFRESH = "ModifyRefresh";
 

@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import DocumentBrowserSidebar from './sidebar/DocumentBrowserSidebar.vue'
 import DocumentBrowserDetail from './DocumentBrowserDetail.vue'
 import Toolbar from 'primevue/toolbar'
@@ -96,12 +98,6 @@ const mockedDocuments = [
     }
 ]
 
-const $store = {
-    state: {
-        user: {}
-    }
-}
-
 const factory = (documents) => {
     return mount(DocumentBrowserDetail, {
         props: {
@@ -112,7 +108,17 @@ const factory = (documents) => {
             directives: {
                 tooltip() {}
             },
-            plugins: [],
+            plugins: [
+                createTestingPinia({
+                    initialState: {
+                        store: {
+                            user: {
+                                functionalities: ['DocumentUserManagement']
+                            }
+                        }
+                    }
+                })
+            ],
             stubs: {
                 DocumentBrowserBreadcrumb: true,
                 DocumentBrowserTable: true,
@@ -120,8 +126,7 @@ const factory = (documents) => {
                 Toolbar
             },
             mocks: {
-                $t: (msg) => msg,
-                $store
+                $t: (msg) => msg
             }
         }
     })

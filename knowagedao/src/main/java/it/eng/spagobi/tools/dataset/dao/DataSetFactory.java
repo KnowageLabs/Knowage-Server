@@ -33,6 +33,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.qbe.dataset.DerivedDataSet;
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.security.IEngUserProfile;
@@ -60,6 +61,7 @@ import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
 import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCOrientDbDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCPostgreSQLDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCRedShiftDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCSpannerDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCSynapseDataSet;
@@ -110,6 +112,7 @@ public class DataSetFactory {
 	public static final String FLAT_DS_TYPE = "Flat";
 	public static final String PREPARED_DS_TYPE = "Prepared";
 	public static final String SPARQL_DS_TYPE = "SPARQL";
+	public static final String DERIVED_DS_TYPE = "Derived";
 
 	static private Logger logger = Logger.getLogger(DataSetFactory.class);
 
@@ -442,6 +445,11 @@ public class DataSetFactory {
 				}
 				ds.setDsType(QBE_DS_TYPE);
 
+			} else if (type.equalsIgnoreCase(DataSetConstants.DS_DERIVED)) {
+				ds = new DerivedDataSet();
+				ds.setConfiguration(sbiDataSet.getConfiguration());
+
+				ds.setDsType(DERIVED_DS_TYPE);
 			} else if (type.equalsIgnoreCase(DataSetConstants.DS_FLAT)) {
 				ds = new FlatDataSet();
 				ds.setConfiguration(sbiDataSet.getConfiguration());
@@ -491,8 +499,8 @@ public class DataSetFactory {
 			try {
 
 				if (sbiDataSet.getCategory() != null) {
-					ds.setCategoryCd(sbiDataSet.getCategory().getValueCd());
-					ds.setCategoryId(sbiDataSet.getCategory().getValueId());
+					ds.setCategoryCd(sbiDataSet.getCategory().getCode());
+					ds.setCategoryId(sbiDataSet.getCategory().getId());
 				}
 				// ds.setConfiguration(sbiDataSet.getConfiguration());
 				if (sbiDataSet.getId().getDsId() != null)
@@ -514,7 +522,7 @@ public class DataSetFactory {
 				ds.setOrganization(sbiDataSet.getId().getOrganization());
 
 				if (ds.getPivotColumnName() != null && ds.getPivotColumnValue() != null && ds.getPivotRowName() != null) {
-					ds.setDataStoreTransformer(
+					ds.addDataStoreTransformer(
 							new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
 				}
 				ds.setPersisted(sbiDataSet.isPersisted());
@@ -768,7 +776,7 @@ public class DataSetFactory {
 				ds.setOrganization(sbiDataSet.getOrganization());
 
 				if (ds.getPivotColumnName() != null && ds.getPivotColumnValue() != null && ds.getPivotRowName() != null) {
-					ds.setDataStoreTransformer(
+					ds.addDataStoreTransformer(
 							new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
 				}
 				ds.setPersisted(sbiDataSet.isPersisted());
@@ -841,6 +849,8 @@ public class DataSetFactory {
 				ds = new JDBCSynapseDataSet();
 			} else if (dialectToLowerCase.contains("Spanner")) {
 				ds = new JDBCSpannerDataSet();
+			} else if (dialectToLowerCase.contains("postgres")) {
+				ds = new JDBCPostgreSQLDataSet();
 			}
 		}
 		return (ds != null) ? ds : new JDBCDataSet();
@@ -1094,8 +1104,8 @@ public class DataSetFactory {
 			try {
 
 				if (sbiDataSet.getCategory() != null) {
-					ds.setCategoryCd(sbiDataSet.getCategory().getValueCd());
-					ds.setCategoryId(sbiDataSet.getCategory().getValueId());
+					ds.setCategoryCd(sbiDataSet.getCategory().getCode());
+					ds.setCategoryId(sbiDataSet.getCategory().getId());
 				}
 				// ds.setConfiguration(sbiDataSet.getConfiguration());
 				if (sbiDataSet.getId().getDsId() != null)
@@ -1116,7 +1126,7 @@ public class DataSetFactory {
 				ds.setOrganization(sbiDataSet.getId().getOrganization());
 
 				if (ds.getPivotColumnName() != null && ds.getPivotColumnValue() != null && ds.getPivotRowName() != null) {
-					ds.setDataStoreTransformer(
+					ds.addDataStoreTransformer(
 							new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
 				}
 				ds.setPersisted(sbiDataSet.isPersisted());

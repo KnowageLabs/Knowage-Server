@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import MenuNodesTree from './MenuManagementNodesTree.vue'
 import InputText from 'primevue/inputtext'
@@ -411,7 +413,7 @@ const factory = () => {
         },
         attachToDocument: true,
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: { Button, InputText, ProgressBar, Tree, Card },
             mocks: {
                 $t: (msg) => msg
@@ -421,7 +423,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Menu Nodes Tree', () => {
@@ -430,11 +432,9 @@ describe('Menu Nodes Tree', () => {
 
         await wrapper.setProps({ elements: mockedElements })
 
-        expect(wrapper.vm.expandedKeys).toStrictEqual({
-            '33': true,
-            '35': true,
-            '38': true
-        })
+        expect(wrapper.vm.expandedKeys[33]).toBe(true)
+        expect(wrapper.vm.expandedKeys[35]).toBe(true)
+        expect(wrapper.vm.expandedKeys[38]).toBe(true)
     })
     it('emits selectedMenuNode when list item is clicked', async () => {
         const wrapper = factory()
@@ -477,9 +477,9 @@ describe('Menu Nodes Tree', () => {
         const wrapper = factory()
 
         await wrapper.setProps({ elements: mockedElements })
-        await wrapper.find('[data-test="move-down-button-38"]').trigger('click')
+        await wrapper.find('[data-test="move-down-button-50"]').trigger('click')
 
         expect(wrapper.emitted()).toHaveProperty('moveDown')
-        expect(wrapper.emitted().moveDown[0][0]).toEqual(38)
+        expect(wrapper.emitted().moveDown[0][0]).toEqual(50)
     })
 })

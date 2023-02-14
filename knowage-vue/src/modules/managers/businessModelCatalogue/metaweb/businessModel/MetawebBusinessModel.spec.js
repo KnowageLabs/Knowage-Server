@@ -1,5 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
-import axios from 'axios'
+import { vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import MetawebBusinessModel from './MetawebBusinessModel.vue'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import TabView from 'primevue/tabview'
@@ -15,11 +16,12 @@ import mainDescriptor from '../MetawebDescriptor.json'
 import bmDescriptor from './MetawebBusinessModelDescriptor.json'
 import metaMock from './MetawebBusinessModelTestMock.json'
 
-jest.mock('axios')
+
+vi.mock('axios')
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/roles`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/roles`:
                 return Promise.resolve({ data: [] })
             default:
                 return Promise.resolve({ data: [] })
@@ -35,6 +37,7 @@ const factory = () => {
             observer: {}
         },
         global: {
+            plugins: [createTestingPinia()],
             stubs: {
                 KnFabButton,
                 TabView,
@@ -67,12 +70,12 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Metaweb Business Model', () => {
     it('clicking on a business model in the list the detail should open in the detail section', async () => {
-        axios.get.mockReturnValueOnce(
+        $http.get.mockReturnValueOnce(
             Promise.resolve({
                 data: []
             })

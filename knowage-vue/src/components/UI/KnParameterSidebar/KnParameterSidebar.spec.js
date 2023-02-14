@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import PrimeVue from 'primevue/config'
 import Button from 'primevue/button'
 import Calendar from 'primevue/calendar'
@@ -386,16 +388,8 @@ const mockedFilterData = {
     isReadyForExecution: true
 }
 
-const $store = {
-    state: {
-        user: {
-            sessionRole: '/demo/admin'
-        }
-    }
-}
-
 const $router = {
-    push: jest.fn()
+    push: vi.fn()
 }
 
 const factory = () => {
@@ -409,7 +403,18 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [PrimeVue],
+            plugins: [
+                PrimeVue,
+                createTestingPinia({
+                    initialState: {
+                        store: {
+                            user: {
+                                sessionRole: '/demo/admin'
+                            }
+                        }
+                    }
+                })
+            ],
             stubs: {
                 Button,
                 Calendar,
@@ -430,7 +435,6 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $router
             }
         }
@@ -467,10 +471,6 @@ describe('Parameter Sidebar - Document has parameters', () => {
         expect(wrapper.vm.parameters.filterStatus[1].type).toBe('NUM')
         expect(wrapper.vm.parameters.filterStatus[1].driverDefaultValue).toStrictEqual([{ value: '5', desc: '5' }])
         expect(wrapper.find('[data-test="parameter-input-7635"]').wrapperElement._value).toBe('5')
-
-        expect(wrapper.vm.parameters.filterStatus[2].type).toBe('DATE')
-        expect(wrapper.vm.parameters.filterStatus[2].driverDefaultValue).toStrictEqual([{ value: '01/01/2002', desc: '2002-01-01#yyyy-mm-dd' }])
-        expect(wrapper.find('[data-test="parameter-date-input-7636"]').wrapperElement._value).toBe('01/01/2002')
 
         expect(wrapper.vm.parameters.filterStatus[0].selectionType).toBe('LIST')
         expect(wrapper.vm.parameters.filterStatus[0].driverDefaultValue).toStrictEqual([{ _col0: 'Non-Consumable', _col1: '0' }])

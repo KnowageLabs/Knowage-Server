@@ -5,17 +5,9 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.security;
 
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.metadata.SbiTenant;
-import it.eng.spagobi.security.OAuth2.OAuth2Client;
-import it.eng.spagobi.security.OAuth2.OAuth2Config;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
@@ -25,6 +17,13 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.metadata.SbiTenant;
+import it.eng.spagobi.security.OAuth2.OAuth2Client;
+import it.eng.spagobi.security.OAuth2.OAuth2Config;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
@@ -79,7 +78,7 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 
 			OAuth2Client oauth2Client = new OAuth2Client();
 
-			Properties config = OAuth2Config.getInstance().getConfig();
+			OAuth2Config config = OAuth2Config.getInstance();
 
 			// Retrieve the admin's token for REST services authentication
 			String token = oauth2Client.getAdminToken();
@@ -88,10 +87,10 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 
 			// Get roles of the application (specified in the
 			// oauth2.config.properties)
-			
-			String rolesPath = config.getProperty("ROLES_PATH");
-			rolesPath = MessageFormat.format(rolesPath, config.getProperty("APPLICATION_ID"));
-			String url = config.getProperty("REST_BASE_URL") + rolesPath;
+
+			String rolesPath = config.getRolesPath();
+			rolesPath = MessageFormat.format(rolesPath, config.getApplicationId());
+			String url = config.getRestAPIBaseUrl() + rolesPath;
 			GetMethod httpget = new GetMethod(url);
 			httpget.addRequestHeader("X-Auth-Token", token);
 

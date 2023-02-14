@@ -17,16 +17,6 @@
  */
 package it.eng.spagobi.tools.catalogue.dao;
 
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.SpagoBIDAOException;
-import it.eng.spagobi.commons.dao.SpagoBIDAOObjectNotExistingException;
-import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.tools.catalogue.bo.Artifact;
-import it.eng.spagobi.tools.catalogue.bo.Content;
-import it.eng.spagobi.tools.catalogue.metadata.SbiArtifact;
-import it.eng.spagobi.tools.catalogue.metadata.SbiArtifactContent;
-import it.eng.spagobi.utilities.assertion.Assert;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -38,6 +28,16 @@ import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
+import it.eng.spagobi.commons.dao.SpagoBIDAOObjectNotExistingException;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.tools.catalogue.bo.Artifact;
+import it.eng.spagobi.tools.catalogue.bo.Content;
+import it.eng.spagobi.tools.catalogue.metadata.SbiArtifact;
+import it.eng.spagobi.tools.catalogue.metadata.SbiArtifactContent;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifactsDAO {
 
@@ -514,7 +514,8 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 				boolean itWasActive = hibContent.getActive();
 				session.delete(hibContent);
 				if (itWasActive) {
-					Query query = session.createQuery(" from SbiArtifactContent mmc where mmc.artifact.id = " + artifactId + " order by prog desc");
+					Query query = session.createQuery(" from SbiArtifactContent mmc where mmc.artifact.id =  :artifactId  order by prog desc");
+					query.setParameter("artifactId", artifactId);
 					List<SbiArtifactContent> list = query.list();
 					if (list != null && !list.isEmpty()) {
 						SbiArtifactContent first = list.get(0);

@@ -1,23 +1,23 @@
 <template>
     <div class="kn-page">
-        <div class="document-browser-tab-container kn-page-content">
+        <div class="document-browser-tab-container kn-flex">
             <TabView id="document-browser-tab-view" class="p-d-flex p-flex-column kn-flex kn-tab" v-model:activeIndex="activeIndex" @tab-change="onTabChange">
                 <TabPanel>
                     <template #header>
                         <i class="fa fa-folder-open"></i>
                     </template>
 
-                    <DocumentBrowserHome @itemSelected="onItemSelect($event)"></DocumentBrowserHome>
+                    <DocumentBrowserHome :documentSaved="documentSaved" :documentSavedTrigger="documentSavedTrigger" @itemSelected="onItemSelect($event)"></DocumentBrowserHome>
                 </TabPanel>
 
                 <TabPanel v-for="(tab, index) in tabs" :key="index">
                     <template #header>
-                        <span>{{ tab.item?.name ? tab.item?.name : 'new dashboard' }}</span>
+                        <span>{{ getTabName(tab) }}</span>
                     </template>
                 </TabPanel>
             </TabView>
 
-            <DocumentBrowserTab v-show="selectedItem" :item="selectedItem?.item" :mode="selectedItem?.mode" :functionalityId="selectedItem?.functionalityId" @close="closeDocument('current')" @iframeCreated="onIFrameCreated" @closeIframe="closeIframe"></DocumentBrowserTab>
+            <DocumentBrowserTab v-show="selectedItem && selectedItem.mode" :item="selectedItem?.item" :functionalityId="selectedItem?.functionalityId" @close="closeDocument('current')" @iframeCreated="onIFrameCreated" @closeIframe="closeIframe" @documentSaved="onDocumentSaved"></DocumentBrowserTab>
             <div v-for="(iframe, index) in iFrameContainers" :key="index">
                 <iframe v-show="iframe.item?.routerId === selectedItem?.item.routerId" ref="iframe" class="document-browser-cockpit-iframe" :src="iframe.iframe"></iframe>
             </div>
@@ -32,17 +32,19 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
+import { getRouteDocumentType } from './documentBrowserHelper'
 import DocumentBrowserHome from './documentBrowserHome/DocumentBrowserHome.vue'
 import DocumentBrowserTab from './DocumentBrowserTab.vue'
 import Menu from 'primevue/menu'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 
-const crypto = require('crypto')
+import cryptoRandomString from 'crypto-random-string'
 
 export default defineComponent({
     name: 'document-browser',
     components: { DocumentBrowserHome, DocumentBrowserTab, Menu, TabView, TabPanel },
+    props: { selectedMenuItem: { type: Object }, menuItemClickedTrigger: { type: Boolean } },
     data() {
         return {
             tabs: [] as any[],
@@ -50,27 +52,64 @@ export default defineComponent({
             menuItems: [] as any[],
             selectedItem: null as any,
             id: 0,
-            iFrameContainers: [] as any[]
+            iFrameContainers: [] as any[],
+            menuItem: null,
+            documentSaved: null,
+            documentSavedTrigger: false,
+            getRouteDocumentType
+        }
+    },
+    watch: {
+        async menuItemClickedTrigger() {
+            if (!this.selectedMenuItem) return
+            if (this.selectedMenuItem.to === '/document-browser') {
+                this.selectedItem = null
+                this.activeIndex = 0
+            } else if (this.selectedMenuItem.to && this.selectedMenuItem.to.includes('document-browser')) {
+                await this.loadPage()
+            }
         }
     },
     async created() {
-        window.addEventListener('message', (event) => {
-            if (event.data.type === 'saveCockpit' && this.$route.name === 'new-dashboard') {
-                this.loadSavedCockpit(event.data.model)
-            }
-        })
-
-        if (this.$route.params.id && this.$route.name === 'document-browser-document-execution') {
-            let tempDocument = {} as any
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.$route.params.id}`).then((response: AxiosResponse<any>) => (tempDocument = response.data))
-            const tempItem = { item: { name: tempDocument.name, label: this.$route.params.id, mode: this.$route.params.mode, routerId: crypto.randomBytes(16).toString('hex') }, mode: 'execute' }
-            this.tabs.push(tempItem)
-
-            this.activeIndex = 1
-            this.selectedItem = tempItem
-        }
+        this.loadPage()
     },
     methods: {
+        async loadPage() {
+            window.addEventListener('message', async (event) => {
+                if (event.data.type === 'saveCockpit' && this.$router.currentRoute.value.name === 'new-cockpit') {
+                    await this.loadSavedCockpit(event.data.model)
+                    this.documentSaved = event.data.model
+                    this.documentSavedTrigger = !this.documentSavedTrigger
+                }
+            })
+
+            let id = this.$router.currentRoute.value.params.id ?? this.parseSelectedMenuItem()
+
+            if (id && id !== 'document-browser' && (this.$router.currentRoute.value.name === 'document-browser-document-execution' || this.$router.currentRoute.value.name === 'document-browser-document-details-edit' || this.$router.currentRoute.value.name === 'document-browser')) {
+                let tempDocument = {} as any
+                if (id !== 'new-dashboard') await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documents/${id}`).then((response: AxiosResponse<any>) => (tempDocument = response.data))
+                const tempItem = {
+                    item: {
+                        name: tempDocument.name,
+                        label: id,
+                        mode: this.$router.currentRoute.value.params.mode,
+                        routerId: cryptoRandomString({ length: 16, type: 'base64' }),
+                        id: id,
+                        showMode: this.$router.currentRoute.value.name === 'document-browser-document-execution' ? 'execute' : 'documentDetail'
+                    },
+                    mode: this.$router.currentRoute.value.name === 'document-browser-document-execution' && this.$router.currentRoute.value.params.id ? 'execute' : 'documentDetail'
+                }
+                this.tabs.push(tempItem)
+
+                this.activeIndex = 1
+                this.selectedItem = tempItem
+            }
+        },
+        parseSelectedMenuItem() {
+            if (!this.selectedMenuItem) return null
+
+            return this.selectedMenuItem.to?.substring(this.selectedMenuItem.to.lastIndexOf('/') + 1)
+        },
         onTabChange() {
             if (this.activeIndex === 0) {
                 this.selectedItem = null
@@ -81,66 +120,47 @@ export default defineComponent({
             const id = this.tabs[this.activeIndex - 1].item ? this.tabs[this.activeIndex - 1].item.label : 'new-dashboard'
 
             this.selectedItem = this.tabs[this.activeIndex - 1]
+            this.selectedItem.item.fromTab = true
 
-            let routeDocumentType = this.tabs[this.activeIndex - 1].item.mode ? this.tabs[this.activeIndex - 1].item.mode : this.getRouteDocumentType(this.tabs[this.activeIndex - 1].item)
-            routeDocumentType ? this.$router.push(`/document-browser/${routeDocumentType}/` + id) : this.$router.push('/document-browser/new-dashboard')
+            if (this.selectedItem.mode === 'documentDetail') {
+                const path = this.selectedItem.functionalityId ? `/document-browser/document-details/new/${this.selectedItem.functionalityId}` : `/document-browser/document-details/${this.selectedItem.item.id}`
+                this.$router.push(path)
+            } else {
+                let routeDocumentType = this.tabs[this.activeIndex - 1].item.mode ? this.tabs[this.activeIndex - 1].item.mode : this.getRouteDocumentType(this.tabs[this.activeIndex - 1].item)
+                routeDocumentType ? this.$router.push(`/document-browser/${routeDocumentType}/` + id) : this.$router.push('/document-browser/new-dashboard')
+            }
         },
         onItemSelect(payload: any) {
             if (payload.item) {
-                payload.item.routerId = crypto.randomBytes(16).toString('hex')
+                payload.item.routerId = cryptoRandomString({ length: 16, type: 'base64' })
             }
 
             const tempItem = { ...payload, item: { ...payload.item } }
+            if (payload.mode === 'documentDetail') tempItem.mode = 'documentDetail'
 
             this.tabs.push(tempItem)
 
             this.selectedItem = tempItem
 
-            const id = payload.item ? payload.item.label : 'new-dashboard'
-            if (payload.item) {
-                let routeDocumentType = this.getRouteDocumentType(payload.item)
-                this.$router.push(`/document-browser/${routeDocumentType}/` + id)
+            if (payload.mode === 'documentDetail') {
+                const path = payload.functionalityId ? `/document-browser/document-details/new/${payload.functionalityId}` : `/document-browser/document-details/${payload.item.id}`
+                this.selectedItem.item.showMode = 'documentDetail'
+                this.$router.push(path)
             } else {
-                this.selectedItem.item = { routerId: crypto.randomBytes(16).toString('hex') }
-                this.$router.push(`/document-browser/new-dashboard`)
+                const id = payload.item ? payload.item.label : 'new-dashboard'
+                if (payload.item) {
+                    let routeDocumentType = this.getRouteDocumentType(payload.item)
+                    this.selectedItem.item.showMode = 'execute'
+                    this.$router.push(`/document-browser/${routeDocumentType}/` + id)
+                } else {
+                    this.selectedItem.item = { routerId: cryptoRandomString({ length: 16, type: 'base64' }) }
+                    this.selectedItem.item.showMode = payload.mode
+                    const link = payload.mode === 'createCockpit' ? '/document-browser/new-cockpit' : `/document-browser/new-dashboard?folderId=${payload.functionalityId}`
+                    this.$router.push(link)
+                }
             }
 
             this.activeIndex = this.tabs.length
-        },
-        getRouteDocumentType(item: any) {
-            let routeDocumentType = ''
-
-            switch (item.typeCode) {
-                case 'DATAMART':
-                    routeDocumentType = 'registry'
-                    break
-                case 'DOCUMENT_COMPOSITE':
-                    routeDocumentType = 'document-composite'
-                    break
-                case 'OFFICE_DOC':
-                    routeDocumentType = 'office-doc'
-                    break
-                case 'OLAP':
-                    routeDocumentType = 'olap'
-                    break
-                case 'MAP':
-                    routeDocumentType = 'map'
-                    break
-                case 'REPORT':
-                    routeDocumentType = 'report'
-                    break
-                case 'KPI':
-                    routeDocumentType = 'kpi'
-                    break
-                case 'DOSSIER':
-                    routeDocumentType = 'dossier'
-                    break
-                case 'ETL':
-                    routeDocumentType = 'etl'
-                    break
-            }
-
-            return routeDocumentType
         },
         toggle(event: any) {
             this.createMenuItems()
@@ -208,11 +228,26 @@ export default defineComponent({
             const index = this.iFrameContainers.findIndex((iframe: any) => iframe.item?.routerId === this.selectedItem?.item.routerId)
             if (index !== -1) this.iFrameContainers.splice(index, 1)
         },
-        loadSavedCockpit(cockpit: any) {
+        async loadSavedCockpit(cockpit: any) {
             this.closeIframe()
-            this.selectedItem = { item: { ...cockpit, routerId: crypto.randomBytes(16).toString('hex'), name: cockpit.DOCUMENT_NAME, label: cockpit.DOCUMENT_LABEL, mode: 'document-composite' } }
+            await this.$router.push(`/document-browser/document-composite/${cockpit.DOCUMENT_LABEL}?documentMode=edit`)
+            setTimeout(() => {}, 2000)
+            this.selectedItem = { item: { ...cockpit, routerId: cryptoRandomString({ length: 16, type: 'base64' }), name: cockpit.DOCUMENT_NAME, label: cockpit.DOCUMENT_LABEL, showMode: 'execute' }, mode: 'execute' }
             this.tabs[this.activeIndex - 1] = this.selectedItem
-            this.$router.push(`/document-browser/document-composite/${cockpit.DOCUMENT_LABEL}`)
+        },
+        getTabName(tab: any) {
+            if (tab.item && tab.item.name) {
+                return tab.item.name
+            } else {
+                return tab.mode === 'documentDetail' ? 'new document' : 'new dashboard'
+            }
+        },
+        onDocumentSaved(document: any) {
+            this.documentSaved = document
+            this.documentSavedTrigger = !this.documentSavedTrigger
+            this.selectedItem.functionalityId = null
+            this.selectedItem.item = { name: document.name, label: document.id, routerId: cryptoRandomString({ length: 16, type: 'base64' }), id: document.id, showMode: 'documentDetail' }
+            this.$router.push(`/document-browser/document-details/${document.id}`)
         }
     }
 })

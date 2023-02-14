@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -48,6 +49,9 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseDet;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
+import it.eng.spagobi.commons.dao.dto.SbiCategory;
+import it.eng.spagobi.commons.dao.es.NoEventEmitting;
+import it.eng.spagobi.commons.dao.es.RoleEventsEmittingCommand;
 import it.eng.spagobi.commons.metadata.SbiAuthorizations;
 import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
 import it.eng.spagobi.commons.metadata.SbiAuthorizationsRolesId;
@@ -68,20 +72,20 @@ import net.sf.ehcache.Element;
  */
 public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
-	private static transient Logger logger = Logger.getLogger(RoleDAOHibImpl.class);
+	private static final Logger LOGGER = Logger.getLogger(RoleDAOHibImpl.class);
 
 	public static final String DEFAULT_CACHE_SUFFIX = "_ROLE_CACHE";
 
 	public static CacheManager cacheManager = null;
 
+	private RoleEventsEmittingCommand eventEmittingCommand = new NoEventEmitting();
+
 	/**
 	 * Load by id.
 	 *
-	 * @param roleID
-	 *            the role id
+	 * @param roleID the role id
 	 * @return the role
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.commons.dao.IRoleDAO#loadByID(java.lang.Integer)
 	 */
 	@Override
@@ -92,7 +96,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		Transaction tx = null;
 		toReturn = getFromCache(String.valueOf(roleID));
 		if (toReturn == null) {
-			logger.debug("Not found a Role [ " + roleID + " ] into the cache");
+			LOGGER.debug("Not found a Role [ " + roleID + " ] into the cache");
 			try {
 				aSession = getSession();
 				tx = aSession.beginTransaction();
@@ -153,11 +157,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	/**
 	 * Load by name.
 	 *
-	 * @param roleName
-	 *            the role name
+	 * @param roleName the role name
 	 * @return the role
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.commons.dao.IRoleDAO#loadByName(java.lang.String)
 	 */
 	@Override
@@ -167,7 +169,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		Transaction tx = null;
 		toReturn = getFromCache(roleName);
 		if (toReturn == null) {
-			logger.debug("Not found a Role [ " + roleName + " ] into the cache");
+			LOGGER.debug("Not found a Role [ " + roleName + " ] into the cache");
 			try {
 				aSession = getSession();
 				tx = aSession.beginTransaction();
@@ -212,8 +214,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	 * Load all roles.
 	 *
 	 * @return the list
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.commons.dao.IRoleDAO#loadAllRoles()
 	 */
 	@Override
@@ -340,10 +341,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	/**
 	 * Insert role.
 	 *
-	 * @param aRole
-	 *            the a role
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @param aRole the a role
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.commons.dao.IRoleDAO#insertRole(it.eng.spagobi.commons.bo.Role)
 	 */
 	@Override
@@ -369,7 +368,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			if (aSession != null) {
 				if (aSession.isOpen()) {
 					aSession.close();
-					logger.debug("The [insertRole] occurs. Role cache will be cleaned.");
+					LOGGER.debug("The [insertRole] occurs. Role cache will be cleaned.");
 					this.clearCache();
 				}
 			}
@@ -393,17 +392,17 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		updateSbiCommonInfo4Insert(hibRole);
 		aSession.save(hibRole);
 
-		logger.debug("The [insertRoleWithSession] occurs. Role cache will be cleaned.");
+		emitRoleAddedEvent(aSession, hibRole);
+
+		LOGGER.debug("The [insertRoleWithSession] occurs. Role cache will be cleaned.");
 		this.clearCache();
 	}
 
 	/**
 	 * Erase role.
 	 *
-	 * @param aRole
-	 *            the a role
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @param aRole the a role
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.commons.dao.IRoleDAO#eraseRole(it.eng.spagobi.commons.bo.Role)
 	 */
 	@Override
@@ -448,6 +447,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			}
 
 			aSession.delete(hibRole);
+
+			emitRoleDeletedEvent(aSession, hibRole);
+
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
@@ -461,7 +463,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			if (aSession != null) {
 				if (aSession.isOpen()) {
 					aSession.close();
-					logger.debug("The [eraseRole] occurs. Role cache will be cleaned.");
+					LOGGER.debug("The [eraseRole] occurs. Role cache will be cleaned.");
 					this.clearCache();
 				}
 			}
@@ -477,6 +479,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		if (hibRole != null) {
 			hibRole.setIsPublic(false);
 			aSession.update(hibRole);
+
+			emitPublicFlagSetEvent(aSession, hibRole);
 		}
 
 	}
@@ -484,10 +488,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	/**
 	 * Modify role.
 	 *
-	 * @param aRole
-	 *            the a role
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @param aRole the a role
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.commons.dao.IRoleDAO#modifyRole(it.eng.spagobi.commons.bo.Role)
 	 */
 	@Override
@@ -520,7 +522,11 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			SbiDomains roleType = (SbiDomains) aSession.load(SbiDomains.class, aRole.getRoleTypeID());
 			hibRole.setRoleType(roleType);
 
-			hibRole.setIsPublic(aRole.getIsPublic());
+			if (!Objects.equals(hibRole.getIsPublic(), aRole.getIsPublic())) {
+				hibRole.setIsPublic(aRole.getIsPublic());
+
+				emitPublicFlagSetEvent(aSession, hibRole);
+			}
 
 			hibRole.setRoleTypeCode(aRole.getRoleTypeCD());
 			updateSbiCommonInfo4Update(hibRole);
@@ -571,6 +577,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 			}
 
+			emitRoleUpdatedEvent(aSession, hibRole);
+
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
@@ -584,7 +592,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			if (aSession != null) {
 				if (aSession.isOpen()) {
 					aSession.close();
-					logger.debug("The [modifyRole] occurs. Role cache will be cleaned.");
+					LOGGER.debug("The [modifyRole] occurs. Role cache will be cleaned.");
 					this.clearCache();
 				}
 			}
@@ -640,11 +648,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	/**
 	 * Load all free roles for insert.
 	 *
-	 * @param parameterID
-	 *            the parameter id
+	 * @param parameterID the parameter id
 	 * @return the list
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.commons.dao.IRoleDAO#loadAllFreeRolesForInsert(java.lang.Integer)
 	 */
 	@Override
@@ -707,11 +713,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	/**
 	 * Load all free roles for detail.
 	 *
-	 * @param parUseID
-	 *            the par use id
+	 * @param parUseID the par use id
 	 * @return the list
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.commons.dao.IRoleDAO#loadAllFreeRolesForDetail(java.lang.Integer)
 	 */
 	@Override
@@ -782,7 +786,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	public Role toBasicRole(SbiExtRoles hibExtRole) {
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		Role role = new Role();
 		role.setId(hibExtRole.getExtRoleId());
@@ -793,19 +797,18 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		// role.setRoleTypeID(hibExtRole.getRoleType().getValueId());
 		// role.setOrganization(hibExtRole.getCommonInfo().getOrganization());
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return role;
 	}
 
 	/**
 	 * From the hibernate Role at input, gives the corrispondent <code>Role</code> object.
 	 *
-	 * @param hibRole
-	 *            The hybernate role
+	 * @param hibRole The hybernate role
 	 * @return The corrispondent <code>Role</code> object
 	 */
 	public Role toRole(SbiExtRoles hibRole) {
-		logger.debug("IN.hibRole.getName()=" + hibRole.getName());
+		LOGGER.debug("IN.hibRole.getName()=" + hibRole.getName());
 		Role role = new Role();
 		role.setCode(hibRole.getCode());
 		role.setDescription(hibRole.getDescr());
@@ -955,18 +958,16 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		role.setRoleTypeCD(hibRole.getRoleTypeCode());
 		role.setRoleTypeID(hibRole.getRoleType().getValueId());
 		role.setOrganization(hibRole.getCommonInfo().getOrganization());
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return role;
 	}
 
 	/**
 	 * Gets all the authorizations associated to the role.
 	 *
-	 * @param roleID
-	 *            The role id
+	 * @param roleID The role id
 	 * @return The authorizations associated to the role
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 */
 	@Override
 	public List LoadFunctionalitiesAssociated(Integer roleID) throws EMFUserError {
@@ -1005,11 +1006,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	/**
 	 * Gets all the parameter uses associated to the role.
 	 *
-	 * @param roleID
-	 *            The role id
+	 * @param roleID The role id
 	 * @return The parameter uses associated to the role
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 */
 	@Override
 	public List LoadParUsesAssociated(Integer roleID) throws EMFUserError {
@@ -1116,6 +1115,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			aSession.flush();
 			hibRole.setSbiAuthorizationsRoleses(functs);
 			aSession.save(hibRole);
+
+			emitRoleAddedEvent(aSession, hibRole);
+
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -1130,7 +1132,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			if (aSession != null) {
 				if (aSession.isOpen()) {
 					aSession.close();
-					logger.debug("OUT");
+					LOGGER.debug("OUT");
 					this.clearCache();
 				}
 			}
@@ -1140,7 +1142,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	@Override
 	public Integer countRoles() throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		Integer resultNumber;
@@ -1155,7 +1157,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			resultNumber = new Integer(temp.intValue());
 
 		} catch (HibernateException he) {
-			logger.error("Error while loading the list of SbiExtRoles", he);
+			LOGGER.error("Error while loading the list of SbiExtRoles", he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
@@ -1164,7 +1166,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			if (aSession != null) {
 				if (aSession.isOpen())
 					aSession.close();
-				logger.debug("OUT");
+				LOGGER.debug("OUT");
 			}
 		}
 		return resultNumber;
@@ -1172,7 +1174,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	@Override
 	public List<Role> loadPagedRolesList(Integer offset, Integer fetchSize) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		List<Role> toReturn = null;
 		Session aSession = null;
 		Transaction tx = null;
@@ -1213,7 +1215,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			}
 
 		} catch (HibernateException he) {
-			logger.error("Error while loading the list of SbiExtRoles", he);
+			LOGGER.error("Error while loading the list of SbiExtRoles", he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
@@ -1222,7 +1224,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			if (aSession != null) {
 				if (aSession.isOpen())
 					aSession.close();
-				logger.debug("OUT");
+				LOGGER.debug("OUT");
 			}
 		}
 		return toReturn;
@@ -1235,7 +1237,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	 */
 	@Override
 	public void insertRoleMetaModelCategory(Integer roleId, Integer categoryId) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -1244,11 +1246,11 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 			SbiExtRoles hibRole = (SbiExtRoles) aSession.load(SbiExtRoles.class, roleId);
 
-			SbiDomains category = (SbiDomains) aSession.load(SbiDomains.class, categoryId);
+			SbiCategory category = (SbiCategory) aSession.load(SbiCategory.class, categoryId);
 
-			Set<SbiDomains> metaModelCategories = hibRole.getSbiMetaModelCategories();
+			Set<SbiCategory> metaModelCategories = hibRole.getSbiMetaModelCategories();
 			if (metaModelCategories == null) {
-				metaModelCategories = new HashSet<SbiDomains>();
+				metaModelCategories = new HashSet<>();
 			}
 			metaModelCategories.add(category);
 			hibRole.setSbiMetaModelCategories(metaModelCategories);
@@ -1270,10 +1272,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			if (aSession != null) {
 				if (aSession.isOpen()) {
 					aSession.close();
-					logger.debug("The [insertRoleMetaModelCategory] occurs. Role cache will be cleaned.");
+					LOGGER.debug("The [insertRoleMetaModelCategory] occurs. Role cache will be cleaned.");
 					this.clearCache();
 				}
-				logger.debug("OUT");
+				LOGGER.debug("OUT");
 
 			}
 		}
@@ -1287,7 +1289,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	 */
 	@Override
 	public void removeRoleMetaModelCategory(Integer roleId, Integer categoryId) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -1296,15 +1298,15 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 			SbiExtRoles hibRole = (SbiExtRoles) aSession.load(SbiExtRoles.class, roleId);
 
-			SbiDomains category = (SbiDomains) aSession.load(SbiDomains.class, categoryId);
+			SbiCategory category = (SbiCategory) aSession.load(SbiCategory.class, categoryId);
 
-			Set<SbiDomains> metaModelCategories = hibRole.getSbiMetaModelCategories();
+			Set<SbiCategory> metaModelCategories = hibRole.getSbiMetaModelCategories();
 			if (metaModelCategories != null) {
 				if (metaModelCategories.contains(category)) {
 					metaModelCategories.remove(category);
 					hibRole.setSbiMetaModelCategories(metaModelCategories);
 				} else {
-					logger.debug("Category " + category.getValueNm() + " is not associated to the role " + hibRole.getName());
+					LOGGER.debug("Category " + category.getName() + " is not associated to the role " + hibRole.getName());
 				}
 
 			}
@@ -1324,10 +1326,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			if (aSession != null) {
 				if (aSession.isOpen()) {
 					aSession.close();
-					logger.debug("The [removeRoleMetaModelCategory] occurs. Role cache will be cleaned.");
+					LOGGER.debug("The [removeRoleMetaModelCategory] occurs. Role cache will be cleaned.");
 					this.clearCache();
 				}
-				logger.debug("OUT");
+				LOGGER.debug("OUT");
 
 			}
 		}
@@ -1349,12 +1351,12 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 			SbiExtRoles sbiExtRole = (SbiExtRoles) aSession.load(SbiExtRoles.class, roleId);
 			Integer extRoleId = sbiExtRole.getExtRoleId();
-			Set<SbiDomains> sbiDomains = sbiExtRole.getSbiMetaModelCategories();
+			Set<SbiCategory> categoriesAsSet = sbiExtRole.getSbiMetaModelCategories();
 
 			// For each category associated to the role
-			for (SbiDomains sbiDomain : sbiDomains) {
+			for (SbiCategory currCategoryFromSet : categoriesAsSet) {
 				RoleMetaModelCategory category = new RoleMetaModelCategory();
-				category.setCategoryId(sbiDomain.getValueId());
+				category.setCategoryId(currCategoryFromSet.getId());
 				category.setRoleId(extRoleId);
 				categories.add(category);
 			}
@@ -1431,7 +1433,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				Criteria c = session.createCriteria(SbiExtRoles.class);
 				c.add(Restrictions.in("name", roles));
 				c.createAlias("sbiMetaModelCategories", "_sbiMetaModelCategories");
-				c.setProjection(Property.forName("_sbiMetaModelCategories.valueId"));
+				c.setProjection(Property.forName("_sbiMetaModelCategories.id"));
 				return c.list();
 			}
 		});
@@ -1444,7 +1446,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	 */
 	@Override
 	public void insertRoleDataSetCategory(Integer roleId, Integer categoryId) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -1463,6 +1465,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			hibRole.setSbiDataSetCategories(dataSetCategories);
 
 			aSession.saveOrUpdate(hibRole);
+
+			emitDatasetCategoryAddedEvent(aSession, hibRole);
+
 			aSession.flush();
 
 			updateSbiCommonInfo4Update(hibRole);
@@ -1479,10 +1484,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			if (aSession != null) {
 				if (aSession.isOpen()) {
 					aSession.close();
-					logger.debug("The [insertRoleDataSetCategory] occurs. Role cache will be cleaned.");
+					LOGGER.debug("The [insertRoleDataSetCategory] occurs. Role cache will be cleaned.");
 					this.clearCache();
 				}
-				logger.debug("OUT");
+				LOGGER.debug("OUT");
 
 			}
 		}
@@ -1496,7 +1501,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	 */
 	@Override
 	public void removeRoleDataSetCategory(Integer roleId, Integer categoryId) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -1511,13 +1516,17 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			if (dataSetCategories != null) {
 				if (dataSetCategories.contains(category)) {
 					dataSetCategories.remove(category);
+
+					emitDatasetCategoryRemovedEvent(aSession, hibRole);
+
 					hibRole.setSbiDataSetCategories(dataSetCategories);
 				} else {
-					logger.debug("Category " + category.getValueNm() + " is not associated to the role " + hibRole.getName());
+					LOGGER.debug("Category " + category.getValueNm() + " is not associated to the role " + hibRole.getName());
 				}
 
 			}
 			aSession.saveOrUpdate(hibRole);
+
 			aSession.flush();
 			updateSbiCommonInfo4Update(hibRole);
 			tx.commit();
@@ -1533,10 +1542,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			if (aSession != null) {
 				if (aSession.isOpen()) {
 					aSession.close();
-					logger.debug("The [removeRoleDataSetCategory] occurs. Role cache will be cleaned.");
+					LOGGER.debug("The [removeRoleDataSetCategory] occurs. Role cache will be cleaned.");
 					this.clearCache();
 				}
-				logger.debug("OUT");
+				LOGGER.debug("OUT");
 
 			}
 		}
@@ -1546,13 +1555,12 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	 * Gets all the Authorizationsations present
 	 *
 	 * @return The authorizations
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 */
 	@Override
 	public List loadAllAuthorizations() throws EMFUserError {
 		List functs = new ArrayList();
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -1575,7 +1583,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 					aSession.close();
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return functs;
 	}
 
@@ -1583,13 +1591,12 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	 * Gets all the Authorizations for product Types
 	 *
 	 * @return The authorizations
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 */
 	@Override
 	public List<SbiAuthorizations> loadAllAuthorizationsByProductTypes(List<Integer> productTypesIds) throws EMFUserError {
 		List functs = new ArrayList();
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -1613,7 +1620,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 					aSession.close();
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return functs;
 	}
 
@@ -1621,13 +1628,12 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	 * Gets all the Authorizations names for product Types
 	 *
 	 * @return The authorizations
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 */
 	@Override
 	public List<String> loadAllAuthorizationsNamesByProductTypes(List<Integer> productTypesIds) throws EMFUserError {
 		List functs = new ArrayList();
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -1651,22 +1657,20 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 					aSession.close();
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return functs;
 	}
 
 	/**
 	 * Gets all the authorizations associated to the role.
 	 *
-	 * @param roleID
-	 *            The role id
+	 * @param roleID The role id
 	 * @return The authorizations associated to the role
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 */
 	@Override
 	public List<SbiAuthorizations> LoadAuthorizationsAssociatedToRole(Integer roleID) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		List<SbiAuthorizations> functs = new ArrayList();
 		Session aSession = null;
 		Transaction tx = null;
@@ -1692,34 +1696,38 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 					aSession.close();
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return functs;
 	}
 
 	/**
 	 * Gets all the authorizationsRoles object (relationn objects) associated to the role.
 	 *
-	 * @param roleID
-	 *            The role id
+	 * @param roleID The role id
 	 * @return The authorizations associated to the role
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 */
 	@Override
 	public List<SbiAuthorizationsRoles> LoadAuthorizationsRolesAssociatedToRole(Integer roleID) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		List<SbiAuthorizationsRoles> functs = new ArrayList<SbiAuthorizationsRoles>();
 		Session aSession = null;
 		Transaction tx = null;
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			String hql = "select fr from SbiAuthorizations f, SbiAuthorizationsRoles fr, SbiExtRoles r " + " where f.id = fr.SbiAuthorizations.id"
+			String hql = "select fr from SbiAuthorizations f, SbiAuthorizationsRoles fr, SbiExtRoles r " + " where f.id = fr.sbiAuthorizations.id"
 					+ " and r.extRoleId = fr.sbiExtRoles.extRoleId " + " and r.extRoleId = ?";
 
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setInteger(0, roleID.intValue());
 			functs = hqlQuery.list();
+
+			if (functs != null) {
+				functs.forEach(authRole -> Hibernate.initialize(authRole.getSbiAuthorizations()));
+
+			}
+
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
@@ -1732,13 +1740,13 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 					aSession.close();
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return functs;
 	}
 
 	@Override
 	public void eraseAuthorizationsRolesAssociatedToRole(Integer roleID, Session currSessionDB) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		try {
 			String hql = "select fr from SbiAuthorizations f, SbiAuthorizationsRoles fr, SbiExtRoles r " + " where f.id = fr.sbiAuthorizations.id"
@@ -1751,21 +1759,25 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			for (Iterator iterator = functs.iterator(); iterator.hasNext();) {
 				SbiAuthorizationsRoles SbiAuthorizationsRoles = (SbiAuthorizationsRoles) iterator.next();
 				currSessionDB.delete(SbiAuthorizationsRoles);
+
+				SbiExtRoles sbiExtRoles = SbiAuthorizationsRoles.getSbiExtRoles();
+
+				emitRoleUpdatedEvent(currSessionDB, sbiExtRoles);
 			}
 
 		} catch (HibernateException he) {
 			logException(he);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			logger.debug("The [eraseAuthorizationsRolesAssociatedToRole] occurs. Role cache will be cleaned.");
+			LOGGER.debug("The [eraseAuthorizationsRolesAssociatedToRole] occurs. Role cache will be cleaned.");
 			this.clearCache();
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 	}
 
 	@Override
 	public SbiAuthorizations insertAuthorization(String authorizationName, String productType) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		SbiAuthorizations toInsert = null;
 		Session aSession = null;
 		Transaction tx = null;
@@ -1792,23 +1804,23 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			if (aSession != null) {
 				if (aSession.isOpen()) {
 					aSession.close();
-					logger.debug("The [eraseAuthorizationsRolesAssociatedToRole] occurs. Role cache will be cleaned.");
+					LOGGER.debug("The [eraseAuthorizationsRolesAssociatedToRole] occurs. Role cache will be cleaned.");
 					this.clearCache();
 				}
 			}
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return toInsert;
 	}
 
 	private SbiProductType findProductType(Session aSession, String label) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String hql = "from SbiProductType e where e.label = :label";
 		Query hqlQuery = aSession.createQuery(hql);
 		hqlQuery.setParameter("label", label);
 		SbiProductType productType = (SbiProductType) hqlQuery.uniqueResult();
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return productType;
 	}
 
@@ -1828,7 +1840,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	}
 
 	private Role getFromCache(String key) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String tenantId = this.getTenant();
 		Role role = null;
 		if (tenantId != null) {
@@ -1837,13 +1849,13 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			try {
 				if (cacheManager == null) {
 					cacheManager = CacheManager.create();
-					logger.debug("Cache for tenant " + tenantId + "does not exist yet. Nothing to get.");
-					logger.debug("OUT");
+					LOGGER.debug("Cache for tenant " + tenantId + "does not exist yet. Nothing to get.");
+					LOGGER.debug("OUT");
 					return null;
 				} else {
 					if (!cacheManager.cacheExists(cacheName)) {
-						logger.debug("Cache for tenant " + tenantId + "does not exist yet. Nothing to get.");
-						logger.debug("OUT");
+						LOGGER.debug("Cache for tenant " + tenantId + "does not exist yet. Nothing to get.");
+						LOGGER.debug("OUT");
 						return null;
 					} else {
 						Element el = cacheManager.getCache(cacheName).get(key);
@@ -1856,7 +1868,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				throw new SpagoBIRuntimeException("Error while getting a Role cache item with key " + key + " for tenant " + tenantId, t);
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return role;
 	}
 
@@ -1902,7 +1914,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	}
 
 	private void putIntoCache(String key, Role role) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String tenantId = this.getTenant();
 		if (tenantId != null) {
 			// The tenant is set, so let's find it into the cache
@@ -1912,7 +1924,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 					cacheManager = CacheManager.create();
 				}
 				if (!cacheManager.cacheExists(cacheName)) {
-					logger.debug("Cache for tenant " + tenantId + "does not exist. It will be create.");
+					LOGGER.debug("Cache for tenant " + tenantId + "does not exist. It will be create.");
 					Cache cache = new Cache(cacheName, 300, true, false, 20, 20);
 					cacheManager.addCache(cache);
 				}
@@ -1921,11 +1933,11 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				throw new SpagoBIRuntimeException("Error while putting Role cache item with key " + key + " for tenant " + tenantId, t);
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 	}
 
 	private void clearCache() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String tenantId = this.getTenant();
 		if (tenantId != null) {
 			// The tenant is set, so let's find it into the cache
@@ -1944,4 +1956,34 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			}
 		}
 	}
+
+	@Override
+	public void setEventEmittingCommand(RoleEventsEmittingCommand command) {
+		this.eventEmittingCommand = command;
+	}
+
+	private void emitRoleDeletedEvent(Session aSession, SbiExtRoles role) {
+		eventEmittingCommand.emitRoleDeletedEvent(aSession, role);
+	}
+
+	private void emitRoleAddedEvent(Session aSession, SbiExtRoles role) {
+		eventEmittingCommand.emitRoleAddedEvent(aSession, role);
+	}
+
+	private void emitDatasetCategoryRemovedEvent(Session aSession, SbiExtRoles role) {
+		eventEmittingCommand.emitDatasetCategoryRemovedEvent(aSession, role);
+	}
+
+	private void emitDatasetCategoryAddedEvent(Session aSession, SbiExtRoles role) {
+		eventEmittingCommand.emitDatasetCategoryAddedEvent(aSession, role);
+	}
+
+	private void emitRoleUpdatedEvent(Session aSession, SbiExtRoles role) {
+		eventEmittingCommand.emitRoleUpdatedEvent(aSession, role);
+	}
+
+	private void emitPublicFlagSetEvent(Session aSession, SbiExtRoles role) {
+		eventEmittingCommand.emitPublicFlagSetEvent(aSession, role);
+	}
+
 }

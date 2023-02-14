@@ -17,7 +17,6 @@
  */
 package it.eng.spagobi.utilities.filters;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
@@ -25,19 +24,20 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.apache.commons.validator.UrlValidator;
 import org.apache.log4j.Logger;
 
+import it.eng.spagobi.utilities.exceptions.InvalidHtmlPayloadException;
 import it.eng.spagobi.utilities.whitelist.WhiteList;
 
 public class XSSRequestWrapper extends HttpServletRequestWrapper {
 
-	private static transient Logger logger = Logger.getLogger(XSSRequestWrapper.class);
-	private static WhiteList whitelist = WhiteList.INSTANCE;
+	private static final Logger LOGGER = Logger.getLogger(XSSRequestWrapper.class);
+	private static final WhiteList whitelist = WhiteList.getInstance();
+	private static final XSSUtils xssUtils = new XSSUtils();
 
 	public XSSRequestWrapper(HttpServletRequest servletRequest) {
 		super(servletRequest);
@@ -73,14 +73,8 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 		return stripXSS(value);
 	}
 
-	@Override
-	public ServletInputStream getInputStream() throws IOException {
-
-		return super.getInputStream();
-	}
-
 	public static String stripXSS(String value) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String initialValue = value;
 
 		if (value != null) {
@@ -195,18 +189,21 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 			objectPattern = Pattern.compile("&lt;object(.*?/)&gt;", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 			value = objectPattern.matcher(value).replaceAll("");
 
-			if (!value.equalsIgnoreCase(initialValue)) {
-				logger.warn("Message: detected a web attack through injection");
+			boolean isValid = true; // xssUtils.isSafe(value);
+
+			if (!value.equalsIgnoreCase(initialValue) || !isValid) {
+				LOGGER.warn("Message: detected a web attack through injection");
+				throw new InvalidHtmlPayloadException(initialValue);
 			}
 
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return value;
 	}
 
 	private static String checkImgTags(String value) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Pattern maliciousImgPattern = Pattern.compile("&lt;img(.*?)&gt;", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 		value = maliciousImgPattern.matcher(value).replaceAll("");
 
@@ -228,16 +225,16 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 					String baseUrl = url.getProtocol() + "://" + url.getHost();
 
 					if (!whitelist.getExternalServices().contains(baseUrl)) {
-						logger.warn("Provided image's src is: " + url + ". Image base url is not in Whitelist and therefore Image will be deleted");
+						LOGGER.warn("Provided image's src is: " + url + ". Image base url is not in Whitelist and therefore Image will be deleted");
 						value = value.replace(img, "");
 					}
 
 				} catch (MalformedURLException e) {
-					logger.debug("URL [" + link + "] is malformed. Trying to see if it is a valid relative URL...");
+					LOGGER.debug("URL [" + link + "] is malformed. Trying to see if it is a valid relative URL...");
 					if (isValidRelativeURL(link) && isTrustedRelativePath(link)) {
-						logger.debug("URL " + link + " is recognized to be a valid URL");
+						LOGGER.debug("URL " + link + " is recognized to be a valid URL");
 					} else {
-						logger.error("Malformed URL [" + link + "]", e);
+						LOGGER.error("Malformed URL [" + link + "]", e);
 						value = value.replace(img, "");
 					}
 				}
@@ -246,12 +243,12 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return value;
 	}
 
 	private static String checkIframeTags(String value) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Pattern maliciousTagPattern = Pattern.compile("&lt;iframe(.*?)iframe\\s*&gt;", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 		value = maliciousTagPattern.matcher(value).replaceAll("");
 
@@ -269,28 +266,28 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 				String baseUrl = url.getProtocol() + "://" + url.getHost();
 
 				if (!whitelist.getExternalServices().contains(baseUrl)) {
-					logger.warn("Provided iframe's src is: " + url + ". Iframe base url is not in Whitelist and therefore iframe will be deleted");
+					LOGGER.warn("Provided iframe's src is: " + url + ". Iframe base url is not in Whitelist and therefore iframe will be deleted");
 					value = value.replace(iframe, "");
 				}
 
 			} catch (MalformedURLException e) {
-				logger.debug("URL [" + link + "] is malformed. Trying to see if it is a valid relative URL...");
+				LOGGER.debug("URL [" + link + "] is malformed. Trying to see if it is a valid relative URL...");
 				if (isValidRelativeURL(link) && isTrustedRelativePath(link)) {
-					logger.debug("URL " + link + " is recognized to be a valid URL");
+					LOGGER.debug("URL " + link + " is recognized to be a valid URL");
 				} else {
-					logger.error("Malformed URL [" + link + "]", e);
+					LOGGER.error("Malformed URL [" + link + "]", e);
 					value = value.replace(iframe, "");
 				}
 			}
 
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return value;
 	}
 
 	private static String checkAnchorTags(String value) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Pattern aPattern = Pattern.compile("<a([^>]+)>(.+?)</a>", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 		Pattern hrefPattern = Pattern.compile("\\s*href\\s*=\\s*['\"]([^'\"]+)['\"]", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 
@@ -311,16 +308,16 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 					String baseUrl = url.getProtocol() + "://" + url.getHost();
 
 					if (!whitelist.getExternalServices().contains(baseUrl)) {
-						logger.warn("Provided anchor's href is: " + url + ". Anchor base url is not in Whitelist and therefore anchor will be deleted");
+						LOGGER.warn("Provided anchor's href is: " + url + ". Anchor base url is not in Whitelist and therefore anchor will be deleted");
 						value = value.replace(aTag, "");
 					}
 
 				} catch (MalformedURLException e) {
-					logger.debug("URL [" + link + "] is malformed. Trying to see if it is a valid relative URL...");
+					LOGGER.debug("URL [" + link + "] is malformed. Trying to see if it is a valid relative URL...");
 					if (isValidRelativeURL(link) && isTrustedRelativePath(link)) {
-						logger.debug("URL " + link + " is recognized to be a valid URL");
+						LOGGER.debug("URL " + link + " is recognized to be a valid URL");
 					} else {
-						logger.error("Malformed URL [" + link + "]", e);
+						LOGGER.error("Malformed URL [" + link + "]", e);
 						value = value.replace(aTag, "");
 					}
 				}
@@ -328,12 +325,12 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return value;
 	}
 
 	private static String checkVideoTags(String value) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Pattern maliciousPattern = Pattern.compile("&lt;video(.*?)video&gt;", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 		value = maliciousPattern.matcher(value).replaceAll("");
 
@@ -355,16 +352,16 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 					String baseUrl = url.getProtocol() + "://" + url.getHost();
 
 					if (!whitelist.getExternalServices().contains(baseUrl)) {
-						logger.warn("Provided anchor's href is: " + url + ". Anchor base url is not in Whitelist and therefore anchor will be deleted");
+						LOGGER.warn("Provided anchor's href is: " + url + ". Anchor base url is not in Whitelist and therefore anchor will be deleted");
 						value = value.replace(video, "");
 					}
 
 				} catch (MalformedURLException e) {
-					logger.debug("URL [" + link + "] is malformed. Trying to see if it is a valid relative URL...");
+					LOGGER.debug("URL [" + link + "] is malformed. Trying to see if it is a valid relative URL...");
 					if (isValidRelativeURL(link) && isTrustedRelativePath(link)) {
-						logger.debug("URL " + link + " is recognized to be a valid URL");
+						LOGGER.debug("URL " + link + " is recognized to be a valid URL");
 					} else {
-						logger.error("Malformed or untrusted URL [" + link + "]", e);
+						LOGGER.error("Malformed or untrusted URL [" + link + "]", e);
 						value = value.replace(video, "");
 					}
 				}
@@ -372,12 +369,12 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return value;
 	}
 
 	private static String checkCSS(String value) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Pattern cssUrlPattern = Pattern.compile("url\\s*\\(['\"]?([^'\"\\)]+)['\"]?\\)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 		Pattern cssUrlDataPattern = Pattern.compile("data:image\\/(gif|jpeg|pjpeg|png|svg\\+xml|tiff|vnd\\.microsoft\\.icon);(utf-8;)?base64",
 				Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
@@ -396,7 +393,7 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 			if (domIdMatcher.find()) {
 				domId = domIdMatcher.group();
 				if (domId.length() > 50) {
-					logger.warn("Provided url attribute with Id is: " + domId + ". Its lenght is grater than 50 characters and therefore it will be delete");
+					LOGGER.warn("Provided url attribute with Id is: " + domId + ". Its lenght is grater than 50 characters and therefore it will be delete");
 					value = value.replace(cssUrl, "");
 				}
 			}
@@ -407,17 +404,17 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 					String baseUrl = url.getProtocol() + "://" + url.getHost();
 
 					if (!whitelist.getExternalServices().contains(baseUrl)) {
-						logger.warn("Provided CSS url attribute is: " + url + ". Base url is not in Whitelist and therefore it will be deleted");
+						LOGGER.warn("Provided CSS url attribute is: " + url + ". Base url is not in Whitelist and therefore it will be deleted");
 						value = value.replace(cssUrl, "");
 					}
 				} catch (MalformedURLException e) {
-					logger.debug("URL [" + link + "] is malformed. Trying to see if it is a valid relative URL...");
+					LOGGER.debug("URL [" + link + "] is malformed. Trying to see if it is a valid relative URL...");
 					if (isValidRelativeURL(link) && isTrustedRelativePath(link)) {
-						logger.debug("URL " + link + " is recognized to be a valid URL");
+						LOGGER.debug("URL " + link + " is recognized to be a valid URL");
 					} else if (link.equals(domId)) {
 						return value;
 					} else {
-						logger.error("Malformed or untrusted URL [" + link + "]", e);
+						LOGGER.error("Malformed or untrusted URL [" + link + "]", e);
 						value = value.replace(cssUrl, "");
 					}
 				}
@@ -425,18 +422,14 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return value;
 	}
 
 	private static boolean isValidRelativeURL(String url) {
 		String absoluteUrl = "http://mynonexistingserver.something.smt:99999" + url;
 		UrlValidator urlValidator = new UrlValidator();
-		if (urlValidator.isValid(absoluteUrl)) {
-			return true;
-		} else {
-			return false;
-		}
+		return urlValidator.isValid(absoluteUrl);
 	}
 
 	private static boolean isTrustedRelativePath(String url) {

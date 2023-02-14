@@ -47,6 +47,7 @@ import it.eng.spagobi.api.v2.documentdetails.subresources.TemplateResource;
 import it.eng.spagobi.api.v2.documentdetails.subresources.VisualDependenciesResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -88,7 +89,11 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		IBIObjectDAO documentDao = null;
 		Assert.assertNotNull(document, "Document can not be null");
 		document.setCreationUser((String) getUserProfile().getUserId());
+		if (document.getFunctionalities().isEmpty()) {
+			logger.error("Error while inserting document. Document saved with no specified functionalities (folders)!");
+			throw new SpagoBIRuntimeException("Error while inserting document. Document has no specified functionalities!");
 
+		}
 		if (documentLabelNameControl(document, "INSERT", "label")) {
 			logger.error("Error while inserting document. Document with the same label already exists!");
 			throw new SpagoBIRuntimeException("Error while inserting document. Document with the same label already exists!");
@@ -119,7 +124,11 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	public BIObject updateDocument(@PathParam("id") Integer id, @Valid BIObject document) {
 		logger.debug("IN");
 		IBIObjectDAO documentDao = null;
+		if (document.getFunctionalities().isEmpty()) {
+			logger.error("Error while inserting document. Document saved with no specified functionalities (folders)!");
+			throw new SpagoBIRuntimeException("Error while inserting document. Document has no specified functionalities!");
 
+		}
 		try {
 			documentDao = DAOFactory.getBIObjectDAO();
 
@@ -129,6 +138,9 @@ public class DocumentResource extends AbstractSpagoBIResource {
 
 			documentDao.modifyBIObject(document);
 			document = documentDao.loadBIObjectById(document.getId());
+		} catch (SpagoBIDAOException e) {
+			logger.error("Document can not be updated", e);
+			throw new SpagoBIRestServiceException("Updating document has failed, document already exists", buildLocaleFromSession(), e);
 		} catch (EMFUserError e) {
 			logger.error("Document can not be updated", e);
 			throw new SpagoBIRestServiceException("Updating document has failed", buildLocaleFromSession(), e);

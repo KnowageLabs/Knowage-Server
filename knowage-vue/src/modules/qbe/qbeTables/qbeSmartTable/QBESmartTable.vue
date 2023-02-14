@@ -49,9 +49,11 @@
                 </div>
             </template>
             <template #body="slotProps">
-                <span v-if="typeof slotProps.data[`column_${index + 1}`] === 'number' && slotProps.data[`column_${index + 1}`]"> {{ getFormattedNumber(slotProps.data[`column_${index + 1}`]) }}</span>
-                <span v-else-if="previewData?.metaData?.fields[index + 1]?.type === 'date'">{{ getFormattedDate(slotProps.data[`column_${index + 1}`], previewData.metaData.fields[index + 1].metawebDateFormat, 'DD/MM/YYYY') }} </span>
-                <span v-else-if="previewData?.metaData?.fields[index + 1]?.type === 'timestamp'">{{ getFormattedDate(slotProps.data[`column_${index + 1}`], previewData.metaData.fields[index + 1].metawebDateFormat, 'DD/MM/YYYY HH:mm:ss.SSS') }} </span>
+                <span v-if="typeof slotProps.data[`column_${index + 1}`] === 'number' && slotProps.data[`column_${index + 1}`]" v-tooltip="{ value: slotProps.data[`column_${index + 1}`] }"> {{ getFormattedNumber(col, slotProps.data[`column_${index + 1}`]) }}</span>
+                <span v-else-if="previewData?.metaData?.fields[index + 1]?.type === 'date' && col.type != 'inline.calculated.field'">{{ getFormattedDate(slotProps.data[`column_${index + 1}`], previewData.metaData.fields[index + 1].metawebDateFormat, 'DD/MM/YYYY') }} </span>
+                <span v-else-if="previewData?.metaData?.fields[index + 1]?.type === 'date' && col.type == 'inline.calculated.field'">{{ getFormattedDate(slotProps.data[`column_${index + 1}`], col.id.format, 'DD/MM/YYYY') }} </span>
+                <span v-else-if="previewData?.metaData?.fields[index + 1]?.type === 'timestamp' && col.type != 'inline.calculated.field'">{{ getFormattedDate(slotProps.data[`column_${index + 1}`], previewData.metaData.fields[index + 1].metawebDateFormat, 'DD/MM/YYYY HH:mm:ss.SSS') }} </span>
+                <span v-else-if="previewData?.metaData?.fields[index + 1]?.type === 'timestamp' && col.type == 'inline.calculated.field'">{{ getFormattedDate(slotProps.data[`column_${index + 1}`], col.id.format, 'DD/MM/YYYY HH:mm:ss.SSS') }} </span>
                 <span v-else v-tooltip.bottom="slotProps.data[`column_${index + 1}`]">{{ slotProps.data[`column_${index + 1}`] }}</span>
             </template>
         </Column>
@@ -89,8 +91,8 @@ import Column from 'primevue/column'
 import Menu from 'primevue/contextmenu'
 import Dialog from 'primevue/dialog'
 import qbeSimpleTableDescriptor from './QBESmartTableDescriptor.json'
-import { formatNumberWithLocale } from '@/helpers/commons/localeHelper'
-import { formatDate } from '@/helpers/commons/localeHelper'
+import { formatDate, getLocale } from '@/helpers/commons/localeHelper'
+import { formatNumber } from '@/helpers/commons/qbeHelpers'
 
 export default defineComponent({
     name: 'qbe-simple-table',
@@ -176,7 +178,7 @@ export default defineComponent({
         changeAlias() {
             this.selectedField.alias = this.alias
             this.aliasDialogVisible = false
-            this.$emit('aliasChanged')
+            this.$emit('aliasChanged', this.selectedField)
         },
         onDrop(event) {
             var data = JSON.parse(event.dataTransfer.getData('text/plain'))
@@ -203,8 +205,13 @@ export default defineComponent({
         openFiltersDialog(field: any) {
             this.$emit('openFilterDialog', field)
         },
-        getFormattedNumber(number: number, precision?: number, format?: any) {
-            return formatNumberWithLocale(number, precision, format)
+        getFormattedNumber(column: any, number: number) {
+            const configuration = formatNumber(column)
+            let locale = getLocale()
+            locale = locale ? locale.replaceAll('_', '-') : 'en-US'
+            if (!configuration) return number
+            const formattedNumber = Intl.NumberFormat(locale, { minimumFractionDigits: configuration.minFractionDigits, maximumFractionDigits: configuration.maxFractionDigits, useGrouping: configuration.useGrouping }).format(number)
+            return configuration.currency + formattedNumber
         },
         getFormattedDate(date: any, output: any, input: any) {
             return formatDate(date, output, input)

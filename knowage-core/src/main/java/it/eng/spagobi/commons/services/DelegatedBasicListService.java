@@ -83,15 +83,11 @@ public class DelegatedBasicListService {
 	/**
 	 * The service method for this class.
 	 *
-	 * @param service
-	 *            The service interface object
-	 * @param request
-	 *            The request Source Bean
-	 * @param response
-	 *            The response Source Bean
+	 * @param service  The service interface object
+	 * @param request  The request Source Bean
+	 * @param response The response Source Bean
 	 *
-	 * @throws Exception
-	 *             If any Exception occurred
+	 * @throws Exception If any Exception occurred
 	 */
 	public static void service(ServiceIFace service, SourceBean request, SourceBean response) throws Exception {
 		if ((service == null) || (request == null) || (response == null)) {
@@ -162,17 +158,13 @@ public class DelegatedBasicListService {
 	/**
 	 * Gets the list for a particular SpagoBI object.
 	 *
-	 * @param service
-	 *            The service interface object
-	 * @param request
-	 *            The request Source Bean
-	 * @param response
-	 *            The response Source Bean
+	 * @param service  The service interface object
+	 * @param request  The request Source Bean
+	 * @param response The response Source Bean
 	 *
 	 * @return the list
 	 *
-	 * @throws Exception
-	 *             If any exception occurred
+	 * @throws Exception If any exception occurred
 	 */
 	public static ListIFace getList(ServiceIFace service, SourceBean request, SourceBean response) throws Exception {
 		PaginatorIFace paginator = new GenericPaginator();
@@ -236,18 +228,12 @@ public class DelegatedBasicListService {
 	/**
 	 * Filters the list with a list of filtering values.
 	 *
-	 * @param list
-	 *            The list to be filtered
-	 * @param valuesfilter
-	 *            The list of filtering values
-	 * @param valuetypefilter
-	 *            The type of the value of the filter (STRING/NUM/DATE)
-	 * @param columnfilter
-	 *            The column to be filtered
-	 * @param typeFilter
-	 *            The type of the filter
-	 * @param errorHandler
-	 *            The EMFErrorHandler object, in which errors are stored if they occurs
+	 * @param list            The list to be filtered
+	 * @param valuesfilter    The list of filtering values
+	 * @param valuetypefilter The type of the value of the filter (STRING/NUM/DATE)
+	 * @param columnfilter    The column to be filtered
+	 * @param typeFilter      The type of the filter
+	 * @param errorHandler    The EMFErrorHandler object, in which errors are stored if they occurs
 	 *
 	 * @return the filtered list
 	 */
@@ -327,18 +313,12 @@ public class DelegatedBasicListService {
 	/**
 	 * Filters the list with a unique value filter.
 	 *
-	 * @param list
-	 *            The list to be filtered
-	 * @param valuefilter
-	 *            The value of the filter
-	 * @param valuetypefilter
-	 *            The type of the value of the filter (STRING/NUM/DATE)
-	 * @param columnfilter
-	 *            The column to be filtered
-	 * @param typeFilter
-	 *            The type of the filter
-	 * @param errorHandler
-	 *            The EMFErrorHandler object, in which errors are stored if they occurs
+	 * @param list            The list to be filtered
+	 * @param valuefilter     The value of the filter
+	 * @param valuetypefilter The type of the value of the filter (STRING/NUM/DATE)
+	 * @param columnfilter    The column to be filtered
+	 * @param typeFilter      The type of the filter
+	 * @param errorHandler    The EMFErrorHandler object, in which errors are stored if they occurs
 	 *
 	 * @return the filtered list
 	 */
@@ -394,18 +374,12 @@ public class DelegatedBasicListService {
 	/**
 	 * Filters the list with a unique value filter.
 	 *
-	 * @param list
-	 *            The list to be filtered
-	 * @param valuefilter
-	 *            The value of the filter
-	 * @param valuetypefilter
-	 *            The type of the value of the filter (STRING/NUM/DATE)
-	 * @param columnfilter
-	 *            The column to be filtered
-	 * @param typeFilter
-	 *            The type of the filter
-	 * @param errorHandler
-	 *            The EMFErrorHandler object, in which errors are stored if they occurs
+	 * @param list            The list to be filtered
+	 * @param valuefilter     The value of the filter
+	 * @param valuetypefilter The type of the value of the filter (STRING/NUM/DATE)
+	 * @param columnfilter    The column to be filtered
+	 * @param typeFilter      The type of the filter
+	 * @param errorHandler    The EMFErrorHandler object, in which errors are stored if they occurs
 	 *
 	 * @return the filtered list
 	 */
@@ -512,18 +486,12 @@ public class DelegatedBasicListService {
 	/**
 	 * Filters the list with a list of filtering values.
 	 *
-	 * @param list
-	 *            The list to be filtered
-	 * @param valuesfilter
-	 *            The list of filtering values
-	 * @param valuetypefilter
-	 *            The type of the value of the filter (STRING/NUM/DATE)
-	 * @param columnfilter
-	 *            The column to be filtered
-	 * @param typeFilter
-	 *            The type of the filter
-	 * @param errorHandler
-	 *            The EMFErrorHandler object, in which errors are stored if they occurs
+	 * @param list            The list to be filtered
+	 * @param valuesfilter    The list of filtering values
+	 * @param valuetypefilter The type of the value of the filter (STRING/NUM/DATE)
+	 * @param columnfilter    The column to be filtered
+	 * @param typeFilter      The type of the filter
+	 * @param errorHandler    The EMFErrorHandler object, in which errors are stored if they occurs
 	 *
 	 * @return the filtered list
 	 */
@@ -641,6 +609,8 @@ public class DelegatedBasicListService {
 				return value.indexOf(valuefilter) != -1;
 			} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.EQUAL_FILTER)) {
 				return value.equals(valuefilter) || value.trim().equals(valuefilter);
+			} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.NOT_EQUAL_FILTER)) {
+				return !value.equals(valuefilter) || !value.trim().equals(valuefilter);
 			} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.LESS_FILTER)) {
 				return value.trim().compareToIgnoreCase(valuefilter) < 0;
 			} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.LESS_OR_EQUAL_FILTER)) {
@@ -786,15 +756,12 @@ public class DelegatedBasicListService {
 	/**
 	 * Converts a String representing a date into a Date object, given the date format.
 	 *
-	 * @param dateStr
-	 *            The String representing the date
-	 * @param format
-	 *            The date format
+	 * @param dateStr The String representing the date
+	 * @param format  The date format
 	 *
 	 * @return the relevant Date object
 	 *
-	 * @throws Exception
-	 *             if any parsing exception occurs
+	 * @throws Exception if any parsing exception occurs
 	 */
 	public static Date toDate(String dateStr, String format) throws Exception {
 		SimpleDateFormat dateFormat = new SimpleDateFormat();
@@ -812,19 +779,14 @@ public class DelegatedBasicListService {
 	/**
 	 * Executes a select statement.
 	 *
-	 * @param requestContainer
-	 *            The request container object
-	 * @param responseContainer
-	 *            The response container object
-	 * @param pool
-	 *            The pool definition string
-	 * @param statement
-	 *            The statement definition string
+	 * @param requestContainer  The request container object
+	 * @param responseContainer The response container object
+	 * @param pool              The pool definition string
+	 * @param statement         The statement definition string
 	 *
 	 * @return A generic object containing the Execution results
 	 *
-	 * @throws EMFInternalError
-	 *             the EMF internal error
+	 * @throws EMFInternalError the EMF internal error
 	 */
 	public static Object executeSelect(RequestContainer requestContainer, ResponseContainer responseContainer, String pool, String statement)
 			throws EMFInternalError {
@@ -851,12 +813,9 @@ public class DelegatedBasicListService {
 	/**
 	 * Function that controls if the deletion of a row in a DB table has success or not.
 	 *
-	 * @param service
-	 *            The service interface object
-	 * @param request
-	 *            The request Source Bean
-	 * @param response
-	 *            The response SourceBean
+	 * @param service  The service interface object
+	 * @param request  The request Source Bean
+	 * @param response The response SourceBean
 	 *
 	 * @return Boolean true (succeeded) or false (not succeeded)
 	 */
@@ -881,8 +840,7 @@ public class DelegatedBasicListService {
 	/**
 	 * Gets the information contained in a Source Bean attribute identified by the key "MESSAGE".
 	 *
-	 * @param request
-	 *            The input Source Bean
+	 * @param request The input Source Bean
 	 *
 	 * @return the message
 	 */

@@ -109,8 +109,6 @@
 		<AUTHORIZATION productType="KnowageSI" authorizationName="BUILD_QBE_QUERY" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="ENABLE_FEDERATED_DATASET" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="GLOSSARY" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageSI" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageSI" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="MANAGE_INTERNATIONALIZATION" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="ENABLE_TO_RATE" organization="DEFAULT_TENANT" />	
 		<AUTHORIZATION productType="KnowageSI" authorizationName="ENABLE_TO_PRINT" organization="DEFAULT_TENANT" />	
@@ -244,6 +242,6 @@
 	
 	<EXT_ROLES_CATEGORIES>
 		<EXT_ROLES_CATEGORY roleName="user" domainCd="BM_CATEGORY" organization="DEFAULT_TENANT"/>
-		<EXT_ROLES_CATEGORY roleName="user" domainCd="CATEGORY_TYPE" organization="DEFAULT_TENANT"/>
+		<EXT_ROLES_CATEGORY roleName="user" domainCd="DATASET_TYPE" organization="DEFAULT_TENANT"/>
 	</EXT_ROLES_CATEGORIES>
 </INTERNAL_PROFILING_INITIALIZER>

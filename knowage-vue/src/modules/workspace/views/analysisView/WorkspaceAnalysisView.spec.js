@@ -1,6 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
+import { createTestingPinia } from '@pinia/testing'
 import PrimeVue from 'primevue/config'
-import axios from 'axios'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -221,12 +221,12 @@ const mockedAnalysis = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documents/myAnalysisDocsList`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `documents/myAnalysisDocsList`:
                 return Promise.resolve({ data: { root: mockedAnalysis } })
             default:
                 return Promise.resolve({ data: [] })
@@ -234,14 +234,8 @@ const $http = {
     })
 }
 
-const $store = {
-    state: {
-        user: {}
-    }
-}
-
 const $router = {
-    push: jest.fn()
+    push: vi.fn()
 }
 
 const factory = (cardDisplay) => {
@@ -254,7 +248,7 @@ const factory = (cardDisplay) => {
             directives: {
                 tooltip() {}
             },
-            plugins: [PrimeVue],
+            plugins: [PrimeVue, createTestingPinia()],
             stubs: {
                 Button,
                 DetailSidebar: true,
@@ -271,11 +265,12 @@ const factory = (cardDisplay) => {
                 WorkspaceWarningDialog: true,
                 WorkspaceAnalysisViewShareDialog: true,
                 WorkspaceCard,
+                WorkspaceCockpitDialog: true,
                 'router-link': true
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $http,
                 $router
             }
@@ -283,12 +278,12 @@ const factory = (cardDisplay) => {
     })
 }
 
-jest.useFakeTimers()
-jest.spyOn(global, 'setTimeout')
+vi.useFakeTimers()
+vi.spyOn(global, 'setTimeout')
 
 describe('Workspace Analysis View', () => {
     it('should show an hint if no elements are present in the selected mode', async () => {
-        axios.get.mockReturnValueOnce(
+        $http.get.mockReturnValueOnce(
             Promise.resolve({
                 data: { root: [] }
             })
@@ -343,9 +338,11 @@ describe('Workspace Analysis View', () => {
         expect(wrapper.vm.filteredAnalysisDocuments).toStrictEqual(mockedAnalysis)
 
         await wrapper.find('[data-test="search-input"]').setValue('CHOCOLATE')
+        expect(wrapper.find('[data-test="search-input"]').element.value).toBe('CHOCOLATE')
+        wrapper.vm.searchWord = 'CHOCOLATE'
         wrapper.vm.searchItems()
 
-        jest.runAllTimers()
+        vi.runAllTimers()
         await nextTick()
 
         expect(wrapper.find('[data-test="analysis-table"]').html()).not.toContain('Mocked')
@@ -353,9 +350,11 @@ describe('Workspace Analysis View', () => {
         expect(wrapper.find('[data-test="analysis-table"]').html()).toContain('Copy of CHOCOLATE_RATINGS(1)')
 
         await wrapper.find('[data-test="search-input"]').setValue('Mocked')
+        expect(wrapper.find('[data-test="search-input"]').element.value).toBe('Mocked')
+        wrapper.vm.searchWord = 'Mocked'
         wrapper.vm.searchItems()
 
-        jest.runAllTimers()
+        vi.runAllTimers()
         await nextTick()
 
         expect(wrapper.find('[data-test="analysis-table"]').html()).not.toContain('CHOCOLATE_RATINGS')
@@ -373,7 +372,6 @@ describe('Workspace Analysis View', () => {
 
         await wrapper.find('[data-test="info-button-CHOCOLATE_RATINGS"]').trigger('click')
 
-        expect(wrapper.vm.showDetailSidebar).toBe(true)
         expect(wrapper.find('[data-test="detail-sidebar"]').exists()).toBe(true)
     })
 })

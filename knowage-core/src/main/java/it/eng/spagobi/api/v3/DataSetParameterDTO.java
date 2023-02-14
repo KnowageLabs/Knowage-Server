@@ -4,10 +4,10 @@ class DataSetParameterDTO {
 
 	private String name;
 	private String type;
-	private String defaultValue;
+	private Object defaultValue;
 	private boolean multiValue;
 
-	public DataSetParameterDTO(String name, String type, String defaultValue, boolean multiValue) {
+	public DataSetParameterDTO(String name, String type, Object defaultValue, boolean multiValue) {
 		super();
 		this.name = name;
 		this.type = type;
@@ -23,7 +23,7 @@ class DataSetParameterDTO {
 		return type;
 	}
 
-	public String getDefaultValue() {
+	public Object getDefaultValue() {
 		return defaultValue;
 	}
 

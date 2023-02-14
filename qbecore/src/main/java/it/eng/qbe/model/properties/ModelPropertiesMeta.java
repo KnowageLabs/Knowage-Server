@@ -26,17 +26,32 @@ import java.util.Map;
  */
 public class ModelPropertiesMeta {
 
-	public final static ModelPropertyMeta[] globalProperties = new ModelPropertyMeta[] { new ModelPropertyMeta("recursiveFiltering", false, true, "enabled") };
+	public static final ModelPropertyMeta[] globalProperties = new ModelPropertyMeta[] {
+			new ModelPropertyMeta("recursiveFiltering", false, true, "enabled")
+		};
 
-	public final static ModelPropertyMeta[] entityProperties = new ModelPropertyMeta[] { new ModelPropertyMeta("visible", false, true, "true"),
-			new ModelPropertyMeta("type", false, true, "dimension"), new ModelPropertyMeta("position", false, true, "" + Integer.MAX_VALUE),
-			new ModelPropertyMeta("linkedToWords", false, true, "false"), new ModelPropertyMeta("sqlFilter", false, true, "") };
+	public static final ModelPropertyMeta[] entityProperties = new ModelPropertyMeta[] {
+			new ModelPropertyMeta("visible", false, true, "true"),
+			new ModelPropertyMeta("type", false, true, "dimension"),
+			new ModelPropertyMeta("position", false, true, "" + Integer.MAX_VALUE),
+			new ModelPropertyMeta("linkedToWords", false, true, "false"),
+			new ModelPropertyMeta("sqlFilter", false, true, "")
+		};
 
-	public final static ModelPropertyMeta[] fieldProperties = new ModelPropertyMeta[] { new ModelPropertyMeta("visible", false, true, "true"),
-			new ModelPropertyMeta("type", false, true, "attribute"), new ModelPropertyMeta("position", false, true, "" + Integer.MAX_VALUE),
-			new ModelPropertyMeta("format", false, true, null), new ModelPropertyMeta("attribute", false, true, null),
-			new ModelPropertyMeta("excludedRoles", false, true, null), new ModelPropertyMeta("filtercondition", false, true, null),
-			new ModelPropertyMeta("customFunction", false, true, null), new ModelPropertyMeta("aggtype", false, true, null) };
+	public static final ModelPropertyMeta[] fieldProperties = new ModelPropertyMeta[] {
+			new ModelPropertyMeta("visible", false, true, "true"),
+			new ModelPropertyMeta("type", false, true, "attribute"),
+			new ModelPropertyMeta("attribute", false, true, null),
+			new ModelPropertyMeta("filtercondition", false, true, null),
+			new ModelPropertyMeta("aggtype", false, true, null),
+			new ModelPropertyMeta("position", false, true, "" + Integer.MAX_VALUE),
+			new ModelPropertyMeta("format", false, true, null),
+			new ModelPropertyMeta("excludedRoles", false, true, null),
+			new ModelPropertyMeta("customFunction", false, true, null),
+			new ModelPropertyMeta("personal", false, true, "false"),
+			new ModelPropertyMeta("decrypt", false, true, "false"),
+			new ModelPropertyMeta("subjectId", false, true, "false"),
+		};
 
 	static Map<String, ModelPropertyMeta> globalPropertiesMap;
 	static Map<String, ModelPropertyMeta> entityPropertiesMap;

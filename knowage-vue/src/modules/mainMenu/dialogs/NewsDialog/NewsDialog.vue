@@ -11,8 +11,8 @@
                                     <div class="kn-list-item-text">
                                         <span>{{ slotProps.option.title }}</span>
                                     </div>
-                                    <span v-if="slotProps.option.read"> <Avatar :icon="typeDescriptor.icons.read.icon" shape="circle" size="medium" :style="typeDescriptor.icons.read.style"/></span
-                                    ><span v-else><Avatar :icon="typeDescriptor.icons.unread.icon" shape="circle" size="medium" :style="typeDescriptor.icons.unread.style"/></span>
+                                    <span v-if="slotProps.option.read"> <Avatar :icon="typeDescriptor.icons.read.icon" shape="circle" size="medium" :style="typeDescriptor.icons.read.style" /></span
+                                    ><span v-else><Avatar :icon="typeDescriptor.icons.unread.icon" shape="circle" size="medium" :style="typeDescriptor.icons.unread.style" /></span>
                                 </div>
                             </template>
                         </Listbox>
@@ -46,13 +46,14 @@ import { defineComponent } from 'vue'
 import Avatar from 'primevue/avatar'
 import Dialog from 'primevue/dialog'
 import Listbox from 'primevue/listbox'
-import { mapState } from 'vuex'
+import { mapState } from 'pinia'
 import { AxiosResponse } from 'axios'
 import newsDialogDescriptor from './NewsDialogDescriptor.json'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import { formatDate } from '@/helpers/commons/localeHelper'
 import WS from '@/services/webSocket'
+import mainStore from '../../../../App.store.js'
 
 interface SingleNews {
     description?: string
@@ -81,6 +82,10 @@ export default defineComponent({
         visibility: Boolean
     },
     emits: ['update:visibility'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     methods: {
         emptySelectedNews() {
             this.selectedNews = {} as SingleNews
@@ -94,16 +99,15 @@ export default defineComponent({
         async getNews(id) {
             if (id != this.selectedNews.id) {
                 this.loading = true
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news/' + id + '?isTechnical=false').then(
+                await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/news/' + id + '?isTechnical=false').then(
                     (response: AxiosResponse<any>) => {
-                        console.log(response)
                         if (response.data.errors) {
-                            this.$store.commit('setError', { title: this.$t('common.error.news'), msg: this.$t('news.errorGettingSelectedNews') })
+                            this.store.setError({ title: this.$t('common.error.news'), msg: this.$t('news.errorGettingSelectedNews') })
                         } else {
                             this.selectedNews = response.data
                             this.loading = false
                             if (!this.selectedNews.read) {
-                                this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/newsRead/' + id).then(
+                                this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/newsRead/' + id).then(
                                     () => {
                                         WS.send(JSON.stringify({ news: true }))
                                     },
@@ -137,14 +141,14 @@ export default defineComponent({
         }
     },
     computed: {
-        ...mapState({
+        ...mapState(mainStore, {
             locale: 'locale'
         })
     },
     watch: {
         visibility(newVisibility) {
             if (newVisibility) {
-                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/newsRead').then(
+                this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/newsRead').then(
                     (response: AxiosResponse<any>) => {
                         this.newsReadArray = []
                         this.newsReadArray = response.data
@@ -152,11 +156,11 @@ export default defineComponent({
                     (error) => console.error(error)
                 )
 
-                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news').then(
+                this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/news').then(
                     (response: AxiosResponse<any>) => {
                         var jsonData = {}
                         let localNewsReadArray = this.newsReadArray
-                        response.data.forEach(function(column: SingleNews) {
+                        response.data.forEach(function (column: SingleNews) {
                             let type = column.type.toString()
                             if (!jsonData[type]) jsonData[type] = []
                             if (localNewsReadArray.indexOf(column.id) != -1) column.read = true

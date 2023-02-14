@@ -1,5 +1,5 @@
 <template>
-    <Dialog :contentStyle="metadataDefinitionTabViewDescriptor.dialog.style" :header="$t('kpi.measureDefinition.saveInProgress')" :visible="true" :modal="true" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false">
+    <Dialog :contentStyle="metadataDefinitionTabViewDescriptor.dialog.style" :header="$t('kpi.measureDefinition.saveInProgress')" :visible="true" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
         <div class="p-field p-m-2">
             <span class="p-float-label">
                 <InputText class="kn-material-input" type="text" v-model.trim="name" />
@@ -45,39 +45,39 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import Chip from 'primevue/chip'
-    import Dialog from 'primevue/dialog'
-    import metadataDefinitionTabViewDescriptor from './MetadataDefinitionTabViewDescriptor.json'
+import { defineComponent } from 'vue'
+import Chip from 'primevue/chip'
+import Dialog from 'primevue/dialog'
+import metadataDefinitionTabViewDescriptor from './MetadataDefinitionTabViewDescriptor.json'
 
-    export default defineComponent({
-        name: 'measure-definition-submit-dialog',
-        components: { Chip, Dialog },
-        props: { ruleName: { type: String }, newAlias: { type: Array }, reusedAlias: { type: Array }, newPlaceholder: { type: Array }, reusedPlaceholder: { type: Array } },
-        emits: ['close'],
-        data() {
-            return {
-                metadataDefinitionTabViewDescriptor,
-                name: null as String | null
-            }
-        },
-        computed: {
-            saveRuleButtonDisabled(): Boolean {
-                return !this.name
-            }
-        },
-        watch: {
-            currentRule() {
-                this.loadRuleName()
-            }
-        },
-        async created() {
-            this.loadRuleName()
-        },
-        methods: {
-            loadRuleName() {
-                this.name = this.ruleName as String
-            }
+export default defineComponent({
+    name: 'measure-definition-submit-dialog',
+    components: { Chip, Dialog },
+    props: { ruleName: { type: String }, newAlias: { type: Array }, reusedAlias: { type: Array }, newPlaceholder: { type: Array }, reusedPlaceholder: { type: Array } },
+    emits: ['close'],
+    data() {
+        return {
+            metadataDefinitionTabViewDescriptor,
+            name: null as String | null
         }
-    })
+    },
+    computed: {
+        saveRuleButtonDisabled(): Boolean {
+            return !this.name
+        }
+    },
+    watch: {
+        currentRule() {
+            this.loadRuleName()
+        }
+    },
+    async created() {
+        this.loadRuleName()
+    },
+    methods: {
+        loadRuleName() {
+            this.name = this.ruleName as String
+        }
+    }
+})
 </script>

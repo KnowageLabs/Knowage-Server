@@ -1,6 +1,12 @@
 const routes = [
     {
-        path: '/:mode(registry|document-composite|report|office-doc|olap|map|report|kpi|dossier|etl)/:id',
+        path: '/dashboard/new-dashboard',
+        name: 'document-execution',
+        component: () => import('@/modules/documentExecution/main/DocumentExecution.vue'),
+        props: true
+    },
+    {
+        path: '/:mode(registry|document-composite|report|office-doc|olap|map|report|kpi|dossier|etl|dashboard)/:id',
         name: 'document-execution',
         component: () => import('@/modules/documentExecution/main/DocumentExecution.vue'),
         props: true
@@ -20,7 +26,7 @@ const routes = [
     {
         path: '/olap-designer/:id',
         name: 'olap-designer',
-        component: () => import('@/modules/documentExecution/main/DocumentExecution.vue'),
+        component: () => import('@/modules/documentExecution/olap/Olap.vue'),
         props: true
     }
 ]

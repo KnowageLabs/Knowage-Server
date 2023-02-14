@@ -1,6 +1,7 @@
 package it.eng.spagobi.engines.qbe.api;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,6 +9,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,13 +37,17 @@ import com.jamonapi.MonitorFactory;
 
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
+import it.eng.qbe.logger.QueryAuditLogger;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.query.HavingField;
+import it.eng.qbe.query.HavingField.Operand;
 import it.eng.qbe.query.IQueryField;
+import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
+import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.TimeAggregationHandler;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.filters.SqlFilterModelAccessModality;
@@ -67,6 +73,7 @@ import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -94,8 +101,8 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 @ManageAuthorization
 public class QbeQueryResource extends AbstractQbeEngineResource {
 
-	public static transient Logger logger = Logger.getLogger(QbeQueryResource.class);
-	public static transient Logger auditlogger = Logger.getLogger("audit.query");
+	private static final Logger auditlogger = QueryAuditLogger.LOGGER;
+	private static final Logger logger = Logger.getLogger(QbeQueryResource.class);
 	private static final String PARAM_VALUE_NAME = "value";
 	public static final String DEFAULT_VALUE_PARAM = "defaultValue";
 	public static final String MULTI_PARAM = "multiValue";
@@ -195,6 +202,8 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 			query = getQueryFromJson(id, query, jsonEncodedReq);
 
+			validateQuery(query);
+
 			SqlFilterModelAccessModality sqlModality = new SqlFilterModelAccessModality();
 			UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
 
@@ -260,10 +269,15 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		IStatement statement = qbeDataSet.getStatement();
 
 		Map<String, String> envs = getEnv();
+
 		String stringDrivers = envs.get(DRIVERS);
 		Map<String, Object> drivers = null;
+		Map<String, Object> datasets = null;
+		Map<String, Object> envs2 = getEnv();
+		List<Object> listDatasets = (List<Object>) envs2.get("DATASETS");
 		try {
 			drivers = JSONObjectDeserializator.getHashMapFromString(stringDrivers);
+
 		} catch (Exception e) {
 			logger.debug("Drivers cannot be transformed from string to map");
 			throw new SpagoBIRestServiceException("Drivers cannot be transformed from string to map", buildLocaleFromSession(), e);
@@ -281,6 +295,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			logger.debug("Executing query ...");
 			Integer maxSize = QbeEngineConfig.getInstance().getResultLimit();
 			logger.debug("Configuration setting  [" + "QBE.QBE-SQL-RESULT-LIMIT.value" + "] is equals to [" + (maxSize != null ? maxSize : "none") + "]");
+
 			String jpaQueryStr = statement.getQueryString();
 
 			logger.debug("Executable query (HQL/JPQL): [" + jpaQueryStr + "]");
@@ -291,7 +306,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			dataStore = dataSet.getDataStore();
 			Assert.assertNotNull(dataStore, "The dataStore returned by loadData method of the class [" + dataSet.getClass().getName() + "] cannot be null");
 		} catch (Exception e) {
-			logger.debug("Query execution aborted because of an internal exceptian");
+			logger.error("Query execution aborted because of an internal exceptian", e);
 			SpagoBIEngineServiceException exception;
 			String message;
 
@@ -402,10 +417,8 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 				throw new RuntimeException("Output type not supported: " + outputType);
 			}
 
-			return Response.ok(stream, mediaType)
-				.cacheControl(CacheControl.valueOf("no-cache"))
-				.header("Content-Disposition", "attachment;filename=" + "report" + "." + outputType + "\";")
-				.build();
+			return Response.ok(stream, mediaType).cacheControl(CacheControl.valueOf("no-cache"))
+					.header("Content-Disposition", "attachment;filename=" + "report" + "." + outputType + "\";").build();
 		} catch (Exception e) {
 			if (iterator != null) {
 				iterator.close();
@@ -516,6 +529,31 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 	}
 
+	@GET
+	@Path("/persistTableName")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getPersistTableName(@javax.ws.rs.core.Context HttpServletRequest req, @QueryParam("sourceDatasetName") String sourceDatasetName) {
+		logger.debug("IN");
+		String persistTableName = null;
+		try {
+
+			Optional<AbstractJDBCDataset> opt = ((List) getEnv().get("DATASETS")).stream()
+					.filter((x) -> ((AbstractJDBCDataset) x).getName().equals(sourceDatasetName)).findFirst();
+
+			if (opt.isPresent())
+				persistTableName = opt.get().getPersistTableName();
+
+		} catch (Throwable t) {
+			logger.error("An unexpected error occured while executing service: QbeQueryResource.getDomainScopes", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service: JsonChartTemplateService.getDomainScopes", t);
+		} finally {
+			logger.debug("OUT");
+		}
+		return persistTableName;
+
+	}
+
 	@POST
 	@Path("/saveDataSet")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -596,6 +634,57 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		return gridDataFeed;
 	}
 
+	private void validateQuery(Query query) {
+		validateHavingClauses(query);
+	}
+
+	private void validateHavingClauses(Query query) {
+		List<HavingField> havingFields = query.getHavingFields();
+
+		for (HavingField havingField : havingFields) {
+
+			Operand leftOperand = havingField.getLeftOperand();
+			Operand rightOperand = havingField.getRightOperand();
+
+			String fieldName = leftOperand.values[0];
+
+			int selectFieldIndex = query.getSelectFieldIndex(fieldName);
+
+			if (selectFieldIndex != -1) {
+				ISelectField selectedField = query.getSelectFieldByIndex(selectFieldIndex);
+
+				boolean simpleField = selectedField.isSimpleField();
+
+				if (simpleField) {
+					SimpleSelectField ssf = (SimpleSelectField) selectedField;
+
+					Class<?> javaClass = ssf.getJavaClass();
+
+					if (rightOperand.isStaticContent() && BigDecimal.class.equals(javaClass)) {
+
+						String[] values = rightOperand.values;
+
+						for (String value : values) {
+							try {
+								checkValueForBigDecimal(value);
+							} catch (Exception e) {
+								throw new SpagoBIRuntimeException("The value " + value + " for the having clause is not valid");
+							}
+						}
+
+					}
+				}
+			} else {
+				logger.debug("Cannot validate field " + fieldName + ": is it a calculated field?");
+			}
+
+		}
+	}
+
+	private void checkValueForBigDecimal(String value) {
+		BigDecimal bg = new BigDecimal(value);
+	}
+
 	private void addParameters(JSONArray parsListJSON) {
 		try {
 			if (hasDuplicates(parsListJSON)) {
@@ -656,14 +745,9 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 				/**
 				 * This block of code:
 				 *
-				 * boolean multivalue = false;
-				 * if (tempVal != null && tempVal.contains(",")) {
-				 * 	multivalue = true;
-				 * }
+				 * boolean multivalue = false; if (tempVal != null && tempVal.contains(",")) { multivalue = true; }
 				 *
-				 * Was replaced by the following because the user has the ability
-				 * to say if the value is multivalue or not, we don't need to do
-				 * any logic.
+				 * Was replaced by the following because the user has the ability to say if the value is multivalue or not, we don't need to do any logic.
 				 */
 				boolean multivalue = obj.optBoolean(MULTI_PARAM);
 
@@ -850,6 +934,34 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 	private IDataSet getActiveQueryAsDataSet(Query q) {
 		IStatement statement = getEngineInstance().getDataSource().createStatement(q);
+		IDataSet dataSet;
+		try {
+
+			dataSet = QbeDatasetFactory.createDataSet(statement);
+			boolean isMaxResultsLimitBlocking = QbeEngineConfig.getInstance().isMaxResultLimitBlocking();
+			dataSet.setAbortOnOverflow(isMaxResultsLimitBlocking);
+
+			Map userAttributes = new HashMap();
+			UserProfile userProfile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+			userAttributes.putAll(userProfile.getUserAttributes());
+			userAttributes.put(SsoServiceInterface.USER_ID, userProfile.getUserId().toString());
+
+			dataSet.addBinding("attributes", userAttributes);
+			dataSet.addBinding("parameters", this.getEnv());
+			dataSet.setUserProfileAttributes(userAttributes);
+
+			dataSet.setParamsMap(this.getEnv());
+
+		} catch (Exception e) {
+			logger.debug("Error getting the data set from the query");
+			throw new SpagoBIRuntimeException("Error getting the data set from the query", e);
+		}
+		logger.debug("Dataset correctly taken from the query ");
+		return dataSet;
+
+	}
+
+	private IDataSet getActiveQueryAsDataSet(Query q, IStatement statement) {
 		IDataSet dataSet;
 		try {
 

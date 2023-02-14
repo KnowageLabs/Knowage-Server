@@ -1,6 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils'
+import { vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import PrimeVue from 'primevue/config'
-import axios from 'axios'
 import Button from 'primevue/button'
 import DocumentExecution from './DocumentExecution.vue'
 import Menu from 'primevue/contextmenu'
@@ -224,23 +225,23 @@ const mockedURLData = {
     typeCode: 'DOCUMENT_COMPOSITE'
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/Document`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documents/Document`:
                 return Promise.resolve({ data: mockedDocument })
             default:
                 return Promise.resolve({ data: [] })
         }
     }),
 
-    post: axios.post.mockImplementation((url) => {
+    post: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentexecution/filters`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentexecution/filters`:
                 return Promise.resolve({ data: mockedFilterData })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`:
                 return Promise.resolve({ data: mockedURLData })
             default:
                 return Promise.resolve({ data: [] })
@@ -248,31 +249,32 @@ const $http = {
     })
 }
 
-const $store = {
-    state: {
-        user: {
-            sessionRole: '/demo/admin'
-        }
-    }
-}
-
 const $router = {
-    push: jest.fn()
+    push: vi.fn()
 }
 
-const $route = { path: '/document-composite/Document%20Test' }
+const $route = { path: '/document-composite/Document%20Test', name: 'document-execution' }
 
 const factory = () => {
     return mount(DocumentExecution, {
         props: {
-            id: 'Document'
+            id: 'Document',
+            propMode: 'document-execution'
         },
         provide: [],
         global: {
             directives: {
                 tooltip() {}
             },
-            plugins: [PrimeVue],
+            plugins: [PrimeVue, createTestingPinia({
+                initialState: {
+                    store: {
+                        user: {
+                            sessionRole: '/demo/admin'
+                        }
+                    }
+                }
+            })],
             stubs: {
                 Button,
                 DocumentExecutionBreadcrumb: true,
@@ -286,6 +288,7 @@ const factory = () => {
                 Dossier: true,
                 KnParameterSidebar: true,
                 Menu,
+                Olap: true,
                 ProgressBar,
                 Registry: true,
                 Toolbar,
@@ -293,7 +296,6 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $http,
                 $router,
                 $route
@@ -313,7 +315,6 @@ describe('Document Execution - Document has no parameters', () => {
         expect(wrapper.vm.filtersData).toStrictEqual(mockedFilterData)
         expect(wrapper.vm.filtersData.filterStatus.length).toBe(0)
 
-        expect(wrapper.find('[data-test="parameter-sidebar-icon"]').exists()).toBe(false)
         expect(wrapper.find('[data-test="parameter-sidebar-icon"]').exists()).toBe(false)
     })
 })

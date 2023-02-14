@@ -1,21 +1,12 @@
 import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import flushPromises from 'flush-promises'
 import NewsManagementDetail from './NewsManagementDetail.vue'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
 
-const mockedNews = {
-    id: 1,
-    title: 'First news',
-    description: 'Description',
-    type: 1,
-    html: '<p>Test</p>',
-    roles: mockedRoles,
-    expirationDate: '2019-10-02 00:00:00.0',
-    active: true
-}
 const mockedRoles = [
     {
         id: 1,
@@ -30,32 +21,41 @@ const mockedRoles = [
         name: 'dev'
     }
 ]
-jest.mock('axios')
+
+const mockedNews = {
+    id: 1,
+    title: 'First news',
+    description: 'Description',
+    type: 1,
+    html: '<p>Test</p>',
+    roles: mockedRoles,
+    expirationDate: '2019-10-02 00:00:00.0',
+    active: true
+}
+
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news/1?isTechnical=true':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/news/1?isTechnical=true':
                 return Promise.resolve({ data: mockedNews })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/roles':
                 return Promise.resolve({ data: mockedRoles })
         }
     }),
-    post: axios.post.mockImplementation(() => Promise.resolve())
-}
-
-const $store = {
-    commit: jest.fn()
+    post: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 const $router = {
-    replace: jest.fn(),
-    push: jest.fn()
+    replace: vi.fn(),
+    push: vi.fn()
 }
 
 const factory = () => {
     return mount(NewsManagementDetail, {
         global: {
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 ProgressBar,
@@ -64,7 +64,6 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $router,
                 $http
             }
@@ -73,7 +72,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('News Management Detail', () => {
@@ -97,8 +96,8 @@ describe('News Management Detail', () => {
 
         wrapper.vm.handleSubmit()
 
-        expect(axios.post).toHaveBeenCalledTimes(1)
-        expect(axios.post).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news', { ...mockedNews, expirationDate: new Date(mockedNews.expirationDate).valueOf() })
+        expect($http.post).toHaveBeenCalledTimes(1)
+        expect($http.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/news', { ...mockedNews, expirationDate: new Date(mockedNews.expirationDate).valueOf() })
     })
 
     it('shows success info if new data is saved', async () => {
@@ -109,8 +108,8 @@ describe('News Management Detail', () => {
 
         wrapper.vm.handleSubmit()
 
-        expect(axios.post).toHaveBeenCalledTimes(1)
-        expect(axios.post).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news', { ...mockedNews, expirationDate: new Date(mockedNews.expirationDate).valueOf() })
+        expect($http.post).toHaveBeenCalledTimes(1)
+        expect($http.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/news', { ...mockedNews, expirationDate: new Date(mockedNews.expirationDate).valueOf() })
     })
     it('close button (X) closes the detail without saving data', async () => {
         const wrapper = factory()
@@ -118,7 +117,7 @@ describe('News Management Detail', () => {
 
         await wrapper.find('[data-test="close-button"]').trigger('click')
 
-        expect(axios.post).toHaveBeenCalledTimes(0)
+        expect($http.post).toHaveBeenCalledTimes(0)
         expect($router.push).toHaveBeenCalledWith('/news-management')
         expect(wrapper.emitted()).toHaveProperty('closed')
     })

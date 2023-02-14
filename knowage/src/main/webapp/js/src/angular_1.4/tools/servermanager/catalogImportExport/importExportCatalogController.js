@@ -153,7 +153,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 						"SCHEMA_LIST": schemaList,
 						"SVG_LIST": SVGtList,
 						"LAYER_LIST": layerList,
-						"EXPORT_FILE_NAME":$scope.nameExport,
+						"EXPORT_FILE_NAME":$scope.nameExport.trim(),
 						"EXPORT_SUB_OBJ":false,
 						"EXPORT_SNAPSHOT":false};
 
@@ -186,11 +186,11 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	
 	
 	$scope.downloadFile= function(){
-		var data={"FILE_NAME":$scope.nameExport};
+		var data={"FILE_NAME":$scope.nameExport.trim()};
 		var config={"responseType": "arraybuffer"};
 		sbiModule_restServices.promisePost("1.0/serverManager/importExport/wizard","downloadExportFile",data,config)
 		.then(function(response, status, headers, config) {
-				$scope.download.getBlob(response.data,$scope.nameExport,'application/zip','zip');
+				$scope.download.getBlob(response.data,$scope.nameExport.trim(),'application/zip','zip');
 				//$scope.showAction(sbiModule_translate.load("sbi.importusers.downloadOK"));
 				sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.importusers.downloadOK"),"");
 				$scope.wait=false;
@@ -211,11 +211,15 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			fd.append('exportedArchive', $scope.IEDConf.fileImport.file);
 			sbiModule_restServices.promisePost("1.0/serverManager/importExport/catalog", 'import', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}})
 			.then(function(response, status, headers, config) {
-//				$scope.catalogSelected = [];
-				$scope.catalogSelected = angular.copy(response.data.exportedCatalog, $scope.catalogSelected);  //for default all elements are checked
-				$scope.exportedCatalog = response.data.exportedCatalog;
-				//open 
-				$scope.IEDConf.showCatalogImported = true;
+				if(response.data.ERROR) {
+					sbiModule_restServices.errorHandler(response.data.ERROR,"");
+				} else {
+	//				$scope.catalogSelected = [];
+					$scope.catalogSelected = angular.copy(response.data.exportedCatalog, $scope.catalogSelected);  //for default all elements are checked
+					$scope.exportedCatalog = response.data.exportedCatalog;
+					//open 
+					$scope.IEDConf.showCatalogImported = true;
+				}
 
 			}, function(response, status, headers, config) {
 				sbiModule_restServices.errorHandler(response.data,"");

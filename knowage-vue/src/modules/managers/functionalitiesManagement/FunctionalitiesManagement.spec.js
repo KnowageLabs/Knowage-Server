@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import FunctionalitiesManagement from './FunctionalitiesManagement.vue'
@@ -9,6 +10,7 @@ import KnHint from '@/components/UI/KnHint.vue'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
 import Tree from 'primevue/tree'
+import mainStore from '../../../App.store'
 
 const mockedFunctionalities = [
     { id: 1, parentId: null, name: 'Functionalities', prog: 1 },
@@ -38,39 +40,35 @@ const mockedFunctionalities = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation(() =>
+    get: vi.fn().mockImplementation(() =>
         Promise.resolve({
             data: mockedFunctionalities
         })
     ),
-    delete: axios.delete.mockImplementation(() => Promise.resolve())
+    delete: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 const $confirm = {
-    require: jest.fn()
-}
-
-const $store = {
-    commit: jest.fn()
+    require: vi.fn()
 }
 
 const factory = () => {
     return mount(FunctionalitiesManagement, {
         global: {
+            plugins: [createTestingPinia()],
             directives: {
                 tooltip() {}
             },
             stubs: { Button, Card, FabButton, FunctionalitiesManagementDetail: true, KnHint, ProgressBar, Toolbar, Tree },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $confirm,
                 $http
             }
@@ -89,7 +87,7 @@ describe('Functionalities loading', () => {
 
 describe('Functionalities', () => {
     it('when loaded a tree with just the root is shown if no child are present', async () => {
-        axios.get.mockReturnValueOnce(
+        $http.get.mockReturnValueOnce(
             Promise.resolve({
                 data: [{ id: 1, parentId: null, name: 'Functionalities' }]
             })
@@ -113,7 +111,7 @@ describe('Functionalities', () => {
 
         expect(wrapper.vm.functionalities.length).toBe(5)
         expect(wrapper.vm.nodes.length).toBe(2)
-        expect(wrapper.vm.expandedKeys).toStrictEqual({ '1': true })
+        expect(wrapper.vm.expandedKeys).toStrictEqual({ 1: true })
         expect(tree.html()).toContain('Functionalities')
         expect(tree.html()).toContain('Test')
         expect(tree.html()).toContain('Other')
@@ -126,6 +124,7 @@ describe('Functionalities', () => {
     })
     it('ask a confirm if delete button is clicked', async () => {
         const wrapper = factory()
+        const store = mainStore()
 
         await flushPromises()
 
@@ -136,9 +135,9 @@ describe('Functionalities', () => {
         expect($confirm.require).toHaveBeenCalledTimes(1)
 
         await wrapper.vm.deleteFunctionality(3)
-        expect(axios.delete).toHaveBeenCalledTimes(1)
-        expect(axios.delete).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/' + 3)
-        expect($store.commit).toHaveBeenCalledTimes(1)
+        expect($http.delete).toHaveBeenCalledTimes(1)
+        expect($http.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/functionalities/' + 3)
+        expect(store.setInfo).toHaveBeenCalledTimes(1)
     })
     it('moves the item up in the tree if the move up button is clicked', async () => {
         const wrapper = factory()
@@ -149,7 +148,7 @@ describe('Functionalities', () => {
 
         await wrapper.find('[data-test="move-up-button-3"]').trigger('click')
 
-        expect(axios.get).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/moveUp/' + 3)
+        expect($http.get).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/functionalities/moveUp/' + 3)
     })
     it('moves the item down in the tree if the move down button is clicked', async () => {
         const wrapper = factory()
@@ -160,7 +159,7 @@ describe('Functionalities', () => {
 
         await wrapper.find('[data-test="move-down-button-3"]').trigger('click')
 
-        expect(axios.get).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/moveDown/' + 3)
+        expect($http.get).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/functionalities/moveDown/' + 3)
     })
     it('shows an empty detail if add new button is clicked', async () => {
         const wrapper = factory()

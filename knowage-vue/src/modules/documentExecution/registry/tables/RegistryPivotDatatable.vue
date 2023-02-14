@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import registryDescriptor from '../RegistryDescriptor.json'
 import KnPivotTable from '@/components/UI/KnPivotTable/KnPivotTable.vue'
@@ -27,7 +27,7 @@ export default defineComponent({
         columns: [] as any,
         rows: [] as any,
         propConfiguration: { type: Object },
-        entity: { type: String },
+        entity: { type: Object as PropType<String | null> },
         id: { type: String },
         propPagination: { type: Object }
     },

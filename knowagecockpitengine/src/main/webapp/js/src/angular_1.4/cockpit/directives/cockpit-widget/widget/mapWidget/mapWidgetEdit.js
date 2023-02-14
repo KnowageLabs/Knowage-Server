@@ -42,7 +42,14 @@ function mapWidgetEditControllerFunction(
 	$scope.availableBackgroundLayers = [];
 	$scope.availableOperators = [{'label':'==','value':'=='},{'label':'!=','value':'!='},{'label':'<','value':'<','range':true},{'label':'>','value':'>','range':true},{'label':'<=','value':'<=','range':true},{'label':'>=','value':'>=','range':true}];
 	$scope.availableChoroplethOperators = [{'label':'>=','value':'>='},{'label':'<','value':'<'}];
-	$scope.visualizationTypes = [{"name":"markers","enabled":true,"class":"markers"},{"name":"clusters","enabled":true,"class":"clusters"},{"name":"heatmap","enabled":true,"class":"heatmap"},{"name":"choropleth","enabled":true,"class":"choropleth"}];
+	$scope.visualizationTypes = [
+		{"name":"markers","enabled":true,"class":"markers"},
+		{"name":"balloons","enabled":true,"class":"balloons"},
+		{"name":"pies","enabled":true,"class":"pies"},
+		{"name":"clusters","enabled":true,"class":"clusters"},
+		{"name":"heatmap","enabled":true,"class":"heatmap"},
+		{"name":"choropleth","enabled":true,"class":"choropleth"}
+	];
 	$scope.uploadImg = {};
 	$scope.widgetSpinner = false;
 	$scope.availableLegendAlignments = [{'label':$scope.translate.load('sbi.cockpit.style.textAlign.left'),'value':'left'},{'label':$scope.translate.load('sbi.cockpit.style.textAlign.center'),'value':'center'},{'label':$scope.translate.load('sbi.cockpit.style.textAlign.right'),'value':'right'}];
@@ -72,6 +79,30 @@ function mapWidgetEditControllerFunction(
 			layer.heatmapConf = layer.heatmapConf || {};
 			layer.heatmapConf.enabled = true;
 		}
+		if(type == "balloons"){
+			layer.balloonConf             = layer.balloonConf             || {};
+			layer.balloonConf.borderColor = layer.balloonConf.borderColor || "rgba(0, 0, 0, 0.5)";
+			layer.balloonConf.color       = layer.balloonConf.color       || "rgba(127, 127, 127, 0.5)";
+			layer.balloonConf.minSize     = layer.balloonConf.minSize     || 5;
+			layer.balloonConf.maxSize     = layer.balloonConf.maxSize     || 35;
+		}
+		if(type == "pies"){
+			layer.pieConf              = layer.pieConf              || {};
+			layer.pieConf.categorizeBy = layer.pieConf.categorizeBy || getFirstAttribute(layer);
+			layer.pieConf.type         = layer.pieConf.type         || "pie"; 
+			layer.pieConf.borderColor  = layer.pieConf.borderColor  || "rgba(0, 0, 0, 0.5)";
+			layer.pieConf.color        = layer.pieConf.color        || "rgba(127, 127, 127, 0.5)";
+			layer.pieConf.minSize      = layer.pieConf.minSize      || 5;
+			layer.pieConf.maxSize      = layer.pieConf.maxSize      || 35;
+		}
+	}
+
+	function getFirstAttribute(layer) {
+		return layer.content.columnSelectedOfDataset.find(function(e) { return e.fieldType == "ATTRIBUTE" });
+	}
+
+	$scope.getAttributes = function(layer) {
+		return layer.content.columnSelectedOfDataset.filter(function(e) { return e.fieldType == "ATTRIBUTE" });
 	}
 
 	$scope.expandRow = function(layer,content){
@@ -618,13 +649,8 @@ function mapWidgetEditControllerFunction(
 	}
 
 	$scope.needsBorderColor = function(layer) {
-		return layer.content
-			.columnSelectedOfDataset
-			.find(function(e) {
-					return e.fieldType == "SPATIAL_ATTRIBUTE";
-				})
-			.properties
-			.coordType != "string";
+		return layer.content.columnSelectedOfDataset.find(function(e) { return e.fieldType == "SPATIAL_ATTRIBUTE"; }).properties.coordType != "string"
+			|| layer.visualizationType == "balloons";
 	}
 
 	$scope.changeCoordType = function(layer) {

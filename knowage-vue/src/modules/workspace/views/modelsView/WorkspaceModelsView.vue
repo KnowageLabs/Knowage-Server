@@ -16,7 +16,7 @@
         <InputText class="kn-material-input p-m-3 model-search" v-model="searchWord" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
         <span class="p-float-label p-mr-auto model-search">
             <MultiSelect class="kn-material-input kn-width-full" :style="mainDescriptor.style.multiselect" v-model="selectedCategories" :options="modelCategories" optionLabel="VALUE_CD" @change="searchItems" :filter="true" />
-            <label class="kn-material-input-label"> {{ $t('common.type') }} </label>
+            <label class="kn-material-input-label"> {{ $t('common.category') }} </label>
         </span>
         <SelectButton class="p-mx-2" v-model="tableMode" :options="selectButtonOptions" @click="onTableModeChange" />
     </div>
@@ -71,6 +71,8 @@ import WorkspaceModelsTable from './tables/WorkspaceModelsTable.vue'
 import { AxiosResponse } from 'axios'
 import QBE from '@/modules/qbe/QBE.vue'
 import MultiSelect from 'primevue/multiselect'
+import mainStore from '../../../../App.store'
+import { getCorrectRolesForExecutionForType } from '@/helpers/commons/roleHelper'
 
 export default defineComponent({
     name: 'workspace-models-view',
@@ -102,7 +104,8 @@ export default defineComponent({
     },
     computed: {
         hasEnableFederatedDatasetFunctionality(): boolean {
-            return this.user.functionalities.includes('EnableFederatedDataset')
+            if (this.user && this.user.functionalities) return this.user.functionalities.includes('EnableFederatedDataset')
+            else return false
         }
     },
     watch: {
@@ -111,8 +114,12 @@ export default defineComponent({
             this.selectedModel = null
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     async created() {
-        this.user = (this.$store.state as any).user
+        this.user = (this.store.$state as any).user
         await this.getModelCategories()
         await this.loadBusinessModels()
         if (this.hasEnableFederatedDatasetFunctionality) {
@@ -129,7 +136,7 @@ export default defineComponent({
         },
         async loadBusinessModels() {
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/?fileExtension=jar`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/businessmodels/?fileExtension=jar`).then((response: AxiosResponse<any>) => {
                 this.businessModels = response.data
                 this.businessModels = this.businessModels.map((el: any) => {
                     return { ...el, type: 'businessModel' }
@@ -139,7 +146,7 @@ export default defineComponent({
         },
         async loadFederatedDatasets() {
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `federateddataset/`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `federateddataset/`).then((response: AxiosResponse<any>) => {
                 this.federatedDatasets = response.data
                 this.federatedDatasets = this.federatedDatasets.map((el: any) => {
                     return { ...el, type: 'federatedDataset' }
@@ -149,13 +156,13 @@ export default defineComponent({
         },
         async getModelCategories() {
             this.loading = true
-            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domainsforfinaluser/bm-categories`).then((response: AxiosResponse<any>) => {
+            return this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `domainsforfinaluser/bm-categories`).then((response: AxiosResponse<any>) => {
                 this.modelCategories = [...response.data]
             })
         },
         searchItems(event?) {
             setTimeout(() => {
-                if (event.value) {
+                if (event?.value) {
                     this.selectedCategoryIds = [] as any
                     event.value.forEach((el) => {
                         this.selectedCategoryIds.push(el.VALUE_ID)
@@ -189,12 +196,28 @@ export default defineComponent({
             this.searchWord = ''
         },
         openDatasetInQBE(dataset: any) {
-            if (process.env.VUE_APP_USE_OLD_QBE_IFRAME == 'true') {
-                this.$emit('showQbeDialog', dataset)
+            let id = null
+            let typeCode = ''
+            if (dataset.federation_id) {
+                typeCode = 'FEDERATED_DATASET'
+                id = dataset.federation_id
             } else {
-                this.selectedQbeDataset = dataset
-                this.qbeVisible = true
+                id = dataset.id
+                typeCode = 'DATAMART'
             }
+
+            getCorrectRolesForExecutionForType(typeCode, id, dataset.label)
+                .then(() => {
+                    if (import.meta.env.VITE_USE_OLD_QBE_IFRAME == 'true') {
+                        this.$emit('showQbeDialog', dataset)
+                    } else {
+                        this.selectedQbeDataset = dataset
+                        this.qbeVisible = true
+                    }
+                })
+                .catch(() => {
+                    this.qbeVisible = false
+                })
         },
         createNewFederation() {
             this.$router.push('models/federation-definition/new-federation')
@@ -213,9 +236,9 @@ export default defineComponent({
         async deleteDataset(dataset: IFederatedDataset) {
             this.loading = true
             await this.$http
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/federateddataset/${dataset.federation_id}`)
+                .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/federateddataset/${dataset.federation_id}`)
                 .then(async () => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.success')
                     })

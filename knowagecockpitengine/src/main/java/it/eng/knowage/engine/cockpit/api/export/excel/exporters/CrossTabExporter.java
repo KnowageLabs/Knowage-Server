@@ -58,6 +58,7 @@ import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab;
 import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab.CellType;
 import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab.MeasureInfo;
 import it.eng.knowage.engine.cockpit.api.crosstable.CrosstabBuilder;
+import it.eng.knowage.engine.cockpit.api.crosstable.Measure;
 import it.eng.knowage.engine.cockpit.api.crosstable.MeasureFormatter;
 import it.eng.knowage.engine.cockpit.api.crosstable.MeasureScaleFactorOption;
 import it.eng.knowage.engine.cockpit.api.crosstable.Node;
@@ -214,14 +215,35 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 		CellStyle cellStyleForNA = buildNACellStyle(sheet);
 		int rowNum = 0;
 		int numOfMeasures = cs.getMeasures().size();
-
+		List<Measure> allMeasures = cs.getCrosstabDefinition().getMeasures();
+		List<Measure> subtotalMeasures = getSubtotalsMeasures(allMeasures);
+		List<MeasureInfo> measuresInfo = cs.getMeasures();
 		for (int i = 0; i < dataMatrix.length; i++) {
 			rowNum = rowOffset + i;
 			Row row = sheet.getRow(rowNum);
 			if (row == null) {
 				row = sheet.createRow(rowNum);
 			}
+			int totalsCounter = 0;
+			int pos;
+
 			for (int j = 0; j < dataMatrix[0].length; j++) {
+
+				JSONObject measureConfig = new JSONObject();
+				if (cs.isMeasureOnRow()) {
+					pos = i % measuresInfo.size();
+					measureConfig = allMeasures.get(pos).getConfig();
+				} else {
+					pos = cs.getOffsetInColumnSubtree(j) % measuresInfo.size();
+					if (cs.isCellFromSubtotalsColumn(j)) {
+						measureConfig = subtotalMeasures.get(pos).getConfig();
+					} else if (cs.isCellFromTotalsColumn(j)) {
+						measureConfig = subtotalMeasures.get(totalsCounter).getConfig();
+						totalsCounter++;
+					} else {
+						measureConfig = allMeasures.get(pos).getConfig();
+					}
+				}
 				String text = dataMatrix[i][j];
 				int columnNum = columnOffset + j;
 				Cell cell = row.createCell(columnNum);
@@ -234,12 +256,21 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 					int measureIdx = j % numOfMeasures;
 					String measureId = getMeasureId(cs, measureIdx);
 					int decimals = measureFormatter.getFormatXLS(i, j);
-					CellStyle style = getStyle(decimals, sheet, createHelper, cs.getCellType(i, j), measureId, value);
+					CellType cellType = cs.getCellType(i, j);
+					CellStyle style = getStyle(decimals, sheet, createHelper, cellType, measureId, value);
 					cellStyleMonitor.stop();
 					Monitor buildCellMonitor = MonitorFactory.start("CockpitEngine.export.excel.CrossTabExporter.buildDataMatrix.buildCellMonitor");
-					cell.setCellValue(valueFormatted);
-					cell.setCellType(this.getCellTypeNumeric());
-					cell.setCellStyle(style);
+					String cellTypeValue = cellType.getValue();
+					boolean insertValue = true;
+					if (measureConfig.has("excludeFromTotalAndSubtotal") && measureConfig.getBoolean("excludeFromTotalAndSubtotal")
+							&& (cellTypeValue.equalsIgnoreCase("partialsum") || cellTypeValue.equalsIgnoreCase("totals"))) {
+						insertValue = false;
+					}
+					if (insertValue) {
+						cell.setCellValue(valueFormatted);
+						cell.setCellType(this.getCellTypeNumeric());
+						cell.setCellStyle(style);
+					}
 					buildCellMonitor.stop();
 				} catch (NumberFormatException e) {
 					logger.debug("Text " + text + " is not recognized as a number");
@@ -250,6 +281,17 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 			}
 		}
 		return rowNum;
+	}
+
+	List<Measure> getSubtotalsMeasures(List<Measure> allMeasures) throws JSONException {
+		List<Measure> toReturn = new ArrayList<Measure>();
+		for (int k = 0; k < allMeasures.size(); k++) {
+			if (!allMeasures.get(k).getConfig().has("excludeFromTotalAndSubtotal")
+					|| !allMeasures.get(k).getConfig().getBoolean("excludeFromTotalAndSubtotal")) {
+				toReturn.add(allMeasures.get(k));
+			}
+		}
+		return toReturn;
 	}
 
 	private String getMeasureId(CrossTab cs, int index) {
@@ -546,11 +588,13 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 			// only odd levels are levels (except the last one, since it contains measures' names)
 			boolean isLevel = isLevel(recursionLevel, aNode);
 			if (isLevel) {
-				it.eng.knowage.engine.cockpit.api.crosstable.CrosstabDefinition.Column aColDef = cs.getCrosstabDefinition().getColumns()
-						.get(recursionLevel / 2);
-				String variable = aColDef.getVariable();
-				if (variables.has(variable)) {
-					text = variables.getString(variable);
+				if (!cs.getCrosstabDefinition().getColumns().isEmpty()) {
+					it.eng.knowage.engine.cockpit.api.crosstable.CrosstabDefinition.Column aColDef = cs.getCrosstabDefinition().getColumns()
+							.get(recursionLevel / 2);
+					String variable = aColDef.getVariable();
+					if (variables.has(variable)) {
+						text = variables.getString(variable);
+					}
 				}
 			}
 			if (!cs.isMeasureOnRow() && (childs == null || childs.size() <= 0)) {

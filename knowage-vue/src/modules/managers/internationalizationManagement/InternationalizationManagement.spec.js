@@ -1,5 +1,5 @@
 import { flushPromises, mount } from '@vue/test-utils'
-import axios from 'axios'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import InternationalizationManagement from './InternationalizationManagement.vue'
 import InputText from 'primevue/inputtext'
@@ -87,14 +87,14 @@ const mockedMessages = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/internationalization/languages`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/internationalization/languages`:
                 return Promise.resolve({ data: mockedLanguages })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/i18nMessages/internationalization/?currLanguage=en-US`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/i18nMessages/internationalization/?currLanguage=en-US`:
                 return Promise.resolve({ data: mockedMessages })
             default:
                 return Promise.resolve({ data: [] })
@@ -109,7 +109,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: { Button, InputText, ProgressBar, Toolbar, Message, Checkbox, DataTable, Column, TabPanel, TabView },
             mocks: {
                 $t: (msg) => msg,
@@ -120,7 +120,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Internationalization Management loading', () => {
@@ -192,13 +192,16 @@ describe('Internationalization Management Search', () => {
         const messageList = wrapper.find('[data-test="messages-table"]')
         const searchInput = messageList.find('[data-test="filterInput"]')
 
-        expect(messageList.html()).toContain('test11')
-        expect(messageList.html()).toContain('test22')
+        expect(wrapper.find('[data-test="input-field-1"]').exists()).toBe(true)
+        expect(wrapper.find('[data-test="input-field-1"]').wrapperElement._value).toBe('test11')
+        expect(wrapper.find('[data-test="input-field-2"]').exists()).toBe(true)
+        expect(wrapper.find('[data-test="input-field-2"]').wrapperElement._value).toBe('test22')
 
         await searchInput.setValue('test22')
 
-        expect(messageList.html()).not.toContain('test11')
-        expect(messageList.html()).toContain('test22')
+        expect(wrapper.find('[data-test="input-field-1"]').exists()).toBe(false)
+        expect(wrapper.find('[data-test="input-field-2"]').exists()).toBe(true)
+        expect(wrapper.find('[data-test="input-field-2"]').wrapperElement._value).toBe('test22')
     })
     it('returns no data if the text is not present', async () => {
         const wrapper = factory()
@@ -209,8 +212,10 @@ describe('Internationalization Management Search', () => {
         const messageList = wrapper.find('[data-test="messages-table"]')
         const searchInput = messageList.find('[data-test="filterInput"]')
 
-        expect(messageList.html()).toContain('test11')
-        expect(messageList.html()).toContain('test22')
+        expect(wrapper.find('[data-test="input-field-1"]').exists()).toBe(true)
+        expect(wrapper.find('[data-test="input-field-1"]').wrapperElement._value).toBe('test11')
+        expect(wrapper.find('[data-test="input-field-2"]').exists()).toBe(true)
+        expect(wrapper.find('[data-test="input-field-2"]').wrapperElement._value).toBe('test22')
 
         await searchInput.setValue('data that doesnt exist')
 

@@ -27,6 +27,7 @@ import { AxiosResponse } from 'axios'
 import DatasetTableCard from './cards/DatasetTableCard/DatasetTableCard.vue'
 import GeneralSettingsCard from './cards/GeneralSettingsCard/GeneralSettingsCard.vue'
 import RuntimeInformationCard from './cards/RuntimeInformationCard/RuntimeInformationCard.vue'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'cache-management',
@@ -53,12 +54,16 @@ export default defineComponent({
             return this.loading || this.settingsPendingCount != 0
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     async created() {
         this.loadPage()
     },
     methods: {
         loadCache() {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee').then((response: AxiosResponse<any>) => {
+            this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/cacheee').then((response: AxiosResponse<any>) => {
                 this.cache = response.data
                 this.chartData = [this.cache.availableMemoryPercentage, 100 - this.cache.availableMemoryPercentage]
             })
@@ -67,50 +72,50 @@ export default defineComponent({
             this.settings = {} as iSettings
             this.settingsPendingCount = 10
             this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/label/SPAGOBI.CACHE.NAMEPREFIX')
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/configs/label/SPAGOBI.CACHE.NAMEPREFIX')
                 .then((response: AxiosResponse<any>) => (this.settings.prefixForCacheTablesName = response.data.valueCheck))
                 .finally(() => this.settingsPendingCount--)
             this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/label/SPAGOBI.CACHE.LIMIT_FOR_CLEAN')
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/configs/label/SPAGOBI.CACHE.LIMIT_FOR_CLEAN')
                 .then((response: AxiosResponse<any>) => (this.settings.limitForClean = +response.data.valueCheck))
                 .finally(() => this.settingsPendingCount--)
             this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/label/SPAGOBI.CACHE.SCHEDULING_FULL_CLEAN')
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/configs/label/SPAGOBI.CACHE.SCHEDULING_FULL_CLEAN')
                 .then((response: AxiosResponse<any>) => (this.settings.schedulingFullClean = { label: response.data.valueCheck, value: response.data.valueCheck }))
                 .finally(() => this.settingsPendingCount--)
             this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/label/SPAGOBI.CACHE.DS_LAST_ACCESS_TTL')
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/configs/label/SPAGOBI.CACHE.DS_LAST_ACCESS_TTL')
                 .then((response: AxiosResponse<any>) => (this.settings.lastAccessTtl = +response.data.valueCheck))
                 .finally(() => this.settingsPendingCount--)
             this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/label/SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT')
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/configs/label/SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT')
                 .then((response: AxiosResponse<any>) => (this.settings.createAndPersistTimeout = +response.data.valueCheck))
                 .finally(() => this.settingsPendingCount--)
             this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/label/SPAGOBI.CACHE.SPACE_AVAILABLE')
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/configs/label/SPAGOBI.CACHE.SPACE_AVAILABLE')
                 .then((response: AxiosResponse<any>) => (this.settings.spaceAvailable = +response.data.valueCheck / 1048576))
                 .finally(() => this.settingsPendingCount--)
             this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/label/SPAGOBI.CACHE.LIMIT_FOR_STORE')
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/configs/label/SPAGOBI.CACHE.LIMIT_FOR_STORE')
                 .then((response: AxiosResponse<any>) => (this.settings.cacheLimitForStore = +response.data.valueCheck))
                 .finally(() => this.settingsPendingCount--)
             this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/label/SPAGOBI.WORKMANAGER.SQLDBCACHE.TIMEOUT')
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/configs/label/SPAGOBI.WORKMANAGER.SQLDBCACHE.TIMEOUT')
                 .then((response: AxiosResponse<any>) => (this.settings.sqldbCacheTimeout = +response.data.valueCheck))
                 .finally(() => this.settingsPendingCount--)
             this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/label/SPAGOBI.CACHE.HAZELCAST.TIMEOUT')
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/configs/label/SPAGOBI.CACHE.HAZELCAST.TIMEOUT')
                 .then((response: AxiosResponse<any>) => (this.settings.hazelcastTimeout = +response.data.valueCheck))
                 .finally(() => this.settingsPendingCount--)
             this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/label/SPAGOBI.CACHE.HAZELCAST.LEASETIME')
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/configs/label/SPAGOBI.CACHE.HAZELCAST.LEASETIME')
                 .then((response: AxiosResponse<any>) => (this.settings.hazelcastLeaseTime = +response.data.valueCheck))
                 .finally(() => this.settingsPendingCount--)
         },
         async loadDataSources() {
             this.loading = true
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources/?type=cache')
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/datasources/?type=cache')
                 .then((response: AxiosResponse<any>) => {
                     this.datasources = []
                     response.data.map((datasource: any) => {
@@ -125,7 +130,7 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
 
             if (this.selectedDatasource === null) {
-                this.$store.commit('setError', {
+                this.store.setError({
                     title: this.$t('managers.cacheManagement.noDefaultDatasetTitle'),
                     msg: this.$t('managers.cacheManagement.noDefaultDataset')
                 })
@@ -134,7 +139,7 @@ export default defineComponent({
         loadDatasetsMetadata() {
             this.datasetMetadataLoading = true
             this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee/meta')
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/cacheee/meta')
                 .then((response: AxiosResponse<any>) => (this.datasetMetadataList = response.data))
                 .finally(() => (this.datasetMetadataLoading = false))
         },

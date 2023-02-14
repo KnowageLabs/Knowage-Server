@@ -1,0 +1,11 @@
+{
+    "globalFilterFields": ["name", "category.valueName", "author"],
+    "selectColumnStyle": "width: 3em",
+    "style": {
+        "dialog": {
+            "height": "80%",
+            "scrollHeight": "80vh",
+            "width": "80%"
+        }
+    }
+}

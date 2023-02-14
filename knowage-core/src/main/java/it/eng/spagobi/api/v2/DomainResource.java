@@ -17,15 +17,6 @@
  */
 package it.eng.spagobi.api.v2;
 
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IDomainDAO;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -46,6 +37,17 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.ICategoryDAO;
+import it.eng.spagobi.commons.dao.IDomainDAO;
+import it.eng.spagobi.commons.dao.dto.SbiCategory;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 @Path("/2.0/domains")
 @ManageAuthorization
@@ -289,28 +291,30 @@ public class DomainResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public List<Domain> getCategoriesOfRoles(@QueryParam("id") List<Integer> ids) {
 		logger.debug("IN");
-		IDomainDAO domainsDao = null;
-		List allRolesCategories = new ArrayList<>();
-		List<Domain> metaModelCategories;
-		List<Domain> rolesMetaModelCategories = new ArrayList<Domain>();
+		List<Domain> rolesMetaModelCategories = new ArrayList<>();
 		try {
-			domainsDao = DAOFactory.getDomainDAO();
+			List<Integer> allRolesCategories = new ArrayList<>();
+
+			IDomainDAO domainsDao = DAOFactory.getDomainDAO();
+			ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
+
 			domainsDao.setUserProfile(getUserProfile());
 			for (int i = 0; i < ids.size(); i++) {
-				List tempL = domainsDao.loadListMetaModelDomainsByRole(ids.get(i));
+				List<Integer> tempL = domainsDao.loadListMetaModelDomainsByRole(ids.get(i));
 				for (int j = 0; j < tempL.size(); j++) {
 					if (!allRolesCategories.contains(tempL.get(j))) {
 						allRolesCategories.add(tempL.get(j));
 					}
 				}
 			}
-			metaModelCategories = domainsDao.loadListDomainsByType("BM_CATEGORY");
-			Integer[] arrayAllRolesCategories = new Integer[allRolesCategories.size()];
-			allRolesCategories.toArray(arrayAllRolesCategories);
-			for (int i = 0; i < arrayAllRolesCategories.length; i++) {
+
+			List<SbiCategory> metaModelCategories = categoryDao.getCategoriesForBusinessModel();
+			for (int i = 0; i < allRolesCategories.size(); i++) {
 				for (int j = 0; j < metaModelCategories.size(); j++) {
-					if (metaModelCategories.get(j).getValueId().equals(arrayAllRolesCategories[i])) {
-						rolesMetaModelCategories.add(metaModelCategories.get(j));
+					SbiCategory sbiCategory = metaModelCategories.get(j);
+					if (allRolesCategories.contains(sbiCategory.getId())) {
+						Domain domain = Domain.fromCategory(sbiCategory);
+						rolesMetaModelCategories.add(domain);
 					}
 				}
 			}

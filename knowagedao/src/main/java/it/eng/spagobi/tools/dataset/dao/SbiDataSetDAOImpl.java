@@ -49,6 +49,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.SpagoBIDAOException;
+import it.eng.spagobi.commons.dao.dto.SbiCategory;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
@@ -197,14 +198,13 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 
 				if (categoryList != null) {
 					if (categoryList.size() > 0) {
-						SbiDomains[] categoryArray = new SbiDomains[categoryList.size()];
+						SbiCategory[] categoryArray = new SbiCategory[categoryList.size()];
 						int i = 0;
 						for (Iterator iterator = categoryList.iterator(); iterator.hasNext();) {
 							Domain domain = (Domain) iterator.next();
-							String domainCd = domain.getDomainCode();
 							String valueCd = domain.getValueCd();
-							SbiDomains sbiDomain = DAOFactory.getDomainDAO().loadSbiDomainByCodeAndValue(domainCd, valueCd);
-							categoryArray[i] = sbiDomain;
+							SbiCategory sbiCategory = DAOFactory.getCategoryDAO().getCategoryForDataSet(valueCd);
+							categoryArray[i] = sbiCategory;
 							i++;
 						}
 						// (IN CATEGORY AND (SCOPE=USER OR SCOPE=ENTERPRISE)) OR SCOPE=TECHNICAL
@@ -272,7 +272,7 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 			if (type != null)
 				statement += " and h.scope.valueCd = ? ";
 			if (category != null)
-				statement += " and h.category.valueCd = ? ";
+				statement += " and h.category.code = ? ";
 			if (implementation != null)
 				statement += " and h.type = ? ";
 			if (showDerivedDatasets == null || showDerivedDatasets.equals(false))
@@ -344,9 +344,10 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-
-			String hql = "select count(*) from SbiDataSet where active=true and label like '%" + search + "%'" + getIdsWhereClause(ids);
+			String idquery = getIdsWhereClause(ids);
+			String hql = "select count(*) from SbiDataSet where active=true and label like :search ".concat(idquery);
 			Query hqlQuery = aSession.createQuery(hql);
+			hqlQuery.setParameter("search", "%" + search + "%");
 			Long temp = (Long) hqlQuery.uniqueResult();
 			resultNumber = new Integer(temp.intValue());
 
@@ -465,7 +466,7 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 					} else {
 						List<String> collect = categoryList.stream().map(e -> e.getValueCd()).collect(Collectors.toList());
 						cr.createAlias("category", "c");
-						cr.add(Restrictions.in("c.valueCd", collect));
+						cr.add(Restrictions.in("c.code", collect));
 					}
 				} else {
 					logger.debug("No categories for the user so we take just it's own datasets");
@@ -509,10 +510,10 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 			session = getSession();
 			categoryList = UserUtilities.getDataSetCategoriesByUser(userProfile);
 			if (categoryList.isEmpty()) {
-				statement.append("ds.category.valueId is null");
+				statement.append("ds.category.id is null");
 			} else {
 				categoryIds = extractCategoryIds(categoryList);
-				statement.append("(ds.category.valueId is null or ds.category.valueId in (:categories))");
+				statement.append("(ds.category.id is null or ds.category.id in (:categories))");
 			}
 
 			statement.append(

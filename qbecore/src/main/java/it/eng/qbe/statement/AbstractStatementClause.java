@@ -431,6 +431,12 @@ public abstract class AbstractStatementClause implements IStatementClause {
 					logger.error("Error parsing the date " + toReturn, e);
 					throw new SpagoBIRuntimeException("Error parsing the date " + toReturn + ".");
 				}
+			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_VERTICA)) {
+				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
+					toReturn = " TO_DATE(" + toReturn + ",'DD/MM/YYYY HH:MI:SS') ";
+				} else {
+					toReturn = " TO_DATE('" + toReturn + "','DD/MM/YYYY HH:MI:SS') ";
+				}
 			}
 		}
 
@@ -519,6 +525,12 @@ public abstract class AbstractStatementClause implements IStatementClause {
 				} catch (Exception e) {
 					logger.error("Error parsing the date " + toReturn, e);
 					throw new SpagoBIRuntimeException("Error parsing the date " + toReturn + ".");
+				}
+			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_VERTICA)) {
+				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
+					toReturn = " TO_DATE(" + toReturn + ",'DD/MM/YYYY') ";
+				} else {
+					toReturn = " TO_DATE('" + toReturn + "','DD/MM/YYYY') ";
 				}
 			}
 		}

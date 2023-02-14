@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import PrimeVue from 'primevue/config'
@@ -31,6 +33,16 @@ const mockedTrigger = {
     endTimeTiming: null
 }
 
+vi.mock('axios')
+
+const $http = {
+    get: vi.fn().mockImplementation(() =>
+        Promise.resolve({
+            data: []
+        })
+    )
+}
+
 const factory = () => {
     return mount(SchedulerTimingOutputDetailDialog, {
         props: {
@@ -41,7 +53,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [PrimeVue],
+            plugins: [PrimeVue, createTestingPinia()],
             stubs: {
                 Button,
                 Dialog,
@@ -55,7 +67,8 @@ const factory = () => {
                 Toolbar
             },
             mocks: {
-                $t: (msg) => msg
+                $t: (msg) => msg,
+                $http
             }
         }
     })

@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="kn-dialog--toolbar--primary datasetListDialogClass" v-bind:visible="visibility" :header="$t('components.advancedData.title')" :closable="false" modal :breakpoints="{ '960px': '75vw', '640px': '100vw' }">
+    <Dialog class="kn-dialog--toolbar--primary datasetListDialogClass" v-bind:visible="visibility" :header="$t('components.advancedData.chooseDataset')" :closable="false" modal :breakpoints="{ '960px': '75vw', '640px': '100vw' }">
         <DataTable
             id="datasets-datatable"
             :value="filteredDatasets"
@@ -12,7 +12,7 @@
             dataKey="id"
             :responsiveLayout="KnDatasetListDescriptor.responsiveLayout"
             :breakpoint="KnDatasetListDescriptor.breakpoint"
-            @rowClick="$emit('selected', $event.data)"
+            @rowClick="handleClick($event.data)"
         >
             <template #loading>
                 {{ $t('common.info.dataLoading') }}
@@ -30,15 +30,18 @@
                     </span>
                 </div>
             </template>
-            <Column class="kn-truncated" :style="col.style" v-for="col of KnDatasetListDescriptor.columns" :header="$t(col.header)" :key="col.field" :sortField="col.field" :sortable="true">
+            <Column class="kn-truncated" :style="col.style" v-for="col of KnDatasetListDescriptor.columns" :header="$t(col.header)" :key="col.field" :sortField="col.field" :sortable="col.field !== 'icon'">
                 <template #body="slotProps">
-                    <span v-tooltip.top="slotProps.data[col.field]"> {{ slotProps.data[col.field] }}</span>
+                    <span v-if="col.field !== 'icon'" v-tooltip.top="slotProps.data[col.field]"> {{ slotProps.data[col.field] }}</span>
+                    <span v-else>
+                        <div style="height: 1.57rem"></div>
+                    </span>
                 </template>
             </Column>
         </DataTable>
         <template #footer>
             <Button class="kn-button kn-button--secondary" :label="$t('common.cancel')" @click="cancel" />
-            <Button class="kn-button kn-button--primary" v-t="'common.apply'" @click="apply" />
+            <Button class="kn-button kn-button--primary" v-t="'common.open'" @click="apply" :disabled="!isDatasetSelected" />
         </template>
     </Dialog>
 </template>
@@ -50,6 +53,9 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dialog from 'primevue/dialog'
 import KnDatasetListDescriptor from './KnDatasetListDescriptor.json'
+import { mapActions } from 'pinia'
+
+import mainStore from '@/App.store'
 
 export default defineComponent({
     name: 'datasets-catalog-datatable',
@@ -66,14 +72,21 @@ export default defineComponent({
             filteredDatasets: [] as iDataset[],
             selectedDataset: {},
             searchWord: '',
-            loading: false
+            loading: false,
+            isDatasetSelected: false
         }
     },
     updated() {
         if (this.items) this.datasets = this.items
         this.filteredDatasets = [...this.datasets]
     },
+    computed: {
+        isEmpty() {
+            return Object.keys(this.selectedDataset).length == 0
+        }
+    },
     methods: {
+        ...mapActions(mainStore, ['setInfo', 'setError']),
         apply(): void {
             this.$emit('save', this.selectedDataset)
             this.clearForm()
@@ -84,6 +97,7 @@ export default defineComponent({
         },
         clearForm(): void {
             this.selectedDataset = {}
+            this.isDatasetSelected = false
         },
         searchDatasets() {
             setTimeout(() => {
@@ -95,6 +109,10 @@ export default defineComponent({
                     })
                 }
             }, 250)
+        },
+        handleClick(data) {
+            this.$emit('selected', data)
+            this.isDatasetSelected = true
         }
     }
 })

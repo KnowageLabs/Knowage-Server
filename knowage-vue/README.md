@@ -1,30 +1,37 @@
 # knowage-vue
 
 ## Project setup
+
 ```
 npm install
 ```
-### Local environment variables  
-Create an **.env.local** file in the project root and set the following properties depending on your environment:
-- VUE_APP_API_URL=http://localhost:8080
 
+### Local environment variables
+
+Create an **.env.local** file in the project root and set the following properties depending on your environment:
+
+-   VITE_API_URL=http://localhost:8080
 
 ### Compiles and hot-reloads for development
+
 ```
-npm run serve
+npm run dev
 ```
 
 ### Compiles and minifies for production
+
 ```
 npm run build
 ```
 
 ### Jest Unit-tests
+
 ```
 npm run test:unit
 ```
 
 ## Project Structure (src)
+
 ```
 .
 ├── assets

@@ -190,7 +190,7 @@ function cockpitChartWidgetControllerFunction(
 		$scope.refreshWidget(undefined,'init', true);
 	});
 	$scope.refresh=function(element,width,height,data,nature, undefined, changedChartType,dataAndChartConf){
-		$scope.tempChartConf = dataAndChartConf.chartConf;
+		if(dataAndChartConf && dataAndChartConf.chartConf) $scope.tempChartConf = dataAndChartConf.chartConf;
 		if ($scope.ngModel.dataset){
 			var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
 			var aggregations = cockpitModule_widgetSelection.getAggregation($scope.ngModel,dataset);
@@ -1256,12 +1256,12 @@ function cockpitChartWidgetControllerFunction(
 			}
 			
 			if(model.cross.crossName != undefined){
-				if(hasVueParent) hasVueParent.postMessage({"type":"crossNavigation","outputParameters":outputParameter,"inputParameters":{},"targetCrossNavigation":crossSettings,"docLabel":null, "otherOutputParameters":otherOutputParameters}, '*')
+				if(hasVueParent) hasVueParent.postMessage({"type":"crossNavigation","outputParameters":outputParameter,"inputParameters":{},"targetCrossNavigation":model.cross.crossName,"docLabel":null, "otherOutputParameters":otherOutputParameters}, '*')
 				else parent.execExternalCrossNavigation(outputParameter,{},model.cross.crossName,null,otherOutputParameters);
 				return;
 			}
 			else{
-				if(hasVueParent) hasVueParent.postMessage({"type":"crossNavigation","outputParameters":outputParameter,"inputParameters":{},"targetCrossNavigation":crossSettings,"docLabel":null, "otherOutputParameters":otherOutputParameters}, '*')
+				if(hasVueParent) hasVueParent.postMessage({"type":"crossNavigation","outputParameters":outputParameter,"inputParameters":{},"targetCrossNavigation":model.cross.crossName,"docLabel":null, "otherOutputParameters":otherOutputParameters}, '*')
 				else parent.execExternalCrossNavigation(outputParameter,{},null,null,otherOutputParameters);
 				return;
 			}
@@ -1294,9 +1294,12 @@ function cockpitChartWidgetControllerFunction(
 				columnValue = event.point.name;
 			}
 
-
+			
 			var category = $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY;
-			var columnName = category.name
+			var columnName =    category.name
+			if ($scope.ngModel.cliccable && $scope.ngModel.updateble && !$scope.ngModel.drillable && !event.point.drilldown && category.column != category.groupby) {
+				columnName = category.groupby;
+			} 
 
 
 			// var d3Types = ["WORDCLOUD", "PARALLEL", "SUNBURST"];
@@ -1304,8 +1307,6 @@ function cockpitChartWidgetControllerFunction(
 			// if(d3Types.indexOf(chartType)<0){
 			if( Array.isArray(category)){
 				columnName = category[(event.point.id.match(new RegExp("_", "g")) ).length-1].name;
-			}else{
-				columnName = category.name;
 			}
 			if(chartType === 'HEATMAP'){
 				columnName = event.point.category;

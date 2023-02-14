@@ -12,6 +12,19 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		}
 		return {};
 	}
+		this.getUserSelections = function(datasetLabel){
+		for(var i=0;i< cockpitModule_widgetSelectionUtils.userSelections.length;i++){
+			if(cockpitModule_widgetSelectionUtils.userSelections[i].hasOwnProperty(datasetLabel)){
+				return cockpitModule_widgetSelectionUtils.userSelections[i];
+			}
+		}
+		return {};
+	}
+	this.getAllUserSelections = function(){		
+		return cockpitModule_widgetSelectionUtils.userSelections;
+
+	}
+	
 	this.getCurrentFilters = function(datasetLabel){
 		var toRet={};
 		if(cockpitModule_template.configuration.filters[datasetLabel]!=undefined && Object.keys(cockpitModule_template.configuration.filters[datasetLabel]).length>0){
@@ -142,7 +155,9 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 						}
 					}
 				}
-
+				else if(col.fieldType == "MEASURE" && ngModel.content.chartTemplate && ngModel.content.chartTemplate.CHART){
+					obj["orderType"] = col.orderType ? col.orderType : "";
+					}
 				// SUM is default but for attribute is meaningless
 				if(ngModel.type != "discovery" && (col.fieldType=="ATTRIBUTE" || col.fieldType=="SPATIAL_ATTRIBUTE") && col.aggregationSelected && col.aggregationSelected === 'SUM'){
 					obj["funct"] = 'NONE';
@@ -175,8 +190,8 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 					//it is measure
 					if(col.aggregationColumn) obj.functColumn = col.aggregationColumn;
 					obj["orderColumn"] = col.name;
-					if(obj.orderType!=undefined){
-						obj.orderType  = col.orderType;
+					if(obj.orderType==undefined && obj.columnName==ngModel.settings.sortingColumn){
+						obj.orderType  = ngModel.settings.sortingOrder;
 					}
 					measures.push(obj);
 				}
@@ -338,6 +353,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				angular.copy(response.data,cockpitModule_template.configuration.aggregations);
 				if(reloadSelection || (!reloadSelection && someDel)){
 					cockpitModule_widgetSelectionUtils.responseCurrentSelection = [];
+					cockpitModule_widgetSelectionUtils.userSelections = [];
 					ws.refreshAllAssociations(associatedDatasets);
 				}
 			}
@@ -827,8 +843,9 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 					}
 				}
 			}
-
-
+ 			cockpitModule_widgetSelectionUtils.userSelections = [];
+			 var userSelections =  this.convertIntoJSON(body['selections']);
+			cockpitModule_widgetSelectionUtils.userSelections.push(userSelections);
 			sbiModule_restServices.restToRootProject();
 			sbiModule_restServices.promisePost("2.0/associativeSelections","",body)
 			.then(function(response){
@@ -852,12 +869,33 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				this[item]={};
 			},objDS)
 			angular.copy([],cockpitModule_widgetSelectionUtils.responseCurrentSelection);
+			angular.copy([],cockpitModule_widgetSelectionUtils.userSelections);
 			$rootScope.hideCockpitSpinner();
 			defer.resolve(objDS);
 		}
 
 
 	}
+
+this.convertIntoJSON = function(obj) {
+
+                var o = {}, j, d;
+                for (var m in obj) {
+                    d = m.split(".");
+                var startOfObj = o;
+                for (j = 0; j < d.length  ; j += 1) {
+
+                    if (j == d.length - 1) {
+                        startOfObj[d[j]] = obj[m];
+                    }
+                    else {
+                        startOfObj[d[j]] = startOfObj[d[j]] || {};
+                        startOfObj = startOfObj[d[j]];
+                    }
+                }
+            }
+            return o;
+        }
 
 	this.currentSelectionContainsAss = function(data){
 		for(var i=0;i<cockpitModule_widgetSelectionUtils.responseCurrentSelection.length;i++){
@@ -1070,7 +1108,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		}, 0);
 	}
 
-	this.getSelectionValues = function(datasetLabel, columnName){
+	this.getSelectionValues = function(datasetLabel, columnName,templateSelections){
 		var result = null;
 
 		var aggregations = cockpitModule_template.configuration.aggregations;
@@ -1096,6 +1134,13 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 					result = selections[datasetLabel][columnName];
 				}
 			}
+		}
+		
+		if(templateSelections && result == undefined){
+			selections = cockpitModule_template.selections.filter((item)=>{
+				return item.ds === datasetLabel && item.columnName === columnName
+			});
+			if(selections && selections.length > 0)result = selections[0].value;
 		}
 
 		if(result){

@@ -14,6 +14,8 @@ package it.eng.spagobi.tools.dataset.bo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -94,8 +96,6 @@ public abstract class AbstractDataSet implements IDataSet {
 	protected IDataSource datasourceForWriting;
 	protected IDataSource datasourceForReading;
 
-	protected IDataStoreTransformer dataSetTransformer;
-
 	// hook for extension points
 	private final Map behaviours;
 
@@ -131,7 +131,9 @@ public abstract class AbstractDataSet implements IDataSet {
 
 	private Set tags;
 
-	private static transient Logger logger = Logger.getLogger(AbstractDataSet.class);
+	protected List<IDataStoreTransformer> dataStoreTransformers = new ArrayList<>();
+
+	private static Logger logger = Logger.getLogger(AbstractDataSet.class);
 
 	public AbstractDataSet() {
 		super();
@@ -186,7 +188,7 @@ public abstract class AbstractDataSet implements IDataSet {
 		setOwner(dataSet.getOwner());
 
 		if (this.getPivotColumnName() != null && this.getPivotColumnValue() != null && this.getPivotRowName() != null) {
-			setDataStoreTransformer(new PivotDataSetTransformer(getPivotColumnName(), getPivotColumnValue(), getPivotRowName(), isNumRows()));
+			addDataStoreTransformer(new PivotDataSetTransformer(getPivotColumnName(), getPivotColumnValue(), getPivotRowName(), isNumRows()));
 		}
 
 		behaviours = new HashMap();
@@ -351,14 +353,12 @@ public abstract class AbstractDataSet implements IDataSet {
 
 	@Override
 	public Map getParamsMap() {
-		DataSetUtilities.fillDefaultValues(this, this.paramsMap);
 		return paramsMap;
 	}
 
 	@Override
 	public void setParamsMap(Map paramsMap) {
 		this.paramsMap = paramsMap;
-		DataSetUtilities.fillDefaultValues(this, this.paramsMap);
 	}
 
 	@Override
@@ -645,26 +645,6 @@ public abstract class AbstractDataSet implements IDataSet {
 	@Override
 	public void setNumRows(boolean numRows) {
 		this.numRows = numRows;
-	}
-
-	@Override
-	public boolean hasDataStoreTransformer() {
-		return getDataStoreTransformer() != null;
-	}
-
-	@Override
-	public void removeDataStoreTransformer() {
-		setDataStoreTransformer(null);
-	}
-
-	@Override
-	public void setDataStoreTransformer(IDataStoreTransformer dataSetTransformer) {
-		this.dataSetTransformer = dataSetTransformer;
-	}
-
-	@Override
-	public IDataStoreTransformer getDataStoreTransformer() {
-		return this.dataSetTransformer;
 	}
 
 	// -----------------------------------------------
@@ -1190,7 +1170,7 @@ public abstract class AbstractDataSet implements IDataSet {
 			IDataSource dataSource = getDataSource();
 			DatabaseDialect dialect = dataSource != null ? DatabaseDialect.get(dataSource.getHibDialectClass()) : null;
 			boolean inLineViewSupported = dialect != null ? dialect.isInLineViewSupported() : false;
-			if (isNearRealtime && inLineViewSupported && !hasDataStoreTransformer()) {
+			if (isNearRealtime && inLineViewSupported && !hasDataStoreTransformers()) {
 				strategy = DatasetEvaluationStrategyType.INLINE_VIEW;
 			} else {
 				strategy = DatasetEvaluationStrategyType.CACHED;
@@ -1223,6 +1203,38 @@ public abstract class AbstractDataSet implements IDataSet {
 	@Override
 	public void setTags(Set tags) {
 		this.tags = tags;
+	}
+
+	@Override
+	public boolean hasDataStoreTransformers() {
+		return !dataStoreTransformers.isEmpty();
+	}
+
+	@Override
+	public void removeDataStoreTransformers() {
+		dataStoreTransformers.clear();
+	}
+
+	@Override
+	public void addDataStoreTransformer(IDataStoreTransformer dataSetTransformer) {
+		dataStoreTransformers.add(dataSetTransformer);
+	}
+
+	@Override
+	public void addDataStoreTransformers(Collection<IDataStoreTransformer> dataSetTransformers) {
+		dataStoreTransformers.addAll(dataSetTransformers);
+	}
+
+	@Override
+	public List<IDataStoreTransformer> getDataStoreTransformers() {
+		return Collections.unmodifiableList(dataStoreTransformers);
+	}
+
+	@Override
+	public final void executeDataStoreTransformers(IDataStore dataStore) {
+		for (IDataStoreTransformer dataStoreTransformer : dataStoreTransformers) {
+			dataStoreTransformer.transform(dataStore);
+		}
 	}
 
 }

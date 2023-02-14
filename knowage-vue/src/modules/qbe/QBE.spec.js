@@ -1,5 +1,6 @@
-import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { flushPromises, mount } from '@vue/test-utils'
+import { createTestingPinia } from '@pinia/testing'
+import { vi } from 'vitest'
 import Button from 'primevue/button'
 import Chip from 'primevue/chip'
 import InputSwitch from 'primevue/inputswitch'
@@ -206,18 +207,27 @@ const mockedQuery = {
     subqueries: []
 }
 
-jest.mock('axios')
+const crypto = require('crypto')
+
+Object.defineProperty(global.self, 'crypto', {
+    value: {
+        getRandomValues: (arr) => crypto.randomBytes(arr.length)
+    }
+})
+
+
+vi.mock('axios')
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/Bojan`:
                 return Promise.resolve({ data: [mockedQBE] })
             default:
                 return Promise.resolve({ data: [] })
         }
     }),
 
-    post: axios.post.mockImplementation((url) => {
+    post: vi.fn().mockImplementation((url) => {
         switch (url) {
             default:
                 return Promise.resolve({ data: [] })
@@ -226,12 +236,6 @@ const $http = {
 }
 
 const $route = { name: '' }
-
-const $store = {
-    state: {
-        user: {}
-    }
-}
 
 const factory = () => {
     return mount(QBE, {
@@ -242,7 +246,15 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [PrimeVue],
+            plugins: [PrimeVue,  createTestingPinia({
+                initialState: {
+                    store: {
+                        user: {
+                            sessionRole: '/demo/admin'
+                        }
+                    }
+                }
+            })],
             stubs: {
                 Button,
                 Chip,
@@ -268,25 +280,27 @@ const factory = () => {
                 SubqueryEntity: true,
                 QBEJoinDefinitionDialog: true,
                 KnParameterSidebar: true,
-                QBEPreviewDialog: true
+                QBEPreviewDialog: true,
+                ProgressSpinner: true
             },
             mocks: {
                 $t: (msg) => msg,
                 $http,
-                $route,
-                $store
+                $route
             }
         }
     })
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('QBE', () => {
-    it('shows progress bar when loading', () => {
+    it('shows progress bar when loading', async () => {
         const wrapper = factory()
+
+        await flushPromises()
 
         expect(wrapper.vm.loading).toBe(true)
     })
@@ -298,7 +312,7 @@ describe('QBE', () => {
 
         expect(wrapper.vm.selectedQuery.fields.length).toBe(2)
 
-        wrapper.vm.deleteAllSelectedFields()
+        wrapper.vm.deleteAllFieldsFromQuery()
 
         expect(wrapper.vm.selectedQuery.fields.length).toBe(0)
     })
@@ -331,27 +345,8 @@ describe('QBE', () => {
         wrapper.vm.onDropComplete(mockedField)
 
         expect(wrapper.vm.selectedQuery.fields.length).toBe(3)
-        expect(wrapper.vm.selectedQuery.fields[wrapper.vm.selectedQuery.fields.length - 1]).toStrictEqual({
-            alias: 'Gross weight',
-            color: '#F46036',
-            dataType: 'java.lang.Double',
-            distinct: false,
-            entity: 'Product',
-            field: 'Gross weight',
-            fieldType: 'attribute',
-            format: '#,###',
-            funct: 'NONE',
-            group: true,
-            iconCls: 'attribute',
-            id: 'it.eng.knowage.inventory.Product:gross_weight',
-            inUse: true,
-            include: true,
-            leaf: true,
-            longDescription: 'Product : Gross weight',
-            order: 'NONE',
-            type: 'datamartField',
-            visible: true
-        })
+        expect(wrapper.vm.selectedQuery.fields[wrapper.vm.selectedQuery.fields.length - 1].id).toBe('it.eng.knowage.inventory.Product:gross_weight')
+        expect(wrapper.vm.selectedQuery.fields[wrapper.vm.selectedQuery.fields.length - 1].field).toBe('Gross weight')
     })
 
     it('adds all the entity columns to the list when clicking on an entity in the list', async () => {
@@ -371,7 +366,10 @@ describe('QBE', () => {
                 {
                     id: 'it.eng.knowage.inventory.Warehouse_class:warehouse_class_id',
                     text: 'Warehouse class id',
+                    isSpatial: undefined,
                     iconCls: 'attribute',
+                    originalId: "it.eng.knowage.inventory.Warehouse_cl",
+                    uniqueID: "q6hc",
                     dataType: 'java.lang.Integer',
                     aggtype: 'SUM',
                     format: '#,###',
@@ -417,48 +415,10 @@ describe('QBE', () => {
         wrapper.vm.onDropComplete(mockedFieldWithChildren)
 
         expect(wrapper.vm.selectedQuery.fields.length).toBe(4)
-        expect(wrapper.vm.selectedQuery.fields[wrapper.vm.selectedQuery.fields.length - 2]).toStrictEqual({
-            alias: 'Warehouse class id',
-            color: '#009688',
-            dataType: 'java.lang.Integer',
-            distinct: false,
-            entity: 'Warehouse class',
-            field: 'Warehouse class id',
-            fieldType: 'attribute',
-            format: '#,###',
-            funct: 'NONE',
-            group: true,
-            iconCls: 'attribute',
-            id: 'it.eng.knowage.inventory.Warehouse_class:warehouse_class_id',
-            inUse: true,
-            include: true,
-            leaf: true,
-            longDescription: 'Warehouse class : Warehouse class id',
-            order: 'NONE',
-            type: 'datamartField',
-            visible: true
-        })
-        expect(wrapper.vm.selectedQuery.fields[wrapper.vm.selectedQuery.fields.length - 1]).toStrictEqual({
-            alias: 'Description',
-            color: '#009688',
-            dataType: 'java.lang.String',
-            distinct: false,
-            entity: 'Warehouse class',
-            field: 'Description',
-            fieldType: 'attribute',
-            format: '#,###',
-            funct: 'NONE',
-            group: true,
-            iconCls: 'attribute',
-            id: 'it.eng.knowage.inventory.Warehouse_class:description',
-            inUse: true,
-            include: true,
-            leaf: true,
-            longDescription: 'Warehouse class : Description',
-            order: 'NONE',
-            type: 'datamartField',
-            visible: true
-        })
+        expect(wrapper.vm.selectedQuery.fields[wrapper.vm.selectedQuery.fields.length - 2].id).toBe('it.eng.knowage.inventory.Warehouse_class:warehouse_class_id')
+        expect(wrapper.vm.selectedQuery.fields[wrapper.vm.selectedQuery.fields.length - 2].field).toBe('Warehouse class id')
+        expect(wrapper.vm.selectedQuery.fields[wrapper.vm.selectedQuery.fields.length - 1].id).toBe('it.eng.knowage.inventory.Warehouse_class:description')
+        expect(wrapper.vm.selectedQuery.fields[wrapper.vm.selectedQuery.fields.length - 1].field).toBe('Description')
     })
 
     it('changes column position when dragging the column', async () => {

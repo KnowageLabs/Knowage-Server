@@ -19,7 +19,7 @@
         <property name="thresholdId" column="THRESHOLD_ID" type="int" length="11" not-null="true"/>
         <property name="active" column="ACTIVE" type="char" />
 		      
-        <many-to-one name="category" class="it.eng.spagobi.commons.metadata.SbiDomains" lazy="false" cascade="save-update">
+        <many-to-one name="category" class="it.eng.spagobi.commons.dao.dto.SbiCategory" lazy="false" cascade="save-update">
             <column name="CATEGORY_ID"  />
         </many-to-one>
         

@@ -29,6 +29,7 @@ import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.datasource.transaction.hibernate.HibernateTransaction;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statement.AbstractQbeDataSet;
+import it.eng.qbe.statement.AbstractStatement;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.JDBCSharedConnectionDataProxy;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -36,11 +37,13 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
+ * @deprecated Used in the old QBE
  */
+@Deprecated
 public class HQLDataSet extends AbstractQbeDataSet {
 
 	/** Logger component. */
-	public static transient Logger logger = Logger.getLogger(HQLDataSet.class);
+	public static Logger logger = Logger.getLogger(HQLDataSet.class);
 
 	public HQLDataSet(HQLStatement statement) {
 		super(statement);
@@ -90,13 +93,13 @@ public class HQLDataSet extends AbstractQbeDataSet {
 				logger.debug("Query " + statement.getQueryString() + " with offset = " + offset + " and fetch size = " + fetchSize + " executed");
 			}
 
-			dataStore = toDataStore(result, getDataStoreMeta(statement.getQuery()));
+			dataStore = toDataStore(result, ((AbstractStatement) this.getStatement()).getDataStoreMeta());
 			if (this.isCalculateResultNumberOnLoadEnabled()) {
 				dataStore.getMetaData().setProperty("resultNumber", resultNumber);
 			}
 
-			if (hasDataStoreTransformer()) {
-				getDataStoreTransformer().transform(dataStore);
+			if (hasDataStoreTransformers()) {
+				executeDataStoreTransformers(dataStore);
 			}
 		} finally {
 			if (session != null && session.isOpen())

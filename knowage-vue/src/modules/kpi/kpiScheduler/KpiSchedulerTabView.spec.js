@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
@@ -29,36 +30,32 @@ const mockedScheduler = {
     }
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/1/loadSchedulerKPI':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/kpi/1/loadSchedulerKPI':
                 return Promise.resolve({ data: mockedScheduler })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/KPI_PLACEHOLDER_TYPE`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/KPI_PLACEHOLDER_TYPE`:
                 return Promise.resolve({ data: [] })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/KPI_PLACEHOLDER_FUNC`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/KPI_PLACEHOLDER_FUNC`:
                 return Promise.resolve({ data: [] })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/get/all/':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/lovs/get/all/':
                 return Promise.resolve({ data: [] })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listKpi':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/kpi/listKpi':
                 return Promise.resolve({ data: [] })
         }
     }),
-    post: axios.post.mockImplementation(() => Promise.resolve({ data: [] }))
+    post: vi.fn().mockImplementation(() => Promise.resolve({ data: [] }))
 }
 
 const $confirm = {
-    require: jest.fn()
-}
-
-const $store = {
-    commit: jest.fn()
+    require: vi.fn()
 }
 
 const $router = {
-    push: jest.fn()
+    push: vi.fn()
 }
 
 const factory = () => {
@@ -67,7 +64,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [PrimeVue],
+            plugins: [PrimeVue, createTestingPinia()],
             stubs: {
                 Button,
                 Card,
@@ -86,7 +83,7 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $confirm,
                 $router,
                 $http
@@ -96,7 +93,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('KPI Scheduler loading', () => {

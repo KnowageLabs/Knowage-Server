@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <meta charset="utf-8">
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+	    <meta name="apple-mobile-web-app-title" content="Knowage">
+	    <link rel="manifest" href="/knowage/manifest.json" crossorigin="use-credentials"/>
+	    
+	    <title>Knowage Logout</title>
+
+		<link rel="shortcut icon" href="/knowage/themes/sbi_default/img/favicon.ico" />
+		   <!-- Bootstrap -->
+		<link rel="stylesheet" href="/knowage/js/lib/bootstrap/css/bootstrap.min.css">
+		<style>
+		.logout-hint {
+			padding: 8px;
+			border: 1px solid #A2A2A2;
+			background-color: #CCC;
+		}
+		.logout-hint a {
+			color: #042d5f;
+			font-weight: bold;
+		}
+		</style>
+		
+		
+	</head>
+
+  	<body class="kn-login">
+  		<div class="container-fluid" style="height:100%;">
+        	<div class="col-sm-5 col-sm-offset-7" style="height:100%;background-color:white;display:flex;flex-direction:column;padding:20px;justify-content:center;align-items:center">
+            	<img id="profile-img" class="col-xs-8" src='/knowage/themes/commons/img/defaultTheme/logoCover.svg' />
+            	<p id="profile-name" class="profile-name-card"></p>
+            	
+            	<div class="col-xs-8">
+				
+					<div class="logout-hint">
+					Logout successful. Click <a href="/knowage">here</a> to log in again.
+					</div>
+	            	 
+            	</div>
+			</div><!-- /container -->
+		</div>
+ 		<script src="/knowage/js/lib/jquery-1.11.3/jquery-1.11.3.min.js"></script>
+ 		<script src="/knowage/js/lib/bootstrap/bootstrap.min.js"></script>
+	
+		<script>
+			$(document).ready(function(){
+				// Select all elements with data-toggle="tooltips" in the document
+				$('[data-toggle="tooltip"]').tooltip(); 
+				
+				// Select a specified element
+				$('#myTooltip').tooltip();
+
+				$.get('./package.json',(data)=>{
+					const version = data.version
+					var linkElem = document.createElement('link');
+					linkElem.setAttribute('rel','styleSheet')
+					linkElem.setAttribute('type','text/css')
+					linkElem.setAttribute('href',`/knowage/themes/commons/css${version.includes('SNAPSHOT')? '' : ('-'+version)}/customStyle.css`)
+					document.querySelector("head").append(linkElem)
+				})
+			});
+		</script>
+		
+	</body>
+</html>

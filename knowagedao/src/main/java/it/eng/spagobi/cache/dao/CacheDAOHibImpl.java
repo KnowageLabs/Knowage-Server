@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,21 +11,16 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package it.eng.spagobi.cache.dao;
 
-import it.eng.spagobi.cache.metadata.SbiCacheItem;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.SpagoBIDAOException;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.cache.CacheItem;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -37,6 +32,12 @@ import org.hibernate.Transaction;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import it.eng.spagobi.cache.metadata.SbiCacheItem;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.cache.CacheItem;
 
 /**
  * @author Alessandro Portosa (alessandro.portosa@eng.it)
@@ -250,9 +251,12 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
-			SbiCacheItem hibMap = toSbiCacheItem(cacheItem);
-			updateSbiCommonInfo4Update(hibMap);
-			session.update(hibMap);
+			SbiCacheItem hibCacheItem = (SbiCacheItem) session.get(SbiCacheItem.class, cacheItem.getSignature());
+			if (hibCacheItem != null) {
+				update(hibCacheItem, cacheItem);
+				updateSbiCommonInfo4Update(hibCacheItem);
+				session.update(hibCacheItem);
+			}
 
 			transaction.commit();
 
@@ -273,9 +277,11 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 	// ========================================================================================
 	// DELETE operations (cruD)
 	// ========================================================================================
-
+	/**
+	 * @return {@link SbiCacheItem} instances of the removed cache items
+	 */
 	@Override
-	public void deleteCacheItemByTableName(String tableName) {
+	public List<SbiCacheItem> deleteCacheItemByTableName(String tableName) {
 		Session session;
 		Transaction transaction;
 		boolean deleted;
@@ -311,12 +317,14 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 
 			transaction.commit();
 
+			return sbiCacheItemList;
+
 		} catch (Throwable t) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			String msg = (t.getMessage() != null) ? t.getMessage() : "An unexpected error occured while deleting cache item " + "whose tableName is equal to ["
-					+ tableName + "]";
+			String msg = (t.getMessage() != null) ? t.getMessage()
+					: "An unexpected error occured while deleting cache item " + "whose tableName is equal to [" + tableName + "]";
 			throw new SpagoBIDAOException(msg, t);
 		} finally {
 			if (session != null && session.isOpen()) {
@@ -326,8 +334,11 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 		}
 	}
 
+	/**
+	 * @return {@link SbiCacheItem} instances of the removed cache items
+	 */
 	@Override
-	public void deleteCacheItemBySignature(String signature) {
+	public List<SbiCacheItem> deleteCacheItemBySignature(String signature) {
 		Session session;
 		Transaction transaction;
 
@@ -361,12 +372,14 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 
 			transaction.commit();
 
+			return sbiCacheItemList;
+
 		} catch (Throwable t) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			String msg = (t.getMessage() != null) ? t.getMessage() : "An unexpected error occured while deleting cache item " + "whose signature is equal to ["
-					+ signature + "]";
+			String msg = (t.getMessage() != null) ? t.getMessage()
+					: "An unexpected error occured while deleting cache item " + "whose signature is equal to [" + signature + "]";
 			throw new SpagoBIDAOException(msg, t);
 		} finally {
 			if (session != null && session.isOpen()) {
@@ -376,8 +389,11 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 		}
 	}
 
+	/**
+	 * @return {@link SbiCacheItem} instances of the removed cache items
+	 */
 	@Override
-	public boolean deleteAllCacheItem() {
+	public List<SbiCacheItem> deleteAllCacheItem() {
 
 		Session session;
 		Transaction transaction;
@@ -388,6 +404,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 		session = null;
 		transaction = null;
 		deleted = false;
+		List<SbiCacheItem> toBeDeleted = Collections.emptyList();
 
 		try {
 
@@ -401,7 +418,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 			}
 
 			Query hibernateQuery = session.createQuery("from SbiCacheItem");
-			List toBeDeleted = hibernateQuery.list();
+			toBeDeleted = hibernateQuery.list();
 			if (toBeDeleted != null && toBeDeleted.isEmpty() == false) {
 				Iterator it = toBeDeleted.iterator();
 				while (it.hasNext()) {
@@ -426,7 +443,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 			}
 			logger.debug("OUT");
 		}
-		return deleted;
+		return toBeDeleted;
 	}
 
 	private SbiCacheItem toSbiCacheItem(CacheItem cacheItem) {
@@ -450,6 +467,25 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 		}
 
 		return hibCacheItem;
+	}
+
+	private void update(SbiCacheItem target, CacheItem source) {
+		String properties = null;
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			properties = mapper.writeValueAsString(source.getProperties());
+		} catch (Throwable t) {
+			throw new SpagoBIDAOException("An error occured while creating a SbiCacheItem from CacheItem:", t);
+		}
+		target.setTableName(source.getTable());
+		target.setSignature(source.getSignature());
+		target.setName(source.getName());
+		target.setDimension(source.getDimension().longValue());
+		target.setCreationDate(source.getCreationDate());
+		target.setLastUsedDate(source.getLastUsedDate());
+		if (properties != null) {
+			target.setProperties(properties);
+		}
 	}
 
 	private CacheItem toCacheItem(SbiCacheItem hibCacheItem) {

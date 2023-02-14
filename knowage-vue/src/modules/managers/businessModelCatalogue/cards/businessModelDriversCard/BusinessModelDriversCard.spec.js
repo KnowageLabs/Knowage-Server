@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import BusinessModelDriversCard from './BusinessModelDriversCard.vue'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
@@ -13,6 +15,7 @@ const factory = () => {
             driversOptions: []
         },
         global: {
+            plugins: [createTestingPinia()],
             stubs: {
                 BuisnessModelDriverDetail: true,
                 Button,

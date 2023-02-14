@@ -1,8 +1,8 @@
 <template>
-    <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-3">
+    <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-3 p-mx-2">
         <template #start>
-            <Button v-if="!expandTableCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandTableCard = true" />
-            <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandTableCard = false" />
+            <Button v-if="!expandTableCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color: white" @click="expandTableCard = true" />
+            <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color: white" @click="expandTableCard = false" />
             {{ $t('managers.datasetManagement.jsonPathAttributes') }}
         </template>
         <template #end>
@@ -11,19 +11,19 @@
             <Button icon="fas fa-eraser" class="p-button-text p-button-rounded p-button-plain" :disabled="disableDeleteAll" @click="removeAllParams" />
         </template>
     </Toolbar>
-    <Card v-show="expandTableCard">
+    <Card v-show="expandTableCard" class="p-mx-2">
         <template #content>
             <DataTable class="p-datatable-sm kn-table" editMode="cell" :value="dataset.restJsonPathAttributes" :scrollable="true" scrollHeight="250px" dataKey="versNum" responsiveLayout="stack" breakpoint="960px" @cell-edit-complete="onCellEditComplete">
                 <template #empty>
                     {{ $t('managers.datasetManagement.tableEmpty') }}
                 </template>
                 <Column field="name" :header="$t('kpi.alert.name')" :sortable="true">
-                    <template #editor="{data}">
+                    <template #editor="{ data }">
                         <InputText class="kn-material-input" :style="tableDescriptor.style.columnStyle" v-model="data.name" />
                     </template>
                 </Column>
                 <Column field="jsonPathValue" :header="$t('managers.datasetManagement.jsonPathValue')" :sortable="true">
-                    <template #editor="{data}">
+                    <template #editor="{ data }">
                         <InputText class="kn-material-input" :style="tableDescriptor.style.columnStyle" v-model="data.jsonPathValue" />
                     </template>
                 </Column>
@@ -31,7 +31,7 @@
                     <template #body="slotProps">
                         {{ slotProps.data.jsonPathType }}
                     </template>
-                    <template #editor="{data}">
+                    <template #editor="{ data }">
                         <Dropdown id="scope" class="kn-material-input" :style="tableDescriptor.style.columnStyle" :options="jsonPathTypes" v-model="data.jsonPathType" />
                     </template>
                 </Column>
@@ -91,7 +91,7 @@ export default defineComponent({
     },
     methods: {
         addNewParam() {
-            this.dataset.restJsonPathAttributes ? '' : (this.dataset.restJsonPathAttributes = [])
+            //this.dataset.restJsonPathAttributes ? [] : (this.dataset.restJsonPathAttributes = [])
             const newParam = { ...tableDescriptor.newJsonPathAttr }
             this.dataset.restJsonPathAttributes.push(newParam)
         },

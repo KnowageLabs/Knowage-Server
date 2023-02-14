@@ -1,9 +1,11 @@
 import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import CacheManagement from './CacheManagement.vue'
 import flushPromises from 'flush-promises'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
+import mainStore from '../../../App.store'
 
 const mockedCache = { totalMemory: 1073741824, availableMemory: 1073709056, availableMemoryPercentage: 100, cachedObjectsCount: 2, cleaningEnabled: true, cleaningQuota: '90%' }
 const mockedDatasets = [
@@ -27,14 +29,14 @@ const mockedDatasets = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/cacheee':
                 return Promise.resolve({ data: mockedCache })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources/?type=cache':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/datasources/?type=cache':
                 return Promise.resolve({ data: mockedDatasets })
             default:
                 return Promise.resolve({ data: [] })
@@ -43,21 +45,16 @@ const $http = {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
-
-const $store = {
-    commit: jest.fn()
-}
 
 const factory = () => {
     return mount(CacheManagement, {
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: { DatasetTableCard: true, GeneralSettingsCard: true, ProgressBar, RuntimeInformationCard: true, Toolbar },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $http
             }
         }
@@ -97,11 +94,12 @@ describe('Cache Management loading', () => {
     it('shows error dialog if there is no selected dataset returned', async () => {
         mockedDatasets[0].writeDefault = false
         const wrapper = factory()
+        const store = mainStore()
 
         await flushPromises()
 
         expect(wrapper.vm.datasources).toStrictEqual(mockedDatasets.slice(0, 2))
-        expect($store.commit).toHaveBeenCalledTimes(1)
+        expect(store.setError).toHaveBeenCalledTimes(1)
         expect(wrapper.vm.selectedDatasource).toStrictEqual(null)
     })
 })

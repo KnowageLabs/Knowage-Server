@@ -1,7 +1,8 @@
+import { luxonFormatDate } from '@/helpers/commons/localeHelper';
 import { AxiosResponse } from 'axios'
-import { iParameter, } from './KnParameterSidebar'
+import { iParameter } from './KnParameterSidebar'
 
-export function setDataDependency(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter) {
+export function setDataDependency(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }, parameter: iParameter) {
     if (parameter.dependencies?.data.length !== 0) {
         parameter.dependencies?.data.forEach((dependency: any) => {
             const index = loadedParameters.filterStatus.findIndex((param: any) => {
@@ -16,39 +17,38 @@ export function setDataDependency(loadedParameters: { filterStatus: iParameter[]
     }
 }
 
-export async function updateDataDependency(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string, $http: any, mode: string) {
+export async function updateDataDependency(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string, resetValue: boolean, userDateFormat: string) {
     if (parameter && parameter.dataDependentParameters) {
         for (let i = 0; i < parameter.dataDependentParameters.length; i++) {
-            await dataDependencyCheck(loadedParameters, parameter.dataDependentParameters[i], loading, document, sessionRole, $http, mode)
+            await dataDependencyCheck(loadedParameters, parameter.dataDependentParameters[i], loading, document, sessionRole, $http, mode, resetValue, userDateFormat)
+
         }
     }
 }
 
-export async function dataDependencyCheck(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string, $http: any, mode: string) {
+export async function dataDependencyCheck(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string, resetValue: boolean, userDateFormat: string) {
     loading = true
-    if (parameter.parameterValue[0]) {
-        parameter.parameterValue[0] = { value: '', description: '' }
-    } else {
-        parameter.parameterValue = [{ value: '', description: '' }]
-    }
 
-    const postData = { label: document?.label, parameters: getFormattedParameters(loadedParameters), paramId: parameter.urlName, role: sessionRole }
+    const postData = { label: document?.label, parameters: getFormattedParameters(loadedParameters, userDateFormat), paramId: parameter.urlName, role: sessionRole }
     let url = '2.0/documentExeParameters/admissibleValues'
 
     if (mode !== 'execution' && document) {
         url = document.type === 'businessModel' ? `1.0/businessmodel/${document.name}/admissibleValues` : `/3.0/datasets/${document.label}/admissibleValues`
     }
 
-    await $http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, postData).then((response: AxiosResponse<any>) => {
+    await $http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData).then((response: AxiosResponse<any>) => {
         parameter.data = response.data.result.data
         parameter.metadata = response.data.result.metadata
-        formatParameterAfterDataDependencyCheck(parameter)
+        formatParameterAfterDataDependencyCheck(parameter, resetValue)
     })
     loading = false
 }
 
-export function formatParameterAfterDataDependencyCheck(parameter: any) {
-    parameter.parameterValue = parameter.multivalue ? [] : [{ value: '', description: '' }]
+export function formatParameterAfterDataDependencyCheck(parameter: any, resetValue: boolean) {
+    if (resetValue || !checkIfParameterDataContainsNewValue(parameter)) {
+        parameter.parameterValue = parameter.multivalue ? [] : [{ value: '', description: '' }]
+    }
+
     if (parameter.data) {
         parameter.data = parameter.data.map((data: any) => {
             return formatParameterDataOptions(parameter, data)
@@ -61,6 +61,7 @@ export function formatParameterAfterDataDependencyCheck(parameter: any) {
 
     if ((parameter.selectionType === 'COMBOBOX' || parameter.selectionType === 'LIST') && parameter.multivalue && parameter.mandatory && parameter.data.length === 1) {
         parameter.showOnPanel = 'false'
+        parameter.visible = false
     }
 
     if (parameter.parameterValue[0] && !parameter.parameterValue[0].description) {
@@ -77,13 +78,18 @@ export function formatParameterDataOptions(parameter: iParameter, data: any) {
     return { value: valueIndex ? data[valueIndex] : '', description: descriptionIndex ? data[descriptionIndex] : '' }
 }
 
-export function getFormattedParameters(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }) {
+export function getFormattedParameters(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }, userDateFormat: string) {
     let parameters = [] as any[]
 
     Object.keys(loadedParameters.filterStatus).forEach((key: any) => {
         const parameter = loadedParameters.filterStatus[key]
 
-        if (!parameter.multivalue) {
+
+        if (parameter.type === 'DATE') {
+            const dateValue = getFormattedDateParameterValue(parameter, userDateFormat)
+            parameters.push({ label: parameter.label, value: dateValue, description: dateValue })
+        }
+        else if (!parameter.multivalue) {
             parameters.push({ label: parameter.label, value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description })
         } else {
             parameters.push({ label: parameter.label, value: parameter.parameterValue?.map((el: any) => el.value), description: parameter.parameterDescription ?? '' })
@@ -91,4 +97,30 @@ export function getFormattedParameters(loadedParameters: { filterStatus: iParame
     })
 
     return parameters
+}
+
+function getFormattedDateParameterValue(parameter: iParameter, userDateFormat: string) {
+    return parameter.parameterValue[0] && parameter.parameterValue[0].value ? luxonFormatDate(parameter.parameterValue[0].value, undefined, userDateFormat) : null
+}
+
+function checkIfParameterDataContainsNewValue(parameter: iParameter) {
+    const valueColumn = parameter.metadata.valueColumn
+    const descriptionColumn = parameter.metadata.descriptionColumn
+    let valueIndex = null as any
+    if (parameter.metadata.colsMap) {
+        valueIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === valueColumn)
+    }
+    let descriptionIndex = null as any
+    if (parameter.metadata.colsMap) {
+        descriptionIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === descriptionColumn)
+    }
+
+    const index = parameter.data.findIndex((option: any) => {
+        if (option.value || option.description) {
+            return parameter.parameterValue[0].value === option.value && parameter.parameterValue[0].description === option.description
+        } else {
+            return parameter.parameterValue[0].value === option[valueIndex] && parameter.parameterValue[0].description === option[descriptionIndex]
+        }
+    })
+    return index !== -1
 }

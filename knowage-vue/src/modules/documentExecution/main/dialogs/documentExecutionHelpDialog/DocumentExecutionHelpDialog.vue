@@ -11,54 +11,92 @@
             </Toolbar>
         </template>
 
-        <iframe id="document-execution-help-dialog-iframe" :src="url"></iframe>
+        <div class="p-d-flex p-flex-row kn-height-full">
+            <Listbox class="kn-list--column kn-flex kn-height-full" :options="words" :filter="true" :filterPlaceholder="$t('common.search')" filterMatchMode="contains" :filterFields="documentExecutionHelpDialogDescriptor.filterFields" :emptyFilterMessage="$t('common.info.noDataFound')">
+                <template #empty>{{ $t('common.info.noDataFound') }}</template>
+                <template #option="slotProps">
+                    <div class="kn-list-item" @click="loadWordDetail(slotProps.option)">
+                        <span>{{ slotProps.option.WORD }}</span>
+                    </div>
+                </template>
+            </Listbox>
+            <DocumentExecutionWordDetail id="document-execution-word-detail" :wordDetail="wordDetail" :selectedWordName="selectedWordName"></DocumentExecutionWordDetail>
+        </div>
     </Dialog>
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import Dialog from 'primevue/dialog'
-    import documentExecutionHelpDialogDescriptor from './DocumentExecutionHelpDialogDescriptor.json'
+import { defineComponent } from 'vue'
+import { AxiosResponse } from 'axios'
+import { mapState } from 'pinia'
+import Dialog from 'primevue/dialog'
+import documentExecutionHelpDialogDescriptor from './DocumentExecutionHelpDialogDescriptor.json'
+import DocumentExecutionWordDetail from './DocumentExecutionWordDetail.vue'
+import Listbox from 'primevue/listbox'
+import mainStore from '../../../../../App.store'
 
-    export default defineComponent({
-        name: 'document-execution-help-dialog',
-        components: { Dialog },
-        props: { visible: { type: Boolean }, propDocument: { type: Object } },
-        emits: ['close'],
-        data() {
-            return {
-                documentExecutionHelpDialogDescriptor,
-                document: null as any
-            }
-        },
-        computed: {
-            url(): string {
-                return this.document && this.visible ? process.env.VUE_APP_HOST_URL + `/knowage/restful-services/publish?PUBLISHER=glossaryHelpOnline?DOCUMENT=${this.document.id}&LABEL=${this.document.label}` : ''
-            }
-        },
-        watch: {
-            propDocument() {
-                this.loadDocument()
-            }
-        },
-        created() {
-            this.loadDocument()
-        },
-        methods: {
-            loadDocument() {
-                this.document = this.propDocument ? { ...this.propDocument } : {}
-            },
-            closeDialog() {
-                this.$emit('close')
-            }
+export default defineComponent({
+    name: 'document-execution-help-dialog',
+    components: { Dialog, DocumentExecutionWordDetail, Listbox },
+    props: { visible: { type: Boolean }, propDocument: { type: Object } },
+    emits: ['close'],
+    data() {
+        return {
+            documentExecutionHelpDialogDescriptor,
+            document: null as any,
+            words: [] as { WORD_ID: number; WORD: string }[],
+            wordDetail: null as any,
+            selectedWordName: '' as string
         }
-    })
+    },
+    computed: {
+        ...mapState(mainStore, {
+            isEnterprise: 'isEnterprise'
+        })
+    },
+    watch: {
+        async propDocument() {
+            await this.loadDocument()
+        }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
+    async created() {
+        await this.loadDocument()
+    },
+    methods: {
+        async loadDocument() {
+            this.document = this.propDocument ? { ...this.propDocument } : {}
+            if (this.isEnterprise && this.document.id) await this.loadDocumentWords()
+        },
+        async loadDocumentWords() {
+            this.store.setLoading(true)
+            await this.$http
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/glossary/getDocumentInfo?DOCUMENT_ID=${this.document.id}`)
+                .then((response: AxiosResponse<any>) => (this.words = response.data.word))
+                .finally(() => this.store.setLoading(false))
+        },
+        async loadWordDetail(word: { WORD_ID: number; WORD: string }) {
+            this.store.setLoading(true)
+            await this.$http
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/glossary/getWord?WORD_ID=${word?.WORD_ID}`)
+                .then((response: AxiosResponse<any>) => {
+                    this.selectedWordName = word.WORD
+                    this.wordDetail = response.data
+                })
+                .finally(() => this.store.setLoading(false))
+        },
+        closeDialog() {
+            this.$emit('close')
+        }
+    }
+})
 </script>
 
 <style lang="scss" scoped>
-    #document-execution-help-dialog-iframe {
-        height: 95%;
-        width: 100%;
-        border: none;
-    }
+#document-execution-word-detail {
+    flex: 2;
+}
 </style>

@@ -18,9 +18,6 @@
 
 package it.eng.knowage.knowageapi.error;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -44,10 +41,9 @@ public class ImpossibleToReadFilesListException extends KnowageBusinessException
 	 */
 	private String description = "Impossible to read the files list";
 
-	/*
-	 * A list of possible solutions to the problem that have caused the exception
-	 */
-	private List hints;
+	{
+		addHint("Contact the administrator to check the repository permission");
+	}
 
 	/**
 	 * Builds a <code>SpagoBIException</code>.
@@ -76,21 +72,6 @@ public class ImpossibleToReadFilesListException extends KnowageBusinessException
 	@Override
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	@Override
-	public List getHints() {
-		if (hints == null) {
-			hints = new ArrayList();
-			String hint = "Contact the administrator to check the repository permission";
-			hints.add(hint);
-		}
-		return hints;
-	}
-
-	@Override
-	public void addHint(String hint) {
-		getHints().add(hint);
 	}
 
 	@Override

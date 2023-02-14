@@ -147,15 +147,18 @@ public class RestFederationDefinition extends AbstractSpagoBIResource {
 
 	@PUT
 	@Path("/{id}")
-	public Integer modifyFederation(@Valid FederatedDatasetDefinitionDTO requestDTO) {
+	public Integer modifyFederation(@PathParam("id") Integer id, @Valid FederatedDatasetDefinitionDTO requestDTO) {
 		try {
 			logger.debug("Editing the federation");
 			FederationDefinition fdsNew = recoverFederatedDatasetDetails(requestDTO);
+
+			fdsNew.setFederation_id(id);
+
 			logger.debug("The federation definition label is " + fdsNew.getLabel());
 			logger.debug("The federation definition ID is " + fdsNew.getFederation_id());
 
 			ISbiFederationDefinitionDAO federatedDatasetDao = DAOFactory.getFedetatedDatasetDAO();
-			Integer id = federatedDatasetDao.modifyFederation(fdsNew);
+			id = federatedDatasetDao.modifyFederation(fdsNew);
 
 			logger.debug("Saving OK");
 			logger.debug("OUT");

@@ -18,8 +18,6 @@
 package it.eng.spagobi.security.OAuth2;
 
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.util.Properties;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -28,67 +26,69 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
+import it.eng.spagobi.services.oauth2.Oauth2SsoService;
+
 /**
- * Servlet Filter implementation class OAuthFilter
+ * This filter forwards incoming requests into /oauth2/authorization_code/flow.jsp (where OAuth2 standard authorization code flow actually occurs), until
+ * request contains OAuth2 access token (propagated by the above jsp file itself); then access token is set into session.
  *
+ * @author Davide Zerbetto
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
  */
 public class OAuth2Filter implements Filter {
+
 	static private Logger logger = Logger.getLogger(OAuth2Filter.class);
 
-	String clientId;
-	String secret;
-	String redirectUri;
-
-	/**
-	 * @see Filter#destroy()
-	 */
 	@Override
 	public void destroy() {
 		// TODO Auto-generated method stub
 	}
 
-	/**
-	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
-	 */
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		logger.debug("IN");
 
 		HttpSession session = ((HttpServletRequest) request).getSession();
+		HttpServletRequest httpRequest = (HttpServletRequest) request;
 
-		Properties oauth2Config = OAuth2Config.getInstance().getConfig();
+		String accessToken = httpRequest.getParameter("access_token");
 
-		if (session.isNew() || session.getAttribute("access_token") == null) {
-			if (((HttpServletRequest) request).getParameter("code") == null) {
-				// We have to retrieve the Oauth2's code redirecting the browser
-				// to the OAuth2 provider
-				String url = oauth2Config.getProperty("AUTHORIZE_URL");
-				url += "?response_type=code&client_id=" + OAuth2Config.getInstance().getConfig().getProperty("CLIENT_ID");
-				url += "&redirect_uri=" + URLEncoder.encode(oauth2Config.getProperty("REDIRECT_URI"), "UTF-8");
-				if (oauth2Config.containsKey("STATE")) {
-					url += "&state=" + URLEncoder.encode(oauth2Config.getProperty("STATE"), "UTF-8");
-				}
-				((HttpServletResponse) response).sendRedirect(url);
+		if (accessToken != null) {
+			// request contains access token --> set it in session and continue with filters chain
+			LogMF.debug(logger, "Access token found: [{0}]", accessToken);
+			session.setAttribute(Oauth2SsoService.ACCESS_TOKEN, accessToken);
+			chain.doFilter(request, response);
+		} else {
+			if (session.isNew() || session.getAttribute(Oauth2SsoService.ACCESS_TOKEN) == null) {
+				// OAuth2 flow must take place --> stop filters chain
+				logger.debug("Access token not found, starting OAuth2 flow...");
+				request.getRequestDispatcher(getFlowJSPPath()).forward(request, response);
 			} else {
-				// Using the code we get the access token and put it in session
-				OAuth2Client client = new OAuth2Client();
-				String accessToken = client.getAccessToken(((HttpServletRequest) request).getParameter("code"));
-				session.setAttribute("access_token", accessToken);
-
+				// session is already initialized --> continue with filters chain
 				chain.doFilter(request, response);
 			}
-		} else {
-			// pass the request along the filter chain
-			chain.doFilter(request, response);
 		}
 
 		logger.debug("OUT");
+	}
+
+	private String getFlowJSPPath() {
+		String toReturn = null;
+		OAuth2Config.FLOWTYPE type = OAuth2Config.getInstance().getFlowType();
+		switch (type) {
+		case AUTHORIZATION_CODE:
+			toReturn = "/oauth2/authorization_code/flow.jsp";
+			break;
+		case PKCE:
+			toReturn = "/oauth2/pkce/flow.jsp";
+			break;
+		}
+		return toReturn;
 	}
 
 	/**
@@ -96,6 +96,6 @@ public class OAuth2Filter implements Filter {
 	 */
 	@Override
 	public void init(FilterConfig fConfig) throws ServletException {
-
+		OAuth2Config.getInstance();
 	}
 }

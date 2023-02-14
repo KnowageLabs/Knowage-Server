@@ -33,6 +33,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.Viewpoint;
@@ -50,13 +53,15 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 @ManageAuthorization
 public class BusinessModelExecutionViewpoint extends AbstractSpagoBIResource {
 
+	private static final Logger LOGGER = LogManager.getLogger(BusinessModelExecutionViewpoint.class);
+
 	public static final String SERVICE_NAME = "SAVE_VIEWPOINTS_SERVICE";
 
 	@POST
 	@Path("/addViewpoint")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response addViewoint(@Valid AddViewpointRequestDTO request) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
 		String viewpointOwner;
 		IMetaModelViewpointDAO metaModelViewpointDAO;
@@ -76,8 +81,8 @@ public class BusinessModelExecutionViewpoint extends AbstractSpagoBIResource {
 			String viewpointString = null;
 
 			metaModel = DAOFactory.getMetaModelsDAO().loadMetaModelForExecutionByNameAndRole(name, role, false);
-			logger.debug("User: [" + userProfile.getUserId() + "]");
-			logger.debug("Document Id: [" + metaModel.getId() + "]");
+			LOGGER.debug("User: [{}", userProfile.getUserId());
+			LOGGER.debug("Document Id: [{}]", metaModel.getId());
 			viewpointOwner = (String) userProfile.getUserId();
 
 			viewpointString = viewpointReq.entrySet()
@@ -85,7 +90,7 @@ public class BusinessModelExecutionViewpoint extends AbstractSpagoBIResource {
 					.map(e -> e.getKey() + "%3D" + e.getValue())
 					.collect(joining("%26"));
 
-			logger.debug("Viewpoint's content will be saved on database as: [" + viewpointString + "]");
+			LOGGER.debug("Viewpoint's content will be saved on database as: [{}]", viewpointString);
 			metaModelViewpointDAO = DAOFactory.getMetaModelViewpointDAO();
 			viewpoint = metaModelViewpointDAO.loadViewpointByNameAndMetaModelId(viewpointName, metaModel.getId());
 			Assert.assertTrue(viewpoint == null, "A viewpoint with the name [" + viewpointName + "] alredy exist");
@@ -124,17 +129,16 @@ public class BusinessModelExecutionViewpoint extends AbstractSpagoBIResource {
 		MetaModel metaModel;
 		metaModel = DAOFactory.getMetaModelsDAO().loadMetaModelForExecutionByNameAndRole(name, role, false);
 		metaModelId = metaModel.getId();
-		logger.debug("User: [" + ((UserProfile) userProfile).getUserId() + "]");
-		logger.debug("Document Id: [" + metaModelId + "]");
+		LOGGER.debug("User: [{}]", ((UserProfile) userProfile).getUserId());
+		LOGGER.debug("Document Id: [{}]", metaModelId);
 		try {
 			metaModelViewpointDAO = DAOFactory.getMetaModelViewpointDAO();
 			viewpoints = metaModelViewpointDAO.loadAccessibleViewpointsByMetaModelId(metaModelId, getUserProfile());
 		} catch (EMFUserError e) {
-			logger.error("Cannot load viewpoints for document [" + metaModelId + "]", e);
+			LOGGER.error("Cannot load viewpoints for document [{}]", metaModelId, e);
 			throw new SpagoBIServiceException(SERVICE_NAME, "Cannot load viewpoints for document [" + metaModelId + "]", e);
 		}
-		logger.debug("Document [" + metaModelId + "] have " + (viewpoints == null ? "0" : "" + viewpoints.size()) + " valid viewpoints for user ["
-				+ ((UserProfile) userProfile).getUserId() + "]");
+		LOGGER.debug("Document [{}] have {} valid viewpoints for user [{}]", metaModelId, (viewpoints == null ? "0" : "" + viewpoints.size()), ((UserProfile) userProfile).getUserId());
 		resultAsMap.put("viewpoints", viewpoints);
 		return Response.ok(resultAsMap).build();
 	}
@@ -152,7 +156,7 @@ public class BusinessModelExecutionViewpoint extends AbstractSpagoBIResource {
 			Assert.assertNotNull(viewpoint, "Viewpoint [" + id + "] does not exist on the database");
 			metaModelViewpointDAO.eraseViewpoint(viewpoint.getVpId());
 		} catch (EMFUserError e) {
-			logger.error("Impossible to delete viewpoint with name [" + id + "] already exists", e);
+			LOGGER.error("Impossible to delete viewpoint with name [{}] already exists", id, e);
 			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to delete viewpoint with name [" + id + "] already exists", e);
 		}
 

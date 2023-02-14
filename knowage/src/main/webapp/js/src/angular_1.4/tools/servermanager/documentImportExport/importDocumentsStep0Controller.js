@@ -31,12 +31,13 @@ function importStep0FuncController(sbiModule_download,sbiModule_device,$scope, $
 //					
 //				});
 				
-				
+				if(!$scope.flags) $scope.flags = {}
 				
 				sbiModule_restServices.promisePost("1.0/serverManager/importExport/document", 'import', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}})
 				.then(function(response) {
 					if(response.data.STATUS=="NON OK"){
-						sbiModule_restServices.errorHandler("Error upload file" ,"sbi.generic.toastr.title.error");
+						let message = response.data.ERROR ? response.data.ERROR : "Error upload file" 
+						sbiModule_restServices.errorHandler(message ,"sbi.generic.toastr.title.error");
 					}else if(response.data.STATUS=="OK"){
 							importExportDocumentModule_importConf.roles.currentRoles=response.data.currentRoles;
 							importExportDocumentModule_importConf.roles.exportedRoles=response.data.exportedRoles;

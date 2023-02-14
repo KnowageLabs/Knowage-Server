@@ -1,5 +1,8 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import { nextTick } from 'vue'
+import axios from 'axios'
 import AlertDefinitionKpiCard from './AlertDefinitionKpiCard.vue'
 import Toolbar from 'primevue/toolbar'
 import Button from 'primevue/button'
@@ -121,13 +124,24 @@ const mockedAlert = {
     }
 }
 
+vi.mock('axios')
+
+const $http = {
+    get: vi.fn().mockImplementation(() =>
+        Promise.resolve({
+            data: mockedKpi
+        })
+    ),
+    delete: vi.fn().mockImplementation(() => Promise.resolve())
+}
+
 const factory = () => {
     return mount(AlertDefinitionKpiCard, {
         props: {
             selectedAlert: mockedAlert
         },
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 Card,
@@ -137,14 +151,15 @@ const factory = () => {
                 InputText
             },
             mocks: {
-                $t: (msg) => msg
+                $t: (msg) => msg,
+                $http
             }
         }
     })
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 describe('Alert Definition Detail', () => {
     it('disables the save button if no kpi is selected', () => {

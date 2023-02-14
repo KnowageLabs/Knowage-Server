@@ -31,22 +31,22 @@
             "value": "Date"
         },
         {
-            "disabled": true,
+            "disabled": false,
             "name": "net.minidev.json.JSONArray",
             "value": "JSON"
         },
         {
-            "disabled": true,
+            "disabled": false,
             "name": "java.util.LinkedHashMap",
             "value": "Hash Map"
         },
         {
-            "disabled": true,
+            "disabled": false,
             "name": "java.lang.Boolean",
             "value": "Boolean"
         },
         {
-            "disabled": true,
+            "disabled": false,
             "name": "java.lang.Double",
             "value": "Double"
         },
@@ -56,13 +56,18 @@
             "value": "Integer"
         },
         {
-            "disabled": true,
+            "disabled": false,
             "name": "java.lang.Long",
             "value": "Long"
         },
         {
             "disabled": false,
             "name": "java.util.Date",
+            "value": "Date"
+        },
+        {
+            "disabled": false,
+            "name": "oracle.sql.TIMESTAMP",
             "value": "Date"
         },
         {
@@ -74,6 +79,36 @@
             "disabled": false,
             "name": "java.math.BigDecimal",
             "value": "Float"
+        },
+        {
+            "disabled": false,
+            "name": "java.lang.Float",
+            "value": "Float"
+        },
+        {
+          "disabled": false,
+          "name": "java.time.LocalTime",
+          "value": "Local Time"
+        },
+        {
+          "disabled": false,
+          "name": "java.time.LocalDateTime",
+          "value": "Local Date Time"
+        },
+        {
+          "disabled": false,
+          "name": "java.time.OffsetTime",
+          "value": "Offset Time"
+        },
+        {
+          "disabled": false,
+          "name": "java.time.OffsetDateTime",
+          "value": "Offset Date Time"
+        },
+        {
+          "disabled": false,
+          "name": "java.time.ZonedDateTime",
+          "value": "Zoned Date Time"
         }
     ]
 }

@@ -13,7 +13,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +27,7 @@ import it.eng.spagobi.services.security.SpagoBIUserProfile;
 @Provider
 public class SecurityAuthorizationInterceptor implements ContainerRequestFilter, ContainerResponseFilter {
 
-	private static final Logger LOGGER = Logger.getLogger(SecurityAuthorizationInterceptor.class);
+	private static final Logger LOGGER = LogManager.getLogger(SecurityAuthorizationInterceptor.class);
 
 	@Context
 	private ResourceInfo resourceInfo;

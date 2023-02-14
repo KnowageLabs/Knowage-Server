@@ -6,7 +6,8 @@
 
 <script lang="ts">
     import { defineComponent } from 'vue'
-    import { mapState } from 'vuex'
+    import { mapState } from 'pinia'
+    import store from '../../App.store.js'
     import ProgressSpinner from 'primevue/progressspinner'
 
     export default defineComponent({
@@ -14,7 +15,7 @@
         components: { ProgressSpinner },
         props: { visibility: Boolean },
         computed: {
-            ...mapState({
+            ...mapState(store, {
                 loading: 'loading'
             })
         },

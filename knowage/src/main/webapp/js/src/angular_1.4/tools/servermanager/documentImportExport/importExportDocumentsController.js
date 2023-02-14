@@ -353,7 +353,7 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 
 		var config={
 				"DOCUMENT_ID_LIST":[],
-				"EXPORT_FILE_NAME":$scope.exportName,
+				"EXPORT_FILE_NAME":$scope.exportName.trim(),
 				"EXPORT_SUB_OBJ":$scope.checkboxs.exportSubObj,
 				"EXPORT_SNAPSHOT":$scope.checkboxs.exportSnapshots,
 				//"EXPORT_CROSSNAV":$scope.checkboxs.exportCrossNav,
@@ -401,7 +401,7 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 	//				$scope.showToast(data.errors[0].message,4000);
 	//			}else if(data.hasOwnProperty("STATUS") && data.STATUS=="OK"){
 	//				$scope.flags.viewDownload = true;
-	//				$scope.downloadedFileName=$scope.exportName;
+	//				$scope.downloadedFileName=$scope.exportName.trim();
 	//			}
 	//			$scope.flags.waitExport=false;
 	//		}).error(function(data, status, headers, config) {
@@ -409,13 +409,14 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 	//			$scope.showToast("ERRORS "+status,4000);
 	//		})
 	
+			if(!$scope.flags) $scope.flags = {}
 			sbiModule_restServices.promisePost("1.0/serverManager/importExport/document","export",config)
 			.then(function(response) {
 				if (response.data.hasOwnProperty("errors")) {
 					sbiModule_restServices.errorHandler(response.data.errors[0].message,"sbi.generic.toastr.title.error");
 				}else if(response.data.hasOwnProperty("STATUS") && response.data.STATUS=="OK"){
 					$scope.flags.viewDownload = true;
-					$scope.downloadedFileName=$scope.exportName;
+					$scope.downloadedFileName=$scope.exportName.trim();
 				}
 				$scope.flags.waitExport=false;
 			}, function(response) {
@@ -442,7 +443,7 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 //			if (data.hasOwnProperty("errors")) {
 //				$scope.showToast(data.errors[0].message,4000);
 //			}else if(status==200){
-//				$scope.download.getBlob(data,$scope.exportName,'application/zip','zip');
+//				$scope.download.getBlob(data,$scope.exportName.trim(),'application/zip','zip');
 //				$scope.flags.viewDownload = false
 //			}
 //		}).error(function(data, status, headers, config) {
@@ -455,7 +456,7 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 			if (response.data.hasOwnProperty("errors")) {
 				sbiModule_restServices.errorHandler(response.data.errors[0].message,"sbi.generic.toastr.title.error");
 			}else {
-				$scope.download.getBlob(response.data,$scope.exportName,'application/zip','zip');
+				$scope.download.getBlob(response.data,$scope.exportName.trim(),'application/zip','zip');
 				$scope.flags.viewDownload = false;
 			}
 		}, function(response) {

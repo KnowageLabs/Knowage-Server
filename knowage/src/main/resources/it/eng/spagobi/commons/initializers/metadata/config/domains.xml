@@ -28,6 +28,8 @@
 		domainNm="BI Object types" valueDs="sbidomains.ds.etl" />
 	<DOMAIN valueCd="DOCUMENT_COMPOSITE" valueNm="sbidomains.nm.document_composite"
 		domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.document_composite" />
+	<DOMAIN valueCd="DASHBOARD" valueNm="sbidomains.nm.dashboard"
+		domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.dashboard" />
 	<DOMAIN valueCd="KPI" valueNm="Kpi" domainCd="BIOBJ_TYPE"
 		domainNm="BI Object types" valueDs="Kpi business indicator" />
 	<DOMAIN valueCd="SMART_FILTER" valueNm="sbidomains.nm.smart_filter"
@@ -329,8 +331,6 @@
 	<DOMAIN valueCd="SPARQL" valueNm="SbiSPARQLDataSet" domainCd="DATA_SET_TYPE"
 		domainNm="Data Set Type" valueDs="SbiSPARQLDataSet" />
 		
-	<DOMAIN valueCd="Default Dataset Category" valueNm="Default Dataset Category" domainCd="CATEGORY_TYPE"
-		domainNm="Category Type" valueDs="Default Dataset Category" />
 	<DOMAIN valueCd="DEVELOPMENT" valueNm="sbidomains.permissiononfolder.nm.dev"
 		domainCd="PERMISSION_ON_FOLDER" domainNm="Permission on folder"
 		valueDs="sbidomains.permissiononfolder.ds.dev" />
@@ -393,8 +393,6 @@
 		domainNm="Data Set Metadata Value" valueDs="Data Set Metadata Value" />
 	<DOMAIN valueCd="Timestamp" valueNm="Timestamp" domainCd="DS_META_VALUE"
 		domainNm="Data Set Metadata Value" valueDs="Data Set Metadata Value" />				
-	<DOMAIN valueCd="Default Model Category" valueNm="Default Model Category"
-		domainCd="BM_CATEGORY" domainNm="Category Meta Model" valueDs="Default Model Category" />
 
 	<DOMAIN valueCd="hierarchy" valueNm="hierarchy" domainCd="DS_META_PROPERTY"
 		domainNm="Data Set Metadata Property" valueDs="Data Set Metadata Property" />
@@ -491,6 +489,8 @@
 	<DOMAIN valueCd="Python/R" valueNm="SbiPythonDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiPythonDataSet"/>
 	
 	<DOMAIN valueCd="Prepared" valueNm="SbiPreparedDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiPreparedDataSet"/>
+	
+	<DOMAIN valueCd="Derived" valueNm="SbiDerivedDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiDerivedDataSet"/>
 	
 	<DOMAIN valueCd="org.hibernate.dialect.RedShiftDialect"
 		valueNm="sbidomains.nm.redshift" domainCd="DIALECT_HIB"
@@ -602,10 +602,6 @@
 			
 	<DOMAIN valueCd="APDF" valueNm="APDF"
 		domainCd="EXPORT_TYPE" domainNm="Exporters types" valueDs="Export type" />				
-		
-	<DOMAIN valueCd="Default Layer Category" valueNm="Default Layer Category" domainCd="GEO_CATEGORY"
-		domainNm="Layer Category" valueDs="Default Layer Category" />
-			
 
 	<DOMAIN valueCd="Announcement" valueNm="sbidomains.news.announcement" 
 		domainCd="NEWS_TYPE" domainNm="News Type" valueDs="sbidomains.news.announcement"></DOMAIN>

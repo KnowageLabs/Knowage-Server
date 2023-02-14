@@ -2,6 +2,7 @@
     <span class="p-float-label p-m-4">
         <AutoComplete id="mailTo" class="p-inputtext-sm" :multiple="true" v-model="selectedUsers" :suggestions="filteredUsers" field="name" @keydown.enter="createMailChip" @complete="searchUsers($event)" @item-select="setUser($event.value)" />
         <label for="mailTo" class="kn-material-input-label"> {{ $t('kpi.alert.mailTo') }}</label>
+        <small id="chips-help">{{ $t('common.chipsHint') }}</small>
     </span>
     <span class="p-float-label p-m-4">
         <InputText id="mailSubject" class="kn-material-input" v-model.trim="selectedAction.jsonActionParameters.subject" />

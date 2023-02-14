@@ -1,0 +1,23 @@
+{
+    "style": {
+        "cardIconContainer": {
+            "background-color": "#cccccc",
+            "border-right": "1px solid #cccccc",
+            "flex-shrink": "0",
+            "width": "100px"
+        },
+        "dialog": {
+            "width": "60%"
+        },
+        "mainIcon": {
+            "font-size": "35px"
+        },
+        "widgetCard": {
+            "border": "1px solid #cccccc",
+            "display": "flex",
+            "height": "100px",
+            "transition": "0.5s ease",
+            "width": "285px"
+        }
+    }
+}

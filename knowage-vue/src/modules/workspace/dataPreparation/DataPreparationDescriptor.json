@@ -261,6 +261,7 @@
                 "class": "material-icons",
                 "name": "padding"
             },
+            "incompatibleDataTypes": ["java.lang.Double", "java.lang.Integer", "java.lang.Long", "java.math.BigDecimal", "java.sql.Date", "java.sql.Timestamp", "oracle.sql.TIMESTAMP"],
             "label": "managers.workspaceManagement.dataPreparation.transformations.padding.label",
             "name": "padding",
             "position": 6,
@@ -297,7 +298,7 @@
             "description": "managers.workspaceManagement.dataPreparation.transformations.replace.description",
             "editColumn": true,
             "icon": "fas fa-sync-alt",
-            "incompatibleDataTypes": ["date"],
+            "incompatibleDataTypes": ["java.sql.Date"],
             "label": "managers.workspaceManagement.dataPreparation.transformations.replace.label",
             "name": "replace",
             "position": 9,

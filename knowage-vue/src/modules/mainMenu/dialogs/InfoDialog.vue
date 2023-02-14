@@ -3,7 +3,7 @@
         <div class="p-grid p-m-1">
             <div class="p-col">
                 <div class="p-d-flex p-jc-center">
-                    <img :src="require('@/assets/images/commons/logo_knowage.svg')" height="100" />
+                    <img :src="`${publicPath}/images/commons/logo_knowage.svg`" height="100" />
                 </div>
                 <p>
                     <strong>{{ $t('common.version') }}:</strong> {{ currentVersion }}
@@ -27,8 +27,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import Dialog from 'primevue/dialog'
-import { mapState } from 'vuex'
+import { mapState } from 'pinia'
 import moment from 'moment'
+import mainStore from '../../../App.store.js'
 
 export default defineComponent({
     name: 'InfoDialog',
@@ -42,7 +43,8 @@ export default defineComponent({
     data() {
         return {
             currentYear: moment().year(),
-            currentVersion: process.env.VUE_APP_VERSION
+            currentVersion: _KNOWAGE_VERSION,
+            publicPath: import.meta.env.VITE_PUBLIC_PATH
         }
     },
     methods: {
@@ -51,7 +53,7 @@ export default defineComponent({
         }
     },
     computed: {
-        ...mapState({
+        ...mapState(mainStore, {
             user: 'user'
         })
     }

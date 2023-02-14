@@ -24,7 +24,7 @@ import Tree from 'primevue/tree'
 export default defineComponent({
     name: 'document-browser-tree',
     components: { Tree },
-    props: { propFolders: { type: Array }, selectedBreadcrumb: { type: Object } },
+    props: { propFolders: { type: Array }, selectedBreadcrumb: { type: Object }, selectedFolderProp: { type: Object } },
     emits: ['folderSelected'],
     data() {
         return {
@@ -42,6 +42,26 @@ export default defineComponent({
         },
         selectedBreadcrumb() {
             this.onBreadcrumbSelected()
+        },
+        selectedFolderProp() {
+            this.selectedFolder = this.selectedFolderProp
+            if (!this.selectedFolder) return
+            this.selectedFolderKey = {}
+            this.selectedFolderKey[this.selectedFolder.key] = true
+            let temp = null as any
+            for (let i = 0; i < this.nodes.length; i++) {
+                temp = this.findNode(this.nodes[i], this.selectedFolder.id, 'id')
+                if (temp) {
+                    this.selectedFolderKey[temp.key] = true
+                    this.expandedKeys[temp.key] = true
+                    const tempPath = this.selectedFolder.path?.substring(1)?.split('/')
+                    tempPath?.forEach((el: string) => {
+                        const tempFolderByCode = this.findNode(this.nodes[i], el, 'code')
+                        if (tempFolderByCode) this.expandedKeys[tempFolderByCode.key] = true
+                    })
+                    break
+                }
+            }
         }
     },
     created() {
@@ -58,6 +78,7 @@ export default defineComponent({
                 key: 'Personal_Folders',
                 icon: 'pi pi-folder',
                 id: -1,
+                prog: 0,
                 parentId: null,
                 label: 'Personal_Folders',
                 children: [] as iNode[],
@@ -76,13 +97,20 @@ export default defineComponent({
             this.nodes = [personalFolder]
             const foldersWithMissingParent = [] as iNode[]
             this.folders.forEach((folder: any) => {
-                const node = { key: folder.name, icon: 'pi pi-folder', id: folder.id, parentId: folder.parentId, label: folder.name, children: [] as iNode[], data: folder }
+                const node = { key: folder.name, icon: 'pi pi-folder', id: folder.id, prog: folder.prog, parentId: folder.parentId, label: folder.name, children: [] as iNode[], data: folder }
                 node.children = foldersWithMissingParent.filter((folder: iNode) => node.id === folder.parentId && folder.data.codType !== 'LOW_FUNCT')
                 this.attachFolderToTree(node, foldersWithMissingParent, personalFolder)
             })
+            this.sortNodesAndChildren(this.nodes)
+        },
+        sortNodesAndChildren(nodes: iNode[]) {
+            nodes.sort((a: iNode, b: iNode) => a.prog - b.prog)
+            nodes.forEach((node: iNode) => {
+                if (node.children) this.sortNodesAndChildren(node.children)
+            })
         },
         attachFolderToTree(folder: iNode, foldersWithMissingParent: iNode[], personalFolder: iNode) {
-            if (folder.parentId) {
+            if (folder.parentId && folder.parentId !== -1) {
                 let parentFolder = null as iNode | null
                 for (let i = 0; i < foldersWithMissingParent.length; i++) {
                     if (folder.parentId === foldersWithMissingParent[i].id && foldersWithMissingParent[i].data.codType !== 'USER_FUNCT') {
@@ -157,6 +185,18 @@ export default defineComponent({
                     this.$emit('folderSelected', this.selectedFolder)
                 }
             }
+        },
+        findNode(node: iNode, value: number | string, property: string) {
+            if (node.data[property] === value) {
+                return node
+            } else if (node.children != null) {
+                let result = null as any
+                for (let i = 0; result == null && i < node.children.length; i++) {
+                    result = this.findNode(node.children[i], value, property)
+                }
+                return result
+            }
+            return null
         }
     }
 })

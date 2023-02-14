@@ -62,6 +62,7 @@ import FabButton from '@/components/UI/KnFabButton.vue'
 import functionalitiesManagementDescriptor from './FunctionalitiesManagementDescriptor.json'
 import KnHint from '@/components/UI/KnHint.vue'
 import Tree from 'primevue/tree'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'functionalities-management',
@@ -87,16 +88,20 @@ export default defineComponent({
             formVisible: false
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     async created() {
         await this.loadPage(null)
     },
     methods: {
         async loadFunctionalities() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/').then((response: AxiosResponse<any>) => (this.functionalities = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/functionalities/').then((response: AxiosResponse<any>) => (this.functionalities = response.data))
         },
         async loadRolesShort() {
             this.rolesShort = []
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles/short/').then((response: AxiosResponse<any>) => (this.rolesShort = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/roles/short/').then((response: AxiosResponse<any>) => (this.rolesShort = response.data))
         },
         createNodeTree() {
             this.nodes = []
@@ -207,7 +212,7 @@ export default defineComponent({
             return functionality.prog !== 1
         },
         moveUp(functionalityId: number) {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/moveUp/${functionalityId}`).then(() => this.loadPage(null))
+            this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/functionalities/moveUp/${functionalityId}`).then(() => this.loadPage(null))
         },
         canBeMovedDown(functionality: iFunctionality) {
             let canBeMoved = false
@@ -220,7 +225,7 @@ export default defineComponent({
             return canBeMoved
         },
         moveDown(functionalityId: number) {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/moveDown/${functionalityId}`).then(() => this.loadPage(null))
+            this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/functionalities/moveDown/${functionalityId}`).then(() => this.loadPage(null))
         },
         canBeDeleted(functionality: iFunctionality) {
             return functionality.parentId && functionality.codType !== 'LOW_FUNCT'
@@ -238,9 +243,9 @@ export default defineComponent({
         },
         async deleteFunctionality(functionalityId: number) {
             await this.$http
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/${functionalityId}`)
+                .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/functionalities/${functionalityId}`)
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
                     })
@@ -250,7 +255,7 @@ export default defineComponent({
                     this.loadPage(null)
                 })
                 .catch((error) => {
-                    this.$store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: error.message
                     })

@@ -7,6 +7,10 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,6 +29,8 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.context.support.SimpleThreadScope;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.ClientHttpRequest;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -98,15 +104,32 @@ public class MainConfiguration {
 
 		RestTemplate template = builder.rootUri(serviceUrlAsURL.toString())
 			.additionalRequestCustomizers(customizer)
+			.requestFactory(() -> clientHttpRequestFactoryWithoutCookies())
 			.build();
 
 		return template;
+	}
+
+	public ClientHttpRequestFactory clientHttpRequestFactoryWithoutCookies() {
+		HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+
+		factory.setConnectTimeout(5000);
+		factory.setReadTimeout(10000);
+
+		HttpClient httpClient = HttpClientBuilder.create()
+				.disableCookieManagement()
+				.build();
+		factory.setHttpClient(httpClient);
+
+		return factory;
 	}
 
 }
 
 @Component
 class PerUserBe2BeRequestCustomizer implements RestTemplateRequestCustomizer<ClientHttpRequest> {
+
+	private static final Logger LOGGER = LogManager.getLogger(PerUserBe2BeRequestCustomizer.class);
 
 	@Autowired
 	private BusinessRequestContext brc;
@@ -115,9 +138,13 @@ class PerUserBe2BeRequestCustomizer implements RestTemplateRequestCustomizer<Cli
 	public void customize(ClientHttpRequest request) {
 		String authorizationHeaderName = ConfigSingleton.getInstance().getAuthorizationHeaderName();
 		String userToken = brc.getUserToken();
+		String correlationId = brc.getCorrelationId().toString();
 		HttpHeaders headers = request.getHeaders();
 
+		LOGGER.debug("Customize BE2BE call using " + authorizationHeaderName + " header with value " + userToken);
+
 		headers.add(authorizationHeaderName, userToken);
+		headers.add("X-Kn-Correlation-Id", correlationId);
 
 		// TODO : Add kn.lang cookie
 	}

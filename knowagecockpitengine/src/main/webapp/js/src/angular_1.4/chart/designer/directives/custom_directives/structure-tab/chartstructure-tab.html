@@ -1,7 +1,12 @@
 
 <md-tab-content class="knowage-grey-color" layout="column">
+	<div layout="row" ng-if="hasFunctions()" layout-padding flex layout-align="center">
+		<div class="kn-warning" flex="75">	
+				{{translate.load('kn.cockpit.functions.chart.warning')}}	
+		</div>
+	</div>
 	<div layout="row" md-content layout-padding ng-form name="structureForm" flex layout-align="center">
-	
+		
 		<!-- 
 			MEASURES AND ATTRIBUTES CONTAINERS
 			<input ng-show='true' ng-repeat = "seriesContainer in seriesContainers"  name="seriesNumber" min=1 max={{2+1}} type="number" ng-model="seriesContainer.series.length" >

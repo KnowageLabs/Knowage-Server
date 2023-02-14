@@ -65,7 +65,7 @@
             </template>
             <div id="qbe-iframe-container" class="p-d-flex p-flex-row kn-flex">
                 <iframe v-if="qbeIframeVisible" id="qbeIframe" ref="qbeIframe" class="kn-width-full kn-height-full" :src="qbeUrl"></iframe>
-                <KnParameterSidebar style="position:inherit;margin-left:auto" v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="qbeDataset" :userRole="userRole" :propQBEParameters="qbeParameters" :propMode="'qbeView'" @execute="initiateQbeIframe"></KnParameterSidebar>
+                <KnParameterSidebar style="position: inherit; margin-left: auto" v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="qbeDataset" :userRole="userRole" :propQBEParameters="qbeParameters" :propMode="'qbeView'" @execute="initiateQbeIframe"></KnParameterSidebar>
             </div>
         </Dialog>
     </div>
@@ -118,15 +118,15 @@ import WorkspaceNewFolderDialog from './views/repositoryView/dialogs/WorkspaceNe
 import Dialog from 'primevue/dialog'
 import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
 import moment from 'moment'
-import { mapState } from 'vuex'
-
-const crypto = require('crypto')
+import { mapState } from 'pinia'
+import cryptoRandomString from 'crypto-random-string'
+import mainStore from '../../App.store'
 
 export default defineComponent({
     name: 'dataset-management',
     components: { Sidebar, Listbox, Accordion, AccordionTab, WorkspaceDocumentTree, WorkspaceNewFolderDialog, Dialog, KnParameterSidebar },
     computed: {
-        ...mapState({
+        ...mapState(mainStore, {
             user: 'user'
         }),
         showRepository(): any {
@@ -134,10 +134,10 @@ export default defineComponent({
         },
         storeFunctionalitiesExist(): any {
             this.createMenuItems()
-            return this.user.functionalities.length > 0
+            return this.user.functionalities?.length > 0
         },
         userRole(): any {
-            return this.user.sessionRole !== 'No default role selected' ? this.user.sessionRole : null
+            return this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
         }
     },
     data() {
@@ -167,8 +167,12 @@ export default defineComponent({
             qbeUrl: ''
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
-        this.uniqueID = crypto.randomBytes(16).toString('hex')
+        this.uniqueID = cryptoRandomString({ length: 16, type: 'base64' })
         this.getAllRepositoryData()
     },
     mounted() {
@@ -185,13 +189,13 @@ export default defineComponent({
             this.loading = false
         },
         async getAllFolders() {
-            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/folders/`).then((response: AxiosResponse<any>) => {
+            return this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/organizer/folders/`).then((response: AxiosResponse<any>) => {
                 this.allFolders = [...response.data]
                 this.displayMenu = true
             })
         },
         async getAllDocuments() {
-            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/documents/`).then((response: AxiosResponse<any>) => {
+            return this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/organizer/documents/`).then((response: AxiosResponse<any>) => {
                 this.allDocuments = [...response.data]
             })
         },
@@ -210,9 +214,9 @@ export default defineComponent({
         async deleteFolder(folder: any) {
             this.loading = true
             await this.$http
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/foldersee/${folder.id}`, { headers: { 'X-Disable-Errors': 'true' } })
+                .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/organizer/foldersee/${folder.id}`, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.success')
                     })
@@ -220,7 +224,7 @@ export default defineComponent({
                     this.$router.push('/workspace')
                 })
                 .catch((response: any) => {
-                    this.$store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: response.message === 'sbi.workspace.organizer.folder.error.delete' ? this.$t('workspace.myRepository.folderDeleteError') : response.message
                     })
@@ -236,13 +240,13 @@ export default defineComponent({
             newFolder.path = this.selectedFolder?.path + `/` + encodeURIComponent(newFolder.code)
             newFolder.prog = this.selectedFolder?.prog
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/organizer/foldersee/', newFolder, { headers: { 'X-Disable-Errors': 'true' } })
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/organizer/foldersee/', newFolder, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
-                    this.$store.commit('setInfo', { title: this.$t('workspace.myRepository.folderCreatedMessage') })
+                    this.store.setInfo({ title: this.$t('workspace.myRepository.folderCreatedMessage') })
                     this.getAllFolders()
                 })
                 .catch((response: any) => {
-                    this.$store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.error.generic'),
                         msg: response
                     })
@@ -264,16 +268,16 @@ export default defineComponent({
         createMenuItems() {
             this.menuItems = []
             this.menuItems.push({ icon: 'fas fa-history', key: '0', label: 'workspace.menuLabels.recent', value: 'recent' }, { icon: 'fas fa-folder', key: '1', label: 'workspace.menuLabels.myRepository', value: 'repository' })
-            if (this.user.functionalities.includes('SeeMyData')) {
+            if (this.user?.functionalities?.includes('SeeMyData')) {
                 this.menuItems.push({ icon: 'fas fa-database', key: '2', label: 'workspace.menuLabels.myData', value: 'data' })
             }
-            if (this.user.isSuperadmin || this.user.functionalities.includes('BuildQbeQueriesFunctionality')) {
+            if (this.user?.isSuperadmin || this.user?.functionalities?.includes('BuildQbeQueriesFunctionality')) {
                 this.menuItems.push({ icon: 'fas fa-table', key: '3', label: 'workspace.menuLabels.myModels', value: 'models' })
             }
-            if (this.user.functionalities.includes('CreateDocument')) {
+            if (this.user?.functionalities?.includes('CreateDocument')) {
                 this.menuItems.push({ icon: 'fas fa-th-large', key: '4', label: 'workspace.menuLabels.myAnalysis', value: 'analysis' })
             }
-            if (this.user.functionalities.includes('SeeSnapshotsFunctionality') && this.user.functionalities.includes('ViewScheduledWorkspace')) {
+            if (this.user?.functionalities?.includes('SeeSnapshotsFunctionality') && this.user?.functionalities?.includes('ViewScheduledWorkspace')) {
                 this.menuItems.push({
                     icon: 'fas fa-stopwatch',
                     key: '5',
@@ -281,7 +285,7 @@ export default defineComponent({
                     value: 'schedulation'
                 })
             }
-            if (this.user.functionalities.includes('DataPreparation')) {
+            if (this.user?.functionalities?.includes('DataPreparation')) {
                 this.menuItems.push({ icon: 'fas fa-cogs', key: '6', label: 'workspace.menuLabels.advanced', value: 'advanced' })
             }
         },
@@ -329,7 +333,7 @@ export default defineComponent({
         },
         async loadQBEDataset(dataset) {
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${dataset.label}`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/${dataset.label}`)
                 .then((response: AxiosResponse<any>) => {
                     this.qbeDataset = response.data
                 })
@@ -337,7 +341,7 @@ export default defineComponent({
         },
         async loadDatasetDrivers(dataset) {
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/businessmodel/${dataset.name}/filters`, { name: dataset.name, role: this.userRole })
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/businessmodel/${dataset.name}/filters`, { name: dataset.name, role: this.userRole })
                 .then((response: AxiosResponse<any>) => {
                     this.filtersData = response.data
                     this.formatDrivers()
@@ -405,7 +409,7 @@ export default defineComponent({
             let country = this.user.locale.split('_')[1]
             let drivers = encodeURI(JSON.stringify(this.datasetDrivers))
             initialUrl = `/knowageqbeengine/servlet/AdapterHTTP?NEW_SESSION=TRUE&SBI_LANGUAGE=${language}&SBI_SCRIPT=&user_id=${this.user.userUniqueIdentifier}&DEFAULT_DATASOURCE_FOR_WRITING_LABEL=CacheDS&SBI_COUNTRY=${country}&SBI_EXECUTION_ID=${this.uniqueID}&ACTION_NAME=QBE_ENGINE_START_ACTION_FROM_BM&MODEL_NAME=${dataset.name}&DATA_SOURCE_LABEL=${dataset.dataSourceLabel}&DATA_SOURCE_ID=${dataset.dataSourceId}&isTechnicalUser=true&DRIVERS=${drivers}`
-            this.qbeUrl = process.env.VUE_APP_HOST_URL + initialUrl
+            this.qbeUrl = import.meta.env.VITE_HOST_URL + initialUrl
         },
         getFormattedParameters(loadedParameters: { filterStatus: any[]; isReadyForExecution: boolean }) {
             let parameters = {} as any

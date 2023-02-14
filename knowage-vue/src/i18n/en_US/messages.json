@@ -2,9 +2,11 @@
     "common": {
         "active": "Active",
         "add": "Add",
+        "addColumn": "Add column",
         "addNew": "Add new",
         "advanced": "Advanced",
         "alias": "Alias",
+        "align": "Align",
         "apply": "Apply",
         "attachments": "Attachments",
         "attributes": "Attributes",
@@ -14,8 +16,12 @@
         "cancel": "cancel",
         "category": "Category",
         "cc": "CC",
+        "center": "Center",
+        "chart": "Chart",
+        "chipsHint": "Press Enter to confirm the input value",
         "choose": "choose",
         "clean": "Clean",
+        "clear": "Clear",
         "clicked": "Clicked",
         "clone": "Clone",
         "close": "close",
@@ -28,12 +34,20 @@
             "python": "python"
         },
         "collapse": "collapse",
+        "color": "Color",
+        "column": "Column",
+        "columns": "Columns",
         "comment": "Comment",
+        "condition": "Condition",
         "continue": "Continue",
         "copyOf": "Copy of",
         "create": "Create",
         "creationDate": "Creation Date",
+        "custom": "Custom",
+        "data": "Data",
         "dataset": "Dataset",
+        "datasets": "Datasets",
+        "date": "Date",
         "default": "Default",
         "delete": "delete",
         "deleteAll": "delete all",
@@ -48,6 +62,9 @@
         "dragAndDropFileHere": "Drag and drop file here.",
         "driver": "Driver",
         "edit": "edit",
+        "enable": "Enable",
+        "enabled": "Enabled",
+        "end": "End",
         "environment": "Environment",
         "error": {
             "allowedFileTypes": "File type allowed are {types}",
@@ -56,6 +73,7 @@
             "exceededSize": "Uploaded file exceedes max size {size}",
             "generic": "Generic Error",
             "incompatibleType": "Incompatible file type",
+            "sameFileName": "It is not possible to upload a file with the same name",
             "saving": "Error saving",
             "tags": {
                 "tagIsNotValid": "Tag ({tag}) is not valid'"
@@ -64,9 +82,10 @@
         },
         "execute": "Execute",
         "expand": "expand",
-        "export": "export",
+        "export": "Export",
         "exportCSV": "Export CSV",
         "exportSuccess": "The download has started in background. You will find the result file in your download page.",
+        "extraLarge": "Extra Large",
         "field": "Field",
         "file": "File",
         "fileName": "File Name",
@@ -76,7 +95,12 @@
         "general": "General",
         "generate": "Generate",
         "group": "Group",
+        "height": "Height",
         "home": "Home",
+        "horizontal": "Horizontal",
+        "horizontalAlign": "Horizontal Align",
+        "icon": "Icon",
+        "id": "id",
         "image": "image",
         "import": "import",
         "inUse": "In use",
@@ -90,19 +114,28 @@
         },
         "information": "information",
         "input": "Input",
+        "key": "Key",
         "kpi": "KPI",
         "label": "label",
+        "labels": "Labels",
         "language": "Language",
+        "large": "Large",
         "lastChangeDate": "Last change date",
-        "left": "left",
+        "layout": "Layout",
+        "left": "Left",
         "library": "Library",
+        "list": "List",
         "load": "Load",
         "locked": "Locked",
         "loggedUser": "logged user",
         "login": "Login",
+        "max": "Max",
+        "medium": "Medium",
         "menu": "Menu",
         "message": "Message",
         "metadata": "Metadata",
+        "middle": "Middle",
+        "min": "Min",
         "modify": "modify",
         "move": "Move",
         "name": "name",
@@ -116,6 +149,9 @@
         "object": "Object",
         "ok": "ok",
         "onlineHelp": "Help Online",
+        "open": "Open",
+        "operator": "Operator",
+        "options": "Options",
         "order": "Order",
         "orderBy": "Order by",
         "output": "Output",
@@ -137,9 +173,11 @@
         "required": "Required",
         "restore": "restore",
         "reused": "Reused",
-        "right": "right",
+        "right": "Right",
         "role": "Role",
         "roles": "Roles",
+        "rotateDevice": "Please rotate your device!",
+        "row": "Row",
         "run": "Run",
         "save": "save",
         "saveAs": "Save as",
@@ -156,12 +194,17 @@
         "shortcuts": "Shortcuts",
         "show": "Show",
         "size": "Size",
+        "small": "Small",
         "snapshot": "Snapshot",
         "sort": "sort",
         "source": "Source",
+        "sourceDataset": "Source dataset",
         "sqlExpression": "SQL expression",
+        "start": "Start",
         "state": "State",
+        "static": "Static",
         "status": "Status",
+        "style": "Style",
         "suspended": "Suspended",
         "table": {
             "footer": {
@@ -173,6 +216,8 @@
         "temporal": "Temporal",
         "tenant": "tenant",
         "test": "test",
+        "text": "Text",
+        "themes": "Themes",
         "time": "Time",
         "title": "Title",
         "to": "to",
@@ -201,30 +246,41 @@
         "uploadFileSuccess": "File uploaded",
         "uploading": "Uploading",
         "uppercaseDelete": "Delete",
+        "url": "URL",
         "validation": {
             "maxLength": "This field must have less then {max} characters",
             "maximumCharacters": "The maximum length allowed is {max}",
             "minLength": "This field should have at least {min} characters",
+            "noQuestionMark": "The value of the field must not contain the question mark (?)",
             "regex": "Invalid format",
             "required": "{fieldName} is required"
         },
         "value": "Value",
         "values": "Values",
+        "variable": "Variable",
+        "variables": "Variables",
         "version": "version",
+        "vertical": "Vertical",
+        "verticalAlign": "Vertical Align",
+        "view": "View",
         "visibility": "Visibility",
         "visible": "Visible",
         "warning": "Warning",
+        "widget": "Widget",
+        "width": "Width",
         "yes": "Yes"
     },
     "components": {
         "knCalculatedField": {
             "columnName": "Column Name",
-            "description": "Calculated field description",
+            "description": "Choose a name, select a type and add an expression for the calculated field. Drag and drop the functions and the fields from the list into the expression text area. Note that fields should be written the format $F{'{'}fieldName{'}'}",
+            "fieldName": "fieldName",
             "fields": "Fields",
             "formula": "Formula",
             "functions": "Functions",
             "officialDocumentation": "Official documentation ({function})",
-            "title": "Calculated field"
+            "title": "Calculated field",
+            "type": "Type"
         }
     },
     "cron": {
@@ -270,6 +326,7 @@
         "nextExecution": "Next execution",
         "november": "November",
         "october": "October",
+        "quarter": "Quarter",
         "repeatInterval": "Repeat Interval",
         "saturday": "Saturday",
         "second": "Second",
@@ -289,10 +346,484 @@
         "thursday": "Thursday",
         "tuesday": "Tuesday",
         "wednesday": "Wednesday",
+        "week": "Week",
         "weekday": "Weekday",
         "weekdays": "Weekdays",
         "weekly": "Weekly",
+        "year": "Year",
         "yearly": "Yearly"
+    },
+    "dashboard": {
+        "dashboardBeta": "Dashboard (Beta)",
+        "datasetEditor": {
+            "addAssociation": "Add Association",
+            "addIndexes": "Add Indexes on Associations",
+            "association": "Association",
+            "associationsDetailMsg": "TODO: Write whatever we need to write here after PR",
+            "associationsDetailTitle": "Dataset Associations",
+            "associationsTabTitle": "Associations",
+            "cached": "Cached",
+            "dataDetailMsg": "Add or select datasets, TODO: Write whatever we need to write here after PR",
+            "dataDetailTitle": "Dataset Management",
+            "dataTabTitle": "Data",
+            "datasetDriversWarningMsg1": "You can only have one dataset with drivers! ",
+            "datasetDriversWarningMsg2": " datasets were not added!",
+            "duplicateAssociationsMsg": "Association already exists!",
+            "dynamic": "Dynamic",
+            "emptyAssociationError": "Association cannot be empty!",
+            "indexHint": "Indexes will be created on single selected columns.",
+            "indexPresentMsg": "Index already exists!",
+            "indexesTitle": "Indexes",
+            "selectDatasets": "Select Datasets",
+            "static": "Static",
+            "title": "Dataset Manageent"
+        },
+        "generalSettings": {
+            "attribute": "Attribute",
+            "profile": "Profile",
+            "title": "General Settings",
+            "variableColumnHint": "If no column is defined the whole dataset will be used.",
+            "variablesHint": "Variables can be used everywhere in the dashboard widgets. They can be static values or dynamic values set in different ways. Check the documentation or the single widgets to learn how to use them."
+        },
+        "getDataError": "Unable to load data from dataset {datasetLabel}. Please check dataset & widget configuration.",
+        "saveCockpit": "Save Cockpit",
+        "saveCockpitHint": "Please enter a valid name",
+        "selectionsList": "Selections List",
+        "tableWidget": {
+            "launchSelection": "LAUNCH SELECTION"
+        },
+        "widgetEditor": {
+            "absolute": "Absolute",
+            "accessibility": {
+                "enabelKeyboardNavigation": "Enable Keyboard Navigation",
+                "exposeAsGroupOnly": "Expose As Group Only",
+                "exposeAsGroupOnlyHint": "Expose only the series element to screen readers, not its points.",
+                "keyboardNavigationOrder": "Keyboard Navigation Order",
+                "keyboardNavigationOrderHint": "Order of tab navigation in the chart. Determines which elements are tabbed to first. Available elements are: series, zoom, rangeSelector, chartMenu, legend and container. In addition, any custom components can be added here. Adding container first in order will make the keyboard focus stop on the chart container first, requiring the user to tab again to enter the chart.",
+                "keyboardNavigationOrderOptions": {
+                    "chartMenu": "Chart Menu",
+                    "container": "Container",
+                    "legend": "Legend",
+                    "rangeSelector": "Range Selector",
+                    "zoom": "Zoom"
+                },
+                "title": "Accessibility"
+            },
+            "addWidget": "Add widget",
+            "aggregation": "Aggregation",
+            "ascending": "Ascending",
+            "background": "Background",
+            "borders": {
+                "borderRadiusBottomLeft": "Border radius bottom left",
+                "borderRadiusBottomRight": "Border radius bottom right",
+                "borderRadiusTopLeft": "Border radius top left",
+                "borderRadiusTopRight": "Border radius top right",
+                "bordersColor": "Borders Color",
+                "bordersStyle": "Borders Style",
+                "bordersThickness": "Borders Thickness",
+                "bordersThicknessHint": "px, rem or % measure units are available",
+                "dashed": "Dashed",
+                "dotted": "Dotted",
+                "solid": "Solid",
+                "title": "Borders"
+            },
+            "chartJS": {
+                "legend": {
+                    "alignHint": "Alignment of the legend",
+                    "positionHint": "Position of the legend."
+                },
+                "piechart": {
+                    "dimensionsTableHint": "Attributes only.",
+                    "valuesTableHint": "Measures only."
+                }
+            },
+            "chartTypes": {
+                "activitygauge": "Activity Gauge",
+                "areaChart": "Area Chart",
+                "barChart": "Bar Chart",
+                "bubbleChart": "Bubble Chart",
+                "columnsChart": "Columns Chart",
+                "donutChart": "Donut Chart",
+                "funnelChart": "Funnel Chart",
+                "gauge": "Gauge",
+                "lineChart": "Line Chart",
+                "parallelChart": "Parallel Chart",
+                "pieChart": "Pie Chart",
+                "radar": "Radar",
+                "scatterChart": "Scatter Chart",
+                "solidgauge": "Solid Gauge",
+                "stackedColumnsChart": "Stacked Columns Chart",
+                "treemap": "Treemap"
+            },
+            "chips": "Chips",
+            "colors": {
+                "title": "Colors"
+            },
+            "columnDetails": "Column Details",
+            "columnFilterHint": "Select the filter operator and the value for the column. Remember to use the correct database sintax for the value. ie: %LIKE%",
+            "columnGroups": {
+                "title": "Column Groups"
+            },
+            "compareValueType": "Compare value type",
+            "conditionalStyle": "Conditional Style",
+            "conditions": {
+                "applyToWholeRow": "Apply to whole row",
+                "compareValueType": "Value type",
+                "title": "Conditions"
+            },
+            "configuration": "Configuration",
+            "configurationOf3D": {
+                "alphaAngle": "Alpha Angle",
+                "alphaAngleHint": "One of the two rotation angles for the chart.",
+                "betaAngle": "Beta Angle",
+                "betaAngleHint": "One of the two rotation angles for the chart.",
+                "title": "3D",
+                "totalDepth": "Total Depth",
+                "totalDepthHint": "The total depth of the chart.",
+                "viewDistance": "View Distance",
+                "viewDistanceHint": "Defines the distance the viewer is standing in front of the chart, this setting is important to calculate the perspective effect in column and scatter charts. It is not used for 3D pie charts."
+            },
+            "customHeaderTooltip": "Custom Header Tooltip",
+            "customMessages": {
+                "customEmptyRowsMessage": "Custom empty rows message",
+                "hideNoRowsAvailable": "Hide \"No Rows Available\" message",
+                "title": "Custom Messages"
+            },
+            "defaultValues": {
+                "columnsFirstItem": "Main column's first item",
+                "columnsLastItem": "Main column's last item",
+                "hint": "Default values hint placeholder",
+                "selectDafaultValue": "Select Default Value",
+                "title": "Default Values"
+            },
+            "descending": "Descending",
+            "dimensions": "Dimensions",
+            "dragColumnsHint": "Drag columns here",
+            "drilldown": {
+                "title": "Drilldown"
+            },
+            "editor": "Editor",
+            "editorTags": {
+                "activesel": "Active Selection",
+                "calc": "Calculation",
+                "calculator": "Calculator",
+                "columnsData": "Columns Data",
+                "conditional": "Conditional Container",
+                "crossnav": "Cross-Navigation",
+                "hint": {
+                    "activesel": "This tag is used to show the selected value of a column of the selected parameter.",
+                    "calculator": "This tag is used to calculate a result number from standard operations and other tags like kn-column and kn-parameter.",
+                    "columnsData": "This tag is used to show a field value from the selected dataset column. The optional attribute ROW make the tag show the field value of the specified row for that column. If a row is not specified the tag will show the first occurrence for the column.",
+                    "conditional": "This tag is used to conditionally show a specific HTML section delimited by the tag ending. If the condition is verified the tag will be displayed, else it will be hidden. Other tags can be used to dinamically get a value for the condition.",
+                    "crossnav": "This tag is used to create an interactive element bind to the selected cross-navigation. Cross-navigation must be enabled in the 'Cross' tab of this widget setting. If you selected \"Dynamic\" output you can add a value to the kn-cross attribute.",
+                    "internationalization": "This tag is used to show a label value depending on the user locale and using the internationalization manager.",
+                    "parameters": "This tag is used to show a parameter value from the ones available to the selected dataset.",
+                    "preview": "This tag is used to create an interactive element creating a link to a popup showing the specified dataset preview.",
+                    "repeatIndex": "This tag is used inside a kn-repeat to get the current row value of the repeater..Dynamic fields from dataset will take the value of the repeated row.",
+                    "repeater": "This tag is used to repeat the HTML section delimited by the tag ending for every row in the dataset if the condition is verified. Set the condition to \"true\" to always show.The limit attribute limits the number of rows shown. Dynamic fields from dataset will take the value of the repeated row.",
+                    "selection": "This tag is used to create an interactive element generating a selection on the specified column with the specified value.",
+                    "toLocale": "TODO: Add to locale hint",
+                    "variables": "This tag is used to show the value of the selected variable."
+                },
+                "i18n": "i18n",
+                "internationalization": "Internationalization",
+                "limit": "Limit",
+                "parameters": "Parameters",
+                "preview": "Preview",
+                "repeatIndex": "Repeat Index",
+                "repeater": "Repeater",
+                "selection": "Selection",
+                "selectionVal": "Selection Value",
+                "toLocale": "Format to locale",
+                "variables": "Variables"
+            },
+            "enableFilter": "Enable Filter",
+            "enableTooltip": "Enable Tooltip",
+            "export": {
+                "a4landscape": "A4 Landscape",
+                "a4portrait": "A4 Portrait",
+                "enableScreenshots": "Enable Screenshots",
+                "exportPdf": "Export PDF",
+                "showExcelExport": "Enable show excel export (when available)",
+                "title": "Export"
+            },
+            "fontawesome": "Fontawesome",
+            "format": "Format",
+            "formatter": "Formatter",
+            "gallery": "Gallery",
+            "galleryWarning": "Are you sure you want to overwrite changes in editor with the template?",
+            "headers": {
+                "action": "Action",
+                "enableCustomHeaders": "Enable Custom Headers",
+                "enableMultiline": "Enable Multiline",
+                "headerHeight": "Header height",
+                "headerHeightHint": "Header height in px (default is 25px)",
+                "hideHeader": "Hide header",
+                "setLabel": "Set label",
+                "title": "Headers"
+            },
+            "hidden": "Hidden",
+            "highcharts": {
+                "activityGauge": {
+                    "valuesTableHint": "Measures only."
+                },
+                "bands": {
+                    "bandsHint": "An array of colored bands stretching across the plot area marking an interval on the axis. In a gauge, a plot band on the Y axis (value axis) will stretch along the perimeter of the gauge.",
+                    "colorHint": "The color of the plot band.",
+                    "fromHint": "The start position of the plot band in axis units.",
+                    "thickness": "Thickness",
+                    "thicknessHint": "In a gauge chart, this option sets the width of the plot band stretching along the perimeter. It can be given as a percentage string, like \"10%\", or as a pixel number, like 10. The default value 10 is the same as the default tickLength, thus making the plot band act as a background for the tick markers.",
+                    "title": "bands",
+                    "toHint": "The end position of the plot band in axis units."
+                },
+                "dial": {
+                    "dialBaseWitdh": "Dial Base Width",
+                    "dialColor": "Dial Color",
+                    "dialRadius": "Dial Radius",
+                    "dialRadiusHint": "The radius or length of the dial, in percentages relative to the radius of the gauge itself."
+                },
+                "gauge": {
+                    "valuesTableHint": "Measures only."
+                },
+                "labels": {
+                    "distance": "Distance",
+                    "distanceHint": "The distance of the data label from the pie's edge. Negative numbers put the data label on top of the pie slices. Can also be defined as a percentage of pie's radius. Connectors are only shown for data labels outside the pie.",
+                    "formatHint": "A format string for the data label. Available variables are the same as for formatter.",
+                    "formatterHint": "Callback JavaScript function to format the data label. Note that if a format is defined, the format takes precedence and the formatter is ignored."
+                },
+                "legend": {
+                    "alignHint": "The horizontal alignment of the legend box within the chart area. Valid values are left, center and right. In the case that the legend is aligned in a corner position, the layout option will determine whether to place it above/below or on the side of the plot area.",
+                    "formatHint": "A format string for each legend label. Available variables relates to properties on the series, or the point in case of pies.",
+                    "formatterHint": "Callback function to format each of the series' labels. The this keyword refers to the series object, or the point object in case of pie charts. By default the series or point name is printed.",
+                    "layoutHint": "The layout of the legend items. Can be one of horizontal or vertical or proximate. When proximate, the legend items will be placed as close as possible to the graphs they're representing, except in inverted charts or when the legend position doesn't allow it.",
+                    "verticalAlignHint": "The vertical alignment of the legend box. Can be one of top, middle or bottom. Vertical position can be further determined by the y option. In the case that the legend is aligned in a corner position, the layout option will determine whether to place it above/below or on the side of the plot area. When the layout option is proximate, the verticalAlign option doesn't apply."
+                },
+                "paneSettings": {
+                    "centralHorizontalPosition": "Centar Horizontal Position",
+                    "centralVerticalPosition": "Centar Vertical Position",
+                    "endAngle": "End Angle",
+                    "endAngleHint": "The end angle of the polar X axis or gauge value axis, given in degrees where 0 is north.",
+                    "startAngle": "Start Angle",
+                    "startAngleHint": "The start angle of the polar X axis or gauge axis, given in degrees where 0 is north."
+                },
+                "piechart": {
+                    "dimensionsTableHint": "Attributes only. Each different value in the selected column will create a different slice. If more than one dimension is present, the list will be the drill-down sequence.",
+                    "valuesTableHint": "Measures only. The selected column will be used as values for every slice."
+                },
+                "pivot": {
+                    "pivotColor": "Pivot Color",
+                    "pivotRadius": "Pivot Radius",
+                    "pivotRadiusHint": "The pixel radius of the pivot."
+                },
+                "proximate": "Proximate",
+                "scale": {
+                    "maxHint": "The maximum value of the axis. If null, the max value is automatically calculated.",
+                    "minHint": "The minimum value of the axis. If null the min value is automatically calculated."
+                },
+                "solidGauge": {
+                    "valuesTableHint": "Measures only."
+                },
+                "stops": {
+                    "colorHint": "Solid gauge series only. Color stops for the solid gauge. Use this in cases where a linear gradient between a minColor and maxColor is not sufficient. The stops is an array of tuples, where the first item is a float between 0 and 1 assigning the relative position in the gradient, and the second item is the color.",
+                    "relativePosition": "Relative Position",
+                    "relativePositionHint": "Solid gauge series only. Color stops for the solid gauge. Use this in cases where a linear gradient between a minColor and maxColor is not sufficient. The stops is an array of tuples, where the first item is a float between 0 and 1 assigning the relative position in the gradient, and the second item is the color.",
+                    "stopsHint": "Color stops for the solid gauge. Use this in cases where a linear gradient between a minColor and maxColor is not sufficient. The stops is an array of tuples, where the first item is a float between 0 and 1 assigning the relative position in the gradient, and the second item is the color.",
+                    "title": "Stops"
+                },
+                "tick": {
+                    "minorTickInterval": "Minor Tick Interval",
+                    "minorTickIntervalHint": "Specific tick interval in axis units for the minor ticks. On a linear axis, if \"auto\", the minor tick interval is calculated as a fifth of the tickInterval. If null or undefined, minor ticks are not shown. On logarithmic axes, the unit is the power of the value. For example, setting the minorTickInterval to 1 puts one tick on each of 0.1, 1, 10, 100 etc. Setting the minorTickInterval to 0.1 produces 9 ticks between 1 and 10, 10 and 100 etc. If user settings dictate minor ticks to become too dense, they don't make sense, and will be ignored to prevent performance problems.",
+                    "tickColor": "Tick Color",
+                    "tickLength": "Tick Length",
+                    "tickLengthHint": "The pixel length of the main tick marks.",
+                    "tickPosition": "Tick Position",
+                    "tickPositionHint": "The position of the major tick marks relative to the axis line. Can be one of inside and outside.",
+                    "tickWidth": "Tick Width",
+                    "tickWidthHint": "The pixel width of the major tick marks.",
+                    "title": "Tick"
+                },
+                "tooltip": {
+                    "activityGaugeFormatterHint": "Activity Gauge Formatter Hint Placeholder.",
+                    "formatterHint": "Callback function to format the text of the tooltip from scratch. In case of single or shared tooltips, a string should be returned. In case of split tooltips, it should return an array where the first item is the header, and subsequent items are mapped to the points. Return false to disable tooltip for a specific point on series. A subset of HTML is supported. Unless useHTML is true, the HTML of the tooltip is parsed and converted to SVG, therefore this isn't a complete HTML renderer. The following HTML tags are supported: b, br, em, i, span, strong. Spans can be styled with a style attribute, but only text-related CSS, that is shared with SVG, is handled. The available data in the formatter differ a bit depending on whether the tooltip is shared or split, or belongs to a single point. In a shared/split tooltip, all properties except x, which is common for all points, are kept in an array, this.points.",
+                    "pointFormatter": "Point Formatter",
+                    "pointFormatterHint": "A callback function for formatting the HTML output for a single point in the tooltip. Like the pointFormat string, but with more flexibility."
+                }
+            },
+            "hint": "Select dataset",
+            "htmlParsingError": "HTML Parsing Error",
+            "iconTooltips": {
+                "backgroundColor": "Background color",
+                "bold": "Bold",
+                "borderColor": "Border color",
+                "fontColor": "Font color",
+                "fontFamily": "Font family",
+                "fontSize": "Font size",
+                "iconPicker": "Icon picker",
+                "italic": "Italic",
+                "textAlignment": "Text alignment"
+            },
+            "imageWidget": {
+                "imageUploadErrors": {
+                    "fileIsNotAnImage": "File is not an image",
+                    "fileTypeIsNotAllowed": "File type is not allowed",
+                    "noMoreImages": "No more images can be added",
+                    "tooBigImage": "Image is too big",
+                    "tooManyUserImages": "No more images can be added by this user. Delete some or ask the administrator to put an higher limit"
+                },
+                "uploadImage": "Upload Image"
+            },
+            "inputHintForPixels": "use px measure unit, ie: 5px",
+            "inside": "Inside",
+            "interactions": {
+                "analyticalDriver": "Analytical Driver",
+                "basicUrl": "Basic Url",
+                "crossNavigation": "Cross-navigation",
+                "crossNavigationName": "Cross Navigation Name",
+                "directDownload": "Direct download",
+                "dynamic": "Dynamic",
+                "enableClickOnIcon": "Enable click on an icon",
+                "enableClickOnSingleColumn": "Enable click on a single column",
+                "enableClickOnWholeRow": "Enable click on whole row",
+                "enableMultiselection": "Enable Multiselection",
+                "json": "JSON",
+                "jwt": "JWT",
+                "link": "Link",
+                "linkType": "Link type",
+                "modalColumn": "Modal Column",
+                "openInNewPage": "Open in new page",
+                "openInSamePage": "Open in the same page",
+                "outputParameter": "Output Parameter",
+                "preview": "Preview",
+                "selection": "Selection",
+                "static": "Static",
+                "title": "Interactions"
+            },
+            "itemsPerPage": "Items per page",
+            "legend": {
+                "title": "Legend"
+            },
+            "manualInput": "Manual input",
+            "noData": {
+                "title": "No data"
+            },
+            "noSelections": {
+                "customMessage": "Custom Message",
+                "customMessageHint": "If left empty the message will be 'No Active Selections'",
+                "title": "No Selection Message"
+            },
+            "outside": "Outside",
+            "padding": {
+                "linkAllHint": "Link all paddings",
+                "paddingBottom": "Padding Bottom",
+                "paddingLeft": "Padding Left",
+                "paddingRight": "Padding Right",
+                "paddingTop": "Padding Top",
+                "title": "Padding",
+                "unlinkAllHint": "Unink all paddings"
+            },
+            "pagination": "Pagination",
+            "percentage": "Percentage",
+            "precision": "Precision",
+            "prefix": "Prefix",
+            "recentlyUsed": "Recently Used",
+            "responsive": {
+                "extraLargeDevices": "Show On Extra Large Devices",
+                "extraSmallDevices": "Show On Extra Small Devices",
+                "largeDevices": "Show On Large Devices",
+                "smallerDevices": "Show On Smaller Devices",
+                "tablets": "Show On Tablets",
+                "title": "Responsive"
+            },
+            "rows": {
+                "alternatedRowsEven": "Alternated Rows Even",
+                "alternatedRowsOdd": "Alternated Rows Odd",
+                "enableIndexColumn": "Enable Index Column",
+                "enableRowspan": "Enable Row Span",
+                "enabledAlternatedRows": "Enabled Alternated Rows",
+                "multiselectable": "Multiselectable",
+                "rowSpanColumn": "Row span column",
+                "selectionColor": "Selection color",
+                "showIndexesColumn": "Show indexes column",
+                "title": "Rows"
+            },
+            "selectDataset": "Select Dataset",
+            "selectedColumns": "Selected Columns",
+            "selectorType": {
+                "title": "Selector Type"
+            },
+            "series": {
+                "enableColor": "Enable Color",
+                "scale": "Scale",
+                "scaleHint": "Scale Hint Placeholder",
+                "title": "Series"
+            },
+            "seriesAccessibility": {
+                "title": "Series Accessibility"
+            },
+            "settingsListOptions": {
+                "tooltip": "Tooltip"
+            },
+            "shadows": {
+                "shadowSize": "Shadow Size",
+                "title": "Shadows"
+            },
+            "showLabel": "Show Label",
+            "sortingColumn": "Sorting column",
+            "sortingOrder": "Sorting order",
+            "suffix": "Suffix",
+            "summary": "Summary",
+            "summaryRows": {
+                "pinnedColumnsOnly": "Pinned columns only",
+                "title": "Summary rows"
+            },
+            "textParsingError": "Text Parsing Error",
+            "title": "Widget Editor",
+            "titles": {
+                "title": "Title"
+            },
+            "tooltip": {
+                "title": "Tooltip"
+            },
+            "tooltipTextHint": "This text will overwrite the columns header default tooltip, variables and parameters placeholders ($V{placeholder} and $P{placeholder}) are available.",
+            "tooltips": {
+                "customHeader": "Custom Header",
+                "title": "Tooltips"
+            },
+            "valuesManagement": {
+                "alwaysEnableValues": "Always Enable Values",
+                "alwaysEnableValuesHint": "Always enable values hint placeholder",
+                "hideDisabledValues": "Hide Disabled Values",
+                "hideDisabledValuesHint": "Hide disabled values hint placeholder",
+                "showColumn": "Show Selection Column",
+                "showColumnHint": "Show selection column hint placeholder",
+                "showDataset": "Show Selection Dataset",
+                "showDatasetHint": "Show Selection dataset hint placeholder",
+                "title": "Values Management",
+                "wrapText": "Wrap Text",
+                "wrapTextHint": "Wrap text hint placeholder"
+            },
+            "visibilityConditions": {
+                "always": "Always",
+                "hideColumn": "Hide Column",
+                "hideOnPdf": "Hide on PDF",
+                "onVariableValue": "On Variable Value",
+                "title": "Visibility Conditions"
+            },
+            "visualization": "Visualization",
+            "visualizationOptions": {
+                "chart": "Chart",
+                "iconOnly": "Icon only",
+                "textAndChart": "Text & Chart"
+            },
+            "visualizationType": {
+                "alignment": "Alignment",
+                "bar": "Bar",
+                "pinned": "Pinned",
+                "sparkline": "Sparkline",
+                "textAndIcon": "Text & Icon",
+                "title": "Visualization Type"
+            }
+        }
     },
     "documentBrowser": {
         "changeStateMessage": "Are you sure you want to change the state for this document?",
@@ -328,6 +859,17 @@
                 "persistOk": "Table persisted",
                 "selectSource": "Select Source",
                 "title": "Data Lineage"
+            },
+            "designerDialog": {
+                "addParameter": "Add Parameter",
+                "mondrian": "Mondrian",
+                "olapDesigner": "Olap Designer",
+                "selectCube": "Select Cube",
+                "selectMondrianSchema": "Select Mondrian Schema",
+                "templateType": "Select type of Template",
+                "xmla": "XMLA Server",
+                "xmlaAddress": "XMLA Address",
+                "xmlaParameters": "XMLA Parameters"
             },
             "drivers": {
                 "ad": "Driver AD",
@@ -371,6 +913,7 @@
                 "engine": "Engine",
                 "engineHint": "Select a type to unlock the available engines",
                 "imageError": "Error deleting image",
+                "imageInfo": "Image successfully uploaded",
                 "imageUploadError": "Error uploading image",
                 "infoTitle": "Informations",
                 "parametersPanelPosition": "Parameters panel position",
@@ -394,6 +937,12 @@
                 "title": "Output Parameters"
             },
             "subreports": {
+                "deleteError": "Error deleting subreport",
+                "deleteOk": "Subreport deleted",
+                "info": "Select the subreports you want to link to the document",
+                "persistError": "Error persisting subreport",
+                "persistOk": "Subreport persisted",
+                "tableName": "Available Subreports",
                 "title": "Subreports"
             },
             "title": "Document Details"
@@ -403,6 +952,7 @@
             "deleteSuccess": "Successfully deleted selected activity.",
             "deleteTitle": "Delete dossier activity",
             "downloadMissingError": "Download ERROR - Document is missing",
+            "downloadTemplate": "Download document template",
             "headers": {
                 "activity": "Activity Name",
                 "partial": "Partial",
@@ -414,16 +964,22 @@
             "launchedActivities": "Launched activities for this document",
             "progressNotFinished": "Please wait until document will be generated.",
             "saveSuccess": "Activity successfully saved!",
-            "title": "Dossier"
+            "templateDownloadError": "Error downloading template",
+            "templateUploadError": "Error uploading template",
+            "title": "Dossier",
+            "uploadTemplate": "Upload document template"
         },
         "main": {
             "addToWorkspace": "Add to my workspace",
             "addToWorkspaceError": "This document cannot be added to Workspace. It already exists in the root folder of the Organizer",
+            "asFinalUser": "As a final user",
+            "clearCache": "Clear cache",
             "copyLink": "Copy link",
             "copyLinkAndShare": "Copy link and share it",
             "crossNavigationNoTargetError": "No cross navigation targets available",
             "currentRank": "Curent Rank is...",
             "customMetadata": "Custom Metadata",
+            "destinationSelectionTitle": "Selection of the destination document",
             "editCockpit": "Edit cockpit document",
             "editModeConfirm": "You are leaving edit mode. Continue?",
             "embedInHtml": "Embed in HTML",
@@ -431,6 +987,7 @@
             "exportInRTF": "Export in RTF",
             "fillForm": "Fill Form",
             "firstToRate": "Be the first rating this document",
+            "inFullScreen": "In full-screen",
             "linkToDocument ": "Link to document",
             "parameterClearTooltip": "Reset to default value",
             "publicUrlExecutionDisabled": "Current document cannot be executed by public user",
@@ -450,6 +1007,11 @@
             "yourRating": "Your rating"
         },
         "olap": {
+            "alDialog": {
+                "availableAlg": "Available algorithms",
+                "infoMsg": "You can change algorithm acting on the form below.",
+                "title": "Change algorithm"
+            },
             "buttonsWizard": {
                 "title": "Buttons Wizard"
             },
@@ -464,6 +1026,11 @@
             "customView": {
                 "title": "Olap custom view List"
             },
+            "deleteVersion": {
+                "errorMessage": "You can not delete active version, please try again.",
+                "id": "id",
+                "title": "Select the version to delete"
+            },
             "drillTru": {
                 "clearAll": "Clear All",
                 "drillLevelsError": "An error occurred while getting drill through levels",
@@ -475,8 +1042,26 @@
                 "selectLevels": "Select visible levels",
                 "title": "Drill Through"
             },
+            "editErrorLocked": "It's not possible to edit a schema if you have not set a lock on it.",
             "editModeConfirm": "You are leaving edit mode. Continue?",
+            "filterDialog": {
+                "ancestorDescendantWarning": "Warning: You selected some members that are in ancestor-descendant relationship: measures will be aggregated over both of them. Are you sure this is what you want?",
+                "driverProfileAttribute": "Driver/ProfileAttribute",
+                "filterLevelsError": "Multiple values must be filled consecutively. Some levels in between are missing values.",
+                "filterUsingDrivers": "Filter using drivers",
+                "infoMessage": "Selected items will be used as filters in the main table.",
+                "level": "Level",
+                "parentDisabledTooltip": "It is not possible to choose a parent. Press the Add button.",
+                "searchWarningMessage": "You need at least 3 letters to start search!",
+                "selectFields": "Select Fields",
+                "treeLockedInfoMessage": {
+                    "partOne": "Selected items are used as filters in the main table. You can remove some or clicking on ",
+                    "partThree": " the whole tree will be unlocked",
+                    "partTwo": "add selection"
+                }
+            },
             "filterPanel": {
+                "activeLevels": "Active levels",
                 "drop": "Drop here to use as a slicer",
                 "filterPanelEmpty": "Drag the member here if you want to use it as a slicer"
             },
@@ -495,12 +1080,42 @@
                 "detail2": "You can change it acting on the form below.",
                 "dropdownLabel": "Available hierarchies"
             },
+            "notEditable": "Measure is not editable",
             "openDesigner": "Open Designer",
             "openDesignerMsg": "By opening designer you will lose all unsaved changes, are you sure?",
+            "outputWizard": {
+                "fieldDelimiter": "Field delimiter",
+                "fileInfo": "Please fill the CSV options.",
+                "infoMsg": "Select the output type for the analysis. This operation will take some minutes. In the meanwhile you can continue to work on your cube",
+                "tableInfo": "What is the name of the table for the output process?",
+                "tableMsg": "Analysis exported",
+                "title": "Output wizard",
+                "version": "Verson to export"
+            },
+            "saveVersion": {
+                "infoMessage": "Type the name of the version. If you leave it blank the name and the description assume the version number",
+                "title": "Save new version",
+                "versionDescription": "Version description",
+                "versionName": "Version name"
+            },
             "savingCustomizedView": "Saving customized view",
+            "scenarioWizard": {
+                "clearData": "Clear data",
+                "deleteAllMsg": "Are you sure you want to delete all variables?",
+                "deleteAllTitle": "Delete All",
+                "editableMeasures": "Editable measures",
+                "longInfo": "Selecting an edit cube and an editable measure is mandatory. In order to perform what if analysis your database as well as OLAP schema should have a specific structure. Please check in the documentation of the WhatIF functionality. The edited cube should be the cube that you want to save with the new version of data.",
+                "parameterName": "Parameter name",
+                "parameterValue": "Parameter value",
+                "scenarioUpdated": "Successfully added scenario to template",
+                "selectedCube": "Selected cube",
+                "shortInfo": "Selecting an edit cube and an editable measure is mandatory.",
+                "title": "Scenario Wizard"
+            },
             "showMdxQuery": "Show MDX Query",
             "showScheduledExecutions": "Show scheduled executions",
             "sidebar": {
+                "alg": "Select an algorithm",
                 "calculatedField": "Calculated field",
                 "calculatedFieldWizard": "Calculated field wizard",
                 "closeDesigner": "Close Designer",
@@ -508,23 +1123,29 @@
                 "configureScenario": "Configure scenario",
                 "configureTablePagination": "Configure table pagination",
                 "defineCrossNavigation": "Define cross navigation",
+                "deleteVersions": "Delete versions",
                 "drillOnData": "Drill on data",
                 "drillOnDimension": "Drill on dimension",
                 "drillThrough": "Drill Through",
                 "enableCrossNavigation": "Enable crossnavigation",
+                "excel": "Export excel for edit",
                 "exportExcel": "Export excel for edit",
                 "exportOutput": "Export output",
                 "hideSpans": "Hide spans",
+                "lockSchema": "Lock schema",
                 "manageVersions": "Manage versions",
                 "mdxQuery": "Mdx Query",
                 "member": "Member",
                 "olapFunctions": "OLAP functions",
+                "outputWizard": "Output wizard",
                 "position": "Position",
                 "reloadSchema": "Reload schema",
                 "replace": "Replace",
+                "saveAsNewVersion": "Save as new version",
                 "saveCustomizedView": "Save customized view",
                 "saveNewVersion": "Save new version",
                 "saveTemplate": "Save template",
+                "scenario": "Configure scenario",
                 "selectAlgorithm": "Select algorithm",
                 "showCustomizedView": "Show customized view",
                 "showParentMembers": "Show parent members",
@@ -533,8 +1154,11 @@
                 "suppressEmptyRowsColumns": "Suppress empty rows/columns",
                 "tableFunctions": "Table functions",
                 "templateEditing": "Template editing",
-                "undo": "Undo"
+                "undo": "Undo",
+                "unlockSchema": "Unlock schema",
+                "whatIfTitle": "What If"
             },
+            "sliceVersionError": "You must slice on Version first",
             "userRoleError": "User does not have valid roles for the execution of the selected document",
             "viewCockpit": "View cockpit document",
             "yourRating": "Your rating"
@@ -542,8 +1166,22 @@
         "registry": {
             "clearFilters": "Clear",
             "column": "Column/s",
+            "copyPasteValidationErrors": {
+                "checkbox": "Cannot paste checkbox values",
+                "dropdown": "Dropdown options doesn't contain pasted value",
+                "notEditable": "Cannot paste in not editable column",
+                "temporal": "Cannot paste temporal values"
+            },
             "filter": "Filter",
             "filters": "Filters",
+            "grid": {
+                "addRow": "Add Row",
+                "cloneRows": "Clone Rows",
+                "deleteRows": "Delete Rows",
+                "rowsSelected": " rows selected"
+            },
+            "isEditableField": "Editable column. Click on a cell and select/enter the new value",
+            "numberFormatNotSupported": "Number format is not supported.",
             "select": "Select",
             "title": "Registry Document",
             "warning": "Warning",
@@ -613,6 +1251,7 @@
         "sourceCode": "Source code available on "
     },
     "knScheduler": {
+        "customCronHint": "Writing your own custom schedulation expression make sure the format is compliant to Quartz (more info <a target=\"_blank\" href=\"http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/crontrigger.html#format\">here</a>)",
         "enableSchedulation": "Enable schedulation",
         "everyDay": "Every {day} day/s ",
         "everyMonth": "Every {month} month/s ",
@@ -620,6 +1259,7 @@
         "everyWeek": "Every {week} week/s",
         "everyYear": "Every {year} year/s",
         "in": "In",
+        "invalidCronExpression": "Invalid cron expression",
         "pauseSchedulation": "Pause schedulation",
         "resumeSchedulation": "Resume schedulation",
         "schedulationPaused": "Schedulation paused",
@@ -636,7 +1276,7 @@
             "execution": "Single Execution",
             "expiredWarning": "WARNING: The alert is expired",
             "hint": "The Alert definition allows you to define a serie of action to start when one or more KPI reach a specific threshold. You can set email alert, execute ETL or call a context broker .Click on one existing item from the list on the side, or press the \"+\" button to add one.",
-            "kpiEditing": "Kpi editing in progres",
+            "kpiEditing": "Kpi editing in progress",
             "kpiEditingMessage": "Current kpi have associated action and will be removed. Are you sure?",
             "kpiListener": "Listener",
             "label": "Label",
@@ -684,6 +1324,59 @@
             "title": "KPI Definition",
             "tresholdTitle": "Threshold",
             "useIt": "Use It"
+        },
+        "kpiDocumentDesigner": {
+            "addScorecardAssociation": "Add Scorecard Association",
+            "color": "Color",
+            "font": {
+                "extended": "Extended (16px)",
+                "large": "Large (18px)",
+                "medium": "Medium (14px)",
+                "small": "Small (10px)",
+                "xlarge": "Extra-large (24px)",
+                "xsmall": "Extra-small (8px)",
+                "xxlarge": "Very Large (40px)"
+            },
+            "fontFamily": {
+                "arial": "Arial",
+                "courierNew": "Courier-new",
+                "roboto": "Roboto",
+                "tahoma": "Tahoma",
+                "timesNewRoman": "Times New Roman",
+                "verdana": "verdana"
+            },
+            "fontSize": "Font-size",
+            "fontWeight": {
+                "bold": "Bold",
+                "light": "Light",
+                "normal": "Normal",
+                "title": "Font Weight"
+            },
+            "kpiCard": "Kpi Card",
+            "kpiList": "KPI List",
+            "kpiName": "Kpi name",
+            "precision": "Precision",
+            "prefix": "Prefix",
+            "prefixSuffixLabel": "Prefix / Suffix label",
+            "rangeMaxValue": "Range Max Value",
+            "rangeMinValue": "Range Min Value",
+            "saveDialogTitle": "KPI Document Designer Save",
+            "saveSubheader": "Please enter a valid name",
+            "saveTitle": "KPI Name is required",
+            "scorecard": "Scorecard",
+            "scorecardList": "Scorecard List",
+            "showLabelAs": "Show label as",
+            "showPercentage": "Show Percentage",
+            "showTarget": "Show Target",
+            "showThreshold": "Show Threshold",
+            "showValue": "Show Value",
+            "speedometer": "Speedometer",
+            "suffix": "Suffix",
+            "title": "Kpi Document Designer",
+            "typeOfDocument": "Type of Document",
+            "units": "Units",
+            "viewAs": "View as",
+            "viewAsPlaceholder": "Select view as"
         },
         "kpiScheduler": {
             "addKpiAssociation": "Add KPI associations",
@@ -977,6 +1670,7 @@
             "hindDesc": "Hint about Description",
             "hindDescMessage": "This field set the description of the navigation visualizable within the selection popup. The popup will be shown if there are multiple cross navigations startable by the same document.It's possible to use parameters (output or input types) of the original document through the syntax $P(source_parameter_name).",
             "hint": "Cross-navigation management functionality allows you to create the link between document navigations. You can select the type of navigation and connect che parameters value from output to input. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "hintDrag": "To connect parameters between documents drag and drop them from the starting document to the target one.",
             "incompatibleTypes": "Incompatible types",
             "incompatibleTypesMessage": "{originParam} parameter's type not compatible with type of parameter {targetParam}",
             "input": "Input",
@@ -1057,8 +1751,16 @@
             "ckanSkipRows": "Start From Row Number",
             "ckanUrl": "CKAN Url",
             "ckanXslSheetNumber": "Sheet Number",
+            "confirmMsg": "You will lose all unsaved changes, are you sure you want to open Data Preparation?",
             "creationUser": "Creation User",
+            "dataPreparation": {
+                "datasetInvolvedIntoDataPrep": "Dataset is involved in a Data Preparation process, do you want to proceed?"
+            },
+            "derived": {
+                "checkForExistingDerivedDatasets": "Dataset has active derived datasets, do you want to proceed?"
+            },
             "dataframeName": "Dataframe variable name",
+            "decrypt": "Decrypt",
             "deleteAllParams": "Clear all dataset parameters",
             "deleteAllParamsMsg": "Are you sure you want to delete all dataset parameters?",
             "deleteAllRequestHeaderMsg": "Are you sure you want to delete all REST request headers",
@@ -1090,16 +1792,19 @@
             "jsonPathAttributes": "JSON Path Attributes",
             "jsonPathValue": "JSON Path Value",
             "metadataInfo": "You cannot open fields metadata for the dataset that is not saved, please save it first.",
+            "monitoring": "Monitoring",
             "noLinkedTables": "There are no linked tables.",
             "noSourceSelectedWarning": "Please select a Source",
             "noSourceTables": "There are no source tables for selected dataset.",
             "noTablesToLink": "There are no tables to link in this source.",
             "noVersions": "There are no previous versions of this dataset, save it with changes to create an older version.",
-            "oldVersions": "Older Dataset Versions",
+            "oldVersions": "Dataset Versions",
+            "openDP": "Open data preparation",
             "openQbeButton": "Open Qbe",
             "params": "Parameters",
             "peristenceWarning": "Dataset with parameters cannot be persisted!",
             "persistTableName": "Persist Table Name",
+            "personal": "Personal",
             "pivotColName": "Category Column to be Pivoted",
             "pivotColValue": "Value Column to be Pivoted",
             "pivotIsNumRows": "Automatic Columns numeration?",
@@ -1127,10 +1832,12 @@
             "restRequestBody": "Request Body",
             "restoreMsg": "Do you want to restore the dataset version?",
             "restoreTitle": "Restore dataset version",
+            "saveTitle": "Save dataset",
             "scheduling": "Scheduling",
             "scope": "Scope",
             "selectDatasetType": "DataSet Type",
             "selectedTables": "Selected Tables",
+            "showMetadataQueryInfo": "To update the metadata save the data set.",
             "solrCollection": "Collection",
             "solrFacetField": "Facet Field (comma-separated values)",
             "solrFacetPrefix": "Facet Prefix",
@@ -1139,13 +1846,15 @@
             "sparqlDefaultGraphIri": "Default Graph IRI",
             "sparqlEndpoint": "Sparql Endpoint",
             "sparqlExecutionTimeout": "Execution timeout(s)",
+            "subjectId": "Subject id",
             "tableEmpty": "Click on the + icon to insert data.",
             "timestampFormat": "Timestamp Format",
             "title": "Dataset Management",
             "typeOrJsonPathValue": "Type or JSON Path Type",
             "viewQbeButton": "View Qbe Query",
             "viewQbeMsg": "The dataset should be saved before viewing the QBE query",
-            "viewQbeWarning": "Cannot open QBE query"
+            "viewQbeWarning": "Cannot open QBE query",
+            "viewSQLButton": "View SQL Query"
         },
         "domainsManagement": {
             "domainCode": "Domain code",
@@ -1160,6 +1869,7 @@
             "deleteError": "Error",
             "functional": "Functional",
             "hint": "Driver models a concept or a piece of data frequently used as a distinguishing criterion on the global data context.Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "noModesSelected": "No modes selected",
             "options": "Options",
             "partialSuccessMessage": "Not all data has been updated successfully. Check again for unsaved informations.",
             "temporal": "Temporal",
@@ -1180,6 +1890,11 @@
                 "selectLov": "Select LOV",
                 "title": "Use modes"
             }
+        },
+        "eventsManagement": {
+            "eventModel": "Select favourite type",
+            "title": "Events Management",
+            "user": "User"
         },
         "functionalitiesManagement": {
             "creation": "Creation",
@@ -1282,7 +1997,7 @@
                 "formula": "Formula",
                 "glossary": "Glossary",
                 "glossaryHint": "Edit the input to change the glossary name",
-                "help": "Select a Glossary from the combo box to show its word hierarchy structure or type a name to create a new one. You can edit it by adding nodes or by dropping words from the right side list",
+                "help": "Select a Glossary from the combo box to show its word hierarchy structure. You can edit it by adding nodes or by dropping words from the right side list",
                 "hint": "The Glossary definition page allows you to create glossary to identify a set of words to apply in different documents and datasets. It's also possible to create a word hierarchy for each glossary. Select one existing item from the dropdown, or press the \"+\" button to add one.",
                 "newNode": "New node",
                 "saveTitle": "New glossary",
@@ -1804,6 +2519,20 @@
             "zipFileName": "Zip file name",
             "zipMailDocument": "Send zipped file?"
         },
+        "scorecards": {
+            "addKpi": "Add Kpi",
+            "addKpiHint": "A Target is a KPI container. It will show the trend for a specific KPI groups.",
+            "addPerspective": "Add Perspective",
+            "addPerspectiveHint": "To create a scorecard at least one perspective (card) should be present. Click on add perspective button to add the first one.",
+            "addTarget": "Add Target",
+            "addTargetHint": "A perspective is the \"card\" container. Add one or more target to assign them some KPIs.",
+            "majority": "Majority",
+            "majorityWithPriority": "Majority with priority",
+            "perspectives": "Perspectives",
+            "priority": "Priority",
+            "scorecardDesigner": "Scorecard Designer",
+            "title": "Scorecard List"
+        },
         "templatePruning": {
             "documentSelection": "Document Selection",
             "documentSelectionMessage": "Select the documents you want to delete whose template is older than the date entered above",
@@ -1836,6 +2565,7 @@
         },
         "timespan": {
             "cloneAlreadyDefined": "The next timespan is already defiend",
+            "hint": "No timespan selected",
             "invalidDatesError": "The dates are not valid",
             "noIntervalError": "Please define at least one interval",
             "startDateGreaterError": "Start date greater than end date",
@@ -1901,6 +2631,12 @@
         },
         "workspaceManagement": {
             "dataPreparation": {
+                "dataPreparationIsApplyingTheChanges": "Data preparation is applying the changes",
+                "dataPreparationIsCompleted": "Data preparation is completed",
+                "dataPreparationIsCreatingFiles": "The data preparation is creating the necessary files",
+                "dataPreparationIsManagingTheDataset": "Data preparation is managing the dataset",
+                "dataPreparationIsStarting": "Data preparation is starting",
+                "dataPreparationStoppedWithErrors": "Data preparation was aborted due to an error that occurred during the process",
                 "dataset": {
                     "description": "Description",
                     "label": "Label",
@@ -1920,6 +2656,9 @@
                 },
                 "errors": {
                     "updatingSchedulation": "An error occurred while updating schedulation"
+                },
+                "info": {
+                    "dataPrepIsLoadingAndWillBeOpened": "Data preparation is in progress... You don't have to wait until it's done. If you continue or wait here, the data preparation will be opened when the process is completed successfully."
                 },
                 "label": "Data preparation",
                 "monitoring": {
@@ -1978,6 +2717,7 @@
                         "label": "Merge columns"
                     },
                     "newChar": "New char",
+                    "numOfChars": "Number of characters",
                     "number": "Number",
                     "numberOfChars": "Number of characters",
                     "oldChar": "Old char",
@@ -2047,6 +2787,7 @@
             },
             "businessClass": "Business Class",
             "businessView": "Business View",
+            "decrypt": "Decrypt",
             "editJoin": "Edit Join Relationship",
             "inbound": {
                 "name": "Insert a Business Relationship Name",
@@ -2056,6 +2797,7 @@
             "newBusiness": "New Business Class",
             "newView": "New Business View",
             "noUnusedFields": "No columns to add",
+            "personal": "Personal",
             "physTable": "Physical Table",
             "physicalColumn": "Physical Column",
             "physicalColumnHint": "The original physical column of this column",
@@ -2064,6 +2806,7 @@
             "sourceAttr": "Source Attributes",
             "sourceHint": "Select source table",
             "sourceTable": "Source Table",
+            "subjectId": "Subject Id",
             "summary": "Summary",
             "summaryHint": "Link tables to see the summary",
             "tabView": {
@@ -2144,6 +2887,7 @@
         },
         "detailView": {
             "hideList": "Hide List",
+            "modifyCalcField": "Modify calculated field",
             "noPreview": "Nothing to preview",
             "parameterDuplicates": "There are parameters with a duplicate name!",
             "showList": "Show List",
@@ -2275,6 +3019,7 @@
     },
     "workspace": {
         "advancedData": {
+            "chooseDataset": "Choose dataset",
             "title": "Data preparation"
         },
         "buttonsTooltips": {
@@ -2303,6 +3048,54 @@
             "selectedDatasetsMessage": "Click to remove from federation",
             "title": "Federation definition"
         },
+        "gis": {
+            "datasetJoinTitle": "Dataset Join",
+            "datasetLayerTitle": "Dataset & Layer",
+            "dnl": {
+                "addDataset": "add dataset",
+                "addFilters": "add filters",
+                "addLayer": "add layer",
+                "changeDataset": "change dataset",
+                "changeDsMessage": "Do you want to confirm the dataset modification? This operation will undo all previous configuration.",
+                "changeLayer": "change layer",
+                "changeLayerMessage": "Do you want to confirm the layer modification? This operation will undo all dataset join configuration.",
+                "datasetList": "Dataset List",
+                "dialogEmptyInfo": "No available datasets",
+                "driverParameter": "Driver parameter",
+                "driversDialogEmpty": "No available drivers",
+                "driversTableEmpty": "Add a filter driver",
+                "emptyInfo": "Add a dataset",
+                "layerFilters": "Layer Filters",
+                "layerList": "Layer List",
+                "layersDialogEmpty": "No available layers",
+                "layersTableEmpty": "Add a layer",
+                "openMapWarning": "Opening the map will undo all unsaved modifications, are you sure you want to continue?"
+            },
+            "dsj": {
+                "addButton": "add join column",
+                "addFilter": "add filter",
+                "addIndicator": "add indicator",
+                "dsJoinCol": "Dataset join column",
+                "lyrJoinCol": "Layer join column"
+            },
+            "editMap": "Edit Map",
+            "fieldRequired": "Field required",
+            "filtersMenu": "Filters & Menu",
+            "indicators": "Indicators",
+            "menu": {
+                "crossNavigationMultiselect": "Enable cross with multiselection",
+                "showBaseLayer": "Enable base layer selection",
+                "showDistanceCalculator": "Enable distance calculator",
+                "showDownloadButton": "Enable download button",
+                "showLayer": "Enable layer selection",
+                "showLegendButton": "Enable show/hide legend button",
+                "showMapConfig": "Enable map style configuration",
+                "showRightConfigMenu": "Enable map configuration menu",
+                "showSelectMode": "Enable mode selection"
+            },
+            "save": "Save new map",
+            "title": "GIS Document Designer"
+        },
         "hint": "Workspace is your personal space where you can find your documents and datasets. Click one of the items categories in the left list to select and interact with them.",
         "menuLabels": {
             "advanced": "Data Preparation",
@@ -2316,6 +3109,7 @@
             "schedulation": "Schedulation"
         },
         "myAnalysis": {
+            "editAnalysis": "Edit Analysis",
             "geoRef": "Geo-referenced analysis",
             "menuItems": {
                 "clone": "Clone Document",
@@ -2328,36 +3122,38 @@
             }
         },
         "myData": {
-            "cloneDataset": "Clone Dataset",
+            "cloneDataset": "Clone",
             "clonedDatasetWizard": "Cloned Dataset Wizard",
-            "csvExport": "Export Dataset to CSV",
+            "csvExport": "CSV",
             "datasetPreview": "Dataset Preview",
-            "deleteDataset": "Delete Dataset",
+            "deleteDataset": "Delete",
             "driverable": "Drivable",
             "exportSuccess": "The download has started in background. You will find the result file in your download page.",
             "fileDownload": "Download Dataset file",
-            "isPreparing": "Preparing avro file...",
+            "isPreparing": "Preparing dataset...",
             "modified": "Modified",
             "monitoring": "Monitoring",
             "openData": "Import Open Data",
-            "openDataPreparation": "Open Data Preparation",
+            "openDataPreparation": "Open in Data Preparation",
             "parametrical": "Parametrical",
             "parseError": "Impossible to parse file. Check its content and upload it again",
             "prepareData": "Prepare Data",
-            "shareDataset": "Share/Unshare Dataset",
+            "shareDataset": "Share/Unshare",
             "shareDatasetHint": "By selecting a category from the combo box you are sharing the data set for all the users that are able to manage the specified data set category.",
             "tablePrefix": "Table Prefix",
             "title": "My Data",
             "unshareDataset": "Unshare Dataset",
+            "userRoleError": "User does not have valid roles for the execution of the selected model",
             "wizardTitle": "Dataset Wizard",
-            "xlsxExport": "Export Dataset to XLSX"
+            "xlsxExport": "XLSX"
         },
         "myModels": {
-            "deleteDataset": "Delete dataset",
-            "editDataset": "Edit dataset",
-            "openInQBE": "Open dataset in QBE",
-            "showInfo": "Show dataset info",
-            "title": "My Models"
+            "deleteDataset": "Delete",
+            "editDataset": "Edit",
+            "openInQBE": "Open in QBE",
+            "showInfo": "Show info",
+            "title": "My Models",
+            "userRoleError": "User does not have valid roles for the execution of the selected model"
         },
         "myRepository": {
             "destinationFolder": "Destination folder",

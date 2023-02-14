@@ -17,6 +17,7 @@
 import { defineComponent } from 'vue'
 import Dialog from 'primevue/dialog'
 import workspaceCockpitDialogDescriptor from './WorkspaceCockpitDialogDescriptor.json'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'workspace-cockpit-dialog',
@@ -31,17 +32,21 @@ export default defineComponent({
     },
     computed: {},
     watch: {},
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.createUrl()
     },
     methods: {
         createUrl() {
-            const user = (this.$store.state as any).user
+            const user = (this.store.$state as any).user
             const language = user.locale.split('_')[0]
             const uniqueID = user.userUniqueIdentifier
             const country = user.locale.split('_')[1]
 
-            this.url = process.env.VUE_APP_HOST_URL + `/knowagecockpitengine/api/1.0/pages/edit?NEW_SESSION=TRUE&SBI_LANGUAGE=${language}&SBI_SCRIPT=&user_id=${uniqueID}&SBI_COUNTRY=${country}&SBI_ENVIRONMENT=WORKSPACE&IS_TECHNICAL_USER=true&documentMode=EDIT`
+            this.url = import.meta.env.VITE_HOST_URL + `/knowagecockpitengine/api/1.0/pages/edit?NEW_SESSION=TRUE&SBI_LANGUAGE=${language}&SBI_SCRIPT=&user_id=${uniqueID}&SBI_COUNTRY=${country}&SBI_ENVIRONMENT=WORKSPACE&IS_TECHNICAL_USER=true&documentMode=EDIT`
         },
         close() {
             this.$emit('close')

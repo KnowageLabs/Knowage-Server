@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Breadcrumb from 'primevue/breadcrumb'
 import DocumentBrowserBreadcrumb from './DocumentBrowserBreadcrumb.vue'
 
@@ -66,7 +68,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Breadcrumb,
                 'router-link': true

@@ -32,8 +32,9 @@
                     <span>{{ $t('kpi.alert.type') }}</span>
                 </template>
                 <TypeCard
+                    :activeTab="activeTab"
                     :selectedDataset="selectedDataset"
-                    :datasetTypes="datasetTypes"
+                    :datasetTypes="filteredDatasetTypes"
                     :dataSources="dataSources"
                     :businessModels="businessModels"
                     :scriptTypes="scriptTypes"
@@ -42,7 +43,7 @@
                     :rEnvironments="rEnvironments"
                     @fileUploaded="selectedDataset.fileUploaded = true"
                     @touched="$emit('touched')"
-                    @qbeSaved="getSelectedDataset"
+                    @queryEdited="showMetadataQueryInfo = true"
                 />
             </TabPanel>
 
@@ -50,7 +51,7 @@
                 <template #header>
                     <span>{{ $t('kpi.measureDefinition.metadata') }}</span>
                 </template>
-                <MetadataCard :selectedDataset="selectedDataset" @touched="$emit('touched')" />
+                <MetadataCard :selectedDataset="selectedDataset" :showMetadataQueryInfoProp="showMetadataQueryInfo" @touched="$emit('touched')" />
             </TabPanel>
 
             <TabPanel v-if="selectedDataset.dsTypeCd == 'Query'">
@@ -60,13 +61,26 @@
                 <LinkCard :selectedDataset="selectedDataset" :metaSourceResource="metaSourceResource" :activeTab="activeTab" @addTables="onAddLinkedTables" @removeTables="onRemoveLinkedTables" />
             </TabPanel>
 
-            <TabPanel>
+            <TabPanel v-if="selectedDataset.dsTypeCd != 'Prepared'">
                 <template #header>
                     <span>{{ $t('cron.advanced') }}</span>
                 </template>
                 <AdvancedCard :selectedDataset="selectedDataset" :transformationDataset="transformationDataset" :schedulingData="scheduling" @touched="$emit('touched')" />
             </TabPanel>
         </TabView>
+
+        <Button v-if="selectedDataset.dsTypeCd == 'Prepared' || isOpenInQBEVisible(selectedDataset)" icon="far fa-share-from-square" class="p-button-text p-button-rounded p-button-plain advancedTransformations" @click="toggleMenu($event, selectedDataset)"></Button>
+        <PreparedDataset
+            v-if="selectedDataset.dsTypeCd == 'Prepared'"
+            :selectedDataset="selectedDataset"
+            :showMonitoringDialog="showMonitoringDialog"
+            @closeMonitoringDialog="showMonitoringDialog = false"
+            :showDataPreparation="showDataPreparation"
+            @closeDataPreparation="showDataPreparation = false"
+        />
+        <QBE v-if="qbeVisible" :sourceDataset="selectedDataset" @close="closeQbe" />
+
+        <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" :popup="true" />
 
         <WorkspaceDataPreviewDialog :visible="showPreviewDialog" :propDataset="previewDataset" @close="showPreviewDialog = false" :previewType="'dataset'" :loadFromDatasetManagement="true"></WorkspaceDataPreviewDialog>
     </div>
@@ -85,9 +99,14 @@ import MetadataCard from './metadataCard/DatasetManagementMetadataCard.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import WorkspaceDataPreviewDialog from '@/modules/workspace/views/dataView/dialogs/WorkspaceDataPreviewDialog.vue'
+import mainStore from '../../../../App.store'
+import { mapState, mapActions } from 'pinia'
+import Menu from 'primevue/menu'
+import PreparedDataset from '@/modules/managers/datasetManagement/detailView/preparedDataset/DatasetManagementPreparedDataset.vue'
+import QBE from '@/modules/qbe/QBE.vue'
 
 export default defineComponent({
-    components: { TabView, TabPanel, DetailCard, AdvancedCard, LinkCard, TypeCard, MetadataCard, WorkspaceDataPreviewDialog },
+    components: { TabView, TabPanel, DetailCard, AdvancedCard, LinkCard, TypeCard, MetadataCard, WorkspaceDataPreviewDialog, Menu, PreparedDataset, QBE },
     props: {
         id: { type: String, required: false },
         scopeTypes: { type: Array as any, required: true },
@@ -104,6 +123,9 @@ export default defineComponent({
         datasetToCloneId: { type: Number as any }
     },
     computed: {
+        ...mapState(mainStore, {
+            user: 'user'
+        }),
         buttonDisabled(): any {
             return this.v$.$invalid
         }
@@ -118,6 +140,7 @@ export default defineComponent({
             selectedDataset: {} as any,
             previewDataset: {} as any,
             selectedDatasetVersions: [] as any,
+            filteredDatasetTypes: [] as any,
             scheduling: {
                 repeatInterval: null as String | null
             } as any,
@@ -125,7 +148,12 @@ export default defineComponent({
             loading: false,
             loadingVersion: false,
             showPreviewDialog: false,
-            activeTab: 0
+            showMetadataQueryInfo: false,
+            activeTab: 0,
+            qbeVisible: false,
+            menuButtons: [] as any,
+            showMonitoringDialog: false,
+            showDataPreparation: false
         }
     },
     created() {
@@ -142,19 +170,29 @@ export default defineComponent({
     },
     validations() {},
     methods: {
+        ...mapActions(mainStore, ['setInfo', 'setError']),
         //#region ===================== Get All Data ====================================================
         async getSelectedDataset() {
-            this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.id}`)
+            await this.$http
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.id}`)
                 .then((response: AxiosResponse<any>) => {
                     this.selectedDataset = response.data[0] ? { ...response.data[0] } : {}
+
+                    this.selectedDataset.restJsonPathAttributes ? (this.selectedDataset.restJsonPathAttributes = JSON.parse(this.selectedDataset.restJsonPathAttributes ? this.selectedDataset.restJsonPathAttributes : '[]')) : []
+                    this.selectedDataset.restRequestHeaders ? (this.selectedDataset.restRequestHeaders = JSON.parse(this.selectedDataset.restRequestHeaders ? this.selectedDataset.restRequestHeaders : '{}')) : {}
+
+                    if (this.selectedDataset.restRequestHeaders) {
+                        const restRequestHeadersKeys = Object.keys(this.selectedDataset.restRequestHeaders)
+                        this.selectedDataset.restRequestHeaders = restRequestHeadersKeys.map((e) => ({ name: e, value: this.selectedDataset.restRequestHeaders[e] }))
+                    }
+
                     this.selectedDataset.pythonEnvironment ? (this.selectedDataset.pythonEnvironment = JSON.parse(this.selectedDataset.pythonEnvironment ? this.selectedDataset.pythonEnvironment : '{}')) : ''
                 })
                 .catch()
         },
         async getSelectedDatasetVersions() {
-            this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/olderversions/${this.id}`)
+            await this.$http
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/olderversions/${this.id}`)
                 .then((response: AxiosResponse<any>) => {
                     response.data.root ? (this.selectedDatasetVersions = response.data.root) : (this.selectedDatasetVersions = [])
                 })
@@ -166,9 +204,17 @@ export default defineComponent({
                 this.loading = true
                 await this.getSelectedDataset()
                 await this.getSelectedDatasetVersions()
+                this.insertCurrentVersion()
             } else {
                 this.selectedDataset = { ...detailViewDescriptor.newDataset }
                 this.selectedDatasetVersions = []
+            }
+            this.filteredDatasetTypes = this.datasetTypes
+        },
+        insertCurrentVersion() {
+            if (this.selectedDatasetVersions.length === 0) {
+                const selectedType = this.datasetTypes.find((type) => type.VALUE_CD === this.selectedDataset.dsTypeCd)
+                this.selectedDatasetVersions.push({ type: selectedType.VALUE_DS, userIn: this.selectedDataset.owner, versNum: 0, dateIn: this.selectedDataset.dateIn, dsId: this.selectedDataset.id })
             }
         },
         //#endregion ===============================================================================================
@@ -183,9 +229,9 @@ export default defineComponent({
             })
         },
         async cloneDataset(datasetId) {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${datasetId}`).then(async (response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${datasetId}`).then(async (response: AxiosResponse<any>) => {
                 if (response.data[0].dsTypeCd === 'File') {
-                    await this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/clone-file?fileName=${response.data[0].fileName}`)
+                    await this.$http.put(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/clone-file?fileName=${response.data[0].fileName}`)
                 }
                 delete response.data[0].id
                 response.data[0].label = '...'
@@ -199,25 +245,67 @@ export default defineComponent({
 
         //#region ===================== Save/Update Dataset & Tags =================================================
         async saveDataset() {
-            this.$emit('showSavingSpinner')
             let dsToSave = { ...this.selectedDataset } as any
-            let restRequestHeadersTemp = {}
-            if (dsToSave.dsTypeCd.toLowerCase() == 'rest' || dsToSave.dsTypeCd.toLowerCase() == 'solr') {
-                for (let i = 0; i < dsToSave.restRequestHeaders.length; i++) {
-                    restRequestHeadersTemp[dsToSave.restRequestHeaders[i]['name']] = dsToSave.restRequestHeaders[i]['value']
-                }
+            if (this.user?.functionalities?.includes('DataPreparation') && dsToSave.id) {
+                await this.$http
+                    .get(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/instance/dataset/' + dsToSave.id, { headers: { 'X-Disable-Interceptor': 'true' } })
+                    .then((response: AxiosResponse<any>) => {
+                        if (response.data) {
+                            this.$confirm.require({
+                                icon: 'pi pi-exclamation-triangle',
+                                message: this.$t('managers.datasetManagement.dataPreparation.datasetInvolvedIntoDataPrep'),
+                                header: this.$t('managers.datasetManagement.saveTitle'),
+                                accept: () => this.checkDerived(dsToSave)
+                            })
+                        } else {
+                            this.checkDerived(dsToSave)
+                        }
+                    })
+                    .catch((err) => {
+                        this.setError({ title: 'Server error', msg: err.data.errors[0].message })
+                    })
+            } else {
+                this.checkDerived(dsToSave)
             }
-            this.previewDataset['restRequestHeaders'] = JSON.stringify(restRequestHeadersTemp)
-            dsToSave['restJsonPathAttributes'] && dsToSave['restJsonPathAttributes'].length > 0 ? (dsToSave.restJsonPathAttributes = JSON.stringify(dsToSave.restJsonPathAttributes)) : (dsToSave.restJsonPathAttributes = '')
+        },
+        async checkDerived(dsToSave) {
+            await this.$http
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/datasets/dataset/' + dsToSave.label + '/derived', { headers: { 'X-Disable-Interceptor': 'true' } })
+                .then((response: AxiosResponse<any>) => {
+                    if (response.data) {
+                        this.$confirm.require({
+                            icon: 'pi pi-exclamation-triangle',
+                            message: this.$t('managers.datasetManagement.derived.checkForExistingDerivedDatasets'),
+                            header: this.$t('managers.datasetManagement.saveTitle'),
+                            accept: () => this.proceedOnSaving(dsToSave)
+                        })
+                    } else {
+                        this.proceedOnSaving(dsToSave)
+                    }
+                })
+                .catch((err) => {
+                    this.setError({ title: 'Server error', msg: err.data.errors[0].message })
+                })
+        },
+        async proceedOnSaving(dsToSave) {
+            this.$emit('showSavingSpinner')
+            if (dsToSave.dsTypeCd.toLowerCase() == 'rest' || dsToSave.dsTypeCd.toLowerCase() == 'solr') {
+                dsToSave.restRequestHeaders = (dsToSave.restRequestHeaders || []).reduce((acc, curr) => {
+                    acc[curr['name']] = curr['value']
+                    return acc
+                }, {})
+            }
+
             dsToSave.pars ? '' : (dsToSave.pars = [])
             dsToSave.pythonEnvironment ? (dsToSave.pythonEnvironment = JSON.stringify(dsToSave.pythonEnvironment)) : ''
+
             dsToSave.meta ? (dsToSave.meta = await this.manageDatasetFieldMetadata(dsToSave.meta)) : (dsToSave.meta = [])
             dsToSave.recalculateMetadata = true
 
             dsToSave.isScheduled ? (dsToSave.schedulingCronLine = await this.formatCronForSave()) : ''
 
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/`, dsToSave, {
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/`, dsToSave, {
                     headers: {
                         Accept: 'application/json, text/plain, */*',
                         'Content-Type': 'application/json;charset=UTF-8'
@@ -225,7 +313,7 @@ export default defineComponent({
                 })
                 .then(async (response: AxiosResponse<any>) => {
                     this.touched = false
-                    this.$store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
+                    this.setInfo({ title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
                     this.selectedDataset.id ? this.$emit('updated') : this.$emit('created', response)
                     await this.saveTags(dsToSave, response.data.id)
                     await this.saveSchedulation(dsToSave, response.data.id)
@@ -236,13 +324,14 @@ export default defineComponent({
                 .catch()
                 .finally(() => this.$emit('hideSavingSpinner'))
         },
+
         async saveTags(dsToSave, id) {
             let tags = {} as any
             tags.versNum = dsToSave.versNum + 1
             tags.tagsToAdd = dsToSave.tags
 
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/${id}/dstags/`, tags, {
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasets/${id}/dstags/`, tags, {
                     headers: {
                         Accept: 'application/json, text/plain, */*',
                         'Content-Type': 'application/json;charset=UTF-8'
@@ -253,7 +342,7 @@ export default defineComponent({
         async saveSchedulation(dsToSave, id) {
             if (dsToSave.isScheduled) {
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/persistence/dataset/id/${id}`, dsToSave, {
+                    .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `scheduleree/persistence/dataset/id/${id}`, dsToSave, {
                         headers: {
                             Accept: 'application/json, text/plain, */*',
                             'Content-Type': 'application/json;charset=UTF-8'
@@ -261,7 +350,7 @@ export default defineComponent({
                     })
                     .catch()
             } else {
-                await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/persistence/dataset/label/${dsToSave.label}`).catch()
+                await this.$http.delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `scheduleree/persistence/dataset/label/${dsToSave.label}`).catch()
             }
         },
         async saveLinks(id) {
@@ -270,7 +359,7 @@ export default defineComponent({
                     if (link.added === true) {
                         delete link.added
                         await this.$http
-                            .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaDsRelationResource/${id}`, link, {
+                            .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/metaDsRelationResource/${id}`, link, {
                                 headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' }
                             })
                             .catch()
@@ -283,7 +372,7 @@ export default defineComponent({
                 this.tablesToRemove.forEach(async (link) => {
                     if (link.deleted === true) {
                         await this.$http
-                            .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaDsRelationResource/${id}/${link.tableId}`, {
+                            .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/metaDsRelationResource/${id}/${link.tableId}`, {
                                 headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' }
                             })
                             .catch()
@@ -292,12 +381,10 @@ export default defineComponent({
             }
         },
         async manageDatasetFieldMetadata(fieldsColumns) {
-            //Temporary workaround because fieldsColumns is now an object with a new structure after changing DataSetJSONSerializer
             if (fieldsColumns.columns != undefined && fieldsColumns.columns != null) {
                 var columnsArray = new Array()
-
                 var columnsNames = new Array()
-                //create columns list
+
                 for (var i = 0; i < fieldsColumns.columns.length; i++) {
                     var element = fieldsColumns.columns[i]
                     columnsNames.push(element.column)
@@ -306,9 +393,10 @@ export default defineComponent({
                 columnsNames = this.removeDuplicates(columnsNames)
 
                 for (i = 0; i < columnsNames.length; i++) {
-                    var columnObject = { displayedName: '', name: '', fieldType: '', type: '' }
+                    var columnObject = { displayedName: '', name: '', fieldType: '', type: '', personal: false, decrypt: false, subjectId: false }
                     var currentColumnName = columnsNames[i]
-                    //this will remove the part before the double dot if the column is in the format ex: it.eng.spagobi.Customer:customerId
+
+                    //remove the part before the double dot if the column is in the format ex: it.eng.spagobi.Customer:customerId
                     if (currentColumnName.indexOf(':') != -1) {
                         var arr = currentColumnName.split(':')
                         columnObject.displayedName = arr[1]
@@ -324,6 +412,12 @@ export default defineComponent({
                                 columnObject.type = element.pvalue
                             } else if (element.pname.toUpperCase() == 'fieldType'.toUpperCase()) {
                                 columnObject.fieldType = element.pvalue
+                            } else if (element.pname.toUpperCase() == 'personal'.toUpperCase()) {
+                                columnObject.personal = element.pvalue
+                            } else if (element.pname.toUpperCase() == 'decrypt'.toUpperCase()) {
+                                columnObject.decrypt = element.pvalue
+                            } else if (element.pname.toUpperCase() == 'subjectId'.toUpperCase()) {
+                                columnObject.subjectId = element.pvalue
                             }
                         }
                     }
@@ -331,12 +425,11 @@ export default defineComponent({
                 }
 
                 return columnsArray
-                // end workaround ---------------------------------------------------
             }
         },
         checkFormulaForParams() {
             if (this.selectedDataset?.query?.includes('${') && this.selectedDataset?.isPersisted) {
-                this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.datasetManagement.formulaParamError') })
+                this.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.datasetManagement.formulaParamError') })
             } else this.saveDataset()
         },
         removeDuplicates(array) {
@@ -402,7 +495,7 @@ export default defineComponent({
                     }
                 }
                 this.previewDataset['restRequestHeaders'] = JSON.stringify(restRequestHeadersTemp)
-                this.previewDataset['restJsonPathAttributes'] && this.previewDataset['restJsonPathAttributes'].length > 0 ? (this.previewDataset.restJsonPathAttributes = JSON.stringify(this.previewDataset.restJsonPathAttributes)) : (this.previewDataset.restJsonPathAttributes = '')
+                this.previewDataset['restJsonPathAttributes'] && this.previewDataset['restJsonPathAttributes'].length > 0 ? (this.previewDataset.restJsonPathAttributes = JSON.stringify(this.previewDataset.restJsonPathAttributes)) : (this.previewDataset.restJsonPathAttributes = [])
                 this.previewDataset.pars ? '' : (this.previewDataset.pars = [])
                 this.previewDataset.pythonEnvironment ? (this.previewDataset.pythonEnvironment = JSON.stringify(this.previewDataset.pythonEnvironment)) : ''
                 this.previewDataset.meta ? (this.previewDataset.meta = await this.manageDatasetFieldMetadata(this.previewDataset.meta)) : (this.previewDataset.meta = [])
@@ -425,6 +518,54 @@ export default defineComponent({
         onOlderVersionLoaded(event) {
             this.$emit('olderVersionLoaded')
             this.selectedDataset = { ...event }
+        },
+        toggleMenu(event: Event, dataset: any): void {
+            this.menuButtons = [] as any
+
+            if (this.isOpenInQBEVisible(this.selectedDataset)) {
+                this.menuButtons.push({
+                    key: 1,
+                    label: this.$t('workspace.myModels.openInQBE'),
+                    icon: 'fas fa-file-circle-question',
+                    command: () => {
+                        this.openDatasetInQbe()
+                    }
+                })
+            }
+
+            if (dataset.pars && dataset.pars?.length == 0) {
+                this.menuButtons.push({
+                    key: 2,
+                    label: this.$t('managers.datasetManagement.openDP'),
+                    icon: 'fas fa-cogs',
+                    command: () => {
+                        this.showDataPreparation = true
+                    }
+                })
+            }
+            if (dataset.dsTypeCd == 'Prepared') {
+                this.menuButtons.push({
+                    key: 3,
+                    label: this.$t('managers.datasetManagement.monitoring'),
+                    icon: 'pi pi-chart-line',
+                    command: () => {
+                        this.showMonitoringDialog = true
+                    }
+                })
+            }
+
+            // eslint-disable-next-line
+            // @ts-ignore
+            this.$refs.optionsMenu.toggle(event)
+        },
+        isOpenInQBEVisible(dataset: any) {
+            return dataset.pars?.length == 0 && ((dataset.isPersisted && dataset.dsTypeCd == 'File') || dataset.dsTypeCd == 'Query' || dataset.dsTypeCd == 'Flat')
+        },
+        openDatasetInQbe() {
+            this.qbeVisible = true
+        },
+        closeQbe() {
+            this.qbeVisible = false
         }
     }
 })
@@ -435,5 +576,12 @@ export default defineComponent({
     flex: 1;
     display: flex;
     flex-direction: column;
+}
+
+.advancedTransformations {
+    position: fixed;
+    right: 20px;
+    top: 40px;
+    z-index: 1000;
 }
 </style>

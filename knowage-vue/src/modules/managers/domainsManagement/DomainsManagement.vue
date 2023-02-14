@@ -16,8 +16,10 @@
                     :paginator="true"
                     :loading="loading"
                     :rows="20"
+                    v-model:selection="selectedDomain"
+                    selectionMode="single"
                     class="p-datatable-sm kn-table"
-                    dataKey="id"
+                    dataKey="valueId"
                     v-model:filters="filters"
                     filterDisplay="menu"
                     :globalFilterFields="domainsManagementDescriptor.globalFilterFields"
@@ -50,7 +52,7 @@
                     </template>
 
                     <Column v-for="col of domainsManagementDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :style="domainsManagementDescriptor.table.column.style" :sortable="true" class="kn-truncated">
-                        <template #filter="{filterModel}">
+                        <template #filter="{ filterModel }">
                             <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
                         </template>
                         <template #body="slotProps">
@@ -73,101 +75,106 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { iDomain } from './DomainsManagement'
-    import { FilterOperator } from 'primevue/api'
-    import { filterDefault } from '@/helpers/commons/filterHelper'
-    import { AxiosResponse } from 'axios'
-    import Column from 'primevue/column'
-    import DataTable from 'primevue/datatable'
-    import domainsManagementDescriptor from './DomainsManagementDescriptor.json'
-    import DomainsManagementDialog from './DomainsManagementDialog.vue'
-    import KnFabButton from '@/components/UI/KnFabButton.vue'
+import { defineComponent } from 'vue'
+import { iDomain } from './DomainsManagement'
+import { FilterOperator } from 'primevue/api'
+import { filterDefault } from '../../../helpers/commons/filterHelper'
+import { AxiosResponse } from 'axios'
+import Column from 'primevue/column'
+import DataTable from 'primevue/datatable'
+import domainsManagementDescriptor from './DomainsManagementDescriptor.json'
+import DomainsManagementDialog from './DomainsManagementDialog.vue'
+import KnFabButton from '../../../components/UI/KnFabButton.vue'
+import mainStore from '../../../App.store'
 
-    export default defineComponent({
-        name: 'domains-management',
-        components: {
-            Column,
-            DataTable,
-            DomainsManagementDialog,
-            KnFabButton
-        },
-        data() {
-            return {
-                domainsManagementDescriptor: domainsManagementDescriptor,
-                domains: [] as iDomain[],
-                filters: {
-                    global: [filterDefault],
-                    valueCd: {
-                        operator: FilterOperator.AND,
-                        constraints: [filterDefault]
-                    },
-                    valueName: {
-                        operator: FilterOperator.AND,
-                        constraints: [filterDefault]
-                    },
-                    domainCode: {
-                        operator: FilterOperator.AND,
-                        constraints: [filterDefault]
-                    },
-                    domainName: {
-                        operator: FilterOperator.AND,
-                        constraints: [filterDefault]
-                    },
-                    valueDescription: {
-                        operator: FilterOperator.AND,
-                        constraints: [filterDefault]
-                    }
-                } as Object,
-                formVisible: false,
-                loading: false,
-                selectedDomain: null as iDomain | null
-            }
-        },
-        created() {
-            this.loadAllDomains()
-        },
-        methods: {
-            async loadAllDomains() {
-                this.loading = true
-                await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains')
-                    .then((response: AxiosResponse<any>) => {
-                        this.domains = response.data
-                    })
-                    .finally(() => (this.loading = false))
-            },
-            deleteDomainConfirm(domainId: number) {
-                this.$confirm.require({
-                    message: this.$t('common.toast.deleteMessage'),
-                    header: this.$t('common.toast.deleteConfirmTitle'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => this.deleteDomain(domainId)
-                })
-            },
-            async deleteDomain(domainId: number) {
-                await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains/' + domainId).then(() => {
-                    this.$store.commit('setInfo', {
-                        title: this.$t('common.toast.deleteTitle'),
-                        msg: this.$t('common.toast.deleteSuccess')
-                    })
-                    this.loadAllDomains()
-                })
-            },
-            showForm(event: any) {
-                if (event) {
-                    this.selectedDomain = event.data
+export default defineComponent({
+    name: 'domains-management',
+    components: {
+        Column,
+        DataTable,
+        DomainsManagementDialog,
+        KnFabButton
+    },
+    data() {
+        return {
+            domainsManagementDescriptor: domainsManagementDescriptor,
+            domains: [] as iDomain[],
+            filters: {
+                global: [filterDefault],
+                valueCd: {
+                    operator: FilterOperator.AND,
+                    constraints: [filterDefault]
+                },
+                valueName: {
+                    operator: FilterOperator.AND,
+                    constraints: [filterDefault]
+                },
+                domainCode: {
+                    operator: FilterOperator.AND,
+                    constraints: [filterDefault]
+                },
+                domainName: {
+                    operator: FilterOperator.AND,
+                    constraints: [filterDefault]
+                },
+                valueDescription: {
+                    operator: FilterOperator.AND,
+                    constraints: [filterDefault]
                 }
-                this.formVisible = true
-            },
-            closeForm() {
-                this.selectedDomain = null
-                this.formVisible = false
-            },
-            reloadDomains() {
-                this.formVisible = false
-                this.loadAllDomains()
-            }
+            } as Object,
+            formVisible: false,
+            loading: false,
+            selectedDomain: null as iDomain | null
         }
-    })
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
+    created() {
+        this.loadAllDomains()
+    },
+    methods: {
+        async loadAllDomains() {
+            this.loading = true
+            await this.$http
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/domains')
+                .then((response: AxiosResponse<any>) => {
+                    this.domains = response.data
+                })
+                .finally(() => (this.loading = false))
+        },
+        deleteDomainConfirm(domainId: number) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteConfirmTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.deleteDomain(domainId)
+            })
+        },
+        async deleteDomain(domainId: number) {
+            await this.$http.delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/domains/' + domainId).then(() => {
+                this.store.setInfo({
+                    title: this.$t('common.toast.deleteTitle'),
+                    msg: this.$t('common.toast.deleteSuccess')
+                })
+                this.loadAllDomains()
+            })
+        },
+        showForm(event: any) {
+            if (event) {
+                this.selectedDomain = event.data
+            }
+            this.formVisible = true
+        },
+        closeForm() {
+            this.selectedDomain = null
+            this.formVisible = false
+        },
+        reloadDomains() {
+            this.formVisible = false
+            this.loadAllDomains()
+        }
+    }
+})
 </script>

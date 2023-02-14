@@ -41,6 +41,7 @@ import Dialog from 'primevue/dialog'
 import documentExecutionLinkDialogDescriptor from './DocumentExecutionLinkDialogDescriptor.json'
 import Textarea from 'primevue/textarea'
 import qs from 'qs'
+import mainStore from '../.././../../../App.store'
 
 export default defineComponent({
     name: 'document-execution-link-dialog',
@@ -66,6 +67,10 @@ export default defineComponent({
             this.loadLink()
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.loadLink()
     },
@@ -82,25 +87,26 @@ export default defineComponent({
             this.linkParameters = this.parameters as any[]
         },
         getPublicUrl() {
-            const tenet = (this.$store.state as any).user.organization
+            const tenet = (this.store.$state as any).user.organization
 
             if (!this.document) return
 
             if (this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER') {
                 if (this.embedHTML) {
-                    this.publicUrl = '<iframe width="600" height="600" src=' + process.env.VUE_APP_HOST_URL + this.$route.fullPath + ' frameborder="0"></iframe>'
+                    this.publicUrl = `<iframe width="600" height="600" src="${location.origin}${this.$route.fullPath}" frameborder="0"></iframe>`
                 } else {
-                    this.publicUrl = process.env.VUE_APP_HOST_URL + this.$route.fullPath
+                    this.publicUrl = location.origin + this.$route.fullPath
                 }
             } else {
                 if (this.embedHTML) {
                     this.publicUrl =
-                        '<iframe width="600" height="600" src=' +
-                        process.env.VUE_APP_HOST_URL +
-                        `/knowage/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&OBJECT_LABEL=${this.document.label}&TOOLBAR_VISIBLE=true&ORGANIZATION=${tenet}&NEW_SESSION=true&PARAMETERS=${qs.stringify(this.linkParameters)}` +
-                        ' frameborder="0"></iframe>'
+                        '<iframe width="600" height="600" src="' +
+                        location.origin +
+                        `/knowage${this.linkInfo?.isPublic ? '/public' : '/'}/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&OBJECT_LABEL=${this.document.label}&TOOLBAR_VISIBLE=true&ORGANIZATION=${tenet}&NEW_SESSION=true&PARAMETERS=${qs.stringify(this.linkParameters)}` +
+                        '" frameborder="0"></iframe>'
                 } else {
-                    this.publicUrl = process.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&OBJECT_LABEL=${this.document.label}&TOOLBAR_VISIBLE=true&ORGANIZATION=${tenet}&NEW_SESSION=true&PARAMETERS=${qs.stringify(this.linkParameters)}`
+                    this.publicUrl =
+                        location.origin + `/knowage${this.linkInfo?.isPublic ? '/public' : '/'}/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&OBJECT_LABEL=${this.document.label}&TOOLBAR_VISIBLE=true&ORGANIZATION=${tenet}&NEW_SESSION=true&PARAMETERS=${qs.stringify(this.linkParameters)}`
                 }
             }
         },

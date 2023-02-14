@@ -1,8 +1,7 @@
-const deepEqual = require('deep-equal')
+import deepcopy from 'deepcopy'
+import deepEqual from 'deep-equal'
 
 const childProperty = 'childNodes';
-const deepcopy = require('deepcopy');
-
 let filterTree = {}
 
 export function getFilterTree() {

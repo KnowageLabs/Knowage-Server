@@ -1,30 +1,27 @@
 import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { createTestingPinia } from '@pinia/testing'
+import { describe, expect, it, vi } from 'vitest'
 import Button from 'primevue/button'
 import DomainsManagementDialog from './DomainsManagementDialog.vue'
 import flushPromises from 'flush-promises'
 import InputText from 'primevue/inputtext'
 import PrimeVue from 'primevue/config'
+import mainStore from '../../../App.store'
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    post: axios.post.mockImplementation(() => Promise.resolve()),
-    put: axios.put.mockImplementation(() => Promise.resolve())
-}
-
-const $store = {
-    commit: jest.fn()
+    post: vi.fn().mockImplementation(() => Promise.resolve()),
+    put: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 const factory = () => {
     return mount(DomainsManagementDialog, {
         global: {
-            plugins: [PrimeVue],
+            plugins: [PrimeVue, createTestingPinia()],
             stubs: { Button, InputText },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $http
             }
         }
@@ -39,6 +36,9 @@ describe('Domains Management Dialog', () => {
     })
     it('close button returns to list without saving data', () => {})
     it('when save button is clicked data is passed', async () => {
+        const formWrapper = factory()
+        const store = mainStore()
+
         const mockedDomain = {
             valueCd: 'QUERY',
             valueName: 'sbidomains.nm.query',
@@ -47,22 +47,20 @@ describe('Domains Management Dialog', () => {
             valueDescription: 'sbidomains.ds.query'
         }
 
-        const formWrapper = factory()
         formWrapper.vm.domain = mockedDomain
         formWrapper.vm.v$.$invalid = false
         formWrapper.vm.handleSubmit()
         await flushPromises()
-        expect(axios.post).toHaveBeenCalledTimes(1)
-        expect(axios.post).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains', mockedDomain)
-        // shows success info if data is saved
-        expect($store.commit).toHaveBeenCalledTimes(1)
+        expect($http.post).toHaveBeenCalledTimes(1)
+        expect($http.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/domains', mockedDomain)
+        expect(store.setInfo).toHaveBeenCalledTimes(1)
 
         mockedDomain.valueId = 1
         formWrapper.vm.domain = mockedDomain
         formWrapper.vm.handleSubmit()
         await flushPromises()
-        expect(axios.put).toHaveBeenCalledTimes(1)
-        expect(axios.put).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains/1', mockedDomain)
-        expect($store.commit).toHaveBeenCalledTimes(2)
+        expect($http.put).toHaveBeenCalledTimes(1)
+        expect($http.put).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/domains/1', mockedDomain)
+        expect(store.setInfo).toHaveBeenCalledTimes(2)
     })
 })

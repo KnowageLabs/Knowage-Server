@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -37,6 +39,7 @@ const factory = (categoryList, selected) => {
             selected
         },
         global: {
+            plugins: [createTestingPinia()],
             stubs: {
                 Column,
                 Card,
@@ -80,6 +83,6 @@ describe('Roles Card', () => {
 
         expect(wrapper.vm.selectedCategories).toStrictEqual(mockedRoles)
         expect(wrapper.emitted()).toHaveProperty('changed')
-        expect(wrapper.emitted().changed[0][0]).toStrictEqual(mockedRoles)
+        expect(wrapper.emitted().changed[1][0]).toStrictEqual(mockedRoles)
     })
 })

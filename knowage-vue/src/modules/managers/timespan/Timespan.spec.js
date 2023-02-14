@@ -1,9 +1,12 @@
 import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
+import { createRouter, createWebHistory } from 'vue-router'
 import Button from 'primevue/button'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import flushPromises from 'flush-promises'
 import Timespan from './Timespan.vue'
+import TimespanHint from './TimespanHint.vue'
 import PrimeVue from 'primevue/config'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
@@ -61,12 +64,12 @@ const mockedTimespans = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/timespan/listDynTimespan`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/timespan/listDynTimespan`:
                 return Promise.resolve({ data: mockedTimespans })
             default:
                 return Promise.resolve({ data: [] })
@@ -75,16 +78,35 @@ const $http = {
 }
 
 const $confirm = {
-    require: jest.fn()
-}
-
-const $store = {
-    commit: jest.fn()
+    require: vi.fn()
 }
 
 const $router = {
-    push: jest.fn()
+    push: vi.fn()
 }
+
+const router = createRouter({
+    history: createWebHistory(),
+    routes: [
+        {
+            path: '/',
+            component: TimespanHint
+        },
+        {
+            path: '/timespan',
+            component: TimespanHint
+        },
+        {
+            path: '/timespan/new-timespan',
+            component: null
+        },
+        {
+            path: '/timespan/edit-timespan',
+            props: (route) => ({ id: route.query.id, clone: route.query.clone }),
+            component: null
+        }
+    ]
+})
 
 const factory = () => {
     return mount(Timespan, {
@@ -93,7 +115,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [],
+            plugins: [router, createTestingPinia()],
             stubs: {
                 Button,
                 FabButton,
@@ -105,7 +127,6 @@ const factory = () => {
             mocks: {
                 $t: (msg) => msg,
                 $http,
-                $store,
                 $confirm,
                 $router
             }
@@ -114,7 +135,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Timespan loading', () => {

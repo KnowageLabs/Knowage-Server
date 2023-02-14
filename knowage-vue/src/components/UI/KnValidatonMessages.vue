@@ -1,7 +1,7 @@
 <template>
     <div v-if="vComp.$invalid && vComp.$dirty" class="p-error">
         <small class="p-col-12" v-for="(error, index) of vComp.$errors" :key="index">
-            {{ $t(this.specificTranslateKeys && this.specificTranslateKeys[error.$validator] ? this.specificTranslateKeys[error.$validator] : `${this.defaultMessageTranslateBasePath}.${error.$validator}`, { ...error.$params, ...additionalTranslateParams }) }}
+            {{ $t(specificTranslateKeys && specificTranslateKeys[error.$validator] ? specificTranslateKeys[error.$validator] : `${defaultMessageTranslateBasePath}.${error.$validator}`, { ...error.$params, ...additionalTranslateParams }) }}
         </small>
     </div>
 </template>
@@ -25,7 +25,7 @@ export default defineComponent({
         specificTranslateKeys: Object,
         defaultMessageTranslateBasePath: {
             type: String,
-            default: process.env.VUE_APP_VALIDATION_MESSAGES_BASE_KEY
+            default: import.meta.env.VITE_VALIDATION_MESSAGES_BASE_KEY
         }
     }
 })

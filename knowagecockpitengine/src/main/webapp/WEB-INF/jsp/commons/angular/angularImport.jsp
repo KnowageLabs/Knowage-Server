@@ -57,6 +57,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <link rel="stylesheet" href="<%=urlBuilder.getResourcePath(cockpitEngineContext,"/dist/knowagecockpit-modules-styles-bundle.css")%>">
 <link rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext,"/node_modules/ng-wysiwyg/dist/editor.min.css")%>">
 
+<!-- AngularJS Slider -->
+<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/angularjs-slider/dist/rzslider.min.css")%>">
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/angularjs-slider/dist/rzslider.min.js")%>"></script>
+
+<!-- OpenLayers Extension -->
+<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/ol-ext/dist/ol-ext.min.css")%>">
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/ol-ext/dist/ol-ext.js")%>"></script>
+
 <%@include file="/WEB-INF/jsp/commons/includeCometd.jspf"%>
 <%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>
 

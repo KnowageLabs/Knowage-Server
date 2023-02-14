@@ -45,9 +45,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.service.BIObjectsModule;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
-import it.eng.spagobi.analiticalmodel.functionalitytree.service.TreeObjectsModule;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -647,14 +645,18 @@ public class DetailMenuModule extends AbstractHttpModule {
 							// + initialPath;
 
 							String idsPath = convertPathInIds(initialPath);
-							url += "&" + BIObjectsModule.MODALITY + "=" + BIObjectsModule.FILTER_TREE + "&" + TreeObjectsModule.PATH_SUBTREE + "=" + initialPath
-									+ idsPath;
-
+//							url += "&" + BIObjectsModule.MODALITY + "=" + BIObjectsModule.FILTER_TREE + "&" + TreeObjectsModule.PATH_SUBTREE + "=" + initialPath
+//									+ idsPath;
+							url = String.format("%s/%s", url, idsPath);
 						}
 					} else if (functionality.equals(SpagoBIConstants.WORKSPACE_MANAGEMENT)) {
 						String initialPath = menu.getInitialPath();
-						if (initialPath != null && !initialPath.trim().equals("")) {
-							url += "&currentOptionMainMenu" + "=" + initialPath;
+						if (initialPath != null && initialPath.equals("documents")) {
+							url += "/recent";
+						} else if (initialPath != null && initialPath.equals("datasets")) {
+							url += "/data";
+						} else if (initialPath != null && initialPath.equals("models")) {
+							url += "/models";
 						}
 					}
 
@@ -702,7 +704,7 @@ public class DetailMenuModule extends AbstractHttpModule {
 		}
 		logger.debug("OUT");
 
-		String value = functIds.stream().map(x -> x.toString()).collect(Collectors.joining("&defaultFoldersId="));
+		String value = functIds.stream().map(x -> x.toString()).collect(Collectors.joining("/"));
 
 		return value;
 	}

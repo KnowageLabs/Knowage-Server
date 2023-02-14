@@ -12,17 +12,12 @@
                     <template #end>
                         <span class="p-mr-4">{{ $t('common.creationDate') + ': ' + getFormattedDate(note.creationDate) }}</span>
                         <span class="p-mr-4">{{ $t('common.lastChangeDate') + ': ' + getFormattedDate(note.lastChangeDate) }}</span>
+                        <Button icon="pi pi-pencil" class="p-button-link" @click="onNoteEdit(note)" />
+                        <Button icon="pi pi-trash" class="p-button-link" @click="deleteNoteConfirm(note)" />
                     </template>
                 </Toolbar>
 
-                <div class="p-m-2">
-                    <Editor v-model="note.content" :readonly="true"></Editor>
-                </div>
-
-                <div class="p-d-flex p-flex-row p-jc-end p-m-2">
-                    <Button icon="pi pi-pencil" class="p-button-link" @click="onNoteEdit(note)" />
-                    <Button icon="pi pi-trash" class="p-button-link" @click="deleteNoteConfirm(note)" />
-                </div>
+                <div v-html="note.content" class="p-mt-0 p-ml-2 p-mr-2 p-mb-2 noteContent" disabled></div>
             </div>
         </template>
     </div>
@@ -33,15 +28,13 @@ import { defineComponent } from 'vue'
 import { formatDate } from '@/helpers/commons/localeHelper'
 import { iNote } from '../../DocumentExecution'
 import documentExecutionNotesDialogDescriptor from './DocumentExecutionNotesDialogDescriptor.json'
-import Editor from 'primevue/editor'
 import Message from 'primevue/message'
 import moment from 'moment'
-
-const deepcopy = require('deepcopy')
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'document-execution-notes-list',
-    components: { Editor, Message },
+    components: { Message },
     props: { propNotes: { type: Array }, document: { type: Object } },
     emits: ['editNote', 'deleteNote'],
     data() {
@@ -80,3 +73,12 @@ export default defineComponent({
     }
 })
 </script>
+
+<style lang="scss" scoped>
+.noteContent {
+    border: 1px solid var(--kn-color-borders);
+
+    padding-top: 0px !important;
+    margin-top: 0px !important;
+}
+</style>

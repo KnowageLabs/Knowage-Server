@@ -386,6 +386,23 @@ public class DataSetResource extends AbstractDataSetResource {
 		}
 	}
 
+	@GET
+	@Path("/dataset/{dsLabel}/derived")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public boolean getDerivedDataSetByDsLabel(@PathParam("dsLabel") String dsLabel) {
+		try {
+			IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
+			datasetDao.setUserProfile(getUserProfile());
+			List<IDataSet> dataset = datasetDao.loadDerivedDataSetByLabel(dsLabel);
+			if (!dataset.isEmpty())
+				return true;
+			return false;
+		} catch (Exception e) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
+		}
+	}
+
 	/**
 	 * Acquire required version of the dataset
 	 *
@@ -503,6 +520,16 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Path("/{label}")
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response deleteDataset(@PathParam("label") String label) {
+		return super.deleteDataset(label);
+	}
+
+	@DELETE
+	@Path("/id/{id}")
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public Response deleteDatasetById(@PathParam("id") int id) {
+		IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
+		IDataSet dataset = datasetDao.loadDataSetById(id);
+		String label = dataset.getLabel();
 		return super.deleteDataset(label);
 	}
 
@@ -1111,14 +1138,16 @@ public class DataSetResource extends AbstractDataSetResource {
 					tableName = dataSetManagementAPI.persistDataset(label);
 					Monitor monitorIdx = MonitorFactory.start("spagobi.dataset.persist.indixes");
 					if (tableName != null) {
-						JSONArray columnsArray = labels.getJSONArray(label);
-						Set<String> columns = new HashSet<String>(columnsArray.length());
-						for (int i = 0; i < columnsArray.length(); i++) {
-							String column = columnsArray.getString(i);
-							columns.add(column);
-						}
-						if (columns.size() > 0) {
-							dataSetManagementAPI.createIndexes(label, columns);
+						if (!labels.isNull(label)) {
+							JSONArray columnsArray = labels.getJSONArray(label);
+							Set<String> columns = new HashSet<String>(columnsArray.length());
+							for (int i = 0; i < columnsArray.length(); i++) {
+								String column = columnsArray.getString(i);
+								columns.add(column);
+							}
+							if (columns.size() > 0) {
+								dataSetManagementAPI.createIndexes(label, columns);
+							}
 						}
 					}
 					monitorIdx.stop();

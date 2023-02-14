@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import { nextTick } from 'vue'
-import axios from 'axios'
 import KnHint from '@/components/UI/KnHint.vue'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
@@ -59,36 +60,44 @@ const mockedActivities = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
-axios.get.mockImplementation(() => Promise.resolve({ data: mockedActivities }))
-axios.delete.mockImplementation(() => Promise.resolve())
-
-const $confirm = {
-    require: jest.fn()
+const $http = {
+    get: vi.fn().mockImplementation(() =>
+        Promise.resolve({
+            data: mockedActivities
+        })
+    ),
+    post: vi.fn().mockImplementation(() =>
+        Promise.resolve({
+            data: []
+        })
+    ),
+    delete: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
-const $store = {
-    commit: jest.fn()
+const $confirm = {
+    require: vi.fn()
 }
 
 const factory = () => {
     return mount(Dossier, {
         attachToDocument: true,
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: { Button, InputText, ProgressBar, DataTable, Column, Toolbar, Card, KnHint },
             mocks: {
                 $t: (msg) => msg,
-                $store,
-                $confirm
+
+                $confirm,
+                $http
             }
         }
     })
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Dossier loading', () => {

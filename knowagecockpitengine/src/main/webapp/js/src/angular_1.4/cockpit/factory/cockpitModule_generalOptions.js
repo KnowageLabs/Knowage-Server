@@ -109,6 +109,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 			 {label:'time',value:'java.sql.Time'},
 			 {label:'timestamp',value:'java.sql.Timestamp'},
 			 {label:'timestamp',value:'oracle.sql.TIMESTAMP'},
+			 {label:'timestamp',value:'java.time.LocalDateTime'},
 			 {label:'blob',value:'oracle.sql.BLOB'},
 			 {label:'clob',value:'oracle.sql.CLOB'}
 		 ],
@@ -130,6 +131,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 			"java.util.Date": {label:'date',icon:'fa fa-calendar'},
 			"java.sql.Date": {label:'date',icon:'fa fa-calendar'},
 			"java.sql.Time": {label:'time',icon:'fa fa-clock-o'},
+			"java.time.LocalDateTime" : {label:'timestamp',icon:'fa fa-clock-o'},
 			"oracle.sql.BLOB": {label:'blob',icon:'fa fa-archive'},
 			"oracle.sql.CLOB": {label:'clob',icon:'fa fa-archive'},
 			"com.simba.googlebigquery.dsi.dataengine.utilities.TimestampTz": {label:'timestamp',icon:'fa fa-calendar'}
@@ -153,7 +155,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 			 {value:'llll',hint:moment().locale(sbiModule_config.curr_language).format('llll')},
 			 {value:'LLL',hint:moment().locale(sbiModule_config.curr_language).format('LLL')},
 			 {value:'lll',hint:moment().locale(sbiModule_config.curr_language).format('lll')},
-			 {value:'DD/MM/YYYY HH:mm:SS',hint:moment().locale(sbiModule_config.curr_language).format('DD/MM/YYYY HH:mm:SS')},
+			 {value:'DD/MM/YYYY HH:mm:ss',hint:moment().locale(sbiModule_config.curr_language).format('DD/MM/YYYY HH:mm:ss')},
 			 {value:'DD/MM/YYYY HH:mm',hint:moment().locale(sbiModule_config.curr_language).format('DD/MM/YYYY HH:mm')},
 			 {value:'LL',hint:moment().locale(sbiModule_config.curr_language).format('LL')},
 			 {value:'ll',hint:moment().locale(sbiModule_config.curr_language).format('ll')},

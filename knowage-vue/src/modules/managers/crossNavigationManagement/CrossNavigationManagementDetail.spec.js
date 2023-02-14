@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import flushPromises from 'flush-promises'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
@@ -46,12 +47,12 @@ const mockedDoc = {
     DOCUMENT_AUTH: 'demoadmin'
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/documents/BestProductSingPar/parameters':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/documents/BestProductSingPar/parameters':
                 return Promise.resolve({ data: mockedInput })
             default:
                 return Promise.resolve({ data: [] })
@@ -59,13 +60,10 @@ const $http = {
     })
 }
 
-const $store = {
-    commit: jest.fn()
-}
-
 const factory = () => {
     return mount(CrossNavigationManagementDetail, {
         global: {
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 Card,
@@ -75,7 +73,6 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $http
             }
         }

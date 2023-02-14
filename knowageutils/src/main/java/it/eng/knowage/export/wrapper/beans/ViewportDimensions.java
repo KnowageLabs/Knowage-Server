@@ -15,8 +15,10 @@ public class ViewportDimensions {
 		private int width;
 		private int height;
 		private double deviceScaleFactor;
+		private boolean isMultiSheet;
 
 		public Builder() {
+
 			String widthValueAsStr = SingletonConfig.getInstance().getConfigValue(CONFIG_NAME_FOR_VIEWPORT_WIDTH);
 			String heighthValueAsStr = SingletonConfig.getInstance().getConfigValue(CONFIG_NAME_FOR_VIEWPORT_HEIGHT);
 			String deviceScaleFactorValueAsStr = SingletonConfig.getInstance().getConfigValue(CONFIG_NAME_FOR_VIEWPORT_DEVICE_SCALE_FACTOR);
@@ -24,6 +26,7 @@ public class ViewportDimensions {
 			width = Integer.parseInt(widthValueAsStr);
 			height = Integer.parseInt(heighthValueAsStr);
 			deviceScaleFactor = Double.parseDouble(deviceScaleFactorValueAsStr);
+			isMultiSheet = false;
 		}
 
 		public Builder withWidth(Integer width) {
@@ -55,8 +58,13 @@ public class ViewportDimensions {
 			return this;
 		}
 
+		public Builder withIsMultiSheet(boolean isMultiSheet) {
+			this.isMultiSheet = isMultiSheet;
+			return this;
+		}
+
 		public ViewportDimensions build() {
-			return new ViewportDimensions(width, height, deviceScaleFactor);
+			return new ViewportDimensions(width, height, deviceScaleFactor, isMultiSheet);
 		}
 	}
 
@@ -67,11 +75,20 @@ public class ViewportDimensions {
 	private final int width;
 	private final int height;
 	private final double deviceScaleFactor;
+	private final boolean isMultiSheet;
 
 	private ViewportDimensions(int width, int height, double deviceScaleFactor) {
 		this.width = width;
 		this.height = height;
 		this.deviceScaleFactor = deviceScaleFactor;
+		this.isMultiSheet = false;
+	}
+
+	private ViewportDimensions(int width, int height, double deviceScaleFactor, boolean isMultiSheet) {
+		this.width = width;
+		this.height = height;
+		this.deviceScaleFactor = deviceScaleFactor;
+		this.isMultiSheet = isMultiSheet;
 	}
 
 	public String getWidth() {
@@ -86,6 +103,10 @@ public class ViewportDimensions {
 		return Double.toString(deviceScaleFactor);
 	}
 
+	public String getIsMultiSheet() {
+		return Boolean.toString(isMultiSheet);
+	}
+
 	public ViewportDimensions withHeight(int height) {
 		return new ViewportDimensions(width, height, 0.8);
 	}
@@ -96,6 +117,10 @@ public class ViewportDimensions {
 
 	public ViewportDimensions withDeviceScaleFactor(double deviceScaleFactor) {
 		return new ViewportDimensions(width, height, deviceScaleFactor);
+	}
+
+	public ViewportDimensions withIsMultiSheet(boolean isMultiSheet) {
+		return new ViewportDimensions(width, height, deviceScaleFactor, isMultiSheet);
 	}
 
 }

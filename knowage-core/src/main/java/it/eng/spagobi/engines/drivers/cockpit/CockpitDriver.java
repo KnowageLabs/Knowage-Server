@@ -88,33 +88,37 @@ public class CockpitDriver extends GenericDriver {
 		JSONArray sheets = templateContent.getJSONArray("sheets");
 		for (int i = 0; i < sheets.length(); i++) {
 			JSONObject sheet = sheets.getJSONObject(i);
-			JSONArray widgets = sheet.getJSONArray("widgets");
-			for (int j = 0; j < widgets.length(); j++) {
-				JSONObject widget = widgets.getJSONObject(j);
-				String widgetId = widget.getString("id");
-				JSONArray columnSelectedOfDataset = new JSONArray();
-				try {
-					if (widget.has("content")) {
-						columnSelectedOfDataset = widget.getJSONObject("content").optJSONArray("columnSelectedOfDataset");
-					} else {
-						// case chart widget
-						columnSelectedOfDataset = widget.optJSONArray("columnSelectedOfDatasetAggregations");
+			try {
+				JSONArray widgets = sheet.getJSONArray("widgets");
+				for (int j = 0; j < widgets.length(); j++) {
+					JSONObject widget = widgets.getJSONObject(j);
+					String widgetId = widget.getString("id");
+					JSONArray columnSelectedOfDataset = new JSONArray();
+					try {
+						if (widget.has("content")) {
+							columnSelectedOfDataset = widget.getJSONObject("content").optJSONArray("columnSelectedOfDataset");
+						} else {
+							// case chart widget
+							columnSelectedOfDataset = widget.optJSONArray("columnSelectedOfDatasetAggregations");
+						}
+					} catch (JSONException e) {
+						logger.error("Something went wrong while getting functions associated to widget: " + widgetId, e);
+						// if something went wrong the template is malformed, just skip
 					}
-				} catch (JSONException e) {
-					logger.error("Something went wrong while getting functions associated to widget: " + widgetId, e);
-					// if something went wrong the template is malformed, just skip
-				}
-				// loop on dataset columns and look for function ids
-				if (columnSelectedOfDataset != null) {
-					for (int k = 0; k < columnSelectedOfDataset.length(); k++) {
-						JSONObject column = columnSelectedOfDataset.getJSONObject(k);
-						if (column.has("boundFunction")) {
-							String funcUuid = column.getJSONObject("boundFunction").getString("id");
-							if (!functionUuids.contains(funcUuid))
-								functionUuids.add(funcUuid);
+					// loop on dataset columns and look for function ids
+					if (columnSelectedOfDataset != null) {
+						for (int k = 0; k < columnSelectedOfDataset.length(); k++) {
+							JSONObject column = columnSelectedOfDataset.getJSONObject(k);
+							if (column.has("boundFunction")) {
+								String funcUuid = column.getJSONObject("boundFunction").getString("id");
+								if (!functionUuids.contains(funcUuid))
+									functionUuids.add(funcUuid);
+							}
 						}
 					}
 				}
+			} catch (Exception e) {
+				logger.info("Old template version. New sanitification is required.");
 			}
 		}
 

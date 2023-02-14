@@ -25,10 +25,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -59,9 +63,9 @@ import org.json.JSONObject;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.BiMap;
-import com.jamonapi.KnowageMonitor;
-import com.jamonapi.KnowageMonitorFactory;
 
+import it.eng.knowage.monitor.IKnowageMonitor;
+import it.eng.knowage.monitor.KnowageMonitorFactory;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.RequestContainerAccess;
 import it.eng.spago.error.EMFInternalError;
@@ -197,7 +201,9 @@ public class DataSetResource {
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("filters") String _filters, @QueryParam("ordering") JSONObject ordering,
 			@QueryParam("tags") List<Integer> tags) {
 
-		try (KnowageMonitor m = KnowageMonitorFactory.start("knowage.dataset.paginatedList")) {
+		IKnowageMonitor monitor = KnowageMonitorFactory.getInstance().start("knowage.datasets.catalog.list");
+
+		try {
 
 			List<DataSetResourceFilter> filters = Collections.emptyList();
 
@@ -227,9 +233,12 @@ public class DataSetResource {
 			List<DataSetMainDTO> dataSets = getListOfGenericDatasets(offset, fetchSize, filters, ordering, tags).stream().map(DataSetMainDTO::new)
 					.collect(toList());
 
+			monitor.stop();
+
 			return new DataSetResourceResponseRoot<>(dataSets);
 
 		} catch (Exception t) {
+			monitor.stop(t);
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
 		}
 	}
@@ -241,14 +250,19 @@ public class DataSetResource {
 	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getEnterpriseDataSet(@DefaultValue("-1") @QueryParam("offset") int offset,
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("typeDoc") String typeDoc) {
 
+		IKnowageMonitor monitor = KnowageMonitorFactory.getInstance().start("knowage.datasets.enterprise.list");
+
 		try {
 			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO().loadEnterpriseDataSets(offset, fetchSize, getUserProfile()).stream()
 					.map(DataSetForWorkspaceDTO::new).collect(toList());
 
 			dataSets = (List<DataSetForWorkspaceDTO>) putActions(dataSets, typeDoc);
 
+			monitor.stop();
+
 			return new DataSetResourceResponseRoot<>(dataSets);
 		} catch (Exception t) {
+			monitor.stop(t);
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
 		}
 	}
@@ -259,15 +273,21 @@ public class DataSetResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getOwnedDataSet(@DefaultValue("-1") @QueryParam("offset") int offset,
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("typeDoc") String typeDoc) {
+
+		IKnowageMonitor monitor = KnowageMonitorFactory.getInstance().start("knowage.datasets.owned.list");
+
 		try {
 			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO().loadDataSetsOwnedByUser(offset, fetchSize, getUserProfile(), true).stream()
 					.map(DataSetForWorkspaceDTO::new).collect(toList());
 
 			dataSets = (List<DataSetForWorkspaceDTO>) putActions(dataSets, typeDoc);
 
+			monitor.stop();
+
 			return new DataSetResourceResponseRoot<>(dataSets);
 
 		} catch (Exception t) {
+			monitor.stop(t);
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
 		}
 
@@ -280,14 +300,19 @@ public class DataSetResource {
 	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getSharedDataSet(@DefaultValue("-1") @QueryParam("offset") int offset,
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("typeDoc") String typeDoc) {
 
+		IKnowageMonitor monitor = KnowageMonitorFactory.getInstance().start("knowage.datasets.shared.list");
+
 		try {
 			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO().loadDatasetsSharedWithUser(offset, fetchSize, getUserProfile(), true).stream()
 					.map(DataSetForWorkspaceDTO::new).collect(toList());
 
 			dataSets = (List<DataSetForWorkspaceDTO>) putActions(dataSets, typeDoc);
 
+			monitor.stop();
+
 			return new DataSetResourceResponseRoot<>(dataSets);
 		} catch (Exception t) {
+			monitor.stop(t);
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
 		}
 
@@ -299,14 +324,20 @@ public class DataSetResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getUncertifiedDataSet(@DefaultValue("-1") @QueryParam("offset") int offset,
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("typeDoc") String typeDoc) {
+
+		IKnowageMonitor monitor = KnowageMonitorFactory.getInstance().start("knowage.datasets.uncertified.list");
+
 		try {
 			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO().loadDatasetOwnedAndShared(offset, fetchSize, getUserProfile()).stream()
 					.map(DataSetForWorkspaceDTO::new).collect(toList());
 
 			dataSets = (List<DataSetForWorkspaceDTO>) putActions(dataSets, typeDoc);
 
+			monitor.stop();
+
 			return new DataSetResourceResponseRoot<>(dataSets);
 		} catch (Exception t) {
+			monitor.stop(t);
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
 		}
 
@@ -319,6 +350,8 @@ public class DataSetResource {
 	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getMyDataDataSet(@DefaultValue("-1") @QueryParam("offset") int offset,
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("typeDoc") String typeDoc) {
 
+		IKnowageMonitor monitor = KnowageMonitorFactory.getInstance().start("knowage.datasets.all.list");
+
 		try {
 			// TODO
 			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO().loadMyDataSets(offset, fetchSize, getUserProfile()).stream()
@@ -326,9 +359,12 @@ public class DataSetResource {
 
 			dataSets = (List<DataSetForWorkspaceDTO>) putActions(dataSets, typeDoc);
 
+			monitor.stop();
+
 			return new DataSetResourceResponseRoot<>(dataSets);
 
 		} catch (Exception t) {
+			monitor.stop(t);
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
 		}
 
@@ -345,15 +381,20 @@ public class DataSetResource {
 	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getAdvancedDataSets(@DefaultValue("-1") @QueryParam("offset") int offset,
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("typeDoc") String typeDoc) {
 
+		IKnowageMonitor monitor = KnowageMonitorFactory.getInstance().start("knowage.datasets.advanced.list");
+
 		try {
 			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO().loadMyDataSets(offset, fetchSize, getUserProfile()).stream()
 					.filter(e -> e.getType().equals(DataSetConstants.DS_PREPARED)).map(DataSetForWorkspaceDTO::new).collect(toList());
 
 			dataSets = (List<DataSetForWorkspaceDTO>) putActions(dataSets, typeDoc);
 
+			monitor.stop();
+
 			return new DataSetResourceResponseRoot<>(dataSets);
 
 		} catch (Exception t) {
+			monitor.stop(t);
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
 		}
 
@@ -364,13 +405,14 @@ public class DataSetResource {
 	 *
 	 */
 	@GET
-	@Path("/advanced/{label}")
+	@Path("/advanced/{dsId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public SbiDataSet getAdvancedDataSet(@PathParam("label") String label) {
+	public SbiDataSet getAdvancedDataSet(@PathParam("dsId") int dsId) {
 
 		try {
-			SbiDataSet dataSet = DAOFactory.getSbiDataSetDAO().loadSbiDataSetByLabel(label);
+			final UserProfile userProfile = getUserProfile();
+			SbiDataSet dataSet = DAOFactory.getSbiDataSetDAO().loadSbiDataSetByIdAndOrganiz(dsId, userProfile.getOrganization());
 			return dataSet;
 
 		} catch (Exception t) {
@@ -387,8 +429,8 @@ public class DataSetResource {
 	@Path("/avro")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public List<String> getPreparedDataSets() {
-		List<String> preparedDataSets = new ArrayList<String>();
+	public List<String> getAvroDataSets() {
+		List<String> avroDataSets = new ArrayList<String>();
 		try {
 			final UserProfile userProfile = getUserProfile();
 			java.nio.file.Path avroExportFolder = Paths.get(SpagoBIUtilities.getRootResourcePath(), userProfile.getOrganization(), "dataPreparation",
@@ -396,15 +438,33 @@ public class DataSetResource {
 			File[] datasets = avroExportFolder.toFile().listFiles(File::isDirectory);
 			for (int i = 0; i < datasets.length; i++) {
 				boolean avroReady = new File(datasets[i], "ready").exists();
-				if (avroReady) {
-					preparedDataSets.add(datasets[i].getName());
+				Integer idToCheck;
+				try {
+					idToCheck = Integer.parseInt(datasets[i].getName());
+				} catch (NumberFormatException e) {
+					continue; // workaround for first developments with label datasets
+				}
+				IDataSet datasetToCheck = DAOFactory.getDataSetDAO().loadDataSetById(idToCheck);
+				if (datasetToCheck != null) {
+					FileTime creationTime = (FileTime) Files.getAttribute(Paths.get(datasets[i].getCanonicalPath() + File.separator + "data"), "creationTime");
+					BasicFileAttributes attr = Files.readAttributes(Paths.get(datasets[i].getCanonicalPath() + File.separator + "data"),
+							BasicFileAttributes.class);
+					Date fileDate = null;
+					if (attr.lastModifiedTime() != null) {
+						fileDate = new Date(attr.lastModifiedTime().toMillis());
+					} else {
+						fileDate = new Date(creationTime.toMillis());
+					}
+					if (avroReady && fileDate.compareTo(datasetToCheck.getDateIn()) > 0) {
+						avroDataSets.add(datasets[i].getName());
+					}
 				}
 			}
 		} catch (Exception e) {
-			logger.error("Cannot get list of prepared datasets", e);
+			logger.error("Cannot get list of Avro datasets", e);
 			return new ArrayList<String>();
 		}
-		return preparedDataSets;
+		return avroDataSets;
 	}
 
 	/**

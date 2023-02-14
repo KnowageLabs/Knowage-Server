@@ -47,12 +47,12 @@ import it.eng.spagobi.tools.catalogue.bo.Artifact;
 import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.dao.IArtifactsDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 @Path("2.0/mondrianSchemasResource")
 @ManageAuthorization
 public class MondrianResource extends AbstractSpagoBIResource {
 
-	private IArtifactsDAO artifactDAO = null;
 	@Context
 	private UriInfo uri;
 
@@ -65,7 +65,7 @@ public class MondrianResource extends AbstractSpagoBIResource {
 		List<Artifact> mondrians;
 
 		try {
-			artifactDAO = DAOFactory.getArtifactsDAO();
+			IArtifactsDAO artifactDAO = DAOFactory.getArtifactsDAO();
 			artifactDAO.setUserProfile(getUserProfile());
 			mondrians = artifactDAO.loadAllArtifacts("MONDRIAN_SCHEMA");
 			return mondrians;
@@ -87,13 +87,31 @@ public class MondrianResource extends AbstractSpagoBIResource {
 		Artifact artifact = null;
 
 		try {
-			artifactDAO = DAOFactory.getArtifactsDAO();
+			IArtifactsDAO artifactDAO = DAOFactory.getArtifactsDAO();
 			artifactDAO.setUserProfile(getUserProfile());
 			artifact = artifactDAO.loadArtifactById(id);
 
 		} catch (Exception e) {
 			logger.error("Error while getting artifact with id: " + id, e);
 
+		} finally {
+			logger.debug("OUT");
+		}
+		return artifact;
+	}
+
+	@GET
+	@Path("/name={name}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Artifact getByName(@PathParam("name") String name) {
+		Artifact artifact = null;
+		try {
+			IArtifactsDAO artifactDAO = DAOFactory.getArtifactsDAO();
+			artifactDAO.setUserProfile(getUserProfile());
+			artifact = artifactDAO.loadArtifactByNameAndType(name, "MONDRIAN_SCHEMA");
+		} catch (Exception e) {
+			logger.error("Error while getting artifact with name: " + name, e);
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "Error while getting artifact with name: " + name, e);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -109,7 +127,7 @@ public class MondrianResource extends AbstractSpagoBIResource {
 		List<Content> versions = null;
 
 		try {
-			artifactDAO = DAOFactory.getArtifactsDAO();
+			IArtifactsDAO artifactDAO = DAOFactory.getArtifactsDAO();
 			artifactDAO.setUserProfile(getUserProfile());
 
 			versions = artifactDAO.loadArtifactVersions(id);
@@ -130,7 +148,7 @@ public class MondrianResource extends AbstractSpagoBIResource {
 	public Content getContent(@PathParam("ID") int id, @PathParam("contentID") int contentId) {
 
 		try {
-			artifactDAO = DAOFactory.getArtifactsDAO();
+			IArtifactsDAO artifactDAO = DAOFactory.getArtifactsDAO();
 			artifactDAO.setUserProfile(getUserProfile());
 			List<Content> versions = artifactDAO.loadArtifactVersions(id);
 			for (Content content : versions) {
@@ -152,7 +170,7 @@ public class MondrianResource extends AbstractSpagoBIResource {
 	@Produces({ MediaType.APPLICATION_OCTET_STREAM })
 	public Response getContentFile(@PathParam("ID") Integer id, @PathParam("contentID") Integer contentId) {
 
-		artifactDAO = DAOFactory.getArtifactsDAO();
+		IArtifactsDAO artifactDAO = DAOFactory.getArtifactsDAO();
 		Content content = artifactDAO.loadArtifactContentById(contentId);
 		byte[] file = content.getContent();
 		String s = new String(file);
@@ -186,7 +204,7 @@ public class MondrianResource extends AbstractSpagoBIResource {
 		}
 
 		try {
-			artifactDAO = DAOFactory.getArtifactsDAO();
+			IArtifactsDAO artifactDAO = DAOFactory.getArtifactsDAO();
 			artifactDAO.setUserProfile(getUserProfile());
 
 			artifactDAO.insertArtifact(artifact);
@@ -210,7 +228,7 @@ public class MondrianResource extends AbstractSpagoBIResource {
 		Content content = new Content();
 		byte[] bytes = null;
 
-		artifactDAO = DAOFactory.getArtifactsDAO();
+		IArtifactsDAO artifactDAO = DAOFactory.getArtifactsDAO();
 
 		final FormFile file = input.getFormFileParameterValues("file")[0];
 
@@ -251,7 +269,7 @@ public class MondrianResource extends AbstractSpagoBIResource {
 
 		try {
 
-			artifactDAO = DAOFactory.getArtifactsDAO();
+			IArtifactsDAO artifactDAO = DAOFactory.getArtifactsDAO();
 			artifactDAO.setUserProfile(getUserProfile());
 			if (!artifactDAO.loadArtifactById(artifactId).getModelLocked()) {
 
@@ -286,7 +304,7 @@ public class MondrianResource extends AbstractSpagoBIResource {
 	public Response delete(@PathParam("ID") int artifactId) {
 
 		try {
-			artifactDAO = DAOFactory.getArtifactsDAO();
+			IArtifactsDAO artifactDAO = DAOFactory.getArtifactsDAO();
 			artifactDAO.setUserProfile(getUserProfile());
 
 			if (!artifactDAO.loadArtifactById(artifactId).getModelLocked()) {
@@ -327,7 +345,7 @@ public class MondrianResource extends AbstractSpagoBIResource {
 	public Response deleteContent(@PathParam("ID") int artifactId, @PathParam("contentID") int contentId) {
 
 		try {
-			artifactDAO = DAOFactory.getArtifactsDAO();
+			IArtifactsDAO artifactDAO = DAOFactory.getArtifactsDAO();
 			artifactDAO.setUserProfile(getUserProfile());
 			if (!artifactDAO.loadArtifactById(artifactId).getModelLocked()) {
 

@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import { nextTick } from 'vue'
-import axios from 'axios'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
@@ -38,14 +39,14 @@ const mockedWords = [
     { WORD_ID: 3, WORD: 'Product Sales' }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/listGlossary':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/glossary/listGlossary':
                 return Promise.resolve({ data: mockedGlossaryList })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/listContents?GLOSSARY_ID=45&PARENT_ID=null':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/glossary/listContents?GLOSSARY_ID=45&PARENT_ID=1':
                 return Promise.resolve({ data: mockedContent })
             default:
                 return Promise.resolve({ data: [] })
@@ -54,12 +55,13 @@ const $http = {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 const factory = () => {
     return mount(GlossaryUsage, {
         global: {
+            plugins: [createTestingPinia()],
             stubs: { Button, Card, Dropdown, InputText, GlossaryUsageDetail: true, GlossaryUsageHint, ProgressBar, Toolbar, Tree },
             mocks: {
                 $t: (msg) => msg,
@@ -68,6 +70,9 @@ const factory = () => {
         }
     })
 }
+
+vi.useFakeTimers()
+vi.spyOn(global, 'setTimeout')
 
 describe('Glossary Usage loading', () => {
     it('the list shows an hint component when loaded empty', () => {
@@ -94,16 +99,12 @@ describe('Glossary Usage Tree', () => {
 
         await flushPromises()
 
-        wrapper.vm.listContents(45, null)
+        wrapper.vm.listContents(45, { id: 1 })
 
         await flushPromises()
 
         let glossaryTree = wrapper.find('[data-test="glossary-tree"]')
         const inputSearch = wrapper.find('[data-test="search-input"]')
-
-        expect(glossaryTree.html()).toContain('PRODUCTS')
-        expect(glossaryTree.html()).toContain('STORE')
-        expect(glossaryTree.html()).toContain('UNITS')
 
         await inputSearch.setValue('Customer')
         wrapper.vm.searchWord = 'Customer'

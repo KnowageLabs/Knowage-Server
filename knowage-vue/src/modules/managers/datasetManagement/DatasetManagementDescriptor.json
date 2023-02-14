@@ -17,6 +17,13 @@
                         "color": "white"
                     }
                 },
+                "Derived": {
+                    "icon": "fas fa-diagram-successor",
+                    "style": {
+                        "background-color": "#ffc107",
+                        "color": "white"
+                    }
+                },
                 "Federated": {
                     "icon": "fas fa-database",
                     "style": {
@@ -42,6 +49,13 @@
                     "icon": "fab fa-java",
                     "style": {
                         "background-color": "#ffcc80",
+                        "color": "white"
+                    }
+                },
+                "Prepared": {
+                    "icon": "fas fa-database",
+                    "style": {
+                        "background-color": "#673ab7",
                         "color": "white"
                     }
                 },
@@ -93,13 +107,6 @@
                         "background-color": "#673ab7",
                         "color": "white"
                     }
-                },
-                "Prepared": {
-                    "icon": "fas fa-database",
-                    "style": {
-                        "background-color": "#673ab7",
-                        "color": "white"
-                    }
                 }
             }
         },
@@ -118,13 +125,20 @@
             }
         ],
         "defaultSortField": "label",
-        "filterFields": ["label", "name"],
+        "filterFields": ["label", "name", "tags"],
         "interaction": {
             "parameterLabel": "id",
             "parameterValue": "id",
             "type": "event"
         },
-        "sortFields": ["label", "name", "dsTypeCd"],
+        "sortFields": [
+            "label",
+            "name",
+            {
+                "label": "type",
+                "name": "dsTypeCd"
+            }
+        ],
         "textField": "name",
         "titleField": "label"
     }

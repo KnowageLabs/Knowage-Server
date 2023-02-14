@@ -6,7 +6,7 @@
                 <span v-tooltip.top="getHeaderTooltip(column)">{{ $t(column.header) }}</span>
             </template>
             <template #body="slotProps">
-                <InputText v-if="column.field === 'alias'" class="kn-material-input p-inputtext-sm qbe-simple-table-input" v-model="slotProps.data[slotProps.column.props.field]"></InputText>
+                <InputText v-if="column.field === 'alias'" class="kn-material-input p-inputtext-sm qbe-simple-table-input" v-model="slotProps.data[slotProps.column.props.field]" @change="$emit('fieldAliasChanged', slotProps.data)"></InputText>
                 <Checkbox v-else-if="column.field === 'group'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="onGroupingChanged(slotProps.data)"></Checkbox>
                 <Dropdown v-else-if="column.field === 'order'" class="kn-material-input" v-model="slotProps.data[slotProps.column.props.field]" :options="QBESimpleTableDescriptor.orderingOptions" />
                 <Dropdown v-else-if="column.field === 'funct'" class="kn-material-input" v-model="slotProps.data[slotProps.column.props.field]" :options="getAttributeOptions(slotProps.data)" :disabled="slotProps.data['group']" />
@@ -38,7 +38,7 @@ export default defineComponent({
     name: 'qbe-simple-table',
     props: { query: { type: Object as PropType<iQuery> } },
     components: { Checkbox, Column, DataTable, Dropdown, Menu },
-    emits: ['columnVisibilityChanged', 'openFilterDialog', 'openHavingDialog', 'entityDropped', 'groupingChanged'],
+    emits: ['columnVisibilityChanged', 'openFilterDialog', 'openHavingDialog', 'entityDropped', 'groupingChanged', 'openCalculatedFieldDialog', 'fieldDeleted'],
     data() {
         return {
             QBESimpleTableDescriptor,
@@ -91,6 +91,9 @@ export default defineComponent({
             if ((field.funct && field.funct !== 'NONE') || (field.type === 'inline.calculated.field' && field.fieldType === 'measure')) {
                 this.menuItems.push({ icon: 'pi pi-filter', label: this.$t('qbe.simpleTable.havings'), command: () => this.openHavingsDialog(field) })
             }
+            if (field.type === 'inline.calculated.field') {
+                this.menuItems.push({ icon: 'fas fa-calculator', label: this.$t('qbe.detailView.modifyCalcField'), command: () => this.openCalculatedFieldDialog(field, index) })
+            }
             this.menuItems.push({ icon: 'pi pi-trash', label: this.$t('common.delete'), command: () => this.deleteColumn(index) })
         },
         onRowReorder(event: any) {
@@ -103,6 +106,9 @@ export default defineComponent({
         openHavingsDialog(field: iField) {
             this.$emit('openHavingDialog', { field: field, query: this.selectedQuery })
         },
+        openCalculatedFieldDialog(field: iField, index) {
+            this.$emit('openCalculatedFieldDialog', field, index)
+        },
         onDrop(event) {
             const data = JSON.parse(event.dataTransfer.getData('text/plain'))
             this.$emit('entityDropped', data)
@@ -112,6 +118,7 @@ export default defineComponent({
             this.$emit('groupingChanged', field)
         },
         deleteColumn(index: number) {
+            this.$emit('fieldDeleted', { ...this.rows[index] })
             this.rows.splice(index, 1)
         }
     }

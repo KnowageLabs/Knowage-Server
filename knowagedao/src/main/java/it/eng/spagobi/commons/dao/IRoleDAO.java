@@ -27,6 +27,7 @@ import org.json.JSONObject;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
+import it.eng.spagobi.commons.dao.es.RoleEventsEmittingCommand;
 import it.eng.spagobi.commons.metadata.SbiAuthorizations;
 import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
@@ -34,9 +35,14 @@ import it.eng.spagobi.commons.metadata.SbiExtRoles;
 /**
  * Defines the interfaces for all methods needed to insert, modify and deleting a role
  *
+ * WARNING : All the implementation must consider the difference between queries
+ * and commands because all the commands executed must be tracked for GDPR.
+ *
  * @author Zoppello
  */
 public interface IRoleDAO extends ISpagoBIDao {
+
+	// Query
 
 	/**
 	 * Loads a role identified by its <code>roleID</code>. All these information, are stored into a <code>Role</code> object, which is returned.
@@ -80,39 +86,6 @@ public interface IRoleDAO extends ISpagoBIDao {
 	public List loadAllRolesFiltereByTenant() throws EMFUserError;
 
 	public List loadRolesItem(JSONObject item) throws EMFUserError, JSONException;
-
-	/**
-	 * Implements the query to insert a role. All information needed is stored into the input <code>Role</code> object.
-	 *
-	 * @param aRole
-	 *            The object containing all insert information
-	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
-	 */
-	public void insertRole(Role aRole) throws EMFUserError;
-
-	/**
-	 * Implements the query to erase a role. All information needed is stored into the input <code>Role</code> object.
-	 *
-	 * @param aRole
-	 *            The object containing all delete information
-	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
-	 */
-	public void eraseRole(Role aRole) throws EMFUserError;
-
-	/**
-	 * Implements the query to modify a role. All information needed is stored into the input <code>Role</code> object.
-	 *
-	 * @param aRole
-	 *            The object containing all modify information
-	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
-	 */
-	public void modifyRole(Role aRole) throws EMFUserError;
 
 	/**
 	 * Gets all free roles for Insert. When a parameter has some parameter use modes associated, this association happens with one or more roles. For the same
@@ -170,18 +143,6 @@ public interface IRoleDAO extends ISpagoBIDao {
 	 */
 	public List LoadParUsesAssociated(Integer roleID) throws EMFUserError;
 
-	/**
-	 * Implements the query to insert a role. All information needed is stored into the input <code>Role</code> object.
-	 *
-	 * @param aRole
-	 *            The object containing all insert information, includig the role abilitations
-	 * @return The role id
-	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
-	 */
-	public Integer insertRoleComplete(Role aRole) throws EMFUserError;
-
 	public List<Role> loadPagedRolesList(Integer offset, Integer fetchSize) throws EMFUserError;
 
 	public Integer countRoles() throws EMFUserError;
@@ -201,26 +162,14 @@ public interface IRoleDAO extends ISpagoBIDao {
 	public List<Integer> getMetaModelCategoriesForRoles(Collection<String> roles) throws EMFUserError;
 
 	/*
-	 * Methods for managing Role - DataSetCategory association
-	 */
-
-	public void insertRoleDataSetCategory(Integer roleId, Integer categoryId) throws EMFUserError;
-
-	public void removeRoleDataSetCategory(Integer roleId, Integer categoryId) throws EMFUserError;
-
-	/*
 	 * Methods for managing Role - Authorization association
 	 */
 
 	public List<SbiAuthorizations> loadAllAuthorizations() throws EMFUserError;
 
-	public SbiAuthorizations insertAuthorization(String authorizationName, String productType) throws EMFUserError;
-
 	public List<SbiAuthorizations> LoadAuthorizationsAssociatedToRole(Integer roleID) throws EMFUserError;
 
 	public List<SbiAuthorizationsRoles> LoadAuthorizationsRolesAssociatedToRole(Integer roleID) throws EMFUserError;
-
-	public void eraseAuthorizationsRolesAssociatedToRole(Integer roleID, Session currSessionDB) throws EMFUserError;
 
 	public List<SbiAuthorizations> loadAllAuthorizationsByProductTypes(List<Integer> productTypesIds) throws EMFUserError;
 
@@ -228,6 +177,71 @@ public interface IRoleDAO extends ISpagoBIDao {
 
 	public Role loadPublicRole() throws EMFUserError;
 
+	// Commands but not directly connected to roles
+
+	public SbiAuthorizations insertAuthorization(String authorizationName, String productType) throws EMFUserError;
+
+	// Commands
+
 	public void unsetOtherPublicRole(Session aSession);
+
+	public void eraseAuthorizationsRolesAssociatedToRole(Integer roleID, Session currSessionDB) throws EMFUserError;
+
+	/*
+	 * Methods for managing Role - DataSetCategory association
+	 */
+
+	public void insertRoleDataSetCategory(Integer roleId, Integer categoryId) throws EMFUserError;
+
+	public void removeRoleDataSetCategory(Integer roleId, Integer categoryId) throws EMFUserError;
+
+	/**
+	 * Implements the query to insert a role. All information needed is stored into the input <code>Role</code> object.
+	 *
+	 * @param aRole
+	 *            The object containing all insert information, includig the role abilitations
+	 * @return The role id
+	 *
+	 * @throws EMFUserError
+	 *             If an Exception occurred
+	 */
+	public Integer insertRoleComplete(Role aRole) throws EMFUserError;
+
+	/**
+	 * Implements the query to insert a role. All information needed is stored into the input <code>Role</code> object.
+	 *
+	 * @param aRole
+	 *            The object containing all insert information
+	 *
+	 * @throws EMFUserError
+	 *             If an Exception occurred
+	 */
+	public void insertRole(Role aRole) throws EMFUserError;
+
+	/**
+	 * Implements the query to erase a role. All information needed is stored into the input <code>Role</code> object.
+	 *
+	 * @param aRole
+	 *            The object containing all delete information
+	 *
+	 * @throws EMFUserError
+	 *             If an Exception occurred
+	 */
+	public void eraseRole(Role aRole) throws EMFUserError;
+
+	/**
+	 * Implements the query to modify a role. All information needed is stored into the input <code>Role</code> object.
+	 *
+	 * @param aRole
+	 *            The object containing all modify information
+	 *
+	 * @throws EMFUserError
+	 *             If an Exception occurred
+	 */
+	public void modifyRole(Role aRole) throws EMFUserError;
+
+	// Utils
+
+	void setEventEmittingCommand(RoleEventsEmittingCommand command);
 
 }

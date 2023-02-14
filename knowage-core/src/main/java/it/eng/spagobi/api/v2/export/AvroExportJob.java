@@ -46,6 +46,7 @@ import org.json.JSONObject;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import it.eng.knowage.tools.utils.DatabaseUtils;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
@@ -135,9 +136,11 @@ public class AvroExportJob extends AbstractExportJob {
 		try {
 			Class<?> type = dsMeta.getFieldType(i);
 			if (isDate(type)) {
-				value = dateFormatter.format(value);
+				value = dateFormatter.parse(value.toString()).getTime();
 			} else if (isTimestamp(type)) {
-				value = timestampFormatter.format(value);
+
+				value = DatabaseUtils.timestampFormatter(value);
+
 			} else if (BigDecimal.class.isAssignableFrom(type)) {
 				BigDecimal bigDecimalValue = (BigDecimal) value;
 				value = bigDecimalValue.setScale(BIG_DECIMAL_SCALE, RoundingMode.CEILING);
@@ -152,6 +155,9 @@ public class AvroExportJob extends AbstractExportJob {
 			} else if (String.class.isAssignableFrom(type)) {
 				value = String.valueOf(value);
 			} else {
+				if (value instanceof java.util.Date) {
+					value = dateFormatter.format(value);
+				}
 				value = value.toString();
 			}
 		} catch (Exception e) {
@@ -210,9 +216,9 @@ public class AvroExportJob extends AbstractExportJob {
 			metadata.put("knColumnAlias", dsMeta.getFieldAlias(i));
 			metadata.put("knJavaType", dsMeta.getFieldType(i).getName());
 
-			fieldAssembler.name(dsMeta.getFieldName(i)).prop("knColumnAlias", dsMeta.getFieldAlias(i)).prop("knJavaType", dsMeta.getFieldType(i).getName())
-					.prop("knFieldType", dsMeta.getFieldMeta(i).getFieldType().toString()).type().unionOf().nullType().and()
-					.type(getType(dsMeta.getFieldType(i))).endUnion().noDefault();
+			fieldAssembler.name("column_" + i).prop("knColumnAlias", dsMeta.getFieldAlias(i)).prop("knJavaType", dsMeta.getFieldType(i).getName())
+					.prop("knColumnName", dsMeta.getFieldName(i)).prop("knFieldType", dsMeta.getFieldMeta(i).getFieldType().toString()).type().unionOf()
+					.nullType().and().type(getType(dsMeta.getFieldType(i))).endUnion().noDefault();
 
 		}
 
@@ -233,6 +239,8 @@ public class AvroExportJob extends AbstractExportJob {
 			ret = Schema.create(Schema.Type.LONG);
 		} else if (Double.class.isAssignableFrom(fieldType)) {
 			ret = Schema.create(Schema.Type.DOUBLE);
+		} else if (isTimestamp(fieldType) || isDate(fieldType)) {
+			ret = Schema.create(Schema.Type.LONG);
 		} else {
 			ret = Schema.create(Schema.Type.STRING);
 		}
@@ -242,7 +250,8 @@ public class AvroExportJob extends AbstractExportJob {
 	@Override
 	protected OutputStream getDataOutputStream() {
 		try {
-			avroExportFolder = Paths.get(resourcePathAsStr, "dataPreparation", (String) userProfile.getUserId(), dataSet.getLabel());
+			String dsIdasString = Integer.toString(dataSet.getId());
+			avroExportFolder = Paths.get(resourcePathAsStr, "dataPreparation", (String) userProfile.getUserId(), dsIdasString);
 			Files.createDirectories(avroExportFolder);
 			return Files.newOutputStream(avroExportFolder.resolve(data));
 		} catch (Exception e) {

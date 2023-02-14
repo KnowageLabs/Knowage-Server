@@ -27,10 +27,8 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
-import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
@@ -127,15 +125,6 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 
 		SbiUser user = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(userId);
 
-		if (user == null) {
-			if (UserProfile.isDataPreparationUser(jwtToken)) {
-				user = createDataPrepUser();
-			} else {
-				logger.error("UserName [" + userId + "] not found!!");
-				return null;
-			}
-		}
-
 		profile = new SpagoBIUserProfile();
 		profile.setUniqueIdentifier(jwtToken);
 		profile.setUserId(user.getUserId());
@@ -189,16 +178,6 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 		logger.debug("OUT");
 		return profile;
 
-	}
-
-	private SbiUser createDataPrepUser() {
-		SbiUser user = new SbiUser();
-		user.setFullName("data-preparation");
-		user.setUserId("");
-		SbiCommonInfo sc = new SbiCommonInfo();
-		sc.setOrganization("DEFAULT_TENANT");
-		user.setCommonInfo(sc);
-		return user;
 	}
 
 	@Override
