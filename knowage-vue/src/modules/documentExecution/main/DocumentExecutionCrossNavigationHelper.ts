@@ -12,7 +12,7 @@ export const executeCrossNavigation = (payload: any, document: any) => {
     const formattedCrossNavigationParameters = getFormattedCrossNavigationParameters(documentCrossNavigations[0])
     console.log('-------- formattedCrossNavigationParameters: ', formattedCrossNavigationParameters)
     document.navigationParams = createDocumentNavigationParametersForFilterService(formattedCrossNavigationParameters)
-    console.log(">>>>>>>>>>>     document.formattedCrossNavigationParameters: ", document.formattedCrossNavigationParameters)
+    console.log(">>>>>>>>>>>     document.formattedCrossNavigationParameters: ", document.navigationParams)
 
 }
 
