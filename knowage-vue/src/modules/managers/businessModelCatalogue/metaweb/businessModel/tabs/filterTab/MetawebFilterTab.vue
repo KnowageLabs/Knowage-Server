@@ -1,13 +1,13 @@
 <template>
     <div v-if="businessModel">
         <div v-for="(property, index) in businessModel.properties" :key="index">
-            <div class="p-d-flex p-flex-row p-m-4" v-if="property['structural.sqlFilter']">
+            <div v-if="property['structural.sqlFilter']" class="p-d-flex p-flex-row p-m-4">
                 <div class="p-mr-2">
-                    <i class="fa fa-question-circle" v-tooltip.top="$t('metaweb.filterHelpMessage')"></i>
+                    <i v-tooltip.top="$t('metaweb.filterHelpMessage')" class="fa fa-question-circle"></i>
                 </div>
                 <div class=" p-fluid p-field kn-flex">
                     <label class="kn-material-input-label"> {{ $t('common.sqlExpression') }} </label>
-                    <Textarea class="kn-material-input" v-model="property['structural.sqlFilter'].value" @blur="updateMeta" />
+                    <Textarea v-model="property['structural.sqlFilter'].value" class="kn-material-input" @blur="updateMeta" />
                 </div>
             </div>
         </div>

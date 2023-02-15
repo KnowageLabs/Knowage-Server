@@ -11,7 +11,7 @@
             <div class="p-grid">
                 <div class="p-col-6 p-fluid">
                     <span class="p-float-label p-m-2">
-                        <Dropdown class="kn-material-input" v-model="font.size" :options="KpiDocumentDesignerStyleCardDescriptor.fontSizeOptions" optionValue="value">
+                        <Dropdown v-model="font.size" class="kn-material-input" :options="KpiDocumentDesignerStyleCardDescriptor.fontSizeOptions" option-value="value">
                             <template #value="slotProps">
                                 <div v-if="slotProps.value">
                                     <span>{{ getDropdownValueLabel(slotProps.value, KpiDocumentDesignerStyleCardDescriptor.fontSizeOptions) }}</span>
@@ -26,7 +26,7 @@
                 </div>
                 <div class="p-col-6 p-fluid">
                     <span class="p-float-label p-m-2">
-                        <Dropdown class="kn-material-input" v-model="font.fontFamily" :options="KpiDocumentDesignerStyleCardDescriptor.fontFamilyOptions" optionValue="value">
+                        <Dropdown v-model="font.fontFamily" class="kn-material-input" :options="KpiDocumentDesignerStyleCardDescriptor.fontFamilyOptions" option-value="value">
                             <template #value="slotProps">
                                 <div v-if="slotProps.value">
                                     <span>{{ getDropdownValueLabel(slotProps.value, KpiDocumentDesignerStyleCardDescriptor.fontFamilyOptions) }}</span>
@@ -41,7 +41,7 @@
                 </div>
                 <div class="p-col-6 p-fluid">
                     <span class="p-float-label p-m-2">
-                        <Dropdown class="kn-material-input" v-model="font.fontWeight" :options="KpiDocumentDesignerStyleCardDescriptor.fontWeightOptions" optionValue="value">
+                        <Dropdown v-model="font.fontWeight" class="kn-material-input" :options="KpiDocumentDesignerStyleCardDescriptor.fontWeightOptions" option-value="value">
                             <template #value="slotProps">
                                 <div v-if="slotProps.value">
                                     <span>{{ getDropdownValueLabel(slotProps.value, KpiDocumentDesignerStyleCardDescriptor.fontWeightOptions) }}</span>

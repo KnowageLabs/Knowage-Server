@@ -3,21 +3,21 @@
         <template #content>
             <div class="p-m-3">
                 <span class="p-float-label">
-                    <Dropdown id="dataSource" class="kn-material-input" v-model="selectedRule.dataSource" :options="datasourcesList" optionLabel="DATASOURCE_LABEL" @change="loadDataSourceStructure"> </Dropdown>
+                    <Dropdown id="dataSource" v-model="selectedRule.dataSource" class="kn-material-input" :options="datasourcesList" option-label="DATASOURCE_LABEL" @change="loadDataSourceStructure"> </Dropdown>
                     <label for="dataSourceLabel" class="kn-material-input-label">{{ $t('kpi.measureDefinition.dataSource') }}</label>
                 </span>
             </div>
             <div v-if="selectedRule.dataSource">
                 <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
                     <template #end>
-                        <Button class="kn-button p-button-text p-button-rounded" @click="showPreview" :disabled="previewDisabled">{{ $t('kpi.measureDefinition.preview') }}</Button>
+                        <Button class="kn-button p-button-text p-button-rounded" :disabled="previewDisabled" @click="showPreview">{{ $t('kpi.measureDefinition.preview') }}</Button>
                     </template>
                 </Toolbar>
-                <VCodeMirror ref="codeMirror" v-model:value="code" :autoHeight="true" :options="options" @keyup="onKeyUp" />
+                <VCodeMirror ref="codeMirror" v-model:value="code" :auto-height="true" :options="options" @keyup="onKeyUp" />
             </div>
         </template>
     </Card>
-    <MeasureDefinitionPreviewDialog v-if="preview" :currentRule="selectedRule" :placeholders="placeholders" :columns="columns" :propRows="rows" @close="$emit('closePreview')" @loadPreview="$emit('loadPreview')"></MeasureDefinitionPreviewDialog>
+    <MeasureDefinitionPreviewDialog v-if="preview" :current-rule="selectedRule" :placeholders="placeholders" :columns="columns" :prop-rows="rows" @close="$emit('closePreview')" @loadPreview="$emit('loadPreview')"></MeasureDefinitionPreviewDialog>
 </template>
 
 <script lang="ts">
@@ -61,7 +61,7 @@ export default defineComponent({
         }
     },
     computed: {
-        previewDisabled(): Boolean {
+        previewDisabled(): boolean {
             return !this.code
         }
     },

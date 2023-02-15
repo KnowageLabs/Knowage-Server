@@ -8,18 +8,18 @@
             </Toolbar>
         </template>
         <template #content>
-            <DataTable class="p-datatable-sm kn-table kn-table-small-input" :autoLayout="true" :value="fieldsMetadata" responsiveLayout="stack" breakpoint="960px">
+            <DataTable class="p-datatable-sm kn-table kn-table-small-input" :auto-layout="true" :value="fieldsMetadata" responsive-layout="stack" breakpoint="960px">
                 <Column field="fieldAlias" :header="$t('managers.datasetManagement.fieldAlias')" :sortable="true">
                     <template #body="{ data }"> {{ data.fieldAlias }} </template>
                 </Column>
                 <Column field="Type" :header="$t('importExport.catalogFunction.column.type')" :sortable="true">
                     <template #body="{ data }">
-                        <Dropdown class="kn-material-input" :style="linkTabDescriptor.style.maxwidth" v-model="data.Type" :options="valueTypes" optionDisabled="disabled" optionLabel="value" optionValue="name" @change="warnForDuplicateSpatialFields" :disabled="true" />
+                        <Dropdown v-model="data.Type" class="kn-material-input" :style="linkTabDescriptor.style.maxwidth" :options="valueTypes" option-disabled="disabled" option-label="value" option-value="name" :disabled="true" @change="warnForDuplicateSpatialFields" />
                     </template>
                 </Column>
                 <Column field="fieldType" :header="$t('managers.datasetManagement.fieldType')" :sortable="true">
                     <template #body="{ data }">
-                        <Dropdown class="kn-material-input" :style="linkTabDescriptor.style.maxwidth" v-model="data.fieldType" :options="fieldMetadataTypes" optionLabel="value" optionValue="value" @change="warnForDuplicateSpatialFields('fieldType')" />
+                        <Dropdown v-model="data.fieldType" class="kn-material-input" :style="linkTabDescriptor.style.maxwidth" :options="fieldMetadataTypes" option-label="value" option-value="value" @change="warnForDuplicateSpatialFields('fieldType')" />
                     </template>
                 </Column>
                 <Column :hidden="true" field="personal" :header="$t('managers.datasetManagement.personal')" :sortable="true">
@@ -65,9 +65,6 @@ export default defineComponent({
             fieldsMetadata: [] as any
         }
     },
-    created() {
-        this.fieldsMetadata = this.propMetadata
-    },
     watch: {
         propMetadata: {
             handler() {
@@ -76,10 +73,13 @@ export default defineComponent({
             deep: true
         }
     },
+    created() {
+        this.fieldsMetadata = this.propMetadata
+    },
     methods: {
         ...mapActions(mainStore, ['setInfo', 'setError']),
         warnForDuplicateSpatialFields() {
-            var numberOfSpatialAttribute = 0
+            let numberOfSpatialAttribute = 0
             for (let i = 0; i < this.fieldsMetadata.length; i++) {
                 if (this.fieldsMetadata[i].fieldType == 'SPATIAL_ATTRIBUTE') {
                     numberOfSpatialAttribute++

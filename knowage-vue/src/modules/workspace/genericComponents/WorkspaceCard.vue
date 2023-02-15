@@ -6,18 +6,18 @@
                     {{ document[documentFields.type] }}
                 </div>
                 <div class="p-ml-3 detail-info">
-                    <h4 class="p-m-0 kn-truncated" role="title" v-tooltip="document[documentFields.label]">
+                    <h4 v-tooltip="document[documentFields.label]" class="p-m-0 kn-truncated" role="title">
                         {{ document[documentFields.label] }}
                     </h4>
-                    <p class="p-m-0 kn-truncated" v-tooltip="document[documentFields.name]">{{ document[documentFields.name] }}</p>
+                    <p v-tooltip="document[documentFields.name]" class="p-m-0 kn-truncated">{{ document[documentFields.name] }}</p>
                 </div>
                 <div class="detail-buttons">
                     <template v-for="(button, index) of documentButtons" :key="index">
-                        <Button :id="button.id" v-if="button.visible" :icon="button.icon" class="p-mx-1 p-button-text p-button-rounded p-button-plain p-button-lg" @click="button.command" v-tooltip="$t(button.label)" :aria-label="$t(button.label)" />
+                        <Button v-if="button.visible" :id="button.id" v-tooltip="$t(button.label)" :icon="button.icon" class="p-mx-1 p-button-text p-button-rounded p-button-plain p-button-lg" :aria-label="$t(button.label)" @click="button.command" />
                     </template>
                 </div>
             </span>
-            <div aria-hidden="true" v-if="document[documentFields.image]" class="card-image" :style="documentImageSource" />
+            <div v-if="document[documentFields.image]" aria-hidden="true" class="card-image" :style="documentImageSource" />
             <div v-else aria-hidden="true" class="card-image" :style="documentImageSource" />
         </div>
     </div>
@@ -34,9 +34,20 @@ import { getCorrectRolesForExecution } from '../../../helpers/commons/roleHelper
 export default defineComponent({
     name: 'workspace-sidebar',
     components: { Menu },
+    props: { visible: Boolean, viewType: String, document: Object as any, isPrepared: Boolean },
     //prettier-ignore
     emits: ['executeRecent', 'executeDocumentFromOrganizer', 'moveDocumentToFolder', 'deleteDocumentFromOrganizer', 'executeAnalysisDocument', 'editAnalysisDocument', 'shareAnalysisDocument', 'cloneAnalysisDocument', 'deleteAnalysisDocument', 'uploadAnalysisPreviewFile', 'openDatasetInQBE', 'editDataset', 'deleteDataset', 'previewDataset', 'deleteDataset', 'editDataset', 'exportToXlsx', 'exportToCsv', 'getHelp', 'downloadDatasetFile', 'shareDataset', 'openSidebar', 'cloneDataset', 'prepareData', 'openDataPreparation'],
-    props: { visible: Boolean, viewType: String, document: Object as any, isPrepared: Boolean },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
+    data() {
+        return {
+            cardDescriptor,
+            sidebarVisible: false,
+            menuButtons: [] as any
+        }
+    },
     computed: {
         isOwner(): any {
             return (this.store.$state as any).user.fullName === this.document.creationUser
@@ -59,14 +70,14 @@ export default defineComponent({
         },
         datasetIsIterable(): any {
             // in order to export to XLSX, dataset must implement an iterator (BE side)
-            let notIterableDataSets = ['Federated']
+            const notIterableDataSets = ['Federated']
             if (notIterableDataSets.includes(this.document.dsTypeCd)) return false
             else return true
         },
         canLoadData(): any {
             if (this.document.actions) {
-                for (var i = 0; i < this.document.actions.length; i++) {
-                    var action = this.document.actions[i]
+                for (let i = 0; i < this.document.actions.length; i++) {
+                    const action = this.document.actions[i]
                     if (action.name == 'loaddata') {
                         return true
                     }
@@ -142,17 +153,6 @@ export default defineComponent({
                     return []
             }
         }
-    },
-    data() {
-        return {
-            cardDescriptor,
-            sidebarVisible: false,
-            menuButtons: [] as any
-        }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     methods: {
         showMenu(event) {

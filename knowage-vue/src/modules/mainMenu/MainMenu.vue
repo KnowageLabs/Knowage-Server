@@ -1,30 +1,30 @@
 <template>
-    <div class="layout-menu-container" id="kn-main-menu" ref="mainMenu">
+    <div id="kn-main-menu" ref="mainMenu" class="layout-menu-container">
         <InfoDialog v-model:visibility="display"></InfoDialog>
         <LanguageDialog v-model:visibility="languageDisplay"></LanguageDialog>
         <RoleDialog v-model:visibility="roleDisplay"></RoleDialog>
         <DownloadsDialog v-model:visibility="downloadsDisplay"></DownloadsDialog>
         <NewsDialog v-model:visibility="newsDisplay"></NewsDialog>
-        <LicenseDialog v-model:visibility="licenseDisplay" v-if="user && user.isSuperadmin && isEnterprise"></LicenseDialog>
-        <MainMenuAdmin :openedPanelEvent="adminMenuOpened" :model="technicalUserFunctionalities" v-if="technicalUserFunctionalities && technicalUserFunctionalities.length > 0" @click="itemClick"></MainMenuAdmin>
-        <TieredMenu :class="['kn-tieredMenu', tieredMenuClass]" ref="menu" :model="selectedCustomMenu" :popup="true" @blur="hideItemMenu" @mouseleave="checkTimer">
+        <LicenseDialog v-if="user && user.isSuperadmin && isEnterprise" v-model:visibility="licenseDisplay"></LicenseDialog>
+        <MainMenuAdmin v-if="technicalUserFunctionalities && technicalUserFunctionalities.length > 0" :opened-panel-event="adminMenuOpened" :model="technicalUserFunctionalities" @click="itemClick"></MainMenuAdmin>
+        <TieredMenu ref="menu" :class="['kn-tieredMenu', tieredMenuClass]" :model="selectedCustomMenu" :popup="true" @blur="hideItemMenu" @mouseleave="checkTimer">
             <template #item="{ item }">
-                <router-link class="p-menuitem-link" v-if="item.to" :to="cleanTo(item)" @click="itemClick(item)" exact>
-                    <span v-if="item.descr" class="p-menuitem-text kn-truncated" v-tooltip.top="item.descr">{{ $internationalization($t(item.descr)) }}</span>
-                    <span v-else class="p-menuitem-text kn-truncated" v-tooltip.top="$internationalization($t(item.label))">{{ $internationalization($t(item.label)) }}</span>
+                <router-link v-if="item.to" class="p-menuitem-link" :to="cleanTo(item)" exact @click="itemClick(item)">
+                    <span v-if="item.descr" v-tooltip.top="item.descr" class="p-menuitem-text kn-truncated">{{ $internationalization($t(item.descr)) }}</span>
+                    <span v-else v-tooltip.top="$internationalization($t(item.label))" class="p-menuitem-text kn-truncated">{{ $internationalization($t(item.label)) }}</span>
                     <span v-if="item.items" class="p-submenu-icon pi pi-angle-right kn-truncated"></span>
                 </router-link>
-                <a v-else class="p-menuitem-link" :target="item.target" role="menuitem" @click="itemClick(item)" :tabindex="item.disabled ? null : '0'">
-                    <span v-if="item.descr" class="p-menuitem-text kn-truncated" v-tooltip.top="item.descr">{{ $internationalization($t(item.descr)) }}</span>
-                    <span v-else class="p-menuitem-text kn-truncated" v-tooltip.top="$internationalization($t(item.label))">{{ $internationalization($t(item.label)) }}</span>
+                <a v-else class="p-menuitem-link" :target="item.target" role="menuitem" :tabindex="item.disabled ? null : '0'" @click="itemClick(item)">
+                    <span v-if="item.descr" v-tooltip.top="item.descr" class="p-menuitem-text kn-truncated">{{ $internationalization($t(item.descr)) }}</span>
+                    <span v-else v-tooltip.top="$internationalization($t(item.label))" class="p-menuitem-text kn-truncated">{{ $internationalization($t(item.label)) }}</span>
                     <span v-if="item.items" class="p-submenu-icon pi pi-angle-right kn-truncated"></span>
                 </a>
             </template>
         </TieredMenu>
 
         <div class="menu-scroll-content">
-            <div class="profile" ref="menuProfile">
-                <button class="p-link" @click="toggleProfile" v-tooltip="user && user.fullName">
+            <div ref="menuProfile" class="profile">
+                <button v-tooltip="user && user.fullName" class="p-link" @click="toggleProfile">
                     <img alt="Profile" class="profile-image" :src="getProfileImage(user)" />
                     <span v-if="user" class="profile-name">{{ user.fullName }}</span>
                     <i class="pi pi-fw pi-chevron-down"></i>
@@ -32,7 +32,7 @@
                 </button>
             </div>
             <transition name="slide-down">
-                <ul class="layout-menu profile-menu" v-show="showProfileMenu" ref="menuProfileSlide">
+                <ul v-show="showProfileMenu" ref="menuProfileSlide" class="layout-menu profile-menu">
                     <template v-for="(item, i) of commonUserFunctionalities" :key="i">
                         <template v-if="item">
                             <MainMenuItem :item="item" @click="itemClick"></MainMenuItem>
@@ -42,14 +42,14 @@
             </transition>
             <ScrollPanel :style="{ height: menuDimensions }">
                 <ul class="layout-menu">
-                    <li role="menu" @click="toggleAdminMenu" v-if="technicalUserFunctionalities && technicalUserFunctionalities.length > 0">
+                    <li v-if="technicalUserFunctionalities && technicalUserFunctionalities.length > 0" role="menu" @click="toggleAdminMenu">
                         <span :class="['p-menuitem-icon', 'fas fa-cog']"></span>
                     </li>
                     <template v-for="(item, i) of allowedUserFunctionalities" :key="i">
-                        <MainMenuItem :item="item" @click="itemClick" :badge="getBadgeValue(item)" @mouseover="toggleMenu($event, item)"></MainMenuItem>
+                        <MainMenuItem :item="item" :badge="getBadgeValue(item)" @click="itemClick" @mouseover="toggleMenu($event, item)"></MainMenuItem>
                     </template>
                     <template v-for="(item, i) of dynamicUserFunctionalities" :key="i">
-                        <MainMenuItem :item="item" @click="itemClick" @mouseover="toggleMenu($event, item)" :internationalize="true"></MainMenuItem>
+                        <MainMenuItem :item="item" :internationalize="true" @click="itemClick" @mouseover="toggleMenu($event, item)"></MainMenuItem>
                     </template>
                 </ul>
             </ScrollPanel>
@@ -76,7 +76,7 @@ import ScrollPanel from 'primevue/scrollpanel'
 import mainStore from '../../App.store'
 
 export default defineComponent({
-    name: 'Knmenu',
+    name: 'knmenu',
     components: {
         InfoDialog,
         MainMenuAdmin,
@@ -88,6 +88,11 @@ export default defineComponent({
         DownloadsDialog,
         TieredMenu,
         ScrollPanel
+    },
+    emits: ['update:visibility', 'menuItemSelected'],
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     data() {
         return {
@@ -110,10 +115,11 @@ export default defineComponent({
             publicPath: import.meta.env.VITE_PUBLIC_PATH
         }
     },
-    emits: ['update:visibility', 'menuItemSelected'],
-    setup() {
-        const store = mainStore()
-        return { store }
+    async mounted() {
+        await this.loadMenu()
+    },
+    unmounted() {
+        window.removeEventListener('resize', this.getDimensions)
     },
     methods: {
         info() {
@@ -183,8 +189,8 @@ export default defineComponent({
             return this.publicPath + '/images/commons/logo_knowage.svg'
         },
         updateNewsAndDownload() {
-            for (var idx in this.allowedUserFunctionalities) {
-                let menu = this.allowedUserFunctionalities[idx] as any
+            for (const idx in this.allowedUserFunctionalities) {
+                const menu = this.allowedUserFunctionalities[idx] as any
                 if (menu.conditionedView) {
                     if (menu.conditionedView === 'downloads') {
                         menu.visible = this.downloads.count.total > 0
@@ -204,14 +210,14 @@ export default defineComponent({
             return 0
         },
         findHomePage(dynMenu) {
-            let toRet = undefined
-            for (var idx in dynMenu) {
-                let menu = dynMenu[idx]
+            const toRet = undefined
+            for (const idx in dynMenu) {
+                const menu = dynMenu[idx]
                 if (this.user.sessionRole) {
                     if (menu.roles.includes(this.user.sessionRole) && (menu.to || menu.url)) return menu
                 } else {
-                    for (var i = 0; i < this.user.roles.length; i++) {
-                        let element = this.user.roles[i]
+                    for (let i = 0; i < this.user.roles.length; i++) {
+                        const element = this.user.roles[i]
                         if (menu.roles.includes(element) && (menu.to || menu.url)) {
                             return menu
                         }
@@ -246,7 +252,7 @@ export default defineComponent({
         cleanTo(item): any {
             return item.to.replace(/\\\//g, '/')
         },
-        async loadMenu(recursive: Boolean = false) {
+        async loadMenu(recursive = false) {
             window.addEventListener('resize', this.getDimensions)
             this.store.setLoading(true)
             let localObject = { locale: this.$i18n.fallbackLocale.toString() }
@@ -256,7 +262,7 @@ export default defineComponent({
             }
             localObject.locale = localObject.locale.replaceAll('_', '-')
             // script handling
-            let splittedLocale = localObject.locale.split('-')
+            const splittedLocale = localObject.locale.split('-')
             if (splittedLocale.length > 2) {
                 localObject.locale = splittedLocale[0] + '-' + splittedLocale[2].replaceAll('#', '') + '-' + splittedLocale[1]
             }
@@ -269,16 +275,16 @@ export default defineComponent({
                         return el1.prog - el2.prog
                     })
                     if (this.dynamicUserFunctionalities.length > 0) {
-                        let homePage = this.findHomePage(this.dynamicUserFunctionalities) || {}
+                        const homePage = this.findHomePage(this.dynamicUserFunctionalities) || {}
                         if (homePage && Object.keys(homePage).length !== 0) {
                             if (!this.stateHomePage.label) {
                                 this.store.setHomePage(homePage)
                             }
                         }
                     }
-                    let responseCommonUserFunctionalities = response.data.commonUserFunctionalities
-                    for (var index in responseCommonUserFunctionalities) {
-                        let item = responseCommonUserFunctionalities[index]
+                    const responseCommonUserFunctionalities = response.data.commonUserFunctionalities
+                    for (const index in responseCommonUserFunctionalities) {
+                        const item = responseCommonUserFunctionalities[index]
                         item.visible = this.isItemToDisplay(item)
                         if (parseInt(index) == 0 && this.stateHomePage?.to) item.to = this.stateHomePage.to.replaceAll('\\/', '/')
                         this.commonUserFunctionalities.push(item)
@@ -296,18 +302,12 @@ export default defineComponent({
         },
         setConditionedVisibility(responseAllowedUserFunctionalities) {
             this.allowedUserFunctionalities = []
-            for (var idx in responseAllowedUserFunctionalities) {
-                let item = responseAllowedUserFunctionalities[idx]
+            for (const idx in responseAllowedUserFunctionalities) {
+                const item = responseAllowedUserFunctionalities[idx]
                 item.visible = this.isItemToDisplay(item)
                 this.allowedUserFunctionalities.push(item)
             }
         }
-    },
-    async mounted() {
-        await this.loadMenu()
-    },
-    unmounted() {
-        window.removeEventListener('resize', this.getDimensions)
     },
     computed: {
         ...mapState(mainStore, {
@@ -322,7 +322,7 @@ export default defineComponent({
     },
     watch: {
         news() {
-            let orig = JSON.parse(JSON.stringify(this.allowedUserFunctionalities))
+            const orig = JSON.parse(JSON.stringify(this.allowedUserFunctionalities))
             this.setConditionedVisibility(orig)
         }
     }

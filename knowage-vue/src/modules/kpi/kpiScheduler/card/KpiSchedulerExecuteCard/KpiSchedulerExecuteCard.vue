@@ -9,11 +9,11 @@
         </template>
         <template #content>
             <div class="p-field-radiobutton">
-                <RadioButton id="delta-with-update" name="delta" :value="true" v-model="schedule.delta" @click="$emit('touched')" />
+                <RadioButton id="delta-with-update" v-model="schedule.delta" name="delta" :value="true" @click="$emit('touched')" />
                 <label for="delta-with-update">{{ $t('kpi.kpiScheduler.insertAndUpdate') }}</label>
             </div>
             <div class="p-field-radiobutton">
-                <RadioButton id="delta-with-delete" name="delta" :value="false" v-model="schedule.delta" @click="$emit('touched')" />
+                <RadioButton id="delta-with-delete" v-model="schedule.delta" name="delta" :value="false" @click="$emit('touched')" />
                 <label for="delta-with-delete">{{ $t('kpi.kpiScheduler.deleteAndInsert') }}</label>
             </div>
         </template>
@@ -27,7 +27,7 @@
             </Toolbar>
         </template>
         <template #content>
-            <DataTable :value="executionList" :paginator="true" :rowsPerPageOptions="[10, 20, 50]" :rows="10" :loading="loading" class="p-datatable-sm kn-table p-m-1" dataKey="id" responsiveLayout="stack" breakpoint="960px" @rowClick="showForm($event.data, false)" data-test="executions-table">
+            <DataTable :value="executionList" :paginator="true" :rows-per-page-options="[10, 20, 50]" :rows="10" :loading="loading" class="p-datatable-sm kn-table p-m-1" data-key="id" responsive-layout="stack" breakpoint="960px" data-test="executions-table" @rowClick="showForm($event.data, false)">
                 <template #loading>
                     {{ $t('common.info.dataLoading') }}
                 </template>
@@ -36,7 +36,7 @@
                         <div class="p-d-flex p-ai-center">
                             <span class="p-d-flex p-flex-column p-mr-2">
                                 <label for="numberOfLogs" class="kn-material-input-label"> {{ $t('kpi.kpiScheduler.numberOfExecutions') }}</label>
-                                <InputNumber id="numberOfLogs" inputClass="kn-material-input" v-model="numberOfLogs" />
+                                <InputNumber id="numberOfLogs" v-model="numberOfLogs" input-class="kn-material-input" />
                             </span>
                             <Button id="load-button" class="kn-button kn-button--primary" :label="$t('common.load')" @click="loadLogExecutionList"></Button>
                         </div>
@@ -47,7 +47,7 @@
                         {{ getFormattedDate(slotProps.data.timeRun) }}
                     </template>
                 </Column>
-                <Column class="kn-truncated" :style="executeCardDescriptor.table.columns.style" v-for="col of executeCardDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true"> </Column>
+                <Column v-for="col of executeCardDescriptor.columns" :key="col.field" class="kn-truncated" :style="executeCardDescriptor.table.columns.style" :field="col.field" :header="$t(col.header)" :sortable="true"> </Column>
                 <Column :style="executeCardDescriptor.table.iconColumn.style">
                     <template #body="slotProps">
                         <Button v-if="slotProps.data.outputPresent" icon="pi pi-download" class="p-button-link" @click="downloadFile(slotProps.data.id)" />
@@ -81,6 +81,10 @@ export default defineComponent({
         }
     },
     emits: ['touched'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             executeCardDescriptor,
@@ -89,10 +93,6 @@ export default defineComponent({
             numberOfLogs: 10,
             loading: false
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadSelectedSchedule()

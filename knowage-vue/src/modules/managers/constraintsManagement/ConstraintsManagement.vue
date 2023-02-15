@@ -6,40 +6,40 @@
                     {{ $t('managers.constraintManagement.title') }}
                 </template>
                 <template #end>
-                    <FabButton icon="fas fa-plus" @click="showForm" data-test="open-form-button" />
+                    <FabButton icon="fas fa-plus" data-test="open-form-button" @click="showForm" />
                 </template>
             </Toolbar>
-            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+            <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
             <Listbox
                 v-if="!loading"
                 class="kn-list--column"
                 :options="allCheks"
-                optionLabel="label"
+                option-label="label"
                 :filter="true"
-                :filterPlaceholder="$t('common.search')"
-                filterMatchMode="contains"
-                :filterFields="constraintManagementDescriptor.filterFields"
-                :emptyFilterMessage="$t('common.info.noDataFound')"
-                @change="showForm"
+                :filter-placeholder="$t('common.search')"
+                filter-match-mode="contains"
+                :filter-fields="constraintManagementDescriptor.filterFields"
+                :empty-filter-message="$t('common.info.noDataFound')"
                 data-test="check-list"
+                @change="showForm"
             >
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
                     <div class="kn-list-item" data-test="list-item">
                         <Avatar :icon="constraintManagementDescriptor.iconTypesMap[slotProps.option.predifined].icon" shape="circle" size="medium" />
-                        <div class="kn-list-item-text" v-tooltip.top="slotProps.option.description">
+                        <div v-tooltip.top="slotProps.option.description" class="kn-list-item-text">
                             <span>{{ slotProps.option.label }}</span>
                             <span class="kn-list-item-text-secondary">{{ slotProps.option.name }}</span>
                             <span class="kn-list-item-text-secondary">{{ slotProps.option.valueTypeCd }}</span>
                         </div>
-                        <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteConstraintConfirm(slotProps.option.checkId)" v-if="!slotProps.option.predifined" data-test="delete-button" />
+                        <Button v-if="!slotProps.option.predifined" icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" data-test="delete-button" @click.stop="deleteConstraintConfirm(slotProps.option.checkId)" />
                     </div>
                 </template>
             </Listbox>
         </div>
         <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0">
-            <KnHint :title="'managers.constraintManagement.title'" :hint="'managers.constraintManagement.hint'" v-if="!formVisible"></KnHint>
-            <ConstraintsManagementDetail :selectedConstraint="selectedCheck" :domains="domains" @close="closeForm" @created="handleSave" @touched="touched = true" v-else></ConstraintsManagementDetail>
+            <KnHint v-if="!formVisible" :title="'managers.constraintManagement.title'" :hint="'managers.constraintManagement.hint'"></KnHint>
+            <ConstraintsManagementDetail v-else :selected-constraint="selectedCheck" :domains="domains" @close="closeForm" @created="handleSave" @touched="touched = true"></ConstraintsManagementDetail>
         </div>
     </div>
 </template>
@@ -68,6 +68,10 @@ export default defineComponent({
     directives: {
         tooltip: Tooltip
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             loading: false,
@@ -80,10 +84,6 @@ export default defineComponent({
             domains: [] as any,
             constraintManagementDescriptor
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadAll()

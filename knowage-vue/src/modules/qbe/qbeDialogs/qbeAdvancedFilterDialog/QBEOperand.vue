@@ -1,8 +1,8 @@
 <template>
     <div>
-        <QBEOperator v-if="node?.type !== 'NODE_CONST' && node?.value !== 'PAR'" :propNode="node" @selectedChanged="$emit('selectedChanged')" @treeUpdated="$emit('treeUpdated')"></QBEOperator>
-        <QBEGroup v-else-if="node?.value === 'PAR'" :propNode="node" @selectedChanged="$emit('selectedChanged')" @treeUpdated="$emit('treeUpdated')"></QBEGroup>
-        <QBEFilter v-else-if="node?.type === 'NODE_CONST'" :propNode="node" @selectedChanged="$emit('selectedChanged')" @treeUpdated="$emit('treeUpdated')"></QBEFilter>
+        <QBEOperator v-if="node?.type !== 'NODE_CONST' && node?.value !== 'PAR'" :prop-node="node" @selectedChanged="$emit('selectedChanged')" @treeUpdated="$emit('treeUpdated')"></QBEOperator>
+        <QBEGroup v-else-if="node?.value === 'PAR'" :prop-node="node" @selectedChanged="$emit('selectedChanged')" @treeUpdated="$emit('treeUpdated')"></QBEGroup>
+        <QBEFilter v-else-if="node?.type === 'NODE_CONST'" :prop-node="node" @selectedChanged="$emit('selectedChanged')" @treeUpdated="$emit('treeUpdated')"></QBEFilter>
     </div>
 </template>
 

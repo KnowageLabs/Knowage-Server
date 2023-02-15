@@ -11,11 +11,11 @@
                     class="kn-list layers-management-property-container"
                     :options="filters"
                     :filter="true"
-                    :filterPlaceholder="$t('common.search')"
-                    optionLabel="property"
-                    filterMatchMode="contains"
-                    :filterFields="layersManagementFilterTabDescriptor.filterFields"
-                    :emptyFilterMessage="$t('common.info.noDataFound')"
+                    :filter-placeholder="$t('common.search')"
+                    option-label="property"
+                    filter-match-mode="contains"
+                    :filter-fields="layersManagementFilterTabDescriptor.filterFields"
+                    :empty-filter-message="$t('common.info.noDataFound')"
                     data-test="available-properties-list"
                 >
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
@@ -38,11 +38,11 @@
                     class="kn-list layers-management-property-container"
                     :options="layer.properties"
                     :filter="true"
-                    :filterPlaceholder="$t('common.search')"
-                    optionLabel="property"
-                    filterMatchMode="contains"
-                    :filterFields="layersManagementFilterTabDescriptor.filterFields"
-                    :emptyFilterMessage="$t('common.info.noDataFound')"
+                    :filter-placeholder="$t('common.search')"
+                    option-label="property"
+                    filter-match-mode="contains"
+                    :filter-fields="layersManagementFilterTabDescriptor.filterFields"
+                    :empty-filter-message="$t('common.info.noDataFound')"
                     data-test="selected-properties-list"
                 >
                     <template #empty>{{ $t('managers.layersManagement.noFilterSelected') }}</template>

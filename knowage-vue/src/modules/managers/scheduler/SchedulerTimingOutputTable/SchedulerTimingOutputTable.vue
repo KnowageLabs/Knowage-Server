@@ -8,7 +8,7 @@
                 <Button class="kn-button p-button-text p-button-rounded" @click="showTriggerDetail(null)">{{ $t('common.add') }}</Button>
             </template>
         </Toolbar>
-        <Message class="p-m-4" v-if="triggers.length === 0" severity="info" :closable="false" :style="schedulerTimingOutputTableDescriptor.styles.message">
+        <Message v-if="triggers.length === 0" class="p-m-4" severity="info" :closable="false" :style="schedulerTimingOutputTableDescriptor.styles.message">
             {{ $t('managers.scheduler.noTriggersInfo') }}
         </Message>
         <DataTable
@@ -18,10 +18,10 @@
             :paginator="true"
             :rows="schedulerTimingOutputTableDescriptor.rows"
             class="p-datatable-sm kn-table p-m-2"
-            dataKey="triggerName"
-            :responsiveLayout="schedulerTimingOutputTableDescriptor.responsiveLayout"
+            data-key="triggerName"
+            :responsive-layout="schedulerTimingOutputTableDescriptor.responsiveLayout"
             :breakpoint="schedulerTimingOutputTableDescriptor.breakpoint"
-            :rowClass="rowClass"
+            :row-class="rowClass"
         >
             <Column class="kn-truncated" :header="$t('common.name')">
                 <template #body="slotProps">
@@ -51,15 +51,15 @@
 
             <Column :style="schedulerTimingOutputTableDescriptor.iconColumnStyle">
                 <template #body="slotProps">
-                    <Button class="p-button-link p-button-sm" icon="fa fa-ellipsis-v" @click="toggle($event, slotProps.data)" aria-haspopup="true" aria-controls="overlay_menu" />
+                    <Button class="p-button-link p-button-sm" icon="fa fa-ellipsis-v" aria-haspopup="true" aria-controls="overlay_menu" @click="toggle($event, slotProps.data)" />
                     <Menu ref="menu" :model="items" :popup="true" data-test="menu"></Menu>
                     <Button icon="pi pi-trash" class="p-button-link" @click="deleteTriggerConfirm({ trigger: slotProps.data, index: slotProps.index })" />
                 </template>
             </Column>
         </DataTable>
 
-        <SchedulerTimingOutputInfoDialog :visible="triggerInfoDialogVisible" :triggerInfo="triggerInfo" @close="triggerInfoDialogVisible = false"></SchedulerTimingOutputInfoDialog>
-        <SchedulerTimingOutputDetailDialog :visible="triggerDetailDialogVisible" :propTrigger="triggerInfo" @close="triggerDetailDialogVisible = false" @saved="onSave"></SchedulerTimingOutputDetailDialog>
+        <SchedulerTimingOutputInfoDialog :visible="triggerInfoDialogVisible" :trigger-info="triggerInfo" @close="triggerInfoDialogVisible = false"></SchedulerTimingOutputInfoDialog>
+        <SchedulerTimingOutputDetailDialog :visible="triggerDetailDialogVisible" :prop-trigger="triggerInfo" @close="triggerDetailDialogVisible = false" @saved="onSave"></SchedulerTimingOutputDetailDialog>
     </div>
 </template>
 
@@ -81,11 +81,15 @@ export default defineComponent({
     components: { Column, DataTable, Message, Menu, SchedulerTimingOutputDetailDialog, SchedulerTimingOutputInfoDialog },
     props: { job: { type: Object, required: true } },
     emits: ['loading', 'triggerSaved'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             schedulerTimingOutputTableDescriptor,
             triggers: [] as any[],
-            items: [] as { label: String; icon: string; command: Function }[],
+            items: [] as { label: string; icon: string; command: Function }[],
             triggerInfo: null as any,
             triggerInfoDialogVisible: false,
             triggerDetailDialogVisible: false
@@ -95,10 +99,6 @@ export default defineComponent({
         job() {
             this.loadTriggers()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadTriggers()

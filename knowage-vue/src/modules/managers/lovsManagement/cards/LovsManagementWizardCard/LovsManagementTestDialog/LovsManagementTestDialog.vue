@@ -4,15 +4,15 @@
             <div>
                 <span>
                     <label for="treeType" class="kn-material-input-label" aria-label="dropdown">{{ $t('managers.lovsManagement.testTreeType') }} * </label>
-                    <Dropdown id="treeType" class="kn-material-input" v-model="treeListTypeModel.LOVTYPE" :options="lovsManagementTestDialogDescriptor.treeTypes" optionLabel="name" optionValue="value" @change="resetValues" />
+                    <Dropdown id="treeType" v-model="treeListTypeModel.LOVTYPE" class="kn-material-input" :options="lovsManagementTestDialogDescriptor.treeTypes" option-label="name" option-value="value" @change="resetValues" />
                 </span>
             </div>
         </div>
-        <LovsManagementSimpleDatatable v-if="treeListTypeModel.LOVTYPE === 'simple'" :tableData="model" :treeListTypeModel="treeListTypeModel" @modelChanged="onModelChange($event)"></LovsManagementSimpleDatatable>
-        <LovsManagementTree v-else :listData="model" :treeModel="treeModel" @modelChanged="onTreeModelChange($event)"></LovsManagementTree>
+        <LovsManagementSimpleDatatable v-if="treeListTypeModel.LOVTYPE === 'simple'" :table-data="model" :tree-list-type-model="treeListTypeModel" @modelChanged="onModelChange($event)"></LovsManagementSimpleDatatable>
+        <LovsManagementTree v-else :list-data="model" :tree-model="treeModel" @modelChanged="onTreeModelChange($event)"></LovsManagementTree>
         <template #footer>
             <Button class="kn-button kn-button--secondary" @click="$emit('close')"> {{ $t('common.close') }}</Button>
-            <Button class="kn-button kn-button--primary" @click="onSave" :disabled="buttonDisabled"> {{ $t('common.save') }}</Button>
+            <Button class="kn-button kn-button--primary" :disabled="buttonDisabled" @click="onSave"> {{ $t('common.save') }}</Button>
         </template>
     </Dialog>
 </template>
@@ -29,7 +29,6 @@ import LovsManagementTree from './LovsManagementTree/LovsManagementTree.vue'
 export default defineComponent({
     name: 'lovs-management-test-dialog',
     components: { Dialog, Dropdown, LovsManagementSimpleDatatable, LovsManagementTree },
-    emits: ['close', 'pageChanged', 'save'],
     props: {
         visible: { type: Boolean },
         testModel: {
@@ -45,6 +44,7 @@ export default defineComponent({
             type: Array
         }
     },
+    emits: ['close', 'pageChanged', 'save'],
     data() {
         return {
             lovsManagementTestDialogDescriptor,

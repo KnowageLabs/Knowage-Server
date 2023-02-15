@@ -2,7 +2,7 @@
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
         <template #start> {{ selectedFolder.name }} </template>
         <template #end>
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="handleSubmit" data-test="submit-button" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" data-test="submit-button" @click="handleSubmit" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" />
         </template>
     </Toolbar>
@@ -14,22 +14,22 @@
                         <span class="p-float-label">
                             <InputText
                                 id="label"
+                                v-model.trim="v$.selectedFolder.code.$model"
                                 class="kn-material-input"
                                 type="text"
-                                v-model.trim="v$.selectedFolder.code.$model"
                                 :class="{
                                     'p-invalid': v$.selectedFolder.code.$invalid && v$.selectedFolder.code.$dirty
                                 }"
-                                maxLength="100"
+                                max-length="100"
+                                data-test="code-input"
                                 @blur="v$.selectedFolder.code.$touch()"
                                 @input="$emit('touched')"
-                                data-test="code-input"
                             />
                             <label for="label" class="kn-material-input-label"> {{ $t('common.label') }} * </label>
                         </span>
                         <KnValidationMessages
-                            :vComp="v$.selectedFolder.code"
-                            :additionalTranslateParams="{
+                            :v-comp="v$.selectedFolder.code"
+                            :additional-translate-params="{
                                 fieldName: $t('common.label')
                             }"
                         />
@@ -38,29 +38,29 @@
                         <span class="p-float-label">
                             <InputText
                                 id="name"
+                                v-model.trim="v$.selectedFolder.name.$model"
                                 class="kn-material-input"
                                 type="text"
-                                v-model.trim="v$.selectedFolder.name.$model"
                                 :class="{
                                     'p-invalid': v$.selectedFolder.name.$invalid && v$.selectedFolder.name.$dirty
                                 }"
-                                maxLength="255"
+                                max-length="255"
+                                data-test="name-input"
                                 @blur="v$.selectedFolder.name.$touch()"
                                 @input="$emit('touched')"
-                                data-test="name-input"
                             />
                             <label for="name" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
                         </span>
                         <KnValidationMessages
-                            :vComp="v$.selectedFolder.name"
-                            :additionalTranslateParams="{
+                            :v-comp="v$.selectedFolder.name"
+                            :additional-translate-params="{
                                 fieldName: $t('common.name')
                             }"
                         />
                     </div>
                     <div class="p-field" :style="detailDescriptor.pField.style">
                         <span class="p-float-label">
-                            <InputText id="description" class="kn-material-input" type="text" v-model.trim="selectedFolder.description" maxLength="255" @input="$emit('touched')" data-test="description-input" />
+                            <InputText id="description" v-model.trim="selectedFolder.description" class="kn-material-input" type="text" max-length="255" data-test="description-input" @input="$emit('touched')" />
                             <label for="description" class="kn-material-input-label">{{ $t('common.description') }}</label>
                         </span>
                     </div>
@@ -76,7 +76,7 @@
                 </Toolbar>
             </template>
             <template #content>
-                <DataTable v-if="!loading" :value="roles" dataKey="id" class="p-datatable-sm kn-table" responsiveLayout="scroll" data-test="roles-table">
+                <DataTable v-if="!loading" :value="roles" data-key="id" class="p-datatable-sm kn-table" responsive-layout="scroll" data-test="roles-table">
                     <Column field="name" :header="$t('managers.functionalitiesManagement.roles')" :sortable="true" />
                     <Column :header="$t('managers.functionalitiesManagement.development')" :style="detailDescriptor.checkboxColumns.style">
                         <template #body="slotProps">
@@ -101,8 +101,8 @@
                     <Column @rowClick="false">
                         <template #body="slotProps">
                             <div class="p-d-flex p-jc-end">
-                                <Button icon="pi pi-check" class="p-button-link" @click="checkAll(slotProps.data)" :disabled="slotProps.data.isButtonDisabled" :data-test="'check-all-' + slotProps.data.id" />
-                                <Button icon="pi pi-times" class="p-button-link" @click="uncheckAll(slotProps.data)" :disabled="slotProps.data.isButtonDisabled" :data-test="'uncheck-all-' + slotProps.data.id" />
+                                <Button icon="pi pi-check" class="p-button-link" :disabled="slotProps.data.isButtonDisabled" :data-test="'check-all-' + slotProps.data.id" @click="checkAll(slotProps.data)" />
+                                <Button icon="pi pi-times" class="p-button-link" :disabled="slotProps.data.isButtonDisabled" :data-test="'uncheck-all-' + slotProps.data.id" @click="uncheckAll(slotProps.data)" />
                             </div>
                         </template>
                     </Column>
@@ -127,18 +127,22 @@ import Checkbox from 'primevue/checkbox'
 import mainStore from '../../../../App.store'
 
 export default defineComponent({
-    emits: ['touched', 'close', 'inserted'],
-    props: {
-        functionality: Object,
-        rolesShort: Array as any,
-        parentId: Number
-    },
     components: {
         Card,
         DataTable,
         Column,
         Checkbox,
         KnValidationMessages
+    },
+    props: {
+        functionality: Object,
+        rolesShort: Array as any,
+        parentId: Number
+    },
+    emits: ['touched', 'close', 'inserted'],
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     data() {
         return {
@@ -155,7 +159,7 @@ export default defineComponent({
         }
     },
     computed: {
-        buttonDisabled(): Boolean {
+        buttonDisabled(): boolean {
             return this.v$.$invalid
         }
     },
@@ -163,17 +167,6 @@ export default defineComponent({
         return {
             selectedFolder: createValidations('selectedFolder', validationDescriptor.validations.selectedFolder)
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
-    async created() {
-        this.loading = true
-        this.selectedFolder = { ...this.functionality }
-        await this.loadParentFolder()
-        this.loadRoles()
-        this.loading = false
     },
     watch: {
         async functionality() {
@@ -187,6 +180,13 @@ export default defineComponent({
         rolesShort() {
             this.loadRoles()
         }
+    },
+    async created() {
+        this.loading = true
+        this.selectedFolder = { ...this.functionality }
+        await this.loadParentFolder()
+        this.loadRoles()
+        this.loading = false
     },
     methods: {
         closeTemplate() {
@@ -210,7 +210,7 @@ export default defineComponent({
                 this.roleIsChecked(tempRole, tempFolder.execRoles, 'execution')
                 this.roleIsChecked(tempRole, tempFolder.createRoles, 'creation')
 
-                for (let field of ['devRoles', 'testRoles', 'execRoles', 'createRoles']) {
+                for (const field of ['devRoles', 'testRoles', 'execRoles', 'createRoles']) {
                     this.isCheckable(tempRole, field)
                 }
 
@@ -246,7 +246,7 @@ export default defineComponent({
             }
         },
         prepareFunctionalityToSend(functionalityToSend) {
-            var roles = [...this.roles]
+            const roles = [...this.roles]
             functionalityToSend.codeType = functionalityToSend.codType
             delete functionalityToSend.codType
             delete functionalityToSend.biObjects
@@ -280,7 +280,7 @@ export default defineComponent({
             if (this.v$.$invalid) {
                 return
             }
-            let functionalityToSend = { ...this.selectedFolder }
+            const functionalityToSend = { ...this.selectedFolder }
             this.prepareFunctionalityToSend(functionalityToSend)
             await this.createOrUpdate(functionalityToSend).then((response: AxiosResponse<any>) => {
                 if (response.data.errors) {

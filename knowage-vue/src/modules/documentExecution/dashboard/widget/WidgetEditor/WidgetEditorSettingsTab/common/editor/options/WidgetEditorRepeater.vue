@@ -3,7 +3,7 @@
         {{ $t(`managers.functionsCatalog.noDatasetSelected`) }}
     </Message>
     <span v-else class="p-float-label">
-        <InputText class="kn-material-input" v-model="repeaterLimit" @change="onColumnChanged" />
+        <InputText v-model="repeaterLimit" class="kn-material-input" @change="onColumnChanged" />
         <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.editorTags.limit') }}</label>
     </span>
 </template>

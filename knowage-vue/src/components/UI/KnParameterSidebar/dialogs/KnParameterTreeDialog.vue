@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="knParameterTreeDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary" :content-style="knParameterTreeDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -7,21 +7,21 @@
                 </template>
             </Toolbar>
         </template>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
 
         <Tree
             id="kn-parameter-tree"
-            :value="nodes"
-            :selectionMode="!multivalue ? 'single' : null"
             v-model:selectionKeys="selectedValuesKeys"
-            :metaKeySelection="false"
+            :value="nodes"
+            :selection-mode="!multivalue ? 'single' : null"
+            :meta-key-selection="false"
             @node-select="setSelectedValue($event)"
             @node-unselect="removeSelectedValue($event)"
             @nodeExpand="loadLeaf($event)"
             @node-collapse="setClosedFolderIcon($event)"
         >
             <template #default="slotProps">
-                <Checkbox v-if="multivalue && slotProps.node.selectable" class="p-ml-2" v-model="selectedNodes" :value="slotProps.node.data" @change="onNodeChange($event)" />
+                <Checkbox v-if="multivalue && slotProps.node.selectable" v-model="selectedNodes" class="p-ml-2" :value="slotProps.node.data" @change="onNodeChange($event)" />
                 <span>{{ slotProps.node.label }}</span>
             </template>
         </Tree>
@@ -125,7 +125,7 @@ export default defineComponent({
             }
 
             const postData = { label: this.document.label ?? this.document.name, role: role, parameterId: this.parameter?.urlName, mode: 'complete', treeLovNode: parent ? parent.id : 'lovroot', parameters: this.formatedParameterValues }
-            let content = [] as any[]
+            const content = [] as any[]
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData)
                 .then((response: AxiosResponse<any>) =>

@@ -7,19 +7,19 @@
                 </template>
             </Toolbar>
         </template>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
 
         <form v-if="!loading" class="p-fluid p-formgrid p-grid p-m-1">
             <InlineMessage v-if="!loading" class="p-m-1 kn-width-full" severity="info" closable="false"> {{ $t('documentExecution.olap.saveVersion.infoMessage') }}</InlineMessage>
 
             <div class="p-field p-float-label p-col-12 p-mt-2">
-                <InputText class="kn-material-input" v-model.trim="version.name" />
+                <InputText v-model.trim="version.name" class="kn-material-input" />
                 <label class="kn-material-input-label"> {{ $t('documentExecution.olap.saveVersion.versionName') }}</label>
             </div>
 
             <div class="p-field p-col-12 p-mt-2">
                 <span class="p-float-label">
-                    <Textarea class="kn-material-input" v-model.trim="version.descr" rows="3" :autoResize="true" />
+                    <Textarea v-model.trim="version.descr" class="kn-material-input" rows="3" :auto-resize="true" />
                     <label class="kn-material-input-label"> {{ $t('documentExecution.olap.saveVersion.versionDescription') }}</label>
                 </span>
             </div>
@@ -46,7 +46,10 @@ export default defineComponent({
     components: { Dialog, InlineMessage, Textarea },
     props: { visible: { type: Boolean }, id: { type: String } },
     emits: ['close', 'save', 'newVersionSaved'],
-    computed: {},
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             olapSaveNewVersionDialogDescriptor,
@@ -54,11 +57,8 @@ export default defineComponent({
             loading: false
         }
     },
+    computed: {},
     watch: {},
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
     created() {},
     methods: {
         close() {

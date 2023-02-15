@@ -13,8 +13,8 @@
     </div>
     <Toolbar class="kn-toolbar--transparent p-mb-2">
         <template #end>
-            <FabButton icon="fas fa-plus" :style="licenseDialogDescriptor.fabButton.style" v-tooltip.top="$t('licenseDialog.dataRequired')" @click="setUploadType('', false)" data-test="new-button" />
-            <KnInputFile label="" v-if="!uploading" :changeFunction="uploadLicense" accept=".lic" :triggerInput="triggerUpload" />
+            <FabButton v-tooltip.top="$t('licenseDialog.dataRequired')" icon="fas fa-plus" :style="licenseDialogDescriptor.fabButton.style" data-test="new-button" @click="setUploadType('', false)" />
+            <KnInputFile v-if="!uploading" label="" :change-function="uploadLicense" accept=".lic" :trigger-input="triggerUpload" />
         </template>
     </Toolbar>
     <Listbox class="kn-list--column kn-list-no-border-right" :style="licenseDialogDescriptor.list.style" :options="licensesList">
@@ -30,13 +30,13 @@
                     <span class="kn-list-item-text-secondary">{{ $t('licenseDialog.licenseId') }}:</span>
                     <span>{{ slotProps.option.licenseId }}</span>
                 </div>
-                <Button icon="pi pi-download" class="p-button-link" v-tooltip.top="$t('licenseDialog.downloadLicense')" @click="downloadLicence(slotProps.option.product)" data-test="download-button" />
-                <Button icon="pi pi-pencil" class="p-button-link" v-tooltip.top="$t('licenseDialog.changeLicense')" @click="setUploadType(slotProps.option.product, true)" data-test="edit-button" />
-                <Button icon="pi pi-trash" class="p-button-link" v-tooltip.top="$t('licenseDialog.deleteLicense')" @click="showDeleteDialog(slotProps.option.product)" data-test="delete-button" />
+                <Button v-tooltip.top="$t('licenseDialog.downloadLicense')" icon="pi pi-download" class="p-button-link" data-test="download-button" @click="downloadLicence(slotProps.option.product)" />
+                <Button v-tooltip.top="$t('licenseDialog.changeLicense')" icon="pi pi-pencil" class="p-button-link" data-test="edit-button" @click="setUploadType(slotProps.option.product, true)" />
+                <Button v-tooltip.top="$t('licenseDialog.deleteLicense')" icon="pi pi-trash" class="p-button-link" data-test="delete-button" @click="showDeleteDialog(slotProps.option.product)" />
             </div>
         </template>
     </Listbox>
-    <Dialog header="Error" v-model:visible="displayWarning">
+    <Dialog v-model:visible="displayWarning" header="Error">
         <p>{{ errorMessage }}</p>
         <template #footer>
             <Button label="Ok" icon="pi pi-check" @click="displayWarning = false" />
@@ -61,7 +61,6 @@ import mainStore from '../../../../App.store'
 
 export default defineComponent({
     name: 'license-tab',
-    emits: ['reloadList'],
     components: {
         Avatar,
         Dialog,
@@ -85,6 +84,11 @@ export default defineComponent({
             required: true
         }
     },
+    emits: ['reloadList'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             licenseDialogDescriptor,
@@ -105,10 +109,6 @@ export default defineComponent({
         host() {
             this.loadHost()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadLicenses()
@@ -147,11 +147,11 @@ export default defineComponent({
                         } else {
                             this.store.setInfo({ title: this.$t('common.toast.success') })
                             if (response.headers) {
-                                var contentDisposition = response.headers['content-disposition']
-                                var contentDispositionMatcher = contentDisposition.match(/filename[^;\n=]*=((['"]).*?\2|[^;\n]*)/i)
+                                const contentDisposition = response.headers['content-disposition']
+                                const contentDispositionMatcher = contentDisposition.match(/filename[^;\n=]*=((['"]).*?\2|[^;\n]*)/i)
                                 if (contentDispositionMatcher && contentDispositionMatcher.length > 1) {
-                                    var fileAndExtension = contentDispositionMatcher[1]
-                                    var completeFileName = fileAndExtension.replaceAll('"', '')
+                                    const fileAndExtension = contentDispositionMatcher[1]
+                                    const completeFileName = fileAndExtension.replaceAll('"', '')
                                     downloadDirect(response.data, completeFileName, 'application/zip; charset=utf-8')
                                 }
                             }
@@ -173,7 +173,7 @@ export default defineComponent({
         },
         uploadLicense(event) {
             this.uploading = true
-            var uploadedFiles = event.target.files[0]
+            const uploadedFiles = event.target.files[0]
             if (this.isForUpdate && !uploadedFiles.name.includes(this.existingLicenseName)) {
                 this.errorMessage = this.$t('licenseDialog.wrongType')
                 this.displayWarning = true
@@ -185,7 +185,7 @@ export default defineComponent({
             setTimeout(() => (this.uploading = false), 200)
         },
         async startUpload(uploadedFiles) {
-            var formData = new FormData()
+            const formData = new FormData()
             formData.append('file', uploadedFiles)
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/license/upload` + `/${this.selectedHost.hostName}` + `?isForUpdate=${this.isForUpdate}`, formData, {

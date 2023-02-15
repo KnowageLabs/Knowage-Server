@@ -6,47 +6,47 @@
                     <span class="p-float-label">
                         <InputText
                             id="label"
+                            v-model="v$.driver.label.$model"
                             class="kn-material-input"
                             type="text"
-                            v-model="v$.driver.label.$model"
                             :class="{
                                 'p-invalid': v$.driver.label.$invalid && v$.driver.label.$dirty
                             }"
-                            maxLength="20"
+                            max-length="20"
                             @blur="v$.driver.label.$touch()"
                             @change="setDirty"
                         />
                         <label for="label" class="kn-material-input-label">{{ $t('common.label') }} * </label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.driver.label" :additionalTranslateParams="{ fieldName: $t('common.label') }"></KnValidationMessages>
+                    <KnValidationMessages class="p-mt-1" :v-comp="v$.driver.label" :additional-translate-params="{ fieldName: $t('common.label') }"></KnValidationMessages>
                 </div>
                 <div class="p-field p-col-4">
                     <span class="p-float-label">
                         <InputText
                             id="name"
+                            v-model="v$.driver.name.$model"
                             class="kn-material-input"
                             type="text"
-                            v-model="v$.driver.name.$model"
                             :class="{
                                 'p-invalid': v$.driver.name.$invalid && v$.driver.name.$dirty
                             }"
-                            maxLength="20"
+                            max-length="20"
                             @blur="v$.driver.name.$touch()"
                             @change="setDirty"
                         />
                         <label for="name" class="kn-material-input-label">{{ $t('common.name') }} * </label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.driver.name" :additionalTranslateParams="{ fieldName: $t('common.name') }"></KnValidationMessages>
+                    <KnValidationMessages class="p-mt-1" :v-comp="v$.driver.name" :additional-translate-params="{ fieldName: $t('common.name') }"></KnValidationMessages>
                 </div>
                 <div class="p-field p-col-4">
                     <span class="p-float-label">
                         <Dropdown
                             id="type"
-                            class="kn-material-input"
                             v-model="v$.driver.type.$model"
+                            class="kn-material-input"
                             :options="types"
-                            optionValue="VALUE_CD"
-                            optionLabel="VALUE_NM"
+                            option-value="VALUE_CD"
+                            option-label="VALUE_NM"
                             :class="{
                                 'p-invalid': v$.driver.type.$invalid && v$.driver.type.$dirty
                             }"
@@ -55,17 +55,17 @@
                         />
                         <label for="type" class="kn-material-input-label"> {{ $t('common.type') }} * </label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.driver.type" :additionalTranslateParams="{ fieldName: $t('common.type') }"></KnValidationMessages>
+                    <KnValidationMessages class="p-mt-1" :v-comp="v$.driver.type" :additional-translate-params="{ fieldName: $t('common.type') }"></KnValidationMessages>
                 </div>
                 <div class="p-field p-col-8">
                     <span class="p-float-label">
-                        <InputText id="description" class="kn-material-input" type="text" v-model="driver.description" @change="setDirty" maxLength="100" />
+                        <InputText id="description" v-model="driver.description" class="kn-material-input" type="text" max-length="100" @change="setDirty" />
                         <label for="description" class="kn-material-input-label">{{ $t('common.description') }} </label>
                     </span>
                 </div>
                 <div class="p-field p-col-4">
                     <span class="p-float-label">
-                        <MultiSelect class="kn-material-input" v-model="selectedOptions" :options="driversManagemenDetailtDescriptor.options" optionLabel="name" optionValue="label" @change="changeType" />
+                        <MultiSelect v-model="selectedOptions" class="kn-material-input" :options="driversManagemenDetailtDescriptor.options" option-label="name" option-value="label" @change="changeType" />
                         <label for="description" class="kn-material-input-label">{{ $t('managers.driversManagement.options') }} </label>
                     </span>
                 </div>
@@ -100,7 +100,7 @@ export default defineComponent({
             driver: {} as any,
             driversManagemenDetailtDescriptor,
             driversManagemenValidationtDescriptor,
-            selectedOptions: [] as String[],
+            selectedOptions: [] as string[],
             v$: useValidate() as any
         }
     },

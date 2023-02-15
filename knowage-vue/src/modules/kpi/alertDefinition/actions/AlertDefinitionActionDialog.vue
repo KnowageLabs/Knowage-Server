@@ -13,13 +13,13 @@
         </template>
         <div class="p-fluid p-formgrid p-grid">
             <span class="p-field p-col-6 p-mt-4 p-float-label">
-                <Dropdown id="type" class="kn-material-input" v-model="action.idAction" dataKey="id" optionLabel="name" optionValue="id" :options="actionList" @change="setType" />
+                <Dropdown id="type" v-model="action.idAction" class="kn-material-input" data-key="id" option-label="name" option-value="id" :options="actionList" @change="setType" />
                 <label for="type" class="kn-material-input-label"> {{ $t('kpi.alert.type') }} * </label>
             </span>
             <span class="p-field p-col-6 p-mt-4 p-float-label">
-                <MultiSelect id="threshold" class="kn-material-input" v-model="selectedThresholds" optionLabel="label" :options="kpi.threshold?.thresholdValues">
+                <MultiSelect id="threshold" v-model="selectedThresholds" class="kn-material-input" option-label="label" :options="kpi.threshold?.thresholdValues">
                     <template #value="slotProps">
-                        <div class="selected-options-container" v-for="option of slotProps.value" :key="option.code">
+                        <div v-for="option of slotProps.value" :key="option.code" class="selected-options-container">
                             <div class="color-box" :style="{ 'background-color': option.color }" />
                             {{ option.label }}
                         </div>
@@ -102,16 +102,16 @@ export default defineComponent({
             return false
         }
     },
+    watch: {
+        selectedAction() {
+            this.loadAction()
+        }
+    },
 
     created() {
         this.loadAction()
         this.loadEtlDocuments()
         this.loadUsers()
-    },
-    watch: {
-        selectedAction() {
-            this.loadAction()
-        }
     },
     validations() {
         return {
@@ -120,7 +120,7 @@ export default defineComponent({
     },
     methods: {
         isObjectEmpty(objectToCheck) {
-            for (var i in objectToCheck) return false
+            for (const i in objectToCheck) return false
             return true
         },
         loadAction() {
@@ -130,7 +130,7 @@ export default defineComponent({
         },
         async setType(event) {
             this.action.jsonActionParameters = {}
-            var actionInList = this.actionList.find((actionInList) => actionInList.id === event.value)
+            const actionInList = this.actionList.find((actionInList) => actionInList.id === event.value)
             this.action.className = actionInList.className
             if (this.action.className == 'it.eng.knowage.enterprise.tools.alert.action.SendMail') {
                 this.action.className = 'it.eng.knowage.enterprise.tools.alert.action.SendMail'
@@ -140,7 +140,7 @@ export default defineComponent({
         formatUsers() {
             for (let i = 0; i < this.usersList.length; i++) {
                 const attributes = this.usersList[i].sbiUserAttributeses
-                for (let key in attributes) {
+                for (const key in attributes) {
                     if (attributes[key]['email']) {
                         this.formatedUsers.push({ name: this.usersList[i].fullName, userId: this.usersList[i].userId, email: attributes[key].email })
                     }

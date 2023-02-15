@@ -8,8 +8,8 @@
             </Toolbar>
         </template>
 
-        <HierarchyManagementHierarchyMasterForm :nodeGeneralFields="nodeGeneralFields"></HierarchyManagementHierarchyMasterForm>
-        <HierarchyManagementHierarchyMasterSelectList :dimensionMetadata="dimensionMetadata" @recursiveChanged="onRecursiveChanged" @levelsChanged="onLevelsChanged"></HierarchyManagementHierarchyMasterSelectList>
+        <HierarchyManagementHierarchyMasterForm :node-general-fields="nodeGeneralFields"></HierarchyManagementHierarchyMasterForm>
+        <HierarchyManagementHierarchyMasterSelectList :dimension-metadata="dimensionMetadata" @recursiveChanged="onRecursiveChanged" @levelsChanged="onLevelsChanged"></HierarchyManagementHierarchyMasterSelectList>
 
         <template #footer>
             <Button class="kn-button kn-button--secondary" @click="close">{{ $t('common.close') }}</Button>
@@ -41,6 +41,10 @@ export default defineComponent({
         dimensionFilters: { type: Array as PropType<iDimensionFilter[]> }
     },
     emits: ['close', 'masterHierarchyCreated'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             hierarchyManagementHierarchyMasterDialogDescriptor,
@@ -62,10 +66,6 @@ export default defineComponent({
         nodeMetadata() {
             this.loadNodeData()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         this.loadNodeData()

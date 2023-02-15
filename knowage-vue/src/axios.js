@@ -43,14 +43,14 @@ axios.interceptors.response.use(
                 }
                 if (obj.errors) {
                     if (obj.errors[0].code) {
-                        let errArray = obj.errors
+                        const errArray = obj.errors
 
-                        for (var idx in errArray) {
-                            let err = errArray[idx]
+                        for (const idx in errArray) {
+                            const err = errArray[idx]
 
                             let hints = ''
-                            for (var hintIdx in err.hints) {
-                                let hint = err.hints[hintIdx]
+                            for (const hintIdx in err.hints) {
+                                const hint = err.hints[hintIdx]
 
                                 if (idx > 0) hints += '\n' + hint
                                 else hints += hint

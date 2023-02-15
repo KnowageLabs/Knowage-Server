@@ -1,8 +1,8 @@
 <template>
     <div v-show="widgetModel">
-        <ImageWidgetSettingsAccordion v-if="setting != 'Gallery'" :widgetModel="widgetModel" :settings="descriptor.settings[setting]" :datasets="datasets" :selectedDatasets="selectedDatasets" :variables="variables" :dashboardId="dashboardId"></ImageWidgetSettingsAccordion>
+        <ImageWidgetSettingsAccordion v-if="setting != 'Gallery'" :widget-model="widgetModel" :settings="descriptor.settings[setting]" :datasets="datasets" :selected-datasets="selectedDatasets" :variables="variables" :dashboard-id="dashboardId"></ImageWidgetSettingsAccordion>
 
-        <ImageWidgetGallery v-if="setting == 'Gallery'" :widgetModel="widgetModel" :imagesListProp="imagesList" @uploadedImage="loadImages"></ImageWidgetGallery>
+        <ImageWidgetGallery v-if="setting == 'Gallery'" :widget-model="widgetModel" :images-list-prop="imagesList" @uploadedImage="loadImages"></ImageWidgetGallery>
     </div>
 </template>
 

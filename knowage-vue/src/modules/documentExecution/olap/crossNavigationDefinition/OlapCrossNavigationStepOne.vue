@@ -1,21 +1,21 @@
 <template>
     <div class="p-m-4">
-        <DataTable :value="parameters" class="p-datatable-sm kn-table p-m-2" dataKey="name" responsiveLayout="stack" breakpoint="600px" @rowClick="$emit('parameterSelected', $event.data)">
+        <DataTable :value="parameters" class="p-datatable-sm kn-table p-m-2" data-key="name" responsive-layout="stack" breakpoint="600px" @rowClick="$emit('parameterSelected', $event.data)">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
 
-            <Column class="kn-truncated" v-for="(column, index) in olapCrossNavigationDefinitionDialogDescriptor.columns" :key="index" :field="column.field" :header="$t(column.label)" :sortable="true"></Column>
+            <Column v-for="(column, index) in olapCrossNavigationDefinitionDialogDescriptor.columns" :key="index" class="kn-truncated" :field="column.field" :header="$t(column.label)" :sortable="true"></Column>
             <Column :style="olapCrossNavigationDefinitionDialogDescriptor.iconColumn.style">
                 <template #body="slotProps">
-                    <Button icon="pi pi-trash" class="p-button-link" v-tooltip.top="$t('common.delete')" @click="deleteParameterConfirm(slotProps.data)" />
+                    <Button v-tooltip.top="$t('common.delete')" icon="pi pi-trash" class="p-button-link" @click="deleteParameterConfirm(slotProps.data)" />
                 </template>
             </Column>
         </DataTable>
 
         <div v-if="addNewParameterVisible">
             <label for="type" class="kn-material-input-label"> {{ $t('documentExecution.olap.crossNavigationDefinition.crossNavigationType') }} </label>
-            <Dropdown id="type" class="kn-material-input" v-model="selectedParameter.type" :options="olapCrossNavigationDefinitionDialogDescriptor.typeList" optionLabel="label" optionValue="value" />
+            <Dropdown id="type" v-model="selectedParameter.type" class="kn-material-input" :options="olapCrossNavigationDefinitionDialogDescriptor.typeList" option-label="label" option-value="value" />
         </div>
     </div>
 </template>

@@ -8,7 +8,7 @@
                 <Button class="kn-button p-button-text p-button-rounded" @click="openDocumentsSelectionDialog">{{ $t('common.add') }}</Button>
             </template>
         </Toolbar>
-        <Message class="p-m-4" v-if="documents?.length === 0" severity="info" :closable="false" :style="schedulerDocumentsTableDescriptor.styles.message">
+        <Message v-if="documents?.length === 0" class="p-m-4" severity="info" :closable="false" :style="schedulerDocumentsTableDescriptor.styles.message">
             {{ $t('managers.scheduler.noDocumentsInfo') }}
         </Message>
         <DataTable
@@ -18,8 +18,8 @@
             :paginator="true"
             :rows="schedulerDocumentsTableDescriptor.rows"
             class="p-datatable-sm kn-table p-m-2"
-            dataKey="name"
-            :responsiveLayout="schedulerDocumentsTableDescriptor.responsiveLayout"
+            data-key="name"
+            :responsive-layout="schedulerDocumentsTableDescriptor.responsiveLayout"
             :breakpoint="schedulerDocumentsTableDescriptor.breakpoint"
             data-test="documents-table"
         >
@@ -43,15 +43,15 @@
             </Column>
         </DataTable>
 
-        <SchedulerDocumentsSelectionDialog :visible="documentsSelectionDialogVisible" :propFiles="files" @close="documentsSelectionDialogVisible = false" @documentSelected="onDocumentSelected"></SchedulerDocumentsSelectionDialog>
+        <SchedulerDocumentsSelectionDialog :visible="documentsSelectionDialogVisible" :prop-files="files" @close="documentsSelectionDialogVisible = false" @documentSelected="onDocumentSelected"></SchedulerDocumentsSelectionDialog>
         <SchedulerDocumentParameterDialog
             :visible="documentParameterDialogVisible"
-            :propParameters="selectedDocument?.parameters"
+            :prop-parameters="selectedDocument?.parameters"
             :roles="roles"
-            :deletedParams="deletedParams"
+            :deleted-params="deletedParams"
+            :document-label="documentLabel"
             @close="closeDocumentParameterDialog"
             @setParameters="onParametersSet"
-            :documentLabel="documentLabel"
         ></SchedulerDocumentParameterDialog>
     </div>
 </template>
@@ -181,7 +181,7 @@ export default defineComponent({
         },
         async loadSelectedDocumentRoles(tempDocument: any) {
             let tempRoles = []
-            let formatedRoles = [] as { userAndRole: string; user: string; role: string }[]
+            const formatedRoles = [] as { userAndRole: string; user: string; role: string }[]
             await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documents/${tempDocument.id}/userroles`).then((response: AxiosResponse<any>) => (tempRoles = response.data))
             tempRoles.forEach((el: string) => {
                 const userAndRole = el.split('|')

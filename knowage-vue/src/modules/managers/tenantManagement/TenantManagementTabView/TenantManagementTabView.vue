@@ -2,11 +2,11 @@
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
         <template #start>{{ tenant.MULTITENANT_NAME }}</template>
         <template #end>
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="handleSubmit" :disabled="buttonDisabled" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="handleSubmit" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" />
         </template>
     </Toolbar>
-    <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+    <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
     <div class="card">
         <TabView class="tabview-custom" data-test="tab-view">
             <TabPanel>
@@ -14,7 +14,7 @@
                     <span>{{ $t('managers.tenantManagement.detail.title') }}</span>
                 </template>
 
-                <TenantDetail :selectedTenant="tenant" :listOfThemes="listOfThemes" @fieldChanged="onFieldChange" />
+                <TenantDetail :selected-tenant="tenant" :list-of-themes="listOfThemes" @fieldChanged="onFieldChange" />
             </TabPanel>
 
             <TabPanel>
@@ -22,7 +22,7 @@
                     <span>{{ $t('managers.tenantManagement.productTypes.title') }}</span>
                 </template>
 
-                <ProductTypes :title="$t('managers.tenantManagement.productTypes.title')" :dataList="listOfProductTypes" :selectedData="listOfSelectedProducts" @changed="setSelectedProducts($event)" />
+                <ProductTypes :title="$t('managers.tenantManagement.productTypes.title')" :data-list="listOfProductTypes" :selected-data="listOfSelectedProducts" @changed="setSelectedProducts($event)" />
             </TabPanel>
 
             <TabPanel>
@@ -30,7 +30,7 @@
                     <span>{{ $t('managers.tenantManagement.dataSource.title') }}</span>
                 </template>
 
-                <ProductTypes :title="$t('managers.tenantManagement.dataSource.title')" :dataList="listOfDataSources" :selectedData="listOfSelectedDataSources" @changed="setSelectedDataSources($event)" />
+                <ProductTypes :title="$t('managers.tenantManagement.dataSource.title')" :data-list="listOfDataSources" :selected-data="listOfSelectedDataSources" @changed="setSelectedDataSources($event)" />
             </TabPanel>
         </TabView>
     </div>
@@ -62,6 +62,10 @@ export default defineComponent({
         licenses: Array
     },
     emits: ['touched', 'closed', 'inserted'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             tabViewDescriptor,
@@ -86,18 +90,6 @@ export default defineComponent({
             return false
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
-    mounted() {
-        if (this.selectedTenant) {
-            this.tenant = { ...this.selectedTenant } as iMultitenant
-        }
-        this.availableLicenses = this.licenses
-        this.loadAllData()
-        this.getTenantData()
-    },
     watch: {
         selectedTenant() {
             this.tenant = { ...this.selectedTenant } as iMultitenant
@@ -106,6 +98,14 @@ export default defineComponent({
         licenses() {
             this.availableLicenses = this.licenses
         }
+    },
+    mounted() {
+        if (this.selectedTenant) {
+            this.tenant = { ...this.selectedTenant } as iMultitenant
+        }
+        this.availableLicenses = this.licenses
+        this.loadAllData()
+        this.getTenantData()
     },
     methods: {
         loadData(dataType: string) {
@@ -128,7 +128,7 @@ export default defineComponent({
         },
 
         filterArrayByTargetArr(sourceArr, targetArr) {
-            var newArr = sourceArr.filter((elem) => targetArr.find((target) => elem.LABEL == target.product))
+            const newArr = sourceArr.filter((elem) => targetArr.find((target) => elem.LABEL == target.product))
             this.listOfProductTypes = newArr
         },
 
@@ -139,13 +139,13 @@ export default defineComponent({
             this.touched = false
 
             await this.loadData(`/producttypes?TENANT=${this.tenant.MULTITENANT_NAME}`).then((response: AxiosResponse<any>) => {
-                var productTypes = response.data.root
+                const productTypes = response.data.root
 
                 this.listOfSelectedProducts = []
                 this.copySelectedElement(productTypes, this.listOfSelectedProducts)
             })
             await this.loadData(`/datasources?TENANT=${this.tenant.MULTITENANT_NAME}`).then((response: AxiosResponse<any>) => {
-                var dataSources = response.data.root
+                const dataSources = response.data.root
 
                 this.listOfSelectedDataSources = []
                 this.copySelectedElement(dataSources, this.listOfSelectedDataSources)
@@ -153,7 +153,7 @@ export default defineComponent({
             this.loading = false
         },
         copySelectedElement(source, selected) {
-            for (var i = 0; i < source.length; i++) {
+            for (let i = 0; i < source.length; i++) {
                 if (source[i].CHECKED == true) {
                     selected.push(source[i])
                 }
@@ -164,7 +164,7 @@ export default defineComponent({
             if (this.v$.$invalid) {
                 return
             }
-            let url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'multitenant/save'
+            const url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'multitenant/save'
 
             await this.$http.post(url, this.createTenantToSave()).then((response: AxiosResponse<any>) => {
                 if (this.selectedTenant) {
@@ -186,7 +186,7 @@ export default defineComponent({
         },
 
         createTenantToSave() {
-            let tenantToSave = {} as iTenantToSave
+            const tenantToSave = {} as iTenantToSave
             tenantToSave.MULTITENANT_ID = this.tenant.MULTITENANT_ID ? '' + this.tenant.MULTITENANT_ID : ''
             tenantToSave.MULTITENANT_NAME = this.tenant.MULTITENANT_NAME
             this.tenant.MULTITENANT_THEME ? (tenantToSave.MULTITENANT_THEME = this.tenant.MULTITENANT_THEME) : ''

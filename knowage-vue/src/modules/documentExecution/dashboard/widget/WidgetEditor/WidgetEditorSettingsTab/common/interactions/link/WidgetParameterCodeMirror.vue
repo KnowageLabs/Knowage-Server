@@ -1,6 +1,6 @@
 <template>
     <div class="kn-width-full">
-        <VCodeMirror ref="codeMirror" class="p-mt-2" v-model:value="code" :autoHeight="true" :height="200" :options="options" @keyup="onKeyUp" />
+        <VCodeMirror ref="codeMirror" v-model:value="code" class="p-mt-2" :auto-height="true" :height="200" :options="options" @keyup="onKeyUp" />
     </div>
 </template>
 

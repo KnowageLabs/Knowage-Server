@@ -9,12 +9,12 @@
         </template>
         <template #content>
             <div>
-                <DataTable :value="scorecards" class="p-datatable-sm kn-table" dataKey="name" v-model:filters="filters" :globalFilterFields="KpiDocumentDesignerScorecardsListCardDescriptor.globalFilterFields" responsiveLayout="stack" breakpoint="960px" :scrollable="true" scroll-height="60vh">
+                <DataTable v-model:filters="filters" :value="scorecards" class="p-datatable-sm kn-table" data-key="name" :global-filter-fields="KpiDocumentDesignerScorecardsListCardDescriptor.globalFilterFields" responsive-layout="stack" breakpoint="960px" :scrollable="true" scroll-height="60vh">
                     <template #header>
                         <div class="table-header p-d-flex p-ai-center">
                             <span id="search-container" class="p-input-icon-left p-mr-3">
                                 <i class="pi pi-search" />
-                                <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" />
+                                <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" />
                             </span>
                             <Button id="kpi-edit-add-scorecard-association-button" class="kn-button kn-button--primary" :label="$t('kpi.kpiDocumentDesigner.addScorecardAssociation')" @click="addScorecardVisible = true"></Button>
                         </div>
@@ -22,8 +22,8 @@
 
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
 
-                    <Column class="kn-truncated" field="name" :header="$t('common.name')" key="name" :sortable="true"> </Column>
-                    <Column class="kn-truncated" field="creationDate" :header="$t('common.creationDate')" key="dateCreation" :sortable="true">
+                    <Column key="name" class="kn-truncated" field="name" :header="$t('common.name')" :sortable="true"> </Column>
+                    <Column key="dateCreation" class="kn-truncated" field="creationDate" :header="$t('common.creationDate')" :sortable="true">
                         <template #body="slotProps">
                             <span>{{ getFormattedDate(slotProps.data.creationDate) }}</span>
                         </template>
@@ -37,7 +37,7 @@
                 </DataTable>
             </div>
 
-            <KpiDocumentDesignerScorecardSelectDialog :scorecardList="scorecardList" :visible="addScorecardVisible" :dataScorecards="scorecards" @close="addScorecardVisible = false" @scorecardSelected="onScorecardSelected"></KpiDocumentDesignerScorecardSelectDialog>
+            <KpiDocumentDesignerScorecardSelectDialog :scorecard-list="scorecardList" :visible="addScorecardVisible" :data-scorecards="scorecards" @close="addScorecardVisible = false" @scorecardSelected="onScorecardSelected"></KpiDocumentDesignerScorecardSelectDialog>
         </template>
     </Card>
 </template>

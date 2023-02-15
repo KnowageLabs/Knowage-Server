@@ -6,9 +6,9 @@
                     <span class="p-float-label">
                         <InputText
                             id="restAddress"
+                            v-model.trim="v$.dataset.restAddress.$model"
                             class="kn-material-input"
                             type="text"
-                            v-model.trim="v$.dataset.restAddress.$model"
                             :class="{
                                 'p-invalid': v$.dataset.restAddress.$invalid && v$.dataset.restAddress.$dirty
                             }"
@@ -17,17 +17,17 @@
                         />
                         <label for="restAddress" class="kn-material-input-label"> {{ $t('managers.datasetManagement.restAddress') }} * </label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.restAddress" :additionalTranslateParams="{ fieldName: $t('managers.datasetManagement.restAddress') }" />
+                    <KnValidationMessages class="p-mt-1" :v-comp="v$.dataset.restAddress" :additional-translate-params="{ fieldName: $t('managers.datasetManagement.restAddress') }" />
                 </div>
                 <div class="p-field p-col-6">
                     <span class="p-float-label">
-                        <InputText id="solrCollection" class="kn-material-input" v-model.trim="dataset.solrCollection" @change="$emit('touched')" />
+                        <InputText id="solrCollection" v-model.trim="dataset.solrCollection" class="kn-material-input" @change="$emit('touched')" />
                         <label for="solrCollection" class="kn-material-input-label"> {{ $t('managers.datasetManagement.solrCollection') }} </label>
                     </span>
                 </div>
                 <div class="p-field p-col-12">
                     <span class="p-float-label">
-                        <InputText id="restRequestBody" class="kn-material-input" maxLength="2000" v-model.trim="dataset.restRequestBody" @change="$emit('touched')" />
+                        <InputText id="restRequestBody" v-model.trim="dataset.restRequestBody" class="kn-material-input" max-length="2000" @change="$emit('touched')" />
                         <label for="restRequestBody" class="kn-material-input-label"> {{ $t('managers.datasetManagement.restRequestBody') }} </label>
                     </span>
                 </div>
@@ -35,11 +35,11 @@
                     <span class="p-float-label">
                         <Dropdown
                             id="restHttpMethod"
+                            v-model="v$.dataset.restHttpMethod.$model"
                             class="kn-material-input"
                             :options="httpMethods"
-                            optionLabel="value"
-                            optionValue="value"
-                            v-model="v$.dataset.restHttpMethod.$model"
+                            option-label="value"
+                            option-value="value"
                             :class="{
                                 'p-invalid': v$.dataset.restHttpMethod.$invalid && v$.dataset.restHttpMethod.$dirty
                             }"
@@ -48,8 +48,8 @@
                         <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.restHttpMethod') }} * </label>
                     </span>
                     <KnValidationMessages
-                        :vComp="v$.dataset.restHttpMethod"
-                        :additionalTranslateParams="{
+                        :v-comp="v$.dataset.restHttpMethod"
+                        :additional-translate-params="{
                             fieldName: $t('managers.datasetManagement.restHttpMethod')
                         }"
                     />
@@ -58,14 +58,14 @@
         </template>
     </Card>
 
-    <RequestHeadersTable :selectedDataset="selectedDataset" />
+    <RequestHeadersTable :selected-dataset="selectedDataset" />
 
     <Card class="p-mt-3">
         <template #content>
             <form class="p-fluid p-formgrid p-grid">
                 <div class="p-col-12 p-field" :style="restDescriptor.style.infoColumnsContainer">
                     <span class="p-float-label" :style="restDescriptor.style.maxWidth">
-                        <InputText id="restJsonPathItems" class="kn-material-input" :style="restDescriptor.style.maxWidth" v-model.trim="dataset.restJsonPathItems" @change="$emit('touched')" />
+                        <InputText id="restJsonPathItems" v-model.trim="dataset.restJsonPathItems" class="kn-material-input" :style="restDescriptor.style.maxWidth" @change="$emit('touched')" />
                         <label for="restJsonPathItems" class="kn-material-input-label"> {{ $t('managers.datasetManagement.restJsonPathItems') }} </label>
                     </span>
                     <Button icon="fas fa-info-circle" class="p-button-text p-button-rounded p-button-plain" @click="jsonItemsHelpVisible = true" />
@@ -73,14 +73,14 @@
                 <div class="p-col-12" :style="restDescriptor.style.infoColumnsContainer">
                     <span class="p-field-checkbox">
                         <label for="binary">{{ $t('managers.datasetManagement.restDirectlyJSONAttributes') }}: </label>
-                        <Checkbox id="binary" class="p-ml-2" v-model="dataset.restDirectlyJSONAttributes" :binary="true" @change="$emit('touched')" />
+                        <Checkbox id="binary" v-model="dataset.restDirectlyJSONAttributes" class="p-ml-2" :binary="true" @change="$emit('touched')" />
                     </span>
                     <Button icon="fas fa-info-circle" class="p-button-text p-button-rounded p-button-plain" @click="directAttributesHelpVisible = true" />
                 </div>
                 <div class="p-col-12" :style="restDescriptor.style.infoColumnsContainer">
                     <span class="p-field-checkbox">
                         <label for="binary">{{ $t('managers.datasetManagement.restNGSI') }}: </label>
-                        <Checkbox id="binary" class="p-ml-2" v-model="dataset.restNGSI" :binary="true" @change="$emit('touched')" />
+                        <Checkbox id="binary" v-model="dataset.restNGSI" class="p-ml-2" :binary="true" @change="$emit('touched')" />
                     </span>
                     <Button icon="fas fa-info-circle" class="p-button-text p-button-rounded p-button-plain" @click="ngsiHelpVisible = true" />
                 </div>
@@ -88,26 +88,26 @@
         </template>
     </Card>
 
-    <JsonPathTable :selectedDataset="selectedDataset" />
+    <JsonPathTable :selected-dataset="selectedDataset" />
 
     <Card class="p-mt-3">
         <template #content>
             <form class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-col-4">
                     <span class="p-float-label">
-                        <InputText id="restOffset" type="number" class="kn-material-input" v-model.trim="dataset.restOffset" @change="$emit('touched')" />
+                        <InputText id="restOffset" v-model.trim="dataset.restOffset" type="number" class="kn-material-input" @change="$emit('touched')" />
                         <label for="restOffset" class="kn-material-input-label"> {{ $t('managers.datasetManagement.restOffset') }} </label>
                     </span>
                 </div>
                 <div class="p-col-4">
                     <span class="p-float-label">
-                        <InputText id="restFetchSize" type="number" class="kn-material-input" v-model.trim="dataset.restFetchSize" @change="$emit('touched')" />
+                        <InputText id="restFetchSize" v-model.trim="dataset.restFetchSize" type="number" class="kn-material-input" @change="$emit('touched')" />
                         <label for="restFetchSize" class="kn-material-input-label"> {{ $t('managers.datasetManagement.restFetchSize') }} </label>
                     </span>
                 </div>
                 <div class="p-col-4">
                     <span class="p-float-label">
-                        <InputText id="restMaxResults" type="number" class="kn-material-input" v-model.trim="dataset.restMaxResults" @change="$emit('touched')" />
+                        <InputText id="restMaxResults" v-model.trim="dataset.restMaxResults" type="number" class="kn-material-input" @change="$emit('touched')" />
                         <label for="restMaxResults" class="kn-material-input-label"> {{ $t('managers.datasetManagement.restMaxResults') }} </label>
                     </span>
                 </div>
@@ -150,13 +150,13 @@ export default defineComponent({
             httpMethods: restDescriptor.httpMethods
         }
     },
-    created() {
-        this.setDatasetToComponent()
-    },
     watch: {
         selectedDataset() {
             this.setDatasetToComponent()
         }
+    },
+    created() {
+        this.setDatasetToComponent()
     },
     validations() {
         const restFieldsRequired = (value) => {

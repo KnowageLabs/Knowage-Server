@@ -1,6 +1,6 @@
 <template>
     <div class="kn-width-full">
-        <VCodeMirror ref="codeMirrorEditor" v-model:value="code" :autoHeight="true" :height="200" :options="options" :disabled="disabled" @keyup="onKeyUp" @keyDown="onKeyUp" @change="onKeyUp" @blur="$emit('blur')" />
+        <VCodeMirror ref="codeMirrorEditor" v-model:value="code" :auto-height="true" :height="200" :options="options" :disabled="disabled" @keyup="onKeyUp" @keyDown="onKeyUp" @change="onKeyUp" @blur="$emit('blur')" />
     </div>
 </template>
 

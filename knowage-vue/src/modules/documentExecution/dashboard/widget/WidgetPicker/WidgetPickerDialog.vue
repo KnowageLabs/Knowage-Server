@@ -33,9 +33,9 @@ import descriptor from './WidgetPickerDescriptor.json'
 export default defineComponent({
     name: 'widget-picker-dialog',
     components: { Dialog, WidgetCard },
-    emits: ['closeWidgetPicker', 'openNewWidgetEditor'],
     inject: [],
     props: { visible: { type: Boolean } },
+    emits: ['closeWidgetPicker', 'openNewWidgetEditor'],
     data() {
         return {
             descriptor,

@@ -2,9 +2,9 @@
     <DataTable
         class="p-datatable-sm kn-table p-m-2"
         :value="inputVariables"
-        editMode="cell"
-        :dataKey="functionsCatalogDatasetFormVariablesTableDescriptor.dataKey"
-        :responsiveLayout="functionsCatalogDatasetFormVariablesTableDescriptor.responsiveLayout"
+        edit-mode="cell"
+        :data-key="functionsCatalogDatasetFormVariablesTableDescriptor.dataKey"
+        :responsive-layout="functionsCatalogDatasetFormVariablesTableDescriptor.responsiveLayout"
         :breakpoint="functionsCatalogDatasetFormVariablesTableDescriptor.breakpoint"
         @cell-edit-complete="onCellEditComplete"
     >
@@ -18,7 +18,7 @@
         <Column :header="$t('common.value')">
             <template #editor="slotProps">
                 <div class="p-d-flex p-flex-row p-ai-center">
-                    <InputText v-if="slotProps.data.type !== 'DATE'" :style="functionsCatalogDatasetFormVariablesTableDescriptor.inputStyle" class="p-mr-2  kn-flex" v-model="slotProps.data['value']" :type="slotProps.data.type === 'NUMBER' ? 'number' : 'text'" />
+                    <InputText v-if="slotProps.data.type !== 'DATE'" v-model="slotProps.data['value']" :style="functionsCatalogDatasetFormVariablesTableDescriptor.inputStyle" class="p-mr-2  kn-flex" :type="slotProps.data.type === 'NUMBER' ? 'number' : 'text'" />
                     <Calendar v-else v-model="slotProps.data['value']" class="kn-flex"></Calendar>
                     <i class="pi pi-pencil edit-icon kn-flex" />
                 </div>

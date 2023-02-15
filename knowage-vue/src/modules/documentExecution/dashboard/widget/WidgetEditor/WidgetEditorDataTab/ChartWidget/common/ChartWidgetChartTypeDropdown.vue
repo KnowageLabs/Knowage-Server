@@ -1,7 +1,7 @@
 <template>
     <div v-if="widgetModel">
         <div class="p-d-flex p-flex-row p-ai-center p-p-4">
-            <Dropdown class="kn-material-input kn-flex" v-model="selectedType" :options="commonDescriptor.chartTypeOptions" optionDisabled="disabled" optionValue="value" @change="onChange">
+            <Dropdown v-model="selectedType" class="kn-material-input kn-flex" :options="commonDescriptor.chartTypeOptions" option-disabled="disabled" option-value="value" @change="onChange">
                 <template #value="slotProps">
                     <div class="p-d-flex p-flex-row p-ai-center">
                         <img class="chart-type-image p-mr-2" :src="getImageSource(slotProps.value)" />

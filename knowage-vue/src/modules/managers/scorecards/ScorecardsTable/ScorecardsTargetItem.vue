@@ -5,19 +5,19 @@
                 <Button v-if="!expanded" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" @click="expanded = true" />
                 <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" @click="expanded = false" />
                 <i class="fa fa-bullseye fa-lg p-mr-1 scorecard-blue-icon" />
-                <InputText class="kn-material-input scorecards-target-name-input" v-model="target.name"  :maxLength="40" @input="$emit('touched', false)" />
+                <InputText v-model="target.name" class="kn-material-input scorecards-target-name-input"  :max-length="40" @input="$emit('touched', false)" />
             </div>
             <div class="p-d-flex p-flex-row p-ai-center">
-                <SelectButton class="p-mr-1" v-model="selectedCriteria" :options="descriptor.criteriaOptions" @change="onCriteriaChange">
+                <SelectButton v-model="selectedCriteria" class="p-mr-1" :options="descriptor.criteriaOptions" @change="onCriteriaChange">
                     <template #option="slotProps">
                         <span v-tooltip="getSelectedCriteriaTooltip(slotProps.option, $t)" :data-test="'select-button-' + slotProps.option">{{ slotProps.option }}</span>
                     </template>
                 </SelectButton>
-                <MultiSelect v-if="selectedCriteria !== 'M'" :style="descriptor.style.multiselect" v-model="target.options.criterionPriority" :options="target.kpis" optionLabel="name" optionValue="name" @change="onCriterionPriortyChanged" data-test="criteria-select-input"></MultiSelect>
+                <MultiSelect v-if="selectedCriteria !== 'M'" v-model="target.options.criterionPriority" :style="descriptor.style.multiselect" :options="target.kpis" option-label="name" option-value="name" data-test="criteria-select-input" @change="onCriterionPriortyChanged"></MultiSelect>
             </div>
 
             <div class="p-ml-auto">
-                <Button icon="fa-solid fa-square-plus" class="p-button-text p-button-rounded p-button-plain" v-tooltip.top="$t('managers.scorecards.addKpi')" @click="openKpiDialog" />
+                <Button v-tooltip.top="$t('managers.scorecards.addKpi')" icon="fa-solid fa-square-plus" class="p-button-text p-button-rounded p-button-plain" @click="openKpiDialog" />
                 <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click="deleteTargetConfirm" />
             </div>
         </div>
@@ -38,7 +38,7 @@
             </template>
         </div>
 
-        <ScorecardsKpiDialog :visible="kpiDialogVisible" :propKpis="kpis" :selectedKpis="target.kpis" @close="kpiDialogVisible = false" @kpiSelected="onKpiSelected"></ScorecardsKpiDialog>
+        <ScorecardsKpiDialog :visible="kpiDialogVisible" :prop-kpis="kpis" :selected-kpis="target.kpis" @close="kpiDialogVisible = false" @kpiSelected="onKpiSelected"></ScorecardsKpiDialog>
     </div>
 </template>
 

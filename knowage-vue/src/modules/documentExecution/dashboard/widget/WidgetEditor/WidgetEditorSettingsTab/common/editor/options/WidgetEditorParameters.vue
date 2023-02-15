@@ -1,14 +1,14 @@
 <template>
     <div class="p-field">
         <span class="p-float-label">
-            <Dropdown class="kn-material-input" v-model="selectedDriver" :options="drivers" optionValue="urlName" optionLabel="name" @change="onDriverValueChanged"> </Dropdown>
+            <Dropdown v-model="selectedDriver" class="kn-material-input" :options="drivers" option-value="urlName" option-label="name" @change="onDriverValueChanged"> </Dropdown>
             <label class="kn-material-input-label"> {{ $t('common.parameter') }}</label>
         </span>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent } from 'vue'
 import { IDashboardDriver } from '@/modules/documentExecution/dashboard/Dashboard'
 import { mapActions } from 'pinia'
 import dashboardStore from '@/modules/documentExecution/dashboard/Dashboard.store'

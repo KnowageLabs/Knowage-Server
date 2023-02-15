@@ -1,7 +1,7 @@
 <template>
     <div v-if="widgetModel">
-        <ChartWidgetChartTypeDropdown :widgetModel="widgetModel" @selectedChartTypeChanged="$emit('selectedChartTypeChanged', $event)"></ChartWidgetChartTypeDropdown>
-        <HighchartsCommonDataContainer :widgetModel="widgetModel" :selectedDataset="selectedDataset"></HighchartsCommonDataContainer>
+        <ChartWidgetChartTypeDropdown :widget-model="widgetModel" @selectedChartTypeChanged="$emit('selectedChartTypeChanged', $event)"></ChartWidgetChartTypeDropdown>
+        <HighchartsCommonDataContainer :widget-model="widgetModel" :selected-dataset="selectedDataset"></HighchartsCommonDataContainer>
     </div>
 </template>
 

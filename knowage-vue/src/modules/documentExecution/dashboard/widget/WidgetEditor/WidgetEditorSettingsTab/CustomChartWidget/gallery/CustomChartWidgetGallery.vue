@@ -1,14 +1,14 @@
 <template>
     <div class="dashboard-card-shadow kn-height-full p-ml-1 p-d-flex p-flex-column">
         <div class="p-d-flex p-flex-row p-ai-center p-flex-wrap">
-            <InputText class="kn-material-input p-m-3 model-search" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" />
+            <InputText v-model="searchWord" class="kn-material-input p-m-3 model-search" type="text" :placeholder="$t('common.search')" @input="searchItems" />
         </div>
         <div class="p-grid p-m-2 kn-flex kn-overflow dashboard-scrollbar">
             <Message v-if="customChartGalleryProp.length == 0" class="kn-flex p-m-2" severity="info" :closable="false">
                 {{ $t('common.info.noDataFound') }}
             </Message>
             <template v-else>
-                <GalleryCard v-for="(galleryItem, index) of filteredGallery" :key="index" :widgetModel="widgetModel" :htmlGalleryItemProp="galleryItem" @click="checkForTemplateContent(galleryItem)" />
+                <GalleryCard v-for="(galleryItem, index) of filteredGallery" :key="index" :widget-model="widgetModel" :html-gallery-item-prop="galleryItem" @click="checkForTemplateContent(galleryItem)" />
             </template>
         </div>
     </div>

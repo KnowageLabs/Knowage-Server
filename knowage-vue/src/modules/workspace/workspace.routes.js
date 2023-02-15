@@ -1,6 +1,6 @@
 import GisRoutes from '@/modules/workspace/gisDocumentDesigner/GisDocumentDesigner.routes.js'
 
-let baseRoutes = [
+const baseRoutes = [
     {
         path: '/workspace',
         name: 'workspace',

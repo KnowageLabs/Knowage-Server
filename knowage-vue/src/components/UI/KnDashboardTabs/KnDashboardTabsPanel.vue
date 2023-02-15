@@ -1,7 +1,7 @@
 <template>
     <div class="sheets-container">
         <!-- <div class="sheets-list" :class="labelPosition" role="tablist" v-if="sheets && sheets.length > 1"> -->
-        <div class="sheets-list" :class="labelPosition" role="tablist" v-if="sheets && sheets.length >= 1">
+        <div v-if="sheets && sheets.length >= 1" class="sheets-list" :class="labelPosition" role="tablist">
             <a v-for="(sheet, index) in sheets" :key="index" class="sheet-label" :class="{ active: currentPage === index }" @touchstart.passive="setPage(index)" @click="setPage(index)">
                 <slot name="label" v-bind="sheet">
                     <i v-if="sheet.icon" :class="sheet.icon" class="p-mr-1"></i>
@@ -30,7 +30,6 @@ import type { ISheet } from '@/modules/documentExecution/dashboard/Dashboard'
 export default defineComponent({
     name: 'kn-dashboard-tabs-panel',
     components: { Menu },
-    emits: ['sheetChange', 'update:sheets'],
     props: {
         sheets: {
             type: Array as PropType<Array<ISheet>>,
@@ -43,6 +42,7 @@ export default defineComponent({
             type: String
         }
     },
+    emits: ['sheetChange', 'update:sheets'],
     data() {
         return {
             currentPage: 0,
@@ -141,7 +141,7 @@ export default defineComponent({
             }
         },
         onTouchEnd() {
-            var quick = new Date().getTime() - this.startTime < 1000
+            const quick = new Date().getTime() - this.startTime < 1000
             if ((this.distance.left < -(200 * this.dpr) && this.distance.top < 100 * this.dpr) || (quick && this.distance.left < -15 && this.distance.top / this.distance.left > -6)) {
                 this.next()
             } else if ((this.distance.left > 200 * this.dpr && this.distance.top < 100 * this.dpr) || (quick && this.distance.left > 15 && this.distance.top / this.distance.left < 6)) {
@@ -153,9 +153,9 @@ export default defineComponent({
             this.distance.top = 0
         },
         initDPR() {
-            var win = window
-            var isIPhone = win.navigator.appVersion.match(/iphone/gi)
-            var devicePixelRatio = win.devicePixelRatio
+            const win = window
+            const isIPhone = win.navigator.appVersion.match(/iphone/gi)
+            const devicePixelRatio = win.devicePixelRatio
             if (isIPhone) {
                 if (devicePixelRatio >= 3 && this.dpr) {
                     this.dpr = 3

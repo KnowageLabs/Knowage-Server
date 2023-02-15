@@ -1,19 +1,19 @@
 <template>
-    <grid-item class="p-d-flex widget-grid-item" :key="item.id" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" drag-allow-from=".drag-handle" @resized="resizedEvent">
+    <grid-item :key="item.id" class="p-d-flex widget-grid-item" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" drag-allow-from=".drag-handle" @resized="resizedEvent">
         <div v-if="initialized" class="drag-handle"></div>
         <ProgressSpinner v-if="loading || customChartLoading" class="kn-progress-spinner" />
-        <Skeleton shape="rectangle" v-if="!initialized" height="100%" border-radius="0" />
+        <Skeleton v-if="!initialized" shape="rectangle" height="100%" border-radius="0" />
         <WidgetRenderer
             v-if="!loading"
             :widget="widget"
-            :widgetData="widgetData"
-            :widgetInitialData="widgetInitialData"
+            :widget-data="widgetData"
+            :widget-initial-data="widgetInitialData"
             :datasets="datasets"
-            :dashboardId="dashboardId"
-            :selectionIsLocked="selectionIsLocked"
-            :propActiveSelections="activeSelections"
+            :dashboard-id="dashboardId"
+            :selection-is-locked="selectionIsLocked"
+            :prop-active-selections="activeSelections"
             :variables="variables"
-            :widgetLoading="widgetLoading"
+            :widget-loading="widgetLoading"
             @reloadData="reloadWidgetData"
             @launchSelection="launchSelection"
             @mouseover="toggleFocus"
@@ -22,10 +22,10 @@
         ></WidgetRenderer>
         <WidgetButtonBar
             :widget="widget"
-            :playSelectionButtonVisible="playSelectionButtonVisible"
-            :selectionIsLocked="selectionIsLocked"
-            :dashboardId="dashboardId"
-            :inFocus="inFocus"
+            :play-selection-button-visible="playSelectionButtonVisible"
+            :selection-is-locked="selectionIsLocked"
+            :dashboard-id="dashboardId"
+            :in-focus="inFocus"
             @edit-widget="toggleEditMode"
             @unlockSelection="unlockSelection"
             @launchSelection="launchSelection"
@@ -66,14 +66,6 @@ export default defineComponent({
         dashboardId: { type: String, required: true },
         variables: { type: Array as PropType<IVariable[]>, required: true }
     },
-    watch: {
-        widget: {
-            async handler() {
-                this.loadWidget(this.widget)
-            },
-            deep: true
-        }
-    },
     data() {
         return {
             loading: false,
@@ -95,6 +87,14 @@ export default defineComponent({
             playDisabledButtonTimeout: null as any,
             widgetLoading: false,
             customChartLoading: false
+        }
+    },
+    watch: {
+        widget: {
+            async handler() {
+                this.loadWidget(this.widget)
+            },
+            deep: true
         }
     },
     async created() {
@@ -251,7 +251,7 @@ export default defineComponent({
                 this.inFocus = false
             }
         },
-        resizedEvent: function (i, newH, newW, newHPx, newWPx) {
+        resizedEvent: function (newHPx) {
             emitter.emit('chartWidgetResized', newHPx)
         }
     }

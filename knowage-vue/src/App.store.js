@@ -32,11 +32,11 @@ const store = defineStore('store', {
         },
 
         updateLicense(el) {
-            let licenses = this.state.licenses
+            const licenses = this.state.licenses
 
-            let hostNameLicenses = licenses.licenses[el.hostName]
+            const hostNameLicenses = licenses.licenses[el.hostName]
 
-            let existingLicense = hostNameLicenses.filter((x) => x.product === el.license.product)
+            const existingLicense = hostNameLicenses.filter((x) => x.product === el.license.product)
 
             if (existingLicense.length == 1) {
                 hostNameLicenses.splice(existingLicense, 1)

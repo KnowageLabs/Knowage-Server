@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="schedulerDocumentsSelectionDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary" :content-style="schedulerDocumentsSelectionDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -10,12 +10,12 @@
 
         <Tree
             id="document-tree"
-            :value="nodes"
-            selectionMode="single"
             v-model:selectionKeys="selectedDocumentsKeys"
-            :metaKeySelection="false"
+            :value="nodes"
+            selection-mode="single"
+            :meta-key-selection="false"
             :filter="true"
-            filterMode="lenient"
+            filter-mode="lenient"
             @node-select="setSelectedDocument($event)"
             @node-unselect="removeSelectedDocument"
             @node-expand="setOpenFolderIcon($event)"

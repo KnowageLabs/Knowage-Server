@@ -10,12 +10,12 @@
 
         <div class="p-p-2">
             <label>{{ documentRank === 0 ? $t('documentExecution.main.firstToRate') : $t('documentExecution.main.currentRank') }}</label>
-            <Rating v-if="documentRank !== 0" class="document-execution-rank-stars" v-model="documentRank" :disabled="true" :cancel="false"></Rating>
+            <Rating v-if="documentRank !== 0" v-model="documentRank" class="document-execution-rank-stars" :disabled="true" :cancel="false"></Rating>
         </div>
 
         <div class="p-p-2">
             <label>{{ $t('documentExecution.main.yourRating') + ': ' }}</label>
-            <Rating class="document-execution-rank-stars" v-model="newRank" :cancel="false"></Rating>
+            <Rating v-model="newRank" class="document-execution-rank-stars" :cancel="false"></Rating>
         </div>
 
         <template #footer>

@@ -2,7 +2,7 @@
     <div class="p-m-4">
         <div class="p-fluid p-field p-col-4">
             <span class="p-float-label">
-                <InputText id="address" class="kn-material-input" v-model="model.address" />
+                <InputText id="address" v-model="model.address" class="kn-material-input" />
                 <label for="address" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.designerDialog.xmlaAddress') }}</label>
             </span>
         </div>
@@ -12,21 +12,21 @@
                 <Button id="add-parameter-button" class="kn-button kn-button--primary p-ml-auto" :label="$t('documentExecution.documentDetails.designerDialog.addParameter')" @click="addParameter"></Button>
             </div>
 
-            <DataTable :value="xmlModel?.parameters" class="p-datatable-sm kn-table p-m-5" responsiveLayout="stack" breakpoint="960px">
+            <DataTable :value="xmlModel?.parameters" class="p-datatable-sm kn-table p-m-5" responsive-layout="stack" breakpoint="960px">
                 <template #empty>
                     {{ $t('common.info.noDataFound') }}
                 </template>
-                <Column class="kn-truncated p-mr-2" v-for="column in descriptor.xmlaParametersColumns" :key="column.header" :field="column.field" :header="$t(column.header)">
+                <Column v-for="column in descriptor.xmlaParametersColumns" :key="column.header" class="kn-truncated p-mr-2" :field="column.field" :header="$t(column.header)">
                     <template #body="slotProps">
                         <div class="p-fluid">
-                            <InputText class="kn-material-input p-inputtext-sm p-mr-2" v-model.trim="slotProps.data[slotProps.column.props.field]" />
+                            <InputText v-model.trim="slotProps.data[slotProps.column.props.field]" class="kn-material-input p-inputtext-sm p-mr-2" />
                             <i class="pi pi-pencil edit-icon" />
                         </div>
                     </template>
                 </Column>
                 <Column :style="descriptor.iconColumnStyle">
                     <template #body="slotProps">
-                        <Button icon="pi pi-trash" class="p-button-link" @click="deleteParameter(slotProps.index)" :data-test="'delete-button-' + slotProps.index" />
+                        <Button icon="pi pi-trash" class="p-button-link" :data-test="'delete-button-' + slotProps.index" @click="deleteParameter(slotProps.index)" />
                     </template>
                 </Column>
             </DataTable>

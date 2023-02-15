@@ -1,29 +1,29 @@
 <template>
     <Card>
         <template #content>
-            <form class="p-fluid p-m-5" v-if="target">
+            <form v-if="target" class="p-fluid p-m-5">
                 <div class="p-field">
                     <span class="p-float-label">
                         <InputText
                             v-bind="$attrs"
                             id="name"
+                            v-model="target.name"
                             class="kn-material-input"
                             type="text"
-                            maxLength="100"
-                            v-model="target.name"
-                            @input="valueChanged('name', $event.target.value)"
+                            max-length="100"
                             :class="{
                                 'p-invalid': vcomp.name.$invalid && vcomp.name.$dirty
                             }"
+                            @input="valueChanged('name', $event.target.value)"
                             @blur="vcomp.name.$touch()"
                         />
                         <label for="name" class="kn-material-input-label">{{ $t('kpi.targetDefinition.name') }} * </label>
                     </span>
-                    <KnValidationMessages :vComp="vcomp.name" :additionalTranslateParams="{ fieldName: $t('kpi.targetDefinition.name') }"></KnValidationMessages>
+                    <KnValidationMessages :v-comp="vcomp.name" :additional-translate-params="{ fieldName: $t('kpi.targetDefinition.name') }"></KnValidationMessages>
                 </div>
                 <div class="p-my-4">
                     <span class="p-float-label">
-                        <AutoComplete id="category" v-model="target.category" :suggestions="filteredCategory" @complete="searchCategory($event)" field="valueName" @input="valueChanged('category', $event.target.value)" @item-select="valueChanged('category', $event.value)" />
+                        <AutoComplete id="category" v-model="target.category" :suggestions="filteredCategory" field="valueName" @complete="searchCategory($event)" @input="valueChanged('category', $event.target.value)" @item-select="valueChanged('category', $event.value)" />
                         <label for="category" class="kn-material-input-label"> {{ $t('kpi.targetDefinition.kpiCategory') }}</label>
                     </span>
                 </div>
@@ -33,38 +33,38 @@
                             <span class="p-float-label">
                                 <Calendar
                                     id="startDate"
-                                    class="kn-material-input"
                                     v-model="target.startValidity"
-                                    @date-select="valueChanged('startValidity', $event)"
+                                    class="kn-material-input"
                                     :class="{
                                         'p-invalid': vcomp.startValidity.$invalid && vcomp.startValidity.$dirty
                                     }"
-                                    :showIcon="true"
-                                    :manualInput="false"
+                                    :show-icon="true"
+                                    :manual-input="false"
+                                    @date-select="valueChanged('startValidity', $event)"
                                     @blur="vcomp.startValidity.$touch()"
                                 />
                                 <label for="startDate" class="kn-material-input-label"> {{ $t('kpi.targetDefinition.startDate') }} * </label>
                             </span>
-                            <KnValidationMessages :vComp="vcomp.startValidity" :additionalTranslateParams="{ fieldName: $t('kpi.targetDefinition.startDate') }"></KnValidationMessages>
+                            <KnValidationMessages :v-comp="vcomp.startValidity" :additional-translate-params="{ fieldName: $t('kpi.targetDefinition.startDate') }"></KnValidationMessages>
                         </div>
                         <div class="p-d-flex">
                             <div>
                                 <span class="p-float-label">
                                     <Calendar
                                         id="endDate"
-                                        class="kn-material-input"
                                         v-model="target.endValidity"
-                                        @date-select="valueChanged('endValidity', $event)"
+                                        class="kn-material-input"
                                         :class="{
                                             'p-invalid': vcomp.endValidity.$invalid && vcomp.endValidity.$dirty
                                         }"
-                                        :showIcon="true"
-                                        :manualInput="false"
+                                        :show-icon="true"
+                                        :manual-input="false"
+                                        @date-select="valueChanged('endValidity', $event)"
                                         @blur="vcomp.endValidity.$touch()"
                                     />
                                     <label for="endDate" class="kn-material-input-label"> {{ $t('kpi.targetDefinition.endDate') }} * </label>
                                 </span>
-                                <KnValidationMessages :vComp="vcomp.endValidity" :additionalTranslateParams="{ fieldName: $t('kpi.targetDefinition.endDate') }" :specificTranslateKeys="{ is_after_date: 'kpi.targetDefinition.endDateBeforeStart' }"></KnValidationMessages>
+                                <KnValidationMessages :v-comp="vcomp.endValidity" :additional-translate-params="{ fieldName: $t('kpi.targetDefinition.endDate') }" :specific-translate-keys="{ is_after_date: 'kpi.targetDefinition.endDateBeforeStart' }"></KnValidationMessages>
                             </div>
                         </div>
                     </div>
@@ -97,18 +97,18 @@ export default defineComponent({
         vcomp: Object
     },
     emits: ['touched', 'valueChanged'],
+    data() {
+        return {
+            target: {} as iTargetDefinition,
+            filteredCategory: [] as iCategory[]
+        }
+    },
     watch: {
         selectedTarget() {
             this.target = { ...this.selectedTarget }
         },
         categories() {
             this.loadCategories()
-        }
-    },
-    data() {
-        return {
-            target: {} as iTargetDefinition,
-            filteredCategory: [] as iCategory[]
         }
     },
     created() {

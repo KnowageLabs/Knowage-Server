@@ -1,9 +1,9 @@
 <template>
-    <ul class="p-megamenu-panel" v-if="model && openedPanelEvent" ref="megamenu">
+    <ul v-if="model && openedPanelEvent" ref="megamenu" class="p-megamenu-panel">
         <div class="p-grid p-mb-1">
             <span class="p-input-icon-left p-col">
                 <i class="pi pi-search" />
-                <InputText type="text" v-model="searchText" :placeholder="$tc('common.search')" @click="focusInput($event)" @keyup="filter()" />
+                <InputText v-model="searchText" type="text" :placeholder="$tc('common.search')" @click="focusInput($event)" @keyup="filter()" />
             </span>
         </div>
         <div style="overflow-y: auto">
@@ -11,15 +11,15 @@
             <div class="p-megamenu-data">
                 <div v-for="(column, columnIndex) of tmpModel" :key="column.label + '_column_' + columnIndex" class="menuColumn p-mb-3">
                     <ul class="p-megamenu-submenu">
-                        <li role="presentation" class="kn-truncated" v-tooltip.top="$t(column.label)">{{ $t(column.label) }}</li>
+                        <li v-tooltip.top="$t(column.label)" role="presentation" class="kn-truncated">{{ $t(column.label) }}</li>
                         <template v-for="(item, i) of column.items" :key="item.label + i.toString()">
                             <li role="none" :style="item.style">
-                                <router-link v-if="item.to && !item.disabled" :to="item.to" custom v-slot="{ navigate, href }">
+                                <router-link v-if="item.to && !item.disabled" v-slot="{ navigate, href }" :to="item.to" custom>
                                     <a :href="href" role="menuitem" @click="onLeafClick($event, item, navigate)">
                                         <span class="p-menuitem-text">{{ $t(item.label) }}</span>
                                     </a>
                                 </router-link>
-                                <a v-else :href="item.url" :target="item.target" @click="onLeafClick($event, item, navigate)" role="menuitem" :tabindex="item.disabled ? null : '0'">
+                                <a v-else :href="item.url" :target="item.target" role="menuitem" :tabindex="item.disabled ? null : '0'" @click="onLeafClick($event, item, navigate)">
                                     <span class="p-menuitem-text">{{ item.label }}</span>
                                 </a>
                             </li>
@@ -38,17 +38,18 @@ import Message from 'primevue/message'
 export default defineComponent({
     name: 'kn-admin-menu',
     components: { Message },
-    emits: ['click'],
     props: {
         model: Array,
         openedPanelEvent: Object
     },
+    emits: ['click'],
     data() {
         return {
             searchText: '',
             tmpModel: new Array<any>()
         }
     },
+    computed: {},
     mounted() {
         this.tmpModel = this.model || []
     },
@@ -60,7 +61,7 @@ export default defineComponent({
         filter() {
             const modelToFilter = this.model || []
             this.tmpModel = modelToFilter.filter((groupItem: any) => {
-                let childItems = groupItem.items.filter((item) => item.label.toLowerCase().includes(this.searchText.toLowerCase()))
+                const childItems = groupItem.items.filter((item) => item.label.toLowerCase().includes(this.searchText.toLowerCase()))
                 return childItems.length > 0
             })
         },
@@ -87,8 +88,7 @@ export default defineComponent({
                 })
             }
         }
-    },
-    computed: {}
+    }
 })
 </script>
 

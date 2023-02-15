@@ -12,7 +12,6 @@ import { CustomChartDatastore } from '../WidgetEditor/WidgetEditorSettingsTab/Cu
 import store from '../../Dashboard.store'
 import appStore from '../../../../../App.store'
 import cryptoRandomString from 'crypto-random-string'
-import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'custom-chart-widget',
@@ -206,7 +205,6 @@ export default defineComponent({
         isUserScriptAlreadLoaded(scriptURL: string) {
             let loaded = false
             const loadedScriptElements = this.iframeDocument.getElementsByTagName('script')
-            const test = deepcopy(loadedScriptElements)
             for (let i = 0; i < loadedScriptElements.length; i++) {
                 if (loadedScriptElements.item(i).attributes?.src?.textContent == scriptURL) {
                     loaded = true

@@ -14,22 +14,21 @@
  * ! this component renders the widget cards inside the picker dialog
  */
 import { defineComponent } from 'vue'
-import Dialog from 'primevue/dialog'
 import descriptor from './WidgetPickerDescriptor.json'
 
 export default defineComponent({
     name: 'widget-picker-dialog',
-    components: { Dialog },
-    emits: ['closeWidgetPicker'],
+    components: {},
     inject: [],
     props: { widget: { required: true, type: Object } },
+    emits: ['closeWidgetPicker'],
     data() {
         return {
             descriptor
         }
     },
-    created() {},
     computed: {},
+    created() {},
     methods: {}
 })
 </script>

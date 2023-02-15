@@ -11,7 +11,7 @@
         </Menu>
     </template>
     <template v-else>
-        <Button v-for="(button, index) in filteredButtons" :key="index" :icon="button.icon" class="p-button-text p-button-rounded p-button-plain" @click="clickedButton($event, button)" v-tooltip.bottom="$t(button.label)" :data-test="'delete-button-' + index" />
+        <Button v-for="(button, index) in filteredButtons" :key="index" v-tooltip.bottom="$t(button.label)" :icon="button.icon" class="p-button-text p-button-rounded p-button-plain" :data-test="'delete-button-' + index" @click="clickedButton($event, button)" />
     </template>
 </template>
 
@@ -27,12 +27,12 @@ export default defineComponent({
         buttons: Array as PropType<Array<Ibutton>>,
         selectedItem: Object as PropType<IKnListBoxOptions>
     },
+    emits: ['click'],
     data() {
         return {
             filteredButtons: [] as Array<Ibutton>
         }
     },
-    emits: ['click'],
     mounted() {
         this.filteredButtons = this.buttons!.filter((x) => {
             return !x.condition || this.selectedItem?.[x.condition]

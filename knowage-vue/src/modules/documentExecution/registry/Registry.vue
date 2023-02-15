@@ -11,20 +11,20 @@
             </template>
         </Toolbar> -->
         <div class="p-d-flex p-flex-column kn-overflow kn-flex">
-            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+            <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
             <div class="">
-                <RegistryFiltersCard v-if="filters.length > 0" :id="id" :propFilters="filters" :entity="entity" @filter="filterRegistry" class=""></RegistryFiltersCard>
+                <RegistryFiltersCard v-if="filters.length > 0" :id="id" :prop-filters="filters" :entity="entity" class="" @filter="filterRegistry"></RegistryFiltersCard>
             </div>
             <div class="kn-relative kn-flex p-m-2 registry-custom-card">
                 <div class="kn-height-full kn-width-full kn-absolute">
                     <RegistryPivotDatatable
                         v-if="isPivot"
-                        :columns="columns"
                         :id="id"
+                        :columns="columns"
                         :rows="rows"
                         :entity="entity"
-                        :propConfiguration="configuration"
-                        :propPagination="pagination"
+                        :prop-configuration="configuration"
+                        :prop-pagination="pagination"
                         @rowChanged="onRowChanged"
                         @rowDeleted="onRowDeleted"
                         @pageChanged="updatePagination"
@@ -33,15 +33,15 @@
                     ></RegistryPivotDatatable>
                     <RegistryDatatable
                         v-else
-                        :propColumns="columns"
                         :id="id"
-                        :propRows="rows"
-                        :propConfiguration="configuration"
-                        :columnMap="columnMap"
+                        :prop-columns="columns"
+                        :prop-rows="rows"
+                        :prop-configuration="configuration"
+                        :column-map="columnMap"
                         :pagination="pagination"
                         :entity="entity"
-                        :stopWarningsState="stopWarningsState"
-                        :dataLoading="dataLoading"
+                        :stop-warnings-state="stopWarningsState"
+                        :data-loading="dataLoading"
                         @saveRegistry="saveRegistry"
                         @rowChanged="onRowChanged"
                         @rowDeleted="onRowDeleted"
@@ -222,8 +222,8 @@ export default defineComponent({
                 this.registry.metaData.fields.forEach((element) => {
                     if (el[element.header]) {
                         if (element.type === 'date') {
-                            let date = new Date(formatDate(el[element.header], 'toISOString'))
-                            let offset = new Date().getTimezoneOffset()
+                            const date = new Date(formatDate(el[element.header], 'toISOString'))
+                            const offset = new Date().getTimezoneOffset()
 
                             el[element.header] = new Date(date.getTime() - offset * 60000)
                         } else if (element.type === 'timestamp') {

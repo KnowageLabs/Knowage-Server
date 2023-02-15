@@ -12,18 +12,18 @@
     </Toolbar>
     <Card v-show="expandTableCard" class="p-mx-2">
         <template #content>
-            <DataTable class="p-datatable-sm kn-table" editMode="cell" :value="dataset.restRequestHeaders" :scrollable="true" scrollHeight="250px" dataKey="versNum" responsiveLayout="stack" breakpoint="960px" @cell-edit-complete="onCellEditComplete">
+            <DataTable class="p-datatable-sm kn-table" edit-mode="cell" :value="dataset.restRequestHeaders" :scrollable="true" scroll-height="250px" data-key="versNum" responsive-layout="stack" breakpoint="960px" @cell-edit-complete="onCellEditComplete">
                 <template #empty>
                     {{ $t('managers.datasetManagement.tableEmpty') }}
                 </template>
                 <Column field="name" :header="$t('kpi.alert.name')" :sortable="true">
                     <template #editor="{ data }">
-                        <InputText class="kn-material-input" :style="tableDescriptor.style.columnStyle" v-model="data.name" />
+                        <InputText v-model="data.name" class="kn-material-input" :style="tableDescriptor.style.columnStyle" />
                     </template>
                 </Column>
                 <Column field="value" :header="$t('common.value')" :sortable="true">
                     <template #editor="{ data }">
-                        <InputText class="kn-material-input" :style="tableDescriptor.style.columnStyle" v-model="data.value" />
+                        <InputText v-model="data.value" class="kn-material-input" :style="tableDescriptor.style.columnStyle" />
                     </template>
                 </Column>
                 <Column @rowClick="false">
@@ -48,6 +48,14 @@ export default defineComponent({
     props: {
         selectedDataset: { type: Object as any }
     },
+    emits: ['touched'],
+    data() {
+        return {
+            tableDescriptor,
+            dataset: {} as any,
+            expandTableCard: false
+        }
+    },
     computed: {
         disableDeleteAll() {
             if (!this.dataset.restRequestHeaders || this.dataset['restRequestHeaders'].length == 0) {
@@ -57,21 +65,13 @@ export default defineComponent({
             }
         }
     },
-    emits: ['touched'],
-    data() {
-        return {
-            tableDescriptor,
-            dataset: {} as any,
-            expandTableCard: false
-        }
-    },
-    created() {
-        this.dataset = this.selectedDataset
-    },
     watch: {
         selectedDataset() {
             this.dataset = this.selectedDataset
         }
+    },
+    created() {
+        this.dataset = this.selectedDataset
     },
     methods: {
         addNewParam() {

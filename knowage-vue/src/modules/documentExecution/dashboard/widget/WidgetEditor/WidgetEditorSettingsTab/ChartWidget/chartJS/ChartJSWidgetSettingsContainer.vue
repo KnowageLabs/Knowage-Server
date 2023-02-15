@@ -1,6 +1,6 @@
 <template>
     <div v-show="widgetModel">
-        <ChartJSWidgetSettingsAccordion v-show="selectedSetting" :widgetModel="widgetModel" :settings="descriptor.settings[selectedSetting]" :datasets="datasets" :selectedDatasets="selectedDatasets" :variables="variables" :dashboardId="dashboardId"></ChartJSWidgetSettingsAccordion>
+        <ChartJSWidgetSettingsAccordion v-show="selectedSetting" :widget-model="widgetModel" :settings="descriptor.settings[selectedSetting]" :datasets="datasets" :selected-datasets="selectedDatasets" :variables="variables" :dashboard-id="dashboardId"></ChartJSWidgetSettingsAccordion>
     </div>
 </template>
 
@@ -11,7 +11,7 @@ import descriptor from './ChartJSWidgetSettingsDescriptor.json'
 import ChartJSWidgetSettingsAccordion from './ChartJSWidgetSettingsAccordion.vue'
 
 export default defineComponent({
-    name: 'chartJS-widget-settings-container',
+    name: 'chart-j-s-widget-settings-container',
     components: { ChartJSWidgetSettingsAccordion },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

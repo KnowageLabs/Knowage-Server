@@ -22,7 +22,7 @@
                 </template>
             </Timeline>
             <template #footer>
-                <Button class="kn-button kn-button--primary" @click="closeDialog" :label="computeLabel()"> </Button>
+                <Button class="kn-button kn-button--primary" :label="computeLabel()" @click="closeDialog"> </Button>
             </template>
         </Dialog>
     </div>
@@ -37,12 +37,25 @@ import Timeline from 'primevue/timeline'
 export default defineComponent({
     name: 'data-preparation-avro-handling-dialog',
     components: { Dialog, Message, Timeline },
-    emits: ['close'],
     props: { visible: { type: Boolean }, title: { type: String }, infoMessage: { type: String }, events: { type: Array } },
+    emits: ['close'],
     data() {
         return {
             descriptor,
             sec: 0
+        }
+    },
+    watch: {
+        events: {
+            handler(newValue) {
+                if (newValue.length === 5) {
+                    const lastEvent = newValue[newValue.length - 1] as any
+                    if (lastEvent?.status !== 'error') {
+                        this.handleTimeout()
+                    }
+                }
+            },
+            deep: true
         }
     },
     mounted() {
@@ -51,7 +64,7 @@ export default defineComponent({
     methods: {
         computeLabel() {
             if (this.events?.length === 5) {
-                let lastEvent = this.events[this.events.length - 1] as any
+                const lastEvent = this.events[this.events.length - 1] as any
                 if (lastEvent?.status === 'error') {
                     return this.$t('common.close')
                 } else {
@@ -65,8 +78,8 @@ export default defineComponent({
             this.$emit('close')
         },
         handleTimeout() {
-            let self = this
-            var x = setInterval(function () {
+            const self = this
+            const x = setInterval(function () {
                 if (self.sec > 0) {
                     self.sec--
                 } else if (self.sec == 0) {
@@ -76,19 +89,6 @@ export default defineComponent({
             setTimeout(() => {
                 this.closeDialog()
             }, 5000)
-        }
-    },
-    watch: {
-        events: {
-            handler(newValue) {
-                if (newValue.length === 5) {
-                    let lastEvent = newValue[newValue.length - 1] as any
-                    if (lastEvent?.status !== 'error') {
-                        this.handleTimeout()
-                    }
-                }
-            },
-            deep: true
         }
     }
 })

@@ -6,44 +6,44 @@
                     {{ $t('managers.dataSourceManagement.title') }}
                 </template>
                 <template #end>
-                    <FabButton icon="fas fa-plus" @click="showForm" data-test="open-form-button" />
+                    <FabButton icon="fas fa-plus" data-test="open-form-button" @click="showForm" />
                 </template>
             </Toolbar>
-            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+            <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
             <Listbox
                 v-if="!loading"
                 class="kn-list--column"
                 :options="datasources"
-                optionLabel="label"
+                option-label="label"
                 :filter="true"
-                :filterPlaceholder="$t('common.search')"
-                filterMatchMode="contains"
-                :filterFields="dataSourceDescriptor.filterFields"
-                :emptyFilterMessage="$t('common.info.noDataFound')"
-                @change="showForm"
+                :filter-placeholder="$t('common.search')"
+                filter-match-mode="contains"
+                :filter-fields="dataSourceDescriptor.filterFields"
+                :empty-filter-message="$t('common.info.noDataFound')"
                 data-test="datasource-list"
+                @change="showForm"
             >
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
                     <div class="kn-list-item" data-test="list-item">
                         <Avatar
+                            v-tooltip="dataSourceDescriptor.iconTypesMap[slotProps.option.dialectName]?.tooltip"
                             :icon="dataSourceDescriptor.iconTypesMap[slotProps.option.dialectName]?.dbIcon"
                             shape="circle"
                             size="medium"
                             :style="dataSourceDescriptor.iconTypesMap[slotProps.option.dialectName]?.style"
-                            v-tooltip="dataSourceDescriptor.iconTypesMap[slotProps.option.dialectName]?.tooltip"
                         />
                         <div class="kn-list-item-text">
                             <span>{{ slotProps.option.label }}</span>
                             <span class="kn-list-item-text-secondary">{{ slotProps.option.descr }}</span>
                         </div>
-                        <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" v-if="slotProps.option.owner == this.user.userId || this.user.isSuperadmin" @click.stop="deleteDatasourceConfirm(slotProps.option.dsId)" data-test="delete-button" />
+                        <Button v-if="slotProps.option.owner == user.userId || user.isSuperadmin" icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" data-test="delete-button" @click.stop="deleteDatasourceConfirm(slotProps.option.dsId)" />
                     </div>
                 </template>
             </Listbox>
         </div>
         <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 p-d-flex p-flex-column kn-height-full-vertical">
-            <router-view :selectedDatasource="selDatasource" :databases="listOfAvailableDatabases" :user="user" @touched="touched = true" @closed="onFormClose" @inserted="reloadPage" />
+            <router-view :selected-datasource="selDatasource" :databases="listOfAvailableDatabases" :user="user" @touched="touched = true" @closed="onFormClose" @inserted="reloadPage" />
         </div>
     </div>
 </template>
@@ -65,6 +65,10 @@ export default defineComponent({
         Listbox,
         Avatar
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             dataSourceDescriptor,
@@ -75,10 +79,6 @@ export default defineComponent({
             loading: false,
             touched: false
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         await this.getAllDatasources()

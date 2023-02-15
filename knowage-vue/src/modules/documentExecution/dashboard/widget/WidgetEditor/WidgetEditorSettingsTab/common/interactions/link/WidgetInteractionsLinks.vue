@@ -3,7 +3,7 @@
         <div v-for="(link, index) in linksModel.links" :key="index" class="dynamic-form-item p-grid p-ai-center p-col-12">
             <div class="p-sm-11 p-md-10 p-d-flex p-flex-column">
                 <label class="kn-material-input-label"> {{ $t('common.type') }}</label>
-                <Dropdown class="kn-material-input" v-model="link.type" :options="descriptor.interactionTypes" optionValue="value" :disabled="linksDisabled" @change="onInteractionTypeChanged(link)">
+                <Dropdown v-model="link.type" class="kn-material-input" :options="descriptor.interactionTypes" option-value="value" :disabled="linksDisabled" @change="onInteractionTypeChanged(link)">
                     <template #value="slotProps">
                         <div>
                             <span>{{ getTranslatedLabel(slotProps.value, descriptor.interactionTypes, $t) }}</span>
@@ -23,22 +23,22 @@
 
             <div class="p-sm-12 p-md-4 p-d-flex p-flex-column p-pt-2">
                 <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.interactions.basicUrl') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="link.baseurl" :disabled="linksDisabled" />
+                <InputText v-model="link.baseurl" class="kn-material-input p-inputtext-sm" :disabled="linksDisabled" />
             </div>
 
             <div v-if="link.type === 'singleColumn'" class="p-sm-12 p-md-3">
                 <div class="p-d-flex p-flex-column kn-flex p-mx-2">
                     <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
-                    <Dropdown class="kn-material-input" v-model="link.column" :options="widgetModel.columns" optionLabel="alias" optionValue="columnName" :disabled="linksDisabled"> </Dropdown>
+                    <Dropdown v-model="link.column" class="kn-material-input" :options="widgetModel.columns" option-label="alias" option-value="columnName" :disabled="linksDisabled"> </Dropdown>
                 </div>
             </div>
             <div v-else-if="link.type === 'icon'" class="p-sm-6 p-md-3 p-p-4">
-                <WidgetEditorStyleToolbar :options="[{ type: 'icon' }]" :propModel="{ icon: link.icon }" :disabled="linksDisabled" @change="onStyleToolbarChange($event, link)"> </WidgetEditorStyleToolbar>
+                <WidgetEditorStyleToolbar :options="[{ type: 'icon' }]" :prop-model="{ icon: link.icon }" :disabled="linksDisabled" @change="onStyleToolbarChange($event, link)"> </WidgetEditorStyleToolbar>
             </div>
 
             <div class="p-sm-6 p-md-4 p-d-flex p-flex-column">
                 <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.interactions.linkType') }}</label>
-                <Dropdown class="kn-material-input" v-model="link.action" :options="descriptor.linkTypes" optionValue="value" :disabled="linksDisabled" @change="onInteractionTypeChanged(link)">
+                <Dropdown v-model="link.action" class="kn-material-input" :options="descriptor.linkTypes" option-value="value" :disabled="linksDisabled" @change="onInteractionTypeChanged(link)">
                     <template #value="slotProps">
                         <div>
                             <span>{{ getTranslatedLabel(slotProps.value, descriptor.linkTypes, $t) }}</span>
@@ -55,11 +55,11 @@
             <div class="p-sm-12 p-md-12">
                 <TableWidgetLinkParameterList
                     class="kn-flex p-mr-2"
-                    :widgetModel="widgetModel"
-                    :propParameters="link.parameters"
-                    :selectedDatasetsColumnsMap="selectedDatasetColumnNameMap"
+                    :widget-model="widgetModel"
+                    :prop-parameters="link.parameters"
+                    :selected-datasets-columns-map="selectedDatasetColumnNameMap"
                     :disabled="linksDisabled"
-                    :dashboardId="dashboardId"
+                    :dashboard-id="dashboardId"
                     @change="onParametersChanged($event, link)"
                     @addParameter="onAddParameter(link)"
                     @delete="onParameterDelete($event, link)"
@@ -75,15 +75,13 @@ import { IWidget, IDataset, IWidgetLinks, ITableWidgetLink, IWidgetStyleToolbarM
 import { emitter } from '../../../../../../DashboardHelpers'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import descriptor from '../WidgetInteractionsDescriptor.json'
-import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
-import InputSwitch from 'primevue/inputswitch'
 import WidgetEditorStyleToolbar from '../../styleToolbar/WidgetEditorStyleToolbar.vue'
 import TableWidgetLinkParameterList from './WidgetLinkParameterList.vue'
 
 export default defineComponent({
     name: 'table-widget-interactions-links',
-    components: { Checkbox, Dropdown, InputSwitch, TableWidgetLinkParameterList, WidgetEditorStyleToolbar },
+    components: { Dropdown, TableWidgetLinkParameterList, WidgetEditorStyleToolbar },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDataset[]> },

@@ -8,16 +8,16 @@
             </template>
             <template #end>
                 <Button class="kn-button p-button-text" @click="openImportDialog">{{ $t('common.import') }}</Button>
-                <Button class="kn-button p-button-text" @click="openExportDialog" :disabled="isExportDisabled()">{{ $t('common.export') }}</Button>
+                <Button class="kn-button p-button-text" :disabled="isExportDisabled()" @click="openExportDialog">{{ $t('common.export') }}</Button>
             </template>
         </Toolbar>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
         <div class="kn-page-content p-grid p-m-0">
             <div class="functionalities-container p-col-3 p-sm-3 p-md-2">
-                <KnTabCard :element="functionality" :selected="functionality.route === $route.path" v-for="(functionality, index) in functionalities" v-bind:key="index" @click="selectType(functionality)" :badge="selectedItems[functionality.type].length"> </KnTabCard>
+                <KnTabCard v-for="(functionality, index) in functionalities" :key="index" :element="functionality" :selected="functionality.route === $route.path" :badge="selectedItems[functionality.type].length" @click="selectType(functionality)"> </KnTabCard>
             </div>
             <div class="p-col p-pt-0">
-                <router-view v-model:loading="loading" @onItemSelected="getSelectedItems($event)" :selectedItems="selectedItems" />
+                <router-view v-model:loading="loading" :selected-items="selectedItems" @onItemSelected="getSelectedItems($event)" />
             </div>
         </div>
     </div>
@@ -38,6 +38,11 @@ import mainStore from '../../App.store'
 export default defineComponent({
     name: 'import-export',
     components: { ExportDialog, KnTabCard, ImportDialog, ProgressBar },
+    emits: ['onItemSelected'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             importExportDescriptor: importExportDescriptor,
@@ -52,21 +57,16 @@ export default defineComponent({
             functionalities: Array<any>()
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
     mounted() {
         if (this.isEnterprise) this.setFunctionalities()
     },
-    emits: ['onItemSelected'],
     methods: {
         async setFunctionalities() {
             this.loading = true
             this.functionalities = []
 
-            let licenses = this.licenses.licenses
-            let currentHostName = this.licenses.hosts[0] ? this.licenses.hosts[0].hostName : undefined
+            const licenses = this.licenses.licenses
+            const currentHostName = this.licenses.hosts[0] ? this.licenses.hosts[0].hostName : undefined
 
             this.functionalities = importExportDescriptor.functionalities
                 .filter((x) => {
@@ -82,7 +82,7 @@ export default defineComponent({
             if (e.items) this.selectedItems[e.functionality] = e.items
         },
         isExportDisabled() {
-            for (var index in this.selectedItems) {
+            for (const index in this.selectedItems) {
                 if (this.selectedItems[index].length > 0) return false
             }
             return true
@@ -127,10 +127,10 @@ export default defineComponent({
         },
 
         streamlineSelectedItemsArray(fileName): JSON {
-            let selectedItemsToBE = {} as JSON
+            const selectedItemsToBE = {} as JSON
             selectedItemsToBE['selectedItems'] = {}
-            for (var category in this.selectedItems) {
-                for (var k in this.selectedItems[category]) {
+            for (const category in this.selectedItems) {
+                for (const k in this.selectedItems[category]) {
                     if (!selectedItemsToBE['selectedItems'][category]) {
                         selectedItemsToBE['selectedItems'][category] = []
                     }

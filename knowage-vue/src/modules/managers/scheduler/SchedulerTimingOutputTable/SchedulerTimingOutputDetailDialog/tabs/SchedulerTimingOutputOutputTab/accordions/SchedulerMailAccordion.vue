@@ -1,5 +1,5 @@
 <template>
-    <Accordion :activeIndex="0">
+    <Accordion :active-index="0">
         <AccordionTab>
             <template #header>
                 <i class="fa fa-envelope"></i>
@@ -8,7 +8,7 @@
             </template>
 
             <div v-if="document">
-                <div class="p-m-4" v-tooltip="$t('managers.scheduler.fixedRecipientsListHelp')">
+                <div v-tooltip="$t('managers.scheduler.fixedRecipientsListHelp')" class="p-m-4">
                     <Checkbox v-model="document.useFixedRecipients" :binary="true" @change="removeDocumentExpressionAndDatasets" />
                     <span class="p-ml-2">{{ $t('managers.scheduler.fixedRecipientsList') }}</span>
                 </div>
@@ -17,12 +17,12 @@
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.mailTo') }} *</label>
                         <InputText
-                            class="kn-material-input p-inputtext-sm"
                             v-model="document.mailtos"
+                            class="kn-material-input p-inputtext-sm"
                             :class="{
                                 'p-invalid': fixedRecipientsListDirty && (!document.mailtos || document.mailtos.length === 0)
                             }"
-                            :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.mail.mailToMaxLength"
+                            :max-length="schedulerTimingOutputOutputTabDescriptor.accordion.mail.mailToMaxLength"
                             @input="validateDocument('fixedRecipientsListDirty')"
                             @blur="validateDocument('fixedRecipientsListDirty')"
                         />
@@ -38,7 +38,7 @@
                 </div>
 
                 <div v-if="drivers.length > 0" class="p-m-4">
-                    <div class="p-my-4" v-tooltip="$t('managers.scheduler.useDatasetListHelp')">
+                    <div v-tooltip="$t('managers.scheduler.useDatasetListHelp')" class="p-my-4">
                         <Checkbox v-model="document.useDataset" :binary="true" @change="removeDocumentFixedRecipientsAndExpression" />
                         <span class="p-ml-2" v-html="$t('managers.scheduler.useDatasetList')"></span>
                     </div>
@@ -48,17 +48,17 @@
                             <span>
                                 <label class="kn-material-input-label">{{ $t('managers.scheduler.datasetVerification') }} *</label>
                                 <Dropdown
-                                    class="kn-material-input"
                                     v-model="document.datasetLabel"
+                                    class="kn-material-input"
                                     :class="{
                                         'p-invalid': datasetLabelDirty && (!document.datasetLabel || document.datasetLabel?.length === 0)
                                     }"
                                     :options="datasets"
-                                    optionLabel="label"
-                                    optionValue="label"
+                                    option-label="label"
+                                    option-value="label"
                                     :filter="true"
-                                    filterMatchMode="contains"
-                                    :filterFields="['label']"
+                                    filter-match-mode="contains"
+                                    :filter-fields="['label']"
                                     @blur="validateDocument('datasetLabelDirty')"
                                     @change="validateDocument('datasetLabelDirty')"
                                 />
@@ -72,8 +72,8 @@
                             <span>
                                 <label class="kn-material-input-label">{{ $t('common.parameter') }} *</label>
                                 <Dropdown
-                                    class="kn-material-input"
                                     v-model="document.datasetParameter"
+                                    class="kn-material-input"
                                     :class="{
                                         'p-invalid': datasetParameterDirty && (!document.datasetParameter || document.datasetParameter?.length === 0)
                                     }"
@@ -89,7 +89,7 @@
                     </div>
                 </div>
 
-                <div class="p-m-4" v-tooltip="$t('managers.scheduler.useExpressionHelp')">
+                <div v-tooltip="$t('managers.scheduler.useExpressionHelp')" class="p-m-4">
                     <Checkbox v-model="document.useExpression" :binary="true" @change="removeDocumentFixedRecipientsAndDatasets" />
                     <span class="p-ml-2" v-html="$t('managers.scheduler.useExpression')"></span>
                 </div>
@@ -98,12 +98,12 @@
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.expression') }} *</label>
                         <InputText
-                            class="kn-material-input p-inputtext-sm"
                             v-model="document.expression"
+                            class="kn-material-input p-inputtext-sm"
                             :class="{
                                 'p-invalid': expressionDirty && (!document.expression || document.expression.length === 0)
                             }"
-                            :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.mail.expressionMaxLength"
+                            :max-length="schedulerTimingOutputOutputTabDescriptor.accordion.mail.expressionMaxLength"
                             @input="validateDocument('expressionDirty')"
                             @blur="validateDocument('expressionDirty')"
                         />
@@ -131,7 +131,7 @@
                 <div v-if="document.zipMailDocument" class="p-m-4">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.zipFileName') }}</label>
-                        <InputText class="kn-material-input p-inputtext-sm" v-model="document.zipMailName" :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.mail.zipMailNameMaxLength" />
+                        <InputText v-model="document.zipMailName" class="kn-material-input p-inputtext-sm" :max-length="schedulerTimingOutputOutputTabDescriptor.accordion.mail.zipMailNameMaxLength" />
                     </span>
                     <div class="p-d-flex p-jc-end">
                         <small>{{ zipMailNameHelp }}</small>
@@ -146,7 +146,7 @@
                 <div class="p-m-4">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.mailSubject') }}</label>
-                        <InputText class="kn-material-input p-inputtext-sm" v-model="document.mailsubj" :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.mail.mailSubjectMaxLength" />
+                        <InputText v-model="document.mailsubj" class="kn-material-input p-inputtext-sm" :max-length="schedulerTimingOutputOutputTabDescriptor.accordion.mail.mailSubjectMaxLength" />
                     </span>
                     <div class="p-d-flex p-flex-row p-jc-between">
                         <p class="max-length-help p-m-0">{{ mailSubjectHelp }}</p>
@@ -156,7 +156,7 @@
                 <div class="p-m-4">
                     <span>
                         <label class="kn-material-input-label">{{ $t('common.fileName') }}</label>
-                        <InputText class="kn-material-input p-inputtext-sm" v-model="document.containedFileName" :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.mail.fileNameMaxLength" />
+                        <InputText v-model="document.containedFileName" class="kn-material-input p-inputtext-sm" :max-length="schedulerTimingOutputOutputTabDescriptor.accordion.mail.fileNameMaxLength" />
                     </span>
                     <div class="p-d-flex p-jc-end">
                         <small>{{ fileNameHelp }}</small>
@@ -166,7 +166,7 @@
                 <div class="p-m-4">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.mailText') }}</label>
-                        <InputText class="kn-material-input p-inputtext-sm" v-model="document.mailtxt" :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.mail.mailTextMaxLength" :placeholder="$t('managers.scheduler.mailTextMessage')" />
+                        <InputText v-model="document.mailtxt" class="kn-material-input p-inputtext-sm" :max-length="schedulerTimingOutputOutputTabDescriptor.accordion.mail.mailTextMaxLength" :placeholder="$t('managers.scheduler.mailTextMessage')" />
                     </span>
                     <div class="p-d-flex p-flex-row p-jc-between">
                         <p class="max-length-help p-m-0">{{ mailTextHelp }}</p>

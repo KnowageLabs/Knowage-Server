@@ -6,8 +6,8 @@
         :rows="functionsCatalogDatatableDescriptor.rows"
         :loading="loading"
         class="p-datatable-sm kn-table kn-page-content"
-        dataKey="id"
-        :responsiveLayout="functionsCatalogDatatableDescriptor.responsiveLayout"
+        data-key="id"
+        :responsive-layout="functionsCatalogDatatableDescriptor.responsiveLayout"
         :breakpoint="functionsCatalogDatatableDescriptor.breakpoint"
         @rowClick="$emit('selected', $event.data)"
     >
@@ -23,19 +23,19 @@
             <div class="table-header p-d-flex">
                 <span class="p-input-icon-left p-mr-3 p-col-12">
                     <i class="pi pi-search" />
-                    <InputText class="kn-material-input" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchFunctions" />
+                    <InputText v-model="searchWord" class="kn-material-input" type="text" :placeholder="$t('common.search')" @input="searchFunctions" />
                 </span>
             </div>
         </template>
-        <Column class="kn-truncated" :style="col.style" v-for="col of functionsCatalogDatatableDescriptor.columns" :header="$t(col.header)" :key="col.field" :sortField="col.field" :sortable="true">
+        <Column v-for="col of functionsCatalogDatatableDescriptor.columns" :key="col.field" class="kn-truncated" :style="col.style" :header="$t(col.header)" :sort-field="col.field" :sortable="true">
             <template #body="slotProps">
                 <span v-tooltip.top="slotProps.data[col.field]"> {{ slotProps.data[col.field] }}</span>
             </template>
         </Column>
         <Column :style="functionsCatalogDatatableDescriptor.table.iconColumn.style">
             <template #body="slotProps">
-                <Button icon="fa fa-play-circle" class="p-button-link" v-tooltip.top="$t('managers.functionsCatalog.executePreview')" @click.stop="previewFunction(slotProps.data)" />
-                <Button v-if="canDelete(slotProps.data)" icon="pi pi-trash" class="p-button-link" v-tooltip.top="$t('common.delete')" @click.stop="deleteFunctionConfirm(slotProps.data.id)" :data-test="'delete-button-' + slotProps.data.id" />
+                <Button v-tooltip.top="$t('managers.functionsCatalog.executePreview')" icon="fa fa-play-circle" class="p-button-link" @click.stop="previewFunction(slotProps.data)" />
+                <Button v-if="canDelete(slotProps.data)" v-tooltip.top="$t('common.delete')" icon="pi pi-trash" class="p-button-link" :data-test="'delete-button-' + slotProps.data.id" @click.stop="deleteFunctionConfirm(slotProps.data.id)" />
             </template>
         </Column>
     </DataTable>
@@ -66,18 +66,18 @@ export default defineComponent({
             loading: false
         }
     },
+    computed: {
+        canManageFunctionalities(): boolean {
+            const index = this.user?.functionalities?.findIndex((el: string) => el === 'FunctionsCatalogManagement')
+            return index !== -1
+        }
+    },
     watch: {
         propLoading() {
             this.setLoading()
         },
         items() {
             this.loadFunctions()
-        }
-    },
-    computed: {
-        canManageFunctionalities(): boolean {
-            const index = this.user?.functionalities?.findIndex((el: string) => el === 'FunctionsCatalogManagement')
-            return index !== -1
         }
     },
     async created() {

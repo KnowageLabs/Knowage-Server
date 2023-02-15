@@ -4,53 +4,53 @@
             <div class="p-d-flex">
                 <div class="p-field" :style="dataViewDescriptor.style.maxwidth">
                     <span class="p-float-label">
-                        <InputText id="fileName" class="kn-material-input" :style="dataViewDescriptor.style.maxwidth" v-model.trim="dataset.fileName" :disabled="true" @change="$emit('touched')" />
+                        <InputText id="fileName" v-model.trim="dataset.fileName" class="kn-material-input" :style="dataViewDescriptor.style.maxwidth" :disabled="true" @change="$emit('touched')" />
                         <label for="fileName" class="kn-material-input-label"> {{ $t('downloadsDialog.columns.fileName') }} </label>
                     </span>
                 </div>
                 <Button icon="fas fa-upload fa-2x" class="p-button-text p-button-plain p-ml-2" @click="setUploadType" />
                 <Button icon="fas fa-download fa-2x" class="p-button-text y p-button-plain p-ml-2" @click="downloadDatasetFile" />
-                <KnInputFile v-if="!uploading" :changeFunction="uploadDatasetFile" accept=".csv, .xls, .xlsx" :triggerInput="triggerUpload" />
+                <KnInputFile v-if="!uploading" :change-function="uploadDatasetFile" accept=".csv, .xls, .xlsx" :trigger-input="triggerUpload" />
             </div>
 
             <div v-if="dataset.fileType && dataset.fileType == 'CSV'" class="p-fluid p-formgrid p-grid p-mt-3">
                 <span class="p-field p-float-label p-col">
-                    <Dropdown id="csvDelimiter" class="kn-material-input workspace-wizard-step-one-input" :options="dataViewDescriptor.csvDelimiterCharacterTypes" optionLabel="name" optionValue="value" v-model="dataset.csvDelimiter" />
+                    <Dropdown id="csvDelimiter" v-model="dataset.csvDelimiter" class="kn-material-input workspace-wizard-step-one-input" :options="dataViewDescriptor.csvDelimiterCharacterTypes" option-label="name" option-value="value" />
                     <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanCsvDelimiter') }} </label>
                 </span>
                 <span class="p-field p-float-label p-col">
-                    <Dropdown id="csvQuote" class="kn-material-input workspace-wizard-step-one-input" :options="dataViewDescriptor.csvQuoteCharacterTypes" optionLabel="name" optionValue="value" v-model="dataset.csvQuote" />
+                    <Dropdown id="csvQuote" v-model="dataset.csvQuote" class="kn-material-input workspace-wizard-step-one-input" :options="dataViewDescriptor.csvQuoteCharacterTypes" option-label="name" option-value="value" />
                     <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanCsvQuote') }} </label>
                 </span>
                 <span class="p-field p-float-label p-col">
-                    <Dropdown id="csvEncoding" class="kn-material-input workspace-wizard-step-one-input" :options="dataViewDescriptor.csvEncodingTypes" optionLabel="name" optionValue="value" v-model="dataset.csvEncoding" />
+                    <Dropdown id="csvEncoding" v-model="dataset.csvEncoding" class="kn-material-input workspace-wizard-step-one-input" :options="dataViewDescriptor.csvEncodingTypes" option-label="name" option-value="value" />
                     <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanCsvEncoding') }} </label>
                 </span>
                 <span class="p-field p-float-label p-col">
-                    <Dropdown id="dateFormat" class="kn-material-input workspace-wizard-step-one-input" :options="dataViewDescriptor.dateFormatTypes" optionLabel="name" optionValue="value" v-model="dataset.dateFormat" />
+                    <Dropdown id="dateFormat" v-model="dataset.dateFormat" class="kn-material-input workspace-wizard-step-one-input" :options="dataViewDescriptor.dateFormatTypes" option-label="name" option-value="value" />
                     <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanDateFormat') }} </label>
                 </span>
                 <span class="p-field p-float-label p-col">
-                    <Dropdown id="timestampFormat" class="kn-material-input workspace-wizard-step-one-input" :options="dataViewDescriptor.timestampFormatTypes" optionLabel="name" optionValue="value" v-model="dataset.timestampFormat" />
+                    <Dropdown id="timestampFormat" v-model="dataset.timestampFormat" class="kn-material-input workspace-wizard-step-one-input" :options="dataViewDescriptor.timestampFormatTypes" option-label="name" option-value="value" />
                     <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.timestampFormat') }} </label>
                 </span>
             </div>
             <div v-if="dataset.fileType == 'XLS' || dataset.fileType == 'XLSX'" class="p-fluid p-formgrid p-grid p-mt-3">
                 <div class="p-field p-col-12 p-xl-4">
                     <span class="p-float-label">
-                        <InputText id="skipRows" class="kn-material-input" type="number" v-model.trim="dataset.skipRows" @change="$emit('touched')" />
+                        <InputText id="skipRows" v-model.trim="dataset.skipRows" class="kn-material-input" type="number" @change="$emit('touched')" />
                         <label for="skipRows" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanSkipRows') }} </label>
                     </span>
                 </div>
                 <div class="p-field p-col-12 p-xl-4">
                     <span class="p-float-label">
-                        <InputText id="limitRows" class="kn-material-input" type="number" v-model.trim="dataset.limitRows" @change="$emit('touched')" />
+                        <InputText id="limitRows" v-model.trim="dataset.limitRows" class="kn-material-input" type="number" @change="$emit('touched')" />
                         <label for="limitRows" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanLimitRows') }} </label>
                     </span>
                 </div>
                 <div class="p-field p-col-12 p-xl-4">
                     <span class="p-float-label">
-                        <InputText id="sheetnumber" class="kn-material-input" type="number" v-model.trim="dataset.xslSheetNumber" @change="$emit('touched')" />
+                        <InputText id="sheetnumber" v-model.trim="dataset.xslSheetNumber" class="kn-material-input" type="number" @change="$emit('touched')" />
                         <label for="sheetnumber" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanXslSheetNumber') }} </label>
                     </span>
                 </div>
@@ -74,6 +74,10 @@ export default defineComponent({
     components: { Card, KnInputFile, Dropdown },
     props: { selectedDataset: { type: Object as any } },
     emits: ['touched', 'fileUploaded', 'closeDialog'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             v$: useValidate() as any,
@@ -87,17 +91,13 @@ export default defineComponent({
             rows: [] as any
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
-    created() {
-        this.dataset = this.selectedDataset
-    },
     watch: {
         selectedDataset() {
             this.dataset = this.selectedDataset
         }
+    },
+    created() {
+        this.dataset = this.selectedDataset
     },
     methods: {
         //#region ===================== File Upload/Download ====================================================
@@ -107,7 +107,7 @@ export default defineComponent({
         },
         uploadDatasetFile(event) {
             this.uploading = true
-            let uploadedFile = event.target.files[0]
+            const uploadedFile = event.target.files[0]
             if (uploadedFile.name.includes(this.dataset.fileName)) {
                 this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('common.error.sameFileName') })
                 this.triggerUpload = false
@@ -118,7 +118,7 @@ export default defineComponent({
             setTimeout(() => (this.uploading = false), 200)
         },
         async startUpload(uploadedFile) {
-            var formData = new FormData()
+            const formData = new FormData()
             formData.append('file', uploadedFile)
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `selfservicedatasetupload/fileupload`, formData, {
@@ -139,7 +139,7 @@ export default defineComponent({
                 })
         },
         async downloadDatasetFile() {
-            var encodedLabel = encodeURI(this.dataset.label)
+            const encodedLabel = encodeURI(this.dataset.label)
             await this.$http
                 .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasets/download/file?dsLabel=${encodedLabel}&type=${this.dataset.fileType}`, {
                     headers: {
@@ -166,9 +166,9 @@ export default defineComponent({
                 )
         },
         createCompleteFileName(response) {
-            var contentDisposition = response.headers['content-disposition']
-            var fileAndExtension = contentDisposition.match(/filename[^;\n=]*=((['"]).*?\2|[^;\n]*)/i)[1]
-            var completeFileName = fileAndExtension.replaceAll('"', '')
+            const contentDisposition = response.headers['content-disposition']
+            const fileAndExtension = contentDisposition.match(/filename[^;\n=]*=((['"]).*?\2|[^;\n]*)/i)[1]
+            const completeFileName = fileAndExtension.replaceAll('"', '')
             return completeFileName
         },
         resetFields() {

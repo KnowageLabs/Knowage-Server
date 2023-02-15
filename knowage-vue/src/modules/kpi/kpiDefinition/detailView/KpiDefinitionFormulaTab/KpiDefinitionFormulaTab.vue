@@ -4,10 +4,10 @@
             <span class="p-float-label p-mb-2">
                 <InputText
                     id="name"
+                    v-model.trim="v$.selectedKpi.name.$model"
                     class="kn-material-input"
                     type="text"
-                    maxLength="25"
-                    v-model.trim="v$.selectedKpi.name.$model"
+                    max-length="25"
                     :class="{
                         'p-invalid': v$.selectedKpi.name.$invalid && v$.selectedKpi.name.$dirty
                     }"
@@ -16,8 +16,8 @@
                 <label for="label" class="kn-material-input-label">{{ $t('common.name') }} * </label>
             </span>
             <KnValidationMessages
-                :vComp="v$.selectedKpi.name"
-                :additionalTranslateParams="{
+                :v-comp="v$.selectedKpi.name"
+                :additional-translate-params="{
                     fieldName: $t('common.name')
                 }"
             >
@@ -25,32 +25,32 @@
         </div>
         <div class="p-field p-col-6">
             <span class="p-float-label p-mb-2">
-                <InputText id="name" class="kn-material-input" type="text" v-model.trim="selectedKpi.author" :disabled="true" />
+                <InputText id="name" v-model.trim="selectedKpi.author" class="kn-material-input" type="text" :disabled="true" />
                 <label for="name" class="kn-material-input-label"> {{ $t('common.author') }}</label>
             </span>
         </div>
     </form>
-    <VCodeMirror v-if="!loading" ref="codeMirror" class="CodeMirrorMathematica" v-model:value="selectedKpi.definition.formula" :autoHeight="true" :options="codeMirrorOptions" @keyup="onKeyUp" @mousedown="onMouseDown" />
-    <Dialog class="kn-dialog--toolbar--primary importExportDialog" footer="footer" v-bind:visible="functionDialogVisible" :closable="false" modal>
+    <VCodeMirror v-if="!loading" ref="codeMirror" v-model:value="selectedKpi.definition.formula" class="CodeMirrorMathematica" :auto-height="true" :options="codeMirrorOptions" @keyup="onKeyUp" @mousedown="onMouseDown" />
+    <Dialog class="kn-dialog--toolbar--primary importExportDialog" footer="footer" :visible="functionDialogVisible" :closable="false" modal>
         <template #header>
-            <h4>{{ $t('kpi.kpiDefinition.formulaDialogHeader') }} {{ this.dialogHeaderInfo.functionName }}</h4>
+            <h4>{{ $t('kpi.kpiDefinition.formulaDialogHeader') }} {{ dialogHeaderInfo.functionName }}</h4>
         </template>
 
         <div class="p-mt-4 p-ml-4">
             <div class="p-field-radiobutton">
-                <RadioButton id="SUM" name="city" value="SUM" v-model="selectedFunctionalities" />
+                <RadioButton id="SUM" v-model="selectedFunctionalities" name="city" value="SUM" />
                 <label for="SUM">SUM</label>
             </div>
             <div class="p-field-radiobutton">
-                <RadioButton id="MAX" name="city" value="MAX" v-model="selectedFunctionalities" />
+                <RadioButton id="MAX" v-model="selectedFunctionalities" name="city" value="MAX" />
                 <label for="MAX">MAX</label>
             </div>
             <div class="p-field-radiobutton">
-                <RadioButton id="MIN" name="city" value="MIN" v-model="selectedFunctionalities" />
+                <RadioButton id="MIN" v-model="selectedFunctionalities" name="city" value="MIN" />
                 <label for="MIN">MIN</label>
             </div>
             <div class="p-field-radiobutton">
-                <RadioButton id="COUNT" name="city" value="COUNT" v-model="selectedFunctionalities" />
+                <RadioButton id="COUNT" v-model="selectedFunctionalities" name="city" value="COUNT" />
                 <label for="COUNT">COUNT</label>
             </div>
         </div>
@@ -78,6 +78,10 @@ export default defineComponent({
     components: { VCodeMirror, Dialog, RadioButton, KnValidationMessages },
     props: { propKpi: Object as any, measures: { type: Array as any }, aliasToInput: { type: String }, checkFormula: { type: Boolean }, activeTab: { type: Number }, loading: Boolean, reloadKpi: Boolean },
     emits: ['touched', 'errorInFormula', 'updateFormulaToSave', 'onGuideClose'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             codeMirrorOptions: {
@@ -117,20 +121,6 @@ export default defineComponent({
             selectedKpi: createValidations('selectedKpi', tabViewDescriptor.validations.selectedKpi)
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
-    created() {
-        setMathematicaModified()
-    },
-    mounted() {
-        if (this.propKpi) {
-            this.selectedKpi = this.propKpi as any
-        }
-        this.registerCodeMirrorHelper()
-        this.loadKPI()
-    },
     watch: {
         propKpi() {
             this.selectedKpi = this.propKpi as any
@@ -159,11 +149,21 @@ export default defineComponent({
             }
         }
     },
+    created() {
+        setMathematicaModified()
+    },
+    mounted() {
+        if (this.propKpi) {
+            this.selectedKpi = this.propKpi as any
+        }
+        this.registerCodeMirrorHelper()
+        this.loadKPI()
+    },
 
     methods: {
         openFunctionPicker() {
-            var cur = this.codeMirror.getCursor()
-            var token = this.codeMirror.getTokenAt(cur)
+            const cur = this.codeMirror.getCursor()
+            let token = this.codeMirror.getTokenAt(cur)
 
             while (token.string.trim() == '') {
                 cur.ch = cur.ch + 1
@@ -181,8 +181,8 @@ export default defineComponent({
             }
 
             if (this.selectedFunctionalities != '') {
-                var arr = this.codeMirror.findMarksAt({ line: this.codeMirror.getCursor().line, ch: token.end })
-                for (var i = 0; i < arr.length; i++) {
+                const arr = this.codeMirror.findMarksAt({ line: this.codeMirror.getCursor().line, ch: token.end })
+                for (let i = 0; i < arr.length; i++) {
                     arr[i].clear()
                 }
             }
@@ -200,7 +200,7 @@ export default defineComponent({
         },
 
         checkError(cm, token) {
-            var flag = false
+            let flag = false
 
             if (this.measureInList(token.string, this.measures) == -1) {
                 flag = true
@@ -212,14 +212,14 @@ export default defineComponent({
 
         registerCodeMirrorHelper() {
             CodeMirror.registerHelper('hint', 'measures', () => {
-                var cur = this.codeMirror.getCursor()
-                var tok = this.codeMirror.getTokenAt(cur)
-                var start = tok.string.trim() == '' ? tok.start + 1 : tok.start
-                var end = tok.end
+                const cur = this.codeMirror.getCursor()
+                const tok = this.codeMirror.getTokenAt(cur)
+                const start = tok.string.trim() == '' ? tok.start + 1 : tok.start
+                const end = tok.end
 
-                var hint = [] as any
+                const hint = [] as any
 
-                for (var i = 0; i < this.measures.length; i++) {
+                for (let i = 0; i < this.measures.length; i++) {
                     if (tok.string.trim() == '' || this.measures[i].alias.startsWith(tok.string)) {
                         hint.push(this.measures[i].alias)
                     }
@@ -229,12 +229,12 @@ export default defineComponent({
         },
 
         onKeyUp(event) {
-            var cm = this.codeMirror
+            const cm = this.codeMirror
             this.$emit('touched')
 
             if ((event.keyIdentifier != undefined && event.keyIdentifier != 'U+0008' && event.keyIdentifier != 'Left' && event.keyIdentifier != 'Right') || (event.key != undefined && event.key != 'Backspace' && event.key != 'Left' && event.key != 'Right')) {
-                var cur = cm.getCursor()
-                var token = cm.getTokenAt(cur)
+                const cur = cm.getCursor()
+                const token = cm.getTokenAt(cur)
 
                 if (token.string == '{' || token.string == '}' || token.string == '[' || token.string == ']') {
                     cm.replaceRange('', { line: cm.getCursor().line, ch: token.start }, { line: cm.getCursor().line, ch: token.end + 1 })
@@ -248,7 +248,7 @@ export default defineComponent({
 
         onMouseDown(event) {
             if ('srcElement' in event) {
-                for (var i = 0; i < event.srcElement.classList.length; i++) {
+                for (let i = 0; i < event.srcElement.classList.length; i++) {
                     this.token = event.srcElement.innerHTML
                     if (event.srcElement.classList[i] == 'cm-m-max') {
                         this.selectedFunctionalities = 'MAX'
@@ -264,7 +264,7 @@ export default defineComponent({
                         break
                     }
                 }
-                var className = event.srcElement.className
+                const className = event.srcElement.className
                 if (className.startsWith('cm-keyword') || className.startsWith('cm-variable-2')) {
                     this.dialogHeaderInfo.functionName = event.srcElement.innerHTML
                     this.functionDialogVisible = true
@@ -292,13 +292,13 @@ export default defineComponent({
             }, 200)
         },
         changeIndexWithMeasures(functions, codeMirror) {
-            var counter = 0
-            for (var i = 0; i < codeMirror.lineCount(); i++) {
-                var arrayOfLines = this.removeSpace(codeMirror.getLineTokens(i))
-                for (var j = 0; j < arrayOfLines.length; j++) {
-                    var token = arrayOfLines[j]
+            let counter = 0
+            for (let i = 0; i < codeMirror.lineCount(); i++) {
+                const arrayOfLines = this.removeSpace(codeMirror.getLineTokens(i))
+                for (let j = 0; j < arrayOfLines.length; j++) {
+                    const token = arrayOfLines[j]
                     if (token.type == 'keyword' || token.type == 'variable-2') {
-                        var className = functions[counter]
+                        const className = functions[counter]
                         counter++
                         if (className == 'MAX') {
                             codeMirror.markText({ line: i, ch: token.start }, { line: i, ch: token.end }, { className: 'cm-m-max' })
@@ -315,7 +315,7 @@ export default defineComponent({
         },
 
         removeSpace(tokenList) {
-            for (var i = 0; i < tokenList.length; i++) {
+            for (let i = 0; i < tokenList.length; i++) {
                 if (tokenList[i].type == null) {
                     tokenList.splice(i, 1)
                 }
@@ -330,8 +330,8 @@ export default defineComponent({
             this.formulaSimple = ''
         },
         measureInList(item, list) {
-            for (var i = 0; i < list.length; i++) {
-                var object = list[i]
+            for (let i = 0; i < list.length; i++) {
+                const object = list[i]
                 if (object.alias == item) {
                     return i
                 }
@@ -342,22 +342,22 @@ export default defineComponent({
 
         checkFormulaForErrors() {
             this.reset()
-            var countOpenBracket = 0
-            var countCloseBracket = 0
-            var codeMirror = (this.$refs.codeMirror as any).cminstance as any
-            var flag = true
-            var numMeasures = 0
+            let countOpenBracket = 0
+            let countCloseBracket = 0
+            const codeMirror = (this.$refs.codeMirror as any).cminstance as any
+            let flag = true
+            let numMeasures = 0
 
-            FORFirst: for (var i = 0; i < codeMirror.lineCount(); i++) {
-                var line = i + 1
-                var array = this.removeSpace(codeMirror.getLineTokens(i))
-                for (var j = 0; j < array.length; j++) {
-                    var token = array[j]
-                    var arr = codeMirror.findMarksAt({ line: i, ch: token.end })
+            FORFirst: for (let i = 0; i < codeMirror.lineCount(); i++) {
+                const line = i + 1
+                const array = this.removeSpace(codeMirror.getLineTokens(i))
+                for (let j = 0; j < array.length; j++) {
+                    const token = array[j]
+                    const arr = codeMirror.findMarksAt({ line: i, ch: token.end })
                     if (token.string.trim() != '') {
                         if (arr.length == 0) {
                             if (j - 1 >= 0) {
-                                var token_before = array[j - 1]
+                                const token_before = array[j - 1]
                                 if (token_before.type == 'keyword' || token_before.type == 'variable-2') {
                                     if (token.type == 'keyword' || token.type == 'number' || token.type == 'variable-2' || token.string == '(') {
                                         this.store.setError({ msg: this.$t('kpi.kpiDefinition.errorformula.missingoperator') + line })
@@ -458,7 +458,7 @@ export default defineComponent({
                             }
                         } else {
                             if (j - 1 >= 0) {
-                                token_before = array[j - 1]
+                                const token_before = array[j - 1]
                                 if (token_before.type == 'number' || token_before.type == 'keyword' || token_before.type == 'variable-2') {
                                     this.store.setError({ msg: this.$t('kpi.kpiDefinition.errorformula.missingoperator') })
                                     this.$emit('errorInFormula', true)
@@ -468,8 +468,8 @@ export default defineComponent({
                                 }
                             }
                             //parse classes token
-                            for (var k = 0; k < arr.length; k++) {
-                                var className = arr[k]['className']
+                            for (let k = 0; k < arr.length; k++) {
+                                const className = arr[k]['className']
                                 if (this.measureInList(token.string, this.measures) == -1) {
                                     this.store.setError({ msg: this.$t('kpi.kpiDefinition.errorformula.generic') })
                                     this.$emit('errorInFormula', true)
@@ -480,8 +480,8 @@ export default defineComponent({
                                     numMeasures++
                                     this.measuresToJSON.push(token.string)
                                     this.functionsTOJSON.push('MAX')
-                                    var index = this.measuresToJSON.length - 1
-                                    var string = 'M' + index
+                                    const index = this.measuresToJSON.length - 1
+                                    const string = 'M' + index
                                     this.formula = this.formula + string
                                     this.formulaDecoded = this.formulaDecoded + 'MAX(' + token.string + ')'
                                     this.formulaSimple = this.formulaSimple + token.string
@@ -489,8 +489,8 @@ export default defineComponent({
                                     numMeasures++
                                     this.measuresToJSON.push(token.string)
                                     this.functionsTOJSON.push('MIN')
-                                    index = this.measuresToJSON.length - 1
-                                    string = 'M' + index
+                                    const index = this.measuresToJSON.length - 1
+                                    const string = 'M' + index
                                     this.formula = this.formula + string
                                     this.formulaDecoded = this.formulaDecoded + 'MIN(' + token.string + ')'
                                     this.formulaSimple = this.formulaSimple + token.string
@@ -498,8 +498,8 @@ export default defineComponent({
                                     numMeasures++
                                     this.measuresToJSON.push(token.string)
                                     this.functionsTOJSON.push('COUNT')
-                                    index = this.measuresToJSON.length - 1
-                                    string = 'M' + index
+                                    const index = this.measuresToJSON.length - 1
+                                    const string = 'M' + index
                                     this.formula = this.formula + string
                                     this.formulaDecoded = this.formulaDecoded + 'COUNT(' + token.string + ')'
                                     this.formulaSimple = this.formulaSimple + token.string
@@ -507,8 +507,8 @@ export default defineComponent({
                                     numMeasures++
                                     this.measuresToJSON.push(token.string)
                                     this.functionsTOJSON.push('SUM')
-                                    index = this.measuresToJSON.length - 1
-                                    string = 'M' + index
+                                    const index = this.measuresToJSON.length - 1
+                                    const string = 'M' + index
                                     this.formula = this.formula + string
                                     this.formulaDecoded = this.formulaDecoded + 'SUM(' + token.string + ')'
                                     this.formulaSimple = this.formulaSimple + token.string

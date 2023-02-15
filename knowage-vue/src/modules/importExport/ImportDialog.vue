@@ -1,42 +1,42 @@
 <template>
-    <Dialog class="kn-dialog--toolbar--primary importExportDialog" v-bind:visible="visibility" footer="footer" :header="$t('common.import')" :closable="false" modal>
+    <Dialog class="kn-dialog--toolbar--primary importExportDialog" :visible="visibility" footer="footer" :header="$t('common.import')" :closable="false" modal>
         <div v-if="step == 0">
-            <FileUpload name="demo[]" :chooseLabel="$t('common.choose')" :customUpload="true" @uploader="onUpload" @remove="onDelete" auto="true" :maxFileSize="10000000" accept="application/zip, application/x-zip-compressed" :multiple="false" :fileLimit="1">
+            <FileUpload name="demo[]" :choose-label="$t('common.choose')" :custom-upload="true" auto="true" :max-file-size="10000000" accept="application/zip, application/x-zip-compressed" :multiple="false" :file-limit="1" @uploader="onUpload" @remove="onDelete">
                 <template #empty>
                     <p>{{ $t('common.dragAndDropFileHere') }}</p>
                 </template>
             </FileUpload>
         </div>
         <div v-if="step == 1" class="importExportImport">
-            <Message severity="warn" v-if="step == 1 && getMessageWarningCondition()">{{ $t('importExport.itemsWithEmptyIdWarning') }}</Message>
+            <Message v-if="step == 1 && getMessageWarningCondition()" severity="warn">{{ $t('importExport.itemsWithEmptyIdWarning') }}</Message>
             <TabView @change="resetSearchFilter">
                 <TabPanel v-for="functionality in importExportDescriptor.functionalities" :key="functionality.label">
                     <template #header>
                         {{ $t(functionality.label).toUpperCase() }}
 
-                        <Badge class="p-ml-1" v-if="selectedItems[functionality.type].length && selectedItems[functionality.type].length > 0" :value="selectedItems[functionality.type].length"></Badge>
+                        <Badge v-if="selectedItems[functionality.type].length && selectedItems[functionality.type].length > 0" class="p-ml-1" :value="selectedItems[functionality.type].length"></Badge>
                     </template>
                     <DataTable
                         ref="dt"
-                        :value="packageItems[functionality.type]"
                         v-model:selection="selectedItems[functionality.type]"
                         v-model:filters="filters"
+                        :value="packageItems[functionality.type]"
                         class="p-datatable-sm kn-table functionalityTable"
-                        dataKey="id"
+                        data-key="id"
                         :paginator="true"
                         :rows="10"
-                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                        responsiveLayout="stack"
+                        paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                        responsive-layout="stack"
                         breakpoint="960px"
-                        :currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
-                        :globalFilterFields="['name', 'type', 'tags']"
+                        :current-page-report-template="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
+                        :global-filter-fields="['name', 'type', 'tags']"
                         :loading="loading"
                     >
                         <template #header>
                             <div class="table-header">
                                 <span class="p-input-icon-left">
                                     <i class="pi pi-search" />
-                                    <InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0" />
+                                    <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" badge="0" />
                                 </span>
                             </div>
                         </template>
@@ -47,17 +47,17 @@
                             {{ $t('common.info.dataLoading') }}
                         </template>
 
-                        <Column v-for="col in getData(functionality.type)" :field="col.field" :header="$t(col.header)" :key="col.field" :style="col.style" :selectionMode="col.field == 'selectionMode' ? 'multiple' : ''" :exportable="col.field == 'selectionMode' ? false : ''">
-                            <template #body="{ data }" v-if="col.displayType">
+                        <Column v-for="col in getData(functionality.type)" :key="col.field" :field="col.field" :header="$t(col.header)" :style="col.style" :selection-mode="col.field == 'selectionMode' ? 'multiple' : ''" :exportable="col.field == 'selectionMode' ? false : ''">
+                            <template v-if="col.displayType" #body="{ data }">
                                 <span class="p-float-label kn-material-input">
                                     <div v-if="col.displayType == 'widgetTags'">
-                                        <Tag class="importExportTags p-mr-1" v-for="(tag, index) in data.tags" v-bind:key="index" rounded :value="tag"> </Tag>
+                                        <Tag v-for="(tag, index) in data.tags" :key="index" class="importExportTags p-mr-1" rounded :value="tag"> </Tag>
                                     </div>
                                     <div v-else-if="col.displayType == 'widgetGalleryType'">
                                         <Tag :style="importExportDescriptor.iconTypesMap[data.type].style"> {{ data.type.toUpperCase() }} </Tag>
                                     </div>
                                     <div v-else-if="col.displayType == 'widgetInfo'">
-                                        <Avatar v-if="data.id === null || data.id === ''" icon="pi pi-exclamation-triangle" shape="circle" v-tooltip="$t('importExport.itemWithEmptyId')" />
+                                        <Avatar v-if="data.id === null || data.id === ''" v-tooltip="$t('importExport.itemWithEmptyId')" icon="pi pi-exclamation-triangle" shape="circle" />
                                     </div>
                                 </span>
                             </template>
@@ -68,12 +68,12 @@
         </div>
 
         <template #footer>
-            <Button v-bind:visible="visibility" class="p-button-text kn-button thirdButton" :label="$t('common.cancel')" @click="resetAndClose" />
+            <Button :visible="visibility" class="p-button-text kn-button thirdButton" :label="$t('common.cancel')" @click="resetAndClose" />
 
-            <Button v-if="step == 0" v-bind:visible="visibility" class="kn-button kn-button--primary" v-t="'common.next'" :disabled="uploadedFiles && uploadedFiles.length == 0" @click="goToChooseElement(uploadedFiles)" />
+            <Button v-if="step == 0" v-t="'common.next'" :visible="visibility" class="kn-button kn-button--primary" :disabled="uploadedFiles && uploadedFiles.length == 0" @click="goToChooseElement(uploadedFiles)" />
             <span v-if="step == 1">
-                <Button v-bind:visible="visibility" class="kn-button kn-button--secondary" v-t="'common.back'" @click="resetToFirstStep" />
-                <Button v-bind:visible="visibility" class="kn-button kn-button--primary" v-t="'common.import'" :disabled="isImportDisabled()" @click="startImport"
+                <Button v-t="'common.back'" :visible="visibility" class="kn-button kn-button--secondary" @click="resetToFirstStep" />
+                <Button v-t="'common.import'" :visible="visibility" class="kn-button kn-button--primary" :disabled="isImportDisabled()" @click="startImport"
             /></span>
         </template>
     </Dialog>
@@ -105,6 +105,11 @@ export default defineComponent({
     props: {
         visibility: Boolean
     },
+    emits: ['update:visibility', 'import'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             importExportDescriptor: importExportDescriptor,
@@ -123,11 +128,6 @@ export default defineComponent({
             step: 0,
             token: ''
         }
-    },
-    emits: ['update:visibility', 'import'],
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.filters = {
@@ -160,7 +160,7 @@ export default defineComponent({
             this.$emit('import', { files: this.uploadedFiles })
         },
         getData(type): Array<ITableColumn> {
-            let columns = this.importExportDescriptor['import'][type]['column']
+            const columns = this.importExportDescriptor['import'][type]['column']
             columns.sort(function (a, b) {
                 if (a.position > b.position) return 1
                 if (a.position < b.position) return -1
@@ -182,7 +182,7 @@ export default defineComponent({
                 this.loading = true
                 this.step = 1
 
-                var formData = new FormData()
+                const formData = new FormData()
                 formData.append('file', uploadedFiles[0])
                 await this.$http
                     .post(import.meta.env.VITE_API_PATH + '1.0/import/upload', formData, {
@@ -203,8 +203,8 @@ export default defineComponent({
                 this.store.setWarning({ title: this.$t('common.uploading'), msg: this.$t('managers.widgetGallery.noFileProvided') })
             }
         },
-        isImportDisabled(): Boolean {
-            for (var idx in this.selectedItems) {
+        isImportDisabled(): boolean {
+            for (const idx in this.selectedItems) {
                 if (this.selectedItems[idx].length > 0) return false
             }
             return true
@@ -259,10 +259,10 @@ export default defineComponent({
         },
 
         streamlineSelectedItemsArray(): JSON {
-            let selectedItemsToBE = {} as JSON
+            const selectedItemsToBE = {} as JSON
             selectedItemsToBE['selectedItems'] = {}
-            for (var category in this.selectedItems) {
-                for (var k in this.selectedItems[category]) {
+            for (const category in this.selectedItems) {
+                for (const k in this.selectedItems[category]) {
                     if (!selectedItemsToBE['selectedItems'][category]) {
                         selectedItemsToBE['selectedItems'][category] = []
                     }

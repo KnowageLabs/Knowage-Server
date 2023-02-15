@@ -6,24 +6,24 @@
                     <span class="p-float-label">
                         <InputText
                             id="label"
+                            v-model.trim="v$.lov.label.$model"
                             class="kn-material-input"
                             type="text"
-                            v-model.trim="v$.lov.label.$model"
                             :class="{
                                 'p-invalid': v$.lov.label.$invalid && v$.lov.label.$dirty
                             }"
-                            maxLength="20"
+                            max-length="20"
                             @blur="v$.lov.label.$touch()"
                             @input="$emit('touched')"
                         />
                         <label for="label" class="kn-material-input-label"> {{ $t('common.label') }} * </label>
                     </span>
                     <KnValidationMessages
-                        :vComp="v$.lov.label"
-                        :additionalTranslateParams="{
+                        :v-comp="v$.lov.label"
+                        :additional-translate-params="{
                             fieldName: $t('common.label')
                         }"
-                        :specificTranslateKeys="{
+                        :specific-translate-keys="{
                             custom_unique_label: 'managers.lovsManagement.lovLabelNotUnique'
                         }"
                     />
@@ -32,24 +32,24 @@
                     <span class="p-float-label">
                         <InputText
                             id="name"
+                            v-model.trim="v$.lov.name.$model"
                             class="kn-material-input"
                             type="text"
-                            v-model.trim="v$.lov.name.$model"
                             :class="{
                                 'p-invalid': v$.lov.name.$invalid && v$.lov.name.$dirty
                             }"
-                            maxLength="50"
+                            max-length="50"
                             @blur="v$.lov.name.$touch()"
                             @input="$emit('touched')"
                         />
                         <label for="name" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
                     </span>
                     <KnValidationMessages
-                        :vComp="v$.lov.name"
-                        :additionalTranslateParams="{
+                        :v-comp="v$.lov.name"
+                        :additional-translate-params="{
                             fieldName: $t('common.name')
                         }"
-                        :specificTranslateKeys="{
+                        :specific-translate-keys="{
                             custom_unique_name: 'managers.lovsManagement.lovNameNotUnique'
                         }"
                     />
@@ -59,14 +59,14 @@
                         <label for="typeLovDropdown" class="kn-material-input-label">{{ $t('managers.lovsManagement.lovType') }} * </label>
                         <Dropdown
                             id="typeLovDropdown"
+                            v-model="v$.lov.itypeCd.$model"
                             class="kn-material-input"
                             :class="{
                                 'p-invalid': v$.lov.itypeCd.$invalid && v$.lov.itypeCd.$dirty
                             }"
-                            v-model="v$.lov.itypeCd.$model"
                             :options="listOfInputTypes"
-                            optionLabel="VALUE_NM"
-                            optionValue="VALUE_CD"
+                            option-label="VALUE_NM"
+                            option-value="VALUE_CD"
                             :placeholder="$t('managers.lovsManagement.lovTypePlaceholder')"
                             aria-label="dropdown"
                             @before-show="v$.lov.itypeCd.$touch()"
@@ -75,8 +75,8 @@
                     </span>
 
                     <KnValidationMessages
-                        :vComp="v$.lov.itypeCd"
-                        :additionalTranslateParams="{
+                        :v-comp="v$.lov.itypeCd"
+                        :additional-translate-params="{
                             fieldName: $t('managers.lovsManagement.lovType')
                         }"
                     >
@@ -84,7 +84,7 @@
                 </div>
                 <div class="p-field p-col-12 p-mb-5">
                     <span class="p-float-label">
-                        <InputText id="description" class="kn-material-input" type="text" v-model.trim="lov.description" maxLength="160" @input="$emit('touched')" />
+                        <InputText id="description" v-model.trim="lov.description" class="kn-material-input" type="text" max-length="160" @input="$emit('touched')" />
                         <label for="description" class="kn-material-input-label"> {{ $t('managers.lovsManagement.description') }}</label>
                     </span>
                 </div>

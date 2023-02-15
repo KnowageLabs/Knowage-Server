@@ -1,27 +1,28 @@
 <template>
-    <Sidebar class="mySidebar" v-model:visible="sidebarVisible" :showCloseIcon="false" position="right" @hide="$emit('close')">
+    <Sidebar v-model:visible="sidebarVisible" class="mySidebar" :show-close-icon="false" position="right" @hide="$emit('close')">
         <div id="sidebarItemsContainer" :style="descriptor.style.sidebarContainer">
             <div class="kn-toolbar kn-toolbar--default" :style="descriptor.style.sidebarToolbar">
                 <span v-for="(button, index) of documentButtons" :key="index">
-                    <Button v-if="button.visible" :icon="button.icon" :class="button.class" @click="button.command" v-tooltip.top="button.tooltip" />
+                    <Button v-if="button.visible" v-tooltip.top="button.tooltip" :icon="button.icon" :class="button.class" @click="button.command" />
                 </span>
             </div>
-            <img v-if="viewType && document.previewFile && !descriptor.typesWithoutImages.includes(viewType)" class="p-mt-5"
+            <img
+v-if="viewType && document.previewFile && !descriptor.typesWithoutImages.includes(viewType)" class="p-mt-5"
                 :style="descriptor.style.sidebarImage" align="center" :src="documentImageSource" />
             <div class="p-m-5">
-                <div class="p-mb-5" v-for="(field, index) of documentFields" :key="index">
+                <div v-for="(field, index) of documentFields" :key="index" class="p-mb-5">
                     <h3 class="p-m-0">
                         <b>{{ $t(field.translation) }}</b>
                     </h3>
-                    <p class="p-m-0" v-if="field.type === 'category' && datasetCategory">
+                    <p v-if="field.type === 'category' && datasetCategory" class="p-m-0">
                         {{ datasetCategory }}
                     </p>
-                    <p class="p-m-0" v-if="field.type === 'date'">{{ getFormattedDate(document[field.value], {
+                    <p v-if="field.type === 'date'" class="p-m-0">{{ getFormattedDate(document[field.value], {
                             year: 'numeric', month: '2-digit', day:
                                 '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'
                         })
                     }}</p>
-                    <p class="p-m-0" v-if="field.type != 'date' && field.type != 'category'">{{ document[field.value] }}</p>
+                    <p v-if="field.type != 'date' && field.type != 'category'" class="p-m-0">{{ document[field.value] }}</p>
                 </div>
             </div>
         </div>
@@ -39,9 +40,21 @@ import mainStore from '../../../App.store'
 export default defineComponent({
     name: 'workspace-sidebar',
     components: { Sidebar, Menu },
+    props: { visible: Boolean, viewType: String, document: Object as any, isPrepared: Boolean, datasetCategories: Array as any },
     //prettier-ignore
     emits: ['close', 'executeRecent', 'executeDocumentFromOrganizer', 'moveDocumentToFolder', 'deleteDocumentFromOrganizer', 'executeAnalysisDocument', 'editAnalysisDocument', 'shareAnalysisDocument', 'cloneAnalysisDocument', 'deleteAnalysisDocument', 'uploadAnalysisPreviewFile', 'openDatasetInQBE', 'editDataset', 'previewDataset', 'deleteDataset', 'editDataset', 'exportToXlsx', 'exportToCsv', 'getHelp', 'downloadDatasetFile', 'shareDataset', 'cloneDataset', 'prepareData', 'openDataPreparation'],
-    props: { visible: Boolean, viewType: String, document: Object as any, isPrepared: Boolean, datasetCategories: Array as any },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
+
+    data() {
+        return {
+            descriptor,
+            sidebarVisible: false,
+            menuButtons: [] as any
+        }
+    },
     computed: {
         isOwner(): any {
             return (this.store.$state as any).user.userId === this.document.creationUser
@@ -63,14 +76,14 @@ export default defineComponent({
         },
         datasetIsIterable(): any {
             // in order to export to XLSX, dataset must implement an iterator (BE side)
-            let notIterableDataSets = ['Federated']
+            const notIterableDataSets = ['Federated']
             if (notIterableDataSets.includes(this.document.dsTypeCd)) return false
             else return true
         },
         canLoadData(): any {
             if (this.document.actions) {
-                for (var i = 0; i < this.document.actions.length; i++) {
-                    var action = this.document.actions[i]
+                for (let i = 0; i < this.document.actions.length; i++) {
+                    const action = this.document.actions[i]
                     if (action.name == 'loaddata') {
                         return true
                     }
@@ -145,25 +158,13 @@ export default defineComponent({
             }
         }
     },
-
-    data() {
-        return {
-            descriptor,
-            sidebarVisible: false,
-            menuButtons: [] as any
-        }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
-    created() {
-        this.sidebarVisible = this.visible
-    },
     watch: {
         visible() {
             this.sidebarVisible = this.visible
         }
+    },
+    created() {
+        this.sidebarVisible = this.visible
     },
     methods: {
         showMenu(event) {

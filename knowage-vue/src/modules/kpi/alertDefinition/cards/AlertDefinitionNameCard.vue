@@ -7,37 +7,37 @@
                         <InputText
                             v-bind="$attrs"
                             id="name"
+                            v-model="alert.name"
                             class="kn-material-input"
                             type="text"
-                            v-model="alert.name"
-                            @input="valueChanged('name', $event.target.value)"
                             :class="{
                                 'p-invalid': vcomp.name.$invalid && vcomp.name.$dirty
                             }"
+                            @input="valueChanged('name', $event.target.value)"
                             @blur="vcomp.name.$touch()"
                         />
                         <label for="name" class="kn-material-input-label">{{ $t('kpi.alert.name') }} * </label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="vcomp.name" :additionalTranslateParams="{ fieldName: $t('kpi.alert.name') }"></KnValidationMessages>
+                    <KnValidationMessages class="p-mt-1" :v-comp="vcomp.name" :additional-translate-params="{ fieldName: $t('kpi.alert.name') }"></KnValidationMessages>
                 </div>
                 <div class="p-field p-col-6">
                     <span class="p-float-label">
                         <Dropdown
                             v-bind="$attrs"
                             id="listener"
-                            class="kn-material-input"
                             v-model="alert.alertListener"
+                            class="kn-material-input"
                             :options="listeners"
-                            optionLabel="name"
-                            @change="valueChanged('alertListener', $event.value)"
+                            option-label="name"
                             :class="{
                                 'p-invalid': vcomp.alertListener.$invalid && vcomp.alertListener.$dirty
                             }"
+                            @change="valueChanged('alertListener', $event.value)"
                             @blur="vcomp.alertListener.$touch()"
                         />
                         <label for="listener" class="kn-material-input-label"> {{ $t('kpi.alert.kpiListener') }} * </label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="vcomp.alertListener" :additionalTranslateParams="{ fieldName: $t('kpi.alert.kpiListener') }"></KnValidationMessages>
+                    <KnValidationMessages class="p-mt-1" :v-comp="vcomp.alertListener" :additional-translate-params="{ fieldName: $t('kpi.alert.kpiListener') }"></KnValidationMessages>
                 </div>
             </form>
         </template>
@@ -64,15 +64,15 @@ export default defineComponent({
         vcomp: Object
     },
     emits: ['touched', 'valueChanged'],
-    watch: {
-        selectedAlert() {
-            this.alert = { ...this.selectedAlert }
-        }
-    },
     data() {
         return {
             alert: {} as iAlert,
             alertDescriptor
+        }
+    },
+    watch: {
+        selectedAlert() {
+            this.alert = { ...this.selectedAlert }
         }
     },
     methods: {

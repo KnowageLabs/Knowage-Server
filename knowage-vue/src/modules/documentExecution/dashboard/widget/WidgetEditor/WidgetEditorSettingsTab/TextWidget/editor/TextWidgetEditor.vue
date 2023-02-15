@@ -2,8 +2,8 @@
     <div class="p-grid">
         <div class="p-col-12">
             <div class="htmlMirrorContainer" style="height: 600px; width: 100%">
-                <Editor class="p-col-12" v-model="widgetModel.settings.editor.text" editorStyle="height: 320px">
-                    <template v-slot:toolbar>
+                <Editor v-model="widgetModel.settings.editor.text" class="p-col-12" editor-style="height: 320px">
+                    <template #toolbar>
                         <span class="ql-formats">
                             <select class="ql-font">
                                 <option selected value="arial">Arial</option>
@@ -56,7 +56,7 @@
                         </span>
 
                         <span id="menu-icon-container" class="ql-formats">
-                            <Button icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" v-tooltip.left="$t('common.menu')" @click="toggle"></Button>
+                            <Button v-tooltip.left="$t('common.menu')" icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" @click="toggle"></Button>
                         </span>
                     </template>
                 </Editor>
@@ -65,7 +65,7 @@
     </div>
 
     <TieredMenu ref="menu" :model="toolbarMenuItems" :popup="true" />
-    <TagsDialog :visible="tagsDialogVisible" :widgetModel="widgetModel" :mode="tagsDialogMode" widgetType="text" :variables="variables" :selectedDatasets="selectedDatasets" :dashboardId="dashboardId" @close="closeTagsDialog" @insert="onInsert" />
+    <TagsDialog :visible="tagsDialogVisible" :widget-model="widgetModel" :mode="tagsDialogMode" widget-type="text" :variables="variables" :selected-datasets="selectedDatasets" :dashboard-id="dashboardId" @close="closeTagsDialog" @insert="onInsert" />
 </template>
 
 <script lang="ts">
@@ -82,7 +82,7 @@ Quill.register(CrossNavBlot, true)
 Quill.register(PreviewBlot, true)
 Quill.register(SelectionBlot, true)
 
-var Font = Quill.import('formats/font')
+const Font = Quill.import('formats/font')
 Font.whitelist = ['mirza', 'roboto', 'arial', 'aref-ruqua', 'roboto', 'inconsolata', 'sans-serif', 'serif', 'monospace']
 Quill.register(Font, true)
 

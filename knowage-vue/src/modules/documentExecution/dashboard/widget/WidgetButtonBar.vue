@@ -5,7 +5,7 @@
     </div>
 
     <div class="widgetButtonBarContainer">
-        <SpeedDial class="speed-dial-menu" :model="items" direction="right" :transitionDelay="80" showIcon="fas fa-ellipsis-v" hideIcon="fas fa-ellipsis-v" buttonClass="p-button-text p-button-rounded p-button-plain">
+        <SpeedDial class="speed-dial-menu" :model="items" direction="right" :transition-delay="80" show-icon="fas fa-ellipsis-v" hide-icon="fas fa-ellipsis-v" button-class="p-button-text p-button-rounded p-button-plain">
             <template #item>
                 <i class="fas fa-arrows-up-down-left-right p-button-text p-button-rounded p-button-plain drag-handle drag-widget-icon buttonHover" style="width: 20px; height: 10px"></i>
                 <Button icon="fas fa-pen-to-square" class="p-button-text p-button-rounded p-button-plain" @click="editWidget" />

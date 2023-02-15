@@ -1,7 +1,7 @@
 <template>
     <div v-if="widgetModel">
-        <ChartWidgetChartTypeDropdown :widgetModel="widgetModel"></ChartWidgetChartTypeDropdown>
-        <ChartJSPieChartDataContainer :widgetModel="widgetModel" :selectedDataset="selectedDataset"></ChartJSPieChartDataContainer>
+        <ChartWidgetChartTypeDropdown :widget-model="widgetModel"></ChartWidgetChartTypeDropdown>
+        <ChartJSPieChartDataContainer :widget-model="widgetModel" :selected-dataset="selectedDataset"></ChartJSPieChartDataContainer>
     </div>
 </template>
 
@@ -12,7 +12,7 @@ import ChartJSPieChartDataContainer from './ChartJSPieChartDataContainer.vue'
 import ChartWidgetChartTypeDropdown from '../common/ChartWidgetChartTypeDropdown.vue'
 
 export default defineComponent({
-    name: 'chartJS-widget-data-container',
+    name: 'chart-j-s-widget-data-container',
     components: { ChartWidgetChartTypeDropdown, ChartJSPieChartDataContainer },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedDataset: { type: Object as PropType<IDataset | null> } },
     data() {

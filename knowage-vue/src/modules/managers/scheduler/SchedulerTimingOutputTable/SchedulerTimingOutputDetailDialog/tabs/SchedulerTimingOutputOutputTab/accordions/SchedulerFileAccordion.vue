@@ -1,5 +1,5 @@
 <template>
-    <Accordion :activeIndex="0">
+    <Accordion :active-index="0">
         <AccordionTab>
             <template #header>
                 <i class="pi pi-file"></i>
@@ -12,12 +12,12 @@
                     <span>
                         <label class="kn-material-input-label">{{ $t('common.fileName') }} *</label>
                         <InputText
-                            class="kn-material-input  p-inputtext-sm"
                             v-model="document.fileName"
+                            class="kn-material-input  p-inputtext-sm"
                             :class="{
                                 'p-invalid': fileNameDirty && (!document.fileName || document.fileName.length === 0)
                             }"
-                            :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.file.nameMaxLength"
+                            :max-length="schedulerTimingOutputOutputTabDescriptor.accordion.file.nameMaxLength"
                             @input="setFileNameValidation"
                             @blur="setFileNameValidation"
                         />
@@ -35,7 +35,7 @@
                 <div class="p-m-2">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.destinationFolder') }}</label>
-                        <InputText class="kn-material-input  p-inputtext-sm" v-model="document.destinationfolder" :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.file.destinationFolderMaxLength" />
+                        <InputText v-model="document.destinationfolder" class="kn-material-input  p-inputtext-sm" :max-length="schedulerTimingOutputOutputTabDescriptor.accordion.file.destinationFolderMaxLength" />
                     </span>
                     <div class="p-d-flex p-jc-end">
                         <small>{{ destinationFolderHelp }}</small>
@@ -46,10 +46,10 @@
                     <Checkbox v-model="document.zipFileDocument" :binary="true" />
                     <span class="p-ml-2">{{ $t('managers.scheduler.zipFileDocument') }}</span>
                 </div>
-                <div class="kn-flex p-mx-2 p-my-4" v-if="document.zipFileDocument">
+                <div v-if="document.zipFileDocument" class="kn-flex p-mx-2 p-my-4">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.zipFileName') }}</label>
-                        <InputText class="kn-material-input p-inputtext-sm" v-model="document.zipFileName" :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.file.zipFileNameMaxLength" />
+                        <InputText v-model="document.zipFileName" class="kn-material-input p-inputtext-sm" :max-length="schedulerTimingOutputOutputTabDescriptor.accordion.file.zipFileNameMaxLength" />
                     </span>
                     <div class="p-d-flex p-jc-end">
                         <small>{{ zipFileNameHelp }}</small>

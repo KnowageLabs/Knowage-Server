@@ -7,20 +7,20 @@
         </template>
     </Toolbar>
 
-    <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-    <TabView v-model:activeIndex="activeIndex" @tab-change="onTabChange" class="kn-overflow">
+    <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
+    <TabView v-model:activeIndex="activeIndex" class="kn-overflow" @tab-change="onTabChange">
         <TabPanel>
             <template #header>
                 <span>{{ $t('managers.layersManagement.layerTitle') }}</span>
             </template>
-            <LayerTab :selectedLayer="selectedLayer" :allRoles="allRoles" :allCategories="allCategories" @touched="$emit('touched')" />
+            <LayerTab :selected-layer="selectedLayer" :all-roles="allRoles" :all-categories="allCategories" @touched="$emit('touched')" />
         </TabPanel>
 
         <TabPanel v-if="layer.layerId">
             <template #header>
                 <span>{{ $t('managers.layersManagement.filterTitle') }}</span>
             </template>
-            <FilterTab :selectedLayer="selectedLayer" :propFilters="filters" />
+            <FilterTab :selected-layer="selectedLayer" :prop-filters="filters" />
         </TabPanel>
     </TabView>
     <Toast position="top-left" group="tl" />
@@ -41,12 +41,11 @@ import mainStore from '../../../../App.store'
 export default defineComponent({
     components: { TabView, TabPanel, LayerTab, FilterTab, Toast },
     props: { selectedLayer: { type: Object, required: true }, allRoles: { type: Array, required: true }, allCategories: { type: Array, required: true } },
-    computed: {
-        buttonDisabled(): boolean {
-            return this.v$.$invalid
-        }
-    },
     emits: ['touched', 'closed', 'saved'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             v$: useValidate() as any,
@@ -57,19 +56,20 @@ export default defineComponent({
             filters: [] as iFilter[]
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
-    async created() {
-        this.loadLayer()
-        this.getRolesForLayer()
+    computed: {
+        buttonDisabled(): boolean {
+            return this.v$.$invalid
+        }
     },
     watch: {
         selectedLayer() {
             this.loadLayer()
             this.getRolesForLayer()
         }
+    },
+    async created() {
+        this.loadLayer()
+        this.getRolesForLayer()
     },
     methods: {
         loadLayer() {
@@ -122,7 +122,7 @@ export default defineComponent({
             let toSend = layer
             let url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'layers'
             if (this.layer.layerFile) {
-                let formData = new FormData()
+                const formData = new FormData()
                 formData.append('data', JSON.stringify(this.layer))
                 formData.append('layerFile', this.layer.layerFile.file)
                 if (layer.layerId) {
@@ -142,7 +142,7 @@ export default defineComponent({
                         title: this.$t('common.toast.success'),
                         msg: this.$t('common.toast.success')
                     })
-                    let id = this.layer.layerId ? this.layer.layerId : response.data.id
+                    const id = this.layer.layerId ? this.layer.layerId : response.data.id
                     this.$emit('saved', id)
                 })
                 .catch((response) => {

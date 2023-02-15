@@ -1,6 +1,6 @@
 <template>
     <div v-show="model" ref="knowageStyleIcon" class="click-outside icon-container" :class="{ 'icon-disabled': disabled }">
-        <div id="color-picker-target" class="p-d-flex p-flex-row p-jc-center p-ai-center" v-tooltip.top="{ value: option.tooltip ? $t(option.tooltip) : getDefaultTooltip() }" @click="openAdditionalComponents">
+        <div id="color-picker-target" v-tooltip.top="{ value: option.tooltip ? $t(option.tooltip) : getDefaultTooltip() }" class="p-d-flex p-flex-row p-jc-center p-ai-center" @click="openAdditionalComponents">
             <i :class="[getIconClass(), active ? 'active-icon' : '']" class="widget-editor-icon kn-cursor-pointer p-mr-2" @click="onIconClicked"></i>
             <div v-show="showArrowDown || showCircleIcon">
                 <div v-show="showCircleIcon" class="style-circle-icon" :style="{ 'background-color': newColor }"></div>
@@ -8,10 +8,10 @@
             </div>
             <span v-if="option.type === 'font-size'" class="icon-display-value-span p-ml-1">{{ '(' + displayValue + ')' }}</span>
         </div>
-        <ColorPicker class="dashboard-color-picker click-outside" v-if="['border-color', 'color', 'background-color'].includes(option.type) && colorPickerVisible" theme="light" :color="color" :sucker-hide="true" @changeColor="changeColor" />
+        <ColorPicker v-if="['border-color', 'color', 'background-color'].includes(option.type) && colorPickerVisible" class="dashboard-color-picker click-outside" theme="light" :color="color" :sucker-hide="true" @changeColor="changeColor" />
         <WidgetEditorToolbarContextMenu
-            class="context-menu"
             v-show="(option.type === 'font-size' || option.type === 'justify-content' || option.type === 'font-family') && contextMenuVisible"
+            class="context-menu"
             :option="option"
             @selected="onContextItemSelected"
             @inputChanged="onContextInputChanged"
@@ -35,6 +35,16 @@ export default defineComponent({
     components: { ColorPicker, WidgetEditorToolbarContextMenu },
     props: { option: { type: Object as PropType<any>, required: true }, propModel: { type: Object as PropType<IWidgetStyleToolbarModel | null>, required: true }, disabled: { type: Boolean } },
     emits: ['change', 'openIconPicker'],
+    setup() {
+        const knowageStyleIcon = ref(null)
+        const colorPickerVisible = ref(false)
+        const contextMenuVisible = ref(false)
+        useClickOutside(knowageStyleIcon, () => {
+            colorPickerVisible.value = false
+            contextMenuVisible.value = false
+        })
+        return { colorPickerVisible, contextMenuVisible, knowageStyleIcon }
+    },
     data() {
         return {
             descriptor,
@@ -60,16 +70,6 @@ export default defineComponent({
         propModel() {
             this.loadModel()
         }
-    },
-    setup() {
-        const knowageStyleIcon = ref(null)
-        let colorPickerVisible = ref(false)
-        let contextMenuVisible = ref(false)
-        useClickOutside(knowageStyleIcon, () => {
-            colorPickerVisible.value = false
-            contextMenuVisible.value = false
-        })
-        return { colorPickerVisible, contextMenuVisible, knowageStyleIcon }
     },
     created() {
         this.setEventListeners()

@@ -1,5 +1,5 @@
 <template>
-    <KnDashboardTabsPanel label-position="bottom" v-model:sheets="dashboardModel.sheets" @sheet-change="sheetChange">
+    <KnDashboardTabsPanel v-model:sheets="dashboardModel.sheets" label-position="bottom" @sheet-change="sheetChange">
         <KnDashboardTab v-for="(sheet, index) in dashboardModel.sheets" :key="index" :index="index">
             <grid-layout
                 v-model:layout="sheet.widgets['lg']"
@@ -14,7 +14,7 @@
                 :margin="[2, 2]"
                 @breakpoint-changed="breakpointChangedEvent"
             >
-                <WidgetController :activeSheet="activeSheet(index)" :widget="currentWidget(item.id)" :item="item" v-for="item in sheet.widgets['lg']" :key="item.i" :datasets="datasets" :dashboardId="dashboardId" :variables="variables" :model="model"></WidgetController>
+                <WidgetController v-for="item in sheet.widgets['lg']" :key="item.i" :active-sheet="activeSheet(index)" :widget="currentWidget(item.id)" :item="item" :datasets="datasets" :dashboard-id="dashboardId" :variables="variables" :model="model"></WidgetController>
             </grid-layout>
         </KnDashboardTab>
     </KnDashboardTabsPanel>
@@ -35,22 +35,22 @@ import dashboardStore from './Dashboard.store'
 export default defineComponent({
     name: 'dashboard-manager',
     components: { KnDashboardTab, KnDashboardTabsPanel, WidgetController },
+    inject: ['dHash'],
     props: {
         model: { type: Object },
         datasets: { type: Array as PropType<IDataset[]>, required: true },
         dashboardId: { type: String, required: true },
         variables: { type: Array as PropType<IVariable[]>, required: true }
     },
-    inject: ['dHash'],
+    setup() {
+        const store = dashboardStore()
+        return { store }
+    },
     data() {
         return {
             dashboardModel: {} as any,
             startingBreakpoint: '' as string
         }
-    },
-    setup() {
-        const store = dashboardStore()
-        return { store }
     },
     mounted() {
         this.dashboardModel = this.model
@@ -66,7 +66,8 @@ export default defineComponent({
             if ((!this.dashboard[this.dHash] && index === 0) || this.dashboard[this.dHash] === index) return true
             return false
         },
-        breakpointChangedEvent: function(newBreakpoint, newLayout) {
+        breakpointChangedEvent: function () {
+            // breakpointChangedEvent: function(newBreakpoint, newLayout) {
             // console.log('BREAKPOINT CHANGED breakpoint=', newBreakpoint, ', layout: ', newLayout)
         },
         currentWidget(id) {

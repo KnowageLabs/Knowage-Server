@@ -3,12 +3,12 @@
         <form class="p-mt-2 p-fluid p-formgrid p-grid">
             <div class="p-field p-col-12">
                 <span class="p-float-label">
-                    <Dropdown class="kn-material-input" v-model="orderBy" :options="hierarchyManagementHierarchiesTreeDescriptor.orderByOptions" @change="sortTree(nodes)" />
+                    <Dropdown v-model="orderBy" class="kn-material-input" :options="hierarchyManagementHierarchiesTreeDescriptor.orderByOptions" @change="sortTree(nodes)" />
                     <label class="kn-material-input-label"> {{ $t('common.orderBy') + ' ... ' }} </label>
                 </span>
             </div>
         </form>
-        <Tree class="hierarchies-tree p-col-12" :value="nodes" :filter="true" filterMode="lenient">
+        <Tree class="hierarchies-tree p-col-12" :value="nodes" :filter="true" filter-mode="lenient">
             <template #default="slotProps">
                 <div
                     class="p-d-flex p-flex-row p-ai-center"
@@ -25,19 +25,19 @@
                     <span class="node-label">{{ slotProps.node.label }}</span>
                     <div v-show="buttonVisible[slotProps.node.key]">
                         <template v-if="treeMode !== 'info'">
-                            <Button v-if="slotProps.node.leaf" icon="pi pi-clone" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.clone')" @click.stop="cloneNode(slotProps.node)" />
-                            <Button v-else icon="pi pi-plus" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.add')" @click.stop="addNode(slotProps.node)" />
-                            <Button v-if="!slotProps.node.data.root" icon="pi pi-pencil" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.edit')" @click.stop="editNode(slotProps.node)" />
-                            <Button v-if="!slotProps.node.data.root" icon="pi pi-trash" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.delete')" @click.stop="deleteNodeConfirm(slotProps.node)" />
+                            <Button v-if="slotProps.node.leaf" v-tooltip.top="$t('common.clone')" icon="pi pi-clone" class="p-button-link p-button-sm p-p-0" @click.stop="cloneNode(slotProps.node)" />
+                            <Button v-else v-tooltip.top="$t('common.add')" icon="pi pi-plus" class="p-button-link p-button-sm p-p-0" @click.stop="addNode(slotProps.node)" />
+                            <Button v-if="!slotProps.node.data.root" v-tooltip.top="$t('common.edit')" icon="pi pi-pencil" class="p-button-link p-button-sm p-p-0" @click.stop="editNode(slotProps.node)" />
+                            <Button v-if="!slotProps.node.data.root" v-tooltip.top="$t('common.delete')" icon="pi pi-trash" class="p-button-link p-button-sm p-p-0" @click.stop="deleteNodeConfirm(slotProps.node)" />
                         </template>
-                        <Button icon="pi pi-info" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.detail')" @click.stop="showNodeInfo(slotProps.node)" />
+                        <Button v-tooltip.top="$t('common.detail')" icon="pi pi-info" class="p-button-link p-button-sm p-p-0" @click.stop="showNodeInfo(slotProps.node)" />
                     </div>
                 </div>
             </template>
         </Tree>
 
-        <HierarchyManagementNodeDetailDialog :visible="detailDialogVisible" :selectedNode="selectedNode" :metadata="metadata" :mode="mode" @save="onNodeSave" @close="closeNodeDialog" />
-        <HierarchyManagementHierarchiesTargetDialog :visible="targetDialogVisible" :hierarchiesTargets="relations" @close="closeTargetDialog" @save="onTargetsSave"></HierarchyManagementHierarchiesTargetDialog>
+        <HierarchyManagementNodeDetailDialog :visible="detailDialogVisible" :selected-node="selectedNode" :metadata="metadata" :mode="mode" @save="onNodeSave" @close="closeNodeDialog" />
+        <HierarchyManagementHierarchiesTargetDialog :visible="targetDialogVisible" :hierarchies-targets="relations" @close="closeTargetDialog" @save="onTargetsSave"></HierarchyManagementHierarchiesTargetDialog>
     </div>
 </template>
 
@@ -68,6 +68,10 @@ export default defineComponent({
         treeMode: { type: String }
     },
     emits: ['loading', 'treeUpdated'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             hierarchyManagementHierarchiesTreeDescriptor,
@@ -95,10 +99,6 @@ export default defineComponent({
         propRelationsMasterTree() {
             this.loadMasterTreeRelations()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadTree()
@@ -240,7 +240,7 @@ export default defineComponent({
         createNode(node: any) {
             node.id = node.name
 
-            let tempNode = this.findNodeInTree(node.parent.key) as any
+            const tempNode = this.findNodeInTree(node.parent.key) as any
             node.LEVEL = tempNode.data.LEVEL + 1
             if (tempNode) tempNode.children.push({ key: cryptoRandomString({ length: 16, type: 'base64' }), id: node.name, label: node.name, children: node.children, data: node, style: this.hierarchyManagementHierarchiesTreeDescriptor.node.style, leaf: node.leaf, parent: tempNode })
             this.$emit('treeUpdated', this.nodes)
@@ -341,7 +341,7 @@ export default defineComponent({
             this.$emit('loading', false)
         },
         copyNodeFromTableToTree(node: any, targetNode: any) {
-            let parentNode = this.findNodeInTree(targetNode.key) as any
+            const parentNode = this.findNodeInTree(targetNode.key) as any
 
             if (!parentNode) return
 
@@ -373,7 +373,7 @@ export default defineComponent({
             }
 
             const leafFields = this.dimensionMetadata?.MATCH_LEAF_FIELDS
-            for (let key in leafFields) {
+            for (const key in leafFields) {
                 if (node[key]) {
                     node[leafFields[key]] = node[key]
                 }
@@ -421,8 +421,8 @@ export default defineComponent({
         moveNodeInsideTree(node: any, parent: any) {
             delete node.movedFrom
 
-            let parentToAdd = this.findNodeInTree(parent.key)
-            let parentToRemoveFrom = this.findNodeInTree(node.parentKey)
+            const parentToAdd = this.findNodeInTree(parent.key)
+            const parentToRemoveFrom = this.findNodeInTree(node.parentKey)
 
             if (!parentToAdd || !parentToRemoveFrom) return
 
@@ -446,7 +446,7 @@ export default defineComponent({
             delete node.movedFrom
             node.parent = parent
 
-            let parentToAdd = this.findNodeInTree(parent.key)
+            const parentToAdd = this.findNodeInTree(parent.key)
             parentToAdd.children ? parentToAdd.children.push({ ...node, parentKey: parentToAdd.key, key: cryptoRandomString({ length: 4, type: 'base64' }) }) : (parentToAdd.children = [{ ...node, parentKey: parentToAdd.key, key: cryptoRandomString({ length: 16, type: 'base64' }) }])
             this.$emit('treeUpdated', this.nodes)
         }

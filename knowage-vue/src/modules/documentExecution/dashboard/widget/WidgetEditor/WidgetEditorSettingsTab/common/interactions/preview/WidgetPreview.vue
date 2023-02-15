@@ -3,7 +3,7 @@
         <div class="p-grid p-col-12 p-pt-4 p-ai-center">
             <div v-if="widgetModel.type !== 'chart' && widgetModel.type !== 'customchart'" class="p-col-6 p-sm-12 p-md-6 p-d-flex p-flex-column kn-flex p-px-2">
                 <label class="kn-material-input-label"> {{ $t('common.type') }}</label>
-                <Dropdown class="kn-material-input" v-model="previewModel.type" :options="descriptor.interactionTypes" optionValue="value" :disabled="previewDisabled" @change="onInteractionTypeChanged">
+                <Dropdown v-model="previewModel.type" class="kn-material-input" :options="descriptor.interactionTypes" option-value="value" :disabled="previewDisabled" @change="onInteractionTypeChanged">
                     <template #value="slotProps">
                         <div>
                             <span>{{ getTranslatedLabel(slotProps.value, descriptor.interactionTypes, $t) }}</span>
@@ -21,17 +21,17 @@
             <div class="p-sm-12 p-md-6 p-px-2">
                 <div class="p-d-flex p-flex-column kn-flex p-mx-2">
                     <label class="kn-material-input-label"> {{ $t('common.dataset') }}</label>
-                    <Dropdown class="kn-material-input" v-model="previewModel.dataset" :options="selectedDatasets" optionLabel="name" optionValue="id.dsId" :disabled="previewDisabled" @change="onDatasetChanged"> </Dropdown>
+                    <Dropdown v-model="previewModel.dataset" class="kn-material-input" :options="selectedDatasets" option-label="name" option-value="id.dsId" :disabled="previewDisabled" @change="onDatasetChanged"> </Dropdown>
                 </div>
             </div>
             <div v-if="previewModel.type === 'singleColumn'" class="p-sm-11 p-md-5">
                 <div class="p-d-flex p-flex-column kn-flex p-mx-2">
                     <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
-                    <Dropdown class="kn-material-input" v-model="previewModel.column" :options="getSelectionDatasetColumnOptions()" :disabled="previewDisabled"> </Dropdown>
+                    <Dropdown v-model="previewModel.column" class="kn-material-input" :options="getSelectionDatasetColumnOptions()" :disabled="previewDisabled"> </Dropdown>
                 </div>
             </div>
             <div v-else-if="previewModel.type === 'icon'" class="p-sm-11 p-md-5 p-p-4">
-                <WidgetEditorStyleToolbar :options="[{ type: 'icon' }]" :propModel="{ icon: previewModel.icon }" :disabled="previewDisabled" @change="onStyleToolbarChange($event)"> </WidgetEditorStyleToolbar>
+                <WidgetEditorStyleToolbar :options="[{ type: 'icon' }]" :prop-model="{ icon: previewModel.icon }" :disabled="previewDisabled" @change="onStyleToolbarChange($event)"> </WidgetEditorStyleToolbar>
             </div>
             <div class="p-sm-1 p-md-1">
                 <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.interactions.directDownload') }}</label>
@@ -41,10 +41,10 @@
         <div v-if="previewModel.parameters.length > 0" class="p-col-12 p-p-2">
             <TableWidgetPreviewParameterList
                 class="kn-flex p-mr-2"
-                :widgetModel="widgetModel"
-                :propParameters="previewModel.parameters"
-                :selectedDatasetsColumnsMap="selectedDatasetColumnNameMap"
-                :dashboardId="dashboardId"
+                :widget-model="widgetModel"
+                :prop-parameters="previewModel.parameters"
+                :selected-datasets-columns-map="selectedDatasetColumnNameMap"
+                :dashboard-id="dashboardId"
                 :disabled="previewDisabled"
                 @change="onParametersChanged"
             ></TableWidgetPreviewParameterList>
@@ -61,7 +61,6 @@ import descriptor from '../WidgetInteractionsDescriptor.json'
 import dashboardStore from '../../../../../../Dashboard.store'
 import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
-import InputSwitch from 'primevue/inputswitch'
 import TableWidgetPreviewParameterList from './WidgetPreviewParameterList.vue'
 import WidgetEditorStyleToolbar from '../../styleToolbar/WidgetEditorStyleToolbar.vue'
 
@@ -70,7 +69,6 @@ export default defineComponent({
     components: {
         Checkbox,
         Dropdown,
-        InputSwitch,
         TableWidgetPreviewParameterList,
         WidgetEditorStyleToolbar
     },
@@ -79,6 +77,10 @@ export default defineComponent({
         datasets: { type: Array as PropType<IDataset[]> },
         selectedDatasets: { type: Array as PropType<IDataset[]> },
         dashboardId: { type: String, required: true }
+    },
+    setup() {
+        const store = dashboardStore()
+        return { store }
     },
     data() {
         return {
@@ -95,10 +97,6 @@ export default defineComponent({
         previewDisabled() {
             return !this.previewModel || !this.previewModel.enabled
         }
-    },
-    setup() {
-        const store = dashboardStore()
-        return { store }
     },
     created() {
         this.setEventListeners()

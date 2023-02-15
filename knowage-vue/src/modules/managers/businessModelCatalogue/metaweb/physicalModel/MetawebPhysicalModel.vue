@@ -10,7 +10,7 @@
 
             <div class="kn-flex kn-relative">
                 <div class="metaweb-right-border" :style="physDescriptor.style.mainListContainer">
-                    <MetawebPhysicalModelList :style="physDescriptor.style.mainList" :propMeta="meta" @selected="onSelectedItem"></MetawebPhysicalModelList>
+                    <MetawebPhysicalModelList :style="physDescriptor.style.mainList" :prop-meta="meta" @selected="onSelectedItem"></MetawebPhysicalModelList>
                 </div>
             </div>
         </div>
@@ -28,20 +28,20 @@
                             <span>{{ $t('metaweb.physicalModel.propertyList') }}</span>
                         </template>
 
-                        <MetawebPropertyListTab class="p-m-2" :selectedPhysicalModel="selectedPhysicalModel"></MetawebPropertyListTab>
+                        <MetawebPropertyListTab class="p-m-2" :selected-physical-model="selectedPhysicalModel"></MetawebPropertyListTab>
                     </TabPanel>
                     <TabPanel v-if="selectedPhysicalModel?.type === 'TABLE'">
                         <template #header>
                             <span>{{ $t('metaweb.physicalModel.foreignKey') }}</span>
                         </template>
 
-                        <MetawebForeignKeyTab class="p-m-2" :propForeignKeys="selectedPhysicalModel.foreignKeys"></MetawebForeignKeyTab>
+                        <MetawebForeignKeyTab class="p-m-2" :prop-foreign-keys="selectedPhysicalModel.foreignKeys"></MetawebForeignKeyTab>
                     </TabPanel>
                 </TabView>
             </div>
         </div>
 
-        <MetawebPhysicalModelUpdateDialog :visible="updateDialogVisible" :changedItem="changedItem" @close="updateDialogVisible = false" @updated="onPhysicalModelUpdate"></MetawebPhysicalModelUpdateDialog>
+        <MetawebPhysicalModelUpdateDialog :visible="updateDialogVisible" :changed-item="changedItem" @close="updateDialogVisible = false" @updated="onPhysicalModelUpdate"></MetawebPhysicalModelUpdateDialog>
     </div>
 </template>
 

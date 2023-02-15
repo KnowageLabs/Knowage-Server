@@ -1,7 +1,7 @@
 <template>
     <div v-show="widgetModel">
-        <CustomChartWidgetSettingsAccordion v-show="selectedSetting" :widgetModel="widgetModel" :settings="descriptor.settings[selectedSetting]" :datasets="datasets" :selectedDatasets="selectedDatasets" :variables="variables" :dashboardId="dashboardId"></CustomChartWidgetSettingsAccordion>
-        <CustomChartWidgetSettingsGallery v-if="selectedSetting == 'Gallery'" v-show="selectedSetting" :widgetModel="widgetModel" :customChartGalleryProp="customChartGalleryProp" @galleryItemSelected="$emit('galleryItemSelected')"></CustomChartWidgetSettingsGallery>
+        <CustomChartWidgetSettingsAccordion v-show="selectedSetting" :widget-model="widgetModel" :settings="descriptor.settings[selectedSetting]" :datasets="datasets" :selected-datasets="selectedDatasets" :variables="variables" :dashboard-id="dashboardId"></CustomChartWidgetSettingsAccordion>
+        <CustomChartWidgetSettingsGallery v-if="selectedSetting == 'Gallery'" v-show="selectedSetting" :widget-model="widgetModel" :custom-chart-gallery-prop="customChartGalleryProp" @galleryItemSelected="$emit('galleryItemSelected')"></CustomChartWidgetSettingsGallery>
     </div>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-    <DataPreparationMonitoringDialog v-model:visibility="showMonitoring" @close="showMonitoring = false" @save="updateDatasetAndSave" :dataset="selectedDataset"></DataPreparationMonitoringDialog>
+    <DataPreparationMonitoringDialog v-model:visibility="showMonitoring" :dataset="selectedDataset" @close="showMonitoring = false" @save="updateDatasetAndSave"></DataPreparationMonitoringDialog>
     <Toolbar class="kn-toolbar kn-toolbar--secondary">
         <template #start>
             {{ $t('workspace.advancedData.title') }}
@@ -10,15 +10,15 @@
             <KnFabButton icon="fas fa-plus" data-test="new-folder-button" @click="showDataSetCatalog" />
         </template>
     </Toolbar>
-    <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
+    <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar p-ml-2" data-test="progress-bar" />
     <KnDatasetList :visibility="showDatasetList" :items="availableDatasets" @selected="newDataPrep" @save="handleSave(selectedDsForDataPrep)" @cancel="hideDataSetCatalog" />
 
     <div class="p-d-flex p-flex-row p-ai-center">
-        <InputText class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
+        <InputText v-model="searchWord" class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" type="text" :placeholder="$t('common.search')" data-test="search-input" @input="searchItems" />
     </div>
 
     <div class="kn-overflow">
-        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table p-mx-2" :value="preparedDatasets" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" data-test="datasets-table">
+        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table p-mx-2" :value="preparedDatasets" :loading="loading" data-key="objId" responsive-layout="stack" breakpoint="600px" data-test="datasets-table">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -36,7 +36,7 @@
                 <template #header> &ensp; </template>
                 <template #body="slotProps">
                     <Button icon="fas fa-ellipsis-v" class="p-button-link" @click.stop="showMenu($event, slotProps.data)" />
-                    <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click.stop="showSidebar(slotProps.data)" :data-test="'info-button-' + slotProps.data.name" />
+                    <Button v-tooltip.left="$t('workspace.myModels.showInfo')" icon="fas fa-info-circle" class="p-button-link" :data-test="'info-button-' + slotProps.data.name" @click.stop="showSidebar(slotProps.data)" />
                     <Button icon="fas fa-eye" class="p-button-link" @click.stop="previewDataset(slotProps.data)" />
                 </template>
             </Column>
@@ -49,7 +49,7 @@
                 <WorkspaceCard
                     v-for="(dataset, index) of preparedDatasets"
                     :key="index"
-                    :viewType="'dataset'"
+                    :view-type="'dataset'"
                     :document="dataset"
                     @previewDataset="previewDataset"
                     @editDataset="editDataset"
@@ -68,8 +68,9 @@
 
     <DetailSidebar
         :visible="showDetailSidebar"
-        :viewType="'dataset'"
+        :view-type="'dataset'"
         :document="selectedDataset"
+        data-test="detail-sidebar"
         @previewDataset="previewDataset"
         @editDataset="editDataset"
         @exportToXlsx="exportDataset($event, 'xls')"
@@ -80,18 +81,17 @@
         @openDataPreparation="openDataPreparation"
         @close="showDetailSidebar = false"
         @monitoring="showMonitoring = !showMonitoring"
-        data-test="detail-sidebar"
     />
 
     <EditPreparedDatasetDialog :dataset="selectedDataset" :visible="showEditPreparedDatasetDialog" @save="updatePreparedDataset" @cancel="showEditPreparedDatasetDialog = false" />
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     <Menu id="creationMenu" ref="creationMenu" :model="creationMenuButtons" />
 
-    <WorkspaceDataCloneDialog :visible="cloneDialogVisible" :propDataset="selectedDataset" @close="cloneDialogVisible = false" @clone="handleDatasetClone"> </WorkspaceDataCloneDialog>
-    <WorkspaceDataPreviewDialog :visible="previewDialogVisible" :propDataset="selectedDataset" @close="previewDialogVisible = false"> </WorkspaceDataPreviewDialog>
-    <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.advancedData.title')" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
+    <WorkspaceDataCloneDialog :visible="cloneDialogVisible" :prop-dataset="selectedDataset" @close="cloneDialogVisible = false" @clone="handleDatasetClone"> </WorkspaceDataCloneDialog>
+    <WorkspaceDataPreviewDialog :visible="previewDialogVisible" :prop-dataset="selectedDataset" @close="previewDialogVisible = false"> </WorkspaceDataPreviewDialog>
+    <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.advancedData.title')" :warning-message="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
 
-    <DataPreparationAvroHandlingDialog :visible="dataPrepAvroHandlingDialogVisbile" :title="$t('workspace.myData.isPreparing')" :infoMessage="dataPrepAvroHandlingMessage" @close="proceedToDataPrep" :events="events"></DataPreparationAvroHandlingDialog>
+    <DataPreparationAvroHandlingDialog :visible="dataPrepAvroHandlingDialogVisbile" :title="$t('workspace.myData.isPreparing')" :info-message="dataPrepAvroHandlingMessage" :events="events" @close="proceedToDataPrep"></DataPreparationAvroHandlingDialog>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -122,8 +122,8 @@ import { Client } from '@stomp/stompjs'
 
 export default defineComponent({
     components: { DataTable, KnDatasetList, Column, Chip, DataPreparationMonitoringDialog, EditPreparedDatasetDialog, DetailSidebar, WorkspaceCard, KnFabButton, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataPreviewDialog, Message, Menu, DataPreparationAvroHandlingDialog },
-    emits: ['toggleDisplayView'],
     props: { toggleCardDisplay: { type: Boolean } },
+    emits: ['toggleDisplayView'],
     computed: {
         ...mapState(mainStore, ['user']),
         ...mapState(workspaceStore, ['dataPreparation', 'isAvroReady']),
@@ -147,7 +147,7 @@ export default defineComponent({
             mainDescriptor,
             loading: false,
             showDetailSidebar: false,
-            showDatasetList: false as Boolean,
+            showDatasetList: false as boolean,
             showEditPreparedDatasetDialog: false,
             datasetList: [] as Array<IDataset>,
             preparedDatasets: [] as any,
@@ -176,9 +176,9 @@ export default defineComponent({
     async created() {
         if (this.user?.functionalities.includes('DataPreparation')) {
             this.events = []
-            var url = new URL(window.location.origin)
+            const url = new URL(window.location.origin)
             url.protocol = url.protocol.replace('http', 'ws')
-            let uri = url + 'knowage-data-preparation/ws?' + import.meta.env.VITE_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
+            const uri = url + 'knowage-data-preparation/ws?' + import.meta.env.VITE_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
             this.client = new Client({
                 brokerURL: uri,
                 connectHeaders: {},
@@ -192,7 +192,7 @@ export default defineComponent({
                 this.client.subscribe('/user/queue/prepare', (message) => {
                     // called when the client receives a STOMP message from the server
                     if (message.body) {
-                        let avroJobResponse = JSON.parse(message.body)
+                        const avroJobResponse = JSON.parse(message.body)
                         if (avroJobResponse.statusOk) {
                             this.addToLoadedAvros(avroJobResponse.dsId)
                             this.addToAvroDatasets(avroJobResponse.dsId)
@@ -253,8 +253,8 @@ export default defineComponent({
                 data: this.selectedDataset,
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Disable-Errors': 'true' },
                 transformRequest: function (obj) {
-                    var str = [] as any
-                    for (var p in obj) str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
+                    const str = [] as any
+                    for (const p in obj) str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
                     return str.join('&')
                 }
             })
@@ -266,7 +266,7 @@ export default defineComponent({
                 })
             await this.getDatasets()
         },
-        async loadDataset(datasetId: Number) {
+        async loadDataset(datasetId: number) {
             this.loading = true
             await this.$http
                 .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${datasetId}`)
@@ -365,11 +365,11 @@ export default defineComponent({
                 //edit existing data prep
                 await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced/${dataset.id}`).then(
                     (response: AxiosResponse<any>) => {
-                        let instanceId = response.data.configuration.dataPrepInstanceId
+                        const instanceId = response.data.configuration.dataPrepInstanceId
                         this.$http.get(import.meta.env.VITE_DATA_PREPARATION_PATH + `1.0/process/by-instance-id/${instanceId}`).then((response: AxiosResponse<any>) => {
-                            let transformations = response.data.definition
-                            let processId = response.data.id
-                            let datasetId = response.data.instance.dataSetId
+                            const transformations = response.data.definition
+                            const processId = response.data.id
+                            const datasetId = response.data.instance.dataSetId
 
                             if (!this.isAvroReady(datasetId)) {
                                 // check if Avro file has been deleted or not
@@ -402,7 +402,7 @@ export default defineComponent({
                 this.existingPreparedDatasetId = dataset.id
             }
         },
-        async generateAvro(dsId: Number) {
+        async generateAvro(dsId: number) {
             this.pushEvent(1)
             // listen on websocket for avro export job to be finished
             if (this.user?.functionalities.includes('DataPreparation') && this.client && Object.keys(this.client).length > 0) this.client.publish({ destination: '/app/prepare', body: dsId })
@@ -423,7 +423,7 @@ export default defineComponent({
                     this.pushEvent(2)
 
                     this.addToLoadingAvros(dsId)
-                    let idx = this.dataPreparation.loadedAvros.indexOf(dsId)
+                    const idx = this.dataPreparation.loadedAvros.indexOf(dsId)
                     if (idx >= 0) this.removeFromLoadedAvros(idx)
                     this.pushEvent(3)
                 })
@@ -583,7 +583,7 @@ export default defineComponent({
                 }
             )
         },
-        pushEvent(id: Number) {
+        pushEvent(id: number) {
             let message = {}
             switch (id) {
                 case 0:

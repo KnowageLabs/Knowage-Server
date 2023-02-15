@@ -4,7 +4,7 @@
             <Toolbar class="kn-toolbar kn-toolbar--secondary p-p-0 p-m-0 p-col-12">
                 <template #start> {{ imageProp.name }} </template>
                 <template #end>
-                    <Button icon="pi pi-trash" class="p-button-link" v-tooltip.top="$t('common.delete')" @click="deleteImageConfirm" />
+                    <Button v-tooltip.top="$t('common.delete')" icon="pi pi-trash" class="p-button-link" @click="deleteImageConfirm" />
                 </template>
             </Toolbar>
             <div class="p-d-flex p-flex-column p-jc-center p-ai-center kn-flex image-container" :class="[isSelected ? 'selected-card-image-container' : 'card-image-container ']">

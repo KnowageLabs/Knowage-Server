@@ -1,6 +1,6 @@
 <template>
     <div class="kn-page">
-        <ProgressSpinner class="kn-progress-spinner" v-if="loadingVersion" />
+        <ProgressSpinner v-if="loadingVersion" class="kn-progress-spinner" />
 
         <div class="kn-page-content p-grid p-m-0">
             <div class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
@@ -9,26 +9,26 @@
                         {{ $t('managers.datasetManagement.title') }}
                     </template>
                     <template #end>
-                        <FabButton icon="fas fa-plus" @click="showDetail" data-test="open-form-button" />
+                        <FabButton icon="fas fa-plus" data-test="open-form-button" @click="showDetail" />
                     </template>
                 </Toolbar>
-                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+                <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
                 <KnListBox :options="listOfDatasets" :settings="mainDescriptor.knListSettings" @click="showDetail" @clone.stop="emitCloneDataset" @delete.stop="deleteDataset" />
             </div>
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
                 <router-view
-                    :scopeTypes="scopeTypes"
-                    :categoryTypes="categoryTypes"
-                    :datasetTypes="datasetTypes"
-                    :transformationDataset="transformationDataset"
-                    :scriptTypes="scriptTypes"
-                    :dataSources="dataSources"
-                    :businessModels="businessModels"
-                    :pythonEnvironments="pythonEnvironments"
-                    :rEnvironments="rEnvironments"
-                    :metaSourceResource="metaSourceResource"
-                    :datasetToCloneId="datasetToCloneId"
-                    :availableTags="tags"
+                    :scope-types="scopeTypes"
+                    :category-types="categoryTypes"
+                    :dataset-types="datasetTypes"
+                    :transformation-dataset="transformationDataset"
+                    :script-types="scriptTypes"
+                    :data-sources="dataSources"
+                    :business-models="businessModels"
+                    :python-environments="pythonEnvironments"
+                    :r-environments="rEnvironments"
+                    :meta-source-resource="metaSourceResource"
+                    :dataset-to-clone-id="datasetToCloneId"
+                    :available-tags="tags"
                     @loadingOlderVersion="loadingVersion = true"
                     @olderVersionLoaded="loadingVersion = false"
                     @touched="touched = true"
@@ -54,6 +54,10 @@ import mainStore from '../../../App.store'
 export default defineComponent({
     name: 'dataset-management',
     components: { FabButton, KnListBox, ProgressSpinner },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             mainDescriptor,
@@ -76,10 +80,6 @@ export default defineComponent({
             tags: [] as any,
             datasetToCloneId: null
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.getAllPersistentData()
@@ -123,7 +123,7 @@ export default defineComponent({
             this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/tags/`).then((response: AxiosResponse<any>) => (this.tags = response.data))
         },
         async getDatasets() {
-            let url = '{"reverseOrdering":false,"columnOrdering":""}'
+            const url = '{"reverseOrdering":false,"columnOrdering":""}'
             await this.$http
                 .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/datasets/catalog?offset=0&fetchSize=0&ordering=` + encodeURI(url))
                 .then((response: AxiosResponse<any>) => (this.listOfDatasets = [...response.data.root]))

@@ -6,8 +6,8 @@
                     {{ $t('managers.templatePruning.title') }}
                 </template>
             </Toolbar>
-            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-            <div id="spinner" v-if="loading">
+            <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
+            <div v-if="loading" id="spinner">
                 <ProgressSpinner />
             </div>
             <div id="cards-container" class="kn-page-contentp-grid p-m-0">
@@ -30,26 +30,26 @@
                                         <span class="p-float-label">
                                             <Calendar
                                                 id="expirationDate"
-                                                class="kn-material-input"
                                                 v-model="selectedDate"
+                                                class="kn-material-input"
                                                 :class="{
                                                     'p-invalid': !selectedDate
                                                 }"
-                                                :showIcon="true"
-                                                :maxDate="maxDate"
-                                                :manualInput="false"
+                                                :show-icon="true"
+                                                :max-date="maxDate"
+                                                :manual-input="false"
                                                 data-test="date-input"
                                             />
                                             <label for="expirationDate" class="kn-material-input-label"> {{ $t('managers.templatePruning.selectDate') }} * </label>
                                         </span>
-                                        <Button icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" :disabled="filterDisabled" @click="loadDocumentSelection" aria-label="Filter" data-test="filter-button" />
+                                        <Button icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" :disabled="filterDisabled" aria-label="Filter" data-test="filter-button" @click="loadDocumentSelection" />
                                     </div>
                                 </div>
                             </div>
                         </template>
                     </Card>
                 </div>
-                <div class="p-col-12" v-if="documentSelectionVisible">
+                <div v-if="documentSelectionVisible" class="p-col-12">
                     <Card data-test="document-selection-card">
                         <template #header>
                             <Toolbar class="kn-toolbar kn-toolbar--secondary">
@@ -62,10 +62,10 @@
                             <div class="p-d-flex p-flex-column">
                                 <div class="kn-flex">
                                     <p>{{ documentSelectionMessage }}</p>
-                                    <Button class="kn-button kn-button--primary" v-if="documentsAvailable" :disabled="deleteDisabled" @click="deleteConfirm" aria-label="Delete Templates" data-test="delete-button">{{ $t('common.delete') }}</Button>
+                                    <Button v-if="documentsAvailable" class="kn-button kn-button--primary" :disabled="deleteDisabled" aria-label="Delete Templates" data-test="delete-button" @click="deleteConfirm">{{ $t('common.delete') }}</Button>
                                 </div>
                                 <div class="kn-flex p-mt-3">
-                                    <Tree id="document-tree" :value="nodes" selectionMode="checkbox" v-model:selectionKeys="selectedDocuments" :filter="true" filterMode="lenient" @node-expand="setOpenFolderIcon($event)" @node-collapse="setClosedFolderIcon($event)" data-test="document-tree"></Tree>
+                                    <Tree id="document-tree" v-model:selectionKeys="selectedDocuments" :value="nodes" selection-mode="checkbox" :filter="true" filter-mode="lenient" data-test="document-tree" @node-expand="setOpenFolderIcon($event)" @node-collapse="setClosedFolderIcon($event)"></Tree>
                                 </div>
                             </div>
                         </template>
@@ -94,6 +94,10 @@ export default defineComponent({
         ProgressSpinner,
         Tree
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             selectedDate: new Date(),
@@ -121,10 +125,6 @@ export default defineComponent({
         deleteDisabled(): boolean {
             return Object.keys(this.selectedDocuments).length === 0
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     methods: {
         formatDate(date: Date) {
@@ -246,7 +246,7 @@ export default defineComponent({
         async deleteDocuments() {
             const documentsToDelete = [] as { id: number; data: string }[]
             if (this.selectedDocuments) {
-                Object.keys(this.selectedDocuments as {}).forEach((id: any) => {
+                Object.keys(this.selectedDocuments as Object).forEach((id: any) => {
                     if (!isNaN(id)) {
                         documentsToDelete.push({ id: +id, data: this.formatDate(this.selectedDate) })
                     }

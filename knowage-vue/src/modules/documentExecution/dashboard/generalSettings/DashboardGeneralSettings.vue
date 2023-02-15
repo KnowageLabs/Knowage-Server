@@ -10,7 +10,7 @@
 
         <div class="datasetEditor-container kn-overflow">
             <DashboardGeneralSettingsList @selectedOption="setSelectedOption"></DashboardGeneralSettingsList>
-            <DashboardVariables v-if="selectedOption === 'Variables'" :propVariables="variables" :selectedDatasets="selectedDatasets" :selectedDatasetsColumnsMap="selectedDatasetColumnsMap" :profileAttributes="profileAttributes"></DashboardVariables>
+            <DashboardVariables v-if="selectedOption === 'Variables'" :prop-variables="variables" :selected-datasets="selectedDatasets" :selected-datasets-columns-map="selectedDatasetColumnsMap" :profile-attributes="profileAttributes"></DashboardVariables>
         </div>
     </div>
 </template>
@@ -43,8 +43,8 @@ export default defineComponent({
             selectedDatasetColumnsMap: {}
         }
     },
-    watch: {},
     computed: {},
+    watch: {},
     created() {
         this.loadDashboardModel()
         this.loadVariables()

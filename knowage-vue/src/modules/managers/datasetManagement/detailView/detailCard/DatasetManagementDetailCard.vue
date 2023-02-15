@@ -4,56 +4,56 @@
             <form class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-mt-1 p-col-6">
                     <span class="p-float-label">
-                        <InputText id="label" class="kn-material-input" type="text" maxLength="50" v-model="v$.dataset.label.$model" :class="{ 'p-invalid': v$.dataset.label.$invalid && v$.dataset.label.$dirty }" @blur="v$.dataset.label.$touch()" @change="$emit('touched')" data-test="label-input" />
+                        <InputText id="label" v-model="v$.dataset.label.$model" class="kn-material-input" type="text" max-length="50" :class="{ 'p-invalid': v$.dataset.label.$invalid && v$.dataset.label.$dirty }" data-test="label-input" @blur="v$.dataset.label.$touch()" @change="$emit('touched')" />
                         <label for="label" class="kn-material-input-label"> {{ $t('common.label') }} * </label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.label" :additionalTranslateParams="{ fieldName: $t('common.label') }" />
+                    <KnValidationMessages class="p-mt-1" :v-comp="v$.dataset.label" :additional-translate-params="{ fieldName: $t('common.label') }" />
                 </div>
                 <div class="p-field p-mt-1 p-col-6">
                     <span class="p-float-label">
-                        <InputText id="name" class="kn-material-input" type="text" maxLength="50" v-model="v$.dataset.name.$model" :class="{ 'p-invalid': v$.dataset.name.$invalid && v$.dataset.name.$dirty }" @blur="v$.dataset.name.$touch()" @change="$emit('touched')" data-test="name-input" />
+                        <InputText id="name" v-model="v$.dataset.name.$model" class="kn-material-input" type="text" max-length="50" :class="{ 'p-invalid': v$.dataset.name.$invalid && v$.dataset.name.$dirty }" data-test="name-input" @blur="v$.dataset.name.$touch()" @change="$emit('touched')" />
                         <label for="name" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.name" :additionalTranslateParams="{ fieldName: $t('common.name') }" />
+                    <KnValidationMessages class="p-mt-1" :v-comp="v$.dataset.name" :additional-translate-params="{ fieldName: $t('common.name') }" />
                 </div>
                 <div class="p-field p-mt-1 p-col-12">
                     <span class="p-float-label">
                         <InputText
                             id="description"
+                            v-model="v$.dataset.description.$model"
                             class="kn-material-input"
                             type="text"
-                            maxLength="150"
-                            v-model="v$.dataset.description.$model"
+                            max-length="150"
                             :class="{ 'p-invalid': v$.dataset.description.$invalid && v$.dataset.description.$dirty }"
+                            data-test="description-input"
                             @blur="v$.dataset.description.$touch()"
                             @change="$emit('touched')"
-                            data-test="description-input"
                         />
                         <label for="description" class="kn-material-input-label"> {{ $t('common.description') }} </label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.description" :additionalTranslateParams="{ fieldName: $t('common.description') }" />
+                    <KnValidationMessages class="p-mt-1" :v-comp="v$.dataset.description" :additional-translate-params="{ fieldName: $t('common.description') }" />
                 </div>
                 <div class="p-field p-mt-1 p-col-6">
                     <span class="p-float-label">
                         <Dropdown
                             id="scope"
+                            v-model="v$.dataset.scopeCd.$model"
                             class="kn-material-input"
                             :options="scopeTypes"
-                            optionLabel="VALUE_CD"
-                            optionValue="VALUE_CD"
-                            v-model="v$.dataset.scopeCd.$model"
+                            option-label="VALUE_CD"
+                            option-value="VALUE_CD"
                             :class="{
                                 'p-invalid': v$.dataset.scopeCd.$invalid && v$.dataset.scopeCd.$dirty
                             }"
-                            @before-show="v$.dataset.scopeCd.$touch()"
-                            @change="updateIdFromCd(this.scopeTypes, 'scopeId', $event.value), $emit('touched')"
                             data-test="scope-input"
+                            @before-show="v$.dataset.scopeCd.$touch()"
+                            @change="updateIdFromCd(scopeTypes, 'scopeId', $event.value), $emit('touched')"
                         />
                         <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.scope') }} * </label>
                     </span>
                     <KnValidationMessages
-                        :vComp="v$.dataset.scopeCd"
-                        :additionalTranslateParams="{
+                        :v-comp="v$.dataset.scopeCd"
+                        :additional-translate-params="{
                             fieldName: $t('managers.datasetManagement.scope')
                         }"
                     />
@@ -62,25 +62,25 @@
                     <span class="p-float-label">
                         <Dropdown
                             id="category"
+                            v-model="v$.dataset.catTypeVn.$model"
                             class="kn-material-input"
                             :options="categoryTypes"
-                            optionLabel="VALUE_CD"
-                            optionValue="VALUE_CD"
-                            v-model="v$.dataset.catTypeVn.$model"
+                            option-label="VALUE_CD"
+                            option-value="VALUE_CD"
                             :class="{
                                 'p-invalid': v$.dataset.catTypeVn.$invalid && v$.dataset.catTypeVn.$dirty
                             }"
-                            :showClear="dataset.scopeCd === 'USER'"
-                            @before-show="v$.dataset.catTypeVn.$touch()"
-                            @change="updateIdFromCd(this.categoryTypes, 'catTypeId', $event.value), $emit('touched')"
+                            :show-clear="dataset.scopeCd === 'USER'"
                             data-test="category-input"
+                            @before-show="v$.dataset.catTypeVn.$touch()"
+                            @change="updateIdFromCd(categoryTypes, 'catTypeId', $event.value), $emit('touched')"
                         />
-                        <label v-if="this.dataset.scopeCd == 'USER'" for="category" class="kn-material-input-label"> {{ $t('common.category') }} </label>
+                        <label v-if="dataset.scopeCd == 'USER'" for="category" class="kn-material-input-label"> {{ $t('common.category') }} </label>
                         <label v-else for="category" class="kn-material-input-label"> {{ $t('common.category') }} * </label>
                     </span>
                     <KnValidationMessages
-                        :vComp="v$.dataset.catTypeVn"
-                        :additionalTranslateParams="{
+                        :v-comp="v$.dataset.catTypeVn"
+                        :additional-translate-params="{
                             fieldName: $t('managers.datasetManagement.scope')
                         }"
                     />
@@ -114,14 +114,14 @@
             </Toolbar>
         </template>
         <template #content>
-            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="versions-loading" />
-            <DataTable v-if="!loading" class="p-datatable-sm kn-table" :value="selectedDatasetVersions" :scrollable="true" scrollHeight="400px" :loading="loading" dataKey="versNum" responsiveLayout="stack" breakpoint="960px">
+            <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="versions-loading" />
+            <DataTable v-if="!loading" class="p-datatable-sm kn-table" :value="selectedDatasetVersions" :scrollable="true" scroll-height="400px" :loading="loading" data-key="versNum" responsive-layout="stack" breakpoint="960px">
                 <template #empty>
                     {{ $t('managers.datasetManagement.noVersions') }}
                 </template>
                 <Column field="userIn" :header="$t('managers.datasetManagement.creationUser')" :sortable="true" />
                 <Column field="type" :header="$t('importExport.gallery.column.type')" :sortable="true" />
-                <Column field="dateIn" :header="$t('managers.mondrianSchemasManagement.headers.creationDate')" dataType="date" :sortable="true">
+                <Column field="dateIn" :header="$t('managers.mondrianSchemasManagement.headers.creationDate')" data-type="date" :sortable="true">
                     <template #body="{ data }">
                         {{ formatDate(data.dateIn) }}
                     </template>
@@ -162,15 +162,11 @@ export default defineComponent({
         availableTags: { type: Array as any },
         loading: { type: Boolean }
     },
-    computed: {
-        noDatasetVersions(): any {
-            if (this.selectedDatasetVersions.length > 0) {
-                return false
-            }
-            return true
-        }
-    },
     emits: ['touched', 'reloadVersions', 'loadingOlderVersion', 'olderVersionLoaded'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             detailTabDescriptor,
@@ -183,12 +179,13 @@ export default defineComponent({
             filteredTagsNames: null as any
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
-    created() {
-        this.dataset = this.selectedDataset
+    computed: {
+        noDatasetVersions(): any {
+            if (this.selectedDatasetVersions.length > 0) {
+                return false
+            }
+            return true
+        }
     },
     watch: {
         selectedDataset() {
@@ -196,6 +193,9 @@ export default defineComponent({
             this.v$.dataset.label.$touch()
             this.v$.dataset.name.$touch()
         }
+    },
+    created() {
+        this.dataset = this.selectedDataset
     },
     validations() {
         const catTypeRequired = (value) => {

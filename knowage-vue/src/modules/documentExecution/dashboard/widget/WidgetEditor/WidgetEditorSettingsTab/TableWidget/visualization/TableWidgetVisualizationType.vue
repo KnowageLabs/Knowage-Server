@@ -4,14 +4,14 @@
             <div class="p-col-12 p-grid p-ai-center">
                 <div class="p-col-12 p-md-6 p-d-flex p-flex-column p-p-2">
                     <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
-                    <Dropdown v-if="index === 0" class="kn-material-input" v-model="visualizationType.target" :options="descriptor.allColumnOption" optionValue="value" optionLabel="label" :disabled="true"> </Dropdown>
+                    <Dropdown v-if="index === 0" v-model="visualizationType.target" class="kn-material-input" :options="descriptor.allColumnOption" option-value="value" option-label="label" :disabled="true"> </Dropdown>
                     <WidgetEditorColumnsMultiselect
                         v-else
                         :value="(visualizationType.target as string[])"
-                        :availableTargetOptions="availableColumnOptions"
-                        :widgetColumnsAliasMap="widgetColumnsAliasMap"
-                        optionLabel="alias"
-                        optionValue="id"
+                        :available-target-options="availableColumnOptions"
+                        :widget-columns-alias-map="widgetColumnsAliasMap"
+                        option-label="alias"
+                        option-value="id"
                         :disabled="visualizationTypeDisabled"
                         @change="onColumnsSelected($event, visualizationType)"
                     >
@@ -19,7 +19,7 @@
                 </div>
                 <div class="p-col-11 p-md-5 p-d-flex p-flex-column p-p-2">
                     <label class="kn-material-input-label p-mr-2">{{ $t('common.type') }}</label>
-                    <Dropdown class="kn-material-input" v-model="visualizationType.type" :options="getVisualizationTypeOptions(visualizationType)" optionValue="value" :disabled="visualizationTypeDisabled" @change="visualizationTypeChanged">
+                    <Dropdown v-model="visualizationType.type" class="kn-material-input" :options="getVisualizationTypeOptions(visualizationType)" option-value="value" :disabled="visualizationTypeDisabled" @change="visualizationTypeChanged">
                         <template #value="slotProps">
                             <div>
                                 <span>{{ getTranslatedLabel(slotProps.value, getVisualizationTypeOptions(visualizationType), $t) }}</span>
@@ -39,19 +39,19 @@
             <div class="p-col-12 p-grid p-ai-center">
                 <div class="p-col-6 p-md-3 p-d-flex p-flex-column p-pr-2">
                     <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.prefix') }}</label>
-                    <InputText class="kn-material-input p-inputtext-sm" v-model="visualizationType.prefix" :disabled="visualizationTypeDisabled" @change="visualizationTypeChanged" />
+                    <InputText v-model="visualizationType.prefix" class="kn-material-input p-inputtext-sm" :disabled="visualizationTypeDisabled" @change="visualizationTypeChanged" />
                 </div>
                 <div class="p-col-6 p-md-3 p-d-flex p-flex-column kn-flex p-pr-2">
                     <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.suffix') }}</label>
-                    <InputText class="kn-material-input p-inputtext-sm" v-model="visualizationType.suffix" :disabled="visualizationTypeDisabled" @change="visualizationTypeChanged" />
+                    <InputText v-model="visualizationType.suffix" class="kn-material-input p-inputtext-sm" :disabled="visualizationTypeDisabled" @change="visualizationTypeChanged" />
                 </div>
                 <div v-if="(optionsContainMeasureColumn(visualizationType) && visualizationType.type === 'Text') || visualizationType.type === 'Text & Icon'" class="p-col-6 p-md-3 p-d-flex p-flex-column p-px-2">
                     <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.precision') }}</label>
-                    <InputNumber class="kn-material-input p-inputtext-sm" v-model="visualizationType.precision" :disabled="visualizationTypeDisabled" @blur="visualizationTypeChanged" />
+                    <InputNumber v-model="visualizationType.precision" class="kn-material-input p-inputtext-sm" :disabled="visualizationTypeDisabled" @blur="visualizationTypeChanged" />
                 </div>
                 <div class="p-col-6 p-md-3 p-d-flex p-flex-column kn-flex p-p-2">
                     <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.visualizationType.pinned') }}</label>
-                    <Dropdown class="kn-material-input" v-model="visualizationType.pinned" :options="descriptor.pinnedOptions" optionValue="value" :disabled="visualizationTypeDisabled" @change="visualizationTypeChanged">
+                    <Dropdown v-model="visualizationType.pinned" class="kn-material-input" :options="descriptor.pinnedOptions" option-value="value" :disabled="visualizationTypeDisabled" @change="visualizationTypeChanged">
                         <template #value="slotProps">
                             <div>
                                 <span>{{ getTranslatedLabel(slotProps.value, descriptor.pinnedOptions, $t) }}</span>
@@ -68,16 +68,16 @@
             <div v-if="optionsContainMeasureColumn(visualizationType) && (visualizationType.type === 'Bar' || visualizationType.type === 'Sparkline')" class="p-col-12 p-grid p-ai-center p-pt-1">
                 <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column p-px-2">
                     <label class="kn-material-input-label">{{ $t('common.min') }}</label>
-                    <InputNumber class="kn-material-input p-inputtext-sm" v-model="visualizationType.min" :disabled="visualizationTypeDisabled" @blur="visualizationTypeChanged" />
+                    <InputNumber v-model="visualizationType.min" class="kn-material-input p-inputtext-sm" :disabled="visualizationTypeDisabled" @blur="visualizationTypeChanged" />
                 </div>
                 <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column p-px-2">
                     <label class="kn-material-input-label">{{ $t('common.max') }}</label>
-                    <InputNumber class="kn-material-input p-inputtext-sm" v-model="visualizationType.max" :disabled="visualizationTypeDisabled" @blur="visualizationTypeChanged" />
+                    <InputNumber v-model="visualizationType.max" class="kn-material-input p-inputtext-sm" :disabled="visualizationTypeDisabled" @blur="visualizationTypeChanged" />
                 </div>
 
                 <div class="p-col-6 p-md-6 p-lg-3 p-d-flex p-flex-column p-p-2">
                     <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.visualizationType.alignment') }}</label>
-                    <Dropdown class="kn-material-input" v-model="visualizationType.alignment" :options="descriptor.alignmentOptions" optionValue="value" :disabled="visualizationTypeDisabled" @change="visualizationTypeChanged">
+                    <Dropdown v-model="visualizationType.alignment" class="kn-material-input" :options="descriptor.alignmentOptions" option-value="value" :disabled="visualizationTypeDisabled" @change="visualizationTypeChanged">
                         <template #value="slotProps">
                             <div>
                                 <span>{{ getTranslatedLabel(slotProps.value, descriptor.alignmentOptions, $t) }}</span>
@@ -93,7 +93,7 @@
                 <div class="p-col-6 p-md-6 p-lg-3 style-toolbar-container">
                     <WidgetEditorStyleToolbar
                         :options="descriptor.styleToolbarVisualizationTypeOptions"
-                        :propModel="{
+                        :prop-model="{
                             color: visualizationType.color,
                             'background-color': visualizationType['background-color']
                         }"

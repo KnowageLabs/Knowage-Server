@@ -11,30 +11,30 @@
                         <Button icon="fas fa-folder-plus" class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0" @click="openCreateFolderDialog"
                     /></template>
                 </Toolbar>
-                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+                <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
                 <ResourceManagementMetadataDialog v-model:visibility="displayMetadataDialog" v-model:id="metadataKey"></ResourceManagementMetadataDialog>
-                <ResourceManagementCreateFolderDialog v-model:visibility="folderCreation" @createFolder="createFolder" v-bind:path="selectedFolder ? selectedFolder.relativePath : ''" />
+                <ResourceManagementCreateFolderDialog v-model:visibility="folderCreation" :path="selectedFolder ? selectedFolder.relativePath : ''" @createFolder="createFolder" />
 
-                <Tree id="folders-tree" :value="nodes" selectionMode="single" :expandedKeys="expandedKeys" :filter="true" filterMode="lenient" data-test="functionality-tree" class="kn-tree kn-flex p-flex-column foldersTree" @node-select="showForm($event)" v-model:selectionKeys="selectedKeys">
+                <Tree id="folders-tree" v-model:selectionKeys="selectedKeys" :value="nodes" selection-mode="single" :expanded-keys="expandedKeys" :filter="true" filter-mode="lenient" data-test="functionality-tree" class="kn-tree kn-flex p-flex-column foldersTree" @node-select="showForm($event)">
                     <template #default="slotProps">
-                        <div class="p-d-flex p-flex-row p-ai-center p-jc-between" @mouseover="buttonsVisible[slotProps.node.key] = true" @mouseleave="buttonsVisible[slotProps.node.key] = false" :data-test="'tree-item-' + slotProps.node.key">
+                        <div class="p-d-flex p-flex-row p-ai-center p-jc-between" :data-test="'tree-item-' + slotProps.node.key" @mouseover="buttonsVisible[slotProps.node.key] = true" @mouseleave="buttonsVisible[slotProps.node.key] = false">
                             <span v-if="!slotProps.node.edit" class="kn-truncated" @dblclick="toggleInput(slotProps.node)">
                                 {{ slotProps.node.label }}
                             </span>
-                            <InputText class="kn-material-input fileNameInputText" type="text" v-if="slotProps.node.edit" v-model="slotProps.node.label" maxlength="50" @blur="toggleInput(slotProps.node)" @keyup.enter="toggleInput(slotProps.node)" />
+                            <InputText v-if="slotProps.node.edit" v-model="slotProps.node.label" class="kn-material-input fileNameInputText" type="text" maxlength="50" @blur="toggleInput(slotProps.node)" @keyup.enter="toggleInput(slotProps.node)" />
 
                             <div>
-                                <Button v-if="slotProps.node.modelFolder" icon="fas fa-table" v-tooltip.top="$t('managers.resourceManagement.openMetadata')" :class="getButtonClass(slotProps.node)" @click="openMetadataDialog(slotProps.node)" :data-test="'move-up-button-' + slotProps.node.key" />
-                                <Button icon="fa fa-download " v-tooltip.top="$t('common.download')" :class="getButtonClass(slotProps.node)" @click="downloadDirect(slotProps.node)" :data-test="'move-down-button-' + slotProps.node.key" />
-                                <Button icon="far fa-trash-alt" v-tooltip.top="$t('common.delete')" :class="getButtonClass(slotProps.node)" @click="showDeleteDialog(slotProps.node)" :data-test="'delete-button-' + slotProps.node.key" v-if="slotProps.node.level > 0" />
+                                <Button v-if="slotProps.node.modelFolder" v-tooltip.top="$t('managers.resourceManagement.openMetadata')" icon="fas fa-table" :class="getButtonClass(slotProps.node)" :data-test="'move-up-button-' + slotProps.node.key" @click="openMetadataDialog(slotProps.node)" />
+                                <Button v-tooltip.top="$t('common.download')" icon="fa fa-download " :class="getButtonClass(slotProps.node)" :data-test="'move-down-button-' + slotProps.node.key" @click="downloadDirect(slotProps.node)" />
+                                <Button v-if="slotProps.node.level > 0" v-tooltip.top="$t('common.delete')" icon="far fa-trash-alt" :class="getButtonClass(slotProps.node)" :data-test="'delete-button-' + slotProps.node.key" @click="showDeleteDialog(slotProps.node)" />
                             </div>
                         </div>
                     </template>
                 </Tree>
             </div>
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
-                <KnHint :title="'managers.resourceManagement.title'" :hint="'managers.resourceManagement.hint'" v-if="showHint"></KnHint>
-                <ResourceManagementDetail v-if="formVisible" :folder="selectedFolder" :parentKey="folderParentKey" @touched="touched = true" @close="onClose" @inserted="loadPage($event)" @folderCreated="loadPage" @closed="switchToHint()" @fileUploaded="loadPage(false, true)" />
+                <KnHint v-if="showHint" :title="'managers.resourceManagement.title'" :hint="'managers.resourceManagement.hint'"></KnHint>
+                <ResourceManagementDetail v-if="formVisible" :folder="selectedFolder" :parent-key="folderParentKey" @touched="touched = true" @close="onClose" @inserted="loadPage($event)" @folderCreated="loadPage" @closed="switchToHint()" @fileUploaded="loadPage(false, true)" />
             </div>
         </div>
     </div>
@@ -56,6 +56,10 @@ import mainStore from '../../../App.store'
 export default defineComponent({
     name: 'resource-management',
     components: { KnHint, ResourceManagementMetadataDialog, ResourceManagementCreateFolderDialog, ResourceManagementDetail, Tree },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             descriptor,
@@ -74,17 +78,13 @@ export default defineComponent({
             formVisible: false
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
     async created() {
         this.loadPage()
     },
     methods: {
         createFolder(folderName: string) {
             if (folderName && this.selectedFolder) {
-                let obj = {} as JSON
+                const obj = {} as JSON
                 obj['key'] = '' + this.selectedFolder.key
                 obj['folderName'] = folderName
                 this.$http
@@ -129,7 +129,7 @@ export default defineComponent({
             if (node.level > 0) {
                 if (node.edit && node.label !== node.edit) {
                     if (this.selectedFolder) {
-                        let obj = {} as JSON
+                        const obj = {} as JSON
                         obj['key'] = this.selectedFolder.key
                         obj['folderName'] = node.label
                         this.loading = true
@@ -162,8 +162,8 @@ export default defineComponent({
             }
         },
         addIcon(nodes) {
-            for (var idx in nodes) {
-                let node = nodes[idx]
+            for (const idx in nodes) {
+                const node = nodes[idx]
                 node.icon = 'far fa-folder'
                 if (node.children && node.children.length > 0) {
                     this.addIcon(node.children)
@@ -177,7 +177,7 @@ export default defineComponent({
             this.$http
                 .get(import.meta.env.VITE_API_PATH + `2.0/resources/folders`)
                 .then((response: AxiosResponse<any>) => {
-                    let root = response.data.root[0]
+                    const root = response.data.root[0]
                     root.label = 'HOME'
                     root.icon = 'pi pi-home'
                     root.disabled = true
@@ -219,7 +219,7 @@ export default defineComponent({
         },
         downloadDirect(node) {
             this.loading = true
-            let obj = {} as JSON
+            const obj = {} as JSON
             obj['key'] = node.key
             this.$http
                 .post(import.meta.env.VITE_API_PATH + `2.0/resources/folders/download`, obj, {

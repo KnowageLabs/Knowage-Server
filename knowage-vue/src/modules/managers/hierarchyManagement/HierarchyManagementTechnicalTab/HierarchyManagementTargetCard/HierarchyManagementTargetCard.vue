@@ -12,7 +12,7 @@
         <template #content>
             <form class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-col-6 p-lg-4">
-                    <Calendar class="kn-material-input" v-model="optionsDate" :manualInput="true" :showIcon="true" @dateSelect="onOptionsDateSelected" />
+                    <Calendar v-model="optionsDate" class="kn-material-input" :manual-input="true" :show-icon="true" @dateSelect="onOptionsDateSelected" />
                 </div>
                 <div class="p-field p-col-6 p-lg-3">
                     <Button class="kn-button kn-button--primary" :label="$t('common.create')" :disabled="!selectedDimension" @click="createHierarchy" />
@@ -26,25 +26,25 @@
                 </div>
                 <div class="p-field p-col-12">
                     <span class="p-float-label">
-                        <Dropdown class="kn-material-input" v-model="selectedHierarchy" :options="hierarchies" optionLabel="HIER_NM" :disabled="!selectedDimension" @change="onHierarchySelected" />
+                        <Dropdown v-model="selectedHierarchy" class="kn-material-input" :options="hierarchies" option-label="HIER_NM" :disabled="!selectedDimension" @change="onHierarchySelected" />
                         <label class="kn-material-input-label"> {{ $t('managers.hierarchyManagement.hierarchies') }} </label>
                     </span>
                 </div>
             </form>
 
-            <HierarchyManagementHierarchiesFilterCard :selectedHierarchy="selectedHierarchy" @applyFilters="onApplyFilters"></HierarchyManagementHierarchiesFilterCard>
+            <HierarchyManagementHierarchiesFilterCard :selected-hierarchy="selectedHierarchy" @applyFilters="onApplyFilters"></HierarchyManagementHierarchiesFilterCard>
             <HierarchyManagementHierarchiesTree
                 v-if="tree"
-                :propTree="tree"
-                :nodeMetadata="nodeMetadata"
-                :selectedDimension="selectedDimension"
-                :selectedHierarchy="selectedHierarchy"
-                :dimensionMetadata="dimensionMetadata"
-                :propRelationsMasterTree="[]"
+                :prop-tree="tree"
+                :node-metadata="nodeMetadata"
+                :selected-dimension="selectedDimension"
+                :selected-hierarchy="selectedHierarchy"
+                :dimension-metadata="dimensionMetadata"
+                :prop-relations-master-tree="[]"
                 @treeUpdated="updateTreeModel"
                 @loading="$emit('loading', $event)"
             ></HierarchyManagementHierarchiesTree>
-            <HierarchyManagementNodeDetailDialog :visible="detailDialogVisible" :selectedNode="selectedNode" :metadata="metadata" :mode="mode" @save="onNodeSave" @close="closeNodeDialog"></HierarchyManagementNodeDetailDialog>
+            <HierarchyManagementNodeDetailDialog :visible="detailDialogVisible" :selected-node="selectedNode" :metadata="metadata" :mode="mode" @save="onNodeSave" @close="closeNodeDialog"></HierarchyManagementNodeDetailDialog>
         </template>
     </Card>
 </template>
@@ -75,6 +75,10 @@ export default defineComponent({
         selectedSourceHierarchy: { type: Object as PropType<iHierarchy | null> }
     },
     emits: ['loading', 'optionsDateSelected'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             hierarchyManagementTargetCardDescriptor,
@@ -95,10 +99,6 @@ export default defineComponent({
         async selectedDimension() {
             if (this.selectedDimension) await this.loadTechnicalHierarchies()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {},
     methods: {

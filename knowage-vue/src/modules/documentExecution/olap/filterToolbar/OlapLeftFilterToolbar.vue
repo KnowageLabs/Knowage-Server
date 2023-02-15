@@ -6,7 +6,7 @@
                 <div v-for="(row, index) in rows" :key="index" class="p-d-flex p-flex-column p-ai-center">
                     <div :id="'left-' + row.name" :ref="'left-' + row.name" class="p-d-flex p-flex-column p-ai-center" :style="toolbarDescriptor.style.leftAxisCard" draggable="true" @dragstart="onDragStart($event, row, 'left-' + row.name)" @dragend="removeDragClass('left-' + row.name)">
                         <Button v-if="row.hierarchies.length > 1" icon="fas fa-sitemap" class="p-button-text p-button-rounded p-button-plain" :style="toolbarDescriptor.style.whiteColor" @click="$emit('showMultiHierarchy', row)" />
-                        <div class="olap-rotate-text kn-flex kn-truncated" :class="{ 'p-mt-2': row.hierarchies.length == 1 }" v-tooltip.right="row.caption" flex>{{ cutName(row.caption, 0, row.hierarchies.length > 1) }}</div>
+                        <div v-tooltip.right="row.caption" class="olap-rotate-text kn-flex kn-truncated" :class="{ 'p-mt-2': row.hierarchies.length == 1 }" flex>{{ cutName(row.caption, 0, row.hierarchies.length > 1) }}</div>
                         <div id="whitespace" class="p-mt-auto" :style="toolbarDescriptor.style.whitespaceLeft" />
                         <Button icon="fas fa-filter" class="p-button-text p-button-rounded p-button-plain p-mt-auto p-m-0" :style="toolbarDescriptor.style.whiteColor" @click="openFilterDialog(row)" />
                     </div>
@@ -29,10 +29,9 @@ export default defineComponent({
     components: {},
     props: { olapProp: { type: Object, required: true } },
     emits: ['openSidebar', 'putFilterOnAxis', 'switchPosition', 'showMultiHierarchy', 'openFilterDialog'],
-    computed: {
-        showScroll(): Boolean {
-            return this.scrollContainerHeight < this.scrollContentHeight
-        }
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     data() {
         return {
@@ -44,14 +43,15 @@ export default defineComponent({
             scrollContentHeight: 0
         }
     },
+    computed: {
+        showScroll(): boolean {
+            return this.scrollContainerHeight < this.scrollContentHeight
+        }
+    },
     watch: {
         olapProp() {
             this.loadData()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadData()
@@ -64,10 +64,10 @@ export default defineComponent({
             this.rows = this.olapProp?.rows as iOlapFilter[]
         },
         cutName(name, axis, multi) {
-            var ind = axis
+            let ind = axis
             if (multi) ind = ind + 2
             ind = ind + 1
-            var cutProp = this.cutArray[ind]
+            const cutProp = this.cutArray[ind]
             if (name == undefined) {
                 name = '...'
             }
@@ -96,11 +96,11 @@ export default defineComponent({
         onDrop(event) {
             // @ts-ignore
             this.$refs.axisDropzone.classList?.remove('display-axis-dropzone')
-            var data = JSON.parse(event.dataTransfer.getData('text/plain'))
+            const data = JSON.parse(event.dataTransfer.getData('text/plain'))
 
-            var leftLength = this.rows.length
-            var topLength = this.columns.length
-            var fromAxis
+            const leftLength = this.rows.length
+            const topLength = this.columns.length
+            let fromAxis
             if (data != null) {
                 fromAxis = data.axis
                 if (fromAxis != 1) {

@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="knParameterSavedParametersDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary" :content-style="knParameterSavedParametersDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start> {{ $t('documentExecution.main.savedParameters') }} </template>
@@ -9,12 +9,12 @@
             </Toolbar>
         </template>
 
-        <DataTable :value="viewpoints" class="p-datatable-sm kn-table" :paginator="viewpoints.length > 20" dataKey="id" v-model:filters="filters" :globalFilterFields="knParameterSavedParametersDialogDescriptor.globalFilterFields" responsiveLayout="stack" breakpoint="600px">
+        <DataTable v-model:filters="filters" :value="viewpoints" class="p-datatable-sm kn-table" :paginator="viewpoints.length > 20" data-key="id" :global-filter-fields="knParameterSavedParametersDialogDescriptor.globalFilterFields" responsive-layout="stack" breakpoint="600px">
             <template #header>
                 <div class="table-header p-d-flex p-ai-center">
                     <span id="search-container" class="p-input-icon-left p-mr-3">
                         <i class="pi pi-search" />
-                        <InputText class="kn-material-input" v-model="filters['global'].value" :placeholder="$t('common.search')" />
+                        <InputText v-model="filters['global'].value" class="kn-material-input" :placeholder="$t('common.search')" />
                     </span>
                 </div>
             </template>
@@ -25,13 +25,13 @@
                 </Message>
             </template>
 
-            <Column class="kn-truncated" v-for="col of knParameterSavedParametersDialogDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true"></Column>
+            <Column v-for="col of knParameterSavedParametersDialogDescriptor.columns" :key="col.field" class="kn-truncated" :field="col.field" :header="$t(col.header)" :sortable="true"></Column>
             <Column :style="knParameterSavedParametersDialogDescriptor.iconColumn.style">
                 <template #body="slotProps">
                     <div class="p-d-flex p-flex-row">
-                        <Button icon="fas fa-file-signature" class="p-button-link p-mr-2" v-tooltip.left="$t('documentExecution.main.fillForm')" @click.stop="$emit('fillForm', slotProps.data)" />
-                        <Button icon="fa fa-play-circle" class="p-button-link p-mr-2" v-tooltip.left="$t('common.execute')" @click.stop="$emit('executeViewpoint', slotProps.data)" />
-                        <Button icon="fas fa-trash-alt" class="p-button-link" v-tooltip.left="$t('common.delete')" @click.stop="deleteViewpointConfirm(slotProps.data)" />
+                        <Button v-tooltip.left="$t('documentExecution.main.fillForm')" icon="fas fa-file-signature" class="p-button-link p-mr-2" @click.stop="$emit('fillForm', slotProps.data)" />
+                        <Button v-tooltip.left="$t('common.execute')" icon="fa fa-play-circle" class="p-button-link p-mr-2" @click.stop="$emit('executeViewpoint', slotProps.data)" />
+                        <Button v-tooltip.left="$t('common.delete')" icon="fas fa-trash-alt" class="p-button-link" @click.stop="deleteViewpointConfirm(slotProps.data)" />
                     </div>
                 </template>
             </Column>

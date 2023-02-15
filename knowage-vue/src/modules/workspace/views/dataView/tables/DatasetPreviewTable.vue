@@ -2,18 +2,18 @@
     <DataTable
         id="preview-datatable"
         v-model:first="first"
+        v-model:filters="filters"
         :value="rows"
         :lazy="true"
         :paginator="lazyParams.size > 15"
         :rows="15"
-        :totalRecords="lazyParams.size"
-        paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+        :total-records="lazyParams.size"
+        paginator-template="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
         class="p-datatable-sm kn-table kn-flex"
-        v-model:filters="filters"
-        filterDisplay="menu"
-        :currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
-        stripedRows
-        responsiveLayout="stack"
+        filter-display="menu"
+        :current-page-report-template="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
+        striped-rows
+        responsive-layout="stack"
         breakpoint="960px"
         @page="onPage($event)"
         @sort="onSort"
@@ -23,7 +23,7 @@
                 {{ $t('common.info.noDataFound') }}
             </div>
         </template>
-        <Column class="kn-truncated" :style="datasetPreviewTableDescriptor.columnStyle" v-for="col of columns" :field="col.field" :key="col.field" :sortable="previewType === 'dataset' ? false : true">
+        <Column v-for="col of columns" :key="col.field" class="kn-truncated" :style="datasetPreviewTableDescriptor.columnStyle" :field="col.field" :sortable="previewType === 'dataset' ? false : true">
             <template #header>
                 <div class="dropdown">
                     <div clas="p-d-flex p-flex-column">
@@ -32,7 +32,7 @@
                     </div>
                     <div v-if="previewType !== 'dataset'" class="dropdown-icon-container">
                         <i class="pi pi-filter-icon pi-filter p-ml-5" :class="{ 'filter-icon-active': searchInput[col.field] }" @click="searchVisible[col.field] = !searchVisible[col.field]" />
-                        <div class="dropdown-content" v-if="searchVisible[col.field]">
+                        <div v-if="searchVisible[col.field]" class="dropdown-content">
                             <InputText v-model="searchInput[col.field]" class="p-inputtext-sm p-column-filter" @input="onFilter(col)"></InputText>
                         </div>
                     </div>

@@ -2,25 +2,25 @@
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
         <template #start>{{ selectedBusinessModel.name }} </template>
         <template #end>
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="handleSubmit" data-test="submit-button" />
-            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" data-test="close-button" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" data-test="submit-button" @click="handleSubmit" />
+            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" data-test="close-button" @click="closeTemplate" />
         </template>
     </Toolbar>
-    <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-    <TabView class="tabview-custom kn-page-content" v-else>
+    <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
+    <TabView v-else class="tabview-custom kn-page-content">
         <TabPanel>
             <template #header>
                 <span>{{ $t('managers.businessModelManager.details') }}</span>
             </template>
 
             <BusinessModelDetailsCard
-                :selectedBusinessModel="selectedBusinessModel"
-                :domainCategories="categories"
-                :datasourcesMeta="datasources"
+                :selected-business-model="selectedBusinessModel"
+                :domain-categories="categories"
+                :datasources-meta="datasources"
                 :user="user"
-                :toGenerate="toGenerate"
+                :to-generate="toGenerate"
                 :readonly="readonly"
-                :businessModelVersions="businessModelVersions"
+                :business-model-versions="businessModelVersions"
                 @fieldChanged="onFieldChange"
                 @fileUploaded="uploadedFile = $event"
                 @datamartGenerated="loadPage"
@@ -45,12 +45,12 @@
         </TabPanel>
 
         <TabPanel v-if="id">
-            <template #header v-if="id">
+            <template v-if="id" #header>
                 <span>{{ $t('managers.businessModelManager.drivers') }}</span>
-                <Badge :value="invalidDrivers" class="p-ml-2" severity="danger" v-if="invalidDrivers > 0"></Badge>
+                <Badge v-if="invalidDrivers > 0" :value="invalidDrivers" class="p-ml-2" severity="danger"></Badge>
             </template>
 
-            <BusinessModelDriversCard v-if="id" :id="selectedBusinessModel.id" :drivers="drivers" :driversOptions="analyticalDrivers" :readonly="readonly" @delete="setDriversForDelete"></BusinessModelDriversCard>
+            <BusinessModelDriversCard v-if="id" :id="selectedBusinessModel.id" :drivers="drivers" :drivers-options="analyticalDrivers" :readonly="readonly" @delete="setDriversForDelete"></BusinessModelDriversCard>
         </TabPanel>
     </TabView>
 </template>
@@ -68,7 +68,6 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import useValidate from '@vuelidate/core'
 import mainStore from '../../../App.store'
-import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'business-model-catalogue-detail',
@@ -88,6 +87,10 @@ export default defineComponent({
         }
     },
     emits: ['touched', 'closed', 'inserted'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             user: null as any,
@@ -121,10 +124,6 @@ export default defineComponent({
         async id() {
             await this.loadPage()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         await this.loadUser()

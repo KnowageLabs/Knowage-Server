@@ -6,7 +6,7 @@
         <MainMenu @menuItemSelected="setSelectedMenuItem"></MainMenu>
 
         <div class="layout-main">
-            <router-view :selectedMenuItem="selectedMenuItem" :menuItemClickedTrigger="menuItemClickedTrigger" />
+            <router-view :selected-menu-item="selectedMenuItem" :menu-item-clicked-trigger="menuItemClickedTrigger" />
         </div>
     </div>
     <KnRotate v-show="isMobileDevice"></KnRotate>
@@ -20,13 +20,17 @@ import MainMenu from '@/modules/mainMenu/MainMenu'
 import Toast from 'primevue/toast'
 import { defineComponent } from 'vue'
 import mainStore from '@/App.store'
-import { mapState, mapActions } from 'pinia'
+import { mapState } from 'pinia'
 import WEB_SOCKET from '@/services/webSocket.js'
 import themeHelper from '@/helpers/themeHelper/themeHelper'
 import { primeVueDate, getLocale } from '@/helpers/commons/localeHelper'
 
 export default defineComponent({
     components: { ConfirmDialog, KnOverlaySpinnerPanel, KnRotate, MainMenu, Toast },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
 
     data() {
         return {
@@ -41,14 +45,14 @@ export default defineComponent({
         await this.$http
             .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/currentuser')
             .then((response) => {
-                let currentUser = response.data
+                const currentUser = response.data
                 if (localStorage.getItem('sessionRole')) {
                     currentUser.sessionRole = localStorage.getItem('sessionRole')
                 } else if (currentUser.defaultRole) currentUser.sessionRole = currentUser.defaultRole
 
                 this.store.initializeUser(currentUser)
 
-                let responseLocale = response.data.locale
+                const responseLocale = response.data.locale
                 let storedLocale = responseLocale
                 if (localStorage.getItem('locale')) {
                     storedLocale = localStorage.getItem('locale')
@@ -66,8 +70,8 @@ export default defineComponent({
                 }
                 this.$primevue.config.locale.dateFormat = primeVueDate(getLocale(true))
 
-                let language = this.$i18n
-                let splittedLanguage = language.locale.split('_')
+                const language = this.$i18n
+                const splittedLanguage = language.locale.split('_')
 
                 let url = '/knowage/servlet/AdapterHTTP?'
                 url += 'ACTION_NAME=CHANGE_LANGUAGE'
@@ -113,10 +117,6 @@ export default defineComponent({
             }
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
     mounted() {
         this.onLoad()
         if (/Android|iPhone/i.test(navigator.userAgent)) {
@@ -132,10 +132,10 @@ export default defineComponent({
             await this.$http
                 .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/export/dataset')
                 .then((response) => {
-                    let totalDownloads = response.data.length
-                    let alreadyDownloaded = response.data.filter((x) => x.alreadyDownloaded).length
+                    const totalDownloads = response.data.length
+                    const alreadyDownloaded = response.data.filter((x) => x.alreadyDownloaded).length
 
-                    let json = { downloads: { count: { total: 0, alreadyDownloaded: 0 } } }
+                    const json = { downloads: { count: { total: 0, alreadyDownloaded: 0 } } }
                     json.downloads.count.total = totalDownloads
                     json.downloads.count.alreadyDownloaded = alreadyDownloaded
 
@@ -158,7 +158,7 @@ export default defineComponent({
             if (currentLocale && Object.keys(currentLocale).length > 0) currentLocale = currentLocale.replaceAll('_', '-')
             else currentLocale = 'en-US'
 
-            let splittedLanguage = currentLocale.split('-')
+            const splittedLanguage = currentLocale.split('-')
             currLanguage += splittedLanguage[0] + '-'
             if (splittedLanguage.length > 2) currLanguage += splittedLanguage[2].replaceAll('#', '') + '-'
             currLanguage += splittedLanguage[1].toUpperCase()
@@ -171,7 +171,7 @@ export default defineComponent({
 
             WEB_SOCKET.update = function (event) {
                 if (event.data) {
-                    let json = JSON.parse(event.data)
+                    const json = JSON.parse(event.data)
                     if (json.news) {
                         store.setNews(json.news)
                     }
@@ -182,7 +182,7 @@ export default defineComponent({
             }
             WEB_SOCKET.onopen = function (event) {
                 if (event.data) {
-                    let json = JSON.parse(event.data)
+                    const json = JSON.parse(event.data)
                     if (json.news) {
                         this.store.setNews(json.news)
                     }
@@ -193,7 +193,7 @@ export default defineComponent({
             }
             WEB_SOCKET.onmessage = function (event) {
                 if (event.data) {
-                    let json = JSON.parse(event.data)
+                    const json = JSON.parse(event.data)
                     if (json.news) {
                         store.setNews(json.news)
                     }

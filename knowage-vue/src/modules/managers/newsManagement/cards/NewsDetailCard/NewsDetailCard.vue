@@ -6,7 +6,7 @@
                     {{ $t('managers.newsManagement.settings') }}
                 </template>
                 <template #end>
-                    <InputSwitch id="active" v-model="news.active" @change="onActiveChange" data-test="active-input" />
+                    <InputSwitch id="active" v-model="news.active" data-test="active-input" @change="onActiveChange" />
                     <label for="active" class="kn-material-input-label p-ml-3"> {{ $t('managers.newsManagement.active') }}</label>
                 </template>
             </Toolbar>
@@ -18,21 +18,21 @@
                         <span class="p-float-label">
                             <InputText
                                 id="title"
+                                v-model.trim="v$.news.title.$model"
                                 class="kn-material-input"
                                 type="text"
-                                v-model.trim="v$.news.title.$model"
                                 :class="{
                                     'p-invalid': v$.news.title.$invalid && v$.news.title.$dirty
                                 }"
+                                data-test="title-input"
                                 @blur="v$.news.title.$touch()"
                                 @input="onFieldChange('title', $event.target.value)"
-                                data-test="title-input"
                             />
                             <label for="title" class="kn-material-input-label"> {{ $t('managers.newsManagement.form.title') }} * </label>
                         </span>
                         <KnValidationMessages
-                            :vComp="v$.news.title"
-                            :additionalTranslateParams="{
+                            :v-comp="v$.news.title"
+                            :additional-translate-params="{
                                 fieldName: $t('managers.newsManagement.form.title')
                             }"
                         />
@@ -42,24 +42,24 @@
                         <span class="p-float-label">
                             <Calendar
                                 id="expirationDate"
+                                v-model="v$.news.expirationDate.$model"
                                 class="kn-material-input"
                                 type="text"
-                                v-model="v$.news.expirationDate.$model"
                                 :class="{
                                     'p-invalid': v$.news.expirationDate.$invalid && v$.news.expirationDate.$dirty
                                 }"
-                                :showIcon="true"
+                                :show-icon="true"
+                                data-test="expiration-input"
                                 @blur="v$.news.expirationDate.$touch()"
                                 @input="onManualDateChange"
                                 @dateSelect="onFieldChange('expirationDate', $event.valueOf())"
-                                data-test="expiration-input"
                             />
-                            <label for="expirationDate" id="calendar-label"> {{ $t('managers.newsManagement.form.expirationDate') }} * </label>
+                            <label id="calendar-label" for="expirationDate"> {{ $t('managers.newsManagement.form.expirationDate') }} * </label>
                         </span>
 
                         <KnValidationMessages
-                            :vComp="v$.news.expirationDate"
-                            :additionalTranslateParams="{
+                            :v-comp="v$.news.expirationDate"
+                            :additional-translate-params="{
                                 fieldName: $t('managers.newsManagement.form.expirationDate')
                             }"
                         />
@@ -69,14 +69,14 @@
                         <span class="p-float-label">
                             <Dropdown
                                 id="type"
+                                v-model="v$.news.type.$model"
                                 class="kn-material-input"
                                 :class="{
                                     'p-invalid': v$.news.type.$invalid && v$.news.type.$dirty
                                 }"
-                                v-model="v$.news.type.$model"
                                 :options="newsDetailCardDescriptor.newsTypes"
-                                optionLabel="name"
-                                optionValue="value"
+                                option-label="name"
+                                option-value="value"
                                 @before-show="v$.news.type.$touch()"
                                 @change="onFieldChange('type', $event.value)"
                             >
@@ -84,8 +84,8 @@
                             <label for="type" class="kn-material-input-label">{{ $t('managers.newsManagement.form.type') }} * </label>
                         </span>
                         <KnValidationMessages
-                            :vComp="v$.news.type"
-                            :additionalTranslateParams="{
+                            :v-comp="v$.news.type"
+                            :additional-translate-params="{
                                 fieldName: $t('managers.newsManagement.form.type')
                             }"
                         >
@@ -98,25 +98,25 @@
                     <span class="p-float-label">
                         <Textarea
                             id="description"
-                            class="kn-material-input"
                             v-model.trim="v$.news.description.$model"
+                            class="kn-material-input"
                             :class="{
                                 'p-invalid': v$.news.description.$invalid && v$.news.description.$dirty
                             }"
-                            :autoResize="true"
-                            maxLength="140"
+                            :auto-resize="true"
+                            max-length="140"
                             rows="2"
                             :placeholder="$t('managers.newsManagement.form.descriptionPlaceholder')"
+                            data-test="description-input"
                             @blur="v$.news.description.$touch()"
                             @input="onFieldChange('description', $event.target.value)"
-                            data-test="description-input"
                         />
                     </span>
                     <div class="p-d-flex p-flex-row p-jc-between">
                         <div>
                             <KnValidationMessages
-                                :vComp="v$.news.description"
-                                :additionalTranslateParams="{
+                                :v-comp="v$.news.description"
+                                :additional-translate-params="{
                                     fieldName: $t('managers.newsManagement.form.description')
                                 }"
                             />
@@ -127,7 +127,7 @@
 
                 <div class="p-field">
                     <span>
-                        <Editor id="html" v-model="news.html" :editorStyle="newsDetailCardDescriptor.editor.style" @text-change="onFieldChange('html', $event.htmlValue)" />
+                        <Editor id="html" v-model="news.html" :editor-style="newsDetailCardDescriptor.editor.style" @text-change="onFieldChange('html', $event.htmlValue)" />
                     </span>
                 </div>
             </form>
@@ -188,14 +188,14 @@
                 return (this.news.description?.length ?? '0') + ' / 140'
             }
         },
-        async created() {
-            this.loadNews()
-        },
         watch: {
             selectedNews() {
                 this.v$.$reset()
                 this.loadNews()
             }
+        },
+        async created() {
+            this.loadNews()
         },
         methods: {
             onFieldChange(fieldName: string, value: any) {

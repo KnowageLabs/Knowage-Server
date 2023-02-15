@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="documentExecutionMailDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary" :content-style="documentExecutionMailDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -12,8 +12,8 @@
             <div class="p-field p-col-12">
                 <label class="kn-material-input-label">{{ $t('common.to') }} *</label>
                 <InputText
-                    class="kn-material-input p-inputtext-sm"
                     v-model="mail.TO"
+                    class="kn-material-input p-inputtext-sm"
                     :class="{
                         'p-invalid': mailToDirty && (!mail.TO || mail.TO.length === 0)
                     }"
@@ -24,7 +24,7 @@
 
             <div class="p-field p-col-12">
                 <label class="kn-material-input-label">{{ $t('common.cc') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="mail.CC" :maxLength="documentExecutionMailDialogDescriptor.ccMaxLength" />
+                <InputText v-model="mail.CC" class="kn-material-input p-inputtext-sm" :max-length="documentExecutionMailDialogDescriptor.ccMaxLength" />
             </div>
             <div class="p-d-flex p-flex-row p-jc-end p-col-12">
                 <p class="max-length-help p-m-0">{{ ccHelp }}</p>
@@ -32,7 +32,7 @@
 
             <div class="p-field p-col-12">
                 <label class="kn-material-input-label">{{ $t('common.object') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="mail.OBJECT" :maxLength="documentExecutionMailDialogDescriptor.objectMaxLength" />
+                <InputText v-model="mail.OBJECT" class="kn-material-input p-inputtext-sm" :max-length="documentExecutionMailDialogDescriptor.objectMaxLength" />
             </div>
             <div class="p-d-flex p-flex-row p-jc-end p-col-12">
                 <p class="max-length-help p-m-0">{{ objectHelp }}</p>
@@ -40,7 +40,7 @@
 
             <div class="p-field p-col-12">
                 <label class="kn-material-input-label">{{ $t('common.message') }}</label>
-                <Editor v-model="mail.MESSAGE" class="p-m-2" :editorStyle="documentExecutionMailDialogDescriptor.editor.style"></Editor>
+                <Editor v-model="mail.MESSAGE" class="p-m-2" :editor-style="documentExecutionMailDialogDescriptor.editor.style"></Editor>
             </div>
 
             <Accordion class="p-col-12">
@@ -56,17 +56,17 @@
                     <div class="p-grid p-mt-4">
                         <div class="p-field p-col-6">
                             <label class="kn-material-input-label">{{ $t('common.login') }}</label>
-                            <InputText class="kn-material-input p-inputtext-sm" v-model="mail.LOGIN" :maxLength="documentExecutionMailDialogDescriptor.objectMaxLength" />
+                            <InputText v-model="mail.LOGIN" class="kn-material-input p-inputtext-sm" :max-length="documentExecutionMailDialogDescriptor.objectMaxLength" />
                         </div>
 
                         <div class="p-field p-col-6">
                             <label class="kn-material-input-label">{{ $t('common.password') }}</label>
-                            <InputText class="kn-material-input p-inputtext-sm" type="password" v-model="mail.PASSWORD" :maxLength="documentExecutionMailDialogDescriptor.objectMaxLength" />
+                            <InputText v-model="mail.PASSWORD" class="kn-material-input p-inputtext-sm" type="password" :max-length="documentExecutionMailDialogDescriptor.objectMaxLength" />
                         </div>
 
                         <div class="p-field p-col-12">
                             <label class="kn-material-input-label">{{ $t('common.replyTo') }}</label>
-                            <InputText class="kn-material-input p-inputtext-sm" v-model="mail.REPLAYTO" :maxLength="documentExecutionMailDialogDescriptor.objectMaxLength" aria-describedby="reply-to-help" />
+                            <InputText v-model="mail.REPLAYTO" class="kn-material-input p-inputtext-sm" :max-length="documentExecutionMailDialogDescriptor.objectMaxLength" aria-describedby="reply-to-help" />
                             <small id="reply-to-help">{{ $t('documentExecution.main.replyToHint') }}</small>
                         </div>
                     </div>
@@ -77,7 +77,7 @@
         <template #footer>
             <div class="p-d-flex p-flex-row p-jc-end">
                 <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
-                <Button class="kn-button kn-button--primary" @click="save" :disabled="saveButtonDisabled"> {{ $t('common.save') }}</Button>
+                <Button class="kn-button kn-button--primary" :disabled="saveButtonDisabled" @click="save"> {{ $t('common.save') }}</Button>
             </div>
         </template>
     </Dialog>

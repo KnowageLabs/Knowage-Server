@@ -1,21 +1,21 @@
 <template>
     <Dialog
         class="kn-dialog--toolbar--primary dataPreparationDialog"
-        v-bind:visible="transformation && transformation.type != 'calculatedField'"
+        :visible="transformation && transformation.type != 'calculatedField'"
         :header="(localCopy && localCopy.type ? $t('managers.workspaceManagement.dataPreparation.transformations.' + localCopy.name + '.label') + ' - ' : '') + $t('managers.workspaceManagement.dataPreparation.parametersConfiguration')"
         :closable="false"
         modal
         :breakpoints="{ '960px': '75vw', '640px': '100vw' }"
     >
-        <Message severity="info" :closable="false" v-if="localCopy && localCopy.description">{{ $t(localCopy.description) }}</Message>
+        <Message v-if="localCopy && localCopy.description" severity="info" :closable="false">{{ $t(localCopy.description) }}</Message>
 
-        <DataPreparationSimple v-if="localCopy.type === 'simple'" :transformation="localCopy" @update:transformation="updateLocalCopy" :columns="columns" :col="col" :readOnly="readOnly" />
-        <DataPreparationFilter v-if="localCopy.type === 'filter'" :transformation="localCopy" @update:transformation="updateLocalCopy" :columns="columns" :col="col" :readOnly="readOnly" />
-        <DataPreparationSplit v-if="localCopy.type === 'split'" :transformation="localCopy" @update:transformation="updateLocalCopy" :columns="columns" :col="col" :readOnly="readOnly" />
+        <DataPreparationSimple v-if="localCopy.type === 'simple'" :transformation="localCopy" :columns="columns" :col="col" :read-only="readOnly" @update:transformation="updateLocalCopy" />
+        <DataPreparationFilter v-if="localCopy.type === 'filter'" :transformation="localCopy" :columns="columns" :col="col" :read-only="readOnly" @update:transformation="updateLocalCopy" />
+        <DataPreparationSplit v-if="localCopy.type === 'split'" :transformation="localCopy" :columns="columns" :col="col" :read-only="readOnly" @update:transformation="updateLocalCopy" />
 
         <template #footer>
             <Button class="p-button-text kn-button thirdButton" :label="$t('common.cancel')" @click="resetAndClose" />
-            <Button v-if="!readOnly" class="kn-button kn-button--primary" v-t="'common.apply'" @click="handleTransformation" />
+            <Button v-if="!readOnly" v-t="'common.apply'" class="kn-button kn-button--primary" @click="handleTransformation" />
         </template>
     </Dialog>
 </template>
@@ -35,13 +35,14 @@ import DataPreparationSplit from './DataPreparationCustom/DataPreparationSplitTr
 
 export default defineComponent({
     name: 'data-preparation-detail-dialog',
+    components: { DataPreparationSimple, Dialog, Message, DataPreparationFilter, DataPreparationSplit },
     props: {
         transformation: {} as PropType<ITransformation<ITransformationParameter>>,
         columns: { type: Array as PropType<Array<IDataPreparationColumn>> },
         col: String,
         readOnly: Boolean
     },
-    components: { DataPreparationSimple, Dialog, Message, DataPreparationFilter, DataPreparationSplit },
+    emits: ['update:transformation', 'update:col', 'update:readOnly', 'send-transformation'],
     data() {
         return { localCopy: {} as ITransformation<ITransformationParameter> | undefined, v$: useValidate() as any, validationDescriptor: DataPreparationValidationDescriptor, simpleDescriptor: DataPreparationSimpleDescriptor }
     },
@@ -50,7 +51,14 @@ export default defineComponent({
             vTransformation: createValidations('localCopy', this.validationDescriptor.validations.configuration)
         }
     },
-    emits: ['update:transformation', 'update:col', 'update:readOnly', 'send-transformation'],
+    watch: {
+        transformation: {
+            handler(newValue) {
+                    this.localCopy = JSON.parse(JSON.stringify(newValue))
+            },
+            deep: true
+        }
+    },
 
     created() {
         this.simpleDescriptor = { ...DataPreparationSimpleDescriptor } as any
@@ -61,13 +69,13 @@ export default defineComponent({
             this.localCopy?.parameters.push(this.localCopy?.parameters[0])
         },
         convertTransformation() {
-            let t = this.localCopy
-            let transformation = { parameters: [] as Array<any>, type: t?.name }
+            const t = this.localCopy
+            const transformation = { parameters: [] as Array<any>, type: t?.name }
 
             if (t?.name === 'filter') return this.convertFilterTransformation(t, transformation)
             if (t?.name === 'split') return this.convertSplitTransformation(t, transformation)
 
-            let par = { columns: [] as Array<any> }
+            const par = { columns: [] as Array<any> }
             t?.parameters?.forEach((p) => {
                 Object.keys(p).forEach((key) => {
                     if (p.value && !this.isToBeSkipped(key)) {
@@ -82,13 +90,13 @@ export default defineComponent({
         },
 
         convertSplitTransformation(t, transformation) {
-            let p = t?.parameters
+            const p = t?.parameters
             this.convertCustomTransformation(p, transformation)
             return transformation
         },
 
         convertCustomTransformation(p, transformation) {
-            let par = { columns: [] as Array<any> }
+            const par = { columns: [] as Array<any> }
             Object.keys(p).forEach((key) => {
                 if (key === 'column') par.columns.push(p[key].header)
                 else par[key] = p[key]
@@ -103,7 +111,7 @@ export default defineComponent({
             return transformation
         },
 
-        isToBeSkipped(key: string): Boolean {
+        isToBeSkipped(key: string): boolean {
             return key === 'value' || key === 'type' || key.includes('option') || key.includes('available') || key.includes('depends') || key.includes('validation') || key.includes('placeholder')
         },
 
@@ -120,7 +128,7 @@ export default defineComponent({
         },
 
         getColumns(parameter): Array<any> {
-            let toReturn = [] as Array<any>
+            const toReturn = [] as Array<any>
             if (Array.isArray(parameter.value)) {
                 parameter.value.forEach((v) => {
                     toReturn.push(v.header)
@@ -132,7 +140,7 @@ export default defineComponent({
         },
 
         handleTransformation(): void {
-            let convertedTransformation = this.convertTransformation()
+            const convertedTransformation = this.convertTransformation()
             this.$emit('send-transformation', convertedTransformation)
             this.closeDialog()
         },
@@ -144,14 +152,6 @@ export default defineComponent({
         updateLocalCopy(t): void {
             if (this.localCopy?.name === 'filter' || this.localCopy?.name === 'split') this.localCopy.parameters = t
             else this.localCopy = t
-        }
-    },
-    watch: {
-        transformation: {
-            handler(newValue) {
-                    this.localCopy = JSON.parse(JSON.stringify(newValue))
-            },
-            deep: true
         }
     }
 })

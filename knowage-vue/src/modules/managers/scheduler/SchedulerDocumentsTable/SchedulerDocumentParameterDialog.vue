@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="schedulerDocumentParameterDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary" :content-style="schedulerDocumentParameterDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -8,10 +8,10 @@
             </Toolbar>
         </template>
         <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
-        <Message class="p-m-2" v-if="deletedParams.length > 0" severity="warn" :closable="false" :style="schedulerDocumentParameterDialogDescriptor.styles.message">
+        <Message v-if="deletedParams.length > 0" class="p-m-2" severity="warn" :closable="false" :style="schedulerDocumentParameterDialogDescriptor.styles.message">
             {{ deletedParamsMessage }}
         </Message>
-        <SchedulerDocumentParameterForm v-for="(parameter, index) in parameters" :key="index" class="p-m-3" :propParameter="parameter" :roles="roles" :formulas="formulas" :documentLabel="documentLabel" @loading="setLoading($event)"></SchedulerDocumentParameterForm>
+        <SchedulerDocumentParameterForm v-for="(parameter, index) in parameters" :key="index" class="p-m-3" :prop-parameter="parameter" :roles="roles" :formulas="formulas" :document-label="documentLabel" @loading="setLoading($event)"></SchedulerDocumentParameterForm>
         <template #footer>
             <div class="p-d-flex p-flex-row p-jc-end">
                 <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>

@@ -1,7 +1,7 @@
 <template>
     <div class="filter-content p-m-2">
-        <b class="kn-truncated" v-tooltip.bottom="details?.leftOperandAlias">{{ details?.leftOperandAlias }}</b>
-        <p class="kn-truncated" v-tooltip.bottom="details?.rightOperandValue">
+        <b v-tooltip.bottom="details?.leftOperandAlias" class="kn-truncated">{{ details?.leftOperandAlias }}</b>
+        <p v-tooltip.bottom="details?.rightOperandValue" class="kn-truncated">
             <b>{{ details?.operator.toLowerCase() + ' ' }}</b>
             <small>{{ details?.rightOperandValue.toLowerCase() }}</small>
         </p>

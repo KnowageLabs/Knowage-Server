@@ -8,7 +8,7 @@
         <Message class="p-m-4" severity="info" :closable="false" :style="workspaceFederationDatasetListDescriptor.styles.message">
             {{ mode === 'available' ? $t('workspace.federationDefinition.availableDatasetsMessage') : $t('workspace.federationDefinition.selectedDatasetsMessage') }}
         </Message>
-        <Listbox class="kn-list listbox-container" :listStyle="workspaceFederationDatasetListDescriptor.styles.dsList" :options="dataset" :filter="true" optionLabel="name" @change="selectDataset($event.value)">
+        <Listbox class="kn-list listbox-container" :list-style="workspaceFederationDatasetListDescriptor.styles.dsList" :options="dataset" :filter="true" option-label="name" @change="selectDataset($event.value)">
             <template #empty>{{ $t('common.info.noDataFound') }}</template>
             <template #option="slotProps">
                 <div class="kn-list-item p-d-flex p-flex-row">

@@ -4,7 +4,7 @@
             <p v-if="showDataset">{{ selection.datasetLabel }}</p>
             <p v-if="showColumn">{{ selection.columnName }}</p>
             <p>{{ formatSelectionForDisplay(selection) }}</p>
-            <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" v-tooltip.left="$t('common.delete')" :disabled="editorMode" @click="deleteSelection(selection)" />
+            <Button v-tooltip.left="$t('common.delete')" icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" :disabled="editorMode" @click="deleteSelection(selection)" />
         </li>
     </ul>
 </template>
@@ -25,18 +25,18 @@ export default defineComponent({
         editorMode: { type: Boolean }
     },
     emits: ['deleteSelection'],
-    computed: {},
+    setup() {},
     data() {
         return {
             formatSelectionForDisplay
         }
     },
-    setup() {},
+    computed: {},
     created() {},
     updated() {},
     methods: {
         getRowStyle(rowIndex: number) {
-            var rowStyles = this.propWidget.settings.style.rows
+            const rowStyles = this.propWidget.settings.style.rows
 
             if (rowStyles.alternatedRows && rowStyles.alternatedRows.enabled) {
                 if (rowStyles.alternatedRows.oddBackgroundColor && rowIndex % 2 === 0) {

@@ -4,13 +4,13 @@
             <form v-if="timespan" class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-col-4">
                     <span class="p-float-label">
-                        <InputText class="kn-material-input" v-model="timespan.name" maxLength="100" @input="$emit('touched')" />
+                        <InputText v-model="timespan.name" class="kn-material-input" max-length="100" @input="$emit('touched')" />
                         <label class="kn-material-input-label"> {{ $t('common.name') }} *</label>
                     </span>
                 </div>
                 <div class="p-field p-col-4">
                     <span class="p-float-label">
-                        <Dropdown class="kn-material-input" v-model="timespan.type" :options="timespanDescriptor.typeValues" optionValue="value" optionLabel="label" @change="onTypeChange">
+                        <Dropdown v-model="timespan.type" class="kn-material-input" :options="timespanDescriptor.typeValues" option-value="value" option-label="label" @change="onTypeChange">
                             <template #value="slotProps">
                                 <div v-if="slotProps.value">
                                     <span class="timespan-type-value">{{ slotProps.value }}</span>
@@ -25,7 +25,7 @@
                 </div>
                 <div class="p-field p-col-4">
                     <span class="p-float-label">
-                        <Dropdown class="kn-material-input" v-model="timespan.category" :options="categories" optionValue="VALUE_ID" optionLabel="VALUE_NM" @change="$emit('touched')"> </Dropdown>
+                        <Dropdown v-model="timespan.category" class="kn-material-input" :options="categories" option-value="VALUE_ID" option-label="VALUE_NM" @change="$emit('touched')"> </Dropdown>
                         <label class="kn-material-input-label"> {{ $t('common.category') }} </label>
                     </span>
                 </div>

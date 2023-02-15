@@ -3,7 +3,7 @@
         <div class="p-col-12 p-md-6 p-lg-4 p-d-flex p-flex-column kn-flex p-m-2">
             <label class="kn-material-input-label p-mr-2">{{ $t('common.align') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center">
-                <Dropdown class="kn-material-input kn-flex" v-model="model.options.plugins.legend.align" :options="descriptor.alignmentOptions" optionValue="value" :disabled="legendDisabled" @change="modelChanged">
+                <Dropdown v-model="model.options.plugins.legend.align" class="kn-material-input kn-flex" :options="descriptor.alignmentOptions" option-value="value" :disabled="legendDisabled" @change="modelChanged">
                     <template #value="slotProps">
                         <div>
                             <span>{{ getTranslatedLabel(slotProps.value, descriptor.alignmentOptions, $t) }}</span>
@@ -15,13 +15,13 @@
                         </div>
                     </template>
                 </Dropdown>
-                <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.chartJS.legend.alignHint')"></i>
+                <i v-tooltip.top="$t('dashboard.widgetEditor.chartJS.legend.alignHint')" class="pi pi-question-circle kn-cursor-pointer p-ml-2"></i>
             </div>
         </div>
         <div class="p-col-12 p-md-6 p-lg-4 p-d-flex p-flex-column kn-flex p-m-2">
             <label class="kn-material-input-label p-mr-2">{{ $t('metaweb.physicalModel.position') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center">
-                <Dropdown class="kn-material-input kn-flex" v-model="model.options.plugins.legend.position" :options="descriptor.positionOptions" optionValue="value" :disabled="legendDisabled" @change="modelChanged">
+                <Dropdown v-model="model.options.plugins.legend.position" class="kn-material-input kn-flex" :options="descriptor.positionOptions" option-value="value" :disabled="legendDisabled" @change="modelChanged">
                     <template #value="slotProps">
                         <div>
                             <span>{{ getTranslatedLabel(slotProps.value, descriptor.positionOptions, $t) }}</span>
@@ -33,7 +33,7 @@
                         </div>
                     </template>
                 </Dropdown>
-                <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.chartJS.legend.positionHint')"></i>
+                <i v-tooltip.top="$t('dashboard.widgetEditor.chartJS.legend.positionHint')" class="pi pi-question-circle kn-cursor-pointer p-ml-2"></i>
             </div>
         </div>
     </div>
@@ -47,11 +47,10 @@ import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import { IChartJSChartModel } from '@/modules/documentExecution/dashboard/interfaces/chartJS/DashboardChartJSWidget'
 import descriptor from '../ChartJSWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
-import InputSwitch from 'primevue/inputswitch'
 
 export default defineComponent({
-    name: 'chartJS-legend-settings',
-    components: { Dropdown, InputSwitch },
+    name: 'chart-j-s-legend-settings',
+    components: { Dropdown },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {

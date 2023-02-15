@@ -20,8 +20,8 @@ import workspaceWarningDialogDescriptor from './WorkspaceWarningDialogDescriptor
 export default defineComponent({
     name: 'workspace-warning-dialog',
     components: { Dialog, Message },
-    emits: ['close'],
     props: { visible: { type: Boolean }, title: { type: String }, warningMessage: { type: String } },
+    emits: ['close'],
     data() {
         return {
             workspaceWarningDialogDescriptor

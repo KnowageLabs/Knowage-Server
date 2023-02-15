@@ -3,21 +3,21 @@
         <template #content>
             <DataTable
                 id="dataset-datatable"
+                v-model:selection="selectedDataset"
+                v-model:filters="filters"
                 :value="datasets"
                 :paginator="true"
                 :rows="15"
                 class="p-datatable-sm kn-table kn-small-paginator"
-                dataKey="id"
-                v-model:selection="selectedDataset"
-                selectionMode="single"
-                v-model:filters="filters"
-                filterDisplay="menu"
-                :globalFilterFields="functionsCatalogDatasetTableDescriptor.globalFilterFields"
-                :responsiveLayout="functionsCatalogDatasetTableDescriptor.responsiveLayout"
+                data-key="id"
+                selection-mode="single"
+                filter-display="menu"
+                :global-filter-fields="functionsCatalogDatasetTableDescriptor.globalFilterFields"
+                :responsive-layout="functionsCatalogDatasetTableDescriptor.responsiveLayout"
                 :breakpoint="functionsCatalogDatasetTableDescriptor.breakpoint"
-                pageLinkSize="2"
+                page-link-size="2"
                 scrollable="true"
-                :scrollHeight="functionsCatalogDatasetTableDescriptor.scrollHeight"
+                :scroll-height="functionsCatalogDatasetTableDescriptor.scrollHeight"
                 @rowClick="$emit('selected', $event.data)"
             >
                 <template #empty>
@@ -29,13 +29,13 @@
                     <div class="table-header p-d-flex">
                         <span class="p-input-icon-left p-mr-3 p-col-12">
                             <i class="pi pi-search" />
-                            <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
+                            <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
                         </span>
                     </div>
                 </template>
-                <Column class="kn-truncated" :style="col.style" v-for="col of functionsCatalogDatasetTableDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true">
+                <Column v-for="col of functionsCatalogDatasetTableDescriptor.columns" :key="col.field" class="kn-truncated" :style="col.style" :field="col.field" :header="$t(col.header)" :sortable="true">
                     <template #filter="{ filterModel }">
-                        <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"></InputText>
                     </template>
                 </Column>
             </DataTable>

@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="functionsCatalogPreviewDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary" :content-style="functionsCatalogPreviewDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -7,29 +7,29 @@
                 </template>
             </Toolbar>
         </template>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
         <TabView v-model:activeIndex="active">
             <TabPanel>
                 <template #header>
                     <span>{{ $t('managers.functionsCatalog.configurator') }}</span>
                 </template>
 
-                <FunctionsCatalogConfiguratorTab :datasets="datasets" :propFunction="propFunction" @loading="setLoading" @selectedEnvironment="setEnvironment" @selectedDataset="setDataset"></FunctionsCatalogConfiguratorTab>
+                <FunctionsCatalogConfiguratorTab :datasets="datasets" :prop-function="propFunction" @loading="setLoading" @selectedEnvironment="setEnvironment" @selectedDataset="setDataset"></FunctionsCatalogConfiguratorTab>
             </TabPanel>
             <TabPanel :disabled="previewInvalid">
                 <template #header>
                     <span>{{ $t('common.preview') }}</span>
                 </template>
 
-                <FunctionsCatalogPreviewTable :previewColumns="previewColumns" :previewRows="previewRows"></FunctionsCatalogPreviewTable>
+                <FunctionsCatalogPreviewTable :preview-columns="previewColumns" :preview-rows="previewRows"></FunctionsCatalogPreviewTable>
             </TabPanel>
         </TabView>
 
-        <FunctionsCatalogPreviewWarningDialog :visible="warningVisible" :warningTitle="warningTitle" :warningMessage="warningMessage" @close="warningVisible = false"></FunctionsCatalogPreviewWarningDialog>
+        <FunctionsCatalogPreviewWarningDialog :visible="warningVisible" :warning-title="warningTitle" :warning-message="warningMessage" @close="warningVisible = false"></FunctionsCatalogPreviewWarningDialog>
 
         <template #footer>
             <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
-            <Button class="kn-button kn-button--primary" :icon="active === 0 ? 'pi pi-chevron-right' : 'pi pi-chevron-left'" :iconPos="active === 0 ? 'right' : 'left'" :label="active === 0 ? $t('common.next') : $t('common.back')" @click="changeTab" />
+            <Button class="kn-button kn-button--primary" :icon="active === 0 ? 'pi pi-chevron-right' : 'pi pi-chevron-left'" :icon-pos="active === 0 ? 'right' : 'left'" :label="active === 0 ? $t('common.next') : $t('common.back')" @click="changeTab" />
         </template>
     </Dialog>
 </template>

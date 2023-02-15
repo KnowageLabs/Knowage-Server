@@ -8,19 +8,19 @@
             </div>
             <div class="p-field p-col-12 p-mt-2 p-p-2">
                 <span class="p-float-label">
-                    <InputText id="label" class="kn-material-input" :maxLength="descriptor.labelMaxLength" v-model="v$.document.label.$model" :class="{ 'p-invalid': v$.document.label.$invalid && v$.document.label.$dirty }" @blur="v$.document.label.$touch()" />
+                    <InputText id="label" v-model="v$.document.label.$model" class="kn-material-input" :max-length="descriptor.labelMaxLength" :class="{ 'p-invalid': v$.document.label.$invalid && v$.document.label.$dirty }" @blur="v$.document.label.$touch()" />
                     <label for="label" class="kn-material-input-label"> {{ $t('common.label') }} * </label>
                 </span>
-                <KnValidationMessages class="p-mt-1" :vComp="v$.document.label" :additionalTranslateParams="{ fieldName: $t('common.label') }" />
+                <KnValidationMessages class="p-mt-1" :v-comp="v$.document.label" :additional-translate-params="{ fieldName: $t('common.label') }" />
                 <p class="input-help p-m-1">{{ labelHelp }}</p>
             </div>
 
             <div class="p-field p-col-12 p-mt-2 p-p-2">
                 <span class="p-float-label">
-                    <InputText id="name" class="kn-material-input" :maxLength="descriptor.nameMaxLength" v-model="v$.document.name.$model" :class="{ 'p-invalid': v$.document.name.$invalid && v$.document.name.$dirty }" @blur="v$.document.name.$touch()" />
+                    <InputText id="name" v-model="v$.document.name.$model" class="kn-material-input" :max-length="descriptor.nameMaxLength" :class="{ 'p-invalid': v$.document.name.$invalid && v$.document.name.$dirty }" @blur="v$.document.name.$touch()" />
                     <label for="name" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
                 </span>
-                <KnValidationMessages class="p-mt-1" :vComp="v$.document.name" :additionalTranslateParams="{ fieldName: $t('common.name') }" />
+                <KnValidationMessages class="p-mt-1" :v-comp="v$.document.name" :additional-translate-params="{ fieldName: $t('common.name') }" />
                 <p class="input-help p-m-1">{{ nameHelp }}</p>
             </div>
         </form>
@@ -44,8 +44,8 @@ import useValidate from '@vuelidate/core'
 export default defineComponent({
     name: 'dashboard-save-dialog',
     components: { Dialog, KnValidationMessages, Message },
-    emits: ['close', 'save'],
     props: { visible: { type: Boolean } },
+    emits: ['close', 'save'],
     data() {
         return {
             descriptor,

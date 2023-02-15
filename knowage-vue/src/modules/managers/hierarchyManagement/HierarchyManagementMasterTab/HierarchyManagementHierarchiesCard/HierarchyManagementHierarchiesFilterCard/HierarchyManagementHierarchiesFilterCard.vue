@@ -14,12 +14,12 @@
         <template #content>
             <div class="p-grid p-fluid p-formgrid">
                 <div class="p-field-checkbox p-col-12">
-                    <Checkbox class="p-mr-2" v-model="showMissingElements" :binary="true" :disabled="!selectedHierarchy" />
+                    <Checkbox v-model="showMissingElements" class="p-mr-2" :binary="true" :disabled="!selectedHierarchy" />
                     <label class="kn-material-input-label"> {{ $t('managers.hierarchyManagement.showMissingElements') }}</label>
                 </div>
                 <div class="p-field p-col-12">
                     <span class="p-float-label">
-                        <Calendar class="kn-material-input" v-model="afterDate" :manualInput="true" :showIcon="true" :disabled="!selectedHierarchy" />
+                        <Calendar v-model="afterDate" class="kn-material-input" :manual-input="true" :show-icon="true" :disabled="!selectedHierarchy" />
                         <label class="kn-material-input-label"> {{ $t('managers.hierarchyManagement.afterDate') }}</label>
                     </span>
                 </div>

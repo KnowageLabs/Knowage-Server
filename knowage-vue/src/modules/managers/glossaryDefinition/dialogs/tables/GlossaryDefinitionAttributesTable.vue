@@ -11,7 +11,7 @@
             </Toolbar>
         </template>
         <template #content>
-            <DataTable class="p-datatable-sm kn-table" :value="mockedAtributes" responsiveLayout="stack">
+            <DataTable class="p-datatable-sm kn-table" :value="mockedAtributes" responsive-layout="stack">
                 <template #empty>
                     {{ $t('common.info.noDataFound') }}
                 </template>
@@ -20,7 +20,7 @@
                 </template>
                 <Column field="name" header="Attribute"></Column>
                 <Column field="value" :header="$t('common.value')"></Column>
-                <Column headerStyle="glossaryDefinitionDialogDescriptor.table.iconColumn.style" :style="glossaryDefinitionDialogDescriptor.table.iconColumn.style">
+                <Column header-style="glossaryDefinitionDialogDescriptor.table.iconColumn.style" :style="glossaryDefinitionDialogDescriptor.table.iconColumn.style">
                     <template #body="slotProps">
                         <Button icon="pi pi-trash" class="p-button-link" @click="deleteAttribute(slotProps.data)" />
                     </template>

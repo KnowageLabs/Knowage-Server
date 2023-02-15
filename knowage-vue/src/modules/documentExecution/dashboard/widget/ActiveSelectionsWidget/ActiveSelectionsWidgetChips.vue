@@ -1,9 +1,9 @@
 <template>
     <div class="active-selections-chip">
         <span v-if="showDataset">{{ activeSelection.datasetLabel }}</span>
-        <span class="p-mx-2" v-if="showColumn">{{ activeSelection.columnName }}</span>
+        <span v-if="showColumn" class="p-mx-2">{{ activeSelection.columnName }}</span>
         <span>{{ formatSelectionForDisplay(activeSelection) }}</span>
-        <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" v-tooltip.left="$t('common.delete')" :disabled="editorMode" @click.stop="deleteSelection()" />
+        <Button v-tooltip.left="$t('common.delete')" icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" :disabled="editorMode" @click.stop="deleteSelection()" />
     </div>
 </template>
 
@@ -22,13 +22,13 @@ export default defineComponent({
         editorMode: { type: Boolean }
     },
     emits: ['deleteSelection'],
-    computed: {},
+    setup() {},
     data() {
         return {
             formatSelectionForDisplay
         }
     },
-    setup() {},
+    computed: {},
     created() {},
     updated() {},
     methods: {

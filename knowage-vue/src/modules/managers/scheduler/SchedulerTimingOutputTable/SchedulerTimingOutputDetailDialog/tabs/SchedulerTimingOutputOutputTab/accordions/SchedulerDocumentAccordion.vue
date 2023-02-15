@@ -1,5 +1,5 @@
 <template>
-    <Accordion :activeIndex="0">
+    <Accordion :active-index="0">
         <AccordionTab>
             <template #header>
                 <i class="fa fa-file"></i>
@@ -12,12 +12,12 @@
                     <span>
                         <label class="kn-material-input-label">{{ $t('common.name') }} *</label>
                         <InputText
-                            class="kn-material-input"
                             v-model="document.documentname"
+                            class="kn-material-input"
                             :class="{
                                 'p-invalid': documentNameDirty && (!document.documentname || document.documentname.length === 0)
                             }"
-                            :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.document.nameMaxLength"
+                            :max-length="schedulerTimingOutputOutputTabDescriptor.accordion.document.nameMaxLength"
                             @input="validateDocument('documentNameDirty')"
                             @blur="validateDocument('documentNameDirty')"
                         />
@@ -35,7 +35,7 @@
                 <div class="p-m-2">
                     <span>
                         <label class="kn-material-input-label">{{ $t('common.description') }}</label>
-                        <InputText class="kn-material-input" v-model="document.documentdescription" :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.document.descriptionMaxLength" />
+                        <InputText v-model="document.documentdescription" class="kn-material-input" :max-length="schedulerTimingOutputOutputTabDescriptor.accordion.document.descriptionMaxLength" />
                     </span>
                     <div class="p-d-flex p-jc-end">
                         <small>{{ descriptionHelp }}</small>
@@ -48,16 +48,16 @@
                 </div>
 
                 <div v-if="document.useFixedFolder" class="p-mt-4">
-                    <SchedulerDocumentAccordionTree :propFunctionalities="functionalities" :propSelectedFolders="document.funct" @selected="setSelectedFolders"></SchedulerDocumentAccordionTree>
+                    <SchedulerDocumentAccordionTree :prop-functionalities="functionalities" :prop-selected-folders="document.funct" @selected="setSelectedFolders"></SchedulerDocumentAccordionTree>
                 </div>
 
                 <div v-if="drivers.length > 0" class="p-m-2">
                     <div
-                        class="p-my-4"
                         v-tooltip="
                             `${$t('managers.scheduler.useFolderDatasetHint.partOne')}:
                             ${$t('managers.scheduler.useFolderDatasetHint.partTwo')} ${$t('managers.scheduler.useFolderDatasetHint.partThree')}`
                         "
+                        class="p-my-4"
                     >
                         <Checkbox v-model="document.useFolderDataset" :binary="true" />
                         <span class="p-ml-2">{{ $t('managers.scheduler.folderFromDataset') }}</span>
@@ -69,17 +69,17 @@
                         <span>
                             <label class="kn-material-input-label">{{ $t('managers.scheduler.datasetVerification') }} *</label>
                             <Dropdown
-                                class="kn-material-input"
                                 v-model="document.datasetFolderLabel"
+                                class="kn-material-input"
                                 :options="datasets"
-                                optionLabel="label"
-                                optionValue="label"
+                                option-label="label"
+                                option-value="label"
                                 :class="{
                                     'p-invalid': datasetFolderLabelDrity && (!document.datasetFolderLabel || document.datasetFolderLabel?.length === 0)
                                 }"
                                 :filter="true"
-                                filterMatchMode="contains"
-                                :filterFields="['label']"
+                                filter-match-mode="contains"
+                                :filter-fields="['label']"
                                 @blur="validateDocument('datasetFolderLabelDrity')"
                                 @change="validateDocument('datasetFolderLabelDrity')"
                             />
@@ -93,8 +93,8 @@
                         <span>
                             <label class="kn-material-input-label">{{ $t('common.driver') }} *</label>
                             <Dropdown
-                                class="kn-material-input"
                                 v-model="document.datasetFolderParameter"
+                                class="kn-material-input"
                                 :options="drivers"
                                 :class="{
                                     'p-invalid': datasetFolderParameterDirty && (!document.datasetFolderParameter || document.datasetFolderParameter?.length === 0)

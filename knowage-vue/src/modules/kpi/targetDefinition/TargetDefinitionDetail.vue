@@ -7,11 +7,11 @@
     </Toolbar>
     <div class="p-grid p-m-0 p-fluid p-jc-center">
         <div class="p-col-9">
-            <target-definition-form :selectedTarget="target" :categories="categories" @valueChanged="updateTarget" :vcomp="v$.target"></target-definition-form>
+            <target-definition-form :selected-target="target" :categories="categories" :vcomp="v$.target" @valueChanged="updateTarget"></target-definition-form>
             <apply-target-card :kpi="kpi" @kpiChanged="updateKpi" @showDialog="addKpiDialog"></apply-target-card>
         </div>
     </div>
-    <add-kpi-dialog :kpi="filteredKpi" :dialogVisible="kpiDialogVisible" :loadingKpi="loadingAllKpi" @close="closeKpiDialog" @add="addKpi"></add-kpi-dialog>
+    <add-kpi-dialog :kpi="filteredKpi" :dialog-visible="kpiDialogVisible" :loading-kpi="loadingAllKpi" @close="closeKpiDialog" @add="addKpi"></add-kpi-dialog>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -41,6 +41,10 @@ export default defineComponent({
         clone: {
             type: String
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     data() {
         return {
@@ -73,16 +77,6 @@ export default defineComponent({
             return this.v$.$invalid || this.kpi.length < 1
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
-    async created() {
-        if (this.id) {
-            this.loadTarget()
-        }
-        await this.loadCategory()
-    },
     watch: {
         async id() {
             await this.checkId()
@@ -90,6 +84,12 @@ export default defineComponent({
         async clone() {
             await this.checkId()
         }
+    },
+    async created() {
+        if (this.id) {
+            this.loadTarget()
+        }
+        await this.loadCategory()
     },
     methods: {
         updateTarget(event) {
@@ -169,7 +169,7 @@ export default defineComponent({
         },
         async handleSubmit() {
             this.categoryDialogVisiable = false
-            let url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/kpiee/saveTarget'
+            const url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/kpiee/saveTarget'
 
             this.target.values = this.kpi.map((kpi: iValues) => {
                 return {
@@ -185,7 +185,7 @@ export default defineComponent({
                     valueCd: valueCd
                 }
             }
-            let operation = this.target.id ? 'update' : 'insert'
+            const operation = this.target.id ? 'update' : 'insert'
 
             await this.$http.post(url, this.target).then((response: AxiosResponse<any>) => {
                 if (response.data.errors != undefined && response.data.errors.length > 0) {

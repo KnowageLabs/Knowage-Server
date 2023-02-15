@@ -1,9 +1,9 @@
 <template>
     <Card class="p-m-2">
         <template #content>
-            <TimespanIntervalForm :propTimespan="propTimespan" />
+            <TimespanIntervalForm :prop-timespan="propTimespan" />
 
-            <DataTable v-if="timespan && timespan.definition?.length > 0" class="p-datatable-sm kn-table p-m-2" :value="timespan.definition" responsiveLayout="stack" breakpoint="960px" :scrollable="true" scrollHeight="60vh">
+            <DataTable v-if="timespan && timespan.definition?.length > 0" class="p-datatable-sm kn-table p-m-2" :value="timespan.definition" responsive-layout="stack" breakpoint="960px" :scrollable="true" scroll-height="60vh">
                 <Column v-for="column in columns" :key="column.header" :field="column.field" :header="$t(column.header)" :style="column.style"> </Column>
                 <Column :style="timespanDescriptor.iconColumnStyle">
                     <template #body="slotProps">
@@ -25,22 +25,22 @@ import Card from 'primevue/card'
 import TimespanIntervalForm from './TimespanIntervalForm.vue'
 export default defineComponent({
     name: 'timespan-interval-table',
-    props: { propTimespan: { type: Object as PropType<iTimespan | null> } },
     components: { Column, DataTable, Card, TimespanIntervalForm },
+    props: { propTimespan: { type: Object as PropType<iTimespan | null> } },
     data() {
         return {
             timespanDescriptor,
             timespan: null as iTimespan | null
         }
     },
-    watch: {
-        propTimespan() {
-            this.loadTimespan()
-        }
-    },
     computed: {
         columns(): { field: string; header: string; style: string }[] {
             return this.timespan?.type === 'temporal' ? this.timespanDescriptor.temporalColumns : this.timespanDescriptor.timeColumns
+        }
+    },
+    watch: {
+        propTimespan() {
+            this.loadTimespan()
         }
     },
     created() {

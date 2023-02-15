@@ -1,4 +1,4 @@
-let routes = [
+const routes = [
 	{
 		path: '/resource-management',
 		name: 'resource-management',

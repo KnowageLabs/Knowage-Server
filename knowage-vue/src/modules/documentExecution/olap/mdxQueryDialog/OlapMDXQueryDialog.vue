@@ -8,7 +8,7 @@
             </Toolbar>
         </template>
 
-        <VCodeMirror ref="codeMirror" class="p-m-2" v-model:value="query" :options="options" />
+        <VCodeMirror ref="codeMirror" v-model:value="query" class="p-m-2" :options="options" />
 
         <template #footer>
             <Button class="kn-button kn-button--primary" @click="$emit('close')"> {{ $t('common.close') }}</Button>
@@ -17,68 +17,69 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent, PropType } from 'vue'
-    import Dialog from 'primevue/dialog'
-    import olapMDXQueryDialogDescriptor from './OlapMDXQueryDialogDescriptor.json'
-    import VCodeMirror, { CodeMirror  } from 'codemirror-editor-vue3'
+import { defineComponent, PropType } from 'vue'
+import Dialog from 'primevue/dialog'
+import olapMDXQueryDialogDescriptor from './OlapMDXQueryDialogDescriptor.json'
+// eslint-disable-next-line
+import VCodeMirror, { CodeMirror } from 'codemirror-editor-vue3'
 
-    export default defineComponent({
-        name: 'olap-custom-view-save-dialog',
-        components: {
-            Dialog,
-            VCodeMirror
-        },
-        props: { mdxQuery: { type: String as PropType<String | null> } },
-        emits: ['close'],
-        data() {
-            return {
-                olapMDXQueryDialogDescriptor,
-                query: null as string | null,
-                codeMirror: {} as any,
-                options: {
-                    mode: 'text/x-sql',
-                    lineWrapping: true,
-                    theme: 'eclipse',
-                    lineNumbers: true,
-                    readOnly: true
-                },
-                loading: false
-            }
-        },
-        watch: {
-            mdxQuery() {
-                this.loadMdxQuery()
-            }
-        },
-        created() {
-            this.loadMdxQuery()
-        },
-        methods: {
-            loadMdxQuery() {
-                this.query = this.mdxQuery as string
+export default defineComponent({
+    name: 'olap-custom-view-save-dialog',
+    components: {
+        Dialog,
+        VCodeMirror
+    },
+    props: { mdxQuery: { type: String as PropType<string | null> } },
+    emits: ['close'],
+    data() {
+        return {
+            olapMDXQueryDialogDescriptor,
+            query: null as string | null,
+            codeMirror: {} as any,
+            options: {
+                mode: 'text/x-sql',
+                lineWrapping: true,
+                theme: 'eclipse',
+                lineNumbers: true,
+                readOnly: true
             },
-            setupCodeMirror() {
-                const interval = setInterval(() => {
-                    if (!this.$refs.codeMirror) return
-                    this.codeMirror = (this.$refs.codeMirror as any).cminstance as any
-                    setTimeout(() => {
-                        this.codeMirror.refresh()
-                    }, 0)
-                    clearInterval(interval)
-                }, 200)
-            }
+            loading: false
         }
-    })
+    },
+    watch: {
+        mdxQuery() {
+            this.loadMdxQuery()
+        }
+    },
+    created() {
+        this.loadMdxQuery()
+    },
+    methods: {
+        loadMdxQuery() {
+            this.query = this.mdxQuery as string
+        },
+        setupCodeMirror() {
+            const interval = setInterval(() => {
+                if (!this.$refs.codeMirror) return
+                this.codeMirror = (this.$refs.codeMirror as any).cminstance as any
+                setTimeout(() => {
+                    this.codeMirror.refresh()
+                }, 0)
+                clearInterval(interval)
+            }, 200)
+        }
+    }
+})
 </script>
 
 <style lang="scss">
-    #olap-mdx-query-dialog .p-dialog-header,
-    #olap-mdx-query-dialog .p-dialog-content {
-        padding: 0;
-    }
-    #olap-mdx-query-dialog .p-dialog-content {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-    }
+#olap-mdx-query-dialog .p-dialog-header,
+#olap-mdx-query-dialog .p-dialog-content {
+    padding: 0;
+}
+#olap-mdx-query-dialog .p-dialog-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
 </style>

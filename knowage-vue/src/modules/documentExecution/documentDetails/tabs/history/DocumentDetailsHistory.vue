@@ -7,7 +7,7 @@
                 </template>
                 <template #end>
                     <Button :label="$t('common.add')" class="p-button-text p-button-rounded p-button-plain kn-white-color" @click="setUploadType" />
-                    <KnInputFile label="" v-if="!uploading" :changeFunction="startTemplateUpload" :triggerInput="triggerUpload" />
+                    <KnInputFile v-if="!uploading" label="" :change-function="startTemplateUpload" :trigger-input="triggerUpload" />
                 </template>
             </Toolbar>
             <div id="drivers-list-container" class="kn-flex kn-relative">
@@ -37,8 +37,8 @@
             </Toolbar>
             <div id="driver-details-container" class="kn-flex kn-relative">
                 <div id="codemirror-container" :style="mainDescriptor.style.absoluteScroll">
-                    {{ this.scriptOptions.mode }}
-                    <VCodeMirror v-if="showTemplateContent" ref="codeMirrorScriptType" class="kn-height-full" v-model:value="selectedTemplateContent" :options="scriptOptions" @keyup="$emit('touched')" />
+                    {{ scriptOptions.mode }}
+                    <VCodeMirror v-if="showTemplateContent" ref="codeMirrorScriptType" v-model:value="selectedTemplateContent" class="kn-height-full" :options="scriptOptions" @keyup="$emit('touched')" />
                     <div v-else>
                         <InlineMessage severity="info" class="p-m-2 kn-width-full"> {{ $t('documentExecution.documentDetails.history.templateHint') }}</InlineMessage>
                     </div>
@@ -97,6 +97,10 @@ export default defineComponent({
             user: 'user'
         })
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             mainDescriptor,
@@ -122,10 +126,6 @@ export default defineComponent({
                 lineNumbers: true
             }
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         const interval = setInterval(() => {
@@ -175,7 +175,7 @@ export default defineComponent({
         },
         setFileType(template) {
             if (template && template.name) {
-                let fileType = template.name.split('.')
+                const fileType = template.name.split('.')
                 this.selectedTemplateFileType = fileType[fileType.length - 1]
             }
         },
@@ -196,7 +196,7 @@ export default defineComponent({
             setTimeout(() => (this.uploading = false), 200)
         },
         async uploadTemplate(uploadedFile) {
-            var formData = new FormData()
+            const formData = new FormData()
             formData.append('file', uploadedFile)
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates`, formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
@@ -218,7 +218,7 @@ export default defineComponent({
                 .catch(() => this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.history.activeError') }))
         },
         async downloadTemplate(template) {
-            let fileType = template.name.split('.')
+            const fileType = template.name.split('.')
             await this.$http
                 .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates/${template.id}/${fileType[fileType.length - 1]}/file`, {
                     headers: { Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9', 'X-Disable-Errors': 'true' }
@@ -229,11 +229,11 @@ export default defineComponent({
                     } else {
                         this.store.setInfo({ title: this.$t('common.toast.success') })
                         if (response.headers) {
-                            var contentDisposition = response.headers['content-disposition']
-                            var contentDispositionMatcher = contentDisposition.match(/filename[^;\n=]*=((['"]).*?\2|[^;\n]*)/i)
+                            const contentDisposition = response.headers['content-disposition']
+                            const contentDispositionMatcher = contentDisposition.match(/filename[^;\n=]*=((['"]).*?\2|[^;\n]*)/i)
                             if (contentDispositionMatcher && contentDispositionMatcher.length > 1) {
-                                var fileAndExtension = contentDispositionMatcher[1]
-                                var completeFileName = fileAndExtension.replaceAll('"', '')
+                                const fileAndExtension = contentDispositionMatcher[1]
+                                const completeFileName = fileAndExtension.replaceAll('"', '')
                                 if (fileType[fileType.length - 1] == 'json' || fileType[fileType.length - 1] == 'sbicockpit') {
                                     downloadDirect(JSON.stringify(response.data), completeFileName, 'text/html; charset=UTF-8')
                                 } else {

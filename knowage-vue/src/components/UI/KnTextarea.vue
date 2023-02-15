@@ -1,22 +1,22 @@
 <template>
     <span>
         <span class="p-float-label">
-            <InputText :id="name" type="text" :modelValue="modelValue" v-bind="$attrs" :class="[cssClass ? cssClass + ' kn-truncated' : 'kn-material-input kn-truncated', required && !modelValue ? 'p-invalid' : '']" :disabled="true" />
+            <InputText :id="name" type="text" :model-value="modelValue" v-bind="$attrs" :class="[cssClass ? cssClass + ' kn-truncated' : 'kn-material-input kn-truncated', required && !modelValue ? 'p-invalid' : '']" :disabled="true" />
 
             <label :for="name" :class="cssClass ? cssClass : 'kn-material-input-label'">{{ label }}</label>
             <Button class="p-button-text p-button-rounded p-button-plain pi pi-pencil" @click="switchVisibility" /> </span
     ></span>
 
-    <Dialog class="kn-dialog--toolbar--primary knTextareaDialog" v-bind:visible="visible" footer="footer" :header="$t('common.edit')" :closable="false" modal :breakpoints="{ '960px': '75vw', '640px': '100vw' }">
+    <Dialog class="kn-dialog--toolbar--primary knTextareaDialog" :visible="visible" footer="footer" :header="$t('common.edit')" :closable="false" modal :breakpoints="{ '960px': '75vw', '640px': '100vw' }">
         <div>
             <span class="p-float-label">
-                <Textarea v-model="localCopy" :rows="rows ? rows : 5" :cols="cols ? cols : 30" :class="[cssClass ? cssClass : 'kn-material-input', required && !locaCopy ? 'p-invalid' : '']" :autoResize="false" v-bind="$attrs" />
+                <Textarea v-model="localCopy" :rows="rows ? rows : 5" :cols="cols ? cols : 30" :class="[cssClass ? cssClass : 'kn-material-input', required && !locaCopy ? 'p-invalid' : '']" :auto-resize="false" v-bind="$attrs" />
                 <label :for="name" :class="cssClass ? cssClass : 'kn-material-input-label'">{{ label }}</label>
             </span>
         </div>
         <template #footer>
             <Button class="p-button-text kn-button thirdButton" :label="$t('common.cancel')" @click="switchVisibility(false)" />
-            <Button class="kn-button kn-button--primary" v-t="'common.save'" @click="switchVisibility(true)" />
+            <Button v-t="'common.save'" class="kn-button kn-button--primary" @click="switchVisibility(true)" />
         </template>
     </Dialog>
 </template>
@@ -39,15 +39,15 @@
             rows: { type: Number, required: false },
             cols: { type: Number, required: false }
         },
+        emits: ['update:visibility'],
         data() {
             return { visible: false, localCopy: '' }
         },
-        emits: ['update:visibility'],
         created() {
             if (this.modelValue) this.localCopy = JSON.parse(JSON.stringify(this.modelValue))
         },
         methods: {
-            switchVisibility(save: Boolean): void {
+            switchVisibility(save: boolean): void {
                 if (!save && this.localCopy != this.modelValue) {
                     console.log('ciao')
                 }

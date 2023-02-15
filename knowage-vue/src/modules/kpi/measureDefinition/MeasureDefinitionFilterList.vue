@@ -2,19 +2,19 @@
     <Toolbar class="kn-toolbar kn-toolbar--primary">
         <template #start>{{ header }}</template>
         <template #end>
-            <i :class="iconClass" @click="sortArray" data-test="sort-icon"></i>
+            <i :class="iconClass" data-test="sort-icon" @click="sortArray"></i>
         </template>
     </Toolbar>
     <Listbox
         class="kn-list kn-flex"
         :options="filters"
-        :listStyle="metadataDefinitionTabViewDescriptor.listBox.style"
+        :list-style="metadataDefinitionTabViewDescriptor.listBox.style"
         :filter="true"
-        :filterPlaceholder="$t('common.search')"
-        optionLabel="name"
-        filterMatchMode="contains"
-        :filterFields="metadataDefinitionTabViewDescriptor.aliasFilterFields"
-        :emptyFilterMessage="$t('common.info.noDataFound')"
+        :filter-placeholder="$t('common.search')"
+        option-label="name"
+        filter-match-mode="contains"
+        :filter-fields="metadataDefinitionTabViewDescriptor.aliasFilterFields"
+        :empty-filter-message="$t('common.info.noDataFound')"
         @change="$emit('selected', { value: $event.value.name, type: listType })"
     >
         <template #empty>{{ $t('common.info.noDataFound') }}</template>
@@ -46,7 +46,7 @@
             }
         },
         computed: {
-            iconClass(): String {
+            iconClass(): string {
                 return this.sorted === 'DESC' ? 'pi pi-arrow-down' : 'pi pi-arrow-up'
             }
         },

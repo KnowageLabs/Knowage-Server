@@ -5,14 +5,14 @@
                 <label for="language" class="kn-material-input-label" aria-label="dropdown">{{ $t('managers.lovsManagement.language') }} * </label>
                 <Dropdown
                     id="language"
+                    v-model="script.language"
                     class="kn-material-input"
                     :class="{
                         'p-invalid': !script.language && dirty
                     }"
-                    v-model="script.language"
                     :options="listOfScriptTypes"
-                    optionLabel="VALUE_NM"
-                    optionValue="VALUE_CD"
+                    option-label="VALUE_NM"
+                    option-value="VALUE_CD"
                     :placeholder="$t('managers.lovsManagement.placeholderScript')"
                     aria-label="dropdown"
                     @before-show="dirty = true"
@@ -31,7 +31,7 @@
         </div>
         <div v-if="script.language" class="p-mt-4">
             <label class="kn-material-input-label">{{ $t('managers.lovsManagement.script') }}</label>
-            <VCodeMirror ref="codeMirror" class="p-mt-2" v-model:value="code" :autoHeight="true" :options="options" @keyup="onKeyUp" />
+            <VCodeMirror ref="codeMirror" v-model:value="code" class="p-mt-2" :auto-height="true" :options="options" @keyup="onKeyUp" />
         </div>
     </div>
 </template>
@@ -39,7 +39,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iLov } from '../../../LovsManagement'
-import VCodeMirror, { CodeMirror  } from 'codemirror-editor-vue3'
+// eslint-disable-next-line
+import VCodeMirror, { CodeMirror } from 'codemirror-editor-vue3'
 import Dropdown from 'primevue/dropdown'
 
 export default defineComponent({
@@ -70,15 +71,15 @@ export default defineComponent({
             }
         }
     },
+    computed: {
+        lovType(): string {
+            return this.selectedLov.itypeCd
+        }
+    },
     watch: {
         selectedLov() {
             this.loadLov()
             this.loadSelectedScript()
-        }
-    },
-    computed: {
-        lovType(): string {
-            return this.selectedLov.itypeCd
         }
     },
     created() {

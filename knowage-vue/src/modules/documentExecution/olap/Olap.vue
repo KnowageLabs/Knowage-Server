@@ -1,16 +1,16 @@
 <template>
     <div class="p-d-flex p-flex-column kn-flex kn-height-full">
-        <ProgressSpinner class="kn-progress-spinner" v-if="loading" />
+        <ProgressSpinner v-if="loading" class="kn-progress-spinner" />
 
-        <OlapCustomViewTable v-if="customViewVisible" class="olap-overlay-dialog" :olapCustomViews="olapCustomViews" @close="$emit('closeOlapCustomView')" @applyCustomView="$emit('applyCustomView', $event)" />
+        <OlapCustomViewTable v-if="customViewVisible" class="olap-overlay-dialog" :olap-custom-views="olapCustomViews" @close="$emit('closeOlapCustomView')" @applyCustomView="$emit('applyCustomView', $event)" />
 
         <DrillTruDialog
             v-if="drillTruDialogVisible"
-            :drillData="dtData"
-            :tableColumns="formattedColumns"
-            :dtLevels="dtAssociatedLevels"
-            :menuTree="dtTree"
-            :dtMaxRows="dtMaxRows"
+            :drill-data="dtData"
+            :table-columns="formattedColumns"
+            :dt-levels="dtAssociatedLevels"
+            :menu-tree="dtTree"
+            :dt-max-rows="dtMaxRows"
             class="olap-overlay-dialog"
             @close="closeDrillTruDialog"
             @checkCheckboxes="checkCheckboxes"
@@ -19,13 +19,13 @@
             @drill="drillThrough"
         />
 
-        <FilterPanel :olapProp="olap" :olapDesigner="olapDesigner" @putFilterOnAxis="putFilterOnAxis" @showMultiHierarchy="showMultiHierarchy" @openFilterDialog="openFilterDialog" />
-        <FilterTopToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @swapAxis="swapAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" @openFilterDialog="openFilterDialog" />
+        <FilterPanel :olap-prop="olap" :olap-designer="olapDesigner" @putFilterOnAxis="putFilterOnAxis" @showMultiHierarchy="showMultiHierarchy" @openFilterDialog="openFilterDialog" />
+        <FilterTopToolbar :olap-prop="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @swapAxis="swapAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" @openFilterDialog="openFilterDialog" />
 
         <div id="left-and-table-container" class="p-d-flex p-flex-row kn-flex">
-            <FilterLeftToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" @openFilterDialog="openFilterDialog" />
+            <FilterLeftToolbar :olap-prop="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" @openFilterDialog="openFilterDialog" />
             <div id="table-container" class="kn-flex" :style="olapDescriptor.style.tableContainer">
-                <div id="olap-table" class="kn-flex kn-olap-table" ref="olap-table" v-html="olap.table" @click="handleTableClick" @dblclick="handleTableDoubleClick"></div>
+                <div id="olap-table" ref="olap-table" class="kn-flex kn-olap-table" @click="handleTableClick" @dblclick="handleTableDoubleClick" v-html="olap.table"></div>
             </div>
         </div>
 
@@ -48,10 +48,10 @@
             v-if="olapSidebarVisible"
             class="olap-sidebar kn-overflow-y"
             :olap="olap"
-            :olapDesignerMode="olapDesignerMode"
-            :propButtons="buttons"
-            :whatIfMode="whatIfMode"
-            :olapHasScenario="olapHasScenario"
+            :olap-designer-mode="olapDesignerMode"
+            :prop-buttons="buttons"
+            :what-if-mode="whatIfMode"
+            :olap-has-scenario="olapHasScenario"
             @openCustomViewDialog="customViewSaveDialogVisible = true"
             @drillTypeChanged="onDrillTypeChanged"
             @showParentMemberChanged="onShowParentMemberChanged"
@@ -84,19 +84,29 @@
     </div>
 
     <!-- DIALOGS -->
-    <OlapCustomViewSaveDialog :visible="customViewSaveDialogVisible" :sbiExecutionId="id" @close="customViewSaveDialogVisible = false"></OlapCustomViewSaveDialog>
+    <OlapCustomViewSaveDialog :visible="customViewSaveDialogVisible" :sbi-execution-id="id" @close="customViewSaveDialogVisible = false"></OlapCustomViewSaveDialog>
     <OlapSortingDialog :visible="sortingDialogVisible" :olap="olap" @save="onSortingSelect"></OlapSortingDialog>
-    <OlapMDXQueryDialog :visible="mdxQueryDialogVisible" :mdxQuery="olap?.MDXWITHOUTCF" @close="mdxQueryDialogVisible = false"></OlapMDXQueryDialog>
-    <OlapCrossNavigationDefinitionDialog :visible="crossNavigationDefinitionDialogVisible" :propOlapDesigner="olapDesigner" :selectedCell="selectedCell" @close="crossNavigationDefinitionDialogVisible = false" @selectFromTable="enterSelectMode($event)"></OlapCrossNavigationDefinitionDialog>
-    <OlapButtonWizardDialog :visible="buttonsWizardDialogVisible" :propButtons="buttons" :propOlapDesigner="olapDesigner" @close="buttonsWizardDialogVisible = false"></OlapButtonWizardDialog>
-    <MultiHierarchyDialog :selectedFilter="multiHierFilter" :multiHierUN="selecetedMultiHierUN" :visible="multiHierarchyDialogVisible" @setMultiHierUN="setMultiHierUN" @updateHierarchy="updateHierarchy" @close="multiHierarchyDialogVisible = false" />
+    <OlapMDXQueryDialog :visible="mdxQueryDialogVisible" :mdx-query="olap?.MDXWITHOUTCF" @close="mdxQueryDialogVisible = false"></OlapMDXQueryDialog>
+    <OlapCrossNavigationDefinitionDialog :visible="crossNavigationDefinitionDialogVisible" :prop-olap-designer="olapDesigner" :selected-cell="selectedCell" @close="crossNavigationDefinitionDialogVisible = false" @selectFromTable="enterSelectMode($event)"></OlapCrossNavigationDefinitionDialog>
+    <OlapButtonWizardDialog :visible="buttonsWizardDialogVisible" :prop-buttons="buttons" :prop-olap-designer="olapDesigner" @close="buttonsWizardDialogVisible = false"></OlapButtonWizardDialog>
+    <MultiHierarchyDialog :selected-filter="multiHierFilter" :multi-hier-u-n="selecetedMultiHierUN" :visible="multiHierarchyDialogVisible" @setMultiHierUN="setMultiHierUN" @updateHierarchy="updateHierarchy" @close="multiHierarchyDialogVisible = false" />
     <KnOverlaySpinnerPanel :visibility="loading" />
-    <OutputWizard v-if="outputWizardVisible" :visible="outputWizardVisible" :olapVersionsProp="olapVersions" :sbiExecutionId="id" @close="outputWizardVisible = false" />
-    <ScenarioWizard v-if="scenarioWizardVisible" :visible="scenarioWizardVisible" :artifactIdProp="artifactId" :sbiExecutionId="id" :olapDesignerProp="olapDesigner" @saveScenario="saveScenario" @deleteScenario="deleteScenario" @close="scenarioWizardVisible = false" />
-    <AlgorithmDialog v-if="algorithmDialogVisible" :visible="algorithmDialogVisible" :sbiExecutionId="id" @close="algorithmDialogVisible = false" />
-    <OlapFilterDialog :visible="filterDialogVisible" :propFilter="selectedFilter" :id="id" :olapDesignerMode="olapDesignerMode" :parameters="parameters" :profileAttributes="profileAttributes" :olapDesigner="olapDesigner" @close="closeFilterDialog" @applyFilters="applyFilters"></OlapFilterDialog>
-    <OlapSaveNewVersionDialog :visible="saveVersionDialogVisible" :id="id" @close="saveVersionDialogVisible = false" @newVersionSaved="onNewVersionSaved"></OlapSaveNewVersionDialog>
-    <OlapDeleteVersionsDialog :visible="deleteVersionDialogVisible" :id="id" :propOlapVersions="olapVersions" :olap="olap" @close="deleteVersionDialogVisible = false"></OlapDeleteVersionsDialog>
+    <OutputWizard v-if="outputWizardVisible" :visible="outputWizardVisible" :olap-versions-prop="olapVersions" :sbi-execution-id="id" @close="outputWizardVisible = false" />
+    <ScenarioWizard v-if="scenarioWizardVisible" :visible="scenarioWizardVisible" :artifact-id-prop="artifactId" :sbi-execution-id="id" :olap-designer-prop="olapDesigner" @saveScenario="saveScenario" @deleteScenario="deleteScenario" @close="scenarioWizardVisible = false" />
+    <AlgorithmDialog v-if="algorithmDialogVisible" :visible="algorithmDialogVisible" :sbi-execution-id="id" @close="algorithmDialogVisible = false" />
+    <OlapFilterDialog
+        :id="id"
+        :visible="filterDialogVisible"
+        :prop-filter="selectedFilter"
+        :olap-designer-mode="olapDesignerMode"
+        :parameters="parameters"
+        :profile-attributes="profileAttributes"
+        :olap-designer="olapDesigner"
+        @close="closeFilterDialog"
+        @applyFilters="applyFilters"
+    ></OlapFilterDialog>
+    <OlapSaveNewVersionDialog :id="id" :visible="saveVersionDialogVisible" @close="saveVersionDialogVisible = false" @newVersionSaved="onNewVersionSaved"></OlapSaveNewVersionDialog>
+    <OlapDeleteVersionsDialog :id="id" :visible="deleteVersionDialogVisible" :prop-olap-versions="olapVersions" :olap="olap" @close="deleteVersionDialogVisible = false"></OlapDeleteVersionsDialog>
 </template>
 
 <script lang="ts">
@@ -151,6 +161,10 @@ export default defineComponent({
     },
     props: { id: { type: String }, olapId: { type: String }, olapName: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean }, hiddenFormDataProp: { type: Object, required: true } },
     emits: ['closeOlapCustomView', 'applyCustomView', 'executeCrossNavigation'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             olapDescriptor,
@@ -186,16 +200,16 @@ export default defineComponent({
             dtTree: [] as any,
             olapVersions: [] as any,
             dtMaxRows: 0,
-            usedOrdinal: 0 as Number,
+            usedOrdinal: 0 as number,
             selectedFilter: null as any,
             filterDialogVisible: false,
             parameters: [] as iParameter[],
             profileAttributes: [] as iProfileAttribute[],
             saveVersionDialogVisible: false,
             deleteVersionDialogVisible: false,
-            whatifInputNewValue: 0 as Number,
-            whatifInputOldValue: 0 as Number,
-            whatifInputOrdinal: 0 as Number,
+            whatifInputNewValue: 0 as number,
+            whatifInputOldValue: 0 as number,
+            whatifInputOrdinal: 0 as number,
             noTemplate: '' as string,
             reference: '' as string,
             olapEngine: '' as any,
@@ -203,19 +217,6 @@ export default defineComponent({
             filterLevels: {} as any,
             artifactId: '' as string
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
-    async created() {
-        this.documentId = this.olapId
-        this.documentName = this.olapName
-
-        if (this.$route.name === 'olap-designer') {
-            this.olapDesignerMode = true
-        }
-        await this.loadPage()
     },
     computed: {
         olapHasScenario() {
@@ -239,6 +240,15 @@ export default defineComponent({
         olapCustomViewVisible() {
             this.loadCustomView()
         }
+    },
+    async created() {
+        this.documentId = this.olapId
+        this.documentName = this.olapName
+
+        if (this.$route.name === 'olap-designer') {
+            this.olapDesignerMode = true
+        }
+        await this.loadPage()
     },
     methods: {
         async loadPage() {
@@ -544,7 +554,7 @@ export default defineComponent({
         },
         async putFilterOnAxis(fromAxis, filter) {
             if (fromAxis === -1) this.removeFilterLevels(filter)
-            var toSend = { fromAxis: fromAxis, hierarchy: filter.selectedHierarchyUniqueName, toAxis: filter.axis }
+            const toSend = { fromAxis: fromAxis, hierarchy: filter.selectedHierarchyUniqueName, toAxis: filter.axis }
             this.loading = true
             await this.$http
                 .post(import.meta.env.VITE_OLAP_PATH + `1.0/axis/moveDimensionToOtherAxis?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
@@ -569,7 +579,7 @@ export default defineComponent({
             this.loading = false
         },
         async moveHierarchies(data) {
-            var toSend = { axis: data.axis, hierarchy: data.selectedHierarchyUniqueName, newPosition: data.positionInAxis + 1, direction: 1 }
+            const toSend = { axis: data.axis, hierarchy: data.selectedHierarchyUniqueName, newPosition: data.positionInAxis + 1, direction: 1 }
             this.loading = true
             await this.$http
                 .post(import.meta.env.VITE_OLAP_PATH + `1.0/axis/moveHierarchy?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
@@ -589,10 +599,10 @@ export default defineComponent({
             this.multiHierarchyDialogVisible = true
         },
         async updateHierarchy() {
-            var oldHier = this.multiHierFilter.hierarchies[this.multiHierFilter.selectedHierarchyPosition].uniqueName
-            var newHier = this.selecetedMultiHierUN
+            const oldHier = this.multiHierFilter.hierarchies[this.multiHierFilter.selectedHierarchyPosition].uniqueName
+            const newHier = this.selecetedMultiHierUN
             if (oldHier != newHier) {
-                var toSend = { axis: this.multiHierFilter.axis, oldHierarchyUniqueName: oldHier, newHierarchyUniqueName: newHier, hierarchyPosition: this.multiHierFilter.positionInAxis }
+                const toSend = { axis: this.multiHierFilter.axis, oldHierarchyUniqueName: oldHier, newHierarchyUniqueName: newHier, hierarchyPosition: this.multiHierFilter.positionInAxis }
                 this.loading = true
                 await this.$http
                     .post(import.meta.env.VITE_OLAP_PATH + `1.0/axis/updateHierarchyOnDimension?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
@@ -652,8 +662,6 @@ export default defineComponent({
         },
         async executeCrossnavigationFromCell(crossNavigationString: string | null) {
             const tempString = crossNavigationString?.substring(crossNavigationString.indexOf('(') + 1, crossNavigationString.indexOf(')'))
-            const tempArray = tempString?.split(',')
-
             const object = tempString ? JSON.parse(tempString) : {}
             this.$emit('executeCrossNavigation', object)
         },
@@ -715,7 +723,7 @@ export default defineComponent({
             this.store.setInfo({ title: this.$t('documentExecution.olap.drillTru.loadingTitle'), msg: this.$t('documentExecution.olap.drillTru.loadingMsg') })
             this.loading = true
             if (this.dtAssociatedLevels.length == 0 && this.dtMaxRows == 0) {
-                let toSend = {} as any
+                const toSend = {} as any
                 toSend.ordinal = this.usedOrdinal
                 await this.$http
                     .post(import.meta.env.VITE_OLAP_PATH + `1.0/member/drilltrough?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
@@ -724,7 +732,7 @@ export default defineComponent({
                         this.dtColumns = []
 
                         this.dtData = response.data
-                        for (var key in response.data[0]) {
+                        for (const key in response.data[0]) {
                             this.dtColumns.push(key)
                         }
                         this.formattedColumns = this.formatColumns(this.dtColumns)
@@ -737,7 +745,7 @@ export default defineComponent({
                     })
                     .finally(() => (this.loading = false))
             } else {
-                let toSend = {} as any
+                const toSend = {} as any
                 toSend.ordinal = this.usedOrdinal
                 toSend.levels = JSON.stringify(this.dtAssociatedLevels)
                 toSend.max = this.dtMaxRows
@@ -747,7 +755,7 @@ export default defineComponent({
                         this.dtData = []
                         this.dtColumns = []
                         this.dtData = response.data
-                        for (var key in response.data[0]) {
+                        for (const key in response.data[0]) {
                             this.dtColumns.push(key)
                         }
                         this.formattedColumns = this.formatColumns(this.dtColumns)
@@ -766,9 +774,9 @@ export default defineComponent({
             return ordinal
         },
         formatColumns(array) {
-            let arr = [] as any
-            for (var i = 0; i < array.length; i++) {
-                var obj = {} as any
+            const arr = [] as any
+            for (let i = 0; i < array.length; i++) {
+                const obj = {} as any
                 obj.label = array[i].toUpperCase()
                 obj.name = array[i]
                 obj.size = '100px'
@@ -777,7 +785,7 @@ export default defineComponent({
             return arr
         },
         async getCollections() {
-            var toSend = {} as any
+            const toSend = {} as any
             toSend.filters = JSON.stringify(this.olap.filters)
 
             await this.$http
@@ -794,11 +802,11 @@ export default defineComponent({
         },
 
         checkDtLevels() {
-            var tempArr = [] as any
+            const tempArr = [] as any
             if (this.dtTree != null && this.formattedColumns != null) {
-                for (var i = 0; i < this.dtTree.length; i++) {
-                    for (var j = 0; j < this.dtTree[i].children.length; j++) {
-                        for (var k = 0; k < this.formattedColumns.length; k++) {
+                for (let i = 0; i < this.dtTree.length; i++) {
+                    for (let j = 0; j < this.dtTree[i].children.length; j++) {
+                        for (let k = 0; k < this.formattedColumns.length; k++) {
                             if (this.formattedColumns[k].label == this.dtTree[i].children[j].caption.toUpperCase()) {
                                 this.dtTree[i].children[j].checked = true
                                 tempArr.push(this.dtTree[i].children[j])
@@ -812,7 +820,7 @@ export default defineComponent({
                 this.store.setError({ title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.drillTru.checkingLevelsError') })
             }
 
-            for (i = 0; i < tempArr.length; i++) {
+            for (let i = 0; i < tempArr.length; i++) {
                 this.checkCheckboxes(tempArr[i], this.dtAssociatedLevels)
             }
         },
@@ -820,7 +828,7 @@ export default defineComponent({
         checkCheckboxes(item, list) {
             // eslint-disable-next-line no-prototype-builtins
             if (item.hasOwnProperty('caption')) {
-                var index = this.indexInList(item, list)
+                const index = this.indexInList(item, list)
 
                 if (index != -1) {
                     this.dtAssociatedLevels.splice(index, 1)
@@ -833,8 +841,8 @@ export default defineComponent({
         indexInList(item, list) {
             // eslint-disable-next-line no-prototype-builtins
             if (item.hasOwnProperty('caption')) {
-                for (var i = 0; i < list.length; i++) {
-                    var object = list[i]
+                for (let i = 0; i < list.length; i++) {
+                    const object = list[i]
                     if (object.caption == item.caption) {
                         return i
                     }
@@ -1029,7 +1037,7 @@ export default defineComponent({
                 this.$http
                     .get(import.meta.env.VITE_OLAP_PATH + `1.0/model/exceledit?SBI_EXECUTION_ID=${this.id}`, { headers: { Accept: 'application/json, text/plain, */*' }, responseType: 'blob' })
                     .then((response: AxiosResponse<any>) => {
-                        let fileName = response.headers['content-disposition'].split('filename="')[1].split('"')[0]
+                        const fileName = response.headers['content-disposition'].split('filename="')[1].split('"')[0]
                         downloadDirect(response.data, fileName, response.headers['content-type'])
                     })
                     .catch(() => {})
@@ -1050,7 +1058,7 @@ export default defineComponent({
         handleTableDoubleClick(event: any) {
             if (!this.olapHasScenario) return
             if (!event.target.attributes.cell) return
-            let clickLocation = event.target.getBoundingClientRect()
+            const clickLocation = event.target.getBoundingClientRect()
 
             if (!this.checkIfVersionIsSet()) {
                 return this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.sliceVersionError') })
@@ -1066,8 +1074,8 @@ export default defineComponent({
                 // @ts-ignore
                 this.$refs.whatifInput.style.display = 'flex'
 
-                let locale = localStorage.getItem('locale') as any
-                let cutLocalString = locale.split('_')
+                const locale = localStorage.getItem('locale') as any
+                const cutLocalString = locale.split('_')
 
                 this.whatifInputNewValue = this.parseLocaleNumber(event.target.attributes.value.value, cutLocalString[0])
                 this.whatifInputOldValue = event.target.attributes.value.value
@@ -1075,13 +1083,14 @@ export default defineComponent({
             }
         },
         parseLocaleNumber(stringNumber, locale) {
-            let num = 123456.789,
+            const num = 123456.789,
                 fmt_local = new Intl.NumberFormat(locale),
-                parts_local = fmt_local.formatToParts(num),
-                group = ''
+                parts_local = fmt_local.formatToParts(num)
+
+            let group = ''
 
             // separators
-            parts_local.forEach(function(i) {
+            parts_local.forEach(function (i) {
                 switch (i.type) {
                     case 'group':
                         group = i.value
@@ -1112,8 +1121,8 @@ export default defineComponent({
                 if (this.olap.modelConfig.writeBackConf.editableMeasures == null || this.olap.modelConfig.writeBackConf.editableMeasures.length == 0) {
                     return true
                 } else {
-                    var measures = this.olap.modelConfig.writeBackConf.editableMeasures
-                    for (var i = 0; i < measures.length; i++) {
+                    const measures = this.olap.modelConfig.writeBackConf.editableMeasures
+                    for (let i = 0; i < measures.length; i++) {
                         if (measures[i] === measureName) {
                             return true
                         }
@@ -1128,7 +1137,7 @@ export default defineComponent({
         },
         async onWhatifInput() {
             if (this.whatifInputNewValue != this.whatifInputOldValue) {
-                let postData = { expression: this.whatifInputNewValue }
+                const postData = { expression: this.whatifInputNewValue }
                 this.loading = true
                 await this.$http
                     .post(import.meta.env.VITE_OLAP_PATH + `1.0/model/setValue/${this.whatifInputOrdinal}?SBI_EXECUTION_ID=${this.id}`, postData, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })

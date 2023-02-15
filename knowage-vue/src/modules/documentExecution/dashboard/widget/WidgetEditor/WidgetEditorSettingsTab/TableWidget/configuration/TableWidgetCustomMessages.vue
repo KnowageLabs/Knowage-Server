@@ -6,7 +6,7 @@
         </div>
         <div class="p-col-12 p-d-flex p-flex-column p-pt-2">
             <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.customMessages.customEmptyRowsMessage') }}</label>
-            <InputText class="kn-material-input p-inputtext-sm" v-model="customMessagesModel.noRowsMessage" :disabled="customMessagesModel.hideNoRowsMessage" @change="customMessagesChanged" />
+            <InputText v-model="customMessagesModel.noRowsMessage" class="kn-material-input p-inputtext-sm" :disabled="customMessagesModel.hideNoRowsMessage" @change="customMessagesChanged" />
         </div>
     </div>
 </template>

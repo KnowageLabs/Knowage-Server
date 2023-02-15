@@ -45,10 +45,10 @@
                                         <span class="p-float-label">
                                             <InputText
                                                 id="label"
+                                                v-model="v$.selectedDriver.label.$model"
                                                 class="kn-material-input"
                                                 type="text"
-                                                maxLength="40"
-                                                v-model="v$.selectedDriver.label.$model"
+                                                max-length="40"
                                                 :class="{
                                                     'p-invalid': v$.selectedDriver.label.$invalid && v$.selectedDriver.label.$dirty
                                                 }"
@@ -57,26 +57,26 @@
                                             />
                                             <label for="label" class="kn-material-input-label"> {{ $t('common.title') }} * </label>
                                         </span>
-                                        <KnValidationMessages class="p-mt-1" :vComp="v$.selectedDriver.label" :additionalTranslateParams="{ fieldName: $t('common.title') }" />
+                                        <KnValidationMessages class="p-mt-1" :v-comp="v$.selectedDriver.label" :additional-translate-params="{ fieldName: $t('common.title') }" />
                                     </div>
                                     <div class="p-field p-col-12">
                                         <span class="p-float-label">
                                             <Dropdown
                                                 id="analytical"
-                                                class="kn-material-input"
                                                 v-model="v$.selectedDriver.parameter.$model"
+                                                class="kn-material-input"
                                                 :options="availableAnalyticalDrivers"
                                                 :class="{
                                                     'p-invalid': v$.selectedDriver.parameter.$invalid && v$.selectedDriver.parameter.$dirty
                                                 }"
-                                                optionLabel="label"
+                                                option-label="label"
                                                 :filter="true"
-                                                :filterPlaceholder="$t('documentExecution.documentDetails.drivers.dropdownSearchHint')"
+                                                :filter-placeholder="$t('documentExecution.documentDetails.drivers.dropdownSearchHint')"
                                                 @blur="v$.selectedDriver.parameter.$touch()"
                                                 @change="changeDriverValue"
                                             >
                                                 <template #value="slotProps">
-                                                    <div class="p-dropdown-driver-value" v-if="slotProps.value">
+                                                    <div v-if="slotProps.value" class="p-dropdown-driver-value">
                                                         <span>{{ slotProps.value.label }}</span>
                                                     </div>
                                                     <span v-else>
@@ -91,16 +91,16 @@
                                             </Dropdown>
                                             <label for="analytical" class="kn-material-input-label"> {{ $t('managers.businessModelManager.analyticalDriver') }} </label>
                                         </span>
-                                        <KnValidationMessages class="p-mt-1" :vComp="v$.selectedDriver.parameter" :additionalTranslateParams="{ fieldName: $t('managers.businessModelManager.analyticalDriver') }" />
+                                        <KnValidationMessages class="p-mt-1" :v-comp="v$.selectedDriver.parameter" :additional-translate-params="{ fieldName: $t('managers.businessModelManager.analyticalDriver') }" />
                                     </div>
                                     <div class="p-field p-col-12">
                                         <span class="p-float-label">
                                             <InputText
                                                 id="parameterUrlName"
+                                                v-model="v$.selectedDriver.parameterUrlName.$model"
                                                 class="kn-material-input"
                                                 type="text"
-                                                maxLength="20"
-                                                v-model="v$.selectedDriver.parameterUrlName.$model"
+                                                max-length="20"
                                                 :class="{
                                                     'p-invalid': v$.selectedDriver.parameterUrlName.$invalid && v$.selectedDriver.parameterUrlName.$dirty
                                                 }"
@@ -111,9 +111,9 @@
                                         </span>
                                         <KnValidationMessages
                                             class="p-mt-1"
-                                            :vComp="v$.selectedDriver.parameterUrlName"
-                                            :additionalTranslateParams="{ fieldName: $t('documentExecution.documentDetails.drivers.parameterUrlName') }"
-                                            :specificTranslateKeys="{ custom_unique: 'managers.businessModelManager.driversUrlNotUnique' }"
+                                            :v-comp="v$.selectedDriver.parameterUrlName"
+                                            :additional-translate-params="{ fieldName: $t('documentExecution.documentDetails.drivers.parameterUrlName') }"
+                                            :specific-translate-keys="{ custom_unique: 'managers.businessModelManager.driversUrlNotUnique' }"
                                         />
                                     </div>
                                     <span class="p-field p-col-12 p-md-4 p-jc-center p-mt-3">
@@ -135,8 +135,8 @@
                             </template>
                         </Card>
                         <div v-if="document.drivers.length > 1 && selectedDriver.id" class="p-grid p-mt-1">
-                            <DataConditions :availableDrivers="document.drivers" :selectedDocument="selectedDocument" :selectedDriver="selectedDriver" />
-                            <VisibilityConditions v-if="selectedDocument.engine" :availableDrivers="document.drivers" :selectedDocument="selectedDocument" :selectedDriver="selectedDriver" />
+                            <DataConditions :available-drivers="document.drivers" :selected-document="selectedDocument" :selected-driver="selectedDriver" />
+                            <VisibilityConditions v-if="selectedDocument.engine" :available-drivers="document.drivers" :selected-document="selectedDocument" :selected-driver="selectedDriver" />
                         </div>
                     </div>
                 </div>
@@ -167,6 +167,10 @@ export default defineComponent({
     components: { DataConditions, VisibilityConditions, KnListBox, KnValidationMessages, InputSwitch, Dropdown, InlineMessage },
     props: { selectedDocument: { type: Object as PropType<iDocument>, required: true }, availableDrivers: { type: Array as PropType<iDriver[]>, required: true }, availableAnalyticalDrivers: { type: Array as PropType<iAnalyticalDriver[]>, required: true } },
     emits: ['driversChanged'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             mainDescriptor,
@@ -185,20 +189,16 @@ export default defineComponent({
             loading: false
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
-    created() {
-        this.getDocumentDrivers()
-        this.document = this.selectedDocument
-    },
     watch: {
         selectedDocument() {
             this.getDocumentDrivers()
             this.document = this.selectedDocument
             this.selectedDriver = {} as iDriver
         }
+    },
+    created() {
+        this.getDocumentDrivers()
+        this.document = this.selectedDocument
     },
     validations() {
         const customValidators: ICustomValidatorMap = {
@@ -244,7 +244,7 @@ export default defineComponent({
         },
         setParameterInfo(driver) {
             if (this.availableAnalyticalDrivers) {
-                for (var i = 0; i < this.availableAnalyticalDrivers.length; i++) {
+                for (let i = 0; i < this.availableAnalyticalDrivers.length; i++) {
                     if ((driver.parameter && this.availableAnalyticalDrivers[i].id == driver.parID) || (driver.parameter && this.availableAnalyticalDrivers[i].name == driver.parameter.name)) {
                         driver.parameter = { ...this.availableAnalyticalDrivers[i] }
                         driver.parID = this.availableAnalyticalDrivers[i].id
@@ -255,7 +255,7 @@ export default defineComponent({
 
         addNewDriver() {
             this.transformedObj = {}
-            let newDriver = {
+            const newDriver = {
                 label: '',
                 parameter: this.availableAnalyticalDrivers[0] ? this.availableAnalyticalDrivers[0] : null,
                 parameterUrlName: '',
@@ -299,7 +299,7 @@ export default defineComponent({
                 await this.$http
                     .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.document.id}/drivers/${driverToDelete.id}`, { headers: { 'X-Disable-Errors': 'true' } })
                     .then(() => {
-                        let deletedDriver = this.document.drivers.findIndex((param) => param.id === driverToDelete.id)
+                        const deletedDriver = this.document.drivers.findIndex((param) => param.id === driverToDelete.id)
                         this.document.drivers.splice(deletedDriver, 1)
                         this.store.setInfo({ title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
                         this.selectedDriver = {} as iDriver
@@ -308,7 +308,7 @@ export default defineComponent({
                         this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: error.message })
                     })
             } else {
-                let deletedDriver = this.document.drivers.findIndex((param) => param.priority === driverToDelete.priority)
+                const deletedDriver = this.document.drivers.findIndex((param) => param.priority === driverToDelete.priority)
                 this.document.drivers.splice(deletedDriver, 1)
                 this.selectedDriver = {} as iDriver
             }

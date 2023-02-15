@@ -12,37 +12,37 @@
         <template #content>
             <form class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-col-12 p-lg-3">
-                    <Calendar class="kn-material-input" v-model="validityDate" :manualInput="true" :showIcon="true" @dateSelect="onValidityDateSelected" />
+                    <Calendar v-model="validityDate" class="kn-material-input" :manual-input="true" :show-icon="true" @dateSelect="onValidityDateSelected" />
                 </div>
                 <div class="p-field p-col-12 p-lg-3">
                     <span class="p-float-label">
-                        <Dropdown class="kn-material-input" v-model="selectedDimension" :options="dimensions" optionLabel="DIMENSION_NM" @change="onSelectedDimensionChange" />
+                        <Dropdown v-model="selectedDimension" class="kn-material-input" :options="dimensions" option-label="DIMENSION_NM" @change="onSelectedDimensionChange" />
                         <label class="kn-material-input-label"> {{ $t('managers.hierarchyManagement.dimensions') }} </label>
                     </span>
                 </div>
                 <div class="p-field p-col-12 p-lg-3">
                     <span class="p-float-label">
-                        <Dropdown class="kn-material-input" v-model="hierarchyType" :options="hierarchyManagementSourceCardDescriptor.hierarchyTypes" :disabled="!selectedDimension" @change="onHierarchyTypeSelected" />
+                        <Dropdown v-model="hierarchyType" class="kn-material-input" :options="hierarchyManagementSourceCardDescriptor.hierarchyTypes" :disabled="!selectedDimension" @change="onHierarchyTypeSelected" />
                         <label class="kn-material-input-label"> {{ $t('managers.hierarchyManagement.hierarchyType') }} </label>
                     </span>
                 </div>
                 <div class="p-field p-col-12 p-lg-3">
                     <span class="p-float-label">
-                        <Dropdown class="kn-material-input" v-model="selectedHierarchy" :options="hierarchies" optionLabel="HIER_NM" :disabled="!hierarchyType" @change="onHierarchySelected" />
+                        <Dropdown v-model="selectedHierarchy" class="kn-material-input" :options="hierarchies" option-label="HIER_NM" :disabled="!hierarchyType" @change="onHierarchySelected" />
                         <label class="kn-material-input-label"> {{ $t('managers.hierarchyManagement.hierarchies') }} </label>
                     </span>
                 </div>
             </form>
 
-            <HierarchyManagementHierarchiesFilterCard :selectedHierarchy="selectedHierarchy" @applyFilters="onApplyFilters"></HierarchyManagementHierarchiesFilterCard>
+            <HierarchyManagementHierarchiesFilterCard :selected-hierarchy="selectedHierarchy" @applyFilters="onApplyFilters"></HierarchyManagementHierarchiesFilterCard>
             <HierarchyManagementHierarchiesTree
                 v-if="tree"
-                :propTree="tree"
-                :nodeMetadata="nodeMetadata"
-                :selectedDimension="selectedDimension"
-                :selectedHierarchy="selectedHierarchy"
-                :dimensionMetadata="dimensionMetadata"
-                treeMode="info"
+                :prop-tree="tree"
+                :node-metadata="nodeMetadata"
+                :selected-dimension="selectedDimension"
+                :selected-hierarchy="selectedHierarchy"
+                :dimension-metadata="dimensionMetadata"
+                tree-mode="info"
                 @loading="$emit('loading', $event)"
             ></HierarchyManagementHierarchiesTree>
         </template>

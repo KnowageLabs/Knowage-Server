@@ -1,4 +1,4 @@
-let routes = [
+const routes = [
     {
         path: '/dataset-management',
         name: 'dataset-management',

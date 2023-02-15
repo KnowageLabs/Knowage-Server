@@ -1,7 +1,7 @@
 <template>
     <table class="pivot-table" :style="descriptor.pivotStyles.table">
         <thead>
-            <th class="pivot-header" v-for="(column, index) of columns.slice(1)" :key="index" :style="descriptor.pivotStyles.header">
+            <th v-for="(column, index) of columns.slice(1)" :key="index" class="pivot-header" :style="descriptor.pivotStyles.header">
                 {{ column.field }}
                 <i v-if="column.isEditable && column.type !== 'merge' && column.columnInfo.type !== 'boolean'" class="pi pi-pencil edit-icon p-ml-2" />
             </th>
@@ -10,12 +10,12 @@
 
         <tr v-for="(row, index) of mappedRows" :key="index">
             <template v-for="(column, i) of columns.slice(1)" :key="i">
-                <td class="pivot-data" v-if="row[column.field].rowSpan > 0" :rowspan="row[column.field].rowSpan" :style="descriptor.pivotStyles.row">
+                <td v-if="row[column.field].rowSpan > 0" class="pivot-data" :rowspan="row[column.field].rowSpan" :style="descriptor.pivotStyles.row">
                     <KnPivotTableEditableField
                         v-if="column.isEditable && column.type !== 'merge'"
                         :column="column"
-                        :propRow="row"
-                        :comboColumnOptions="columnOptions"
+                        :prop-row="row"
+                        :combo-column-options="columnOptions"
                         @rowChanged="setRowEdited(row)"
                         @dropdownChanged="onDropdownChange"
                         @dropdownOpened="$emit('dropdownOpened', $event)"
@@ -39,15 +39,15 @@
     <Paginator
         v-model:first="first"
         :rows="numberOfRows"
-        :totalRecords="lazyParams.size"
-        :currentPageReportTemplate="
+        :total-records="lazyParams.size"
+        :current-page-report-template="
             $t('common.table.footer.paginated', {
                 first: '{first}',
                 last: '{last}',
                 totalRecords: '{totalRecords}'
             })
         "
-        paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+        paginator-template="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
         @page="onPage($event)"
     ></Paginator>
     <RegistryDatatableWarningDialog :visible="warningVisible" :columns="dependentColumns" @close="onWarningDialogClose"></RegistryDatatableWarningDialog>
@@ -72,7 +72,7 @@ export default defineComponent({
         columns: [] as any,
         rows: [] as any,
         propConfiguration: { type: Object },
-        entity: { type: Object as PropType<String | null> },
+        entity: { type: Object as PropType<string | null> },
         id: { type: String },
         pagination: { type: Object },
         comboColumnOptions: { type: Array },
@@ -80,12 +80,24 @@ export default defineComponent({
         stopWarningsState: { type: Array }
     },
     emits: ['rowChanged', 'pageChanged', 'dropdownOpened', 'warningChanged'],
-    created() {
-        this.mapRows()
-        this.checkForRowSpan(0, this.mappedRows.length - 1, this.mappedRows, this.columns, 1)
-        this.loadPagination()
-        this.loadColumnOptions()
-        this.loadWarningState()
+    data() {
+        return {
+            descriptor,
+            mappedRows: [] as any,
+            configuration: {} as any,
+            columnOptions: [] as any[],
+            dependentColumns: [] as any[],
+            selectedRow: null as any,
+            warningVisible: false,
+            stopWarnings: [] as any[],
+            lazyParams: {} as any,
+            first: 0
+        }
+    },
+    computed: {
+        getCurrentLocaleDefaultDateFormat() {
+            return (column) => (column.isEditable ? column.format || primeVueDate() : localeDate())
+        }
     },
     watch: {
         rows: {
@@ -109,30 +121,18 @@ export default defineComponent({
             deep: true
         }
     },
-    data() {
-        return {
-            descriptor,
-            mappedRows: [] as any,
-            configuration: {} as any,
-            columnOptions: [] as any[],
-            dependentColumns: [] as any[],
-            selectedRow: null as any,
-            warningVisible: false,
-            stopWarnings: [] as any[],
-            lazyParams: {} as any,
-            first: 0
-        }
-    },
-    computed: {
-        getCurrentLocaleDefaultDateFormat() {
-            return (column) => (column.isEditable ? column.format || primeVueDate() : localeDate())
-        }
+    created() {
+        this.mapRows()
+        this.checkForRowSpan(0, this.mappedRows.length - 1, this.mappedRows, this.columns, 1)
+        this.loadPagination()
+        this.loadColumnOptions()
+        this.loadWarningState()
     },
 
     methods: {
         mapRows() {
             this.mappedRows = this.rows.map((row) => {
-                let newRow = { id: row.id }
+                const newRow = { id: row.id }
                 this.columns.forEach((column) => {
                     newRow[column.field] = { data: row[column.field], rowSpan: 1 }
                 })
@@ -211,7 +211,7 @@ export default defineComponent({
             this.$emit('rowChanged', row)
         },
         setDependentColumns(column: any) {
-            let tempColumn = column
+            const tempColumn = column
 
             if (!tempColumn.hasDependencies) {
                 return

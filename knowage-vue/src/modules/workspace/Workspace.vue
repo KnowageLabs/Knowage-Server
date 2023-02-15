@@ -6,7 +6,7 @@
                     {{ $t('workspace.menuLabels.menuTitle') }}
                 </template>
             </Toolbar>
-            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+            <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
             <Listbox v-if="displayMenu && storeFunctionalitiesExist" :options="menuItems" data-test="menu-list" class="kn-list">
                 <template #option="slotProps">
                     <div v-if="slotProps.option.value !== 'repository'" class="kn-list-item" @click="setActiveView(`/workspace/${slotProps.option.value}`)">
@@ -15,18 +15,18 @@
                             <span>{{ $t(slotProps.option.label) }}</span>
                         </div>
                     </div>
-                    <div v-else class="menu-accordion" v-show="showRepository">
+                    <div v-else v-show="showRepository" class="menu-accordion">
                         <Accordion>
                             <AccordionTab>
                                 <template #header>
-                                    <div class="p-d-flex p-flex-row" @click="accordionIcon = !accordionIcon" data-test="document-accordion">
+                                    <div class="p-d-flex p-flex-row" data-test="document-accordion" @click="accordionIcon = !accordionIcon">
                                         <i class="fas fa-folder"></i>
                                         <span class="p-ml-2">{{ $t('workspace.menuLabels.myRepository') }}</span>
                                         <i v-if="accordionIcon" class="pi pi-chevron-right menu-accordion-icon"></i>
                                         <i v-if="!accordionIcon" class="pi pi-chevron-down menu-accordion-icon"></i>
                                     </div>
                                 </template>
-                                <WorkspaceDocumentTree :propFolders="allFolders" mode="select" :selectedBreadcrumb="selectedBreadcrumb" @folderSelected="setSelectedFolder" @delete="deleteFolder" @createFolder="showCreateFolderDialog" data-test="document-tree"></WorkspaceDocumentTree>
+                                <WorkspaceDocumentTree :prop-folders="allFolders" mode="select" :selected-breadcrumb="selectedBreadcrumb" data-test="document-tree" @folderSelected="setSelectedFolder" @delete="deleteFolder" @createFolder="showCreateFolderDialog"></WorkspaceDocumentTree>
                             </AccordionTab>
                         </Accordion>
                     </div>
@@ -34,12 +34,12 @@
             </Listbox>
         </div>
         <div class="p-d-flex p-flex-column" :style="workspaceDescriptor.style.maxWidth">
-            <Button id="showSidenavIcon" v-if="$router.currentRoute._rawValue.fullPath === '/workspace'" icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="sidebarVisible = true" />
+            <Button v-if="$router.currentRoute._rawValue.fullPath === '/workspace'" id="showSidenavIcon" icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="sidebarVisible = true" />
             <router-view
                 class="kn-router-view"
-                :selectedFolder="selectedFolder"
-                :allFolders="allFolders"
-                :toggleCardDisplay="toggleCardDisplay"
+                :selected-folder="selectedFolder"
+                :all-folders="allFolders"
+                :toggle-card-display="toggleCardDisplay"
                 :breadcrumbs="breadcrumbs"
                 @toggleDisplayView="toggleDisplayView"
                 @showMenu="sidebarVisible = true"
@@ -50,33 +50,33 @@
             />
         </div>
 
-        <Dialog class="metaweb-dialog remove-padding p-fluid" :contentStyle="workspaceDescriptor.style.flex" :visible="qbeDialogVisible" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
+        <Dialog class="metaweb-dialog remove-padding p-fluid" :content-style="workspaceDescriptor.style.flex" :visible="qbeDialogVisible" :modal="false" :closable="false" position="right" :base-z-index="1" :auto-z-index="true">
             <template #header>
                 <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                     <template #start>
                         {{ qbeDataset.name }}
                     </template>
                     <template #end>
-                        <Button icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="parameterSidebarVisible = !parameterSidebarVisible" />
-                        <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveQbeDataset" />
-                        <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeQbeIframe" />
+                        <Button v-tooltip.bottom="$t('common.save')" icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" @click="parameterSidebarVisible = !parameterSidebarVisible" />
+                        <Button v-tooltip.bottom="$t('common.save')" icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="saveQbeDataset" />
+                        <Button v-tooltip.bottom="$t('common.close')" icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeQbeIframe" />
                     </template>
                 </Toolbar>
             </template>
             <div id="qbe-iframe-container" class="p-d-flex p-flex-row kn-flex">
                 <iframe v-if="qbeIframeVisible" id="qbeIframe" ref="qbeIframe" class="kn-width-full kn-height-full" :src="qbeUrl"></iframe>
-                <KnParameterSidebar style="position: inherit; margin-left: auto" v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="qbeDataset" :userRole="userRole" :propQBEParameters="qbeParameters" :propMode="'qbeView'" @execute="initiateQbeIframe"></KnParameterSidebar>
+                <KnParameterSidebar v-if="parameterSidebarVisible" style="position: inherit; margin-left: auto" :filters-data="filtersData" :prop-document="qbeDataset" :user-role="userRole" :prop-q-b-e-parameters="qbeParameters" :prop-mode="'qbeView'" @execute="initiateQbeIframe"></KnParameterSidebar>
             </div>
         </Dialog>
     </div>
 
-    <Sidebar class="mySidebar" v-model:visible="sidebarVisible" :showCloseIcon="false">
+    <Sidebar v-model:visible="sidebarVisible" class="mySidebar" :show-close-icon="false">
         <Toolbar class="kn-toolbar kn-toolbar--primary">
             <template #start>
                 {{ $t('workspace.menuLabels.menuTitle') }}
             </template>
         </Toolbar>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
         <Listbox :options="menuItems">
             <template #option="slotProps">
                 <div v-if="slotProps.option.value !== 'repository'" class="kn-list-item p-d-flex p-flex-row" @click="setActiveView(`/workspace/${slotProps.option.value}`)">
@@ -89,12 +89,12 @@
                     <Accordion>
                         <AccordionTab>
                             <template #header>
-                                <div class="p-d-flex p-flex-row" @click="accordionIcon = !accordionIcon" data-test="document-accordion">
+                                <div class="p-d-flex p-flex-row" data-test="document-accordion" @click="accordionIcon = !accordionIcon">
                                     <i class="fas fa-folder"></i>
                                     <span class="p-ml-2">{{ $t('workspace.menuLabels.myRepository') }}</span>
                                 </div>
                             </template>
-                            <WorkspaceDocumentTree :propFolders="allFolders" mode="select" :selectedBreadcrumb="selectedBreadcrumb" @folderSelected="setSelectedFolder" @delete="deleteFolder" @createFolder="showCreateFolderDialog" data-test="document-tree"></WorkspaceDocumentTree>
+                            <WorkspaceDocumentTree :prop-folders="allFolders" mode="select" :selected-breadcrumb="selectedBreadcrumb" data-test="document-tree" @folderSelected="setSelectedFolder" @delete="deleteFolder" @createFolder="showCreateFolderDialog"></WorkspaceDocumentTree>
                         </AccordionTab>
                     </Accordion>
                 </div>
@@ -140,6 +140,10 @@ export default defineComponent({
             return this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             workspaceDescriptor,
@@ -166,10 +170,6 @@ export default defineComponent({
             filtersData: null as any,
             qbeUrl: ''
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.uniqueID = cryptoRandomString({ length: 16, type: 'base64' })
@@ -405,14 +405,14 @@ export default defineComponent({
         },
         async buildQbeUrl(dataset) {
             let initialUrl = ''
-            let language = this.user.locale.split('_')[0]
-            let country = this.user.locale.split('_')[1]
-            let drivers = encodeURI(JSON.stringify(this.datasetDrivers))
+            const language = this.user.locale.split('_')[0]
+            const country = this.user.locale.split('_')[1]
+            const drivers = encodeURI(JSON.stringify(this.datasetDrivers))
             initialUrl = `/knowageqbeengine/servlet/AdapterHTTP?NEW_SESSION=TRUE&SBI_LANGUAGE=${language}&SBI_SCRIPT=&user_id=${this.user.userUniqueIdentifier}&DEFAULT_DATASOURCE_FOR_WRITING_LABEL=CacheDS&SBI_COUNTRY=${country}&SBI_EXECUTION_ID=${this.uniqueID}&ACTION_NAME=QBE_ENGINE_START_ACTION_FROM_BM&MODEL_NAME=${dataset.name}&DATA_SOURCE_LABEL=${dataset.dataSourceLabel}&DATA_SOURCE_ID=${dataset.dataSourceId}&isTechnicalUser=true&DRIVERS=${drivers}`
             this.qbeUrl = import.meta.env.VITE_HOST_URL + initialUrl
         },
         getFormattedParameters(loadedParameters: { filterStatus: any[]; isReadyForExecution: boolean }) {
-            let parameters = {} as any
+            const parameters = {} as any
 
             Object.keys(loadedParameters.filterStatus).forEach((key: any) => {
                 const parameter = loadedParameters.filterStatus[key]
@@ -446,7 +446,7 @@ export default defineComponent({
             this.qbeDataset = {}
         },
         saveQbeDataset() {
-            let iframe = this.$refs.qbeIframe as any
+            const iframe = this.$refs.qbeIframe as any
             iframe.contentWindow.postMessage('saveDS', '*')
         }
     }

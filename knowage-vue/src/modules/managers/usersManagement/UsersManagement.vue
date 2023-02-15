@@ -7,16 +7,16 @@
                         {{ $t('managers.usersManagement.title') }}
                     </template>
                     <template #end>
-                        <KnFabButton icon="fas fa-plus" @click="showForm()" data-test="open-form-button"></KnFabButton>
+                        <KnFabButton icon="fas fa-plus" data-test="open-form-button" @click="showForm()"></KnFabButton>
                     </template>
                 </Toolbar>
-                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+                <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
                 <div v-if="!loading">
-                    <UsersListBox :users="users" :loading="loading" @selectedUser="onUserSelect" @deleteUser="onUserDelete" data-test="users-list"></UsersListBox>
+                    <UsersListBox :users="users" :loading="loading" data-test="users-list" @selectedUser="onUserSelect" @deleteUser="onUserDelete"></UsersListBox>
                 </div>
             </div>
 
-            <KnHint :title="'managers.usersManagement.title'" :hint="'managers.usersManagement.hint'" v-if="hiddenForm"></KnHint>
+            <KnHint v-if="hiddenForm" :title="'managers.usersManagement.title'" :hint="'managers.usersManagement.hint'"></KnHint>
             <div v-show="!hiddenForm" class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
                 <Toolbar class="kn-toolbar kn-toolbar--secondary">
                     <template #start>
@@ -27,28 +27,28 @@
                         <Button class="p-button-text p-button-rounded p-button-plain" icon="pi pi-times" @click="closeForm" />
                     </template>
                 </Toolbar>
-                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+                <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
                 <div class="kn-page-content">
-                    <TabView class="tabview-custom kn-tab" ref="usersFormTab">
+                    <TabView ref="usersFormTab" class="tabview-custom kn-tab">
                         <TabPanel>
                             <template #header>
                                 <span>{{ $t('managers.usersManagement.detail') }}</span>
                             </template>
-                            <DetailFormTab v-if="!hiddenForm" :formInsert="formInsert" :formValues="userDetailsForm" :vobj="v$" :disabledUID="disableUsername" @dataChanged="onDataChange" @unlock="unlockUser($event)"></DetailFormTab>
+                            <DetailFormTab v-if="!hiddenForm" :form-insert="formInsert" :form-values="userDetailsForm" :vobj="v$" :disabled-u-i-d="disableUsername" @dataChanged="onDataChange" @unlock="unlockUser($event)"></DetailFormTab>
                         </TabPanel>
 
                         <TabPanel>
                             <template #header>
                                 <span>{{ $t('managers.usersManagement.roles') }}</span>
                             </template>
-                            <RolesTab :defRole="defaultRole" :rolesList="roles" :selected="selectedRoles" @changed="setSelectedRoles($event)" @setDefaultRole="setDefaultRoleValue($event)"></RolesTab>
+                            <RolesTab :def-role="defaultRole" :roles-list="roles" :selected="selectedRoles" @changed="setSelectedRoles($event)" @setDefaultRole="setDefaultRoleValue($event)"></RolesTab>
                         </TabPanel>
 
                         <TabPanel>
                             <template #header>
                                 <span>{{ $t('managers.usersManagement.attributes') }}</span>
                             </template>
-                            <UserAttributesForm :attributes="attributes" v-model="attributesForm" @formDirty="onFormDirty"></UserAttributesForm>
+                            <UserAttributesForm v-model="attributesForm" :attributes="attributes" @formDirty="onFormDirty"></UserAttributesForm>
                         </TabPanel>
                     </TabView>
                 </div>
@@ -78,6 +78,10 @@ import mainStore from '../../../App.store'
 export default defineComponent({
     name: 'user-management',
     components: { UsersListBox, TabView, TabPanel, KnFabButton, KnHint, RolesTab, DetailFormTab, UserAttributesForm },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             v$: useValidate() as any,
@@ -110,10 +114,6 @@ export default defineComponent({
         }
 
         return validationObject
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         await this.loadAllUsers()
@@ -179,8 +179,8 @@ export default defineComponent({
             const userToSave = { ...this.userDetailsForm }
             delete userToSave.passwordConfirm
             userToSave['defaultRoleId'] = this.defaultRole
-            for (var key in this.attributesForm) {
-                for (var key2 in this.attributesForm[key]) {
+            for (const key in this.attributesForm) {
+                for (const key2 in this.attributesForm[key]) {
                     this.attributesForm[key][key2] === '' ? delete this.attributesForm[key] : ''
                 }
             }
@@ -292,7 +292,7 @@ export default defineComponent({
         populateAttributesForm(userAttributeValues: any) {
             const tmp = {}
             this.attributes.forEach((attribute: iAttribute) => {
-                let obj = {}
+                const obj = {}
                 obj[attribute.attributeName] = userAttributeValues && userAttributeValues[attribute.attributeId] ? userAttributeValues[attribute.attributeId][attribute.attributeName] : null
                 tmp[attribute.attributeId] = obj
             })

@@ -1,4 +1,4 @@
-let routes = [
+const routes = [
     {
         path: '/internationalization-management',
         name: 'internationalization-management',

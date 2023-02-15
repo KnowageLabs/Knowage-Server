@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="document-details-dialog remove-padding" :contentStyle="mainDescriptor.style.flex" position="right" :visible="visible" :modal="false" :closable="false" :baseZIndex="10" :autoZIndex="true">
+    <Dialog class="document-details-dialog remove-padding" :content-style="mainDescriptor.style.flex" position="right" :visible="visible" :modal="false" :closable="false" :base-z-index="10" :auto-z-index="true">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary kn-width-full">
                 <template #start>
@@ -7,11 +7,11 @@
                 </template>
             </Toolbar>
         </template>
-        <DataTable class="p-datatable-sm kn-table p-m-2" :value="datasets" dataKey="id" responsiveLayout="stack" v-model:filters="filters" :globalFilterFields="infoDescriptor.globalFilterFields" :loading="loading" v-model:selection="selectedDataset" selectionMode="single" stripedRows>
+        <DataTable v-model:filters="filters" v-model:selection="selectedDataset" class="p-datatable-sm kn-table p-m-2" :value="datasets" data-key="id" responsive-layout="stack" :global-filter-fields="infoDescriptor.globalFilterFields" :loading="loading" selection-mode="single" striped-rows>
             <template #header>
                 <span id="search-container" class="p-input-icon-left p-mr-3">
                     <i class="pi pi-search" />
-                    <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
+                    <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
                 </span>
             </template>
             <template #empty>{{ $t('common.info.noDataFound') }}</template>

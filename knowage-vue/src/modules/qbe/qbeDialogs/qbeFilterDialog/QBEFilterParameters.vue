@@ -1,5 +1,5 @@
 <template>
-    <DataTable class="p-datatable-sm kn-table p-m-4" :value="parameters" editMode="cell" responsiveLayout="stack" breakpoint="960px" @cell-edit-complete="onCellEditComplete">
+    <DataTable class="p-datatable-sm kn-table p-m-4" :value="parameters" edit-mode="cell" responsive-layout="stack" breakpoint="960px" @cell-edit-complete="onCellEditComplete">
         <template #empty>
             <div>
                 {{ $t('common.info.noDataFound') }}
@@ -9,7 +9,7 @@
         <Column :field="'value'" :header="$t('common.value')" :sortable="true">
             <template #editor="slotProps">
                 <div class="p-d-flex p-flex-row p-ai-center">
-                    <InputText class="kn-material-input p-inputtext-sm" v-model="slotProps.data[slotProps.column.props.field]"></InputText>
+                    <InputText v-model="slotProps.data[slotProps.column.props.field]" class="kn-material-input p-inputtext-sm"></InputText>
                     <i class="pi pi-pencil p-ml-2" />
                 </div>
             </template>

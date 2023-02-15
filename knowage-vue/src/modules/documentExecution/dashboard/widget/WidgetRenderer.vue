@@ -6,23 +6,33 @@
         <div class="widget-container-renderer" :style="getWidgetPadding()">
             <TableWidget
                 v-if="widget.type == 'table'"
-                :propWidget="widget"
+                :prop-widget="widget"
                 :datasets="datasets"
-                :dataToShow="dataToShow"
-                :editorMode="false"
-                :propActiveSelections="activeSelections"
-                :dashboardId="dashboardId"
+                :data-to-show="dataToShow"
+                :editor-mode="false"
+                :prop-active-selections="activeSelections"
+                :dashboard-id="dashboardId"
                 @pageChanged="$emit('reloadData')"
                 @sortingChanged="$emit('reloadData')"
                 @launchSelection="$emit('launchSelection', $event)"
             />
-            <SelectorWidget v-if="widget.type == 'selector'" :propWidget="widget" :dataToShow="dataToShow" :widgetInitialData="widgetInitialData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" :datasets="datasets" :selectionIsLocked="selectionIsLocked" />
-            <ActiveSelectionsWidget v-if="widget.type == 'selection'" :propWidget="widget" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" />
-            <WebComponentContainer v-if="widget.type == 'html' || widget.type == 'text'" :propWidget="widget" :widgetData="dataToShow" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" :variables="variables"></WebComponentContainer>
-            <HighchartsContainer v-if="widget.type === 'highcharts'" :widgetModel="widget" :dataToShow="widgetData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId"></HighchartsContainer>
-            <ChartJSContainer v-if="widget.type === 'chartJS'" :widgetModel="widget" :dataToShow="widgetData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId"></ChartJSContainer>
-            <ImageWidget v-if="widget.type === 'image'" :widgetModel="widget" :dashboardId="dashboardId" :editorMode="false" />
-            <CustomChartWidget v-if="widget.type == 'customchart'" :propWidget="widget" :widgetData="widgetData" :propActiveSelections="activeSelections" :editorMode="false" :dashboardId="dashboardId" :variables="variables" @loading="$emit('loading', $event)"></CustomChartWidget>
+            <SelectorWidget
+                v-if="widget.type == 'selector'"
+                :prop-widget="widget"
+                :data-to-show="dataToShow"
+                :widget-initial-data="widgetInitialData"
+                :prop-active-selections="activeSelections"
+                :editor-mode="false"
+                :dashboard-id="dashboardId"
+                :datasets="datasets"
+                :selection-is-locked="selectionIsLocked"
+            />
+            <ActiveSelectionsWidget v-if="widget.type == 'selection'" :prop-widget="widget" :prop-active-selections="activeSelections" :editor-mode="false" :dashboard-id="dashboardId" />
+            <WebComponentContainer v-if="widget.type == 'html' || widget.type == 'text'" :prop-widget="widget" :widget-data="dataToShow" :prop-active-selections="activeSelections" :editor-mode="false" :dashboard-id="dashboardId" :variables="variables"></WebComponentContainer>
+            <HighchartsContainer v-if="widget.type === 'highcharts'" :widget-model="widget" :data-to-show="widgetData" :prop-active-selections="activeSelections" :editor-mode="false" :dashboard-id="dashboardId"></HighchartsContainer>
+            <ChartJSContainer v-if="widget.type === 'chartJS'" :widget-model="widget" :data-to-show="widgetData" :prop-active-selections="activeSelections" :editor-mode="false" :dashboard-id="dashboardId"></ChartJSContainer>
+            <ImageWidget v-if="widget.type === 'image'" :widget-model="widget" :dashboard-id="dashboardId" :editor-mode="false" />
+            <CustomChartWidget v-if="widget.type == 'customchart'" :prop-widget="widget" :widget-data="widgetData" :prop-active-selections="activeSelections" :editor-mode="false" :dashboard-id="dashboardId" :variables="variables" @loading="$emit('loading', $event)"></CustomChartWidget>
         </div>
     </div>
 </template>
@@ -33,7 +43,7 @@
  */
 import { defineComponent, PropType } from 'vue'
 import { getWidgetStyleByType } from '../widget/TableWidget/TableWidgetHelper'
-import { IDashboardDataset, IDataset, ISelection, IVariable } from '../Dashboard'
+import { IDashboardDataset, ISelection, IVariable } from '../Dashboard'
 import TableWidget from './TableWidget/TableWidget.vue'
 import SelectorWidget from './SelectorWidget/SelectorWidget.vue'
 import ActiveSelectionsWidget from './ActiveSelectionsWidget/ActiveSelectionsWidget.vue'
@@ -46,7 +56,6 @@ import CustomChartWidget from '../widget/CustomChartWidget/CustomChartWidget.vue
 
 export default defineComponent({
     name: 'widget-renderer',
-    emits: ['interaction', 'launchSelection', 'reloadData', 'loading'],
     components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, WebComponentContainer, HighchartsContainer, ChartJSContainer, ImageWidget, CustomChartWidget },
     props: {
         widget: { required: true, type: Object as any },
@@ -59,6 +68,7 @@ export default defineComponent({
         propActiveSelections: { type: Array as PropType<ISelection[]>, required: true },
         variables: { type: Array as PropType<IVariable[]>, required: true }
     },
+    emits: ['interaction', 'launchSelection', 'reloadData', 'loading'],
     data() {
         return {
             mock,
@@ -89,7 +99,7 @@ export default defineComponent({
             this.activeSelections = this.propActiveSelections
         },
         getWidgetTitleStyle() {
-            let widgetTitle = this.widget.settings.style.title
+            const widgetTitle = this.widget.settings.style.title
             const styleString = getWidgetStyleByType(this.widget, 'title')
             return styleString + `height: ${widgetTitle.height ?? 25}px;`
         },

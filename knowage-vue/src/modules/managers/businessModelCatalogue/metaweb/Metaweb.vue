@@ -1,11 +1,11 @@
 <template>
-    <Dialog class="metaweb-dialog remove-padding p-fluid kn-dialog--toolbar--primary" :contentStyle="mainDescriptor.style.flex" :visible="visible" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
+    <Dialog class="metaweb-dialog remove-padding p-fluid kn-dialog--toolbar--primary" :content-style="mainDescriptor.style.flex" :visible="visible" :modal="false" :closable="false" position="right" :base-z-index="1" :auto-z-index="true">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start> {{ $t('metaweb.title') }} </template>
                 <template #end>
-                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="metadataSave" />
-                    <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeMetawebConfirm" />
+                    <Button v-tooltip.bottom="$t('common.save')" icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="metadataSave" />
+                    <Button v-tooltip.bottom="$t('common.close')" icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeMetawebConfirm" />
                 </template>
             </Toolbar>
         </template>
@@ -16,19 +16,19 @@
                     <template #header>
                         <span>{{ $t('metaweb.businessModel.title') }}</span>
                     </template>
-                    <BusinessModelTab :businessModelId="businessModel.dataSourceId" :propMeta="meta" :observer="observer" :metaUpdated="metaUpdated" @metaUpdated="onMetaUpdated" />
+                    <BusinessModelTab :business-model-id="businessModel.dataSourceId" :prop-meta="meta" :observer="observer" :meta-updated="metaUpdated" @metaUpdated="onMetaUpdated" />
                 </TabPanel>
                 <TabPanel>
                     <template #header>
                         <span>{{ $t('metaweb.physicalModel.title') }}</span>
                     </template>
 
-                    <MetawebPhysicalModel :propMeta="meta" :observer="observer" @loading="setLoading"></MetawebPhysicalModel>
+                    <MetawebPhysicalModel :prop-meta="meta" :observer="observer" @loading="setLoading"></MetawebPhysicalModel>
                 </TabPanel>
             </TabView>
         </div>
 
-        <MetawebInvalidRelationshipsDialog :visible="invalidRelationshipsDialogVisible" :propIncorrectRelationships="incorrectRelationships" @close="invalidRelationshipsDialogVisible = false" @save="generateModel"></MetawebInvalidRelationshipsDialog>
+        <MetawebInvalidRelationshipsDialog :visible="invalidRelationshipsDialogVisible" :prop-incorrect-relationships="incorrectRelationships" @close="invalidRelationshipsDialogVisible = false" @save="generateModel"></MetawebInvalidRelationshipsDialog>
     </Dialog>
 </template>
 <script lang="ts">

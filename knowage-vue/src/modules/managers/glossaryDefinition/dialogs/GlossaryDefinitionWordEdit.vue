@@ -6,10 +6,10 @@
                     <span class="p-float-label">
                         <InputText
                             id="word"
+                            v-model.trim="v$.word.WORD.$model"
                             class="kn-material-input"
                             type="text"
-                            v-model.trim="v$.word.WORD.$model"
-                            maxLength="100"
+                            max-length="100"
                             :class="{
                                 'p-invalid': v$.word.WORD.$invalid && v$.word.WORD.$dirty
                             }"
@@ -17,18 +17,18 @@
                         />
                         <label for="word" class="kn-material-input-label">{{ $t('managers.glossary.common.word', 1) }} * </label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.word.WORD" :additionalTranslateParams="{ fieldName: $tc('managers.glossary.common.word', 1) }"></KnValidationMessages>
+                    <KnValidationMessages class="p-mt-1" :v-comp="v$.word.WORD" :additional-translate-params="{ fieldName: $tc('managers.glossary.common.word', 1) }"></KnValidationMessages>
                 </div>
                 <div class="p-field p-col-4">
                     <span class="p-float-label">
-                        <Dropdown id="status" class="kn-material-input" v-model="word.STATE" :options="tState" optionValue="id" optionLabel="name" />
+                        <Dropdown id="status" v-model="word.STATE" class="kn-material-input" :options="tState" option-value="id" option-label="name" />
 
                         <label for="status" class="kn-material-input-label"> {{ $t('managers.glossary.common.status') }} </label>
                     </span>
                 </div>
                 <div class="p-field p-col-4">
                     <span class="p-float-label">
-                        <Dropdown id="category" class="kn-material-input" v-model="word.CATEGORY" :options="tCategory" optionValue="id" optionLabel="name" />
+                        <Dropdown id="category" v-model="word.CATEGORY" class="kn-material-input" :options="tCategory" option-value="id" option-label="name" />
                         <label for="category" class="kn-material-input-label"> {{ $t('common.category') }} </label>
                     </span>
                 </div>
@@ -36,10 +36,10 @@
                     <span class="p-float-label">
                         <InputText
                             id="description"
+                            v-model="v$.word.DESCR.$model"
                             class="kn-material-input"
                             type="text"
-                            v-model="v$.word.DESCR.$model"
-                            maxLength="500"
+                            max-length="500"
                             :class="{
                                 'p-invalid': v$.word.DESCR.$invalid && v$.word.DESCR.$dirty
                             }"
@@ -47,17 +47,17 @@
                         />
                         <label for="description" class="kn-material-input-label">{{ $t('common.description') }} *</label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.word.DESCR" :additionalTranslateParams="{ fieldName: $t('common.description') }"></KnValidationMessages>
+                    <KnValidationMessages class="p-mt-1" :v-comp="v$.word.DESCR" :additional-translate-params="{ fieldName: $t('common.description') }"></KnValidationMessages>
                 </div>
                 <div class="p-field p-col-12">
                     <span class="p-float-label">
-                        <InputText id="formula" class="kn-material-input" type="text" v-model="word.FORMULA" maxLength="500" />
+                        <InputText id="formula" v-model="word.FORMULA" class="kn-material-input" type="text" max-length="500" />
                         <label for="formula" class="kn-material-input-label">{{ $t('managers.glossary.common.formula') }} </label>
                     </span>
                 </div>
                 <div class="p-field p-col-12">
                     <span class="p-float-label">
-                        <AutoComplete id="link" class="kn-material-input" :multiple="true" v-model="word.LINK" :suggestions="availableWords" @complete="searchWord($event)" field="WORD"></AutoComplete>
+                        <AutoComplete id="link" v-model="word.LINK" class="kn-material-input" :multiple="true" :suggestions="availableWords" field="WORD" @complete="searchWord($event)"></AutoComplete>
                         <label for="link" class="kn-material-input-label">{{ $t('managers.glossary.common.link') }} </label>
                     </span>
                 </div>
@@ -65,8 +65,8 @@
             <!-- <AttributesTable></AttributesTable> -->
         </div>
         <template #footer>
-            <Button :label="$t('common.cancel')" @click="closeDialog" class="kn-button kn-button--secondary" />
-            <Button :label="$t('common.save')" @click="saveWord" class="kn-button kn-button--primary" :disabled="buttonDisabled" />
+            <Button :label="$t('common.cancel')" class="kn-button kn-button--secondary" @click="closeDialog" />
+            <Button :label="$t('common.save')" class="kn-button kn-button--primary" :disabled="buttonDisabled" @click="saveWord" />
         </template>
     </Dialog>
 </template>
@@ -117,6 +117,10 @@ export default defineComponent({
         }
     },
     emits: ['close', 'saved', 'reloadTree'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             glossaryDefinitionDialogDescriptor,
@@ -170,10 +174,6 @@ export default defineComponent({
                 }
             })
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     mounted() {
         if (this.propWord) {

@@ -10,26 +10,26 @@
                 </template>
             </Toolbar>
         </template>
-        <Message class="p-mx-2" v-if="hasDuplicates" severity="info" :closable="false">
+        <Message v-if="hasDuplicates" class="p-mx-2" severity="info" :closable="false">
             {{ $t('qbe.detailView.parameterDuplicates') }}
         </Message>
-        <DataTable class="p-datatable-sm kn-table p-m-2" :value="dataset.pars" responsiveLayout="scroll">
+        <DataTable class="p-datatable-sm kn-table p-m-2" :value="dataset.pars" responsive-layout="scroll">
             <template #empty>
                 {{ $t('managers.datasetManagement.tableEmpty') }}
             </template>
             <Column field="name" :header="$t('kpi.alert.name')" :sortable="true">
                 <template #body="{data}">
-                    <InputText class="kn-material-input" v-model="data.name" />
+                    <InputText v-model="data.name" class="kn-material-input" />
                 </template>
             </Column>
             <Column field="type" :header="$t('kpi.alert.type')" :sortable="true">
                 <template #body="{data}">
-                    <Dropdown id="scope" class="kn-material-input" :options="datasetParamTypes" optionLabel="name" optionValue="value" v-model="data.type" />
+                    <Dropdown id="scope" v-model="data.type" class="kn-material-input" :options="datasetParamTypes" option-label="name" option-value="value" />
                 </template>
             </Column>
             <Column field="defaultValue" :header="$t('managers.driversManagement.useModes.defaultValue')" :sortable="true">
                 <template #body="{data}">
-                    <InputText class="kn-material-input" v-model="data.defaultValue" @change="onDefaultValueChange(data)" />
+                    <InputText v-model="data.defaultValue" class="kn-material-input" @change="onDefaultValueChange(data)" />
                 </template>
             </Column>
             <Column field="multiValue" :header="$t('managers.profileAttributesManagement.form.multiValue')" :sortable="true">
@@ -70,18 +70,6 @@ export default defineComponent({
     components: { KnFabButton, Dialog, Message, Dropdown, DataTable, Column, Checkbox },
     props: { propDataset: { type: Object, required: true }, visible: Boolean },
     emits: ['close', 'save'],
-    computed: {
-        hasDuplicates(): any {
-            var hasDuplicate = false
-            this.dataset.pars
-                .map((param) => param.name)
-                .sort()
-                .sort((a, b) => {
-                    if (a === b) hasDuplicate = true
-                })
-            return hasDuplicate
-        }
-    },
 
     data() {
         return {
@@ -89,6 +77,18 @@ export default defineComponent({
             dataset: {} as any,
             initialParsState: [] as any,
             datasetParamTypes: descriptor.paramDialog.datasetParamTypes
+        }
+    },
+    computed: {
+        hasDuplicates(): any {
+            let hasDuplicate = false
+            this.dataset.pars
+                .map((param) => param.name)
+                .sort()
+                .sort((a, b) => {
+                    if (a === b) hasDuplicate = true
+                })
+            return hasDuplicate
         }
     },
     watch: {
