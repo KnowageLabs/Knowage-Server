@@ -80,6 +80,7 @@ public class HtmlSanitizer {
 				.allowAttributes("src").matching(this::isSrcAttributeInWhitelist).onElements("audio", "iframe", "img", "kn-import", "video")
 				.allowAttributes("title").globally()
 				.allowAttributes("value", "min", "max").onElements("input")
+				.allowAttributes("multiple").onElements("select")
 				.allowAttributes("type").onElements("button", "input")
 				.allowAttributes("for").onElements("label")
 				.allowAttributes("frameborder", "allow", "allowfullscreen").onElements("iframe")
