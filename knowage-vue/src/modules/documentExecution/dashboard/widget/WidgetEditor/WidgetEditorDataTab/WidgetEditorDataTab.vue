@@ -5,7 +5,7 @@
         <WidgetEditorHint v-if="!selectedDataset"></WidgetEditorHint>
         <WidgetEditorCommonDataContainer v-else-if="['table', 'html', 'text', 'discovery', 'customchart'].includes(propWidget.type)" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widget-model="propWidget" :selected-dataset="selectedDataset"></WidgetEditorCommonDataContainer>
         <SelectorWidgetDataContainer v-else-if="propWidget.type === 'selector'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widget-model="propWidget" :selected-dataset="selectedDataset"></SelectorWidgetDataContainer>
-        <HighchartsDataContainer v-else-if="propWidget.type === 'highcharts'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widget-model="propWidget" :selected-dataset="selectedDataset" @selectedChartTypeChanged="onChartTypeChanged"></HighchartsDataContainer>
+        <HighchartsDataContainer v-else-if="propWidget.type === 'highcharts' && user.isEnterprise" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widget-model="propWidget" :selected-dataset="selectedDataset" @selectedChartTypeChanged="onChartTypeChanged"></HighchartsDataContainer>
         <ChartJSDataContainer v-else-if="propWidget.type === 'chartJS'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widget-model="propWidget" :selected-dataset="selectedDataset"></ChartJSDataContainer>
     </div>
 </template>

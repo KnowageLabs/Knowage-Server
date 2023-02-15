@@ -29,7 +29,7 @@
             />
             <ActiveSelectionsWidget v-if="widget.type == 'selection'" :prop-widget="widget" :prop-active-selections="activeSelections" :editor-mode="false" :dashboard-id="dashboardId" />
             <WebComponentContainer v-if="widget.type == 'html' || widget.type == 'text'" :prop-widget="widget" :widget-data="dataToShow" :prop-active-selections="activeSelections" :editor-mode="false" :dashboard-id="dashboardId" :variables="variables"></WebComponentContainer>
-            <HighchartsContainer v-if="widget.type === 'highcharts'" :widget-model="widget" :data-to-show="widgetData" :prop-active-selections="activeSelections" :editor-mode="false" :dashboard-id="dashboardId"></HighchartsContainer>
+            <HighchartsContainer v-if="widget.type === 'highcharts' && user.isEnterprise" :widget-model="widget" :data-to-show="widgetData" :prop-active-selections="activeSelections" :editor-mode="false" :dashboard-id="dashboardId"></HighchartsContainer>
             <ChartJSContainer v-if="widget.type === 'chartJS'" :widget-model="widget" :data-to-show="widgetData" :prop-active-selections="activeSelections" :editor-mode="false" :dashboard-id="dashboardId"></ChartJSContainer>
             <ImageWidget v-if="widget.type === 'image'" :widget-model="widget" :dashboard-id="dashboardId" :editor-mode="false" />
             <CustomChartWidget v-if="widget.type == 'customchart'" :prop-widget="widget" :widget-data="widgetData" :prop-active-selections="activeSelections" :editor-mode="false" :dashboard-id="dashboardId" :variables="variables" @loading="$emit('loading', $event)"></CustomChartWidget>
@@ -53,6 +53,8 @@ import HighchartsContainer from '../widget/ChartWidget/Highcharts/HighchartsCont
 import ChartJSContainer from '../widget/ChartWidget/ChartJS/ChartJSContainer.vue'
 import ImageWidget from '../widget/ImageWidget/ImageWidget.vue'
 import CustomChartWidget from '../widget/CustomChartWidget/CustomChartWidget.vue'
+import { mapState } from 'pinia'
+import mainStore from '@/App.store'
 
 export default defineComponent({
     name: 'widget-renderer',
@@ -78,6 +80,11 @@ export default defineComponent({
             webComponentCss: '' as string,
             textModel: '' as string
         }
+    },
+    computed: {
+        ...mapState(mainStore, {
+            user: 'user'
+        })
     },
     watch: {
         widgetData() {

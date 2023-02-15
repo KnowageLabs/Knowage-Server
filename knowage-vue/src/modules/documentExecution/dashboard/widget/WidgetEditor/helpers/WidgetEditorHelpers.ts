@@ -13,6 +13,9 @@ import { createNewImageWidgetSettings } from './imageWidget/ImageWidgetFunctions
 import { createNewCustomChartSettings } from './customchart/CustomChartFunctions'
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
+import { useStore } from '@/App.store'
+
+const store = useStore()
 
 export function createNewWidget(type: string) {
     const widget = {
@@ -42,7 +45,6 @@ export const createNewWidgetColumn = (eventData: any, widgetType: string) => {
     else if (widgetType === 'discovery' && tempColumn.fieldType === 'ATTRIBUTE') tempColumn.aggregation = 'COUNT'
     return tempColumn
 }
-
 
 const createNewWidgetSettings = (widget: IWidget) => {
     switch (widget.type) {
@@ -84,13 +86,12 @@ export function formatWidgetForSave(tempWidget: IWidget) {
     switch (widget.type) {
         case 'table':
             formatTableWidgetForSave(widget)
-            break;
+            break
         case 'highcharts':
             formatHighchartsWidgetForSave(widget)
-            break;
+            break
         case 'chartJS':
             formatChartJSForSave(widget)
-
     }
     return widget
 }
@@ -108,5 +109,5 @@ export function getRGBColorFromString(color: string) {
 
 export const recreateKnowageChartModel = (widget: IWidget) => {
     if (widget.type === 'chartJS') formatChartJSWidget(widget)
-    else if (widget.type === 'highcharts') formatHighchartsWidget(widget)
+    else if (widget.type === 'highcharts' && store.user.isEnterprise) formatHighchartsWidget(widget)
 }

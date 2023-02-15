@@ -52,7 +52,7 @@
             :dashboard-id="dashboardId"
         ></TextWidgetSettingsContainer>
         <HighchartsWidgetSettingsContainer
-            v-else-if="propWidget.type === 'highcharts'"
+            v-else-if="propWidget.type === 'highcharts' && user.isEnterprise"
             class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
             :widget-model="propWidget"
             :selected-setting="selectedSetting"
@@ -126,6 +126,8 @@ import HighchartsActivityGaugeSettingsDescriptor from './ChartWidget/highcharts/
 import HighchartsSolidGaugeSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsSolidGaugeSettingsDescriptor.json'
 import imageDescriptor from './ImageWidget/ImageWidgetSettingsDescriptor.json'
 import customChartDescriptor from './CustomChartWidget/CustomChartWidgetSettingsDescriptor.json'
+import { mapState } from 'pinia'
+import mainStore from '@/App.store'
 
 export default defineComponent({
     name: 'widget-editor-settings-tab',
@@ -159,6 +161,9 @@ export default defineComponent({
         }
     },
     computed: {
+        ...mapState(mainStore, {
+            user: 'user'
+        }),
         chartType() {
             return this.propWidget?.settings.chartModel?.model?.chart.type
         }

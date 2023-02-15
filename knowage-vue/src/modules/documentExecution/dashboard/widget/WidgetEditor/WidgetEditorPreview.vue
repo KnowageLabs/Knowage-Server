@@ -15,8 +15,16 @@
                 <TableWidget v-if="propWidget.type == 'table'" :prop-widget="propWidget" :datasets="datasets" :data-to-show="widgetData" :editor-mode="true" :dashboard-id="dashboardId" :prop-active-selections="activeSelections" @pageChanged="getWidgetData" />
                 <SelectorWidget v-if="propWidget.type == 'selector'" :prop-widget="propWidget" :data-to-show="widgetData" :widget-initial-data="widgetData" :editor-mode="true" :prop-active-selections="activeSelections" :datasets="datasets" :selection-is-locked="false" :dashboard-id="dashboardId" />
                 <ActiveSelectionsWidget v-if="propWidget.type == 'selection'" :prop-widget="propWidget" :prop-active-selections="activeSelections" :editor-mode="true" :dashboard-id="dashboardId" />
-                <WebComponentContainer v-if="(propWidget.type == 'html' || propWidget.type == 'text') && !loading" :prop-widget="propWidget" :widget-data="widgetData" :prop-active-selections="activeSelections" :editor-mode="true" :dashboard-id="dashboardId" :variables="variables"></WebComponentContainer>
-                <HighchartsContainer v-if="propWidget.type === 'highcharts' && !loading" :widget-model="propWidget" :data-to-show="widgetData" :prop-active-selections="activeSelections" :editor-mode="true" :dashboard-id="dashboardId"></HighchartsContainer>
+                <WebComponentContainer
+                    v-if="(propWidget.type == 'html' || propWidget.type == 'text') && !loading"
+                    :prop-widget="propWidget"
+                    :widget-data="widgetData"
+                    :prop-active-selections="activeSelections"
+                    :editor-mode="true"
+                    :dashboard-id="dashboardId"
+                    :variables="variables"
+                ></WebComponentContainer>
+                <HighchartsContainer v-if="propWidget.type === 'highcharts' && !loading && user.isEnterprise" :widget-model="propWidget" :data-to-show="widgetData" :prop-active-selections="activeSelections" :editor-mode="true" :dashboard-id="dashboardId"></HighchartsContainer>
                 <ChartJSContainer v-if="propWidget.type === 'chartJS' && !loading" :widget-model="propWidget" :data-to-show="widgetData" :editor-mode="true" :dashboard-id="dashboardId" :prop-active-selections="activeSelections"></ChartJSContainer>
                 <ImageWidget v-if="propWidget.type === 'image'" :widget-model="propWidget" :dashboard-id="dashboardId" :editor-mode="true" />
                 <CustomChartWidget
@@ -48,6 +56,7 @@ import { getWidgetData } from '../../DataProxyHelper'
 import ProgressBar from 'primevue/progressbar'
 import { mapState, mapActions } from 'pinia'
 import store from '../../Dashboard.store'
+import mainStore from '@/App.store'
 import deepcopy from 'deepcopy'
 import WebComponentContainer from '../WebComponent/WebComponentContainer.vue'
 import HighchartsContainer from '../ChartWidget/Highcharts/HighchartsContainer.vue'
@@ -79,6 +88,9 @@ export default defineComponent({
         }
     },
     computed: {
+        ...mapState(mainStore, {
+            user: 'user'
+        }),
         ...mapState(store, ['dashboards'])
     },
     created() {

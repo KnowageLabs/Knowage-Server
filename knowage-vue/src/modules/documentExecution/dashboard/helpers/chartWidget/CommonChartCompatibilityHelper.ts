@@ -1,6 +1,7 @@
 import { IWidget, IWidgetColumn } from '../../Dashboard'
 import { getFormattedWidgetColumn } from '../common/WidgetColumnHelper'
 import { hexToRgba } from '@/modules/documentExecution/dashboard/helpers/FormattingHelpers'
+import { useStore } from '@/App.store'
 
 interface IOldModelCategory {
     column: string
@@ -13,6 +14,7 @@ interface IOldModelCategory {
 }
 
 const columnNameIdMap = {}
+const store = useStore()
 
 export const getFormattedWidgetColumns = (widget: any, chartLibrary: 'chartJS' | 'highcharts') => {
     if (!widget.content || !widget.content.columnSelectedOfDatasetAggregations || !widget.content.chartTemplate || !widget.content.chartTemplate.CHART || !widget.content.chartTemplate.CHART.VALUES) return []
@@ -36,7 +38,7 @@ export const getFormattedWidgetColumns = (widget: any, chartLibrary: 'chartJS' |
 
 export const getMaximumNumberOfSeries = (chartLibrary: 'chartJS' | 'highcharts', chartType: string, widget: any) => {
     if (chartLibrary === 'chartJS') return 1
-    if (chartLibrary === 'highcharts' && chartType === 'PIE') return 1
+    if (chartLibrary === 'highcharts' && store.user.isEnterprise && chartType === 'PIE') return 1
     if (chartType === 'GAUGE') {
         const chartSubtype = widget.content.chartTemplate.CHART.subtype
         switch (chartSubtype) {
@@ -71,7 +73,7 @@ const chartCanHaveOnlyOneAttribute = (widget: any, chartLibrary: 'chartJS' | 'hi
 }
 
 const chartHasDrilldown = (widget: any, chartLibrary: 'chartJS' | 'highcharts') => {
-    return chartLibrary === 'highcharts' && widget.content.chartTemplate.CHART.type === 'PIE'
+    return chartLibrary === 'highcharts' && store.user.isEnterprise && widget.content.chartTemplate.CHART.type === 'PIE'
 }
 
 const addDrillColumnsFromCategory = (category: IOldModelCategory, widgetColumNameMap: any, formattedColumns: IWidgetColumn[]) => {
