@@ -1,7 +1,7 @@
 import { IWidget, IWidgetColumn } from '../../Dashboard'
 import { getFormattedWidgetColumn } from '../common/WidgetColumnHelper'
 import { hexToRgba } from '@/modules/documentExecution/dashboard/helpers/FormattingHelpers'
-import { useStore } from '@/App.store'
+import useStore from '@/App.store'
 
 interface IOldModelCategory {
     column: string
