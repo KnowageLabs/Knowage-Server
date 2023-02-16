@@ -58,6 +58,8 @@
                     :filters-data="filtersData"
                     :new-dashboard-mode="newDashboardMode"
                     @newDashboardSaved="onNewDashboardSaved"
+                    @add-widget="addWidget"
+                    @add-dataset="openDashboardDatasetManagement"
                 ></DashboardController>
             </template>
             <iframe
@@ -132,7 +134,7 @@ import { findCrossTargetByCrossName, loadNavigationParamsInitialValue } from './
 
 // @ts-ignore
 // eslint-disable-next-line
-window.execExternalCrossNavigation = function(outputParameters, otherOutputParameters, crossNavigationLabel) {
+window.execExternalCrossNavigation = function (outputParameters, otherOutputParameters, crossNavigationLabel) {
     postMessage(
         {
             type: 'crossNavigation',
@@ -1474,7 +1476,7 @@ export default defineComponent({
 }
 
 #add-widget-button {
-    background-color: #ff0000;
+    background-color: var(--kn-color-fab);
     min-width: 120px;
 }
 </style>

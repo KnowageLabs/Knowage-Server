@@ -1,7 +1,7 @@
 <template>
     <div v-if="model" :id="`dashboard_${model.configuration.id}`" class="dashboard-container">
         <Button icon="fas fa-square-check" class="p-m-3 p-button-rounded p-button-text p-button-plain" style="position: fixed; right: 0; z-index: 999; background-color: white; box-shadow: 0px 2px 3px #ccc" @click="selectionsDialogVisible = true" />
-        <DashboardRenderer v-if="!loading" :model="model" :datasets="datasets" :dashboard-id="dashboardId" :document-drivers="drivers" :variables="model ? model.configuration.variables : []"></DashboardRenderer>
+        <DashboardRenderer v-if="!loading" :document="document" :model="model" :datasets="datasets" :dashboard-id="dashboardId" :document-drivers="drivers" :variables="model ? model.configuration.variables : []" @add-widget="addWidget" @add-dataset="addDataset"></DashboardRenderer>
 
         <Transition name="editorEnter" appear>
             <DatasetEditor v-if="datasetEditorVisible" :dashboard-id-prop="dashboardId" :available-datasets-prop="datasets" :filters-data-prop="filtersData" @closeDatasetEditor="closeDatasetEditor" @datasetEditorSaved="closeDatasetEditor" @allDatasetsLoaded="datasets = $event" />
@@ -75,7 +75,7 @@ export default defineComponent({
         }
     },
     props: { sbiExecutionId: { type: String }, document: { type: Object }, reloadTrigger: { type: Boolean }, hiddenFormData: { type: Object }, filtersData: { type: Object as PropType<{ filterStatus: iParameter[]; isReadyForExecution: boolean }> }, newDashboardMode: { type: Boolean } },
-    emits: ['newDashboardSaved'],
+    emits: ['newDashboardSaved', 'addDataset', 'addWidget'],
     data() {
         return {
             descriptor,
@@ -315,6 +315,12 @@ export default defineComponent({
         closeGeneralSettings() {
             this.generalSettingsVisible = false
             emitter.emit('dashboardGeneralSettingsClosed')
+        },
+        addDataset() {
+            this.$emit('addDataset')
+        },
+        addWidget() {
+            this.$emit('addWidget')
         }
     }
 })

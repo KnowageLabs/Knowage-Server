@@ -1,5 +1,5 @@
 <template>
-    <grid-item :key="item.id" class="p-d-flex widget-grid-item" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" drag-allow-from=".drag-handle" @resized="resizedEvent">
+    <grid-item :key="item.id" class="p-d-flex widget-grid-item" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" drag-allow-from=".drag-handle" @resized="resizedEvent" :class="{ canEdit: canEditDashboard(document) }">
         <div v-if="initialized" class="drag-handle"></div>
         <ProgressSpinner v-if="loading || customChartLoading" class="kn-progress-spinner" />
         <Skeleton v-if="!initialized" shape="rectangle" height="100%" border-radius="0" />
@@ -19,6 +19,7 @@
             @mouseover="toggleFocus"
             @mouseleave="startUnfocusTimer(500)"
             @loading="customChartLoading = $event"
+            @contextmenu="onWidgetRightClick"
         ></WidgetRenderer>
         <WidgetButtonBar
             :widget="widget"
@@ -26,11 +27,13 @@
             :selection-is-locked="selectionIsLocked"
             :dashboard-id="dashboardId"
             :in-focus="inFocus"
+            :menu-items="items"
             @edit-widget="toggleEditMode"
             @unlockSelection="unlockSelection"
             @launchSelection="launchSelection"
             @changeFocus="changeFocus"
         ></WidgetButtonBar>
+        <ContextMenu ref="contextMenu" :model="items" />
     </grid-item>
 </template>
 
@@ -40,10 +43,11 @@
  */
 import { defineComponent, PropType } from 'vue'
 import { IDataset, ISelection, IVariable, IWidget } from '../Dashboard'
-import { emitter } from '../DashboardHelpers'
+import { emitter, canEditDashboard } from '../DashboardHelpers'
 import { mapState, mapActions } from 'pinia'
 import { getWidgetData } from '../DataProxyHelper'
 import store from '../Dashboard.store'
+import mainStore from '@/App.store'
 import WidgetRenderer from './WidgetRenderer.vue'
 import WidgetButtonBar from './WidgetButtonBar.vue'
 import Skeleton from 'primevue/skeleton'
@@ -52,15 +56,17 @@ import deepcopy from 'deepcopy'
 import { ISelectorWidgetSettings } from '../interfaces/DashboardSelectorWidget'
 import { datasetIsUsedInAssociations } from './interactionsHelpers/DatasetAssociationsHelper'
 import { loadAssociativeSelections } from './interactionsHelpers/InteractionHelper'
+import ContextMenu from 'primevue/contextmenu'
 
 export default defineComponent({
     name: 'widget-manager',
-    components: { Skeleton, WidgetButtonBar, WidgetRenderer, ProgressSpinner },
+    components: { ContextMenu, Skeleton, WidgetButtonBar, WidgetRenderer, ProgressSpinner },
     inject: ['dHash'],
     props: {
         model: { type: Object },
         item: { required: true, type: Object },
         activeSheet: { type: Boolean },
+        document: { type: Object },
         widget: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDataset[]>, required: true },
         dashboardId: { type: String, required: true },
@@ -86,7 +92,20 @@ export default defineComponent({
             selectionIsLocked: false,
             playDisabledButtonTimeout: null as any,
             widgetLoading: false,
-            customChartLoading: false
+            customChartLoading: false,
+            canEditDashboard,
+            items: [
+                {
+                    label: 'Edit Widget',
+                    icon: 'fa-solid fa-pen-to-square',
+                    command: () => this.toggleEditMode()
+                },
+                {
+                    label: 'Delete Widget',
+                    icon: 'fa-solid fa-trash',
+                    command: () => this.deleteWidget(this.dashboardId, this.widget)
+                }
+            ]
         }
     },
     watch: {
@@ -111,13 +130,14 @@ export default defineComponent({
     },
     computed: {
         ...mapState(store, ['dashboards']),
+        ...mapState(mainStore, ['user']),
         playSelectionButtonVisible(): boolean {
             if (!this.widget || !this.widget.settings.configuration || !this.widget.settings.configuration.selectorType) return false
             return this.widget.type === 'selector' && ['multiValue', 'multiDropdown', 'dateRange'].includes(this.widget.settings.configuration.selectorType.modality) && !this.selectionIsLocked
         }
     },
     methods: {
-        ...mapActions(store, ['getDashboard', 'getSelections', 'setSelections', 'removeSelection']),
+        ...mapActions(store, ['getDashboard', 'getSelections', 'setSelections', 'removeSelection', 'deleteWidget']),
         setEventListeners() {
             emitter.on('selectionsChanged', this.loadActiveSelections)
             emitter.on('selectionsDeleted', this.onSelectionsDeleted)
@@ -133,6 +153,10 @@ export default defineComponent({
             emitter.off('associativeSelectionsLoaded', this.onAssociativeSelectionsLoaded)
             emitter.off('datasetRefreshed', this.onDatasetRefresh)
             emitter.off('setWidgetLoading', this.setWidgetLoading)
+        },
+        onWidgetRightClick(event) {
+            const contextMenu = this.$refs.contextMenu as any
+            contextMenu.show(event)
         },
         loadWidget(widget: IWidget) {
             this.widgetModel = widget
@@ -258,8 +282,24 @@ export default defineComponent({
 })
 </script>
 <style lang="scss">
-.widget-grid-item:hover .widgetButtonBarContainer {
-    display: block;
+.widget-grid-item {
+    &.vue-grid-item > .vue-resizable-handle {
+        display: none;
+    }
+    &:hover {
+        &.vue-grid-item > .vue-resizable-handle {
+            display: block;
+        }
+        &.canEdit {
+            outline: 1px solid var(--kn-color-borders);
+            .drag-widget-icon {
+                display: block;
+            }
+        }
+        .widgetButtonBarContainer {
+            display: block;
+        }
+    }
 }
 
 .editorEnter-enter-active,

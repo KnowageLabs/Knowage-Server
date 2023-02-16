@@ -7,16 +7,26 @@
                 :responsive="true"
                 :cols="{ lg: 50, md: 100, sm: 50, xs: 20, xxs: 10 }"
                 :row-height="30"
-                :is-draggable="true"
-                :is-resizable="true"
+                :is-draggable="canEditDashboard(document)"
+                :is-resizable="canEditDashboard(document)"
                 :vertical-compact="false"
                 :use-css-transforms="false"
-                :margin="[2, 2]"
+                :margin="[0, 0]"
                 @breakpoint-changed="breakpointChangedEvent"
             >
-                <WidgetController v-for="item in sheet.widgets['lg']" :key="item.i" :active-sheet="activeSheet(index)" :widget="currentWidget(item.id)" :item="item" :datasets="datasets" :dashboard-id="dashboardId" :variables="variables" :model="model"></WidgetController>
+                <WidgetController v-for="item in sheet.widgets['lg']" :key="item.i" :active-sheet="activeSheet(index)" :document="document" :widget="currentWidget(item.id)" :item="item" :datasets="datasets" :dashboard-id="dashboardId" :variables="variables" :model="model"></WidgetController>
             </grid-layout>
         </KnDashboardTab>
+        <div v-if="canEditDashboard(document)" class="emptyDashboardWizard">
+            <div class="dashboardWizardContainer" v-if="dashboardModel?.configuration?.datasets.length === 0" @click="addDataset">
+                <img src="/images/dashboard/common/databaseWizardDashboard.svg" />
+                <span>{{ $t('dashboard.wizard.addDataset') }}</span>
+            </div>
+            <div class="dashboardWizardContainer" v-if="dashboardModel?.sheets && dashboardModel.sheets[selectedSheetIndex]?.widgets?.lg?.length === 0" @click="addWidget">
+                <img src="/images/dashboard/common/widgetWizardDashboard.svg" />
+                <span>{{ $t('dashboard.wizard.addWidget') }}</span>
+            </div>
+        </div>
     </KnDashboardTabsPanel>
 </template>
 
@@ -26,7 +36,8 @@
  */
 import { defineComponent, PropType } from 'vue'
 import { IDataset, IVariable } from './Dashboard'
-import { mapState } from 'pinia'
+import { canEditDashboard } from './DashboardHelpers'
+import { mapActions, mapState } from 'pinia'
 import WidgetController from './widget/WidgetController.vue'
 import KnDashboardTabsPanel from '@/components/UI/KnDashboardTabs/KnDashboardTabsPanel.vue'
 import KnDashboardTab from '@/components/UI/KnDashboardTabs/KnDashboardTab.vue'
@@ -35,32 +46,34 @@ import dashboardStore from './Dashboard.store'
 export default defineComponent({
     name: 'dashboard-manager',
     components: { KnDashboardTab, KnDashboardTabsPanel, WidgetController },
+    emits: ['addWidget', 'addDataset'],
     inject: ['dHash'],
     props: {
         model: { type: Object },
+        document: { type: Object },
         datasets: { type: Array as PropType<IDataset[]>, required: true },
         dashboardId: { type: String, required: true },
         variables: { type: Array as PropType<IVariable[]>, required: true }
     },
-    setup() {
-        const store = dashboardStore()
-        return { store }
-    },
     data() {
         return {
             dashboardModel: {} as any,
-            startingBreakpoint: '' as string
+            startingBreakpoint: '' as string,
+            canEditDashboard
         }
     },
     mounted() {
         this.dashboardModel = this.model
+        if (this.dashboardModel.sheets.length === 0) this.dashboardModel.sheets.push({ label: 'new sheet', widgets: { lg: [] } })
     },
     computed: {
         ...mapState(dashboardStore, {
-            dashboard: 'dashboards'
+            dashboard: 'dashboards',
+            selectedSheetIndex: 'selectedSheetIndex'
         })
     },
     methods: {
+        ...mapActions(dashboardStore, ['setSelectedSheetIndex', 'setDashboardSheet']),
         activeSheet(index) {
             // @ts-ignore
             if ((!this.dashboard[this.dHash] && index === 0) || this.dashboard[this.dHash] === index) return true
@@ -74,9 +87,44 @@ export default defineComponent({
             return this.dashboardModel.widgets.find((item) => item.id === id)
         },
         sheetChange(index) {
-            this.store.setSelectedSheetIndex(index)
-            this.store.setDashboardSheet({ id: (this as any).dHash as any, sheet: index })
+            this.setSelectedSheetIndex(index)
+            this.setDashboardSheet({ id: (this as any).dHash as any, sheet: index })
+        },
+        addDataset() {
+            this.$emit('addDataset')
+        },
+        addWidget() {
+            this.$emit('addWidget')
         }
     }
 })
 </script>
+<style lang="scss">
+.emptyDashboardWizard {
+    position: absolute;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    height: 130px;
+    align-items: center;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 0;
+    .dashboardWizardContainer {
+        margin: 0 16px;
+        display: flex;
+        height: 100%;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        opacity: 0.8;
+        span {
+            font-weight: bold;
+        }
+        img {
+            height: 100px;
+        }
+    }
+}
+</style>

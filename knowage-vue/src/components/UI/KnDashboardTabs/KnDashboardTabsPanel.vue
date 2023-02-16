@@ -186,7 +186,6 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     .sheets-wrapper {
-        background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeAQMAAAAB/jzhAAAAAXNSR0IB2cksfwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAZQTFRFAAAA4+PjQpPE2wAAAAJ0Uk5TAP9bkSK1AAAAFUlEQVR4nGNgYGBgYRhMxP////8AACz5BG4ege3ZAAAAAElFTkSuQmCC');
         width: 100%;
         // TODO: fix for scroll, might be wrong, talk with Davide
         // flex: 1;
