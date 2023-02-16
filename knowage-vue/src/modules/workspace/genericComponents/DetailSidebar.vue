@@ -6,9 +6,7 @@
                     <Button v-if="button.visible" v-tooltip.top="button.tooltip" :icon="button.icon" :class="button.class" @click="button.command" />
                 </span>
             </div>
-            <img
-v-if="viewType && document.previewFile && !descriptor.typesWithoutImages.includes(viewType)" class="p-mt-5"
-                :style="descriptor.style.sidebarImage" align="center" :src="documentImageSource" />
+            <img v-if="viewType && document.previewFile && !descriptor.typesWithoutImages.includes(viewType)" class="p-mt-5" :style="descriptor.style.sidebarImage" align="center" :src="documentImageSource" />
             <div class="p-m-5">
                 <div v-for="(field, index) of documentFields" :key="index" class="p-mb-5">
                     <h3 class="p-m-0">
@@ -17,11 +15,18 @@ v-if="viewType && document.previewFile && !descriptor.typesWithoutImages.include
                     <p v-if="field.type === 'category' && datasetCategory" class="p-m-0">
                         {{ datasetCategory }}
                     </p>
-                    <p v-if="field.type === 'date'" class="p-m-0">{{ getFormattedDate(document[field.value], {
-                            year: 'numeric', month: '2-digit', day:
-                                '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'
-                        })
-                    }}</p>
+                    <p v-if="field.type === 'date'" class="p-m-0">
+                        {{
+                            getFormattedDate(document[field.value], {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit'
+                            })
+                        }}
+                    </p>
                     <p v-if="field.type != 'date' && field.type != 'category'" class="p-m-0">{{ document[field.value] }}</p>
                 </div>
             </div>
@@ -126,32 +131,32 @@ export default defineComponent({
         documentButtons(): any {
             switch (this.viewType) {
                 case 'recent':
-                    return [{ icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', tooltip: this.$t('workspace.buttonsTooltips.executeDoc'), visible: true, command: this.emitEvent('executeRecent') }]
+                    return [{ icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', tooltip: this.$t('workspace.buttonsTooltips.executeDoc'), visible: true, command: () => this.emitEvent('executeRecent') }]
                 case 'repository':
                     return [
-                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.executeDoc'), visible: true, command: this.emitEvent('executeDocumentFromOrganizer') },
-                        { icon: 'fas fa-share', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.moveDoc'), visible: true, command: this.emitEvent('moveDocumentToFolder') },
-                        { icon: 'fas fa-trash', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.deleteDoc'), visible: true, command: this.emitEvent('deleteDocumentFromOrganizer') }
+                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.executeDoc'), visible: true, command: () => this.emitEvent('executeDocumentFromOrganizer') },
+                        { icon: 'fas fa-share', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.moveDoc'), visible: true, command: () => this.emitEvent('moveDocumentToFolder') },
+                        { icon: 'fas fa-trash', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.deleteDoc'), visible: true, command: () => this.emitEvent('deleteDocumentFromOrganizer') }
                     ]
                 case 'dataset':
                     return [
-                        { icon: 'fas fa-eye', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.previewDs'), visible: this.canLoadData, command: this.emitEvent('previewDataset') },
-                        { icon: 'fas fa-question-circle', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.help'), visible: true, command: this.emitEvent('getHelp') },
+                        { icon: 'fas fa-eye', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.previewDs'), visible: this.canLoadData, command: () => this.emitEvent('previewDataset') },
+                        { icon: 'fas fa-question-circle', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.help'), visible: true, command: () => this.emitEvent('getHelp') },
                         { icon: 'fas fa-ellipsis-v', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.other'), visible: true, command: this.showMenu }
                     ]
                 case 'analysis':
                     return [
-                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.executeDoc'), visible: true, command: this.emitEvent('executeAnalysisDocument') },
-                        { icon: 'fas fa-edit', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.editDoc'), visible: this.isOwner, command: this.emitEvent('editAnalysisDocument') },
+                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.executeDoc'), visible: true, command: () => this.emitEvent('executeAnalysisDocument') },
+                        { icon: 'fas fa-edit', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.editDoc'), visible: this.isOwner, command: () => this.emitEvent('editAnalysisDocument') },
                         { icon: 'fas fa-ellipsis-v', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.other'), visible: true, command: this.showMenu }
                     ]
                 case 'businessModel':
-                    return [{ icon: 'fa fa-search', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.myModels.openInQBE'), visible: true, command: this.emitEvent('openDatasetInQBE') }]
+                    return [{ icon: 'fa fa-search', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.myModels.openInQBE'), visible: true, command: () => this.emitEvent('openDatasetInQBE') }]
                 case 'federationDataset':
                     return [
-                        { icon: 'fa fa-search', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openDatasetInQBE') },
-                        { icon: 'pi pi-pencil', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('editDataset') },
-                        { icon: 'fas fa-trash-alt', class: 'p-button-text p-button-rounded p-button-plain', visible: (this.store.$state as any).user.isSuperadmin || (this.store.$state as any).user.userId === this.document.owner, command: this.emitEvent('deleteDataset') }
+                        { icon: 'fa fa-search', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: () => this.emitEvent('openDatasetInQBE') },
+                        { icon: 'pi pi-pencil', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: () => this.emitEvent('editDataset') },
+                        { icon: 'fas fa-trash-alt', class: 'p-button-text p-button-rounded p-button-plain', visible: (this.store.$state as any).user.isSuperadmin || (this.store.$state as any).user.userId === this.document.owner, command: () => this.emitEvent('deleteDataset') }
                     ]
                 default:
                     return []
@@ -177,21 +182,21 @@ export default defineComponent({
             this.menuButtons = []
             if (this.viewType == 'analysis') {
                 this.menuButtons.push(
-                    { key: 1, label: this.$t('workspace.myAnalysis.menuItems.share'), icon: 'fas fa-share-alt', command: this.emitEvent('shareAnalysisDocument'), visible: !this.isAnalysisShared },
-                    { key: 2, label: this.$t('workspace.myAnalysis.menuItems.unshare'), icon: 'fas fa-times-circle', command: this.emitEvent('shareAnalysisDocument'), visible: this.isAnalysisShared },
-                    { key: 3, label: this.$t('workspace.myAnalysis.menuItems.clone'), icon: 'fas fa-clone', command: this.emitEvent('cloneAnalysisDocument') },
-                    { key: 4, label: this.$t('workspace.myAnalysis.menuItems.delete'), icon: 'fas fa-trash', command: this.emitEvent('deleteAnalysisDocument') },
-                    { key: 5, label: this.$t('workspace.myAnalysis.menuItems.upload'), icon: 'fas fa-upload', command: this.emitEvent('uploadAnalysisPreviewFile') }
+                    { key: 1, label: this.$t('workspace.myAnalysis.menuItems.share'), icon: 'fas fa-share-alt', command: () => this.emitEvent('shareAnalysisDocument'), visible: !this.isAnalysisShared },
+                    { key: 2, label: this.$t('workspace.myAnalysis.menuItems.unshare'), icon: 'fas fa-times-circle', command: () => this.emitEvent('shareAnalysisDocument'), visible: this.isAnalysisShared },
+                    { key: 3, label: this.$t('workspace.myAnalysis.menuItems.clone'), icon: 'fas fa-clone', command: () => this.emitEvent('cloneAnalysisDocument') },
+                    { key: 4, label: this.$t('workspace.myAnalysis.menuItems.delete'), icon: 'fas fa-trash', command: () => this.emitEvent('deleteAnalysisDocument') },
+                    { key: 5, label: this.$t('workspace.myAnalysis.menuItems.upload'), icon: 'fas fa-upload', command: () => this.emitEvent('uploadAnalysisPreviewFile') }
                 )
             } else if (this.viewType == 'dataset') {
                 let tmp = [] as any
-                tmp.push({ key: 0, label: this.$t('workspace.myModels.editDataset'), icon: 'fas fa-pen', command: this.emitEvent('editDataset'), visible: this.isDatasetOwner && (this.document.dsTypeCd == 'File' || this.document.dsTypeCd == 'Prepared') })
-                tmp.push({ key: 1, label: this.$t('workspace.myModels.openInQBE'), icon: 'fas fa-file-circle-question', command: this.emitEvent('openDatasetInQBE'), visible: this.isOpenInQBEVisible(this.document) })
+                tmp.push({ key: 0, label: this.$t('workspace.myModels.editDataset'), icon: 'fas fa-pen', command: () => this.emitEvent('editDataset'), visible: this.isDatasetOwner && (this.document.dsTypeCd == 'File' || this.document.dsTypeCd == 'Prepared') })
+                tmp.push({ key: 1, label: this.$t('workspace.myModels.openInQBE'), icon: 'fas fa-file-circle-question', command: () => this.emitEvent('openDatasetInQBE'), visible: this.isOpenInQBEVisible(this.document) })
 
                 if ((this.store.$state as any).user?.functionalities.includes('DataPreparation')) {
                     tmp.push(
-                        { key: 2, label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: this.emitEvent('openDataPreparation'), visible: this.canLoadData && this.document.dsTypeCd != 'Qbe' && (this.document.pars && this.document.pars.length == 0) },
-                        { key: 3, label: this.$t('workspace.myData.monitoring'), icon: 'fas fa-cogs', command: this.emitEvent('monitoring'), visible: this.canLoadData && this.document.dsTypeCd != 'Qbe' && (this.document.pars && this.document.pars.length == 0) }
+                        { key: 2, label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.emitEvent('openDataPreparation'), visible: this.canLoadData && this.document.dsTypeCd != 'Qbe' && this.document.pars && this.document.pars.length == 0 },
+                        { key: 3, label: this.$t('workspace.myData.monitoring'), icon: 'fas fa-cogs', command: () => this.emitEvent('monitoring'), visible: this.canLoadData && this.document.dsTypeCd != 'Qbe' && this.document.pars && this.document.pars.length == 0 }
                     )
                 }
 
@@ -201,18 +206,18 @@ export default defineComponent({
                     icon: 'fa-solid fa-file-export',
                     visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.document.dsTypeCd != 'File',
                     items: [
-                        { key: 40, label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: this.emitEvent('exportToXlsx'), visible: this.datasetIsIterable },
-                        { key: 41, label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: this.emitEvent('exportToCsv') },
+                        { key: 40, label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.emitEvent('exportToXlsx'), visible: this.datasetIsIterable },
+                        { key: 41, label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: () => this.emitEvent('exportToCsv') }
                     ]
                 })
 
-                tmp.push({ key: 5, label: this.$t('workspace.myData.fileDownload'), icon: 'fas fa-download', command: this.emitEvent('downloadDatasetFile'), visible: this.document.dsTypeCd == 'File' })
-                tmp.push({ key: 6, label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: this.emitEvent('shareDataset'), visible: this.canLoadData && this.isDatasetOwner })
-                tmp.push({ key: 7, label: this.$t('workspace.myData.cloneDataset'), icon: 'fas fa-clone', command: this.emitEvent('cloneDataset'), visible: this.canLoadData && this.document.dsTypeCd == 'Qbe' })
-                tmp.push({ key: 100, label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: this.emitEvent('deleteDataset'), visible: this.isDatasetOwner })
+                tmp.push({ key: 5, label: this.$t('workspace.myData.fileDownload'), icon: 'fas fa-download', command: () => this.emitEvent('downloadDatasetFile'), visible: this.document.dsTypeCd == 'File' })
+                tmp.push({ key: 6, label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: () => this.emitEvent('shareDataset'), visible: this.canLoadData && this.isDatasetOwner })
+                tmp.push({ key: 7, label: this.$t('workspace.myData.cloneDataset'), icon: 'fas fa-clone', command: () => this.emitEvent('cloneDataset'), visible: this.canLoadData && this.document.dsTypeCd == 'Qbe' })
+                tmp.push({ key: 100, label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.emitEvent('deleteDataset'), visible: this.isDatasetOwner })
 
                 tmp = tmp.sort((a, b) => a.key < b.key)
-                tmp.forEach(element => {
+                tmp.forEach((element) => {
                     if (element.items) {
                         element.items = element.items.sort((a, b) => a.key < b.key)
                     }

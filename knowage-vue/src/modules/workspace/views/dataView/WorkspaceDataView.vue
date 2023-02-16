@@ -504,7 +504,7 @@ export default defineComponent({
             this.showDetailSidebar = true
         },
         showCreationMenu(event) {
-            this.createCreationMenuButtons()
+            this.createCreationMenuButtons(event)
             // eslint-disable-next-line
             // @ts-ignore
             this.$refs.creationMenu.toggle(event)
@@ -519,7 +519,7 @@ export default defineComponent({
         // prettier-ignore
         createMenuItems(clickedDocument: any) {
             let tmp = [] as any
-            tmp.push({ key: 0, label: this.$t('workspace.myModels.editDataset'), icon: 'fas fa-pen', command: this.editDataset, visible: this.isDatasetOwner && (this.selectedDataset.dsTypeCd == 'File' || this.selectedDataset.dsTypeCd == 'Prepared') })
+            tmp.push({ key: 0, label: this.$t('workspace.myModels.editDataset'), icon: 'fas fa-pen', command: () => this.editDataset(), visible: this.isDatasetOwner && (this.selectedDataset.dsTypeCd == 'File' || this.selectedDataset.dsTypeCd == 'Prepared') })
             tmp.push({ key: 1, label: this.$t('workspace.myModels.editDataset'), icon: 'fas fa-pen', command: () => this.openDatasetInQBE(clickedDocument), visible: this.showQbeEditButton })
 
             tmp.push({ key: 2, label: this.$t('workspace.myModels.editDataset'), icon: 'fas fa-pen', command: () => this.openQBEUponDataset(clickedDocument), visible: this.selectedDataset.dsTypeCd == 'Derived' })
@@ -557,9 +557,12 @@ export default defineComponent({
             this.menuButtons = tmp
 
         },
-        createCreationMenuButtons() {
+        createCreationMenuButtons(event: any) {
             this.creationMenuButtons = []
-            this.creationMenuButtons.push({ key: '0', label: this.$t('managers.businessModelManager.uploadFile'), command: this.toggleDatasetDialog, visible: true }, { key: '1', label: this.$t('workspace.myData.openData'), command: this.openDatasetInQBE, visible: this.showCkanIntegration })
+            this.creationMenuButtons.push(
+                { key: '0', label: this.$t('managers.businessModelManager.uploadFile'), command: () => this.toggleDatasetDialog(), visible: true },
+                { key: '1', label: this.$t('workspace.myData.openData'), command: () => this.openDatasetInQBE(event), visible: this.showCkanIntegration }
+            )
         },
         toggleDatasetDialog() {
             this.selectedDataset = {}
