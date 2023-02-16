@@ -15,18 +15,18 @@
                 @breakpoint-changed="breakpointChangedEvent"
             >
                 <WidgetController v-for="item in sheet.widgets['lg']" :key="item.i" :active-sheet="activeSheet(index)" :document="document" :widget="currentWidget(item.id)" :item="item" :datasets="datasets" :dashboard-id="dashboardId" :variables="variables" :model="model"></WidgetController>
+                <div v-if="canEditDashboard(document)" class="emptyDashboardWizard">
+                    <div class="dashboardWizardContainer" v-if="dashboardModel?.configuration?.datasets.length === 0" @click="addDataset">
+                        <img src="/images/dashboard/common/databaseWizardDashboard.svg" />
+                        <span>{{ $t('dashboard.wizard.addDataset') }}</span>
+                    </div>
+                    <div class="dashboardWizardContainer" v-if="sheet.widgets?.lg?.length === 0" @click="addWidget">
+                        <img src="/images/dashboard/common/widgetWizardDashboard.svg" />
+                        <span>{{ $t('dashboard.wizard.addWidget') }}</span>
+                    </div>
+                </div>
             </grid-layout>
         </KnDashboardTab>
-        <div v-if="canEditDashboard(document)" class="emptyDashboardWizard">
-            <div class="dashboardWizardContainer" v-if="dashboardModel?.configuration?.datasets.length === 0" @click="addDataset">
-                <img src="/images/dashboard/common/databaseWizardDashboard.svg" />
-                <span>{{ $t('dashboard.wizard.addDataset') }}</span>
-            </div>
-            <div class="dashboardWizardContainer" v-if="dashboardModel?.sheets && dashboardModel.sheets[selectedSheetIndex]?.widgets?.lg?.length === 0" @click="addWidget">
-                <img src="/images/dashboard/common/widgetWizardDashboard.svg" />
-                <span>{{ $t('dashboard.wizard.addWidget') }}</span>
-            </div>
-        </div>
     </KnDashboardTabsPanel>
 </template>
 
@@ -100,30 +100,36 @@ export default defineComponent({
 })
 </script>
 <style lang="scss">
-.emptyDashboardWizard {
-    position: absolute;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    height: 130px;
-    align-items: center;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 0;
-    .dashboardWizardContainer {
-        margin: 0 16px;
+.vue-grid-layout {
+    min-height: 100%;
+    .vue-grid-item {
+        z-index: 1;
+    }
+    .emptyDashboardWizard {
+        position: absolute;
         display: flex;
-        height: 100%;
-        flex-direction: column;
-        justify-content: space-between;
+        justify-content: center;
+        height: 130px;
         align-items: center;
-        cursor: pointer;
-        opacity: 0.8;
-        span {
-            font-weight: bold;
-        }
-        img {
-            height: 100px;
+        top: 50%;
+        left: 50%;
+        transform: translateY(-50%) translateX(-50%);
+        z-index: 0;
+        .dashboardWizardContainer {
+            margin: 0 16px;
+            display: flex;
+            height: 100%;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            opacity: 0.8;
+            span {
+                font-weight: bold;
+            }
+            img {
+                height: 100px;
+            }
         }
     }
 }
