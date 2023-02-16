@@ -13,7 +13,7 @@ import { createNewImageWidgetSettings } from './imageWidget/ImageWidgetFunctions
 import { createNewCustomChartSettings } from './customchart/CustomChartFunctions'
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
-import { useStore } from '@/App.store'
+import useStore from '@/App.store'
 
 const store = useStore()
 
