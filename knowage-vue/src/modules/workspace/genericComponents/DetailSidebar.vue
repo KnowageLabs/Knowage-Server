@@ -107,32 +107,32 @@ export default defineComponent({
         documentButtons(): any {
             switch (this.viewType) {
                 case 'recent':
-                    return [{ icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', tooltip: this.$t('workspace.buttonsTooltips.executeDoc'), visible: true, command: this.emitEvent('executeRecent') }]
+                    return [{ icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', tooltip: this.$t('workspace.buttonsTooltips.executeDoc'), visible: true, command: () => this.emitEvent('executeRecent') }]
                 case 'repository':
                     return [
-                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.executeDoc'), visible: true, command: this.emitEvent('executeDocumentFromOrganizer') },
-                        { icon: 'fas fa-share', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.moveDoc'), visible: true, command: this.emitEvent('moveDocumentToFolder') },
-                        { icon: 'fas fa-trash', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.deleteDoc'), visible: true, command: this.emitEvent('deleteDocumentFromOrganizer') }
+                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.executeDoc'), visible: true, command: () => this.emitEvent('executeDocumentFromOrganizer') },
+                        { icon: 'fas fa-share', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.moveDoc'), visible: true, command: () => this.emitEvent('moveDocumentToFolder') },
+                        { icon: 'fas fa-trash', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.deleteDoc'), visible: true, command: () => this.emitEvent('deleteDocumentFromOrganizer') }
                     ]
                 case 'dataset':
                     return [
-                        { icon: 'fas fa-eye', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.previewDs'), visible: this.canLoadData, command: this.emitEvent('previewDataset') },
-                        { icon: 'fas fa-question-circle', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.help'), visible: true, command: this.emitEvent('getHelp') },
+                        { icon: 'fas fa-eye', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.previewDs'), visible: this.canLoadData, command: () => this.emitEvent('previewDataset') },
+                        { icon: 'fas fa-question-circle', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.help'), visible: true, command: () => this.emitEvent('getHelp') },
                         { icon: 'fas fa-ellipsis-v', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.other'), visible: true, command: this.showMenu }
                     ]
                 case 'analysis':
                     return [
-                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.executeDoc'), visible: true, command: this.emitEvent('executeAnalysisDocument') },
-                        { icon: 'fas fa-edit', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.editDoc'), visible: this.isOwner, command: this.emitEvent('editAnalysisDocument') },
+                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.executeDoc'), visible: true, command: () => this.emitEvent('executeAnalysisDocument') },
+                        { icon: 'fas fa-edit', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.editDoc'), visible: this.isOwner, command: () => this.emitEvent('editAnalysisDocument') },
                         { icon: 'fas fa-ellipsis-v', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.buttonsTooltips.other'), visible: true, command: this.showMenu }
                     ]
                 case 'businessModel':
-                    return [{ icon: 'fa fa-search', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.myModels.openInQBE'), visible: true, command: this.emitEvent('openDatasetInQBE') }]
+                    return [{ icon: 'fa fa-search', class: 'p-button-text p-button-rounded p-button-plain', tooltip: this.$t('workspace.myModels.openInQBE'), visible: true, command: () => this.emitEvent('openDatasetInQBE') }]
                 case 'federationDataset':
                     return [
-                        { icon: 'fa fa-search', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openDatasetInQBE') },
-                        { icon: 'pi pi-pencil', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('editDataset') },
-                        { icon: 'fas fa-trash-alt', class: 'p-button-text p-button-rounded p-button-plain', visible: (this.$store.state as any).user.isSuperadmin || (this.$store.state as any).user.userId === this.document.owner, command: this.emitEvent('deleteDataset') }
+                        { icon: 'fa fa-search', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: () => this.emitEvent('openDatasetInQBE') },
+                        { icon: 'pi pi-pencil', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: () => this.emitEvent('editDataset') },
+                        { icon: 'fas fa-trash-alt', class: 'p-button-text p-button-rounded p-button-plain', visible: (this.$store.state as any).user.isSuperadmin || (this.$store.state as any).user.userId === this.document.owner, command: () => this.emitEvent('deleteDataset') }
                     ]
                 default:
                     return []
@@ -166,24 +166,24 @@ export default defineComponent({
             this.menuButtons = []
             if (this.viewType == 'analysis') {
                 this.menuButtons.push(
-                    { key: '1', label: this.$t('workspace.myAnalysis.menuItems.share'), icon: 'fas fa-share-alt', command: this.emitEvent('shareAnalysisDocument'), visible: !this.isAnalysisShared },
-                    { key: '2', label: this.$t('workspace.myAnalysis.menuItems.unshare'), icon: 'fas fa-times-circle', command: this.emitEvent('shareAnalysisDocument'), visible: this.isAnalysisShared },
-                    { key: '3', label: this.$t('workspace.myAnalysis.menuItems.clone'), icon: 'fas fa-clone', command: this.emitEvent('cloneAnalysisDocument') },
-                    { key: '4', label: this.$t('workspace.myAnalysis.menuItems.delete'), icon: 'fas fa-trash', command: this.emitEvent('deleteAnalysisDocument') },
-                    { key: '5', label: this.$t('workspace.myAnalysis.menuItems.upload'), icon: 'fas fa-upload', command: this.emitEvent('uploadAnalysisPreviewFile') }
+                    { key: '1', label: this.$t('workspace.myAnalysis.menuItems.share'), icon: 'fas fa-share-alt', command: () => this.emitEvent('shareAnalysisDocument'), visible: !this.isAnalysisShared },
+                    { key: '2', label: this.$t('workspace.myAnalysis.menuItems.unshare'), icon: 'fas fa-times-circle', command: () => this.emitEvent('shareAnalysisDocument'), visible: this.isAnalysisShared },
+                    { key: '3', label: this.$t('workspace.myAnalysis.menuItems.clone'), icon: 'fas fa-clone', command: () => this.emitEvent('cloneAnalysisDocument') },
+                    { key: '4', label: this.$t('workspace.myAnalysis.menuItems.delete'), icon: 'fas fa-trash', command: () => this.emitEvent('deleteAnalysisDocument') },
+                    { key: '5', label: this.$t('workspace.myAnalysis.menuItems.upload'), icon: 'fas fa-upload', command: () => this.emitEvent('uploadAnalysisPreviewFile') }
                 )
             } else if (this.viewType == 'dataset') {
                 let tmp = [] as any
                 tmp.push(
-                    { key: '0', label: this.$t('workspace.myAnalysis.menuItems.showDsDetails'), icon: 'fas fa-pen', command: this.emitEvent('editDataset'), visible: this.isDatasetOwner && (this.document.dsTypeCd == 'File' || this.document.dsTypeCd == 'Prepared') },
-                    { key: '1', label: this.$t('workspace.myModels.openInQBE'), icon: 'fas fa-pen', command: this.emitEvent('openDatasetInQBE'), visible: this.showQbeEditButton },
-                    { key: '2', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: this.emitEvent('exportToXlsx'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.document.dsTypeCd != 'File' && this.datasetIsIterable },
-                    { key: '3', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: this.emitEvent('exportToCsv'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.document.dsTypeCd != 'File' },
-                    { key: '4', label: this.$t('workspace.myData.fileDownload'), icon: 'fas fa-download', command: this.emitEvent('downloadDatasetFile'), visible: this.document.dsTypeCd == 'File' },
-                    { key: '5', label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: this.emitEvent('shareDataset'), visible: this.canLoadData && this.isDatasetOwner && this.document.dsTypeCd != 'Prepared' },
-                    { key: '6', label: this.$t('workspace.myData.cloneDataset'), icon: 'fas fa-clone', command: this.emitEvent('cloneDataset'), visible: this.canLoadData && this.document.dsTypeCd == 'Qbe' },
+                    { key: '0', label: this.$t('workspace.myAnalysis.menuItems.showDsDetails'), icon: 'fas fa-pen', command: () => this.emitEvent('editDataset'), visible: this.isDatasetOwner && (this.document.dsTypeCd == 'File' || this.document.dsTypeCd == 'Prepared') },
+                    { key: '1', label: this.$t('workspace.myModels.openInQBE'), icon: 'fas fa-pen', command: () => this.emitEvent('openDatasetInQBE'), visible: this.showQbeEditButton },
+                    { key: '2', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.emitEvent('exportToXlsx'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.document.dsTypeCd != 'File' && this.datasetIsIterable },
+                    { key: '3', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: () => this.emitEvent('exportToCsv'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.document.dsTypeCd != 'File' },
+                    { key: '4', label: this.$t('workspace.myData.fileDownload'), icon: 'fas fa-download', command: () => this.emitEvent('downloadDatasetFile'), visible: this.document.dsTypeCd == 'File' },
+                    { key: '5', label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: () => this.emitEvent('shareDataset'), visible: this.canLoadData && this.isDatasetOwner && this.document.dsTypeCd != 'Prepared' },
+                    { key: '6', label: this.$t('workspace.myData.cloneDataset'), icon: 'fas fa-clone', command: () => this.emitEvent('cloneDataset'), visible: this.canLoadData && this.document.dsTypeCd == 'Qbe' },
 
-                    { key: '9', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: this.emitEvent('deleteDataset'), visible: this.isDatasetOwner }
+                    { key: '9', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.emitEvent('deleteDataset'), visible: this.isDatasetOwner }
                 )
 
                 if ((this.$store.state as any).user?.functionalities.includes('DataPreparation')) {
@@ -191,7 +191,7 @@ export default defineComponent({
                         key: '7',
                         label: this.$t('workspace.myData.openDataPreparation'),
                         icon: 'fas fa-cogs',
-                        command: this.emitEvent('openDataPreparation'),
+                        command: () => this.emitEvent('openDataPreparation'),
                         visible: this.canLoadData && this.document.dsTypeCd != 'Qbe' && this.document.pars && this.document.pars.length == 0
                     })
                 }
