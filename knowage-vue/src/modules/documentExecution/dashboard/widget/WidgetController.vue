@@ -33,7 +33,7 @@
             @launchSelection="launchSelection"
             @changeFocus="changeFocus"
         ></WidgetButtonBar>
-        <ContextMenu ref="contextMenu" :model="items" />
+        <ContextMenu ref="contextMenu" :model="items" v-if="canEditDashboard(document)" />
     </grid-item>
 </template>
 
