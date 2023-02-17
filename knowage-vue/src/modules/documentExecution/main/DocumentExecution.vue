@@ -49,18 +49,20 @@
                     @applyCustomView="executeOlapCustomView"
                     @executeCrossNavigation="executeOLAPCrossNavigation"
                 ></Olap>
-                <DashboardController
-                    v-else-if="mode === 'dashboard' || newDashboardMode"
-                    :sbi-execution-id="urlData?.sbiExecutionId"
-                    :document="document"
-                    :reload-trigger="reloadTrigger"
-                    :hidden-form-data="hiddenFormData"
-                    :filters-data="filtersData"
-                    :new-dashboard-mode="newDashboardMode"
-                    @newDashboardSaved="onNewDashboardSaved"
-                    @add-widget="addWidget"
-                    @add-dataset="openDashboardDatasetManagement"
-                ></DashboardController>
+                <template v-else-if="mode === 'dashboard' || newDashboardMode">
+                    <DashboardController
+                        v-for="(item, index) in breadcrumbs"
+                        :key="index"
+                        :sbiExecutionId="urlData?.sbiExecutionId"
+                        :document="item.document"
+                        :reloadTrigger="reloadTrigger"
+                        :hiddenFormData="item.hiddenFormData"
+                        :filtersData="item.filtersData"
+                        :newDashboardMode="newDashboardMode"
+                        @newDashboardSaved="onNewDashboardSaved"
+                        @executeCrossNavigation="onExecuteCrossNavigation"
+                    ></DashboardController>
+                </template>
             </template>
             <iframe
                 v-for="(item, index) in breadcrumbs"
@@ -122,7 +124,6 @@ import TieredMenu from 'primevue/tieredmenu'
 import Registry from '../registry/Registry.vue'
 import Dossier from '../dossier/Dossier.vue'
 import Olap from '../olap/Olap.vue'
-import moment from 'moment'
 import DocumentExecutionSelectCrossNavigationDialog from './dialogs/documentExecutionSelectCrossNavigationDialog/DocumentExecutionSelectCrossNavigationDialog.vue'
 import DocumentExecutionCNContainerDialog from './dialogs/documentExecutionCNContainerDialog/DocumentExecutionCNContainerDialog.vue'
 import mainStore from '../../../App.store'
@@ -136,7 +137,7 @@ import { loadFilters } from './DocumentExecutionDirverHelpers'
 
 // @ts-ignore
 // eslint-disable-next-line
-window.execExternalCrossNavigation = function (outputParameters, otherOutputParameters, crossNavigationLabel) {
+window.execExternalCrossNavigation = function(outputParameters, otherOutputParameters, crossNavigationLabel) {
     postMessage(
         {
             type: 'crossNavigation',
@@ -513,9 +514,7 @@ export default defineComponent({
         },
         async loadPage(initialLoading = false, documentLabel: string | null = null, crossNavigationPopupMode = false) {
             this.loading = true
-            // TODO
-            //await this.loadFilters(initialLoading)
-            this.filtersData = await loadFilters(initialLoading, this.filtersData, this.document, this.breadcrumbs, this.userRole, this.parameterValuesMap, this.tabKey as string, this.sessionEnabled, this.$http)
+            this.filtersData = await loadFilters(initialLoading, this.filtersData, this.document, this.breadcrumbs, this.userRole, this.parameterValuesMap, this.tabKey as string, this.sessionEnabled, this.$http, this)
             console.log('------------- filters data: ', this.filtersData)
             if (this.filtersData?.isReadyForExecution) {
                 this.parameterSidebarVisible = false
@@ -552,114 +551,6 @@ export default defineComponent({
                     label: this.document.name,
                     document: this.document
                 })
-            }
-        },
-        async loadFilters(initialLoading = false) {
-            if (this.parameterValuesMap && this.parameterValuesMap[this.document.label + '-' + this.tabKey] && initialLoading) {
-                this.filtersData = this.parameterValuesMap[this.document.label + '-' + this.tabKey]
-                this.setFiltersForBreadcrumbItem()
-                return
-            }
-
-            if (this.sessionEnabled && !this.document.navigationParams) {
-                const tempFilters = sessionStorage.getItem(this.document.label)
-                if (tempFilters) {
-                    this.filtersData = JSON.parse(tempFilters) as {
-                        filterStatus: iParameter[]
-                        isReadyForExecution: boolean
-                    }
-                    this.filtersData.filterStatus?.forEach((filter: any) => {
-                        if (filter.type === 'DATE' && filter.parameterValue[0].value) {
-                            filter.parameterValue[0].value = new Date(filter.parameterValue[0].value)
-                        }
-                    })
-                    this.setFiltersForBreadcrumbItem()
-                    return
-                }
-            }
-
-            await this.$http
-                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentexecution/filters`, {
-                    label: this.document.label,
-                    role: this.userRole,
-                    parameters: this.document.navigationParams ?? {}
-                })
-                .then((response: AxiosResponse<any>) => {
-                    this.filtersData = response.data
-                })
-                .catch((error: any) => {
-                    if (error.response?.status === 500) {
-                        this.setError({
-                            title: this.$t('common.error.generic'),
-                            msg: this.$t('documentExecution.main.userRoleError')
-                        })
-                    }
-                })
-
-            this.filtersData?.filterStatus?.forEach((el: iParameter) => {
-                el.parameterValue = !el.multivalue || (el.typeCode === 'MAN_IN' && !el.selectionType) ? [{ value: '', description: '' }] : []
-                if (el.driverDefaultValue?.length > 0) {
-                    let valueIndex = '_col0'
-                    let descriptionIndex = 'col1'
-                    if (el.metadata?.colsMap) {
-                        valueIndex = Object.keys(el.metadata?.colsMap).find((key: string) => el.metadata.colsMap[key] === el.metadata.valueColumn) as any
-                        descriptionIndex = Object.keys(el.metadata?.colsMap).find((key: string) => el.metadata.colsMap[key] === el.metadata.descriptionColumn) as any
-                    }
-
-                    el.parameterValue = el.driverDefaultValue.map((defaultValue: any) => {
-                        return {
-                            value: defaultValue.value ?? defaultValue[valueIndex],
-                            description: defaultValue.desc ?? defaultValue[descriptionIndex]
-                        }
-                    })
-
-                    if (el.type === 'DATE' && !el.selectionType && el.valueSelection === 'man_in' && el.showOnPanel === 'true' && el.visible) {
-                        el.parameterValue[0].value = moment(el.parameterValue[0].description?.split('#')[0]).toDate() as any
-                    }
-                }
-                if (el.data) {
-                    el.data = el.data.map((data: any) => {
-                        return this.formatParameterDataOptions(el, data)
-                    })
-
-                    if (el.data.length === 1) {
-                        el.parameterValue = [...el.data]
-                    }
-                }
-                if ((el.selectionType === 'COMBOBOX' || el.selectionType === 'LIST') && el.multivalue && el.mandatory && el.data.length === 1) {
-                    el.showOnPanel = 'false'
-                    el.visible = false
-                }
-
-                if (!el.parameterValue) {
-                    el.parameterValue = [{ value: '', description: '' }]
-                }
-
-                if (el.parameterValue[0] && !el.parameterValue[0].description) {
-                    el.parameterValue[0].description = el.parameterDescription ? el.parameterDescription[0] : ''
-                }
-            })
-
-            if (this.document.navigationParams) {
-                loadNavigationParamsInitialValue(this)
-            }
-
-            this.setFiltersForBreadcrumbItem()
-        },
-        setFiltersForBreadcrumbItem() {
-            const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
-            if (index !== -1) this.breadcrumbs[index].filtersData = this.filtersData
-        },
-        formatParameterDataOptions(parameter: iParameter, data: any) {
-            if (!parameter.metadata) return { value: data['_col0'] ? data['_col0'] : '', description: data['_col1'] ? data['_col1'] : '' }
-            const valueColumn = parameter.metadata.valueColumn
-            const descriptionColumn = parameter.metadata.descriptionColumn
-            const valueIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === valueColumn)
-            const descriptionIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === descriptionColumn)
-
-            return {
-                value: valueIndex ? data[valueIndex] : '',
-                description: descriptionIndex ? data[descriptionIndex] : ''
             }
         },
         async loadURL(olapParameters: any, documentLabel: string | null = null, crossNavigationPopupMode = false) {
@@ -781,8 +672,6 @@ export default defineComponent({
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
             console.log('----- index: ', index)
             if (index !== -1) this.breadcrumbs[index].hiddenFormData = this.hiddenFormData
-
-            console.log('>>>>> BLA: ', this.breadcrumbs)
         },
         async sendHiddenFormData() {
             await this.$http
@@ -846,9 +735,7 @@ export default defineComponent({
             this.loading = false
         },
         getFormattedParameters() {
-            if (!this.filtersData || !this.filtersData.filterStatus) {
-                return {}
-            }
+            if (!this.filtersData || !this.filtersData.filterStatus) return {}
 
             const parameters = {} as any
 
@@ -1033,118 +920,6 @@ export default defineComponent({
             this.exporters = null
             await this.loadPage()
         },
-        getCrossBeadcrumb(crossNavigationDocument: any, angularData: any) {
-            let tempCrossBreadcrumb = crossNavigationDocument?.crossBreadcrumb
-            if (tempCrossBreadcrumb?.includes('$P{')) {
-                tempCrossBreadcrumb = this.updateCrossBreadCrumbWithParameterValues(tempCrossBreadcrumb, angularData)
-            }
-
-            return tempCrossBreadcrumb ?? this.document.name
-        },
-        updateCrossBreadCrumbWithParameterValues(tempCrossBreadcrumb: string, angularData: any) {
-            const parameterPlaceholders = tempCrossBreadcrumb.match(/{[\w\d]+}/g)
-            if (!parameterPlaceholders) return ''
-            const parameters = angularData.outputParameters
-            for (let i = 0; i < angularData.otherOutputParameters.length; i++) {
-                const key = Object.keys(angularData.otherOutputParameters[i])[0]
-                parameters[key] = angularData.otherOutputParameters[i][key]
-            }
-            const temp = [] as any[]
-            for (let i = 0; i < parameterPlaceholders.length; i++) {
-                const tempParameterName = parameterPlaceholders[i].substring(1, parameterPlaceholders[i].length - 1)
-                temp.push({
-                    parameterPlaceholder: parameterPlaceholders[i],
-                    value: parameters[tempParameterName]
-                })
-            }
-            let finalString = tempCrossBreadcrumb
-            for (let i = 0; i < temp.length; i++) {
-                finalString = finalString.replaceAll('$P' + temp[i].parameterPlaceholder, temp[i].value)
-            }
-
-            return finalString
-        },
-        addDocumentOtherParametersToNavigationParamas(navigationParams: any[], angularData: any, crossNavigationDocument: any) {
-            if (!angularData.outputParameters || angularData.outputParameters.length === 0 || !crossNavigationDocument?.navigationParams) return
-            const keys = Object.keys(angularData.outputParameters)
-            const documentNavigationParamsKeys = Object.keys(crossNavigationDocument.navigationParams)
-            for (let i = 0; i < keys.length; i++) {
-                const tempKey = keys[i]
-                let newKey = ''
-                for (let j = 0; j < documentNavigationParamsKeys.length; j++) {
-                    if (crossNavigationDocument.navigationParams[documentNavigationParamsKeys[j]].value?.label === tempKey) {
-                        newKey = documentNavigationParamsKeys[j]
-                    }
-                }
-                if (newKey) navigationParams[newKey] = angularData.outputParameters[tempKey]
-            }
-
-            this.addSourceDocumentParameterValuesFromDocumentNavigationParameters(navigationParams, crossNavigationDocument)
-        },
-        addSourceDocumentParameterValuesFromDocumentNavigationParameters(navigationParams: any[], crossNavigationDocument: any) {
-            const documentNavigationParamsKeys = Object.keys(crossNavigationDocument.navigationParams)
-            documentNavigationParamsKeys.forEach((key: string) => {
-                if (!navigationParams[key]) {
-                    const sourceParameter = this.filtersData.filterStatus.find((parameter: iParameter) => {
-                        return parameter.urlName === crossNavigationDocument.navigationParams[key].value.label
-                    })
-                    if (sourceParameter) {
-                        navigationParams[key] = sourceParameter.parameterValue[0].value ?? ''
-                        navigationParams[key + '_field_visible_description'] = sourceParameter.parameterValue[0].description ?? ''
-                    }
-                }
-            })
-        },
-        openCrossNavigationInNewWindow(popupOptions: any, crossNavigationDocument: any, navigationParams: any) {
-            if (!crossNavigationDocument || !crossNavigationDocument.document) return
-            const parameters = encodeURI(JSON.stringify(navigationParams))
-            const url =
-                import.meta.env.VITE_HOST_URL +
-                `/knowage/restful-services/publish?PUBLISHER=documentExecutionNg&OBJECT_ID=${crossNavigationDocument.document.id}&OBJECT_LABEL=${crossNavigationDocument.document.label}&SELECTED_ROLE=${this.sessionRole}&SBI_EXECUTION_ID=null&OBJECT_NAME=${crossNavigationDocument.document.name}&CROSS_PARAMETER=${parameters}`
-            window.open(url, '_blank', `toolbar=0,status=0,menubar=0,width=${popupOptions.width || '800'},height=${popupOptions.height || '600'}`)
-        },
-        formatAngularOutputParameters(otherOutputParameters: any[]) {
-            const startDocumentInputParameters = deepcopy(this.document.drivers)
-            const keys = [] as any[]
-            otherOutputParameters.forEach((parameter: any) => keys.push(Object.keys(parameter)[0]))
-            for (let i = 0; i < startDocumentInputParameters.length; i++) {
-                if (!keys.includes(startDocumentInputParameters[i].label)) {
-                    const tempObject = {} as any
-                    tempObject[startDocumentInputParameters[i].label] = this.getParameterValueForCrossNavigation(startDocumentInputParameters[i].label)
-                    otherOutputParameters.push(tempObject)
-                }
-            }
-        },
-        getParameterValueForCrossNavigation(parameterLabel: string) {
-            if (!parameterLabel) return
-            const index = this.filtersData.filterStatus?.findIndex((param: any) => param.label === parameterLabel)
-            return index !== -1 ? this.filtersData.filterStatus[index].parameterValue[0].value : ''
-        },
-        formatNavigationParams(otherOutputParameters: any[], navigationParams: any) {
-            const formatedParams = {} as any
-
-            otherOutputParameters.forEach((el: any) => {
-                let found = false
-                let label = ''
-
-                for (let i = 0; i < Object.keys(navigationParams).length; i++) {
-                    if (navigationParams[Object.keys(navigationParams)[i]].value.label === Object.keys(el)[0]) {
-                        found = true
-                        label = Object.keys(navigationParams)[i]
-                        break
-                    }
-                }
-
-                if (found) {
-                    formatedParams[label] = el[Object.keys(el)[0]]
-                    formatedParams[label + '_field_visible_description'] = el[Object.keys(el)[0]]
-                }
-            })
-
-            this.setNavigationParametersFromCurrentFilters(formatedParams, navigationParams)
-
-            return formatedParams
-        },
         setNavigationParametersFromCurrentFilters(formatedParams: any, navigationParams: any) {
             const navigationParamsKeys = navigationParams ? Object.keys(navigationParams) : []
             const formattedParameters = this.getFormattedParameters()
@@ -1246,15 +1021,7 @@ export default defineComponent({
         },
         saveParametersInSession() {
             const tempFilters = deepcopy(this.filtersData)
-            tempFilters.filterStatus?.forEach((filter: any) => {
-                delete filter.dataDependsOnParameters
-                delete filter.dataDependentParameters
-                delete filter.dependsOnParameters
-                delete filter.dependentParameters
-                delete filter.lovDependsOnParameters
-                delete filter.lovDependentParameters
-            })
-
+            tempFilters.filterStatus?.forEach((filter: any) => ['dataDependsOnParameters', 'dataDependentParameters', 'dependsOnParameters', 'dependentParameters', 'lovDependsOnParameters', 'lovDependentParameters'].forEach((field: string) => delete filter[field]))
             sessionStorage.setItem(this.document.label, JSON.stringify(tempFilters))
         },
         async onCrossNavigationSelected(event: any) {
@@ -1317,8 +1084,9 @@ export default defineComponent({
             }
             this.newDashboardMode = false
         },
-        onExecuteCrossNavigation(payload: any) {
+        async onExecuteCrossNavigation(payload: any) {
             executeCrossNavigation(payload, this.document)
+            this.filtersData = await loadFilters(false, this.filtersData, this.document, this.breadcrumbs, this.userRole, this.parameterValuesMap, this.tabKey as string, this.sessionEnabled, this.$http, this)
         }
     }
 })

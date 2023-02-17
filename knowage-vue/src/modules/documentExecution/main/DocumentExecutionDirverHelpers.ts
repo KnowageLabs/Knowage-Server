@@ -4,11 +4,12 @@ import store from '@/App.store.js'
 import moment from 'moment'
 import i18n from '@/App.i18n'
 import { AxiosResponse } from 'axios'
+import { loadNavigationInitialValuesFromDashboard } from './DocumentExecutionCrossNavigationHelper'
 
 const { t } = i18n.global
 const mainStore = store()
 
-export const loadFilters = async (initialLoading: boolean, filtersData: { filterStatus: iParameter[], isReadyForExecution: boolean }, document: any, breadcrumbs: any[], userRole: string | null, parameterValuesMap: any, tabKey: string, sessionEnabled: boolean, $http: any) => {
+export const loadFilters = async (initialLoading: boolean, filtersData: { filterStatus: iParameter[], isReadyForExecution: boolean }, document: any, breadcrumbs: any[], userRole: string | null, parameterValuesMap: any, tabKey: string, sessionEnabled: boolean, $http: any, vueComponenet: any) => {
     if (parameterValuesMap && parameterValuesMap[document.label + '-' + tabKey] && initialLoading) return loadFiltersFromParametersMap(parameterValuesMap, document, tabKey, filtersData, breadcrumbs)
     if (sessionEnabled && !document.navigationParams) return loadFiltersFromSession(document, filtersData, breadcrumbs)
 
@@ -18,7 +19,9 @@ export const loadFilters = async (initialLoading: boolean, filtersData: { filter
 
     formatDrivers(filtersData)
 
-    if (document.navigationParams) loadNavigationParamsInitialValue(this)
+    if (document.navigationParams) {
+        document.navigationFromDashboard ? loadNavigationInitialValuesFromDashboard(document, filtersData) : loadNavigationParamsInitialValue(vueComponenet)
+    }
     setFiltersForBreadcrumbItem(breadcrumbs, filtersData, document)
 
     return filtersData

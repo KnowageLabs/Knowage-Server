@@ -421,12 +421,14 @@ export default defineComponent({
             }
         },
         onCellClicked(node) {
+            // TODO - remove hardcoded
             executeCrossNavigation('testValue', 713)
+            return
+
             if (!this.editorMode) {
                 if (node.colDef.measure == 'MEASURE' || node.colDef.pinned || node.value === '' || node.value == undefined) return
                 //SELECTION LOGIC -------------------------------------------------------------------
                 var modalSelection = this.propWidget.settings.interactions.selection
-                // TODO - remove hardcoded
 
                 if (modalSelection.enabled) {
                     if (modalSelection.multiselection.enabled) {

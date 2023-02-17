@@ -1,4 +1,5 @@
 import { IDashboardCrossNavigation } from "../dashboard/Dashboard"
+import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
 import { IDocumentNavigationParameter, ICrossNavigationParameter } from "./DocumentExecution"
 
 let documentCrossNavigations = [] as IDashboardCrossNavigation[]
@@ -12,6 +13,7 @@ export const executeCrossNavigation = (payload: any, document: any) => {
     const formattedCrossNavigationParameters = getFormattedCrossNavigationParameters(documentCrossNavigations[0])
     console.log('-------- formattedCrossNavigationParameters: ', formattedCrossNavigationParameters)
     document.navigationParams = createDocumentNavigationParametersForFilterService(formattedCrossNavigationParameters)
+    document.navigationFromDashboard = true
     console.log(">>>>>>>>>>>     document.formattedCrossNavigationParameters: ", document.navigationParams)
 
 }
@@ -52,4 +54,9 @@ const createDocumentNavigationParametersForFilterService = (formattedCrossNaviga
         }
     })
     return documentNavigationParamsForFilterService
+}
+
+export const loadNavigationInitialValuesFromDashboard = (document: any, filtersData: { filterStatus: iParameter[], isReadyForExecution: boolean }) => {
+    console.log("-------- DOCUMENT: ", document)
+    console.log("-------- FILTERS DATA: ", filtersData)
 }

@@ -9,7 +9,7 @@
         </template>
 
         <div class="p-m-2">
-            <div v-if="!linkInfo.isPublic" class="p-m-2">
+            <div v-if="linkInfo && !linkInfo.isPublic" class="p-m-2">
                 <p>
                     <i class="fa fa-exclamation-triangle p-mr-2"></i>
                     <span>{{ $t('documentExecution.main.publicUrlExecutionDisabled') }}</span>
@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import Dialog from 'primevue/dialog'
 import documentExecutionLinkDialogDescriptor from './DocumentExecutionLinkDialogDescriptor.json'
 import Textarea from 'primevue/textarea'
@@ -46,7 +46,18 @@ import mainStore from '../.././../../../App.store'
 export default defineComponent({
     name: 'document-execution-link-dialog',
     components: { Dialog, Textarea },
-    props: { visible: { type: Boolean }, linkInfo: { type: Object }, embedHTML: { type: Boolean }, propDocument: { type: Object }, parameters: { type: Array } },
+    props: {
+        visible: { type: Boolean },
+        linkInfo: {
+            type: Object as PropType<{
+                isPublic: boolean
+                noPublicRoleError: boolean
+            } | null>
+        },
+        embedHTML: { type: Boolean },
+        propDocument: { type: Object },
+        parameters: { type: Array }
+    },
     emits: ['close'],
     setup() {
         const store = mainStore()
