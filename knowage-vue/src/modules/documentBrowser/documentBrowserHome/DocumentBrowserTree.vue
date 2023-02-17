@@ -13,7 +13,11 @@
         @node-select="setSelectedFolder"
         @node-expand="setOpenFolderIcon($event)"
         @node-collapse="setClosedFolderIcon($event)"
-    ></Tree>
+    >
+        <template #default="slotProps">
+            <span>{{ getTranslatedLabel(slotProps.node.label) }}</span>
+        </template>
+    </Tree>
 </template>
 
 <script lang="ts">
@@ -196,6 +200,9 @@ export default defineComponent({
                 return result
             }
             return null
+        },
+        getTranslatedLabel(label: string) {
+            return (this as any).$internationalization(label)
         }
     }
 })
