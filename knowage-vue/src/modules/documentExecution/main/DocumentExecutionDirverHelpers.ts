@@ -9,7 +9,7 @@ import { loadNavigationInitialValuesFromDashboard } from './DocumentExecutionCro
 const { t } = i18n.global
 const mainStore = store()
 
-export const loadFilters = async (initialLoading: boolean, filtersData: { filterStatus: iParameter[], isReadyForExecution: boolean }, document: any, breadcrumbs: any[], userRole: string | null, parameterValuesMap: any, tabKey: string, sessionEnabled: boolean, $http: any, vueComponenet: any) => {
+export const loadFilters = async (initialLoading: boolean, filtersData: { filterStatus: iParameter[], isReadyForExecution: boolean }, document: any, breadcrumbs: any[], userRole: string | null, parameterValuesMap: any, tabKey: string, sessionEnabled: boolean, $http: any, dateFormat: string, vueComponenet: any) => {
     if (parameterValuesMap && parameterValuesMap[document.label + '-' + tabKey] && initialLoading) return loadFiltersFromParametersMap(parameterValuesMap, document, tabKey, filtersData, breadcrumbs)
     if (sessionEnabled && !document.navigationParams) return loadFiltersFromSession(document, filtersData, breadcrumbs)
     console.log('---2------ document: ', document)
@@ -23,7 +23,7 @@ export const loadFilters = async (initialLoading: boolean, filtersData: { filter
     formatDrivers(filtersData)
 
     if (document.navigationParams) {
-        document.navigationFromDashboard ? loadNavigationInitialValuesFromDashboard(document, filtersData) : loadNavigationParamsInitialValue(vueComponenet)
+        document.navigationFromDashboard ? loadNavigationInitialValuesFromDashboard(document, filtersData, dateFormat) : loadNavigationParamsInitialValue(vueComponenet)
     }
     setFiltersForBreadcrumbItem(breadcrumbs, filtersData, document)
 

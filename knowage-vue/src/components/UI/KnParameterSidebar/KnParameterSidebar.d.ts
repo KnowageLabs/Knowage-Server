@@ -13,7 +13,7 @@ export interface iParameter {
     driverUseLabel: string
     label: string
     driverDefaultValue: { value: string | number; desc: string }[]
-    parameterValue: { value: string | number | Date; description: string }[]
+    parameterValue: { value: string | number | Date | null; description: string }[]
     type: string
     driverLabel: string
     mandatory: boolean
