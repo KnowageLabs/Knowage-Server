@@ -7,20 +7,20 @@
         <div :style="styleDescriptor.style.absoluteScroll">
             <Card>
                 <template #content>
-                    <DataTable class="p-datatable-sm kn-table georef-step1-table" :value="documentDataProp.dsJoins" dataKey="id" responsiveLayout="scroll" breakpoint="600px">
+                    <DataTable class="p-datatable-sm kn-table georef-step1-table" :value="documentDataProp.dsJoins" data-key="id" responsive-layout="scroll" breakpoint="600px">
                         <template #empty>
                             {{ $t('workspace.gis.dnl.emptyInfo') }}
                         </template>
                         <Column field="datasetColumn" :header="$t('workspace.gis.dsj.dsJoinCol')" :sortable="true">
                             <template #body="slotProps">
-                                <Dropdown id="dsJoinCol" class="kn-material-input kn-width-full" v-model="slotProps.data.datasetColumn" :options="documentDataProp.datasetJoinColumns" optionLabel="id" optionValue="id" :class="{ 'p-invalid': slotProps.data.datasetColumn == null }" />
-                                <small for="dsJoinCol" v-if="slotProps.data.datasetColumn == null" class="p-error">{{ $t('workspace.gis.fieldRequired') }} *</small>
+                                <Dropdown id="dsJoinCol" v-model="slotProps.data.datasetColumn" class="kn-material-input kn-width-full" :options="documentDataProp.datasetJoinColumns" option-label="id" option-value="id" :class="{ 'p-invalid': slotProps.data.datasetColumn == null }" />
+                                <small v-if="slotProps.data.datasetColumn == null" for="dsJoinCol" class="p-error">{{ $t('workspace.gis.fieldRequired') }} *</small>
                             </template>
                         </Column>
                         <Column field="layerColumn" :header="$t('workspace.gis.dsj.lyrJoinCol')" :sortable="true">
                             <template #body="slotProps">
-                                <Dropdown class="kn-material-input kn-width-full" v-model="slotProps.data.layerColumn" :options="documentDataProp.layerJoinColumns" optionLabel="property" optionValue="property" :class="{ 'p-invalid': slotProps.data.layerColumn == null }" />
-                                <small for="dsJoinCol" v-if="slotProps.data.layerColumn == null" class="p-error">{{ $t('workspace.gis.fieldRequired') }} *</small>
+                                <Dropdown v-model="slotProps.data.layerColumn" class="kn-material-input kn-width-full" :options="documentDataProp.layerJoinColumns" option-label="property" option-value="property" :class="{ 'p-invalid': slotProps.data.layerColumn == null }" />
+                                <small v-if="slotProps.data.layerColumn == null" for="dsJoinCol" class="p-error">{{ $t('workspace.gis.fieldRequired') }} *</small>
                             </template>
                         </Column>
                         <Column :style="styleDescriptor.style.trashColumn">
@@ -44,8 +44,14 @@ import Dropdown from 'primevue/dropdown'
 
 export default defineComponent({
     components: { DataTable, Column, Dropdown },
-    emits: ['joinsValidationChanged'],
     props: { documentDataProp: { type: Object as any, required: false } },
+    emits: ['joinsValidationChanged'],
+    data() {
+        return {
+            styleDescriptor,
+            documentData: {} as any
+        }
+    },
     computed: {
         joinsInvalid() {
             if ((this.documentDataProp.dsJoins.length == 0 && this.documentDataProp.datasetLabel != '') || this.joinsContainEmptyFields) {
@@ -62,16 +68,6 @@ export default defineComponent({
             return value
         }
     },
-    data() {
-        return {
-            styleDescriptor,
-            documentData: {} as any
-        }
-    },
-    created() {
-        this.documentData = this.documentDataProp
-        this.$emit('joinsValidationChanged', 'joinsInvalid', this.joinsInvalid)
-    },
     watch: {
         documentDataProp() {
             this.documentData = this.documentDataProp
@@ -79,6 +75,10 @@ export default defineComponent({
         joinsInvalid() {
             this.$emit('joinsValidationChanged', 'joinsInvalid', this.joinsInvalid)
         }
+    },
+    created() {
+        this.documentData = this.documentDataProp
+        this.$emit('joinsValidationChanged', 'joinsInvalid', this.joinsInvalid)
     },
     methods: {
         addJoinRow() {

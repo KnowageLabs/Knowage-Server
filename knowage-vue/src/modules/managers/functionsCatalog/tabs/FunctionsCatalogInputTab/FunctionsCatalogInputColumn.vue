@@ -2,14 +2,14 @@
     <div v-if="inputColumn" class="p-d-flex p-flex-row p-ai-center" data-test="input-columns-container">
         <div class="column-name-input kn-flex ">
             <span class="p-float-label">
-                <InputText class="kn-material-input" v-model.trim="inputColumn.name" :disabled="readonly" data-test="column-name-input" />
+                <InputText v-model.trim="inputColumn.name" class="kn-material-input" :disabled="readonly" data-test="column-name-input" />
                 <label for="columnName" class="kn-material-input-label"> {{ $t('managers.functionsCatalog.columnName') }} </label>
             </span>
         </div>
         <div class="p-field kn-flex p-m-2">
             <span>
                 <label for="columnType" class="kn-material-input-label">{{ $t('managers.functionsCatalog.columnType') }}</label>
-                <Dropdown class="kn-material-input" v-model="inputColumn.type" :options="functionsCatalogInputTabDescriptor.columnTypes" optionLabel="value" optionValue="value" :disabled="readonly" />
+                <Dropdown v-model="inputColumn.type" class="kn-material-input" :options="functionsCatalogInputTabDescriptor.columnTypes" option-label="value" option-value="value" :disabled="readonly" />
             </span>
         </div>
         <div class="p-field p-mt-5">

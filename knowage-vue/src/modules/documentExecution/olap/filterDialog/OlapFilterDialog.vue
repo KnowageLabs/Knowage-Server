@@ -7,7 +7,7 @@
                 </template>
             </Toolbar>
         </template>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
 
         <Message class="p-m-4" severity="info" :closable="false" :style="olapFilterDialogDescriptor.styles.message">
             <div v-if="treeLocked">
@@ -18,15 +18,15 @@
             <span v-else>{{ $t('documentExecution.olap.filterDialog.infoMessage') }}</span>
         </Message>
 
-        <SelectButton v-if="olapDesignerMode && !loading && propFilter?.type === 'slicer'" id="olap-filter-select-buttons" class="p-ml-auto p-mr-4" v-model="mode" :options="olapFilterDialogDescriptor.selectButtonOptions" optionValue="value">
+        <SelectButton v-if="olapDesignerMode && !loading && propFilter?.type === 'slicer'" id="olap-filter-select-buttons" v-model="mode" class="p-ml-auto p-mr-4" :options="olapFilterDialogDescriptor.selectButtonOptions" option-value="value">
             <template #option="slotProps">
                 <span>{{ $t(slotProps.option.label) }}</span>
             </template>
         </SelectButton>
 
         <div v-show="!loading">
-            <OlapFilterTree v-if="mode === 'selectFields'" :propFilter="filter" :id="id" :clearTrigger="clearTrigger" :treeLocked="treeLocked" @loading="loading = $event" @filtersChanged="onFiltersChange" @lockTree="treeLocked = true" @rootNode="setRootNode"></OlapFilterTree>
-            <OlapFilterTable v-else :propFilter="filter" :propLevels="levels" :parameters="parameters" :profileAttributes="profileAttributes"></OlapFilterTable>
+            <OlapFilterTree v-if="mode === 'selectFields'" :id="id" :prop-filter="filter" :clear-trigger="clearTrigger" :tree-locked="treeLocked" @loading="loading = $event" @filtersChanged="onFiltersChange" @lockTree="treeLocked = true" @rootNode="setRootNode"></OlapFilterTree>
+            <OlapFilterTable v-else :prop-filter="filter" :prop-levels="levels" :parameters="parameters" :profile-attributes="profileAttributes"></OlapFilterTable>
         </div>
 
         <template #footer>

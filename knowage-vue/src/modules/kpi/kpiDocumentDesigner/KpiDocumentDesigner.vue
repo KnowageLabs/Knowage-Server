@@ -15,13 +15,13 @@
                     <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
 
                     <div v-if="kpiDesigner" class="p-d-flex p-flex-column p-m-0">
-                        <KpiDocumentDesignerTypeCard v-if="showScorecards" class="kn-flex" :chartType="kpiDesigner.chart.type" @typeChanged="onTypeChanged"></KpiDocumentDesignerTypeCard>
-                        <KpiDocumentDesignerDocumentTypeCard v-if="kpiDesigner.chart.type === 'kpi'" class="kn-flex" :propChart="kpiDesigner.chart"></KpiDocumentDesignerDocumentTypeCard>
-                        <KpiDocumentDesignerKpiListCard v-if="kpiDesigner.chart.type === 'kpi'" class="kn-flex" :propData="kpiDesigner.chart.data" :kpiList="kpiList" :documentType="kpiDesigner.chart.model"></KpiDocumentDesignerKpiListCard>
-                        <KpiDocumentDesignerScorecardsListCard v-else class="kn-flex" :propData="kpiDesigner.chart.data" :scorecardList="scorecards" @scorecardChanged="onScorecardChanged"></KpiDocumentDesignerScorecardsListCard>
+                        <KpiDocumentDesignerTypeCard v-if="showScorecards" class="kn-flex" :chart-type="kpiDesigner.chart.type" @typeChanged="onTypeChanged"></KpiDocumentDesignerTypeCard>
+                        <KpiDocumentDesignerDocumentTypeCard v-if="kpiDesigner.chart.type === 'kpi'" class="kn-flex" :prop-chart="kpiDesigner.chart"></KpiDocumentDesignerDocumentTypeCard>
+                        <KpiDocumentDesignerKpiListCard v-if="kpiDesigner.chart.type === 'kpi'" class="kn-flex" :prop-data="kpiDesigner.chart.data" :kpi-list="kpiList" :document-type="kpiDesigner.chart.model"></KpiDocumentDesignerKpiListCard>
+                        <KpiDocumentDesignerScorecardsListCard v-else class="kn-flex" :prop-data="kpiDesigner.chart.data" :scorecard-list="scorecards" @scorecardChanged="onScorecardChanged"></KpiDocumentDesignerScorecardsListCard>
                         <div class="p-d-flex p-flex-row kn-flex p-p-0 p-m-0">
-                            <KpiDocumentDesignerStyleCard class="kn-flex" :propStyle="kpiDesigner.chart.style"></KpiDocumentDesignerStyleCard>
-                            <KpiDocumentDesignerOptionsCard v-if="kpiDesigner.chart.type === 'kpi'" class="kn-flex" :propOptions="kpiDesigner.chart.options"></KpiDocumentDesignerOptionsCard>
+                            <KpiDocumentDesignerStyleCard class="kn-flex" :prop-style="kpiDesigner.chart.style"></KpiDocumentDesignerStyleCard>
+                            <KpiDocumentDesignerOptionsCard v-if="kpiDesigner.chart.type === 'kpi'" class="kn-flex" :prop-options="kpiDesigner.chart.options"></KpiDocumentDesignerOptionsCard>
                         </div>
                     </div>
                 </div>
@@ -87,12 +87,12 @@ export default defineComponent({
     methods: {
         async loadPage() {
             this.loading = true
-            let config = {
+            const config = {
                 headers: { Accept: 'application/json, text/plain, */*' }
             }
 
-            let language = this.user.locale?.split('_')[0]
-            let country = this.user.locale?.split('_')[1]
+            const language = this.user.locale?.split('_')[0]
+            const country = this.user.locale?.split('_')[1]
             await this.$http.get(import.meta.env.VITE_KPI_ENGINE_API_URL + `1.0/pages/edit?SBI_LANGUAGE=${language}&SBI_COUNTRY=${country}&user_id=${this.user.userUniqueIdentifier}&document=${this.id}`, config).then(() => {})
 
             await this.loadKpi()

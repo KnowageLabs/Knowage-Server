@@ -9,7 +9,7 @@
                     <FabButton icon="fas fa-plus" @click="addTheme" />
                 </template>
             </Toolbar>
-            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+            <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
             <KnListBox :options="availableThemes" :selected="selectedTheme" :settings="descriptor.knListSettings" @click="selectTheme" @delete.stop="deleteThemeConfirm" />
         </div>
 
@@ -18,7 +18,7 @@
             <ThemeManagementExamples v-else :properties="selectedTheme.config"></ThemeManagementExamples>
         </div>
 
-        <div class="kn-list--column kn-page p-col-2 p-sm-2 p-md-3 p-p-0" v-if="selectedTheme.themeName">
+        <div v-if="selectedTheme.themeName" class="kn-list--column kn-page p-col-2 p-sm-2 p-md-3 p-p-0">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #start>
                     {{ themeToSend.themeName }}
@@ -29,7 +29,7 @@
             </Toolbar>
             <div class="p-p-2 p-mt-2 p-d-flex p-ai-center">
                 <span class="p-float-label kn-flex">
-                    <InputText id="themeName" class="kn-material-input" type="text" v-model="themeToSend.themeName" />
+                    <InputText id="themeName" v-model="themeToSend.themeName" class="kn-material-input" type="text" />
                     <label for="themeName" class="kn-material-input-label"> Theme name </label>
                 </span>
                 <InputSwitch v-model="themeToSend.active" v-tooltip="'active'"></InputSwitch>
@@ -41,13 +41,13 @@
                         <Fieldset :legend="key" :toggleable="true" :collapsed="true">
                             <div v-for="property in value.properties" :key="property.key">
                                 <div class="p-field">
-                                    <span class="p-float-label" v-if="property.type === 'text'">
-                                        <InputText id="exampleTextInput" class="kn-material-input p-inputtext-sm" type="text" @change="updateModelToSend(property.key)" v-model="selectedTheme.config[property.key]" />
+                                    <span v-if="property.type === 'text'" class="p-float-label">
+                                        <InputText id="exampleTextInput" v-model="selectedTheme.config[property.key]" class="kn-material-input p-inputtext-sm" type="text" @change="updateModelToSend(property.key)" />
                                         <label for="exampleTextInput" class="kn-material-input-label"> {{ property.label }} </label>
                                     </span>
-                                    <span class="p-float-label" v-if="property.type === 'color'">
-                                        <InputText id="exampleTextInput" class="kn-material-input p-inputtext-sm" type="text" v-model="selectedTheme.config[property.key]" @change="updateModelToSend(property.key)" />
-                                        <input type="color" v-model="selectedTheme.config[property.key]" @change="updateModelToSend(property.key)" />
+                                    <span v-if="property.type === 'color'" class="p-float-label">
+                                        <InputText id="exampleTextInput" v-model="selectedTheme.config[property.key]" class="kn-material-input p-inputtext-sm" type="text" @change="updateModelToSend(property.key)" />
+                                        <input v-model="selectedTheme.config[property.key]" type="color" @change="updateModelToSend(property.key)" />
                                         <label for="exampleTextInput" class="kn-material-input-label"> {{ property.label }} </label>
                                     </span>
                                 </div>
@@ -77,6 +77,10 @@ import mainStore from '../../../App.store'
 export default defineComponent({
     name: 'theme-management',
     components: { Divider, FabButton, Fieldset, InputSwitch, KnHint, KnListBox, ThemeManagementExamples },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             descriptor: ThemeManagementDescriptor,
@@ -87,10 +91,6 @@ export default defineComponent({
             loading: false,
             themeHelper: new themeHelper()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     mounted() {
         this.loading = true
@@ -169,7 +169,7 @@ export default defineComponent({
             this.overrideDefaultValues(event.item)
         },
         setActiveTheme(theme) {
-            let newTheme = { ...(this.store.$state as any).defaultTheme, ...theme.config }
+            const newTheme = { ...(this.store.$state as any).defaultTheme, ...theme.config }
             this.store.setTheme(newTheme)
             this.themeHelper.setTheme(newTheme)
         },

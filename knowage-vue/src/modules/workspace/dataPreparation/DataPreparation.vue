@@ -3,13 +3,13 @@
         <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
             <template #start> Data preparation </template>
             <template #end>
-                <KnFabButton icon="fas fa-plus" @click="showForm" data-test="open-form-button"></KnFabButton>
+                <KnFabButton icon="fas fa-plus" data-test="open-form-button" @click="showForm"></KnFabButton>
             </template>
         </Toolbar>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
 
         <div class="kn-page-content managerDetail p-grid p-m-0 p-fluid">
-            <Card class="p-col-2 p-m-1 p-p-0" v-for="(item, index) in dataPreparation" v-bind:key="index">
+            <Card v-for="(item, index) in dataPreparation" :key="index" class="p-col-2 p-m-1 p-p-0">
                 <template #content>
                     <div class="p-col-5 d-flex flex-row mb-3">
                         <img src="https://i.imgur.com/ccMhxvC.png" width="50" />
@@ -22,9 +22,9 @@
                         <p>{{ item.description }}</p>
                     </div>
                     <div class="p-col-12 p-m-0 p-p-0 p-d-flex p-jc-end">
-                        <Button icon="pi pi-search" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.search')" @click="search($event, item)" />
+                        <Button v-tooltip.bottom="$t('common.search')" icon="pi pi-search" class="p-button-text p-button-rounded p-button-plain" @click="search($event, item)" />
 
-                        <Button icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.filter')" @click="filter($event)" />
+                        <Button v-tooltip.bottom="$t('common.filter')" icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" @click="filter($event)" />
                     </div>
                 </template>
             </Card>
@@ -44,11 +44,11 @@ export default defineComponent({
     props: {
         visibility: Boolean
     },
+
+    emits: ['update:visibility'],
     data() {
         return { descriptor: DataPreparationDescriptor, dataPreparation: Array<any>() }
     },
-
-    emits: ['update:visibility'],
     created() {
         this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '3.0/datasets/mydata/').then((response: AxiosResponse<any>) => (this.dataPreparation = response.data.root))
     },

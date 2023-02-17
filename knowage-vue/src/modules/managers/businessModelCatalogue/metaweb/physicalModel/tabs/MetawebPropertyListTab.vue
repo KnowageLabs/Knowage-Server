@@ -1,16 +1,16 @@
 <template>
-    <Accordion v-if="physicalModel" :multiple="true" :activeIndex="[0]">
+    <Accordion v-if="physicalModel" :multiple="true" :active-index="[0]">
         <AccordionTab>
             <template #header>
                 <span>{{ $t('metaweb.physicalModel.misc') }}</span>
             </template>
 
             <div class="p-grid">
-                <div class="p-col-6" v-for="(modelInfo, index) in metawebPropertyListTabDescriptor.physicalModelInfo" :key="index">
+                <div v-for="(modelInfo, index) in metawebPropertyListTabDescriptor.physicalModelInfo" :key="index" class="p-col-6">
                     <div class="p-fluid">
                         <div class="p-field">
                             <label :for="modelInfo.name" class="kn-material-input-label"> {{ $t(modelInfo.label) }} </label>
-                            <InputText class="kn-material-input" v-model="physicalModel[modelInfo.name]" :id="modelInfo.name" :disabled="true" :data-test="'input-' + modelInfo.label" />
+                            <InputText :id="modelInfo.name" v-model="physicalModel[modelInfo.name]" class="kn-material-input" :disabled="true" :data-test="'input-' + modelInfo.label" />
                         </div>
                     </div>
                 </div>
@@ -23,11 +23,11 @@
             </template>
 
             <div class="p-grid">
-                <div class="p-col-6" v-for="(prop, index) in categories[categoryKey]" :key="index">
+                <div v-for="(prop, index) in categories[categoryKey]" :key="index" class="p-col-6">
                     <div class="p-fluid">
                         <div class="p-field">
                             <label class="kn-material-input-label"> {{ prop.propertyType.name }} </label>
-                            <InputText class="kn-material-input" v-model="prop.value" :disabled="true" :data-test="'input-' + prop.propertyType.name" />
+                            <InputText v-model="prop.value" class="kn-material-input" :disabled="true" :data-test="'input-' + prop.propertyType.name" />
                         </div>
                     </div>
                 </div>

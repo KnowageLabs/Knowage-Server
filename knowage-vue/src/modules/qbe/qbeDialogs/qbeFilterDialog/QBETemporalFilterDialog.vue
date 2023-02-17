@@ -8,7 +8,7 @@
             </Toolbar>
         </template>
 
-        <DataTable class="p-datatable-sm kn-table p-m-4" :value="filters" v-model:selection="selectedFilter" selectionMode="single" responsiveLayout="stack" breakpoint="960px">
+        <DataTable v-model:selection="selectedFilter" class="p-datatable-sm kn-table p-m-4" :value="filters" selection-mode="single" responsive-layout="stack" breakpoint="960px">
             <template #empty>
                 <div id="noFunctionsFound">
                     {{ $t('common.info.noDataFound') }}

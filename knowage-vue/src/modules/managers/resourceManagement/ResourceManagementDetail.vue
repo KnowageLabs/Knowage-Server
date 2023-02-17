@@ -6,10 +6,10 @@
             >
 
             <template #end>
-                <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeDetail()" />
+                <Button v-tooltip.bottom="$t('common.close')" icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeDetail()" />
             </template>
         </Toolbar>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
         <Breadcrumb :home="home" :model="items"> </Breadcrumb>
         <div class="kn-page-content">
             <Toolbar v-if="selectedFiles.length > 0" class="kn-toolbar kn-toolbar--default p-m-0">
@@ -20,37 +20,37 @@
                 </template>
             </Toolbar>
 
-            <ResourceManagementImportFileDialog v-model:visibility="importFile" v-bind:path="folder.key" @fileUploaded="fileUploaded" v-bind:existingFiles="files" />
+            <ResourceManagementImportFileDialog v-model:visibility="importFile" :path="folder.key" :existing-files="files" @fileUploaded="fileUploaded" />
 
             <div class="managerDetail p-grid p-m-0 kn-height-full">
                 <div class="p-col">
                     <DataTable
                         ref="dt"
-                        :value="files"
-                        :loading="loading"
                         v-model:selection="selectedFiles"
                         v-model:filters="filters"
+                        :value="files"
+                        :loading="loading"
                         class="p-datatable-sm kn-table"
                         :paginator="true"
                         :rows="10"
-                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                        :rowsPerPageOptions="[10, 15, 20]"
-                        responsiveLayout="stack"
+                        paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                        :rows-per-page-options="[10, 15, 20]"
+                        responsive-layout="stack"
                         breakpoint="960px"
-                        :currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
-                        :globalFilterFields="['name', 'type', 'tags']"
+                        :current-page-report-template="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
+                        :global-filter-fields="['name', 'type', 'tags']"
                     >
                         <template #header>
                             <div class="p-grid p-pt-0">
                                 <div class="p-col-10">
                                     <span class="p-input-icon-left p-col p-p-0">
                                         <i class="pi pi-search" />
-                                        <InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0"
+                                        <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" badge="0"
                                     /></span>
                                 </div>
                                 <div class="p-col p-d-flex p-jc-end p-ai-center">
-                                    <Button icon="fas fa-sync-alt" class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0" @click="loadSelectedFolder()" :disabled="selectedFiles.length > 0" />
-                                    <Button icon="fas fa-upload" class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0" @click="openImportFileDialog" :disabled="selectedFiles.length > 0" />
+                                    <Button icon="fas fa-sync-alt" class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0" :disabled="selectedFiles.length > 0" @click="loadSelectedFolder()" />
+                                    <Button icon="fas fa-upload" class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0" :disabled="selectedFiles.length > 0" @click="openImportFileDialog" />
                                 </div>
                             </div>
                         </template>
@@ -61,8 +61,8 @@
                             {{ $t('common.info.dataLoading') }}
                         </template>
 
-                        <Column v-for="col in getOrderedColumns()" :field="col.field" :header="$t(col.header)" class="kn-truncated" :key="col.position" :style="col.style" :selectionMode="col.field == 'selectionMode' ? 'multiple' : ''" :exportable="col.field == 'selectionMode' ? false : ''">
-                            <template #body="{ data }" v-if="col.field != 'selectionMode'">
+                        <Column v-for="col in getOrderedColumns()" :key="col.position" :field="col.field" :header="$t(col.header)" class="kn-truncated" :style="col.style" :selection-mode="col.field == 'selectionMode' ? 'multiple' : ''" :exportable="col.field == 'selectionMode' ? false : ''">
+                            <template v-if="col.field != 'selectionMode'" #body="{ data }">
                                 <span v-if="col.displayType == 'fileSize'">
                                     {{ getDataValue(data.size) }}
                                 </span>
@@ -99,10 +99,17 @@ import mainStore from '../../../App.store'
 
 export default defineComponent({
     components: { Breadcrumb, Column, DataTable, ResourceManagementImportFileDialog },
+    beforeRouteUpdate() {
+        this.loadSelectedFolder()
+    },
     props: {
         folder: Object
     },
     emits: ['touched', 'closed', 'inserted', 'folderCreated', 'fileUploaded'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             descriptor,
@@ -117,19 +124,24 @@ export default defineComponent({
                 lastModified: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] }
             },
             home: { icon: 'pi pi-home' },
-            items: [] as Array<{ label: String }>,
+            items: [] as Array<{ label: string }>,
             folderName: '',
             importFile: false,
             selectedFolder: {} as any
         }
     },
     computed: {},
-    beforeRouteUpdate() {
-        this.loadSelectedFolder()
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
+    watch: {
+        id(oldId, newId) {
+            if (oldId != newId) this.loadSelectedFolder()
+        },
+        folder() {
+            this.loading = true
+            /* this.v$.$reset() */
+            this.selectedFolder = { ...this.folder }
+            this.loadSelectedFolder()
+            this.loading = false
+        }
     },
     created() {
         this.loadSelectedFolder()
@@ -163,11 +175,11 @@ export default defineComponent({
         },
         getBreadcrumbs() {
             this.items = []
-            let relativePath = this.getCurrentFolderPath()
+            const relativePath = this.getCurrentFolderPath()
             if (relativePath) {
-                let pathFolders = relativePath.split('\\')
+                const pathFolders = relativePath.split('\\')
                 pathFolders.forEach((element) => {
-                    let obj = { label: element, to: null }
+                    const obj = { label: element, to: null }
                     this.items.push(obj)
                 })
             }
@@ -179,7 +191,7 @@ export default defineComponent({
             return this.folder ? '' + this.folder.key : undefined
         },
         getOrderedColumns(): Array<ITableColumn> {
-            let columns = this.descriptor['column']
+            const columns = this.descriptor['column']
             columns.sort(function (a, b) {
                 if (a.position > b.position) return 1
                 if (a.position < b.position) return -1
@@ -255,11 +267,11 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         getKeyAndFilenamesObj() {
-            let obj = {} as JSON
+            const obj = {} as JSON
             if (this.folder) {
                 obj['key'] = this.folder.key
                 obj['selectedFilesNames'] = []
-                for (var idx in this.selectedFiles) {
+                for (const idx in this.selectedFiles) {
                     obj['selectedFilesNames'].push(this.selectedFiles[idx].name)
                 }
             }
@@ -268,18 +280,6 @@ export default defineComponent({
         fileUploaded() {
             this.loadSelectedFolder()
             this.$emit('fileUploaded')
-        }
-    },
-    watch: {
-        id(oldId, newId) {
-            if (oldId != newId) this.loadSelectedFolder()
-        },
-        folder() {
-            this.loading = true
-            /* this.v$.$reset() */
-            this.selectedFolder = { ...this.folder }
-            this.loadSelectedFolder()
-            this.loading = false
         }
     }
 })

@@ -5,7 +5,7 @@
                 <Button icon="fas fa-clone" class="p-button-text p-button-rounded p-button-plain kn-button-light kn-cursor-pointer" @click="copyToBase64" />
             </template>
             <template #end>
-                <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain kn-cursor-pointer" v-tooltip="$t('common.close')" @click="$emit('close')" />
+                <Button v-tooltip="$t('common.close')" icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain kn-cursor-pointer" @click="$emit('close')" />
             </template>
         </Toolbar>
         <div class="p-m-4">

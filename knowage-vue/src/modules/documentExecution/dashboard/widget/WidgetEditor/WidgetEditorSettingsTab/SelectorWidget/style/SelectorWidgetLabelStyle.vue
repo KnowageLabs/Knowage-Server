@@ -6,7 +6,7 @@
         </div>
         <div class="p-col-6"></div>
         <div class="p-col-12 p-py-4">
-            <WidgetEditorStyleToolbar :options="descriptor.labelToolbarStyleOptions" :propModel="labelStyleModel.properties" :disabled="labelStyleDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
+            <WidgetEditorStyleToolbar :options="descriptor.labelToolbarStyleOptions" :prop-model="labelStyleModel.properties" :disabled="labelStyleDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
         </div>
     </div>
 </template>

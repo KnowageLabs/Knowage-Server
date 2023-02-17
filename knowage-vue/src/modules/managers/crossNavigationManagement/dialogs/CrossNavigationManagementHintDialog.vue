@@ -9,7 +9,7 @@
         </template>
         {{ message }}
         <template #footer>
-            <Button :label="$t('common.close')" @click="closeDialog" class="kn-button kn-button--primary" />
+            <Button :label="$t('common.close')" class="kn-button kn-button--primary" @click="closeDialog" />
         </template>
     </Dialog>
 </template>

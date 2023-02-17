@@ -1,24 +1,24 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary dataPreparationSaveDialog" v-bind:visible="visibility" footer="footer" :header="$t('managers.workspaceManagement.dataPreparation.savePreparedDataset')" :closable="false" modal>
+    <Dialog class="p-fluid kn-dialog--toolbar--primary dataPreparationSaveDialog" :visible="visibility" footer="footer" :header="$t('managers.workspaceManagement.dataPreparation.savePreparedDataset')" :closable="false" modal>
         <div class="p-grid p-m-0">
             <div class="p-col-12">
                 <div class="p-d-flex">
                     <span class="p-float-label kn-flex p-mr-2">
                         <InputText
+                            v-model.trim="v$.preparedDataset.name.$model"
                             class="kn-material-input"
                             type="text"
                             :disabled="!isFirstSave"
-                            v-model.trim="v$.preparedDataset.name.$model"
                             :class="{
                                 'p-invalid': v$.preparedDataset.name.$invalid
                             }"
-                            maxLength="100"
+                            max-length="100"
                             @change="touched = true"
                         />
                         <label class="kn-material-input-label" for="label">{{ $t('managers.workspaceManagement.dataPreparation.dataset.name') }}</label>
                         <KnValidationMessages
-                            :vComp="v$.preparedDataset.name"
-                            :additionalTranslateParams="{
+                            :v-comp="v$.preparedDataset.name"
+                            :additional-translate-params="{
                                 fieldName: $t('managers.configurationManagement.headers.name')
                             }"
                         ></KnValidationMessages>
@@ -27,21 +27,21 @@
 
                 <span class="p-float-label">
                     <Textarea
+                        v-model.trim="v$.preparedDataset.description.$model"
                         class="kn-material-input p-mb-1"
                         type="text"
                         :disabled="!isFirstSave"
-                        v-model.trim="v$.preparedDataset.description.$model"
                         :class="{
                             'p-invalid': v$.preparedDataset.description.$invalid
                         }"
                         rows="3"
-                        maxLength="10000"
+                        max-length="10000"
                         @blur="touched = true"
                     />
                     <label class="kn-material-input-label" for="label">{{ $t('managers.workspaceManagement.dataPreparation.dataset.description') }}</label>
                     <KnValidationMessages
-                        :vComp="v$.preparedDataset.description"
-                        :additionalTranslateParams="{
+                        :v-comp="v$.preparedDataset.description"
+                        :additional-translate-params="{
                             fieldName: $t('managers.configurationManagement.headers.description')
                         }"
                     ></KnValidationMessages>
@@ -50,13 +50,13 @@
             <div class="schedulerContainer">
                 <KnScheduler
                     class="p-m-1"
-                    :cronExpression="currentCronExpression"
-                    :cronExpressionType="cronExpressionType"
+                    :cron-expression="currentCronExpression"
+                    :cron-expression-type="cronExpressionType"
                     :descriptor="schedulerDescriptor"
+                    :logs-visible="false"
+                    :schedulation-enabled="schedulationEnabled"
+                    :schedulation-paused="schedulationPaused"
                     @touched="touched = true"
-                    :logsVisible="false"
-                    :schedulationEnabled="schedulationEnabled"
-                    :schedulationPaused="schedulationPaused"
                     @update:schedulationPaused="updateSchedulationPaused"
                     @update:schedulationEnabled="updateSchedulationEnabled"
                     @update:currentCronExpression="updateCurrentCronExpression"
@@ -67,7 +67,7 @@
         <template #footer>
             <Button class="kn-button--secondary" :label="$t('common.cancel')" @click="cancel" />
 
-            <Button class="kn-button--primary" v-t="'common.save'" :disabled="saveButtonDisabled" @click="savePreparedDataset()" />
+            <Button v-t="'common.save'" class="kn-button--primary" :disabled="saveButtonDisabled" @click="savePreparedDataset()" />
         </template>
     </Dialog>
 </template>
@@ -91,6 +91,7 @@ import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'data-preparation-detail-save-dialog',
+    components: { Dialog, KnScheduler, KnValidationMessages, Textarea },
     props: {
         originalDataset: {} as any,
         config: {} as any,
@@ -100,7 +101,11 @@ export default defineComponent({
         preparedDsMeta: {} as any,
         visibility: Boolean
     },
-    components: { Dialog, KnScheduler, KnValidationMessages, Textarea },
+    emits: ['update:visibility', 'update:instanceId', 'update:processId'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             descriptor: DataPreparationDescriptor,
@@ -116,33 +121,49 @@ export default defineComponent({
             cronExpressionType: ''
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
+    computed: {
+        saveButtonDisabled(): any {
+            return this.v$.$invalid || !this.preparedDataset.name
+        }
+    },
+
+    watch: {
+        preparedDsMeta: {
+            handler() {
+                if (Object.keys(this.preparedDsMeta).length > 0) {
+                    this.preparedDataset = this.preparedDsMeta
+                    this.cronExpressionType = this.preparedDsMeta.config?.type
+                    this.currentCronExpression = this.preparedDsMeta.config?.cron ? this.preparedDsMeta.config.cron : ''
+
+                    this.schedulationPaused = this.preparedDsMeta.config?.schedulationPaused || false
+
+                    this.schedulationEnabled = this.preparedDsMeta.config?.cron ? true : false
+                }
+            },
+            deep: true
+        }
     },
     updated() {
         if (this.processId && this.processId != '') this.isFirstSave = false
     },
-    emits: ['update:visibility', 'update:instanceId', 'update:processId'],
 
     validations() {
         return {
             preparedDataset: createValidations('preparedDataset', this.validationDescriptor.validations.configuration)
         }
     },
-    computed: {
-        saveButtonDisabled(): any {
-            return this.v$.$invalid || !this.preparedDataset.name
-        }
+
+    created() {
+        this.loadTranslations()
     },
     methods: {
         savePreparedDataset(): void {
-            let processDefinition = this.createProcessDefinition()
+            const processDefinition = this.createProcessDefinition()
             this.saveOrUpdateProcess(processDefinition).then(
                 (response: AxiosResponse<any>) => {
-                    let processId = response.data.id
+                    const processId = response.data.id
                     this.$emit('update:processId', processId)
-                    let datasetDefinition = this.createDatasetDefinition()
+                    const datasetDefinition = this.createDatasetDefinition()
                     this.saveOrUpdateInstance(processId, datasetDefinition).then(
                         (response: AxiosResponse<any>) => {
                             this.$emit('update:instanceId', response.data.id)
@@ -168,7 +189,7 @@ export default defineComponent({
             else return this.$http.post(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/process/' + processId + '/instance', datasetDefinition)
         },
         createDatasetDefinition() {
-            let toReturn = {}
+            const toReturn = {}
             toReturn['config'] = {}
             toReturn['config']['paused'] = this.schedulationPaused
 
@@ -179,7 +200,7 @@ export default defineComponent({
 
             toReturn['dataSetLabel'] = this.originalDataset.label
             toReturn['dataSetId'] = this.originalDataset.id
-            var d = new Date()
+            const d = new Date()
             if (this.preparedDataset.label) {
                 toReturn['destinationDataSetLabel'] = this.preparedDataset.label
             } else {
@@ -192,9 +213,9 @@ export default defineComponent({
             return toReturn
         },
         createMetaDefinition() {
-            let meta = [] as Array<any>
+            const meta = [] as Array<any>
             this.columns?.forEach((col) => {
-                let item = {}
+                const item = {}
                 item['displayedName'] = col.fieldAlias
                 item['name'] = col.header
                 item['fieldType'] = col.fieldType
@@ -204,7 +225,7 @@ export default defineComponent({
             return meta
         },
         createProcessDefinition() {
-            let toReturn = {}
+            const toReturn = {}
             if (this.config && this.config.transformations) toReturn['definition'] = this.config.transformations
             return toReturn
         },
@@ -250,27 +271,6 @@ export default defineComponent({
         updateCronExpressionType(newCronExpressionType) {
             this.cronExpressionType = newCronExpressionType
         }
-    },
-
-    watch: {
-        preparedDsMeta: {
-            handler() {
-                if (Object.keys(this.preparedDsMeta).length > 0) {
-                    this.preparedDataset = this.preparedDsMeta
-                    this.cronExpressionType = this.preparedDsMeta.config?.type
-                    this.currentCronExpression = this.preparedDsMeta.config?.cron ? this.preparedDsMeta.config.cron : ''
-
-                    this.schedulationPaused = this.preparedDsMeta.config?.schedulationPaused || false
-
-                    this.schedulationEnabled = this.preparedDsMeta.config?.cron ? true : false
-                }
-            },
-            deep: true
-        }
-    },
-
-    created() {
-        this.loadTranslations()
     }
 })
 </script>

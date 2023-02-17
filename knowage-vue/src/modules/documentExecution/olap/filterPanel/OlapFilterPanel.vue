@@ -6,7 +6,7 @@
                 <div v-if="filterCardList?.length == 0" class="p-d-flex p-flex-row p-jc-center kn-flex">
                     <InlineMessage class="kn-flex p-m-1" :style="panelDescriptor.style.noFilters" severity="info" closable="false">{{ $t('documentExecution.olap.filterPanel.filterPanelEmpty') }}</InlineMessage>
                 </div>
-                <FilterCard v-else :filterCardList="filterCardList" :olapDesigner="olapDesigner" @showMultiHierarchy="emitMultiHierarchy" @openFilterDialog="$emit('openFilterDialog', $event)" />
+                <FilterCard v-else :filter-card-list="filterCardList" :olap-designer="olapDesigner" @showMultiHierarchy="emitMultiHierarchy" @openFilterDialog="$emit('openFilterDialog', $event)" />
                 <div ref="axisDropzone" class="kn-flex kn-truncated p-mr-1" :style="panelDescriptor.style.filterAxisDropzone">{{ $t('documentExecution.olap.filterPanel.drop') }}</div>
             </div>
             <Button v-if="showScroll" icon="fas fa-arrow-circle-right" class="p-button-text p-button-rounded p-button-plain p-mr-1" @click="scrollRight" />
@@ -26,10 +26,9 @@ export default defineComponent({
     components: { InlineMessage, FilterCard },
     props: { olapProp: { type: Object as PropType<iOlap | null>, required: true }, olapDesigner: { type: Object } },
     emits: ['putFilterOnAxis', 'showMultiHierarchy', 'openFilterDialog'],
-    computed: {
-        showScroll(): Boolean {
-            return this.scrollContainerWidth < this.scrollContentWidth
-        }
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     data() {
         return {
@@ -39,14 +38,15 @@ export default defineComponent({
             scrollContentWidth: 0
         }
     },
+    computed: {
+        showScroll(): boolean {
+            return this.scrollContainerWidth < this.scrollContentWidth
+        }
+    },
     watch: {
         olapProp() {
             this.loadData()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadData()
@@ -68,10 +68,10 @@ export default defineComponent({
         onDrop(event) {
             // @ts-ignore
             this.$refs.axisDropzone.classList?.remove('display-axis-dropzone')
-            var data = JSON.parse(event.dataTransfer.getData('text/plain'))
-            var topLength = this.olapProp?.columns.length
-            var leftLength = this.olapProp?.rows.length
-            var fromAxis
+            const data = JSON.parse(event.dataTransfer.getData('text/plain'))
+            const topLength = this.olapProp?.columns.length
+            const leftLength = this.olapProp?.rows.length
+            let fromAxis
             if (data != null) {
                 fromAxis = data.axis
                 if (data.measure) {

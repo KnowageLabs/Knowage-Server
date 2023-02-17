@@ -9,7 +9,7 @@
 
     <Card v-if="!loading" :style="tabViewDescriptor.style.card">
         <template #content>
-            <DataTable :value="attributesList" responsiveLayout="scroll" class="cardinalityTable">
+            <DataTable :value="attributesList" responsive-layout="scroll" class="cardinalityTable">
                 <Column>
                     <template #body="slotProps">
                         {{ slotProps.data }}
@@ -20,7 +20,7 @@
                         <div :style="tabViewDescriptor.style.cardinalityColumn">{{ measure.measureName }}</div>
                     </template>
                     <template #body="slotProps">
-                        <div class="measureCell" v-if="measureHaveAttribute(slotProps.data, slotProps.column.key)" @click="toggleCell(slotProps.data, slotProps.column.key)">
+                        <div v-if="measureHaveAttribute(slotProps.data, slotProps.column.key)" class="measureCell" @click="toggleCell(slotProps.data, slotProps.column.key)">
                             <i v-if="!isEnabled(slotProps.data, slotProps.column.key)" class="fa fa-ban invalidCell"></i>
                             <i v-if="measure.attributes[slotProps.data]" class="fa fa-check selectedCell"></i>
                             <i v-if="measure.attributes[slotProps.data] && !canDisable(slotProps.data, slotProps.column.key)" class="fa fa-lock selectedCell"></i>
@@ -50,7 +50,6 @@ export default defineComponent({
         updateMeasureList: Boolean,
         loading: Boolean
     },
-    computed: {},
     emits: ['touched', 'measureListUpdated'],
     data() {
         return {
@@ -63,6 +62,7 @@ export default defineComponent({
             oldFormula: ''
         }
     },
+    computed: {},
     watch: {
         selectedKpi() {
             this.kpi = this.selectedKpi as any
@@ -83,8 +83,8 @@ export default defineComponent({
                     this.oldFormula = this.kpi.definition.formulaSimple
                 }
 
-                var string = this.kpi.definition.formulaSimple.split(' ')
-                var count = 0
+                const string = this.kpi.definition.formulaSimple.split(' ')
+                let count = 0
                 let formuloaHTML = ''
                 for (let i = 0; i < string.length; i++) {
                     let span = ''
@@ -111,8 +111,8 @@ export default defineComponent({
                     this.kpi.cardinality = JSON.parse(this.kpi.cardinality)
                 }
 
-                for (var i = 0; i < this.kpi.cardinality.measureList.length; i++) {
-                    for (var tmpAttr in this.kpi.cardinality.measureList[i].attributes) {
+                for (let i = 0; i < this.kpi.cardinality.measureList.length; i++) {
+                    for (const tmpAttr in this.kpi.cardinality.measureList[i].attributes) {
                         if (this.attributesList.indexOf(tmpAttr) == -1) {
                             this.attributesList.push(tmpAttr)
                         }
@@ -123,9 +123,9 @@ export default defineComponent({
         },
 
         async retryNewAttributes() {
-            var definition = {}
-            for (var i = 0; i < this.kpi.definition.measures.length; i++) {
-                var meas = this.kpi.definition.measures[i]
+            const definition = {}
+            for (let i = 0; i < this.kpi.definition.measures.length; i++) {
+                const meas = this.kpi.definition.measures[i]
                 definition[i] = meas
             }
 
@@ -134,8 +134,8 @@ export default defineComponent({
                     this.kpi.cardinality.measureList = [...response.data]
                     this.formulaChanged = false
                     this.attributesList = []
-                    for (var i = 0; i < response.data.length; i++) {
-                        for (let key of Object.keys(response.data[i]['attributes'])) {
+                    for (let i = 0; i < response.data.length; i++) {
+                        for (const key of Object.keys(response.data[i]['attributes'])) {
                             if (this.attributesList.indexOf(key) == -1) {
                                 this.attributesList.push(key)
                             }
@@ -147,7 +147,7 @@ export default defineComponent({
         },
 
         isEnabled(attr, measure) {
-            var checkMs = this.checkMeasure(measure)
+            const checkMs = this.checkMeasure(measure)
             return checkMs.status || this.isContainedByUpperSet(attr, measure, checkMs.itemNumber)
         },
 
@@ -161,13 +161,13 @@ export default defineComponent({
         },
 
         checkMeasure(measure) {
-            var tot = 0
-            for (var attr in measure.attributes) {
+            let tot = 0
+            for (const attr in measure.attributes) {
                 if (measure.attributes[attr]) {
                     tot++
                 }
             }
-            var resp = {
+            const resp = {
                 status: Object.keys(this.kpi.cardinality.checkedAttribute.attributeUnion).length == tot,
                 itemNumber: tot
             }
@@ -175,15 +175,15 @@ export default defineComponent({
         },
 
         isContainedByUpperSet(attr, measure, measureItemNumber) {
-            var upperSetAttributeNumber = 99999999
-            var upperSet
-            for (var i = 0; i < this.kpi.cardinality.measureList.length; i++) {
-                var tmpMeas = this.kpi.cardinality.measureList[i]
+            let upperSetAttributeNumber = 99999999
+            let upperSet
+            for (let i = 0; i < this.kpi.cardinality.measureList.length; i++) {
+                const tmpMeas = this.kpi.cardinality.measureList[i]
                 if (tmpMeas == measure) {
                     continue
                 }
-                var tmpTot = 0
-                for (var tmpAttr in tmpMeas.attributes) {
+                let tmpTot = 0
+                for (const tmpAttr in tmpMeas.attributes) {
                     if (tmpMeas.attributes[tmpAttr]) {
                         tmpTot++
                     }
@@ -205,22 +205,22 @@ export default defineComponent({
         },
 
         isContainedByUnderSet(attr, measure) {
-            var measureItemNumber = 0
-            for (var tmpattr in measure.attributes) {
+            let measureItemNumber = 0
+            for (const tmpattr in measure.attributes) {
                 if (measure.attributes[tmpattr]) {
                     measureItemNumber++
                 }
             }
 
-            var underSetAttributeNumber = 0
-            var underSet
-            for (var i = 0; i < this.kpi.cardinality.measureList.length; i++) {
-                var tmpMeas = this.kpi.cardinality.measureList[i]
+            let underSetAttributeNumber = 0
+            let underSet
+            for (let i = 0; i < this.kpi.cardinality.measureList.length; i++) {
+                const tmpMeas = this.kpi.cardinality.measureList[i]
                 if (tmpMeas == measure) {
                     continue
                 }
-                var tmpTot = 0
-                for (var tmpAttr in tmpMeas.attributes) {
+                let tmpTot = 0
+                for (const tmpAttr in tmpMeas.attributes) {
                     if (tmpMeas.attributes[tmpAttr]) {
                         tmpTot++
                     }
@@ -243,8 +243,8 @@ export default defineComponent({
         },
 
         getMaxAttributeNumber(data) {
-            var max = 0
-            for (var key in data) {
+            let max = 0
+            for (const key in data) {
                 if (data[key] >= max) {
                     max = data[key]
                 }
@@ -257,14 +257,14 @@ export default defineComponent({
             this.currentCell.row = attr
             this.currentCell.column = index
             this.indexOfMeasure = index
-            var string = 'M' + this.indexOfMeasure
-            var test = document.getElementById(string) as any
+            const string = 'M' + this.indexOfMeasure
+            const test = document.getElementById(string) as any
             test.css('background', '#eceff1')
         },
 
         removeblinkMeasure() {
-            var string = 'M' + this.indexOfMeasure
-            var test = document.getElementById(string) as any
+            const string = 'M' + this.indexOfMeasure
+            const test = document.getElementById(string) as any
             test.css('background', 'transparent')
         },
 
@@ -295,8 +295,8 @@ export default defineComponent({
             }
             //update intersection
             this.kpi.cardinality.checkedAttribute.attributeIntersection = {}
-            var maxAttrNum = this.getMaxAttributeNumber(this.kpi.cardinality.checkedAttribute.attributeUnion)
-            for (var key in this.kpi.cardinality.checkedAttribute.attributeUnion) {
+            const maxAttrNum = this.getMaxAttributeNumber(this.kpi.cardinality.checkedAttribute.attributeUnion)
+            for (const key in this.kpi.cardinality.checkedAttribute.attributeUnion) {
                 if (this.kpi.cardinality.checkedAttribute.attributeUnion[key] == maxAttrNum) {
                     this.kpi.cardinality.checkedAttribute.attributeIntersection[key] = true
                 }

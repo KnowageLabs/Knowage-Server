@@ -1,8 +1,8 @@
 <template>
     <div v-if="driver" class="p-fluid p-formgrid p-grid p-jc-center p-ai-center p-p-5 p-m-0">
-        <div class="p-field-radiobutton p-col-12" v-for="(option, index) in driver.options" :key="index">
-            <RadioButton v-if="!driver.multivalue && driver.parameterValue" :value="option.value" v-model="driver.parameterValue[0].value" @change="setRadioButtonValue" />
-            <Checkbox v-if="driver.multivalue && driver.parameterValue" :value="option.value" v-model="checkedValues" @change="setCheckboxValue" />
+        <div v-for="(option, index) in driver.options" :key="index" class="p-field-radiobutton p-col-12">
+            <RadioButton v-if="!driver.multivalue && driver.parameterValue" v-model="driver.parameterValue[0].value" :value="option.value" @change="setRadioButtonValue" />
+            <Checkbox v-if="driver.multivalue && driver.parameterValue" v-model="checkedValues" :value="option.value" @change="setCheckboxValue" />
             <label>{{ option.description }}</label>
         </div>
     </div>
@@ -18,13 +18,13 @@ export default defineComponent({
     name: 'driver-dialog-list',
     components: { Checkbox, RadioButton },
     props: { propDriver: { type: Object as PropType<IDashboardDatasetDriver | null>, required: true } },
-    computed: {},
     data() {
         return {
             driver: null as IDashboardDatasetDriver | null,
             checkedValues: [] as string[]
         }
     },
+    computed: {},
     watch: {
         propDriver() {
             this.loadDriver()

@@ -4,7 +4,7 @@
             <form class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-col-6">
                     <span class="p-float-label">
-                        <InputNumber id="noOfEvents" inputClass="kn-material-input" v-model="alert.eventBeforeTriggerAction" @input="valueChanged('eventBeforeTriggerAction', $event.value)" />
+                        <InputNumber id="noOfEvents" v-model="alert.eventBeforeTriggerAction" input-class="kn-material-input" @input="valueChanged('eventBeforeTriggerAction', $event.value)" />
                         <label for="noOfEvents" class="kn-material-input-label">{{ $t('kpi.alert.noOfEvents') }}</label>
                     </span>
                 </div>
@@ -33,15 +33,15 @@ export default defineComponent({
         vcomp: Object
     },
     emits: ['touched', 'valueChanged'],
-    watch: {
-        selectedAlert() {
-            this.alert = { ...this.selectedAlert }
-        }
-    },
     data() {
         return {
             alert: {} as iAlert,
             alertDescriptor
+        }
+    },
+    watch: {
+        selectedAlert() {
+            this.alert = { ...this.selectedAlert }
         }
     },
     methods: {

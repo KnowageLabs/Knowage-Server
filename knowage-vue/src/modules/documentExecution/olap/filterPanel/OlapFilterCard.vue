@@ -1,13 +1,13 @@
 <template>
-    <div id="filterCard" class="p-d-flex p-flex-row" v-for="(filter, index) in filterCardList" :key="index" v-tooltip="{ value: $t('documentExecution.olap.filterPanel.activeLevels') + ': ' + getNumberOfActiveLevels(filter), disabled: getNumberOfActiveLevels(filter) === 0 }">
+    <div v-for="(filter, index) in filterCardList" id="filterCard" :key="index" v-tooltip="{ value: $t('documentExecution.olap.filterPanel.activeLevels') + ': ' + getNumberOfActiveLevels(filter), disabled: getNumberOfActiveLevels(filter) === 0 }" class="p-d-flex p-flex-row">
         <div :id="'filter-' + filter.name" :ref="'filter-' + filter.name" :style="panelDescriptor.style.filterCard" draggable="true" @dragstart="onDragStart($event, filter, 'filter-' + filter.name)" @dragend="removeDragClass('filter-' + filter.name)">
             <Button v-if="filter.hierarchies.length > 1" icon="fas fa-sitemap" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showMultiHierarchy', filter)" />
             <span class="p-ml-1"> {{ filter.caption }} </span>
             <Button
+                v-tooltip="{ value: getSlicersTooltip(filter), disabled: !filter || !filter.hierarchies[0].slicers || filter.hierarchies[0].slicers.length === 0 }"
                 icon="fas fa-filter"
                 :class="{ 'olap-active-filter-icon': filterIsActive(filter) }"
                 class="p-button-text p-button-rounded p-button-plain p-ml-auto"
-                v-tooltip="{ value: getSlicersTooltip(filter), disabled: !filter || !filter.hierarchies[0].slicers || filter.hierarchies[0].slicers.length === 0 }"
                 @click="openFilterDialog(filter)"
             />
         </div>

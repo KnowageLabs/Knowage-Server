@@ -7,8 +7,8 @@
         </template>
     </Toolbar>
     <div class="p-grid p-m-0 p-p-2 p-fluid p-d-flex p-flex-column kn-height-full kn-overflow-y" data-test="drivers-form">
-        <DriversDetailCard class="p-mt-2" :selectedDriver="driver" :types="filteredTypes" @touched="setDirty"></DriversDetailCard>
-        <UseMode class="kn-flex-grow p-mt-2" :propModes="modes" :roles="roles" :constraints="constraints" :layers="layers" :lovs="lovs" :selectionTypes="filteredSelectionTypes" :isDate="isDateType" :showMapDriver="showMapDriver"></UseMode>
+        <DriversDetailCard class="p-mt-2" :selected-driver="driver" :types="filteredTypes" @touched="setDirty"></DriversDetailCard>
+        <UseMode class="kn-flex-grow p-mt-2" :prop-modes="modes" :roles="roles" :constraints="constraints" :layers="layers" :lovs="lovs" :selection-types="filteredSelectionTypes" :is-date="isDateType" :show-map-driver="showMapDriver"></UseMode>
     </div>
 </template>
 <script lang="ts">
@@ -27,6 +27,27 @@ export default defineComponent({
         selectedDriver: {
             type: Object,
             required: false
+        }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
+    data() {
+        return {
+            driver: {} as iDriver,
+            types: [] as any[],
+            modes: [] as any[],
+            modesToSave: [] as any[],
+            roles: [] as any[],
+            constraints: [] as any[],
+            selectionTypes: [] as any[],
+            layers: [] as any[],
+            lovs: [] as any[],
+            operation: 'insert',
+            useModeOperation: 'insert',
+            showMapDriver: false,
+            driversManagemenDetailtDescriptor
         }
     },
     computed: {
@@ -52,32 +73,11 @@ export default defineComponent({
             return this.driver.type?.toLowerCase() === 'date'
         }
     },
-    data() {
-        return {
-            driver: {} as iDriver,
-            types: [] as any[],
-            modes: [] as any[],
-            modesToSave: [] as any[],
-            roles: [] as any[],
-            constraints: [] as any[],
-            selectionTypes: [] as any[],
-            layers: [] as any[],
-            lovs: [] as any[],
-            operation: 'insert',
-            useModeOperation: 'insert',
-            showMapDriver: false,
-            driversManagemenDetailtDescriptor
-        }
-    },
     watch: {
         selectedDriver() {
             this.driver = { ...this.selectedDriver } as any
             this.getModes()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     mounted() {
         if (this.driver) {
@@ -122,14 +122,14 @@ export default defineComponent({
         },
         formatDriver() {
             this.driver.length = 0
-            let selectedType = this.types.filter((val) => {
+            const selectedType = this.types.filter((val) => {
                 return val.VALUE_CD === this.driver.type
             })
             this.driver.type = selectedType[0].VALUE_CD
             this.driver.typeId = selectedType[0].VALUE_ID
         },
         formatUseMode() {
-            let tmp = this.modes.filter((mode) => mode.edited)
+            const tmp = this.modes.filter((mode) => mode.edited)
             this.modesToSave = []
             tmp.forEach((mode) => {
                 mode.maximizerEnabled = false

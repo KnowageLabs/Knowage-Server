@@ -1,8 +1,8 @@
 <template>
-    <Tree class="documents-tree" :value="nodes" :expandedKeys="expandedKeys" @node-expand="setOpenFolderIcon($event)" @node-collapse="setClosedFolderIcon($event)">
+    <Tree class="documents-tree" :value="nodes" :expanded-keys="expandedKeys" @node-expand="setOpenFolderIcon($event)" @node-collapse="setClosedFolderIcon($event)">
         <template #default="slotProps">
             <i class="p-mr-2" :class="slotProps.node.customIcon"></i>
-            <Checkbox v-if="slotProps.node.selectable" name="folders" v-model="selectedFolders" :value="slotProps.node.path" @change="emitSelectedFolders" />
+            <Checkbox v-if="slotProps.node.selectable" v-model="selectedFolders" name="folders" :value="slotProps.node.path" @change="emitSelectedFolders" />
             <b>{{ slotProps.node.label }}</b>
         </template>
     </Tree>
@@ -108,7 +108,7 @@ export default defineComponent({
             }
         },
         expandAll() {
-            for (let node of this.nodes) {
+            for (const node of this.nodes) {
                 this.expandNode(node)
             }
             this.expandedKeys = { ...this.expandedKeys }
@@ -116,7 +116,7 @@ export default defineComponent({
         expandNode(node: any) {
             if (node.children && node.children.length) {
                 this.expandedKeys[node.key] = true
-                for (let child of node.children) {
+                for (const child of node.children) {
                     this.expandNode(child)
                 }
             }

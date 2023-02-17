@@ -2,7 +2,7 @@
     <div class="p-fluid p-formgrid p-grid">
         <div class="p-field p-col-12 p-p-2">
             <span class="p-float-label">
-                <Dropdown class="kn-material-input" v-model="selectedColumnName" :options="widgetModel.columns" optionValue="columnName" optionLabel="columnName" @change="onColumnChanged"> </Dropdown>
+                <Dropdown v-model="selectedColumnName" class="kn-material-input" :options="widgetModel.columns" option-value="columnName" option-label="columnName" @change="onColumnChanged"> </Dropdown>
                 <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
             </span>
         </div>
@@ -14,11 +14,10 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
 import Dropdown from 'primevue/dropdown'
 import descriptor from '../WidgetTagsDialogDescriptor.json'
-import Message from 'primevue/message'
 
 export default defineComponent({
     name: 'widget-editor-cross-navigation',
-    components: { Dropdown, Message },
+    components: { Dropdown },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     emits: ['insertChanged'],
     data() {

@@ -8,14 +8,14 @@
             </Toolbar>
             <Listbox
                 class="kn-list link-list kn-flex"
-                :listStyle="linkTabDescriptor.style.listbox"
+                :list-style="linkTabDescriptor.style.listbox"
                 :options="availableTables"
                 :filter="true"
-                :filterPlaceholder="$t('common.search')"
-                optionLabel="name"
-                filterMatchMode="contains"
-                :filterFields="linkTabDescriptor.filterFields"
-                :emptyFilterMessage="$t('common.info.noDataFound')"
+                :filter-placeholder="$t('common.search')"
+                option-label="name"
+                filter-match-mode="contains"
+                :filter-fields="linkTabDescriptor.filterFields"
+                :empty-filter-message="$t('common.info.noDataFound')"
             >
                 <template #option="slotProps">
                     <div class="kn-list-item" @click="addTableToSelectedList(slotProps.option)">
@@ -34,14 +34,14 @@
             </Toolbar>
             <Listbox
                 class="kn-list link-list kn-flex"
-                :listStyle="linkTabDescriptor.style.listbox"
+                :list-style="linkTabDescriptor.style.listbox"
                 :options="selectedTables"
                 :filter="true"
-                :filterPlaceholder="$t('common.search')"
-                optionLabel="name"
-                filterMatchMode="contains"
-                :filterFields="linkTabDescriptor.filterFields"
-                :emptyFilterMessage="$t('managers.datasetManagement.noLinkedTables')"
+                :filter-placeholder="$t('common.search')"
+                option-label="name"
+                filter-match-mode="contains"
+                :filter-fields="linkTabDescriptor.filterFields"
+                :empty-filter-message="$t('managers.datasetManagement.noLinkedTables')"
             >
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
@@ -71,6 +71,10 @@ export default defineComponent({
         activeTab: { type: Number }
     },
     emits: ['removeTables', 'addTables'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             linkTabDescriptor,
@@ -83,14 +87,6 @@ export default defineComponent({
             tablesToAdd: [] as any
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
-    created() {
-        this.dataset = this.selectedDataset
-        this.getSelectedTables()
-    },
     watch: {
         selectedDataset() {
             this.dataset = this.selectedDataset
@@ -101,6 +97,10 @@ export default defineComponent({
                 this.getAvailableSources()
             }
         }
+    },
+    created() {
+        this.dataset = this.selectedDataset
+        this.getSelectedTables()
     },
 
     methods: {
@@ -138,10 +138,10 @@ export default defineComponent({
                 .catch((error) => this.store.setError({ title: this.$t('common.toast.error'), msg: error }))
         },
         removeSelectedTablesFromAvailable(availableTablesArray, selectedTablesArray) {
-            let filteredSelected = selectedTablesArray.map((selectedTable) => {
+            const filteredSelected = selectedTablesArray.map((selectedTable) => {
                 return selectedTable.tableId
             })
-            let filteredArray = availableTablesArray.filter((availableTable) => !filteredSelected.includes(availableTable.tableId))
+            const filteredArray = availableTablesArray.filter((availableTable) => !filteredSelected.includes(availableTable.tableId))
             return filteredArray
         },
         moveTableToList(movedTableId, sourceList, targetList) {

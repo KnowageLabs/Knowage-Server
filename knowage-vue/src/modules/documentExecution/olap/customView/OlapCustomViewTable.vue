@@ -9,16 +9,16 @@
         </Toolbar>
 
         <DataTable
-            :value="customViews"
             id="olap-custom-views-table"
-            class="p-datatable-sm kn-table"
-            dataKey="id"
             v-model:filters="filters"
-            :globalFilterFields="olapCustomViewTableDescriptor.globalFilterFields"
+            :value="customViews"
+            class="p-datatable-sm kn-table"
+            data-key="id"
+            :global-filter-fields="olapCustomViewTableDescriptor.globalFilterFields"
             :paginator="customViews.length > 20"
             :rows="20"
             :loading="loading"
-            responsiveLayout="stack"
+            responsive-layout="stack"
             breakpoint="600px"
         >
             <template #empty>
@@ -28,16 +28,16 @@
                 <div class="table-header p-d-flex p-ai-center">
                     <span id="search-container" class="p-input-icon-left p-mr-3">
                         <i class="pi pi-search" />
-                        <InputText class="kn-material-input" v-model="filters['global'].value" :placeholder="$t('common.search')" />
+                        <InputText v-model="filters['global'].value" class="kn-material-input" :placeholder="$t('common.search')" />
                     </span>
                 </div>
             </template>
 
-            <Column class="kn-truncated" v-for="(column, index) in olapCustomViewTableDescriptor.columns" :key="index" :field="column.field" :header="$t(column.label)" :sortable="true"></Column>
+            <Column v-for="(column, index) in olapCustomViewTableDescriptor.columns" :key="index" class="kn-truncated" :field="column.field" :header="$t(column.label)" :sortable="true"></Column>
             <Column :style="olapCustomViewTableDescriptor.iconColumn.style">
                 <template #body="slotProps">
-                    <Button icon="pi pi-file" class="p-button-link" v-tooltip.top="$t('common.apply')" @click="applyCustomView(slotProps.data)" />
-                    <Button icon="pi pi-trash" class="p-button-link" v-tooltip.top="$t('common.delete')" @click="deleteCustomViewsConfirm(slotProps.data)" />
+                    <Button v-tooltip.top="$t('common.apply')" icon="pi pi-file" class="p-button-link" @click="applyCustomView(slotProps.data)" />
+                    <Button v-tooltip.top="$t('common.delete')" icon="pi pi-trash" class="p-button-link" @click="deleteCustomViewsConfirm(slotProps.data)" />
                 </template>
             </Column>
         </DataTable>
@@ -58,6 +58,10 @@ export default defineComponent({
     components: { Column, DataTable },
     props: { olapCustomViews: { type: Object as PropType<iOlapCustomView[]> } },
     emits: ['close', 'applyCustomView'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             olapCustomViewTableDescriptor,
@@ -70,10 +74,6 @@ export default defineComponent({
         olapCustomViews() {
             this.loadCustomViews()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadCustomViews()

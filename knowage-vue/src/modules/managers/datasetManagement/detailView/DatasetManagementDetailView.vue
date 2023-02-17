@@ -2,23 +2,23 @@
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
         <template #start>{{ selectedDataset.label }}</template>
         <template #end>
-            <Button :label="$t('managers.lovsManagement.preview')" class="p-button-text p-button-rounded p-button-plain" @click="sendDatasetForPreview" :disabled="buttonDisabled" />
+            <Button :label="$t('managers.lovsManagement.preview')" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="sendDatasetForPreview" />
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="checkFormulaForParams" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="$emit('close')" />
         </template>
     </Toolbar>
     <div class="datasetDetail">
-        <TabView class="tabview-custom kn-tab" v-model:activeIndex="activeTab" data-test="tab-view">
+        <TabView v-model:activeIndex="activeTab" class="tabview-custom kn-tab" data-test="tab-view">
             <TabPanel>
                 <template #header>
                     <span>{{ $t('managers.mondrianSchemasManagement.detail.title') }}</span>
                 </template>
                 <DetailCard
-                    :scopeTypes="scopeTypes"
-                    :categoryTypes="categoryTypes"
-                    :selectedDataset="selectedDataset"
-                    :selectedDatasetVersions="selectedDatasetVersions"
-                    :availableTags="availableTags"
+                    :scope-types="scopeTypes"
+                    :category-types="categoryTypes"
+                    :selected-dataset="selectedDataset"
+                    :selected-dataset-versions="selectedDatasetVersions"
+                    :available-tags="availableTags"
                     :loading="loading"
                     @reloadVersions="getSelectedDatasetVersions"
                     @loadingOlderVersion="$emit('loadingOlderVersion')"
@@ -32,15 +32,15 @@
                     <span>{{ $t('kpi.alert.type') }}</span>
                 </template>
                 <TypeCard
-                    :activeTab="activeTab"
-                    :selectedDataset="selectedDataset"
-                    :datasetTypes="filteredDatasetTypes"
-                    :dataSources="dataSources"
-                    :businessModels="businessModels"
-                    :scriptTypes="scriptTypes"
-                    :parentValid="v$.$invalid"
-                    :pythonEnvironments="pythonEnvironments"
-                    :rEnvironments="rEnvironments"
+                    :active-tab="activeTab"
+                    :selected-dataset="selectedDataset"
+                    :dataset-types="filteredDatasetTypes"
+                    :data-sources="dataSources"
+                    :business-models="businessModels"
+                    :script-types="scriptTypes"
+                    :parent-valid="v$.$invalid"
+                    :python-environments="pythonEnvironments"
+                    :r-environments="rEnvironments"
                     @fileUploaded="selectedDataset.fileUploaded = true"
                     @touched="$emit('touched')"
                     @queryEdited="showMetadataQueryInfo = true"
@@ -51,38 +51,38 @@
                 <template #header>
                     <span>{{ $t('kpi.measureDefinition.metadata') }}</span>
                 </template>
-                <MetadataCard :selectedDataset="selectedDataset" :showMetadataQueryInfoProp="showMetadataQueryInfo" @touched="$emit('touched')" />
+                <MetadataCard :selected-dataset="selectedDataset" :show-metadata-query-info-prop="showMetadataQueryInfo" @touched="$emit('touched')" />
             </TabPanel>
 
             <TabPanel v-if="selectedDataset.dsTypeCd == 'Query'">
                 <template #header>
                     <span>{{ $t('managers.glossary.glossaryUsage.link') }}</span>
                 </template>
-                <LinkCard :selectedDataset="selectedDataset" :metaSourceResource="metaSourceResource" :activeTab="activeTab" @addTables="onAddLinkedTables" @removeTables="onRemoveLinkedTables" />
+                <LinkCard :selected-dataset="selectedDataset" :meta-source-resource="metaSourceResource" :active-tab="activeTab" @addTables="onAddLinkedTables" @removeTables="onRemoveLinkedTables" />
             </TabPanel>
 
             <TabPanel v-if="selectedDataset.dsTypeCd != 'Prepared'">
                 <template #header>
                     <span>{{ $t('cron.advanced') }}</span>
                 </template>
-                <AdvancedCard :selectedDataset="selectedDataset" :transformationDataset="transformationDataset" :schedulingData="scheduling" @touched="$emit('touched')" />
+                <AdvancedCard :selected-dataset="selectedDataset" :transformation-dataset="transformationDataset" :scheduling-data="scheduling" @touched="$emit('touched')" />
             </TabPanel>
         </TabView>
 
         <Button v-if="selectedDataset.dsTypeCd == 'Prepared' || isOpenInQBEVisible(selectedDataset)" icon="far fa-share-from-square" class="p-button-text p-button-rounded p-button-plain advancedTransformations" @click="toggleMenu($event, selectedDataset)"></Button>
         <PreparedDataset
             v-if="selectedDataset.dsTypeCd == 'Prepared'"
-            :selectedDataset="selectedDataset"
-            :showMonitoringDialog="showMonitoringDialog"
+            :selected-dataset="selectedDataset"
+            :show-monitoring-dialog="showMonitoringDialog"
+            :show-data-preparation="showDataPreparation"
             @closeMonitoringDialog="showMonitoringDialog = false"
-            :showDataPreparation="showDataPreparation"
             @closeDataPreparation="showDataPreparation = false"
         />
-        <QBE v-if="qbeVisible" :sourceDataset="selectedDataset" @close="closeQbe" />
+        <QBE v-if="qbeVisible" :source-dataset="selectedDataset" @close="closeQbe" />
 
         <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" :popup="true" />
 
-        <WorkspaceDataPreviewDialog :visible="showPreviewDialog" :propDataset="previewDataset" @close="showPreviewDialog = false" :previewType="'dataset'" :loadFromDatasetManagement="true"></WorkspaceDataPreviewDialog>
+        <WorkspaceDataPreviewDialog :visible="showPreviewDialog" :prop-dataset="previewDataset" :preview-type="'dataset'" :load-from-dataset-management="true" @close="showPreviewDialog = false"></WorkspaceDataPreviewDialog>
     </div>
 </template>
 
@@ -142,7 +142,7 @@ export default defineComponent({
             selectedDatasetVersions: [] as any,
             filteredDatasetTypes: [] as any,
             scheduling: {
-                repeatInterval: null as String | null
+                repeatInterval: null as string | null
             } as any,
             touched: false,
             loading: false,
@@ -156,9 +156,6 @@ export default defineComponent({
             showDataPreparation: false
         }
     },
-    created() {
-        this.getAllDatasetData()
-    },
     watch: {
         id() {
             this.getAllDatasetData()
@@ -167,6 +164,9 @@ export default defineComponent({
         datasetToCloneId() {
             this.cloneDatasetConfirm(this.datasetToCloneId)
         }
+    },
+    created() {
+        this.getAllDatasetData()
     },
     validations() {},
     methods: {
@@ -245,7 +245,7 @@ export default defineComponent({
 
         //#region ===================== Save/Update Dataset & Tags =================================================
         async saveDataset() {
-            let dsToSave = { ...this.selectedDataset } as any
+            const dsToSave = { ...this.selectedDataset } as any
             if (this.user?.functionalities?.includes('DataPreparation') && dsToSave.id) {
                 await this.$http
                     .get(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/instance/dataset/' + dsToSave.id, { headers: { 'X-Disable-Interceptor': 'true' } })
@@ -326,7 +326,7 @@ export default defineComponent({
         },
 
         async saveTags(dsToSave, id) {
-            let tags = {} as any
+            const tags = {} as any
             tags.versNum = dsToSave.versNum + 1
             tags.tagsToAdd = dsToSave.tags
 
@@ -382,31 +382,31 @@ export default defineComponent({
         },
         async manageDatasetFieldMetadata(fieldsColumns) {
             if (fieldsColumns.columns != undefined && fieldsColumns.columns != null) {
-                var columnsArray = new Array()
-                var columnsNames = new Array()
+                const columnsArray = []
+                let columnsNames = []
 
-                for (var i = 0; i < fieldsColumns.columns.length; i++) {
-                    var element = fieldsColumns.columns[i]
+                for (let i = 0; i < fieldsColumns.columns.length; i++) {
+                    const element = fieldsColumns.columns[i]
                     columnsNames.push(element.column)
                 }
 
                 columnsNames = this.removeDuplicates(columnsNames)
 
-                for (i = 0; i < columnsNames.length; i++) {
-                    var columnObject = { displayedName: '', name: '', fieldType: '', type: '', personal: false, decrypt: false, subjectId: false }
-                    var currentColumnName = columnsNames[i]
+                for (let i = 0; i < columnsNames.length; i++) {
+                    const columnObject = { displayedName: '', name: '', fieldType: '', type: '', personal: false, decrypt: false, subjectId: false }
+                    const currentColumnName = columnsNames[i]
 
                     //remove the part before the double dot if the column is in the format ex: it.eng.spagobi.Customer:customerId
                     if (currentColumnName.indexOf(':') != -1) {
-                        var arr = currentColumnName.split(':')
+                        const arr = currentColumnName.split(':')
                         columnObject.displayedName = arr[1]
                     } else {
                         columnObject.displayedName = currentColumnName
                     }
 
                     columnObject.name = currentColumnName
-                    for (var j = 0; j < fieldsColumns.columns.length; j++) {
-                        element = fieldsColumns.columns[j]
+                    for (let j = 0; j < fieldsColumns.columns.length; j++) {
+                        const element = fieldsColumns.columns[j]
                         if (element.column == currentColumnName) {
                             if (element.pname.toUpperCase() == 'type'.toUpperCase()) {
                                 columnObject.type = element.pvalue
@@ -433,8 +433,8 @@ export default defineComponent({
             } else this.saveDataset()
         },
         removeDuplicates(array) {
-            var index = {}
-            for (var i = array.length - 1; i >= 0; i--) {
+            const index = {}
+            for (let i = array.length - 1; i >= 0; i--) {
                 if (array[i] in index) {
                     array.splice(i, 1)
                 } else {
@@ -448,14 +448,14 @@ export default defineComponent({
                 if (this.selectedDataset.startDate == null) {
                     this.selectedDataset.startDate = new Date()
                 }
-                var repeatInterval = this.scheduling.repeatInterval
-                var finalCronString = ''
-                var secondsForCron = 0
-                var minutesForCron = this.stringifySchedulingValues(this.scheduling.minutesSelected && this.scheduling.minutesSelected.length != 0, 'minutesSelected')
-                var hoursForCron = this.stringifySchedulingValues(repeatInterval != 'minute' && this.scheduling.hoursSelected && this.scheduling.hoursSelected.length != 0, 'hoursSelected')
-                var daysForCron = this.stringifySchedulingValues((repeatInterval === 'day' || repeatInterval === 'month') && this.scheduling.daysSelected && this.scheduling.daysSelected.length != 0, 'daysSelected')
-                var monthsForCron = this.stringifySchedulingValues(repeatInterval === 'month' && this.scheduling.monthsSelected && this.scheduling.monthsSelected.length != 0, 'monthsSelected')
-                var weekdaysForCron = this.stringifySchedulingValues(repeatInterval === 'week' && this.scheduling.weekdaysSelected && this.scheduling.weekdaysSelected.length != 0, 'weekdaysSelected')
+                const repeatInterval = this.scheduling.repeatInterval
+                let finalCronString = ''
+                const secondsForCron = 0
+                const minutesForCron = this.stringifySchedulingValues(this.scheduling.minutesSelected && this.scheduling.minutesSelected.length != 0, 'minutesSelected')
+                const hoursForCron = this.stringifySchedulingValues(repeatInterval != 'minute' && this.scheduling.hoursSelected && this.scheduling.hoursSelected.length != 0, 'hoursSelected')
+                let daysForCron = this.stringifySchedulingValues((repeatInterval === 'day' || repeatInterval === 'month') && this.scheduling.daysSelected && this.scheduling.daysSelected.length != 0, 'daysSelected')
+                const monthsForCron = this.stringifySchedulingValues(repeatInterval === 'month' && this.scheduling.monthsSelected && this.scheduling.monthsSelected.length != 0, 'monthsSelected')
+                let weekdaysForCron = this.stringifySchedulingValues(repeatInterval === 'week' && this.scheduling.weekdaysSelected && this.scheduling.weekdaysSelected.length != 0, 'weekdaysSelected')
 
                 if (daysForCron == '*' && weekdaysForCron != '*') {
                     daysForCron = '?'
@@ -468,9 +468,9 @@ export default defineComponent({
             }
         },
         stringifySchedulingValues(condition, selectedValue) {
-            var stringValue = ''
+            let stringValue = ''
             if (condition) {
-                for (var i = 0; i < this.scheduling[selectedValue].length; i++) {
+                for (let i = 0; i < this.scheduling[selectedValue].length; i++) {
                     stringValue += '' + this.scheduling[selectedValue][i]
 
                     if (i < this.scheduling[selectedValue].length - 1) {
@@ -488,7 +488,7 @@ export default defineComponent({
         async sendDatasetForPreview() {
             if (this.selectedDataset.dsTypeCd === 'Solr') {
                 this.previewDataset = JSON.parse(JSON.stringify(this.selectedDataset))
-                let restRequestHeadersTemp = {}
+                const restRequestHeadersTemp = {}
                 if (this.previewDataset.dsTypeCd.toLowerCase() == 'rest' || this.previewDataset.dsTypeCd.toLowerCase() == 'solr') {
                     for (let i = 0; i < this.previewDataset.restRequestHeaders.length; i++) {
                         restRequestHeadersTemp[this.previewDataset.restRequestHeaders[i]['name']] = this.previewDataset.restRequestHeaders[i]['value']

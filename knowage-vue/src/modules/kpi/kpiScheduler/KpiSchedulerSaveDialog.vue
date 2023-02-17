@@ -1,11 +1,11 @@
 <template>
-    <Dialog :style="kpiSchedulerTabViewDescriptor.dialog.style" :contentStyle="kpiSchedulerTabViewDescriptor.dialog.contentStyle" :header="$t('kpi.kpiScheduler.saveScheduler')" :visible="true" :modal="true" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false">
+    <Dialog :style="kpiSchedulerTabViewDescriptor.dialog.style" :content-style="kpiSchedulerTabViewDescriptor.dialog.contentStyle" :header="$t('kpi.kpiScheduler.saveScheduler')" :visible="true" :modal="true" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false">
         <div class="p-field p-m-4">
             <span class="p-float-label">
                 <InputText
+                    v-model.trim="name"
                     class="kn-material-input"
                     type="text"
-                    v-model.trim="name"
                     max="40"
                     :class="{
                         'p-invalid': name && name.length == 0 && nameDirty
@@ -21,7 +21,7 @@
 
         <template #footer>
             <Button class="kn-button kn-button--secondary" :label="$t('common.close')" @click="$emit('close')"></Button>
-            <Button class="kn-button kn-button--primary" :label="$t('common.save')" @click="$emit('save', name)" :disabled="saveSchedulerButtonDisabled"></Button>
+            <Button class="kn-button kn-button--primary" :label="$t('common.save')" :disabled="saveSchedulerButtonDisabled" @click="$emit('save', name)"></Button>
         </template>
     </Dialog>
 </template>
@@ -39,7 +39,7 @@ export default defineComponent({
     data() {
         return {
             kpiSchedulerTabViewDescriptor,
-            name: '' as String,
+            name: '' as string,
             nameDirty: false
         }
     },
@@ -47,7 +47,7 @@ export default defineComponent({
         nameHelp(): string {
             return (this.name?.length ?? '0') + ' / 40'
         },
-        saveSchedulerButtonDisabled(): Boolean {
+        saveSchedulerButtonDisabled(): boolean {
             return !this.name
         }
     },
@@ -61,7 +61,7 @@ export default defineComponent({
     },
     methods: {
         loadSchedulerName() {
-            this.name = this.schedulerName as String
+            this.name = this.schedulerName as string
         }
     }
 })

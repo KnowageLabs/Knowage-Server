@@ -9,35 +9,35 @@
             <div v-if="settings.dropIsActive && rows.length === 0">
                 <div id="drag-columns-hint" class="p-d-flex p-flex-row p-jc-center p-ai-center">{{ $t(settings.dragColumnsHint) }}</div>
             </div>
-            <DataTable v-else :value="rows" class="p-datatable-sm kn-table table-headers-hidden" :dataKey="settings.dataKey" v-model:filters="filters" :globalFilterFields="settings.globalFilterFields" :responsiveLayout="'stack'" :breakpoint="'600px'" @rowReorder="onRowReorder">
+            <DataTable v-else v-model:filters="filters" :value="rows" class="p-datatable-sm kn-table table-headers-hidden" :data-key="settings.dataKey" :global-filter-fields="settings.globalFilterFields" :responsive-layout="'stack'" :breakpoint="'600px'" @rowReorder="onRowReorder">
                 <template #header>
                     <div v-if="settings.globalFilterFields?.length > 0" class="table-header p-d-flex p-ai-center">
                         <span id="search-container" class="p-input-icon-left p-mr-3">
                             <i class="pi pi-search" />
-                            <InputText class="kn-material-input" v-model="filters['global'].value" :placeholder="$t('common.search')" />
+                            <InputText v-model="filters['global'].value" class="kn-material-input" :placeholder="$t('common.search')" />
                         </span>
                     </div>
                 </template>
                 <template #empty>
                     {{ $t('common.info.noDataFound') }}
                 </template>
-                <Column v-if="rowReorderEnabled" :rowReorder="rowReorderEnabled" :style="settings.rowReorder.rowReorderColumnStyle" />
+                <Column v-if="rowReorderEnabled" :row-reorder="rowReorderEnabled" :style="settings.rowReorder.rowReorderColumnStyle" />
                 <Column v-if="widgetModel.type !== 'highcharts' && widgetModel.type !== 'chartJS'">
                     <template #body="slotProps">
                         <i :class="getIcon(slotProps.data)"></i>
                     </template>
                 </Column>
-                <Column class="kn-truncated" v-for="column in settings.columns" :key="column.field" :field="column.field" :header="column.header ? $t(column.header) : ''" :sortable="column.sortable">
+                <Column v-for="column in settings.columns" :key="column.field" class="kn-truncated" :field="column.field" :header="column.header ? $t(column.header) : ''" :sortable="column.sortable">
                     <template #body="slotProps">
                         <div :style="column.style ?? ''">
-                            <InputText v-if="column.field === 'alias'" class="kn-material-input" v-model="slotProps.data[column.field]" @change="onColumnAliasRenamed(slotProps.data)" />
+                            <InputText v-if="column.field === 'alias'" v-model="slotProps.data[column.field]" class="kn-material-input" @change="onColumnAliasRenamed(slotProps.data)" />
                             <Dropdown
                                 v-else-if="column.field === 'aggregation' && aggregationDropdownIsVisible(slotProps.data)"
-                                class="kn-material-input column-aggregation-dropdown"
                                 v-model="slotProps.data[column.field]"
+                                class="kn-material-input column-aggregation-dropdown"
                                 :options="commonDescriptor.columnAggregationOptions"
-                                optionLabel="label"
-                                optionValue="value"
+                                option-label="label"
+                                option-value="value"
                                 @change="$emit('itemUpdated', slotProps.data)"
                             />
                             <span v-else-if="column.field === 'columnName'" class="kn-truncated">{{ '(' + slotProps.data[column.field] + ')' }}</span>
@@ -48,9 +48,9 @@
                 <Column :style="settings.buttonColumnStyle">
                     <template #body="slotProps">
                         <div>
-                            <Button v-if="slotProps.data.formula" icon="fas fa-calculator" class="p-button-link" v-tooltip.top="$t('common.edit')" @click.stop="openCalculatedFieldDialog(slotProps.data)"></Button>
-                            <Button icon="fas fa-cog" class="p-button-link" v-tooltip.top="$t('common.edit')" @click.stop="$emit('itemSelected', slotProps.data)"></Button>
-                            <Button icon="pi pi-trash" class="p-button-link" v-tooltip.top="$t('common.delete')" @click.stop="deleteItem(slotProps.data, slotProps.index)"></Button>
+                            <Button v-if="slotProps.data.formula" v-tooltip.top="$t('common.edit')" icon="fas fa-calculator" class="p-button-link" @click.stop="openCalculatedFieldDialog(slotProps.data)"></Button>
+                            <Button v-tooltip.top="$t('common.edit')" icon="fas fa-cog" class="p-button-link" @click.stop="$emit('itemSelected', slotProps.data)"></Button>
+                            <Button v-tooltip.top="$t('common.delete')" icon="pi pi-trash" class="p-button-link" @click.stop="deleteItem(slotProps.data, slotProps.index)"></Button>
                         </div>
                     </template>
                 </Column>

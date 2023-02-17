@@ -8,11 +8,11 @@
             </Toolbar>
         </template>
 
-        <DataTable class="p-datatable-sm kn-table p-m-2" :value="propEntity.relation" responsiveLayout="scroll" stripedRows>
+        <DataTable class="p-datatable-sm kn-table p-m-2" :value="propEntity.relation" responsive-layout="scroll" striped-rows>
             <template #empty>
                 {{ $t('qbe.entities.relationDialog.noRelations') }}
             </template>
-            <Column class="kn-truncated" v-for="column in relationDescriptor.entityRelation.columns" :key="column.field" :field="column.field" :header="$t(column.header)" :sortable="true" />
+            <Column v-for="column in relationDescriptor.entityRelation.columns" :key="column.field" class="kn-truncated" :field="column.field" :header="$t(column.header)" :sortable="true" />
         </DataTable>
 
         <template #footer>

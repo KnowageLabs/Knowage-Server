@@ -1,5 +1,5 @@
 <template>
-    <Dialog id="kpi-edit-scorecard-select-dialog" class="p-fluid kn-dialog--toolbar--primary" :style="KpiDocumentDesignerScorecardsListCardDescriptor.dialog.style" :contentStyle="KpiDocumentDesignerScorecardsListCardDescriptor.dialog.contentStyle" :visible="visible" :modal="true" :closable="false">
+    <Dialog id="kpi-edit-scorecard-select-dialog" class="p-fluid kn-dialog--toolbar--primary" :style="KpiDocumentDesignerScorecardsListCardDescriptor.dialog.style" :content-style="KpiDocumentDesignerScorecardsListCardDescriptor.dialog.contentStyle" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -9,31 +9,31 @@
         </template>
 
         <DataTable
-            :value="scorecardList"
             v-model:selection="selectedScorecard"
-            class="p-datatable-sm kn-table"
-            dataKey="id"
             v-model:filters="filters"
-            :KpiDocumentDesignerKpiListCardDescriptor="KpiDocumentDesignerScorecardsListCardDescriptor.selectScorecardGlobalFilterFields"
-            responsiveLayout="stack"
+            :value="scorecardList"
+            class="p-datatable-sm kn-table"
+            data-key="id"
+            :kpi-document-designer-kpi-list-card-descriptor="KpiDocumentDesignerScorecardsListCardDescriptor.selectScorecardGlobalFilterFields"
+            responsive-layout="stack"
             breakpoint="960px"
             :scrollable="true"
-            scrollHeight="80vh"
+            scroll-height="80vh"
         >
             <template #header>
                 <div class="table-header p-d-flex">
                     <span class="p-input-icon-left p-mr-3">
                         <i class="pi pi-search" />
-                        <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
+                        <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
                     </span>
                 </div>
             </template>
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
-            <Column selectionMode="single" :headerStyle="KpiDocumentDesignerScorecardsListCardDescriptor.selectColumnStyle" :style="KpiDocumentDesignerScorecardsListCardDescriptor.selectColumnStyle"></Column>
-            <Column class="kn-truncated" field="name" :header="$t('common.name')" key="name" :sortable="true"> </Column>
-            <Column class="kn-truncated" field="creationDate" :header="$t('common.creationDate')" key="dateCreation" :sortable="true">
+            <Column selection-mode="single" :header-style="KpiDocumentDesignerScorecardsListCardDescriptor.selectColumnStyle" :style="KpiDocumentDesignerScorecardsListCardDescriptor.selectColumnStyle"></Column>
+            <Column key="name" class="kn-truncated" field="name" :header="$t('common.name')" :sortable="true"> </Column>
+            <Column key="dateCreation" class="kn-truncated" field="creationDate" :header="$t('common.creationDate')" :sortable="true">
                 <template #body="slotProps">
                     <span>{{ getFormattedDate(slotProps.data.creationDate) }}</span>
                 </template>

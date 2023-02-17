@@ -9,26 +9,26 @@
         </template>
         <template #content>
             <DataTable
-                :value="categoryList"
                 v-model:selection="selectedCategories"
+                :value="categoryList"
                 class="p-datatable-sm kn-table"
-                dataKey="categoryId"
+                data-key="categoryId"
                 :paginator="true"
                 :rows="20"
-                responsiveLayout="stack"
+                responsive-layout="stack"
                 breakpoint="960px"
                 :scrollable="true"
-                scrollHeight="flex"
+                scroll-height="flex"
+                data-test="data-table"
                 @rowSelect="setDirty"
                 @rowUnselect="setDirty"
                 @rowSelectAll="onSelectAll"
                 @rowUnselectAll="onUnselectAll"
-                data-test="data-table"
             >
                 <template #empty>
                     {{ $t('common.info.noDataFound') }}
                 </template>
-                <Column class="kn-column-checkbox" selectionMode="multiple" dataKey="categoryId"></Column>
+                <Column class="kn-column-checkbox" selection-mode="multiple" data-key="categoryId"></Column>
                 <Column field="categoryName" :header="$t('common.name')" :style="domainCategoryTabDescriptor.column.header.style"></Column>
             </DataTable>
         </template>

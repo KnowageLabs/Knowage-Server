@@ -6,9 +6,9 @@
                     <span class="p-float-label">
                         <InputText
                             id="sparqlEndpoint"
+                            v-model.trim="v$.dataset.sparqlEndpoint.$model"
                             class="kn-material-input"
                             type="text"
-                            v-model.trim="v$.dataset.sparqlEndpoint.$model"
                             :class="{
                                 'p-invalid': v$.dataset.sparqlEndpoint.$invalid && v$.dataset.sparqlEndpoint.$dirty
                             }"
@@ -17,22 +17,22 @@
                         />
                         <label for="sparqlEndpoint" class="kn-material-input-label"> {{ $t('managers.datasetManagement.sparqlEndpoint') }} * </label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.sparqlEndpoint" :additionalTranslateParams="{ fieldName: $t('managers.datasetManagement.sparqlEndpoint') }" />
+                    <KnValidationMessages class="p-mt-1" :v-comp="v$.dataset.sparqlEndpoint" :additional-translate-params="{ fieldName: $t('managers.datasetManagement.sparqlEndpoint') }" />
                 </div>
                 <div class="p-field p-col-6">
                     <span class="p-float-label">
-                        <InputText id="sparqlDefaultGraphIri" class="kn-material-input" v-model.trim="dataset.sparqlDefaultGraphIri" @change="$emit('touched')" />
+                        <InputText id="sparqlDefaultGraphIri" v-model.trim="dataset.sparqlDefaultGraphIri" class="kn-material-input" @change="$emit('touched')" />
                         <label for="sparqlDefaultGraphIri" class="kn-material-input-label"> {{ $t('managers.datasetManagement.sparqlDefaultGraphIri') }} </label>
                     </span>
                 </div>
                 <div class="p-field p-col-6">
                     <span class="p-float-label">
-                        <InputText id="sparqlExecutionTimeout" class="kn-material-input" type="number" v-model.trim="dataset.sparqlExecutionTimeout" @change="$emit('touched')" />
+                        <InputText id="sparqlExecutionTimeout" v-model.trim="dataset.sparqlExecutionTimeout" class="kn-material-input" type="number" @change="$emit('touched')" />
                         <label for="sparqlExecutionTimeout" class="kn-material-input-label"> {{ $t('managers.datasetManagement.sparqlExecutionTimeout') }} </label>
                     </span>
                 </div>
             </form>
-            <VCodeMirror class="p-mt-2" ref="codeMirrorSparql" v-model:value="dataset.sparqlQuery" :autoHeight="true" :options="sparqlOptions" @keyup="$emit('touched')" />
+            <VCodeMirror ref="codeMirrorSparql" v-model:value="dataset.sparqlQuery" class="p-mt-2" :auto-height="true" :options="sparqlOptions" @keyup="$emit('touched')" />
         </template>
     </Card>
 </template>
@@ -40,7 +40,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
-import VCodeMirror, { CodeMirror  } from 'codemirror-editor-vue3'
+// eslint-disable-next-line
+import VCodeMirror, { CodeMirror } from 'codemirror-editor-vue3'
 import useValidate from '@vuelidate/core'
 import sparqlDescriptor from './DatasetManagementSparqlDataset.json'
 import Card from 'primevue/card'
@@ -67,14 +68,14 @@ export default defineComponent({
             }
         }
     },
-    created() {
-        this.loadDataset()
-        this.setupCodeMirror()
-    },
     watch: {
         selectedDataset() {
             this.loadDataset()
         }
+    },
+    created() {
+        this.loadDataset()
+        this.setupCodeMirror()
     },
     validations() {
         const sparqlFieldsRequired = (value) => {

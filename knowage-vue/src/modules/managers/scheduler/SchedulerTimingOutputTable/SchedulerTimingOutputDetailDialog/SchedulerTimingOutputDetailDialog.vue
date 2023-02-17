@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="schedulerTimingOutputDetailDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary" :content-style="schedulerTimingOutputDetailDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -14,18 +14,18 @@
                 <template #header>
                     <span>{{ $t('managers.scheduler.timing') }}</span>
                 </template>
-                <SchedulerTimingOutputTimingTab :propTrigger="trigger" :datasets="datasets" @cronValid="setCronValid($event)"></SchedulerTimingOutputTimingTab>
+                <SchedulerTimingOutputTimingTab :prop-trigger="trigger" :datasets="datasets" @cronValid="setCronValid($event)"></SchedulerTimingOutputTimingTab>
             </TabPanel>
             <TabPanel>
                 <template #header>
                     <span>{{ $t('common.output') }}</span>
                 </template>
 
-                <SchedulerTimingOutputOutputTab :propDocuments="trigger.documents" :functionalities="functionalities" :datasets="datasets" :jobInfo="jobInfo"></SchedulerTimingOutputOutputTab>
+                <SchedulerTimingOutputOutputTab :prop-documents="trigger.documents" :functionalities="functionalities" :datasets="datasets" :job-info="jobInfo"></SchedulerTimingOutputOutputTab>
             </TabPanel>
         </TabView>
 
-        <SchedulerTimingOutputWarningDialog :visible="warningVisible" :warningTitle="warningTitle" :warningMessage="warningMessage" @close="warningVisible = false"></SchedulerTimingOutputWarningDialog>
+        <SchedulerTimingOutputWarningDialog :visible="warningVisible" :warning-title="warningTitle" :warning-message="warningMessage" @close="warningVisible = false"></SchedulerTimingOutputWarningDialog>
 
         <template #footer>
             <div class="p-d-flex p-flex-row p-jc-end">
@@ -53,6 +53,10 @@ export default defineComponent({
     components: { Dialog, SchedulerTimingOutputTimingTab, SchedulerTimingOutputOutputTab, SchedulerTimingOutputWarningDialog, TabView, TabPanel },
     props: { visible: { type: Boolean }, propTrigger: { type: Object } },
     emits: ['close', 'saved'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             schedulerTimingOutputDetailDialogDescriptor,
@@ -95,10 +99,6 @@ export default defineComponent({
             this.loadTrigger()
             await this.loadJobInfo()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         this.loadTrigger()

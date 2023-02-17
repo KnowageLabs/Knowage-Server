@@ -7,13 +7,13 @@
                 </template>
             </Toolbar>
         </template>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
 
-        <DataTable v-if="!loading" class="p-datatable-sm kn-table p-m-4" v-model:selection="selectedVersions" :value="versions" dataKey="id">
+        <DataTable v-if="!loading" v-model:selection="selectedVersions" class="p-datatable-sm kn-table p-m-4" :value="versions" data-key="id">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
-            <Column selectionMode="multiple" :headerStyle="olapDeleteVersionsDialogDescriptor.selectColumnStyle"></Column>
+            <Column selection-mode="multiple" :header-style="olapDeleteVersionsDialogDescriptor.selectColumnStyle"></Column>
             <Column v-for="column in olapDeleteVersionsDialogDescriptor.columns" :key="column.header" :header="$t(column.header)" :field="column.field" :style="column.style" :sortable="true"> </Column>
         </DataTable>
 
@@ -38,7 +38,10 @@ export default defineComponent({
     components: { Column, DataTable, Dialog },
     props: { visible: { type: Boolean }, id: { type: String }, propOlapVersions: { type: Array as PropType<{ id: number; name: string; description: string }[]> }, olap: { type: Object as PropType<iOlap> } },
     emits: ['close'],
-    computed: {},
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             olapDeleteVersionsDialogDescriptor,
@@ -47,14 +50,11 @@ export default defineComponent({
             loading: false
         }
     },
+    computed: {},
     watch: {
         propOlapVersions() {
             this.loadVersions()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadVersions()

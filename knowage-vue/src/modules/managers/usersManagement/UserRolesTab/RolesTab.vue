@@ -13,7 +13,7 @@
                     <div v-if="selectedRoles.length > 1">
                         <div class="p-inputgroup">
                             <span class="p-float-label">
-                                <Dropdown v-model="defaultRole" showClear="true" :options="selectedRolesWithEmpty()" @change="onSelectDefaultRole($event)" optionLabel="name" class="p-inputtext p-component kn-material-input">
+                                <Dropdown v-model="defaultRole" show-clear="true" :options="selectedRolesWithEmpty()" option-label="name" class="p-inputtext p-component kn-material-input" @change="onSelectDefaultRole($event)">
                                     <template #value="slotProps">
                                         <span>{{ slotProps.value?.name }}</span>
                                     </template>
@@ -26,26 +26,26 @@
                         </div>
                     </div>
                     <p>
-                        <Message severity="info" v-if="selectedRoles.length > 1">{{ $t('managers.usersManagement.defaultRoleInfo') }}</Message>
+                        <Message v-if="selectedRoles.length > 1" severity="info">{{ $t('managers.usersManagement.defaultRoleInfo') }}</Message>
                     </p>
                     <DataTable
-                        :value="rolesList"
-                        @row-select-all="onRowSelect"
-                        @row-unselect-all="onRowUnselect"
                         v-model:selection="selectedRoles"
+                        :value="rolesList"
                         class="p-datatable-sm kn-table"
-                        dataKey="id"
+                        data-key="id"
                         :paginator="true"
                         :rows="20"
-                        responsiveLayout="stack"
+                        responsive-layout="stack"
                         breakpoint="960px"
+                        @row-select-all="onRowSelect"
+                        @row-unselect-all="onRowUnselect"
                         @rowSelect="onRowSelect"
                         @rowUnselect="onRowUnselect"
                     >
                         <template #empty>
                             {{ $t('common.info.noDataFound') }}
                         </template>
-                        <Column selectionMode="multiple" dataKey="id" style="width:50px"></Column>
+                        <Column selection-mode="multiple" data-key="id" style="width:50px"></Column>
                         <Column field="name" :header="$t('common.name')"></Column>
                     </DataTable>
                 </template>
@@ -87,7 +87,6 @@ export default defineComponent({
             emptyOption: { id: null, name: this.$t('managers.usersManagement.emptyRolesOption'), value: '' }
         }
     },
-    mounted() {},
     watch: {
         selected: {
             handler: function(selected: iRole[]) {
@@ -101,6 +100,7 @@ export default defineComponent({
             }
         }
     },
+    mounted() {},
     methods: {
         setDefaultRole(defRole) {
             if (this.selectedRoles) {

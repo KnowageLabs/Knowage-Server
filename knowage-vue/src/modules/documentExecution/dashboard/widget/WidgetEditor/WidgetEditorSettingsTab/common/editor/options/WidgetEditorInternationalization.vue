@@ -1,6 +1,6 @@
 <template>
     <span class="p-float-label">
-        <InputText class="kn-material-input" v-model="i18n" @change="onColumnChanged" />
+        <InputText v-model="i18n" class="kn-material-input" @change="onColumnChanged" />
         <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.editorTags.i18n') }}</label>
     </span>
 </template>

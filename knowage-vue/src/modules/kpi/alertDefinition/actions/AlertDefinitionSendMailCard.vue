@@ -1,16 +1,16 @@
 <template>
     <span class="p-float-label p-m-4">
-        <AutoComplete id="mailTo" class="p-inputtext-sm" :multiple="true" v-model="selectedUsers" :suggestions="filteredUsers" field="name" @keydown.enter="createMailChip" @complete="searchUsers($event)" @item-select="setUser($event.value)" />
+        <AutoComplete id="mailTo" v-model="selectedUsers" class="p-inputtext-sm" :multiple="true" :suggestions="filteredUsers" field="name" @keydown.enter="createMailChip" @complete="searchUsers($event)" @item-select="setUser($event.value)" />
         <label for="mailTo" class="kn-material-input-label"> {{ $t('kpi.alert.mailTo') }}</label>
         <small id="chips-help">{{ $t('common.chipsHint') }}</small>
     </span>
     <span class="p-float-label p-m-4">
-        <InputText id="mailSubject" class="kn-material-input" v-model.trim="selectedAction.jsonActionParameters.subject" />
+        <InputText id="mailSubject" v-model.trim="selectedAction.jsonActionParameters.subject" class="kn-material-input" />
         <label for="mailSubject" class="kn-material-input-label"> {{ $t('kpi.alert.mailSubject') }}</label>
     </span>
     <div class="p-field">
         <span>
-            <Editor id="html" v-model="selectedAction.jsonActionParameters.body" :editorStyle="sendMailCardDescriptor.editor.style" />
+            <Editor id="html" v-model="selectedAction.jsonActionParameters.body" :editor-style="sendMailCardDescriptor.editor.style" />
         </span>
     </div>
 </template>

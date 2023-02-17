@@ -3,7 +3,7 @@
         <div class="p-fluid p-formgrid p-grid">
             <div class="p-field p-col-4">
                 <span class="p-float-label">
-                    <Dropdown id="mondrian-schema-select" class="kn-material-input" v-model="selectedMondrianSchema" :options="mondrianSchemas" optionLabel="name" @change="onMondrianSchemaSelected"> </Dropdown>
+                    <Dropdown id="mondrian-schema-select" v-model="selectedMondrianSchema" class="kn-material-input" :options="mondrianSchemas" option-label="name" @change="onMondrianSchemaSelected"> </Dropdown>
                     <label for="mondrian-schema-select" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.designerDialog.selectMondrianSchema') }}</label>
                 </span>
             </div>
@@ -11,7 +11,7 @@
 
             <div v-if="selectedMondrianSchema" class="p-field p-col-4">
                 <span class="p-float-label">
-                    <Dropdown id="cube-select" class="kn-material-input" v-model="selectedCube" :options="cubes" @change="onCubeSelected"> </Dropdown>
+                    <Dropdown id="cube-select" v-model="selectedCube" class="kn-material-input" :options="cubes" @change="onCubeSelected"> </Dropdown>
                     <label for="cube-select" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.designerDialog.selectCube') }}</label>
                 </span>
             </div>

@@ -1,10 +1,10 @@
 <template>
     <div class="qbe-filter-group">
-        <div class="filter-group-container" draggable="true" @dragstart="onDragStart" :class="{ 'qbe-group-selected': selected }" @click.stop="select(node)">
+        <div class="filter-group-container" draggable="true" :class="{ 'qbe-group-selected': selected }" @dragstart="onDragStart" @click.stop="select(node)">
             <span v-show="dropzoneTopVisible" class="qbe-group-tooltip qbe-group-tooltip-top">{{ $t('qbe.advancedFilters.replaceTooltip') }}</span>
             <div :ref="'group-top-' + groupId" class="filter-dropzone" @drop.stop="onDropComplete($event)" @dragover.prevent @dragenter.prevent="displayDropzone('top')" @dragleave.prevent="hideDropzone('top')"></div>
             <div class="kn-draggable" draggable="false">
-                <QBEOperator :propNode="node.childNodes[0]" :selected="selected" @selectedChanged="$emit('selectedChanged')" @treeUpdated="$emit('treeUpdated')"></QBEOperator>
+                <QBEOperator :prop-node="node.childNodes[0]" :selected="selected" @selectedChanged="$emit('selectedChanged')" @treeUpdated="$emit('treeUpdated')"></QBEOperator>
             </div>
             <div :ref="'group-bottom-' + groupId" class="filter-dropzone" @drop.stop="onDropMove($event)" @dragover.prevent @dragenter.prevent="displayDropzone('bottom')" @dragleave.prevent="hideDropzone('bottom')"></div>
             <span v-show="dropzoneBottomVisible" class="qbe-group-tooltip qbe-group-tooltip-bottom">{{ $t('qbe.advancedFilters.moveTooltip') }}</span>

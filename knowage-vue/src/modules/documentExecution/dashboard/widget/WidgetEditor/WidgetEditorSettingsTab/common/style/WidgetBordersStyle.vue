@@ -3,7 +3,7 @@
         <div class="p-col-12 p-grid p-ai-center">
             <div class="p-col-12 p-md-4 p-d-flex p-flex-column p-px-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.borders.bordersStyle') }}</label>
-                <Dropdown class="kn-material-input" v-model="bordersStyleModel.properties['border-style']" :options="descriptor.bordersStyleOptions" optionValue="value" :disabled="bordersStyleDisabled" @change="bordersStyleChanged">
+                <Dropdown v-model="bordersStyleModel.properties['border-style']" class="kn-material-input" :options="descriptor.bordersStyleOptions" option-value="value" :disabled="bordersStyleDisabled" @change="bordersStyleChanged">
                     <template #value="slotProps">
                         <div>
                             <span>{{ getTranslatedLabel(slotProps.value, descriptor.bordersStyleOptions, $t) }}</span>
@@ -18,33 +18,33 @@
             </div>
             <div class="p-col-12 p-md-4 p-d-flex p-flex-column p-px-2 p-pt-4">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.borders.bordersThickness') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="bordersStyleModel.properties['border-width']" :disabled="bordersStyleDisabled" @change="bordersStyleChanged" />
+                <InputText v-model="bordersStyleModel.properties['border-width']" class="kn-material-input p-inputtext-sm" :disabled="bordersStyleDisabled" @change="bordersStyleChanged" />
                 <small>{{ $t('dashboard.widgetEditor.borders.bordersThicknessHint') }}</small>
             </div>
             <div class="p-col-12 p-md-4 p-px-2 p-pt-4">
-                <WidgetEditorColorPicker :initialValue="bordersStyleModel.properties['border-width']" :label="$t('dashboard.widgetEditor.borders.bordersColor')" :disabled="bordersStyleDisabled" @change="onSelectionColorChanged"></WidgetEditorColorPicker>
+                <WidgetEditorColorPicker :initial-value="bordersStyleModel.properties['border-width']" :label="$t('dashboard.widgetEditor.borders.bordersColor')" :disabled="bordersStyleDisabled" @change="onSelectionColorChanged"></WidgetEditorColorPicker>
             </div>
         </div>
 
         <div class="p-col-12 p-grid p-ai-center">
             <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column kn-flex p-px-2 p-pt-4">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.borders.borderRadiusTopLeft') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="bordersStyleModel.properties['border-top-left-radius']" :disabled="bordersStyleDisabled" @change="bordersStyleChanged" />
+                <InputText v-model="bordersStyleModel.properties['border-top-left-radius']" class="kn-material-input p-inputtext-sm" :disabled="bordersStyleDisabled" @change="bordersStyleChanged" />
                 <small>{{ $t('dashboard.widgetEditor.inputHintForPixels') }}</small>
             </div>
             <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column kn-flex p-px-2 p-pt-4">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.borders.borderRadiusTopRight') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="bordersStyleModel.properties['border-top-right-radius']" :disabled="bordersStyleDisabled" @change="bordersStyleChanged" />
+                <InputText v-model="bordersStyleModel.properties['border-top-right-radius']" class="kn-material-input p-inputtext-sm" :disabled="bordersStyleDisabled" @change="bordersStyleChanged" />
                 <small>{{ $t('dashboard.widgetEditor.inputHintForPixels') }}</small>
             </div>
             <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column kn-flex p-px-2 p-pt-4">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.borders.borderRadiusBottomLeft') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="bordersStyleModel.properties['border-bottom-left-radius']" :disabled="bordersStyleDisabled" @change="bordersStyleChanged" />
+                <InputText v-model="bordersStyleModel.properties['border-bottom-left-radius']" class="kn-material-input p-inputtext-sm" :disabled="bordersStyleDisabled" @change="bordersStyleChanged" />
                 <small>{{ $t('dashboard.widgetEditor.inputHintForPixels') }}</small>
             </div>
             <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column kn-flex p-px-2 p-pt-4">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.borders.borderRadiusBottomRight') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="bordersStyleModel.properties['border-bottom-right-radius']" :disabled="bordersStyleDisabled" @change="bordersStyleChanged" />
+                <InputText v-model="bordersStyleModel.properties['border-bottom-right-radius']" class="kn-material-input p-inputtext-sm" :disabled="bordersStyleDisabled" @change="bordersStyleChanged" />
                 <small>{{ $t('dashboard.widgetEditor.inputHintForPixels') }}</small>
             </div>
         </div>
@@ -58,12 +58,11 @@ import { emitter } from '../../../../../DashboardHelpers'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import descriptor from '../../WidgetEditorSettingsTabDescriptor.json'
 import Dropdown from 'primevue/dropdown'
-import InputSwitch from 'primevue/inputswitch'
 import WidgetEditorColorPicker from '../../common/WidgetEditorColorPicker.vue'
 
 export default defineComponent({
     name: 'widget-borders-style',
-    components: { Dropdown, InputSwitch, WidgetEditorColorPicker },
+    components: { Dropdown, WidgetEditorColorPicker },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true }
     },

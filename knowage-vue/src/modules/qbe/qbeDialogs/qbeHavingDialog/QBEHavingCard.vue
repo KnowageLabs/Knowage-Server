@@ -3,12 +3,12 @@
         <div class="p-grid p-m-2">
             <div class="p-col-3">
                 <label class="kn-material-input-label"> {{ $t('common.field') }} </label>
-                <InputText class="kn-material-input" v-model="having.leftOperandDescription" :disabled="true" />
+                <InputText v-model="having.leftOperandDescription" class="kn-material-input" :disabled="true" />
             </div>
 
             <div class="p-col-2">
-                <label class="kn-material-input-label" v-tooltip.top="$t('qbe.filters.conditionTooltip')"> {{ $t('qbe.filters.condition') }} </label>
-                <Dropdown class="kn-material-input" v-model="having.operator" :options="QBEHavingDialogDescriptor.operatorValues" optionValue="value">
+                <label v-tooltip.top="$t('qbe.filters.conditionTooltip')" class="kn-material-input-label"> {{ $t('qbe.filters.condition') }} </label>
+                <Dropdown v-model="having.operator" class="kn-material-input" :options="QBEHavingDialogDescriptor.operatorValues" option-value="value">
                     <template #value="slotProps">
                         <div v-if="slotProps.value">
                             <span class="qbe-filter-option-value">{{ slotProps.value.toLowerCase() }}</span>
@@ -24,21 +24,21 @@
 
             <div class="p-col-2">
                 <label class="kn-material-input-label"> {{ $t('qbe.filters.targetType') }} </label>
-                <Dropdown class="kn-material-input" v-model="having.rightType" :options="targetValues" optionValue="value" optionLabel="label" @change="onHavingTypeChange" />
+                <Dropdown v-model="having.rightType" class="kn-material-input" :options="targetValues" option-value="value" option-label="label" @change="onHavingTypeChange" />
             </div>
 
             <div class="p-col-3">
                 <label class="kn-material-input-label"> {{ $t('qbe.filters.target') }} </label>
                 <div class="p-d-flex p-flex-row p-ai-center">
-                    <InputText v-if="having.rightType === ''" class="kn-material-input" v-model="having.rightOperandDescription" @input="onManualValueChange" />
-                    <Dropdown class="kn-material-input kn-flex" v-else-if="having.rightType === 'anotherEntity'" v-model="having.rightOperandDescription" :options="entities" optionLabel="field" optionValue="id" @change="onEntityTypeChanged" />
+                    <InputText v-if="having.rightType === ''" v-model="having.rightOperandDescription" class="kn-material-input" @input="onManualValueChange" />
+                    <Dropdown v-else-if="having.rightType === 'anotherEntity'" v-model="having.rightOperandDescription" class="kn-material-input kn-flex" :options="entities" option-label="field" option-value="id" @change="onEntityTypeChanged" />
                 </div>
             </div>
 
             <div class="p-col-2">
                 <label class="kn-material-input-label"> {{ $t('qbe.filters.target') }} </label>
                 <div class="p-d-flex p-flex-row p-ai-center">
-                    <Dropdown class="kn-material-input kn-flex" v-model="having.booleanConnector" :options="QBEHavingDialogDescriptor.booleanConnectors" />
+                    <Dropdown v-model="having.booleanConnector" class="kn-material-input kn-flex" :options="QBEHavingDialogDescriptor.booleanConnectors" />
                     <i class="fa fa-eraser kn-cursor-pointer p-ml-2" @click="$emit('removeHaving', having)"></i>
                 </div>
             </div>

@@ -1,6 +1,6 @@
 <template>
     <div class="p-mt-2">
-        <DataTable :value="rows" class="p-datatable-sm kn-table" v-model:filters="filters" :globalFilterFields="globalFilterFields">
+        <DataTable v-model:filters="filters" :value="rows" class="p-datatable-sm kn-table" :global-filter-fields="globalFilterFields">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -8,7 +8,7 @@
                 <div class="table-header p-d-flex">
                     <span class="p-input-icon-left p-mr-3 p-col-12">
                         <i class="pi pi-search" />
-                        <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" />
+                        <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" />
                     </span>
                 </div>
             </template>
@@ -17,19 +17,19 @@
                     <div class="pi pi-bars p-button-link" :draggable="true" @dragstart.stop="onDragStart($event, slotProps.data)" />
                 </template>
             </Column>
-            <Column class="kn-truncated" v-for="column in columns" :header="$t(column.header)" :key="column.field" :sortField="column.field" :sortable="true">
+            <Column v-for="column in columns" :key="column.field" class="kn-truncated" :header="$t(column.header)" :sort-field="column.field" :sortable="true">
                 <template #body="slotProps">
                     <span v-tooltip.top="slotProps.data[column.field]" class="kn-cursor-pointer" :draggable="true" @dragstart="onDragStart($event, slotProps.data)"> {{ slotProps.data[column.field] }}</span>
                 </template>
             </Column>
             <Column :style="hierarchyManagementDimensionsTableDescriptor.smallIconColumn">
                 <template #body="slotProps">
-                    <Button icon="pi pi-info" class="p-button-link" v-tooltip.top="$t('common.detail')" @click.stop="showInfo(slotProps.data)" />
+                    <Button v-tooltip.top="$t('common.detail')" icon="pi pi-info" class="p-button-link" @click.stop="showInfo(slotProps.data)" />
                 </template>
             </Column>
         </DataTable>
 
-        <HierarchyManagementDimensionsInfoDialog :visible="infoDialogVisible" :selectedItem="selectedItem" @close="closeInfoDialog" />
+        <HierarchyManagementDimensionsInfoDialog :visible="infoDialogVisible" :selected-item="selectedItem" @close="closeInfoDialog" />
     </div>
 </template>
 

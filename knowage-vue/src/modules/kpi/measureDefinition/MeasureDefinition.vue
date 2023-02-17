@@ -5,28 +5,28 @@
                 {{ $t('kpi.measureDefinition.title') }}
             </template>
             <template #end>
-                <KnFabButton icon="fas fa-plus" @click="showForm(null, false)" data-test="new-button" />
+                <KnFabButton icon="fas fa-plus" data-test="new-button" @click="showForm(null, false)" />
             </template>
         </Toolbar>
         <div class="kn-page-content">
-            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+            <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
             <KnHint v-if="measuresList.length === 0 && !loading" :title="'kpi.measureDefinition.title'" :hint="'kpi.measureDefinition.hint'" data-test="measure-hint"></KnHint>
             <DataTable
                 v-else
+                v-model:filters="filters"
                 :value="measuresList"
-                rowGroupMode="rowspan"
-                groupRowsBy="rule"
+                row-group-mode="rowspan"
+                group-rows-by="rule"
                 :paginator="true"
                 :rows="15"
                 :loading="loading"
                 class="p-datatable-sm kn-table"
-                dataKey="id"
-                v-model:filters="filters"
-                :globalFilterFields="measureDefinitionDescriptor.globalFilterFields"
-                responsiveLayout="stack"
+                data-key="id"
+                :global-filter-fields="measureDefinitionDescriptor.globalFilterFields"
+                responsive-layout="stack"
                 breakpoint="960px"
-                @rowClick="showForm($event.data, false)"
                 data-test="measures-table"
+                @rowClick="showForm($event.data, false)"
             >
                 <template #loading>
                     {{ $t('common.info.dataLoading') }}
@@ -35,15 +35,15 @@
                     <div class="table-header p-d-flex">
                         <span class="p-input-icon-left p-mr-3">
                             <i class="pi pi-search" />
-                            <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
+                            <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
                         </span>
                     </div>
                 </template>
-                <Column class="kn-truncated" :style="col.style" v-for="col of measureDefinitionDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true"> </Column>
+                <Column v-for="col of measureDefinitionDescriptor.columns" :key="col.field" class="kn-truncated" :style="col.style" :field="col.field" :header="$t(col.header)" :sortable="true"> </Column>
                 <Column :style="measureDefinitionDescriptor.table.iconColumn.style">
                     <template #body="slotProps">
-                        <Button icon="pi pi-copy" class="p-button-link" @click="cloneKpiConfirm(slotProps.data)" data-test="clone-button" />
-                        <Button icon="pi pi-trash" class="p-button-link" @click="deleteMeasureConfirm(slotProps.data)" :data-test="'delete-button-' + slotProps.data.id" />
+                        <Button icon="pi pi-copy" class="p-button-link" data-test="clone-button" @click="cloneKpiConfirm(slotProps.data)" />
+                        <Button icon="pi pi-trash" class="p-button-link" :data-test="'delete-button-' + slotProps.data.id" @click="deleteMeasureConfirm(slotProps.data)" />
                     </template>
                 </Column>
             </DataTable>
@@ -71,6 +71,10 @@ export default defineComponent({
         KnFabButton,
         KnHint
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             measureDefinitionDescriptor,
@@ -78,10 +82,6 @@ export default defineComponent({
             filters: { global: [filterDefault] } as Object,
             loading: false
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         await this.loadPage()
@@ -103,7 +103,7 @@ export default defineComponent({
                 })
             )
         },
-        showForm(measure: iMeasure, clone: Boolean) {
+        showForm(measure: iMeasure, clone: boolean) {
             const path = measure ? `/measure-definition/edit?id=${measure.ruleId}&ruleVersion=${measure.ruleVersion}&clone=${clone}` : '/measure-definition/new-measure-definition'
             this.$router.push(path)
         },

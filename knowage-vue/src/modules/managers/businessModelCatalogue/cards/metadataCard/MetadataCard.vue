@@ -40,14 +40,14 @@ export default defineComponent({
             required: false
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             importing: false
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     methods: {
         confirmImport() {

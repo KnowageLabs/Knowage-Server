@@ -3,12 +3,12 @@
         <template #start>{{ selectedKpi.name }}</template>
         <template #end>
             <Button :label="$t('kpi.kpiDefinition.aliasToolbarTitle')" :style="tabViewDescriptor.style.aliasButton" class="p-button-text p-button-rounded p-button-plain" @click="toggleAlias" />
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="showSaveDialog = true" :disabled="buttonDisabled" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="showSaveDialog = true" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" />
         </template>
     </Toolbar>
 
-    <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+    <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
 
     <div class="p-d-flex p-flex-row">
         <div class="card kn-flex">
@@ -19,14 +19,14 @@
                     </template>
 
                     <KpiDefinitionFormulaTab
-                        :propKpi="selectedKpi"
+                        :prop-kpi="selectedKpi"
                         :measures="measureList"
                         :loading="loading"
-                        :aliasToInput="aliasToInput"
-                        :checkFormula="checkFormula"
-                        :activeTab="activeTab"
-                        :reloadKpi="reloadKpi"
-                        :showGuide="showGuide"
+                        :alias-to-input="aliasToInput"
+                        :check-formula="checkFormula"
+                        :active-tab="activeTab"
+                        :reload-kpi="reloadKpi"
+                        :show-guide="showGuide"
                         @updateFormulaToSave="onUpdateFormulaToSave"
                         @errorInFormula="ifErrorInFormula"
                         @touched="setTouched"
@@ -39,7 +39,7 @@
                         <span>{{ $t('kpi.kpiDefinition.cardinalityTtitle') }}</span>
                     </template>
 
-                    <KpiDefinitionCardinalityTab :selectedKpi="selectedKpi" :loading="loading" :updateMeasureList="updateMeasureList" @measureListUpdated="updateMeasureList = false" />
+                    <KpiDefinitionCardinalityTab :selected-kpi="selectedKpi" :loading="loading" :update-measure-list="updateMeasureList" @measureListUpdated="updateMeasureList = false" />
                 </TabPanel>
 
                 <TabPanel>
@@ -47,7 +47,7 @@
                         <span>{{ $t('kpi.kpiDefinition.tresholdTitle') }}</span>
                     </template>
 
-                    <KpiDefinitionThresholdTab :selectedKpi="selectedKpi" :thresholdsList="tresholdList" :severityOptions="severityOptions" :thresholdTypeList="thresholdTypeList" :loading="loading" @touched="setTouched" />
+                    <KpiDefinitionThresholdTab :selected-kpi="selectedKpi" :thresholds-list="tresholdList" :severity-options="severityOptions" :threshold-type-list="thresholdTypeList" :loading="loading" @touched="setTouched" />
                 </TabPanel>
             </TabView>
         </div>
@@ -60,13 +60,13 @@
                 class="kn-list--column"
                 :options="measureList"
                 :filter="true"
-                :filterPlaceholder="$t('common.search')"
-                optionLabel="alias"
-                filterMatchMode="contains"
-                :filterFields="tabViewDescriptor.filterFields"
-                :emptyFilterMessage="$t('common.info.noDataFound')"
-                @change="insertAlias($event.value.alias)"
+                :filter-placeholder="$t('common.search')"
+                option-label="alias"
+                filter-match-mode="contains"
+                :filter-fields="tabViewDescriptor.filterFields"
+                :empty-filter-message="$t('common.info.noDataFound')"
                 data-test="kpi-list"
+                @change="insertAlias($event.value.alias)"
             >
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
@@ -79,7 +79,7 @@
             </Listbox>
         </div>
 
-        <Dialog id="saveDialog" class="kn-dialog--toolbar--primary importExportDialog" :style="tabViewDescriptor.style.saveDialog" v-bind:visible="showSaveDialog" footer="footer" :closable="false" modal>
+        <Dialog id="saveDialog" class="kn-dialog--toolbar--primary importExportDialog" :style="tabViewDescriptor.style.saveDialog" :visible="showSaveDialog" footer="footer" :closable="false" modal>
             <template #header>
                 <h4>{{ $t('kpi.kpiDefinition.addKpiAssociations') }}</h4>
             </template>
@@ -98,8 +98,8 @@
                         <label for="name" class="kn-material-input-label"> {{ $t('managers.configurationManagement.headers.category') }} *</label>
                     </span>
                     <KnValidationMessages
-                        :vComp="v$.selectedKpi.category"
-                        :additionalTranslateParams="{
+                        :v-comp="v$.selectedKpi.category"
+                        :additional-translate-params="{
                             fieldName: $t('managers.configurationManagement.headers.category')
                         }"
                     >
@@ -113,7 +113,7 @@
             <template #footer>
                 <div>
                     <Button class="kn-button kn-button--secondary" :label="$t('common.cancel')" @click="showSaveDialog = false" />
-                    <Button class="kn-button kn-button--primary" :label="$t('common.save')" @click="saveKpi" :disabled="v$.$invalid" />
+                    <Button class="kn-button kn-button--primary" :label="$t('common.save')" :disabled="v$.$invalid" @click="saveKpi" />
                 </div>
             </template>
         </Dialog>
@@ -141,17 +141,11 @@ import mainStore from '../../../../App.store'
 export default defineComponent({
     components: { TabView, TabPanel, KnValidationMessages, Listbox, KpiDefinitionThresholdTab, KpiDefinitionFormulaTab, Dialog, AutoComplete, Checkbox, KpiDefinitionCardinalityTab },
     props: { id: { type: String, required: false }, version: { type: String, required: false }, cloneKpiVersion: { type: Number }, cloneKpiId: { type: Number } },
-    computed: {
-        buttonDisabled(): any {
-            if (this.selectedKpi.threshold) {
-                if (this.formulaHasErrors === true || !this.selectedKpi.threshold.name) {
-                    return true
-                }
-            }
-            return false
-        }
-    },
     emits: ['touched', 'closed', 'kpiCreated', 'kpiUpdated'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             v$: useValidate() as any,
@@ -177,17 +171,20 @@ export default defineComponent({
             formulaHasErrors: false
         }
     },
+    computed: {
+        buttonDisabled(): any {
+            if (this.selectedKpi.threshold) {
+                if (this.formulaHasErrors === true || !this.selectedKpi.threshold.name) {
+                    return true
+                }
+            }
+            return false
+        }
+    },
     validations() {
         return {
             selectedKpi: createValidations('selectedKpi', tabViewDescriptor.validations.selectedKpi)
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
-    async created() {
-        this.loadPersistentData()
     },
     watch: {
         id() {
@@ -197,6 +194,9 @@ export default defineComponent({
         cloneKpiId() {
             this.cloneKpiConfirm(this.cloneKpiId, this.cloneKpiVersion)
         }
+    },
+    async created() {
+        this.loadPersistentData()
     },
     methods: {
         async loadPersistentData() {
@@ -233,7 +233,7 @@ export default defineComponent({
             if (this.id) {
                 await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.id}/${this.version}/loadKpi`).then((response: AxiosResponse<any>) => {
                     this.selectedKpi = { ...response.data }
-                    let definitionFormula = JSON.parse(this.selectedKpi.definition)
+                    const definitionFormula = JSON.parse(this.selectedKpi.definition)
                     this.formulaToSave = definitionFormula.formula
                 })
             } else {
@@ -348,7 +348,7 @@ export default defineComponent({
         correctColors(thresholdValues) {
             thresholdValues.forEach((value: any) => {
                 if (!value.color.includes('#')) {
-                    let fixedColor = '#' + value.color
+                    const fixedColor = '#' + value.color
                     value.color = fixedColor
                 }
             })

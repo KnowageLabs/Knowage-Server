@@ -3,16 +3,16 @@
         class="kn-list knListBox"
         :options="sortedOptions"
         :class="{ noSorting: !settings.sortFields }"
-        listStyle="max-height:calc(100% - 62px)"
+        list-style="max-height:calc(100% - 62px)"
         :filter="true"
-        :filterPlaceholder="$t('common.search')"
-        filterMatchMode="contains"
-        :filterFields="settings.filterFields"
-        :emptyFilterMessage="$t('common.info.noDataFound')"
+        :filter-placeholder="$t('common.search')"
+        filter-match-mode="contains"
+        :filter-fields="settings.filterFields"
+        :empty-filter-message="$t('common.info.noDataFound')"
         data-test="list"
     >
-        <template #header v-if="settings.sortFields">
-            <Button icon="fas fa-sort-amount-down-alt" class="p-button-text p-button-rounded p-button-plain headerButton" @click="toggleSort" v-tooltip.bottom="$t('common.sort')" />
+        <template v-if="settings.sortFields" #header>
+            <Button v-tooltip.bottom="$t('common.sort')" icon="fas fa-sort-amount-down-alt" class="p-button-text p-button-rounded p-button-plain headerButton" @click="toggleSort" />
             <Menu id="sortMenu" ref="sortMenu" :model="settings.sortFields" :popup="true">
                 <template #item="{item}">
                     <a class="p-menuitem-link" role="menuitem" tabindex="0" @click="sort($event, item.name || item)">
@@ -24,12 +24,12 @@
             </Menu>
         </template>
         <template #option="slotProps">
-            <router-link class="kn-decoration-none" :to="{ name: settings.interaction.path, params: { id: slotProps.option.id } }" exact v-if="settings.interaction.type === 'router'">
-                <div class="kn-list-item" v-tooltip="slotProps.option[settings.tooltipField || 'description']" :class="getBorderClass(slotProps.option)" data-test="list-item">
+            <router-link v-if="settings.interaction.type === 'router'" class="kn-decoration-none" :to="{ name: settings.interaction.path, params: { id: slotProps.option.id } }" exact>
+                <div v-tooltip="slotProps.option[settings.tooltipField || 'description']" class="kn-list-item" :class="getBorderClass(slotProps.option)" data-test="list-item">
                     <Avatar v-if="settings.avatar && settings.avatar.values[slotProps.option[settings.avatar.property]]" :icon="settings.avatar.values[slotProps.option[settings.avatar.property]].icon" shape="circle" :style="settings.avatar.values[slotProps.option[settings.avatar.property]].style" />
                     <div class="kn-list-item-text">
                         <span v-if="settings.titleField !== false">{{ slotProps.option[settings.titleField || 'label'] }}</span>
-                        <span class="kn-list-item-text-secondary kn-truncated" v-if="settings.textField !== false">{{ slotProps.option[settings.textField || 'name'] }}</span>
+                        <span v-if="settings.textField !== false" class="kn-list-item-text-secondary kn-truncated">{{ slotProps.option[settings.textField || 'name'] }}</span>
                     </div>
                     <Badge v-if="settings.badgeField" :value="slotProps.option[settings.badgeField]" :severity="settings.badgeSeverity || 'info'"></Badge>
                     <Badge v-if="settings.badgeIcon && slotProps.option[settings.badgeIcon] === true" :severity="settings.badgeSeverity || 'info'">
@@ -39,12 +39,12 @@
                 </div>
             </router-link>
             <div
-                class="kn-list-item"
-                v-tooltip="slotProps.option[settings.tooltipField || 'description']"
                 v-if="!settings.interaction || settings.interaction.type === 'event'"
-                @click="clickedButton($event, slotProps.option)"
+                v-tooltip="slotProps.option[settings.tooltipField || 'description']"
+                class="kn-list-item"
                 :class="[{ 'router-link-active': isItemSelected(slotProps.option) }, getBorderClass(slotProps.option)]"
                 data-test="list-item"
+                @click="clickedButton($event, slotProps.option)"
             >
                 <Avatar v-if="settings.avatar && settings.avatar.values[slotProps.option[settings.avatar.property]]" :icon="settings.avatar.values[slotProps.option[settings.avatar.property]].icon" shape="circle" :style="settings.avatar.values[slotProps.option[settings.avatar.property]].style" />
                 <div class="kn-list-item-text">
@@ -56,7 +56,7 @@
                 <Badge v-if="settings.badgeIcon && slotProps.option[settings.badgeIcon] === true" :severity="settings.badgeSeverity || 'info'">
                     <i class="fas fa-check"></i>
                 </Badge>
-                <KnListButtonRenderer :buttons="settings.buttons" :selectedItem="slotProps.option" @click="clickedButton($event, slotProps.option)" />
+                <KnListButtonRenderer :buttons="settings.buttons" :selected-item="slotProps.option" @click="clickedButton($event, slotProps.option)" />
             </div>
         </template>
     </Listbox>
@@ -88,6 +88,7 @@ export default defineComponent({
         options: Array,
         selected: Object
     },
+    emits: ['click'],
     data() {
         return {
             selectedSort: 'label',
@@ -95,7 +96,7 @@ export default defineComponent({
             sortedOptions: [] as Array<any>
         }
     },
-    emits: ['click'],
+    computed: {},
     created() {
         this.selectedSort = this.settings.defaultSortField || 'label'
         this.sort(null, this.selectedSort, true)
@@ -103,7 +104,6 @@ export default defineComponent({
     updated() {
         this.sort(null, this.selectedSort, true)
     },
-    computed: {},
     methods: {
         clickedButton(e, item) {
             const emits = e.item && e.item.emits

@@ -1,5 +1,5 @@
 <template>
-    <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain p-ml-auto" v-tooltip.left="$t('common.delete')" @click.stop="deleteSelection()" />
+    <Button v-tooltip.left="$t('common.delete')" icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain p-ml-auto" @click.stop="deleteSelection()" />
 </template>
 
 <script lang="ts">

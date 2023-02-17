@@ -1,15 +1,15 @@
 <template>
     <div class="card" style="height: calc(100vh - 165px)">
         <DataTable
+            v-model:filters="filters"
             :value="foreignKeys"
             class="p-datatable-sm kn-table"
-            dataKey="id"
-            v-model:filters="filters"
-            :globalFilterFields="metawebForeignKeyTabDescriptor.globalFilterFields"
-            responsiveLayout="stack"
+            data-key="id"
+            :global-filter-fields="metawebForeignKeyTabDescriptor.globalFilterFields"
+            responsive-layout="stack"
             breakpoint="600px"
             :scrollable="true"
-            :scrollHeight="metawebForeignKeyTabDescriptor.scrollHeight"
+            :scroll-height="metawebForeignKeyTabDescriptor.scrollHeight"
         >
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
@@ -18,12 +18,12 @@
                 <div class="table-header p-d-flex p-ai-center">
                     <span id="search-container" class="p-input-icon-left p-mr-3">
                         <i class="pi pi-search" />
-                        <InputText class="kn-material-input" v-model="filters['global'].value" :placeholder="$t('common.search')" />
+                        <InputText v-model="filters['global'].value" class="kn-material-input" :placeholder="$t('common.search')" />
                     </span>
                 </div>
             </template>
 
-            <Column class="kn-truncated" field="name" :header="$t('common.name')" key="name" :sortable="true">
+            <Column key="name" class="kn-truncated" field="name" :header="$t('common.name')" :sortable="true">
                 <template #body="slotProps">
                     <span v-tooltip.top="slotProps.data.name">{{ slotProps.data.name }}</span>
                 </template>

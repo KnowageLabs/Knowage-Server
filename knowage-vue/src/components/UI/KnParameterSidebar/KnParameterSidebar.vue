@@ -3,19 +3,19 @@
         <Toolbar v-if="mode !== 'workspaceView' && mode !== 'qbeView' && mode !== 'datasetManagement'" id="kn-parameter-sidebar-toolbar" class="kn-toolbar kn-toolbar--secondary">
             <template #start>
                 <div id="kn-parameter-sidebar-toolbar-icons-container" class="p-d-flex p-flex-row p-jc-around">
-                    <Button icon="fa fa-eraser" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.top="$t('documentExecution.main.resetParametersTooltip')" @click="resetAllParameters"></Button>
-                    <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.top="$t('documentExecution.main.savedParametersTooltip')" @click="openSavedParametersDialog"></Button>
-                    <Button icon="fas fa-save" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.top="$t('documentExecution.main.saveParametersFromStateTooltip')" @click="openSaveParameterDialog"></Button>
+                    <Button v-tooltip.top="$t('documentExecution.main.resetParametersTooltip')" icon="fa fa-eraser" class="p-button-text p-button-rounded p-button-plain p-mx-2" @click="resetAllParameters"></Button>
+                    <Button v-tooltip.top="$t('documentExecution.main.savedParametersTooltip')" icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain p-mx-2" @click="openSavedParametersDialog"></Button>
+                    <Button v-tooltip.top="$t('documentExecution.main.saveParametersFromStateTooltip')" icon="fas fa-save" class="p-button-text p-button-rounded p-button-plain p-mx-2" @click="openSaveParameterDialog"></Button>
                 </div>
             </template>
         </Toolbar>
 
         <div class="p-fluid kn-parameter-sidebar-content kn-alternated-rows">
-            <div class="p-field p-my-1 p-p-2" v-if="user && (!sessionRole || sessionRole === $t('role.defaultRolePlaceholder')) && (mode === 'execution' || mode === 'qbeView' || (mode === 'workspaceView' && dataset?.drivers?.length > 0)) && availableRolesForExecution.length > 1">
+            <div v-if="user && (!sessionRole || sessionRole === $t('role.defaultRolePlaceholder')) && (mode === 'execution' || mode === 'qbeView' || (mode === 'workspaceView' && dataset?.drivers?.length > 0)) && availableRolesForExecution.length > 1" class="p-field p-my-1 p-p-2">
                 <div class="p-d-flex">
                     <label class="kn-material-input-label">{{ $t('common.roles') }}</label>
                 </div>
-                <Dropdown class="kn-material-input" v-model="role" :options="availableRolesForExecution" @change="setNewSessionRole" />
+                <Dropdown v-model="role" class="kn-material-input" :options="availableRolesForExecution" @change="setNewSessionRole" />
             </div>
 
             <template v-if="mode === 'qbeView' || mode === 'workspaceView' || mode === 'datasetManagement'">
@@ -26,14 +26,14 @@
                                 >{{ qbeParameter.name }}
                                 <span v-if="mode !== 'datasetManagement'"> *</span>
                             </label>
-                            <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="qbeParameter.value = qbeParameter.defaultValue"></i>
+                            <i v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" @click="qbeParameter.value = qbeParameter.defaultValue"></i>
                         </div>
                         <Chips v-if="qbeParameter.multiValue" v-model="qbeParameter.value" />
                         <small v-if="qbeParameter.multiValue" id="chips-help">{{ $t('common.chipsHint') }}</small>
                         <InputText
                             v-else
-                            class="kn-material-input p-inputtext-sm"
                             v-model="qbeParameter.value"
+                            class="kn-material-input p-inputtext-sm"
                             :class="{
                                 'p-invalid': !qbeParameter.value && mode !== 'datasetManagement'
                             }"
@@ -43,7 +43,7 @@
             </template>
 
             <template v-for="(parameter, index) in parameters.filterStatus" :key="index">
-                <div class="p-field p-my-1 p-p-2" v-if="(parameter.type === 'STRING' || parameter.type === 'NUM') && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true' && parameter.visible">
+                <div v-if="(parameter.type === 'STRING' || parameter.type === 'NUM') && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true' && parameter.visible" class="p-field p-my-1 p-p-2">
                     <div class="p-d-flex">
                         <label
                             class="kn-material-input-label"
@@ -53,22 +53,22 @@
                             :data-test="'parameter-input-label-' + parameter.id"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
                         >
-                        <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)" :data-test="'parameter-input-clear-' + parameter.id"></i>
+                        <i v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" :data-test="'parameter-input-clear-' + parameter.id" @click="resetParameterValue(parameter)"></i>
                     </div>
                     <InputText
                         v-if="parameter.parameterValue && parameter.parameterValue[0]"
+                        v-model="parameter.parameterValue[0].value"
                         class="kn-material-input p-inputtext-sm"
                         :type="parameter.type === 'NUM' ? 'number' : 'text'"
-                        v-model="parameter.parameterValue[0].value"
                         :class="{
                             'p-invalid': parameter.mandatory && parameter.parameterValue && !parameter.parameterValue[0]?.value
                         }"
+                        :data-test="'parameter-input-' + parameter.id"
                         @blur="updateDependency(parameter)"
                         @keypress.enter="updateDependency(parameter)"
-                        :data-test="'parameter-input-' + parameter.id"
                     />
                 </div>
-                <div class="p-field p-my-1 p-p-2" v-if="parameter.type === 'DATE' && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true' && parameter.visible">
+                <div v-if="parameter.type === 'DATE' && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true' && parameter.visible" class="p-field p-my-1 p-p-2">
                     <div class="p-d-flex">
                         <label
                             class="kn-material-input-label"
@@ -78,24 +78,24 @@
                             :data-test="'parameter-date-label-' + parameter.id"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
                         >
-                        <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)" :data-test="'parameter-date-clear-' + parameter.id"></i>
+                        <i v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" :data-test="'parameter-date-clear-' + parameter.id" @click="resetParameterValue(parameter)"></i>
                     </div>
                     <Calendar
                         v-if="parameter.parameterValue"
                         v-model="parameter.parameterValue[0].value"
-                        :showButtonBar="true"
-                        :showIcon="true"
-                        :manualInput="true"
+                        :show-button-bar="true"
+                        :show-icon="true"
+                        :manual-input="true"
                         class="kn-material-input custom-timepicker"
                         :class="{
                             'p-invalid': parameter.mandatory && parameter.parameterValue && !parameter.parameterValue[0]?.value
                         }"
+                        :data-test="'parameter-date-input-' + parameter.id"
                         @change="updateDependency(parameter)"
                         @date-select="updateDependency(parameter)"
-                        :data-test="'parameter-date-input-' + parameter.id"
                     />
                 </div>
-                <div class="p-field p-my-1 p-p-2" v-if="parameter.selectionType === 'LIST' && parameter.showOnPanel === 'true' && parameter.visible">
+                <div v-if="parameter.selectionType === 'LIST' && parameter.showOnPanel === 'true' && parameter.visible" class="p-field p-my-1 p-p-2">
                     <div class="p-d-flex">
                         <label
                             class="kn-material-input-label"
@@ -106,17 +106,17 @@
                             :data-test="'parameter-checkbox-label-' + parameter.id"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
                         >
-                        <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)" :data-test="'parameter-checkbox-clear-' + parameter.id"></i>
+                        <i v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" :data-test="'parameter-checkbox-clear-' + parameter.id" @click="resetParameterValue(parameter)"></i>
                     </div>
                     <ScrollPanel class="inputScrollPanel">
-                        <div class="p-field-radiobutton" v-for="(option, index) in parameter.data" :key="index" :data-test="'parameter-list-' + parameter.id">
-                            <RadioButton v-if="!parameter.multivalue && parameter.parameterValue" :value="option.value" v-model="parameter.parameterValue[0].value" @change="setRadioButtonValue(parameter)" />
-                            <Checkbox v-if="parameter.multivalue && parameter.parameterValue" :value="option.value" v-model="selectedParameterCheckbox[parameter.id]" @change="setCheckboxValue(parameter)" />
+                        <div v-for="(option, index) in parameter.data" :key="index" class="p-field-radiobutton" :data-test="'parameter-list-' + parameter.id">
+                            <RadioButton v-if="!parameter.multivalue && parameter.parameterValue" v-model="parameter.parameterValue[0].value" :value="option.value" @change="setRadioButtonValue(parameter)" />
+                            <Checkbox v-if="parameter.multivalue && parameter.parameterValue" v-model="selectedParameterCheckbox[parameter.id]" :value="option.value" @change="setCheckboxValue(parameter)" />
                             <label>{{ option.description }}</label>
                         </div>
                     </ScrollPanel>
                 </div>
-                <div class="p-field p-my-1 p-p-2" v-if="parameter.selectionType === 'COMBOBOX' && parameter.showOnPanel === 'true' && parameter.visible">
+                <div v-if="parameter.selectionType === 'COMBOBOX' && parameter.showOnPanel === 'true' && parameter.visible" class="p-field p-my-1 p-p-2">
                     <div class="p-d-flex">
                         <label
                             class="kn-material-input-label"
@@ -126,13 +126,13 @@
                             }"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
                         >
-                        <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)"></i>
+                        <i v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" @click="resetParameterValue(parameter)"></i>
                     </div>
-                    <Dropdown v-if="!parameter.multivalue && parameter.parameterValue" class="kn-material-input" v-model="parameter.parameterValue[0].value" :options="parameter.data" optionValue="value" optionLabel="description" @change="onDropdownChange(parameter)" />
+                    <Dropdown v-if="!parameter.multivalue && parameter.parameterValue" v-model="parameter.parameterValue[0].value" class="kn-material-input" :options="parameter.data" option-value="value" option-label="description" @change="onDropdownChange(parameter)" />
 
-                    <MultiSelect v-else v-model="parameter.parameterValue" :options="parameter.data" optionLabel="description" @change="updateDependency(parameter)" />
+                    <MultiSelect v-else v-model="parameter.parameterValue" :options="parameter.data" option-label="description" @change="updateDependency(parameter)" />
                 </div>
-                <div class="p-field p-my-1 p-p-2" v-if="parameter.selectionType === 'LOOKUP' && parameter.showOnPanel === 'true' && parameter.visible">
+                <div v-if="parameter.selectionType === 'LOOKUP' && parameter.showOnPanel === 'true' && parameter.visible" class="p-field p-my-1 p-p-2">
                     <div class="p-d-flex">
                         <label
                             class="kn-material-input-label"
@@ -142,16 +142,16 @@
                             }"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
                         >
-                        <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)"></i>
+                        <i v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" @click="resetParameterValue(parameter)"></i>
                     </div>
                     <div class="p-d-flex p-flex-row">
                         <i class="pi pi-external-link kn-cursor-pointer p-mr-2" @click="openPopupDialog(parameter)"></i>
                         <ScrollPanel class="lookupScrollPanel">
-                            <Chip class="parameterValueChip" v-for="(parameterValue, index) in parameter.parameterValue" :key="index">{{ parameterValue.description ?? parameterValue.value }}</Chip>
+                            <Chip v-for="(parameterValue, index) in parameter.parameterValue" :key="index" class="parameterValueChip">{{ parameterValue.description ?? parameterValue.value }}</Chip>
                         </ScrollPanel>
                     </div>
                 </div>
-                <div class="p-field p-my-1 p-p-2" v-if="parameter.selectionType === 'TREE' && parameter.showOnPanel === 'true' && parameter.visible">
+                <div v-if="parameter.selectionType === 'TREE' && parameter.showOnPanel === 'true' && parameter.visible" class="p-field p-my-1 p-p-2">
                     <div class="p-d-flex">
                         <label
                             class="kn-material-input-label"
@@ -161,7 +161,7 @@
                             }"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
                         >
-                        <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)"></i>
+                        <i v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" @click="resetParameterValue(parameter)"></i>
                     </div>
                     <div class="p-d-flex p-flex-row">
                         <i class="pi pi-external-link kn-cursor-pointer p-mr-2" @click="openTreeDialog(parameter)"></i>
@@ -177,10 +177,10 @@
             <Button v-if="mode !== 'qbeView' && mode !== 'workspaceView' && mode !== 'datasetManagement'" class="kn-button kn-button--primary p-ml-1" icon="fa fa-chevron-down" :disabled="buttonsDisabled" @click="toggle($event)" />
             <Menu ref="executeButtonMenu" :model="executeMenuItems" :popup="true" />
         </div>
-        <KnParameterPopupDialog v-if="popupDialogVisible" :visible="popupDialogVisible" :selectedParameter="selectedParameter" :propLoading="loading" :parameterPopUpData="parameterPopUpData" @close="popupDialogVisible = false" @save="onPopupSave"></KnParameterPopupDialog>
-        <KnParameterTreeDialog v-if="treeDialogVisible" :visible="treeDialogVisible" :selectedParameter="selectedParameter" :formatedParameterValues="formatedParameterValues" :document="document" :mode="mode" :selectedRole="role" @close="onTreeClose" @save="onTreeSave"></KnParameterTreeDialog>
-        <KnParameterSaveDialog :visible="parameterSaveDialogVisible" :propLoading="loading" @close="parameterSaveDialogVisible = false" @saveViewpoint="saveViewpoint"></KnParameterSaveDialog>
-        <KnParameterSavedParametersDialog :visible="savedParametersDialogVisible" :propViewpoints="viewpoints" @close="savedParametersDialogVisible = false" @fillForm="fillParameterForm" @executeViewpoint="executeViewpoint" @deleteViewpoint="deleteViewpoint"></KnParameterSavedParametersDialog>
+        <KnParameterPopupDialog v-if="popupDialogVisible" :visible="popupDialogVisible" :selected-parameter="selectedParameter" :prop-loading="loading" :parameter-pop-up-data="parameterPopUpData" @close="popupDialogVisible = false" @save="onPopupSave"></KnParameterPopupDialog>
+        <KnParameterTreeDialog v-if="treeDialogVisible" :visible="treeDialogVisible" :selected-parameter="selectedParameter" :formated-parameter-values="formatedParameterValues" :document="document" :mode="mode" :selected-role="role" @close="onTreeClose" @save="onTreeSave"></KnParameterTreeDialog>
+        <KnParameterSaveDialog :visible="parameterSaveDialogVisible" :prop-loading="loading" @close="parameterSaveDialogVisible = false" @saveViewpoint="saveViewpoint"></KnParameterSaveDialog>
+        <KnParameterSavedParametersDialog :visible="savedParametersDialogVisible" :prop-viewpoints="viewpoints" @close="savedParametersDialogVisible = false" @fillForm="fillParameterForm" @executeViewpoint="executeViewpoint" @deleteViewpoint="deleteViewpoint"></KnParameterSavedParametersDialog>
     </div>
 </template>
 <script lang="ts">
@@ -213,7 +213,7 @@ export default defineComponent({
     props: {
         filtersData: { type: Object },
         propDocument: { type: Object },
-        userRole: { type: Object as PropType<String | null> },
+        userRole: { type: Object as PropType<string | null> },
         propMode: { type: String },
         propQBEParameters: { type: Array },
         dateFormat: { type: String },
@@ -222,6 +222,10 @@ export default defineComponent({
         loadFromDatasetManagement: { type: Boolean, default: false }
     },
     emits: ['execute', 'exportCSV', 'roleChanged', 'parametersChanged'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             document: null as iDocument | null,
@@ -247,6 +251,17 @@ export default defineComponent({
             availableRolesForExecution: [] as any
         }
     },
+    computed: {
+        sessionRole(): string {
+            return (this.store.$state as any).user.sessionRole
+        },
+        buttonsDisabled(): boolean {
+            return this.loading || this.requiredFiledMissing()
+        },
+        positionClass(): string {
+            return this.document?.parametersRegion ? 'kn-parameter-sidebar-' + this.document.parametersRegion : 'kn-parameter-sidebar'
+        }
+    },
     watch: {
         sessionRole() {
             this.role = ''
@@ -269,21 +284,6 @@ export default defineComponent({
             this.userDateFormat = this.dateFormat as string
         }
     },
-    computed: {
-        sessionRole(): string {
-            return (this.store.$state as any).user.sessionRole
-        },
-        buttonsDisabled(): boolean {
-            return this.loading || this.requiredFiledMissing()
-        },
-        positionClass(): string {
-            return this.document?.parametersRegion ? 'kn-parameter-sidebar-' + this.document.parametersRegion : 'kn-parameter-sidebar'
-        }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
     mounted() {
         this.loadMode()
         if (this.mode === 'qbeView' || this.mode === 'workspaceView' || this.mode === 'datasetManagement') this.loadQBEParameters()
@@ -296,7 +296,7 @@ export default defineComponent({
     },
     methods: {
         applyFieldClass(cssClass: string): string {
-            let cssCompleteClass = this.primary ? cssClass + ' fieldBackgroundColorPrimary' : cssClass + ' fieldBackgroundColorSecondary'
+            const cssCompleteClass = this.primary ? cssClass + ' fieldBackgroundColorPrimary' : cssClass + ' fieldBackgroundColorSecondary'
             this.primary = !this.primary
             return cssCompleteClass
         },
@@ -495,7 +495,7 @@ export default defineComponent({
             this.loading = false
         },
         getFormattedParameters() {
-            let parameters = [] as any[]
+            const parameters = [] as any[]
             Object.keys(this.parameters.filterStatus).forEach((key: any) => {
                 const parameter = this.parameters.filterStatus[key]
                 if (!parameter.multivalue) {
@@ -507,7 +507,7 @@ export default defineComponent({
             return parameters
         },
         getParameterValues() {
-            let parameters = {} as any
+            const parameters = {} as any
             Object.keys(this.parameters.filterStatus).forEach((key: any) => {
                 const parameter = this.parameters.filterStatus[key]
                 if (parameter.type === 'DATE') {
@@ -539,7 +539,7 @@ export default defineComponent({
             this.updateVisualDependency(parameter)
             this.treeDialogVisible = false
         },
-        async updateDependency(parameter: iParameter, resetValue: boolean = false) {
+        async updateDependency(parameter: iParameter, resetValue = false) {
             this.loading = true
             const role = this.sessionRole && this.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.sessionRole : this.role
             this.updateVisualDependency(parameter)

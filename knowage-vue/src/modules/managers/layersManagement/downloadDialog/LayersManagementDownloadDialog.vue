@@ -9,8 +9,8 @@
         </template>
 
         <div v-if="layer" class="p-m-5">
-            <div class="p-field-radiobutton p-d-flex p-flex-row" v-for="(mode, index) in modes" :key="index">
-                <RadioButton name="downloadMode" :value="mode" v-model="downloadMode" />
+            <div v-for="(mode, index) in modes" :key="index" class="p-field-radiobutton p-d-flex p-flex-row">
+                <RadioButton v-model="downloadMode" name="downloadMode" :value="mode" />
                 <label>{{ $t(`managers.layersManagement.downloadTypes.${mode}`) }}</label>
             </div>
         </div>

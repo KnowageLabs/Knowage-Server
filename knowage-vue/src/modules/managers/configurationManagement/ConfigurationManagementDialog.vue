@@ -5,20 +5,20 @@
                 <span class="p-float-label">
                     <InputText
                         id="label"
+                        v-model.trim="v$.configuration.label.$model"
                         class="kn-material-input"
                         type="text"
-                        v-model.trim="v$.configuration.label.$model"
                         :class="{
                             'p-invalid': v$.configuration.label.$invalid && v$.configuration.label.$dirty
                         }"
-                        maxLength="100"
+                        max-length="100"
                         @blur="v$.configuration.label.$touch()"
                     />
                     <label for="label" class="kn-material-input-label"> {{ $t('managers.configurationManagement.headers.label') }} * </label>
                 </span>
                 <KnValidationMessages
-                    :vComp="v$.configuration.label"
-                    :additionalTranslateParams="{
+                    :v-comp="v$.configuration.label"
+                    :additional-translate-params="{
                         fieldName: $t('managers.configurationManagement.headers.label')
                     }"
                 ></KnValidationMessages>
@@ -28,20 +28,20 @@
                 <span class="p-float-label">
                     <InputText
                         id="name"
+                        v-model.trim="v$.configuration.name.$model"
                         class="kn-material-input"
                         type="text"
-                        v-model.trim="v$.configuration.name.$model"
                         :class="{
                             'p-invalid': v$.configuration.name.$invalid && v$.configuration.name.$dirty
                         }"
-                        maxLength="100"
+                        max-length="100"
                         @blur="v$.configuration.name.$touch()"
                     />
                     <label for="name" class="kn-material-input-label"> {{ $t('managers.configurationManagement.headers.name') }} * </label>
                 </span>
                 <KnValidationMessages
-                    :vComp="v$.configuration.name"
-                    :additionalTranslateParams="{
+                    :v-comp="v$.configuration.name"
+                    :additional-translate-params="{
                         fieldName: $t('managers.configurationManagement.headers.name')
                     }"
                 ></KnValidationMessages>
@@ -51,13 +51,13 @@
                 <span class="p-float-label">
                     <InputText
                         id="description"
+                        v-model.trim="v$.configuration.description.$model"
                         class="kn-material-input"
                         type="text"
-                        v-model.trim="v$.configuration.description.$model"
                         :class="{
                             'p-invalid': v$.configuration.description.$invalid && v$.configuration.description.$dirty
                         }"
-                        maxLength="500"
+                        max-length="500"
                         @blur="v$.configuration.description.$touch()"
                     />
                     <label for="description" class="kn-material-input-label">
@@ -65,8 +65,8 @@
                     </label>
                 </span>
                 <KnValidationMessages
-                    :vComp="v$.configuration.description"
-                    :additionalTranslateParams="{
+                    :v-comp="v$.configuration.description"
+                    :additional-translate-params="{
                         fieldName: $t('managers.configurationManagement.headers.description')
                     }"
                 ></KnValidationMessages>
@@ -76,33 +76,33 @@
                 <span class="p-float-label">
                     <Dropdown
                         id="category"
-                        class="kn-material-input"
                         v-model="v$.configuration.category.$model"
+                        class="kn-material-input"
                         :class="{
                             'p-invalid': v$.configuration.category.$invalid && v$.configuration.category.$dirty
                         }"
                         :options="configurationManagementDescriptor.category"
-                        optionLabel="name"
-                        optionValue="value"
+                        option-label="name"
+                        option-value="value"
                         @before-show="v$.configuration.category.$touch()"
                     />
                     <label for="category" class="kn-material-input-label"> {{ $t('managers.configurationManagement.headers.category') }} * </label>
                 </span>
                 <KnValidationMessages
-                    :vComp="v$.configuration.category"
-                    :additionalTranslateParams="{
+                    :v-comp="v$.configuration.category"
+                    :additional-translate-params="{
                         fieldName: $t('managers.configurationManagement.headers.category')
                     }"
                 ></KnValidationMessages>
             </div>
             <div class="p-field" :style="configurationManagementDescriptor.pField.style">
-                <span class="p-float-label" v-if="configuration?.label?.toLowerCase().endsWith('.password')">
-                    <InputText id="description" class="kn-material-input" type="password" v-model.trim="v$.configuration.valueCheck.$model" @blur="v$.configuration.valueCheck.$touch()" />
+                <span v-if="configuration?.label?.toLowerCase().endsWith('.password')" class="p-float-label">
+                    <InputText id="description" v-model.trim="v$.configuration.valueCheck.$model" class="kn-material-input" type="password" @blur="v$.configuration.valueCheck.$touch()" />
                     <label v-if="configuration.id" for="pwd" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.pwd') }}</label>
                     <label v-else for="description" class="kn-material-input-label"> {{ $t('managers.configurationManagement.headers.valueCheck') }} </label>
                 </span>
                 <span v-else class="p-float-label">
-                    <InputText id="description" class="kn-material-input" type="text" v-model.trim="v$.configuration.valueCheck.$model" @blur="v$.configuration.valueCheck.$touch()" />
+                    <InputText id="description" v-model.trim="v$.configuration.valueCheck.$model" class="kn-material-input" type="text" @blur="v$.configuration.valueCheck.$touch()" />
                     <label for="description" class="kn-material-input-label"> {{ $t('managers.configurationManagement.headers.valueCheck') }} </label>
                 </span>
             </div>
@@ -144,6 +144,10 @@ export default defineComponent({
         }
     },
     emits: ['close', 'created'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             configurationManagementDescriptor: configurationManagementDescriptor,
@@ -168,17 +172,13 @@ export default defineComponent({
             return this.v$.$invalid
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
-    mounted() {
-        if (this.model) {
+    watch: {
+        model() {
             this.configuration = { ...this.model } as iConfiguration
         }
     },
-    watch: {
-        model() {
+    mounted() {
+        if (this.model) {
             this.configuration = { ...this.model } as iConfiguration
         }
     },

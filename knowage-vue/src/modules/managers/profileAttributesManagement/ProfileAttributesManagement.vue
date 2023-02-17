@@ -7,16 +7,16 @@
                         {{ $t('managers.profileAttributesManagement.title') }}
                     </template>
                     <template #end>
-                        <KnFabButton icon="fas fa-plus" @click="showForm()" data-test="open-form-button"></KnFabButton>
+                        <KnFabButton icon="fas fa-plus" data-test="open-form-button" @click="showForm()"></KnFabButton>
                     </template>
                 </Toolbar>
-                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <AttributesListBox :attributes="attributes" :loading="loading" @deleteAttribute="onAttributeDelete" @selectedAttribute="onAttributeSelect" data-test="profile-attributes-listbox"></AttributesListBox>
+                <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
+                <AttributesListBox :attributes="attributes" :loading="loading" data-test="profile-attributes-listbox" @deleteAttribute="onAttributeDelete" @selectedAttribute="onAttributeSelect"></AttributesListBox>
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
-                <KnHint :title="'managers.profileAttributesManagement.title'" :hint="'managers.profileAttributesManagement.hint'" v-if="hideForm"></KnHint>
-                <ProfileAttributesDetail :selectedAttribute="attribute" @refreshRecordSet="loadAllAttributes" @closesForm="closeForm" @dataChanged="dirty = true" v-if="!hideForm"></ProfileAttributesDetail>
+                <KnHint v-if="hideForm" :title="'managers.profileAttributesManagement.title'" :hint="'managers.profileAttributesManagement.hint'"></KnHint>
+                <ProfileAttributesDetail v-if="!hideForm" :selected-attribute="attribute" @refreshRecordSet="loadAllAttributes" @closesForm="closeForm" @dataChanged="dirty = true"></ProfileAttributesDetail>
             </div>
         </div>
     </div>
@@ -41,6 +41,10 @@ export default defineComponent({
         KnHint,
         ProfileAttributesDetail
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             apiUrl: import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/',
@@ -49,14 +53,10 @@ export default defineComponent({
             tempAttribute: {} as iAttribute,
             profileAttributesManagementDescriptor: ProfileAttributesManagementDescriptor,
             columns: ProfileAttributesManagementDescriptor.columns,
-            loading: false as Boolean,
-            hideForm: true as Boolean,
-            dirty: false as Boolean
+            loading: false as boolean,
+            hideForm: true as boolean,
+            dirty: false as boolean
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         await this.loadAllAttributes()

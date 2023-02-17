@@ -7,15 +7,15 @@
                         {{ $t('managers.businessModelManager.title') }}
                     </template>
                     <template #end>
-                        <FabButton icon="fas fa-plus" @click="showForm" data-test="new-button" />
+                        <FabButton icon="fas fa-plus" data-test="new-button" @click="showForm" />
                     </template>
                 </Toolbar>
-                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+                <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
                 <KnListBox :options="businessModelList" :settings="businessModelCatalogueDescriptor.knListSettings" @click="showForm" @delete.stop="deleteBusinessModelConfirm" />
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
-                <KnHint :title="'managers.businessModelManager.title'" :hint="'managers.businessModelManager.hint'" v-if="showHint" data-test="bm-hint"></KnHint>
+                <KnHint v-if="showHint" :title="'managers.businessModelManager.title'" :hint="'managers.businessModelManager.hint'" data-test="bm-hint"></KnHint>
                 <router-view @touched="touched = true" @closed="onClose" @inserted="pageReload" />
             </div>
         </div>
@@ -39,6 +39,10 @@ export default defineComponent({
         KnListBox,
         KnHint
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             businessModelCatalogueDescriptor,
@@ -47,10 +51,6 @@ export default defineComponent({
             touched: false,
             loading: false
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         if (this.$route.path !== '/business-model-catalogue') {

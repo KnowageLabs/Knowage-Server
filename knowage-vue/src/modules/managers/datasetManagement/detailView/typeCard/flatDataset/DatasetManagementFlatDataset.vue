@@ -6,8 +6,8 @@
                     <span class="p-float-label">
                         <InputText
                             id="flatTableName"
-                            class="kn-material-input"
                             v-model.trim="v$.dataset.flatTableName.$model"
+                            class="kn-material-input"
                             :class="{
                                 'p-invalid': v$.dataset.flatTableName.$invalid && v$.dataset.flatTableName.$dirty
                             }"
@@ -16,17 +16,17 @@
                         />
                         <label for="flatTableName" class="kn-material-input-label"> {{ $t('managers.datasetManagement.flatTableName') }} * </label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.flatTableName" :additionalTranslateParams="{ fieldName: $t('managers.datasetManagement.flatTableName') }" />
+                    <KnValidationMessages class="p-mt-1" :v-comp="v$.dataset.flatTableName" :additional-translate-params="{ fieldName: $t('managers.datasetManagement.flatTableName') }" />
                 </div>
                 <div class="p-field p-col-6">
                     <span class="p-float-label">
                         <Dropdown
                             id="dataSourceFlat"
+                            v-model="v$.dataset.dataSourceFlat.$model"
                             class="kn-material-input"
                             :options="dataSources"
-                            optionLabel="label"
-                            optionValue="label"
-                            v-model="v$.dataset.dataSourceFlat.$model"
+                            option-label="label"
+                            option-value="label"
                             :class="{
                                 'p-invalid': v$.dataset.dataSourceFlat.$invalid && v$.dataset.dataSourceFlat.$dirty
                             }"
@@ -35,8 +35,8 @@
                         <label for="scope" class="kn-material-input-label"> {{ $t('managers.businessModelManager.dataSource') }} * </label>
                     </span>
                     <KnValidationMessages
-                        :vComp="v$.dataset.dataSourceFlat"
-                        :additionalTranslateParams="{
+                        :v-comp="v$.dataset.dataSourceFlat"
+                        :additional-translate-params="{
                             fieldName: $t('managers.businessModelManager.dataSource')
                         }"
                     />
@@ -60,6 +60,10 @@ export default defineComponent({
     components: { Card, Dropdown, KnValidationMessages },
     props: { selectedDataset: { type: Object as any }, dataSources: { type: Array as any } },
     emits: ['touched'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             flatTypeDescriptor,
@@ -67,17 +71,13 @@ export default defineComponent({
             v$: useValidate() as any
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
-    created() {
-        this.dataset = this.selectedDataset
-    },
     watch: {
         selectedDataset() {
             this.dataset = this.selectedDataset
         }
+    },
+    created() {
+        this.dataset = this.selectedDataset
     },
     validations() {
         const flatFieldsRequired = (value) => {

@@ -1,6 +1,6 @@
 <template>
     <div class="p-d-flex p-flex-row">
-        <FunctionsCatalogFilterCard class="kn-flex p-m-2" v-for="filter in filters" :key="filter.valueId" :propFilter="filter" @selected="onSelected"></FunctionsCatalogFilterCard>
+        <FunctionsCatalogFilterCard v-for="filter in filters" :key="filter.valueId" class="kn-flex p-m-2" :prop-filter="filter" @selected="onSelected"></FunctionsCatalogFilterCard>
     </div>
 </template>
 

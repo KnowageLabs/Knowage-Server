@@ -81,10 +81,10 @@
                     <li>
                         <span>{{ $t('managers.glossary.glossaryUsage.profiledVisibility') }}:</span>
                         <ul class="p-mt-3">
-                            <li class="inline-list-item" v-for="(link, index) in contentInfo.data.access" :key="index">{{ link }}</li>
+                            <li v-for="(link, index) in contentInfo.data.access" :key="index" class="inline-list-item">{{ link }}</li>
                         </ul>
                     </li>
-                    <GlossaryUsageInfoDialogWordsColumnList :selectedWords="selectedWords" :wordsList="contentInfo.data.words"></GlossaryUsageInfoDialogWordsColumnList>
+                    <GlossaryUsageInfoDialogWordsColumnList :selected-words="selectedWords" :words-list="contentInfo.data.words"></GlossaryUsageInfoDialogWordsColumnList>
                 </ul>
             </div>
             <div v-else-if="contentInfo.type && contentInfo.type === 'dataset'">
@@ -105,7 +105,7 @@
                         <span>{{ $t('managers.glossary.glossaryUsage.dataSource') }}:</span>
                         <p>{{ contentInfo.data.DataSet.configuration.dataSource }}</p>
                     </li>
-                    <GlossaryUsageInfoDialogWordsColumnList :selectedWords="selectedWords" :wordsList="contentInfo.data.Word" :columnList="contentInfo.data.SbiGlDataSetWlist" :columnField="'alias'"></GlossaryUsageInfoDialogWordsColumnList>
+                    <GlossaryUsageInfoDialogWordsColumnList :selected-words="selectedWords" :words-list="contentInfo.data.Word" :column-list="contentInfo.data.SbiGlDataSetWlist" :column-field="'alias'"></GlossaryUsageInfoDialogWordsColumnList>
                 </ul>
             </div>
             <div v-else-if="contentInfo.type && contentInfo.type === 'businessClass'">
@@ -118,7 +118,7 @@
                         <span>{{ $t('managers.glossary.glossaryUsage.businessClass') }}:</span>
                         <p>{{ contentInfo.data.metaBc.name }}</p>
                     </li>
-                    <GlossaryUsageInfoDialogWordsColumnList :selectedWords="selectedWords" :wordsList="contentInfo.data.words" :columnList="contentInfo.data.sbiGlBnessClsWlist" :columnField="'name'"></GlossaryUsageInfoDialogWordsColumnList>
+                    <GlossaryUsageInfoDialogWordsColumnList :selected-words="selectedWords" :words-list="contentInfo.data.words" :column-list="contentInfo.data.sbiGlBnessClsWlist" :column-field="'name'"></GlossaryUsageInfoDialogWordsColumnList>
                 </ul>
             </div>
             <div v-else-if="contentInfo.type && contentInfo.type === 'table'">
@@ -131,7 +131,7 @@
                         <span>{{ $t('common.label') }}:</span>
                         <p>{{ contentInfo.data.metaTable.name }}</p>
                     </li>
-                    <GlossaryUsageInfoDialogWordsColumnList :selectedWords="selectedWords" :wordsList="contentInfo.data.words" :columnList="contentInfo.data.sbiGlTableWlist" :columnField="'name'"></GlossaryUsageInfoDialogWordsColumnList>
+                    <GlossaryUsageInfoDialogWordsColumnList :selected-words="selectedWords" :words-list="contentInfo.data.words" :column-list="contentInfo.data.sbiGlTableWlist" :column-field="'name'"></GlossaryUsageInfoDialogWordsColumnList>
                 </ul>
             </div>
             <template #footer>
@@ -150,12 +150,12 @@ import GlossaryUsageInfoDialogWordsColumnList from './GlossaryUsageInfoDialogWor
 export default defineComponent({
     name: 'glossary-usage-info-dialog',
     components: { Dialog, GlossaryUsageInfoDialogWordsColumnList },
-    emits: ['close'],
     props: {
         visible: { type: Boolean },
         contentInfo: { type: Object },
         selectedWords: { type: Array }
     },
+    emits: ['close'],
     data() {
         return {
             glossaryUsageDescriptor

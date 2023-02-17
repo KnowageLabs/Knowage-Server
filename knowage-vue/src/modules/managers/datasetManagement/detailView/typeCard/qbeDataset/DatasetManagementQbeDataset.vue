@@ -6,11 +6,11 @@
                     <span class="p-float-label">
                         <Dropdown
                             id="qbeDataSource"
+                            v-model="v$.dataset.qbeDataSource.$model"
                             class="kn-material-input"
                             :options="dataSources"
-                            optionLabel="label"
-                            optionValue="label"
-                            v-model="v$.dataset.qbeDataSource.$model"
+                            option-label="label"
+                            option-value="label"
                             :class="{
                                 'p-invalid': v$.dataset.qbeDataSource.$invalid && v$.dataset.qbeDataSource.$dirty
                             }"
@@ -19,8 +19,8 @@
                         <label for="scope" class="kn-material-input-label"> {{ $t('managers.glossary.glossaryUsage.dataSource') }} * </label>
                     </span>
                     <KnValidationMessages
-                        :vComp="v$.dataset.qbeDataSource"
-                        :additionalTranslateParams="{
+                        :v-comp="v$.dataset.qbeDataSource"
+                        :additional-translate-params="{
                             fieldName: $t('managers.glossary.glossaryUsage.dataSource')
                         }"
                     />
@@ -29,11 +29,11 @@
                     <span class="p-float-label">
                         <Dropdown
                             id="qbeDatamarts"
+                            v-model="v$.dataset.qbeDatamarts.$model"
                             class="kn-material-input"
                             :options="businessModels"
-                            optionLabel="name"
-                            optionValue="name"
-                            v-model="v$.dataset.qbeDatamarts.$model"
+                            option-label="name"
+                            option-value="name"
                             :class="{
                                 'p-invalid': v$.dataset.qbeDatamarts.$invalid && v$.dataset.qbeDatamarts.$dirty
                             }"
@@ -43,8 +43,8 @@
                         <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.qbeDatamarts') }} * </label>
                     </span>
                     <KnValidationMessages
-                        :vComp="v$.dataset.qbeDatamarts"
-                        :additionalTranslateParams="{
+                        :v-comp="v$.dataset.qbeDatamarts"
+                        :additional-translate-params="{
                             fieldName: $t('managers.datasetManagement.qbeDatamarts')
                         }"
                     />
@@ -68,16 +68,17 @@
                 </template>
             </Toolbar>
         </template>
-        <VCodeMirror class="kn-height-full" ref="codeMirror" v-model:value="qbeQuery" :options="codemirrorOptions" />
+        <VCodeMirror ref="codeMirror" v-model:value="qbeQuery" class="kn-height-full" :options="codemirrorOptions" />
     </Dialog>
 
-    <QBE v-if="qbeVisible" :visible="qbeVisible" :dataset="qbeDataset" :returnQueryMode="true" :getQueryFromDatasetProp="getQueryFromDataset" @querySaved="onQbeDialogSave" @close="onQbeDialogClose" />
+    <QBE v-if="qbeVisible" :visible="qbeVisible" :dataset="qbeDataset" :return-query-mode="true" :get-query-from-dataset-prop="getQueryFromDataset" @querySaved="onQbeDialogSave" @close="onQbeDialogClose" />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
 import { AxiosResponse } from 'axios'
+// eslint-disable-next-line
 import VCodeMirror, { CodeMirror } from 'codemirror-editor-vue3'
 import useValidate from '@vuelidate/core'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
@@ -118,15 +119,15 @@ export default defineComponent({
             }
         }
     },
-    created() {
-        this.dataset = this.selectedDataset
-        this.setupCodeMirror()
-    },
     watch: {
         selectedDataset() {
             this.dataset = this.selectedDataset
             this.setupCodeMirror()
         }
+    },
+    created() {
+        this.dataset = this.selectedDataset
+        this.setupCodeMirror()
     },
     validations() {
         const qbeFieldsRequired = (value) => {

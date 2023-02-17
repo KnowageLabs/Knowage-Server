@@ -1,25 +1,25 @@
 <template>
     <DataTable
         ref="dt"
-        :value="functions"
         v-model:selection="selectedCatalogFunctionItems"
         v-model:filters="filters"
+        :value="functions"
         class="p-datatable-sm kn-table"
-        dataKey="id"
+        data-key="id"
         :paginator="true"
         :rows="10"
-        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-        :rowsPerPageOptions="[10, 15, 20]"
-        responsiveLayout="stack"
+        paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+        :rows-per-page-options="[10, 15, 20]"
+        responsive-layout="stack"
         breakpoint="960px"
-        :currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
-        :globalFilterFields="['name', 'type', 'tags']"
+        :current-page-report-template="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
+        :global-filter-fields="['name', 'type', 'tags']"
     >
         <template #header>
             <div class="table-header">
                 <span class="p-input-icon-left">
                     <i class="pi pi-search" />
-                    <InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0" />
+                    <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" badge="0" />
                 </span>
             </div>
         </template>
@@ -30,14 +30,14 @@
             {{ $t('common.info.dataLoading') }}
         </template>
 
-        <Column selectionMode="multiple" :exportable="false" :style="importExportDescriptor.export.catalogFunction.column.selectionMode.style"></Column>
+        <Column selection-mode="multiple" :exportable="false" :style="importExportDescriptor.export.catalogFunction.column.selectionMode.style"></Column>
         <Column field="name" :header="$t(importExportDescriptor.export.catalogFunction.column.name.header)" :sortable="true" :style="importExportDescriptor.export.catalogFunction.column.name.style"></Column>
         <Column field="type" :header="$t(importExportDescriptor.export.catalogFunction.column.type.header)" :sortable="true" :style="importExportDescriptor.export.catalogFunction.column.type.style"> </Column>
 
         <Column field="tags" :header="$t(importExportDescriptor.export.catalogFunction.column.tags.header)" :sortable="true" :style="importExportDescriptor.export.catalogFunction.column.tags.style">
             <template #body="{ data }">
                 <span class="p-float-label kn-material-input">
-                    <Tag class="importExportTags p-mr-1" v-for="(tag, index) in data.tags" v-bind:key="index" rounded :value="tag"> </Tag>
+                    <Tag v-for="(tag, index) in data.tags" :key="index" class="importExportTags p-mr-1" rounded :value="tag"> </Tag>
                 </span>
             </template>
         </Column>
@@ -60,6 +60,7 @@ export default defineComponent({
     name: 'import-export-catalog-function',
     components: { Column, DataTable, InputText, Tag },
     props: { selectedItems: Object },
+    emits: ['onItemSelected', 'update:loading'],
     data() {
         return {
             filters: {},
@@ -68,6 +69,13 @@ export default defineComponent({
             selectedCatalogFunctionItems: [],
             functions: [] as Array<ICatalogFunctionTemplate>,
             FUNCTIONALITY: 'catalogFunction'
+        }
+    },
+    watch: {
+        selectedCatalogFunctionItems(newSelectedCatalogFunctionItems, oldSelectedCatalogFunctionItems) {
+            if (oldSelectedCatalogFunctionItems != newSelectedCatalogFunctionItems) {
+                this.$emit('onItemSelected', { items: this.selectedCatalogFunctionItems, functionality: this.FUNCTIONALITY })
+            }
         }
     },
     created() {
@@ -79,7 +87,6 @@ export default defineComponent({
         }
         this.loadAllFunctions()
     },
-    emits: ['onItemSelected', 'update:loading'],
     methods: {
         loadAllFunctions(): void {
             this.$emit('update:loading', true)
@@ -98,13 +105,6 @@ export default defineComponent({
                 .finally(() => {
                     this.$emit('update:loading', false)
                 })
-        }
-    },
-    watch: {
-        selectedCatalogFunctionItems(newSelectedCatalogFunctionItems, oldSelectedCatalogFunctionItems) {
-            if (oldSelectedCatalogFunctionItems != newSelectedCatalogFunctionItems) {
-                this.$emit('onItemSelected', { items: this.selectedCatalogFunctionItems, functionality: this.FUNCTIONALITY })
-            }
         }
     }
 })

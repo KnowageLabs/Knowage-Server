@@ -45,17 +45,17 @@ import { mapState } from 'pinia'
 import mainStore from '../App.store.js'
 
 export default defineComponent({
-    name: 'Home',
+    name: 'home',
     components: {},
     props: {},
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             completeUrl: false
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     beforeMounted() {
         this.setCompleteUrl()
@@ -65,7 +65,7 @@ export default defineComponent({
             if (Object.keys(this.homePage).length > 0) {
                 this.completeUrl = this.homePage.url
                 if (this.homePage.to) {
-                    let to = this.homePage.to?.replaceAll('\\/', '/')
+                    const to = this.homePage.to?.replaceAll('\\/', '/')
                     if (this.isFunctionality(to) || this.isADocument(to)) this.$router.push(to)
                     else this.completeUrl = import.meta.env.VITE_HOST_URL + this.homePage.to.replaceAll('\\/', '/')
                 }
@@ -73,10 +73,10 @@ export default defineComponent({
                 this.completeUrl = false
             }
         },
-        isFunctionality(to: String): Boolean {
+        isFunctionality(to: string): boolean {
             return to.startsWith('/document-browser') || to.startsWith('/workspace')
         },
-        isADocument(to: String): Boolean {
+        isADocument(to: string): boolean {
             return to.startsWith('/dossier/') || to.startsWith('/map/') || to.startsWith('/kpi/') || to.startsWith('/office-doc/') || to.startsWith('/document-composite/')
         }
     },

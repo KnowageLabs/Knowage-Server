@@ -1,22 +1,22 @@
 <template>
-    <Dialog class="kn-dialog--toolbar--primary importExportDialog" :style="dataViewDescriptor.style.dialog" v-bind:visible="visible" footer="footer" :header="$t('workspace.myData.wizardTitle')" :closable="false" modal>
+    <Dialog class="kn-dialog--toolbar--primary importExportDialog" :style="dataViewDescriptor.style.dialog" :visible="visible" footer="footer" :header="$t('workspace.myData.wizardTitle')" :closable="false" modal>
         <span v-if="wizardStep === 1">
-            <StepOne :selectedDataset="dataset" @fileUploaded="onFileUpload" />
+            <StepOne :selected-dataset="dataset" @fileUploaded="onFileUpload" />
         </span>
         <span v-if="wizardStep === 2">
-            <StepTwo :selectedDataset="dataset" />
+            <StepTwo :selected-dataset="dataset" />
         </span>
         <span v-if="wizardStep === 3">
-            <StepThree :gridForPreview="gridForPreview" />
+            <StepThree :grid-for-preview="gridForPreview" />
         </span>
         <span v-if="wizardStep === 4">
-            <StepFour :selectedDataset="dataset" />
+            <StepFour :selected-dataset="dataset" />
         </span>
 
         <template #footer>
             <div>
                 <Button class="kn-button kn-button--secondary" :label="$t('common.cancel')" @click="$emit('closeDialog')" />
-                <Button class="kn-button kn-button--secondary" v-if="wizardStep > 1" :label="$t('common.back')" @click="wizardStep--" />
+                <Button v-if="wizardStep > 1" class="kn-button kn-button--secondary" :label="$t('common.back')" @click="wizardStep--" />
                 <Button class="kn-button kn-button--primary" :label="$t('common.next')" :disabled="!fileUploaded" @click="documentFields" />
             </div>
         </template>
@@ -36,8 +36,24 @@ import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     components: { Dialog, StepOne, StepTwo, StepThree, StepFour },
-    emits: ['touched', 'fileUploaded', 'closeDialog', 'closeDialogAndReload'],
     props: { selectedDataset: { type: Object as any }, visible: { type: Boolean as any } },
+    emits: ['touched', 'fileUploaded', 'closeDialog', 'closeDialogAndReload'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
+    data() {
+        return {
+            dataViewDescriptor,
+            dataset: {} as any,
+            gridForPreview: {} as any,
+            datasetColumns: [] as any,
+            editingDatasetFile: false,
+            newFileUploaded: false,
+            fileUploaded: false,
+            wizardStep: 1
+        }
+    },
     computed: {
         documentFields(): any {
             switch (this.wizardStep) {
@@ -54,31 +70,15 @@ export default defineComponent({
             }
         }
     },
-    data() {
-        return {
-            dataViewDescriptor,
-            dataset: {} as any,
-            gridForPreview: {} as any,
-            datasetColumns: [] as any,
-            editingDatasetFile: false,
-            newFileUploaded: false,
-            fileUploaded: false,
-            wizardStep: 1
-        }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
-    created() {
-        this.dataset = this.selectedDataset
-        this.dataset.id ? this.getSelectedDataset() : this.initializeDatasetWizard(undefined, false)
-    },
     watch: {
         selectedDataset() {
             this.dataset = this.selectedDataset
             this.dataset.id ? this.getSelectedDataset() : this.initializeDatasetWizard(undefined, false)
         }
+    },
+    created() {
+        this.dataset = this.selectedDataset
+        this.dataset.id ? this.getSelectedDataset() : this.initializeDatasetWizard(undefined, false)
     },
     methods: {
         onFileUpload() {
@@ -124,7 +124,7 @@ export default defineComponent({
             this.dataset.tableName = dataset != undefined && dataset.persistTableName ? dataset.persistTableName : ''
         },
         submitStepOne() {
-            let params = {} as any
+            const params = {} as any
             params.SBI_EXECUTION_ID = -1
             params.isTech = false
             params.showOnlyOwner = true
@@ -147,8 +147,8 @@ export default defineComponent({
                 params: params,
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Disable-Errors': 'true' },
                 transformRequest: function (obj) {
-                    var str = [] as any
-                    for (var p in obj) str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
+                    const str = [] as any
+                    for (const p in obj) str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
                     return str.join('&')
                 }
             })
@@ -175,15 +175,15 @@ export default defineComponent({
             this.dataset.datasetMetadata.columns = []
             this.dataset.datasetMetadata.dataset = [...this.dataset.meta.dataset]
             this.dataset.datasetMetadata.columns = [...this.dataset.meta.columns]
-            let c = this.dataset.datasetMetadata.columns
-            for (var i = 0; i < c.length; i++) {
+            const c = this.dataset.datasetMetadata.columns
+            for (let i = 0; i < c.length; i++) {
                 delete c[i].columnView
                 delete c[i].pvalueView
                 delete c[i].pnameView
                 delete c[i].dsMetaValue
             }
-            let d = this.dataset.datasetMetadata.dataset
-            for (i = 0; i < d.length; i++) {
+            const d = this.dataset.datasetMetadata.dataset
+            for (let i = 0; i < d.length; i++) {
                 delete d[i].pvalueView
                 delete d[i].pnameView
             }
@@ -196,7 +196,7 @@ export default defineComponent({
             if (this.editingDatasetFile == true && this.dataset.fileUploaded == true) {
                 this.dataset.label = ''
             }
-            var params = {} as any
+            const params = {} as any
             params.SBI_EXECUTION_ID = -1
             this.wizardStep++
         },
@@ -204,17 +204,17 @@ export default defineComponent({
             this.wizardStep++
         },
         async submitStepFour() {
-            let dsToSend = { ...this.dataset }
+            const dsToSend = { ...this.dataset }
             dsToSend.isPublicDS = false
             dsToSend.meta = this.dataset.datasetMetadata
             dsToSend.fileUploaded = this.fileUploaded
             delete dsToSend['datasetMetadata']
-            var d = new Date()
-            var label = 'ds__' + (d.getTime() % 10000000)
+            const d = new Date()
+            const label = 'ds__' + (d.getTime() % 10000000)
             if (dsToSend.label === '') {
                 dsToSend.label = label
             }
-            var params = {} as any
+            const params = {} as any
             params.showDerivedDataset = false
             params.SBI_EXECUTION_ID = -1
             params.isTech = false
@@ -228,8 +228,8 @@ export default defineComponent({
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Disable-Errors': 'true' },
 
                 transformRequest: function (obj) {
-                    var str = [] as any
-                    for (var p in obj) str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
+                    const str = [] as any
+                    for (const p in obj) str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
                     return str.join('&')
                 }
             })
@@ -241,7 +241,7 @@ export default defineComponent({
                     }
                     this.$emit('closeDialogAndReload')
                 })
-                .catch((error: any) => {
+                .catch(() => {
                     this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('common.error.uploading') })
                 })
         }

@@ -1,11 +1,11 @@
 <template>
-    <Dialog :style="previewDialogDescriptor.dialog.style" :contentStyle="previewDialogDescriptor.dialog.contentStyle" :visible="true" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :header="$t('kpi.measureDefinition.preview')" :closable="false">
+    <Dialog :style="previewDialogDescriptor.dialog.style" :content-style="previewDialogDescriptor.dialog.contentStyle" :visible="true" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :header="$t('kpi.measureDefinition.preview')" :closable="false">
         <div class="p-d-flex">
-            <DataTable :value="rows" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px">
+            <DataTable :value="rows" class="p-datatable-sm kn-table" data-key="id" responsive-layout="stack" breakpoint="960px">
                 <template #empty>
                     {{ $t('common.info.noDataFound') }}
                 </template>
-                <Column class="kn-truncated" v-for="col of columns" :field="col.name" :header="col.label" :key="col.field" :sortable="true"> </Column>
+                <Column v-for="col of columns" :key="col.field" class="kn-truncated" :field="col.name" :header="col.label" :sortable="true"> </Column>
             </DataTable>
 
             <div v-if="rule.placeholders && rule.placeholders.length > 0" class="p-col-3">
@@ -21,7 +21,7 @@
                     <div v-for="placeholder in rule.placeholders" :key="placeholder.id">
                         <div class="p-field p-m-2">
                             <span class="p-float-label">
-                                <InputText class="kn-material-input" type="text" v-model.trim="placeholder.value" />
+                                <InputText v-model.trim="placeholder.value" class="kn-material-input" type="text" />
                                 <label class="kn-material-input-label"> {{ placeholder.name }} </label>
                             </span>
                         </div>
@@ -59,19 +59,19 @@
             propRows: { type: Array }
         },
         emits: ['close', 'loadPreview'],
+        data() {
+            return {
+                previewDialogDescriptor,
+                rule: {} as iRule,
+                rows: [] as any[]
+            }
+        },
         watch: {
             propRows() {
                 this.loadRows()
             },
             currentRule() {
                 this.loadRule()
-            }
-        },
-        data() {
-            return {
-                previewDialogDescriptor,
-                rule: {} as iRule,
-                rows: [] as any[]
             }
         },
         async created() {

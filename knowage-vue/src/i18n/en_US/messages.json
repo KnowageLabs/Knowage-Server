@@ -823,6 +823,10 @@
                 "textAndIcon": "Text & Icon",
                 "title": "Visualization Type"
             }
+        },
+        "wizard": {
+            "addDataset": "Add a new dataset to the dashboard",
+            "addWidget": "Add a new Widget to the dashboard"
         }
     },
     "documentBrowser": {
@@ -1756,9 +1760,6 @@
             "dataPreparation": {
                 "datasetInvolvedIntoDataPrep": "Dataset is involved in a Data Preparation process, do you want to proceed?"
             },
-            "derived": {
-                "checkForExistingDerivedDatasets": "Dataset has active derived datasets, do you want to proceed?"
-            },
             "dataframeName": "Dataframe variable name",
             "decrypt": "Decrypt",
             "deleteAllParams": "Clear all dataset parameters",
@@ -1769,6 +1770,9 @@
             "deleteAllVersionsSuccess": "All dataset versions are deleted",
             "deleteAllVersionsTitle": "Delete all dataset versions",
             "deleteOneVersionMsg": "Do you want to delete selected version?",
+            "derived": {
+                "checkForExistingDerivedDatasets": "Dataset has active derived datasets, do you want to proceed?"
+            },
             "disablePersistence": "Disabling Persistence",
             "disablePersistenceMsg": "Persistence of Dataset is enabled. By adding the parameters, persistence will be automatically disabled. Do You want to proceed?",
             "documents": "Documents",

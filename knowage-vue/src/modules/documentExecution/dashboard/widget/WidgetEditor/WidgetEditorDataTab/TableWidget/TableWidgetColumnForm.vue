@@ -4,27 +4,27 @@
             <div class="p-d-flex p-flex-row p-ai-center">
                 <div class="p-d-flex p-flex-column kn-flex p-m-2">
                     <label class="kn-material-input-label p-mr-2">{{ $t('common.alias') }}</label>
-                    <InputText class="kn-material-input p-inputtext-sm" v-model="column.alias" @change="onColumnAliasRenamed" />
+                    <InputText v-model="column.alias" class="kn-material-input p-inputtext-sm" @change="onColumnAliasRenamed" />
                 </div>
             </div>
 
             <div class="p-d-flex p-flex-row p-ai-center p-mt-2">
                 <div class="p-d-flex p-flex-column kn-flex-2 p-m-2">
                     <label class="kn-material-input-label p-mr-2">{{ $t('common.type') }}</label>
-                    <Dropdown class="kn-material-input" v-model="column.fieldType" :options="descriptor.columnTypeOptions" optionValue="value" optionLabel="label" :disabled="column.formula !== undefined" @change="columnTypeChanged"> </Dropdown>
+                    <Dropdown v-model="column.fieldType" class="kn-material-input" :options="descriptor.columnTypeOptions" option-value="value" option-label="label" :disabled="column.formula !== undefined" @change="columnTypeChanged"> </Dropdown>
                 </div>
                 <div v-if="column.fieldType === 'MEASURE' && widgetType !== 'discovery'" class="p-d-flex p-flex-column kn-flex p-m-2">
                     <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.aggregation') }}</label>
-                    <Dropdown class="kn-material-input" v-model="column.aggregation" :options="commonDescriptor.columnAggregationOptions" optionValue="value" optionLabel="label" @change="selectedColumnUpdated"> </Dropdown>
+                    <Dropdown v-model="column.aggregation" class="kn-material-input" :options="commonDescriptor.columnAggregationOptions" option-value="value" option-label="label" @change="selectedColumnUpdated"> </Dropdown>
                 </div>
                 <div v-else-if="column.fieldType === 'ATTRIBUTE' && widgetType === 'discovery'" class="p-d-flex p-flex-row kn-flex-2">
                     <div class="p-d-flex p-flex-column kn-flex p-m-2">
                         <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.aggregation') }}</label>
-                        <Dropdown class="kn-material-input" v-model="column.aggregation" :options="commonDescriptor.discoveryWidgetColumnAggregationOptions" optionValue="value" optionLabel="label" @change="onDiscoveryWidgetColumnAggregationChanged"> </Dropdown>
+                        <Dropdown v-model="column.aggregation" class="kn-material-input" :options="commonDescriptor.discoveryWidgetColumnAggregationOptions" option-value="value" option-label="label" @change="onDiscoveryWidgetColumnAggregationChanged"> </Dropdown>
                     </div>
                     <div v-if="column.aggregation !== 'COUNT'" class="p-d-flex p-flex-column kn-flex p-m-2">
                         <label class="kn-material-input-label p-mr-2">{{ $t('common.column') }}</label>
-                        <Dropdown class="kn-material-input" v-model="column.aggregationColumn" :options="widgetMeasureColumns" optionValue="columnName" optionLabel="columnName" @change="selectedColumnUpdated"> </Dropdown>
+                        <Dropdown v-model="column.aggregationColumn" class="kn-material-input" :options="widgetMeasureColumns" option-value="columnName" option-label="columnName" @change="selectedColumnUpdated"> </Dropdown>
                     </div>
                 </div>
             </div>
@@ -32,7 +32,7 @@
 
         <hr />
 
-        <WidgetEditorFilterForm v-if="column.filter" :propColumn="column"></WidgetEditorFilterForm>
+        <WidgetEditorFilterForm v-if="column.filter" :prop-column="column"></WidgetEditorFilterForm>
     </div>
 </template>
 
@@ -42,13 +42,12 @@ import { IWidget, IWidgetColumn, IWidgetColumnFilter } from '../../../../Dashboa
 import { emitter } from '../../../../DashboardHelpers'
 import descriptor from './TableWidgetDataDescriptor.json'
 import commonDescriptor from '../common/WidgetCommonDescriptor.json'
-import InputSwitch from 'primevue/inputswitch'
 import Dropdown from 'primevue/dropdown'
 import WidgetEditorFilterForm from '../common/WidgetEditorFilterForm.vue'
 
 export default defineComponent({
     name: 'table-widget-column-form',
-    components: { InputSwitch, Dropdown, WidgetEditorFilterForm },
+    components: { Dropdown, WidgetEditorFilterForm },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedColumn: { type: Object as PropType<IWidgetColumn | null>, required: true } },
     data() {
         return {

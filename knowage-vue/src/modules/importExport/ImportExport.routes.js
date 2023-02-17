@@ -1,4 +1,4 @@
-let routes = [
+const routes = [
 	{
 		path: '/import-export',
 		name: 'import-export',

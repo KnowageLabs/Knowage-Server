@@ -1,4 +1,4 @@
-let routes = [
+const routes = [
     {
         path: '/cross-navigation-management',
         name: 'cross-navigation',

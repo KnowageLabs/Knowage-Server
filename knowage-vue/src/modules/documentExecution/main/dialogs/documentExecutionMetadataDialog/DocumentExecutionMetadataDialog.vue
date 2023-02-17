@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="documentExecutionMetadataDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary" :content-style="documentExecutionMetadataDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -7,7 +7,7 @@
                 </template>
             </Toolbar>
         </template>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
 
         <div v-if="metadata">
             <div v-if="metadata.generalMetadata.length > 0">
@@ -16,7 +16,7 @@
                     <template v-for="(meta, index) in metadata.generalMetadata" :key="index">
                         <div v-if="meta.value && index !== metadata.generalMetadata.length - 1" :class="{ 'p-col-4': index !== 3, 'p-col-12': index === 3 }">
                             <label class="kn-material-input-label">{{ meta.name }}</label>
-                            <InputText v-if="index !== 3" class="kn-material-input p-inputtext-sm" v-model="meta.value" :disabled="true" />
+                            <InputText v-if="index !== 3" v-model="meta.value" class="kn-material-input p-inputtext-sm" :disabled="true" />
                             <Textarea v-else v-model="meta.value" rows="2" :disabled="true" />
                         </div>
                     </template>
@@ -29,7 +29,7 @@
                 <div v-show="metadata.shortText.length > 0" class="p-grid">
                     <div v-for="(meta, index) in metadata.shortText" :key="index" class="p-col-4">
                         <label class="kn-material-input-label">{{ meta.name }}</label>
-                        <InputText class="kn-material-input p-inputtext-sm" v-model="meta.value" :disabled="!canModify" />
+                        <InputText v-model="meta.value" class="kn-material-input p-inputtext-sm" :disabled="!canModify" />
                     </div>
                 </div>
             </div>
@@ -40,7 +40,7 @@
                         <span class="p-text-uppercase kn-truncated">{{ meta.name }}</span>
                     </template>
 
-                    <Editor v-model="meta.value" :readonly="!canModify" :editorStyle="documentExecutionMetadataDialogDescriptor.editor.style"></Editor>
+                    <Editor v-model="meta.value" :readonly="!canModify" :editor-style="documentExecutionMetadataDialogDescriptor.editor.style"></Editor>
                 </TabPanel>
             </TabView>
 
@@ -50,12 +50,12 @@
                 <div v-for="(meta, index) in metadata.file" :key="index" class="p-d-flex p-flex-row p-ai-center">
                     <div class="kn-flex p-d-flex p-flex-row p-m-2">
                         <div v-if="meta.value" class="kn-flex p-d-flex p-flex-row p-m-1">
-                            <InputText class="kn-material-input p-inputtext-sm" v-model="meta.value.fileName" :disabled="true" />
-                            <InputText class="kn-material-input p-inputtext-sm" v-model="meta.value.saveDate" :disabled="true" />
+                            <InputText v-model="meta.value.fileName" class="kn-material-input p-inputtext-sm" :disabled="true" />
+                            <InputText v-model="meta.value.saveDate" class="kn-material-input p-inputtext-sm" :disabled="true" />
                         </div>
                         <div class="p-m-1">
                             <label class="kn-material-input-label">{{ meta.name }}</label>
-                            <KnInputFile :ref="'' + meta.id" :id="'' + meta.id" :changeFunction="uploadFile" :visibility="true" />
+                            <KnInputFile :id="'' + meta.id" :ref="'' + meta.id" :change-function="uploadFile" :visibility="true" />
                         </div>
                     </div>
 
@@ -101,6 +101,10 @@ export default defineComponent({
         propLoading: { type: Boolean }
     },
     emits: ['close', 'saveMetadata'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             documentExecutionMetadataDialogDescriptor,
@@ -108,6 +112,11 @@ export default defineComponent({
             metadata: null as iMetadata | null,
             uploadedFiles: {} as any,
             loading: false
+        }
+    },
+    computed: {
+        canModify(): boolean {
+            return (this.store.$state as any).user.functionalities.includes('SaveMetadataFunctionality')
         }
     },
     watch: {
@@ -118,15 +127,6 @@ export default defineComponent({
         propLoading() {
             this.setLoading()
         }
-    },
-    computed: {
-        canModify(): boolean {
-            return (this.store.$state as any).user.functionalities.includes('SaveMetadataFunctionality')
-        }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.setLoading()

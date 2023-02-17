@@ -6,9 +6,9 @@
                     <span class="p-float-label">
                         <InputText
                             id="restAddress"
+                            v-model.trim="v$.dataset.restAddress.$model"
                             class="kn-material-input"
                             type="text"
-                            v-model.trim="v$.dataset.restAddress.$model"
                             :class="{
                                 'p-invalid': v$.dataset.restAddress.$invalid && v$.dataset.restAddress.$dirty
                             }"
@@ -17,15 +17,15 @@
                         />
                         <label for="restAddress" class="kn-material-input-label"> {{ $t('managers.datasetManagement.restAddress') }} * </label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.restAddress" :additionalTranslateParams="{ fieldName: $t('managers.datasetManagement.restAddress') }" />
+                    <KnValidationMessages class="p-mt-1" :v-comp="v$.dataset.restAddress" :additional-translate-params="{ fieldName: $t('managers.datasetManagement.restAddress') }" />
                 </div>
                 <div class="p-field p-col-6 p-float-label">
                     <span class="p-float-label">
                         <InputText
                             id="solrCollection"
+                            v-model.trim="v$.dataset.solrCollection.$model"
                             class="kn-material-input"
                             type="text"
-                            v-model.trim="v$.dataset.solrCollection.$model"
                             :class="{
                                 'p-invalid': v$.dataset.solrCollection.$invalid && v$.dataset.solrCollection.$dirty
                             }"
@@ -34,18 +34,18 @@
                         />
                         <label for="solrCollection" class="kn-material-input-label"> {{ $t('managers.datasetManagement.solrCollection') }} * </label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.solrCollection" :additionalTranslateParams="{ fieldName: $t('managers.datasetManagement.solrCollection') }" />
+                    <KnValidationMessages class="p-mt-1" :v-comp="v$.dataset.solrCollection" :additional-translate-params="{ fieldName: $t('managers.datasetManagement.solrCollection') }" />
                 </div>
                 <div class="p-field p-col-12 p-float-label">
-                    <InputText id="restRequestBody" class="kn-material-input" type="text" maxLength="2000" v-model.trim="dataset.restRequestBody" @change="$emit('touched')" />
+                    <InputText id="restRequestBody" v-model.trim="dataset.restRequestBody" class="kn-material-input" type="text" max-length="2000" @change="$emit('touched')" />
                     <label for="restRequestBody" class="kn-material-input-label"> {{ $t('kpi.measureDefinition.query') }} </label>
                 </div>
-                <div class="p-field p-col-12 p-float-label" v-if="dataset.solrType == 'DOCUMENTS'">
+                <div v-if="dataset.solrType == 'DOCUMENTS'" class="p-field p-col-12 p-float-label">
                     <InputText
                         id="solrFieldList"
+                        v-model.trim="v$.dataset.solrFieldList.$model"
                         class="kn-material-input"
                         type="text"
-                        v-model.trim="v$.dataset.solrFieldList.$model"
                         :class="{
                             'p-invalid': v$.dataset.solrFieldList.$invalid && v$.dataset.solrFieldList.$dirty
                         }"
@@ -53,14 +53,14 @@
                         @change="$emit('touched')"
                     />
                     <label for="solrFieldList" class="kn-material-input-label"> {{ $t('managers.datasetManagement.solrFieldList') }} * </label>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.solrFieldList" :additionalTranslateParams="{ fieldName: $t('managers.datasetManagement.solrFieldList') }" />
+                    <KnValidationMessages class="p-mt-1" :v-comp="v$.dataset.solrFieldList" :additional-translate-params="{ fieldName: $t('managers.datasetManagement.solrFieldList') }" />
                 </div>
             </form>
         </template>
     </Card>
 
-    <RequestHeadersTable :selectedDataset="selectedDataset" />
-    <QueryParamTable :selectedDataset="selectedDataset" />
+    <RequestHeadersTable :selected-dataset="selectedDataset" />
+    <QueryParamTable :selected-dataset="selectedDataset" />
     <FacetInfoDialog :visible="facetQueryHelpVisible" @close="facetQueryHelpVisible = false" />
 </template>
 
@@ -94,14 +94,14 @@ export default defineComponent({
             facetQueryHelpVisible: false
         }
     },
-    created() {
-        this.dataset = this.selectedDataset
-        if (this.dataset.dsTypeCd === 'Solr' && (!this.dataset.solrType || this.dataset.solrType === 'FACETS')) this.dataset.solrType = 'DOCUMENTS'
-    },
     watch: {
         selectedDataset() {
             this.dataset = this.selectedDataset
         }
+    },
+    created() {
+        this.dataset = this.selectedDataset
+        if (this.dataset.dsTypeCd === 'Solr' && (!this.dataset.solrType || this.dataset.solrType === 'FACETS')) this.dataset.solrType = 'DOCUMENTS'
     },
     validations() {
         const solrFieldsRequired = (value) => {

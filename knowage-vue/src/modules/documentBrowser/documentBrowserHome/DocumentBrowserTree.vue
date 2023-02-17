@@ -1,15 +1,15 @@
 <template>
     <Tree
         id="folders-tree"
+        v-model:selectionKeys="selectedFolderKey"
         class="kn-tree kn-column-tree kn-flex p-p-0"
-        scrollHeight="calc(100vh - 127px)"
+        scroll-height="calc(100vh - 127px)"
         maximizable
         :value="nodes"
-        selectionMode="single"
-        v-model:selectionKeys="selectedFolderKey"
+        selection-mode="single"
         :filter="true"
-        filterMode="lenient"
-        :expandedKeys="expandedKeys"
+        filter-mode="lenient"
+        :expanded-keys="expandedKeys"
         @node-select="setSelectedFolder"
         @node-expand="setOpenFolderIcon($event)"
         @node-collapse="setClosedFolderIcon($event)"

@@ -8,14 +8,14 @@
         <div v-for="(variable, index) in variables" :key="index" class="p-fluid p-formgrid p-grid p-m-3" style="gap: 5px">
             <div class="p-field kn-flex">
                 <span class="p-float-label">
-                    <InputText class="kn-material-input" v-model="variable.name" />
+                    <InputText v-model="variable.name" class="kn-material-input" />
                     <label class="kn-material-input-label">{{ $t('common.name') }}</label>
                 </span>
             </div>
 
             <div class="p-field kn-flex">
                 <span class="p-float-label">
-                    <Dropdown class="kn-material-input" v-model="variable.type" :options="descriptor.variableTypes" optionValue="value" @change="onVariableTypeChange(variable)">
+                    <Dropdown v-model="variable.type" class="kn-material-input" :options="descriptor.variableTypes" option-value="value" @change="onVariableTypeChange(variable)">
                         <template #value="slotProps">
                             <span>{{ getTranslatedLabel(slotProps.value, descriptor.variableTypes, $t) }}</span>
                         </template>
@@ -29,20 +29,20 @@
 
             <div v-if="variable.type === 'static'" class="p-field kn-flex">
                 <span class="p-float-label">
-                    <InputText class="kn-material-input" v-model="variable.value" />
+                    <InputText v-model="variable.value" class="kn-material-input" />
                     <label class="kn-material-input-label">{{ $t('common.value') }}</label>
                 </span>
             </div>
 
             <div v-if="variable.type === 'dataset'" class="p-field kn-flex">
                 <span class="p-float-label">
-                    <Dropdown class="kn-material-input" v-model="variable.dataset" :options="selectedDatasetOptions" optionLabel="label" optionValue="id"> </Dropdown>
+                    <Dropdown v-model="variable.dataset" class="kn-material-input" :options="selectedDatasetOptions" option-label="label" option-value="id"> </Dropdown>
                     <label class="kn-material-input-label"> {{ $t('common.dataset') }}</label>
                 </span>
             </div>
             <div v-if="variable.type === 'dataset'" class="p-field kn-flex">
                 <span class="p-float-label">
-                    <Dropdown class="kn-material-input" v-model="variable.column" :options="getSelectionDatasetColumnOptions(variable)"> </Dropdown>
+                    <Dropdown v-model="variable.column" class="kn-material-input" :options="getSelectionDatasetColumnOptions(variable)"> </Dropdown>
                     <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
                 </span>
                 <small>{{ $t('dashboard.generalSettings.variableColumnHint') }}</small>
@@ -50,19 +50,19 @@
 
             <div v-if="variable.type === 'driver'" class="p-field kn-flex">
                 <span class="p-float-label">
-                    <Dropdown class="kn-material-input" v-model="variable.driver" :options="drivers" optionLabel="name" optionValue="urlName" @change="setValueFromAnalyticalDriver(variable)"> </Dropdown>
+                    <Dropdown v-model="variable.driver" class="kn-material-input" :options="drivers" option-label="name" option-value="urlName" @change="setValueFromAnalyticalDriver(variable)"> </Dropdown>
                     <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.interactions.analyticalDriver') }}</label>
                 </span>
             </div>
 
             <div v-if="variable.type === 'profile'" class="p-field kn-flex">
                 <span class="p-float-label">
-                    <Dropdown class="kn-material-input" v-model="variable.attribute" :options="profileAttributes" optionLabel="name" optionValue="name" @change="setValueFromProfileAttribute(variable)"> </Dropdown>
+                    <Dropdown v-model="variable.attribute" class="kn-material-input" :options="profileAttributes" option-label="name" option-value="name" @change="setValueFromProfileAttribute(variable)"> </Dropdown>
                     <label class="kn-material-input-label">{{ $t('dashboard.generalSettings.attribute') }}</label>
                 </span>
             </div>
 
-            <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain p-mt-1" v-tooltip.left="$t('common.delete')" @click="removeVariable(index)" />
+            <Button v-tooltip.left="$t('common.delete')" icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain p-mt-1" @click="removeVariable(index)" />
         </div>
     </div>
 </template>

@@ -2,11 +2,11 @@
     <div v-if="driver && driver.parameterValue" class="p-fluid p-formgrid p-grid p-p-5 p-m-0">
         <Tree
             id="kn-parameter-tree"
+            v-model:selectionKeys="selectedValuesKeys"
             class="p-col-12"
             :value="nodes as any"
-            :selectionMode="!driver.multivalue ? 'single' : undefined"
-            v-model:selectionKeys="selectedValuesKeys"
-            :metaKeySelection="false"
+            :selection-mode="!driver.multivalue ? 'single' : undefined"
+            :meta-key-selection="false"
             :loading="loading"
             @nodeSelect="setSelectedValue"
             @nodeUnselect="removeSelectedValue"
@@ -14,7 +14,7 @@
             @nodeCollapse="setClosedFolderIcon"
         >
             <template #default="slotProps">
-                <Checkbox v-if="driver.multivalue && slotProps.node.selectable" class="p-ml-2" v-model="selectedNodes" :value="slotProps.node.data" @change="onNodeChange" />
+                <Checkbox v-if="driver.multivalue && slotProps.node.selectable" v-model="selectedNodes" class="p-ml-2" :value="slotProps.node.data" @change="onNodeChange" />
                 <span>{{ slotProps.node.label }}</span>
             </template>
         </Tree>
@@ -117,7 +117,7 @@ export default defineComponent({
                 PARAMETERS: getFormattedDrivers(this.drivers)
             }
 
-            let content = [] as iNode[]
+            const content = [] as iNode[]
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/businessModelOpening/parametervalues', postData, { headers: { 'X-Disable-Interceptor': 'true' } })
                 .then((response: AxiosResponse<any>) => {

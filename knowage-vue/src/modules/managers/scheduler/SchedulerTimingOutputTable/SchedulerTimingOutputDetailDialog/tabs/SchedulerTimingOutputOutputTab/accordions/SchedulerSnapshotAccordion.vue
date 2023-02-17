@@ -1,5 +1,5 @@
 <template>
-    <Accordion :activeIndex="0">
+    <Accordion :active-index="0">
         <AccordionTab>
             <template #header>
                 <i class="fa fa-camera"></i>
@@ -13,12 +13,12 @@
                         <span>
                             <label class="kn-material-input-label">{{ $t('common.name') }} *</label>
                             <InputText
-                                class="kn-material-input"
                                 v-model="document.snapshotname"
+                                class="kn-material-input"
                                 :class="{
                                     'p-invalid': snapshotNameDirty && (!document.snapshotname || document.snapshotname.length === 0)
                                 }"
-                                :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.snapshot.nameMaxLength"
+                                :max-length="schedulerTimingOutputOutputTabDescriptor.accordion.snapshot.nameMaxLength"
                                 @input="setNameValidation"
                                 @blur="setNameValidation"
                             />
@@ -36,7 +36,7 @@
                     <div class="p-m-2">
                         <span>
                             <label class="kn-material-input-label">{{ $t('managers.scheduler.historyLength') }}</label>
-                            <InputText class="kn-material-input" type="number" v-model="document.snapshothistorylength" />
+                            <InputText v-model="document.snapshothistorylength" class="kn-material-input" type="number" />
                         </span>
                     </div>
                 </div>
@@ -44,7 +44,7 @@
                 <div class="p-m-2">
                     <span>
                         <label class="kn-material-input-label">{{ $t('common.description') }}</label>
-                        <InputText class="kn-material-input" v-model="document.snapshotdescription" :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.snapshot.descriptionMaxLength" />
+                        <InputText v-model="document.snapshotdescription" class="kn-material-input" :max-length="schedulerTimingOutputOutputTabDescriptor.accordion.snapshot.descriptionMaxLength" />
                     </span>
                     <div class="p-d-flex p-jc-end">
                         <small>{{ descriptionHelp }}</small>

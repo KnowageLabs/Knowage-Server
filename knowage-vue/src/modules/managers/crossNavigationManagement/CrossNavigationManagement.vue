@@ -7,10 +7,10 @@
                         {{ $t('managers.crossNavigationManagement.title') }}
                     </template>
                     <template #end>
-                        <KnFabButton icon="fas fa-plus" @click="showForm(-1)" data-test="new-button" />
+                        <KnFabButton icon="fas fa-plus" data-test="new-button" @click="showForm(-1)" />
                     </template>
                 </Toolbar>
-                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+                <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
                 <KnListBox :options="navigations" :settings="crossNavigationDescriptor.knListSettings" @click="selected($event, item)" @delete.stop="deleteTempateConfirm($event, item)"></KnListBox>
             </div>
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
@@ -31,6 +31,10 @@ import mainStore from '../../../App.store'
 export default defineComponent({
     name: 'navigation-management',
     components: { KnFabButton, KnListBox },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             navigations: [] as iNavigation[],
@@ -38,10 +42,6 @@ export default defineComponent({
             touched: false,
             crossNavigationDescriptor
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadAll()
@@ -121,7 +121,7 @@ export default defineComponent({
             await this.loadAll()
             this.touched = false
             if (operation === 'insert') {
-                let id = this.navigations.find((nav) => nav.name === name)?.id
+                const id = this.navigations.find((nav) => nav.name === name)?.id
                 this.$router.push('/cross-navigation-management/' + id)
             }
         }

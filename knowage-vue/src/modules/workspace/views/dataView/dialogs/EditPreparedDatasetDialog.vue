@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary dataPreparationSaveDialog" v-bind:visible="visible" :modal="true" :closable="false">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary dataPreparationSaveDialog" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -12,18 +12,18 @@
                 <div class="p-d-flex">
                     <span class="p-float-label kn-flex p-mr-2">
                         <InputText
+                            v-model.trim="v$.newDataset.name.$model"
                             class="kn-material-input"
                             type="text"
-                            v-model.trim="v$.newDataset.name.$model"
                             :class="{
                                 'p-invalid': v$.newDataset.name.$invalid
                             }"
-                            maxLength="100"
+                            max-length="100"
                         />
                         <label class="kn-material-input-label" for="label">{{ $t('managers.workspaceManagement.dataPreparation.dataset.name') }}</label>
                         <KnValidationMessages
-                            :vComp="v$.newDataset.name"
-                            :additionalTranslateParams="{
+                            :v-comp="v$.newDataset.name"
+                            :additional-translate-params="{
                                 fieldName: $t('managers.configurationManagement.headers.name')
                             }"
                         ></KnValidationMessages>
@@ -31,19 +31,19 @@
                 </div>
                 <span class="p-float-label">
                     <Textarea
+                        v-model.trim="v$.newDataset.description.$model"
                         class="kn-material-input p-mb-1"
                         type="text"
-                        v-model.trim="v$.newDataset.description.$model"
                         :class="{
                             'p-invalid': v$.newDataset.description.$invalid
                         }"
                         rows="3"
-                        maxLength="10000"
+                        max-length="10000"
                     />
                     <label class="kn-material-input-label" for="label">{{ $t('managers.workspaceManagement.dataPreparation.dataset.description') }}</label>
                     <KnValidationMessages
-                        :vComp="v$.newDataset.description"
-                        :additionalTranslateParams="{
+                        :v-comp="v$.newDataset.description"
+                        :additional-translate-params="{
                             fieldName: $t('managers.configurationManagement.headers.description')
                         }"
                     ></KnValidationMessages>
@@ -52,7 +52,7 @@
         </div>
         <template #footer>
             <Button class="kn-button kn-button--secondary" :label="$t('common.cancel')" @click="cancel" />
-            <Button class="kn-button kn-button--primary" v-t="'common.apply'" @click="apply" :disabled="saveButtonDisabled" />
+            <Button v-t="'common.apply'" class="kn-button kn-button--primary" :disabled="saveButtonDisabled" @click="apply" />
         </template>
     </Dialog>
 </template>
@@ -85,6 +85,11 @@ export default defineComponent({
             newDataset: createValidations('newDataset', this.validationDescriptor.validations.configuration)
         }
     },
+    computed: {
+        saveButtonDisabled(): any {
+            return this.v$.$invalid
+        }
+    },
     updated() {
         if (this.dataset) {
             this.newDataset['label'] = this.dataset.label
@@ -103,11 +108,6 @@ export default defineComponent({
         },
         clearForm(): void {
             this.newDataset = {}
-        }
-    },
-    computed: {
-        saveButtonDisabled(): any {
-            return this.v$.$invalid
         }
     }
 })

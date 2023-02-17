@@ -13,23 +13,23 @@
                     <span class="p-float-label">
                         <InputText
                             id="name"
+                            v-model.trim="v$.businessModel.name.$model"
                             class="kn-material-input"
                             type="text"
-                            v-model.trim="v$.businessModel.name.$model"
                             :class="{
                                 'p-invalid': v$.businessModel.name.$invalid && v$.businessModel.name.$dirty
                             }"
-                            maxLength="100"
+                            max-length="100"
                             :disabled="businessModel.id"
+                            data-test="name-input"
                             @blur="v$.businessModel.name.$touch()"
                             @input="onFieldChange('name', $event.target.value)"
-                            data-test="name-input"
                         />
                         <label for="label" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
                     </span>
                     <KnValidationMessages
-                        :vComp="v$.businessModel.name"
-                        :additionalTranslateParams="{
+                        :v-comp="v$.businessModel.name"
+                        :additional-translate-params="{
                             fieldName: $t('common.name')
                         }"
                     />
@@ -38,23 +38,23 @@
                     <span class="p-float-label">
                         <InputText
                             id="description"
+                            v-model.trim="v$.businessModel.description.$model"
                             class="kn-material-input"
                             type="text"
-                            v-model.trim="v$.businessModel.description.$model"
                             :class="{
                                 'p-invalid': v$.businessModel.description.$invalid && v$.businessModel.description.$dirty
                             }"
-                            maxLength="500"
-                            @blur="v$.businessModel.description.$touch()"
-                            @input="onFieldChange('description', $event.target.value)"
+                            max-length="500"
                             :disabled="readonly"
                             data-test="description-input"
+                            @blur="v$.businessModel.description.$touch()"
+                            @input="onFieldChange('description', $event.target.value)"
                         />
                         <label for="description" class="kn-material-input-label"> {{ $t('managers.businessModelManager.description') }}</label>
                     </span>
                     <KnValidationMessages
-                        :vComp="v$.businessModel.description"
-                        :additionalTranslateParams="{
+                        :v-comp="v$.businessModel.description"
+                        :additional-translate-params="{
                             fieldName: $t('managers.businessModelManager.description')
                         }"
                     />
@@ -65,11 +65,11 @@
                         <label for="category" class="kn-material-input-label">{{ $t('common.category') }} * </label>
                         <Dropdown
                             id="category"
+                            v-model="v$.businessModel.category.$model"
                             class="kn-material-input"
                             :class="{
                                 'p-invalid': v$.businessModel.category.$invalid && v$.businessModel.category.$dirty
                             }"
-                            v-model="v$.businessModel.category.$model"
                             :options="categories"
                             :placeholder="$t('common.category')"
                             :disabled="readonly"
@@ -89,8 +89,8 @@
                         </Dropdown>
                     </span>
                     <KnValidationMessages
-                        :vComp="v$.businessModel.category"
-                        :additionalTranslateParams="{
+                        :v-comp="v$.businessModel.category"
+                        :additional-translate-params="{
                             fieldName: $t('managers.businessModelManager.analyticalDriver')
                         }"
                     />
@@ -101,11 +101,11 @@
                         <label for="dataSourceLabel" class="kn-material-input-label">{{ $t('managers.businessModelManager.dataSource') }} * </label>
                         <Dropdown
                             id="dataSourceLabel"
+                            v-model="v$.businessModel.dataSourceLabel.$model"
                             class="kn-material-input"
                             :class="{
                                 'p-invalid': v$.businessModel.dataSourceLabel.$invalid && v$.businessModel.dataSourceLabel.$dirty
                             }"
-                            v-model="v$.businessModel.dataSourceLabel.$model"
                             :options="datasources"
                             :placeholder="$t('managers.businessModelManager.dataSourceLabelPlaceholder')"
                             :disabled="readonly"
@@ -125,52 +125,52 @@
                         </Dropdown>
                     </span>
                     <KnValidationMessages
-                        :vComp="v$.businessModel.dataSourceLabel"
-                        :additionalTranslateParams="{
+                        :v-comp="v$.businessModel.dataSourceLabel"
+                        :additional-translate-params="{
                             fieldName: $t('managers.businessModelManager.dataSource')
                         }"
                     />
                 </div>
 
                 <div class="p-d-flex p-flex-row">
-                    <div class="input-container" v-show="!metaWebVisible && !readonly">
+                    <div v-show="!metaWebVisible && !readonly" class="input-container">
                         <label for="upload" class="kn-material-input-label">{{ $t('managers.businessModelManager.uploadFile') }}:</label>
-                        <KnInputFile :changeFunction="uploadFile" :visibility="true" />
+                        <KnInputFile :change-function="uploadFile" :visibility="true" />
                     </div>
                     <div class="input-container p-d-flex p-flex-row">
                         <div class="p-m-2">
-                            <Button v-show="metaWebVisible" class="kn-button kn-button--primary" :label="$t('managers.businessModelManager.metaWeb')" @click="goToMetaWeb" data-test="metaweb-button"></Button>
+                            <Button v-show="metaWebVisible" class="kn-button kn-button--primary" :label="$t('managers.businessModelManager.metaWeb')" data-test="metaweb-button" @click="goToMetaWeb"></Button>
                         </div>
-                        <div class="p-m-2" v-show="toGenerate">
-                            <Button v-show="metaWebVisible" class="kn-button kn-button--primary" :label="$t('managers.businessModelManager.generate')" @click="generateDatamartVisible = true" data-test="generate-button"></Button>
+                        <div v-show="toGenerate" class="p-m-2">
+                            <Button v-show="metaWebVisible" class="kn-button kn-button--primary" :label="$t('managers.businessModelManager.generate')" data-test="generate-button" @click="generateDatamartVisible = true"></Button>
                         </div>
                     </div>
 
                     <div class="input-container">
                         <div class="p-d-flex p-flex-row">
                             <div v-if="selectedBusinessModel.id" class="p-mr-2">
-                                <InputSwitch id="enable-metadata" class="p-mr-2" v-model="metaWebVisible" :disabled="readonly" data-test="metaweb-switch" />
+                                <InputSwitch id="enable-metadata" v-model="metaWebVisible" class="p-mr-2" :disabled="readonly" data-test="metaweb-switch" />
                                 <label for="enable-metadata" class="kn-material-input-label">{{ $t('managers.businessModelManager.enableMetaweb') }}</label>
                             </div>
                             <div>
-                                <InputSwitch id="model-lock" class="p-mr-2" v-model="businessModel.modelLocked" :disabled="readonly" @change="onLockedChange" />
+                                <InputSwitch id="model-lock" v-model="businessModel.modelLocked" class="p-mr-2" :disabled="readonly" @change="onLockedChange" />
                                 <label for="model-lock" class="kn-material-input-label">{{ businessModel.modelLocked ? $t('managers.businessModelManager.unlockModel') : $t('managers.businessModelManager.lockModel') }}</label>
                             </div>
                         </div>
                         <div class="p-mt-2">
-                            <InputSwitch id="smart-view" class="p-mr-2" v-model="businessModel.smartView" :disabled="readonly" @change="onSmartViewChange" />
-                            <label for="smart-view" class="kn-material-input-label" v-tooltip.bottom="$t('managers.businessModelManager.smartViewTooltip')">{{ businessModel.smartView ? $t('managers.businessModelManager.smartView') : $t('managers.businessModelManager.advancedView') }}</label>
+                            <InputSwitch id="smart-view" v-model="businessModel.smartView" class="p-mr-2" :disabled="readonly" @change="onSmartViewChange" />
+                            <label v-tooltip.bottom="$t('managers.businessModelManager.smartViewTooltip')" for="smart-view" class="kn-material-input-label">{{ businessModel.smartView ? $t('managers.businessModelManager.smartView') : $t('managers.businessModelManager.advancedView') }}</label>
                         </div>
                     </div>
                 </div>
 
-                <div class="p-mt-5" v-if="metaWebVisible">
+                <div v-if="metaWebVisible" class="p-mt-5">
                     <Toolbar class="kn-toolbar kn-toolbar--secondary">
                         <template #start>
                             {{ $t('managers.businessModelManager.configurationTablePrefixTitle') }}
                         </template>
                         <template #end>
-                            <i class="fa fa-info-circle" v-tooltip.bottom="$t('managers.businessModelManager.prefixTooltip')"></i>
+                            <i v-tooltip.bottom="$t('managers.businessModelManager.prefixTooltip')" class="fa fa-info-circle"></i>
                         </template>
                     </Toolbar>
                     <div class="p-fluid p-m-5">
@@ -179,24 +179,24 @@
                                 <span class="p-float-label p-mr-2">
                                     <InputText
                                         id="tablePrefixLike"
+                                        v-model.trim="v$.businessModel.tablePrefixLike.$model"
+                                        v-tooltip.bottom="$t('managers.businessModelManager.tablePrefixLikeExampleTooltip')"
                                         class="kn-material-input"
                                         type="text"
-                                        v-model.trim="v$.businessModel.tablePrefixLike.$model"
                                         :class="{
                                             'p-invalid': v$.businessModel.tablePrefixLike.$invalid && v$.businessModel.tablePrefixLike.$dirty
                                         }"
-                                        maxLength="500"
-                                        v-tooltip.bottom="$t('managers.businessModelManager.tablePrefixLikeExampleTooltip')"
+                                        max-length="500"
                                         :disabled="readonly"
+                                        data-test="prefix-input"
                                         @blur="v$.businessModel.tablePrefixLike.$touch()"
                                         @input="onFieldChange('tablePrefixLike', $event.target.value)"
-                                        data-test="prefix-input"
                                     />
                                     <label for="label" class="kn-material-input-label"> {{ $t('managers.businessModelManager.tablePrefixLike') }}</label>
                                 </span>
                                 <KnValidationMessages
-                                    :vComp="v$.businessModel.tablePrefixLike"
-                                    :additionalTranslateParams="{
+                                    :v-comp="v$.businessModel.tablePrefixLike"
+                                    :additional-translate-params="{
                                         fieldName: $t('managers.businessModelManager.tablePrefixLike')
                                     }"
                                 />
@@ -205,24 +205,24 @@
                                 <span class="p-float-label">
                                     <InputText
                                         id="tablePrefixNotLike"
+                                        v-model.trim="v$.businessModel.tablePrefixNotLike.$model"
+                                        v-tooltip.bottom="$t('managers.businessModelManager.tablePrefixNotLikeExampleTooltip')"
                                         class="kn-material-input"
                                         type="text"
-                                        v-model.trim="v$.businessModel.tablePrefixNotLike.$model"
                                         :class="{
                                             'p-invalid': v$.businessModel.tablePrefixNotLike.$invalid && v$.businessModel.tablePrefixNotLike.$dirty
                                         }"
-                                        maxLength="500"
-                                        v-tooltip.bottom="$t('managers.businessModelManager.tablePrefixNotLikeExampleTooltip')"
+                                        max-length="500"
                                         :disabled="readonly"
+                                        data-test="prefix-not-like-input"
                                         @blur="v$.businessModel.tablePrefixNotLike.$touch()"
                                         @input="onFieldChange('tablePrefixNotLike', $event.target.value)"
-                                        data-test="prefix-not-like-input"
                                     />
                                     <label for="label" class="kn-material-input-label"> {{ $t('managers.businessModelManager.tablePrefixNotLike') }}</label>
                                 </span>
                                 <KnValidationMessages
-                                    :vComp="v$.businessModel.tablePrefixNotLike"
-                                    :additionalTranslateParams="{
+                                    :v-comp="v$.businessModel.tablePrefixNotLike"
+                                    :additional-translate-params="{
                                         fieldName: $t('managers.businessModelManager.tablePrefixNotLike')
                                     }"
                                 />
@@ -232,11 +232,11 @@
                 </div>
             </form>
 
-            <GenerateDatamartCard v-if="generateDatamartVisible" :businessModel="selectedBusinessModel" :user="user" @close="generateDatamartVisible = false" @generated="onDatamartGenerated"></GenerateDatamartCard>
+            <GenerateDatamartCard v-if="generateDatamartVisible" :business-model="selectedBusinessModel" :user="user" @close="generateDatamartVisible = false" @generated="onDatamartGenerated"></GenerateDatamartCard>
 
-            <MetawebSelectDialog :visible="metawebSelectDialogVisible" :selectedBusinessModel="selectedBusinessModel" @close="metawebSelectDialogVisible = false" @metaSelected="onMetaSelect"></MetawebSelectDialog>
+            <MetawebSelectDialog :visible="metawebSelectDialogVisible" :selected-business-model="selectedBusinessModel" @close="metawebSelectDialogVisible = false" @metaSelected="onMetaSelect"></MetawebSelectDialog>
 
-            <Metaweb :visible="metawebDialogVisible" :propMeta="meta" :businessModel="businessModel" @closeMetaweb="metawebDialogVisible = false" @modelGenerated="$emit('modelGenerated')" />
+            <Metaweb :visible="metawebDialogVisible" :prop-meta="meta" :business-model="businessModel" @closeMetaweb="metawebDialogVisible = false" @modelGenerated="$emit('modelGenerated')" />
             <KnOverlaySpinnerPanel id="metaweb-spinner" :visibility="loading" />
 
             <Dialog :visible="saveConfirmVisible" :modal="true" :closable="false">
@@ -310,31 +310,9 @@ export default defineComponent({
         }
     },
     emits: ['fieldChanged', 'fileUploaded', 'datamartGenerated', 'modelGenerated'],
-    watch: {
-        selectedBusinessModel() {
-            this.v$.$reset()
-            this.loadBusinessModel()
-        },
-        domainCategories() {
-            this.loadCategories()
-        },
-        datasourcesMeta() {
-            this.loadDatasources()
-        }
-    },
-    computed: {
-        metaModelUrl(): any {
-            return `/knowagemeta/restful-services/1.0/pages/edit?datasourceId=${this.businessModel.dataSourceId}&user_id=${(this.user as any)?.userUniqueIdentifier}&bmId=${this.businessModel.id}&bmName=${this.businessModel.name}`
-        }
-    },
     setup() {
         const store = mainStore()
         return { store }
-    },
-    created() {
-        this.loadBusinessModel()
-        this.loadCategories()
-        this.loadDatasources()
     },
     data() {
         return {
@@ -354,6 +332,28 @@ export default defineComponent({
             prefixesTouched: false,
             saveConfirmVisible: false
         }
+    },
+    computed: {
+        metaModelUrl(): any {
+            return `/knowagemeta/restful-services/1.0/pages/edit?datasourceId=${this.businessModel.dataSourceId}&user_id=${(this.user as any)?.userUniqueIdentifier}&bmId=${this.businessModel.id}&bmName=${this.businessModel.name}`
+        }
+    },
+    watch: {
+        selectedBusinessModel() {
+            this.v$.$reset()
+            this.loadBusinessModel()
+        },
+        domainCategories() {
+            this.loadCategories()
+        },
+        datasourcesMeta() {
+            this.loadDatasources()
+        }
+    },
+    created() {
+        this.loadBusinessModel()
+        this.loadCategories()
+        this.loadDatasources()
     },
     validations() {
         return {

@@ -1,39 +1,39 @@
 <template>
-    <Dialog :style="workspaceDataPreviewDialogDescriptor.dialog.style" :contentStyle="workspaceDataPreviewDialogDescriptor.dialog.contentStyle" :visible="visible" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
+    <Dialog :style="workspaceDataPreviewDialogDescriptor.dialog.style" :content-style="workspaceDataPreviewDialogDescriptor.dialog.contentStyle" :visible="visible" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12" :style="mainDescriptor.style.maxWidth">
                 <template #start>
                     <span>{{ dataset?.label }}</span>
                 </template>
                 <template #end>
-                    <Button v-if="isParameterSidebarVisible" icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.filter')" @click="parameterSidebarVisible = !parameterSidebarVisible" />
+                    <Button v-if="isParameterSidebarVisible" v-tooltip.bottom="$t('common.filter')" icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" @click="parameterSidebarVisible = !parameterSidebarVisible" />
                     <Button class="kn-button p-button-text p-button-plain" :label="$t('common.close')" @click="closeDialog"></Button>
                 </template>
             </Toolbar>
         </template>
 
-        <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar p-ml-2" data-test="progress-bar" />
 
         <div class="p-d-flex p-flex-column kn-flex workspace-scrollable-table">
             <Message v-if="errorMessageVisible" class="p-m-2" severity="warn" :closable="false" :style="mainDescriptor.style.message">
                 {{ errorMessage }}
             </Message>
 
-            <DatasetPreviewTable v-else class="p-d-flex p-flex-column kn-flex p-m-2" :previewColumns="columns" :previewRows="rows" :pagination="pagination" :previewType="previewType" @pageChanged="updatePagination($event)" @sort="onSort" @filter="onFilter"></DatasetPreviewTable>
+            <DatasetPreviewTable v-else class="p-d-flex p-flex-column kn-flex p-m-2" :preview-columns="columns" :preview-rows="rows" :pagination="pagination" :preview-type="previewType" @pageChanged="updatePagination($event)" @sort="onSort" @filter="onFilter"></DatasetPreviewTable>
             <KnParameterSidebar
                 v-if="parameterSidebarVisible && dataset"
                 style="height: calc(100% - 35px)"
                 class="workspace-parameter-sidebar kn-overflow-y"
-                :filtersData="filtersData"
-                :propDocument="dataset"
-                :propMode="sidebarMode"
-                :propQBEParameters="dataset.pars"
-                :userRole="userRole"
+                :filters-data="filtersData"
+                :prop-document="dataset"
+                :prop-mode="sidebarMode"
+                :prop-q-b-e-parameters="dataset.pars"
+                :user-role="userRole"
                 :dataset="dataset"
+                :load-from-dataset-management="loadFromDatasetManagement"
+                :correct-roles-for-execution="correctRolesForExecution"
                 @execute="onExecute"
                 @roleChanged="onRoleChange"
-                :loadFromDatasetManagement="loadFromDatasetManagement"
-                :correctRolesForExecution="correctRolesForExecution"
             ></KnParameterSidebar>
         </div>
     </Dialog>
@@ -56,6 +56,10 @@ export default defineComponent({
     components: { Dialog, DatasetPreviewTable, Message, KnParameterSidebar },
     props: { visible: { type: Boolean }, propDataset: { type: Object }, previewType: String, loadFromDatasetManagement: Boolean },
     emits: ['close'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             mainDescriptor,
@@ -110,10 +114,6 @@ export default defineComponent({
             this.setSidebarMode()
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
     async created() {
         this.userRole = (this.store.$state as any).user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? (this.store.$state as any).user.sessionRole : null
         await this.loadPreview()
@@ -165,7 +165,7 @@ export default defineComponent({
                 await this.$http
                     .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasets/${this.dataset.label}/preview`, postData, { headers: { 'X-Disable-Errors': 'true' } })
                     .then((response: AxiosResponse<any>) => {
-                        let fields = response.data?.metaData?.fields
+                        const fields = response.data?.metaData?.fields
                         if (this.dataset.dsTypeCd == 'REST' && fields?.length == 1 && fields[0] === 'recNo') {
                             this.rows = []
                         } else {
@@ -283,7 +283,7 @@ export default defineComponent({
             return { value: valueIndex ? data[valueIndex] : '', description: descriptionIndex ? data[descriptionIndex] : '' }
         },
         formatDriversForPreviewData() {
-            let formattedDrivers = {}
+            const formattedDrivers = {}
             this.filtersData?.filterStatus.forEach((filter: any) => {
                 formattedDrivers[filter.urlName] = filter.parameterValue
             })

@@ -3,7 +3,7 @@
         <div class="p-col-12 p-md-6 p-lg-4 p-d-flex p-flex-column kn-flex p-m-2">
             <label class="kn-material-input-label p-mr-2">{{ $t('common.align') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center">
-                <Dropdown class="kn-material-input kn-flex" v-model="model.legend.align" :options="descriptor.alignmentOptions" optionValue="value" :disabled="legendDisabled" @change="modelChanged">
+                <Dropdown v-model="model.legend.align" class="kn-material-input kn-flex" :options="descriptor.alignmentOptions" option-value="value" :disabled="legendDisabled" @change="modelChanged">
                     <template #value="slotProps">
                         <div>
                             <span>{{ getTranslatedLabel(slotProps.value, descriptor.alignmentOptions, $t) }}</span>
@@ -15,13 +15,13 @@
                         </div>
                     </template>
                 </Dropdown>
-                <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.legend.alignHint')"></i>
+                <i v-tooltip.top="$t('dashboard.widgetEditor.highcharts.legend.alignHint')" class="pi pi-question-circle kn-cursor-pointer p-ml-2"></i>
             </div>
         </div>
         <div class="p-col-12 p-md-6 p-lg-4 p-d-flex p-flex-column kn-flex p-m-2">
             <label class="kn-material-input-label p-mr-2">{{ $t('common.verticalAlign') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center">
-                <Dropdown class="kn-material-input kn-flex" v-model="model.legend.verticalAlign" :options="descriptor.verticalAlignmentOptions" optionValue="value" :disabled="legendDisabled" @change="modelChanged">
+                <Dropdown v-model="model.legend.verticalAlign" class="kn-material-input kn-flex" :options="descriptor.verticalAlignmentOptions" option-value="value" :disabled="legendDisabled" @change="modelChanged">
                     <template #value="slotProps">
                         <div>
                             <span>{{ getTranslatedLabel(slotProps.value, descriptor.verticalAlignmentOptions, $t) }}</span>
@@ -33,13 +33,13 @@
                         </div>
                     </template>
                 </Dropdown>
-                <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.legend.verticalAlignHint')"></i>
+                <i v-tooltip.top="$t('dashboard.widgetEditor.highcharts.legend.verticalAlignHint')" class="pi pi-question-circle kn-cursor-pointer p-ml-2"></i>
             </div>
         </div>
         <div class="p-col-12 p-md-6 p-lg-4 p-d-flex p-flex-column kn-flex p-m-2">
             <label class="kn-material-input-label p-mr-2">{{ $t('common.layout') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center">
-                <Dropdown class="kn-material-input kn-flex" v-model="model.legend.layout" :options="descriptor.layoutOptions" optionValue="value" :disabled="legendDisabled" @change="modelChanged">
+                <Dropdown v-model="model.legend.layout" class="kn-material-input kn-flex" :options="descriptor.layoutOptions" option-value="value" :disabled="legendDisabled" @change="modelChanged">
                     <template #value="slotProps">
                         <div>
                             <span>{{ getTranslatedLabel(slotProps.value, descriptor.layoutOptions, $t) }}</span>
@@ -51,11 +51,11 @@
                         </div>
                     </template>
                 </Dropdown>
-                <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.legend.layoutHint')"></i>
+                <i v-tooltip.top="$t('dashboard.widgetEditor.highcharts.legend.layoutHint')" class="pi pi-question-circle kn-cursor-pointer p-ml-2"></i>
             </div>
         </div>
         <div class="p-col-12 p-py-4">
-            <WidgetEditorStyleToolbar :options="descriptor.legendStyleOptions" :propModel="toolbarModel" :disabled="legendDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
+            <WidgetEditorStyleToolbar :options="descriptor.legendStyleOptions" :prop-model="toolbarModel" :disabled="legendDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
         </div>
         <div class="p-col-12 p-py-4">
             <div class="p-d-flex p-flex-row p-jc-center">
@@ -67,8 +67,8 @@
                     <div class="p-col-12">
                         <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.format') }}</label>
                         <div class="p-d-flex p-flex-row p-ai-center">
-                            <Textarea class="kn-material-input kn-width-full" rows="2" :autoResize="true" v-model="model.legend.labelFormat" maxlength="250" :disabled="legendDisabled" @change="modelChanged" />
-                            <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.legend.formatHint')"></i>
+                            <Textarea v-model="model.legend.labelFormat" class="kn-material-input kn-width-full" rows="2" :auto-resize="true" maxlength="250" :disabled="legendDisabled" @change="modelChanged" />
+                            <i v-tooltip.top="$t('dashboard.widgetEditor.highcharts.legend.formatHint')" class="pi pi-question-circle kn-cursor-pointer p-ml-2"></i>
                         </div>
                     </div>
                     <div class="p-col-12">
@@ -77,8 +77,8 @@
                             {{ model.legend.labelFormatterError }}
                         </Message>
                         <div class="p-d-flex p-flex-row p-ai-center">
-                            <HighchartsFormatterCodeMirror :propCode="model.legend.labelFormatterText" :disabled="legendDisabled" @change="onFormatterChange" @blur="modelChanged"></HighchartsFormatterCodeMirror>
-                            <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.legend.formatterHint')"></i>
+                            <HighchartsFormatterCodeMirror :prop-code="model.legend.labelFormatterText" :disabled="legendDisabled" @change="onFormatterChange" @blur="modelChanged"></HighchartsFormatterCodeMirror>
+                            <i v-tooltip.top="$t('dashboard.widgetEditor.highcharts.legend.formatterHint')" class="pi pi-question-circle kn-cursor-pointer p-ml-2"></i>
                         </div>
                     </div>
                 </div>
@@ -95,8 +95,6 @@ import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import descriptor from '../HighchartsWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
-import InputNumber from 'primevue/inputnumber'
-import InputSwitch from 'primevue/inputswitch'
 import Message from 'primevue/message'
 import WidgetEditorStyleToolbar from '../../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
 import Textarea from 'primevue/textarea'
@@ -104,7 +102,7 @@ import HighchartsFormatterCodeMirror from '../common/HighchartsFormatterCodeMirr
 
 export default defineComponent({
     name: 'hihgcharts-legend-settings',
-    components: { Dropdown, InputSwitch, InputNumber, Message, WidgetEditorStyleToolbar, Textarea, HighchartsFormatterCodeMirror },
+    components: { Dropdown, Message, WidgetEditorStyleToolbar, Textarea, HighchartsFormatterCodeMirror },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {

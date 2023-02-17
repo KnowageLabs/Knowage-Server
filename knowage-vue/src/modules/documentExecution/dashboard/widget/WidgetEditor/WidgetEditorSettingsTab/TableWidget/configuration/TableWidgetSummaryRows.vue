@@ -11,12 +11,12 @@
             <div v-for="(summaryRow, index) in summaryRowsModel.list" :key="index" class="p-grid p-ai-center">
                 <div class="p-col-12 p-md-4 p-d-flex p-flex-column p-pt-1">
                     <label class="kn-material-input-label p-mr-2">{{ $t('common.label') }}</label>
-                    <InputText class="kn-material-input p-inputtext-sm" v-model="summaryRow.label" :disabled="summaryRowsDiabled" @change="summaryRowsChanged" />
+                    <InputText v-model="summaryRow.label" class="kn-material-input p-inputtext-sm" :disabled="summaryRowsDiabled" @change="summaryRowsChanged" />
                 </div>
                 <div class="p-col-12 p-md-8 p-grid p-p-2">
                     <div class="p-col-10 p-d-flex p-flex-column">
                         <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.aggregation') }}</label>
-                        <Dropdown class="kn-material-input" v-model="summaryRow.aggregation" :options="getAggregationOptions(index)" optionValue="value" optionLabel="label" :disabled="index === 0 || !summaryRowsModel.enabled" @change="summaryRowsChanged"> </Dropdown>
+                        <Dropdown v-model="summaryRow.aggregation" class="kn-material-input" :options="getAggregationOptions(index)" option-value="value" option-label="label" :disabled="index === 0 || !summaryRowsModel.enabled" @change="summaryRowsChanged"> </Dropdown>
                     </div>
                     <div class="p-col-2 p-d-flex p-flex-column p-jc-center p-ai-center p-pl-3">
                         <i :class="[index === 0 ? 'pi pi-plus-circle' : 'pi pi-trash', summaryRowsDiabled ? 'icon-disabled' : '']" class="kn-cursor-pointer" @click="index === 0 ? addSummaryRow() : removeSummaryRow(index)"></i>
@@ -34,11 +34,10 @@ import { emitter } from '../../../../../DashboardHelpers'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
 import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
-import InputSwitch from 'primevue/inputswitch'
 
 export default defineComponent({
     name: 'table-widget-summary-rows',
-    components: { Checkbox, Dropdown, InputSwitch },
+    components: { Checkbox, Dropdown },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {

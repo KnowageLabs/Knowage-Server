@@ -21,22 +21,22 @@ export default defineComponent({
             type: Object as any
         }
     },
+    data() {
+        return { helpersDecriptor }
+    },
     watch: {
         params: {
             async handler() {},
             deep: true
         }
     },
-    data() {
-        return { helpersDecriptor }
-    },
     created() {
         this.getCellStyle()
     },
     methods: {
         getColumnStyle() {
-            var columnStyles = this.params.propWidget.settings.style.columns
-            var columnStyleString = null as any
+            const columnStyles = this.params.propWidget.settings.style.columns
+            let columnStyleString = null as any
 
             if (columnStyles.enabled) {
                 columnStyleString = Object.entries(columnStyles.styles[0].properties)
@@ -55,7 +55,7 @@ export default defineComponent({
             return columnStyleString
         },
         getRowspanRowColor() {
-            var rowStyles = this.params.propWidget.settings.style.rows
+            const rowStyles = this.params.propWidget.settings.style.rows
             if (rowStyles.alternatedRows && rowStyles.alternatedRows.enabled) {
                 if (rowStyles.alternatedRows.oddBackgroundColor && this.params.node.rowIndex % 2 === 0) {
                     return `background-color: ${rowStyles.alternatedRows.oddBackgroundColor}`
@@ -71,12 +71,12 @@ export default defineComponent({
             } else return null
         },
         getMultiselectStyle() {
-            let selection = this.params.propWidget.settings.interactions.selection
-            let celectedCellValues = this.params.multiSelectedCells
-            let selectedColumn = this.params.selectedColumnArray[0]
+            const selection = this.params.propWidget.settings.interactions.selection
+            const celectedCellValues = this.params.multiSelectedCells
+            const selectedColumn = this.params.selectedColumnArray[0]
 
             if (selection.enabled && selection.multiselection.enabled) {
-                var multiselectStyle = Object.entries(selection.multiselection.properties)
+                const multiselectStyle = Object.entries(selection.multiselection.properties)
                     .map(([k, v]) => `${k}:${v}`)
                     .join(';')
                 if (selection.modalColumn && selection.modalColumn == this.params.colDef.colId && celectedCellValues.includes(this.params.value)) {
@@ -87,7 +87,7 @@ export default defineComponent({
             } else return null
         },
         getCellStyle() {
-            var defaultColumnStyle = Object.entries(this.helpersDecriptor.defaultColumnStyles.styles[0].properties)
+            const defaultColumnStyle = Object.entries(this.helpersDecriptor.defaultColumnStyles.styles[0].properties)
                 .map(([k, v]) => `${k}:${v}`)
                 .join(';')
             if (this.getMultiselectStyle()) return this.getMultiselectStyle()
@@ -96,18 +96,18 @@ export default defineComponent({
             if (this.getRowspanRowColor()) return this.getRowspanRowColor()
         },
         isColumnOfType(columnType: string) {
-            let widgetColumns = this.params.propWidget.columns
-            let cellColumnId = this.params.colId
-            let cellColumn = widgetColumns.find(({ id }) => id === cellColumnId)
+            const widgetColumns = this.params.propWidget.columns
+            const cellColumnId = this.params.colId
+            const cellColumn = widgetColumns.find(({ id }) => id === cellColumnId)
 
             return cellColumn?.type.toLowerCase().includes(columnType)
         },
         dateFormatter(params) {
-            let isDateValid = moment(params, 'DD/MM/YYYY').isValid()
+            const isDateValid = moment(params, 'DD/MM/YYYY').isValid()
             return isDateValid ? moment(params, 'DD/MM/YYYY').locale(getLocale(true)).format('LL') : params
         },
         dateTimeFormatter(params) {
-            let isDateValid = moment(params, 'DD/MM/YYYY HH:mm:ss.SSS').isValid()
+            const isDateValid = moment(params, 'DD/MM/YYYY HH:mm:ss.SSS').isValid()
             return isDateValid ? moment(params, 'DD/MM/YYYY HH:mm:ss.SSS').locale(getLocale(true)).format('LLL') : params
         }
     }

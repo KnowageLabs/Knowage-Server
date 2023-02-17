@@ -5,7 +5,7 @@
 <script>
 import authHelper from '@/helpers/commons/authHelper'
 export default {
-    name: 'IframeRenderer',
+    name: 'iframe-renderer',
     props: {
         url: String,
         externalLink: Boolean

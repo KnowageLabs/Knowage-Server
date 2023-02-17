@@ -7,11 +7,11 @@
                         {{ $t('managers.lovsManagement.title') }}
                     </template>
                     <template #end>
-                        <FabButton icon="fas fa-plus" @click="showForm" data-test="new-button" />
+                        <FabButton icon="fas fa-plus" data-test="new-button" @click="showForm" />
                     </template>
                 </Toolbar>
-                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <KnListBox :options="lovsList" :settings="lovsManagementDescriptor.knListSettings" @delete="deleteLovConfirm($event)" data-test="lovs-list"></KnListBox>
+                <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
+                <KnListBox :options="lovsList" :settings="lovsManagementDescriptor.knListSettings" data-test="lovs-list" @delete="deleteLovConfirm($event)"></KnListBox>
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
@@ -33,6 +33,10 @@ import mainStore from '../../../App.store'
 export default defineComponent({
     name: 'lovs-management',
     components: { FabButton, KnListBox },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             lovsManagementDescriptor,
@@ -40,10 +44,6 @@ export default defineComponent({
             loading: false,
             touched: false
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         await this.loadLovs()

@@ -1,22 +1,22 @@
 <template>
     <div class="kn-page">
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-        <TabView @tab-click="switchTabConfirm($event.index)" v-model:activeIndex="activeTab" lazy data-test="tab-view" class="internationalization-management kn-tab kn-page-content">
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
+        <TabView v-model:activeIndex="activeTab" lazy data-test="tab-view" class="internationalization-management kn-tab kn-page-content" @tab-click="switchTabConfirm($event.index)">
             <TabPanel v-for="language in languages" :key="language">
                 <template #header>
                     {{ language.language }}
                     <span v-if="language.defaultLanguage">{{ $t('managers.internationalizationManagement.defaultLanguage') }}</span>
                 </template>
 
-                <DataTable v-if="!loading" editMode="cell" :value="messages" :loading="loading" class="p-datatable kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" v-model:filters="filters" data-test="messages-table">
+                <DataTable v-if="!loading" v-model:filters="filters" edit-mode="cell" :value="messages" :loading="loading" class="p-datatable kn-table" data-key="id" responsive-layout="stack" breakpoint="960px" data-test="messages-table">
                     <template #header>
                         <div class="table-header p-d-flex">
                             <span class="p-input-icon-left p-mr-3" :style="intDescriptor.headerStyles.searchBoxStyle">
                                 <i class="pi pi-search" />
-                                <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
+                                <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
                             </span>
                             <div class="p-field-checkbox p-mt-4">
-                                <Checkbox id="findEmptyFields" :binary="true" v-model="showOnlyEmptyFields" @change="filterEmptyMessages" data-test="checkbox" />
+                                <Checkbox id="findEmptyFields" v-model="showOnlyEmptyFields" :binary="true" data-test="checkbox" @change="filterEmptyMessages" />
                                 <label for="findEmptyFields">{{ $t('managers.internationalizationManagement.showBlankMessages') }}</label>
                             </div>
                         </div>
@@ -25,31 +25,31 @@
                         {{ $t('common.info.noDataFound') }}
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText type="text" v-model="filterModel.value" class="p-column-filter" />
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter" />
                     </template>
 
-                    <Column :headerStyle="intDescriptor.headerStyles.dirtyHeaderStyle">
+                    <Column :header-style="intDescriptor.headerStyles.dirtyHeaderStyle">
                         <template #body="slotProps">
-                            <i class="pi pi-flag" v-if="slotProps.data['dirty']"></i>
+                            <i v-if="slotProps.data['dirty']" class="pi pi-flag"></i>
                         </template>
                     </Column>
 
-                    <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" :class="{ disabledColumn: col.disabled, editableColumn: !col.disabled }">
+                    <Column v-for="col of columns" :key="col.field" :field="col.field" :header="$t(col.header)" :sortable="true" :class="{ disabledColumn: col.disabled, editableColumn: !col.disabled }">
                         <template #body="slotProps">
-                            <InputText v-model="slotProps.data[slotProps.column.props.field]" v-if="!col.disabled" class="kn-material-input p-inputtext-sm p-p-2" @input="atFieldChange(slotProps)" :data-test="'input-field-' + slotProps.data['id']" />
+                            <InputText v-if="!col.disabled" v-model="slotProps.data[slotProps.column.props.field]" class="kn-material-input p-inputtext-sm p-p-2" :data-test="'input-field-' + slotProps.data['id']" @input="atFieldChange(slotProps)" />
                             <span v-else :class="{ disabledCell: col.disabled, 'kn-disabled-text': col.disabled, editableCell: !col.disabled }">{{ slotProps.data[slotProps.column.props.field] }}</span>
                         </template>
                     </Column>
 
-                    <Column :headerStyle="intDescriptor.headerStyles.buttonsHeaderStyle">
+                    <Column :header-style="intDescriptor.headerStyles.buttonsHeaderStyle">
                         <template #header>
                             <Button v-if="language.defaultLanguage" :label="$t('managers.internationalizationManagement.table.addLabel')" class="p-button kn-button--primary" @click="addEmptyLabel" />
                         </template>
                         <template #body="slotProps">
                             <div class="p-d-flex p-jc-center p-ai-center">
-                                <Button icon="pi pi-save" class="p-button-link" @click="saveLabel(language, slotProps.data)" v-tooltip.top="$t('common.save')" />
-                                <Button v-if="language.defaultLanguage" icon="pi pi-trash" class="p-button-link" @click="deleteLabelConfirm(language, slotProps, true)" v-tooltip.top="$t('common.delete')" />
-                                <Button v-if="!language.defaultLanguage" icon="pi pi-times" class="p-button-link" @click="deleteLabelConfirm(language, slotProps, false)" v-tooltip.top="$t('common.cancel')" />
+                                <Button v-tooltip.top="$t('common.save')" icon="pi pi-save" class="p-button-link" @click="saveLabel(language, slotProps.data)" />
+                                <Button v-if="language.defaultLanguage" v-tooltip.top="$t('common.delete')" icon="pi pi-trash" class="p-button-link" @click="deleteLabelConfirm(language, slotProps, true)" />
+                                <Button v-if="!language.defaultLanguage" v-tooltip.top="$t('common.cancel')" icon="pi pi-times" class="p-button-link" @click="deleteLabelConfirm(language, slotProps, false)" />
                             </div>
                         </template>
                     </Column>
@@ -83,15 +83,9 @@ export default defineComponent({
         Checkbox,
         Button
     },
-
-    computed: {
-        columns() {
-            if (this.selectedLanguage.defaultLanguage) {
-                return intDescriptor.defaultLanguageColumns
-            } else {
-                return intDescriptor.notDefaultLanguageColumns
-            }
-        }
+    setup() {
+        const store = mainStore()
+        return { store }
     },
 
     data() {
@@ -114,9 +108,15 @@ export default defineComponent({
             } as Object
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
+
+    computed: {
+        columns() {
+            if (this.selectedLanguage.defaultLanguage) {
+                return intDescriptor.defaultLanguageColumns
+            } else {
+                return intDescriptor.notDefaultLanguageColumns
+            }
+        }
     },
     async created() {
         await this.getLanguages()
@@ -135,7 +135,7 @@ export default defineComponent({
 
         setDefaultLanguage() {
             let defaultLanguageIndex
-            for (var language in this.languages) {
+            for (const language in this.languages) {
                 if (this.languages[language].defaultLanguage) {
                     defaultLanguageIndex = language
                     this.defaultLanguage = this.languages[language]
@@ -146,7 +146,7 @@ export default defineComponent({
         },
 
         addEmptyLabel() {
-            var tempMessage = {
+            const tempMessage = {
                 language: '',
                 label: '',
                 message: ''
@@ -155,7 +155,7 @@ export default defineComponent({
         },
 
         selectLanguage(index) {
-            var selectedTab = this.languages[index]
+            const selectedTab = this.languages[index]
             this.selectedLanguage = this.languages[index]
             this.getMessages(selectedTab)
         },
@@ -207,7 +207,7 @@ export default defineComponent({
 
         async setEmptyDatatableData(selectedTab) {
             this.defaultLangMessages.forEach((defMess) => {
-                var newMess = {} as any
+                const newMess = {} as any
                 newMess.language = selectedTab.languageTag
                 newMess.label = defMess.label
                 newMess.defaultMessageCode = defMess.message
@@ -227,14 +227,14 @@ export default defineComponent({
 
         async setFilledDatatableData(response, selectedTab) {
             this.defaultLangMessages.forEach((defMess) => {
-                var translatedMessage = response.data.find((item) => {
+                const translatedMessage = response.data.find((item) => {
                     return item.label == defMess.label
                 })
                 if (translatedMessage) {
                     translatedMessage.defaultMessageCode = defMess.message
                     this.messages.push(translatedMessage)
                 } else {
-                    var message = {
+                    const message = {
                         language: selectedTab.languageTag,
                         label: defMess.label,
                         defaultMessageCode: defMess.message,
@@ -284,8 +284,8 @@ export default defineComponent({
         },
 
         saveLabel(langObj, message) {
-            let url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/i18nMessages'
-            var toSave = { ...message } as iMessage
+            const url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/i18nMessages'
+            const toSave = { ...message } as iMessage
             delete toSave.dirty
             this.saveOrUpdateMessage(url, toSave, langObj).then((response: AxiosResponse<any>) => {
                 if (response.data.errors) {
@@ -301,8 +301,8 @@ export default defineComponent({
         },
 
         deleteLabelConfirm(langObj, message, isDefault) {
-            let msgToDelete = message.data
-            let index = message.index
+            const msgToDelete = message.data
+            const index = message.index
             if (msgToDelete.id) {
                 let url = ''
                 if (msgToDelete.defaultMessageCode) {

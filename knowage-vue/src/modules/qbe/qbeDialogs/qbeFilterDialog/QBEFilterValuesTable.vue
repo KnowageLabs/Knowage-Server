@@ -1,15 +1,15 @@
 <template>
     <DataTable
+        v-model:filters="filters"
+        v-model:selection="selectedValues"
         class="p-datatable-sm kn-table p-m-2"
         :paginator="true"
         :rows="10"
         :value="rows"
         :loading="loading"
-        v-model:filters="filters"
-        v-model:selection="selectedValues"
-        :selectionMode="['CONTAINS', 'NOT CONTAINS', 'IN', 'NOT IN'].includes(filterOperator) ? false : 'single'"
-        filterDisplay="menu"
-        responsiveLayout="stack"
+        :selection-mode="['CONTAINS', 'NOT CONTAINS', 'IN', 'NOT IN'].includes(filterOperator) ? false : 'single'"
+        filter-display="menu"
+        responsive-layout="stack"
         breakpoint="960px"
         @rowSelect="onSelect"
         @rowUnselect="onSelect"
@@ -21,7 +21,7 @@
                 {{ $t('common.info.noDataFound') }}
             </div>
         </template>
-        <Column :selectionMode="['CONTAINS', 'NOT CONTAINS', 'IN', 'NOT IN'].includes(filterOperator) ? 'multiple' : 'single'" :headerStyle="QBEFilterDialogDescriptor.selectionColumnHeaderStyle"></Column>
+        <Column :selection-mode="['CONTAINS', 'NOT CONTAINS', 'IN', 'NOT IN'].includes(filterOperator) ? 'multiple' : 'single'" :header-style="QBEFilterDialogDescriptor.selectionColumnHeaderStyle"></Column>
         <Column v-for="column in columns" :key="column.header" :field="column.dataIndex" :header="column.header" :sortable="true">
             <template #filter="{filterModel}">
                 <InputText v-model="filterModel.value" class="p-column-filter"></InputText>

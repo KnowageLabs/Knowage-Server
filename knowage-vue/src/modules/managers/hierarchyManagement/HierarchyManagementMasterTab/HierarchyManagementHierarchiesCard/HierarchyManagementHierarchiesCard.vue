@@ -12,7 +12,7 @@
         <template #content>
             <form class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-col-12 p-lg-6">
-                    <Calendar class="kn-material-input" v-model="date" :manualInput="true" :showIcon="true" @dateSelect="onTreeDateChanged" />
+                    <Calendar v-model="date" class="kn-material-input" :manual-input="true" :show-icon="true" @dateSelect="onTreeDateChanged" />
                 </div>
                 <div class="p-field p-col-8 p-lg-4">
                     <Button class="kn-button kn-button--primary" :label="$t('common.save')" :disabled="!treeModel" @click="handleSaveHiararchy" />
@@ -23,27 +23,27 @@
                 </div>
                 <div class="p-field p-col-6">
                     <span class="p-float-label">
-                        <Dropdown class="kn-material-input" v-model="hierarchyType" :options="hierarchyManagementHierarchiesCardDescriptor.hierarchyTypes" :disabled="!dimension" @change="onHierarchyTypeSelected" />
+                        <Dropdown v-model="hierarchyType" class="kn-material-input" :options="hierarchyManagementHierarchiesCardDescriptor.hierarchyTypes" :disabled="!dimension" @change="onHierarchyTypeSelected" />
                         <label class="kn-material-input-label"> {{ $t('managers.hierarchyManagement.hierarchyType') }} </label>
                     </span>
                 </div>
                 <div class="p-field p-col-6">
                     <span class="p-float-label">
-                        <Dropdown class="kn-material-input" v-model="selectedHierarchy" :options="hierarchies" optionLabel="HIER_NM" :disabled="!dimension" @change="onHierarchySelected" />
+                        <Dropdown v-model="selectedHierarchy" class="kn-material-input" :options="hierarchies" option-label="HIER_NM" :disabled="!dimension" @change="onHierarchySelected" />
                         <label class="kn-material-input-label"> {{ $t('managers.hierarchyManagement.hierarchies') }} </label>
                     </span>
                 </div>
             </form>
 
-            <HierarchyManagementHierarchiesFilterCard :selectedHierarchy="selectedHierarchy" @applyFilters="onApplyFilters" />
+            <HierarchyManagementHierarchiesFilterCard :selected-hierarchy="selectedHierarchy" @applyFilters="onApplyFilters" />
             <HierarchyManagementHierarchiesTree
                 v-show="tree"
-                :propTree="tree"
-                :nodeMetadata="nodeMetadata"
-                :selectedDimension="dimension"
-                :selectedHierarchy="selectedHierarchy"
-                :dimensionMetadata="dimensionMetadata"
-                :propRelationsMasterTree="relationsMasterTree"
+                :prop-tree="tree"
+                :node-metadata="nodeMetadata"
+                :selected-dimension="dimension"
+                :selected-hierarchy="selectedHierarchy"
+                :dimension-metadata="dimensionMetadata"
+                :prop-relations-master-tree="relationsMasterTree"
                 @treeUpdated="updateTreeModel"
                 @loading="$emit('loading', $event)"
             />
@@ -77,6 +77,10 @@ export default defineComponent({
         reloadHierarchiesTrigger: { type: Boolean }
     },
     emits: ['loading', 'hierarchySelected', 'dateSelected', 'hierarchyTypeSelected'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             hierarchyManagementHierarchiesCardDescriptor,
@@ -103,10 +107,6 @@ export default defineComponent({
         reloadHierarchiesTrigger() {
             if (this.hierarchyType === 'MASTER') this.loadHierarchies()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadDimension()

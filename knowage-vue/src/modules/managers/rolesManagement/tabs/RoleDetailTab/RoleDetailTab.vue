@@ -8,22 +8,22 @@
                             <span class="p-float-label">
                                 <InputText
                                     id="name"
+                                    v-model.trim="v$.role.name.$model"
                                     class="kn-material-input"
                                     type="text"
-                                    v-model.trim="v$.role.name.$model"
                                     :class="{
                                         'p-invalid': v$.role.name.$invalid && v$.role.name.$dirty
                                     }"
-                                    maxLength="100"
+                                    max-length="100"
+                                    data-test="name-input"
                                     @blur="v$.role.name.$touch()"
                                     @input="onFieldChange('name', $event.target.value)"
-                                    data-test="name-input"
                                 />
                                 <label for="name" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
                             </span>
                             <KnValidationMessages
-                                :vComp="v$.role.name"
-                                :additionalTranslateParams="{
+                                :v-comp="v$.role.name"
+                                :additional-translate-params="{
                                     fieldName: $t('common.name')
                                 }"
                             />
@@ -33,24 +33,24 @@
                             <span class="p-float-label">
                                 <InputText
                                     id="code"
+                                    v-model.trim="v$.role.code.$model"
                                     class="kn-material-input"
                                     type="text"
-                                    v-model.trim="v$.role.code.$model"
                                     :class="{
                                         'p-invalid': v$.role.code.$invalid && v$.role.code.$dirty
                                     }"
-                                    maxLength="20"
+                                    max-length="20"
+                                    data-test="code-input"
                                     @blur="v$.role.code.$touch()"
                                     @input="onFieldChange('code', $event.target.value)"
-                                    data-test="code-input"
                                 />
                                 <label for="code" class="kn-material-input-label">
                                     {{ $t('managers.rolesManagement.detail.code') }}
                                 </label>
                             </span>
                             <KnValidationMessages
-                                :vComp="v$.role.code"
-                                :additionalTranslateParams="{
+                                :v-comp="v$.role.code"
+                                :additional-translate-params="{
                                     fieldName: $t('managers.rolesManagement.detail.code')
                                 }"
                             />
@@ -60,24 +60,24 @@
                             <span class="p-float-label">
                                 <InputText
                                     id="description"
+                                    v-model.trim="v$.role.description.$model"
                                     class="kn-material-input"
                                     type="text"
-                                    v-model.trim="v$.role.description.$model"
                                     :class="{
                                         'p-invalid': v$.role.description.$invalid && v$.role.description.$dirty
                                     }"
-                                    maxLength="150"
+                                    max-length="150"
+                                    data-test="description-input"
                                     @blur="v$.role.description.$touch()"
                                     @input="onFieldChange('description', $event.target.value)"
-                                    data-test="description-input"
                                 />
                                 <label for="description" class="kn-material-input-label">
                                     {{ $t('common.description') }}
                                 </label>
                             </span>
                             <KnValidationMessages
-                                :vComp="v$.role.description"
-                                :additionalTranslateParams="{
+                                :v-comp="v$.role.description"
+                                :additional-translate-params="{
                                     fieldName: $t('common.description')
                                 }"
                             />
@@ -87,11 +87,11 @@
                             <span class="p-float-label">
                                 <Dropdown
                                     id="roleTypeID"
+                                    v-model="v$.role.roleTypeID.$model"
                                     class="kn-material-input"
                                     :options="translatedRoleTypes"
-                                    optionLabel="VALUE_CD"
-                                    optionValue="VALUE_ID"
-                                    v-model="v$.role.roleTypeID.$model"
+                                    option-label="VALUE_CD"
+                                    option-value="VALUE_ID"
                                     :class="{
                                         'p-invalid': v$.role.roleTypeID.$invalid && v$.role.roleTypeID.$dirty
                                     }"
@@ -102,8 +102,8 @@
                                 <label for="roleTypeID" class="kn-material-input-label"> {{ $t('managers.rolesManagement.detail.roleTypeID') }} * </label>
                             </span>
                             <KnValidationMessages
-                                :vComp="v$.role.roleTypeID"
-                                :additionalTranslateParams="{
+                                :v-comp="v$.role.roleTypeID"
+                                :additional-translate-params="{
                                     fieldName: $t('managers.rolesManagement.detail.roleTypeID')
                                 }"
                             />
@@ -111,7 +111,7 @@
 
                         <div class="p-field">
                             <span class="p-field-checkbox">
-                                <Checkbox id="isPublic" name="isPublic" v-model="role.isPublic" @change="onPublicChange" :binary="true" data-test="is-public-checkbox" />
+                                <Checkbox id="isPublic" v-model="role.isPublic" name="isPublic" :binary="true" data-test="is-public-checkbox" @change="onPublicChange" />
                                 <label for="isPublic">
                                     {{ $t('managers.rolesManagement.detail.isPublic') }}
                                 </label>
@@ -170,17 +170,17 @@ export default defineComponent({
             role: createValidations('role', roleDetailValidationDescriptor.validations.role)
         }
     },
-    async created() {
-        if (this.selectedRole) {
-            this.role = { ...this.selectedRole } as any
-        }
-        await this.loadRoleTypes()
-    },
     watch: {
         selectedRole() {
             this.v$.$reset()
             this.role = { ...this.selectedRole } as any
         }
+    },
+    async created() {
+        if (this.selectedRole) {
+            this.role = { ...this.selectedRole } as any
+        }
+        await this.loadRoleTypes()
     },
     methods: {
         async loadRoleTypes() {
@@ -211,7 +211,7 @@ export default defineComponent({
         },
         onPublicChange() {
             if (this.publicRole && this.publicRole.id != this.role.id && this.role.isPublic) {
-                let warningMessage = this.$t('managers.rolesManagement.publicRoleWarning1') + `< ${this.publicRole.name} >` + this.$t('managers.rolesManagement.publicRoleWarning2')
+                const warningMessage = this.$t('managers.rolesManagement.publicRoleWarning1') + `< ${this.publicRole.name} >` + this.$t('managers.rolesManagement.publicRoleWarning2')
                 this.$confirm.require({
                     message: warningMessage,
                     header: this.$t('common.warning'),

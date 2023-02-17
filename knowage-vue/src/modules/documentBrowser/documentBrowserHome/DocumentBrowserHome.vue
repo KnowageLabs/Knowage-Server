@@ -1,11 +1,11 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--primary">
         <template #start>
-            <i class="fa fa-ellipsis-v p-mr-3" id="sidebar-button" @click="toggleSidebarView" />
+            <i id="sidebar-button" class="fa fa-ellipsis-v p-mr-3" @click="toggleSidebarView" />
             <span>{{ searchMode ? $t('documentBrowser.documentsSearch') : $t('documentBrowser.title') }}</span>
             <span v-show="searchMode" class="p-mx-4">
                 <i class="fa fa-arrow-left search-pointer p-mx-4" @click="exitSearchMode" />
-                <InputText id="document-search" class="kn-material-input p-inputtext-sm p-mx-2 searchInput" ref="searchBar" @keyup.enter="loadDocuments" v-model="searchWord" :placeholder="$t('common.search')" autofocus />
+                <InputText id="document-search" ref="searchBar" v-model="searchWord" class="kn-material-input p-inputtext-sm p-mx-2 searchInput" :placeholder="$t('common.search')" autofocus @keyup.enter="loadDocuments" />
                 <i class="fa fa-times search-pointer p-mx-4" @click="searchWord = ''" />
                 <i class="pi pi-search search-pointer p-mx-4" @click="loadDocuments" />
             </span>
@@ -15,7 +15,7 @@
             <span v-if="!searchMode" class="p-mx-4">
                 <i class="pi pi-search search-pointer" @click="openSearchBar()" />
             </span>
-            <KnFabButton v-if="(isSuperAdmin || canAddNewDocument) && selectedFolder && selectedFolder.parentId && selectedFolder.codType !== 'USER_FUNCT'" icon="fas fa-plus" @click="toggle($event)" aria-haspopup="true" aria-controls="overlay_menu"></KnFabButton>
+            <KnFabButton v-if="(isSuperAdmin || canAddNewDocument) && selectedFolder && selectedFolder.parentId && selectedFolder.codType !== 'USER_FUNCT'" icon="fas fa-plus" aria-haspopup="true" aria-controls="overlay_menu" @click="toggle($event)"></KnFabButton>
             <Menu ref="menu" :model="items" :popup="true" />
         </template>
     </Toolbar>
@@ -26,15 +26,15 @@
         <div v-if="sidebarVisible && windowWidth < 1024" id="document-browser-sidebar-backdrop" @click="sidebarVisible = false"></div>
 
         <div v-show="!searchMode" class="document-sidebar kn-flex" style="width: 350px" :class="{ 'sidebar-hidden': isSidebarHidden, 'document-sidebar-absolute': sidebarVisible && windowWidth < 1024 }">
-            <DocumentBrowserTree :propFolders="folders" :selectedBreadcrumb="selectedBreadcrumb" :selectedFolderProp="selectedFolder" @folderSelected="setSelectedFolder"></DocumentBrowserTree>
+            <DocumentBrowserTree :prop-folders="folders" :selected-breadcrumb="selectedBreadcrumb" :selected-folder-prop="selectedFolder" @folderSelected="setSelectedFolder"></DocumentBrowserTree>
         </div>
 
         <div id="detail-container" class="p-d-flex p-flex-column">
             <DocumentBrowserDetail
                 v-if="selectedFolder || searchMode"
-                :propDocuments="searchMode ? searchedDocuments : documents"
+                :prop-documents="searchMode ? searchedDocuments : documents"
                 :breadcrumbs="breadcrumbs"
-                :searchMode="searchMode"
+                :search-mode="searchMode"
                 @breadcrumbClicked="setSelectedBreadcrumb($event)"
                 @documentCloned="loadDocuments"
                 @documentStateChanged="loadDocuments"
@@ -61,6 +61,10 @@ export default defineComponent({
     components: { DocumentBrowserHint, DocumentBrowserTree, DocumentBrowserDetail, KnFabButton, Menu },
     props: { documentSaved: { type: Object as PropType<any> }, documentSavedTrigger: { type: Boolean } },
     emits: ['itemSelected'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             folders: [] as any[],
@@ -106,10 +110,6 @@ export default defineComponent({
             if (this.documentSaved.folderId) this.selectedFolder.id = this.documentSaved.folderId
             this.loadDocumentsWithBreadcrumbs()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         window.addEventListener('resize', this.onResize)

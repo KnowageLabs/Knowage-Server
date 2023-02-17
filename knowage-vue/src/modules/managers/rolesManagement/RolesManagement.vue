@@ -7,15 +7,15 @@
                         {{ $t('managers.rolesManagement.title') }}
                     </template>
                     <template #end>
-                        <FabButton icon="fas fa-plus" @click="showForm" data-test="open-form-button" />
+                        <FabButton icon="fas fa-plus" data-test="open-form-button" @click="showForm" />
                     </template>
                 </Toolbar>
-                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+                <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
                 <KnListBox class="kn-height-full" :options="roles" :settings="rolesDecriptor.knListSettings" @click="showForm" @delete.stop="deleteRoleConfirm"></KnListBox>
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
-                <router-view :publicRole="publicRole" @touched="touched = true" @closed="touched = false" @inserted="pageReload" />
+                <router-view :public-role="publicRole" @touched="touched = true" @closed="touched = false" @inserted="pageReload" />
             </div>
         </div>
     </div>
@@ -33,6 +33,10 @@ import mainStore from '../../../App.store'
 export default defineComponent({
     name: 'roles-management',
     components: { FabButton, KnListBox },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             roles: [] as iRole[],
@@ -43,10 +47,6 @@ export default defineComponent({
             dirty: false,
             publicRole: null as any
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         await this.loadAllRoles()

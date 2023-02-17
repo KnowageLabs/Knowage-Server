@@ -4,12 +4,12 @@
             <span>
                 <label class="kn-material-input-label">{{ $t('managers.scheduler.timingDescription') }} *</label>
                 <InputText
-                    class="kn-material-input p-inputtext-sm"
                     v-model="trigger.triggerDescription"
+                    class="kn-material-input p-inputtext-sm"
                     :class="{
                         'p-invalid': descriptionDirty && (!trigger.triggerDescription || trigger.triggerDescription.length === 0)
                     }"
-                    :maxLength="500"
+                    :max-length="500"
                     @input="setTriggerName"
                     @blur="descriptionDirty = true"
                 />
@@ -23,7 +23,7 @@
 
         <div class="p-d-flex p-flex-row kn-flex p-jc-around p-ai-center">
             <div v-for="type in schedulerTimingOutputTimingTabDescriptor.types" :key="type.value">
-                <RadioButton :id="type.value" name="type" :value="type.value" class="p-mr-2" v-model="triggerType" @change="formatFrequency" :data-test="'trigger-type-button-' + type.value"></RadioButton>
+                <RadioButton :id="type.value" v-model="triggerType" name="type" :value="type.value" class="p-mr-2" :data-test="'trigger-type-button-' + type.value" @change="formatFrequency"></RadioButton>
                 <label :for="type.value" class="kn-material-input-label">{{ $t(type.label) }}</label>
             </div>
         </div>
@@ -41,7 +41,7 @@
                 <div class="p-col-5">
                     <span>
                         <label for="startDateTiming" class="kn-material-input-label">{{ $t('cron.startDate') + ':' }}</label>
-                        <Calendar id="startDateTiming" class="kn-material-input custom-timepicker" :style="schedulerTimingOutputTimingTabDescriptor.style.calendarInput" v-model="trigger.startDateTiming" :showIcon="true" :manualInput="true" @change="setStartDate" @date-select="setStartDate" />
+                        <Calendar id="startDateTiming" v-model="trigger.startDateTiming" class="kn-material-input custom-timepicker" :style="schedulerTimingOutputTimingTabDescriptor.style.calendarInput" :show-icon="true" :manual-input="true" @change="setStartDate" @date-select="setStartDate" />
                     </span>
                     <div v-if="!validDates" class="p-error p-grid">
                         <small class="p-col-12">
@@ -55,13 +55,13 @@
                     <span>
                         <Calendar
                             id="startTime"
+                            v-model="trigger.startTimeTiming"
                             class="kn-material-input custom-timepicker"
                             :style="schedulerTimingOutputTimingTabDescriptor.style.timePicker"
-                            v-model="trigger.startTimeTiming"
-                            :showTime="true"
-                            :manualInput="true"
-                            :timeOnly="true"
-                            hourFormat="24"
+                            :show-time="true"
+                            :manual-input="true"
+                            :time-only="true"
+                            hour-format="24"
                             @change="setStartDate"
                             @date-select="setStartDate"
                         />
@@ -73,7 +73,7 @@
                 <div class="p-col-5">
                     <span>
                         <label for="endDateTiming" class="kn-material-input-label">{{ $t('cron.endDate') + ':' }}</label>
-                        <Calendar id="endDateTiming" class="kn-material-input custom-timepicker" :style="schedulerTimingOutputTimingTabDescriptor.style.calendarInput" v-model="trigger.endDateTiming" :showIcon="true" :manualInput="true" @change="setEndDate" @date-select="setEndDate" />
+                        <Calendar id="endDateTiming" v-model="trigger.endDateTiming" class="kn-material-input custom-timepicker" :style="schedulerTimingOutputTimingTabDescriptor.style.calendarInput" :show-icon="true" :manual-input="true" @change="setEndDate" @date-select="setEndDate" />
                     </span>
                     <div v-if="!validDates" class="p-error p-grid">
                         <small class="p-col-12">
@@ -87,13 +87,13 @@
                     <span>
                         <Calendar
                             id="endTime"
+                            v-model="trigger.endTimeTiming"
                             class="kn-material-input custom-timepicker"
                             :style="schedulerTimingOutputTimingTabDescriptor.style.timePicker"
-                            v-model="trigger.endTimeTiming"
-                            :showTime="true"
-                            :manualInput="true"
-                            :timeOnly="true"
-                            hourFormat="24"
+                            :show-time="true"
+                            :manual-input="true"
+                            :time-only="true"
+                            hour-format="24"
                             @change="setEndDate"
                             @date-select="setEndDate"
                         />
@@ -112,7 +112,7 @@
             <div class="p-m-4">
                 <span>
                     <label class="kn-material-input-label">{{ $t('managers.scheduler.eventType') }}</label>
-                    <Dropdown class="kn-material-input" v-model="trigger.chrono.parameter.type" :options="eventTypes" optionLabel="label" optionValue="value" />
+                    <Dropdown v-model="trigger.chrono.parameter.type" class="kn-material-input" :options="eventTypes" option-label="label" option-value="value" />
                 </span>
             </div>
 
@@ -127,13 +127,13 @@
                     <div class="kn-flex p-m-4">
                         <span>
                             <label class="kn-material-input-label">{{ $t('managers.scheduler.datasetVerification') }}</label>
-                            <Dropdown class="kn-material-input" v-model="trigger.chrono.parameter.dataset" :options="datasets" optionLabel="label" optionValue="id.dsId" :filter="true" filterMatchMode="contains" :filterFields="['label']" />
+                            <Dropdown v-model="trigger.chrono.parameter.dataset" class="kn-material-input" :options="datasets" option-label="label" option-value="id.dsId" :filter="true" filter-match-mode="contains" :filter-fields="['label']" />
                         </span>
                     </div>
                     <div class="kn-flex p-m-4">
                         <span>
                             <label class="kn-material-input-label">{{ $t('managers.scheduler.frequencyMinutes') }}</label>
-                            <InputText class="kn-material-input p-inputtext-sm" type="number" v-model="trigger.chrono.parameter.frequency" />
+                            <InputText v-model="trigger.chrono.parameter.frequency" class="kn-material-input p-inputtext-sm" type="number" />
                         </span>
                     </div>
                 </div>
@@ -177,11 +177,6 @@
                 descriptionDirty: false
             }
         },
-        watch: {
-            propTrigger() {
-                this.loadTrigger()
-            }
-        },
         computed: {
             validDates() {
                 let valid = true
@@ -197,6 +192,11 @@
 
                 this.$emit('cronValid', valid)
                 return valid
+            }
+        },
+        watch: {
+            propTrigger() {
+                this.loadTrigger()
             }
         },
         created() {

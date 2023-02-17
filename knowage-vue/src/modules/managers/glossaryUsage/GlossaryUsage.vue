@@ -7,10 +7,10 @@
         </Toolbar>
         <div class="p-grid p-m-0 kn-page-content">
             <div class="p-col-4 p-sm-4 p-md-3 p-p-0 kn-list">
-                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+                <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
                 <div class="p-d-flex p-flex-column p-m-3">
                     <label v-if="selectedGlossaryId" for="glossary" class="kn-material-input-label">{{ $t('managers.glossary.glossaryUsage.title') }}</label>
-                    <Dropdown id="glossary" class="kn-material-input" v-model="selectedGlossaryId" :options="glossaryList" optionLabel="GLOSSARY_NM" optionValue="GLOSSARY_ID" :placeholder="$t('managers.glossary.glossaryUsage.selectGlossary')" />
+                    <Dropdown id="glossary" v-model="selectedGlossaryId" class="kn-material-input" :options="glossaryList" option-label="GLOSSARY_NM" option-value="GLOSSARY_ID" :placeholder="$t('managers.glossary.glossaryUsage.selectGlossary')" />
                 </div>
                 <div>
                     <div v-if="glossaryList.length === 0" data-test="no-glossary-found-hint">
@@ -19,29 +19,29 @@
                     <Message v-else-if="!selectedGlossaryId" class="p-mx-3" data-test="no-glossary-selected-tree-hint">{{ $t('managers.glossary.glossaryUsage.glossaryHint') }}</Message>
                     <div v-else>
                         <div class="p-m-3">
-                            <InputText id="search-input" class="kn-material-input" v-model="searchWord" :placeholder="$t('common.search')" @input="filterGlossaryTree" data-test="search-input" />
+                            <InputText id="search-input" v-model="searchWord" class="kn-material-input" :placeholder="$t('common.search')" data-test="search-input" @input="filterGlossaryTree" />
                         </div>
                         <Tree
                             v-if="!loading"
                             id="glossary-tree"
-                            :value="nodes"
-                            selectionMode="multiple"
                             v-model:selectionKeys="selectedKeys"
-                            :metaKeySelection="false"
-                            :expandedKeys="expandedKeys"
+                            :value="nodes"
+                            selection-mode="multiple"
+                            :meta-key-selection="false"
+                            :expanded-keys="expandedKeys"
+                            data-test="glossary-tree"
                             @nodeExpand="listContents(selectedGlossaryId, $event)"
                             @nodeSelect="onNodeSelect"
                             @nodeUnselect="onNodeUnselect"
-                            data-test="glossary-tree"
                         >
                             <template #default="slotProps">
                                 <div
                                     class="p-d-flex p-flex-row p-ai-center"
+                                    :draggable="slotProps.node.leaf"
+                                    :data-test="'tree-item-' + slotProps.node.id"
                                     @mouseover="buttonVisible[slotProps.node.id] = true"
                                     @mouseleave="buttonVisible[slotProps.node.id] = false"
-                                    :draggable="slotProps.node.leaf"
                                     @dragstart="onDragStart($event, slotProps.node)"
-                                    :data-test="'tree-item-' + slotProps.node.id"
                                 >
                                     <span>{{ slotProps.node.label }}</span>
                                     <div v-show="buttonVisible[slotProps.node.id]" class="p-ml-2">
@@ -54,11 +54,11 @@
                 </div>
             </div>
 
-            <GlossaryUsageInfoDialog v-show="infoDialogVisible" :visible="infoDialogVisible" :contentInfo="contentInfo" :selectedWords="selectedWords" @close="infoDialogVisible = false" @loading="setLoading"></GlossaryUsageInfoDialog>
+            <GlossaryUsageInfoDialog v-show="infoDialogVisible" :visible="infoDialogVisible" :content-info="contentInfo" :selected-words="selectedWords" @close="infoDialogVisible = false" @loading="setLoading"></GlossaryUsageInfoDialog>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
                 <GlossaryUsageHint v-if="!selectedGlossaryId" data-test="no-glossary-selected-hint"></GlossaryUsageHint>
-                <GlossaryUsageDetail v-else :glossaryId="selectedGlossaryId" :selectedWords="selectedWords" @infoClicked="showNavigationItemInfo($event)" @wordsFiltered="setFilteredWords"></GlossaryUsageDetail>
+                <GlossaryUsageDetail v-else :glossary-id="selectedGlossaryId" :selected-words="selectedWords" @infoClicked="showNavigationItemInfo($event)" @wordsFiltered="setFilteredWords"></GlossaryUsageDetail>
             </div>
         </div>
     </div>
@@ -130,7 +130,7 @@ export default defineComponent({
             }
 
             const parentId = parent ? parent.id : null
-            let content = [] as iNode[]
+            const content = [] as iNode[]
             await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/glossary/listContents?GLOSSARY_ID=${glossaryId}&PARENT_ID=${parentId}`).then((response: AxiosResponse<any>) => {
                 response.data.forEach((el: any) => content.push(this.createNode(el)))
                 content.sort((a: iNode, b: iNode) => (a.label > b.label ? 1 : -1))
@@ -201,7 +201,7 @@ export default defineComponent({
             }
         },
         expandAll() {
-            for (let node of this.nodes) {
+            for (const node of this.nodes) {
                 this.expandNode(node)
             }
             this.expandedKeys = { ...this.expandedKeys }
@@ -209,7 +209,7 @@ export default defineComponent({
         expandNode(node: iNode) {
             if (node.children && node.children.length) {
                 this.expandedKeys[node.key] = true
-                for (let child of node.children) {
+                for (const child of node.children) {
                     this.expandNode(child)
                 }
             }

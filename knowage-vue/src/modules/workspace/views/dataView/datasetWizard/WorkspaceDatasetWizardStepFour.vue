@@ -4,14 +4,14 @@
             <form class="p-fluid p-formgrid p-grid">
                 <div class="p-field  p-col-12">
                     <span class="p-float-label">
-                        <InputText id="name" class="kn-material-input" type="text" maxLength="50" v-model="v$.dataset.name.$model" :class="{ 'p-invalid': v$.dataset.name.$invalid && v$.dataset.name.$dirty }" @blur="v$.dataset.name.$touch()" @change="$emit('touched')" data-test="name-input" />
+                        <InputText id="name" v-model="v$.dataset.name.$model" class="kn-material-input" type="text" max-length="50" :class="{ 'p-invalid': v$.dataset.name.$invalid && v$.dataset.name.$dirty }" data-test="name-input" @blur="v$.dataset.name.$touch()" @change="$emit('touched')" />
                         <label for="name" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.name" :additionalTranslateParams="{ fieldName: $t('common.name') }" />
+                    <KnValidationMessages class="p-mt-1" :v-comp="v$.dataset.name" :additional-translate-params="{ fieldName: $t('common.name') }" />
                 </div>
                 <div class="p-field  p-col-12">
                     <span class="p-float-label">
-                        <InputText id="description" class="kn-material-input" type="text" maxLength="50" v-model="dataset.description" data-test="description-input" />
+                        <InputText id="description" v-model="dataset.description" class="kn-material-input" type="text" max-length="50" data-test="description-input" />
                         <label for="description" class="kn-material-input-label"> {{ $t('common.description') }} </label>
                     </span>
                 </div>
@@ -32,10 +32,10 @@
                         <span class="p-float-label p-mt-3 p-mx-2">
                             <InputText
                                 id="persistTableName"
+                                v-model="dataset.tableName"
                                 class="kn-material-input"
                                 type="text"
-                                maxLength="50"
-                                v-model="dataset.tableName"
+                                max-length="50"
                                 :class="{
                                     'p-invalid': v$.dataset.tableName.$invalid && v$.dataset.tableName.$dirty
                                 }"
@@ -44,7 +44,7 @@
                             />
                             <label for="persistTableName" class="kn-material-input-label"> {{ $t('managers.datasetManagement.persistTableName') }} *</label>
                         </span>
-                        <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.tableName" :additionalTranslateParams="{ fieldName: $t('managers.datasetManagement.persistTableName') }" />
+                        <KnValidationMessages class="p-mt-1" :v-comp="v$.dataset.tableName" :additional-translate-params="{ fieldName: $t('managers.datasetManagement.persistTableName') }" />
                     </div>
                 </div>
             </form>
@@ -71,13 +71,13 @@
                 dataset: {} as any
             }
         },
-        created() {
-            this.dataset = this.selectedDataset
-        },
         watch: {
             selectedDataset() {
                 this.dataset = this.selectedDataset
             }
+        },
+        created() {
+            this.dataset = this.selectedDataset
         },
         validations() {
             const wizardFieldsRequired = (value) => {

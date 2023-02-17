@@ -1,17 +1,13 @@
 <template>
+    <i class="fa-solid fa-grip-vertical drag-handle drag-widget-icon"></i>
     <div v-if="(selectionIsLocked || playSelectionButtonVisible) && inFocus" class="lockButtonContainer" @mouseover="$emit('changeFocus', true)" @mouseleave="$emit('changeFocus', false)">
         <i v-if="selectionIsLocked" class="fas fa-lock kn-cursor-pointer" @click="$emit('unlockSelection')" />
         <i v-if="playSelectionButtonVisible" class="fas fa-play kn-cursor-pointer" @click="$emit('launchSelection')" />
     </div>
 
     <div class="widgetButtonBarContainer">
-        <SpeedDial class="speed-dial-menu" :model="items" direction="right" :transitionDelay="80" showIcon="fas fa-ellipsis-v" hideIcon="fas fa-ellipsis-v" buttonClass="p-button-text p-button-rounded p-button-plain">
-            <template #item>
-                <i class="fas fa-arrows-up-down-left-right p-button-text p-button-rounded p-button-plain drag-handle drag-widget-icon buttonHover" style="width: 20px; height: 10px"></i>
-                <Button icon="fas fa-pen-to-square" class="p-button-text p-button-rounded p-button-plain" @click="editWidget" />
-                <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="onDeleteWidget" />
-            </template>
-        </SpeedDial>
+        <Button type="button" icon="fa-solid fa-ellipsis-h" @click="toggle" class="p-button-outlined p-button-rounded widgetMenuButton" />
+        <Menu label="Toggle" @click="toggle" :model="menuItems" ref="widgetmenu" :popup="true" />
     </div>
 </template>
 
@@ -20,34 +16,29 @@
  * ! this component will be in charge of managing the widget buttons and visibility.
  */
 import { defineComponent, PropType } from 'vue'
-import { mapActions } from 'pinia'
 import { IWidget } from '../Dashboard'
 import SpeedDial from 'primevue/speeddial'
-import store from '../Dashboard.store'
+import Menu from 'primevue/menu'
 
 export default defineComponent({
     name: 'widget-button-bar',
-    components: { SpeedDial },
-    props: { widget: { type: Object as PropType<IWidget>, required: true }, playSelectionButtonVisible: { type: Boolean, required: true }, selectionIsLocked: { type: Boolean, required: true }, dashboardId: { type: String, required: true }, inFocus: { type: Boolean, required: true } },
-    emits: ['editWidget', 'unlockSelection', 'launchSelection', 'changeFocus'],
-    data() {
-        return {
-            items: [
-                {
-                    label: 'Add',
-                    icon: 'pi pi-pencil',
-                    class: 'drag-handle'
-                }
-            ]
-        }
+    components: { Menu, SpeedDial },
+    props: {
+        widget: { type: Object as PropType<IWidget>, required: true },
+        playSelectionButtonVisible: { type: Boolean, required: true },
+        selectionIsLocked: { type: Boolean, required: true },
+        dashboardId: { type: String, required: true },
+        inFocus: { type: Boolean, required: true },
+        menuItems: { type: Object as PropType<any> }
     },
+    emits: ['editWidget', 'unlockSelection', 'launchSelection', 'changeFocus'],
     methods: {
-        ...mapActions(store, ['deleteWidget']),
+        toggle(event) {
+            const menu = this.$refs.widgetmenu as any
+            menu.toggle(event)
+        },
         editWidget() {
             this.$emit('editWidget')
-        },
-        onDeleteWidget() {
-            this.deleteWidget(this.dashboardId, this.widget)
         }
     }
 })
@@ -71,15 +62,34 @@ export default defineComponent({
 .widgetButtonBarContainer {
     display: none;
     position: absolute;
-    bottom: 0;
-    left: 0;
+    top: 2px;
+    right: 2px;
+    .widgetMenuButton.p-button.p-button-outlined:enabled {
+        background-color: rgba(256, 256, 256, 0.6);
+        &:hover {
+            outline: 2px solid #0085f290;
+            background-color: rgba(246, 246, 246, 0.8);
+        }
+        &:active {
+            background-color: rgba(216, 216, 216, 0.8);
+        }
+    }
 }
 .drag-widget-icon {
-    border-radius: 50% !important;
-    height: 2.2rem !important;
-    width: 2.25rem !important;
-    padding: 0.571rem !important;
-    color: rgba(0, 0, 0, 0.6);
+    position: absolute;
+    display: none;
+    top: 0;
+    left: 0;
+    height: 26px;
+    width: 26px;
+    text-align: center;
+    padding: 6px;
+    font-size: 1.1rem;
+    cursor: grab;
+    color: rgba(0, 0, 0, 0.4);
+    &:active {
+        cursor: grabbing;
+    }
 }
 .speed-dial-menu {
     position: relative;

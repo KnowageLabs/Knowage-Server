@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="metawebPhysicalModelUpdateDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary" :content-style="metawebPhysicalModelUpdateDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -7,10 +7,10 @@
                 </template>
             </Toolbar>
         </template>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
 
-        <MetawebUpdateChangedLists v-if="step === 0" :changedItem="data"></MetawebUpdateChangedLists>
-        <MetawebUpdatePhysicalTablesSelect v-else :changedItem="data" @selected="onTablesSelect"></MetawebUpdatePhysicalTablesSelect>
+        <MetawebUpdateChangedLists v-if="step === 0" :changed-item="data"></MetawebUpdateChangedLists>
+        <MetawebUpdatePhysicalTablesSelect v-else :changed-item="data" @selected="onTablesSelect"></MetawebUpdatePhysicalTablesSelect>
 
         <template #footer>
             <div class="p-d-flex p-flex-row p-jc-end">
@@ -37,6 +37,10 @@ export default defineComponent({
     components: { Dialog, MetawebUpdateChangedLists, MetawebUpdatePhysicalTablesSelect },
     props: { visible: { type: Boolean }, changedItem: { type: Object as PropType<iChangedData> } },
     emits: ['close', 'updated'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             metawebPhysicalModelUpdateDialogDescriptor,
@@ -50,10 +54,6 @@ export default defineComponent({
         changedItem() {
             this.loadData()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         this.loadData()

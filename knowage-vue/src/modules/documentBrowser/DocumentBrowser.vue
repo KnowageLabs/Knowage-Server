@@ -1,13 +1,13 @@
 <template>
     <div class="kn-page">
         <div class="document-browser-tab-container kn-flex">
-            <TabView id="document-browser-tab-view" class="p-d-flex p-flex-column kn-flex kn-tab" v-model:activeIndex="activeIndex" @tab-change="onTabChange">
+            <TabView id="document-browser-tab-view" v-model:activeIndex="activeIndex" class="p-d-flex p-flex-column kn-flex kn-tab" @tab-change="onTabChange">
                 <TabPanel>
                     <template #header>
                         <i class="fa fa-folder-open"></i>
                     </template>
 
-                    <DocumentBrowserHome :documentSaved="documentSaved" :documentSavedTrigger="documentSavedTrigger" @itemSelected="onItemSelect($event)"></DocumentBrowserHome>
+                    <DocumentBrowserHome :document-saved="documentSaved" :document-saved-trigger="documentSavedTrigger" @itemSelected="onItemSelect($event)"></DocumentBrowserHome>
                 </TabPanel>
 
                 <TabPanel v-for="(tab, index) in tabs" :key="index">
@@ -17,11 +17,11 @@
                 </TabPanel>
             </TabView>
 
-            <DocumentBrowserTab v-show="selectedItem && selectedItem.mode" :item="selectedItem?.item" :functionalityId="selectedItem?.functionalityId" @close="closeDocument('current')" @iframeCreated="onIFrameCreated" @closeIframe="closeIframe" @documentSaved="onDocumentSaved"></DocumentBrowserTab>
+            <DocumentBrowserTab v-show="selectedItem && selectedItem.mode" :item="selectedItem?.item" :functionality-id="selectedItem?.functionalityId" @close="closeDocument('current')" @iframeCreated="onIFrameCreated" @closeIframe="closeIframe" @documentSaved="onDocumentSaved"></DocumentBrowserTab>
             <div v-for="(iframe, index) in iFrameContainers" :key="index">
                 <iframe v-show="iframe.item?.routerId === selectedItem?.item.routerId" ref="iframe" class="document-browser-cockpit-iframe" :src="iframe.iframe"></iframe>
             </div>
-            <div id="document-browser-tab-icon-container" v-if="activeIndex !== 0">
+            <div v-if="activeIndex !== 0" id="document-browser-tab-icon-container">
                 <i id="document-browser-tab-icon" class="fa fa-times-circle" @click="toggle($event)"></i>
                 <Menu ref="menu" :model="menuItems" :popup="true" />
             </div>
@@ -83,7 +83,7 @@ export default defineComponent({
                 }
             })
 
-            let id = this.$router.currentRoute.value.params.id ?? this.parseSelectedMenuItem()
+            const id = this.$router.currentRoute.value.params.id ?? this.parseSelectedMenuItem()
 
             if (id && id !== 'document-browser' && (this.$router.currentRoute.value.name === 'document-browser-document-execution' || this.$router.currentRoute.value.name === 'document-browser-document-details-edit' || this.$router.currentRoute.value.name === 'document-browser')) {
                 let tempDocument = {} as any
@@ -126,7 +126,7 @@ export default defineComponent({
                 const path = this.selectedItem.functionalityId ? `/document-browser/document-details/new/${this.selectedItem.functionalityId}` : `/document-browser/document-details/${this.selectedItem.item.id}`
                 this.$router.push(path)
             } else {
-                let routeDocumentType = this.tabs[this.activeIndex - 1].item.mode ? this.tabs[this.activeIndex - 1].item.mode : this.getRouteDocumentType(this.tabs[this.activeIndex - 1].item)
+                const routeDocumentType = this.tabs[this.activeIndex - 1].item.mode ? this.tabs[this.activeIndex - 1].item.mode : this.getRouteDocumentType(this.tabs[this.activeIndex - 1].item)
                 routeDocumentType ? this.$router.push(`/document-browser/${routeDocumentType}/` + id) : this.$router.push('/document-browser/new-dashboard')
             }
         },
@@ -149,7 +149,7 @@ export default defineComponent({
             } else {
                 const id = payload.item ? payload.item.label : 'new-dashboard'
                 if (payload.item) {
-                    let routeDocumentType = this.getRouteDocumentType(payload.item)
+                    const routeDocumentType = this.getRouteDocumentType(payload.item)
                     this.selectedItem.item.showMode = 'execute'
                     this.$router.push(`/document-browser/${routeDocumentType}/` + id)
                 } else {

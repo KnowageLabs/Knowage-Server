@@ -5,44 +5,44 @@
     <div v-else class="p-fluid p-formgrid p-grid">
         <div class="p-field p-col-8">
             <span class="p-float-label">
-                <Dropdown class="kn-material-input" v-model="selectedColumnName" :options="widgetModel.columns" optionValue="columnName" optionLabel="columnName" @change="onColumnChanged"> </Dropdown>
+                <Dropdown v-model="selectedColumnName" class="kn-material-input" :options="widgetModel.columns" option-value="columnName" option-label="columnName" @change="onColumnChanged"> </Dropdown>
                 <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
             </span>
         </div>
         <div class="p-field p-col-4">
             <span class="p-float-label">
-                <InputText class="kn-material-input" v-model="row" @change="onColumnChanged" />
+                <InputText v-model="row" class="kn-material-input" @change="onColumnChanged" />
                 <label class="kn-material-input-label">{{ $t('common.row') }}</label>
             </span>
         </div>
         <div class="p-field p-col-3">
             <span class="p-float-label">
-                <Dropdown class="kn-material-input" v-model="aggregation" :options="tableDescriptor.aggregationOptions" optionValue="value" optionLabel="label" @change="onColumnChanged"> </Dropdown>
+                <Dropdown v-model="aggregation" class="kn-material-input" :options="tableDescriptor.aggregationOptions" option-value="value" option-label="label" @change="onColumnChanged"> </Dropdown>
                 <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.aggregation') }}</label>
             </span>
         </div>
         <div class="p-field p-col-3">
             <span class="p-float-label">
-                <InputText type="number" class="kn-material-input" v-model="precision" @change="onColumnChanged" />
+                <InputText v-model="precision" type="number" class="kn-material-input" @change="onColumnChanged" />
                 <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.precision') }}</label>
             </span>
         </div>
         <div class="p-field p-col-3">
             <span class="p-float-label">
-                <InputText class="kn-material-input" v-model="prefix" @change="onColumnChanged" />
+                <InputText v-model="prefix" class="kn-material-input" @change="onColumnChanged" />
                 <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.prefix') }}</label>
             </span>
         </div>
         <div class="p-field p-col-3">
             <span class="p-float-label">
-                <InputText class="kn-material-input" v-model="suffix" @change="onColumnChanged" />
+                <InputText v-model="suffix" class="kn-material-input" @change="onColumnChanged" />
                 <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.suffix') }}</label>
             </span>
         </div>
         <div class="p-field p-d-flex p-col-12 p-mt-2">
-            <InputSwitch class="" v-model="format" @change="onColumnChanged" />
+            <InputSwitch v-model="format" class="" @change="onColumnChanged" />
             <label class="kn-material-input-label p-mx-2">{{ $t('dashboard.widgetEditor.editorTags.toLocale') }}</label>
-            <i class="p-button-text p-button-rounded p-button-plain fas fa-circle-question" style="color: rgba(0, 0, 0, 0.6)" v-tooltip.right="$t('dashboard.widgetEditor.editorTags.hint.toLocale')" />
+            <i v-tooltip.right="$t('dashboard.widgetEditor.editorTags.hint.toLocale')" class="p-button-text p-button-rounded p-button-plain fas fa-circle-question" style="color: rgba(0, 0, 0, 0.6)" />
         </div>
     </div>
 </template>

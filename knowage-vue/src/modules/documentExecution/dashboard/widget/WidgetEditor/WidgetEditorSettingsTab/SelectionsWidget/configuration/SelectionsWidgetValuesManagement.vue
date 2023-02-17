@@ -6,7 +6,7 @@
             </div>
             <div class="p-sm-12 p-md-10 p-d-flex">
                 <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.valuesManagement.showDataset') }}</label>
-                <i class="pi pi-question-circle kn-cursor-pointer p-ml-auto p-mr-4" v-tooltip.top="$t('dashboard.widgetEditor.valuesManagement.showDatasetHint')"></i>
+                <i v-tooltip.top="$t('dashboard.widgetEditor.valuesManagement.showDatasetHint')" class="pi pi-question-circle kn-cursor-pointer p-ml-auto p-mr-4"></i>
             </div>
 
             <div class="p-sm-12 p-md-2">
@@ -14,7 +14,7 @@
             </div>
             <div class="p-sm-12 p-md-10 p-d-flex">
                 <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.valuesManagement.showColumn') }}</label>
-                <i class="pi pi-question-circle kn-cursor-pointer p-ml-auto p-mr-4" v-tooltip.top="$t('dashboard.widgetEditor.valuesManagement.showColumnHint')"></i>
+                <i v-tooltip.top="$t('dashboard.widgetEditor.valuesManagement.showColumnHint')" class="pi pi-question-circle kn-cursor-pointer p-ml-auto p-mr-4"></i>
             </div>
         </div>
     </div>

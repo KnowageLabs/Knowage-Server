@@ -4,7 +4,7 @@
     </Message>
     <div v-else class="p-field">
         <span class="p-float-label">
-            <Dropdown class="kn-material-input" v-model="selectedDatasetName" :options="selectedDatasets" optionValue="name" optionLabel="name" @change="onColumnChanged"> </Dropdown>
+            <Dropdown v-model="selectedDatasetName" class="kn-material-input" :options="selectedDatasets" option-value="name" option-label="name" @change="onColumnChanged"> </Dropdown>
             <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
         </span>
     </div>

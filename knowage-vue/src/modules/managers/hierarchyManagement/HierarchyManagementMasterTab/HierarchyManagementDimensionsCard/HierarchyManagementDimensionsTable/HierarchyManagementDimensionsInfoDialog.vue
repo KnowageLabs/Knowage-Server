@@ -8,9 +8,9 @@
             </Toolbar>
         </template>
         <form v-if="selectedItem" class="marginated-form p-fluid p-formgrid p-grid kn-flex p-m-2">
-            <div class="p-field p-col-12 p-md-6 p-lg-4" v-for="(item, index) in selectedItem" :key="index">
+            <div v-for="(item, index) in selectedItem" :key="index" class="p-field p-col-12 p-md-6 p-lg-4">
                 <span class="p-float-label">
-                    <InputText class="kn-material-input" v-model.trim="item.value" :disabled="true" />
+                    <InputText v-model.trim="item.value" class="kn-material-input" :disabled="true" />
                     <label class="kn-material-input-label"> {{ item.label }}</label>
                 </span>
             </div>

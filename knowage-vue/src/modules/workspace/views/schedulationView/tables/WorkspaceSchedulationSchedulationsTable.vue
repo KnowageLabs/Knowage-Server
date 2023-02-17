@@ -1,16 +1,16 @@
 <template>
-    <DataTable :value="schedulations" id="schedulations-table" class="p-datatable-sm kn-table" dataKey="triggerName" :paginator="true" :rows="20" responsiveLayout="stack" breakpoint="960px">
+    <DataTable id="schedulations-table" :value="schedulations" class="p-datatable-sm kn-table" data-key="triggerName" :paginator="true" :rows="20" responsive-layout="stack" breakpoint="960px">
         <template #empty>
             {{ $t('common.info.noDataFound') }}
         </template>
 
-        <Column :headerStyle="workspaceSchedulationSchedulationsTableDescriptor.checkboxColumn.style">
-            <template #body="slotProps"> <Checkbox :name="index + ''" v-model="selectedSchedulations" :value="slotProps.data" @change="setSelectedSchedulations"></Checkbox> </template
+        <Column :header-style="workspaceSchedulationSchedulationsTableDescriptor.checkboxColumn.style">
+            <template #body="slotProps"> <Checkbox v-model="selectedSchedulations" :name="index + ''" :value="slotProps.data" @change="setSelectedSchedulations"></Checkbox> </template
         ></Column>
-        <Column class="kn-truncated" v-for="col of workspaceSchedulationSchedulationsTableDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true"></Column>
+        <Column v-for="col of workspaceSchedulationSchedulationsTableDescriptor.columns" :key="col.field" class="kn-truncated" :field="col.field" :header="$t(col.header)" :sortable="true"></Column>
         <Column :style="workspaceSchedulationSchedulationsTableDescriptor.iconColumn.style">
             <template #body="slotProps">
-                <Button v-if="canRunScheduledExecutions" icon="fa fa-play-circle" class="p-button-link" v-tooltip.top="$t('common.run')" @click.stop="runSchedulation(slotProps.data)" />
+                <Button v-if="canRunScheduledExecutions" v-tooltip.top="$t('common.run')" icon="fa fa-play-circle" class="p-button-link" @click.stop="runSchedulation(slotProps.data)" />
             </template>
         </Column>
     </DataTable>

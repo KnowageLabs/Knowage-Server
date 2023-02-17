@@ -7,22 +7,22 @@
                         {{ $t('kpi.kpiScheduler.title') }}
                     </template>
                     <template #end>
-                        <FabButton icon="fas fa-plus" @click="showForm" data-test="new-button" />
+                        <FabButton icon="fas fa-plus" data-test="new-button" @click="showForm" />
                     </template>
                 </Toolbar>
-                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+                <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
                 <Listbox
                     v-if="!loading"
                     class="kn-list"
                     :options="schedulerList"
-                    :listStyle="kpiSchedulerDescriptor.listBox.style"
+                    :list-style="kpiSchedulerDescriptor.listBox.style"
                     :filter="true"
-                    :filterPlaceholder="$t('common.search')"
-                    filterMatchMode="contains"
-                    :filterFields="kpiSchedulerDescriptor.filterFields"
-                    :emptyFilterMessage="$t('common.info.noDataFound')"
-                    @change="showForm($event.value)"
+                    :filter-placeholder="$t('common.search')"
+                    filter-match-mode="contains"
+                    :filter-fields="kpiSchedulerDescriptor.filterFields"
+                    :empty-filter-message="$t('common.info.noDataFound')"
                     data-test="scheduler-list"
+                    @change="showForm($event.value)"
                 >
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
@@ -32,11 +32,11 @@
                                     <span>{{ slotProps.option.name }}</span>
                                 </div>
                                 <div class="p-d-flex p-flex-row kn-truncated">
-                                    <Chip class="p-m-1" v-tooltip.top="slotProps.option.kpiNames" v-for="(kpiName, index) in slotProps.option.kpiNames.split(',')" :key="index" :label="kpiName"></Chip>
+                                    <Chip v-for="(kpiName, index) in slotProps.option.kpiNames.split(',')" :key="index" v-tooltip.top="slotProps.option.kpiNames" class="p-m-1" :label="kpiName"></Chip>
                                 </div>
                             </div>
                             <i v-if="slotProps.option.jobStatus.toUpperCase() !== 'EXPIRED'" :class="playIcon(slotProps.option.jobStatus)" @click="startSchedule(slotProps.option)" />
-                            <Button class="p-button-link p-button-sm" icon="fa fa-ellipsis-v" @click="toggle($event, slotProps.option)" aria-haspopup="true" aria-controls="overlay_menu" data-test="menu-button" />
+                            <Button class="p-button-link p-button-sm" icon="fa fa-ellipsis-v" aria-haspopup="true" aria-controls="overlay_menu" data-test="menu-button" @click="toggle($event, slotProps.option)" />
                             <Menu ref="menu" :model="items" :popup="true" data-test="menu"></Menu>
                         </div>
                     </template>
@@ -64,18 +64,18 @@ import mainStore from '../../../App.store'
 export default defineComponent({
     name: 'kpi-scheduler',
     components: { Chip, FabButton, Listbox, Menu },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             kpiSchedulerDescriptor,
             schedulerList: [] as iKpiSchedule[],
-            items: [] as { label: String; icon: string; command: Function }[],
+            items: [] as { label: string; icon: string; command: Function }[],
             loading: false,
             touched: false
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         await this.loadPage()

@@ -1,29 +1,29 @@
 <template>
-    <div class="kn-page-content p-m-0 p-p-4" ref="example" id="example">
+    <div id="example" ref="example" class="kn-page-content p-m-0 p-p-4">
         <Card class="p-mt-4">
             <template #content>
                 <form class="p-fluid p-m-5 p-grid">
                     <div class="p-field p-col-3 p-md-4">
                         <span class="p-float-label">
-                            <InputText id="exampleTextInput" class="kn-material-input" type="text" v-model="examples.input.text" />
+                            <InputText id="exampleTextInput" v-model="examples.input.text" class="kn-material-input" type="text" />
                             <label for="exampleTextInput" class="kn-material-input-label"> Example Text Input </label>
                         </span>
                     </div>
                     <div class="p-field p-col-3 p-md-4">
                         <span class="p-float-label">
-                            <InputText id="exampleTextInputDisabled" class="kn-material-input" type="text" disabled v-model="examples.input.disabled" />
+                            <InputText id="exampleTextInputDisabled" v-model="examples.input.disabled" class="kn-material-input" type="text" disabled />
                             <label for="exampleTextInputDisabled" class="kn-material-input-label"> Example Text Input disabled</label>
                         </span>
                     </div>
                     <div class="p-field p-col-3 p-md-4">
                         <span class="p-float-label">
-                            <InputText id="exampleTextInputInvalid" class="kn-material-input p-invalid" type="text" v-model="examples.input.invalid" />
+                            <InputText id="exampleTextInputInvalid" v-model="examples.input.invalid" class="kn-material-input p-invalid" type="text" />
                             <label for="exampleTextInputInvalid" class="kn-material-input-label"> Example Text Input invalid</label>
                         </span>
                     </div>
                     <div class="p-field p-col-3 p-md-4">
                         <span class="p-float-label">
-                            <InputText id="exampleNumberInput" class="kn-material-input" type="number" v-model="examples.input.number" />
+                            <InputText id="exampleNumberInput" v-model="examples.input.number" class="kn-material-input" type="number" />
                             <label for="exampleNumberInput" class="kn-material-input-label"> Example Number Input </label>
                         </span>
                     </div>
@@ -117,7 +117,7 @@
         </Card>
         <Card class="p-mt-4">
             <template #content>
-                <DataTable class="kn-table" :value="examples.dataTable" responsiveLayout="scroll" :paginator="true" :rows="5">
+                <DataTable class="kn-table" :value="examples.dataTable" responsive-layout="scroll" :paginator="true" :rows="5">
                     <Column field="code" header="Code" :sortable="true"></Column>
                     <Column field="name" header="Name" :sortable="true"></Column>
                     <Column field="category" header="Category" :sortable="true"></Column>
@@ -170,7 +170,7 @@ export default defineComponent({
     },
     methods: {
         updateStyle(properties) {
-            for (let key in properties) {
+            for (const key in properties) {
                 // @ts-ignore
                 this.$refs.example.style.setProperty(key, properties[key])
             }

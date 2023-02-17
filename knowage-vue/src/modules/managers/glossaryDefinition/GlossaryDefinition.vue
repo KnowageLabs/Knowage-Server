@@ -1,10 +1,10 @@
 <template>
     <div class="kn-page">
         <div class="kn-page-content p-grid p-m-0">
-            <GlossaryDefinitionInfoDialog v-show="infoDialogVisible" :visible="infoDialogVisible" :contentInfo="contentInfo" @close="infoDialogVisible = false"></GlossaryDefinitionInfoDialog>
+            <GlossaryDefinitionInfoDialog v-show="infoDialogVisible" :visible="infoDialogVisible" :content-info="contentInfo" @close="infoDialogVisible = false"></GlossaryDefinitionInfoDialog>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
-                <GlossaryDefinitionDetail :reloadTree="reloadTree" @infoClicked="showInfo" @addWord="editWord(-1, $event)"></GlossaryDefinitionDetail>
+                <GlossaryDefinitionDetail :reload-tree="reloadTree" @infoClicked="showInfo" @addWord="editWord(-1, $event)"></GlossaryDefinitionDetail>
             </div>
 
             <div class="kn-list--column kn-list-border-left p-col-4 p-sm-4 p-md-3 p-p-0">
@@ -13,36 +13,36 @@
                         {{ $t('managers.glossary.glossaryDefinition.wordsList') }}
                     </template>
                     <template #end>
-                        <FabButton icon="fas fa-plus" @click.stop="editWord(-1)" data-test="new-button" />
+                        <FabButton icon="fas fa-plus" data-test="new-button" @click.stop="editWord(-1)" />
                     </template>
                 </Toolbar>
-                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+                <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
                 <Listbox
                     v-if="!loading"
                     class="kn-list--column"
                     :options="wordsList"
                     :filter="true"
-                    :filterPlaceholder="$t('common.search')"
-                    filterMatchMode="contains"
-                    :filterFields="glossaryDefinitionDescriptor.filterFields"
-                    :emptyFilterMessage="$t('common.info.noDataFound')"
+                    :filter-placeholder="$t('common.search')"
+                    filter-match-mode="contains"
+                    :filter-fields="glossaryDefinitionDescriptor.filterFields"
+                    :empty-filter-message="$t('common.info.noDataFound')"
                     data-test="words-list"
                 >
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
-                        <div class="kn-list-item kn-draggable" draggable="true" @dragstart="onDragStart($event, slotProps.option)" data-test="list-item">
+                        <div class="kn-list-item kn-draggable" draggable="true" data-test="list-item" @dragstart="onDragStart($event, slotProps.option)">
                             <i class="pi pi-bars"></i>
                             <div class="kn-list-item-text" @click.stop="editWord(slotProps.option.WORD_ID)">
                                 <span>{{ slotProps.option.WORD }}</span>
                             </div>
-                            <Button icon="pi pi-info-circle" class="p-button-text p-button-rounded p-button-plain" @click.stop="showInfo(slotProps.option)" data-test="info-button" />
-                            <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteWordConfirm(slotProps.option.WORD_ID)" data-test="delete-button" />
+                            <Button icon="pi pi-info-circle" class="p-button-text p-button-rounded p-button-plain" data-test="info-button" @click.stop="showInfo(slotProps.option)" />
+                            <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" data-test="delete-button" @click.stop="deleteWordConfirm(slotProps.option.WORD_ID)" />
                         </div>
                     </template>
                 </Listbox>
             </div>
         </div>
-        <GlossaryDefinitionWordEdit :visible="editWordDialogVisible" @close="editWordDialogVisible = false" @saved="wordSaved" :state="state" :category="category" :propWord="contentInfo" :selectedGlossaryId="selectedGlossaryId" @reloadTree="reloadTree = !reloadTree"></GlossaryDefinitionWordEdit>
+        <GlossaryDefinitionWordEdit :visible="editWordDialogVisible" :state="state" :category="category" :prop-word="contentInfo" :selected-glossary-id="selectedGlossaryId" @close="editWordDialogVisible = false" @saved="wordSaved" @reloadTree="reloadTree = !reloadTree"></GlossaryDefinitionWordEdit>
     </div>
 </template>
 
@@ -67,6 +67,10 @@ export default defineComponent({
         GlossaryDefinitionInfoDialog,
         GlossaryDefinitionWordEdit
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             glossaryDefinitionDescriptor,
@@ -81,10 +85,6 @@ export default defineComponent({
             loading: false,
             editWordDialogVisible: false
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         await this.loadPage()

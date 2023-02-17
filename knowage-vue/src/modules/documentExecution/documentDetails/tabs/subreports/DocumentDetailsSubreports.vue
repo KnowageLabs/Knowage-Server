@@ -21,13 +21,13 @@
                                 <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
                                 <DataTable
                                     v-if="!loading"
+                                    v-model:selection="selectedSubreports"
+                                    v-model:filters="filters"
                                     class="p-datatable-sm kn-table"
                                     :value="allDocumentDetailsProp"
-                                    v-model:selection="selectedSubreports"
-                                    dataKey="id"
-                                    responsiveLayout="scroll"
-                                    v-model:filters="filters"
-                                    :globalFilterFields="globalFilterFields"
+                                    data-key="id"
+                                    responsive-layout="scroll"
+                                    :global-filter-fields="globalFilterFields"
                                     :loading="loading"
                                     @rowSelect="peristTable"
                                     @rowUnselect="deleteTable"
@@ -36,11 +36,11 @@
                                         <div class="table-header p-d-flex p-ai-center">
                                             <span id="search-container" class="p-input-icon-left p-mr-3">
                                                 <i class="pi pi-search" />
-                                                <InputText class="kn-material-input" v-model="filters['global'].value" :placeholder="$t('common.search')" />
+                                                <InputText v-model="filters['global'].value" class="kn-material-input" :placeholder="$t('common.search')" />
                                             </span>
                                         </div>
                                     </template>
-                                    <Column class="lineage-table-header" selectionMode="multiple" :headerStyle="mainDescriptor.style.tableHeader"> </Column>
+                                    <Column class="lineage-table-header" selection-mode="multiple" :header-style="mainDescriptor.style.tableHeader"> </Column>
                                     <Column field="label" :header="$t('common.label')" :sortable="true"></Column>
                                     <Column field="name" :header="$t('common.name')" :sortable="true"></Column>
                                     <Column field="description" :header="$t('common.description')" :sortable="true"></Column>
@@ -74,6 +74,10 @@ export default defineComponent({
     },
     props: { selectedDocument: { type: Object as PropType<iDocument>, required: true }, allDocumentDetailsProp: { type: Array as any, required: true } },
     emits: [],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             mainDescriptor,
@@ -84,17 +88,13 @@ export default defineComponent({
             globalFilterFields: ['name']
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
-    async created() {
-        await this.getSelectedSubreports()
-    },
     watch: {
         async allDocumentDetailsProp() {
             await this.getSelectedSubreports()
         }
+    },
+    async created() {
+        await this.getSelectedSubreports()
     },
 
     methods: {
@@ -107,8 +107,8 @@ export default defineComponent({
             this.loading = false
         },
         setCheckedTables() {
-            for (var i = 0; i < this.allDocumentDetailsProp.length; i++) {
-                for (var j = 0; j < this.savedSubreports.length; j++) {
+            for (let i = 0; i < this.allDocumentDetailsProp.length; i++) {
+                for (let j = 0; j < this.savedSubreports.length; j++) {
                     if (this.allDocumentDetailsProp[i].id == this.savedSubreports[j].sub_rpt_id) {
                         this.selectedSubreports.push(this.allDocumentDetailsProp[i])
                     }

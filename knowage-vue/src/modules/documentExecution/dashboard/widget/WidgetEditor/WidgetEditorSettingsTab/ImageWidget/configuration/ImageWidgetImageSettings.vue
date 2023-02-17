@@ -2,17 +2,17 @@
     <div v-if="imageSettings" class="p-grid p-jc-center p-ai-center kn-flex p-p-4">
         <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column kn-flex p-m-2">
             <label class="kn-material-input-label p-mr-2">{{ $t('common.height') }}</label>
-            <InputText class="kn-material-input p-inputtext-sm" v-model="imageSettings.style.height" @change="imageSettingsChanged" />
+            <InputText v-model="imageSettings.style.height" class="kn-material-input p-inputtext-sm" @change="imageSettingsChanged" />
         </div>
 
         <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column kn-flex p-m-2">
             <label class="kn-material-input-label p-mr-2">{{ $t('common.width') }}</label>
-            <InputText class="kn-material-input p-inputtext-sm" v-model="imageSettings.style.width" @change="imageSettingsChanged" />
+            <InputText v-model="imageSettings.style.width" class="kn-material-input p-inputtext-sm" @change="imageSettingsChanged" />
         </div>
 
         <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column kn-flex p-m-2">
             <label class="kn-material-input-label p-mr-2">{{ $t('common.horizontalAlign') }}</label>
-            <Dropdown class="kn-material-input kn-flex" v-model="imageSettings.style['background-position-x']" :options="descriptor.horizontalAlignmentOptions" optionValue="value" @change="imageSettingsChanged">
+            <Dropdown v-model="imageSettings.style['background-position-x']" class="kn-material-input kn-flex" :options="descriptor.horizontalAlignmentOptions" option-value="value" @change="imageSettingsChanged">
                 <template #value="slotProps">
                     <div>
                         <span>{{ getTranslatedLabel(slotProps.value, descriptor.horizontalAlignmentOptions, $t) }}</span>
@@ -29,7 +29,7 @@
         <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column kn-flex p-m-2">
             <label class="kn-material-input-label p-mr-2">{{ $t('common.verticalAlign') }}</label>
 
-            <Dropdown class="kn-material-input kn-flex" v-model="imageSettings.style['background-position-y']" :options="descriptor.verticalAlignmentOptions" optionValue="value" @change="imageSettingsChanged">
+            <Dropdown v-model="imageSettings.style['background-position-y']" class="kn-material-input kn-flex" :options="descriptor.verticalAlignmentOptions" option-value="value" @change="imageSettingsChanged">
                 <template #value="slotProps">
                     <div>
                         <span>{{ getTranslatedLabel(slotProps.value, descriptor.verticalAlignmentOptions, $t) }}</span>
@@ -53,11 +53,10 @@ import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import { emitter } from '../../../../../DashboardHelpers'
 import descriptor from '../ImageWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
-import InputNumber from 'primevue/inputnumber'
 
 export default defineComponent({
     name: 'image-widget-image-settings',
-    components: { Dropdown, InputNumber },
+    components: { Dropdown },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {

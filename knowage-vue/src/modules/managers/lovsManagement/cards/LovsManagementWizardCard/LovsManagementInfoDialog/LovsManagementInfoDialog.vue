@@ -87,12 +87,12 @@ import lovsManagementInfoDialogDescriptor from './LovsManagementInfoDialogDescri
 export default defineComponent({
     name: 'lovs-management-info-dialog',
     components: { Dialog },
-    emits: ['close'],
     props: {
         visible: { type: Boolean },
         infoTitle: { type: String },
         lovType: { type: Object }
     },
+    emits: ['close'],
     data() {
         return {
             lovsManagementInfoDialogDescriptor,

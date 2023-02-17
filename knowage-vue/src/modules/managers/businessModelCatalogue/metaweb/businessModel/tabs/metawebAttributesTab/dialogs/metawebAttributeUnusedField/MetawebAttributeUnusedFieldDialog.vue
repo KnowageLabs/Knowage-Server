@@ -7,7 +7,7 @@
                 </template>
             </Toolbar>
         </template>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
 
         <Message v-if="fields.length === 0" class="p-m-4" severity="info" :closable="false" :style="metawebAttributeUnusedFieldDialogDescriptor.styles.message">
             {{ $t('metaweb.businessModel.noUnusedFields') }}
@@ -16,7 +16,7 @@
         <Listbox v-else class="metaweb-unused-fields-listbox p-m-4" :options="fields">
             <template #option="slotProps">
                 <div class="p-m-2">
-                    <Checkbox class="p-mr-2" v-model="selectedUnusedFields" :value="slotProps.option"></Checkbox>
+                    <Checkbox v-model="selectedUnusedFields" class="p-mr-2" :value="slotProps.option"></Checkbox>
                     <span>{{ slotProps.option.name }}</span>
                 </div>
             </template>

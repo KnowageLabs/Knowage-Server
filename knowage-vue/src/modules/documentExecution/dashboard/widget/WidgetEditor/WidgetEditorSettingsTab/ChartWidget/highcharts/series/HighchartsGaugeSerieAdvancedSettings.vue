@@ -3,30 +3,30 @@
         <div class="p-col-12 p-md-6 p-lg-4 p-d-flex p-flex-column">
             <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.highcharts.dial.dialRadius') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center p-fluid">
-                <InputNumber class="kn-material-input p-inputtext-sm" v-model="dialRadius" :disabled="disabled" @blur="onRadiusChanged" />
-                <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.dial.dialRadiusHint')"></i>
+                <InputNumber v-model="dialRadius" class="kn-material-input p-inputtext-sm" :disabled="disabled" @blur="onRadiusChanged" />
+                <i v-tooltip.top="$t('dashboard.widgetEditor.highcharts.dial.dialRadiusHint')" class="pi pi-question-circle kn-cursor-pointer p-ml-2"></i>
             </div>
         </div>
 
         <div class="p-col-12 p-md-6 p-lg-4 p-px-2 p-pt-4">
-            <WidgetEditorColorPicker :initialValue="serieSettings.dial.backgroundColor" :label="$t('dashboard.widgetEditor.highcharts.dial.dialColor')" :disabled="disabled" @change="onSelectionColorChanged($event, 'dial')"></WidgetEditorColorPicker>
+            <WidgetEditorColorPicker :initial-value="serieSettings.dial.backgroundColor" :label="$t('dashboard.widgetEditor.highcharts.dial.dialColor')" :disabled="disabled" @change="onSelectionColorChanged($event, 'dial')"></WidgetEditorColorPicker>
         </div>
 
         <div class="p-col-12 p-md-6 p-lg-4 p-d-flex p-flex-column p-fluid">
             <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.highcharts.dial.dialBaseWitdh') }}</label>
-            <InputNumber class="kn-material-input p-inputtext-sm" v-model="serieSettings.dial.baseWidth" :disabled="disabled" @blur="modelChanged" />
+            <InputNumber v-model="serieSettings.dial.baseWidth" class="kn-material-input p-inputtext-sm" :disabled="disabled" @blur="modelChanged" />
         </div>
 
         <div class="p-col-12 p-md-6 p-lg-6 p-d-flex p-flex-column">
             <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.highcharts.pivot.pivotRadius') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center p-fluid">
-                <InputNumber class="kn-material-input p-inputtext-sm" v-model="serieSettings.pivot.radius" :disabled="disabled" @blur="modelChanged" />
-                <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.pivot.pivotRadiusHint')"></i>
+                <InputNumber v-model="serieSettings.pivot.radius" class="kn-material-input p-inputtext-sm" :disabled="disabled" @blur="modelChanged" />
+                <i v-tooltip.top="$t('dashboard.widgetEditor.highcharts.pivot.pivotRadiusHint')" class="pi pi-question-circle kn-cursor-pointer p-ml-2"></i>
             </div>
         </div>
 
         <div class="p-col-12 p-md-6 p-lg-6 p-px-2 p-pt-4">
-            <WidgetEditorColorPicker :initialValue="serieSettings.pivot.backgroundColor" :label="$t('dashboard.widgetEditor.highcharts.pivot.pivotColor')" :disabled="disabled" @change="onSelectionColorChanged($event, 'pivot')"></WidgetEditorColorPicker>
+            <WidgetEditorColorPicker :initial-value="serieSettings.pivot.backgroundColor" :label="$t('dashboard.widgetEditor.highcharts.pivot.pivotColor')" :disabled="disabled" @change="onSelectionColorChanged($event, 'pivot')"></WidgetEditorColorPicker>
         </div>
     </div>
 </template>

@@ -13,7 +13,7 @@
             <Button class="kn-button kn-button--primary qbe-advanced-filter-button p-m-2" :disabled="!singleGroupSelected" @click="ungroup"> {{ $t('qbe.advancedFilters.ungroup') }}</Button>
         </div>
 
-        <QBEOperator v-if="expression" :propNode="root" @selectedChanged="onSelectedChanged" @treeUpdated="onTreeUpdated"></QBEOperator>
+        <QBEOperator v-if="expression" :prop-node="root" @selectedChanged="onSelectedChanged" @treeUpdated="onTreeUpdated"></QBEOperator>
 
         <template #footer>
             <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>

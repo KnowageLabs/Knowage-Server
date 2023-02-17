@@ -1,4 +1,4 @@
-let routes = [
+const routes = [
     {
         path: '/kpi-definition',
         name: 'kpi-definition',

@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="workspaceSchedulationOldSchedulationsDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary" :content-style="workspaceSchedulationOldSchedulationsDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -7,9 +7,9 @@
                 </template>
             </Toolbar>
         </template>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
 
-        <WorkspaceSchedulationOldSchedulationsTable :propSchedulations="schedulations"></WorkspaceSchedulationOldSchedulationsTable>
+        <WorkspaceSchedulationOldSchedulationsTable :prop-schedulations="schedulations"></WorkspaceSchedulationOldSchedulationsTable>
         <template #footer>
             <div class="p-d-flex p-flex-row p-jc-end">
                 <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
@@ -61,7 +61,7 @@ export default defineComponent({
             this.schedulations = []
             if (this.job && this.job.documents) {
                 for (let i = 0; i < this.job.documents.length; i++) {
-                    let documentId = await this.getDocumentId(this.job.documents[i].name)
+                    const documentId = await this.getDocumentId(this.job.documents[i].name)
                     if (documentId) {
                         this.loadDocumentSchedulers(documentId, this.job.jobName)
                     }

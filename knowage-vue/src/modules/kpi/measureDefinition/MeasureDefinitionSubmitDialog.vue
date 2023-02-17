@@ -1,8 +1,8 @@
 <template>
-    <Dialog :contentStyle="metadataDefinitionTabViewDescriptor.dialog.style" :header="$t('kpi.measureDefinition.saveInProgress')" :visible="true" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
+    <Dialog :content-style="metadataDefinitionTabViewDescriptor.dialog.style" :header="$t('kpi.measureDefinition.saveInProgress')" :visible="true" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
         <div class="p-field p-m-2">
             <span class="p-float-label">
-                <InputText class="kn-material-input" type="text" v-model.trim="name" />
+                <InputText v-model.trim="name" class="kn-material-input" type="text" />
                 <label class="kn-material-input-label"> {{ $t('common.name') }} </label>
             </span>
         </div>
@@ -13,12 +13,12 @@
         </Toolbar>
         <div v-if="newAlias.length > 0">
             <h4>{{ $t('common.new') }}</h4>
-            <Chip v-for="alias in newAlias" class="p-m-2" :key="alias.id" :label="alias"></Chip>
+            <Chip v-for="alias in newAlias" :key="alias.id" class="p-m-2" :label="alias"></Chip>
         </div>
 
         <div v-if="reusedAlias.length > 0">
             <h4>{{ $t('common.reused') }}</h4>
-            <Chip v-for="alias in reusedAlias" class="p-m-2" :key="alias.id" :label="alias"></Chip>
+            <Chip v-for="alias in reusedAlias" :key="alias.id" class="p-m-2" :label="alias"></Chip>
         </div>
 
         <Toolbar v-if="newPlaceholder.length > 0 || reusedPlaceholder.length > 0" class="kn-toolbar kn-toolbar--primary">
@@ -29,17 +29,17 @@
 
         <div v-if="newPlaceholder.length > 0">
             <h4>{{ $t('common.new') }}</h4>
-            <Chip v-for="placeholder in newPlaceholder" class="p-m-2" :key="placeholder.id" :label="placeholder"></Chip>
+            <Chip v-for="placeholder in newPlaceholder" :key="placeholder.id" class="p-m-2" :label="placeholder"></Chip>
         </div>
 
         <div v-if="reusedPlaceholder.length > 0">
             <h4>{{ $t('common.reused') }}</h4>
-            <Chip v-for="placeholder in reusedPlaceholder" class="p-m-2" :key="placeholder.id" :label="placeholder"></Chip>
+            <Chip v-for="placeholder in reusedPlaceholder" :key="placeholder.id" class="p-m-2" :label="placeholder"></Chip>
         </div>
 
         <template #footer>
             <Button class="kn-button kn-button--secondary" :label="$t('common.close')" @click="$emit('close')"></Button>
-            <Button class="kn-button kn-button--primary" :label="$t('common.save')" @click="$emit('save', name)" :disabled="saveRuleButtonDisabled"></Button>
+            <Button class="kn-button kn-button--primary" :label="$t('common.save')" :disabled="saveRuleButtonDisabled" @click="$emit('save', name)"></Button>
         </template>
     </Dialog>
 </template>
@@ -58,11 +58,11 @@ export default defineComponent({
     data() {
         return {
             metadataDefinitionTabViewDescriptor,
-            name: null as String | null
+            name: null as string | null
         }
     },
     computed: {
-        saveRuleButtonDisabled(): Boolean {
+        saveRuleButtonDisabled(): boolean {
             return !this.name
         }
     },
@@ -76,7 +76,7 @@ export default defineComponent({
     },
     methods: {
         loadRuleName() {
-            this.name = this.ruleName as String
+            this.name = this.ruleName as string
         }
     }
 })

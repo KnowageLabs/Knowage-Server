@@ -1,4 +1,4 @@
-let routes = [
+const routes = [
   {
     path: '/profile-attributes-management',
     name: 'profile-attributes-management',

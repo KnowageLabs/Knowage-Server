@@ -9,19 +9,19 @@
             </Toolbar>
         </template>
         <template #content>
-            <DataTable class="georef-step1-table p-datatable-sm kn-table" :value="documentData.selectedDriver" dataKey="id" responsiveLayout="scroll" breakpoint="600px" v-model:filters="mainFilters" :globalFilterFields="globalFilterFields">
+            <DataTable v-model:filters="mainFilters" class="georef-step1-table p-datatable-sm kn-table" :value="documentData.selectedDriver" data-key="id" responsive-layout="scroll" breakpoint="600px" :global-filter-fields="globalFilterFields">
                 <template #empty>
                     {{ $t('workspace.gis.dnl.driversTableEmpty') }}
                 </template>
                 <template #header>
                     <span id="search-container" class="p-input-icon-left p-mr-3">
                         <i class="pi pi-search" />
-                        <InputText class="kn-material-input" v-model="mainFilters['global'].value" :placeholder="$t('common.search')" />
+                        <InputText v-model="mainFilters['global'].value" class="kn-material-input" :placeholder="$t('common.search')" />
                     </span>
                 </template>
-                <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true">
+                <Column v-for="col of columns" :key="col.field" :field="col.field" :header="$t(col.header)" :sortable="true">
                     <template #body="{data}">
-                        <span class="kn-truncated" v-tooltip.top="data[col.field]">{{ data[col.field] }}</span>
+                        <span v-tooltip.top="data[col.field]" class="kn-truncated">{{ data[col.field] }}</span>
                     </template>
                 </Column>
                 <Column v-if="!isDatasetChosen" :style="styleDescriptor.style.trashColumn" @rowClick="false">
@@ -33,26 +33,26 @@
         </template>
     </Card>
 
-    <Dialog class="p-fluid kn-dialog--toolbar--primary" :style="styleDescriptor.style.dialogSize" v-if="driverDialogVisible" :visible="driverDialogVisible" :modal="true" :closable="false">
+    <Dialog v-if="driverDialogVisible" class="p-fluid kn-dialog--toolbar--primary" :style="styleDescriptor.style.dialogSize" :visible="driverDialogVisible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>{{ $t('workspace.gis.dnl.layerList') }}</template>
             </Toolbar>
         </template>
-        <DataTable class="p-datatable-sm kn-table" :value="documentData.allDrivers" v-model:selection="selectedDriversList" dataKey="id" responsiveLayout="scroll" v-model:filters="multipleFilters" :globalFilterFields="globalFilterFields">
+        <DataTable v-model:selection="selectedDriversList" v-model:filters="multipleFilters" class="p-datatable-sm kn-table" :value="documentData.allDrivers" data-key="id" responsive-layout="scroll" :global-filter-fields="globalFilterFields">
             <template #empty>
                 {{ $t('workspace.gis.dnl.layersDialogEmpty') }}
             </template>
             <template #header>
                 <span id="search-container" class="p-input-icon-left p-mr-3">
                     <i class="pi pi-search" />
-                    <InputText class="kn-material-input" v-model="multipleFilters['global'].value" :placeholder="$t('common.search')" />
+                    <InputText v-model="multipleFilters['global'].value" class="kn-material-input" :placeholder="$t('common.search')" />
                 </span>
             </template>
-            <Column selectionMode="multiple" />
-            <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field">
+            <Column selection-mode="multiple" />
+            <Column v-for="col of columns" :key="col.field" :field="col.field" :header="$t(col.header)">
                 <template #body="{data}">
-                    <span class="kn-truncated" v-tooltip.top="data[col.field]">{{ data[col.field] }}</span>
+                    <span v-tooltip.top="data[col.field]" class="kn-truncated">{{ data[col.field] }}</span>
                 </template>
             </Column>
         </DataTable>
@@ -83,9 +83,8 @@ export default defineComponent({
         Column,
         Dialog
     },
-    emits: ['driverChanged'],
     props: { documentDataProp: { type: Object as any, required: false }, isDatasetChosen: Boolean },
-    computed: {},
+    emits: ['driverChanged'],
     data() {
         return {
             descriptor,
@@ -101,6 +100,7 @@ export default defineComponent({
             documentData: {} as any
         }
     },
+    computed: {},
     created() {
         this.documentData = this.documentDataProp
         this.selectedDriversList = deepcopy(this.documentDataProp.selectedDriver)

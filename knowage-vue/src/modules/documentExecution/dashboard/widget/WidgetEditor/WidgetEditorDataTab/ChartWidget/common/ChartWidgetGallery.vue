@@ -1,7 +1,8 @@
+<!-- eslint-disable vue/no-unused-vars -->
 <template>
     <div v-if="widgetModel" class="dashboard-editor-list-card-container kn-flex p-m-3">
         <div class="gallery-inputs p-d-flex p-flex-row p-ai-center p-flex-wrap p-mt-4 p-ml-4">
-            <InputText class="kn-material-input p-mr-2 model-search" :style="galleryDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" />
+            <InputText v-model="searchWord" class="kn-material-input p-mr-2 model-search" :style="galleryDescriptor.style.filterInput" type="text" :placeholder="$t('common.search')" @input="searchItems" />
         </div>
 
         <MasonryWall class="p-mx-4 p-my-2 kn-flex kn-overflow dashboard-scrollbar" :items="filteredChartTypes" :column-width="200" :gap="6">
@@ -20,12 +21,11 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget, IChartType } from '@/modules/documentExecution/Dashboard/Dashboard'
 import galleryDescriptor from './ChartWidgetGalleryDescriptor.json'
 import commonDescriptor from '../../common/WidgetCommonDescriptor.json'
-import Dropdown from 'primevue/dropdown'
 import MasonryWall from '@yeger/vue-masonry-wall'
 
 export default defineComponent({
     name: 'chart-widget-gallery',
-    components: { Dropdown, MasonryWall },
+    components: { MasonryWall },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     emits: ['selectedChartTypeChanged'],
     data() {
