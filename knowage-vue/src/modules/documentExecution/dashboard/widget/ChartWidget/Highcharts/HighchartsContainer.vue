@@ -1,4 +1,5 @@
 <template>
+    {{ chartID }}
     <div v-show="!error" :id="chartID" style="width: 100%; height: 100%; margin: 0 auto"></div>
 </template>
 
@@ -100,7 +101,7 @@ export default defineComponent({
             try {
                 this.highchartsInstance = Highcharts.chart(this.chartID, modelToRender as any)
                 this.highchartsInstance.reflow()
-            } catch (error: any) {
+            } catch (error) {
                 this.setError({ title: this.$t('common.toast.errorTitle'), msg: error })
             }
         },

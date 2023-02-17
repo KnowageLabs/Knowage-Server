@@ -50,18 +50,21 @@
                     @executeCrossNavigation="executeOLAPCrossNavigation"
                 ></Olap>
                 <template v-else-if="mode === 'dashboard' || newDashboardMode">
-                    <DashboardController
-                        v-for="(item, index) in breadcrumbs"
-                        :key="index"
-                        :sbiExecutionId="urlData?.sbiExecutionId"
-                        :document="item.document"
-                        :reloadTrigger="reloadTrigger"
-                        :hiddenFormData="item.hiddenFormData"
-                        :filtersData="item.filtersData"
-                        :newDashboardMode="newDashboardMode"
-                        @newDashboardSaved="onNewDashboardSaved"
-                        @executeCrossNavigation="onExecuteCrossNavigation"
-                    ></DashboardController>
+                    <template v-for="(item, index) in breadcrumbs" :key="index">
+                        <!-- {{ 'test' }}
+                        {{ filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible && (item.label === document.name || (crossNavigationContainerData && index === breadcrumbs.length - 1)) }} -->
+                        <DashboardController
+                            :visible="filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible && (item.label === document.name || (crossNavigationContainerData && index === breadcrumbs.length - 1))"
+                            :sbiExecutionId="urlData?.sbiExecutionId"
+                            :document="item.document"
+                            :reloadTrigger="reloadTrigger"
+                            :hiddenFormData="item.hiddenFormData"
+                            :filtersData="item.filtersData"
+                            :newDashboardMode="newDashboardMode"
+                            @newDashboardSaved="onNewDashboardSaved"
+                            @executeCrossNavigation="onExecuteCrossNavigation"
+                        ></DashboardController>
+                    </template>
                 </template>
             </template>
             <iframe
@@ -107,7 +110,7 @@
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
-import { iURLData, iExporter, iSchedulation } from './DocumentExecution'
+import { iURLData, iExporter, iSchedulation, ICrossNavigationBreadcrumb } from './DocumentExecution'
 import { createToolbarMenuItems } from './DocumentExecutionHelpers'
 import { emitter } from '../dashboard/DashboardHelpers'
 import DocumentExecutionBreadcrumb from './breadcrumbs/DocumentExecutionBreadcrumb.vue'
@@ -132,7 +135,7 @@ import deepcopy from 'deepcopy'
 import DashboardController from '../dashboard/DashboardController.vue'
 import { getCorrectRolesForExecution } from '../../../helpers/commons/roleHelper'
 import { executeAngularCrossNavigation, loadCrossNavigation } from './DocumentExecutionAngularCrossNavigationHelper'
-import { getDocumentForCrossNavigation } from './DocumentExecutionCrossNavigationHelper'
+import { getDocumentForCrossNavigation, updateBreadcrumbForCrossNavigation } from './DocumentExecutionCrossNavigationHelper'
 import { loadFilters } from './DocumentExecutionDirverHelpers'
 
 // @ts-ignore
@@ -213,7 +216,7 @@ export default defineComponent({
             sbiExecutionId: null as string | null,
             embedHTML: false,
             reloadTrigger: false,
-            breadcrumbs: [] as any[],
+            breadcrumbs: [] as ICrossNavigationBreadcrumb[],
             linkParameters: [],
             embed: false,
             olapCustomViewVisible: false,
@@ -1084,8 +1087,11 @@ export default defineComponent({
         async onExecuteCrossNavigation(payload: any) {
             this.document = getDocumentForCrossNavigation(payload, this.document)
             console.log('!!!!!!!!! DOCUMENT: ', this.document)
-            this.filtersData = await loadFilters(false, this.filtersData, this.document, this.breadcrumbs, this.userRole, this.parameterValuesMap, this.tabKey as string, this.sessionEnabled, this.$http, this.dateFormat, this)
-            console.log('!!!!!!! FORMATTED FILTERS DATA: ', this.filtersData)
+            updateBreadcrumbForCrossNavigation(this.breadcrumbs, this.document)
+            //  this.filtersData = await loadFilters(false, this.filtersData, this.document, this.breadcrumbs, this.userRole, this.parameterValuesMap, this.tabKey as string, this.sessionEnabled, this.$http, this.dateFormat, this)
+            //console.log('!!!!!!! FORMATTED FILTERS DATA: ', this.filtersData)
+            await this.loadPage(false, this.document.dsLabel, false)
+            console.log('!!!!!!!!! breadcrumbs: ', this.breadcrumbs)
         }
     }
 })

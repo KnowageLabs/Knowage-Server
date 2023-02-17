@@ -1,5 +1,5 @@
 <template>
-    <div v-if="model" :id="`dashboard_${model.configuration.id}`" class="dashboard-container">
+    <div v-if="model && visible" :id="`dashboard_${model?.configuration?.id}`" class="dashboard-container">
         <Button icon="fas fa-square-check" class="p-m-3 p-button-rounded p-button-text p-button-plain" style="position: fixed; right: 0; z-index: 999; background-color: white; box-shadow: 0px 2px 3px #ccc" @click="selectionsDialogVisible = true" />
         <Button icon="fas fa-square-check" class="p-m-3 p-button-rounded p-button-text p-button-plain" style="position: fixed; top: 150px; right: 0; z-index: 999; background-color: blue; box-shadow: 0px 2px 3px #ccc" @click="executeCrossNavigation" />
         <DashboardRenderer v-if="!loading" :model="model" :datasets="datasets" :dashboardId="dashboardId" :documentDrivers="drivers" :variables="model ? model.configuration.variables : []"></DashboardRenderer>
@@ -75,7 +75,15 @@ export default defineComponent({
             dHash: uuidv4()
         }
     },
-    props: { sbiExecutionId: { type: String }, document: { type: Object }, reloadTrigger: { type: Boolean }, hiddenFormData: { type: Object }, filtersData: { type: Object as PropType<{ filterStatus: iParameter[]; isReadyForExecution: boolean }> }, newDashboardMode: { type: Boolean } },
+    props: {
+        visible: { type: Boolean },
+        sbiExecutionId: { type: String },
+        document: { type: Object },
+        reloadTrigger: { type: Boolean },
+        hiddenFormData: { type: Object },
+        filtersData: { type: Object as PropType<{ filterStatus: iParameter[]; isReadyForExecution: boolean }> },
+        newDashboardMode: { type: Boolean }
+    },
     emits: ['newDashboardSaved', 'executeCrossNavigation'],
     data() {
         return {

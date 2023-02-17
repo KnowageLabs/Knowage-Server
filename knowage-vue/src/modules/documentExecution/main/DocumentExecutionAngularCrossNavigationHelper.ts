@@ -62,7 +62,7 @@ export const loadCrossNavigation = async (vueComponent: any, crossNavigationDocu
             vueComponent.breadcrumbs.push({
                 label: vueComponent.document.name,
                 document: vueComponent.document,
-                crossBreadcrumb: vueComponent.getCrossBeadcrumb(crossNavigationDocument, angularData)
+                crossBreadcrumb: getCrossBeadcrumb(crossNavigationDocument, angularData, document)
             })
         }
 
@@ -237,4 +237,35 @@ function formatCrossNavigationComboParameterDescription(tempParam: any) {
             } else tempParam.parameterValue.splice(i, 1)
         }
     }
+}
+
+const getCrossBeadcrumb = (crossNavigationDocument: any, angularData: any, document: any) => {
+    let tempCrossBreadcrumb = crossNavigationDocument?.crossBreadcrumb
+    if (tempCrossBreadcrumb?.includes('$P{')) {
+        tempCrossBreadcrumb = updateCrossBreadCrumbWithParameterValues(tempCrossBreadcrumb, angularData)
+    }
+    return tempCrossBreadcrumb ?? document.name
+}
+
+const updateCrossBreadCrumbWithParameterValues = (tempCrossBreadcrumb: string, angularData: any) => {
+    const parameterPlaceholders = tempCrossBreadcrumb.match(/{[\w\d]+}/g)
+    if (!parameterPlaceholders) return ''
+    const parameters = angularData.outputParameters
+    for (let i = 0; i < angularData.otherOutputParameters.length; i++) {
+        const key = Object.keys(angularData.otherOutputParameters[i])[0]
+        parameters[key] = angularData.otherOutputParameters[i][key]
+    }
+    const temp = [] as any[]
+    for (let i = 0; i < parameterPlaceholders.length; i++) {
+        const tempParameterName = parameterPlaceholders[i].substring(1, parameterPlaceholders[i].length - 1)
+        temp.push({
+            parameterPlaceholder: parameterPlaceholders[i],
+            value: parameters[tempParameterName]
+        })
+    }
+    let finalString = tempCrossBreadcrumb
+    for (let i = 0; i < temp.length; i++) {
+        finalString = finalString.replaceAll('$P' + temp[i].parameterPlaceholder, temp[i].value)
+    }
+    return finalString
 }

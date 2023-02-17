@@ -1,6 +1,6 @@
 import { IDashboardCrossNavigation } from "../dashboard/Dashboard"
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
-import { IDocumentNavigationParameter, ICrossNavigationParameter } from "./DocumentExecution"
+import { IDocumentNavigationParameter, ICrossNavigationParameter, ICrossNavigationBreadcrumb } from "./DocumentExecution"
 import { getDateStringFromJSDate } from "@/helpers/commons/localeHelper"
 
 let documentCrossNavigations = [] as IDashboardCrossNavigation[]
@@ -165,3 +165,16 @@ const loadTreeDriverInitialValue = (parameter: iParameter, crossNavigationParame
 }
 
 
+export const updateBreadcrumbForCrossNavigation = (breadcrumbs: ICrossNavigationBreadcrumb[], document: any) => {
+
+    const index = breadcrumbs.findIndex((el: any) => el.label === document.name)
+    if (index !== -1) {
+        breadcrumbs[index].document = document
+    } else {
+        breadcrumbs.push({
+            label: document.name,
+            document: document,
+            crossBreadcrumb: document.name // TODO - add cross breadcrumb logic
+        })
+    }
+}

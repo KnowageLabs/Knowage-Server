@@ -78,3 +78,12 @@ export interface ICrossNavigationParameter {
     multivalue: boolean,
     type: 'fixed'
 }
+
+export interface ICrossNavigationBreadcrumb {
+    document: any,
+    label: string,
+    crossBreadcrumb?: string,
+    filtersData?: { filterStatus: iParameter[], isReadyForExecution: boolean },
+    hiddenFormData?: any,
+    urlData?: any
+}
