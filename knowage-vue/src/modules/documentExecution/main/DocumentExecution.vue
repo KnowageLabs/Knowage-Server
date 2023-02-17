@@ -49,22 +49,6 @@
                     @applyCustomView="executeOlapCustomView"
                     @executeCrossNavigation="executeOLAPCrossNavigation"
                 ></Olap>
-<<<<<<< HEAD
-                <template v-else-if="mode === 'dashboard' || newDashboardMode">
-                    <DashboardController
-                        v-for="(item, index) in breadcrumbs"
-                        :key="index"
-                        :sbiExecutionId="urlData?.sbiExecutionId"
-                        :document="item.document"
-                        :reloadTrigger="reloadTrigger"
-                        :hiddenFormData="item.hiddenFormData"
-                        :filtersData="item.filtersData"
-                        :newDashboardMode="newDashboardMode"
-                        @newDashboardSaved="onNewDashboardSaved"
-                        @executeCrossNavigation="onExecuteCrossNavigation"
-                    ></DashboardController>
-                </template>
-=======
                 <DashboardController
                     v-else-if="mode === 'dashboard' || newDashboardMode"
                     :sbi-execution-id="urlData?.sbiExecutionId"
@@ -77,7 +61,6 @@
                     @add-widget="addWidget"
                     @add-dataset="openDashboardDatasetManagement"
                 ></DashboardController>
->>>>>>> 112b7ac8132131c92f38cef7bc90e0d3d8ced06c
             </template>
             <iframe
                 v-for="(item, index) in breadcrumbs"
@@ -571,13 +554,7 @@ export default defineComponent({
                 })
             }
         },
-<<<<<<< HEAD
-
-        // TODO - FILTER SERVICE
-        async loadFilters(initialLoading: boolean = false) {
-=======
         async loadFilters(initialLoading = false) {
->>>>>>> 112b7ac8132131c92f38cef7bc90e0d3d8ced06c
             if (this.parameterValuesMap && this.parameterValuesMap[this.document.label + '-' + this.tabKey] && initialLoading) {
                 this.filtersData = this.parameterValuesMap[this.document.label + '-' + this.tabKey]
                 this.setFiltersForBreadcrumbItem()
@@ -1087,8 +1064,6 @@ export default defineComponent({
 
             return finalString
         },
-<<<<<<< HEAD
-=======
         addDocumentOtherParametersToNavigationParamas(navigationParams: any[], angularData: any, crossNavigationDocument: any) {
             if (!angularData.outputParameters || angularData.outputParameters.length === 0 || !crossNavigationDocument?.navigationParams) return
             const keys = Object.keys(angularData.outputParameters)
@@ -1184,7 +1159,6 @@ export default defineComponent({
                 }
             }
         },
->>>>>>> 112b7ac8132131c92f38cef7bc90e0d3d8ced06c
         showOLAPCustomView() {
             this.olapCustomViewVisible = true
         },
