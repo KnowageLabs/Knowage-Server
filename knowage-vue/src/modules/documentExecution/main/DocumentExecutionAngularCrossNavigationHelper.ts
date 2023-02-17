@@ -3,26 +3,26 @@ import deepcopy from 'deepcopy'
 import moment from 'moment'
 
 export const executeAngularCrossNavigation = async (vueComponent: any, event: any, $http: any) => {
-    vueComponent.angularData = event.data
+    angularData = event.data
     await loadCrossNavigationByDocument(vueComponent, event.data, $http)
 }
 
 const loadCrossNavigationByDocument = async (vueComponent: any, angularData: any, $http: any) => {
-    if (!vueComponent.document) return
+    if (!document) return
 
     let temp = {} as any
 
-    vueComponent.loading = true
-    await $http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${vueComponent.document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
-    vueComponent.loading = false
+    loading = true
+    await $http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
+    loading = false
 
     if (temp.length === 0) return
 
     const crossTarget = findCrossTargetByCrossName(angularData, temp)
 
     if (!crossTarget && temp.length > 1) {
-        vueComponent.crossNavigationDocuments = temp
-        vueComponent.destinationSelectDialogVisible = true
+        crossNavigationDocuments = temp
+        destinationSelectDialogVisible = true
     } else {
         loadCrossNavigation(vueComponent, crossTarget ?? temp[0], angularData)
     }
@@ -38,7 +38,7 @@ export const loadCrossNavigation = async (vueComponent: any, crossNavigationDocu
     checkIfParameterHasFixedValue(navigationParams, crossNavigationDocument)
 
     if (crossNavigationDocument?.crossType !== 2) {
-        vueComponent.document = {
+        document = {
             ...crossNavigationDocument?.document,
             navigationParams: navigationParams
         }
@@ -48,31 +48,31 @@ export const loadCrossNavigation = async (vueComponent: any, crossNavigationDocu
         openCrossNavigationInNewWindow(vueComponent, popupOptions, crossNavigationDocument, navigationParams)
     } else if (crossNavigationDocument?.crossType === 1) {
         const documentLabel = crossNavigationDocument?.document.label
-        vueComponent.crossNavigationContainerData = {
+        crossNavigationContainerData = {
             documentLabel: documentLabel,
             iFrameName: documentLabel
         }
-        vueComponent.crossNavigationContainerVisible = true
-        await vueComponent.loadPage(false, documentLabel, true)
+        crossNavigationContainerVisible = true
+        await loadPage(false, documentLabel, true)
     } else {
-        const index = vueComponent.breadcrumbs.findIndex((el: any) => el.label === vueComponent.document.name)
+        const index = breadcrumbs.findIndex((el: any) => el.label === document.name)
         if (index !== -1) {
-            vueComponent.breadcrumbs[index].document = vueComponent.document
+            breadcrumbs[index].document = document
         } else {
-            vueComponent.breadcrumbs.push({
-                label: vueComponent.document.name,
-                document: vueComponent.document,
-                crossBreadcrumb: vueComponent.getCrossBeadcrumb(crossNavigationDocument, angularData)
+            breadcrumbs.push({
+                label: document.name,
+                document: document,
+                crossBreadcrumb: getCrossBeadcrumb(crossNavigationDocument, angularData)
             })
         }
 
-        await vueComponent.loadPage()
+        await loadPage()
     }
-    vueComponent.documentMode = 'VIEW'
+    documentMode = 'VIEW'
 }
 
 const formatAngularOutputParameters = (vueComponent: any, otherOutputParameters: any[]) => {
-    const startDocumentInputParameters = deepcopy(vueComponent.document.drivers)
+    const startDocumentInputParameters = deepcopy(document.drivers)
     const keys = [] as any[]
     otherOutputParameters.forEach((parameter: any) => keys.push(Object.keys(parameter)[0]))
     for (let i = 0; i < startDocumentInputParameters.length; i++) {
@@ -86,8 +86,8 @@ const formatAngularOutputParameters = (vueComponent: any, otherOutputParameters:
 
 const getParameterValueForCrossNavigation = (vueComponent: any, parameterLabel: string) => {
     if (!parameterLabel) return
-    const index = vueComponent.filtersData.filterStatus?.findIndex((param: any) => param.label === parameterLabel)
-    return index !== -1 ? vueComponent.filtersData.filterStatus[index].parameterValue[0].value : ''
+    const index = filtersData.filterStatus?.findIndex((param: any) => param.label === parameterLabel)
+    return index !== -1 ? filtersData.filterStatus[index].parameterValue[0].value : ''
 }
 
 const formatNavigationParams = (vueComponent: any, otherOutputParameters: any[], navigationParams: any) => {
@@ -118,7 +118,7 @@ const formatNavigationParams = (vueComponent: any, otherOutputParameters: any[],
 
 const setNavigationParametersFromCurrentFilters = (vueComponent: any, formatedParams: any, navigationParams: any) => {
     const navigationParamsKeys = navigationParams ? Object.keys(navigationParams) : []
-    const formattedParameters = vueComponent.getFormattedParameters()
+    const formattedParameters = getFormattedParameters()
     const formattedParametersKeys = formattedParameters ? Object.keys(formattedParameters) : []
     if (navigationParamsKeys.length > 0 && formattedParametersKeys.length > 0) {
         for (let i = 0; i < navigationParamsKeys.length; i++) {
@@ -154,7 +154,7 @@ const addSourceDocumentParameterValuesFromDocumentNavigationParameters = (vueCom
     const documentNavigationParamsKeys = Object.keys(crossNavigationDocument.navigationParams)
     documentNavigationParamsKeys.forEach((key: string) => {
         if (!navigationParams[key]) {
-            const sourceParameter = vueComponent.filtersData.filterStatus.find((parameter: any) => {
+            const sourceParameter = filtersData.filterStatus.find((parameter: any) => {
                 return parameter.urlName === crossNavigationDocument.navigationParams[key].value.label
             })
             if (sourceParameter) {
@@ -182,7 +182,7 @@ const openCrossNavigationInNewWindow = (vueComponent: any, popupOptions: any, cr
     const parameters = encodeURI(JSON.stringify(navigationParams))
     const url =
         import.meta.env.VITE_HOST_URL +
-        `/knowage/restful-services/publish?PUBLISHER=documentExecutionNg&OBJECT_ID=${crossNavigationDocument.document.id}&OBJECT_LABEL=${crossNavigationDocument.document.label}&SELECTED_ROLE=${vueComponent.sessionRole}&SBI_EXECUTION_ID=null&OBJECT_NAME=${crossNavigationDocument.document.name}&CROSS_PARAMETER=${parameters}`
+        `/knowage/restful-services/publish?PUBLISHER=documentExecutionNg&OBJECT_ID=${crossNavigationDocument.document.id}&OBJECT_LABEL=${crossNavigationDocument.document.label}&SELECTED_ROLE=${sessionRole}&SBI_EXECUTION_ID=null&OBJECT_NAME=${crossNavigationDocument.document.name}&CROSS_PARAMETER=${parameters}`
     window.open(url, '_blank', `toolbar=0,status=0,menubar=0,width=${popupOptions.width || '800'},height=${popupOptions.height || '600'}`)
 }
 
@@ -193,24 +193,24 @@ function findCrossTargetByCrossName(angularData: any, temp: any[]) {
     return index !== -1 ? temp[index] : null
 }
 
-export function loadNavigationParamsInitialValue(vueComponent: any) {
-    Object.keys(vueComponent.document.navigationParams).forEach((key: string) => {
-        for (let i = 0; i < vueComponent.filtersData.filterStatus.length; i++) {
-            const tempParam = vueComponent.filtersData.filterStatus[i]
+export function loadNavigationParamsInitialValue() {
+    Object.keys(document.navigationParams).forEach((key: string) => {
+        for (let i = 0; i < filtersData.filterStatus.length; i++) {
+            const tempParam = filtersData.filterStatus[i]
             if (key === tempParam.urlName || key === tempParam.label) {
-                if (tempParam.multivalue && Array.isArray(vueComponent.document.navigationParams[key])) {
-                    tempParam.parameterValue = vueComponent.document.navigationParams[key].map((value: string) => {
+                if (tempParam.multivalue && Array.isArray(document.navigationParams[key])) {
+                    tempParam.parameterValue = document.navigationParams[key].map((value: string) => {
                         return { value: value, description: '' }
                     })
                 } else {
-                    const crossNavigationValue = Array.isArray(vueComponent.document.navigationParams[key]) && vueComponent.document.navigationParams[key][0] ? vueComponent.document.navigationParams[key][0] : vueComponent.document.navigationParams[key]
+                    const crossNavigationValue = Array.isArray(document.navigationParams[key]) && document.navigationParams[key][0] ? document.navigationParams[key][0] : document.navigationParams[key]
                     if (tempParam.parameterValue[0] && tempParam.parameterValue[0].value === '') tempParam.parameterValue = []
                     if (!checkIfMultivalueDriverContainsCrossNavigationValue(tempParam, crossNavigationValue)) return
                     if (crossNavigationValue) {
                         if (tempParam.parameterValue[0]) tempParam.parameterValue[0].value = crossNavigationValue
                         else tempParam.parameterValue[0] = { value: crossNavigationValue, description: '' }
                     }
-                    if (vueComponent.document.navigationParams[key + '_field_visible_description']) vueComponent.document.navigationParams[key + '_field_visible_description'] = tempParam.parameterValue[0].description
+                    if (document.navigationParams[key + '_field_visible_description']) document.navigationParams[key + '_field_visible_description'] = tempParam.parameterValue[0].description
                     if (tempParam.type === 'DATE' && tempParam.parameterValue[0] && tempParam.parameterValue[0].value) {
                         tempParam.parameterValue[0].value = moment(tempParam.parameterValue[0].value, 'DD/MM/YYYY').toDate()
                     }
