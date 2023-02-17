@@ -152,11 +152,7 @@ export default defineComponent({
     },
     methods: {
         showMenu(event) {
-            console.log(event)
             this.createMenuItems()
-            // eslint-disable-next-line
-            // @ts-ignore
-            this.$refs.optionsMenu.close()
             // eslint-disable-next-line
             // @ts-ignore
             this.$refs.optionsMenu.toggle(event)
