@@ -131,8 +131,8 @@ import { mapState, mapActions } from 'pinia'
 import deepcopy from 'deepcopy'
 import DashboardController from '../dashboard/DashboardController.vue'
 import { getCorrectRolesForExecution } from '../../../helpers/commons/roleHelper'
-import { executeAngularCrossNavigation, loadNavigationParamsInitialValue, loadCrossNavigation } from './DocumentExecutionAngularCrossNavigationHelper'
-import { executeCrossNavigation } from './DocumentExecutionCrossNavigationHelper'
+import { executeAngularCrossNavigation, loadCrossNavigation } from './DocumentExecutionAngularCrossNavigationHelper'
+import { getDocumentForCrossNavigation } from './DocumentExecutionCrossNavigationHelper'
 import { loadFilters } from './DocumentExecutionDirverHelpers'
 
 // @ts-ignore
@@ -360,7 +360,6 @@ export default defineComponent({
                 }
             }
         })
-        console.log('------------ BREADCRUMBS: ', this.breadcrumbs)
     },
     unmounted() {
         this.removeEventListeners()
@@ -515,7 +514,6 @@ export default defineComponent({
         async loadPage(initialLoading = false, documentLabel: string | null = null, crossNavigationPopupMode = false) {
             this.loading = true
             this.filtersData = await loadFilters(initialLoading, this.filtersData, this.document, this.breadcrumbs, this.userRole, this.parameterValuesMap, this.tabKey as string, this.sessionEnabled, this.$http, this)
-            console.log('------------- filters data: ', this.filtersData)
             if (this.filtersData?.isReadyForExecution) {
                 this.parameterSidebarVisible = false
                 await this.loadURL(null, documentLabel, crossNavigationPopupMode)
@@ -670,7 +668,6 @@ export default defineComponent({
             }
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
-            console.log('----- index: ', index)
             if (index !== -1) this.breadcrumbs[index].hiddenFormData = this.hiddenFormData
         },
         async sendHiddenFormData() {
@@ -1085,8 +1082,10 @@ export default defineComponent({
             this.newDashboardMode = false
         },
         async onExecuteCrossNavigation(payload: any) {
-            executeCrossNavigation(payload, this.document)
+            this.document = getDocumentForCrossNavigation(payload, this.document)
+            console.log('!!!!!!!!! DOCUMENT: ', this.document)
             this.filtersData = await loadFilters(false, this.filtersData, this.document, this.breadcrumbs, this.userRole, this.parameterValuesMap, this.tabKey as string, this.sessionEnabled, this.$http, this)
+            console.log('!!!!!!! FORMATTED FILTERS DATA: ', this.filtersData)
         }
     }
 })
