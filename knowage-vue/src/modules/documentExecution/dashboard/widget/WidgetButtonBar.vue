@@ -17,12 +17,11 @@
  */
 import { defineComponent, PropType } from 'vue'
 import { IWidget } from '../Dashboard'
-import SpeedDial from 'primevue/speeddial'
 import Menu from 'primevue/menu'
 
 export default defineComponent({
     name: 'widget-button-bar',
-    components: { Menu, SpeedDial },
+    components: { Menu },
     props: {
         widget: { type: Object as PropType<IWidget>, required: true },
         playSelectionButtonVisible: { type: Boolean, required: true },
