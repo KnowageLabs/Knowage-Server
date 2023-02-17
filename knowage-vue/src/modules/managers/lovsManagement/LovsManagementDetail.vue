@@ -206,9 +206,20 @@ export default defineComponent({
                     return !this.selectedJavaClass.name
                 case lovItemEnum.DATASET:
                     return !this.selectedDataset.name
+                case lovItemEnum.FIX_LOV:
+                    return this.isFixedLovListInvalid()
             }
 
             return false
+        },
+        isFixedLovListInvalid() {
+            for (let i = 0; i < this.listForFixLov.length; i++) {
+                const fixedLovListItem = this.listForFixLov[i] as iFixedValue
+                if (fixedLovListItem.VALUE?.trim() && fixedLovListItem.DESCRIPTION?.trim()) {
+                    return false
+                }
+            }
+            return true
         },
         cleanSelections() {
             this.selectedQuery = { datasource: '', query: '' }
