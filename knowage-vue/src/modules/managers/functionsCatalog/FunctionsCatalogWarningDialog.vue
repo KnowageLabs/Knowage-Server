@@ -1,8 +1,8 @@
 <template>
-    <Dialog :header="title" :visible="visible" :modal="true" :contentStyle="functionsCatalogDetailDescriptor.warningDialog.style" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
+    <Dialog :header="title" :visible="visible" :modal="true" :content-style="functionsCatalogDetailDescriptor.warningDialog.style" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
         <div class="p-m-2">
             <Message class="p-m-2" severity="warn" :closable="false" :style="functionsCatalogDetailDescriptor.styles.message">
-                <p class="p-m-2" v-for="(field, index) in missingFields" :key="index">{{ field }}</p>
+                <p v-for="(field, index) in missingFields" :key="index" class="p-m-2">{{ field }}</p>
             </Message>
         </div>
         <template #footer>
@@ -20,12 +20,12 @@ import functionsCatalogDetailDescriptor from './FunctionsCatalogDetailDescriptor
 export default defineComponent({
     name: 'functions-catalog-warning-dialog',
     components: { Dialog, Message },
-    emits: ['close'],
     props: {
         visible: { type: Boolean },
         title: { type: String },
         missingFields: { type: Array }
     },
+    emits: ['close'],
     data() {
         return {
             functionsCatalogDetailDescriptor

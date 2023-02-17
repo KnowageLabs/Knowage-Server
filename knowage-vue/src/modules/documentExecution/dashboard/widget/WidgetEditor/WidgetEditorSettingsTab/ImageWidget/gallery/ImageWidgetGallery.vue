@@ -8,13 +8,13 @@
                 <div v-if="sidebarVisible" id="image-widget-gallery-backdrop" class="kn-flex" @click="sidebarVisible = false"></div>
                 <div class="p-col-12 p-d-flex p-jc-center p-ai-center">
                     <Button icon="fas fa-upload fa-1x" class="p-button-text p-button-plain p-ml-2" @click="setImageUploadType" />
-                    <KnInputFile :changeFunction="setImageForUpload" accept=".png, .jpg, .jpeg" :triggerInput="triggerImageUpload" />
+                    <KnInputFile :change-function="setImageForUpload" accept=".png, .jpg, .jpeg" :trigger-input="triggerImageUpload" />
                     <label class="kn-material-input-label p-mr-5"> {{ $t('dashboard.widgetEditor.imageWidget.uploadImage') }} </label>
                 </div>
-                <ImageWidgetGalleryCard v-for="(image, index) of images" :key="index" class="p-col-12 p-md-6 p-lg-4 kn-cursor-pointer" :isSelected="selectedImage?.imgId === image.imgId" :imageProp="image" @click="setSelectedImage(image)" @delete="onImageDelete" />
+                <ImageWidgetGalleryCard v-for="(image, index) of images" :key="index" class="p-col-12 p-md-6 p-lg-4 kn-cursor-pointer" :is-selected="selectedImage?.imgId === image.imgId" :image-prop="image" @click="setSelectedImage(image)" @delete="onImageDelete" />
 
                 <div v-if="sidebarVisible" id="image-widget-gallery-card-sidebar-container">
-                    <ImageWidgetGallerySidebar :selectedImage="selectedImage" @close="sidebarVisible = false"></ImageWidgetGallerySidebar>
+                    <ImageWidgetGallerySidebar :selected-image="selectedImage" @close="sidebarVisible = false"></ImageWidgetGallerySidebar>
                 </div>
             </div>
         </div>
@@ -77,7 +77,7 @@ export default defineComponent({
             const imageToUpload = event.target.files[0]
 
             if (imageToUpload) {
-                var formData = new FormData()
+                const formData = new FormData()
                 formData.append('uploadedImage', imageToUpload)
                 await this.$http
                     .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/images/addImage`, formData, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })

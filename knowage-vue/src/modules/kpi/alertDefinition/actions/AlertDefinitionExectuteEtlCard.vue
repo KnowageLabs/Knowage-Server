@@ -1,14 +1,14 @@
 <template>
     <DataTable
         v-model:selection="selectedFiles"
+        v-model:filters="filters"
         :value="files"
         :loading="loading"
         class="p-datatable-sm kn-table"
-        dataKey="DOCUMENT_ID"
-        responsiveLayout="stack"
-        v-model:filters="filters"
-        filterDisplay="menu"
-        :globalFilterFields="addActionDialogDescriptor.documentFilterFields"
+        data-key="DOCUMENT_ID"
+        responsive-layout="stack"
+        filter-display="menu"
+        :global-filter-fields="addActionDialogDescriptor.documentFilterFields"
         @row-select="fileSelected"
         @row-unselect="fileSelected"
         @row-select-all="fileSelected"
@@ -18,7 +18,7 @@
             <div class="table-header">
                 <span class="p-input-icon-left">
                     <i class="pi pi-search" />
-                    <InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
+                    <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
                 </span>
             </div>
         </template>
@@ -29,8 +29,8 @@
             {{ $t('common.info.dataLoading') }}
         </template>
 
-        <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-        <Column v-for="col of addActionDialogDescriptor.columnsDocument" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" class="kn-truncated">
+        <Column selection-mode="multiple" header-style="width: 3rem"></Column>
+        <Column v-for="col of addActionDialogDescriptor.columnsDocument" :key="col.field" :field="col.field" :header="$t(col.header)" :sortable="true" class="kn-truncated">
             <template #body="slotProps">
                 <span>{{ slotProps.data[slotProps.column.props.field] }}</span>
             </template>
@@ -62,9 +62,6 @@ export default defineComponent({
             type: Object
         }
     },
-    created() {
-        this.loadData()
-    },
     data() {
         return {
             addActionDialogDescriptor,
@@ -82,6 +79,9 @@ export default defineComponent({
                 }
             } as Object
         }
+    },
+    created() {
+        this.loadData()
     },
     methods: {
         loadData() {

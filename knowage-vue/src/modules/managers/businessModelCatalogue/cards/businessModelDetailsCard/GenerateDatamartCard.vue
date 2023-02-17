@@ -2,26 +2,26 @@
     <Dialog :style="generateDatamartCardDescriptor.dialog.style" :visible="true" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :header="$t('managers.businessModelManager.generateDatamart')" :closable="false" aria-label="Generate Datamart Options">
         <p>{{ $t('managers.businessModelManager.generateDatamartHint') }}</p>
         <div class="p-m-5">
-            <InputSwitch id="advanced-options" class="p-mr-2" v-model="showAdvancedOptions" />
+            <InputSwitch id="advanced-options" v-model="showAdvancedOptions" class="p-mr-2" />
             <label for="advanced-options" class="kn-material-input-label">{{ $t('managers.businessModelManager.showAdvancedOptions') }}</label>
         </div>
 
-        <form class="p-fluid p-m-2" v-if="showAdvancedOptions">
+        <form v-if="showAdvancedOptions" class="p-fluid p-m-2">
             <div class="p-field">
                 <span class="p-float-label">
-                    <InputText id="modelName" class="kn-material-input" type="text" v-model.trim="modelName" />
+                    <InputText id="modelName" v-model.trim="modelName" class="kn-material-input" type="text" />
                     <label for="modelName" class="kn-material-input-label"> {{ $t('managers.businessModelManager.modelName') }}</label>
                 </span>
             </div>
             <div class="p-field">
                 <span class="p-float-label">
-                    <InputText id="schemaName" class="kn-material-input" type="text" v-model.trim="schemaName" />
+                    <InputText id="schemaName" v-model.trim="schemaName" class="kn-material-input" type="text" />
                     <label for="schemaName" class="kn-material-input-label"> {{ $t('managers.businessModelManager.schemaName') }}</label>
                 </span>
             </div>
             <div class="p-field">
                 <span class="p-float-label">
-                    <InputText id="catalogName" class="kn-material-input" type="text" v-model.trim="catalogName" />
+                    <InputText id="catalogName" v-model.trim="catalogName" class="kn-material-input" type="text" />
                     <label for="catalogName" class="kn-material-input-label"> {{ $t('managers.businessModelManager.catalogName') }}</label>
                 </span>
             </div>
@@ -71,19 +71,9 @@ export default defineComponent({
         }
     },
     emits: ['generated', 'close'],
-    watch: {
-        businessModel() {
-            this.loadBusinessModel()
-        }
-    },
     setup() {
         const store = mainStore()
         return { store }
-    },
-    async created() {
-        this.loadBusinessModel()
-        this.loadUser()
-        await this.loadModelInfo()
     },
     data() {
         return {
@@ -97,6 +87,16 @@ export default defineComponent({
             isGeneratedForRegistry: false,
             includeSources: false
         }
+    },
+    watch: {
+        businessModel() {
+            this.loadBusinessModel()
+        }
+    },
+    async created() {
+        this.loadBusinessModel()
+        this.loadUser()
+        await this.loadModelInfo()
     },
     methods: {
         loadBusinessModel() {

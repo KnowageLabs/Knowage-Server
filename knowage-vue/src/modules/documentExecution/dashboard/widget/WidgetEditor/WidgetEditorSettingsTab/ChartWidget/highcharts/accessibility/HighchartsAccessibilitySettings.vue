@@ -2,7 +2,7 @@
     <div v-if="model?.accessibility" class="p-grid p-jc-center p-ai-center p-p-4">
         <div class="p-col-12">
             <label class="kn-material-input-label">{{ $t('common.description') }}</label>
-            <Textarea class="kn-material-input kn-width-full" rows="4" :autoResize="true" v-model="model.accessibility.description" maxlength="250" :disabled="accessibilityDisabled" @change="modelChanged" />
+            <Textarea v-model="model.accessibility.description" class="kn-material-input kn-width-full" rows="4" :auto-resize="true" maxlength="250" :disabled="accessibilityDisabled" @change="modelChanged" />
         </div>
         <div class="p-col-12 p-grid p-ai-center p-p-4">
             <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.accessibility.enabelKeyboardNavigation') }}</label>
@@ -11,9 +11,9 @@
         <div class="p-col-12 p-d-flex p-flex-column kn-flex p-m-2">
             <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.accessibility.keyboardNavigationOrder') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center">
-                <MultiSelect class="kn-material-input multiselect-keyboardNavigation" v-model="model.accessibility.keyboardNavigation.order" :options="descriptor.keyboardNavigationOrderOptions" optionValue="value" :disabled="accessibilityDisabled" @change="modelChanged">
+                <MultiSelect v-model="model.accessibility.keyboardNavigation.order" class="kn-material-input multiselect-keyboardNavigation" :options="descriptor.keyboardNavigationOrderOptions" option-value="value" :disabled="accessibilityDisabled" @change="modelChanged">
                     <template #value="slotProps">
-                        <div class="option-item-value" v-for="value of slotProps.value" :key="value">
+                        <div v-for="value of slotProps.value" :key="value" class="option-item-value">
                             <span> {{ getTranslatedLabel(value, descriptor.keyboardNavigationOrderOptions, $t) }}</span>
                         </div>
                     </template>
@@ -23,7 +23,7 @@
                         </div>
                     </template>
                 </MultiSelect>
-                <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.accessibility.keyboardNavigationOrderHint')"></i>
+                <i v-tooltip.top="$t('dashboard.widgetEditor.accessibility.keyboardNavigationOrderHint')" class="pi pi-question-circle kn-cursor-pointer p-ml-2"></i>
             </div>
         </div>
     </div>

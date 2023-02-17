@@ -8,7 +8,7 @@
                 </div>
             </template>
 
-            <Listbox class="metaweb-physical-model-column-listbox" v-model="selectedPhysicalModel" :options="physicalModel.columns" @change="emitSelectedItem">
+            <Listbox v-model="selectedPhysicalModel" class="metaweb-physical-model-column-listbox" :options="physicalModel.columns" @change="emitSelectedItem">
                 <template #option="slotProps">
                     <div>
                         <i :class="slotProps.option.primaryKey ? 'fa fa-key gold-key' : 'fa fa-columns'" class="p-mr-2"></i>

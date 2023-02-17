@@ -7,15 +7,15 @@
                 </template>
             </Toolbar>
         </template>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
 
         <div class="p-formgrid p-grid p-m-4">
             <div class="p-fluid p-col-12 p-md-12 p-mt-2">
                 <span class="p-float-label">
                     <InputText
                         id="name"
-                        class="kn-material-input"
                         v-model.trim="view.name"
+                        class="kn-material-input"
                         :class="{
                             'p-invalid': !view.name && viewNameTouched
                         }"
@@ -32,14 +32,14 @@
 
             <div class="p-field p-col-12 p-md-12 p-mt-2">
                 <span class="p-float-label">
-                    <InputText id="description" class="kn-material-input" v-model.trim="view.description" />
+                    <InputText id="description" v-model.trim="view.description" class="kn-material-input" />
                     <label for="description" class="kn-material-input-label">{{ $t('common.description') }}</label>
                 </span>
             </div>
 
             <div class="p-field p-col-12 p-md-12 p-mt-2">
                 <span class="p-float-label">
-                    <Dropdown class="kn-material-input" v-model="view.scope" :options="olapCustomViewSaveDialogDescriptor.scopeOptions"> </Dropdown>
+                    <Dropdown v-model="view.scope" class="kn-material-input" :options="olapCustomViewSaveDialogDescriptor.scopeOptions"> </Dropdown>
                     <label class="kn-material-input-label"> {{ $t('common.scope') }}</label>
                 </span>
             </div>
@@ -63,6 +63,10 @@ export default defineComponent({
     name: 'olap-custom-view-save-dialog',
     components: { Dialog, Dropdown },
     props: { sbiExecutionId: { type: String } },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             olapCustomViewSaveDialogDescriptor,
@@ -70,10 +74,6 @@ export default defineComponent({
             viewNameTouched: false,
             loading: false
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {},
     methods: {

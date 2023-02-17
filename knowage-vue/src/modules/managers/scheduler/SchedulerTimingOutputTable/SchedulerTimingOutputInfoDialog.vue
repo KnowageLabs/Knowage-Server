@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="schedulerTimingOutputInfoDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary" :content-style="schedulerTimingOutputInfoDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>

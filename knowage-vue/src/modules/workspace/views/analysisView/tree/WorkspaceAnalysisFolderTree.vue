@@ -1,7 +1,7 @@
 <template>
     <Tree id="folders-tree" :value="nodes" @node-expand="setOpenFolderIcon($event)" @node-collapse="setClosedFolderIcon($event)">
         <template #default="slotProps">
-            <Checkbox name="folders" v-model="selectedFolders" :value="slotProps.node.id" @change="emitSelectedFolders" />
+            <Checkbox v-model="selectedFolders" name="folders" :value="slotProps.node.id" @change="emitSelectedFolders" />
             <i :class="slotProps.node.customIcon" class="p-mx-2"></i>
             <b>{{ slotProps.node.label }}</b>
         </template>

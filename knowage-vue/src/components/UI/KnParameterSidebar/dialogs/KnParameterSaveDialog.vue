@@ -1,20 +1,20 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="knParameterSaveDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary" :content-style="knParameterSaveDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start> {{ $t('common.saveAs') + ' ... ' }} </template>
             </Toolbar>
         </template>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
 
         <div class="p-fluid p-formgrid p-grid p-m-4">
             <div class="p-field p-col-12">
                 <span class="p-float-label">
                     <InputText
                         id="name"
-                        class="kn-material-input"
-                        :maxLength="knParameterSaveDialogDescriptor.nameMaxLength"
                         v-model.trim="v$.viewpoint.NAME.$model"
+                        class="kn-material-input"
+                        :max-length="knParameterSaveDialogDescriptor.nameMaxLength"
                         :class="{
                             'p-invalid': v$.viewpoint.NAME.$invalid && v$.viewpoint.NAME.$dirty
                         }"
@@ -24,8 +24,8 @@
                 </span>
                 <div class="p-d-flex p-flex-row p-jc-around">
                     <KnValidationMessages
-                        :vComp="v$.viewpoint.NAME"
-                        :additionalTranslateParams="{
+                        :v-comp="v$.viewpoint.NAME"
+                        :additional-translate-params="{
                             fieldName: $t('common.name')
                         }"
                     />
@@ -37,9 +37,9 @@
                 <span class="p-float-label">
                     <InputText
                         id="description"
-                        class="kn-material-input"
-                        :maxLength="knParameterSaveDialogDescriptor.descriptionMaxLength"
                         v-model.trim="v$.viewpoint.DESCRIPTION.$model"
+                        class="kn-material-input"
+                        :max-length="knParameterSaveDialogDescriptor.descriptionMaxLength"
                         :class="{
                             'p-invalid': v$.viewpoint.DESCRIPTION.$invalid && v$.viewpoint.DESCRIPTION.$dirty
                         }"
@@ -49,8 +49,8 @@
                 </span>
                 <div class="p-d-flex p-flex-row p-jc-around">
                     <KnValidationMessages
-                        :vComp="v$.viewpoint.DESCRIPTION"
-                        :additionalTranslateParams="{
+                        :v-comp="v$.viewpoint.DESCRIPTION"
+                        :additional-translate-params="{
                             fieldName: $t('common.description')
                         }"
                     />
@@ -62,8 +62,8 @@
                 <label for="scope" class="kn-material-input-label">{{ $t('common.scope') }} * </label>
                 <Dropdown
                     id="scope"
-                    class="kn-material-input"
                     v-model="v$.viewpoint.SCOPE.$model"
+                    class="kn-material-input"
                     :class="{
                         'p-invalid': v$.viewpoint.SCOPE.$invalid && v$.viewpoint.SCOPE.$dirty
                     }"
@@ -72,8 +72,8 @@
                 />
                 <div class="p-d-flex p-flex-row">
                     <KnValidationMessages
-                        :vComp="v$.viewpoint.SCOPE"
-                        :additionalTranslateParams="{
+                        :v-comp="v$.viewpoint.SCOPE"
+                        :additional-translate-params="{
                             fieldName: $t('common.scope')
                         }"
                     />
@@ -84,7 +84,7 @@
         <template #footer>
             <div class="p-d-flex p-flex-row p-jc-end">
                 <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
-                <Button class="kn-button kn-button--primary" @click="saveViewpoint" :disabled="saveButtonDisabled"> {{ $t('common.save') }}</Button>
+                <Button class="kn-button kn-button--primary" :disabled="saveButtonDisabled" @click="saveViewpoint"> {{ $t('common.save') }}</Button>
             </div>
         </template>
     </Dialog>

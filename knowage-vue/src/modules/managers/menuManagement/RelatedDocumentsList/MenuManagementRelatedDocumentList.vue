@@ -2,29 +2,29 @@
     <ProgressBar mode="indeterminate" class="kn-progress-bar" :hidden="!load" data-test="related-docs-progress-bar" />
 
     <DataTable
-        :value="relatedDocumentsList"
         v-model:selection="selectedProduct1"
-        selectionMode="single"
-        @rowSelect="onDocumentSelect"
+        v-model:filters="filters"
+        :value="relatedDocumentsList"
+        selection-mode="single"
         :paginator="true"
         :loading="load"
         :rows="20"
         class="p-datatable-sm kn-table"
-        dataKey="id"
-        v-model:filters="filters"
-        filterDisplay="menu"
-        :globalFilterFields="menuConfigurationRelatedDocumentsDescriptor.globalFilterFields"
-        :rowsPerPageOptions="[10, 15, 20]"
-        responsiveLayout="stack"
+        data-key="id"
+        filter-display="menu"
+        :global-filter-fields="menuConfigurationRelatedDocumentsDescriptor.globalFilterFields"
+        :rows-per-page-options="[10, 15, 20]"
+        responsive-layout="stack"
         breakpoint="960px"
-        :currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
+        :current-page-report-template="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
         data-test="related-documents-list"
+        @rowSelect="onDocumentSelect"
     >
         <template #header>
             <div class="table-header">
                 <span class="p-input-icon-left">
                     <i class="pi pi-search" />
-                    <InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
+                    <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
                 </span>
             </div>
         </template>
@@ -35,9 +35,9 @@
             {{ $t('common.info.dataLoading') }}
         </template>
 
-        <Column v-for="col of menuConfigurationRelatedDocumentsDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :style="menuConfigurationRelatedDocumentsDescriptor.table.column.style" :sortable="true" class="kn-truncated">
+        <Column v-for="col of menuConfigurationRelatedDocumentsDescriptor.columns" :key="col.field" :field="col.field" :header="$t(col.header)" :style="menuConfigurationRelatedDocumentsDescriptor.table.column.style" :sortable="true" class="kn-truncated">
             <template #filter="{ filterModel }">
-                <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter"></InputText>
             </template>
             <template #body="slotProps">
                 <span :title="slotProps.data[col.field]">{{ slotProps.data[col.field] }}</span>
@@ -64,22 +64,15 @@ export default defineComponent({
         Column,
         ProgressBar
     },
-    emits: ['selectedDocument'],
     props: {
         documents: Object,
         loading: Boolean
     },
-    watch: {
-        loading: {
-            handler: function (l) {
-                this.load = l
-            }
-        }
-    },
+    emits: ['selectedDocument'],
     data() {
         return {
             apiUrl: import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/',
-            load: false as Boolean,
+            load: false as boolean,
             relatedDocumentsList: [] as iDocument[],
             filters: {
                 global: [filterDefault],
@@ -94,6 +87,13 @@ export default defineComponent({
             } as Object,
             selectedDocument: null as iDocument | null,
             menuConfigurationRelatedDocumentsDescriptor: MenuConfigurationRelatedDocumentsDescriptor
+        }
+    },
+    watch: {
+        loading: {
+            handler: function (l) {
+                this.load = l
+            }
         }
     },
     async created() {

@@ -2,15 +2,15 @@
     <div class="kn-page kn-data-preparation">
         <KnCalculatedField
             v-model:visibility="showCFDialog"
-            @save="saveCFDialog"
-            @cancel="cancelCFDialog"
+            v-model:template="selectedTransformation"
             :fields="columns"
             :descriptor="cfDescriptor"
-            :propCalcFieldFunctions="cfDescriptor.availableFunctions"
-            :readOnly="readOnly"
-            @update:readOnly="updateReadOnly"
-            v-model:template="selectedTransformation"
+            :prop-calc-field-functions="cfDescriptor.availableFunctions"
+            :read-only="readOnly"
             :valid="cfType !== ''"
+            @save="saveCFDialog"
+            @cancel="cancelCFDialog"
+            @update:readOnly="updateReadOnly"
         >
             <template #additionalInputs>
                 <div class="p-col-4">
@@ -20,8 +20,8 @@
                             :options="cfDescriptor.availableTypes"
                             :disabled="readOnly"
                             class="kn-material-input"
-                            optionLabel="label"
-                            optionValue="code"
+                            option-label="label"
+                            option-value="code"
                             :class="{
                                 'p-invalid': !cfType
                             }"
@@ -31,19 +31,19 @@
                 </div>
             </template>
         </KnCalculatedField>
-        <DataPreparationDialog v-model:transformation="selectedTransformation" @send-transformation="handleTransformation" :columns="columns" v-model:col="col" :readOnly="readOnly" @update:readOnly="updateReadOnly" />
-        <DataPreparationSaveDialog v-model:visibility="showSaveDialog" :originalDataset="dataset" :config="dataset.config" :columns="columns" :instanceId="instanceId" @update:instanceId="updateInstanceId" :processId="processId" @update:processId="updateprocessId" :preparedDsMeta="preparedDsMeta" />
+        <DataPreparationDialog v-model:transformation="selectedTransformation" v-model:col="col" :columns="columns" :read-only="readOnly" @send-transformation="handleTransformation" @update:readOnly="updateReadOnly" />
+        <DataPreparationSaveDialog v-model:visibility="showSaveDialog" :original-dataset="dataset" :config="dataset.config" :columns="columns" :instance-id="instanceId" :process-id="processId" :prepared-ds-meta="preparedDsMeta" @update:instanceId="updateInstanceId" @update:processId="updateprocessId" />
         <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
             <template #start> {{ $t('managers.workspaceManagement.dataPreparation.label') }} ({{ $t('managers.workspaceManagement.dataPreparation.originalDataset') }}: {{ dataset.name }})</template>
             <template #end>
-                <Button icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.refresh')" @click="refreshOriginalDataset" :disabled="loading > 0" />
-                <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDataset" :disabled="loading > 0" />
-                <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeTemplate()" /> </template
+                <Button v-tooltip.bottom="$t('common.refresh')" icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain" :disabled="loading > 0" @click="refreshOriginalDataset" />
+                <Button v-tooltip.bottom="$t('common.save')" icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="loading > 0" @click="saveDataset" />
+                <Button v-tooltip.bottom="$t('common.close')" icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate()" /> </template
         ></Toolbar>
         <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0 toolbarCustomConfig">
             <template #start>
-                <template v-for="(menu, index) in getMenuForToolbar()" v-bind:key="index">
-                    <Button v-if="menu !== 'divider'" :class="descriptor.css.buttonClassHeader" v-tooltip.bottom="$t(menu.label)" @click="callFunction(menu)" :disabled="calculateDisabledProperty(menu)">
+                <template v-for="(menu, index) in getMenuForToolbar()" :key="index">
+                    <Button v-if="menu !== 'divider'" v-tooltip.bottom="$t(menu.label)" :class="descriptor.css.buttonClassHeader" :disabled="calculateDisabledProperty(menu)" @click="callFunction(menu)">
                         <span v-if="menu.icon.class" :class="menu.icon.class">{{ menu.icon.name }}</span>
                         <i v-else :class="menu.icon"></i>
                     </Button>
@@ -53,7 +53,7 @@
             <template #end>
                 <div class="arrow-button-container">
                     <Button icon="pi pi-arrow-left" :class="descriptor.css.buttonClassHeader" style="overflow: visible" @click="toggleSidebarVisibility()" />
-                    <Badge class="arrow-badge" v-if="dataset.config && dataset.config.transformations && dataset.config.transformations.length > 0" :value="dataset.config && dataset.config.transformations && dataset.config.transformations.length"></Badge>
+                    <Badge v-if="dataset.config && dataset.config.transformations && dataset.config.transformations.length > 0" class="arrow-badge" :value="dataset.config && dataset.config.transformations && dataset.config.transformations.length"></Badge>
                 </div>
             </template>
         </Toolbar>
@@ -77,14 +77,14 @@
                     <h4 class="kn-truncated">{{ $t('managers.workspaceManagement.dataPreparation.transformations.label') }}</h4>
                 </div>
                 <Divider class="p-m-0 p-p-0 dividerCustomConfig" />
-                <Listbox class="kn-list kn-flex kn-list-no-border-right" :options="reverseTransformations()" optionLabel="type"
+                <Listbox class="kn-list kn-flex kn-list-no-border-right" :options="reverseTransformations()" option-label="type"
                     ><template #option="slotProps">
                         <div class="p-text-uppercase kn-list-item transformationSidebarElement">
                             <div v-if="slotProps.option.type != 'calculatedField'">{{ slotProps.option.type }} - {{ slotProps.option.parameters[0].columns[0] }}</div>
                             <div v-else>{{ slotProps.option.type }} - {{ slotProps.option.parameters[0].colName }}</div>
                             <div>
-                                <Button v-if="slotProps.option.type != 'trim' && slotProps.option.type != 'drop'" icon="fas fa-eye" :class="descriptor.css.buttonClassHeader" @click="openTransformationDetail(slotProps.option)" v-tooltip="$t('common.preview')" />
-                                <Button v-if="slotProps.index == 0" icon="p-jc-end pi pi-trash" :class="descriptor.css.buttonClassHeader" @click="deleteTransformation()" v-tooltip="$t('common.delete')" :disabled="loading > 0" />
+                                <Button v-if="slotProps.option.type != 'trim' && slotProps.option.type != 'drop'" v-tooltip="$t('common.preview')" icon="fas fa-eye" :class="descriptor.css.buttonClassHeader" @click="openTransformationDetail(slotProps.option)" />
+                                <Button v-if="slotProps.index == 0" v-tooltip="$t('common.delete')" icon="p-jc-end pi pi-trash" :class="descriptor.css.buttonClassHeader" :disabled="loading > 0" @click="deleteTransformation()" />
                             </div>
                         </div> </template
                 ></Listbox>
@@ -93,19 +93,19 @@
                 ref="dt"
                 :value="datasetData"
                 class="p-datatable-sm kn-table data-prep-table"
-                dataKey="id"
+                data-key="id"
                 :paginator="datasetData.length > 20"
                 :rows="20"
-                paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 breakpoint="960px"
-                :currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
+                :current-page-report-template="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
                 :loading="loading > 0"
-                :resizableColumns="true"
-                columnResizeMode="expand"
-                showGridlines
-                responsiveLayout="scroll"
+                :resizable-columns="true"
+                column-resize-mode="expand"
+                show-gridlines
+                responsive-layout="scroll"
                 :scrollable="true"
-                scrollDirection="both"
+                scroll-direction="both"
             >
                 <template #empty>
                     {{ $t('common.info.noDataFound') }}
@@ -114,7 +114,7 @@
                     {{ $t('common.info.dataLoading') }}
                 </template>
 
-                <Column v-for="(col, colIndex) in columns" :field="col.header" :key="colIndex" :style="{ width: '200px' }">
+                <Column v-for="(col, colIndex) in columns" :key="colIndex" :field="col.header" :style="{ width: '200px' }">
                     <template #header>
                         <Button v-if="col.fieldType" :class="descriptor.css.buttonClassHeader" @click="toggle($event, 'opType-' + colIndex)">
                             <span v-if="descriptor.roles.filter((x) => x.code === col.fieldType)[0].icon.class" :class="descriptor.roles.filter((x) => x.code === col.fieldType)[0].icon.class">{{ descriptor.roles.filter((x) => x.code === col.fieldType)[0].icon.name }}</span>
@@ -122,19 +122,19 @@
                         </Button>
                         <OverlayPanel :ref="'opType-' + colIndex" :popup="true">
                             <span class="p-float-label">
-                                <Dropdown v-model="col.fieldType" :options="translateRoles()" optionLabel="label" optionValue="code" class="kn-material-input" />
+                                <Dropdown v-model="col.fieldType" :options="translateRoles()" option-label="label" option-value="code" class="kn-material-input" />
                             </span>
                         </OverlayPanel>
                         <div class="aliasAndType p-ml-2">
-                            <input class="kn-input-text-sm" type="text" v-model="col.fieldAlias" v-if="col.editing" @blur="changeAlias(col)" @keydown.enter="changeAlias(col)" />
+                            <input v-if="col.editing" v-model="col.fieldAlias" class="kn-input-text-sm" type="text" @blur="changeAlias(col)" @keydown.enter="changeAlias(col)" />
                             <span v-else class="kn-clickable" @click="changeAlias(col)">{{ col.fieldAlias }}</span>
                             <span class="kn-list-item-text-secondary kn-truncated roleType">{{ $t(removePrefixFromType(col.Type)) }}</span>
                         </div>
                         <Button icon="pi pi-ellipsis-v" :class="descriptor.css.buttonClassHeader" @click="toggle($event, 'trOpType-' + colIndex)" />
-                        <Menu :model="getTransformationsMenu(col)" :ref="'trOpType-' + colIndex" :popup="true">
+                        <Menu :ref="'trOpType-' + colIndex" :model="getTransformationsMenu(col)" :popup="true">
                             <template #item="{ item }">
                                 <span :class="['p-menuitem-link', 'toolbarCustomConfig', descriptor.css.buttonClassHeader]" @click="callFunction(item, col)">
-                                    <span :class="item.icon.class" class="menu-icon" v-if="item.icon.class">{{ item.icon.name }}</span>
+                                    <span v-if="item.icon.class" :class="item.icon.class" class="menu-icon">{{ item.icon.name }}</span>
                                     <i v-else :class="item.icon"></i> <span class="p-ml-2"> {{ $t(item.label) }}</span>
                                 </span>
                             </template>
@@ -180,6 +180,7 @@ import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'data-preparation-detail',
+    components: { Listbox, KnCalculatedField, Badge, Column, DataPreparationDialog, DataPreparationSaveDialog, DataTable, Divider, Dropdown, OverlayPanel, Sidebar, Menu },
     props: {
         id: Number,
         transformations: Array as PropType<any[]>,
@@ -187,7 +188,10 @@ export default defineComponent({
         existingInstanceId: String,
         existingDataset: String
     },
-    components: { Listbox, KnCalculatedField, Badge, Column, DataPreparationDialog, DataPreparationSaveDialog, DataTable, Divider, Dropdown, OverlayPanel, Sidebar, Menu },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
 
     data() {
         return {
@@ -217,10 +221,6 @@ export default defineComponent({
             cfType: ''
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
     async created() {
         this.loading++
         this.descriptorTransformations = Object.assign([], this.descriptor.transformations)
@@ -232,9 +232,9 @@ export default defineComponent({
             await this.initDsMetadata()
             this.initTransformations()
 
-            var url = new URL(window.location.origin)
+            const url = new URL(window.location.origin)
             url.protocol = url.protocol.replace('http', 'ws')
-            var uri = url + 'knowage-data-preparation/ws?' + import.meta.env.VITE_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
+            const uri = url + 'knowage-data-preparation/ws?' + import.meta.env.VITE_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
             this.client = new Client({
                 brokerURL: uri,
                 connectHeaders: {},
@@ -262,7 +262,7 @@ export default defineComponent({
                 this.client.subscribe('/user/queue/error', (error) => {
                     // called when the client receives a STOMP message from the server
                     if (error.body) {
-                        let message = JSON.parse(error.body)
+                        const message = JSON.parse(error.body)
                         this.store.setError({ title: 'Error', msg: message.message })
                     } else {
                         this.store.setError({ title: 'Error' })
@@ -276,7 +276,7 @@ export default defineComponent({
                     (message) => {
                         // called when the client receives a STOMP message from the server
                         if (message.body) {
-                            let avroJobResponse = JSON.parse(message.body)
+                            const avroJobResponse = JSON.parse(message.body)
                             if (avroJobResponse.statusOk) this.store.setInfo({ title: 'Dataset prepared successfully' })
                             else this.store.setError({ title: 'Cannot prepare dataset', msg: avroJobResponse.errorMessage })
                             //TODO: refresh data?
@@ -297,6 +297,12 @@ export default defineComponent({
             this.client.activate()
         }
     },
+    unmounted() {
+        if (Object.keys(this.client).length > 0) {
+            this.client.deactivate()
+            this.client = {}
+        }
+    },
 
     methods: {
         getFormattedDate(date: any, format: any) {
@@ -305,7 +311,7 @@ export default defineComponent({
         getProgressValue() {
             if (this.dataset.config && this.dataset.config.transformations && this.dataset.config.transformations.length && this.dataset.config.transformations.length > 1) {
                 this.progressMode = ''
-                let tot = this.dataset.config.transformations.length
+                const tot = this.dataset.config.transformations.length
 
                 return (100 * (tot - this.loading)) / tot
             }
@@ -316,7 +322,7 @@ export default defineComponent({
         },
         reverseTransformations() {
             if (this.dataset.config && this.dataset.config.transformations) {
-                let transformations = [...this.dataset.config.transformations]
+                const transformations = [...this.dataset.config.transformations]
                 return transformations.reverse()
             }
 
@@ -328,13 +334,13 @@ export default defineComponent({
             this.cfType = ''
         },
         saveCFDialog(t): void {
-            let convertedTransformation = this.convertCFTransformation(t)
+            const convertedTransformation = this.convertCFTransformation(t)
             this.handleTransformation(convertedTransformation)
             this.showCFDialog = false
         },
         convertCFTransformation(t) {
-            let transformation = { parameters: [] as Array<any>, type: 'calculatedField' }
-            let par = { columns: [] as Array<any> }
+            const transformation = { parameters: [] as Array<any>, type: 'calculatedField' }
+            const par = { columns: [] as Array<any> }
             Object.keys(t).forEach((key) => {
                 if (key === 'column') par.columns.push(t[key].header)
                 else par[key] = t[key]
@@ -345,7 +351,7 @@ export default defineComponent({
             transformation.parameters.push(par)
             return transformation
         },
-        calculateDisabledProperty(menu): Boolean {
+        calculateDisabledProperty(menu): boolean {
             if (this.loading > 0) return true
             let disabled = false
             if (menu.type === 'advancedFilter') {
@@ -386,16 +392,16 @@ export default defineComponent({
         },
         openTransformationDetail(t) {
             this.readOnly = true
-            let selectedTransformation = this.descriptorTransformations.filter((x) => x.name == t.type)[0]
+            const selectedTransformation = this.descriptorTransformations.filter((x) => x.name == t.type)[0]
             selectedTransformation['parameters'] = []
-            let param = t.parameters[0]
+            const param = t.parameters[0]
             Object.keys(param).forEach((key) => {
-                let obj = {}
+                const obj = {}
                 obj['name'] = key
                 if (key == 'columns') {
-                    let value = [] as Array<any>
+                    const value = [] as Array<any>
                     for (let i = 0; i < param[key].length; i++) {
-                        let col = this.columns.filter((x) => x.fieldAlias.toUpperCase() === param[key][i].toUpperCase())[0]
+                        const col = this.columns.filter((x) => x.fieldAlias.toUpperCase() === param[key][i].toUpperCase())[0]
                         value.push(col)
                     }
                     obj['value'] = value
@@ -411,7 +417,7 @@ export default defineComponent({
             })
 
             if (t.type == 'filter' || t.type == 'split') {
-                let col = this.columns.filter((x) => x.fieldAlias.toUpperCase() === t.parameters[0].columns[0].toUpperCase())[0]
+                const col = this.columns.filter((x) => x.fieldAlias.toUpperCase() === t.parameters[0].columns[0].toUpperCase())[0]
                 this.callFunction(selectedTransformation, col)
             } else this.callFunction(selectedTransformation, undefined)
         },
@@ -434,14 +440,14 @@ export default defineComponent({
             if (this.existingProcessId) this.processId = this.existingProcessId
             if (this.existingInstanceId) this.instanceId = this.existingInstanceId
             if (this.existingDataset) {
-                let dsMeta = JSON.parse(this.existingDataset)
-                let tmp = {}
+                const dsMeta = JSON.parse(this.existingDataset)
+                const tmp = {}
                 tmp['label'] = dsMeta.label
                 tmp['name'] = dsMeta.name
                 tmp['description'] = dsMeta.description
                 tmp['id'] = dsMeta.id
                 await this.$http.get(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/process/by-destination-data-set/' + dsMeta.id).then((response: AxiosResponse<any>) => {
-                    let instance = response.data.instance
+                    const instance = response.data.instance
                     if (instance.config) {
                         tmp['config'] = instance.config
                     }
@@ -450,16 +456,16 @@ export default defineComponent({
                 this.preparedDsMeta = tmp
             }
         },
-        getColHeader(metadata: Array<any>, idx: Number): string {
-            let columnMapping = 'column_' + idx
-            let toReturn = metadata.filter((x) => x.mappedTo == columnMapping)[0].alias
+        getColHeader(metadata: Array<any>, idx: number): string {
+            const columnMapping = 'column_' + idx
+            const toReturn = metadata.filter((x) => x.mappedTo == columnMapping)[0].alias
             return toReturn
         },
         callFunction(transformation: any, col): void {
             if (transformation.name === 'changeType' || transformation.name === 'split') {
-                let parsArray = transformation.name === 'changeType' ? this.simpleDescriptor[transformation.name].parameters : this.splitDescriptor.parameters
-                for (var i = 0; i < parsArray.length; i++) {
-                    let element = parsArray[i]
+                const parsArray = transformation.name === 'changeType' ? this.simpleDescriptor[transformation.name].parameters : this.splitDescriptor.parameters
+                for (let i = 0; i < parsArray.length; i++) {
+                    const element = parsArray[i]
                     if (element.name === 'destType' || element.name === 'destType1' || element.name === 'destType2') {
                         element.availableOptions = col ? this.getCompatibilityType(col) : this.descriptor.compatibilityMap['all'].values
 
@@ -478,12 +484,12 @@ export default defineComponent({
                     header: this.$t('common.toast.deleteTitle'),
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
-                        let par = this.simpleDescriptor[transformation.name].parameters[0]
+                        const par = this.simpleDescriptor[transformation.name].parameters[0]
                         par.value = col.header
                         transformation.parameters = []
                         transformation.parameters.push(par)
-                        let toReturn = { parameters: [] as Array<any>, type: 'drop' }
-                        let obj = { columns: [] as Array<any> }
+                        const toReturn = { parameters: [] as Array<any>, type: 'drop' }
+                        const obj = { columns: [] as Array<any> }
                         obj.columns.push(col.header)
 
                         toReturn.parameters.push(obj)
@@ -524,7 +530,7 @@ export default defineComponent({
             temp[0].toggle(event)
         },
         getMenuForToolbar(): Array<any> {
-            let tmp = this.descriptorTransformations
+            const tmp = this.descriptorTransformations
                 .filter((x) => x.toolbar && !x.hidden)
                 .sort(function (a, b) {
                     if (a.position > b.position) return 1
@@ -532,7 +538,7 @@ export default defineComponent({
                     return 0
                 })
 
-            let menu = [] as Array<any>
+            const menu = [] as Array<any>
             if (tmp.length > 0) {
                 let type = tmp[0].category
                 menu.push(tmp[0])
@@ -547,8 +553,8 @@ export default defineComponent({
             }
             return menu
         },
-        removePrefixFromType(type: String): String {
-            let splitted = type.split('.', -1)
+        removePrefixFromType(type: string): string {
+            const splitted = type.split('.', -1)
 
             return splitted.length > 0 ? splitted[splitted.length - 1] : splitted[0]
         },
@@ -556,7 +562,7 @@ export default defineComponent({
             this.showSaveDialog = true
         },
         translateRoles() {
-            let translatedRoles = this.descriptor.roles
+            const translatedRoles = this.descriptor.roles
             translatedRoles.forEach((x) => (x.label = this.$t(x.label)))
             return translatedRoles
         },
@@ -573,12 +579,12 @@ export default defineComponent({
             this.processId = pid
         },
         updateTable(message) {
-            let response = JSON.parse(message)
+            const response = JSON.parse(message)
             // set headers
-            let metadata = response.metadata.columns
+            const metadata = response.metadata.columns
             this.columns = []
             for (let i = 0; i < metadata.length; i++) {
-                let obj = {} as IDataPreparationColumn
+                const obj = {} as IDataPreparationColumn
                 obj.Type = metadata[i].type
                 obj.disabled = false
                 obj.fieldAlias = metadata[i].alias
@@ -589,19 +595,13 @@ export default defineComponent({
             //set data rows
             this.datasetData = []
             response.rows.forEach((row) => {
-                let obj = {}
+                const obj = {}
                 for (let i = 0; i < row.length; i++) {
-                    let colHeader = this.getColHeader(metadata, i)
+                    const colHeader = this.getColHeader(metadata, i)
                     obj[colHeader] = row[i]
                 }
                 this.datasetData.push(obj)
             })
-        }
-    },
-    unmounted() {
-        if (Object.keys(this.client).length > 0) {
-            this.client.deactivate()
-            this.client = {}
         }
     }
 })

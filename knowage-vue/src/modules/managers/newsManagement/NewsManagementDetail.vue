@@ -2,16 +2,16 @@
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
         <template #start>{{ $t('managers.newsManagement.detailTitle') }}</template>
         <template #end>
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="handleSubmit" :disabled="invalid" />
-            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" data-test="close-button" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="invalid" @click="handleSubmit" />
+            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" data-test="close-button" @click="closeTemplateConfirm" />
         </template>
     </Toolbar>
-    <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+    <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
     <div class="card">
-        <NewsDetailCard :selectedNews="selectedNews" @fieldChanged="onFieldChange"></NewsDetailCard>
+        <NewsDetailCard :selected-news="selectedNews" @fieldChanged="onFieldChange"></NewsDetailCard>
     </div>
     <div class="card">
-        <RolesCard :categoryList="roleList" :selected="selectedNews.roles" @changed="setSelectedRoles($event)"></RolesCard>
+        <RolesCard :category-list="roleList" :selected="selectedNews.roles" @changed="setSelectedRoles($event)"></RolesCard>
     </div>
 </template>
 
@@ -37,6 +37,10 @@ export default defineComponent({
         }
     },
     emits: ['touched', 'closed', 'inserted'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             newsManagementDetailDescriptor,
@@ -59,10 +63,6 @@ export default defineComponent({
         id() {
             this.loadSelectedNews()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         await this.loadSelectedNews()

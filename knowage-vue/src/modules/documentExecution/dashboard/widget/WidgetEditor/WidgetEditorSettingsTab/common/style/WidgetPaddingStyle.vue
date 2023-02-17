@@ -3,31 +3,31 @@
         <div class="p-col-12 p-grid p-ai-center">
             <div class="p-d-flex p-jc-center p-ai-center">
                 <i
+                    v-tooltip="paddingStyleModel.properties.unlinked ? $t('dashboard.widgetEditor.padding.linkAllHint') : $t('dashboard.widgetEditor.padding.unlinkAllHint')"
                     :class="paddingStyleModel.properties.unlinked ? 'fa fa-link' : 'fa fa-unlink'"
                     class="kn-cursor-pointer p-mr-2"
-                    v-tooltip="paddingStyleModel.properties.unlinked ? $t('dashboard.widgetEditor.padding.linkAllHint') : $t('dashboard.widgetEditor.padding.unlinkAllHint')"
                     @click="onLinkIconClicked"
                 ></i>
             </div>
 
             <div id="padding-left-container" class="p-col-11 p-md-5 p-lg-2 p-d-flex p-flex-column kn-flex p-px-2">
                 <label class="kn-material-input-label p-mr-2">{{ paddingStyleModel.properties.unlinked ? $t('dashboard.widgetEditor.padding.paddingLeft') : $t('dashboard.widgetEditor.padding.title') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="paddingStyleModel.properties['padding-left']" :disabled="paddingStyleDisabled" @input="onPaddingLeftInputChange" />
+                <InputText v-model="paddingStyleModel.properties['padding-left']" class="kn-material-input p-inputtext-sm" :disabled="paddingStyleDisabled" @input="onPaddingLeftInputChange" />
                 <small>{{ $t('dashboard.widgetEditor.inputHintForPixels') }}</small>
             </div>
-            <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column p-px-2" v-if="paddingStyleModel.properties.unlinked">
+            <div v-if="paddingStyleModel.properties.unlinked" class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column p-px-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.padding.paddingTop') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="paddingStyleModel.properties['padding-top']" :disabled="paddingStyleDisabled" @change="paddingStyleChanged" />
+                <InputText v-model="paddingStyleModel.properties['padding-top']" class="kn-material-input p-inputtext-sm" :disabled="paddingStyleDisabled" @change="paddingStyleChanged" />
                 <small>{{ $t('dashboard.widgetEditor.inputHintForPixels') }}</small>
             </div>
-            <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column p-px-2" v-if="paddingStyleModel.properties.unlinked">
+            <div v-if="paddingStyleModel.properties.unlinked" class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column p-px-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.padding.paddingRight') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="paddingStyleModel.properties['padding-right']" :disabled="paddingStyleDisabled" @change="paddingStyleChanged" />
+                <InputText v-model="paddingStyleModel.properties['padding-right']" class="kn-material-input p-inputtext-sm" :disabled="paddingStyleDisabled" @change="paddingStyleChanged" />
                 <small>{{ $t('dashboard.widgetEditor.inputHintForPixels') }}</small>
             </div>
-            <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column p-px-2" v-if="paddingStyleModel.properties.unlinked">
+            <div v-if="paddingStyleModel.properties.unlinked" class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column p-px-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.padding.paddingBottom') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="paddingStyleModel.properties['padding-bottom']" :disabled="paddingStyleDisabled" @change="paddingStyleChanged" />
+                <InputText v-model="paddingStyleModel.properties['padding-bottom']" class="kn-material-input p-inputtext-sm" :disabled="paddingStyleDisabled" @change="paddingStyleChanged" />
                 <small>{{ $t('dashboard.widgetEditor.inputHintForPixels') }}</small>
             </div>
         </div>
@@ -38,11 +38,10 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IWidgetPaddingStyle } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
-import InputSwitch from 'primevue/inputswitch'
 
 export default defineComponent({
     name: 'widget-padding-style',
-    components: { InputSwitch },
+    components: {},
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true }
     },

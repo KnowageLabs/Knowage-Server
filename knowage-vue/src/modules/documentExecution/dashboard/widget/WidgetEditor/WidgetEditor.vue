@@ -11,18 +11,18 @@
             <div class="datasetEditor-container kn-overflow">
                 <WidgetEditorTabs
                     class="dashboardEditor-tabs"
-                    :propWidget="widget"
+                    :prop-widget="widget"
                     :datasets="datasets"
-                    :selectedDatasets="selectedDatasets"
+                    :selected-datasets="selectedDatasets"
                     :variables="variables"
-                    :dashboardId="dashboardId"
-                    :selectedSettingProp="selectedSetting"
-                    :htmlGalleryProp="htmlGalleryProp"
-                    :customChartGalleryProp="customChartGalleryProp"
+                    :dashboard-id="dashboardId"
+                    :selected-setting-prop="selectedSetting"
+                    :html-gallery-prop="htmlGalleryProp"
+                    :custom-chart-gallery-prop="customChartGalleryProp"
                     @settingChanged="onSettingChanged"
                     @datasetSelected="onDatasetSelected"
                 />
-                <WidgetEditorPreview v-if="selectedSetting != 'Gallery' && !chartPickerVisible" :propWidget="widget" :dashboardId="dashboardId" :datasets="selectedModelDatasets" :variables="variables" />
+                <WidgetEditorPreview v-if="selectedSetting != 'Gallery' && !chartPickerVisible" :prop-widget="widget" :dashboard-id="dashboardId" :datasets="selectedModelDatasets" :variables="variables" />
             </div>
         </div>
     </Teleport>
@@ -47,7 +47,6 @@ import deepcopy from 'deepcopy'
 export default defineComponent({
     name: 'widget-editor',
     components: { WidgetEditorPreview, WidgetEditorTabs },
-    emits: ['close', 'widgetUpdated', 'widgetSaved'],
     props: {
         dashboardId: { type: String, required: true },
         propWidget: { type: Object as PropType<IWidget>, required: true },
@@ -55,6 +54,12 @@ export default defineComponent({
         variables: { type: Array as PropType<IVariable[]>, required: true },
         htmlGalleryProp: { type: Array as PropType<IGalleryItem[]>, required: true },
         customChartGalleryProp: { type: Array as PropType<IGalleryItem[]>, required: true }
+    },
+    emits: ['close', 'widgetUpdated', 'widgetSaved'],
+    setup() {
+        const store = mainStore()
+        const dashboardStore = dashStore()
+        return { store, dashboardStore }
     },
     data() {
         return {
@@ -75,11 +80,6 @@ export default defineComponent({
         propWidget() {
             this.loadWidget()
         }
-    },
-    setup() {
-        const store = mainStore()
-        const dashboardStore = dashStore()
-        return { store, dashboardStore }
     },
     created() {
         this.setEventListeners()

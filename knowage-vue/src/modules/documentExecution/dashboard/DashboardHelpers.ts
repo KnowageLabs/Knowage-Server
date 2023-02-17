@@ -8,7 +8,9 @@ import deepcopy from 'deepcopy'
 import { formatChartJSWidget } from './widget/WidgetEditor/helpers/chartWidget/chartJS/ChartJSHelpers'
 import { formatHighchartsWidget } from './widget/WidgetEditor/helpers/chartWidget/highcharts/HighchartsHelpers'
 import { AxiosResponse } from 'axios'
+import mainStore from '@/App.store'
 
+const store = mainStore()
 
 export const createNewDashboardModel = () => {
     const dashboardModel = {
@@ -25,7 +27,7 @@ export const createNewDashboardModel = () => {
             themes: {},
             selections: []
         },
-        version: "8.2.0"
+        version: '8.2.0'
     } as IDashboard
 
     return dashboardModel
@@ -37,7 +39,7 @@ export const updateWidgetHelper = (dashboardId: string, widget: IWidget, dashboa
             const tempWidget = deepcopy(widget)
             recreateKnowageChartModel(tempWidget)
             dashboards[dashboardId].widgets[i] = tempWidget
-            emitter.emit("widgetUpdatedFromStore", widget)
+            emitter.emit('widgetUpdatedFromStore', widget)
         }
     }
 }
@@ -49,7 +51,6 @@ export const deleteWidgetHelper = (dashboardId: string, widget: IWidget, dashboa
         dashboards[dashboardId].widgets.splice(index, 1)
         deleteWidgetFromSheets(dashboards[dashboardId], widget.id as string)
     }
-
 }
 
 const deleteWidgetFromSheets = (dashboard: IDashboard, widgetId: string) => {
@@ -97,7 +98,6 @@ const formatWidget = (widget: IWidget) => {
     }
 }
 
-
 export const loadDatasets = async (dashboardModel: IDashboard | any, appStore: any, setAllDatasets: Function, $http: any) => {
     appStore.setLoading(true)
     let url = `2.0/datasets/?asPagedList=true&seeTechnical=true`
@@ -109,7 +109,7 @@ export const loadDatasets = async (dashboardModel: IDashboard | any, appStore: a
     await $http
         .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url)
         .then((response: AxiosResponse<any>) => (datasets = response.data ? response.data.item : []))
-        .catch(() => { })
+        .catch(() => {})
     setAllDatasets(datasets)
     appStore.setLoading(false)
     return datasets
@@ -117,7 +117,12 @@ export const loadDatasets = async (dashboardModel: IDashboard | any, appStore: a
 
 const getDatasetIdsFromDashboardModel = (dashboardModel: IDashboard | any) => {
     const datasetIds = [] as string[]
-    dashboardModel.configuration?.datasets?.forEach((dataset: any) => dashboardModel.hasOwnProperty('id') ? datasetIds.push(dataset.id) : datasetIds.push(dataset.dsId))
+    dashboardModel.configuration?.datasets?.forEach((dataset: any) => (dashboardModel.hasOwnProperty('id') ? datasetIds.push(dataset.id) : datasetIds.push(dataset.dsId)))
 
     return datasetIds.join(',')
+}
+
+export const canEditDashboard = (document): boolean => {
+    if (!store.user || !document) return false
+    return store.user.functionalities?.includes('DocumentAdminManagement') || document.creationUser === store.user.userId
 }

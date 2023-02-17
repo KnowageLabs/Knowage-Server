@@ -1,17 +1,17 @@
 <template>
-    <TabView :activeIndex="activeIndex">
+    <TabView :active-index="activeIndex">
         <TabPanel v-if="propWidget && propWidget.type !== 'selection' && propWidget.type !== 'image'" :header="$t('common.data')">
-            <WidgetEditorDataTab :propWidget="propWidget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="$emit('datasetSelected', $event)" data-test="data-tab"></WidgetEditorDataTab>
+            <WidgetEditorDataTab :prop-widget="propWidget" :datasets="datasets" :selected-datasets="selectedDatasets" data-test="data-tab" @datasetSelected="$emit('datasetSelected', $event)"></WidgetEditorDataTab>
         </TabPanel>
         <TabPanel :header="$t('common.settings')">
             <WidgetEditorSettingsTab
-                :propWidget="propWidget"
+                :prop-widget="propWidget"
                 :datasets="datasets"
-                :selectedDatasets="selectedDatasets"
+                :selected-datasets="selectedDatasets"
                 :variables="variables"
-                :dashboardId="dashboardId"
-                :htmlGalleryProp="htmlGalleryProp"
-                :customChartGalleryProp="customChartGalleryProp"
+                :dashboard-id="dashboardId"
+                :html-gallery-prop="htmlGalleryProp"
+                :custom-chart-gallery-prop="customChartGalleryProp"
                 @settingChanged="$emit('settingChanged', $event)"
             ></WidgetEditorSettingsTab>
         </TabPanel>

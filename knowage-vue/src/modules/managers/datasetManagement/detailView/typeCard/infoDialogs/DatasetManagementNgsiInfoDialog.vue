@@ -19,10 +19,10 @@ import detailDescriptor from '../../DatasetManagementDetailViewDescriptor.json'
 export default defineComponent({
     name: 'lovs-management-info-dialog',
     components: { Dialog },
-    emits: ['close'],
     props: {
         visible: { type: Boolean }
     },
+    emits: ['close'],
     data() {
         return {
             detailDescriptor

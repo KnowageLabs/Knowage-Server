@@ -4,12 +4,12 @@
             {{ menuNode.name }}
         </template>
         <template #end>
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="save" :disabled="formValid" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="formValid" @click="save" />
             <Button class="p-button-text p-button-rounded p-button-plain" icon="pi pi-times" @click="closeForm" />
         </template>
     </Toolbar>
 
-    <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+    <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
 
     <div class="p-grid p-m-0 p-fluid kn-page-content">
         <div class="p-col-12">
@@ -19,17 +19,17 @@
                         <div class="p-field p-mb-5">
                             <div class="p-inputgroup">
                                 <span class="p-float-label">
-                                    <InputText id="name" type="text" v-model.trim="v$.menuNode.name.$model" @change="onDataChange(v$.menuNode.name)" class="p-inputtext p-component kn-material-input" />
+                                    <InputText id="name" v-model.trim="v$.menuNode.name.$model" type="text" class="p-inputtext p-component kn-material-input" @change="onDataChange(v$.menuNode.name)" />
                                     <label for="name">{{ $t('managers.menuManagement.form.name') }} *</label>
                                 </span>
                             </div>
-                            <KnValidationMessages :vComp="v$.menuNode.name" :additionalTranslateParams="{ fieldName: $t('managers.menuManagement.form.name') }"></KnValidationMessages>
+                            <KnValidationMessages :v-comp="v$.menuNode.name" :additional-translate-params="{ fieldName: $t('managers.menuManagement.form.name') }"></KnValidationMessages>
                         </div>
 
                         <div class="p-field p-mb-5">
                             <div class="p-inputgroup">
                                 <span class="p-float-label">
-                                    <InputText id="descr" type="text" v-model.trim="v$.menuNode.descr.$model" @blur="onDataChange(v$.menuNode.descr)" class="p-inputtext p-component kn-material-input" aria-describedby="descr-help" />
+                                    <InputText id="descr" v-model.trim="v$.menuNode.descr.$model" type="text" class="p-inputtext p-component kn-material-input" aria-describedby="descr-help" @blur="onDataChange(v$.menuNode.descr)" />
                                     <Button v-if="isIconSelectorShown(menuNode) && (menuNode.icon != null || menuNode.custIcon != null)" icon="pi pi-times" @click="clearSelectedIcon" />
                                     <Button v-if="isCustomIconShown(menuNode)"><img style="max-height: 26px; max-width: 26px" :src="selectedIcon" /></Button>
                                     <Button v-if="isFaIconShown(menuNode)"><i :class="selectedIcon"></i></Button>
@@ -38,10 +38,10 @@
                                 </span>
                             </div>
                             <small id="descr-help">{{ $t('managers.menuManagement.descrHelp') }}</small>
-                            <KnValidationMessages :vComp="v$.menuNode.descr" :additionalTranslateParams="{ fieldName: $t('managers.menuManagement.description') }"></KnValidationMessages>
+                            <KnValidationMessages :v-comp="v$.menuNode.descr" :additional-translate-params="{ fieldName: $t('managers.menuManagement.description') }"></KnValidationMessages>
                         </div>
 
-                        <FontAwesomePicker :showModal="chooseIconModalShown" @chooseIcon="onChoosenIcon" @closeFontAwesomeModal="closeFontAwesomeSelectionModal"></FontAwesomePicker>
+                        <FontAwesomePicker :show-modal="chooseIconModalShown" @chooseIcon="onChoosenIcon" @closeFontAwesomeModal="closeFontAwesomeSelectionModal"></FontAwesomePicker>
 
                         <div class="p-field p-mb-5">
                             <div class="p-inputgroup">
@@ -50,15 +50,15 @@
                                         id="menuNodeContent"
                                         v-model="v$.menuNode.menuNodeContent.$model"
                                         :options="menuNodeContent"
-                                        @change="onMenuNodeChange(v$.menuNode.menuNodeContent)"
-                                        optionLabel="name"
-                                        optionValue="value"
+                                        option-label="name"
+                                        option-value="value"
                                         class="p-dropdown p-component p-inputwrapper p-inputwrapper-filled kn-material-input"
+                                        @change="onMenuNodeChange(v$.menuNode.menuNodeContent)"
                                     />
                                     <label for="menuNodeContent">{{ $t('managers.menuManagement.form.menuNodeContent') }} *</label>
                                 </span>
                             </div>
-                            <KnValidationMessages :vComp="v$.menuNode.menuNodeContent" :additionalTranslateParams="{ fieldName: $t('managers.menuManagement.form.menuNodeContent') }"></KnValidationMessages>
+                            <KnValidationMessages :v-comp="v$.menuNode.menuNodeContent" :additional-translate-params="{ fieldName: $t('managers.menuManagement.form.menuNodeContent') }"></KnValidationMessages>
                         </div>
 
                         <div class="p-field p-mb-5" :hidden="staticPageHidden">
@@ -69,53 +69,53 @@
                                             id="staticPage"
                                             v-model="v$.menuNode.staticPage.$model"
                                             :options="staticPagesList"
-                                            @change="onStaticPageSelect(v$.menuNode.staticPage)"
-                                            optionLabel="name"
-                                            optionValue="name"
+                                            option-label="name"
+                                            option-value="name"
                                             class="p-dropdown p-component p-inputwrapper p-inputwrapper-filled kn-material-input"
+                                            @change="onStaticPageSelect(v$.menuNode.staticPage)"
                                         />
                                         <label for="staticPage">{{ $t('managers.menuManagement.form.staticPage') }} *</label>
                                     </span>
                                 </div>
-                                <KnValidationMessages :vComp="v$.menuNode.staticPage" :additionalTranslateParams="{ fieldName: $t('managers.menuManagement.form.staticPage') }"></KnValidationMessages>
+                                <KnValidationMessages :v-comp="v$.menuNode.staticPage" :additional-translate-params="{ fieldName: $t('managers.menuManagement.form.staticPage') }"></KnValidationMessages>
                             </div>
                         </div>
 
                         <div class="p-field p-mb-5" :hidden="externalAppHidden">
                             <div class="p-inputgroup">
                                 <span class="p-float-label">
-                                    <InputText id="externalApplicationUrl" type="text" v-model.trim="v$.menuNode.externalApplicationUrl.$model" @blur="onDataChange(v$.menuNode.externalApplicationUrl)" class="p-inputtext p-component kn-material-input" />
+                                    <InputText id="externalApplicationUrl" v-model.trim="v$.menuNode.externalApplicationUrl.$model" type="text" class="p-inputtext p-component kn-material-input" @blur="onDataChange(v$.menuNode.externalApplicationUrl)" />
                                     <label for="externalApplicationUrl">{{ $t('managers.menuManagement.form.externalApplicationUrl') }} *</label>
                                 </span>
                             </div>
-                            <KnValidationMessages :vComp="v$.menuNode.externalApplicationUrl" :additionalTranslateParams="{ fieldName: $t('managers.menuManagement.form.externalApplicationUrl') }"></KnValidationMessages>
+                            <KnValidationMessages :v-comp="v$.menuNode.externalApplicationUrl" :additional-translate-params="{ fieldName: $t('managers.menuManagement.form.externalApplicationUrl') }"></KnValidationMessages>
                         </div>
 
                         <div :hidden="documentHidden">
                             <div class="p-field p-mb-5">
                                 <div class="p-inputgroup">
                                     <span class="p-float-label">
-                                        <InputText id="selectedDocument" type="text" v-model.trim="v$.menuNode.document.$model" @blur="onDataChange(v$.menuNode.document)" class="p-inputtext p-component kn-material-input" />
-                                        <InputText :hidden="true" id="objId" type="text" v-model.trim="v$.menuNode.objId.$model" @blur="onDataChange(v$.menuNode.objId)" class="p-inputtext p-component kn-material-input" />
+                                        <InputText id="selectedDocument" v-model.trim="v$.menuNode.document.$model" type="text" class="p-inputtext p-component kn-material-input" @blur="onDataChange(v$.menuNode.document)" />
+                                        <InputText id="objId" v-model.trim="v$.menuNode.objId.$model" :hidden="true" type="text" class="p-inputtext p-component kn-material-input" @blur="onDataChange(v$.menuNode.objId)" />
                                         <Button icon="pi pi-search" class="p-button" @click="openRelatedDocumentModal()" />
                                         <label for="objId">{{ $t('managers.menuManagement.form.document') }} *</label>
                                     </span>
                                 </div>
-                                <KnValidationMessages :vComp="v$.menuNode.document" :additionalTranslateParams="{ fieldName: $t('managers.menuManagement.form.document') }"></KnValidationMessages>
+                                <KnValidationMessages :v-comp="v$.menuNode.document" :additional-translate-params="{ fieldName: $t('managers.menuManagement.form.document') }"></KnValidationMessages>
                             </div>
 
                             <div class="p-field p-mb-5">
                                 <div class="p-inputgroup">
                                     <span class="p-float-label">
-                                        <InputText id="objParameters" type="text" v-model.trim="v$.menuNode.objParameters.$model" @blur="onDataChange(v$.menuNode.objParameters)" class="p-inputtext p-component kn-material-input" />
+                                        <InputText id="objParameters" v-model.trim="v$.menuNode.objParameters.$model" type="text" class="p-inputtext p-component kn-material-input" @blur="onDataChange(v$.menuNode.objParameters)" />
                                         <label for="objParameters">{{ $t('managers.menuManagement.form.objParameters') }}</label>
                                     </span>
                                 </div>
-                                <KnValidationMessages :vComp="v$.menuNode.objParameters" :additionalTranslateParams="{ fieldName: $t('managers.menuManagement.form.objParameters') }"></KnValidationMessages>
+                                <KnValidationMessages :v-comp="v$.menuNode.objParameters" :additional-translate-params="{ fieldName: $t('managers.menuManagement.form.objParameters') }"></KnValidationMessages>
                             </div>
 
-                            <Dialog :header="$t('managers.menuManagement.selectDocument')" v-model:visible="displayModal" :style="{ width: '50vw' }" :modal="true">
-                                <RelatedDocumentList :loading="loading" @selectedDocument="onDocumentSelect" data-test="related-documents-list"></RelatedDocumentList>
+                            <Dialog v-model:visible="displayModal" :header="$t('managers.menuManagement.selectDocument')" :style="{ width: '50vw' }" :modal="true">
+                                <RelatedDocumentList :loading="loading" data-test="related-documents-list" @selectedDocument="onDocumentSelect"></RelatedDocumentList>
                             </Dialog>
                         </div>
 
@@ -126,21 +126,21 @@
                                         id="functionality"
                                         v-model="v$.menuNode.functionality.$model"
                                         :options="menuNodeContentFunctionalies"
-                                        @change="onFunctionalityTypeChange(v$.menuNode.functionality)"
-                                        optionLabel="name"
-                                        optionValue="value"
+                                        option-label="name"
+                                        option-value="value"
                                         class="p-dropdown p-component p-inputwrapper p-inputwrapper-filled kn-material-input"
+                                        @change="onFunctionalityTypeChange(v$.menuNode.functionality)"
                                     />
                                     <label for="functionality">{{ $t('managers.menuManagement.form.functionality') }}*</label>
                                 </span>
                             </div>
-                            <KnValidationMessages :vComp="v$.menuNode.functionality" :additionalTranslateParams="{ fieldName: $t('managers.menuManagement.form.functionality') }"></KnValidationMessages>
+                            <KnValidationMessages :v-comp="v$.menuNode.functionality" :additional-translate-params="{ fieldName: $t('managers.menuManagement.form.functionality') }"></KnValidationMessages>
                         </div>
 
                         <div class="p-field p-mb-5" :hidden="workspaceInitialHidden">
                             <div class="p-inputgroup">
                                 <span class="p-float-label">
-                                    <Dropdown id="initialPath" v-model="v$.menuNode.initialPath.$model" :options="workspaceOptions" optionLabel="name" optionValue="value" class="p-dropdown p-component p-inputwrapper p-inputwrapper-filled kn-material-input" />
+                                    <Dropdown id="initialPath" v-model="v$.menuNode.initialPath.$model" :options="workspaceOptions" option-label="name" option-value="value" class="p-dropdown p-component p-inputwrapper p-inputwrapper-filled kn-material-input" />
                                     <label for="initialPath">{{ $t('managers.menuManagement.form.initialPath') }} *</label>
                                 </span>
                             </div>
@@ -148,14 +148,14 @@
 
                         <div class="p-field p-mb-5" :hidden="documentTreeHidden">
                             <p>Open document browser on {{ v$.menuNode.initialPath.$model }}</p>
-                            <DocumentBrowserTree :selected="v$.menuNode.initialPath.$model" @selectedDocumentNode="onSelectedDocumentNode" :loading="loading"></DocumentBrowserTree>
+                            <DocumentBrowserTree :selected="v$.menuNode.initialPath.$model" :loading="loading" @selectedDocumentNode="onSelectedDocumentNode"></DocumentBrowserTree>
                         </div>
                     </form>
                 </template>
             </Card>
         </div>
         <div class="p-col-12">
-            <RolesCard :hidden="hideForm" :rolesList="roles" :parentNodeRoles="parentNodeRoles" :selected="selectedMenuNode.roles" @changed="setSelectedRoles($event)"></RolesCard>
+            <RolesCard :hidden="hideForm" :roles-list="roles" :parent-node-roles="parentNodeRoles" :selected="selectedMenuNode.roles" @changed="setSelectedRoles($event)"></RolesCard>
         </div>
     </div>
 </template>
@@ -183,6 +183,38 @@ export default defineComponent({
     name: 'profile-attributes-detail',
     components: { Dropdown, DocumentBrowserTree, RelatedDocumentList, KnValidationMessages, Dialog, FontAwesomePicker, RolesCard },
     props: { roles: { type: Array }, selectedMenuNode: { type: Object, required: true }, selectedRoles: { type: Array }, staticPagesList: { type: Array }, menuNodes: { type: Array }, parentNodeRoles: { type: Array } },
+    emits: ['refreshRecordSet', 'closesForm', 'dataChanged'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
+    data() {
+        return {
+            v$: useValidate() as any,
+            apiUrl: import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/',
+            menuNode: {} as iMenuNode,
+            loading: false as boolean,
+            hideForm: false as boolean,
+            documentHidden: true as boolean,
+            staticPageHidden: true as boolean,
+            externalAppHidden: true as boolean,
+            functionalityHidden: true as boolean,
+            workspaceInitialHidden: true as boolean,
+            documentTreeHidden: true as boolean,
+            dirty: false as boolean,
+            displayModal: false as boolean,
+            chooseIconModalShown: false as boolean,
+            relatedDocuments: [],
+            selectedRelatedDocument: null as string | null,
+            selectedIcon: null as string | null,
+            selectedFunctionality: {},
+            menuNodeContent: MenuConfigurationDescriptor.menuNodeContent,
+            workspaceOptions: MenuConfigurationDescriptor.workspaceOptions,
+            menuNodeContentFunctionalies: MenuConfigurationDescriptor.menuNodeContentFunctionalies,
+            menuManagementElementDetailDescriptor: MenuManagementElementDetailDescriptor.importantfields,
+            nodes: [] as iMenuNode[]
+        }
+    },
     computed: {
         formValid(): any {
             return this.v$.$invalid
@@ -204,42 +236,10 @@ export default defineComponent({
             this.loadNodes()
         }
     },
-    emits: ['refreshRecordSet', 'closesForm', 'dataChanged'],
-    data() {
-        return {
-            v$: useValidate() as any,
-            apiUrl: import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/',
-            menuNode: {} as iMenuNode,
-            loading: false as Boolean,
-            hideForm: false as Boolean,
-            documentHidden: true as Boolean,
-            staticPageHidden: true as Boolean,
-            externalAppHidden: true as Boolean,
-            functionalityHidden: true as Boolean,
-            workspaceInitialHidden: true as Boolean,
-            documentTreeHidden: true as Boolean,
-            dirty: false as Boolean,
-            displayModal: false as Boolean,
-            chooseIconModalShown: false as Boolean,
-            relatedDocuments: [],
-            selectedRelatedDocument: null as string | null,
-            selectedIcon: null as string | null,
-            selectedFunctionality: {},
-            menuNodeContent: MenuConfigurationDescriptor.menuNodeContent,
-            workspaceOptions: MenuConfigurationDescriptor.workspaceOptions,
-            menuNodeContentFunctionalies: MenuConfigurationDescriptor.menuNodeContentFunctionalies,
-            menuManagementElementDetailDescriptor: MenuManagementElementDetailDescriptor.importantfields,
-            nodes: [] as iMenuNode[]
-        }
-    },
     validations() {
         return {
             menuNode: createValidations('menuNode', MenuConfigurationValidationDescriptor.validations.menuNode)
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         this.loadNodes()

@@ -3,15 +3,15 @@
         {{ $t('workspace.schedulation.oldSchedulationsMessage') }}
     </Message>
     <DataTable
-        :value="schedulations"
         id="old-chedulations-table"
-        class="p-datatable-sm kn-table"
-        dataKey="id"
         v-model:filters="filters"
-        :globalFilterFields="workspaceSchedulationOldSchedulationsTableDescriptor.globalFilterFields"
+        :value="schedulations"
+        class="p-datatable-sm kn-table"
+        data-key="id"
+        :global-filter-fields="workspaceSchedulationOldSchedulationsTableDescriptor.globalFilterFields"
         :paginator="schedulations.length > 20"
         :rows="20"
-        responsiveLayout="stack"
+        responsive-layout="stack"
         breakpoint="600px"
     >
         <template #empty>
@@ -23,20 +23,20 @@
             <div class="table-header p-d-flex p-ai-center">
                 <span id="search-container" class="p-input-icon-left p-mr-3">
                     <i class="pi pi-search" />
-                    <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" />
+                    <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" />
                 </span>
             </div>
         </template>
 
-        <Column class="kn-truncated" field="name" :header="$t('common.packages')" key="name" :sortable="true"></Column>
-        <Column class="kn-truncated" field="dateCreation" :header="$t('common.time')" key="dateCreation" :sortable="true">
+        <Column key="name" class="kn-truncated" field="name" :header="$t('common.packages')" :sortable="true"></Column>
+        <Column key="dateCreation" class="kn-truncated" field="dateCreation" :header="$t('common.time')" :sortable="true">
             <template #body="slotProps">
                 {{ getFormattedDate(slotProps.data.dateCreation, 'MMM DD, YYYY h:mm:ss A') }}
             </template>
         </Column>
         <Column :style="workspaceSchedulationOldSchedulationsTableDescriptor.iconColumn.style">
             <template #body="slotProps">
-                <Button icon="pi pi-download" class="p-button-link" v-tooltip.top="$t('common.download')" @click="downloadSnapshot(slotProps.data)" />
+                <Button v-tooltip.top="$t('common.download')" icon="pi pi-download" class="p-button-link" @click="downloadSnapshot(slotProps.data)" />
             </template>
         </Column>
     </DataTable>
@@ -57,6 +57,10 @@ export default defineComponent({
     name: 'workspace-schedulation-old-schedulations-table',
     components: { Column, DataTable, Message },
     props: { propSchedulations: { type: Array } },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             workspaceSchedulationOldSchedulationsTableDescriptor,
@@ -69,10 +73,6 @@ export default defineComponent({
         propSchedulations() {
             this.loadSchedulations()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.user = (this.store.$state as any).user

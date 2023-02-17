@@ -1,4 +1,4 @@
-let routes = [
+const routes = [
     {
         path: '/mondrian-schemas-management',
         name: 'mondrian-schemas-management',

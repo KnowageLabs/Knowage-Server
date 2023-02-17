@@ -1,22 +1,22 @@
 <template>
     <DataTable
-        :value="jobs"
         id="jobs-table"
-        class="p-datatable-sm kn-table"
         v-model:expandedRows="expandedRows"
-        dataKey="jobName"
         v-model:filters="filters"
-        :globalFilterFields="workspaceSchedulationTableDescriptor.globalFilterFields"
+        :value="jobs"
+        class="p-datatable-sm kn-table"
+        data-key="jobName"
+        :global-filter-fields="workspaceSchedulationTableDescriptor.globalFilterFields"
         :paginator="true"
         :rows="20"
-        responsiveLayout="stack"
+        responsive-layout="stack"
         breakpoint="960px"
     >
         <template #header>
             <div class="table-header p-d-flex p-ai-center">
                 <span id="search-container" class="p-input-icon-left p-mr-3">
                     <i class="pi pi-search" />
-                    <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="search-input" />
+                    <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" data-test="search-input" />
                 </span>
             </div>
         </template>
@@ -31,17 +31,17 @@
                 class="p-m-4"
                 :triggers="slotProps.data.triggers"
                 :index="slotProps.index"
-                :propSelectedSchedulations="selectedSchedulations"
+                :prop-selected-schedulations="selectedSchedulations"
                 @runSchedulationClick="$emit('runSchedulationClick', $event)"
                 @selectedSchedulations="setSelectedSchedulations"
             ></WorkspaceSchedulationSchedulationsTable>
         </template>
-        <Column :expander="true" :headerStyle="workspaceSchedulationTableDescriptor.expanderHeaderStyle" />
+        <Column :expander="true" :header-style="workspaceSchedulationTableDescriptor.expanderHeaderStyle" />
 
-        <Column class="kn-truncated" v-for="col of workspaceSchedulationTableDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true"></Column>
+        <Column v-for="col of workspaceSchedulationTableDescriptor.columns" :key="col.field" class="kn-truncated" :field="col.field" :header="$t(col.header)" :sortable="true"></Column>
         <Column :style="workspaceSchedulationTableDescriptor.iconColumn.style">
             <template #body="slotProps">
-                <Button v-if="canSeeScheduledExecutions" icon="fa fa-eye" class="p-button-link" v-tooltip.left="$t('workspace.schedulation.ranSchedulations')" @click.stop="viewRanSchedulations(slotProps.data)" />
+                <Button v-if="canSeeScheduledExecutions" v-tooltip.left="$t('workspace.schedulation.ranSchedulations')" icon="fa fa-eye" class="p-button-link" @click.stop="viewRanSchedulations(slotProps.data)" />
             </template>
         </Column>
     </DataTable>

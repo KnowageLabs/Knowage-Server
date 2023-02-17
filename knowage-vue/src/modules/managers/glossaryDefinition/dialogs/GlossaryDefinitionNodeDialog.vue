@@ -7,8 +7,8 @@
             <span class="p-float-label">
                 <InputText
                     id="contentName"
-                    class="kn-material-input"
                     v-model.trim="content.CONTENT_NM"
+                    class="kn-material-input"
                     max="100"
                     :class="{
                         'p-invalid': content.CONTENT_NM?.length === 0 && contentNameDirty
@@ -24,13 +24,13 @@
 
         <div class="p-field p-m-4">
             <span class="p-float-label">
-                <InputText id="contentCode" class="kn-material-input" v-model.trim="content.CONTENT_CD" max="30" />
+                <InputText id="contentCode" v-model.trim="content.CONTENT_CD" class="kn-material-input" max="30" />
                 <label for="contentCode" class="kn-material-input-label"> {{ $t('managers.glossary.common.code') }}</label>
             </span>
         </div>
         <div class="p-field p-m-4">
             <span class="p-float-label">
-                <Textarea id="contentDescription" class="kn-material-input" v-model.trim="content.CONTENT_DS" :autoResize="true" maxLength="500" rows="1" />
+                <Textarea id="contentDescription" v-model.trim="content.CONTENT_DS" class="kn-material-input" :auto-resize="true" max-length="500" rows="1" />
                 <label for="contentDescription" class="kn-material-input-label"> {{ $t('common.description') }}</label>
             </span>
             <div id="description-help">
@@ -39,7 +39,7 @@
         </div>
         <template #footer>
             <Button class="kn-button kn-button--primary" @click="$emit('close')"> {{ $t('common.close') }}</Button>
-            <Button :label="$t('common.save')" @click="$emit('save', content)" class="kn-button kn-button--primary" :disabled="buttonDisabled" />
+            <Button :label="$t('common.save')" class="kn-button kn-button--primary" :disabled="buttonDisabled" @click="$emit('save', content)" />
         </template>
     </Dialog>
 </template>
@@ -54,16 +54,11 @@ import Textarea from 'primevue/textarea'
 export default defineComponent({
     name: 'glossary-definition-node-dialog',
     components: { Dialog, Textarea },
-    emits: ['close', 'save'],
     props: {
         visible: { type: Boolean },
         selectedContent: { type: Object }
     },
-    watch: {
-        selectedContent() {
-            this.loadContent()
-        }
-    },
+    emits: ['close', 'save'],
     data() {
         return {
             glossaryDefinitionDialogDescriptor,
@@ -77,6 +72,11 @@ export default defineComponent({
         },
         buttonDisabled(): boolean {
             return this.content.CONTENT_NM?.length === 0
+        }
+    },
+    watch: {
+        selectedContent() {
+            this.loadContent()
         }
     },
     created() {

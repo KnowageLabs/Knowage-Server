@@ -6,19 +6,19 @@
                     {{ attribute.attributeName }}
                 </template>
                 <template #end>
-                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="handleSubmit" data-test="submit-button" />
+                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" data-test="submit-button" @click="handleSubmit" />
                     <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeDialog" />
                 </template>
             </Toolbar>
         </template>
-        <DataTable :value="lovValues" v-model:selection="selectedLovValues" dataKey="id" responsiveLayout="scroll" v-model:filters="filters" filterDisplay="row" :globalFilterFields="userAttributesLovValueDialogDescriptor.globalFilterFields">
+        <DataTable v-model:selection="selectedLovValues" v-model:filters="filters" :value="lovValues" data-key="id" responsive-layout="scroll" filter-display="row" :global-filter-fields="userAttributesLovValueDialogDescriptor.globalFilterFields">
             <template #header>
                 <div class="p-col-8 p-input-icon-left">
                     <i class="pi pi-search" />
-                    <InputText class="kn-material-input p-col-12" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
+                    <InputText v-model="filters['global'].value" class="kn-material-input p-col-12" type="text" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
                 </div>
             </template>
-            <Column :selectionMode="selectionMode" dataKey="id" :exportable="false"></Column>
+            <Column :selection-mode="selectionMode" data-key="id" :exportable="false"></Column>
             <Column field="value" header="Value" :sortable="true"> </Column>
         </DataTable>
     </Dialog>
@@ -37,7 +37,6 @@ import { AxiosResponse } from 'axios'
 export default defineComponent({
     name: 'lovs-value-dialog',
     components: { Dialog, DataTable, Column },
-    emits: ['closeDialog', 'saveLovValues'],
     props: {
         attribute: {
             type: Object as PropType<iAttribute>,
@@ -46,17 +45,7 @@ export default defineComponent({
         dialogVisible: Boolean,
         selection: Object as PropType<any>
     },
-    watch: {
-        attribute() {
-            if (!this.attribute) return
-            this.loadAttributeValue()
-            this.selectionMode = this.attribute.multivalue ? 'multiple' : 'single'
-            this.selectedLovValues = this.attribute.multivalue ? [] : {}
-        }
-    },
-    created() {
-        this.loadAttributeValue()
-    },
+    emits: ['closeDialog', 'saveLovValues'],
     data() {
         return {
             selectedLovValues: [] as Array<any> | Object,
@@ -74,6 +63,17 @@ export default defineComponent({
                 }
             } as Object
         }
+    },
+    watch: {
+        attribute() {
+            if (!this.attribute) return
+            this.loadAttributeValue()
+            this.selectionMode = this.attribute.multivalue ? 'multiple' : 'single'
+            this.selectedLovValues = this.attribute.multivalue ? [] : {}
+        }
+    },
+    created() {
+        this.loadAttributeValue()
     },
     methods: {
         async loadAttributeValue() {

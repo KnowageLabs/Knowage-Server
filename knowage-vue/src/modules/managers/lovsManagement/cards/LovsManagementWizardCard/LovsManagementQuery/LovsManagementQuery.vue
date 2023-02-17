@@ -5,14 +5,14 @@
                 <label for="dataSource" class="kn-material-input-label" aria-label="dropdown">{{ $t('managers.lovsManagement.dataSource') }} * </label>
                 <Dropdown
                     id="dataSource"
+                    v-model="query.datasource"
                     class="kn-material-input"
                     :class="{
                         'p-invalid': !query.datasource && dirty
                     }"
-                    v-model="query.datasource"
                     :options="datasources"
-                    optionLabel="label"
-                    optionValue="label"
+                    option-label="label"
+                    option-value="label"
                     :placeholder="$t('managers.lovsManagement.placeholderDatasource')"
                     aria-label="dropdown"
                     @before-show="dirty = true"
@@ -31,7 +31,7 @@
         </div>
         <div v-if="query.datasource" class="p-mt-4">
             <label class="kn-material-input-label">{{ $t('managers.lovsManagement.queryDefinition') }}</label>
-            <VCodeMirror ref="codeMirror" class="p-mt-2" v-model:value="code" :autoHeight="true" :options="options" @keyup="onKeyUp" />
+            <VCodeMirror ref="codeMirror" v-model:value="code" class="p-mt-2" :auto-height="true" :options="options" @keyup="onKeyUp" />
         </div>
     </div>
 </template>
@@ -39,7 +39,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iLov } from '../../../LovsManagement'
-import VCodeMirror, { CodeMirror  } from 'codemirror-editor-vue3'
+// eslint-disable-next-line
+import VCodeMirror, { CodeMirror } from 'codemirror-editor-vue3'
 import Dropdown from 'primevue/dropdown'
 
 export default defineComponent({
@@ -72,6 +73,11 @@ export default defineComponent({
             cursorPosition: null
         }
     },
+    computed: {
+        lovType(): string {
+            return this.selectedLov.itypeCd
+        }
+    },
     watch: {
         selectedLov() {
             this.loadLov()
@@ -82,11 +88,6 @@ export default defineComponent({
             this.setupCodeMirror()
             this.cursorPosition = this.codeMirror.getCursor()
             this.codeMirror.replaceRange('${' + this.codeInput?.code + '}', this.cursorPosition)
-        }
-    },
-    computed: {
-        lovType(): string {
-            return this.selectedLov.itypeCd
         }
     },
     async created() {

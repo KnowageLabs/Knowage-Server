@@ -6,7 +6,7 @@
 
         <div class="p-fluid p-col-12 p-md-12 p-mt-4">
             <span class="p-float-label">
-                <InputText id="value" class="kn-material-input" v-model.trim="selectedParameter.value" />
+                <InputText id="value" v-model.trim="selectedParameter.value" class="kn-material-input" />
                 <label for="value" class="kn-material-input-label">{{ $t('common.value') }}</label>
             </span>
         </div>
@@ -17,8 +17,8 @@
             <span class="p-float-label">
                 <InputText
                     id="name"
-                    class="kn-material-input"
                     v-model.trim="selectedParameter.name"
+                    class="kn-material-input"
                     :class="{
                         'p-invalid': !selectedParameter.name && nameTouched
                     }"

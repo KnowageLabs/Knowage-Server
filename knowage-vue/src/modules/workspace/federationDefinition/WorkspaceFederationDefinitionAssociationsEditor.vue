@@ -12,13 +12,13 @@
             <div class="p-d-flex kn-flex" :style="workspaceFederationDatasetListDescriptor.styles.metaContainer">
                 <div class="p-d-flex p-flex-row kn-flex kn-overflow">
                     <WorkspaceFederationDefinitionMetafieldsList
-                        :style="workspaceFederationDatasetListDescriptor.styles.metaList"
                         v-for="dataset in datasets"
-                        class="metafield-select-list p-mx-2 p-mb-2"
                         :key="dataset.id"
-                        :propDataset="dataset"
-                        :selectedMetafields="selectedMetafields"
-                        :resetSelectedMetafield="resetSelectedMetafield"
+                        :style="workspaceFederationDatasetListDescriptor.styles.metaList"
+                        class="metafield-select-list p-mx-2 p-mb-2"
+                        :prop-dataset="dataset"
+                        :selected-metafields="selectedMetafields"
+                        :reset-selected-metafield="resetSelectedMetafield"
                     ></WorkspaceFederationDefinitionMetafieldsList>
                 </div>
             </div>

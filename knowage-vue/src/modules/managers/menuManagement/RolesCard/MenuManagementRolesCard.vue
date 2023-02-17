@@ -9,12 +9,12 @@
         </template>
         <template #content>
             <DataTable
-                :value="rolesListFiltered"
                 v-model:filters="filters"
                 v-model:selection="selectedRoles"
+                :value="rolesListFiltered"
                 class="p-datatable-sm kn-table"
-                dataKey="id"
-                responsiveLayout="stack"
+                data-key="id"
+                responsive-layout="stack"
                 breakpoint="960px"
                 @rowSelect="onRowSelect"
                 @rowUnselect="onRowUnselect"
@@ -28,11 +28,11 @@
                     <div class="table-header">
                         <span class="p-input-icon-left">
                             <i class="pi pi-search" />
-                            <InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
+                            <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
                         </span>
                     </div>
                 </template>
-                <Column selectionMode="multiple" dataKey="id" style="width:50px"></Column>
+                <Column selection-mode="multiple" data-key="id" style="width:50px"></Column>
                 <Column field="name" :header="$t('common.name')"></Column>
             </DataTable>
         </template>
@@ -72,9 +72,14 @@ export default defineComponent({
             }
         }
     },
-    created() {
-        if (this.selected) {
-            this.selectedRoles = this.selected
+    computed: {
+        rolesListFiltered(): iRole[] {
+            if (!this.rolesList) return []
+            if (this.parentNodeRoles) {
+                return this.rolesList.filter((role) => this.parentNodeRoles && this.parentNodeRoles.findIndex((parentNodeRole) => parentNodeRole.id === role.id) >= 0)
+            } else {
+                return this.rolesList
+            }
         }
     },
     watch: {
@@ -82,6 +87,11 @@ export default defineComponent({
             handler: function(selected: iRole[]) {
                 this.selectedRoles = selected
             }
+        }
+    },
+    created() {
+        if (this.selected) {
+            this.selectedRoles = this.selected
         }
     },
     methods: {
@@ -93,16 +103,6 @@ export default defineComponent({
         },
         onAllRowSelectionChange() {
             setTimeout(() => this.$emit('changed', this.selectedRoles), 0)
-        }
-    },
-    computed: {
-        rolesListFiltered(): iRole[] {
-            if (!this.rolesList) return []
-            if (this.parentNodeRoles) {
-                return this.rolesList.filter((role) => this.parentNodeRoles && this.parentNodeRoles.findIndex((parentNodeRole) => parentNodeRole.id === role.id) >= 0)
-            } else {
-                return this.rolesList
-            }
         }
     }
 })

@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="kn-dialog--toolbar--primary" v-bind:visible="visibility" footer="footer" :header="$t('infoDialog.aboutKnowage')" :closable="false" modal>
+    <Dialog class="kn-dialog--toolbar--primary" :visible="visibility" footer="footer" :header="$t('infoDialog.aboutKnowage')" :closable="false" modal>
         <div class="p-grid p-m-1">
             <div class="p-col">
                 <div class="p-d-flex p-jc-center">
@@ -19,7 +19,7 @@
             </div>
         </div>
         <template #footer>
-            <Button class="kn-button kn-button--primary" v-t="'common.close'" @click="closeDialog" />
+            <Button v-t="'common.close'" class="kn-button kn-button--primary" @click="closeDialog" />
         </template>
     </Dialog>
 </template>
@@ -32,7 +32,7 @@ import moment from 'moment'
 import mainStore from '../../../App.store.js'
 
 export default defineComponent({
-    name: 'InfoDialog',
+    name: 'info-dialog',
     components: {
         Dialog
     },
@@ -43,19 +43,20 @@ export default defineComponent({
     data() {
         return {
             currentYear: moment().year(),
+            // eslint-disable-next-line no-undef
             currentVersion: _KNOWAGE_VERSION,
             publicPath: import.meta.env.VITE_PUBLIC_PATH
-        }
-    },
-    methods: {
-        closeDialog() {
-            this.$emit('update:visibility', false)
         }
     },
     computed: {
         ...mapState(mainStore, {
             user: 'user'
         })
+    },
+    methods: {
+        closeDialog() {
+            this.$emit('update:visibility', false)
+        }
     }
 })
 </script>

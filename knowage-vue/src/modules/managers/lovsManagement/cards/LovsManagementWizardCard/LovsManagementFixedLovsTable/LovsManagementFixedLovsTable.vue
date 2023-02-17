@@ -1,15 +1,15 @@
 <template>
     <DataTable
+        v-model:filters="filters"
         :value="values"
         class="p-datatable-sm kn-table p-m-5"
-        editMode="cell"
-        v-model:filters="filters"
-        :globalFilterFields="lovsManagementFixedLovsTableDescriptor.globalFilterFields"
-        responsiveLayout="stack"
+        edit-mode="cell"
+        :global-filter-fields="lovsManagementFixedLovsTableDescriptor.globalFilterFields"
+        responsive-layout="stack"
         breakpoint="960px"
+        data-test="values-list"
         @rowReorder="setPositionOnReorder"
         @cell-edit-complete="onCellEditComplete"
-        data-test="values-list"
     >
         <template #empty>
             {{ $t('common.info.noDataFound') }}
@@ -22,17 +22,17 @@
                 <div class="table-header p-d-flex p-ai-center p-jc-between">
                     <span id="search-container" class="p-input-icon-left p-mr-3">
                         <i class="pi pi-search" />
-                        <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="filter-input" />
+                        <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" data-test="filter-input" />
                     </span>
-                    <Button id="add-fixed-value-button" class="kn-button kn-button--primary" :label="$t('managers.lovsManagement.add')" @click="addFixedValue" data-test="new-button"></Button>
+                    <Button id="add-fixed-value-button" class="kn-button kn-button--primary" :label="$t('managers.lovsManagement.add')" data-test="new-button" @click="addFixedValue"></Button>
                 </div>
             </div>
         </template>
-        <Column :rowReorder="true" :headerStyle="lovsManagementFixedLovsTableDescriptor.table.reorderColumn.headerStyle" :reorderableColumn="false" />
+        <Column :row-reorder="true" :header-style="lovsManagementFixedLovsTableDescriptor.table.reorderColumn.headerStyle" :reorderable-column="false" />
 
         <Column class="kn-truncated p-mr-2" :style="lovsManagementFixedLovsTableDescriptor.table.inputColumnStyle" field="VALUE" :header="$t('managers.lovsManagement.value')">
             <template #editor="slotProps">
-                <InputText class="p-mr-2" type="text" v-model.trim="slotProps.data[slotProps.column.props.field]" maxLength="20" @input="$emit('touched')" data-test="value-input" />
+                <InputText v-model.trim="slotProps.data[slotProps.column.props.field]" class="p-mr-2" type="text" max-length="20" data-test="value-input" @input="$emit('touched')" />
                 <i class="pi pi-pencil edit-icon" />
             </template>
             <template #body="slotProps">
@@ -42,7 +42,7 @@
         </Column>
         <Column class="kn-truncated" :style="lovsManagementFixedLovsTableDescriptor.table.textAreaColumnStyle" field="DESCRIPTION" :header="$t('managers.lovsManagement.description')">
             <template #editor="slotProps">
-                <Textarea class="p-mr-2" type="text" v-model.trim="slotProps.data[slotProps.column.props.field]" maxLength="160" rows="2" cols="80" @input="$emit('touched')" data-test="description-input" />
+                <Textarea v-model.trim="slotProps.data[slotProps.column.props.field]" class="p-mr-2" type="text" max-length="160" rows="2" cols="80" data-test="description-input" @input="$emit('touched')" />
                 <i class="pi pi-pencil edit-icon" />
             </template>
             <template #body="slotProps">
@@ -52,7 +52,7 @@
         </Column>
         <Column :style="lovsManagementFixedLovsTableDescriptor.table.iconColumn.style">
             <template #body="slotProps">
-                <Button icon="pi pi-trash" class="p-button-link" @click="deleteValueConfirm(slotProps.index)" :data-test="'delete-button-' + slotProps.index" />
+                <Button icon="pi pi-trash" class="p-button-link" :data-test="'delete-button-' + slotProps.index" @click="deleteValueConfirm(slotProps.index)" />
             </template>
         </Column>
     </DataTable>

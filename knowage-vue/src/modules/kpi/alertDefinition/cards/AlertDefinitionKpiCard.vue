@@ -3,7 +3,7 @@
         <template #content>
             <div class="p-field">
                 <span class="p-float-label">
-                    <Dropdown id="kpi" class="kn-material-input" dataKey="id" v-model="kpi" :options="kpiList" optionLabel="name" @change="confirmLoadSelectedKpi($event.value)" />
+                    <Dropdown id="kpi" v-model="kpi" class="kn-material-input" data-key="id" :options="kpiList" option-label="name" @change="confirmLoadSelectedKpi($event.value)" />
                     <label for="kpi" class="kn-material-input-label"> Kpi *</label>
                 </span>
             </div>
@@ -13,26 +13,26 @@
                 </template>
 
                 <template #end>
-                    <Button :label="$t('kpi.alert.addAction')" class="p-button-text p-button-rounded p-button-plain" :disabled="disableActionButton" @click="$emit('showDialog')" data-test="add-action-button" />
+                    <Button :label="$t('kpi.alert.addAction')" class="p-button-text p-button-rounded p-button-plain" :disabled="disableActionButton" data-test="add-action-button" @click="$emit('showDialog')" />
                 </template>
             </Toolbar>
             <div class="p-grid p-mt-2">
-                <div class="p-m-2 p-shadow-2 action-box" v-for="(action, index) in alert.jsonOptions?.actions" :key="index">
+                <div v-for="(action, index) in alert.jsonOptions?.actions" :key="index" class="p-m-2 p-shadow-2 action-box">
                     <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
                         <template #start>
                             <span>{{ action.data?.name }}</span>
                         </template>
 
                         <template #end>
-                            <Button class="p-button-link p-button-sm" :style="alertDescriptor.styles.menuButton" icon="fa fa-ellipsis-v" @click="toggleMenu($event, { action, index })" aria-haspopup="true" aria-controls="overlay_menu" data-test="menu-button" />
+                            <Button class="p-button-link p-button-sm" :style="alertDescriptor.styles.menuButton" icon="fa fa-ellipsis-v" aria-haspopup="true" aria-controls="overlay_menu" data-test="menu-button" @click="toggleMenu($event, { action, index })" />
                             <Menu ref="menu" :model="items" :popup="true" data-test="menu" />
                         </template>
                     </Toolbar>
-                    <div class="p-d-flex p-flex-column severity-container p-m-2" v-if="action">
-                        <div class="p-d-inline-flex p-m-2" v-for="(threshVal, index) in action.thresholdData" :key="index">
+                    <div v-if="action" class="p-d-flex p-flex-column severity-container p-m-2">
+                        <div v-for="(threshVal, index) in action.thresholdData" :key="index" class="p-d-inline-flex p-m-2">
                             <div class="color-box" :style="{ 'background-color': threshVal?.color }"></div>
                             <span flex>{{ threshVal?.label }}</span>
-                            <span class="severity-box" style="text" v-if="threshVal?.severityCd != undefined">({{ threshVal.severityCd }})</span>
+                            <span v-if="threshVal?.severityCd != undefined" class="severity-box" style="text">({{ threshVal.severityCd }})</span>
                         </div>
                     </div>
                 </div>
@@ -51,18 +51,19 @@ export default defineComponent({
     components: { Dropdown, Menu },
     props: { selectedAlert: { type: Object as any }, kpiList: { type: Array as any }, actionList: { type: Array as any } },
     emits: ['showDialog', 'kpiLoaded', 'touched'],
-
-    async created() {
-        this.alert = this.selectedAlert
-        if (this.alert.jsonOptions) {
-            await this.loadKpi(this.alert.jsonOptions.kpiId, this.alert.jsonOptions.kpiVersion)
-            this.alert.jsonOptions.actions = this.alert.jsonOptions.actions.map((action) => {
-                const option = { ...action, data: this.actionList?.find((ac) => action.idAction == ac.id) }
-                option['thresholdData'] = option.thresholdValues.map((thresholdId) => {
-                    return this.kpi.threshold.thresholdValues.find((threshold) => threshold.id == thresholdId)
-                })
-                return option
-            })
+    data() {
+        return {
+            alertDescriptor,
+            alert: {} as any,
+            kpi: {} as any,
+            oldKpi: null as any,
+            items: [] as { label: string; icon: string; command: Function }[]
+        }
+    },
+    computed: {
+        disableActionButton() {
+            for (const i in this.kpi) return false
+            return true
         }
     },
     watch: {
@@ -80,19 +81,18 @@ export default defineComponent({
             }
         }
     },
-    computed: {
-        disableActionButton() {
-            for (var i in this.kpi) return false
-            return true
-        }
-    },
-    data() {
-        return {
-            alertDescriptor,
-            alert: {} as any,
-            kpi: {} as any,
-            oldKpi: null as any,
-            items: [] as { label: String; icon: string; command: Function }[]
+
+    async created() {
+        this.alert = this.selectedAlert
+        if (this.alert.jsonOptions) {
+            await this.loadKpi(this.alert.jsonOptions.kpiId, this.alert.jsonOptions.kpiVersion)
+            this.alert.jsonOptions.actions = this.alert.jsonOptions.actions.map((action) => {
+                const option = { ...action, data: this.actionList?.find((ac) => action.idAction == ac.id) }
+                option['thresholdData'] = option.thresholdValues.map((thresholdId) => {
+                    return this.kpi.threshold.thresholdValues.find((threshold) => threshold.id == thresholdId)
+                })
+                return option
+            })
         }
     },
     methods: {
@@ -154,7 +154,7 @@ export default defineComponent({
             }
         },
         getActionLabel(idAction) {
-            for (var i = 0; i < this.actionList.length; i++) {
+            for (let i = 0; i < this.actionList.length; i++) {
                 if (this.actionList[i].id == idAction) {
                     return this.actionList[i].name
                 }
@@ -165,8 +165,8 @@ export default defineComponent({
             if (!this.kpi?.threshold?.thresholdValues) {
                 return []
             }
-            var actionThresholdsList = [] as any
-            for (var i = 0; i < this.kpi.threshold.thresholdValues.length; i++) {
+            const actionThresholdsList = [] as any
+            for (let i = 0; i < this.kpi.threshold.thresholdValues.length; i++) {
                 if (actionThresholds.indexOf('' + this.kpi.threshold.thresholdValues[i].id) != -1) {
                     actionThresholdsList.push(this.kpi.threshold.thresholdValues[i])
                 }

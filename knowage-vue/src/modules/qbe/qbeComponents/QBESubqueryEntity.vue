@@ -1,7 +1,7 @@
 <template>
-    <div class="expandable-entities" v-for="(entity, index) in entities" :key="index">
+    <div v-for="(entity, index) in entities" :key="index" class="expandable-entities">
         <h4 draggable="true" @dragstart="onDragStart($event, entity)">
-            <i class="fas fa-cube p-mx-2" v-tooltip.top="$t(`qbe.entities.types.cube`)" />
+            <i v-tooltip.top="$t(`qbe.entities.types.cube`)" class="fas fa-cube p-mx-2" />
             <span class="kn-flex" @click="expandEntity(entity)">{{ entity.name }}</span>
             <Button icon="fas fa-edit" class="p-button-text p-button-rounded p-button-plain p-ml-auto" @click="$emit('editSubquery', entity)" />
             <Button icon="fas fa-trash" class="p-button-text p-button-rounded p-button-plain" @click="$emit('deleteSubquery', index, entity)" />
@@ -10,7 +10,7 @@
         </h4>
         <ul v-show="entity.expanded">
             <li v-for="(child, index) in entity.fields" :key="index" draggable="true" @dragstart="onDragStart($event, child)">
-                <i :class="getIconCls(child.iconCls)" class="p-mx-2" v-tooltip.top="$t(`qbe.entities.types.${child.iconCls}`)" />
+                <i v-tooltip.top="$t(`qbe.entities.types.${child.iconCls}`)" :class="getIconCls(child.iconCls)" class="p-mx-2" />
                 <span>{{ child.alias }}</span>
             </li>
         </ul>

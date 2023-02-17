@@ -18,7 +18,7 @@
                         <span v-if="$route.path.includes('new')">{{ $t('workspace.gis.datasetLayerTitle') }}</span>
                         <span v-else>{{ $t('managers.layersManagement.layerTitle') }}</span>
                     </template>
-                    <DatasetLayerTab :documentDataProp="documentData" :isDatasetChosen="isDatasetChosen" @datasetChanged="onDatasetChange($event)" @layerChanged="onLayerChange($event)" @driverChanged="onDriverChange($event)" @datasetDeleted="onDatasetDelete" />
+                    <DatasetLayerTab :document-data-prop="documentData" :is-dataset-chosen="isDatasetChosen" @datasetChanged="onDatasetChange($event)" @layerChanged="onLayerChange($event)" @driverChanged="onDriverChange($event)" @datasetDeleted="onDatasetDelete" />
                 </TabPanel>
 
                 <TabPanel :disabled="!documentData.selectedDataset.length > 0 || !documentData.selectedLayer.length > 0">
@@ -27,7 +27,7 @@
                         <Badge v-if="validations.joinsInvalid" value="" class="p-ml-2" severity="danger" />
                     </template>
 
-                    <DatasetJoinTab :documentDataProp="documentData" @joinsValidationChanged="validationChanged" />
+                    <DatasetJoinTab :document-data-prop="documentData" @joinsValidationChanged="validationChanged" />
                 </TabPanel>
 
                 <TabPanel :disabled="!documentData.selectedDataset.length > 0">
@@ -36,7 +36,7 @@
                         <Badge v-if="validations.indicatorsInvalid" value="" class="p-ml-2" severity="danger" />
                     </template>
 
-                    <IndicatorsTab :documentDataProp="documentData" @indicatorsValidationChanged="validationChanged" />
+                    <IndicatorsTab :document-data-prop="documentData" @indicatorsValidationChanged="validationChanged" />
                 </TabPanel>
 
                 <TabPanel>
@@ -45,12 +45,12 @@
                         <Badge v-if="validations.filtersInvalid" value="" class="p-ml-2" severity="danger" />
                     </template>
 
-                    <MenuTab :documentDataProp="documentData" @filtersValidationChanged="validationChanged" />
+                    <MenuTab :document-data-prop="documentData" @filtersValidationChanged="validationChanged" />
                 </TabPanel>
             </TabView>
         </div>
 
-        <Dialog class="p-fluid kn-dialog--toolbar--primary" :style="descriptor.style.dialogSize" v-if="saveDialogVisible" :visible="saveDialogVisible" :modal="true" :closable="false">
+        <Dialog v-if="saveDialogVisible" class="p-fluid kn-dialog--toolbar--primary" :style="descriptor.style.dialogSize" :visible="saveDialogVisible" :modal="true" :closable="false">
             <template #header>
                 <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                     <template #start>{{ $t('workspace.gis.save') }}</template>
@@ -58,14 +58,14 @@
             </template>
             <div class="p-field p-col-12 p-my-1">
                 <span class="p-float-label">
-                    <InputText id="label" class="kn-material-input" v-model="documentData.documentLabel" :class="{ 'p-invalid': documentData.documentLabel == null || documentData.documentLabel == '' }" />
+                    <InputText id="label" v-model="documentData.documentLabel" class="kn-material-input" :class="{ 'p-invalid': documentData.documentLabel == null || documentData.documentLabel == '' }" />
                     <label for="label" class="kn-material-input-label"> {{ $t('common.label') }} * </label>
                 </span>
-                <small for="label" v-if="documentData.documentLabel == null || documentData.documentLabel == ''" class="p-error">Field required *</small>
+                <small v-if="documentData.documentLabel == null || documentData.documentLabel == ''" for="label" class="p-error">Field required *</small>
             </div>
             <div class="p-field p-col-12">
                 <span class="p-float-label">
-                    <InputText id="desc" class="kn-material-input kn-width-full" v-model="documentData.documentDesc" />
+                    <InputText id="desc" v-model="documentData.documentDesc" class="kn-material-input kn-width-full" />
                     <label for="desc" class="kn-material-input-label"> {{ $t('common.description') }} </label>
                 </span>
             </div>
@@ -99,20 +99,11 @@ import deepcopy from 'deepcopy'
 export default defineComponent({
     name: 'gis-document-designer',
     components: { Dialog, TabView, TabPanel, DatasetLayerTab, DatasetJoinTab, IndicatorsTab, MenuTab, KnOverlaySpinnerPanel, Badge },
-    emits: [],
     props: {},
-    computed: {
-        isDatasetChosen(): boolean {
-            return this.documentData.datasetLabel != ''
-        },
-        saveDialogDisabled(): boolean {
-            if (this.documentData.selectedLayer <= 0 || this.validations.joinsInvalid || this.validations.indicatorsInvalid || this.validations.filtersInvalid) {
-                return true
-            } else return false
-        },
-        saveButtonDisabled(): boolean {
-            return this.documentData.documentLabel == null || this.documentData.documentLabel == ''
-        }
+    emits: [],
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     data() {
         return {
@@ -130,9 +121,18 @@ export default defineComponent({
             canOpenMap: true
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
+    computed: {
+        isDatasetChosen(): boolean {
+            return this.documentData.datasetLabel != ''
+        },
+        saveDialogDisabled(): boolean {
+            if (this.documentData.selectedLayer <= 0 || this.validations.joinsInvalid || this.validations.indicatorsInvalid || this.validations.filtersInvalid) {
+                return true
+            } else return false
+        },
+        saveButtonDisabled(): boolean {
+            return this.documentData.documentLabel == null || this.documentData.documentLabel == ''
+        }
     },
     created() {
         this.loadPage()
@@ -237,9 +237,9 @@ export default defineComponent({
         },
         async initializeSelectedJoinColumns() {
             if (this.documentTemplate.datasetJoinColumns && this.documentTemplate.layerJoinColumns) {
-                var dsJoinCols = this.documentTemplate.datasetJoinColumns.split(',')
-                var layerJoinCols = this.documentTemplate.layerJoinColumns.split(',')
-                var layerId = this.documentData.selectedLayer[0].layerId
+                const dsJoinCols = this.documentTemplate.datasetJoinColumns.split(',')
+                const layerJoinCols = this.documentTemplate.layerJoinColumns.split(',')
+                const layerId = this.documentData.selectedLayer[0].layerId
 
                 this.documentData.dsJoins = dsJoinCols.map((x, i) => {
                     return { datasetColumn: x, layerColumn: layerJoinCols[i] }
@@ -309,7 +309,7 @@ export default defineComponent({
             }
         },
         buildGisTemplate() {
-            let template = {} as any
+            const template = {} as any
 
             template.targetLayerConf = []
 
@@ -348,7 +348,7 @@ export default defineComponent({
         },
         async saveGisDocument(template) {
             if (this.$route.path.includes('edit')) {
-                let postData = {} as any
+                const postData = {} as any
                 postData.DATASET_LABEL = this.documentData.datasetLabel
                 postData.DOCUMENT_LABEL = this.documentData.documentLabel
                 postData.TEMPLATE = template
@@ -363,9 +363,9 @@ export default defineComponent({
                     this.routeToDocument()
                 })
             } else {
-                let postData = {} as any
-                let d = new Date()
-                let docLabel = 'geomap_' + (d.getTime() % 10000000)
+                const postData = {} as any
+                const d = new Date()
+                const docLabel = 'geomap_' + (d.getTime() % 10000000)
                 postData.action = 'DOC_SAVE'
                 postData.customData = { templateContent: template }
                 postData.document = { name: this.documentData.documentLabel, description: this.documentData.documentDesc, label: docLabel, type: 'MAP' }

@@ -1,24 +1,25 @@
+<!-- eslint-disable vue/valid-v-model -->
 <template>
     <div v-if="columnStyles" class="p-grid p-p-4">
         <div v-for="(columnStyle, index) in columnStyles.styles" :key="index" class="dynamic-form-item p-col-12 p-grid p-ai-center">
             <div v-if="mode !== 'columnGroups'" class="p-col-12 p-grid">
                 <div class="p-col-4 p-d-flex p-flex-column kn-flex">
                     <label class="kn-material-input-label p-mr-2">{{ $t('common.width') }}</label>
-                    <InputNumber class="kn-material-input p-inputtext-sm" v-model="(columnStyle.properties.width as number)" :disabled="columnStylesDisabled" @blur="columnStylesChanged" />
+                    <InputNumber v-model="(columnStyle.properties.width as number)" class="kn-material-input p-inputtext-sm" :disabled="columnStylesDisabled" @blur="columnStylesChanged" />
                 </div>
                 <div class="p-col-8"></div>
             </div>
             <div class="p-col-12 p-md-12 p-grid p-ai-center">
                 <div class="p-col-10 p-md-11 p-d-flex p-flex-column p-p-2">
                     <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
-                    <Dropdown v-if="index === 0" class="kn-material-input" v-model="columnStyle.target" :options="descriptor.allColumnOption" optionValue="value" optionLabel="label" :disabled="true"> </Dropdown>
+                    <Dropdown v-if="index === 0" v-model="columnStyle.target" class="kn-material-input" :options="descriptor.allColumnOption" option-value="value" option-label="label" :disabled="true"> </Dropdown>
                     <WidgetEditorColumnsMultiselect
                         v-else
                         :value="(columnStyle.target as string[])"
-                        :availableTargetOptions="availableColumnOptions"
-                        :widgetColumnsAliasMap="widgetColumnsAliasMap"
-                        optionLabel="alias"
-                        optionValue="id"
+                        :available-target-options="availableColumnOptions"
+                        :widget-columns-alias-map="widgetColumnsAliasMap"
+                        option-label="alias"
+                        option-value="id"
                         :disabled="columnStylesDisabled"
                         @change="onColumnsSelected($event, columnStyle)"
                     >
@@ -30,7 +31,7 @@
             </div>
 
             <div class="p-col-12 p-md-12 p-py-2">
-                <WidgetEditorStyleToolbar :options="settingsDescriptor.defaultToolbarStyleOptions" :propModel="columnStyle.properties" :disabled="columnStylesDisabled" @change="onStyleToolbarChange($event, columnStyle)"> </WidgetEditorStyleToolbar>
+                <WidgetEditorStyleToolbar :options="settingsDescriptor.defaultToolbarStyleOptions" :prop-model="columnStyle.properties" :disabled="columnStylesDisabled" @change="onStyleToolbarChange($event, columnStyle)"> </WidgetEditorStyleToolbar>
             </div>
         </div>
     </div>
@@ -44,13 +45,12 @@ import descriptor from '../TableWidgetSettingsDescriptor.json'
 import settingsDescriptor from '../../WidgetEditorSettingsTabDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import InputNumber from 'primevue/inputnumber'
-import InputSwitch from 'primevue/inputswitch'
 import WidgetEditorStyleToolbar from '../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
 import WidgetEditorColumnsMultiselect from '../../common/WidgetEditorColumnsMultiselect.vue'
 
 export default defineComponent({
     name: 'table-widget-column-style',
-    components: { Dropdown, InputNumber, InputSwitch, WidgetEditorColumnsMultiselect, WidgetEditorStyleToolbar },
+    components: { Dropdown, InputNumber, WidgetEditorColumnsMultiselect, WidgetEditorStyleToolbar },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, mode: { type: String } },
     data() {
         return {
@@ -148,7 +148,8 @@ export default defineComponent({
                 if (index !== -1) this.availableColumnOptions.splice(index, 1)
             })
         },
-        onColumnsRemovedFromMultiselect(intersection: string[], columnStyle: ITableWidgetColumnStyle) {
+        onColumnsRemovedFromMultiselect(intersection: string[]) {
+            //onColumnsRemovedFromMultiselect(intersection: string[], columnStyle: ITableWidgetColumnStyle) {
             intersection.forEach((el: string) =>
                 this.availableColumnOptions.push({
                     id: el,

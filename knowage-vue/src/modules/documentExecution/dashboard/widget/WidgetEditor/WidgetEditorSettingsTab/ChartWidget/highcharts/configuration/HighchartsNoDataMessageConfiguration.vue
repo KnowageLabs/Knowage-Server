@@ -2,11 +2,11 @@
     <div v-if="model" class="p-grid p-jc-center p-ai-center p-p-4">
         <div v-if="model.lang" class="p-col-12">
             <label class="kn-material-input-label">{{ $t('common.message') }}</label>
-            <Textarea class="kn-material-input kn-width-full" rows="4" :autoResize="true" v-model="model.lang.noData" maxlength="250" @change="modelChanged" />
+            <Textarea v-model="model.lang.noData" class="kn-material-input kn-width-full" rows="4" :auto-resize="true" maxlength="250" @change="modelChanged" />
         </div>
         <div v-if="model.noData?.position" class="p-col-6 p-d-flex p-flex-column kn-flex p-m-2">
             <label class="kn-material-input-label p-mr-2">{{ $t('common.align') }}</label>
-            <Dropdown class="kn-material-input" v-model="model.noData.position.align" :options="descriptor.alignmentOptions" optionValue="value" @change="modelChanged">
+            <Dropdown v-model="model.noData.position.align" class="kn-material-input" :options="descriptor.alignmentOptions" option-value="value" @change="modelChanged">
                 <template #value="slotProps">
                     <div>
                         <span>{{ getTranslatedLabel(slotProps.value, descriptor.alignmentOptions, $t) }}</span>
@@ -21,7 +21,7 @@
         </div>
         <div v-if="model.noData?.position" class="p-col-6 p-d-flex p-flex-column kn-flex p-m-2">
             <label class="kn-material-input-label p-mr-2">{{ $t('common.verticalAlign') }}</label>
-            <Dropdown class="kn-material-input" v-model="model.noData.position.verticalAlign" :options="descriptor.verticalAlignmentOptions" optionValue="value" @change="modelChanged">
+            <Dropdown v-model="model.noData.position.verticalAlign" class="kn-material-input" :options="descriptor.verticalAlignmentOptions" option-value="value" @change="modelChanged">
                 <template #value="slotProps">
                     <div>
                         <span>{{ getTranslatedLabel(slotProps.value, descriptor.verticalAlignmentOptions, $t) }}</span>
@@ -36,7 +36,7 @@
         </div>
 
         <div class="p-col-12 p-py-4">
-            <WidgetEditorStyleToolbar :options="descriptor.noDataToolbarStyleOptions" :propModel="toolbarModel" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
+            <WidgetEditorStyleToolbar :options="descriptor.noDataToolbarStyleOptions" :prop-model="toolbarModel" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
         </div>
     </div>
 </template>

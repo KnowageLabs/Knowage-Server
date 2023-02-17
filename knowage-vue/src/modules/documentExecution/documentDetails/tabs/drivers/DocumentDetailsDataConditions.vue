@@ -8,13 +8,13 @@
                 <Button :label="$t('managers.businessModelManager.addCondition')" class="p-button-text p-button-rounded p-button-plain kn-white-color" @click="showForm" />
             </template>
         </Toolbar>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
         <Listbox class="kn-list data-condition-list" :options="conditions" @change="showForm">
             <template #empty>{{ $t('documentExecution.documentDetails.drivers.noDataCond') }} </template>
             <template #option="slotProps">
                 <div class="kn-list-item">
                     <div class="kn-list-item-text">
-                        <span class="kn-truncated" v-tooltip.top="slotProps.option.filterOperation + $t('documentExecution.documentDetails.drivers.dataConditionsValue') + slotProps.option.parFatherUrlName">
+                        <span v-tooltip.top="slotProps.option.filterOperation + $t('documentExecution.documentDetails.drivers.dataConditionsValue') + slotProps.option.parFatherUrlName" class="kn-truncated">
                             <b>{{ slotProps.option.filterOperation }} {{ $t('documentExecution.documentDetails.drivers.dataConditionsValue') }}</b> {{ slotProps.option.parFatherUrlName }}
                         </span>
                     </div>
@@ -39,19 +39,19 @@
                 <form class="p-fluid p-formgrid p-grid p-mx-2 p-mt-5">
                     <div class="p-field p-col-12 p-md-4">
                         <span class="p-float-label">
-                            <Dropdown id="driver" class="kn-material-input" v-model="condition.parFatherId" :options="excludeCurrentDriverFromList()" optionLabel="label" optionValue="id" @change="setParFatherUrlName" />
+                            <Dropdown id="driver" v-model="condition.parFatherId" class="kn-material-input" :options="excludeCurrentDriverFromList()" option-label="label" option-value="id" @change="setParFatherUrlName" />
                             <label for="driver" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.drivers.ad') }} {{ $t('documentExecution.documentDetails.drivers.adDepends') }} </label>
                         </span>
                     </div>
                     <div class="p-field p-col-12 p-md-4">
                         <span class="p-float-label">
-                            <Dropdown id="filterOp" class="kn-material-input" v-model="condition.filterOperation" :options="availableOperators" />
+                            <Dropdown id="filterOp" v-model="condition.filterOperation" class="kn-material-input" :options="availableOperators" />
                             <label for="filterOp" class="kn-material-input-label"> {{ $t('managers.businessModelManager.filterOperator') }} </label>
                         </span>
                     </div>
                     <div class="p-field p-col-12 p-md-4">
                         <span class="p-float-label">
-                            <Dropdown id="logicalOp" class="kn-material-input" v-model="condition.logicOperator" :options="connectingOperators" />
+                            <Dropdown id="logicalOp" v-model="condition.logicOperator" class="kn-material-input" :options="connectingOperators" />
                             <label for="logicalOp" class="kn-material-input-label"> {{ $t('managers.businessModelManager.logicOperator') }} </label>
                         </span>
                     </div>
@@ -59,12 +59,12 @@
                         <form class="p-fluid p-formgrid p-grid">
                             <p class="p-col-12 p-m-0">{{ $t('managers.businessModelManager.modality') + ': ' + mode.name }}</p>
                             <div class="mode-inputs p-col-4" :style="driversDescriptor.style.modalityCheckbox">
-                                <Checkbox class="p-mr-2" :value="mode.useID" v-model="selectedModes" :disabled="readonly" />
+                                <Checkbox v-model="selectedModes" class="p-mr-2" :value="mode.useID" :disabled="readonly" />
                                 <label>{{ $t('managers.businessModelManager.check') }}</label>
                             </div>
                             <div class="mode-inputs p-col-8">
                                 <label class="kn-material-input-label">{{ $t('managers.businessModelManager.lovsColumn') }}</label>
-                                <Dropdown id="parFather" class="kn-material-input" v-model="modalities[mode.useID]" :options="getLovs(mode.idLov)" :placeholder="$t('managers.businessModelManager.lovsColumnSelect')">
+                                <Dropdown id="parFather" v-model="modalities[mode.useID]" class="kn-material-input" :options="getLovs(mode.idLov)" :placeholder="$t('managers.businessModelManager.lovsColumnSelect')">
                                     <template #value="slotProps">
                                         <div v-if="slotProps.value">
                                             <span>{{ slotProps.value }}</span>
@@ -108,6 +108,10 @@ export default defineComponent({
     components: { Listbox, Dialog, Dropdown, Checkbox, InlineMessage },
     props: { availableDrivers: { type: Array as PropType<iDriver[]>, required: true }, selectedDocument: { type: Object as PropType<iDocument>, required: true }, selectedDriver: { type: Object as PropType<iDriver>, required: true } },
     emits: ['driversChanged'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             mainDescriptor,
@@ -141,10 +145,6 @@ export default defineComponent({
                 }
             }
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         this.loadSelectedDriver()

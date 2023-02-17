@@ -12,26 +12,26 @@
                 <div class="p-col-12 p-md-6 p-lg-6 p-d-flex p-flex-column kn-flex">
                     <label class="kn-material-input-label p-mr-2">{{ $t('common.from') }}</label>
                     <div class="p-d-flex p-flex-row p-ai-center">
-                        <InputNumber class="kn-material-input p-inputtext-sm" v-model="plotBand.from" @blur="onInputNumberChanged" />
-                        <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.bands.fromHint')"></i>
+                        <InputNumber v-model="plotBand.from" class="kn-material-input p-inputtext-sm" @blur="onInputNumberChanged" />
+                        <i v-tooltip.top="$t('dashboard.widgetEditor.highcharts.bands.fromHint')" class="pi pi-question-circle kn-cursor-pointer p-ml-2"></i>
                     </div>
                 </div>
                 <div class="p-col-12 p-md-6 p-lg-6 p-d-flex p-flex-column kn-flex">
                     <label class="kn-material-input-label p-mr-2">{{ $t('common.to') }}</label>
                     <div class="p-d-flex p-flex-row p-ai-center">
-                        <InputNumber class="kn-material-input p-inputtext-sm" v-model="plotBand.to" @blur="onInputNumberChanged" />
-                        <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.bands.toHint')"></i>
+                        <InputNumber v-model="plotBand.to" class="kn-material-input p-inputtext-sm" @blur="onInputNumberChanged" />
+                        <i v-tooltip.top="$t('dashboard.widgetEditor.highcharts.bands.toHint')" class="pi pi-question-circle kn-cursor-pointer p-ml-2"></i>
                     </div>
                 </div>
                 <div class="p-col-12 p-md-6 p-lg-6 p-d-flex p-flex-column kn-flex">
                     <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.highcharts.bands.thickness') }}</label>
                     <div class="p-d-flex p-flex-row p-ai-center">
-                        <InputNumber class="kn-material-input p-inputtext-sm" v-model="plotBand.thickness" @blur="onInputNumberChanged" />
-                        <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.bands.thicknessHint')"></i>
+                        <InputNumber v-model="plotBand.thickness" class="kn-material-input p-inputtext-sm" @blur="onInputNumberChanged" />
+                        <i v-tooltip.top="$t('dashboard.widgetEditor.highcharts.bands.thicknessHint')" class="pi pi-question-circle kn-cursor-pointer p-ml-2"></i>
                     </div>
                 </div>
                 <div class="p-col-12 p-md-6 p-lg-6 p-px-2 p-pt-4">
-                    <WidgetEditorColorPicker :initialValue="plotBand.color" :label="$t('dashboard.widgetEditor.highcharts.tick.tickColor')" @change="onSelectionColorChanged($event, plotBand)"></WidgetEditorColorPicker>
+                    <WidgetEditorColorPicker :initial-value="plotBand.color" :label="$t('dashboard.widgetEditor.highcharts.tick.tickColor')" @change="onSelectionColorChanged($event, plotBand)"></WidgetEditorColorPicker>
                 </div>
 
                 <div class="p-col-1 p-d-flex p-flex-row p-jc-center p-ai-center p-pl-2">
@@ -51,7 +51,6 @@ import { IHighchartsChartModel } from '@/modules/documentExecution/dashboard/int
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import { IHighchartsBands } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget'
 import descriptor from '../../HighchartsWidgetSettingsDescriptor.json'
-import Dropdown from 'primevue/dropdown'
 import InputNumber from 'primevue/inputnumber'
 import Message from 'primevue/message'
 import WidgetEditorColorPicker from '../../../../common/WidgetEditorColorPicker.vue'
@@ -59,7 +58,7 @@ import * as highchartsDefaultValues from '../../../../../helpers/chartWidget/hig
 
 export default defineComponent({
     name: 'hihgcharts-gauge-bands-settings',
-    components: { Dropdown, InputNumber, Message, WidgetEditorColorPicker },
+    components: { InputNumber, Message, WidgetEditorColorPicker },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {

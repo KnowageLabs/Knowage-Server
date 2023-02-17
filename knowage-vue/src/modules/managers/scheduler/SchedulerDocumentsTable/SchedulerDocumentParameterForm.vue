@@ -6,35 +6,35 @@
                 <div class="p-m-0 p-col-12 p-md-12 p-lg-4 p-xl-4">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.parameterValueType') }}</label>
-                        <Dropdown class="kn-material-input" v-model="parameter.type" :options="parameter.temporal ? triggerStrategies : triggerStrategies.slice(0, 2)" optionLabel="label" optionValue="value" @change="onParameterTypeChange" />
+                        <Dropdown v-model="parameter.type" class="kn-material-input" :options="parameter.temporal ? triggerStrategies : triggerStrategies.slice(0, 2)" option-label="label" option-value="value" @change="onParameterTypeChange" />
                     </span>
                 </div>
                 <div v-if="parameter.type === 'fixed'" class="p-m-0 p-col-12 p-md-12 p-lg-4 p-xl-4">
                     <span v-if="parameterValues.manualInput">
                         <label class="kn-material-input-label">{{ $t('common.values') }}</label>
-                        <InputText class="kn-material-input" v-model="parameter.value" />
+                        <InputText v-model="parameter.value" class="kn-material-input" />
                     </span>
                     <span v-else>
                         <label class="kn-material-input-label">{{ $t('common.values') }}</label>
-                        <MultiSelect class="kn-material-input" v-model="parameter.selectedValues" :options="parameterValues.values" @change="formatSelectedValues" />
+                        <MultiSelect v-model="parameter.selectedValues" class="kn-material-input" :options="parameterValues.values" @change="formatSelectedValues" />
                     </span>
                 </div>
-                <div class="p-m-0 p-col-12 p-md-12 p-lg-4 p-xl-4" v-else-if="parameter.type === 'loadAtRuntime'">
+                <div v-else-if="parameter.type === 'loadAtRuntime'" class="p-m-0 p-col-12 p-md-12 p-lg-4 p-xl-4">
                     <span>
                         <label class="kn-material-input-label">{{ $t('common.role') }}</label>
-                        <Dropdown class="kn-material-input" v-model="parameter.value" :options="rolesOptions" optionLabel="role" optionValue="userAndRole" />
+                        <Dropdown v-model="parameter.value" class="kn-material-input" :options="rolesOptions" option-label="role" option-value="userAndRole" />
                     </span>
                 </div>
-                <div class="p-m-0 p-col-12 p-md-12 p-lg-4 p-xl-4" v-else-if="parameter.type === 'formula'">
+                <div v-else-if="parameter.type === 'formula'" class="p-m-0 p-col-12 p-md-12 p-lg-4 p-xl-4">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.selectFormula') }}</label>
-                        <Dropdown class="kn-material-input" v-model="parameter.value" :options="formulaOptions" optionLabel="description" optionValue="name" />
+                        <Dropdown v-model="parameter.value" class="kn-material-input" :options="formulaOptions" option-label="description" option-value="name" />
                     </span>
                 </div>
                 <div class="p-m-0 p-col-12 p-md-12 p-lg-4 p-xl-4">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.iterations') }}</label>
-                        <Dropdown class="kn-material-input" v-model="parameter.iterative" :options="triggerIterations" optionLabel="label" optionValue="value" />
+                        <Dropdown v-model="parameter.iterative" class="kn-material-input" :options="triggerIterations" option-label="label" option-value="value" />
                     </span>
                 </div>
             </div>

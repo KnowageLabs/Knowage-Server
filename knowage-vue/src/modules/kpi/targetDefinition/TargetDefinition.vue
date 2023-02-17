@@ -7,22 +7,22 @@
                         {{ $t('kpi.targetDefinition.title') }}
                     </template>
                     <template #end>
-                        <KnFabButton icon="fas fa-plus" @click="showForm(null, false)" data-test="open-form-button"></KnFabButton>
+                        <KnFabButton icon="fas fa-plus" data-test="open-form-button" @click="showForm(null, false)"></KnFabButton>
                     </template>
                 </Toolbar>
-                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+                <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
                 <Listbox
                     v-if="!loading"
                     class="kn-list--column"
                     :options="targetList"
                     :filter="true"
-                    :filterPlaceholder="$t('common.search')"
-                    optionLabel="name"
-                    filterMatchMode="contains"
-                    :filterFields="targetDefinitionDecriptor.filterFields"
-                    :emptyFilterMessage="$t('common.info.noDataFound')"
-                    @change="showForm($event.value, false)"
+                    :filter-placeholder="$t('common.search')"
+                    option-label="name"
+                    filter-match-mode="contains"
+                    :filter-fields="targetDefinitionDecriptor.filterFields"
+                    :empty-filter-message="$t('common.info.noDataFound')"
                     data-test="target-list"
+                    @change="showForm($event.value, false)"
                 >
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
@@ -31,8 +31,8 @@
                                 <span>{{ slotProps.option.name }}</span>
                                 <span class="kn-list-item-text-secondary">{{ formatDate(slotProps.option.startValidity) }} - {{ formatDate(slotProps.option.endValidity) }}</span>
                             </div>
-                            <Button icon="far fa-copy" class="p-button-text p-button-rounded p-button-plain" @click.stop="cloneTargetConfirm(slotProps.option)" data-test="clone-button" />
-                            <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteTargetConfirm(slotProps.option.id)" data-test="delete-button" />
+                            <Button icon="far fa-copy" class="p-button-text p-button-rounded p-button-plain" data-test="clone-button" @click.stop="cloneTargetConfirm(slotProps.option)" />
+                            <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" data-test="delete-button" @click.stop="deleteTargetConfirm(slotProps.option.id)" />
                         </div>
                     </template>
                 </Listbox>
@@ -56,6 +56,10 @@ import mainStore from '../../../App.store'
 export default defineComponent({
     name: 'target-definition',
     components: { KnFabButton, Listbox },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             targetList: [] as iTargetDefinition[],
@@ -64,10 +68,6 @@ export default defineComponent({
             targetDefinitionDecriptor: targetDefinitionDecriptor,
             formatDate: formatDate
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         await this.loadAllMetadata()
@@ -93,7 +93,7 @@ export default defineComponent({
                 )
                 .finally(() => (this.loading = false))
         },
-        showForm(target: any, clone: Boolean) {
+        showForm(target: any, clone: boolean) {
             const path = target ? `/target-definition/edit?id=${target.id}&clone=${clone}` : '/target-definition/new-target-definition'
             if (!this.touched) {
                 this.$router.push(path)

@@ -1,28 +1,28 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
-        <template #start>{{ this.clone || this.id ? this.selectedSchedule.name : this.$t('kpi.kpiScheduler.newScheduler') }} </template>
+        <template #start>{{ clone || id ? selectedSchedule.name : $t('kpi.kpiScheduler.newScheduler') }} </template>
         <template #end>
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="saveDialogVisible = true" data-test="submit-button" />
-            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" data-test="close-button" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" data-test="submit-button" @click="saveDialogVisible = true" />
+            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" data-test="close-button" @click="closeTemplate" />
         </template>
     </Toolbar>
-    <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-    <div class="card" v-else>
+    <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
+    <div v-else class="card">
         <TabView class="tabview-custom">
             <TabPanel>
                 <template #header>
                     <span>{{ $t('common.kpi') }}</span>
                 </template>
 
-                <KpiSchedulerKpiCard :expired="selectedSchedule.jobStatus === 'EXPIRED'" :kpis="selectedSchedule.kpis" :allKpiList="kpiList" @touched="setTouched" @kpiAdded="onKpiAdded($event)" @kpiDeleted="onKpiDeleted"></KpiSchedulerKpiCard>
+                <KpiSchedulerKpiCard :expired="selectedSchedule.jobStatus === 'EXPIRED'" :kpis="selectedSchedule.kpis" :all-kpi-list="kpiList" @touched="setTouched" @kpiAdded="onKpiAdded($event)" @kpiDeleted="onKpiDeleted"></KpiSchedulerKpiCard>
             </TabPanel>
 
-            <TabPanel :disabled="Object.keys(this.formatedFilters).length === 0">
+            <TabPanel :disabled="Object.keys(formatedFilters).length === 0">
                 <template #header>
                     <span>{{ $t('kpi.kpiScheduler.filters') }}</span>
                 </template>
 
-                <KpiSchedulerFiltersCard :formatedFilters="formatedFilters" :placeholderType="domainsKpiPlaceholderType" :temporalType="domainsKpiPlaceholderFunction" :lovs="lovs" @touched="setTouched"></KpiSchedulerFiltersCard>
+                <KpiSchedulerFiltersCard :formated-filters="formatedFilters" :placeholder-type="domainsKpiPlaceholderType" :temporal-type="domainsKpiPlaceholderFunction" :lovs="lovs" @touched="setTouched"></KpiSchedulerFiltersCard>
             </TabPanel>
 
             <TabPanel>
@@ -38,14 +38,14 @@
                     <span>{{ $t('kpi.kpiScheduler.execute') }}</span>
                 </template>
 
-                <KpiSchedulerExecuteCard :selectedSchedule="selectedSchedule" @touched="setTouched"></KpiSchedulerExecuteCard>
+                <KpiSchedulerExecuteCard :selected-schedule="selectedSchedule" @touched="setTouched"></KpiSchedulerExecuteCard>
             </TabPanel>
         </TabView>
     </div>
 
-    <KpiSchedulerSaveDialog v-if="saveDialogVisible" :schedulerName="selectedSchedule.name" @save="saveScheduler($event)" @close="saveDialogVisible = false"></KpiSchedulerSaveDialog>
+    <KpiSchedulerSaveDialog v-if="saveDialogVisible" :scheduler-name="selectedSchedule.name" @save="saveScheduler($event)" @close="saveDialogVisible = false"></KpiSchedulerSaveDialog>
 
-    <Dialog :style="kpiSchedulerTabViewDescriptor.errorDialog.style" :modal="true" :visible="errorDialogVisible" :header="$t('common.toast.' + this.operation + 'Title')" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary error-dialog" :closable="false" data-test="save-dialog">
+    <Dialog :style="kpiSchedulerTabViewDescriptor.errorDialog.style" :modal="true" :visible="errorDialogVisible" :header="$t('common.toast.' + operation + 'Title')" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary error-dialog" :closable="false" data-test="save-dialog">
         <p>{{ errorMessage }}</p>
         <template #footer>
             <Button class="kn-button kn-button--secondary" :label="$t('common.close')" @click="errorMessage = null"></Button>
@@ -76,6 +76,10 @@ export default defineComponent({
         clone: { type: String }
     },
     emits: ['touched', 'inserted', 'closed'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             kpiSchedulerTabViewDescriptor,
@@ -96,10 +100,10 @@ export default defineComponent({
         }
     },
     computed: {
-        buttonDisabled(): Boolean {
+        buttonDisabled(): boolean {
             return !this.selectedSchedule.kpis || this.selectedSchedule.kpis.length == 0 || this.validCron == false || this.loading || this.emptyFilters()
         },
-        errorDialogVisible(): Boolean {
+        errorDialogVisible(): boolean {
             return this.errorMessage ? true : false
         }
     },
@@ -110,10 +114,6 @@ export default defineComponent({
         async clone() {
             await this.loadPage()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         await this.loadPage()
@@ -244,7 +244,7 @@ export default defineComponent({
             }
         },
         getPlaceholders(tempPlaceholders: iFilter[], keys: string[], index: number) {
-            for (let id in this.selectedSchedule.filters) {
+            for (const id in this.selectedSchedule.filters) {
                 if ((this.selectedSchedule.filters[id] as iFilter).kpiName == keys[index]) {
                     tempPlaceholders.push(this.selectedSchedule.filters[id])
                 }
@@ -254,7 +254,7 @@ export default defineComponent({
             let temp = null as iFilter | null
             for (let j = 0; j < array.length; j++) {
                 temp = null
-                for (let tempPLaceholder in tempPlaceholders) {
+                for (const tempPLaceholder in tempPlaceholders) {
                     if (Object.keys(array[j])[0] == tempPlaceholders[tempPLaceholder].placeholderName) {
                         temp = tempPlaceholders[tempPLaceholder]
                         break
@@ -273,7 +273,7 @@ export default defineComponent({
         },
         removeUnusedPlaceholders(tempPlaceholders: iFilter[], array: any) {
             let temp = null
-            for (let tempPLaceholder in tempPlaceholders) {
+            for (const tempPLaceholder in tempPlaceholders) {
                 for (let i = 0; i < array.length; i++) {
                     if (Object.keys(array[i])[0] == tempPlaceholders[tempPLaceholder].placeholderName) {
                         temp = tempPLaceholder as any

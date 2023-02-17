@@ -1,4 +1,4 @@
-let routes = [
+const routes = [
     {
         path: '/constraint-management',
         name: 'constraint-management',

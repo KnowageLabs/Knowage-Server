@@ -1,23 +1,23 @@
 <template>
     <div id="cockpit-container" class="kn-height-full">
         <DocumentExecution
-            :id="name"
             v-show="mode === 'document-execution'"
-            :propMode="mode"
-            v-bind:style="[mode === 'document-execution' ? '' : 'display: none !important; ']"
-            :parameterValuesMap="parameterValuesMap"
-            :tabKey="tabKey"
+            :id="name"
+            :prop-mode="mode"
+            :style="[mode === 'document-execution' ? '' : 'display: none !important; ']"
+            :parameter-values-map="parameterValuesMap"
+            :tab-key="tabKey"
             @parametersChanged="$emit('parametersChanged', $event)"
             @close="$emit('close')"
         ></DocumentExecution>
         <DocumentDetails
             v-show="mode === 'document-detail'"
-            v-bind:style="[mode === 'document-detail' ? '' : 'display: none !important;']"
-            :propMode="'execution'"
-            :viewMode="mode"
-            :propDocId="item?.id"
-            :wholeItem="item"
-            :propFolderId="functionalityId"
+            :style="[mode === 'document-detail' ? '' : 'display: none !important;']"
+            :prop-mode="'execution'"
+            :view-mode="mode"
+            :prop-doc-id="item?.id"
+            :whole-item="item"
+            :prop-folder-id="functionalityId"
             @closeDetails="$emit('closeDetails', item)"
             @documentSaved="onDocumentsSaved"
         ></DocumentDetails>
@@ -38,6 +38,10 @@ export default defineComponent({
     },
     props: { id: { type: String }, functionalityId: { type: String }, item: { type: Object }, parameterValuesMap: { type: Object }, tabKey: { type: String } },
     emits: ['iframeCreated', 'closeIframe', 'parametersChanged', 'closeDetails', 'documentSaved', 'close'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             url: '',
@@ -57,10 +61,6 @@ export default defineComponent({
             this.loadItem()
             this.setMode()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.name = this.id as string

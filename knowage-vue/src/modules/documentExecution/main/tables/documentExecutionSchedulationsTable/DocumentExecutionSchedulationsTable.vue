@@ -9,15 +9,15 @@
         </Toolbar>
 
         <DataTable
-            :value="schedulations"
             id="old-chedulations-table"
-            class="p-datatable-sm kn-table p-col-12"
-            dataKey="id"
             v-model:filters="filters"
-            :globalFilterFields="documentExecutionSchedulationsTableDescriptor.globalFilterFields"
+            :value="schedulations"
+            class="p-datatable-sm kn-table p-col-12"
+            data-key="id"
+            :global-filter-fields="documentExecutionSchedulationsTableDescriptor.globalFilterFields"
             :paginator="schedulations.length > 20"
             :rows="20"
-            responsiveLayout="stack"
+            responsive-layout="stack"
             breakpoint="600px"
         >
             <template #empty>
@@ -29,27 +29,27 @@
                 <div class="table-header p-d-flex p-ai-center">
                     <span id="search-container" class="p-input-icon-left p-mr-3">
                         <i class="pi pi-search" />
-                        <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" />
+                        <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" />
                     </span>
                 </div>
             </template>
 
-            <Column class="kn-truncated" field="name" :header="$t('common.name')" key="name" :sortable="true"></Column>
-            <Column class="kn-truncated" field="description" :header="$t('common.description')" key="description" :sortable="true"></Column>
-            <Column class="kn-truncated" field="dateCreation" :header="$t('common.creationDate')" key="dateCreation" :sortable="true">
+            <Column key="name" class="kn-truncated" field="name" :header="$t('common.name')" :sortable="true"></Column>
+            <Column key="description" class="kn-truncated" field="description" :header="$t('common.description')" :sortable="true"></Column>
+            <Column key="dateCreation" class="kn-truncated" field="dateCreation" :header="$t('common.creationDate')" :sortable="true">
                 <template #body="slotProps">
                     {{ getFormattedDate(slotProps.data.dateCreation, 'DD/MM/YYYY hh:mm') }}
                 </template>
             </Column>
             <Column :style="documentExecutionSchedulationsTableDescriptor.iconColumn.style">
                 <template #body="slotProps">
-                    <Button icon="pi pi-download" class="p-button-link" v-tooltip.top="$t('common.download')" @click="downloadSnapshot(slotProps.data)" />
+                    <Button v-tooltip.top="$t('common.download')" icon="pi pi-download" class="p-button-link" @click="downloadSnapshot(slotProps.data)" />
                     <Button icon="pi pi-trash" class="p-button-link" @click="deleteSchedulationConfirm(slotProps.data)" />
                 </template>
             </Column>
         </DataTable>
 
-        <DocumentExecutionSnapshotDialog :visible="snapshotDialogVisible" :propUrl="url" @close="snapshotDialogVisible = false"></DocumentExecutionSnapshotDialog>
+        <DocumentExecutionSnapshotDialog :visible="snapshotDialogVisible" :prop-url="url" @close="snapshotDialogVisible = false"></DocumentExecutionSnapshotDialog>
     </div>
 </template>
 
@@ -70,6 +70,10 @@ export default defineComponent({
     components: { Column, DataTable, DocumentExecutionSnapshotDialog, Message },
     props: { propSchedulations: { type: Array } },
     emits: ['deleteSchedulation', 'close'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             documentExecutionSchedulationsTableDescriptor,
@@ -84,10 +88,6 @@ export default defineComponent({
         propSchedulations() {
             this.loadSchedulations()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.user = (this.store.$state as any).user

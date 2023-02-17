@@ -5,10 +5,10 @@
                 <span class="p-float-label">
                     <InputText
                         id="jClassName"
+                        v-model.trim="v$.dataset.jClassName.$model"
                         class="kn-material-input"
                         type="text"
                         :style="javaDatasetDescriptor.style.maxWidth"
-                        v-model.trim="v$.dataset.jClassName.$model"
                         :class="{
                             'p-invalid': v$.dataset.jClassName.$invalid && v$.dataset.jClassName.$dirty
                         }"
@@ -17,7 +17,7 @@
                     />
                     <label for="jClassName" class="kn-material-input-label"> {{ $t('managers.lovsManagement.javaClassName') }} * </label>
                 </span>
-                <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.jClassName" :additionalTranslateParams="{ fieldName: $t('managers.lovsManagement.javaClassName') }" />
+                <KnValidationMessages class="p-mt-1" :v-comp="v$.dataset.jClassName" :additional-translate-params="{ fieldName: $t('managers.lovsManagement.javaClassName') }" />
             </div>
         </template>
     </Card>
@@ -36,6 +36,10 @@ export default defineComponent({
     components: { Card, KnValidationMessages },
     props: { selectedDataset: { type: Object as any } },
     emits: ['touched'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             dataset: {} as any,
@@ -43,17 +47,13 @@ export default defineComponent({
             v$: useValidate() as any
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
-    created() {
-        this.dataset = this.selectedDataset
-    },
     watch: {
         selectedDataset() {
             this.dataset = this.selectedDataset
         }
+    },
+    created() {
+        this.dataset = this.selectedDataset
     },
     validations() {
         const javaClassFieldRequired = (value) => {

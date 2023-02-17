@@ -5,7 +5,7 @@
             <Button class="p-button-text p-button-rounded p-button-plain" icon="pi pi-times" @click="closeTemplate" />
         </template>
     </Toolbar>
-    <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+    <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
     <div class="p-grid p-m-0 p-fluid p-jc-center" style="overflow: auto">
         <Card class="p-m-2">
             <template #content>
@@ -14,10 +14,10 @@
                         <span class="p-float-label">
                             <InputText
                                 id="name"
+                                v-model.trim="v$.simpleNavigation.name.$model"
                                 class="kn-material-input"
                                 type="text"
-                                v-model.trim="v$.simpleNavigation.name.$model"
-                                maxLength="40"
+                                max-length="40"
                                 :class="{
                                     'p-invalid': v$.simpleNavigation.name.$invalid && v$.simpleNavigation.name.$dirty
                                 }"
@@ -26,24 +26,24 @@
                             />
                             <label for="name" class="kn-material-input-label">{{ $t('common.name') }} * </label>
                         </span>
-                        <KnValidationMessages class="p-mt-1" :vComp="v$.simpleNavigation.name" :additionalTranslateParams="{ fieldName: $t('common.name') }"></KnValidationMessages>
+                        <KnValidationMessages class="p-mt-1" :v-comp="v$.simpleNavigation.name" :additional-translate-params="{ fieldName: $t('common.name') }"></KnValidationMessages>
                     </div>
                     <div :class="simpleNavigation.type === 2 ? 'p-field p-col-2 p-mb-3' : 'p-field p-col-6 p-mb-3'">
                         <span class="p-float-label">
-                            <Dropdown id="type" class="kn-material-input" v-model="simpleNavigation.type" :options="crossModes" optionValue="value" optionLabel="name" @change="handleDropdown" />
+                            <Dropdown id="type" v-model="simpleNavigation.type" class="kn-material-input" :options="crossModes" option-value="value" option-label="name" @change="handleDropdown" />
                             <label for="type" class="kn-material-input-label"> {{ $t('managers.crossNavigationManagement.modality') }} </label>
                         </span>
                     </div>
-                    <div class="p-field p-col-2 p-mb-3" v-if="simpleNavigation.type === 2">
+                    <div v-if="simpleNavigation.type === 2" class="p-field p-col-2 p-mb-3">
                         <span class="p-float-label">
-                            <InputNumber id="width" inputClass="kn-material-input" v-model="simpleNavigation.popupOptions.width" :min="0" :useGrouping="false" @input="setDirty" />
+                            <InputNumber id="width" v-model="simpleNavigation.popupOptions.width" input-class="kn-material-input" :min="0" :use-grouping="false" @input="setDirty" />
                             <label for="width" class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.width') }} </label>
                         </span>
                         <small id="width-help">{{ $t('managers.crossNavigationManagement.widthHelp') }}</small>
                     </div>
-                    <div class="p-field p-col-2 p-mb-3" v-if="simpleNavigation.type === 2">
+                    <div v-if="simpleNavigation.type === 2" class="p-field p-col-2 p-mb-3">
                         <span class="p-float-label">
-                            <InputNumber id="height" inputClass="kn-material-input" v-model="simpleNavigation.popupOptions.height" :min="0" :useGrouping="false" @input="setDirty" />
+                            <InputNumber id="height" v-model="simpleNavigation.popupOptions.height" input-class="kn-material-input" :min="0" :use-grouping="false" @input="setDirty" />
                             <label for="height" class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.height') }} </label>
                         </span>
                         <small id="height-help">{{ $t('managers.crossNavigationManagement.heightHelp') }}</small>
@@ -51,7 +51,7 @@
                     <div class="p-field p-col-6 p-mb-3">
                         <span class="p-input-icon-right">
                             <span class="p-float-label">
-                                <InputText id="description" class="kn-material-input" type="text" v-model.trim="simpleNavigation.description" maxLength="200" @input="setDirty" />
+                                <InputText id="description" v-model.trim="simpleNavigation.description" class="kn-material-input" type="text" max-length="200" @input="setDirty" />
                                 <label for="description" class="kn-material-input-label">{{ $t('common.description') }} </label>
                             </span>
                             <i class="pi pi-info-circle" @click="hintDialog('desc')" />
@@ -60,7 +60,7 @@
                     <div class="p-field p-col-6 p-mb-3">
                         <span class="p-input-icon-right">
                             <span class="p-float-label">
-                                <InputText id="breadcrumb" class="kn-material-input" type="text" v-model.trim="simpleNavigation.breadcrumb" maxLength="200" @input="setDirty" />
+                                <InputText id="breadcrumb" v-model.trim="simpleNavigation.breadcrumb" class="kn-material-input" type="text" max-length="200" @input="setDirty" />
                                 <label for="breadcrumb" class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.breadCrumbs') }} </label>
                             </span>
                             <i class="pi pi-info-circle" @click="hintDialog('bread')" />
@@ -68,28 +68,28 @@
                     </div>
                     <div class="p-field p-col-4 p-mb-3">
                         <span class="p-float-label">
-                            <InputText id="origin" class="kn-material-input" type="text" v-model.trim="simpleNavigation.fromDoc" disabled />
+                            <InputText id="origin" v-model.trim="simpleNavigation.fromDoc" class="kn-material-input" type="text" disabled />
                             <label for="origin" class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.originDoc') }} </label>
                         </span>
                     </div>
                     <div class="p-field p-col-2 p-mb-3">
-                        <Button :label="$t('common.select')" @click="selectDoc('origin')" class="kn-button kn-button--primary" />
+                        <Button :label="$t('common.select')" class="kn-button kn-button--primary" @click="selectDoc('origin')" />
                     </div>
                     <div class="p-field p-col-4 p-mb-3">
                         <span class="p-float-label">
-                            <InputText id="target" class="kn-material-input" type="text" v-model.trim="simpleNavigation.toDoc" disabled />
+                            <InputText id="target" v-model.trim="simpleNavigation.toDoc" class="kn-material-input" type="text" disabled />
                             <label for="target" class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.targetDoc') }} </label>
                         </span>
                     </div>
                     <div class="p-field p-col-2 p-mb-3">
-                        <Button :label="$t('common.select')" @click="selectDoc('target')" class="kn-button kn-button--primary" />
+                        <Button :label="$t('common.select')" class="kn-button kn-button--primary" @click="selectDoc('target')" />
                     </div>
-                    <DocParameters :selectedNavigation="navigation" @touched="setDirty"></DocParameters>
+                    <DocParameters :selected-navigation="navigation" @touched="setDirty"></DocParameters>
                 </form>
             </template>
         </Card>
-        <DocDialog :dialogVisible="dialogVisible" :selectedDoc="docId" @close="dialogVisible = false" @apply="hadleDoc"></DocDialog>
-        <HintDialog :dialogVisible="hintDialogVisiable" :message="hintDialogMessage" :title="hintDialogTitle" @close="hintDialogVisiable = false"></HintDialog>
+        <DocDialog :dialog-visible="dialogVisible" :selected-doc="docId" @close="dialogVisible = false" @apply="hadleDoc"></DocDialog>
+        <HintDialog :dialog-visible="hintDialogVisiable" :message="hintDialogMessage" :title="hintDialogTitle" @close="hintDialogVisiable = false"></HintDialog>
     </div>
 </template>
 <script lang="ts">
@@ -114,6 +114,10 @@ export default defineComponent({
         id: {
             type: String
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     data() {
         return {
@@ -142,15 +146,6 @@ export default defineComponent({
             return this.v$.$invalid
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
-    created() {
-        if (this.id) {
-            this.loadNavigation()
-        } else this.initNew()
-    },
     watch: {
         async id() {
             if (this.id) {
@@ -161,6 +156,11 @@ export default defineComponent({
                 }
             } else this.initNew()
         }
+    },
+    created() {
+        if (this.id) {
+            this.loadNavigation()
+        } else this.initNew()
     },
     validations() {
         const validationObject = {

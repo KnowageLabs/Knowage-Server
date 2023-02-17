@@ -1,5 +1,5 @@
 <template>
-    <DataTable v-if="calendarSplitData" :value="calendarSplitData" :paginator="calendarSplitData.length > 20" :rows="20" class="p-datatable-sm" dataKey="idCalComposition" responsiveLayout="stack" breakpoint="960px">
+    <DataTable v-if="calendarSplitData" :value="calendarSplitData" :paginator="calendarSplitData.length > 20" :rows="20" class="p-datatable-sm" data-key="idCalComposition" responsive-layout="stack" breakpoint="960px">
         <template #empty>
             {{ $t('common.info.noDataFound') }}
         </template>
@@ -22,7 +22,7 @@
         </Column>
         <Column class="kn-truncated" field="listOfAttributes" :header="$t('common.attributes')" :style="calendarManagementDetailTableDescriptor.columnStyle.checkEvent" :sortable="true">
             <template #body="slotProps">
-                <MultiSelect class="kn-material-input" v-model="slotProps.data[slotProps.column.props.field]" :options="domains" optionLabel="attributeDomainDescr" optionValue="attributeDomainDescr" />
+                <MultiSelect v-model="slotProps.data[slotProps.column.props.field]" class="kn-material-input" :options="domains" option-label="attributeDomainDescr" option-value="attributeDomainDescr" />
             </template>
         </Column>
         <Column v-if="canManageCalendar" :style="calendarManagementDetailTableDescriptor.iconColumnStyle">
@@ -49,6 +49,10 @@ export default defineComponent({
     name: 'calendar-management-detail-table',
     components: { Checkbox, Column, DataTable, MultiSelect },
     props: { propCalendarInfo: { type: Array as PropType<any[]> }, domains: { type: Array as PropType<iDomain[]> } },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             calendarManagementDetailTableDescriptor,
@@ -64,10 +68,6 @@ export default defineComponent({
         propCalendarInfo() {
             this.loadCalendarInfo()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadCalendarInfo()

@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="documentExecutionSelectCNDialogDsecriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary" :content-style="documentExecutionSelectCNDialogDsecriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -8,7 +8,7 @@
             </Toolbar>
         </template>
 
-        <Listbox id="cross-navigation-document-list" class="p-m-2" :options="crossNavigationDocuments" @change="navigationSelected($event.value)" data-test="kpi-list">
+        <Listbox id="cross-navigation-document-list" class="p-m-2" :options="crossNavigationDocuments" data-test="kpi-list" @change="navigationSelected($event.value)">
             <template #option="slotProps">
                 <div class="kn-list-item" data-test="list-item">
                     <div class="kn-list-item-text">

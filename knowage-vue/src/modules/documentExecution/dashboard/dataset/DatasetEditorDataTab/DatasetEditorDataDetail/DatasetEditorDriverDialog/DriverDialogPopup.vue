@@ -1,16 +1,16 @@
 <template>
     <div v-if="driver && driver.parameterValue" class="p-fluid p-formgrid p-grid p-jc-center p-ai-center p-p-5 p-m-0">
         <DataTable
+            v-model:selection="selectedRows"
+            v-model:filters="filters"
             :value="rows"
             class="p-datatable-sm kn-table p-col-12"
-            v-model:selection="selectedRows"
             :loading="loading"
-            :selectionMode="driver.multivalue ? 'multiple' : 'single'"
-            v-model:filters="filters"
-            :globalFilterFields="globalFilterFields"
+            :selection-mode="driver.multivalue ? 'multiple' : 'single'"
+            :global-filter-fields="globalFilterFields"
             :paginator="rows.length > 20"
             :rows="20"
-            responsiveLayout="stack"
+            responsive-layout="stack"
             breakpoint="600px"
             @row-select="onRowSelect"
             @row-unselect="onRowSelect"
@@ -27,13 +27,13 @@
                 <div class="table-header p-d-flex p-ai-center">
                     <span id="search-container" class="p-input-icon-left p-mr-3">
                         <i class="pi pi-search" />
-                        <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" />
+                        <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" />
                     </span>
                 </div>
             </template>
 
-            <Column v-if="driver.multivalue" selectionMode="multiple" :style="descriptor.style.checkboxColumn"></Column>
-            <Column class="kn-truncated" v-for="col of columns" :field="col.name" :header="col.header" :key="col.name" :sortable="true"> </Column>
+            <Column v-if="driver.multivalue" selection-mode="multiple" :style="descriptor.style.checkboxColumn"></Column>
+            <Column v-for="col of columns" :key="col.name" class="kn-truncated" :field="col.name" :header="col.header" :sortable="true"> </Column>
         </DataTable>
     </div>
 </template>

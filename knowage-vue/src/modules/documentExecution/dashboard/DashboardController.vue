@@ -1,20 +1,20 @@
 <template>
-    <div v-if="model" class="dashboard-container" :id="`dashboard_${model.configuration.id}`">
+    <div v-if="model" :id="`dashboard_${model.configuration.id}`" class="dashboard-container">
         <Button icon="fas fa-square-check" class="p-m-3 p-button-rounded p-button-text p-button-plain" style="position: fixed; right: 0; z-index: 999; background-color: white; box-shadow: 0px 2px 3px #ccc" @click="selectionsDialogVisible = true" />
         <Button icon="fas fa-square-check" class="p-m-3 p-button-rounded p-button-text p-button-plain" style="position: fixed; top: 150px; right: 0; z-index: 999; background-color: blue; box-shadow: 0px 2px 3px #ccc" @click="executeCrossNavigation" />
         <DashboardRenderer v-if="!loading" :model="model" :datasets="datasets" :dashboardId="dashboardId" :documentDrivers="drivers" :variables="model ? model.configuration.variables : []"></DashboardRenderer>
 
         <Transition name="editorEnter" appear>
-            <DatasetEditor v-if="datasetEditorVisible" :dashboardIdProp="dashboardId" :availableDatasetsProp="datasets" :filtersDataProp="filtersData" @closeDatasetEditor="closeDatasetEditor" @datasetEditorSaved="closeDatasetEditor" @allDatasetsLoaded="datasets = $event" />
+            <DatasetEditor v-if="datasetEditorVisible" :dashboard-id-prop="dashboardId" :available-datasets-prop="datasets" :filters-data-prop="filtersData" @closeDatasetEditor="closeDatasetEditor" @datasetEditorSaved="closeDatasetEditor" @allDatasetsLoaded="datasets = $event" />
         </Transition>
 
         <Transition name="editorEnter" appear>
             <DashboardGeneralSettings
                 v-if="generalSettingsVisible"
-                :dashboardId="dashboardId"
+                :dashboard-id="dashboardId"
                 :datasets="datasets"
-                :documentDrivers="drivers"
-                :profileAttributes="profileAttributes"
+                :document-drivers="drivers"
+                :profile-attributes="profileAttributes"
                 @closeGeneralSettings="closeGeneralSettings"
                 @saveGeneralSettings="generalSettingsVisible = false"
             ></DashboardGeneralSettings>
@@ -22,21 +22,21 @@
 
         <WidgetPickerDialog v-if="widgetPickerVisible" :visible="widgetPickerVisible" @openNewWidgetEditor="openNewWidgetEditor" @closeWidgetPicker="widgetPickerVisible = false" />
         <DashboardControllerSaveDialog v-if="saveDialogVisible" :visible="saveDialogVisible" @save="saveNewDashboard" @close="saveDialogVisible = false"></DashboardControllerSaveDialog>
-        <SelectionsListDialog v-if="selectionsDialogVisible" :visible="selectionsDialogVisible" :dashboardId="dashboardId" @close="selectionsDialogVisible = false" @save="onSelectionsRemove" />
+        <SelectionsListDialog v-if="selectionsDialogVisible" :visible="selectionsDialogVisible" :dashboard-id="dashboardId" @close="selectionsDialogVisible = false" @save="onSelectionsRemove" />
     </div>
     <WidgetEditor
         v-if="widgetEditorVisible"
-        :dashboardId="dashboardId"
-        :propWidget="selectedWidget"
+        :dashboard-id="dashboardId"
+        :prop-widget="selectedWidget"
         :datasets="datasets"
-        :documentDrivers="drivers"
+        :document-drivers="drivers"
         :variables="model ? model.configuration.variables : []"
-        :htmlGalleryProp="htmlGallery"
-        :customChartGalleryProp="customChartGallery"
+        :html-gallery-prop="htmlGallery"
+        :custom-chart-gallery-prop="customChartGallery"
+        data-test="widget-editor"
         @close="closeWidgetEditor"
         @widgetSaved="closeWidgetEditor"
         @widgetUpdated="closeWidgetEditor"
-        data-test="widget-editor"
     ></WidgetEditor>
 </template>
 
@@ -70,6 +70,11 @@ import deepcopy from 'deepcopy'
 export default defineComponent({
     name: 'dashboard-manager',
     components: { DashboardRenderer, WidgetPickerDialog, DatasetEditor, WidgetEditor, DashboardControllerSaveDialog, SelectionsListDialog, DashboardGeneralSettings },
+    provide() {
+        return {
+            dHash: uuidv4()
+        }
+    },
     props: { sbiExecutionId: { type: String }, document: { type: Object }, reloadTrigger: { type: Boolean }, hiddenFormData: { type: Object }, filtersData: { type: Object as PropType<{ filterStatus: iParameter[]; isReadyForExecution: boolean }> }, newDashboardMode: { type: Boolean } },
     emits: ['newDashboardSaved', 'executeCrossNavigation'],
     data() {
@@ -92,11 +97,6 @@ export default defineComponent({
             loading: false,
             htmlGallery: [] as IGalleryItem[],
             customChartGallery: [] as IGalleryItem[]
-        }
-    },
-    provide() {
-        return {
-            dHash: uuidv4()
         }
     },
     computed: {
@@ -130,7 +130,7 @@ export default defineComponent({
             this.setDashboardDrivers(this.dashboardId, this.drivers)
             this.loadHtmlGallery()
             this.loadCustomChartGallery()
-             await this.loadCrossNavigations()
+            await this.loadCrossNavigations()
             this.loading = false
         },
         async loadModel() {
@@ -144,7 +144,7 @@ export default defineComponent({
                     .catch(() => {})
             }
             this.datasets = await loadDatasets(tempModel, this.appStore, this.setAllDatasets, this.$http)
-            this.model = (tempModel && this.newDashboardMode) || tempModel.hasOwnProperty('id') ? await formatNewModel(tempModel, this.datasets, this.$http) : await (formatModel(tempModel, this.document, this.datasets, this.drivers, this.profileAttributes, this.$http, this.user) as any)
+            this.model = (tempModel && this.newDashboardMode) || typeof tempModel.id != 'undefined' ? await formatNewModel(tempModel, this.datasets, this.$http) : await (formatModel(tempModel, this.document, this.datasets, this.drivers, this.profileAttributes, this.$http, this.user) as any)
             setDatasetIntervals(this.model?.configuration.datasets, this.datasets)
             this.dashboardId = cryptoRandomString({ length: 16, type: 'base64' })
             this.store.setDashboard(this.dashboardId, this.model)
@@ -153,7 +153,7 @@ export default defineComponent({
         },
         async loadInternationalization() {
             this.appStore.setLoading(true)
-            var result = (this.appStore.$state as any).user.locale.split('_')
+            const result = (this.appStore.$state as any).user.locale.split('_')
             await this.$http
                 .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/i18nMessages/?currCountry=${result[1]}&currLanguage=${result[0]}&currScript=`)
                 .then((response: AxiosResponse<any>) => {
@@ -281,7 +281,7 @@ export default defineComponent({
 
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/saveDocument`, postData)
-                .then((response: AxiosResponse<any>) => {
+                .then(() => {
                     this.appStore.setInfo({
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.toast.success')

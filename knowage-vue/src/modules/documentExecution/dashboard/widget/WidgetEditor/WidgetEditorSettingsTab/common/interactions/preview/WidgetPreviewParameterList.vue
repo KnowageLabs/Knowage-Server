@@ -8,11 +8,11 @@
             </div>
             <div class="p-sm-6 p-md-2 p-d-flex p-flex-column kn-flex">
                 <label class="kn-material-input-label">{{ $t('common.parameter') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="parameter.name" :disabled="true" />
+                <InputText v-model="parameter.name" class="kn-material-input p-inputtext-sm" :disabled="true" />
             </div>
             <div class="p-sm-6 p-md-2 p-d-flex p-flex-column kn-flex p-p-2 value-type-dropdown">
                 <label class="kn-material-input-label"> {{ $t('common.type') }}</label>
-                <Dropdown class="kn-material-input" v-model="parameter.type" :options="descriptor.previewParameterTypeOptions" optionValue="value" :disabled="disabled" @change="onParameterTypeChanged(parameter)">
+                <Dropdown v-model="parameter.type" class="kn-material-input" :options="descriptor.previewParameterTypeOptions" option-value="value" :disabled="disabled" @change="onParameterTypeChanged(parameter)">
                     <template #value="slotProps">
                         <div>
                             <span>{{ getTranslatedLabel(slotProps.value, descriptor.previewParameterTypeOptions, $t) }}</span>
@@ -27,31 +27,31 @@
             </div>
             <div v-if="parameter.type === 'static'" class="p-sm-12 p-md-7 p-d-flex p-flex-column kn-flex">
                 <label class="kn-material-input-label">{{ $t('common.value') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="parameter.value" :disabled="disabled" @change="parametersChanged" />
+                <InputText v-model="parameter.value" class="kn-material-input p-inputtext-sm" :disabled="disabled" @change="parametersChanged" />
             </div>
             <div v-else-if="parameter.type === 'driver'" class="p-sm-12 p-md-7 p-d-flex p-flex-row p-ai-center kn-flex">
                 <div class="p-d-flex p-flex-column kn-flex">
                     <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
-                    <Dropdown class="kn-material-input" v-model="parameter.driver" :options="drivers" optionLabel="name" optionValue="name" :disabled="disabled" @change="parametersChanged"> </Dropdown>
+                    <Dropdown v-model="parameter.driver" class="kn-material-input" :options="drivers" option-label="name" option-value="name" :disabled="disabled" @change="parametersChanged"> </Dropdown>
                 </div>
             </div>
             <div v-else-if="parameter.type === 'dynamic'" class="p-sm-12 p-md-7 p-d-flex p-flex-row p-ai-center kn-flex">
                 <div class="p-d-flex p-flex-column kn-flex">
                     <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
-                    <Dropdown class="kn-material-input" v-model="parameter.column" :options="widgetModel.columns" optionLabel="alias" optionValue="alias" :disabled="disabled" @change="parametersChanged"> </Dropdown>
+                    <Dropdown v-model="parameter.column" class="kn-material-input" :options="widgetModel.columns" option-label="alias" option-value="alias" :disabled="disabled" @change="parametersChanged"> </Dropdown>
                 </div>
             </div>
             <div v-else-if="parameter.type === 'selection'" class="p-grid p-sm-12 p-md-7 p-ai-center kn-flex">
                 <div class="p-sm-12 p-md-6 p-ai-center">
                     <div class="p-d-flex p-flex-column kn-flex">
                         <label class="kn-material-input-label"> {{ $t('common.dataset') }}</label>
-                        <Dropdown class="kn-material-input" v-model="parameter.dataset" :options="selectedDatasetNames" :disabled="disabled" @change="onDatasetChanged(parameter)"> </Dropdown>
+                        <Dropdown v-model="parameter.dataset" class="kn-material-input" :options="selectedDatasetNames" :disabled="disabled" @change="onDatasetChanged(parameter)"> </Dropdown>
                     </div>
                 </div>
                 <div class="p-sm-12 p-md-6 p-ai-center">
                     <div class="p-d-flex p-flex-column kn-flex">
                         <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
-                        <Dropdown class="kn-material-input" v-model="parameter.column" :options="getSelectionDatasetColumnOptions(parameter)" :disabled="disabled" @change="parametersChanged"> </Dropdown>
+                        <Dropdown v-model="parameter.column" class="kn-material-input" :options="getSelectionDatasetColumnOptions(parameter)" :disabled="disabled" @change="parametersChanged"> </Dropdown>
                     </div>
                 </div>
             </div>

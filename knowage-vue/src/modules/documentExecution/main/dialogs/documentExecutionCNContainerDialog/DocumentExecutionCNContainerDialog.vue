@@ -1,12 +1,12 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="documentExecutionCNContainerDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary" :content-style="documentExecutionCNContainerDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
                     {{ data?.documentLabel }}
                 </template>
                 <template #end>
-                    <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip="$t('common.close')" @click="closeDialog" />
+                    <Button v-tooltip="$t('common.close')" icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeDialog" />
                 </template>
             </Toolbar>
         </template>

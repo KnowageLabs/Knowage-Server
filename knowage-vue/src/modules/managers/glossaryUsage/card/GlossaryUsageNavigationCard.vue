@@ -12,17 +12,17 @@
         </template>
         <template #content>
             <DataTable
+                v-model:selection="selectedItems"
+                v-model:filters="filters"
                 :value="items"
                 class="p-datatable-sm kn-table"
-                dataKey="id"
-                v-model:selection="selectedItems"
-                selectionMode="multiple"
-                :metaKeySelection="false"
-                v-model:filters="filters"
-                :globalFilterFields="glossaryUsageNavigationCardDescriptor.globalFilterFields"
+                data-key="id"
+                selection-mode="multiple"
+                :meta-key-selection="false"
+                :global-filter-fields="glossaryUsageNavigationCardDescriptor.globalFilterFields"
                 :paginator="items.length > 5"
                 :rows="5"
-                responsiveLayout="stack"
+                responsive-layout="stack"
                 breakpoint="960px"
                 @rowSelect="onItemsSelected"
                 @rowUnselect="onItemsSelected"
@@ -31,7 +31,7 @@
                     <div class="table-header p-d-flex p-ai-center">
                         <span id="search-container" class="p-input-icon-left p-mr-3">
                             <i class="pi pi-search" />
-                            <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="search-input" />
+                            <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" data-test="search-input" />
                         </span>
                     </div>
                 </template>
@@ -40,10 +40,10 @@
                         <p>{{ $t('managers.glossary.glossaryUsage.noWordsPresent', { type: title }) }}</p>
                     </div></template
                 >
-                <Column class="kn-truncated" field="label" key="label"></Column>
+                <Column key="label" class="kn-truncated" field="label"></Column>
                 <Column class="p-text-right">
                     <template #body="slotProps">
-                        <Button icon="pi pi-info-circle" class="p-button-link" @click.stop="$emit('infoClicked', slotProps.data)" :data-test="'info-button-' + slotProps.data.id" />
+                        <Button icon="pi pi-info-circle" class="p-button-link" :data-test="'info-button-' + slotProps.data.id" @click.stop="$emit('infoClicked', slotProps.data)" />
                     </template>
                 </Column>
             </DataTable>
@@ -69,17 +69,16 @@ export default defineComponent({
         glossaryChanged: { type: Boolean }
     },
     emits: ['infoClicked', 'linkClicked', 'selected'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             glossaryUsageNavigationCardDescriptor,
             filters: { global: [filterDefault] } as Object,
             selectedItems: [],
             user: {} as any
-        }
-    },
-    watch: {
-        glossaryChanged() {
-            this.selectedItems = []
         }
     },
     computed: {
@@ -105,9 +104,10 @@ export default defineComponent({
             return index !== -1
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
+    watch: {
+        glossaryChanged() {
+            this.selectedItems = []
+        }
     },
     created() {
         this.user = (this.store.$state as any).user

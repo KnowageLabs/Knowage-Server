@@ -17,8 +17,8 @@
                         <div class="p-field p-col-6">
                             <span class="p-float-label">
                                 <InputText
-                                    class="kn-material-input"
                                     v-model="scorecard.name"
+                                    class="kn-material-input"
                                     :class="{
                                         'p-invalid': !scorecard.name && nameTouched
                                     }"
@@ -33,7 +33,7 @@
 
                         <div class="p-field p-col-6">
                             <span class="p-float-label">
-                                <InputText class="kn-material-input" v-model="scorecard.description" @input="touched = true" />
+                                <InputText v-model="scorecard.description" class="kn-material-input" @input="touched = true" />
                                 <label class="kn-material-input-label"> {{ $t('common.description') }}</label>
                             </span>
                         </div>
@@ -41,11 +41,11 @@
                 </template>
             </Card>
 
-            <ScorecardsTable v-if="scorecard" :propScorecard="scorecard" :criterias="criterias" :kpis="kpis" @touched="touched = true"></ScorecardsTable>
+            <ScorecardsTable v-if="scorecard" :prop-scorecard="scorecard" :criterias="criterias" :kpis="kpis" @touched="touched = true"></ScorecardsTable>
         </div>
 
         <div v-if="scorecard" id="sideMenu" class="kn-overflow" :style="descriptor.style.perspective">
-            <KnPerspectiveCard class="p-m-4" v-for="(perspective, index) in scorecard.perspectives" :key="index" :propPerspective="perspective" :data-test="'perspective-' + perspective.name"></KnPerspectiveCard>
+            <KnPerspectiveCard v-for="(perspective, index) in scorecard.perspectives" :key="index" class="p-m-4" :prop-perspective="perspective" :data-test="'perspective-' + perspective.name"></KnPerspectiveCard>
         </div>
     </div>
 </template>
@@ -65,6 +65,10 @@ export default defineComponent({
     name: 'scorecards-designer',
     components: { Card, KnPerspectiveCard, ScorecardsTable },
     props: { id: { type: String } },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             descriptor,
@@ -84,10 +88,6 @@ export default defineComponent({
         async id() {
             await this.loadScorecard()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         await this.loadScorecard()

@@ -11,8 +11,8 @@
                         <Menu ref="menu" :model="addMenuItems" popup="true" />
                     </template>
                 </Toolbar>
-                <KnInputFile label="" :changeFunction="uploadTemplate" accept="application/json,application/zip" :triggerInput="triggerInput" />
-                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+                <KnInputFile label="" :change-function="uploadTemplate" accept="application/json,application/zip" :trigger-input="triggerInput" />
+                <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
                 <KnListBox :options="galleryTemplates" :settings="typeDescriptor.knListSettings" @delete="deleteTemplate($event, item)"></KnListBox>
             </div>
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
@@ -41,6 +41,10 @@ export default defineComponent({
         KnListBox,
         Menu
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             galleryTemplates: [] as Array<IGalleryTemplate>,
@@ -59,10 +63,6 @@ export default defineComponent({
             ],
             importingTemplate: {} as string | ArrayBuffer
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadAllTemplates()
@@ -117,14 +117,14 @@ export default defineComponent({
             this.triggerInputFile(false)
         },
         uploadTemplate(event): void {
-            var reader = new FileReader()
+            const reader = new FileReader()
             reader.onload = this.onReaderLoad
             reader.readAsText(event.target.files[0])
             this.triggerInputFile(false)
             event.target.value = ''
         },
         onReaderLoad(event) {
-            let json = JSON.parse(event.target.result)
+            const json = JSON.parse(event.target.result)
             if (json.id) {
                 this.importWidget(json)
             } else {

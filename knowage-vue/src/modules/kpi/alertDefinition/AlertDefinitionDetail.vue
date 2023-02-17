@@ -7,15 +7,15 @@
         </template>
     </Toolbar>
     <div class="p-grid p-m-0 p-jc-center" style="overflow: auto">
-        <Message class="p-m-2" v-if="expiredCard" severity="warn" :closable="true" :style="alertDescriptor.styles.message">
+        <Message v-if="expiredCard" class="p-m-2" severity="warn" :closable="true" :style="alertDescriptor.styles.message">
             {{ $t('kpi.alert.expiredWarning') }}
         </Message>
-        <NameCard :selectedAlert="selectedAlert" :listeners="listeners" @valueChanged="updateAlert" :vcomp="v$.selectedAlert" />
-        <KnCron class="p-m-2" v-if="selectedAlert?.frequency" :frequency="selectedAlert.frequency" @touched="touched = true" @cronValid="setCronValid($event)" />
-        <EventsCard :selectedAlert="selectedAlert" @valueChanged="updateAlert" />
-        <KpiCard v-if="isListenerSelected && actionList?.length > 0" :selectedAlert="selectedAlert" :kpiList="kpiList" :actionList="actionList" @showDialog="onShowActionDialog($event)" @kpiLoaded="updateKpi" @touched="touched = true" />
+        <NameCard :selected-alert="selectedAlert" :listeners="listeners" :vcomp="v$.selectedAlert" @valueChanged="updateAlert" />
+        <KnCron v-if="selectedAlert?.frequency" class="p-m-2" :frequency="selectedAlert.frequency" @touched="touched = true" @cronValid="setCronValid($event)" />
+        <EventsCard :selected-alert="selectedAlert" @valueChanged="updateAlert" />
+        <KpiCard v-if="isListenerSelected && actionList?.length > 0" :selected-alert="selectedAlert" :kpi-list="kpiList" :action-list="actionList" @showDialog="onShowActionDialog($event)" @kpiLoaded="updateKpi" @touched="touched = true" />
     </div>
-    <AddActionDialog :dialogVisible="isActionDialogVisible" :kpi="kpi" :selectedAction="selectedAction" :actionList="actionList" @close="isActionDialogVisible = false" @save="onActionSave" />
+    <AddActionDialog :dialog-visible="isActionDialogVisible" :kpi="kpi" :selected-action="selectedAction" :action-list="actionList" @close="isActionDialogVisible = false" @save="onActionSave" />
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -37,6 +37,43 @@ export default defineComponent({
     name: 'alert-details',
     components: { NameCard, EventsCard, AddActionDialog, KpiCard, Message, KnCron },
     props: { id: { type: String, required: false } },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
+    data() {
+        return {
+            v$: useValidate() as any,
+            alertValidationDescriptor,
+            alertDescriptor,
+            kpi: {} as any,
+            emptyObject: {} as any,
+            jsonOptions: {} as any,
+            selectedAlert: {} as iAlert,
+            selectedAction: {} as iAction,
+            listeners: [] as iListener[],
+            actionList: [] as any,
+            actions: [] as any[],
+            kpiList: [] as any,
+            isActionDialogVisible: false,
+            expiredCard: false,
+            touched: false,
+            actionIndexToEdit: -1,
+            validCron: true
+        }
+    },
+    computed: {
+        isListenerSelected(): any {
+            if (!this.selectedAlert.alertListener || this.selectedAlert.alertListener === this.emptyObject) {
+                return false
+            }
+            return true
+        },
+        buttonDisabled(): any {
+            if (this.selectedAlert.jsonOptions?.actions?.length === 0 || !this.selectedAlert.name || !this.selectedAlert.alertListener || this.validCron == false) return true
+            return false
+        }
+    },
     watch: {
         async id() {
             await this.checkId()
@@ -54,22 +91,6 @@ export default defineComponent({
                     }
                 }
         }
-    },
-    computed: {
-        isListenerSelected(): any {
-            if (!this.selectedAlert.alertListener || this.selectedAlert.alertListener === this.emptyObject) {
-                return false
-            }
-            return true
-        },
-        buttonDisabled(): any {
-            if (this.selectedAlert.jsonOptions?.actions?.length === 0 || !this.selectedAlert.name || !this.selectedAlert.alertListener || this.validCron == false) return true
-            return false
-        }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
 
     created() {
@@ -92,27 +113,6 @@ export default defineComponent({
         this.loadListener()
         this.loadKpiList()
         this.loadActionList()
-    },
-    data() {
-        return {
-            v$: useValidate() as any,
-            alertValidationDescriptor,
-            alertDescriptor,
-            kpi: {} as any,
-            emptyObject: {} as any,
-            jsonOptions: {} as any,
-            selectedAlert: {} as iAlert,
-            selectedAction: {} as iAction,
-            listeners: [] as iListener[],
-            actionList: [] as any,
-            actions: [] as any[],
-            kpiList: [] as any,
-            isActionDialogVisible: false,
-            expiredCard: false,
-            touched: false,
-            actionIndexToEdit: -1,
-            validCron: true
-        }
     },
     validations() {
         return {
@@ -167,7 +167,7 @@ export default defineComponent({
             }
         },
         async handleSubmit() {
-            let alertToSave = JSON.parse(JSON.stringify(this.selectedAlert))
+            const alertToSave = JSON.parse(JSON.stringify(this.selectedAlert))
             if (alertToSave.jsonOptions) {
                 alertToSave.jsonOptions.actions = alertToSave.jsonOptions.actions.map((action: any) => {
                     return {
@@ -180,7 +180,7 @@ export default defineComponent({
             alertToSave.jsonOptions = JSON.stringify(alertToSave.jsonOptions)
             if (alertToSave.frequency) alertToSave.frequency.cron = JSON.stringify(alertToSave.frequency.cron)
 
-            let operation = alertToSave.id ? 'update' : 'insert'
+            const operation = alertToSave.id ? 'update' : 'insert'
 
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/alert/save', alertToSave)

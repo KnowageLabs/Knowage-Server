@@ -13,68 +13,68 @@
                         <span class="p-float-label">
                             <InputText
                                 id="label"
+                                v-model.trim="v$.constraint.label.$model"
                                 class="kn-material-input"
                                 type="text"
-                                v-model.trim="v$.constraint.label.$model"
                                 maxlength="20"
                                 :class="{
                                     'p-invalid': v$.constraint.label.$invalid && v$.constraint.label.$dirty
                                 }"
+                                :disabled="inputDisabled"
                                 @blur="v$.constraint.label.$touch()"
                                 @input="$emit('touched')"
-                                :disabled="inputDisabled"
                             />
                             <label for="label" class="kn-material-input-label">{{ $t('common.label') }} * </label>
                         </span>
-                        <KnValidationMessages class="p-mt-1" :vComp="v$.constraint.label" :additionalTranslateParams="{ fieldName: $t('common.label') }"></KnValidationMessages>
+                        <KnValidationMessages class="p-mt-1" :v-comp="v$.constraint.label" :additional-translate-params="{ fieldName: $t('common.label') }"></KnValidationMessages>
                     </div>
                     <div class="p-field p-col-6">
                         <span class="p-float-label">
                             <InputText
                                 id="name"
+                                v-model.trim="v$.constraint.name.$model"
                                 class="kn-material-input"
                                 type="text"
-                                v-model.trim="v$.constraint.name.$model"
                                 maxlength="40"
                                 :class="{
                                     'p-invalid': v$.constraint.name.$invalid && v$.constraint.name.$dirty
                                 }"
+                                :disabled="inputDisabled"
                                 @blur="v$.constraint.name.$touch()"
                                 @input="$emit('touched')"
-                                :disabled="inputDisabled"
                             />
                             <label for="name" class="kn-material-input-label">{{ $t('common.name') }} * </label>
                         </span>
-                        <KnValidationMessages class="p-mt-1" :vComp="v$.constraint.name" :additionalTranslateParams="{ fieldName: $t('common.name') }"></KnValidationMessages>
+                        <KnValidationMessages class="p-mt-1" :v-comp="v$.constraint.name" :additional-translate-params="{ fieldName: $t('common.name') }"></KnValidationMessages>
                     </div>
                     <div class="p-field p-col-12">
                         <span class="p-float-label">
                             <InputText
                                 id="description"
+                                v-model.trim="v$.constraint.description.$model"
                                 class="kn-material-input"
                                 type="text"
-                                v-model.trim="v$.constraint.description.$model"
                                 :class="{
                                     'p-invalid': v$.constraint.description.$invalid && v$.constraint.description.$dirty
                                 }"
                                 :disabled="inputDisabled"
-                                @input="$emit('touched')"
                                 maxlength="160"
+                                @input="$emit('touched')"
                             />
                             <label for="description" class="kn-material-input-label">{{ $t('common.description') }} </label>
                         </span>
-                        <KnValidationMessages class="p-mt-1" :vComp="v$.constraint.description" :additionalTranslateParams="{ fieldName: $t('common.description') }"></KnValidationMessages>
+                        <KnValidationMessages class="p-mt-1" :v-comp="v$.constraint.description" :additional-translate-params="{ fieldName: $t('common.description') }"></KnValidationMessages>
                     </div>
                     <div class="p-field p-col-4">
                         <span class="p-float-label">
                             <Dropdown
                                 v-if="!constraint.predifined"
                                 id="type"
-                                class="kn-material-input"
                                 v-model="v$.constraint.valueTypeCd.$model"
-                                dataKey="id"
-                                optionLabel="VALUE_NM"
-                                optionValue="VALUE_CD"
+                                class="kn-material-input"
+                                data-key="id"
+                                option-label="VALUE_NM"
+                                option-value="VALUE_CD"
                                 :options="domains"
                                 :class="{
                                     'p-invalid': v$.constraint.valueTypeCd.$invalid && v$.constraint.valueTypeCd.$dirty
@@ -82,15 +82,15 @@
                                 @blur="v$.constraint.valueTypeCd.$touch()"
                                 @change="clearInput"
                             />
-                            <InputText v-else id="type" class="kn-material-input" type="text" v-model.trim="constraint.valueTypeCd" disabled />
+                            <InputText v-else id="type" v-model.trim="constraint.valueTypeCd" class="kn-material-input" type="text" disabled />
                             <label for="type" class="kn-material-input-label">{{ $t('managers.constraintManagement.type') }} * </label>
                         </span>
-                        <KnValidationMessages class="p-mt-1" :vComp="v$.constraint.valueTypeCd" :additionalTranslateParams="{ fieldName: $t('managers.constraintManagement.type') }"></KnValidationMessages>
+                        <KnValidationMessages class="p-mt-1" :v-comp="v$.constraint.valueTypeCd" :additional-translate-params="{ fieldName: $t('managers.constraintManagement.type') }"></KnValidationMessages>
                     </div>
                     <div v-if="!constraint.predifined && constraint.valueTypeCd" :class="constraintsManagementDetailDescriptor.firstValue[constraint.valueTypeCd].class">
                         <span class="p-float-label">
-                            <InputText v-if="!numberType" id="type" class="kn-material-input" type="text" v-model.trim="constraint.firstValue" @input="$emit('touched')" />
-                            <InputNumber v-else id="type" inputClass="kn-material-input" v-model="constraint.firstValue" @input="$emit('touched')" />
+                            <InputText v-if="!numberType" id="type" v-model.trim="constraint.firstValue" class="kn-material-input" type="text" @input="$emit('touched')" />
+                            <InputNumber v-else id="type" v-model="constraint.firstValue" input-class="kn-material-input" @input="$emit('touched')" />
                             <label for="type" class="kn-material-input-label">{{ $t(constraintsManagementDetailDescriptor.firstValue[constraint.valueTypeCd].label) }}</label>
                         </span>
                     </div>
@@ -98,8 +98,8 @@
                         <span class="p-float-label">
                             <InputNumber
                                 id="typeTwo"
-                                inputClass="kn-material-input"
                                 v-model="v$.constraint.secondValue.$model"
+                                input-class="kn-material-input"
                                 :class="{
                                     'p-invalid': v$.constraint.secondValue.$invalid && v$.constraint.secondValue.$dirty
                                 }"
@@ -110,9 +110,9 @@
                         </span>
                         <KnValidationMessages
                             class="p-mt-1"
-                            :vComp="v$.constraint.secondValue"
-                            :additionalTranslateParams="{ fieldName: $t(constraintsManagementDetailDescriptor.firstValue[constraint.valueTypeCd].labelTwo) }"
-                            :specificTranslateKeys="{ range_check: 'managers.constraintManagement.rangeCheck' }"
+                            :v-comp="v$.constraint.secondValue"
+                            :additional-translate-params="{ fieldName: $t(constraintsManagementDetailDescriptor.firstValue[constraint.valueTypeCd].labelTwo) }"
+                            :specific-translate-keys="{ range_check: 'managers.constraintManagement.rangeCheck' }"
                         ></KnValidationMessages>
                     </div>
                 </form>
@@ -147,6 +147,10 @@ export default defineComponent({
         }
     },
     emits: ['close', 'created', 'touched'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             constraintsManagementDetailDescriptor,
@@ -177,7 +181,7 @@ export default defineComponent({
             return this.constraint.valueTypeCd == 'MAXLENGTH' || this.constraint.valueTypeCd == 'RANGE' || this.constraint.valueTypeCd == 'DECIMALS' || this.constraint.valueTypeCd == 'MINLENGTH'
         },
         rangeCheck(): any {
-            let test = this.constraint.firstValue < this.constraint.secondValue
+            const test = this.constraint.firstValue < this.constraint.secondValue
             return test
         }
     },
@@ -186,10 +190,6 @@ export default defineComponent({
             this.v$.$reset()
             this.constraint = { ...this.selectedConstraint } as iConstraint
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     mounted() {
         if (this.selectedConstraint) {
@@ -202,7 +202,7 @@ export default defineComponent({
                 return
             }
             delete this.constraint.predifined
-            let selectedDomain = this.domains.filter((cd) => {
+            const selectedDomain = this.domains.filter((cd) => {
                 return cd.VALUE_CD == this.constraint?.valueTypeCd
             })
             this.constraint.valueTypeId = selectedDomain[0].VALUE_ID

@@ -5,26 +5,27 @@
                 {{ $t('managers.configurationManagement.title') }}
             </template>
             <template #end>
-                <KnFabButton icon="fas fa-plus" @click="showForm()" data-test="open-form-button"></KnFabButton>
+                <KnFabButton icon="fas fa-plus" data-test="open-form-button" @click="showForm()"></KnFabButton>
             </template>
         </Toolbar>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
         <div class="kn-page-content p-grid p-m-0">
-            <div class="p-col" v-if="!loading">
+            <div v-if="!loading" class="p-col">
                 <DataTable
+                    v-model:filters="filters"
+                    v-model:selection="selectedConfiguration"
                     :value="configurations"
                     :paginator="true"
                     :loading="loading"
                     :rows="20"
                     class="p-datatable-sm kn-table"
-                    dataKey="id"
-                    v-model:filters="filters"
-                    filterDisplay="menu"
-                    :globalFilterFields="configurationManagementDescriptor.globalFilterFields"
-                    :rowsPerPageOptions="[10, 15, 20]"
-                    responsiveLayout="stack"
+                    data-key="id"
+                    filter-display="menu"
+                    :global-filter-fields="configurationManagementDescriptor.globalFilterFields"
+                    :rows-per-page-options="[10, 15, 20]"
+                    responsive-layout="stack"
                     breakpoint="960px"
-                    :currentPageReportTemplate="
+                    :current-page-report-template="
                         $t('common.table.footer.paginated', {
                             first: '{first}',
                             last: '{last}',
@@ -32,28 +33,27 @@
                         })
                     "
                     data-test="configurations-table"
-                    v-model:selection="selectedConfiguration"
-                    selectionMode="single"
+                    selection-mode="single"
                     @rowSelect="showForm"
                 >
                     <template #header>
                         <div class="table-header">
                             <span class="p-input-icon-left">
                                 <i class="pi pi-search" />
-                                <InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
+                                <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
                             </span>
                         </div>
                     </template>
                     <template #empty>
                         {{ $t('common.info.noDataFound') }}
                     </template>
-                    <template #loading v-if="loading">
+                    <template v-if="loading" #loading>
                         {{ $t('common.info.dataLoading') }}
                     </template>
 
-                    <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" :style="[col.style, [col.field == 'valueCheck' ? 'max-width: 200px' : '']]" class="kn-truncated">
+                    <Column v-for="col of columns" :key="col.field" :field="col.field" :header="$t(col.header)" :sortable="true" :style="[col.style, [col.field == 'valueCheck' ? 'max-width: 200px' : '']]" class="kn-truncated">
                         <template #filter="{ filterModel }">
-                            <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
+                            <InputText v-model="filterModel.value" type="text" class="p-column-filter"></InputText>
                         </template>
                         <template #body="slotProps">
                             <span v-if="slotProps.data['label'].toLowerCase().endsWith('.password') && col.field == 'valueCheck'">●●●●●●●●●●●●</span>
@@ -62,13 +62,13 @@
                     </Column>
                     <Column :style="configurationManagementDescriptor.table.iconColumn.style" @rowClick="false">
                         <template #body="slotProps">
-                            <Button icon="pi pi-trash" class="p-button-link" @click="showDeleteDialog(slotProps.data.id)" :data-test="'delete-button'" />
+                            <Button icon="pi pi-trash" class="p-button-link" :data-test="'delete-button'" @click="showDeleteDialog(slotProps.data.id)" />
                         </template>
                     </Column>
                 </DataTable>
             </div>
             <div v-if="formVisible">
-                <ConfigurationManagementDialog :model="selectedConfiguration" @created="reload" @close="closeForm" data-test="configuration-form"></ConfigurationManagementDialog>
+                <ConfigurationManagementDialog :model="selectedConfiguration" data-test="configuration-form" @created="reload" @close="closeForm"></ConfigurationManagementDialog>
             </div>
         </div>
     </div>
@@ -93,6 +93,10 @@ export default defineComponent({
         DataTable,
         KnFabButton,
         ConfigurationManagementDialog
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     data() {
         return {
@@ -126,10 +130,6 @@ export default defineComponent({
                 }
             } as Object
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadConfigurations()

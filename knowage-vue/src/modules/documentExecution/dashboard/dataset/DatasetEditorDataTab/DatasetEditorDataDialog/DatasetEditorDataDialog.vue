@@ -2,14 +2,14 @@
     <Dialog class="kn-dialog--toolbar--primary" :visible="visible" :header="$t('dashboard.datasetEditor.selectDatasets')" :style="dataDialogDescriptor.style.datasetListDialog" :closable="false" modal :breakpoints="{ '960px': '75vw', '640px': '100vw' }">
         <DataTable
             id="datasets-datatable"
+            v-model:selection="selectedDatasets"
             class="p-datatable-sm kn-table kn-page-content"
             :value="filteredDatasets"
-            v-model:selection="selectedDatasets"
             :paginator="true"
             :rows="dataDialogDescriptor.rows"
             :loading="loading"
-            dataKey="id.dsId"
-            :responsiveLayout="dataDialogDescriptor.responsiveLayout"
+            data-key="id.dsId"
+            :responsive-layout="dataDialogDescriptor.responsiveLayout"
             :breakpoint="dataDialogDescriptor.breakpoint"
         >
             <template #loading>
@@ -24,12 +24,12 @@
                 <div class="table-header p-d-flex">
                     <span class="p-input-icon-left p-mr-3 p-col-12">
                         <i class="pi pi-search" />
-                        <InputText class="kn-material-input" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchDatasets" />
+                        <InputText v-model="searchWord" class="kn-material-input" type="text" :placeholder="$t('common.search')" @input="searchDatasets" />
                     </span>
                 </div>
             </template>
-            <Column selectionMode="multiple" />
-            <Column class="kn-truncated" :style="col.style" v-for="col of dataDialogDescriptor.columns" :header="$t(col.header)" :key="col.field" :sortField="col.field" :sortable="true">
+            <Column selection-mode="multiple" />
+            <Column v-for="col of dataDialogDescriptor.columns" :key="col.field" class="kn-truncated" :style="col.style" :header="$t(col.header)" :sort-field="col.field" :sortable="true">
                 <template #body="slotProps">
                     <span v-if="col.field == 'type'" v-tooltip.top="slotProps.data[col.field]"> {{ dataDialogDescriptor.datasetTypes[slotProps.data[col.field]] }} </span>
                     <span v-else v-tooltip.top="slotProps.data[col.field]"> {{ slotProps.data[col.field] }}</span>
@@ -50,7 +50,7 @@
         </DataTable>
         <template #footer>
             <Button class="kn-button kn-button--secondary" :label="$t('common.close')" @click="$emit('close')" />
-            <Button class="kn-button kn-button--primary" v-t="'common.add'" @click="addSelectedDatasets" />
+            <Button v-t="'common.add'" class="kn-button kn-button--primary" @click="addSelectedDatasets" />
         </template>
     </Dialog>
 </template>
@@ -70,6 +70,10 @@ export default defineComponent({
     components: { Column, DataTable, Dialog, Chip },
     props: { selectedDatasetsProp: { required: true, type: Array as any }, availableDatasetsProp: { required: true, type: Array as PropType<IDataset[]> } },
     emits: ['close', 'addSelectedDatasets'],
+    setup() {
+        const dashboardStore = dashStore()
+        return { dashboardStore }
+    },
     data() {
         return {
             dataDialogDescriptor,
@@ -84,10 +88,6 @@ export default defineComponent({
         availableDatasetsProp() {
             this.setDatasetList()
         }
-    },
-    setup() {
-        const dashboardStore = dashStore()
-        return { dashboardStore }
     },
     async created() {
         await this.setDatasetList()

@@ -7,14 +7,14 @@
                     <span>
                         <Calendar
                             id="startDate"
+                            v-model="startDate"
                             class="kn-material-input"
                             :style="knCronDescriptor.style.calendarInput"
-                            v-model="startDate"
                             :class="{
                                 'p-invalid': !validDates
                             }"
-                            :showIcon="true"
-                            :manualInput="true"
+                            :show-icon="true"
+                            :manual-input="true"
                             @change="setDate('startDate')"
                             @date-select="setDate('startDate')"
                         />
@@ -29,7 +29,7 @@
                 <div class="p-col-4 p-d-flex p-ai-center">
                     <label for="startTime" class="kn-material-input-label p-m-2"> {{ $t('cron.startTime') + ':' }}</label>
                     <span>
-                        <Calendar id="startTime" :style="knCronDescriptor.style.timePicker" class="kn-material-input custom-timepicker" v-model="startTime" :manualInput="true" :timeOnly="true" hourFormat="24" @change="setDate('startDate')" @date-select="setDate('startDate')" />
+                        <Calendar id="startTime" v-model="startTime" :style="knCronDescriptor.style.timePicker" class="kn-material-input custom-timepicker" :manual-input="true" :time-only="true" hour-format="24" @change="setDate('startDate')" @date-select="setDate('startDate')" />
                     </span>
                 </div>
             </div>
@@ -40,15 +40,15 @@
                     <span>
                         <Calendar
                             id="endDate"
+                            v-model="endDate"
                             class="kn-material-input p-ml-2"
                             :style="knCronDescriptor.style.calendarInput"
-                            v-model="endDate"
                             :class="{
                                 'p-invalid': !validDates
                             }"
-                            :showIcon="true"
-                            :manualInput="true"
-                            :showButtonBar="true"
+                            :show-icon="true"
+                            :manual-input="true"
+                            :show-button-bar="true"
                             @change="setDate('endDate')"
                             @date-select="setDate('endDate')"
                             @clear-click="clearEndDate"
@@ -64,7 +64,7 @@
                 <div v-if="endDate" class="p-col-6 p-d-flex p-ai-center">
                     <label for="endTime" class="kn-material-input-label p-m-2"> {{ $t('cron.endTime') + ':' }}</label>
                     <span>
-                        <Calendar id="endTime" :style="knCronDescriptor.style.timePicker" class="kn-material-input p-ml-2 custom-timepicker" v-model="endTime" :manualInput="true" :timeOnly="true" hourFormat="24" @change="setDate('endDate')" @date-select="setDate('endDate')" />
+                        <Calendar id="endTime" v-model="endTime" :style="knCronDescriptor.style.timePicker" class="kn-material-input p-ml-2 custom-timepicker" :manual-input="true" :time-only="true" hour-format="24" @change="setDate('endDate')" @date-select="setDate('endDate')" />
                     </span>
                 </div>
             </div>
@@ -75,12 +75,12 @@
                         <span>
                             <Dropdown
                                 id="repeatInterval"
+                                v-model="repeatInterval"
                                 class="kn-material-input"
                                 :class="{ 'p-error': !validInterval }"
                                 :style="knCronDescriptor.style.intervalInput"
-                                optionLabel="name"
-                                optionValue="value"
-                                v-model="repeatInterval"
+                                option-label="name"
+                                option-value="value"
                                 :options="knCronDescriptor.intervals"
                                 @change="updateCronInterval"
                             />
@@ -92,48 +92,48 @@
                         </span>
                     </div>
 
-                    <div class="p-d-flex p-flex-row" v-if="repeatInterval === 'minute' || repeatInterval === 'hour' || repeatInterval === 'day'">
+                    <div v-if="repeatInterval === 'minute' || repeatInterval === 'hour' || repeatInterval === 'day'" class="p-d-flex p-flex-row">
                         <label for="parameter" class="kn-material-input-label p-m-2"> {{ $t('kpi.kpiScheduler.every') }}</label>
                         <span>
-                            <Dropdown id="parameter" class="kn-material-input" optionLabel="name" optionValue="value" v-model="parameter" :options="parameterOptions" @change="updateCronNumberOfRepetition" />
+                            <Dropdown id="parameter" v-model="parameter" class="kn-material-input" option-label="name" option-value="value" :options="parameterOptions" @change="updateCronNumberOfRepetition" />
                         </span>
                     </div>
                     <div v-else-if="repeatInterval === 'week'" class="p-d-flex p-flex-row p-m-2">
                         <div v-for="(day, index) in knCronDescriptor.weeklyOptions" :key="index">
                             <span class="p-m-1">{{ day.name + ':' }}</span>
-                            <Checkbox :value="day.value" v-model="selectedDays" @click="updateCronDays" />
+                            <Checkbox v-model="selectedDays" :value="day.value" @click="updateCronDays" />
                         </div>
                     </div>
                     <div v-else-if="repeatInterval === 'month'" class="p-d-flex p-flex-row">
                         <div class="p-m-2">
                             <div>
                                 <span class="p-mr-2">{{ $t('cron.advanced') }}</span>
-                                <InputSwitch class="p-mr-2" v-model="simpleMonth" />
+                                <InputSwitch v-model="simpleMonth" class="p-mr-2" />
                                 <span>{{ $t('cron.simple') }}</span>
                             </div>
                             <div v-if="simpleMonth" class="p-d-flex p-flex-row p-mt-2">
                                 <label for="parameterMonth" class="kn-material-input-label p-m-2"> {{ $t('kpi.kpiScheduler.every') }}</label>
-                                <Dropdown class="kn-material-input" optionLabel="name" optionValue="value" v-model="parameter" :options="parameterOptions" @change="updateCronSimpleMonthRepetition(true)" />
+                                <Dropdown v-model="parameter" class="kn-material-input" option-label="name" option-value="value" :options="parameterOptions" @change="updateCronSimpleMonthRepetition(true)" />
                                 <label for="parameterMonth" class="kn-material-input-label p-m-2"> {{ $t('cron.months') }}</label>
                             </div>
                             <div v-else class="p-d-flex p-flex-row p-mt-2">
                                 <label class="kn-material-input-label p-m-2"> {{ $t('cron.inMonth') }}</label>
-                                <MultiSelect class="kn-material-input" optionLabel="name" optionValue="value" v-model="selectedMonths" :options="parameterOptions" @change="updateCronAdvancedMonthRepetition(true)" />
+                                <MultiSelect v-model="selectedMonths" class="kn-material-input" option-label="name" option-value="value" :options="parameterOptions" @change="updateCronAdvancedMonthRepetition(true)" />
                             </div>
                         </div>
                         <div class="p-m-2">
                             <span class="p-mr-2">{{ $t('cron.advanced') }}</span>
-                            <InputSwitch class="p-mr-2" v-model="simpleDay" />
+                            <InputSwitch v-model="simpleDay" class="p-mr-2" />
                             <span>{{ $t('cron.simple') }}</span>
                             <div v-if="simpleDay" class="p-d-flex p-flex-row p-mt-2">
                                 <label for="parameterDay" class="kn-material-input-label p-m-2"> {{ $t('cron.theDay') }}</label>
-                                <Dropdown class="kn-material-input" optionLabel="name" optionValue="value" v-model="simpleDayParameter" :options="dayOptions" @change="updateCronSimpleDayRepetition(true)" />
+                                <Dropdown v-model="simpleDayParameter" class="kn-material-input" option-label="name" option-value="value" :options="dayOptions" @change="updateCronSimpleDayRepetition(true)" />
                             </div>
                             <div v-else class="p-d-flex p-flex-row p-mt-2">
                                 <label for="parameterDay" class="kn-material-input-label p-m-2"> {{ $t('cron.theWeek') }}</label>
-                                <Dropdown class="kn-material-input" :style="knCronDescriptor.style.advancedDayDropdown" optionLabel="name" optionValue="value" v-model="parameterDay" :options="knCronDescriptor.dayOptions" @change="updateCronAdvancedDayRepetition(true)" />
+                                <Dropdown v-model="parameterDay" class="kn-material-input" :style="knCronDescriptor.style.advancedDayDropdown" option-label="name" option-value="value" :options="knCronDescriptor.dayOptions" @change="updateCronAdvancedDayRepetition(true)" />
                                 <label for="parameterDay" class="kn-material-input-label p-m-2"> {{ $t('cron.inDay') }}</label>
-                                <MultiSelect class="kn-material-input" optionLabel="name" optionValue="value" v-model="selectedDays" :options="knCronDescriptor.weeklyOptions" @change="updateCronAdvancedDayRepetition" />
+                                <MultiSelect v-model="selectedDays" class="kn-material-input" option-label="name" option-value="value" :options="knCronDescriptor.weeklyOptions" @change="updateCronAdvancedDayRepetition" />
                             </div>
                         </div>
                     </div>
@@ -188,17 +188,17 @@ export default defineComponent({
             endDate: null as Date | null,
             startTime: null as Date | null,
             endTime: null as Date | null,
-            repeatInterval: null as String | null,
-            parameter: null as String | null,
+            repeatInterval: null as string | null,
+            parameter: null as string | null,
             parameterOptions: [] as any[],
             simpleMonth: true,
             simpleDay: true,
             parameterMonth: null,
-            parameterDay: null as Number | null,
+            parameterDay: null as number | null,
             dayOptions: [] as any[],
             selectedDays: [] as any,
             selectedMonths: [] as any,
-            simpleDayParameter: null as Number | null
+            simpleDayParameter: null as number | null
         }
     },
     computed: {

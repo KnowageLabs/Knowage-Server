@@ -12,25 +12,25 @@
     </Toolbar>
     <Card v-show="expandParamsCard" class="p-mx-2">
         <template #content>
-            <DataTable class="p-datatable-sm kn-table" editMode="cell" :value="dataset.pars" :scrollable="true" scrollHeight="250px" dataKey="versNum" responsiveLayout="stack" breakpoint="960px" @cell-edit-complete="onCellEditComplete">
+            <DataTable class="p-datatable-sm kn-table" edit-mode="cell" :value="dataset.pars" :scrollable="true" scroll-height="250px" data-key="versNum" responsive-layout="stack" breakpoint="960px" @cell-edit-complete="onCellEditComplete">
                 <template #empty>
                     {{ $t('managers.datasetManagement.tableEmpty') }}
                 </template>
                 <Column field="name" :header="$t('kpi.alert.name')" :sortable="true">
                     <template #body="{ data }">
-                        <InputText class="kn-material-input" :style="tableDescriptor.style.columnStyle" v-model="data.name" />
+                        <InputText v-model="data.name" class="kn-material-input" :style="tableDescriptor.style.columnStyle" />
                     </template>
                 </Column>
                 <Column field="type" :header="$t('kpi.alert.type')" :sortable="true">
                     <template #body="{ data }">
-                        <Dropdown id="scope" class="kn-material-input" :style="tableDescriptor.style.columnStyle" :options="datasetParamTypes" optionLabel="value" optionValue="value" v-model="data.type" />
+                        <Dropdown id="scope" v-model="data.type" class="kn-material-input" :style="tableDescriptor.style.columnStyle" :options="datasetParamTypes" option-label="value" option-value="value" />
                     </template>
                 </Column>
                 <Column field="defaultValue" :header="$t('managers.driversManagement.useModes.defaultValue')" :sortable="true">
                     <template #body="{ data }">
-                        <InputText v-if="data.multiValue === false" class="kn-material-input" :style="tableDescriptor.style.columnStyle" v-model="data.defaultValue" />
+                        <InputText v-if="data.multiValue === false" v-model="data.defaultValue" class="kn-material-input" :style="tableDescriptor.style.columnStyle" />
                         <div v-else class="p-d-flex p-flex-column chipsContainer">
-                            <Chips class="kn-border-none" v-model="data.defaultValue" />
+                            <Chips v-model="data.defaultValue" class="kn-border-none" />
                             <small id="chips-help">{{ $t('common.chipsHint') }}</small>
                         </div>
                     </template>
@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, nextTick } from 'vue'
+import { defineComponent } from 'vue'
 import tableDescriptor from './DatasetManagementTablesDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import Card from 'primevue/card'
@@ -65,15 +65,6 @@ export default defineComponent({
     props: {
         selectedDataset: { type: Object as any }
     },
-    computed: {
-        disableDeleteAll() {
-            if (!this.dataset.pars || this.dataset['pars'].length == 0) {
-                return true
-            } else {
-                return false
-            }
-        }
-    },
     emits: ['touched'],
     data() {
         return {
@@ -83,13 +74,22 @@ export default defineComponent({
             datasetParamTypes: tableDescriptor.datasetParamTypes
         }
     },
-    created() {
-        this.dataset = this.selectedDataset
+    computed: {
+        disableDeleteAll() {
+            if (!this.dataset.pars || this.dataset['pars'].length == 0) {
+                return true
+            } else {
+                return false
+            }
+        }
     },
     watch: {
         selectedDataset() {
             this.dataset = this.selectedDataset
         }
+    },
+    created() {
+        this.dataset = this.selectedDataset
     },
     methods: {
         addNewParam() {

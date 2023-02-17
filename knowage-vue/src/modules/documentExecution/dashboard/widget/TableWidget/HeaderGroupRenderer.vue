@@ -19,8 +19,8 @@ export default defineComponent({
     },
     methods: {
         getHeaderGroupStyle() {
-            var modelGroups = this.params.propWidget.settings.style.columnGroups
-            var columnGroupStyleString = null as any
+            const modelGroups = this.params.propWidget.settings.style.columnGroups
+            let columnGroupStyleString = null as any
 
             if (modelGroups.enabled) {
                 columnGroupStyleString = Object.entries(modelGroups.styles[0].properties)

@@ -1,14 +1,14 @@
 <template>
-    <DataTable v-if="!metadataError" class="p-datatable-sm kn-table" :value="rule.ruleOutputs" dataKey="id" responsiveLayout="stack" breakpoint="960px" data-test="metadata-table">
+    <DataTable v-if="!metadataError" class="p-datatable-sm kn-table" :value="rule.ruleOutputs" data-key="id" responsive-layout="stack" breakpoint="960px" data-test="metadata-table">
         <Column :style="metadataCardDescriptor.table.iconColumn.style">
             <template #body="slotProps">
-                <i v-if="slotProps.data.aliasIcon" :class="slotProps.data.aliasIcon" v-tooltip.top="alisIconTooltip(slotProps.data.aliasIcon)"></i>
+                <i v-if="slotProps.data.aliasIcon" v-tooltip.top="alisIconTooltip(slotProps.data.aliasIcon)" :class="slotProps.data.aliasIcon"></i>
             </template>
         </Column>
         <Column class="kn-truncated" field="alias" :header="$t('kpi.measureDefinition.alias')"> </Column>
         <Column class="kn-truncated" field="type" :header="$t('kpi.measureDefinition.tipology')">
             <template #body="slotProps">
-                <Dropdown class="metaweb-dropdown-field p-mr-2" v-model="slotProps.data['type']" :options="tipologiesType" @change="$emit('touched')">
+                <Dropdown v-model="slotProps.data['type']" class="metaweb-dropdown-field p-mr-2" :options="tipologiesType" @change="$emit('touched')">
                     <template #value="slotProps">
                         <div v-if="slotProps.value">
                             <span>{{ slotProps.value['valueCd'] }}</span>
@@ -26,16 +26,16 @@
         <Column :header="$t('common.category')">
             <template #body="slotProps">
                 <AutoComplete
-                    class="metaweb-dropdown-field  p-mr-2"
                     v-if="slotProps.data['category'] && slotProps.data.type.valueCd != 'TEMPORAL_ATTRIBUTE'"
                     v-model="slotProps.data['category'].valueCd"
+                    class="metaweb-dropdown-field  p-mr-2"
                     :suggestions="filteredCategories"
                     field="valueCd"
                     @complete="searchCategories($event)"
                     @input="$emit('touched')"
                     @item-select="setRuleCategory($event.value, slotProps.data)"
                 />
-                <Dropdown class="metaweb-dropdown-field p-mr-2" v-else v-model="slotProps.data['hierarchy']" :options="domainsTemporalLevel" :placeholder="$t('kpi.measureDefinition.temporalAttributePlaceholder')" @change="$emit('touched')">
+                <Dropdown v-else v-model="slotProps.data['hierarchy']" class="metaweb-dropdown-field p-mr-2" :options="domainsTemporalLevel" :placeholder="$t('kpi.measureDefinition.temporalAttributePlaceholder')" @change="$emit('touched')">
                     <template #value="slotProps">
                         <div v-if="slotProps.value">
                             <span>{{ slotProps.value['valueCd'] }}</span>

@@ -7,11 +7,11 @@
             <div class="p-grid p-ai-center p-col-11">
                 <div class="p-sm-12 p-md-3 p-d-flex p-flex-column">
                     <label class="kn-material-input-label">{{ $t('common.parameter') }}</label>
-                    <InputText class="kn-material-input p-inputtext-sm" v-model="parameter.name" :disabled="disabled" />
+                    <InputText v-model="parameter.name" class="kn-material-input p-inputtext-sm" :disabled="disabled" />
                 </div>
                 <div class="p-sm-12 p-md-3 kn-flex p-d-flex p-flex-column p-p-2">
                     <label class="kn-material-input-label"> {{ $t('common.type') }}</label>
-                    <Dropdown class="kn-material-input" v-model="parameter.type" :options="descriptor.linkParameterTypeOptions" optionValue="value" :disabled="disabled" @change="onParameterTypeChanged(parameter)">
+                    <Dropdown v-model="parameter.type" class="kn-material-input" :options="descriptor.linkParameterTypeOptions" option-value="value" :disabled="disabled" @change="onParameterTypeChanged(parameter)">
                         <template #value="slotProps">
                             <div>
                                 <span>{{ getTranslatedLabel(slotProps.value, descriptor.linkParameterTypeOptions, $t) }}</span>
@@ -26,31 +26,31 @@
                 </div>
                 <div v-if="parameter.type === 'static'" class="p-sm-11 p-md-5 p-d-flex p-flex-column">
                     <label class="kn-material-input-label">{{ $t('common.value') }}</label>
-                    <InputText class="kn-material-input p-inputtext-sm" v-model="parameter.value" :disabled="disabled" @change="parametersChanged" />
+                    <InputText v-model="parameter.value" class="kn-material-input p-inputtext-sm" :disabled="disabled" @change="parametersChanged" />
                 </div>
                 <div v-else-if="parameter.type === 'driver'" class="p-sm-11 p-md-5 p-d-flex p-flex-row p-ai-center">
                     <div class="p-d-flex p-flex-column kn-flex">
                         <label class="kn-material-input-label"> {{ $t('common.driver') }}</label>
-                        <Dropdown class="kn-material-input" v-model="parameter.driver" :options="drivers" optionLabel="name" optionValue="name" :disabled="disabled" @change="parametersChanged"> </Dropdown>
+                        <Dropdown v-model="parameter.driver" class="kn-material-input" :options="drivers" option-label="name" option-value="name" :disabled="disabled" @change="parametersChanged"> </Dropdown>
                     </div>
                 </div>
                 <div v-else-if="parameter.type === 'dynamic'" class="p-sm-11 p-md-5 p-d-flex p-flex-row p-ai-center">
                     <div class="p-d-flex p-flex-column kn-flex">
                         <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
-                        <Dropdown class="kn-material-input" v-model="parameter.column" :options="widgetModel.columns" optionLabel="alias" optionValue="alias" :disabled="disabled" @change="parametersChanged"> </Dropdown>
+                        <Dropdown v-model="parameter.column" class="kn-material-input" :options="widgetModel.columns" option-label="alias" option-value="alias" :disabled="disabled" @change="parametersChanged"> </Dropdown>
                     </div>
                 </div>
                 <div v-else-if="parameter.type === 'selection'" class="p-grid p-sm-11 p-md-5 p-ai-center">
                     <div class="p-sm-12 p-md-6 p-ai-center">
                         <div class="p-d-flex p-flex-column kn-flex">
                             <label class="kn-material-input-label"> {{ $t('common.dataset') }}</label>
-                            <Dropdown class="kn-material-input" v-model="parameter.dataset" :options="selectedDatasetNames" :disabled="disabled" @change="onDatasetChanged(parameter)"> </Dropdown>
+                            <Dropdown v-model="parameter.dataset" class="kn-material-input" :options="selectedDatasetNames" :disabled="disabled" @change="onDatasetChanged(parameter)"> </Dropdown>
                         </div>
                     </div>
                     <div class="p-sm-12 p-md-6 p-ai-center">
                         <div class="p-d-flex p-flex-column kn-flex">
                             <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
-                            <Dropdown class="kn-material-input" v-model="parameter.column" :options="getSelectionDatasetColumnOptions(parameter)" :disabled="disabled" @change="parametersChanged"> </Dropdown>
+                            <Dropdown v-model="parameter.column" class="kn-material-input" :options="getSelectionDatasetColumnOptions(parameter)" :disabled="disabled" @change="parametersChanged"> </Dropdown>
                         </div>
                     </div>
                 </div>
@@ -59,7 +59,7 @@
                 <i :class="'pi pi-trash'" class="kn-cursor-pointer" @click="deleteParameter(index)"></i>
             </div>
             <div v-if="parameter.type === 'json'" class="p-grid p-col-12 p-ai-center">
-                <TableWidgetParameterCodeMirror v-if="parameter.type === 'json'" :propParameter="parameter" :visible="parameter.type === 'json'"></TableWidgetParameterCodeMirror>
+                <TableWidgetParameterCodeMirror v-if="parameter.type === 'json'" :prop-parameter="parameter" :visible="parameter.type === 'json'"></TableWidgetParameterCodeMirror>
             </div>
         </div>
     </div>
@@ -73,12 +73,11 @@ import { mapActions } from 'pinia'
 import dashboardStore from '@/modules/documentExecution/dashboard/Dashboard.store'
 import descriptor from '../WidgetInteractionsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
-import InputSwitch from 'primevue/inputswitch'
 import TableWidgetParameterCodeMirror from './WidgetParameterCodeMirror.vue'
 
 export default defineComponent({
     name: 'table-widget-link-parameters-list',
-    components: { Dropdown, InputSwitch, TableWidgetParameterCodeMirror },
+    components: { Dropdown, TableWidgetParameterCodeMirror },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
         propParameters: { type: Array as PropType<IWidgetInteractionParameter[]>, required: true },

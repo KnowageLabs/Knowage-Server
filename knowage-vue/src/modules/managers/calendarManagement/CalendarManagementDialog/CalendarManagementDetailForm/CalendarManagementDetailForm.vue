@@ -1,19 +1,19 @@
 <template>
-    <div class="p-fluid p-formgrid p-grid p-m-2" v-if="calendar">
+    <div v-if="calendar" class="p-fluid p-formgrid p-grid p-m-2">
         <div class="p-col-12 p-md-6 p-d-flex p-flex-row p-ai-center">
             <div class="kn-flex">
                 <span class="p-float-label p-m-2">
                     <InputText
-                        class="kn-material-input"
                         v-model.trim="calendar.calendar"
+                        class="kn-material-input"
                         :maxlength="calendarManagementDetailFormDescriptor.nameMaxLength"
                         :class="{
                             'p-invalid': calendarNameDirty && calendar.calendar.trim().length === 0
                         }"
                         :disabled="readonly"
+                        data-test="calendar-name-input"
                         @input="calendarNameDirty = true"
                         @blur="calendarNameDirty = true"
-                        data-test="calendar-name-input"
                     />
                     <label class="kn-material-input-label"> {{ $t('common.name') + ' *' }}</label>
                 </span>
@@ -28,7 +28,7 @@
             </div>
             <div class="kn-flex">
                 <span class="p-float-label p-m-2">
-                    <InputText class="kn-material-input" v-model.trim="calendar.calType" :maxlength="calendarManagementDetailFormDescriptor.typeMaxLength" :disabled="readonly" data-test="calendar-type-input" />
+                    <InputText v-model.trim="calendar.calType" class="kn-material-input" :maxlength="calendarManagementDetailFormDescriptor.typeMaxLength" :disabled="readonly" data-test="calendar-type-input" />
                     <label class="kn-material-input-label"> {{ $t('common.type') }}</label>
                 </span>
                 <div class="p-d-flex p-flex-row p-jc-end">
@@ -40,16 +40,16 @@
             <div class="kn-flex p-mx-2">
                 <span class="p-float-label">
                     <Calendar
-                        class="calendar-management-detail-form-calendar-input"
                         v-model="calendar.calStartDay"
+                        class="calendar-management-detail-form-calendar-input"
                         :class="{
                             'p-invalid': startDateDirty && !calendar.calStartDay
                         }"
-                        :manualInput="true"
+                        :manual-input="true"
                         :disabled="readonly"
+                        data-test="calendar-start-date-input"
                         @input="startDateDirty = true"
                         @blur="startDateDirty = true"
-                        data-test="calendar-start-date-input"
                     ></Calendar>
                     <label class="kn-material-input-label"> {{ $t('managers.calendarManagement.startValidityDate') + ' *' }}</label>
                 </span>
@@ -57,17 +57,17 @@
             <div class="kn-flex">
                 <span class="p-float-label">
                     <Calendar
-                        class="calendar-management-detail-form-calendar-input"
                         v-model="calendar.calEndDay"
+                        class="calendar-management-detail-form-calendar-input"
                         :class="{
                             'p-invalid': endDateDirty && !calendar.calEndDay
                         }"
-                        :manualInput="true"
-                        :minDate="calendar.calStartDay"
+                        :manual-input="true"
+                        :min-date="calendar.calStartDay"
                         :disabled="readonly"
+                        data-test="calendar-end-date-input"
                         @input="endDateDirty = true"
                         @blur="endDateDirty = true"
-                        data-test="calendar-end-date-input"
                     ></Calendar>
                     <label class="kn-material-input-label"> {{ $t('managers.calendarManagement.endValidityDate') + ' *' }}</label>
                 </span>
@@ -89,6 +89,10 @@ export default defineComponent({
     components: { Calendar },
     props: { propCalendar: { type: Object as PropType<iCalendar | null> }, generateButtonVisible: { type: Boolean }, generateButtonDisabled: { type: Boolean } },
     emits: ['generateCalendarClicked'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             calendarManagementDetailFormDescriptor,
@@ -116,10 +120,6 @@ export default defineComponent({
         propCalendar() {
             this.loadCalendar()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadCalendar()

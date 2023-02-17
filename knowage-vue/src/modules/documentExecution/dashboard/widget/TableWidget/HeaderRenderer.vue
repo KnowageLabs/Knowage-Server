@@ -16,7 +16,9 @@ export default defineComponent({
             type: Object
         }
     },
-    mounted() {},
+    data() {
+        return {}
+    },
     computed: {
         showAscending(): boolean {
             return this.params.propWidget.settings.sortingColumn == this.params.colId && this.params.propWidget.settings.sortingOrder == 'DESC'
@@ -25,9 +27,7 @@ export default defineComponent({
             return this.params.propWidget.settings.sortingColumn == this.params.colId && this.params.propWidget.settings.sortingOrder == 'ASC'
         }
     },
-    data() {
-        return {}
-    },
+    mounted() {},
     methods: {
         getHeaderStyle() {
             const styleSettings = this.params.propWidget.settings.style.headers
@@ -37,8 +37,8 @@ export default defineComponent({
             return styleString + ';'
         },
         onSortRequested() {
-            var sortingColumn = this.params.propWidget.settings.sortingColumn
-            var sortingOrder = this.params.propWidget.settings.sortingOrder
+            const sortingColumn = this.params.propWidget.settings.sortingColumn
+            let sortingOrder = this.params.propWidget.settings.sortingOrder
             if (sortingColumn == this.params.colId) {
                 sortingOrder == 'ASC' ? (sortingOrder = 'DESC') : (sortingOrder = 'ASC')
                 this.params.context.componentParent.sortingChanged({ colId: this.params.colId, order: sortingOrder })

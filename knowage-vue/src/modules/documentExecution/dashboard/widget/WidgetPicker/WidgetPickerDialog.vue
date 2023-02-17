@@ -3,10 +3,10 @@
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary kn-width-full">
                 <template #start>
-                    {{ $t('documentExecution.olap.showMdxQuery') }}
+                    {{ $t('dashboard.widgetEditor.addWidget') }}
                 </template>
                 <template #end>
-                    <Button icon="pi pi-times" class="p-button-link" @click="$emit('closeWidgetPicker')" />
+                    <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain p-mx-2" @click="$emit('closeWidgetPicker')" />
                 </template>
             </Toolbar>
         </template>
@@ -33,9 +33,9 @@ import descriptor from './WidgetPickerDescriptor.json'
 export default defineComponent({
     name: 'widget-picker-dialog',
     components: { Dialog, WidgetCard },
-    emits: ['closeWidgetPicker', 'openNewWidgetEditor'],
     inject: [],
     props: { visible: { type: Boolean } },
+    emits: ['closeWidgetPicker', 'openNewWidgetEditor'],
     data() {
         return {
             descriptor,

@@ -1,8 +1,8 @@
 <template>
-	<Dialog class="kn-dialog--toolbar--primary exportDialog" v-bind:visible="visibility" :header="$t('common.export')" :closable="false" modal>
+	<Dialog class="kn-dialog--toolbar--primary exportDialog" :visible="visibility" :header="$t('common.export')" :closable="false" modal>
 		<div class="exportDialogContent">
 			<span class="p-float-label">
-				<InputText class="kn-material-input fileNameInputText" type="text" v-model="fileName" maxlength="50" />
+				<InputText v-model="fileName" class="kn-material-input fileNameInputText" type="text" maxlength="50" />
 				<label class="kn-material-input-label" for="label">{{ $t('importExport.filenamePlaceholder') }}</label>
 			</span>
 		</div>
@@ -23,11 +23,11 @@
 		props: {
 			visibility: Boolean
 		},
+		emits: ['update:visibility', 'export'],
 		data() {
 			return { fileName: '' }
 		},
 		created() {},
-		emits: ['update:visibility', 'export'],
 		methods: {
 			closeDialog(): void {
 				this.$emit('update:visibility', false)

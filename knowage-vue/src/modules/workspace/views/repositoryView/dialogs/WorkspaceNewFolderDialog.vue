@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="workspaceNewFolderDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary" :content-style="workspaceNewFolderDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -13,10 +13,10 @@
                 <span class="p-float-label ">
                     <InputText
                         id="code"
+                        v-model.trim="v$.newFolder.code.$model"
                         class="kn-material-input"
                         type="text"
-                        maxLength="25"
-                        v-model.trim="v$.newFolder.code.$model"
+                        max-length="25"
                         :class="{
                             'p-invalid': v$.newFolder.code.$invalid && v$.newFolder.code.$dirty
                         }"
@@ -25,8 +25,8 @@
                     <label for="code" class="kn-material-input-label">{{ $t('managers.glossary.common.code') }} * </label>
                 </span>
                 <KnValidationMessages
-                    :vComp="v$.newFolder.code"
-                    :additionalTranslateParams="{
+                    :v-comp="v$.newFolder.code"
+                    :additional-translate-params="{
                         fieldName: $t('managers.glossary.common.code')
                     }"
                 />
@@ -35,10 +35,10 @@
                 <span class="p-float-label ">
                     <InputText
                         id="name"
+                        v-model.trim="v$.newFolder.name.$model"
                         class="kn-material-input"
                         type="text"
-                        maxLength="25"
-                        v-model.trim="v$.newFolder.name.$model"
+                        max-length="25"
                         :class="{
                             'p-invalid': v$.newFolder.name.$invalid && v$.newFolder.name.$dirty
                         }"
@@ -47,15 +47,15 @@
                     <label for="name" class="kn-material-input-label">{{ $t('importExport.catalogFunction.column.name') }} * </label>
                 </span>
                 <KnValidationMessages
-                    :vComp="v$.newFolder.name"
-                    :additionalTranslateParams="{
+                    :v-comp="v$.newFolder.name"
+                    :additional-translate-params="{
                         fieldName: $t('importExport.catalogFunction.column.name')
                     }"
                 />
             </div>
             <div class="p-field p-col-12">
                 <span class="p-float-label p-mb-2">
-                    <InputText id="descr" class="kn-material-input" type="text" maxLength="254" v-model.trim="newFolder.descr" />
+                    <InputText id="descr" v-model.trim="newFolder.descr" class="kn-material-input" type="text" max-length="254" />
                     <label for="descr" class="kn-material-input-label"> {{ $t('common.description') }} </label>
                 </span>
             </div>
@@ -64,7 +64,7 @@
         <template #footer>
             <div class="p-d-flex p-flex-row p-jc-end">
                 <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
-                <Button class="kn-button kn-button--primary" @click="createFolder" :disabled="buttonDisabled">{{ $t('common.save') }}</Button>
+                <Button class="kn-button kn-button--primary" :disabled="buttonDisabled" @click="createFolder">{{ $t('common.save') }}</Button>
             </div>
         </template>
     </Dialog>

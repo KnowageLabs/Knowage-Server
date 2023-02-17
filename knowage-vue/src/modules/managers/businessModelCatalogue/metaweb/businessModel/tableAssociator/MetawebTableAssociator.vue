@@ -31,9 +31,9 @@
                     <template #empty>{{ $t('metaweb.businessModel.targetHint') }} </template>
                     <template #option="slotProps">
                         <div
-                            class="associator-target-list-item"
                             :id="'target-' + slotProps.index"
                             :ref="'target-' + slotProps.index"
+                            class="associator-target-list-item"
                             @drop="onDrop($event, 'target-' + slotProps.index, slotProps.option)"
                             @dragover.prevent
                             @dragenter.prevent="setDropzoneClass(true, 'target-' + slotProps.index)"
@@ -43,16 +43,16 @@
                                 <span class="kn-truncated kn-flex-05">
                                     {{ slotProps.option.name }}
                                 </span>
-                                <i class="fas fa-link kn-flex-05" v-if="slotProps.option[associatedItem] && slotProps.option[associatedItem].length > 0" />
-                                <div class="p-d-flex p-flex-column kn-flex" v-bind:class="{ 'p-mb-1': slotProps.option[associatedItem].length > 1 }" v-if="slotProps.option[associatedItem] && slotProps.option[associatedItem].length > 0">
-                                    <span class="p-d-flex p-flex-row p-ai-center" v-for="(link, index) in slotProps.option[associatedItem]" v-bind:key="index">
+                                <i v-if="slotProps.option[associatedItem] && slotProps.option[associatedItem].length > 0" class="fas fa-link kn-flex-05" />
+                                <div v-if="slotProps.option[associatedItem] && slotProps.option[associatedItem].length > 0" class="p-d-flex p-flex-column kn-flex" :class="{ 'p-mb-1': slotProps.option[associatedItem].length > 1 }">
+                                    <span v-for="(link, index) in slotProps.option[associatedItem]" :key="index" class="p-d-flex p-flex-row p-ai-center">
                                         <span class="kn-truncated">
                                             {{ link.name }}
                                         </span>
                                         <Button v-if="slotProps.option[associatedItem].length > 1" icon="fas fa-times" class="associator-enable-hover p-button-text p-button-rounded p-button-plain" @click.stop="deleteRelationship(slotProps.option, link)" />
                                     </span>
                                 </div>
-                                <Button icon="far fa-trash-alt kn-flex-0" class="associator-enable-hover p-button-text p-button-rounded p-button-plain" v-if="slotProps.option[associatedItem] && slotProps.option[associatedItem].length > 0" @click.stop="deleteRelationship(slotProps.option)" />
+                                <Button v-if="slotProps.option[associatedItem] && slotProps.option[associatedItem].length > 0" icon="far fa-trash-alt kn-flex-0" class="associator-enable-hover p-button-text p-button-rounded p-button-plain" @click.stop="deleteRelationship(slotProps.option)" />
                             </div>
                         </div>
                     </template>
@@ -80,11 +80,6 @@ export default defineComponent({
             expandSummary: true
         }
     },
-    created() {
-        this.setAssociatedItem()
-        this.targetModel = this.targetArray
-        this.sourceModel = this.sourceArray
-    },
     watch: {
         targetArray() {
             this.targetModel = this.targetArray
@@ -92,6 +87,11 @@ export default defineComponent({
         sourceArray() {
             this.sourceModel = this.sourceArray
         }
+    },
+    created() {
+        this.setAssociatedItem()
+        this.targetModel = this.targetArray
+        this.sourceModel = this.sourceArray
     },
     methods: {
         setAssociatedItem() {
@@ -124,7 +124,7 @@ export default defineComponent({
         },
         beforeDrop(source, target) {
             if (target.links) {
-                for (var i = 0; i < target.links.length; i++) {
+                for (let i = 0; i < target.links.length; i++) {
                     if (source.tableName === target.links[i].tableName) {
                         return false
                     }
@@ -137,8 +137,8 @@ export default defineComponent({
             event.stopPropagation()
             // @ts-ignore
             this.$refs[`${elementId}`].classList.remove('associator-hover')
-            var data = event.dataTransfer.getData('text')
-            var executeDrop = true
+            const data = event.dataTransfer.getData('text')
+            let executeDrop = true
             this.useMultipleTablesFromSameSource ? (executeDrop = this.beforeDrop(this.sourceModel[data], targetElement)) : ''
             if (executeDrop != false) {
                 if (targetElement[this.associatedItem] == undefined) {

@@ -2,7 +2,7 @@
     <div class="p-d-flex p-flex-row">
         <Card id="form-container" class="p-m-2">
             <template #content>
-                <Accordion class="p-m-2" :activeIndex="0">
+                <Accordion class="p-m-2" :active-index="0">
                     <AccordionTab :header="$t('common.description')">
                         <div>
                             <label class="kn-material-input-label"> {{ $t('common.description') }}</label>
@@ -20,7 +20,7 @@
                 </Accordion>
                 <div v-if="selectedFunction.inputColumns.length > 0" class="p-m-2">
                     <label class="kn-material-input-label"> {{ $t('managers.functionsCatalog.columnsSettings') }}</label>
-                    <FunctionsCatalogDatasetFormColumnsTable :columns="selectedFunction.inputColumns" :datasetColumns="datasetColumns"></FunctionsCatalogDatasetFormColumnsTable>
+                    <FunctionsCatalogDatasetFormColumnsTable :columns="selectedFunction.inputColumns" :dataset-columns="datasetColumns"></FunctionsCatalogDatasetFormColumnsTable>
                 </div>
                 <div v-if="selectedFunction.inputVariables.length > 0" class="p-mx-2 p-mt-3">
                     <label class="kn-material-input-label"> {{ $t('managers.functionsCatalog.variablesSettings') }}</label>
@@ -28,14 +28,14 @@
                 </div>
                 <div class="p-mx-2 p-mt-3">
                     <label class="kn-material-input-label">{{ $t('common.environment') }}</label>
-                    <Dropdown class="kn-material-input" v-model="selectedEnvironment" :options="selectedFunction.language == 'Python' ? pythonEnvironments : rEnvironments" optionLabel="label" optionValue="label" @change="$emit('environmentSelected', selectedEnvironment)" />
+                    <Dropdown v-model="selectedEnvironment" class="kn-material-input" :options="selectedFunction.language == 'Python' ? pythonEnvironments : rEnvironments" option-label="label" option-value="label" @change="$emit('environmentSelected', selectedEnvironment)" />
                 </div>
                 <div v-if="selectedEnvironment" class="p-mx-2 p-mt-3">
                     <FunctionsCatalogDatasetEnvironmentTable :libraries="libraries"></FunctionsCatalogDatasetEnvironmentTable>
                 </div>
             </template>
         </Card>
-        <FunctionsCatalogParametersForm v-if="selectedDataset.pars.length > 0" id="parameters-form" class="p-m-2" :propParameters="selectedDataset.pars"></FunctionsCatalogParametersForm>
+        <FunctionsCatalogParametersForm v-if="selectedDataset.pars.length > 0" id="parameters-form" class="p-m-2" :prop-parameters="selectedDataset.pars"></FunctionsCatalogParametersForm>
     </div>
 </template>
 

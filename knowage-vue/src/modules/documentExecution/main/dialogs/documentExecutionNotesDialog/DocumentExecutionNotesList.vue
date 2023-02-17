@@ -17,7 +17,7 @@
                     </template>
                 </Toolbar>
 
-                <div v-html="note.content" class="p-mt-0 p-ml-2 p-mr-2 p-mb-2 noteContent" disabled></div>
+                <div class="p-mt-0 p-ml-2 p-mr-2 p-mb-2 noteContent" disabled v-html="note.content"></div>
             </div>
         </template>
     </div>

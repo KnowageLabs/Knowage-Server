@@ -1,7 +1,7 @@
 <template>
     <div v-if="model" class="p-grid p-jc-center p-ai-center p-p-4">
         <div class="p-col-12 p-py-4">
-            <WidgetEditorStyleToolbar :options="descriptor.activityGaugeTooltipStyleOptions" :propModel="toolbarModel" :disabled="tooltipDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
+            <WidgetEditorStyleToolbar :options="descriptor.activityGaugeTooltipStyleOptions" :prop-model="toolbarModel" :disabled="tooltipDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
         </div>
     </div>
 </template>
@@ -12,13 +12,11 @@ import { IWidget, IWidgetStyleToolbarModel } from '../../../../../../Dashboard'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { IHighchartsChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import descriptor from '../HighchartsWidgetSettingsDescriptor.json'
-import Message from 'primevue/message'
 import WidgetEditorStyleToolbar from '../../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
 
 export default defineComponent({
     name: 'hihgcharts-activity-gauge-tooltip-settings',
     components: {
-        Message,
         WidgetEditorStyleToolbar
     },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },

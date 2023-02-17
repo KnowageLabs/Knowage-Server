@@ -28,12 +28,12 @@
 
                 <div v-if="exportModel.pdf" class="p-col-12 p-md-6 p-lg-5 p-d-flex p-flex-column p-px-4">
                     <label class="kn-material-input-label">{{ $t('common.width') }}</label>
-                    <InputNumber class="kn-material-input p-inputtext-sm export-number-input" v-model="exportModel.pdf.custom.width" :disabled="pdfExportDisabled || selectedExport !== 'custom'" @blur="exportConfigurationChanged" />
+                    <InputNumber v-model="exportModel.pdf.custom.width" class="kn-material-input p-inputtext-sm export-number-input" :disabled="pdfExportDisabled || selectedExport !== 'custom'" @blur="exportConfigurationChanged" />
                 </div>
 
                 <div v-if="exportModel.pdf" class="p-col-12 p-md-6 p-lg-4 p-d-flex p-flex-column p-px-4">
                     <label class="kn-material-input-label">{{ $t('common.height') }}</label>
-                    <InputNumber class="kn-material-input p-inputtext-sm export-number-input" v-model="exportModel.pdf.custom.height" :disabled="pdfExportDisabled || selectedExport !== 'custom'" @blur="exportConfigurationChanged" />
+                    <InputNumber v-model="exportModel.pdf.custom.height" class="kn-material-input p-inputtext-sm export-number-input" :disabled="pdfExportDisabled || selectedExport !== 'custom'" @blur="exportConfigurationChanged" />
                 </div>
             </div>
         </div>

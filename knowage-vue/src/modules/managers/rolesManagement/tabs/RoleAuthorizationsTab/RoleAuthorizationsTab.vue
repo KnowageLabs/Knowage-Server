@@ -55,11 +55,6 @@ export default defineComponent({
             authorizationCBs: {} as any
         }
     },
-    created() {
-        this.authorizationList = this.authList as any[]
-        this.authorizationCBs = this.authCBs as any[]
-        this.role = { ...this.selectedRole } as any
-    },
     watch: {
         selectedRole: {
             handler: function(value) {
@@ -67,6 +62,11 @@ export default defineComponent({
             },
             deep: true
         }
+    },
+    created() {
+        this.authorizationList = this.authList as any[]
+        this.authorizationCBs = this.authCBs as any[]
+        this.role = { ...this.selectedRole } as any
     },
     methods: {
         authChanged(fieldName: string, value: any) {

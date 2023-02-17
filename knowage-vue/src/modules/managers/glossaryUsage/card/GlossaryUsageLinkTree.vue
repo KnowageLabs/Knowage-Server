@@ -1,5 +1,5 @@
 <template>
-    <Tree id="glossary-link-tree" :value="nodes" :expandedKeys="expandedKeys">
+    <Tree id="glossary-link-tree" :value="nodes" :expanded-keys="expandedKeys">
         <template #default="slotProps">
             <div
                 class="p-d-flex p-flex-row p-ai-center"
@@ -13,7 +13,7 @@
                     <span>{{ slotProps.node.label }}</span>
                 </div>
                 <div class="p-ml-2">
-                    <Button v-if="slotProps.node.leaf" icon="far fa-trash-alt" v-tooltip.top="$t('common.delete')" class="p-button-link p-button-sm p-p-0" @click.stop="deleteWordConfirm(slotProps.node)" />
+                    <Button v-if="slotProps.node.leaf" v-tooltip.top="$t('common.delete')" icon="far fa-trash-alt" class="p-button-link p-button-sm p-p-0" @click.stop="deleteWordConfirm(slotProps.node)" />
                 </div>
             </div>
         </template>
@@ -56,7 +56,7 @@ export default defineComponent({
             }
         },
         expandAll() {
-            for (let node of this.nodes) {
+            for (const node of this.nodes) {
                 this.expandNode(node)
             }
             this.expandedKeys = { ...this.expandedKeys }
@@ -64,7 +64,7 @@ export default defineComponent({
         expandNode(node: iNode) {
             if (node.children && node.children.length) {
                 this.expandedKeys[node.key] = true
-                for (let child of node.children) {
+                for (const child of node.children) {
                     this.expandNode(child)
                 }
             }

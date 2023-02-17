@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="documentExecutionHelpDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary" :content-style="documentExecutionHelpDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -12,7 +12,7 @@
         </template>
 
         <div class="p-d-flex p-flex-row kn-height-full">
-            <Listbox class="kn-list--column kn-flex kn-height-full" :options="words" :filter="true" :filterPlaceholder="$t('common.search')" filterMatchMode="contains" :filterFields="documentExecutionHelpDialogDescriptor.filterFields" :emptyFilterMessage="$t('common.info.noDataFound')">
+            <Listbox class="kn-list--column kn-flex kn-height-full" :options="words" :filter="true" :filter-placeholder="$t('common.search')" filter-match-mode="contains" :filter-fields="documentExecutionHelpDialogDescriptor.filterFields" :empty-filter-message="$t('common.info.noDataFound')">
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
                     <div class="kn-list-item" @click="loadWordDetail(slotProps.option)">
@@ -20,7 +20,7 @@
                     </div>
                 </template>
             </Listbox>
-            <DocumentExecutionWordDetail id="document-execution-word-detail" :wordDetail="wordDetail" :selectedWordName="selectedWordName"></DocumentExecutionWordDetail>
+            <DocumentExecutionWordDetail id="document-execution-word-detail" :word-detail="wordDetail" :selected-word-name="selectedWordName"></DocumentExecutionWordDetail>
         </div>
     </Dialog>
 </template>

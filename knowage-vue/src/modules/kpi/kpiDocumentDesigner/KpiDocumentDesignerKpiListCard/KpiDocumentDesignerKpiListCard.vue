@@ -9,12 +9,12 @@
         </template>
         <template #content>
             <div>
-                <DataTable :value="data.kpi" class="p-datatable-sm kn-table" dataKey="name" v-model:filters="filters" :globalFilterFields="KpiDocumentDesignerKpiListCardDescriptor.globalFilterFields" responsiveLayout="stack" breakpoint="960px" :scrollable="true" scroll-height="60vh">
+                <DataTable v-model:filters="filters" :value="data.kpi" class="p-datatable-sm kn-table" data-key="name" :global-filter-fields="KpiDocumentDesignerKpiListCardDescriptor.globalFilterFields" responsive-layout="stack" breakpoint="960px" :scrollable="true" scroll-height="60vh">
                     <template #header>
                         <div class="table-header p-d-flex p-ai-center">
                             <span id="search-container" class="p-input-icon-left p-mr-3">
                                 <i class="pi pi-search" />
-                                <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
+                                <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
                             </span>
                             <Button id="kpi-edit-add-kpi-associations-button" class="kn-button kn-button--primary" :label="$t('kpi.kpiScheduler.addKpiAssociation')" @click="addKpiAssociationVisible = true"></Button>
                         </div>
@@ -22,11 +22,11 @@
 
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
 
-                    <Column class="kn-truncated" v-for="col of KpiDocumentDesignerKpiListCardDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :style="col.style" :sortable="true"> </Column>
+                    <Column v-for="col of KpiDocumentDesignerKpiListCardDescriptor.columns" :key="col.field" class="kn-truncated" :field="col.field" :header="$t(col.header)" :style="col.style" :sortable="true"> </Column>
 
-                    <Column v-if="showSaveAsColumn" field="vieweas" :header="$t('kpi.kpiDocumentDesigner.viewAs')" key="vieweas" :sortable="true" :style="KpiDocumentDesignerKpiListCardDescriptor.columnStyle">
+                    <Column v-if="showSaveAsColumn" key="vieweas" field="vieweas" :header="$t('kpi.kpiDocumentDesigner.viewAs')" :sortable="true" :style="KpiDocumentDesignerKpiListCardDescriptor.columnStyle">
                         <template #body="slotProps">
-                            <Dropdown class="kpi-edit-kpi-list-card-dropdown" v-model="slotProps.data[slotProps.column.props.field]" :options="KpiDocumentDesignerKpiListCardDescriptor.viewAsOptions" optionValue="value" :placeholder="$t('kpi.kpiDocumentDesigner.viewAsPlaceholder')">
+                            <Dropdown v-model="slotProps.data[slotProps.column.props.field]" class="kpi-edit-kpi-list-card-dropdown" :options="KpiDocumentDesignerKpiListCardDescriptor.viewAsOptions" option-value="value" :placeholder="$t('kpi.kpiDocumentDesigner.viewAsPlaceholder')">
                                 <template #value="slotProps">
                                     <div v-if="slotProps.value">
                                         <span>{{ slotProps.value === 'speedometer' ? $t('kpi.kpiDocumentDesigner.speedometer') : $t('kpi.kpiDocumentDesigner.kpiCard') }}</span>
@@ -39,36 +39,36 @@
                         </template>
                     </Column>
 
-                    <Column field="rangeMinValue" :header="$t('kpi.kpiDocumentDesigner.rangeMinValue')" key="rangeMinValue" :sortable="true" :style="KpiDocumentDesignerKpiListCardDescriptor.columnStyle">
+                    <Column key="rangeMinValue" field="rangeMinValue" :header="$t('kpi.kpiDocumentDesigner.rangeMinValue')" :sortable="true" :style="KpiDocumentDesignerKpiListCardDescriptor.columnStyle">
                         <template #body="slotProps">
                             <div class="p-d-flex p-flex-row p-ai-center">
-                                <InputText class="kn-material-input p-mr-2 kn-flex" type="number" v-model="slotProps.data[slotProps.column.props.field]" :class="{ 'p-invalid': !slotProps.data[slotProps.column.props.field] }" />
+                                <InputText v-model="slotProps.data[slotProps.column.props.field]" class="kn-material-input p-mr-2 kn-flex" type="number" :class="{ 'p-invalid': !slotProps.data[slotProps.column.props.field] }" />
                                 <i class="pi pi-pencil edit-icon kn-flex" />
                             </div>
                         </template>
                     </Column>
 
-                    <Column field="rangeMaxValue" :header="$t('kpi.kpiDocumentDesigner.rangeMaxValue')" key="rangeMaxValue" :sortable="true" :style="KpiDocumentDesignerKpiListCardDescriptor.columnStyle">
+                    <Column key="rangeMaxValue" field="rangeMaxValue" :header="$t('kpi.kpiDocumentDesigner.rangeMaxValue')" :sortable="true" :style="KpiDocumentDesignerKpiListCardDescriptor.columnStyle">
                         <template #body="slotProps">
                             <div class="p-d-flex p-flex-row p-ai-center">
-                                <InputText class="kn-material-input p-mr-2 kn-flex" type="number" v-model="slotProps.data[slotProps.column.props.field]" :class="{ 'p-invalid': !slotProps.data[slotProps.column.props.field] }" />
+                                <InputText v-model="slotProps.data[slotProps.column.props.field]" class="kn-material-input p-mr-2 kn-flex" type="number" :class="{ 'p-invalid': !slotProps.data[slotProps.column.props.field] }" />
                                 <i class="pi pi-pencil edit-icon kn-flex" />
                             </div>
                         </template>
                     </Column>
 
-                    <Column field="prefixSuffixValue" :header="$t('kpi.kpiDocumentDesigner.prefixSuffixLabel')" key="prefixSuffixValue" :sortable="true" :style="KpiDocumentDesignerKpiListCardDescriptor.columnStyle">
+                    <Column key="prefixSuffixValue" field="prefixSuffixValue" :header="$t('kpi.kpiDocumentDesigner.prefixSuffixLabel')" :sortable="true" :style="KpiDocumentDesignerKpiListCardDescriptor.columnStyle">
                         <template #body="slotProps">
                             <div class="p-d-flex p-flex-row p-ai-center">
-                                <InputText class="kn-material-input p-mr-2 kn-flex" v-model="slotProps.data[slotProps.column.props.field]" maxLength="3" />
+                                <InputText v-model="slotProps.data[slotProps.column.props.field]" class="kn-material-input p-mr-2 kn-flex" max-length="3" />
                                 <i class="pi pi-pencil edit-icon kn-flex" />
                             </div>
                         </template>
                     </Column>
 
-                    <Column field="isSuffix" :header="$t('kpi.kpiDocumentDesigner.showLabelAs')" key="isSuffix" :sortable="true" :style="KpiDocumentDesignerKpiListCardDescriptor.columnStyle">
+                    <Column key="isSuffix" field="isSuffix" :header="$t('kpi.kpiDocumentDesigner.showLabelAs')" :sortable="true" :style="KpiDocumentDesignerKpiListCardDescriptor.columnStyle">
                         <template #body="slotProps">
-                            <Dropdown v-model="slotProps.data[slotProps.column.props.field]" :options="KpiDocumentDesignerKpiListCardDescriptor.prefixSuffixOptions" optionValue="value">
+                            <Dropdown v-model="slotProps.data[slotProps.column.props.field]" :options="KpiDocumentDesignerKpiListCardDescriptor.prefixSuffixOptions" option-value="value">
                                 <template #value="slotProps">
                                     <div v-if="slotProps.value">
                                         <span>{{ slotProps.value === 'true' ? $t('kpi.kpiDocumentDesigner.suffix') : $t('kpi.kpiDocumentDesigner.prefix') }}</span>
@@ -89,7 +89,7 @@
                 </DataTable>
             </div>
 
-            <KpiDocumentDesignerKpiSelectDialog :kpiList="kpiList" :visible="addKpiAssociationVisible" :data="data" @close="addKpiAssociationVisible = false" @kpiSelected="onKpiSelected"></KpiDocumentDesignerKpiSelectDialog>
+            <KpiDocumentDesignerKpiSelectDialog :kpi-list="kpiList" :visible="addKpiAssociationVisible" :data="data" @close="addKpiAssociationVisible = false" @kpiSelected="onKpiSelected"></KpiDocumentDesignerKpiSelectDialog>
         </template>
     </Card>
 </template>

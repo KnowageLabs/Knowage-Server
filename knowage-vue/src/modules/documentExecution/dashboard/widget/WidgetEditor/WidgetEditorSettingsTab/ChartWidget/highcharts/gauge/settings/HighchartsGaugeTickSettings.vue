@@ -3,7 +3,7 @@
         <div class="p-col-12 p-md-6 p-lg-6 p-d-flex p-flex-column">
             <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.highcharts.tick.tickPosition') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center">
-                <Dropdown class="kn-material-input kn-flex" v-model="model.yAxis.tickPosition" :options="descriptor.tickPositionOptions" optionValue="value" @change="modelChanged">
+                <Dropdown v-model="model.yAxis.tickPosition" class="kn-material-input kn-flex" :options="descriptor.tickPositionOptions" option-value="value" @change="modelChanged">
                     <template #value="slotProps">
                         <div>
                             <span>{{ getTranslatedLabel(slotProps.value, descriptor.tickPositionOptions, $t) }}</span>
@@ -15,31 +15,31 @@
                         </div>
                     </template>
                 </Dropdown>
-                <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.tick.tickPositionHint')"></i>
+                <i v-tooltip.top="$t('dashboard.widgetEditor.highcharts.tick.tickPositionHint')" class="pi pi-question-circle kn-cursor-pointer p-ml-2"></i>
             </div>
         </div>
         <div class="p-col-12 p-md-6 p-lg-6 p-px-2 p-pt-4">
-            <WidgetEditorColorPicker :initialValue="model.yAxis.tickColor" :label="$t('dashboard.widgetEditor.highcharts.tick.tickColor')" @change="onSelectionColorChanged"></WidgetEditorColorPicker>
+            <WidgetEditorColorPicker :initial-value="model.yAxis.tickColor" :label="$t('dashboard.widgetEditor.highcharts.tick.tickColor')" @change="onSelectionColorChanged"></WidgetEditorColorPicker>
         </div>
         <div class="p-col-12 p-md-6 p-lg-4 p-d-flex p-flex-column">
             <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.highcharts.tick.tickLength') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center p-fluid">
-                <InputNumber class="kn-material-input p-inputtext-sm" v-model="model.yAxis.tickLength" @blur="onInputNumberChanged" />
-                <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.tick.tickLengthHint')"></i>
+                <InputNumber v-model="model.yAxis.tickLength" class="kn-material-input p-inputtext-sm" @blur="onInputNumberChanged" />
+                <i v-tooltip.top="$t('dashboard.widgetEditor.highcharts.tick.tickLengthHint')" class="pi pi-question-circle kn-cursor-pointer p-ml-2"></i>
             </div>
         </div>
         <div class="p-col-12 p-md-6 p-lg-4 p-d-flex p-flex-column">
             <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.highcharts.tick.tickWidth') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center p-fluid">
-                <InputNumber class="kn-material-input p-inputtext-sm" v-model="model.yAxis.tickWidth" @blur="onInputNumberChanged" />
-                <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.tick.tickWidthHint')"></i>
+                <InputNumber v-model="model.yAxis.tickWidth" class="kn-material-input p-inputtext-sm" @blur="onInputNumberChanged" />
+                <i v-tooltip.top="$t('dashboard.widgetEditor.highcharts.tick.tickWidthHint')" class="pi pi-question-circle kn-cursor-pointer p-ml-2"></i>
             </div>
         </div>
         <div class="p-col-12 p-md-12 p-lg-4 p-d-flex p-flex-column">
             <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.highcharts.tick.minorTickInterval') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center p-fluid">
-                <InputText class="kn-material-input p-inputtext-sm" v-model="minorTickInterval" @change="onMinorIntervalChange" />
-                <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.tick.minorTickIntervalHint')"></i>
+                <InputText v-model="minorTickInterval" class="kn-material-input p-inputtext-sm" @change="onMinorIntervalChange" />
+                <i v-tooltip.top="$t('dashboard.widgetEditor.highcharts.tick.minorTickIntervalHint')" class="pi pi-question-circle kn-cursor-pointer p-ml-2"></i>
                 <Button icon="fa fa-eraser" class="p-button-text p-button-rounded p-button-plain" @click="removeMinorTickInterval" />
             </div>
         </div>

@@ -6,35 +6,35 @@
                     <span class="p-float-label">
                         <InputText
                             id="MULTITENANT_NAME"
+                            v-model.trim="v$.tenant.MULTITENANT_NAME.$model"
                             class="kn-material-input"
                             type="text"
                             :disabled="disableField"
-                            v-model.trim="v$.tenant.MULTITENANT_NAME.$model"
                             :class="{
                                 'p-invalid': v$.tenant.MULTITENANT_NAME.$invalid && v$.tenant.MULTITENANT_NAME.$dirty
                             }"
-                            maxLength="20"
+                            max-length="20"
+                            data-test="name-input"
                             @blur="v$.tenant.MULTITENANT_NAME.$touch()"
                             @input="onFieldChange('MULTITENANT_NAME', $event.target.value)"
-                            data-test="name-input"
                         />
                         <label for="MULTITENANT_NAME" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
                     </span>
                     <KnValidationMessages
-                        :vComp="v$.tenant.MULTITENANT_NAME"
-                        :additionalTranslateParams="{
+                        :v-comp="v$.tenant.MULTITENANT_NAME"
+                        :additional-translate-params="{
                             fieldName: $t('common.name')
                         }"
                     />
                 </div>
                 <div class="p-col-3 kn-height-full">
-                    <input id="organizationImage" type="file" @change="uploadFile" accept="image/png, image/jpeg" />
-                    <label for="organizationImage" v-tooltip.bottom="$t('common.upload')">
+                    <input id="organizationImage" type="file" accept="image/png, image/jpeg" @change="uploadFile" />
+                    <label v-tooltip.bottom="$t('common.upload')" for="organizationImage">
                         <i class="pi pi-upload" />
                     </label>
                     <div class="imageContainer p-d-flex p-jc-center p-ai-center">
-                        <i class="far fa-image fa-5x icon" v-if="!tenant.MULTITENANT_IMAGE" />
-                        <img :src="tenant.MULTITENANT_IMAGE" v-if="tenant.MULTITENANT_IMAGE" class="kn-no-select" />
+                        <i v-if="!tenant.MULTITENANT_IMAGE" class="far fa-image fa-5x icon" />
+                        <img v-if="tenant.MULTITENANT_IMAGE" :src="tenant.MULTITENANT_IMAGE" class="kn-no-select" />
                     </div>
                 </div>
             </form>
@@ -67,13 +67,11 @@ export default defineComponent({
         },
         listOfThemes: Array
     },
-    computed: {
-        disableField() {
-            if (this.tenant.MULTITENANT_ID) return true
-            return false
-        }
-    },
     emits: ['fieldChanged', 'roleTypeChanged'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             tabViewDescriptor,
@@ -83,23 +81,16 @@ export default defineComponent({
             themes: [] as any
         }
     },
+    computed: {
+        disableField() {
+            if (this.tenant.MULTITENANT_ID) return true
+            return false
+        }
+    },
     validations() {
         return {
             tenant: createValidations('tenant', tenantDetailValidationDescriptor.validations.tenant)
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
-    created() {
-        if (this.selectedTenant && Object.keys(this.selectedTenant).length > 0) {
-            this.tenant = { ...this.selectedTenant } as iMultitenant
-        } else {
-            this.tenant = {} as iMultitenant
-            this.tenant.MULTITENANT_THEME = 'sbi_default'
-        }
-        if (this.listOfThemes) this.themes = [...this.listOfThemes] as any
     },
     watch: {
         async selectedTenant() {
@@ -112,6 +103,15 @@ export default defineComponent({
         listOfThemes() {
             this.themes = [...(this.listOfThemes as any[])]
         }
+    },
+    created() {
+        if (this.selectedTenant && Object.keys(this.selectedTenant).length > 0) {
+            this.tenant = { ...this.selectedTenant } as iMultitenant
+        } else {
+            this.tenant = {} as iMultitenant
+            this.tenant.MULTITENANT_THEME = 'sbi_default'
+        }
+        if (this.listOfThemes) this.themes = [...this.listOfThemes] as any
     },
     methods: {
         onFieldChange(fieldName: string, value: any) {

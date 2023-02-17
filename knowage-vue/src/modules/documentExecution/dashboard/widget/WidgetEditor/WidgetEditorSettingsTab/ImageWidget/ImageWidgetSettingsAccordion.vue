@@ -1,19 +1,19 @@
 <template>
     <div v-show="widgetModel">
-        <Accordion class="widget-editor-accordion" v-model:activeIndex="activeIndex">
+        <Accordion v-model:activeIndex="activeIndex" class="widget-editor-accordion">
             <AccordionTab v-for="(accordion, index) in settings" :key="index">
                 <template #header>
-                    <ImageWidgetSettingsAccordionHeader :widgetModel="widgetModel" :title="accordion.title" :type="accordion.type"></ImageWidgetSettingsAccordionHeader>
+                    <ImageWidgetSettingsAccordionHeader :widget-model="widgetModel" :title="accordion.title" :type="accordion.type"></ImageWidgetSettingsAccordionHeader>
                 </template>
-                <ImageWidgetImageSettings v-if="accordion.type === 'ImageSettings'" :widgetModel="widgetModel"></ImageWidgetImageSettings>
-                <WidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
-                <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
-                <WidgetBackgroundColorStyle v-else-if="accordion.type === 'BackgroundColorStyle'" :widgetModel="widgetModel"></WidgetBackgroundColorStyle>
-                <WidgetBordersStyle v-else-if="accordion.type === 'BordersStyle'" :widgetModel="widgetModel"></WidgetBordersStyle>
-                <WidgetPaddingStyle v-else-if="accordion.type === 'PaddingStyle'" :widgetModel="widgetModel"></WidgetPaddingStyle>
-                <WidgetShadowsStyle v-else-if="accordion.type === 'ShadowsStyle'" :widgetModel="widgetModel"></WidgetShadowsStyle>
-                <WidgetResponsive v-else-if="accordion.type === 'Responsive'" :widgetModel="widgetModel"></WidgetResponsive>
-                <WidgetCrossNavigation v-else-if="accordion.type === 'CrossNavigation'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :dashboardId="dashboardId"></WidgetCrossNavigation>
+                <ImageWidgetImageSettings v-if="accordion.type === 'ImageSettings'" :widget-model="widgetModel"></ImageWidgetImageSettings>
+                <WidgetExport v-else-if="accordion.type === 'Export'" :widget-model="widgetModel"></WidgetExport>
+                <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widget-model="widgetModel" :toolbar-style-settings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
+                <WidgetBackgroundColorStyle v-else-if="accordion.type === 'BackgroundColorStyle'" :widget-model="widgetModel"></WidgetBackgroundColorStyle>
+                <WidgetBordersStyle v-else-if="accordion.type === 'BordersStyle'" :widget-model="widgetModel"></WidgetBordersStyle>
+                <WidgetPaddingStyle v-else-if="accordion.type === 'PaddingStyle'" :widget-model="widgetModel"></WidgetPaddingStyle>
+                <WidgetShadowsStyle v-else-if="accordion.type === 'ShadowsStyle'" :widget-model="widgetModel"></WidgetShadowsStyle>
+                <WidgetResponsive v-else-if="accordion.type === 'Responsive'" :widget-model="widgetModel"></WidgetResponsive>
+                <WidgetCrossNavigation v-else-if="accordion.type === 'CrossNavigation'" :widget-model="widgetModel" :datasets="datasets" :selected-datasets="selectedDatasets" :dashboard-id="dashboardId"></WidgetCrossNavigation>
             </AccordionTab>
         </Accordion>
     </div>
@@ -61,17 +61,17 @@ export default defineComponent({
         variables: { type: Array as PropType<IVariable[]>, required: true },
         dashboardId: { type: String, required: true }
     },
-    watch: {
-        settings() {
-            this.activeIndex = -1
-            this.setActiveAccordion()
-        }
-    },
     data() {
         return {
             descriptor,
             settingsTabDescriptor,
             activeIndex: -1
+        }
+    },
+    watch: {
+        settings() {
+            this.activeIndex = -1
+            this.setActiveAccordion()
         }
     },
     created() {

@@ -4,12 +4,12 @@
             <label class="kn-material-input-label">{{ data.missingTables.length > 0 ? $t('metaweb.updatePhysicalModel.newTables') : $t('metaweb.updatePhysicalModel.noNewTables') }}</label>
 
             <DataTable
+                v-model:selection="selectedTables"
+                v-model:filters="filters"
                 :value="rows"
                 class="p-datatable-sm kn-table"
-                v-model:selection="selectedTables"
-                dataKey="value"
-                v-model:filters="filters"
-                :globalFilterFields="metawebPhysicalModelUpdateDialogDescriptor.globalFilterFields"
+                data-key="value"
+                :global-filter-fields="metawebPhysicalModelUpdateDialogDescriptor.globalFilterFields"
                 @row-select="onTablesSelect"
                 @row-unselect="onTablesSelect"
                 @row-select-all="onTablesSelect"
@@ -22,11 +22,11 @@
                     <div class="table-header p-d-flex">
                         <span class="p-input-icon-left p-mr-3 p-col-12">
                             <i class="pi pi-search" />
-                            <InputText class="kn-material-input" v-model="filters['global'].value" :placeholder="$t('common.search')" />
+                            <InputText v-model="filters['global'].value" class="kn-material-input" :placeholder="$t('common.search')" />
                         </span>
                     </div>
                 </template>
-                <Column selectionMode="multiple" :style="metawebPhysicalModelUpdateDialogDescriptor.selectColumnStyle" />
+                <Column selection-mode="multiple" :style="metawebPhysicalModelUpdateDialogDescriptor.selectColumnStyle" />
                 <Column field="value" :header="data.missingTables.length > 0 ? $t('metaweb.updatePhysicalModel.newTables') : $t('metaweb.updatePhysicalModel.noNewTables')" />
             </DataTable>
         </div>

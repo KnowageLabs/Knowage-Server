@@ -1,6 +1,6 @@
 <template>
     <div class="kn-page">
-        <ProgressSpinner class="kn-progress-spinner" v-if="loading" />
+        <ProgressSpinner v-if="loading" class="kn-progress-spinner" />
         <Toolbar class="kn-toolbar kn-toolbar--primary">
             <template #start>
                 {{ $t('managers.bml.title') }}
@@ -11,9 +11,9 @@
         </Toolbar>
 
         <div id="table-container" class="p-d-flex p-flex-row bml-table-container">
-            <BMLTable :tableData="allLovs" :headerTitle="$t('managers.bml.lovsTitle')" :loading="loading" dataType="lovs" @rowSelected="onRowSelect" @rowUnselected="onRowUnselect" />
-            <BMLTable :tableData="allDrivers" :headerTitle="$t('managers.bml.drivers')" :loading="loading" dataType="analyticalDrivers" @rowSelected="onRowSelect" @rowUnselected="onRowUnselect" />
-            <BMLTable :tableData="allDocuments" :headerTitle="$t('managers.datasetManagement.documents')" :loading="loading" dataType="documents" @rowSelected="onRowSelect" @rowUnselected="onRowUnselect" />
+            <BMLTable :table-data="allLovs" :header-title="$t('managers.bml.lovsTitle')" :loading="loading" data-type="lovs" @rowSelected="onRowSelect" @rowUnselected="onRowUnselect" />
+            <BMLTable :table-data="allDrivers" :header-title="$t('managers.bml.drivers')" :loading="loading" data-type="analyticalDrivers" @rowSelected="onRowSelect" @rowUnselected="onRowUnselect" />
+            <BMLTable :table-data="allDocuments" :header-title="$t('managers.datasetManagement.documents')" :loading="loading" data-type="documents" @rowSelected="onRowSelect" @rowUnselected="onRowUnselect" />
         </div>
     </div>
 </template>

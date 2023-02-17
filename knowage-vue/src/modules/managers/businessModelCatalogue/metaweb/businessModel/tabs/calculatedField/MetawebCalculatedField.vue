@@ -1,5 +1,5 @@
 <template>
-    <DataTable :value="businessModel.calculatedBusinessColumns" class="p-datatable-sm kn-table p-ml-2" responsiveLayout="stack" breakpoint="960px">
+    <DataTable :value="businessModel.calculatedBusinessColumns" class="p-datatable-sm kn-table p-ml-2" responsive-layout="stack" breakpoint="960px">
         <template #empty>
             {{ $t('common.info.noDataFound') }}
         </template>
@@ -21,9 +21,9 @@
         v-model:visibility="calcFieldDialogVisible"
         :fields="calcFieldColumns"
         :descriptor="calcFieldDescriptor"
-        :propCalcFieldFunctions="calcFieldFunctions"
+        :prop-calc-field-functions="calcFieldFunctions"
         :source="'QBE'"
-        :readOnly="false"
+        :read-only="false"
         :valid="true"
         @save="onCalcFieldSave"
         @cancel="calcFieldDialogVisible = false"
@@ -31,13 +31,13 @@
         <template #additionalInputs>
             <div class="p-field" :class="[selectedCalcField.type === 'DATE' ? 'p-col-3' : 'p-col-4']">
                 <span class="p-float-label">
-                    <Dropdown id="type" class="kn-material-input" v-model="selectedCalcField.type" :options="descriptor.types" optionLabel="label" optionValue="name" />
+                    <Dropdown id="type" v-model="selectedCalcField.type" class="kn-material-input" :options="descriptor.types" option-label="label" option-value="name" />
                     <label for="type" class="kn-material-input-label"> {{ $t('components.knCalculatedField.type') }} </label>
                 </span>
             </div>
             <div v-if="selectedCalcField.type === 'DATE'" class="p-field p-col-3">
                 <span class="p-float-label">
-                    <Dropdown id="type" class="kn-material-input" v-model="selectedCalcField.format" :options="descriptor.admissibleDateFormats">
+                    <Dropdown id="type" v-model="selectedCalcField.format" class="kn-material-input" :options="descriptor.admissibleDateFormats">
                         <template #value>
                             <span>{{ selectedCalcField.format ? moment().format(selectedCalcField.format) : '' }}</span>
                         </template>
@@ -50,7 +50,7 @@
             </div>
             <div class="p-field" :class="[selectedCalcField.type === 'DATE' ? 'p-col-3' : 'p-col-4']">
                 <span class="p-float-label">
-                    <Dropdown id="columnType" class="kn-material-input" v-model="selectedCalcField.nature" :options="descriptor.columnTypes" optionLabel="label" optionValue="name" />
+                    <Dropdown id="columnType" v-model="selectedCalcField.nature" class="kn-material-input" :options="descriptor.columnTypes" option-label="label" option-value="name" />
                     <label for="columnType" class="kn-material-input-label"> {{ $t('managers.functionsCatalog.columnType') }} </label>
                 </span>
             </div>
@@ -147,13 +147,13 @@ export default defineComponent({
         },
 
         formatCalcFieldForComponent(calcField) {
-            let formatField = {} as any
+            const formatField = {} as any
 
             formatField.alias = calcField.name
             formatField.uniqueName = calcField.uniqueName
 
-            for (var i = 0; i < calcField.properties.length; i++) {
-                var key = Object.keys(calcField.properties[i])[0]
+            for (let i = 0; i < calcField.properties.length; i++) {
+                const key = Object.keys(calcField.properties[i])[0]
                 if (key === 'structural.datatype') {
                     formatField.type = calcField.properties[i][key].value.toUpperCase()
                 }
@@ -175,7 +175,7 @@ export default defineComponent({
         },
 
         onCalcFieldSave(event) {
-            let calculatedField = {
+            const calculatedField = {
                 expression: event.formula,
                 dataType: this.selectedCalcField.type,
                 columnType: this.selectedCalcField.nature.toLowerCase(),
@@ -207,7 +207,7 @@ export default defineComponent({
         },
 
         async deleteCalcField(calcField) {
-            let dataToSend = { name: calcField.name, sourceTableName: this.businessModel?.uniqueName }
+            const dataToSend = { name: calcField.name, sourceTableName: this.businessModel?.uniqueName }
             const postData = { data: dataToSend, diff: generate(this.observer) }
             await this.$http
                 .post(import.meta.env.VITE_META_API_URL + `/1.0/metaWeb/deleteCalculatedField`, postData)
@@ -226,7 +226,7 @@ export default defineComponent({
                 })
             }
             if (!this.isGeographicBm) {
-                let tempFunctions = deepcopy(functions)
+                const tempFunctions = deepcopy(functions)
                 functions = tempFunctions.filter((funct) => {
                     return funct.category !== 'SPATIAL'
                 })

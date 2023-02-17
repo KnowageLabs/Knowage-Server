@@ -5,42 +5,42 @@
                 {{ $t('managers.domainsManagement.title') }}
             </template>
             <template #end>
-                <KnFabButton icon="fas fa-plus" @click="showForm()" data-test="open-form-button"></KnFabButton>
+                <KnFabButton icon="fas fa-plus" data-test="open-form-button" @click="showForm()"></KnFabButton>
             </template>
         </Toolbar>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
         <div class="kn-page-content p-grid p-m-0">
-            <div class="p-col" v-if="!loading">
+            <div v-if="!loading" class="p-col">
                 <DataTable
+                    v-model:selection="selectedDomain"
+                    v-model:filters="filters"
                     :value="domains"
                     :paginator="true"
                     :loading="loading"
                     :rows="20"
-                    v-model:selection="selectedDomain"
-                    selectionMode="single"
+                    selection-mode="single"
                     class="p-datatable-sm kn-table"
-                    dataKey="valueId"
-                    v-model:filters="filters"
-                    filterDisplay="menu"
-                    :globalFilterFields="domainsManagementDescriptor.globalFilterFields"
-                    :rowsPerPageOptions="[10, 15, 20]"
-                    responsiveLayout="stack"
+                    data-key="valueId"
+                    filter-display="menu"
+                    :global-filter-fields="domainsManagementDescriptor.globalFilterFields"
+                    :rows-per-page-options="[10, 15, 20]"
+                    responsive-layout="stack"
                     breakpoint="960px"
-                    :currentPageReportTemplate="
+                    :current-page-report-template="
                         $t('common.table.footer.paginated', {
                             first: '{first}',
                             last: '{last}',
                             totalRecords: '{totalRecords}'
                         })
                     "
-                    @rowClick="showForm($event)"
                     data-test="domains-table"
+                    @rowClick="showForm($event)"
                 >
                     <template #header>
                         <div class="table-header">
                             <span class="p-input-icon-left">
                                 <i class="pi pi-search" />
-                                <InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
+                                <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
                             </span>
                         </div>
                     </template>
@@ -51,9 +51,9 @@
                         {{ $t('common.info.dataLoading') }}
                     </template>
 
-                    <Column v-for="col of domainsManagementDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :style="domainsManagementDescriptor.table.column.style" :sortable="true" class="kn-truncated">
+                    <Column v-for="col of domainsManagementDescriptor.columns" :key="col.field" :field="col.field" :header="$t(col.header)" :style="domainsManagementDescriptor.table.column.style" :sortable="true" class="kn-truncated">
                         <template #filter="{ filterModel }">
-                            <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
+                            <InputText v-model="filterModel.value" type="text" class="p-column-filter"></InputText>
                         </template>
                         <template #body="slotProps">
                             <span :title="slotProps.data[col.field]">{{ slotProps.data[col.field] }}</span>
@@ -61,14 +61,14 @@
                     </Column>
                     <Column :style="domainsManagementDescriptor.table.iconColumn.style">
                         <template #body="slotProps">
-                            <Button icon="pi pi-trash" class="p-button-link" @click="deleteDomainConfirm(slotProps.data.valueId)" :data-test="'delete-button'" />
+                            <Button icon="pi pi-trash" class="p-button-link" :data-test="'delete-button'" @click="deleteDomainConfirm(slotProps.data.valueId)" />
                         </template>
                     </Column>
                 </DataTable>
             </div>
 
             <div v-if="formVisible">
-                <DomainsManagementDialog :model="selectedDomain" @created="reloadDomains" @close="closeForm" data-test="domain-form"></DomainsManagementDialog>
+                <DomainsManagementDialog :model="selectedDomain" data-test="domain-form" @created="reloadDomains" @close="closeForm"></DomainsManagementDialog>
             </div>
         </div>
     </div>
@@ -94,6 +94,10 @@ export default defineComponent({
         DataTable,
         DomainsManagementDialog,
         KnFabButton
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     data() {
         return {
@@ -126,10 +130,6 @@ export default defineComponent({
             loading: false,
             selectedDomain: null as iDomain | null
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadAllDomains()

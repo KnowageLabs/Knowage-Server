@@ -11,8 +11,8 @@
             </Toolbar>
         </template>
 
-        <OlapCrossNavigationStepOne v-if="step === 0" :propParameters="parameters" :addNewParameterVisible="addNewParameterVisible" :propSelectedParameter="selectedParameter" @parameterSelected="onParameterSelect" @deleteParameter="deleteParameter"></OlapCrossNavigationStepOne>
-        <OlapCrossNavigationStepTwo v-else :propSelectedParameter="selectedParameter" :cell="cell" @selectFromTable="$emit('selectFromTable', selectedParameter?.type)"></OlapCrossNavigationStepTwo>
+        <OlapCrossNavigationStepOne v-if="step === 0" :prop-parameters="parameters" :add-new-parameter-visible="addNewParameterVisible" :prop-selected-parameter="selectedParameter" @parameterSelected="onParameterSelect" @deleteParameter="deleteParameter"></OlapCrossNavigationStepOne>
+        <OlapCrossNavigationStepTwo v-else :prop-selected-parameter="selectedParameter" :cell="cell" @selectFromTable="$emit('selectFromTable', selectedParameter?.type)"></OlapCrossNavigationStepTwo>
 
         <template #footer>
             <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>

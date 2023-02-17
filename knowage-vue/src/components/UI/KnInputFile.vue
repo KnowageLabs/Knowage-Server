@@ -1,7 +1,7 @@
 <template>
     <div :class="getVisibility">
         <span :v-if="label"> {{ label }} </span>
-        <input ref="inputFile" :id="id" type="file" @change="changeFunction" :accept="accept" />
+        <input :id="id" ref="inputFile" type="file" :accept="accept" @change="changeFunction" />
         <label for="inputFile">
             <i class="pi pi-upload" />
         </label>
@@ -22,16 +22,16 @@ export default defineComponent({
         id: String
     },
     computed: {
-        getVisibility(): String {
+        getVisibility(): string {
             return this.visibility ? '' : 'kn-hide'
         }
     },
     watch: {
         triggerInput(newTriggerInput, oldTriggerInput) {
             if (newTriggerInput != oldTriggerInput && newTriggerInput) {
-                var elem = this.$refs.inputFile as any
+                const elem = this.$refs.inputFile as any
                 if (elem && document.createEvent) {
-                    var evt = document.createEvent('MouseEvents')
+                    const evt = document.createEvent('MouseEvents')
                     evt.initEvent('click', true, false)
                     elem.dispatchEvent(evt)
                 }

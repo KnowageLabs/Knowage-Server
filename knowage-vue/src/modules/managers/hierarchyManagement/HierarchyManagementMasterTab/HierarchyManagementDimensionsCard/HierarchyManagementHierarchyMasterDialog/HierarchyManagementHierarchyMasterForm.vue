@@ -1,12 +1,12 @@
 <template>
     <form class="marginated-form p-fluid p-formgrid p-grid kn-flex p-m-2">
         <template v-for="(field, index) in fields" :key="index">
-            <div class="p-field p-col-6" v-if="field.VISIBLE">
+            <div v-if="field.VISIBLE" class="p-field p-col-6">
                 <span class="p-float-label">
                     <InputText
+                        v-model.trim="field.value"
                         class="kn-material-input"
                         :type="field.TYPE === 'Number' ? 'number' : 'text'"
-                        v-model.trim="field.value"
                         :class="{
                             'p-invalid': !field.value
                         }"

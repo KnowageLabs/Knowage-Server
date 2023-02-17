@@ -1,5 +1,5 @@
 <template>
-    <DataTable :value="inboundRelationships" class="p-datatable-sm kn-table p-ml-2" responsiveLayout="stack" breakpoint="960px" v-model:filters="filters" :globalFilterFields="irDescriptor.globalFilterFields">
+    <DataTable v-model:filters="filters" :value="inboundRelationships" class="p-datatable-sm kn-table p-ml-2" responsive-layout="stack" breakpoint="960px" :global-filter-fields="irDescriptor.globalFilterFields">
         <template #empty>
             {{ $t('common.info.noDataFound') }}
         </template>
@@ -7,7 +7,7 @@
             <div class="table-header p-d-flex">
                 <span class="p-input-icon-left p-mr-3 p-col-12">
                     <i class="pi pi-search" />
-                    <InputText class="kn-material-input" v-model="filters['global'].value" :placeholder="$t('common.search')" />
+                    <InputText v-model="filters['global'].value" class="kn-material-input" :placeholder="$t('common.search')" />
                 </span>
             </div>
         </template>
@@ -47,8 +47,8 @@
                 <span class="p-float-label">
                     <InputText
                         id="name"
-                        class="kn-material-input"
                         v-model.trim="v$.dataSend.name.$model"
+                        class="kn-material-input"
                         :class="{
                             'p-invalid': v$.dataSend.name.$invalid && v$.dataSend.name.$dirty
                         }"
@@ -57,39 +57,39 @@
                     />
                     <label for="name" class="kn-material-input-label"> {{ $t('metaweb.businessModel.inbound.name') }} *</label>
                 </span>
-                <KnValidationMessages class="p-mt-1" :vComp="v$.dataSend.name" :additionalTranslateParams="{ fieldName: $t('metaweb.businessModel.inbound.name') }" />
+                <KnValidationMessages class="p-mt-1" :v-comp="v$.dataSend.name" :additional-translate-params="{ fieldName: $t('metaweb.businessModel.inbound.name') }" />
             </div>
             <div class="p-field p-col-12 p-md-6">
                 <span class="p-float-label">
                     <Dropdown
                         id="source"
-                        class="kn-material-input"
                         v-model="v$.dataSend.cardinality.$model"
-                        optionLabel="name"
-                        optionValue="value"
+                        class="kn-material-input"
+                        option-label="name"
+                        option-value="value"
                         :options="irDescriptor.cardinality"
                         :class="{ 'p-invalid': v$.dataSend.cardinality.$invalid && v$.dataSend.cardinality.$dirty }"
                         @blur="v$.dataSend.cardinality.$touch()"
                     />
                     <label for="source" class="kn-material-input-label"> {{ $t('kpi.kpiDefinition.cardinalityTtitle') }} *</label>
                 </span>
-                <KnValidationMessages class="p-mt-1" :vComp="v$.dataSend.cardinality" :additionalTranslateParams="{ fieldName: $t('kpi.kpiDefinition.cardinalityTtitle') }" />
+                <KnValidationMessages class="p-mt-1" :v-comp="v$.dataSend.cardinality" :additional-translate-params="{ fieldName: $t('kpi.kpiDefinition.cardinalityTtitle') }" />
             </div>
             <div class="p-field p-col-12 p-md-6">
                 <span class="p-float-label">
-                    <Dropdown id="source" class="kn-material-input" v-model="rightElement" :options="sourceBusinessClassOptions" optionLabel="name" @change="alterTableToSimpleBound($event.value)" />
+                    <Dropdown id="source" v-model="rightElement" class="kn-material-input" :options="sourceBusinessClassOptions" option-label="name" @change="alterTableToSimpleBound($event.value)" />
                     <label for="source" class="kn-material-input-label"> {{ $t('metaweb.businessModel.inbound.sourceBc') }} </label>
                 </span>
             </div>
             <div class="p-field p-col-12 p-md-6">
                 <span class="p-float-label">
-                    <InputText id="target" class="kn-material-input" v-model="businessModel.name" :disabled="true" />
+                    <InputText id="target" v-model="businessModel.name" class="kn-material-input" :disabled="true" />
                     <label for="target" class="kn-material-input-label"> {{ $t('metaweb.businessModel.inbound.targetBc') }} </label>
                 </span>
             </div>
         </form>
 
-        <TableAssociator class="kn-flex" :sourceArray="simpleRight" :targetArray="simpleLeft" :useMultipleTablesFromSameSource="false" @drop="onDrop" @relationshipDeleted="onDelete" />
+        <TableAssociator class="kn-flex" :source-array="simpleRight" :target-array="simpleLeft" :use-multiple-tables-from-same-source="false" @drop="onDrop" @relationshipDeleted="onDelete" />
 
         <template #footer>
             <Button class="p-button-text kn-button" :label="$t('common.cancel')" @click="closeDialog" />
@@ -121,20 +121,6 @@ export default defineComponent({
     components: { TableAssociator, DataTable, Column, Dialog, Dropdown, KnValidationMessages },
     props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null>, required: true }, propMeta: { type: Object, required: true }, observer: { type: Object, required: true } },
     emits: ['loading'],
-    computed: {
-        leftHasLinks(): boolean {
-            var x = 0
-            this.simpleLeft.forEach((item) => {
-                if (item.links.length > 0) x += 1
-            })
-            return x > 0 ? false : true
-        },
-        buttonDisabled(): boolean {
-            if (this.v$.$invalid || this.leftHasLinks) {
-                return true
-            } else return false
-        }
-    },
     data() {
         return {
             bsDescriptor,
@@ -150,6 +136,20 @@ export default defineComponent({
             sourceBusinessClassOptions: [] as any,
             businessModel: null as iBusinessModel | null,
             filters: { global: [filterDefault] } as Object
+        }
+    },
+    computed: {
+        leftHasLinks(): boolean {
+            let x = 0
+            this.simpleLeft.forEach((item) => {
+                if (item.links.length > 0) x += 1
+            })
+            return x > 0 ? false : true
+        },
+        buttonDisabled(): boolean {
+            if (this.v$.$invalid || this.leftHasLinks) {
+                return true
+            } else return false
         }
     },
     watch: {
@@ -192,7 +192,7 @@ export default defineComponent({
             this.propMeta.businessViews.forEach((el) => this.sourceBusinessClassOptions.push(el))
         },
         createColumnString(data) {
-            var ret = [] as any
+            const ret = [] as any
             data.forEach((entry) => {
                 ret.push(entry.name)
             }, this)
@@ -209,7 +209,7 @@ export default defineComponent({
             this.simpleRight = this.tableToSimpleBound(item)
         },
         tableToSimpleBound(model) {
-            var a = [] as any
+            const a = [] as any
             if (model) {
                 if (model.columns)
                     model.columns.forEach(function (item) {

@@ -9,9 +9,9 @@
             <Button v-if="!toggleCardDisplay" icon="fas fa-th-large" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
         </template>
     </Toolbar>
-    <InputText class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
+    <InputText v-model="searchWord" class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" type="text" :placeholder="$t('common.search')" data-test="search-input" @input="searchItems" />
     <div class="kn-overflow">
-        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table p-mx-2" :value="filteredDocuments" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" data-test="recent-table">
+        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table p-mx-2" :value="filteredDocuments" :loading="loading" data-key="objId" responsive-layout="stack" breakpoint="600px" data-test="recent-table">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -25,7 +25,7 @@
             <Column :style="mainDescriptor.style.iconColumn">
                 <template #header> &ensp; </template>
                 <template #body="slotProps">
-                    <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click.stop="showSidebar(slotProps.data)" :data-test="'info-button-' + slotProps.data.documentName" />
+                    <Button v-tooltip.left="$t('workspace.myModels.showInfo')" icon="fas fa-info-circle" class="p-button-link" :data-test="'info-button-' + slotProps.data.documentName" @click.stop="showSidebar(slotProps.data)" />
                     <Button icon="fas fa-play-circle" class="p-button-link" @click="executeRecent(slotProps.data)" />
                 </template>
             </Column>
@@ -35,12 +35,12 @@
                 {{ $t('common.info.noDataFound') }}
             </Message>
             <template v-else>
-                <WorkspaceCard v-for="(document, index) of filteredDocuments" :key="index" :viewType="'recent'" :document="document" @executeRecent="executeRecent" @openSidebar="showSidebar" />
+                <WorkspaceCard v-for="(document, index) of filteredDocuments" :key="index" :view-type="'recent'" :document="document" @executeRecent="executeRecent" @openSidebar="showSidebar" />
             </template>
         </div>
     </div>
 
-    <DetailSidebar :visible="showDetailSidebar" :viewType="'recent'" :document="selectedDocument" @executeRecent="executeRecent" @close="showDetailSidebar = false" data-test="detail-sidebar" />
+    <DetailSidebar :visible="showDetailSidebar" :view-type="'recent'" :document="selectedDocument" data-test="detail-sidebar" @executeRecent="executeRecent" @close="showDetailSidebar = false" />
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -57,8 +57,12 @@ import mainStore from '../../../../App.store'
 
 export default defineComponent({
     components: { DataTable, Column, DetailSidebar, WorkspaceCard, Message },
-    emits: ['showMenu', 'toggleDisplayView', 'execute'],
     props: { toggleCardDisplay: { type: Boolean } },
+    emits: ['showMenu', 'toggleDisplayView', 'execute'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             mainDescriptor,
@@ -69,10 +73,6 @@ export default defineComponent({
             selectedDocument: {} as IDocument,
             searchWord: '' as string
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.getRecentDocuments()

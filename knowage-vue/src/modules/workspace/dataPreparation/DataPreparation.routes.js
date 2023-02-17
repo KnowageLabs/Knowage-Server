@@ -1,4 +1,4 @@
-let routes = [
+const routes = [
     {
         path: '/data-preparation/:id',
         name: 'data-preparation',

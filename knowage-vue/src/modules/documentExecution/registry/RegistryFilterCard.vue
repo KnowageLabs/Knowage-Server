@@ -1,24 +1,24 @@
 <template>
     <div v-if="filter.static && filter.visible">
-        <InputText class="kn-material-input p-mx-2" v-model="filter.filterValue" disabled />
+        <InputText v-model="filter.filterValue" class="kn-material-input p-mx-2" disabled />
     </div>
     <div v-else-if="!filter.static" class="p-mx-2">
         <span v-if="filter.presentation === 'MANUAL'" class="p-float-label">
             <InputText
-                class="kn-material-input"
                 v-model="v$.filter.filterValue.$model"
-                @input="filterChanged"
+                class="kn-material-input"
                 :class="{
                     'p-invalid': v$.filter.filterValue.$invalid
                 }"
+                @input="filterChanged"
             />
             <label class="kn-material-input-label"> {{ filter.title }}</label>
         </span>
         <span v-else-if="filter.presentation === 'COMBO'" class="p-float-label">
-            <Dropdown class="kn-material-input" v-model="v$.filter.filterValue.$model" :options="options" optionValue="column_1" optionLabel="column_1" @change="filterChanged" :filter="true"> </Dropdown>
+            <Dropdown v-model="v$.filter.filterValue.$model" class="kn-material-input" :options="options" option-value="column_1" option-label="column_1" :filter="true" @change="filterChanged"> </Dropdown>
             <label class="kn-material-input-label"> {{ filter.title }}</label>
         </span>
-        <KnValidationMessages :vComp="v$.filter.filterValue"></KnValidationMessages>
+        <KnValidationMessages :v-comp="v$.filter.filterValue"></KnValidationMessages>
     </div>
 </template>
 
@@ -34,7 +34,7 @@ import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 export default defineComponent({
     name: 'registry-filter-card',
     components: { Dropdown, KnValidationMessages },
-    props: { propFilter: { type: Object }, filterOptions: { type: Array }, entity: { type: Object as PropType<String | null> }, clearTrigger: { type: Boolean }, id: { type: String } },
+    props: { propFilter: { type: Object }, filterOptions: { type: Array }, entity: { type: Object as PropType<string | null> }, clearTrigger: { type: Boolean }, id: { type: String } },
     emits: ['changed', 'valid'],
     data() {
         return {

@@ -12,7 +12,7 @@
                 <template #empty>{{ $t('managers.businessModelManager.noSavedVersions') }}</template>
                 <template #option="slotProps">
                     <div class="kn-list-item" :data-test="'version-' + slotProps.option.id">
-                        <RadioButton name="active" :value="slotProps.option" v-model="activeVersion" :disabled="readonly" @change="setActive"></RadioButton>
+                        <RadioButton v-model="activeVersion" name="active" :value="slotProps.option" :disabled="readonly" @change="setActive"></RadioButton>
                         <div class="kn-list-item-text">
                             <span>{{ slotProps.option.fileName }}</span>
                             <span class="kn-list-item-text-secondary">{{ creationDate(slotProps.option.creationDate) }}</span>
@@ -20,7 +20,7 @@
                         <div class="kn-list-item-text">
                             <span>{{ slotProps.option.creationUser }}</span>
                         </div>
-                        <Button class="p-button-link p-button-sm" icon="fa fa-ellipsis-v" @click="toggle($event, slotProps.option)" aria-haspopup="true" aria-controls="overlay_menu" />
+                        <Button class="p-button-link p-button-sm" icon="fa fa-ellipsis-v" aria-haspopup="true" aria-controls="overlay_menu" @click="toggle($event, slotProps.option)" />
                         <Menu ref="menu" :model="items" :popup="true" />
                     </div>
                 </template>
@@ -62,17 +62,9 @@ export default defineComponent({
         }
     },
     emits: ['touched', 'deleted'],
-    watch: {
-        versions() {
-            this.loadVersions()
-        }
-    },
     setup() {
         const store = mainStore()
         return { store }
-    },
-    created() {
-        this.loadVersions()
     },
     data() {
         return {
@@ -81,6 +73,14 @@ export default defineComponent({
             previousActiveVersion: { active: false },
             activeVersion: { active: false }
         }
+    },
+    watch: {
+        versions() {
+            this.loadVersions()
+        }
+    },
+    created() {
+        this.loadVersions()
     },
     methods: {
         loadVersions() {

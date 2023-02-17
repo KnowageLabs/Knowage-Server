@@ -7,48 +7,49 @@
             </template>
             <template #end>
                 <div class="p-d-flex p-jc-around">
-                    <Button v-if="mode == 'dashboard'" icon="fas fa-database" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.datasets')" @click="openDashboardDatasetManagement"></Button>
-                    <Button v-if="mode == 'dashboard'" icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.save')" @click="saveDashboard"></Button>
-                    <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="mode !== 'dashboard' && canEditCockpit && documentMode === 'VIEW'" v-tooltip.left="$t('documentExecution.main.editCockpit')" @click="editCockpitDocumentConfirm"></Button>
-                    <Button icon="fa fa-eye" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="mode !== 'dashboard' && canEditCockpit && documentMode === 'EDIT'" v-tooltip.left="$t('documentExecution.main.viewCockpit')" @click="editCockpitDocumentConfirm"></Button>
-                    <Button v-if="mode !== 'dashboard'" icon="pi pi-book" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.onlineHelp')" @click="openHelp"></Button>
-                    <Button v-if="!newDashboardMode" icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.refresh')" @click="refresh"></Button>
+                    <Button v-if="mode == 'dashboard'" v-tooltip.left="$t('common.datasets')" icon="fas fa-database" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" @click="openDashboardDatasetManagement"></Button>
+                    <Button v-if="mode == 'dashboard'" v-tooltip.left="$t('common.save')" icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" @click="saveDashboard"></Button>
+                    <Button v-if="mode !== 'dashboard' && canEditCockpit && documentMode === 'VIEW'" v-tooltip.left="$t('documentExecution.main.editCockpit')" icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain p-mx-2" @click="editCockpitDocumentConfirm"></Button>
+                    <Button v-if="mode !== 'dashboard' && canEditCockpit && documentMode === 'EDIT'" v-tooltip.left="$t('documentExecution.main.viewCockpit')" icon="fa fa-eye" class="p-button-text p-button-rounded p-button-plain p-mx-2" @click="editCockpitDocumentConfirm"></Button>
+                    <Button v-if="mode !== 'dashboard'" v-tooltip.left="$t('common.onlineHelp')" icon="pi pi-book" class="p-button-text p-button-rounded p-button-plain p-mx-2" @click="openHelp"></Button>
+                    <Button v-if="!newDashboardMode" v-tooltip.left="$t('common.refresh')" icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" @click="refresh"></Button>
                     <Button
                         v-if="isParameterSidebarVisible && !newDashboardMode"
+                        v-tooltip.left="$t('common.parameters')"
                         icon="fa fa-filter"
                         class="p-button-text p-button-rounded p-button-plain p-mx-2"
                         :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }"
-                        v-tooltip.left="$t('common.parameters')"
-                        @click="parameterSidebarVisible = !parameterSidebarVisible"
                         data-test="parameter-sidebar-icon"
+                        @click="parameterSidebarVisible = !parameterSidebarVisible"
                     ></Button>
-                    <Button icon="fa fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.menu')" @click="toggle"></Button>
+                    <Button v-tooltip.left="$t('common.menu')" icon="fa fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" @click="toggle"></Button>
                     <TieredMenu ref="menu" :model="toolbarMenuItems" :popup="true" />
                     <Button v-if="mode == 'dashboard'" id="add-widget-button" class="p-button-sm" :label="$t('dashboard.widgetEditor.addWidget')" icon="pi pi-plus-circle" @click="addWidget" />
-                    <Button icon="fa fa-times" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.close')" @click="closeDocument"></Button>
+                    <Button v-tooltip.left="$t('common.close')" icon="fa fa-times" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" @click="closeDocument"></Button>
                 </div>
             </template>
         </Toolbar>
         <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
 
-        <div ref="document-execution-view" id="document-execution-view" class="p-d-flex p-flex-row myDivToPrint">
+        <div id="document-execution-view" ref="document-execution-view" class="p-d-flex p-flex-row myDivToPrint">
             <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
 
             <template v-if="(filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible) || newDashboardMode">
-                <Registry v-if="mode === 'registry'" :id="urlData?.sbiExecutionId" :reloadTrigger="reloadTrigger"></Registry>
-                <Dossier v-else-if="mode === 'dossier'" :id="document.id" :reloadTrigger="reloadTrigger" :filterData="filtersData"></Dossier>
+                <Registry v-if="mode === 'registry'" :id="urlData?.sbiExecutionId" :reload-trigger="reloadTrigger"></Registry>
+                <Dossier v-else-if="mode === 'dossier'" :id="document.id" :reload-trigger="reloadTrigger" :filter-data="filtersData"></Dossier>
                 <Olap
                     v-else-if="mode === 'olap'"
                     :id="urlData?.sbiExecutionId"
-                    :olapId="document.id"
-                    :olapName="document.label"
-                    :reloadTrigger="reloadTrigger"
-                    :olapCustomViewVisible="olapCustomViewVisible"
-                    :hiddenFormDataProp="hiddenFormData"
+                    :olap-id="document.id"
+                    :olap-name="document.label"
+                    :reload-trigger="reloadTrigger"
+                    :olap-custom-view-visible="olapCustomViewVisible"
+                    :hidden-form-data-prop="hiddenFormData"
                     @closeOlapCustomView="olapCustomViewVisible = false"
                     @applyCustomView="executeOlapCustomView"
                     @executeCrossNavigation="executeOLAPCrossNavigation"
                 ></Olap>
+<<<<<<< HEAD
                 <template v-else-if="mode === 'dashboard' || newDashboardMode">
                     <DashboardController
                         v-for="(item, index) in breadcrumbs"
@@ -63,41 +64,55 @@
                         @executeCrossNavigation="onExecuteCrossNavigation"
                     ></DashboardController>
                 </template>
+=======
+                <DashboardController
+                    v-else-if="mode === 'dashboard' || newDashboardMode"
+                    :sbi-execution-id="urlData?.sbiExecutionId"
+                    :document="document"
+                    :reload-trigger="reloadTrigger"
+                    :hidden-form-data="hiddenFormData"
+                    :filters-data="filtersData"
+                    :new-dashboard-mode="newDashboardMode"
+                    @newDashboardSaved="onNewDashboardSaved"
+                    @add-widget="addWidget"
+                    @add-dataset="openDashboardDatasetManagement"
+                ></DashboardController>
+>>>>>>> 112b7ac8132131c92f38cef7bc90e0d3d8ced06c
             </template>
             <iframe
                 v-for="(item, index) in breadcrumbs"
+                v-show="mode === 'iframe' && filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible && (item.label === document.name || (crossNavigationContainerData && index === breadcrumbs.length - 1))"
                 :key="index"
                 ref="documentFrame"
                 :name="'documentFrame' + index"
-                v-show="mode === 'iframe' && filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible && (item.label === document.name || (crossNavigationContainerData && index === breadcrumbs.length - 1))"
                 class="document-execution-iframe"
             ></iframe>
 
-            <DocumentExecutionSchedulationsTable id="document-execution-schedulations-table" v-if="schedulationsTableVisible" :propSchedulations="schedulations" @deleteSchedulation="onDeleteSchedulation" @close="schedulationsTableVisible = false"></DocumentExecutionSchedulationsTable>
+            <DocumentExecutionSchedulationsTable v-if="schedulationsTableVisible" id="document-execution-schedulations-table" :prop-schedulations="schedulations" @deleteSchedulation="onDeleteSchedulation" @close="schedulationsTableVisible = false"></DocumentExecutionSchedulationsTable>
 
             <KnParameterSidebar
-                class="document-execution-parameter-sidebar kn-overflow-y"
                 v-if="parameterSidebarVisible"
-                :filtersData="filtersData"
-                :propDocument="document"
-                :userRole="userRole"
-                :sessionEnabled="sessionEnabled"
-                :dateFormat="dateFormat"
+                class="document-execution-parameter-sidebar kn-overflow-y"
+                :filters-data="filtersData"
+                :prop-document="document"
+                :user-role="userRole"
+                :session-enabled="sessionEnabled"
+                :date-format="dateFormat"
+                data-test="parameter-sidebar"
                 @execute="onExecute"
                 @exportCSV="onExportCSV"
                 @roleChanged="onRoleChange"
                 @parametersChanged="$emit('parametersChanged', $event)"
-                data-test="parameter-sidebar"
             ></KnParameterSidebar>
 
-            <DocumentExecutionHelpDialog :visible="helpDialogVisible" :propDocument="document" @close="helpDialogVisible = false"></DocumentExecutionHelpDialog>
+            <DocumentExecutionHelpDialog :visible="helpDialogVisible" :prop-document="document" @close="helpDialogVisible = false"></DocumentExecutionHelpDialog>
 
-            <DocumentExecutionRankDialog :visible="rankDialogVisible" :propDocumentRank="documentRank" @close="rankDialogVisible = false" @saveRank="onSaveRank"></DocumentExecutionRankDialog>
-            <DocumentExecutionNotesDialog :visible="notesDialogVisible" :propDocument="document" @close="notesDialogVisible = false"></DocumentExecutionNotesDialog>
-            <DocumentExecutionMetadataDialog :visible="metadataDialogVisible" :propDocument="document" :propMetadata="metadata" :propLoading="loading" @close="metadataDialogVisible = false" @saveMetadata="onMetadataSave"></DocumentExecutionMetadataDialog>
+            <DocumentExecutionRankDialog :visible="rankDialogVisible" :prop-document-rank="documentRank" @close="rankDialogVisible = false" @saveRank="onSaveRank"></DocumentExecutionRankDialog>
+            <DocumentExecutionNotesDialog :visible="notesDialogVisible" :prop-document="document" @close="notesDialogVisible = false"></DocumentExecutionNotesDialog>
+            <DocumentExecutionMetadataDialog :visible="metadataDialogVisible" :prop-document="document" :prop-metadata="metadata" :prop-loading="loading" @close="metadataDialogVisible = false" @saveMetadata="onMetadataSave"></DocumentExecutionMetadataDialog>
             <DocumentExecutionMailDialog :visible="mailDialogVisible" @close="mailDialogVisible = false" @sendMail="onMailSave"></DocumentExecutionMailDialog>
-            <DocumentExecutionLinkDialog :visible="linkDialogVisible" :linkInfo="linkInfo" :embedHTML="embedHTML" :propDocument="document" :parameters="linkParameters" @close="linkDialogVisible = false"></DocumentExecutionLinkDialog>
-            <DocumentExecutionSelectCrossNavigationDialog :visible="destinationSelectDialogVisible" :crossNavigationDocuments="crossNavigationDocuments" @close="destinationSelectDialogVisible = false" @selected="onCrossNavigationSelected"></DocumentExecutionSelectCrossNavigationDialog>
+            <DocumentExecutionLinkDialog :visible="linkDialogVisible" :link-info="linkInfo" :embed-h-t-m-l="embedHTML" :prop-document="document" :parameters="linkParameters" @close="linkDialogVisible = false"></DocumentExecutionLinkDialog>
+            <DocumentExecutionSelectCrossNavigationDialog :visible="destinationSelectDialogVisible" :cross-navigation-documents="crossNavigationDocuments" @close="destinationSelectDialogVisible = false" @selected="onCrossNavigationSelected"></DocumentExecutionSelectCrossNavigationDialog>
             <DocumentExecutionCNContainerDialog v-if="crossNavigationContainerData" :visible="crossNavigationContainerVisible" :data="crossNavigationContainerData" @close="onCrossNavigationContainerClose"></DocumentExecutionCNContainerDialog>
         </div>
     </div>
@@ -138,7 +153,7 @@ import { loadFilters } from './DocumentExecutionDirverHelpers'
 
 // @ts-ignore
 // eslint-disable-next-line
-window.execExternalCrossNavigation = function(outputParameters, otherOutputParameters, crossNavigationLabel) {
+window.execExternalCrossNavigation = function (outputParameters, otherOutputParameters, crossNavigationLabel) {
     postMessage(
         {
             type: 'crossNavigation',
@@ -333,7 +348,7 @@ export default defineComponent({
 
         let invalidRole = false
         getCorrectRolesForExecution(this.document).then(async (response: any) => {
-            let correctRolesForExecution = response
+            const correctRolesForExecution = response
 
             if (!this.userRole) {
                 if (correctRolesForExecution.length == 1) {
@@ -343,7 +358,7 @@ export default defineComponent({
                 }
             } else if (this.userRole) {
                 if (correctRolesForExecution.length == 1) {
-                    let correctRole = correctRolesForExecution[0]
+                    const correctRole = correctRolesForExecution[0]
                     if (this.userRole !== correctRole) {
                         this.setError({
                             title: this.$t('common.error.generic'),
@@ -513,7 +528,7 @@ export default defineComponent({
                 this.mode = 'iframe'
             }
         },
-        async loadPage(initialLoading: boolean = false, documentLabel: string | null = null, crossNavigationPopupMode: boolean = false) {
+        async loadPage(initialLoading = false, documentLabel: string | null = null, crossNavigationPopupMode = false) {
             this.loading = true
             // TODO
             //await this.loadFilters(initialLoading)
@@ -556,9 +571,13 @@ export default defineComponent({
                 })
             }
         },
+<<<<<<< HEAD
 
         // TODO - FILTER SERVICE
         async loadFilters(initialLoading: boolean = false) {
+=======
+        async loadFilters(initialLoading = false) {
+>>>>>>> 112b7ac8132131c92f38cef7bc90e0d3d8ced06c
             if (this.parameterValuesMap && this.parameterValuesMap[this.document.label + '-' + this.tabKey] && initialLoading) {
                 this.filtersData = this.parameterValuesMap[this.document.label + '-' + this.tabKey]
                 this.setFiltersForBreadcrumbItem()
@@ -666,7 +685,7 @@ export default defineComponent({
                 description: descriptionIndex ? data[descriptionIndex] : ''
             }
         },
-        async loadURL(olapParameters: any, documentLabel: string | null = null, crossNavigationPopupMode: boolean = false) {
+        async loadURL(olapParameters: any, documentLabel: string | null = null, crossNavigationPopupMode = false) {
             let error = false
             const postData = {
                 label: this.document.label,
@@ -712,8 +731,8 @@ export default defineComponent({
             if (!this.urlData || !this.urlData.engineLabel) return
             await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/exporters/${this.urlData.engineLabel}`).then((response: AxiosResponse<any>) => (this.exporters = response.data.exporters))
         },
-        async sendForm(documentLabel: string | null = null, crossNavigationPopupMode: boolean = false) {
-            let tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name) as any
+        async sendForm(documentLabel: string | null = null, crossNavigationPopupMode = false) {
+            const tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name) as any
 
             const documentUrl = this.urlData?.url + '&timereloadurl=' + new Date().getTime()
             const postObject = {
@@ -725,7 +744,7 @@ export default defineComponent({
             this.hiddenFormUrl = postObject.url
             const paramsFromUrl = documentUrl?.split('?')[1]?.split('&')
 
-            for (let i in paramsFromUrl) {
+            for (const i in paramsFromUrl) {
                 if (typeof paramsFromUrl !== 'function') {
                     postObject.params[paramsFromUrl[i].split('=')[0]] = paramsFromUrl[i].split('=')[1]
                 }
@@ -745,7 +764,7 @@ export default defineComponent({
 
             this.hiddenFormData = new URLSearchParams()
 
-            for (let k in postObject.params) {
+            for (const k in postObject.params) {
                 const inputElement = document.getElementById('postForm_' + postObject.params.document + k) as any
                 if (inputElement) {
                     inputElement.value = decodeURIComponent(postObject.params[k])
@@ -854,7 +873,7 @@ export default defineComponent({
                 return {}
             }
 
-            let parameters = {} as any
+            const parameters = {} as any
 
             Object.keys(this.filtersData.filterStatus).forEach((key: any) => {
                 const parameter = this.filtersData.filterStatus[key]
@@ -887,7 +906,7 @@ export default defineComponent({
         getFormattedParametersForCSVExport() {
             if (!this.filtersData) return {}
 
-            let parameters = {} as any
+            const parameters = {} as any
 
             Object.keys(this.filtersData.filterStatus).forEach((key: any) => {
                 const parameter = this.filtersData.filterStatus[key]
@@ -1068,6 +1087,104 @@ export default defineComponent({
 
             return finalString
         },
+<<<<<<< HEAD
+=======
+        addDocumentOtherParametersToNavigationParamas(navigationParams: any[], angularData: any, crossNavigationDocument: any) {
+            if (!angularData.outputParameters || angularData.outputParameters.length === 0 || !crossNavigationDocument?.navigationParams) return
+            const keys = Object.keys(angularData.outputParameters)
+            const documentNavigationParamsKeys = Object.keys(crossNavigationDocument.navigationParams)
+            for (let i = 0; i < keys.length; i++) {
+                const tempKey = keys[i]
+                let newKey = ''
+                for (let j = 0; j < documentNavigationParamsKeys.length; j++) {
+                    if (crossNavigationDocument.navigationParams[documentNavigationParamsKeys[j]].value?.label === tempKey) {
+                        newKey = documentNavigationParamsKeys[j]
+                    }
+                }
+                if (newKey) navigationParams[newKey] = angularData.outputParameters[tempKey]
+            }
+
+            this.addSourceDocumentParameterValuesFromDocumentNavigationParameters(navigationParams, crossNavigationDocument)
+        },
+        addSourceDocumentParameterValuesFromDocumentNavigationParameters(navigationParams: any[], crossNavigationDocument: any) {
+            const documentNavigationParamsKeys = Object.keys(crossNavigationDocument.navigationParams)
+            documentNavigationParamsKeys.forEach((key: string) => {
+                if (!navigationParams[key]) {
+                    const sourceParameter = this.filtersData.filterStatus.find((parameter: iParameter) => {
+                        return parameter.urlName === crossNavigationDocument.navigationParams[key].value.label
+                    })
+                    if (sourceParameter) {
+                        navigationParams[key] = sourceParameter.parameterValue[0].value ?? ''
+                        navigationParams[key + '_field_visible_description'] = sourceParameter.parameterValue[0].description ?? ''
+                    }
+                }
+            })
+        },
+        openCrossNavigationInNewWindow(popupOptions: any, crossNavigationDocument: any, navigationParams: any) {
+            if (!crossNavigationDocument || !crossNavigationDocument.document) return
+            const parameters = encodeURI(JSON.stringify(navigationParams))
+            const url =
+                import.meta.env.VITE_HOST_URL +
+                `/knowage/restful-services/publish?PUBLISHER=documentExecutionNg&OBJECT_ID=${crossNavigationDocument.document.id}&OBJECT_LABEL=${crossNavigationDocument.document.label}&SELECTED_ROLE=${this.sessionRole}&SBI_EXECUTION_ID=null&OBJECT_NAME=${crossNavigationDocument.document.name}&CROSS_PARAMETER=${parameters}`
+            window.open(url, '_blank', `toolbar=0,status=0,menubar=0,width=${popupOptions.width || '800'},height=${popupOptions.height || '600'}`)
+        },
+        formatAngularOutputParameters(otherOutputParameters: any[]) {
+            const startDocumentInputParameters = deepcopy(this.document.drivers)
+            const keys = [] as any[]
+            otherOutputParameters.forEach((parameter: any) => keys.push(Object.keys(parameter)[0]))
+            for (let i = 0; i < startDocumentInputParameters.length; i++) {
+                if (!keys.includes(startDocumentInputParameters[i].label)) {
+                    const tempObject = {} as any
+                    tempObject[startDocumentInputParameters[i].label] = this.getParameterValueForCrossNavigation(startDocumentInputParameters[i].label)
+                    otherOutputParameters.push(tempObject)
+                }
+            }
+        },
+        getParameterValueForCrossNavigation(parameterLabel: string) {
+            if (!parameterLabel) return
+            const index = this.filtersData.filterStatus?.findIndex((param: any) => param.label === parameterLabel)
+            return index !== -1 ? this.filtersData.filterStatus[index].parameterValue[0].value : ''
+        },
+        formatNavigationParams(otherOutputParameters: any[], navigationParams: any) {
+            const formatedParams = {} as any
+
+            otherOutputParameters.forEach((el: any) => {
+                let found = false
+                let label = ''
+
+                for (let i = 0; i < Object.keys(navigationParams).length; i++) {
+                    if (navigationParams[Object.keys(navigationParams)[i]].value.label === Object.keys(el)[0]) {
+                        found = true
+                        label = Object.keys(navigationParams)[i]
+                        break
+                    }
+                }
+
+                if (found) {
+                    formatedParams[label] = el[Object.keys(el)[0]]
+                    formatedParams[label + '_field_visible_description'] = el[Object.keys(el)[0]]
+                }
+            })
+
+            this.setNavigationParametersFromCurrentFilters(formatedParams, navigationParams)
+
+            return formatedParams
+        },
+        setNavigationParametersFromCurrentFilters(formatedParams: any, navigationParams: any) {
+            const navigationParamsKeys = navigationParams ? Object.keys(navigationParams) : []
+            const formattedParameters = this.getFormattedParameters()
+            const formattedParametersKeys = formattedParameters ? Object.keys(formattedParameters) : []
+            if (navigationParamsKeys.length > 0 && formattedParametersKeys.length > 0) {
+                for (let i = 0; i < navigationParamsKeys.length; i++) {
+                    const index = formattedParametersKeys.findIndex((key: string) => key === navigationParams[navigationParamsKeys[i]].value.label && navigationParams[navigationParamsKeys[i]].value.isInput)
+                    if (index !== -1) {
+                        formatedParams[navigationParamsKeys[i]] = formattedParameters[formattedParametersKeys[index]]
+                        formatedParams[navigationParamsKeys[i] + '_field_visible_description'] = formattedParameters[formattedParametersKeys[index] + '_field_visible_description'] ? formattedParameters[formattedParametersKeys[index] + '_field_visible_description'] : ''
+                    }
+                }
+            }
+        },
+>>>>>>> 112b7ac8132131c92f38cef7bc90e0d3d8ced06c
         showOLAPCustomView() {
             this.olapCustomViewVisible = true
         },
@@ -1112,7 +1229,7 @@ export default defineComponent({
         },
         formatOLAPNavigationParams(crossNavigationParams: any, navigationParams: any) {
             const crossNavigationParamKeys = Object.keys(crossNavigationParams)
-            let formattedParams = {} as any
+            const formattedParams = {} as any
 
             Object.keys(navigationParams).forEach((key: string) => {
                 const index = crossNavigationParamKeys.findIndex((el: string) => el === navigationParams[key].value.label)
@@ -1320,7 +1437,7 @@ export default defineComponent({
 }
 
 #add-widget-button {
-    background-color: #ff0000;
+    background-color: var(--kn-color-fab);
     min-width: 120px;
 }
 </style>

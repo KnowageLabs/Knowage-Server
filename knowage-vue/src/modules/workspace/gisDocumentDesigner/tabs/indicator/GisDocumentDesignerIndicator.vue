@@ -7,20 +7,20 @@
         <div :style="styleDescriptor.style.absoluteScroll">
             <Card>
                 <template #content>
-                    <DataTable class="p-datatable-sm kn-table georef-step1-table" :value="documentDataProp.indicators" responsiveLayout="scroll" breakpoint="600px">
+                    <DataTable class="p-datatable-sm kn-table georef-step1-table" :value="documentDataProp.indicators" responsive-layout="scroll" breakpoint="600px">
                         <template #empty>
                             {{ $t('workspace.gis.dnl.emptyInfo') }}
                         </template>
                         <Column field="name" :header="$t('qbe.entities.types.measure')" :sortable="true">
                             <template #body="slotProps">
-                                <Dropdown id="measure" class="kn-material-input kn-width-full" v-model="slotProps.data.name" :options="documentDataProp.datasetMeasures" optionLabel="id" optionValue="id" :class="{ 'p-invalid': slotProps.data.name == null }" />
-                                <small for="measure" v-if="slotProps.data.name == null" class="p-error">{{ $t('workspace.gis.fieldRequired') }} *</small>
+                                <Dropdown id="measure" v-model="slotProps.data.name" class="kn-material-input kn-width-full" :options="documentDataProp.datasetMeasures" option-label="id" option-value="id" :class="{ 'p-invalid': slotProps.data.name == null }" />
+                                <small v-if="slotProps.data.name == null" for="measure" class="p-error">{{ $t('workspace.gis.fieldRequired') }} *</small>
                             </template>
                         </Column>
                         <Column field="label" :header="$t('common.label')" :sortable="true">
                             <template #body="slotProps">
-                                <InputText id="label" class="kn-material-input kn-width-full" v-model="slotProps.data.label" :class="{ 'p-invalid': slotProps.data.label == null || slotProps.data.label == '' }" />
-                                <small for="label" v-if="slotProps.data.label == null || slotProps.data.label == ''" class="p-error">{{ $t('workspace.gis.fieldRequired') }} *</small>
+                                <InputText id="label" v-model="slotProps.data.label" class="kn-material-input kn-width-full" :class="{ 'p-invalid': slotProps.data.label == null || slotProps.data.label == '' }" />
+                                <small v-if="slotProps.data.label == null || slotProps.data.label == ''" for="label" class="p-error">{{ $t('workspace.gis.fieldRequired') }} *</small>
                             </template>
                         </Column>
                         <Column :style="styleDescriptor.style.trashColumn">
@@ -44,8 +44,14 @@ import Dropdown from 'primevue/dropdown'
 
 export default defineComponent({
     components: { DataTable, Column, Dropdown },
-    emits: ['indicatorsValidationChanged'],
     props: { documentDataProp: { type: Object as any, required: false } },
+    emits: ['indicatorsValidationChanged'],
+    data() {
+        return {
+            styleDescriptor,
+            documentData: {} as any
+        }
+    },
     computed: {
         indicatorsInvalid() {
             if ((this.documentDataProp.indicators.length == 0 && this.documentDataProp.datasetLabel != '') || this.indicatorsContainEmptyFields) {
@@ -62,16 +68,6 @@ export default defineComponent({
             return value
         }
     },
-    data() {
-        return {
-            styleDescriptor,
-            documentData: {} as any
-        }
-    },
-    created() {
-        this.documentData = this.documentDataProp
-        this.$emit('indicatorsValidationChanged', 'indicatorsInvalid', this.indicatorsInvalid)
-    },
     watch: {
         documentDataProp() {
             this.documentData = this.documentDataProp
@@ -79,6 +75,10 @@ export default defineComponent({
         indicatorsInvalid() {
             this.$emit('indicatorsValidationChanged', 'indicatorsInvalid', this.indicatorsInvalid)
         }
+    },
+    created() {
+        this.documentData = this.documentDataProp
+        this.$emit('indicatorsValidationChanged', 'indicatorsInvalid', this.indicatorsInvalid)
     },
     methods: {
         addIndicatorRow() {

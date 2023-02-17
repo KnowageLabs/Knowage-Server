@@ -20,7 +20,7 @@
 
         <div class="p-col-12 p-fluid p-d-flex p-flex-column">
             <label class="kn-material-input-label p-mb-1"> {{ $t('dashboard.widgetEditor.rows.rowSpanColumn') }}</label>
-            <Dropdown class="kn-material-input" v-model="rowsModel.rowSpan.column" :options="widgetModel.columns" optionLabel="alias" optionValue="id" :disabled="!rowsModel.rowSpan.enabled" @change="onRowSpanChanged"> </Dropdown>
+            <Dropdown v-model="rowsModel.rowSpan.column" class="kn-material-input" :options="widgetModel.columns" option-label="alias" option-value="id" :disabled="!rowsModel.rowSpan.enabled" @change="onRowSpanChanged"> </Dropdown>
         </div>
     </div>
 </template>

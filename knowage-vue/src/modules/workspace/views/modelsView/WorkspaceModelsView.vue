@@ -10,19 +10,19 @@
             <KnFabButton v-if="tableMode === 'Federated'" icon="fas fa-plus" @click="createNewFederation" />
         </template>
     </Toolbar>
-    <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+    <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
 
     <div class="p-d-flex p-flex-row p-ai-center p-flex-wrap">
-        <InputText class="kn-material-input p-m-3 model-search" v-model="searchWord" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
+        <InputText v-model="searchWord" class="kn-material-input p-m-3 model-search" :placeholder="$t('common.search')" data-test="search-input" @input="searchItems" />
         <span class="p-float-label p-mr-auto model-search">
-            <MultiSelect class="kn-material-input kn-width-full" :style="mainDescriptor.style.multiselect" v-model="selectedCategories" :options="modelCategories" optionLabel="VALUE_CD" @change="searchItems" :filter="true" />
+            <MultiSelect v-model="selectedCategories" class="kn-material-input kn-width-full" :style="mainDescriptor.style.multiselect" :options="modelCategories" option-label="VALUE_CD" :filter="true" @change="searchItems" />
             <label class="kn-material-input-label"> {{ $t('common.category') }} </label>
         </span>
-        <SelectButton class="p-mx-2" v-model="tableMode" :options="selectButtonOptions" @click="onTableModeChange" />
+        <SelectButton v-model="tableMode" class="p-mx-2" :options="selectButtonOptions" @click="onTableModeChange" />
     </div>
 
     <div class="p-m-2 kn-overflow">
-        <WorkspaceModelsTable v-if="!toggleCardDisplay" :propItems="filteredItems" @selected="setSelectedModel" @openDatasetInQBEClick="openDatasetInQBE" @editDatasetClick="editDataset" @deleteDatasetClick="deleteDatasetConfirm" data-test="models-table"></WorkspaceModelsTable>
+        <WorkspaceModelsTable v-if="!toggleCardDisplay" :prop-items="filteredItems" data-test="models-table" @selected="setSelectedModel" @openDatasetInQBEClick="openDatasetInQBE" @editDatasetClick="editDataset" @deleteDatasetClick="deleteDatasetConfirm"></WorkspaceModelsTable>
         <div v-if="toggleCardDisplay" class="p-grid p-m-2" data-test="card-container">
             <Message v-if="filteredItems.length === 0" class="kn-flex p-m-2" severity="info" :closable="false" :style="mainDescriptor.style.message">
                 {{ $t('common.info.noDataFound') }}
@@ -31,7 +31,7 @@
                 <WorkspaceCard
                     v-for="(document, index) of filteredItems"
                     :key="index"
-                    :viewType="document && document.federation_id ? 'federationDataset' : 'businessModel'"
+                    :view-type="document && document.federation_id ? 'federationDataset' : 'businessModel'"
                     :document="document"
                     @openSidebar="setSelectedModel"
                     @openDatasetInQBE="openDatasetInQBE($event)"
@@ -45,14 +45,14 @@
 
     <DetailSidebar
         :visible="showDetailSidebar"
-        :viewType="selectedModel && selectedModel.federation_id ? 'federationDataset' : 'businessModel'"
+        :view-type="selectedModel && selectedModel.federation_id ? 'federationDataset' : 'businessModel'"
         :document="selectedModel"
+        data-test="detail-sidebar"
         @openDatasetInQBE="openDatasetInQBE($event)"
         @editDataset="editDataset"
         @deleteDataset="deleteDatasetConfirm"
         @monitoring="showMonitoring = !showMonitoring"
         @close="showDetailSidebar = false"
-        data-test="detail-sidebar"
     />
 
     <QBE v-if="qbeVisible" :visible="qbeVisible" :dataset="selectedQbeDataset" @close="closeQbe" />
@@ -77,8 +77,12 @@ import { getCorrectRolesForExecutionForType } from '@/helpers/commons/roleHelper
 export default defineComponent({
     name: 'workspace-models-view',
     components: { MultiSelect, DetailSidebar, KnFabButton, Message, SelectButton, WorkspaceModelsTable, WorkspaceCard, QBE },
-    emits: ['showMenu', 'toggleDisplayView', 'showQbeDialog'],
     props: { toggleCardDisplay: { type: Boolean } },
+    emits: ['showMenu', 'toggleDisplayView', 'showQbeDialog'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             mainDescriptor,
@@ -113,10 +117,6 @@ export default defineComponent({
             this.resetSearch()
             this.selectedModel = null
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         this.user = (this.store.$state as any).user

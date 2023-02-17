@@ -14,7 +14,7 @@
         <div class="p-d-flex p-flex-column">
             <InlineMessage v-if="showInfo" class="p-m-2" severity="info">{{ $t('documentExecution.olap.scenarioWizard.longInfo') }}</InlineMessage>
             <div class="p-float-label p-col-12 p-mt-2">
-                <Dropdown id="selectedCube" class="kn-material-input" v-model="selectedCube" :options="cubes" optionLabel="name" @change="onCubeChange" />
+                <Dropdown id="selectedCube" v-model="selectedCube" class="kn-material-input" :options="cubes" option-label="name" @change="onCubeChange" />
                 <label for="selectedCube" class="kn-material-input-label"> {{ $t('documentExecution.olap.scenarioWizard.selectedCube') }} </label>
             </div>
 
@@ -27,11 +27,11 @@
                     </Toolbar>
                 </template>
                 <template #content>
-                    <DataTable :value="measures" v-model:selection="scenario.MEASURE" class="p-datatable-sm kn-table" dataKey="XML_TAG_TEXT_CONTENT" responsiveLayout="stack" breakpoint="960px" :scrollable="true" scrollHeight="flex">
+                    <DataTable v-model:selection="scenario.MEASURE" :value="measures" class="p-datatable-sm kn-table" data-key="XML_TAG_TEXT_CONTENT" responsive-layout="stack" breakpoint="960px" :scrollable="true" scroll-height="flex">
                         <template #empty>
                             {{ $t('common.info.noDataFound') }}
                         </template>
-                        <Column class="kn-column-checkbox" selectionMode="multiple" dataKey="XML_TAG_TEXT_CONTENT"></Column>
+                        <Column class="kn-column-checkbox" selection-mode="multiple" data-key="XML_TAG_TEXT_CONTENT"></Column>
                         <Column field="XML_TAG_TEXT_CONTENT" :header="$t('common.name')"></Column>
                     </DataTable>
                 </template>
@@ -49,21 +49,21 @@
             </Toolbar>
             <Card v-show="expandParamsCard" class="p-mx-2 p-mb-2">
                 <template #content>
-                    <DataTable class="p-datatable-sm kn-table" editMode="cell" :value="scenario.VARIABLE" :scrollable="true" scrollHeight="250px" responsiveLayout="stack" breakpoint="960px">
+                    <DataTable class="p-datatable-sm kn-table" edit-mode="cell" :value="scenario.VARIABLE" :scrollable="true" scroll-height="250px" responsive-layout="stack" breakpoint="960px">
                         <template #empty>
                             {{ $t('managers.datasetManagement.tableEmpty') }}
                         </template>
                         <Column field="name" :header="$t('documentExecution.olap.scenarioWizard.parameterName')">
                             <template #body="{ data }">
-                                <InputText class="kn-material-input" v-model="data.name" :style="descriptor.style.columnStyle" />
+                                <InputText v-model="data.name" class="kn-material-input" :style="descriptor.style.columnStyle" />
                             </template>
                         </Column>
                         <Column field="value" :header="$t('documentExecution.olap.scenarioWizard.parameterValue')">
                             <template #body="{ data }">
-                                <InputText class="kn-material-input" v-model="data.value" :style="descriptor.style.columnStyle" />
+                                <InputText v-model="data.value" class="kn-material-input" :style="descriptor.style.columnStyle" />
                             </template>
                         </Column>
-                        <Column @rowClick="false" :style="descriptor.style.iconColumn">
+                        <Column :style="descriptor.style.iconColumn" @rowClick="false">
                             <template #body="slotProps">
                                 <Button icon="pi pi-trash" class="p-button-link" @click="removeParam(slotProps)" />
                             </template>
@@ -76,7 +76,7 @@
         <template #footer>
             <Button class="kn-button" @click="resetScenarioData"> {{ $t('documentExecution.olap.scenarioWizard.clearData') }}</Button>
             <Button class="kn-button kn-button--secondary" @click="$emit('close')"> {{ $t('common.cancel') }}</Button>
-            <Button class="kn-button kn-button--primary" @click="saveScenario" :disabled="saveButtonDisabled"> {{ $t('common.save') }}</Button>
+            <Button class="kn-button kn-button--primary" :disabled="saveButtonDisabled" @click="saveScenario"> {{ $t('common.save') }}</Button>
         </template>
     </Dialog>
 </template>
@@ -99,6 +99,18 @@ export default defineComponent({
     components: { Dialog, InlineMessage, Dropdown, Card, Column, DataTable },
     props: { artifactIdProp: { type: String }, sbiExecutionId: { type: String }, olapDesignerProp: { type: Object, required: true } },
     emits: ['close', 'saveScenario', 'deleteScenario'],
+    data() {
+        return {
+            descriptor,
+            showInfo: false,
+            loading: false,
+            expandParamsCard: true,
+            scenario: {} as any,
+            selectedCube: { name: '' } as any,
+            cubes: [] as any,
+            measures: [] as any
+        }
+    },
     computed: {
         saveButtonDisabled() {
             let validation = false
@@ -112,18 +124,6 @@ export default defineComponent({
             }
             this.scenario.MEASURE.length === 0 ? (validation = true) : ''
             return validation
-        }
-    },
-    data() {
-        return {
-            descriptor,
-            showInfo: false,
-            loading: false,
-            expandParamsCard: true,
-            scenario: {} as any,
-            selectedCube: { name: '' } as any,
-            cubes: [] as any,
-            measures: [] as any
         }
     },
     watch: {

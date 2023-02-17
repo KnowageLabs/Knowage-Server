@@ -2,13 +2,13 @@
     <div class="p-fluid p-formgrid p-grid p-m-4">
         <div class="p-field kn-flex">
             <span class="p-float-label">
-                <Dropdown class="kn-material-input" v-model="selectedVariable" :options="variables" optionLabel="name" @change="onVariableChange"> </Dropdown>
+                <Dropdown v-model="selectedVariable" class="kn-material-input" :options="variables" option-label="name" @change="onVariableChange"> </Dropdown>
                 <label class="kn-material-input-label"> {{ $t('common.variable') }}</label>
             </span>
         </div>
         <div v-if="selectedVariable && selectedVariable.pivotedValues" class="p-field kn-flex p-ml-3">
             <span class="p-float-label">
-                <Dropdown class="kn-material-input" v-model="variableKey" :options="selectedVariable.pivotedValues ? Object.keys(selectedVariable.pivotedValues) : []" @change="onVariableKeyChange"> </Dropdown>
+                <Dropdown v-model="variableKey" class="kn-material-input" :options="selectedVariable.pivotedValues ? Object.keys(selectedVariable.pivotedValues) : []" @change="onVariableKeyChange"> </Dropdown>
                 <label class="kn-material-input-label"> {{ $t('common.key') }}</label>
             </span>
         </div>

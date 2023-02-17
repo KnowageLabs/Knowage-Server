@@ -2,7 +2,7 @@
     <div class="p-d-flex p-flex-row">
         <HierarchyManagementSourceCard
             :dimensions="dimensions"
-            :optionsDate="optionsDate"
+            :options-date="optionsDate"
             @loading="$emit('loading', $event)"
             @validityDateSelected="setValidityDate"
             @dimensionSelected="setSelectedDimension"
@@ -10,7 +10,7 @@
             @hierarchyTypeSelected="onHierarchyTypeSelected"
             @hierarchySelected="onHierarchySelected"
         ></HierarchyManagementSourceCard>
-        <HierarchyManagementTargetCard :selectedDimension="selectedDimension" :validityDate="validityDate" :nodeMetadata="nodeMetadata" :selectedSourceHierarchy="selectedHierarchy" @loading="$emit('loading', $event)" @optionsDateSelected="setOptionsDate"></HierarchyManagementTargetCard>
+        <HierarchyManagementTargetCard :selected-dimension="selectedDimension" :validity-date="validityDate" :node-metadata="nodeMetadata" :selected-source-hierarchy="selectedHierarchy" @loading="$emit('loading', $event)" @optionsDateSelected="setOptionsDate"></HierarchyManagementTargetCard>
     </div>
 </template>
 

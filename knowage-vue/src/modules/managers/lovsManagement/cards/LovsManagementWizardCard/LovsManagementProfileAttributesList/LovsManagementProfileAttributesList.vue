@@ -3,13 +3,13 @@
         <Listbox
             class="kn-list"
             :options="profileAttributes"
-            :listStyle="lovsManagementProfileAttributesListDescriptor.listBox.style"
+            :list-style="lovsManagementProfileAttributesListDescriptor.listBox.style"
             :filter="true"
-            :filterPlaceholder="$t('common.search')"
-            optionLabel="name"
-            filterMatchMode="contains"
-            :filterFields="lovsManagementProfileAttributesListDescriptor.filterFields"
-            :emptyFilterMessage="$t('common.info.noDataFound')"
+            :filter-placeholder="$t('common.search')"
+            option-label="name"
+            filter-match-mode="contains"
+            :filter-fields="lovsManagementProfileAttributesListDescriptor.filterFields"
+            :empty-filter-message="$t('common.info.noDataFound')"
             @change="$emit('selected', $event.value.attributeName)"
         >
             <template #empty>{{ $t('common.info.noDataFound') }}</template>
@@ -36,8 +36,8 @@ import lovsManagementProfileAttributesListDescriptor from './LovsManagementProfi
 export default defineComponent({
     name: 'lovs-management-info-dialog',
     components: { Dialog, Listbox },
-    emits: ['close', 'selected'],
     props: { visible: { type: Boolean }, profileAttributes: { type: Array } },
+    emits: ['close', 'selected'],
     data() {
         return {
             lovsManagementProfileAttributesListDescriptor

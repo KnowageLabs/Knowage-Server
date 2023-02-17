@@ -1,8 +1,8 @@
 <template>
     <div style="margin-bottom: 1em">
-        <ToggleButton :onLabel="$t('common.expand')" :offLabel="$t('common.collapse')" onIcon="pi pi-plus" offIcon="pi pi-minus" style="width: 10em" @click="toggleExpandCollapse" />
+        <ToggleButton :on-label="$t('common.expand')" :off-label="$t('common.collapse')" on-icon="pi pi-plus" off-icon="pi pi-minus" style="width: 10em" @click="toggleExpandCollapse" />
     </div>
-    <Tree :value="nodes" :expandedKeys="expandedKeys" selectionMode="single" v-model:selectionKeys="preselectedNodeKey" :metaKeySelection="false" @node-select="onNodeSelect" :data-test="document - browser - tree">
+    <Tree v-model:selectionKeys="preselectedNodeKey" :value="nodes" :expanded-keys="expandedKeys" selection-mode="single" :meta-key-selection="false" :data-test="document - browser - tree" @node-select="onNodeSelect">
         <template #empty>{{ $t('common.info.noDataFound') }}</template>
         <template #default="slotProps">
             <div class="kn-list-item">
@@ -25,10 +25,20 @@ export default defineComponent({
         Tree,
         ToggleButton
     },
-    emits: ['selectedDocumentNode'],
     props: {
         selected: null,
         loading: Boolean
+    },
+    emits: ['selectedDocumentNode'],
+    data() {
+        return {
+            apiUrl: import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/',
+            load: false as boolean,
+            preselectedNodeKey: null as any | null,
+            nodes: [] as any[],
+            expandedKeys: {},
+            flatTree: [] as any[]
+        }
     },
     watch: {
         selected: {
@@ -45,16 +55,6 @@ export default defineComponent({
             }
         }
     },
-    data() {
-        return {
-            apiUrl: import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/',
-            load: false as Boolean,
-            preselectedNodeKey: null as any | null,
-            nodes: [] as any[],
-            expandedKeys: {},
-            flatTree: [] as any[]
-        }
-    },
     async created() {
         await this.loadFunctionalities()
         if (this.checkValueIsPath(this.selected)) {
@@ -63,7 +63,7 @@ export default defineComponent({
     },
     methods: {
         flattenTree(root, key) {
-            let flatten = [Object.assign({}, root)]
+            const flatten = [Object.assign({}, root)]
             delete flatten[0][key]
             if (root[key] && root[key].length > 0) {
                 return flatten.concat(root[key].map((child) => this.flattenTree(child, key)).reduce((a, b) => a.concat(b), []))
@@ -72,7 +72,7 @@ export default defineComponent({
         },
         checkValueIsPath(select) {
             if (select && this.nodes[0]) {
-                var pos = select.indexOf('/')
+                const pos = select.indexOf('/')
                 if (pos != -1) {
                     return true
                 } else {
@@ -81,9 +81,9 @@ export default defineComponent({
             }
         },
         preselectNodeKey(flatArray, select) {
-            for (let node of flatArray) {
+            for (const node of flatArray) {
                 if (node.path == select) {
-                    let selectionObj: any = {}
+                    const selectionObj: any = {}
                     selectionObj[node.key] = true
                     this.preselectedNodeKey = selectionObj
                 }
@@ -98,7 +98,7 @@ export default defineComponent({
         },
         expandAll() {
             if (!this.nodes) return
-            for (let node of this.nodes) {
+            for (const node of this.nodes) {
                 this.expandNode(node)
             }
 
@@ -110,7 +110,7 @@ export default defineComponent({
         expandNode(node) {
             if (node.children && node.children.length) {
                 this.expandedKeys[node.key] = true
-                for (let child of node.children) {
+                for (const child of node.children) {
                     this.expandNode(child)
                 }
             }

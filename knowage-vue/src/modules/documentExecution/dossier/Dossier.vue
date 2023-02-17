@@ -17,27 +17,27 @@
                         <span class="p-float-label">
                             <InputText
                                 id="activityName"
+                                v-model.trim="v$.activity.activityName.$model"
                                 class="kn-material-input p-mb-2"
                                 type="text"
-                                v-model.trim="v$.activity.activityName.$model"
                                 :class="{
                                     'p-invalid': v$.activity.activityName.$invalid && v$.activity.activityName.$dirty
                                 }"
-                                maxLength="100"
-                                @blur="v$.activity.activityName.$touch()"
+                                max-length="100"
                                 data-test="activityName-input"
+                                @blur="v$.activity.activityName.$touch()"
                             />
                             <label for="activityName" class="kn-material-input-label"> {{ $t('documentExecution.dossier.headers.activity') }} * </label>
                         </span>
                         <KnValidationMessages
-                            :vComp="v$.activity.activityName"
-                            :additionalTranslateParams="{
+                            :v-comp="v$.activity.activityName"
+                            :additional-translate-params="{
                                 fieldName: $t('documentExecution.dossier.headers.activity')
                             }"
                         />
                     </div>
                     <div class="p-field p-md-2">
-                        <Button class="kn-button p-button-text" :disabled="buttonDisabled" :label="$t('documentExecution.dossier.launchActivity')" @click="createNewActivity" data-test="input-button" />
+                        <Button class="kn-button p-button-text" :disabled="buttonDisabled" :label="$t('documentExecution.dossier.launchActivity')" data-test="input-button" @click="createNewActivity" />
                     </div>
                 </form>
             </template>
@@ -53,12 +53,26 @@
             </template>
             <template #content>
                 <KnHint v-if="showHint" :title="'documentExecution.dossier.title'" :hint="'documentExecution.dossier.hint'" data-test="hint"></KnHint>
-                <DataTable v-else :value="dossierActivities" v-model:filters="filters" :scrollable="true" scrollHeight="40vh" :rows="20" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" data-test="activities-table" sortField="creationDate" :sortOrder="-1">
+                <DataTable
+                    v-else
+                    v-model:filters="filters"
+                    :value="dossierActivities"
+                    :scrollable="true"
+                    scroll-height="40vh"
+                    :rows="20"
+                    class="p-datatable-sm kn-table"
+                    data-key="id"
+                    responsive-layout="stack"
+                    breakpoint="960px"
+                    data-test="activities-table"
+                    sort-field="creationDate"
+                    :sort-order="-1"
+                >
                     <template #header>
                         <div class="table-header">
                             <span class="p-input-icon-left">
                                 <i class="pi pi-search" />
-                                <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" badge="0" />
+                                <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" badge="0" />
                             </span>
                         </div>
                     </template>
@@ -66,19 +80,19 @@
                         {{ $t('common.info.noDataFound') }}
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"></InputText>
                     </template>
                     <Column field="activity" :header="$t('documentExecution.dossier.headers.activity')" :sortable="true" />
-                    <Column field="creationDate" :header="$t('common.creationDate')" :sortable="true" dataType="date">
+                    <Column field="creationDate" :header="$t('common.creationDate')" :sortable="true" data-type="date">
                         <template #body="{ data }">
                             {{ formatDate(data.creationDate) }}
                         </template>
                     </Column>
-                    <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field" :style="col.style" class="kn-truncated" :sortable="true" />
+                    <Column v-for="col of columns" :key="col.field" :field="col.field" :header="$t(col.header)" :style="col.style" class="kn-truncated" :sortable="true" />
                     <Column header :style="dossierDescriptor.table.iconColumn.style" @rowClick="false">
                         <template #body="slotProps">
                             <Button icon="pi pi-download" class="p-button-link" @click="downloadActivity(slotProps.data)" />
-                            <Button icon="pi pi-trash" class="p-button-link" :disabled="dateCheck(slotProps.data)" @click="deleteDossierConfirm(slotProps.data)" data-test="delete-button" />
+                            <Button icon="pi pi-trash" class="p-button-link" :disabled="dateCheck(slotProps.data)" data-test="delete-button" @click="deleteDossierConfirm(slotProps.data)" />
                         </template>
                     </Column>
                 </DataTable>
@@ -86,7 +100,7 @@
         </Card>
     </div>
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
-    <KnInputFile label="" v-if="!uploading" :changeFunction="startTemplateUpload" :triggerInput="triggerUpload" />
+    <KnInputFile v-if="!uploading" label="" :change-function="startTemplateUpload" :trigger-input="triggerUpload" />
 </template>
 
 <script lang="ts">
@@ -110,6 +124,28 @@ export default defineComponent({
     name: 'dossier',
     components: { KnInputFile, Menu, Card, Column, DataTable, KnHint, KnValidationMessages },
     props: { id: { type: String, required: false }, reloadTrigger: { type: Boolean }, filterData: Object },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
+    data() {
+        return {
+            v$: useValidate() as any,
+            dossierDescriptor,
+            activity: { activityName: '' } as any,
+            loading: false,
+            triggerUpload: false,
+            uploading: false,
+            interval: null as any,
+            dossierActivities: [] as any,
+            menuButtons: [] as any,
+            columns: dossierDescriptor.columns,
+            jsonTemplate: {} as any,
+            filters: {
+                global: [filterDefault]
+            } as Object
+        }
+    },
     computed: {
         showHint() {
             if (this.dossierActivities.length != 0) {
@@ -130,10 +166,6 @@ export default defineComponent({
             }, 10000)
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
     created() {
         this.getDossierTemplate()
         this.getDossierActivities()
@@ -143,24 +175,6 @@ export default defineComponent({
     },
     deactivated() {
         clearInterval(this.interval)
-    },
-    data() {
-        return {
-            v$: useValidate() as any,
-            dossierDescriptor,
-            activity: { activityName: '' } as any,
-            loading: false,
-            triggerUpload: false,
-            uploading: false,
-            interval: null as any,
-            dossierActivities: [] as any,
-            menuButtons: [] as any,
-            columns: dossierDescriptor.columns,
-            jsonTemplate: {} as any,
-            filters: {
-                global: [filterDefault]
-            } as Object
-        }
     },
     validations() {
         return {
@@ -187,13 +201,13 @@ export default defineComponent({
         },
         async getDossierTemplate() {
             this.loading = true
-            let url = `/knowagedossierengine/api/start/dossierTemplate?documentId=${this.id}`
-            let filters = this.filterData ? this.filterData : {}
+            const url = `/knowagedossierengine/api/start/dossierTemplate?documentId=${this.id}`
+            const filters = this.filterData ? this.filterData : {}
             filters.filterStatus?.forEach((filter: iParameter) => {
                 const fields = ['dataDependsOnParameters', 'dataDependentParameters', 'lovDependsOnParameters', 'lovDependentParameters', 'dependsOnParameters', 'dependentParameters']
                 fields.forEach((field: string) => delete filter[field])
             })
-            let config = {
+            const config = {
                 headers: { Accept: 'application/json, text/plain, */*' },
                 data: encodeURIComponent(JSON.stringify(filters))
             }
@@ -216,7 +230,7 @@ export default defineComponent({
             })
         },
         async deleteDossier(selectedDossier) {
-            let url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedDossier.id}`
+            const url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedDossier.id}`
             if (selectedDossier.status == 'DOWNLOAD' || selectedDossier.status == 'ERROR' || !this.dateCheck(selectedDossier)) {
                 await this.$http
                     .delete(url, { headers: { Accept: 'application/json, text/plain, */*' } })
@@ -243,7 +257,7 @@ export default defineComponent({
             }
         },
         async createNewActivity() {
-            let url = `/knowagedossierengine/api/dossier/run?activityName=${this.activity.activityName}&documentId=${this.id}`
+            const url = `/knowagedossierengine/api/dossier/run?activityName=${this.activity.activityName}&documentId=${this.id}`
             await this.$http.post(url, this.jsonTemplate, { headers: { Accept: 'application/json, text/plain, */*' } }).then((response: AxiosResponse<any>) => {
                 if (response.data.errors) {
                     this.store.setError({ title: this.$t('common.error.saving'), msg: response.data.errors })
@@ -256,11 +270,11 @@ export default defineComponent({
         async downloadActivity(selectedActivity) {
             if (selectedActivity.status == 'ERROR') {
                 if (selectedActivity.hasBinContent) {
-                    var link = import.meta.env.VITE_DOSSIER_PATH + `dossier/activity/${selectedActivity.id}/txt?activityName=${selectedActivity.activity}`
+                    const link = import.meta.env.VITE_DOSSIER_PATH + `dossier/activity/${selectedActivity.id}/txt?activityName=${selectedActivity.activity}`
                     window.open(link)
                 } else {
                     await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `dossier/random-key/${selectedActivity.progressId}`).then((response: AxiosResponse<any>) => {
-                        var url = `../api/start/errorFile?activityId=${selectedActivity.id}&randomKey=${response.data}&activityName=${selectedActivity.activity}`
+                        let url = `../api/start/errorFile?activityId=${selectedActivity.id}&randomKey=${response.data}&activityName=${selectedActivity.activity}`
                         if (this.jsonTemplate.PPT_TEMPLATE != null) {
                             url += '&type=PPT'
                             url += '&templateName=' + this.jsonTemplate.PPT_TEMPLATE.name
@@ -271,23 +285,23 @@ export default defineComponent({
                             url += '&type=PPTV2'
                             url += '&templateName=' + this.jsonTemplate.PPT_TEMPLATE_V2.name
                         }
-                        link = import.meta.env.VITE_RESTFUL_SERVICES_PATH + url
+                        const link = import.meta.env.VITE_RESTFUL_SERVICES_PATH + url
                         window.open(link)
                         response.data.errors ? this.store.setError({ title: this.$t('common.error.generic'), msg: response.data.errors[0].message }) : ''
                     })
                 }
             } else if (selectedActivity.partial == selectedActivity.total) {
                 if (selectedActivity.hasBinContent) {
-                    link = import.meta.env.VITE_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedActivity.id}/pptx?activityName=${selectedActivity.activity}`
+                    const link = import.meta.env.VITE_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedActivity.id}/pptx?activityName=${selectedActivity.activity}`
                     window.open(link)
                 } else if (selectedActivity.hasDocBinContent) {
-                    link = import.meta.env.VITE_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedActivity.id}/doc?activityName=${selectedActivity.activity}`
+                    const link = import.meta.env.VITE_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedActivity.id}/doc?activityName=${selectedActivity.activity}`
                     window.open(link)
                 } else if (selectedActivity.hasPptV2BinContent) {
-                    link = import.meta.env.VITE_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedActivity.id}/pptv2?activityName=${selectedActivity.activity}`
+                    const link = import.meta.env.VITE_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedActivity.id}/pptv2?activityName=${selectedActivity.activity}`
                     window.open(link)
                 } else {
-                    link = import.meta.env.VITE_RESTFUL_SERVICES_PATH + `dossier/random-key/${selectedActivity.progressId}`
+                    const link = import.meta.env.VITE_RESTFUL_SERVICES_PATH + `dossier/random-key/${selectedActivity.progressId}`
                     await this.$http.get(link, { headers: { Accept: 'application/json, text/plain, */*' } }).then((response: AxiosResponse<any>) => {
                         if (this.jsonTemplate.PPT_TEMPLATE != null) {
                             this.storePPT(selectedActivity.id, response.data, selectedActivity.activity)
@@ -308,22 +322,22 @@ export default defineComponent({
         },
 
         storePPT(id, randomKey, activityName) {
-            let generateType = 'generatePPT'
-            let templateName = this.jsonTemplate.PPT_TEMPLATE.name
+            const generateType = 'generatePPT'
+            const templateName = this.jsonTemplate.PPT_TEMPLATE.name
             this.storeDossier(id, randomKey, activityName, generateType, templateName)
         },
         storePPTV2(id, randomKey, activityName) {
-            let generateType = 'generatePPTV2'
-            let templateName = this.jsonTemplate.PPT_TEMPLATE_V2.name
+            const generateType = 'generatePPTV2'
+            const templateName = this.jsonTemplate.PPT_TEMPLATE_V2.name
             this.storeDossier(id, randomKey, activityName, generateType, templateName)
         },
         storeDOC(id, randomKey, activityName) {
-            let generateType = 'generateDOC'
-            let templateName = this.jsonTemplate.DOC_TEMPLATE.name
+            const generateType = 'generateDOC'
+            const templateName = this.jsonTemplate.DOC_TEMPLATE.name
             this.storeDossier(id, randomKey, activityName, generateType, templateName)
         },
         storeDossier(id, randomKey, activityName, generateType, templateName) {
-            var link = import.meta.env.VITE_HOST_URL + `/knowagedossierengine/api/start/` + generateType + `?activityId=${id}&randomKey=${randomKey}&templateName=${templateName}&activityName=${activityName}`
+            const link = import.meta.env.VITE_HOST_URL + `/knowagedossierengine/api/start/` + generateType + `?activityId=${id}&randomKey=${randomKey}&templateName=${templateName}&activityName=${activityName}`
             window.open(link)
         },
 
@@ -341,7 +355,7 @@ export default defineComponent({
             )
         },
         templateOptionEnabled(optionName: string) {
-            var isEnabled = false
+            let isEnabled = false
 
             if (this.jsonTemplate && this.jsonTemplate?.PPT_TEMPLATE) {
                 isEnabled = this.jsonTemplate?.PPT_TEMPLATE?.[optionName]
@@ -354,7 +368,7 @@ export default defineComponent({
         },
         async downloadTemplate() {
             if (this.jsonTemplate.PPT_TEMPLATE == null) {
-                var fileName = this.jsonTemplate?.DOC_TEMPLATE?.name ? this.jsonTemplate?.DOC_TEMPLATE?.name : this.jsonTemplate?.PPT_TEMPLATE_V2?.name
+                const fileName = this.jsonTemplate?.DOC_TEMPLATE?.name ? this.jsonTemplate?.DOC_TEMPLATE?.name : this.jsonTemplate?.PPT_TEMPLATE_V2?.name
                 await this.$http
                     .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'dossier/checkPathFile?templateName=' + fileName)
                     .then((response: AxiosResponse<any>) => {
@@ -368,7 +382,7 @@ export default defineComponent({
                         if (error) this.store.setError({ title: this.$t('common.error.generic'), msg: error.message })
                     })
             } else {
-                var fileName = this.jsonTemplate.PPT_TEMPLATE.name
+                const fileName = this.jsonTemplate.PPT_TEMPLATE.name
                 window.open(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'resourcePath?templateName=' + fileName)
             }
         },
@@ -383,7 +397,7 @@ export default defineComponent({
             setTimeout(() => (this.uploading = false), 200)
         },
         async uploadTemplate(uploadedFile) {
-            var formData = new FormData()
+            const formData = new FormData()
             formData.append('file', uploadedFile)
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'dossier/importTemplateFile', formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })

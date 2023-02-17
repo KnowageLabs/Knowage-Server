@@ -58,20 +58,20 @@ export default defineComponent({
             cacheData: this.loadChart()
         }
     },
-    watch: {
-        item() {
-            this.loadCache()
-        },
-        chartData() {
-            this.loadChart()
-        }
-    },
     computed: {
         totalMemory(): string {
             return (this.cache.totalMemory / 1048576).toFixed(2) + ' MB'
         },
         availableMemory(): string {
             return (this.cache.availableMemory / 1048576).toFixed(2) + ' MB'
+        }
+    },
+    watch: {
+        item() {
+            this.loadCache()
+        },
+        chartData() {
+            this.loadChart()
         }
     },
     created() {

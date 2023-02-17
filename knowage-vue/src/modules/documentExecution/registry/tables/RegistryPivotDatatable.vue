@@ -3,11 +3,11 @@
         :id="id"
         :columns="filteredColumns"
         :rows="tempRows"
-        :propConfiguration="propConfiguration"
+        :prop-configuration="propConfiguration"
         :entity="entity"
         :pagination="pagination"
-        :comboColumnOptions="comboColumnOptions"
-        :numberOfRows="registryDescriptor.paginationNumberOfItems"
+        :combo-column-options="comboColumnOptions"
+        :number-of-rows="registryDescriptor.paginationNumberOfItems"
         @rowChanged="onRowChanged"
         @pageChanged="onPageChange"
         @dropdownOpened="addColumnOptions"
@@ -27,7 +27,7 @@ export default defineComponent({
         columns: [] as any,
         rows: [] as any,
         propConfiguration: { type: Object },
-        entity: { type: Object as PropType<String | null> },
+        entity: { type: Object as PropType<string | null> },
         id: { type: String },
         propPagination: { type: Object }
     },

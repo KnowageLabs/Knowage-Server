@@ -6,11 +6,11 @@
                     <span class="p-float-label">
                         <Dropdown
                             id="ckanFileType"
+                            v-model="v$.dataset.ckanFileType.$model"
                             class="kn-material-input"
                             :options="availableFileTypes"
-                            optionLabel="name"
-                            optionValue="name"
-                            v-model="v$.dataset.ckanFileType.$model"
+                            option-label="name"
+                            option-value="name"
                             :class="{
                                 'p-invalid': v$.dataset.ckanFileType.$invalid && v$.dataset.ckanFileType.$dirty
                             }"
@@ -19,8 +19,8 @@
                         <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.fileType') }} * </label>
                     </span>
                     <KnValidationMessages
-                        :vComp="v$.dataset.ckanFileType"
-                        :additionalTranslateParams="{
+                        :v-comp="v$.dataset.ckanFileType"
+                        :additional-translate-params="{
                             fieldName: $t('managers.datasetManagement.fileType')
                         }"
                     />
@@ -29,19 +29,19 @@
                 <div v-if="dataset.ckanFileType == 'XLS'" class="p-formgrid p-grid p-col-12">
                     <div class="p-field p-col-4">
                         <span class="p-float-label">
-                            <InputText id="ckanSkipRows" class="kn-material-input" type="number" v-model.trim="dataset.ckanSkipRows" @change="$emit('touched')" />
+                            <InputText id="ckanSkipRows" v-model.trim="dataset.ckanSkipRows" class="kn-material-input" type="number" @change="$emit('touched')" />
                             <label for="ckanSkipRows" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanSkipRows') }} </label>
                         </span>
                     </div>
                     <div class="p-field p-col-4">
                         <span class="p-float-label">
-                            <InputText id="ckanLimitRows" class="kn-material-input" type="number" v-model.trim="dataset.ckanLimitRows" @change="$emit('touched')" />
+                            <InputText id="ckanLimitRows" v-model.trim="dataset.ckanLimitRows" class="kn-material-input" type="number" @change="$emit('touched')" />
                             <label for="ckanLimitRows" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanLimitRows') }} </label>
                         </span>
                     </div>
                     <div class="p-field p-col-4">
                         <span class="p-float-label">
-                            <InputText id="ckanXslSheetNumber" class="kn-material-input" type="number" v-model.trim="dataset.ckanXslSheetNumber" @change="$emit('touched')" />
+                            <InputText id="ckanXslSheetNumber" v-model.trim="dataset.ckanXslSheetNumber" class="kn-material-input" type="number" @change="$emit('touched')" />
                             <label for="ckanXslSheetNumber" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanXslSheetNumber') }} </label>
                         </span>
                     </div>
@@ -52,11 +52,11 @@
                         <span class="p-float-label">
                             <Dropdown
                                 id="ckanCsvDelimiter"
+                                v-model="v$.dataset.ckanCsvDelimiter.$model"
                                 class="kn-material-input"
                                 :options="csvDelimiterCharacterTypes"
-                                optionLabel="name"
-                                optionValue="name"
-                                v-model="v$.dataset.ckanCsvDelimiter.$model"
+                                option-label="name"
+                                option-value="name"
                                 :class="{
                                     'p-invalid': v$.dataset.ckanCsvDelimiter.$invalid && v$.dataset.ckanCsvDelimiter.$dirty
                                 }"
@@ -65,8 +65,8 @@
                             <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanCsvDelimiter') }} * </label>
                         </span>
                         <KnValidationMessages
-                            :vComp="v$.dataset.ckanCsvDelimiter"
-                            :additionalTranslateParams="{
+                            :v-comp="v$.dataset.ckanCsvDelimiter"
+                            :additional-translate-params="{
                                 fieldName: $t('managers.datasetManagement.ckanCsvDelimiter')
                             }"
                         />
@@ -75,11 +75,11 @@
                         <span class="p-float-label">
                             <Dropdown
                                 id="ckanCsvQuote"
+                                v-model="v$.dataset.ckanCsvQuote.$model"
                                 class="kn-material-input"
                                 :options="csvQuoteCharacterTypes"
-                                optionLabel="name"
-                                optionValue="name"
-                                v-model="v$.dataset.ckanCsvQuote.$model"
+                                option-label="name"
+                                option-value="name"
                                 :class="{
                                     'p-invalid': v$.dataset.ckanCsvQuote.$invalid && v$.dataset.ckanCsvQuote.$dirty
                                 }"
@@ -88,8 +88,8 @@
                             <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanCsvQuote') }} * </label>
                         </span>
                         <KnValidationMessages
-                            :vComp="v$.dataset.ckanCsvQuote"
-                            :additionalTranslateParams="{
+                            :v-comp="v$.dataset.ckanCsvQuote"
+                            :additional-translate-params="{
                                 fieldName: $t('managers.datasetManagement.ckanCsvQuote')
                             }"
                         />
@@ -98,11 +98,11 @@
                         <span class="p-float-label">
                             <Dropdown
                                 id="ckanCsvEncoding"
+                                v-model="v$.dataset.ckanCsvEncoding.$model"
                                 class="kn-material-input"
                                 :options="csvEncodingTypes"
-                                optionLabel="name"
-                                optionValue="name"
-                                v-model="v$.dataset.ckanCsvEncoding.$model"
+                                option-label="name"
+                                option-value="name"
                                 :class="{
                                     'p-invalid': v$.dataset.ckanCsvEncoding.$invalid && v$.dataset.ckanCsvEncoding.$dirty
                                 }"
@@ -111,8 +111,8 @@
                             <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanCsvEncoding') }} * </label>
                         </span>
                         <KnValidationMessages
-                            :vComp="v$.dataset.ckanCsvEncoding"
-                            :additionalTranslateParams="{
+                            :v-comp="v$.dataset.ckanCsvEncoding"
+                            :additional-translate-params="{
                                 fieldName: $t('managers.datasetManagement.ckanCsvEncoding')
                             }"
                         />
@@ -121,11 +121,11 @@
                         <span class="p-float-label">
                             <Dropdown
                                 id="ckanDateFormat"
+                                v-model="v$.dataset.ckanDateFormat.$model"
                                 class="kn-material-input"
                                 :options="ckanDateFormat"
-                                optionLabel="name"
-                                optionValue="name"
-                                v-model="v$.dataset.ckanDateFormat.$model"
+                                option-label="name"
+                                option-value="name"
                                 :class="{
                                     'p-invalid': v$.dataset.ckanDateFormat.$invalid && v$.dataset.ckanDateFormat.$dirty
                                 }"
@@ -134,8 +134,8 @@
                             <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanDateFormat') }} * </label>
                         </span>
                         <KnValidationMessages
-                            :vComp="v$.dataset.ckanDateFormat"
-                            :additionalTranslateParams="{
+                            :v-comp="v$.dataset.ckanDateFormat"
+                            :additional-translate-params="{
                                 fieldName: $t('managers.datasetManagement.ckanDateFormat')
                             }"
                         />
@@ -147,8 +147,8 @@
                         <span class="p-float-label">
                             <InputText
                                 id="ckanId"
-                                class="kn-material-input"
                                 v-model.trim="v$.dataset.ckanId.$model"
+                                class="kn-material-input"
                                 :class="{
                                     'p-invalid': v$.dataset.ckanId.$invalid && v$.dataset.ckanId.$dirty
                                 }"
@@ -157,14 +157,14 @@
                             />
                             <label for="ckanId" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanId') }} * </label>
                         </span>
-                        <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.ckanId" :additionalTranslateParams="{ fieldName: $t('managers.datasetManagement.ckanId') }" />
+                        <KnValidationMessages class="p-mt-1" :v-comp="v$.dataset.ckanId" :additional-translate-params="{ fieldName: $t('managers.datasetManagement.ckanId') }" />
                     </div>
                     <div class="p-field p-col-6">
                         <span class="p-float-label">
                             <InputText
                                 id="ckanUrl"
-                                class="kn-material-input"
                                 v-model.trim="v$.dataset.ckanUrl.$model"
+                                class="kn-material-input"
                                 :class="{
                                     'p-invalid': v$.dataset.ckanUrl.$invalid && v$.dataset.ckanUrl.$dirty
                                 }"
@@ -173,7 +173,7 @@
                             />
                             <label for="ckanUrl" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanUrl') }} * </label>
                         </span>
-                        <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.ckanUrl" :additionalTranslateParams="{ fieldName: $t('managers.datasetManagement.ckanUrl') }" />
+                        <KnValidationMessages class="p-mt-1" :v-comp="v$.dataset.ckanUrl" :additional-translate-params="{ fieldName: $t('managers.datasetManagement.ckanUrl') }" />
                     </div>
                 </div>
             </form>
@@ -206,13 +206,13 @@ export default defineComponent({
             csvDelimiterCharacterTypes: ckanDescriptor.csvDelimiterCharacterTypes
         }
     },
-    created() {
-        this.dataset = this.selectedDataset
-    },
     watch: {
         selectedDataset() {
             this.dataset = this.selectedDataset
         }
+    },
+    created() {
+        this.dataset = this.selectedDataset
     },
     validations() {
         const ckanFieldsRequired = (value) => {

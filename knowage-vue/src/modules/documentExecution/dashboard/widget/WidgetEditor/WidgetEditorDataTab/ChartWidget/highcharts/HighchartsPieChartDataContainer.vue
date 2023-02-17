@@ -2,10 +2,10 @@
     <div v-if="widgetModel">
         <WidgetEditorColumnTable
             class="p-m-2"
-            :widgetModel="widgetModel"
+            :widget-model="widgetModel"
             :items="columnTableItems['ATTRIBUTES'] ?? []"
             :settings="{ ...commonDescriptor.columnTableSettings, ...highchartDescriptor.pieChartcolumnTableSettings[0] }"
-            chartType="highchartsPieChart"
+            chart-type="highchartsPieChart"
             @rowReorder="onColumnsReorder"
             @itemAdded="onColumnAdded"
             @itemUpdated="onColumnItemUpdate"
@@ -14,16 +14,16 @@
         ></WidgetEditorColumnTable>
         <WidgetEditorColumnTable
             class="p-m-2"
-            :widgetModel="widgetModel"
+            :widget-model="widgetModel"
             :items="columnTableItems['MEASURES'] ?? []"
             :settings="{ ...commonDescriptor.columnTableSettings, ...highchartDescriptor.pieChartcolumnTableSettings[1] }"
-            chartType="highchartsPieChart"
+            chart-type="highchartsPieChart"
             @itemAdded="onColumnAdded"
             @itemUpdated="onColumnItemUpdate"
             @itemSelected="setSelectedColumn"
             @itemDeleted="onColumnDelete"
         ></WidgetEditorColumnTable>
-        <ChartWidgetColumnForm class="p-m-2" :widgetModel="widgetModel" :selectedColumn="selectedColumn"></ChartWidgetColumnForm>
+        <ChartWidgetColumnForm class="p-m-2" :widget-model="widgetModel" :selected-column="selectedColumn"></ChartWidgetColumnForm>
     </div>
 </template>
 
@@ -34,15 +34,13 @@ import { emitter } from '../../../../../DashboardHelpers'
 import { removeSerieFromWidgetModel } from '../../../helpers/chartWidget/highcharts/HighchartsDataTabHelpers'
 import descriptor from '../../TableWidget/TableWidgetDataDescriptor.json'
 import highchartDescriptor from './HighchartsDataContainerDescriptor.json'
-import Dropdown from 'primevue/dropdown'
 import commonDescriptor from '../../common/WidgetCommonDescriptor.json'
 import WidgetEditorColumnTable from '../../common/WidgetEditorColumnTable.vue'
-import WidgetEditorFilterForm from '../../common/WidgetEditorFilterForm.vue'
 import ChartWidgetColumnForm from '../common/ChartWidgetColumnForm.vue'
 
 export default defineComponent({
     name: 'highcharts-widget-pie-chart-data-container',
-    components: { Dropdown, WidgetEditorColumnTable, WidgetEditorFilterForm, ChartWidgetColumnForm },
+    components: { WidgetEditorColumnTable, ChartWidgetColumnForm },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedDataset: { type: Object as PropType<IDataset | null> } },
     data() {
         return {

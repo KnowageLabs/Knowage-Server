@@ -7,22 +7,22 @@
                         {{ $t('managers.metadata.title') }}
                     </template>
                     <template #end>
-                        <KnFabButton icon="fas fa-plus" @click="showForm" data-test="open-form-button"></KnFabButton>
+                        <KnFabButton icon="fas fa-plus" data-test="open-form-button" @click="showForm"></KnFabButton>
                     </template>
                 </Toolbar>
-                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+                <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
                 <Listbox
                     v-if="!loading"
                     class="kn-list--column"
                     :options="metadataList"
                     :filter="true"
-                    :filterPlaceholder="$t('common.search')"
-                    optionLabel="name"
-                    filterMatchMode="contains"
-                    :filterFields="metadataManagementDescriptor.filterFields"
-                    :emptyFilterMessage="$t('managers.widgetGallery.noResults')"
-                    @change="showForm"
+                    :filter-placeholder="$t('common.search')"
+                    option-label="name"
+                    filter-match-mode="contains"
+                    :filter-fields="metadataManagementDescriptor.filterFields"
+                    :empty-filter-message="$t('managers.widgetGallery.noResults')"
                     data-test="metadata-list"
+                    @change="showForm"
                 >
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
@@ -31,14 +31,14 @@
                                 <span>{{ slotProps.option.name }}</span>
                                 <span class="kn-list-item-text-secondary">{{ slotProps.option.dataType }}</span>
                             </div>
-                            <Button icon="pi pi-trash" class="p-button-link p-button-sm" @click="deleteMetadataConfirm(slotProps.option.id)" :data-test="'delete-button'" />
+                            <Button icon="pi pi-trash" class="p-button-link p-button-sm" :data-test="'delete-button'" @click="deleteMetadataConfirm(slotProps.option.id)" />
                         </div>
                     </template>
                 </Listbox>
             </div>
             <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0">
-                <KnHint :title="'managers.metadata.title'" :hint="'managers.metadata.hint'" v-if="!formVisible"></KnHint>
-                <MetadataManagementDetail :model="selectedMetadata" @close="closeForm" @saved="reloadMetadata" @touched="touched = true" v-if="formVisible"></MetadataManagementDetail>
+                <KnHint v-if="!formVisible" :title="'managers.metadata.title'" :hint="'managers.metadata.hint'"></KnHint>
+                <MetadataManagementDetail v-if="formVisible" :model="selectedMetadata" @close="closeForm" @saved="reloadMetadata" @touched="touched = true"></MetadataManagementDetail>
             </div>
         </div>
     </div>
@@ -58,6 +58,10 @@ import mainStore from '../../../App.store'
 export default defineComponent({
     name: 'metadata-management',
     components: { KnFabButton, Listbox, MetadataManagementDetail, KnHint },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             metadataManagementDescriptor: metadataManagementDescriptor,
@@ -67,10 +71,6 @@ export default defineComponent({
             touched: false,
             selectedMetadata: {} as iMetadata
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadAllMetadata()

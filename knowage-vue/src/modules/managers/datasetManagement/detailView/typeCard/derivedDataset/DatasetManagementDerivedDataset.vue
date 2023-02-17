@@ -26,7 +26,7 @@
                     /> -->
 
                     <span class="p-float-label">
-                        <InputText id="label" class="kn-material-input" type="text" maxLength="40" v-model="v$.dataset.sourceDatasetLabel.$model" disabled />
+                        <InputText id="label" v-model="v$.dataset.sourceDatasetLabel.$model" class="kn-material-input" type="text" max-length="40" disabled />
                         <label for="label" class="kn-material-input-label"> {{ $t('common.sourceDataset') }} * </label>
                     </span>
                 </div>
@@ -49,28 +49,25 @@
                 </template>
             </Toolbar>
         </template>
-        <VCodeMirror class="kn-height-full" ref="codeMirror" v-model:value="qbeQuery" :options="codemirrorOptions" />
+        <VCodeMirror ref="codeMirror" v-model:value="qbeQuery" class="kn-height-full" :options="codemirrorOptions" />
     </Dialog>
 
-    <QBE v-if="qbeVisible" :visible="qbeVisible" :dataset="qbeDataset" :returnQueryMode="true" :getQueryFromDatasetProp="getQueryFromDataset" @querySaved="onQbeDialogSave" @close="onQbeDialogClose" :sourceDataset="selectedDataset" />
+    <QBE v-if="qbeVisible" :visible="qbeVisible" :dataset="qbeDataset" :return-query-mode="true" :get-query-from-dataset-prop="getQueryFromDataset" :source-dataset="selectedDataset" @querySaved="onQbeDialogSave" @close="onQbeDialogClose" />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
-import { AxiosResponse } from 'axios'
+// eslint-disable-next-line
 import VCodeMirror, { CodeMirror } from 'codemirror-editor-vue3'
 import useValidate from '@vuelidate/core'
-import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import qbeDescriptor from './DatasetManagementDerivedDatasetDescriptor.json'
-import Dropdown from 'primevue/dropdown'
 import Card from 'primevue/card'
 import Dialog from 'primevue/dialog'
 import QBE from '@/modules/qbe/QBE.vue'
-import deepcopy from 'deepcopy'
 
 export default defineComponent({
-    components: { Card, Dropdown, KnValidationMessages, Dialog, VCodeMirror, QBE },
+    components: { Card, Dialog, VCodeMirror, QBE },
     props: { parentValid: { type: Boolean }, selectedDataset: { type: Object as any }, qbeDatasets: { type: Array as any } },
     emits: ['touched', 'qbeDialogClosed', 'qbeDialogSaved'],
     data() {
@@ -100,15 +97,15 @@ export default defineComponent({
             }
         }
     },
-    created() {
-        this.dataset = this.selectedDataset
-        this.setupCodeMirror()
-    },
     watch: {
         selectedDataset() {
             this.dataset = this.selectedDataset
             this.setupCodeMirror()
         }
+    },
+    created() {
+        this.dataset = this.selectedDataset
+        this.setupCodeMirror()
     },
     validations() {
         const qbeFieldsRequired = (value) => {

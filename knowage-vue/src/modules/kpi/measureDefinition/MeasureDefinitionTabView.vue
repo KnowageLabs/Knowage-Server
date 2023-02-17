@@ -3,15 +3,15 @@
         <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
             <template #start>{{ title }} </template>
             <template #end>
-                <Button class="p-button-text p-button-rounded kn-button" :label="$t('kpi.measureDefinition.alias')" @click="aliasesVisible = !aliasesVisible" data-test="submit-button" />
-                <Button class="p-button-text p-button-rounded kn-button" :label="$t('kpi.measureDefinition.placeholder')" @click="placeholderVisible = !placeholderVisible" data-test="submit-button" />
-                <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="metadataDisabled" @click="submitConfirm" data-test="submit-button" />
-                <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" data-test="close-button" />
+                <Button class="p-button-text p-button-rounded kn-button" :label="$t('kpi.measureDefinition.alias')" data-test="submit-button" @click="aliasesVisible = !aliasesVisible" />
+                <Button class="p-button-text p-button-rounded kn-button" :label="$t('kpi.measureDefinition.placeholder')" data-test="submit-button" @click="placeholderVisible = !placeholderVisible" />
+                <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="metadataDisabled" data-test="submit-button" @click="submitConfirm" />
+                <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" data-test="close-button" @click="closeTemplate" />
             </template>
         </Toolbar>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
         <div class="p-d-flex p-flex-row kn-page-content">
-            <div class="card kn-flex" v-if="!loading">
+            <div v-if="!loading" class="card kn-flex">
                 <TabView v-model:activeIndex="activeTab" @tab-change="setTabChanged($event.index)">
                     <TabPanel>
                         <template #header>
@@ -20,14 +20,14 @@
 
                         <MeasureDefinitionQueryCard
                             :rule="rule"
-                            :datasourcesList="datasourcesList"
+                            :datasources-list="datasourcesList"
                             :aliases="availableAliasList"
                             :placeholders="placeholdersList"
                             :columns="columns"
                             :rows="rows"
-                            :codeInput="codeInput"
+                            :code-input="codeInput"
                             :preview="preview"
-                            :activeTab="activeTab"
+                            :active-tab="activeTab"
                             @queryChanged="queryChanged = true"
                             @loadPreview="previewQuery(false, true, true)"
                             @closePreview="preview = false"
@@ -39,22 +39,22 @@
                             <span>{{ $t('kpi.measureDefinition.metadata') }}</span>
                         </template>
 
-                        <MeasureDefinitionMetadataCard :currentRule="rule" :tipologiesType="domainsKpiRuleoutput" :domainsTemporalLevel="domainsTemporalLevel" :categories="domainsKpiMeasures" @touched="setTouched"></MeasureDefinitionMetadataCard>
+                        <MeasureDefinitionMetadataCard :current-rule="rule" :tipologies-type="domainsKpiRuleoutput" :domains-temporal-level="domainsTemporalLevel" :categories="domainsKpiMeasures" @touched="setTouched"></MeasureDefinitionMetadataCard>
                     </TabPanel>
                 </TabView>
             </div>
             <div v-if="aliasesVisible" class="listbox p-d-flex p-flex-column">
-                <MeasureDefinitionFilterList :header="$t('kpi.measureDefinition.alias')" :list="availableAliasList" listType="alias" @selected="setCodeInput($event)"></MeasureDefinitionFilterList>
+                <MeasureDefinitionFilterList :header="$t('kpi.measureDefinition.alias')" :list="availableAliasList" list-type="alias" @selected="setCodeInput($event)"></MeasureDefinitionFilterList>
             </div>
             <div v-if="placeholderVisible" class="listbox p-d-flex p-flex-column">
-                <MeasureDefinitionFilterList :header="$t('kpi.measureDefinition.placeholder')" :list="placeholdersList" listType="placeholder" @selected="setCodeInput($event)"></MeasureDefinitionFilterList>
+                <MeasureDefinitionFilterList :header="$t('kpi.measureDefinition.placeholder')" :list="placeholdersList" list-type="placeholder" @selected="setCodeInput($event)"></MeasureDefinitionFilterList>
             </div>
         </div>
     </div>
 
-    <MeasureDefinitionSubmitDialog v-if="showSaveDialog" :ruleName="rule.name" :newAlias="newAlias" :reusedAlias="reusedAlias" :newPlaceholder="newPlaceholder" :reusedPlaceholder="reusedPlaceholder" @close="showSaveDialog = false" @save="saveRule($event)"></MeasureDefinitionSubmitDialog>
+    <MeasureDefinitionSubmitDialog v-if="showSaveDialog" :rule-name="rule.name" :new-alias="newAlias" :reused-alias="reusedAlias" :new-placeholder="newPlaceholder" :reused-placeholder="reusedPlaceholder" @close="showSaveDialog = false" @save="saveRule($event)"></MeasureDefinitionSubmitDialog>
 
-    <Dialog :autoZIndex="false" :style="metadataDefinitionTabViewDescriptor.errorDialog.style" :contentStyle="metadataDefinitionTabViewDescriptor.errorDialog.contentStyle"  :modal="true" :visible="errorDialogVisible" :header="errorTitle" class="p-fluid kn-dialog--toolbar--primary error-dialog" :closable="false">
+    <Dialog :auto-z-index="false" :style="metadataDefinitionTabViewDescriptor.errorDialog.style" :content-style="metadataDefinitionTabViewDescriptor.errorDialog.contentStyle"  :modal="true" :visible="errorDialogVisible" :header="errorTitle" class="p-fluid kn-dialog--toolbar--primary error-dialog" :closable="false">
         <p>{{ errorMessage }}</p>
         <template #footer>
             <Button class="kn-button kn-button--secondary" :label="$t('common.close')" @click="closeErrorMessageDialog"></Button>
@@ -89,6 +89,10 @@ export default defineComponent({
         clone: {
             type: String
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     data() {
         return {
@@ -130,7 +134,7 @@ export default defineComponent({
         title(): string {
             return this.clone || this.id ? this.rule.name : this.$t('kpi.measureDefinition.newMeasure')
         },
-        metadataDisabled(): Boolean {
+        metadataDisabled(): boolean {
             let disabled = false
             if (!this.rule.dataSource) {
                 disabled = true
@@ -144,13 +148,9 @@ export default defineComponent({
             }
             return disabled
         },
-        errorDialogVisible(): Boolean {
+        errorDialogVisible(): boolean {
             return this.errorMessage ? true : false
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         this.loading = true
@@ -408,7 +408,7 @@ export default defineComponent({
         columnToRuleOutputs() {
             const tempMetadatas = [] as any[]
 
-            for (let index in this.columns) {
+            for (const index in this.columns) {
                 tempMetadatas.push(this.columns[index].label.toUpperCase())
                 if (this.ruleOutputIndexOfColumnName(this.columns[index].label) === -1) {
                     let type = this.domainsKpiRuleoutput[1]

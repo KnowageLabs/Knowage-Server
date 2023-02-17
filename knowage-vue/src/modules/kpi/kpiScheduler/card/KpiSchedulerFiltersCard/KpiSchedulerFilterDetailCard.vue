@@ -9,9 +9,9 @@
         </template>
         <template #content>
             <div class="p-d-flex p-flex-row">
-                <Dropdown id="valueCd" class="kn-material-input p-mr-2" :style="kpiSchedulerFilterDetailCardDescriptor.input.style" v-model="currentFilter.type" :options="placeholderType" @change="resetValue">
+                <Dropdown id="valueCd" v-model="currentFilter.type" class="kn-material-input p-mr-2" :style="kpiSchedulerFilterDetailCardDescriptor.input.style" :options="placeholderType" @change="resetValue">
                     <template #value="slotProps">
-                        <div class="p-dropdown-car-value" v-if="slotProps.value">
+                        <div v-if="slotProps.value" class="p-dropdown-car-value">
                             <span>{{ slotProps.value['valueCd'] }}</span>
                         </div>
                     </template>
@@ -25,12 +25,12 @@
                 <div v-if="currentFilter.type.valueCd === 'FIXED_VALUE'">
                     <span class="p-float-label">
                         <InputText
+                            v-model.trim="currentFilter.value"
                             class="kn-material-input"
                             :class="{
                                 'p-invalid': currentFilter.value === ''
                             }"
                             :style="kpiSchedulerFilterDetailCardDescriptor.input.style"
-                            v-model.trim="currentFilter.value"
                             @input="$emit('touched')"
                         />
                         <label for="label" class="kn-material-input-label"> {{ $t('common.value') }} * </label>
@@ -39,20 +39,20 @@
 
                 <div v-else-if="currentFilter.type.valueCd === 'TEMPORAL_FUNCTIONS'">
                     <span class="p-float-label">
-                        <Dropdown id="valueCd" class="kn-material-input p-mr-2" :style="kpiSchedulerFilterDetailCardDescriptor.input.style" optionLabel="valueCd" optionValue="valueCd" v-model="currentFilter.value" :options="temporalType" @change="$emit('touched')" />
+                        <Dropdown id="valueCd" v-model="currentFilter.value" class="kn-material-input p-mr-2" :style="kpiSchedulerFilterDetailCardDescriptor.input.style" option-label="valueCd" option-value="valueCd" :options="temporalType" @change="$emit('touched')" />
                     </span>
                 </div>
 
                 <div v-else-if="currentFilter.type.valueCd === 'LOV'">
                     <span class="p-float-label">
                         <AutoComplete
+                            v-model="currentFilter.value"
                             class="p-mr-2"
                             :style="kpiSchedulerFilterDetailCardDescriptor.input.style"
-                            v-model="currentFilter.value"
                             :suggestions="filteredLovs"
                             field="name"
                             :dropdown="true"
-                            :forceSelection="true"
+                            :force-selection="true"
                             @complete="searchCategories($event)"
                             @item-select="setLovValue($event.value, filter)"
                         />

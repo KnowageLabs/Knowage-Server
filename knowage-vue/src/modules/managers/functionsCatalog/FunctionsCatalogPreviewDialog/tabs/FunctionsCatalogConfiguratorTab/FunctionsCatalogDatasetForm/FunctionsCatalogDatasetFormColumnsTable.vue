@@ -2,9 +2,9 @@
     <DataTable
         class="p-datatable-sm kn-table p-m-2"
         :value="inputColumns"
-        editMode="cell"
-        :dataKey="functionsCatalogDatasetFormColumnsTableDescriptor.dataKey"
-        :responsiveLayout="functionsCatalogDatasetFormColumnsTableDescriptor.responsiveLayout"
+        edit-mode="cell"
+        :data-key="functionsCatalogDatasetFormColumnsTableDescriptor.dataKey"
+        :responsive-layout="functionsCatalogDatasetFormColumnsTableDescriptor.responsiveLayout"
         :breakpoint="functionsCatalogDatasetFormColumnsTableDescriptor.breakpoint"
         @cell-edit-complete="onCellEditComplete"
     >
@@ -18,7 +18,7 @@
         <Column :header="$t('managers.functionsCatalog.datasetColumn')">
             <template #editor="slotProps">
                 <div class="p-d-flex p-flex-row p-ai-center">
-                    <Dropdown :style="functionsCatalogDatasetFormColumnsTableDescriptor.dropdownStyle" class="p-mr-2 kn-flex" v-model="slotProps.data['dsColumn']" :options="datasetColumns" />
+                    <Dropdown v-model="slotProps.data['dsColumn']" :style="functionsCatalogDatasetFormColumnsTableDescriptor.dropdownStyle" class="p-mr-2 kn-flex" :options="datasetColumns" />
                     <i class="pi pi-pencil edit-icon kn-flex" />
                 </div>
             </template>

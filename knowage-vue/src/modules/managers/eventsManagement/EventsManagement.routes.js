@@ -1,4 +1,4 @@
-let routes = [
+const routes = [
     {
         path: '/events-management',
         name: 'events-management',

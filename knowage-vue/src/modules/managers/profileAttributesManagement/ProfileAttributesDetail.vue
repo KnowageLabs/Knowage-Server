@@ -4,11 +4,11 @@
             {{ attribute.attributeName }}
         </template>
         <template #end>
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="save" :disabled="formValid" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="formValid" @click="save" />
             <Button class="p-button-text p-button-rounded p-button-plain" icon="pi pi-times" @click="closeForm" />
         </template>
     </Toolbar>
-    <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+    <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
 
     <div class="p-grid p-m-0 p-fluid">
         <div class="p-col-12">
@@ -18,21 +18,21 @@
                         <div class="p-field">
                             <div class="p-inputgroup">
                                 <span class="p-float-label">
-                                    <InputText id="attributeName" maxLength="100" type="text" v-model.trim="v$.attribute.attributeName.$model" @change="onDataChange(v$.attribute.attributeName)" class="p-inputtext p-component kn-material-input" />
+                                    <InputText id="attributeName" v-model.trim="v$.attribute.attributeName.$model" max-length="100" type="text" class="p-inputtext p-component kn-material-input" @change="onDataChange(v$.attribute.attributeName)" />
                                     <label for="attributeName">{{ $t('managers.profileAttributesManagement.form.name') }} *</label>
                                 </span>
                             </div>
-                            <KnValidationMessages :vComp="v$.attribute.attributeName" :additionalTranslateParams="{ fieldName: $t('managers.profileAttributesManagement.form.name') }"></KnValidationMessages>
+                            <KnValidationMessages :v-comp="v$.attribute.attributeName" :additional-translate-params="{ fieldName: $t('managers.profileAttributesManagement.form.name') }"></KnValidationMessages>
                         </div>
 
                         <div class="p-field">
                             <div class="p-inputgroup">
                                 <span class="p-float-label">
-                                    <InputText id="attributeDescription" maxLength="250" type="text" v-model.trim="v$.attribute.attributeDescription.$model" @blur="onDataChange(v$.attribute.attributeDescription)" class="p-inputtext p-component kn-material-input" />
+                                    <InputText id="attributeDescription" v-model.trim="v$.attribute.attributeDescription.$model" max-length="250" type="text" class="p-inputtext p-component kn-material-input" @blur="onDataChange(v$.attribute.attributeDescription)" />
                                     <label for="attributeDescription">{{ $t('managers.profileAttributesManagement.form.description') }} *</label>
                                 </span>
                             </div>
-                            <KnValidationMessages :vComp="v$.attribute.attributeDescription" :additionalTranslateParams="{ fieldName: $t('managers.profileAttributesManagement.form.description') }"></KnValidationMessages>
+                            <KnValidationMessages :v-comp="v$.attribute.attributeDescription" :additional-translate-params="{ fieldName: $t('managers.profileAttributesManagement.form.description') }"></KnValidationMessages>
                         </div>
 
                         <div class="p-field">
@@ -41,27 +41,27 @@
                                     <Dropdown
                                         id="dataType"
                                         v-model="v$.attribute.value.$model"
-                                        @before-show="setDirty(v$.attribute.value)"
                                         :options="attributeTypeValues"
-                                        optionLabel="name"
-                                        optionValue="value"
+                                        option-label="name"
+                                        option-value="value"
                                         class="p-dropdown p-component p-inputwrapper p-inputwrapper-filled kn-material-input"
+                                        @before-show="setDirty(v$.attribute.value)"
                                         @change="onDataChange(v$.attribute.value)"
                                     />
                                     <label for="dataType">{{ $t('managers.profileAttributesManagement.form.dataType') }} *</label>
                                 </span>
                             </div>
-                            <KnValidationMessages :vComp="v$.attribute.value" :additionalTranslateParams="{ fieldName: $t('managers.profileAttributesManagement.form.dataType') }"></KnValidationMessages>
+                            <KnValidationMessages :v-comp="v$.attribute.value" :additional-translate-params="{ fieldName: $t('managers.profileAttributesManagement.form.dataType') }"></KnValidationMessages>
                         </div>
 
                         <div class="p-inputgroup p-col-6 p-sm-12 p-md-6">
                             <div class="p-field-radiobutton p-col-6 p-sm-12 p-md-6">
-                                <RadioButton id="disableLov" name="disableLov" v-model="disableLov" :value="false" @change="hideLovDropdown" />
+                                <RadioButton id="disableLov" v-model="disableLov" name="disableLov" :value="false" @change="hideLovDropdown" />
                                 <label for="disableLov">{{ $t('managers.profileAttributesManagement.form.manualInput') }}</label>
                             </div>
 
                             <div class="p-field-radiobutton p-col-6 p-sm-12 p-md-6">
-                                <RadioButton id="lov" name="enableLov" :value="false" v-model="enableLov" @change="showLovDropdown" />
+                                <RadioButton id="lov" v-model="enableLov" name="enableLov" :value="false" @change="showLovDropdown" />
                                 <label for="enableLov">{{ $t('managers.profileAttributesManagement.form.lov') }}</label>
                             </div>
                         </div>
@@ -72,24 +72,24 @@
                                     <Dropdown
                                         v-model="v$.attribute.lovId.$model"
                                         :options="lovs"
-                                        optionLabel="name"
-                                        optionValue="id"
-                                        @change="onLoveDropdownChange"
-                                        @before-show="setDirty(v$.attribute.lovId)"
+                                        option-label="name"
+                                        option-value="id"
                                         :filter="true"
                                         :placeholder="$t('managers.profileAttributesManagement.form.lovPlaceholder')"
-                                        :showClear="true"
+                                        :show-clear="true"
                                         class="p-dropdown p-component p-inputwrapper p-inputwrapper-filled kn-material-input"
+                                        @change="onLoveDropdownChange"
+                                        @before-show="setDirty(v$.attribute.lovId)"
                                     />
                                     <label for="attributeDescription">{{ $t('managers.profileAttributesManagement.form.lov') }} *</label>
                                 </span>
                             </div>
-                            <KnValidationMessages :vComp="v$.attribute.lovId" :additionalTranslateParams="{ fieldName: $t('managers.profileAttributesManagement.form.lov') }"></KnValidationMessages>
+                            <KnValidationMessages :v-comp="v$.attribute.lovId" :additional-translate-params="{ fieldName: $t('managers.profileAttributesManagement.form.lov') }"></KnValidationMessages>
                         </div>
 
                         <div class="p-inputgroup p-col-6 p-sm-12 p-md-6">
                             <div class="p-field-radiobutton p-col-6 p-sm-12 p-md-6">
-                                <InputSwitch v-model="v$.attribute.multivalue.$model" :onInput="checkSyntax()" @change="onDataChange(v$.attribute.multivalue)" />
+                                <InputSwitch v-model="v$.attribute.multivalue.$model" :on-input="checkSyntax()" @change="onDataChange(v$.attribute.multivalue)" />
                                 <i class="p-ml-2 pi pi-bars"></i>
                                 <label for="multiValue">{{ $t('managers.profileAttributesManagement.form.multiValue') }}</label>
                             </div>
@@ -104,14 +104,14 @@
                         <div class="p-col-6 p-sm-12 p-md-6" :hidden="syntaxSelectHidden">
                             <div class="p-grid p-ai-start vertical-container">
                                 <div class="p-col">
-                                    <RadioButton id="simple" name="syntax" :value="false" v-model="v$.attribute.syntax.$model" @change="onDataChange(v$.attribute.syntax)" />
+                                    <RadioButton id="simple" v-model="v$.attribute.syntax.$model" name="syntax" :value="false" @change="onDataChange(v$.attribute.syntax)" />
                                     <label class="p-m-2" for="simple">{{ $t('managers.profileAttributesManagement.form.syntax.simple') }}</label>
-                                    <div class="p-mt-2" v-if="v$.attribute.syntax.$model === false">* Simple = ('Italy','USA','Serbia', ...)</div>
+                                    <div v-if="v$.attribute.syntax.$model === false" class="p-mt-2">* Simple = ('Italy','USA','Serbia', ...)</div>
                                 </div>
                                 <div class="p-col">
-                                    <RadioButton id="complex" name="syntax" :value="true" v-model="v$.attribute.syntax.$model" @change="onDataChange(v$.attribute.syntax)" />
+                                    <RadioButton id="complex" v-model="v$.attribute.syntax.$model" name="syntax" :value="true" @change="onDataChange(v$.attribute.syntax)" />
                                     <label class="p-m-2" for="complex">{{ $t('managers.profileAttributesManagement.form.syntax.complex') }}</label>
-                                    <div class="p-m-2" v-if="v$.attribute.syntax.$model === true">* Complex = {;{Italy;USA;Serbia; ...}}</div>
+                                    <div v-if="v$.attribute.syntax.$model === true" class="p-m-2">* Complex = {;{Italy;USA;Serbia; ...}}</div>
                                 </div>
                             </div>
                         </div>
@@ -150,6 +150,29 @@ export default defineComponent({
             required: true
         }
     },
+    emits: ['refreshRecordSet', 'closesForm', 'dataChanged'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
+    data() {
+        return {
+            v$: useValidate() as any,
+            apiUrl: import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/',
+            attribute: {} as iAttribute,
+            lovs: {} as iLov,
+            loading: false as boolean,
+            hideForm: false as boolean,
+            isDirty: false as boolean,
+            disableLov: true as boolean,
+            enableLov: true as boolean,
+            LovSelectHidden: true as boolean,
+            syntaxSelectHidden: true as boolean,
+            profileAttributesManagementDescriptor: ProfileAttributesManagementDescriptor,
+            columns: ProfileAttributesManagementDescriptor.columns,
+            attributeTypeValues: ProfileAttributesManagementDescriptor.attributeTypeValues
+        }
+    },
     computed: {
         formValid(): any {
             return this.v$.$invalid
@@ -163,25 +186,6 @@ export default defineComponent({
             }
         }
     },
-    emits: ['refreshRecordSet', 'closesForm', 'dataChanged'],
-    data() {
-        return {
-            v$: useValidate() as any,
-            apiUrl: import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/',
-            attribute: {} as iAttribute,
-            lovs: {} as iLov,
-            loading: false as Boolean,
-            hideForm: false as Boolean,
-            isDirty: false as Boolean,
-            disableLov: true as Boolean,
-            enableLov: true as Boolean,
-            LovSelectHidden: true as Boolean,
-            syntaxSelectHidden: true as Boolean,
-            profileAttributesManagementDescriptor: ProfileAttributesManagementDescriptor,
-            columns: ProfileAttributesManagementDescriptor.columns,
-            attributeTypeValues: ProfileAttributesManagementDescriptor.attributeTypeValues
-        }
-    },
     validations() {
         const customValidators: ICustomValidatorMap = {
             'custom-required': (value) => {
@@ -191,10 +195,6 @@ export default defineComponent({
         return {
             attribute: createValidations('attribute', profileAttributesManagementValidationDescriptor.validations.attribute, customValidators)
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         await this.loadLovs()

@@ -13,19 +13,19 @@
         <template #content>
             <div class="p-d-flex p-flex-row">
                 <DataTable
-                    :value="items"
                     id="link-table"
-                    class="p-datatable-sm kn-table p-mr-3"
                     v-model:selection="selectedItem"
-                    selectionMode="single"
                     v-model:expandedRows="expandedRows"
-                    :loading="loading"
-                    dataKey="id"
                     v-model:filters="filters"
-                    :globalFilterFields="glossaryUsageLinkCardDescriptor.globalFilterFields"
+                    :value="items"
+                    class="p-datatable-sm kn-table p-mr-3"
+                    selection-mode="single"
+                    :loading="loading"
+                    data-key="id"
+                    :global-filter-fields="glossaryUsageLinkCardDescriptor.globalFilterFields"
                     :paginator="true"
                     :rows="20"
-                    responsiveLayout="stack"
+                    responsive-layout="stack"
                     breakpoint="960px"
                     @rowSelect="onRowExpand"
                     @rowExpand="onRowExpand"
@@ -34,7 +34,7 @@
                         <div class="table-header p-d-flex p-ai-center">
                             <span id="search-container" class="p-input-icon-left p-mr-3">
                                 <i class="pi pi-search" />
-                                <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" />
+                                <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" />
                             </span>
                         </div>
                     </template>
@@ -42,23 +42,23 @@
                     <template #loading> {{ $t('common.info.dataLoading') }}</template>
                     <template #expansion="slotProps">
                         <div :style="glossaryUsageLinkCardDescriptor.dropZoneStyle" @drop="onDragDrop($event, slotProps.data)" @dragover.prevent @dragenter.prevent>
-                            <Chip class="p-m-2" v-for="word in associatedWords[slotProps.data.id]" :key="word.WORD_ID" :label="word.WORD">
+                            <Chip v-for="word in associatedWords[slotProps.data.id]" :key="word.WORD_ID" class="p-m-2" :label="word.WORD">
                                 <span>{{ word.WORD }}</span>
                                 <i class="pi pi-times-circle chip-icon p-ml-3" @click="deleteWordConfirm(word.WORD_ID, slotProps.data)" />
                             </Chip>
                         </div>
                     </template>
-                    <Column :expander="true" :headerStyle="glossaryUsageLinkCardDescriptor.expanderHeaderStyle" />
-                    <Column class="kn-truncated" v-for="col of glossaryUsageLinkCardDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true"></Column>
+                    <Column :expander="true" :header-style="glossaryUsageLinkCardDescriptor.expanderHeaderStyle" />
+                    <Column v-for="col of glossaryUsageLinkCardDescriptor.columns" :key="col.field" class="kn-truncated" :field="col.field" :header="$t(col.header)" :sortable="true"></Column>
                     <Column v-if="showModelColumn" class="kn-truncated" field="model" :header="'model'" :sortable="true"></Column>
                 </DataTable>
-                <div class="kn-flex" v-if="selectedItem && selectedItem.id && selectedItem.itemType !== 'document'">
+                <div v-if="selectedItem && selectedItem.id && selectedItem.itemType !== 'document'" class="kn-flex">
                     <Toolbar class="kn-toolbar kn-toolbar--secondary">
                         <template #start>
                             {{ $t('managers.glossary.glossaryUsage.column') }}
                         </template>
                     </Toolbar>
-                    <GlossaryUsageLinkTree :treeWords="associatedWordsTree[selectedItem.id]" @delete="deleteTreeWord" @wordDropped="onDragDrop($event.event, $event.item)"></GlossaryUsageLinkTree>
+                    <GlossaryUsageLinkTree :tree-words="associatedWordsTree[selectedItem.id]" @delete="deleteTreeWord" @wordDropped="onDragDrop($event.event, $event.item)"></GlossaryUsageLinkTree>
                 </div>
             </div>
         </template>
@@ -89,6 +89,10 @@ export default defineComponent({
         treeWords: { type: Object }
     },
     emits: ['selected'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             glossaryUsageLinkCardDescriptor,
@@ -113,10 +117,6 @@ export default defineComponent({
             },
             deep: true
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadAssociatedWords()
