@@ -2130,6 +2130,7 @@
             "emptyField": "Value or description field is empty",
             "fields": "Fields",
             "filterNullValues": "If a record contains some null values it will be filtered out",
+            "fixedListInvalidError": "You must add at least one item with both value and description.",
             "fixedListWizard": "WIZARD FIX LOV",
             "hint": "The LOVs management page allows you to create List Of Values to use inside your drivers or parameters. </br>There are many different type of LOVs that can be generated, using queries, JAVA classes, scripts or entering the data manually. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "infoRules": "Rules",
