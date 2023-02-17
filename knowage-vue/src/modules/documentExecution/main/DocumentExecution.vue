@@ -1085,7 +1085,7 @@ export default defineComponent({
             this.newDashboardMode = false
         },
         async onExecuteCrossNavigation(payload: any) {
-            this.document = getDocumentForCrossNavigation(payload, this.document)
+            this.document = getDocumentForCrossNavigation(payload, this.document, this.filtersData)
             console.log('!!!!!!!!! DOCUMENT: ', this.document)
             updateBreadcrumbForCrossNavigation(this.breadcrumbs, this.document)
             //  this.filtersData = await loadFilters(false, this.filtersData, this.document, this.breadcrumbs, this.userRole, this.parameterValuesMap, this.tabKey as string, this.sessionEnabled, this.$http, this.dateFormat, this)
