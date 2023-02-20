@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,7 +33,6 @@ import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -47,6 +47,7 @@ public class CatalogFunctionDataProxy extends AbstractDataProxy {
 	private final Map<String, String> requestHeaders;
 	private final HttpMethod method;
 	private IDataStore dataStore;
+	private static transient Logger logger = Logger.getLogger(CatalogFunctionDataProxy.class);
 
 	public CatalogFunctionDataProxy(String address, HttpMethod method, Map<String, String> requestHeaders, JSONObject requestBody) {
 		this.requestBody = requestBody;
@@ -64,6 +65,8 @@ public class CatalogFunctionDataProxy extends AbstractDataProxy {
 			putDataStoreInRequestBody();
 
 			Response response = RestUtilities.makeRequest(this.method, this.address, this.requestHeaders, this.requestBody.toString());
+			logger.info("CatalogFunctionDataProxy, this.method [" + this.method + "], this.address [" + this.address + "], this.requestHeaders ["
+					+ this.requestHeaders + "], this.requestBody.toString() [" + this.requestBody.toString() + "]");
 			String responseBody = response.getResponseBody();
 			if (response.getStatusCode() != HttpStatus.SC_OK) {
 				throw new CatalogFunctionException(responseBody);
@@ -86,7 +89,7 @@ public class CatalogFunctionDataProxy extends AbstractDataProxy {
 		// put metadata
 		JSONArray metadataArray = new JSONArray();
 		for (int i = 0; i < dataStore.getMetaData().getFieldsMeta().size(); i++) {
-			IFieldMetaData meta = (IFieldMetaData) dataStore.getMetaData().getFieldsMeta().get(i);
+			IFieldMetaData meta = dataStore.getMetaData().getFieldsMeta().get(i);
 			JSONObject metaObj = new JSONObject();
 			metaObj.put("header", meta.getName());
 			metaObj.put("type", meta.getType());
@@ -97,7 +100,7 @@ public class CatalogFunctionDataProxy extends AbstractDataProxy {
 		// put records
 		JSONArray recordsArray = new JSONArray();
 		for (int i = 0; i < dataStore.getRecords().size(); i++) {
-			IRecord record = (Record) dataStore.getRecords().get(i);
+			IRecord record = dataStore.getRecords().get(i);
 			JSONArray fieldsArray = new JSONArray();
 			for (int j = 0; j < record.getFields().size(); j++) {
 				IField field = record.getFields().get(j);
