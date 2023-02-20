@@ -1,40 +1,42 @@
-<!-- linear gradient -->
-<div class="mapWidgetLegend" ng-class="ngModel.style.legend.alignment" ng-show="isShowLegend" ng-if="legend.length>0 && (!ngModel.style.legend || ngModel.style.legend.visualizationType!='Range')">
-	<button class="toggleButton" ng-click="hideLegend()"><md-icon md-font-icon="fas fa-chevron-down"></button>
-	<div ng-repeat="legendElem in legend">
-		<div layout="column" ng-if="legendElem.method!='CLASSIFY_BY_RANGES' && getLayerVisibility(legendElem.layer)">
-			<span class="legendLayerLabel" flex>&nbsp;{{legendElem.alias}}</span>
-			<div ng-if="legendElem.method!='CLASSIFY_BY_RANGES'" layout="row" layout-align="start center">
-				  <span class="legendStartLimit">{{legendElem.limits[0]}}&nbsp;&nbsp;</span>
-				  <div style="height:10px;width:90%;display:block;border-radius:25px;" ng-style="{ background: 'linear-gradient(to right ' + legendElem.colors + ')' }"></div>
-				  <span class="legendEndLimit">&nbsp;&nbsp;{{legendElem.limits[1]}}</span>
+<div class="mapWidgetLegendContainer" draggable="ngModel.style.legend.position">
+	<!-- linear gradient -->
+	<div class="mapWidgetLegend" ng-class="ngModel.style.legend.alignment" ng-show="isShowLegend" ng-if="legend.length>0 && (!ngModel.style.legend || ngModel.style.legend.visualizationType!='Range')">
+		<button class="toggleButton" ng-click="hideLegend()"><md-icon md-font-icon="fas fa-chevron-down"></button>
+		<div ng-repeat="legendElem in legend">
+			<div layout="column" ng-if="legendElem.method!='CLASSIFY_BY_RANGES' && getLayerVisibility(legendElem.layer)">
+				<span class="legendLayerLabel" flex>&nbsp;{{legendElem.alias}}</span>
+				<div ng-if="legendElem.method!='CLASSIFY_BY_RANGES'" layout="row" layout-align="start center">
+					  <span class="legendStartLimit">{{legendElem.limits[0]}}&nbsp;&nbsp;</span>
+					  <div style="height:10px;width:90%;display:block;border-radius:25px;" ng-style="{ background: 'linear-gradient(to right ' + legendElem.colors + ')' }"></div>
+					  <span class="legendEndLimit">&nbsp;&nbsp;{{legendElem.limits[1]}}</span>
+				</div>
 			</div>
-		</div>
-		<div layout="column" layout-align="space-around center" ng-if="legendElem.method=='CLASSIFY_BY_RANGES' && getLayerVisibility(legendElem.layer)">
-			<span class="legendLayerLabel" flex>&nbsp;{{legendElem.alias}}</span>
-			<div layout="row" style="align-items:center" ng-repeat="r in legendElem.ranges">
-				<div style="height:10px;width:10px;border-radius:25px;" ng-style="{ background: r.color }"></div>
-				<div style="font-size:small;margin-left:5px;margin-right:5px;">[{{r.from}}-{{r.to}}]</div>
-			</div>
-		</div>
-	</div>
-</div>
-<!-- range -->
-<div class="rangesContainer" ng-class="ngModel.style.legend.alignment" ng-if="ngModel.style.legend.visualizationType=='Range'">
-	<div class="mapWidgetLegend ranges" ng-show="isShowLegend" ng-repeat="legendElem in legend" ng-if="getLayerVisibility(legendElem.layer)">
-		<div layout="column" layout-align="space-around center" >
-			<span class="legendLayerLabel" flex>&nbsp;{{legendElem.alias}}</span>
-			<div layout="row" layout-align="center center" ng-repeat="r in legendElem.ranges">
-				<div style="height:10px;width:10px;border-radius:25px;" ng-style="{ background: r.color }"></div>
-				<div style="font-size:small;margin-left:5px;margin-right:5px;" ng-if="!legendElem.dataNotAvailable">[{{r.from}}-{{r.to}}]</div>
-				<div style="font-size:small;margin-left:5px;margin-right:5px;" ng-if="legendElem.dataNotAvailable">{{translate.load('sbi.cockpit.map.legend.dataNotAvailable')}}</div>
+			<div layout="column" layout-align="space-around center" ng-if="legendElem.method=='CLASSIFY_BY_RANGES' && getLayerVisibility(legendElem.layer)">
+				<span class="legendLayerLabel" flex>&nbsp;{{legendElem.alias}}</span>
+				<div layout="row" style="align-items:center" ng-repeat="r in legendElem.ranges">
+					<div style="height:10px;width:10px;border-radius:25px;" ng-style="{ background: r.color }"></div>
+					<div style="font-size:small;margin-left:5px;margin-right:5px;">[{{r.from}}-{{r.to}}]</div>
+				</div>
 			</div>
 		</div>
 	</div>
-	<button class="toggleButton" ng-click="hideLegend()" ng-show="isShowLegend && getVisibleLayersCount()>0"><md-icon md-font-icon="fas fa-chevron-down"></button>
-</div>
-
-<!-- fake panel when legend is hidden -->
-<div  class="mapWidgetLegend" ng-class="[{'ranges': legend[0].method=='CLASSIFY_BY_RANGES'}, ngModel.style.legend.alignment]" ng-show="!isShowLegend"">
-	<button class="toggleButton" ng-click="showLegend()"><md-icon md-font-icon="fas fa-chevron-up"></md-icon></button>
+	<!-- range -->
+	<div class="mapWidgetLegend rangesContainer" ng-class="ngModel.style.legend.alignment" ng-if="ngModel.style.legend.visualizationType=='Range'">
+		<div class="mapWidgetLegend ranges" ng-show="isShowLegend" ng-repeat="legendElem in legend" ng-if="getLayerVisibility(legendElem.layer)">
+			<div layout="column" layout-align="space-around center" >
+				<span class="legendLayerLabel" flex>&nbsp;{{legendElem.alias}}</span>
+				<div layout="row" layout-align="center center" ng-repeat="r in legendElem.ranges">
+					<div style="height:10px;width:10px;border-radius:25px;" ng-style="{ background: r.color }"></div>
+					<div style="font-size:small;margin-left:5px;margin-right:5px;" ng-if="!legendElem.dataNotAvailable">[{{r.from}}-{{r.to}}]</div>
+					<div style="font-size:small;margin-left:5px;margin-right:5px;" ng-if="legendElem.dataNotAvailable">{{translate.load('sbi.cockpit.map.legend.dataNotAvailable')}}</div>
+				</div>
+			</div>
+		</div>
+		<button class="toggleButton" ng-click="hideLegend()" ng-show="isShowLegend && getVisibleLayersCount()>0"><md-icon md-font-icon="fas fa-chevron-down"></button>
+	</div>
+	
+	<!-- fake panel when legend is hidden -->
+	<div  class="mapWidgetLegend" ng-class="ngModel.style.legend.alignment" ng-show="!isShowLegend"">
+		<span class="legendLayerLabel" flex>{{translate.load('sbi.cockpit.map.legend.label')}}</span><button class="toggleButton" ng-click="showLegend()"><md-icon md-font-icon="fas fa-chevron-up"></md-icon></button>
+	</div>
 </div>

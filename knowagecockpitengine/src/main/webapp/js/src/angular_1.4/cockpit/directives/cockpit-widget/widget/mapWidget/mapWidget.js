@@ -23,6 +23,88 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				return sbiModule_i18n.getI18n(label);
 			}
 		})
+		.directive('draggable', ['$document', function($document) {
+			return {
+				restrict: 'A',
+				link: function(scope, elm, attrs) {
+					var startX, startY, initialMouseX, initialMouseY;
+					elm.css({ position: 'absolute' });
+
+					var currPosition = scope.$eval(attrs.draggable);
+
+					if (currPosition == undefined) {
+						scope.$eval(attrs.draggable + "= [100,10]");
+						currPosition = scope.$eval(attrs.draggable);
+					}
+
+					elm.css({
+						top:  currPosition[0],
+						left: currPosition[1]
+					});
+					
+					elm.bind('mouseover', function($event) {
+						elm.css({ cursor: "grab" });
+					});
+
+					elm.bind('mouseout', function($event) {
+						elm.css({ cursor: "unset" });
+					});
+
+					elm.bind('mousedown', function($event) {
+						startX = elm.prop('offsetLeft');
+						startY = elm.prop('offsetTop');
+						initialMouseX = $event.clientX;
+						initialMouseY = $event.clientY;
+						$document.bind('mousemove', mousemove);
+						$document.bind('mouseup', mouseup);
+						return false;
+					});
+
+					function mousemove($event) {
+						var dx = $event.clientX - initialMouseX;
+						var dy = $event.clientY - initialMouseY;
+						
+						currPosition[0] = startY + dy;
+						currPosition[1] = startX + dx;
+						
+						var parenteElementBoundingRect = elm[0].closest(".map").getBoundingClientRect();
+						var parentWidth = parenteElementBoundingRect.width;
+						var parentHeight = parenteElementBoundingRect.height;
+						
+						var subElementBoundingRect = elm[0].querySelector(".mapWidgetLegend:not(.ng-hide)").getBoundingClientRect();
+						var legendWidth = subElementBoundingRect.width;
+						var legendHeight = subElementBoundingRect.height;
+						
+						currPosition[0] = Math.max(currPosition[0], 0 + legendHeight);
+						currPosition[1] = Math.max(currPosition[1], 0);
+						
+						currPosition[0] = Math.min(currPosition[0], parentHeight);
+						currPosition[1] = Math.min(currPosition[1], parentWidth  - legendWidth);
+						
+						elm.css({
+							top:  currPosition[0],
+							left: currPosition[1]
+						});
+						return false;
+					}
+
+					function mouseup() {
+						$document.unbind('mousemove', mousemove);
+						$document.unbind('mouseup', mouseup);
+					}
+				}
+			};
+		}])
+		.directive('mapWidgetLabelPanel', ['$document', function($document) {
+			return {
+				restrict: 'E',
+				scope: false,
+				link: function(scope, elm, attrs) {
+					
+				},
+				templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/mapWidget/templates/mapWidgetLegendPanel.html'
+			};
+		}])
 		.directive('cockpitMapWidget',function(){
 			return{
 				templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/mapWidget/templates/mapWidgetTemplate.html',
@@ -1329,18 +1411,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.animationStatus = {};
 		
+		$scope.getAnimatedLayers = function() {
+			return $scope.ngModel.content.layers.filter($scope.isLayerAnimated);
+		}
+
 		$scope.toggleAnimation = function(layerName) {
-			if (!$scope.animationStatus[layerName]) {
-				$scope.animationStatus[layerName] = {};
-				$scope.animationStatus[layerName].inPlay = true;
-			} else {
-				$scope.animationStatus[layerName].inPlay = !$scope.animationStatus[layerName].inPlay;
-			}
-			
-			if ($scope.animationStatus[layerName].inPlay) {
-				setTimeout(() => {
-					$scope.animateLayer(layerName);
-				}, 0);
+			if (layerName != undefined) {
+				if (!$scope.animationStatus[layerName]) {
+					$scope.animationStatus[layerName] = {};
+					$scope.animationStatus[layerName].inPlay = true;
+				} else {
+					$scope.animationStatus[layerName].inPlay = !$scope.animationStatus[layerName].inPlay;
+				}
+				
+				if ($scope.animationStatus[layerName].inPlay) {
+					setTimeout(() => {
+						$scope.animateLayer(layerName);
+					}, 0);
+				}
 			}
 		}
 
@@ -1348,6 +1436,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			Object.values($scope.animationStatus).forEach(function(e) {
 				e.inPlay = false;
 			});
+		}
+
+		$scope.isAnimationInPlay = function() {
+			return Object.values($scope.animationStatus).find(function(e) { return e.inPlay; }) != null;
+		}
+
+		$scope.getAnimationCurrentValue = function() {
+			var animationInPlay = Object.values($scope.animationStatus).find(function(e) { return e.inPlay; });
+			return animationInPlay && animationInPlay.currValue || "...";
 		}
 
 		$scope.animateLayer = function(layerName) {
@@ -1395,18 +1492,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}, 100);
 			}
 		}
-		
-		$scope.animationStyleFunction = function(feature, resolution) {
-			
-		}
-		
+
 		$scope.animationLoop = function(index, animationStatus, distinctValues, styleHidden, styleVisible, featureMapByAnimatedCol) {
 
 			i = distinctValues[index];
+			animationStatus.currValue = i;
+
 			var valuesToHide = distinctValues.filter(function(e) { return e != i; });
-			
+
 			featureMapByAnimatedCol.get(i).forEach(function(e) { e.setStyle(null); });
-			
+
 			for (var j of valuesToHide) {
 				featureMapByAnimatedCol.get(j).forEach(function(e) { e.setStyle(styleHidden); });
 			}
@@ -1424,6 +1519,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.animationLoop(index, animationStatus, distinctValues, styleHidden, styleVisible, featureMapByAnimatedCol);
 				}, 1000);
 			} else {
+				animationStatus.currValue = null;
 				featureMapByAnimatedCol.forEach(function(value, key) {
 					value.forEach(function(e) {
 						var oldStyleFunction = e.get("_animation_old_style_func");
@@ -1431,6 +1527,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					});
 				});
 			}
+
+			$scope.$digest();
+
 		}
 
 		$scope.hasAnimatedLayer = function() {

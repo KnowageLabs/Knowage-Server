@@ -125,13 +125,13 @@
 													</md-input-container>
 												</td>
 												<td style="text-align:center">
-													<md-checkbox ng-model="column.properties.aggregateBy" aria-label="Aggregate by this attribute" ng-if="column.fieldType=='ATTRIBUTE' || column.fieldType=='SPATIAL_ATTRIBUTE'" ng-change="setAggregateBy(column,layer)"/>
+													<md-checkbox ng-model="column.properties.aggregateBy" aria-label="Aggregate by this attribute" ng-if="column.fieldType=='ATTRIBUTE' || column.fieldType=='SPATIAL_ATTRIBUTE'" ng-change="setAggregateBy(column,layer)" ng-disabled="column.properties.animateOn"/>
 												</td>
 												<td style="text-align:center">
-													<md-checkbox ng-model="column.properties.animateOn" aria-label="Animate widget on this attribute" ng-if="column.fieldType=='ATTRIBUTE' || column.fieldType=='SPATIAL_ATTRIBUTE'" ng-change="setAnimateOn(column,layer)"/>
+													<md-checkbox ng-model="column.properties.animateOn" aria-label="Animate widget on this attribute" ng-if="column.properties.aggregateBy && (column.fieldType=='ATTRIBUTE' || column.fieldType=='SPATIAL_ATTRIBUTE')" ng-change="setAnimateOn(column,layer)"/>
 												</td>
 												<td style="text-align:center">
-													<md-checkbox ng-model="column.properties.showDetails" aria-label="Show column on details" ng-if="column.fieldType=='MEASURE' || column.fieldType=='ATTRIBUTE'"  ng-disabled="column.fieldType=='ATTRIBUTE' && !column.properties.aggregateBy"/>
+													<md-checkbox ng-model="column.properties.showDetails" aria-label="Show column on details" ng-if="column.fieldType=='MEASURE' || column.fieldType=='ATTRIBUTE'" ng-disabled="column.fieldType=='ATTRIBUTE' && !column.properties.aggregateBy"/>
 												</td>
 												<td style="text-align:center">
 													<md-checkbox ng-model="column.properties.showMap" aria-label="Show column on map" ng-if="column.fieldType=='MEASURE'"/>

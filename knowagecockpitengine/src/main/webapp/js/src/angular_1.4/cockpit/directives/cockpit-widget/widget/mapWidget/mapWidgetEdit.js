@@ -216,6 +216,8 @@ function mapWidgetEditControllerFunction(
 		for(var i in columnsList){
 			if(columnsList[i].alias !== column.alias){
 				columnsList[i].properties.animateOn = false;
+			} else {
+				columnsList[i].properties.aggregateBy = true;
 			}
 		}
 
