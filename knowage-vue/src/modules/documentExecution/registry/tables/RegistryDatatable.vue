@@ -44,6 +44,7 @@ export default defineComponent({
         pagination: { type: Object },
         entity: { type: Object as PropType<String | null> },
         id: { type: String },
+        keyColumnName: { type: String as any },
         stopWarningsState: { type: Array },
         dataLoading: { type: Boolean }
     },
@@ -391,6 +392,7 @@ export default defineComponent({
                 tempRow.uniqueId = cryptoRandomString({ length: 16, type: 'base64' })
                 tempRow.isNew = true
                 delete tempRow.id
+                if (this.keyColumnName) delete tempRow[this.keyColumnName]
                 this.addRowToFirstPosition(tempRow)
             })
         },

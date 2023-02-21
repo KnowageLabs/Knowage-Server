@@ -42,6 +42,7 @@
                         :entity="entity"
                         :stopWarningsState="stopWarningsState"
                         :dataLoading="dataLoading"
+                        :keyColumnName="keyColumnName"
                         @saveRegistry="saveRegistry"
                         @rowChanged="onRowChanged"
                         @rowDeleted="onRowDeleted"
@@ -93,7 +94,8 @@ export default defineComponent({
             isPivot: false,
             loading: false,
             dataLoading: false,
-            sortModel: null as any
+            sortModel: null as any,
+            keyColumnName: '' as string
         }
     },
     watch: {
@@ -147,8 +149,13 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => {
                     this.pagination.size = response.data.results
                     this.registry = response.data
+                    this.loadKeyColumnName(response.data.metaData.fields)
                 })
                 .catch(() => {})
+        },
+        loadKeyColumnName(fieldsMetadata) {
+            const keyColumn = fieldsMetadata.find((field) => field.keyColumn === true)
+            this.keyColumnName = keyColumn.header
         },
         loadRegistryData() {
             if (this.registry) {
@@ -213,7 +220,7 @@ export default defineComponent({
         },
         onRowChanged(row: any) {
             const tempRow = { ...row }
-            const index = this.updatedRows.findIndex((el: any) => el.id === tempRow.id)
+            const index = this.updatedRows.findIndex((el: any) => el.uniqueId === tempRow.uniqueId)
             index === -1 ? this.updatedRows.push(tempRow) : (this.updatedRows[index] = tempRow)
         },
         async saveRegistry() {
@@ -277,6 +284,7 @@ export default defineComponent({
                             this.pagination.size--
                         }
                     } else {
+                        this.pagination.start = 0
                         await this.reloadRegistryData(true)
                     }
                 })
