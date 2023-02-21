@@ -1,6 +1,5 @@
 <template>
     <div id="registry-gric-container" class="kn-height-full p-d-flex p-flex-column">
-        {{ sortModel }}
         <div id="registry-grid-toolbar" class="p-d-flex p-flex-row p-ai-center" :style="registryDescriptor.styles.tableToolbar">
             <div v-if="selectedRows.length > 0" class="p-ml-1">{{ selectedRows.length }} {{ $t('documentExecution.registry.grid.rowsSelected') }}</div>
             <div id="operation-buttons-containter" class="p-ml-auto" :style="registryDescriptor.styles.tableToolbarButtonContainer">
@@ -11,7 +10,6 @@
             <Button icon="fas fa-save" class="p-button-text p-button-rounded p-button-plain kn-button-light" @click="$emit('saveRegistry')" />
         </div>
         <ag-grid-vue v-if="!loading" class="registry-grid ag-theme-alpine kn-height-full" :rowData="rows" :gridOptions="gridOptions" :context="context" />
-        <!-- <ag-grid-vue class="registry-grid ag-theme-alpine kn-height-full" :rowData="rows" :gridOptions="gridOptions" :context="context" /> -->
     </div>
 
     <RegistryDatatableWarningDialog :visible="warningVisible" :columns="dependentColumns" @close="onWarningDialogClose"></RegistryDatatableWarningDialog>
