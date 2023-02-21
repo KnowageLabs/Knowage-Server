@@ -18,11 +18,11 @@ export function loadNavigationParamsInitialValue(vueComponent: any) {
                     })
                 } else {
                     const crossNavigationValue = Array.isArray(vueComponent.document.navigationParams[key]) && vueComponent.document.navigationParams[key][0] ? vueComponent.document.navigationParams[key][0] : vueComponent.document.navigationParams[key]
-                    const parameterDescription = tempParam.parameterValue[0] ? tempParam.parameterValue[0].description : ''
+                    let parameterDescription = vueComponent.document.navigationParams[key + '_field_visible_description']
+                    if (!parameterDescription) parameterDescription = tempParam.parameterValue[0] ? tempParam.parameterValue[0].description : ''
                     if (tempParam.parameterValue[0] && tempParam.parameterValue[0].value === '') tempParam.parameterValue = []
                     if (!checkIfMultivalueDriverContainsCrossNavigationValue(tempParam, crossNavigationValue) || parameterDescription === 'NOT ADMISSIBLE') return
                     if (crossNavigationValue) tempParam.parameterValue[0] = { value: crossNavigationValue, description: parameterDescription }
-                    if (vueComponent.document.navigationParams[key + '_field_visible_description']) vueComponent.document.navigationParams[key + '_field_visible_description'] = tempParam.parameterValue[0].description
                     if (tempParam.type === 'DATE' && tempParam.parameterValue[0] && tempParam.parameterValue[0].value) {
                         const date = moment(tempParam.parameterValue[0].value, 'DD/MM/YYYY HH:mm:ss.SSS') as any
                         const isValidDate = date.isValid()
