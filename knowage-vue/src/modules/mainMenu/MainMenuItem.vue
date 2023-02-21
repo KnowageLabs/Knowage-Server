@@ -1,7 +1,7 @@
 <template>
     <li role="menu" :style="[item.style, getVisibilityClass(item)]" :title="getInternationalizedValue()">
-        <router-link v-if="item.to && !item.disabled" :to="cleanTo" custom v-slot="{ navigate, isActive }" exact>
-            <a @click="onClick($event, navigate)" role="menuitem" :class="isActive && 'router-link-active'">
+        <router-link v-if="item.to && !item.disabled" v-slot="{ navigate, isActive }" :to="cleanTo" custom exact>
+            <a role="menuitem" :class="isActive && 'router-link-active'" @click="onClick($event, navigate)">
                 <Badge v-if="badge > 0" :value="badge" severity="danger"></Badge>
                 <span v-if="item.iconCls" :class="['p-menuitem-icon', item.iconCls]"></span>
                 <img v-if="item.custIcon" :src="item.custIcon" />
@@ -10,7 +10,7 @@
                 <i v-if="item.items" class="pi pi-fw pi-angle-right"></i>
             </a>
         </router-link>
-        <a v-else @click="onClick" :target="item.target" role="menuitem" :tabindex="item.disabled ? null : '0'">
+        <a v-else :target="item.target" role="menuitem" :tabindex="item.disabled ? null : '0'" @click="onClick">
             <Badge v-if="badge > 0" :value="badge" severity="danger"></Badge>
             <span v-if="item.iconCls && item.command != 'languageSelection'" :class="['p-menuitem-icon', item.iconCls]"></span>
             <img v-if="item.custIcon" :src="item.custIcon" />
@@ -31,12 +31,12 @@ import store from '../../App.store.js'
 export default defineComponent({
     name: 'kn-menu-item',
     components: { Badge },
-    emits: ['click'],
     props: {
         item: null,
         badge: null,
         internationalize: { type: Boolean, required: false, default: false }
     },
+    emits: ['click'],
     data() {
         return {
             openedLi: false,
@@ -60,8 +60,8 @@ export default defineComponent({
 
             return !item.visible ? 'display:none' : ''
         },
-        getInternationalizedValue(): String {
-            let value = this.item.descr ? this.item.descr : this.item.label
+        getInternationalizedValue(): string {
+            const value = this.item.descr ? this.item.descr : this.item.label
             if (this.internationalize) {
                 // @ts-ignore
                 return this.$internationalization(value)

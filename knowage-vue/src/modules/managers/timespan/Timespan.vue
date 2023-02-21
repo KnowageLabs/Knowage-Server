@@ -33,6 +33,10 @@ import mainStore from '../../../App.store'
 export default defineComponent({
     name: 'timespan',
     components: { KnListBox, FabButton },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             timespanDescriptor,
@@ -40,10 +44,6 @@ export default defineComponent({
             categories: [] as iCategory[],
             loading: false
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         await this.loadTimespans()

@@ -6,10 +6,10 @@
                     <span class="p-float-label">
                         <InputText
                             id="label"
+                            v-model="v$.layer.label.$model"
                             class="kn-material-input"
                             type="text"
-                            maxLength="100"
-                            v-model="v$.layer.label.$model"
+                            max-length="100"
                             :class="{
                                 'p-invalid': v$.layer.label.$invalid && v$.layer.label.$dirty
                             }"
@@ -18,16 +18,16 @@
                         />
                         <label for="label" class="kn-material-input-label"> {{ $t('common.label') }} * </label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.layer.label" :additionalTranslateParams="{ fieldName: $t('common.label') }" />
+                    <KnValidationMessages class="p-mt-1" :v-comp="v$.layer.label" :additional-translate-params="{ fieldName: $t('common.label') }" />
                 </div>
                 <div class="p-field p-col-12 p-lg-6">
                     <span class="p-float-label">
                         <InputText
                             id="name"
+                            v-model="v$.layer.name.$model"
                             class="kn-material-input"
                             type="text"
-                            maxLength="100"
-                            v-model="v$.layer.name.$model"
+                            max-length="100"
                             :class="{
                                 'p-invalid': v$.layer.name.$invalid && v$.layer.name.$dirty
                             }"
@@ -36,17 +36,17 @@
                         />
                         <label for="name" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.layer.name" :additionalTranslateParams="{ fieldName: $t('common.name') }" />
+                    <KnValidationMessages class="p-mt-1" :v-comp="v$.layer.name" :additional-translate-params="{ fieldName: $t('common.name') }" />
                 </div>
                 <div class="p-field p-col-12 p-lg-6">
                     <span class="p-float-label">
-                        <Textarea id="descr" class="kn-material-input" rows="1" maxLength="100" :autoResize="true" v-model="layer.descr" @change="$emit('touched')" />
+                        <Textarea id="descr" v-model="layer.descr" class="kn-material-input" rows="1" max-length="100" :auto-resize="true" @change="$emit('touched')" />
                         <label for="descr" class="kn-material-input-label"> {{ $t('common.description') }} </label>
                     </span>
                 </div>
                 <div class="p-field p-col-12 p-lg-6">
                     <span class="p-float-label">
-                        <Dropdown id="category" class="kn-material-input" v-model="layer.category_id" :options="allCategories" optionLabel="VALUE_NM" optionValue="VALUE_ID" :showClear="true" @change="onTypeChange" />
+                        <Dropdown id="category" v-model="layer.category_id" class="kn-material-input" :options="allCategories" option-label="VALUE_NM" option-value="VALUE_ID" :show-clear="true" @change="onTypeChange" />
                         <label for="category" class="kn-material-input-label"> {{ $t('common.category') }}</label>
                     </span>
                 </div>
@@ -60,10 +60,10 @@
                     <span class="p-float-label">
                         <InputText
                             id="label"
+                            v-model="v$.layer.layerLabel.$model"
                             class="kn-material-input"
                             type="text"
-                            maxLength="100"
-                            v-model="v$.layer.layerLabel.$model"
+                            max-length="100"
                             :class="{
                                 'p-invalid': v$.layer.layerLabel.$invalid && v$.layer.layerLabel.$dirty
                             }"
@@ -72,16 +72,16 @@
                         />
                         <label for="label" class="kn-material-input-label"> {{ $t('managers.layersManagement.layerLabel') }} * </label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.layer.layerLabel" :additionalTranslateParams="{ fieldName: $t('managers.layersManagement.layerLabel') }" />
+                    <KnValidationMessages class="p-mt-1" :v-comp="v$.layer.layerLabel" :additional-translate-params="{ fieldName: $t('managers.layersManagement.layerLabel') }" />
                 </div>
                 <div class="p-field p-col-12 p-lg-6">
                     <span class="p-float-label">
                         <InputText
                             id="name"
+                            v-model="v$.layer.layerName.$model"
                             class="kn-material-input"
                             type="text"
-                            maxLength="100"
-                            v-model="v$.layer.layerName.$model"
+                            max-length="100"
                             :class="{
                                 'p-invalid': v$.layer.layerName.$invalid && v$.layer.layerName.$dirty
                             }"
@@ -90,7 +90,7 @@
                         />
                         <label for="name" class="kn-material-input-label"> {{ $t('managers.layersManagement.layerName') }} * </label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.layer.layerName" :additionalTranslateParams="{ fieldName: $t('managers.layersManagement.layerName') }" />
+                    <KnValidationMessages class="p-mt-1" :v-comp="v$.layer.layerName" :additional-translate-params="{ fieldName: $t('managers.layersManagement.layerName') }" />
                 </div>
                 <div class="p-col-12 p-lg-4 p-mt-3">
                     <span class="p-as-center">
@@ -102,10 +102,10 @@
                     <span class="p-float-label">
                         <InputText
                             id="name"
+                            v-model="v$.layer.layerIdentify.$model"
                             class="kn-material-input"
                             type="text"
-                            maxLength="100"
-                            v-model="v$.layer.layerIdentify.$model"
+                            max-length="100"
                             :class="{
                                 'p-invalid': v$.layer.layerIdentify.$invalid && v$.layer.layerIdentify.$dirty
                             }"
@@ -114,16 +114,16 @@
                         />
                         <label for="name" class="kn-material-input-label"> {{ $t('managers.layersManagement.layerIdentify') }} * </label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.layer.layerIdentify" :additionalTranslateParams="{ fieldName: $t('managers.layersManagement.layerIdentify') }" />
+                    <KnValidationMessages class="p-mt-1" :v-comp="v$.layer.layerIdentify" :additional-translate-params="{ fieldName: $t('managers.layersManagement.layerIdentify') }" />
                 </div>
                 <div class="p-field p-col-12 p-lg-4">
                     <span class="p-float-label">
                         <InputText
                             id="name"
+                            v-model="v$.layer.layerOrder.$model"
                             class="kn-material-input"
                             type="number"
                             min="0"
-                            v-model="v$.layer.layerOrder.$model"
                             :class="{
                                 'p-invalid': v$.layer.layerOrder.$invalid && v$.layer.layerOrder.$dirty
                             }"
@@ -132,11 +132,11 @@
                         />
                         <label for="name" class="kn-material-input-label"> {{ $t('managers.layersManagement.layerOrder') }} * </label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.layer.layerOrder" :additionalTranslateParams="{ fieldName: $t('managers.layersManagement.layerOrder') }" />
+                    <KnValidationMessages class="p-mt-1" :v-comp="v$.layer.layerOrder" :additional-translate-params="{ fieldName: $t('managers.layersManagement.layerOrder') }" />
                 </div>
                 <div class="p-col-12">
                     <span class="p-float-label">
-                        <MultiSelect id="layerRoles" class="kn-material-input" v-model="layer.roles" :options="allRoles" optionLabel="name" display="chip" :filter="true" />
+                        <MultiSelect id="layerRoles" v-model="layer.roles" class="kn-material-input" :options="allRoles" option-label="name" display="chip" :filter="true" />
                         <label for="layerRoles" class="kn-material-input-label"> {{ $t('common.roles') }} </label>
                     </span>
                 </div>
@@ -150,11 +150,11 @@
                     <span class="p-float-label">
                         <Dropdown
                             id="layerType"
-                            class="kn-material-input"
                             v-model="v$.layer.type.$model"
+                            class="kn-material-input"
                             :options="layerTypes"
-                            optionLabel="label"
-                            optionValue="value"
+                            option-label="label"
+                            option-value="value"
                             :class="{
                                 'p-invalid': v$.layer.type.$invalid && v$.layer.type.$dirty
                             }"
@@ -164,26 +164,26 @@
                         />
                         <label for="layerType" class="kn-material-input-label"> {{ $t('common.type') }} *</label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.layer.type" :additionalTranslateParams="{ fieldName: $t('common.type') }" />
+                    <KnValidationMessages class="p-mt-1" :v-comp="v$.layer.type" :additional-translate-params="{ fieldName: $t('common.type') }" />
                 </div>
                 <div v-if="layer.type == 'File'" class="p-field p-col-12 p-d-flex">
                     <div class="kn-flex">
                         <span class="p-float-label">
-                            <InputText id="fileName" class="kn-material-input" v-model="layer.pathFile" :disabled="true" />
+                            <InputText id="fileName" v-model="layer.pathFile" class="kn-material-input" :disabled="true" />
                             <label for="fileName" class="kn-material-input-label"> {{ $t('managers.layersManagement.fileLocation') }} </label>
                         </span>
                     </div>
                     <Button icon="fas fa-upload" class="p-button-text p-button-plain p-ml-2" @click="setUploadType" />
-                    <KnInputFile v-if="!uploading" :changeFunction="uploadLayerFile" accept=".json" :triggerInput="triggerUpload" />
+                    <KnInputFile v-if="!uploading" :change-function="uploadLayerFile" accept=".json" :trigger-input="triggerUpload" />
                 </div>
                 <div v-if="layer.type == 'WFS' || layer.type == 'WMS' || layer.type == 'TMS'" class="p-field p-col-12">
                     <span class="p-float-label">
                         <InputText
                             id="label"
+                            v-model="v$.layer.layerURL.$model"
                             class="kn-material-input"
                             type="text"
-                            maxLength="100"
-                            v-model="v$.layer.layerURL.$model"
+                            max-length="100"
                             :class="{
                                 'p-invalid': v$.layer.layerURL.$invalid && v$.layer.layerURL.$dirty
                             }"
@@ -192,17 +192,17 @@
                         />
                         <label for="label" class="kn-material-input-label"> {{ $t('managers.layersManagement.layerURL') }} * </label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.layer.layerURL" :additionalTranslateParams="{ fieldName: $t('managers.layersManagement.layerURL') }" />
+                    <KnValidationMessages class="p-mt-1" :v-comp="v$.layer.layerURL" :additional-translate-params="{ fieldName: $t('managers.layersManagement.layerURL') }" />
                 </div>
                 <div v-if="layer.type == 'Google' || layer.type == 'WMS' || layer.type == 'TMS'" :class="{ 'p-lg-6': layer.type == 'WMS', 'p-lg-12': layer.type != 'WMS' }" class="p-field p-col-12 p-lg-6">
                     <span class="p-float-label">
-                        <InputText id="label" class="kn-material-input" type="text" maxLength="100" v-model="layer.layerOptions" @change="$emit('touched')" />
+                        <InputText id="label" v-model="layer.layerOptions" class="kn-material-input" type="text" max-length="100" @change="$emit('touched')" />
                         <label for="label" class="kn-material-input-label"> {{ $t('managers.layersManagement.layerOptions') }} </label>
                     </span>
                 </div>
                 <div v-if="layer.type == 'WMS'" class="p-field p-col-12 p-lg-6">
                     <span class="p-float-label">
-                        <InputText id="label" class="kn-material-input" type="text" maxLength="100" v-model="layer.layerParams" @change="$emit('touched')" />
+                        <InputText id="label" v-model="layer.layerParams" class="kn-material-input" type="text" max-length="100" @change="$emit('touched')" />
                         <label for="label" class="kn-material-input-label"> {{ $t('managers.layersManagement.layerParams') }} </label>
                     </span>
                 </div>
@@ -226,7 +226,6 @@ import InputSwitch from 'primevue/inputswitch'
 export default defineComponent({
     components: { KnValidationMessages, Textarea, MultiSelect, Dropdown, KnInputFile, InputSwitch },
     props: { selectedLayer: { type: Object, required: true }, allRoles: { type: Array, required: true }, allCategories: { type: Array, required: true } },
-    computed: {},
     emits: [],
     data() {
         return {
@@ -263,17 +262,18 @@ export default defineComponent({
             ]
         }
     },
-    async created() {
-        this.layer = this.selectedLayer
-    },
+    computed: {},
     watch: {
         selectedLayer() {
             this.layer = this.selectedLayer
         }
     },
+    async created() {
+        this.layer = this.selectedLayer
+    },
     validations() {
         const urlRequried = (value) => {
-            let types = ['WFS', 'WMS', 'TMS']
+            const types = ['WFS', 'WMS', 'TMS']
             return !types.includes(this.layer.type) || value
         }
         const customValidators: ICustomValidatorMap = { 'url-required': urlRequried }
@@ -287,7 +287,7 @@ export default defineComponent({
         },
         uploadLayerFile(event) {
             this.uploading = true
-            let uploadedFile = event.target.files[0]
+            const uploadedFile = event.target.files[0]
             this.layer.layerFile = { file: uploadedFile, fileName: uploadedFile.name }
             this.triggerUpload = false
             setTimeout(() => (this.uploading = false), 200)

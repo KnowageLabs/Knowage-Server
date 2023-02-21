@@ -9,8 +9,8 @@
         </template>
         <template #content>
             <div class=" p-d-flex p-flex-row">
-                <div class="field-radiobutton p-mx-2" v-for="(option, index) in kpiDocumentDesignerDocumentTypeCardDescriptor.documentTypeOptions" :key="index">
-                    <RadioButton :id="option.value" :value="option.value" v-model="chart.model" @change="$emit('documentTypeChanged')"></RadioButton>
+                <div v-for="(option, index) in kpiDocumentDesignerDocumentTypeCardDescriptor.documentTypeOptions" :key="index" class="field-radiobutton p-mx-2">
+                    <RadioButton :id="option.value" v-model="chart.model" :value="option.value" @change="$emit('documentTypeChanged')"></RadioButton>
                     <label :for="option.value" class="p-ml-2">{{ $t(option.label) }}</label>
                 </div>
             </div>

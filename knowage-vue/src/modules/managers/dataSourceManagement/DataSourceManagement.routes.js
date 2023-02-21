@@ -1,4 +1,4 @@
-let routes = [
+const routes = [
     {
         path: '/datasource-management',
         name: 'datasource-management',

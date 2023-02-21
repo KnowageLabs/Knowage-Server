@@ -13,7 +13,7 @@
 
         <template #content>
             <div :style="workspaceFederationDatasetListDescriptor.styles.assContainer">
-                <Listbox id="associations-list" :options="associations" :listStyle="workspaceFederationDatasetListDescriptor.styles.maxHeight">
+                <Listbox id="associations-list" :options="associations" :list-style="workspaceFederationDatasetListDescriptor.styles.maxHeight">
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
                         <div class="kn-list-item p-d-flex p-flex-row">

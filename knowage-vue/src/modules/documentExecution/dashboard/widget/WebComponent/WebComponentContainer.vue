@@ -1,5 +1,5 @@
 <template>
-    <widget-web-component id="webComponent" class="kn-flex" ref="webComponent"></widget-web-component>
+    <widget-web-component id="webComponent" ref="webComponent" class="kn-flex"></widget-web-component>
 </template>
 
 <script lang="ts">
@@ -15,7 +15,6 @@ import { executeCrossNavigation, executePreview, updateStoreSelections } from '.
 
 export default defineComponent({
     name: 'widget-component-container',
-    emits: ['interaction', 'pageChanged', 'launchSelection', 'sortingChanged'],
     components: {},
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
@@ -25,6 +24,7 @@ export default defineComponent({
         variables: { type: Array as PropType<IVariable[]>, required: true },
         editorMode: { type: Boolean }
     },
+    emits: ['interaction', 'pageChanged', 'launchSelection', 'sortingChanged'],
     data() {
         return {
             dataToShow: {} as any,

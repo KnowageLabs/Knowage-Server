@@ -7,27 +7,27 @@
                         {{ $t('managers.menuManagement.title') }}
                     </template>
                     <template #end>
-                        <KnFabButton icon="fas fa-plus" @click="showForm()" data-test="open-form-button"></KnFabButton>
+                        <KnFabButton icon="fas fa-plus" data-test="open-form-button" @click="showForm()"></KnFabButton>
                     </template>
                 </Toolbar>
-                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <MenuNodesTree :elements="menuNodes" :loading="loading" @deleteMenuNode="onNodeDelete" @selectedMenuNode="onNodeSelect" @unselectedMenuNode="onNodeUnselect" @changeWithFather="onChangeWithFather" @moveUp="onMoveUp" @moveDown="onMoveDown" data-test="menu-nodes-tree"></MenuNodesTree>
+                <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
+                <MenuNodesTree :elements="menuNodes" :loading="loading" data-test="menu-nodes-tree" @deleteMenuNode="onNodeDelete" @selectedMenuNode="onNodeSelect" @unselectedMenuNode="onNodeUnselect" @changeWithFather="onChangeWithFather" @moveUp="onMoveUp" @moveDown="onMoveDown"></MenuNodesTree>
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
-                <KnHint :title="'managers.menuManagement.title'" :hint="'managers.menuManagement.hint'" v-if="hideForm"></KnHint>
+                <KnHint v-if="hideForm" :title="'managers.menuManagement.title'" :hint="'managers.menuManagement.hint'"></KnHint>
                 <MenuElementsDetail
                     v-if="!hideForm"
-                    :selectedRoles="selectedMenuNode.roles"
-                    :parentNodeRoles="parentNodeRoles"
+                    :selected-roles="selectedMenuNode.roles"
+                    :parent-node-roles="parentNodeRoles"
                     :roles="roles"
-                    :selectedMenuNode="selectedMenuNode"
-                    :menuNodes="menuNodes"
-                    :staticPagesList="staticPagesList"
+                    :selected-menu-node="selectedMenuNode"
+                    :menu-nodes="menuNodes"
+                    :static-pages-list="staticPagesList"
+                    :hidden="hideForm"
                     @refreshRecordSet="loadMenuNodes"
                     @closesForm="closeForm"
                     @dataChanged="dirty = true"
-                    :hidden="hideForm"
                 ></MenuElementsDetail>
             </div>
         </div>
@@ -53,6 +53,10 @@ export default defineComponent({
         KnFabButton,
         KnHint
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             apiUrl: import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/',
@@ -60,15 +64,11 @@ export default defineComponent({
             staticPagesList: [] as iStaticPage[],
             selectedMenuNode: {} as any,
             parentNodeRoles: [] as iRole[] | null,
-            loading: false as Boolean,
-            hideForm: true as Boolean,
-            dirty: false as Boolean,
+            loading: false as boolean,
+            hideForm: true as boolean,
+            dirty: false as boolean,
             roles: [] as iRole[]
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         await this.loadMenuNodes()
@@ -92,7 +92,7 @@ export default defineComponent({
                 this.selectedMenuNode = {}
                 this.initMenuNode()
             } else {
-                let selectedNode = this.selectedMenuNode
+                const selectedNode = this.selectedMenuNode
                 this.selectedMenuNode = {}
                 this.initMenuNode()
                 this.selectedMenuNode.parentId = selectedNode.id

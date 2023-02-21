@@ -3,7 +3,7 @@
         :header="$t('kpi.targetDefinition.addKpiBtn')"
         :breakpoints="targetDefinitionDetailDescriptor.dialog.breakpoints"
         :style="targetDefinitionDetailDescriptor.dialog.style"
-        :contentStyle="targetDefinitionDetailDescriptor.dialog.contentStyle"
+        :content-style="targetDefinitionDetailDescriptor.dialog.contentStyle"
         :visible="dialogVisible"
         :modal="true"
         :closable="false"
@@ -21,26 +21,26 @@
             </Toolbar>
         </template>
         <DataTable
+            v-model:selection="selectedKpi"
+            v-model:filters="filters"
             :paginator="true"
             :rows="15"
-            :rowsPerPageOptions="[10, 15, 20]"
-            v-model:selection="selectedKpi"
+            :rows-per-page-options="[10, 15, 20]"
             :value="kpi"
             :loading="loadingKpi"
             class="p-datatable-sm kn-table"
-            dataKey="kpiId"
-            responsiveLayout="stack"
-            v-model:filters="filters"
-            filterDisplay="menu"
+            data-key="kpiId"
+            responsive-layout="stack"
+            filter-display="menu"
             :scrollable="true"
-            :scrollHeight="targetDefinitionDetailDescriptor.dialog.scrollHeight"
-            :globalFilterFields="targetDefinitionDetailDescriptor.globalFilterFields"
+            :scroll-height="targetDefinitionDetailDescriptor.dialog.scrollHeight"
+            :global-filter-fields="targetDefinitionDetailDescriptor.globalFilterFields"
         >
             <template #header>
                 <div class="table-header">
                     <span class="p-input-icon-left">
                         <i class="pi pi-search" />
-                        <InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
+                        <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
                     </span>
                 </div>
             </template>
@@ -51,8 +51,8 @@
                 {{ $t('common.info.dataLoading') }}
             </template>
 
-            <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-            <Column v-for="col of targetDefinitionDetailDescriptor.columnsAllKPI" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" class="kn-truncated">
+            <Column selection-mode="multiple" header-style="width: 3rem"></Column>
+            <Column v-for="col of targetDefinitionDetailDescriptor.columnsAllKPI" :key="col.field" :field="col.field" :header="$t(col.header)" :sortable="true" class="kn-truncated">
                 <template #body="slotProps">
                     <span v-if="!col.dateField">{{ slotProps.data[slotProps.column.props.field] }}</span>
                     <span v-else>{{ formatDate(slotProps.data[slotProps.column.props.field]) }}</span>

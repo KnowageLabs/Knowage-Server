@@ -1,8 +1,8 @@
 <template>
     <Card class="p-mt-4">
         <template #content>
-            <DataTable :value="rows" class="p-datatable-sm kn-table" responsiveLayout="scroll" :loading="loading" stripedRows rowHover>
-                <Column v-for="col of columns" :field="col.name" :header="col.header" :key="col.dataIndex" class="kn-truncated" :sortable="true" />
+            <DataTable :value="rows" class="p-datatable-sm kn-table" responsive-layout="scroll" :loading="loading" striped-rows row-hover>
+                <Column v-for="col of columns" :key="col.dataIndex" :field="col.name" :header="col.header" class="kn-truncated" :sortable="true" />
             </DataTable>
         </template>
     </Card>
@@ -17,7 +17,6 @@ import Column from 'primevue/column'
 export default defineComponent({
     components: { DataTable, Column, Card },
     props: { gridForPreview: { type: Object as any } },
-    computed: {},
     emits: ['close'],
     data() {
         return {
@@ -26,18 +25,19 @@ export default defineComponent({
             loading: false
         }
     },
-    created() {
-        this.getPreviewData()
-    },
+    computed: {},
     watch: {
         selectedDataset() {
             this.getPreviewData()
         }
     },
+    created() {
+        this.getPreviewData()
+    },
     methods: {
         getPreviewData() {
             this.loading = true
-            let previewColumns = this.gridForPreview.metaData.fields
+            const previewColumns = this.gridForPreview.metaData.fields
             previewColumns.forEach((el: any) => {
                 typeof el != 'object' ? '' : this.columns.push(el)
             })

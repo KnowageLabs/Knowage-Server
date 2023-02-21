@@ -1,7 +1,7 @@
 <template>
     <div class="parent-card p-d-flex p-flex-column">
         <span class="p-d-flex flex-no-grow p-mx-2" :style="schedulationAgendaDescriptor.span.style">
-            <SelectButton class="p-m-1" v-model="selectedDisplayMode" :options="displayModes" optionLabel="name" data-test="select-button" />
+            <SelectButton v-model="selectedDisplayMode" class="p-m-1" :options="displayModes" option-label="name" data-test="select-button" />
         </span>
         <div class="flex-grow overflow-auto">
             <template v-for="dataItem in groupedItemList" :key="dataItem">
@@ -9,7 +9,7 @@
                     <template #content>
                         <div class="p-grid p-m-0">
                             <div class=" p-col-3">
-                                <div class="p-d-flex p-jc-center p-ai-center" v-if="displayMode === 'time'">
+                                <div v-if="displayMode === 'time'" class="p-d-flex p-jc-center p-ai-center">
                                     <div class="p-d-flex p-mx-3">
                                         <p class="p-text-bold p-text-center p-large">{{ dataItem.day }}</p>
                                     </div>
@@ -18,19 +18,19 @@
                                         <p class="p-text-left p-m-1">{{ dataItem.monthName + ' ' + dataItem.year }}</p>
                                     </div>
                                 </div>
-                                <div class="p-d-flex p-jc-center p-ai-center" v-if="displayMode === 'package'">
+                                <div v-if="displayMode === 'package'" class="p-d-flex p-jc-center p-ai-center">
                                     <div class="p-d-flex">
                                         <h2>{{ dataItem.jobName }}</h2>
                                     </div>
                                 </div>
-                                <div class="p-d-flex p-jc-center p-ai-center" v-if="displayMode === 'document'">
+                                <div v-if="displayMode === 'document'" class="p-d-flex p-jc-center p-ai-center">
                                     <div class="p-d-flex">
                                         <h2>{{ dataItem.document }}</h2>
                                     </div>
                                 </div>
                             </div>
                             <div class="p-col-9">
-                                <DataTable :value="dataItem.executions" v-model:expandedRows="expandedRows" class="custom-row-border p-datatable-sm kn-table" dataKey="id" :rows="10" :rowClass="rowClass" responsiveLayout="stack" breakpoint="960px" data-test="data-table">
+                                <DataTable v-model:expandedRows="expandedRows" :value="dataItem.executions" class="custom-row-border p-datatable-sm kn-table" data-key="id" :rows="10" :row-class="rowClass" responsive-layout="stack" breakpoint="960px" data-test="data-table">
                                     <template #empty>
                                         {{ $t('common.info.noDataFound') }}
                                     </template>
@@ -54,7 +54,7 @@
                                     <Column :style="schedulationAgendaDescriptor.table.rowExpanderColumn.style" :expander="true" />
                                     <Column :style="schedulationAgendaDescriptor.table.iconColumn.style">
                                         <template #body="slotProps">
-                                            <Button icon="pi pi-pencil" class="p-button-link" @click="openRedirection(slotProps.data.jobName)" :data-test="'action-button'" />
+                                            <Button icon="pi pi-pencil" class="p-button-link" :data-test="'action-button'" @click="openRedirection(slotProps.data.jobName)" />
                                         </template>
                                     </Column>
                                     <template #expansion="slotProps">
@@ -162,7 +162,7 @@ export default defineComponent({
                     break
             }
         },
-        openRedirection(jobName: String) {
+        openRedirection(jobName: string) {
             if (jobName) {
                 this.$router.push(`/scheduler/edit-package-schedule?id=${jobName}&clone=false`)
             }
@@ -170,9 +170,9 @@ export default defineComponent({
         getRandomColor(inputName: any) {
             let currentColor = this.colorDictionary[inputName]
             if (!currentColor) {
-                var letters = '0123456789ABCDEF'
-                var color = '#'
-                for (var i = 0; i < 6; i++) {
+                const letters = '0123456789ABCDEF'
+                let color = '#'
+                for (let i = 0; i < 6; i++) {
                     color += letters[Math.floor(Math.random() * 16)]
                 }
                 currentColor = color
@@ -223,7 +223,7 @@ export default defineComponent({
             const groupedItemList: iGroupDataItem[] = []
             for (let i = 0; i < this.dataItemList.length; i++) {
                 if (this.dataItemList[i].triggers && this.dataItemList[i].triggers[0].executions) {
-                    let item = {
+                    const item = {
                         jobName: this.dataItemList[i].name,
                         color: 'red',
                         document: '',
@@ -231,7 +231,7 @@ export default defineComponent({
                     }
                     for (let j = 0; j < this.dataItemList[i].triggers.length; j++) {
                         for (let k = 0; k < this.dataItemList[i].triggers[j].executions.length; k++) {
-                            let execution = {
+                            const execution = {
                                 id: index++,
                                 rawDate: new Date(this.dataItemList[i].triggers[j].executions[k]),
                                 date: this.formatDateTime(this.dataItemList[i].triggers[j].executions[k]),
@@ -272,7 +272,7 @@ export default defineComponent({
                                     groupedItemList.push(item)
                                 }
                             }
-                            let execution = {
+                            const execution = {
                                 id: index++,
                                 rawDate: new Date(this.dataItemList[i].triggers[j].executions[k]),
                                 date: this.dataItemList[i].triggers[j].executions[k],
@@ -308,7 +308,7 @@ export default defineComponent({
             }
         },
         returnTime(inputDate: any) {
-            var date = new Date(inputDate)
+            const date = new Date(inputDate)
             if (date) {
                 return date.toLocaleTimeString(navigator.language, {
                     hour: '2-digit',

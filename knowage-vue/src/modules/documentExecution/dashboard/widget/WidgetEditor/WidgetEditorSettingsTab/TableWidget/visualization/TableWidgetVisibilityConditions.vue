@@ -19,7 +19,7 @@
                         <div class="p-col-12 p-grid p-ai-center p-pt-1">
                             <div class="p-col-12 p-md-4 p-d-flex p-flex-column kn-flex p-p-2">
                                 <label class="kn-material-input-label p-mr-2">{{ $t('common.condition') }}</label>
-                                <Dropdown class="kn-material-input" v-model="visibilityCondition.condition.type" :options="descriptor.visibilityConditionsOptions" optionValue="value" :disabled="visibilityConditionsDisabled" @change="onVisibilityConditionTypeChanged(visibilityCondition)">
+                                <Dropdown v-model="visibilityCondition.condition.type" class="kn-material-input" :options="descriptor.visibilityConditionsOptions" option-value="value" :disabled="visibilityConditionsDisabled" @change="onVisibilityConditionTypeChanged(visibilityCondition)">
                                     <template #value="slotProps">
                                         <div>
                                             <span>{{ getTranslatedLabel(slotProps.value, descriptor.visibilityConditionsOptions, $t) }}</span>
@@ -35,13 +35,13 @@
                             <div v-if="visibilityCondition.condition.type === 'variable'" class="p-col-11 p-md-7 p-grid p-ai-center p-p-2">
                                 <div class="p-col-12 p-md-4 p-d-flex p-flex-column p-px-2 p-pt-3">
                                     <label class="kn-material-input-label">{{ $t('common.variable') }}</label>
-                                    <Dropdown class="kn-material-input" v-model="visibilityCondition.condition.variable" :options="variables" optionValue="name" optionLabel="name" :disabled="visibilityConditionsDisabled" @change="onVariabeSelected(visibilityCondition)"> </Dropdown>
+                                    <Dropdown v-model="visibilityCondition.condition.variable" class="kn-material-input" :options="variables" option-value="name" option-label="name" :disabled="visibilityConditionsDisabled" @change="onVariabeSelected(visibilityCondition)"> </Dropdown>
                                 </div>
                                 <div v-if="visibilityCondition.condition.type === 'variable' && visibilityCondition.condition.variablePivotDatasetOptions" class="p-col-12 p-md-2 p-d-flex p-flex-column">
                                     <label class="kn-material-input-label p-mr-2">{{ $t('common.key') }}</label>
                                     <Dropdown
-                                        class="kn-material-input"
                                         v-model="visibilityCondition.condition.variableKey"
+                                        class="kn-material-input"
                                         :options="visibilityCondition.condition.variablePivotDatasetOptions ? Object.keys(visibilityCondition.condition.variablePivotDatasetOptions) : []"
                                         :disabled="visibilityConditionsDisabled"
                                         @change="onVariableKeyChanged(visibilityCondition)"
@@ -50,12 +50,12 @@
                                 </div>
                                 <div class="p-col-12 p-md-2 p-d-flex p-flex-column p-px-2 p-pt-3">
                                     <label class="kn-material-input-label">{{ $t('common.operator') }}</label>
-                                    <Dropdown class="kn-material-input" v-model="visibilityCondition.condition.operator" :options="descriptor.visibilityConditionOperators" optionValue="value" optionLabel="label" :disabled="visibilityConditionsDisabled" @change="visibilityConditionsChanged">
+                                    <Dropdown v-model="visibilityCondition.condition.operator" class="kn-material-input" :options="descriptor.visibilityConditionOperators" option-value="value" option-label="label" :disabled="visibilityConditionsDisabled" @change="visibilityConditionsChanged">
                                     </Dropdown>
                                 </div>
                                 <div class="p-col-12 p-md-4 p-d-flex p-flex-column p-px-2 p-pt-3">
                                     <label class="kn-material-input-label p-pb-1">{{ $t('common.value') }}</label>
-                                    <InputText class="kn-material-input p-inputtext-sm" v-model="visibilityCondition.condition.value" :disabled="visibilityConditionsDisabled" @change="visibilityConditionsChanged" />
+                                    <InputText v-model="visibilityCondition.condition.value" class="kn-material-input p-inputtext-sm" :disabled="visibilityConditionsDisabled" @change="visibilityConditionsChanged" />
                                 </div>
                             </div>
                             <div class="p-col-1 p-d-flex p-flex-column p-jc-center p-ai-center p-pl-2">
@@ -65,7 +65,7 @@
                         <div class="p-col-12 p-grid p-ai-center p-ai-center p-pt-1">
                             <div class="p-col-12 p-md-4 p-d-flex p-flex-column p-p-2">
                                 <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
-                                <MultiSelect v-model="visibilityCondition.target" :options="widgetModel.columns" optionLabel="alias" optionValue="id" :disabled="visibilityConditionsDisabled" @change="visibilityConditionsChanged"> </MultiSelect>
+                                <MultiSelect v-model="visibilityCondition.target" :options="widgetModel.columns" option-label="alias" option-value="id" :disabled="visibilityConditionsDisabled" @change="visibilityConditionsChanged"> </MultiSelect>
                             </div>
                             <div class="p-col-6 p-md-4">
                                 <InputSwitch v-model="visibilityCondition.hide" :disabled="visibilityConditionsDisabled" @change="visibilityConditionsChanged"></InputSwitch>

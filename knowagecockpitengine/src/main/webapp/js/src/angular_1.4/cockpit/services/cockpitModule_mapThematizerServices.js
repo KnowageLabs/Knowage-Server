@@ -17,8 +17,23 @@
 		var cacheSymbolMinMax;
 		var activeInd, activeConf, activeLegend;
 
-
+		// TODO : Replace all related logics and use styleCache2
 		var styleCache = {};
+		
+		// 2nd version of the cache above
+		var styleCache2 = new Map();
+		
+		// Set the style cache before layer adding
+		mts.clearCache = function(layerName) {
+			styleCache2.set(layerName, new Map());
+		}
+		
+		function findIndicatorStats(indicator, stats) {
+			return Object.values(stats).find(function(e) {
+				return e.header == indicator;
+			});
+		}
+
 		mts.layerStyle = function(feature, resolution){
 			var featureType = feature.getGeometry().getType();
 
@@ -44,10 +59,7 @@
 			var useCache = false; //cache isn't use for analysis, just with fixed marker
 			var isSimpleMarker = props["isSimpleMarker"];
 			var isCluster = (Array.isArray(feature.get('features'))) ? true : false;
-			var stats = Object.values(props["stats"])
-			var measureStat = stats.find(function(e) {
-				return e.header == defaultIndicator;
-			});
+			var measureStat = findIndicatorStats(defaultIndicator, props["stats"]);
 			var visualizationType = config.visualizationType;
 			var isBalloon = visualizationType == "balloons";
 			var isPie = visualizationType == "pies";
@@ -311,61 +323,80 @@
 		mts.getBalloonStyles = function (value, props, config, measureStat){
 
 			var style;
-			var color;
-			var borderColor = config.borderColor ? config.borderColor : "rgba(0, 0, 0, 0.5)";
+			var layerName = props["parentLayer"];
 			var minSize = config.minSize;
 			var maxSize = config.maxSize;
-			
-			if (props[mts.getActiveIndicator()] && props[mts.getActiveIndicator()].thresholdsConfig) color = mts.getColorByThresholds(value, props);
-			if (!color)	color = (config.color) ? config.color : "rgba(127, 127, 127, 0.5)";
-			
+
 			var unitSize = (maxSize - minSize) / measureStat.cardinality;
 			var perValueSize = minSize + (measureStat.distinct.indexOf(value) * unitSize);
 
 			var size = perValueSize;
 
-			style = new ol.style.Style({
-				image: new ol.style.Circle({
-						radius: size,
-						fill: new ol.style.Fill({color: color}),
-						stroke: new ol.style.Stroke({color: borderColor, width: 1})
-					}),
-			});
+			if (!styleCache2.get(layerName).has(size)) {
+				var color;
+				var borderColor = config.borderColor ? config.borderColor : "rgba(0, 0, 0, 0.5)";
+				
+				if (props[mts.getActiveIndicator()] && props[mts.getActiveIndicator()].thresholdsConfig) color = mts.getColorByThresholds(value, props);
+				if (!color)	color = (config.color) ? config.color : "rgba(127, 127, 127, 0.5)";
+				
+				style = new ol.style.Style({
+					image: new ol.style.Circle({
+							radius: size,
+							fill: new ol.style.Fill({color: color}),
+							stroke: new ol.style.Stroke({color: borderColor, width: 1})
+						}),
+				});
+
+				styleCache2.get(layerName).set(size, style);
+			}
+
+			style = styleCache2.get(layerName).get(size);
 
 			return style;
 		}
 
 		mts.getPieStyles = function (value, props, config, measureStat){
-			
+
 			var style;
-			var color;
-			var borderColor = config.borderColor;
+			var layerName = props["parentLayer"];
 			var minSize = config.minSize;
 			var maxSize = config.maxSize;
-			var type = config.type;
-			
-			// if (props[mts.getActiveIndicator()] && props[mts.getActiveIndicator()].thresholdsConfig) color = mts.getColorByThresholds(value, props);
-			if (!color)	color = config.color;
-			
 			var total = value.reduce(function(a,c) { return a+c; }, 0) / value.length;
-			
+
 			var unitSize = (maxSize - minSize) / measureStat.cardinality;
 			var perValueSize = minSize + ((measureStat.distinct.filter(e => e <= total).length-1) * unitSize);
 
 			var size = perValueSize;
 
-			style = new ol.style.Style({
-				image: new ol.style.Chart({
-						type: type,
-						radius: size,
-						fill: new ol.style.Fill({color: color}),
-						data: value,
-						stroke: new ol.style.Stroke({
-							color: borderColor,
-							width: 1
-						})
-					}),
-			});
+			if (!styleCache2.get(layerName).has(size)) {
+				var borderColor = config.borderColor;
+				var type = config.type;
+				var fromColor = config.fromColor;
+				var toColor = config.toColor;
+				var stats = props["stats"];
+				var category = config.categorizeBy;
+				var categoryStats = findIndicatorStats(category, stats);
+
+				var grad = tinygradient([fromColor, toColor]);
+				var colors= grad.rgb(categoryStats.cardinality);
+
+				style = new ol.style.Style({
+					image: new ol.style.Chart({
+							type: type,
+							radius: size,
+							colors: colors,
+							data: value,
+							stroke: new ol.style.Stroke({
+								color: borderColor,
+								width: 1
+							})
+						}),
+				});
+				
+				styleCache2.get(layerName).set(size, style);
+			}
+			
+			style = styleCache2.get(layerName).get(size);
 
 			return style;
 		}

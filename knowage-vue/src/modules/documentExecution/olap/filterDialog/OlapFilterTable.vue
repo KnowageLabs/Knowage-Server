@@ -1,5 +1,5 @@
 <template>
-    <DataTable :value="levels" class="p-datatable-sm kn-table p-m-4" responsiveLayout="stack" breakpoint="960px">
+    <DataTable :value="levels" class="p-datatable-sm kn-table p-m-4" responsive-layout="stack" breakpoint="960px">
         <template #empty>{{ $t('common.info.noDataFound') }}</template>
 
         <Column class="kn-truncated" :header="$t('documentExecution.olap.filterDialog.level')" :style="olapFilterDialogDescriptor.iconColumnStyle">
@@ -7,10 +7,10 @@
                 <span> {{ slotProps.index + 1 }} </span>
             </template>
         </Column>
-        <Column class="kn-truncated" :field="'LEVEL'" :header="$t('common.name')" :key="'name'"> </Column>
-        <Column field="value" :header="$t('documentExecution.olap.filterDialog.driverProfileAttribute')" key="value">
+        <Column :key="'name'" class="kn-truncated" :field="'LEVEL'" :header="$t('common.name')"> </Column>
+        <Column key="value" field="value" :header="$t('documentExecution.olap.filterDialog.driverProfileAttribute')">
             <template #body="slotProps">
-                <Dropdown class="olap-filter-table-dropdown" v-model="slotProps.data[slotProps.column.props.field]" :options="options" optionValue="value" optionLabel="label" optionGroupValue="value" optionGroupLabel="label" optionGroupChildren="items" @change="onLevelUpdate(slotProps.data)">
+                <Dropdown v-model="slotProps.data[slotProps.column.props.field]" class="olap-filter-table-dropdown" :options="options" option-value="value" option-label="label" option-group-value="value" option-group-label="label" option-group-children="items" @change="onLevelUpdate(slotProps.data)">
                     <template #option="slotProps">
                         <span> {{ slotProps.option.label }} </span>
                     </template>

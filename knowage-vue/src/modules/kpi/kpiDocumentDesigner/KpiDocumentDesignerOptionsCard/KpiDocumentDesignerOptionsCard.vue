@@ -10,27 +10,27 @@
         <template #content>
             <div class="p-grid p-m-1">
                 <div class="p-col-6">
-                    <Checkbox class="p-mr-2" v-model="options.showvalue" :binary="true" />
+                    <Checkbox v-model="options.showvalue" class="p-mr-2" :binary="true" />
                     <label>{{ $t('kpi.kpiDocumentDesigner.showValue') }}</label>
                 </div>
                 <div class="p-col-6">
-                    <Checkbox class="p-mr-2" v-model="options.showtarget" :binary="true" />
+                    <Checkbox v-model="options.showtarget" class="p-mr-2" :binary="true" />
                     <label>{{ $t('kpi.kpiDocumentDesigner.showTarget') }}</label>
                 </div>
                 <div class="p-col-6">
-                    <Checkbox class="p-mr-2" v-model="options.showtargetpercentage" :binary="true" />
+                    <Checkbox v-model="options.showtargetpercentage" class="p-mr-2" :binary="true" />
                     <label>{{ $t('kpi.kpiDocumentDesigner.showPercentage') }}</label>
                 </div>
                 <div class="p-col-6">
-                    <Checkbox class="p-mr-2" v-model="options.showthreshold" :binary="true" />
+                    <Checkbox v-model="options.showthreshold" class="p-mr-2" :binary="true" />
                     <label>{{ $t('kpi.kpiDocumentDesigner.showThreshold') }}</label>
                 </div>
                 <div class="p-field p-col-6">
                     <span class="p-float-label p-m-2">
                         <InputText
+                            v-model="options.history.size"
                             class="kn-material-input"
                             type="number"
-                            v-model="options.history.size"
                             min="0"
                             :class="{
                                 'p-invalid': +options.history.size < 0
@@ -41,7 +41,7 @@
                 </div>
                 <div class="p-col-6 p-fluid">
                     <span class="p-float-label p-m-2">
-                        <Dropdown class="kn-material-input" v-model="options.history.units" :options="KpiDocumentDesignerOptionsCardDescriptor.unitsOptions" optionValue="value">
+                        <Dropdown v-model="options.history.units" class="kn-material-input" :options="KpiDocumentDesignerOptionsCardDescriptor.unitsOptions" option-value="value">
                             <template #value="slotProps">
                                 <div v-if="slotProps.value">
                                     <span>{{ slotProps.value }}</span>

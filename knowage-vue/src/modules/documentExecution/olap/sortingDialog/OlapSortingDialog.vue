@@ -9,14 +9,14 @@
         </template>
 
         <div v-if="olap" class="p-m-4">
-            <div class="p-field-radiobutton" v-for="(mode, index) in olapSortingDialogDescriptor.sortingModes" :key="index">
-                <RadioButton name="sorting" :value="mode" v-model="sortingMode" />
+            <div v-for="(mode, index) in olapSortingDialogDescriptor.sortingModes" :key="index" class="p-field-radiobutton">
+                <RadioButton v-model="sortingMode" name="sorting" :value="mode" />
                 <label>{{ mode }}</label>
             </div>
 
-            <div class="p-field" v-if="sortingMode === 'count'">
+            <div v-if="sortingMode === 'count'" class="p-field">
                 <span class="p-float-label">
-                    <InputText id="sortingCount" type="number" class="kn-material-input" v-model.trim="sortingCount" :min="1" />
+                    <InputText id="sortingCount" v-model.trim="sortingCount" type="number" class="kn-material-input" :min="1" />
                 </span>
             </div>
         </div>

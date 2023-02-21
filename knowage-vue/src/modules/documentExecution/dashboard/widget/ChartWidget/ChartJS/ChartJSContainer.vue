@@ -16,17 +16,9 @@ import store from '../../../Dashboard.store'
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale)
 
 export default defineComponent({
-    name: 'chartJS-container',
+    name: 'chart-j-s-container',
     components: { Pie },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, dataToShow: { type: Object as any, required: true }, dashboardId: { type: String, required: true }, editorMode: { type: Boolean }, propActiveSelections: { type: Array as PropType<ISelection[]>, required: true } },
-    computed: {
-        myStyles(): any {
-            return {
-                height: this.editorMode ? '100%' : `${this.chartHeight}px`,
-                position: 'relative'
-            }
-        }
-    },
     data() {
         return {
             chartData: { labels: [], datasets: [] } as IChartJSData,
@@ -34,6 +26,14 @@ export default defineComponent({
             chartModel: {} as IChartJSChartModel,
             error: false,
             chartHeight: 0 as number
+        }
+    },
+    computed: {
+        myStyles(): any {
+            return {
+                height: this.editorMode ? '100%' : `${this.chartHeight}px`,
+                position: 'relative'
+            }
         }
     },
     watch: {

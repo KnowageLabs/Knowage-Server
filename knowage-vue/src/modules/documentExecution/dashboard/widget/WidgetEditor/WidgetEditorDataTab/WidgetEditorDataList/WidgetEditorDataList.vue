@@ -1,7 +1,7 @@
 <template>
     <div v-if="widgetModel" class="dashboard-editor-list-card-container p-m-3">
         <span class="p-float-label p-mx-2 p-mt-4 p-mb-1">
-            <Dropdown id="dataset" class="kn-material-input kn-width-full" v-model="selectedDataset" :options="datasetOptions" optionLabel="label" @change="onDatasetSelected"></Dropdown>
+            <Dropdown id="dataset" v-model="selectedDataset" class="kn-material-input kn-width-full" :options="datasetOptions" option-label="label" @change="onDatasetSelected"></Dropdown>
             <label for="dataset" class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.selectDataset') }} </label>
         </span>
         <div v-if="widgetModel.type !== 'selector'" class="p-col-12 p-d-flex">
@@ -9,7 +9,7 @@
             <Button :label="$t('common.addColumn')" icon="pi pi-plus-circle" class="p-button-outlined p-ml-auto p-mr-1" @click="createNewCalcField"></Button>
         </div>
 
-        <Listbox v-if="selectedDataset" class="kn-list kn-list-no-border-right dashboard-editor-list" :options="selectedDatasetColumns" :filter="true" :filterPlaceholder="$t('common.search')" :filterFields="descriptor.filterFields" :emptyFilterMessage="$t('common.info.noDataFound')">
+        <Listbox v-if="selectedDataset" class="kn-list kn-list-no-border-right dashboard-editor-list" :options="selectedDatasetColumns" :filter="true" :filter-placeholder="$t('common.search')" :filter-fields="descriptor.filterFields" :empty-filter-message="$t('common.info.noDataFound')">
             <template #empty>{{ $t('common.info.noDataFound') }}</template>
             <template #option="slotProps">
                 <div class="kn-list-item kn-draggable" draggable="true" :style="dataListDescriptor.style.list.listItem" @dragstart="onDragStart($event, slotProps.option)">
@@ -29,8 +29,8 @@
         v-model:visibility="calcFieldDialogVisible"
         :fields="calcFieldColumns"
         :descriptor="calcFieldDescriptor"
-        :propCalcFieldFunctions="calcFieldDescriptor.availableFunctions"
-        :readOnly="false"
+        :prop-calc-field-functions="calcFieldDescriptor.availableFunctions"
+        :read-only="false"
         :valid="true"
         source="dashboard"
         @save="onCalcFieldSave"
@@ -47,7 +47,6 @@ import descriptor from './WidgetEditorDataListDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import mainStore from '../../../../../../../App.store'
 import Listbox from 'primevue/listbox'
-import Card from 'primevue/card'
 import dataListDescriptor from '../../../../dataset/DatasetEditorDataTab/DatasetEditorDataList/DatasetEditorDataListDescriptor.json'
 import KnCalculatedField from '@/components/functionalities/KnCalculatedField/KnCalculatedField.vue'
 import calcFieldDescriptor from './WidgetEditorCalcFieldDescriptor.json'
@@ -55,9 +54,13 @@ import cryptoRandomString from 'crypto-random-string'
 
 export default defineComponent({
     name: 'widget-editor-data-list',
-    components: { Card, Dropdown, Listbox, KnCalculatedField },
+    components: { Dropdown, Listbox, KnCalculatedField },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array }, selectedDatasets: { type: Array as PropType<IDataset[]> } },
     emits: ['datasetSelected'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             descriptor,
@@ -72,10 +75,6 @@ export default defineComponent({
             selectedCalcField: null as any,
             calcFieldFunctionsToShow: [] as any
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.setEventListeners()

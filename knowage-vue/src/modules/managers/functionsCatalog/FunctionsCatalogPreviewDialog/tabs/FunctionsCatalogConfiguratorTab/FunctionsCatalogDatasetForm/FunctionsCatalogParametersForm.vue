@@ -10,7 +10,7 @@
         <template #content>
             <div v-for="(parameter, index) in parameters" :key="index" class="p-mt-3">
                 <span class="p-float-label">
-                    <InputText class="kn-material-input" v-model.trim="parameter.value" data-test="parameter-input" />
+                    <InputText v-model.trim="parameter.value" class="kn-material-input" data-test="parameter-input" />
                     <label class="kn-material-input-label"> {{ parameter.name }} </label>
                 </span>
             </div>

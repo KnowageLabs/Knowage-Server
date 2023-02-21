@@ -12,14 +12,14 @@
         <div class="kn-page-content p-grid p-m-0">
             <div class="p-col">
                 <DataTable
+                    v-model:filters="filters"
                     :value="scorecards"
                     :paginator="scorecards.length > 20"
                     :rows="20"
                     class="p-datatable-sm kn-table"
-                    dataKey="id"
-                    v-model:filters="filters"
-                    :globalFilterFields="scorecardsDescriptor.globalFilterFields"
-                    responsiveLayout="stack"
+                    data-key="id"
+                    :global-filter-fields="scorecardsDescriptor.globalFilterFields"
+                    responsive-layout="stack"
                     breakpoint="960px"
                     @rowClick="openScorecardDetail($event.data)"
                 >
@@ -27,7 +27,7 @@
                         <div class="table-header">
                             <span class="p-input-icon-left">
                                 <i class="pi pi-search" />
-                                <InputText class="kn-material-input" v-model="filters['global'].value" :placeholder="$t('common.search')" />
+                                <InputText v-model="filters['global'].value" class="kn-material-input" :placeholder="$t('common.search')" />
                             </span>
                         </div>
                     </template>
@@ -68,6 +68,10 @@ import mainStore from '../../../App.store'
 export default defineComponent({
     name: 'scorecards',
     components: { Column, DataTable, KnFabButton },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             scorecardsDescriptor,
@@ -76,10 +80,6 @@ export default defineComponent({
         }
     },
     computed: {},
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
     async created() {
         await this.loadScorecards()
     },

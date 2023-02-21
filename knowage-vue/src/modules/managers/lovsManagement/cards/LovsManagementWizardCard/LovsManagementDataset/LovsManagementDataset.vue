@@ -1,11 +1,11 @@
 <template>
-    <div class="p-fluid p-formgrid p-grid" v-if="selectedDataset">
+    <div v-if="selectedDataset" class="p-fluid p-formgrid p-grid">
         <span class="p-field p-col-6 p-float-label">
-            <InputText id="datasetLabel" class="kn-material-input" type="text" v-model.trim="selectedDataset.label" disabled />
+            <InputText id="datasetLabel" v-model.trim="selectedDataset.label" class="kn-material-input" type="text" disabled />
             <label for="datasetLabel" class="kn-material-input-label"> {{ $t('common.label') }} * </label>
         </span>
         <span class="p-field p-col-5 p-float-label">
-            <InputText id="datasetName" class="kn-material-input" type="text" v-model.trim="selectedDataset.name" disabled />
+            <InputText id="datasetName" v-model.trim="selectedDataset.name" class="kn-material-input" type="text" disabled />
             <label for="datasetName" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
         </span>
         <span class="p-field">
@@ -13,43 +13,43 @@
         </span>
     </div>
 
-    <Dialog :visible="showDatasetsDialog" :modal="true" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
+    <Dialog :visible="showDatasetsDialog" :modal="true" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false" position="right" :base-z-index="1" :auto-z-index="true">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0 p-col">
                 <template #start>Select Dataset</template>
                 <template #end>
-                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="onSave" data-test="submit-button" />
-                    <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="showDatasetsDialog = false" data-test="close-button" />
+                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" data-test="submit-button" @click="onSave" />
+                    <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" data-test="close-button" @click="showDatasetsDialog = false" />
                 </template>
             </Toolbar>
         </template>
 
         <DataTable
+            v-model:filters="filters"
+            v-model:selection="selectedDataset"
             :value="datasets"
             :paginator="true"
             class="p-datatable-sm kn-table p-ml-2 p-mr-2"
-            dataKey="id"
-            v-model:filters="filters"
-            filterDisplay="menu"
-            :globalFilterFields="lovsManagementDatasetDescriptor.globalFilterFields"
+            data-key="id"
+            filter-display="menu"
+            :global-filter-fields="lovsManagementDatasetDescriptor.globalFilterFields"
             :rows="20"
-            responsiveLayout="stack"
+            responsive-layout="stack"
             breakpoint="960px"
-            :currentPageReportTemplate="
+            :current-page-report-template="
                 $t('common.table.footer.paginated', {
                     first: '{first}',
                     last: '{last}',
                     totalRecords: '{totalRecords}'
                 })
             "
-            v-model:selection="selectedDataset"
-            selectionMode="single"
+            selection-mode="single"
         >
             <template #header>
                 <div class="table-header">
                     <span class="p-input-icon-left">
                         <i class="pi pi-search" />
-                        <InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
+                        <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
                     </span>
                 </div>
             </template>
@@ -57,9 +57,9 @@
                 {{ $t('common.info.noDataFound') }}
             </template>
 
-            <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" :style="col.style" class="kn-truncated">
+            <Column v-for="col of columns" :key="col.field" :field="col.field" :header="$t(col.header)" :sortable="true" :style="col.style" class="kn-truncated">
                 <template #filter="{ filterModel }">
-                    <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter"></InputText>
                 </template>
                 <template #body="slotProps">
                     <span :title="slotProps.data[col.field]">{{ slotProps.data[col.field] }}</span>
@@ -116,14 +116,14 @@ export default defineComponent({
             } as Object
         }
     },
-    async created() {
-        this.loadDataset()
-        await this.loadDatasets()
-    },
     watch: {
         dataset() {
             this.loadDataset()
         }
+    },
+    async created() {
+        this.loadDataset()
+        await this.loadDatasets()
     },
     methods: {
         async loadDatasets() {

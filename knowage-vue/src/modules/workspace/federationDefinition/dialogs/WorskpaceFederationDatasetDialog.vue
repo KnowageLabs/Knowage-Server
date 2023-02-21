@@ -30,8 +30,8 @@ import worskpaceFederationDatasetDialogDescriptor from './WorskpaceFederationDat
 export default defineComponent({
     name: 'workspace-federation-dataset-dialog',
     components: { Dialog },
-    emits: ['close'],
     props: { visible: { type: Boolean }, dataset: { type: Object } },
+    emits: ['close'],
     data() {
         return {
             worskpaceFederationDatasetDialogDescriptor

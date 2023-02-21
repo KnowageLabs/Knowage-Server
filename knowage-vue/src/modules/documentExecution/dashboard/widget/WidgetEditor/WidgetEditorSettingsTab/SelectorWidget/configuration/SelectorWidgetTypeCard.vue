@@ -11,6 +11,9 @@ export default defineComponent({
     name: 'table-widget-rows',
     components: {},
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectorType: { type: Object as any, true: false } },
+    data() {
+        return {}
+    },
     computed: {
         cardDisabled(): boolean {
             if (this.selectorType.value == 'date' || this.selectorType.value == 'dateRange') {
@@ -19,9 +22,6 @@ export default defineComponent({
             } else if (this.widgetModel.columns[0]?.type.toLowerCase().includes('date') || this.widgetModel.columns[0]?.type.toLowerCase().includes('timestamp')) return true
             return false
         }
-    },
-    data() {
-        return {}
     },
     created() {},
     unmounted() {},

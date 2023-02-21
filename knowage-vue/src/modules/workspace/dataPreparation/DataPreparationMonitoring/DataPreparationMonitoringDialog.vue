@@ -1,25 +1,25 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary schedulerDialog" v-bind:visible="visibility" footer="footer" :header="$t('workspace.myData.monitoring')" modal :breakpoints="{ '960px': '75vw', '640px': '100vw' }" :closable="false" :baseZIndex="1" :autoZIndex="true">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary schedulerDialog" :visible="visibility" footer="footer" :header="$t('workspace.myData.monitoring')" modal :breakpoints="{ '960px': '75vw', '640px': '100vw' }" :closable="false" :base-z-index="1" :auto-z-index="true">
         <KnScheduler
             class="p-m-1"
-            :cronExpression="currentCronExpression"
-            :cronExpressionType="cronExpressionType"
+            :cron-expression="currentCronExpression"
+            :cron-expression-type="cronExpressionType"
             :descriptor="schedulerDescriptor"
-            @touched="touched = true"
-            :readOnly="false"
+            :read-only="false"
             :logs="logs"
-            :schedulationEnabled="schedulationEnabled"
-            :schedulationPaused="schedulationPaused"
+            :schedulation-enabled="schedulationEnabled"
+            :schedulation-paused="schedulationPaused"
+            :loading-logs="loadingLogs"
+            @touched="touched = true"
             @update:schedulationPaused="updateSchedulationPaused"
             @update:schedulationEnabled="updateSchedulationEnabled"
             @update:currentCronExpression="updateCurrentCronExpression"
             @update:cronExpressionType="updateCronExpressionType"
-            :loadingLogs="loadingLogs"
         />
         <template #footer>
-            <Button v-bind:visible="visibility" class="kn-button--secondary" :label="$t('common.cancel')" @click="cancel" />
+            <Button :visible="visibility" class="kn-button--secondary" :label="$t('common.cancel')" @click="cancel" />
 
-            <Button v-bind:visible="visibility" class="kn-button--primary" v-t="'common.save'" @click="saveSchedulation" :disabled="!touched" />
+            <Button v-t="'common.save'" :visible="visibility" class="kn-button--primary" :disabled="!touched" @click="saveSchedulation" />
         </template>
     </Dialog>
 </template>
@@ -39,6 +39,10 @@ export default defineComponent({
     components: { Dialog, KnScheduler },
     props: { visibility: Boolean, dataset: Object },
     emits: ['close', 'save', 'update:loading'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             schedulerDescriptor: dataPreparationMonitoringDescriptor,
@@ -65,15 +69,11 @@ export default defineComponent({
             this.loadingLogs = false
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
     methods: {
         async loadLogs() {
             if (this.dataset && this.dataset.id) {
                 await this.$http.get(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/process/by-destination-data-set/' + this.dataset.id).then((response: AxiosResponse<any>) => {
-                    let instance = response.data.instance
+                    const instance = response.data.instance
                     if (instance) {
                         this.instanceId = instance.id
                         this.currentCronExpression = instance.config.cron
@@ -112,7 +112,7 @@ export default defineComponent({
             this.validSchedulation = event.item
         },
         saveSchedulation() {
-            let obj = { instanceId: this.instanceId, config: {} }
+            const obj = { instanceId: this.instanceId, config: {} }
             if (this.schedulationEnabled) {
                 obj['config']['cron'] = this.currentCronExpression
                 obj['config']['paused'] = this.schedulationPaused

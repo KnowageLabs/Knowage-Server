@@ -6,20 +6,20 @@
                 <Button :label="$t('dashboard.datasetEditor.addAssociation')" icon="pi pi-plus-circle" class="p-button-outlined" @click="$emit('createNewAssociation')"></Button>
             </div>
             <Listbox
-                class="kn-list kn-list-no-border-right dashboard-editor-list"
                 v-model="selectedAssociation"
+                class="kn-list kn-list-no-border-right dashboard-editor-list"
                 :options="dashboardAssociationsProp"
                 :filter="true"
-                :filterPlaceholder="$t('common.search')"
-                optionLabel="label"
-                filterMatchMode="contains"
-                :filterFields="['label']"
-                :emptyFilterMessage="$t('common.info.noDataFound')"
+                :filter-placeholder="$t('common.search')"
+                option-label="label"
+                filter-match-mode="contains"
+                :filter-fields="['label']"
+                :empty-filter-message="$t('common.info.noDataFound')"
                 @change="selectAssociation"
             >
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
-                    <div class="kn-list-item" :style="associationListDescriptor.style.list.listItem" v-tooltip.right="slotProps.option.fields.length">
+                    <div v-tooltip.right="slotProps.option.fields.length" class="kn-list-item" :style="associationListDescriptor.style.list.listItem">
                         <i v-if="slotProps.option.fields.length === 0" class="fa-solid fa-circle-exclamation p-ml-1 details-warning-color" />
                         <!-- <div v-for="(field, index) of slotProps.option.fields" :key="index">
                             {{ field.column }}
@@ -37,16 +37,19 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { IAssociation } from '../../../Dashboard'
-import Card from 'primevue/card'
 import Listbox from 'primevue/listbox'
 import dashStore from '../../../Dashboard.store'
 import associationListDescriptor from './DatasetEditorAssociationsListDescriptor.json'
 
 export default defineComponent({
     name: 'dataset-editor-data-list',
-    components: { Card, Listbox },
+    components: { Listbox },
     props: { dashboardAssociationsProp: { required: true, type: Array as any }, selectedAssociationProp: { required: true, type: Object as any } },
     emits: ['createNewAssociation', 'associationSelected', 'associationDeleted', 'addIndexesOnAssociations'],
+    setup() {
+        const dashboardStore = dashStore()
+        return { dashboardStore }
+    },
     data() {
         return {
             associationListDescriptor,
@@ -57,10 +60,6 @@ export default defineComponent({
         selectedAssociationProp() {
             this.selectedAssociation = this.selectedAssociationProp
         }
-    },
-    setup() {
-        const dashboardStore = dashStore()
-        return { dashboardStore }
     },
     created() {},
     methods: {

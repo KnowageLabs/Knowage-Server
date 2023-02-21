@@ -1,6 +1,6 @@
 <template>
     <div class="p-d-flex p-flex-row p-ai-center">
-        <InputSwitch v-if="model" class="p-mr-3" v-model="model.enabled" @click.stop="onModelChange"></InputSwitch>
+        <InputSwitch v-if="model" v-model="model.enabled" class="p-mr-3" @click.stop="onModelChange"></InputSwitch>
         <label class="kn-material-input-label">{{ title ? $t(title) : '' }}</label>
     </div>
 </template>
@@ -9,13 +9,11 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
-import Checkbox from 'primevue/checkbox'
-import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 
 export default defineComponent({
     name: 'selections-widget-settings-accordion-header',
-    components: { Checkbox, Dropdown, InputSwitch },
+    components: { InputSwitch },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, title: { type: String }, type: { type: String, required: true } },
     data() {
         return {

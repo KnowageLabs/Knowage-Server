@@ -7,9 +7,9 @@
                 </template>
             </Toolbar>
         </template>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
 
-        <DataTable :value="rows" class="p-datatable-sm kn-table p-m-2" v-model:selection="selectedTables" dataKey="name" v-model:filters="filters" :globalFilterFields="metawebAddPhysicalTableDialogDescriptor.globalFilterFields">
+        <DataTable v-model:selection="selectedTables" v-model:filters="filters" :value="rows" class="p-datatable-sm kn-table p-m-2" data-key="name" :global-filter-fields="metawebAddPhysicalTableDialogDescriptor.globalFilterFields">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -17,11 +17,11 @@
                 <div class="table-header p-d-flex">
                     <span class="p-input-icon-left p-mr-3 p-col-12">
                         <i class="pi pi-search" />
-                        <InputText class="kn-material-input" v-model="filters['global'].value" :placeholder="$t('common.search')" />
+                        <InputText v-model="filters['global'].value" class="kn-material-input" :placeholder="$t('common.search')" />
                     </span>
                 </div>
             </template>
-            <Column selectionMode="multiple" :style="metawebAddPhysicalTableDialogDescriptor.selectColumnStyle" />
+            <Column selection-mode="multiple" :style="metawebAddPhysicalTableDialogDescriptor.selectColumnStyle" />
             <Column field="name" :header="$t('common.name')" />
         </DataTable>
 

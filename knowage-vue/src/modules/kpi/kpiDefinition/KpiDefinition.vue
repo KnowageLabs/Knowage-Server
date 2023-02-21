@@ -7,27 +7,27 @@
                         {{ $t('kpi.kpiDefinition.title') }}
                     </template>
                     <template #end>
-                        <FabButton icon="fas fa-plus" @click="showForm" data-test="open-form-button" />
+                        <FabButton icon="fas fa-plus" data-test="open-form-button" @click="showForm" />
                     </template>
                 </Toolbar>
-                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <Listbox v-if="!loading" class="kn-list--column" :options="kpiList" :filter="true" :filterPlaceholder="$t('common.search')" optionLabel="name" filterMatchMode="contains" :filterFields="name" :emptyFilterMessage="$t('common.info.noDataFound')" @change="showForm" data-test="kpi-list">
+                <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
+                <Listbox v-if="!loading" class="kn-list--column" :options="kpiList" :filter="true" :filter-placeholder="$t('common.search')" option-label="name" filter-match-mode="contains" :filter-fields="name" :empty-filter-message="$t('common.info.noDataFound')" data-test="kpi-list" @change="showForm">
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
                         <div class="kn-list-item" data-test="list-item">
                             <div class="kn-list-item-text">
                                 <span>{{ slotProps.option.name }}</span>
-                                <span class="kn-list-item-text-secondary" v-if="slotProps.option.category">{{ slotProps.option.category.valueDescription }}</span>
+                                <span v-if="slotProps.option.category" class="kn-list-item-text-secondary">{{ slotProps.option.category.valueDescription }}</span>
                             </div>
-                            <Button icon="far fa-copy" class="p-button-text p-button-rounded p-button-plain" @click.stop="emitCopyKpi(slotProps.option.id, slotProps.option.version)" data-test="copy-button" />
-                            <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteKpiConfirm(slotProps.option.id, slotProps.option.version)" data-test="delete-button" />
+                            <Button icon="far fa-copy" class="p-button-text p-button-rounded p-button-plain" data-test="copy-button" @click.stop="emitCopyKpi(slotProps.option.id, slotProps.option.version)" />
+                            <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" data-test="delete-button" @click.stop="deleteKpiConfirm(slotProps.option.id, slotProps.option.version)" />
                         </div>
                     </template>
                 </Listbox>
             </div>
 
             <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
-                <router-view :cloneKpiId="cloneKpiId" :cloneKpiVersion="cloneKpiVersion" @touched="touched = true" @closed="onFormClose" @kpiUpdated="reloadAndReroute" @kpiCreated="reloadAndReroute" @showDialog="displayInfoDialog" @onGuideClose="showGuide = false" />
+                <router-view :clone-kpi-id="cloneKpiId" :clone-kpi-version="cloneKpiVersion" @touched="touched = true" @closed="onFormClose" @kpiUpdated="reloadAndReroute" @kpiCreated="reloadAndReroute" @showDialog="displayInfoDialog" @onGuideClose="showGuide = false" />
             </div>
         </div>
     </div>
@@ -47,6 +47,10 @@ export default defineComponent({
         FabButton,
         Listbox
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             loading: false,
@@ -59,10 +63,6 @@ export default defineComponent({
             cloneKpiId: Number,
             cloneKpiVersion: Number
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         await this.getKpiList()
@@ -127,7 +127,7 @@ export default defineComponent({
         async reloadAndReroute(event) {
             await this.getKpiList()
 
-            let kpiToLoad = this.kpiList.find((kpi) => {
+            const kpiToLoad = this.kpiList.find((kpi) => {
                 if (kpi.name === event) return true
             })
             let path = ''

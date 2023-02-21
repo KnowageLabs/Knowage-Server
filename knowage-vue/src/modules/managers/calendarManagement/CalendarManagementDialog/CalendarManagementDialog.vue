@@ -8,11 +8,11 @@
             </Toolbar>
         </template>
 
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
 
         <div>
-            <CalendarManagementDetailForm :propCalendar="calendar" :generateButtonVisible="generateButtonVisible" :generateButtonDisabled="generateButtonDisabled" @generateCalendarClicked="generateCalendarConfirm"></CalendarManagementDetailForm>
-            <CalendarManagementDetailTable v-if="calendarDetailTableVisible" class="p-m-4" :propCalendarInfo="calendar?.splittedCalendar" :domains="domains"></CalendarManagementDetailTable>
+            <CalendarManagementDetailForm :prop-calendar="calendar" :generate-button-visible="generateButtonVisible" :generate-button-disabled="generateButtonDisabled" @generateCalendarClicked="generateCalendarConfirm"></CalendarManagementDetailForm>
+            <CalendarManagementDetailTable v-if="calendarDetailTableVisible" class="p-m-4" :prop-calendar-info="calendar?.splittedCalendar" :domains="domains"></CalendarManagementDetailTable>
         </div>
 
         <template #footer>
@@ -39,6 +39,10 @@ export default defineComponent({
     components: { CalendarManagementDetailForm, CalendarManagementDetailTable, Dialog },
     props: { visible: { type: Boolean }, propCalendar: { type: Object as PropType<iCalendar | null> }, domains: { type: Array as PropType<iDomain[]> } },
     emits: ['close', 'calendarSaved'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             calendarManagementDialogDescriptor,
@@ -62,10 +66,6 @@ export default defineComponent({
         propCalendar() {
             if (this.visible) this.loadCalendar()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadCalendar()

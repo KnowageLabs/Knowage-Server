@@ -2,29 +2,29 @@
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
         <template #start>{{ selectedLov.label }}</template>
         <template #end>
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="saveButtonDisabled" @click="saveLov" data-test="submit-button" v-tooltip="$t('common.save')" />
-            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" data-test="close-button" v-tooltip="$t('common.close')" />
+            <Button v-tooltip="$t('common.save')" icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="saveButtonDisabled" data-test="submit-button" @click="saveLov" />
+            <Button v-tooltip="$t('common.close')" icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" data-test="close-button" @click="closeTemplate" />
         </template>
     </Toolbar>
-    <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+    <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
     <div v-else class="kn-page-content">
         <div class="card">
-            <LovsManagementDetailCard :selectedLov="selectedLov" :lovs="lovs" :listOfInputTypes="listOfInputTypes" @touched="setTouched" @typeChanged="cleanSelections"></LovsManagementDetailCard>
+            <LovsManagementDetailCard :selected-lov="selectedLov" :lovs="lovs" :list-of-input-types="listOfInputTypes" @touched="setTouched" @typeChanged="cleanSelections"></LovsManagementDetailCard>
         </div>
         <div class="card">
             <LovsManagementWizardCard
                 v-if="selectedLov.itypeCd"
-                :selectedLov="selectedLov"
-                :selectedQuery="selectedQuery"
-                :selectedScript="selectedScript"
+                :selected-lov="selectedLov"
+                :selected-query="selectedQuery"
+                :selected-script="selectedScript"
                 :datasources="datasources"
-                :profileAttributes="profileAttributes"
-                :listOfScriptTypes="listOfScriptTypes"
-                :listForFixLov="listForFixLov"
-                :selectedJavaClass="selectedJavaClass"
-                :selectedDataset="selectedDataset"
+                :profile-attributes="profileAttributes"
+                :list-of-script-types="listOfScriptTypes"
+                :list-for-fix-lov="listForFixLov"
+                :selected-java-class="selectedJavaClass"
+                :selected-dataset="selectedDataset"
                 :save="save"
-                :previewDisabled="saveButtonDisabled"
+                :preview-disabled="saveButtonDisabled"
                 @touched="setTouched"
                 @created="onCreated()"
                 @selectedDataset="setSelectedDataset($event)"
@@ -86,14 +86,14 @@ export default defineComponent({
             v$: useValidate() as any
         }
     },
-    watch: {
-        async id() {
-            await this.loadPage()
-        }
-    },
     computed: {
         saveButtonDisabled(): boolean {
             return this.v$.$invalid || this.emptyRequiredFields()
+        }
+    },
+    watch: {
+        async id() {
+            await this.loadPage()
         }
     },
     async mounted() {
@@ -206,9 +206,20 @@ export default defineComponent({
                     return !this.selectedJavaClass.name
                 case lovItemEnum.DATASET:
                     return !this.selectedDataset.name
+                case lovItemEnum.FIX_LOV:
+                    return this.isFixedLovListInvalid()
             }
 
             return false
+        },
+        isFixedLovListInvalid() {
+            for (let i = 0; i < this.listForFixLov.length; i++) {
+                const fixedLovListItem = this.listForFixLov[i] as iFixedValue
+                if (fixedLovListItem.VALUE?.trim() && fixedLovListItem.DESCRIPTION?.trim()) {
+                    return false
+                }
+            }
+            return true
         },
         cleanSelections() {
             this.selectedQuery = { datasource: '', query: '' }

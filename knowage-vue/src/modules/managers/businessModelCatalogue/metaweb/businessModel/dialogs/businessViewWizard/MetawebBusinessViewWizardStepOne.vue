@@ -4,8 +4,8 @@
             <span class="p-float-label">
                 <InputText
                     id="name"
-                    class="kn-material-input"
                     v-model.trim="v$.tmpBnssView.name.$model"
+                    class="kn-material-input"
                     :class="{
                         'p-invalid': v$.tmpBnssView.name.$invalid && v$.tmpBnssView.name.$dirty
                     }"
@@ -14,18 +14,18 @@
                 />
                 <label for="name" class="kn-material-input-label"> {{ $t('common.name') }} *</label>
             </span>
-            <KnValidationMessages class="p-mt-1" :vComp="v$.tmpBnssView.name" :additionalTranslateParams="{ fieldName: $t('common.name') }" />
+            <KnValidationMessages class="p-mt-1" :v-comp="v$.tmpBnssView.name" :additional-translate-params="{ fieldName: $t('common.name') }" />
         </div>
         <div class="p-field p-col-12 p-md-6">
             <span class="p-float-label">
-                <InputText id="desc" class="kn-material-input" v-model="tmpBnssView.description" />
+                <InputText id="desc" v-model="tmpBnssView.description" class="kn-material-input" />
                 <label for="desc" class="kn-material-input-label"> {{ $t('common.description') }}</label>
             </span>
         </div>
     </form>
     <div class="kn-relative kn-flex">
         <div class="kn-height-full kn-width-full" :style="bsDescriptor.style.absolute">
-            <DataTable class="p-datatable-sm kn-table p-ml-2" :value="physicalModels" v-model:selection="tmpBnssView.physicalModels" :scrollable="true" scrollHeight="100%" v-model:filters="filters" :globalFilterFields="bsDescriptor.globalFilterFields">
+            <DataTable v-model:selection="tmpBnssView.physicalModels" v-model:filters="filters" class="p-datatable-sm kn-table p-ml-2" :value="physicalModels" :scrollable="true" scroll-height="100%" :global-filter-fields="bsDescriptor.globalFilterFields">
                 <template #empty>
                     {{ $t('metaweb.businessModel.') }}
                 </template>
@@ -33,11 +33,11 @@
                     <div class="table-header p-d-flex">
                         <span class="p-input-icon-left p-mr-3 p-col-12">
                             <i class="pi pi-search" />
-                            <InputText class="kn-material-input" v-model="filters['global'].value" :placeholder="$t('common.search')" />
+                            <InputText v-model="filters['global'].value" class="kn-material-input" :placeholder="$t('common.search')" />
                         </span>
                     </div>
                 </template>
-                <Column selectionMode="multiple" />
+                <Column selection-mode="multiple" />
                 <Column field="name" :header="$t('common.name')" style="flex-basis:100%" />
             </DataTable>
         </div>
@@ -67,13 +67,13 @@ export default defineComponent({
             } as Object
         }
     },
-    created() {
-        this.tmpBnssView = this.bnssViewObject
-    },
     watch: {
         bnssViewObject() {
             this.tmpBnssView = this.bnssViewObject
         }
+    },
+    created() {
+        this.tmpBnssView = this.bnssViewObject
     },
     validations() {
         const bvRequired = (value) => {

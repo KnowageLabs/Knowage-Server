@@ -2,8 +2,8 @@
     <div v-if="driver && driver.parameterValue" class="p-fluid p-formgrid p-grid p-jc-center p-ai-center p-p-5 p-m-0">
         <div class="p-field p-col-12">
             <span class="p-float-label">
-                <MultiSelect v-if="driver.multivalue" v-model="driver.parameterValue" :options="driver.options" optionLabel="description" />
-                <Dropdown v-else class="kn-material-input" v-model="driver.parameterValue[0].value" :options="driver.options" optionValue="value" optionLabel="description" @change="onDropdownChange" />
+                <MultiSelect v-if="driver.multivalue" v-model="driver.parameterValue" :options="driver.options" option-label="description" />
+                <Dropdown v-else v-model="driver.parameterValue[0].value" class="kn-material-input" :options="driver.options" option-value="value" option-label="description" @change="onDropdownChange" />
                 <label class="kn-material-input-label">{{ $t('common.value') }}</label>
             </span>
         </div>
@@ -20,12 +20,12 @@ export default defineComponent({
     name: 'driver-dialog-dropdown',
     components: { Dropdown, MultiSelect },
     props: { propDriver: { type: Object as PropType<IDashboardDatasetDriver | null>, required: true } },
-    computed: {},
     data() {
         return {
             driver: null as IDashboardDatasetDriver | null
         }
     },
+    computed: {},
     watch: {
         propDriver() {
             this.loadDriver()

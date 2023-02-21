@@ -1,13 +1,13 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="knParameterPopupDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary" :content-style="knParameterPopupDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start> {{ $t('common.parameter') + ': ' }} {{ popupData ? popupData.idParam : '' }} </template>
             </Toolbar>
         </template>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
 
-        <KnParameterPopupTable v-if="parameterPopUpData && !loading" :parameterPopUpData="popupData" :multivalue="multivalue" :multipleSelectedRows="multipleSelectedRows" @selected="onRowSelected"></KnParameterPopupTable>
+        <KnParameterPopupTable v-if="parameterPopUpData && !loading" :parameter-pop-up-data="popupData" :multivalue="multivalue" :multiple-selected-rows="multipleSelectedRows" @selected="onRowSelected"></KnParameterPopupTable>
 
         <template #footer>
             <div class="p-d-flex p-flex-row p-jc-end">

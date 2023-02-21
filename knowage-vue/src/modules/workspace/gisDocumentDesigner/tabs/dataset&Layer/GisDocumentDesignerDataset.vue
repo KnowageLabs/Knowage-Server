@@ -10,13 +10,13 @@
             </Toolbar>
         </template>
         <template #content>
-            <DataTable class="p-datatable-sm kn-table georef-step1-table" :value="documentData.selectedDataset" dataKey="id" responsiveLayout="scroll" breakpoint="600px">
+            <DataTable class="p-datatable-sm kn-table georef-step1-table" :value="documentData.selectedDataset" data-key="id" responsive-layout="scroll" breakpoint="600px">
                 <template #empty>
                     {{ $t('workspace.gis.dnl.emptyInfo') }}
                 </template>
-                <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field">
+                <Column v-for="col of columns" :key="col.field" :field="col.field" :header="$t(col.header)">
                     <template #body="{ data }">
-                        <span class="kn-truncated" v-tooltip.top="data[col.field]">{{ data[col.field] }}</span>
+                        <span v-tooltip.top="data[col.field]" class="kn-truncated">{{ data[col.field] }}</span>
                     </template>
                 </Column>
                 <Column :style="styleDescriptor.style.trashColumn" @rowClick="false">
@@ -28,39 +28,39 @@
         </template>
     </Card>
 
-    <Dialog class="p-fluid kn-dialog--toolbar--primary" :style="styleDescriptor.style.dialogSize" v-if="datasetDialogVisible" :visible="datasetDialogVisible" :modal="true" :closable="false">
+    <Dialog v-if="datasetDialogVisible" class="p-fluid kn-dialog--toolbar--primary" :style="styleDescriptor.style.dialogSize" :visible="datasetDialogVisible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>{{ $t('workspace.gis.dnl.datasetList') }}</template>
             </Toolbar>
         </template>
         <DataTable
+            v-model:selection="selectedDataset"
+            v-model:filters="filters"
             class="p-datatable-sm kn-table kn-width-full"
             :value="availableDatasets"
-            dataKey="id"
-            v-model:selection="selectedDataset"
-            selectionMode="single"
+            data-key="id"
+            selection-mode="single"
             :scrollable="true"
-            scrollHeight="40vh"
-            v-model:filters="filters"
-            :globalFilterFields="globalFilterFields"
+            scroll-height="40vh"
+            :global-filter-fields="globalFilterFields"
             :loading="loading"
-            responsiveLayout="scroll"
+            responsive-layout="scroll"
         >
             <template #header>
                 <div class="table-header p-d-flex p-ai-center">
                     <span id="search-container" class="p-input-icon-left p-mr-3">
                         <i class="pi pi-search" />
-                        <InputText class="kn-material-input" v-model="filters['global'].value" :placeholder="$t('common.search')" />
+                        <InputText v-model="filters['global'].value" class="kn-material-input" :placeholder="$t('common.search')" />
                     </span>
                 </div>
             </template>
             <template #empty>
                 {{ $t('workspace.gis.dnl.dialogEmptyInfo') }}
             </template>
-            <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field">
+            <Column v-for="col of columns" :key="col.field" :field="col.field" :header="$t(col.header)">
                 <template #body="{ data }">
-                    <span class="kn-truncated" v-tooltip.top="data[col.field]">{{ data[col.field] }}</span>
+                    <span v-tooltip.top="data[col.field]" class="kn-truncated">{{ data[col.field] }}</span>
                 </template>
             </Column>
         </DataTable>
@@ -91,9 +91,8 @@ export default defineComponent({
         Column,
         Dialog
     },
-    emits: ['datasetDeleted', 'datasetChanged'],
     props: { documentDataProp: { type: Object as any, required: false }, isDatasetChosen: Object },
-    computed: {},
+    emits: ['datasetDeleted', 'datasetChanged'],
     data() {
         return {
             descriptor,
@@ -108,6 +107,7 @@ export default defineComponent({
             documentData: {} as any
         }
     },
+    computed: {},
     created() {
         this.documentData = this.documentDataProp
     },

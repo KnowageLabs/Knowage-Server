@@ -9,7 +9,7 @@
         </template>
 
         <template #content>
-            <Listbox class="metafield-list" v-model="selectedMetafield" :options="dataset.metadata.fieldsMeta" @change="metafieldsSelected($event.value)">
+            <Listbox v-model="selectedMetafield" class="metafield-list" :options="dataset.metadata.fieldsMeta" @change="metafieldsSelected($event.value)">
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
                     <div class="kn-list-item p-d-flex p-flex-row" :class="{ ' selected-metafield': slotProps.option.selected }">

@@ -17,12 +17,12 @@
                                 <div class="p-field p-col-12 p-d-flex">
                                     <div class="kn-flex">
                                         <span class="p-float-label">
-                                            <InputText id="fileName" class="kn-material-input kn-width-full" v-model="templateToUpload.name" :disabled="true" />
+                                            <InputText id="fileName" v-model="templateToUpload.name" class="kn-material-input kn-width-full" :disabled="true" />
                                             <label for="fileName" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.info.uploadTemplate') }} </label>
                                         </span>
                                     </div>
                                     <Button icon="fas fa-upload fa-1x" class="p-button-text p-button-plain p-ml-2" @click="setUploadType" />
-                                    <KnInputFile label="" v-if="!uploading" :changeFunction="setTemplateForUpload" :triggerInput="triggerUpload" />
+                                    <KnInputFile v-if="!uploading" label="" :change-function="setTemplateForUpload" :trigger-input="triggerUpload" />
                                 </div>
                             </div>
                             <form class="p-fluid p-formgrid p-grid p-m-1">
@@ -30,10 +30,10 @@
                                     <span class="p-float-label">
                                         <InputText
                                             id="label"
+                                            v-model="v$.document.label.$model"
                                             class="kn-material-input"
                                             type="text"
-                                            maxLength="100"
-                                            v-model="v$.document.label.$model"
+                                            max-length="100"
                                             :class="{
                                                 'p-invalid': v$.document.label.$invalid && v$.document.label.$dirty
                                             }"
@@ -42,16 +42,16 @@
                                         />
                                         <label for="label" class="kn-material-input-label"> {{ $t('common.label') }} * </label>
                                     </span>
-                                    <KnValidationMessages class="p-mt-1" :vComp="v$.document.label" :additionalTranslateParams="{ fieldName: $t('common.label') }" />
+                                    <KnValidationMessages class="p-mt-1" :v-comp="v$.document.label" :additional-translate-params="{ fieldName: $t('common.label') }" />
                                 </div>
                                 <div class="p-field p-col-12 p-lg-6">
                                     <span class="p-float-label">
                                         <InputText
                                             id="name"
+                                            v-model="v$.document.name.$model"
                                             class="kn-material-input"
                                             type="text"
-                                            maxLength="200"
-                                            v-model="v$.document.name.$model"
+                                            max-length="200"
                                             :class="{
                                                 'p-invalid': v$.document.name.$invalid && v$.document.name.$dirty
                                             }"
@@ -60,7 +60,7 @@
                                         />
                                         <label for="name" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
                                     </span>
-                                    <KnValidationMessages class="p-mt-1" :vComp="v$.document.name" :additionalTranslateParams="{ fieldName: $t('common.name') }" />
+                                    <KnValidationMessages class="p-mt-1" :v-comp="v$.document.name" :additional-translate-params="{ fieldName: $t('common.name') }" />
                                 </div>
 
                                 <div class="p-field p-col-12 p-lg-6">
@@ -72,11 +72,11 @@
                                     <span class="p-float-label">
                                         <Textarea
                                             id="description"
+                                            v-model="v$.document.description.$model"
                                             class="kn-material-input"
                                             rows="9"
-                                            maxLength="400"
-                                            :autoResize="true"
-                                            v-model="v$.document.description.$model"
+                                            max-length="400"
+                                            :auto-resize="true"
                                             :class="{
                                                 'p-invalid': v$.document.description.$invalid && v$.document.description.$dirty
                                             }"
@@ -85,29 +85,29 @@
                                         />
                                         <label for="description" class="kn-material-input-label"> {{ $t('common.description') }} </label>
                                     </span>
-                                    <KnValidationMessages class="p-mt-1" :vComp="v$.document.description" :additionalTranslateParams="{ fieldName: $t('common.description') }" />
+                                    <KnValidationMessages class="p-mt-1" :v-comp="v$.document.description" :additional-translate-params="{ fieldName: $t('common.description') }" />
                                 </div>
 
                                 <div class="p-field p-col-12 p-d-flex">
                                     <div class="kn-flex">
                                         <span class="p-float-label">
-                                            <InputText id="fileName" class="kn-material-input" v-model="document.previewFile" :disabled="true" />
+                                            <InputText id="fileName" v-model="document.previewFile" class="kn-material-input" :disabled="true" />
                                             <label for="fileName" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.info.previewImage') }} </label>
                                         </span>
                                     </div>
                                     <Button icon="fas fa-upload fa-1x" class="p-button-text p-button-plain p-ml-2" @click="setImageUploadType" />
                                     <Button v-if="document.previewFile" icon="fas fa-trash fa-1x" class="p-button-text p-button-plain p-ml-2" @click="$emit('deleteImage')" />
-                                    <KnInputFile :changeFunction="setImageForUpload" accept=".png, .jpg, .jpeg" :triggerInput="triggerImageUpload" />
+                                    <KnInputFile :change-function="setImageForUpload" accept=".png, .jpg, .jpeg" :trigger-input="triggerImageUpload" />
                                 </div>
                                 <div class="p-field p-col-12 p-lg-6">
                                     <span class="p-float-label">
                                         <Dropdown
                                             id="type"
-                                            class="kn-material-input"
                                             v-model="v$.document.typeCode.$model"
+                                            class="kn-material-input"
                                             :options="documentTypes"
-                                            optionLabel="translatedValueName"
-                                            optionValue="valueCd"
+                                            option-label="translatedValueName"
+                                            option-value="valueCd"
                                             :class="{
                                                 'p-invalid': v$.document.typeCode.$invalid && v$.document.typeCode.$dirty
                                             }"
@@ -116,17 +116,17 @@
                                         />
                                         <label for="type" class="kn-material-input-label"> {{ $t('importExport.catalogFunction.column.type') }} *</label>
                                     </span>
-                                    <KnValidationMessages class="p-mt-1" :vComp="v$.document.typeCode" :additionalTranslateParams="{ fieldName: $t('importExport.catalogFunction.column.type') }" />
+                                    <KnValidationMessages class="p-mt-1" :v-comp="v$.document.typeCode" :additional-translate-params="{ fieldName: $t('importExport.catalogFunction.column.type') }" />
                                 </div>
                                 <div class="p-field p-col-12 p-lg-6">
                                     <span class="p-float-label">
                                         <Dropdown
                                             id="engine"
-                                            class="kn-material-input"
                                             v-model="v$.document.engine.$model"
+                                            class="kn-material-input"
                                             :options="filteredEngines"
-                                            optionLabel="name"
-                                            optionValue="label"
+                                            option-label="name"
+                                            option-value="label"
                                             :disabled="!document.typeCode || document.typeCode == ''"
                                             :class="{
                                                 'p-invalid': v$.document.engine.$invalid && v$.document.engine.$dirty
@@ -137,18 +137,18 @@
                                         <label for="engine" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.info.engine') }} *</label>
                                     </span>
                                     <small>{{ $t('documentExecution.documentDetails.info.engineHint') }}</small>
-                                    <KnValidationMessages class="p-mt-1" :vComp="v$.document.engine" :additionalTranslateParams="{ fieldName: $t('documentExecution.documentDetails.info.engine') }" />
+                                    <KnValidationMessages class="p-mt-1" :v-comp="v$.document.engine" :additional-translate-params="{ fieldName: $t('documentExecution.documentDetails.info.engine') }" />
                                 </div>
 
-                                <span v-if="isDataSourceVisible" class="p-field p-float-label p-col-12 p-lg-6" v-bind:class="{ 'p-lg-12': !isDataSetVisible }">
-                                    <Dropdown id="datasource" class="kn-material-input" v-model="document.dataSourceLabel" :options="availableDatasources" optionLabel="label" optionValue="label" />
+                                <span v-if="isDataSourceVisible" class="p-field p-float-label p-col-12 p-lg-6" :class="{ 'p-lg-12': !isDataSetVisible }">
+                                    <Dropdown id="datasource" v-model="document.dataSourceLabel" class="kn-material-input" :options="availableDatasources" option-label="label" option-value="label" />
                                     <label for="datasource" class="kn-material-input-label"> {{ $t('managers.businessModelManager.dataSource') }} </label>
                                 </span>
 
                                 <div v-if="isDataSetVisible" class="p-field p-col-12 p-lg-6 p-d-flex">
                                     <div class="kn-flex">
                                         <span class="p-float-label">
-                                            <InputText id="dataset" class="kn-material-input" v-model="dataset.name" :disabled="true" />
+                                            <InputText id="dataset" v-model="dataset.name" class="kn-material-input" :disabled="true" />
                                             <label for="dataset" class="kn-material-input-label"> {{ $t('common.dataset') }} </label>
                                         </span>
                                     </div>
@@ -159,11 +159,11 @@
                                     <span class="p-float-label">
                                         <Dropdown
                                             id="state"
-                                            class="kn-material-input"
                                             v-model="v$.document.stateCode.$model"
+                                            class="kn-material-input"
                                             :options="availableStates"
-                                            optionLabel="translatedValueName"
-                                            optionValue="valueCd"
+                                            option-label="translatedValueName"
+                                            option-value="valueCd"
                                             :class="{
                                                 'p-invalid': v$.document.stateCode.$invalid && v$.document.stateCode.$dirty
                                             }"
@@ -172,11 +172,11 @@
                                         />
                                         <label for="state" class="kn-material-input-label"> {{ $t('common.state') }} *</label>
                                     </span>
-                                    <KnValidationMessages class="p-mt-1" :vComp="v$.document.stateCode" :additionalTranslateParams="{ fieldName: $t('common.state') }" />
+                                    <KnValidationMessages class="p-mt-1" :v-comp="v$.document.stateCode" :additional-translate-params="{ fieldName: $t('common.state') }" />
                                 </div>
                                 <div class="p-field p-col-12 p-lg-6">
                                     <span class="p-float-label">
-                                        <InputText id="refresh" class="kn-material-input" v-model="document.refreshSeconds" type="number" />
+                                        <InputText id="refresh" v-model="document.refreshSeconds" class="kn-material-input" type="number" />
                                         <label for="refresh" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.info.refresh') }} </label>
                                     </span>
                                     <small>{{ $t('documentExecution.documentDetails.info.refreshHint') }}</small>
@@ -205,7 +205,7 @@
             </Toolbar>
             <div id="position-content" class="kn-flex kn-relative">
                 <div :style="mainDescriptor.style.absoluteScroll">
-                    <div id="driver-position-container" class="p-m-2" v-if="document.drivers && document.drivers.length > 0">
+                    <div v-if="document.drivers && document.drivers.length > 0" id="driver-position-container" class="p-m-2">
                         <Toolbar class="kn-toolbar kn-toolbar--default">
                             <template #start>
                                 {{ $t('documentExecution.documentDetails.info.parametersPanelPosition') }}
@@ -214,7 +214,7 @@
                         <Card>
                             <template #content>
                                 <span class="p-field p-float-label p-col-12">
-                                    <Dropdown id="attributes" class="kn-material-input kn-width-full" v-model="document.parametersRegion" :options="driversPositions" :optionLabel="translatedLabel" optionValue="value">
+                                    <Dropdown id="attributes" v-model="document.parametersRegion" class="kn-material-input kn-width-full" :options="driversPositions" :option-label="translatedLabel" option-value="value">
                                         <template #option="slotProps">
                                             <div class="p-dropdown-option">
                                                 <span class="kn-capitalize">{{ $t(slotProps.option.label) }}</span>
@@ -236,7 +236,7 @@
                             <template #content>
                                 <form class="p-formgrid p-grid p-mb-3">
                                     <span class="p-float-label p-col-10">
-                                        <Textarea id="profiledVisibility" class="kn-material-input kn-width-full" rows="1" :autoResize="true" v-model="document.profiledVisibility" :disabled="true" />
+                                        <Textarea id="profiledVisibility" v-model="document.profiledVisibility" class="kn-material-input kn-width-full" rows="1" :auto-resize="true" :disabled="true" />
                                         <label for="profiledVisibility" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.info.profiledVisibility') }} </label>
                                     </span>
                                     <Button icon="fas fa-plus-circle fa-1x" class="p-button-text p-button-plain p-ml-2 p-col-1" :disabled="!visibilityAttribute" @click="addRestriction" />
@@ -244,12 +244,12 @@
                                 </form>
                                 <form class="p-formgrid p-grid">
                                     <span class="p-field p-float-label p-col-12 p-lg-5">
-                                        <Dropdown id="attributes" class="kn-material-input kn-width-full" v-model="visibilityAttribute" :options="availableAttributes" optionLabel="attributeName" optionValue="attributeName" />
+                                        <Dropdown id="attributes" v-model="visibilityAttribute" class="kn-material-input kn-width-full" :options="availableAttributes" option-label="attributeName" option-value="attributeName" />
                                         <label for="attributes" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.info.attribute') }} </label>
                                     </span>
                                     <span class="p-col-12 p-lg-1" :style="infoDescriptor.style.center">=</span>
                                     <span class="p-field p-float-label p-col-12 p-lg-6">
-                                        <InputText id="restrictionValue" class="kn-material-input kn-width-full" v-model="restrictionValue" />
+                                        <InputText id="restrictionValue" v-model="restrictionValue" class="kn-material-input kn-width-full" />
                                         <label for="restrictionValue" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.info.restrictionValueHint') }} </label>
                                     </span>
                                 </form>
@@ -264,14 +264,14 @@
                         </Toolbar>
                         <Card class="card-0-padding">
                             <template #content>
-                                <DocumentDetailsTree :propFunctionalities="folders" :propSelectedFolders="document.functionalities" @selected="setFunctionality" />
+                                <DocumentDetailsTree :prop-functionalities="folders" :prop-selected-folders="document.functionalities" @selected="setFunctionality" />
                             </template>
                         </Card>
                     </div>
                 </div>
             </div>
         </div>
-        <DatasetDialog v-if="showDatasetDialog" :selectedDataset="selectedDataset" :visible="showDatasetDialog" @closeDialog="showDatasetDialog = false" @saveSelectedDataset="saveSelectedDataset" />
+        <DatasetDialog v-if="showDatasetDialog" :selected-dataset="selectedDataset" :visible="showDatasetDialog" @closeDialog="showDatasetDialog = false" @saveSelectedDataset="saveSelectedDataset" />
     </div>
 </template>
 
@@ -355,6 +355,10 @@ export default defineComponent({
             user: 'user'
         })
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             v$: useValidate() as any,
@@ -379,19 +383,15 @@ export default defineComponent({
             imagePreview: false
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
-    async created() {
-        this.setData()
-        await this.getAllTemplates()
-    },
     watch: {
         async selectedDocument() {
             this.setData()
             await this.getAllTemplates()
         }
+    },
+    async created() {
+        this.setData()
+        await this.getAllTemplates()
     },
     validations() {
         const validationObject = { document: createValidations('document', infoDescriptor.validations.document) }

@@ -3,13 +3,13 @@
         <div id="registry-grid-toolbar" class="p-d-flex p-flex-row p-ai-center" :style="registryDescriptor.styles.tableToolbar">
             <div v-if="selectedRows.length > 0" class="p-ml-1">{{ selectedRows.length }} {{ $t('documentExecution.registry.grid.rowsSelected') }}</div>
             <div id="operation-buttons-containter" class="p-ml-auto" :style="registryDescriptor.styles.tableToolbarButtonContainer">
-                <Button icon="fas fa-plus" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.addRow')" data-test="new-row-button" @click="addNewRow" />
-                <Button icon="fas fa-clone" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.cloneRows')" @click="cloneRows" />
-                <Button icon="fas fa-trash" class="p-button-text p-button-rounded p-button-plain kn-button-light" v-tooltip.top="$t('documentExecution.registry.grid.deleteRows')" @click="rowsDeleteConfirm()" />
+                <Button v-tooltip.top="$t('documentExecution.registry.grid.addRow')" icon="fas fa-plus" class="p-button-text p-button-rounded p-button-plain kn-button-light" data-test="new-row-button" @click="addNewRow" />
+                <Button v-tooltip.top="$t('documentExecution.registry.grid.cloneRows')" icon="fas fa-clone" class="p-button-text p-button-rounded p-button-plain kn-button-light" @click="cloneRows" />
+                <Button v-tooltip.top="$t('documentExecution.registry.grid.deleteRows')" icon="fas fa-trash" class="p-button-text p-button-rounded p-button-plain kn-button-light" @click="rowsDeleteConfirm()" />
             </div>
             <Button icon="fas fa-save" class="p-button-text p-button-rounded p-button-plain kn-button-light" @click="$emit('saveRegistry')" />
         </div>
-        <ag-grid-vue v-if="!loading" class="registry-grid ag-theme-alpine kn-height-full" :rowData="rows" :gridOptions="gridOptions" :context="context" />
+        <ag-grid-vue v-if="!loading" class="registry-grid ag-theme-alpine kn-height-full" :row-data="rows" :grid-options="gridOptions" :context="context" />
     </div>
 
     <RegistryDatatableWarningDialog :visible="warningVisible" :columns="dependentColumns" @close="onWarningDialogClose"></RegistryDatatableWarningDialog>
@@ -35,14 +35,21 @@ import cryptoRandomString from 'crypto-random-string'
 
 export default defineComponent({
     name: 'registry-datatable',
-    components: { RegistryDatatableWarningDialog, AgGridVue, HeaderRenderer, TooltipRenderer },
+    components: {
+        RegistryDatatableWarningDialog,
+        AgGridVue,
+        // eslint-disable-next-line vue/no-unused-components
+        HeaderRenderer,
+        // eslint-disable-next-line vue/no-unused-components
+        TooltipRenderer
+    },
     props: {
         propColumns: { type: Array },
         propRows: { type: Array, required: true },
         columnMap: { type: Object },
         propConfiguration: { type: Object },
         pagination: { type: Object },
-        entity: { type: Object as PropType<String | null> },
+        entity: { type: Object as PropType<string | null> },
         id: { type: String },
         keyColumnName: { type: String as any },
         stopWarningsState: { type: Array },
@@ -190,7 +197,7 @@ export default defineComponent({
                     suppressMovable: true,
                     resizable: false,
                     columnInfo: { type: 'int' },
-                    cellStyle: (params) => {
+                    cellStyle: () => {
                         return { color: 'black', backgroundColor: registryDescriptor.styles.colors.disabledCellColor, opacity: 0.8 }
                     }
                 }
@@ -224,7 +231,7 @@ export default defineComponent({
                     comboColumnOptions: this.comboColumnOptions
                 }
             } else {
-                el.cellStyle = (params) => {
+                el.cellStyle = () => {
                     return { color: 'black', backgroundColor: 'rgba(231, 231, 231, 0.8)', opacity: 0.8 }
                 }
             }
@@ -354,16 +361,16 @@ export default defineComponent({
             })
         },
         deleteRows() {
-            var rowsForTableDeletion = this.selectedRows.filter((row) => row.isNew)
+            const rowsForTableDeletion = this.selectedRows.filter((row) => row.isNew)
             if (rowsForTableDeletion.length > 0) {
                 rowsForTableDeletion.forEach((val) => {
-                    var foundIndex = this.rows.indexOf(val)
+                    const foundIndex = this.rows.indexOf(val)
                     if (foundIndex != -1) this.rows.splice(foundIndex, 1)
                 })
                 this.gridApi.applyTransaction({ remove: rowsForTableDeletion })
             }
 
-            var rowsForServiceDeletion = this.selectedRows.filter((row) => !row.isNew)
+            const rowsForServiceDeletion = this.selectedRows.filter((row) => !row.isNew)
             if (rowsForServiceDeletion.length > 0) this.$emit('rowDeleted', rowsForServiceDeletion)
         },
         getFormattedDate(date: any, format: any, incomingFormat?: string) {
@@ -419,7 +426,7 @@ export default defineComponent({
             this.$emit('rowChanged', row)
         },
         setDependentColumns(column: any) {
-            let tempColumn = column
+            const tempColumn = column
             if (!tempColumn.hasDependencies) return
 
             tempColumn.hasDependencies.forEach((el: any) => {
@@ -447,9 +454,9 @@ export default defineComponent({
             this.$emit('rowChanged', row)
         },
         onCellEditComplete(event: any) {
-            let id = event.newData.id
+            const id = event.newData.id
             if (id) {
-                var foundIndex = this.rows.findIndex((x) => x.id == id)
+                const foundIndex = this.rows.findIndex((x) => x.id == id)
                 this.rows[foundIndex] = event.newData
             }
         },
@@ -459,10 +466,10 @@ export default defineComponent({
         onBodyScroll() {
             if (this.timeout) clearTimeout(this.timeout)
             this.timeout = setTimeout(() => {
-                var bottom_px = this.gridApi.getVerticalPixelRange().bottom
-                var grid_height = this.gridApi.getDisplayedRowCount() * this.gridApi.getSizesForCurrentTheme().rowHeight
+                const bottom_px = this.gridApi.getVerticalPixelRange().bottom
+                const grid_height = this.gridApi.getDisplayedRowCount() * this.gridApi.getSizesForCurrentTheme().rowHeight
                 if (bottom_px == grid_height) {
-                    var newPaginationStart = this.lazyParams.start + this.registryDescriptor.paginationNumberOfItems
+                    const newPaginationStart = this.lazyParams.start + this.registryDescriptor.paginationNumberOfItems
                     this.lazyParams = {
                         paginationStart: newPaginationStart,
                         paginationLimit: this.registryDescriptor.paginationLimit,
@@ -494,8 +501,8 @@ export default defineComponent({
             return { cell: focusedCell, column: column, row: rowNode }
         },
         async setCellValue(selectedCell, pasteValue) {
-            var colDef = selectedCell.cell.column.colDef
-            var cellType = this.getCellType(colDef)
+            const colDef = selectedCell.cell.column.colDef
+            const cellType = this.getCellType(colDef)
 
             if (this.cellAcceptsPasteValue(colDef, cellType)) {
                 switch (cellType) {
@@ -534,7 +541,7 @@ export default defineComponent({
         },
         validateDropdownValueAfterCopyPaste(colDef: any, pasteValue: string, selectedCell: any) {
             const parentCellValue = selectedCell.row.data[colDef.dependences]
-            let options = this.comboColumnOptions && this.comboColumnOptions[colDef.field] ? this.comboColumnOptions[colDef.field][parentCellValue ?? 'All'] : []
+            const options = this.comboColumnOptions && this.comboColumnOptions[colDef.field] ? this.comboColumnOptions[colDef.field][parentCellValue ?? 'All'] : []
             if (!options) return false
             const index = options.findIndex((dropdownOption: any) => dropdownOption['column_1'] === pasteValue)
             return index !== -1

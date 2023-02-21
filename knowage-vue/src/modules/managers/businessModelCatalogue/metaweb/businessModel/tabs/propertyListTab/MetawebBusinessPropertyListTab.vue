@@ -1,22 +1,22 @@
 <template>
-    <Accordion v-if="businessModel" :multiple="true" :activeIndex="[0, 1]">
+    <Accordion v-if="businessModel" :multiple="true" :active-index="[0, 1]">
         <AccordionTab>
             <template #header>
                 <span>{{ $t('metaweb.physicalModel.misc') }}</span>
             </template>
 
             <div class="p-grid">
-                <div class="p-col-6" v-for="(modelInfo, index) in metawebBusinessPropertyListTabDescriptor.businessModelInfo" :key="index">
+                <div v-for="(modelInfo, index) in metawebBusinessPropertyListTabDescriptor.businessModelInfo" :key="index" class="p-col-6">
                     <div class="p-field">
                         <label :for="modelInfo.name" class="kn-material-input-label"> {{ $t(modelInfo.label) }} </label>
-                        <InputText class="kn-material-input" v-model="businessModel[modelInfo.name]" :id="modelInfo.name" data-test="input-name" />
+                        <InputText :id="modelInfo.name" v-model="businessModel[modelInfo.name]" class="kn-material-input" data-test="input-name" />
                     </div>
                 </div>
 
                 <div v-if="businessModel.physicalTable && meta" class="p-col-6">
                     <div class="p-field">
                         <label class="kn-material-input-label"> {{ $t('metaweb.businessModel.physicalTable') }} </label>
-                        <InputText class="kn-material-input" v-model="meta.physicalModels[businessModel.physicalTable.physicalTableIndex].name" :disabled="true" />
+                        <InputText v-model="meta.physicalModels[businessModel.physicalTable.physicalTableIndex].name" class="kn-material-input" :disabled="true" />
                     </div>
                 </div>
             </div>
@@ -28,38 +28,38 @@
             </template>
 
             <div class="p-grid">
-                <div class="p-col-6" v-for="(prop, index) in categories[categoryKey]" :key="index">
-                    <div class="p-fluid" v-if="prop.propertyType.admissibleValues.length !== 0">
+                <div v-for="(prop, index) in categories[categoryKey]" :key="index" class="p-col-6">
+                    <div v-if="prop.propertyType.admissibleValues.length !== 0" class="p-fluid">
                         <div class="p-field">
                             <label class="kn-material-input-label"> {{ prop.propertyType.name }} </label>
-                            <Dropdown class="kn-material-input" v-model="prop.value" :options="prop.propertyType.admissibleValues" @change="updateCategoryValue(prop)" />
+                            <Dropdown v-model="prop.value" class="kn-material-input" :options="prop.propertyType.admissibleValues" @change="updateCategoryValue(prop)" />
                         </div>
                     </div>
-                    <div class="p-fluid" v-if="prop.propertyType.admissibleValues.length === 0 && prop.type !== 'structural.attribute' && prop.type !== 'structural.sqlFilter' && prop.type !== 'behavioural.notEnabledRoles'">
+                    <div v-if="prop.propertyType.admissibleValues.length === 0 && prop.type !== 'structural.attribute' && prop.type !== 'structural.sqlFilter' && prop.type !== 'behavioural.notEnabledRoles'" class="p-fluid">
                         <div class="p-field">
                             <label class="kn-material-input-label"> {{ prop.propertyType.name }} </label>
-                            <InputText class="kn-material-input" v-model="prop.value" :disabled="prop.type === 'physical.physicaltable'" @change="updateCategoryValue(prop)" />
-                        </div>
-                    </div>
-
-                    <div class="p-fluid" v-if="prop.type === 'structural.attribute'">
-                        <div class="p-field">
-                            <label class="kn-material-input-label"> {{ prop.propertyType.name }} </label>
-                            <Dropdown class="kn-material-input" v-model="prop.value" :options="profileAttributes" @change="updateCategoryValue(prop)" />
+                            <InputText v-model="prop.value" class="kn-material-input" :disabled="prop.type === 'physical.physicaltable'" @change="updateCategoryValue(prop)" />
                         </div>
                     </div>
 
-                    <div class="p-fluid" v-if="prop.type === 'behavioural.notEnabledRoles'">
+                    <div v-if="prop.type === 'structural.attribute'" class="p-fluid">
                         <div class="p-field">
                             <label class="kn-material-input-label"> {{ prop.propertyType.name }} </label>
-                            <MultiSelect class="kn-material-input" v-model="prop.value" :options="roleOptions" @change="updateCategoryValue(prop)" />
+                            <Dropdown v-model="prop.value" class="kn-material-input" :options="profileAttributes" @change="updateCategoryValue(prop)" />
                         </div>
                     </div>
 
-                    <div class="p-fluid" v-if="businessModel.physicalColumn && categoryKey === 'physical'">
+                    <div v-if="prop.type === 'behavioural.notEnabledRoles'" class="p-fluid">
+                        <div class="p-field">
+                            <label class="kn-material-input-label"> {{ prop.propertyType.name }} </label>
+                            <MultiSelect v-model="prop.value" class="kn-material-input" :options="roleOptions" @change="updateCategoryValue(prop)" />
+                        </div>
+                    </div>
+
+                    <div v-if="businessModel.physicalColumn && categoryKey === 'physical'" class="p-fluid">
                         <div class="p-field">
                             <label class="kn-material-input-label"> {{ $t('metaweb.businessModel.physicalColumn') }} </label>
-                            <InputText class="kn-material-input" v-model="businessModel.physicalColumn.name" :disabled="true" />
+                            <InputText v-model="businessModel.physicalColumn.name" class="kn-material-input" :disabled="true" />
                         </div>
                     </div>
                 </div>
@@ -83,6 +83,10 @@ export default defineComponent({
     components: { Accordion, AccordionTab, Dropdown, MultiSelect },
     props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null> }, roles: { type: Array }, propMeta: { type: Object } },
     emits: ['metaUpdated'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             metawebBusinessPropertyListTabDescriptor,
@@ -105,10 +109,6 @@ export default defineComponent({
         roles() {
             this.loadRoleOptions()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadMeta()

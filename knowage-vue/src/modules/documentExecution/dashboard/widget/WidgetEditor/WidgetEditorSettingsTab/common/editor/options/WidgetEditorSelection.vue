@@ -5,13 +5,13 @@
     <div v-else class="p-fluid p-formgrid p-grid">
         <div class="p-field p-col-6">
             <span class="p-float-label">
-                <Dropdown class="kn-material-input" v-model="selectedColumnName" :options="widgetModel.columns" optionValue="columnName" optionLabel="columnName" @change="onColumnChanged"> </Dropdown>
+                <Dropdown v-model="selectedColumnName" class="kn-material-input" :options="widgetModel.columns" option-value="columnName" option-label="columnName" @change="onColumnChanged"> </Dropdown>
                 <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
             </span>
         </div>
         <div class="p-field p-col-6">
             <span class="p-float-label">
-                <InputText class="kn-material-input" v-model="selectionValue" @change="onColumnChanged" />
+                <InputText v-model="selectionValue" class="kn-material-input" @change="onColumnChanged" />
                 <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.editorTags.selectionVal') }}</label>
             </span>
         </div>

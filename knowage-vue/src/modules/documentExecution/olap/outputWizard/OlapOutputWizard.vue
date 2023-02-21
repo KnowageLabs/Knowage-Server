@@ -8,37 +8,37 @@
             </Toolbar>
         </template>
 
-        <ProgressSpinner class="wizard-overlay-spinner" v-if="loading" :style="descriptor.style.spinner" />
+        <ProgressSpinner v-if="loading" class="wizard-overlay-spinner" :style="descriptor.style.spinner" />
 
         <form class="p-fluid p-formgrid p-grid p-m-1">
             <InlineMessage class="p-m-1" severity="info" closable="false">{{ $t('documentExecution.olap.outputWizard.infoMsg') }}</InlineMessage>
             <div id="type-container" class="p-field p-d-flex p-ai-center p-m-2 p-col-11">
                 <span>{{ $t('managers.workspaceManagement.dataPreparation.transformations.outputType') }}: </span>
                 <div class="p-mx-2">
-                    <RadioButton id="fileType" name="file" value="file" v-model="selectedType" />
+                    <RadioButton id="fileType" v-model="selectedType" name="file" value="file" />
                     <label for="fileType" class="p-ml-1">{{ $t('common.file') }}</label>
                 </div>
                 <div>
-                    <RadioButton id="tableType" name="table" value="table" v-model="selectedType" />
+                    <RadioButton id="tableType" v-model="selectedType" name="table" value="table" />
                     <label for="tableType" class="p-ml-1">{{ $t('common.table.table') }}</label>
                 </div>
             </div>
 
             <div class="p-field p-float-label p-col-6 p-mt-2">
-                <Dropdown id="version" class="kn-material-input" v-model="selectedVersion" :options="olapVersionsProp" optionLabel="name" />
+                <Dropdown id="version" v-model="selectedVersion" class="kn-material-input" :options="olapVersionsProp" option-label="name" />
                 <label for="version" class="kn-material-input-label"> {{ $t('documentExecution.olap.outputWizard.version') }} </label>
             </div>
 
             <div v-if="selectedType === 'file' && selectedVersion" class="p-field p-col-6 p-mt-2">
                 <span class="p-float-label">
-                    <InputText id="fieldDelimiter" class="kn-material-input" v-model="fieldDelimiter" />
+                    <InputText id="fieldDelimiter" v-model="fieldDelimiter" class="kn-material-input" />
                     <label for="fieldDelimiter" class="kn-material-input-label"> {{ $t('documentExecution.olap.outputWizard.fieldDelimiter') }} </label>
                 </span>
                 <small>{{ $t('documentExecution.olap.outputWizard.fileInfo') }}</small>
             </div>
             <div v-if="selectedType === 'table' && selectedVersion" class="p-field p-col-6 p-mt-2">
                 <span class="p-float-label">
-                    <InputText id="tableName" class="kn-material-input" v-model="tableName" />
+                    <InputText id="tableName" v-model="tableName" class="kn-material-input" />
                     <label for="tableName" class="kn-material-input-label"> {{ $t('managers.datasetManagement.flatTableName') }} </label>
                 </span>
                 <small>{{ $t('documentExecution.olap.outputWizard.tableInfo') }}</small>
@@ -69,12 +69,9 @@ export default defineComponent({
     components: { Dialog, Dropdown, InlineMessage, RadioButton, ProgressSpinner },
     props: { olapVersionsProp: { type: Boolean, required: true }, sbiExecutionId: { type: String } },
     emits: ['close'],
-    computed: {
-        saveDisabled(): any {
-            if ((this.selectedType === 'file' && this.fieldDelimiter.length > 0) || (this.selectedType === 'table' && this.tableName.length > 0)) {
-                return false
-            } else return true
-        }
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     data() {
         return {
@@ -86,11 +83,14 @@ export default defineComponent({
             fieldDelimiter: '|'
         }
     },
-    watch: {},
-    setup() {
-        const store = mainStore()
-        return { store }
+    computed: {
+        saveDisabled(): any {
+            if ((this.selectedType === 'file' && this.fieldDelimiter.length > 0) || (this.selectedType === 'table' && this.tableName.length > 0)) {
+                return false
+            } else return true
+        }
     },
+    watch: {},
 
     created() {},
     methods: {

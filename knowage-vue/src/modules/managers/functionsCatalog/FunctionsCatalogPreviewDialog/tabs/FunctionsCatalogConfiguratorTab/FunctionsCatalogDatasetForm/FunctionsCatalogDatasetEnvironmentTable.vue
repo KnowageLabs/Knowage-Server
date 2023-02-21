@@ -1,14 +1,14 @@
 <template>
     <DataTable
         id="environment-datatable"
+        v-model:filters="filters"
         :value="environmentLibraries"
         :paginator="true"
         :rows="functionsCatalogDatasetEnvironmentTableDescriptor.rows"
         class="p-datatable-sm kn-table"
-        dataKey="name"
-        v-model:filters="filters"
-        :globalFilterFields="functionsCatalogDatasetEnvironmentTableDescriptor.globalFilterFields"
-        :responsiveLayout="functionsCatalogDatasetEnvironmentTableDescriptor.responsiveLayout"
+        data-key="name"
+        :global-filter-fields="functionsCatalogDatasetEnvironmentTableDescriptor.globalFilterFields"
+        :responsive-layout="functionsCatalogDatasetEnvironmentTableDescriptor.responsiveLayout"
         :breakpoint="functionsCatalogDatasetEnvironmentTableDescriptor.breakpoint"
         @rowClick="$emit('selected', $event.data)"
     >
@@ -21,11 +21,11 @@
             <div class="table-header p-d-flex">
                 <span class="p-input-icon-left p-mr-3 p-col-12">
                     <i class="pi pi-search" />
-                    <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
+                    <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
                 </span>
             </div>
         </template>
-        <Column class="kn-truncated" :style="col.style" v-for="col of functionsCatalogDatasetEnvironmentTableDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true"> </Column>
+        <Column v-for="col of functionsCatalogDatasetEnvironmentTableDescriptor.columns" :key="col.field" class="kn-truncated" :style="col.style" :field="col.field" :header="$t(col.header)" :sortable="true"> </Column>
     </DataTable>
 </template>
 

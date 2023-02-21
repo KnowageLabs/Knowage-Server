@@ -2,15 +2,15 @@
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
         <template #start>{{ timespan?.name }}</template>
         <template #end>
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="saveDisabled" @click="saveTimespan(null)" data-test="save-button" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="saveDisabled" data-test="save-button" @click="saveTimespan(null)" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTimespanDetailsConfirm" />
         </template>
     </Toolbar>
     <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
 
     <div class="p-d-flex p-flex-column kn-flex kn-overflow">
-        <TimespanForm :propTimespan="timespan" :categories="categories" @touched="touched = true"></TimespanForm>
-        <TimespanIntervalTable :propTimespan="timespan" @touched="touched = true"></TimespanIntervalTable>
+        <TimespanForm :prop-timespan="timespan" :categories="categories" @touched="touched = true"></TimespanForm>
+        <TimespanIntervalTable :prop-timespan="timespan" @touched="touched = true"></TimespanIntervalTable>
     </div>
 </template>
 
@@ -30,6 +30,10 @@ export default defineComponent({
     components: { TimespanForm, TimespanIntervalTable },
     props: { id: { type: String }, clone: { type: String }, categories: { type: Array as PropType<iCategory[]> }, timespans: { type: Array as PropType<iTimespan[]>, required: true } },
     emits: ['timespanCreated'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             timespan: null as iTimespan | null,
@@ -52,10 +56,6 @@ export default defineComponent({
                 this.loadTimespan()
             }
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadTimespan()

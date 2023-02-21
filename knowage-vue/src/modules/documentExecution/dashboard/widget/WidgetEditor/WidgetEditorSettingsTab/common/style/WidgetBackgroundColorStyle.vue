@@ -1,7 +1,7 @@
 <template>
     <div v-if="backgroundStyleModel" class="p-grid p-jc-center p-ai-center kn-flex p-p-4">
         <div class="p-col-12">
-            <WidgetEditorColorPicker :initialValue="backgroundStyleModel.properties['background-color']" :label="$t('dashboard.widgetEditor.iconTooltips.backgroundColor')" :disabled="backgroundStyleDisabled" @change="onBackroundColorChanged"></WidgetEditorColorPicker>
+            <WidgetEditorColorPicker :initial-value="backgroundStyleModel.properties['background-color']" :label="$t('dashboard.widgetEditor.iconTooltips.backgroundColor')" :disabled="backgroundStyleDisabled" @change="onBackroundColorChanged"></WidgetEditorColorPicker>
         </div>
     </div>
 </template>
@@ -12,12 +12,11 @@ import { IWidget, IWidgetBackgroundStyle } from '@/modules/documentExecution/Das
 import { emitter } from '../../../../../DashboardHelpers'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import descriptor from '../../WidgetEditorSettingsTabDescriptor.json'
-import InputSwitch from 'primevue/inputswitch'
 import WidgetEditorColorPicker from '../WidgetEditorColorPicker.vue'
 
 export default defineComponent({
     name: 'widget-background-color-style',
-    components: { InputSwitch, WidgetEditorColorPicker },
+    components: { WidgetEditorColorPicker },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true }
     },

@@ -1,46 +1,46 @@
 <template>
     <InputText
-        class="kn-material-input"
         v-if="column && column.editorType !== 'COMBO' && column.columnInfo?.type !== 'date' && column.columnInfo?.type !== 'timestamp' && getDataType(column.columnInfo?.type) === 'text'"
+        v-model="row[column.field]"
+        class="kn-material-input"
         :type="'text'"
         :step="getStep(column.columnInfo?.type)"
-        v-model="row[column.field]"
         @input="$emit('rowChanged', row)"
     />
     <InputNumber
-        class="kn-material-input p-inputtext-sm"
         v-if="column && column.editorType !== 'COMBO' && column.columnInfo?.type !== 'date' && column.columnInfo?.type !== 'timestamp' && getDataType(column.columnInfo?.type) === 'number'"
         v-model="row[column.field]"
-        :useGrouping="useGrouping"
+        class="kn-material-input p-inputtext-sm"
+        :use-grouping="useGrouping"
         :locale="locale"
-        :minFractionDigits="minFractionDigits"
-        :maxFractionDigits="maxFractionDigits"
+        :min-fraction-digits="minFractionDigits"
+        :max-fraction-digits="maxFractionDigits"
         :disabled="!column.isEditable"
         @blur="onInputNumberChange"
     >
     </InputNumber>
     <Dropdown
-        class="kn-material-input"
         v-else-if="column && column.editorType === 'COMBO'"
         v-model="row[column.field]"
+        class="kn-material-input"
         :options="getOptions(column, row)"
-        optionValue="column_1"
-        optionLabel="column_1"
+        option-value="column_1"
+        option-label="column_1"
+        :filter="true"
         @change="$emit('dropdownChanged', { row: row, column: column })"
         @before-show="$emit('dropdownOpened', { row: row, column: column })"
-        :filter="true"
     >
     </Dropdown>
     <Calendar
-        :style="registryDatatableDescriptor.pivotStyles.inputFields"
-        class="pivot-calendar"
         v-else-if="column && (column.columnInfo?.type === 'date' || column.columnInfo?.type === 'timestamp')"
         v-model="row[column.field]"
-        :showTime="column.columnInfo?.type === 'timestamp'"
-        :showSeconds="column.columnInfo?.type === 'timestamp'"
-        :showButtonBar="true"
+        :style="registryDatatableDescriptor.pivotStyles.inputFields"
+        class="pivot-calendar"
+        :show-time="column.columnInfo?.type === 'timestamp'"
+        :show-seconds="column.columnInfo?.type === 'timestamp'"
+        :show-button-bar="true"
+        :date-format="column.columnInfo?.type === 'date' ? getCurrentLocaleDefaultDateFormat(column) : ''"
         @date-select="$emit('rowChanged', row)"
-        :dateFormat="column.columnInfo?.type === 'date' ? getCurrentLocaleDefaultDateFormat(column) : ''"
     />
 </template>
 
@@ -71,6 +71,11 @@ export default defineComponent({
             maxFractionDigits: 2
         }
     },
+    computed: {
+        getCurrentLocaleDefaultDateFormat() {
+            return (column) => column.format || primeVueDate()
+        }
+    },
     watch: {
         propRow() {
             this.loadRow()
@@ -86,11 +91,6 @@ export default defineComponent({
         this.setDefaultLocale()
         this.loadRow()
         this.loadColumnOptions()
-    },
-    computed: {
-        getCurrentLocaleDefaultDateFormat() {
-            return (column) => column.format || primeVueDate()
-        }
     },
     methods: {
         loadRow() {

@@ -10,16 +10,16 @@
         <template #content>
             <div class="filter-container" :style="registryDescriptor.styles.filterContainer">
                 <div class="fields-container" :style="registryDescriptor.styles.fieldsContainer">
-                    <form class="p-fluid p-formgrid p-grid" v-on:submit="filterRegistry">
+                    <form class="p-fluid p-formgrid p-grid" @submit="filterRegistry">
                         <template v-for="(filter, index) in filters" :key="index">
-                            <RegistryFilterCard class="kn-flex p-mx-2" :id="id" :propFilter="filter" :entity="entity" :clearTrigger="clearFiltersTrigger" @changed="setFilterValue($event, index)" @valid="setFilterButtonDisabled"> </RegistryFilterCard>
+                            <RegistryFilterCard :id="id" class="kn-flex p-mx-2" :prop-filter="filter" :entity="entity" :clear-trigger="clearFiltersTrigger" @changed="setFilterValue($event, index)" @valid="setFilterButtonDisabled"> </RegistryFilterCard>
                         </template>
                     </form>
                 </div>
 
                 <div class="button-container p-ml-2" :style="registryDescriptor.styles.buttonsContainer">
                     <Button class="p-button kn-button--primary p-mx-1" :style="registryDescriptor.styles.filtersButton" @click="clearAllFilters">{{ $t('documentExecution.registry.clearFilters') }}</Button>
-                    <Button class="p-button kn-button--primary p-mx-1" :style="registryDescriptor.styles.filtersButton" @click="filterRegistry" data-test="filter-button" :disabled="filterButtonDisabled">{{ $t('documentExecution.registry.filter') }} </Button>
+                    <Button class="p-button kn-button--primary p-mx-1" :style="registryDescriptor.styles.filtersButton" data-test="filter-button" :disabled="filterButtonDisabled" @click="filterRegistry">{{ $t('documentExecution.registry.filter') }} </Button>
                 </div>
             </div>
         </template>
@@ -37,7 +37,7 @@ export default defineComponent({
     components: { Card, RegistryFilterCard },
     props: {
         propFilters: { type: Array },
-        entity: { type: Object as PropType<String | null> },
+        entity: { type: Object as PropType<string | null> },
         id: { type: String }
     },
     emits: ['filter'],

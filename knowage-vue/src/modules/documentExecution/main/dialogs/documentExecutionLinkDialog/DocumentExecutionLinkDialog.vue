@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="documentExecutionLinkDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary" :content-style="documentExecutionLinkDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -21,8 +21,8 @@
 
             <div class="p-fluid p-formgrid p-grid p-m-2">
                 <div class="p-field p-col-12">
-                    <Textarea v-if="embedHTML" class="kn-material-input" v-model="publicUrl" :rows="6"></Textarea>
-                    <InputText v-else class="kn-material-input p-inputtext-sm" v-model="publicUrl" />
+                    <Textarea v-if="embedHTML" v-model="publicUrl" class="kn-material-input" :rows="6"></Textarea>
+                    <InputText v-else v-model="publicUrl" class="kn-material-input p-inputtext-sm" />
                 </div>
             </div>
         </div>
@@ -48,6 +48,10 @@ export default defineComponent({
     components: { Dialog, Textarea },
     props: { visible: { type: Boolean }, linkInfo: { type: Object }, embedHTML: { type: Boolean }, propDocument: { type: Object }, parameters: { type: Array } },
     emits: ['close'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             documentExecutionLinkDialogDescriptor,
@@ -66,10 +70,6 @@ export default defineComponent({
         linkParameters() {
             this.loadLink()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadLink()

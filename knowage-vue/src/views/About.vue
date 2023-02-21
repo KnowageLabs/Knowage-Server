@@ -34,7 +34,7 @@
 <script>
 import Toolbar from 'primevue/toolbar';
 export default {
-  name: 'About',
+  name: 'about',
   components: {
     Toolbar
   }

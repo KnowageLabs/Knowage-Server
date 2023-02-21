@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="kn-dialog--toolbar--primary" :style="licenseDialogDescriptor.card.style" v-bind:visible="visibility" footer="footer" :closable="false" modal>
+    <Dialog class="kn-dialog--toolbar--primary" :style="licenseDialogDescriptor.card.style" :visible="visibility" footer="footer" :closable="false" modal>
         <template #header> {{ $t('licenseDialog.title') }} </template>
         <div v-if="!licenses.hosts || licenses.hosts.length === 0">
             <p>{{ $t('licenseDialog.noLicenses') }}</p>
@@ -31,16 +31,16 @@ import mainStore from '../../../../App.store.js'
 export default defineComponent({
     name: 'license-dialog',
     components: { Dialog, LicenceTab, TabView, TabPanel },
+    props: {
+        visibility: Boolean
+    },
+    emits: ['update:visibility'],
     data() {
         return {
             cpuNumber: Number,
             licenseDialogDescriptor
         }
     },
-    props: {
-        visibility: Boolean
-    },
-    emits: ['update:visibility'],
     methods: {
         closeDialog() {
             this.$emit('update:visibility', false)

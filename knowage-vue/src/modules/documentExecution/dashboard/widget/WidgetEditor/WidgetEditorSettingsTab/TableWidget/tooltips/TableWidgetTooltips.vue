@@ -19,14 +19,14 @@
                     </div>
                     <div class="p-col-5 p-d-flex p-flex-column">
                         <label class="kn-material-input-label">{{ $t('common.columns') }}</label>
-                        <Dropdown v-if="index === 0" class="kn-material-input" v-model="tooltip.target" :options="descriptor.allColumnOption" optionValue="value" optionLabel="label" :disabled="true"> </Dropdown>
+                        <Dropdown v-if="index === 0" v-model="tooltip.target" class="kn-material-input" :options="descriptor.allColumnOption" option-value="value" option-label="label" :disabled="true"> </Dropdown>
                         <WidgetEditorColumnsMultiselect
                             v-else
                             :value="(tooltip.target as string[])"
-                            :availableTargetOptions="availableColumnOptions"
-                            :widgetColumnsAliasMap="widgetColumnsAliasMap"
-                            optionLabel="alias"
-                            optionValue="id"
+                            :available-target-options="availableColumnOptions"
+                            :widget-columns-alias-map="widgetColumnsAliasMap"
+                            option-label="alias"
+                            option-value="id"
                             @change="onColumnsSelected($event, tooltip)"
                         ></WidgetEditorColumnsMultiselect>
                     </div>
@@ -41,15 +41,15 @@
                 <div class="p-d-flex p-flex-row p-flex-wrap p-ai-center p-mt-3">
                     <div class="p-d-flex p-flex-column kn-flex p-mx-2">
                         <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.prefix') }}</label>
-                        <InputText class="kn-material-input p-inputtext-sm" v-model="tooltip.prefix" :disabled="!tooltip.enabled" @change="tooltipsChanged" />
+                        <InputText v-model="tooltip.prefix" class="kn-material-input p-inputtext-sm" :disabled="!tooltip.enabled" @change="tooltipsChanged" />
                     </div>
                     <div class="p-d-flex p-flex-column kn-flex p-mx-2">
                         <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.suffix') }}</label>
-                        <InputText class="kn-material-input p-inputtext-sm" v-model="tooltip.suffix" :disabled="!tooltip.enabled" @change="tooltipsChanged" />
+                        <InputText v-model="tooltip.suffix" class="kn-material-input p-inputtext-sm" :disabled="!tooltip.enabled" @change="tooltipsChanged" />
                     </div>
                     <div v-if="optionsContainMeasureColumn(tooltip)" class="p-d-flex p-flex-column p-mx-2">
                         <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.precision') }}</label>
-                        <InputNumber class="kn-material-input p-inputtext-sm" v-model="tooltip.precision" :disabled="!tooltip.enabled" @blur="tooltipsChanged" />
+                        <InputNumber v-model="tooltip.precision" class="kn-material-input p-inputtext-sm" :disabled="!tooltip.enabled" @blur="tooltipsChanged" />
                     </div>
                 </div>
                 <div class="p-grid p-ai-center p-pt-3">
@@ -59,7 +59,7 @@
                     </div>
                     <div class="p-col-12 p-md-9 p-d-flex p-flex-column p-px-2">
                         <label class="kn-material-input-label">{{ $t('common.text') }}</label>
-                        <InputText class="kn-material-input p-inputtext-sm" v-model="tooltip.header.text" :disabled="!tooltip.enabled || !tooltip.header.enabled" @change="tooltipsChanged" />
+                        <InputText v-model="tooltip.header.text" class="kn-material-input p-inputtext-sm" :disabled="!tooltip.enabled || !tooltip.header.enabled" @change="tooltipsChanged" />
                     </div>
                 </div>
             </div>

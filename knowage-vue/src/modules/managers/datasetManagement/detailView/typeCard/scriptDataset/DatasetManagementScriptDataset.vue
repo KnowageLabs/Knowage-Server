@@ -6,12 +6,12 @@
                     <span class="p-float-label">
                         <Dropdown
                             id="scriptLanguage"
+                            v-model="v$.dataset.scriptLanguage.$model"
                             class="kn-material-input"
                             :style="queryDescriptor.style.maxWidth"
                             :options="scriptTypes"
-                            optionLabel="VALUE_NM"
-                            optionValue="VALUE_CD"
-                            v-model="v$.dataset.scriptLanguage.$model"
+                            option-label="VALUE_NM"
+                            option-value="VALUE_CD"
                             :class="{
                                 'p-invalid': v$.dataset.scriptLanguage.$invalid && v$.dataset.scriptLanguage.$dirty
                             }"
@@ -21,14 +21,14 @@
                         <label for="scope" class="kn-material-input-label"> {{ $t('managers.lovsManagement.language') }} * </label>
                     </span>
                     <KnValidationMessages
-                        :vComp="v$.dataset.scriptLanguage"
-                        :additionalTranslateParams="{
+                        :v-comp="v$.dataset.scriptLanguage"
+                        :additional-translate-params="{
                             fieldName: $t('managers.lovsManagement.language')
                         }"
                     />
                 </div>
             </span>
-            <VCodeMirror class="p-mt-2" ref="codeMirrorScriptType" v-model:value="dataset.script" :autoHeight="true" :options="scriptOptions" @keyup="$emit('touched')" />
+            <VCodeMirror ref="codeMirrorScriptType" v-model:value="dataset.script" class="p-mt-2" :auto-height="true" :options="scriptOptions" @keyup="$emit('touched')" />
         </template>
     </Card>
 </template>
@@ -65,18 +65,6 @@ export default defineComponent({
             }
         }
     },
-    created() {
-        this.loadDataset()
-        const interval = setInterval(() => {
-            if (!this.$refs.codeMirrorScriptType) return
-            this.codeMirrorScriptType = (this.$refs.codeMirrorScriptType as any).cminstance as any
-
-            this.loadDataset()
-            this.loadScriptMode()
-
-            clearInterval(interval)
-        }, 200)
-    },
     watch: {
         selectedDataset() {
             this.loadDataset()
@@ -89,6 +77,18 @@ export default defineComponent({
                 }, 0)
             }
         }
+    },
+    created() {
+        this.loadDataset()
+        const interval = setInterval(() => {
+            if (!this.$refs.codeMirrorScriptType) return
+            this.codeMirrorScriptType = (this.$refs.codeMirrorScriptType as any).cminstance as any
+
+            this.loadDataset()
+            this.loadScriptMode()
+
+            clearInterval(interval)
+        }, 200)
     },
     validations() {
         const scriptFieldsRequired = (value) => {

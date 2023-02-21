@@ -14,14 +14,14 @@
         <template #content>
             <div class="p-grid p-fluid p-formgrid">
                 <div class="p-field-checkbox p-col-12">
-                    <Checkbox class="p-mr-2" v-model="showMissingElements" :binary="true" :disabled="!selectedHierarchy" />
+                    <Checkbox v-model="showMissingElements" class="p-mr-2" :binary="true" :disabled="!selectedHierarchy" />
                     <label class="kn-material-input-label p-as-center"> {{ $t('managers.hierarchyManagement.showMissingElements') }}</label>
                 </div>
 
-                <div class="p-field p-col-12 p-lg-6" v-for="(filter, index) in filters" :key="index">
+                <div v-for="(filter, index) in filters" :key="index" class="p-field p-col-12 p-lg-6">
                     <span class="p-float-label">
-                        <Calendar v-if="filter.TYPE === 'Date'" class="kn-material-input" v-model="filter.VALUE" :manualInput="true" :showIcon="true" />
-                        <InputText v-else class="kn-material-input" :type="filter.TYPE === 'number' ? 'number' : 'text'" v-model.trim="filter.VALUE" />
+                        <Calendar v-if="filter.TYPE === 'Date'" v-model="filter.VALUE" class="kn-material-input" :manual-input="true" :show-icon="true" />
+                        <InputText v-else v-model.trim="filter.VALUE" class="kn-material-input" :type="filter.TYPE === 'number' ? 'number' : 'text'" />
                         <label class="kn-material-input-label"> {{ filter.NAME }}</label>
                     </span>
                 </div>

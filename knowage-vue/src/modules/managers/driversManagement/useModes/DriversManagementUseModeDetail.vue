@@ -1,27 +1,27 @@
 <template>
-    <KnHint class="kn-card-reset" :title="'managers.driversManagement.useModes.title'" :hint="'managers.driversManagement.useModes.hint'" v-if="!selectedMode.useID" data-test="mode-hint"></KnHint>
-    <TabView class="tabview-custom kn-page-content" v-else data-test="modes-form">
+    <KnHint v-if="!selectedMode.useID" class="kn-card-reset" :title="'managers.driversManagement.useModes.title'" :hint="'managers.driversManagement.useModes.hint'" data-test="mode-hint"></KnHint>
+    <TabView v-else class="tabview-custom kn-page-content" data-test="modes-form">
         <TabPanel>
             <template #header>
                 <span>{{ $t('managers.driversManagement.useModes.details') }}</span>
-                <Badge :value="invalidModes" class="p-ml-2" severity="danger" v-if="invalidModes > 0"></Badge>
+                <Badge v-if="invalidModes > 0" :value="invalidModes" class="p-ml-2" severity="danger"></Badge>
             </template>
-            <DetailsCard :selectedMode="mode" :selectionTypes="selectionTypes" :layers="layers" :isDate="isDate" :lovs="lovs" :showMapDriver="showMapDriver"></DetailsCard>
+            <DetailsCard :selected-mode="mode" :selection-types="selectionTypes" :layers="layers" :is-date="isDate" :lovs="lovs" :show-map-driver="showMapDriver"></DetailsCard>
         </TabPanel>
 
         <TabPanel>
             <template #header>
                 <span>{{ $t('managers.driversManagement.useModes.roles') }}</span>
-                <Badge value="1" class="p-ml-2" severity="danger" v-if="invalidRoles"></Badge>
+                <Badge v-if="invalidRoles" value="1" class="p-ml-2" severity="danger"></Badge>
             </template>
-            <RolesCard :roles="availableRoles" :selectedModeProp="mode"></RolesCard>
+            <RolesCard :roles="availableRoles" :selected-mode-prop="mode"></RolesCard>
         </TabPanel>
 
         <TabPanel>
             <template #header>
                 <span>{{ $t('managers.driversManagement.useModes.constraints') }}</span>
             </template>
-            <ConstraintsCard :constraints="constraints" :selectedModeProp="mode"></ConstraintsCard>
+            <ConstraintsCard :constraints="constraints" :selected-mode-prop="mode"></ConstraintsCard>
         </TabPanel>
     </TabView>
 </template>

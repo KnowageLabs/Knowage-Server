@@ -1,5 +1,5 @@
 <template>
-    <Dialog id="kpi-edit-save-dialog" class="p-fluid kn-dialog--toolbar--primary" :style="KpiDocumentDesignerSaveDialogDescriptor.dialog.style" :contentStyle="KpiDocumentDesignerSaveDialogDescriptor.dialog.contentStyle" :visible="visible" :modal="true" :closable="false">
+    <Dialog id="kpi-edit-save-dialog" class="p-fluid kn-dialog--toolbar--primary" :style="KpiDocumentDesignerSaveDialogDescriptor.dialog.style" :content-style="KpiDocumentDesignerSaveDialogDescriptor.dialog.contentStyle" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -14,8 +14,8 @@
             <div class="p-field">
                 <span class="p-float-label">
                     <InputText
-                        class="kn-material-input"
                         v-model="kpiName"
+                        class="kn-material-input"
                         :class="{
                             'p-invalid': kpiName.length === 0
                         }"

@@ -8,24 +8,24 @@
             </Toolbar>
         </template>
 
-        <StepOne v-if="wizardStep === 1" :physicalModels="physicalModels" :showBusinessViewDialog="showBusinessViewDialog" :bnssViewObject="tmpBnssView" />
+        <StepOne v-if="wizardStep === 1" :physical-models="physicalModels" :show-business-view-dialog="showBusinessViewDialog" :bnss-view-object="tmpBnssView" />
 
         <form v-if="wizardStep === 2" ref="bvForm" class="p-fluid p-formgrid p-grid p-mt-4 p-mx-2 kn-flex-0">
             <div class="p-field p-col-12 p-md-6">
                 <span class="p-float-label">
-                    <Dropdown id="source" class="kn-material-input" v-model="sourceTable" :options="tmpBnssView.physicalModels" optionLabel="name" />
+                    <Dropdown id="source" v-model="sourceTable" class="kn-material-input" :options="tmpBnssView.physicalModels" option-label="name" />
                     <label for="source" class="kn-material-input-label"> {{ $t('metaweb.businessModel.sourceTable') }}</label>
                 </span>
             </div>
             <div class="p-field p-col-12 p-md-6">
                 <span class="p-float-label">
-                    <Dropdown id="target" class="kn-material-input" v-model="targetTable" :options="tmpBnssView.physicalModels" optionLabel="name" />
+                    <Dropdown id="target" v-model="targetTable" class="kn-material-input" :options="tmpBnssView.physicalModels" option-label="name" />
                     <label for="target" class="kn-material-input-label"> {{ $t('metaweb.businessModel.targetTable') }}</label>
                 </span>
             </div>
         </form>
 
-        <TableAssociator class="kn-flex" v-if="wizardStep === 2" :sourceArray="sourceTable.columns" :targetArray="targetTable.columns" :useMultipleTablesFromSameSource="true" @drop="updateSummary" @relationshipDeleted="updateSummary" />
+        <TableAssociator v-if="wizardStep === 2" class="kn-flex" :source-array="sourceTable.columns" :target-array="targetTable.columns" :use-multiple-tables-from-same-source="true" @drop="updateSummary" @relationshipDeleted="updateSummary" />
 
         <div v-if="wizardStep === 2" id="summary-container" class="p-m-3 p-d-flex p-flex-column kn-flex-05">
             <Toolbar class="kn-toolbar kn-toolbar--primary">
@@ -45,16 +45,16 @@
                             <span class="kn-truncated kn-flex-05 p-ml-2">
                                 {{ slotProps.option.name }}
                             </span>
-                            <i class="fas fa-link kn-flex-05" v-if="slotProps.option['links'] && slotProps.option['links'].length > 0" />
-                            <div class="p-d-flex p-flex-column kn-flex" v-bind:class="{ 'p-mb-1': slotProps.option['links'].length > 1 }" v-if="slotProps.option['links'] && slotProps.option['links'].length > 0">
-                                <span class="p-d-flex p-flex-row p-ai-center" v-for="(link, index) in slotProps.option['links']" v-bind:key="index">
+                            <i v-if="slotProps.option['links'] && slotProps.option['links'].length > 0" class="fas fa-link kn-flex-05" />
+                            <div v-if="slotProps.option['links'] && slotProps.option['links'].length > 0" class="p-d-flex p-flex-column kn-flex" :class="{ 'p-mb-1': slotProps.option['links'].length > 1 }">
+                                <span v-for="(link, index) in slotProps.option['links']" :key="index" class="p-d-flex p-flex-row p-ai-center">
                                     <span class="kn-truncated">
                                         {{ link.name }}
                                     </span>
                                     <Button v-if="slotProps.option['links'].length > 1" icon="fas fa-times" class="associator-enable-hover p-button-text p-button-rounded p-button-plain" @click.stop="deleteRelationship(slotProps.option, link)" />
                                 </span>
                             </div>
-                            <Button icon="far fa-trash-alt kn-flex-0" class="associator-enable-hover p-button-text p-button-rounded p-button-plain" v-if="slotProps.option['links'] && slotProps.option['links'].length > 0" @click.stop="deleteRelationship(slotProps.option)" />
+                            <Button v-if="slotProps.option['links'] && slotProps.option['links'].length > 0" icon="far fa-trash-alt kn-flex-0" class="associator-enable-hover p-button-text p-button-rounded p-button-plain" @click.stop="deleteRelationship(slotProps.option)" />
                         </div>
                     </template>
                 </Listbox>
@@ -85,15 +85,8 @@ import { generate, applyPatch } from 'fast-json-patch'
 
 export default defineComponent({
     components: { Dialog, StepOne, TableAssociator, Dropdown, Listbox },
-    emits: ['closeDialog'],
     props: { showBusinessViewDialog: Boolean, meta: { type: Object, required: true }, observer: { type: Object }, selectedBusinessModel: { type: Object, required: true }, editMode: Boolean },
-    computed: {
-        buttonDisabled(): boolean {
-            if (this.v$.$invalid || this.tmpBnssView.physicalModels.length < 2) {
-                return true
-            } else return false
-        }
-    },
+    emits: ['closeDialog'],
     data() {
         return {
             bsDescriptor,
@@ -108,15 +101,22 @@ export default defineComponent({
             physicalModels: [] as any
         }
     },
-    created() {
-        this.loadMeta()
-        this.setEditModeData()
+    computed: {
+        buttonDisabled(): boolean {
+            if (this.v$.$invalid || this.tmpBnssView.physicalModels.length < 2) {
+                return true
+            } else return false
+        }
     },
     watch: {
         meta() {
             this.loadMeta()
             this.setEditModeData()
         }
+    },
+    created() {
+        this.loadMeta()
+        this.setEditModeData()
     },
     methods: {
         async loadMeta() {
@@ -136,7 +136,7 @@ export default defineComponent({
             this.wizardStep--
         },
         getItemIndex(list, name) {
-            for (var i = 0; i < list.length; i++) {
+            for (let i = 0; i < list.length; i++) {
                 if (list[i].name === name) {
                     return i
                 }
@@ -146,25 +146,25 @@ export default defineComponent({
         setEditModeData() {
             if (this.editMode == true) {
                 this.wizardStep = 2
-                for (var pti = 0; pti < this.selectedBusinessModel.physicalTables.length; pti++) {
-                    var tmppt = {}
+                for (let pti = 0; pti < this.selectedBusinessModel.physicalTables.length; pti++) {
+                    let tmppt = {}
                     tmppt = JSON.parse(JSON.stringify(this.meta.physicalModels[this.selectedBusinessModel.physicalTables[pti].physicalTableIndex]))
                     this.tmpBnssView.physicalModels.push(tmppt)
                 }
 
-                for (var x = 0; x < this.tmpBnssView.physicalModels.length; x++) {
-                    for (var y = 0; y < this.tmpBnssView.physicalModels[x].columns.length; y++) {
+                for (let x = 0; x < this.tmpBnssView.physicalModels.length; x++) {
+                    for (let y = 0; y < this.tmpBnssView.physicalModels[x].columns.length; y++) {
                         this.tmpBnssView.physicalModels[x].columns[y].$parent = this.tmpBnssView.physicalModels[x]
                     }
                 }
 
-                for (var i = 0; i < this.selectedBusinessModel.joinRelationships.length; i++) {
-                    var rel = this.selectedBusinessModel.joinRelationships[i]
-                    var destTab = this.tmpBnssView.physicalModels[this.getItemIndex(this.tmpBnssView.physicalModels, rel.destinationTable.name)]
-                    var sourceTab = this.tmpBnssView.physicalModels[this.getItemIndex(this.tmpBnssView.physicalModels, rel.sourceTable.name)]
-                    for (var dc = 0; dc < rel.destinationColumns.length; dc++) {
-                        var destCol = destTab.columns[this.getItemIndex(destTab.columns, rel.destinationColumns[dc].name)]
-                        var sourceCol = sourceTab.columns[this.getItemIndex(sourceTab.columns, rel.sourceColumns[dc].name)]
+                for (let i = 0; i < this.selectedBusinessModel.joinRelationships.length; i++) {
+                    const rel = this.selectedBusinessModel.joinRelationships[i]
+                    const destTab = this.tmpBnssView.physicalModels[this.getItemIndex(this.tmpBnssView.physicalModels, rel.destinationTable.name)]
+                    const sourceTab = this.tmpBnssView.physicalModels[this.getItemIndex(this.tmpBnssView.physicalModels, rel.sourceTable.name)]
+                    for (let dc = 0; dc < rel.destinationColumns.length; dc++) {
+                        const destCol = destTab.columns[this.getItemIndex(destTab.columns, rel.destinationColumns[dc].name)]
+                        const sourceCol = sourceTab.columns[this.getItemIndex(sourceTab.columns, rel.sourceColumns[dc].name)]
                         // eslint-disable-next-line no-prototype-builtins
                         if (!destCol.hasOwnProperty('links')) {
                             destCol.links = []
@@ -178,20 +178,20 @@ export default defineComponent({
         },
         updateSummary() {
             this.summary = []
-            for (var i = 0; i < this.tmpBnssView.physicalModels.length; i++) {
-                for (var col = 0; col < this.tmpBnssView.physicalModels[i].columns.length; col++) {
+            for (let i = 0; i < this.tmpBnssView.physicalModels.length; i++) {
+                for (let col = 0; col < this.tmpBnssView.physicalModels[i].columns.length; col++) {
                     // eslint-disable-next-line no-prototype-builtins
                     if (this.tmpBnssView.physicalModels[i].columns[col].hasOwnProperty('links') && this.tmpBnssView.physicalModels[i].columns[col].links.length > 0) {
                         this.summary.push(this.tmpBnssView.physicalModels[i].columns[col])
                         // eslint-disable-next-line no-prototype-builtins
-                    } else if (this.tmpBnssView.physicalModels[i].columns[col].hasOwnProperty('links') && this.tmpBnssView.physicalModels[i].columns[col].links.length > 0) {
+                    } /* elseif (this.tmpBnssView.physicalModels[i].columns[col].hasOwnProperty('links') && this.tmpBnssView.physicalModels[i].columns[col].links.length > 0) {
                         delete this.tmpBnssView.physicalModels[i].columns[col].links
-                    }
+                    } */
                 }
             }
         },
         async saveBusinessView() {
-            var tmpData = {} as any
+            const tmpData = {} as any
             if (this.editMode) {
                 tmpData.viewUniqueName = this.selectedBusinessModel.uniqueName
             } else {
@@ -203,29 +203,29 @@ export default defineComponent({
 
             tmpData.relationships = {}
 
-            for (var i = 0; i < this.tmpBnssView.physicalModels.length; i++) {
-                var tmpDataObj = this.tmpBnssView.physicalModels[i]
+            for (let i = 0; i < this.tmpBnssView.physicalModels.length; i++) {
+                const tmpDataObj = this.tmpBnssView.physicalModels[i]
                 this.editMode ? '' : tmpData.physicaltable.push(tmpDataObj.name)
-                for (var col = 0; col < this.tmpBnssView.physicalModels[i].columns.length; col++) {
+                for (let col = 0; col < this.tmpBnssView.physicalModels[i].columns.length; col++) {
                     // eslint-disable-next-line no-prototype-builtins
                     if (this.tmpBnssView.physicalModels[i].columns[col].hasOwnProperty('links') && this.tmpBnssView.physicalModels[i].columns[col].links.length > 0) {
                         // eslint-disable-next-line no-prototype-builtins
                         if (!tmpData.relationships.hasOwnProperty(tmpDataObj.name)) {
                             tmpData.relationships[tmpDataObj.name] = {}
                         }
-                        var tabObj = tmpData.relationships[tmpDataObj.name]
-                        var tmpColObj = this.tmpBnssView.physicalModels[i].columns[col]
+                        const tabObj = tmpData.relationships[tmpDataObj.name]
+                        const tmpColObj = this.tmpBnssView.physicalModels[i].columns[col]
                         // eslint-disable-next-line no-prototype-builtins
                         if (!tabObj.hasOwnProperty(tmpColObj.name)) {
                             tabObj[tmpColObj.name] = {}
                         }
-                        var colObj = tabObj[tmpColObj.name]
-                        for (var rel = 0; rel < tmpColObj.links.length; rel++) {
+                        const colObj = tabObj[tmpColObj.name]
+                        for (let rel = 0; rel < tmpColObj.links.length; rel++) {
                             // eslint-disable-next-line no-prototype-builtins
                             if (!colObj.hasOwnProperty(tmpColObj.links[rel].tableName)) {
                                 colObj[tmpColObj.links[rel].tableName] = []
                             }
-                            var targetTableObj = colObj[tmpColObj.links[rel].tableName]
+                            const targetTableObj = colObj[tmpColObj.links[rel].tableName]
                             targetTableObj.push(tmpColObj.links[rel].name)
                         }
                     }

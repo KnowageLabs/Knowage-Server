@@ -7,38 +7,38 @@
                         {{ $t('managers.functionalitiesManagement.title') }}
                     </template>
                     <template #end>
-                        <FabButton v-if="selectedFunctionality" icon="fas fa-plus" @click="showForm(null, selectedFunctionality.id)" data-test="new-button" />
+                        <FabButton v-if="selectedFunctionality" icon="fas fa-plus" data-test="new-button" @click="showForm(null, selectedFunctionality.id)" />
                     </template>
                 </Toolbar>
-                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+                <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
 
                 <Tree
                     id="document-tree"
-                    scrollHeight="calc(100vh - 91px)"
+                    scroll-height="calc(100vh - 91px)"
                     maximizable
                     :value="nodes"
-                    selectionMode="single"
-                    :expandedKeys="expandedKeys"
+                    selection-mode="single"
+                    :expanded-keys="expandedKeys"
                     :filter="true"
-                    filterMode="lenient"
-                    @node-select="showForm($event.data, $event.data.parentId)"
+                    filter-mode="lenient"
                     data-test="functionality-tree"
                     class="kn-tree kn-column-tree kn-flex p-p-0"
+                    @node-select="showForm($event.data, $event.data.parentId)"
                 >
                     <template #default="slotProps">
-                        <div class="p-d-flex p-flex-row p-ai-center" @mouseover="buttonsVisible[slotProps.node.id] = true" @mouseleave="buttonsVisible[slotProps.node.id] = false" :data-test="'tree-item-' + slotProps.node.id">
+                        <div class="p-d-flex p-flex-row p-ai-center" :data-test="'tree-item-' + slotProps.node.id" @mouseover="buttonsVisible[slotProps.node.id] = true" @mouseleave="buttonsVisible[slotProps.node.id] = false">
                             <span>{{ slotProps.node.label }}</span>
                             <div v-show="buttonsVisible[slotProps.node.id]" class="p-ml-2">
-                                <Button v-if="canBeMovedUp(slotProps.node.data)" icon="fa fa-arrow-up" v-tooltip.top="$t('managers.functionalitiesManagement.moveUp')" class="p-button-link p-button-sm p-p-0" @click.stop="moveUp(slotProps.node.id)" :data-test="'move-up-button-' + slotProps.node.id" />
+                                <Button v-if="canBeMovedUp(slotProps.node.data)" v-tooltip.top="$t('managers.functionalitiesManagement.moveUp')" icon="fa fa-arrow-up" class="p-button-link p-button-sm p-p-0" :data-test="'move-up-button-' + slotProps.node.id" @click.stop="moveUp(slotProps.node.id)" />
                                 <Button
                                     v-if="canBeMovedDown(slotProps.node.data)"
-                                    icon="fa fa-arrow-down"
                                     v-tooltip.top="$t('managers.functionalitiesManagement.moveDown ')"
+                                    icon="fa fa-arrow-down"
                                     class="p-button-link p-button-sm p-p-0"
-                                    @click.stop="moveDown(slotProps.node.id)"
                                     :data-test="'move-down-button-' + slotProps.node.id"
+                                    @click.stop="moveDown(slotProps.node.id)"
                                 />
-                                <Button v-if="canBeDeleted(slotProps.node)" icon="far fa-trash-alt" v-tooltip.top="$t('common.delete')" class="p-button-link p-button-sm p-p-0" @click.stop="deleteFunctionalityConfirm(slotProps.node.id)" :data-test="'delete-button-' + slotProps.node.id" />
+                                <Button v-if="canBeDeleted(slotProps.node)" v-tooltip.top="$t('common.delete')" icon="far fa-trash-alt" class="p-button-link p-button-sm p-p-0" :data-test="'delete-button-' + slotProps.node.id" @click.stop="deleteFunctionalityConfirm(slotProps.node.id)" />
                             </div>
                         </div>
                     </template>
@@ -46,8 +46,8 @@
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-height-full-vertical">
-                <KnHint :title="'managers.functionalitiesManagement.title'" :hint="'managers.functionalitiesManagement.hint'" v-if="showHint" data-test="functionality-hint"></KnHint>
-                <FunctionalitiesManagementDetail v-if="formVisible" :functionality="selectedFunctionality" :parentId="functionalityParentId" :rolesShort="rolesShort" @touched="touched = true" @close="onClose" @inserted="loadPage($event)" />
+                <KnHint v-if="showHint" :title="'managers.functionalitiesManagement.title'" :hint="'managers.functionalitiesManagement.hint'" data-test="functionality-hint"></KnHint>
+                <FunctionalitiesManagementDetail v-if="formVisible" :functionality="selectedFunctionality" :parent-id="functionalityParentId" :roles-short="rolesShort" @touched="touched = true" @close="onClose" @inserted="loadPage($event)" />
             </div>
         </div>
     </div>
@@ -72,6 +72,10 @@ export default defineComponent({
         KnHint,
         Tree
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             functionalitiesManagementDescriptor,
@@ -87,10 +91,6 @@ export default defineComponent({
             buttonsVisible: [],
             formVisible: false
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         await this.loadPage(null)
@@ -166,7 +166,7 @@ export default defineComponent({
             }
         },
         expandAll() {
-            for (let node of this.nodes) {
+            for (const node of this.nodes) {
                 this.expandNode(node)
             }
 
@@ -177,7 +177,7 @@ export default defineComponent({
             if (node.children && node.children.length) {
                 this.expandedKeys[node.key] = true
 
-                for (let child of node.children) {
+                for (const child of node.children) {
                     this.expandNode(child)
                 }
             }

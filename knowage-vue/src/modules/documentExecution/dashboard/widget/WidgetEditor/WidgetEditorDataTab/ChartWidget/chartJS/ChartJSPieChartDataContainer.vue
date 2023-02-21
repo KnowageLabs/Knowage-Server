@@ -2,10 +2,10 @@
     <div v-if="widgetModel">
         <WidgetEditorColumnTable
             class="p-m-2"
-            :widgetModel="widgetModel"
+            :widget-model="widgetModel"
             :items="columnTableItems['ATTRIBUTES'] ?? []"
             :settings="{ ...commonDescriptor.columnTableSettings, ...chartJSDescriptor.pieChartColumnTableSettings[0] }"
-            chartType="chartJSPieChart"
+            chart-type="chartJSPieChart"
             @rowReorder="onColumnsReorder"
             @itemAdded="onColumnAdded"
             @itemUpdated="onColumnItemUpdate"
@@ -14,16 +14,16 @@
         ></WidgetEditorColumnTable>
         <WidgetEditorColumnTable
             class="p-m-2"
-            :widgetModel="widgetModel"
+            :widget-model="widgetModel"
             :items="columnTableItems['MEASURES'] ?? []"
             :settings="{ ...commonDescriptor.columnTableSettings, ...chartJSDescriptor.pieChartColumnTableSettings[1] }"
-            chartType="chartJSPieChart"
+            chart-type="chartJSPieChart"
             @itemAdded="onColumnAdded"
             @itemUpdated="onColumnItemUpdate"
             @itemSelected="setSelectedColumn"
             @itemDeleted="onColumnDelete"
         ></WidgetEditorColumnTable>
-        <ChartWidgetColumnForm class="p-m-2" :widgetModel="widgetModel" :selectedColumn="selectedColumn"></ChartWidgetColumnForm>
+        <ChartWidgetColumnForm class="p-m-2" :widget-model="widgetModel" :selected-column="selectedColumn"></ChartWidgetColumnForm>
     </div>
 </template>
 
@@ -33,15 +33,13 @@ import { IDataset, IWidget, IWidgetColumn } from '@/modules/documentExecution/Da
 import { emitter } from '../../../../../DashboardHelpers'
 import descriptor from '../../TableWidget/TableWidgetDataDescriptor.json'
 import chartJSDescriptor from './ChartJSDataContainerDescriptor.json'
-import Dropdown from 'primevue/dropdown'
 import commonDescriptor from '../../common/WidgetCommonDescriptor.json'
 import WidgetEditorColumnTable from '../../common/WidgetEditorColumnTable.vue'
-import WidgetEditorFilterForm from '../../common/WidgetEditorFilterForm.vue'
 import ChartWidgetColumnForm from '../common/ChartWidgetColumnForm.vue'
 
 export default defineComponent({
-    name: 'chartJS-widget-pie-chart-data-container',
-    components: { Dropdown, WidgetEditorColumnTable, WidgetEditorFilterForm, ChartWidgetColumnForm },
+    name: 'chart-j-s-widget-pie-chart-data-container',
+    components: { WidgetEditorColumnTable, ChartWidgetColumnForm },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedDataset: { type: Object as PropType<IDataset | null> } },
     data() {
         return {

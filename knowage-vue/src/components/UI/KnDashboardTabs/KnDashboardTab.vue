@@ -1,5 +1,5 @@
 <template>
-    <div class="sheet" :id="`sheet_${index}`">
+    <div :id="`sheet_${index}`" class="sheet">
         <slot />
     </div>
 </template>

@@ -1,7 +1,7 @@
 <template>
     <div v-if="meta" class="p-grid p-m-0 kn-flex">
         <div id="CONTAINER ELEMENT LIST" class="p-col-4 p-sm-4 p-md-3 p-p-0 p-d-flex p-flex-column kn-flex">
-            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+            <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
             <div class="p-d-flex p-flex-column kn-flex">
                 <Toolbar class="kn-toolbar kn-toolbar--default">
                     <template #start>
@@ -13,8 +13,8 @@
                 </Toolbar>
                 <div class="kn-relative kn-flex">
                     <div class="kn-height-full kn-width-full kn-absolute">
-                        <DataTable class="p-datatable-sm metaweb-table kn-table metaweb-right-border" :loading="loading" :scrollable="true" scrollHeight="100%" :value="meta.businessModels" @row-click="selectBusinessModel" @rowReorder="onRowReorder" data-test="bm-table">
-                            <Column :rowReorder="true" :reorderableColumn="false" />
+                        <DataTable class="p-datatable-sm metaweb-table kn-table metaweb-right-border" :loading="loading" :scrollable="true" scroll-height="100%" :value="meta.businessModels" data-test="bm-table" @row-click="selectBusinessModel" @rowReorder="onRowReorder">
+                            <Column :row-reorder="true" :reorderable-column="false" />
                             <Column :style="mainDescriptor.style.columnMain">
                                 <template #body="slotProps">
                                     <span>{{ slotProps.data.name }}</span>
@@ -39,8 +39,8 @@
                 </Toolbar>
                 <div class="kn-relative kn-flex">
                     <div class="kn-height-full kn-width-full kn-absolute">
-                        <DataTable class="p-datatable-sm metaweb-table kn-table metaweb-right-border" :loading="loading" :scrollable="true" scrollHeight="100%" :value="meta.businessViews" @row-click="selectBusinessModel" @rowReorder="onRowReorder">
-                            <Column :rowReorder="true" :reorderableColumn="false" />
+                        <DataTable class="p-datatable-sm metaweb-table kn-table metaweb-right-border" :loading="loading" :scrollable="true" scroll-height="100%" :value="meta.businessViews" @row-click="selectBusinessModel" @rowReorder="onRowReorder">
+                            <Column :row-reorder="true" :reorderable-column="false" />
                             <Column :style="mainDescriptor.style.columnMain">
                                 <template #body="slotProps">
                                     <span>{{ slotProps.data.name }}</span>
@@ -72,7 +72,7 @@
                         </template>
 
                         <div :style="mainDescriptor.style.absoluteScroll">
-                            <MetawebBusinessPropertyListTab :selectedBusinessModel="selectedBusinessModel" :roles="roles" :propMeta="meta" @metaUpdated="$emit('metaUpdated')"></MetawebBusinessPropertyListTab>
+                            <MetawebBusinessPropertyListTab :selected-business-model="selectedBusinessModel" :roles="roles" :prop-meta="meta" @metaUpdated="$emit('metaUpdated')"></MetawebBusinessPropertyListTab>
                         </div>
                     </TabPanel>
 
@@ -82,7 +82,7 @@
                         </template>
 
                         <div :style="mainDescriptor.style.absoluteScroll">
-                            <MetawebAttributesTab :selectedBusinessModel="selectedBusinessModel" :propMeta="meta" :observer="observer" :roles="roles" @metaUpdated="$emit('metaUpdated')"></MetawebAttributesTab>
+                            <MetawebAttributesTab :selected-business-model="selectedBusinessModel" :prop-meta="meta" :observer="observer" :roles="roles" @metaUpdated="$emit('metaUpdated')"></MetawebAttributesTab>
                         </div>
                     </TabPanel>
 
@@ -91,7 +91,7 @@
                             <span>{{ $t('metaweb.businessModel.tabView.calcField') }}</span>
                         </template>
                         <div :style="mainDescriptor.style.absoluteScroll">
-                            <CalculatedField :selectedBusinessModel="selectedBusinessModel" :propMeta="meta" :propCustomFunctions="customFunctions" @metaUpdated="$emit('metaUpdated')" :observer="observer" />
+                            <CalculatedField :selected-business-model="selectedBusinessModel" :prop-meta="meta" :prop-custom-functions="customFunctions" :observer="observer" @metaUpdated="$emit('metaUpdated')" />
                         </div>
                     </TabPanel>
                     <TabPanel>
@@ -99,7 +99,7 @@
                             <span>{{ $t('metaweb.businessModel.tabView.inbound') }}</span>
                         </template>
                         <div :style="mainDescriptor.style.absoluteScroll">
-                            <InboundRelationships :selectedBusinessModel="selectedBusinessModel" :propMeta="meta" :observer="observer" />
+                            <InboundRelationships :selected-business-model="selectedBusinessModel" :prop-meta="meta" :observer="observer" />
                         </div>
                     </TabPanel>
                     <TabPanel>
@@ -107,14 +107,14 @@
                             <span>{{ $t('metaweb.businessModel.tabView.outbound') }}</span>
                         </template>
                         <div :style="mainDescriptor.style.absoluteScroll">
-                            <OutboundRelationships :selectedBusinessModel="selectedBusinessModel" :propMeta="meta" :observer="observer" />
+                            <OutboundRelationships :selected-business-model="selectedBusinessModel" :prop-meta="meta" :observer="observer" />
                         </div>
                     </TabPanel>
                     <TabPanel>
                         <template #header>
                             <span>{{ $t('metaweb.businessModel.tabView.filter') }}</span>
                         </template>
-                        <div :style="mainDescriptor.style.absoluteScroll"><MetawebFilterTab :selectedBusinessModel="selectedBusinessModel" :propMeta="meta" @metaUpdated="$emit('metaUpdated')"></MetawebFilterTab></div>
+                        <div :style="mainDescriptor.style.absoluteScroll"><MetawebFilterTab :selected-business-model="selectedBusinessModel" :prop-meta="meta" @metaUpdated="$emit('metaUpdated')"></MetawebFilterTab></div>
                     </TabPanel>
 
                     <TabPanel v-if="selectedBusinessModel.joinRelationships != undefined">
@@ -122,7 +122,7 @@
                             <span>{{ $t('metaweb.businessModel.tabView.joinRelationships') }}</span>
                         </template>
                         <div :style="mainDescriptor.style.absoluteScroll">
-                            <MetawebJoinRelationships :selectedBusinessModel="selectedBusinessModel" :propMeta="meta" :observer="observer" />
+                            <MetawebJoinRelationships :selected-business-model="selectedBusinessModel" :prop-meta="meta" :observer="observer" />
                         </div>
                     </TabPanel>
 
@@ -132,7 +132,7 @@
                         </template>
 
                         <div :style="mainDescriptor.style.absoluteScroll">
-                            <MetawebPhysicalTableTab :selectedBusinessModel="selectedBusinessModel" :propMeta="meta" :observer="observer"></MetawebPhysicalTableTab>
+                            <MetawebPhysicalTableTab :selected-business-model="selectedBusinessModel" :prop-meta="meta" :observer="observer"></MetawebPhysicalTableTab>
                         </div>
                     </TabPanel>
                 </TabView>
@@ -140,8 +140,8 @@
         </div>
     </div>
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
-    <BusinessClassDialog v-if="showBusinessClassDialog" :meta="meta" :observer="observer" :physicalModels="meta.physicalModels" :showBusinessClassDialog="showBusinessClassDialog" @closeDialog="showBusinessClassDialog = false" />
-    <BusinessViewDialog v-if="showBusinessViewDialog" :meta="meta" :observer="observer" :showBusinessViewDialog="showBusinessViewDialog" @closeDialog="showBusinessViewDialog = false" />
+    <BusinessClassDialog v-if="showBusinessClassDialog" :meta="meta" :observer="observer" :physical-models="meta.physicalModels" :show-business-class-dialog="showBusinessClassDialog" @closeDialog="showBusinessClassDialog = false" />
+    <BusinessViewDialog v-if="showBusinessViewDialog" :meta="meta" :observer="observer" :show-business-view-dialog="showBusinessViewDialog" @closeDialog="showBusinessViewDialog = false" />
 </template>
 
 <script lang="ts">
@@ -194,7 +194,10 @@ export default defineComponent({
     },
     props: { propMeta: { type: Object }, observer: { type: Object }, metaUpdated: { type: Boolean }, businessModelId: Number },
     emits: ['loading', 'metaUpdated'],
-    computed: {},
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             bmDescriptor,
@@ -209,6 +212,7 @@ export default defineComponent({
             loading: false
         }
     },
+    computed: {},
     watch: {
         propMeta() {
             this.loadMeta()
@@ -216,10 +220,6 @@ export default defineComponent({
         metaUpdated() {
             this.loadMeta()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadMeta()

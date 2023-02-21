@@ -9,15 +9,15 @@
             </template>
         </Toolbar>
         <div class="p-d-flex p-flex-column kn-flex functions-main-content">
-            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+            <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
 
-            <FunctionsCatalogFilterCards class="p-m-3" :propFilters="filters" @selected="onSelectedFilter"></FunctionsCatalogFilterCards>
-            <FunctionsCatalogDatatable class="p-m-3" :user="user" :propLoading="loading" :items="functions" @selected="showForm" @preview="onPreview" @deleted="deleteFunction"></FunctionsCatalogDatatable>
+            <FunctionsCatalogFilterCards class="p-m-3" :prop-filters="filters" @selected="onSelectedFilter"></FunctionsCatalogFilterCards>
+            <FunctionsCatalogDatatable class="p-m-3" :user="user" :prop-loading="loading" :items="functions" @selected="showForm" @preview="onPreview" @deleted="deleteFunction"></FunctionsCatalogDatatable>
         </div>
 
         <div>
-            <FunctionsCatalogDetail v-show="detailDialogVisible" :visible="detailDialogVisible" :propFunction="selectedFunction" :functionTypes="filters" @close="onDetailClose" @created="onCreated"></FunctionsCatalogDetail>
-            <FunctionsCatalogPreviewDialog :visible="previewDialogVisible" :propFunction="selectedFunction" :datasets="datasets" @close="onPreviewClose"></FunctionsCatalogPreviewDialog>
+            <FunctionsCatalogDetail v-show="detailDialogVisible" :visible="detailDialogVisible" :prop-function="selectedFunction" :function-types="filters" @close="onDetailClose" @created="onCreated"></FunctionsCatalogDetail>
+            <FunctionsCatalogPreviewDialog :visible="previewDialogVisible" :prop-function="selectedFunction" :datasets="datasets" @close="onPreviewClose"></FunctionsCatalogPreviewDialog>
         </div>
     </div>
 </template>
@@ -42,6 +42,10 @@ export default defineComponent({
         FunctionsCatalogPreviewDialog,
         KnFabButton
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             user: null as any,
@@ -54,10 +58,6 @@ export default defineComponent({
             previewDialogVisible: false,
             loading: false
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         this.loadUser()

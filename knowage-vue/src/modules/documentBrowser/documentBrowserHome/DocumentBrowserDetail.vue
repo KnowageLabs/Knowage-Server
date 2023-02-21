@@ -4,12 +4,12 @@
             <div class="document-table-container p-d-flex p-flex-column kn-flex">
                 <div v-if="selectedDocument" id="document-detail-backdrop" @click="selectedDocument = null"></div>
                 <DocumentBrowserBreadcrumb v-if="!searchMode" :breadcrumbs="breadcrumbs" @breadcrumbClicked="$emit('breadcrumbClicked', $event)"></DocumentBrowserBreadcrumb>
-                <DocumentBrowserTable :propDocuments="documents" :searchMode="searchMode" @selected="setSelectedDocument" @itemSelected="$emit('itemSelected', $event)"></DocumentBrowserTable>
+                <DocumentBrowserTable :prop-documents="documents" :search-mode="searchMode" @selected="setSelectedDocument" @itemSelected="$emit('itemSelected', $event)"></DocumentBrowserTable>
             </div>
         </div>
         <div v-if="selectedDocument" id="document-browser-sidebar-container" data-test="document-browser-sidebar">
             <DocumentBrowserSidebar
-                :selectedDocument="selectedDocument"
+                :selected-document="selectedDocument"
                 @documentCloneClick="cloneDocument"
                 @documentDeleteClick="deleteDocument"
                 @itemSelected="$emit('itemSelected', $event)"
@@ -32,6 +32,10 @@ export default defineComponent({
     components: { DocumentBrowserBreadcrumb, DocumentBrowserTable, DocumentBrowserSidebar },
     props: { propDocuments: { type: Array }, breadcrumbs: { type: Array }, searchMode: { type: Boolean } },
     emits: ['breadcrumbClicked', 'loading', 'documentCloned', 'itemSelected', 'documentStateChanged', 'showDocumentDetails'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             documents: [] as any[],
@@ -43,10 +47,6 @@ export default defineComponent({
             this.loadDocuments()
             this.selectedDocument = null
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadDocuments()

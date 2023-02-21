@@ -2,9 +2,9 @@
     <Card class="p-m-2">
         <template #content>
             <div class="p-field-radiobutton">
-                <RadioButton name="Python" value="python" v-model="dataset.pythonDatasetType" @click="resetPythonEnv" />
+                <RadioButton v-model="dataset.pythonDatasetType" name="Python" value="python" @click="resetPythonEnv" />
                 <label for="Python">Python</label>
-                <RadioButton name="R" class="p-ml-3" value="r" v-model="dataset.pythonDatasetType" @click="resetPythonEnv" />
+                <RadioButton v-model="dataset.pythonDatasetType" name="R" class="p-ml-3" value="r" @click="resetPythonEnv" />
                 <label for="R">R</label>
             </div>
             <form class="p-fluid p-formgrid p-grid p-mt-2">
@@ -12,15 +12,15 @@
                     <span class="p-float-label">
                         <Dropdown
                             id="pythonEnvironment"
+                            v-model="dataset.pythonEnvironment.label"
                             class="kn-material-input"
                             :options="datasetTypes"
-                            optionLabel="label"
-                            optionValue="label"
-                            v-model="dataset.pythonEnvironment.label"
-                            @change="updateValueFromLabel(datasetTypes, 'value', $event.value)"
+                            option-label="label"
+                            option-value="label"
                             :class="{
                                 'p-invalid': !dataset.pythonEnvironment?.label || dataset.pythonEnvironment?.label === ''
                             }"
+                            @change="updateValueFromLabel(datasetTypes, 'value', $event.value)"
                         />
                         <label for="pythonEnvironment" class="kn-material-input-label"> {{ $t('managers.datasetManagement.environment') }} * </label>
                     </span>
@@ -30,9 +30,9 @@
                     <span class="p-float-label">
                         <InputText
                             id="dataframeName"
+                            v-model.trim="v$.dataset.dataframeName.$model"
                             class="kn-material-input"
                             type="text"
-                            v-model.trim="v$.dataset.dataframeName.$model"
                             :class="{
                                 'p-invalid': v$.dataset.dataframeName.$invalid && v$.dataset.dataframeName.$dirty
                             }"
@@ -41,16 +41,16 @@
                         />
                         <label for="dataframeName" class="kn-material-input-label"> {{ $t('managers.datasetManagement.dataframeName') }} * </label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.dataframeName" :additionalTranslateParams="{ fieldName: $t('managers.datasetManagement.dataframeName') }" />
+                    <KnValidationMessages class="p-mt-1" :v-comp="v$.dataset.dataframeName" :additional-translate-params="{ fieldName: $t('managers.datasetManagement.dataframeName') }" />
                 </div>
             </form>
             <Button :label="$t('managers.datasetManagement.checkEnvironment')" class="p-button kn-button--primary" :disabled="!dataset.pythonEnvironment.label" @click="checkEnvironment" />
 
-            <VCodeMirror class="p-mt-4" ref="codeMirrorPython" v-model:value="dataset.pythonScript" :autoHeight="true" :options="scriptOptions" @keyup="$emit('touched')" />
+            <VCodeMirror ref="codeMirrorPython" v-model:value="dataset.pythonScript" class="p-mt-4" :auto-height="true" :options="scriptOptions" @keyup="$emit('touched')" />
 
             <Dialog :header="$t('managers.datasetManagement.availableLibraries')" style="width: 60vw" :visible="libListVisible" :modal="false" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
                 <div class="p-mt-3">
-                    <DataTable class="p-datatable-sm kn-table" :value="pythonEnvLibs" :scrollable="true" responsiveLayout="stack" breakpoint="960px">
+                    <DataTable class="p-datatable-sm kn-table" :value="pythonEnvLibs" :scrollable="true" responsive-layout="stack" breakpoint="960px">
                         <Column field="name" :header="$t('kpi.alert.name')" :sortable="true">
                             <template #body="{ data }"> <span v-if="dataset.pythonDatasetType == 'python'"></span> {{ data.name }} <span v-if="dataset.pythonDatasetType == 'r'"></span> {{ data[0] }} </template>
                         </Column>
@@ -71,6 +71,7 @@
 import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
+// eslint-disable-next-line
 import VCodeMirror, { CodeMirror } from 'codemirror-editor-vue3'
 import useValidate from '@vuelidate/core'
 import pythonDescriptor from './DatasetManagementPythonDataset.json'
@@ -86,15 +87,6 @@ export default defineComponent({
     components: { Card, Dropdown, VCodeMirror, RadioButton, KnValidationMessages, Dialog, DataTable, Column },
     props: { selectedDataset: { type: Object as any }, pythonEnvironments: { type: Array as any }, rEnvironments: { type: Array as any } },
     emits: ['touched'],
-    computed: {
-        datasetTypes(): any {
-            if (this.dataset.pythonDatasetType == 'python') {
-                return this.pythonEnvironments
-            } else {
-                return this.rEnvironments
-            }
-        }
-    },
     data() {
         return {
             pythonDescriptor,
@@ -111,14 +103,23 @@ export default defineComponent({
             }
         }
     },
-    created() {
-        this.loadDataset()
-        this.setupCodeMirror()
+    computed: {
+        datasetTypes(): any {
+            if (this.dataset.pythonDatasetType == 'python') {
+                return this.pythonEnvironments
+            } else {
+                return this.rEnvironments
+            }
+        }
     },
     watch: {
         selectedDataset() {
             this.loadDataset()
         }
+    },
+    created() {
+        this.loadDataset()
+        this.setupCodeMirror()
     },
     validations() {
         const pythonFieldsRequired = (value) => {

@@ -1,4 +1,4 @@
-let routes = [
+const routes = [
     {
         path: '/metadata-management',
         name: 'metadata-management',

@@ -12,7 +12,7 @@
         </span>
         <div class="p-col-12">
             <span class="p-float-label">
-                <Dropdown id="hier" class="kn-material-input" v-model="selecetedMultiHierUN" :options="member.hierarchies" optionLabel="caption" optionValue="uniqueName" @change="$emit('setMultiHierUN', selecetedMultiHierUN)" />
+                <Dropdown id="hier" v-model="selecetedMultiHierUN" class="kn-material-input" :options="member.hierarchies" option-label="caption" option-value="uniqueName" @change="$emit('setMultiHierUN', selecetedMultiHierUN)" />
                 <label for="hier" class="kn-material-input-label">{{ $t('documentExecution.olap.multiHierarchy.dropdownLabel') }} </label>
             </span>
         </div>

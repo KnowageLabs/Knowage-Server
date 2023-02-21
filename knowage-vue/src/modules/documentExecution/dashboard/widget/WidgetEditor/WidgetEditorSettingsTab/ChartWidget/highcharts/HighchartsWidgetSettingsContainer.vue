@@ -2,12 +2,12 @@
     <div v-show="widgetModel">
         <HighchartsWidgetSettingsAccordion
             v-show="selectedSetting"
-            :widgetModel="widgetModel"
+            :widget-model="widgetModel"
             :settings="descriptor?.settings[selectedSetting]"
             :datasets="datasets"
-            :selectedDatasets="selectedDatasets"
+            :selected-datasets="selectedDatasets"
             :variables="variables"
-            :dashboardId="dashboardId"
+            :dashboard-id="dashboardId"
             :descriptor="descriptor"
         ></HighchartsWidgetSettingsAccordion>
     </div>

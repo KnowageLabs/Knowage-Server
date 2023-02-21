@@ -32,9 +32,9 @@
                                 <span class="p-float-label">
                                     <InputText
                                         id="title"
+                                        v-model.trim="v$.selectedParam.name.$model"
                                         class="kn-material-input"
                                         :disabled="selectedParam.isUserDefined === null"
-                                        v-model.trim="v$.selectedParam.name.$model"
                                         :class="{
                                             'p-invalid': v$.selectedParam.name.$invalid && v$.selectedParam.name.$dirty
                                         }"
@@ -43,23 +43,23 @@
                                     />
                                     <label for="title" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.outputParams.paramName') }} *</label>
                                 </span>
-                                <KnValidationMessages class="p-mt-1" :vComp="v$.selectedParam.name" :additionalTranslateParams="{ fieldName: $t('documentExecution.documentDetails.outputParams.paramName') }" />
+                                <KnValidationMessages class="p-mt-1" :v-comp="v$.selectedParam.name" :additional-translate-params="{ fieldName: $t('documentExecution.documentDetails.outputParams.paramName') }" />
                             </div>
                             <div class="p-field p-col-12">
                                 <span class="p-float-label">
-                                    <Dropdown id="type" class="kn-material-input" v-model="selectedParam.type" :options="typeList" optionLabel="valueCd" :disabled="selectedParam.isUserDefined === null" @change="markSelectedParamForChange" />
+                                    <Dropdown id="type" v-model="selectedParam.type" class="kn-material-input" :options="typeList" option-label="valueCd" :disabled="selectedParam.isUserDefined === null" @change="markSelectedParamForChange" />
                                     <label for="type" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.outputParams.paramType') }} </label>
                                 </span>
                             </div>
                             <div v-if="selectedParam.type.valueCd === 'DATE'" class="p-field p-col-12">
                                 <span class="p-float-label">
-                                    <Dropdown id="dateFormat" class="kn-material-input" v-model="selectedParam.formatCode" :options="dateFormats" optionLabel="translatedValueName" optionValue="valueCd" :disabled="selectedParam.isUserDefined === null" @change="markSelectedParamForChange" />
+                                    <Dropdown id="dateFormat" v-model="selectedParam.formatCode" class="kn-material-input" :options="dateFormats" option-label="translatedValueName" option-value="valueCd" :disabled="selectedParam.isUserDefined === null" @change="markSelectedParamForChange" />
                                     <label for="dateFormat" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanDateFormat') }} </label>
                                 </span>
                             </div>
                             <div v-if="selectedParam.type.valueCd === 'DATE' && selectedParam.formatCode === 'CUSTOM'" class="p-field p-col-12">
                                 <span class="p-float-label">
-                                    <InputText id="title" class="kn-material-input" v-model="selectedParam.formatValue" :disabled="selectedParam.isUserDefined === null" @input="markSelectedParamForChange" />
+                                    <InputText id="title" v-model="selectedParam.formatValue" class="kn-material-input" :disabled="selectedParam.isUserDefined === null" @input="markSelectedParamForChange" />
                                     <label for="title" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.outputParams.customValue') }} *</label>
                                 </span>
                             </div>
@@ -136,7 +136,7 @@ export default defineComponent({
                 await this.$http
                     .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/outputparameters/${paramToDelete.id}`, { headers: { 'X-Disable-Errors': 'true' } })
                     .then(() => {
-                        let deletedParam = this.document.outputParameters.findIndex((param) => param.id === paramToDelete.id)
+                        const deletedParam = this.document.outputParameters.findIndex((param) => param.id === paramToDelete.id)
                         this.document.outputParameters.splice(deletedParam, 1)
                         this.store.setInfo({ title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
                         this.selectedParam = {} as iOutputParam
@@ -145,7 +145,7 @@ export default defineComponent({
                         this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: error.message })
                     })
             } else {
-                let deletedParam = this.document.outputParameters.findIndex((param) => param.tempId === paramToDelete.tempId)
+                const deletedParam = this.document.outputParameters.findIndex((param) => param.tempId === paramToDelete.tempId)
                 this.document.outputParameters.splice(deletedParam, 1)
                 this.selectedParam = {} as iOutputParam
             }

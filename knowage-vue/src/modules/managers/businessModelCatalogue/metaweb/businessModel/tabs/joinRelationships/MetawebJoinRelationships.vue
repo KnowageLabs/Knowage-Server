@@ -1,11 +1,11 @@
 <template>
-    <DataTable :value="businessModel.joinRelationships" class="p-datatable-sm kn-table p-ml-2" responsiveLayout="scroll" breakpoint="400px">
+    <DataTable :value="businessModel.joinRelationships" class="p-datatable-sm kn-table p-ml-2" responsive-layout="scroll" breakpoint="400px">
         <Column class="p-text-center">
             <template #header>
                 <Button :label="$t('metaweb.businessModel.editJoin')" class="p-button-link p-text-right" @click="showBusinessViewDialog = true" />
             </template>
             <template #body="slotProps">
-                <span v-for="(rel, index) in slotProps.data.sourceColumns" v-bind:key="index" class="associator-block-hover p-d-flex p-flex-row p-ai-center kn-width-full">
+                <span v-for="(rel, index) in slotProps.data.sourceColumns" :key="index" class="associator-block-hover p-d-flex p-flex-row p-ai-center kn-width-full">
                     <!-- <span class="p-mr-6">{{ slotProps.data.sourceTable.name }}.{{ rel.name }}</span>
                     <span class="p-mx-6"><i class="fa fa-link" aria-hidden="true"></i></span>
                     <span class="p-ml-6">{{ slotProps.data.destinationTable.name }}.{{ slotProps.data.destinationColumns[index].name }}</span> -->
@@ -20,12 +20,12 @@
 
     <MetawebBusinessViewDialog
         v-if="showBusinessViewDialog"
-        :selectedBusinessModel="selectedBusinessModel"
-        :physicalModels="propMeta.physicalModels"
+        :selected-business-model="selectedBusinessModel"
+        :physical-models="propMeta.physicalModels"
         :meta="propMeta"
         :observer="observer"
-        :editMode="true"
-        :showBusinessViewDialog="showBusinessViewDialog"
+        :edit-mode="true"
+        :show-business-view-dialog="showBusinessViewDialog"
         @closeDialog="showBusinessViewDialog = false"
     />
 </template>
@@ -47,7 +47,6 @@ export default defineComponent({
         observer: { type: Object }
     },
     emits: ['loading'],
-    computed: {},
     data() {
         return {
             v$: useValidate() as any,
@@ -55,6 +54,7 @@ export default defineComponent({
             showBusinessViewDialog: false
         }
     },
+    computed: {},
     watch: {
         selectedBusinessModel() {
             this.loadData()

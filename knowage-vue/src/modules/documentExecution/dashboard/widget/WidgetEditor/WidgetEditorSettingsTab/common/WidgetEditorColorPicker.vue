@@ -22,11 +22,20 @@ export default defineComponent({
         disabled: { type: Boolean }
     },
     emits: ['change'],
+    setup() {
+        const knowageStyleIcon = ref(null)
+        const colorPickerVisible = ref(false)
+        const contextMenuVisible = ref(false)
+        useClickOutside(knowageStyleIcon, () => {
+            colorPickerVisible.value = false
+            contextMenuVisible.value = false
+        })
+        return { colorPickerVisible, contextMenuVisible, knowageStyleIcon }
+    },
     data() {
         return {
             modelValue: null as any,
             color: '#59c7f9',
-            colorPickerVisible: false,
             colorPickTimer: null as any,
             useClickOutside
         }
@@ -35,16 +44,6 @@ export default defineComponent({
         initialValue() {
             this.loadValue()
         }
-    },
-    setup() {
-        const knowageStyleIcon = ref(null)
-        let colorPickerVisible = ref(false)
-        let contextMenuVisible = ref(false)
-        useClickOutside(knowageStyleIcon, () => {
-            colorPickerVisible.value = false
-            contextMenuVisible.value = false
-        })
-        return { colorPickerVisible, contextMenuVisible, knowageStyleIcon }
     },
     created() {
         this.loadValue()

@@ -26,11 +26,11 @@ import registryDatatableWarningDialogDescriptor from './RegistryDatatableWarning
 export default defineComponent({
     name: 'registry-datatable-warning-dialog',
     components: { Checkbox, Dialog },
-    emits: ['close'],
     props: {
         visible: { type: Boolean },
         columns: { type: Array, required: true }
     },
+    emits: ['close'],
     data() {
         return {
             registryDatatableWarningDialogDescriptor,

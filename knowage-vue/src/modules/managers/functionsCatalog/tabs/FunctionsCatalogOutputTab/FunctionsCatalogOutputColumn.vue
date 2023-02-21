@@ -2,20 +2,20 @@
     <div v-if="outputColumn" class="p-d-flex p-flex-row p-ai-center">
         <div class="column-name-input kn-flex ">
             <span class="p-float-label">
-                <InputText class="kn-material-input" v-model.trim="outputColumn.name" :disabled="readonly" />
+                <InputText v-model.trim="outputColumn.name" class="kn-material-input" :disabled="readonly" />
                 <label for="columnName" class="kn-material-input-label"> {{ $t('managers.functionsCatalog.columnName') }} </label>
             </span>
         </div>
         <div class="p-field kn-flex p-m-2">
             <span>
                 <label for="columnType" class="kn-material-input-label">{{ $t('managers.functionsCatalog.columnFieldType') }}</label>
-                <Dropdown class="kn-material-input" v-model="outputColumn.fieldType" :options="functionsCatalogOutputTabDescriptor.columnFieldTypes" optionLabel="value" optionValue="value" :disabled="readonly" @change="onFieldTypeChange" />
+                <Dropdown v-model="outputColumn.fieldType" class="kn-material-input" :options="functionsCatalogOutputTabDescriptor.columnFieldTypes" option-label="value" option-value="value" :disabled="readonly" @change="onFieldTypeChange" />
             </span>
         </div>
         <div class="p-field kn-flex p-m-2">
             <span>
                 <label for="columnType" class="kn-material-input-label">{{ $t('managers.functionsCatalog.columnType') }}</label>
-                <Dropdown class="kn-material-input" v-model="outputColumn.type" :options="outputColumn.fieldType === 'ATTRIBUTE' ? functionsCatalogOutputTabDescriptor.columnTypes : [{ value: 'NUMBER' }]" optionLabel="value" optionValue="value" :disabled="readonly" />
+                <Dropdown v-model="outputColumn.type" class="kn-material-input" :options="outputColumn.fieldType === 'ATTRIBUTE' ? functionsCatalogOutputTabDescriptor.columnTypes : [{ value: 'NUMBER' }]" option-label="value" option-value="value" :disabled="readonly" />
             </span>
         </div>
         <div class="p-field p-mt-5">

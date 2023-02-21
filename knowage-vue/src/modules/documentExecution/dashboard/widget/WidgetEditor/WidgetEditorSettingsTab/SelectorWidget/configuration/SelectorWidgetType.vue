@@ -1,25 +1,25 @@
 <template>
     <div v-if="widgetModel && widgetModel.type == 'selector'" class="p-m-2">
         <div class="p-grid p-mx-2">
-            <TypeCard v-for="(type, index) of selectorTypes" :widgetModel="widgetModel" :key="index" :selectorType="type" />
+            <TypeCard v-for="(type, index) of selectorTypes" :key="index" :widget-model="widgetModel" :selector-type="type" />
         </div>
 
         <div v-if="showAlignment" class="p-d-flex p-flex-row p-m-2">
             <div v-for="(layout, index) of descriptor.layouts" :key="index" class="p-m-2">
-                <RadioButton :inputId="layout.name" :name="layout.name" :value="layout.value" v-model="widgetModel.settings.configuration.selectorType.alignment" />
+                <RadioButton v-model="widgetModel.settings.configuration.selectorType.alignment" :input-id="layout.name" :name="layout.name" :value="layout.value" />
                 <i :class="layout.icon" class="p-mx-2" />
                 <label :for="layout.name">{{ layout.name }}</label>
             </div>
         </div>
         <span v-if="widgetModel.settings.configuration.selectorType.alignment === 'grid'" class="p-float-label">
-            <InputText id="colSize" class="kn-material-input kn-width-full" v-model="widgetModel.settings.configuration.selectorType.columnSize" />
+            <InputText id="colSize" v-model="widgetModel.settings.configuration.selectorType.columnSize" class="kn-material-input kn-width-full" />
             <label for="colSize" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.info.uploadTemplate') }} </label>
         </span>
     </div>
 
     <div v-if="widgetModel && widgetModel.type == 'selection'" class="p-m-2">
         <div class="p-grid p-mx-2">
-            <TypeCard v-for="(type, index) of selectionTypes" :widgetModel="widgetModel" :key="index" :selectorType="type" />
+            <TypeCard v-for="(type, index) of selectionTypes" :key="index" :widget-model="widgetModel" :selector-type="type" />
         </div>
     </div>
 </template>
@@ -35,17 +35,17 @@ export default defineComponent({
     name: 'selector-widget-type',
     components: { TypeCard, RadioButton },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
-    computed: {
-        showAlignment(): boolean {
-            let modality = this.widgetModel.settings.configuration.selectorType.modality
-            return modality === 'singleValue' || modality === 'multiValue' || modality === 'dateRange'
-        }
-    },
     data() {
         return {
             descriptor,
             selectorTypes: [] as { imageUrl: string; label: string; value: string }[],
             selectionTypes: [] as { imageUrl: string; label: string; value: string }[]
+        }
+    },
+    computed: {
+        showAlignment(): boolean {
+            const modality = this.widgetModel.settings.configuration.selectorType.modality
+            return modality === 'singleValue' || modality === 'multiValue' || modality === 'dateRange'
         }
     },
     created() {

@@ -1,12 +1,12 @@
 <template>
     <Card style="width:100%" class="p-m-2">
         <template #content>
-            <DataTable :paginator="true" :rows="10" v-model:selection="selectedMode.associatedRoles" :value="roles" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" v-model:filters="filters" filterDisplay="menu" data-test="values-list">
+            <DataTable v-model:selection="selectedMode.associatedRoles" v-model:filters="filters" :paginator="true" :rows="10" :value="roles" class="p-datatable-sm kn-table" data-key="id" responsive-layout="stack" filter-display="menu" data-test="values-list">
                 <template #header>
                     <div class="table-header">
                         <span class="p-input-icon-left">
                             <i class="pi pi-search" />
-                            <InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0" data-test="filter-input" />
+                            <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" badge="0" data-test="filter-input" />
                         </span>
                     </div>
                 </template>
@@ -17,7 +17,7 @@
                     {{ $t('common.info.dataLoading') }}
                 </template>
 
-                <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+                <Column selection-mode="multiple" header-style="width: 3rem"></Column>
                 <Column field="name" header="Roles" class="kn-truncated"></Column>
             </DataTable>
         </template>

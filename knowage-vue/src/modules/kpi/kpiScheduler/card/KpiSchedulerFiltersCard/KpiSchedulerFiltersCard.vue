@@ -10,7 +10,7 @@
             </template>
             <template #content>
                 <div class="p-d-flex p-flex-row p-flex-wrap">
-                    <KpiSchedulerFilterDetailCard class="p-m-2" v-for="filter in formatedFilters[kpiName]" :key="filter.id" :filter="filter" :placeholderType="placeholderType" :temporalType="temporalType" :lovs="lovs" @touched="$emit('touched')"></KpiSchedulerFilterDetailCard>
+                    <KpiSchedulerFilterDetailCard v-for="filter in formatedFilters[kpiName]" :key="filter.id" class="p-m-2" :filter="filter" :placeholder-type="placeholderType" :temporal-type="temporalType" :lovs="lovs" @touched="$emit('touched')"></KpiSchedulerFilterDetailCard>
                 </div>
             </template>
         </Card>

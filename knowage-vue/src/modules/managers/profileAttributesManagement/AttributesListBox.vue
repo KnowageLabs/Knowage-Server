@@ -4,13 +4,13 @@
         class="kn-list--column"
         :options="attributes"
         :filter="true"
-        :filterPlaceholder="$t('common.search')"
-        optionLabel="userId"
-        filterMatchMode="contains"
-        :filterFields="profileAttributesManagementDescriptor.globalFilterFields"
-        :emptyFilterMessage="$t('managers.widgetGallery.noResults')"
-        @change="onAttributeSelect"
+        :filter-placeholder="$t('common.search')"
+        option-label="userId"
+        filter-match-mode="contains"
+        :filter-fields="profileAttributesManagementDescriptor.globalFilterFields"
+        :empty-filter-message="$t('managers.widgetGallery.noResults')"
         data-test="attributes-list"
+        @change="onAttributeSelect"
     >
         <template #empty>{{ $t('common.info.noDataFound') }}</template>
         <template #option="slotProps">
@@ -19,7 +19,7 @@
                     <span>{{ slotProps.option.attributeName }}</span>
                     <span class="kn-list-item-text-secondary">{{ slotProps.option.attributeDescription }}</span>
                 </div>
-                <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click="deleteAttribute(slotProps.option.attributeId)" :data-test="'delete-button'" />
+                <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" :data-test="'delete-button'" @click="deleteAttribute(slotProps.option.attributeId)" />
             </div>
         </template>
     </Listbox>
@@ -36,10 +36,18 @@ export default defineComponent({
     components: {
         Listbox
     },
-    emits: ['selectedAttribute', 'deleteAttribute'],
     props: {
         attributes: Object,
         loading: Boolean
+    },
+    emits: ['selectedAttribute', 'deleteAttribute'],
+    data() {
+        return {
+            load: false as boolean,
+            listAttributes: [] as iAttribute[],
+            selectedAttribute: null as iAttribute | null,
+            profileAttributesManagementDescriptor: ProfileAttributesManagementDescriptor
+        }
     },
     watch: {
         attributes: {
@@ -51,14 +59,6 @@ export default defineComponent({
             handler: function(l) {
                 this.load = l
             }
-        }
-    },
-    data() {
-        return {
-            load: false as Boolean,
-            listAttributes: [] as iAttribute[],
-            selectedAttribute: null as iAttribute | null,
-            profileAttributesManagementDescriptor: ProfileAttributesManagementDescriptor
         }
     },
     methods: {

@@ -1,13 +1,13 @@
 <template>
     <div class="toolbar-context-menu">
-        <div class="toolbar-context-menu-option" v-for="(option, index) in options" :key="index">
+        <div v-for="(option, index) in options" :key="index" class="toolbar-context-menu-option">
             <div class="toolbar-context-item kn-cursor-pointer" @click="setSelectedValue(option.value)">
                 <div class="toolbar-item-text">
                     {{ $t(option.label) }}
                 </div>
                 <i v-if="option.value === 'input'" class="pi pi-angle-right p-ml-auto p-mr-5"></i>
             </div>
-            <InputText v-if="inputVisible" class="toolbar-context-menu-input kn-material-input p-inputtext-sm" v-model="inputValue" @input="onInputChanged" @change="onInputChanged" />
+            <InputText v-if="inputVisible" v-model="inputValue" class="toolbar-context-menu-input kn-material-input p-inputtext-sm" @input="onInputChanged" @change="onInputChanged" />
         </div>
     </div>
 </template>

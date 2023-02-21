@@ -4,13 +4,13 @@
         class="kn-list--column"
         :options="users"
         :filter="true"
-        :filterPlaceholder="$t('common.search')"
-        optionLabel="userId"
-        filterMatchMode="contains"
-        :filterFields="usersManagementDescriptor.globalFilterFields"
-        :emptyFilterMessage="$t('managers.widgetGallery.noResults')"
-        @change="onUserSelect"
+        :filter-placeholder="$t('common.search')"
+        option-label="userId"
+        filter-match-mode="contains"
+        :filter-fields="usersManagementDescriptor.globalFilterFields"
+        :empty-filter-message="$t('managers.widgetGallery.noResults')"
         data-test="users-list"
+        @change="onUserSelect"
     >
         <template #empty>{{ $t('common.info.noDataFound') }}</template>
         <template #option="slotProps">
@@ -20,7 +20,7 @@
                     <span class="kn-list-item-text-secondary">{{ slotProps.option.fullName }}</span>
                 </div>
                 <Button v-if="slotProps.option.failedLoginAttempts >= 3" icon="pi pi-lock" class="p-button-text p-button-rounded p-button-plain" />
-                <Button icon="pi pi-trash" class="p-button-text p-button-rounded p-button-plain" @click="onUserDelete(slotProps.option.id)" :data-test="'deleteBtn'" />
+                <Button icon="pi pi-trash" class="p-button-text p-button-rounded p-button-plain" :data-test="'deleteBtn'" @click="onUserDelete(slotProps.option.id)" />
             </div>
         </template>
     </Listbox>
@@ -39,10 +39,18 @@ export default defineComponent({
     components: {
         Listbox
     },
-    emits: ['selectedUser', 'deleteUser'],
     props: {
         users: Array,
         loading: Boolean
+    },
+    emits: ['selectedUser', 'deleteUser'],
+    data() {
+        return {
+            listUsers: [] as iUser[],
+            load: false as boolean,
+            selectedUser: null as iUser | null,
+            usersManagementDescriptor: usersManagementDescriptor
+        }
     },
     watch: {
         users: {
@@ -54,14 +62,6 @@ export default defineComponent({
             handler: function(l) {
                 this.load = l
             }
-        }
-    },
-    data() {
-        return {
-            listUsers: [] as iUser[],
-            load: false as Boolean,
-            selectedUser: null as iUser | null,
-            usersManagementDescriptor: usersManagementDescriptor
         }
     },
     methods: {

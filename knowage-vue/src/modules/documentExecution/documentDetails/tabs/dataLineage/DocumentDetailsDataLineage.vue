@@ -18,7 +18,7 @@
                             <template #content>
                                 <div class="p-field p-col-12">
                                     <span class="p-float-label">
-                                        <Dropdown id="dataSource" class="kn-material-input kn-width-full" v-model="dataSource" :options="metaSourceResource" @change="getTablesBySourceID" optionLabel="name" />
+                                        <Dropdown id="dataSource" v-model="dataSource" class="kn-material-input kn-width-full" :options="metaSourceResource" option-label="name" @change="getTablesBySourceID" />
                                         <label for="dataSource" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.dataLineage.selectSource') }} </label>
                                     </span>
                                 </div>
@@ -31,13 +31,13 @@
                                 <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
                                 <DataTable
                                     v-if="dataSource && tablesList.length > 0 && !loading"
+                                    v-model:selection="selectedTables"
+                                    v-model:filters="filters"
                                     class="p-datatable-sm kn-table"
                                     :value="tablesList"
-                                    v-model:selection="selectedTables"
-                                    dataKey="tableId"
-                                    responsiveLayout="scroll"
-                                    v-model:filters="filters"
-                                    :globalFilterFields="globalFilterFields"
+                                    data-key="tableId"
+                                    responsive-layout="scroll"
+                                    :global-filter-fields="globalFilterFields"
                                     @rowSelect="peristTable"
                                     @rowUnselect="deleteTable"
                                 >
@@ -45,11 +45,11 @@
                                         <div class="table-header p-d-flex p-ai-center">
                                             <span id="search-container" class="p-input-icon-left p-mr-3">
                                                 <i class="pi pi-search" />
-                                                <InputText class="kn-material-input" v-model="filters['global'].value" :placeholder="$t('common.search')" />
+                                                <InputText v-model="filters['global'].value" class="kn-material-input" :placeholder="$t('common.search')" />
                                             </span>
                                         </div>
                                     </template>
-                                    <Column class="lineage-table-header" selectionMode="multiple" :headerStyle="mainDescriptor.style.tableHeader"> </Column>
+                                    <Column class="lineage-table-header" selection-mode="multiple" :header-style="mainDescriptor.style.tableHeader"> </Column>
                                     <Column field="name" :header="$t('managers.datasetManagement.flatTableName')" :sortable="true"></Column>
                                 </DataTable>
                             </template>
@@ -78,6 +78,10 @@ export default defineComponent({
     components: { Dropdown, DataTable, Column, InlineMessage },
     props: { selectedDocument: { type: Object as PropType<iDocument>, required: true }, metaSourceResource: { type: Array as PropType<iMetaSource[]>, required: true }, savedTables: { type: Array as PropType<iTableSmall[]>, required: true } },
     emits: [],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             mainDescriptor,
@@ -88,10 +92,6 @@ export default defineComponent({
             filters: { global: [filterDefault] } as Object,
             globalFilterFields: ['name']
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {},
     methods: {
@@ -106,8 +106,8 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         setCheckedTables() {
-            for (var i = 0; i < this.tablesList.length; i++) {
-                for (var j = 0; j < this.savedTables.length; j++) {
+            for (let i = 0; i < this.tablesList.length; i++) {
+                for (let j = 0; j < this.savedTables.length; j++) {
                     if (this.tablesList[i].tableId == this.savedTables[j].tableId) {
                         this.selectedTables.push(this.tablesList[i])
                     }

@@ -12,24 +12,24 @@
             <TabView v-if="!loading" class="dashboardEditor-tabs">
                 <TabPanel :header="$t('dashboard.datasetEditor.dataTabTitle')">
                     <DataTab
-                        :availableDatasetsProp="availableDatasets"
-                        :dashboardDatasetsProp="dashboardDatasets"
-                        :selectedDatasetsProp="selectedDatasets"
-                        :documentDriversProp="filtersDataProp"
-                        :dashboardId="dashboardIdProp"
+                        :available-datasets-prop="availableDatasets"
+                        :dashboard-datasets-prop="dashboardDatasets"
+                        :selected-datasets-prop="selectedDatasets"
+                        :document-drivers-prop="filtersDataProp"
+                        :dashboard-id="dashboardIdProp"
                         @addSelectedDatasets="addSelectedDatasets"
                         @deleteDataset="confirmDeleteDataset"
                     />
                 </TabPanel>
                 <TabPanel>
                     <template #header>
-                        <span v-bind:class="{ 'details-warning-color': modelHasEmptyAssociations }">{{ $t('dashboard.datasetEditor.associationsTabTitle') }}</span>
+                        <span :class="{ 'details-warning-color': modelHasEmptyAssociations }">{{ $t('dashboard.datasetEditor.associationsTabTitle') }}</span>
                         <i v-if="modelHasEmptyAssociations" class="fa-solid fa-circle-exclamation p-ml-1 details-warning-color" />
                     </template>
                     <AssociationsTab
-                        :dashboardAssociationsProp="dashboardAssociations"
-                        :selectedDatasetsProp="selectedDatasets"
-                        :selectedAssociationProp="selectedAssociation"
+                        :dashboard-associations-prop="dashboardAssociations"
+                        :selected-datasets-prop="selectedDatasets"
+                        :selected-association-prop="selectedAssociation"
                         @createNewAssociation="createNewAssociation"
                         @associationDeleted="deleteAssociation"
                         @associationSelected="selectAssociation"
@@ -39,7 +39,7 @@
             </TabView>
         </div>
     </Teleport>
-    <DriverWarningDialog :visible="warningDialogVisible" :ignoredDatasets="ignoredDatasets" @close="warningDialogVisible = false" />
+    <DriverWarningDialog :visible="warningDialogVisible" :ignored-datasets="ignoredDatasets" @close="warningDialogVisible = false" />
 </template>
 
 <script lang="ts">
@@ -64,6 +64,11 @@ export default defineComponent({
     components: { TabView, TabPanel, DataTab, AssociationsTab, DriverWarningDialog },
     props: { availableDatasetsProp: { required: true, type: Array as PropType<IDataset[]> }, filtersDataProp: { type: Object }, dashboardIdProp: { type: String, required: true } },
     emits: ['closeDatasetEditor', 'datasetEditorSaved', 'allDatasetsLoaded'],
+    setup() {
+        const store = mainStore()
+        const dashboardStore = dashStore()
+        return { store, dashboardStore }
+    },
     data() {
         return {
             activeIndex: 0,
@@ -78,11 +83,6 @@ export default defineComponent({
             uncachedDatasets: ['SbiQueryDataSet', 'SbiQbeDataSet', 'SbiSolrDataSet', 'SbiPreparedDataSet']
         }
     },
-    watch: {
-        async availableDatasetsProp() {
-            await this.setDatasetsData()
-        }
-    },
     computed: {
         modelHasEmptyAssociations(): boolean {
             let isInvalid = false
@@ -92,10 +92,10 @@ export default defineComponent({
             return isInvalid
         }
     },
-    setup() {
-        const store = mainStore()
-        const dashboardStore = dashStore()
-        return { store, dashboardStore }
+    watch: {
+        async availableDatasetsProp() {
+            await this.setDatasetsData()
+        }
     },
     async created() {
         await this.setDatasetsData()
@@ -185,7 +185,7 @@ export default defineComponent({
         },
 
         confirmDeleteDataset(datasetToDelete) {
-            let datasetUsedByWidgetCheck = false
+            const datasetUsedByWidgetCheck = false
             if (datasetUsedByWidgetCheck) {
                 this.store.setInfo({ title: this.$t('common.toast.error'), msg: 'Dataset is being used by some widget.' })
             } else {
@@ -201,7 +201,7 @@ export default defineComponent({
             }
         },
         async checkForDatasetAssociations(datasetToDelete) {
-            let datasetAssociations = (await this.getDatasetAssociations(datasetToDelete.id.dsId)) as unknown as IAssociation[]
+            const datasetAssociations = (await this.getDatasetAssociations(datasetToDelete.id.dsId)) as unknown as IAssociation[]
             if (datasetAssociations && datasetAssociations.length > 0) this.deleteDatasetAssociations(datasetAssociations)
             this.deleteDataset(datasetToDelete.id.dsId)
         },
@@ -214,12 +214,12 @@ export default defineComponent({
             this.dashboardAssociations = this.dashboardAssociations.filter((association) => !associationsToDelete.find((assToDelete) => assToDelete.id === association.id))
         },
         deleteDataset(datasetToDeleteId) {
-            let toDeleteIndex = this.selectedDatasets.findIndex((dataset) => datasetToDeleteId === dataset.id.dsId)
+            const toDeleteIndex = this.selectedDatasets.findIndex((dataset) => datasetToDeleteId === dataset.id.dsId)
             this.selectedDatasets.splice(toDeleteIndex, 1)
         },
 
         saveDatasetsToModel() {
-            let formattedDatasets = [] as IDashboardDataset[]
+            const formattedDatasets = [] as IDashboardDataset[]
 
             this.selectedDatasets.forEach((dataset) => {
                 formattedDatasets.push(this.formatDatasetForModel(dataset))
@@ -231,7 +231,7 @@ export default defineComponent({
             this.$emit('datasetEditorSaved')
         },
         formatDatasetForModel(datasetToFormat) {
-            let formattedDataset = {
+            const formattedDataset = {
                 id: datasetToFormat.id.dsId,
                 dsLabel: datasetToFormat.label,
                 cache: datasetToFormat.modelCache ?? false,

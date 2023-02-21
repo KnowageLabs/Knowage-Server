@@ -1,10 +1,10 @@
 <template>
-    <Dialog class="workspace-cockpit-dialog remove-padding p-fluid kn-dialog--toolbar--primary" :contentStyle="workspaceCockpitDialogDescriptor.style.flex" :visible="visible" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
+    <Dialog class="workspace-cockpit-dialog remove-padding p-fluid kn-dialog--toolbar--primary" :content-style="workspaceCockpitDialogDescriptor.style.flex" :visible="visible" :modal="false" :closable="false" position="right" :base-z-index="1" :auto-z-index="true">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start></template>
                 <template #end>
-                    <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="close" />
+                    <Button v-tooltip.bottom="$t('common.close')" icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="close" />
                 </template>
             </Toolbar>
         </template>
@@ -24,6 +24,10 @@ export default defineComponent({
     components: { Dialog },
     props: { visible: { type: Boolean } },
     emits: ['close'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             workspaceCockpitDialogDescriptor,
@@ -32,10 +36,6 @@ export default defineComponent({
     },
     computed: {},
     watch: {},
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
     created() {
         this.createUrl()
     },

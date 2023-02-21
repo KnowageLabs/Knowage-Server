@@ -2,11 +2,11 @@
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
         <template #start>{{ job.jobName }}</template>
         <template #end>
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="saveDisabled" @click="saveJob" data-test="save-button" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="saveDisabled" data-test="save-button" @click="saveJob" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeJobDetail" />
         </template>
     </Toolbar>
-    <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+    <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
 
     <Card v-if="job" id="scheduler-detail-card" class="p-m-2">
         <template #content>
@@ -15,15 +15,15 @@
                     <span class="p-float-label">
                         <InputText
                             id="jobName"
-                            class="kn-material-input"
                             v-model.trim="job.jobName"
+                            class="kn-material-input"
                             :class="{
                                 'p-invalid': job.jobName?.length === 0 && jobNameDirty
                             }"
-                            maxLength="80"
+                            max-length="80"
                             :disabled="testReadonly"
-                            @blur="jobNameDirty = true"
                             data-test="name-input"
+                            @blur="jobNameDirty = true"
                         />
                         <label for="jobName" class="kn-material-input-label"> {{ $t('managers.scheduler.packageName') }} *</label>
                     </span>
@@ -33,12 +33,12 @@
                 </div>
                 <div class="p-field p-col-6 p-mb-6">
                     <span class="p-float-label">
-                        <InputText id="jobDescription" class="kn-material-input" maxLength="120" v-model.trim="job.jobDescription" />
+                        <InputText id="jobDescription" v-model.trim="job.jobDescription" class="kn-material-input" max-length="120" />
                         <label for="jobDescription" class="kn-material-input-label"> {{ $t('managers.scheduler.packageDescription') }} </label>
                     </span>
                 </div>
             </form>
-            <SchedulerDocumentsTable class="p-mt-4" :jobDocuments="job.documents" @loading="setLoading"></SchedulerDocumentsTable>
+            <SchedulerDocumentsTable class="p-mt-4" :job-documents="job.documents" @loading="setLoading"></SchedulerDocumentsTable>
             <SchedulerTimingOutputTable v-if="job.edit" class="p-mt-4" :job="job" @loading="setLoading" @triggerSaved="$emit('triggerSaved')"></SchedulerTimingOutputTable>
         </template>
     </Card>
@@ -58,17 +58,16 @@ export default defineComponent({
     components: { Card, SchedulerDocumentsTable, SchedulerTimingOutputTable },
     props: { id: { type: String }, clone: { type: String }, selectedJob: { type: Object } },
     emits: ['documentSaved', 'close'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             job: null as iPackage | null,
             jobNameDirty: false,
             operation: 'create',
             loading: false
-        }
-    },
-    watch: {
-        selectedJob() {
-            this.loadJob()
         }
     },
     computed: {
@@ -79,9 +78,10 @@ export default defineComponent({
             return this.job && this.job.edit ? true : false
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
+    watch: {
+        selectedJob() {
+            this.loadJob()
+        }
     },
     created() {
         this.loadJob()

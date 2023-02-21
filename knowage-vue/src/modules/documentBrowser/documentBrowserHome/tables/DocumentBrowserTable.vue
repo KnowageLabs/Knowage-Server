@@ -4,20 +4,21 @@
             {{ documents.length + ' ' + $t('documentBrowser.documentsFound') }}
         </Message>
     </div>
-    <div class="table-header p-d-flex" v-if="!searchMode">
+    <div v-if="!searchMode" class="table-header p-d-flex">
         <span class="p-input-icon-left p-mr-3 p-col-12">
             <i class="pi pi-search" />
-            <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
+            <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
         </span>
     </div>
     <div class="kn-overflow-y last-flex-container kn-flex">
         <DataTable
             id="documents-datatable"
             v-model:first="first"
+            v-model:filters="filters"
             :value="documents"
             :paginator="documents.length > documentBrowserTableDescriptor.rows"
-            paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-            :currentPageReportTemplate="
+            paginator-template="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+            :current-page-report-template="
                 $t('common.table.footer.paginated', {
                     first: '{first}',
                     last: '{last}',
@@ -25,50 +26,49 @@
                 })
             "
             :rows="documentBrowserTableDescriptor.rows"
-            v-model:filters="filters"
-            filterDisplay="menu"
-            selectionMode="single"
+            filter-display="menu"
+            selection-mode="single"
             class="p-datatable-sm kn-table"
-            dataKey="id"
-            :responsiveLayout="documentBrowserTableDescriptor.responsiveLayout"
+            data-key="id"
+            :responsive-layout="documentBrowserTableDescriptor.responsiveLayout"
             :breakpoint="documentBrowserTableDescriptor.breakpoint"
-            @rowClick="$emit('selected', $event.data)"
             data-test="documents-datatable"
             style="width: 100%"
             :scrollable="true"
-            scrollHeight="100%"
+            scroll-height="100%"
+            @rowClick="$emit('selected', $event.data)"
         >
             <template #empty>
                 <Message class="p-m-2" severity="info" :closable="false" :style="documentBrowserTableDescriptor.styles.message" data-test="no-documents-hint">
                     {{ $t('documentBrowser.noDocumentsHint') }}
                 </Message>
             </template>
-            <Column class="kn-truncated" :style="col.style" v-for="col of documentBrowserTableDescriptor.columns" :header="$t(col.header)" :field="col.field" :key="col.field" :sortField="col.field" :sortable="true">
+            <Column v-for="col of documentBrowserTableDescriptor.columns" :key="col.field" class="kn-truncated" :style="col.style" :header="$t(col.header)" :field="col.field" :sort-field="col.field" :sortable="true">
                 <template #filter="{ filterModel }">
-                    <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter"></InputText>
                 </template>
                 <template #body="slotProps">
-                    <span class="kn-truncated" v-tooltip.top="slotProps.data[col.field]">{{ slotProps.data[col.field] }}</span>
+                    <span v-tooltip.top="slotProps.data[col.field]" class="kn-truncated">{{ getTranslatedValue(slotProps.data[col.field], col.field) }}</span>
                 </template>
             </Column>
-            <Column v-if="isAdmin" :header="$t('common.status')" field="stateCodeStr" sortField="stateCodeStr" :sortable="true" :style="documentBrowserTableDescriptor.table.smallmessage">
+            <Column v-if="isAdmin" :header="$t('common.status')" field="stateCodeStr" sort-field="stateCodeStr" :sortable="true" :style="documentBrowserTableDescriptor.table.smallmessage">
                 <template #filter="{ filterModel }">
-                    <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter"></InputText>
                 </template>
                 <template #body="slotProps" :style="documentBrowserTableDescriptor.table.iconColumn.smallmessage">
                     <span data-test="document-status"> {{ slotProps.data['stateCodeStr'] }}</span>
                 </template></Column
             >
-            <Column v-if="isAdmin" :header="$t('common.visible')" field="visible" sortField="visible" :sortable="true" :style="documentBrowserTableDescriptor.table.iconColumn.style">
+            <Column v-if="isAdmin" :header="$t('common.visible')" field="visible" sort-field="visible" :sortable="true" :style="documentBrowserTableDescriptor.table.iconColumn.style">
                 <template #body="slotProps">
-                    <span class="fa-stack" v-tooltip="slotProps.data['visible'] ? $t('common.visible') : $t('common.notVisible')">
+                    <span v-tooltip="slotProps.data['visible'] ? $t('common.visible') : $t('common.notVisible')" class="fa-stack">
                         <i class="fa fa-eye fa-stack-1x"></i>
                         <i v-if="!slotProps.data['visible']" class="fa fa-ban fa-stack-2x"></i>
                     </span> </template
             ></Column>
             <Column :style="documentBrowserTableDescriptor.table.iconColumn.style">
                 <template #body="slotProps">
-                    <Button icon="fa fa-play-circle" class="p-button-link" v-tooltip.left="$t('documentBrowser.executeDocument')" @click.stop="executeDocument(slotProps.data)" />
+                    <Button v-tooltip.left="$t('documentBrowser.executeDocument')" icon="fa fa-play-circle" class="p-button-link" @click.stop="executeDocument(slotProps.data)" />
                 </template>
             </Column>
         </DataTable>
@@ -91,6 +91,10 @@ export default defineComponent({
     components: { Column, DataTable, Message },
     props: { propDocuments: { type: Array }, searchMode: { type: Boolean } },
     emits: ['itemSelected', 'selected'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             documentBrowserTableDescriptor,
@@ -122,20 +126,16 @@ export default defineComponent({
             first: 0
         }
     },
-    watch: {
-        propDocuments() {
-            this.loadDocuments()
-            this.first = 0
-        }
-    },
     computed: {
         isAdmin(): boolean {
             return this.user?.functionalities.includes('DocumentManagement') || this.user?.isSuperadmin
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
+    watch: {
+        propDocuments() {
+            this.loadDocuments()
+            this.first = 0
+        }
     },
     created() {
         this.loadDocuments()
@@ -156,6 +156,10 @@ export default defineComponent({
             getCorrectRolesForExecution(document).then(() => {
                 this.$emit('itemSelected', { item: document, mode: 'execute' })
             })
+        },
+        getTranslatedValue(value: string, fieldType: string) {
+            if (fieldType !== 'name' && fieldType !== 'label') return value
+            return (this as any).$internationalization(value)
         }
     }
 })

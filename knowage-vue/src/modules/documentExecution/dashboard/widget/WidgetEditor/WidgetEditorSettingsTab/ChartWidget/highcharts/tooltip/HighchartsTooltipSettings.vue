@@ -1,7 +1,7 @@
 <template>
     <div v-if="model" class="p-grid p-jc-center p-ai-center p-p-4">
         <div class="p-col-12 p-py-4">
-            <WidgetEditorStyleToolbar :options="descriptor.tooltipStyleOptions" :propModel="toolbarModel" :disabled="tooltipDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
+            <WidgetEditorStyleToolbar :options="descriptor.tooltipStyleOptions" :prop-model="toolbarModel" :disabled="tooltipDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
         </div>
         <div class="p-col-12 p-py-4">
             <div class="p-d-flex p-flex-row p-jc-center">
@@ -15,8 +15,8 @@
                             {{ model.tooltip.formatterError }}
                         </Message>
                         <div class="p-d-flex p-flex-row p-ai-center">
-                            <HighchartsFormatterCodeMirror :propCode="model.tooltip.formatterText" @change="onFormatterChange($event, 'formatter')" @blur="modelChanged"></HighchartsFormatterCodeMirror>
-                            <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.tooltip.formatterHint')"></i>
+                            <HighchartsFormatterCodeMirror :prop-code="model.tooltip.formatterText" @change="onFormatterChange($event, 'formatter')" @blur="modelChanged"></HighchartsFormatterCodeMirror>
+                            <i v-tooltip.top="$t('dashboard.widgetEditor.highcharts.tooltip.formatterHint')" class="pi pi-question-circle kn-cursor-pointer p-ml-2"></i>
                         </div>
                     </div>
                     <div class="p-col-12">
@@ -25,8 +25,8 @@
                             {{ model.tooltip.pointFormatterError }}
                         </Message>
                         <div class="p-d-flex p-flex-row p-ai-center">
-                            <HighchartsFormatterCodeMirror :propCode="model.tooltip.pointFormatterText" @change="onFormatterChange($event, 'pointFormatter')" @blur="modelChanged"></HighchartsFormatterCodeMirror>
-                            <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.tooltip.pointFormatterHint')"></i>
+                            <HighchartsFormatterCodeMirror :prop-code="model.tooltip.pointFormatterText" @change="onFormatterChange($event, 'pointFormatter')" @blur="modelChanged"></HighchartsFormatterCodeMirror>
+                            <i v-tooltip.top="$t('dashboard.widgetEditor.highcharts.tooltip.pointFormatterHint')" class="pi pi-question-circle kn-cursor-pointer p-ml-2"></i>
                         </div>
                     </div>
                 </div>
@@ -41,8 +41,6 @@ import { IWidget, IWidgetStyleToolbarModel } from '../../../../../../Dashboard'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { IHighchartsChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import descriptor from '../HighchartsWidgetSettingsDescriptor.json'
-import InputNumber from 'primevue/inputnumber'
-import InputSwitch from 'primevue/inputswitch'
 import Message from 'primevue/message'
 import WidgetEditorStyleToolbar from '../../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
 import HighchartsFormatterCodeMirror from '../common/HighchartsFormatterCodeMirror.vue'
@@ -50,8 +48,6 @@ import HighchartsFormatterCodeMirror from '../common/HighchartsFormatterCodeMirr
 export default defineComponent({
     name: 'hihgcharts-tooltip-settings',
     components: {
-        InputSwitch,
-        InputNumber,
         Message,
         WidgetEditorStyleToolbar,
         HighchartsFormatterCodeMirror

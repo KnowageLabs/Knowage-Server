@@ -3,17 +3,17 @@
         <Toolbar id="document-detail-toolbar" class="kn-toolbar kn-toolbar--secondary">
             <template #start>
                 <div id="document-icons-container" class="p-d-flex p-flex-row p-jc-around">
-                    <i class="fa fa-play-circle document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.executeDocument')" @click="executeDocument" v-if="user?.functionalities.includes('DocumentUserManagement')" />
+                    <i v-if="user?.functionalities.includes('DocumentUserManagement')" v-tooltip.top="$t('documentBrowser.executeDocument')" class="fa fa-play-circle document-pointer p-mx-4" @click="executeDocument" />
                     <template v-if="canEditDocument">
-                        <i class="pi pi-pencil document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.editDocument')" @click="$emit('showDocumentDetails', document)" />
-                        <i class="far fa-copy document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.cloneDocument')" @click="cloneDocumentConfirm" />
-                        <i class="far fa-trash-alt document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.deleteDocument')" @click="deleteDocumentConfirm" v-if="user?.functionalities.includes('DocumentDeleteManagement')" />
+                        <i v-tooltip.top="$t('documentBrowser.editDocument')" class="pi pi-pencil document-pointer p-mx-4" @click="$emit('showDocumentDetails', document)" />
+                        <i v-tooltip.top="$t('documentBrowser.cloneDocument')" class="far fa-copy document-pointer p-mx-4" @click="cloneDocumentConfirm" />
+                        <i v-if="user?.functionalities.includes('DocumentDeleteManagement')" v-tooltip.top="$t('documentBrowser.deleteDocument')" class="far fa-trash-alt document-pointer p-mx-4" @click="deleteDocumentConfirm" />
                     </template>
-                    <i v-if="user?.functionalities.includes('DocumentMoveUpState') && document.stateCode === 'TEST'" class="fa fa-arrow-up document-pointer p-mx-4" v-tooltip.left="$t('documentBrowser.moveUpDocumentState')" @click="changeStateDocumentConfirm('UP')" />
+                    <i v-if="user?.functionalities.includes('DocumentMoveUpState') && document.stateCode === 'TEST'" v-tooltip.left="$t('documentBrowser.moveUpDocumentState')" class="fa fa-arrow-up document-pointer p-mx-4" @click="changeStateDocumentConfirm('UP')" />
                     <i
                         v-if="user?.functionalities.includes('DocumentMoveDownState') && (document.stateCode === 'TEST' || document.stateCode === 'REL')"
-                        class="fa fa-arrow-down document-pointer p-mx-4"
                         v-tooltip.left="$t('documentBrowser.moveDownDocumentState')"
+                        class="fa fa-arrow-down document-pointer p-mx-4"
                         @click="changeStateDocumentConfirm('DOWN')"
                     />
                 </div>
@@ -72,15 +72,14 @@ export default defineComponent({
     name: 'document-browser-sidebar',
     props: { selectedDocument: { type: Object } },
     emits: ['documentCloneClick', 'documentDeleteClick', 'itemSelected', 'documentChangeStateClicked', 'showDocumentDetails'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             document: null as any,
             user: null as any
-        }
-    },
-    watch: {
-        selectedDocument() {
-            this.loadDocument()
         }
     },
     computed: {
@@ -107,9 +106,10 @@ export default defineComponent({
             }
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
+    watch: {
+        selectedDocument() {
+            this.loadDocument()
+        }
     },
     created() {
         this.loadDocument()

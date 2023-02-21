@@ -61,6 +61,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <link rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/angularjs-slider/dist/rzslider.min.css")%>">
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/angularjs-slider/dist/rzslider.min.js")%>"></script>
 
+<!-- OpenLayers -->
+<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/ol/ol.css")%>">
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/ol/index.js")%>"></script>
+
 <!-- OpenLayers Extension -->
 <link rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/ol-ext/dist/ol-ext.min.css")%>">
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/ol-ext/dist/ol-ext.js")%>"></script>

@@ -1,21 +1,21 @@
 <template>
     <div>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-        <div class="p-grid p-m-0" v-if="!linkTableVisible">
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
+        <div v-if="!linkTableVisible" class="p-grid p-m-0">
             <div class="p-col-6">
-                <GlossaryUsageNavigationCard class="p-m-2" :type="'document'" :items="documents" :glossaryChanged="glossaryChanged" @infoClicked="showDocumentInfo($event)" @linkClicked="onLinkClicked($event)" @selected="onDocumentsSelected"></GlossaryUsageNavigationCard>
+                <GlossaryUsageNavigationCard class="p-m-2" :type="'document'" :items="documents" :glossary-changed="glossaryChanged" @infoClicked="showDocumentInfo($event)" @linkClicked="onLinkClicked($event)" @selected="onDocumentsSelected"></GlossaryUsageNavigationCard>
             </div>
             <div class="p-col-6">
-                <GlossaryUsageNavigationCard class="p-m-2" :type="'dataset'" :items="datasets" :glossaryChanged="glossaryChanged" @infoClicked="showDatasetInfo($event)" @linkClicked="onLinkClicked($event)" @selected="onDatasetsSelected"></GlossaryUsageNavigationCard>
+                <GlossaryUsageNavigationCard class="p-m-2" :type="'dataset'" :items="datasets" :glossary-changed="glossaryChanged" @infoClicked="showDatasetInfo($event)" @linkClicked="onLinkClicked($event)" @selected="onDatasetsSelected"></GlossaryUsageNavigationCard>
             </div>
             <div class="p-col-6">
-                <GlossaryUsageNavigationCard class="p-m-2" :type="'businessClass'" :items="businessClasses" :glossaryChanged="glossaryChanged" @infoClicked="showBusinessClassInfo($event)" @linkClicked="onLinkClicked($event)" @selected="onBusinessClassesSelected"></GlossaryUsageNavigationCard>
+                <GlossaryUsageNavigationCard class="p-m-2" :type="'businessClass'" :items="businessClasses" :glossary-changed="glossaryChanged" @infoClicked="showBusinessClassInfo($event)" @linkClicked="onLinkClicked($event)" @selected="onBusinessClassesSelected"></GlossaryUsageNavigationCard>
             </div>
             <div class="p-col-6">
-                <GlossaryUsageNavigationCard class="p-m-2" :type="'table'" :items="tables" :glossaryChanged="glossaryChanged" @infoClicked="showTableInfo($event)" @linkClicked="onLinkClicked($event)" @selected="onTablesSelected"></GlossaryUsageNavigationCard>
+                <GlossaryUsageNavigationCard class="p-m-2" :type="'table'" :items="tables" :glossary-changed="glossaryChanged" @infoClicked="showTableInfo($event)" @linkClicked="onLinkClicked($event)" @selected="onTablesSelected"></GlossaryUsageNavigationCard>
             </div>
         </div>
-        <GlossaryUsageLinkCard v-else :title="linkTableTitle" class="p-m-2" :items="linkTableItems" :words="selectedLinkItemWords" :treeWords="selectedLinkItemTree" :showModelColumn="showModelColumn" @close="onLinkTableClose" @selected="onLinkItemSelect"></GlossaryUsageLinkCard>
+        <GlossaryUsageLinkCard v-else :title="linkTableTitle" class="p-m-2" :items="linkTableItems" :words="selectedLinkItemWords" :tree-words="selectedLinkItemTree" :show-model-column="showModelColumn" @close="onLinkTableClose" @selected="onLinkItemSelect"></GlossaryUsageLinkCard>
     </div>
 </template>
 
@@ -33,6 +33,10 @@ export default defineComponent({
     components: { GlossaryUsageNavigationCard, GlossaryUsageLinkCard },
     props: { glossaryId: { type: Number }, selectedWords: { type: Array } },
     emits: ['infoClicked', 'linkClicked', 'wordsFiltered', 'loading'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             glossaryUsageDescriptor,
@@ -67,10 +71,6 @@ export default defineComponent({
             deep: true
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
     async created() {
         await this.loadNavigationItems('all', 'word')
     },
@@ -84,14 +84,14 @@ export default defineComponent({
                 word: {
                     selected: this.selectedWords,
                     search: '',
-                    item_number: 9223372036854775807,
+                    item_number: 9223372036854775807n,
                     page: 1,
                     GLOSSARY_ID: this.glossaryId
                 },
-                document: { selected: this.selectedDocuments, search: '', item_number: 9223372036854775807, page: 1, GLOSSARY_ID: this.glossaryId },
-                dataset: { selected: this.selectedDatasets, search: '', item_number: 9223372036854775807, page: 1, GLOSSARY_ID: this.glossaryId },
-                table: { selected: this.selectedTables, search: '', item_number: 9223372036854775807, page: 1, GLOSSARY_ID: this.glossaryId },
-                bness_cls: { selected: this.selectedBusinessClasses, search: '', item_number: 9223372036854775807, page: 1, GLOSSARY_ID: this.glossaryId }
+                document: { selected: this.selectedDocuments, search: '', item_number: 9223372036854775807n, page: 1, GLOSSARY_ID: this.glossaryId },
+                dataset: { selected: this.selectedDatasets, search: '', item_number: 9223372036854775807n, page: 1, GLOSSARY_ID: this.glossaryId },
+                table: { selected: this.selectedTables, search: '', item_number: 9223372036854775807n, page: 1, GLOSSARY_ID: this.glossaryId },
+                bness_cls: { selected: this.selectedBusinessClasses, search: '', item_number: 9223372036854775807n, page: 1, GLOSSARY_ID: this.glossaryId }
             }
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/glossary/loadNavigationItem', postData)

@@ -1,5 +1,5 @@
 <template>
-    <Accordion :activeIndex="0">
+    <Accordion :active-index="0">
         <AccordionTab>
             <template #header>
                 <i class="fab fa-java"></i>
@@ -12,12 +12,12 @@
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.classPath') }} *</label>
                         <InputText
-                            class="kn-material-input"
                             v-model="document.javaclasspath"
+                            class="kn-material-input"
                             :class="{
                                 'p-invalid': javaClassPathDirty && (!document.javaclasspath || document.javaclasspath.length === 0)
                             }"
-                            :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.javaClass.classPathMaxLength"
+                            :max-length="schedulerTimingOutputOutputTabDescriptor.accordion.javaClass.classPathMaxLength"
                             @input="setJavaClassPathValidation"
                             @blur="setJavaClassPathValidation"
                         />

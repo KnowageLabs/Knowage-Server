@@ -1,5 +1,5 @@
 <template>
-    <Card class="perspective-card" v-if="perspective">
+    <Card v-if="perspective" class="perspective-card">
         <template #header>
             <div class="perspective-header p-d-flex p-flex-row p-ai-center" :class="toolbarBorderClass">
                 <h2 class="p-m-0 p-p-2">{{ perspective.name }}</h2>
@@ -8,7 +8,7 @@
             </div>
         </template>
         <template #content>
-            <div class="target-row p-d-flex p-flex-row p-ai-center p-p-3 p-my-2" :class="{ 'perspective-target-container': index !== perspective.targets.length - 1 }" v-for="(target, index) in perspective.targets" :key="index">
+            <div v-for="(target, index) in perspective.targets" :key="index" class="target-row p-d-flex p-flex-row p-ai-center p-p-3 p-my-2" :class="{ 'perspective-target-container': index !== perspective.targets.length - 1 }">
                 <div class="p-d-flex p-flex-row">
                     <span class="p-mr-2 kn-flex">{{ target.name }}</span>
                     <span v-tooltip="getSelectedCriteriaTooltip(target.criterion?.valueCd)" class="p-ml-auto perspective-target-icon kn-cursor-pointer">{{ getTargetIconLetter(target.criterion?.valueCd) }}</span>
@@ -34,6 +34,10 @@ export default defineComponent({
     name: 'kn-perspective-card',
     components: { Card },
     props: { propPerspective: { type: Object as PropType<iPerspective> } },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             perspective: null as iPerspective | null,
@@ -56,10 +60,6 @@ export default defineComponent({
                 this.perspective.updated = false
             }
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadPerspective()

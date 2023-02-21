@@ -8,7 +8,7 @@ import KnHint from '@/components/UI/KnHint.vue'
 
 export default defineComponent({
     name: 'scorecards-table-hint',
-    props: { hint: { type: String } },
-    components: { KnHint }
+    components: { KnHint },
+    props: { hint: { type: String } }
 })
 </script>

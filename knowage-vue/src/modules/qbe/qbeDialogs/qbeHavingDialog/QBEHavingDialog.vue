@@ -20,7 +20,7 @@
             {{ $t('qbe.having.noHavings') }}
         </Message>
         <div>
-            <QBEHavingCard v-for="having in havings" :key="having.filterId" :propHaving="having" :entities="entities" @removeHaving="removeHaving"></QBEHavingCard>
+            <QBEHavingCard v-for="having in havings" :key="having.filterId" :prop-having="having" :entities="entities" @removeHaving="removeHaving"></QBEHavingCard>
         </div>
 
         <template #footer>

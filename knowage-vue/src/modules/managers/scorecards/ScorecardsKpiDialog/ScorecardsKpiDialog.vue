@@ -9,22 +9,22 @@
         </template>
 
         <DataTable
+            v-model:selection="selected"
+            v-model:filters="filters"
             :value="kpis"
             :paginator="kpis.length > 20"
             :rows="20"
             class="p-datatable-sm kn-table p-p-2"
-            v-model:selection="selected"
-            dataKey="id"
-            v-model:filters="filters"
-            :globalFilterFields="scorecardsKpiDialogDescriptor.globalFilterFields"
+            data-key="id"
+            :global-filter-fields="scorecardsKpiDialogDescriptor.globalFilterFields"
             :scrollable="true"
-            :scrollHeight="scorecardsKpiDialogDescriptor.style.dialog.scrollHeight"
+            :scroll-height="scorecardsKpiDialogDescriptor.style.dialog.scrollHeight"
         >
             <template #header>
                 <div class="table-header">
                     <span class="p-input-icon-left">
                         <i class="pi pi-search" />
-                        <InputText class="kn-material-input" v-model="filters['global'].value" :placeholder="$t('common.search')" />
+                        <InputText v-model="filters['global'].value" class="kn-material-input" :placeholder="$t('common.search')" />
                     </span>
                 </div>
             </template>
@@ -33,7 +33,7 @@
                 {{ $t('common.info.noDataFound') }}
             </template>
 
-            <Column selectionMode="multiple" :headerStyle="scorecardsKpiDialogDescriptor.selectColumnStyle"></Column>
+            <Column selection-mode="multiple" :header-style="scorecardsKpiDialogDescriptor.selectColumnStyle"></Column>
             <Column class="kn-truncated" field="status" :header="$t('common.status')" :sortable="true">
                 <template #body="slotProps">
                     <i class="fas fa-square fa-2xl p-mr-2" :class="getKpiIconColorClass(slotProps.data)"></i>

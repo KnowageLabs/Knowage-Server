@@ -56,7 +56,7 @@ export default defineComponent({
             CodeMirror.registerHelper('hint', 'placeholder', () => {
                 const cur = this.codeMirrorJsEditor.getCursor()
                 const tok = this.codeMirrorJsEditor.getTokenAt(cur)
-                const start = tok.string.trim() == '' ? tok.start + 1 : tok.start
+                //const start = tok.string.trim() == '' ? tok.start + 1 : tok.start
                 const end = tok.end
                 const hintList = descriptor.cmAutocomplete as any
 

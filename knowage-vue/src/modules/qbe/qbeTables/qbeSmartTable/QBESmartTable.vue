@@ -1,50 +1,50 @@
 <template>
     <DataTable
-        class="qbe-smart-table"
         v-if="previewData != null"
+        class="qbe-smart-table"
         :first="first"
         :value="previewData.rows"
         :scrollable="true"
-        scrollHeight="flex"
-        scrollDirection="both"
-        :resizableColumns="true"
-        :reorderableColumns="true"
-        :rowHover="true"
-        columnResizeMode="expand"
+        scroll-height="flex"
+        scroll-direction="both"
+        :resizable-columns="true"
+        :reorderable-columns="true"
+        :row-hover="true"
+        column-resize-mode="expand"
         :paginator="true"
         :lazy="true"
         :rows="25"
-        :totalRecords="lazyParams.size"
-        :currentPageReportTemplate="
+        :total-records="lazyParams.size"
+        :current-page-report-template="
             $t('common.table.footer.paginated', {
                 first: '{first}',
                 last: '{last}',
                 totalRecords: '{totalRecords}'
             })
         "
+        striped-rows
+        show-gridlines
         @page="onPage($event)"
         @column-reorder="$emit('reordered', $event)"
         @drop.stop="onDrop($event)"
         @dragover.prevent
         @dragenter.prevent
-        stripedRows
-        showGridlines
     >
         <template #empty>
             <div id="noFunctionsFound">
                 {{ $t('common.info.noDataFound') }}
             </div>
         </template>
-        <Column v-for="(col, index) of filteredVisibleFields" class="kn-truncated" :hidden="!col.visible" :field="`column_${index + 1}`" :key="index" :style="qbeSimpleTableDescriptor.style.column">
+        <Column v-for="(col, index) of filteredVisibleFields" :key="index" class="kn-truncated" :hidden="!col.visible" :field="`column_${index + 1}`" :style="qbeSimpleTableDescriptor.style.column">
             <template #header>
                 <div class="customHeader">
                     <div class="qbeCustomTopColor" :style="`background-color: ${col.color}`" :title="col.entity"></div>
                     <div class="qbeHeaderContainer">
-                        <i class="fas fa-sort p-ml-2" @click="changeOrder(col)" :data-test="'change-order-' + col.alias" v-tooltip.bottom="$t(`qbe.detailView.smartViewMenu.sorting`)" />
-                        <span class="p-mx-2 kn-truncated" v-tooltip.bottom="col.alias">{{ col.alias }}</span>
-                        <i class="fas fa-cog p-ml-auto" v-tooltip.bottom="$t(`qbe.detailView.smartViewMenu.colset`)" @click="showMenu($event, col)" />
-                        <i class="fas fa-filter p-mx-2" :class="{ 'qbe-active-filter-icon': fieldHasFilters(col) }" v-tooltip.bottom="$t(`qbe.detailView.smartViewMenu.colfil`)" @click="openFiltersDialog(col)" />
-                        <i class="fas fa-times p-mr-2" v-tooltip.bottom="$t(`qbe.detailView.smartViewMenu.coldel`)" @click="$emit('removeFieldFromQuery', col.uniqueID)" :data-test="'delete-column-' + col.alias" />
+                        <i v-tooltip.bottom="$t(`qbe.detailView.smartViewMenu.sorting`)" class="fas fa-sort p-ml-2" :data-test="'change-order-' + col.alias" @click="changeOrder(col)" />
+                        <span v-tooltip.bottom="col.alias" class="p-mx-2 kn-truncated">{{ col.alias }}</span>
+                        <i v-tooltip.bottom="$t(`qbe.detailView.smartViewMenu.colset`)" class="fas fa-cog p-ml-auto" @click="showMenu($event, col)" />
+                        <i v-tooltip.bottom="$t(`qbe.detailView.smartViewMenu.colfil`)" class="fas fa-filter p-mx-2" :class="{ 'qbe-active-filter-icon': fieldHasFilters(col) }" @click="openFiltersDialog(col)" />
+                        <i v-tooltip.bottom="$t(`qbe.detailView.smartViewMenu.coldel`)" class="fas fa-times p-mr-2" :data-test="'delete-column-' + col.alias" @click="$emit('removeFieldFromQuery', col.uniqueID)" />
                     </div>
                 </div>
             </template>
@@ -61,7 +61,7 @@
 
     <div v-else class="kn-height-full kn-width-full" @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>{{ $t('common.info.noDataFound') }}</div>
 
-    <Dialog v-if="aliasDialogVisible" class="qbe-smart-table-alias-dialog" :visible="aliasDialogVisible" :modal="true" :closable="false" :baseZIndex="1" :autoZIndex="true">
+    <Dialog v-if="aliasDialogVisible" class="qbe-smart-table-alias-dialog" :visible="aliasDialogVisible" :modal="true" :closable="false" :base-z-index="1" :auto-z-index="true">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
                 <template #start>
@@ -71,7 +71,7 @@
         </template>
 
         <span class="p-float-label p-m-4">
-            <InputText id="alias" class="kn-material-input" type="text" maxLength="50" v-model="alias" />
+            <InputText id="alias" v-model="alias" class="kn-material-input" type="text" max-length="50" />
             <label for="alias" class="kn-material-input-label"> {{ $t('common.alias') }} </label>
         </span>
 
@@ -96,8 +96,8 @@ import { formatNumber } from '@/helpers/commons/qbeHelpers'
 
 export default defineComponent({
     name: 'qbe-simple-table',
-    props: { previewData: { type: Object, required: true }, query: { type: Object, required: true }, pagination: { type: Object } },
     components: { Column, DataTable, Menu, Dialog },
+    props: { previewData: { type: Object, required: true }, query: { type: Object, required: true }, pagination: { type: Object } },
     emits: ['removeFieldFromQuery', 'orderChanged', 'fieldHidden', 'fieldGrouped', 'fieldAggregated', 'aliasChanged', 'entityDropped', 'reordered', 'pageChanged', 'openFilterDialog'],
     data() {
         return {
@@ -112,7 +112,7 @@ export default defineComponent({
     },
     computed: {
         filteredVisibleFields(): any {
-            var newArr = this.query.fields.filter((field) => field.visible === true && field.inUse === true)
+            const newArr = this.query.fields.filter((field) => field.visible === true && field.inUse === true)
             return newArr
         }
     },
@@ -133,8 +133,8 @@ export default defineComponent({
         },
         createMenuItems(field) {
             this.menuButtons = []
-            let visibleIcon = field.visible ? 'fas fa-check' : 'fas fa-times'
-            let groupIcon = field.group ? 'fas fa-check' : 'fas fa-times'
+            const visibleIcon = field.visible ? 'fas fa-check' : 'fas fa-times'
+            const groupIcon = field.group ? 'fas fa-check' : 'fas fa-times'
             this.menuButtons.push(
                 { key: '1', label: this.$t('qbe.detailView.smartViewMenu.showField'), icon: visibleIcon, command: () => this.hideField(field) },
                 { key: '2', label: this.$t('qbe.detailView.smartViewMenu.group'), icon: groupIcon, visible: field.iconCls == 'attribute' || (field.iconCls == 'calculation' && field.attributes.formState.nature.toLowerCase() == 'attribute'), command: () => this.groupField(field) },
@@ -181,7 +181,7 @@ export default defineComponent({
             this.$emit('aliasChanged', this.selectedField)
         },
         onDrop(event) {
-            var data = JSON.parse(event.dataTransfer.getData('text/plain'))
+            const data = JSON.parse(event.dataTransfer.getData('text/plain'))
             this.$emit('entityDropped', data)
         },
         loadPagination() {

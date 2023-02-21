@@ -8,18 +8,18 @@
             </Toolbar>
         </template>
         <template #content>
-            <DataTable v-if="dataset.meta && (dataset.meta.ccolumns || dataset.meta.dataset)" class="p-datatable-sm kn-table kn-table-small-input" :autoLayout="true" :value="fieldsMetadata" responsiveLayout="stack" breakpoint="960px">
+            <DataTable v-if="dataset.meta && (dataset.meta.ccolumns || dataset.meta.dataset)" class="p-datatable-sm kn-table kn-table-small-input" :auto-layout="true" :value="fieldsMetadata" responsive-layout="stack" breakpoint="960px">
                 <Column field="fieldAlias" :header="$t('managers.datasetManagement.fieldAlias')" :sortable="true">
                     <template #body="{ data }"> {{ data.fieldAlias }} </template>
                 </Column>
                 <Column field="Type" :header="$t('importExport.catalogFunction.column.type')" :sortable="true">
                     <template #body="{ data }">
-                        <Dropdown class="kn-material-input" :style="linkTabDescriptor.style.maxwidth" v-model="data.Type" :options="valueTypes" optionDisabled="disabled" optionLabel="value" optionValue="name" @change="saveFieldsMetadata" :disabled="true" />
+                        <Dropdown v-model="data.Type" class="kn-material-input" :style="linkTabDescriptor.style.maxwidth" :options="valueTypes" option-disabled="disabled" option-label="value" option-value="name" :disabled="true" @change="saveFieldsMetadata" />
                     </template>
                 </Column>
                 <Column field="fieldType" :header="$t('managers.datasetManagement.fieldType')" :sortable="true">
                     <template #body="{ data }">
-                        <Dropdown class="kn-material-input" :style="linkTabDescriptor.style.maxwidth" v-model="data.fieldType" :options="fieldMetadataTypes" optionLabel="value" optionValue="value" @change="saveFieldsMetadata('fieldType')" />
+                        <Dropdown v-model="data.fieldType" class="kn-material-input" :style="linkTabDescriptor.style.maxwidth" :options="fieldMetadataTypes" option-label="value" option-value="value" @change="saveFieldsMetadata('fieldType')" />
                     </template>
                 </Column>
                 <Column field="personal" :header="$t('managers.datasetManagement.personal')" :sortable="true">
@@ -62,7 +62,6 @@ export default defineComponent({
     props: {
         selectedDataset: { type: Object as any }
     },
-    computed: {},
     emits: ['touched'],
     data() {
         return {
@@ -73,24 +72,25 @@ export default defineComponent({
             fieldsMetadata: [] as any
         }
     },
-    created() {
-        this.dataset = this.selectedDataset
-        this.dataset.meta ? this.exctractFieldsMetadata(this.dataset.meta.columns) : ''
-    },
+    computed: {},
     watch: {
         selectedDataset() {
             this.dataset = this.selectedDataset
             this.dataset.meta ? this.exctractFieldsMetadata(this.dataset.meta.columns) : ''
         }
     },
+    created() {
+        this.dataset = this.selectedDataset
+        this.dataset.meta ? this.exctractFieldsMetadata(this.dataset.meta.columns) : ''
+    },
 
     methods: {
         ...mapActions(mainStore, ['setInfo', 'setError']),
         exctractFieldsMetadata(array) {
-            var object = {}
+            const object = {}
 
-            for (var item in array) {
-                var element = object[array[item].column]
+            for (const item in array) {
+                let element = object[array[item].column]
                 if (!element) {
                     element = {}
                     object[array[item].column] = element
@@ -99,9 +99,9 @@ export default defineComponent({
                 element[array[item].pname] = array[item].pvalue
             }
 
-            var fieldsMetadata = new Array()
+            const fieldsMetadata = []
 
-            for (item in object) {
+            for (const item in object) {
                 fieldsMetadata.push(object[item])
             }
 
@@ -121,7 +121,7 @@ export default defineComponent({
             }
         },
         warnForDuplicateSpatialFields() {
-            var numberOfSpatialAttribute = 0
+            let numberOfSpatialAttribute = 0
             for (let i = 0; i < this.fieldsMetadata.length; i++) {
                 if (this.fieldsMetadata[i].fieldType == 'SPATIAL_ATTRIBUTE') {
                     numberOfSpatialAttribute++

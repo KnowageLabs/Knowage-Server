@@ -1,6 +1,6 @@
 <template>
     <div :class="getVisibility()">
-        <ProgressSpinner :baseZIndex="9999" />
+        <ProgressSpinner :base-z-index="9999" />
     </div>
 </template>
 
@@ -20,7 +20,7 @@
             })
         },
         methods: {
-            getVisibility(): String {
+            getVisibility(): string {
                 return this.loading == 0 ? 'kn-hide' : 'overlappingPanel'
             }
         }

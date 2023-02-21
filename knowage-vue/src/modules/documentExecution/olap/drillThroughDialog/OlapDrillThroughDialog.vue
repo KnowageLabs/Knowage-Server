@@ -16,7 +16,7 @@
             </template>
         </Card>
 
-        <DataTable :value="dtData" id="olap-custom-views-table" class="p-datatable-sm kn-table kn-flex p-m-2 olap-drill-through-table" v-model:filters="filters" :paginator="drillData.length > 20" :rows="18" responsiveLayout="stack" breakpoint="600px" stripedRows="true" rowHover="true">
+        <DataTable id="olap-custom-views-table" v-model:filters="filters" :value="dtData" class="p-datatable-sm kn-table kn-flex p-m-2 olap-drill-through-table" :paginator="drillData.length > 20" :rows="18" responsive-layout="stack" breakpoint="600px" striped-rows="true" row-hover="true">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -24,16 +24,16 @@
                 <div class="table-header p-d-flex p-ai-center">
                     <span id="search-container" class="p-input-icon-left p-mr-3">
                         <i class="pi pi-search" />
-                        <InputText class="kn-material-input" v-model="filters['global'].value" :placeholder="$t('common.search')" />
+                        <InputText v-model="filters['global'].value" class="kn-material-input" :placeholder="$t('common.search')" />
                     </span>
                     <span class="p-float-label p-as-end p-ml-auto">
-                        <Dropdown id="rows" class="kn-material-input" v-model="maxRows" :options="maxRowsOptions" :style="dtDescriptor.style.dropdown" @change="$emit('rowsChanged', maxRows)" />
+                        <Dropdown id="rows" v-model="maxRows" class="kn-material-input" :options="maxRowsOptions" :style="dtDescriptor.style.dropdown" @change="$emit('rowsChanged', maxRows)" />
                         <label for="rows" class="kn-material-input-label"> {{ $t('documentExecution.olap.drillTru.maxRows') }} </label>
                     </span>
                 </div>
             </template>
 
-            <Column class="kn-truncated" v-for="(column, index) in tableColumns" :key="index" :field="column.name" :header="$t(column.label)" :sortable="true"></Column>
+            <Column v-for="(column, index) in tableColumns" :key="index" class="kn-truncated" :field="column.name" :header="$t(column.label)" :sortable="true"></Column>
         </DataTable>
 
         <div class="p-mt-auto p-ml-auto p-mb-3 p-mr-3">
@@ -68,6 +68,10 @@ export default defineComponent({
     components: { Column, DataTable, Menu, Checkbox, Dropdown },
     props: { drillData: { type: Array, required: true }, tableColumns: { type: Array, required: true }, dtLevels: { type: Array, required: true }, menuTree: { type: Array, required: true }, dtMaxRows: { type: Number, required: true } },
     emits: ['close', 'applyCustomView', 'checkCheckboxes', 'clearLevels', 'drill', 'rowsChanged'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             dtDescriptor,
@@ -95,10 +99,6 @@ export default defineComponent({
         menuTree() {
             this.dtTree = this.menuTree
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadData()
@@ -134,20 +134,20 @@ export default defineComponent({
             })
         },
         exportDrill(JSONData, ReportTitle, ShowLabel) {
-            var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData
-            var CSV = ''
+            const arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData
+            let CSV = ''
             CSV += ReportTitle + '\r\n\n'
             if (ShowLabel) {
-                var row = ''
-                for (var index in arrData[0]) {
+                let row = ''
+                for (const index in arrData[0]) {
                     row += index + ','
                 }
                 row = row.slice(0, -1)
                 CSV += row + '\r\n'
             }
-            for (var i = 0; i < arrData.length; i++) {
-                row = ''
-                for (index in arrData[i]) {
+            for (let i = 0; i < arrData.length; i++) {
+                let row = ''
+                for (const index in arrData[i]) {
                     row += '"' + arrData[i][index] + '",'
                 }
                 row.slice(0, row.length - 1)
@@ -157,10 +157,10 @@ export default defineComponent({
                 this.store.setError({ title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.drillTru.invalidData') })
                 return
             }
-            var fileName = 'MyReport_'
+            let fileName = 'MyReport_'
             fileName += ReportTitle.replace(/ /g, '_')
-            var uri = 'data:text/csv;charset=utf-8,' + escape(CSV)
-            var link = document.createElement('a') as any
+            const uri = 'data:text/csv;charset=utf-8,' + escape(CSV)
+            const link = document.createElement('a') as any
             link.href = uri
             link.style = 'visibility:hidden'
             link.download = fileName + '.csv'

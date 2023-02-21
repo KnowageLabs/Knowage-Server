@@ -7,15 +7,15 @@
                         {{ $t('managers.layersManagement.title') }}
                     </template>
                     <template #end>
-                        <FabButton icon="fas fa-plus" @click="showDetail" data-test="open-form-button" />
+                        <FabButton icon="fas fa-plus" data-test="open-form-button" @click="showDetail" />
                     </template>
                 </Toolbar>
-                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+                <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
                 <KnListBox :options="allLayers" :settings="descriptor.knListSettings" @click="showDetail" @delete.stop="deleteLayerConfirm" @download.stop="downloadLayerFile" />
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
-                <LayersManagementDetailView v-if="selectedLayer" :selectedLayer="selectedLayer" :allRoles="allRoles" :allCategories="allCategories" @closed="onDetailClose" @saved="reloadPageOnSave" @touched="touched = true"></LayersManagementDetailView>
+                <LayersManagementDetailView v-if="selectedLayer" :selected-layer="selectedLayer" :all-roles="allRoles" :all-categories="allCategories" @closed="onDetailClose" @saved="reloadPageOnSave" @touched="touched = true"></LayersManagementDetailView>
                 <LayersManagementHint v-else></LayersManagementHint>
             </div>
 
@@ -40,6 +40,10 @@ import deepcopy from 'deepcopy'
 export default defineComponent({
     name: 'roles-management',
     components: { FabButton, KnListBox, LayersManagementDetailView, LayersManagementHint, LayersManagementDownloadDialog },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             descriptor,
@@ -52,10 +56,6 @@ export default defineComponent({
             downloadDialogVisible: false,
             selectedLayerForDownload: null
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         this.loadPage()
@@ -119,7 +119,7 @@ export default defineComponent({
         },
         async reloadPageOnSave(id) {
             await this.loadPage()
-            let layerToReload = this.allLayers.find((layer) => layer.layerId === id) as any
+            const layerToReload = this.allLayers.find((layer) => layer.layerId === id) as any
             this.selectedLayer = deepcopy(layerToReload) as iLayer
         }
     }

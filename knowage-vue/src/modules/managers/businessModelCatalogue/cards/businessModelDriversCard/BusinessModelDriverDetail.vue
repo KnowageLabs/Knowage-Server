@@ -8,29 +8,29 @@
             </Toolbar>
         </template>
         <template #content>
-            <KnHint :title="'managers.businessModelManager.drivers'" :hint="'managers.businessModelManager.noDriverSelected'" v-if="!selectedDriver" data-test="driver-hint"></KnHint>
-            <form class="p-fluid p-m-5" v-else>
+            <KnHint v-if="!selectedDriver" :title="'managers.businessModelManager.drivers'" :hint="'managers.businessModelManager.noDriverSelected'" data-test="driver-hint"></KnHint>
+            <form v-else class="p-fluid p-m-5">
                 <div class="p-field">
                     <span class="p-float-label">
                         <InputText
                             id="label"
+                            v-model.trim="v$.driver.label.$model"
                             class="kn-material-input"
                             type="text"
-                            v-model.trim="v$.driver.label.$model"
                             :class="{
                                 'p-invalid': v$.driver.label.$invalid && v$.driver.label.$dirty
                             }"
-                            maxLength="40"
-                            @blur="v$.driver.label.$touch()"
-                            @input="setChanged"
+                            max-length="40"
                             :disabled="readonly"
                             data-test="label-input"
+                            @blur="v$.driver.label.$touch()"
+                            @input="setChanged"
                         />
                         <label for="label" class="kn-material-input-label"> {{ $t('managers.businessModelManager.driverTitle') }} * </label>
                     </span>
                     <KnValidationMessages
-                        :vComp="v$.driver.label"
-                        :additionalTranslateParams="{
+                        :v-comp="v$.driver.label"
+                        :additional-translate-params="{
                             fieldName: $t('managers.businessModelManager.driverTitle')
                         }"
                     />
@@ -41,16 +41,16 @@
                         <label for="parameter" class="kn-material-input-label">{{ $t('managers.businessModelManager.analyticalDriver') }} * </label>
                         <Dropdown
                             id="parameter"
+                            v-model="v$.driver.parameter.$model"
                             class="kn-material-input"
                             :class="{
                                 'p-invalid': v$.driver.parameter.$invalid && v$.driver.parameter.$dirty
                             }"
-                            v-model="v$.driver.parameter.$model"
                             :options="analyticalDrivers"
                             :placeholder="$t('managers.businessModelManager.analyticalDriverPlaceholder')"
                             :filter="true"
-                            filterMatchMode="contains"
-                            :filterFields="['label']"
+                            filter-match-mode="contains"
+                            :filter-fields="['label']"
                             :disabled="readonly"
                             @before-show="v$.driver.parameter.$touch()"
                             @change="showAnalyticalDropdownConfirm"
@@ -69,8 +69,8 @@
                     </span>
 
                     <KnValidationMessages
-                        :vComp="v$.driver.parameter"
-                        :additionalTranslateParams="{
+                        :v-comp="v$.driver.parameter"
+                        :additional-translate-params="{
                             fieldName: $t('managers.businessModelManager.analyticalDriver')
                         }"
                     >
@@ -81,31 +81,31 @@
                     <span class="p-float-label">
                         <InputText
                             id="parameterUrlName"
+                            v-model.trim="v$.driver.parameterUrlName.$model"
                             class="kn-material-input"
                             type="text"
-                            v-model.trim="v$.driver.parameterUrlName.$model"
                             :class="{
                                 'p-invalid': v$.driver.parameterUrlName.$invalid && v$.driver.parameterUrlName.$dirty
                             }"
-                            maxLength="20"
+                            max-length="20"
                             :disabled="readonly"
+                            data-test="parameterUrlName-input"
                             @blur="v$.driver.parameterUrlName.$touch()"
                             @input="setChanged"
-                            data-test="parameterUrlName-input"
                         />
                         <label for="parameterUrlName" class="kn-material-input-label"> {{ $t('managers.businessModelManager.driversUrl') }} * </label>
                     </span>
                     <KnValidationMessages
-                        :vComp="v$.driver.parameterUrlName"
-                        :additionalTranslateParams="{
+                        :v-comp="v$.driver.parameterUrlName"
+                        :additional-translate-params="{
                             fieldName: $t('managers.businessModelManager.driversUrl')
                         }"
-                        :specificTranslateKeys="{ custom_unique: 'managers.businessModelManager.driversUrlNotUnique' }"
+                        :specific-translate-keys="{ custom_unique: 'managers.businessModelManager.driversUrlNotUnique' }"
                     />
                 </div>
 
                 <div class="p-field p-mt-2">
-                    <InputSwitch id="driver-multivalue " class="p-mr-2" v-model="driver.multivalue" :disabled="readonly" @change="setChanged" />
+                    <InputSwitch id="driver-multivalue " v-model="driver.multivalue" class="p-mr-2" :disabled="readonly" @change="setChanged" />
                     <i class="fa fa-list p-mr-2" />
                     <label for="driver-multivalue " class="kn-material-input-label"> {{ $t('managers.businessModelManager.multivalue') }}</label>
                 </div>
@@ -120,14 +120,14 @@
                     {{ $t('managers.businessModelManager.driverDataConditions') }}
                 </template>
                 <template #end>
-                    <Button class="kn-button p-button-text" @click="showForm" :disabled="modes.length === 0 || !driver.id || readonly">{{ $t('managers.businessModelManager.addCondition') }}</Button>
+                    <Button class="kn-button p-button-text" :disabled="modes.length === 0 || !driver.id || readonly" @click="showForm">{{ $t('managers.businessModelManager.addCondition') }}</Button>
                 </template>
             </Toolbar>
         </template>
         <template #content>
             <div class="kn-list--column">
                 <div class="p-col">
-                    <Listbox class="kn-list" :options="conditions" listStyle="max-height:calc(100% - 62px)" @change="showForm">
+                    <Listbox class="kn-list" :options="conditions" list-style="max-height:calc(100% - 62px)" @change="showForm">
                         <template #empty>{{ $t('common.info.noDataFound') }}</template>
                         <template #option="slotProps">
                             <div class="kn-list-item">
@@ -153,7 +153,7 @@
                 <div class="p-field p-d-flex">
                     <div :style="businessModelDriverDetailDescriptor.input.parFather.style">
                         <span class="p-float-label">
-                            <Dropdown id="parFather" class="kn-material-input" v-model="condition.parFatherId" :options="drivers" placeholder=" " optionValue="id" :disabled="readonly">
+                            <Dropdown id="parFather" v-model="condition.parFatherId" class="kn-material-input" :options="drivers" placeholder=" " option-value="id" :disabled="readonly">
                                 <template #value="slotProps">
                                     <div v-if="slotProps.value">
                                         <span>{{ getDriverProperty(slotProps.value, 'label') }}</span>
@@ -171,14 +171,14 @@
 
                     <div :style="businessModelDriverDetailDescriptor.input.filterOperation.style">
                         <span class="p-float-label">
-                            <Dropdown id="filterOperation" class="kn-material-input" v-model="condition.filterOperation" :options="businessModelDriverDetailDescriptor.operations" optionLabel="name" optionValue="value" :disabled="readonly" />
+                            <Dropdown id="filterOperation" v-model="condition.filterOperation" class="kn-material-input" :options="businessModelDriverDetailDescriptor.operations" option-label="name" option-value="value" :disabled="readonly" />
                             <label for="filterOperation" class="kn-material-input-label">{{ $t('managers.businessModelManager.filterOperator') }}</label>
                         </span>
                     </div>
 
                     <div :style="businessModelDriverDetailDescriptor.input.logicOperator.style">
                         <span class="p-float-label">
-                            <Dropdown id="logicOperator" class="kn-material-input" v-model="condition.logicOperator" :options="businessModelDriverDetailDescriptor.logicOperator" optionLabel="name" optionValue="value" :disabled="readonly" />
+                            <Dropdown id="logicOperator" v-model="condition.logicOperator" class="kn-material-input" :options="businessModelDriverDetailDescriptor.logicOperator" option-label="name" option-value="value" :disabled="readonly" />
                             <label for="logicOperator" class="kn-material-input-label">{{ $t('managers.businessModelManager.logicOperator') }}</label>
                         </span>
                     </div>
@@ -188,12 +188,12 @@
                     <p>{{ $t('managers.businessModelManager.modality') + ': ' + mode.name }}</p>
                     <div class="p-d-flex p-ai-center">
                         <div class="mode-inputs">
-                            <Checkbox class="p-mr-2" :value="mode.useID" v-model="selectedModes" :disabled="readonly" />
+                            <Checkbox v-model="selectedModes" class="p-mr-2" :value="mode.useID" :disabled="readonly" />
                             <label>{{ $t('managers.businessModelManager.check') }}</label>
                         </div>
                         <div class="mode-inputs">
                             <label class="kn-material-input-label">{{ $t('managers.businessModelManager.lovsColumn') }}</label>
-                            <Dropdown id="parFather" class="kn-material-input" v-model="modalities[mode.useID]" :options="getLovs(mode.idLov)" :placeholder="$t('managers.businessModelManager.lovsColumnSelect')" :disabled="isModeActive(mode.useID) || readonly">
+                            <Dropdown id="parFather" v-model="modalities[mode.useID]" class="kn-material-input" :options="getLovs(mode.idLov)" :placeholder="$t('managers.businessModelManager.lovsColumnSelect')" :disabled="isModeActive(mode.useID) || readonly">
                                 <template #value="slotProps">
                                     <div v-if="slotProps.value">
                                         <span>{{ slotProps.value }}</span>
@@ -216,7 +216,7 @@
         </Dialog>
     </div>
 
-    <Dialog header="Error" v-model:visible="displayWarning">
+    <Dialog v-model:visible="displayWarning" header="Error">
         <p>{{ errorMessage }}</p>
         <template #footer>
             <Button label="Ok" icon="pi pi-check" @click="displayWarning = false" />
@@ -278,37 +278,9 @@ export default defineComponent({
         }
     },
     emits: ['touched'],
-    watch: {
-        async selectedDriver() {
-            this.loadSelectedDriver()
-            if (this.driver) {
-                await this.loadDataDependencies()
-                if (this.driver.parameter) {
-                    await this.loadModes()
-                    await this.loadLovs()
-                }
-            }
-        },
-        driverOptions() {
-            this.loadAnalyticalDrivers()
-        },
-        businessModelDrivers() {
-            this.loadBusinessModelDrivers()
-        }
-    },
     setup() {
         const store = mainStore()
         return { store }
-    },
-    async created() {
-        this.loadSelectedDriver()
-        this.loadAnalyticalDrivers()
-        this.loadBusinessModelDrivers()
-        if (this.selectedDriver) {
-            await this.loadDataDependencies()
-            await this.loadModes()
-            await this.loadLovs()
-        }
     },
     data() {
         return {
@@ -332,6 +304,34 @@ export default defineComponent({
             errorMessage: '',
             displayWarning: false,
             v$: useValidate() as any
+        }
+    },
+    watch: {
+        async selectedDriver() {
+            this.loadSelectedDriver()
+            if (this.driver) {
+                await this.loadDataDependencies()
+                if (this.driver.parameter) {
+                    await this.loadModes()
+                    await this.loadLovs()
+                }
+            }
+        },
+        driverOptions() {
+            this.loadAnalyticalDrivers()
+        },
+        businessModelDrivers() {
+            this.loadBusinessModelDrivers()
+        }
+    },
+    async created() {
+        this.loadSelectedDriver()
+        this.loadAnalyticalDrivers()
+        this.loadBusinessModelDrivers()
+        if (this.selectedDriver) {
+            await this.loadDataDependencies()
+            await this.loadModes()
+            await this.loadLovs()
         }
     },
     validations() {

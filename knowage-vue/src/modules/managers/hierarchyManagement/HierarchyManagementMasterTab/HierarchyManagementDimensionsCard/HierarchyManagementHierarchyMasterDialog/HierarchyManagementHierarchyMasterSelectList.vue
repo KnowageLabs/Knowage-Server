@@ -2,7 +2,7 @@
     <small v-if="errorMessageVisible" class="p-error p-ml-2" data-test="error-message">{{ $t('managers.hierarchyManagement.createHierarchyMasterErrorMessage') }}</small>
     <div class="p-d-flex kn-flex kn-overflow">
         <div id="list-container" class="p-d-flex p-ml-2" style="flex: 1 1 0;">
-            <Listbox class="kn-list kn-list-border-all kn-flex hierarchy-management-list" listStyle="max-height:calc(100% - 62px)" v-model="selectedSourceFields" :options="dimensionSourceFields" optionLabel="NAME" :multiple="true" :filter="true" @change="onSelectedField">
+            <Listbox v-model="selectedSourceFields" class="kn-list kn-list-border-all kn-flex hierarchy-management-list" list-style="max-height:calc(100% - 62px)" :options="dimensionSourceFields" option-label="NAME" :multiple="true" :filter="true" @change="onSelectedField">
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
                     <div class="kn-list-item">
@@ -16,13 +16,13 @@
 
         <div id="button-container" class="p-as-center p-mx-2">
             <div class="p-d-flex p-flex-column">
-                <Button class="kn-button kn-button--primary hierarchy-management-master-selecet-list-button" icon="pi pi-angle-double-right" :disabled="selectedSourceFields.length === 0" @click="moveToTheRight" data-test="move-right-button" />
+                <Button class="kn-button kn-button--primary hierarchy-management-master-selecet-list-button" icon="pi pi-angle-double-right" :disabled="selectedSourceFields.length === 0" data-test="move-right-button" @click="moveToTheRight" />
                 <Button class="kn-button kn-button--primary hierarchy-management-master-selecet-list-button p-mt-2" icon="pi pi-angle-double-left" :disabled="selectedDestinationFields.length === 0" @click="moveToTheLeft" />
             </div>
         </div>
 
         <div id="identifier-container" class="p-d-flex p-mr-2" style="flex: 1 1 0;">
-            <Listbox class="kn-list kn-list-border-all kn-flex hierarchy-management-list" listStyle="max-height:100%" v-model="selectedDestinationFields" :options="dimensionDestinationFields" optionLabel="NAME" :multiple="true" @change="onSelectedField" data-test="selected-destinations-list">
+            <Listbox v-model="selectedDestinationFields" class="kn-list kn-list-border-all kn-flex hierarchy-management-list" list-style="max-height:100%" :options="dimensionDestinationFields" option-label="NAME" :multiple="true" data-test="selected-destinations-list" @change="onSelectedField">
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
                     <div class="kn-list-item">
@@ -36,8 +36,8 @@
                                     v-if="slotProps.index === dimensionDestinationFields.length - 1"
                                     icon="fa fa-plus"
                                     class="p-button-text p-button-plain p-button-sm p-p-0"
-                                    @click.stop="moveToRecursive(slotProps.option, slotProps.index)"
                                     :data-test="'recursive-button-' + slotProps.option.code.NAME"
+                                    @click.stop="moveToRecursive(slotProps.option, slotProps.index)"
                                 />
                                 <Button v-if="slotProps.index !== 0" icon="fa fa-arrow-up" class="p-button-text p-button-plain p-button-sm p-p-0" @click.stop="move(slotProps.option, slotProps.index, 'up')" />
                                 <Button v-if="slotProps.index !== dimensionDestinationFields.length - 1" icon="fa fa-arrow-down" class="p-button-text p-button-plain p-button-sm p-p-0" @click.stop="move(slotProps.option, slotProps.index, 'down')" />
@@ -52,7 +52,7 @@
         <Toolbar class="kn-toolbar kn-toolbar--secondary p-p-0 p-m-0 p-col-12">
             <template #start>
                 {{ $t('managers.hierarchyManagement.recursive') + ': ' }}
-                <span class="p-ml-2" v-if="recursive">{{ recursive.code.NAME + ' ' + recursive.name.NAME }}</span>
+                <span v-if="recursive" class="p-ml-2">{{ recursive.code.NAME + ' ' + recursive.name.NAME }}</span>
             </template>
             <template #end>
                 <Button v-show="recursive" icon="pi pi-trash" class="p-button-text p-button-rounded p-button-plain" @click="removeRecursive" />
@@ -62,10 +62,10 @@
             <div class="p-field p-col-6">
                 <span class="p-float-label">
                     <Dropdown
-                        class="kn-material-input"
                         v-model="recursiveParentName"
+                        class="kn-material-input"
                         :options="parentDimensionSourceFields"
-                        optionLabel="NAME"
+                        option-label="NAME"
                         :disabled="!recursive"
                         @change="$emit('recursiveChanged', { recursive: recursive, recursiveParentName: recursiveParentName, recursiveParentDescription: recursiveParentDescription })"
                     >
@@ -76,10 +76,10 @@
             <div class="p-field p-col-6">
                 <span class="p-float-label">
                     <Dropdown
-                        class="kn-material-input"
                         v-model="recursiveParentDescription"
+                        class="kn-material-input"
                         :options="parentDimensionSourceFields"
-                        optionLabel="NAME"
+                        option-label="NAME"
                         :disabled="!recursive"
                         @change="$emit('recursiveChanged', { recursive: recursive, recursiveParentName: recursiveParentName, recursiveParentDescription: recursiveParentDescription })"
                     >

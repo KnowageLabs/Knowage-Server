@@ -7,27 +7,27 @@
                 </template>
             </Toolbar>
         </template>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
 
         <div v-if="attribute" ref="attribute-form" class="p-mt-4 p-mx-4 kn-flex-0">
             <div class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-col-12 p-md-12">
                     <span class="p-float-label">
-                        <InputText id="name" class="kn-material-input" v-model.trim="attribute.name" />
+                        <InputText id="name" v-model.trim="attribute.name" class="kn-material-input" />
                         <label for="name" class="kn-material-input-label"> {{ $t('common.name') }}</label>
                     </span>
                 </div>
 
                 <div class="p-field p-col-12 p-md-12">
                     <span class="p-float-label">
-                        <InputText id="name" class="kn-material-input" v-model.trim="attribute.description" />
+                        <InputText id="name" v-model.trim="attribute.description" class="kn-material-input" />
                         <label for="name" class="kn-material-input-label"> {{ $t('common.description') }}</label>
                     </span>
                 </div>
 
                 <div class="p-field p-col-12 p-md-12">
                     <span class="p-float-label">
-                        <Dropdown class="kn-material-input" v-model="columnType" :options="metawebAttributeDetailDialogDescriptor.typeOptions" @change="onTypeChange()" />
+                        <Dropdown v-model="columnType" class="kn-material-input" :options="metawebAttributeDetailDialogDescriptor.typeOptions" @change="onTypeChange()" />
                         <label for="type" class="kn-material-input-label"> {{ $t('common.type') }}</label>
                     </span>
                 </div>
@@ -38,7 +38,7 @@
             <div class="p-fluid p-formgrid p-grid p-mt-4">
                 <div class="p-field p-col-12 p-md-6 p-mt-2">
                     <span class="p-float-label">
-                        <Dropdown class="kn-material-input" v-model="properties['structural.aggtype'].value" :options="properties['structural.aggtype'].propertyType.admissibleValues" @change="updateAttribute('structural.aggtyp')" />
+                        <Dropdown v-model="properties['structural.aggtype'].value" class="kn-material-input" :options="properties['structural.aggtype'].propertyType.admissibleValues" @change="updateAttribute('structural.aggtyp')" />
                         <label class="kn-material-input-label"> {{ properties['structural.aggtype'].propertyType.name }}</label>
                         <small>{{ properties['structural.aggtype'].propertyType.description }}</small>
                     </span>
@@ -46,7 +46,7 @@
 
                 <div class="p-field p-col-12 p-md-6 p-mt-2">
                     <span class="p-float-label">
-                        <Dropdown class="kn-material-input" v-model="properties['structural.datatype'].value" :options="properties['structural.datatype'].propertyType.admissibleValues" @change="updateAttribute('structural.datatype')" />
+                        <Dropdown v-model="properties['structural.datatype'].value" class="kn-material-input" :options="properties['structural.datatype'].propertyType.admissibleValues" @change="updateAttribute('structural.datatype')" />
                         <label class="kn-material-input-label"> {{ properties['structural.datatype'].propertyType.name }}</label>
                         <small>{{ properties['structural.datatype'].propertyType.description }}</small>
                     </span>
@@ -54,7 +54,7 @@
 
                 <div class="p-field p-col-12 p-md-6 p-mt-2">
                     <span class="p-float-label">
-                        <MultiSelect class="kn-material-input" v-model="properties['behavioural.notEnabledRoles'].value" :options="roleOptions" optionLabel="name" optionValue="name" :filter="true" @change="updateAttribute('behavioural.notEnabledRoles')" />
+                        <MultiSelect v-model="properties['behavioural.notEnabledRoles'].value" class="kn-material-input" :options="roleOptions" option-label="name" option-value="name" :filter="true" @change="updateAttribute('behavioural.notEnabledRoles')" />
                         <label class="kn-material-input-label"> {{ properties['behavioural.notEnabledRoles'].propertyType.name }}</label>
                         <small>{{ properties['behavioural.notEnabledRoles'].propertyType.description }}</small>
                     </span>
@@ -62,7 +62,7 @@
 
                 <div class="p-field p-col-12 p-md-6 p-mt-2">
                     <span class="p-float-label">
-                        <Dropdown class="kn-material-input" v-model="properties['structural.attribute'].value" :options="profileAttributes" @change="updateAttribute('structural.attribute')" />
+                        <Dropdown v-model="properties['structural.attribute'].value" class="kn-material-input" :options="profileAttributes" @change="updateAttribute('structural.attribute')" />
                         <label class="kn-material-input-label"> {{ properties['structural.attribute'].propertyType.name }}</label>
                         <small>{{ properties['structural.attribute'].propertyType.description }}</small>
                     </span>
@@ -70,7 +70,7 @@
 
                 <div class="p-field p-col-12 p-md-6 p-mt-2">
                     <span class="p-float-label">
-                        <InputText class="kn-material-input" v-model.trim="properties['physical.physicaltable'].value" :disabled="true" />
+                        <InputText v-model.trim="properties['physical.physicaltable'].value" class="kn-material-input" :disabled="true" />
                         <label class="kn-material-input-label"> {{ properties['physical.physicaltable'].propertyType.name }}</label>
                         <small>{{ properties['physical.physicaltable'].propertyType.description }}</small>
                     </span>
@@ -78,7 +78,7 @@
 
                 <div v-if="attribute.physicalColumn" class="p-field p-col-12 p-md-6 p-mt-2">
                     <span class="p-float-label">
-                        <InputText id="physicalColumn" class="kn-material-input" v-model.trim="attribute.physicalColumn.name" :disabled="true" />
+                        <InputText id="physicalColumn" v-model.trim="attribute.physicalColumn.name" class="kn-material-input" :disabled="true" />
                         <label for="physicalColumn" class="kn-material-input-label">{{ $t('metaweb.businessModel.physicalColumn') }}</label>
                         <small>{{ $t('metaweb.businessModel.physicalColumnHint') }}</small>
                     </span>
@@ -86,15 +86,15 @@
 
                 <div class="p-field p-col-12 p-md-6 p-mt-2">
                     <span class="p-float-label">
-                        <Dropdown class="kn-material-input" v-model="properties['structural.filtercondition'].value" :options="properties['structural.filtercondition'].propertyType.admissibleValues" @change="updateAttribute('structural.filtercondition')" />
+                        <Dropdown v-model="properties['structural.filtercondition'].value" class="kn-material-input" :options="properties['structural.filtercondition'].propertyType.admissibleValues" @change="updateAttribute('structural.filtercondition')" />
                         <label class="kn-material-input-label"> {{ properties['structural.filtercondition'].propertyType.name }}</label>
                         <small>{{ properties['structural.filtercondition'].propertyType.description }}</small>
                     </span>
                 </div>
 
-                <div class="p-field p-col-12 p-md-6 p-mt-2" v-if="properties['structural.datatype'].value === 'DATE' || properties['structural.datatype'].value === 'TIMESTAMP' || properties['structural.datatype'].value === 'TIME'">
+                <div v-if="properties['structural.datatype'].value === 'DATE' || properties['structural.datatype'].value === 'TIMESTAMP' || properties['structural.datatype'].value === 'TIME'" class="p-field p-col-12 p-md-6 p-mt-2">
                     <span class="p-float-label">
-                        <Dropdown class="kn-material-input" v-model="properties['structural.dateformat'].value" :options="properties['structural.dateformat'].propertyType.admissibleValues" @change="updateAttribute('structural.dateformat')">
+                        <Dropdown v-model="properties['structural.dateformat'].value" class="kn-material-input" :options="properties['structural.dateformat'].propertyType.admissibleValues" @change="updateAttribute('structural.dateformat')">
                             <template #option="slotProps">
                                 <span>{{ getFormattedDate(new Date(), slotProps.option) }}</span>
                             </template>
@@ -107,9 +107,9 @@
                     </span>
                 </div>
 
-                <div class="p-field p-col-12 p-md-6 p-mt-2" v-if="['INTEGER', 'DOUBLE', 'DECIMAL', 'BIGINT', 'FLOAT'].indexOf(properties['structural.datatype'].value) !== -1">
+                <div v-if="['INTEGER', 'DOUBLE', 'DECIMAL', 'BIGINT', 'FLOAT'].indexOf(properties['structural.datatype'].value) !== -1" class="p-field p-col-12 p-md-6 p-mt-2">
                     <span class="p-float-label">
-                        <Dropdown class="kn-material-input" v-model="properties['structural.format'].value" :options="properties['structural.format'].propertyType.admissibleValues" @change="updateAttribute('structural.format')" />
+                        <Dropdown v-model="properties['structural.format'].value" class="kn-material-input" :options="properties['structural.format'].propertyType.admissibleValues" @change="updateAttribute('structural.format')" />
                         <label class="kn-material-input-label"> {{ properties['structural.format'].propertyType.name }}</label>
                         <small>{{ properties['structural.format'].propertyType.description }}</small>
                     </span>
@@ -117,7 +117,7 @@
 
                 <div class="p-field p-col-12 p-md-6 p-mt-2">
                     <span class="p-float-label">
-                        <InputText class="kn-material-input" v-model.trim="properties['structural.customFunction'].value" @change="updateAttribute('structural.customFunction')" />
+                        <InputText v-model.trim="properties['structural.customFunction'].value" class="kn-material-input" @change="updateAttribute('structural.customFunction')" />
                         <label class="kn-material-input-label"> {{ properties['structural.customFunction'].propertyType.name }}</label>
                         <small>{{ properties['structural.customFunction'].propertyType.description }}</small>
                     </span>
@@ -147,6 +147,10 @@ export default defineComponent({
     components: { Dialog, Dropdown, MultiSelect },
     props: { visible: { type: Boolean }, selectedAttribute: { type: Object as PropType<iBusinessModelColumn> }, roles: { type: Array } },
     emits: ['close', 'save'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             metawebAttributeDetailDialogDescriptor,
@@ -173,10 +177,6 @@ export default defineComponent({
             this.loadAttribute()
             this.loadRoleOptions()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadAttribute()

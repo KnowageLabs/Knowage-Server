@@ -6,12 +6,12 @@
                     <span>
                         <label class="kn-material-input-label">{{ $t('common.label') }} *</label>
                         <InputText
-                            class="kn-material-input p-inputtext-sm"
                             v-model="analysis.label"
+                            class="kn-material-input p-inputtext-sm"
                             :class="{
                                 'p-invalid': labelDirty && (!analysis.label || analysis.label.length === 0)
                             }"
-                            :maxLength="workspaceAnalysisViewEditDialogDescriptor.labelMaxLength"
+                            :max-length="workspaceAnalysisViewEditDialogDescriptor.labelMaxLength"
                             @input="labelDirty = true"
                             @blur="labelDirty = true"
                         />
@@ -31,12 +31,12 @@
                     <span>
                         <label class="kn-material-input-label">{{ $t('common.name') }} *</label>
                         <InputText
-                            class="kn-material-input p-inputtext-sm"
                             v-model="analysis.name"
+                            class="kn-material-input p-inputtext-sm"
                             :class="{
                                 'p-invalid': nameDirty && (!analysis.name || analysis.name.length === 0)
                             }"
-                            :maxLength="workspaceAnalysisViewEditDialogDescriptor.nameMaxLength"
+                            :max-length="workspaceAnalysisViewEditDialogDescriptor.nameMaxLength"
                             @input="nameDirty = true"
                             @blur="nameDirty = true"
                         />
@@ -55,7 +55,7 @@
                 <div class="p-m-4">
                     <span>
                         <label class="kn-material-input-label">{{ $t('common.description') }}</label>
-                        <InputText class="kn-material-input p-inputtext-sm" v-model="analysis.description" :maxLength="workspaceAnalysisViewEditDialogDescriptor.descriptionMaxLength" />
+                        <InputText v-model="analysis.description" class="kn-material-input p-inputtext-sm" :max-length="workspaceAnalysisViewEditDialogDescriptor.descriptionMaxLength" />
                     </span>
 
                     <div class="p-d-flex p-flex-row p-jc-between">
@@ -81,8 +81,8 @@ import workspaceAnalysisViewEditDialogDescriptor from './WorkspaceAnalysisViewEd
 export default defineComponent({
     name: 'workspace-analysis-edit-dialog',
     components: { Dialog },
-    emits: ['close', 'save'],
     props: { visible: { type: Boolean }, propAnalysis: { type: Object } },
+    emits: ['close', 'save'],
     data() {
         return {
             workspaceAnalysisViewEditDialogDescriptor,

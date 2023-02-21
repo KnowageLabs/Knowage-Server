@@ -7,7 +7,7 @@
                         {{ $t('managers.scheduler.title') }}
                     </template>
                     <template #end>
-                        <FabButton icon="fas fa-plus" @click="showJobDetail(null, false)" data-test="progress-bar" />
+                        <FabButton icon="fas fa-plus" data-test="progress-bar" @click="showJobDetail(null, false)" />
                     </template>
                 </Toolbar>
                 <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
@@ -15,7 +15,7 @@
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
-                <router-view :selectedJob="selectedJob" @closed="touched = false" @documentSaved="loadSelectJob" @close="closeDetail" @triggerSaved="loadPage" />
+                <router-view :selected-job="selectedJob" @closed="touched = false" @documentSaved="loadSelectJob" @close="closeDetail" @triggerSaved="loadPage" />
             </div>
         </div>
     </div>
@@ -33,6 +33,10 @@ import mainStore from '../../../App.store'
 export default defineComponent({
     name: 'scheduler',
     components: { FabButton, KnListBox },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             schedulerDescriptor,
@@ -40,10 +44,6 @@ export default defineComponent({
             selectedJob: null as iPackage | null,
             loading: false
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         await this.loadPage()

@@ -2,11 +2,11 @@
     <div v-if="chipsStyleModel" class="p-grid p-ai-center kn-flex p-p-4">
         <div id="height-input-container" class="p-col-4">
             <label class="kn-material-input-label p-mr-2">{{ $t('common.height') }}</label>
-            <InputNumber class="kn-material-input p-inputtext-sm" v-model="chipsStyleModel.height" :disabled="chipsStyleDisabled" @blur="chipsStyleChanged" />
+            <InputNumber v-model="chipsStyleModel.height" class="kn-material-input p-inputtext-sm" :disabled="chipsStyleDisabled" @blur="chipsStyleChanged" />
         </div>
 
         <div class="p-col-12 p-py-4">
-            <WidgetEditorStyleToolbar :options="descriptor.chipsToolbarStyleOptions" :propModel="chipsStyleModel.properties" :disabled="chipsStyleDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
+            <WidgetEditorStyleToolbar :options="descriptor.chipsToolbarStyleOptions" :prop-model="chipsStyleModel.properties" :disabled="chipsStyleDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
         </div>
     </div>
 </template>
@@ -18,12 +18,11 @@ import { ISelectionWidgetChipsStyle } from '@/modules/documentExecution/dashboar
 import { emitter } from '../../../../../DashboardHelpers'
 import descriptor from '../SelectionsWidgetSettingsDescriptor.json'
 import InputNumber from 'primevue/inputnumber'
-import InputSwitch from 'primevue/inputswitch'
 import WidgetEditorStyleToolbar from '../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
 
 export default defineComponent({
     name: 'selections-widget-chips-style',
-    components: { InputNumber, InputSwitch, WidgetEditorStyleToolbar },
+    components: { InputNumber, WidgetEditorStyleToolbar },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {

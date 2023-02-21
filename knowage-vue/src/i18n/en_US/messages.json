@@ -823,6 +823,10 @@
                 "textAndIcon": "Text & Icon",
                 "title": "Visualization Type"
             }
+        },
+        "wizard": {
+            "addDataset": "Add a new dataset to the dashboard",
+            "addWidget": "Add a new Widget to the dashboard"
         }
     },
     "documentBrowser": {
@@ -1756,9 +1760,6 @@
             "dataPreparation": {
                 "datasetInvolvedIntoDataPrep": "Dataset is involved in a Data Preparation process, do you want to proceed?"
             },
-            "derived": {
-                "checkForExistingDerivedDatasets": "Dataset has active derived datasets, do you want to proceed?"
-            },
             "dataframeName": "Dataframe variable name",
             "decrypt": "Decrypt",
             "deleteAllParams": "Clear all dataset parameters",
@@ -1769,6 +1770,9 @@
             "deleteAllVersionsSuccess": "All dataset versions are deleted",
             "deleteAllVersionsTitle": "Delete all dataset versions",
             "deleteOneVersionMsg": "Do you want to delete selected version?",
+            "derived": {
+                "checkForExistingDerivedDatasets": "Dataset has active derived datasets, do you want to proceed?"
+            },
             "disablePersistence": "Disabling Persistence",
             "disablePersistenceMsg": "Persistence of Dataset is enabled. By adding the parameters, persistence will be automatically disabled. Do You want to proceed?",
             "documents": "Documents",
@@ -2126,6 +2130,7 @@
             "emptyField": "Value or description field is empty",
             "fields": "Fields",
             "filterNullValues": "If a record contains some null values it will be filtered out",
+            "fixedListInvalidError": "You must add at least one item with both value and description.",
             "fixedListWizard": "WIZARD FIX LOV",
             "hint": "The LOVs management page allows you to create List Of Values to use inside your drivers or parameters. </br>There are many different type of LOVs that can be generated, using queries, JAVA classes, scripts or entering the data manually. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "infoRules": "Rules",

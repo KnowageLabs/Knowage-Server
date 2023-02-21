@@ -8,7 +8,7 @@
             </Toolbar>
         </template>
 
-        <DataTable :value="wizardButtons" class="p-datatable-sm kn-table p-m-4" :scrollable="true" scrollHeight="100%">
+        <DataTable :value="wizardButtons" class="p-datatable-sm kn-table p-m-4" :scrollable="true" scroll-height="100%">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -21,7 +21,7 @@
             </Column>
             <Column :header="$t('common.visible')">
                 <template #header>
-                    <Checkbox class="p-mr-2" v-model="allVisibleSelected" :binary="true" @change="setAllChecked('visible')" />
+                    <Checkbox v-model="allVisibleSelected" class="p-mr-2" :binary="true" @change="setAllChecked('visible')" />
                 </template>
                 <template #body="slotProps">
                     <Checkbox v-model="slotProps.data.visible" :binary="true" @change="setChecked(slotProps.data, 'visible')" />
@@ -29,7 +29,7 @@
             </Column>
             <Column :header="$t('common.clicked')">
                 <template #header>
-                    <Checkbox class="p-mr-2" v-model="allClickedSelected" :binary="true" @change="setAllChecked('clicked')" />
+                    <Checkbox v-model="allClickedSelected" class="p-mr-2" :binary="true" @change="setAllChecked('clicked')" />
                 </template>
                 <template #body="slotProps">
                     <Checkbox v-model="slotProps.data.clicked" :binary="true" :disabled="!slotProps.data.clickable" @change="setChecked(slotProps.data, 'clicked')" />

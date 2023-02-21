@@ -1,4 +1,4 @@
-let routes = [
+const routes = [
     {
         path: '/behavioural-model-lineage',
         name: 'behavioural-model-lineage',

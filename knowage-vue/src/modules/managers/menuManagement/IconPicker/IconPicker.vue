@@ -1,12 +1,12 @@
 <template>
-    <Dialog :header="$t('managers.menuManagement.chooseIcon')" v-model:visible="modalShown" :style="{ width: '50vw' }" :modal="true" :closable="false">
+    <Dialog v-model:visible="modalShown" :header="$t('managers.menuManagement.chooseIcon')" :style="{ width: '50vw' }" :modal="true" :closable="false">
         <KnImageToBase64IconPicker @selectedImageBase64="onBase64ImageSelection" @wrongInput="toggleDisableChooseButton"></KnImageToBase64IconPicker>
 
         <div id="iconPicker">
             <div class="p-mt-2 p-field">
                 <div class="p-inputgroup">
                     <span class="p-float-label">
-                        <InputText id="searchIcon" type="text" @keyup="filterIcons($event)" class="p-inputtext p-component kn-material-input" />
+                        <InputText id="searchIcon" type="text" class="p-inputtext p-component kn-material-input" @keyup="filterIcons($event)" />
                         <label for="searchIcon">{{ $t('common.search') }}</label>
                     </span>
                 </div>
@@ -15,15 +15,15 @@
             <div class="p-mt-4">
                 <div class="iconPicker__icons">
                     <p>fontawesome</p>
-                    <a href="#" @click.stop.prevent="getIcon(icon)" :class="`item ${selected === icon.name ? 'selected' : ''}`" v-for="icon in icons" :key="icon.value">
+                    <a v-for="icon in icons" :key="icon.value" href="#" :class="`item ${selected === icon.name ? 'selected' : ''}`" @click.stop.prevent="getIcon(icon)">
                         <i :class="'fas fa-' + icon.name"></i>
                     </a>
                 </div>
             </div>
         </div>
         <template #footer>
-            <Button label="Cancel" icon="pi pi-times" @click="closeModal" class="p-button-text" />
-            <Button label="Choose" icon="pi pi-check" :disabled="disableChoosen" @click="chooseIcon" autofocus />
+            <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="closeModal" />
+            <Button label="Choose" icon="pi pi-check" :disabled="disableChoosen" autofocus @click="chooseIcon" />
         </template>
     </Dialog>
 </template>
@@ -34,17 +34,10 @@ import Dialog from 'primevue/dialog'
 import icons from './icons'
 import { defineComponent } from 'vue'
 export default defineComponent({
-    name: 'IconPicker',
-    emits: ['chooseIcon', 'closeFontAwesomeModal'],
+    name: 'icon-picker',
     components: { Dialog, KnImageToBase64IconPicker },
     props: ['showModal'],
-    watch: {
-        showModal: {
-            handler: function(show) {
-                this.modalShown = show
-            }
-        }
-    },
+    emits: ['chooseIcon', 'closeFontAwesomeModal'],
     data() {
         return {
             modalShown: false,
@@ -52,6 +45,13 @@ export default defineComponent({
             selected: '',
             chosenIcon: {},
             icons
+        }
+    },
+    watch: {
+        showModal: {
+            handler: function(show) {
+                this.modalShown = show
+            }
         }
     },
     methods: {

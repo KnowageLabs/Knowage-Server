@@ -1162,8 +1162,7 @@ class DecoratedDataStore implements IDataStore {
 
 	@Override
 	public DataStoreStats getStats() {
-		// TODO Auto-generated method stub
-		return null;
+		return dataStore.getStats();
 	}
 
 }

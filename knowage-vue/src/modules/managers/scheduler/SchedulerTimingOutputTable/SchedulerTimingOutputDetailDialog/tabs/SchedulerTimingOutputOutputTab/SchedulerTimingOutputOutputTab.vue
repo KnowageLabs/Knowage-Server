@@ -14,7 +14,7 @@
             </Listbox>
         </div>
         <div class="p-col-8 p-sm-8 p-md-9  p-p-0">
-            <SchedulerTimingOutputDocumentDetail v-if="selectedDocument" :propDocument="selectedDocument" :functionalities="functionalities" :datasets="datasets" :jobInfo="jobInfo"></SchedulerTimingOutputDocumentDetail>
+            <SchedulerTimingOutputDocumentDetail v-if="selectedDocument" :prop-document="selectedDocument" :functionalities="functionalities" :datasets="datasets" :job-info="jobInfo"></SchedulerTimingOutputDocumentDetail>
             <Message v-else class="p-m-4" severity="info" :closable="false" :style="schedulerTimingOutputOutputTabDescriptor.styles.message">
                 {{ $t('managers.scheduler.noDocumentSelected') }}
             </Message>

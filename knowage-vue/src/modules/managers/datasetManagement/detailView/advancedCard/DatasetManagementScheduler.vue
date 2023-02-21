@@ -7,14 +7,14 @@
                     <span>
                         <Calendar
                             id="startDate"
-                            class="kn-material-input"
                             v-model="startTemp"
+                            class="kn-material-input"
                             style="width:20rem"
                             :class="{
                                 'p-invalid': !validDates
                             }"
-                            :showIcon="true"
-                            :manualInput="true"
+                            :show-icon="true"
+                            :manual-input="true"
                             @date-select="setDate($event, 'startDate')"
                         />
                         <div v-if="!validDates" class="p-error p-grid p-mt-1">
@@ -29,15 +29,15 @@
                     <span>
                         <Calendar
                             id="endDate"
-                            class="kn-material-input"
                             v-model="endTemp"
+                            class="kn-material-input"
                             style="width:20rem"
                             :class="{
                                 'p-invalid': !validDates
                             }"
-                            :showIcon="true"
-                            :manualInput="true"
-                            :showButtonBar="true"
+                            :show-icon="true"
+                            :manual-input="true"
+                            :show-button-bar="true"
                             @date-select="setDate($event, 'endDate')"
                         />
                         <div v-if="!validDates" class="p-error p-grid p-mt-1">
@@ -52,29 +52,29 @@
                 <div class="p-mx-2">
                     <label for="repeatInterval" class="kn-material-input-label p-m-2"> {{ $t('managers.functionalitiesManagement.execution') }}: </label>
                     <span>
-                        <Dropdown id="repeatInterval" class="kn-material-input" :style="knCronDescriptor.style.intervalInput" v-model="scheduling.repeatInterval" optionLabel="name" optionValue="value" :options="knCronDescriptor.intervals" @change="updateCronInterval" />
+                        <Dropdown id="repeatInterval" v-model="scheduling.repeatInterval" class="kn-material-input" :style="knCronDescriptor.style.intervalInput" option-label="name" option-value="value" :options="knCronDescriptor.intervals" @change="updateCronInterval" />
                     </span>
                 </div>
 
-                <div class="p-field" v-if="scheduling.repeatInterval === 'week'">
+                <div v-if="scheduling.repeatInterval === 'week'" class="p-field">
                     <label for="weekdays" class="kn-material-input-label "> {{ $t('cron.inWeekday') }}</label>
-                    <MultiSelect id="weekdays" class="kn-material-input p-mx-2" style="max-width:8rem" v-model="scheduling.weekdaysSelected" :options="weekdays" optionLabel="label" optionValue="value" :placeholder="$t('common.default')" @change="formatCronForSave" />
+                    <MultiSelect id="weekdays" v-model="scheduling.weekdaysSelected" class="kn-material-input p-mx-2" style="max-width:8rem" :options="weekdays" option-label="label" option-value="value" :placeholder="$t('common.default')" @change="formatCronForSave" />
                 </div>
-                <div class="p-field" v-if="scheduling.repeatInterval === 'month'">
+                <div v-if="scheduling.repeatInterval === 'month'" class="p-field">
                     <label for="months" class="kn-material-input-label"> {{ $t('cron.inMonth') }} </label>
-                    <MultiSelect id="months" class="kn-material-input p-mx-2" style="max-width:8rem" v-model="scheduling.monthsSelected" :options="months" optionLabel="label" optionValue="value" :placeholder="$t('common.default')" @change="formatCronForSave" />
+                    <MultiSelect id="months" v-model="scheduling.monthsSelected" class="kn-material-input p-mx-2" style="max-width:8rem" :options="months" option-label="label" option-value="value" :placeholder="$t('common.default')" @change="formatCronForSave" />
                 </div>
-                <div class="p-field" v-if="scheduling.repeatInterval === 'day' || scheduling.repeatInterval === 'month'">
+                <div v-if="scheduling.repeatInterval === 'day' || scheduling.repeatInterval === 'month'" class="p-field">
                     <label for="days" class="kn-material-input-label  "> {{ $t('cron.inDay') }} </label>
-                    <MultiSelect id="days" class="kn-material-input p-mx-2" style="max-width:8rem" v-model="scheduling.daysSelected" :options="days" :placeholder="$t('common.default')" @change="formatCronForSave" />
+                    <MultiSelect id="days" v-model="scheduling.daysSelected" class="kn-material-input p-mx-2" style="max-width:8rem" :options="days" :placeholder="$t('common.default')" @change="formatCronForSave" />
                 </div>
-                <div class="p-field" v-if="scheduling.repeatInterval && scheduling.repeatInterval != 'minute'">
+                <div v-if="scheduling.repeatInterval && scheduling.repeatInterval != 'minute'" class="p-field">
                     <label for="hours" class="kn-material-input-label"> {{ $t('cron.inHour') }}</label>
-                    <MultiSelect id="hours" class="kn-material-input p-mx-2" style="max-width:8rem" v-model="scheduling.hoursSelected" :options="hours" :placeholder="$t('common.default')" @change="formatCronForSave" />
+                    <MultiSelect id="hours" v-model="scheduling.hoursSelected" class="kn-material-input p-mx-2" style="max-width:8rem" :options="hours" :placeholder="$t('common.default')" @change="formatCronForSave" />
                 </div>
-                <div class="p-field p-ml-2" v-if="scheduling.repeatInterval">
+                <div v-if="scheduling.repeatInterval" class="p-field p-ml-2">
                     <label for="minutes" class="kn-material-input-label"> {{ $t('cron.inMinute') }} </label>
-                    <MultiSelect id="minutes" class="kn-material-input p-mx-2" style="max-width:8rem" v-model="scheduling.minutesSelected" :options="minutes" :placeholder="$t('common.default')" @change="formatCronForSave" />
+                    <MultiSelect id="minutes" v-model="scheduling.minutesSelected" class="kn-material-input p-mx-2" style="max-width:8rem" :options="minutes" :placeholder="$t('common.default')" @change="formatCronForSave" />
                 </div>
             </div>
         </template>
@@ -96,25 +96,6 @@ export default defineComponent({
     props: {
         selectedDataset: { type: Object as any },
         schedulingData: { type: Object as any }
-    },
-    computed: {
-        validDates() {
-            let valid = true
-            const startDate = this.dataset.startDate
-            const now = new Date()
-            const endDate = this.dataset.endDate
-
-            if (endDate && endDate.valueOf() < now.valueOf()) {
-                valid = false
-            }
-
-            if (endDate && endDate.valueOf() < startDate.valueOf()) {
-                valid = false
-            }
-
-            this.$emit('cronValid', valid)
-            return valid
-        }
     },
     emits: ['touched', 'cronValid'],
     data() {
@@ -155,15 +136,34 @@ export default defineComponent({
             ]
         }
     },
-    created() {
-        this.loadData()
-        this.deparseScheduling()
+    computed: {
+        validDates() {
+            let valid = true
+            const startDate = this.dataset.startDate
+            const now = new Date()
+            const endDate = this.dataset.endDate
+
+            if (endDate && endDate.valueOf() < now.valueOf()) {
+                valid = false
+            }
+
+            if (endDate && endDate.valueOf() < startDate.valueOf()) {
+                valid = false
+            }
+
+            this.$emit('cronValid', valid)
+            return valid
+        }
     },
     watch: {
         selectedDataset() {
             this.loadData()
             this.deparseScheduling()
         }
+    },
+    created() {
+        this.loadData()
+        this.deparseScheduling()
     },
 
     methods: {
@@ -175,18 +175,18 @@ export default defineComponent({
             this.endTemp = this.selectedDataset.endDate ? new Date(this.selectedDataset.endDate) : null
         },
         deparseScheduling() {
-            var cronNoSeconds = ''
+            let cronNoSeconds = ''
 
             if (this.dataset.isScheduled && this.dataset.schedulingCronLine) {
                 this.dataset.startDate = new Date(this.dataset.startDate)
                 this.dataset.endDate ? (this.dataset.endDate = new Date(this.dataset.endDate)) : (this.dataset.endDate = null)
 
-                var splitCron = this.dataset.schedulingCronLine.split(' ')
-                var selectedMinutesCronString = splitCron[1] != '*' ? splitCron[1] : null
-                var selectedHoursCronString = splitCron[2] != '*' ? splitCron[2] : null
-                var selectedDaysCronString = splitCron[3] != '*' ? splitCron[3] : null
-                var selectedMonthsCronString = splitCron[4] != '*' ? splitCron[4] : null
-                var selectedWeekdaysCronString = splitCron[5] != '*' && splitCron[5] != '?' ? splitCron[5] : null
+                const splitCron = this.dataset.schedulingCronLine.split(' ')
+                const selectedMinutesCronString = splitCron[1] != '*' ? splitCron[1] : null
+                const selectedHoursCronString = splitCron[2] != '*' ? splitCron[2] : null
+                const selectedDaysCronString = splitCron[3] != '*' ? splitCron[3] : null
+                const selectedMonthsCronString = splitCron[4] != '*' ? splitCron[4] : null
+                const selectedWeekdaysCronString = splitCron[5] != '*' && splitCron[5] != '?' ? splitCron[5] : null
 
                 for (let i = 1; i < splitCron.length; i++) {
                     cronNoSeconds += splitCron[i] + ' '
@@ -200,10 +200,10 @@ export default defineComponent({
             }
         },
         setSchedulingValues(cronString, valueToSet, customCheck) {
-            var splitValue = new Array()
+            const splitValue = []
 
             if (cronString != null) {
-                var tempValue = cronString.split(',')
+                const tempValue = cronString.split(',')
 
                 for (let i = 0; i < tempValue.length; i++) {
                     splitValue.push(tempValue[i])
@@ -220,13 +220,13 @@ export default defineComponent({
                 if (this.dataset.startDate == null) {
                     this.dataset.startDate = new Date()
                 }
-                var repeatInterval = this.scheduling.repeatInterval
+                const repeatInterval = this.scheduling.repeatInterval
 
-                var minutesForCron = this.stringifySchedulingValues(this.scheduling.minutesSelected && this.scheduling.minutesSelected.length != 0, 'minutesSelected')
-                var hoursForCron = this.stringifySchedulingValues(repeatInterval != 'minute' && this.scheduling.hoursSelected && this.scheduling.hoursSelected.length != 0, 'hoursSelected')
-                var daysForCron = this.stringifySchedulingValues((repeatInterval === 'day' || repeatInterval === 'month') && this.scheduling.daysSelected && this.scheduling.daysSelected.length != 0, 'daysSelected')
-                var monthsForCron = this.stringifySchedulingValues(repeatInterval === 'month' && this.scheduling.monthsSelected.length != 0, 'monthsSelected')
-                var weekdaysForCron = this.stringifySchedulingValues(repeatInterval === 'week' && this.scheduling.weekdaysSelected.length != 0, 'weekdaysSelected')
+                const minutesForCron = this.stringifySchedulingValues(this.scheduling.minutesSelected && this.scheduling.minutesSelected.length != 0, 'minutesSelected')
+                const hoursForCron = this.stringifySchedulingValues(repeatInterval != 'minute' && this.scheduling.hoursSelected && this.scheduling.hoursSelected.length != 0, 'hoursSelected')
+                let daysForCron = this.stringifySchedulingValues((repeatInterval === 'day' || repeatInterval === 'month') && this.scheduling.daysSelected && this.scheduling.daysSelected.length != 0, 'daysSelected')
+                const monthsForCron = this.stringifySchedulingValues(repeatInterval === 'month' && this.scheduling.monthsSelected.length != 0, 'monthsSelected')
+                let weekdaysForCron = this.stringifySchedulingValues(repeatInterval === 'week' && this.scheduling.weekdaysSelected.length != 0, 'weekdaysSelected')
 
                 if (daysForCron == '*' && weekdaysForCron != '*') {
                     daysForCron = '?'
@@ -238,9 +238,9 @@ export default defineComponent({
             }
         },
         stringifySchedulingValues(condition, selectedValue) {
-            var stringValue = ''
+            let stringValue = ''
             if (condition) {
-                for (var i = 0; i < this.scheduling[selectedValue].length; i++) {
+                for (let i = 0; i < this.scheduling[selectedValue].length; i++) {
                     stringValue += '' + this.scheduling[selectedValue][i]
 
                     if (i < this.scheduling[selectedValue].length - 1) {
@@ -254,7 +254,7 @@ export default defineComponent({
             }
         },
         setDate(event, type) {
-            var date = moment(event)
+            const date = moment(event)
             type === 'startDate' ? (this.dataset.startDate = date.format('YYYY-MM-DD[T]HH:mm:ss[Z]')) : (this.dataset.endDate = date.format('YYYY-MM-DD[T]HH:mm:ss[Z]'))
         }
     }

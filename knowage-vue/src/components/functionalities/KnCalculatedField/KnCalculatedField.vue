@@ -1,17 +1,17 @@
 <template>
-    <Dialog class="kn-dialog--toolbar--primary calculatedFieldDialogClass" v-bind:visible="visibility" :header="$t('components.knCalculatedField.title')" :closable="false" modal :breakpoints="{ '960px': '75vw', '640px': '100vw' }">
+    <Dialog class="kn-dialog--toolbar--primary calculatedFieldDialogClass" :visible="visibility" :header="$t('components.knCalculatedField.title')" :closable="false" modal :breakpoints="{ '960px': '75vw', '640px': '100vw' }">
         <Message severity="info" :closable="false">{{ $t('components.knCalculatedField.description') }}</Message>
 
         <div class="p-fluid p-grid">
             <div class="p-col">
                 <span class="p-float-label p-field kn-flex">
                     <InputText
+                        id="colName"
                         ref="colName"
+                        v-model="v$.cf.colName.$model"
                         type="text"
                         :disabled="readOnly"
                         class="kn-material-input"
-                        id="colName"
-                        v-model="v$.cf.colName.$model"
                         :class="{
                             'p-invalid': v$.cf.colName.$invalid
                         }"
@@ -30,7 +30,7 @@
                         <h5 class="p-float-label p-text-uppercase p-m-2">{{ $t('components.knCalculatedField.fields') }}</h5>
 
                         <ScrollPanel class="kn-list knListBox kn-flex kn-list-no-border-right" style="height: 200px !important; border: 1px">
-                            <div v-for="(field, index) in fields" v-bind:key="index" class="kn-list-item p-d-flex p-ai-center fieldType kn-truncated p-ml-2" draggable="true" @dragstart="dragElement($event, field, 'field')" v-tooltip.bottom="source === 'QBE' ? field.fieldLabel : field.fieldAlias">
+                            <div v-for="(field, index) in fields" :key="index" v-tooltip.bottom="source === 'QBE' ? field.fieldLabel : field.fieldAlias" class="kn-list-item p-d-flex p-ai-center fieldType kn-truncated p-ml-2" draggable="true" @dragstart="dragElement($event, field, 'field')">
                                 <div><i class="fa fa-solid fa-bars"></i></div>
                                 <div v-if="source === 'QBE'" class="p-ml-2">{{ field.fieldLabel }}</div>
                                 <div v-else class="p-ml-2">{{ field.fieldAlias }}</div>
@@ -39,7 +39,7 @@
                     </div>
                     <div class="p-col-4">
                         <span class="p-float-label p-m-2">
-                            <Dropdown id="category" v-model="selectedCategory" :options="availableCategories" class="kn-material-input" optionLabel="name" optionValue="code" @change="filterFunctions" />
+                            <Dropdown id="category" v-model="selectedCategory" :options="availableCategories" class="kn-material-input" option-label="name" option-value="code" @change="filterFunctions" />
                             <label for="category" class="kn-material-input-label"> {{ $t(descriptor.category.label) }} </label>
                         </span>
 
@@ -47,12 +47,12 @@
                         <ScrollPanel class="kn-list knListBox kn-flex kn-list-no-border-right" style="height: 150px !important; border: 1px">
                             <div
                                 v-for="(af, index) in availableFunctions"
-                                v-bind:key="index"
+                                :key="index"
+                                v-tooltip.bottom="af.formula"
                                 class="kn-list-item p-d-flex p-ai-center formulaType kn-truncated p-ml-2"
                                 :class="{ selected: af.formula === selectedFunction.formula }"
                                 draggable="true"
                                 @dragstart="dragElement($event, af, 'function')"
-                                v-tooltip.bottom="af.formula"
                                 @click="handleClick(af)"
                             >
                                 <div><i class="fa fa-solid fa-bars"></i></div>
@@ -72,7 +72,7 @@
                                 <a :href="selectedFunction.officialDocumentationLink" target="_blank"> {{ $t('components.knCalculatedField.officialDocumentation', { function: selectedFunction.label }) }}</a>
                             </div>
                         </span>
-                        <span class="p-m-2" v-else>
+                        <span v-else class="p-m-2">
                             <KnHint class="kn-hint-sm" :title="'components.knCalculatedField.title'" :hint="$t(descriptor.hint)" data-test="hint"></KnHint>
                         </span>
                     </div>
@@ -80,11 +80,11 @@
             </template>
         </Card>
 
-        <VCodeMirror :class="['p-mt-2 codeMirrorClass', this.readOnly ? 'readOnly' : '', v$.cf.formula.$invalid ? 'p-invalid' : '']" ref="codeMirror" v-model:value="cf.formula" :options="scriptOptions" @drop="drop" v-model="v$.cf.formula.$model" />
+        <VCodeMirror ref="codeMirror" v-model:value="cf.formula" v-model="v$.cf.formula.$model" :class="['p-mt-2 codeMirrorClass', readOnly ? 'readOnly' : '', v$.cf.formula.$invalid ? 'p-invalid' : '']" :options="scriptOptions" @drop="drop" />
 
         <template #footer>
             <Button :class="readOnly ? 'kn-button kn-button--primary' : 'kn-button kn-button--secondary'" :label="$t('common.cancel')" @click="cancel" />
-            <Button v-if="!readOnly" class="kn-button kn-button--primary" v-t="'common.apply'" @click="apply" :disabled="saveButtonDisabled" />
+            <Button v-if="!readOnly" v-t="'common.apply'" class="kn-button kn-button--primary" :disabled="saveButtonDisabled" @click="apply" />
         </template>
     </Dialog>
 </template>
@@ -115,6 +115,7 @@ export default defineComponent({
         source: String,
         propCalcFieldFunctions: { type: Array as PropType<IKnCalculatedFieldFunction[]>, required: true }
     },
+    emits: ['save', 'cancel', 'update:readOnly'],
     data() {
         return {
             cf: { formula: '' } as IKnCalculatedField,
@@ -142,7 +143,51 @@ export default defineComponent({
             showHelpPanel: false
         }
     },
-    emits: ['save', 'cancel', 'update:readOnly'],
+    computed: {
+        saveButtonDisabled(): any {
+            if (typeof this.valid === 'undefined') return this.v$.$invalid || !this.isValidFormula
+            else return this.v$.$invalid || !this.isValidFormula || !this.valid
+        }
+    },
+    watch: {
+        selectedFunction(newValue, oldValue) {
+            if (newValue && oldValue !== newValue && newValue.label) {
+                this.showHelpPanel = true
+            } else {
+                this.showHelpPanel = false
+            }
+        },
+        readOnly(value) {
+            this.scriptOptions.readOnly = value
+        },
+        visibility(newV, oldV) {
+            if (newV && newV !== oldV) {
+                if (!this.selectedCategory) {
+                    if (this.descriptor?.defaultSelectedCategory) this.selectedCategory = this.descriptor?.defaultSelectedCategory
+                    else this.selectedCategory = this.allCategories.name
+                }
+            }
+        },
+        cf: {
+            handler() {
+                if (this.cf.formula) {
+                    if (this.descriptor?.validationServiceUrl) {
+                        this.formulaValidationInterval = setInterval(() => {
+                            this.$http.get(this.descriptor?.validationServiceUrl).then((response: AxiosResponse<any>) => {
+                                this.isValidFormula = response.data[0]
+                                this.applyValidationResultsToFormula()
+                            })
+                            clearInterval(this.formulaValidationInterval)
+                            this.formulaValidationInterval = null
+                        }, 2500)
+                    } else {
+                        this.isValidFormula = true
+                    }
+                }
+            },
+            deep: true
+        }
+    },
     created() {
         this.calcFieldFunctions = [...this.propCalcFieldFunctions]
         this.availableFunctions = [...this.calcFieldFunctions].sort((a, b) => {
@@ -166,7 +211,7 @@ export default defineComponent({
         if (!this.cf.formula) this.cf.formula = ''
         if (this.readOnly && this.template && this.template.parameters) {
             this.cf = {} as IKnCalculatedField
-            for (var i = 0; i < this.template.parameters.length; i++) {
+            for (let i = 0; i < this.template.parameters.length; i++) {
                 if (this.template.parameters[i]['name'] == 'formula') this.cf.formula = this.template.parameters[i]['value']
                 else if (this.template.parameters[i]['name'] == 'colName') this.cf.colName = this.template.parameters[i]['value']
             }
@@ -218,7 +263,7 @@ export default defineComponent({
             this.selectedCategory = ''
         },
         filterFunctions() {
-            let tmp = [...this.calcFieldFunctions].sort((a, b) => {
+            const tmp = [...this.calcFieldFunctions].sort((a, b) => {
                 return a.name.localeCompare(b.name)
             })
             tmp.forEach((x) => {
@@ -226,7 +271,7 @@ export default defineComponent({
             })
             this.availableFunctions = tmp
             if (this.selectedCategory && this.selectedCategory !== this.allCategories.name) {
-                let cat = this.selectedCategory as any
+                const cat = this.selectedCategory as any
                 this.availableFunctions = tmp.filter((x) => x.category.toUpperCase() === cat.toUpperCase())
             }
         },
@@ -248,13 +293,13 @@ export default defineComponent({
         },
         clearCodemirror(cursor, data) {
             if (this.codeMirror.somethingSelected()) {
-                let selections = this.codeMirror.getSelections()
-                for (var sel of selections) {
+                const selections = this.codeMirror.getSelections()
+                for (const sel of selections) {
                     this.codeMirror.replaceRange('', { line: cursor.line, ch: cursor.ch - JSON.stringify(data).length }, { line: cursor.line, ch: cursor.ch - JSON.stringify(data).length + sel.length })
                 }
             }
         },
-        dragElement(ev, item, elementType: String) {
+        dragElement(ev, item, elementType: string) {
             if (this.readOnly) return
             if (elementType === 'function') {
                 ev.dataTransfer.setData('myItem', JSON.stringify({ item: item.formula, elementType: elementType }))
@@ -267,8 +312,8 @@ export default defineComponent({
             if (this.readOnly) return
             ev.stopPropagation()
             ev.preventDefault()
-            var data = JSON.parse(ev.dataTransfer.getData('myItem'))
-            var cursor = cm.coordsChar({
+            const data = JSON.parse(ev.dataTransfer.getData('myItem'))
+            const cursor = cm.coordsChar({
                 left: ev.x,
                 top: ev.y
             })
@@ -283,76 +328,31 @@ export default defineComponent({
                 start = this.codeMirror.findWordAt(cursor).anchor.ch
                 end = this.codeMirror.findWordAt(cursor).head.ch
             }
-            let from = { line: cursor.line, ch: start }
-            let to = { line: cursor.line, ch: end }
-            let range = this.codeMirror.getDoc().getRange(from, to)
-            let fieldAlias = this.source !== 'QBE' ? '$F{' + data.item.fieldAlias + '}' : data.item.fieldAlias
-            let spContent = data.elementType === 'function' ? data.item : fieldAlias
+            const from = { line: cursor.line, ch: start }
+            const to = { line: cursor.line, ch: end }
+            const range = this.codeMirror.getDoc().getRange(from, to)
+            const fieldAlias = this.source !== 'QBE' ? '$F{' + data.item.fieldAlias + '}' : data.item.fieldAlias
+            const spContent = data.elementType === 'function' ? data.item : fieldAlias
             if (range.match(/\(|\)|,|\./g)) {
                 this.codeMirror.getDoc().replaceSelection(spContent, cursor)
             } else {
                 this.codeMirror.getDoc().replaceRange(spContent, from, to)
             }
-            let lines = document.querySelector('.CodeMirror-line')
+            const lines = document.querySelector('.CodeMirror-line')
             if (lines) {
-                let textEl = lines.querySelector('div span') as any
+                const textEl = lines.querySelector('div span') as any
                 if (textEl) this.cf.formula = textEl.innerText
             }
             this.codeMirror.refresh()
         },
         applyValidationResultsToFormula() {
-            let from = { line: this.codeMirror.getDoc().firstLine(), ch: 0 }
-            let to = { line: this.codeMirror.getDoc().lastLine(), ch: this.codeMirror.getDoc().getLine(this.codeMirror.getDoc().lastLine()).length }
+            const from = { line: this.codeMirror.getDoc().firstLine(), ch: 0 }
+            const to = { line: this.codeMirror.getDoc().lastLine(), ch: this.codeMirror.getDoc().getLine(this.codeMirror.getDoc().lastLine()).length }
             if (!this.isValidFormula) {
                 this.codeMirror.getDoc().markText(from, to, { className: 'syntax-error' })
             } else {
                 this.codeMirror.getDoc().markText(from, to, { className: 'no-syntax-error' })
             }
-        }
-    },
-    watch: {
-        selectedFunction(newValue, oldValue) {
-            if (newValue && oldValue !== newValue && newValue.label) {
-                this.showHelpPanel = true
-            } else {
-                this.showHelpPanel = false
-            }
-        },
-        readOnly(value) {
-            this.scriptOptions.readOnly = value
-        },
-        visibility(newV, oldV) {
-            if (newV && newV !== oldV) {
-                if (!this.selectedCategory) {
-                    if (this.descriptor?.defaultSelectedCategory) this.selectedCategory = this.descriptor?.defaultSelectedCategory
-                    else this.selectedCategory = this.allCategories.name
-                }
-            }
-        },
-        cf: {
-            handler() {
-                if (this.cf.formula) {
-                    if (this.descriptor?.validationServiceUrl) {
-                        this.formulaValidationInterval = setInterval(() => {
-                            this.$http.get(this.descriptor?.validationServiceUrl).then((response: AxiosResponse<any>) => {
-                                this.isValidFormula = response.data[0]
-                                this.applyValidationResultsToFormula()
-                            })
-                            clearInterval(this.formulaValidationInterval)
-                            this.formulaValidationInterval = null
-                        }, 2500)
-                    } else {
-                        this.isValidFormula = true
-                    }
-                }
-            },
-            deep: true
-        }
-    },
-    computed: {
-        saveButtonDisabled(): any {
-            if (typeof this.valid === 'undefined') return this.v$.$invalid || !this.isValidFormula
-            else return this.v$.$invalid || !this.isValidFormula || !this.valid
         }
     }
 })

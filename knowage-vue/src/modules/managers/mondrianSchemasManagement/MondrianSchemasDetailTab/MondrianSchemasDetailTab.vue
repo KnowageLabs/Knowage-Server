@@ -6,45 +6,45 @@
                     <span class="p-float-label">
                         <InputText
                             id="name"
+                            v-model.trim="v$.schema.name.$model"
                             class="kn-material-input"
                             type="text"
-                            v-model.trim="v$.schema.name.$model"
                             :class="{
                                 'p-invalid': v$.schema.name.$invalid && v$.schema.name.$dirty
                             }"
-                            maxLength="100"
+                            max-length="100"
+                            data-test="name-input"
                             @blur="v$.schema.name.$touch()"
                             @input="onFieldChange('name', $event.target.value)"
-                            data-test="name-input"
                         />
                         <label for="name" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
                     </span>
-                    <KnValidationMessages :vComp="v$.schema.name" :additionalTranslateParams="{ fieldName: $t('common.name') }" />
+                    <KnValidationMessages :v-comp="v$.schema.name" :additional-translate-params="{ fieldName: $t('common.name') }" />
                 </div>
                 <div class="p-field p-mb-3">
                     <span class="p-float-label">
                         <InputText
                             id="description"
+                            v-model.trim="v$.schema.description.$model"
                             class="kn-material-input"
                             type="text"
-                            v-model.trim="v$.schema.description.$model"
                             :class="{
                                 'p-invalid': v$.schema.description.$invalid && v$.schema.description.$dirty
                             }"
-                            maxLength="500"
+                            max-length="500"
+                            data-test="description-input"
                             @blur="v$.schema.description.$touch()"
                             @input="onFieldChange('description', $event.target.value)"
-                            data-test="description-input"
                         />
                         <label for="description" class="kn-material-input-label">
                             {{ $t('common.description') }}
                         </label>
                     </span>
-                    <KnValidationMessages :vComp="v$.schema.description" :additionalTranslateParams="{ fieldName: $t('common.description') }" />
+                    <KnValidationMessages :v-comp="v$.schema.description" :additional-translate-params="{ fieldName: $t('common.description') }" />
                 </div>
                 <div class="p-field">
                     <span class="p-float-label">
-                        <KnInputFile label="" :changeFunction="onVersionUpload" accept=".xml,.csv" :visibility="true" />
+                        <KnInputFile label="" :change-function="onVersionUpload" accept=".xml,.csv" :visibility="true" />
                     </span>
                 </div>
             </form>
@@ -59,29 +59,29 @@
             </Toolbar>
         </template>
         <template #content>
-            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+            <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
             <div>
                 <div class="p-col">
                     <DataTable
                         v-if="!loading"
+                        v-model:selection="selectedVersion"
+                        v-model:filters="filters"
                         :value="versions"
                         :scrollable="true"
-                        scrollHeight="40vh"
+                        scroll-height="40vh"
                         :loading="loading"
                         :rows="7"
                         class="p-datatable-sm kn-table"
-                        dataKey="id"
-                        responsiveLayout="stack"
+                        data-key="id"
+                        responsive-layout="stack"
                         breakpoint="960px"
-                        v-model:selection="selectedVersion"
-                        v-model:filters="filters"
                         @row-select="onActiveVersionChange"
                     >
                         <template #header>
                             <div class="table-header">
                                 <span class="p-input-icon-left">
                                     <i class="pi pi-search" />
-                                    <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" badge="0" />
+                                    <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" badge="0" />
                                 </span>
                             </div>
                         </template>
@@ -89,11 +89,11 @@
                             {{ $t('common.info.noDataFound') }}
                         </template>
                         <template #filter="{ filterModel }">
-                            <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
+                            <InputText v-model="filterModel.value" type="text" class="p-column-filter"></InputText>
                         </template>
-                        <Column selectionMode="single" :header="$t('managers.mondrianSchemasManagement.headers.active')" headerStyle="width: 3em"></Column>
-                        <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" :style="detailDescriptor.table.column.style"> </Column>
-                        <Column field="creationDate" :header="$t('managers.mondrianSchemasManagement.headers.creationDate')" dataType="date">
+                        <Column selection-mode="single" :header="$t('managers.mondrianSchemasManagement.headers.active')" header-style="width: 3em"></Column>
+                        <Column v-for="col of columns" :key="col.field" :field="col.field" :header="$t(col.header)" :sortable="true" :style="detailDescriptor.table.column.style"> </Column>
+                        <Column field="creationDate" :header="$t('managers.mondrianSchemasManagement.headers.creationDate')" data-type="date">
                             <template #body="{ data }">
                                 {{ formatDate(data.creationDate) }}
                             </template>
@@ -150,6 +150,10 @@ export default defineComponent({
         }
     },
     emits: ['fieldChanged', 'activeVersionChanged', 'versionUploaded', 'versionsReloaded'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             loading: false,
@@ -171,15 +175,6 @@ export default defineComponent({
             schema: createValidations('schema', detailDescriptor.validations.schema)
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
-    mounted() {
-        if (this.selectedSchema) {
-            this.schema = { ...this.selectedSchema } as iSchema
-        }
-    },
     watch: {
         selectedSchema() {
             this.schema = { ...this.selectedSchema } as iSchema
@@ -191,16 +186,21 @@ export default defineComponent({
             }
         }
     },
+    mounted() {
+        if (this.selectedSchema) {
+            this.schema = { ...this.selectedSchema } as iSchema
+        }
+    },
     methods: {
         onFieldChange(fieldName: string, value: any) {
             this.$emit('fieldChanged', { fieldName, value })
         },
         onActiveVersionChange(event) {
-            let versionId = event.data.id
+            const versionId = event.data.id
             this.$emit('activeVersionChanged', versionId)
         },
         async onVersionUpload(event) {
-            let uploadedVersion = event.target.files[0]
+            const uploadedVersion = event.target.files[0]
             this.$emit('versionUploaded', uploadedVersion)
         },
         async loadVersions() {
@@ -231,12 +231,12 @@ export default defineComponent({
                             this.store.setError({ title: this.$t('common.error.downloading'), msg: this.$t('common.error.errorCreatingPackage') })
                         } else {
                             this.store.setInfo({ title: this.$t('managers.mondrianSchemasManagement.toast.downloadFile.downloaded'), msg: this.$t('managers.mondrianSchemasManagement.toast.downloadFile.ok') })
-                            var contentDisposition = response.headers['content-disposition']
+                            const contentDisposition = response.headers['content-disposition']
 
-                            var contentDispositionMatches = contentDisposition.match(/(?!([\b attachment;filename= \b])).*(?=)/g)
+                            const contentDispositionMatches = contentDisposition.match(/(?!([\b attachment;filename= \b])).*(?=)/g)
                             if (contentDispositionMatches && contentDispositionMatches.length > 0) {
-                                var fileAndExtension = contentDispositionMatches[0]
-                                var completeFileName = fileAndExtension.replaceAll('"', '')
+                                const fileAndExtension = contentDispositionMatches[0]
+                                const completeFileName = fileAndExtension.replaceAll('"', '')
                                 downloadDirect(response.data, completeFileName, 'application/zip; charset=utf-8')
                             }
                         }

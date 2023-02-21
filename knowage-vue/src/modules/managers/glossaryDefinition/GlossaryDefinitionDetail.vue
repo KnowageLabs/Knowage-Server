@@ -7,7 +7,7 @@
                 <FabButton icon="fas fa-plus" class="fab-button" @click="addNewGlossary('Save')" />
             </template>
         </Toolbar>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
         <Card class="p-m-3">
             <template #header>
                 <Toolbar class="kn-toolbar kn-toolbar--secondary">
@@ -28,15 +28,15 @@
                 <Message class="p-mt-0">{{ $t('managers.glossary.glossaryDefinition.help') }}</Message>
                 <div>
                     <div class="p-field p-d-flex p-ai-center">
-                        <div class="p-d-flex p-flex-column p-mr-2" id="glossary-select-container">
+                        <div id="glossary-select-container" class="p-d-flex p-flex-column p-mr-2">
                             <label for="glossary" class="kn-material-input-label">{{ $t('managers.glossary.glossaryDefinition.title') }}</label>
                             <Dropdown
                                 id="glossary"
-                                class="kn-material-input"
                                 v-model="selectedGlossaryId"
+                                class="kn-material-input"
                                 :options="glossaries"
-                                optionLabel="GLOSSARY_NM"
-                                optionValue="GLOSSARY_ID"
+                                option-label="GLOSSARY_NM"
+                                option-value="GLOSSARY_ID"
                                 :editable="selectedGlossary"
                                 :placeholder="$t('managers.glossary.glossaryDefinition.glossary')"
                                 @change="loadGlossaryInfo($event.value, null)"
@@ -47,14 +47,14 @@
                         </div>
                         <div v-if="selectedGlossary" id="code-container">
                             <span class="p-float-label">
-                                <InputText id="code" class="kn-material-input full-width" v-model.trim="selectedGlossary.GLOSSARY_CD" @blur="handleSaveGlossary" />
+                                <InputText id="code" v-model.trim="selectedGlossary.GLOSSARY_CD" class="kn-material-input full-width" @blur="handleSaveGlossary" />
                                 <label for="code" class="kn-material-input-label"> {{ $t('managers.glossary.common.code') }}</label>
                             </span>
                         </div>
                     </div>
                     <div v-if="selectedGlossary" class="p-field p-d-flex kn-flex">
                         <div class="p-float-label kn-flex">
-                            <InputText id="description" class="kn-material-input full-width" v-model.trim="selectedGlossary.GLOSSARY_DS" @blur="handleSaveGlossary" />
+                            <InputText id="description" v-model.trim="selectedGlossary.GLOSSARY_DS" class="kn-material-input full-width" @blur="handleSaveGlossary" />
                             <label for="description" class="kn-material-input-label"> {{ $t('common.description') }}</label>
                         </div>
                     </div>
@@ -69,9 +69,9 @@
                         </template>
                     </Toolbar>
                     <div class="p-d-flex p-flex-row p-m-3">
-                        <InputText id="search-input" class="kn-material-input" v-model="searchWord" :placeholder="$t('common.search')" @input="filterGlossaryTree" data-test="search-input" />
+                        <InputText id="search-input" v-model="searchWord" class="kn-material-input" :placeholder="$t('common.search')" data-test="search-input" @input="filterGlossaryTree" />
                     </div>
-                    <Tree id="glossary-tree" :value="nodes" :expandedKeys="expandedKeys" @nodeExpand="listContents(selectedGlossary.GLOSSARY_ID, $event)">
+                    <Tree id="glossary-tree" :value="nodes" :expanded-keys="expandedKeys" @nodeExpand="listContents(selectedGlossary.GLOSSARY_ID, $event)">
                         <template #default="slotProps">
                             <div
                                 class="p-d-flex p-flex-row p-ai-center"
@@ -87,15 +87,15 @@
                                 <div v-show="buttonVisible[slotProps.node.key]">
                                     <Button
                                         v-if="!slotProps.node.data.HAVE_WORD_CHILD && slotProps.node.data.CONTENT_NM"
+                                        v-tooltip.top="$t('managers.glossary.glossaryDefinition.addNode')"
                                         icon="pi pi-bars"
                                         class="p-button-link p-button-sm p-p-0"
-                                        v-tooltip.top="$t('managers.glossary.glossaryDefinition.addNode')"
                                         @click.stop="showNodeDialog(slotProps.node, 'new')"
                                     />
-                                    <Button v-if="!slotProps.node.data.HAVE_CONTENTS_CHILD && slotProps.node.data.CONTENT_NM" icon="pi pi-book" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('managers.glossary.glossaryDefinition.addWord')" @click.stop="addWord(slotProps.node)" />
-                                    <Button v-if="slotProps.node.data.CONTENT_NM" icon="pi pi-pencil" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.edit')" @click.stop="showNodeDialog(slotProps.node, 'edit')" />
-                                    <Button icon="pi pi-info-circle" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('managers.glossary.glossaryDefinition.showInfo')" @click.stop="$emit('infoClicked', slotProps.node.data)" />
-                                    <Button icon="far fa-trash-alt" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.delete')" @click.stop="deleteNodeConfirm(slotProps.node)" />
+                                    <Button v-if="!slotProps.node.data.HAVE_CONTENTS_CHILD && slotProps.node.data.CONTENT_NM" v-tooltip.top="$t('managers.glossary.glossaryDefinition.addWord')" icon="pi pi-book" class="p-button-link p-button-sm p-p-0" @click.stop="addWord(slotProps.node)" />
+                                    <Button v-if="slotProps.node.data.CONTENT_NM" v-tooltip.top="$t('common.edit')" icon="pi pi-pencil" class="p-button-link p-button-sm p-p-0" @click.stop="showNodeDialog(slotProps.node, 'edit')" />
+                                    <Button v-tooltip.top="$t('managers.glossary.glossaryDefinition.showInfo')" icon="pi pi-info-circle" class="p-button-link p-button-sm p-p-0" @click.stop="$emit('infoClicked', slotProps.node.data)" />
+                                    <Button v-tooltip.top="$t('common.delete')" icon="far fa-trash-alt" class="p-button-link p-button-sm p-p-0" @click.stop="deleteNodeConfirm(slotProps.node)" />
                                 </div>
                             </div>
                         </template>
@@ -104,7 +104,7 @@
             </template>
         </Card>
         <GlossaryDefinitionHint v-if="showHint"></GlossaryDefinitionHint>
-        <GlossaryDefinitionNodeDialog :visible="nodeDialogVisible" :selectedContent="selectedContent" @save="saveContent" @close="nodeDialogVisible = false"></GlossaryDefinitionNodeDialog>
+        <GlossaryDefinitionNodeDialog :visible="nodeDialogVisible" :selected-content="selectedContent" @save="saveContent" @close="nodeDialogVisible = false"></GlossaryDefinitionNodeDialog>
     </div>
 </template>
 
@@ -135,6 +135,10 @@ export default defineComponent({
     },
     props: { reloadTree: { type: Boolean } },
     emits: ['addWord', 'infoClicked'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             glossaryDefinitionDescriptor,
@@ -161,10 +165,6 @@ export default defineComponent({
             this.updateParentNode('HAVE_WORD_CHILD', true)
             await this.listContents(this.selectedGlossaryId as number, this.selectedNode)
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         await this.loadGlossaryList()
@@ -198,7 +198,7 @@ export default defineComponent({
             }
 
             const parentId = parent ? parent.id : null
-            let content = [] as iNode[]
+            const content = [] as iNode[]
             await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/glossary/listContents?GLOSSARY_ID=${glossaryId}&PARENT_ID=${parentId}`).then((response: AxiosResponse<any>) => {
                 response.data.forEach((el: any) => content.push(this.createNode(el, parent)))
                 content.sort((a: iNode, b: iNode) => (a.label > b.label ? 1 : -1))

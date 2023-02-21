@@ -3,11 +3,11 @@
         <div v-for="(columnGroup, index) in columnGroupsModel.groups" :key="index" class="p-grid p-col-12 p-ai-center p-ai-center p-pt-2">
             <div class="p-col-12 p-sm-12 p-md-4 p-d-flex p-flex-column p-p-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('common.label') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="columnGroup.label" :disabled="columnGroupsDisabled" @change="onColumnGroupLabelChanged(columnGroup)" />
+                <InputText v-model="columnGroup.label" class="kn-material-input p-inputtext-sm" :disabled="columnGroupsDisabled" @change="onColumnGroupLabelChanged(columnGroup)" />
             </div>
             <div class="p-col-11 p-sm-11 p-md-7 p-d-flex p-flex-column p-p-2">
                 <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
-                <WidgetEditorColumnsMultiselect :value="columnGroup.columns" :availableTargetOptions="availableColumnOptions" :widgetColumnsAliasMap="widgetColumnsAliasMap" optionLabel="alias" optionValue="id" :disabled="columnGroupsDisabled" @change="onColumnsSelected($event, columnGroup)">
+                <WidgetEditorColumnsMultiselect :value="columnGroup.columns" :available-target-options="availableColumnOptions" :widget-columns-alias-map="widgetColumnsAliasMap" option-label="alias" option-value="id" :disabled="columnGroupsDisabled" @change="onColumnsSelected($event, columnGroup)">
                 </WidgetEditorColumnsMultiselect>
             </div>
             <div class="p-col-1 p-d-flex p-flex-column p-jc-center p-ai-center p-pl-2">
@@ -24,12 +24,11 @@ import { emitter } from '../../../../../DashboardHelpers'
 import { removeColumnGroupFromModel } from '../../../helpers/tableWidget/TableWidgetFunctions'
 import cryptoRandomString from 'crypto-random-string'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
-import InputSwitch from 'primevue/inputswitch'
 import WidgetEditorColumnsMultiselect from '../../common/WidgetEditorColumnsMultiselect.vue'
 
 export default defineComponent({
     name: 'table-widget-column-groups',
-    components: { InputSwitch, WidgetEditorColumnsMultiselect },
+    components: { WidgetEditorColumnsMultiselect },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {

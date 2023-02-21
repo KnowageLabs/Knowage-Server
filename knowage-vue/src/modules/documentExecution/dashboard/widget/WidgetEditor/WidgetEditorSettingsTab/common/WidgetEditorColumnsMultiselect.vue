@@ -1,5 +1,5 @@
 <template>
-    <MultiSelect v-model="modelValue" :options="options" :optionLabel="optionLabel" :optionValue="optionsValue" :disabled="disabled" @change="$emit('change', $event)"> </MultiSelect>
+    <MultiSelect v-model="modelValue" :options="options" :option-label="optionLabel" :option-value="optionsValue" :disabled="disabled" @change="$emit('change', $event)"> </MultiSelect>
 </template>
 
 <script lang="ts">
@@ -17,14 +17,6 @@ export default defineComponent({
             modelValue: [] as any[]
         }
     },
-    watch: {
-        value() {
-            this.loadValue()
-        }
-    },
-    created() {
-        this.loadValue()
-    },
     computed: {
         options() {
             const targetOptions = [] as (IWidgetColumn | { id: string; alias: string })[]
@@ -34,6 +26,14 @@ export default defineComponent({
             })
             return targetOptions.concat(this.availableTargetOptions as any)
         }
+    },
+    watch: {
+        value() {
+            this.loadValue()
+        }
+    },
+    created() {
+        this.loadValue()
     },
     methods: {
         loadValue() {

@@ -1,5 +1,5 @@
 <template>
-    <Dialog id="function-catalog-detail-dialog" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :contentStyle="functionsCatalogDetailDescriptor.dialog.style" :visible="visible" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="false">
+    <Dialog id="function-catalog-detail-dialog" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :content-style="functionsCatalogDetailDescriptor.dialog.style" :visible="visible" :modal="false" :closable="false" position="right" :base-z-index="1" :auto-z-index="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -10,44 +10,44 @@
                     <Button class="kn-button p-button-text" :label="$t('common.save')" :disabled="readonly" @click="onSave"></Button>
                 </template>
             </Toolbar>
-            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+            <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
         </template>
 
         <TabView v-model:activeIndex="activeTab" >
             <TabPanel>
                 <template #header>
                     <span>{{ $t('common.general') }}</span>
-                    <Badge class="p-ml-2" severity="danger" v-if="invalidGeneral"></Badge>
+                    <Badge v-if="invalidGeneral" class="p-ml-2" severity="danger"></Badge>
                 </template>
 
-                <FunctionsCatalogGeneralTab :propFunction="selectedFunction" :readonly="readonly" :functionTypes="filteredFunctionTypes"></FunctionsCatalogGeneralTab>
+                <FunctionsCatalogGeneralTab :prop-function="selectedFunction" :readonly="readonly" :function-types="filteredFunctionTypes"></FunctionsCatalogGeneralTab>
             </TabPanel>
             <TabPanel>
                 <template #header>
                     <span>{{ $t('common.input') }}</span>
-                    <Badge class="p-ml-2" severity="danger" v-if="invalidInput"></Badge>
+                    <Badge v-if="invalidInput" class="p-ml-2" severity="danger"></Badge>
                 </template>
 
-                <FunctionsCatalogInputTab :propFunction="selectedFunction" :readonly="readonly"></FunctionsCatalogInputTab>
+                <FunctionsCatalogInputTab :prop-function="selectedFunction" :readonly="readonly"></FunctionsCatalogInputTab>
             </TabPanel>
             <TabPanel>
                 <template #header>
                     <span>{{ $t('common.script') }}</span>
-                    <Badge class="p-ml-2" severity="danger" v-if="invalidCode"></Badge>
+                    <Badge v-if="invalidCode" class="p-ml-2" severity="danger"></Badge>
                 </template>
-                <FunctionsCatalogScriptTab :activeTab="activeTab" :propFunction="selectedFunction" :readonly="readonly"></FunctionsCatalogScriptTab>
+                <FunctionsCatalogScriptTab :active-tab="activeTab" :prop-function="selectedFunction" :readonly="readonly"></FunctionsCatalogScriptTab>
             </TabPanel>
             <TabPanel>
                 <template #header>
                     <span>{{ $t('common.output') }}</span>
-                    <Badge class="p-ml-2" severity="danger" v-if="invalidOutput"></Badge>
+                    <Badge v-if="invalidOutput" class="p-ml-2" severity="danger"></Badge>
                 </template>
 
-                <FunctionsCatalogOutputTab :propFunction="selectedFunction" :readonly="readonly"></FunctionsCatalogOutputTab>
+                <FunctionsCatalogOutputTab :prop-function="selectedFunction" :readonly="readonly"></FunctionsCatalogOutputTab>
             </TabPanel>
         </TabView>
 
-        <FunctionsCatalogWarningDialog :visible="warningVisible" :title="warningTitle" :missingFields="missingFields" @close="warningVisible = false"></FunctionsCatalogWarningDialog>
+        <FunctionsCatalogWarningDialog :visible="warningVisible" :title="warningTitle" :missing-fields="missingFields" @close="warningVisible = false"></FunctionsCatalogWarningDialog>
     </Dialog>
 </template>
 
@@ -76,25 +76,21 @@ export default defineComponent({
         functionTypes: { type: Array }
     },
     emits: ['created', 'close'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             functionsCatalogDetailDescriptor,
             selectedFunction: {} as iFunction,
             filteredFunctionTypes: [] as iFunctionType[],
-            missingFields: [] as String[],
+            missingFields: [] as string[],
             warningTitle: '',
             operation: 'create',
             warningVisible: false,
             activeTab: 0,
             loading: false
-        }
-    },
-    watch: {
-        propFunction() {
-            this.loadFunction()
-        },
-        functionTypes() {
-            this.loadFunctionTypes()
         }
     },
     computed: {
@@ -118,9 +114,13 @@ export default defineComponent({
             return !this.validateOutputColumns(false)
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
+    watch: {
+        propFunction() {
+            this.loadFunction()
+        },
+        functionTypes() {
+            this.loadFunctionTypes()
+        }
     },
     created() {
         this.loadFunction()
