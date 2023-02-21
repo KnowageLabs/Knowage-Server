@@ -1,5 +1,5 @@
 <template>
-    <grid-item :key="item.id" class="p-d-flex widget-grid-item" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" drag-allow-from=".drag-handle" @resized="resizedEvent" :class="{ canEdit: canEditDashboard(document) }">
+    <grid-item :key="item.id" class="p-d-flex widget-grid-item" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" drag-allow-from=".drag-handle" :class="{ canEdit: canEditDashboard(document) }" @resized="resizedEvent">
         <div v-if="initialized" class="drag-handle"></div>
         <ProgressSpinner v-if="loading || customChartLoading" class="kn-progress-spinner" />
         <Skeleton v-if="!initialized" shape="rectangle" height="100%" border-radius="0" />
@@ -33,7 +33,7 @@
             @launchSelection="launchSelection"
             @changeFocus="changeFocus"
         ></WidgetButtonBar>
-        <ContextMenu ref="contextMenu" :model="items" v-if="canEditDashboard(document)" />
+        <ContextMenu v-if="canEditDashboard(document)" ref="contextMenu" :model="items" />
     </grid-item>
 </template>
 

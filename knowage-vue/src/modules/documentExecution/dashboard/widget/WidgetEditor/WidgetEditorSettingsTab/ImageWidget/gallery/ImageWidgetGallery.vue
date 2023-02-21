@@ -11,7 +11,17 @@
                     <KnInputFile :change-function="setImageForUpload" accept=".png, .jpg, .jpeg" :trigger-input="triggerImageUpload" />
                     <label class="kn-material-input-label p-mr-5"> {{ $t('dashboard.widgetEditor.imageWidget.uploadImage') }} </label>
                 </div>
-                <ImageWidgetGalleryCard v-for="(image, index) of images" :key="index" class="p-col-12 p-md-6 p-lg-4 kn-cursor-pointer" :is-selected="selectedImage?.imgId === image.imgId" :image-prop="image" @click="setSelectedImage(image)" @delete="onImageDelete" />
+                <ImageWidgetGalleryCard
+                    v-for="(image, index) of images"
+                    :key="index"
+                    class="p-col-12 p-md-6 p-lg-4 p-p-0 kn-cursor-pointer"
+                    :class="[selectedImage?.imgId === image.imgId ? 'selected-card-image-container' : '']"
+                    :is-selected="selectedImage?.imgId === image.imgId"
+                    :image-prop="image"
+                    @imageSelected="setSelectedImage(image)"
+                    @openSidebar="openSidebar(image)"
+                    @delete="onImageDelete"
+                />
 
                 <div v-if="sidebarVisible" id="image-widget-gallery-card-sidebar-container">
                     <ImageWidgetGallerySidebar :selected-image="selectedImage" @close="sidebarVisible = false"></ImageWidgetGallerySidebar>
@@ -45,7 +55,8 @@ export default defineComponent({
             images: [] as IImage[],
             triggerImageUpload: false,
             selectedImage: null as IImage | null,
-            sidebarVisible: false
+            sidebarVisible: false,
+            selectedSidebarImage: null as IImage | null
         }
     },
     watch: {
@@ -130,11 +141,16 @@ export default defineComponent({
             if (index !== -1) {
                 this.images.splice(index, 1)
                 this.setInfo({ title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+                this.selectedSidebarImage = null
+                this.sidebarVisible = false
             }
         },
         setSelectedImage(image: IImage) {
             this.selectedImage = image
             this.widgetModel.settings.configuration.image.id = image.imgId
+        },
+        openSidebar(image: IImage) {
+            this.selectedSidebarImage = image
             this.sidebarVisible = true
         }
     }
@@ -172,5 +188,9 @@ export default defineComponent({
 
 #image-widget-gallery-content {
     position: relative;
+}
+
+.selected-card-image-container {
+    border: 3px solid var(--kn-color-primary);
 }
 </style>
