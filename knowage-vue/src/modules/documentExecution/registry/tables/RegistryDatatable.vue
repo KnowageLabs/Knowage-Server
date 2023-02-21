@@ -51,10 +51,11 @@ export default defineComponent({
         pagination: { type: Object },
         entity: { type: Object as PropType<string | null> },
         id: { type: String },
+        keyColumnName: { type: String as any },
         stopWarningsState: { type: Array },
         dataLoading: { type: Boolean }
     },
-    emits: ['rowChanged', 'rowDeleted', 'pageChanged', 'warningChanged', 'saveRegistry'],
+    emits: ['rowChanged', 'rowDeleted', 'pageChanged', 'warningChanged', 'saveRegistry', 'sortingChanged'],
     data() {
         return {
             registryDescriptor,
@@ -83,7 +84,11 @@ export default defineComponent({
             selectedRows: [] as any,
             gridOptions: null as any,
             context: null as any,
-            ctrlDown: false
+            ctrlDown: false,
+            sortModel: {
+                fieldName: '',
+                orderType: 'NONE'
+            }
         }
     },
     computed: {
@@ -207,6 +212,11 @@ export default defineComponent({
                     this.addColumnCheckboxRendererProps(el)
                     this.addColumnFormattingProps(el)
 
+                    el.headerComponent = HeaderRenderer
+                    el.headerComponentParams = {
+                        sortModel: this.sortModel
+                    }
+
                     this.columns.push(el)
                 }
             })
@@ -216,7 +226,6 @@ export default defineComponent({
         },
         addColumnEditableProps(el: any) {
             if (el.editable) {
-                el.headerComponent = HeaderRenderer
                 el.cellEditor = CellEditor
                 el.cellEditorParams = {
                     comboColumnOptions: this.comboColumnOptions
@@ -390,6 +399,7 @@ export default defineComponent({
                 tempRow.uniqueId = cryptoRandomString({ length: 16, type: 'base64' })
                 tempRow.isNew = true
                 delete tempRow.id
+                if (this.keyColumnName) delete tempRow[this.keyColumnName]
                 this.addRowToFirstPosition(tempRow)
             })
         },
@@ -587,6 +597,19 @@ export default defineComponent({
         },
         getRowStyle(params) {
             if (params.data.isNew) return { 'background-color': registryDescriptor.styles.colors.newRowColor }
+        },
+        sortingChanged(updatedSortModel) {
+            this.sortModel = updatedSortModel
+            this.columns.forEach((el: any) => {
+                if (el.isVisible) {
+                    el.headerComponent = HeaderRenderer
+                    el.headerComponentParams = {
+                        sortModel: updatedSortModel
+                    }
+                }
+            })
+            this.refreshGridConfiguration()
+            this.$emit('sortingChanged', updatedSortModel)
         }
     }
 })
