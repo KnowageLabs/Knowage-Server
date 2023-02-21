@@ -91,6 +91,9 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		Integer maxSize = null;
 		IDataStore dataStore = null;
 
+		String fieldName = null;
+		String orderType = null;
+
 		Query query = null;
 
 		Integer resultNumber = null;
@@ -118,11 +121,21 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 				limit = getAttributeAsInteger(LIMIT);
 			}
 
+			Object fieldNameO = getAttribute("fieldName");
+			if (fieldNameO != null && !fieldNameO.toString().equals("")) {
+				fieldName = null;
+			}
+
+			Object orderTypeO = getAttribute("orderType");
+			if (orderTypeO != null && !orderTypeO.toString().equals("")) {
+				orderType = null;
+			}
+
 			Assert.assertNotNull(getEngineInstance(),
 					"It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
 
 			// retrieving query specified by id on request
-			query = getQuery();
+			query = getQuery(fieldName, orderType);
 			Assert.assertNotNull(query, "Query object with id [" + getAttributeAsString(QUERY_ID) + "] does not exist in the catalogue");
 			if (getEngineInstance().getActiveQuery() == null || !getEngineInstance().getActiveQuery().getId().equals(query.getId())) {
 				logger.debug("Query with id [" + query.getId() + "] is not the current active query. A new statment will be generated");

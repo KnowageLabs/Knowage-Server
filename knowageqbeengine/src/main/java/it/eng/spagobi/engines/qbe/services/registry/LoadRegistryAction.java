@@ -107,7 +107,13 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 
 	@Override
 	public Query getQuery() {
-		Query query = buildQuery();
+		Query query = buildQuery(null, null);
+		return query;
+	}
+
+	@Override
+	public Query getQuery(String fieldName, String orderType) {
+		Query query = buildQuery(fieldName, orderType);
 		return query;
 	}
 
@@ -719,7 +725,7 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 		}
 	}
 
-	private Query buildQuery() {
+	private Query buildQuery(String fieldName, String orderType) {
 		logger.debug("IN");
 		Query query = null;
 		try {
@@ -757,9 +763,14 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 						name = field.getName();
 					}
 
-					String sorter = column.getSorter() != null && (column.getSorter().equalsIgnoreCase("ASC") || column.getSorter().equalsIgnoreCase("DESC"))
-							? column.getSorter().toUpperCase()
-							: null;
+					String sorter = null;
+					if (fieldName != null && orderType != null) {
+						sorter = name.equals(fieldName) ? orderType.toUpperCase() : null;
+					} else {
+						sorter = column.getSorter() != null && (column.getSorter().equalsIgnoreCase("ASC") || column.getSorter().equalsIgnoreCase("DESC"))
+								? column.getSorter().toUpperCase()
+								: null;
+					}
 
 					query.addSelectFiled(field.getUniqueName(), "NONE", field.getName(), true, true, false, sorter, field.getPropertyAsString("format"), null,
 							field.getJavaClass());
