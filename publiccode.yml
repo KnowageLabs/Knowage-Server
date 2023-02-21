@@ -46,7 +46,7 @@ description:
       - |-
         SMART DATA: combina indici Solr con altre fonti dati e abilita faceted
         views e full text search
-    genericName: Suite per la BI e gli Analytics
+    genericName: Business Intelligence e Analytics
     longDescription: |
       KNOWAGE è la suite open source per la business intelligence e gli analytics che
       affianca alle tradizionali capacità di business intelligence, strumenti
