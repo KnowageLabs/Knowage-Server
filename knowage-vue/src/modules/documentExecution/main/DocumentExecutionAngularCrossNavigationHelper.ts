@@ -91,7 +91,7 @@ const getParameterValueForCrossNavigation = (vueComponent: any, parameterLabel: 
 }
 
 const formatNavigationParams = (vueComponent: any, otherOutputParameters: any[], navigationParams: any) => {
-    let formatedParams = {} as any
+    const formatedParams = {} as any
 
     otherOutputParameters.forEach((el: any) => {
         let found = false

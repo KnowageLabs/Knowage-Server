@@ -1,3 +1,5 @@
+import { iParameter } from "@/components/UI/KnParameterSidebar/KnParameterSidebar"
+
 export interface iURLData {
     engineLabel: string,
     sbiExecutionId: string,
@@ -44,13 +46,14 @@ export interface iMetadata {
     generalMetadata: { name: string, value: string }[],
     shortText: { id: number, name: string, value: string }[],
     longText: { id: number, name: string, value: string }[],
-    file: { id: number, name: string, value: any, fileToSave?: { file: {}, fileName: string } }[],
+    file: { id: number, name: string, value: any, fileToSave?: { file: any, fileName: string } }[],
 }
 
 export interface IDocumentNavigationParameter {
     id: string,
     value: IDocumentNavigationParameterValue | string,
-    fixed: boolean
+    fixed: boolean,
+    sourceDriverUrlName?: string,
 }
 
 export interface IDocumentNavigationParameterValue {
@@ -76,7 +79,9 @@ export interface ICrossNavigationParameter {
     targetDriverUrlName: string,
     parameterValue: { value: string | number, description: string }[],
     multivalue: boolean,
-    type: 'fixed'
+    type: 'fixed' | 'fromSourceDocumentDriver',
+    parameterType?: string,
+    selectionType?: string
 }
 
 export interface ICrossNavigationBreadcrumb {

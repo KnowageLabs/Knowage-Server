@@ -343,6 +343,8 @@ export default defineComponent({
             this.parameters?.filterStatus.forEach((el: any) => setDataDependency(this.parameters, el))
             this.parameters?.filterStatus.forEach((el: any) => setLovsDependency(this.parameters, el))
             this.parameters?.filterStatus.forEach((el: any) => this.updateVisualDependency(el))
+
+            console.log('------------ LOADED DRIVERS IN PARAMETER SIDEBAR: ', this.parameters)
         },
         setDataDependency(parameter: iParameter) {
             if (parameter.dependencies.data.length !== 0) {
