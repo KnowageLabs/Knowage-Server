@@ -47,6 +47,7 @@
                         @rowDeleted="onRowDeleted"
                         @pageChanged="updatePagination"
                         @warningChanged="setWarningState"
+                        @sortingChanged="onSortingChanged"
                     ></RegistryDatatable>
                 </div>
             </div>
@@ -91,7 +92,8 @@ export default defineComponent({
             stopWarningsState: [] as any[],
             isPivot: false,
             loading: false,
-            dataLoading: false
+            dataLoading: false,
+            sortModel: null as any
         }
     },
     watch: {
@@ -129,6 +131,12 @@ export default defineComponent({
             })
 
             postData.append('start', '' + this.pagination.start)
+
+            if (this.sortModel && this.sortModel.fieldName && this.sortModel.orderType) {
+                postData.append('fieldName', '' + this.sortModel.fieldName)
+                postData.append('orderType', '' + this.sortModel.orderType)
+            }
+
             await this.$http
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=LOAD_REGISTRY_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, {
                     headers: {
@@ -336,6 +344,12 @@ export default defineComponent({
             await this.loadRegistry()
             this.loadRows(resetRows)
             this.dataLoading = false
+        },
+        async onSortingChanged(sortModel) {
+            this.pagination.start = 0
+            this.pagination.size = 0
+            this.sortModel = sortModel
+            await this.reloadRegistryData(true)
         }
     }
 })

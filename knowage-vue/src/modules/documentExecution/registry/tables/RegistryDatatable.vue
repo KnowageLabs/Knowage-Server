@@ -1,5 +1,6 @@
 <template>
     <div id="registry-gric-container" class="kn-height-full p-d-flex p-flex-column">
+        {{ sortModel }}
         <div id="registry-grid-toolbar" class="p-d-flex p-flex-row p-ai-center" :style="registryDescriptor.styles.tableToolbar">
             <div v-if="selectedRows.length > 0" class="p-ml-1">{{ selectedRows.length }} {{ $t('documentExecution.registry.grid.rowsSelected') }}</div>
             <div id="operation-buttons-containter" class="p-ml-auto" :style="registryDescriptor.styles.tableToolbarButtonContainer">
@@ -10,6 +11,7 @@
             <Button icon="fas fa-save" class="p-button-text p-button-rounded p-button-plain kn-button-light" @click="$emit('saveRegistry')" />
         </div>
         <ag-grid-vue v-if="!loading" class="registry-grid ag-theme-alpine kn-height-full" :rowData="rows" :gridOptions="gridOptions" :context="context" />
+        <!-- <ag-grid-vue class="registry-grid ag-theme-alpine kn-height-full" :rowData="rows" :gridOptions="gridOptions" :context="context" /> -->
     </div>
 
     <RegistryDatatableWarningDialog :visible="warningVisible" :columns="dependentColumns" @close="onWarningDialogClose"></RegistryDatatableWarningDialog>
@@ -47,7 +49,7 @@ export default defineComponent({
         stopWarningsState: { type: Array },
         dataLoading: { type: Boolean }
     },
-    emits: ['rowChanged', 'rowDeleted', 'pageChanged', 'warningChanged', 'saveRegistry'],
+    emits: ['rowChanged', 'rowDeleted', 'pageChanged', 'warningChanged', 'saveRegistry', 'sortingChanged'],
     data() {
         return {
             registryDescriptor,
@@ -76,7 +78,11 @@ export default defineComponent({
             selectedRows: [] as any,
             gridOptions: null as any,
             context: null as any,
-            ctrlDown: false
+            ctrlDown: false,
+            sortModel: {
+                fieldName: '',
+                orderType: 'NONE'
+            }
         }
     },
     computed: {
@@ -167,6 +173,7 @@ export default defineComponent({
 
                 // CALLBACKS
                 onGridReady: this.onGridReady,
+                // onSortChanged: this.onSortChanged1,
                 getRowStyle: this.getRowStyle,
                 getRowId: this.getRowId
             }
@@ -200,6 +207,11 @@ export default defineComponent({
                     this.addColumnCheckboxRendererProps(el)
                     this.addColumnFormattingProps(el)
 
+                    el.headerComponent = HeaderRenderer
+                    el.headerComponentParams = {
+                        sortModel: this.sortModel
+                    }
+
                     this.columns.push(el)
                 }
             })
@@ -209,7 +221,6 @@ export default defineComponent({
         },
         addColumnEditableProps(el: any) {
             if (el.editable) {
-                el.headerComponent = HeaderRenderer
                 el.cellEditor = CellEditor
                 el.cellEditorParams = {
                     comboColumnOptions: this.comboColumnOptions
@@ -580,6 +591,19 @@ export default defineComponent({
         },
         getRowStyle(params) {
             if (params.data.isNew) return { 'background-color': registryDescriptor.styles.colors.newRowColor }
+        },
+        sortingChanged(updatedSortModel) {
+            this.sortModel = updatedSortModel
+            this.columns.forEach((el: any) => {
+                if (el.isVisible) {
+                    el.headerComponent = HeaderRenderer
+                    el.headerComponentParams = {
+                        sortModel: updatedSortModel
+                    }
+                }
+            })
+            this.refreshGridConfiguration()
+            this.$emit('sortingChanged', updatedSortModel)
         }
     }
 })
