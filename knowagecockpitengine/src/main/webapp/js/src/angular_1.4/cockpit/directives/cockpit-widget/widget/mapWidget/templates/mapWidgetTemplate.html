@@ -4,6 +4,18 @@
 			<md-tooltip>{{translate.load('sbi.cockpit.map.togglemapoptions')}}</md-tooltip>
 			<i class="fa fa-cog"></i>
 		</div>
+		<div class="optionsController" ng-click="toggleSidenav()" ng-class="{ 'sideNavOpened': sideNavOpened }" ng-if="!ngModel.controlPanelAlwaysOpen">
+			<md-tooltip>{{translate.load('sbi.cockpit.map.togglemapoptions')}}</md-tooltip>
+			<i class="fa fa-cog"></i>
+		</div>
+		<div class="mapAnimationController" ng-show="hasAnimatedLayer()">
+			<select ng-model="selectedAnimatedLayerName">
+				<option ng-value="currLayer.name" ng-repeat="currLayer in ngModel.content.layers | orderBy:'':true | filter:isLayerAnimated">{{ currLayer.alias }}</option>
+			</select>
+			<md-button class="md-icon-button" ng-click="toggleAnimation(selectedAnimatedLayerName)">
+				<md-icon md-font-icon="fas" ng-class="{ 'fa-play': !animationStatus[selectedAnimatedLayerName].inPlay, 'fa-stop': animationStatus[selectedAnimatedLayerName].inPlay }"></md-icon>
+			</md-button>
+		</div>
 		<ng-include src="getTemplateUrl('mapWidgetLegendPanel')"></ng-include>
 	</div>
 	

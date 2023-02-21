@@ -312,6 +312,28 @@
 				border-radius:0px;
 			}
 		}
+		.mapAnimationController {
+			position: absolute;
+			padding: 0 0 0 8px;
+			display: inline-flex;
+			min-width: 250px;
+			height: 36px;
+			background-color:white;
+			bottom: 0;
+			z-index: 1;
+			left: 50%;
+			transform: translateX(-50%);
+			opacity:0.9;
+			border-radius: 5px;
+			align-items: center;
+			font-size: .8rem;
+			
+			select {
+				flex: 1;
+				border: none;
+				outline: none;
+			}
+		}
 		.mapWidgetLegend{
 			position:absolute;
 			padding:10px;
