@@ -171,7 +171,6 @@ export default defineComponent({
 
                 // CALLBACKS
                 onGridReady: this.onGridReady,
-                // onSortChanged: this.onSortChanged1,
                 getRowStyle: this.getRowStyle,
                 getRowId: this.getRowId
             }
