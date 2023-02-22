@@ -249,9 +249,12 @@ export default defineComponent({
                 }
             } else if (['int', 'float', 'decimal', 'long'].includes(el.columnInfo.type)) {
                 el.valueFormatter = (params: any) => {
-                    let configuration = { useGrouping: false, minFractionDigits: 0, maxFractionDigits: 0 } as { useGrouping: boolean; minFractionDigits: number; maxFractionDigits: number } | null
-                    configuration = formatRegistryNumber(el)
-                    return Intl.NumberFormat(locale, { useGrouping: configuration?.useGrouping, minimumFractionDigits: configuration?.minFractionDigits, maximumFractionDigits: configuration?.maxFractionDigits ?? 2 }).format(params.value)
+                    if (params.value == '') return ''
+                    else {
+                        let configuration = { useGrouping: false, minFractionDigits: 0, maxFractionDigits: 0 } as { useGrouping: boolean; minFractionDigits: number; maxFractionDigits: number } | null
+                        configuration = formatRegistryNumber(el)
+                        return Intl.NumberFormat(locale, { useGrouping: configuration?.useGrouping, minimumFractionDigits: configuration?.minFractionDigits, maximumFractionDigits: configuration?.maxFractionDigits ?? 2 }).format(params.value)
+                    }
                 }
             }
         },
@@ -392,7 +395,7 @@ export default defineComponent({
                 tempRow.uniqueId = cryptoRandomString({ length: 16, type: 'base64' })
                 tempRow.isNew = true
                 delete tempRow.id
-                if (this.keyColumnName) delete tempRow[this.keyColumnName]
+                if (this.keyColumnName) tempRow[this.keyColumnName] = ''
                 this.addRowToFirstPosition(tempRow)
             })
         },
