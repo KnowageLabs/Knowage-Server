@@ -9,7 +9,7 @@ import mainStore from '@/App.store'
 
 export const getFormattedInteractions = (widget: any) => {
     const interactions = {} as IWidgetInteractions
-    let chartType = getChartType(widget)
+    const chartType = getChartType(widget)
     if (['table', 'chart'].includes(widget.type) && chartType !== 'GAUGE') interactions.selection = getFormattedSelection(widget) as IWidgetSelection
     if (['table', 'html', 'text', 'chart', 'discovery', 'image', 'customchart'].includes(widget.type)) interactions.crossNavigation = getFormattedCrossNavigation(widget) as IWidgetCrossNavigation
     if (['table', 'chart', 'discovery'].includes(widget.type)) interactions.link = getFormattedLinkInteraction(widget) as IWidgetLinks
@@ -57,7 +57,8 @@ const getFormattedChartSelection = () => {
 
 export const getFormattedCrossNavigation = (widget: any) => {
     if (!widget.cross || !widget.cross.cross) return widgetCommonDefaultValues.getDefaultCrossNavigation()
-
+    console.log('------------- widget: ', widget)
+    console.log('------------- widget cross: ', widget.cross)
     return {
         enabled: widget.cross.cross.enable,
         type: widget.cross.cross.crossType,
@@ -70,6 +71,7 @@ export const getFormattedCrossNavigation = (widget: any) => {
 
 const getFormattedCrossNavigationParameters = (outputParameterList: any) => {
     const formattedParameters = [] as IWidgetInteractionParameter[]
+    // TODO - put the 'MAIN' Parameter from list and format it here
     if (outputParameterList) {
         Object.keys(outputParameterList).forEach((key: string) => {
             const tempParameter = outputParameterList[key]

@@ -2,6 +2,7 @@ import { IDashboardCrossNavigation } from "../dashboard/Dashboard"
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
 import { IDocumentNavigationParameter, ICrossNavigationParameter, ICrossNavigationBreadcrumb, IDocumentNavigationParameterValue } from "./DocumentExecution"
 import { getDateStringFromJSDate } from "@/helpers/commons/localeHelper"
+import deepcopy from "deepcopy"
 
 let documentCrossNavigations = [] as IDashboardCrossNavigation[]
 
@@ -24,7 +25,7 @@ export const getDocumentForCrossNavigation = (payload: any, document: any, sourc
 const getFormattedCrossNavigationParameters = (documentCrossNavigation: IDashboardCrossNavigation, sourceFiltersData: { filterStatus: iParameter[], isReadyForExecution: boolean }) => {
     const formattedCrossNavigationParameters = [] as ICrossNavigationParameter[]
     const documentCrossNavigationParameters = getFormattedDocumentCrossNavigationParameters(documentCrossNavigation.navigationParams)
-    console.log("-------------- documentCrossNavigationParameters: ", documentCrossNavigationParameters)
+    // console.log("-------------- documentCrossNavigationParameters: ", documentCrossNavigationParameters)
     documentCrossNavigationParameters.forEach((documentCrossNavigationParameter: IDocumentNavigationParameter) => {
         if (documentCrossNavigationParameter.fixed) {
             addFixedDocumentCrossNavigationParameter(documentCrossNavigationParameter, formattedCrossNavigationParameters)
@@ -145,7 +146,7 @@ export const loadNavigationInitialValuesFromDashboard = (document: any, filtersD
 const loadDriverInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter, dateFormat: string) => {
     if (!crossNavigationParameter.parameterValue || !crossNavigationParameter.parameterValue[0]) return
 
-    //console.log("$$$$$$$$$ parameter: ", parameter)
+    // console.log("$$$$$$$$$ parameter: ", deepcopy(parameter))
     //console.log("$$$$$$$$ crossNavigationParameter: ", crossNavigationParameter)
     if (!parameter.selectionType && parameter.valueSelection === 'man_in') {
         if (parameter.type === 'STRING') loadManualStringDriverInitialValue(parameter, crossNavigationParameter)
@@ -179,7 +180,7 @@ const getFormattedNumberValue = (value: string | number) => {
 
 const loadDateDriverInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter, dateFormat: string) => {
     // console.log("-------- date parameter: ", parameter)
-    //  console.log("-------- crossNavigationParameter: ", crossNavigationParameter)
+    //console.log("-------- crossNavigationParameter: ", crossNavigationParameter)
     if (typeof crossNavigationParameter.parameterValue[0].value !== 'number') return
     const dateValue = new Date(crossNavigationParameter.parameterValue[0].value)
     const dateDescription = getDateStringFromJSDate(dateValue, dateFormat)
@@ -187,7 +188,8 @@ const loadDateDriverInitialValue = (parameter: iParameter, crossNavigationParame
 }
 
 const loadListDropdownDriverInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter) => {
-
+    // console.log("-------- list/combo parameter 1: ", deepcopy(parameter))
+    // console.log("-------- crossNavigationParameter 1: ", crossNavigationParameter)
     if (parameter.multivalue) {
         loadListComboboxMultiInitialValue(parameter, crossNavigationParameter)
     } else {
@@ -196,10 +198,10 @@ const loadListDropdownDriverInitialValue = (parameter: iParameter, crossNavigati
 }
 
 const loadListComboboxSingleInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter) => {
-    console.log("-------- list/combo parameter: ", parameter)
-    console.log("-------- crossNavigationParameter: ", crossNavigationParameter)
+    //console.log("-------- list/combo parameter 2: ", deepcopy(parameter))
+    // console.log("-------- crossNavigationParameter 2: ", crossNavigationParameter)
     const parameterValue = getListComboboxCrossNavigationValue(parameter, crossNavigationParameter.parameterValue[0].value)
-    if (parameterValue) parameter.parameterValue = parameterValue
+    if (parameterValue) parameter.parameterValue = [parameterValue]
 }
 
 const loadListComboboxMultiInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter) => {

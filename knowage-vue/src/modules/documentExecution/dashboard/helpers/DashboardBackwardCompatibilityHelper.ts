@@ -194,7 +194,7 @@ const checkIfWidgetInModel = (widget: any, formattedModel: any) => {
 export const formatWidget = (widget: any, formattedModel: IDashboard, user: any, drivers: IDashboardDriver[]) => {
     let formattedWidget = {} as any
 
-    console.log('widget;', widget)
+    // console.log('widget;', widget)
 
     switch (widget.type) {
         case 'table':

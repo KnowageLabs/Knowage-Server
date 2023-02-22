@@ -1,7 +1,9 @@
 import { ISelectionsWidgetSettings } from '@/modules/documentExecution/dashboard/interfaces/DashboardSelectionsWidget'
 import { IChartJSWidgetSettings } from './interfaces/chartJS/DashboardChartJSWidget'
+import { ICustomChartWidgetSettings } from './interfaces/customChart/DashboardCustomChartWidget'
 import { IHTMLWidgetSettings } from './interfaces/DashboardHTMLWidget'
 import { IImageWidgetSettings } from './interfaces/DashboardImageWidget'
+import { ISelectorWidgetSettings } from './interfaces/DashboardSelectorWidget'
 import { ITextWidgetSettings } from './interfaces/DashboardTextWidget'
 import { IDrillOrderItem, IHighchartsDrilldown, IHighchartsWidgetSettings } from './interfaces/highcharts/DashboardHighchartsWidget'
 import { IPivotTableSettings } from './interfaces/pivotTable/DashboardPivotTableWidget'
@@ -217,7 +219,7 @@ export interface IWidgetPreview {
     dataset: number
     column?: string
     directDownload: boolean
-    icon?: stirng
+    icon?: string
 }
 
 export interface IWidgetSelection {
@@ -582,7 +584,7 @@ export interface IIcon {
     id: number
     label: string
     unicode: string
-    visible: booleam
+    visible: boolean
 }
 
 export interface IWidgetStyleToolbarModel {
@@ -685,4 +687,27 @@ export interface IDashboardCrossNavigation {
     documentId: number,
     navigationParams: any,
     popupOptions: any
+}
+
+
+export interface IDashboardOutputParameter {
+    biObjectId: number,
+    formatCode: string | null,
+    formatValue: string | null,
+    id: number,
+    isUserDefined: boolean,
+    name: string,
+    type: IDashboardOutputParameterType
+}
+
+// TODO - see if needed, valueCd could be usefull
+interface IDashboardOutputParameterType {
+    domainCode: string,
+    domainName: string,
+    translatedValueDescription: string,
+    translatedValueName: string,
+    valueCd: string,
+    valueDescription: string,
+    valueId: number,
+    valueName: string
 }
