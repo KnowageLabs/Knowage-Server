@@ -38,7 +38,7 @@ import WidgetEditorColumnTable from '../../common/WidgetEditorColumnTable.vue'
 import ChartWidgetColumnForm from '../common/ChartWidgetColumnForm.vue'
 
 export default defineComponent({
-    name: 'chart-j-s-widget-pie-chart-data-container',
+    name: 'chart-js-widget-pie-chart-data-container',
     components: { WidgetEditorColumnTable, ChartWidgetColumnForm },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedDataset: { type: Object as PropType<IDataset | null> } },
     data() {
