@@ -1,18 +1,18 @@
 <template>
     <Card class="p-mt-4">
         <template #content>
-            <DataTable v-if="dataset.meta" class="p-datatable-sm kn-table" :scrollable="true" scrollHeight="40vh" :value="fieldsMetadata" stripedRows rowHover>
+            <DataTable v-if="dataset.meta" class="p-datatable-sm kn-table" :scrollable="true" scroll-height="40vh" :value="fieldsMetadata" striped-rows row-hover>
                 <Column field="fieldAlias" :header="$t('managers.datasetManagement.fieldAlias')" :sortable="true">
                     <template #body="{ data }"> {{ data.fieldAlias }} </template>
                 </Column>
                 <Column field="Type" :header="$t('importExport.catalogFunction.column.type')" :sortable="true">
                     <template #body="{ data }">
-                        <Dropdown class="kn-material-input" :style="wizardDescriptor.style.maxwidth" v-model="data.Type" :options="valueTypes" optionLabel="value" optionValue="name" @change="saveFieldsMetadata" :disabled="true" />
+                        <Dropdown v-model="data.Type" class="kn-material-input" :style="wizardDescriptor.style.maxwidth" :options="valueTypes" option-label="value" option-value="name" :disabled="true" @change="saveFieldsMetadata" />
                     </template>
                 </Column>
                 <Column field="fieldType" :header="$t('managers.datasetManagement.fieldType')" :sortable="true">
                     <template #body="{ data }">
-                        <Dropdown class="kn-material-input" :style="wizardDescriptor.style.maxwidth" v-model="data.fieldType" :options="fieldMetadataTypes" optionLabel="value" optionValue="value" @change="saveFieldsMetadata" />
+                        <Dropdown v-model="data.fieldType" class="kn-material-input" :style="wizardDescriptor.style.maxwidth" :options="fieldMetadataTypes" option-label="value" option-value="value" @change="saveFieldsMetadata" />
                     </template>
                 </Column>
             </DataTable>
@@ -38,8 +38,11 @@ export default defineComponent({
     props: {
         selectedDataset: { type: Object as any }
     },
-    computed: {},
     emits: ['touched'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             wizardDescriptor,
@@ -49,26 +52,23 @@ export default defineComponent({
             fieldsMetadata: [] as any
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
-    created() {
-        this.dataset = this.selectedDataset
-        this.dataset.meta ? this.exctractFieldsMetadata(this.dataset.meta.columns) : ''
-    },
+    computed: {},
     watch: {
         selectedDataset() {
             this.dataset = this.selectedDataset
             this.dataset.meta ? this.exctractFieldsMetadata(this.dataset.meta.columns) : ''
         }
     },
+    created() {
+        this.dataset = this.selectedDataset
+        this.dataset.meta ? this.exctractFieldsMetadata(this.dataset.meta.columns) : ''
+    },
     methods: {
         exctractFieldsMetadata(array) {
-            var object = {}
+            const object = {}
 
-            for (var item in array) {
-                var element = object[array[item].column]
+            for (const item in array) {
+                let element = object[array[item].column]
                 if (!element) {
                     element = {}
                     object[array[item].column] = element
@@ -77,16 +77,16 @@ export default defineComponent({
                 element[array[item].pname] = array[item].pvalue
             }
 
-            var fieldsMetadata = new Array()
+            const fieldsMetadata = []
 
-            for (item in object) {
+            for (const item in object) {
                 fieldsMetadata.push(object[item])
             }
 
             this.fieldsMetadata = fieldsMetadata
         },
         saveFieldsMetadata() {
-            var numberOfSpatialAttribute = 0
+            let numberOfSpatialAttribute = 0
             for (let i = 0; i < this.fieldsMetadata.length; i++) {
                 if (this.fieldsMetadata[i].fieldType == 'SPATIAL_ATTRIBUTE') {
                     numberOfSpatialAttribute++

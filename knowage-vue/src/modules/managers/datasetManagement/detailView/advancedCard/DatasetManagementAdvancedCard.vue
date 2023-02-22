@@ -1,7 +1,7 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary">
         <template #start>
-            <InputSwitch v-model="isTransformable" @change="setTransformationType" class="p-mr-2" />
+            <InputSwitch v-model="isTransformable" class="p-mr-2" @change="setTransformationType" />
             <span>{{ $t('managers.datasetManagement.pivotTransformer') }}</span>
         </template>
     </Toolbar>
@@ -12,9 +12,9 @@
                     <span class="p-float-label">
                         <InputText
                             id="pivotColName"
+                            v-model.trim="v$.dataset.pivotColName.$model"
                             class="kn-material-input"
                             type="text"
-                            v-model.trim="v$.dataset.pivotColName.$model"
                             :class="{
                                 'p-invalid': v$.dataset.pivotColName.$invalid && v$.dataset.pivotColName.$dirty
                             }"
@@ -23,15 +23,15 @@
                         />
                         <label for="pivotColName" class="kn-material-input-label"> {{ $t('managers.datasetManagement.pivotColName') }} * </label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.pivotColName" :additionalTranslateParams="{ fieldName: $t('managers.datasetManagement.pivotColName') }" />
+                    <KnValidationMessages class="p-mt-1" :v-comp="v$.dataset.pivotColName" :additional-translate-params="{ fieldName: $t('managers.datasetManagement.pivotColName') }" />
                 </div>
                 <div class="p-field p-col-3">
                     <span class="p-float-label">
                         <InputText
                             id="pivotColValue"
+                            v-model="dataset.pivotColValue"
                             class="kn-material-input"
                             type="text"
-                            v-model="dataset.pivotColValue"
                             :class="{
                                 'p-invalid': v$.dataset.pivotColValue.$invalid && v$.dataset.pivotColValue.$dirty
                             }"
@@ -40,15 +40,15 @@
                         />
                         <label for="pivotColValue" class="kn-material-input-label"> {{ $t('managers.datasetManagement.pivotColValue') }} * </label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.pivotColValue" :additionalTranslateParams="{ fieldName: $t('managers.datasetManagement.pivotColValue') }" />
+                    <KnValidationMessages class="p-mt-1" :v-comp="v$.dataset.pivotColValue" :additional-translate-params="{ fieldName: $t('managers.datasetManagement.pivotColValue') }" />
                 </div>
                 <div class="p-field p-col-3">
                     <span class="p-float-label">
                         <InputText
                             id="pivotRowName"
+                            v-model="dataset.pivotRowName"
                             class="kn-material-input"
                             type="text"
-                            v-model="dataset.pivotRowName"
                             :class="{
                                 'p-invalid': v$.dataset.pivotRowName.$invalid && v$.dataset.pivotRowName.$dirty
                             }"
@@ -57,12 +57,12 @@
                         />
                         <label for="pivotRowName" class="kn-material-input-label"> {{ $t('managers.datasetManagement.pivotRowName') }} *</label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.pivotRowName" :additionalTranslateParams="{ fieldName: $t('managers.datasetManagement.pivotRowName') }" />
+                    <KnValidationMessages class="p-mt-1" :v-comp="v$.dataset.pivotRowName" :additional-translate-params="{ fieldName: $t('managers.datasetManagement.pivotRowName') }" />
                 </div>
 
                 <span class="p-field-checkbox p-col-3">
                     <label for="pivotIsNumRows">{{ $t('managers.datasetManagement.pivotIsNumRows') }}</label>
-                    <Checkbox id="pivotIsNumRows" class="p-ml-2" v-model="dataset.pivotIsNumRows" :binary="true" @change="$emit('touched')" />
+                    <Checkbox id="pivotIsNumRows" v-model="dataset.pivotIsNumRows" class="p-ml-2" :binary="true" @change="$emit('touched')" />
                 </span>
             </form>
         </template>
@@ -89,9 +89,9 @@
                         <span class="p-float-label">
                             <InputText
                                 id="persistTableName"
+                                v-model="dataset.persistTableName"
                                 class="kn-material-input"
                                 type="text"
-                                v-model="dataset.persistTableName"
                                 :class="{
                                     'p-invalid': v$.dataset.persistTableName.$invalid && v$.dataset.persistTableName.$dirty
                                 }"
@@ -100,16 +100,16 @@
                             />
                             <label for="persistTableName" class="kn-material-input-label"> {{ $t('managers.datasetManagement.persistTableName') }} *</label>
                         </span>
-                        <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.persistTableName" :additionalTranslateParams="{ fieldName: $t('managers.datasetManagement.persistTableName') }" />
+                        <KnValidationMessages class="p-mt-1" :v-comp="v$.dataset.persistTableName" :additional-translate-params="{ fieldName: $t('managers.datasetManagement.persistTableName') }" />
                     </div>
                 </form>
-                <Toolbar class="kn-toolbar kn-toolbar--default p-mt-3" v-if="isAbleToSeeIsScheduledToolbar">
+                <Toolbar v-if="isAbleToSeeIsScheduledToolbar" class="kn-toolbar kn-toolbar--default p-mt-3">
                     <template #start>
                         <InputSwitch v-model="dataset.isScheduled" class="p-mr-2" @change="$emit('touched')" />
                         <span>{{ $t('managers.datasetManagement.isScheduled') }}</span>
                     </template>
                 </Toolbar>
-                <DatasetScheduler v-if="isAbleToSeeDatasetScheduler" :selectedDataset="dataset" :schedulingData="schedulingData" />
+                <DatasetScheduler v-if="isAbleToSeeDatasetScheduler" :selected-dataset="dataset" :scheduling-data="schedulingData" />
             </template>
         </Card>
     </div>
@@ -145,10 +145,10 @@ export default defineComponent({
             }
             return false
         },
-        isAbleToSeeIsScheduledToolbar(): Boolean {
+        isAbleToSeeIsScheduledToolbar(): boolean {
             return this.user.functionalities.includes('SchedulingDatasetManagement') && this.dataset.isPersisted
         },
-        isAbleToSeeDatasetScheduler(): Boolean {
+        isAbleToSeeDatasetScheduler(): boolean {
             return this.user.functionalities.includes('SchedulingDatasetManagement') && this.dataset.isPersisted && this.dataset.isScheduled
         }
     },
@@ -163,15 +163,15 @@ export default defineComponent({
             isTransformable: false
         }
     },
-    created() {
-        this.dataset = this.selectedDataset
-        this.isDatasetTransformable()
-    },
     watch: {
         selectedDataset() {
             this.dataset = this.selectedDataset
             this.isDatasetTransformable()
         }
+    },
+    created() {
+        this.dataset = this.selectedDataset
+        this.isDatasetTransformable()
     },
     validations() {
         const transformationFieldsRequired = (value) => {

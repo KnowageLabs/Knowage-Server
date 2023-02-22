@@ -1,4 +1,4 @@
-let routes = [
+const routes = [
     {
         path: '/gis',
         name: 'gis-document-designer',

@@ -6,25 +6,25 @@
     </span>
     <DataTable
         ref="dt"
-        :value="templates"
         v-model:selection="selectedGalleryItems"
         v-model:filters="filters"
+        :value="templates"
         class="p-datatable-sm kn-table"
-        dataKey="id"
+        data-key="id"
         :paginator="true"
         :rows="10"
-        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-        :rowsPerPageOptions="[10, 15, 20]"
-        responsiveLayout="stack"
+        paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+        :rows-per-page-options="[10, 15, 20]"
+        responsive-layout="stack"
         breakpoint="960px"
-        :currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
-        :globalFilterFields="['name', 'type', 'tags']"
+        :current-page-report-template="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
+        :global-filter-fields="['name', 'type', 'tags']"
     >
         <template #header>
             <div class="table-header">
                 <span class="p-input-icon-left">
                     <i class="pi pi-search" />
-                    <InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0" />
+                    <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" badge="0" />
                 </span>
             </div>
         </template>
@@ -35,7 +35,7 @@
             {{ $t('common.info.dataLoading') }}
         </template>
 
-        <Column selectionMode="multiple" :exportable="false" :style="importExportDescriptor.export.gallery.column.selectionMode.style"></Column>
+        <Column selection-mode="multiple" :exportable="false" :style="importExportDescriptor.export.gallery.column.selectionMode.style"></Column>
         <Column field="name" :header="$t(importExportDescriptor.export.gallery.column.name.header)" :sortable="true" :style="importExportDescriptor.export.gallery.column.name.style"></Column>
         <Column field="type" :header="$t(importExportDescriptor.export.gallery.column.type.header)" :sortable="true" :style="importExportDescriptor.export.gallery.column.type.style">
             <template #body="{ data }">
@@ -46,14 +46,14 @@
         <Column field="tags" :header="$t(importExportDescriptor.export.gallery.column.tags.header)" :sortable="true" :style="importExportDescriptor.export.gallery.column.tags.style">
             <template #body="{ data }">
                 <span class="p-float-label kn-material-input">
-                    <Tag class="importExportTags p-mr-1" v-for="(tag, index) in data.tags" v-bind:key="index" rounded :value="tag"> </Tag>
+                    <Tag v-for="(tag, index) in data.tags" :key="index" class="importExportTags p-mr-1" rounded :value="tag"> </Tag>
                 </span>
             </template>
         </Column>
         <Column field="image" :header="$t(importExportDescriptor.export.gallery.column.image.header)" :style="importExportDescriptor.export.gallery.column.image.style">
             <template #body="{ data }">
                 <span @click="togglePreview($event, data.id)">
-                    <i class="fas fa-image" v-if="data.image && data.image.length > 0" />
+                    <i v-if="data.image && data.image.length > 0" class="fas fa-image" />
                 </span>
             </template>
         </Column>
@@ -77,6 +77,7 @@ export default defineComponent({
     name: 'import-export-gallery',
     components: { Column, DataTable, InputText, OverlayPanel, Tag },
     props: { selectedItems: Object },
+    emits: ['onItemSelected', 'update:loading'],
     data() {
         return {
             currentImage: '',
@@ -88,6 +89,13 @@ export default defineComponent({
             FUNCTIONALITY: 'gallery'
         }
     },
+    watch: {
+        selectedGalleryItems(newSelectedGalleryItems, oldSelectedGalleryItems) {
+            if (oldSelectedGalleryItems != newSelectedGalleryItems) {
+                this.$emit('onItemSelected', { items: this.selectedGalleryItems, functionality: this.FUNCTIONALITY })
+            }
+        }
+    },
     created() {
         this.filters = {
             global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -97,7 +105,6 @@ export default defineComponent({
         }
         this.loadAllTemplates()
     },
-    emits: ['onItemSelected', 'update:loading'],
     methods: {
         loadAllTemplates(): void {
             this.$emit('update:loading', true)
@@ -128,13 +135,6 @@ export default defineComponent({
             // eslint-disable-next-line
             // @ts-ignore
             this.$refs.op.toggle(event)
-        }
-    },
-    watch: {
-        selectedGalleryItems(newSelectedGalleryItems, oldSelectedGalleryItems) {
-            if (oldSelectedGalleryItems != newSelectedGalleryItems) {
-                this.$emit('onItemSelected', { items: this.selectedGalleryItems, functionality: this.FUNCTIONALITY })
-            }
         }
     }
 })

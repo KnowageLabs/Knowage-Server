@@ -6,24 +6,21 @@
         </template>
         <template #end>
             <Button v-if="toggleCardDisplay" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="$emit('toggleDisplayView')" />
-            <Button v-if="!toggleCardDisplay" icon="fas fa-th-large" class="p-button-text p-button-rounded p-button-plain"
-                @click="$emit('toggleDisplayView')" />
+            <Button v-if="!toggleCardDisplay" icon="fas fa-th-large" class="p-button-text p-button-rounded p-button-plain" @click="$emit('toggleDisplayView')" />
             <KnFabButton v-if="addButtonIsVisible" icon="fas fa-plus" data-test="new-folder-button" @click="showCreationMenu" />
         </template>
     </Toolbar>
-    <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+    <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
 
-    <InputText class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')"
-        @input="searchItems" data-test="search-input" />
+    <InputText v-model="searchWord" class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" type="text" :placeholder="$t('common.search')" data-test="search-input" @input="searchItems" />
 
     <div class="p-m-2 kn-overflow">
-        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table p-mx-2" :value="filteredAnalysisDocuments" :loading="loading" dataKey="id"
-            responsiveLayout="stack" breakpoint="600px" data-test="analysis-table">
+        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table p-mx-2" :value="filteredAnalysisDocuments" :loading="loading" data-key="id" responsive-layout="stack" breakpoint="600px" data-test="analysis-table">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
             <template #filter="{ filterModel }">
-                <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter"></InputText>
             </template>
             <Column field="name" :header="$t('importExport.gallery.column.name')" :sortable="true" />
             <Column field="creationUser" :header="$t('kpi.targetDefinition.kpiAuthor')" :sortable="true" />
@@ -35,40 +32,53 @@
             <Column :style="mainDescriptor.style.iconColumn">
                 <template #body="slotProps">
                     <Button icon="fas fa-ellipsis-v" class="p-button-link" @click="showMenu($event, slotProps.data)" />
-                    <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')"
-                        @click="showSidebar(slotProps.data)" :data-test="'info-button-' + slotProps.data.name" />
+                    <Button v-tooltip.left="$t('workspace.myModels.showInfo')" icon="fas fa-info-circle" class="p-button-link" :data-test="'info-button-' + slotProps.data.name" @click="showSidebar(slotProps.data)" />
                     <Button icon="fas fa-play-circle" class="p-button-link" @click="executeAnalysisDocument(slotProps.data)" />
                 </template>
             </Column>
         </DataTable>
         <div v-if="toggleCardDisplay" class="p-grid p-m-2" data-test="card-container">
-            <Message v-if="filteredAnalysisDocuments.length === 0" class="kn-flex p-m-2" severity="info" :closable="false"
-                :style="mainDescriptor.style.message">
+            <Message v-if="filteredAnalysisDocuments.length === 0" class="kn-flex p-m-2" severity="info" :closable="false" :style="mainDescriptor.style.message">
                 {{ $t('common.info.noDataFound') }}
             </Message>
             <template v-else>
-                <WorkspaceCard v-for="(document, index) of filteredAnalysisDocuments" :key="index" :viewType="'analysis'" :document="document"
-                    @executeAnalysisDocument="executeAnalysisDocument" @editAnalysisDocument="openKpiDesigner" @shareAnalysisDocument="shareAnalysisDocument"
-                    @cloneAnalysisDocument="cloneAnalysisDocument" @deleteAnalysisDocument="deleteAnalysisDocumentConfirm"
-                    @uploadAnalysisPreviewFile="uploadAnalysisPreviewFile" @openSidebar="showSidebar" />
+                <WorkspaceCard
+                    v-for="(document, index) of filteredAnalysisDocuments"
+                    :key="index"
+                    :view-type="'analysis'"
+                    :document="document"
+                    @executeAnalysisDocument="executeAnalysisDocument"
+                    @editAnalysisDocument="openKpiDesigner"
+                    @shareAnalysisDocument="shareAnalysisDocument"
+                    @cloneAnalysisDocument="cloneAnalysisDocument"
+                    @deleteAnalysisDocument="deleteAnalysisDocumentConfirm"
+                    @uploadAnalysisPreviewFile="uploadAnalysisPreviewFile"
+                    @openSidebar="showSidebar"
+                />
             </template>
         </div>
     </div>
-    <DetailSidebar :visible="showDetailSidebar" :viewType="'analysis'" :document="selectedAnalysis" @executeAnalysisDocument="executeAnalysisDocument"
-        @editAnalysisDocument="editAnalysisDocument" @shareAnalysisDocument="shareAnalysisDocument" @cloneAnalysisDocument="cloneAnalysisDocumentConfirm"
-        @deleteAnalysisDocument="deleteAnalysisDocumentConfirm" @uploadAnalysisPreviewFile="uploadAnalysisPreviewFile" @close="showDetailSidebar = false"
-        data-test="detail-sidebar" />
+    <DetailSidebar
+        :visible="showDetailSidebar"
+        :view-type="'analysis'"
+        :document="selectedAnalysis"
+        data-test="detail-sidebar"
+        @executeAnalysisDocument="executeAnalysisDocument"
+        @editAnalysisDocument="editAnalysisDocument"
+        @shareAnalysisDocument="shareAnalysisDocument"
+        @cloneAnalysisDocument="cloneAnalysisDocumentConfirm"
+        @deleteAnalysisDocument="deleteAnalysisDocumentConfirm"
+        @uploadAnalysisPreviewFile="uploadAnalysisPreviewFile"
+        @close="showDetailSidebar = false"
+    />
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     <Menu id="creationMenu" ref="creationMenu" :model="creationMenuButtons" />
 
-    <WorkspaceAnalysisViewShareDialog :visible="shareDialogVisible" :propFolders="folders" @close="shareDialogVisible = false"
-        @share="handleAnalysShared($event, false)"></WorkspaceAnalysisViewShareDialog>
-    <WorkspaceAnalysisViewEditDialog :visible="editDialogVisible" :propAnalysis="selectedAnalysis" @close="editDialogVisible = false"
-        @save="handleEditAnalysis"></WorkspaceAnalysisViewEditDialog>
-    <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.menuLabels.myAnalysis')" :warningMessage="warningMessage"
-        @close="closeWarningDialog"></WorkspaceWarningDialog>
+    <WorkspaceAnalysisViewShareDialog :visible="shareDialogVisible" :prop-folders="folders" @close="shareDialogVisible = false" @share="handleAnalysShared($event, false)"></WorkspaceAnalysisViewShareDialog>
+    <WorkspaceAnalysisViewEditDialog :visible="editDialogVisible" :prop-analysis="selectedAnalysis" @close="editDialogVisible = false" @save="handleEditAnalysis"></WorkspaceAnalysisViewEditDialog>
+    <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.menuLabels.myAnalysis')" :warning-message="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
 
-    <KnInputFile v-if="!uploading" :changeFunction="uploadAnalysisFile" accept="image/*" :triggerInput="triggerUpload" />
+    <KnInputFile v-if="!uploading" :change-function="uploadAnalysisFile" accept="image/*" :trigger-input="triggerUpload" />
     <WorkspaceCockpitDialog :visible="cockpitDialogVisible" @close="closeCockpitDialog"></WorkspaceCockpitDialog>
 </template>
 <script lang="ts">
@@ -95,8 +105,8 @@ import { mapState } from 'pinia'
 export default defineComponent({
     name: 'workspace-analysis-view',
     components: { DataTable, Column, DetailSidebar, WorkspaceCard, KnFabButton, Menu, Message, KnInputFile, WorkspaceAnalysisViewEditDialog, WorkspaceWarningDialog, WorkspaceAnalysisViewShareDialog, WorkspaceCockpitDialog },
-    emits: ['showMenu', 'toggleDisplayView', 'execute'],
     props: { toggleCardDisplay: { type: Boolean } },
+    emits: ['showMenu', 'toggleDisplayView', 'execute'],
     computed: {
         isOwner(): any {
             return (this.store.$state as any).user.userId === this.selectedAnalysis.creationUser
@@ -110,6 +120,10 @@ export default defineComponent({
         addButtonIsVisible(): boolean {
             return this.user.functionalities.includes('CreateSelfSelviceCockpit') || this.user.functionalities.includes('CreateSelfSelviceGeoreport') || this.user.functionalities.includes('CreateSelfSelviceKpi')
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     data() {
         return {
@@ -131,10 +145,6 @@ export default defineComponent({
             creationMenuButtons: [] as any,
             cockpitDialogVisible: false
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.getAnalysisDocs()
@@ -178,12 +188,6 @@ export default defineComponent({
 
         },
         executeAnalysisDocument(document: any) {
-            let typeCode = 'DOCUMENT'
-            if (document.type === 'businessModel') {
-                typeCode = 'DATAMART'
-            } else if (document.dsTypeCd) {
-                typeCode = 'DATASET'
-            }
             getCorrectRolesForExecution(document).then(() => {
                 this.$emit('execute', document)
             })
@@ -255,7 +259,7 @@ export default defineComponent({
                     this.showDetailSidebar = false
                     this.getAnalysisDocs()
                 })
-                .catch(() => { })
+                .catch(() => {})
 
             this.loading = false
         },
@@ -277,7 +281,7 @@ export default defineComponent({
                     this.showDetailSidebar = false
                     this.getAnalysisDocs()
                 })
-                .catch(() => { })
+                .catch(() => {})
             this.loading = true
         },
         deleteAnalysisDocumentConfirm(analysis: any) {
@@ -300,7 +304,7 @@ export default defineComponent({
                     this.showDetailSidebar = false
                     this.getAnalysisDocs()
                 })
-                .catch(() => { })
+                .catch(() => {})
             this.loading = false
         },
         uploadAnalysisPreviewFile(analysis: any) {
@@ -310,7 +314,7 @@ export default defineComponent({
         },
         uploadAnalysisFile(event: any) {
             this.uploading = true
-            let uploadedFile = event.target.files[0]
+            const uploadedFile = event.target.files[0]
 
             this.startUpload(uploadedFile)
 
@@ -318,7 +322,7 @@ export default defineComponent({
             setTimeout(() => (this.uploading = false), 200)
         },
         startUpload(uploadedFile: any) {
-            var formData = new FormData()
+            const formData = new FormData()
             formData.append('file', uploadedFile)
             this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/analysis/${this.selectedAnalysis.id}`, formData, {
@@ -363,9 +367,9 @@ export default defineComponent({
         createCreationMenuButtons() {
             this.creationMenuButtons = []
 
-            if (this.user.functionalities.includes('CreateSelfSelviceCockpit')) this.creationMenuButtons.push({ key: '0', label: this.$t('common.cockpit'), command: this.openCockpitDialog, visible: true })
-            if (this.user.functionalities.includes('CreateSelfSelviceGeoreport')) this.creationMenuButtons.push({ key: '1', label: this.$t('workspace.myAnalysis.geoRef'), command: this.openGeoRefCreation, visible: true })
-            if (this.user.functionalities.includes('CreateSelfSelviceKpi')) this.creationMenuButtons.push({ key: '2', label: this.$t('common.kpi'), command: this.openKpiDocumentDesigner, visible: true })
+            if (this.user.functionalities.includes('CreateSelfSelviceCockpit')) this.creationMenuButtons.push({ key: '0', label: this.$t('common.cockpit'), command: () => this.openCockpitDialog(), visible: true })
+            if (this.user.functionalities.includes('CreateSelfSelviceGeoreport')) this.creationMenuButtons.push({ key: '1', label: this.$t('workspace.myAnalysis.geoRef'), command: () => this.openGeoRefCreation(), visible: true })
+            if (this.user.functionalities.includes('CreateSelfSelviceKpi')) this.creationMenuButtons.push({ key: '2', label: this.$t('common.kpi'), command: () => this.openKpiDocumentDesigner(), visible: true })
         },
         openCockpitDialog() {
             this.cockpitDialogVisible = true

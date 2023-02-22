@@ -14,22 +14,22 @@
                             <span class="p-float-label">
                                 <InputText
                                     id="label"
+                                    v-model.trim="v$.metadata.label.$model"
                                     class="kn-material-input"
                                     type="text"
-                                    v-model.trim="v$.metadata.label.$model"
                                     :class="{
                                         'p-invalid': v$.metadata.label.$invalid && v$.metadata.label.$dirty
                                     }"
+                                    data-test="label-input"
                                     @blur="v$.metadata.label.$touch()"
                                     @change="setDirty"
-                                    data-test="label-input"
                                 />
                                 <label for="label" class="kn-material-input-label">{{ $t('common.label') }} * </label>
                             </span>
 
                             <KnValidationMessages
-                                :vComp="v$.metadata.label"
-                                :additionalTranslateParams="{
+                                :v-comp="v$.metadata.label"
+                                :additional-translate-params="{
                                     fieldName: $t('common.label')
                                 }"
                             >
@@ -40,22 +40,22 @@
                             <span class="p-float-label">
                                 <InputText
                                     id="name"
+                                    v-model.trim="v$.metadata.name.$model"
                                     class="kn-material-input"
                                     type="text"
-                                    v-model.trim="v$.metadata.name.$model"
                                     :class="{
                                         'p-invalid': v$.metadata.name.$invalid && v$.metadata.name.$dirty
                                     }"
+                                    data-test="name-input"
                                     @blur="v$.metadata.name.$touch()"
                                     @change="setDirty"
-                                    data-test="name-input"
                                 />
                                 <label for="name" class="kn-material-input-label">{{ $t('common.name') }} * </label>
                             </span>
 
                             <KnValidationMessages
-                                :vComp="v$.metadata.name"
-                                :additionalTranslateParams="{
+                                :v-comp="v$.metadata.name"
+                                :additional-translate-params="{
                                     fieldName: $t('common.name')
                                 }"
                             >
@@ -66,22 +66,22 @@
                             <span class="p-float-label">
                                 <InputText
                                     id="description"
+                                    v-model.trim="v$.metadata.description.$model"
                                     class="kn-material-input"
                                     type="text"
-                                    v-model.trim="v$.metadata.description.$model"
                                     :class="{
                                         'p-invalid': v$.metadata.description.$invalid && v$.metadata.description.$dirty
                                     }"
+                                    data-test="description-input"
                                     @blur="v$.metadata.description.$touch()"
                                     @change="setDirty"
-                                    data-test="description-input"
                                 />
                                 <label for="description" class="kn-material-input-label">{{ $t('common.description') }}</label>
                             </span>
 
                             <KnValidationMessages
-                                :vComp="v$.metadata.description"
-                                :additionalTranslateParams="{
+                                :v-comp="v$.metadata.description"
+                                :additional-translate-params="{
                                     fieldName: $t('common.description')
                                 }"
                             >
@@ -92,24 +92,24 @@
                             <span class="p-float-label">
                                 <Dropdown
                                     id="dataType"
+                                    v-model="v$.metadata.dataType.$model"
                                     class="kn-material-input"
                                     :class="{
                                         'p-invalid': v$.metadata.dataType.$invalid && v$.metadata.dataType.$dirty
                                     }"
-                                    v-model="v$.metadata.dataType.$model"
                                     :options="metadataTypes"
-                                    optionLabel="name"
-                                    optionValue="value"
+                                    option-label="name"
+                                    option-value="value"
+                                    data-test="dataType-dropdown"
                                     @before-show="v$.metadata.dataType.$touch()"
                                     @change="setDirty"
-                                    data-test="dataType-dropdown"
                                 />
                                 <label for="dataType" class="kn-material-input-label">{{ $t('common.type') }} * </label>
                             </span>
 
                             <KnValidationMessages
-                                :vComp="v$.metadata.dataType"
-                                :additionalTranslateParams="{
+                                :v-comp="v$.metadata.dataType"
+                                :additional-translate-params="{
                                     fieldName: $t('common.type')
                                 }"
                             >
@@ -146,13 +146,17 @@ export default defineComponent({
         }
     },
     emits: ['close', 'saved', 'touched'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             metadataManagementDescriptor: metadataManagementDescriptor,
             metadataManagementValidationDescriptor,
             metadata: {} as iMetadata,
             metadataTypes: metadataManagementDescriptor.metadataTypes,
-            submitted: false as Boolean,
+            submitted: false as boolean,
             operation: 'insert',
             v$: useValidate() as any
         }
@@ -175,10 +179,6 @@ export default defineComponent({
             this.v$.$reset()
             this.metadata = { ...this.model } as iMetadata
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     mounted() {
         if (this.model) {

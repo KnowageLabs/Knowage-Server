@@ -1,5 +1,5 @@
 <template>
-    <Dialog id="kpi-edit-kpi-select-dialog" class="p-fluid kn-dialog--toolbar--primary" :style="kpiDocumentDesignerKpiListCardDescriptor.dialog.style" :contentStyle="kpiDocumentDesignerKpiListCardDescriptor.dialog.contentStyle" :visible="visible" :modal="true" :closable="false">
+    <Dialog id="kpi-edit-kpi-select-dialog" class="p-fluid kn-dialog--toolbar--primary" :style="kpiDocumentDesignerKpiListCardDescriptor.dialog.style" :content-style="kpiDocumentDesignerKpiListCardDescriptor.dialog.contentStyle" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -9,37 +9,37 @@
         </template>
 
         <DataTable
-            :value="kpiList"
             v-model:selection="selectedKpiAssociations"
-            class="p-datatable-sm kn-table"
-            dataKey="id"
             v-model:filters="filters"
-            :kpiDocumentDesignerKpiListCardDescriptor="kpiDocumentDesignerKpiListCardDescriptor.selectKpiGlobalFilterFields"
-            responsiveLayout="stack"
+            :value="kpiList"
+            class="p-datatable-sm kn-table"
+            data-key="id"
+            :kpi-document-designer-kpi-list-card-descriptor="kpiDocumentDesignerKpiListCardDescriptor.selectKpiGlobalFilterFields"
+            responsive-layout="stack"
             breakpoint="960px"
             :scrollable="true"
-            scrollHeight="80vh"
+            scroll-height="80vh"
         >
             <template #header>
                 <div class="table-header p-d-flex">
                     <span class="p-input-icon-left p-mr-3">
                         <i class="pi pi-search" />
-                        <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
+                        <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
                     </span>
                 </div>
             </template>
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
-            <Column selectionMode="multiple" headerStyle="width: 3em"></Column>
-            <Column class="kn-truncated" field="name" :header="$t('kpi.kpiScheduler.kpiName')" key="name" :sortable="true"> </Column>
-            <Column class="kn-truncated" field="category.valueCd" :header="$t('common.category')" key="category.valueCd" :sortable="true"> </Column>
-            <Column class="kn-truncated" field="dateCreation" :header="$t('kpi.kpiScheduler.kpiName')" key="dateCreation" :sortable="true">
+            <Column selection-mode="multiple" header-style="width: 3em"></Column>
+            <Column key="name" class="kn-truncated" field="name" :header="$t('kpi.kpiScheduler.kpiName')" :sortable="true"> </Column>
+            <Column key="category.valueCd" class="kn-truncated" field="category.valueCd" :header="$t('common.category')" :sortable="true"> </Column>
+            <Column key="dateCreation" class="kn-truncated" field="dateCreation" :header="$t('kpi.kpiScheduler.kpiName')" :sortable="true">
                 <template #body="slotProps">
                     <span>{{ getFormattedDate(slotProps.data.dateCreation) }}</span>
                 </template>
             </Column>
-            <Column class="kn-truncated" field="author" :header="$t('common.author')" key="author" :sortable="true"> </Column>
+            <Column key="author" class="kn-truncated" field="author" :header="$t('common.author')" :sortable="true"> </Column>
         </DataTable>
 
         <template #footer>

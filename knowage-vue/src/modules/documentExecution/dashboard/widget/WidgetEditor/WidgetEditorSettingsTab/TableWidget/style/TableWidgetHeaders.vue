@@ -2,11 +2,11 @@
     <div v-if="headersStyleModel" class="p-grid p-ai-center p-p-4">
         <div id="height-input-container" class="p-col-4">
             <label class="kn-material-input-label p-mr-2">{{ $t('common.height') }}</label>
-            <InputNumber class="kn-material-input p-inputtext-sm" v-model="headersStyleModel.height" @blur="headersStyleChanged" />
+            <InputNumber v-model="headersStyleModel.height" class="kn-material-input p-inputtext-sm" @blur="headersStyleChanged" />
         </div>
 
         <div class="p-col-12 p-py-4">
-            <WidgetEditorStyleToolbar :options="settingsDescriptor.defaultToolbarStyleOptions" :propModel="headersStyleModel.properties" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
+            <WidgetEditorStyleToolbar :options="settingsDescriptor.defaultToolbarStyleOptions" :prop-model="headersStyleModel.properties" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
         </div>
     </div>
 </template>

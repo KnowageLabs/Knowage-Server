@@ -4,8 +4,8 @@
             <i class="fas fa-bolt kn-cursor-pointer" @click="applyMultiSelection" />
             {{ $t('dashboard.tableWidget.launchSelection') }}
         </div>
-        <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine kn-flex" :gridOptions="gridOptions" :context="context"></ag-grid-vue>
-        <PaginatorRenderer v-if="showPaginator" :propWidgetPagination="propWidget.settings.pagination" @pageChanged="$emit('pageChanged')" />
+        <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine kn-flex" :grid-options="gridOptions" :context="context"></ag-grid-vue>
+        <PaginatorRenderer v-if="showPaginator" :prop-widget-pagination="propWidget.settings.pagination" @pageChanged="$emit('pageChanged')" />
     </div>
 </template>
 
@@ -32,8 +32,18 @@ import store from '../../Dashboard.store'
 
 export default defineComponent({
     name: 'table-widget',
-    emits: ['pageChanged', 'sortingChanged', 'launchSelection'],
-    components: { AgGridVue, HeaderRenderer, SummaryRowRenderer, HeaderGroupRenderer, TooltipRenderer, PaginatorRenderer },
+    components: {
+        AgGridVue,
+        // eslint-disable-next-line vue/no-unused-components
+        HeaderRenderer,
+        // eslint-disable-next-line vue/no-unused-components
+        SummaryRowRenderer,
+        // eslint-disable-next-line vue/no-unused-components
+        HeaderGroupRenderer,
+        // eslint-disable-next-line vue/no-unused-components
+        TooltipRenderer,
+        PaginatorRenderer
+    },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         editorMode: { type: Boolean, required: false },
@@ -42,24 +52,11 @@ export default defineComponent({
         propActiveSelections: { type: Array as PropType<ISelection[]>, required: true },
         dashboardId: { type: String, required: true }
     },
-    watch: {
-        propWidget: {
-            handler() {
-                if (!this.editorMode) this.refreshGridConfiguration(true)
-            },
-            deep: true
-        },
-        dataToShow: {
-            handler() {
-                this.tableData = this.dataToShow
-                this.refreshGridConfiguration(true)
-                // this.loadActiveSelectionValue()
-            },
-            deep: true
-        },
-        propActiveSelections() {
-            this.loadActiveSelections()
-        }
+    emits: ['pageChanged', 'sortingChanged', 'launchSelection'],
+    setup() {
+        const store = dashboardStore()
+        const appStore = mainStore()
+        return { store, appStore }
     },
     data() {
         return {
@@ -80,10 +77,24 @@ export default defineComponent({
             context: null as any
         }
     },
-    setup() {
-        const store = dashboardStore()
-        const appStore = mainStore()
-        return { store, appStore }
+    watch: {
+        propWidget: {
+            handler() {
+                if (!this.editorMode) this.refreshGridConfiguration(true)
+            },
+            deep: true
+        },
+        dataToShow: {
+            handler() {
+                this.tableData = this.dataToShow
+                this.refreshGridConfiguration(true)
+                // this.loadActiveSelectionValue()
+            },
+            deep: true
+        },
+        propActiveSelections() {
+            this.loadActiveSelections()
+        }
     },
     beforeMount() {
         this.context = { componentParent: this }
@@ -189,11 +200,11 @@ export default defineComponent({
             else return 25
         },
         createGridColumns(responseFields) {
-            var columns = [] as any
-            var columnGroups = {}
+            const columns = [] as any
+            const columnGroups = {}
             this.columnsNameArray = []
 
-            var dataset = { type: 'SbiFileDataSet' }
+            const dataset = { type: 'SbiFileDataSet' }
 
             if (this.propWidget.settings.configuration.rows.indexColumn) {
                 columns.push({
@@ -211,13 +222,13 @@ export default defineComponent({
                 })
             }
 
-            for (var datasetColumn in this.propWidget.columns) {
-                for (var responseField in responseFields) {
-                    var thisColumn = this.propWidget.columns[datasetColumn]
+            for (const datasetColumn in this.propWidget.columns) {
+                for (const responseField in responseFields) {
+                    const thisColumn = this.propWidget.columns[datasetColumn]
 
                     if (typeof responseFields[responseField] == 'object' && ((dataset.type == 'SbiSolrDataSet' && thisColumn.alias.toLowerCase() === responseFields[responseField].header) || thisColumn.alias.toLowerCase() === responseFields[responseField].header.toLowerCase())) {
                         this.columnsNameArray.push(responseFields[responseField].name)
-                        var tempCol = {
+                        const tempCol = {
                             hide: this.getColumnVisibilityCondition(this.propWidget.columns[datasetColumn].id),
                             colId: this.propWidget.columns[datasetColumn].id,
                             headerName: this.propWidget.columns[datasetColumn].alias,
@@ -234,10 +245,10 @@ export default defineComponent({
 
                         //ROWSPAN MANAGEMENT
                         if (this.propWidget.settings.configuration.rows.rowSpan.enabled && this.propWidget.settings.configuration.rows.rowSpan.column === this.propWidget.columns[datasetColumn].id) {
-                            var previousValue
-                            var previousIndex
-                            var tempRows = this.tableData.rows as any
-                            for (var r in tempRows as any) {
+                            let previousValue
+                            let previousIndex
+                            const tempRows = this.tableData.rows as any
+                            for (const r in tempRows as any) {
                                 if (previousValue != tempRows[r][responseFields[responseField].name]) {
                                     previousValue = tempRows[r][responseFields[responseField].name]
                                     previousIndex = r
@@ -278,7 +289,7 @@ export default defineComponent({
                             }
                         }
                         // HEADERS CONFIGURATION  -----------------------------------------------------------------
-                        var headersConfiguration = this.propWidget.settings.configuration.headers
+                        const headersConfiguration = this.propWidget.settings.configuration.headers
                         if (headersConfiguration.enabled && headersConfiguration.custom.enabled) {
                             headersConfiguration.custom.rules.forEach((rule) => {
                                 rule.target.forEach((columnId) => {
@@ -297,7 +308,7 @@ export default defineComponent({
                         }
 
                         // TOOLTIP CONFIGURATION  -----------------------------------------------------------------
-                        var tooltipConfig = this.getColumnTooltipConfig(tempCol.colId)
+                        const tooltipConfig = this.getColumnTooltipConfig(tempCol.colId)
                         if (tooltipConfig !== null) {
                             tempCol.tooltipComponent = TooltipRenderer
                             tempCol.tooltipField = tempCol.field
@@ -308,20 +319,20 @@ export default defineComponent({
                         }
 
                         // PAGINATION CONFIGURATION  -----------------------------------------------------------------
-                        var pagination = this.propWidget.settings.pagination
+                        const pagination = this.propWidget.settings.pagination
                         if (pagination.enabled) {
                             this.showPaginator = true
                         } else this.showPaginator = false
 
                         // CUSTOM MESSAGE CONFIGURATION  -----------------------------------------------------------------
-                        var customMessageConfig = this.propWidget.settings.configuration.customMessages
+                        const customMessageConfig = this.propWidget.settings.configuration.customMessages
                         if (customMessageConfig) {
                             if (customMessageConfig.hideNoRowsMessage) this.gridApi?.hideOverlay()
                             if (customMessageConfig.noRowsMessage) this.overlayNoRowsTemplateTest = customMessageConfig.noRowsMessage
                         }
 
                         // COLUMN GROUPING -----------------------------------------------------------------
-                        var group = this.getColumnGroup(this.propWidget.columns[datasetColumn])
+                        const group = this.getColumnGroup(this.propWidget.columns[datasetColumn])
                         if (group) {
                             if (typeof columnGroups[group.id] != 'undefined') {
                                 columns[columnGroups[group.id]].children.push(tempCol)
@@ -343,9 +354,9 @@ export default defineComponent({
             return columns
         },
         getColumnGroup(col) {
-            var modelGroups = this.propWidget.settings.configuration.columnGroups.groups
+            const modelGroups = this.propWidget.settings.configuration.columnGroups.groups
             if (this.propWidget.settings.configuration.columnGroups.enabled && modelGroups && modelGroups.length > 0) {
-                for (var k in modelGroups) {
+                for (const k in modelGroups) {
                     if (modelGroups[k].columns.includes(col.id)) {
                         return modelGroups[k]
                     }
@@ -353,8 +364,8 @@ export default defineComponent({
             } else return false
         },
         getColumnTooltipConfig(colId) {
-            var tooltipConfig = this.propWidget.settings.tooltips
-            var columntooltipConfig = null as any
+            const tooltipConfig = this.propWidget.settings.tooltips
+            let columntooltipConfig = null as any
             tooltipConfig[0].enabled ? (columntooltipConfig = tooltipConfig[0]) : ''
             tooltipConfig.forEach((config) => {
                 config.target.includes(colId) ? (columntooltipConfig = config) : ''
@@ -363,11 +374,11 @@ export default defineComponent({
             return columntooltipConfig
         },
         getRowStyle(params) {
-            var rowStyles = this.propWidget.settings.style.rows
-            var rowData = Object.entries(params.data).filter((row) => row[0].includes('column_'))
+            const rowStyles = this.propWidget.settings.style.rows
+            const rowData = Object.entries(params.data).filter((row) => row[0].includes('column_'))
             if (this.propWidget.settings.conditionalStyles.enabled) {
                 for (let i = 0; i < rowData.length; i++) {
-                    var conditionalColumnStyle = getColumnConditionalStyles(this.propWidget, this.propWidget.columns[i].id!, rowData[i][1], false)
+                    const conditionalColumnStyle = getColumnConditionalStyles(this.propWidget, this.propWidget.columns[i].id!, rowData[i][1], false)
                     if (conditionalColumnStyle) return conditionalColumnStyle
                 }
             }
@@ -382,11 +393,11 @@ export default defineComponent({
             }
         },
         getColumnVisibilityCondition(colId) {
-            var visCond = this.propWidget.settings.visualization.visibilityConditions
-            var columnHidden = false as boolean
+            const visCond = this.propWidget.settings.visualization.visibilityConditions
+            let columnHidden = false as boolean
 
             if (visCond.enabled) {
-                var colConditions = visCond.conditions.filter((condition) => condition.target.includes(colId))
+                const colConditions = visCond.conditions.filter((condition) => condition.target.includes(colId))
                 //We always take the 1st condition as a priority for the column and use that one.
                 if (colConditions[0]) {
                     if (colConditions[0].condition.type === 'always') {
@@ -401,7 +412,7 @@ export default defineComponent({
         },
         updateData(data) {
             if (this.propWidget.settings.configuration.summaryRows.enabled) {
-                var rowsNumber = this.propWidget.settings.configuration.summaryRows.list.length
+                const rowsNumber = this.propWidget.settings.configuration.summaryRows.list.length
                 this.gridApi?.setRowData(data.slice(0, data.length - rowsNumber))
                 this.gridApi?.setPinnedBottomRowData(data.slice(-rowsNumber))
             } else {
@@ -413,7 +424,7 @@ export default defineComponent({
             if (!this.editorMode) {
                 if (node.colDef.measure == 'MEASURE' || node.colDef.pinned || node.value === '' || node.value == undefined) return
                 //SELECTION LOGIC -------------------------------------------------------------------
-                var modalSelection = this.propWidget.settings.interactions.selection
+                const modalSelection = this.propWidget.settings.interactions.selection
                 if (modalSelection.enabled) {
                     if (modalSelection.multiselection.enabled) {
                         //first check to see it the column selected is the same, if not clear the past selections
@@ -448,7 +459,7 @@ export default defineComponent({
                 this.selectedColumnArray.pop()
                 this.selectedColumnArray.push(node.colDef.field)
 
-                var params = { force: true }
+                const params = { force: true }
                 this.gridApi?.refreshCells(params)
             }
         },
@@ -482,9 +493,9 @@ export default defineComponent({
             }
         },
         mapRow(rowData) {
-            var keyMap = {}
-            for (var r in rowData) {
-                for (var f in this.tableData?.metaData?.fields) {
+            const keyMap = {}
+            for (const r in rowData) {
+                for (const f in this.tableData?.metaData?.fields) {
                     if (this.tableData?.metaData?.fields[f].dataIndex == r) keyMap[this.tableData?.metaData?.fields[f].header] = rowData[r]
                 }
             }

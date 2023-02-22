@@ -1,19 +1,19 @@
 <template>
     <div class="managerDetail">
-        <Dialog class="kn-dialog--toolbar--primary knMetadataDialog" v-bind:visible="visibility" footer="footer" :header="$t('managers.resourceManagement.metadata.dialog.title')" :closable="false" modal @id="loadMetadata">
+        <Dialog class="kn-dialog--toolbar--primary knMetadataDialog" :visible="visibility" footer="footer" :header="$t('managers.resourceManagement.metadata.dialog.title')" :closable="false" modal @id="loadMetadata">
             <div class="p-grid p-m-3 p-fluid p-ai-start">
                 <span class="p-float-label p-col-4">
-                    <InputText id="name" class="kn-material-input" type="text" v-model="metadata.name" @change="setDirty" />
+                    <InputText id="name" v-model="metadata.name" class="kn-material-input" type="text" @change="setDirty" />
                     <label class="kn-material-input-label" for="name">{{ $t('common.name') }}</label>
                 </span>
 
                 <span class="p-float-label p-col-2">
-                    <InputText id="name" class="kn-material-input" type="text" v-model="metadata.version" @change="setDirty" />
+                    <InputText id="name" v-model="metadata.version" class="kn-material-input" type="text" @change="setDirty" />
                     <label class="kn-material-input-label" for="name">{{ $t(descriptor.metadata.version.label) }}</label>
                 </span>
 
                 <span class="p-float-label p-col-3">
-                    <Dropdown id="typeOfAnalytics" class="kn-material-input" v-model="metadata.typeOfAnalytics" @change="setDirty" :options="translatedOptions" optionLabel="name" optionValue="value"> </Dropdown>
+                    <Dropdown id="typeOfAnalytics" v-model="metadata.typeOfAnalytics" class="kn-material-input" :options="translatedOptions" option-label="name" option-value="value" @change="setDirty"> </Dropdown>
                     <label class="kn-material-input-label" for="outputType">{{ $t(descriptor.metadata.typeOfAnalytics.label) }}</label>
                 </span>
                 <span class="p-col-3 p-d-flex p-jc-end">
@@ -21,39 +21,39 @@
                     <InputSwitch v-model="metadata.openSource" @change="setDirty" />
                 </span>
                 <span class="p-float-label p-col-8 descriptionTextArea">
-                    <Textarea v-model="metadata.description" class="kn-material-input" style="resize: none" id="description" rows="5" @change="setDirty" />
+                    <Textarea id="description" v-model="metadata.description" class="kn-material-input" style="resize: none" rows="5" @change="setDirty" />
                     <label class="kn-material-input-label" for="description">{{ $t('common.description') }}</label>
                 </span>
                 <span class="p-col-4 kn-height-full">
                     <span class="p-d-flex p-jc-end p-ai-center">
-                        <input id="inputImage" type="file" @change="uploadFile" accept="image/png, image/jpeg" />
-                        <label for="inputImage" v-tooltip.bottom="$t('common.upload')">
+                        <input id="inputImage" type="file" accept="image/png, image/jpeg" @change="uploadFile" />
+                        <label v-tooltip.bottom="$t('common.upload')" for="inputImage">
                             <i class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0 pi pi-upload" />
                         </label>
-                        <i class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0 pi pi-times p-ml-2" v-if="metadata.image" @click="removeImage" v-tooltip.bottom="$t('common.delete')" />
+                        <i v-if="metadata.image" v-tooltip.bottom="$t('common.delete')" class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0 pi pi-times p-ml-2" @click="removeImage" />
                     </span>
                     <div class="imageContainer p-d-flex p-jc-center p-ai-center">
-                        <i class="far fa-image fa-5x icon" v-if="!metadata.image" />
-                        <img :src="metadata.image" v-if="metadata.image" height="100%" class="kn-no-select" />
+                        <i v-if="!metadata.image" class="far fa-image fa-5x icon" />
+                        <img v-if="metadata.image" :src="metadata.image" height="100%" class="kn-no-select" />
                     </div>
                 </span>
             </div>
 
             <Accordion class="p-col-12">
                 <AccordionTab :header="$t(descriptor.metadata.accuracyAndPerformance.label)">
-                    <Textarea v-model="metadata.accuracyAndPerformance" class="kn-material-input metadataTextArea" style="resize: none" id="accuracyAndPerformance" rows="3" @change="setDirty" />
+                    <Textarea id="accuracyAndPerformance" v-model="metadata.accuracyAndPerformance" class="kn-material-input metadataTextArea" style="resize: none" rows="3" @change="setDirty" />
                 </AccordionTab>
                 <AccordionTab :header="$t(descriptor.metadata.usageOfTheModel.label)">
-                    <Textarea v-model="metadata.usageOfTheModel" class="kn-material-input metadataTextArea" style="resize: none" id="usageOfTheModel" rows="3" @change="setDirty" />
+                    <Textarea id="usageOfTheModel" v-model="metadata.usageOfTheModel" class="kn-material-input metadataTextArea" style="resize: none" rows="3" @change="setDirty" />
                 </AccordionTab>
                 <AccordionTab :header="$t(descriptor.metadata.formatOfData.label)">
-                    <Textarea v-model="metadata.formatOfData" class="kn-material-input metadataTextArea" style="resize: none" id="formatOfData" rows="3" @change="setDirty" />
+                    <Textarea id="formatOfData" v-model="metadata.formatOfData" class="kn-material-input metadataTextArea" style="resize: none" rows="3" @change="setDirty" />
                 </AccordionTab>
             </Accordion>
 
             <template #footer>
                 <Button class="kn-button kn-button--secondary" @click="closeDialog">{{ $t('common.close') }} </Button>
-                <Button class="kn-button kn-button--primary" @click="saveMetadata" :disabled="!dirty"> {{ $t('common.save') }}</Button>
+                <Button class="kn-button kn-button--primary" :disabled="!dirty" @click="saveMetadata"> {{ $t('common.save') }}</Button>
             </template>
         </Dialog>
     </div>
@@ -77,6 +77,15 @@ import mainStore from '../../../App.store'
 export default defineComponent({
     name: 'metadata-dialog',
     components: { Dialog, Dropdown, InputSwitch, Accordion, AccordionTab, Textarea },
+    props: {
+        id: String,
+        visibility: Boolean
+    },
+    emits: ['update:visibility'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             dirty: false,
@@ -87,24 +96,15 @@ export default defineComponent({
             translatedOptions: Array<any>()
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
     created() {
         this.loadMetadata()
-        let notTranslatedOptions = this.descriptor.metadata.typeOfAnalytics.options
-        for (var idx in notTranslatedOptions) {
-            let translatedOption = notTranslatedOptions[idx]
+        const notTranslatedOptions = this.descriptor.metadata.typeOfAnalytics.options
+        for (const idx in notTranslatedOptions) {
+            const translatedOption = notTranslatedOptions[idx]
             translatedOption.name = this.$t(translatedOption.name)
             this.translatedOptions.push(translatedOption)
         }
     },
-    props: {
-        id: String,
-        visibility: Boolean
-    },
-    emits: ['update:visibility'],
     methods: {
         closeDialog() {
             this.$emit('update:visibility', false)
@@ -163,7 +163,7 @@ export default defineComponent({
         },
         uploadFile(event): void {
             const reader = new FileReader()
-            let self = this
+            const self = this
             reader.addEventListener(
                 'load',
                 function () {

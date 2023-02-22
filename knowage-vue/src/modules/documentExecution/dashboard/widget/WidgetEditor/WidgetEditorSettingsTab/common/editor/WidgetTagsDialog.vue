@@ -13,18 +13,18 @@
                 {{ $t(`dashboard.widgetEditor.editorTags.hint.${mode}`) }}
             </Message>
 
-            <WidgetEditorParameters v-if="mode === 'parameters'" :dashboardId="dashboardId" @insertChanged="onInsertChanged"></WidgetEditorParameters>
+            <WidgetEditorParameters v-if="mode === 'parameters'" :dashboard-id="dashboardId" @insertChanged="onInsertChanged"></WidgetEditorParameters>
             <WidgetEditorVariables v-else-if="mode === 'variables'" :variables="variables" @insertChanged="onInsertChanged"></WidgetEditorVariables>
             <WidgetEditorInternationalization v-else-if="mode === 'internationalization'" @insertChanged="onInsertChanged"></WidgetEditorInternationalization>
-            <WidgetEditorRepeater v-else-if="mode === 'repeater'" :widgetModel="widgetModel" @insertChanged="onInsertChanged"></WidgetEditorRepeater>
-            <WidgetEditorRepeatIndex v-else-if="mode === 'repeatIndex'" :widgetModel="widgetModel"></WidgetEditorRepeatIndex>
+            <WidgetEditorRepeater v-else-if="mode === 'repeater'" :widget-model="widgetModel" @insertChanged="onInsertChanged"></WidgetEditorRepeater>
+            <WidgetEditorRepeatIndex v-else-if="mode === 'repeatIndex'" :widget-model="widgetModel"></WidgetEditorRepeatIndex>
             <WidgetEditorCalculator v-else-if="mode === 'calculator'" @insertChanged="onInsertChanged"></WidgetEditorCalculator>
-            <WidgetEditorPreview v-else-if="mode === 'preview'" :widgetModel="widgetModel" :selectedDatasets="selectedDatasets" @insertChanged="onInsertChanged"></WidgetEditorPreview>
+            <WidgetEditorPreview v-else-if="mode === 'preview'" :widget-model="widgetModel" :selected-datasets="selectedDatasets" @insertChanged="onInsertChanged"></WidgetEditorPreview>
             <WidgetEditorConditionalContainer v-else-if="mode === 'conditional'" @insertChanged="onInsertChanged"></WidgetEditorConditionalContainer>
-            <WidgetEditorActiveSelections v-else-if="mode === 'activesel'" :widgetModel="widgetModel" @insertChanged="onInsertChanged"></WidgetEditorActiveSelections>
-            <WidgetEditorSelection v-else-if="mode === 'selection'" :widgetModel="widgetModel" @insertChanged="onInsertChanged"></WidgetEditorSelection>
-            <WidgetEditorColumnData v-else-if="mode === 'columnsData'" :widgetModel="widgetModel" @insertChanged="onInsertChanged"></WidgetEditorColumnData>
-            <WidgetEditorCrossNavigation v-else-if="mode === 'crossnav'" :widgetModel="widgetModel" @insertChanged="onInsertChanged"></WidgetEditorCrossNavigation>
+            <WidgetEditorActiveSelections v-else-if="mode === 'activesel'" :widget-model="widgetModel" @insertChanged="onInsertChanged"></WidgetEditorActiveSelections>
+            <WidgetEditorSelection v-else-if="mode === 'selection'" :widget-model="widgetModel" @insertChanged="onInsertChanged"></WidgetEditorSelection>
+            <WidgetEditorColumnData v-else-if="mode === 'columnsData'" :widget-model="widgetModel" @insertChanged="onInsertChanged"></WidgetEditorColumnData>
+            <WidgetEditorCrossNavigation v-else-if="mode === 'crossnav'" :widget-model="widgetModel" @insertChanged="onInsertChanged"></WidgetEditorCrossNavigation>
         </div>
 
         <template #footer>
@@ -81,13 +81,13 @@ export default defineComponent({
         dashboardId: { type: String, required: true }
     },
     emited: ['close', 'insert'],
-    computed: {},
     data() {
         return {
             descriptor,
             forInsert: '' as string
         }
     },
+    computed: {},
     watch: {
         mode() {
             this.setInitialInsertValue()

@@ -1,10 +1,10 @@
 <template>
-    <DataTable :value="data" class="p-datatable-sm kn-table" dataKey="field" v-model:filters="filters" :globalFilterFields="lovsManagementSimpleDatatableDescriptor.globalFilterFields" responsiveLayout="stack" breakpoint="960px" @page="onPage($event)">
+    <DataTable v-model:filters="filters" :value="data" class="p-datatable-sm kn-table" data-key="field" :global-filter-fields="lovsManagementSimpleDatatableDescriptor.globalFilterFields" responsive-layout="stack" breakpoint="960px" @page="onPage($event)">
         <template #header>
             <div class="table-header">
                 <span class="p-input-icon-left">
                     <i class="pi pi-search" />
-                    <InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
+                    <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
                 </span>
             </div>
         </template>

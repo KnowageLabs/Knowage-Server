@@ -3,13 +3,13 @@
         <span class="p-float-label">
             <InputText
                 id="javaClassName"
+                v-model.trim="javaClass.name"
                 class="kn-material-input"
                 type="text"
-                v-model.trim="javaClass.name"
                 :class="{
                     'p-invalid': !javaClass.name && dirty
                 }"
-                maxLength="160"
+                max-length="160"
                 @blur="dirty = true"
                 @input="$emit('touched')"
             />

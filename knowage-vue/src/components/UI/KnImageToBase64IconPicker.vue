@@ -1,7 +1,7 @@
 <template>
   <div>
     <img style="" :src="image" alt="" />
-    <input @change="handleImage" type="file" />
+    <input type="file" @change="handleImage" />
     <img :src="remoteUrl" alt="" />
   </div>
 </template>

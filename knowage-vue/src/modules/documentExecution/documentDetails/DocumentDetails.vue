@@ -5,8 +5,8 @@
                 {{ $t('documentExecution.documentDetails.title') }}
             </template>
             <template #end>
-                <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDocument" :disabled="invalidDrivers > 0 || invalidOutputParams > 0 || invalidFunctionalities == 0 || v$.$invalid" />
-                <Button v-if="propMode === 'execution'" icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeDocument" />
+                <Button v-tooltip.bottom="$t('common.save')" icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="invalidDrivers > 0 || invalidOutputParams > 0 || invalidFunctionalities == 0 || v$.$invalid" @click="saveDocument" />
+                <Button v-if="propMode === 'execution'" v-tooltip.bottom="$t('common.close')" icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeDocument" />
             </template>
         </Toolbar>
         <ProgressSpinner v-if="loading" class="doc-details-spinner" :style="mainDescriptor.style.spinnerStyle" />
@@ -19,59 +19,59 @@
                     </template>
                     <InformationsTab
                         v-if="!loading"
-                        :selectedDocument="selectedDocument"
-                        :availableFolders="availableFolders"
-                        :documentTypes="types"
-                        :documentEngines="engines"
-                        :availableDatasources="dataSources"
-                        :availableStates="states"
-                        :selectedDataset="selectedDataset"
-                        :availableTemplates="templates"
-                        :availableAttributes="attributes"
+                        :selected-document="selectedDocument"
+                        :available-folders="availableFolders"
+                        :document-types="types"
+                        :document-engines="engines"
+                        :available-datasources="dataSources"
+                        :available-states="states"
+                        :selected-dataset="selectedDataset"
+                        :available-templates="templates"
+                        :available-attributes="attributes"
                         @setTemplateForUpload="setTemplateForUpload"
                         @setImageForUpload="setImageForUpload"
                         @deleteImage="deleteImage"
                         @openDesignerDialog="openDesignerDialog"
                     />
                 </TabPanel>
-                <TabPanel v-if="this.selectedDocument?.id">
+                <TabPanel v-if="selectedDocument?.id">
                     <template #header>
-                        <span v-bind:class="{ 'details-warning-color': invalidDrivers }">{{ $t('documentExecution.documentDetails.drivers.title') }}</span>
-                        <Badge :value="invalidDrivers" class="p-ml-2" severity="danger" v-if="invalidDrivers > 0"></Badge>
+                        <span :class="{ 'details-warning-color': invalidDrivers }">{{ $t('documentExecution.documentDetails.drivers.title') }}</span>
+                        <Badge v-if="invalidDrivers > 0" :value="invalidDrivers" class="p-ml-2" severity="danger"></Badge>
                     </template>
-                    <DriversTab :selectedDocument="selectedDocument" :availableDrivers="drivers" :availableAnalyticalDrivers="analyticalDrivers" />
+                    <DriversTab :selected-document="selectedDocument" :available-drivers="drivers" :available-analytical-drivers="analyticalDrivers" />
                 </TabPanel>
-                <TabPanel v-if="this.selectedDocument?.id">
+                <TabPanel v-if="selectedDocument?.id">
                     <template #header>
-                        <span v-bind:class="{ 'details-warning-color': invalidOutputParams }">{{ $t('documentExecution.documentDetails.outputParams.title') }}</span>
-                        <Badge :value="invalidOutputParams" class="p-ml-2" severity="danger" v-if="invalidOutputParams > 0"></Badge>
+                        <span :class="{ 'details-warning-color': invalidOutputParams }">{{ $t('documentExecution.documentDetails.outputParams.title') }}</span>
+                        <Badge v-if="invalidOutputParams > 0" :value="invalidOutputParams" class="p-ml-2" severity="danger"></Badge>
                     </template>
-                    <OutputParamsTab :selectedDocument="selectedDocument" :typeList="parTypes" :dateFormats="dateFormats" />
+                    <OutputParamsTab :selected-document="selectedDocument" :type-list="parTypes" :date-formats="dateFormats" />
                 </TabPanel>
-                <TabPanel v-if="this.selectedDocument?.id && showDataLineageTab">
+                <TabPanel v-if="selectedDocument?.id && showDataLineageTab">
                     <template #header>
                         <span>{{ $t('documentExecution.documentDetails.dataLineage.title') }}</span>
                     </template>
 
-                    <DataLineageTab :selectedDocument="selectedDocument" :metaSourceResource="metaSourceResource" :savedTables="savedTables" />
+                    <DataLineageTab :selected-document="selectedDocument" :meta-source-resource="metaSourceResource" :saved-tables="savedTables" />
                 </TabPanel>
-                <TabPanel v-if="this.selectedDocument?.id">
+                <TabPanel v-if="selectedDocument?.id">
                     <template #header>
                         <span>{{ $t('documentExecution.documentDetails.history.title') }}</span>
                     </template>
-                    <HistoryTab :selectedDocument="selectedDocument" @openDesignerDialog="openDesignerDialog" />
+                    <HistoryTab :selected-document="selectedDocument" @openDesignerDialog="openDesignerDialog" />
                 </TabPanel>
-                <TabPanel v-if="this.selectedDocument?.id && this.selectedDocument?.typeCode == 'REPORT' && this.selectedDocument?.engine == 'knowagejasperreporte'">
+                <TabPanel v-if="selectedDocument?.id && selectedDocument?.typeCode == 'REPORT' && selectedDocument?.engine == 'knowagejasperreporte'">
                     <template #header>
                         <span>{{ $t('documentExecution.documentDetails.subreports.title') }}</span>
                     </template>
 
-                    <SubreportsTab :selectedDocument="selectedDocument" :allDocumentDetailsProp="allDocumentDetails" />
+                    <SubreportsTab :selected-document="selectedDocument" :all-document-details-prop="allDocumentDetails" />
                 </TabPanel>
             </TabView>
         </div>
 
-        <DocumentDetailOlapDesignerDialog v-if="designerDialogVisible" :visible="designerDialogVisible" :selectedDocument="selectedDocument" @close="designerDialogVisible = false" @designerStarted="onDesignerStart"></DocumentDetailOlapDesignerDialog>
+        <DocumentDetailOlapDesignerDialog v-if="designerDialogVisible" :visible="designerDialogVisible" :selected-document="selectedDocument" @close="designerDialogVisible = false" @designerStarted="onDesignerStart"></DocumentDetailOlapDesignerDialog>
     </div>
 </template>
 
@@ -111,6 +111,10 @@ export default defineComponent({
     },
     props: { propDocId: { type: String }, propFolderId: { type: String }, propMode: { type: String }, viewMode: { type: String }, wholeItem: { type: Object } },
     emits: ['closeDetails', 'documentSaved'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             v$: useValidate() as any,
@@ -165,10 +169,6 @@ export default defineComponent({
         async propDocId() {
             await this.isForEdit()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         if (this.viewMode !== 'document-detail' && this.$route.name !== 'document-details-new-document' && this.$route.name !== 'document-details-edit-document') return
@@ -240,7 +240,7 @@ export default defineComponent({
             await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/folders?includeDocs=false`).then((response: AxiosResponse<any>) => {
                 this.availableFolders = response.data
                 if (this.$route.params.folderId) {
-                    let sourceFolder = this.availableFolders.find((folder) => folder.id == parseInt(this.folderId)) as iFolder
+                    const sourceFolder = this.availableFolders.find((folder) => folder.id == parseInt(this.folderId)) as iFolder
                     if (!this.selectedDocument.functionalities.includes(sourceFolder.path)) this.selectedDocument.functionalities.push(sourceFolder.path)
                 }
             })
@@ -306,7 +306,7 @@ export default defineComponent({
         },
         async uploadTemplate(uploadedFile, responseId) {
             if (this.templateToUpload) {
-                var formData = new FormData()
+                const formData = new FormData()
                 formData.append('file', uploadedFile)
                 await this.$http
                     .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${responseId}/templates`, formData, {
@@ -329,7 +329,7 @@ export default defineComponent({
         },
         async uploadImage(uploadedFile, responseId) {
             if (this.imageToUpload) {
-                var formData = new FormData()
+                const formData = new FormData()
                 formData.append('file', uploadedFile)
                 formData.append('fileName', uploadedFile.name)
                 await this.$http
@@ -391,7 +391,7 @@ export default defineComponent({
         },
         async saveDocument() {
             this.loading = true
-            let docToSave = { ...this.selectedDocument }
+            const docToSave = { ...this.selectedDocument }
             const folderId = this.propFolderId
             delete docToSave.drivers
             delete docToSave.outputParameters

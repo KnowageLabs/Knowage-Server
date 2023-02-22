@@ -5,7 +5,7 @@ const messages = {
     en_US: import('@/i18n/en_US/messages.json')
 }
 
-let currentLocale = localStorage.getItem('locale') ? localStorage.getItem('locale') : store.locale
+const currentLocale = localStorage.getItem('locale') ? localStorage.getItem('locale') : store.locale
 
 const i18n = createI18n({
     locale: currentLocale,

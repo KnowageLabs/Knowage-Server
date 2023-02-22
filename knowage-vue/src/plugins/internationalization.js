@@ -4,9 +4,9 @@ export default {
     install: (app) => {
         const store = mainStore()
         app.config.globalProperties.$internationalization = (key) => {
-            let options = store.$state.internationalization
+            const options = store.$state.internationalization
 
-            let el = options.find((item) => item.label === key)
+            const el = options.find((item) => item.label === key)
             return el ? el.message : key
         }
     }

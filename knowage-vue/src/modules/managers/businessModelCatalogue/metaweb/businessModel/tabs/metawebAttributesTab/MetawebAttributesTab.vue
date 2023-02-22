@@ -1,8 +1,8 @@
 <template>
     <div>
-        <DataTable v-if="businessModel" class="p-datatable-sm kn-table p-m-2" :value="businessModel.columns" :loading="loading" responsiveLayout="stack" breakpoint="960px" @rowReorder="onRowReorder">
-            <Column :rowReorder="true" :headerStyle="metawebAttributesTabDescriptor.reorderColumnStyle" :reorderableColumn="false" />
-            <Column class="kn-truncated" v-for="(column, index) in metawebAttributesTabDescriptor.columns" :key="index" :field="column.field" :header="$t(column.header)">
+        <DataTable v-if="businessModel" class="p-datatable-sm kn-table p-m-2" :value="businessModel.columns" :loading="loading" responsive-layout="stack" breakpoint="960px" @rowReorder="onRowReorder">
+            <Column :row-reorder="true" :header-style="metawebAttributesTabDescriptor.reorderColumnStyle" :reorderable-column="false" />
+            <Column v-for="(column, index) in metawebAttributesTabDescriptor.columns" :key="index" class="kn-truncated" :field="column.field" :header="$t(column.header)">
                 <template #body="slotProps">
                     <div class="p-d-flex p-flex-row">
                         <Checkbox v-if="column.field === 'identifier'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="$emit('metaUpdated')"></Checkbox>
@@ -10,7 +10,7 @@
                         <Checkbox v-else-if="column.field === 'personal'" v-model="columnsPersonal[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'personal')"></Checkbox>
                         <Checkbox v-else-if="column.field === 'decrypt'" v-model="columnsDecrypt[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'decrypt')"></Checkbox>
                         <Checkbox v-else-if="column.field === 'subjectId'" v-model="columnsSubjectId[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'subjectId')"></Checkbox>
-                        <Dropdown v-else-if="column.field === 'type'" class="kn-material-input" v-model="columnsType[slotProps.data.uniqueName]" :options="metawebAttributesTabDescriptor.typeOptions" @change="onChange(slotProps.data, 'type')" />
+                        <Dropdown v-else-if="column.field === 'type'" v-model="columnsType[slotProps.data.uniqueName]" class="kn-material-input" :options="metawebAttributesTabDescriptor.typeOptions" @change="onChange(slotProps.data, 'type')" />
                         <InputText v-else-if="column.field === 'name'" v-model="slotProps.data[slotProps.column.props.field]" class="kn-material-input p-inputtext-sm p-p-2" @blur="$emit('metaUpdated')" />
                         <span v-else>{{ slotProps.data[slotProps.column.props.field] }}</span>
                     </div>
@@ -18,20 +18,20 @@
             </Column>
             <Column :style="metawebAttributesTabDescriptor.iconColumnStyle">
                 <template #header>
-                    <Button class="kn-button kn-button--primary p-button-link p-jc-center" @click="openUnusedFieldsDialog" data-test="add-button"> {{ $t('common.add') }}</Button>
+                    <Button class="kn-button kn-button--primary p-button-link p-jc-center" data-test="add-button" @click="openUnusedFieldsDialog"> {{ $t('common.add') }}</Button>
                 </template>
 
                 <template #body="slotProps">
                     <div class="p-d-flex p-flex-row p-jc-end">
-                        <Button icon="far fa-edit" class="p-button-link" @click="openAttributeDialog(slotProps.data)" :data-test="'open-icon-' + slotProps.data.name" />
-                        <Button icon="pi pi-trash" class="p-button-link" @click="deleteBusinessColumnConfirm(slotProps.data)" :data-test="'delete-icon-' + slotProps.data.name" />
+                        <Button icon="far fa-edit" class="p-button-link" :data-test="'open-icon-' + slotProps.data.name" @click="openAttributeDialog(slotProps.data)" />
+                        <Button icon="pi pi-trash" class="p-button-link" :data-test="'delete-icon-' + slotProps.data.name" @click="deleteBusinessColumnConfirm(slotProps.data)" />
                     </div>
                 </template>
             </Column>
         </DataTable>
 
-        <MetawebAttributeDetailDialog :visible="attributeDetailDialogVisible" :selectedAttribute="selectedAttribute" :roles="roles" @close="attributeDetailDialogVisible = false" @save="onAttributeSave"></MetawebAttributeDetailDialog>
-        <MetawebAttributeUnusedFieldDialog :visible="unusedFieldDialogVisible" :unusedFields="unusedFields" @close="unusedFieldDialogVisible = false" @save="saveUnusedFields"></MetawebAttributeUnusedFieldDialog>
+        <MetawebAttributeDetailDialog :visible="attributeDetailDialogVisible" :selected-attribute="selectedAttribute" :roles="roles" @close="attributeDetailDialogVisible = false" @save="onAttributeSave"></MetawebAttributeDetailDialog>
+        <MetawebAttributeUnusedFieldDialog :visible="unusedFieldDialogVisible" :unused-fields="unusedFields" @close="unusedFieldDialogVisible = false" @save="saveUnusedFields"></MetawebAttributeUnusedFieldDialog>
     </div>
 </template>
 
@@ -54,6 +54,10 @@ export default defineComponent({
     components: { Checkbox, Column, DataTable, Dropdown, MetawebAttributeDetailDialog, MetawebAttributeUnusedFieldDialog },
     props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null> }, propMeta: { type: Object }, observer: { type: Object }, roles: { type: Array } },
     emits: ['loading', 'metaUpdated'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             metawebAttributesTabDescriptor,
@@ -78,10 +82,6 @@ export default defineComponent({
             this.loadMeta()
             this.loadBusinessModel()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadMeta()

@@ -10,26 +10,26 @@
         </Toolbar>
         <KnOverlaySpinnerPanel :visibility="loading" data-test="spinner" />
         <div class="kn-page-content p-grid p-m-0">
-            <div class="p-col" v-if="!loading">
+            <div v-if="!loading" class="p-col">
                 <DataTable
+                    v-model:filters="filters"
                     :value="calendars"
                     :paginator="calendars.length > 20"
                     :loading="loading"
                     :rows="20"
                     class="p-datatable-sm kn-table"
-                    dataKey="id"
-                    v-model:filters="filters"
-                    :globalFilterFields="calendarManagementDescriptor.globalFilterFields"
-                    responsiveLayout="stack"
+                    data-key="id"
+                    :global-filter-fields="calendarManagementDescriptor.globalFilterFields"
+                    responsive-layout="stack"
                     breakpoint="960px"
-                    @rowClick="showForm($event)"
                     data-test="calendar-table"
+                    @rowClick="showForm($event)"
                 >
                     <template #header>
                         <div class="table-header">
                             <span class="p-input-icon-left">
                                 <i class="pi pi-search" />
-                                <InputText class="kn-material-input" v-model="filters['global'].value" :placeholder="$t('common.search')" data-test="search-input" />
+                                <InputText v-model="filters['global'].value" class="kn-material-input" :placeholder="$t('common.search')" data-test="search-input" />
                             </span>
                         </div>
                     </template>
@@ -53,14 +53,14 @@
                     <Column class="kn-truncated" field="calType" :header="$t('common.type')" :sortable="true"></Column>
                     <Column v-if="canManageCalendar" :style="calendarManagementDescriptor.iconColumnStyle">
                         <template #body="slotProps">
-                            <Button icon="pi pi-trash" class="p-button-link" @click="deleteCalendarConfirm(slotProps.data)" :data-test="'delete-button-' + slotProps.data.calendar" />
+                            <Button icon="pi pi-trash" class="p-button-link" :data-test="'delete-button-' + slotProps.data.calendar" @click="deleteCalendarConfirm(slotProps.data)" />
                         </template>
                     </Column>
                 </DataTable>
             </div>
         </div>
 
-        <CalendarManagementDialog :visible="calendarDialogVisible" :propCalendar="selectedCalendar" :domains="domains" @close="closeCalendarDialog" @calendarSaved="onCalendarSaved"></CalendarManagementDialog>
+        <CalendarManagementDialog :visible="calendarDialogVisible" :prop-calendar="selectedCalendar" :domains="domains" @close="closeCalendarDialog" @calendarSaved="onCalendarSaved"></CalendarManagementDialog>
     </div>
 </template>
 
@@ -82,6 +82,10 @@ import mainStore from '../../../App.store'
 export default defineComponent({
     name: 'calendar-management',
     components: { CalendarManagementDialog, Column, DataTable, KnFabButton, KnOverlaySpinnerPanel },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             calendarManagementDescriptor,
@@ -97,10 +101,6 @@ export default defineComponent({
         canManageCalendar(): boolean {
             return (this.store.$state as any).user.functionalities.includes('ManageCalendar')
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         await this.loadCalendars()

@@ -20,14 +20,6 @@ export default defineComponent({
             modelValue: [] as string[]
         }
     },
-    watch: {
-        value() {
-            this.loadValue()
-        }
-    },
-    created() {
-        this.loadValue()
-    },
     computed: {
         options() {
             const targetOptions = [] as string[]
@@ -36,6 +28,14 @@ export default defineComponent({
             })
             return targetOptions.concat(this.availableSeriesOptions as any)
         }
+    },
+    watch: {
+        value() {
+            this.loadValue()
+        }
+    },
+    created() {
+        this.loadValue()
     },
     methods: {
         loadValue() {

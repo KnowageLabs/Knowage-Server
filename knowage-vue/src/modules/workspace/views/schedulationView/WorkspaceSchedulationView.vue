@@ -9,10 +9,10 @@
             <Button v-if="canRunScheduledExecutions" class="kn-button p-button-text p-button-rounded" @click="runAllSchedulations">{{ $t('common.run') }}</Button>
         </template>
     </Toolbar>
-    <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-    <WorkspaceSchedulationTable class="overflow p-m-2" :propJobs="jobs" @runSchedulationClick="runSingleSchedulation" @schedulationsSelected="setSelectedSchedulations" @viewOldSchedulationsClick="viewOldSchedulations"></WorkspaceSchedulationTable>
+    <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
+    <WorkspaceSchedulationTable class="overflow p-m-2" :prop-jobs="jobs" @runSchedulationClick="runSingleSchedulation" @schedulationsSelected="setSelectedSchedulations" @viewOldSchedulationsClick="viewOldSchedulations"></WorkspaceSchedulationTable>
 
-    <WorkspaceSchedulationOldSchedulationsDialog :visible="schedulationsDialogVisible" :selectedJob="selectedJob" @close="closeOldSchedulationsDialog"></WorkspaceSchedulationOldSchedulationsDialog>
+    <WorkspaceSchedulationOldSchedulationsDialog :visible="schedulationsDialogVisible" :selected-job="selectedJob" @close="closeOldSchedulationsDialog"></WorkspaceSchedulationOldSchedulationsDialog>
 </template>
 
 <script lang="ts">
@@ -66,7 +66,7 @@ export default defineComponent({
             await this.runSchedulations(formatedSchedulations)
         },
         getFormatedSchedulations() {
-            let formatedSchedulations = [] as ITrigger[]
+            const formatedSchedulations = [] as ITrigger[]
             Object.keys(this.selectedSchedulations).forEach((key) => {
                 this.selectedSchedulations[key].forEach((schedulation: ITrigger) => {
                     formatedSchedulations.push({ jobName: schedulation.jobName, jobGroup: schedulation.jobGroup, triggerName: schedulation.triggerName, triggerGroup: schedulation.triggerGroup })

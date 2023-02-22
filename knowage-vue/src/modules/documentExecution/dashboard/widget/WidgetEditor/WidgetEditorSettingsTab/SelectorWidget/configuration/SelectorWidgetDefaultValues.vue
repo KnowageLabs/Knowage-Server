@@ -1,21 +1,22 @@
+<!-- eslint-disable vue/valid-v-model -->
 <template>
     <div v-if="defaultValuesModel" class="p-grid p-jc-center p-ai-center kn-flex p-p-4">
         <div class="p-col-12 p-grid p-ai-center">
             <div v-if="isDateType" class="p-col-10 p-lg-11 p-grid">
                 <div class="p-col-12 p-lg-6 p-d-flex p-flex-column">
                     <label class="kn-material-input-label"> {{ $t('cron.startDate') }}</label>
-                    <Calendar v-model="(defaultValuesModel.startDate as Date)" :manualInput="true" :disabled="defaultModelDisabled" @input="defaultValuesChanged" @dateSelect="defaultValuesChanged"></Calendar>
+                    <Calendar v-model="(defaultValuesModel.startDate as Date)" :manual-input="true" :disabled="defaultModelDisabled" @input="defaultValuesChanged" @dateSelect="defaultValuesChanged"></Calendar>
                 </div>
 
                 <div class="p-col-12 p-lg-6 p-d-flex p-flex-column">
                     <label class="kn-material-input-label"> {{ $t('cron.endDate') }}</label>
-                    <Calendar v-model="(defaultValuesModel.endDate as Date)" :manualInput="true" :disabled="defaultModelDisabled" @input="defaultValuesChanged" @dateSelect="defaultValuesChanged"></Calendar>
+                    <Calendar v-model="(defaultValuesModel.endDate as Date)" :manual-input="true" :disabled="defaultModelDisabled" @input="defaultValuesChanged" @dateSelect="defaultValuesChanged"></Calendar>
                 </div>
             </div>
             <div v-else class="p-col-10 p-lg-11 p-grid">
                 <div class="p-col-12 p-lg-9 p-fluid p-d-flex p-flex-column kn-flex">
                     <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.defaultValues.selectDafaultValue') }}</label>
-                    <Dropdown class="kn-material-input" v-model="defaultValuesModel.valueType" :options="descriptor.defaultValuesTypes" optionValue="value" :disabled="defaultModelDisabled" @change="onDefaultValuesTypeChanged">
+                    <Dropdown v-model="defaultValuesModel.valueType" class="kn-material-input" :options="descriptor.defaultValuesTypes" option-value="value" :disabled="defaultModelDisabled" @change="onDefaultValuesTypeChanged">
                         <template #value="slotProps">
                             <div>
                                 <span>{{ getTranslatedLabel(slotProps.value, descriptor.defaultValuesTypes, $t) }}</span>
@@ -31,11 +32,11 @@
 
                 <div v-if="defaultValuesModel.valueType === 'STATIC'" class="p-col-12 p-lg-3 p-d-flex p-flex-column">
                     <label class="kn-material-input-label p-mr-2">{{ $t('common.value') }}</label>
-                    <InputText class="kn-material-input p-inputtext-sm kn-flex" v-model="defaultValuesModel.value" :disabled="defaultModelDisabled" @change="defaultValuesChanged" />
+                    <InputText v-model="defaultValuesModel.value" class="kn-material-input p-inputtext-sm kn-flex" :disabled="defaultModelDisabled" @change="defaultValuesChanged" />
                 </div>
             </div>
             <div class="p-col-2 p-lg-1 p-d-flex p-jc-center">
-                <i class="pi pi-question-circle kn-cursor-pointer p-ml-auto p-mr-4" v-tooltip.top="$t('dashboard.widgetEditor.defaultValues.hint')"></i>
+                <i v-tooltip.top="$t('dashboard.widgetEditor.defaultValues.hint')" class="pi pi-question-circle kn-cursor-pointer p-ml-auto p-mr-4"></i>
             </div>
         </div>
     </div>
@@ -49,12 +50,11 @@ import { emitter } from '../../../../../DashboardHelpers'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import descriptor from '../SelectorWidgetSettingsDescriptor.json'
 import Calendar from 'primevue/calendar'
-import InputSwitch from 'primevue/inputswitch'
 import Dropdown from 'primevue/dropdown'
 
 export default defineComponent({
     name: 'selector-widget-default-values',
-    components: { Calendar, InputSwitch, Dropdown },
+    components: { Calendar, Dropdown },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {

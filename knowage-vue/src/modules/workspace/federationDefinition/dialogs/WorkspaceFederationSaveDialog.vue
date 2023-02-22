@@ -6,8 +6,8 @@
                     <span>
                         <label class="kn-material-input-label">{{ $t('common.label') }} *</label>
                         <InputText
-                            class="kn-material-input p-inputtext-sm"
                             v-model="dataset.label"
+                            class="kn-material-input p-inputtext-sm"
                             :class="{
                                 'p-invalid': labelDirty && (!dataset.label || dataset.label.length === 0)
                             }"
@@ -25,8 +25,8 @@
                     <span>
                         <label class="kn-material-input-label">{{ $t('common.name') }} *</label>
                         <InputText
-                            class="kn-material-input p-inputtext-sm"
                             v-model="dataset.name"
+                            class="kn-material-input p-inputtext-sm"
                             :class="{
                                 'p-invalid': nameDirty && (!dataset.name || dataset.name.length === 0)
                             }"
@@ -43,7 +43,7 @@
                 <div class="p-m-4">
                     <span>
                         <label class="kn-material-input-label">{{ $t('common.description') }}</label>
-                        <InputText class="kn-material-input p-inputtext-sm" v-model="dataset.description" />
+                        <InputText v-model="dataset.description" class="kn-material-input p-inputtext-sm" />
                     </span>
                 </div>
             </div>
@@ -64,8 +64,8 @@ import workspaceFederationSaveDialogDescriptor from './WorkspaceFederationSaveDi
 export default defineComponent({
     name: 'workspace-federation-save-dialog',
     components: { Dialog },
-    emits: ['close', 'save'],
     props: { visible: { type: Boolean }, federatedDataset: { type: Object } },
+    emits: ['close', 'save'],
     data() {
         return {
             workspaceFederationSaveDialogDescriptor,
@@ -74,14 +74,14 @@ export default defineComponent({
             nameDirty: false
         }
     },
-    watch: {
-        federatedDataset() {
-            this.loadDataset()
-        }
-    },
     computed: {
         saveButtonDisabled(): boolean {
             return this.dataset.label.length === 0 || this.dataset.name.length === 0
+        }
+    },
+    watch: {
+        federatedDataset() {
+            this.loadDataset()
         }
     },
     created() {

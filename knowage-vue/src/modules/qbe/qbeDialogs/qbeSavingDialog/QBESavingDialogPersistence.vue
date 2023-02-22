@@ -20,9 +20,9 @@
                         <span class="p-float-label">
                             <InputText
                                 id="persistTableName"
+                                v-model="dataset.persistTableName"
                                 class="kn-material-input"
                                 type="text"
-                                v-model="dataset.persistTableName"
                                 :class="{
                                     'p-invalid': v$.dataset.persistTableName.$invalid && v$.dataset.persistTableName.$dirty
                                 }"
@@ -31,16 +31,16 @@
                             />
                             <label for="persistTableName" class="kn-material-input-label"> {{ $t('managers.datasetManagement.persistTableName') }} *</label>
                         </span>
-                        <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.persistTableName" :additionalTranslateParams="{ fieldName: $t('managers.datasetManagement.persistTableName') }" />
+                        <KnValidationMessages class="p-mt-1" :v-comp="v$.dataset.persistTableName" :additional-translate-params="{ fieldName: $t('managers.datasetManagement.persistTableName') }" />
                     </div>
                 </form>
-                <Toolbar class="kn-toolbar kn-toolbar--default p-mt-3" v-if="dataset.isPersisted">
+                <Toolbar v-if="dataset.isPersisted" class="kn-toolbar kn-toolbar--default p-mt-3">
                     <template #start>
                         <InputSwitch v-model="dataset.isScheduled" class="p-mr-2" @change="$emit('touched')" />
                         <span>{{ $t('managers.datasetManagement.isScheduled') }}</span>
                     </template>
                 </Toolbar>
-                <DatasetScheduler v-if="dataset.isPersisted && dataset.isScheduled" :selectedDataset="dataset" :schedulingData="schedulingData" />
+                <DatasetScheduler v-if="dataset.isPersisted && dataset.isScheduled" :selected-dataset="dataset" :scheduling-data="schedulingData" />
             </template>
         </Card>
     </div>
@@ -60,6 +60,13 @@ export default defineComponent({
     name: 'olap-custom-view-save-dialog',
     components: { Card, KnValidationMessages, InputSwitch, DatasetScheduler },
     props: { propDataset: Object, schedulingData: Object },
+    data() {
+        return {
+            v$: useValidate() as any,
+            dataset: {} as any,
+            descriptor
+        }
+    },
     computed: {
         disablePersist() {
             if (this.dataset['pars'] && this.dataset['pars'].length > 0) {
@@ -68,20 +75,13 @@ export default defineComponent({
             return false
         }
     },
-    data() {
-        return {
-            v$: useValidate() as any,
-            dataset: {} as any,
-            descriptor
-        }
-    },
-    created() {
-        this.dataset = this.propDataset
-    },
     watch: {
         selectedDataset() {
             this.dataset = this.propDataset
         }
+    },
+    created() {
+        this.dataset = this.propDataset
     },
     validations() {
         const persistFieldsRequired = (value) => {

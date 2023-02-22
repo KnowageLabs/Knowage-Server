@@ -12,20 +12,20 @@
 
     <WorkspaceRepositoryBreadcrumb :breadcrumbs="breadcrumbs" @breadcrumbClicked="$emit('breadcrumbClicked', $event)"></WorkspaceRepositoryBreadcrumb>
 
-    <InputText class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
+    <InputText v-model="searchWord" class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" type="text" :placeholder="$t('common.search')" data-test="search-input" @input="searchItems" />
     <div class="p-m-2 kn-overflow">
-        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table p-mx-2" :value="filteredDocuments" :loading="loading" dataKey="biObjId" responsiveLayout="stack" breakpoint="600px" data-test="documents-table">
+        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table p-mx-2" :value="filteredDocuments" :loading="loading" data-key="biObjId" responsive-layout="stack" breakpoint="600px" data-test="documents-table">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
             <template #filter="{ filterModel }">
-                <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter"></InputText>
             </template>
-            <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" />
+            <Column v-for="col of columns" :key="col.field" :field="col.field" :header="$t(col.header)" :sortable="true" />
             <Column class="icon-cell" :style="mainDescriptor.style.iconColumn">
                 <template #body="slotProps">
                     <Button icon="fas fa-ellipsis-v" class="p-button-link" @click="showMenu($event, slotProps.data)" />
-                    <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click="showSidebar(slotProps.data)" :data-test="'info-button-' + slotProps.data.documentName" />
+                    <Button v-tooltip.left="$t('workspace.myModels.showInfo')" icon="fas fa-info-circle" class="p-button-link" :data-test="'info-button-' + slotProps.data.documentName" @click="showSidebar(slotProps.data)" />
                     <Button icon="fas fa-play-circle" class="p-button-link" @click="executeDocumentFromOrganizer(slotProps.data)" />
                 </template>
             </Column>
@@ -38,7 +38,7 @@
                 <WorkspaceCard
                     v-for="(document, index) of filteredDocuments"
                     :key="index"
-                    :viewType="'repository'"
+                    :view-type="'repository'"
                     :document="document"
                     @executeDocumentFromOrganizer="executeDocumentFromOrganizer"
                     @moveDocumentToFolder="moveDocumentToFolder"
@@ -51,17 +51,17 @@
 
     <DetailSidebar
         :visible="showDetailSidebar"
-        :viewType="'repository'"
+        :view-type="'repository'"
         :document="selectedDocument"
+        data-test="detail-sidebar"
         @executeDocumentFromOrganizer="executeDocumentFromOrganizer"
         @moveDocumentToFolder="moveDocumentToFolder"
         @deleteDocumentFromOrganizer="deleteDocumentConfirm"
         @close="showDetailSidebar = false"
-        data-test="detail-sidebar"
     />
 
-    <WorkspaceRepositoryMoveDialog :visible="moveDialogVisible" :propFolders="folders" @close="moveDialogVisible = false" @move="handleDocumentMove"></WorkspaceRepositoryMoveDialog>
-    <WorkspaceWarningDialog :visible="warningDialogVisbile" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
+    <WorkspaceRepositoryMoveDialog :visible="moveDialogVisible" :prop-folders="folders" @close="moveDialogVisible = false" @move="handleDocumentMove"></WorkspaceRepositoryMoveDialog>
+    <WorkspaceWarningDialog :visible="warningDialogVisbile" :warning-message="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
 </template>
 <script lang="ts">
@@ -84,8 +84,12 @@ import mainStore from '../../../../App.store'
 
 export default defineComponent({
     components: { DataTable, Column, DetailSidebar, WorkspaceCard, Menu, Message, WorkspaceRepositoryMoveDialog, WorkspaceWarningDialog, WorkspaceRepositoryBreadcrumb },
-    emits: ['showMenu', 'reloadRepositoryMenu', 'toggleDisplayView', 'breadcrumbClicked', 'execute'],
     props: { selectedFolder: { type: Object }, id: { type: String, required: false }, toggleCardDisplay: { type: Boolean }, breadcrumbs: { type: Array }, allFolders: { type: Array } },
+    emits: ['showMenu', 'reloadRepositoryMenu', 'toggleDisplayView', 'breadcrumbClicked', 'execute'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             mainDescriptor,
@@ -110,10 +114,6 @@ export default defineComponent({
         allFolders() {
             this.loadFolders()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadFolders()

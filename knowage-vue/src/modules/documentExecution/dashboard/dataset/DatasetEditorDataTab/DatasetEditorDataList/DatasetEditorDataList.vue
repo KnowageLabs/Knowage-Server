@@ -1,37 +1,36 @@
 <template>
     <div class="dashboard-editor-list-card-container p-m-3">
         <div class="dashboard-editor-list-card">
-            <Button label="Add Dataset" icon="pi pi-plus-circle" class="p-button-outlined p-mt-2 p-mx-2" @click="toggleDataDialog" data-test="add-dataset-button"></Button>
+            <Button label="Add Dataset" icon="pi pi-plus-circle" class="p-button-outlined p-mt-2 p-mx-2" data-test="add-dataset-button" @click="toggleDataDialog"></Button>
             <Listbox
                 class="kn-list kn-list-no-border-right dashboard-editor-list"
                 :options="selectedDatasets"
                 :filter="true"
-                :filterPlaceholder="$t('common.search')"
-                optionLabel="label"
-                filterMatchMode="contains"
-                :filterFields="['label']"
-                :emptyFilterMessage="$t('common.info.noDataFound')"
+                :filter-placeholder="$t('common.search')"
+                option-label="label"
+                filter-match-mode="contains"
+                :filter-fields="['label']"
+                :empty-filter-message="$t('common.info.noDataFound')"
                 @change="selectDataset"
             >
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
-                    <div class="kn-list-item" :style="dataListDescriptor.style.list.listItem" v-tooltip.left="slotProps.option.label" data-test="dataset-list-item">
+                    <div v-tooltip.left="slotProps.option.label" class="kn-list-item" :style="dataListDescriptor.style.list.listItem" data-test="dataset-list-item">
                         <i class="p-mx-2" :style="dataListDescriptor.style.list.listIcon" :class="dataListDescriptor.listboxSettings.avatar.values[slotProps.option.type].icon"></i>
                         <span class="kn-list-item-text">{{ slotProps.option.label }}</span>
-                        <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain p-ml-auto" @click.stop="deleteDatasetFromModel(slotProps.option)" data-test="delete-dataset-list-item" />
+                        <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain p-ml-auto" data-test="delete-dataset-list-item" @click.stop="deleteDatasetFromModel(slotProps.option)" />
                     </div>
                 </template>
             </Listbox>
         </div>
 
-        <DataDialog v-if="dataDialogVisible" :visible="dataDialogVisible" :selectedDatasetsProp="selectedDatasets" :availableDatasetsProp="availableDatasetsProp" @addSelectedDatasets="addSelectedDatasets" @close="toggleDataDialog" data-test="dataset-data-dialog" />
+        <DataDialog v-if="dataDialogVisible" :visible="dataDialogVisible" :selected-datasets-prop="selectedDatasets" :available-datasets-prop="availableDatasetsProp" data-test="dataset-data-dialog" @addSelectedDatasets="addSelectedDatasets" @close="toggleDataDialog" />
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IDataset } from '../../../Dashboard'
-import Card from 'primevue/card'
 import Listbox from 'primevue/listbox'
 import DataDialog from '../DatasetEditorDataDialog/DatasetEditorDataDialog.vue'
 import dashStore from '../../../Dashboard.store'
@@ -39,9 +38,13 @@ import dataListDescriptor from './DatasetEditorDataListDescriptor.json'
 
 export default defineComponent({
     name: 'dataset-editor-data-list',
-    components: { Card, Listbox, DataDialog },
+    components: { Listbox, DataDialog },
     props: { dashboardDatasetsProp: { required: true, type: Array as any }, availableDatasetsProp: { required: true, type: Array as PropType<IDataset[]> }, selectedDatasetsProp: { required: true, type: Array as any } },
     emits: ['datasetSelected', 'addSelectedDatasets', 'deleteDataset'],
+    setup() {
+        const dashboardStore = dashStore()
+        return { dashboardStore }
+    },
     data() {
         return {
             dataListDescriptor,
@@ -53,10 +56,6 @@ export default defineComponent({
         selectedDatasetsProp() {
             this.loadSelectedDatasets()
         }
-    },
-    setup() {
-        const dashboardStore = dashStore()
-        return { dashboardStore }
     },
     created() {
         this.loadSelectedDatasets()

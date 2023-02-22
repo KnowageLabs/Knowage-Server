@@ -1,4 +1,4 @@
-let routes = [
+const routes = [
     {
         path: '/drivers-management',
         name: 'drivers-management',

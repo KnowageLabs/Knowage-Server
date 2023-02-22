@@ -2,18 +2,18 @@
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
         <template #start>{{ selectedRole.name }} </template>
         <template #end>
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="handleSubmit" :disabled="buttonDisabled" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="handleSubmit" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" />
         </template>
     </Toolbar>
-    <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+    <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
     <TabView class="roles-tabview" data-test="tab-view">
         <TabPanel>
             <template #header>
                 <span>{{ $t('managers.rolesManagement.detail.title') }}</span>
             </template>
 
-            <RoleDetailTab :selectedRole="selectedRole" :publicRole="publicRole" @fieldChanged="onFieldChange" @roleTypeChanged="onRoleTypeChange" />
+            <RoleDetailTab :selected-role="selectedRole" :public-role="publicRole" @fieldChanged="onFieldChange" @roleTypeChanged="onRoleTypeChange" />
         </TabPanel>
 
         <TabPanel>
@@ -21,7 +21,7 @@
                 <span>{{ $t('managers.rolesManagement.authorizations.title') }}</span>
             </template>
 
-            <RoleAuthorizationsTab :selectedRole="selectedRole" :authList="authorizationList" :authCBs="authorizationCBs" @authChanged="onFieldChange" />
+            <RoleAuthorizationsTab :selected-role="selectedRole" :auth-list="authorizationList" :auth-c-bs="authorizationCBs" @authChanged="onFieldChange" />
         </TabPanel>
 
         <TabPanel>
@@ -29,7 +29,7 @@
                 <span>{{ $t('managers.rolesManagement.businessModels') }}</span>
             </template>
 
-            <DomainCategoryTab :title="$t('managers.rolesManagement.businessModels') + ' ' + $t('managers.rolesManagement.categories')" :categoryList="businessModelList" :selected="selectedBusinessModels" @changed="setSelectedBusinessModels($event)"></DomainCategoryTab>
+            <DomainCategoryTab :title="$t('managers.rolesManagement.businessModels') + ' ' + $t('managers.rolesManagement.categories')" :category-list="businessModelList" :selected="selectedBusinessModels" @changed="setSelectedBusinessModels($event)"></DomainCategoryTab>
         </TabPanel>
 
         <TabPanel>
@@ -37,7 +37,7 @@
                 <span>{{ $t('managers.rolesManagement.dataSets') }}</span>
             </template>
 
-            <DomainCategoryTab :title="$t('managers.rolesManagement.dataSets') + ' ' + $t('managers.rolesManagement.categories')" :categoryList="dataSetList" :selected="selectedDataSets" @changed="setSelectedDataSets($event)"></DomainCategoryTab>
+            <DomainCategoryTab :title="$t('managers.rolesManagement.dataSets') + ' ' + $t('managers.rolesManagement.categories')" :category-list="dataSetList" :selected="selectedDataSets" @changed="setSelectedDataSets($event)"></DomainCategoryTab>
         </TabPanel>
 
         <TabPanel>
@@ -45,7 +45,7 @@
                 <span>{{ $t('managers.rolesManagement.kpiCategories') }}</span>
             </template>
 
-            <DomainCategoryTab :title="$t('managers.rolesManagement.kpiCategories')" :categoryList="kpiCategoriesList" :selected="selectedKPICategories" @changed="setSelectedKPICategories($event)"></DomainCategoryTab>
+            <DomainCategoryTab :title="$t('managers.rolesManagement.kpiCategories')" :category-list="kpiCategoriesList" :selected="selectedKPICategories" @changed="setSelectedKPICategories($event)"></DomainCategoryTab>
         </TabPanel>
     </TabView>
 </template>
@@ -72,6 +72,10 @@ export default defineComponent({
     },
     props: { id: { type: String, required: false }, publicRole: { type: Object, required: false } },
     emits: ['touched', 'closed', 'inserted'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             rolesManagementTabViewDescriptor: rolesManagementTabViewDescriptor,
@@ -101,10 +105,6 @@ export default defineComponent({
             this.loadSelectedRole()
             this.clearSelectedLists()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         await this.loadAllDomainsData()

@@ -4,7 +4,7 @@
             <p>{{ $t(lovsManagementParamsDialogDescriptor.info[dependency.type]) }}</p>
             <div>
                 <span class="p-float-label">
-                    <InputText class="kn-material-input" type="text" v-model.trim="dependency.value" />
+                    <InputText v-model.trim="dependency.value" class="kn-material-input" type="text" />
                     <label class="kn-material-input-label"> {{ dependency.name }}</label>
                 </span>
             </div>
@@ -24,12 +24,12 @@ import lovsManagementParamsDialogDescriptor from './LovsManagementParamsDialogDe
 export default defineComponent({
     name: 'lovs-management-params-dialog',
     components: { Dialog },
-    emits: ['close', 'preview', 'test'],
     props: {
         visible: { type: Boolean },
         dependenciesList: { type: Array },
         mode: { type: String }
     },
+    emits: ['close', 'preview', 'test'],
     data() {
         return {
             lovsManagementParamsDialogDescriptor

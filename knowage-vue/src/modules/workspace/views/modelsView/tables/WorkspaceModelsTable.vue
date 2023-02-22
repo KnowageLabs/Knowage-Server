@@ -1,13 +1,13 @@
 <template>
-    <DataTable :value="items" id="models-table" class="p-datatable-sm kn-table" v-model:filters="filters" filterDisplay="menu" dataKey="name" responsiveLayout="stack" breakpoint="960px">
+    <DataTable id="models-table" v-model:filters="filters" :value="items" class="p-datatable-sm kn-table" filter-display="menu" data-key="name" responsive-layout="stack" breakpoint="960px">
         <template #empty>
             <Message class="p-m-2" severity="info" :closable="false" :style="workspaceModelsTableDescriptor.styles.message">
                 {{ $t('common.info.noDataFound') }}
             </Message>
         </template>
 
-        <Column class="kn-truncated" v-for="col of workspaceModelsTableDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true">
-            <template #filter="{ filterModel }"> <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText> </template
+        <Column v-for="col of workspaceModelsTableDescriptor.columns" :key="col.field" class="kn-truncated" :field="col.field" :header="$t(col.header)" :sortable="true">
+            <template #filter="{ filterModel }"> <InputText v-model="filterModel.value" type="text" class="p-column-filter"></InputText> </template
         ></Column>
         <Column :style="workspaceModelsTableDescriptor.iconColumn.style">
             <template #body="slotProps">
@@ -16,8 +16,8 @@
                         <Button icon="fas fa-ellipsis-v" class="p-button-link" @click="toggle($event, slotProps.data)" />
                         <Menu ref="menu" :model="menuItems" :popup="true" />
                     </div>
-                    <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click.stop="$emit('selected', slotProps.data)" :data-test="'info-button-' + slotProps.data.name" />
-                    <Button icon="fas fa-search" class="p-button-link" v-tooltip.left="$t('workspace.myModels.openInQBE')" @click.stop="openDatasetInQBE(slotProps.data)" />
+                    <Button v-tooltip.left="$t('workspace.myModels.showInfo')" icon="fas fa-info-circle" class="p-button-link" :data-test="'info-button-' + slotProps.data.name" @click.stop="$emit('selected', slotProps.data)" />
+                    <Button v-tooltip.left="$t('workspace.myModels.openInQBE')" icon="fas fa-search" class="p-button-link" @click.stop="openDatasetInQBE(slotProps.data)" />
                 </div>
             </template>
         </Column>
@@ -40,6 +40,10 @@ export default defineComponent({
     components: { Column, DataTable, Menu },
     props: { propItems: { type: Array } },
     emits: ['openDatasetInQBEClick', 'editDatasetClick', 'deleteDatasetClick', 'selected'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             workspaceModelsTableDescriptor,
@@ -63,10 +67,6 @@ export default defineComponent({
         propItems() {
             this.loadTable()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.user = (this.store.$state as any).user

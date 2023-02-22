@@ -3,15 +3,15 @@
         <HTMLWidgetSettingsAccordion
             v-if="selectedSetting != 'Gallery'"
             v-show="selectedSetting"
-            :widgetModel="widgetModel"
+            :widget-model="widgetModel"
             :settings="descriptor.settings[selectedSetting]"
             :datasets="datasets"
-            :selectedDatasets="selectedDatasets"
+            :selected-datasets="selectedDatasets"
             :variables="variables"
-            :dashboardId="dashboardId"
+            :dashboard-id="dashboardId"
         ></HTMLWidgetSettingsAccordion>
 
-        <HTMLWidgetSettingsGallery v-if="selectedSetting == 'Gallery'" v-show="selectedSetting" :widgetModel="widgetModel" :htmlGalleryProp="htmlGalleryProp" @galleryItemSelected="$emit('galleryItemSelected')"></HTMLWidgetSettingsGallery>
+        <HTMLWidgetSettingsGallery v-if="selectedSetting == 'Gallery'" v-show="selectedSetting" :widget-model="widgetModel" :html-gallery-prop="htmlGalleryProp" @galleryItemSelected="$emit('galleryItemSelected')"></HTMLWidgetSettingsGallery>
     </div>
 </template>
 

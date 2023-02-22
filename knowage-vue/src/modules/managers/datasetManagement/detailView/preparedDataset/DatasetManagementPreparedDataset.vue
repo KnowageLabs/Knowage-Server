@@ -6,14 +6,17 @@
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
 import descriptor from './DatasetManagementPreparedDataset.json'
-import Card from 'primevue/card'
 import MonitoringDialog from '@/modules/workspace/dataPreparation/DataPreparationMonitoring/DataPreparationMonitoringDialog.vue'
 import mainStore from '@/App.store'
 
 export default defineComponent({
-    components: { Card, MonitoringDialog },
+    components: { MonitoringDialog },
     props: { selectedDataset: { type: Object as any }, dataSources: { type: Array as any }, showMonitoringDialog: Boolean, showDataPreparation: Boolean },
     emits: ['touched', 'closeMonitoringDialog', 'closeDataPreparation'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             descriptor,
@@ -21,13 +24,6 @@ export default defineComponent({
             availableDatasets: [] as any,
             avroDatasets: [] as any
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
-    created() {
-        this.dataset = this.selectedDataset
     },
     watch: {
         selectedDataset() {
@@ -39,8 +35,11 @@ export default defineComponent({
             }
         }
     },
+    created() {
+        this.dataset = this.selectedDataset
+    },
     methods: {
-        async loadDataset(datasetId: Number) {
+        async loadDataset(datasetId: number) {
             await this.$http
                 .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${datasetId}`)
                 .then((response: AxiosResponse<any>) => {
@@ -49,7 +48,7 @@ export default defineComponent({
                 .catch(() => {})
         },
         routeToDataPreparation() {
-            let path = ''
+            const path = ''
             this.$confirm.require({
                 header: this.$t('managers.datasetManagement.openDP'),
                 message: this.$t('managers.datasetManagement.confirmMsg'),
@@ -74,7 +73,7 @@ export default defineComponent({
             await this.openDataPreparation(this.selectedDataset)
         },
 
-        isAvroReady(dsId: Number) {
+        isAvroReady(dsId: number) {
             if (this.avroDatasets.indexOf(dsId) >= 0 || (dsId && this.avroDatasets.indexOf(dsId.toString())) >= 0) return true
             else return false
         },
@@ -84,12 +83,12 @@ export default defineComponent({
                 //edit existing data prep
                 this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced/${dataset.id}`).then(
                     (response: AxiosResponse<any>) => {
-                        let instanceId = response.data.configuration.dataPrepInstanceId
+                        const instanceId = response.data.configuration.dataPrepInstanceId
                         this.$http.get(import.meta.env.VITE_DATA_PREPARATION_PATH + `1.0/process/by-instance-id/${instanceId}`).then(
                             (response: AxiosResponse<any>) => {
-                                let transformations = response.data.definition
-                                let processId = response.data.id
-                                let datasetId = response.data.instance.dataSetId
+                                const transformations = response.data.definition
+                                const processId = response.data.id
+                                const datasetId = response.data.instance.dataSetId
                                 if (this.isAvroReady(datasetId))
                                     // check if Avro file has been deleted or not
                                     this.$router.push({ name: 'data-preparation', params: { id: datasetId, transformations: JSON.stringify(transformations), processId: processId, instanceId: instanceId, dataset: JSON.stringify(dataset) } })

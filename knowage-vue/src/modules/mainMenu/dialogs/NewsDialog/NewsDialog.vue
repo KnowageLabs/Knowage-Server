@@ -1,10 +1,10 @@
 <template>
-    <Dialog class="kn-dialog--toolbar--primary knNewsDialog" v-bind:visible="visibility" footer="footer" :header="$t('newsDialog.title')" :closable="false" modal>
+    <Dialog class="kn-dialog--toolbar--primary knNewsDialog" :visible="visibility" footer="footer" :header="$t('newsDialog.title')" :closable="false" modal>
         <TabView class="knTab kn-tab" @tab-click="emptySelectedNews()">
-            <TabPanel v-for="(type, index) in news" v-bind:key="index" :header="$t(typeDescriptor.newsType[index].label)">
+            <TabPanel v-for="(type, index) in news" :key="index" :header="$t(typeDescriptor.newsType[index].label)">
                 <div class="knPageContent p-grid p-m-0 p-p-0">
                     <div class="p-col-4 p-p-0">
-                        <Listbox class="kn-list" :options="news[index]" optionLabel="title" listStyle="max-height:250px">
+                        <Listbox class="kn-list" :options="news[index]" option-label="title" list-style="max-height:250px">
                             <template #option="slotProps">
                                 <div class="kn-list-item" @click="getNews(slotProps.option.id)">
                                     <Avatar :icon="typeDescriptor.newsType[slotProps.option.type].className" shape="circle" size="medium" :style="typeDescriptor.newsType[slotProps.option.type].style" />
@@ -17,8 +17,8 @@
                             </template>
                         </Listbox>
                     </div>
-                    <div class="p-col-8 p-flex-column newsContainer p-p-0" v-if="Object.keys(selectedNews).length != 0">
-                        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+                    <div v-if="Object.keys(selectedNews).length != 0" class="p-col-8 p-flex-column newsContainer p-p-0">
+                        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
                         <h4>
                             <div class="p-col">
                                 {{ $t('newsDialog.description') }}: <span class="h4-text">{{ selectedNews.description }}</span>
@@ -28,15 +28,15 @@
                             </div>
                         </h4>
                         <div class="p-col">
-                            <p v-html="selectedNews.html" disabled></p>
+                            <p disabled v-html="selectedNews.html"></p>
                         </div>
                     </div>
-                    <div class="p-col-7 p-d-flex p-ai-center p-jc-center" v-else>{{ $t('common.info.noElementSelected') }}</div>
+                    <div v-else class="p-col-7 p-d-flex p-ai-center p-jc-center">{{ $t('common.info.noElementSelected') }}</div>
                 </div>
             </TabPanel>
         </TabView>
         <template #footer>
-            <Button class="kn-button kn-button--primary" @click="closeDialog"><ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" /> {{ $t('common.close') }}</Button>
+            <Button class="kn-button kn-button--primary" @click="closeDialog"><ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" /> {{ $t('common.close') }}</Button>
         </template>
     </Dialog>
 </template>
@@ -68,6 +68,14 @@ interface SingleNews {
 export default defineComponent({
     name: 'news-dialog',
     components: { Avatar, Dialog, Listbox, TabView, TabPanel },
+    props: {
+        visibility: Boolean
+    },
+    emits: ['update:visibility'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             typeDescriptor: newsDialogDescriptor,
@@ -78,14 +86,6 @@ export default defineComponent({
         }
     },
     created() {},
-    props: {
-        visibility: Boolean
-    },
-    emits: ['update:visibility'],
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
     methods: {
         emptySelectedNews() {
             this.selectedNews = {} as SingleNews
@@ -115,12 +115,12 @@ export default defineComponent({
                                 )
 
                                 this.selectedNews.read = true
-                                var stop = false
-                                for (var idx in this.news) {
-                                    let currNewsArray = this.news[idx]
+                                let stop = false
+                                for (const idx in this.news) {
+                                    const currNewsArray = this.news[idx]
 
-                                    for (var index in currNewsArray) {
-                                        let currNews = currNewsArray[index]
+                                    for (const index in currNewsArray) {
+                                        const currNews = currNewsArray[index]
                                         if (currNews.id == id) {
                                             currNews.read = true
                                             stop = true
@@ -158,10 +158,10 @@ export default defineComponent({
 
                 this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/news').then(
                     (response: AxiosResponse<any>) => {
-                        var jsonData = {}
-                        let localNewsReadArray = this.newsReadArray
+                        const jsonData = {}
+                        const localNewsReadArray = this.newsReadArray
                         response.data.forEach(function (column: SingleNews) {
-                            let type = column.type.toString()
+                            const type = column.type.toString()
                             if (!jsonData[type]) jsonData[type] = []
                             if (localNewsReadArray.indexOf(column.id) != -1) column.read = true
                             jsonData[type].push(column)

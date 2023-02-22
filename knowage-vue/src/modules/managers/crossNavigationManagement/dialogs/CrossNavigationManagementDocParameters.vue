@@ -6,14 +6,14 @@
                 {{ $t('managers.crossNavigationManagement.availableIO') }}
             </template>
         </Toolbar>
-        <div class="p-inputgroup p-mt-3" v-if="navigation.fromPars">
+        <div v-if="navigation.fromPars" class="p-inputgroup p-mt-3">
             <span class="p-float-label">
-                <InputText class="kn-material-input" type="text" v-model.trim="fixedValue" maxlength="100" />
+                <InputText v-model.trim="fixedValue" class="kn-material-input" type="text" maxlength="100" />
                 <label class="kn-material-input-label">{{ $t('managers.crossNavigationManagement.fixedValue') }} </label>
             </span>
-            <Button :label="$t('common.add')" @click="addFixedValue" class="kn-button p-button-text" />
+            <Button :label="$t('common.add')" class="kn-button p-button-text" @click="addFixedValue" />
         </div>
-        <Listbox :options="navigation.fromPars" v-if="navigation.fromPars">
+        <Listbox v-if="navigation.fromPars" :options="navigation.fromPars">
             <template #empty>{{ $t('common.info.noDataFound') }}</template>
             <template #option="slotProps">
                 <div class="p-d-flex card p-p-3 kn-draggable" draggable="true" @dragstart="onDragStart($event, slotProps.option)">
@@ -30,21 +30,21 @@
                 {{ $t('managers.crossNavigationManagement.availableInput') }}
             </template>
         </Toolbar>
-        <Listbox :options="navigation.toPars" v-if="navigation.toPars">
+        <Listbox v-if="navigation.toPars" :options="navigation.toPars">
             <template #empty>{{ $t('common.info.noDataFound') }}</template>
             <template #option="slotProps">
-                <div class="p-d-flex p-p-3 card" v-if="slotProps.option.links && slotProps.option.links.length > 0">
+                <div v-if="slotProps.option.links && slotProps.option.links.length > 0" class="p-d-flex p-p-3 card">
                     <div>{{ slotProps.option.links[0].name }} <i class="fa fa-link"> </i> {{ slotProps.option.name }}</div>
-                    <i class="fa fa-times-circle p-mr-2 p-ml-auto" @click="removeLink(slotProps.option.id)" data-test="remove"> </i>
+                    <i class="fa fa-times-circle p-mr-2 p-ml-auto" data-test="remove" @click="removeLink(slotProps.option.id)"> </i>
                 </div>
                 <div
+                    v-else
                     class="p-d-flex p-p-3 card"
                     :class="{ dropzone: dropzoneActive[slotProps.option.id] }"
                     @drop="link($event, slotProps.option)"
                     @dragenter.prevent
                     @dragleave.prevent="setDropzoneClass(false, slotProps.option.id)"
                     @dragover.prevent="setDropzoneClass(true, slotProps.option.id)"
-                    v-else
                 >
                     <div>{{ slotProps.option.name }}</div>
                     <div class="p-ml-auto">{{ $t(dialogDescriptor.parType[slotProps.option.type].label) }}</div>
@@ -68,6 +68,10 @@ export default defineComponent({
             type: Object
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             navigation: {} as any,
@@ -76,22 +80,18 @@ export default defineComponent({
             dropzoneActive: [] as boolean[]
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
-    created() {
-        if (this.selectedNavigation) {
-            this.navigation = this.selectedNavigation
-            this.dropzoneActive = []
-        }
-    },
     watch: {
         selectedNavigation() {
             if (this.selectedNavigation) {
                 this.navigation = this.selectedNavigation
                 this.dropzoneActive = []
             }
+        }
+    },
+    created() {
+        if (this.selectedNavigation) {
+            this.navigation = this.selectedNavigation
+            this.dropzoneActive = []
         }
     },
     methods: {

@@ -10,7 +10,7 @@
 
         <div class="widget-editor-icon-picker-content">
             <div class="p-m-2">
-                <InputText class="p-inputtext p-component kn-material-input" v-model="searchWord" :placeholder="$t('common.search')" @input="filterIcons()" />
+                <InputText v-model="searchWord" class="p-inputtext p-component kn-material-input" :placeholder="$t('common.search')" @input="filterIcons()" />
             </div>
 
             <label class="kn-material-input-label p-my-3"> {{ $t('dashboard.widgetEditor.recentlyUsed') }}</label>

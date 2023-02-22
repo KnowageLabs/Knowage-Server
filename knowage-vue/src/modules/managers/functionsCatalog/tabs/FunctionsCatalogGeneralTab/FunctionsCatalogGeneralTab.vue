@@ -1,35 +1,35 @@
 <template>
-    <form class="p-fluid p-ai-end p-formgrid p-grid p-m-2" v-if="selectedFunction">
+    <form v-if="selectedFunction" class="p-fluid p-ai-end p-formgrid p-grid p-m-2">
         <div class="p-field p-col-6 p-mb-6">
             <span class="p-float-label">
-                <InputText id="name" class="kn-material-input" v-model.trim="selectedFunction.name" :disabled="readonly" />
+                <InputText id="name" v-model.trim="selectedFunction.name" class="kn-material-input" :disabled="readonly" />
                 <label for="name" class="kn-material-input-label"> {{ $t('managers.functionsCatalog.functionName') }} </label>
                 <small class="hint">{{ $t('managers.functionsCatalog.functionNameHint') }}</small>
             </span>
         </div>
         <div class="p-field p-col-6 p-mb-6">
             <span class="p-float-label">
-                <InputText id="label " class="kn-material-input" v-model.trim="selectedFunction.label" :disabled="readonly" />
+                <InputText id="label " v-model.trim="selectedFunction.label" class="kn-material-input" :disabled="readonly" />
                 <label for="label " class="kn-material-input-label"> {{ $t('common.label') }} </label>
                 <small class="hint">{{ $t('managers.functionsCatalog.functionLabelHint') }}</small>
             </span>
         </div>
         <div class="p-field p-col-6 p-mb-6">
             <span class="p-float-label">
-                <InputText id="owner " class="kn-material-input" v-model.trim="selectedFunction.owner" :disabled="true" />
+                <InputText id="owner " v-model.trim="selectedFunction.owner" class="kn-material-input" :disabled="true" />
                 <label for="owner " class="kn-material-input-label"> {{ $t('common.owner') }} </label>
             </span>
         </div>
         <div class="p-field p-col-6 p-mb-6">
             <span>
                 <label for="type" class="kn-material-input-label">{{ $t('common.type') }}</label>
-                <Dropdown id="type" class="kn-material-input" v-model="selectedFunction.type" :options="functionTypes" optionLabel="valueCd" optionValue="valueCd" :disabled="readonly" />
+                <Dropdown id="type" v-model="selectedFunction.type" class="kn-material-input" :options="functionTypes" option-label="valueCd" option-value="valueCd" :disabled="readonly" />
             </span>
         </div>
         <div class="p-field p-col-12 p-mb-12">
             <span>
                 <label for="keywords" class="kn-material-input-label"> {{ $t('managers.functionsCatalog.keywords') }}</label>
-                <Chips id="keywords" class="p-inputtext-sm" :multiple="true" v-model="selectedFunction.tags" :disabled="readonly" :placeholder="$t('managers.functionsCatalog.keywords')" />
+                <Chips id="keywords" v-model="selectedFunction.tags" class="p-inputtext-sm" :multiple="true" :disabled="readonly" :placeholder="$t('managers.functionsCatalog.keywords')" />
             </span>
         </div>
         <div class="p-field p-col-12 p-mb-12">
@@ -50,8 +50,8 @@
                     <Editor
                         v-else
                         id="description"
-                        :editorStyle="functionsCatalogGeneralTabDescriptor.editor.style"
                         v-model="selectedFunction.description"
+                        :editor-style="functionsCatalogGeneralTabDescriptor.editor.style"
                         :class="{
                             'p-invalid': selectedFunction.description.length === 0 && descriptionDirty
                         }"
@@ -71,7 +71,7 @@
                 <AccordionTab :header="$t('managers.functionsCatalog.benchmarks')">
                     <label for="benchmarks" class="kn-material-input-label"> {{ $t('managers.functionsCatalog.benchmarks') }}</label>
                     <Textarea v-if="showBenchmarksSource" v-model="selectedFunction.benchmark" :style="functionsCatalogGeneralTabDescriptor.editor.style" :readonly="readonly"></Textarea>
-                    <Editor v-else id="benchmarks" :editorStyle="functionsCatalogGeneralTabDescriptor.editor.style" v-model="selectedFunction.benchmark" :readonly="readonly" />
+                    <Editor v-else id="benchmarks" v-model="selectedFunction.benchmark" :editor-style="functionsCatalogGeneralTabDescriptor.editor.style" :readonly="readonly" />
                     <Button class="editor-switch-button" icon="pi pi-bars" :label="showBenchmarksSource ? 'wysiwyg' : $t('common.source')" @click="showBenchmarksSource = !showBenchmarksSource"></Button>
                 </AccordionTab>
             </Accordion>

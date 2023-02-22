@@ -2,7 +2,7 @@
     <div class="p-field p-col-12 p-d-flex">
         <div class="kn-flex">
             <span class="p-float-label">
-                <InputText id="fileName" class="kn-material-input kn-width-full" v-model="customColorValue" :disabled="true" />
+                <InputText id="fileName" v-model="customColorValue" class="kn-material-input kn-width-full" :disabled="true" />
                 <label for="fileName" class="kn-material-input-label"> Custom color </label>
             </span>
         </div>
@@ -12,8 +12,8 @@
 
     <ColorPicker v-if="colorPickerVisible" class="dashboard-color-picker click-outside" theme="light" :color="customColorValue" :colors-default="descriptor.defaultColors" :sucker-hide="true" @changeColor="changeColor" />
 
-    <DataTable class="pallete-table p-m-2" :style="descriptor.colorPalleteStyle.table" :value="widgetModel.settings.chart.colors" :reorderableColumns="false" responsiveLayout="scroll" @rowReorder="onRowReorder">
-        <Column :rowReorder="true" :reorderableColumn="false" :style="descriptor.colorPalleteStyle.column">
+    <DataTable class="pallete-table p-m-2" :style="descriptor.colorPalleteStyle.table" :value="widgetModel.settings.chart.colors" :reorderable-columns="false" responsive-layout="scroll" @rowReorder="onRowReorder">
+        <Column :row-reorder="true" :reorderable-column="false" :style="descriptor.colorPalleteStyle.column">
             <template #body="slotProps">
                 <span class="kn-height-full" :style="`background-color: ${slotProps.data}; color:${getContrastYIQ(slotProps.data)}`">
                     <i class="p-datatable-reorderablerow-handle pi pi-bars p-m-2"></i>
@@ -25,7 +25,7 @@
                 <span class="kn-flex" :style="`background-color: ${slotProps.data}; color:${getContrastYIQ(slotProps.data)}`">{{ slotProps.data }}</span>
             </template>
         </Column>
-        <Column :rowReorder="true" :reorderableColumn="false" :style="descriptor.colorPalleteStyle.column">
+        <Column :row-reorder="true" :reorderable-column="false" :style="descriptor.colorPalleteStyle.column">
             <template #body="slotProps">
                 <span class="kn-height-full" :style="`background-color: ${slotProps.data}; color:${getContrastYIQ(slotProps.data)}`">
                     <i class="pi pi-pencil p-mr-2 click-outside" @click="toggleColorPicker(slotProps.index)"></i>
@@ -53,6 +53,16 @@ export default defineComponent({
     name: 'hihgcharts-color-settings',
     components: { DataTable, Column, ColorPicker },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
+    setup() {
+        const knowageStyleIcon = ref(null)
+        const colorPickerVisible = ref(false)
+        const contextMenuVisible = ref(false)
+        useClickOutside(knowageStyleIcon, () => {
+            colorPickerVisible.value = false
+            contextMenuVisible.value = false
+        })
+        return { colorPickerVisible, contextMenuVisible, knowageStyleIcon }
+    },
     data() {
         return {
             descriptor,
@@ -61,16 +71,6 @@ export default defineComponent({
             colorPickTimer: null as any,
             useClickOutside
         }
-    },
-    setup() {
-        const knowageStyleIcon = ref(null)
-        let colorPickerVisible = ref(false)
-        let contextMenuVisible = ref(false)
-        useClickOutside(knowageStyleIcon, () => {
-            colorPickerVisible.value = false
-            contextMenuVisible.value = false
-        })
-        return { colorPickerVisible, contextMenuVisible, knowageStyleIcon }
     },
     created() {},
     methods: {
@@ -105,7 +105,8 @@ export default defineComponent({
             this.widgetModel.settings.chart.colors.splice(index, 1)
             emitter.emit('refreshChart', this.widgetModel.id)
         },
-        getContrastYIQ(hexcolor) {
+        getContrastYIQ() {
+            //getContrastYIQ(hexcolor) {
             // var getRGBA = function(string) {
             //     var match = string.match(/^rgba\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3}),\s*(\d*(?:\.\d+)?)\)$/)
             //     return match

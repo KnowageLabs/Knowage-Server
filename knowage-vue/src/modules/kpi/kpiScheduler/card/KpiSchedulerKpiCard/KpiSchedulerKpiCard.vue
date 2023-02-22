@@ -1,25 +1,25 @@
 <template>
     <Card>
         <template #content>
-            <div id="expired-schedule" v-if="showExpired && expired" data-test="expired-warning">
+            <div v-if="showExpired && expired" id="expired-schedule" data-test="expired-warning">
                 <p>{{ $t('kpi.kpiScheduler.expiredInterval') }}</p>
                 <i class="fa fa-times-circle" @click="showExpired = false"></i>
             </div>
-            <DataTable :value="kpisList" class="p-datatable-sm kn-table" dataKey="id" v-model:filters="filters" :globalFilterFields="kpiCardDescriptor.globalFilterFields" responsiveLayout="stack" breakpoint="960px" data-test="kpi-table">
+            <DataTable v-model:filters="filters" :value="kpisList" class="p-datatable-sm kn-table" data-key="id" :global-filter-fields="kpiCardDescriptor.globalFilterFields" responsive-layout="stack" breakpoint="960px" data-test="kpi-table">
                 <template #header>
                     <div class="table-header p-d-flex p-ai-center">
                         <span id="search-container" class="p-input-icon-left p-mr-3">
                             <i class="pi pi-search" />
-                            <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
+                            <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
                         </span>
                         <Button id="add-kpi-associations-button" class="kn-button kn-button--primary" :label="$t('kpi.kpiScheduler.addKpiAssociation')" @click="addKpiAssociationVisible = true"></Button>
                     </div>
                 </template>
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
-                <Column class="kn-truncated" v-for="col of kpiCardDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true"> </Column>
+                <Column v-for="col of kpiCardDescriptor.columns" :key="col.field" class="kn-truncated" :field="col.field" :header="$t(col.header)" :sortable="true"> </Column>
                 <Column :style="kpiCardDescriptor.table.iconColumn.style">
                     <template #body="slotProps">
-                        <Button icon="pi pi-trash" class="p-button-link" @click="deleteKpiAssociationConfirm(slotProps.data.id)" :data-test="'delete-button-' + slotProps.data.id" />
+                        <Button icon="pi pi-trash" class="p-button-link" :data-test="'delete-button-' + slotProps.data.id" @click="deleteKpiAssociationConfirm(slotProps.data.id)" />
                     </template>
                 </Column>
             </DataTable>
@@ -36,27 +36,27 @@
                         </template>
                     </Toolbar>
                 </template>
-                <DataTable :value="allKpiList" v-model:selection="selectedKpiAssociations" class="p-datatable-sm kn-table" dataKey="id" v-model:filters="filters" :globalFilterFields="kpiCardDescriptor.globalFilterFields" responsiveLayout="stack" breakpoint="960px">
+                <DataTable v-model:selection="selectedKpiAssociations" v-model:filters="filters" :value="allKpiList" class="p-datatable-sm kn-table" data-key="id" :global-filter-fields="kpiCardDescriptor.globalFilterFields" responsive-layout="stack" breakpoint="960px">
                     <template #header>
                         <div class="table-header p-d-flex ">
                             <span class="p-input-icon-left p-mr-3">
                                 <i class="pi pi-search" />
-                                <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
+                                <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
                             </span>
                         </div>
                     </template>
                     <template #empty>
                         {{ $t('common.info.noDataFound') }}
                     </template>
-                    <Column selectionMode="multiple" headerStyle="width: 3em"></Column>
-                    <Column class="kn-truncated" field="name" :header="$t('kpi.kpiScheduler.kpiName')" key="name" :sortable="true"> </Column>
-                    <Column class="kn-truncated" field="category.valueCd" :header="$t('common.category')" key="category.valueCd" :sortable="true"> </Column>
-                    <Column class="kn-truncated" field="dateCreation" :header="$t('kpi.kpiScheduler.kpiName')" key="dateCreation" :sortable="true">
+                    <Column selection-mode="multiple" header-style="width: 3em"></Column>
+                    <Column key="name" class="kn-truncated" field="name" :header="$t('kpi.kpiScheduler.kpiName')" :sortable="true"> </Column>
+                    <Column key="category.valueCd" class="kn-truncated" field="category.valueCd" :header="$t('common.category')" :sortable="true"> </Column>
+                    <Column key="dateCreation" class="kn-truncated" field="dateCreation" :header="$t('kpi.kpiScheduler.kpiName')" :sortable="true">
                         <template #body="slotProps">
                             <span>{{ getFormattedDate(slotProps.data.dateCreation) }}</span>
                         </template>
                     </Column>
-                    <Column class="kn-truncated" field="author" :header="$t('common.author')" key="author" :sortable="true"> </Column>
+                    <Column key="author" class="kn-truncated" field="author" :header="$t('common.author')" :sortable="true"> </Column>
                 </DataTable>
             </Dialog>
         </template>

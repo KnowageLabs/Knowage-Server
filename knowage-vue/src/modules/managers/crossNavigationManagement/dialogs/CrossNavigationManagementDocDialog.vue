@@ -3,7 +3,7 @@
         :header="$t('managers.crossNavigationManagement.selectDocument')"
         :breakpoints="dialogDescriptor.dialog.breakpoints"
         :style="dialogDescriptor.dialog.style"
-        :contentStyle="dialogDescriptor.dialog.contentStyle"
+        :content-style="dialogDescriptor.dialog.contentStyle"
         :visible="dialogVisible"
         :modal="true"
         :closable="false"
@@ -20,28 +20,28 @@
             </Toolbar>
         </template>
         <DataTable
+            v-model:selection="selected"
+            v-model:filters="filters"
             :paginator="true"
             :rows="15"
-            :rowsPerPageOptions="[10, 15, 20]"
-            v-model:selection="selected"
+            :rows-per-page-options="[10, 15, 20]"
             :value="documents.item"
             class="p-datatable-sm kn-table"
-            dataKey="DOCUMENT_ID"
-            responsiveLayout="stack"
-            selectionMode="single"
+            data-key="DOCUMENT_ID"
+            responsive-layout="stack"
+            selection-mode="single"
             :loading="loading"
-            @row-select="hadleSelect"
-            v-model:filters="filters"
-            filterDisplay="menu"
+            filter-display="menu"
             :scrollable="true"
-            :scrollHeight="dialogDescriptor.dialog.scrollHeight"
-            :globalFilterFields="dialogDescriptor.globalFilterFields"
+            :scroll-height="dialogDescriptor.dialog.scrollHeight"
+            :global-filter-fields="dialogDescriptor.globalFilterFields"
+            @row-select="hadleSelect"
         >
             <template #header>
                 <div class="table-header">
                     <span class="p-input-icon-left">
                         <i class="pi pi-search" />
-                        <InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
+                        <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
                     </span>
                 </div>
             </template>
@@ -52,7 +52,7 @@
                 {{ $t('common.info.dataLoading') }}
             </template>
 
-            <Column v-for="col of dialogDescriptor.columnsDoc" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" class="kn-truncated">
+            <Column v-for="col of dialogDescriptor.columnsDoc" :key="col.field" :field="col.field" :header="$t(col.header)" :sortable="true" class="kn-truncated">
                 <template #body="slotProps">
                     <span>{{ slotProps.data[slotProps.column.props.field] }}</span>
                 </template>

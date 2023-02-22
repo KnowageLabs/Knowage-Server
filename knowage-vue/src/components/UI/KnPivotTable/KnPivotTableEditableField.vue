@@ -1,29 +1,29 @@
 <template>
     <div v-if="column">
         <InputText
-            :style="knPivotTableDescriptor.pivotStyles.inputFields"
             v-if="column.editorType !== 'COMBO' && column.columnInfo.type !== 'date' && column.columnInfo.type !== 'timestamp'"
+            v-model="row[column.field].data"
+            :style="knPivotTableDescriptor.pivotStyles.inputFields"
             class="kn-material-input"
             :type="setDataType(column.columnInfo.type)"
             :step="getStep(column.columnInfo.type)"
-            v-model="row[column.field].data"
             @input="$emit('rowChanged', row)"
         />
         <Calendar
-            :style="knPivotTableDescriptor.pivotStyles.inputFields"
-            class="pivot-calendar"
             v-else-if="column.columnInfo.type === 'date' || column.columnInfo.type === 'timestamp'"
             v-model="row[column.field].data"
-            :showTime="column.columnInfo.type === 'timestamp'"
-            :showSeconds="column.columnInfo.type === 'timestamp'"
-            :showButtonBar="true"
+            :style="knPivotTableDescriptor.pivotStyles.inputFields"
+            class="pivot-calendar"
+            :show-time="column.columnInfo.type === 'timestamp'"
+            :show-seconds="column.columnInfo.type === 'timestamp'"
+            :show-button-bar="true"
+            :date-format="column.columnInfo.type === 'date' ? getCurrentLocaleDefaultDateFormat(column) : ''"
             @date-select="$emit('rowChanged', row)"
-            :dateFormat="column.columnInfo.type === 'date' ? getCurrentLocaleDefaultDateFormat(column) : ''"
         />
         <Dropdown
-            class="kn-material-input"
             v-else-if="column.editorType === 'COMBO'"
             v-model="row[column.field].data"
+            class="kn-material-input"
             :options="columnOptions[column.field] ? columnOptions[column.field][row[column.dependences]?.data] : []"
             :placeholder="$t('documentExecution.registry.select')"
             @change="$emit('dropdownChanged', { row: row, column: column })"
@@ -64,6 +64,11 @@ export default defineComponent({
             columnOptions: [] as any[]
         }
     },
+    computed: {
+        getCurrentLocaleDefaultDateFormat() {
+            return (column) => column.format || primeVueDate()
+        }
+    },
     watch: {
         propRow() {
             this.loadRow()
@@ -79,15 +84,10 @@ export default defineComponent({
         this.loadRow()
         this.loadColumnOptions()
     },
-    computed: {
-        getCurrentLocaleDefaultDateFormat() {
-            return (column) => column.format || primeVueDate()
-        }
-    },
     methods: {
         loadRow() {
             this.row = this.propRow
-            let data = this.row[this.column?.field]?.data
+            const data = this.row[this.column?.field]?.data
             if (data && typeof data === 'string') {
                 if (this.column?.columnInfo.type === 'date') {
                     this.row[this.column.field].data = new Date(luxonFormatDate(data, 'yyyy-MM-dd', 'yyyy-MM-dd'))

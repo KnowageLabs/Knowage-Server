@@ -22,13 +22,13 @@ import { IWidget, IGalleryItem } from '@/modules/documentExecution/Dashboard/Das
 export default defineComponent({
     name: 'workspace-sidebar',
     components: {},
-    emits: [],
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, htmlGalleryItemProp: { type: Object as PropType<IGalleryItem>, required: true } },
-    computed: {},
+    emits: [],
+    setup() {},
     data() {
         return {}
     },
-    setup() {},
+    computed: {},
     methods: {}
 })
 </script>

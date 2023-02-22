@@ -9,13 +9,13 @@
             <Listbox
                 class="kn-list"
                 :options="data"
-                :listStyle="lovsManagementTreeDescriptor.listBox.style"
+                :list-style="lovsManagementTreeDescriptor.listBox.style"
                 :filter="true"
-                :filterPlaceholder="$t('common.search')"
-                optionLabel="name"
-                filterMatchMode="contains"
-                :filterFields="lovsManagementTreeDescriptor.filterFields"
-                :emptyFilterMessage="$t('common.info.noDataFound')"
+                :filter-placeholder="$t('common.search')"
+                option-label="name"
+                filter-match-mode="contains"
+                :filter-fields="lovsManagementTreeDescriptor.filterFields"
+                :empty-filter-message="$t('common.info.noDataFound')"
                 @change="setSelectedValue($event.value)"
             >
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
@@ -34,11 +34,11 @@
                     {{ $t('managers.lovsManagement.definition') }}
                 </template>
             </Toolbar>
-            <DataTable :value="selectedValues" class="p-datatable-sm kn-table" editMode="cell" responsiveLayout="stack" breakpoint="960px" @cell-edit-complete="onCellEditComplete">
+            <DataTable :value="selectedValues" class="p-datatable-sm kn-table" edit-mode="cell" responsive-layout="stack" breakpoint="960px" @cell-edit-complete="onCellEditComplete">
                 <Column class="kn-truncated" field="level" :header="$t('managers.lovsManagement.level')"></Column>
                 <Column class="kn-truncated p-mr-2" field="value" :header="$t('managers.lovsManagement.value')">
                     <template #editor="slotProps">
-                        <Dropdown class="p-mr-2" v-model.trim="slotProps.data[slotProps.column.props.field]" optionLabel="name" optionValue="name" :options="options" />
+                        <Dropdown v-model.trim="slotProps.data[slotProps.column.props.field]" class="p-mr-2" option-label="name" option-value="name" :options="options" />
                         <i class="pi pi-pencil edit-icon" />
                     </template>
                     <template #body="slotProps">
@@ -48,7 +48,7 @@
                 </Column>
                 <Column class="kn-truncated p-mr-2" field="description" :header="$t('managers.lovsManagement.description')">
                     <template #editor="slotProps">
-                        <Dropdown class="p-mr-2" v-model.trim="slotProps.data[slotProps.column.props.field]" optionLabel="name" optionValue="name" :options="options" />
+                        <Dropdown v-model.trim="slotProps.data[slotProps.column.props.field]" class="p-mr-2" option-label="name" option-value="name" :options="options" />
                         <i class="pi pi-pencil edit-icon" />
                     </template>
                     <template #body="slotProps">

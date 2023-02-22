@@ -1,10 +1,10 @@
 <template>
     <Paginator
         v-if="propWidgetPagination && propWidgetPagination.properties"
-        class="kn-table-widget-paginator"
         v-model:first="propWidgetPagination.properties.offset"
+        class="kn-table-widget-paginator"
         :rows="propWidgetPagination.properties.itemsNumber"
-        :totalRecords="propWidgetPagination.properties.totalItems"
+        :total-records="propWidgetPagination.properties.totalItems"
         template="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
         @page="onPage($event)"
     />
@@ -19,10 +19,10 @@ export default defineComponent({
     components: {
         Paginator
     },
-    emits: ['pageChanged'],
     props: {
         propWidgetPagination: { type: Object as PropType<ITableWidgetPagination>, required: true }
     },
+    emits: ['pageChanged'],
     data() {
         return {}
     },

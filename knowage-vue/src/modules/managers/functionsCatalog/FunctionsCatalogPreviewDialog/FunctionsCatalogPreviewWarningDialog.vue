@@ -1,5 +1,5 @@
 <template>
-    <Dialog :header="warningTitle" :visible="visible" :modal="true" :contentStyle="functionsCatalogPreviewDialogDescriptor.warningDialog.style" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
+    <Dialog :header="warningTitle" :visible="visible" :modal="true" :content-style="functionsCatalogPreviewDialogDescriptor.warningDialog.style" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
         <div class="p-m-2">
             <Message class="p-m-2" severity="warn" :closable="false" :style="functionsCatalogPreviewDialogDescriptor.styles.message">
                 {{ warningMessage }}

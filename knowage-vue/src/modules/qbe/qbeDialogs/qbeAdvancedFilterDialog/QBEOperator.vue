@@ -1,11 +1,11 @@
 <template>
     <div class="p-m-2">
         <div class="p-d-flex p-flex-row p-ai-center">
-            <QBEOperand v-if="node?.childNodes" :propNode="node.childNodes[0]" @selectedChanged="$emit('selectedChanged')" @treeUpdated="$emit('treeUpdated')"></QBEOperand>
+            <QBEOperand v-if="node?.childNodes" :prop-node="node.childNodes[0]" @selectedChanged="$emit('selectedChanged')" @treeUpdated="$emit('treeUpdated')"></QBEOperand>
             <div v-if="node">
-                <Dropdown v-if="node?.childNodes && node.childNodes.length > 0" class="kn-material-input p-mx-2" :style="{ maxWidth: '200px' }" :class="{ 'dropdown-test': selected }" v-model="node.value" :options="QBEAdvancedFilterDialogDescriptor.operatorOptions" />
+                <Dropdown v-if="node?.childNodes && node.childNodes.length > 0" v-model="node.value" class="kn-material-input p-mx-2" :style="{ maxWidth: '200px' }" :class="{ 'dropdown-test': selected }" :options="QBEAdvancedFilterDialogDescriptor.operatorOptions" />
             </div>
-            <QBEOperand v-if="node?.childNodes" :propNode="node?.childNodes[1]" @selectedChanged="$emit('selectedChanged')" @treeUpdated="$emit('treeUpdated')"></QBEOperand>
+            <QBEOperand v-if="node?.childNodes" :prop-node="node?.childNodes[1]" @selectedChanged="$emit('selectedChanged')" @treeUpdated="$emit('treeUpdated')"></QBEOperand>
         </div>
     </div>
 </template>

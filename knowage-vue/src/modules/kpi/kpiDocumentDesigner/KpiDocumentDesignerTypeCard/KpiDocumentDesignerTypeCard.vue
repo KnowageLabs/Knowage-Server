@@ -2,8 +2,8 @@
     <Card class="p-m-2">
         <template #content>
             <div class=" p-d-flex p-flex-row">
-                <div class="field-radiobutton p-mx-2" v-for="(option, index) in KpiDocumentDesignerTypeCardDescriptor.typeOptions" :key="index">
-                    <RadioButton :id="option.value" :value="option.value" v-model="type" @change="onTypeChange"></RadioButton>
+                <div v-for="(option, index) in KpiDocumentDesignerTypeCardDescriptor.typeOptions" :key="index" class="field-radiobutton p-mx-2">
+                    <RadioButton :id="option.value" v-model="type" :value="option.value" @change="onTypeChange"></RadioButton>
                     <label :for="option.value" class="p-ml-2">{{ $t(option.label) }}</label>
                 </div>
             </div>

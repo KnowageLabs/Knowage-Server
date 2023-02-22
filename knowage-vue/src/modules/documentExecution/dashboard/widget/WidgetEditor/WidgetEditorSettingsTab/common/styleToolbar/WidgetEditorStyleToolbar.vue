@@ -1,10 +1,10 @@
 <template>
     <div class="widget-editor-toolbar p-d-flex p-flex-md-row p-ai-md-center p-flex-column kn-flex">
         <div v-for="(option, index) in options" :key="index" class="kn-flex">
-            <WidgetEditorStyleIcon :option="option" :propModel="model" :disabled="disabled" @change="onChange" @openIconPicker="iconPickerDialogVisible = true"></WidgetEditorStyleIcon>
+            <WidgetEditorStyleIcon :option="option" :prop-model="model" :disabled="disabled" @change="onChange" @openIconPicker="iconPickerDialogVisible = true"></WidgetEditorStyleIcon>
         </div>
 
-        <WidgetEditorStyleIconPickerDialog v-if="iconPickerDialogVisible" :propModel="model" @close="iconPickerDialogVisible = false" @save="onIconSelected"></WidgetEditorStyleIconPickerDialog>
+        <WidgetEditorStyleIconPickerDialog v-if="iconPickerDialogVisible" :prop-model="model" @close="iconPickerDialogVisible = false" @save="onIconSelected"></WidgetEditorStyleIconPickerDialog>
     </div>
 </template>
 

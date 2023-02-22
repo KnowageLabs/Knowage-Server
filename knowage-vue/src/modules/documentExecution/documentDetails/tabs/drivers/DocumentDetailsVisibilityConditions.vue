@@ -8,13 +8,13 @@
                 <Button :label="$t('managers.businessModelManager.addCondition')" class="p-button-text p-button-rounded p-button-plain kn-white-color" @click="openVisibilityConditionDialog('newCondition')" />
             </template>
         </Toolbar>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
         <Listbox class="kn-list data-condition-list" :options="visusalDependencyObjects" @change="openVisibilityConditionDialog($event.value)">
             <template #empty>{{ $t('documentExecution.documentDetails.drivers.noVisCond') }}</template>
             <template #option="slotProps">
                 <div class="kn-list-item">
                     <div class="kn-list-item-text">
-                        <span class="kn-truncated" v-tooltip.top="slotProps.option.viewLabel + ' ' + slotProps.option.parFatherUrlName + ' ' + slotProps.option.operation + slotProps.option.compareValue">
+                        <span v-tooltip.top="slotProps.option.viewLabel + ' ' + slotProps.option.parFatherUrlName + ' ' + slotProps.option.operation + slotProps.option.compareValue" class="kn-truncated">
                             <b>{{ slotProps.option.viewLabel }}</b> {{ slotProps.option.parFatherUrlName }} {{ slotProps.option.operation }}{{ slotProps.option.compareValue }}
                         </span>
                     </div>
@@ -37,48 +37,48 @@
         <form class="p-fluid p-formgrid p-grid p-m-2">
             <div class="p-field p-col-12 p-mt-2">
                 <span class="p-float-label">
-                    <InputText id="title" class="kn-material-input" v-model="v$.selectedCondition.viewLabel.$model" :class="{ 'p-invalid': v$.selectedCondition.viewLabel.$invalid && v$.selectedCondition.viewLabel.$dirty }" @blur="v$.selectedCondition.viewLabel.$touch()" />
+                    <InputText id="title" v-model="v$.selectedCondition.viewLabel.$model" class="kn-material-input" :class="{ 'p-invalid': v$.selectedCondition.viewLabel.$invalid && v$.selectedCondition.viewLabel.$dirty }" @blur="v$.selectedCondition.viewLabel.$touch()" />
                     <label for="title" class="kn-material-input-label"> {{ $t('common.title') }} *</label>
                 </span>
-                <KnValidationMessages class="p-mt-1" :vComp="v$.selectedCondition.viewLabel" :additionalTranslateParams="{ fieldName: $t('common.title') }" />
+                <KnValidationMessages class="p-mt-1" :v-comp="v$.selectedCondition.viewLabel" :additional-translate-params="{ fieldName: $t('common.title') }" />
             </div>
             <div class="p-field p-col-12 p-md-4">
                 <span class="p-float-label">
                     <Dropdown
                         id="driver"
-                        class="kn-material-input"
                         v-model="v$.selectedCondition.parFatherId.$model"
+                        class="kn-material-input"
                         :options="availableDrivers"
-                        optionLabel="label"
-                        optionValue="id"
+                        option-label="label"
+                        option-value="id"
                         :class="{ 'p-invalid': v$.selectedCondition.parFatherId.$invalid && v$.selectedCondition.parFatherId.$dirty }"
                         @blur="v$.selectedCondition.parFatherId.$touch()"
                         @change="setParFatherUrlName"
                     />
                     <label for="driver" class="kn-material-input-label"> {{ $t('managers.businessModelManager.analyticalDriver') }} *</label>
                 </span>
-                <KnValidationMessages class="p-mt-1" :vComp="v$.selectedCondition.parFatherId" :additionalTranslateParams="{ fieldName: $t('managers.businessModelManager.analyticalDriver') }" />
+                <KnValidationMessages class="p-mt-1" :v-comp="v$.selectedCondition.parFatherId" :additional-translate-params="{ fieldName: $t('managers.businessModelManager.analyticalDriver') }" />
             </div>
             <div class="p-field p-col-12 p-md-4">
                 <span class="p-float-label">
                     <Dropdown
                         id="operator"
-                        class="kn-material-input"
                         v-model="v$.selectedCondition.operation.$model"
+                        class="kn-material-input"
                         :options="availableOperators"
                         :class="{ 'p-invalid': v$.selectedCondition.operation.$invalid && v$.selectedCondition.operation.$dirty }"
                         @blur="v$.selectedCondition.operation.$touch()"
                     />
                     <label for="operator" class="kn-material-input-label"> {{ $t('managers.businessModelManager.analyticalDriver') }} *</label>
                 </span>
-                <KnValidationMessages class="p-mt-1" :vComp="v$.selectedCondition.operation" :additionalTranslateParams="{ fieldName: $t('managers.businessModelManager.analyticalDriver') }" />
+                <KnValidationMessages class="p-mt-1" :v-comp="v$.selectedCondition.operation" :additional-translate-params="{ fieldName: $t('managers.businessModelManager.analyticalDriver') }" />
             </div>
             <div class="p-field p-col-12 p-md-4">
                 <span class="p-float-label">
-                    <InputText id="title" class="kn-material-input" v-model="v$.selectedCondition.compareValue.$model" :class="{ 'p-invalid': v$.selectedCondition.compareValue.$invalid && v$.selectedCondition.compareValue.$dirty }" @blur="v$.selectedCondition.compareValue.$touch()" />
+                    <InputText id="title" v-model="v$.selectedCondition.compareValue.$model" class="kn-material-input" :class="{ 'p-invalid': v$.selectedCondition.compareValue.$invalid && v$.selectedCondition.compareValue.$dirty }" @blur="v$.selectedCondition.compareValue.$touch()" />
                     <label for="title" class="kn-material-input-label"> {{ $t('common.value') }} *</label>
                 </span>
-                <KnValidationMessages class="p-mt-1" :vComp="v$.selectedCondition.compareValue" :additionalTranslateParams="{ fieldName: $t('common.value') }" />
+                <KnValidationMessages class="p-mt-1" :v-comp="v$.selectedCondition.compareValue" :additional-translate-params="{ fieldName: $t('common.value') }" />
             </div>
         </form>
 
@@ -109,6 +109,10 @@ export default defineComponent({
     components: { Listbox, Dialog, Dropdown, KnValidationMessages, InlineMessage },
     props: { selectedDocument: { type: Object as PropType<iDocument>, required: true }, availableDrivers: { type: Array as PropType<iDriver[]>, required: true }, selectedDriver: { type: Object as PropType<iDriver>, required: true } },
     emits: ['driversChanged'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             v$: useValidate() as any,
@@ -125,10 +129,6 @@ export default defineComponent({
         selectedDriver() {
             this.selectedDriver.id ? this.getVisualDependenciesByDriverId() : ''
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.selectedDriver.id ? this.getVisualDependenciesByDriverId() : ''

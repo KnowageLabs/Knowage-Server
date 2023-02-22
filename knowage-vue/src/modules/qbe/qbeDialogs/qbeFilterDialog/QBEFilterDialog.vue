@@ -17,17 +17,17 @@
             {{ $t('common.info.noDataFound') }}
         </Message>
         <div v-else-if="!parameterTableVisible">
-            <QBEFilterCard v-for="filter in filters" :key="filter.filterId" :propFilter="filter" :id="id" :propEntities="entities" :subqueries="filterDialogData?.query.subqueries" :field="filterDialogData?.field" :propParameters="parameters" @removeFilter="removeFilter"></QBEFilterCard>
+            <QBEFilterCard v-for="filter in filters" :id="id" :key="filter.filterId" :prop-filter="filter" :prop-entities="entities" :subqueries="filterDialogData?.query.subqueries" :field="filterDialogData?.field" :prop-parameters="parameters" @removeFilter="removeFilter"></QBEFilterCard>
         </div>
 
-        <QBEFilterParameters v-else-if="parameterTableVisible" :propParameters="parameters" @parametersUpdated="onParametersUpdated"></QBEFilterParameters>
+        <QBEFilterParameters v-else-if="parameterTableVisible" :prop-parameters="parameters" @parametersUpdated="onParametersUpdated"></QBEFilterParameters>
 
         <template #footer>
             <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
             <Button class="kn-button kn-button--primary" @click="save"> {{ parameterTableVisible ? $t('qbe.filters.applyParameters') : $t('common.save') }}</Button>
         </template>
 
-        <QBETemporalFilterDialog :visible="temporalFilterDialogVisible" :temporalFilters="temporalFilters" @close="temporalFilterDialogVisible = false" @save="addTemporalFilter"></QBETemporalFilterDialog>
+        <QBETemporalFilterDialog :visible="temporalFilterDialogVisible" :temporal-filters="temporalFilters" @close="temporalFilterDialogVisible = false" @save="addTemporalFilter"></QBETemporalFilterDialog>
     </Dialog>
 </template>
 
@@ -52,6 +52,10 @@ export default defineComponent({
     components: { Dialog, KnFabButton, Message, QBEFilterCard, QBETemporalFilterDialog, QBEFilterParameters },
     props: { visible: { type: Boolean }, filterDialogData: { type: Object as PropType<{ field: iField; query: iQuery }> }, id: { type: String }, entities: { type: Array }, propParameters: { type: Array, required: true }, propExpression: { type: Object } },
     emits: ['save', 'close', 'parametersUpdated'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             QBEFilterDialogDescriptor,
@@ -78,10 +82,6 @@ export default defineComponent({
         propExpression() {
             this.loadExpression()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadData()
@@ -162,7 +162,7 @@ export default defineComponent({
             this.push(filter)
         },
         push(filter: iFilter) {
-            var newConst = {
+            const newConst = {
                 type: 'NODE_CONST',
                 value: '$F{' + filter.filterId + '}',
                 childNodes: [],

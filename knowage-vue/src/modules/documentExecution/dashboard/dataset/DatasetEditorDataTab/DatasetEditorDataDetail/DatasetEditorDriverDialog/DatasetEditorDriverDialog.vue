@@ -9,12 +9,12 @@
         </template>
 
         <div v-if="driver">
-            <DriverDialogManualInput v-if="driver.typeCode === 'MAN_IN' && (driver.type === 'NUM' || driver.type === 'STRING')" :propDriver="driver"></DriverDialogManualInput>
-            <DriverDialogList v-else-if="driver.selectionType === 'LIST'" :propDriver="driver"></DriverDialogList>
-            <DriverDialogDropdown v-else-if="driver.selectionType === 'COMBOBOX'" :propDriver="driver"></DriverDialogDropdown>
-            <DriverDialogDateInput v-else-if="driver.type === 'DATE'" :propDriver="driver"></DriverDialogDateInput>
-            <DriverDialogPopup v-else-if="driver.selectionType === 'LOOKUP'" :propDriver="driver" :dashboardId="dashboardId" :selectedDatasetProp="selectedDatasetProp" :drivers="drivers"></DriverDialogPopup>
-            <DriverDialogTree v-else-if="driver.selectionType === 'TREE'" :propDriver="driver" :dashboardId="dashboardId" :selectedDatasetProp="selectedDatasetProp" :drivers="drivers"></DriverDialogTree>
+            <DriverDialogManualInput v-if="driver.typeCode === 'MAN_IN' && (driver.type === 'NUM' || driver.type === 'STRING')" :prop-driver="driver"></DriverDialogManualInput>
+            <DriverDialogList v-else-if="driver.selectionType === 'LIST'" :prop-driver="driver"></DriverDialogList>
+            <DriverDialogDropdown v-else-if="driver.selectionType === 'COMBOBOX'" :prop-driver="driver"></DriverDialogDropdown>
+            <DriverDialogDateInput v-else-if="driver.type === 'DATE'" :prop-driver="driver"></DriverDialogDateInput>
+            <DriverDialogPopup v-else-if="driver.selectionType === 'LOOKUP'" :prop-driver="driver" :dashboard-id="dashboardId" :selected-dataset-prop="selectedDatasetProp" :drivers="drivers"></DriverDialogPopup>
+            <DriverDialogTree v-else-if="driver.selectionType === 'TREE'" :prop-driver="driver" :dashboard-id="dashboardId" :selected-dataset-prop="selectedDatasetProp" :drivers="drivers"></DriverDialogTree>
             <span v-else>
                 {{ driver }}
             </span>

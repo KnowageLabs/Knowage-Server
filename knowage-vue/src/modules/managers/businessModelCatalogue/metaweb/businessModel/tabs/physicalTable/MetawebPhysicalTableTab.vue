@@ -1,11 +1,11 @@
 <template>
     <div>
-        <DataTable v-if="businessModel" class="p-datatable-sm kn-table p-m-2" :value="physicalTables" v-model:filters="filters" :globalFilterFields="metawebPhysicalTableTabDescriptor.globalFilterFields" :loading="loading" editMode="cell" responsiveLayout="stack" breakpoint="960px">
+        <DataTable v-if="businessModel" v-model:filters="filters" class="p-datatable-sm kn-table p-m-2" :value="physicalTables" :global-filter-fields="metawebPhysicalTableTabDescriptor.globalFilterFields" :loading="loading" edit-mode="cell" responsive-layout="stack" breakpoint="960px">
             <template #header>
                 <div class="table-header">
                     <span class="p-input-icon-left">
                         <i class="pi pi-search" />
-                        <InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
+                        <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
                     </span>
                 </div>
             </template>
@@ -24,13 +24,13 @@
 
                 <template #body="slotProps">
                     <div class="p-d-flex p-flex-row p-jc-end">
-                        <Button icon="pi pi-trash" class="p-button-link" v-tooltip.top="$t('common.delete')" @click="deletePhysicalTableConfirm(slotProps.data)" />
+                        <Button v-tooltip.top="$t('common.delete')" icon="pi pi-trash" class="p-button-link" @click="deletePhysicalTableConfirm(slotProps.data)" />
                     </div>
                 </template>
             </Column>
         </DataTable>
 
-        <MetawebAddPhysicalTableDialog :visible="addTableDialogVisible" :physicalTables="availablePhysicalTables" :propLoading="loading" @close="addTableDialogVisible = false" @save="addNewPhysicalTables"></MetawebAddPhysicalTableDialog>
+        <MetawebAddPhysicalTableDialog :visible="addTableDialogVisible" :physical-tables="availablePhysicalTables" :prop-loading="loading" @close="addTableDialogVisible = false" @save="addNewPhysicalTables"></MetawebAddPhysicalTableDialog>
     </div>
 </template>
 
@@ -48,8 +48,12 @@ import mainStore from '../../../../../../../App.store'
 
 export default defineComponent({
     name: 'metaweb-physical-table-tab',
-    props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null> }, propMeta: { type: Object }, observer: { type: Object } },
     components: { Column, DataTable, MetawebAddPhysicalTableDialog },
+    props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null> }, propMeta: { type: Object }, observer: { type: Object } },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             metawebPhysicalTableTabDescriptor,
@@ -68,10 +72,6 @@ export default defineComponent({
         selectedBusinessModel() {
             this.loadData()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadData()

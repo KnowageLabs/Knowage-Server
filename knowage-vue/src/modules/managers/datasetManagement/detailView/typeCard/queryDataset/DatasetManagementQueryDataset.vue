@@ -5,12 +5,12 @@
                 <span class="p-float-label">
                     <Dropdown
                         id="dataSource"
+                        v-model="v$.dataset.dataSource.$model"
                         class="kn-material-input"
                         :style="queryDescriptor.style.maxWidth"
                         :options="dataSources"
-                        optionLabel="label"
-                        optionValue="label"
-                        v-model="v$.dataset.dataSource.$model"
+                        option-label="label"
+                        option-value="label"
                         :class="{
                             'p-invalid': v$.dataset.dataSource.$invalid && v$.dataset.dataSource.$dirty
                         }"
@@ -19,8 +19,8 @@
                     <label for="scope" class="kn-material-input-label"> {{ $t('managers.businessModelManager.dataSource') }} * </label>
                 </span>
                 <KnValidationMessages
-                    :vComp="v$.dataset.dataSource"
-                    :additionalTranslateParams="{
+                    :v-comp="v$.dataset.dataSource"
+                    :additional-translate-params="{
                         fieldName: $t('managers.businessModelManager.dataSource')
                     }"
                 />
@@ -37,7 +37,7 @@
             </Toolbar>
             <Card v-show="expandQueryCard">
                 <template #content>
-                    <VCodeMirror ref="codeMirror" v-model:value="dataset.query" :autoHeight="true" :options="codemirrorOptions" @keyup="$emit('queryEdited')" />
+                    <VCodeMirror ref="codeMirror" v-model:value="dataset.query" :auto-height="true" :options="codemirrorOptions" @keyup="$emit('queryEdited')" />
                 </template>
             </Card>
 
@@ -51,10 +51,10 @@
             <Card v-show="expandScriptCard">
                 <template #content>
                     <span class="p-float-label">
-                        <Dropdown id="queryScriptLanguage" class="kn-material-input" :style="queryDescriptor.style.maxWidth" :options="scriptTypes" optionLabel="VALUE_NM" optionValue="VALUE_CD" v-model="dataset.queryScriptLanguage" @change="onLanguageChanged($event.value)" />
+                        <Dropdown id="queryScriptLanguage" v-model="dataset.queryScriptLanguage" class="kn-material-input" :style="queryDescriptor.style.maxWidth" :options="scriptTypes" option-label="VALUE_NM" option-value="VALUE_CD" @change="onLanguageChanged($event.value)" />
                         <label for="queryScriptLanguage" class="kn-material-input-label"> {{ $t('managers.lovsManagement.placeholderScript') }} </label>
                     </span>
-                    <VCodeMirror class="p-mt-2" ref="codeMirrorScript" v-model:value="dataset.queryScript" :autoHeight="true" :options="scriptOptions" @keyup="$emit('touched')" />
+                    <VCodeMirror ref="codeMirrorScript" v-model:value="dataset.queryScript" class="p-mt-2" :auto-height="true" :options="scriptOptions" @keyup="$emit('touched')" />
                 </template>
             </Card>
         </template>
@@ -109,19 +109,6 @@ export default defineComponent({
             }
         }
     },
-    created() {
-        const interval = setInterval(() => {
-            if (!this.$refs.codeMirror) return
-            this.codeMirror = (this.$refs.codeMirror as any).cminstance as any
-            if (!this.$refs.codeMirrorScript) return
-            this.codeMirrorScript = (this.$refs.codeMirrorScript as any).cminstance as any
-
-            this.loadDataset()
-            this.loadScriptMode()
-
-            clearInterval(interval)
-        }, 200)
-    },
     watch: {
         selectedDataset() {
             this.loadDataset()
@@ -135,6 +122,19 @@ export default defineComponent({
                 }, 0)
             }
         }
+    },
+    created() {
+        const interval = setInterval(() => {
+            if (!this.$refs.codeMirror) return
+            this.codeMirror = (this.$refs.codeMirror as any).cminstance as any
+            if (!this.$refs.codeMirrorScript) return
+            this.codeMirrorScript = (this.$refs.codeMirrorScript as any).cminstance as any
+
+            this.loadDataset()
+            this.loadScriptMode()
+
+            clearInterval(interval)
+        }, 200)
     },
     validations() {
         const queryFieldsRequired = (value) => {

@@ -1,7 +1,7 @@
 <template>
-    <Dialog class="kn-dialog--toolbar--primary RoleDialog" v-bind:visible="visibility" footer="footer" :header="$t('downloadsDialog.title')" :closable="false" modal>
-        <DataTable :value="downloadsList" style="width: 800px" :resizableColumns="true" columnResizeMode="fit | expand">
-            <Column v-for="(column, index) in columnDefs" v-bind:key="index" :field="column.field" :header="$t(column.headerName)" :bodyStyle="column.bodyStyle">
+    <Dialog class="kn-dialog--toolbar--primary RoleDialog" :visible="visibility" footer="footer" :header="$t('downloadsDialog.title')" :closable="false" modal>
+        <DataTable :value="downloadsList" style="width: 800px" :resizable-columns="true" column-resize-mode="fit | expand">
+            <Column v-for="(column, index) in columnDefs" :key="index" :field="column.field" :header="$t(column.headerName)" :body-style="column.bodyStyle">
                 <template v-if="column.template" #body="slotProps">
                     <Button icon="pi pi-download" class="p-button-text p-button-rounded p-button-plain" @click="downloadContent(slotProps.data)" />
                 </template>
@@ -47,6 +47,11 @@ export default defineComponent({
     props: {
         visibility: Boolean
     },
+    emits: ['update:visibility'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             columnDefs: {},
@@ -54,9 +59,10 @@ export default defineComponent({
             gridOptions: {}
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
+    watch: {
+        visibility(newVisibility, oldVisibility) {
+            if (newVisibility != oldVisibility) this.getDownloads()
+        }
     },
     beforeMount() {
         this.gridOptions = { headerHeight: 30 }
@@ -65,7 +71,6 @@ export default defineComponent({
     created() {
         this.getDownloads()
     },
-    emits: ['update:visibility'],
     methods: {
         closeDialog() {
             this.$emit('update:visibility', false)
@@ -82,7 +87,7 @@ export default defineComponent({
             )
         },
         async downloadContent(data) {
-            var encodedUri = encodeURI(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/export/dataset/' + data.id)
+            const encodedUri = encodeURI(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/export/dataset/' + data.id)
             await this.$http
                 .get(encodedUri, {
                     responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
@@ -112,11 +117,6 @@ export default defineComponent({
                 },
                 (error) => console.error(error)
             )
-        }
-    },
-    watch: {
-        visibility(newVisibility, oldVisibility) {
-            if (newVisibility != oldVisibility) this.getDownloads()
         }
     }
 })

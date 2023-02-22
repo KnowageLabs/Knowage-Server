@@ -6,15 +6,15 @@
         <Message v-if="selectedAncestorsWarningVisible" class="p-m-4" severity="warn" :closable="false" :style="olapFilterDialogDescriptor.styles.message">
             {{ $t('documentExecution.olap.filterDialog.ancestorDescendantWarning') }}
         </Message>
-        <InputText v-if="!treeLocked" id="olap-filter-tree-search" class="kn-material-input" v-model.trim="searchWord" type="text" :placeholder="$t('common.search')" @input="searchTree" />
-        <Tree id="kn-parameter-tree" :class="{ 'olap-filter-tree-locked': treeLocked }" :value="nodes" :metaKeySelection="false" :expandedKeys="expandedKeys" :loading="loading" @nodeExpand="loadNodes($event)">
+        <InputText v-if="!treeLocked" id="olap-filter-tree-search" v-model.trim="searchWord" class="kn-material-input" type="text" :placeholder="$t('common.search')" @input="searchTree" />
+        <Tree id="kn-parameter-tree" :class="{ 'olap-filter-tree-locked': treeLocked }" :value="nodes" :meta-key-selection="false" :expanded-keys="expandedKeys" :loading="loading" @nodeExpand="loadNodes($event)">
             <template #default="slotProps">
                 <Checkbox
-                    class="p-ml-2"
                     v-model="selectedFilters"
+                    v-tooltip="{ value: $t('documentExecution.olap.filterDialog.parentDisabledTooltip'), disabled: !treeLocked || slotProps.node.data.visible || filterType === 'visible' }"
+                    class="p-ml-2"
                     :value="filterType === 'slicer' ? slotProps.node.id : slotProps.node.data"
                     :disabled="treeLocked && filterType !== 'visible' && !slotProps.node.data.visible"
-                    v-tooltip="{ value: $t('documentExecution.olap.filterDialog.parentDisabledTooltip'), disabled: !treeLocked || slotProps.node.data.visible || filterType === 'visible' }"
                     @change="onFiltersSelected()"
                 />
                 <span>{{ slotProps.node.label }}</span>

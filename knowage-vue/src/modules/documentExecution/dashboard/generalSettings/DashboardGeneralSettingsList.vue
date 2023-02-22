@@ -5,10 +5,10 @@
                 class="kn-list kn-list-no-border-right dashboard-editor-list"
                 :options="descriptor.settingsList"
                 :filter="true"
-                :filterPlaceholder="$t('common.search')"
-                filterMatchMode="contains"
-                :filterFields="descriptor.settingsListFilterFields"
-                :emptyFilterMessage="$t('common.info.noDataFound')"
+                :filter-placeholder="$t('common.search')"
+                filter-match-mode="contains"
+                :filter-fields="descriptor.settingsListFilterFields"
+                :empty-filter-message="$t('common.info.noDataFound')"
                 @change="selectOption"
             >
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
@@ -33,12 +33,12 @@ export default defineComponent({
     name: 'general-settings-list',
     components: { Listbox },
     emits: ['selectedOption'],
+    setup() {},
     data() {
         return {
             descriptor
         }
     },
-    setup() {},
     created() {},
     methods: {
         selectOption(event: any) {

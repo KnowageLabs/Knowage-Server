@@ -12,8 +12,8 @@
                 <span class="p-float-label">
                     <InputText
                         id="name"
-                        class="kn-material-input"
                         v-model.trim="v$.tmpBusinessModel.name.$model"
+                        class="kn-material-input"
                         :class="{
                             'p-invalid': v$.tmpBusinessModel.name.$invalid && v$.tmpBusinessModel.name.$dirty
                         }"
@@ -22,17 +22,17 @@
                     />
                     <label for="name" class="kn-material-input-label"> {{ $t('common.name') }} *</label>
                 </span>
-                <KnValidationMessages class="p-mt-1" :vComp="v$.tmpBusinessModel.name" :additionalTranslateParams="{ fieldName: $t('common.name') }" />
+                <KnValidationMessages class="p-mt-1" :v-comp="v$.tmpBusinessModel.name" :additional-translate-params="{ fieldName: $t('common.name') }" />
             </div>
             <div class="p-field p-col-12 p-md-6">
                 <span class="p-float-label">
-                    <InputText id="desc" class="kn-material-input" v-model="tmpBusinessModel.description" />
+                    <InputText id="desc" v-model="tmpBusinessModel.description" class="kn-material-input" />
                     <label for="desc" class="kn-material-input-label"> {{ $t('common.description') }}</label>
                 </span>
             </div>
             <div class="p-field p-col-12">
                 <span class="p-float-label">
-                    <Dropdown id="driver" class="kn-material-input" v-model="tmpBusinessModel.physicalModel" :filter="true" :options="physicalModels" optionLabel="name" />
+                    <Dropdown id="driver" v-model="tmpBusinessModel.physicalModel" class="kn-material-input" :filter="true" :options="physicalModels" option-label="name" />
                     <label for="driver" class="kn-material-input-label"> {{ $t('metaweb.businessModel.physTable') }}</label>
                 </span>
             </div>
@@ -42,14 +42,14 @@
             <div class="kn-height-full kn-width-full kn-absolute">
                 <DataTable
                     v-if="tmpBusinessModel.physicalModel"
+                    v-model:selection="tmpBusinessModel.selectedColumns"
+                    v-model:filters="filters"
                     :value="tmpBusinessModel.physicalModel.columns"
                     class="p-datatable-sm kn-table p-ml-2"
-                    v-model:selection="tmpBusinessModel.selectedColumns"
                     :scrollable="true"
-                    :scrollHeight="bsDescriptor.style.mainList"
-                    dataKey="position"
-                    v-model:filters="filters"
-                    :globalFilterFields="bsDescriptor.globalFilterFields"
+                    :scroll-height="bsDescriptor.style.mainList"
+                    data-key="position"
+                    :global-filter-fields="bsDescriptor.globalFilterFields"
                 >
                     <template #empty>
                         {{ $t('common.info.noDataFound') }}
@@ -58,11 +58,11 @@
                         <div class="table-header p-d-flex">
                             <span class="p-input-icon-left p-mr-3 p-col-12">
                                 <i class="pi pi-search" />
-                                <InputText class="kn-material-input" v-model="filters['global'].value" :placeholder="$t('common.search')" />
+                                <InputText v-model="filters['global'].value" class="kn-material-input" :placeholder="$t('common.search')" />
                             </span>
                         </div>
                     </template>
-                    <Column selectionMode="multiple" />
+                    <Column selection-mode="multiple" />
                     <Column field="name" :header="$t('common.name')" :style="bsDescriptor.style.tableCell" />
                 </DataTable>
             </div>
@@ -92,15 +92,8 @@ import { generate, applyPatch } from 'fast-json-patch'
 export default defineComponent({
     name: 'document-drivers',
     components: { Dialog, Dropdown, DataTable, Column, KnValidationMessages },
-    emits: ['closeDialog'],
     props: { physicalModels: Array, showBusinessClassDialog: Boolean, meta: Object, observer: { type: Object } },
-    computed: {
-        buttonDisabled(): boolean {
-            if (this.v$.$invalid || this.tmpBusinessModel.selectedColumns.length === 0) {
-                return true
-            } else return false
-        }
-    },
+    emits: ['closeDialog'],
     data() {
         return {
             bsDescriptor,
@@ -112,13 +105,20 @@ export default defineComponent({
             } as Object
         }
     },
-    created() {
-        this.loadMeta()
+    computed: {
+        buttonDisabled(): boolean {
+            if (this.v$.$invalid || this.tmpBusinessModel.selectedColumns.length === 0) {
+                return true
+            } else return false
+        }
     },
     watch: {
         meta() {
             this.loadMeta()
         }
+    },
+    created() {
+        this.loadMeta()
     },
     validations() {
         const bmRequired = (value) => {
@@ -144,7 +144,7 @@ export default defineComponent({
             this.tmpBusinessModel = { physicalModel: { columns: [] }, selectedColumns: [], name: '', description: '' } as any
         },
         async saveBusinessClass() {
-            let objToSend = { selectedColumns: [] } as any
+            const objToSend = { selectedColumns: [] } as any
             objToSend.name = this.tmpBusinessModel.name
             objToSend.description = this.tmpBusinessModel.description
             objToSend.physicalModel = this.tmpBusinessModel.physicalModel.name

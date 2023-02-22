@@ -1,5 +1,5 @@
 <template>
-    <Dialog id="metaweb-select-dialog" class="metaweb-dialog remove-padding p-fluid kn-dialog--toolbar--primary" :contentStyle="metawebSelectDialogDescriptor.dialog.style" :visible="visible" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
+    <Dialog id="metaweb-select-dialog" class="metaweb-dialog remove-padding p-fluid kn-dialog--toolbar--primary" :content-style="metawebSelectDialogDescriptor.dialog.style" :visible="visible" :modal="false" :closable="false" position="right" :base-z-index="1" :auto-z-index="true">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -11,9 +11,9 @@
                 </template>
             </Toolbar>
         </template>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
 
-        <DataTable v-else :value="rows" class="p-datatable-sm kn-table p-ml-1" :scrollable="true" scrollHeight="100%" v-model:filters="filters" :globalFilterFields="metawebSelectDialogDescriptor.globalFilterFields" @filter="onRowsFiltered">
+        <DataTable v-else v-model:filters="filters" :value="rows" class="p-datatable-sm kn-table p-ml-1" :scrollable="true" scroll-height="100%" :global-filter-fields="metawebSelectDialogDescriptor.globalFilterFields" @filter="onRowsFiltered">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -22,7 +22,7 @@
                 <div class="table-header p-d-flex">
                     <span class="p-input-icon-left p-mr-3 p-col-12">
                         <i class="pi pi-search" />
-                        <InputText class="kn-material-input" v-model="filters['global'].value" :placeholder="$t('common.search')" />
+                        <InputText v-model="filters['global'].value" class="kn-material-input" :placeholder="$t('common.search')" />
                     </span>
                 </div>
             </template>
@@ -30,7 +30,7 @@
             <Column field="value" :header="$t('metaweb.selectDialog.tableName')" style="flex: 5"></Column>
             <Column :header="$t('metaweb.physicalModel.title')">
                 <template #header>
-                    <Checkbox class="p-mr-2" v-model="allPhysicalSelected" :binary="true" @change="setAllChecked('physical')" />
+                    <Checkbox v-model="allPhysicalSelected" class="p-mr-2" :binary="true" @change="setAllChecked('physical')" />
                 </template>
                 <template #body="slotProps">
                     <Checkbox v-model="selected[slotProps.data.value].physical" :binary="true" @change="setChecked(slotProps.data, 'physical')" />
@@ -38,7 +38,7 @@
             </Column>
             <Column :header="$t('metaweb.businessModel.title')">
                 <template #header>
-                    <Checkbox class="p-mr-2" v-model="allBusinessSelected" :binary="true" @change="setAllChecked('business')" />
+                    <Checkbox v-model="allBusinessSelected" class="p-mr-2" :binary="true" @change="setAllChecked('business')" />
                 </template>
                 <template #body="slotProps">
                     <Checkbox v-model="selected[slotProps.data.value].business" :binary="true" @change="setChecked(slotProps.data, 'business')" />
@@ -65,6 +65,10 @@ export default defineComponent({
     components: { Checkbox, Column, DataTable, Dialog },
     props: { visible: { type: Boolean }, selectedBusinessModel: { type: Object as PropType<iBusinessModel> } },
     emits: ['close', 'metaSelected'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             metawebSelectDialogDescriptor,
@@ -94,10 +98,6 @@ export default defineComponent({
             }
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
     async created() {
         await this.loadData()
     },
@@ -114,7 +114,7 @@ export default defineComponent({
         },
         async loadDatasourceStructure() {
             if (this.businessModel?.dataSourceId) {
-                let url = `2.0/datasources/structure/${this.businessModel.dataSourceId}?`
+                const url = `2.0/datasources/structure/${this.businessModel.dataSourceId}?`
                 const urlParams = {} as any
                 if (this.businessModel.tablePrefixLike) urlParams.tablePrefixLike = this.businessModel.tablePrefixLike
                 if (this.businessModel.tablePrefixNotLike) urlParams.tablePrefixNotLike = this.businessModel.tablePrefixNotLike

@@ -1,23 +1,23 @@
 <template>
-    <div id="perspective" v-if="perspective">
+    <div v-if="perspective" id="perspective">
         <div class="p-d-flex p-flex-row p-ai-center">
             <div class="p-d-flex p-ai-center" :style="descriptor.style.inputContainer">
                 <Button v-if="!expanded" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" @click="expanded = true" />
                 <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" @click="expanded = false" />
                 <i class="fa-solid fa-rectangle-list fa-lg p-mr-1 scorecard-blue-icon" />
-                <InputText class="kn-material-input scorecards-target-perspective-input" v-model="perspective.name" :maxLength="40" @input="$emit('touched')" />
+                <InputText v-model="perspective.name" class="kn-material-input scorecards-target-perspective-input" :max-length="40" @input="$emit('touched')" />
             </div>
             <div class="p-d-flex p-flex-row p-ai-center kn-flex">
-                <SelectButton class="p-mr-1" v-model="selectedCriteria" :options="descriptor.criteriaOptions" @change="onCriteriaChange">
+                <SelectButton v-model="selectedCriteria" class="p-mr-1" :options="descriptor.criteriaOptions" @change="onCriteriaChange">
                     <template #option="slotProps">
                         <span v-tooltip="getSelectedCriteriaTooltip(slotProps.option, $t)" :data-test="'select-button-' + slotProps.option">{{ slotProps.option }}</span>
                     </template>
                 </SelectButton>
-                <MultiSelect v-if="selectedCriteria !== 'M'" :style="descriptor.style.multiselect" v-model="perspective.options.criterionPriority" :options="perspective.targets" optionLabel="name" optionValue="name" @change="onCriterionPriortyChanged" data-test="criteria-select-input" />
+                <MultiSelect v-if="selectedCriteria !== 'M'" v-model="perspective.options.criterionPriority" :style="descriptor.style.multiselect" :options="perspective.targets" option-label="name" option-value="name" data-test="criteria-select-input" @change="onCriterionPriortyChanged" />
             </div>
 
             <div class="p-d-flex p-ai-center">
-                <Button icon="fa-solid fa-square-plus" class="p-button-text p-button-rounded p-button-plain" v-tooltip.top="$t('managers.scorecards.addTarget')" @click="addTarget" />
+                <Button v-tooltip.top="$t('managers.scorecards.addTarget')" icon="fa-solid fa-square-plus" class="p-button-text p-button-rounded p-button-plain" @click="addTarget" />
                 <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click="deletePerspectiveConfirm" />
             </div>
         </div>
@@ -26,7 +26,7 @@
                 <ScorecardsTableHint :hint="'managers.scorecards.addTargetHint'" data-test="no-targets-hint"></ScorecardsTableHint>
             </div>
             <template v-else>
-                <ScorecardsTargetItem v-for="(target, index) in perspective.targets" :key="index" :propTarget="target" :criterias="criterias" :kpis="kpis" @deleteTarget="deleteTarget" @openKpiDialog="$emit('openKpiDialog', $event)" @touched="onTargetTouched"></ScorecardsTargetItem>
+                <ScorecardsTargetItem v-for="(target, index) in perspective.targets" :key="index" :prop-target="target" :criterias="criterias" :kpis="kpis" @deleteTarget="deleteTarget" @openKpiDialog="$emit('openKpiDialog', $event)" @touched="onTargetTouched"></ScorecardsTargetItem>
             </template>
         </div>
     </div>

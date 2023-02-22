@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="workspaceAnalysisViewShareDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary" :content-style="workspaceAnalysisViewShareDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -8,7 +8,7 @@
             </Toolbar>
         </template>
 
-        <WorkspaceAnalysisFolderTree :propFolders="folders" @foldersSelected="setSelectedFolders"></WorkspaceAnalysisFolderTree>
+        <WorkspaceAnalysisFolderTree :prop-folders="folders" @foldersSelected="setSelectedFolders"></WorkspaceAnalysisFolderTree>
 
         <template #footer>
             <div class="p-d-flex p-flex-row p-jc-end">

@@ -12,7 +12,7 @@ span<template>
                 </Toolbar>
             </template>
             <template #content>
-                <Listbox class="kn-list" :options="businessModelDrivers" listStyle="max-height:calc(100% - 62px)" @change="showForm" data-test="driver-list">
+                <Listbox class="kn-list" :options="businessModelDrivers" list-style="max-height:calc(100% - 62px)" data-test="driver-list" @change="showForm">
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
                         <div class="kn-list-item">
@@ -35,7 +35,7 @@ span<template>
         </Card>
 
         <div class="p-col-6 p-p-0 p-m-0">
-            <BuisnessModelDriverDetail :businessModelId="id" :selectedDriver="selectedDriver" :formVisible="formVisible" :driverOptions="analyticalDrivers" :businessModelDrivers="businessModelDrivers" :readonly="readonly"></BuisnessModelDriverDetail>
+            <BuisnessModelDriverDetail :business-model-id="id" :selected-driver="selectedDriver" :form-visible="formVisible" :driver-options="analyticalDrivers" :business-model-drivers="businessModelDrivers" :readonly="readonly"></BuisnessModelDriverDetail>
         </div>
     </div>
 </template>

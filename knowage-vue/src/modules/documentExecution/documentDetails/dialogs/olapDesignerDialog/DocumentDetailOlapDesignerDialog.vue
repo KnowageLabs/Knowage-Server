@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="full-screen-dialog" :visible="visible" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
+    <Dialog class="full-screen-dialog" :visible="visible" :modal="false" :closable="false" position="right" :base-z-index="1" :auto-z-index="true">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
                 <template #start>
@@ -11,12 +11,12 @@
                 </template>
             </Toolbar>
         </template>
-        <ProgressSpinner class="kn-progress-spinner" v-if="loading" />
+        <ProgressSpinner v-if="loading" class="kn-progress-spinner" />
 
         <div class="p-fluid p-formgrid p-grid p-m-4">
             <div class="p-field p-col-4">
                 <span class="p-float-label">
-                    <Dropdown id="type" class="kn-material-input" v-model="type" :options="descriptor.typeOptions" optionValue="value" optionDisabled="disabled">
+                    <Dropdown id="type" v-model="type" class="kn-material-input" :options="descriptor.typeOptions" option-value="value" option-disabled="disabled">
                         <template #value="slotProps">
                             <div v-if="slotProps.value">
                                 <span>{{ $t(`documentExecution.documentDetails.designerDialog.${slotProps.value}`) }}</span>
@@ -32,8 +32,8 @@
                 </span>
             </div>
         </div>
-        <DocumentDetailXMLAForm v-if="type === 'xmla'" class="p-m-4" :xmlModel="xmlModel"></DocumentDetailXMLAForm>
-        <DocumentDetailMondrianForm v-else class="p-m-4" :sbiExecutionId="sbiExecutionId" :mondrianModel="mondrianModel" :mondrianSchemas="mondrianSchemas"></DocumentDetailMondrianForm>
+        <DocumentDetailXMLAForm v-if="type === 'xmla'" class="p-m-4" :xml-model="xmlModel"></DocumentDetailXMLAForm>
+        <DocumentDetailMondrianForm v-else class="p-m-4" :sbi-execution-id="sbiExecutionId" :mondrian-model="mondrianModel" :mondrian-schemas="mondrianSchemas"></DocumentDetailMondrianForm>
     </Dialog>
 </template>
 

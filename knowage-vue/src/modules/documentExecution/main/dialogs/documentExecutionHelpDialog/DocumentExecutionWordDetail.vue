@@ -46,7 +46,7 @@
                 <li>
                     <span class="p-mr-2">{{ $t('managers.glossary.common.link') }}:</span>
                     <div class="p-d-flex p-flex-row p-flex-wrap">
-                        <Chip class="p-m-1" v-for="(link, index) in contentInfo.LINK" :key="index">{{ link.WORD }}</Chip>
+                        <Chip v-for="(link, index) in contentInfo.LINK" :key="index" class="p-m-1">{{ link.WORD }}</Chip>
                     </div>
                 </li>
                 <li>
@@ -58,7 +58,7 @@
                             <ul>
                                 <li class="p-mr-2">{{ attribute.VALUE }}</li>
                                 <div class="p-d-flex p-flex-row p-flex-wrap">
-                                    <Chip class="p-m-1" v-for="(link, index) in contentInfo.LINK" :key="index">{{ link.WORD }}</Chip>
+                                    <Chip v-for="(link, index) in contentInfo.LINK" :key="index" class="p-m-1">{{ link.WORD }}</Chip>
                                 </div>
                             </ul>
                         </li>

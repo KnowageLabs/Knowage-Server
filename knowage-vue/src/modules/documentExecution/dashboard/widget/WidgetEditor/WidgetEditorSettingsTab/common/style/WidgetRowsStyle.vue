@@ -2,7 +2,7 @@
     <div v-if="rowsStyleModel" class="p-grid p-jc-center p-ai-center p-p-4">
         <div class="p-col-4 p-md-4 p-lg-4 p-d-flex p-flex-column p-pb-2">
             <label class="kn-material-input-label p-mr-2">{{ $t('common.height') }}</label>
-            <InputNumber class="kn-material-input p-inputtext-sm" v-model="rowsStyleModel.height" @blur="rowsStyleChanged" />
+            <InputNumber v-model="rowsStyleModel.height" class="kn-material-input p-inputtext-sm" @blur="rowsStyleChanged" />
         </div>
         <div class="p-col-8"></div>
         <div class="p-col-12 p-grid p-ai-center p-p-4">
@@ -11,10 +11,10 @@
         </div>
         <div class="p-col-12 p-grid p-ai-center p-p-0">
             <div class="p-col-12 p-md-6 p-px-2">
-                <WidgetEditorColorPicker :initialValue="rowsStyleModel.alternatedRows.evenBackgroundColor" :label="$t('dashboard.widgetEditor.rows.alternatedRowsEven')" :disabled="!rowsStyleModel.alternatedRows.enabled" @change="onBackroundColorChanged($event, 'even')"></WidgetEditorColorPicker>
+                <WidgetEditorColorPicker :initial-value="rowsStyleModel.alternatedRows.evenBackgroundColor" :label="$t('dashboard.widgetEditor.rows.alternatedRowsEven')" :disabled="!rowsStyleModel.alternatedRows.enabled" @change="onBackroundColorChanged($event, 'even')"></WidgetEditorColorPicker>
             </div>
             <div class="p-col-12 p-md-6 p-px-2">
-                <WidgetEditorColorPicker :initialValue="rowsStyleModel.alternatedRows.oddBackgroundColor" :label="$t('dashboard.widgetEditor.rows.alternatedRowsOdd')" :disabled="!rowsStyleModel.alternatedRows.enabled" @change="onBackroundColorChanged($event, 'odd')"></WidgetEditorColorPicker>
+                <WidgetEditorColorPicker :initial-value="rowsStyleModel.alternatedRows.oddBackgroundColor" :label="$t('dashboard.widgetEditor.rows.alternatedRowsOdd')" :disabled="!rowsStyleModel.alternatedRows.enabled" @change="onBackroundColorChanged($event, 'odd')"></WidgetEditorColorPicker>
             </div>
         </div>
     </div>

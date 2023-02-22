@@ -7,12 +7,12 @@
                 </template>
             </Toolbar>
         </template>
-        <DataTable v-if="!detailVisiable" v-model:filters="filters" filterDisplay="menu" :globalFilterFields="useModeDescriptor.globalFilterFields" v-model:selection="selectedLov" :value="lovs" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" selectionMode="single">
+        <DataTable v-if="!detailVisiable" v-model:filters="filters" v-model:selection="selectedLov" filter-display="menu" :global-filter-fields="useModeDescriptor.globalFilterFields" :value="lovs" class="p-datatable-sm kn-table" data-key="id" responsive-layout="stack" selection-mode="single">
             <template #header>
                 <div class="table-header">
                     <span class="p-input-icon-left">
                         <i class="pi pi-search" />
-                        <InputText class="kn-material-input" type="text" v-model="filters.global.value" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
+                        <InputText v-model="filters.global.value" class="kn-material-input" type="text" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
                     </span>
                 </div>
             </template>
@@ -23,12 +23,12 @@
                 {{ $t('common.info.dataLoading') }}
             </template>
 
-            <Column v-for="col of useModeDescriptor.columnsLov" :field="col.field" :header="$t(col.header)" :key="col.field" class="kn-truncated" :sortable="true">
+            <Column v-for="col of useModeDescriptor.columnsLov" :key="col.field" :field="col.field" :header="$t(col.header)" class="kn-truncated" :sortable="true">
                 <template #body="slotProps">
                     <span>{{ slotProps.data[slotProps.column.props.field] }}</span>
                 </template>
             </Column>
-            <Column headerStyle="useModeDescriptor.table.iconColumn.style" :style="useModeDescriptor.table.iconColumn.style">
+            <Column header-style="useModeDescriptor.table.iconColumn.style" :style="useModeDescriptor.table.iconColumn.style">
                 <template #body="slotProps">
                     <Button icon="pi pi-info-circle" class="p-button-link" @click="lovDetail(slotProps.data)" />
                 </template>
@@ -36,8 +36,8 @@
         </DataTable>
         <LovsDetail v-else :lov="lovDetails" @close="detailVisiable = false"></LovsDetail>
         <template #footer>
-            <Button :label="$t('common.cancel')" @click="closeLovDialog" class="kn-button kn-button--secondary" />
-            <Button :label="$t('common.apply')" @click="applyLov" class="kn-button kn-button--primary" />
+            <Button :label="$t('common.cancel')" class="kn-button kn-button--secondary" @click="closeLovDialog" />
+            <Button :label="$t('common.apply')" class="kn-button kn-button--primary" @click="applyLov" />
         </template>
     </Dialog>
 </template>
@@ -96,13 +96,13 @@
                 } as Object
             }
         },
-        mounted() {
-            this.selectedLov = { ...this.selectedLovProp }
-        },
         watch: {
             selectedLovProp() {
                 this.selectedLov = { ...this.selectedLovProp }
             }
+        },
+        mounted() {
+            this.selectedLov = { ...this.selectedLovProp }
         },
         methods: {
             applyLov() {

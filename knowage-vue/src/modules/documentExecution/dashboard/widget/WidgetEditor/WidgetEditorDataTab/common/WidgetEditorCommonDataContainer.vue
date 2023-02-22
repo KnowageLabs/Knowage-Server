@@ -1,9 +1,9 @@
 <template>
     <div v-if="widgetModel">
-        <TableWidgetDataForm v-if="widgetType !== 'discovery'" class="p-m-2" :widgetModel="widgetModel" :sortingColumnOptions="columnTableItems"></TableWidgetDataForm>
+        <TableWidgetDataForm v-if="widgetType !== 'discovery'" class="p-m-2" :widget-model="widgetModel" :sorting-column-options="columnTableItems"></TableWidgetDataForm>
         <WidgetEditorColumnTable
             class="p-m-2"
-            :widgetModel="widgetModel"
+            :widget-model="widgetModel"
             :items="columnTableItems"
             :settings="descriptor.columnTableSettings"
             @rowReorder="onColumnsReorder"
@@ -12,7 +12,7 @@
             @itemSelected="setSelectedColumn"
             @itemDeleted="onColumnDelete"
         ></WidgetEditorColumnTable>
-        <TableWidgetColumnForm class="p-m-2" :widgetModel="widgetModel" :selectedColumn="selectedColumn"></TableWidgetColumnForm>
+        <TableWidgetColumnForm class="p-m-2" :widget-model="widgetModel" :selected-column="selectedColumn"></TableWidgetColumnForm>
     </div>
 </template>
 

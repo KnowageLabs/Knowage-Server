@@ -12,11 +12,11 @@
         <template #content>
             <form class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-col-12 p-lg-6">
-                    <Calendar class="kn-material-input" v-model="validityDate" :manualInput="true" :showIcon="true" @dateSelect="onValidityDateSelected" />
+                    <Calendar v-model="validityDate" class="kn-material-input" :manual-input="true" :show-icon="true" @dateSelect="onValidityDateSelected" />
                 </div>
                 <div class="p-field p-col-12 p-lg-6">
                     <span class="p-float-label">
-                        <Dropdown class="kn-material-input" v-model="selectedDimension" :options="dimensions" optionLabel="DIMENSION_NM" @change="onSelectedDimensionChange" />
+                        <Dropdown v-model="selectedDimension" class="kn-material-input" :options="dimensions" option-label="DIMENSION_NM" @change="onSelectedDimensionChange" />
                         <label class="kn-material-input-label"> {{ $t('managers.hierarchyManagement.dimensions') }} </label>
                     </span>
                 </div>
@@ -28,18 +28,18 @@
                 </div>
             </form>
 
-            <HierarchyManagementDimensionsFilterCard v-show="selectedDimension" :dimensionFilters="dimensionFilters" :selectedHierarchy="selectedHierarchy" @applyFilters="onApplyFilters" />
-            <HierarchyManagementDimensionsTable v-show="dimensionData" :dimensionData="dimensionData" />
+            <HierarchyManagementDimensionsFilterCard v-show="selectedDimension" :dimension-filters="dimensionFilters" :selected-hierarchy="selectedHierarchy" @applyFilters="onApplyFilters" />
+            <HierarchyManagementDimensionsTable v-show="dimensionData" :dimension-data="dimensionData" />
         </template>
     </Card>
 
     <HierarchyManagementHierarchyMasterDialog
         :visible="hierarchyMasterDialogVisible"
-        :nodeMetadata="nodeMetadata"
-        :dimensionMetadata="dimensionMetadata"
-        :validityDate="validityDate"
-        :selectedDimension="selectedDimension"
-        :dimensionFilters="dimensionFilters"
+        :node-metadata="nodeMetadata"
+        :dimension-metadata="dimensionMetadata"
+        :validity-date="validityDate"
+        :selected-dimension="selectedDimension"
+        :dimension-filters="dimensionFilters"
         @close="hierarchyMasterDialogVisible = false"
         @masterHierarchyCreated="onMasterHierarchyCreated"
     />
@@ -63,6 +63,10 @@ export default defineComponent({
     components: { Card, Calendar, Dropdown, HierarchyManagementDimensionsTable, HierarchyManagementHierarchyMasterDialog, HierarchyManagementDimensionsFilterCard },
     props: { dimensions: { type: Array as PropType<iDimension[]> }, hierarchyType: { type: String }, selectedHierarchy: { type: Object as PropType<iHierarchy | null> }, validityTreeDate: { type: Object as PropType<Date | null> } },
     emits: ['loading', 'dimensionSelected', 'nodeMetadataChanged', 'validityDateSelected', 'dimensionMetadataChanged', 'synchronized', 'masterHierarchyCreated'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             validityDate: new Date(),
@@ -79,10 +83,6 @@ export default defineComponent({
         synchronizeButtonDisabled(): boolean {
             return !this.dimensionData || this.dimensionData.root.length === 0 || this.hierarchyType?.toUpperCase() !== 'MASTER' || !this.selectedHierarchy
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {},
     methods: {

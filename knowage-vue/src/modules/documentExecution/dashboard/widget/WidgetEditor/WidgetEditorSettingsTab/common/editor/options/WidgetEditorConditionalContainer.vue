@@ -1,6 +1,6 @@
 <template>
     <span class="p-float-label">
-        <Textarea class="kn-material-input kn-width-full" rows="4" :autoResize="true" v-model="condition" maxlength="150" @change="onColumnChanged" />
+        <Textarea v-model="condition" class="kn-material-input kn-width-full" rows="4" :auto-resize="true" maxlength="150" @change="onColumnChanged" />
         <label class="kn-material-input-label">{{ $t('common.condition') }}</label>
     </span>
 </template>

@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="documentExecutionNotesDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary" :content-style="documentExecutionNotesDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -10,7 +10,7 @@
                 </template>
             </Toolbar>
         </template>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
 
         <TabView v-model:activeIndex="activeTab">
             <TabPanel>
@@ -18,7 +18,7 @@
                     <span>{{ $t('common.note') }}</span>
                 </template>
 
-                <DocumentExecutionNotesForm :selectedNote="selectedNote"></DocumentExecutionNotesForm>
+                <DocumentExecutionNotesForm :selected-note="selectedNote"></DocumentExecutionNotesForm>
             </TabPanel>
 
             <TabPanel>
@@ -26,17 +26,17 @@
                     <span>{{ $t('common.notesList') }}</span>
                 </template>
 
-                <DocumentExecutionNotesList :propNotes="notes" :document="document" @editNote="onEditNote" @deleteNote="onDeleteNote"></DocumentExecutionNotesList>
+                <DocumentExecutionNotesList :prop-notes="notes" :document="document" @editNote="onEditNote" @deleteNote="onDeleteNote"></DocumentExecutionNotesList>
             </TabPanel>
         </TabView>
 
         <template #footer>
             <div class="p-d-flex p-flex-row">
-                <Button v-if="activeTab === 1" class="kn-button kn-button--primary" @click="exportNotes('pdf')" :disabled="exportButtonDisabled"> {{ $t('documentExecution.main.exportInPDF') }}</Button>
-                <Button v-if="activeTab === 1" class="kn-button kn-button--primary" @click="exportNotes('rtf')" :disabled="exportButtonDisabled"> {{ $t('documentExecution.main.exportInRTF') }}</Button>
+                <Button v-if="activeTab === 1" class="kn-button kn-button--primary" :disabled="exportButtonDisabled" @click="exportNotes('pdf')"> {{ $t('documentExecution.main.exportInPDF') }}</Button>
+                <Button v-if="activeTab === 1" class="kn-button kn-button--primary" :disabled="exportButtonDisabled" @click="exportNotes('rtf')"> {{ $t('documentExecution.main.exportInRTF') }}</Button>
 
                 <Button class="kn-button kn-button--primary p-ml-auto" @click="closeDialog"> {{ $t('common.close') }}</Button>
-                <Button v-if="activeTab === 0" class="kn-button kn-button--primary" @click="saveNote" :disabled="saveButtonDisabled"> {{ $t('common.save') }}</Button>
+                <Button v-if="activeTab === 0" class="kn-button kn-button--primary" :disabled="saveButtonDisabled" @click="saveNote"> {{ $t('common.save') }}</Button>
             </div>
         </template>
     </Dialog>

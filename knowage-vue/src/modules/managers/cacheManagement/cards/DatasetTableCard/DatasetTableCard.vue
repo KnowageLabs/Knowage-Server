@@ -6,22 +6,22 @@
                     {{ $t('managers.cacheManagement.addRemoveDataset') }}
                 </template>
                 <template #end>
-                    <Button class="kn-button p-button-text p-button-rounded" :disabled="cleanAllDisabled" @click="cleanAllConfirm" data-test="clean-all-button">{{ $t('managers.cacheManagement.cleanAll') }}</Button>
+                    <Button class="kn-button p-button-text p-button-rounded" :disabled="cleanAllDisabled" data-test="clean-all-button" @click="cleanAllConfirm">{{ $t('managers.cacheManagement.cleanAll') }}</Button>
                 </template>
             </Toolbar>
         </template>
         <template #content>
-            <DataTable :value="datasets" :loading="loading" class="p-datatable-sm kn-table" dataKey="signature" responsiveLayout="stack" breakpoint="960px" data-test="dataset-table">
+            <DataTable :value="datasets" :loading="loading" class="p-datatable-sm kn-table" data-key="signature" responsive-layout="stack" breakpoint="960px" data-test="dataset-table">
                 <template #empty>
                     {{ $t('managers.cacheManagement.metadataUnavailable') }}
                 </template>
                 <template #loading>
                     {{ $t('common.info.dataLoading') }}
                 </template>
-                <Column v-for="col of datasetTableCardDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :style="col.style" class="kn-truncated"> </Column>
+                <Column v-for="col of datasetTableCardDescriptor.columns" :key="col.field" :field="col.field" :header="$t(col.header)" :style="col.style" class="kn-truncated"> </Column>
                 <Column :style="datasetTableCardDescriptor.table.iconColumn.style">
                     <template #body="slotProps">
-                        <Button icon="pi pi-trash" class="p-button-link" @click="deleteDatasetConfirm(slotProps.data.signature)" data-test="delete-button" />
+                        <Button icon="pi pi-trash" class="p-button-link" data-test="delete-button" @click="deleteDatasetConfirm(slotProps.data.signature)" />
                     </template>
                 </Column>
             </DataTable>
@@ -55,6 +55,10 @@ export default defineComponent({
         }
     },
     emits: ['deleted'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             datasetTableCardDescriptor,
@@ -70,10 +74,6 @@ export default defineComponent({
         datasetMetadataList() {
             this.loadDatasets()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.loadDatasets()

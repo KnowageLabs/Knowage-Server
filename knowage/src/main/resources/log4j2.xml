@@ -151,6 +151,9 @@
 		<logger name="it.eng.spagobi.tools.dataset.common.dataproxy.JDBCDataProxy" level="info" additivity="false">
 			<AppenderRef ref="KNOWAGE_DATASET_AUDIT" />
 		</logger>
+		<logger name="it.eng.spagobi.tools.dataset.common.dataproxy.JDBCPostgreSQLDataProxy" level="info" additivity="false">
+			<AppenderRef ref="KNOWAGE_DATASET_AUDIT" />
+		</logger>
 		<logger name="it.eng.spagobi.tools.dataset.common.dataproxy.JDBCRedShiftDataProxy" level="info" additivity="false">
 			<AppenderRef ref="KNOWAGE_DATASET_AUDIT" />
 		</logger>

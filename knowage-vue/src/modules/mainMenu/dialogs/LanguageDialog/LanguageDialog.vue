@@ -1,12 +1,12 @@
 <template>
-    <Dialog class="kn-dialog--toolbar--primary" v-bind:visible="visibility" footer="footer" :header="$t('language.languageSelection')" :closable="false" modal>
-        <Listbox class="countryList" :options="languages" optionDisabled="disabled">
+    <Dialog class="kn-dialog--toolbar--primary" :visible="visibility" footer="footer" :header="$t('language.languageSelection')" :closable="false" modal>
+        <Listbox class="countryList" :options="languages" option-disabled="disabled">
             <template #option="slotProps">
                 <div :class="['p-d-flex', 'p-ai-center', 'countryItem', slotProps.option.locale]" class="p-my-1" @click="changeLanguage(slotProps.option)">
                     <img :alt="slotProps.option.locale" :src="`${publicPath}/images/flags/${slotProps.option.locale.toLowerCase().substring(3, 5)}.svg`" width="40" />
                     <div class="countryLabel">{{ $t(`language.${slotProps.option.locale}`) }}</div>
                     <span class="kn-flex"></span>
-                    <i class="fas fa-check" v-if="slotProps.option.locale === $i18n.locale"></i>
+                    <i v-if="slotProps.option.locale === $i18n.locale" class="fas fa-check"></i>
                 </div>
             </template>
         </Listbox>
@@ -36,12 +36,6 @@ export default defineComponent({
         Dialog,
         Listbox
     },
-    data() {
-        return {
-            languages: Array<Language>(),
-            publicPath: import.meta.env.VITE_PUBLIC_PATH
-        }
-    },
 
     props: {
         visibility: Boolean
@@ -51,9 +45,15 @@ export default defineComponent({
         const store = mainStore()
         return { store }
     },
+    data() {
+        return {
+            languages: Array<Language>(),
+            publicPath: import.meta.env.VITE_PUBLIC_PATH
+        }
+    },
     methods: {
         changeLanguage(language) {
-            let splittedLanguage = language.locale.split('_')
+            const splittedLanguage = language.locale.split('_')
 
             let url = '/knowage/servlet/AdapterHTTP?'
             url += 'ACTION_NAME=CHANGE_LANGUAGE'
@@ -91,10 +91,10 @@ export default defineComponent({
             if (newVisibility && this.languages.length == 0) {
                 this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/languages').then(
                     (response: AxiosResponse<any>) => {
-                        let languagesArray = response.data.sort()
+                        const languagesArray = response.data.sort()
 
-                        for (var idx in languagesArray) {
-                            var disabled = false
+                        for (const idx in languagesArray) {
+                            let disabled = false
                             if (languagesArray[idx] === this.$i18n.locale) {
                                 disabled = true
                             }

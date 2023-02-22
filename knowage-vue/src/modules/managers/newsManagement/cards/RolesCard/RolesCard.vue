@@ -9,26 +9,26 @@
         </template>
         <template #content>
             <DataTable
-                :value="categoryList"
                 v-model:selection="selectedCategories"
+                :value="categoryList"
                 class="p-datatable-sm kn-table"
-                dataKey="id"
+                data-key="id"
                 :rows="20"
                 :scrollable="true"
-                :scrollHeight="rolesCardDescriptor.table.scrollHeight"
-                responsiveLayout="stack"
+                :scroll-height="rolesCardDescriptor.table.scrollHeight"
+                responsive-layout="stack"
                 breakpoint="960px"
+                data-test="data-table"
                 @rowSelect="setDirty"
                 @rowUnselect="setDirty"
                 @rowSelectAll="onSelectAll"
                 @rowUnselectAll="onUnselectAll"
-                data-test="data-table"
             >
                 <template #empty>
                     {{ $t('common.info.noDataFound') }}
                 </template>
                 <Column field="name" :header="$t('managers.newsManagement.role')" :style="rolesCardDescriptor.column.header.style"></Column>
-                <Column selectionMode="multiple" :style="rolesCardDescriptor.column.style" dataKey="id"></Column>
+                <Column selection-mode="multiple" :style="rolesCardDescriptor.column.style" data-key="id"></Column>
             </DataTable>
         </template>
     </Card>

@@ -1,54 +1,54 @@
 <template>
     <div v-if="options" class="selector-widget dashboard-scrollbar">
         <div v-if="widgetType === 'singleValue'" :class="getLayoutStyle()">
-            <div class="multi-select p-p-1" :style="getLabelStyle() + getGridWidth()" v-for="(value, index) of showMode === 'hideDisabled' ?  options.rows.filter((row: any) => !row.disabled) : options.rows" :key="index">
-                <RadioButton :inputId="`radio-${index}`" class="p-mr-2" :name="value.column_1" :value="value.column_1" v-model="selectedValue" :disabled="showMode === 'showDisabled' && value.disabled" @change="singleValueSelectionChanged" />
+            <div v-for="(value, index) of showMode === 'hideDisabled' ?  options.rows.filter((row: any) => !row.disabled) : options.rows" :key="index" class="multi-select p-p-1" :style="getLabelStyle() + getGridWidth()">
+                <RadioButton v-model="selectedValue" :input-id="`radio-${index}`" class="p-mr-2" :name="value.column_1" :value="value.column_1" :disabled="showMode === 'showDisabled' && value.disabled" @change="singleValueSelectionChanged" />
                 <label :for="`radio-${index}`" class="multi-select-label">{{ value.column_1 }}</label>
             </div>
         </div>
 
         <div v-if="widgetType === 'multiValue'" :class="getLayoutStyle()">
-            <div class="multi-select p-p-1" :style="getLabelStyle() + getGridWidth()" v-for="(value, index) of showMode === 'hideDisabled' ?  options.rows.filter((row: any) => !row.disabled) : options.rows" :key="index">
-                <Checkbox :inputId="`multi-${index}`" class="p-mr-2" :name="value.column_1" :value="value.column_1" v-model="selectedValues" :disabled="showMode === 'showDisabled' && value.disabled" @change="multiValueSelectionChanged" />
+            <div v-for="(value, index) of showMode === 'hideDisabled' ?  options.rows.filter((row: any) => !row.disabled) : options.rows" :key="index" class="multi-select p-p-1" :style="getLabelStyle() + getGridWidth()">
+                <Checkbox v-model="selectedValues" :input-id="`multi-${index}`" class="p-mr-2" :name="value.column_1" :value="value.column_1" :disabled="showMode === 'showDisabled' && value.disabled" @change="multiValueSelectionChanged" />
                 <label :for="`multi-${index}`" class="multi-select-label">{{ value.column_1 }}</label>
             </div>
         </div>
 
         <span v-if="widgetType === 'dropdown'" class="p-float-label p-m-2">
             <Dropdown
-                class="kn-width-full"
-                panelClass="selectorCustomDropdownPanel"
                 v-model="selectedValue"
+                class="kn-width-full"
+                panel-class="selectorCustomDropdownPanel"
                 :options="showMode === 'hideDisabled' ?  options.rows.filter((row: any) => !row.disabled) : options.rows"
-                optionLabel="column_1"
-                optionValue="column_1"
+                option-label="column_1"
+                option-value="column_1"
                 :style="getLabelStyle()"
-                :inputStyle="getLabelStyle()"
-                :panelStyle="getLabelStyle()"
-                :optionDisabled="showMode === 'showDisabled' ? 'disabled' : ''"
+                :input-style="getLabelStyle()"
+                :panel-style="getLabelStyle()"
+                :option-disabled="showMode === 'showDisabled' ? 'disabled' : ''"
                 @change="singleValueSelectionChanged"
             />
         </span>
 
         <span v-if="widgetType === 'multiDropdown'" class="p-float-label p-m-2">
             <MultiSelect
-                class="kn-width-full"
-                panelClass="selectorCustomDropdownPanel"
                 v-model="selectedValues"
+                class="kn-width-full"
+                panel-class="selectorCustomDropdownPanel"
                 :options="showMode === 'hideDisabled' ?  options.rows.filter((row: any) => !row.disabled) : options.rows"
-                optionLabel="column_1"
-                optionValue="column_1"
+                option-label="column_1"
+                option-value="column_1"
                 :style="getLabelStyle()"
-                :inputStyle="getLabelStyle()"
-                :panelStyle="getLabelStyle()"
+                :input-style="getLabelStyle()"
+                :panel-style="getLabelStyle()"
                 :filter="true"
-                :optionDisabled="showMode === 'showDisabled' ? 'disabled' : ''"
+                :option-disabled="showMode === 'showDisabled' ? 'disabled' : ''"
                 @change="multiValueSelectionChanged"
             />
         </span>
 
         <span v-if="widgetType === 'date'" class="p-float-label p-m-2">
-            <Calendar class="kn-material-input kn-width-full" v-model="selectedDate" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :showIcon="true" @date-select="dateSelectionChanged" />
+            <Calendar v-model="selectedDate" class="kn-material-input kn-width-full" :min-date="getDateRange('startDate')" :max-date="getDateRange('endDate')" :show-icon="true" @date-select="dateSelectionChanged" />
             <label class="kn-material-input-label">
                 {{ $t('common.date') }}
             </label>
@@ -56,10 +56,10 @@
 
         <div v-if="widgetType === 'dateRange'" :class="getLayoutStyle()">
             <span class="p-float-label p-m-2" :style="getGridWidth()">
-                <Calendar class="kn-width-full" v-model="startDate" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :style="getLabelStyle()" :inputStyle="getLabelStyle()" :panelStyle="getLabelStyle()" :showIcon="true" @date-select="dateRangeSelectionChanged" />
+                <Calendar v-model="startDate" class="kn-width-full" :min-date="getDateRange('startDate')" :max-date="getDateRange('endDate')" :style="getLabelStyle()" :input-style="getLabelStyle()" :panel-style="getLabelStyle()" :show-icon="true" @date-select="dateRangeSelectionChanged" />
             </span>
             <span class="p-float-label p-m-2" :style="getGridWidth()">
-                <Calendar class="kn-width-full" v-model="endDate" :minDate="getDateRange('startDate')" :maxDate="getDateRange('endDate')" :style="getLabelStyle()" :inputStyle="getLabelStyle()" :panelStyle="getLabelStyle()" :showIcon="true" @date-select="dateRangeSelectionChanged" />
+                <Calendar v-model="endDate" class="kn-width-full" :min-date="getDateRange('startDate')" :max-date="getDateRange('endDate')" :style="getLabelStyle()" :input-style="getLabelStyle()" :panel-style="getLabelStyle()" :show-icon="true" @date-select="dateRangeSelectionChanged" />
             </span>
         </div>
     </div>
@@ -96,16 +96,6 @@ export default defineComponent({
         editorMode: { type: Boolean }
     },
     emits: ['close'],
-    computed: {
-        widgetType(): string {
-            return this.propWidget.settings.configuration.selectorType.modality || null
-        },
-        showMode(): string {
-            if (this.propWidget.settings.configuration.valuesManagement.hideDisabled) return 'hideDisabled'
-            else if (this.propWidget.settings.configuration.valuesManagement.enableAll) return 'enableAll'
-            else return 'showDisabled'
-        }
-    },
     data() {
         return {
             dashboardDescriptor,
@@ -118,6 +108,16 @@ export default defineComponent({
             startDate: null as any,
             endDate: null as any,
             activeSelections: [] as ISelection[]
+        }
+    },
+    computed: {
+        widgetType(): string {
+            return this.propWidget.settings.configuration.selectorType.modality || null
+        },
+        showMode(): string {
+            if (this.propWidget.settings.configuration.valuesManagement.hideDisabled) return 'hideDisabled'
+            else if (this.propWidget.settings.configuration.valuesManagement.enableAll) return 'enableAll'
+            else return 'showDisabled'
         }
     },
     watch: {
@@ -254,7 +254,7 @@ export default defineComponent({
                 return
             }
             switch (defaultMode) {
-                case 'FIRST':
+                case 'FIRST': {
                     const firstValue = this.findFirstAvailableValue()
                     if (multivalue) {
                         this.selectedValues = firstValue != null ? [firstValue.column_1] : []
@@ -262,7 +262,8 @@ export default defineComponent({
                         this.selectedValue = firstValue != null ? firstValue.column_1 : null
                     }
                     break
-                case 'LAST':
+                }
+                case 'LAST': {
                     const lastValue = this.findLastAvailableValue()
                     if (multivalue) {
                         this.selectedValues = lastValue != null ? [lastValue.column_1] : []
@@ -270,6 +271,7 @@ export default defineComponent({
                         this.selectedValue = lastValue != null ? lastValue.column_1 : null
                     }
                     break
+                }
                 case 'STATIC':
                     this.setDefaultStaticValue(multivalue)
                     break
@@ -322,7 +324,7 @@ export default defineComponent({
             })
         },
         getLayoutStyle() {
-            let selectorType = this.propWidget.settings.configuration.selectorType
+            const selectorType = this.propWidget.settings.configuration.selectorType
             if (selectorType.alignment) {
                 switch (selectorType.alignment) {
                     case 'vertical':
@@ -337,12 +339,12 @@ export default defineComponent({
             }
         },
         getGridWidth() {
-            let gridWidth = this.propWidget.settings.configuration.selectorType.columnSize
+            const gridWidth = this.propWidget.settings.configuration.selectorType.columnSize
             if (gridWidth != '') return `width: ${gridWidth}`
             else return ''
         },
         getDateRange(rangeValue: string) {
-            let dateRange = this.propWidget.settings.configuration.defaultValues
+            const dateRange = this.propWidget.settings.configuration.defaultValues
             if (dateRange.enabled && dateRange[rangeValue]) return dateRange[rangeValue]
             else return undefined
         },

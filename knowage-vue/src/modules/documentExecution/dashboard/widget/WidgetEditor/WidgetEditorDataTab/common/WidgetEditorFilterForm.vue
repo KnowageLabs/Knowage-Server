@@ -10,19 +10,19 @@
         <div class="p-d-flex p-flex-row p-ai-center p-mt-2">
             <div id="filter-operator-dropdown" class="p-d-flex p-flex-column kn-flex p-m-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('common.operator') }}</label>
-                <Dropdown class="kn-material-input" v-model="column.filter.operator" :options="getColumnFilterOptions()" optionValue="value" optionLabel="label" :disabled="!column.filter.enabled" @change="onFilterOperatorChange"> </Dropdown>
+                <Dropdown v-model="column.filter.operator" class="kn-material-input" :options="getColumnFilterOptions()" option-value="value" option-label="label" :disabled="!column.filter.enabled" @change="onFilterOperatorChange"> </Dropdown>
             </div>
 
             <div v-if="['=', '<', '>', '<=', '>=', '!=', 'IN', 'like', 'range'].includes(column.filter.operator)" class="p-d-flex p-flex-column kn-flex-3 p-m-2">
                 <label class="kn-material-input-label p-mr-2">{{ column.filter.operator === 'range' ? $t('common.from') : $t('common.value') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="column.filter.value" :disabled="!column.filter.enabled" @change="selectedColumnUpdated" />
+                <InputText v-model="column.filter.value" class="kn-material-input p-inputtext-sm" :disabled="!column.filter.enabled" @change="selectedColumnUpdated" />
             </div>
 
             <div v-if="column.filter.operator === 'range'" class="p-d-flex p-flex-column kn-flex-3 p-m-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('common.to') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="column.filter.value2" :disabled="!column.filter.enabled" @change="selectedColumnUpdated" />
+                <InputText v-model="column.filter.value2" class="kn-material-input p-inputtext-sm" :disabled="!column.filter.enabled" @change="selectedColumnUpdated" />
             </div>
-            <i class="pi pi-question-circle kn-cursor-pointer p-ml-auto p-mr-4" v-tooltip.top="$t('dashboard.widgetEditor.columnFilterHint')"></i>
+            <i v-tooltip.top="$t('dashboard.widgetEditor.columnFilterHint')" class="pi pi-question-circle kn-cursor-pointer p-ml-auto p-mr-4"></i>
         </div>
     </div>
 </template>

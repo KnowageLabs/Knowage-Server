@@ -4,7 +4,7 @@
             <FunctionsCatalogDatasetTable :datasets="datasets" @selected="loadSelectedDataset"></FunctionsCatalogDatasetTable>
         </div>
         <div class="p-col-8 p-sm-8 p-md-9 p-m-2 p-p-0">
-            <FunctionsCatalogDatasetForm v-if="selectedDataset" :selectedDataset="selectedDataset" :propFunction="propFunction" :pythonEnvironments="pythonEnvironments" :rEnvironments="rEnvironments" @environmentSelected="onEnvironmentSelected" :libraries="libraries"></FunctionsCatalogDatasetForm>
+            <FunctionsCatalogDatasetForm v-if="selectedDataset" :selected-dataset="selectedDataset" :prop-function="propFunction" :python-environments="pythonEnvironments" :r-environments="rEnvironments" :libraries="libraries" @environmentSelected="onEnvironmentSelected"></FunctionsCatalogDatasetForm>
             <div v-else id="no-dataset-selected-info" class="p-d-flex p-flex-row p-jc-center">
                 {{ $t('managers.functionsCatalog.noDatasetSelected') }}
             </div>

@@ -74,7 +74,7 @@ const router = createRouter({
     routes
 })
 
-router.afterEach(async (to, from) => {
+router.afterEach(async () => {
     if (localStorage.getItem('locale')) loadLanguageAsync(localStorage.getItem('locale'))
 })
 

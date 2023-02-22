@@ -4,9 +4,9 @@
             {{ $t('managers.lovsManagement.filterNullValues') }}
         </Message>
 
-        <DataTable :value="rows" class="p-datatable-sm kn-table" dataKey="field" scrollHeight="flex" :scrollable="true" scrollDirection="both" :lazy="true" :paginator="true" :rows="15" :totalRecords="lazyParams.size" responsiveLayout="stack" breakpoint="960px" @page="onPage($event)" @sort="onSort">
+        <DataTable :value="rows" class="p-datatable-sm kn-table" data-key="field" scroll-height="flex" :scrollable="true" scroll-direction="both" :lazy="true" :paginator="true" :rows="15" :total-records="lazyParams.size" responsive-layout="stack" breakpoint="960px" @page="onPage($event)" @sort="onSort">
             <template #empty>{{ $t('common.info.noDataFound') }}</template>
-            <Column class="kn-truncated" v-for="col of columns" :field="col.field" :header="col.header" :key="col.field" :sortable="true" style="flex-grow:1; flex-basis:200px"></Column>
+            <Column v-for="col of columns" :key="col.field" class="kn-truncated" :field="col.field" :header="col.header" :sortable="true" style="flex-grow:1; flex-basis:200px"></Column>
         </DataTable>
         <template #footer>
             <Button class="kn-button kn-button--primary" @click="$emit('close')"> {{ $t('common.close') }}</Button>
@@ -24,12 +24,12 @@ import Message from 'primevue/message'
 export default defineComponent({
     name: 'lovs-management-preview-dialog',
     components: { Column, DataTable, Dialog, Message },
-    emits: ['close', 'pageChanged'],
     props: {
         visible: { type: Boolean },
         dataForPreview: { type: Object, required: true },
         pagination: { type: Object }
     },
+    emits: ['close', 'pageChanged'],
     data() {
         return {
             columns: [] as any[],

@@ -11,19 +11,19 @@
 
         <DataTable
             id="qbe-preview-datatable"
-            class="p-datatable-sm kn-table"
             v-model:first="first"
+            class="p-datatable-sm kn-table"
             :value="rows"
             :paginator="true"
             :lazy="true"
             :rows="20"
-            :totalRecords="lazyParams.size"
-            paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-            :currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
-            responsiveLayout="stack"
+            :total-records="lazyParams.size"
+            paginator-template="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+            :current-page-report-template="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
+            responsive-layout="stack"
             breakpoint="960px"
             :scrollable="true"
-            :scrollHeight="QBEPreviewDialogDescriptor.scrollHeight"
+            :scroll-height="QBEPreviewDialogDescriptor.scrollHeight"
             @page="onPage($event)"
         >
             <template #empty>
@@ -31,7 +31,7 @@
                     {{ $t('common.info.noDataFound') }}
                 </div>
             </template>
-            <Column class="kn-truncated" v-for="col of columns" :field="col.dataIndex" :header="col.header" :key="col.field" :sortable="true">
+            <Column v-for="col of columns" :key="col.field" class="kn-truncated" :field="col.dataIndex" :header="col.header" :sortable="true">
                 <template #body="slotProps">
                     {{ col.metawebDateFormat ? getFormattedDate(slotProps.data[col.dataIndex], col) : slotProps.data[col.dataIndex] }}
                 </template>

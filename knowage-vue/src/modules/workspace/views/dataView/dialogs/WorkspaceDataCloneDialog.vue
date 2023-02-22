@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="workspaceDataCloneDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary" :content-style="workspaceDataCloneDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -13,9 +13,9 @@
                 <span class="p-float-label">
                     <InputText
                         id="label"
-                        class="kn-material-input"
-                        :maxLength="workspaceDataCloneDialogDescriptor.labelMaxLength"
                         v-model.trim="v$.dataset.label.$model"
+                        class="kn-material-input"
+                        :max-length="workspaceDataCloneDialogDescriptor.labelMaxLength"
                         :class="{
                             'p-invalid': v$.dataset.label.$invalid && v$.dataset.label.$dirty
                         }"
@@ -25,8 +25,8 @@
                 </span>
                 <div class="p-d-flex p-flex-row p-jc-end">
                     <KnValidationMessages
-                        :vComp="v$.dataset.label"
-                        :additionalTranslateParams="{
+                        :v-comp="v$.dataset.label"
+                        :additional-translate-params="{
                             fieldName: $t('common.label')
                         }"
                     />
@@ -38,9 +38,9 @@
                 <span class="p-float-label">
                     <InputText
                         id="name"
-                        class="kn-material-input"
-                        :maxLength="workspaceDataCloneDialogDescriptor.nameMaxLength"
                         v-model.trim="v$.dataset.name.$model"
+                        class="kn-material-input"
+                        :max-length="workspaceDataCloneDialogDescriptor.nameMaxLength"
                         :class="{
                             'p-invalid': v$.dataset.name.$invalid && v$.dataset.name.$dirty
                         }"
@@ -50,8 +50,8 @@
                 </span>
                 <div class="p-d-flex p-flex-row p-jc-end">
                     <KnValidationMessages
-                        :vComp="v$.dataset.name"
-                        :additionalTranslateParams="{
+                        :v-comp="v$.dataset.name"
+                        :additional-translate-params="{
                             fieldName: $t('common.name')
                         }"
                     />
@@ -61,7 +61,7 @@
 
             <div class="p-m-4">
                 <span class="p-float-label p-mb-2">
-                    <InputText id="description" class="kn-material-input" :maxLength="workspaceDataCloneDialogDescriptor.descriptionMaxLength" v-model.trim="dataset.description" />
+                    <InputText id="description" v-model.trim="dataset.description" class="kn-material-input" :max-length="workspaceDataCloneDialogDescriptor.descriptionMaxLength" />
                     <label for="description" class="kn-material-input-label"> {{ $t('common.description') }} </label>
                 </span>
                 <div class="p-d-flex p-flex-row p-jc-end">
@@ -73,7 +73,7 @@
         <template #footer>
             <div class="p-d-flex p-flex-row p-jc-end">
                 <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
-                <Button class="kn-button kn-button--primary" @click="cloneDataset" :disabled="buttonDisabled">{{ $t('common.save') }}</Button>
+                <Button class="kn-button kn-button--primary" :disabled="buttonDisabled" @click="cloneDataset">{{ $t('common.save') }}</Button>
             </div>
         </template>
     </Dialog>
@@ -93,6 +93,10 @@ export default defineComponent({
     components: { Dialog, KnValidationMessages },
     props: { visible: { type: Boolean }, propDataset: { type: Object } },
     emits: ['close', 'clone'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             v$: useValidate() as any,
@@ -103,11 +107,6 @@ export default defineComponent({
     validations() {
         return {
             dataset: createValidations('dataset', workspaceDataCloneDialogDescriptor.validations.dataset)
-        }
-    },
-    watch: {
-        propDataset() {
-            this.loadDataset()
         }
     },
     computed: {
@@ -124,9 +123,10 @@ export default defineComponent({
             return this.v$.$invalid
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
+    watch: {
+        propDataset() {
+            this.loadDataset()
+        }
     },
     created() {
         this.loadDataset()

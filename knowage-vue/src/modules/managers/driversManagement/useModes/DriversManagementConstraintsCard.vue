@@ -1,12 +1,12 @@
 <template>
     <Card style="width:100%" class="p-m-2">
         <template #content>
-            <DataTable v-model:selection="selectedMode.associatedChecks" :value="constraints" class="p-datatable-sm kn-table" dataKey="checkId" responsiveLayout="stack" v-model:filters="filters" filterDisplay="menu" data-test="values-list">
+            <DataTable v-model:selection="selectedMode.associatedChecks" v-model:filters="filters" :value="constraints" class="p-datatable-sm kn-table" data-key="checkId" responsive-layout="stack" filter-display="menu" data-test="values-list">
                 <template #header>
                     <div class="table-header">
                         <span class="p-input-icon-left">
                             <i class="pi pi-search" />
-                            <InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0" data-test="filter-input" />
+                            <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" badge="0" data-test="filter-input" />
                         </span>
                     </div>
                 </template>
@@ -17,7 +17,7 @@
                     {{ $t('common.info.dataLoading') }}
                 </template>
 
-                <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+                <Column selection-mode="multiple" header-style="width: 3rem"></Column>
                 <Column field="name" header="Constraints" class="kn-truncated"></Column>
             </DataTable>
         </template>

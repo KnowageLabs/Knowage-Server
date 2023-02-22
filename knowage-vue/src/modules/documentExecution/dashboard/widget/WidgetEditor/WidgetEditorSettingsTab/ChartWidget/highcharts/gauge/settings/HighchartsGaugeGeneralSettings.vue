@@ -3,27 +3,27 @@
         <div class="p-col-12 p-md-6 p-lg-6 p-d-flex p-flex-column kn-flex">
             <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.highcharts.paneSettings.startAngle') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center">
-                <InputNumber class="kn-material-input p-inputtext-sm" v-model="model.pane.startAngle" @blur="modelChanged" />
-                <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.paneSettings.startAngleHint')"></i>
+                <InputNumber v-model="model.pane.startAngle" class="kn-material-input p-inputtext-sm" @blur="modelChanged" />
+                <i v-tooltip.top="$t('dashboard.widgetEditor.highcharts.paneSettings.startAngleHint')" class="pi pi-question-circle kn-cursor-pointer p-ml-2"></i>
             </div>
         </div>
         <div class="p-col-12 p-md-6 p-lg-6 p-d-flex p-flex-column kn-flex">
             <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.highcharts.paneSettings.endAngle') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center">
-                <InputNumber class="kn-material-input p-inputtext-sm" v-model="model.pane.endAngle" @blur="modelChanged" />
-                <i class="pi pi-question-circle kn-cursor-pointer p-ml-2" v-tooltip.top="$t('dashboard.widgetEditor.highcharts.paneSettings.endAngleHint')"></i>
+                <InputNumber v-model="model.pane.endAngle" class="kn-material-input p-inputtext-sm" @blur="modelChanged" />
+                <i v-tooltip.top="$t('dashboard.widgetEditor.highcharts.paneSettings.endAngleHint')" class="pi pi-question-circle kn-cursor-pointer p-ml-2"></i>
             </div>
         </div>
         <div class="p-col-12 p-md-6 p-lg-6 p-d-flex p-flex-column kn-flex">
             <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.highcharts.paneSettings.centralHorizontalPosition') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center">
-                <InputNumber class="kn-material-input p-inputtext-sm" v-model="centralHorizontalPosition" @blur="onPositionChanged('horizontal')" />
+                <InputNumber v-model="centralHorizontalPosition" class="kn-material-input p-inputtext-sm" @blur="onPositionChanged('horizontal')" />
             </div>
         </div>
         <div class="p-col-12 p-md-6 p-lg-6 p-d-flex p-flex-column kn-flex">
             <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.highcharts.paneSettings.centralVerticalPosition') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center">
-                <InputNumber class="kn-material-input p-inputtext-sm" v-model="centralVerticalPosition" @blur="onPositionChanged('vertical')" />
+                <InputNumber v-model="centralVerticalPosition" class="kn-material-input p-inputtext-sm" @blur="onPositionChanged('vertical')" />
             </div>
         </div>
     </div>

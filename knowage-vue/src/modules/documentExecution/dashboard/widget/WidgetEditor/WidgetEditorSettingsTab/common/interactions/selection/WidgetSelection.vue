@@ -9,7 +9,7 @@
                 <div v-if="selectionModel.multiselection" class="p-col-12 p-md-4 style-toolbar-container p-pt-3 p-pr-5">
                     <WidgetEditorStyleToolbar
                         :options="descriptor.styleToolbarSelectionOptions"
-                        :propModel="{
+                        :prop-model="{
                             color: selectionModel.multiselection.properties.color,
                             'background-color': selectionModel.multiselection.properties['background-color']
                         }"
@@ -21,7 +21,7 @@
             <div v-if="selectionModel.modalColumn || selectionModel.modalColumn === ''" class="p-col-12 p-d-flex p-flex-row p-ai-center p-p-3">
                 <div class="p-d-flex p-flex-column kn-flex p-m-2">
                     <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.interactions.modalColumn') }}</label>
-                    <Dropdown class="kn-material-input" v-model="selectionModel.modalColumn" :options="widgetModel.columns" :showClear="true" optionLabel="alias" optionValue="id" @change="selectionChanged"> </Dropdown>
+                    <Dropdown v-model="selectionModel.modalColumn" class="kn-material-input" :options="widgetModel.columns" :show-clear="true" option-label="alias" option-value="id" @change="selectionChanged"> </Dropdown>
                 </div>
             </div>
         </div>

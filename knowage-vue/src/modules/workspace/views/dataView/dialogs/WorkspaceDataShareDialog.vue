@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="workspaceDataShareDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary" :content-style="workspaceDataShareDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -14,7 +14,7 @@
 
         <div class="p-m-4">
             <span>
-                <Dropdown class="kn-material-input" v-model="dataset.catTypeId" :options="datasetCategories" optionLabel="VALUE_NM" optionValue="VALUE_ID" />
+                <Dropdown v-model="dataset.catTypeId" class="kn-material-input" :options="datasetCategories" option-label="VALUE_NM" option-value="VALUE_ID" />
             </span>
         </div>
 
@@ -22,7 +22,7 @@
             <div class="p-d-flex p-flex-row p-jc-end">
                 <Button class="kn-button kn-button--primary" @click="shareDataset(false)">{{ $t('workspace.myData.unshareDataset') }}</Button>
                 <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
-                <Button class="kn-button kn-button--primary" @click="shareDataset(true)" :disabled="!dataset.catTypeId">{{ $t('common.save') }}</Button>
+                <Button class="kn-button kn-button--primary" :disabled="!dataset.catTypeId" @click="shareDataset(true)">{{ $t('common.save') }}</Button>
             </div>
         </template>
     </Dialog>

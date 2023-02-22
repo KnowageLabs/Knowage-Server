@@ -7,21 +7,21 @@
             <Button class="kn-button p-button-text p-button-rounded" @click="closeFederationDefinition"> {{ $t('common.close') }}</Button></template
         >
     </Toolbar>
-    <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+    <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
 
     <div class="kn-overflow-y kn-flex p-d-flex p-flex-column">
         <div v-if="step === 0" class="p-d-flex p-flex-row p-flex-wrap kn-flex">
-            <WorkspaceFederationDatasetList class="kn-flex p-m-2" :mode="'available'" :propDatasets="availableDatasets" @showInfo="showDatasetInfo" @datasetSelected="moveDataset"></WorkspaceFederationDatasetList>
-            <WorkspaceFederationDatasetList class="kn-flex p-m-2" :mode="'selected'" :propDatasets="selectedDatasets" @datasetSelected="moveDataset"></WorkspaceFederationDatasetList>
+            <WorkspaceFederationDatasetList class="kn-flex p-m-2" :mode="'available'" :prop-datasets="availableDatasets" @showInfo="showDatasetInfo" @datasetSelected="moveDataset"></WorkspaceFederationDatasetList>
+            <WorkspaceFederationDatasetList class="kn-flex p-m-2" :mode="'selected'" :prop-datasets="selectedDatasets" @datasetSelected="moveDataset"></WorkspaceFederationDatasetList>
         </div>
         <div v-else class="kn-flex">
-            <WorkspaceFederationDefinitionAssociationsEditor class="p-m-2" :selectedDatasets="selectedDatasets" :selectedMetafields="selectedMetafields" :resetSelectedMetafield="resetSelectedMetafield"></WorkspaceFederationDefinitionAssociationsEditor>
-            <WorkspaceFederationDefinitionAssociationsList class="p-m-2" :propAssociations="multirelationships" @createAssociationClick="createAssociation()"></WorkspaceFederationDefinitionAssociationsList>
+            <WorkspaceFederationDefinitionAssociationsEditor class="p-m-2" :selected-datasets="selectedDatasets" :selected-metafields="selectedMetafields" :reset-selected-metafield="resetSelectedMetafield"></WorkspaceFederationDefinitionAssociationsEditor>
+            <WorkspaceFederationDefinitionAssociationsList class="p-m-2" :prop-associations="multirelationships" @createAssociationClick="createAssociation()"></WorkspaceFederationDefinitionAssociationsList>
         </div>
 
         <WorskpaceFederationDatasetDialog :visible="infoDialogVisible" :dataset="selectedDataset" @close="closeInfoDialog"></WorskpaceFederationDatasetDialog>
-        <WorkspaceFederationSaveDialog :visible="saveDialogVisible" :federatedDataset="federatedDataset" @close="closeSaveDialog" @save="handleSaveFederation"></WorkspaceFederationSaveDialog>
-        <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.federationDefinition.title')" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
+        <WorkspaceFederationSaveDialog :visible="saveDialogVisible" :federated-dataset="federatedDataset" @close="closeSaveDialog" @save="handleSaveFederation"></WorkspaceFederationSaveDialog>
+        <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.federationDefinition.title')" :warning-message="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
     </div>
 </template>
 
@@ -42,6 +42,10 @@ export default defineComponent({
     name: 'workspace-federation-definition',
     components: { WorkspaceFederationDatasetList, WorskpaceFederationDatasetDialog, WorkspaceWarningDialog, WorkspaceFederationDefinitionAssociationsEditor, WorkspaceFederationDefinitionAssociationsList, WorkspaceFederationSaveDialog },
     props: { id: { type: String } },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             mainDescriptor,
@@ -68,10 +72,6 @@ export default defineComponent({
         async id() {
             await this.loadPage()
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         this.user = (this.store.$state as any).user
@@ -112,14 +112,14 @@ export default defineComponent({
             if (!dataset.metadata.fieldsMeta) {
                 dataset.metadata.fieldsMeta = []
                 if (dataset.meta && dataset.meta.columns) {
-                    let columnsJson = {}
-                    for (let c in dataset.meta.columns) {
+                    const columnsJson = {}
+                    for (const c in dataset.meta.columns) {
                         if (dataset.meta.columns[c].pname === 'fieldAlias') {
                             columnsJson[dataset.meta.columns[c].column] = dataset.meta.columns[c].pvalue
                         }
                     }
 
-                    for (let column in columnsJson) {
+                    for (const column in columnsJson) {
                         dataset.metadata.fieldsMeta.push({ name: column, alias: columnsJson[column] })
                     }
                 }

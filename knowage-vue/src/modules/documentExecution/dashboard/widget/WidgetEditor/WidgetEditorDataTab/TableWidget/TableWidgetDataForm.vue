@@ -8,18 +8,18 @@
 
             <div class="p-d-flex p-flex-column kn-flex p-ml-auto p-mr-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.itemsPerPage') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="itemsNumber" type="number" :disabled="!paginationEnabled" @change="paginationChanged" />
+                <InputText v-model="itemsNumber" class="kn-material-input p-inputtext-sm" type="number" :disabled="!paginationEnabled" @change="paginationChanged" />
             </div>
         </div>
 
         <div class="p-d-flex p-flex-row p-ai-center p-mt-2">
             <div class="p-d-flex p-flex-column kn-flex-2 p-m-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.sortingColumn') }}</label>
-                <Dropdown class="kn-material-input" v-model="sortingColumn" :options="sortingColumnOptions" optionValue="id" optionLabel="alias" @change="sortingChanged"> </Dropdown>
+                <Dropdown v-model="sortingColumn" class="kn-material-input" :options="sortingColumnOptions" option-value="id" option-label="alias" @change="sortingChanged"> </Dropdown>
             </div>
             <div class="p-d-flex p-flex-column kn-flex p-m-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.sortingOrder') }}</label>
-                <Dropdown class="kn-material-input" v-model="sortingOrder" :options="commonDescriptor.sortingOrderOptions" optionValue="value" @change="sortingChanged">
+                <Dropdown v-model="sortingOrder" class="kn-material-input" :options="commonDescriptor.sortingOrderOptions" option-value="value" @change="sortingChanged">
                     <template #value="slotProps">
                         <div>
                             <span>{{ slotProps.value }}</span>

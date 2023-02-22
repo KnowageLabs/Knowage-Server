@@ -8,12 +8,12 @@
             </Toolbar>
         </template>
 
-        <DataTable class="p-datatable-sm kn-table" :value="targets" v-model:selection="selectedTargets" dataKey="MT_ID">
+        <DataTable v-model:selection="selectedTargets" class="p-datatable-sm kn-table" :value="targets" data-key="MT_ID">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
 
-            <Column selectionMode="multiple" :style="hierarchyManagementHierarchiesTreeDescriptor.selectColumnStyle" />
+            <Column selection-mode="multiple" :style="hierarchyManagementHierarchiesTreeDescriptor.selectColumnStyle" />
             <Column field="label" :header="$t('common.label')" :sortable="true">
                 <template #body="slotProps">
                     <div>

@@ -8,12 +8,12 @@
                     </Toolbar>
                 </template>
                 <template #content>
-                    <div class="p-grid p-offset-1" v-if="userDetailsForm.failedLoginAttempts >= 3">
+                    <div v-if="userDetailsForm.failedLoginAttempts >= 3" class="p-grid p-offset-1">
                         <div class="p-col-9 p-md-9">
                             <InlineMessage severity="warn">{{ $t('managers.usersManagement.blockedUserInfo') }}</InlineMessage>
                         </div>
                         <div class="p-col-3 p-md-3">
-                            <Button @click="unlockUser" icon="pi pi-lock-open" :label="$t('managers.usersManagement.unlockUser')" />
+                            <Button icon="pi pi-lock-open" :label="$t('managers.usersManagement.unlockUser')" @click="unlockUser" />
                         </div>
                     </div>
 
@@ -21,44 +21,44 @@
                         <div class="p-field">
                             <div class="p-inputgroup">
                                 <span class="p-float-label">
-                                    <InputText id="userId" maxlength="100" type="text" :disabled="!formInsert" v-model.trim="userDetailsForm.userId" @change="onDataChange(vobj.userDetailsForm.userId)" class="p-inputtext p-component kn-material-input" />
+                                    <InputText id="userId" v-model.trim="userDetailsForm.userId" maxlength="100" type="text" :disabled="!formInsert" class="p-inputtext p-component kn-material-input" @change="onDataChange(vobj.userDetailsForm.userId)" />
                                     <label for="userId">{{ $t('managers.usersManagement.form.userId') }} *</label>
                                 </span>
                             </div>
-                            <KnValidationMessages :vComp="vobj.userDetailsForm.userId" :additionalTranslateParams="{ fieldName: $t('managers.usersManagement.form.userId') }"></KnValidationMessages>
+                            <KnValidationMessages :v-comp="vobj.userDetailsForm.userId" :additional-translate-params="{ fieldName: $t('managers.usersManagement.form.userId') }"></KnValidationMessages>
                         </div>
 
                         <div class="p-field">
                             <div class="p-inputgroup">
                                 <span class="p-float-label">
-                                    <InputText id="fullName" maxlength="250" type="text" v-model.trim="userDetailsForm.fullName" @change="onDataChange(vobj.userDetailsForm.fullName)" class="p-inputtext p-component kn-material-input" />
+                                    <InputText id="fullName" v-model.trim="userDetailsForm.fullName" maxlength="250" type="text" class="p-inputtext p-component kn-material-input" @change="onDataChange(vobj.userDetailsForm.fullName)" />
                                     <label for="fullName">{{ $t('managers.usersManagement.fullName') }} *</label>
                                 </span>
                             </div>
-                            <KnValidationMessages :vComp="vobj.userDetailsForm.fullName" :additionalTranslateParams="{ fieldName: $t('managers.usersManagement.fullName') }"></KnValidationMessages>
+                            <KnValidationMessages :v-comp="vobj.userDetailsForm.fullName" :additional-translate-params="{ fieldName: $t('managers.usersManagement.fullName') }"></KnValidationMessages>
                         </div>
 
                         <div class="p-field">
                             <div class="p-inputgroup">
                                 <span class="p-float-label">
-                                    <InputText id="password" type="password" v-model.trim="userDetailsForm.password" @change="onDataChange(vobj.userDetailsForm.password)" class="p-inputtext p-component kn-material-input" />
+                                    <InputText id="password" v-model.trim="userDetailsForm.password" type="password" class="p-inputtext p-component kn-material-input" @change="onDataChange(vobj.userDetailsForm.password)" />
                                     <label for="password">{{ $t('managers.usersManagement.form.password') }} *</label>
                                 </span>
                             </div>
-                            <KnValidationMessages :vComp="vobj.userDetailsForm.password" :additionalTranslateParams="{ fieldName: $t('managers.usersManagement.form.password') }"></KnValidationMessages>
+                            <KnValidationMessages :v-comp="vobj.userDetailsForm.password" :additional-translate-params="{ fieldName: $t('managers.usersManagement.form.password') }"></KnValidationMessages>
                         </div>
 
                         <div class="p-field">
                             <div class="p-inputgroup">
                                 <span class="p-float-label">
-                                    <InputText id="passwordConfirm" type="password" v-model.trim="userDetailsForm.passwordConfirm" @change="onDataChange(vobj.userDetailsForm.passwordConfirm)" class="p-inputtext p-component kn-material-input" />
+                                    <InputText id="passwordConfirm" v-model.trim="userDetailsForm.passwordConfirm" type="password" class="p-inputtext p-component kn-material-input" @change="onDataChange(vobj.userDetailsForm.passwordConfirm)" />
                                     <label for="passwordConfirm">{{ $t('managers.usersManagement.form.passwordConfirm') }} *</label>
                                 </span>
                             </div>
                             <KnValidationMessages
-                                :vComp="vobj.userDetailsForm.passwordConfirm"
-                                :additionalTranslateParams="{ fieldName: $t('managers.usersManagement.form.passwordConfirm') }"
-                                :specificTranslateKeys="{ sameAsPassword: 'managers.usersManagement.validation.sameAsPassword' }"
+                                :v-comp="vobj.userDetailsForm.passwordConfirm"
+                                :additional-translate-params="{ fieldName: $t('managers.usersManagement.form.passwordConfirm') }"
+                                :specific-translate-keys="{ sameAsPassword: 'managers.usersManagement.validation.sameAsPassword' }"
                             ></KnValidationMessages>
                         </div>
                     </form>
@@ -82,7 +82,6 @@
             Card,
             KnValidationMessages
         },
-        emits: ['unlock', 'dataChanged'],
         props: {
             formValues: Object,
             disabledUID: Boolean,
@@ -90,6 +89,17 @@
             formInsert: {
                 type: Boolean,
                 default: false
+            }
+        },
+        emits: ['unlock', 'dataChanged'],
+        data() {
+            return {
+                v$: useValidate() as any,
+                userDetailsForm: {} as any,
+                defaultRole: null,
+                hiddenForm: true as boolean,
+                disableUsername: true as boolean,
+                loading: false as boolean
             }
         },
         watch: {
@@ -102,16 +112,6 @@
                 handler: function(value) {
                     this.disableUsername = value
                 }
-            }
-        },
-        data() {
-            return {
-                v$: useValidate() as any,
-                userDetailsForm: {} as any,
-                defaultRole: null,
-                hiddenForm: true as Boolean,
-                disableUsername: true as Boolean,
-                loading: false as Boolean
             }
         },
         created() {

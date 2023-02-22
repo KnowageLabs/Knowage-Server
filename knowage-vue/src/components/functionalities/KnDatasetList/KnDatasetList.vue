@@ -1,16 +1,16 @@
 <template>
-    <Dialog class="kn-dialog--toolbar--primary datasetListDialogClass" v-bind:visible="visibility" :header="$t('components.advancedData.chooseDataset')" :closable="false" modal :breakpoints="{ '960px': '75vw', '640px': '100vw' }">
+    <Dialog class="kn-dialog--toolbar--primary datasetListDialogClass" :visible="visibility" :header="$t('components.advancedData.chooseDataset')" :closable="false" modal :breakpoints="{ '960px': '75vw', '640px': '100vw' }">
         <DataTable
             id="datasets-datatable"
             :value="filteredDatasets"
             :selection="selectedDataset"
-            selectionMode="single"
+            selection-mode="single"
             :paginator="true"
             :rows="KnDatasetListDescriptor.rows"
             :loading="loading"
             class="p-datatable-sm kn-table kn-page-content"
-            dataKey="id"
-            :responsiveLayout="KnDatasetListDescriptor.responsiveLayout"
+            data-key="id"
+            :responsive-layout="KnDatasetListDescriptor.responsiveLayout"
             :breakpoint="KnDatasetListDescriptor.breakpoint"
             @rowClick="handleClick($event.data)"
         >
@@ -26,11 +26,11 @@
                 <div class="table-header p-d-flex">
                     <span class="p-input-icon-left p-mr-3 p-col-12">
                         <i class="pi pi-search" />
-                        <InputText class="kn-material-input" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchDatasets" />
+                        <InputText v-model="searchWord" class="kn-material-input" type="text" :placeholder="$t('common.search')" @input="searchDatasets" />
                     </span>
                 </div>
             </template>
-            <Column class="kn-truncated" :style="col.style" v-for="col of KnDatasetListDescriptor.columns" :header="$t(col.header)" :key="col.field" :sortField="col.field" :sortable="col.field !== 'icon'">
+            <Column v-for="col of KnDatasetListDescriptor.columns" :key="col.field" class="kn-truncated" :style="col.style" :header="$t(col.header)" :sort-field="col.field" :sortable="col.field !== 'icon'">
                 <template #body="slotProps">
                     <span v-if="col.field !== 'icon'" v-tooltip.top="slotProps.data[col.field]"> {{ slotProps.data[col.field] }}</span>
                     <span v-else>
@@ -41,7 +41,7 @@
         </DataTable>
         <template #footer>
             <Button class="kn-button kn-button--secondary" :label="$t('common.cancel')" @click="cancel" />
-            <Button class="kn-button kn-button--primary" v-t="'common.open'" @click="apply" :disabled="!isDatasetSelected" />
+            <Button v-t="'common.open'" class="kn-button kn-button--primary" :disabled="!isDatasetSelected" @click="apply" />
         </template>
     </Dialog>
 </template>
@@ -76,14 +76,14 @@ export default defineComponent({
             isDatasetSelected: false
         }
     },
-    updated() {
-        if (this.items) this.datasets = this.items
-        this.filteredDatasets = [...this.datasets]
-    },
     computed: {
         isEmpty() {
             return Object.keys(this.selectedDataset).length == 0
         }
+    },
+    updated() {
+        if (this.items) this.datasets = this.items
+        this.filteredDatasets = [...this.datasets]
     },
     methods: {
         ...mapActions(mainStore, ['setInfo', 'setError']),

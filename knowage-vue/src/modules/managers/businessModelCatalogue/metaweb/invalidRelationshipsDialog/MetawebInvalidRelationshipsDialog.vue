@@ -1,5 +1,5 @@
 <template>
-    <Dialog id="metaweb-inccorect-relationships-dialog" class="p-fluid kn-dialog--toolbar--primary" :style="metawebInvalidRelationshipsDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false" :baseZIndex="10" :autoZIndex="true">
+    <Dialog id="metaweb-inccorect-relationships-dialog" class="p-fluid kn-dialog--toolbar--primary" :style="metawebInvalidRelationshipsDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false" :base-z-index="10" :auto-z-index="true">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-2 p-col-12">
                 <template #start>

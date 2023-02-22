@@ -11,7 +11,7 @@
         <form class="p-fluid p-formgrid p-grid p-m-1">
             <InlineMessage class="p-m-1 p-col-12" severity="info" closable="false">{{ $t('documentExecution.olap.alDialog.infoMsg') }}</InlineMessage>
             <div class="p-field p-float-label p-col-12 p-mt-2">
-                <Dropdown id="availableAlg" class="kn-material-input" v-model="selectedAlgorithm" :options="availableAlgorithms" optionLabel="name" />
+                <Dropdown id="availableAlg" v-model="selectedAlgorithm" class="kn-material-input" :options="availableAlgorithms" option-label="name" />
                 <label for="availableAlg" class="kn-material-input-label"> {{ $t('documentExecution.olap.alDialog.availableAlg') }} </label>
             </div>
         </form>
@@ -37,16 +37,16 @@ export default defineComponent({
     components: { Dialog, Dropdown, InlineMessage },
     props: { sbiExecutionId: { type: String } },
     emits: ['close'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             descriptor,
             selectedAlgorithm: {} as any,
             availableAlgorithms: [] as any
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     created() {
         this.getAvailableAlgorithms()

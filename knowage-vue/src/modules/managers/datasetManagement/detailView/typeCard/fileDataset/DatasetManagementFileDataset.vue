@@ -6,9 +6,9 @@
                     <span class="p-float-label">
                         <InputText
                             id="fileName"
+                            v-model.trim="v$.dataset.fileName.$model"
                             class="kn-material-input"
                             :style="fileDescriptor.style.maxwidth"
-                            v-model.trim="v$.dataset.fileName.$model"
                             :class="{
                                 'p-invalid': v$.dataset.fileName.$invalid && v$.dataset.fileName.$dirty
                             }"
@@ -18,51 +18,51 @@
                         />
                         <label for="fileName" class="kn-material-input-label"> {{ $t('downloadsDialog.columns.fileName') }} * </label>
                     </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.fileName" :additionalTranslateParams="{ fieldName: $t('downloadsDialog.columns.fileName') }" />
+                    <KnValidationMessages class="p-mt-1" :v-comp="v$.dataset.fileName" :additional-translate-params="{ fieldName: $t('downloadsDialog.columns.fileName') }" />
                 </div>
                 <Button icon="fas fa-upload" class="p-button-text p-button-plain p-ml-2" @click="setUploadType" />
                 <Button icon="fas fa-download" class="p-button-text y p-button-plain p-ml-2" @click="downloadDatasetFile" />
-                <KnInputFile v-if="!uploading" :changeFunction="uploadDatasetFile" accept=".csv, .xls, .xlsx" :triggerInput="triggerUpload" />
+                <KnInputFile v-if="!uploading" :change-function="uploadDatasetFile" accept=".csv, .xls, .xlsx" :trigger-input="triggerUpload" />
             </div>
 
             <div v-if="dataset.fileType && dataset.fileType == 'CSV'" class="p-fluid p-formgrid p-grid p-mt-3">
                 <span class="p-field p-float-label p-col">
-                    <Dropdown id="csvDelimiter" class="kn-material-input" :options="fileDescriptor.csvDelimiterCharacterTypes" optionLabel="name" optionValue="value" v-model="dataset.csvDelimiter" @change="getPreviewData(false)" />
+                    <Dropdown id="csvDelimiter" v-model="dataset.csvDelimiter" class="kn-material-input" :options="fileDescriptor.csvDelimiterCharacterTypes" option-label="name" option-value="value" @change="getPreviewData(false)" />
                     <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanCsvDelimiter') }} </label>
                 </span>
                 <span class="p-field p-float-label p-col">
-                    <Dropdown id="csvQuote" class="kn-material-input" :options="fileDescriptor.csvQuoteCharacterTypes" optionLabel="name" optionValue="value" v-model="dataset.csvQuote" @change="getPreviewData(false)" />
+                    <Dropdown id="csvQuote" v-model="dataset.csvQuote" class="kn-material-input" :options="fileDescriptor.csvQuoteCharacterTypes" option-label="name" option-value="value" @change="getPreviewData(false)" />
                     <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanCsvQuote') }} </label>
                 </span>
                 <span class="p-field p-float-label p-col">
-                    <Dropdown id="csvEncoding" class="kn-material-input" :options="fileDescriptor.csvEncodingTypes" optionLabel="name" optionValue="value" v-model="dataset.csvEncoding" @change="getPreviewData(false)" />
+                    <Dropdown id="csvEncoding" v-model="dataset.csvEncoding" class="kn-material-input" :options="fileDescriptor.csvEncodingTypes" option-label="name" option-value="value" @change="getPreviewData(false)" />
                     <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanCsvEncoding') }} </label>
                 </span>
                 <span class="p-field p-float-label p-col">
-                    <Dropdown id="dateFormat" class="kn-material-input" :options="fileDescriptor.dateFormatTypes" optionLabel="name" optionValue="value" v-model="dataset.dateFormat" @change="getPreviewData(false)" />
+                    <Dropdown id="dateFormat" v-model="dataset.dateFormat" class="kn-material-input" :options="fileDescriptor.dateFormatTypes" option-label="name" option-value="value" @change="getPreviewData(false)" />
                     <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanDateFormat') }} </label>
                 </span>
                 <span class="p-field p-float-label p-col">
-                    <Dropdown id="timestampFormat" class="kn-material-input" :options="fileDescriptor.timestampFormatTypes" optionLabel="name" optionValue="value" v-model="dataset.timestampFormat" @change="getPreviewData(false)" />
+                    <Dropdown id="timestampFormat" v-model="dataset.timestampFormat" class="kn-material-input" :options="fileDescriptor.timestampFormatTypes" option-label="name" option-value="value" @change="getPreviewData(false)" />
                     <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.timestampFormat') }} </label>
                 </span>
             </div>
             <div v-if="dataset.fileType == 'XLS' || dataset.fileType == 'XLSX'" class="p-fluid p-formgrid p-grid p-mt-3">
                 <div class="p-field p-col">
                     <span class="p-float-label">
-                        <InputText id="skipRows" class="kn-material-input" type="number" v-model.trim="dataset.skipRows" @change="getPreviewData(false)" />
+                        <InputText id="skipRows" v-model.trim="dataset.skipRows" class="kn-material-input" type="number" @change="getPreviewData(false)" />
                         <label for="skipRows" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanSkipRows') }} </label>
                     </span>
                 </div>
                 <div class="p-field p-col">
                     <span class="p-float-label">
-                        <InputText id="limitRows" class="kn-material-input" type="number" v-model.trim="dataset.limitRows" @change="getPreviewData(false)" />
+                        <InputText id="limitRows" v-model.trim="dataset.limitRows" class="kn-material-input" type="number" @change="getPreviewData(false)" />
                         <label for="limitRows" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanLimitRows') }} </label>
                     </span>
                 </div>
                 <div class="p-field p-col">
                     <span class="p-float-label">
-                        <InputText id="sheetnumber" class="kn-material-input" type="number" v-model.trim="dataset.xslSheetNumber" @change="getPreviewData(false)" />
+                        <InputText id="sheetnumber" v-model.trim="dataset.xslSheetNumber" class="kn-material-input" type="number" @change="getPreviewData(false)" />
                         <label for="sheetnumber" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanXslSheetNumber') }} </label>
                     </span>
                 </div>
@@ -70,7 +70,7 @@
         </template>
     </Card>
 
-    <div id="preview-container" v-if="rows.length > 0">
+    <div v-if="rows.length > 0" id="preview-container">
         <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-3">
             <template #start>
                 <Button v-if="!expandTableCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color: white" @click="expandTableCard = true" />
@@ -78,13 +78,13 @@
                 {{ $t('managers.lovsManagement.preview') }}
             </template>
             <template #end>
-                <Button icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain p-ml-auto" v-tooltip.left="$t('common.refresh')" @click="getPreviewData"></Button>
+                <Button v-tooltip.left="$t('common.refresh')" icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain p-ml-auto" @click="getPreviewData"></Button>
             </template>
         </Toolbar>
-        <Card class="p-m-2" v-show="expandTableCard">
+        <Card v-show="expandTableCard" class="p-m-2">
             <template #content>
-                <DataTable :value="rows" class="p-datatable-sm kn-table" :loading="loading" responsiveLayout="scroll" :scrollable="true" scrollDirection="both" scrollHeight="800px" stripedRows rowHover style="width: 70vw">
-                    <Column v-for="col of columns" :field="col.name" :header="col.header" :key="col.dataIndex" class="kn-truncated" style="width: 250px" />
+                <DataTable :value="rows" class="p-datatable-sm kn-table" :loading="loading" responsive-layout="scroll" :scrollable="true" scroll-direction="both" scroll-height="800px" striped-rows row-hover style="width: 70vw">
+                    <Column v-for="col of columns" :key="col.dataIndex" :field="col.name" :header="col.header" class="kn-truncated" style="width: 250px" />
                 </DataTable>
             </template>
         </Card>
@@ -110,6 +110,10 @@ export default defineComponent({
     components: { Card, KnValidationMessages, KnInputFile, Dropdown, DataTable, Column },
     props: { selectedDataset: { type: Object as any }, dataSources: { type: Array as any } },
     emits: ['touched', 'fileUploaded', 'checkFormulaForParams'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             v$: useValidate() as any,
@@ -123,19 +127,15 @@ export default defineComponent({
             rows: [] as any
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
-    created() {
-        this.dataset = this.selectedDataset
-        this.dataset.id ? this.getPreviewData() : ''
-    },
     watch: {
         selectedDataset() {
             this.dataset = this.selectedDataset
             this.dataset.id ? this.getPreviewData() : ''
         }
+    },
+    created() {
+        this.dataset = this.selectedDataset
+        this.dataset.id ? this.getPreviewData() : ''
     },
     validations() {
         const fileFieldsRequired = (value) => {
@@ -152,7 +152,7 @@ export default defineComponent({
         },
         uploadDatasetFile(event) {
             this.uploading = true
-            let uploadedFile = event.target.files[0]
+            const uploadedFile = event.target.files[0]
             if (uploadedFile.name.includes(this.dataset.fileName)) {
                 this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('common.error.sameFileName') })
                 this.triggerUpload = false
@@ -163,7 +163,7 @@ export default defineComponent({
             setTimeout(() => (this.uploading = false), 200)
         },
         async startUpload(uploadedFile) {
-            var formData = new FormData()
+            const formData = new FormData()
             formData.append('file', uploadedFile)
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `selfservicedatasetupload/fileupload`, formData, {
@@ -207,7 +207,7 @@ export default defineComponent({
         },
 
         async downloadDatasetFile() {
-            var encodedLabel = encodeURI(this.dataset.label)
+            const encodedLabel = encodeURI(this.dataset.label)
             await this.$http
                 .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasets/download/file?dsLabel=${encodedLabel}&type=${this.dataset.fileType}`, {
                     headers: {
@@ -233,12 +233,12 @@ export default defineComponent({
                 )
         },
         createCompleteFileName(response) {
-            var contentDisposition = response.headers['content-disposition']
-            var fileAndExtension = contentDisposition.match(/filename[^;\n=]*=((['"]).*?\2|[^;\n]*)/i)[1]
-            var completeFileName = fileAndExtension.replaceAll('"', '')
+            const contentDisposition = response.headers['content-disposition']
+            const fileAndExtension = contentDisposition.match(/filename[^;\n=]*=((['"]).*?\2|[^;\n]*)/i)[1]
+            const completeFileName = fileAndExtension.replaceAll('"', '')
             return completeFileName
         },
-        async getPreviewData(metadata: Boolean = true) {
+        async getPreviewData(metadata = true) {
             this.loading = true
             this.dataset.limit = 10
             if (!metadata) delete this.dataset.meta
@@ -252,7 +252,7 @@ export default defineComponent({
                     }
                 })
                 .then((response: AxiosResponse<any>) => {
-                    let previewColumns = response.data.metaData.fields
+                    const previewColumns = response.data.metaData.fields
                     previewColumns.forEach((el: any) => {
                         typeof el != 'object' ? '' : this.columns.push(el)
                     })

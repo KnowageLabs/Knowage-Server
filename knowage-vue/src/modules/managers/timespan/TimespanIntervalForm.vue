@@ -2,17 +2,17 @@
     <div v-if="timespan" class="p-d-flex kn-flex">
         <div class="timespan-interval-calendar p-fluid kn-flex">
             <span class="p-float-label">
-                <Calendar v-model="interval.from" :manualInput="true" :timeOnly="timespan.type === 'time'" hourFormat="24"></Calendar>
+                <Calendar v-model="interval.from" :manual-input="true" :time-only="timespan.type === 'time'" hour-format="24"></Calendar>
                 <label class="kn-material-input-label"> {{ $t('common.from') }}</label>
             </span>
         </div>
         <div class="timespan-interval-calendar p-fluid kn-flex p-mx-auto">
             <span class="p-float-label">
-                <Calendar v-model="interval.to" :manualInput="true" :timeOnly="timespan.type === 'time'" hourFormat="24"></Calendar>
+                <Calendar v-model="interval.to" :manual-input="true" :time-only="timespan.type === 'time'" hour-format="24"></Calendar>
                 <label class="kn-material-input-label"> {{ $t('common.to') }}</label>
             </span>
         </div>
-        <Button id="timespan-interval-add-button" class="kn-button kn-button--primary p-ml-auto" :disabled="addButtonDisabled" @click="onAddInterval" data-test="add-button"> {{ $t('common.add') }}</Button>
+        <Button id="timespan-interval-add-button" class="kn-button kn-button--primary p-ml-auto" :disabled="addButtonDisabled" data-test="add-button" @click="onAddInterval"> {{ $t('common.add') }}</Button>
     </div>
 </template>
 
@@ -30,18 +30,14 @@ export default defineComponent({
     components: { Calendar },
     props: { propTimespan: { type: Object as PropType<iTimespan | null> } },
     emits: ['touched'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             interval: {} as any,
             timespan: null as iTimespan | null
-        }
-    },
-    watch: {
-        propTimespan() {
-            this.loadTimespan()
-        },
-        timespanType() {
-            this.loadTimespan()
         }
     },
     computed: {
@@ -52,9 +48,13 @@ export default defineComponent({
             return this.timespan?.type
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
+    watch: {
+        propTimespan() {
+            this.loadTimespan()
+        },
+        timespanType() {
+            this.loadTimespan()
+        }
     },
     created() {
         this.loadTimespan()
@@ -96,7 +96,7 @@ export default defineComponent({
         },
         addNewTimeInterval(interval: iInterval, from: string, to: string, fromTime: number, toTime: number) {
             if (this.timespan) {
-                for (let i in this.timespan.definition) {
+                for (const i in this.timespan.definition) {
                     const tempStart = this.createDateFromHoursAndMinutes(this.timespan.definition[i].from)
                     const tempEnd = this.createDateFromHoursAndMinutes(this.timespan.definition[i].to)
                     if (fromTime <= tempEnd && toTime >= tempStart) {
@@ -135,7 +135,7 @@ export default defineComponent({
         },
         addNewTemporalInterval(fromDate: Date, toDate: Date) {
             if (this.timespan) {
-                for (let i in this.timespan.definition) {
+                for (const i in this.timespan.definition) {
                     const tempStart = createDateFromIntervalTime(this.timespan.definition[i].from)
                     const tempEnd = createDateFromIntervalTime(this.timespan.definition[i].to)
 

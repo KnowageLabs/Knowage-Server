@@ -1,7 +1,7 @@
 <template>
     <Breadcrumb :home="home" :model="items" class="kn-breadcrumb border-bottom">
         <template #item="{item}">
-            <span class="breadcrumbs-item" @click="selectBreadcrumb" :data-test="'breadcrumb-' + item.label">{{ item.label }}</span>
+            <span class="breadcrumbs-item" :data-test="'breadcrumb-' + item.label" @click="selectBreadcrumb">{{ item.label }}</span>
         </template>
     </Breadcrumb>
 </template>

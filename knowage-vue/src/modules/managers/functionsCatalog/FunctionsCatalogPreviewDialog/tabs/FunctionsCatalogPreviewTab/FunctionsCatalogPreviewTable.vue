@@ -1,14 +1,14 @@
 <template>
     <DataTable
         id="preview-datatable"
+        v-model:filters="filters"
         :value="rows"
         :paginator="true"
         :rows="functionsCatalogPreviewTableDescriptor.rows"
         class="p-datatable-sm kn-table"
-        v-model:filters="filters"
-        filterDisplay="menu"
-        :globalFilterFields="globalFilterFields"
-        :responsiveLayout="functionsCatalogPreviewTableDescriptor.responsiveLayout"
+        filter-display="menu"
+        :global-filter-fields="globalFilterFields"
+        :responsive-layout="functionsCatalogPreviewTableDescriptor.responsiveLayout"
         :breakpoint="functionsCatalogPreviewTableDescriptor.breakpoint"
     >
         <template #empty>
@@ -20,13 +20,13 @@
             <div class="table-header p-d-flex">
                 <span class="p-input-icon-left p-mr-3 p-col-12">
                     <i class="pi pi-search" />
-                    <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
+                    <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
                 </span>
             </div>
         </template>
-        <Column class="kn-truncated" v-for="col of columns" :field="col.field" :header="col.header" :key="col.field" :sortable="true">
+        <Column v-for="col of columns" :key="col.field" class="kn-truncated" :field="col.field" :header="col.header" :sortable="true">
             <template #filter="{filterModel}">
-                <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
+                <InputText v-model="filterModel.value" type="text" class="p-column-filter"></InputText>
             </template>
         </Column>
     </DataTable>

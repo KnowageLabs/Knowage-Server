@@ -1,42 +1,42 @@
 <template>
     <div class="kn-height-full p-d-flex p-flex-row p-ai-center">
-        <Checkbox v-if="getCellType(column) === 'checkbox'" v-model="value" class="p-ml-2" :binary="true" ref="input" />
-        <Textarea v-if="getCellType(column) === 'text'" class="kn-material-input kn-width-full" rows="4" v-model="value" :step="getStep(column.columnInfo?.type)" maxlength="250" @input="onRowChanged(row)" ref="input" />
+        <Checkbox v-if="getCellType(column) === 'checkbox'" ref="input" v-model="value" class="p-ml-2" :binary="true" />
+        <Textarea v-if="getCellType(column) === 'text'" ref="input" v-model="value" class="kn-material-input kn-width-full" rows="4" :step="getStep(column.columnInfo?.type)" maxlength="250" @input="onRowChanged(row)" />
         <InputNumber
             v-if="getCellType(column) === 'number'"
-            class="kn-material-input p-inputtext-sm kn-width-full kn-height-full"
+            ref="input"
             v-model="value"
-            :useGrouping="useGrouping"
+            class="kn-material-input p-inputtext-sm kn-width-full kn-height-full"
+            :use-grouping="useGrouping"
             :locale="locale"
-            :minFractionDigits="minFractionDigits"
-            :maxFractionDigits="maxFractionDigits"
+            :min-fraction-digits="minFractionDigits"
+            :max-fraction-digits="maxFractionDigits"
             :disabled="!column.isEditable"
             @blur="onInputNumberChange"
-            ref="input"
         />
         <Dropdown
             v-else-if="getCellType(column) === 'dropdown'"
-            class="kn-material-input kn-width-full"
+            ref="input"
             v-model="value"
+            class="kn-material-input kn-width-full"
             :options="getOptions(column, row)"
-            optionValue="column_1"
-            optionLabel="column_1"
+            option-value="column_1"
+            option-label="column_1"
+            :filter="true"
             @change="onDropdownChange({ row: row, column: column })"
             @before-show="addColumnOptions({ row: row, column: column })"
-            :filter="true"
-            ref="input"
         />
         <Calendar
             v-else-if="getCellType(column) === 'temporal'"
+            ref="input"
+            v-model="value"
             class="registry-no-borders kn-width-full kn-height-full"
             :style="registryDatatableDescriptor.pivotStyles.inputFields"
-            v-model="value"
-            :showTime="column.columnInfo?.type === 'timestamp'"
-            :showSeconds="column.columnInfo?.type === 'timestamp'"
-            :showButtonBar="true"
+            :show-time="column.columnInfo?.type === 'timestamp'"
+            :show-seconds="column.columnInfo?.type === 'timestamp'"
+            :show-button-bar="true"
+            :date-format="column.columnInfo?.type === 'date' ? getCurrentLocaleDefaultDateFormat(column) : ''"
             @date-select="onRowChanged(row)"
-            :dateFormat="column.columnInfo?.type === 'date' ? getCurrentLocaleDefaultDateFormat(column) : ''"
-            ref="input"
         />
     </div>
 </template>
@@ -78,6 +78,11 @@ export default defineComponent({
             value: null as any
         }
     },
+    computed: {
+        getCurrentLocaleDefaultDateFormat() {
+            return (column) => column.format || primeVueDate()
+        }
+    },
     watch: {
         propRow() {
             this.loadRow()
@@ -111,11 +116,6 @@ export default defineComponent({
         this.loadRow()
         this.loadColumnOptions()
         this.value = this.getInitialValue()
-    },
-    computed: {
-        getCurrentLocaleDefaultDateFormat() {
-            return (column) => column.format || primeVueDate()
-        }
     },
     methods: {
         loadRow() {

@@ -11,16 +11,16 @@
                     class="kn-list workflowContainer"
                     :options="availableUsersList[0]"
                     :filter="true"
-                    :filterPlaceholder="$t('common.search')"
-                    optionLabel="name"
-                    filterMatchMode="contains"
-                    :filterFields="workflowDescriptor.filterFields"
-                    :emptyFilterMessage="$t('common.info.noDataFound')"
+                    :filter-placeholder="$t('common.search')"
+                    option-label="name"
+                    filter-match-mode="contains"
+                    :filter-fields="workflowDescriptor.filterFields"
+                    :empty-filter-message="$t('common.info.noDataFound')"
                     data-test="userList1"
                 >
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
-                        <div class="kn-list-item" :class="{ disableCursor: isStartedWf }" @click="addUserToWfList(slotProps.option.id)" data-test="userList1-item">
+                        <div class="kn-list-item" :class="{ disableCursor: isStartedWf }" data-test="userList1-item" @click="addUserToWfList(slotProps.option.id)">
                             <div class="kn-list-item-text">
                                 <span>{{ slotProps.option.userId }}</span>
                                 <span class="kn-list-item-text-secondary">{{ slotProps.option.fullName }}</span>
@@ -44,16 +44,16 @@
                     class="kn-list workflowContainer"
                     :options="availableUsersList[1]"
                     :filter="true"
-                    :filterPlaceholder="$t('common.search')"
-                    optionLabel="name"
-                    filterMatchMode="contains"
-                    :filterFields="workflowDescriptor.filterFields"
-                    :emptyFilterMessage="$t('common.info.noDataFound')"
+                    :filter-placeholder="$t('common.search')"
+                    option-label="name"
+                    filter-match-mode="contains"
+                    :filter-fields="workflowDescriptor.filterFields"
+                    :empty-filter-message="$t('common.info.noDataFound')"
                     data-test="userList2"
                 >
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
-                        <div class="kn-list-item" :class="{ disableCursor: isStartedWf }" @click="removeUserFromWfList(slotProps.option.id)" data-test="userList2-item">
+                        <div class="kn-list-item" :class="{ disableCursor: isStartedWf }" data-test="userList2-item" @click="removeUserFromWfList(slotProps.option.id)">
                             <div class="kn-list-item-text">
                                 <span>{{ slotProps.option.userId }}</span>
                                 <span class="kn-list-item-text-secondary">{{ slotProps.option.fullName }}</span>
@@ -95,6 +95,21 @@ export default defineComponent({
         selectedSchema: Object,
         isChanged: Boolean
     },
+    emits: ['changed', 'selectedUsersChanged'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
+    data() {
+        return {
+            workflowDescriptor,
+            availableUsersList: [] as any[],
+            schema: {} as iSchema,
+            isStartedWf: false,
+            isButtonDisabled: false,
+            userInProg: null as any
+        }
+    },
     computed: {
         disableButton() {
             if (!this.schema.id || this.availableUsersList[1].length == 0 || this.isChanged || this.isStartedWf) return true
@@ -109,27 +124,6 @@ export default defineComponent({
             return ''
         }
     },
-    emits: ['changed', 'selectedUsersChanged'],
-    data() {
-        return {
-            workflowDescriptor,
-            availableUsersList: [] as any[],
-            schema: {} as iSchema,
-            isStartedWf: false,
-            isButtonDisabled: false,
-            userInProg: null as any
-        }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
-    mounted() {
-        if (this.selectedSchema) {
-            this.schema = { ...this.selectedSchema } as iSchema
-        }
-        this.availableUsersList = this.usersList as any[]
-    },
     watch: {
         usersList() {
             this.availableUsersList = this.usersList as any[]
@@ -139,9 +133,15 @@ export default defineComponent({
             this.isWorkflowStarted()
         }
     },
+    mounted() {
+        if (this.selectedSchema) {
+            this.schema = { ...this.selectedSchema } as iSchema
+        }
+        this.availableUsersList = this.usersList as any[]
+    },
     methods: {
         onUserChange() {
-            let selectedUsers = this.availableUsersList[1]
+            const selectedUsers = this.availableUsersList[1]
             this.$emit('selectedUsersChanged', selectedUsers)
             this.$emit('changed')
         },
@@ -162,7 +162,7 @@ export default defineComponent({
             }
         },
         async startWorkflow() {
-            let url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/workflow/startWorkflow/${this.schema.id}`
+            const url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/workflow/startWorkflow/${this.schema.id}`
             await this.$http
                 .put(url)
                 .then((response: AxiosResponse<any>) => {

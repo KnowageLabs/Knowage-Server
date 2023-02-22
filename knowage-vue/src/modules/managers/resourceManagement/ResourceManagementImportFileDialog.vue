@@ -1,24 +1,24 @@
 <template>
-    <Dialog class="kn-dialog--toolbar--primary importFileDialog" v-bind:visible="visibility" footer="footer" :header="$t('common.import')" :closable="false" modal>
+    <Dialog class="kn-dialog--toolbar--primary importFileDialog" :visible="visibility" footer="footer" :header="$t('common.import')" :closable="false" modal>
         <span v-if="checkExistingFile()">
             <Message severity="warn">{{ $t('managers.resourceManagement.uploadFile.fileWillBeOverwritten') }}</Message>
         </span>
         <span v-if="notifyExtractionWarning()">
             <Message severity="warn">{{ $t('managers.resourceManagement.uploadFile.fileAndFoldersContentWillBeOverwritten') }}</Message>
         </span>
-        <FileUpload name="demo[]" :chooseLabel="$t('common.choose')" :customUpload="true" @uploader="onUpload" @remove="onDelete" auto="true" :maxFileSize="50000000" :multiple="false" :fileLimit="1">
+        <FileUpload name="demo[]" :choose-label="$t('common.choose')" :custom-upload="true" auto="true" :max-file-size="50000000" :multiple="false" :file-limit="1" @uploader="onUpload" @remove="onDelete">
             <template #empty>
                 <p>{{ $t('common.dragAndDropFileHere') }}</p>
             </template>
         </FileUpload>
 
-        <span :class="notifyExtractionWarning() || checkExistingFile() ? 'inputFileToggleWithToolbar' : 'inputFileToggle'" v-if="isArchive()">
+        <span v-if="isArchive()" :class="notifyExtractionWarning() || checkExistingFile() ? 'inputFileToggleWithToolbar' : 'inputFileToggle'">
             <label for="active" class="kn-material-input-label p-mr-3"> {{ $t('managers.resourceManagement.extract') }}</label>
             <InputSwitch v-model="checked" />
         </span>
         <template #footer>
             <Button class="p-button-text kn-button" :label="$t('common.cancel')" @click="closeDialog" />
-            <Button class="kn-button kn-button--primary" v-t="'common.import'" :disabled="uploadedFiles && uploadedFiles.length == 0" @click="startImportFile" />
+            <Button v-t="'common.import'" class="kn-button kn-button--primary" :disabled="uploadedFiles && uploadedFiles.length == 0" @click="startImportFile" />
         </template>
     </Dialog>
 </template>
@@ -43,13 +43,13 @@ export default defineComponent({
         visibility: Boolean,
         existingFiles: Array as PropType<Array<IFileTemplate>>
     },
-    data() {
-        return { checked: false, descriptor: resourceManagementDescriptor, uploadedFiles: [], loading: false }
-    },
     emits: ['update:visibility', 'fileUploaded'],
     setup() {
         const store = mainStore()
         return { store }
+    },
+    data() {
+        return { checked: false, descriptor: resourceManagementDescriptor, uploadedFiles: [], loading: false }
     },
     methods: {
         isArchive() {
@@ -72,8 +72,8 @@ export default defineComponent({
         checkExistingFile() {
             let found = false
             if (this.existingFiles && this.uploadedFiles[0]) {
-                for (var idx in this.existingFiles) {
-                    let element = this.existingFiles[idx]
+                for (const idx in this.existingFiles) {
+                    const element = this.existingFiles[idx]
                     // eslint-disable-next-line
                     // @ts-ignore
                     if (element.name === this.uploadedFiles[0].name) {
@@ -92,10 +92,10 @@ export default defineComponent({
             if (this.uploadedFiles[0] && this.path) {
                 this.loading = true
 
-                var formData = new FormData()
+                const formData = new FormData()
                 formData.append('file', this.uploadedFiles[0])
                 formData.append('key', this.path)
-                let checkedAsString = this.checked ? 'true' : 'false'
+                const checkedAsString = this.checked ? 'true' : 'false'
                 formData.append('extract', checkedAsString)
                 await this.$http
                     .post(import.meta.env.VITE_API_PATH + '2.0/resources/files/uploadFile', formData, {

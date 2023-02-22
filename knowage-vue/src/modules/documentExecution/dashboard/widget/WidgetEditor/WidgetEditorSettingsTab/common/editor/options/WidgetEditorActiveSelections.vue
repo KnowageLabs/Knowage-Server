@@ -1,7 +1,7 @@
 <template>
     <div v-if="widgetModel" class="p-field">
         <span class="p-float-label">
-            <Dropdown class="kn-material-input" v-model="selectedColumnName" :options="widgetModel.columns" optionValue="columnName" optionLabel="columnName" @change="onColumnChanged"> </Dropdown>
+            <Dropdown v-model="selectedColumnName" class="kn-material-input" :options="widgetModel.columns" option-value="columnName" option-label="columnName" @change="onColumnChanged"> </Dropdown>
             <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
         </span>
     </div>

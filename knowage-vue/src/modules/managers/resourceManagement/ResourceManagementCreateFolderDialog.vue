@@ -1,9 +1,9 @@
 <template>
-    <Dialog class="kn-dialog--toolbar--primary createFolderDialog" v-bind:visible="visibility" footer="footer" :header="$t('managers.resourceManagement.createFolder')" :closable="false" modal>
+    <Dialog class="kn-dialog--toolbar--primary createFolderDialog" :visible="visibility" footer="footer" :header="$t('managers.resourceManagement.createFolder')" :closable="false" modal>
         <Breadcrumb :home="home" :model="items"> </Breadcrumb>
         <div class="createFolderDialogContent">
             <span class="p-float-label">
-                <InputText class="folderNameInputText" type="text" v-model="folderName" />
+                <InputText v-model="folderName" class="folderNameInputText" type="text" />
                 <label class="kn-material-input-label" for="label">{{ $t('managers.resourceManagement.foldernamePlaceholder') }}</label>
             </span>
         </div>
@@ -32,9 +32,14 @@ export default defineComponent({
         return {
             descriptor: resourceManagementDescriptor,
             home: { icon: 'pi pi-home' },
-            items: [] as Array<{ label: String }>,
+            items: [] as Array<{ label: string }>,
             folderName: '',
             loading: false
+        }
+    },
+    watch: {
+        path(oldPath, newPath) {
+            if (oldPath != newPath) this.setBreadcrumbs()
         }
     },
     mounted() {
@@ -55,17 +60,12 @@ export default defineComponent({
             this.items = []
 
             if (this.path) {
-                let pathFolders = this.path.split('\\', -1)
+                const pathFolders = this.path.split('\\', -1)
                 pathFolders.forEach((element) => {
-                    let obj = { label: element }
+                    const obj = { label: element }
                     this.items.push(obj)
                 })
             }
-        }
-    },
-    watch: {
-        path(oldPath, newPath) {
-            if (oldPath != newPath) this.setBreadcrumbs()
         }
     }
 })

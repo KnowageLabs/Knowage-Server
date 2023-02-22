@@ -14,18 +14,18 @@
             </Toolbar>
         </template>
         <template #content>
-            <LovsManagementQuery v-if="lovType === 'QUERY'" :selectedLov="lov" :selectedQuery="selectedQuery" :datasources="datasources" :codeInput="codeInput" @touched="onTouched"></LovsManagementQuery>
-            <LovsManagementScript v-else-if="lovType === 'SCRIPT'" :selectedLov="lov" :selectedScript="selectedScript" :listOfScriptTypes="listOfScriptTypes" @touched="onTouched"></LovsManagementScript>
-            <LovsManagementFixedLovsTable v-else-if="lovType === 'FIX_LOV'" :listForFixLov="listForFixLov" @touched="$emit('touched')" @sorted="$emit('sorted', $event)"></LovsManagementFixedLovsTable>
-            <LovsManagementJavaClassInput v-else-if="lovType === 'JAVA_CLASS'" :selectedJavaClass="selectedJavaClass" @touched="onTouched"></LovsManagementJavaClassInput>
+            <LovsManagementQuery v-if="lovType === 'QUERY'" :selected-lov="lov" :selected-query="selectedQuery" :datasources="datasources" :code-input="codeInput" @touched="onTouched"></LovsManagementQuery>
+            <LovsManagementScript v-else-if="lovType === 'SCRIPT'" :selected-lov="lov" :selected-script="selectedScript" :list-of-script-types="listOfScriptTypes" @touched="onTouched"></LovsManagementScript>
+            <LovsManagementFixedLovsTable v-else-if="lovType === 'FIX_LOV'" :list-for-fix-lov="listForFixLov" @touched="$emit('touched')" @sorted="$emit('sorted', $event)"></LovsManagementFixedLovsTable>
+            <LovsManagementJavaClassInput v-else-if="lovType === 'JAVA_CLASS'" :selected-java-class="selectedJavaClass" @touched="onTouched"></LovsManagementJavaClassInput>
             <LovsManagementDataset v-else-if="lovType === 'DATASET'" :dataset="selectedDataset" @selected="$emit('selectedDataset', $event)" />
         </template>
     </Card>
-    <LovsManagementInfoDialog v-show="infoDialogVisible" :visible="infoDialogVisible" :infoTitle="infoTitle" :lovType="lov.itypeCd" @close="infoDialogVisible = false"></LovsManagementInfoDialog>
-    <LovsManagementProfileAttributesList v-show="profileAttributesDialogVisible" :visible="profileAttributesDialogVisible" :profileAttributes="profileAttributes" @selected="setCodeInput($event)" @close="profileAttributesDialogVisible = false"></LovsManagementProfileAttributesList>
-    <LovsManagementParamsDialog v-show="paramsDialogVisible" :visible="paramsDialogVisible" :dependenciesList="dependenciesList" :mode="paramsDialogMode" @preview="onPreview" @close="onParamsDialogClose" @test="onTest"></LovsManagementParamsDialog>
-    <LovsManagementPreviewDialog v-show="previewDialogVisible" :visible="previewDialogVisible" :dataForPreview="dataForPreview" :pagination="pagination" @close="onPreviewClose" @pageChanged="previewLov($event, false, true)"></LovsManagementPreviewDialog>
-    <LovsManagementTestDialog v-show="testDialogVisible" :visible="testDialogVisible" :selectedLov="lov" :testModel="treeListTypeModel" :testLovModel="testLovModel" :testLovTreeModel="testLovTreeModel" @close="onTestDialogClose()" @save="onTestSave($event)"></LovsManagementTestDialog>
+    <LovsManagementInfoDialog v-show="infoDialogVisible" :visible="infoDialogVisible" :info-title="infoTitle" :lov-type="lov.itypeCd" @close="infoDialogVisible = false"></LovsManagementInfoDialog>
+    <LovsManagementProfileAttributesList v-show="profileAttributesDialogVisible" :visible="profileAttributesDialogVisible" :profile-attributes="profileAttributes" @selected="setCodeInput($event)" @close="profileAttributesDialogVisible = false"></LovsManagementProfileAttributesList>
+    <LovsManagementParamsDialog v-show="paramsDialogVisible" :visible="paramsDialogVisible" :dependencies-list="dependenciesList" :mode="paramsDialogMode" @preview="onPreview" @close="onParamsDialogClose" @test="onTest"></LovsManagementParamsDialog>
+    <LovsManagementPreviewDialog v-show="previewDialogVisible" :visible="previewDialogVisible" :data-for-preview="dataForPreview" :pagination="pagination" @close="onPreviewClose" @pageChanged="previewLov($event, false, true)"></LovsManagementPreviewDialog>
+    <LovsManagementTestDialog v-show="testDialogVisible" :visible="testDialogVisible" :selected-lov="lov" :test-model="treeListTypeModel" :test-lov-model="testLovModel" :test-lov-tree-model="testLovTreeModel" @close="onTestDialogClose()" @save="onTestSave($event)"></LovsManagementTestDialog>
 </template>
 
 <script lang="ts">
@@ -77,6 +77,10 @@ export default defineComponent({
         previewDisabled: { type: Boolean }
     },
     emits: ['touched', 'save', 'created', 'selectedDataset'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             lovsManagementWizardCardDescriptor,
@@ -109,6 +113,11 @@ export default defineComponent({
             paramsDialogMode: 'preview'
         }
     },
+    computed: {
+        lovType(): string {
+            return this.selectedLov.itypeCd
+        }
+    },
     watch: {
         lovType() {
             this.onLovTypeChanged()
@@ -129,15 +138,6 @@ export default defineComponent({
                 await this.checkForDependencies(false)
             }
         }
-    },
-    computed: {
-        lovType(): string {
-            return this.selectedLov.itypeCd
-        }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         this.loadLov()
@@ -343,7 +343,7 @@ export default defineComponent({
                     this.lov.lovProviderJSON[prop].ID = this.selectedDataset?.id
                     this.lov.lovProviderJSON[prop].LABEL = this.selectedDataset?.label
                     if (this.selectedDataset?.id) {
-                        for (var i = 0; i < this.datasources.length; i++) {
+                        for (let i = 0; i < this.datasources.length; i++) {
                             if ((this.datasources[i] as any).id == this.selectedDataset.id) {
                                 this.lov.lovProviderJSON[prop].LABEL = (this.datasources[i] as any).label
                             }
@@ -442,10 +442,10 @@ export default defineComponent({
             }
         },
         formatForSave() {
-            let result = {}
-            let propName = this.lov.itypeCd
-            let prop = lovProviderEnum[propName]
-            let tempObj = this.lov.lovProviderJSON[prop]
+            const result = {}
+            const propName = this.lov.itypeCd
+            const prop = lovProviderEnum[propName]
+            const tempObj = this.lov.lovProviderJSON[prop]
             if (!this.treeListTypeModel || this.treeListTypeModel.LOVTYPE == 'simple') {
                 this.formatSimpleTestTree(tempObj)
             } else {

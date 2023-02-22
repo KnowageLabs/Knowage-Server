@@ -7,23 +7,23 @@
                         {{ $t('managers.newsManagement.title') }}
                     </template>
                     <template #end>
-                        <FabButton icon="fas fa-plus" @click="showForm" data-test="open-form-button" />
+                        <FabButton icon="fas fa-plus" data-test="open-form-button" @click="showForm" />
                     </template>
                 </Toolbar>
-                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+                <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
                 <Listbox
                     v-if="!loading"
                     class="kn-list--column"
                     :options="newsList"
-                    listStyle="max-height:calc(100% - 62px)"
+                    list-style="max-height:calc(100% - 62px)"
                     :filter="true"
-                    :filterPlaceholder="$t('common.search')"
-                    optionLabel="name"
-                    filterMatchMode="contains"
-                    :filterFields="newsManagementDescriptor.filterFields"
-                    :emptyFilterMessage="$t('managers.newsManagement.noResults')"
-                    @change="showForm"
+                    :filter-placeholder="$t('common.search')"
+                    option-label="name"
+                    filter-match-mode="contains"
+                    :filter-fields="newsManagementDescriptor.filterFields"
+                    :empty-filter-message="$t('managers.newsManagement.noResults')"
                     data-test="news-list"
+                    @change="showForm"
                 >
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
@@ -33,7 +33,7 @@
                                 <span>{{ slotProps.option.title }}</span>
                                 <span class="kn-list-item-text-secondary">{{ slotProps.option.description }}</span>
                             </div>
-                            <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" @click.stop="deleteNewsConfirm(slotProps.option)" data-test="delete-button" />
+                            <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" data-test="delete-button" @click.stop="deleteNewsConfirm(slotProps.option)" />
                         </div>
                     </template>
                 </Listbox>
@@ -64,6 +64,10 @@ export default defineComponent({
         FabButton,
         Listbox
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             newsManagementDescriptor,
@@ -71,10 +75,6 @@ export default defineComponent({
             touched: false,
             loading: false
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         await this.loadAllNews()

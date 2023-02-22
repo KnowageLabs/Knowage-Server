@@ -1,4 +1,4 @@
-let routes = [
+const routes = [
     {
         path: '/domains-management',
         name: 'domains-management',

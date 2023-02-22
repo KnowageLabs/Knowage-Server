@@ -1,6 +1,6 @@
 <template>
     <div v-show="widgetModel">
-        <SelectionsWidgetSettingsAccordion v-show="selectedSetting" :widgetModel="widgetModel" :settings="descriptor.settings[selectedSetting]" :datasets="datasets" :selectedDatasets="selectedDatasets" :variables="variables"></SelectionsWidgetSettingsAccordion>
+        <SelectionsWidgetSettingsAccordion v-show="selectedSetting" :widget-model="widgetModel" :settings="descriptor.settings[selectedSetting]" :datasets="datasets" :selected-datasets="selectedDatasets" :variables="variables"></SelectionsWidgetSettingsAccordion>
     </div>
 </template>
 

@@ -6,21 +6,21 @@
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" />
         </template>
     </Toolbar>
-    <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+    <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
     <div class="kn-page-content">
         <TabView class="kn-tab kn-tab-overflow-visible" data-test="tab-view">
             <TabPanel>
                 <template #header>
                     <span>{{ $t('managers.mondrianSchemasManagement.detail.title') }}</span>
                 </template>
-                <MondrianSchemasDetailTab :selectedSchema="selectedSchema" :reloadTable="reloadVersionTable" @fieldChanged="onFieldChange" @activeVersionChanged="onVersionChange" @versionUploaded="versionToSave = $event" @versionsReloaded="reloadVersionTable = false" />
+                <MondrianSchemasDetailTab :selected-schema="selectedSchema" :reload-table="reloadVersionTable" @fieldChanged="onFieldChange" @activeVersionChanged="onVersionChange" @versionUploaded="versionToSave = $event" @versionsReloaded="reloadVersionTable = false" />
             </TabPanel>
 
             <TabPanel>
                 <template #header>
                     <span>{{ $t('managers.mondrianSchemasManagement.workFlow.title') }}</span>
                 </template>
-                <MondrianSchemasWorkflowTab :isChanged="isWorkflowChanged" :selectedSchema="selectedSchema" :usersList="availableUsersList" @selectedUsersChanged="onSelectedUsersChange" @changed="emitTouched" />
+                <MondrianSchemasWorkflowTab :is-changed="isWorkflowChanged" :selected-schema="selectedSchema" :users-list="availableUsersList" @selectedUsersChanged="onSelectedUsersChange" @changed="emitTouched" />
             </TabPanel>
         </TabView>
     </div>
@@ -45,12 +45,16 @@ export default defineComponent({
         MondrianSchemasDetailTab,
         MondrianSchemasWorkflowTab
     },
-    emits: ['touched', 'closed', 'inserted'],
     props: {
         id: {
             type: String,
             required: false
         }
+    },
+    emits: ['touched', 'closed', 'inserted'],
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     data() {
         return {
@@ -66,15 +70,6 @@ export default defineComponent({
             touched: false,
             isWorkflowChanged: false
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
-    async created() {
-        await this.loadAllUsers()
-        this.loadSelectedSchema()
-        this.clearAvailableUsersList()
     },
     computed: {
         buttonDisabled(): any {
@@ -97,6 +92,11 @@ export default defineComponent({
             this.touched = false
             this.isWorkflowChanged = false
         }
+    },
+    async created() {
+        await this.loadAllUsers()
+        this.loadSelectedSchema()
+        this.clearAvailableUsersList()
     },
     methods: {
         emitTouched() {
@@ -207,7 +207,7 @@ export default defineComponent({
             this.touched = false
         },
         async updateWorkflow(schemaId) {
-            let url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/workflow/update`
+            const url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/workflow/update`
             await this.$http.put(url, { modelId: schemaId, workflowArr: this.availableUsersList[1] }, { headers: { Accept: 'application/json, text/plain, */*' } }).then(() => {
                 this.store.setInfo({
                     title: this.$t('managers.mondrianSchemasManagement.toast.workflow.updated'),
@@ -219,9 +219,9 @@ export default defineComponent({
             if (!this.versionToSave) {
                 return
             }
-            var formData = new FormData()
+            const formData = new FormData()
             formData.append('file', this.versionToSave)
-            let url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/${this.selectedSchema.id}` + '/versions'
+            const url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/${this.selectedSchema.id}` + '/versions'
             await this.$http.post(url, formData, { headers: { 'Content-Type': 'multipart/form-data' } }).then((response: AxiosResponse<any>) => {
                 if (response.data.errors) {
                     this.store.setError({ title: this.$t('managers.mondrianSchemasManagement.toast.uploadFile.error'), msg: response.data.errors })

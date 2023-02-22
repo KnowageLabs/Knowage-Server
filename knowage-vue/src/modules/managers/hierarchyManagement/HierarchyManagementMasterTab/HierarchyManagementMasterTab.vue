@@ -2,9 +2,9 @@
     <div class="p-d-flex p-flex-row">
         <HierarchyManagementDimensionsCard
             :dimensions="dimensions"
-            :selectedHierarchy="selectedHierarchy"
-            :validityTreeDate="validityTreeDate"
-            :hierarchyType="hierarchyType"
+            :selected-hierarchy="selectedHierarchy"
+            :validity-tree-date="validityTreeDate"
+            :hierarchy-type="hierarchyType"
             @synchronized="onSynchronized"
             @dimensionSelected="setSelectedDimension"
             @loading="$emit('loading', $event)"
@@ -14,12 +14,12 @@
             @masterHierarchyCreated="onMasterHierarchyCreated"
         />
         <HierarchyManagementHierarchiesCard
-            :selectedDimension="selectedDimension"
-            :nodeMetadata="nodeMetadata"
-            :validityDate="validityDate"
-            :dimensionMetadata="dimensionMetadata"
-            :synchronizationTrigger="synchronizationTrigger"
-            :reloadHierarchiesTrigger="reloadHierarchiesTrigger"
+            :selected-dimension="selectedDimension"
+            :node-metadata="nodeMetadata"
+            :validity-date="validityDate"
+            :dimension-metadata="dimensionMetadata"
+            :synchronization-trigger="synchronizationTrigger"
+            :reload-hierarchies-trigger="reloadHierarchiesTrigger"
             @loading="$emit('loading', $event)"
             @hierarchyTypeSelected="onHierarchyTypeSelected"
             @hierarchySelected="onHierarchySelected"

@@ -8,12 +8,10 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
 import VCodeMirror from 'codemirror-editor-vue3'
-import TieredMenu from 'primevue/tieredmenu'
-import TagsDialog from '../../common/editor/WidgetTagsDialog.vue'
 
 export default defineComponent({
     name: 'custom-chart-html-editor',
-    components: { VCodeMirror, TieredMenu, TagsDialog },
+    components: { VCodeMirror },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
         activeIndex: { type: Number, required: true }
