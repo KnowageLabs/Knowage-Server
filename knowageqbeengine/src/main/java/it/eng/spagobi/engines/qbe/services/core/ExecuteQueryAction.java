@@ -123,12 +123,12 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 
 			Object fieldNameO = getAttribute("fieldName");
 			if (fieldNameO != null && !fieldNameO.toString().equals("")) {
-				fieldName = null;
+				fieldName = getAttributeAsString("fieldName");
 			}
 
 			Object orderTypeO = getAttribute("orderType");
-			if (orderTypeO != null && !orderTypeO.toString().equals("")) {
-				orderType = null;
+			if (orderTypeO != null && !orderTypeO.toString().equals("") && !orderTypeO.toString().equals("NONE")) {
+				orderType = getAttributeAsString("orderType");
 			}
 
 			Assert.assertNotNull(getEngineInstance(),
