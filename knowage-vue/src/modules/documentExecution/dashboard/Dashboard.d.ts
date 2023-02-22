@@ -217,7 +217,7 @@ export interface IWidgetPreview {
     dataset: number
     column?: string
     directDownload: boolean
-    icon?: stirng
+    icon?: string
 }
 
 export interface IWidgetSelection {
@@ -582,7 +582,7 @@ export interface IIcon {
     id: number
     label: string
     unicode: string
-    visible: booleam
+    visible: boolean
 }
 
 export interface IWidgetStyleToolbarModel {
@@ -685,4 +685,27 @@ export interface IDashboardCrossNavigation {
     documentId: number,
     navigationParams: any,
     popupOptions: any
+}
+
+
+export interface IDashboardOutputParameter {
+    biObjectId: number,
+    formatCode: string | null,
+    formatValue: string | null,
+    id: number,
+    isUserDefined: boolean,
+    name: string,
+    type: IDashboardOutputParameterType
+}
+
+// TODO - see if needed, valueCd could be usefull
+interface IDashboardOutputParameterType {
+    domainCode: string,
+    domainName: string,
+    translatedValueDescription: string,
+    translatedValueName: string,
+    valueCd: string,
+    valueDescription: string,
+    valueId: number,
+    valueName: string
 }

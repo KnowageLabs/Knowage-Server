@@ -1,5 +1,6 @@
 <template>
     <div v-if="crossNavigationModel" class="p-grid p-jc-center p-ai-center p-p-4">
+        {{ crossNavigationModel }}
         <div class="p-grid p-col-12 p-ai-center">
             <div v-if="!['chart', 'image', 'customchart'].includes(widgetModel.type)" class="p-col-6 p-sm-12 p-md-6 p-d-flex p-flex-column kn-flex p-px-2">
                 <label class="kn-material-input-label"> {{ $t('common.type') }}</label>
@@ -18,12 +19,13 @@
             </div>
         </div>
         <div class="p-grid p-col-12 p-ai-center">
-            <div v-if="widgetModel.type !== 'image' && widgetModel.type !== 'customchart'" class="p-sm-12 p-md-5 p-d-flex p-flex-row p-ai-center p-px-2">
+            <!-- TODO - FOR REMOVE ?!! -->
+            <!-- <div v-if="widgetModel.type !== 'image' && widgetModel.type !== 'customchart'" class="p-sm-12 p-md-5 p-d-flex p-flex-row p-ai-center p-px-2">
                 <div class="p-d-flex p-flex-column kn-flex">
                     <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
                     <Dropdown v-model="crossNavigationModel.column" class="kn-material-input" :options="widgetModel.columns" option-label="alias" option-value="id" :disabled="crossNavigationDisabled"> </Dropdown>
                 </div>
-            </div>
+            </div> -->
             <div class="p-sm-10 p-md-5 p-d-flex p-flex-row p-ai-center">
                 <div class="p-d-flex p-flex-column kn-flex p-mx-2">
                     <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.interactions.crossNavigationName') }}</label>

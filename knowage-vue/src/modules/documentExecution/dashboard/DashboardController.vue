@@ -49,7 +49,7 @@ import { AxiosResponse } from 'axios'
 import { v4 as uuidv4 } from 'uuid'
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
 import { IDashboardDataset, ISelection, IWidget, IGalleryItem, IDataset } from './Dashboard'
-import { emitter, createNewDashboardModel, formatDashboardForSave, formatNewModel, loadDatasets } from './DashboardHelpers'
+import { emitter, createNewDashboardModel, formatDashboardForSave, formatNewModel, loadDatasets, getFormattedOutputParameters } from './DashboardHelpers'
 import { mapActions, mapState } from 'pinia'
 import { formatModel } from './helpers/DashboardBackwardCompatibilityHelper'
 import { setDatasetIntervals, clearAllDatasetIntervals } from './helpers/datasetRefresh/DatasetRefreshHelpers'
@@ -138,6 +138,7 @@ export default defineComponent({
             this.setDashboardDrivers(this.dashboardId, this.drivers)
             this.loadHtmlGallery()
             this.loadCustomChartGallery()
+            this.loadOutputParameters()
             await this.loadCrossNavigations()
             this.loading = false
         },
@@ -180,7 +181,7 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => (this.crossNavigations = response.data))
                 .catch(() => {})
             this.appStore.setLoading(false)
-            console.log('------- loaded cross navigations: ', this.crossNavigations)
+            //('------- loaded cross navigations: ', this.crossNavigations)
             this.store.setCrossNavigations(this.dashboardId, this.crossNavigations)
         },
         async loadHtmlGallery() {
@@ -198,8 +199,9 @@ export default defineComponent({
         loadOutputParameters() {
             if (this.newDashboardMode) return
             // TODO - Remove Mocked Output Parameters
-            const mockedParameters = descriptor.mockedOutputParameters
-            this.store.setOutputParameters(this.dashboardId, mockedParameters)
+            // console.log('----- Dashboard Controller --------- document: ', this.document)
+            const formattedOutputParameters = this.document ? getFormattedOutputParameters(this.document.outputParameters) : []
+            this.store.setOutputParameters(this.dashboardId, formattedOutputParameters)
         },
 
         loadProfileAttributes() {
@@ -319,9 +321,9 @@ export default defineComponent({
             emitter.emit('dashboardGeneralSettingsClosed')
         },
         executeCrossNavigation(payload: any) {
-            console.log('------- CROSS NAVIGATION PAYLOAD: ', payload)
+            // console.log('------- CROSS NAVIGATION PAYLOAD: ', payload)
             const crossNavigations = this.getCrossNavigations(this.dashboardId)
-            console.log('------- CROSS NAVIGATION crossNavigations: ', crossNavigations)
+            // console.log('------- CROSS NAVIGATION crossNavigations: ', crossNavigations)
             payload.crossNavigations = crossNavigations
             this.$emit('executeCrossNavigation', payload)
         }
