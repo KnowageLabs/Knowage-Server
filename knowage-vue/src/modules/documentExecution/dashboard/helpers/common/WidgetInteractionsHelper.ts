@@ -71,6 +71,7 @@ export const getFormattedCrossNavigation = (widget: any) => {
 
 const getFormattedCrossNavigationParameters = (outputParameterList: any) => {
     const formattedParameters = [] as IWidgetInteractionParameter[]
+    // TODO - put the 'MAIN' Parameter from list and format it here
     if (outputParameterList) {
         Object.keys(outputParameterList).forEach((key: string) => {
             const tempParameter = outputParameterList[key]

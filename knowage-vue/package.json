@@ -6,7 +6,7 @@
     "scripts": {
         "test": "vitest",
         "coverage": "vitest run --coverage",
-        "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
+        "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src --quiet",
         "dev": "vite",
         "build": "vite build"
     },
