@@ -1,8 +1,8 @@
 <template>
-    <div v-if="widgetModel">
+    <div v-if="widget">
         <WidgetEditorColumnTable
             class="p-m-2"
-            :widget-model="widgetModel"
+            :widget-model="widget"
             :items="columnTableItems['ATTRIBUTES'] ?? []"
             :settings="{ ...commonDescriptor.columnTableSettings, ...chartJSDescriptor.pieChartColumnTableSettings[0] }"
             chart-type="chartJSPieChart"
@@ -14,7 +14,7 @@
         ></WidgetEditorColumnTable>
         <WidgetEditorColumnTable
             class="p-m-2"
-            :widget-model="widgetModel"
+            :widget-model="widget"
             :items="columnTableItems['MEASURES'] ?? []"
             :settings="{ ...commonDescriptor.columnTableSettings, ...chartJSDescriptor.pieChartColumnTableSettings[1] }"
             chart-type="chartJSPieChart"
@@ -23,7 +23,7 @@
             @itemSelected="setSelectedColumn"
             @itemDeleted="onColumnDelete"
         ></WidgetEditorColumnTable>
-        <ChartWidgetColumnForm class="p-m-2" :widget-model="widgetModel" :selected-column="selectedColumn"></ChartWidgetColumnForm>
+        <ChartWidgetColumnForm class="p-m-2" :widget-model="widget" :selected-column="selectedColumn"></ChartWidgetColumnForm>
     </div>
 </template>
 
@@ -44,6 +44,7 @@ export default defineComponent({
     data() {
         return {
             descriptor,
+            widget: {} as IWidget,
             chartJSDescriptor,
             commonDescriptor,
             columnTableItems: {} as any,
@@ -56,15 +57,19 @@ export default defineComponent({
         }
     },
     async created() {
-        this.$watch('widgetModel.columns', () => this.loadColumnTableItems())
+        this.loadWidget()
+        this.$watch('widget.columns', () => this.loadColumnTableItems())
         this.loadColumnTableItems()
     },
     methods: {
+        loadWidget() {
+            this.widget = this.widgetModel
+        },
         loadColumnTableItems() {
             this.columnTableItems = []
             this.columnTableItems['ATTRIBUTES'] = []
             this.columnTableItems['MEASURES'] = []
-            this.widgetModel.columns.forEach((column: IWidgetColumn) => {
+            this.widget.columns.forEach((column: IWidgetColumn) => {
                 const type = column.fieldType == 'MEASURE' ? 'MEASURES' : 'ATTRIBUTES'
                 if ((type === 'MEASURES' && this.columnTableItems['MEASURES'].length === 1) || (type === 'ATTRIBUTES' && this.columnTableItems['ATTRIBUTES'].length === 1)) return
                 this.columnTableItems[type].push(column)
@@ -72,9 +77,9 @@ export default defineComponent({
         },
         onColumnsReorder(columns: IWidgetColumn[]) {
             this.columnTableItems['ATTRIBUTES'] = columns
-            this.widgetModel.columns = this.columnTableItems['ATTRIBUTES'].concat(this.columnTableItems['MEASURES'])
-            emitter.emit('columnsReordered', this.widgetModel.columns)
-            emitter.emit('refreshWidgetWithData', this.widgetModel.id)
+            this.widget.columns = this.columnTableItems['ATTRIBUTES'].concat(this.columnTableItems['MEASURES'])
+            emitter.emit('columnsReordered', this.widget.columns)
+            emitter.emit('refreshWidgetWithData', this.widget.id)
         },
         onColumnAdded(payload: { column: IWidgetColumn; rows: IWidgetColumn[]; settings: any }) {
             if (!payload.rows) this.columnTableItems['MEASURES'] = [payload]
@@ -85,27 +90,27 @@ export default defineComponent({
             this.updateWidgetColumns()
         },
         updateWidgetColumns() {
-            this.widgetModel.columns = this.columnTableItems['ATTRIBUTES'].concat(this.columnTableItems['MEASURES'])
-            emitter.emit('refreshWidgetWithData', this.widgetModel.id)
+            this.widget.columns = this.columnTableItems['ATTRIBUTES'].concat(this.columnTableItems['MEASURES'])
+            emitter.emit('refreshWidgetWithData', this.widget.id)
         },
         onColumnItemUpdate(column: IWidgetColumn) {
-            const index = this.widgetModel.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === column.id)
+            const index = this.widget.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === column.id)
             if (index !== -1) {
-                this.widgetModel.columns[index] = { ...column }
-                emitter.emit('refreshWidgetWithData', this.widgetModel.id)
-                if (this.widgetModel.columns[index].id === this.selectedColumn?.id) this.selectedColumn = { ...this.widgetModel.columns[index] }
+                this.widget.columns[index] = { ...column }
+                emitter.emit('refreshWidgetWithData', this.widget.id)
+                if (this.widget.columns[index].id === this.selectedColumn?.id) this.selectedColumn = { ...this.widget.columns[index] }
             }
         },
         setSelectedColumn(column: IWidgetColumn) {
             this.selectedColumn = { ...column }
         },
         onColumnDelete(column: IWidgetColumn) {
-            const index = this.widgetModel.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === column.id)
+            const index = this.widget.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === column.id)
             if (index !== -1) {
-                this.widgetModel.columns.splice(index, 1)
+                this.widget.columns.splice(index, 1)
                 if (column.id === this.selectedColumn?.id) this.selectedColumn = null
                 this.removeColumnFromColumnTableItems(column)
-                emitter.emit('refreshWidgetWithData', this.widgetModel.id)
+                emitter.emit('refreshWidgetWithData', this.widget.id)
             }
         },
         removeColumnFromColumnTableItems(column: IWidgetColumn) {

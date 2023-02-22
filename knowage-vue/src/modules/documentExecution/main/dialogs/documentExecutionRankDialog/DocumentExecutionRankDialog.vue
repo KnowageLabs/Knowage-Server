@@ -35,7 +35,7 @@ import Rating from 'primevue/rating'
 export default defineComponent({
     name: 'document-execution-help-dialog',
     components: { Dialog, Rating },
-    props: { visible: { type: Boolean }, propDocumentRank: { type: Object as PropType<String | null> } },
+    props: { visible: { type: Boolean }, propDocumentRank: { type: Object as PropType<string | null> } },
     emits: ['close', 'saveRank'],
     data() {
         return {
