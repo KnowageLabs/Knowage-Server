@@ -9,13 +9,11 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
-import Checkbox from 'primevue/checkbox'
-import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 
 export default defineComponent({
     name: 'pivot-table-settings-accordion-header',
-    components: { Checkbox, Dropdown, InputSwitch },
+    components: { InputSwitch },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, title: { type: String }, type: { type: String, required: true } },
     data() {
         return {

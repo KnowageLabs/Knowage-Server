@@ -428,7 +428,7 @@ export default defineComponent({
             if (!this.editorMode) {
                 if (node.colDef.measure == 'MEASURE' || node.colDef.pinned || node.value === '' || node.value == undefined) return
                 //SELECTION LOGIC -------------------------------------------------------------------
-                var modalSelection = this.propWidget.settings.interactions.selection
+                const modalSelection = this.propWidget.settings.interactions.selection
 
                 if (modalSelection.enabled) {
                     if (modalSelection.multiselection.enabled) {
