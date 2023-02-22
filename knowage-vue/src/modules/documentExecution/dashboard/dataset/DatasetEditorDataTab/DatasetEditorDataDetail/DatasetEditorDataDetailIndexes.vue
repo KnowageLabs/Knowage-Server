@@ -28,7 +28,16 @@ export default defineComponent({
     emits: [],
     data() {
         return {
-            descriptor
+            descriptor,
+            selectedDataset: {} as any
+        }
+    },
+    watch: {
+        selectedDatasetProp: {
+            handler() {
+                this.selectedDataset = this.selectedDatasetProp
+            },
+            deep: true
         }
     }
 })
