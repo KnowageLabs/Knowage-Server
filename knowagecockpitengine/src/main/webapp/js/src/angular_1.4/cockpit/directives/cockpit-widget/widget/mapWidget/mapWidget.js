@@ -1412,7 +1412,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.animationStatus = {};
 		
 		$scope.getAnimatedLayers = function() {
-			return $scope.ngModel.content.layers.filter($scope.isLayerAnimated);
+			var layers = $scope.ngModel.content.layers || [];
+
+			return layers.filter($scope.isLayerAnimated);
 		}
 
 		$scope.toggleAnimation = function(layerName) {
@@ -1533,7 +1535,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.hasAnimatedLayer = function() {
-			var layers = $scope.ngModel.content.layers;
+			var layers = $scope.ngModel.content.layers || [];
 
 			return layers.find($scope.isLayerAnimated) != undefined;
 		}
