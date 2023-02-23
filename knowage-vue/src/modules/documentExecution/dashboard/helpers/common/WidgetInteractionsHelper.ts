@@ -57,21 +57,32 @@ const getFormattedChartSelection = () => {
 
 export const getFormattedCrossNavigation = (widget: any) => {
     if (!widget.cross || !widget.cross.cross) return widgetCommonDefaultValues.getDefaultCrossNavigation()
-    console.log('------------- widget: ', widget)
-    console.log('------------- widget cross: ', widget.cross)
+    const formattedParameters = [] as IWidgetInteractionParameter[]
+    if (widget.cross.cross.outputParameter) addFormattedFirstCrossNavigationParameter(widget.cross.cross, formattedParameters)
+    if (widget.cross.cross.outputParametersList) addFormattedCrossNavigationParameters(widget.cross.cross.outputParametersList, formattedParameters)
     return {
         enabled: widget.cross.cross.enable,
         type: widget.cross.cross.crossType,
         icon: widget.cross.cross.icon ? widget.cross.cross.icon.trim() : '',
-        column: getColumnId(widget.cross.cross.column),
+        column: widget.cross.cross.column,
         name: widget.cross.cross.crossName,
-        parameters: widget.cross.cross.outputParametersList ? getFormattedCrossNavigationParameters(widget.cross.cross.outputParametersList) : []
+        parameters: formattedParameters
     }
 }
 
-const getFormattedCrossNavigationParameters = (outputParameterList: any) => {
-    const formattedParameters = [] as IWidgetInteractionParameter[]
-    // TODO - put the 'MAIN' Parameter from list and format it here
+const addFormattedFirstCrossNavigationParameter = (oldWidgetCrossNavigation: any, formattedParameters: IWidgetInteractionParameter[]) => {
+    const formattedParameter = {
+        enabled: true,
+        name: oldWidgetCrossNavigation.outputParameter,
+        type: 'dynamic',
+        value: '',
+        column: oldWidgetCrossNavigation.column
+    } as IWidgetInteractionParameter
+    delete oldWidgetCrossNavigation.outputParametersList[oldWidgetCrossNavigation.outputParameter]
+    formattedParameters.push(formattedParameter)
+}
+
+const addFormattedCrossNavigationParameters = (outputParameterList: any, formattedParameters: IWidgetInteractionParameter[]) => {
     if (outputParameterList) {
         Object.keys(outputParameterList).forEach((key: string) => {
             const tempParameter = outputParameterList[key]
@@ -81,8 +92,8 @@ const getFormattedCrossNavigationParameters = (outputParameterList: any) => {
                 type: tempParameter.type,
                 value: tempParameter.value
             } as IWidgetInteractionParameter
-            if (tempParameter) formattedParameter.column = tempParameter.column
-            if (tempParameter) formattedParameter.dataset = tempParameter.dataset
+            if (tempParameter.column) formattedParameter.column = tempParameter.column
+            if (tempParameter.dataset) formattedParameter.dataset = tempParameter.dataset
             formattedParameters.push(formattedParameter)
         })
     }
