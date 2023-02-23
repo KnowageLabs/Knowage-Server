@@ -55,6 +55,7 @@ export default defineComponent({
         }
     },
     created() {
+        this.dashboardAssociations = this.dashboardAssociationsProp as IAssociation[]
         this.loadSelectedDatasets()
     },
     methods: {

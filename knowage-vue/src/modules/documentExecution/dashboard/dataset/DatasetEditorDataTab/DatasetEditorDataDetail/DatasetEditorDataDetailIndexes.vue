@@ -39,6 +39,9 @@ export default defineComponent({
             },
             deep: true
         }
+    },
+    created() {
+        this.selectedDataset = this.selectedDatasetProp
     }
 })
 </script>
