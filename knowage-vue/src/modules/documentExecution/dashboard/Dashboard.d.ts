@@ -1,12 +1,4 @@
-import { ISelectionsWidgetSettings } from '@/modules/documentExecution/dashboard/interfaces/DashboardSelectionsWidget'
-import { IChartJSWidgetSettings } from './interfaces/chartJS/DashboardChartJSWidget'
-import { ICustomChartWidgetSettings } from './interfaces/customChart/DashboardCustomChartWidget'
-import { IHTMLWidgetSettings } from './interfaces/DashboardHTMLWidget'
-import { IImageWidgetSettings } from './interfaces/DashboardImageWidget'
-import { ISelectorWidgetSettings } from './interfaces/DashboardSelectorWidget'
-import { ITextWidgetSettings } from './interfaces/DashboardTextWidget'
-import { IDrillOrderItem, IHighchartsDrilldown, IHighchartsWidgetSettings } from './interfaces/highcharts/DashboardHighchartsWidget'
-import { IPivotTableSettings } from './interfaces/pivotTable/DashboardPivotTableWidget'
+import { IDrillOrderItem, IHighchartsDrilldown } from './interfaces/highcharts/DashboardHighchartsWidget'
 
 export interface IDashboard {
     sheets: []
@@ -44,7 +36,7 @@ export interface IWidget {
     dataset: number | null
     type: string
     columns: IWidgetColumn[]
-    settings: ITableWidgetSettings | ISelectionsWidgetSettings | ISelectorWidgetSettings | IHTMLWidgetSettings | ITextWidgetSettings | IHighchartsWidgetSettings | IChartJSWidgetSettings | IImageWidgetSettings | ICustomChartWidgetSettings | IPivotTableSettings
+    settings: any
     new?: boolean
 }
 

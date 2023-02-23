@@ -1,4 +1,4 @@
-import { IWidget, ITableWidgetColumnGroup, IDataset } from '../../Dashboard'
+import { IWidget, ITableWidgetColumnGroup, IDataset, IWidgetCrossNavigation, IWidgetColumn } from '../../Dashboard'
 
 export const getColumnGroup = (propWidget: IWidget, col: ITableWidgetColumnGroup) => {
     var modelGroups = propWidget.settings.configuration.columnGroups.groups
@@ -87,4 +87,19 @@ export const createNewTableSelection = (value: (string | number)[], columnName: 
 const getDatasetLabel = (datasetId: number, datasets: IDataset[]) => {
     const index = datasets.findIndex((dataset: IDataset) => dataset.id.dsId == datasetId)
     return index !== -1 ? datasets[index].label : ''
+}
+
+export const formatRowDataForCrossNavigation = (tableNode: any, dataToShow: any) => {
+    const columnDefs = tableNode.columnApi?.columnModel?.columnDefs
+    const rowData = tableNode.node.data
+    if (!columnDefs || !rowData) return {}
+    const formattedRow = {}
+    columnDefs.forEach((columnDef: any) => formattedRow[columnDef.columnName] = { value: rowData[columnDef.field], type: getColumnType(columnDef.field, dataToShow) })
+    return formattedRow
+}
+
+const getColumnType = (columnField: string, dataToShow: any) => {
+    if (!dataToShow.metaData || !dataToShow.metaData.fields) return ''
+    const index = dataToShow.metaData.fields.findIndex((field: any) => field.name === columnField)
+    return index !== -1 ? dataToShow.metaData.fields[index].type : ''
 }
