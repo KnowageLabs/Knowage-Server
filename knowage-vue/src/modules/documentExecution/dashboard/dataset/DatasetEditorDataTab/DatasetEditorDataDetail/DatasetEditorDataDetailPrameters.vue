@@ -105,6 +105,7 @@ export default defineComponent({
         }
     },
     async created() {
+        this.selectedDataset = this.selectedDatasetProp
         this.loadDrivers()
     },
     methods: {

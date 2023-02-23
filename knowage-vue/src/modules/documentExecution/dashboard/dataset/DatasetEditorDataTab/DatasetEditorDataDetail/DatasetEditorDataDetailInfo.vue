@@ -68,7 +68,9 @@ export default defineComponent({
             return (this.selectedDatasetProp.isCachingSupported && !this.selectedDatasetProp.isNearRealtimeSupported) || (!this.selectedDatasetProp.isCachingSupported && this.selectedDatasetProp.isNearRealtimeSupported) || this.selectedDatasetProp.isRealtime
         }
     },
-    async created() {},
+    async created() {
+        this.selectedDataset = this.selectedDatasetProp
+    },
     methods: {}
 })
 </script>
