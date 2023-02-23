@@ -125,7 +125,14 @@ const getValueAndDescriptionForFilterServiceFromSourceDocumentDriverCrossNavigat
 
 const getValueForFilterServiceFromSourceDocumentOutputParameter = (formattedCrossNavigationParameter: ICrossNavigationParameter) => {
     console.log('--------------------- formattedCrossNavigationParameter: ', formattedCrossNavigationParameter)
-    return ''
+    // TODO - CONTINUE HERE, SEE ABOUT DATE DRIVERS
+    // console.log('---------- test: ', formattedCrossNavigationParameter.parameterValue.join(';'))
+    if (formattedCrossNavigationParameter.multivalue) {
+        return '' // todo
+    } else {
+        return formattedCrossNavigationParameter.parameterValue[0] ? formattedCrossNavigationParameter.parameterValue[0].value : ''
+    }
+
 }
 
 const createCrossNavigationParameterFromSourceDocumentDriver = (sourceDocumentDriver: iParameter | null, targetDriverUrlName: string) => {
