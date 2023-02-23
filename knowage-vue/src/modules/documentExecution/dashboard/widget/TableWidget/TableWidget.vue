@@ -425,7 +425,7 @@ export default defineComponent({
             if (this.propWidget.settings.interactions.crossNavigation.enabled) {
                 const formattedRow = formatRowDataForCrossNavigation(node, this.dataToShow)
                 const formattedClickedValue = getFormattedClickedValueForCrossNavigation(node, this.dataToShow)
-                executeTableWidgetCrossNavigation(formattedClickedValue, formattedRow, this.propWidget.settings.interactions.crossNavigation)
+                executeTableWidgetCrossNavigation(formattedClickedValue, formattedRow, this.propWidget.settings.interactions.crossNavigation, this.dashboardId)
                 return
             }
 

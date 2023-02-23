@@ -110,7 +110,7 @@
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
-import { iURLData, iExporter, iSchedulation, ICrossNavigationBreadcrumb } from './DocumentExecution'
+import { iURLData, iExporter, iSchedulation, ICrossNavigationBreadcrumb, ICrossNavigationParameter } from './DocumentExecution'
 import { createToolbarMenuItems } from './DocumentExecutionHelpers'
 import { emitter } from '../dashboard/DashboardHelpers'
 import DocumentExecutionBreadcrumb from './breadcrumbs/DocumentExecutionBreadcrumb.vue'
@@ -137,6 +137,7 @@ import { getCorrectRolesForExecution } from '../../../helpers/commons/roleHelper
 import { executeAngularCrossNavigation, loadCrossNavigation } from './DocumentExecutionAngularCrossNavigationHelper'
 import { getDocumentForCrossNavigation, updateBreadcrumbForCrossNavigation } from './DocumentExecutionCrossNavigationHelper'
 import { loadFilters } from './DocumentExecutionDirverHelpers'
+import { IDashboardCrossNavigation } from '../dashboard/Dashboard'
 
 // @ts-ignore
 // eslint-disable-next-line
@@ -1084,7 +1085,7 @@ export default defineComponent({
             }
             this.newDashboardMode = false
         },
-        async onExecuteCrossNavigation(payload: any) {
+        async onExecuteCrossNavigation(payload: { documentCrossNavigationOutputParameters: ICrossNavigationParameter[]; crossNavigationName: string | undefined; crossNavigations: IDashboardCrossNavigation[] }) {
             this.document = getDocumentForCrossNavigation(payload, this.filtersData)
             // console.log('!!!!!!!!! DOCUMENT: ', this.document)
             updateBreadcrumbForCrossNavigation(this.breadcrumbs, this.document)

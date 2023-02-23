@@ -2,6 +2,8 @@ import { IDashboard, IDataset, ISelection, IWidgetCrossNavigation, IWidgetIntera
 import { ICrossNavigationParameter } from '@/modules/documentExecution/main/DocumentExecution'
 import { getAssociativeSelections } from './DatasetAssociationsHelper'
 import { emitter } from '../../DashboardHelpers'
+import dashboardStore from '@/modules/documentExecution/dashboard/Dashboard.store'
+import moment from "moment"
 
 interface IClickedValue { value: string, type: string }
 
@@ -16,25 +18,24 @@ export const updateStoreSelections = (newSelection: ISelection, currentActiveSel
     updateSelectionFunction(dashboardId, currentActiveSelections, $http)
 }
 
-export const executeCrossNavigation = (documentCrossNavigationOutputParameters: ICrossNavigationParameter[], crossNavigationId: number) => {
-    console.log("TODO: executeCrossNavigation() - dynamicValue: ", documentCrossNavigationOutputParameters)
-    console.log("TODO: executeCrossNavigation() - crossNavigationId: ", crossNavigationId)
-    const payload = { documentCrossNavigationOutputParameters: documentCrossNavigationOutputParameters, crossNavigationId: crossNavigationId }
+export const executeCrossNavigation = (documentCrossNavigationOutputParameters: ICrossNavigationParameter[], crossNavigationName: string | undefined) => {
+    //console.log("--- executeCrossNavigation() - documentCrossNavigationOutputParameters: ", documentCrossNavigationOutputParameters)
+    //console.log("--- executeCrossNavigation() - crossNavigationName: ", crossNavigationName)
+    const payload = { documentCrossNavigationOutputParameters: documentCrossNavigationOutputParameters, crossNavigationName: crossNavigationName }
     emitter.emit('executeCrossNavigation', payload)
 }
 
 
 
-export const executeTableWidgetCrossNavigation = (clickedValue: IClickedValue, formattedRow: any, crossNavigationModel: IWidgetCrossNavigation) => {
-    const outputParameters = getFormattedTableOutputParameters(clickedValue, formattedRow, crossNavigationModel)
+export const executeTableWidgetCrossNavigation = (clickedValue: IClickedValue, formattedRow: any, crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
+    // console.log(' ------------------------- >>>> crossNavigationModel: ', crossNavigationModel)
+    const outputParameters = getFormattedTableOutputParameters(clickedValue, formattedRow, crossNavigationModel, dashboardId)
     console.log(' ------------------------- >>>> outputParameters: ', outputParameters)
-    // const payload = { dynamicValue: dynamicValue, crossNavigationId: crossNavigationId }
-    // emitter.emit('executeCrossNavigation', payload)
+    // console.log(' ------------------------- >>>> crossNavigationModel: ', crossNavigationModel)
+    executeCrossNavigation(outputParameters, crossNavigationModel.name)
 }
 
-const getFormattedTableOutputParameters = (clickedValue: IClickedValue, formattedRow: any, crossNavigationModel: IWidgetCrossNavigation) => {
-    console.log("formattedRow ", formattedRow)
-    console.log("crossNavigationModel ", crossNavigationModel)
+const getFormattedTableOutputParameters = (clickedValue: IClickedValue, formattedRow: any, crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
     const formattedOutputParameters = [] as ICrossNavigationParameter[]
     crossNavigationModel.parameters.forEach((crossNavigationParameter: IWidgetInteractionParameter) => {
         switch (crossNavigationParameter.type) {
@@ -45,6 +46,7 @@ const getFormattedTableOutputParameters = (clickedValue: IClickedValue, formatte
                 formattedOutputParameters.push(getFormattedDynamicOutputParameter(clickedValue, crossNavigationParameter, formattedRow))
                 break
             case 'selection':
+                addSelectionTypeOutputParameter(crossNavigationParameter, formattedOutputParameters, dashboardId)
         }
     })
     return formattedOutputParameters
@@ -56,8 +58,9 @@ const getFormattedFixedOutputParameter = (crossNavigationParameter: IWidgetInter
         targetDriverUrlName: '',
         parameterValue: [{ value: value, description: value }],
         multivalue: false,
-        type: 'formSourceDocumentOutputParameter',
-        parameterType: 'string'
+        type: 'fromSourceDocumentOutputParameter',
+        parameterType: 'string',
+        outputDriverName: crossNavigationParameter.name
     } as ICrossNavigationParameter
 }
 
@@ -68,51 +71,57 @@ const getFormattedDynamicOutputParameter = (clickedValue: IClickedValue, crossNa
         targetDriverUrlName: '',
         parameterValue: [{ value: value, description: value }],
         multivalue: false,
-        type: 'formSourceDocumentOutputParameter',
-        parameterType: valueAndType ? valueAndType.type : '' // TODO
+        type: 'fromSourceDocumentOutputParameter',
+        parameterType: valueAndType ? valueAndType.type : '', // TODO
+        outputDriverName: crossNavigationParameter.name
     } as ICrossNavigationParameter
 }
 
 const getDynamicValueAndType = (clickedValue: IClickedValue, crossNavigationParameter: IWidgetInteractionParameter, formattedRow: any) => {
     // TODO - REFACTOR ?
-    if (!crossNavigationParameter.column) return { value: ['date', 'timestamp'].includes(clickedValue.type) ? getFormattedDateValue(clickedValue.value) : clickedValue.value, type: clickedValue.type }
-    console.log(' ------------------------- >>>> clickedValue: ', clickedValue)
-    console.log(' ------------------------- >>>> crossNavigationParameter: ', crossNavigationParameter)
-    console.log(' ------------------------- >>>> formattedRow: ', formattedRow)
+    if (!crossNavigationParameter.column) return { value: ['date', 'timestamp'].includes(clickedValue.type) ? getFormattedDateValue(clickedValue.value, clickedValue.type) : clickedValue.value, type: clickedValue.type }
     const rowField = formattedRow[crossNavigationParameter.column]
     if (!rowField) return null
-    const value = ['date', 'timestamp'].includes(clickedValue.type) ? getFormattedDateValue(rowField.value) : rowField.value
-    return { value: value, type: rowField.type }
+    const fieldTypeIsDate = ['date', 'timestamp'].includes(rowField.type)
+    const value = fieldTypeIsDate ? getFormattedDateValue(rowField.value, rowField.type) : rowField.value
+    return { value: value, type: fieldTypeIsDate ? 'DATE' : 'string' } // TODO
 }
 
-const getFormattedDateValue = (valueAsString: string) => {
-    console.log('------ valueAsString: ', valueAsString)
+const getFormattedDateValue = (valueAsString: string, type: string) => {
+    // console.log('------ valueAsString: ', valueAsString)
+    // console.log('------ type: ', type)
+    const format = type === 'timestamp' ? 'DD/MM/YYYY HH:mm:ss.SSS' : 'DD/MM/YYYY'
+    const date = moment(valueAsString, format)
+    return date.isValid() ? date.valueOf() : ''
 }
 
-// const getFormattedSelectionOutputParameter = (crossNavigationParameter: IWidgetInteractionParameter) => {
-//     return {}
-// }
+const addSelectionTypeOutputParameter = (crossNavigationParameter: IWidgetInteractionParameter, formattedOutputParameters: ICrossNavigationParameter[], dashboardId: string) => {
+    const tempParameter = getFormattedSelectionOutputParameter(crossNavigationParameter, dashboardId)
+    if (tempParameter) formattedOutputParameters.push(tempParameter)
+}
 
+const getFormattedSelectionOutputParameter = (crossNavigationParameter: IWidgetInteractionParameter, dashboardId: string) => {
+    const dashStore = dashboardStore()
+    const activeSelections = dashStore.getSelections(dashboardId)
+    const activeSelection = getActiveSelectionByDatasetAndColumn(crossNavigationParameter.dataset, crossNavigationParameter.column, activeSelections)
 
+    if (!activeSelection) return null
+    return {
+        targetDriverUrlName: '',
+        parameterValue: activeSelection.value.map((value: string | number) => { return { value: "" + value, description: "" + value } }), // TODO - see about DATE value
+        multivalue: activeSelection.value.length > 1,
+        type: 'fromSourceDocumentOutputParameter',
+        parameterType: 'string', // TODO - for date ?
+        outputDriverName: crossNavigationParameter.name
+    } as ICrossNavigationParameter
+}
 
-// export interface ICrossNavigationParameter {
-//     targetDriverUrlName: string,
-//     parameterValue: { value: string | number, description: string }[],
-//     multivalue: boolean,
-//     type: 'fixed' | 'fromSourceDocumentDriver' | 'formSourceDocumentOutputParameter',
-//     parameterType?: string,
-//     selectionType?: string
-// }
+const getActiveSelectionByDatasetAndColumn = (datasetLabel: string | undefined, columnName: string | undefined, activeSelections: ISelection[]) => {
+    if (!datasetLabel || !columnName) return null
+    const index = activeSelections.findIndex((selection: ISelection) => selection.datasetLabel === datasetLabel && selection.columnName === columnName)
+    return index !== -1 ? activeSelections[index] : null
+}
 
-
-
-
-
-
-// export const executeCrossNavigation = (dynamicValue: string, crossNavigation: IWidgetCrossNavigation) => {
-//     console.log("TODO: executeCrossNavigation() - dynamicValue: ", dynamicValue, ', crossNavigation: ', crossNavigation)
-//     emitter.emit('executeCrossNavigation',)
-// }
 
 export const executePreview = (datasetLabel: string) => {
     console.log("TODO: executePreview() - datasetLabel: ", datasetLabel)

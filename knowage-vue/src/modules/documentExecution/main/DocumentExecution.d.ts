@@ -79,9 +79,10 @@ export interface ICrossNavigationParameter {
     targetDriverUrlName: string,
     parameterValue: { value: string | number, description: string }[],
     multivalue: boolean,
-    type: 'fixed' | 'fromSourceDocumentDriver' | 'formSourceDocumentOutputParameter',
+    type: 'fixed' | 'fromSourceDocumentDriver' | 'fromSourceDocumentOutputParameter',
     parameterType?: string,
-    selectionType?: string
+    selectionType?: string,
+    outputDriverName?: string
 }
 
 export interface ICrossNavigationBreadcrumb {

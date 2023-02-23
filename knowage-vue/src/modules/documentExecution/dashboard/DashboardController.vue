@@ -48,7 +48,7 @@ import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import { v4 as uuidv4 } from 'uuid'
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
-import { IDashboardDataset, ISelection, IWidget, IGalleryItem, IDataset } from './Dashboard'
+import { IDashboardDataset, ISelection, IWidget, IGalleryItem, IDataset, IDashboardCrossNavigation } from './Dashboard'
 import { emitter, createNewDashboardModel, formatDashboardForSave, formatNewModel, loadDatasets, getFormattedOutputParameters } from './DashboardHelpers'
 import { mapActions, mapState } from 'pinia'
 import { formatModel } from './helpers/DashboardBackwardCompatibilityHelper'
@@ -66,6 +66,7 @@ import DashboardControllerSaveDialog from './DashboardControllerSaveDialog.vue'
 import SelectionsListDialog from './widget/SelectorWidget/SelectionsListDialog.vue'
 import DashboardGeneralSettings from './generalSettings/DashboardGeneralSettings.vue'
 import deepcopy from 'deepcopy'
+import { ICrossNavigationParameter } from '../main/DocumentExecution'
 
 export default defineComponent({
     name: 'dashboard-manager',
@@ -320,7 +321,7 @@ export default defineComponent({
             this.generalSettingsVisible = false
             emitter.emit('dashboardGeneralSettingsClosed')
         },
-        executeCrossNavigation(payload: any) {
+        executeCrossNavigation(payload: { documentCrossNavigationOutputParameters: ICrossNavigationParameter[]; crossNavigationName: string | undefined; crossNavigations: IDashboardCrossNavigation[] }) {
             // console.log('------- CROSS NAVIGATION PAYLOAD: ', payload)
             const crossNavigations = this.getCrossNavigations(this.dashboardId)
             // console.log('------- CROSS NAVIGATION crossNavigations: ', crossNavigations)
