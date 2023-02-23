@@ -15,8 +15,8 @@ import { mapActions } from 'pinia'
 import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
 import { IDataset, ISelection, IWidget } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
-import { createNewTableSelection, getColumnConditionalStyles, isConditionMet } from './TableWidgetHelper'
-import { executeCrossNavigation, updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
+import { createNewTableSelection, getColumnConditionalStyles, isConditionMet, formatRowDataForCrossNavigation } from './TableWidgetHelper'
+import { executeTableWidgetCrossNavigation, updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
 import mainStore from '../../../../../App.store'
 import dashboardStore from '../../Dashboard.store'
 import descriptor from '../../dataset/DatasetEditorDescriptor.json'
@@ -421,9 +421,12 @@ export default defineComponent({
             }
         },
         onCellClicked(node) {
-            // TODO - remove hardcoded
-            executeCrossNavigation('testValue', 713)
-            return
+            // TODO
+            if (this.propWidget.settings.interactions.crossNavigation.enabled) {
+                const formattedRow = formatRowDataForCrossNavigation(node, this.dataToShow)
+                executeTableWidgetCrossNavigation(formattedRow, this.propWidget.settings.interactions.crossNavigation)
+                return
+            }
 
             if (!this.editorMode) {
                 if (node.colDef.measure == 'MEASURE' || node.colDef.pinned || node.value === '' || node.value == undefined) return

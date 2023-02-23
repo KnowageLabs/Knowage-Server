@@ -22,6 +22,22 @@ export const executeCrossNavigation = (dynamicValue: string, crossNavigationId: 
 }
 
 
+
+export const executeTableWidgetCrossNavigation = (formattedRow: any, crossNavigationModel: IWidgetCrossNavigation) => {
+    console.log("formattedRow ", formattedRow)
+    console.log("crossNavigationModel ", crossNavigationModel)
+    // const payload = { dynamicValue: dynamicValue, crossNavigationId: crossNavigationId }
+    // emitter.emit('executeCrossNavigation', payload)
+}
+
+
+
+
+
+
+
+
+
 // export const executeCrossNavigation = (dynamicValue: string, crossNavigation: IWidgetCrossNavigation) => {
 //     console.log("TODO: executeCrossNavigation() - dynamicValue: ", dynamicValue, ', crossNavigation: ', crossNavigation)
 //     emitter.emit('executeCrossNavigation',)
@@ -30,3 +46,4 @@ export const executeCrossNavigation = (dynamicValue: string, crossNavigationId: 
 export const executePreview = (datasetLabel: string) => {
     console.log("TODO: executePreview() - datasetLabel: ", datasetLabel)
 }
+
