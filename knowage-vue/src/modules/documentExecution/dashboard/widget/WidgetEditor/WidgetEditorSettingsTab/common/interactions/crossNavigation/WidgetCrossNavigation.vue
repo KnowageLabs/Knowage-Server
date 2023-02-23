@@ -19,13 +19,6 @@
             </div>
         </div>
         <div class="p-grid p-col-12 p-ai-center">
-            <!-- TODO - FOR REMOVE ?!! -->
-            <!-- <div v-if="widgetModel.type !== 'image' && widgetModel.type !== 'customchart'" class="p-sm-12 p-md-5 p-d-flex p-flex-row p-ai-center p-px-2">
-                <div class="p-d-flex p-flex-column kn-flex">
-                    <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
-                    <Dropdown v-model="crossNavigationModel.column" class="kn-material-input" :options="widgetModel.columns" option-label="alias" option-value="id" :disabled="crossNavigationDisabled"> </Dropdown>
-                </div>
-            </div> -->
             <div class="p-sm-10 p-md-5 p-d-flex p-flex-row p-ai-center">
                 <div class="p-d-flex p-flex-column kn-flex p-mx-2">
                     <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.interactions.crossNavigationName') }}</label>

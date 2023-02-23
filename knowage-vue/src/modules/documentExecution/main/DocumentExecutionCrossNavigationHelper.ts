@@ -6,7 +6,7 @@ import deepcopy from "deepcopy"
 
 let documentCrossNavigations = [] as IDashboardCrossNavigation[]
 
-export const getDocumentForCrossNavigation = (payload: any, document: any, sourceFiltersData: { filterStatus: iParameter[], isReadyForExecution: boolean }) => {
+export const getDocumentForCrossNavigation = (payload: any, sourceFiltersData: { filterStatus: iParameter[], isReadyForExecution: boolean }) => {
     // console.log('------ doc exe onExecuteCrossNavigation: ', payload)
     documentCrossNavigations = payload.crossNavigations
     console.log('------ doc exe documentCrossNavigations: ', documentCrossNavigations)

@@ -98,6 +98,10 @@ export const formatRowDataForCrossNavigation = (tableNode: any, dataToShow: any)
     return formattedRow
 }
 
+export const getFormattedClickedValueForCrossNavigation = (tableNode: any, dataToShow: any) => {
+    return { value: tableNode.value, type: getColumnType(tableNode.colDef?.field, dataToShow) }
+}
+
 const getColumnType = (columnField: string, dataToShow: any) => {
     if (!dataToShow.metaData || !dataToShow.metaData.fields) return ''
     const index = dataToShow.metaData.fields.findIndex((field: any) => field.name === columnField)
