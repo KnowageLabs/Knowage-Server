@@ -11,7 +11,7 @@ import store from '../../Dashboard.store'
 import appStore from '../../../../../App.store'
 import { IWidget } from '../../Dashboard'
 import { parseHtml, parseText } from '../WidgetEditor/helpers/htmlParser/ParserHelper'
-import { executeCrossNavigation, executePreview, updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
+import { executeHTMLandTextWidgetCrossNavigation, executePreview, updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
 
 export default defineComponent({
     name: 'widget-component-container',
@@ -103,7 +103,7 @@ export default defineComponent({
             if (this.editorMode || !event.detail || !this.propWidget) return
             const crossValue = event.detail.crossValue
             const crossNavigationConfiguration = this.propWidget.settings.interactions.crossNavigation
-            executeCrossNavigation(crossValue, crossNavigationConfiguration)
+            executeHTMLandTextWidgetCrossNavigation(crossValue, crossNavigationConfiguration, this.dashboardId)
         }
     }
 })

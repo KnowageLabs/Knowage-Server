@@ -4,6 +4,7 @@ import { getAssociativeSelections } from './DatasetAssociationsHelper'
 import { emitter } from '../../DashboardHelpers'
 import dashboardStore from '@/modules/documentExecution/dashboard/Dashboard.store'
 import moment from "moment"
+import { CHART_TOOL_PANEL_MENU_OPTIONS } from "ag-grid-community"
 
 interface IClickedValue { value: string, type: string }
 
@@ -90,6 +91,13 @@ const getFormattedDateValue = (valueAsString: string, type: string) => {
     const date = moment(valueAsString, format)
     return date.isValid() ? date.valueOf() : ''
 }
+
+export const executeHTMLandTextWidgetCrossNavigation = (dynamicValue: string, crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
+    console.log('--------- dynamicValue: ', dynamicValue)
+    console.log('--------- crossNavigationModel: ', crossNavigationModel)
+    console.log('--------- dashboardId: ', dashboardId)
+}
+
 
 const addSelectionTypeOutputParameter = (crossNavigationParameter: IWidgetInteractionParameter, formattedOutputParameters: ICrossNavigationParameter[], dashboardId: string) => {
     const tempParameter = getFormattedSelectionOutputParameter(crossNavigationParameter, dashboardId)

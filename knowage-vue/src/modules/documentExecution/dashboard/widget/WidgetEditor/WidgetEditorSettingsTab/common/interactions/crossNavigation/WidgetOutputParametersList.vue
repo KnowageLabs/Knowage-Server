@@ -29,7 +29,7 @@
                 <label class="kn-material-input-label">{{ $t('common.value') }}</label>
                 <InputText v-model="parameter.value" class="kn-material-input p-inputtext-sm" :disabled="disabled" @change="parametersChanged" />
             </div>
-            <div v-else-if="parameter.type === 'dynamic'" class="p-sm-12 p-md-7 p-d-flex p-flex-row p-ai-center kn-flex">
+            <div v-else-if="parameter.type === 'dynamic' && ['table'].includes(widgetType)" class="p-sm-12 p-md-7 p-d-flex p-flex-row p-ai-center kn-flex">
                 <div class="p-d-flex p-flex-column kn-flex">
                     <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
                     <Dropdown v-model="parameter.column" class="kn-material-input" :options="widgetModel.columns" option-label="alias" option-value="columnName" :disabled="disabled" @change="parametersChanged"> </Dropdown>
@@ -72,6 +72,11 @@ export default defineComponent({
             parameters: [] as IWidgetInteractionParameter[],
             selectedDatasetNames: [] as string[],
             getTranslatedLabel
+        }
+    },
+    computed: {
+        widgetType() {
+            return this.widgetModel.type
         }
     },
     watch: {
