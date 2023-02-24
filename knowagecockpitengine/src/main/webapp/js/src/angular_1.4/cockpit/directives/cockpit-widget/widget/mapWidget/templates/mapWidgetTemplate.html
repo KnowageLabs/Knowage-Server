@@ -1,5 +1,5 @@
-<div layout="row" class="cockpit-map-widget" layout-fill style="position: relative;">
-	<div id="{{ngModel.content.mapId}}" class="map" style="width:100%">
+<div class="cockpit-map-widget" style="position: relative;" ng-class="getMapLayout()">
+	<div id="{{ngModel.content.mapId}}" class="map" flex>
 		<div class="optionsController" ng-click="toggleSidenav()" ng-class="{ 'sideNavOpened': sideNavOpened }" ng-if="!ngModel.controlPanelAlwaysOpen">
 			<md-tooltip>{{translate.load('sbi.cockpit.map.togglemapoptions')}}</md-tooltip>
 			<i class="fa fa-cog"></i>
@@ -19,10 +19,10 @@
 				<md-icon md-font-icon="fas" ng-class="{ 'fa-play': !animationStatus[selectedAnimatedLayerName].inPlay, 'fa-stop': animationStatus[selectedAnimatedLayerName].inPlay }"></md-icon>
 			</md-button>
 		</div>
-		<!-- <ng-include src="getTemplateUrl('mapWidgetLegendPanel')"></ng-include> -->
-		<map-widget-label-panel></map-widget-label-panel>
 	</div>
-	
+
+	<map-widget-label-panel></map-widget-label-panel>
+
 	<div id="tooltip-{{ngModel.id}}" class="ol-tooltip">
 		<span>{{ tooltip }}</span>
 	</div> 

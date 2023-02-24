@@ -1,4 +1,4 @@
-<div class="mapWidgetLegendContainer" draggable="ngModel.style.legend.position">
+<div class="mapWidgetLegendContainer" draggable="ngModel.style.legend" ng-class="ngModel.style.legend.position">
 	<!-- linear gradient -->
 	<div class="mapWidgetLegend" ng-class="ngModel.style.legend.alignment" ng-show="isShowLegend" ng-if="legend.length>0 && (!ngModel.style.legend || ngModel.style.legend.visualizationType!='Range')">
 		<button class="toggleButton" ng-click="hideLegend()"><md-icon md-font-icon="fas fa-chevron-down"></button>
@@ -34,9 +34,9 @@
 		</div>
 		<button class="toggleButton" ng-click="hideLegend()" ng-show="isShowLegend && getVisibleLayersCount()>0"><md-icon md-font-icon="fas fa-chevron-down"></button>
 	</div>
-	
+
 	<!-- fake panel when legend is hidden -->
-	<div  class="mapWidgetLegend" ng-class="ngModel.style.legend.alignment" ng-show="!isShowLegend"">
+	<div class="mapWidgetLegend toggle-legend" ng-class="ngModel.style.legend.alignment" ng-show="!isShowLegend"">
 		<span class="legendLayerLabel" flex>{{translate.load('sbi.cockpit.map.legend.label')}}</span><button class="toggleButton" ng-click="showLegend()"><md-icon md-font-icon="fas fa-chevron-up"></md-icon></button>
 	</div>
 </div>

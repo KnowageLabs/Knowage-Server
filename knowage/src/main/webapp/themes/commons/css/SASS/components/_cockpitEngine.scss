@@ -265,6 +265,11 @@
 				
 			}
 		}
+		.cockpit-map-widget {
+			height: 100%;
+			width: 100%;
+			overflow: hidden;
+		}
 		.map {
 			position: relative;
 			.ol-scale-line {
@@ -291,6 +296,8 @@
 					background-color: darken(#6690B9,15%);
 				}
 			}
+
+			order: 1;
 		}
 		
 		.rangesContainer{
@@ -338,11 +345,73 @@
 		}
 		.mapWidgetLegendContainer {
 			z-index: 1;
+			
+			&.drag {
+				position: absolute;
+			}
+
+			&.nord,&.sud,&.west,&.east {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				
+				.mapWidgetLegend {
+					position: relative;
+					padding: 0;
+					min-width: unset;
+					bottom: unset;
+					background-color: transparent;
+
+					&.toggle-legend,.toggleButton {
+						display: none;
+					}
+				}
+				
+			}
+
+			&.nord,&.sud {
+				flex-direction: row;
+				width: 100%;
+				min-height: 50px;
+				
+				.mapWidgetLegend {
+					display: flex;
+					flex-direction: column;
+					justify-content: center;
+					align-items: center;
+					
+					&>div {
+						width: 100%;
+						
+						.layout-column {
+							width: 100%;
+							flex-direction: row;
+							justify-content: center;
+							align-items: center;
+						}
+					}
+				}
+			}
+
+			&.west,&.east {
+				flex-direction: column;
+				min-width: 100px;
+				height: 100%;
+			}
+
+			&.nord,&.west {
+				order: 0;
+			}
+
+			&.sud,&.east {
+				order: 2;
+			}
+
 		}
 		md-backdrop {
 			z-index: 10;
 		}
-		.mapWidgetLegend{
+		.mapWidgetLegend {
 			position:absolute;
 			padding:10px;
 			display:block;

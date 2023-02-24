@@ -54,6 +54,28 @@ function mapWidgetEditControllerFunction(
 	$scope.widgetSpinner = false;
 	$scope.availableLegendAlignments = [{'label':$scope.translate.load('sbi.cockpit.style.textAlign.left'),'value':'left'},{'label':$scope.translate.load('sbi.cockpit.style.textAlign.center'),'value':'center'},{'label':$scope.translate.load('sbi.cockpit.style.textAlign.right'),'value':'right'}];
 	$scope.availableVisualizationTypes = ['Linear Gradient', 'Range'];
+	$scope.availableLegendPosition = [
+		{
+			'label':'nord',
+			'value':'nord'
+		},
+		{
+			'label':'west',
+			'value':'west'
+		},
+		{
+			'label':'sud',
+			'value':'sud'
+		},
+		{
+			'label':'east',
+			'value':'east'
+		},
+		{
+			'label':'drag',
+			'value':'drag'
+		}
+	];
 
 	$scope.getTemplateUrl = function(template){
 		return cockpitModule_generalServices.getTemplateUrl('mapWidget',template);
