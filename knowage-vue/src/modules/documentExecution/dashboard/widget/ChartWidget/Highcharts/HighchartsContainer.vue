@@ -9,8 +9,9 @@ import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { ISelection, IWidget, IWidgetColumn } from '../../../Dashboard'
 import { IHighchartsChartModel } from '../../../interfaces/highcharts/DashboardHighchartsWidget'
 import { mapActions } from 'pinia'
-import { updateStoreSelections } from '../../interactionsHelpers/InteractionHelper'
+import { updateStoreSelections, executeHighchartsCrossNavigation } from '../../interactionsHelpers/InteractionHelper'
 import { formatActivityGauge } from './HighchartsModelFormattingHelpers'
+import { formatForCrossNavigation } from './HighchartsContainerHelpers'
 import Highcharts from 'highcharts'
 import Highcharts3D from 'highcharts/highcharts-3d'
 import HighchartsMore from 'highcharts/highcharts-more'
@@ -126,12 +127,21 @@ export default defineComponent({
         setSeriesEvents() {
             if (this.chartModel.plotOptions.series) {
                 this.chartModel.plotOptions.series.events = {
-                    click: this.setSelection
+                    click: this.executeInteractions
                 }
             } else
                 this.chartModel.plotOptions.series = {
-                    events: { click: this.setSelection }
+                    events: { click: this.executeInteractions }
                 }
+        },
+        executeInteractions(event: any) {
+            if (this.widgetModel.settings.interactions.crossNavigation.enabled) {
+                const formattedOutputParameters = formatForCrossNavigation(event, this.widgetModel.settings.interactions.crossNavigation, this.dataToShow)
+                console.log('------ formattedOutputParameters: ', formattedOutputParameters)
+                executeHighchartsCrossNavigation(formattedOutputParameters, this.widgetModel.settings.interactions.crossNavigation, this.dashboardId)
+            } else {
+                this.setSelection(event)
+            }
         },
         setSelection(event: any) {
             if (this.editorMode || !this.widgetModel.settings.interactions.selection || !this.widgetModel.settings.interactions.selection.enabled) return

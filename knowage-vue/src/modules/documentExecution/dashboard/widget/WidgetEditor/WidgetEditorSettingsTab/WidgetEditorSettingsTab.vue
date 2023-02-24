@@ -52,7 +52,7 @@
             :dashboard-id="dashboardId"
         ></TextWidgetSettingsContainer>
         <HighchartsWidgetSettingsContainer
-            v-else-if="propWidget.type === 'highcharts' && user.isEnterprise"
+            v-else-if="propWidget.type === 'highcharts' && user.enterprise"
             class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
             :widget-model="propWidget"
             :selected-setting="selectedSetting"

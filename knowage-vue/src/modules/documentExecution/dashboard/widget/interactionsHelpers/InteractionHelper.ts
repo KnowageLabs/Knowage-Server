@@ -136,6 +136,14 @@ const getDynamicValueAndTypeForHTMLandTextDynamicOutputParameter = (clickedValue
     return { value: value, type: crossNavigationParameter.dataType }
 }
 
+export const executeHighchartsCrossNavigation = (outputParameters: IWidgetInteractionParameter[], crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
+    console.log('------- outputParameters: ', outputParameters)
+    console.log('------- crossNavigationModel: ', crossNavigationModel)
+    console.log('------- dashboardId: ', dashboardId)
+    // const outputParameters = getFormattedTableOutputParameters(clickedValue, formattedRow, crossNavigationModel, dashboardId)
+    //  executeCrossNavigation(outputParameters, crossNavigationModel.name)
+}
+
 const addSelectionTypeOutputParameter = (crossNavigationParameter: IWidgetInteractionParameter, formattedOutputParameters: ICrossNavigationParameter[], dashboardId: string) => {
     const tempParameter = getFormattedSelectionOutputParameter(crossNavigationParameter, dashboardId)
     if (tempParameter) formattedOutputParameters.push(tempParameter)

@@ -1,5 +1,6 @@
 <template>
     <div class="p-grid">
+        {{ widgetType }}
         <div v-for="(parameter, index) in parameters" :key="index" class="p-grid p-col-12 p-ai-center p-p-2">
             <div class="p-sm-6 p-md-1 p-ai-center">
                 <div class="kn-flex p-mx-4 p-my-2">
@@ -29,10 +30,18 @@
                 <label class="kn-material-input-label">{{ $t('common.value') }}</label>
                 <InputText v-model="parameter.value" class="kn-material-input p-inputtext-sm" :disabled="disabled" @change="parametersChanged" />
             </div>
-            <div v-else-if="parameter.type === 'dynamic' && ['table'].includes(widgetType)" class="p-sm-12 p-md-7 p-d-flex p-flex-row p-ai-center kn-flex">
+            <div v-else-if="parameter.type === 'dynamic' && ['table', 'highcharts'].includes(widgetType)" class="p-sm-12 p-md-7 p-d-flex p-flex-row p-ai-center kn-flex">
                 <div class="p-d-flex p-flex-column kn-flex">
                     <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
-                    <Dropdown v-model="parameter.column" class="kn-material-input" :options="widgetModel.columns" option-label="alias" option-value="columnName" :disabled="disabled" @change="parametersChanged"> </Dropdown>
+                    <Dropdown v-if="widgetType === 'table'" v-model="parameter.column" class="kn-material-input" :options="widgetModel.columns" option-label="alias" option-value="columnName" :disabled="disabled" @change="parametersChanged"></Dropdown>
+                    <Dropdown v-else v-model="parameter.column" class="kn-material-input" :options="descriptor.chartInteractionDynamicOptions" :disabled="disabled" @change="parametersChanged">
+                        <template #value="slotProps">
+                            <span>{{ getTranslatedLabel(slotProps.value, descriptor.chartInteractionDynamicOptions, $t) }}</span>
+                        </template>
+                        <template #option="slotProps">
+                            <span>{{ $t(slotProps.option.label) }}</span>
+                        </template>
+                    </Dropdown>
                 </div>
             </div>
             <div v-else-if="parameter.type === 'selection'" class="p-grid p-sm-12 p-md-7 p-d-flex p-flex-row p-ai-center kn-flex">

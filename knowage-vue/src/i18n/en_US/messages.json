@@ -677,6 +677,12 @@
             "interactions": {
                 "analyticalDriver": "Analytical Driver",
                 "basicUrl": "Basic Url",
+                "chartDynamicOptions": {
+                    "categoryName": "Category name",
+                    "categoryValue": "Category value",
+                    "serieName": "Serie name",
+                    "serieValue": "Serie value"
+                },
                 "crossNavigation": "Cross-navigation",
                 "crossNavigationName": "Cross Navigation Name",
                 "directDownload": "Direct download",
