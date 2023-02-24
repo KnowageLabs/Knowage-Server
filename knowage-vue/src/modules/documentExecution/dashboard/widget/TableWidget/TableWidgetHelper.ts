@@ -90,10 +90,9 @@ const getDatasetLabel = (datasetId: number, datasets: IDataset[]) => {
 }
 
 export const isCrossNavigationActive = (tableNode: any, crossNavigationOptions: IWidgetCrossNavigation) => {
-    console.log('--------- table node: ', tableNode)
-    console.log('--------- crossNavigationOptions: ', crossNavigationOptions)
     if (!crossNavigationOptions.enabled) return false
-    if ((crossNavigationOptions.type === 'singleColumn' && !crossNavigationOptions.column) || (tableNode.colDef?.columnName !== crossNavigationOptions.column)) return false
+    if (crossNavigationOptions.type === 'singleColumn' && (!crossNavigationOptions.column || (tableNode.colDef?.columnName !== crossNavigationOptions.column))) return false
+    if (crossNavigationOptions.type === 'icon' && (tableNode.colDef?.colId !== 'iconColumn')) return false
     return true
 }
 
@@ -107,11 +106,30 @@ export const formatRowDataForCrossNavigation = (tableNode: any, dataToShow: any)
 }
 
 export const getFormattedClickedValueForCrossNavigation = (tableNode: any, dataToShow: any) => {
-    return { value: tableNode.value, type: getColumnType(tableNode.colDef?.field, dataToShow) }
+    const type = tableNode.colDef?.colId === 'iconColumn' ? 'icon' : getColumnType(tableNode.colDef?.field, dataToShow)
+    return { value: tableNode.value, type: type }
 }
 
 const getColumnType = (columnField: string, dataToShow: any) => {
     if (!dataToShow.metaData || !dataToShow.metaData.fields) return ''
     const index = dataToShow.metaData.fields.findIndex((field: any) => field.name === columnField)
     return index !== -1 ? dataToShow.metaData.fields[index].type : ''
+}
+
+export const addIconColumn = (columns: any[], propWidget: IWidget, HeaderRenderer: any, CellRenderer: any) => {
+    const crossNavigationOptions = propWidget.settings.interactions.crossNavigation as IWidgetCrossNavigation
+    if (crossNavigationOptions.enabled && crossNavigationOptions.type === 'icon')
+        columns.push({
+            colId: 'iconColumn',
+            valueGetter: `node.rowIndex + 1`,
+            headerName: '',
+            pinned: 'right',
+            width: 55,
+            sortable: false,
+            filter: false,
+            headerComponent: HeaderRenderer,
+            headerComponentParams: { propWidget: propWidget },
+            cellRenderer: CellRenderer,
+            cellRendererParams: { colId: 'iconColumn', propWidget: propWidget }
+        })
 }

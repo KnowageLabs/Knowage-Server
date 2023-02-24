@@ -156,7 +156,7 @@ export default defineComponent({
         },
         onWidgetRightClick(event) {
             const contextMenu = this.$refs.contextMenu as any
-            contextMenu.show(event)
+            contextMenu?.show(event)
         },
         loadWidget(widget: IWidget) {
             this.widgetModel = widget
@@ -275,7 +275,7 @@ export default defineComponent({
                 this.inFocus = false
             }
         },
-        resizedEvent: function (newHPx) {
+        resizedEvent: function(newHPx) {
             emitter.emit('chartWidgetResized', newHPx)
         }
     }

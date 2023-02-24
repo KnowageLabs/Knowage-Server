@@ -12,13 +12,8 @@ const mainStore = store()
 export const loadFilters = async (initialLoading: boolean, filtersData: { filterStatus: iParameter[], isReadyForExecution: boolean }, document: any, breadcrumbs: any[], userRole: string | null, parameterValuesMap: any, tabKey: string, sessionEnabled: boolean, $http: any, dateFormat: string, vueComponenet: any) => {
     if (parameterValuesMap && parameterValuesMap[document.label + '-' + tabKey] && initialLoading) return loadFiltersFromParametersMap(parameterValuesMap, document, tabKey, filtersData, breadcrumbs)
     if (sessionEnabled && !document.navigationParams) return loadFiltersFromSession(document, filtersData, breadcrumbs)
-    // console.log('---2------ document: ', document)
 
     filtersData = await getFilters(document, userRole, $http)
-
-    console.log('----2----- FILTERS DATA: ', filtersData)
-
-
 
     formatDrivers(filtersData)
 

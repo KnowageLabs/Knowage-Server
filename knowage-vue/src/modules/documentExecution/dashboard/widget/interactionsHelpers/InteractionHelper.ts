@@ -74,7 +74,10 @@ const getFormattedDynamicOutputParameter = (clickedValue: IClickedValue, crossNa
 
 const getDynamicValueAndType = (clickedValue: IClickedValue, crossNavigationParameter: IWidgetInteractionParameter, formattedRow: any) => {
     // TODO - REFACTOR ?
-    if (!crossNavigationParameter.column) return { value: ['date', 'timestamp'].includes(clickedValue.type) ? getFormattedDateValue(clickedValue.value, clickedValue.type) : clickedValue.value, type: clickedValue.type }
+    if (!crossNavigationParameter.column) {
+        if (clickedValue.type === 'icon') return { value: '', type: 'string' }
+        else return { value: ['date', 'timestamp'].includes(clickedValue.type) ? getFormattedDateValue(clickedValue.value, clickedValue.type) : clickedValue.value, type: clickedValue.type }
+    }
     const rowField = formattedRow[crossNavigationParameter.column]
     if (!rowField) return null
     const fieldTypeIsDate = ['date', 'timestamp'].includes(rowField.type)
