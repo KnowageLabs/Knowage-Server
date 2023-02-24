@@ -197,6 +197,7 @@ export interface IWidgetInteractionParameter {
     enabled: boolean
     name: string
     type: string
+    dataType: string
     value?: string
     column?: string
     driver?: string

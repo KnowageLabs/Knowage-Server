@@ -4,7 +4,6 @@ import { getAssociativeSelections } from './DatasetAssociationsHelper'
 import { emitter } from '../../DashboardHelpers'
 import dashboardStore from '@/modules/documentExecution/dashboard/Dashboard.store'
 import moment from "moment"
-import { CHART_TOOL_PANEL_MENU_OPTIONS } from "ag-grid-community"
 
 interface IClickedValue { value: string, type: string }
 
@@ -39,7 +38,7 @@ const getFormattedTableOutputParameters = (clickedValue: IClickedValue, formatte
                 formattedOutputParameters.push(getFormattedFixedOutputParameter(crossNavigationParameter))
                 break
             case 'dynamic':
-                formattedOutputParameters.push(getFormattedDynamicOutputParameter(clickedValue, crossNavigationParameter, formattedRow))
+                formattedOutputParameters.push(getFormattedTableDynamicOutputParameter(clickedValue, crossNavigationParameter, formattedRow))
                 break
             case 'selection':
                 addSelectionTypeOutputParameter(crossNavigationParameter, formattedOutputParameters, dashboardId)
@@ -50,30 +49,31 @@ const getFormattedTableOutputParameters = (clickedValue: IClickedValue, formatte
 
 const getFormattedFixedOutputParameter = (crossNavigationParameter: IWidgetInteractionParameter) => {
     const value = crossNavigationParameter.value ?? ''
+    const formattedValue = crossNavigationParameter.dataType === 'date' ? getFormattedDateValue(value, 'date') : value
     return {
         targetDriverUrlName: '',
-        parameterValue: [{ value: value, description: value }],
+        parameterValue: [{ value: formattedValue, description: formattedValue }],
         multivalue: false,
         type: 'fromSourceDocumentOutputParameter',
-        parameterType: 'string',
+        parameterType: getDriverParameterTypeFromOutputParameterType(crossNavigationParameter.dataType),
         outputDriverName: crossNavigationParameter.name
     } as ICrossNavigationParameter
 }
 
-const getFormattedDynamicOutputParameter = (clickedValue: IClickedValue, crossNavigationParameter: IWidgetInteractionParameter, formattedRow: any) => {
-    const valueAndType = getDynamicValueAndType(clickedValue, crossNavigationParameter, formattedRow)
+const getFormattedTableDynamicOutputParameter = (clickedValue: IClickedValue, crossNavigationParameter: IWidgetInteractionParameter, formattedRow: any) => {
+    const valueAndType = getDynamicValueAndTypeForTableDynamicOutputParameter(clickedValue, crossNavigationParameter, formattedRow)
     const value = valueAndType ? valueAndType.value : ''
     return {
         targetDriverUrlName: '',
         parameterValue: [{ value: value, description: value }],
         multivalue: false,
         type: 'fromSourceDocumentOutputParameter',
-        parameterType: valueAndType ? valueAndType.type : '', // TODO
+        parameterType: getDriverParameterTypeFromOutputParameterType(crossNavigationParameter.dataType),
         outputDriverName: crossNavigationParameter.name
     } as ICrossNavigationParameter
 }
 
-const getDynamicValueAndType = (clickedValue: IClickedValue, crossNavigationParameter: IWidgetInteractionParameter, formattedRow: any) => {
+const getDynamicValueAndTypeForTableDynamicOutputParameter = (clickedValue: IClickedValue, crossNavigationParameter: IWidgetInteractionParameter, formattedRow: any) => {
     // TODO - REFACTOR ?
     if (!crossNavigationParameter.column) {
         if (clickedValue.type === 'icon') return { value: '', type: 'string' }
@@ -83,7 +83,7 @@ const getDynamicValueAndType = (clickedValue: IClickedValue, crossNavigationPara
     if (!rowField) return null
     const fieldTypeIsDate = ['date', 'timestamp'].includes(rowField.type)
     const value = fieldTypeIsDate ? getFormattedDateValue(rowField.value, rowField.type) : rowField.value
-    return { value: value, type: fieldTypeIsDate ? 'DATE' : 'string' } // TODO
+    return { value: value, type: fieldTypeIsDate ? 'date' : 'string' } // TODO
 }
 
 const getFormattedDateValue = (valueAsString: string, type: string) => {
@@ -93,11 +93,48 @@ const getFormattedDateValue = (valueAsString: string, type: string) => {
 }
 
 export const executeHTMLandTextWidgetCrossNavigation = (dynamicValue: string, crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
-    console.log('--------- dynamicValue: ', dynamicValue)
-    console.log('--------- crossNavigationModel: ', crossNavigationModel)
-    console.log('--------- dashboardId: ', dashboardId)
+    const clickedValue = { value: dynamicValue, type: '' }
+    const outputParameters = getFormattedHTMLandTextWidgetOutputParameters(clickedValue, crossNavigationModel, dashboardId)
+    executeCrossNavigation(outputParameters, crossNavigationModel.name)
 }
 
+
+const getFormattedHTMLandTextWidgetOutputParameters = (clickedValue: IClickedValue, crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
+    const formattedOutputParameters = [] as ICrossNavigationParameter[]
+    crossNavigationModel.parameters.forEach((crossNavigationParameter: IWidgetInteractionParameter) => {
+        switch (crossNavigationParameter.type) {
+            case 'static':
+                formattedOutputParameters.push(getFormattedFixedOutputParameter(crossNavigationParameter))
+                break
+            case 'dynamic':
+                formattedOutputParameters.push(getFormattedHTMLandTextDynamicOutputParameter(clickedValue, crossNavigationParameter))
+                break
+            case 'selection':
+                addSelectionTypeOutputParameter(crossNavigationParameter, formattedOutputParameters, dashboardId)
+        }
+    })
+    return formattedOutputParameters
+}
+
+const getFormattedHTMLandTextDynamicOutputParameter = (clickedValue: IClickedValue, crossNavigationParameter: IWidgetInteractionParameter) => {
+    const valueAndType = getDynamicValueAndTypeForHTMLandTextDynamicOutputParameter(clickedValue, crossNavigationParameter)
+    const value = valueAndType ? valueAndType.value : ''
+    return {
+        targetDriverUrlName: '',
+        parameterValue: [{ value: value, description: value }],
+        multivalue: false,
+        type: 'fromSourceDocumentOutputParameter',
+        parameterType: getDriverParameterTypeFromOutputParameterType(crossNavigationParameter.dataType),
+        outputDriverName: crossNavigationParameter.name
+    } as ICrossNavigationParameter
+
+}
+
+const getDynamicValueAndTypeForHTMLandTextDynamicOutputParameter = (clickedValue: IClickedValue, crossNavigationParameter: IWidgetInteractionParameter) => {
+    if (!clickedValue.value) return { value: '', type: crossNavigationParameter.dataType }
+    const value = crossNavigationParameter.dataType === 'date' ? getFormattedDateValue(clickedValue.value, 'date') : clickedValue.value
+    return { value: value, type: crossNavigationParameter.dataType }
+}
 
 const addSelectionTypeOutputParameter = (crossNavigationParameter: IWidgetInteractionParameter, formattedOutputParameters: ICrossNavigationParameter[], dashboardId: string) => {
     const tempParameter = getFormattedSelectionOutputParameter(crossNavigationParameter, dashboardId)
@@ -115,7 +152,7 @@ const getFormattedSelectionOutputParameter = (crossNavigationParameter: IWidgetI
         parameterValue: activeSelection.value.map((value: string | number) => { return { value: "" + value, description: "" + value } }), // TODO - see about DATE value
         multivalue: activeSelection.value.length > 1,
         type: 'fromSourceDocumentOutputParameter',
-        parameterType: 'string', // TODO - for date ?
+        parameterType: getDriverParameterTypeFromOutputParameterType(crossNavigationParameter.dataType),
         outputDriverName: crossNavigationParameter.name
     } as ICrossNavigationParameter
 }
@@ -126,6 +163,18 @@ const getActiveSelectionByDatasetAndColumn = (datasetLabel: string | undefined, 
     return index !== -1 ? activeSelections[index] : null
 }
 
+const getDriverParameterTypeFromOutputParameterType = (outputParameterType: string) => {
+    switch (outputParameterType) {
+        case 'string':
+            return 'STRING';
+        case 'number':
+            return 'NUM';
+        case 'date':
+            return 'DATE'
+        default:
+            return 'STRING'
+    }
+}
 
 export const executePreview = (datasetLabel: string) => {
     console.log("TODO: executePreview() - datasetLabel: ", datasetLabel)

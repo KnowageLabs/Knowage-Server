@@ -76,7 +76,8 @@ const addFormattedFirstCrossNavigationParameter = (oldWidgetCrossNavigation: any
         name: oldWidgetCrossNavigation.outputParameter,
         type: 'dynamic',
         value: '',
-        column: oldWidgetCrossNavigation.column
+        column: oldWidgetCrossNavigation.column,
+        dataType: oldWidgetCrossNavigation.outputParametersList[oldWidgetCrossNavigation.outputParameter].dataType
     } as IWidgetInteractionParameter
     delete oldWidgetCrossNavigation.outputParametersList[oldWidgetCrossNavigation.outputParameter]
     formattedParameters.push(formattedParameter)
@@ -90,7 +91,8 @@ const addFormattedCrossNavigationParameters = (outputParameterList: any, formatt
                 enabled: tempParameter.enabled,
                 name: key,
                 type: tempParameter.type,
-                value: tempParameter.value
+                value: tempParameter.value,
+                dataType: tempParameter.dataType
             } as IWidgetInteractionParameter
             if (tempParameter.column) formattedParameter.column = tempParameter.column
             if (tempParameter.dataset) formattedParameter.dataset = tempParameter.dataset

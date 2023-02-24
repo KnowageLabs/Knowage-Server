@@ -126,6 +126,7 @@ export default defineComponent({
                     temp.enabled = modelParameter.enabled
                     temp.type = modelParameter.type
                     temp.value = modelParameter.value
+                    temp.dataType = modelParameter.dataType
                     if (modelParameter.column) temp.column = modelParameter.column
                     if (modelParameter.dataset) temp.dataset = modelParameter.dataset
                 }
