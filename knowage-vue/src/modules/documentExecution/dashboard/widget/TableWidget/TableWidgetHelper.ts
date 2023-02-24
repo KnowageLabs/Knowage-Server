@@ -1,9 +1,9 @@
-import { IWidget, ITableWidgetColumnGroup, IDataset, IWidgetCrossNavigation, IWidgetColumn } from '../../Dashboard'
+import { IWidget, ITableWidgetColumnGroup, IDataset, IWidgetCrossNavigation } from '../../Dashboard'
 
 export const getColumnGroup = (propWidget: IWidget, col: ITableWidgetColumnGroup) => {
-    var modelGroups = propWidget.settings.configuration.columnGroups.groups
+    const modelGroups = propWidget.settings.configuration.columnGroups.groups
     if (propWidget.settings.configuration.columnGroups.enabled && modelGroups && modelGroups.length > 0) {
-        for (var k in modelGroups) {
+        for (const k in modelGroups) {
             if (modelGroups[k].columns.includes(col.id)) {
                 return modelGroups[k]
             }
@@ -30,10 +30,10 @@ export const getWidgetStyleByTypeWithoutValidation = (propWidget: IWidget, style
 }
 
 export const getColumnConditionalStyles = (propWidget: IWidget, colId: string, valueToCompare: any, returnString?: boolean) => {
-    var conditionalStyles = propWidget.settings.conditionalStyles
-    var styleString = null as any
+    const conditionalStyles = propWidget.settings.conditionalStyles
+    let styleString = null as any
 
-    var columnConditionalStyles = conditionalStyles.conditions.filter((condition) => condition.target.includes(colId))
+    const columnConditionalStyles = conditionalStyles.conditions.filter((condition) => condition.target.includes(colId))
     if (columnConditionalStyles.length > 0) {
         for (let i = 0; i < columnConditionalStyles.length; i++) {
             if (isConditionMet(columnConditionalStyles[i].condition, valueToCompare)) {
@@ -52,7 +52,7 @@ export const getColumnConditionalStyles = (propWidget: IWidget, colId: string, v
 }
 
 export const isConditionMet = (condition, valueToCompare) => {
-    var fullfilledCondition = false
+    let fullfilledCondition = false
     switch (condition.operator) {
         case '==':
             fullfilledCondition = valueToCompare == condition.value
@@ -87,6 +87,14 @@ export const createNewTableSelection = (value: (string | number)[], columnName: 
 const getDatasetLabel = (datasetId: number, datasets: IDataset[]) => {
     const index = datasets.findIndex((dataset: IDataset) => dataset.id.dsId == datasetId)
     return index !== -1 ? datasets[index].label : ''
+}
+
+export const isCrossNavigationActive = (tableNode: any, crossNavigationOptions: IWidgetCrossNavigation) => {
+    console.log('--------- table node: ', tableNode)
+    console.log('--------- crossNavigationOptions: ', crossNavigationOptions)
+    if (!crossNavigationOptions.enabled) return false
+    if ((crossNavigationOptions.type === 'singleColumn' && !crossNavigationOptions.column) || (tableNode.colDef?.columnName !== crossNavigationOptions.column)) return false
+    return true
 }
 
 export const formatRowDataForCrossNavigation = (tableNode: any, dataToShow: any) => {

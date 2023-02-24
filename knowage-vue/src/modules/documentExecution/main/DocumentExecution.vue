@@ -1087,12 +1087,8 @@ export default defineComponent({
         },
         async onExecuteCrossNavigation(payload: { documentCrossNavigationOutputParameters: ICrossNavigationParameter[]; crossNavigationName: string | undefined; crossNavigations: IDashboardCrossNavigation[] }) {
             this.document = getDocumentForCrossNavigation(payload, this.filtersData)
-            // console.log('!!!!!!!!! DOCUMENT: ', this.document)
             updateBreadcrumbForCrossNavigation(this.breadcrumbs, this.document)
-            //  this.filtersData = await loadFilters(false, this.filtersData, this.document, this.breadcrumbs, this.userRole, this.parameterValuesMap, this.tabKey as string, this.sessionEnabled, this.$http, this.dateFormat, this)
-            //console.log('!!!!!!! FORMATTED FILTERS DATA: ', this.filtersData)
             await this.loadPage(false, this.document.dsLabel, false)
-            // console.log('!!!!!!!!! breadcrumbs: ', this.breadcrumbs)
         }
     }
 })

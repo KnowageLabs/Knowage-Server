@@ -15,7 +15,7 @@ import { mapActions } from 'pinia'
 import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
 import { IDataset, ISelection, IWidget } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
-import { createNewTableSelection, getColumnConditionalStyles, isConditionMet, formatRowDataForCrossNavigation, getFormattedClickedValueForCrossNavigation } from './TableWidgetHelper'
+import { createNewTableSelection, getColumnConditionalStyles, isConditionMet, isCrossNavigationActive, formatRowDataForCrossNavigation, getFormattedClickedValueForCrossNavigation } from './TableWidgetHelper'
 import { executeTableWidgetCrossNavigation, updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
 import mainStore from '../../../../../App.store'
 import dashboardStore from '../../Dashboard.store'
@@ -422,7 +422,7 @@ export default defineComponent({
         },
         onCellClicked(node) {
             // TODO
-            if (this.propWidget.settings.interactions.crossNavigation.enabled) {
+            if (isCrossNavigationActive(node, this.propWidget.settings.interactions.crossNavigation)) {
                 const formattedRow = formatRowDataForCrossNavigation(node, this.dataToShow)
                 const formattedClickedValue = getFormattedClickedValueForCrossNavigation(node, this.dataToShow)
                 executeTableWidgetCrossNavigation(formattedClickedValue, formattedRow, this.propWidget.settings.interactions.crossNavigation, this.dashboardId)

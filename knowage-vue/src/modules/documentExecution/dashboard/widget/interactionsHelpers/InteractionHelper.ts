@@ -19,8 +19,6 @@ export const updateStoreSelections = (newSelection: ISelection, currentActiveSel
 }
 
 export const executeCrossNavigation = (documentCrossNavigationOutputParameters: ICrossNavigationParameter[], crossNavigationName: string | undefined) => {
-    //console.log("--- executeCrossNavigation() - documentCrossNavigationOutputParameters: ", documentCrossNavigationOutputParameters)
-    //console.log("--- executeCrossNavigation() - crossNavigationName: ", crossNavigationName)
     const payload = { documentCrossNavigationOutputParameters: documentCrossNavigationOutputParameters, crossNavigationName: crossNavigationName }
     emitter.emit('executeCrossNavigation', payload)
 }
@@ -28,10 +26,7 @@ export const executeCrossNavigation = (documentCrossNavigationOutputParameters: 
 
 
 export const executeTableWidgetCrossNavigation = (clickedValue: IClickedValue, formattedRow: any, crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
-    // console.log(' ------------------------- >>>> crossNavigationModel: ', crossNavigationModel)
     const outputParameters = getFormattedTableOutputParameters(clickedValue, formattedRow, crossNavigationModel, dashboardId)
-    console.log(' ------------------------- >>>> outputParameters: ', outputParameters)
-    // console.log(' ------------------------- >>>> crossNavigationModel: ', crossNavigationModel)
     executeCrossNavigation(outputParameters, crossNavigationModel.name)
 }
 
@@ -88,8 +83,6 @@ const getDynamicValueAndType = (clickedValue: IClickedValue, crossNavigationPara
 }
 
 const getFormattedDateValue = (valueAsString: string, type: string) => {
-    // console.log('------ valueAsString: ', valueAsString)
-    // console.log('------ type: ', type)
     const format = type === 'timestamp' ? 'DD/MM/YYYY HH:mm:ss.SSS' : 'DD/MM/YYYY'
     const date = moment(valueAsString, format)
     return date.isValid() ? date.valueOf() : ''
