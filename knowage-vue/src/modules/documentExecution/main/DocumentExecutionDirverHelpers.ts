@@ -16,7 +16,7 @@ export const loadFilters = async (initialLoading: boolean, filtersData: { filter
 
     filtersData = await getFilters(document, userRole, $http)
 
-    // console.log('----2----- FILTERS DATA: ', filtersData)
+    console.log('----2----- FILTERS DATA: ', filtersData)
 
 
 
