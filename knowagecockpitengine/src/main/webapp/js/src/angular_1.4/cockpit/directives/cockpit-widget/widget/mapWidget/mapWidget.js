@@ -1987,7 +1987,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var ret = "layout-row";
 			
 			if ($scope.isShowLegend
-				&& ($scope.ngModel.style.legend.position == "nord" || $scope.ngModel.style.legend.position == "sud")) {
+				&& ($scope.ngModel.style.legend.position == "north" || $scope.ngModel.style.legend.position == "south")) {
 				ret = "layout-column";
 			}
 			

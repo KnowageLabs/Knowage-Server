@@ -350,7 +350,7 @@
 				position: absolute;
 			}
 
-			&.nord,&.sud,&.west,&.east {
+			&.north,&.south,&.west,&.east {
 				display: flex;
 				justify-content: center;
 				align-items: center;
@@ -369,7 +369,7 @@
 				
 			}
 
-			&.nord,&.sud {
+			&.north,&.south {
 				flex-direction: row;
 				width: 100%;
 				min-height: 50px;
@@ -399,11 +399,11 @@
 				height: 100%;
 			}
 
-			&.nord,&.west {
+			&.north,&.west {
 				order: 0;
 			}
 
-			&.sud,&.east {
+			&.south,&.east {
 				order: 2;
 			}
 

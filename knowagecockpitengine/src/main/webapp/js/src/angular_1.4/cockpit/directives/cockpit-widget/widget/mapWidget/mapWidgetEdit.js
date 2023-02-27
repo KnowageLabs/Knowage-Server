@@ -56,23 +56,23 @@ function mapWidgetEditControllerFunction(
 	$scope.availableVisualizationTypes = ['Linear Gradient', 'Range'];
 	$scope.availableLegendPosition = [
 		{
-			'label':'nord',
-			'value':'nord'
+			'label':$scope.translate.load('sbi.cockpit.style.legend.position.north'),
+			'value':'north'
 		},
 		{
-			'label':'west',
+			'label':$scope.translate.load('sbi.cockpit.style.legend.position.south'),
+			'value':'south'
+		},
+		{
+			'label':$scope.translate.load('sbi.cockpit.style.legend.position.west'),
 			'value':'west'
 		},
 		{
-			'label':'sud',
-			'value':'sud'
-		},
-		{
-			'label':'east',
+			'label':$scope.translate.load('sbi.cockpit.style.legend.position.east'),
 			'value':'east'
 		},
 		{
-			'label':'drag',
+			'label':$scope.translate.load('sbi.cockpit.style.legend.position.drag'),
 			'value':'drag'
 		}
 	];
