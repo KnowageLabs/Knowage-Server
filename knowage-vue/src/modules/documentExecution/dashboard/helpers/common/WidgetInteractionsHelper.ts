@@ -102,9 +102,9 @@ const addFormattedCrossNavigationParameters = (outputParameterList: any, formatt
         Object.keys(outputParameterList).forEach((key: string) => {
             const tempParameter = outputParameterList[key]
             const formattedParameter = {
-                enabled: tempParameter.enabled,
+                enabled: tempParameter.enabled ?? false,
                 name: key,
-                type: tempParameter.type,
+                type: tempParameter.type ?? '',
                 value: tempParameter.value,
                 dataType: tempParameter.dataType
             } as IWidgetInteractionParameter

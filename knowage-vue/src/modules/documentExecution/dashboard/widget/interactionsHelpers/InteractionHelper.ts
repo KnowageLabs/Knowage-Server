@@ -74,7 +74,6 @@ const getFormattedTableDynamicOutputParameter = (clickedValue: IClickedValue, cr
 }
 
 const getDynamicValueAndTypeForTableDynamicOutputParameter = (clickedValue: IClickedValue, crossNavigationParameter: IWidgetInteractionParameter, formattedRow: any) => {
-    // TODO - REFACTOR ?
     if (!crossNavigationParameter.column) {
         if (clickedValue.type === 'icon') return { value: '', type: 'string' }
         else return { value: ['date', 'timestamp'].includes(clickedValue.type) ? getFormattedDateValue(clickedValue.value, clickedValue.type) : clickedValue.value, type: clickedValue.type }
@@ -158,7 +157,6 @@ const getFormattedChartOutputParameters = (outputParameters: IWidgetInteractionP
     return formattedOutputParameters
 }
 
-
 const getFormattedChartDynamicOutputParameter = (outputParameters: IWidgetInteractionParameter[], crossNavigationParameter: IWidgetInteractionParameter) => {
     const index = outputParameters.findIndex((tempParameter: IWidgetInteractionParameter) => tempParameter.name === crossNavigationParameter.name)
     const outputParameter = index !== -1 ? outputParameters[index] : null
@@ -172,6 +170,26 @@ const getFormattedChartDynamicOutputParameter = (outputParameters: IWidgetIntera
         outputDriverName: crossNavigationParameter.name
     } as ICrossNavigationParameter
 }
+
+export const executeImageWidgetCrossNavigation = (crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
+    const outputParameters = getFormattedImageWidgetOutputParameters(crossNavigationModel, dashboardId)
+    executeCrossNavigation(outputParameters, crossNavigationModel.name)
+}
+
+const getFormattedImageWidgetOutputParameters = (crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
+    const formattedOutputParameters = [] as ICrossNavigationParameter[]
+    crossNavigationModel.parameters.forEach((crossNavigationParameter: IWidgetInteractionParameter) => {
+        switch (crossNavigationParameter.type) {
+            case 'static':
+                formattedOutputParameters.push(getFormattedFixedOutputParameter(crossNavigationParameter))
+                break
+            case 'selection':
+                addSelectionTypeOutputParameter(crossNavigationParameter, formattedOutputParameters, dashboardId)
+        }
+    })
+    return formattedOutputParameters
+}
+
 
 const addSelectionTypeOutputParameter = (crossNavigationParameter: IWidgetInteractionParameter, formattedOutputParameters: ICrossNavigationParameter[], dashboardId: string) => {
     const tempParameter = getFormattedSelectionOutputParameter(crossNavigationParameter, dashboardId)
