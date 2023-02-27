@@ -137,6 +137,7 @@ import HighchartsActivityGaugeSettingsDescriptor from './ChartWidget/highcharts/
 import HighchartsSolidGaugeSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsSolidGaugeSettingsDescriptor.json'
 import imageDescriptor from './ImageWidget/ImageWidgetSettingsDescriptor.json'
 import customChartDescriptor from './CustomChartWidget/CustomChartWidgetSettingsDescriptor.json'
+import pivotTableDescriptor from './PivotTableWidget/PivotTableSettingsDescriptor.json'
 import { mapState } from 'pinia'
 import mainStore from '@/App.store'
 
