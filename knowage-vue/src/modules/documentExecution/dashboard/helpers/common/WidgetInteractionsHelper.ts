@@ -56,11 +56,8 @@ const getFormattedChartSelection = () => {
 }
 
 export const getFormattedCrossNavigation = (widget: any) => {
-    const oldCrossNavigation = widget.type === 'chart' ? widget.content.cross : widget.cross
-
+    const oldCrossNavigation = getOldCrossNavigation(widget)
     if (!oldCrossNavigation) return widgetCommonDefaultValues.getDefaultCrossNavigation()  // TODO - see about chart default
-
-
 
     const formattedParameters = [] as IWidgetInteractionParameter[]
     if (oldCrossNavigation.outputParameter) addFormattedFirstCrossNavigationParameter(oldCrossNavigation, formattedParameters)
@@ -72,6 +69,18 @@ export const getFormattedCrossNavigation = (widget: any) => {
         column: oldCrossNavigation.column,
         name: oldCrossNavigation.crossName,
         parameters: formattedParameters
+    }
+}
+
+const getOldCrossNavigation = (widget: any) => {
+    switch (widget.type) {
+        case 'chart':
+            return widget.content.cross;
+        case 'image':
+            return widget.cross.cross
+        default:
+            return widget.cross
+
     }
 }
 
