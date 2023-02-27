@@ -214,8 +214,8 @@ export const formatWidget = (widget: any, formattedModel: IDashboard, user: any,
             break
         case 'chart':
             // TODO widgetChange
-            formattedWidget = user?.enterprise ? formatHighchartsWidget(widget) : formatChartJSWidget(widget)
-            //  formattedWidget = false ? formatHighchartsWidget(widget) : formatChartJSWidget(widget)
+            // formattedWidget = user?.enterprise ? formatHighchartsWidget(widget) : formatChartJSWidget(widget)
+            formattedWidget = false ? formatHighchartsWidget(widget) : formatChartJSWidget(widget)
             break
         case 'image':
             formattedWidget = formatImageWidget(widget)

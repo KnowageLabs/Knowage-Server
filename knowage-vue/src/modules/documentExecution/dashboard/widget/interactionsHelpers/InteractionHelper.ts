@@ -137,10 +137,17 @@ const getDynamicValueAndTypeForHTMLandTextDynamicOutputParameter = (clickedValue
 }
 
 export const executeHighchartsCrossNavigation = (outputParameters: IWidgetInteractionParameter[], crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
+
+    const formattedOutputParameters = getFormattedChartOutputParameters(outputParameters, crossNavigationModel, dashboardId)
+    executeCrossNavigation(formattedOutputParameters, crossNavigationModel.name)
+}
+
+export const executeChartJSCrossNavigation = (outputParameters: IWidgetInteractionParameter[], crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
     console.log('------- outputParameters: ', outputParameters)
     console.log('------- crossNavigationModel: ', crossNavigationModel)
     console.log('------- dashboardId: ', dashboardId)
     const formattedOutputParameters = getFormattedChartOutputParameters(outputParameters, crossNavigationModel, dashboardId)
+    console.log('------- formattedOutputParameters: ', formattedOutputParameters)
     executeCrossNavigation(formattedOutputParameters, crossNavigationModel.name)
 }
 

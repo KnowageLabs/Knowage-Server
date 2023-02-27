@@ -126,7 +126,7 @@ const getValueForFilterServiceFromSourceDocumentOutputParameter = (formattedCros
 
 const getDateStringFromMilliseconds = (miliseconds: any) => {
     if (!miliseconds || isNaN(miliseconds)) return ''
-    const date = new Date(miliseconds)
+    const date = new Date(+miliseconds)
     const dateAsString = getDateStringFromJSDate(new Date(date), 'MM/dd/y')
     return dateAsString ?? ''
 }
@@ -195,6 +195,8 @@ const getFormattedNumberValue = (value: string | number) => {
 }
 
 const loadDateDriverInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter, dateFormat: string) => {
+    console.log('---------- loadDateDriverInitialValue - parameter: ', parameter)
+    console.log('---------- loadDateDriverInitialValue - crossNavigationParameter: ', crossNavigationParameter)
     if (typeof crossNavigationParameter.parameterValue[0].value !== 'number') {
         if (parameter.parameterValue[0].value instanceof Date) parameter.parameterValue[0].value = null
         return

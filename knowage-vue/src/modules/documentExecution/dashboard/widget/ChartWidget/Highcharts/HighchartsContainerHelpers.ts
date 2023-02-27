@@ -1,6 +1,5 @@
 import { IWidgetCrossNavigation, IWidgetInteractionParameter } from "../../../Dashboard";
-
-interface IChartValues { serieName: string, serieValue: string, categoryName: string, categoryValue: string }
+import { IChartInteractionValues } from "../../../interfaces/chartJS/DashboardChartJSWidget";
 
 export const formatForCrossNavigation = (chartEvent: any, crossNavigationOptions: IWidgetCrossNavigation, dataToShow: any) => {
     const formattedChartValues = getFormattedChartValues(chartEvent, dataToShow)
@@ -15,7 +14,7 @@ const getFormattedChartValues = (chartEvent: any, dataToShow: any) => {
     return { serieName: chartPoint.series.name, serieValue: chartPoint.options.y, categoryName: categoryName, categoryValue: chartPoint.options.name }
 }
 
-const getFormattedOutputParameters = (formattedChartValues: IChartValues, outputParameters: IWidgetInteractionParameter[]) => {
+const getFormattedOutputParameters = (formattedChartValues: IChartInteractionValues, outputParameters: IWidgetInteractionParameter[]) => {
     const formattedOutputParameters = [] as IWidgetInteractionParameter[]
     outputParameters.forEach((outputParameter: IWidgetInteractionParameter) => {
         if (outputParameter.type === 'dynamic') {
@@ -27,7 +26,7 @@ const getFormattedOutputParameters = (formattedChartValues: IChartValues, output
     return formattedOutputParameters
 }
 
-const getFormattedDynamicOutputParameter = (formattedChartValues: IChartValues, outputParameter: IWidgetInteractionParameter) => {
+const getFormattedDynamicOutputParameter = (formattedChartValues: IChartInteractionValues, outputParameter: IWidgetInteractionParameter) => {
     let value = ''
     switch (outputParameter.column) {
         case "SERIE_NAME":

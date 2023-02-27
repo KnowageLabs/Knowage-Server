@@ -10,15 +10,25 @@ import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale } f
 import { IWidget, IWidgetColumn, ISelection } from '../../../Dashboard'
 import { IChartJSChartModel, IChartJSData, IChartJSOptions } from '../../../interfaces/chartJS/DashboardChartJSWidget'
 import { mapActions } from 'pinia'
-import { updateStoreSelections } from '../../interactionsHelpers/InteractionHelper'
+import { updateStoreSelections, executeChartJSCrossNavigation } from '../../interactionsHelpers/InteractionHelper'
 import store from '../../../Dashboard.store'
+import { formatForCrossNavigation } from './ChartJSContainerHelper'
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale)
 
 export default defineComponent({
     name: 'chart-j-s-container',
     components: { Pie },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, dataToShow: { type: Object as any, required: true }, dashboardId: { type: String, required: true }, editorMode: { type: Boolean }, propActiveSelections: { type: Array as PropType<ISelection[]>, required: true } },
+    props: {
+        widgetModel: { type: Object as PropType<IWidget>, required: true },
+        dataToShow: { type: Object as any, required: true },
+        dashboardId: { type: String, required: true },
+        editorMode: { type: Boolean },
+        propActiveSelections: {
+            type: Array as PropType<ISelection[]>,
+            required: true
+        }
+    },
     data() {
         return {
             chartData: { labels: [], datasets: [] } as IChartJSData,
@@ -74,7 +84,13 @@ export default defineComponent({
             this.updateChartData()
         },
         updateChartOptions() {
-            this.chartOptions = { ...this.chartModel.options, responsive: true, maintainAspectRatio: false, events: ['click', 'mousemove'], onClick: this.setSelection }
+            this.chartOptions = {
+                ...this.chartModel.options,
+                responsive: true,
+                maintainAspectRatio: false,
+                events: ['click', 'mousemove'],
+                onClick: this.executeInteractions
+            }
         },
         updateChartData() {
             this.widgetModel.settings.chartModel.setData(this.dataToShow)
@@ -84,6 +100,15 @@ export default defineComponent({
         resetChart() {
             this.chartData = { labels: [], datasets: [] }
             this.chartOptions = {} as IChartJSOptions
+        },
+        executeInteractions(event: any, selectionEvent: any[]) {
+            if (this.editorMode || !selectionEvent[0]) return
+            if (this.widgetModel.settings.interactions.crossNavigation.enabled) {
+                const formattedOutputParameters = formatForCrossNavigation(selectionEvent[0], this.widgetModel, this.chartData, this.dataToShow)
+                executeChartJSCrossNavigation(formattedOutputParameters, this.widgetModel.settings.interactions.crossNavigation, this.dashboardId)
+            } else {
+                this.setSelection(event, selectionEvent)
+            }
         },
         setSelection(event: any, selectionEvent: any[]) {
             if (this.editorMode || !selectionEvent || !selectionEvent[0] || !this.widgetModel.settings.interactions.selection || !this.widgetModel.settings.interactions.selection.enabled) return
@@ -96,7 +121,14 @@ export default defineComponent({
         },
         createNewSelection(value: (string | number)[]) {
             const attributeColumn = this.widgetModel.columns.find((column: IWidgetColumn) => column.fieldType === 'ATTRIBUTE')
-            const selection = { datasetId: this.widgetModel.dataset as number, datasetLabel: this.getDatasetLabel(this.widgetModel.dataset as number), columnName: attributeColumn?.columnName ?? '', value: value, aggregated: false, timestamp: new Date().getTime() }
+            const selection = {
+                datasetId: this.widgetModel.dataset as number,
+                datasetLabel: this.getDatasetLabel(this.widgetModel.dataset as number),
+                columnName: attributeColumn?.columnName ?? '',
+                value: value,
+                aggregated: false,
+                timestamp: new Date().getTime()
+            }
             return selection
         },
         onChartResize(newHeight: number) {
