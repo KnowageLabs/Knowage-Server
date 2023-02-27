@@ -72,7 +72,7 @@ const getFilters = async (document: any, userRole: string | null, $http: any) =>
 
 const formatDrivers = (filtersData: { filterStatus: iParameter[], isReadyForExecution: boolean } | null) => {
     filtersData?.filterStatus?.forEach((el: iParameter) => {
-        el.parameterValue = !el.multivalue || (el.typeCode === 'MAN_IN' && !el.selectionType) ? [{ value: '', description: '' }] : []
+        el.parameterValue = !el.multivalue || (el.valueSelection === 'man_in' && !el.selectionType) ? [{ value: '', description: '' }] : []
         if (el.driverDefaultValue?.length > 0) {
             let valueIndex = '_col0'
             let descriptionIndex = 'col1'
