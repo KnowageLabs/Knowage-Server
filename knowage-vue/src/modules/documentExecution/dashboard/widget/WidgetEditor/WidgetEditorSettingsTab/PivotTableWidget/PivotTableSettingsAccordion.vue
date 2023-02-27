@@ -31,7 +31,6 @@ import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import descriptor from './PivotTableSettingsDescriptor.json'
 import settingsTabDescriptor from '../WidgetEditorSettingsTabDescriptor.json'
-import InputSwitch from 'primevue/inputswitch'
 import WidgetExport from '../common/configuration/WidgetExport.vue'
 import TableWidgetColumnStyle from '../TableWidget/style/TableWidgetColumnStyle.vue'
 import WidgetRowsStyle from '../common/style/WidgetRowsStyle.vue'
@@ -53,7 +52,6 @@ export default defineComponent({
     components: {
         Accordion,
         AccordionTab,
-        InputSwitch,
         WidgetExport,
         WidgetTitleStyle,
         TableWidgetColumnStyle,

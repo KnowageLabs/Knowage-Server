@@ -35,6 +35,8 @@ import 'primeflex/primeflex.css'
 import '@/assets/css/dialects-icons.css'
 import 'material-icons/iconfont/material-icons.css'
 
+import 'devextreme/dist/css/dx.light.css'
+
 import ToastService from 'primevue/toastservice'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
