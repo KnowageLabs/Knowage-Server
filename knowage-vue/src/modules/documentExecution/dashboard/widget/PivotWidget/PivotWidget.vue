@@ -1,6 +1,6 @@
 <template>
-    <div class="kn-pivot-widget-container p-d-flex p-d-row kn-flex">
-        <DxPivotGrid id="pivotgrid" ref="grid" :height="440" :data-source="dataSource" :allow-sorting-by-summary="true" :allow-filtering="true" :show-borders="true" :show-column-grand-totals="false" :show-row-grand-totals="false" :show-row-totals="false" :show-column-totals="false">
+    <div class="pivot-widget-container p-d-flex p-d-row kn-flex">
+        <DxPivotGrid id="pivotgrid" ref="grid" :data-source="dataSource" :allow-sorting-by-summary="true" :allow-filtering="true" :show-borders="true" :show-column-grand-totals="false" :show-row-grand-totals="false" :show-row-totals="false" :show-column-totals="false" @contentReady="onContentReady">
             <DxFieldChooser :enabled="true" :height="400" />
         </DxPivotGrid>
     </div>
@@ -93,7 +93,15 @@ export default defineComponent({
     unmounted() {},
     mounted() {},
 
-    methods: {}
+    methods: {
+        onContentReady() {
+            console.log('CONTENT READY', this.dataSource.fields)
+        }
+    }
 })
 </script>
-<style lang="scss"></style>
+<style lang="scss">
+.pivot-widget-container {
+    overflow: auto;
+}
+</style>

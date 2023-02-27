@@ -1,6 +1,6 @@
 <template>
     <div v-if="widgetModel">
-        {{ 'PIVOT TABLE CONTAINER' }}
+        TEST
         <!-- <WidgetEditorColumnTable
             v-if="chartType === 'pie'"
             class="p-m-2"
@@ -41,7 +41,7 @@ import ChartWidgetColumnForm from '../common/ChartWidgetColumnForm.vue'
 
 export default defineComponent({
     name: 'highcharts-widget-common-data-container',
-    components: { Dropdown, WidgetEditorColumnTable, WidgetEditorFilterForm, ChartWidgetColumnForm },
+    components: {},
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedDataset: { type: Object as PropType<IDataset | null> } },
     data() {
         return {

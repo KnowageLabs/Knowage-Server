@@ -1,6 +1,6 @@
 import { formatTableWidget } from './tableWidget/TableWidgetCompatibilityHelper'
 import { formatSelectorWidget } from '@/modules/documentExecution/dashboard/helpers/selectorWidget/SelectorWidgetCompatibilityHelper'
-import { IAssociation, IDashboard, IDashboardConfiguration, IDataset, IDatasetParameter, ISelection, IVariable, IWidget, IWidgetColumn, IWidgetColumnFilter, IDashboardDataset, IDashboardDatasetDriver, IDashboardDriver } from '../Dashboard'
+import { IAssociation, IDashboard, IDashboardConfiguration, IDataset, IDatasetParameter, ISelection, IVariable, IWidget, IWidgetColumn, IWidgetColumnFilter, IDashboardDataset, IDashboardDriver } from '../Dashboard'
 import { formatSelectionWidget } from './selectionWidget/SelectionsWidgetCompatibilityHelper'
 import { setVariableValueFromDataset } from '../generalSettings/VariablesHelper'
 import deepcopy from 'deepcopy'
@@ -219,10 +219,10 @@ export const formatWidget = (widget: any, formattedModel: IDashboard, user: any,
             break
         case 'image':
             formattedWidget = formatImageWidget(widget)
-            break;
+            break
         case 'customchart':
             formattedWidget = formatCustomChartWidget(widget)
-            break;
+            break
         case 'static-pivot-table':
             formattedWidget = formatPivotTabletWidget(widget, formattedModel, drivers)
     }

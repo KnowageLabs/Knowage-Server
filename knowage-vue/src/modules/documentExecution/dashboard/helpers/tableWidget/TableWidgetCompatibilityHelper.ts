@@ -1,4 +1,18 @@
-import { IWidget, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle, ITableWidgetStyle, IWidgetInteractions, ITableWidgetConfiguration, IWidgetResponsive, ITableWidgetConditionalStyles, IDashboard, IVariable, IDashboardDriver } from '../../Dashboard'
+import {
+    IWidget,
+    ITableWidgetSettings,
+    ITableWidgetPagination,
+    ITableWidgetConditionalStyle,
+    ITableWidgetTooltipStyle,
+    ITableWidgetStyle,
+    IWidgetInteractions,
+    ITableWidgetConfiguration,
+    IWidgetResponsive,
+    ITableWidgetConditionalStyles,
+    IDashboard,
+    IVariable,
+    IDashboardDriver
+} from '../../Dashboard'
 import { getFormattedConfiguration } from './TableWidgetConfigurationHelper'
 import { getFormattedStyle } from './TableWidgetStyleHelper'
 import { getSettingsFromWidgetColumns } from './TableWidgetColumnSettingsHelper'
@@ -11,6 +25,7 @@ import { getFormattedWidgetColumns } from '../common/WidgetColumnHelper'
 const columnNameIdMap = {}
 
 export const formatTableWidget = (widget: any, formattedDashboardModel: IDashboard, drivers: IDashboardDriver[]) => {
+    console.log('----------- ORIGINAL WIDGET: ', widget)
     const formattedWidget = {
         id: widget.id,
         dataset: widget.dataset.dsId,
@@ -23,6 +38,7 @@ export const formatTableWidget = (widget: any, formattedDashboardModel: IDashboa
     formattedWidget.settings = getFormattedWidgetSettings(widget, formattedDashboardModel, drivers)
     getFiltersForColumns(formattedWidget, widget)
     getSettingsFromWidgetColumns(formattedWidget, widget, formattedDashboardModel, columnNameIdMap)
+    console.log('----------- FORMATTED WIDGET: ', formattedWidget)
     return formattedWidget
 }
 
@@ -104,7 +120,7 @@ const setConditionalStyleValueFromVariable = (conditionStyle: ITableWidgetCondit
         case 'profile':
         case 'driver':
             conditionStyle.condition.value = modelVariable.value
-            break;
+            break
         case 'dataset':
             if (modelVariable.column) {
                 conditionStyle.condition.value = modelVariable.value
@@ -119,7 +135,8 @@ const setConditionalStyleValueFromVariable = (conditionStyle: ITableWidgetCondit
 export const getFormattedPaginations = (widget: any) => {
     if (!widget.settings?.pagination) return tableWidgetDefaultValues.getDefaultPagination()
     return {
-        enabled: widget.settings.pagination.enabled, properties: { offset: 0, itemsNumber: widget.settings.pagination.itemsNumber ?? 15, totalItems: 0 }
+        enabled: widget.settings.pagination.enabled,
+        properties: { offset: 0, itemsNumber: widget.settings.pagination.itemsNumber ?? 15, totalItems: 0 }
     } as ITableWidgetPagination
 }
 

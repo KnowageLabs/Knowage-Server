@@ -1,15 +1,13 @@
-
 import { IDashboard, IDashboardDriver, ITableWidgetConditionalStyle, ITableWidgetConditionalStyles, ITableWidgetStyle, IVariable, IWidget, IWidgetInteractions, IWidgetResponsive } from '../../Dashboard'
 // import * as pivotTalbeDefaultValues from '../../widget/WidgetEditor/helpers/pivotTableWidget/PivotTableDefaultValues'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import { getFiltersForColumns } from '../DashboardBackwardCompatibilityHelper'
 import { getFormattedInteractions } from '../common/WidgetInteractionsHelper'
-import { getFormattedWidgetColumns } from '../common/WidgetColumnHelper'
+import { getFormattedPivotFields } from './PivotTableColumnHelper'
 import { IPivotTableConfiguration, IPivotTableSettings } from '../../interfaces/pivotTable/DashboardPivotTableWidget'
 import { getSettingsFromWidgetColumns } from './PivotTableColumnSettingsHelper'
 import { getFormattedConfiguration } from './PivotTableConfigurationHelper'
 import { getFormattedStyle } from './PivotTabletStyleHelper'
-
 
 const columnNameIdMap = {}
 
@@ -19,7 +17,8 @@ export const formatPivotTabletWidget = (widget: any, formattedDashboardModel: ID
         id: widget.id,
         dataset: widget.dataset.dsId,
         type: widget.type,
-        columns: getFormattedWidgetColumns(widget, columnNameIdMap),
+        fields: getFormattedPivotFields(widget, columnNameIdMap),
+        columns: [],
         theme: '',
         style: {},
         settings: {} as IPivotTableSettings
@@ -46,7 +45,7 @@ const getFormattedWidgetSettings = (widget: any, formattedDashboardModel: IDashb
     return formattedSettings
 }
 
-// TODO - Darko see if needed or it needs to be changed 
+// TODO - Darko see if needed or it needs to be changed
 const getFormattedConditionalStyles = (widget: any, formattedDashboardModel: IDashboard, drivers: IDashboardDriver[]) => {
     const formattedStyles = { enabled: false, conditions: [] } as ITableWidgetConditionalStyles
     if (widget.settings?.rowThresholds?.enabled) {
@@ -108,7 +107,7 @@ const setConditionalStyleValueFromVariable = (conditionStyle: ITableWidgetCondit
         case 'profile':
         case 'driver':
             conditionStyle.condition.value = modelVariable.value
-            break;
+            break
         case 'dataset':
             if (modelVariable.column) {
                 conditionStyle.condition.value = modelVariable.value
