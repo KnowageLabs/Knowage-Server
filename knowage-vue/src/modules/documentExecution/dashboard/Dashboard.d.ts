@@ -38,6 +38,7 @@ export interface IWidget {
     columns: IWidgetColumn[]
     settings: any
     new?: boolean
+    fields?: any
 }
 
 export interface ITableWidgetSettings {
@@ -166,7 +167,7 @@ export interface IWidgetInteractions {
     crossNavigation: IWidgetCrossNavigation
     link?: IWidgetLinks
     preview?: IWidgetPreview
-    selection?: IWidgetSelection,
+    selection?: IWidgetSelection
     drilldown?: IHighchartsDrilldown
 }
 
@@ -429,7 +430,6 @@ export interface IDashboardDataset {
     indexes?: any[]
 }
 
-
 export interface IDashboardDatasetDriver {
     urlName: string
     parameterValue: { value: string | number | Date; description: string }[]
@@ -671,36 +671,42 @@ export interface IChartType {
 }
 
 export interface IDashboardCrossNavigation {
-    crossBreadcrumb: string,
-    crossId: number,
-    crossName: string,
-    crossText: string,
-    crossType: number,
-    document: any,
-    documentId: number,
-    navigationParams: any,
+    crossBreadcrumb: string
+    crossId: number
+    crossName: string
+    crossText: string
+    crossType: number
+    document: any
+    documentId: number
+    navigationParams: any
     popupOptions: any
 }
 
-
 export interface IDashboardOutputParameter {
-    biObjectId: number,
-    formatCode: string | null,
-    formatValue: string | null,
-    id: number,
-    isUserDefined: boolean,
-    name: string,
+    biObjectId: number
+    formatCode: string | null
+    formatValue: string | null
+    id: number
+    isUserDefined: boolean
+    name: string
     type: IDashboardOutputParameterType
 }
 
 // TODO - see if needed, valueCd could be usefull
 interface IDashboardOutputParameterType {
-    domainCode: string,
-    domainName: string,
-    translatedValueDescription: string,
-    translatedValueName: string,
-    valueCd: string,
-    valueDescription: string,
-    valueId: number,
+    domainCode: string
+    domainName: string
+    translatedValueDescription: string
+    translatedValueName: string
+    valueCd: string
+    valueDescription: string
+    valueId: number
     valueName: string
+}
+
+interface IPivotFields {
+    columns: IWidgetColumn[]
+    rows: IWidgetColumn[]
+    data: IWidgetColumn[]
+    filters: IWidgetColumn[]
 }

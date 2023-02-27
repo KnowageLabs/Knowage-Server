@@ -219,10 +219,10 @@ export const formatWidget = (widget: any, formattedModel: IDashboard, user: any,
             break
         case 'image':
             formattedWidget = formatImageWidget(widget)
-            break;
+            break
         case 'customchart':
             formattedWidget = formatCustomChartWidget(widget)
-            break;
+            break
         case 'static-pivot-table':
             formattedWidget = formatPivotTabletWidget(widget, formattedModel, drivers)
     }
