@@ -2,7 +2,7 @@
     <div v-if="crossNavigationModel" class="p-grid p-jc-center p-ai-center p-p-4">
         {{ crossNavigationModel }}
         <div class="p-grid p-col-12 p-ai-center">
-            <div v-if="!['html', 'text', 'highcharts', 'image', 'customchart'].includes(widgetModel.type)" class="p-col-6 p-sm-12 p-md-6 p-d-flex p-flex-column kn-flex p-px-2">
+            <div v-if="!['html', 'text', 'highcharts', 'chartJS', 'image', 'customchart'].includes(widgetModel.type)" class="p-col-6 p-sm-12 p-md-6 p-d-flex p-flex-column kn-flex p-px-2">
                 <label class="kn-material-input-label"> {{ $t('common.type') }}</label>
                 <Dropdown v-model="crossNavigationModel.type" class="kn-material-input" :options="descriptor.interactionTypes" option-value="value" :disabled="crossNavigationDisabled" @change="onInteractionTypeChanged">
                     <template #value="slotProps">

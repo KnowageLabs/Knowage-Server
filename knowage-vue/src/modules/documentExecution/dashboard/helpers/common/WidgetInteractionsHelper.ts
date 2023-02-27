@@ -56,8 +56,8 @@ const getFormattedChartSelection = () => {
 }
 
 export const getFormattedCrossNavigation = (widget: any) => {
-    const oldCrossNavigation = widget.type === 'chart' ? widget.content.cross : widget.cross
-    if (!oldCrossNavigation) return widgetCommonDefaultValues.getDefaultCrossNavigation()  // TODO - see about chart default 
+    const oldCrossNavigation = getOldCrossNavigation(widget)
+    if (!oldCrossNavigation) return widgetCommonDefaultValues.getDefaultCrossNavigation()  // TODO - see about chart default
 
     const formattedParameters = [] as IWidgetInteractionParameter[]
     if (oldCrossNavigation.outputParameter) addFormattedFirstCrossNavigationParameter(oldCrossNavigation, formattedParameters)
@@ -69,6 +69,18 @@ export const getFormattedCrossNavigation = (widget: any) => {
         column: oldCrossNavigation.column,
         name: oldCrossNavigation.crossName,
         parameters: formattedParameters
+    }
+}
+
+const getOldCrossNavigation = (widget: any) => {
+    switch (widget.type) {
+        case 'chart':
+            return widget.content.cross;
+        case 'image':
+            return widget.cross.cross
+        default:
+            return widget.cross
+
     }
 }
 
@@ -90,9 +102,9 @@ const addFormattedCrossNavigationParameters = (outputParameterList: any, formatt
         Object.keys(outputParameterList).forEach((key: string) => {
             const tempParameter = outputParameterList[key]
             const formattedParameter = {
-                enabled: tempParameter.enabled,
+                enabled: tempParameter.enabled ?? false,
                 name: key,
-                type: tempParameter.type,
+                type: tempParameter.type ?? '',
                 value: tempParameter.value,
                 dataType: tempParameter.dataType
             } as IWidgetInteractionParameter

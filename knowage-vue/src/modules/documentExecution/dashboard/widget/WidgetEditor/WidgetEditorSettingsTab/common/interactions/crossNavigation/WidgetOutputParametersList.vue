@@ -13,7 +13,7 @@
             </div>
             <div class="p-sm-6 p-md-2 p-d-flex p-flex-column kn-flex p-p-2 value-type-dropdown">
                 <label class="kn-material-input-label"> {{ $t('common.type') }}</label>
-                <Dropdown v-model="parameter.type" class="kn-material-input" :options="descriptor.outputParameterTypeOptions" option-value="value" :disabled="disabled" @change="onParameterTypeChanged(parameter)">
+                <Dropdown v-model="parameter.type" class="kn-material-input" :options="outputParameterTypeOptions" option-value="value" :disabled="disabled" @change="onParameterTypeChanged(parameter)">
                     <template #value="slotProps">
                         <div>
                             <span>{{ getTranslatedLabel(slotProps.value, descriptor.outputParameterTypeOptions, $t) }}</span>
@@ -30,7 +30,7 @@
                 <label class="kn-material-input-label">{{ $t('common.value') }}</label>
                 <InputText v-model="parameter.value" class="kn-material-input p-inputtext-sm" :disabled="disabled" @change="parametersChanged" />
             </div>
-            <div v-else-if="parameter.type === 'dynamic' && ['table', 'highcharts'].includes(widgetType)" class="p-sm-12 p-md-7 p-d-flex p-flex-row p-ai-center kn-flex">
+            <div v-else-if="parameter.type === 'dynamic' && ['table', 'highcharts', 'chartJS'].includes(widgetType)" class="p-sm-12 p-md-7 p-d-flex p-flex-row p-ai-center kn-flex">
                 <div class="p-d-flex p-flex-column kn-flex">
                     <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
                     <Dropdown v-if="widgetType === 'table'" v-model="parameter.column" class="kn-material-input" :options="widgetModel.columns" option-label="alias" option-value="columnName" :disabled="disabled" @change="parametersChanged"></Dropdown>
@@ -86,6 +86,9 @@ export default defineComponent({
     computed: {
         widgetType() {
             return this.widgetModel.type
+        },
+        outputParameterTypeOptions() {
+            return this.widgetType !== 'image' ? descriptor.outputParameterTypeOptions : descriptor.outputParameterTypeOptions.filter((option: { value: string; label: string }) => option.value !== 'dynamic')
         }
     },
     watch: {
