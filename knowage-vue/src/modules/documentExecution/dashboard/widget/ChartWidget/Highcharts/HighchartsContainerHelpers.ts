@@ -3,13 +3,8 @@ import { IWidgetCrossNavigation, IWidgetInteractionParameter } from "../../../Da
 interface IChartValues { serieName: string, serieValue: string, categoryName: string, categoryValue: string }
 
 export const formatForCrossNavigation = (chartEvent: any, crossNavigationOptions: IWidgetCrossNavigation, dataToShow: any) => {
-    // console.log('------ dataToShow: ', dataToShow)
-    // console.log('--------- chartEvent: ', chartEvent)
-    //   console.log('--------- evecrossNavigationOptionsnt: ', crossNavigationOptions)
     const formattedChartValues = getFormattedChartValues(chartEvent, dataToShow)
-    // console.log('--------- formattedChartValues: ', formattedChartValues)
     const formattedOutputParameters = getFormattedOutputParameters(formattedChartValues, crossNavigationOptions.parameters)
-    // console.log('--------- formattedOutputParameters: ', formattedOutputParameters)
     return formattedOutputParameters
 
 }
@@ -33,8 +28,7 @@ const getFormattedOutputParameters = (formattedChartValues: IChartValues, output
 }
 
 const getFormattedDynamicOutputParameter = (formattedChartValues: IChartValues, outputParameter: IWidgetInteractionParameter) => {
-    // console.log("------- outputParameter: ", outputParameter)
-    let value = '' // TODO - see about date
+    let value = ''
     switch (outputParameter.column) {
         case "SERIE_NAME":
             value = formattedChartValues.serieName;

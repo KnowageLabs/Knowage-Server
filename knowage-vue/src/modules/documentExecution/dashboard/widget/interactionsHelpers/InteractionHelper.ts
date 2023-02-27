@@ -140,8 +140,40 @@ export const executeHighchartsCrossNavigation = (outputParameters: IWidgetIntera
     console.log('------- outputParameters: ', outputParameters)
     console.log('------- crossNavigationModel: ', crossNavigationModel)
     console.log('------- dashboardId: ', dashboardId)
-    // const outputParameters = getFormattedTableOutputParameters(clickedValue, formattedRow, crossNavigationModel, dashboardId)
-    //  executeCrossNavigation(outputParameters, crossNavigationModel.name)
+    const formattedOutputParameters = getFormattedChartOutputParameters(outputParameters, crossNavigationModel, dashboardId)
+    executeCrossNavigation(formattedOutputParameters, crossNavigationModel.name)
+}
+
+const getFormattedChartOutputParameters = (outputParameters: IWidgetInteractionParameter[], crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
+    const formattedOutputParameters = [] as ICrossNavigationParameter[]
+    crossNavigationModel.parameters.forEach((crossNavigationParameter: IWidgetInteractionParameter) => {
+        switch (crossNavigationParameter.type) {
+            case 'static':
+                formattedOutputParameters.push(getFormattedFixedOutputParameter(crossNavigationParameter))
+                break
+            case 'dynamic':
+                formattedOutputParameters.push(getFormattedChartDynamicOutputParameter(outputParameters, crossNavigationParameter))
+                break
+            case 'selection':
+                addSelectionTypeOutputParameter(crossNavigationParameter, formattedOutputParameters, dashboardId)
+        }
+    })
+    return formattedOutputParameters
+}
+
+
+const getFormattedChartDynamicOutputParameter = (outputParameters: IWidgetInteractionParameter[], crossNavigationParameter: IWidgetInteractionParameter) => {
+    const index = outputParameters.findIndex((tempParameter: IWidgetInteractionParameter) => tempParameter.name === crossNavigationParameter.name)
+    const outputParameter = index !== -1 ? outputParameters[index] : null
+    const value = outputParameter?.value ?? ''
+    return {
+        targetDriverUrlName: '',
+        parameterValue: [{ value: value, description: value }],
+        multivalue: false,
+        type: 'fromSourceDocumentOutputParameter',
+        parameterType: getDriverParameterTypeFromOutputParameterType(crossNavigationParameter.dataType),
+        outputDriverName: crossNavigationParameter.name
+    } as ICrossNavigationParameter
 }
 
 const addSelectionTypeOutputParameter = (crossNavigationParameter: IWidgetInteractionParameter, formattedOutputParameters: ICrossNavigationParameter[], dashboardId: string) => {

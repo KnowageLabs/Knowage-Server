@@ -137,7 +137,6 @@ export default defineComponent({
         executeInteractions(event: any) {
             if (this.widgetModel.settings.interactions.crossNavigation.enabled) {
                 const formattedOutputParameters = formatForCrossNavigation(event, this.widgetModel.settings.interactions.crossNavigation, this.dataToShow)
-                console.log('------ formattedOutputParameters: ', formattedOutputParameters)
                 executeHighchartsCrossNavigation(formattedOutputParameters, this.widgetModel.settings.interactions.crossNavigation, this.dashboardId)
             } else {
                 this.setSelection(event)
