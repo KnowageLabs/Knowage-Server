@@ -68,8 +68,8 @@ export default defineComponent({
             if (!this.user || !this.widget) return
             if (this.user.enterprise) updateWidgetModelColumnsAfterChartTypeChange(this.widget, chartType)
             // TODO widgetChange
-            // this.widget.settings.chartModel = this.user.enterprise ? createNewHighchartsModel(chartType, this.widget.settings.chartModel?.model) : createChartJSModel(chartType)
-            this.propWidget.settings.chartModel = false ? createNewHighchartsModel(chartType) : createChartJSModel(chartType)
+            this.widget.settings.chartModel = this.user.enterprise ? createNewHighchartsModel(chartType, this.widget.settings.chartModel?.model) : createChartJSModel(chartType)
+            // this.propWidget.settings.chartModel = false ? createNewHighchartsModel(chartType) : createChartJSModel(chartType)
             emitter.emit('chartTypeChanged', this.widget.id)
             emitter.emit('refreshWidgetWithData', this.widget.id)
         }

@@ -51,13 +51,16 @@ const getFormattedChartSelection = () => {
     const store = mainStore()
     const user = store.getUser()
     // TODO widgetChange
-    // return user?.enterprise ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections
-    return false ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections()
+    return user?.enterprise ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections
+    // return false ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections()
 }
 
 export const getFormattedCrossNavigation = (widget: any) => {
     const oldCrossNavigation = widget.type === 'chart' ? widget.content.cross : widget.cross
-    if (!oldCrossNavigation) return widgetCommonDefaultValues.getDefaultCrossNavigation()  // TODO - see about chart default 
+
+    if (!oldCrossNavigation) return widgetCommonDefaultValues.getDefaultCrossNavigation()  // TODO - see about chart default
+
+
 
     const formattedParameters = [] as IWidgetInteractionParameter[]
     if (oldCrossNavigation.outputParameter) addFormattedFirstCrossNavigationParameter(oldCrossNavigation, formattedParameters)

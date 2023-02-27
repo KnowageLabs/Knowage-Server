@@ -1,6 +1,6 @@
 import { formatTableWidget } from './tableWidget/TableWidgetCompatibilityHelper'
 import { formatSelectorWidget } from '@/modules/documentExecution/dashboard/helpers/selectorWidget/SelectorWidgetCompatibilityHelper'
-import { IAssociation, IDashboard, IDashboardConfiguration, IDataset, IDatasetParameter, ISelection, IVariable, IWidget, IWidgetColumn, IWidgetColumnFilter, IDashboardDataset, IDashboardDatasetDriver, IDashboardDriver } from '../Dashboard'
+import { IAssociation, IDashboard, IDashboardConfiguration, IDataset, IDatasetParameter, ISelection, IVariable, IWidget, IWidgetColumn, IWidgetColumnFilter, IDashboardDataset, IDashboardDriver } from '../Dashboard'
 import { formatSelectionWidget } from './selectionWidget/SelectionsWidgetCompatibilityHelper'
 import { setVariableValueFromDataset } from '../generalSettings/VariablesHelper'
 import deepcopy from 'deepcopy'
@@ -214,8 +214,8 @@ export const formatWidget = (widget: any, formattedModel: IDashboard, user: any,
             break
         case 'chart':
             // TODO widgetChange
-            // formattedWidget = user?.enterprise ? formatHighchartsWidget(widget) : formatChartJSWidget(widget)
-            formattedWidget = false ? formatHighchartsWidget(widget) : formatChartJSWidget(widget)
+            formattedWidget = user?.enterprise ? formatHighchartsWidget(widget) : formatChartJSWidget(widget)
+            // formattedWidget = false ? formatHighchartsWidget(widget) : formatChartJSWidget(widget)
             break
         case 'image':
             formattedWidget = formatImageWidget(widget)
