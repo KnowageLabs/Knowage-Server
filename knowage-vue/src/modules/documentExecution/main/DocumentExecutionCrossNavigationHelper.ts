@@ -140,10 +140,10 @@ const createDocumentNavigationParametersForFilterService = (formattedCrossNaviga
 */
 const getValueAndDescriptionForFilterServiceFromSourceDocumentDriverCrossNavigationParameter = (formattedCrossNavigationParameter: ICrossNavigationParameter) => {
     const parameterValue = formattedCrossNavigationParameter.parameterValue
-    const valueAndDescription = { value: '', description: null } as { value: string | number | (string | number)[] | null, description: string | string[] | null }
-    if (!formattedCrossNavigationParameter.selectionType) {
-        if (formattedCrossNavigationParameter.parameterType === 'STRING') valueAndDescription.value = parameterValue[0] ? parameterValue[0].value : ''
-        else if (formattedCrossNavigationParameter.parameterType === 'NUM') valueAndDescription.value = parameterValue[0] && parameterValue[0].value ? +parameterValue[0].value : null
+    let valueAndDescription = { value: '', description: null } as { value: string | number | (string | number)[] | null, description: string | string[] | null }
+    if (!formattedCrossNavigationParameter.selectionType && parameterValue[0]) {
+        if (formattedCrossNavigationParameter.parameterType === 'STRING') valueAndDescription = { value: parameterValue[0].value, description: '' + parameterValue[0].value }
+        else if (formattedCrossNavigationParameter.parameterType === 'NUM' && parameterValue[0].value) valueAndDescription = { value: +parameterValue[0].value, description: "" + parameterValue[0].value }
         else if (formattedCrossNavigationParameter.parameterType === 'DATE') {
             const dateValue = getDateStringFromJSDate(new Date(parameterValue[0].value), 'MM/dd/y')
             valueAndDescription.value = dateValue ?? ''
@@ -157,8 +157,7 @@ const getValueAndDescriptionForFilterServiceFromSourceDocumentDriverCrossNavigat
             valueAndDescription.value = parameterValue[0] ? parameterValue[0].value : ''
             valueAndDescription.description = parameterValue[0] ? parameterValue[0].description : ''
         }
-    }
-    else if (formattedCrossNavigationParameter.selectionType === 'LOOKUP' || formattedCrossNavigationParameter.selectionType === 'TREE') {
+    } else if (formattedCrossNavigationParameter.selectionType === 'LOOKUP' || formattedCrossNavigationParameter.selectionType === 'TREE') {
         valueAndDescription.value = parameterValue.map((tempValue: { value: string | number; description: string }) => tempValue.value)
         valueAndDescription.description = parameterValue.map((tempValue: { value: string | number; description: string }) => tempValue.description)
     }
@@ -278,8 +277,13 @@ const getListComboboxCrossNavigationValue = (parameter: iParameter, crossNavigat
     return index !== -1 ? parameter.data[index] : null
 }
 
+
+// TODO - refactor/merge with function below ???
 const loadPopupDriverInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter) => {
     // TODO - see for NON ADMISSABLE
+    console.log('---------- loadPopupDriverInitialValue - parameter: ', parameter)
+    console.log('---------- loadPopupDriverInitialValue - crossNavigationParameter: ', crossNavigationParameter)
+    addMissingDescriptionForPopupAndTreeDriver(crossNavigationParameter)
     if (parameter.multivalue) {
         parameter.parameterValue = crossNavigationParameter.parameterValue
     } else {
@@ -289,11 +293,18 @@ const loadPopupDriverInitialValue = (parameter: iParameter, crossNavigationParam
 
 const loadTreeDriverInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter) => {
     // TODO - see for NON ADMISSABLE
+    addMissingDescriptionForPopupAndTreeDriver(crossNavigationParameter)
     if (parameter.multivalue) {
         parameter.parameterValue = crossNavigationParameter.parameterValue
     } else {
         parameter.parameterValue = crossNavigationParameter.parameterValue
     }
+}
+
+const addMissingDescriptionForPopupAndTreeDriver = (crossNavigationParameter: ICrossNavigationParameter) => {
+    crossNavigationParameter.parameterValue.forEach((parameterValue: { value: string | number, description: string }) => {
+        if (!parameterValue.description) parameterValue.description = '' + parameterValue.value
+    })
 }
 
 //#endregion ===== INITIAL VALUES ======
