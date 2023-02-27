@@ -9,7 +9,7 @@ import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { ISelection, IWidget, IWidgetColumn } from '../../../Dashboard'
 import { IHighchartsChartModel } from '../../../interfaces/highcharts/DashboardHighchartsWidget'
 import { mapActions } from 'pinia'
-import { updateStoreSelections, executeHighchartsCrossNavigation } from '../../interactionsHelpers/InteractionHelper'
+import { updateStoreSelections, executeChartCrossNavigation } from '../../interactionsHelpers/InteractionHelper'
 import { formatActivityGauge } from './HighchartsModelFormattingHelpers'
 import { formatForCrossNavigation } from './HighchartsContainerHelpers'
 import Highcharts from 'highcharts'
@@ -137,7 +137,7 @@ export default defineComponent({
         executeInteractions(event: any) {
             if (this.widgetModel.settings.interactions.crossNavigation.enabled) {
                 const formattedOutputParameters = formatForCrossNavigation(event, this.widgetModel.settings.interactions.crossNavigation, this.dataToShow)
-                executeHighchartsCrossNavigation(formattedOutputParameters, this.widgetModel.settings.interactions.crossNavigation, this.dashboardId)
+                executeChartCrossNavigation(formattedOutputParameters, this.widgetModel.settings.interactions.crossNavigation, this.dashboardId)
             } else {
                 this.setSelection(event)
             }

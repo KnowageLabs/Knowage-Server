@@ -10,7 +10,7 @@ import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale } f
 import { IWidget, IWidgetColumn, ISelection } from '../../../Dashboard'
 import { IChartJSChartModel, IChartJSData, IChartJSOptions } from '../../../interfaces/chartJS/DashboardChartJSWidget'
 import { mapActions } from 'pinia'
-import { updateStoreSelections, executeChartJSCrossNavigation } from '../../interactionsHelpers/InteractionHelper'
+import { updateStoreSelections, executeChartCrossNavigation } from '../../interactionsHelpers/InteractionHelper'
 import store from '../../../Dashboard.store'
 import { formatForCrossNavigation } from './ChartJSContainerHelper'
 
@@ -105,7 +105,7 @@ export default defineComponent({
             if (this.editorMode || !selectionEvent[0]) return
             if (this.widgetModel.settings.interactions.crossNavigation.enabled) {
                 const formattedOutputParameters = formatForCrossNavigation(selectionEvent[0], this.widgetModel, this.chartData, this.dataToShow)
-                executeChartJSCrossNavigation(formattedOutputParameters, this.widgetModel.settings.interactions.crossNavigation, this.dashboardId)
+                executeChartCrossNavigation(formattedOutputParameters, this.widgetModel.settings.interactions.crossNavigation, this.dashboardId)
             } else {
                 this.setSelection(event, selectionEvent)
             }
