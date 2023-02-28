@@ -118,6 +118,7 @@ const getColumnType = (columnField: string, dataToShow: any) => {
 
 export const addIconColumn = (columns: any[], propWidget: IWidget, HeaderRenderer: any, CellRenderer: any) => {
     const crossNavigationOptions = propWidget.settings.interactions.crossNavigation as IWidgetCrossNavigation
+    console.log('--------- CROSS NAVIGATION OPTIONS: ', crossNavigationOptions)
     if (crossNavigationOptions.enabled && crossNavigationOptions.type === 'icon')
         columns.push({
             colId: 'iconColumn',

@@ -24,7 +24,7 @@ export const executeCrossNavigation = (documentCrossNavigationOutputParameters: 
 }
 
 
-
+//#region ===== TABLE ======
 export const executeTableWidgetCrossNavigation = (clickedValue: IClickedValue, formattedRow: any, crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
     const outputParameters = getFormattedTableOutputParameters(clickedValue, formattedRow, crossNavigationModel, dashboardId)
     executeCrossNavigation(outputParameters, crossNavigationModel.name)
@@ -32,7 +32,9 @@ export const executeTableWidgetCrossNavigation = (clickedValue: IClickedValue, f
 
 const getFormattedTableOutputParameters = (clickedValue: IClickedValue, formattedRow: any, crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
     const formattedOutputParameters = [] as ICrossNavigationParameter[]
-    crossNavigationModel.parameters.forEach((crossNavigationParameter: IWidgetInteractionParameter) => {
+    for (let i = 0; i < crossNavigationModel.parameters.length; i++) {
+        const crossNavigationParameter = crossNavigationModel.parameters[i] as IWidgetInteractionParameter
+        if (!crossNavigationParameter.enabled) continue
         switch (crossNavigationParameter.type) {
             case 'static':
                 formattedOutputParameters.push(getFormattedFixedOutputParameter(crossNavigationParameter))
@@ -43,13 +45,13 @@ const getFormattedTableOutputParameters = (clickedValue: IClickedValue, formatte
             case 'selection':
                 addSelectionTypeOutputParameter(crossNavigationParameter, formattedOutputParameters, dashboardId)
         }
-    })
+    }
     return formattedOutputParameters
 }
 
 const getFormattedFixedOutputParameter = (crossNavigationParameter: IWidgetInteractionParameter) => {
     const value = crossNavigationParameter.value ?? ''
-    const formattedValue = crossNavigationParameter.dataType === 'date' ? getFormattedDateValue(value, 'date') : value
+    const formattedValue = getFormattedFixedOutputValue(value, crossNavigationParameter.dataType)
     return {
         targetDriverUrlName: '',
         parameterValue: [{ value: formattedValue, description: formattedValue }],
@@ -58,6 +60,17 @@ const getFormattedFixedOutputParameter = (crossNavigationParameter: IWidgetInter
         parameterType: getDriverParameterTypeFromOutputParameterType(crossNavigationParameter.dataType),
         outputDriverName: crossNavigationParameter.name
     } as ICrossNavigationParameter
+}
+
+const getFormattedFixedOutputValue = (value: string, dataType: string) => {
+    switch (dataType) {
+        case 'date':
+            return getFormattedDateValue(value, 'date')
+        case 'number':
+            return isNaN(value as any) ? null : +value
+        default:
+            return value
+    }
 }
 
 const getFormattedTableDynamicOutputParameter = (clickedValue: IClickedValue, crossNavigationParameter: IWidgetInteractionParameter, formattedRow: any) => {
@@ -85,12 +98,15 @@ const getDynamicValueAndTypeForTableDynamicOutputParameter = (clickedValue: ICli
     return { value: value, type: fieldTypeIsDate ? 'date' : 'string' } // TODO
 }
 
+//#endregion ===== TABLE ======
+
 const getFormattedDateValue = (valueAsString: string, type: string) => {
     const format = type === 'timestamp' ? 'DD/MM/YYYY HH:mm:ss.SSS' : 'DD/MM/YYYY'
     const date = moment(valueAsString, format)
     return date.isValid() ? date.valueOf() : ''
 }
 
+//#region ===== HTML/TEXT ======
 export const executeHTMLandTextWidgetCrossNavigation = (dynamicValue: string, crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
     const clickedValue = { value: dynamicValue, type: '' }
     const outputParameters = getFormattedHTMLandTextWidgetOutputParameters(clickedValue, crossNavigationModel, dashboardId)
@@ -135,6 +151,9 @@ const getDynamicValueAndTypeForHTMLandTextDynamicOutputParameter = (clickedValue
     return { value: value, type: crossNavigationParameter.dataType }
 }
 
+//#endregion ===== HTML/TEXT ======
+
+//#region ===== CHART ======
 export const executeChartCrossNavigation = (outputParameters: IWidgetInteractionParameter[], crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
     const formattedOutputParameters = getFormattedChartOutputParameters(outputParameters, crossNavigationModel, dashboardId)
     executeCrossNavigation(formattedOutputParameters, crossNavigationModel.name)
@@ -171,6 +190,9 @@ const getFormattedChartDynamicOutputParameter = (outputParameters: IWidgetIntera
     } as ICrossNavigationParameter
 }
 
+//#endregion ===== CHART ======
+
+//#region ===== IMAGE ======
 export const executeImageWidgetCrossNavigation = (crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
     const outputParameters = getFormattedImageWidgetOutputParameters(crossNavigationModel, dashboardId)
     executeCrossNavigation(outputParameters, crossNavigationModel.name)
@@ -189,6 +211,7 @@ const getFormattedImageWidgetOutputParameters = (crossNavigationModel: IWidgetCr
     })
     return formattedOutputParameters
 }
+//#endregion ===== IMAGE ======
 
 
 const addSelectionTypeOutputParameter = (crossNavigationParameter: IWidgetInteractionParameter, formattedOutputParameters: ICrossNavigationParameter[], dashboardId: string) => {
