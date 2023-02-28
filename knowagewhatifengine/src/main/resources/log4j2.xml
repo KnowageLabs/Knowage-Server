@@ -3,7 +3,7 @@
 	<Appenders>
 		<Console name="CONSOLE" target="SYSTEM_OUT">
 			<PatternLayout>
-				<Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
+				<Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}/%X{jSessionId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
 			</PatternLayout>
 		</Console>
 		<RollingFile
@@ -14,7 +14,7 @@
 				ignoreExceptions="false"
 				createOnDemand="true">
 			<PatternLayout>
-				<Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
+				<Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}/%X{jSessionId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
 			</PatternLayout>
 			<Policies>
 				<SizeBasedTriggeringPolicy size="5000KB" />
@@ -29,7 +29,7 @@
 				ignoreExceptions="false"
 				createOnDemand="true">
 			<PatternLayout>
-				<Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
+				<Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}/%X{jSessionId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
 			</PatternLayout>
 			<Policies>
 				<SizeBasedTriggeringPolicy size="5000KB" />
