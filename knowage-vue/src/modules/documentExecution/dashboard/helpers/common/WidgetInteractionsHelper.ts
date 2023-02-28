@@ -78,6 +78,7 @@ const getOldCrossNavigation = (widget: any) => {
             return widget.content.cross;
         case 'table':
         case 'image':
+        case 'html':
             return widget.cross.cross
         default:
             return widget.cross

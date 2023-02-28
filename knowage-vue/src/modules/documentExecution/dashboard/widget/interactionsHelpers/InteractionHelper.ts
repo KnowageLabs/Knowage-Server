@@ -100,11 +100,6 @@ const getDynamicValueAndTypeForTableDynamicOutputParameter = (clickedValue: ICli
 
 //#endregion ===== TABLE ======
 
-const getFormattedDateValue = (valueAsString: string, type: string) => {
-    const format = type === 'timestamp' ? 'DD/MM/YYYY HH:mm:ss.SSS' : 'DD/MM/YYYY'
-    const date = moment(valueAsString, format)
-    return date.isValid() ? date.valueOf() : ''
-}
 
 //#region ===== HTML/TEXT ======
 export const executeHTMLandTextWidgetCrossNavigation = (dynamicValue: string, crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
@@ -116,7 +111,9 @@ export const executeHTMLandTextWidgetCrossNavigation = (dynamicValue: string, cr
 
 const getFormattedHTMLandTextWidgetOutputParameters = (clickedValue: IClickedValue, crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
     const formattedOutputParameters = [] as ICrossNavigationParameter[]
-    crossNavigationModel.parameters.forEach((crossNavigationParameter: IWidgetInteractionParameter) => {
+    for (let i = 0; i < crossNavigationModel.parameters.length; i++) {
+        const crossNavigationParameter = crossNavigationModel.parameters[i] as IWidgetInteractionParameter
+        if (!crossNavigationParameter.enabled) continue
         switch (crossNavigationParameter.type) {
             case 'static':
                 formattedOutputParameters.push(getFormattedFixedOutputParameter(crossNavigationParameter))
@@ -127,7 +124,7 @@ const getFormattedHTMLandTextWidgetOutputParameters = (clickedValue: IClickedVal
             case 'selection':
                 addSelectionTypeOutputParameter(crossNavigationParameter, formattedOutputParameters, dashboardId)
         }
-    })
+    }
     return formattedOutputParameters
 }
 
@@ -240,6 +237,13 @@ const getActiveSelectionByDatasetAndColumn = (datasetLabel: string | undefined, 
     const index = activeSelections.findIndex((selection: ISelection) => selection.datasetLabel === datasetLabel && selection.columnName === columnName)
     return index !== -1 ? activeSelections[index] : null
 }
+
+const getFormattedDateValue = (valueAsString: string, type: string) => {
+    const format = type === 'timestamp' ? 'DD/MM/YYYY HH:mm:ss.SSS' : 'DD/MM/YYYY'
+    const date = moment(valueAsString, format, true)
+    return date.isValid() ? date.valueOf() : ''
+}
+
 
 const getDriverParameterTypeFromOutputParameterType = (outputParameterType: string | undefined) => {
     switch (outputParameterType) {

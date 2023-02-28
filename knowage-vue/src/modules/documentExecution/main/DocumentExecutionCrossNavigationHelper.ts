@@ -260,7 +260,7 @@ const loadDateDriverInitialValue = (parameter: iParameter, crossNavigationParame
     console.log('---------- loadDateDriverInitialValue - parameter: ', parameter)
     console.log('---------- loadDriverInitialValue - crossNavigationParameter: ', crossNavigationParameter)
     if (crossNavigationParameter.type === 'fixed') {
-        const date = moment(crossNavigationParameter.parameterValue[0].value, 'MM/DD/YYYY')
+        const date = moment(crossNavigationParameter.parameterValue[0].value, 'MM/DD/YYYY', true)
         if (date.isValid()) parameter.parameterValue[0].value = date.toDate()
     }
     else if (typeof crossNavigationParameter.parameterValue[0].value !== 'number') {
