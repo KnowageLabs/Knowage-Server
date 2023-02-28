@@ -81,7 +81,7 @@ const getFormattedTableDynamicOutputParameter = (clickedValue: IClickedValue, cr
         parameterValue: [{ value: value, description: value }],
         multivalue: false,
         type: 'fromSourceDocumentOutputParameter',
-        parameterType: getDriverParameterTypeFromOutputParameterType(crossNavigationParameter.dataType),
+        parameterType: getDriverParameterTypeFromOutputParameterType(valueAndType?.type),
         outputDriverName: crossNavigationParameter.name
     } as ICrossNavigationParameter
 }
@@ -95,7 +95,7 @@ const getDynamicValueAndTypeForTableDynamicOutputParameter = (clickedValue: ICli
     if (!rowField) return null
     const fieldTypeIsDate = ['date', 'timestamp'].includes(rowField.type)
     const value = fieldTypeIsDate ? getFormattedDateValue(rowField.value, rowField.type) : rowField.value
-    return { value: value, type: fieldTypeIsDate ? 'date' : 'string' } // TODO
+    return { value: value, type: rowField.type }
 }
 
 //#endregion ===== TABLE ======
@@ -241,13 +241,17 @@ const getActiveSelectionByDatasetAndColumn = (datasetLabel: string | undefined, 
     return index !== -1 ? activeSelections[index] : null
 }
 
-const getDriverParameterTypeFromOutputParameterType = (outputParameterType: string) => {
+const getDriverParameterTypeFromOutputParameterType = (outputParameterType: string | undefined) => {
     switch (outputParameterType) {
         case 'string':
+        case 'text':
             return 'STRING';
         case 'number':
+        case 'int':
+        case 'float':
             return 'NUM';
         case 'date':
+        case 'timestamp':
             return 'DATE'
         default:
             return 'STRING'
