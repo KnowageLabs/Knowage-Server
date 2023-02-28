@@ -258,8 +258,8 @@ const getFormattedNumberValue = (value: string | number) => {
 }
 
 const loadDateDriverInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter, dateFormat: string) => {
-    console.log('---------- loadDateDriverInitialValue - parameter: ', parameter)
-    console.log('---------- loadDriverInitialValue - crossNavigationParameter: ', crossNavigationParameter)
+    // console.log('---------- loadDateDriverInitialValue - parameter: ', parameter)
+    // console.log('---------- loadDriverInitialValue - crossNavigationParameter: ', crossNavigationParameter)
     if (crossNavigationParameter.type === 'fixed') {
         const date = moment(crossNavigationParameter.parameterValue[0].value, 'MM/DD/YYYY', true)
         if (date.isValid()) parameter.parameterValue[0].value = date.toDate()
