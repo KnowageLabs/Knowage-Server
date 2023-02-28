@@ -352,8 +352,8 @@ export default defineComponent({
                 }
             }
 
-            // TODO - ICON COLUMN
             addIconColumn(columns, this.propWidget, HeaderRenderer, CellRenderer)
+
             return columns
         },
         getColumnGroup(col) {
@@ -424,8 +424,7 @@ export default defineComponent({
             }
         },
         onCellClicked(node) {
-            // TODO
-            if (isCrossNavigationActive(node, this.propWidget.settings.interactions.crossNavigation)) {
+            if (!this.editorMode && isCrossNavigationActive(node, this.propWidget.settings.interactions.crossNavigation)) {
                 const formattedRow = formatRowDataForCrossNavigation(node, this.dataToShow)
                 const formattedClickedValue = getFormattedClickedValueForCrossNavigation(node, this.dataToShow)
                 executeTableWidgetCrossNavigation(formattedClickedValue, formattedRow, this.propWidget.settings.interactions.crossNavigation, this.dashboardId)
