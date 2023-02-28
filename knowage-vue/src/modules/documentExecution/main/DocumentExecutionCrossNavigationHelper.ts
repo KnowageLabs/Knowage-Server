@@ -118,7 +118,7 @@ const getFormattedSourceDocumentParameterValue = (sourceDocumentDriver: iParamet
 const getDateValueFromSourceDocumentDriverAsMilliseconds = (parameterValue: { value: string | number | Date | null; description: string }[]) => {
     if (!parameterValue[0] || !parameterValue[0].value) return [{ value: '', description: '' }]
     if (parameterValue[0].value instanceof Date) {
-        return [{ value: parameterValue[0].value.valueOf(), descripton: '' }]  // TODO - add date as string for description
+        return [{ value: parameterValue[0].value.valueOf(), descripton: '' }]
     }
     else return [{ value: parameterValue[0].value, description: '' + parameterValue[0].value }] as { value: string | number, description: string }[]
 }
@@ -156,7 +156,7 @@ const getValueAndDescriptionForFilterServiceFromSourceDocumentDriverCrossNavigat
         if (formattedCrossNavigationParameter.parameterType === 'STRING') valueAndDescription = { value: parameterValue[0].value, description: '' + parameterValue[0].value }
         else if (formattedCrossNavigationParameter.parameterType === 'NUM' && parameterValue[0].value) valueAndDescription = { value: +parameterValue[0].value, description: "" + parameterValue[0].value }
         else if (formattedCrossNavigationParameter.parameterType === 'DATE') {
-            const dateValue = getDateStringFromJSDate(new Date(parameterValue[0].value), 'MM/dd/y')
+            const dateValue = getDateStringFromJSDate(new Date(parameterValue[0].value), 'dd/MM/y')
             valueAndDescription.value = dateValue ?? ''
             valueAndDescription.description = dateValue ?? ''
         }
@@ -194,7 +194,7 @@ const getValueForFilterServiceFromSourceDocumentOutputParameter = (formattedCros
 const getDateStringFromMilliseconds = (miliseconds: any) => {
     if (!miliseconds || isNaN(miliseconds)) return ''
     const date = new Date(+miliseconds)
-    const dateAsString = getDateStringFromJSDate(new Date(date), 'MM/dd/y')
+    const dateAsString = getDateStringFromJSDate(new Date(date), 'dd/MM/y')
     return dateAsString ?? ''
 }
 
@@ -214,7 +214,6 @@ export const loadNavigationInitialValuesFromDashboard = (document: any, filtersD
 }
 
 const loadDriverInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter, dateFormat: string) => {
-    console.log('---------- loadDriverInitialValue - crossNavigationParameter: ', crossNavigationParameter)
     if (!crossNavigationParameter.parameterValue || !crossNavigationParameter.parameterValue[0]) return
     if (!parameter.selectionType && parameter.valueSelection === 'man_in') {
         if (parameter.type === 'STRING') loadManualStringDriverInitialValue(parameter, crossNavigationParameter)
@@ -222,12 +221,9 @@ const loadDriverInitialValue = (parameter: iParameter, crossNavigationParameter:
         else if (parameter.type === 'DATE') loadDateDriverInitialValue(parameter, crossNavigationParameter, dateFormat)
     } else if (parameter.selectionType === 'LIST' || parameter.selectionType === 'COMBOBOX') {
         loadListDropdownDriverInitialValue(parameter, crossNavigationParameter)
-    } else if (parameter.selectionType === 'LOOKUP') {
-        loadPopupDriverInitialValue(parameter, crossNavigationParameter)
-    } else if (parameter.selectionType === 'TREE') {
-        loadTreeDriverInitialValue(parameter, crossNavigationParameter)
+    } else if (parameter.selectionType === 'LOOKUP' || parameter.selectionType === 'TREE') {
+        loadPopupAndTreeDriverInitialValue(parameter, crossNavigationParameter)
     }
-
 }
 
 const loadManualStringDriverInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter) => {
@@ -248,7 +244,8 @@ const getFormattedNumberValue = (value: string | number) => {
 }
 
 const loadDateDriverInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter, dateFormat: string) => {
-    //  console.log('---------- loadDateDriverInitialValue - parameter: ', parameter)
+    // console.log('---------- loadDateDriverInitialValue - parameter: ', parameter)
+    // console.log('---------- loadDriverInitialValue - crossNavigationParameter: ', crossNavigationParameter)
     if (crossNavigationParameter.type === 'fixed') {
         const date = moment(crossNavigationParameter.parameterValue[0].value, 'MM/DD/YYYY')
         if (date.isValid()) parameter.parameterValue[0].value = date.toDate()
@@ -295,26 +292,13 @@ const getListComboboxCrossNavigationValue = (parameter: iParameter, crossNavigat
 }
 
 
-// TODO - refactor/merge with function below ???
-const loadPopupDriverInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter) => {
-    // TODO - see for NON ADMISSABLE
-    // console.log('---------- loadPopupDriverInitialValue - parameter: ', parameter)
-    // console.log('---------- loadPopupDriverInitialValue - crossNavigationParameter: ', crossNavigationParameter)
-    addMissingDescriptionForPopupAndTreeDriver(crossNavigationParameter)
-    if (parameter.multivalue) {
-        parameter.parameterValue = crossNavigationParameter.parameterValue
-    } else {
-        parameter.parameterValue = crossNavigationParameter.parameterValue
-    }
-}
-
-const loadTreeDriverInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter) => {
+const loadPopupAndTreeDriverInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter) => {
     // TODO - see for NON ADMISSABLE
     addMissingDescriptionForPopupAndTreeDriver(crossNavigationParameter)
     if (parameter.multivalue) {
         parameter.parameterValue = crossNavigationParameter.parameterValue
     } else {
-        parameter.parameterValue = crossNavigationParameter.parameterValue
+        parameter.parameterValue = crossNavigationParameter.parameterValue[0] ? [crossNavigationParameter.parameterValue[0]] : []
     }
 }
 

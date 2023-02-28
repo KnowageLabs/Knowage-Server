@@ -89,7 +89,7 @@ const formatDrivers = (filtersData: { filterStatus: iParameter[], isReadyForExec
             })
 
             if (el.type === 'DATE' && !el.selectionType && el.valueSelection === 'man_in' && el.showOnPanel === 'true' && el.visible) {
-                el.parameterValue[0].value = moment(el.parameterValue[0].value, 'MM/DD/YYYY').toDate() as any
+                el.parameterValue[0].value = moment(el.parameterValue[0].value, 'DD/MM/YYYY').toDate() as any
             }
         }
         if (el.data) {
