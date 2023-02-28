@@ -1,5 +1,4 @@
 <template>
-    {{ chartID }}
     <div v-show="!error" :id="chartID" style="width: 100%; height: 100%; margin: 0 auto"></div>
 </template>
 
@@ -135,6 +134,7 @@ export default defineComponent({
                 }
         },
         executeInteractions(event: any) {
+            if (this.chartModel.chart.type !== 'pie') return
             if (this.widgetModel.settings.interactions.crossNavigation.enabled) {
                 const formattedOutputParameters = formatForCrossNavigation(event, this.widgetModel.settings.interactions.crossNavigation, this.dataToShow)
                 executeChartCrossNavigation(formattedOutputParameters, this.widgetModel.settings.interactions.crossNavigation, this.dashboardId)

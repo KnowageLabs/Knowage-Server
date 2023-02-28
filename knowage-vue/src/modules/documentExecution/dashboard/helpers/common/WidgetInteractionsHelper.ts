@@ -52,7 +52,7 @@ const getFormattedChartSelection = () => {
     const user = store.getUser()
     // TODO widgetChange
     return user?.enterprise ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections
-    // return false ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections()
+    //  return false ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections()
 }
 
 export const getFormattedCrossNavigation = (widget: any) => {
@@ -79,6 +79,7 @@ const getOldCrossNavigation = (widget: any) => {
         case 'table':
         case 'image':
         case 'html':
+        case 'customchart':
             return widget.cross.cross
         default:
             return widget.cross

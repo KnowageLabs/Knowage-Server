@@ -7,8 +7,9 @@ import { defineComponent, PropType } from 'vue'
 import { IDataset, ISelection, IVariable } from '../../Dashboard'
 import { mapActions } from 'pinia'
 import { IWidget } from '../../Dashboard'
-import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
+import { updateStoreSelections, executeChartCrossNavigation } from '../interactionsHelpers/InteractionHelper'
 import { CustomChartDatastore } from '../WidgetEditor/WidgetEditorSettingsTab/CustomChartWidget/datastore/CustomChartWidgetDatastore'
+import { formatForCrossNavigation } from './CustomChartWidgetHelpers'
 import store from '../../Dashboard.store'
 import appStore from '../../../../../App.store'
 import cryptoRandomString from 'crypto-random-string'
@@ -217,8 +218,14 @@ export default defineComponent({
             script.addEventListener('error', () => this.$emit('loading', false))
         },
         onClickManager(columnName: string, columnValue: string | number) {
-            if (this.editorMode || !columnName) return
-            updateStoreSelections(this.createNewSelection([columnValue], columnName), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
+            if (this.editorMode) return
+            if (this.propWidget.settings.interactions.crossNavigation.enabled) {
+                const formattedOutputParameters = formatForCrossNavigation(columnValue, this.propWidget.settings.interactions.crossNavigation)
+                executeChartCrossNavigation(formattedOutputParameters, this.propWidget.settings.interactions.crossNavigation, this.dashboardId)
+            } else {
+                if (!columnName) return
+                updateStoreSelections(this.createNewSelection([columnValue], columnName), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
+            }
         },
         createNewSelection(value: (string | number)[], columnName: string) {
             return { datasetId: this.propWidget.dataset as number, datasetLabel: this.getDatasetLabel(this.propWidget.dataset as number), columnName: columnName, value: value, aggregated: false, timestamp: new Date().getTime() }

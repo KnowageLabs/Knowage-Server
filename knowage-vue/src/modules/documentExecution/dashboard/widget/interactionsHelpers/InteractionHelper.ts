@@ -158,7 +158,9 @@ export const executeChartCrossNavigation = (outputParameters: IWidgetInteraction
 
 const getFormattedChartOutputParameters = (outputParameters: IWidgetInteractionParameter[], crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
     const formattedOutputParameters = [] as ICrossNavigationParameter[]
-    crossNavigationModel.parameters.forEach((crossNavigationParameter: IWidgetInteractionParameter) => {
+    for (let i = 0; i < crossNavigationModel.parameters.length; i++) {
+        const crossNavigationParameter = crossNavigationModel.parameters[i] as IWidgetInteractionParameter
+        if (!crossNavigationParameter.enabled) continue
         switch (crossNavigationParameter.type) {
             case 'static':
                 formattedOutputParameters.push(getFormattedFixedOutputParameter(crossNavigationParameter))
@@ -169,7 +171,7 @@ const getFormattedChartOutputParameters = (outputParameters: IWidgetInteractionP
             case 'selection':
                 addSelectionTypeOutputParameter(crossNavigationParameter, formattedOutputParameters, dashboardId)
         }
-    })
+    }
     return formattedOutputParameters
 }
 
@@ -211,7 +213,6 @@ const getFormattedImageWidgetOutputParameters = (crossNavigationModel: IWidgetCr
     return formattedOutputParameters
 }
 //#endregion ===== IMAGE ======
-
 
 const addSelectionTypeOutputParameter = (crossNavigationParameter: IWidgetInteractionParameter, formattedOutputParameters: ICrossNavigationParameter[], dashboardId: string) => {
     const tempParameter = getFormattedSelectionOutputParameter(crossNavigationParameter, dashboardId)
