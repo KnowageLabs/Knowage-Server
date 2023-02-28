@@ -225,12 +225,8 @@ const getFormattedSelectionOutputParameter = (crossNavigationParameter: IWidgetI
     const activeSelection = getActiveSelectionByDatasetAndColumn(crossNavigationParameter.dataset, crossNavigationParameter.column, activeSelections)
 
     if (!activeSelection) return null
-    // const dateFormat = checkIfActiveSelectionIsDateType(activeSelection)
     console.log('---------- ACTIVE SELECTION: ', activeSelection)
     console.log('---------- crossNavigationParameter.dataType: ', crossNavigationParameter.dataType)
-    const date = moment(activeSelection.value[0], 'DD/MM/YYYY HH:mm:ss.SSS', true) as any
-    const isValidDate = date.isValid()
-    console.log('----------is validDate: ', isValidDate)
     const values = getAcitveSelectionValues(activeSelection.value)
     return {
         targetDriverUrlName: '',
@@ -245,9 +241,9 @@ const getFormattedSelectionOutputParameter = (crossNavigationParameter: IWidgetI
 const getAcitveSelectionValues = (values: any[]) => {
     return values.map((value: any) => {
         if (moment(value, 'DD/MM/YYYY HH:mm:ss.SSS', true).isValid()) {
-            return { value: "" + moment(value, 'DD/MM/YYYY HH:mm:ss.SSS', true).valueOf(), description: "" + moment(value, 'DD/MM/YYYY HH:mm:ss.SSS', true).valueOf() }
+            return { value: moment(value, 'DD/MM/YYYY HH:mm:ss.SSS', true).valueOf(), description: moment(value, 'DD/MM/YYYY HH:mm:ss.SSS', true).valueOf() }
         } else if (moment(value, 'DD/MM/YYYY', true).isValid()) {
-            return { value: "" + moment(value, 'DD/MM/YYYY', true).valueOf(), description: "" + moment(value, 'DD/MM/YYYY', true).valueOf() }
+            return { value: moment(value, 'DD/MM/YYYY', true).valueOf(), description: moment(value, 'DD/MM/YYYY', true).valueOf() }
         } else {
             return { value: "" + value, description: "" + value }
         }
