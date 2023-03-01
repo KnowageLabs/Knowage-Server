@@ -52,6 +52,7 @@ import it.eng.spagobi.engines.drivers.chart.ChartDriver;
 import it.eng.spagobi.engines.drivers.kpi.KpiDriver;
 import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
+import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -386,8 +387,10 @@ public class ContentServiceImplSupplier {
 			logger.debug("Input document: id=[" + biobj.getId() + "], name=[" + biobj.getName() + "], label=[" + biobj.getLabel() + "]");
 			// creates the user profile
 			IEngUserProfile profile = null;
+			UserProfile _profile = null;
 			try {
 				profile = UserUtilities.getUserProfile(user);
+				_profile = (UserProfile) profile;
 			} catch (Exception e) {
 				logger.error("An error occurred while creating the profile of user [" + user + "]");
 				throw new SecurityException("An error occurred while creating the profile of user [" + user + "]", e);
@@ -396,8 +399,8 @@ public class ContentServiceImplSupplier {
 			// Check if the user can execute the document
 			boolean canExec = ObjectsAccessVerifier.canExec(biobj, profile);
 			if (!canExec) {
-				logger.error("Current user cannot execute the required document");
-				throw new SecurityException("Current user cannot execute the required document");
+				logger.error("Current user [" + _profile.getUserId() + "] cannot execute the required document [" + biobj.getLabel() + "] for tenant [" + TenantManager.getTenant() + "]");
+				throw new SecurityException("Current user [" + _profile.getUserId() + "] cannot execute the required document [" + biobj.getLabel() + "] for tenant [" + TenantManager.getTenant() + "]");
 			}
 
 			Integer id = biobj.getId();
