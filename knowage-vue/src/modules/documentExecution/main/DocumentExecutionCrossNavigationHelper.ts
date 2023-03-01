@@ -318,11 +318,23 @@ const loadPopupAndTreeDriverInitialValue = (parameter: iParameter, crossNavigati
 }
 
 const loadPopupAndTreeDriverSingleInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter) => {
+    // console.log('---------- loadPopupAndTreeDriverInitialValue - parameter: ', deepcopy(parameter))
+    // console.log('---------- loadPopupAndTreeDriverInitialValue - crossNavigationParameter: ', deepcopy(crossNavigationParameter))
+    if (parameter.parameterValue[0]?.description === 'NOT ADMISSIBLE') {
+        parameter.parameterValue = [{ value: '', description: '' }]
+        return
+    }
     parameter.parameterValue = crossNavigationParameter.parameterValue[0] ? [crossNavigationParameter.parameterValue[0]] : []
 }
 
 const loadPopupAndTreeDriverMultiInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter) => {
-    parameter.parameterValue = crossNavigationParameter.parameterValue
+    // console.log('---------- loadPopupAndTreeDriverInitialValue - parameter: ', deepcopy(parameter))
+    // console.log('---------- loadPopupAndTreeDriverInitialValue - crossNavigationParameter: ', deepcopy(crossNavigationParameter))
+    const parameterValues = [] as { value: string | number, description: string }[]
+    crossNavigationParameter.parameterValue.forEach((parameterValue: { value: string | number, description: string }, index) => {
+        if (parameter.parameterDescription[index] !== 'NOT ADMISSIBLE') parameterValues.push(parameterValue)
+    })
+    parameter.parameterValue = parameterValues
 }
 
 
