@@ -711,14 +711,10 @@ export const getPivotData = async (dashboardId: any, widget: IWidget, datasets: 
     const datasetIndex = datasets.findIndex((dataset: IDashboardDataset) => widget.dataset === dataset.id)
     const selectedDataset = datasets[datasetIndex]
 
-    if (selectedDataset) {
-        let url = ''
-        const pagination = widget.settings.pagination
-        if (pagination.enabled) {
-            url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=${pagination.properties.offset}&size=${pagination.properties.itemsNumber}&nearRealtime=true`
-        } else url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=0&size=-1&nearRealtime=true`
+    if (selectedDataset && hasFields(widget)) {
+        const url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=-1&size=-1&nearRealtime=true`
 
-        const postData = formatWidgetModelForGet(dashboardId, widget, selectedDataset, initialCall, selections, associativeResponseSelections)
+        const postData = formatPivotModelForGet(dashboardId, widget, selectedDataset, initialCall, selections, associativeResponseSelections)
         let tempResponse = null as any
 
         if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
@@ -726,7 +722,7 @@ export const getPivotData = async (dashboardId: any, widget: IWidget, datasets: 
             .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData, { headers: { 'X-Disable-Errors': 'true' } })
             .then((response: AxiosResponse<any>) => {
                 tempResponse = response.data
-                if (pagination.enabled) widget.settings.pagination.properties.totalItems = response.data.results
+                tempResponse.initialCall = initialCall
             })
             .catch((error: any) => {
                 showGetDataError(error, selectedDataset.dsLabel)
@@ -735,8 +731,76 @@ export const getPivotData = async (dashboardId: any, widget: IWidget, datasets: 
                 // TODO - uncomment when realtime dataset example is ready
                 // resetDatasetInterval(widget)
             })
-
         return tempResponse
     }
+}
+
+const hasFields = (propWidget: IWidget) => {
+    const fields = propWidget.fields || ({} as any)
+
+    if (fields.columns.length > 0 && fields.rows.length > 0 && fields.data.length > 0) return true
+    else return false
+}
+
+const formatPivotModelForGet = (dashboardId: any, propWidget: IWidget, dataset: IDashboardDataset, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+    const dataToSend = {
+        aggregations: {
+            dataset: '',
+            measures: [],
+            categories: []
+        },
+        parameters: {},
+        selections: {},
+        drivers: {},
+        indexes: []
+    } as any
+
+    //TODO: work in selections
+    // addSelectionsToData(dataToSend, propWidget, dataset.dsLabel, initialCall, selections, associativeResponseSelections)
+
+    dataToSend.aggregations.dataset = dataset.dsLabel
+
+    for (const fieldsName in propWidget.fields) {
+        const fields = propWidget.fields[fieldsName]
+        fields.forEach((field) => {
+            if (field.fieldType === 'MEASURE') {
+                const measureToPush = { id: field.alias, alias: field.alias, columnName: field.columnName, funct: field.aggregation, orderColumn: field.alias } as any
+                field.formula ? (measureToPush.formula = field.formula) : ''
+                dataToSend.aggregations.measures.push(measureToPush)
+            } else {
+                const attributeToPush = { id: field.alias, alias: field.alias, columnName: field.columnName, orderType: '', funct: 'NONE' } as any
+
+                //TODO: sort logic
+                // if (propWidget.type === 'table' || propWidget.type === 'html' || propWidget.type === 'text') field.id === propWidget.settings.sortingColumn ? (attributeToPush.orderType = propWidget.settings.sortingOrder) : ''
+                // else attributeToPush.orderType = propWidget.settings.sortingOrder
+
+                dataToSend.aggregations.categories.push(attributeToPush)
+            }
+        })
+    }
+
+    if (dataset.drivers && dataset.drivers.length > 0) {
+        dataset.drivers.forEach((driver: IDashboardDatasetDriver) => {
+            dataToSend.drivers[`${driver.urlName}`] = driver.parameterValue
+        })
+    }
+
+    if (dataset.parameters && dataset.parameters.length > 0) {
+        const paramRegex = /[^\$P{]+(?=\})/
+        dataset.parameters.forEach((param: any) => {
+            const matched = paramRegex.exec(param.value)
+            if (matched && matched[0]) {
+                const documentDrivers = dashStore.dashboards[dashboardId].drivers
+                for (let index = 0; index < documentDrivers.length; index++) {
+                    const driver = documentDrivers[index]
+                    if (driver.urlName == matched[0]) {
+                        dataToSend.parameters[`${param.name}`] = driver.value
+                    }
+                }
+            } else dataToSend.parameters[`${param.name}`] = param.value
+        })
+    }
+
+    return dataToSend
 }
 //#endregion ================================================================================================

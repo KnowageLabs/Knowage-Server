@@ -13,7 +13,7 @@
                     <label class="kn-material-input-label">{{ $t('common.type') }}</label>
                 </span>
             </div>
-            <div class="p-field p-col-4">
+            <div v-if="!isDataField" class="p-field p-col-4">
                 <span class="p-float-label">
                     <Dropdown v-model="column.sort" class="kn-material-input" :options="descriptor.sortOptions" option-value="value" option-label="label" @change="onFieldSortChanged"> </Dropdown>
                     <label class="kn-material-input-label">{{ $t('common.sort') }}</label>
@@ -55,11 +55,14 @@ export default defineComponent({
         widgetType() {
             return this.widgetModel.type
         },
-        sortingColumnOptions() {
-            return this.widgetModel.columns
-        },
-        widgetMeasureColumns() {
-            return this.widgetModel.columns.filter((column: IWidgetColumn) => column.fieldType === 'MEASURE')
+        isDataField() {
+            const index = this.widgetModel.fields?.data.findIndex((field: any) => {
+                console.log(field.columnName)
+                console.log(this.selectedColumn?.columnName)
+                return field.columnName === this.selectedColumn?.columnName
+            })
+
+            return index != -1
         }
     },
     watch: {

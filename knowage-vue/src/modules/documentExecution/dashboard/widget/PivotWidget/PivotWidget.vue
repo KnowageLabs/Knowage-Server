@@ -1,7 +1,20 @@
 <template>
     <div class="pivot-widget-container p-d-flex p-d-row kn-flex">
         <DxButton text="Apply" type="default" @click="doStuff()" />
-        <DxPivotGrid id="pivotgrid" ref="grid" :data-source="dataSource" :allow-sorting-by-summary="true" :allow-filtering="true" :show-borders="true" :show-column-grand-totals="false" :show-row-grand-totals="false" :show-row-totals="false" :show-column-totals="false" @contentReady="onContentReady">
+        <DxPivotGrid
+            id="pivotgrid"
+            ref="grid"
+            :data-source="dataSource"
+            :allow-sorting="true"
+            :allow-sorting-by-summary="true"
+            :allow-filtering="true"
+            :show-borders="true"
+            :show-column-grand-totals="true"
+            :show-row-grand-totals="true"
+            :show-row-totals="true"
+            :show-column-totals="true"
+            @contentReady="onContentReady"
+        >
             <DxFieldChooser :enabled="true" :height="400" />
         </DxPivotGrid>
     </div>
@@ -17,7 +30,7 @@ import { defineComponent, PropType } from 'vue'
 import mainStore from '../../../../../App.store'
 import dashboardStore from '../../Dashboard.store'
 
-import { sales } from './MockData.js'
+// import { sales } from './MockData.js'
 
 export default defineComponent({
     name: 'table-widget',
@@ -38,8 +51,8 @@ export default defineComponent({
     },
     data() {
         const dataSource = new PivotGridDataSource({
-            fields: this.getFields(),
-            store: sales
+            fields: this.getFormattedFieldsFromModel(),
+            store: this.getPivotData()
         })
         return {
             dataSource,
@@ -68,10 +81,12 @@ export default defineComponent({
 
     methods: {
         onContentReady() {
-            console.log('CONTENT READY \n', this.dataSource.state())
+            // console.log('CONTENT READY \n', this.dataSource.state())
         },
         doStuff() {
-            console.log('this.dataSource.state();', this.dataSource.getData())
+            console.log('propWidget', this.propWidget)
+            console.log('dataToShow', this.dataToShow)
+            console.log('this.dataSource.fields()', this.dataSource.fields())
         },
         getFields() {
             return [
@@ -110,6 +125,51 @@ export default defineComponent({
                     area: 'data'
                 }
             ]
+        },
+        getFormattedFieldsFromModel() {
+            const formattedFields = [] as any
+            const responseMetadataFields = this.dataToShow?.metaData?.fields
+
+            if (this.getPivotData().length > 0) {
+                for (const fieldsName in this.propWidget.fields) {
+                    const modelFields = this.propWidget.fields[fieldsName]
+                    modelFields.forEach((modelField) => {
+                        const tempField = {} as any
+                        console.log('FIELD', modelField)
+
+                        const index = responseMetadataFields.findIndex((metaField: any) => {
+                            if (typeof metaField == 'object') return metaField.header.toLowerCase() === modelField.alias.toLowerCase()
+                        })
+
+                        //TODO: split tempField props to methods
+                        tempField.caption = modelField.alias
+                        tempField.dataField = `column_${index}`
+                        tempField.area = this.getDataField(fieldsName)
+                        if (modelField.sort) tempField.sortOrder = modelField.sort.toLowerCase()
+
+                        console.log('INDEX FOUND', index, tempField)
+
+                        formattedFields.push(tempField)
+                    })
+                }
+            }
+
+            console.log('formattedFields', formattedFields)
+            return formattedFields
+        },
+        getDataField(fieldsName) {
+            switch (fieldsName) {
+                case 'columns':
+                    return 'column'
+                case 'rows':
+                    return 'row'
+                default:
+                    return fieldsName
+            }
+        },
+        getPivotData() {
+            if (this.dataToShow && this.dataToShow.rows) return this.dataToShow.rows
+            else return []
         }
     }
 })
