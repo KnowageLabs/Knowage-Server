@@ -10,10 +10,11 @@ let documentCrossNavigations = [] as IDashboardCrossNavigation[]
 /* 
     Creates target document with formatted crossNavigationParameters (for loading initial values for Target Document drivers) and navigationParams for filter service
 */
-export const getDocumentForCrossNavigation = (payload: { documentCrossNavigationOutputParameters: ICrossNavigationParameter[]; crossNavigationName: string | undefined; crossNavigations: IDashboardCrossNavigation[] }, sourceFiltersData: { filterStatus: iParameter[], isReadyForExecution: boolean }) => {
+export const getDocumentForCrossNavigation = (payload: { documentCrossNavigationOutputParameters: ICrossNavigationParameter[]; crossNavigationName: string | undefined; crossNavigations: IDashboardCrossNavigation[] }, sourceFiltersData: { filterStatus: iParameter[], isReadyForExecution: boolean }, paramSelectedCrossNavigation: IDashboardCrossNavigation | null) => {
     documentCrossNavigations = payload.crossNavigations
-    const selectedCrossNavigation = getSelectedCrossNavigation(payload.crossNavigationName, payload.crossNavigations)
+    const selectedCrossNavigation = paramSelectedCrossNavigation ?? getSelectedCrossNavigation(payload.crossNavigationName, payload.crossNavigations)
     // TODO - add for multiple cross navs
+    console.log('------ selectedCrossNavigation: ', selectedCrossNavigation)
     if (!selectedCrossNavigation) return null
     const formattedCrossNavigationParameters = getFormattedCrossNavigationParameters(selectedCrossNavigation, sourceFiltersData, payload.documentCrossNavigationOutputParameters)
     const crossNavigationDocument = documentCrossNavigations[0].document
@@ -355,7 +356,6 @@ const addMissingDescriptionForPopupAndTreeDriver = (crossNavigationParameter: IC
 //#endregion ===== INITIAL VALUES ======
 
 export const updateBreadcrumbForCrossNavigation = (breadcrumbs: ICrossNavigationBreadcrumb[], document: any) => {
-    console.log("---------------- DOCUMENT: ", document)
     const index = breadcrumbs.findIndex((el: any) => el.label === document.name)
     if (index !== -1) {
         breadcrumbs[index].document = document
@@ -366,7 +366,6 @@ export const updateBreadcrumbForCrossNavigation = (breadcrumbs: ICrossNavigation
             crossBreadcrumb: document.crossBreadCrumb ?? document.name
         })
     }
-    console.log("---------------- breadcrumbs: ", breadcrumbs)
 }
 
 const formatDocumentBreadcrumbLabel = (crossNavigation: IDashboardCrossNavigation, crossNavigationDocument: any) => {

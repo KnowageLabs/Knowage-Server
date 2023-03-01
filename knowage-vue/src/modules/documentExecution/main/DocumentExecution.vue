@@ -232,7 +232,8 @@ export default defineComponent({
             crossNavigationContainerVisible: false,
             crossNavigationContainerData: null as any,
             newDashboardMode: false,
-            dashboardGeneralSettingsOpened: false
+            dashboardGeneralSettingsOpened: false,
+            crossNavigationPayload: null as any
         }
     },
     watch: {
@@ -1027,7 +1028,8 @@ export default defineComponent({
         },
         async onCrossNavigationSelected(event: any) {
             this.destinationSelectDialogVisible = false
-            await loadCrossNavigation(this, event, this.angularData)
+            console.log('------ event: ', event)
+            this.angularData ? await loadCrossNavigation(this, event, this.angularData) : this.executeCrossNavigationAfterSelect(event)
         },
         onCrossNavigationContainerClose() {
             this.crossNavigationContainerData = null
@@ -1086,7 +1088,32 @@ export default defineComponent({
             this.newDashboardMode = false
         },
         async onExecuteCrossNavigation(payload: { documentCrossNavigationOutputParameters: ICrossNavigationParameter[]; crossNavigationName: string | undefined; crossNavigations: IDashboardCrossNavigation[] }) {
-            this.document = getDocumentForCrossNavigation(payload, this.filtersData)
+            // TODO - Refactor for cross nav target
+            this.crossNavigationPayload = payload
+            let targetDocument = getDocumentForCrossNavigation(payload, this.filtersData, null)
+            if (!targetDocument) {
+                if (payload.crossNavigations.length > 1) {
+                    console.log('------- 1')
+                    this.crossNavigationDocuments = payload.crossNavigations
+                    this.destinationSelectDialogVisible = true
+                    return
+                } else if (payload.crossNavigations.length === 1) {
+                    console.log('------- 2')
+                    targetDocument = getDocumentForCrossNavigation(payload, this.filtersData, payload.crossNavigations[0])
+                } else {
+                    // TODO - SET ERROR FOR NO CROSS NAVS
+                    console.log('------- 3')
+                    console.log('--- ERRROR NO CROSS NAV!')
+                    return
+                }
+            }
+
+            this.document = targetDocument
+            updateBreadcrumbForCrossNavigation(this.breadcrumbs, this.document)
+            await this.loadPage(false, this.document.dsLabel, false)
+        },
+        async executeCrossNavigationAfterSelect(crossNavigation: IDashboardCrossNavigation) {
+            this.document = getDocumentForCrossNavigation(this.crossNavigationPayload, this.filtersData, crossNavigation)
             updateBreadcrumbForCrossNavigation(this.breadcrumbs, this.document)
             await this.loadPage(false, this.document.dsLabel, false)
         }
