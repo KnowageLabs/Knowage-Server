@@ -138,9 +138,7 @@ public class AvroExportJob extends AbstractExportJob {
 			if (isDate(type)) {
 				value = dateFormatter.parse(value.toString()).getTime();
 			} else if (isTimestamp(type)) {
-
 				value = DatabaseUtils.timestampFormatter(value);
-
 			} else if (BigDecimal.class.isAssignableFrom(type)) {
 				BigDecimal bigDecimalValue = (BigDecimal) value;
 				value = bigDecimalValue.setScale(BIG_DECIMAL_SCALE, RoundingMode.CEILING);
