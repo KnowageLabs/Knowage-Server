@@ -754,6 +754,10 @@
             },
             "selectDataset": "Select Dataset",
             "selectedColumns": "Selected Columns",
+            "pivotColumns": "Columns",
+            "pivotRows": "Rows",
+            "pivotData": "Data",
+            "pivotFilters": "Filters",
             "selectorType": {
                 "title": "Selector Type"
             },

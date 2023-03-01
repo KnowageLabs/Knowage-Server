@@ -3,7 +3,7 @@ import { IDashboard, IDashboardDriver, ITableWidgetConditionalStyle, ITableWidge
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import { getFiltersForColumns } from '../DashboardBackwardCompatibilityHelper'
 import { getFormattedInteractions } from '../common/WidgetInteractionsHelper'
-import { getFormattedPivotFields } from './PivotTableColumnHelper'
+// import { getFormattedPivotFields } from './PivotTableColumnHelper'
 import { IPivotTableConfiguration, IPivotTableSettings } from '../../interfaces/pivotTable/DashboardPivotTableWidget'
 import { getSettingsFromWidgetColumns } from './PivotTableColumnSettingsHelper'
 import { getFormattedConfiguration } from './PivotTableConfigurationHelper'
@@ -17,13 +17,22 @@ export const formatPivotTabletWidget = (widget: any, formattedDashboardModel: ID
         id: widget.id,
         dataset: widget.dataset.dsId,
         type: widget.type,
-        fields: getFormattedPivotFields(widget, columnNameIdMap),
+        // fields: getFormattedPivotFields(widget, columnNameIdMap),
         columns: [],
         theme: '',
         style: {},
         settings: {} as IPivotTableSettings
     } as IWidget
     formattedWidget.settings = getFormattedWidgetSettings(widget, formattedDashboardModel, drivers)
+
+    //TODO: Remove mock fields
+    formattedWidget.fields = {
+        columns: [],
+        rows: [],
+        data: [],
+        filters: []
+    }
+
     getFiltersForColumns(formattedWidget, widget)
     getSettingsFromWidgetColumns(formattedWidget, widget, formattedDashboardModel, columnNameIdMap)
     console.log('----------- FORMATTED WIDGET: ', formattedWidget)

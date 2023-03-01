@@ -1,1 +1,160 @@
-{}
+{
+    "columnAggregationOptions": [
+        {
+            "label": "NONE",
+            "value": "NONE"
+        },
+        {
+            "label": "SUM",
+            "value": "SUM"
+        },
+        {
+            "label": "AVG",
+            "value": "AVG"
+        },
+        {
+            "label": "MAX",
+            "value": "MAX"
+        },
+        {
+            "label": "MIN",
+            "value": "MIN"
+        },
+        {
+            "label": "COUNT",
+            "value": "COUNT"
+        },
+        {
+            "label": "COUNT_DISTINCT",
+            "value": "COUNT_DISTINCT"
+        }
+    ],
+    "columnTypeOptions": [
+        {
+            "label": "ATTRIBUTE",
+            "value": "ATTRIBUTE"
+        },
+        {
+            "label": "MEASURE",
+            "value": "MEASURE"
+        }
+    ],
+    "columns": {
+        "buttonColumnStyle": {
+            "min-width": "125px",
+            "text-align": "end"
+        },
+        "columns": [
+            {
+                "field": "alias",
+                "style": "max-width: 200px"
+            },
+            {
+                "field": "columnName"
+            },
+            {
+                "field": "aggregation",
+                "style": "max-width: 100px"
+            }
+        ],
+        "dataKey": "columnName",
+        "dragColumnsHint": "dashboard.widgetEditor.dragColumnsHint",
+        "dropIsActive": true,
+        "label": "dashboard.widgetEditor.pivotColumns",
+        "rowReorder": {
+            "rowReorderColumnStyle": "width: 3rem"
+        }
+    },
+    "data": {
+        "buttonColumnStyle": {
+            "min-width": "125px",
+            "text-align": "end"
+        },
+        "columns": [
+            {
+                "field": "alias",
+                "style": "max-width: 200px"
+            },
+            {
+                "field": "columnName"
+            },
+            {
+                "field": "aggregation",
+                "style": "max-width: 100px"
+            }
+        ],
+        "dataKey": "columnName",
+        "dragColumnsHint": "dashboard.widgetEditor.dragColumnsHint",
+        "dropIsActive": true,
+        "label": "dashboard.widgetEditor.pivotData",
+        "rowReorder": {
+            "rowReorderColumnStyle": "width: 3rem"
+        }
+    },
+    "filters": {
+        "buttonColumnStyle": {
+            "min-width": "125px",
+            "text-align": "end"
+        },
+        "columns": [
+            {
+                "field": "alias",
+                "style": "max-width: 200px"
+            },
+            {
+                "field": "columnName"
+            },
+            {
+                "field": "aggregation",
+                "style": "max-width: 100px"
+            }
+        ],
+        "dataKey": "columnName",
+        "dragColumnsHint": "dashboard.widgetEditor.dragColumnsHint",
+        "dropIsActive": true,
+        "label": "dashboard.widgetEditor.pivotFilters",
+        "rowReorder": {
+            "rowReorderColumnStyle": "width: 3rem"
+        }
+    },
+    "rows": {
+        "buttonColumnStyle": {
+            "min-width": "125px",
+            "text-align": "end"
+        },
+        "columns": [
+            {
+                "field": "alias",
+                "style": "max-width: 200px"
+            },
+            {
+                "field": "columnName"
+            },
+            {
+                "field": "aggregation",
+                "style": "max-width: 100px"
+            }
+        ],
+        "dataKey": "columnName",
+        "dragColumnsHint": "dashboard.widgetEditor.dragColumnsHint",
+        "dropIsActive": true,
+        "label": "dashboard.widgetEditor.pivotRows",
+        "rowReorder": {
+            "rowReorderColumnStyle": "width: 3rem"
+        }
+    },
+    "sortOptions": [
+        {
+            "label": "NONE",
+            "value": "NONE"
+        },
+        {
+            "label": "ASC",
+            "value": "ASC"
+        },
+        {
+            "label": "DESC",
+            "value": "DESC"
+        }
+    ]
+}

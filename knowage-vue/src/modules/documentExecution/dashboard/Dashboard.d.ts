@@ -38,7 +38,7 @@ export interface IWidget {
     columns: IWidgetColumn[]
     settings: any
     new?: boolean
-    fields?: any
+    fields?: IPivotFields
 }
 
 export interface ITableWidgetSettings {
@@ -411,6 +411,7 @@ export interface IWidgetColumn {
     formulaEditor?: string
     drillOrder?: IDrillOrderItem
     orderType?: string
+    sort?: string
 }
 
 export interface IWidgetColumnFilter {

@@ -1,5 +1,6 @@
 <template>
     <div class="pivot-widget-container p-d-flex p-d-row kn-flex">
+        <DxButton text="Apply" type="default" @click="doStuff()" />
         <DxPivotGrid id="pivotgrid" ref="grid" :data-source="dataSource" :allow-sorting-by-summary="true" :allow-filtering="true" :show-borders="true" :show-column-grand-totals="false" :show-row-grand-totals="false" :show-row-totals="false" :show-column-totals="false" @contentReady="onContentReady">
             <DxFieldChooser :enabled="true" :height="400" />
         </DxPivotGrid>
@@ -8,6 +9,9 @@
 
 <script lang="ts">
 import { DxPivotGrid, DxFieldChooser } from 'devextreme-vue/pivot-grid'
+import { DxButton } from 'devextreme-vue/button'
+import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source'
+
 import { IDashboardDataset, ISelection, IWidget } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
 import mainStore from '../../../../../App.store'
@@ -17,7 +21,7 @@ import { sales } from './MockData.js'
 
 export default defineComponent({
     name: 'table-widget',
-    components: { DxPivotGrid, DxFieldChooser },
+    components: { DxPivotGrid, DxFieldChooser, DxButton },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         editorMode: { type: Boolean, required: false },
@@ -33,44 +37,13 @@ export default defineComponent({
         return { store, appStore }
     },
     data() {
+        const dataSource = new PivotGridDataSource({
+            fields: this.getFields(),
+            store: sales
+        })
         return {
-            tableData: [] as any,
-            dataSource: {
-                fields: [
-                    {
-                        caption: 'Region',
-                        width: 120,
-                        dataField: 'region',
-                        area: 'row',
-                        sortBySummaryField: 'Total'
-                    },
-                    {
-                        caption: 'City',
-                        dataField: 'city',
-                        width: 150,
-                        area: 'row'
-                    },
-                    {
-                        dataField: 'date',
-                        dataType: 'date',
-                        area: 'column'
-                    },
-                    {
-                        groupName: 'date',
-                        groupInterval: 'month',
-                        visible: false
-                    },
-                    {
-                        caption: 'Total',
-                        dataField: 'amount',
-                        dataType: 'number',
-                        summaryType: 'sum',
-                        format: 'currency',
-                        area: 'data'
-                    }
-                ],
-                store: sales
-            }
+            dataSource,
+            tableData: [] as any
         }
     },
     watch: {
@@ -95,7 +68,48 @@ export default defineComponent({
 
     methods: {
         onContentReady() {
-            console.log('CONTENT READY', this.dataSource.fields)
+            console.log('CONTENT READY \n', this.dataSource.state())
+        },
+        doStuff() {
+            console.log('this.dataSource.state();', this.dataSource.getData())
+        },
+        getFields() {
+            return [
+                {
+                    caption: 'Region',
+                    width: 120,
+                    dataField: 'region',
+                    area: 'row',
+                    headerFilter: {
+                        allowSearch: true
+                    }
+                },
+                {
+                    caption: 'City',
+                    dataField: 'city',
+                    width: 150,
+                    area: 'row',
+                    headerFilter: {
+                        allowSearch: true
+                    },
+                    selector(data) {
+                        return `${data.city} (${data.country})`
+                    }
+                },
+                {
+                    dataField: 'date',
+                    dataType: 'date',
+                    area: 'column'
+                },
+                {
+                    caption: 'Sales',
+                    dataField: 'amount',
+                    dataType: 'number',
+                    summaryType: 'sum',
+                    format: 'currency',
+                    area: 'data'
+                }
+            ]
         }
     }
 })
