@@ -1,9 +1,9 @@
-import { ITableWidgetStyle, IWidgetInteractions } from "../../Dashboard"
+import { ITableWidgetColumnStyles, ITableWidgetConditionalStyles, ITawbleWidgetHeadersStyle, IWidgetBackgroundStyle, IWidgetBordersStyle, IWidgetExports, IWidgetInteractions, IWidgetPaddingStyle, IWidgetResponsive, IWidgetRowsStyle, IWidgetShadowsStyle, IWidgetTitle } from '../../Dashboard'
 
 export interface IPivotTableSettings {
     updatable: boolean
     clickable: boolean
-    conditionalStyles: ITableWidgetConditionalStyles  // TODO - Darko see if needed or it needs to be changed to use another interface (probably)
+    conditionalStyles: ITableWidgetConditionalStyles // TODO - Darko see if needed or it needs to be changed to use another interface (probably)
     configuration: IPivotTableConfiguration
     interactions: IWidgetInteractions
     style: IPivotTableStyle
@@ -11,6 +11,8 @@ export interface IPivotTableSettings {
 }
 
 export interface IPivotTableConfiguration {
+    rows: IPivotRowsConfiguration
+    columns: IPivotColumnsConfiguration
     exports: IWidgetExports
 }
 
@@ -23,4 +25,14 @@ export interface IPivotTableStyle {
     borders: IWidgetBordersStyle
     padding: IWidgetPaddingStyle
     shadows: IWidgetShadowsStyle
+}
+
+export interface IPivotRowsConfiguration {
+    grandTotal: boolean
+    subTotal: boolean
+}
+
+export interface IPivotColumnsConfiguration {
+    grandTotal: boolean
+    subTotal: boolean
 }

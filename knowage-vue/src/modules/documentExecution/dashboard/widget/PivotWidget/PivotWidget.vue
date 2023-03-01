@@ -84,9 +84,11 @@ export default defineComponent({
             // console.log('CONTENT READY \n', this.dataSource.state())
         },
         doStuff() {
+            console.groupCollapsed('DO STUFF ------------')
             console.log('propWidget', this.propWidget)
-            console.log('dataToShow', this.dataToShow)
-            console.log('this.dataSource.fields()', this.dataSource.fields())
+            console.groupEnd()
+            // console.log('dataToShow', this.dataToShow)
+            // console.log('this.dataSource.fields()', this.dataSource.fields())
         },
         getFields() {
             return [
@@ -135,7 +137,7 @@ export default defineComponent({
                     const modelFields = this.propWidget.fields[fieldsName]
                     modelFields.forEach((modelField) => {
                         const tempField = {} as any
-                        console.log('FIELD', modelField)
+                        // console.log('FIELD', modelField)
 
                         const index = responseMetadataFields.findIndex((metaField: any) => {
                             if (typeof metaField == 'object') return metaField.header.toLowerCase() === modelField.alias.toLowerCase()
@@ -147,14 +149,14 @@ export default defineComponent({
                         tempField.area = this.getDataField(fieldsName)
                         if (modelField.sort) tempField.sortOrder = modelField.sort.toLowerCase()
 
-                        console.log('INDEX FOUND', index, tempField)
+                        // console.log('INDEX FOUND', index, tempField)
 
                         formattedFields.push(tempField)
                     })
                 }
             }
 
-            console.log('formattedFields', formattedFields)
+            // console.log('formattedFields', formattedFields)
             return formattedFields
         },
         getDataField(fieldsName) {
