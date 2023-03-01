@@ -174,7 +174,7 @@ export default defineComponent({
         },
         createScriptTagFromUsersJSScript() {
             const userScript = document.createElement('script')
-            userScript.text = 'try {' + this.webComponentJs + `} catch (error) {window.parent.postMessage({type: 'error', error: error, editorMode: ${this.editorMode}}, '*')}`
+            userScript.text = 'try {' + this.webComponentJs + `\n} catch (error) {window.parent.postMessage({type: 'error', error: error, editorMode: ${this.editorMode}}, '*')}`
 
             setTimeout(() => {
                 this.iframeDocument?.body?.appendChild(userScript)
