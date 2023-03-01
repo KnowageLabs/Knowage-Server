@@ -80,6 +80,7 @@ export default defineComponent({
             this.updateChartModel()
         },
         updateChartModel() {
+            if (!this.chartModel) return
             Highcharts.setOptions({ lang: { noData: this.chartModel.lang.noData } })
 
             this.widgetModel.settings.chartModel.setData(this.dataToShow, this.widgetModel)

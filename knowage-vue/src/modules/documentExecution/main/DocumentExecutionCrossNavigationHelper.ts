@@ -311,11 +311,20 @@ const loadPopupAndTreeDriverInitialValue = (parameter: iParameter, crossNavigati
     //  console.log('---------- loadPopupAndTreeDriverInitialValue - crossNavigationParameter: ', crossNavigationParameter)
     addMissingDescriptionForPopupAndTreeDriver(crossNavigationParameter)
     if (parameter.multivalue) {
-        parameter.parameterValue = crossNavigationParameter.parameterValue
+        loadPopupAndTreeDriverMultiInitialValue(parameter, crossNavigationParameter)
     } else {
-        parameter.parameterValue = crossNavigationParameter.parameterValue[0] ? [crossNavigationParameter.parameterValue[0]] : []
+        loadPopupAndTreeDriverSingleInitialValue(parameter, crossNavigationParameter)
     }
 }
+
+const loadPopupAndTreeDriverSingleInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter) => {
+    parameter.parameterValue = crossNavigationParameter.parameterValue[0] ? [crossNavigationParameter.parameterValue[0]] : []
+}
+
+const loadPopupAndTreeDriverMultiInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter) => {
+    parameter.parameterValue = crossNavigationParameter.parameterValue
+}
+
 
 const addMissingDescriptionForPopupAndTreeDriver = (crossNavigationParameter: ICrossNavigationParameter) => {
     crossNavigationParameter.parameterValue.forEach((parameterValue: { value: string | number, description: string }) => {

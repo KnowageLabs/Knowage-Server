@@ -225,9 +225,7 @@ const getFormattedSelectionOutputParameter = (crossNavigationParameter: IWidgetI
     const activeSelection = getActiveSelectionByDatasetAndColumn(crossNavigationParameter.dataset, crossNavigationParameter.column, activeSelections)
 
     if (!activeSelection) return null
-    console.log('---------- ACTIVE SELECTION: ', activeSelection)
-    console.log('---------- crossNavigationParameter.dataType: ', crossNavigationParameter.dataType)
-    const values = getAcitveSelectionValues(activeSelection.value)
+    const values = getAcitveSelectionValues(activeSelection.value, crossNavigationParameter.dataType)
     return {
         targetDriverUrlName: '',
         parameterValue: values,
@@ -238,14 +236,17 @@ const getFormattedSelectionOutputParameter = (crossNavigationParameter: IWidgetI
     } as ICrossNavigationParameter
 }
 
-const getAcitveSelectionValues = (values: any[]) => {
+const getAcitveSelectionValues = (values: any[], type: string) => {
     return values.map((value: any) => {
-        if (moment(value, 'DD/MM/YYYY HH:mm:ss.SSS', true).isValid()) {
-            return { value: moment(value, 'DD/MM/YYYY HH:mm:ss.SSS', true).valueOf(), description: moment(value, 'DD/MM/YYYY HH:mm:ss.SSS', true).valueOf() }
-        } else if (moment(value, 'DD/MM/YYYY', true).isValid()) {
-            return { value: moment(value, 'DD/MM/YYYY', true).valueOf(), description: moment(value, 'DD/MM/YYYY', true).valueOf() }
+        let formattedValue = value
+        if (['date', 'timestamp'].includes(type) && moment(value, 'DD/MM/YYYY HH:mm:ss.SSS', true).isValid()) {
+            formattedValue = moment(value, 'DD/MM/YYYY HH:mm:ss.SSS', true).valueOf()
+            return { value: formattedValue, description: formattedValue }
+        } else if (['date', 'timestamp'].includes(type) && moment(value, 'DD/MM/YYYY', true).isValid()) {
+            formattedValue = moment(value, 'DD/MM/YYYY', true).valueOf()
+            return { value: formattedValue, description: formattedValue }
         } else {
-            return { value: "" + value, description: "" + value }
+            return { value: "" + formattedValue, description: "" + formattedValue }
         }
     })
 }
