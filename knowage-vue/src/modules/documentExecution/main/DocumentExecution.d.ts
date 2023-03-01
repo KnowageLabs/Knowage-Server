@@ -82,6 +82,7 @@ export interface ICrossNavigationParameter {
     type: 'fixed' | 'fromSourceDocumentDriver' | 'fromSourceDocumentOutputParameter',
     parameterType?: string,
     selectionType?: string,
+    sourceDriverName?: string,
     outputDriverName?: string
 }
 

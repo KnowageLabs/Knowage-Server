@@ -20,6 +20,8 @@ export const getDocumentForCrossNavigation = (payload: { documentCrossNavigation
     crossNavigationDocument.formattedCrossNavigationParameters = formattedCrossNavigationParameters
     crossNavigationDocument.navigationParams = createDocumentNavigationParametersForFilterService(formattedCrossNavigationParameters)
     crossNavigationDocument.navigationFromDashboard = true
+
+    formatDocumentBreadcrumbLabel(selectedCrossNavigation, crossNavigationDocument)
     // console.log(">>>>>>>>>>>     document.formattedCrossNavigationParameters: ", crossNavigationDocument.navigationParams)
     return crossNavigationDocument
 }
@@ -95,6 +97,7 @@ const createCrossNavigationParameterFromSourceDocumentDriver = (sourceDocumentDr
     const parameterValue = getFormattedSourceDocumentParameterValue(sourceDocumentDriver)
 
     const crossNavigationParameter = {
+        sourceDriverName: sourceDocumentDriver.label,
         targetDriverUrlName: targetDriverUrlName,
         parameterValue: parameterValue,
         multivalue: sourceDocumentDriver.multivalue,
@@ -180,7 +183,7 @@ const getValueAndDescriptionForFilterServiceFromSourceDocumentDriverCrossNavigat
     Creating parameter value for filter service from source document output parameters
 */
 const getValueForFilterServiceFromSourceDocumentOutputParameter = (formattedCrossNavigationParameter: ICrossNavigationParameter) => {
-    console.log('-------- formattedCrossNavigationParameter: ', formattedCrossNavigationParameter)
+    // console.log('-------- formattedCrossNavigationParameter: ', formattedCrossNavigationParameter)
     const values = [] as (string | number)[]
     for (let i = 0; i < formattedCrossNavigationParameter.parameterValue.length; i++) {
         const tempValue = formattedCrossNavigationParameter.parameterValue[i].value;
@@ -240,9 +243,14 @@ const formattDateCrossNavigatonParameterForNonDateDriver = (crossNavigationParam
 const loadManualStringDriverInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter) => {
     // console.log('---------- loadManualStringDriverInitialValue - parameter: ', parameter)
     // console.log('---------- loadManualStringDriverInitialValue - crossNavigationParameter: ', crossNavigationParameter)
+    const value = getCrossNavigationParameterValuesAsString(crossNavigationParameter)
+    parameter.parameterValue[0] = { value: value, description: value }
+}
+
+const getCrossNavigationParameterValuesAsString = (crossNavigationParameter: ICrossNavigationParameter) => {
     let value = ''
     crossNavigationParameter.parameterValue.forEach((parameterValue: { value: string | number, description: string }, index) => value += index === crossNavigationParameter.parameterValue.length - 1 ? parameterValue.value : parameterValue.value + ',')
-    parameter.parameterValue[0] = { value: value, description: value }
+    return value
 }
 
 const loadManualNumberDriverInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter) => {
@@ -347,7 +355,7 @@ const addMissingDescriptionForPopupAndTreeDriver = (crossNavigationParameter: IC
 //#endregion ===== INITIAL VALUES ======
 
 export const updateBreadcrumbForCrossNavigation = (breadcrumbs: ICrossNavigationBreadcrumb[], document: any) => {
-
+    console.log("---------------- DOCUMENT: ", document)
     const index = breadcrumbs.findIndex((el: any) => el.label === document.name)
     if (index !== -1) {
         breadcrumbs[index].document = document
@@ -355,7 +363,41 @@ export const updateBreadcrumbForCrossNavigation = (breadcrumbs: ICrossNavigation
         breadcrumbs.push({
             label: document.name,
             document: document,
-            crossBreadcrumb: document.name // TODO - add cross breadcrumb logic
+            crossBreadcrumb: document.crossBreadCrumb ?? document.name
         })
     }
+    console.log("---------------- breadcrumbs: ", breadcrumbs)
+}
+
+const formatDocumentBreadcrumbLabel = (crossNavigation: IDashboardCrossNavigation, crossNavigationDocument: any) => {
+    if (!crossNavigation.crossBreadcrumb) return
+    crossNavigationDocument.crossBreadCrumb = crossNavigation.crossBreadcrumb.includes('$P{') ? updateCrossBreadCrumbWithParameterValues(crossNavigation.crossBreadcrumb, crossNavigationDocument) : crossNavigation.crossBreadcrumb
+}
+
+const updateCrossBreadCrumbWithParameterValues = (crossBreadCrumb: string, crossNavigationDocument: any) => {
+    const crossNavigationParameters = crossNavigationDocument.formattedCrossNavigationParameters as ICrossNavigationParameter[]
+    if (!crossNavigationParameters || crossNavigationParameters.length === 0) return crossBreadCrumb
+    const parameterPlaceholders = crossBreadCrumb.match(/(?<=\$P\{).*?(?=\})/g)
+    const parameterPlaceholderMapWithValues = {}
+    getvaluesforparameterplaceholders(parameterPlaceholders, crossNavigationParameters, parameterPlaceholderMapWithValues)
+    return replacePlaceholdersWithRealValues(crossBreadCrumb, parameterPlaceholderMapWithValues)
+}
+
+const getvaluesforparameterplaceholders = (parameterPlaceholders: string[] | null, crossNavigationParameters: ICrossNavigationParameter[], parameterPlaceholderMapWithValues: any) => {
+    parameterPlaceholders?.forEach((parameterPlaceholder: string) => {
+        const driverName = parameterPlaceholder
+        const index = crossNavigationParameters.findIndex((crossNavigationParameter: ICrossNavigationParameter) => crossNavigationParameter.sourceDriverName === driverName || crossNavigationParameter.outputDriverName === driverName)
+        let value = ''
+        if (index !== -1) value = getCrossNavigationParameterValuesAsString(crossNavigationParameters[index])
+
+        parameterPlaceholderMapWithValues[parameterPlaceholder] = value
+    })
+}
+
+const replacePlaceholdersWithRealValues = (crossBreadCrumb: string, parameterPlaceholderMapWithValues: any) => {
+    let finalString = crossBreadCrumb
+    Object.keys(parameterPlaceholderMapWithValues).forEach((key: string) => {
+        finalString = finalString.replaceAll('$P{' + key + '}', parameterPlaceholderMapWithValues[key])
+    })
+    return finalString
 }
