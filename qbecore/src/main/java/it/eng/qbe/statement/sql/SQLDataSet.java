@@ -177,20 +177,29 @@ public class SQLDataSet extends AbstractQbeDataSet {
 	public DataIterator iterator() {
 		logger.debug("IN");
 		try {
-			IDataSource daS = this.getDataSource();
-			if (daS == null && this.datasourceForReading != null)
-				daS = this.datasourceForReading;
-			JDBCDataSet jdbcDataset = (JDBCDataSet) JDBCDatasetFactory.getJDBCDataSet(daS);
-			jdbcDataset.setDataSource(daS);
-			if (this.getWrappedDataset() instanceof VersionedDataSet) {
-				VersionedDataSet vds = (VersionedDataSet) this.getWrappedDataset();
-				if ((vds.getWrappedDataset() instanceof JDBCDataSet)) {
-					JDBCDataSet jDataset = (JDBCDataSet) vds.getWrappedDataset();
-					statement.getQuerySQLString(jDataset.getQuery().toString());
+			if (this.isPersisted()) {
+				JDBCDataSet jdbcDataset = (JDBCDataSet) JDBCDatasetFactory.getJDBCDataSet(this.getDataSourceForReading());
+				jdbcDataset.setQuery("select * from " + this.getPersistTableName());
+				return jdbcDataset.iterator();
+
+			} else {
+
+				IDataSource daS = this.getDataSource();
+				if (daS == null && this.datasourceForReading != null)
+					daS = this.datasourceForReading;
+				JDBCDataSet jdbcDataset = (JDBCDataSet) JDBCDatasetFactory.getJDBCDataSet(daS);
+				jdbcDataset.setDataSource(daS);
+				if (this.getWrappedDataset() instanceof VersionedDataSet) {
+					VersionedDataSet vds = (VersionedDataSet) this.getWrappedDataset();
+					if ((vds.getWrappedDataset() instanceof JDBCDataSet)) {
+						JDBCDataSet jDataset = (JDBCDataSet) vds.getWrappedDataset();
+						statement.getQuerySQLString(jDataset.getQuery().toString());
+					}
 				}
+				jdbcDataset.setQuery(statement.getQueryString());
+				return jdbcDataset.iterator();
 			}
-			jdbcDataset.setQuery(statement.getQueryString());
-			return jdbcDataset.iterator();
+
 		} finally {
 			logger.debug("OUT");
 		}
