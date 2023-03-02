@@ -430,7 +430,8 @@ export default defineComponent({
         },
         getQbeJSONQuery(dataset) {
             const query = { id: 'q1', name: 'Main', fields: [], distinct: false, filters: [], calendar: {}, expression: {}, isNestedExpression: false, havings: [], graph: [], relationRoles: [], subqueries: [] }
-            return dataset.qbeJSONQuery ?? query
+
+            return dataset.qbeJSONQuery && typeof dataset.qbeJSONQuery === 'string' && JSON.parse(dataset.qbeJSONQuery)?.catalogue?.queries[0] ? JSON.parse(dataset.qbeJSONQuery).catalogue?.queries[0] : query
         },
         loadQuery() {
             let query = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
