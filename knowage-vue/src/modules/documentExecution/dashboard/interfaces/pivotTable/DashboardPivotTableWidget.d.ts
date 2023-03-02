@@ -1,4 +1,19 @@
-import { ITableWidgetColumnStyles, ITableWidgetConditionalStyles, ITawbleWidgetHeadersStyle, IWidgetBackgroundStyle, IWidgetBordersStyle, IWidgetExports, IWidgetInteractions, IWidgetPaddingStyle, IWidgetResponsive, IWidgetRowsStyle, IWidgetShadowsStyle, IWidgetTitle } from '../../Dashboard'
+import {
+    IPivotColumnsConfiguration,
+    IPivotRowsConfiguration,
+    ITableWidgetColumnStyles,
+    ITableWidgetConditionalStyles,
+    ITawbleWidgetHeadersStyle,
+    IWidgetBackgroundStyle,
+    IWidgetBordersStyle,
+    IWidgetExports,
+    IWidgetInteractions,
+    IWidgetPaddingStyle,
+    IWidgetResponsive,
+    IWidgetRowsStyle,
+    IWidgetShadowsStyle,
+    IWidgetTitle
+} from '../../Dashboard'
 
 export interface IPivotTableSettings {
     updatable: boolean
@@ -25,14 +40,4 @@ export interface IPivotTableStyle {
     borders: IWidgetBordersStyle
     padding: IWidgetPaddingStyle
     shadows: IWidgetShadowsStyle
-}
-
-export interface IPivotRowsConfiguration {
-    grandTotal: boolean
-    subTotal: boolean
-}
-
-export interface IPivotColumnsConfiguration {
-    grandTotal: boolean
-    subTotal: boolean
 }

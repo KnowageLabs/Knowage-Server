@@ -18,7 +18,9 @@
                 <WidgetSelection v-else-if="accordion.type === 'Selection'" :widgetModel="widgetModel"></WidgetSelection>
                 <WidgetCrossNavigation v-else-if="accordion.type === 'CrossNavigation'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :dashboardId="dashboardId"></WidgetCrossNavigation>
                 <WidgetInteractionsLinks v-else-if="accordion.type === 'Link'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :dashboardId="dashboardId"></WidgetInteractionsLinks>
-                <WidgetPreview v-else-if="accordion.type === 'Preview'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :dashboardId="dashboardId"></WidgetPreview>
+                <WidgetPreview v-else-if="accordion.type === 'Preview'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :dashboardId="dashboardId" />
+                <PivotTableRowsConfig v-else-if="accordion.type === 'Rows'" :widgetModel="widgetModel" />
+                <PivotTableColumnsConfig v-else-if="accordion.type === 'Columns'" :widgetModel="widgetModel" />
             </AccordionTab>
         </Accordion>
     </div>
@@ -46,6 +48,8 @@ import WidgetTitleStyle from '../common/style/WidgetTitleStyle.vue'
 import WidgetPaddingStyle from '../common/style/WidgetPaddingStyle.vue'
 import WidgetBackgroundColorStyle from '../common/style/WidgetBackgroundColorStyle.vue'
 import PivotTableSettingsAccordionHeader from './PivotTableSettingsAccordionHeader.vue'
+import PivotTableRowsConfig from '../PivotTableWidget/configuration/PivotTableRowsConfig.vue'
+import PivotTableColumnsConfig from '../PivotTableWidget/configuration/PivotTableColumnsConfig.vue'
 
 export default defineComponent({
     name: 'pivot-table-settings-accordion',
@@ -66,7 +70,9 @@ export default defineComponent({
         WidgetCrossNavigation,
         WidgetInteractionsLinks,
         WidgetPreview,
-        PivotTableSettingsAccordionHeader
+        PivotTableSettingsAccordionHeader,
+        PivotTableRowsConfig,
+        PivotTableColumnsConfig
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

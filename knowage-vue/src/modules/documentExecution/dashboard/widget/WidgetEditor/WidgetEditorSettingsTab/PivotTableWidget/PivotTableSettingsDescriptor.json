@@ -8,6 +8,14 @@
         ],
         "Configuration": [
             {
+                "title": "common.columns",
+                "type": "Columns"
+            },
+            {
+                "title": "dashboard.widgetEditor.rows.title",
+                "type": "Rows"
+            },
+            {
                 "title": "dashboard.widgetEditor.export.title",
                 "type": "Export"
             }

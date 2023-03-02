@@ -1,20 +1,7 @@
 <template>
     <div class="pivot-widget-container p-d-flex p-d-row kn-flex">
         <DxButton text="Apply" type="default" @click="doStuff()" />
-        <DxPivotGrid
-            id="pivotgrid"
-            ref="grid"
-            :data-source="dataSource"
-            :allow-sorting="true"
-            :allow-sorting-by-summary="true"
-            :allow-filtering="true"
-            :show-borders="true"
-            :show-column-grand-totals="true"
-            :show-row-grand-totals="true"
-            :show-row-totals="true"
-            :show-column-totals="true"
-            @contentReady="onContentReady"
-        >
+        <DxPivotGrid id="pivotgrid" ref="grid" :data-source="dataSource" v-bind="pivotConfig">
             <DxFieldChooser :enabled="true" :height="400" />
         </DxPivotGrid>
     </div>
@@ -56,12 +43,15 @@ export default defineComponent({
         })
         return {
             dataSource,
-            tableData: [] as any
+            tableData: [] as any,
+            pivotConfig: {} as any
         }
     },
     watch: {
         propWidget: {
-            handler() {},
+            handler() {
+                console.log('PROP WIDGET CHANGED', this.propWidget)
+            },
             deep: true
         },
         dataToShow: {
@@ -75,11 +65,34 @@ export default defineComponent({
         }
     },
     beforeMount() {},
-    created() {},
+    created() {
+        this.pivotConfig.onCellPrepared = this.setCellConfiguration
+    },
     unmounted() {},
     mounted() {},
 
     methods: {
+        createPivotConfiguration() {
+            this.pivotConfig = {
+                // PROPS
+                allowSorting: true,
+                allowSortingBySummary: true,
+                allowFiltering: true,
+                showBorders: true,
+                showColumnGrandTotals: true,
+                showColumnTotals: true,
+                showRowGrandTotals: true,
+                showRowTotals: true,
+                texts: {
+                    grandTotal: 'TEST 123',
+                    total: 'TOTAL TEST'
+                },
+
+                // EVENTS
+                contentReady: this.onContentReady,
+                cellPrepared: this.setCellConfiguration
+            }
+        },
         onContentReady() {
             // console.log('CONTENT READY \n', this.dataSource.state())
         },
@@ -172,6 +185,21 @@ export default defineComponent({
         getPivotData() {
             if (this.dataToShow && this.dataToShow.rows) return this.dataToShow.rows
             else return []
+        },
+        setCellConfiguration(event) {
+            // console.log('cell prep,', event)
+            if (event.area === 'row' && event.cell.text === 'Grand Total') {
+                event.cellElement.innerHTML = this.getGrandTotalLabel('rows')
+            }
+            if (event.area === 'column' && event.cell.text === 'Grand Total') {
+                event.cellElement.innerHTML = this.getGrandTotalLabel('columns')
+            }
+        },
+        getGrandTotalLabel(totalType) {
+            if (totalType === 'rows' || totalType === 'columns') {
+                const grandTotalLabel = this.propWidget.settings.configuration[totalType].grandTotalLabel
+                return grandTotalLabel
+            } else return 'Grand Total'
         }
     }
 })

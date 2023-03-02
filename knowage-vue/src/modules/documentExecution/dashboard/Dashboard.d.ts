@@ -711,3 +711,15 @@ interface IPivotFields {
     data: IWidgetColumn[]
     filters: IWidgetColumn[]
 }
+
+export interface IPivotRowsConfiguration {
+    grandTotal: boolean
+    subTotal: boolean
+    grandTotalLabel: string
+}
+
+export interface IPivotColumnsConfiguration {
+    grandTotal: boolean
+    subTotal: boolean
+    grandTotalLabel: string
+}

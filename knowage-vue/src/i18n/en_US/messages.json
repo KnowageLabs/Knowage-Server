@@ -393,6 +393,13 @@
             "launchSelection": "LAUNCH SELECTION"
         },
         "widgetEditor": {
+            "pivot": {
+                "configuration": {
+                    "grandTotal": "Show Totals",
+                    "subtotal": "Show Subtotals",
+                    "grandTotalLabel": "Labels for Totals"
+                }
+            },
             "absolute": "Absolute",
             "accessibility": {
                 "enabelKeyboardNavigation": "Enable Keyboard Navigation",
