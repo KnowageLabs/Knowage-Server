@@ -137,7 +137,7 @@ public class SQLDataSet extends AbstractQbeDataSet {
 
 	@Override
 	public void setDataSource(IDataSource dataSource) {
-		// TODO Auto-generated method stub
+
 	}
 
 	@Override
@@ -175,9 +175,11 @@ public class SQLDataSet extends AbstractQbeDataSet {
 	public DataIterator iterator() {
 		logger.debug("IN");
 		try {
-
-			JDBCDataSet jdbcDataset = (JDBCDataSet) JDBCDatasetFactory.getJDBCDataSet(this.getDataSource());
-			jdbcDataset.setDataSource(this.getDataSource());
+			IDataSource daS = this.getDataSource();
+			if (daS == null && this.datasourceForReading != null)
+				daS = this.datasourceForReading;
+			JDBCDataSet jdbcDataset = (JDBCDataSet) JDBCDatasetFactory.getJDBCDataSet(daS);
+			jdbcDataset.setDataSource(daS);
 			if (this.getWrappedDataset() instanceof VersionedDataSet) {
 				VersionedDataSet vds = (VersionedDataSet) this.getWrappedDataset();
 				if ((vds.getWrappedDataset() instanceof JDBCDataSet)) {
