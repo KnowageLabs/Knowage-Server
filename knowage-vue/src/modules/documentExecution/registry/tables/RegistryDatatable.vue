@@ -372,7 +372,7 @@ export default defineComponent({
         addNewRow() {
             const newRow = { uniqueId: cryptoRandomString({ length: 16, type: 'base64' }), id: this.rows.length + 1, isNew: true }
             this.columns.forEach((el: any) => {
-                if (el.isVisible && el.field !== 'id') {
+                if (el.isVisible && el.field && el.field !== 'id') {
                     newRow[el.field] = el.defaultValue ?? ''
                 }
             })
@@ -388,7 +388,7 @@ export default defineComponent({
                 tempRow.uniqueId = cryptoRandomString({ length: 16, type: 'base64' })
                 tempRow.isNew = true
                 delete tempRow.id
-                if (this.keyColumnName) delete tempRow[this.keyColumnName]
+                if (this.keyColumnName) tempRow[this.keyColumnName] = ''
                 this.addRowToFirstPosition(tempRow)
             })
         },
