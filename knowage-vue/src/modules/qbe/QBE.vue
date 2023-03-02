@@ -62,9 +62,9 @@
                         </span>
                     </template>
                     <template #end>
-                        <i v-if="selectedQuery.fields.length > 0" v-tooltip.top="$t('qbe.viewToolbar.deleteAllSelectedFields')" class="fas fa-eraser kn-cursor-pointer p-mx-2" @click="deleteAllFieldsFromQuery"></i>
+                        <i v-if="selectedQuery?.fields?.length > 0" v-tooltip.top="$t('qbe.viewToolbar.deleteAllSelectedFields')" class="fas fa-eraser kn-cursor-pointer p-mx-2" @click="deleteAllFieldsFromQuery"></i>
                         <i v-if="hiddenColumnsExist" v-tooltip.top="$t('qbe.viewToolbar.showHiddenColumns')" class="pi pi-eye kn-cursor-pointer p-mx-2" @click="showHiddenColumns"></i>
-                        <span v-if="selectedQuery.filters.length > 0" class="fa-stack p-mx-2">
+                        <span v-if="selectedQuery?.filters?.length > 0" class="fa-stack p-mx-2">
                             <i class="fas fa-ban fa-stack-2x"></i>
                             <i v-tooltip.top="$t('qbe.viewToolbar.deleteAllFilters')" class="fas fa-filter fa-stack-1x kn-cursor-pointer" @click="deleteAllFilters"></i>
                         </span>
@@ -807,7 +807,7 @@ export default defineComponent({
                 { key: '1', label: this.$t('qbe.detailView.toolbarMenu.sql'), command: () => this.showSQLQuery() },
                 { key: '2', icon: repetitionIcon, label: this.$t('qbe.detailView.toolbarMenu.repetitions'), command: () => this.toggleDiscardRepetitions() },
                 { key: '3', label: this.$t('common.parameters'), command: () => this.showParamDialog() },
-                { key: '4', label: this.$t('components.knCalculatedField.title'), visible: !this.smartView && this.selectedQuery.fields.length > 0, command: () => this.createNewCalcField() },
+                { key: '4', label: this.$t('components.knCalculatedField.title'), visible: !this.smartView && this.selectedQuery?.fields?.length > 0, command: () => this.createNewCalcField() },
                 { key: '5', label: this.$t('qbe.advancedFilters.advancedFilterVisualisation'), command: () => this.showAdvancedFilters() },
                 { key: '6', label: this.$t('qbe.joinDefinitions.title'), command: () => this.showJoinDefinitions() },
                 {
