@@ -55,6 +55,8 @@ export default defineComponent({
                     return this.widgetModel.settings.interactions.link
                 case 'Preview':
                     return this.widgetModel.settings.interactions.preview
+                case 'FieldPicker':
+                    return this.widgetModel.settings.configuration.fieldPicker
                 default:
                     return null
             }

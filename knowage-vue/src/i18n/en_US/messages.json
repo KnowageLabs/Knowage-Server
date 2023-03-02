@@ -397,7 +397,9 @@
                 "configuration": {
                     "grandTotal": "Show Totals",
                     "subtotal": "Show Subtotals",
-                    "grandTotalLabel": "Labels for Totals"
+                    "grandTotalLabel": "Labels for Totals",
+                    "showFieldPicker": "Show Integrated Field Picker",
+                    "fieldPicker": "Field Picker"
                 }
             },
             "absolute": "Absolute",

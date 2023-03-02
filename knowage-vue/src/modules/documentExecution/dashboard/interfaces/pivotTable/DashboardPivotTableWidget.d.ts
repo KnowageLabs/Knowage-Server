@@ -1,5 +1,6 @@
 import {
     IPivotColumnsConfiguration,
+    IPivotFieldPicker,
     IPivotRowsConfiguration,
     ITableWidgetColumnStyles,
     ITableWidgetConditionalStyles,
@@ -29,6 +30,7 @@ export interface IPivotTableConfiguration {
     rows: IPivotRowsConfiguration
     columns: IPivotColumnsConfiguration
     exports: IWidgetExports
+    fieldPicker: IPivotFieldPicker
 }
 
 export interface IPivotTableStyle {

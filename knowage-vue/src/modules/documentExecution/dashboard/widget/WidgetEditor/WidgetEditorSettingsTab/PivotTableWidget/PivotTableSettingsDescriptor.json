@@ -16,6 +16,10 @@
                 "type": "Rows"
             },
             {
+                "title": "dashboard.widgetEditor.pivot.configuration.fieldPicker",
+                "type": "FieldPicker"
+            },
+            {
                 "title": "dashboard.widgetEditor.export.title",
                 "type": "Export"
             }

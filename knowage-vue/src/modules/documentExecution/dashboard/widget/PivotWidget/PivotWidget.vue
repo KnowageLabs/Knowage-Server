@@ -1,14 +1,15 @@
 <template>
     <div class="pivot-widget-container p-d-flex p-d-row kn-flex">
-        <DxButton text="Apply" type="default" @click="doStuff()" />
+        <DxButton text="Apply" type="default" @click="logButton()" />
         <DxPivotGrid id="pivotgrid" ref="grid" :data-source="dataSource" v-bind="pivotConfig">
-            <DxFieldChooser :enabled="true" :height="400" />
+            <DxFieldChooser v-bind="fieldPickerConfig" />
+            <DxFieldPanel :visible="false" :show-column-fields="true" :show-data-fields="true" :show-filter-fields="true" :show-row-fields="true" :allow-field-dragging="true" />
         </DxPivotGrid>
     </div>
 </template>
 
 <script lang="ts">
-import { DxPivotGrid, DxFieldChooser } from 'devextreme-vue/pivot-grid'
+import { DxPivotGrid, DxFieldChooser, DxFieldPanel } from 'devextreme-vue/pivot-grid'
 import { DxButton } from 'devextreme-vue/button'
 import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source'
 
@@ -21,7 +22,7 @@ import dashboardStore from '../../Dashboard.store'
 
 export default defineComponent({
     name: 'table-widget',
-    components: { DxPivotGrid, DxFieldChooser, DxButton },
+    components: { DxPivotGrid, DxFieldChooser, DxFieldPanel, DxButton },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         editorMode: { type: Boolean, required: false },
@@ -44,9 +45,11 @@ export default defineComponent({
         return {
             dataSource,
             tableData: [] as any,
-            pivotConfig: {} as any
+            pivotConfig: {} as any,
+            fieldPickerConfig: {} as any
         }
     },
+    computed: {},
     watch: {
         propWidget: {
             handler() {
@@ -66,81 +69,54 @@ export default defineComponent({
     },
     beforeMount() {},
     created() {
-        this.pivotConfig.onCellPrepared = this.setCellConfiguration
+        this.setPivotConfiguration()
+        this.setFieldPickerConfiguration()
     },
     unmounted() {},
     mounted() {},
 
     methods: {
-        createPivotConfiguration() {
-            this.pivotConfig = {
-                // PROPS
-                allowSorting: true,
-                allowSortingBySummary: true,
-                allowFiltering: true,
-                showBorders: true,
-                showColumnGrandTotals: true,
-                showColumnTotals: true,
-                showRowGrandTotals: true,
-                showRowTotals: true,
-                texts: {
-                    grandTotal: 'TEST 123',
-                    total: 'TOTAL TEST'
-                },
-
-                // EVENTS
-                contentReady: this.onContentReady,
-                cellPrepared: this.setCellConfiguration
-            }
-        },
-        onContentReady() {
-            // console.log('CONTENT READY \n', this.dataSource.state())
-        },
-        doStuff() {
+        logButton() {
             console.groupCollapsed('DO STUFF ------------')
             console.log('propWidget', this.propWidget)
             console.groupEnd()
             // console.log('dataToShow', this.dataToShow)
             // console.log('this.dataSource.fields()', this.dataSource.fields())
         },
-        getFields() {
-            return [
-                {
-                    caption: 'Region',
-                    width: 120,
-                    dataField: 'region',
-                    area: 'row',
-                    headerFilter: {
-                        allowSearch: true
-                    }
-                },
-                {
-                    caption: 'City',
-                    dataField: 'city',
-                    width: 150,
-                    area: 'row',
-                    headerFilter: {
-                        allowSearch: true
-                    },
-                    selector(data) {
-                        return `${data.city} (${data.country})`
-                    }
-                },
-                {
-                    dataField: 'date',
-                    dataType: 'date',
-                    area: 'column'
-                },
-                {
-                    caption: 'Sales',
-                    dataField: 'amount',
-                    dataType: 'number',
-                    summaryType: 'sum',
-                    format: 'currency',
-                    area: 'data'
-                }
-            ]
+        setPivotConfiguration() {
+            const widgetConfig = this.propWidget.settings.configuration
+            this.pivotConfig = {
+                // PROPS
+                allowSorting: true,
+                allowSortingBySummary: true,
+                allowFiltering: true,
+                showBorders: true,
+                showColumnGrandTotals: widgetConfig.columns.grandTotal,
+                showColumnTotals: widgetConfig.columns.subTotal,
+                showRowGrandTotals: widgetConfig.rows.grandTotal,
+                showRowTotals: widgetConfig.rows.subTotal,
+                texts: {},
+
+                // EVENTS
+                contentReady: this.onContentReady,
+                onCellPrepared: this.setCellConfiguration
+            }
         },
+
+        setFieldPickerConfiguration() {
+            const fieldPickerConfig = this.propWidget.settings.configuration.fieldPicker
+            this.fieldPickerConfig = {
+                enabled: fieldPickerConfig.enabled,
+                width: fieldPickerConfig.width,
+                height: fieldPickerConfig.height
+            }
+        },
+
+        onContentReady() {
+            // console.log('CONTENT READY \n', this.dataSource.state())
+        },
+
+        //#region ===================== Pivot Datasource Config (Fields & Data) ====================================================
         getFormattedFieldsFromModel() {
             const formattedFields = [] as any
             const responseMetadataFields = this.dataToShow?.metaData?.fields
@@ -186,13 +162,22 @@ export default defineComponent({
             if (this.dataToShow && this.dataToShow.rows) return this.dataToShow.rows
             else return []
         },
+        //#endregion ===============================================================================================
+
+        //#region ===================== Cell Config (Totals, Stlye, Conditionals) ====================================================
         setCellConfiguration(event) {
             // console.log('cell prep,', event)
-            if (event.area === 'row' && event.cell.text === 'Grand Total') {
-                event.cellElement.innerHTML = this.getGrandTotalLabel('rows')
+            this.setColumnGrandTotal(event)
+            this.setRowGrandTotal(event)
+        },
+        setColumnGrandTotal(cellEvent) {
+            if (cellEvent.area === 'row' && cellEvent.cell.text === 'Grand Total') {
+                cellEvent.cellElement.innerHTML = this.getGrandTotalLabel('rows')
             }
-            if (event.area === 'column' && event.cell.text === 'Grand Total') {
-                event.cellElement.innerHTML = this.getGrandTotalLabel('columns')
+        },
+        setRowGrandTotal(cellEvent) {
+            if (cellEvent.area === 'column' && cellEvent.cell.text === 'Grand Total') {
+                cellEvent.cellElement.innerHTML = this.getGrandTotalLabel('columns')
             }
         },
         getGrandTotalLabel(totalType) {
@@ -201,6 +186,7 @@ export default defineComponent({
                 return grandTotalLabel
             } else return 'Grand Total'
         }
+        //#endregion ===============================================================================================
     }
 })
 </script>

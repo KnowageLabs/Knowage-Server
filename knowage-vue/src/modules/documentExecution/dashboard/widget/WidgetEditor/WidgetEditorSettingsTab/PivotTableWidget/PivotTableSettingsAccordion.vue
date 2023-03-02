@@ -21,6 +21,7 @@
                 <WidgetPreview v-else-if="accordion.type === 'Preview'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :dashboardId="dashboardId" />
                 <PivotTableRowsConfig v-else-if="accordion.type === 'Rows'" :widgetModel="widgetModel" />
                 <PivotTableColumnsConfig v-else-if="accordion.type === 'Columns'" :widgetModel="widgetModel" />
+                <PivotTableFieldPicker v-else-if="accordion.type === 'FieldPicker'" :widgetModel="widgetModel" />
             </AccordionTab>
         </Accordion>
     </div>
@@ -50,6 +51,7 @@ import WidgetBackgroundColorStyle from '../common/style/WidgetBackgroundColorSty
 import PivotTableSettingsAccordionHeader from './PivotTableSettingsAccordionHeader.vue'
 import PivotTableRowsConfig from '../PivotTableWidget/configuration/PivotTableRowsConfig.vue'
 import PivotTableColumnsConfig from '../PivotTableWidget/configuration/PivotTableColumnsConfig.vue'
+import PivotTableFieldPicker from '../PivotTableWidget/configuration/PivotTableFieldPicker.vue'
 
 export default defineComponent({
     name: 'pivot-table-settings-accordion',
@@ -72,7 +74,8 @@ export default defineComponent({
         WidgetPreview,
         PivotTableSettingsAccordionHeader,
         PivotTableRowsConfig,
-        PivotTableColumnsConfig
+        PivotTableColumnsConfig,
+        PivotTableFieldPicker
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

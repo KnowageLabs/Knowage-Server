@@ -1,3 +1,4 @@
 {
-    "rowTotals": ["grandTotal", "subTotal"]
+    "rowTotals": ["grandTotal", "subTotal"],
+    "fieldPicker": ["showFieldPicker"]
 }

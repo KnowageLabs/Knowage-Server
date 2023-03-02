@@ -723,3 +723,9 @@ export interface IPivotColumnsConfiguration {
     subTotal: boolean
     grandTotalLabel: string
 }
+
+export interface IPivotFieldPicker {
+    enabled: boolean
+    width: number
+    height: number
+}
