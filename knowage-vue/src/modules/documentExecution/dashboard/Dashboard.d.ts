@@ -729,3 +729,7 @@ export interface IPivotFieldPicker {
     width: number
     height: number
 }
+
+export interface IPivotFieldPanel {
+    enabled: boolean
+}

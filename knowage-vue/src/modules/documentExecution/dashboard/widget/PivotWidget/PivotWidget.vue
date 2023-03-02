@@ -3,7 +3,8 @@
         <DxButton text="Apply" type="default" @click="logButton()" />
         <DxPivotGrid id="pivotgrid" ref="grid" :data-source="dataSource" v-bind="pivotConfig">
             <DxFieldChooser v-bind="fieldPickerConfig" />
-            <DxFieldPanel :visible="false" :show-column-fields="true" :show-data-fields="true" :show-filter-fields="true" :show-row-fields="true" :allow-field-dragging="true" />
+            <!-- <DxFieldPanel  v-bind="fieldPanelConfig" :visible="false" :show-column-fields="true" :show-data-fields="true" :show-filter-fields="true" :show-row-fields="true" :allow-field-dragging="true" /> -->
+            <DxFieldPanel v-bind="fieldPanelConfig" />
         </DxPivotGrid>
     </div>
 </template>
@@ -46,7 +47,8 @@ export default defineComponent({
             dataSource,
             tableData: [] as any,
             pivotConfig: {} as any,
-            fieldPickerConfig: {} as any
+            fieldPickerConfig: {} as any,
+            fieldPanelConfig: {} as any
         }
     },
     computed: {},
@@ -71,6 +73,7 @@ export default defineComponent({
     created() {
         this.setPivotConfiguration()
         this.setFieldPickerConfiguration()
+        this.setFieldPanelConfiguration()
     },
     unmounted() {},
     mounted() {},
@@ -109,6 +112,13 @@ export default defineComponent({
                 enabled: fieldPickerConfig.enabled,
                 width: fieldPickerConfig.width,
                 height: fieldPickerConfig.height
+            }
+        },
+
+        setFieldPanelConfiguration() {
+            const fieldPanelConfig = this.propWidget.settings.configuration.fieldPanel
+            this.fieldPanelConfig = {
+                visible: fieldPanelConfig.enabled
             }
         },
 

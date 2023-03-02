@@ -13,7 +13,8 @@ import {
     IWidgetResponsive,
     IWidgetRowsStyle,
     IWidgetShadowsStyle,
-    IWidgetTitle
+    IWidgetTitle,
+    IPivotFieldPanel
 } from '../../Dashboard'
 
 export interface IPivotTableSettings {
@@ -31,6 +32,7 @@ export interface IPivotTableConfiguration {
     columns: IPivotColumnsConfiguration
     exports: IWidgetExports
     fieldPicker: IPivotFieldPicker
+    fieldPanel: IPivotFieldPanel
 }
 
 export interface IPivotTableStyle {

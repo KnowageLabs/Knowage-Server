@@ -20,6 +20,10 @@
                 "type": "FieldPicker"
             },
             {
+                "title": "dashboard.widgetEditor.pivot.configuration.fieldPanel",
+                "type": "FieldPanel"
+            },
+            {
                 "title": "dashboard.widgetEditor.export.title",
                 "type": "Export"
             }

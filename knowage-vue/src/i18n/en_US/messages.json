@@ -399,7 +399,8 @@
                     "subtotal": "Show Subtotals",
                     "grandTotalLabel": "Labels for Totals",
                     "showFieldPicker": "Show Integrated Field Picker",
-                    "fieldPicker": "Field Picker"
+                    "fieldPicker": "Field Picker",
+                    "fieldPanel": "Field Panel"
                 }
             },
             "absolute": "Absolute",
