@@ -132,9 +132,11 @@ export default defineComponent({
         ...mapActions(store, ['setInfo', 'setError']),
         setEventListeners() {
             emitter.on('refreshTableWithData', this.loadRows)
+            emitter.on('clearSelectedRows', this.clearSelectedRows)
         },
         removeEventListeners() {
             emitter.off('refreshTableWithData', this.loadRows)
+            emitter.off('clearSelectedRows', this.clearSelectedRows)
         },
         onGridReady(params) {
             this.gridApi = params.api
@@ -592,6 +594,9 @@ export default defineComponent({
             })
             this.refreshGridConfiguration()
             this.$emit('sortingChanged', updatedSortModel)
+        },
+        clearSelectedRows() {
+            this.selectedRows = []
         }
     }
 })

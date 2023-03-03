@@ -1,6 +1,6 @@
 <template>
     <div class="p-d-flex p-flex-column kn-width-full kn-height-full">
-        <!-- <Toolbar class="kn-toolbar kn-toolbar--secondary kn-width-full">
+        <Toolbar v-if="isPivot" class="kn-toolbar kn-toolbar--secondary kn-width-full">
             <template #start>
                 {{ $t('documentExecution.registry.title') }}
             </template>
@@ -9,7 +9,7 @@
                     <Button class="kn-button p-button-text" @click="saveRegistry">{{ $t('common.save') }}</Button>
                 </div>
             </template>
-        </Toolbar> -->
+        </Toolbar>
         <div class="p-d-flex p-flex-column kn-overflow kn-flex">
             <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
             <div class="">
@@ -104,6 +104,7 @@ export default defineComponent({
             this.stopWarningsState = []
         },
         async reloadTrigger() {
+            this.pagination.start = 0
             await this.loadPage()
             this.stopWarningsState = []
         }
@@ -115,6 +116,7 @@ export default defineComponent({
         ...mapActions(store, ['setInfo', 'setError']),
         async loadPage() {
             this.loading = true
+            emitter.emit('clearSelectedRows')
             await this.loadRegistry()
             this.loadRegistryData()
             this.loading = false
