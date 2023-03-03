@@ -195,7 +195,8 @@ export default defineComponent({
             crossNavigationDocuments: [] as any[],
             angularData: null as any,
             crossNavigationContainerVisible: false,
-            crossNavigationContainerData: null as any
+            crossNavigationContainerData: null as any,
+            newCockpitCreated: false
         }
     },
     watch: {
@@ -729,7 +730,7 @@ export default defineComponent({
                 label: this.document.label,
                 role: this.userRole,
                 parameters: olapParameters ? olapParameters : this.getFormattedParameters(),
-                EDIT_MODE: 'null',
+                EDIT_MODE: this.documentMode ? this.documentMode : 'null',
                 IS_FOR_EXPORT: true,
                 SBI_EXECUTION_ID: ''
             } as any
@@ -778,8 +779,10 @@ export default defineComponent({
                 params: { document: null } as any,
                 url: documentUrl.split('?')[0]
             }
-            if (this.$route.query.documentMode === 'edit') this.documentMode = 'EDIT'
+
+            if (this.$route.query.documentMode === 'edit' && !this.newCockpitCreated) this.documentMode = 'EDIT'
             postObject.params.documentMode = this.documentMode
+            this.newCockpitCreated = true
             this.hiddenFormUrl = postObject.url
             const paramsFromUrl = documentUrl?.split('?')[1]?.split('&')
 
