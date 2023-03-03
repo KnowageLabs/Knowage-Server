@@ -103,6 +103,9 @@ public final class DataSetServiceProxy extends AbstractServiceProxy {
 			} else {
 				service = Service.create(SERVICE_QNAME).getPort(DataSetService.class);
 			}
+
+			setCommonHeader(service);
+
 			return service;
 		} catch (Exception e) {
 			logger.error("Impossible to locate [" + SERVICE_NAME + "] at [" + serviceUrl + "]");
