@@ -67,19 +67,27 @@ export function formatParameterAfterDataDependencyCheck(parameter: any, resetVal
     if (parameter.parameterValue[0] && !parameter.parameterValue[0].description) {
         parameter.parameterValue[0].description = ''
     }
+
+    addDefaultValueForSelectionTypeParameters(parameter)
 }
 
 export function formatParameterDataOptions(parameter: iParameter, data: any) {
+    const valueAndDescriptionIndex = getValueAndDescriptionIndex(parameter)
+    return { value: valueAndDescriptionIndex.valueIndex ? data[valueAndDescriptionIndex.valueIndex] : '', description: valueAndDescriptionIndex.descriptionIndex ? data[valueAndDescriptionIndex.descriptionIndex] : '' }
+}
+
+const getValueAndDescriptionIndex = (parameter: iParameter) => {
     const valueColumn = parameter.metadata.valueColumn
     const descriptionColumn = parameter.metadata.descriptionColumn
     const valueIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === valueColumn)
     const descriptionIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === descriptionColumn)
 
-    return { value: valueIndex ? data[valueIndex] : '', description: descriptionIndex ? data[descriptionIndex] : '' }
+
+    return { valueIndex: valueIndex ?? '', descriptionIndex: descriptionIndex ?? '' }
 }
 
 export function getFormattedParameters(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }, userDateFormat: string) {
-    let parameters = [] as any[]
+    const parameters = [] as any[]
 
     Object.keys(loadedParameters.filterStatus).forEach((key: any) => {
         const parameter = loadedParameters.filterStatus[key]
@@ -123,4 +131,33 @@ function checkIfParameterDataContainsNewValue(parameter: iParameter) {
         }
     })
     return index !== -1
+}
+
+export function addDefaultValueForSelectionTypeParameters(parameter: iParameter) {
+    if (!parameter.driverDefaultValue || !parameter.selectionType) return
+    const valueAndDescriptionIndex = getValueAndDescriptionIndex(parameter)
+    if (parameter.multivalue && parameter.parameterValue.length === 0) {
+        addMultiDriverDefaultValue(parameter, valueAndDescriptionIndex)
+    } else if (!parameter.multivalue && (!parameter.parameterValue[0] || parameter.parameterValue[0].value === '' || parameter.parameterValue[0].value === null)) {
+        addSingleDriverDefaultValue(parameter, valueAndDescriptionIndex)
+    }
+}
+
+function addSingleDriverDefaultValue(parameter: iParameter, valueAndDescriptionIndex: { valueIndex: string, descriptionIndex: string }) {
+    if (!parameter.driverDefaultValue[0]) return
+    parameter.parameterValue = [{ value: parameter.driverDefaultValue[0][valueAndDescriptionIndex.valueIndex], description: parameter.driverDefaultValue[0][valueAndDescriptionIndex.descriptionIndex] }]
+    removeNonCompatibleParameterValues(parameter)
+}
+
+function addMultiDriverDefaultValue(parameter: iParameter, valueAndDescriptionIndex: { valueIndex: string, descriptionIndex: string }) {
+    parameter.parameterValue = parameter.driverDefaultValue.map((defaultValue: any) => { return { value: defaultValue[valueAndDescriptionIndex.valueIndex], description: defaultValue[valueAndDescriptionIndex.descriptionIndex] } })
+    removeNonCompatibleParameterValues(parameter)
+}
+
+function removeNonCompatibleParameterValues(parameter: iParameter) {
+    for (let i = parameter.parameterValue.length - 1; i >= 0; i--) {
+        const index = parameter.data?.findIndex((parameterValue: any) => parameterValue.value === parameter.parameterValue[i].value && parameterValue.description === parameter.parameterValue[i].description)
+        if (index === undefined || index === -1) parameter.parameterValue.splice(i, 1)
+    }
+    if (!parameter.multivalue && parameter.parameterValue.length === 0) parameter.parameterValue = [{ value: '', description: '' }]
 }

@@ -133,11 +133,11 @@ public class ExcelExporter extends AbstractFormatExporter {
 			logger.info("Starting export script");
 			Process exec = processBuilder.start();
 
+			logOutputToCoreLog(exec);
+
 			logger.info("Waiting...");
 			exec.waitFor();
 			logger.warn("Exit value: " + exec.exitValue());
-
-			logOutputToCoreLog(exec);
 
 			// the script creates the resulting xls and saves it to outputFile
 			Path outputFile = outputDir.resolve(documentLabel + ".xlsx");

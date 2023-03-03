@@ -44,8 +44,10 @@ function cockpitCustomChartControllerFunction(
 		$q,
 		$sce,
 		$filter,
+		cockpitModule_analyticalDrivers,
 		cockpitModule_generalServices,
 		cockpitModule_properties,
+		cockpitModule_template,
 		sbiModule_user,
 		sbiModule_translate,
 		datastore
@@ -72,10 +74,13 @@ function cockpitCustomChartControllerFunction(
 	datastore.clickManager = function(column,value){
 		$scope.doSelection(column,value);
 	}
+	datastore.parameters = cockpitModule_analyticalDrivers
+	
 
 	$scope.refresh = function(element,width,height, datasetRecords,nature){
 		datastore.variables = cockpitModule_properties.VARIABLES;
 		datastore.profile = sbiModule_user.profileAttributes;
+		datastore.selections = cockpitModule_template.getSelections();
 		$scope.jsError = false;
 		$scope.showWidgetSpinner();
 		var thisElement = angular.element( document.querySelector( '#w'+$scope.ngModel.id+' .htmlRenderer' ) )[0];

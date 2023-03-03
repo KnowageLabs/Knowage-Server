@@ -137,13 +137,15 @@ public class SQLDataSet extends AbstractQbeDataSet {
 
 	@Override
 	public void setDataSource(IDataSource dataSource) {
-		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public IDataSource getDataSourceForReading() {
 		SQLStatement statement = (SQLStatement) this.getStatement();
 		DataSetDataSource ds = (DataSetDataSource) statement.getDataSource();
+		if (ds.getDataSourceForReading() == null && this.datasourceForReading != null)
+			return this.datasourceForReading;
 		return ds.getDataSourceForReading();
 	}
 
@@ -175,18 +177,29 @@ public class SQLDataSet extends AbstractQbeDataSet {
 	public DataIterator iterator() {
 		logger.debug("IN");
 		try {
+			if (this.isPersisted()) {
+				JDBCDataSet jdbcDataset = (JDBCDataSet) JDBCDatasetFactory.getJDBCDataSet(this.getDataSourceForReading());
+				jdbcDataset.setQuery("select * from " + this.getPersistTableName());
+				return jdbcDataset.iterator();
 
-			JDBCDataSet jdbcDataset = (JDBCDataSet) JDBCDatasetFactory.getJDBCDataSet(this.getDataSource());
-			jdbcDataset.setDataSource(this.getDataSource());
-			if (this.getWrappedDataset() instanceof VersionedDataSet) {
-				VersionedDataSet vds = (VersionedDataSet) this.getWrappedDataset();
-				if ((vds.getWrappedDataset() instanceof JDBCDataSet)) {
-					JDBCDataSet jDataset = (JDBCDataSet) vds.getWrappedDataset();
-					statement.getQuerySQLString(jDataset.getQuery().toString());
+			} else {
+
+				IDataSource daS = this.getDataSource();
+				if (daS == null && this.datasourceForReading != null)
+					daS = this.datasourceForReading;
+				JDBCDataSet jdbcDataset = (JDBCDataSet) JDBCDatasetFactory.getJDBCDataSet(daS);
+				jdbcDataset.setDataSource(daS);
+				if (this.getWrappedDataset() instanceof VersionedDataSet) {
+					VersionedDataSet vds = (VersionedDataSet) this.getWrappedDataset();
+					if ((vds.getWrappedDataset() instanceof JDBCDataSet)) {
+						JDBCDataSet jDataset = (JDBCDataSet) vds.getWrappedDataset();
+						statement.getQuerySQLString(jDataset.getQuery().toString());
+					}
 				}
+				jdbcDataset.setQuery(statement.getQueryString());
+				return jdbcDataset.iterator();
 			}
-			jdbcDataset.setQuery(statement.getQueryString());
-			return jdbcDataset.iterator();
+
 		} finally {
 			logger.debug("OUT");
 		}

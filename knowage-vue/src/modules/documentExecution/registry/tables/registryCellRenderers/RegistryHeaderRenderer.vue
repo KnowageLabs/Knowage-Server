@@ -20,14 +20,14 @@ export default defineComponent({
             type: Object
         }
     },
+    data() {
+        return {}
+    },
     computed: {
         sortOrder(): string {
             if (this.params.sortModel.fieldName === this.params.column.colId) return this.params.sortModel.orderType
             else return 'NONE'
         }
-    },
-    data() {
-        return {}
     },
     methods: {
         onSortRequested() {

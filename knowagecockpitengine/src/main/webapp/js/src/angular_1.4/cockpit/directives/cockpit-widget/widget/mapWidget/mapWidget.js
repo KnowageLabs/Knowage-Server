@@ -28,69 +28,67 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				restrict: 'A',
 				link: function(scope, elm, attrs) {
 					var startX, startY, initialMouseX, initialMouseY;
-					elm.css({ position: 'absolute' });
 
-					var currPosition = scope.$eval(attrs.draggable);
-
-					if (currPosition == undefined) {
-						scope.$eval(attrs.draggable + "= [100,10]");
-						currPosition = scope.$eval(attrs.draggable);
-					}
-
-					elm.css({
-						top:  currPosition[0],
-						left: currPosition[1]
-					});
+					var draggable = scope.$eval(attrs.draggable);
 					
-					elm.bind('mouseover', function($event) {
-						elm.css({ cursor: "grab" });
-					});
-
-					elm.bind('mouseout', function($event) {
-						elm.css({ cursor: "unset" });
-					});
-
-					elm.bind('mousedown', function($event) {
-						startX = elm.prop('offsetLeft');
-						startY = elm.prop('offsetTop');
-						initialMouseX = $event.clientX;
-						initialMouseY = $event.clientY;
-						$document.bind('mousemove', mousemove);
-						$document.bind('mouseup', mouseup);
-						return false;
-					});
-
-					function mousemove($event) {
-						var dx = $event.clientX - initialMouseX;
-						var dy = $event.clientY - initialMouseY;
-						
-						currPosition[0] = startY + dy;
-						currPosition[1] = startX + dx;
-						
-						var parenteElementBoundingRect = elm[0].closest(".map").getBoundingClientRect();
-						var parentWidth = parenteElementBoundingRect.width;
-						var parentHeight = parenteElementBoundingRect.height;
-						
-						var subElementBoundingRect = elm[0].querySelector(".mapWidgetLegend:not(.ng-hide)").getBoundingClientRect();
-						var legendWidth = subElementBoundingRect.width;
-						var legendHeight = subElementBoundingRect.height;
-						
-						currPosition[0] = Math.max(currPosition[0], 0 + legendHeight);
-						currPosition[1] = Math.max(currPosition[1], 0);
-						
-						currPosition[0] = Math.min(currPosition[0], parentHeight);
-						currPosition[1] = Math.min(currPosition[1], parentWidth  - legendWidth);
+					if (draggable && draggable.position === "drag") {
+						var currPosition = draggable.coordinates = draggable.coordinates || [150,10];
 						
 						elm.css({
 							top:  currPosition[0],
 							left: currPosition[1]
 						});
-						return false;
-					}
-
-					function mouseup() {
-						$document.unbind('mousemove', mousemove);
-						$document.unbind('mouseup', mouseup);
+						
+						elm.bind('mouseover', function($event) {
+							elm.css({ cursor: "grab" });
+						});
+	
+						elm.bind('mouseout', function($event) {
+							elm.css({ cursor: "unset" });
+						});
+	
+						elm.bind('mousedown', function($event) {
+							startX = elm.prop('offsetLeft');
+							startY = elm.prop('offsetTop');
+							initialMouseX = $event.clientX;
+							initialMouseY = $event.clientY;
+							$document.bind('mousemove', mousemove);
+							$document.bind('mouseup', mouseup);
+							return false;
+						});
+	
+						function mousemove($event) {
+							var dx = $event.clientX - initialMouseX;
+							var dy = $event.clientY - initialMouseY;
+							
+							draggable.coordinates[0] = startY + dy;
+							draggable.coordinates[1] = startX + dx;
+							
+							var parenteElementBoundingRect = elm[0].previousElementSibling.getBoundingClientRect();
+							var parentWidth = parenteElementBoundingRect.width;
+							var parentHeight = parenteElementBoundingRect.height;
+							
+							var subElementBoundingRect = elm[0].querySelector(".mapWidgetLegend:not(.ng-hide)").getBoundingClientRect();
+							var legendWidth = subElementBoundingRect.width;
+							var legendHeight = subElementBoundingRect.height;
+							
+							draggable.coordinates[0] = Math.max(draggable.coordinates[0], 0 + legendHeight);
+							draggable.coordinates[1] = Math.max(draggable.coordinates[1], 0);
+							
+							draggable.coordinates[0] = Math.min(draggable.coordinates[0], parentHeight);
+							draggable.coordinates[1] = Math.min(draggable.coordinates[1], parentWidth  - legendWidth);
+							
+							elm.css({
+								top:  draggable.coordinates[0],
+								left: draggable.coordinates[1]
+							});
+							return false;
+						}
+	
+						function mouseup() {
+							$document.unbind('mousemove', mousemove);
+							$document.unbind('mouseup', mouseup);
+						}
 					}
 				}
 			};
@@ -99,8 +97,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return {
 				restrict: 'E',
 				scope: false,
+				replace: true,
 				link: function(scope, elm, attrs) {
-					
+					scope.isDraggable = function() {
+						if (scope.ngModel.style.legend.position === "drag") {
+							return scope.ngModel.style.legend.coordinates;
+						} else {
+							return false;
+						}
+					}
 				},
 				templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/mapWidget/templates/mapWidgetLegendPanel.html'
 			};
@@ -585,6 +590,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.exploded[currDsId] = false;
 				}
 			}
+			
+			// Retrocompatibility
+			if (Array.isArray($scope.ngModel.style.legend.position)) {
+				$scope.ngModel.style.legend.coordinates = $scope.ngModel.style.legend.position;
+				$scope.ngModel.style.legend.position = "drag";
+			}
+			$scope.ngModel.style.legend.position = $scope.ngModel.style.legend.position || "east";
+			
 			if (!$scope.ngModel.content.hasOwnProperty("enableBaseLayer")) $scope.ngModel.content.enableBaseLayer = true;
 
 		}
@@ -1970,8 +1983,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return layer.content.columnSelectedOfDataset.some(function(e) { return e.properties && e.properties.showMap == true; });
 		}
 
-	}
+		$scope.getMapLayout = function() {
+			var ret = "layout-row";
+			
+			if ($scope.isShowLegend
+				&& ($scope.ngModel.style.legend.position == "north" || $scope.ngModel.style.legend.position == "south")) {
+				ret = "layout-column";
+			}
+			
+			return ret;
+		}
 
+	}
+	
 	// this function register the widget in the cockpitModule_widgetConfigurator factory
 	addWidgetFunctionality("map",{'initialDimension':{'width':20, 'height':20},'updateble':true,'cliccable':true});
 })();
