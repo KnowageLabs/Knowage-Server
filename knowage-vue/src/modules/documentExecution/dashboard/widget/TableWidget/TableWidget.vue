@@ -5,7 +5,7 @@
             {{ $t('dashboard.tableWidget.launchSelection') }}
         </div>
         <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine kn-flex" :grid-options="gridOptions" :context="context"></ag-grid-vue>
-        <PaginatorRenderer v-if="showPaginator" :prop-widget-pagination="propWidget.settings.pagination" @pageChanged="$emit('pageChanged')" />
+        <PaginatorRenderer v-if="showPaginator" :prop-widget-pagination="widgetModel.settings.pagination" @pageChanged="$emit('pageChanged')" />
     </div>
 </template>
 
@@ -61,6 +61,7 @@ export default defineComponent({
     data() {
         return {
             descriptor,
+            widgetModel: {} as IWidget,
             gridOptions: null as any,
             columnsNameArray: [] as any,
             rowData: [] as any,
@@ -80,6 +81,7 @@ export default defineComponent({
     watch: {
         propWidget: {
             handler() {
+                this.loadWidgetModel()
                 if (!this.editorMode) this.refreshGridConfiguration(true)
             },
             deep: true
@@ -101,6 +103,7 @@ export default defineComponent({
     },
     created() {
         this.setEventListeners()
+        this.loadWidgetModel()
         this.loadActiveSelections()
         this.setupDatatableOptions()
         this.loadActiveSelectionValue()
@@ -113,6 +116,9 @@ export default defineComponent({
 
     methods: {
         ...mapActions(store, ['setSelections']),
+        loadWidgetModel() {
+            this.widgetModel = this.propWidget
+        },
         setEventListeners() {
             emitter.on('refreshTable', this.refreshGridConfigurationWithoutData)
             emitter.on('selectionsDeleted', this.onSelectionsDeleted)
@@ -126,9 +132,9 @@ export default defineComponent({
         },
         loadActiveSelectionValue() {
             if (this.editorMode) return false
-            const index = this.activeSelections.findIndex((selection: ISelection) => selection.datasetId === this.propWidget.dataset && selection.columnName === this.propWidget.columns[0]?.columnName)
+            const index = this.activeSelections.findIndex((selection: ISelection) => selection.datasetId === this.widgetModel.dataset && selection.columnName === this.widgetModel.columns[0]?.columnName)
             if (index !== -1) {
-                const modalSelection = this.propWidget.settings.interactions.selection
+                const modalSelection = this.widgetModel.settings.interactions.selection
                 const selection = this.activeSelections[index]
                 if (modalSelection.multiselection.enabled) {
                     this.setSelectedCellForMultiselected(selection.columnName)
@@ -178,7 +184,7 @@ export default defineComponent({
         },
         async refreshGridConfiguration(updateData?: boolean) {
             const gridColumns = this.createGridColumns(this.tableData?.metaData?.fields)
-            this.toggleHeaders(this.propWidget.settings.configuration.headers)
+            this.toggleHeaders(this.widgetModel.settings.configuration.headers)
             this.gridApi?.setColumnDefs(gridColumns)
 
             if (updateData) this.updateData(this.tableData?.rows)
@@ -186,16 +192,16 @@ export default defineComponent({
         refreshGridConfigurationWithoutData() {
             if (this.editorMode) {
                 const gridColumns = this.createGridColumns(this.tableData?.metaData?.fields)
-                this.toggleHeaders(this.propWidget.settings.configuration.headers)
+                this.toggleHeaders(this.widgetModel.settings.configuration.headers)
                 this.gridApi?.setColumnDefs(gridColumns)
                 this.gridApi?.redrawRows()
             }
         },
         toggleHeaders(headersConfiguration) {
-            headersConfiguration.enabled ? this.gridApi?.setHeaderHeight(this.propWidget.settings.style.headers.height) : this.gridApi?.setHeaderHeight(0)
+            headersConfiguration.enabled ? this.gridApi?.setHeaderHeight(this.widgetModel.settings.style.headers.height) : this.gridApi?.setHeaderHeight(0)
         },
         getRowHeight() {
-            const rowsConfiguration = this.propWidget.settings.style.rows
+            const rowsConfiguration = this.widgetModel.settings.style.rows
             if (rowsConfiguration.height && rowsConfiguration.height != 0) return rowsConfiguration.height
             else return 25
         },
@@ -206,7 +212,7 @@ export default defineComponent({
 
             const dataset = { type: 'SbiFileDataSet' }
 
-            if (this.propWidget.settings.configuration.rows.indexColumn) {
+            if (this.widgetModel.settings.configuration.rows.indexColumn) {
                 columns.push({
                     colId: 'indexColumn',
                     valueGetter: `node.rowIndex + 1`,
@@ -216,35 +222,35 @@ export default defineComponent({
                     sortable: false,
                     filter: false,
                     headerComponent: HeaderRenderer,
-                    headerComponentParams: { propWidget: this.propWidget },
+                    headerComponentParams: { propWidget: this.widgetModel },
                     cellRenderer: CellRenderer,
-                    cellRendererParams: { colId: 'indexColumn', propWidget: this.propWidget }
+                    cellRendererParams: { colId: 'indexColumn', propWidget: this.widgetModel }
                 })
             }
 
-            for (const datasetColumn in this.propWidget.columns) {
+            for (const datasetColumn in this.widgetModel.columns) {
                 for (const responseField in responseFields) {
-                    const thisColumn = this.propWidget.columns[datasetColumn]
+                    const thisColumn = this.widgetModel.columns[datasetColumn]
 
                     if (typeof responseFields[responseField] == 'object' && ((dataset.type == 'SbiSolrDataSet' && thisColumn.alias.toLowerCase() === responseFields[responseField].header) || thisColumn.alias.toLowerCase() === responseFields[responseField].header.toLowerCase())) {
                         this.columnsNameArray.push(responseFields[responseField].name)
                         const tempCol = {
-                            hide: this.getColumnVisibilityCondition(this.propWidget.columns[datasetColumn].id),
-                            colId: this.propWidget.columns[datasetColumn].id,
-                            headerName: this.propWidget.columns[datasetColumn].alias,
-                            columnName: this.propWidget.columns[datasetColumn].columnName,
+                            hide: this.getColumnVisibilityCondition(this.widgetModel.columns[datasetColumn].id),
+                            colId: this.widgetModel.columns[datasetColumn].id,
+                            headerName: this.widgetModel.columns[datasetColumn].alias,
+                            columnName: this.widgetModel.columns[datasetColumn].columnName,
                             field: responseFields[responseField].name,
-                            measure: this.propWidget.columns[datasetColumn].fieldType,
+                            measure: this.widgetModel.columns[datasetColumn].fieldType,
                             headerComponent: HeaderRenderer,
-                            headerComponentParams: { colId: this.propWidget.columns[datasetColumn].id, propWidget: this.propWidget },
+                            headerComponentParams: { colId: this.widgetModel.columns[datasetColumn].id, propWidget: this.widgetModel },
                             cellRenderer: CellRenderer,
-                            cellRendererParams: { colId: this.propWidget.columns[datasetColumn].id, propWidget: this.propWidget, multiSelectedCells: this.multiSelectedCells, selectedColumnArray: this.selectedColumnArray }
+                            cellRendererParams: { colId: this.widgetModel.columns[datasetColumn].id, propWidget: this.widgetModel, multiSelectedCells: this.multiSelectedCells, selectedColumnArray: this.selectedColumnArray }
                         } as any
 
-                        if (tempCol.measure === 'MEASURE') tempCol.aggregationSelected = this.propWidget.columns[datasetColumn].aggregation
+                        if (tempCol.measure === 'MEASURE') tempCol.aggregationSelected = this.widgetModel.columns[datasetColumn].aggregation
 
                         //ROWSPAN MANAGEMENT
-                        if (this.propWidget.settings.configuration.rows.rowSpan.enabled && this.propWidget.settings.configuration.rows.rowSpan.column === this.propWidget.columns[datasetColumn].id) {
+                        if (this.widgetModel.settings.configuration.rows.rowSpan.enabled && this.widgetModel.settings.configuration.rows.rowSpan.column === this.widgetModel.columns[datasetColumn].id) {
                             let previousValue
                             let previousIndex
                             const tempRows = this.tableData.rows as any
@@ -270,16 +276,16 @@ export default defineComponent({
                         }
 
                         // SUMMARY ROW  -----------------------------------------------------------------
-                        if (this.propWidget.settings.configuration.summaryRows.enabled) {
+                        if (this.widgetModel.settings.configuration.summaryRows.enabled) {
                             tempCol.cellRendererSelector = (params) => {
-                                if (params.node.rowPinned && this.propWidget.settings.configuration.summaryRows.enabled) {
+                                if (params.node.rowPinned && this.widgetModel.settings.configuration.summaryRows.enabled) {
                                     return {
                                         component: SummaryRowRenderer,
                                         params: {
-                                            summaryRows: this.propWidget.settings.configuration.summaryRows.list.map((row) => {
+                                            summaryRows: this.widgetModel.settings.configuration.summaryRows.list.map((row) => {
                                                 return row.label
                                             }),
-                                            propWidget: this.propWidget
+                                            propWidget: this.widgetModel
                                         }
                                     }
                                 } else {
@@ -289,7 +295,7 @@ export default defineComponent({
                             }
                         }
                         // HEADERS CONFIGURATION  -----------------------------------------------------------------
-                        const headersConfiguration = this.propWidget.settings.configuration.headers
+                        const headersConfiguration = this.widgetModel.settings.configuration.headers
                         if (headersConfiguration.enabled && headersConfiguration.custom.enabled) {
                             headersConfiguration.custom.rules.forEach((rule) => {
                                 rule.target.forEach((columnId) => {
@@ -319,20 +325,20 @@ export default defineComponent({
                         }
 
                         // PAGINATION CONFIGURATION  -----------------------------------------------------------------
-                        const pagination = this.propWidget.settings.pagination
+                        const pagination = this.widgetModel.settings.pagination
                         if (pagination.enabled) {
                             this.showPaginator = true
                         } else this.showPaginator = false
 
                         // CUSTOM MESSAGE CONFIGURATION  -----------------------------------------------------------------
-                        const customMessageConfig = this.propWidget.settings.configuration.customMessages
+                        const customMessageConfig = this.widgetModel.settings.configuration.customMessages
                         if (customMessageConfig) {
                             if (customMessageConfig.hideNoRowsMessage) this.gridApi?.hideOverlay()
                             if (customMessageConfig.noRowsMessage) this.overlayNoRowsTemplateTest = customMessageConfig.noRowsMessage
                         }
 
                         // COLUMN GROUPING -----------------------------------------------------------------
-                        const group = this.getColumnGroup(this.propWidget.columns[datasetColumn])
+                        const group = this.getColumnGroup(this.widgetModel.columns[datasetColumn])
                         if (group) {
                             if (typeof columnGroups[group.id] != 'undefined') {
                                 columns[columnGroups[group.id]].children.push(tempCol)
@@ -342,7 +348,7 @@ export default defineComponent({
                                     colId: group.id,
                                     headerName: group.label,
                                     headerGroupComponent: HeaderGroupRenderer,
-                                    headerGroupComponentParams: { colId: group.id, propWidget: this.propWidget },
+                                    headerGroupComponentParams: { colId: group.id, propWidget: this.widgetModel },
                                     children: [tempCol]
                                 })
                             }
@@ -352,13 +358,13 @@ export default defineComponent({
                 }
             }
 
-            addIconColumn(columns, this.propWidget, HeaderRenderer, CellRenderer)
+            addIconColumn(columns, this.widgetModel, HeaderRenderer, CellRenderer)
 
             return columns
         },
         getColumnGroup(col) {
-            const modelGroups = this.propWidget.settings.configuration.columnGroups.groups
-            if (this.propWidget.settings.configuration.columnGroups.enabled && modelGroups && modelGroups.length > 0) {
+            const modelGroups = this.widgetModel.settings.configuration.columnGroups.groups
+            if (this.widgetModel.settings.configuration.columnGroups.enabled && modelGroups && modelGroups.length > 0) {
                 for (const k in modelGroups) {
                     if (modelGroups[k].columns.includes(col.id)) {
                         return modelGroups[k]
@@ -367,7 +373,7 @@ export default defineComponent({
             } else return false
         },
         getColumnTooltipConfig(colId) {
-            const tooltipConfig = this.propWidget.settings.tooltips
+            const tooltipConfig = this.widgetModel.settings.tooltips
             let columntooltipConfig = null as any
             tooltipConfig[0].enabled ? (columntooltipConfig = tooltipConfig[0]) : ''
             tooltipConfig.forEach((config) => {
@@ -377,11 +383,11 @@ export default defineComponent({
             return columntooltipConfig
         },
         getRowStyle(params) {
-            const rowStyles = this.propWidget.settings.style.rows
+            const rowStyles = this.widgetModel.settings.style.rows
             const rowData = Object.entries(params.data).filter((row) => row[0].includes('column_'))
-            if (this.propWidget.settings.conditionalStyles.enabled) {
+            if (this.widgetModel.settings.conditionalStyles.enabled) {
                 for (let i = 0; i < rowData.length; i++) {
-                    const conditionalColumnStyle = getColumnConditionalStyles(this.propWidget, this.propWidget.columns[i].id!, rowData[i][1], false)
+                    const conditionalColumnStyle = getColumnConditionalStyles(this.widgetModel, this.widgetModel.columns[i].id!, rowData[i][1], false)
                     if (conditionalColumnStyle) return conditionalColumnStyle
                 }
             }
@@ -396,7 +402,7 @@ export default defineComponent({
             }
         },
         getColumnVisibilityCondition(colId) {
-            const visCond = this.propWidget.settings.visualization.visibilityConditions
+            const visCond = this.widgetModel.settings.visualization.visibilityConditions
             let columnHidden = false as boolean
 
             if (visCond.enabled) {
@@ -414,8 +420,8 @@ export default defineComponent({
             return columnHidden
         },
         updateData(data) {
-            if (this.propWidget.settings.configuration.summaryRows.enabled) {
-                const rowsNumber = this.propWidget.settings.configuration.summaryRows.list.length
+            if (this.widgetModel.settings.configuration.summaryRows.enabled) {
+                const rowsNumber = this.widgetModel.settings.configuration.summaryRows.list.length
                 this.gridApi?.setRowData(data.slice(0, data.length - rowsNumber))
                 this.gridApi?.setPinnedBottomRowData(data.slice(-rowsNumber))
             } else {
@@ -424,17 +430,17 @@ export default defineComponent({
             }
         },
         onCellClicked(node) {
-            if (!this.editorMode && isCrossNavigationActive(node, this.propWidget.settings.interactions.crossNavigation)) {
+            if (!this.editorMode && isCrossNavigationActive(node, this.widgetModel.settings.interactions.crossNavigation)) {
                 const formattedRow = formatRowDataForCrossNavigation(node, this.dataToShow)
                 const formattedClickedValue = getFormattedClickedValueForCrossNavigation(node, this.dataToShow)
-                executeTableWidgetCrossNavigation(formattedClickedValue, formattedRow, this.propWidget.settings.interactions.crossNavigation, this.dashboardId)
+                executeTableWidgetCrossNavigation(formattedClickedValue, formattedRow, this.widgetModel.settings.interactions.crossNavigation, this.dashboardId)
                 return
             }
 
             if (!this.editorMode) {
                 if (node.colDef.measure == 'MEASURE' || node.colDef.pinned || node.value === '' || node.value == undefined) return
                 //SELECTION LOGIC -------------------------------------------------------------------
-                const modalSelection = this.propWidget.settings.interactions.selection
+                const modalSelection = this.widgetModel.settings.interactions.selection
 
                 if (modalSelection.enabled) {
                     if (modalSelection.multiselection.enabled) {
@@ -445,7 +451,7 @@ export default defineComponent({
                         }
 
                         if (modalSelection.modalColumn) {
-                            const modalColumnIndex = this.propWidget.columns.findIndex((column) => column.id == modalSelection.modalColumn)
+                            const modalColumnIndex = this.widgetModel.columns.findIndex((column) => column.id == modalSelection.modalColumn)
                             const modalColumnValue = node.data[`column_${modalColumnIndex + 1}`]
 
                             if (!this.multiSelectedCells.includes(modalColumnValue)) this.multiSelectedCells.push(modalColumnValue)
@@ -458,11 +464,11 @@ export default defineComponent({
                         }
                     } else if (!modalSelection.multiselection.enabled) {
                         if (modalSelection.modalColumn) {
-                            const modalColumnIndex = this.propWidget.columns.findIndex((column) => column.id == modalSelection.modalColumn)
+                            const modalColumnIndex = this.widgetModel.columns.findIndex((column) => column.id == modalSelection.modalColumn)
                             const modalColumnValue = node.data[`column_${modalColumnIndex + 1}`]
-                            updateStoreSelections(createNewTableSelection([modalColumnValue], this.propWidget.columns[modalColumnIndex].columnName, this.propWidget, this.datasets), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
+                            updateStoreSelections(createNewTableSelection([modalColumnValue], this.widgetModel.columns[modalColumnIndex].columnName, this.widgetModel, this.datasets), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
                         } else {
-                            updateStoreSelections(createNewTableSelection([node.value], node.colDef.columnName, this.propWidget, this.datasets), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
+                            updateStoreSelections(createNewTableSelection([node.value], node.colDef.columnName, this.widgetModel, this.datasets), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
                         }
                     }
                 }
@@ -475,16 +481,16 @@ export default defineComponent({
             }
         },
         applyMultiSelection() {
-            const modalSelection = this.propWidget.settings.interactions.selection
+            const modalSelection = this.widgetModel.settings.interactions.selection
 
             let tempSelection = null as ISelection | null
             if (modalSelection.modalColumn) {
-                const modalColumnIndex = this.propWidget.columns.findIndex((column) => column.id == modalSelection.modalColumn)
-                const modalColumnName = this.propWidget.columns[modalColumnIndex].columnName
-                tempSelection = createNewTableSelection(this.multiSelectedCells, modalColumnName, this.propWidget, this.datasets)
+                const modalColumnIndex = this.widgetModel.columns.findIndex((column) => column.id == modalSelection.modalColumn)
+                const modalColumnName = this.widgetModel.columns[modalColumnIndex].columnName
+                tempSelection = createNewTableSelection(this.multiSelectedCells, modalColumnName, this.widgetModel, this.datasets)
             } else {
                 const columnIndex = this.selectedColumn?.split('_')[1]
-                if (columnIndex || columnIndex === 0) tempSelection = createNewTableSelection(this.multiSelectedCells, this.propWidget.columns[columnIndex - 1].columnName, this.propWidget, this.datasets)
+                if (columnIndex || columnIndex === 0) tempSelection = createNewTableSelection(this.multiSelectedCells, this.widgetModel.columns[columnIndex - 1].columnName, this.widgetModel, this.datasets)
             }
             if (tempSelection) {
                 this.updateActiveSelectionsWithMultivalueSelection(tempSelection)
@@ -513,15 +519,15 @@ export default defineComponent({
             return keyMap
         },
         onSelectionsDeleted(selections: any) {
-            const index = selections.findIndex((selection: ISelection) => selection.datasetId === this.propWidget.dataset && selection.columnName === this.propWidget.columns[0]?.columnName)
+            const index = selections.findIndex((selection: ISelection) => selection.datasetId === this.widgetModel.dataset && selection.columnName === this.widgetModel.columns[0]?.columnName)
             if (index !== -1) this.removeSelectedValues()
         },
         removeSelectedValues() {
             this.multiSelectedCells = []
         },
         sortingChanged(updatedSorting) {
-            this.propWidget.settings.sortingColumn = updatedSorting.colId
-            this.propWidget.settings.sortingOrder = updatedSorting.order
+            this.widgetModel.settings.sortingColumn = updatedSorting.colId
+            this.widgetModel.settings.sortingOrder = updatedSorting.order
             this.$emit('sortingChanged')
         }
     }
