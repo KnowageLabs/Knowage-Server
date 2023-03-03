@@ -135,7 +135,7 @@ import deepcopy from 'deepcopy'
 import DashboardController from '../dashboard/DashboardController.vue'
 import { getCorrectRolesForExecution } from '../../../helpers/commons/roleHelper'
 import { executeAngularCrossNavigation, loadCrossNavigation } from './DocumentExecutionAngularCrossNavigationHelper'
-import { getDocumentForCrossNavigation, updateBreadcrumbForCrossNavigation } from './DocumentExecutionCrossNavigationHelper'
+import { getDocumentForCrossNavigation, getSelectedCrossNavigation, updateBreadcrumbForCrossNavigation } from './DocumentExecutionCrossNavigationHelper'
 import { loadFilters } from './DocumentExecutionDirverHelpers'
 import { IDashboardCrossNavigation } from '../dashboard/Dashboard'
 
@@ -233,42 +233,10 @@ export default defineComponent({
             crossNavigationContainerData: null as any,
             newDashboardMode: false,
             dashboardGeneralSettingsOpened: false,
-            crossNavigationPayload: null as any
+            crossNavigationPayload: null as { documentCrossNavigationOutputParameters: ICrossNavigationParameter[]; crossNavigationName: string | undefined; crossNavigations: IDashboardCrossNavigation[] } | null
         }
     },
-    watch: {
-        async menuItemClickedTrigger() {
-            if (!this.selectedMenuItem) return
-            const routes = ['registry', 'document-composite', 'report', 'office-doc', 'olap', 'map', 'report', 'kpi', 'dossier', 'etl']
-            const test = routes.some((el) => this.selectedMenuItem?.to.includes(el))
-            if (!test) return
-            const label = this.selectedMenuItem.to.substring(this.selectedMenuItem.to.lastIndexOf('/') + 1)
-            this.document = { label: label }
-            if (!this.document.label) return
-            this.breadcrumbs = []
-            this.filtersData = {} as any
-            await this.loadDocument()
 
-            if (this.userRole) {
-                await this.loadPage(true)
-            } else {
-                this.parameterSidebarVisible = true
-            }
-        }
-    },
-    async activated() {
-        if (this.mode === 'iframe' && this.$route.name !== 'new-dashboard') {
-            if (this.userRole) {
-                await this.loadPage(true)
-            } else {
-                this.parameterSidebarVisible = true
-            }
-        }
-    },
-    deactivated() {
-        this.parameterSidebarVisible = false
-        window.removeEventListener('message', this.iframeEventsListener)
-    },
     computed: {
         ...mapState(mainStore, {
             user: 'user',
@@ -306,6 +274,39 @@ export default defineComponent({
 
             return parameterVisible
         }
+    },
+    watch: {
+        async menuItemClickedTrigger() {
+            if (!this.selectedMenuItem) return
+            const routes = ['registry', 'document-composite', 'report', 'office-doc', 'olap', 'map', 'report', 'kpi', 'dossier', 'etl']
+            const test = routes.some((el) => this.selectedMenuItem?.to.includes(el))
+            if (!test) return
+            const label = this.selectedMenuItem.to.substring(this.selectedMenuItem.to.lastIndexOf('/') + 1)
+            this.document = { label: label }
+            if (!this.document.label) return
+            this.breadcrumbs = []
+            this.filtersData = {} as any
+            await this.loadDocument()
+
+            if (this.userRole) {
+                await this.loadPage(true)
+            } else {
+                this.parameterSidebarVisible = true
+            }
+        }
+    },
+    async activated() {
+        if (this.mode === 'iframe' && this.$route.name !== 'new-dashboard') {
+            if (this.userRole) {
+                await this.loadPage(true)
+            } else {
+                this.parameterSidebarVisible = true
+            }
+        }
+    },
+    deactivated() {
+        this.parameterSidebarVisible = false
+        window.removeEventListener('message', this.iframeEventsListener)
     },
     async created() {
         this.setEventListeners()
@@ -1028,8 +1029,7 @@ export default defineComponent({
         },
         async onCrossNavigationSelected(event: any) {
             this.destinationSelectDialogVisible = false
-            console.log('------ event: ', event)
-            this.angularData ? await loadCrossNavigation(this, event, this.angularData) : this.executeCrossNavigationAfterSelect(event)
+            this.angularData ? await loadCrossNavigation(this, event, this.angularData) : this.getDocumentAfterCrossNavigationIsSelected(event)
         },
         onCrossNavigationContainerClose() {
             this.crossNavigationContainerData = null
@@ -1088,32 +1088,27 @@ export default defineComponent({
             this.newDashboardMode = false
         },
         async onExecuteCrossNavigation(payload: { documentCrossNavigationOutputParameters: ICrossNavigationParameter[]; crossNavigationName: string | undefined; crossNavigations: IDashboardCrossNavigation[] }) {
-            // TODO - Refactor for cross nav target
             this.crossNavigationPayload = payload
-            let targetDocument = getDocumentForCrossNavigation(payload, this.filtersData, null)
-            if (!targetDocument) {
-                if (payload.crossNavigations.length > 1) {
-                    console.log('------- 1')
-                    this.crossNavigationDocuments = payload.crossNavigations
-                    this.destinationSelectDialogVisible = true
-                    return
-                } else if (payload.crossNavigations.length === 1) {
-                    console.log('------- 2')
-                    targetDocument = getDocumentForCrossNavigation(payload, this.filtersData, payload.crossNavigations[0])
-                } else {
-                    // TODO - SET ERROR FOR NO CROSS NAVS
-                    console.log('------- 3')
-                    console.log('--- ERRROR NO CROSS NAV!')
-                    return
-                }
+            if (payload.crossNavigations.length === 0) {
+                this.setError({ title: this.$t('common.error.generic'), msg: this.$t('documentExecution.main.crossNavigationError') })
+                return
+            }
+            const selectedCrossNavigation = getSelectedCrossNavigation(payload.crossNavigationName, payload.crossNavigations)
+            if (!selectedCrossNavigation) {
+                this.crossNavigationDocuments = payload.crossNavigations
+                this.destinationSelectDialogVisible = true
+                return
             }
 
-            this.document = targetDocument
-            updateBreadcrumbForCrossNavigation(this.breadcrumbs, this.document)
-            await this.loadPage(false, this.document.dsLabel, false)
+            this.document = getDocumentForCrossNavigation(payload.documentCrossNavigationOutputParameters, this.filtersData, selectedCrossNavigation)
+            this.executeCrossNavigation()
         },
-        async executeCrossNavigationAfterSelect(crossNavigation: IDashboardCrossNavigation) {
-            this.document = getDocumentForCrossNavigation(this.crossNavigationPayload, this.filtersData, crossNavigation)
+        async getDocumentAfterCrossNavigationIsSelected(crossNavigation: IDashboardCrossNavigation) {
+            const documentCrossNavigationParameters = this.crossNavigationPayload ? this.crossNavigationPayload.documentCrossNavigationOutputParameters : []
+            this.document = getDocumentForCrossNavigation(documentCrossNavigationParameters, this.filtersData, crossNavigation)
+            this.executeCrossNavigation()
+        },
+        async executeCrossNavigation() {
             updateBreadcrumbForCrossNavigation(this.breadcrumbs, this.document)
             await this.loadPage(false, this.document.dsLabel, false)
         }

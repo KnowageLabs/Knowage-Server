@@ -4,20 +4,26 @@ import { IDocumentNavigationParameter, ICrossNavigationParameter, ICrossNavigati
 import { getDateStringFromJSDate } from "@/helpers/commons/localeHelper"
 import moment from "moment"
 
-let documentCrossNavigations = [] as IDashboardCrossNavigation[]
+
+
+
+/* 
+    If the widget has selected cross navigation get it from the list of cross navigations that we got from the BE service
+*/
+export const getSelectedCrossNavigation = (crossNavigationName: string | undefined, crossNavigations: IDashboardCrossNavigation[]) => {
+    const index = crossNavigations.findIndex((crossNavigation: IDashboardCrossNavigation) => crossNavigation.crossName === crossNavigationName)
+    return index !== -1 ? crossNavigations[index] : null
+}
 
 
 /* 
     Creates target document with formatted crossNavigationParameters (for loading initial values for Target Document drivers) and navigationParams for filter service
 */
-export const getDocumentForCrossNavigation = (payload: { documentCrossNavigationOutputParameters: ICrossNavigationParameter[]; crossNavigationName: string | undefined; crossNavigations: IDashboardCrossNavigation[] }, sourceFiltersData: { filterStatus: iParameter[], isReadyForExecution: boolean }, paramSelectedCrossNavigation: IDashboardCrossNavigation | null) => {
-    documentCrossNavigations = payload.crossNavigations
-    const selectedCrossNavigation = paramSelectedCrossNavigation ?? getSelectedCrossNavigation(payload.crossNavigationName, payload.crossNavigations)
-    // TODO - add for multiple cross navs
-    console.log('------ selectedCrossNavigation: ', selectedCrossNavigation)
+export const getDocumentForCrossNavigation = (documentCrossNavigationOutputParameters: ICrossNavigationParameter[], sourceFiltersData: { filterStatus: iParameter[], isReadyForExecution: boolean }, selectedCrossNavigation: IDashboardCrossNavigation | null) => {
+    console.log('------  !!! selectedCrossNavigation: ', selectedCrossNavigation)
     if (!selectedCrossNavigation) return null
-    const formattedCrossNavigationParameters = getFormattedCrossNavigationParameters(selectedCrossNavigation, sourceFiltersData, payload.documentCrossNavigationOutputParameters)
-    const crossNavigationDocument = documentCrossNavigations[0].document
+    const formattedCrossNavigationParameters = getFormattedCrossNavigationParameters(selectedCrossNavigation, sourceFiltersData, documentCrossNavigationOutputParameters)
+    const crossNavigationDocument = selectedCrossNavigation.document
     crossNavigationDocument.formattedCrossNavigationParameters = formattedCrossNavigationParameters
     crossNavigationDocument.navigationParams = createDocumentNavigationParametersForFilterService(formattedCrossNavigationParameters)
     crossNavigationDocument.navigationFromDashboard = true
@@ -27,13 +33,6 @@ export const getDocumentForCrossNavigation = (payload: { documentCrossNavigation
     return crossNavigationDocument
 }
 
-/* 
-    If the widget has selected cross navigation get it from the list of cross navigations that we got from the BE service
-*/
-const getSelectedCrossNavigation = (crossNavigationName: string | undefined, crossNavigations: IDashboardCrossNavigation[]) => {
-    const index = crossNavigations.findIndex((crossNavigation: IDashboardCrossNavigation) => crossNavigation.crossName === crossNavigationName)
-    return index !== -1 ? crossNavigations[index] : null
-}
 
 
 /* 
