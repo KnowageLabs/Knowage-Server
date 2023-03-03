@@ -20,6 +20,8 @@ package it.eng.knowage.websocket;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 import javax.websocket.EncodeException;
 import javax.websocket.EndpointConfig;
@@ -31,7 +33,8 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
 import org.apache.log4j.Logger;
-import org.json.JSONException;
+
+import it.eng.spagobi.commons.bo.UserProfile;
 
 @ServerEndpoint(value = "/webSocket", encoders = KnowageWebSocketMessageEncoder.class, decoders = KnowageWebSocketMessageDecoder.class, configurator = HttpSessionConfigurator.class)
 public class KnowageWebSocket {
@@ -41,24 +44,33 @@ public class KnowageWebSocket {
 	private static NewsFeed newsFeed = new NewsFeed();
 	private static AsyncDownloadsFeed asyncDownloadsFeed = new AsyncDownloadsFeed();
 
+	public static final String USER_PROPERTIES_USER_PROFILE = "UserProfile";
+
 	private static final HashMap<Session, SessionData> session2SessionData = new HashMap<>();
 
 	@OnOpen
 	public void onOpen(Session session, EndpointConfig config) throws IOException, EncodeException {
 
-		SessionData sessionData = new SessionData(session, config);
+		Map<String, Object> userProperties = session.getUserProperties();
+		UserProfile userProfile = (UserProfile) userProperties.get(USER_PROPERTIES_USER_PROFILE);
 
-		session2SessionData.put(session, sessionData);
+		if (Objects.nonNull(userProfile)) {
+			SessionData sessionData = new SessionData(session, config);
 
-		newsFeed.addListener(sessionData);
-		asyncDownloadsFeed.addListener(sessionData);
+			session2SessionData.put(session, sessionData);
 
-		// Force sync of news
-		newsFeed.refresh(sessionData.subscribeForOrganization());
+			newsFeed.addListener(sessionData);
+			asyncDownloadsFeed.addListener(sessionData);
+
+			// Force sync of news
+			newsFeed.refresh(sessionData.subscribeForOrganization());
+		} /* else {
+			session.close(new CloseReason(CloseCodes.CANNOT_ACCEPT, "Invalid user"));
+		}*/
 	}
 
 	@OnMessage
-	public void onMessage(Session session, String message) throws JSONException {
+	public void onMessage(Session session, String message) {
 		SessionData sessionData = session2SessionData.get(session);
 
 		// Force sync of news
