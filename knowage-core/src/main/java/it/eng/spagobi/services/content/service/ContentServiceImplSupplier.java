@@ -58,7 +58,7 @@ import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class ContentServiceImplSupplier {
-	static private Logger logger = Logger.getLogger(ContentServiceImplSupplier.class);
+	private static Logger logger = Logger.getLogger(ContentServiceImplSupplier.class);
 
 	/**
 	 * Read template.
@@ -264,7 +264,7 @@ public class ContentServiceImplSupplier {
 			logger.error("EMFUserError", e);
 			throw e;
 		} catch (EMFInternalError e) {
-			logger.error("EMFUserError", e);
+			logger.error("EMFInternalError", e);
 			throw e;
 		} finally {
 			logger.debug("OUT");
