@@ -202,6 +202,7 @@ export default defineComponent({
             const limit = this.pagination.size <= registryDescriptor.paginationLimit ? this.registry.rows.length : registryDescriptor.paginationNumberOfItems
             for (let i = 0; i < limit; i++) {
                 const tempRow = {} as any
+                if (!this.registry.rows[i]) break
                 Object.keys(this.registry.rows[i]).forEach((key: string) => {
                     tempRow[this.columnMap[key]] = this.registry.rows[i][key]
                 })
