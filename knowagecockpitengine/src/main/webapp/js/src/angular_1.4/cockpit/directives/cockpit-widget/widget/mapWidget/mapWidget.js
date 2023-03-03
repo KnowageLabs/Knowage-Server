@@ -89,11 +89,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							$document.unbind('mousemove', mousemove);
 							$document.unbind('mouseup', mouseup);
 						}
+					} else {
+						elm.bind('mouseout', function($event) {
+							elm.css({ cursor: "unset" });
+						});
 					}
 				}
 			};
 		}])
-		.directive('mapWidgetLabelPanel', ['$document', function($document) {
+		.directive('mapWidgetLegendPanel', ['$document', function($document) {
 			return {
 				restrict: 'E',
 				scope: false,
@@ -187,14 +191,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			cockpitModule_properties){
 
 		//ol objects
-		$scope.popupContainer; 		//popup detail
-		$scope.closer; 				//popup detail closer icon
+		$scope.popupContainer;		//popup detail
+		$scope.closer;				//popup detail closer icon
 		$scope.tooltipContainer;
-		$scope.layers = [];  		//layers with features
-		$scope.values = {};  		//layers with values
+		$scope.layers = [];		//layers with features
+		$scope.values = {};		//layers with values
 		$scope.savedValues = {};
-		$scope.configs = {}; 		//layers with configuration
-		$scope.columnsConfig = {} 	//layers with just columns definition
+		$scope.configs = {};		//layers with configuration
+		$scope.columnsConfig = {}	//layers with just columns definition
 		$scope.optionSidenavId = "optionSidenav-" + Math.random(); // random id for sidenav id
 		$scope.layerVisibility = [];
 		$scope.exploded = {}; // is heatp/cluster exploded?
@@ -487,9 +491,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 //############################################## SPECIFIC MAP WIDGET METHODS #########################################################################
 
-	    $scope.getLegend = function(referenceId, visualizationType){
-	    	$scope.legend = cockpitModule_mapThematizerServices.getLegend(referenceId, visualizationType);
-	    }
+		$scope.getLegend = function(referenceId, visualizationType){
+			$scope.legend = cockpitModule_mapThematizerServices.getLegend(referenceId, visualizationType);
+		}
 
 		function syncDatasetMetadata(layerDef) {
 
@@ -591,14 +595,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 			
+			$scope.ngModel.style = $scope.ngModel.style || {};
+			$scope.ngModel.style.legend = $scope.ngModel.style.legend || {};
 			// Retrocompatibility
 			if (Array.isArray($scope.ngModel.style.legend.position)) {
 				$scope.ngModel.style.legend.coordinates = $scope.ngModel.style.legend.position;
 				$scope.ngModel.style.legend.position = "drag";
 			}
 			$scope.ngModel.style.legend.position = $scope.ngModel.style.legend.position || "east";
-			
-			if (!$scope.ngModel.content.hasOwnProperty("enableBaseLayer")) $scope.ngModel.content.enableBaseLayer = true;
+
+			if (!$scope.ngModel.content.hasOwnProperty("enableBaseLayer")) {
+				$scope.ngModel.content.enableBaseLayer = true;
+			}
 
 		}
 		
@@ -696,8 +704,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			var layer;
 			if (isCluster) {
-				var clusterSource = new ol.source.Cluster({source: featuresSource
-														  });
+				var clusterSource = new ol.source.Cluster({
+					source: featuresSource
+				});
 				layer = new ol.layer.Vector({source: clusterSource,
 					style: cockpitModule_mapThematizerServices.layerStyle
 				});
@@ -1987,6 +1996,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var ret = "layout-row";
 			
 			if ($scope.isShowLegend
+				&& $scope.ngModel
+				&& $scope.ngModel.style
+				&& $scope.ngModel.style.legend
 				&& ($scope.ngModel.style.legend.position == "north" || $scope.ngModel.style.legend.position == "south")) {
 				ret = "layout-column";
 			}
