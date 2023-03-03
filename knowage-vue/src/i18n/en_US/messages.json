@@ -398,6 +398,7 @@
                     "grandTotal": "Show Totals",
                     "subtotal": "Show Subtotals",
                     "grandTotalLabel": "Labels for Totals",
+                    "subTotalLabel": "Labels for SubTotals",
                     "showFieldPicker": "Show Integrated Field Picker",
                     "fieldPicker": "Field Picker",
                     "fieldPanel": "Field Panel"

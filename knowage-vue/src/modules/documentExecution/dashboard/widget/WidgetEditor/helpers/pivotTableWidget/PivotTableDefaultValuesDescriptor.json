@@ -16,5 +16,14 @@
                 "target": "all"
             }
         ]
-    }
+    },
+    "defaultFieldPanel": {
+        "enabled": true
+    },
+    "defaultFieldPicker": {
+        "enabled": true,
+        "height": 600,
+        "width": 600
+    },
+    "defaultTooltops": {}
 }

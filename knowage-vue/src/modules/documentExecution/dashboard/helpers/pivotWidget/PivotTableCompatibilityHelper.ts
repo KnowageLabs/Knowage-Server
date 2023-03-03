@@ -8,6 +8,7 @@ import { IPivotTableConfiguration, IPivotTableSettings } from '../../interfaces/
 import { getSettingsFromWidgetColumns } from './PivotTableColumnSettingsHelper'
 import { getFormattedConfiguration } from './PivotTableConfigurationHelper'
 import { getFormattedStyle } from './PivotTabletStyleHelper'
+import * as pivotTableDefaultValues from '../../widget/WidgetEditor/helpers/pivotTableWidget/PivotTableDefaultValues'
 
 const columnNameIdMap = {}
 
@@ -44,7 +45,8 @@ const getFormattedWidgetSettings = (widget: any, formattedDashboardModel: IDashb
         configuration: getFormattedConfiguration(widget) as IPivotTableConfiguration,
         interactions: getFormattedInteractions(widget) as IWidgetInteractions,
         style: getFormattedStyle(widget) as ITableWidgetStyle,
-        responsive: widgetCommonDefaultValues.getDefaultResponsivnes() as IWidgetResponsive
+        responsive: widgetCommonDefaultValues.getDefaultResponsivnes() as IWidgetResponsive,
+        tooltips: pivotTableDefaultValues.getDefaultTooltips()
     } as IPivotTableSettings
     return formattedSettings
 }

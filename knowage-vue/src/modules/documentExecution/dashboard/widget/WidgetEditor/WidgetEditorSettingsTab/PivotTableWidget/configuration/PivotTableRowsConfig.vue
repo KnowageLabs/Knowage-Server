@@ -7,10 +7,10 @@
             <div class="p-sm-12 p-md-10">
                 <label class="kn-material-input-label">{{ getLabel(field) }}</label>
             </div>
-        </div>
-        <div class="p-col-12 p-d-flex p-flex-column p-pt-2">
-            <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.pivot.configuration.grandTotalLabel') }}</label>
-            <InputText v-model="responsiveModel.grandTotalLabel" class="kn-material-input p-inputtext-sm" />
+            <div class="p-col-12 p-d-flex p-flex-column p-pt-2">
+                <label class="kn-material-input-label">{{ getLabel(`${field}Label`) }}</label>
+                <InputText v-model="responsiveModel[`${field}Label`]" class="kn-material-input p-inputtext-sm" />
+            </div>
         </div>
     </div>
 </template>
@@ -44,6 +44,10 @@ export default defineComponent({
                     return this.$t('dashboard.widgetEditor.pivot.configuration.grandTotal')
                 case 'subTotal':
                     return this.$t('dashboard.widgetEditor.pivot.configuration.subtotal')
+                case 'subTotalLabel':
+                    return this.$t('dashboard.widgetEditor.pivot.configuration.subTotalLabel')
+                case 'grandTotalLabel':
+                    return this.$t('dashboard.widgetEditor.pivot.configuration.grandTotalLabel')
             }
         }
     }
