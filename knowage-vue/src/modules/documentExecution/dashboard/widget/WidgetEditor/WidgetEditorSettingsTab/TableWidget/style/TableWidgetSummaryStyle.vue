@@ -22,24 +22,29 @@ export default defineComponent({
     data() {
         return {
             settingsDescriptor,
+            model: {} as IWidget,
             summaryStyleModel: null as ITableWidgetSummaryStyle | null
         }
     },
     computed: {
         summaryStyleDisabled() {
-            return !this.widgetModel.settings?.configuration?.summaryRows?.enabled
+            return !this.model.settings?.configuration?.summaryRows?.enabled
         }
     },
     created() {
+        this.loadModel()
         this.loadSummaryRowsStyle()
     },
     methods: {
+        loadModel() {
+            this.model = this.widgetModel
+        },
         loadSummaryRowsStyle() {
-            if (this.widgetModel?.settings?.style?.summary) this.summaryStyleModel = this.widgetModel.settings.style.summary
+            if (this.model?.settings?.style?.summary) this.summaryStyleModel = this.model.settings.style.summary
         },
         summaryStyleChanged() {
             emitter.emit('summaryStyleChanged', this.summaryStyleModel)
-            emitter.emit('refreshTable', this.widgetModel.id)
+            emitter.emit('refreshTable', this.model.id)
         },
         onStyleToolbarChange(model: IWidgetStyleToolbarModel) {
             this.summaryStyleModel = {
@@ -51,7 +56,7 @@ export default defineComponent({
                 'font-style': model['font-style'] ?? '',
                 'font-weight': model['font-weight'] ?? ''
             }
-            this.widgetModel.settings.style.summary = this.summaryStyleModel
+            this.model.settings.style.summary = this.summaryStyleModel
             this.summaryStyleChanged()
         }
     }
