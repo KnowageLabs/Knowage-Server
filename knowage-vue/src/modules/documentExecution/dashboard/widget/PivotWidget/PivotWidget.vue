@@ -3,7 +3,6 @@
         <DxButton text="Apply" type="default" @click="logButton()" />
         <DxPivotGrid id="pivotgrid" ref="grid" :data-source="dataSource" v-bind="pivotConfig">
             <DxFieldChooser v-bind="fieldPickerConfig" />
-            <!-- <DxFieldPanel  v-bind="fieldPanelConfig" :visible="false" :show-column-fields="true" :show-data-fields="true" :show-filter-fields="true" :show-row-fields="true" :allow-field-dragging="true" /> -->
             <DxFieldPanel v-bind="fieldPanelConfig" />
         </DxPivotGrid>
     </div>
@@ -62,7 +61,7 @@ export default defineComponent({
         },
         dataToShow: {
             handler() {
-                this.tableData = this.dataToShow
+                // this.tableData = this.dataToShow
             },
             deep: true
         },
@@ -84,6 +83,7 @@ export default defineComponent({
             console.groupCollapsed('DO STUFF ------------')
             console.log('propWidget', this.propWidget)
             console.groupEnd()
+
             // console.log('dataToShow', this.dataToShow)
             // console.log('this.dataSource.fields()', this.dataSource.fields())
         },
@@ -143,6 +143,7 @@ export default defineComponent({
                             if (typeof metaField == 'object') return metaField.header.toLowerCase() === modelField.alias.toLowerCase()
                         })
 
+                        tempField.id = modelField.id //ID FROM MODEL PASSED AS A PROPERTY
                         //TODO: split tempField props to methods
                         tempField.caption = modelField.alias
                         tempField.dataField = `column_${index}`
@@ -177,29 +178,34 @@ export default defineComponent({
 
         //#region ===================== Cell Config (Totals, Stlye, Conditionals) ====================================================
         setCellConfiguration(event) {
-            console.group('cellPrep', event.cellElement)
-            console.log(event)
-            console.groupEnd()
-            this.setColumnGrandTotal(event)
-            this.setRowGrandTotal(event)
-            this.createFieldTooltips(event)
-        },
-        setColumnGrandTotal(cellEvent) {
-            if (cellEvent.area === 'row' && cellEvent.cell.text === 'Grand Total') {
-                cellEvent.cellElement.innerHTML = this.getGrandTotalLabel('rows')
+            if (event.area && event.cell.value == 14) {
+                const pivotFields = this.dataSource.fields()
+                const parentField = pivotFields[pivotFields.findIndex((field: any) => field.area === 'data' && field.areaIndex === event.cell.dataIndex)]
+
+                console.group('cellPrep ---------------------', event.cellElement)
+                console.log('CELL EVENT', event)
+                console.log('PARENT FIELD', parentField)
+                // console.log('FIELDS', this.dataSource.fields())
+                console.groupEnd()
             }
+
+            this.setTotals(event)
+            // this.createFieldTooltips(event)
         },
-        setRowGrandTotal(cellEvent) {
-            if (cellEvent.area === 'column' && cellEvent.cell.text === 'Grand Total') {
-                cellEvent.cellElement.innerHTML = this.getGrandTotalLabel('columns')
-            }
+
+        //#region ===================== Totals Config (Sub, Grand, Style) ====================================================
+        setTotals(cellEvent) {
+            if (cellEvent.area === 'column') this.setTotalLabels(cellEvent, 'columns')
+            else if (cellEvent.area === 'row') this.setTotalLabels(cellEvent, 'rows')
         },
-        getGrandTotalLabel(totalType) {
-            if (totalType === 'rows' || totalType === 'columns') {
-                const grandTotalLabel = this.propWidget.settings.configuration[totalType].grandTotalLabel
-                return grandTotalLabel
-            } else return 'Grand Total'
+        setTotalLabels(cellEvent, fieldType) {
+            const columnConfig = this.propWidget.settings.configuration[fieldType]
+
+            if (cellEvent.cell.type === 'GT') cellEvent.cellElement.innerHTML = columnConfig.grandTotalLabel
+            else if (cellEvent.cell.type === 'T') cellEvent.cellElement.innerHTML = columnConfig.subTotalLabel
         },
+        //#endregion ===============================================================================================
+
         createFieldTooltips(cellEvent) {
             //TODO DARKO: add correct cell values from cellEvent
             const container = document.createElement('div')
