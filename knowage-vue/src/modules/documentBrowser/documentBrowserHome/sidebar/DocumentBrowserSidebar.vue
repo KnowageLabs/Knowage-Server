@@ -39,7 +39,7 @@
                 <h3 class="p-m-0">{{ $t('common.author') }}</h3>
                 <p class="p-m-0">{{ document.creationUser }}</p>
             </div>
-            <div v-if="document.description" class="p-m-4">
+            <div v-if="document.description" class="p-m-4 kn-truncated">
                 <h3 class="p-m-0">{{ $t('common.description') }}</h3>
                 <p class="p-m-0">{{ document.description }}</p>
             </div>
