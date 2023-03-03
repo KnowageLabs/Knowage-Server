@@ -9,7 +9,7 @@
                 <Highcharts3DConfiguration v-if="accordion.type === 'ConfigurationOf3D'" :widget-model="widgetModel"></Highcharts3DConfiguration>
                 <HighchartsNoDataMessageConfiguration v-else-if="accordion.type === 'NoDataMessageConfiguration'" :widget-model="widgetModel"></HighchartsNoDataMessageConfiguration>
                 <HighchartsAccessibilitySettings v-else-if="accordion.type === 'AccessibilitySettings'" :widget-model="widgetModel"></HighchartsAccessibilitySettings>
-                <HighchartsSeriesAccessibilitySettings v-else-if="accordion.type === 'SeriesAccessibilitySettings'" :widget-model="widgetModel"></HighchartsSeriesAccessibilitySettings>
+                <HighchartsSeriesAccessibilitySettings v-else-if="accordion.type === 'SeriesAccessibilitySettings'" :prop-widget-model="widgetModel"></HighchartsSeriesAccessibilitySettings>
                 <HighchartsLabelsSettings v-else-if="accordion.type === 'Labels'" :widget-model="widgetModel"></HighchartsLabelsSettings>
                 <HighchartsLegendSettings v-else-if="accordion.type === 'Legend'" :widget-model="widgetModel"></HighchartsLegendSettings>
                 <HighchartsTooltipSettings v-else-if="accordion.type === 'Tooltip'" :widget-model="widgetModel"></HighchartsTooltipSettings>
