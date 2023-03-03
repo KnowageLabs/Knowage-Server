@@ -12,6 +12,7 @@
 <script lang="ts">
 import { DxPivotGrid, DxFieldChooser, DxFieldPanel } from 'devextreme-vue/pivot-grid'
 import { DxButton } from 'devextreme-vue/button'
+import Tooltip from 'devextreme/ui/tooltip'
 import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source'
 
 import { IDashboardDataset, ISelection, IWidget } from '../../Dashboard'
@@ -176,9 +177,12 @@ export default defineComponent({
 
         //#region ===================== Cell Config (Totals, Stlye, Conditionals) ====================================================
         setCellConfiguration(event) {
-            // console.log('cell prep,', event)
+            console.group('cellPrep', event.cellElement)
+            console.log(event)
+            console.groupEnd()
             this.setColumnGrandTotal(event)
             this.setRowGrandTotal(event)
+            this.createFieldTooltips(event)
         },
         setColumnGrandTotal(cellEvent) {
             if (cellEvent.area === 'row' && cellEvent.cell.text === 'Grand Total') {
@@ -195,6 +199,22 @@ export default defineComponent({
                 const grandTotalLabel = this.propWidget.settings.configuration[totalType].grandTotalLabel
                 return grandTotalLabel
             } else return 'Grand Total'
+        },
+        createFieldTooltips(cellEvent) {
+            //TODO DARKO: add correct cell values from cellEvent
+            const container = document.createElement('div')
+            cellEvent.cellElement.appendChild(container)
+            new Tooltip(container, {
+                target: cellEvent.cellElement,
+                visible: false,
+                showEvent: 'mouseenter',
+                hideEvent: 'mouseleave click',
+                contentTemplate: function (content) {
+                    const label = document.createElement('div')
+                    label.innerHTML = '<b>Test</b>'
+                    content.appendChild(label)
+                }
+            })
         }
         //#endregion ===============================================================================================
     }
