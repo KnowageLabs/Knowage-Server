@@ -31,6 +31,11 @@ export default defineComponent({
             return !this.model.settings?.configuration?.summaryRows?.enabled
         }
     },
+    watch: {
+        widgetModel() {
+            this.loadModel()
+        }
+    },
     created() {
         this.loadModel()
         this.loadSummaryRowsStyle()

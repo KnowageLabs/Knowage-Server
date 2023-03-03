@@ -106,6 +106,11 @@ export default defineComponent({
             quill: {} as any
         }
     },
+    watch: {
+        widgetModel() {
+            this.loadModel()
+        }
+    },
     created() {
         this.loadModel()
     },
