@@ -519,7 +519,7 @@ export default defineComponent({
         },
         async loadPage(initialLoading = false, documentLabel: string | null = null, crossNavigationPopupMode = false) {
             this.loading = true
-            this.filtersData = await loadFilters(initialLoading, this.filtersData, this.document, this.breadcrumbs, this.userRole, this.parameterValuesMap, this.tabKey as string, this.sessionEnabled, this.$http, this.dateFormat, this)
+            this.filtersData = await loadFilters(initialLoading, this.filtersData, this.document, this.breadcrumbs, this.userRole, this.parameterValuesMap, this.tabKey as string, this.sessionEnabled, this.$http, this.dateFormat, this.$route, this)
             if (this.filtersData?.isReadyForExecution) {
                 this.parameterSidebarVisible = false
                 await this.loadURL(null, documentLabel, crossNavigationPopupMode)
@@ -911,6 +911,7 @@ export default defineComponent({
             this.urlData = item.urlData
             this.hiddenFormData = item.hiddenFormData
             this.documentMode = 'VIEW'
+            this.parameterSidebarVisible = false
             this.updateMode()
         },
         async onRoleChange(role: string) {
@@ -1101,16 +1102,30 @@ export default defineComponent({
             }
 
             this.document = getDocumentForCrossNavigation(payload.documentCrossNavigationOutputParameters, this.filtersData, selectedCrossNavigation)
-            this.executeCrossNavigation()
+            this.executeCrossNavigation(selectedCrossNavigation)
         },
         async getDocumentAfterCrossNavigationIsSelected(crossNavigation: IDashboardCrossNavigation) {
             const documentCrossNavigationParameters = this.crossNavigationPayload ? this.crossNavigationPayload.documentCrossNavigationOutputParameters : []
             this.document = getDocumentForCrossNavigation(documentCrossNavigationParameters, this.filtersData, crossNavigation)
-            this.executeCrossNavigation()
+            this.executeCrossNavigation(crossNavigation)
         },
-        async executeCrossNavigation() {
-            updateBreadcrumbForCrossNavigation(this.breadcrumbs, this.document)
-            await this.loadPage(false, this.document.dsLabel, false)
+        async executeCrossNavigation(crossNavigation: IDashboardCrossNavigation) {
+            if (this.document.crossType === 2) {
+                this.openCrossNavigationInNewWindow(crossNavigation)
+            } else if (this.document.crossType === 1) {
+                /// TODO - OPEN IN POPUP DIALOG
+            } else {
+                updateBreadcrumbForCrossNavigation(this.breadcrumbs, this.document)
+                await this.loadPage(false, this.document.dsLabel, false)
+            }
+        },
+        openCrossNavigationInNewWindow(crossNavigation: IDashboardCrossNavigation) {
+            const parameters = encodeURI(JSON.stringify(this.document.formattedCrossNavigationParameters))
+            // TODO - Uncomment
+            // const url = import.meta.env.VITE_HOST_URL + `/knowage-vue/document-browser/dashboard/CrossNavigationExample5?crossNavigationParameters=${parameters}`
+            const url = 'http://localhost:3000' + `/knowage-vue/document-browser/dashboard/${this.document.label}?role=${this.userRole}&crossNavigationParameters=${parameters}`
+            const popupOptions = crossNavigation.popupOptions ?? { width: '800', height: '600' }
+            window.open(url, '_blank', `toolbar=0,status=0,menubar=0,width=${popupOptions.width},height=${popupOptions.height}`)
         }
     }
 })

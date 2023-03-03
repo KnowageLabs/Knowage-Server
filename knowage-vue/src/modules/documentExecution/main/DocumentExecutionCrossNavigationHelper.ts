@@ -12,7 +12,9 @@ import moment from "moment"
 */
 export const getSelectedCrossNavigation = (crossNavigationName: string | undefined, crossNavigations: IDashboardCrossNavigation[]) => {
     const index = crossNavigations.findIndex((crossNavigation: IDashboardCrossNavigation) => crossNavigation.crossName === crossNavigationName)
-    return index !== -1 ? crossNavigations[index] : null
+    if (index !== -1) return crossNavigations[index]
+    else if (crossNavigations.length === 1) return crossNavigations[0]
+    else return null
 }
 
 
@@ -27,6 +29,7 @@ export const getDocumentForCrossNavigation = (documentCrossNavigationOutputParam
     crossNavigationDocument.formattedCrossNavigationParameters = formattedCrossNavigationParameters
     crossNavigationDocument.navigationParams = createDocumentNavigationParametersForFilterService(formattedCrossNavigationParameters)
     crossNavigationDocument.navigationFromDashboard = true
+    crossNavigationDocument.crossType = selectedCrossNavigation.crossType
 
     formatDocumentBreadcrumbLabel(selectedCrossNavigation, crossNavigationDocument)
     // console.log(">>>>>>>>>>>     document.formattedCrossNavigationParameters: ", crossNavigationDocument.navigationParams)
