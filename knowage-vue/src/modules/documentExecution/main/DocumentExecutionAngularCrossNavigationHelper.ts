@@ -1,3 +1,4 @@
+import deepcopy from 'deepcopy'
 import moment from 'moment'
 
 export function findCrossTargetByCrossName(angularData: any, temp: any[]) {
@@ -24,7 +25,7 @@ export function loadNavigationParamsInitialValue(vueComponent: any) {
                     if (!checkIfMultivalueDriverContainsCrossNavigationValue(tempParam, crossNavigationValue) || parameterDescription === 'NOT ADMISSIBLE') return
                     if (crossNavigationValue) tempParam.parameterValue[0] = { value: crossNavigationValue, description: parameterDescription }
                     if (tempParam.type === 'DATE' && tempParam.parameterValue[0] && tempParam.parameterValue[0].value) {
-                        const date = moment(tempParam.parameterValue[0].value, 'DD/MM/YYYY HH:mm:ss.SSS') as any
+                        const date = moment(deepcopy(tempParam.parameterValue[0].value, 'DD/MM/YYYY HH:mm:ss.SSS')) as any
                         const isValidDate = date.isValid()
                         tempParam.parameterValue[0].value = isValidDate ? date.toDate() : moment(tempParam.parameterValue[0].value, 'DD/MM/YYYY').toDate()
                     }
