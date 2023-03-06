@@ -107,8 +107,12 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 #document-browser-sidebar-container {
-    flex: 0.3;
     z-index: 100;
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    max-width: 350px;
 }
 
 .document-table-container {
