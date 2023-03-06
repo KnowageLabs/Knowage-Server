@@ -176,6 +176,3 @@
 %>
 
 <%@include file="/WEB-INF/jsp/commons/includeMessageResource.jspf"%>
-<script>
-document.domain = 'localhost'
-</script>
