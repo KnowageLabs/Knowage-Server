@@ -425,8 +425,9 @@ export default defineComponent({
             } as any
         },
         getQbeJSONQuery(dataset) {
-            let query = { id: 'q1', name: 'Main', fields: [], distinct: false, filters: [], calendar: {}, expression: {}, isNestedExpression: false, havings: [], graph: [], relationRoles: [], subqueries: [] }
-            return dataset.qbeJSONQuery ?? query
+            const query = { id: 'q1', name: 'Main', fields: [], distinct: false, filters: [], calendar: {}, expression: {}, isNestedExpression: false, havings: [], graph: [], relationRoles: [], subqueries: [] }
+
+            return dataset.qbeJSONQuery && typeof dataset.qbeJSONQuery === 'string' && JSON.parse(dataset.qbeJSONQuery)?.catalogue?.queries[0] ? JSON.parse(dataset.qbeJSONQuery).catalogue?.queries[0] : query
         },
         loadQuery() {
             let query = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]

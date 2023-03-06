@@ -52,7 +52,7 @@
         <VCodeMirror class="kn-height-full" ref="codeMirror" v-model:value="qbeQuery" :options="codemirrorOptions" />
     </Dialog>
 
-    <QBE v-if="qbeVisible" :visible="qbeVisible" :dataset="qbeDataset" :returnQueryMode="true" :getQueryFromDatasetProp="getQueryFromDataset" @querySaved="onQbeDialogSave" @close="onQbeDialogClose" :sourceDataset="selectedDataset" />
+    <QBE v-if="qbeVisible" :visible="qbeVisible" :dataset="qbeDataset" :get-query-from-dataset-prop="getQueryFromDataset" :source-dataset="selectedDataset" :return-query-mode="false" @querySaved="onQbeDialogSave" @close="onQbeDialogClose" />
 </template>
 
 <script lang="ts">
@@ -155,7 +155,6 @@ export default defineComponent({
             this.dataset.qbeJSONQuery = query
             this.datsetBmChanged = false
             this.getQueryFromDataset = true
-            this.qbeVisible = false
         }
     }
 })
