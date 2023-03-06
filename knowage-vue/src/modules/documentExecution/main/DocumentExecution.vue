@@ -54,7 +54,6 @@
 
         <div ref="document-execution-view" class="p-d-flex p-flex-row document-execution-view myDivToPrint">
             <div v-if="parameterSidebarVisible" :class="propMode === 'document-execution-cross-navigation-popup' ? 'document-execution-backdrop-popup-dialog' : 'document-execution-backdrop'" @click="parameterSidebarVisible = false"></div>
-
             <template v-if="(filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible) || newDashboardMode">
                 <Registry v-if="mode === 'registry'" :id="urlData?.sbiExecutionId" :reload-trigger="reloadTrigger"></Registry>
                 <Dossier v-else-if="mode === 'dossier'" :id="document.id" :reload-trigger="reloadTrigger" :filter-data="filtersData"></Dossier>
@@ -70,10 +69,22 @@
                     @applyCustomView="executeOlapCustomView"
                     @executeCrossNavigation="executeOLAPCrossNavigation"
                 ></Olap>
+                <DashboardController
+                    v-else-if="propMode === 'document-execution-cross-navigation-popup' && document"
+                    :visible="filtersData && filtersData.isReadyForExecution && !loading"
+                    :sbi-execution-id="urlData?.sbiExecutionId"
+                    :document="document"
+                    :reload-trigger="reloadTrigger"
+                    :hidden-form-data="document.hiddenFormData"
+                    :filtersData="document.filtersData"
+                    :newDashboardMode="false"
+                ></DashboardController>
                 <template v-else-if="mode === 'dashboard' || newDashboardMode">
                     <template v-for="(item, index) in breadcrumbs" :key="index">
                         <DashboardController
-                            :visible="filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible && (item.label === document.name || (crossNavigationContainerData && index === breadcrumbs.length - 1))"
+                            :visible="
+                                filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible && (item.label === document.name || (crossNavigationContainerData && index === breadcrumbs.length - 1) || (crossNavigationDialogVisible && index === breadcrumbs.length - 1))
+                            "
                             :sbiExecutionId="urlData?.sbiExecutionId"
                             :document="item.document"
                             :reloadTrigger="reloadTrigger"
@@ -342,9 +353,6 @@ export default defineComponent({
         window.removeEventListener('message', this.iframeEventsListener)
     },
     async created() {
-        console.log('-------------- CREATED!')
-        console.log('-------------- DOCUMENT: ', this.document)
-        console.log('-------------- propCrossNavigationPopupDialogDocument: ', this.propCrossNavigationPopupDialogDocument)
         this.setEventListeners()
         window.addEventListener('message', this.iframeEventsListener)
 
@@ -367,12 +375,11 @@ export default defineComponent({
                 this.newDashboardMode = true
                 return
             }
+
+            await this.loadDocument()
         }
 
         this.userRole = this.user?.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user?.sessionRole : null
-        console.log('-------- GOT HERE WITH DOCUMENT: ', this.document)
-        await this.loadDocument()
-
         let invalidRole = false
         getCorrectRolesForExecution(this.document).then(async (response: any) => {
             const correctRolesForExecution = response
@@ -1153,6 +1160,7 @@ export default defineComponent({
                 this.openCrossNavigationInNewWindow(crossNavigation)
             } else if (crossNavigation.crossType === 1) {
                 this.crossNavigationPopupDialogDocument = getDocumentForCrossNavigation(documentCrossNavigationParameters, this.filtersData, crossNavigation)
+                console.log('-------------------- STEP 1 - crossNavigationPopupDialogDocument: ', this.crossNavigationPopupDialogDocument)
                 this.crossNavigationDialogVisible = true
             } else {
                 updateBreadcrumbForCrossNavigation(this.breadcrumbs, this.document)

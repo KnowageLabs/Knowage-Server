@@ -21,6 +21,7 @@ export const loadFilters = async (initialLoading: boolean, filtersData: { filter
 
     formatDrivers(filtersData)
 
+    console.log('-------------------- LOADED document IN FILTER SERVICE!: ', document)
     if (document.navigationParams || document.formattedCrossNavigationParameters) {
         document.navigationFromDashboard ? loadNavigationInitialValuesFromDashboard(document, filtersData, dateFormat) : loadNavigationParamsInitialValue(vueComponenet)
     }
