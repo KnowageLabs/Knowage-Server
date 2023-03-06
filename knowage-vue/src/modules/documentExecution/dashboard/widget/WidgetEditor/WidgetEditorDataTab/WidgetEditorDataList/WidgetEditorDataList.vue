@@ -76,10 +76,15 @@ export default defineComponent({
             calcFieldFunctionsToShow: [] as any
         }
     },
+    watch: {
+        widgetModel() {
+            this.loadModel()
+        }
+    },
     created() {
         this.setEventListeners()
-        this.loadDatasets()
         this.loadModel()
+        this.loadDatasets()
     },
     unmounted() {
         this.removeEventListeners()
@@ -105,8 +110,9 @@ export default defineComponent({
                 }
             })
 
-            if (this.datasetOptions.length === 1) {
+            if (this.datasetOptions.length === 1 && this.model) {
                 this.selectedDataset = this.datasetOptions[0]
+                this.model.dataset = this.selectedDataset.id
                 this.onDatasetSelected()
             }
         },
