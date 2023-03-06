@@ -28,8 +28,9 @@ public class BIObjFunctionDAOHibImpl extends AbstractHibernateDAO implements IBI
 
 		ArrayList<BIObject> toReturn = new ArrayList<BIObject>();
 
-		String hql = "from SbiObjFunction s where s.functionUuid = '" + uuid + "'";
+		String hql = "from SbiObjFunction s where s.functionUuid = :uuid";
 		Query hqlQuery = currSession.createQuery(hql);
+		hqlQuery.setParameter("uuid", uuid);
 		List hibObjectPars = hqlQuery.list();
 
 		Iterator it = hibObjectPars.iterator();
@@ -92,8 +93,9 @@ public class BIObjFunctionDAOHibImpl extends AbstractHibernateDAO implements IBI
 
 		logger.debug("IN");
 
-		String hql = "from SbiObjFunction s where s.sbiObject.biobjId = " + biObjId + "";
+		String hql = "from SbiObjFunction s where s.sbiObject.biobjId = :biObjId";
 		Query hqlQuery = currSession.createQuery(hql);
+		hqlQuery.setParameter("biObjId", biObjId);
 		List hibObjectPars = hqlQuery.list();
 
 		for (Iterator iterator = hibObjectPars.iterator(); iterator.hasNext();) {

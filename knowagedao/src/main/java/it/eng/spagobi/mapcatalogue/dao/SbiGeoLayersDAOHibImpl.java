@@ -75,13 +75,11 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	/**
 	 * Load layer by id.
 	 *
-	 * @param layerID
-	 *            the layer id
+	 * @param layerID the layer id
 	 *
 	 * @return the geo layer
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError                 the EMF user error
 	 * @throws UnsupportedEncodingException
 	 * @throws JSONException
 	 *
@@ -131,13 +129,11 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	/**
 	 * Load layer by name.
 	 *
-	 * @param name
-	 *            the name
+	 * @param name the name
 	 *
 	 * @return the geo layer
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.mapcatalogue.dao.geo.bo.dao.ISbiGeoLayersDAO#loadLayerByName(string)
 	 */
@@ -187,11 +183,9 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	/**
 	 * Modify layer.
 	 *
-	 * @param aLayer
-	 *            the a layer
+	 * @param aLayer the a layer
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError                 the EMF user error
 	 * @throws JSONException
 	 * @throws UnsupportedEncodingException
 	 *
@@ -301,8 +295,9 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 			// delete all roles of layer
 			// query hql
-			String hql = "DELETE from SbiGeoLayersRoles a WHERE a.layer.id =" + aLayer.getLayerId();
+			String hql = "DELETE from SbiGeoLayersRoles a WHERE a.layer.id =:aLayerId";
 			Query q = tmpSession.createQuery(hql);
+			q.setParameter("aLayerId", aLayer.getLayerId());
 			q.executeUpdate();
 
 			// reload roles
@@ -360,11 +355,9 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	/**
 	 * Insert layer.
 	 *
-	 * @param aLayer
-	 *            the a layer
+	 * @param aLayer the a layer
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError  the EMF user error
 	 * @throws JSONException
 	 * @throws IOException
 	 * @see it.eng.spagobi.geo.bo.dao.IEngineDAO#insertEngine(it.eng.spagobi.bo.Engine)
@@ -657,11 +650,9 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	/**
 	 * Erase layer.
 	 *
-	 * @param aLayer
-	 *            the a layer
+	 * @param aLayer the a layer
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.geo.bo.dao.IEngineDAO#eraseEngine(it.eng.spagobi.bo.Engine)
 	 */
@@ -876,8 +867,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	 *
 	 * @return the list
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError                 the EMF user error
 	 * @throws JSONException
 	 * @throws UnsupportedEncodingException
 	 *

@@ -397,8 +397,10 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 							otherFuncts.remove(rel.getId().getSbiFunctions().getFunctId());
 							if (otherFuncts.size() == 0) {
 								// delete templates
-								String hql = "from SbiObjTemplates sot where sot.sbiObject.biobjId=" + hibBIObject.getBiobjId();
+								String hql = "from SbiObjTemplates sot where sot.sbiObject.biobjId=:biobjId";
 								Query query5 = aSession.createQuery(hql);
+								query5.setParameter("biobjId", hibBIObject.getBiobjId());
+
 								List templs = query5.list();
 								Iterator iterTempls = templs.iterator();
 								while (iterTempls.hasNext()) {

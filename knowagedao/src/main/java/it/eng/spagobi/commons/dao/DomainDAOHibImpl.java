@@ -62,7 +62,8 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			SQLQuery query = aSession.createSQLQuery("select category_id from SBI_EXT_ROLES_CATEGORY where ext_role_id=" + roleId);
+			SQLQuery query = aSession.createSQLQuery("select category_id from SBI_EXT_ROLES_CATEGORY where ext_role_id= :roleId");
+			query.setParameter("roleId", roleId);
 			List hibList = query.list();
 
 			Iterator it = hibList.iterator();
@@ -94,13 +95,11 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 	/**
 	 * Load list domains by type.
 	 *
-	 * @param domainType
-	 *            the domain type
+	 * @param domainType the domain type
 	 *
 	 * @return the list
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadListDomainsByType(java.lang.String)
 	 */
@@ -222,15 +221,12 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 	/**
 	 * Load domain by code and value.
 	 *
-	 * @param codeDomain
-	 *            the code domain
-	 * @param codeValue
-	 *            the code value
+	 * @param codeDomain the code domain
+	 * @param codeValue  the code value
 	 *
 	 * @return the domain
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadDomainByCodeAndValue(java.lang.String, java.lang.String)
 	 */
@@ -300,15 +296,12 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 	/**
 	 * Load domain by code and value.
 	 *
-	 * @param codeDomain
-	 *            the code domain
-	 * @param codeValue
-	 *            the code value
+	 * @param codeDomain the code domain
+	 * @param codeValue  the code value
 	 *
 	 * @return the domain
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadDomainByCodeAndValue(java.lang.String, java.lang.String)
 	 */
@@ -355,8 +348,7 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 	/**
 	 * From the hibernate domain object at input, gives the corrispondent <code>Domain</code> object.
 	 *
-	 * @param hibDomain
-	 *            The hybernate Domain object
+	 * @param hibDomain The hybernate Domain object
 	 *
 	 * @return The corrispondent <code>Domain</code>
 	 */
@@ -374,13 +366,11 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 	/**
 	 * Load domain by id.
 	 *
-	 * @param id
-	 *            the id
+	 * @param id the id
 	 *
 	 * @return the domain
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadDomainById(java.lang.Integer)
 	 */
@@ -421,13 +411,11 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 	/**
 	 * Load domain by id.
 	 *
-	 * @param id
-	 *            the id
+	 * @param id the id
 	 *
 	 * @return the domain
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadSbiDomainById(java.lang.Integer)
 	 */
@@ -503,8 +491,7 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 	/**
 	 * to the hibernate domain object at input, from the corrispondent <code>Domain</code> object.
 	 *
-	 * @param Domain
-	 *            object
+	 * @param Domain object
 	 *
 	 * @return The corrispondent <code>SbiDomain</code>
 	 */
@@ -522,13 +509,11 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 	/**
 	 * Save domain by id.
 	 *
-	 * @param id
-	 *            the id
+	 * @param id the id
 	 *
 	 * @return void
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 */
 	@Override
@@ -603,13 +588,11 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 	/**
 	 * Delete domain by id.
 	 *
-	 * @param id
-	 *            the id
+	 * @param id the id
 	 *
 	 * @return void
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 */
 	@Override

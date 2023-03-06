@@ -199,9 +199,10 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			String hql = "from SbiUdpValue s " + "	where s.referenceId = ? AND " + "         lower(s.family) = lower('" + family + "') AND "
+			String hql = "from SbiUdpValue s " + "	where s.referenceId = ? AND " + "         lower(s.family) = lower(:family) AND "
 					+ "         s.endTs is NULL " + " order by s.label asc";
 			Query hqlQuery = aSession.createQuery(hql);
+			hqlQuery.setParameter("family", family);
 			hqlQuery.setInteger(0, kpiId);
 			List toConvert = hqlQuery.list();
 			for (Iterator iterator = toConvert.iterator(); iterator.hasNext();) {
@@ -266,11 +267,12 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 		Transaction tx = null;
 		try {
 			tx = tmpSession.beginTransaction();
-			String hql = "from SbiUdpValue s " + "	where s.referenceId = ? AND " + "         s.sbiUdp.udpId = ? AND " + "         lower(s.family) = lower('"
-					+ family + "') AND " + "         s.endTs is NULL " + " order by s.label asc";
+			String hql = "from SbiUdpValue s " + "	where s.referenceId = ? AND " + "         s.sbiUdp.udpId = ? AND " + "         lower(s.family) = lower("
+					+ "?) AND " + "         s.endTs is NULL " + " order by s.label asc";
 			Query hqlQuery = tmpSession.createQuery(hql);
 			hqlQuery.setInteger(0, referenceId);
 			hqlQuery.setInteger(1, udpId);
+			hqlQuery.setString(2, family);
 
 			SbiUdpValue hibValueUDP = (SbiUdpValue) hqlQuery.uniqueResult();
 			if (hibValueUDP == null)

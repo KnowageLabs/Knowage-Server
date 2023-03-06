@@ -186,8 +186,9 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 
 		ArrayList<BIObjDataSet> toReturn = new ArrayList<BIObjDataSet>();
 
-		String hql = "from SbiObjDataSet s where s.sbiObject.biobjId = " + biObjId + "";
+		String hql = "from SbiObjDataSet s where s.sbiObject.biobjId = :biObjId";
 		Query hqlQuery = currSession.createQuery(hql);
+		hqlQuery.setParameter("biObjId", biObjId);
 		List hibObjectPars = hqlQuery.list();
 
 		Iterator it = hibObjectPars.iterator();
@@ -206,8 +207,9 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 
 		ArrayList<BIObjDataSet> toReturn = new ArrayList<BIObjDataSet>();
 
-		String hql = "from SbiObjDataSet s where s.sbiObject.biobjId = " + biObjId + " AND (isDetail=false OR isDetail is null)";
+		String hql = "from SbiObjDataSet s where s.sbiObject.biobjId =  :biObjId   AND (isDetail=false OR isDetail is null)";
 		Query hqlQuery = currSession.createQuery(hql);
+		hqlQuery.setParameter("biObjId", biObjId);
 		List hibObjectPars = hqlQuery.list();
 
 		Iterator it = hibObjectPars.iterator();
@@ -304,8 +306,9 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 
 		logger.debug("IN");
 
-		String hql = "from SbiObjDataSet s where s.sbiObject.biobjId = " + biObjId + "";
+		String hql = "from SbiObjDataSet s where s.sbiObject.biobjId = :biObjId  ";
 		Query hqlQuery = currSession.createQuery(hql);
+		hqlQuery.setParameter("biObjId", biObjId);
 		List hibObjectPars = hqlQuery.list();
 
 		for (Iterator iterator = hibObjectPars.iterator(); iterator.hasNext();) {
@@ -322,8 +325,9 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 
 		ArrayList<BIObject> toReturn = new ArrayList<BIObject>();
 
-		String hql = "from SbiObjDataSet s where s.dsId = " + datasetId;
+		String hql = "from SbiObjDataSet s where s.dsId = :datasetId";
 		Query hqlQuery = currSession.createQuery(hql);
+		hqlQuery.setParameter("datasetId", datasetId);
 		List hibObjectPars = hqlQuery.list();
 
 		Iterator it = hibObjectPars.iterator();
@@ -368,9 +372,10 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 		logger.debug("IN");
 
 		BIObjDataSet aBIObjectDataSet = null;
-		String hql = "from SbiObjDataSet s where s.sbiObject.biobjId = " + objectId + " AND isDetail = ? ";
+		String hql = "from SbiObjDataSet s where s.sbiObject.biobjId = :objectId  AND isDetail = :isDetail ";
 		Query hqlQuery = currSession.createQuery(hql);
-		hqlQuery.setBoolean(0, true);
+		hqlQuery.setParameter("objectId", objectId);
+		hqlQuery.setParameter("isDetail", true);
 		SbiObjDataSet hibDs = (SbiObjDataSet) hqlQuery.uniqueResult();
 
 		if (hibDs != null) {
@@ -387,8 +392,10 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 		logger.debug("IN");
 		ArrayList<BIObjDataSet> toReturn = new ArrayList<BIObjDataSet>();
 
-		String hql = "from SbiObjDataSet s where s.sbiObject.biobjId = " + objectId + " AND (isDetail =" + false + " OR isDetail is null)";
+		String hql = "from SbiObjDataSet s where s.sbiObject.biobjId =  :objectId AND (isDetail =:isDetail OR isDetail is null)";
 		Query hqlQuery = currSession.createQuery(hql);
+		hqlQuery.setParameter("objectId", objectId);
+		hqlQuery.setParameter("isDetail", false);
 
 		List hibObjectPars = hqlQuery.list();
 

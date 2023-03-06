@@ -55,13 +55,11 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParame
 	/**
 	 * Load for detail by parameter id.
 	 *
-	 * @param parameterID
-	 *            the parameter id
+	 * @param parameterID the parameter id
 	 *
 	 * @return the parameter
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO#loadForDetailByParameterID(java.lang.Integer)
 	 */
@@ -130,15 +128,12 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParame
 	/**
 	 * Load for execution by parameter i dand role name.
 	 *
-	 * @param parameterID
-	 *            the parameter id
-	 * @param roleName
-	 *            the role name
+	 * @param parameterID the parameter id
+	 * @param roleName    the role name
 	 *
 	 * @return the parameter
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO#loadForExecutionByParameterIDandRoleName(java.lang.Integer, java.lang.String)
 	 */
@@ -257,8 +252,7 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParame
 	 *
 	 * @return the list
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO#loadAllParameters()
 	 */
@@ -302,8 +296,7 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParame
 	 *
 	 * @return the list
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO#loadAllSbiParameters()
 	 */
@@ -352,7 +345,8 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParame
 			tx = aSession.beginTransaction();
 
 			Query hibQuery = aSession.createQuery(("select distinct params from   SbiParameters as params " + "inner join params.sbiParuses as paruses "
-					+ "inner join paruses.sbiLov as lov " + "where  lov.lovId = " + lovId));
+					+ "inner join paruses.sbiLov as lov " + "where  lov.lovId = :lovId"));
+			hibQuery.setParameter("lovId", lovId);
 			List hibList = hibQuery.list();
 
 			Iterator it = hibList.iterator();
@@ -388,7 +382,8 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParame
 			tx = aSession.beginTransaction();
 
 			Query hibQuery = aSession.createQuery("select distinct params from   SbiParameters as params " + "inner join params.sbiObjPars as objpars "
-					+ "inner join objpars.sbiObject as obj " + "where  obj.label = '" + label + "'");
+					+ "inner join objpars.sbiObject as obj " + "where  obj.label =  :label");
+			hibQuery.setParameter("label", label);
 			List hibList = hibQuery.list();
 
 			Iterator it = hibList.iterator();
@@ -417,11 +412,9 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParame
 	/**
 	 * Modify parameter.
 	 *
-	 * @param aParameter
-	 *            the a parameter
+	 * @param aParameter the a parameter
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO#modifyParameter(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter)
 	 */
@@ -493,11 +486,9 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParame
 	/**
 	 * Insert parameter.
 	 *
-	 * @param aParameter
-	 *            the a parameter
+	 * @param aParameter the a parameter
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO#insertParameter(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter)
 	 */
@@ -565,11 +556,9 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParame
 	/**
 	 * Erase parameter.
 	 *
-	 * @param aParameter
-	 *            the a parameter
+	 * @param aParameter the a parameter
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO#eraseParameter(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter)
 	 */
@@ -607,8 +596,7 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParame
 	/**
 	 * From the hibernate parametes at input, gives the corrispondent <code>Parameter</code> object.
 	 *
-	 * @param hibParameters
-	 *            The hybernate parameter
+	 * @param hibParameters The hybernate parameter
 	 *
 	 * @return The corrispondent <code>Parameter</code> object
 	 */

@@ -1,12 +1,5 @@
 package it.eng.spagobi.profiling.dao;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.profiling.bean.SbiAccessibilityPreferences;
-import it.eng.spagobi.profiling.bean.SbiUser;
-
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -14,6 +7,13 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
+
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.profiling.bean.SbiAccessibilityPreferences;
+import it.eng.spagobi.profiling.bean.SbiUser;
 
 public class SbiAccessibilityPreferencesDAOHibImpl extends AbstractHibernateDAO implements ISbiAccessibilityPreferencesDAO {
 	static private Logger logger = Logger.getLogger(SbiAccessibilityPreferencesDAOHibImpl.class);
@@ -103,7 +103,8 @@ public class SbiAccessibilityPreferencesDAOHibImpl extends AbstractHibernateDAO 
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			Query q = aSession.createQuery("FROM SbiUser as user where user.userId ='" + userId + "'");
+			Query q = aSession.createQuery("FROM SbiUser as user where user.userId = :userId");
+			q.setParameter("userId", userId);
 			SbiUser user = (SbiUser) q.uniqueResult();
 
 			SbiAccessibilityPreferences ap = new SbiAccessibilityPreferences();
@@ -163,7 +164,8 @@ public class SbiAccessibilityPreferencesDAOHibImpl extends AbstractHibernateDAO 
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			Query q = aSession.createQuery("FROM SbiUser as user where user.userId ='" + userId + "'");
+			Query q = aSession.createQuery("FROM SbiUser as user where user.userId = :userId");
+			q.setParameter("userId", userId);
 			SbiUser user = (SbiUser) q.uniqueResult();
 
 			Criteria criteria = aSession.createCriteria(SbiAccessibilityPreferences.class);
