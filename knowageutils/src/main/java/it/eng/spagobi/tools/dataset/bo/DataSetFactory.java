@@ -230,6 +230,9 @@ public class DataSetFactory {
 		dataSet.setEndDateField(dataSetConfig.getEndDateField());
 		dataSet.setSchedulingCronLine(dataSetConfig.getSchedulingCronLine());
 
+		IDataSource ds = DataSourceFactory.getDataSource(dataSetConfig.getDataSourceForReading());
+		dataSet.setDataSourceForReading(ds);
+
 		return dataSet;
 	}
 }
