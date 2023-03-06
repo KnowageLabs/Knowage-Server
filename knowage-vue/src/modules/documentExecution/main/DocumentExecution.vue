@@ -7,12 +7,33 @@
             </template>
             <template #end>
                 <div class="p-d-flex p-jc-around">
-                    <Button v-if="mode == 'dashboard'" v-tooltip.left="$t('common.datasets')" icon="fas fa-database" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" @click="openDashboardDatasetManagement"></Button>
-                    <Button v-if="mode == 'dashboard'" v-tooltip.left="$t('common.save')" icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" @click="saveDashboard"></Button>
+                    <Button
+                        v-if="mode == 'dashboard' && propMode !== 'document-execution-cross-navigation-popup'"
+                        v-tooltip.left="$t('common.datasets')"
+                        icon="fas fa-database"
+                        class="p-button-text p-button-rounded p-button-plain p-mx-2"
+                        :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }"
+                        @click="openDashboardDatasetManagement"
+                    ></Button>
+                    <Button
+                        v-if="mode == 'dashboard' && propMode !== 'document-execution-cross-navigation-popup'"
+                        v-tooltip.left="$t('common.save')"
+                        icon="pi pi-save"
+                        class="p-button-text p-button-rounded p-button-plain p-mx-2"
+                        :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }"
+                        @click="saveDashboard"
+                    ></Button>
                     <Button v-if="mode !== 'dashboard' && canEditCockpit && documentMode === 'VIEW'" v-tooltip.left="$t('documentExecution.main.editCockpit')" icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain p-mx-2" @click="editCockpitDocumentConfirm"></Button>
                     <Button v-if="mode !== 'dashboard' && canEditCockpit && documentMode === 'EDIT'" v-tooltip.left="$t('documentExecution.main.viewCockpit')" icon="fa fa-eye" class="p-button-text p-button-rounded p-button-plain p-mx-2" @click="editCockpitDocumentConfirm"></Button>
                     <Button v-if="mode !== 'dashboard'" v-tooltip.left="$t('common.onlineHelp')" icon="pi pi-book" class="p-button-text p-button-rounded p-button-plain p-mx-2" @click="openHelp"></Button>
-                    <Button v-if="!newDashboardMode" v-tooltip.left="$t('common.refresh')" icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" @click="refresh"></Button>
+                    <Button
+                        v-if="!newDashboardMode && propMode !== 'document-execution-cross-navigation-popup'"
+                        v-tooltip.left="$t('common.refresh')"
+                        icon="pi pi-refresh"
+                        class="p-button-text p-button-rounded p-button-plain p-mx-2"
+                        :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }"
+                        @click="refresh"
+                    ></Button>
                     <Button
                         v-if="isParameterSidebarVisible && !newDashboardMode"
                         v-tooltip.left="$t('common.parameters')"
@@ -22,17 +43,17 @@
                         data-test="parameter-sidebar-icon"
                         @click="parameterSidebarVisible = !parameterSidebarVisible"
                     ></Button>
-                    <Button v-tooltip.left="$t('common.menu')" icon="fa fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" @click="toggle"></Button>
+                    <Button v-if="propMode !== 'document-execution-cross-navigation-popup'" v-tooltip.left="$t('common.menu')" icon="fa fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" @click="toggle"></Button>
                     <TieredMenu ref="menu" :model="toolbarMenuItems" :popup="true" />
-                    <Button v-if="mode == 'dashboard'" id="add-widget-button" class="p-button-sm" :label="$t('dashboard.widgetEditor.addWidget')" icon="pi pi-plus-circle" @click="addWidget" />
+                    <Button v-if="mode == 'dashboard' && propMode !== 'document-execution-cross-navigation-popup'" id="add-widget-button" class="p-button-sm" :label="$t('dashboard.widgetEditor.addWidget')" icon="pi pi-plus-circle" @click="addWidget" />
                     <Button v-tooltip.left="$t('common.close')" icon="fa fa-times" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" @click="closeDocument"></Button>
                 </div>
             </template>
         </Toolbar>
         <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
 
-        <div id="document-execution-view" ref="document-execution-view" class="p-d-flex p-flex-row myDivToPrint">
-            <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
+        <div ref="document-execution-view" class="p-d-flex p-flex-row document-execution-view myDivToPrint">
+            <div v-if="parameterSidebarVisible" :class="propMode === 'document-execution-cross-navigation-popup' ? 'document-execution-backdrop-popup-dialog' : 'document-execution-backdrop'" @click="parameterSidebarVisible = false"></div>
 
             <template v-if="(filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible) || newDashboardMode">
                 <Registry v-if="mode === 'registry'" :id="urlData?.sbiExecutionId" :reload-trigger="reloadTrigger"></Registry>
@@ -51,8 +72,6 @@
                 ></Olap>
                 <template v-else-if="mode === 'dashboard' || newDashboardMode">
                     <template v-for="(item, index) in breadcrumbs" :key="index">
-                        <!-- {{ 'test' }}
-                        {{ filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible && (item.label === document.name || (crossNavigationContainerData && index === breadcrumbs.length - 1)) }} -->
                         <DashboardController
                             :visible="filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible && (item.label === document.name || (crossNavigationContainerData && index === breadcrumbs.length - 1))"
                             :sbiExecutionId="urlData?.sbiExecutionId"
@@ -86,6 +105,7 @@
                 :user-role="userRole"
                 :session-enabled="sessionEnabled"
                 :date-format="dateFormat"
+                :show-in-dialog="true"
                 data-test="parameter-sidebar"
                 @execute="onExecute"
                 @exportCSV="onExportCSV"
@@ -102,15 +122,18 @@
             <DocumentExecutionLinkDialog :visible="linkDialogVisible" :link-info="linkInfo" :embed-h-t-m-l="embedHTML" :prop-document="document" :parameters="linkParameters" @close="linkDialogVisible = false"></DocumentExecutionLinkDialog>
             <DocumentExecutionSelectCrossNavigationDialog :visible="destinationSelectDialogVisible" :cross-navigation-documents="crossNavigationDocuments" @close="destinationSelectDialogVisible = false" @selected="onCrossNavigationSelected"></DocumentExecutionSelectCrossNavigationDialog>
             <DocumentExecutionCNContainerDialog v-if="angularData && crossNavigationContainerData" :visible="crossNavigationContainerVisible" :data="crossNavigationContainerData" @close="onCrossNavigationContainerClose"></DocumentExecutionCNContainerDialog>
-            <DocumentExecutionCrossDialog
-                v-if="crossNavigationDialogVisible"
-                :visible="crossNavigationDialogVisible"
-                :document="crossNavigationPopupDialogDocument"
-                :parameterValuesMap="parameterValuesMap"
-                :tabKey="tabKey"
-                @parametersChanged="$emit('parametersChanged', $event)"
-                @close="onCrossNavigationPopupClose"
-            ></DocumentExecutionCrossDialog>
+            <Dialog class="p-fluid kn-dialog--toolbar--primary" :content-style="descriptor.popupDialog.style" :visible="crossNavigationDialogVisible" :modal="true" :showHeader="false" :closable="false">
+                <DocumentExecution
+                    v-if="crossNavigationPopupDialogDocument"
+                    :id="crossNavigationPopupDialogDocument?.label"
+                    :prop-mode="'document-execution-cross-navigation-popup'"
+                    :parameter-values-map="parameterValuesMap"
+                    :tab-key="tabKey"
+                    :propCrossNavigationPopupDialogDocument="crossNavigationPopupDialogDocument"
+                    @parametersChanged="$emit('parametersChanged', $event)"
+                    @close="onCrossNavigationPopupClose()"
+                ></DocumentExecution>
+            </Dialog>
         </div>
     </div>
 </template>
@@ -128,6 +151,7 @@ import { executeAngularCrossNavigation, loadCrossNavigation } from './DocumentEx
 import { getDocumentForCrossNavigation, getSelectedCrossNavigation, updateBreadcrumbForCrossNavigation } from './DocumentExecutionCrossNavigationHelper'
 import { loadFilters } from './DocumentExecutionDirverHelpers'
 import { IDashboardCrossNavigation } from '../dashboard/Dashboard'
+import { luxonFormatDate } from '@/helpers/commons/localeHelper'
 import DocumentExecutionBreadcrumb from './breadcrumbs/DocumentExecutionBreadcrumb.vue'
 import DocumentExecutionHelpDialog from './dialogs/documentExecutionHelpDialog/DocumentExecutionHelpDialog.vue'
 import DocumentExecutionRankDialog from './dialogs/documentExecutionRankDialog/DocumentExecutionRankDialog.vue'
@@ -137,7 +161,6 @@ import DocumentExecutionMailDialog from './dialogs/documentExecutionMailDialog/D
 import DocumentExecutionSchedulationsTable from './tables/documentExecutionSchedulationsTable/DocumentExecutionSchedulationsTable.vue'
 import DocumentExecutionLinkDialog from './dialogs/documentExecutionLinkDialog/DocumentExecutionLinkDialog.vue'
 import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
-import { luxonFormatDate } from '@/helpers/commons/localeHelper'
 import TieredMenu from 'primevue/tieredmenu'
 import Registry from '../registry/Registry.vue'
 import Dossier from '../dossier/Dossier.vue'
@@ -147,7 +170,8 @@ import DocumentExecutionCNContainerDialog from './dialogs/documentExecutionCNCon
 import mainStore from '../../../App.store'
 import deepcopy from 'deepcopy'
 import DashboardController from '../dashboard/DashboardController.vue'
-import DocumentExecutionCrossDialog from './dialogs/DocumentExecutionCrossDialog/DocumentExecutionCrossDialog.vue'
+import Dialog from 'primevue/dialog'
+import descriptor from './DocumentExecutionDescriptor.json'
 
 // @ts-ignore
 // eslint-disable-next-line
@@ -184,7 +208,7 @@ export default defineComponent({
         DocumentExecutionSelectCrossNavigationDialog,
         DocumentExecutionCNContainerDialog,
         DashboardController,
-        DocumentExecutionCrossDialog
+        Dialog
     },
     props: {
         id: { type: String },
@@ -192,11 +216,13 @@ export default defineComponent({
         tabKey: { type: String },
         propMode: { type: String },
         selectedMenuItem: { type: Object },
-        menuItemClickedTrigger: { type: Boolean }
+        menuItemClickedTrigger: { type: Boolean },
+        propCrossNavigationPopupDialogDocument: { type: Object }
     },
     emits: ['close', 'updateDocumentName', 'parametersChanged'],
     data() {
         return {
+            descriptor,
             managementOpened: false,
             document: null as any,
             hiddenFormData: {} as any,
@@ -318,31 +344,33 @@ export default defineComponent({
     async created() {
         console.log('-------------- CREATED!')
         console.log('-------------- DOCUMENT: ', this.document)
+        console.log('-------------- propCrossNavigationPopupDialogDocument: ', this.propCrossNavigationPopupDialogDocument)
         this.setEventListeners()
-
         window.addEventListener('message', this.iframeEventsListener)
 
-        if (this.propMode !== 'document-execution' && !this.$route.path.includes('olap-designer') && this.$route.name !== 'document-execution' && this.$route.name !== 'document-execution-embed' && this.$route.name !== 'document-execution-workspace') return
+        if (this.propCrossNavigationPopupDialogDocument) {
+            this.document = this.propCrossNavigationPopupDialogDocument
+            await this.loadUserConfig()
+            this.setMode()
+        } else {
+            if (this.propMode !== 'document-execution' && !this.$route.path.includes('olap-designer') && this.$route.name !== 'document-execution' && this.$route.name !== 'document-execution-embed' && this.$route.name !== 'document-execution-workspace') return
+            if (this.$route.name === 'new-dashboard') this.newDashboardMode = true
+            await this.loadUserConfig()
 
-        if (this.$route.name === 'new-dashboard') {
-            this.newDashboardMode = true
+            this.isOlapDesignerMode()
+            this.setMode()
+
+            this.document = { label: this.id }
+            if (!this.document.label) return
+
+            if (this.document.label === 'new-dashboard') {
+                this.newDashboardMode = true
+                return
+            }
         }
-        await this.loadUserConfig()
-
-        this.isOlapDesignerMode()
-        this.setMode()
-
-        this.document = { label: this.id }
-
-        if (!this.document.label) return
 
         this.userRole = this.user?.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user?.sessionRole : null
-
-        if (this.document.label === 'new-dashboard') {
-            this.newDashboardMode = true
-            return
-        }
-
+        console.log('-------- GOT HERE WITH DOCUMENT: ', this.document)
         await this.loadDocument()
 
         let invalidRole = false
@@ -503,9 +531,10 @@ export default defineComponent({
             this.loading = false
         },
         closeDocument() {
-            const link = this.$route.path.includes('workspace') ? '/workspace' : '/document-browser'
-            this.$router.push(link)
-            this.breadcrumbs = []
+            if (this.propMode !== 'document-execution-cross-navigation-popup') {
+                this.$router.push(this.$route.path.includes('workspace') ? '/workspace' : '/document-browser')
+                this.breadcrumbs = []
+            }
             this.$emit('close')
         },
         setMode() {
@@ -1116,7 +1145,6 @@ export default defineComponent({
         },
         async getDocumentAfterCrossNavigationIsSelected(crossNavigation: IDashboardCrossNavigation) {
             const documentCrossNavigationParameters = this.crossNavigationPayload ? this.crossNavigationPayload.documentCrossNavigationOutputParameters : []
-            console.log('crossNavigation type: ', crossNavigation.crossType)
             if (crossNavigation.crossType !== 1) this.document = getDocumentForCrossNavigation(documentCrossNavigationParameters, this.filtersData, crossNavigation)
             this.executeCrossNavigation(crossNavigation, documentCrossNavigationParameters)
         },
@@ -1124,7 +1152,6 @@ export default defineComponent({
             if (crossNavigation.crossType === 2) {
                 this.openCrossNavigationInNewWindow(crossNavigation)
             } else if (crossNavigation.crossType === 1) {
-                console.log('------------- GOT HERE!')
                 this.crossNavigationPopupDialogDocument = getDocumentForCrossNavigation(documentCrossNavigationParameters, this.filtersData, crossNavigation)
                 this.crossNavigationDialogVisible = true
             } else {
@@ -1150,19 +1177,30 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-#document-execution-view {
+.document-execution-view {
     position: relative;
     height: 100%;
     width: 100%;
 }
 
-#document-execution-backdrop {
+.document-execution-backdrop {
     background-color: rgba(33, 33, 33, 1);
     opacity: 0.48;
     z-index: 50;
     position: absolute;
     width: 100%;
     height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.document-execution-backdrop-popup-dialog {
+    background-color: rgba(33, 33, 33, 1);
+    opacity: 0.48;
+    z-index: 50;
+    position: absolute;
+    width: 100%;
+    height: calc(80vh - 35px);
     top: 0;
     left: 0;
 }
@@ -1174,10 +1212,6 @@ export default defineComponent({
 .document-execution-iframe {
     width: 100%;
     height: 100%;
-}
-
-.document-execution-parameter-sidebar {
-    height: 60vh;
 }
 
 #document-execution-schedulations-table {
@@ -1199,18 +1233,18 @@ export default defineComponent({
     body * {
         visibility: hidden;
     }
-    #document-execution-view,
-    #document-execution-view * {
+    .document-execution-view,
+    .document-execution-view * {
         visibility: visible;
     }
 
-    #document-execution-view .document-execution-parameter-sidebar,
-    #document-execution-view .document-execution-parameter-sidebar *,
-    #document-execution-view #document-execution-backdrop {
+    .document-execution-view .document-execution-parameter-sidebar,
+    .document-execution-view .document-execution-parameter-sidebar *,
+    .document-execution-view .document-execution-backdrop {
         visibility: hidden;
     }
 
-    #document-execution-view {
+    .document-execution-view {
         background-color: white;
         height: 100%;
         width: 100%;
