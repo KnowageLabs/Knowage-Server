@@ -187,8 +187,16 @@ abstract class AbstractExportJob implements Job {
 					DerivedDataSet dataSetDer = (DerivedDataSet) vds.getWrappedDataset();
 					dataSetDer.setSourceDataset(sourcedataSet);
 					dataSetDer.setJsonQuery(jsonQuery);
-					dataSetDer.setDataSource(sourcedataSet.getDataSource());
-					dataSetDer.setDataSourceForReading(sourcedataSet.getDataSource());
+					dataSetDer
+							.setDataSource(dataSetDer.getDataSourceForReading() != null ? dataSetDer.getDataSourceForReading() : sourcedataSet.getDataSource());
+					dataSetDer.setDataSourceForReading(
+							dataSetDer.getDataSourceForReading() != null ? dataSetDer.getDataSourceForReading() : sourcedataSet.getDataSource());
+
+					if (dataSetDer.isPersisted()) { // Current export jobs don't use persistence tables when exporting, we use the same way for derived...
+						dataSetDer.setPersisted(false);
+						dataSetDer.setDataSource(sourcedataSet.getDataSource());
+						dataSetDer.setDataSourceForReading(sourcedataSet.getDataSource());
+					}
 					dataSet = dataSetDer;
 				}
 			}

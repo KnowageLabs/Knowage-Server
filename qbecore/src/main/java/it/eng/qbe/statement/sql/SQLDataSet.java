@@ -144,6 +144,8 @@ public class SQLDataSet extends AbstractQbeDataSet {
 	public IDataSource getDataSourceForReading() {
 		SQLStatement statement = (SQLStatement) this.getStatement();
 		DataSetDataSource ds = (DataSetDataSource) statement.getDataSource();
+		if (ds.getDataSourceForReading() == null && this.datasourceForReading != null)
+			return this.datasourceForReading;
 		return ds.getDataSourceForReading();
 	}
 
