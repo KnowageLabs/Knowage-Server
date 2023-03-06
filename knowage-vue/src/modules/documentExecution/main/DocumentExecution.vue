@@ -187,17 +187,7 @@ import descriptor from './DocumentExecutionDescriptor.json'
 // @ts-ignore
 // eslint-disable-next-line
 window.execExternalCrossNavigation = function(outputParameters, otherOutputParameters, crossNavigationLabel) {
-    postMessage(
-        {
-            type: 'crossNavigation',
-            outputParameters: outputParameters,
-            inputParameters: {},
-            targetCrossNavigation: crossNavigationLabel,
-            docLabel: null,
-            otherOutputParameters: otherOutputParameters ? [otherOutputParameters] : []
-        },
-        '*'
-    )
+    postMessage({ type: 'crossNavigation', outputParameters: outputParameters, inputParameters: {}, targetCrossNavigation: crossNavigationLabel, docLabel: null, otherOutputParameters: otherOutputParameters ? [otherOutputParameters] : [] }, '*')
 }
 
 export default defineComponent({
@@ -295,18 +285,13 @@ export default defineComponent({
             return this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
         },
         url(): string {
-            if (this.document) {
-                return (
-                    import.meta.env.VITE_HOST_URL +
-                    `/knowage/restful-services/publish?PUBLISHER=documentExecutionNg&OBJECT_ID=${this.document.id}&OBJECT_LABEL=${this.document.label}&TOOLBAR_VISIBLE=false&MENU_PARAMETERS=%7B%7D&LIGHT_NAVIGATOR_DISABLED=TRUE&SBI_EXECUTION_ID=${this.sbiExecutionId}&OBJECT_NAME=${this.document.name}&CROSS_PARAMETER=null`
-                )
-            } else {
-                return ''
-            }
+            return this.document
+                ? import.meta.env.VITE_HOST_URL +
+                      `/knowage/restful-services/publish?PUBLISHER=documentExecutionNg&OBJECT_ID=${this.document.id}&OBJECT_LABEL=${this.document.label}&TOOLBAR_VISIBLE=false&MENU_PARAMETERS=%7B%7D&LIGHT_NAVIGATOR_DISABLED=TRUE&SBI_EXECUTION_ID=${this.sbiExecutionId}&OBJECT_NAME=${this.document.name}&CROSS_PARAMETER=null`
+                : ''
         },
         isParameterSidebarVisible(): boolean {
             if (!this.userRole) return false
-
             let parameterVisible = false
             for (let i = 0; i < this.filtersData?.filterStatus?.length; i++) {
                 const tempFilter = this.filtersData.filterStatus[i]
@@ -315,7 +300,6 @@ export default defineComponent({
                     break
                 }
             }
-
             return parameterVisible
         }
     },
@@ -331,22 +315,11 @@ export default defineComponent({
             this.breadcrumbs = []
             this.filtersData = {} as any
             await this.loadDocument()
-
-            if (this.userRole) {
-                await this.loadPage(true)
-            } else {
-                this.parameterSidebarVisible = true
-            }
+            this.userRole ? await this.loadPage(true) : (this.parameterSidebarVisible = true)
         }
     },
     async activated() {
-        if (this.mode === 'iframe' && this.$route.name !== 'new-dashboard') {
-            if (this.userRole) {
-                await this.loadPage(true)
-            } else {
-                this.parameterSidebarVisible = true
-            }
-        }
+        if (this.mode === 'iframe' && this.$route.name !== 'new-dashboard') this.userRole ? await this.loadPage(true) : (this.parameterSidebarVisible = true)
     },
     deactivated() {
         this.parameterSidebarVisible = false
@@ -364,18 +337,14 @@ export default defineComponent({
             if (this.propMode !== 'document-execution' && !this.$route.path.includes('olap-designer') && this.$route.name !== 'document-execution' && this.$route.name !== 'document-execution-embed' && this.$route.name !== 'document-execution-workspace') return
             if (this.$route.name === 'new-dashboard') this.newDashboardMode = true
             await this.loadUserConfig()
-
             this.isOlapDesignerMode()
             this.setMode()
-
             this.document = { label: this.id }
             if (!this.document.label) return
-
             if (this.document.label === 'new-dashboard') {
                 this.newDashboardMode = true
                 return
             }
-
             await this.loadDocument()
         }
 
@@ -402,13 +371,7 @@ export default defineComponent({
                     }
                 }
             }
-            if (!invalidRole) {
-                if (this.userRole) {
-                    await this.loadPage(true)
-                } else {
-                    this.parameterSidebarVisible = true
-                }
-            }
+            if (!invalidRole) this.userRole ? await this.loadPage(true) : (this.parameterSidebarVisible = true)
         })
     },
     unmounted() {
@@ -424,16 +387,7 @@ export default defineComponent({
             }
         },
         editCockpitDocumentConfirm() {
-            if (this.documentMode === 'EDIT') {
-                this.$confirm.require({
-                    message: this.$t('documentExecution.main.editModeConfirm'),
-                    header: this.$t('documentExecution.main.editCockpit'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => this.editCockpitDocument()
-                })
-            } else {
-                this.editCockpitDocument()
-            }
+            this.documentMode === 'EDIT' ? this.$confirm.require({ message: this.$t('documentExecution.main.editModeConfirm'), header: this.$t('documentExecution.main.editCockpit'), icon: 'pi pi-exclamation-triangle', accept: () => this.editCockpitDocument() }) : this.editCockpitDocument()
         },
         async editCockpitDocument() {
             this.loading = true
@@ -489,9 +443,8 @@ export default defineComponent({
             } else {
                 const tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
                 let tempFrame = window.frames[tempIndex]
-                while (tempFrame && tempFrame.name !== 'documentFrame' + tempIndex) {
-                    tempFrame = tempFrame[0].frames
-                }
+                while (tempFrame && tempFrame.name !== 'documentFrame' + tempIndex) tempFrame = tempFrame[0].frames
+
                 tempFrame.postMessage({ type: 'export', format: type.toLowerCase() }, '*')
             }
         },
@@ -519,9 +472,7 @@ export default defineComponent({
             this.loading = true
             this.parameterSidebarVisible = false
             this.schedulationsTableVisible = true
-            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentsnapshot/getSnapshots?id=${this.document.id}`).then((response: AxiosResponse<any>) => {
-                response.data?.schedulers.forEach((el: any) => this.schedulations.push({ ...el, urlPath: response.data.urlPath }))
-            })
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentsnapshot/getSnapshots?id=${this.document.id}`).then((response: AxiosResponse<any>) => response.data?.schedulers.forEach((el: any) => this.schedulations.push({ ...el, urlPath: response.data.urlPath })))
             this.loading = false
         },
         async copyLink(embedHTML: boolean) {
@@ -546,21 +497,12 @@ export default defineComponent({
         },
         setMode() {
             this.embed = this.$route.path.includes('embed')
-            if (this.embed) {
-                this.setDocumentExecutionEmbed()
-            }
-
-            if (this.$route.path.includes('registry')) {
-                this.mode = 'registry'
-            } else if (this.$route.path.includes('dossier')) {
-                this.mode = 'dossier'
-            } else if (this.$route.path.includes('olap')) {
-                this.mode = 'olap'
-            } else if (this.$route.path.includes('dashboard')) {
-                this.mode = 'dashboard'
-            } else {
-                this.mode = 'iframe'
-            }
+            if (this.embed) this.setDocumentExecutionEmbed()
+            if (this.$route.path.includes('registry')) this.mode = 'registry'
+            else if (this.$route.path.includes('dossier')) this.mode = 'dossier'
+            else if (this.$route.path.includes('olap')) this.mode = 'olap'
+            else if (this.$route.path.includes('dashboard')) this.mode = 'dashboard'
+            else this.mode = 'iframe'
         },
         async loadPage(initialLoading = false, documentLabel: string | null = null, crossNavigationPopupMode = false) {
             this.loading = true
@@ -572,55 +514,26 @@ export default defineComponent({
             } else if (this.filtersData?.filterStatus) {
                 this.parameterSidebarVisible = true
             }
-
             this.updateMode()
             this.loading = false
         },
         updateMode() {
-            if (this.document.typeCode === 'DATAMART') {
-                this.mode = 'registry'
-            } else if (this.document.typeCode === 'DOSSIER') {
-                this.mode = 'dossier'
-            } else if (this.document.typeCode === 'OLAP') {
-                this.mode = 'olap'
-            } else if (this.document.typeCode === 'DOCUMENT_COMPOSITE' && this.$route.path.includes('dashboard')) {
-                this.mode = 'dashboard'
-            } else {
-                this.mode = 'iframe'
-            }
+            if (this.document.typeCode === 'DATAMART') this.mode = 'registry'
+            else if (this.document.typeCode === 'DOSSIER') this.mode = 'dossier'
+            else if (this.document.typeCode === 'OLAP') this.mode = 'olap'
+            else if (this.document.typeCode === 'DOCUMENT_COMPOSITE' && this.$route.path.includes('dashboard')) this.mode = 'dashboard'
+            else this.mode = 'iframe'
         },
         async loadDocument() {
             await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documents/${this.document?.label}`).then((response: AxiosResponse<any>) => (this.document = response.data))
-
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
-            if (index !== -1) {
-                this.breadcrumbs[index].document = this.document
-            } else {
-                this.breadcrumbs.push({
-                    label: this.document.name,
-                    document: this.document
-                })
-            }
+            index !== -1 ? (this.breadcrumbs[index].document = this.document) : this.breadcrumbs.push({ label: this.document.name, document: this.document })
         },
         async loadURL(olapParameters: any, documentLabel: string | null = null, crossNavigationPopupMode = false) {
             let error = false
-            const postData = {
-                label: this.document.label,
-                role: this.userRole,
-                parameters: olapParameters ? olapParameters : this.getFormattedParameters(),
-                EDIT_MODE: 'null',
-                IS_FOR_EXPORT: true,
-                SBI_EXECUTION_ID: ''
-            } as any
-
-            if (this.sbiExecutionId) {
-                postData.SBI_EXECUTION_ID = this.sbiExecutionId
-            }
-
-            if (this.document.typeCode === 'MAP') {
-                postData.EDIT_MODE = 'edit_map'
-            }
-
+            const postData = { label: this.document.label, role: this.userRole, parameters: olapParameters ? olapParameters : this.getFormattedParameters(), EDIT_MODE: 'null', IS_FOR_EXPORT: true, SBI_EXECUTION_ID: '' } as any
+            if (this.sbiExecutionId) postData.SBI_EXECUTION_ID = this.sbiExecutionId
+            if (this.document.typeCode === 'MAP') postData.EDIT_MODE = 'edit_map'
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`, postData)
                 .then((response: AxiosResponse<any>) => {
@@ -639,9 +552,7 @@ export default defineComponent({
                 this.breadcrumbs[index].urlData = this.urlData
                 this.sbiExecutionId = this.urlData?.sbiExecutionId as string
             }
-
             if (error) return
-
             await this.sendForm(documentLabel, crossNavigationPopupMode)
         },
         async loadExporters() {
@@ -650,27 +561,19 @@ export default defineComponent({
         },
         async sendForm(documentLabel: string | null = null, crossNavigationPopupMode = false) {
             const tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name) as any
-
             const documentUrl = this.urlData?.url + '&timereloadurl=' + new Date().getTime()
-            const postObject = {
-                params: { document: null } as any,
-                url: documentUrl.split('?')[0]
-            }
+            const postObject = { params: { document: null } as any, url: documentUrl.split('?')[0] }
             if (this.$route.query.documentMode === 'edit') this.documentMode = 'EDIT'
             postObject.params.documentMode = this.documentMode
             this.hiddenFormUrl = postObject.url
             const paramsFromUrl = documentUrl?.split('?')[1]?.split('&')
 
             for (const i in paramsFromUrl) {
-                if (typeof paramsFromUrl !== 'function') {
-                    postObject.params[paramsFromUrl[i].split('=')[0]] = paramsFromUrl[i].split('=')[1]
-                }
+                if (typeof paramsFromUrl !== 'function') postObject.params[paramsFromUrl[i].split('=')[0]] = paramsFromUrl[i].split('=')[1]
             }
 
             let postForm = document.getElementById('postForm_' + postObject.params.document) as any
-            if (!postForm) {
-                postForm = document.createElement('form')
-            }
+            if (!postForm) postForm = document.createElement('form')
             postForm.id = 'postForm_' + postObject.params.document
             postForm.action = import.meta.env.VITE_HOST_URL + postObject.url
             postForm.method = 'post'
@@ -686,7 +589,6 @@ export default defineComponent({
                 if (inputElement) {
                     inputElement.value = decodeURIComponent(postObject.params[k])
                     inputElement.value = inputElement.value.replace(/\+/g, ' ')
-
                     this.hiddenFormData.set(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))
                 } else {
                     const element = document.createElement('input')
@@ -695,7 +597,6 @@ export default defineComponent({
                     element.name = k
                     element.value = decodeURIComponent(postObject.params[k])
                     element.value = element.value.replace(/\+/g, ' ')
-
                     postForm.appendChild(element)
                     this.hiddenFormData.append(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))
                 }
@@ -703,32 +604,20 @@ export default defineComponent({
 
             for (let i = postForm.elements.length - 1; i >= 0; i--) {
                 const postFormElement = postForm.elements[i].id.replace('postForm_' + postObject.params.document, '')
-
                 if (!(postFormElement in postObject.params)) {
                     postForm.removeChild(postForm.elements[i])
                     this.hiddenFormData.delete(postFormElement)
                 }
             }
-
             this.hiddenFormData.append('documentMode', this.documentMode)
 
-            if (this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER' || this.document.typeCode === 'OLAP' || (this.document.typeCode === 'DOCUMENT_COMPOSITE' && this.mode === 'dashboard')) {
-                await this.sendHiddenFormData()
-            } else {
-                postForm.submit()
-            }
-
+            this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER' || this.document.typeCode === 'OLAP' || (this.document.typeCode === 'DOCUMENT_COMPOSITE' && this.mode === 'dashboard') ? await this.sendHiddenFormData() : postForm.submit()
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
             if (index !== -1) this.breadcrumbs[index].hiddenFormData = this.hiddenFormData
         },
         async sendHiddenFormData() {
             await this.$http
-                .post(this.hiddenFormUrl, this.hiddenFormData, {
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
-                    }
-                })
+                .post(this.hiddenFormUrl, this.hiddenFormData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9' } })
                 .then(() => {})
                 .catch(() => {})
         },
@@ -738,58 +627,28 @@ export default defineComponent({
             await this.loadURL(null)
             this.parameterSidebarVisible = false
             this.reloadTrigger = !this.reloadTrigger
-
             if (!this.exporters || this.exporters.length === 0) {
                 await this.loadExporters()
                 const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.export'))
-                if (index === -1) {
-                    this.toolbarMenuItems.splice(1, 0, {
-                        label: this.$t('common.export'),
-                        items: []
-                    })
-                } else {
-                    this.exporters?.forEach((exporter: any) =>
-                        this.toolbarMenuItems[index].items.push({
-                            icon: 'fa fa-file-excel',
-                            label: exporter.name,
-                            command: () => this.export(exporter.name)
-                        })
-                    )
-                }
+                index === -1 ? this.toolbarMenuItems.splice(1, 0, { label: this.$t('common.export'), items: [] }) : this.exporters?.forEach((exporter: any) => this.toolbarMenuItems[index].items.push({ icon: 'fa fa-file-excel', label: exporter.name, command: () => this.export(exporter.name) }))
             }
-
-            if (this.sessionEnabled) {
-                this.saveParametersInSession()
-            }
+            if (this.sessionEnabled) this.saveParametersInSession()
             this.loading = false
         },
         async onExportCSV() {
-            const postData = {
-                documentId: this.document.id,
-                documentLabel: this.document.label,
-                exportType: 'CSV',
-                parameters: this.getFormattedParametersForCSVExport()
-            }
+            const postData = { documentId: this.document.id, documentLabel: this.document.label, exportType: 'CSV', parameters: this.getFormattedParametersForCSVExport() }
             this.loading = true
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/export/cockpitData`, postData)
-                .then(() => {
-                    this.setInfo({
-                        title: this.$t('common.toast.updateTitle'),
-                        msg: this.$t('common.exportSuccess')
-                    })
-                })
+                .then(() => this.setInfo({ title: this.$t('common.toast.updateTitle'), msg: this.$t('common.exportSuccess') }))
                 .catch(() => {})
             this.loading = false
         },
         getFormattedParameters() {
             if (!this.filtersData || !this.filtersData.filterStatus) return {}
-
             const parameters = {} as any
-
             Object.keys(this.filtersData.filterStatus).forEach((key: any) => {
                 const parameter = this.filtersData.filterStatus[key]
-
                 if (parameter.parameterValue) {
                     if (parameter.type === 'DATE' && parameter.parameterValue[0] && parameter.parameterValue[0].value) {
                         parameters[parameter.urlName] = this.getFormattedDate(parameter.parameterValue[0].value)
@@ -812,17 +671,13 @@ export default defineComponent({
                     }
                 }
             })
-
             return parameters
         },
         getFormattedParametersForCSVExport() {
             if (!this.filtersData) return {}
-
             const parameters = {} as any
-
             Object.keys(this.filtersData.filterStatus).forEach((key: any) => {
                 const parameter = this.filtersData.filterStatus[key]
-
                 if (parameter.parameterValue) {
                     if (parameter.type === 'DATE') {
                         parameters[parameter.urlName] = this.getFormattedDate(parameter.parameterValue[0].value)
@@ -840,7 +695,6 @@ export default defineComponent({
                     }
                 }
             })
-
             return parameters
         },
         async getRank() {
@@ -848,12 +702,7 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `documentrating/getvote`, { obj: this.document.id })
                 .then((response: AxiosResponse<any>) => (this.documentRank = response.data))
-                .catch((error: any) =>
-                    this.setError({
-                        title: this.$t('common.error.generic'),
-                        msg: error
-                    })
-                )
+                .catch((error: any) => this.setError({ title: this.$t('common.error.generic'), msg: error }))
             this.loading = false
         },
         async onSaveRank(newRank: any) {
@@ -861,18 +710,8 @@ export default defineComponent({
                 this.loading = true
                 await this.$http
                     .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `documentrating/vote`, { rating: newRank, obj: this.document.id })
-                    .then(() =>
-                        this.setInfo({
-                            title: this.$t('common.toast.updateTitle'),
-                            msg: this.$t('documentExecution.main.rankSaveSucces')
-                        })
-                    )
-                    .catch((error: any) =>
-                        this.setError({
-                            title: this.$t('common.error.generic'),
-                            msg: error
-                        })
-                    )
+                    .then(() => this.setInfo({ title: this.$t('common.toast.updateTitle'), msg: this.$t('documentExecution.main.rankSaveSucces') }))
+                    .catch((error: any) => this.setError({ title: this.$t('common.error.generic'), msg: error }))
                 this.loading = false
             }
             this.rankDialogVisible = false
@@ -889,14 +728,10 @@ export default defineComponent({
                     }
                 })
             )
-
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentexecutionee/saveDocumentMetadata`, { id: this.document.id, jsonMeta: jsonMeta })
                 .then(() => {
-                    this.setInfo({
-                        title: this.$t('common.toast.createTitle'),
-                        msg: this.$t('common.toast.success')
-                    })
+                    this.setInfo({ title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
                     this.metadataDialogVisible = false
                 })
                 .catch(() => {})
@@ -904,28 +739,14 @@ export default defineComponent({
         },
         async onMailSave(mail: any) {
             this.loading = true
-            const postData = {
-                ...mail,
-                label: this.document.label,
-                docId: this.document.id,
-                userId: this.user.userId,
-                parameters: this.getFormattedParameters()
-            }
+            const postData = { ...mail, label: this.document.label, docId: this.document.id, userId: this.user.userId, parameters: this.getFormattedParameters() }
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentexecutionmail/sendMail`, postData)
                 .then(() => {
-                    this.setInfo({
-                        title: this.$t('common.toast.createTitle'),
-                        msg: this.$t('common.sendMailSuccess')
-                    })
+                    this.setInfo({ title: this.$t('common.toast.createTitle'), msg: this.$t('common.sendMailSuccess') })
                     this.mailDialogVisible = false
                 })
-                .catch((error: any) => {
-                    this.setError({
-                        title: this.$t('common.error.generic'),
-                        msg: error
-                    })
-                })
+                .catch((error: any) => this.setError({ title: this.$t('common.error.generic'), msg: error }))
             this.loading = false
         },
         async onDeleteSchedulation(schedulation: any) {
@@ -934,10 +755,7 @@ export default defineComponent({
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentsnapshot/deleteSnapshot`, { SNAPSHOT: '' + schedulation.id })
                 .then(async () => {
                     this.removeSchedulation(schedulation)
-                    this.setInfo({
-                        title: this.$t('common.toast.deleteTitle'),
-                        msg: this.$t('common.toast.deleteSuccess')
-                    })
+                    this.setInfo({ title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
                 })
                 .catch(() => {})
             this.loading = false
@@ -962,10 +780,7 @@ export default defineComponent({
         },
         async onRoleChange(role: string) {
             this.userRole = role as any
-            this.filtersData = {} as {
-                filterStatus: iParameter[]
-                isReadyForExecution: boolean
-            }
+            this.filtersData = {} as { filterStatus: iParameter[]; isReadyForExecution: boolean }
             this.urlData = null
             this.exporters = null
             await this.loadPage()
@@ -1001,48 +816,26 @@ export default defineComponent({
             this.loading = false
 
             if (!temp || temp.length === 0) {
-                this.setError({
-                    title: this.$t('common.error.generic'),
-                    msg: this.$t('documentExecution.main.crossNavigationNoTargetError')
-                })
+                this.setError({ title: this.$t('common.error.generic'), msg: this.$t('documentExecution.main.crossNavigationNoTargetError') })
                 return
             }
-
-            this.document = {
-                ...temp[0].document,
-                navigationParams: this.formatOLAPNavigationParams(crossNavigationParams, temp[0].navigationParams)
-            }
-
+            this.document = { ...temp[0].document, navigationParams: this.formatOLAPNavigationParams(crossNavigationParams, temp[0].navigationParams) }
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
-            if (index !== -1) {
-                this.breadcrumbs[index].document = this.document
-            } else {
-                this.breadcrumbs.push({
-                    label: this.document.name,
-                    document: this.document
-                })
-            }
-
+            index !== -1 ? (this.breadcrumbs[index].document = this.document) : this.breadcrumbs.push({ label: this.document.name, document: this.document })
             await this.loadPage()
             this.reloadTrigger = !this.reloadTrigger
         },
         formatOLAPNavigationParams(crossNavigationParams: any, navigationParams: any) {
             const crossNavigationParamKeys = Object.keys(crossNavigationParams)
             const formattedParams = {} as any
-
             Object.keys(navigationParams).forEach((key: string) => {
                 const index = crossNavigationParamKeys.findIndex((el: string) => el === navigationParams[key].value.label)
-                if (index !== -1) {
-                    formattedParams[key] = crossNavigationParams[crossNavigationParamKeys[index]]
-                }
+                if (index !== -1) formattedParams[key] = crossNavigationParams[crossNavigationParamKeys[index]]
             })
-
             return formattedParams
         },
         isOlapDesignerMode() {
-            if (this.$route.name === 'olap-designer') {
-                this.olapDesignerMode = true
-            }
+            if (this.$route.name === 'olap-designer') this.olapDesignerMode = true
         },
         isOrganizerEnabled() {
             return this.user.isSuperadmin || this.user.functionalities.includes('DocumentAdminManagement') || this.user.functionalities.includes('SaveIntoFolderFunctionality')
@@ -1051,18 +844,8 @@ export default defineComponent({
             this.loading = true
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/organizer/documents/${this.document.id}`, {}, { headers: { 'X-Disable-Errors': 'true' } })
-                .then(() => {
-                    this.setInfo({
-                        title: this.$t('common.toast.updateTitle'),
-                        msg: this.$t('common.toast.success')
-                    })
-                })
-                .catch((error) => {
-                    this.setError({
-                        title: this.$t('common.toast.updateTitle'),
-                        msg: error.message === 'sbi.workspace.organizer.document.addtoorganizer.error.duplicateentry' ? this.$t('documentExecution.main.addToWorkspaceError') : error.message
-                    })
-                })
+                .then(() => this.setInfo({ title: this.$t('common.toast.updateTitle'), msg: this.$t('common.toast.success') }))
+                .catch((error) => this.setError({ title: this.$t('common.toast.updateTitle'), msg: error.message === 'sbi.workspace.organizer.document.addtoorganizer.error.duplicateentry' ? this.$t('documentExecution.main.addToWorkspaceError') : error.message }))
             this.loading = false
         },
         async loadUserConfig() {
@@ -1124,14 +907,8 @@ export default defineComponent({
         async onNewDashboardSaved(document: { name: string; label: string }) {
             this.document.label = document.label
             await this.loadDocument()
-
             this.userRole = this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
-
-            if (this.userRole) {
-                await this.loadPage(true)
-            } else {
-                this.parameterSidebarVisible = true
-            }
+            this.userRole ? await this.loadPage(true) : (this.parameterSidebarVisible = true)
             this.newDashboardMode = false
         },
         async onExecuteCrossNavigation(payload: { documentCrossNavigationOutputParameters: ICrossNavigationParameter[]; crossNavigationName: string | undefined; crossNavigations: IDashboardCrossNavigation[] }) {
@@ -1170,7 +947,7 @@ export default defineComponent({
         openCrossNavigationInNewWindow(crossNavigation: IDashboardCrossNavigation) {
             const parameters = encodeURI(JSON.stringify(this.document.formattedCrossNavigationParameters))
             // TODO - Uncomment
-            // const url = import.meta.env.VITE_HOST_URL + `/knowage-vue/document-browser/dashboard/CrossNavigationExample5?crossNavigationParameters=${parameters}`
+            // const url = import.meta.env.VITE_HOST_URL + `/knowage-vue/document-browser/dashboard/${this.document.label}?role=${this.userRole}&crossNavigationParameters=${parameters}
             const url = 'http://localhost:3000' + `/knowage-vue/document-browser/dashboard/${this.document.label}?role=${this.userRole}&crossNavigationParameters=${parameters}`
             const popupOptions = crossNavigation.popupOptions ?? { width: '800', height: '600' }
             window.open(url, '_blank', `toolbar=0,status=0,menubar=0,width=${popupOptions.width},height=${popupOptions.height}`)
