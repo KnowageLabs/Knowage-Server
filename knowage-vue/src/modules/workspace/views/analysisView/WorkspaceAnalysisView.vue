@@ -169,14 +169,14 @@ export default defineComponent({
         // prettier-ignore
         createMenuItems() {
         this.menuButtons = []
-        this.menuButtons.push(
-            { key: '0', label: this.$t('workspace.myAnalysis.menuItems.edit'), icon: 'fas fa-edit', command: () => { this.editAnalysisDocument(this.selectedAnalysis) }, visible: this.isOwner},
-            { key: '1', label: this.$t('workspace.myAnalysis.menuItems.share'), icon: 'fas fa-share-alt', command: () => { this.shareAnalysisDocument(this.selectedAnalysis) }, visible: !this.isShared},
-            { key: '1', label: this.$t('workspace.myAnalysis.menuItems.unshare'), icon: 'fas fa-times-circle', command: () => { this.shareAnalysisDocument(this.selectedAnalysis) }, visible: this.isShared},
-            { key: '2', label: this.$t('workspace.myAnalysis.menuItems.clone'), icon: 'fas fa-clone', command: () => { this.cloneAnalysisDocument(this.selectedAnalysis) }},
-            { key: '3', label: this.$t('workspace.myAnalysis.menuItems.delete'), icon: 'fas fa-trash', command: () => { this.deleteAnalysisDocumentConfirm(this.selectedAnalysis) }},
-            { key: '4', label: this.$t('workspace.myAnalysis.menuItems.upload'), icon: 'fas fa-upload', command: () => { this.uploadAnalysisPreviewFile(this.selectedAnalysis) }}
-        )
+            this.menuButtons.push({ key: '0', label: this.$t('workspace.myAnalysis.menuItems.edit'), icon: 'fas fa-edit', command: () => { this.editAnalysisDocument(this.selectedAnalysis) }, visible: this.isOwner })
+            this.menuButtons.push({ key: '1', label: this.$t('workspace.myAnalysis.menuItems.share'), icon: 'fas fa-share-alt', command: () => { this.shareAnalysisDocument(this.selectedAnalysis) }, visible: !this.isShared })
+            this.menuButtons.push({ key: '2', label: this.$t('workspace.myAnalysis.menuItems.unshare'), icon: 'fas fa-times-circle', command: () => { this.shareAnalysisDocument(this.selectedAnalysis) }, visible: this.isShared })
+            this.menuButtons.push({ key: '3', label: this.$t('workspace.myAnalysis.menuItems.clone'), icon: 'fas fa-clone', command: () => { this.cloneAnalysisDocument(this.selectedAnalysis) } })
+
+            this.menuButtons.push({ key: '4', label: this.$t('workspace.myAnalysis.menuItems.upload'), icon: 'fas fa-upload', command: () => { this.uploadAnalysisPreviewFile(this.selectedAnalysis) } })
+            this.menuButtons.push({ key: '5', label: this.$t('workspace.myAnalysis.menuItems.delete'), icon: 'fas fa-trash', command: () => { this.deleteAnalysisDocumentConfirm(this.selectedAnalysis) } })
+     
     },
         executeAnalysisDocument(document: any) {
             getCorrectRolesForExecution(document).then(() => {

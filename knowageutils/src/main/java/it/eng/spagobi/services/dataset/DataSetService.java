@@ -27,12 +27,7 @@ import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
  * @author Angelo Bernabei (angelo.bernabei@eng.it)
  * @author Marco Libanori
  */
-@WebService(
-		name = "DataSetServiceService",
-		portName = "DataSetServicePort",
-		serviceName = "DataSetService",
-		targetNamespace = "http://dataset.services.spagobi.eng.it/"
-	)
+@WebService(name = "DataSetServiceService", portName = "DataSetServicePort", serviceName = "DataSetService", targetNamespace = "http://dataset.services.spagobi.eng.it/")
 @SOAPBinding(style = Style.RPC)
 public interface DataSetService {
 
@@ -70,4 +65,13 @@ public interface DataSetService {
 	 * @return SpagoBiDataSet
 	 */
 	SpagoBiDataSet saveDataSet(String token, String user, SpagoBiDataSet dataset);
+
+	/**
+	 *
+	 * @param token String
+	 * @param user  String
+	 * @param label String
+	 * @return SpagoBiDataSet
+	 */
+	SpagoBiDataSet getDataSetByLabelAndUserCategories(String token, String user, String label);
 }

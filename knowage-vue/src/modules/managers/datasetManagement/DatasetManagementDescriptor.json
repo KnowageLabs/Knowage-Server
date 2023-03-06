@@ -17,6 +17,13 @@
                         "color": "white"
                     }
                 },
+                "Derived": {
+                    "icon": "fas fa-diagram-successor",
+                    "style": {
+                        "background-color": "#ffc107",
+                        "color": "white"
+                    }
+                },
                 "Federated": {
                     "icon": "fas fa-database",
                     "style": {

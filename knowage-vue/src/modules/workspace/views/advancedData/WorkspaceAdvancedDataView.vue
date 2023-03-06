@@ -86,8 +86,8 @@
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     <Menu id="creationMenu" ref="creationMenu" :model="creationMenuButtons" />
 
-    <WorkspaceDataCloneDialog :visible="cloneDialogVisible" :propDataset="selectedDataset" @close="cloneDialogVisible = false" @clone="handleDatasetClone"></WorkspaceDataCloneDialog>
-    <WorkspaceDataPreviewDialog :visible="previewDialogVisible" :propDataset="selectedDataset" @close="previewDialogVisible = false"></WorkspaceDataPreviewDialog>
+    <WorkspaceDataCloneDialog :visible="cloneDialogVisible" :propDataset="selectedDataset" @close="cloneDialogVisible = false" @clone="handleDatasetClone"> </WorkspaceDataCloneDialog>
+    <WorkspaceDataPreviewDialog :visible="previewDialogVisible" :propDataset="selectedDataset" @close="previewDialogVisible = false"> </WorkspaceDataPreviewDialog>
     <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.advancedData.title')" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
 
     <DataPreparationAvroHandlingDialog :visible="dataPrepAvroHandlingDialogVisbile" :title="$t('workspace.myData.isPreparing')" :infoMessage="dataPrepAvroHandlingMessage" @close="proceedToDataPrep" :events="events"></DataPreparationAvroHandlingDialog>
@@ -309,24 +309,34 @@ export default defineComponent({
         },
         // prettier-ignore
         createMenuItems(clickedDocument: any) {
-                let tmp = [] as any
+            let tmp = [] as any
 
+            if (this.user?.functionalities.includes('DataPreparation')) {
                 tmp.push(
-                    { key: '0', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.exportDataset(clickedDocument, 'xls'), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'File' },
-                    { key: '1', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: () => this.exportDataset(clickedDocument, 'csv'), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'File' },
-                    { key: '4', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner }
+                    { key: 1, label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: true },
+                    { key: 2, label: this.$t('workspace.myData.monitoring'), icon: 'pi pi-chart-line', command: () => this.handleMonitoring(clickedDocument), visible: true }
                 )
+            }
 
-                if (this.user?.functionalities.includes('DataPreparation')) {
+            tmp.push({
+                key: 3,
+                label: this.$t('common.export'),
+                icon: 'fa-solid fa-file-export',
+                visible: this.canLoadData && this.selectedDataset.dsTypeCd && this.selectedDataset.dsTypeCd != 'File',
+                items: [
+                    { key: 10, label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.exportDataset(clickedDocument, 'xls') },
+                    { key: 11, label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: () => this.exportDataset(clickedDocument, 'csv') },
+                ]
+            })
+            tmp.push({ key: 100, label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner })
 
-                    tmp.push(
-                        { key: '2', label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: true },
-                        { key: '3', label: this.$t('workspace.myData.monitoring'), icon: 'pi pi-chart-line', command: () => this.handleMonitoring(clickedDocument), visible: true }
-                    )
+            tmp = tmp.sort((a, b) => a.key < b.key)
+            tmp.forEach(element => {
+                if (element.items) {
+                    element.items = element.items.sort((a, b) => a.key < b.key)
                 }
-
-                tmp = tmp.sort((a,b)=>a.key.localeCompare(b.key))
-                this.menuButtons = tmp
+            })
+            this.menuButtons = tmp
 
         },
         createCreationMenuButtons() {

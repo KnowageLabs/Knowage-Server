@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -72,6 +73,7 @@ import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -409,10 +411,8 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 				throw new RuntimeException("Output type not supported: " + outputType);
 			}
 
-			return Response.ok(stream, mediaType)
-				.cacheControl(CacheControl.valueOf("no-cache"))
-				.header("Content-Disposition", "attachment;filename=" + "report" + "." + outputType + "\";")
-				.build();
+			return Response.ok(stream, mediaType).cacheControl(CacheControl.valueOf("no-cache"))
+					.header("Content-Disposition", "attachment;filename=" + "report" + "." + outputType + "\";").build();
 		} catch (Exception e) {
 			if (iterator != null) {
 				iterator.close();
@@ -457,6 +457,31 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	@GET
+	@Path("/persistTableName")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getPersistTableName(@javax.ws.rs.core.Context HttpServletRequest req, @QueryParam("sourceDatasetName") String sourceDatasetName) {
+		logger.debug("IN");
+		String persistTableName = null;
+		try {
+
+			Optional<AbstractJDBCDataset> opt = ((List) getEnv().get("DATASETS")).stream()
+					.filter((x) -> ((AbstractJDBCDataset) x).getName().equals(sourceDatasetName)).findFirst();
+
+			if (opt.isPresent())
+				persistTableName = opt.get().getPersistTableName();
+
+		} catch (Throwable t) {
+			logger.error("An unexpected error occured while executing service: QbeQueryResource.getDomainScopes", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service: JsonChartTemplateService.getDomainScopes", t);
+		} finally {
+			logger.debug("OUT");
+		}
+		return persistTableName;
+
 	}
 
 	@GET
@@ -714,14 +739,9 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 				/**
 				 * This block of code:
 				 *
-				 * boolean multivalue = false;
-				 * if (tempVal != null && tempVal.contains(",")) {
-				 * 	multivalue = true;
-				 * }
+				 * boolean multivalue = false; if (tempVal != null && tempVal.contains(",")) { multivalue = true; }
 				 *
-				 * Was replaced by the following because the user has the ability
-				 * to say if the value is multivalue or not, we don't need to do
-				 * any logic.
+				 * Was replaced by the following because the user has the ability to say if the value is multivalue or not, we don't need to do any logic.
 				 */
 				boolean multivalue = obj.optBoolean(MULTI_PARAM);
 
@@ -1257,6 +1277,34 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		} finally {
 			logger.debug("OUT");
 		}
+
+	}
+
+	private IDataSet getActiveQueryAsDataSet(Query q, IStatement statement) {
+		IDataSet dataSet;
+		try {
+
+			dataSet = QbeDatasetFactory.createDataSet(statement);
+			boolean isMaxResultsLimitBlocking = QbeEngineConfig.getInstance().isMaxResultLimitBlocking();
+			dataSet.setAbortOnOverflow(isMaxResultsLimitBlocking);
+
+			Map userAttributes = new HashMap();
+			UserProfile userProfile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+			userAttributes.putAll(userProfile.getUserAttributes());
+			userAttributes.put(SsoServiceInterface.USER_ID, userProfile.getUserId().toString());
+
+			dataSet.addBinding("attributes", userAttributes);
+			dataSet.addBinding("parameters", this.getEnv());
+			dataSet.setUserProfileAttributes(userAttributes);
+
+			dataSet.setParamsMap(this.getEnv());
+
+		} catch (Exception e) {
+			logger.debug("Error getting the data set from the query");
+			throw new SpagoBIRuntimeException("Error getting the data set from the query", e);
+		}
+		logger.debug("Dataset correctly taken from the query ");
+		return dataSet;
 
 	}
 

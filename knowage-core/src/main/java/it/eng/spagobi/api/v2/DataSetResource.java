@@ -64,6 +64,7 @@ import com.jamonapi.MonitorFactory;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.knowage.functionscatalog.utils.CatalogFunctionException;
+import it.eng.qbe.dataset.DerivedDataSet;
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.error.EMFInternalError;
@@ -492,7 +493,7 @@ public class DataSetResource extends AbstractDataSetResource {
 		dataSet = dataSet instanceof VersionedDataSet ? ((VersionedDataSet) dataSet).getWrappedDataset() : dataSet;
 		if (dataSet instanceof FederatedDataSet) {
 			// Yes, we doesn't need to load the model
-		} else if (dataSet instanceof QbeDataSet) {
+		} else if (dataSet instanceof QbeDataSet && !(dataSet instanceof DerivedDataSet)) {
 			try {
 				Boolean loadDSwithDrivers = true;
 				ArrayList<HashMap<String, Object>> drivers = null;

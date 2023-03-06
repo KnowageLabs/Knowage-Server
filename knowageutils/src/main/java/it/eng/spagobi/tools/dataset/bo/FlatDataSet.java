@@ -31,8 +31,10 @@ import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.dataset.common.iterator.ResultSetIterator;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
@@ -100,7 +102,15 @@ public class FlatDataSet extends ConfigurableDataSet {
 
 	@Override
 	public IMetaData getMetadata() {
-		return this.metadata;
+		IMetaData metadata = null;
+		try {
+			DatasetMetadataParser dsp = new DatasetMetadataParser();
+			metadata = dsp.xmlToMetadata(getDsMetadata());
+		} catch (Exception e) {
+			logger.error("Error loading the metadata", e);
+			throw new SpagoBIEngineRuntimeException("Error loading the metadata", e);
+		}
+		return metadata;
 	}
 
 	@Override

@@ -49,6 +49,7 @@ import org.json.JSONObjectDeserializator;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.knowage.parameter.ParameterManagerFactory;
+import it.eng.qbe.dataset.DerivedDataSet;
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
@@ -73,6 +74,7 @@ import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
@@ -318,6 +320,53 @@ public class ManageDataSetsForREST {
 				try {
 					if (ds.getDsType().equals(DataSetConstants.DS_PREPARED)) {
 						currentMetadata = getPreparedDsMeta(meta);
+					} else if (ds.getDsType().equals(DataSetConstants.DS_DERIVED)) {
+						String sourceDatasetLabel = json.optString(DataSetConstants.SOURCE_DS_LABEL);
+						IDataSet sourceDataset = null;
+						if (sourceDatasetLabel != null && !sourceDatasetLabel.trim().equals("")) {
+							try {
+								sourceDataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(sourceDatasetLabel);
+								if (sourceDataset == null) {
+									throw new SpagoBIRuntimeException("Dataset with label [" + sourceDatasetLabel + "] does not exist");
+								}
+
+								// TODO Add file not persisted management. Use another variable instead of persistTableName
+//								String persistTableName = null;
+//								if (json.has("persistTableName") && StringUtils.isNotEmpty(json.getString("persistTableName"))) {
+//									persistTableName = json.getString("persistTableName");
+//									sourceDataset.setPersistTableName(persistTableName);
+//									sourceDataset.setPersisted(true);
+//									((DerivedDataSet) dsRecalc).setSourceDataset(sourceDataset);
+//								}
+								if (sourceDataset.getDataSourceForReading() == null && sourceDataset.getDataSourceForWriting() != null) {
+									sourceDataset.setDataSourceForReading(sourceDataset.getDataSource());
+								}
+								((DerivedDataSet) ds).setSourceDataset(sourceDataset);
+
+								currentMetadata = getDatasetTestMetadata(dsRecalc, parametersMap, profile, meta);
+
+								JSONObject sourceJsonConfig = new JSONObject(sourceDataset.getConfiguration());
+								JSONObject dsJsonConfig = new JSONObject(ds.getConfiguration());
+								if (sourceDataset instanceof VersionedDataSet) {
+									VersionedDataSet vds = (VersionedDataSet) sourceDataset;
+									if (!(vds.getWrappedDataset() instanceof FileDataSet)) {
+										dsJsonConfig.put(DataSetConstants.SOURCE_DATA_SOURCE, sourceDataset.getDataSource().getLabel());
+									} else {
+										dsJsonConfig.put(DataSetConstants.SOURCE_DATA_SOURCE, sourceDataset.getDataSourceForReading().getLabel());
+									}
+									if (vds.getWrappedDataset() instanceof AbstractJDBCDataset) {
+										String sqlQuery = ((DerivedDataSet) ds).getStatement().getQuerySQLString(sourceJsonConfig.getString("Query"));
+										dsJsonConfig.put("sqlQuery", sqlQuery);
+									} else {
+										dsJsonConfig.put("sqlQuery", ((DerivedDataSet) ds).getStatement().getQueryString());
+									}
+								}
+								dsJsonConfig.put(DataSetConstants.SOURCE_DS_LABEL, sourceDatasetLabel);
+								ds.setConfiguration(dsJsonConfig.toString());
+							} catch (Exception e) {
+								throw new SpagoBIServiceException(SERVICE_NAME, "Cannot retrieve source dataset information", e);
+							}
+						}
 					} else {
 						currentMetadata = getDatasetTestMetadata(dsRecalc, parametersMap, profile, meta);
 					}
@@ -544,12 +593,22 @@ public class ManageDataSetsForREST {
 			toReturn = manageFlatDataSet(savingDataset, jsonDsConfig, json);
 		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_PREPARED)) {
 			toReturn = managePreparedDataSet(savingDataset, jsonDsConfig, json);
+		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_DERIVED)) {
+			toReturn = manageDerivedDataSet(savingDataset, jsonDsConfig, json, userProfile);
 		} else {
 			throw new SpagoBIRuntimeException("Cannot find a match with dataset type " + datasetTypeName);
 		}
 
 		toReturn.setConfiguration(jsonDsConfig.toString());
 		return toReturn;
+	}
+
+	private DerivedDataSet manageDerivedDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json, UserProfile userProfile)
+			throws JSONException, EMFUserError, IOException {
+		// KNOWAGE-7575
+		DerivedDataSet dataset = new DerivedDataSet();
+		createQbeOrDerivedDataset(jsonDsConfig, json, dataset);
+		return dataset;
 	}
 
 	public List getCategories(UserProfile userProfile) {
@@ -1022,9 +1081,15 @@ public class ManageDataSetsForREST {
 		} else {
 			dataSet = new QbeDataSet();
 		}
+		createQbeOrDerivedDataset(jsonDsConfig, json, dataSet);
+		return dataSet;
+	}
+
+	private void createQbeOrDerivedDataset(JSONObject jsonDsConfig, JSONObject json, QbeDataSet dataSet) throws JSONException, IOException, EMFUserError {
 		manageDataSetMetadata(json, dataSet);
 		String qbeDatamarts = json.optString(DataSetConstants.QBE_DATAMARTS);
 		String dataSourceLabel = json.optString(DataSetConstants.QBE_DATA_SOURCE);
+		String dataSetLabel = json.optString(DataSetConstants.DATASET_LABEL);
 		String jsonQuery = json.optString(DataSetConstants.QBE_JSON_QUERY);
 		HashMap<String, Object> driversMap = null;
 		JSONObject driversJSON = json.optJSONObject(DRIVERS);
@@ -1067,7 +1132,12 @@ public class ManageDataSetsForREST {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot retrieve source dataset information", e);
 			}
 		}
-		return dataSet;
+		if (StringUtils.isNotEmpty(dataSetLabel)) {
+			IDataSet ds = DAOFactory.getDataSetDAO().loadDataSetByLabel(dataSetLabel);
+			IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(ds.getDataSource().getLabel());
+			dataSet.setDataSource(dataSource);
+			dataSet.setSourceDataset(ds);
+		}
 	}
 
 	private IDataSet manageCustomDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json) throws JSONException {
@@ -1837,6 +1907,19 @@ public class ManageDataSetsForREST {
 
 			IDataSet dataset = iDatasetDao.loadDataSetByLabel(ds.getLabel());
 			checkFileDataset(((VersionedDataSet) dataset).getWrappedDataset());
+
+			if (ds.getDsType().equals(DataSetConstants.DS_DERIVED)) {
+				if (((DerivedDataSet) ds).getSourceDataset() != null) {
+					if (((VersionedDataSet) dataset).getWrappedDataset().getDsType().equals(DataSetConstants.DS_DERIVED)) {
+						DerivedDataSet dsDerived = (DerivedDataSet) ((VersionedDataSet) dataset).getWrappedDataset();
+						dsDerived.setSourceDataset(((DerivedDataSet) ds).getSourceDataset());
+						dsDerived.setJsonQuery((((DerivedDataSet) ds).getJsonQuery()));
+						((VersionedDataSet) dataset).setWrappedDataset(dsDerived);
+
+					}
+
+				}
+			}
 
 			JSONArray parsListJSON = json.optJSONArray(DataSetConstants.PARS);
 			if (parsListJSON != null && parsListJSON.length() > 0) {

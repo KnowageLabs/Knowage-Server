@@ -67,7 +67,7 @@
         },
         "execute": "Execute",
         "expand": "expand",
-        "export": "export",
+        "export": "Export",
         "exportCSV": "Export CSV",
         "exportSuccess": "The download has started in background. You will find the result file in your download page.",
         "field": "Field",
@@ -167,6 +167,7 @@
         "snapshot": "Snapshot",
         "sort": "sort",
         "source": "Source",
+        "sourceDataset": "Source dataset",
         "sqlExpression": "SQL expression",
         "start": "Start",
         "state": "State",
@@ -1227,6 +1228,9 @@
             "dataPreparation": {
                 "datasetInvolvedIntoDataPrep": "Dataset is involved in a Data Preparation process, do you want to proceed?"
             },
+            "derived": {
+                "checkForExistingDerivedDatasets": "Dataset has active derived datasets, do you want to proceed?"
+            },
             "dataframeName": "Dataframe variable name",
             "decrypt": "Decrypt",
             "deleteAllParams": "Clear all dataset parameters",
@@ -1321,7 +1325,8 @@
             "typeOrJsonPathValue": "Type or JSON Path Type",
             "viewQbeButton": "View Qbe Query",
             "viewQbeMsg": "The dataset should be saved before viewing the QBE query",
-            "viewQbeWarning": "Cannot open QBE query"
+            "viewQbeWarning": "Cannot open QBE query",
+            "viewSQLButton": "View SQL Query"
         },
         "domainsManagement": {
             "domainCode": "Domain code",
@@ -2590,11 +2595,11 @@
             }
         },
         "myData": {
-            "cloneDataset": "Clone Dataset",
+            "cloneDataset": "Clone",
             "clonedDatasetWizard": "Cloned Dataset Wizard",
-            "csvExport": "Export Dataset to CSV",
+            "csvExport": "CSV",
             "datasetPreview": "Dataset Preview",
-            "deleteDataset": "Delete Dataset",
+            "deleteDataset": "Delete",
             "driverable": "Drivable",
             "exportSuccess": "The download has started in background. You will find the result file in your download page.",
             "fileDownload": "Download Dataset file",
@@ -2602,24 +2607,24 @@
             "modified": "Modified",
             "monitoring": "Monitoring",
             "openData": "Import Open Data",
-            "openDataPreparation": "Open Data Preparation",
+            "openDataPreparation": "Open in Data Preparation",
             "parametrical": "Parametrical",
             "parseError": "Impossible to parse file. Check its content and upload it again",
             "prepareData": "Prepare Data",
-            "shareDataset": "Share/Unshare Dataset",
+            "shareDataset": "Share/Unshare",
             "shareDatasetHint": "By selecting a category from the combo box you are sharing the data set for all the users that are able to manage the specified data set category.",
             "tablePrefix": "Table Prefix",
             "title": "My Data",
             "unshareDataset": "Unshare Dataset",
             "userRoleError": "User does not have valid roles for the execution of the selected dataset",
             "wizardTitle": "Dataset Wizard",
-            "xlsxExport": "Export Dataset to XLSX"
+            "xlsxExport": "XLSX"
         },
         "myModels": {
-            "deleteDataset": "Delete dataset",
-            "editDataset": "Edit dataset",
-            "openInQBE": "Open dataset in QBE",
-            "showInfo": "Show dataset info",
+            "deleteDataset": "Delete",
+            "editDataset": "Edit",
+            "openInQBE": "Open in QBE",
+            "showInfo": "Show info",
             "title": "My Models",
             "userRoleError": "User does not have valid roles for the execution of the selected model"
         },

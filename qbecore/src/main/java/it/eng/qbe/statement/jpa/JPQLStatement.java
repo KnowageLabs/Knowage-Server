@@ -243,4 +243,10 @@ public class JPQLStatement extends AbstractStatement {
 		return sqlQueryString;
 	}
 
+	@Override
+	public String getQuerySQLString(String wrappedDatasetQuery) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

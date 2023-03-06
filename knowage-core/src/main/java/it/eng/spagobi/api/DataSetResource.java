@@ -1121,14 +1121,16 @@ public class DataSetResource extends AbstractDataSetResource {
 					tableName = dataSetManagementAPI.persistDataset(label);
 					Monitor monitorIdx = MonitorFactory.start("spagobi.dataset.persist.indixes");
 					if (tableName != null) {
-						JSONArray columnsArray = labels.getJSONArray(label);
-						Set<String> columns = new HashSet<String>(columnsArray.length());
-						for (int i = 0; i < columnsArray.length(); i++) {
-							String column = columnsArray.getString(i);
-							columns.add(column);
-						}
-						if (columns.size() > 0) {
-							dataSetManagementAPI.createIndexes(label, columns);
+						if (!labels.isNull(label)) {
+							JSONArray columnsArray = labels.getJSONArray(label);
+							Set<String> columns = new HashSet<String>(columnsArray.length());
+							for (int i = 0; i < columnsArray.length(); i++) {
+								String column = columnsArray.getString(i);
+								columns.add(column);
+							}
+							if (columns.size() > 0) {
+								dataSetManagementAPI.createIndexes(label, columns);
+							}
 						}
 					}
 					monitorIdx.stop();
@@ -1204,6 +1206,23 @@ public class DataSetResource extends AbstractDataSetResource {
 		}
 		logger.debug("OUT");
 		return sb.toString();
+	}
+
+	@GET
+	@Path("/dataset/{dsLabel}/derived")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public boolean getDerivedDataSetByDsLabel(@PathParam("dsLabel") String dsLabel) {
+		try {
+			IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
+			datasetDao.setUserProfile(getUserProfile());
+			List<IDataSet> dataset = datasetDao.loadDerivedDataSetByLabel(dsLabel);
+			if (!dataset.isEmpty())
+				return true;
+			return false;
+		} catch (Exception e) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
+		}
 	}
 
 }

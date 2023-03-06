@@ -42,6 +42,7 @@ public class DataSetConstants {
 	public static final String DATASET_DELETE = "DATASET_DELETE";
 	public static final String DATASET_TEST = "DATASET_TEST";
 	public static final String DATASET_EXEC = "DATASET_EXEC";
+	public static final String DATASET_LABEL = "DATASET_LABEL";
 
 	public static final String DATASET_VERSION_RESTORE = "DATASET_VERSION_RESTORE";
 	public static final String DATASET_VERSION_DELETE = "DATASET_VERSION_DELETE";
@@ -69,7 +70,7 @@ public class DataSetConstants {
 
 	public static final String PARS = "pars";
 	public static final String METADATA = "meta";
-
+	public static final String SOURCE_DATA_SOURCE = "sourceDataSource";
 	public static final String DS_TYPE_CD = "dsTypeCd";
 	public static final String CONFIGURATION = "configuration";
 	public static final String FILE_NAME = "fileName";
@@ -94,7 +95,7 @@ public class DataSetConstants {
 	public static final String DS_PYTHON_NAME = "Python/R";
 	public static final String DS_SOLR_NAME = "Solr";
 	public static final String SPARQL = "SPARQL";
-
+	public static final String DERIVED = "Derived";
 	public static final String TRASFORMER_TYPE_CD = "trasfTypeCd";
 	public static final String PIVOT_COL_NAME = "pivotColName";
 	public static final String PIVOT_COL_VALUE = "pivotColValue";
@@ -118,7 +119,7 @@ public class DataSetConstants {
 	public static final String DS_SOLR_TYPE = SolrDataSet.DATASET_TYPE;
 	public static final String DS_SPARQL = "SbiSPARQLDataSet";
 	public static final String PREPARED_DATASET = PreparedDataSet.DS_TYPE;
-
+	public static final String DS_DERIVED = "SbiDerivedDataSet";
 	public static final String QBE_DATA_SOURCE = "qbeDataSource";
 	public static final String QBE_DATAMARTS = "qbeDatamarts";
 	public static final String QBE_JSON_QUERY = "qbeJSONQuery";
@@ -217,6 +218,7 @@ public class DataSetConstants {
 		code2name.put(DS_PYTHON_TYPE, DS_PYTHON_NAME);
 		code2name.put(DataSetConstants.DS_SPARQL, "SPARQL");
 		code2name.put(DataSetConstants.DS_PREPARED, "Prepared");
+		code2name.put(DataSetConstants.DS_DERIVED, "Derived");
 	}
 
 }

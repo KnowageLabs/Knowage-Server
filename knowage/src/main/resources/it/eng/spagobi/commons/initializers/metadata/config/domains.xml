@@ -488,6 +488,8 @@
 	
 	<DOMAIN valueCd="Prepared" valueNm="SbiPreparedDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiPreparedDataSet"/>
 	
+	<DOMAIN valueCd="Derived" valueNm="SbiDerivedDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiDerivedDataSet"/>
+		
 	<DOMAIN valueCd="org.hibernate.dialect.RedShiftDialect"
 		valueNm="sbidomains.nm.redshift" domainCd="DIALECT_HIB"
 		domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.redshift" />

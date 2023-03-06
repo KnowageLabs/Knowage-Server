@@ -19,7 +19,7 @@
                             v-model="dataset.pythonEnvironment.label"
                             @change="updateValueFromLabel(datasetTypes, 'value', $event.value)"
                             :class="{
-                                'p-invalid': !dataset.pythonEnvironment.label || dataset.pythonEnvironment.label === ''
+                                'p-invalid': !dataset.pythonEnvironment?.label || dataset.pythonEnvironment?.label === ''
                             }"
                         />
                         <label for="pythonEnvironment" class="kn-material-input-label"> {{ $t('managers.datasetManagement.environment') }} * </label>

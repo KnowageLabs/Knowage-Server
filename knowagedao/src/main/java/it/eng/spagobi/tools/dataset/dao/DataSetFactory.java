@@ -33,6 +33,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.qbe.dataset.DerivedDataSet;
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.security.IEngUserProfile;
@@ -111,6 +112,7 @@ public class DataSetFactory {
 	public static final String FLAT_DS_TYPE = "Flat";
 	public static final String PREPARED_DS_TYPE = "Prepared";
 	public static final String SPARQL_DS_TYPE = "SPARQL";
+	public static final String DERIVED_DS_TYPE = "Derived";
 
 	static private Logger logger = Logger.getLogger(DataSetFactory.class);
 
@@ -443,6 +445,11 @@ public class DataSetFactory {
 				}
 				ds.setDsType(QBE_DS_TYPE);
 
+			} else if (type.equalsIgnoreCase(DataSetConstants.DS_DERIVED)) {
+				ds = new DerivedDataSet();
+				ds.setConfiguration(sbiDataSet.getConfiguration());
+
+				ds.setDsType(DERIVED_DS_TYPE);
 			} else if (type.equalsIgnoreCase(DataSetConstants.DS_FLAT)) {
 				ds = new FlatDataSet();
 				ds.setConfiguration(sbiDataSet.getConfiguration());
