@@ -52,6 +52,7 @@ import internationalizationPlugin from './plugins/internationalization.js'
 import i18n from '@/App.i18n'
 
 import QBEOperator from './modules/qbe/qbeDialogs/qbeAdvancedFilterDialog/QBEOperator.vue'
+// import DocumentExecution from './modules/documentExecution/main/DocumentExecution.vue'
 
 if (import.meta.env.DEV) document.domain = 'localhost'
 
@@ -86,5 +87,6 @@ app.use(VueAxios, interceptor)
     .component('ProgressBar', ProgressBar)
     .component('Toolbar', Toolbar)
     .component('QBEOperator', QBEOperator)
+    // .component('DocumentExecution', DocumentExecution)
 
     .mount('#app')

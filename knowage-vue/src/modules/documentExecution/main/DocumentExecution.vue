@@ -101,7 +101,16 @@
             <DocumentExecutionMailDialog :visible="mailDialogVisible" @close="mailDialogVisible = false" @sendMail="onMailSave"></DocumentExecutionMailDialog>
             <DocumentExecutionLinkDialog :visible="linkDialogVisible" :link-info="linkInfo" :embed-h-t-m-l="embedHTML" :prop-document="document" :parameters="linkParameters" @close="linkDialogVisible = false"></DocumentExecutionLinkDialog>
             <DocumentExecutionSelectCrossNavigationDialog :visible="destinationSelectDialogVisible" :cross-navigation-documents="crossNavigationDocuments" @close="destinationSelectDialogVisible = false" @selected="onCrossNavigationSelected"></DocumentExecutionSelectCrossNavigationDialog>
-            <DocumentExecutionCNContainerDialog v-if="crossNavigationContainerData" :visible="crossNavigationContainerVisible" :data="crossNavigationContainerData" @close="onCrossNavigationContainerClose"></DocumentExecutionCNContainerDialog>
+            <DocumentExecutionCNContainerDialog v-if="angularData && crossNavigationContainerData" :visible="crossNavigationContainerVisible" :data="crossNavigationContainerData" @close="onCrossNavigationContainerClose"></DocumentExecutionCNContainerDialog>
+            <DocumentExecutionCrossDialog
+                v-if="crossNavigationDialogVisible"
+                :visible="crossNavigationDialogVisible"
+                :document="crossNavigationPopupDialogDocument"
+                :parameterValuesMap="parameterValuesMap"
+                :tabKey="tabKey"
+                @parametersChanged="$emit('parametersChanged', $event)"
+                @close="onCrossNavigationPopupClose"
+            ></DocumentExecutionCrossDialog>
         </div>
     </div>
 </template>
@@ -113,6 +122,12 @@ import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSideba
 import { iURLData, iExporter, iSchedulation, ICrossNavigationBreadcrumb, ICrossNavigationParameter } from './DocumentExecution'
 import { createToolbarMenuItems } from './DocumentExecutionHelpers'
 import { emitter } from '../dashboard/DashboardHelpers'
+import { mapState, mapActions } from 'pinia'
+import { getCorrectRolesForExecution } from '../../../helpers/commons/roleHelper'
+import { executeAngularCrossNavigation, loadCrossNavigation } from './DocumentExecutionAngularCrossNavigationHelper'
+import { getDocumentForCrossNavigation, getSelectedCrossNavigation, updateBreadcrumbForCrossNavigation } from './DocumentExecutionCrossNavigationHelper'
+import { loadFilters } from './DocumentExecutionDirverHelpers'
+import { IDashboardCrossNavigation } from '../dashboard/Dashboard'
 import DocumentExecutionBreadcrumb from './breadcrumbs/DocumentExecutionBreadcrumb.vue'
 import DocumentExecutionHelpDialog from './dialogs/documentExecutionHelpDialog/DocumentExecutionHelpDialog.vue'
 import DocumentExecutionRankDialog from './dialogs/documentExecutionRankDialog/DocumentExecutionRankDialog.vue'
@@ -130,14 +145,9 @@ import Olap from '../olap/Olap.vue'
 import DocumentExecutionSelectCrossNavigationDialog from './dialogs/documentExecutionSelectCrossNavigationDialog/DocumentExecutionSelectCrossNavigationDialog.vue'
 import DocumentExecutionCNContainerDialog from './dialogs/documentExecutionCNContainerDialog/DocumentExecutionCNContainerDialog.vue'
 import mainStore from '../../../App.store'
-import { mapState, mapActions } from 'pinia'
 import deepcopy from 'deepcopy'
 import DashboardController from '../dashboard/DashboardController.vue'
-import { getCorrectRolesForExecution } from '../../../helpers/commons/roleHelper'
-import { executeAngularCrossNavigation, loadCrossNavigation } from './DocumentExecutionAngularCrossNavigationHelper'
-import { getDocumentForCrossNavigation, getSelectedCrossNavigation, updateBreadcrumbForCrossNavigation } from './DocumentExecutionCrossNavigationHelper'
-import { loadFilters } from './DocumentExecutionDirverHelpers'
-import { IDashboardCrossNavigation } from '../dashboard/Dashboard'
+import DocumentExecutionCrossDialog from './dialogs/DocumentExecutionCrossDialog/DocumentExecutionCrossDialog.vue'
 
 // @ts-ignore
 // eslint-disable-next-line
@@ -173,7 +183,8 @@ export default defineComponent({
         Olap,
         DocumentExecutionSelectCrossNavigationDialog,
         DocumentExecutionCNContainerDialog,
-        DashboardController
+        DashboardController,
+        DocumentExecutionCrossDialog
     },
     props: {
         id: { type: String },
@@ -191,10 +202,7 @@ export default defineComponent({
             hiddenFormData: {} as any,
             hiddenFormUrl: '' as string,
             documentMode: 'VIEW',
-            filtersData: {} as {
-                filterStatus: iParameter[]
-                isReadyForExecution: boolean
-            },
+            filtersData: {} as { filterStatus: iParameter[]; isReadyForExecution: boolean },
             urlData: null as iURLData | null,
             exporters: null as iExporter[] | null,
             mode: null as string | null,
@@ -210,10 +218,7 @@ export default defineComponent({
             schedulationsTableVisible: false,
             schedulations: [] as any[],
             linkDialogVisible: false,
-            linkInfo: null as {
-                isPublic: boolean
-                noPublicRoleError: boolean
-            } | null,
+            linkInfo: null as { isPublic: boolean; noPublicRoleError: boolean } | null,
             sbiExecutionId: null as string | null,
             embedHTML: false,
             reloadTrigger: false,
@@ -233,7 +238,9 @@ export default defineComponent({
             crossNavigationContainerData: null as any,
             newDashboardMode: false,
             dashboardGeneralSettingsOpened: false,
-            crossNavigationPayload: null as { documentCrossNavigationOutputParameters: ICrossNavigationParameter[]; crossNavigationName: string | undefined; crossNavigations: IDashboardCrossNavigation[] } | null
+            crossNavigationPayload: null as { documentCrossNavigationOutputParameters: ICrossNavigationParameter[]; crossNavigationName: string | undefined; crossNavigations: IDashboardCrossNavigation[] } | null,
+            crossNavigationPopupDialogDocument: null as any,
+            crossNavigationDialogVisible: false
         }
     },
 
@@ -309,6 +316,8 @@ export default defineComponent({
         window.removeEventListener('message', this.iframeEventsListener)
     },
     async created() {
+        console.log('-------------- CREATED!')
+        console.log('-------------- DOCUMENT: ', this.document)
         this.setEventListeners()
 
         window.addEventListener('message', this.iframeEventsListener)
@@ -906,6 +915,7 @@ export default defineComponent({
             return luxonFormatDate(date, format, useDefaultFormat ? undefined : this.configurations['SPAGOBI.DATE-FORMAT-SERVER.format'])
         },
         async onBreadcrumbClick(item: any) {
+            if (!item) return
             this.document = item.document
             this.filtersData = item.filtersData
             this.urlData = item.urlData
@@ -1034,7 +1044,7 @@ export default defineComponent({
         },
         onCrossNavigationContainerClose() {
             this.crossNavigationContainerData = null
-            this.crossNavigationContainerVisible = true
+            this.crossNavigationContainerVisible = false
             this.onBreadcrumbClick(this.breadcrumbs[0])
         },
         addWidget() {
@@ -1102,18 +1112,21 @@ export default defineComponent({
             }
 
             this.document = getDocumentForCrossNavigation(payload.documentCrossNavigationOutputParameters, this.filtersData, selectedCrossNavigation)
-            this.executeCrossNavigation(selectedCrossNavigation)
+            this.executeCrossNavigation(selectedCrossNavigation, payload.documentCrossNavigationOutputParameters)
         },
         async getDocumentAfterCrossNavigationIsSelected(crossNavigation: IDashboardCrossNavigation) {
             const documentCrossNavigationParameters = this.crossNavigationPayload ? this.crossNavigationPayload.documentCrossNavigationOutputParameters : []
-            this.document = getDocumentForCrossNavigation(documentCrossNavigationParameters, this.filtersData, crossNavigation)
-            this.executeCrossNavigation(crossNavigation)
+            console.log('crossNavigation type: ', crossNavigation.crossType)
+            if (crossNavigation.crossType !== 1) this.document = getDocumentForCrossNavigation(documentCrossNavigationParameters, this.filtersData, crossNavigation)
+            this.executeCrossNavigation(crossNavigation, documentCrossNavigationParameters)
         },
-        async executeCrossNavigation(crossNavigation: IDashboardCrossNavigation) {
-            if (this.document.crossType === 2) {
+        async executeCrossNavigation(crossNavigation: IDashboardCrossNavigation, documentCrossNavigationParameters: ICrossNavigationParameter[]) {
+            if (crossNavigation.crossType === 2) {
                 this.openCrossNavigationInNewWindow(crossNavigation)
-            } else if (this.document.crossType === 1) {
-                /// TODO - OPEN IN POPUP DIALOG
+            } else if (crossNavigation.crossType === 1) {
+                console.log('------------- GOT HERE!')
+                this.crossNavigationPopupDialogDocument = getDocumentForCrossNavigation(documentCrossNavigationParameters, this.filtersData, crossNavigation)
+                this.crossNavigationDialogVisible = true
             } else {
                 updateBreadcrumbForCrossNavigation(this.breadcrumbs, this.document)
                 await this.loadPage(false, this.document.dsLabel, false)
@@ -1126,6 +1139,11 @@ export default defineComponent({
             const url = 'http://localhost:3000' + `/knowage-vue/document-browser/dashboard/${this.document.label}?role=${this.userRole}&crossNavigationParameters=${parameters}`
             const popupOptions = crossNavigation.popupOptions ?? { width: '800', height: '600' }
             window.open(url, '_blank', `toolbar=0,status=0,menubar=0,width=${popupOptions.width},height=${popupOptions.height}`)
+        },
+        onCrossNavigationPopupClose() {
+            this.crossNavigationPopupDialogDocument = null
+            this.crossNavigationDialogVisible = false
+            this.onBreadcrumbClick(this.breadcrumbs[this.breadcrumbs.length - 1])
         }
     }
 })
