@@ -66,6 +66,14 @@
                 "type": "ColumnStyle"
             },
             {
+                "title": "dashboard.widgetEditor.pivot.style.totals",
+                "type": "Totals"
+            },
+            {
+                "title": "dashboard.widgetEditor.pivot.style.subTotals",
+                "type": "SubTotals"
+            },
+            {
                 "title": "dashboard.widgetEditor.background",
                 "type": "BackgroundColorStyle"
             },

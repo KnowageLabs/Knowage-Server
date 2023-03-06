@@ -746,3 +746,15 @@ export interface IPivotTooltips {
         text: string
     }
 }
+export interface IPivotTotal {
+    enabled: boolean
+    properties: {
+        'font-weight': string
+        'font-style': string
+        'font-size': string
+        'font-family': string
+        'justify-content': string
+        color: string
+        'background-color': string
+    }
+}

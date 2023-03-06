@@ -59,6 +59,10 @@ export default defineComponent({
                     return this.widgetModel.settings.configuration.fieldPicker
                 case 'FieldPanel':
                     return this.widgetModel.settings.configuration.fieldPanel
+                case 'Totals':
+                    return this.widgetModel.settings.style.totals
+                case 'SubTotals':
+                    return this.widgetModel.settings.style.subTotals
                 default:
                     return null
             }

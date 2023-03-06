@@ -19,7 +19,7 @@ import { defineComponent, PropType } from 'vue'
 import mainStore from '../../../../../App.store'
 import dashboardStore from '../../Dashboard.store'
 
-// import { sales } from './MockData.js'
+import { getWidgetStyleByType } from '../TableWidget/TableWidgetHelper'
 
 export default defineComponent({
     name: 'table-widget',
@@ -137,8 +137,6 @@ export default defineComponent({
                     const modelFields = this.propWidget.fields[fieldsName]
                     modelFields.forEach((modelField) => {
                         const tempField = {} as any
-                        // console.log('FIELD', modelField)
-
                         const index = responseMetadataFields.findIndex((metaField: any) => {
                             if (typeof metaField == 'object') return metaField.header.toLowerCase() === modelField.alias.toLowerCase()
                         })
@@ -149,8 +147,6 @@ export default defineComponent({
                         tempField.dataField = `column_${index}`
                         tempField.area = this.getDataField(fieldsName)
                         if (modelField.sort) tempField.sortOrder = modelField.sort.toLowerCase()
-
-                        // console.log('INDEX FOUND', index, tempField)
 
                         formattedFields.push(tempField)
                     })
@@ -199,13 +195,25 @@ export default defineComponent({
         //#region ===================== Totals Config (Sub, Grand, Style) ====================================================
         setTotals(cellEvent) {
             if (cellEvent.area === 'column') this.setTotalLabels(cellEvent, 'columns')
-            else if (cellEvent.area === 'row') this.setTotalLabels(cellEvent, 'rows')
+            if (cellEvent.area === 'row') this.setTotalLabels(cellEvent, 'rows')
+            this.setTotalStyles(cellEvent)
         },
         setTotalLabels(cellEvent, fieldType) {
             const columnConfig = this.propWidget.settings.configuration[fieldType]
 
             if (cellEvent.cell.type === 'GT') cellEvent.cellElement.innerHTML = columnConfig.grandTotalLabel
             else if (cellEvent.cell.type === 'T') cellEvent.cellElement.innerHTML = columnConfig.subTotalLabel
+        },
+        setTotalStyles(cellEvent) {
+            let totalType = null as any
+            if (cellEvent.cell.type === 'GT' || cellEvent.cell.rowType === 'GT' || cellEvent.cell.columnType === 'GT') totalType = 'totals'
+            else if (cellEvent.cell.type === 'T' || cellEvent.cell.rowType === 'T' || cellEvent.cell.columnType === 'T') totalType = 'subTotals'
+
+            const styleConfig = getWidgetStyleByType(this.propWidget, totalType)
+            if (styleConfig != '') {
+                //TODO: justify-content ne moze da radi u ovom slucaju, mora na style toolbar da se promeni u text-align
+                cellEvent.cellElement.style = styleConfig + 'text-align:left !important;'
+            }
         },
         //#endregion ===============================================================================================
 

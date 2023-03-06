@@ -403,6 +403,10 @@
                     "showFieldPicker": "Show Integrated Field Picker",
                     "fieldPicker": "Field Picker",
                     "fieldPanel": "Field Panel"
+                },
+                "style": {
+                    "totals": "Totals",
+                    "subTotals": "SubTotals"
                 }
             },
             "absolute": "Absolute",

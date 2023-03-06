@@ -14,7 +14,8 @@ import {
     IWidgetRowsStyle,
     IWidgetShadowsStyle,
     IWidgetTitle,
-    IPivotFieldPanel
+    IPivotFieldPanel,
+    IPivotTotal
 } from '../../Dashboard'
 
 export interface IPivotTableSettings {
@@ -44,4 +45,6 @@ export interface IPivotTableStyle {
     borders: IWidgetBordersStyle
     padding: IWidgetPaddingStyle
     shadows: IWidgetShadowsStyle
+    totals: IPivotTotal
+    subTotals: IPivotTotal
 }

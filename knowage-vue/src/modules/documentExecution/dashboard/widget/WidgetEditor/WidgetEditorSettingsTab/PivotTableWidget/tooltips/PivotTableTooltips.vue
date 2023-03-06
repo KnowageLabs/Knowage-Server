@@ -89,12 +89,11 @@ import { emitter } from '../../../../../DashboardHelpers'
 import descriptor from './PivotTableTooltipsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
-import InputNumber from 'primevue/inputnumber'
 import WidgetEditorColumnsMultiselect from '../../common/WidgetEditorColumnsMultiselect.vue'
 
 export default defineComponent({
     name: 'table-widget-tooltips',
-    components: { Dropdown, InputSwitch, InputNumber, WidgetEditorColumnsMultiselect },
+    components: { Dropdown, InputSwitch, WidgetEditorColumnsMultiselect },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, variables: { type: Array as PropType<IVariable[]> } },
 
     data() {

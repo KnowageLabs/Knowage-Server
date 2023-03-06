@@ -17,3 +17,7 @@ export const getDefaultFieldPanel = () => {
 export const getDefaultTooltips = () => {
     return deepcopy(descriptor.defaultTooltips)
 }
+
+export const getDefaultTotals = () => {
+    return deepcopy(descriptor.defaultTotals)
+}
