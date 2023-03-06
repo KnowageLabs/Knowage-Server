@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.websocket.CloseReason;
+import javax.websocket.CloseReason.CloseCodes;
 import javax.websocket.EncodeException;
 import javax.websocket.EndpointConfig;
 import javax.websocket.OnClose;
@@ -55,7 +57,7 @@ public class KnowageWebSocket {
 		UserProfile userProfile = (UserProfile) userProperties.get(USER_PROPERTIES_USER_PROFILE);
 
 		if (Objects.nonNull(userProfile)) {
-			SessionData sessionData = new SessionData(session, config);
+			SessionData sessionData = new SessionData(session, userProfile, config);
 
 			session2SessionData.put(session, sessionData);
 
@@ -64,9 +66,9 @@ public class KnowageWebSocket {
 
 			// Force sync of news
 			newsFeed.refresh(sessionData.subscribeForOrganization());
-		} /* else {
+		} else {
 			session.close(new CloseReason(CloseCodes.CANNOT_ACCEPT, "Invalid user"));
-		}*/
+		}
 	}
 
 	@OnMessage
