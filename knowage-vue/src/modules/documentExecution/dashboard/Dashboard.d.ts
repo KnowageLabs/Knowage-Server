@@ -735,3 +735,14 @@ export interface IPivotFieldPicker {
 export interface IPivotFieldPanel {
     enabled: boolean
 }
+export interface IPivotTooltips {
+    target: string | string[]
+    enabled: boolean
+    prefix: string
+    suffix: string
+    precision: number
+    header: {
+        enabled: boolean
+        text: string
+    }
+}

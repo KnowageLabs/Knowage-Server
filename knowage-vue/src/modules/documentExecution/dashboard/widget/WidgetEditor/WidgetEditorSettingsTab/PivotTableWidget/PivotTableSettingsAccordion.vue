@@ -23,6 +23,7 @@
                 <PivotTableRowsConfig v-else-if="accordion.type === 'Rows'" :widgetModel="widgetModel" />
                 <PivotTableColumnsConfig v-else-if="accordion.type === 'Columns'" :widgetModel="widgetModel" />
                 <PivotTableFieldPicker v-else-if="accordion.type === 'FieldPicker'" :widgetModel="widgetModel" />
+                <PivotTableTooltips v-else-if="accordion.type === 'Tooltips'" :widgetModel="widgetModel" />
             </AccordionTab>
         </Accordion>
     </div>
@@ -50,9 +51,10 @@ import WidgetTitleStyle from '../common/style/WidgetTitleStyle.vue'
 import WidgetPaddingStyle from '../common/style/WidgetPaddingStyle.vue'
 import WidgetBackgroundColorStyle from '../common/style/WidgetBackgroundColorStyle.vue'
 import PivotTableSettingsAccordionHeader from './PivotTableSettingsAccordionHeader.vue'
-import PivotTableRowsConfig from '../PivotTableWidget/configuration/PivotTableRowsConfig.vue'
-import PivotTableColumnsConfig from '../PivotTableWidget/configuration/PivotTableColumnsConfig.vue'
-import PivotTableFieldPicker from '../PivotTableWidget/configuration/PivotTableFieldPicker.vue'
+import PivotTableRowsConfig from './configuration/PivotTableRowsConfig.vue'
+import PivotTableColumnsConfig from './configuration/PivotTableColumnsConfig.vue'
+import PivotTableFieldPicker from './configuration/PivotTableFieldPicker.vue'
+import PivotTableTooltips from './tooltips/PivotTableTooltips.vue'
 
 export default defineComponent({
     name: 'pivot-table-settings-accordion',
@@ -76,7 +78,8 @@ export default defineComponent({
         PivotTableSettingsAccordionHeader,
         PivotTableRowsConfig,
         PivotTableColumnsConfig,
-        PivotTableFieldPicker
+        PivotTableFieldPicker,
+        PivotTableTooltips
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

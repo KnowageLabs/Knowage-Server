@@ -25,5 +25,17 @@
         "height": 600,
         "width": 600
     },
-    "defaultTooltops": {}
+    "defaultTooltips": [
+        {
+            "enabled": true,
+            "header": {
+                "enabled": false,
+                "text": ""
+            },
+            "precision": 0,
+            "prefix": "",
+            "suffix": "",
+            "target": "all"
+        }
+    ]
 }

@@ -1,4 +1,4 @@
-import { IDashboard, IDashboardDriver, ITableWidgetConditionalStyle, ITableWidgetConditionalStyles, ITableWidgetStyle, IVariable, IWidget, IWidgetInteractions, IWidgetResponsive } from '../../Dashboard'
+import { IDashboard, IDashboardDriver, IPivotTooltips, ITableWidgetConditionalStyle, ITableWidgetConditionalStyles, ITableWidgetStyle, IVariable, IWidget, IWidgetInteractions, IWidgetResponsive } from '../../Dashboard'
 // import * as pivotTalbeDefaultValues from '../../widget/WidgetEditor/helpers/pivotTableWidget/PivotTableDefaultValues'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 // import { getFiltersForColumns } from '../DashboardBackwardCompatibilityHelper'
@@ -46,7 +46,7 @@ const getFormattedWidgetSettings = (widget: any, formattedDashboardModel: IDashb
         interactions: getFormattedInteractions(widget) as IWidgetInteractions,
         style: getFormattedStyle(widget) as ITableWidgetStyle,
         responsive: widgetCommonDefaultValues.getDefaultResponsivnes() as IWidgetResponsive,
-        tooltips: pivotTableDefaultValues.getDefaultTooltips()
+        tooltips: pivotTableDefaultValues.getDefaultTooltips() as IPivotTooltips[]
     } as IPivotTableSettings
     return formattedSettings
 }

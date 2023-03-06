@@ -81,6 +81,12 @@
                 "title": "dashboard.widgetEditor.shadows.title",
                 "type": "ShadowsStyle"
             }
+        ],
+        "Tooltips": [
+            {
+                "title": "dashboard.widgetEditor.tooltips.title",
+                "type": "Tooltips"
+            }
         ]
     },
     "settingsListOptions": [
@@ -98,6 +104,11 @@
             "icon": "fa fa-hand-pointer",
             "label": "dashboard.widgetEditor.interactions.title",
             "value": "Interactions"
+        },
+        {
+            "icon": "fa fa-commenting",
+            "label": "dashboard.widgetEditor.tooltips.title",
+            "value": "Tooltips"
         },
         {
             "icon": "pi pi-tablet",

@@ -14,7 +14,7 @@ import { DxButton } from 'devextreme-vue/button'
 import Tooltip from 'devextreme/ui/tooltip'
 import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source'
 
-import { IDashboardDataset, ISelection, IWidget } from '../../Dashboard'
+import { IDashboardDataset, IPivotTooltips, ISelection, IWidget } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
 import mainStore from '../../../../../App.store'
 import dashboardStore from '../../Dashboard.store'
@@ -178,20 +178,23 @@ export default defineComponent({
 
         //#region ===================== Cell Config (Totals, Stlye, Conditionals) ====================================================
         setCellConfiguration(event) {
-            if (event.area && event.cell.value == 14) {
-                const pivotFields = this.dataSource.fields()
-                const parentField = pivotFields[pivotFields.findIndex((field: any) => field.area === 'data' && field.areaIndex === event.cell.dataIndex)]
+            const pivotFields = this.dataSource.fields()
+            // if (event.area && event.cell.value == 14) {
+            //     const pivotFields = this.dataSource.fields()
+            //     const parentField = pivotFields[pivotFields.findIndex((field: any) => field.area === 'data' && field.areaIndex === event.cell.dataIndex)]
 
-                console.group('cellPrep ---------------------', event.cellElement)
-                console.log('CELL EVENT', event)
-                console.log('PARENT FIELD', parentField)
-                // console.log('FIELDS', this.dataSource.fields())
-                console.groupEnd()
-            }
+            //     console.group('cellPrep ---------------------', event.cellElement)
+            //     console.log('CELL EVENT', event)
+            //     console.log('PARENT FIELD', parentField)
+            //     // console.log('FIELDS', this.dataSource.fields())
+            //     console.groupEnd()
+            // }
 
             this.setTotals(event)
+            this.setTooltips(event, pivotFields)
             // this.createFieldTooltips(event)
         },
+        //#endregion ===============================================================================================
 
         //#region ===================== Totals Config (Sub, Grand, Style) ====================================================
         setTotals(cellEvent) {
@@ -206,8 +209,27 @@ export default defineComponent({
         },
         //#endregion ===============================================================================================
 
-        createFieldTooltips(cellEvent) {
-            //TODO DARKO: add correct cell values from cellEvent
+        //#region ===================== Tooltips Config  ====================================================
+        //Tooltips - we cannot target custom headers if they are not in data fields...we have no way of knowing which field they belong.
+        //Tooltips - ALL Fields can have, well all tooltips, same with headers. That would be the workaround. Specific ones, cant have custom headers.
+        //Tooltips - TODO: Remove custom headers completely from UI?
+
+        setTooltips(cellEvent, pivotFields) {
+            let cellTooltipConfig = null as unknown as IPivotTooltips
+
+            const tooltipsConfig = this.propWidget.settings.tooltips as IPivotTooltips[]
+            const parentField = pivotFields[pivotFields.findIndex((field: any) => cellEvent.area === 'data' && field.area === 'data' && field.areaIndex === cellEvent.cell.dataIndex)] as any
+
+            if (parentField?.id && tooltipsConfig.length >= 1) {
+                for (let index = 1; index < tooltipsConfig.length; index++) {
+                    const tooltipConfig = tooltipsConfig[index]
+                    if (tooltipConfig.target.includes(parentField.id)) cellTooltipConfig = tooltipConfig
+                }
+            } else if (!cellTooltipConfig && tooltipsConfig[0].enabled) cellTooltipConfig = tooltipsConfig[0]
+
+            if (cellTooltipConfig) this.createFieldTooltips(cellEvent, cellTooltipConfig, tooltipsConfig[0])
+        },
+        createFieldTooltips(cellEvent, tooltipConfig: IPivotTooltips, allCellConfig: IPivotTooltips) {
             const container = document.createElement('div')
             cellEvent.cellElement.appendChild(container)
             new Tooltip(container, {
@@ -217,8 +239,13 @@ export default defineComponent({
                 hideEvent: 'mouseleave click',
                 contentTemplate: function (content) {
                     const label = document.createElement('div')
-                    label.innerHTML = '<b>Test</b>'
-                    content.appendChild(label)
+                    if (cellEvent.area == 'data') {
+                        label.innerHTML = `<b>${tooltipConfig.prefix} ${cellEvent.cell.text} ${tooltipConfig.suffix}</b>`
+                        content.appendChild(label)
+                    } else {
+                        label.innerHTML = `<b>${allCellConfig.header.enabled ? allCellConfig.header.text : cellEvent.cell.text}</b>`
+                        content.appendChild(label)
+                    }
                 }
             })
         }
