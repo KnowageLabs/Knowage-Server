@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, ITawbleWidgetHeadersStyle, IWidgetStyleToolbarModel } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget, ITableWidgetHeadersStyle, IWidgetStyleToolbarModel } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
 import settingsDescriptor from '../../WidgetEditorSettingsTabDescriptor.json'
 import InputNumber from 'primevue/inputnumber'
@@ -27,7 +27,7 @@ export default defineComponent({
     data() {
         return {
             settingsDescriptor,
-            headersStyleModel: null as ITawbleWidgetHeadersStyle | null
+            headersStyleModel: null as ITableWidgetHeadersStyle | null
         }
     },
     created() {

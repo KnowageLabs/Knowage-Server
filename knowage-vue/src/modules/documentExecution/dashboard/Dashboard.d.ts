@@ -242,7 +242,7 @@ export interface ITableWidgetStyle {
     borders: IWidgetBordersStyle
     columns: ITableWidgetColumnStyles
     columnGroups: ITableWidgetColumnStyles
-    headers: ITawbleWidgetHeadersStyle
+    headers: ITableWidgetHeadersStyle
     padding: IWidgetPaddingStyle
     rows: IWidgetRowsStyle
     shadows: IWidgetShadowsStyle
@@ -282,7 +282,7 @@ export interface ITableWidgetColumnStyle {
     }
 }
 
-export interface ITawbleWidgetHeadersStyle {
+export interface ITableWidgetHeadersStyle {
     height: number
     properties: {
         'background-color': string

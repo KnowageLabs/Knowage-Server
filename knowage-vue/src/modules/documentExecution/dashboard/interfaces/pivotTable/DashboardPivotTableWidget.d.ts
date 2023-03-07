@@ -4,7 +4,7 @@ import {
     IPivotRowsConfiguration,
     ITableWidgetColumnStyles,
     ITableWidgetConditionalStyles,
-    ITawbleWidgetHeadersStyle,
+    ITableWidgetHeadersStyle,
     IWidgetBackgroundStyle,
     IWidgetBordersStyle,
     IWidgetExports,
@@ -21,7 +21,7 @@ import {
 export interface IPivotTableSettings {
     updatable: boolean
     clickable: boolean
-    conditionalStyles: ITableWidgetConditionalStyles // TODO - Darko see if needed or it needs to be changed to use another interface (probably)
+    conditionalStyles: ITableWidgetConditionalStyles
     configuration: IPivotTableConfiguration
     interactions: IWidgetInteractions
     style: IPivotTableStyle
@@ -38,7 +38,7 @@ export interface IPivotTableConfiguration {
 
 export interface IPivotTableStyle {
     title: IWidgetTitle
-    headers: ITawbleWidgetHeadersStyle
+    headers: ITableWidgetHeadersStyle
     fields: ITableWidgetColumnStyles
     rows: IWidgetRowsStyle
     background: IWidgetBackgroundStyle
