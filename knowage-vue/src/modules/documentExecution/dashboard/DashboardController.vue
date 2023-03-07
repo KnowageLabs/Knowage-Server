@@ -241,10 +241,10 @@ export default defineComponent({
             clearAllDatasetIntervals()
         },
         emptyStoreValues() {
+            if (!this.dashboardId) return
             this.store.removeDashboard(this.dashboardId)
             this.store.setCrossNavigations(this.dashboardId, [])
             this.store.setOutputParameters(this.dashboardId, [])
-            this.store.setSelections(this.dashboardId, [], this.$http)
             this.store.setSelections(this.dashboardId, [], this.$http)
             this.setDashboardDrivers(this.dashboardId, [])
             this.setProfileAttributes([])

@@ -59,16 +59,16 @@ const store = defineStore('dashboardStore', {
             return temp ?? []
         },
         getCrossNavigations(dashboardId: string) {
-            return this.dashboards[dashboardId].crossNavigations
+            return this.dashboards[dashboardId] ? this.dashboards[dashboardId].crossNavigations : []
         },
         setCrossNavigations(dashboardId: string, crossNavigations: any[]) {
-            this.dashboards[dashboardId].crossNavigations = crossNavigations
+            if (this.dashboards[dashboardId]) this.dashboards[dashboardId].crossNavigations = crossNavigations
         },
         getOutputParameters(dashboardId: string) {
-            return this.dashboards[dashboardId].outputParameters
+            return this.dashboards[dashboardId] ? this.dashboards[dashboardId].outputParameters : []
         },
         setOutputParameters(dashboardId: string, outputParameters: any) {
-            this.dashboards[dashboardId].outputParameters = outputParameters
+            if (this.dashboards[dashboardId]) this.dashboards[dashboardId].outputParameters = outputParameters
         },
         getSelections(dashboardId: string) {
 
@@ -78,7 +78,8 @@ const store = defineStore('dashboardStore', {
             this.internationalization = internationalization
         },
         setSelections(dashboardId: string, selections: ISelection[], $http: any) {
-            this.dashboards[dashboardId].selections = selections
+            if (this.dashboards[dashboardId]) this.dashboards[dashboardId].selections = selections
+            if (!this.dashboards[dashboardId]) return
             if (selections.length > 0 && selectionsUseDatasetWithAssociation(selections, this.dashboards[dashboardId].configuration.associations)) {
                 loadAssociativeSelections(this.dashboards[dashboardId], this.allDatasets, selections, $http)
             } else {
@@ -123,7 +124,7 @@ const store = defineStore('dashboardStore', {
             return this.dashboards[dashboardId].drivers
         },
         setDashboardDrivers(dashboardId: string, drivers: IDashboardDriver[]) {
-            this.dashboards[dashboardId].drivers = drivers
+            if (this.dashboards[dashboardId]) this.dashboards[dashboardId].drivers = drivers
         },
         getAllDatasetLoadedFlag(dashboardId: string) {
             return this.dashboards[dashboardId].allDatasetsLoaded

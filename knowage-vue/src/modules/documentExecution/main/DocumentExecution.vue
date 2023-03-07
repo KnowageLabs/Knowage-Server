@@ -775,7 +775,7 @@ export default defineComponent({
             this.urlData = item.urlData
             this.hiddenFormData = item.hiddenFormData
             this.documentMode = 'VIEW'
-            this.parameterSidebarVisible = false
+            this.parameterSidebarVisible = !this.filtersData || this.filtersData.isReadyForExecution === false
             this.updateMode()
         },
         async onRoleChange(role: string) {
@@ -924,7 +924,6 @@ export default defineComponent({
                 return
             }
 
-            this.document = getDocumentForCrossNavigation(payload.documentCrossNavigationOutputParameters, this.filtersData, selectedCrossNavigation)
             this.executeCrossNavigation(selectedCrossNavigation, payload.documentCrossNavigationOutputParameters)
         },
         async getDocumentAfterCrossNavigationIsSelected(crossNavigation: IDashboardCrossNavigation) {
@@ -939,6 +938,7 @@ export default defineComponent({
                 this.crossNavigationPopupDialogDocument = getDocumentForCrossNavigation(documentCrossNavigationParameters, this.filtersData, crossNavigation)
                 this.crossNavigationDialogVisible = true
             } else {
+                this.document = getDocumentForCrossNavigation(documentCrossNavigationParameters, this.filtersData, crossNavigation)
                 updateBreadcrumbForCrossNavigation(this.breadcrumbs, this.document)
                 await this.loadPage(false, this.document.dsLabel, false)
             }
