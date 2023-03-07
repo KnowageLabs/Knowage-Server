@@ -84,6 +84,7 @@ export default defineComponent({
     created() {
         this.setEventListeners()
         this.loadModel()
+        this.loadSelectedDataset()
         this.loadDatasets()
     },
     unmounted() {
@@ -110,15 +111,13 @@ export default defineComponent({
                 }
             })
 
-            if (this.datasetOptions.length === 1 && this.model) {
+            if (this.datasetOptions.length === 1) {
                 this.selectedDataset = this.datasetOptions[0]
-                this.model.dataset = this.selectedDataset.id
                 this.onDatasetSelected()
             }
         },
         loadModel() {
             this.model = this.widgetModel
-            this.loadSelectedDataset()
             this.loadDatasetColumns()
         },
         loadSelectedDataset() {
@@ -129,10 +128,12 @@ export default defineComponent({
             }
         },
         onDatasetSelected() {
-            if (!this.model) return
             this.loadDatasetColumns()
-            this.removeSelectedColumnsFromModel()
-            this.model.dataset = this.selectedDataset ? this.selectedDataset.id : null
+            this.loadModel()
+            if (this.model) {
+                this.model.dataset = this.selectedDataset ? this.selectedDataset.id : null
+                if (this.model.dataset !== this.selectedDataset?.id) this.removeSelectedColumnsFromModel()
+            }
             this.$emit('datasetSelected', this.selectedDataset)
             emitter.emit('clearWidgetData', this.widgetModel.id)
         },

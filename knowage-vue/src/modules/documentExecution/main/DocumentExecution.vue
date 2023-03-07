@@ -76,8 +76,9 @@
                     :document="document"
                     :reload-trigger="reloadTrigger"
                     :hidden-form-data="document.hiddenFormData"
-                    :filtersData="document.filtersData"
-                    :newDashboardMode="false"
+                    :mode="'dashboard-popup'"
+                    :filters-data="document.filtersData"
+                    :new-dashboard-mode="false"
                 ></DashboardController>
                 <div v-show="mode === 'dashboard' || newDashboardMode" class="p-d-flex p-flex-row" style="height: 100%">
                     <template v-for="(item, index) in breadcrumbs" :key="index">
@@ -85,12 +86,13 @@
                             :visible="
                                 filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible && (item.label === document.name || (crossNavigationContainerData && index === breadcrumbs.length - 1) || (crossNavigationDialogVisible && index === breadcrumbs.length - 1))
                             "
-                            :sbiExecutionId="urlData?.sbiExecutionId"
+                            :sbi-execution-id="urlData?.sbiExecutionId"
                             :document="item.document"
-                            :reloadTrigger="reloadTrigger"
-                            :hiddenFormData="item.hiddenFormData"
-                            :filtersData="item.filtersData"
-                            :newDashboardMode="newDashboardMode"
+                            :reload-trigger="reloadTrigger"
+                            :hidden-form-data="item.hiddenFormData"
+                            :filters-data="item.filtersData"
+                            :new-dashboard-mode="newDashboardMode"
+                            :mode="mode"
                             @newDashboardSaved="onNewDashboardSaved"
                             @executeCrossNavigation="onExecuteCrossNavigation"
                         ></DashboardController>
@@ -133,14 +135,14 @@
             <DocumentExecutionLinkDialog :visible="linkDialogVisible" :link-info="linkInfo" :embed-h-t-m-l="embedHTML" :prop-document="document" :parameters="linkParameters" @close="linkDialogVisible = false"></DocumentExecutionLinkDialog>
             <DocumentExecutionSelectCrossNavigationDialog :visible="destinationSelectDialogVisible" :cross-navigation-documents="crossNavigationDocuments" @close="destinationSelectDialogVisible = false" @selected="onCrossNavigationSelected"></DocumentExecutionSelectCrossNavigationDialog>
             <DocumentExecutionCNContainerDialog v-if="angularData && crossNavigationContainerData" :visible="crossNavigationContainerVisible" :data="crossNavigationContainerData" @close="onCrossNavigationContainerClose"></DocumentExecutionCNContainerDialog>
-            <Dialog class="p-fluid kn-dialog--toolbar--primary" :content-style="descriptor.popupDialog.style" :visible="crossNavigationDialogVisible" :modal="true" :showHeader="false" :closable="false">
+            <Dialog class="p-fluid kn-dialog--toolbar--primary" :content-style="descriptor.popupDialog.style" :visible="crossNavigationDialogVisible" :modal="true" :show-header="false" :closable="false">
                 <DocumentExecution
                     v-if="crossNavigationPopupDialogDocument"
                     :id="crossNavigationPopupDialogDocument?.label"
                     :prop-mode="'document-execution-cross-navigation-popup'"
                     :parameter-values-map="parameterValuesMap"
                     :tab-key="tabKey"
-                    :propCrossNavigationPopupDialogDocument="crossNavigationPopupDialogDocument"
+                    :prop-cross-navigation-popup-dialog-document="crossNavigationPopupDialogDocument"
                     @parametersChanged="$emit('parametersChanged', $event)"
                     @close="onCrossNavigationPopupClose()"
                 ></DocumentExecution>
@@ -775,7 +777,7 @@ export default defineComponent({
             this.urlData = item.urlData
             this.hiddenFormData = item.hiddenFormData
             this.documentMode = 'VIEW'
-            this.parameterSidebarVisible = false
+            this.parameterSidebarVisible = !this.filtersData || this.filtersData.isReadyForExecution === false
             this.updateMode()
         },
         async onRoleChange(role: string) {
@@ -924,31 +926,30 @@ export default defineComponent({
                 return
             }
 
-            this.document = getDocumentForCrossNavigation(payload.documentCrossNavigationOutputParameters, this.filtersData, selectedCrossNavigation)
             this.executeCrossNavigation(selectedCrossNavigation, payload.documentCrossNavigationOutputParameters)
         },
         async getDocumentAfterCrossNavigationIsSelected(crossNavigation: IDashboardCrossNavigation) {
             const documentCrossNavigationParameters = this.crossNavigationPayload ? this.crossNavigationPayload.documentCrossNavigationOutputParameters : []
-            if (crossNavigation.crossType !== 1) this.document = getDocumentForCrossNavigation(documentCrossNavigationParameters, this.filtersData, crossNavigation)
             this.executeCrossNavigation(crossNavigation, documentCrossNavigationParameters)
         },
         async executeCrossNavigation(crossNavigation: IDashboardCrossNavigation, documentCrossNavigationParameters: ICrossNavigationParameter[]) {
             if (crossNavigation.crossType === 2) {
-                this.openCrossNavigationInNewWindow(crossNavigation)
+                const tempDocument = getDocumentForCrossNavigation(documentCrossNavigationParameters, this.filtersData, crossNavigation)
+                this.openCrossNavigationInNewWindow(tempDocument, crossNavigation)
             } else if (crossNavigation.crossType === 1) {
                 this.crossNavigationPopupDialogDocument = getDocumentForCrossNavigation(documentCrossNavigationParameters, this.filtersData, crossNavigation)
-                console.log('-------------------- STEP 1 - crossNavigationPopupDialogDocument: ', this.crossNavigationPopupDialogDocument)
                 this.crossNavigationDialogVisible = true
             } else {
+                this.document = getDocumentForCrossNavigation(documentCrossNavigationParameters, this.filtersData, crossNavigation)
                 updateBreadcrumbForCrossNavigation(this.breadcrumbs, this.document)
                 await this.loadPage(false, this.document.dsLabel, false)
             }
         },
-        openCrossNavigationInNewWindow(crossNavigation: IDashboardCrossNavigation) {
-            const parameters = encodeURI(JSON.stringify(this.document.formattedCrossNavigationParameters))
-            // TODO - Uncomment
+        openCrossNavigationInNewWindow(tempDocument: any, crossNavigation: IDashboardCrossNavigation) {
+            const parameters = encodeURI(JSON.stringify(tempDocument.formattedCrossNavigationParameters))
+            // TODO - Uncomment after peer
             // const url = import.meta.env.VITE_HOST_URL + `/knowage-vue/document-browser/dashboard/${this.document.label}?role=${this.userRole}&crossNavigationParameters=${parameters}
-            const url = 'http://localhost:3000' + `/knowage-vue/document-browser/dashboard/${this.document.label}?role=${this.userRole}&crossNavigationParameters=${parameters}`
+            const url = 'http://localhost:3000' + `/knowage-vue/document-browser/dashboard/${tempDocument.label}?role=${this.userRole}&crossNavigationParameters=${parameters}`
             const popupOptions = crossNavigation.popupOptions ?? { width: '800', height: '600' }
             window.open(url, '_blank', `toolbar=0,status=0,menubar=0,width=${popupOptions.width},height=${popupOptions.height}`)
         },

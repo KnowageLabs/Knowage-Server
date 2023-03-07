@@ -3,9 +3,9 @@ import { deleteWidgetHelper, emitter, updateWidgetHelper } from './DashboardHelp
 import { IDashboardDriver, IDataset, ISelection, IWidget } from './Dashboard'
 import { selectionsUseDatasetWithAssociation } from './widget/interactionsHelpers/DatasetAssociationsHelper'
 import { loadAssociativeSelections } from './widget/interactionsHelpers/InteractionHelper'
+import { recreateKnowageChartModel } from './widget/WidgetEditor/helpers/WidgetEditorHelpers'
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
-import { recreateKnowageChartModel } from './widget/WidgetEditor/helpers/WidgetEditorHelpers'
 
 const store = defineStore('dashboardStore', {
     state() {
@@ -14,8 +14,7 @@ const store = defineStore('dashboardStore', {
             selectedSheetIndex: 0,
             allDatasets: [] as IDataset[],
             internationalization: {},
-            profileAttributes: [] as { name: string; value: string }[],
-            dashboardState: {}
+            profileAttributes: [] as { name: string; value: string }[]
         }
     },
     actions: {
@@ -60,16 +59,16 @@ const store = defineStore('dashboardStore', {
             return temp ?? []
         },
         getCrossNavigations(dashboardId: string) {
-            return this.dashboards[dashboardId].crossNavigations
+            return this.dashboards[dashboardId] ? this.dashboards[dashboardId].crossNavigations : []
         },
         setCrossNavigations(dashboardId: string, crossNavigations: any[]) {
-            this.dashboards[dashboardId].crossNavigations = crossNavigations
+            if (this.dashboards[dashboardId]) this.dashboards[dashboardId].crossNavigations = crossNavigations
         },
         getOutputParameters(dashboardId: string) {
-            return this.dashboards[dashboardId].outputParameters
+            return this.dashboards[dashboardId] ? this.dashboards[dashboardId].outputParameters : []
         },
         setOutputParameters(dashboardId: string, outputParameters: any) {
-            this.dashboards[dashboardId].outputParameters = outputParameters
+            if (this.dashboards[dashboardId]) this.dashboards[dashboardId].outputParameters = outputParameters
         },
         getSelections(dashboardId: string) {
 
@@ -79,7 +78,8 @@ const store = defineStore('dashboardStore', {
             this.internationalization = internationalization
         },
         setSelections(dashboardId: string, selections: ISelection[], $http: any) {
-            this.dashboards[dashboardId].selections = selections
+            if (this.dashboards[dashboardId]) this.dashboards[dashboardId].selections = selections
+            if (!this.dashboards[dashboardId]) return
             if (selections.length > 0 && selectionsUseDatasetWithAssociation(selections, this.dashboards[dashboardId].configuration.associations)) {
                 loadAssociativeSelections(this.dashboards[dashboardId], this.allDatasets, selections, $http)
             } else {
@@ -124,7 +124,7 @@ const store = defineStore('dashboardStore', {
             return this.dashboards[dashboardId].drivers
         },
         setDashboardDrivers(dashboardId: string, drivers: IDashboardDriver[]) {
-            this.dashboards[dashboardId].drivers = drivers
+            if (this.dashboards[dashboardId]) this.dashboards[dashboardId].drivers = drivers
         },
         getAllDatasetLoadedFlag(dashboardId: string) {
             return this.dashboards[dashboardId].allDatasetsLoaded
@@ -137,12 +137,6 @@ const store = defineStore('dashboardStore', {
         },
         setProfileAttributes(profileAttributes: { name: string; value: string }[]) {
             this.profileAttributes = profileAttributes
-        },
-        getDashboardState(dashboardId: string) {
-            return this.dashboardState[dashboardId]
-        },
-        setDashboardState(dashboardId: string, state: any) {
-            this.dashboardState[dashboardId] = state
         }
     }
 })

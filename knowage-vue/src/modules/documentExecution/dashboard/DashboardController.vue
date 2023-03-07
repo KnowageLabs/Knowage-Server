@@ -1,7 +1,7 @@
 <template>
-    <div v-show="model && visible" :id="`dashboard_${model?.configuration?.id}`" class="dashboard-container">
+    <div v-show="model && visible && showDashboard" :id="`dashboard_${model?.configuration?.id}`" :class="mode === 'dashboard-popup' ? 'dashboard-container-popup' : 'dashboard-container'">
         <Button icon="fas fa-square-check" class="p-m-3 p-button-rounded p-button-text p-button-plain" style="position: fixed; right: 0; z-index: 999; background-color: white; box-shadow: 0px 2px 3px #ccc" @click="selectionsDialogVisible = true" />
-        <DashboardRenderer v-if="!loading" :model="model" :datasets="datasets" :dashboardId="dashboardId" :documentDrivers="drivers" :variables="model ? model.configuration.variables : []"></DashboardRenderer>
+        <DashboardRenderer v-if="!loading && visible && showDashboard" :model="model" :datasets="datasets" :dashboardId="dashboardId" :documentDrivers="drivers" :variables="model ? model.configuration.variables : []"></DashboardRenderer>
 
         <Transition name="editorEnter" appear>
             <DatasetEditor v-if="datasetEditorVisible" :dashboard-id-prop="dashboardId" :available-datasets-prop="datasets" :filters-data-prop="filtersData" @closeDatasetEditor="closeDatasetEditor" @datasetEditorSaved="closeDatasetEditor" @allDatasetsLoaded="datasets = $event" />
@@ -47,7 +47,7 @@ import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import { v4 as uuidv4 } from 'uuid'
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
-import { IDashboardDataset, ISelection, IWidget, IGalleryItem, IDataset, IDashboardCrossNavigation } from './Dashboard'
+import { IDashboardDataset, ISelection, IWidget, IGalleryItem, IDataset } from './Dashboard'
 import { emitter, createNewDashboardModel, formatDashboardForSave, formatNewModel, loadDatasets, getFormattedOutputParameters } from './DashboardHelpers'
 import { mapActions, mapState } from 'pinia'
 import { formatModel } from './helpers/DashboardBackwardCompatibilityHelper'
@@ -65,7 +65,6 @@ import DashboardControllerSaveDialog from './DashboardControllerSaveDialog.vue'
 import SelectionsListDialog from './widget/SelectorWidget/SelectionsListDialog.vue'
 import DashboardGeneralSettings from './generalSettings/DashboardGeneralSettings.vue'
 import deepcopy from 'deepcopy'
-import { ICrossNavigationParameter } from '../main/DocumentExecution'
 
 export default defineComponent({
     name: 'dashboard-manager',
@@ -82,7 +81,8 @@ export default defineComponent({
         reloadTrigger: { type: Boolean },
         hiddenFormData: { type: Object },
         filtersData: { type: Object as PropType<{ filterStatus: iParameter[]; isReadyForExecution: boolean }> },
-        newDashboardMode: { type: Boolean }
+        newDashboardMode: { type: Boolean },
+        mode: { type: Object as PropType<string | null>, required: true }
     },
     emits: ['newDashboardSaved', 'executeCrossNavigation'],
     setup() {
@@ -115,30 +115,26 @@ export default defineComponent({
     computed: {
         ...mapState(mainStore, {
             user: 'user'
-        })
+        }),
+        showDashboard() {
+            return ['dashboard', 'dashboard-popup'].includes('' + this.mode)
+        }
     },
     async created() {
-        console.log('------------- DASHBOARD CONTROLLER CREATED!!!')
+        if (!this.showDashboard) return
         this.setEventListeners()
         await this.getData()
-        this.$watch('model.configuration.datasets', (modelDatasets: IDashboardDataset[]) => {
-            setDatasetIntervals(modelDatasets, this.datasets)
-        })
+        this.$watch('model.configuration.datasets', (modelDatasets: IDashboardDataset[]) => setDatasetIntervals(modelDatasets, this.datasets))
     },
     beforeUnmount() {
-        console.log('------------- DASHBOARD CONTROLLER BEFORE UNMOUNTED!!!')
-        console.log('------------- this data: ', this.$data)
-        this.setDashboardState(this.dashboardId, this.$data)
-        console.log('------------------------ LOAD STATE 2: ', this.getDashboardState(this.dashboardId))
         this.emptyStoreValues()
         clearAllDatasetIntervals()
     },
     methods: {
-        ...mapActions(dashboardStore, ['removeSelections', 'setAllDatasets', 'getSelections', 'setInternationalization', 'getInternationalization', 'setDashboardDocument', 'setDashboardDrivers', 'setProfileAttributes', 'getCrossNavigations', 'getDashboardState', 'setDashboardState']),
+        ...mapActions(dashboardStore, ['removeSelections', 'setAllDatasets', 'getSelections', 'setInternationalization', 'getInternationalization', 'setDashboardDocument', 'setDashboardDrivers', 'setProfileAttributes', 'getCrossNavigations']),
         async getData() {
             this.loading = true
             this.dashboardId = cryptoRandomString({ length: 16, type: 'base64' })
-            console.log('------------------------ LOAD STATE: ', this.getDashboardState(this.dashboardId))
             if (this.filtersData) this.drivers = loadDrivers(this.filtersData, this.model)
             await Promise.all([this.loadProfileAttributes(), this.loadModel(), this.loadInternationalization()])
             this.setDashboardDrivers(this.dashboardId, this.drivers)
@@ -160,7 +156,6 @@ export default defineComponent({
             }
             this.datasets = await loadDatasets(tempModel, this.appStore, this.setAllDatasets, this.$http)
             this.model = (tempModel && this.newDashboardMode) || typeof tempModel.id != 'undefined' ? await formatNewModel(tempModel, this.datasets, this.$http) : await (formatModel(tempModel, this.document, this.datasets, this.drivers, this.profileAttributes, this.$http, this.user) as any)
-            console.log('---------- LOAD MODEL: ', this.model)
             setDatasetIntervals(this.model?.configuration.datasets, this.datasets)
             this.store.setDashboard(this.dashboardId, this.model)
             this.store.setSelections(this.dashboardId, this.model.configuration.selections, this.$http)
@@ -204,8 +199,6 @@ export default defineComponent({
         },
         loadOutputParameters() {
             if (this.newDashboardMode) return
-            // TODO - Remove Mocked Output Parameters
-            // console.log('----- Dashboard Controller --------- document: ', this.document)
             const formattedOutputParameters = this.document ? getFormattedOutputParameters(this.document.outputParameters) : []
             this.store.setOutputParameters(this.dashboardId, formattedOutputParameters)
         },
@@ -248,10 +241,10 @@ export default defineComponent({
             clearAllDatasetIntervals()
         },
         emptyStoreValues() {
+            if (!this.dashboardId) return
             this.store.removeDashboard(this.dashboardId)
             this.store.setCrossNavigations(this.dashboardId, [])
             this.store.setOutputParameters(this.dashboardId, [])
-            this.store.setSelections(this.dashboardId, [], this.$http)
             this.store.setSelections(this.dashboardId, [], this.$http)
             this.setDashboardDrivers(this.dashboardId, [])
             this.setProfileAttributes([])
@@ -326,10 +319,8 @@ export default defineComponent({
             this.generalSettingsVisible = false
             emitter.emit('dashboardGeneralSettingsClosed')
         },
-        executeCrossNavigation(payload: { documentCrossNavigationOutputParameters: ICrossNavigationParameter[]; crossNavigationName: string | undefined; crossNavigations: IDashboardCrossNavigation[] }) {
-            // console.log('------- CROSS NAVIGATION PAYLOAD: ', payload)
+        executeCrossNavigation(payload: any) {
             const crossNavigations = this.getCrossNavigations(this.dashboardId)
-            // console.log('------- CROSS NAVIGATION crossNavigations: ', crossNavigations)
             payload.crossNavigations = crossNavigations
             this.$emit('executeCrossNavigation', payload)
         }
@@ -344,5 +335,10 @@ export default defineComponent({
     .dashboard-container {
         height: calc(100vh - var(--kn-mainmenu-width));
     }
+}
+
+.dashboard-container-popup {
+    height: 100%;
+    flex: 1;
 }
 </style>

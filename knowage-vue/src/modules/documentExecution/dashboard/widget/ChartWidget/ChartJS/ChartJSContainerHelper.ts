@@ -15,7 +15,6 @@ export const formatForCrossNavigation = (chartSelectionEvent: any, widgetModel: 
 }
 
 const getSerieName = (widgetModel: IWidget) => {
-    console.log('-------- widgetModel: ', widgetModel)
     const index = widgetModel.columns.findIndex((column: IWidgetColumn) => column.fieldType === "MEASURE")
     return index !== -1 ? widgetModel.columns[index].columnName : ''
 }

@@ -25,7 +25,6 @@ import { getFormattedWidgetColumns } from '../common/WidgetColumnHelper'
 const columnNameIdMap = {}
 
 export const formatTableWidget = (widget: any, formattedDashboardModel: IDashboard, drivers: IDashboardDriver[]) => {
-    console.log('----------- ORIGINAL WIDGET: ', widget)
     const formattedWidget = {
         id: widget.id,
         dataset: widget.dataset.dsId,
@@ -38,7 +37,6 @@ export const formatTableWidget = (widget: any, formattedDashboardModel: IDashboa
     formattedWidget.settings = getFormattedWidgetSettings(widget, formattedDashboardModel, drivers)
     getFiltersForColumns(formattedWidget, widget)
     getSettingsFromWidgetColumns(formattedWidget, widget, formattedDashboardModel, columnNameIdMap)
-    console.log('----------- FORMATTED WIDGET: ', formattedWidget)
     return formattedWidget
 }
 
