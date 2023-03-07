@@ -930,12 +930,12 @@ export default defineComponent({
         },
         async getDocumentAfterCrossNavigationIsSelected(crossNavigation: IDashboardCrossNavigation) {
             const documentCrossNavigationParameters = this.crossNavigationPayload ? this.crossNavigationPayload.documentCrossNavigationOutputParameters : []
-            if (crossNavigation.crossType !== 1) this.document = getDocumentForCrossNavigation(documentCrossNavigationParameters, this.filtersData, crossNavigation)
             this.executeCrossNavigation(crossNavigation, documentCrossNavigationParameters)
         },
         async executeCrossNavigation(crossNavigation: IDashboardCrossNavigation, documentCrossNavigationParameters: ICrossNavigationParameter[]) {
             if (crossNavigation.crossType === 2) {
-                this.openCrossNavigationInNewWindow(crossNavigation)
+                const tempDocument = getDocumentForCrossNavigation(documentCrossNavigationParameters, this.filtersData, crossNavigation)
+                this.openCrossNavigationInNewWindow(tempDocument, crossNavigation)
             } else if (crossNavigation.crossType === 1) {
                 this.crossNavigationPopupDialogDocument = getDocumentForCrossNavigation(documentCrossNavigationParameters, this.filtersData, crossNavigation)
                 this.crossNavigationDialogVisible = true
@@ -945,11 +945,11 @@ export default defineComponent({
                 await this.loadPage(false, this.document.dsLabel, false)
             }
         },
-        openCrossNavigationInNewWindow(crossNavigation: IDashboardCrossNavigation) {
-            const parameters = encodeURI(JSON.stringify(this.document.formattedCrossNavigationParameters))
+        openCrossNavigationInNewWindow(tempDocument: any, crossNavigation: IDashboardCrossNavigation) {
+            const parameters = encodeURI(JSON.stringify(tempDocument.formattedCrossNavigationParameters))
             // TODO - Uncomment after peer
             // const url = import.meta.env.VITE_HOST_URL + `/knowage-vue/document-browser/dashboard/${this.document.label}?role=${this.userRole}&crossNavigationParameters=${parameters}
-            const url = 'http://localhost:3000' + `/knowage-vue/document-browser/dashboard/${this.document.label}?role=${this.userRole}&crossNavigationParameters=${parameters}`
+            const url = 'http://localhost:3000' + `/knowage-vue/document-browser/dashboard/${tempDocument.label}?role=${this.userRole}&crossNavigationParameters=${parameters}`
             const popupOptions = crossNavigation.popupOptions ?? { width: '800', height: '600' }
             window.open(url, '_blank', `toolbar=0,status=0,menubar=0,width=${popupOptions.width},height=${popupOptions.height}`)
         },
