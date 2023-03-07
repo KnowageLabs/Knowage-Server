@@ -23,8 +23,6 @@ export const executeCrossNavigation = (documentCrossNavigationOutputParameters: 
     emitter.emit('executeCrossNavigation', payload)
 }
 
-
-//#region ===== TABLE ======
 export const executeTableWidgetCrossNavigation = (clickedValue: IClickedValue, formattedRow: any, crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
     const outputParameters = getFormattedTableOutputParameters(clickedValue, formattedRow, crossNavigationModel, dashboardId)
     executeCrossNavigation(outputParameters, crossNavigationModel.name)
@@ -98,10 +96,6 @@ const getDynamicValueAndTypeForTableDynamicOutputParameter = (clickedValue: ICli
     return { value: value, type: rowField.type }
 }
 
-//#endregion ===== TABLE ======
-
-
-//#region ===== HTML/TEXT ======
 export const executeHTMLandTextWidgetCrossNavigation = (dynamicValue: string, crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
     const clickedValue = { value: dynamicValue, type: '' }
     const outputParameters = getFormattedHTMLandTextWidgetOutputParameters(clickedValue, crossNavigationModel, dashboardId)
@@ -148,9 +142,6 @@ const getDynamicValueAndTypeForHTMLandTextDynamicOutputParameter = (clickedValue
     return { value: value, type: crossNavigationParameter.dataType }
 }
 
-//#endregion ===== HTML/TEXT ======
-
-//#region ===== CHART ======
 export const executeChartCrossNavigation = (outputParameters: IWidgetInteractionParameter[], crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
     const formattedOutputParameters = getFormattedChartOutputParameters(outputParameters, crossNavigationModel, dashboardId)
     executeCrossNavigation(formattedOutputParameters, crossNavigationModel.name)
@@ -189,9 +180,6 @@ const getFormattedChartDynamicOutputParameter = (outputParameters: IWidgetIntera
     } as ICrossNavigationParameter
 }
 
-//#endregion ===== CHART ======
-
-//#region ===== IMAGE ======
 export const executeImageWidgetCrossNavigation = (crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
     const outputParameters = getFormattedImageWidgetOutputParameters(crossNavigationModel, dashboardId)
     executeCrossNavigation(outputParameters, crossNavigationModel.name)
@@ -212,7 +200,35 @@ const getFormattedImageWidgetOutputParameters = (crossNavigationModel: IWidgetCr
     }
     return formattedOutputParameters
 }
-//#endregion ===== IMAGE ======
+
+// TODO
+export const executePivotTableWidgetCrossNavigation = (clickedValue: IClickedValue, crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
+    const outputParameters = getFormattedPivotTableOutputParameters(clickedValue, crossNavigationModel, dashboardId)
+    console.log('---------- FORMATTED OUTPUT PARAMETERS: ', outputParameters)
+    // executeCrossNavigation(outputParameters, crossNavigationModel.name)
+}
+
+// TODO
+const getFormattedPivotTableOutputParameters = (clickedValue: IClickedValue, crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
+    console.log('---------- clickedValue: ', clickedValue)
+    const formattedOutputParameters = [] as ICrossNavigationParameter[]
+    for (let i = 0; i < crossNavigationModel.parameters.length; i++) {
+        const crossNavigationParameter = crossNavigationModel.parameters[i] as IWidgetInteractionParameter
+        if (!crossNavigationParameter.enabled) continue
+        switch (crossNavigationParameter.type) {
+            case 'static':
+                formattedOutputParameters.push(getFormattedFixedOutputParameter(crossNavigationParameter))
+                break
+            case 'dynamic':
+                // TODO
+                break
+            case 'selection':
+                addSelectionTypeOutputParameter(crossNavigationParameter, formattedOutputParameters, dashboardId)
+        }
+    }
+    return formattedOutputParameters
+}
+
 
 const addSelectionTypeOutputParameter = (crossNavigationParameter: IWidgetInteractionParameter, formattedOutputParameters: ICrossNavigationParameter[], dashboardId: string) => {
     const tempParameter = getFormattedSelectionOutputParameter(crossNavigationParameter, dashboardId)
