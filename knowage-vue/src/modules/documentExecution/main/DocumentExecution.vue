@@ -937,7 +937,6 @@ export default defineComponent({
                 this.openCrossNavigationInNewWindow(crossNavigation)
             } else if (crossNavigation.crossType === 1) {
                 this.crossNavigationPopupDialogDocument = getDocumentForCrossNavigation(documentCrossNavigationParameters, this.filtersData, crossNavigation)
-                console.log('-------------------- STEP 1 - crossNavigationPopupDialogDocument: ', this.crossNavigationPopupDialogDocument)
                 this.crossNavigationDialogVisible = true
             } else {
                 updateBreadcrumbForCrossNavigation(this.breadcrumbs, this.document)

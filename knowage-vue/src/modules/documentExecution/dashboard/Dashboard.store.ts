@@ -3,9 +3,9 @@ import { deleteWidgetHelper, emitter, updateWidgetHelper } from './DashboardHelp
 import { IDashboardDriver, IDataset, ISelection, IWidget } from './Dashboard'
 import { selectionsUseDatasetWithAssociation } from './widget/interactionsHelpers/DatasetAssociationsHelper'
 import { loadAssociativeSelections } from './widget/interactionsHelpers/InteractionHelper'
+import { recreateKnowageChartModel } from './widget/WidgetEditor/helpers/WidgetEditorHelpers'
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
-import { recreateKnowageChartModel } from './widget/WidgetEditor/helpers/WidgetEditorHelpers'
 
 const store = defineStore('dashboardStore', {
     state() {
@@ -14,8 +14,7 @@ const store = defineStore('dashboardStore', {
             selectedSheetIndex: 0,
             allDatasets: [] as IDataset[],
             internationalization: {},
-            profileAttributes: [] as { name: string; value: string }[],
-            dashboardState: {}
+            profileAttributes: [] as { name: string; value: string }[]
         }
     },
     actions: {
@@ -137,12 +136,6 @@ const store = defineStore('dashboardStore', {
         },
         setProfileAttributes(profileAttributes: { name: string; value: string }[]) {
             this.profileAttributes = profileAttributes
-        },
-        getDashboardState(dashboardId: string) {
-            return this.dashboardState[dashboardId]
-        },
-        setDashboardState(dashboardId: string, state: any) {
-            this.dashboardState[dashboardId] = state
         }
     }
 })

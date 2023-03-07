@@ -52,8 +52,8 @@ export default defineComponent({
         }
     },
     async created() {
-        this.$watch('widgetModel.columns', () => this.loadColumnTableItems())
         this.loadWidgetModel()
+        this.$watch('widgetModel.columns', () => this.loadColumnTableItems())
         this.loadColumnTableItems()
     },
     methods: {

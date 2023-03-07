@@ -83,8 +83,8 @@ export default defineComponent({
     },
     created() {
         this.setEventListeners()
-        this.loadModel()
         this.loadDatasets()
+        this.loadModel()
     },
     unmounted() {
         this.removeEventListeners()
@@ -110,9 +110,8 @@ export default defineComponent({
                 }
             })
 
-            if (this.datasetOptions.length === 1 && this.model) {
+            if (this.datasetOptions.length === 1) {
                 this.selectedDataset = this.datasetOptions[0]
-                this.model.dataset = this.selectedDataset.id
                 this.onDatasetSelected()
             }
         },

@@ -121,24 +121,18 @@ export default defineComponent({
         console.log('------------- DASHBOARD CONTROLLER CREATED!!!')
         this.setEventListeners()
         await this.getData()
-        this.$watch('model.configuration.datasets', (modelDatasets: IDashboardDataset[]) => {
-            setDatasetIntervals(modelDatasets, this.datasets)
-        })
+        this.$watch('model.configuration.datasets', (modelDatasets: IDashboardDataset[]) => setDatasetIntervals(modelDatasets, this.datasets))
     },
     beforeUnmount() {
-        console.log('------------- DASHBOARD CONTROLLER BEFORE UNMOUNTED!!!')
-        console.log('------------- this data: ', this.$data)
-        this.setDashboardState(this.dashboardId, this.$data)
-        console.log('------------------------ LOAD STATE 2: ', this.getDashboardState(this.dashboardId))
+        console.log('------------- DASHBOARD CONTROLLER beforeUnmount!!!')
         this.emptyStoreValues()
         clearAllDatasetIntervals()
     },
     methods: {
-        ...mapActions(dashboardStore, ['removeSelections', 'setAllDatasets', 'getSelections', 'setInternationalization', 'getInternationalization', 'setDashboardDocument', 'setDashboardDrivers', 'setProfileAttributes', 'getCrossNavigations', 'getDashboardState', 'setDashboardState']),
+        ...mapActions(dashboardStore, ['removeSelections', 'setAllDatasets', 'getSelections', 'setInternationalization', 'getInternationalization', 'setDashboardDocument', 'setDashboardDrivers', 'setProfileAttributes', 'getCrossNavigations']),
         async getData() {
             this.loading = true
             this.dashboardId = cryptoRandomString({ length: 16, type: 'base64' })
-            console.log('------------------------ LOAD STATE: ', this.getDashboardState(this.dashboardId))
             if (this.filtersData) this.drivers = loadDrivers(this.filtersData, this.model)
             await Promise.all([this.loadProfileAttributes(), this.loadModel(), this.loadInternationalization()])
             this.setDashboardDrivers(this.dashboardId, this.drivers)
