@@ -1,23 +1,29 @@
 <template>
     <div class="pivot-widget-container p-d-flex p-d-row kn-flex">
-        <DxPivotGrid id="pivotgrid" ref="grid" :data-source="dataSource" :allow-sorting-by-summary="true" :allow-filtering="true" :show-borders="true" :show-column-grand-totals="false" :show-row-grand-totals="false" :show-row-totals="false" :show-column-totals="false" @contentReady="onContentReady">
-            <DxFieldChooser :enabled="true" :height="400" />
+        <DxButton text="Apply" type="default" @click="logButton()" />
+        <DxPivotGrid id="pivotgrid" ref="grid" :data-source="dataSource" v-bind="pivotConfig">
+            <DxFieldChooser v-bind="fieldPickerConfig" />
+            <DxFieldPanel v-bind="fieldPanelConfig" />
         </DxPivotGrid>
     </div>
 </template>
 
 <script lang="ts">
-import { DxPivotGrid, DxFieldChooser } from 'devextreme-vue/pivot-grid'
-import { IDashboardDataset, ISelection, IWidget } from '../../Dashboard'
+import { DxPivotGrid, DxFieldChooser, DxFieldPanel } from 'devextreme-vue/pivot-grid'
+import { DxButton } from 'devextreme-vue/button'
+import Tooltip from 'devextreme/ui/tooltip'
+import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source'
+
+import { IDashboardDataset, IPivotTooltips, ISelection, IWidget } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
 import mainStore from '../../../../../App.store'
 import dashboardStore from '../../Dashboard.store'
 
-import { sales } from './MockData.js'
+import { getWidgetStyleByType } from '../TableWidget/TableWidgetHelper'
 
 export default defineComponent({
     name: 'table-widget',
-    components: { DxPivotGrid, DxFieldChooser },
+    components: { DxPivotGrid, DxFieldChooser, DxFieldPanel, DxButton },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         editorMode: { type: Boolean, required: false },
@@ -33,54 +39,29 @@ export default defineComponent({
         return { store, appStore }
     },
     data() {
+        const dataSource = new PivotGridDataSource({
+            fields: this.getFormattedFieldsFromModel(),
+            store: this.getPivotData()
+        })
         return {
+            dataSource,
             tableData: [] as any,
-            dataSource: {
-                fields: [
-                    {
-                        caption: 'Region',
-                        width: 120,
-                        dataField: 'region',
-                        area: 'row',
-                        sortBySummaryField: 'Total'
-                    },
-                    {
-                        caption: 'City',
-                        dataField: 'city',
-                        width: 150,
-                        area: 'row'
-                    },
-                    {
-                        dataField: 'date',
-                        dataType: 'date',
-                        area: 'column'
-                    },
-                    {
-                        groupName: 'date',
-                        groupInterval: 'month',
-                        visible: false
-                    },
-                    {
-                        caption: 'Total',
-                        dataField: 'amount',
-                        dataType: 'number',
-                        summaryType: 'sum',
-                        format: 'currency',
-                        area: 'data'
-                    }
-                ],
-                store: sales
-            }
+            pivotConfig: {} as any,
+            fieldPickerConfig: {} as any,
+            fieldPanelConfig: {} as any
         }
     },
+    computed: {},
     watch: {
         propWidget: {
-            handler() {},
+            handler() {
+                console.log('PROP WIDGET CHANGED', this.propWidget)
+            },
             deep: true
         },
         dataToShow: {
             handler() {
-                this.tableData = this.dataToShow
+                // this.tableData = this.dataToShow
             },
             deep: true
         },
@@ -89,14 +70,194 @@ export default defineComponent({
         }
     },
     beforeMount() {},
-    created() {},
+    created() {
+        this.setPivotConfiguration()
+        this.setFieldPickerConfiguration()
+        this.setFieldPanelConfiguration()
+    },
     unmounted() {},
     mounted() {},
 
     methods: {
+        logButton() {
+            console.groupCollapsed('DO STUFF ------------')
+            console.log('propWidget', this.propWidget)
+            console.groupEnd()
+
+            // console.log('dataToShow', this.dataToShow)
+            // console.log('this.dataSource.fields()', this.dataSource.fields())
+        },
+        setPivotConfiguration() {
+            const widgetConfig = this.propWidget.settings.configuration
+            this.pivotConfig = {
+                // PROPS
+                allowSorting: true,
+                allowSortingBySummary: true,
+                allowFiltering: true,
+                showBorders: true,
+                showColumnGrandTotals: widgetConfig.columns.grandTotal,
+                showColumnTotals: widgetConfig.columns.subTotal,
+                showRowGrandTotals: widgetConfig.rows.grandTotal,
+                showRowTotals: widgetConfig.rows.subTotal,
+                texts: {},
+
+                // EVENTS
+                contentReady: this.onContentReady,
+                onCellPrepared: this.setCellConfiguration
+            }
+        },
+
+        setFieldPickerConfiguration() {
+            const fieldPickerConfig = this.propWidget.settings.configuration.fieldPicker
+            this.fieldPickerConfig = {
+                enabled: fieldPickerConfig.enabled,
+                width: fieldPickerConfig.width,
+                height: fieldPickerConfig.height
+            }
+        },
+
+        setFieldPanelConfiguration() {
+            const fieldPanelConfig = this.propWidget.settings.configuration.fieldPanel
+            this.fieldPanelConfig = {
+                visible: fieldPanelConfig.enabled
+            }
+        },
+
         onContentReady() {
-            console.log('CONTENT READY', this.dataSource.fields)
+            // console.log('CONTENT READY \n', this.dataSource.state())
+        },
+
+        //#region ===================== Pivot Datasource Config (Fields & Data) ====================================================
+        getFormattedFieldsFromModel() {
+            const formattedFields = [] as any
+            const responseMetadataFields = this.dataToShow?.metaData?.fields
+
+            if (this.getPivotData().length > 0) {
+                for (const fieldsName in this.propWidget.fields) {
+                    const modelFields = this.propWidget.fields[fieldsName]
+                    modelFields.forEach((modelField) => {
+                        const tempField = {} as any
+                        const index = responseMetadataFields.findIndex((metaField: any) => {
+                            if (typeof metaField == 'object') return metaField.header.toLowerCase() === modelField.alias.toLowerCase()
+                        })
+
+                        tempField.id = modelField.id //ID FROM MODEL PASSED AS A PROPERTY
+                        //TODO: split tempField props to methods
+                        tempField.caption = modelField.alias
+                        tempField.dataField = `column_${index}`
+                        tempField.area = this.getDataField(fieldsName)
+                        if (modelField.sort) tempField.sortOrder = modelField.sort.toLowerCase()
+
+                        formattedFields.push(tempField)
+                    })
+                }
+            }
+
+            // console.log('formattedFields', formattedFields)
+            return formattedFields
+        },
+        getDataField(fieldsName) {
+            switch (fieldsName) {
+                case 'columns':
+                    return 'column'
+                case 'rows':
+                    return 'row'
+                default:
+                    return fieldsName
+            }
+        },
+        getPivotData() {
+            if (this.dataToShow && this.dataToShow.rows) return this.dataToShow.rows
+            else return []
+        },
+        //#endregion ===============================================================================================
+
+        //#region ===================== Cell Config (Totals, Stlye, Conditionals) ====================================================
+        setCellConfiguration(event) {
+            const pivotFields = this.dataSource.fields()
+            // if (event.area && event.cell.value == 14) {
+            //     const pivotFields = this.dataSource.fields()
+            //     const parentField = pivotFields[pivotFields.findIndex((field: any) => field.area === 'data' && field.areaIndex === event.cell.dataIndex)]
+
+            //     console.group('cellPrep ---------------------', event.cellElement)
+            //     console.log('CELL EVENT', event)
+            //     console.log('PARENT FIELD', parentField)
+            //     // console.log('FIELDS', this.dataSource.fields())
+            //     console.groupEnd()
+            // }
+
+            this.setTotals(event)
+            this.setTooltips(event, pivotFields)
+            // this.createFieldTooltips(event)
+        },
+        //#endregion ===============================================================================================
+
+        //#region ===================== Totals Config (Sub, Grand, Style) ====================================================
+        setTotals(cellEvent) {
+            if (cellEvent.area === 'column') this.setTotalLabels(cellEvent, 'columns')
+            if (cellEvent.area === 'row') this.setTotalLabels(cellEvent, 'rows')
+            this.setTotalStyles(cellEvent)
+        },
+        setTotalLabels(cellEvent, fieldType) {
+            const columnConfig = this.propWidget.settings.configuration[fieldType]
+
+            if (cellEvent.cell.type === 'GT') cellEvent.cellElement.innerHTML = columnConfig.grandTotalLabel
+            else if (cellEvent.cell.type === 'T') cellEvent.cellElement.innerHTML = columnConfig.subTotalLabel
+        },
+        setTotalStyles(cellEvent) {
+            let totalType = null as any
+            if (cellEvent.cell.type === 'GT' || cellEvent.cell.rowType === 'GT' || cellEvent.cell.columnType === 'GT') totalType = 'totals'
+            else if (cellEvent.cell.type === 'T' || cellEvent.cell.rowType === 'T' || cellEvent.cell.columnType === 'T') totalType = 'subTotals'
+
+            const styleConfig = getWidgetStyleByType(this.propWidget, totalType)
+            if (styleConfig != '') {
+                //TODO: justify-content ne moze da radi u ovom slucaju, mora na style toolbar da se promeni u text-align
+                cellEvent.cellElement.style = styleConfig + 'text-align:left !important;'
+            }
+        },
+        //#endregion ===============================================================================================
+
+        //#region ===================== Tooltips Config  ====================================================
+        //Tooltips - we cannot target custom headers if they are not in data fields...we have no way of knowing which field they belong.
+        //Tooltips - ALL Fields can have, well all tooltips, same with headers. That would be the workaround. Specific ones, cant have custom headers.
+        //Tooltips - TODO: Remove custom headers completely from UI?
+
+        setTooltips(cellEvent, pivotFields) {
+            let cellTooltipConfig = null as unknown as IPivotTooltips
+
+            const tooltipsConfig = this.propWidget.settings.tooltips as IPivotTooltips[]
+            const parentField = pivotFields[pivotFields.findIndex((field: any) => cellEvent.area === 'data' && field.area === 'data' && field.areaIndex === cellEvent.cell.dataIndex)] as any
+
+            if (parentField?.id && tooltipsConfig.length >= 1) {
+                for (let index = 1; index < tooltipsConfig.length; index++) {
+                    const tooltipConfig = tooltipsConfig[index]
+                    if (tooltipConfig.target.includes(parentField.id)) cellTooltipConfig = tooltipConfig
+                }
+            } else if (!cellTooltipConfig && tooltipsConfig[0].enabled) cellTooltipConfig = tooltipsConfig[0]
+
+            if (cellTooltipConfig) this.createFieldTooltips(cellEvent, cellTooltipConfig, tooltipsConfig[0])
+        },
+        createFieldTooltips(cellEvent, tooltipConfig: IPivotTooltips, allCellConfig: IPivotTooltips) {
+            const container = document.createElement('div')
+            cellEvent.cellElement.appendChild(container)
+            new Tooltip(container, {
+                target: cellEvent.cellElement,
+                visible: false,
+                showEvent: 'mouseenter',
+                hideEvent: 'mouseleave click',
+                contentTemplate: function (content) {
+                    const label = document.createElement('div')
+                    if (cellEvent.area == 'data') {
+                        label.innerHTML = `<b>${tooltipConfig.prefix} ${cellEvent.cell.text} ${tooltipConfig.suffix}</b>`
+                        content.appendChild(label)
+                    } else {
+                        label.innerHTML = `<b>${allCellConfig.header.enabled ? allCellConfig.header.text : cellEvent.cell.text}</b>`
+                        content.appendChild(label)
+                    }
+                }
+            })
         }
+        //#endregion ===============================================================================================
     }
 })
 </script>

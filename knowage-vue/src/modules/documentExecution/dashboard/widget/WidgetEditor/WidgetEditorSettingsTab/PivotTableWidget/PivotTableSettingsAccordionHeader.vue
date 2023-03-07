@@ -55,6 +55,14 @@ export default defineComponent({
                     return this.widgetModel.settings.interactions.link
                 case 'Preview':
                     return this.widgetModel.settings.interactions.preview
+                case 'FieldPicker':
+                    return this.widgetModel.settings.configuration.fieldPicker
+                case 'FieldPanel':
+                    return this.widgetModel.settings.configuration.fieldPanel
+                case 'Totals':
+                    return this.widgetModel.settings.style.totals
+                case 'SubTotals':
+                    return this.widgetModel.settings.style.subTotals
                 default:
                     return null
             }

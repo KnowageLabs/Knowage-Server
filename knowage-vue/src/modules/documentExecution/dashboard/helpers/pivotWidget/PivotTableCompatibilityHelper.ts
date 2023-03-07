@@ -1,13 +1,14 @@
-import { IDashboard, IDashboardDriver, ITableWidgetConditionalStyle, ITableWidgetConditionalStyles, ITableWidgetStyle, IVariable, IWidget, IWidgetInteractions, IWidgetResponsive } from '../../Dashboard'
+import { IDashboard, IDashboardDriver, IPivotTooltips, ITableWidgetConditionalStyle, ITableWidgetConditionalStyles, ITableWidgetStyle, IVariable, IWidget, IWidgetInteractions, IWidgetResponsive } from '../../Dashboard'
 // import * as pivotTalbeDefaultValues from '../../widget/WidgetEditor/helpers/pivotTableWidget/PivotTableDefaultValues'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
-import { getFiltersForColumns } from '../DashboardBackwardCompatibilityHelper'
+// import { getFiltersForColumns } from '../DashboardBackwardCompatibilityHelper'
 import { getFormattedInteractions } from '../common/WidgetInteractionsHelper'
 import { getFormattedPivotFields } from './PivotTableColumnHelper'
 import { IPivotTableConfiguration, IPivotTableSettings } from '../../interfaces/pivotTable/DashboardPivotTableWidget'
 import { getSettingsFromWidgetColumns } from './PivotTableColumnSettingsHelper'
 import { getFormattedConfiguration } from './PivotTableConfigurationHelper'
 import { getFormattedStyle } from './PivotTabletStyleHelper'
+import * as pivotTableDefaultValues from '../../widget/WidgetEditor/helpers/pivotTableWidget/PivotTableDefaultValues'
 
 const columnNameIdMap = {}
 
@@ -18,14 +19,18 @@ export const formatPivotTabletWidget = (widget: any, formattedDashboardModel: ID
         dataset: widget.dataset.dsId,
         type: widget.type,
         fields: getFormattedPivotFields(widget, columnNameIdMap),
-        columns: [],
+        columns: [], //Not used for pivot :/
         theme: '',
         style: {},
         settings: {} as IPivotTableSettings
     } as IWidget
     formattedWidget.settings = getFormattedWidgetSettings(widget, formattedDashboardModel, drivers)
-    getFiltersForColumns(formattedWidget, widget)
+
+    //TODO: Rework this method
+    // getFiltersForColumns(formattedWidget, widget)
+
     getSettingsFromWidgetColumns(formattedWidget, widget, formattedDashboardModel, columnNameIdMap)
+
     console.log('----------- FORMATTED WIDGET: ', formattedWidget)
     return formattedWidget
 }
@@ -40,7 +45,8 @@ const getFormattedWidgetSettings = (widget: any, formattedDashboardModel: IDashb
         configuration: getFormattedConfiguration(widget) as IPivotTableConfiguration,
         interactions: getFormattedInteractions(widget) as IWidgetInteractions,
         style: getFormattedStyle(widget) as ITableWidgetStyle,
-        responsive: widgetCommonDefaultValues.getDefaultResponsivnes() as IWidgetResponsive
+        responsive: widgetCommonDefaultValues.getDefaultResponsivnes() as IWidgetResponsive,
+        tooltips: pivotTableDefaultValues.getDefaultTooltips() as IPivotTooltips[]
     } as IPivotTableSettings
     return formattedSettings
 }

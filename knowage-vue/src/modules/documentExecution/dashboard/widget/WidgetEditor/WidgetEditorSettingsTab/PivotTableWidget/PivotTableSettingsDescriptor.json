@@ -8,6 +8,22 @@
         ],
         "Configuration": [
             {
+                "title": "common.columns",
+                "type": "Columns"
+            },
+            {
+                "title": "dashboard.widgetEditor.rows.title",
+                "type": "Rows"
+            },
+            {
+                "title": "dashboard.widgetEditor.pivot.configuration.fieldPicker",
+                "type": "FieldPicker"
+            },
+            {
+                "title": "dashboard.widgetEditor.pivot.configuration.fieldPanel",
+                "type": "FieldPanel"
+            },
+            {
                 "title": "dashboard.widgetEditor.export.title",
                 "type": "Export"
             }
@@ -50,6 +66,14 @@
                 "type": "ColumnStyle"
             },
             {
+                "title": "dashboard.widgetEditor.pivot.style.totals",
+                "type": "Totals"
+            },
+            {
+                "title": "dashboard.widgetEditor.pivot.style.subTotals",
+                "type": "SubTotals"
+            },
+            {
                 "title": "dashboard.widgetEditor.background",
                 "type": "BackgroundColorStyle"
             },
@@ -64,6 +88,12 @@
             {
                 "title": "dashboard.widgetEditor.shadows.title",
                 "type": "ShadowsStyle"
+            }
+        ],
+        "Tooltips": [
+            {
+                "title": "dashboard.widgetEditor.tooltips.title",
+                "type": "Tooltips"
             }
         ]
     },
@@ -82,6 +112,11 @@
             "icon": "fa fa-hand-pointer",
             "label": "dashboard.widgetEditor.interactions.title",
             "value": "Interactions"
+        },
+        {
+            "icon": "fa fa-commenting",
+            "label": "dashboard.widgetEditor.tooltips.title",
+            "value": "Tooltips"
         },
         {
             "icon": "pi pi-tablet",

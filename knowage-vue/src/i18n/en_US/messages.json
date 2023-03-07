@@ -7,6 +7,7 @@
         "advanced": "Advanced",
         "alias": "Alias",
         "align": "Align",
+        "fields": "Fields",
         "apply": "Apply",
         "attachments": "Attachments",
         "attributes": "Attributes",
@@ -393,6 +394,21 @@
             "launchSelection": "LAUNCH SELECTION"
         },
         "widgetEditor": {
+            "pivot": {
+                "configuration": {
+                    "grandTotal": "Show Totals",
+                    "subtotal": "Show Subtotals",
+                    "grandTotalLabel": "Labels for Totals",
+                    "subTotalLabel": "Labels for SubTotals",
+                    "showFieldPicker": "Show Integrated Field Picker",
+                    "fieldPicker": "Field Picker",
+                    "fieldPanel": "Field Panel"
+                },
+                "style": {
+                    "totals": "Totals",
+                    "subTotals": "SubTotals"
+                }
+            },
             "absolute": "Absolute",
             "accessibility": {
                 "enabelKeyboardNavigation": "Enable Keyboard Navigation",
@@ -754,6 +770,10 @@
             },
             "selectDataset": "Select Dataset",
             "selectedColumns": "Selected Columns",
+            "pivotColumns": "Columns",
+            "pivotRows": "Rows",
+            "pivotData": "Data",
+            "pivotFilters": "Filters",
             "selectorType": {
                 "title": "Selector Type"
             },

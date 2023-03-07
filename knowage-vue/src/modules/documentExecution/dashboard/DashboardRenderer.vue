@@ -1,7 +1,7 @@
 <template>
     <KnDashboardTabsPanel v-model:sheets="dashboardModel.sheets" label-position="bottom" @sheet-change="sheetChange">
         <KnDashboardTab v-for="(sheet, index) in dashboardModel.sheets" :key="index" :index="index">
-            <grid-layout
+            <!-- <grid-layout
                 v-model:layout="sheet.widgets['lg']"
                 :responsive-layouts="sheet.widgets"
                 :responsive="true"
@@ -12,6 +12,19 @@
                 :vertical-compact="false"
                 :use-css-transforms="false"
                 :margin="[0, 0]"
+                @breakpoint-changed="breakpointChangedEvent"
+            > -->
+            <grid-layout
+                v-model:layout="sheet.widgets['lg']"
+                :responsive-layouts="sheet.widgets"
+                :responsive="true"
+                :cols="{ lg: 50, md: 100, sm: 50, xs: 20, xxs: 10 }"
+                :row-height="30"
+                :is-draggable="true"
+                :is-resizable="true"
+                :vertical-compact="false"
+                :use-css-transforms="false"
+                :margin="[2, 2]"
                 @breakpoint-changed="breakpointChangedEvent"
             >
                 <WidgetController v-for="item in sheet.widgets['lg']" :key="item.i" :active-sheet="activeSheet(index)" :document="document" :widget="currentWidget(item.id)" :item="item" :datasets="datasets" :dashboard-id="dashboardId" :variables="variables" :model="model"></WidgetController>

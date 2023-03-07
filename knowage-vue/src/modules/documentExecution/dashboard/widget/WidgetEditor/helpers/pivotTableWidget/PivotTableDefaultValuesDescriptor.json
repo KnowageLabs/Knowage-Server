@@ -16,5 +16,38 @@
                 "target": "all"
             }
         ]
+    },
+    "defaultFieldPanel": {
+        "enabled": true
+    },
+    "defaultFieldPicker": {
+        "enabled": true,
+        "height": 600,
+        "width": 600
+    },
+    "defaultTooltips": [
+        {
+            "enabled": true,
+            "header": {
+                "enabled": false,
+                "text": ""
+            },
+            "precision": 0,
+            "prefix": "",
+            "suffix": "",
+            "target": "all"
+        }
+    ],
+    "defaultTotals": {
+        "enabled": false,
+        "properties": {
+            "background-color": "",
+            "color": "",
+            "font-family": "",
+            "font-size": "",
+            "font-style": "",
+            "font-weight": "",
+            "justify-content": ""
+        }
     }
 }
