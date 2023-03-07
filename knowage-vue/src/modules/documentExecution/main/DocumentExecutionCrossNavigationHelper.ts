@@ -4,33 +4,38 @@ import { IDocumentNavigationParameter, ICrossNavigationParameter, ICrossNavigati
 import { getDateStringFromJSDate } from "@/helpers/commons/localeHelper"
 import moment from "moment"
 
-let documentCrossNavigations = [] as IDashboardCrossNavigation[]
+
+
+
+/* 
+    If the widget has selected cross navigation get it from the list of cross navigations that we got from the BE service
+*/
+export const getSelectedCrossNavigation = (crossNavigationName: string | undefined, crossNavigations: IDashboardCrossNavigation[]) => {
+    const index = crossNavigations.findIndex((crossNavigation: IDashboardCrossNavigation) => crossNavigation.crossName === crossNavigationName)
+    if (index !== -1) return crossNavigations[index]
+    else if (crossNavigations.length === 1) return crossNavigations[0]
+    else return null
+}
 
 
 /* 
     Creates target document with formatted crossNavigationParameters (for loading initial values for Target Document drivers) and navigationParams for filter service
 */
-export const getDocumentForCrossNavigation = (payload: { documentCrossNavigationOutputParameters: ICrossNavigationParameter[]; crossNavigationName: string | undefined; crossNavigations: IDashboardCrossNavigation[] }, sourceFiltersData: { filterStatus: iParameter[], isReadyForExecution: boolean }) => {
-    documentCrossNavigations = payload.crossNavigations
-    const selectedCrossNavigation = getSelectedCrossNavigation(payload.crossNavigationName, payload.crossNavigations)
-    // TODO - add for multiple cross navs
+export const getDocumentForCrossNavigation = (documentCrossNavigationOutputParameters: ICrossNavigationParameter[], sourceFiltersData: { filterStatus: iParameter[], isReadyForExecution: boolean }, selectedCrossNavigation: IDashboardCrossNavigation | null) => {
+    console.log('------  !!! selectedCrossNavigation: ', selectedCrossNavigation)
     if (!selectedCrossNavigation) return null
-    const formattedCrossNavigationParameters = getFormattedCrossNavigationParameters(selectedCrossNavigation, sourceFiltersData, payload.documentCrossNavigationOutputParameters)
-    const crossNavigationDocument = documentCrossNavigations[0].document
+    const formattedCrossNavigationParameters = getFormattedCrossNavigationParameters(selectedCrossNavigation, sourceFiltersData, documentCrossNavigationOutputParameters)
+    const crossNavigationDocument = selectedCrossNavigation.document
     crossNavigationDocument.formattedCrossNavigationParameters = formattedCrossNavigationParameters
     crossNavigationDocument.navigationParams = createDocumentNavigationParametersForFilterService(formattedCrossNavigationParameters)
     crossNavigationDocument.navigationFromDashboard = true
+    crossNavigationDocument.crossType = selectedCrossNavigation.crossType
+
+    formatDocumentBreadcrumbLabel(selectedCrossNavigation, crossNavigationDocument)
     // console.log(">>>>>>>>>>>     document.formattedCrossNavigationParameters: ", crossNavigationDocument.navigationParams)
     return crossNavigationDocument
 }
 
-/* 
-    If the widget has selected cross navigation get it from the list of cross navigations that we got from the BE service
-*/
-const getSelectedCrossNavigation = (crossNavigationName: string | undefined, crossNavigations: IDashboardCrossNavigation[]) => {
-    const index = crossNavigations.findIndex((crossNavigation: IDashboardCrossNavigation) => crossNavigation.crossName === crossNavigationName)
-    return index !== -1 ? crossNavigations[index] : null
-}
 
 
 /* 
@@ -92,9 +97,12 @@ const getSourceDocumentDriver = (documentCrossNavigationParameter: IDocumentNavi
 
 const createCrossNavigationParameterFromSourceDocumentDriver = (sourceDocumentDriver: iParameter | null, targetDriverUrlName: string) => {
     if (!sourceDocumentDriver || !targetDriverUrlName) return
+    const parameterValue = getFormattedSourceDocumentParameterValue(sourceDocumentDriver)
+
     const crossNavigationParameter = {
+        sourceDriverName: sourceDocumentDriver.label,
         targetDriverUrlName: targetDriverUrlName,
-        parameterValue: sourceDocumentDriver.type === 'DATE' ? getDateValueFromSourceDocumentDriverAsMilliseconds(sourceDocumentDriver.parameterValue) : sourceDocumentDriver.parameterValue,
+        parameterValue: parameterValue,
         multivalue: sourceDocumentDriver.multivalue,
         type: 'fromSourceDocumentDriver',
         selectionType: sourceDocumentDriver.selectionType ?? null,
@@ -103,11 +111,20 @@ const createCrossNavigationParameterFromSourceDocumentDriver = (sourceDocumentDr
     return crossNavigationParameter
 }
 
+const getFormattedSourceDocumentParameterValue = (sourceDocumentDriver: iParameter) => {
+    if (sourceDocumentDriver.type === 'DATE') {
+        return getDateValueFromSourceDocumentDriverAsMilliseconds(sourceDocumentDriver.parameterValue)
+    } else if (!sourceDocumentDriver.multivalue && sourceDocumentDriver.parameterValue.length > 1) {
+        return [sourceDocumentDriver.parameterValue[0]]
+    } else {
+        return sourceDocumentDriver.parameterValue
+    }
+}
 
 const getDateValueFromSourceDocumentDriverAsMilliseconds = (parameterValue: { value: string | number | Date | null; description: string }[]) => {
     if (!parameterValue[0] || !parameterValue[0].value) return [{ value: '', description: '' }]
     if (parameterValue[0].value instanceof Date) {
-        return [{ value: parameterValue[0].value.valueOf(), descripton: '' }]  // TODO - add date as string for description
+        return [{ value: parameterValue[0].value.valueOf(), descripton: '' }]
     }
     else return [{ value: parameterValue[0].value, description: '' + parameterValue[0].value }] as { value: string | number, description: string }[]
 }
@@ -145,7 +162,7 @@ const getValueAndDescriptionForFilterServiceFromSourceDocumentDriverCrossNavigat
         if (formattedCrossNavigationParameter.parameterType === 'STRING') valueAndDescription = { value: parameterValue[0].value, description: '' + parameterValue[0].value }
         else if (formattedCrossNavigationParameter.parameterType === 'NUM' && parameterValue[0].value) valueAndDescription = { value: +parameterValue[0].value, description: "" + parameterValue[0].value }
         else if (formattedCrossNavigationParameter.parameterType === 'DATE') {
-            const dateValue = getDateStringFromJSDate(new Date(parameterValue[0].value), 'MM/dd/y')
+            const dateValue = getDateStringFromJSDate(new Date(parameterValue[0].value), 'dd/MM/y')
             valueAndDescription.value = dateValue ?? ''
             valueAndDescription.description = dateValue ?? ''
         }
@@ -169,6 +186,7 @@ const getValueAndDescriptionForFilterServiceFromSourceDocumentDriverCrossNavigat
     Creating parameter value for filter service from source document output parameters
 */
 const getValueForFilterServiceFromSourceDocumentOutputParameter = (formattedCrossNavigationParameter: ICrossNavigationParameter) => {
+    // console.log('-------- formattedCrossNavigationParameter: ', formattedCrossNavigationParameter)
     const values = [] as (string | number)[]
     for (let i = 0; i < formattedCrossNavigationParameter.parameterValue.length; i++) {
         const tempValue = formattedCrossNavigationParameter.parameterValue[i].value;
@@ -183,7 +201,7 @@ const getValueForFilterServiceFromSourceDocumentOutputParameter = (formattedCros
 const getDateStringFromMilliseconds = (miliseconds: any) => {
     if (!miliseconds || isNaN(miliseconds)) return ''
     const date = new Date(+miliseconds)
-    const dateAsString = getDateStringFromJSDate(new Date(date), 'MM/dd/y')
+    const dateAsString = getDateStringFromJSDate(new Date(date), 'dd/MM/y')
     return dateAsString ?? ''
 }
 
@@ -204,25 +222,43 @@ export const loadNavigationInitialValuesFromDashboard = (document: any, filtersD
 
 const loadDriverInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter, dateFormat: string) => {
     if (!crossNavigationParameter.parameterValue || !crossNavigationParameter.parameterValue[0]) return
+    if (parameter.type !== 'DATE' && crossNavigationParameter.parameterType === 'DATE') formattDateCrossNavigatonParameterForNonDateDriver(crossNavigationParameter, dateFormat)
     if (!parameter.selectionType && parameter.valueSelection === 'man_in') {
         if (parameter.type === 'STRING') loadManualStringDriverInitialValue(parameter, crossNavigationParameter)
         else if (parameter.type === 'NUM') loadManualNumberDriverInitialValue(parameter, crossNavigationParameter)
         else if (parameter.type === 'DATE') loadDateDriverInitialValue(parameter, crossNavigationParameter, dateFormat)
     } else if (parameter.selectionType === 'LIST' || parameter.selectionType === 'COMBOBOX') {
         loadListDropdownDriverInitialValue(parameter, crossNavigationParameter)
-    } else if (parameter.selectionType === 'LOOKUP') {
-        loadPopupDriverInitialValue(parameter, crossNavigationParameter)
-    } else if (parameter.selectionType === 'TREE') {
-        loadTreeDriverInitialValue(parameter, crossNavigationParameter)
+    } else if (parameter.selectionType === 'LOOKUP' || parameter.selectionType === 'TREE') {
+        loadPopupAndTreeDriverInitialValue(parameter, crossNavigationParameter)
     }
+}
 
+const formattDateCrossNavigatonParameterForNonDateDriver = (crossNavigationParameter: ICrossNavigationParameter, dateFormat: string) => {
+    crossNavigationParameter.parameterValue.forEach((parameterValue: { value: string | number, description: string }) => {
+        const dateValue = new Date(parameterValue.value)
+        const dateDescription = getDateStringFromJSDate(dateValue, dateFormat) ?? '' + parameterValue.value
+        parameterValue.value = dateDescription
+        parameterValue.description = dateDescription
+    })
 }
 
 const loadManualStringDriverInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter) => {
-    parameter.parameterValue[0] = { value: "" + crossNavigationParameter.parameterValue[0].value, description: "" + crossNavigationParameter.parameterValue[0].description }
+    // console.log('---------- loadManualStringDriverInitialValue - parameter: ', parameter)
+    // console.log('---------- loadManualStringDriverInitialValue - crossNavigationParameter: ', crossNavigationParameter)
+    const value = getCrossNavigationParameterValuesAsString(crossNavigationParameter)
+    parameter.parameterValue[0] = { value: value, description: value }
+}
+
+const getCrossNavigationParameterValuesAsString = (crossNavigationParameter: ICrossNavigationParameter) => {
+    let value = ''
+    crossNavigationParameter.parameterValue.forEach((parameterValue: { value: string | number, description: string }, index) => value += index === crossNavigationParameter.parameterValue.length - 1 ? parameterValue.value : parameterValue.value + ',')
+    return value
 }
 
 const loadManualNumberDriverInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter) => {
+    // console.log('---------- loadManualNumberDriverInitialValue - parameter: ', parameter)
+    // console.log('---------- loadManualNumberDriverInitialValue - crossNavigationParameter: ', crossNavigationParameter)
     parameter.parameterValue[0] = { value: getFormattedNumberValue(crossNavigationParameter.parameterValue[0].value), description: "" + crossNavigationParameter.parameterValue[0].description }
 }
 
@@ -234,9 +270,9 @@ const getFormattedNumberValue = (value: string | number) => {
 
 const loadDateDriverInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter, dateFormat: string) => {
     console.log('---------- loadDateDriverInitialValue - parameter: ', parameter)
-    console.log('---------- loadDateDriverInitialValue - crossNavigationParameter: ', crossNavigationParameter)
+    console.log('---------- loadDriverInitialValue - crossNavigationParameter: ', crossNavigationParameter)
     if (crossNavigationParameter.type === 'fixed') {
-        const date = moment(crossNavigationParameter.parameterValue[0].value, 'MM/DD/YYYY')
+        const date = moment(crossNavigationParameter.parameterValue[0].value, 'MM/DD/YYYY', true)
         if (date.isValid()) parameter.parameterValue[0].value = date.toDate()
     }
     else if (typeof crossNavigationParameter.parameterValue[0].value !== 'number') {
@@ -258,11 +294,15 @@ const loadListDropdownDriverInitialValue = (parameter: iParameter, crossNavigati
 }
 
 const loadListComboboxSingleInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter) => {
+    // console.log('---------- loadListComboboxSingleInitialValue - parameter: ', parameter)
+    // console.log('---------- loadListComboboxSingleInitialValue - crossNavigationParameter: ', crossNavigationParameter)
     const parameterValue = getListComboboxCrossNavigationValue(parameter, crossNavigationParameter.parameterValue[0].value)
     if (parameterValue) parameter.parameterValue = [parameterValue]
 }
 
 const loadListComboboxMultiInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter) => {
+    //  console.log('---------- loadListComboboxMultiInitialValue - parameter: ', parameter)
+    // console.log('---------- loadListComboboxMultiInitialValue - crossNavigationParameter: ', crossNavigationParameter)
     const parameterValues = [] as { value: string | number | Date | null; description: string }[]
     crossNavigationParameter.parameterValue.forEach((tempParameterValue: { value: string | number | Date | null; description: string }) => {
         const parameterValue = getListComboboxCrossNavigationValue(parameter, tempParameterValue.value)
@@ -271,46 +311,53 @@ const loadListComboboxMultiInitialValue = (parameter: iParameter, crossNavigatio
     if (parameterValues.length > 0) parameter.parameterValue = parameterValues
 }
 
-
 const getListComboboxCrossNavigationValue = (parameter: iParameter, crossNavigationValue: any) => {
     const index = parameter.data.findIndex((option: { value: string; description: string }) => option.value == crossNavigationValue)
     return index !== -1 ? parameter.data[index] : null
 }
 
-
-// TODO - refactor/merge with function below ???
-const loadPopupDriverInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter) => {
+const loadPopupAndTreeDriverInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter) => {
     // TODO - see for NON ADMISSABLE
-    console.log('---------- loadPopupDriverInitialValue - parameter: ', parameter)
-    console.log('---------- loadPopupDriverInitialValue - crossNavigationParameter: ', crossNavigationParameter)
+    //console.log('---------- loadPopupAndTreeDriverInitialValue - parameter: ', parameter)
+    //  console.log('---------- loadPopupAndTreeDriverInitialValue - crossNavigationParameter: ', crossNavigationParameter)
     addMissingDescriptionForPopupAndTreeDriver(crossNavigationParameter)
     if (parameter.multivalue) {
-        parameter.parameterValue = crossNavigationParameter.parameterValue
+        loadPopupAndTreeDriverMultiInitialValue(parameter, crossNavigationParameter)
     } else {
-        parameter.parameterValue = crossNavigationParameter.parameterValue
+        loadPopupAndTreeDriverSingleInitialValue(parameter, crossNavigationParameter)
     }
 }
 
-const loadTreeDriverInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter) => {
-    // TODO - see for NON ADMISSABLE
-    addMissingDescriptionForPopupAndTreeDriver(crossNavigationParameter)
-    if (parameter.multivalue) {
-        parameter.parameterValue = crossNavigationParameter.parameterValue
-    } else {
-        parameter.parameterValue = crossNavigationParameter.parameterValue
+const loadPopupAndTreeDriverSingleInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter) => {
+    // console.log('---------- loadPopupAndTreeDriverInitialValue - parameter: ', deepcopy(parameter))
+    // console.log('---------- loadPopupAndTreeDriverInitialValue - crossNavigationParameter: ', deepcopy(crossNavigationParameter))
+    if (parameter.parameterValue[0]?.description === 'NOT ADMISSIBLE') {
+        parameter.parameterValue = [{ value: '', description: '' }]
+        return
     }
+    parameter.parameterValue = crossNavigationParameter.parameterValue[0] ? [crossNavigationParameter.parameterValue[0]] : []
 }
+
+const loadPopupAndTreeDriverMultiInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter) => {
+    // console.log('---------- loadPopupAndTreeDriverInitialValue - parameter: ', deepcopy(parameter))
+    // console.log('---------- loadPopupAndTreeDriverInitialValue - crossNavigationParameter: ', deepcopy(crossNavigationParameter))
+    const parameterValues = [] as { value: string | number, description: string }[]
+    crossNavigationParameter.parameterValue.forEach((parameterValue: { value: string | number, description: string }, index) => {
+        if (parameter.parameterDescription[index] !== 'NOT ADMISSIBLE') parameterValues.push(parameterValue)
+    })
+    parameter.parameterValue = parameterValues
+}
+
 
 const addMissingDescriptionForPopupAndTreeDriver = (crossNavigationParameter: ICrossNavigationParameter) => {
     crossNavigationParameter.parameterValue.forEach((parameterValue: { value: string | number, description: string }) => {
-        if (!parameterValue.description) parameterValue.description = '' + parameterValue.value
+        if (parameterValue.description === '' || parameterValue.description === null) parameterValue.description = '' + parameterValue.value
     })
 }
 
 //#endregion ===== INITIAL VALUES ======
 
 export const updateBreadcrumbForCrossNavigation = (breadcrumbs: ICrossNavigationBreadcrumb[], document: any) => {
-
     const index = breadcrumbs.findIndex((el: any) => el.label === document.name)
     if (index !== -1) {
         breadcrumbs[index].document = document
@@ -318,7 +365,40 @@ export const updateBreadcrumbForCrossNavigation = (breadcrumbs: ICrossNavigation
         breadcrumbs.push({
             label: document.name,
             document: document,
-            crossBreadcrumb: document.name // TODO - add cross breadcrumb logic
+            crossBreadcrumb: document.crossBreadCrumb ?? document.name
         })
     }
+}
+
+const formatDocumentBreadcrumbLabel = (crossNavigation: IDashboardCrossNavigation, crossNavigationDocument: any) => {
+    if (!crossNavigation.crossBreadcrumb) return
+    crossNavigationDocument.crossBreadCrumb = crossNavigation.crossBreadcrumb.includes('$P{') ? updateCrossBreadCrumbWithParameterValues(crossNavigation.crossBreadcrumb, crossNavigationDocument) : crossNavigation.crossBreadcrumb
+}
+
+const updateCrossBreadCrumbWithParameterValues = (crossBreadCrumb: string, crossNavigationDocument: any) => {
+    const crossNavigationParameters = crossNavigationDocument.formattedCrossNavigationParameters as ICrossNavigationParameter[]
+    if (!crossNavigationParameters || crossNavigationParameters.length === 0) return crossBreadCrumb
+    const parameterPlaceholders = crossBreadCrumb.match(/(?<=\$P\{).*?(?=\})/g)
+    const parameterPlaceholderMapWithValues = {}
+    getvaluesforparameterplaceholders(parameterPlaceholders, crossNavigationParameters, parameterPlaceholderMapWithValues)
+    return replacePlaceholdersWithRealValues(crossBreadCrumb, parameterPlaceholderMapWithValues)
+}
+
+const getvaluesforparameterplaceholders = (parameterPlaceholders: string[] | null, crossNavigationParameters: ICrossNavigationParameter[], parameterPlaceholderMapWithValues: any) => {
+    parameterPlaceholders?.forEach((parameterPlaceholder: string) => {
+        const driverName = parameterPlaceholder
+        const index = crossNavigationParameters.findIndex((crossNavigationParameter: ICrossNavigationParameter) => crossNavigationParameter.sourceDriverName === driverName || crossNavigationParameter.outputDriverName === driverName)
+        let value = ''
+        if (index !== -1) value = getCrossNavigationParameterValuesAsString(crossNavigationParameters[index])
+
+        parameterPlaceholderMapWithValues[parameterPlaceholder] = value
+    })
+}
+
+const replacePlaceholdersWithRealValues = (crossBreadCrumb: string, parameterPlaceholderMapWithValues: any) => {
+    let finalString = crossBreadCrumb
+    Object.keys(parameterPlaceholderMapWithValues).forEach((key: string) => {
+        finalString = finalString.replaceAll('$P{' + key + '}', parameterPlaceholderMapWithValues[key])
+    })
+    return finalString
 }

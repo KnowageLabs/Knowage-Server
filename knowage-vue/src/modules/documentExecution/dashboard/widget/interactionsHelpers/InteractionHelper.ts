@@ -24,7 +24,7 @@ export const executeCrossNavigation = (documentCrossNavigationOutputParameters: 
 }
 
 
-
+//#region ===== TABLE ======
 export const executeTableWidgetCrossNavigation = (clickedValue: IClickedValue, formattedRow: any, crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
     const outputParameters = getFormattedTableOutputParameters(clickedValue, formattedRow, crossNavigationModel, dashboardId)
     executeCrossNavigation(outputParameters, crossNavigationModel.name)
@@ -32,7 +32,9 @@ export const executeTableWidgetCrossNavigation = (clickedValue: IClickedValue, f
 
 const getFormattedTableOutputParameters = (clickedValue: IClickedValue, formattedRow: any, crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
     const formattedOutputParameters = [] as ICrossNavigationParameter[]
-    crossNavigationModel.parameters.forEach((crossNavigationParameter: IWidgetInteractionParameter) => {
+    for (let i = 0; i < crossNavigationModel.parameters.length; i++) {
+        const crossNavigationParameter = crossNavigationModel.parameters[i] as IWidgetInteractionParameter
+        if (!crossNavigationParameter.enabled) continue
         switch (crossNavigationParameter.type) {
             case 'static':
                 formattedOutputParameters.push(getFormattedFixedOutputParameter(crossNavigationParameter))
@@ -43,13 +45,13 @@ const getFormattedTableOutputParameters = (clickedValue: IClickedValue, formatte
             case 'selection':
                 addSelectionTypeOutputParameter(crossNavigationParameter, formattedOutputParameters, dashboardId)
         }
-    })
+    }
     return formattedOutputParameters
 }
 
 const getFormattedFixedOutputParameter = (crossNavigationParameter: IWidgetInteractionParameter) => {
     const value = crossNavigationParameter.value ?? ''
-    const formattedValue = crossNavigationParameter.dataType === 'date' ? getFormattedDateValue(value, 'date') : value
+    const formattedValue = getFormattedFixedOutputValue(value, crossNavigationParameter.dataType)
     return {
         targetDriverUrlName: '',
         parameterValue: [{ value: formattedValue, description: formattedValue }],
@@ -60,6 +62,17 @@ const getFormattedFixedOutputParameter = (crossNavigationParameter: IWidgetInter
     } as ICrossNavigationParameter
 }
 
+const getFormattedFixedOutputValue = (value: string, dataType: string) => {
+    switch (dataType) {
+        case 'date':
+            return getFormattedDateValue(value, 'date')
+        case 'number':
+            return isNaN(value as any) ? null : +value
+        default:
+            return value
+    }
+}
+
 const getFormattedTableDynamicOutputParameter = (clickedValue: IClickedValue, crossNavigationParameter: IWidgetInteractionParameter, formattedRow: any) => {
     const valueAndType = getDynamicValueAndTypeForTableDynamicOutputParameter(clickedValue, crossNavigationParameter, formattedRow)
     const value = valueAndType ? valueAndType.value : ''
@@ -68,7 +81,7 @@ const getFormattedTableDynamicOutputParameter = (clickedValue: IClickedValue, cr
         parameterValue: [{ value: value, description: value }],
         multivalue: false,
         type: 'fromSourceDocumentOutputParameter',
-        parameterType: getDriverParameterTypeFromOutputParameterType(crossNavigationParameter.dataType),
+        parameterType: getDriverParameterTypeFromOutputParameterType(valueAndType?.type),
         outputDriverName: crossNavigationParameter.name
     } as ICrossNavigationParameter
 }
@@ -82,15 +95,13 @@ const getDynamicValueAndTypeForTableDynamicOutputParameter = (clickedValue: ICli
     if (!rowField) return null
     const fieldTypeIsDate = ['date', 'timestamp'].includes(rowField.type)
     const value = fieldTypeIsDate ? getFormattedDateValue(rowField.value, rowField.type) : rowField.value
-    return { value: value, type: fieldTypeIsDate ? 'date' : 'string' } // TODO
+    return { value: value, type: rowField.type }
 }
 
-const getFormattedDateValue = (valueAsString: string, type: string) => {
-    const format = type === 'timestamp' ? 'DD/MM/YYYY HH:mm:ss.SSS' : 'DD/MM/YYYY'
-    const date = moment(valueAsString, format)
-    return date.isValid() ? date.valueOf() : ''
-}
+//#endregion ===== TABLE ======
 
+
+//#region ===== HTML/TEXT ======
 export const executeHTMLandTextWidgetCrossNavigation = (dynamicValue: string, crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
     const clickedValue = { value: dynamicValue, type: '' }
     const outputParameters = getFormattedHTMLandTextWidgetOutputParameters(clickedValue, crossNavigationModel, dashboardId)
@@ -100,7 +111,9 @@ export const executeHTMLandTextWidgetCrossNavigation = (dynamicValue: string, cr
 
 const getFormattedHTMLandTextWidgetOutputParameters = (clickedValue: IClickedValue, crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
     const formattedOutputParameters = [] as ICrossNavigationParameter[]
-    crossNavigationModel.parameters.forEach((crossNavigationParameter: IWidgetInteractionParameter) => {
+    for (let i = 0; i < crossNavigationModel.parameters.length; i++) {
+        const crossNavigationParameter = crossNavigationModel.parameters[i] as IWidgetInteractionParameter
+        if (!crossNavigationParameter.enabled) continue
         switch (crossNavigationParameter.type) {
             case 'static':
                 formattedOutputParameters.push(getFormattedFixedOutputParameter(crossNavigationParameter))
@@ -111,7 +124,7 @@ const getFormattedHTMLandTextWidgetOutputParameters = (clickedValue: IClickedVal
             case 'selection':
                 addSelectionTypeOutputParameter(crossNavigationParameter, formattedOutputParameters, dashboardId)
         }
-    })
+    }
     return formattedOutputParameters
 }
 
@@ -135,6 +148,9 @@ const getDynamicValueAndTypeForHTMLandTextDynamicOutputParameter = (clickedValue
     return { value: value, type: crossNavigationParameter.dataType }
 }
 
+//#endregion ===== HTML/TEXT ======
+
+//#region ===== CHART ======
 export const executeChartCrossNavigation = (outputParameters: IWidgetInteractionParameter[], crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
     const formattedOutputParameters = getFormattedChartOutputParameters(outputParameters, crossNavigationModel, dashboardId)
     executeCrossNavigation(formattedOutputParameters, crossNavigationModel.name)
@@ -142,7 +158,9 @@ export const executeChartCrossNavigation = (outputParameters: IWidgetInteraction
 
 const getFormattedChartOutputParameters = (outputParameters: IWidgetInteractionParameter[], crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
     const formattedOutputParameters = [] as ICrossNavigationParameter[]
-    crossNavigationModel.parameters.forEach((crossNavigationParameter: IWidgetInteractionParameter) => {
+    for (let i = 0; i < crossNavigationModel.parameters.length; i++) {
+        const crossNavigationParameter = crossNavigationModel.parameters[i] as IWidgetInteractionParameter
+        if (!crossNavigationParameter.enabled) continue
         switch (crossNavigationParameter.type) {
             case 'static':
                 formattedOutputParameters.push(getFormattedFixedOutputParameter(crossNavigationParameter))
@@ -153,7 +171,7 @@ const getFormattedChartOutputParameters = (outputParameters: IWidgetInteractionP
             case 'selection':
                 addSelectionTypeOutputParameter(crossNavigationParameter, formattedOutputParameters, dashboardId)
         }
-    })
+    }
     return formattedOutputParameters
 }
 
@@ -171,6 +189,9 @@ const getFormattedChartDynamicOutputParameter = (outputParameters: IWidgetIntera
     } as ICrossNavigationParameter
 }
 
+//#endregion ===== CHART ======
+
+//#region ===== IMAGE ======
 export const executeImageWidgetCrossNavigation = (crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
     const outputParameters = getFormattedImageWidgetOutputParameters(crossNavigationModel, dashboardId)
     executeCrossNavigation(outputParameters, crossNavigationModel.name)
@@ -178,7 +199,9 @@ export const executeImageWidgetCrossNavigation = (crossNavigationModel: IWidgetC
 
 const getFormattedImageWidgetOutputParameters = (crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
     const formattedOutputParameters = [] as ICrossNavigationParameter[]
-    crossNavigationModel.parameters.forEach((crossNavigationParameter: IWidgetInteractionParameter) => {
+    for (let i = 0; i < crossNavigationModel.parameters.length; i++) {
+        const crossNavigationParameter = crossNavigationModel.parameters[i] as IWidgetInteractionParameter
+        if (!crossNavigationParameter.enabled) continue
         switch (crossNavigationParameter.type) {
             case 'static':
                 formattedOutputParameters.push(getFormattedFixedOutputParameter(crossNavigationParameter))
@@ -186,10 +209,10 @@ const getFormattedImageWidgetOutputParameters = (crossNavigationModel: IWidgetCr
             case 'selection':
                 addSelectionTypeOutputParameter(crossNavigationParameter, formattedOutputParameters, dashboardId)
         }
-    })
+    }
     return formattedOutputParameters
 }
-
+//#endregion ===== IMAGE ======
 
 const addSelectionTypeOutputParameter = (crossNavigationParameter: IWidgetInteractionParameter, formattedOutputParameters: ICrossNavigationParameter[], dashboardId: string) => {
     const tempParameter = getFormattedSelectionOutputParameter(crossNavigationParameter, dashboardId)
@@ -202,14 +225,30 @@ const getFormattedSelectionOutputParameter = (crossNavigationParameter: IWidgetI
     const activeSelection = getActiveSelectionByDatasetAndColumn(crossNavigationParameter.dataset, crossNavigationParameter.column, activeSelections)
 
     if (!activeSelection) return null
+    const values = getAcitveSelectionValues(activeSelection.value, crossNavigationParameter.dataType)
     return {
         targetDriverUrlName: '',
-        parameterValue: activeSelection.value.map((value: string | number) => { return { value: "" + value, description: "" + value } }), // TODO - see about DATE value
+        parameterValue: values,
         multivalue: activeSelection.value.length > 1,
         type: 'fromSourceDocumentOutputParameter',
         parameterType: getDriverParameterTypeFromOutputParameterType(crossNavigationParameter.dataType),
         outputDriverName: crossNavigationParameter.name
     } as ICrossNavigationParameter
+}
+
+const getAcitveSelectionValues = (values: any[], type: string) => {
+    return values.map((value: any) => {
+        let formattedValue = value
+        if (['date', 'timestamp'].includes(type) && moment(value, 'DD/MM/YYYY HH:mm:ss.SSS', true).isValid()) {
+            formattedValue = moment(value, 'DD/MM/YYYY HH:mm:ss.SSS', true).valueOf()
+            return { value: formattedValue, description: formattedValue }
+        } else if (['date', 'timestamp'].includes(type) && moment(value, 'DD/MM/YYYY', true).isValid()) {
+            formattedValue = moment(value, 'DD/MM/YYYY', true).valueOf()
+            return { value: formattedValue, description: formattedValue }
+        } else {
+            return { value: "" + formattedValue, description: "" + formattedValue }
+        }
+    })
 }
 
 const getActiveSelectionByDatasetAndColumn = (datasetLabel: string | undefined, columnName: string | undefined, activeSelections: ISelection[]) => {
@@ -218,13 +257,24 @@ const getActiveSelectionByDatasetAndColumn = (datasetLabel: string | undefined, 
     return index !== -1 ? activeSelections[index] : null
 }
 
-const getDriverParameterTypeFromOutputParameterType = (outputParameterType: string) => {
+const getFormattedDateValue = (valueAsString: string, type: string) => {
+    const format = type === 'timestamp' ? 'DD/MM/YYYY HH:mm:ss.SSS' : 'DD/MM/YYYY'
+    const date = moment(valueAsString, format, true)
+    return date.isValid() ? date.valueOf() : ''
+}
+
+
+const getDriverParameterTypeFromOutputParameterType = (outputParameterType: string | undefined) => {
     switch (outputParameterType) {
         case 'string':
+        case 'text':
             return 'STRING';
         case 'number':
+        case 'int':
+        case 'float':
             return 'NUM';
         case 'date':
+        case 'timestamp':
             return 'DATE'
         default:
             return 'STRING'

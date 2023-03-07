@@ -9,15 +9,19 @@ import { loadNavigationInitialValuesFromDashboard } from './DocumentExecutionCro
 const { t } = i18n.global
 const mainStore = store()
 
-export const loadFilters = async (initialLoading: boolean, filtersData: { filterStatus: iParameter[], isReadyForExecution: boolean }, document: any, breadcrumbs: any[], userRole: string | null, parameterValuesMap: any, tabKey: string, sessionEnabled: boolean, $http: any, dateFormat: string, vueComponenet: any) => {
+export const loadFilters = async (initialLoading: boolean, filtersData: { filterStatus: iParameter[], isReadyForExecution: boolean }, document: any, breadcrumbs: any[], userRole: string | null, parameterValuesMap: any, tabKey: string, sessionEnabled: boolean, $http: any, dateFormat: string, route: any, vueComponenet: any) => {
     if (parameterValuesMap && parameterValuesMap[document.label + '-' + tabKey] && initialLoading) return loadFiltersFromParametersMap(parameterValuesMap, document, tabKey, filtersData, breadcrumbs)
     if (sessionEnabled && !document.navigationParams) return loadFiltersFromSession(document, filtersData, breadcrumbs)
+    if (route.query.crossNavigationParameters) {
+        document.formattedCrossNavigationParameters = JSON.parse(route.query.crossNavigationParameters)
+        document.navigationFromDashboard = true
+    }
 
     filtersData = await getFilters(document, userRole, $http)
 
     formatDrivers(filtersData)
 
-    if (document.navigationParams) {
+    if (document.navigationParams || document.formattedCrossNavigationParameters) {
         document.navigationFromDashboard ? loadNavigationInitialValuesFromDashboard(document, filtersData, dateFormat) : loadNavigationParamsInitialValue(vueComponenet)
     }
     setFiltersForBreadcrumbItem(breadcrumbs, filtersData, document)
@@ -89,7 +93,7 @@ const formatDrivers = (filtersData: { filterStatus: iParameter[], isReadyForExec
             })
 
             if (el.type === 'DATE' && !el.selectionType && el.valueSelection === 'man_in' && el.showOnPanel === 'true' && el.visible) {
-                el.parameterValue[0].value = moment(el.parameterValue[0].value, 'MM/DD/YYYY').toDate() as any
+                el.parameterValue[0].value = moment(el.parameterValue[0].value, 'DD/MM/YYYY').toDate() as any
             }
         }
         if (el.data) {

@@ -2,7 +2,7 @@
     <div class="p-grid">
         <div class="p-col-12">
             <div class="htmlMirrorContainer" style="height: 600px; width: 100%">
-                <Editor v-model="widgetModel.settings.editor.text" class="p-col-12" editor-style="height: 320px">
+                <Editor v-model="model.settings.editor.text" class="p-col-12" editor-style="height: 320px">
                     <template #toolbar>
                         <span class="ql-formats">
                             <select class="ql-font">
@@ -65,7 +65,7 @@
     </div>
 
     <TieredMenu ref="menu" :model="toolbarMenuItems" :popup="true" />
-    <TagsDialog :visible="tagsDialogVisible" :widget-model="widgetModel" :mode="tagsDialogMode" widget-type="text" :variables="variables" :selected-datasets="selectedDatasets" :dashboard-id="dashboardId" @close="closeTagsDialog" @insert="onInsert" />
+    <TagsDialog :visible="tagsDialogVisible" :widget-model="model" :mode="tagsDialogMode" widget-type="text" :variables="variables" :selected-datasets="selectedDatasets" :dashboard-id="dashboardId" @close="closeTagsDialog" @insert="onInsert" />
 </template>
 
 <script lang="ts">
@@ -98,6 +98,7 @@ export default defineComponent({
     },
     data() {
         return {
+            model: {} as IWidget,
             toolbarMenuItems: [] as any[],
             tagsDialogMode: '' as string,
             tagsDialogVisible: false,
@@ -105,7 +106,18 @@ export default defineComponent({
             quill: {} as any
         }
     },
+    watch: {
+        widgetModel() {
+            this.loadModel()
+        }
+    },
+    created() {
+        this.loadModel()
+    },
     methods: {
+        loadModel() {
+            this.model = this.widgetModel
+        },
         toggle(event: Event) {
             this.createMenuItems()
             const menu = this.$refs.menu as any
@@ -157,8 +169,8 @@ export default defineComponent({
             this.tagsDialogVisible = false
         },
         onInsert(value: string) {
-            this.widgetModel.settings.editor.text += '<p>' + value + '</p>'
-            this.widgetModel.settings.editor.text += '&#8205;'
+            this.model.settings.editor.text += '<p>' + value + '</p>'
+            this.model.settings.editor.text += '&#8205;'
             this.tagsDialogVisible = false
         }
     }

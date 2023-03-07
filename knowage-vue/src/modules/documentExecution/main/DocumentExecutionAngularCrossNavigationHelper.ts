@@ -204,15 +204,15 @@ export function loadNavigationParamsInitialValue(vueComponent: any) {
                     })
                 } else {
                     const crossNavigationValue = Array.isArray(vueComponent.document.navigationParams[key]) && vueComponent.document.navigationParams[key][0] ? vueComponent.document.navigationParams[key][0] : vueComponent.document.navigationParams[key]
+                    let parameterDescription = vueComponent.document.navigationParams[key + '_field_visible_description']
+                    if (!parameterDescription) parameterDescription = tempParam.parameterValue[0] ? tempParam.parameterValue[0].description : ''
                     if (tempParam.parameterValue[0] && tempParam.parameterValue[0].value === '') tempParam.parameterValue = []
-                    if (!checkIfMultivalueDriverContainsCrossNavigationValue(tempParam, crossNavigationValue)) return
-                    if (crossNavigationValue) {
-                        if (tempParam.parameterValue[0]) tempParam.parameterValue[0].value = crossNavigationValue
-                        else tempParam.parameterValue[0] = { value: crossNavigationValue, description: '' }
-                    }
-                    if (vueComponent.document.navigationParams[key + '_field_visible_description']) vueComponent.document.navigationParams[key + '_field_visible_description'] = tempParam.parameterValue[0].description
+                    if (!checkIfMultivalueDriverContainsCrossNavigationValue(tempParam, crossNavigationValue) || parameterDescription === 'NOT ADMISSIBLE') return
+                    if (crossNavigationValue) tempParam.parameterValue[0] = { value: crossNavigationValue, description: parameterDescription }
                     if (tempParam.type === 'DATE' && tempParam.parameterValue[0] && tempParam.parameterValue[0].value) {
-                        tempParam.parameterValue[0].value = moment(tempParam.parameterValue[0].value, 'DD/MM/YYYY').toDate()
+                        const date = moment(tempParam.parameterValue[0].value, 'DD/MM/YYYY HH:mm:ss.SSS') as any
+                        const isValidDate = date.isValid()
+                        tempParam.parameterValue[0].value = isValidDate ? date.toDate() : moment(tempParam.parameterValue[0].value, 'DD/MM/YYYY').toDate()
                     }
                 }
                 if (tempParam.selectionType === 'COMBOBOX') formatCrossNavigationComboParameterDescription(tempParam)
@@ -228,7 +228,6 @@ function checkIfMultivalueDriverContainsCrossNavigationValue(tempParam: any, cro
 }
 
 function formatCrossNavigationComboParameterDescription(tempParam: any) {
-    if (!['LIST', 'COMBOBOX', 'LOOKUP', 'TREE'].includes(tempParam.selectionType)) return true
     for (let i = tempParam.parameterValue.length - 1; i >= 0; i--) {
         if (tempParam.parameterValue[i].value) {
             const index = tempParam.data.findIndex((option: any) => option.value == tempParam.parameterValue[i].value)

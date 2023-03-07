@@ -1,5 +1,5 @@
 <template>
-    <div id="kn-parameter-sidebar" :class="positionClass">
+    <div class="kn-parameter-sidebar" :class="positionClass">
         <Toolbar v-if="mode !== 'workspaceView' && mode !== 'qbeView' && mode !== 'datasetManagement'" id="kn-parameter-sidebar-toolbar" class="kn-toolbar kn-toolbar--secondary">
             <template #start>
                 <div id="kn-parameter-sidebar-toolbar-icons-container" class="p-d-flex p-flex-row p-jc-around">
@@ -219,7 +219,8 @@ export default defineComponent({
         dateFormat: { type: String },
         dataset: { type: Object },
         correctRolesForExecution: { type: Array },
-        loadFromDatasetManagement: { type: Boolean, default: false }
+        loadFromDatasetManagement: { type: Boolean, default: false },
+        showInDialog: { type: Boolean }
     },
     emits: ['execute', 'exportCSV', 'roleChanged', 'parametersChanged'],
     setup() {
@@ -685,7 +686,7 @@ export default defineComponent({
 #kn-parameter-sidebar-toolbar-icons-container {
     width: 100%;
 }
-#kn-parameter-sidebar {
+.kn-parameter-sidebar {
     z-index: 100;
     background-color: white;
     height: 100%;

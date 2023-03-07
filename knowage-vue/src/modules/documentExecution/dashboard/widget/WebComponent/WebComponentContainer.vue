@@ -74,6 +74,7 @@ export default defineComponent({
             }
 
             if (!this.webComponentRef) return
+            this.webComponentRef.widgetType = this.propWidget.type
             this.webComponentRef.htmlContent = this.propWidget.type === 'text' ? '<div style="position: absolute;height: 100%;width: 100%;">' + this.htmlContent + '</div>' : this.htmlContent
             this.webComponentRef.webComponentCss = this.webComponentCss
             this.webComponentRef.addEventListener('selectEvent', this.onSelect)

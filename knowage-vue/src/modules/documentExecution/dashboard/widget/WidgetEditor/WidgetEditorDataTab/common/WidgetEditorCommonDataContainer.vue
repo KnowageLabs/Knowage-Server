@@ -29,10 +29,11 @@ import WidgetEditorColumnTable from './WidgetEditorColumnTable.vue'
 export default defineComponent({
     name: 'widget-editor-common-data-container',
     components: { TableWidgetDataForm, TableWidgetColumnForm, WidgetEditorColumnTable },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedDataset: { type: Object as PropType<IDataset | null> } },
+    props: { propWidgetModel: { type: Object as PropType<IWidget>, required: true }, selectedDataset: { type: Object as PropType<IDataset | null> } },
     data() {
         return {
             descriptor,
+            widgetModel: {} as IWidget,
             columnTableItems: [] as IWidgetColumn[],
             selectedColumn: null as IWidgetColumn | null
         }
@@ -43,15 +44,22 @@ export default defineComponent({
         }
     },
     watch: {
+        propWidgetModel() {
+            this.loadWidgetModel()
+        },
         selectedDataset() {
             this.selectedColumn = null
         }
     },
     async created() {
         this.$watch('widgetModel.columns', () => this.loadColumnTableItems())
+        this.loadWidgetModel()
         this.loadColumnTableItems()
     },
     methods: {
+        loadWidgetModel() {
+            this.widgetModel = this.propWidgetModel
+        },
         loadColumnTableItems() {
             this.columnTableItems = this.widgetModel.columns ?? []
         },

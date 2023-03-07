@@ -1006,6 +1006,7 @@
             "clearCache": "Clear cache",
             "copyLink": "Copy link",
             "copyLinkAndShare": "Copy link and share it",
+            "crossNavigationError": "No target for selected cross navigation!",
             "crossNavigationNoTargetError": "No cross navigation targets available",
             "currentRank": "Curent Rank is...",
             "customMetadata": "Custom Metadata",

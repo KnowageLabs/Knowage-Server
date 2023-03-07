@@ -1,5 +1,6 @@
 class WidgetWebComponent extends HTMLElement {
     selectEvent = null as any
+    widgetType = '' as string
 
     constructor() {
         super()
@@ -38,7 +39,7 @@ class WidgetWebComponent extends HTMLElement {
     }
 
     get webComponentCss() {
-        return this.htmlContent
+        return this.webComponentCss
     }
 
     set webComponentCss(value: string) {
@@ -56,7 +57,6 @@ class WidgetWebComponent extends HTMLElement {
                     'click',
                     (event: any) => {
                         const eventTarget = event.target as any
-
                         if (eventTarget.attributes) {
                             const selectionColumn = eventTarget.attributes['kn-selection-column'].value
                             const selectionValue = eventTarget.attributes['kn-selection-value'].value
@@ -83,7 +83,6 @@ class WidgetWebComponent extends HTMLElement {
                     'click',
                     (event: any) => {
                         const eventTarget = event.target as any
-
                         if (eventTarget.attributes) {
                             const datasetLabel = eventTarget.attributes['kn-preview'].value
                             this.dispatchEvent(
@@ -109,9 +108,8 @@ class WidgetWebComponent extends HTMLElement {
                     'click',
                     (event: any) => {
                         const eventTarget = event.target as any
-
                         if (eventTarget.attributes) {
-                            const crossValue = eventTarget.attributes['kn-cross'].value
+                            const crossValue = this.widgetType === 'html' ? eventTarget.attributes['kn-cross'].value : eventTarget.innerHTML
                             this.dispatchEvent(
                                 new CustomEvent('crossNavEvent', {
                                     bubbles: true,
