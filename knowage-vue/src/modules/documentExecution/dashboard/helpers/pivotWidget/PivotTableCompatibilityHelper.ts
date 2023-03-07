@@ -1,10 +1,10 @@
-import { IDashboard, IDashboardDriver, IPivotTooltips, ITableWidgetConditionalStyle, ITableWidgetConditionalStyles, ITableWidgetStyle, IVariable, IWidget, IWidgetInteractions, IWidgetResponsive } from '../../Dashboard'
+import { IDashboard, IDashboardDriver, IPivotTooltips, ITableWidgetConditionalStyle, ITableWidgetConditionalStyles, IVariable, IWidget, IWidgetInteractions, IWidgetResponsive } from '../../Dashboard'
 // import * as pivotTalbeDefaultValues from '../../widget/WidgetEditor/helpers/pivotTableWidget/PivotTableDefaultValues'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 // import { getFiltersForColumns } from '../DashboardBackwardCompatibilityHelper'
 import { getFormattedInteractions } from '../common/WidgetInteractionsHelper'
 import { getFormattedPivotFields } from './PivotTableColumnHelper'
-import { IPivotTableConfiguration, IPivotTableSettings } from '../../interfaces/pivotTable/DashboardPivotTableWidget'
+import { IPivotTableConfiguration, IPivotTableSettings, IPivotTableStyle } from '../../interfaces/pivotTable/DashboardPivotTableWidget'
 import { getSettingsFromWidgetColumns } from './PivotTableColumnSettingsHelper'
 import { getFormattedConfiguration } from './PivotTableConfigurationHelper'
 import { getFormattedStyle } from './PivotTabletStyleHelper'
@@ -44,7 +44,7 @@ const getFormattedWidgetSettings = (widget: any, formattedDashboardModel: IDashb
         conditionalStyles: getFormattedConditionalStyles(widget, formattedDashboardModel, drivers),
         configuration: getFormattedConfiguration(widget) as IPivotTableConfiguration,
         interactions: getFormattedInteractions(widget) as IWidgetInteractions,
-        style: getFormattedStyle(widget) as ITableWidgetStyle,
+        style: getFormattedStyle(widget) as IPivotTableStyle,
         responsive: widgetCommonDefaultValues.getDefaultResponsivnes() as IWidgetResponsive,
         tooltips: pivotTableDefaultValues.getDefaultTooltips() as IPivotTooltips[]
     } as IPivotTableSettings
