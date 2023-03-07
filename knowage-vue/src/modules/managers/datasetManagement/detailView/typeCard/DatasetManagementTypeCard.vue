@@ -11,7 +11,7 @@
                             id="scope"
                             class="kn-material-input"
                             :style="typeTabDescriptor.style.maxWidth"
-                            :options="getAllowed"
+                            :options="getAllowed()"
                             optionLabel="VALUE_CD"
                             optionValue="VALUE_CD"
                             v-model="v$.dataset.dsTypeCd.$model"
