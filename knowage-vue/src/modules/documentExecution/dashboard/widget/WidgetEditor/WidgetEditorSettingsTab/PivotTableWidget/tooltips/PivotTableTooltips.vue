@@ -56,7 +56,8 @@
                 </div>
 
                 <!-- TODO: Show custom header, only on ALL fields, no custom -->
-                <div v-if="tooltip.target == 'all'" class="p-grid p-ai-center p-pt-3">
+                <!-- <div v-if="tooltip.target == 'all'" class="p-grid p-ai-center p-pt-3"> -->
+                <div class="p-grid p-ai-center p-pt-3">
                     <div class="p-col-12 p-md-3 p-mt-4 p-px-4">
                         <InputSwitch v-model="tooltip.header.enabled" :disabled="!tooltip.enabled" @change="tooltipsChanged"></InputSwitch>
                         <label class="kn-material-input-label p-m-3">{{ $t('dashboard.widgetEditor.tooltips.customHeader') }}</label>
@@ -66,6 +67,7 @@
                         <InputText v-model="tooltip.header.text" class="kn-material-input p-inputtext-sm" :disabled="!tooltip.enabled || !tooltip.header.enabled" @change="tooltipsChanged" />
                     </div>
                 </div>
+                <!-- </div> -->
             </div>
 
             <div
