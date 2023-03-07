@@ -76,6 +76,7 @@
                     :document="document"
                     :reload-trigger="reloadTrigger"
                     :hidden-form-data="document.hiddenFormData"
+                    :mode="'dashboard-popup'"
                     :filtersData="document.filtersData"
                     :newDashboardMode="false"
                 ></DashboardController>
@@ -91,6 +92,7 @@
                             :hiddenFormData="item.hiddenFormData"
                             :filtersData="item.filtersData"
                             :newDashboardMode="newDashboardMode"
+                            :mode="mode"
                             @newDashboardSaved="onNewDashboardSaved"
                             @executeCrossNavigation="onExecuteCrossNavigation"
                         ></DashboardController>

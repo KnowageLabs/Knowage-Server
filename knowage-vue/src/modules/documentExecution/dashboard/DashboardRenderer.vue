@@ -60,7 +60,6 @@ export default defineComponent({
     name: 'dashboard-manager',
     components: { KnDashboardTab, KnDashboardTabsPanel, WidgetController },
     emits: ['addWidget', 'addDataset'],
-    inject: ['dHash'],
     props: {
         model: { type: Object },
         document: { type: Object },
@@ -75,16 +74,18 @@ export default defineComponent({
             canEditDashboard
         }
     },
-    mounted() {
-        this.dashboardModel = this.model
-        if (this.dashboardModel.sheets.length === 0) this.dashboardModel.sheets.push({ label: 'new sheet', widgets: { lg: [] } })
-    },
     computed: {
         ...mapState(dashboardStore, {
             dashboard: 'dashboards',
             selectedSheetIndex: 'selectedSheetIndex'
         })
     },
+    mounted() {
+        this.dashboardModel = this.model ?? {}
+        if (!this.dashboardModel.sheets) this.dashboardModel.sheets = []
+        if (this.dashboardModel.sheets.length === 0) this.dashboardModel.sheets.push({ label: 'new sheet', widgets: { lg: [] } })
+    },
+
     methods: {
         ...mapActions(dashboardStore, ['setSelectedSheetIndex', 'setDashboardSheet']),
         activeSheet(index) {

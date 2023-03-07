@@ -1,7 +1,7 @@
 <template>
-    <div show="model && visible" :id="`dashboard_${model?.configuration?.id}`" class="dashboard-container">
+    <div v-show="model && visible && showDashboard" :id="`dashboard_${model?.configuration?.id}`" :class="mode === 'dashboard-popup' ? 'dashboard-container-popup' : 'dashboard-container'">
         <Button icon="fas fa-square-check" class="p-m-3 p-button-rounded p-button-text p-button-plain" style="position: fixed; right: 0; z-index: 999; background-color: white; box-shadow: 0px 2px 3px #ccc" @click="selectionsDialogVisible = true" />
-        <DashboardRenderer v-if="!loading && visible" :model="model" :datasets="datasets" :dashboardId="dashboardId" :documentDrivers="drivers" :variables="model ? model.configuration.variables : []"></DashboardRenderer>
+        <DashboardRenderer v-if="!loading && visible && showDashboard" :model="model" :datasets="datasets" :dashboardId="dashboardId" :documentDrivers="drivers" :variables="model ? model.configuration.variables : []"></DashboardRenderer>
 
         <Transition name="editorEnter" appear>
             <DatasetEditor v-if="datasetEditorVisible" :dashboard-id-prop="dashboardId" :available-datasets-prop="datasets" :filters-data-prop="filtersData" @closeDatasetEditor="closeDatasetEditor" @datasetEditorSaved="closeDatasetEditor" @allDatasetsLoaded="datasets = $event" />
@@ -81,7 +81,8 @@ export default defineComponent({
         reloadTrigger: { type: Boolean },
         hiddenFormData: { type: Object },
         filtersData: { type: Object as PropType<{ filterStatus: iParameter[]; isReadyForExecution: boolean }> },
-        newDashboardMode: { type: Boolean }
+        newDashboardMode: { type: Boolean },
+        mode: { type: Object as PropType<string | null>, required: true }
     },
     emits: ['newDashboardSaved', 'executeCrossNavigation'],
     setup() {
@@ -114,10 +115,14 @@ export default defineComponent({
     computed: {
         ...mapState(mainStore, {
             user: 'user'
-        })
+        }),
+        showDashboard() {
+            return ['dashboard', 'dashboard-popup'].includes('' + this.mode)
+        }
     },
     async created() {
         console.log('------------- DASHBOARD CONTROLLER CREATED!!!')
+        if (!this.showDashboard) return
         this.setEventListeners()
         await this.getData()
         this.$watch('model.configuration.datasets', (modelDatasets: IDashboardDataset[]) => setDatasetIntervals(modelDatasets, this.datasets))
@@ -335,5 +340,10 @@ export default defineComponent({
     .dashboard-container {
         height: calc(100vh - var(--kn-mainmenu-width));
     }
+}
+
+.dashboard-container-popup {
+    height: 100%;
+    flex: 1;
 }
 </style>
