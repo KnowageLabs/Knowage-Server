@@ -77,8 +77,8 @@
                     :reload-trigger="reloadTrigger"
                     :hidden-form-data="document.hiddenFormData"
                     :mode="'dashboard-popup'"
-                    :filtersData="document.filtersData"
-                    :newDashboardMode="false"
+                    :filters-data="document.filtersData"
+                    :new-dashboard-mode="false"
                 ></DashboardController>
                 <div v-show="mode === 'dashboard' || newDashboardMode" class="p-d-flex p-flex-row" style="height: 100%">
                     <template v-for="(item, index) in breadcrumbs" :key="index">
@@ -86,12 +86,12 @@
                             :visible="
                                 filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible && (item.label === document.name || (crossNavigationContainerData && index === breadcrumbs.length - 1) || (crossNavigationDialogVisible && index === breadcrumbs.length - 1))
                             "
-                            :sbiExecutionId="urlData?.sbiExecutionId"
+                            :sbi-execution-id="urlData?.sbiExecutionId"
                             :document="item.document"
-                            :reloadTrigger="reloadTrigger"
-                            :hiddenFormData="item.hiddenFormData"
-                            :filtersData="item.filtersData"
-                            :newDashboardMode="newDashboardMode"
+                            :reload-trigger="reloadTrigger"
+                            :hidden-form-data="item.hiddenFormData"
+                            :filters-data="item.filtersData"
+                            :new-dashboard-mode="newDashboardMode"
                             :mode="mode"
                             @newDashboardSaved="onNewDashboardSaved"
                             @executeCrossNavigation="onExecuteCrossNavigation"
@@ -135,14 +135,14 @@
             <DocumentExecutionLinkDialog :visible="linkDialogVisible" :link-info="linkInfo" :embed-h-t-m-l="embedHTML" :prop-document="document" :parameters="linkParameters" @close="linkDialogVisible = false"></DocumentExecutionLinkDialog>
             <DocumentExecutionSelectCrossNavigationDialog :visible="destinationSelectDialogVisible" :cross-navigation-documents="crossNavigationDocuments" @close="destinationSelectDialogVisible = false" @selected="onCrossNavigationSelected"></DocumentExecutionSelectCrossNavigationDialog>
             <DocumentExecutionCNContainerDialog v-if="angularData && crossNavigationContainerData" :visible="crossNavigationContainerVisible" :data="crossNavigationContainerData" @close="onCrossNavigationContainerClose"></DocumentExecutionCNContainerDialog>
-            <Dialog class="p-fluid kn-dialog--toolbar--primary" :content-style="descriptor.popupDialog.style" :visible="crossNavigationDialogVisible" :modal="true" :showHeader="false" :closable="false">
+            <Dialog class="p-fluid kn-dialog--toolbar--primary" :content-style="descriptor.popupDialog.style" :visible="crossNavigationDialogVisible" :modal="true" :show-header="false" :closable="false">
                 <DocumentExecution
                     v-if="crossNavigationPopupDialogDocument"
                     :id="crossNavigationPopupDialogDocument?.label"
                     :prop-mode="'document-execution-cross-navigation-popup'"
                     :parameter-values-map="parameterValuesMap"
                     :tab-key="tabKey"
-                    :propCrossNavigationPopupDialogDocument="crossNavigationPopupDialogDocument"
+                    :prop-cross-navigation-popup-dialog-document="crossNavigationPopupDialogDocument"
                     @parametersChanged="$emit('parametersChanged', $event)"
                     @close="onCrossNavigationPopupClose()"
                 ></DocumentExecution>
@@ -947,7 +947,7 @@ export default defineComponent({
         },
         openCrossNavigationInNewWindow(crossNavigation: IDashboardCrossNavigation) {
             const parameters = encodeURI(JSON.stringify(this.document.formattedCrossNavigationParameters))
-            // TODO - Uncomment
+            // TODO - Uncomment after peer
             // const url = import.meta.env.VITE_HOST_URL + `/knowage-vue/document-browser/dashboard/${this.document.label}?role=${this.userRole}&crossNavigationParameters=${parameters}
             const url = 'http://localhost:3000' + `/knowage-vue/document-browser/dashboard/${this.document.label}?role=${this.userRole}&crossNavigationParameters=${parameters}`
             const popupOptions = crossNavigation.popupOptions ?? { width: '800', height: '600' }

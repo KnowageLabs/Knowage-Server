@@ -121,14 +121,12 @@ export default defineComponent({
         }
     },
     async created() {
-        console.log('------------- DASHBOARD CONTROLLER CREATED!!!')
         if (!this.showDashboard) return
         this.setEventListeners()
         await this.getData()
         this.$watch('model.configuration.datasets', (modelDatasets: IDashboardDataset[]) => setDatasetIntervals(modelDatasets, this.datasets))
     },
     beforeUnmount() {
-        console.log('------------- DASHBOARD CONTROLLER beforeUnmount!!!')
         this.emptyStoreValues()
         clearAllDatasetIntervals()
     },
@@ -158,7 +156,6 @@ export default defineComponent({
             }
             this.datasets = await loadDatasets(tempModel, this.appStore, this.setAllDatasets, this.$http)
             this.model = (tempModel && this.newDashboardMode) || typeof tempModel.id != 'undefined' ? await formatNewModel(tempModel, this.datasets, this.$http) : await (formatModel(tempModel, this.document, this.datasets, this.drivers, this.profileAttributes, this.$http, this.user) as any)
-            console.log('---------- LOAD MODEL: ', this.model)
             setDatasetIntervals(this.model?.configuration.datasets, this.datasets)
             this.store.setDashboard(this.dashboardId, this.model)
             this.store.setSelections(this.dashboardId, this.model.configuration.selections, this.$http)
@@ -202,8 +199,6 @@ export default defineComponent({
         },
         loadOutputParameters() {
             if (this.newDashboardMode) return
-            // TODO - Remove Mocked Output Parameters
-            // console.log('----- Dashboard Controller --------- document: ', this.document)
             const formattedOutputParameters = this.document ? getFormattedOutputParameters(this.document.outputParameters) : []
             this.store.setOutputParameters(this.dashboardId, formattedOutputParameters)
         },
