@@ -37,6 +37,8 @@ import javax.websocket.server.ServerEndpoint;
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.user.UserProfileManager;
 
 @ServerEndpoint(value = "/webSocket", encoders = KnowageWebSocketMessageEncoder.class, decoders = KnowageWebSocketMessageDecoder.class, configurator = HttpSessionConfigurator.class)
 public class KnowageWebSocket {
@@ -96,6 +98,9 @@ public class KnowageWebSocket {
 			newsFeed.removeListener(sessionData);
 			asyncDownloadsFeed.removeListener(sessionData);
 		}
+
+		UserProfileManager.unset();
+		TenantManager.unset();
 	}
 
 }
