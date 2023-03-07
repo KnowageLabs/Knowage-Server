@@ -1,6 +1,8 @@
 <template>
-    <grid-item :key="item.id" class="p-d-flex widget-grid-item" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" drag-allow-from=".drag-handle" @resized="resizedEvent" :class="{ canEdit: canEditDashboard(document) }">
-        <div v-if="initialized" class="drag-handle"></div>
+    <!-- <grid-item :key="item.id" class="p-d-flex widget-grid-item" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" drag-allow-from=".drag-handle" @resized="resizedEvent" :class="{ canEdit: canEditDashboard(document) }"> -->
+    <!-- <div v-if="initialized" class="drag-handle"></div> -->
+    <grid-item :key="item.id" class="p-d-flex widget-grid-item" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" drag-allow-from=".drag-handle" @resized="resizedEvent">
+        <i class="fas fa-up-down-left-right drag-handle"></i>
         <ProgressSpinner v-if="loading || customChartLoading" class="kn-progress-spinner" />
         <Skeleton v-if="!initialized" shape="rectangle" height="100%" border-radius="0" />
         <WidgetRenderer
