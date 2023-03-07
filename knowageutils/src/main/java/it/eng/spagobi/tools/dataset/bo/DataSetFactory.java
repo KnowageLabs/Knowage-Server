@@ -229,9 +229,10 @@ public class DataSetFactory {
 		dataSet.setStartDateField(dataSetConfig.getStartDateField());
 		dataSet.setEndDateField(dataSetConfig.getEndDateField());
 		dataSet.setSchedulingCronLine(dataSetConfig.getSchedulingCronLine());
-
-		IDataSource ds = DataSourceFactory.getDataSource(dataSetConfig.getDataSourceForReading());
-		dataSet.setDataSourceForReading(ds);
+		if (dataSetConfig.getDataSourceForReading() != null) {
+			IDataSource ds = DataSourceFactory.getDataSource(dataSetConfig.getDataSourceForReading());
+			dataSet.setDataSourceForReading(ds);
+		}
 
 		return dataSet;
 	}
