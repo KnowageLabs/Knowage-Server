@@ -167,7 +167,7 @@ export default defineComponent({
             const pivotFields = this.dataSource.fields()
             const dataFields = pivotFields.filter((field) => field.area == 'data')
 
-            // if (event.area == 'row') {
+            // if (event.cell.text == 'UNITS_ORDERED') {
             //     console.group('cellPrep ---------------------', event.cellElement)
             //     console.log('CELL EVENT', event)
             //     console.log('CELL EVENT', pivotFields[event.cell.dataSourceIndex])
@@ -178,9 +178,9 @@ export default defineComponent({
             //     event.cellElement.style = 'background-color: grey; color: orange'
             // }
 
-            if (event.area == 'row' || event.area == 'column' || !this.isTotalCell) {
-                event.cellElement.style = 'background-color: grey; color: orange'
-            }
+            // if (event.area == 'row' || event.area == 'column' || !this.isTotalCell) {
+            //     event.cellElement.style = 'background-color: grey; color: orange'
+            // }
 
             this.setTotals(event)
             this.setTooltips(event, dataFields)
@@ -256,14 +256,27 @@ export default defineComponent({
 
         //#region ===================== Field Styles  ====================================================
         setFieldStyles(cellEvent, dataFields) {
-            const fieldsStyles = this.propWidget.settings.style.fields as ITableWidgetColumnStyles
+            let fieldStyles = null as unknown as ITableWidgetColumnStyles
+            // const fieldStyles = this.propWidget.settings.style.fields as ITableWidgetColumnStyles
+            // const fieldHeaderStyles = this.propWidget.settings.style.fieldHeaders as ITableWidgetColumnStyles
+
             const parentField = dataFields[cellEvent.cell.dataIndex]
             let fieldStyleString = null as any
 
-            if (!fieldsStyles.enabled || !parentField || cellEvent.area !== 'data' || this.isTotalCell(cellEvent)) return
+            // if (!fieldStyles.enabled || !parentField || cellEvent.area !== 'data' || this.isTotalCell(cellEvent)) return
 
-            fieldStyleString = stringifyStyleProperties(fieldsStyles.styles[0].properties)
-            fieldsStyles.styles.forEach((fieldStyle) => {
+            if (cellEvent.area == 'data') fieldStyles = this.propWidget.settings.style.fields
+            else fieldStyles = this.propWidget.settings.style.fieldHeaders
+
+            if (!fieldStyles.enabled || this.isTotalCell(cellEvent) || cellEvent.area == 'row' || !parentField) return
+            // if (cellEvent.area == 'column' && parentField && !this.isTotalCell(cellEvent)) {
+            //     console.group('cellPrep ---------------------', cellEvent.cellElement)
+            //     console.log('CELL EVENT', cellEvent)
+            //     console.groupEnd()
+            // }
+
+            fieldStyleString = stringifyStyleProperties(fieldStyles.styles[0].properties)
+            fieldStyles.styles.forEach((fieldStyle) => {
                 if (fieldStyle.target.includes(parentField.id)) fieldStyleString = stringifyStyleProperties(fieldStyle.properties)
             })
 

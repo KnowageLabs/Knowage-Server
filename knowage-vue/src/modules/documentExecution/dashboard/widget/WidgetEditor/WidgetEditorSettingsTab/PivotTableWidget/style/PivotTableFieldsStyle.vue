@@ -52,7 +52,7 @@ import WidgetEditorColumnsMultiselect from '../../common/WidgetEditorColumnsMult
 export default defineComponent({
     name: 'table-widget-column-style',
     components: { Dropdown, InputNumber, WidgetEditorColumnsMultiselect, WidgetEditorStyleToolbar },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, fieldType: { type: String, required: true } },
     data() {
         return {
             descriptor,
@@ -104,7 +104,7 @@ export default defineComponent({
             this.addFieldAsOption()
         },
         loadFieldStyles() {
-            this.fieldStyles = this.widgetModel.settings.style.fields
+            this.fieldStyles = this.widgetModel.settings.style[this.fieldType]
             this.removeFieldsFromAvailableOptions()
         },
         loadFieldOptions() {

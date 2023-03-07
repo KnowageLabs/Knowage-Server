@@ -64,8 +64,8 @@
                 "type": "Title"
             },
             {
-                "title": "dashboard.widgetEditor.headers.title",
-                "type": "Headers"
+                "title": "dashboard.widgetEditor.pivot.style.fieldHeaders",
+                "type": "FieldHeadersStyle"
             },
             {
                 "title": "common.fields",

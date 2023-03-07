@@ -406,7 +406,8 @@
                 },
                 "style": {
                     "totals": "Totals",
-                    "subTotals": "SubTotals"
+                    "subTotals": "SubTotals",
+                    "fieldHeaders": "Field Headers"
                 }
             },
             "absolute": "Absolute",

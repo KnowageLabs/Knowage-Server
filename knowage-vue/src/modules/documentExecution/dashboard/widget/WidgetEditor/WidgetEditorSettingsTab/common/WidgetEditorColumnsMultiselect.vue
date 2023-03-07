@@ -1,5 +1,4 @@
 <template>
-    <!-- {{ options }}{{ widgetColumnsAliasMap }} -->
     <MultiSelect v-model="modelValue" :options="options" :option-label="optionLabel" :option-value="optionsValue" :disabled="disabled" @change="$emit('change', $event)"> </MultiSelect>
 </template>
 

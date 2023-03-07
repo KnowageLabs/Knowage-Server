@@ -25,7 +25,8 @@
                 <PivotTableTooltips v-else-if="accordion.type === 'Tooltips'" :widgetModel="widgetModel" />
                 <PivotTableTotalsStyle v-else-if="accordion.type === 'Totals'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions" :totalType="accordion.type" />
                 <PivotTableTotalsStyle v-else-if="accordion.type === 'SubTotals'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions" :totalType="accordion.type" />
-                <PivotTableFieldsStyle v-else-if="accordion.type === 'FieldsStyle'" :widgetModel="widgetModel" />
+                <PivotTableFieldsStyle v-else-if="accordion.type === 'FieldsStyle'" :widgetModel="widgetModel" :fieldType="'fields'" />
+                <PivotTableFieldsStyle v-else-if="accordion.type === 'FieldHeadersStyle'" :widgetModel="widgetModel" :fieldType="'fieldHeaders'" />
             </AccordionTab>
         </Accordion>
     </div>
