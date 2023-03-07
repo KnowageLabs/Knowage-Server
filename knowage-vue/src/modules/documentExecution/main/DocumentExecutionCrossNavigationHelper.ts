@@ -22,7 +22,7 @@ export const getSelectedCrossNavigation = (crossNavigationName: string | undefin
     Creates target document with formatted crossNavigationParameters (for loading initial values for Target Document drivers) and navigationParams for filter service
 */
 export const getDocumentForCrossNavigation = (documentCrossNavigationOutputParameters: ICrossNavigationParameter[], sourceFiltersData: { filterStatus: iParameter[], isReadyForExecution: boolean }, selectedCrossNavigation: IDashboardCrossNavigation | null) => {
-    console.log('------  !!! selectedCrossNavigation: ', selectedCrossNavigation)
+    // console.log('------  !!! selectedCrossNavigation: ', selectedCrossNavigation)
     if (!selectedCrossNavigation) return null
     const formattedCrossNavigationParameters = getFormattedCrossNavigationParameters(selectedCrossNavigation, sourceFiltersData, documentCrossNavigationOutputParameters)
     const crossNavigationDocument = selectedCrossNavigation.document
@@ -269,8 +269,8 @@ const getFormattedNumberValue = (value: string | number) => {
 }
 
 const loadDateDriverInitialValue = (parameter: iParameter, crossNavigationParameter: ICrossNavigationParameter, dateFormat: string) => {
-    console.log('---------- loadDateDriverInitialValue - parameter: ', parameter)
-    console.log('---------- loadDriverInitialValue - crossNavigationParameter: ', crossNavigationParameter)
+    //console.log('---------- loadDateDriverInitialValue - parameter: ', parameter)
+    // console.log('---------- loadDriverInitialValue - crossNavigationParameter: ', crossNavigationParameter)
     if (crossNavigationParameter.type === 'fixed') {
         const date = moment(crossNavigationParameter.parameterValue[0].value, 'MM/DD/YYYY', true)
         if (date.isValid()) parameter.parameterValue[0].value = date.toDate()

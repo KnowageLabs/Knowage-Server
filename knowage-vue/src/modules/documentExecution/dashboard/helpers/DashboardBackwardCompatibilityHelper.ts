@@ -166,6 +166,7 @@ const formatSheet = (sheet: any, formattedModel: any, user: any, drivers: IDashb
 
     for (let i = 0; i < sheet.widgets.length; i++) {
         const tempWidget = sheet.widgets[i]
+        console.log('tempWidget;', tempWidget)
         formattedSheet.widgets.lg.push({ id: tempWidget.id, h: tempWidget.sizeY, w: tempWidget.sizeX, x: tempWidget.col, y: tempWidget.row, i: cryptoRandomString({ length: 16, type: 'base64' }), moved: false })
         addWidgetToModel(tempWidget, formattedModel, user, drivers)
     }
@@ -194,7 +195,7 @@ const checkIfWidgetInModel = (widget: any, formattedModel: any) => {
 export const formatWidget = (widget: any, formattedModel: IDashboard, user: any, drivers: IDashboardDriver[]) => {
     let formattedWidget = {} as any
 
-    // console.log('widget;', widget)
+
 
     switch (widget.type) {
         case 'table':

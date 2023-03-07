@@ -54,7 +54,7 @@
 
         <div ref="document-execution-view" class="p-d-flex p-flex-row document-execution-view myDivToPrint">
             <div v-if="parameterSidebarVisible" :class="propMode === 'document-execution-cross-navigation-popup' ? 'document-execution-backdrop-popup-dialog' : 'document-execution-backdrop'" @click="parameterSidebarVisible = false"></div>
-            <template v-if="(filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible) || newDashboardMode">
+            <div v-show="(filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible) || newDashboardMode" class="kn-flex">
                 <Registry v-if="mode === 'registry'" :id="urlData?.sbiExecutionId" :reload-trigger="reloadTrigger"></Registry>
                 <Dossier v-else-if="mode === 'dossier'" :id="document.id" :reload-trigger="reloadTrigger" :filter-data="filtersData"></Dossier>
                 <Olap
@@ -79,7 +79,7 @@
                     :filtersData="document.filtersData"
                     :newDashboardMode="false"
                 ></DashboardController>
-                <template v-else-if="mode === 'dashboard' || newDashboardMode">
+                <div v-show="mode === 'dashboard' || newDashboardMode" class="p-d-flex p-flex-row" style="height: 100%">
                     <template v-for="(item, index) in breadcrumbs" :key="index">
                         <DashboardController
                             :visible="
@@ -95,8 +95,8 @@
                             @executeCrossNavigation="onExecuteCrossNavigation"
                         ></DashboardController>
                     </template>
-                </template>
-            </template>
+                </div>
+            </div>
             <iframe
                 v-for="(item, index) in breadcrumbs"
                 v-show="mode === 'iframe' && filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible && (item.label === document.name || (crossNavigationContainerData && index === breadcrumbs.length - 1))"

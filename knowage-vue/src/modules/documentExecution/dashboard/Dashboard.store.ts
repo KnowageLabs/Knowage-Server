@@ -14,7 +14,8 @@ const store = defineStore('dashboardStore', {
             selectedSheetIndex: 0,
             allDatasets: [] as IDataset[],
             internationalization: {},
-            profileAttributes: [] as { name: string; value: string }[]
+            profileAttributes: [] as { name: string; value: string }[],
+            dashboardState: {}
         }
     },
     actions: {
@@ -137,6 +138,12 @@ const store = defineStore('dashboardStore', {
         setProfileAttributes(profileAttributes: { name: string; value: string }[]) {
             this.profileAttributes = profileAttributes
         },
+        getDashboardState(dashboardId: string) {
+            return this.dashboardState[dashboardId]
+        },
+        setDashboardState(dashboardId: string, state: any) {
+            this.dashboardState[dashboardId] = state
+        }
     }
 })
 

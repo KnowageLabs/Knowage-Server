@@ -1,5 +1,5 @@
 <template>
-    <div v-if="model && visible" :id="`dashboard_${model?.configuration?.id}`" class="dashboard-container">
+    <div v-show="model && visible" :id="`dashboard_${model?.configuration?.id}`" class="dashboard-container">
         <Button icon="fas fa-square-check" class="p-m-3 p-button-rounded p-button-text p-button-plain" style="position: fixed; right: 0; z-index: 999; background-color: white; box-shadow: 0px 2px 3px #ccc" @click="selectionsDialogVisible = true" />
         <DashboardRenderer v-if="!loading" :model="model" :datasets="datasets" :dashboardId="dashboardId" :documentDrivers="drivers" :variables="model ? model.configuration.variables : []"></DashboardRenderer>
 
@@ -85,6 +85,11 @@ export default defineComponent({
         newDashboardMode: { type: Boolean }
     },
     emits: ['newDashboardSaved', 'executeCrossNavigation'],
+    setup() {
+        const store = dashboardStore()
+        const appStore = mainStore()
+        return { store, appStore }
+    },
     data() {
         return {
             descriptor,
@@ -112,27 +117,28 @@ export default defineComponent({
             user: 'user'
         })
     },
-    setup() {
-        const store = dashboardStore()
-        const appStore = mainStore()
-        return { store, appStore }
-    },
     async created() {
+        console.log('------------- DASHBOARD CONTROLLER CREATED!!!')
         this.setEventListeners()
         await this.getData()
         this.$watch('model.configuration.datasets', (modelDatasets: IDashboardDataset[]) => {
             setDatasetIntervals(modelDatasets, this.datasets)
         })
     },
-    unmounted() {
+    beforeUnmount() {
+        console.log('------------- DASHBOARD CONTROLLER BEFORE UNMOUNTED!!!')
+        console.log('------------- this data: ', this.$data)
+        this.setDashboardState(this.dashboardId, this.$data)
+        console.log('------------------------ LOAD STATE 2: ', this.getDashboardState(this.dashboardId))
         this.emptyStoreValues()
         clearAllDatasetIntervals()
     },
     methods: {
-        ...mapActions(dashboardStore, ['removeSelections', 'setAllDatasets', 'getSelections', 'setInternationalization', 'getInternationalization', 'setDashboardDocument', 'setDashboardDrivers', 'setProfileAttributes', 'getCrossNavigations']),
+        ...mapActions(dashboardStore, ['removeSelections', 'setAllDatasets', 'getSelections', 'setInternationalization', 'getInternationalization', 'setDashboardDocument', 'setDashboardDrivers', 'setProfileAttributes', 'getCrossNavigations', 'getDashboardState', 'setDashboardState']),
         async getData() {
             this.loading = true
-
+            this.dashboardId = cryptoRandomString({ length: 16, type: 'base64' })
+            console.log('------------------------ LOAD STATE: ', this.getDashboardState(this.dashboardId))
             if (this.filtersData) this.drivers = loadDrivers(this.filtersData, this.model)
             await Promise.all([this.loadProfileAttributes(), this.loadModel(), this.loadInternationalization()])
             this.setDashboardDrivers(this.dashboardId, this.drivers)
@@ -154,8 +160,8 @@ export default defineComponent({
             }
             this.datasets = await loadDatasets(tempModel, this.appStore, this.setAllDatasets, this.$http)
             this.model = (tempModel && this.newDashboardMode) || typeof tempModel.id != 'undefined' ? await formatNewModel(tempModel, this.datasets, this.$http) : await (formatModel(tempModel, this.document, this.datasets, this.drivers, this.profileAttributes, this.$http, this.user) as any)
+            console.log('---------- LOAD MODEL: ', this.model)
             setDatasetIntervals(this.model?.configuration.datasets, this.datasets)
-            this.dashboardId = cryptoRandomString({ length: 16, type: 'base64' })
             this.store.setDashboard(this.dashboardId, this.model)
             this.store.setSelections(this.dashboardId, this.model.configuration.selections, this.$http)
             this.store.setDashboardDocument(this.dashboardId, this.document)

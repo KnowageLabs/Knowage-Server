@@ -79,7 +79,7 @@ export default defineComponent({
             if ((!this.dashboard[this.dHash] && index === 0) || this.dashboard[this.dHash] === index) return true
             return false
         },
-        breakpointChangedEvent: function () {
+        breakpointChangedEvent: function() {
             // breakpointChangedEvent: function(newBreakpoint, newLayout) {
             // console.log('BREAKPOINT CHANGED breakpoint=', newBreakpoint, ', layout: ', newLayout)
         },
