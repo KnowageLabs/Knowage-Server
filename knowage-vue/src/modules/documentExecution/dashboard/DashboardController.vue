@@ -1,7 +1,7 @@
 <template>
-    <div v-show="model && visible" :id="`dashboard_${model?.configuration?.id}`" class="dashboard-container">
+    <div show="model && visible" :id="`dashboard_${model?.configuration?.id}`" class="dashboard-container">
         <Button icon="fas fa-square-check" class="p-m-3 p-button-rounded p-button-text p-button-plain" style="position: fixed; right: 0; z-index: 999; background-color: white; box-shadow: 0px 2px 3px #ccc" @click="selectionsDialogVisible = true" />
-        <DashboardRenderer v-if="!loading" :model="model" :datasets="datasets" :dashboardId="dashboardId" :documentDrivers="drivers" :variables="model ? model.configuration.variables : []"></DashboardRenderer>
+        <DashboardRenderer v-if="!loading && visible" :model="model" :datasets="datasets" :dashboardId="dashboardId" :documentDrivers="drivers" :variables="model ? model.configuration.variables : []"></DashboardRenderer>
 
         <Transition name="editorEnter" appear>
             <DatasetEditor v-if="datasetEditorVisible" :dashboard-id-prop="dashboardId" :available-datasets-prop="datasets" :filters-data-prop="filtersData" @closeDatasetEditor="closeDatasetEditor" @datasetEditorSaved="closeDatasetEditor" @allDatasetsLoaded="datasets = $event" />
@@ -47,7 +47,7 @@ import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import { v4 as uuidv4 } from 'uuid'
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
-import { IDashboardDataset, ISelection, IWidget, IGalleryItem, IDataset, IDashboardCrossNavigation } from './Dashboard'
+import { IDashboardDataset, ISelection, IWidget, IGalleryItem, IDataset } from './Dashboard'
 import { emitter, createNewDashboardModel, formatDashboardForSave, formatNewModel, loadDatasets, getFormattedOutputParameters } from './DashboardHelpers'
 import { mapActions, mapState } from 'pinia'
 import { formatModel } from './helpers/DashboardBackwardCompatibilityHelper'
@@ -65,7 +65,6 @@ import DashboardControllerSaveDialog from './DashboardControllerSaveDialog.vue'
 import SelectionsListDialog from './widget/SelectorWidget/SelectionsListDialog.vue'
 import DashboardGeneralSettings from './generalSettings/DashboardGeneralSettings.vue'
 import deepcopy from 'deepcopy'
-import { ICrossNavigationParameter } from '../main/DocumentExecution'
 
 export default defineComponent({
     name: 'dashboard-manager',
@@ -320,10 +319,8 @@ export default defineComponent({
             this.generalSettingsVisible = false
             emitter.emit('dashboardGeneralSettingsClosed')
         },
-        executeCrossNavigation(payload: { documentCrossNavigationOutputParameters: ICrossNavigationParameter[]; crossNavigationName: string | undefined; crossNavigations: IDashboardCrossNavigation[] }) {
-            // console.log('------- CROSS NAVIGATION PAYLOAD: ', payload)
+        executeCrossNavigation(payload: any) {
             const crossNavigations = this.getCrossNavigations(this.dashboardId)
-            // console.log('------- CROSS NAVIGATION crossNavigations: ', crossNavigations)
             payload.crossNavigations = crossNavigations
             this.$emit('executeCrossNavigation', payload)
         }
