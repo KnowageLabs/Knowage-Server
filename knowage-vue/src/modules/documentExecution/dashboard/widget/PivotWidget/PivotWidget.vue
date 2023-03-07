@@ -12,12 +12,12 @@ import { DxPivotGrid, DxFieldChooser, DxFieldPanel } from 'devextreme-vue/pivot-
 import Tooltip from 'devextreme/ui/tooltip'
 import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source'
 
-import { IDashboardDataset, IPivotTooltips, ISelection, IWidget } from '../../Dashboard'
+import { IDashboardDataset, IPivotTooltips, ISelection, IWidget, ITableWidgetColumnStyles } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
 import mainStore from '../../../../../App.store'
 import dashboardStore from '../../Dashboard.store'
 
-import { getWidgetStyleByType } from '../TableWidget/TableWidgetHelper'
+import { getWidgetStyleByType, stringifyStyleProperties } from '../TableWidget/TableWidgetHelper'
 
 export default defineComponent({
     name: 'table-widget',
@@ -166,20 +166,25 @@ export default defineComponent({
         setCellConfiguration(event) {
             const pivotFields = this.dataSource.fields()
             const dataFields = pivotFields.filter((field) => field.area == 'data')
-            if (event.area == 'row') {
-                console.group('cellPrep ---------------------', event.cellElement)
-                console.log('CELL EVENT', event)
-                console.log('CELL EVENT', pivotFields[event.cell.dataSourceIndex])
-                console.groupEnd()
-            }
 
-            if ((event.area == 'row' || event.area == 'data') && event.rowIndex % 2 === 0) {
+            // if (event.area == 'row') {
+            //     console.group('cellPrep ---------------------', event.cellElement)
+            //     console.log('CELL EVENT', event)
+            //     console.log('CELL EVENT', pivotFields[event.cell.dataSourceIndex])
+            //     console.groupEnd()
+            // }
+
+            // if ((event.area == 'row' || event.area == 'data') && event.rowIndex % 2 === 0) {
+            //     event.cellElement.style = 'background-color: grey; color: orange'
+            // }
+
+            if (event.area == 'row' || event.area == 'column' || !this.isTotalCell) {
                 event.cellElement.style = 'background-color: grey; color: orange'
             }
 
             this.setTotals(event)
             this.setTooltips(event, dataFields)
-            // this.createFieldTooltips(event)
+            this.setFieldStyles(event, dataFields)
         },
         //#endregion ===============================================================================================
 
@@ -246,7 +251,28 @@ export default defineComponent({
                     }
                 }
             })
+        },
+        //#endregion ===============================================================================================
+
+        //#region ===================== Field Styles  ====================================================
+        setFieldStyles(cellEvent, dataFields) {
+            const fieldsStyles = this.propWidget.settings.style.fields as ITableWidgetColumnStyles
+            const parentField = dataFields[cellEvent.cell.dataIndex]
+            let fieldStyleString = null as any
+
+            if (!fieldsStyles.enabled || !parentField || cellEvent.area !== 'data' || this.isTotalCell(cellEvent)) return
+
+            fieldStyleString = stringifyStyleProperties(fieldsStyles.styles[0].properties)
+            fieldsStyles.styles.forEach((fieldStyle) => {
+                if (fieldStyle.target.includes(parentField.id)) fieldStyleString = stringifyStyleProperties(fieldStyle.properties)
+            })
+
+            cellEvent.cellElement.style = fieldStyleString
+        },
+        isTotalCell(cellEvent) {
+            return cellEvent.cell.type === 'GT' || cellEvent.cell.rowType === 'GT' || cellEvent.cell.columnType === 'GT' || cellEvent.cell.type === 'T' || cellEvent.cell.rowType === 'T' || cellEvent.cell.columnType === 'T'
         }
+
         //#endregion ===============================================================================================
     }
 })

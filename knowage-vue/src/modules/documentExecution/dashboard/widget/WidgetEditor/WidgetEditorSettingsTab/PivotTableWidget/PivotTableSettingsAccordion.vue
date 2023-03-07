@@ -8,7 +8,6 @@
                 </template>
                 <WidgetExport v-if="accordion.type === 'Export'" :widgetModel="widgetModel"></WidgetExport>
                 <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
-                <TableWidgetColumnStyle v-else-if="accordion.type === 'ColumnStyle'" :widgetModel="widgetModel"></TableWidgetColumnStyle>
                 <WidgetRowsStyle v-else-if="accordion.type === 'RowsStyle'" :widgetModel="widgetModel"></WidgetRowsStyle>
                 <WidgetBackgroundColorStyle v-else-if="accordion.type === 'BackgroundColorStyle'" :widgetModel="widgetModel"></WidgetBackgroundColorStyle>
                 <WidgetBordersStyle v-else-if="accordion.type === 'BordersStyle'" :widgetModel="widgetModel"></WidgetBordersStyle>
@@ -26,6 +25,7 @@
                 <PivotTableTooltips v-else-if="accordion.type === 'Tooltips'" :widgetModel="widgetModel" />
                 <PivotTableTotalsStyle v-else-if="accordion.type === 'Totals'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions" :totalType="accordion.type" />
                 <PivotTableTotalsStyle v-else-if="accordion.type === 'SubTotals'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions" :totalType="accordion.type" />
+                <PivotTableFieldsStyle v-else-if="accordion.type === 'FieldsStyle'" :widgetModel="widgetModel" />
             </AccordionTab>
         </Accordion>
     </div>
@@ -39,7 +39,6 @@ import AccordionTab from 'primevue/accordiontab'
 import descriptor from './PivotTableSettingsDescriptor.json'
 import settingsTabDescriptor from '../WidgetEditorSettingsTabDescriptor.json'
 import WidgetExport from '../common/configuration/WidgetExport.vue'
-import TableWidgetColumnStyle from '../TableWidget/style/TableWidgetColumnStyle.vue'
 import WidgetRowsStyle from '../common/style/WidgetRowsStyle.vue'
 import WidgetBordersStyle from '../common/style/WidgetBordersStyle.vue'
 import WidgetShadowsStyle from '../common/style/WidgetShadowsStyle.vue'
@@ -58,6 +57,7 @@ import PivotTableColumnsConfig from './configuration/PivotTableColumnsConfig.vue
 import PivotTableFieldPicker from './configuration/PivotTableFieldPicker.vue'
 import PivotTableTooltips from './tooltips/PivotTableTooltips.vue'
 import PivotTableTotalsStyle from './style/PivotTableTotalsStyle.vue'
+import PivotTableFieldsStyle from './style/PivotTableFieldsStyle.vue'
 
 export default defineComponent({
     name: 'pivot-table-settings-accordion',
@@ -66,7 +66,6 @@ export default defineComponent({
         AccordionTab,
         WidgetExport,
         WidgetTitleStyle,
-        TableWidgetColumnStyle,
         WidgetRowsStyle,
         WidgetBordersStyle,
         WidgetShadowsStyle,
@@ -83,7 +82,8 @@ export default defineComponent({
         PivotTableColumnsConfig,
         PivotTableFieldPicker,
         PivotTableTooltips,
-        PivotTableTotalsStyle
+        PivotTableTotalsStyle,
+        PivotTableFieldsStyle
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

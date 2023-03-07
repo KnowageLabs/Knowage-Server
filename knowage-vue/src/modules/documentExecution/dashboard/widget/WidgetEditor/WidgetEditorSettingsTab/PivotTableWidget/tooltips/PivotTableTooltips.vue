@@ -1,6 +1,5 @@
 <template>
     <div class="p-grid p-jc-center p-ai-center p-p-4">
-        <!-- {{ combinedArray }} -->
         <div v-for="(tooltip, index) in tooltips" :key="index" class="dynamic-form-item p-grid p-col-12 p-ai-center p-py-2 p-pb-2">
             <div v-show="index !== 0 && dropzoneTopVisible[index]" class="p-col-12 form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'before', index)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
             <div
@@ -117,7 +116,6 @@ export default defineComponent({
         }
     },
     created() {
-        console.log(this.widgetModel)
         this.setEventListeners()
         this.loadColumnOptions()
         this.loadTooltips()

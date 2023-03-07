@@ -39,7 +39,7 @@ export interface IPivotTableConfiguration {
 export interface IPivotTableStyle {
     title: IWidgetTitle
     headers: ITawbleWidgetHeadersStyle
-    columns: ITableWidgetColumnStyles
+    fields: ITableWidgetColumnStyles
     rows: IWidgetRowsStyle
     background: IWidgetBackgroundStyle
     borders: IWidgetBordersStyle

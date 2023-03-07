@@ -21,6 +21,13 @@ export const getWidgetStyleByType = (propWidget: IWidget, styleType: string) => 
     } else return ''
 }
 
+export const stringifyStyleProperties = (properties: object) => {
+    const styleString = Object.entries(properties)
+        .map(([k, v]) => `${k}:${v}`)
+        .join(';')
+    return styleString + ';'
+}
+
 export const getWidgetStyleByTypeWithoutValidation = (propWidget: IWidget, styleType: string) => {
     const styleSettings = propWidget.settings.style[styleType]
     const styleString = Object.entries(styleSettings.properties ?? styleSettings)
@@ -79,7 +86,6 @@ export const isConditionMet = (condition, valueToCompare) => {
     return fullfilledCondition
 }
 
-
 export const createNewTableSelection = (value: (string | number)[], columnName: string, widget: IWidget, datasets: IDataset[]) => {
     return { datasetId: widget.dataset as number, datasetLabel: getDatasetLabel(widget.dataset as number, datasets) as string, columnName: columnName, value: value, aggregated: false, timestamp: new Date().getTime() }
 }
@@ -91,8 +97,8 @@ const getDatasetLabel = (datasetId: number, datasets: IDataset[]) => {
 
 export const isCrossNavigationActive = (tableNode: any, crossNavigationOptions: IWidgetCrossNavigation) => {
     if (!crossNavigationOptions.enabled) return false
-    if (crossNavigationOptions.type === 'singleColumn' && (!crossNavigationOptions.column || (tableNode.colDef?.columnName !== crossNavigationOptions.column))) return false
-    if (crossNavigationOptions.type === 'icon' && (tableNode.colDef?.colId !== 'iconColumn')) return false
+    if (crossNavigationOptions.type === 'singleColumn' && (!crossNavigationOptions.column || tableNode.colDef?.columnName !== crossNavigationOptions.column)) return false
+    if (crossNavigationOptions.type === 'icon' && tableNode.colDef?.colId !== 'iconColumn') return false
     return true
 }
 
@@ -101,7 +107,7 @@ export const formatRowDataForCrossNavigation = (tableNode: any, dataToShow: any)
     const rowData = tableNode.node.data
     if (!columnDefs || !rowData) return {}
     const formattedRow = {}
-    columnDefs.forEach((columnDef: any) => formattedRow[columnDef.columnName] = { value: rowData[columnDef.field], type: getColumnType(columnDef.field, dataToShow) })
+    columnDefs.forEach((columnDef: any) => (formattedRow[columnDef.columnName] = { value: rowData[columnDef.field], type: getColumnType(columnDef.field, dataToShow) }))
     return formattedRow
 }
 
