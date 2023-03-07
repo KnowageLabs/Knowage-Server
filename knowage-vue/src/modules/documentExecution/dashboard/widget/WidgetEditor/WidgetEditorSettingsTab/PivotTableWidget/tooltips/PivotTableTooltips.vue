@@ -1,6 +1,5 @@
 <template>
     <div class="p-grid p-jc-center p-ai-center p-p-4">
-        <!-- {{ combinedArray }} -->
         <div v-for="(tooltip, index) in tooltips" :key="index" class="dynamic-form-item p-grid p-col-12 p-ai-center p-py-2 p-pb-2">
             <div v-show="index !== 0 && dropzoneTopVisible[index]" class="p-col-12 form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'before', index)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
             <div
@@ -56,7 +55,8 @@
                 </div>
 
                 <!-- TODO: Show custom header, only on ALL fields, no custom -->
-                <div v-if="tooltip.target == 'all'" class="p-grid p-ai-center p-pt-3">
+                <!-- <div v-if="tooltip.target == 'all'" class="p-grid p-ai-center p-pt-3"> -->
+                <div class="p-grid p-ai-center p-pt-3">
                     <div class="p-col-12 p-md-3 p-mt-4 p-px-4">
                         <InputSwitch v-model="tooltip.header.enabled" :disabled="!tooltip.enabled" @change="tooltipsChanged"></InputSwitch>
                         <label class="kn-material-input-label p-m-3">{{ $t('dashboard.widgetEditor.tooltips.customHeader') }}</label>
@@ -66,6 +66,7 @@
                         <InputText v-model="tooltip.header.text" class="kn-material-input p-inputtext-sm" :disabled="!tooltip.enabled || !tooltip.header.enabled" @change="tooltipsChanged" />
                     </div>
                 </div>
+                <!-- </div> -->
             </div>
 
             <div
@@ -115,7 +116,6 @@ export default defineComponent({
         }
     },
     created() {
-        console.log(this.widgetModel)
         this.setEventListeners()
         this.loadColumnOptions()
         this.loadTooltips()

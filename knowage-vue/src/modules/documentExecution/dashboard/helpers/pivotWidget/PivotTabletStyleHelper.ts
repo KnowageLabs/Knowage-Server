@@ -6,7 +6,8 @@ export const getFormattedStyle = (widget: any) => {
     return {
         title: getFormattedTitleStyle(widget),
         borders: getFormattedBorderStyle(widget),
-        columns: pivotTalbeDefaultValues.getDefaultColumnStyles(),
+        fields: getFormattedFieldsStyle(widget, 'measures'),
+        fieldHeaders: getFormattedFieldsStyle(widget, 'measuresHeaders'),
         headers: getFormattedHeadersStyle(widget),
         padding: getFormattedPaddingStyle(widget),
         rows: getFormattedRowsStyle(widget),
@@ -19,6 +20,23 @@ export const getFormattedStyle = (widget: any) => {
 
 const getFormattedHeadersStyle = (widget: any) => {}
 const getFormattedRowsStyle = (widget: any) => {}
+
+const getFormattedFieldsStyle = (widget: any, fieldType) => {
+    const formattedStyles = pivotTalbeDefaultValues.getDefaultFields()
+    if (!widget.content.style || !widget.content.style[fieldType]) return formattedStyles
+    else {
+        formattedStyles.styles[0].properties = {
+            'font-weight': widget.content.style[fieldType]['font-weight'],
+            'font-style': widget.content.style[fieldType]['font-style'],
+            'font-size': widget.content.style[fieldType]['font-size'],
+            'font-family': widget.content.style[fieldType]['font-family'],
+            'justify-content': widget.content.style[fieldType]['text-align'],
+            color: widget.content.style[fieldType].color,
+            'background-color': widget.content.style[fieldType]['background-color']
+        }
+        return formattedStyles
+    }
+}
 
 const getFormattedTotalsStyle = (widget: any) => {
     const formattedStyles = pivotTalbeDefaultValues.getDefaultTotals()

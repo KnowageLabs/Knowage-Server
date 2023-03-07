@@ -1,6 +1,5 @@
 <template>
     <div class="pivot-widget-container p-d-flex p-d-row kn-flex">
-        <DxButton text="Apply" type="default" @click="logButton()" />
         <DxPivotGrid id="pivotgrid" ref="grid" :data-source="dataSource" v-bind="pivotConfig">
             <DxFieldChooser v-bind="fieldPickerConfig" />
             <DxFieldPanel v-bind="fieldPanelConfig" />
@@ -10,20 +9,19 @@
 
 <script lang="ts">
 import { DxPivotGrid, DxFieldChooser, DxFieldPanel } from 'devextreme-vue/pivot-grid'
-import { DxButton } from 'devextreme-vue/button'
 import Tooltip from 'devextreme/ui/tooltip'
 import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source'
 
-import { IDashboardDataset, IPivotTooltips, ISelection, IWidget } from '../../Dashboard'
+import { IDashboardDataset, IPivotTooltips, ISelection, IWidget, ITableWidgetColumnStyles } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
 import mainStore from '../../../../../App.store'
 import dashboardStore from '../../Dashboard.store'
 
-import { getWidgetStyleByType } from '../TableWidget/TableWidgetHelper'
+import { getWidgetStyleByType, stringifyStyleProperties } from '../TableWidget/TableWidgetHelper'
 
 export default defineComponent({
     name: 'table-widget',
-    components: { DxPivotGrid, DxFieldChooser, DxFieldPanel, DxButton },
+    components: { DxPivotGrid, DxFieldChooser, DxFieldPanel },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         editorMode: { type: Boolean, required: false },
@@ -79,14 +77,6 @@ export default defineComponent({
     mounted() {},
 
     methods: {
-        logButton() {
-            console.groupCollapsed('DO STUFF ------------')
-            console.log('propWidget', this.propWidget)
-            console.groupEnd()
-
-            // console.log('dataToShow', this.dataToShow)
-            // console.log('this.dataSource.fields()', this.dataSource.fields())
-        },
         setPivotConfiguration() {
             const widgetConfig = this.propWidget.settings.configuration
             this.pivotConfig = {
@@ -175,20 +165,26 @@ export default defineComponent({
         //#region ===================== Cell Config (Totals, Stlye, Conditionals) ====================================================
         setCellConfiguration(event) {
             const pivotFields = this.dataSource.fields()
-            // if (event.area && event.cell.value == 14) {
-            //     const pivotFields = this.dataSource.fields()
-            //     const parentField = pivotFields[pivotFields.findIndex((field: any) => field.area === 'data' && field.areaIndex === event.cell.dataIndex)]
+            const dataFields = pivotFields.filter((field) => field.area == 'data')
 
+            // if (event.cell.text == 'UNITS_ORDERED') {
             //     console.group('cellPrep ---------------------', event.cellElement)
             //     console.log('CELL EVENT', event)
-            //     console.log('PARENT FIELD', parentField)
-            //     // console.log('FIELDS', this.dataSource.fields())
+            //     console.log('CELL EVENT', pivotFields[event.cell.dataSourceIndex])
             //     console.groupEnd()
             // }
 
+            // if ((event.area == 'row' || event.area == 'data') && event.rowIndex % 2 === 0) {
+            //     event.cellElement.style = 'background-color: grey; color: orange'
+            // }
+
+            // if (event.area == 'row' || event.area == 'column' || !this.isTotalCell) {
+            //     event.cellElement.style = 'background-color: grey; color: orange'
+            // }
+
             this.setTotals(event)
-            this.setTooltips(event, pivotFields)
-            // this.createFieldTooltips(event)
+            this.setTooltips(event, dataFields)
+            this.setFieldStyles(event, dataFields)
         },
         //#endregion ===============================================================================================
 
@@ -219,14 +215,13 @@ export default defineComponent({
 
         //#region ===================== Tooltips Config  ====================================================
         //Tooltips - we cannot target custom headers if they are not in data fields...we have no way of knowing which field they belong.
-        //Tooltips - ALL Fields can have, well all tooltips, same with headers. That would be the workaround. Specific ones, cant have custom headers.
-        //Tooltips - TODO: Remove custom headers completely from UI?
 
-        setTooltips(cellEvent, pivotFields) {
+        setTooltips(cellEvent, dataFields) {
+            // const parentField = pivotFields[pivotFields.findIndex((field: any) => cellEvent.area === 'data' && field.area === 'data' && field.areaIndex === cellEvent.cell.dataIndex)] as any
             let cellTooltipConfig = null as unknown as IPivotTooltips
 
             const tooltipsConfig = this.propWidget.settings.tooltips as IPivotTooltips[]
-            const parentField = pivotFields[pivotFields.findIndex((field: any) => cellEvent.area === 'data' && field.area === 'data' && field.areaIndex === cellEvent.cell.dataIndex)] as any
+            const parentField = dataFields[cellEvent.cell.dataIndex]
 
             if (parentField?.id && tooltipsConfig.length >= 1) {
                 for (let index = 1; index < tooltipsConfig.length; index++) {
@@ -235,9 +230,9 @@ export default defineComponent({
                 }
             } else if (!cellTooltipConfig && tooltipsConfig[0].enabled) cellTooltipConfig = tooltipsConfig[0]
 
-            if (cellTooltipConfig) this.createFieldTooltips(cellEvent, cellTooltipConfig, tooltipsConfig[0])
+            if (cellTooltipConfig) this.createFieldTooltips(cellEvent, cellTooltipConfig)
         },
-        createFieldTooltips(cellEvent, tooltipConfig: IPivotTooltips, allCellConfig: IPivotTooltips) {
+        createFieldTooltips(cellEvent, tooltipConfig: IPivotTooltips) {
             const container = document.createElement('div')
             cellEvent.cellElement.appendChild(container)
             new Tooltip(container, {
@@ -251,12 +246,46 @@ export default defineComponent({
                         label.innerHTML = `<b>${tooltipConfig.prefix} ${cellEvent.cell.text} ${tooltipConfig.suffix}</b>`
                         content.appendChild(label)
                     } else {
-                        label.innerHTML = `<b>${allCellConfig.header.enabled ? allCellConfig.header.text : cellEvent.cell.text}</b>`
+                        label.innerHTML = `<b>${tooltipConfig.header.enabled ? tooltipConfig.header.text : cellEvent.cell.text}</b>`
                         content.appendChild(label)
                     }
                 }
             })
+        },
+        //#endregion ===============================================================================================
+
+        //#region ===================== Field Styles  ====================================================
+        setFieldStyles(cellEvent, dataFields) {
+            let fieldStyles = null as unknown as ITableWidgetColumnStyles
+            // const fieldStyles = this.propWidget.settings.style.fields as ITableWidgetColumnStyles
+            // const fieldHeaderStyles = this.propWidget.settings.style.fieldHeaders as ITableWidgetColumnStyles
+
+            const parentField = dataFields[cellEvent.cell.dataIndex]
+            let fieldStyleString = null as any
+
+            // if (!fieldStyles.enabled || !parentField || cellEvent.area !== 'data' || this.isTotalCell(cellEvent)) return
+
+            if (cellEvent.area == 'data') fieldStyles = this.propWidget.settings.style.fields
+            else fieldStyles = this.propWidget.settings.style.fieldHeaders
+
+            if (!fieldStyles.enabled || this.isTotalCell(cellEvent) || cellEvent.area == 'row' || !parentField) return
+            // if (cellEvent.area == 'column' && parentField && !this.isTotalCell(cellEvent)) {
+            //     console.group('cellPrep ---------------------', cellEvent.cellElement)
+            //     console.log('CELL EVENT', cellEvent)
+            //     console.groupEnd()
+            // }
+
+            fieldStyleString = stringifyStyleProperties(fieldStyles.styles[0].properties)
+            fieldStyles.styles.forEach((fieldStyle) => {
+                if (fieldStyle.target.includes(parentField.id)) fieldStyleString = stringifyStyleProperties(fieldStyle.properties)
+            })
+
+            cellEvent.cellElement.style = fieldStyleString
+        },
+        isTotalCell(cellEvent) {
+            return cellEvent.cell.type === 'GT' || cellEvent.cell.rowType === 'GT' || cellEvent.cell.columnType === 'GT' || cellEvent.cell.type === 'T' || cellEvent.cell.rowType === 'T' || cellEvent.cell.columnType === 'T'
         }
+
         //#endregion ===============================================================================================
     }
 })

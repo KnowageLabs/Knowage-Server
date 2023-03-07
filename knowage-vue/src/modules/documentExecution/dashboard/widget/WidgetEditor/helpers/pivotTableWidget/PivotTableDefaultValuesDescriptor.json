@@ -18,7 +18,7 @@
         ]
     },
     "defaultFieldPanel": {
-        "enabled": true
+        "enabled": false
     },
     "defaultFieldPicker": {
         "enabled": true,

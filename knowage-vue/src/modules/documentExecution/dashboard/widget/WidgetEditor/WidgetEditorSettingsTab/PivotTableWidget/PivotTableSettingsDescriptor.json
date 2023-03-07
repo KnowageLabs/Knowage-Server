@@ -1,4 +1,10 @@
 {
+    "allColumnOption": [
+        {
+            "label": "all",
+            "value": "all"
+        }
+    ],
     "settings": {
         "ConditionalStyle": [
             {
@@ -54,12 +60,12 @@
                 "type": "Title"
             },
             {
-                "title": "dashboard.widgetEditor.headers.title",
-                "type": "Headers"
+                "title": "dashboard.widgetEditor.pivot.style.fieldHeaders",
+                "type": "FieldHeadersStyle"
             },
             {
-                "title": "common.columns",
-                "type": "ColumnStyle"
+                "title": "common.fields",
+                "type": "FieldsStyle"
             },
             {
                 "title": "dashboard.widgetEditor.pivot.style.totals",

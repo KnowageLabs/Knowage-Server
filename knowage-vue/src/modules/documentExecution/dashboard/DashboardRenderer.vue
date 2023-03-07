@@ -24,7 +24,7 @@
                 :is-resizable="true"
                 :vertical-compact="false"
                 :use-css-transforms="false"
-                :margin="[2, 2]"
+                :margin="[0, 0]"
                 @breakpoint-changed="breakpointChangedEvent"
             >
                 <WidgetController v-for="item in sheet.widgets['lg']" :key="item.i" :active-sheet="activeSheet(index)" :document="document" :widget="currentWidget(item.id)" :item="item" :datasets="datasets" :dashboard-id="dashboardId" :variables="variables" :model="model"></WidgetController>
@@ -93,7 +93,7 @@ export default defineComponent({
             if ((!this.dashboard[this.dHash] && index === 0) || this.dashboard[this.dHash] === index) return true
             return false
         },
-        breakpointChangedEvent: function() {
+        breakpointChangedEvent: function () {
             // breakpointChangedEvent: function(newBreakpoint, newLayout) {
             // console.log('BREAKPOINT CHANGED breakpoint=', newBreakpoint, ', layout: ', newLayout)
         },
