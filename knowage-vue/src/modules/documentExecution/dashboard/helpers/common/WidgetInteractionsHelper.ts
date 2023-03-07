@@ -10,9 +10,9 @@ import mainStore from '@/App.store'
 export const getFormattedInteractions = (widget: any) => {
     const interactions = {} as IWidgetInteractions
     const chartType = getChartType(widget)
-    if (['table', 'chart'].includes(widget.type) && chartType !== 'GAUGE') interactions.selection = getFormattedSelection(widget) as IWidgetSelection
-    if (['table', 'html', 'text', 'chart', 'discovery', 'image', 'customchart'].includes(widget.type)) interactions.crossNavigation = getFormattedCrossNavigation(widget) as IWidgetCrossNavigation
-    if (['table', 'chart', 'discovery'].includes(widget.type)) interactions.link = getFormattedLinkInteraction(widget) as IWidgetLinks
+    if (['table', 'chart', 'static-pivot-table'].includes(widget.type) && chartType !== 'GAUGE') interactions.selection = getFormattedSelection(widget) as IWidgetSelection
+    if (['table', 'html', 'text', 'chart', 'discovery', 'image', 'customchart', 'static-pivot-table'].includes(widget.type)) interactions.crossNavigation = getFormattedCrossNavigation(widget) as IWidgetCrossNavigation
+    if (['table', 'chart', 'discovery', 'static-pivot-table'].includes(widget.type)) interactions.link = getFormattedLinkInteraction(widget) as IWidgetLinks
     if (['table', 'html', 'text', 'chart', 'discovery', 'customchart'].includes(widget.type)) interactions.preview = getFormattedPreview(widget) as IWidgetPreview
     if (['chart'].includes(widget.type)) interactions.drilldown = { enabled: false } as IHighchartsDrilldown
     return interactions
@@ -27,6 +27,8 @@ const getFormattedSelection = (widget: any) => {
         return getFormattedTableSelection(widget)
     } else if (widget.type === 'chart') {
         return getFormattedChartSelection()
+    } else if (widget.type === 'static-pivot-table') {
+        return getFormattedPivotTableSelection()
     }
 }
 
@@ -51,8 +53,12 @@ const getFormattedChartSelection = () => {
     const store = mainStore()
     const user = store.getUser()
     // TODO widgetChange
-    return user?.enterprise ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections
+    return user?.enterprise ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections()
     //  return false ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections()
+}
+
+const getFormattedPivotTableSelection = () => {
+    return { enabled: true }
 }
 
 export const getFormattedCrossNavigation = (widget: any) => {
@@ -80,6 +86,7 @@ const getOldCrossNavigation = (widget: any) => {
         case 'image':
         case 'html':
         case 'customchart':
+        case 'static-pivot-table':
             return widget.cross.cross
         default:
             return widget.cross
