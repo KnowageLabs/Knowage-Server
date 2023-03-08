@@ -28,6 +28,7 @@
                 <PivotTableColumnHeadersStyle v-else-if="accordion.type === 'ColumnHeadersStyle'" :widgetModel="widgetModel" :toolbarStyleSettings="descriptor.columnHeadersToolbarStyleOptions" type="columns" />
                 <PivotTableColumnHeadersStyle v-else-if="accordion.type === 'RowsHeadersStyle'" :widgetModel="widgetModel" :toolbarStyleSettings="descriptor.columnHeadersToolbarStyleOptions" type="rows" />
                 <PivotTableConditionalStyle v-else-if="accordion.type === 'Conditions'" :widgetModel="widgetModel"></PivotTableConditionalStyle>
+                <PivotTableWidgetVisualizationType v-else-if="accordion.type === 'VisualizationType'" :widgetModel="widgetModel"></PivotTableWidgetVisualizationType>
             </AccordionTab>
         </Accordion>
     </div>
@@ -60,6 +61,7 @@ import PivotTableTotalsStyle from './style/PivotTableTotalsStyle.vue'
 import PivotTableFieldsStyle from './style/PivotTableFieldsStyle.vue'
 import PivotTableColumnHeadersStyle from './style/PivotTableColumnHeadersStyle.vue'
 import PivotTableConditionalStyle from './conditionalStyle/PivotTableConditionalStyle.vue'
+import PivotTableWidgetVisualizationType from './visualization/PivotTableWidgetVisualizationType.vue'
 
 export default defineComponent({
     name: 'pivot-table-settings-accordion',
@@ -85,7 +87,8 @@ export default defineComponent({
         PivotTableTotalsStyle,
         PivotTableFieldsStyle,
         PivotTableColumnHeadersStyle,
-        PivotTableConditionalStyle
+        PivotTableConditionalStyle,
+        PivotTableWidgetVisualizationType
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

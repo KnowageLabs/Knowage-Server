@@ -64,6 +64,8 @@ export default defineComponent({
                     return this.widgetModel.settings.style.columnHeaders
                 case 'RowsHeadersStyle':
                     return this.widgetModel.settings.style.rowHeaders
+                case 'VisualizationType':
+                    return this.widgetModel.settings.visualization.visualizationTypes
                 default:
                     return null
             }
