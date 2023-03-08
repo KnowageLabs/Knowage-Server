@@ -7,7 +7,6 @@
         "advanced": "Advanced",
         "alias": "Alias",
         "align": "Align",
-        "fields": "Fields",
         "apply": "Apply",
         "attachments": "Attachments",
         "attributes": "Attributes",
@@ -88,6 +87,7 @@
         "exportSuccess": "The download has started in background. You will find the result file in your download page.",
         "extraLarge": "Extra Large",
         "field": "Field",
+        "fields": "Fields",
         "file": "File",
         "fileName": "File Name",
         "filterBy": "Filter by",
@@ -394,23 +394,6 @@
             "launchSelection": "LAUNCH SELECTION"
         },
         "widgetEditor": {
-            "pivot": {
-                "configuration": {
-                    "grandTotal": "Show Totals",
-                    "subtotal": "Show Subtotals",
-                    "grandTotalLabel": "Labels for Totals",
-                    "subTotalLabel": "Labels for SubTotals",
-                    "showFieldPicker": "Show Integrated Field Picker",
-                    "fieldPicker": "Field Picker",
-                    "fieldPanel": "Field Panel"
-                },
-                "style": {
-                    "columnHeaders": "Column Headers",
-                    "totals": "Totals",
-                    "subTotals": "SubTotals",
-                    "fieldHeaders": "Field Headers"
-                }
-            },
             "absolute": "Absolute",
             "accessibility": {
                 "enabelKeyboardNavigation": "Enable Keyboard Navigation",
@@ -747,6 +730,28 @@
             },
             "pagination": "Pagination",
             "percentage": "Percentage",
+            "pivot": {
+                "configuration": {
+                    "fieldPanel": "Field Panel",
+                    "fieldPicker": "Field Picker",
+                    "grandTotal": "Show Totals",
+                    "grandTotalLabel": "Labels for Totals",
+                    "showFieldPicker": "Show Integrated Field Picker",
+                    "subTotalLabel": "Labels for SubTotals",
+                    "subtotal": "Show Subtotals"
+                },
+                "style": {
+                    "columnHeaders": "Column Headers",
+                    "fieldHeaders": "Field Headers",
+                    "rowHeaders": "Row Headers",
+                    "subTotals": "SubTotals",
+                    "totals": "Totals"
+                }
+            },
+            "pivotColumns": "Columns",
+            "pivotData": "Data",
+            "pivotFilters": "Filters",
+            "pivotRows": "Rows",
             "precision": "Precision",
             "prefix": "Prefix",
             "recentlyUsed": "Recently Used",
@@ -772,10 +777,6 @@
             },
             "selectDataset": "Select Dataset",
             "selectedColumns": "Selected Columns",
-            "pivotColumns": "Columns",
-            "pivotRows": "Rows",
-            "pivotData": "Data",
-            "pivotFilters": "Filters",
             "selectorType": {
                 "title": "Selector Type"
             },

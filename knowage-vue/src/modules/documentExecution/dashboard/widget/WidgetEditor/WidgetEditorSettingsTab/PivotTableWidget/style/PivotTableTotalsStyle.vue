@@ -1,5 +1,6 @@
 <template>
     <div v-if="titleStyleModel" class="p-grid p-ai-center kn-flex p-p-4">
+        {{ titleStyleModel }}
         <div class="p-col-12 p-py-4">
             <WidgetEditorStyleToolbar :options="toolbarStyleSettings" :prop-model="titleStyleModel.properties" :disabled="titleStyleDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
         </div>
@@ -8,8 +9,10 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IWidgetStyleToolbarModel, IWidgetTitle } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget, IWidgetStyleToolbarModel } from '@/modules/documentExecution/Dashboard/Dashboard'
 import WidgetEditorStyleToolbar from '../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
+import * as pivotTableDefaultValues from '../../../helpers/pivotTableWidget/PivotTableDefaultValues'
+import { IPivotTotal } from '@/modules/documentExecution/dashboard/interfaces/pivotTable/DashboardPivotTableWidget'
 
 export default defineComponent({
     name: 'widget-title-style',
@@ -21,7 +24,7 @@ export default defineComponent({
     },
     data() {
         return {
-            titleStyleModel: null as IWidgetTitle | null
+            titleStyleModel: null as IPivotTotal | null
         }
     },
     computed: {
@@ -40,14 +43,15 @@ export default defineComponent({
         },
         onStyleToolbarChange(model: IWidgetStyleToolbarModel) {
             if (!this.titleStyleModel) return
+            const defaultTotalsStyle = pivotTableDefaultValues.getDefaultTotals()
             this.titleStyleModel.properties = {
-                'background-color': model['background-color'] ?? 'rgb(137, 158, 175)',
-                color: model.color ?? 'rgb(255, 255, 255)',
-                'justify-content': model['justify-content'] ?? 'center',
-                'font-size': model['font-size'] ?? '14px',
-                'font-family': model['font-family'] ?? '',
-                'font-style': model['font-style'] ?? 'normal',
-                'font-weight': model['font-weight'] ?? ''
+                'background-color': model['background-color'] ?? defaultTotalsStyle.properties['background-color'],
+                color: model.color ?? defaultTotalsStyle.properties.color,
+                'text-align': model['text-align'] ?? defaultTotalsStyle.properties['text-align'],
+                'font-size': model['font-size'] ?? defaultTotalsStyle.properties['font-size'],
+                'font-family': model['font-family'] ?? defaultTotalsStyle.properties['font-family'],
+                'font-style': model['font-style'] ?? defaultTotalsStyle.properties['font-style'],
+                'font-weight': model['font-weight'] ?? defaultTotalsStyle.properties['font-weight']
             }
         }
     }

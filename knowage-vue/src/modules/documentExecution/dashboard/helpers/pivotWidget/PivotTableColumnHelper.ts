@@ -1,4 +1,5 @@
-import { IPivotFields, IWidgetColumn } from '../../Dashboard'
+import { IWidgetColumn } from '../../Dashboard'
+import { IPivotFields } from '../../interfaces/pivotTable/DashboardPivotTableWidget'
 import cryptoRandomString from 'crypto-random-string'
 
 export const getFormattedPivotFields = (widget: any, columnNameIdMap: any) => {

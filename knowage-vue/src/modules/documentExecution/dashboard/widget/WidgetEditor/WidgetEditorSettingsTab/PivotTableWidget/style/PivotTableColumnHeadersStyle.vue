@@ -2,7 +2,7 @@
     <div v-if="headersStyleModel" class="p-grid p-ai-center kn-flex p-p-4">
         {{ headersStyleModel }}
         <div class="p-col-12 p-py-4">
-            <WidgetEditorStyleToolbar :options="toolbarStyleSettings" :prop-model="headersStyleModel.properties" :disabled="titleStyleDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
+            <WidgetEditorStyleToolbar :options="toolbarStyleSettings" :prop-model="headersStyleModel.properties" :disabled="headersStyleDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
         </div>
     </div>
 </template>
@@ -19,7 +19,8 @@ export default defineComponent({
     components: { WidgetEditorStyleToolbar },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
-        toolbarStyleSettings: { type: Array, required: true }
+        toolbarStyleSettings: { type: Array, required: true },
+        type: { type: String, required: true }
     },
     data() {
         return {
@@ -27,7 +28,7 @@ export default defineComponent({
         }
     },
     computed: {
-        titleStyleDisabled() {
+        headersStyleDisabled() {
             return !this.headersStyleModel || !this.headersStyleModel.enabled
         }
     },
@@ -36,11 +37,12 @@ export default defineComponent({
     },
     methods: {
         loadHeadersStyleModel() {
-            if (this.widgetModel?.settings?.style?.columnHeaders) this.headersStyleModel = this.widgetModel.settings.style.columnHeaders
+            if (!this.widgetModel || !this.widgetModel.settings || !this.widgetModel.settings.style) return
+            this.headersStyleModel = this.type === 'columns' ? this.widgetModel.settings.style.columnHeaders : this.widgetModel.settings.style.rowHeaders
         },
         onStyleToolbarChange(model: IWidgetStyleToolbarModel) {
             if (!this.headersStyleModel) return
-            const defaultColumnHeadersStyle = pivotTableDefaultValues.getDefaultColumnHeadersStyle()
+            const defaultColumnHeadersStyle = this.type === 'columns' ? pivotTableDefaultValues.getDefaultColumnHeadersStyle() : pivotTableDefaultValues.getDefaultRowsHeadersStyle()
             this.headersStyleModel.properties = {
                 'background-color': model['background-color'] ?? defaultColumnHeadersStyle.properties['background-color'],
                 color: model.color ?? defaultColumnHeadersStyle.properties.color,

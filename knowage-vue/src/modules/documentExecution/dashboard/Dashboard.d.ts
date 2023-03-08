@@ -1,4 +1,5 @@
 import { IDrillOrderItem, IHighchartsDrilldown } from './interfaces/highcharts/DashboardHighchartsWidget'
+import { IPivotFields } from './interfaces/pivotTable/DashboardPivotTableWidget'
 
 export interface IDashboard {
     sheets: []
@@ -694,7 +695,6 @@ export interface IDashboardOutputParameter {
     type: IDashboardOutputParameterType
 }
 
-// TODO - see if needed, valueCd could be usefull
 interface IDashboardOutputParameterType {
     domainCode: string
     domainName: string
@@ -706,56 +706,3 @@ interface IDashboardOutputParameterType {
     valueName: string
 }
 
-interface IPivotFields {
-    columns: IWidgetColumn[]
-    rows: IWidgetColumn[]
-    data: IWidgetColumn[]
-    filters: IWidgetColumn[]
-}
-
-export interface IPivotRowsConfiguration {
-    grandTotal: boolean
-    subTotal: boolean
-    grandTotalLabel: string
-    subTotalLabel: string
-}
-
-export interface IPivotColumnsConfiguration {
-    grandTotal: boolean
-    subTotal: boolean
-    grandTotalLabel: string
-    subTotalLabel: string
-}
-
-export interface IPivotFieldPicker {
-    enabled: boolean
-    width: number
-    height: number
-}
-
-export interface IPivotFieldPanel {
-    enabled: boolean
-}
-export interface IPivotTooltips {
-    target: string | string[]
-    enabled: boolean
-    prefix: string
-    suffix: string
-    precision: number
-    header: {
-        enabled: boolean
-        text: string
-    }
-}
-export interface IPivotTotal {
-    enabled: boolean
-    properties: {
-        'font-weight': string
-        'font-style': string
-        'font-size': string
-        'font-family': string
-        'justify-content': string
-        color: string
-        'background-color': string
-    }
-}

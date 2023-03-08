@@ -1,5 +1,5 @@
-import { IPivotColumnsConfiguration, IPivotFieldPicker, IPivotRowsConfiguration, IWidgetExports, IPivotFieldPanel } from '../../Dashboard'
-import { IPivotTableConfiguration } from '../../interfaces/pivotTable/DashboardPivotTableWidget'
+import { IWidgetExports } from '../../Dashboard'
+import { IPivotColumnsConfiguration, IPivotFieldPanel, IPivotFieldPicker, IPivotRowsConfiguration, IPivotTableConfiguration } from '../../interfaces/pivotTable/DashboardPivotTableWidget'
 import * as pivotTableDefaultValues from '../../widget/WidgetEditor/helpers/pivotTableWidget/PivotTableDefaultValues'
 
 export const getFormattedConfiguration = (widget: any) => {

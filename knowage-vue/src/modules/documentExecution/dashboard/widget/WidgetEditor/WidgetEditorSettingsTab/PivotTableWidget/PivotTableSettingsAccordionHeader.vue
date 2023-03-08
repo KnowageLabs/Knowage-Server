@@ -63,6 +63,8 @@ export default defineComponent({
                     return this.widgetModel.settings.style.subTotals
                 case 'ColumnHeadersStyle':
                     return this.widgetModel.settings.style.columnHeaders
+                case 'RowsHeadersStyle':
+                    return this.widgetModel.settings.style.rowHeaders
                 default:
                     return null
             }

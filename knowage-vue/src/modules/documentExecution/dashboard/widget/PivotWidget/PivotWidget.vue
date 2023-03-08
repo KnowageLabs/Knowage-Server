@@ -11,13 +11,13 @@
 import { DxPivotGrid, DxFieldChooser, DxFieldPanel } from 'devextreme-vue/pivot-grid'
 import Tooltip from 'devextreme/ui/tooltip'
 import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source'
-
-import { IDashboardDataset, IPivotTooltips, ISelection, IWidget, ITableWidgetColumnStyles } from '../../Dashboard'
+import { IDashboardDataset, ISelection, IWidget, ITableWidgetColumnStyles } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
 import mainStore from '../../../../../App.store'
 import dashboardStore from '../../Dashboard.store'
 
 import { getWidgetStyleByType, stringifyStyleProperties } from '../TableWidget/TableWidgetHelper'
+import { IPivotTooltips } from '../../interfaces/pivotTable/DashboardPivotTableWidget'
 
 export default defineComponent({
     name: 'table-widget',
@@ -230,7 +230,7 @@ export default defineComponent({
             const tooltipsConfig = this.propWidget.settings.tooltips as IPivotTooltips[]
             const parentField = dataFields[cellEvent.cell.dataIndex]
 
-            let cellTooltipConfig = null as unknown as IPivotTooltips
+            let cellTooltipConfig = (null as unknown) as IPivotTooltips
 
             if (parentField?.id && tooltipsConfig.length >= 1) {
                 for (let index = 1; index < tooltipsConfig.length; index++) {
@@ -249,7 +249,7 @@ export default defineComponent({
                 visible: false,
                 showEvent: 'mouseenter',
                 hideEvent: 'mouseleave click',
-                contentTemplate: function (content) {
+                contentTemplate: function(content) {
                     const label = document.createElement('div')
                     if (cellEvent.area == 'data') {
                         label.innerHTML = `<b>${tooltipConfig.prefix} ${cellEvent.cell.text} ${tooltipConfig.suffix}</b>`
@@ -265,7 +265,7 @@ export default defineComponent({
 
         //#region ===================== Field Styles  ====================================================
         setFieldStyles(cellEvent, dataFields) {
-            let fieldStyles = null as unknown as ITableWidgetColumnStyles
+            let fieldStyles = (null as unknown) as ITableWidgetColumnStyles
 
             const parentField = dataFields[cellEvent.cell.dataIndex]
             let fieldStyleString = null as any
