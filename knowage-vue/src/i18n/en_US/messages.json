@@ -405,6 +405,7 @@
                     "fieldPanel": "Field Panel"
                 },
                 "style": {
+                    "columnHeaders": "Column Headers",
                     "totals": "Totals",
                     "subTotals": "SubTotals",
                     "fieldHeaders": "Field Headers"

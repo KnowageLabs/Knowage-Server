@@ -36,6 +36,8 @@ export default defineComponent({
                     return descriptor.fontSizeOptions
                 case 'justify-content':
                     return descriptor.cellAlignmentOptions
+                case 'text-align':
+                    return descriptor.textAlignmentOptions
                 case 'font-family':
                     return descriptor.fontFamilyOptions
                 default:

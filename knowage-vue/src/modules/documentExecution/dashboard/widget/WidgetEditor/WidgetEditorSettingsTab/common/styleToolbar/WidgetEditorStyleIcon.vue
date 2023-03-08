@@ -9,13 +9,7 @@
             <span v-if="option.type === 'font-size'" class="icon-display-value-span p-ml-1">{{ '(' + displayValue + ')' }}</span>
         </div>
         <ColorPicker v-if="['border-color', 'color', 'background-color'].includes(option.type) && colorPickerVisible" class="dashboard-color-picker click-outside" theme="light" :color="color" :sucker-hide="true" @changeColor="changeColor" />
-        <WidgetEditorToolbarContextMenu
-            v-show="(option.type === 'font-size' || option.type === 'justify-content' || option.type === 'font-family') && contextMenuVisible"
-            class="context-menu"
-            :option="option"
-            @selected="onContextItemSelected"
-            @inputChanged="onContextInputChanged"
-        ></WidgetEditorToolbarContextMenu>
+        <WidgetEditorToolbarContextMenu v-show="['font-size', 'justify-content', 'text-align', 'font-family'].includes(option.type) && contextMenuVisible" class="context-menu" :option="option" @selected="onContextItemSelected" @inputChanged="onContextInputChanged"></WidgetEditorToolbarContextMenu>
     </div>
 </template>
 
@@ -60,7 +54,7 @@ export default defineComponent({
     },
     computed: {
         showArrowDown() {
-            return ['font-size', 'justify-content', 'border-color', 'color', 'background-color', 'font-family'].includes(this.option.type)
+            return ['font-size', 'justify-content', 'text-align', 'border-color', 'color', 'background-color', 'font-family'].includes(this.option.type)
         },
         showCircleIcon() {
             return ['border-color', 'color', 'background-color'].includes(this.option.type)
@@ -176,6 +170,7 @@ export default defineComponent({
                     break
                 case 'font-size':
                 case 'justify-content':
+                case 'text-align':
                 case 'font-family':
                     this.changeContextMenuVisibility()
             }
@@ -220,6 +215,9 @@ export default defineComponent({
                     break
                 case 'justify-content':
                     this.model['justify-content'] = item
+                    break
+                case 'text-align':
+                    this.model['text-align'] = item
                     break
                 case 'font-family':
                     this.model['font-family'] = item

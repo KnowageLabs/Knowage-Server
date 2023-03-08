@@ -1,22 +1,4 @@
-import {
-    IPivotColumnsConfiguration,
-    IPivotFieldPicker,
-    IPivotRowsConfiguration,
-    ITableWidgetColumnStyles,
-    ITableWidgetConditionalStyles,
-    ITableWidgetHeadersStyle,
-    IWidgetBackgroundStyle,
-    IWidgetBordersStyle,
-    IWidgetExports,
-    IWidgetInteractions,
-    IWidgetPaddingStyle,
-    IWidgetResponsive,
-    IWidgetRowsStyle,
-    IWidgetShadowsStyle,
-    IWidgetTitle,
-    IPivotFieldPanel,
-    IPivotTotal
-} from '../../Dashboard'
+import { IPivotColumnsConfiguration, IPivotFieldPicker, IPivotRowsConfiguration, ITableWidgetColumnStyles, ITableWidgetConditionalStyles, ITableWidgetHeadersStyle, IWidgetBackgroundStyle, IWidgetBordersStyle, IWidgetExports, IWidgetInteractions, IWidgetPaddingStyle, IWidgetResponsive, IWidgetRowsStyle, IWidgetShadowsStyle, IWidgetTitle, IPivotFieldPanel, IPivotTotal } from '../../Dashboard'
 
 export interface IPivotTableSettings {
     updatable: boolean
@@ -47,4 +29,18 @@ export interface IPivotTableStyle {
     shadows: IWidgetShadowsStyle
     totals: IPivotTotal
     subTotals: IPivotTotal
+    columnHeaders: IPivotTableColumnHeadersStyle
+}
+
+export interface IPivotTableColumnHeadersStyle {
+    enabled: boolean,
+    properties: {
+        "background-color": string,
+        color: string,
+        "font-family": string,
+        "font-size": string,
+        "font-style": string,
+        "font-weight": string,
+        "text-align": string
+    }
 }

@@ -1,7 +1,7 @@
 import { IPivotTableStyle } from '../../interfaces/pivotTable/DashboardPivotTableWidget'
 import { ITableWidgetHeadersStyle, IWidgetRowsStyle } from '../../Dashboard'
 import { getFormattedBorderStyle, getFormattedPaddingStyle, getFormattedShadowsStyle, getFormattedTitleStyle, getFormattedBackgroundStyle } from '../common/WidgetStyleHelper'
-import * as pivotTalbeDefaultValues from '../../widget/WidgetEditor/helpers/pivotTableWidget/PivotTableDefaultValues'
+import * as pivotTableDefaultValues from '../../widget/WidgetEditor/helpers/pivotTableWidget/PivotTableDefaultValues'
 
 export const getFormattedStyle = (widget: any) => {
     return {
@@ -15,7 +15,8 @@ export const getFormattedStyle = (widget: any) => {
         shadows: getFormattedShadowsStyle(widget),
         background: getFormattedBackgroundStyle(widget),
         totals: getFormattedTotalsStyle(widget),
-        subTotals: getFormattedSubTotalsStyle(widget)
+        subTotals: getFormattedSubTotalsStyle(widget),
+        columnHeaders: getFormattedColumnHeadersStyle(widget)
     } as IPivotTableStyle
 }
 
@@ -27,7 +28,7 @@ const getFormattedRowsStyle = (widget: any) => {
 }
 
 const getFormattedFieldsStyle = (widget: any, fieldType) => {
-    const formattedStyles = pivotTalbeDefaultValues.getDefaultFields()
+    const formattedStyles = pivotTableDefaultValues.getDefaultFields()
     if (!widget.content.style || !widget.content.style[fieldType]) return formattedStyles
     else {
         formattedStyles.styles[0].properties = {
@@ -44,7 +45,7 @@ const getFormattedFieldsStyle = (widget: any, fieldType) => {
 }
 
 const getFormattedTotalsStyle = (widget: any) => {
-    const formattedStyles = pivotTalbeDefaultValues.getDefaultTotals()
+    const formattedStyles = pivotTableDefaultValues.getDefaultTotals()
     if (!widget.content.style || !widget.content.style.totals) return formattedStyles
     else {
         formattedStyles.enabled = true
@@ -55,7 +56,7 @@ const getFormattedTotalsStyle = (widget: any) => {
     }
 }
 const getFormattedSubTotalsStyle = (widget: any) => {
-    const formattedStyles = pivotTalbeDefaultValues.getDefaultTotals()
+    const formattedStyles = pivotTableDefaultValues.getDefaultTotals()
     if (!widget.content.style || !widget.content.style.subTotals) return formattedStyles
     else {
         formattedStyles.enabled = true
@@ -63,5 +64,23 @@ const getFormattedSubTotalsStyle = (widget: any) => {
         formattedStyles.properties.color = widget.content.style.subTotals.color
 
         return formattedStyles
+    }
+}
+
+const getFormattedColumnHeadersStyle = (widget: any) => {
+    const defaultColumnHeadersStyle = pivotTableDefaultValues.getDefaultColumnHeadersStyle()
+    if (!widget.content.style || !widget.content.style.crossTabHeaders) return defaultColumnHeadersStyle
+    const oldCrossTabHeaders = widget.content.style.crossTabHeaders
+    return {
+        enabled: true,
+        properties: {
+            "background-color": oldCrossTabHeaders['background-color'] ?? defaultColumnHeadersStyle.properties['background-color'],
+            color: oldCrossTabHeaders.color ?? defaultColumnHeadersStyle.properties.color,
+            "font-family": oldCrossTabHeaders['font-family'] ?? defaultColumnHeadersStyle.properties['font-family'],
+            "font-size": oldCrossTabHeaders['font-size'] ?? defaultColumnHeadersStyle.properties['font-size'],
+            "font-style": oldCrossTabHeaders['font-style'] ?? defaultColumnHeadersStyle.properties['font-style'],
+            "font-weight": oldCrossTabHeaders['font-weight'] ?? defaultColumnHeadersStyle.properties['font-weight'],
+            "text-align": oldCrossTabHeaders['text-align'] ?? defaultColumnHeadersStyle.properties['text-align']
+        }
     }
 }

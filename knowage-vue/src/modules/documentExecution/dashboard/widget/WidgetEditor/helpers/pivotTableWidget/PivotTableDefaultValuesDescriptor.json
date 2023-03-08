@@ -1,4 +1,16 @@
 {
+    "defaultColumnHeadersStyle": {
+        "enabled": true,
+        "properties": {
+            "background-color": "rgb(137, 158, 175)",
+            "color": "rgb(255, 255, 255)",
+            "font-family": "",
+            "font-size": "14px",
+            "font-style": "normal",
+            "font-weight": "",
+            "text-align": "center"
+        }
+    },
     "defaultColumnStyles": {
         "enabled": true,
         "styles": [

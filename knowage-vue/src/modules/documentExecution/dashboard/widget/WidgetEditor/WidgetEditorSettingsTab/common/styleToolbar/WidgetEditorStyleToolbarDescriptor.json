@@ -94,7 +94,8 @@
         "font-style": "fas fa-italic",
         "font-weight": "fas fa-bold",
         "icon": "fas fa-icons",
-        "justify-content": "fas fa-align-left"
+        "justify-content": "fas fa-align-left",
+        "text-align": "fas fa-align-left"
     },
     "iconsList": [
         {
@@ -15666,6 +15667,24 @@
             "label": "zhihu",
             "unicode": "",
             "visible": true
+        }
+    ],
+    "textAlignmentOptions": [
+        {
+            "label": "",
+            "value": ""
+        },
+        {
+            "label": "common.left",
+            "value": "left"
+        },
+        {
+            "label": "common.center",
+            "value": "center"
+        },
+        {
+            "label": "common.right",
+            "value": "right"
         }
     ],
     "tooltips": {

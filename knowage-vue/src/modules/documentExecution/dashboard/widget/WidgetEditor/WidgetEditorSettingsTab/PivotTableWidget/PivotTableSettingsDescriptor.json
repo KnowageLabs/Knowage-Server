@@ -5,6 +5,29 @@
             "value": "all"
         }
     ],
+    "columnHeadersToolbarStyleOptions": [
+        {
+            "type": "font-weight"
+        },
+        {
+            "type": "font-style"
+        },
+        {
+            "type": "font-size"
+        },
+        {
+            "type": "text-align"
+        },
+        {
+            "type": "font-family"
+        },
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
+        }
+    ],
     "settings": {
         "ConditionalStyle": [
             {
@@ -58,6 +81,10 @@
             {
                 "title": "dashboard.widgetEditor.titles.title",
                 "type": "Title"
+            },
+            {
+                "title": "dashboard.widgetEditor.pivot.style.columnHeaders",
+                "type": "ColumnHeadersStyle"
             },
             {
                 "title": "dashboard.widgetEditor.pivot.style.fieldHeaders",

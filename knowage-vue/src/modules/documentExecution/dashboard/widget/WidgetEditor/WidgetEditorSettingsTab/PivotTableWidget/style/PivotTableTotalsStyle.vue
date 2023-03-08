@@ -53,9 +53,3 @@ export default defineComponent({
     }
 })
 </script>
-
-<style lang="scss" scoped>
-#height-input-container {
-    max-width: 200px;
-}
-</style>

@@ -586,7 +586,8 @@ export interface IWidgetStyleToolbarModel {
     'font-style'?: string
     'font-size'?: string
     'font-family'?: string
-    'justify-content'?: string
+    'justify-content'?: string,
+    'text-align'?: string,
     'border-color'?: string
     color?: string
     'background-color'?: string

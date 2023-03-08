@@ -26,6 +26,7 @@
                 <PivotTableTotalsStyle v-else-if="accordion.type === 'SubTotals'" :widgetModel="widgetModel" :toolbarStyleSettings="settingsTabDescriptor.defaultToolbarStyleOptions" :totalType="accordion.type" />
                 <PivotTableFieldsStyle v-else-if="accordion.type === 'FieldsStyle'" :widgetModel="widgetModel" :fieldType="'fields'" />
                 <PivotTableFieldsStyle v-else-if="accordion.type === 'FieldHeadersStyle'" :widgetModel="widgetModel" :fieldType="'fieldHeaders'" />
+                <PivotTableColumnHeadersStyle v-else-if="accordion.type === 'ColumnHeadersStyle'" :widgetModel="widgetModel" :toolbarStyleSettings="descriptor.columnHeadersToolbarStyleOptions" />
             </AccordionTab>
         </Accordion>
     </div>
@@ -57,6 +58,7 @@ import PivotTableFieldPicker from './configuration/PivotTableFieldPicker.vue'
 import PivotTableTooltips from './tooltips/PivotTableTooltips.vue'
 import PivotTableTotalsStyle from './style/PivotTableTotalsStyle.vue'
 import PivotTableFieldsStyle from './style/PivotTableFieldsStyle.vue'
+import PivotTableColumnHeadersStyle from './style/PivotTableColumnHeadersStyle.vue'
 
 export default defineComponent({
     name: 'pivot-table-settings-accordion',
@@ -81,7 +83,8 @@ export default defineComponent({
         PivotTableFieldPicker,
         PivotTableTooltips,
         PivotTableTotalsStyle,
-        PivotTableFieldsStyle
+        PivotTableFieldsStyle,
+        PivotTableColumnHeadersStyle
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

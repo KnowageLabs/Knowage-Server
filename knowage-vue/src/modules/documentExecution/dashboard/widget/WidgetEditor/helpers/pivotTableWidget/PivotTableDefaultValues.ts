@@ -1,4 +1,5 @@
 import { IPivotFieldPanel, IPivotFieldPicker, IPivotTooltips, IPivotTotal, ITableWidgetColumnStyles } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IPivotTableColumnHeadersStyle } from '@/modules/documentExecution/dashboard/interfaces/pivotTable/DashboardPivotTableWidget'
 import deepcopy from 'deepcopy'
 import descriptor from './PivotTableDefaultValuesDescriptor.json'
 
@@ -24,4 +25,8 @@ export const getDefaultTotals = () => {
 
 export const getDefaultFields = () => {
     return deepcopy(descriptor.defaultColumnStyles) as ITableWidgetColumnStyles
+}
+
+export const getDefaultColumnHeadersStyle = () => {
+    return deepcopy(descriptor.defaultColumnHeadersStyle) as IPivotTableColumnHeadersStyle
 }
