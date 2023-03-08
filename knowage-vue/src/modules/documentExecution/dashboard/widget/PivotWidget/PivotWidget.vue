@@ -11,10 +11,11 @@
 import { DxPivotGrid, DxFieldChooser, DxFieldPanel } from 'devextreme-vue/pivot-grid'
 import Tooltip from 'devextreme/ui/tooltip'
 import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source'
-import { IDashboardDataset, ISelection, IWidget, ITableWidgetColumnStyles } from '../../Dashboard'
+import { IDashboardDataset, ISelection, IWidget, ITableWidgetColumnStyles, ITableWidgetConditionalStyles } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
 import mainStore from '../../../../../App.store'
 import dashboardStore from '../../Dashboard.store'
+import { getColumnConditionalStyles } from '../TableWidget/TableWidgetHelper'
 
 import { getWidgetStyleByType, stringifyStyleProperties } from '../TableWidget/TableWidgetHelper'
 import { IPivotTooltips } from '../../interfaces/pivotTable/DashboardPivotTableWidget'
@@ -259,9 +260,10 @@ export default defineComponent({
         },
         //#endregion ===============================================================================================
 
-        //#region ===================== Field Styles  ====================================================
+        //#region ===================== Field Styles: TODO: Possibly split methods? Maybe no need.  ====================================================
         setFieldStyles(cellEvent) {
             const parentField = this.dataFields[cellEvent.cell.dataIndex] as any
+            const conditionalStyles = this.propWidget.settings.conditionalStyles as ITableWidgetConditionalStyles
             let fieldStyles = null as unknown as ITableWidgetColumnStyles
             let fieldStyleString = null as any
 
@@ -270,10 +272,19 @@ export default defineComponent({
 
             if (!fieldStyles.enabled || this.isTotalCell(cellEvent) || cellEvent.area == 'row' || !parentField) return
 
+            //All Field Styles
             fieldStyleString = stringifyStyleProperties(fieldStyles.styles[0].properties)
-            fieldStyles.styles.forEach((fieldStyle) => {
-                if (fieldStyle.target.includes(parentField.id)) fieldStyleString = stringifyStyleProperties(fieldStyle.properties)
-            })
+
+            //Specific Field Styles
+            const fieldStyle = fieldStyles.styles.find((fieldStyle) => fieldStyle.target.includes(parentField.id))
+            if (fieldStyle) fieldStyleString = stringifyStyleProperties(fieldStyle.properties)
+
+            //Conditional Styles
+            if (cellEvent.area == 'data' && conditionalStyles.enabled) {
+                const cellConditionalStyle = getColumnConditionalStyles(this.propWidget, parentField?.id, cellEvent.cell.text)
+                if (cellConditionalStyle) fieldStyleString = stringifyStyleProperties(cellConditionalStyle)
+                if (cellConditionalStyle && cellConditionalStyle.icon) cellEvent.cellElement.innerHTML += `<i class="${cellConditionalStyle.icon} p-ml-1"/>`
+            }
 
             cellEvent.cellElement.style = fieldStyleString
         },
@@ -305,7 +316,7 @@ export default defineComponent({
             console.group('CELL CLICKED ---------------------', cellEvent.cellElement)
             console.log('event', cellEvent)
             console.log('pivotFields', this.pivotFields)
-            console.log('event', cellEvent)
+            console.log('this.dataFields[cellEvent.cell.dataIndex]', this.dataFields[cellEvent.cell.dataIndex])
             console.groupEnd()
         }
 
