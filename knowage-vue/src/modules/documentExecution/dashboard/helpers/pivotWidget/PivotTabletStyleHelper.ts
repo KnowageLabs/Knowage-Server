@@ -16,7 +16,8 @@ export const getFormattedStyle = (widget: any) => {
         background: getFormattedBackgroundStyle(widget),
         totals: getFormattedTotalsStyle(widget),
         subTotals: getFormattedSubTotalsStyle(widget),
-        columnHeaders: getFormattedColumnHeadersStyle(widget)
+        columnHeaders: getFormattedColumnHeadersStyle(widget),
+        rowHeaders: pivotTableDefaultValues.getDefaultRowsHeadersStyle()
     } as IPivotTableStyle
 }
 

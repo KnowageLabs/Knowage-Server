@@ -30,3 +30,8 @@ export const getDefaultFields = () => {
 export const getDefaultColumnHeadersStyle = () => {
     return deepcopy(descriptor.defaultColumnHeadersStyle) as IPivotTableColumnHeadersStyle
 }
+
+export const getDefaultRowsHeadersStyle = () => {
+    return deepcopy(descriptor.defaultRowsHeadersStyle) as IPivotTableColumnHeadersStyle
+}
+

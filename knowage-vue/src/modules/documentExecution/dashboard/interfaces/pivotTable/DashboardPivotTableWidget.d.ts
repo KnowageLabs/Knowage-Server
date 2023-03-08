@@ -29,7 +29,8 @@ export interface IPivotTableStyle {
     shadows: IWidgetShadowsStyle
     totals: IPivotTotal
     subTotals: IPivotTotal
-    columnHeaders: IPivotTableColumnHeadersStyle
+    columnHeaders: IPivotTableColumnHeadersStyle,
+    rowHeaders: IPivotTableColumnHeadersStyle
 }
 
 export interface IPivotTableColumnHeadersStyle {
