@@ -1,4 +1,4 @@
-import { IPivotColumnsConfiguration, IPivotFieldPicker, IPivotRowsConfiguration, ITableWidgetColumnStyles, ITableWidgetConditionalStyles, ITableWidgetHeadersStyle, IWidgetBackgroundStyle, IWidgetBordersStyle, IWidgetExports, IWidgetInteractions, IWidgetPaddingStyle, IWidgetResponsive, IWidgetRowsStyle, IWidgetShadowsStyle, IWidgetTitle, IPivotFieldPanel, IPivotTotal } from '../../Dashboard'
+import { ITableWidgetColumnStyles, ITableWidgetConditionalStyles, ITableWidgetHeadersStyle, IWidgetBackgroundStyle, IWidgetBordersStyle, IWidgetExports, IWidgetInteractions, IWidgetPaddingStyle, IWidgetResponsive, IWidgetRowsStyle, IWidgetShadowsStyle, IWidgetTitle, IWidgetColumn } from '../../Dashboard'
 
 export interface IPivotTableSettings {
     updatable: boolean
@@ -42,5 +42,59 @@ export interface IPivotTableColumnHeadersStyle {
         "font-style": string,
         "font-weight": string,
         "text-align": string
+    }
+}
+
+export interface IPivotFields {
+    columns: IWidgetColumn[]
+    rows: IWidgetColumn[]
+    data: IWidgetColumn[]
+    filters: IWidgetColumn[]
+}
+
+export interface IPivotRowsConfiguration {
+    grandTotal: boolean
+    subTotal: boolean
+    grandTotalLabel: string
+    subTotalLabel: string
+}
+
+export interface IPivotColumnsConfiguration {
+    grandTotal: boolean
+    subTotal: boolean
+    grandTotalLabel: string
+    subTotalLabel: string
+}
+
+export interface IPivotFieldPicker {
+    enabled: boolean
+    width: number
+    height: number
+}
+
+export interface IPivotFieldPanel {
+    enabled: boolean
+}
+export interface IPivotTooltips {
+    target: string | string[]
+    enabled: boolean
+    prefix: string
+    suffix: string
+    precision: number
+    header: {
+        enabled: boolean
+        text: string
+    }
+}
+export interface IPivotTotal {
+    enabled: boolean
+    properties: {
+        'font-weight': string
+        'font-style': string
+        'font-size': string
+        'font-family': string
+        'justify-content': string
+        color: string
+        'background-color': string
     }
 }
