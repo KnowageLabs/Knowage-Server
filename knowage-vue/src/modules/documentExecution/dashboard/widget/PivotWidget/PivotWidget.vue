@@ -172,8 +172,8 @@ export default defineComponent({
 
         //#region ===================== Cell Config (Totals, Stlye, Conditionals) ====================================================
         setCellConfiguration(event) {
-            const pivotFields = this.dataSource.fields()
-            const dataFields = pivotFields.filter((field) => field.area == 'data')
+            // const pivotFields = this.dataSource.fields()
+            // const dataFields = pivotFields.filter((field) => field.area == 'data')
 
             // if (event.cell.text == 'UNITS_ORDERED') {
             //     console.group('cellPrep ---------------------', event.cellElement)
@@ -191,17 +191,20 @@ export default defineComponent({
             // }
 
             this.setTotals(event)
-            this.setTooltips(event, dataFields)
-            this.setFieldStyles(event, dataFields)
+            this.setTooltips(event)
+            this.setFieldStyles(event)
             this.setHeaderStyles(event)
         },
         //#endregion ===============================================================================================
 
         //#region ===================== Totals Config (Sub, Grand, Style) ====================================================
         setTotals(cellEvent) {
-            if (cellEvent.area === 'column') this.setTotalLabels(cellEvent, 'columns')
-            if (cellEvent.area === 'row') this.setTotalLabels(cellEvent, 'rows')
             this.setTotalStyles(cellEvent)
+
+            if (cellEvent.area === 'data') return
+
+            const fieldType = cellEvent.area === 'column' ? 'columns' : 'rows'
+            this.setTotalLabels(cellEvent, fieldType)
         },
         setTotalLabels(cellEvent, fieldType) {
             const columnConfig = this.propWidget.settings.configuration[fieldType]
@@ -211,33 +214,26 @@ export default defineComponent({
         },
         setTotalStyles(cellEvent) {
             let totalType = null as any
-            if (cellEvent.cell.type === 'GT' || cellEvent.cell.rowType === 'GT' || cellEvent.cell.columnType === 'GT') totalType = 'totals'
-            else if (cellEvent.cell.type === 'T' || cellEvent.cell.rowType === 'T' || cellEvent.cell.columnType === 'T') totalType = 'subTotals'
+            const cell = cellEvent.cell
+
+            if (cell.type === 'GT' || cell.rowType === 'GT' || cell.columnType === 'GT') totalType = 'totals'
+            else if (cell.type === 'T' || cell.rowType === 'T' || cell.columnType === 'T') totalType = 'subTotals'
 
             const styleConfig = getWidgetStyleByType(this.propWidget, totalType)
-            if (styleConfig != '') {
-                //TODO: justify-content ne moze da radi u ovom slucaju, mora na style toolbar da se promeni u text-align
-                // cellEvent.cellElement.style = styleConfig + 'text-align:left !important;'
-                cellEvent.cellElement.style = styleConfig
-            }
+            cellEvent.cellElement.style = styleConfig
         },
         //#endregion ===============================================================================================
 
         //#region ===================== Tooltips Config  ====================================================
         //Tooltips - we cannot target custom headers if they are not in data fields...we have no way of knowing which field they belong.
 
-        setTooltips(cellEvent, dataFields) {
+        setTooltips(cellEvent) {
             const tooltipsConfig = this.propWidget.settings.tooltips as IPivotTooltips[]
-            const parentField = dataFields[cellEvent.cell.dataIndex]
+            const parentField = this.dataFields[cellEvent.cell.dataIndex] as any
 
             let cellTooltipConfig = null as unknown as IPivotTooltips
-
-            if (parentField?.id && tooltipsConfig.length >= 1) {
-                for (let index = 1; index < tooltipsConfig.length; index++) {
-                    const tooltipConfig = tooltipsConfig[index]
-                    if (tooltipConfig.target.includes(parentField.id)) cellTooltipConfig = tooltipConfig
-                }
-            } else if (!cellTooltipConfig && tooltipsConfig[0].enabled) cellTooltipConfig = tooltipsConfig[0]
+            if (parentField?.id && tooltipsConfig.length >= 1) cellTooltipConfig = tooltipsConfig.find((tooltipConfig) => tooltipConfig.target.includes(parentField.id)) as IPivotTooltips
+            else if (tooltipsConfig[0].enabled) cellTooltipConfig = tooltipsConfig[0] as IPivotTooltips
 
             if (cellTooltipConfig) this.createFieldTooltips(cellEvent, cellTooltipConfig)
         },
@@ -264,10 +260,9 @@ export default defineComponent({
         //#endregion ===============================================================================================
 
         //#region ===================== Field Styles  ====================================================
-        setFieldStyles(cellEvent, dataFields) {
+        setFieldStyles(cellEvent) {
+            const parentField = this.dataFields[cellEvent.cell.dataIndex] as any
             let fieldStyles = null as unknown as ITableWidgetColumnStyles
-
-            const parentField = dataFields[cellEvent.cell.dataIndex]
             let fieldStyleString = null as any
 
             if (cellEvent.area == 'data') fieldStyles = this.propWidget.settings.style.fields
