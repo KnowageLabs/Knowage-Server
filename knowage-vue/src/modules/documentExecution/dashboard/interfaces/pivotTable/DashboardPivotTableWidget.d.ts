@@ -93,7 +93,7 @@ export interface IPivotTotal {
         'font-style': string
         'font-size': string
         'font-family': string
-        'justify-content': string
+        'text-align': string
         color: string
         'background-color': string
     }
