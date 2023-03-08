@@ -1,13 +1,15 @@
 import { IWidget } from '../../Dashboard'
 import { IPivotTableWidgetConditionalStyle } from '../../interfaces/pivotTable/DashboardPivotTableWidget'
 import * as pivotTableDefaultValues from '../../widget/WidgetEditor/helpers/pivotTableWidget/PivotTableDefaultValues'
+import { getColumnId } from './PivotTableCompatibilityHelper'
 
-export const getSettingsFromPivotTableWidgetColumns = (formattedWidget: IWidget, widget: any) => {
-    getSettingsFromMeasureColumns(formattedWidget, widget)
+export const getSettingsFromPivotTableWidgetColumns = (formattedWidget: IWidget, widget: any, columnNameIdMap: any) => {
+    getSettingsFromMeasureColumns(formattedWidget, widget, columnNameIdMap)
 
 }
 
-const getSettingsFromMeasureColumns = (formattedWidget: IWidget, widget: any) => {
+const getSettingsFromMeasureColumns = (formattedWidget: IWidget, widget: any, columnNameIdMap: any) => {
+    console.log('----- columnNameIdMap: ', columnNameIdMap)
     for (let i = 0; i < widget.content.crosstabDefinition.measures.length; i++) {
         const tempColumn = widget.content.crosstabDefinition.measures[i]
         console.log('----------------- TEMP COLUMN: ', tempColumn)
@@ -130,7 +132,7 @@ const getConditionalStyleFromColumn = (formattedWidget: IWidget, tempColumn: any
     const defaultConditionalStyle = pivotTableDefaultValues.getDefaultConditionalStyle()
     tempColumn.ranges.forEach((range: any) => {
         const tempConditionalStyle = {
-            target: tempColumn.id,
+            target: getColumnId(tempColumn.id),
             condition: { operator: range.operator, value: range.value },
             properties: {
                 'text-align': defaultConditionalStyle.properties['text-align'],

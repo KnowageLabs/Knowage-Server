@@ -90,5 +90,17 @@
             "font-weight": "",
             "text-align": ""
         }
+    },
+    "defaultVisualisationSettings": {
+        "visualizationTypes": {
+            "enabled": false,
+            "types": [
+                {
+                    "prefix": "",
+                    "suffix": "",
+                    "target": "all"
+                }
+            ]
+        }
     }
 }

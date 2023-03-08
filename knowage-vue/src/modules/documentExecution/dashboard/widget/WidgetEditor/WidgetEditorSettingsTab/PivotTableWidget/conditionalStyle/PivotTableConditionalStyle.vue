@@ -21,7 +21,7 @@
                 <div class="p-grid p-col-10 p-ai-center">
                     <div class="p-sm-12 p-md-6 p-lg-6 p-d-flex p-flex-column">
                         <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
-                        <Dropdown v-model="conditionalStyle.target" class="kn-material-input" :options="widgetModel.fields?.data ?? []" option-label="alias" option-value="columnName" :disabled="conditionalStylesDisabled"> </Dropdown>
+                        <Dropdown v-model="conditionalStyle.target" class="kn-material-input" :options="widgetModel.fields?.data ?? []" option-label="alias" option-value="id" :disabled="conditionalStylesDisabled"> </Dropdown>
                     </div>
                     <div class="p-sm-12 p-md-2 p-lg-2 p-d-flex p-flex-column">
                         <label class="kn-material-input-label"> {{ $t('common.operator') }}</label>

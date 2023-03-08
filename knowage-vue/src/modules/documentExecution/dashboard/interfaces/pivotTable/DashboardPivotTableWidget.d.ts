@@ -5,6 +5,7 @@ export interface IPivotTableSettings {
     clickable: boolean
     conditionalStyles: IPivotTableWidgetConditionalStyles
     configuration: IPivotTableConfiguration
+    visualization: IPivotTableWidgetVisualization
     interactions: IWidgetInteractions
     style: IPivotTableStyle
     responsive: IWidgetResponsive
@@ -13,6 +14,21 @@ export interface IPivotTableSettings {
 export interface IPivotTableWidgetConditionalStyles {
     enabled: boolean
     conditions: IPivotTableWidgetConditionalStyle[]
+}
+
+export interface IPivotTableWidgetVisualization {
+    visualizationTypes: IPivotTableWidgetVisualizationTypes
+}
+
+export interface IPivotTableWidgetVisualizationTypes {
+    enabled: boolean
+    types: IPivotTableWidgetVisualizationType[]
+}
+
+export interface IPivotTableWidgetVisualizationType {
+    target: string | string[]
+    prefix: string
+    suffix: string
 }
 
 export interface IPivotTableWidgetConditionalStyle {

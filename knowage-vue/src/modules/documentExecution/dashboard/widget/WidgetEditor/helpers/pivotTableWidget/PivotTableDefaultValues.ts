@@ -1,5 +1,5 @@
 import { ITableWidgetColumnStyles } from '@/modules/documentExecution/dashboard/Dashboard'
-import { IPivotFieldPanel, IPivotFieldPicker, IPivotTableColumnHeadersStyle, IPivotTableWidgetConditionalStyle, IPivotTooltips, IPivotTotal } from '@/modules/documentExecution/dashboard/interfaces/pivotTable/DashboardPivotTableWidget'
+import { IPivotFieldPanel, IPivotFieldPicker, IPivotTableColumnHeadersStyle, IPivotTableWidgetConditionalStyle, IPivotTableWidgetVisualization, IPivotTooltips, IPivotTotal } from '@/modules/documentExecution/dashboard/interfaces/pivotTable/DashboardPivotTableWidget'
 import deepcopy from 'deepcopy'
 import descriptor from './PivotTableDefaultValuesDescriptor.json'
 
@@ -37,4 +37,8 @@ export const getDefaultRowsHeadersStyle = () => {
 
 export const getDefaultConditionalStyle = () => {
     return deepcopy(descriptor.defaultConditionalStyle) as IPivotTableWidgetConditionalStyle
+}
+
+export const getDefaultVisualisationSettings = () => {
+    return deepcopy(descriptor.defaultVisualisationSettings) as IPivotTableWidgetVisualization
 }

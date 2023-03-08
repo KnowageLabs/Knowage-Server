@@ -4,7 +4,7 @@ import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/co
 // import { getFiltersForColumns } from '../DashboardBackwardCompatibilityHelper'
 import { getFormattedInteractions } from '../common/WidgetInteractionsHelper'
 import { getFormattedPivotFields } from './PivotTableColumnHelper'
-import { IPivotTableConfiguration, IPivotTableSettings, IPivotTableStyle, IPivotTableWidgetConditionalStyles, IPivotTooltips } from '../../interfaces/pivotTable/DashboardPivotTableWidget'
+import { IPivotTableConfiguration, IPivotTableSettings, IPivotTableStyle, IPivotTableWidgetConditionalStyles, IPivotTableWidgetVisualization, IPivotTooltips } from '../../interfaces/pivotTable/DashboardPivotTableWidget'
 import { getSettingsFromPivotTableWidgetColumns } from './PivotTableColumnSettingsHelper'
 import { getFormattedConfiguration } from './PivotTableConfigurationHelper'
 import { getFormattedStyle } from './PivotTabletStyleHelper'
@@ -29,7 +29,7 @@ export const formatPivotTabletWidget = (widget: any) => {
     //TODO: Rework this method
     // getFiltersForColumns(formattedWidget, widget)
 
-    getSettingsFromPivotTableWidgetColumns(formattedWidget, widget)
+    getSettingsFromPivotTableWidgetColumns(formattedWidget, widget, columnNameIdMap)
 
     console.log('----------- FORMATTED WIDGET: ', formattedWidget)
     return formattedWidget
@@ -40,6 +40,7 @@ const getFormattedWidgetSettings = (widget: any) => {
         updatable: widget.updateble,
         clickable: widget.cliccable,
         conditionalStyles: getFormattedConditionalStyles() as IPivotTableWidgetConditionalStyles,
+        visualization: pivotTableDefaultValues.getDefaultVisualisationSettings() as IPivotTableWidgetVisualization,
         configuration: getFormattedConfiguration(widget) as IPivotTableConfiguration,
         interactions: getFormattedInteractions(widget) as IWidgetInteractions,
         style: getFormattedStyle(widget) as IPivotTableStyle,
