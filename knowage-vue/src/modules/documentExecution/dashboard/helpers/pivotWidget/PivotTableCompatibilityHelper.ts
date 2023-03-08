@@ -29,7 +29,7 @@ export const formatPivotTabletWidget = (widget: any) => {
     //TODO: Rework this method
     // getFiltersForColumns(formattedWidget, widget)
 
-    getSettingsFromPivotTableWidgetColumns(formattedWidget, widget, columnNameIdMap)
+    getSettingsFromPivotTableWidgetColumns(formattedWidget, widget)
 
     console.log('----------- FORMATTED WIDGET: ', formattedWidget)
     return formattedWidget

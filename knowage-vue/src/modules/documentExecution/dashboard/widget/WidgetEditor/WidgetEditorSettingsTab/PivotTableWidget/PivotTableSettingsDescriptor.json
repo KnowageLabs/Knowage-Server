@@ -128,6 +128,12 @@
                 "title": "dashboard.widgetEditor.tooltips.title",
                 "type": "Tooltips"
             }
+        ],
+        "Visualization": [
+            {
+                "title": "dashboard.widgetEditor.visualizationType.title",
+                "type": "VisualizationType"
+            }
         ]
     },
     "settingsListOptions": [
@@ -135,6 +141,11 @@
             "icon": "fa fa-cogs",
             "label": "dashboard.widgetEditor.configuration",
             "value": "Configuration"
+        },
+        {
+            "icon": "pi pi-eye",
+            "label": "dashboard.widgetEditor.visualization",
+            "value": "Visualization"
         },
         {
             "icon": "fa fa-paint-brush",
