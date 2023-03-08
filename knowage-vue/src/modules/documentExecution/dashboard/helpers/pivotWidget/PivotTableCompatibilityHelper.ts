@@ -39,7 +39,7 @@ const getFormattedWidgetSettings = (widget: any) => {
     const formattedSettings = {
         updatable: widget.updateble,
         clickable: widget.cliccable,
-        conditionalStyles: getFormattedConditionalStyles() as IPivotTableWidgetConditionalStyles,
+        conditionalStyles: pivotTableDefaultValues.getDefaultConditionalStyles() as IPivotTableWidgetConditionalStyles,
         visualization: pivotTableDefaultValues.getDefaultVisualisationSettings() as IPivotTableWidgetVisualization,
         configuration: getFormattedConfiguration(widget) as IPivotTableConfiguration,
         interactions: getFormattedInteractions(widget) as IWidgetInteractions,
@@ -48,11 +48,6 @@ const getFormattedWidgetSettings = (widget: any) => {
         tooltips: pivotTableDefaultValues.getDefaultTooltips() as IPivotTooltips[]
     } as IPivotTableSettings
     return formattedSettings
-}
-
-const getFormattedConditionalStyles = () => {
-    const formattedStyles = { enabled: false, conditions: [] } as IPivotTableWidgetConditionalStyles
-    return formattedStyles
 }
 
 export const getColumnId = (widgetColumnName: string) => {

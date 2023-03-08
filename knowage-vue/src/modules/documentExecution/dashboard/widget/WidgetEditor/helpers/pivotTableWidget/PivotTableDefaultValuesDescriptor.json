@@ -46,6 +46,10 @@
         },
         "target": ""
     },
+    "defaultConditionalStyles": {
+        "conditions": [],
+        "enabled": false
+    },
     "defaultFieldPanel": {
         "enabled": false
     },
