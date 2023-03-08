@@ -49,7 +49,14 @@ export default defineComponent({
             fieldPanelConfig: {} as any
         }
     },
-    computed: {},
+    computed: {
+        dataFields() {
+            return this.dataSource.fields().filter((field) => field.area == 'data')
+        },
+        pivotFields() {
+            return this.dataSource.fields()
+        }
+    },
     watch: {
         propWidget: {
             handler() {
@@ -170,7 +177,7 @@ export default defineComponent({
 
             // if (event.cell.text == 'UNITS_ORDERED') {
             //     console.group('cellPrep ---------------------', event.cellElement)
-            //     console.log('CELL EVENT', event)
+            // console.log('CELL EVENT', event)
             //     console.log('CELL EVENT', pivotFields[event.cell.dataSourceIndex])
             //     console.groupEnd()
             // }
@@ -186,6 +193,7 @@ export default defineComponent({
             this.setTotals(event)
             this.setTooltips(event, dataFields)
             this.setFieldStyles(event, dataFields)
+            this.setHeaderStyles(event)
         },
         //#endregion ===============================================================================================
 
@@ -277,12 +285,31 @@ export default defineComponent({
         isTotalCell(cellEvent) {
             return cellEvent.cell.type === 'GT' || cellEvent.cell.rowType === 'GT' || cellEvent.cell.columnType === 'GT' || cellEvent.cell.type === 'T' || cellEvent.cell.rowType === 'T' || cellEvent.cell.columnType === 'T'
         },
+        //#endregion ===============================================================================================
 
+        //#region ===================== Header Styles  ====================================================
+        setHeaderStyles(cellEvent) {
+            // let headerStyles = null as unknown as IPivotTableColumnHeadersStyle
+            let headerStyles = null as any
+
+            const parentField = this.dataFields[cellEvent.cell.dataIndex]
+            let headerStylestring = null as any
+
+            if (cellEvent.area == 'column') headerStyles = this.propWidget.settings.style.columnHeaders
+            else if (cellEvent.area == 'row') headerStyles = this.propWidget.settings.style.columnHeaders //TODO: Change to rowHeaders when implemented
+
+            if (cellEvent.area == 'data' || this.isTotalCell(cellEvent) || parentField || !headerStyles.enabled) return
+
+            headerStylestring = stringifyStyleProperties(headerStyles.properties)
+            cellEvent.cellElement.style = headerStylestring
+        },
         //#endregion ===============================================================================================
 
         //#region ===================== Cell Click Events  ====================================================
         onCellClicked(cellEvent) {
             console.group('CELL CLICKED ---------------------', cellEvent.cellElement)
+            console.log('event', cellEvent)
+            console.log('pivotFields', this.pivotFields)
             console.log('event', cellEvent)
             console.groupEnd()
         }
