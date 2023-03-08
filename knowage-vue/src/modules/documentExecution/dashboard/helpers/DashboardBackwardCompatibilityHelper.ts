@@ -224,7 +224,7 @@ export const formatWidget = (widget: any, formattedModel: IDashboard, user: any,
             formattedWidget = formatCustomChartWidget(widget)
             break
         case 'static-pivot-table':
-            formattedWidget = formatPivotTabletWidget(widget, formattedModel, drivers)
+            formattedWidget = formatPivotTabletWidget(widget)
     }
 
     return formattedWidget
