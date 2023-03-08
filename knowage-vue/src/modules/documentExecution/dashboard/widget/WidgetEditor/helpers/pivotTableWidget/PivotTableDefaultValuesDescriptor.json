@@ -40,7 +40,7 @@
     "defaultRowsHeadersStyle": {
         "enabled": true,
         "properties": {
-            "background-color": "rgb(137, 158, 175)",
+            "background-color": "rgb(59, 103, 140)",
             "color": "rgb(255, 255, 255)",
             "font-family": "",
             "font-size": "14px",

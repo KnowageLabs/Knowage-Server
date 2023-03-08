@@ -230,7 +230,7 @@ export default defineComponent({
             const tooltipsConfig = this.propWidget.settings.tooltips as IPivotTooltips[]
             const parentField = dataFields[cellEvent.cell.dataIndex]
 
-            let cellTooltipConfig = (null as unknown) as IPivotTooltips
+            let cellTooltipConfig = null as unknown as IPivotTooltips
 
             if (parentField?.id && tooltipsConfig.length >= 1) {
                 for (let index = 1; index < tooltipsConfig.length; index++) {
@@ -249,7 +249,7 @@ export default defineComponent({
                 visible: false,
                 showEvent: 'mouseenter',
                 hideEvent: 'mouseleave click',
-                contentTemplate: function(content) {
+                contentTemplate: function (content) {
                     const label = document.createElement('div')
                     if (cellEvent.area == 'data') {
                         label.innerHTML = `<b>${tooltipConfig.prefix} ${cellEvent.cell.text} ${tooltipConfig.suffix}</b>`
@@ -265,7 +265,7 @@ export default defineComponent({
 
         //#region ===================== Field Styles  ====================================================
         setFieldStyles(cellEvent, dataFields) {
-            let fieldStyles = (null as unknown) as ITableWidgetColumnStyles
+            let fieldStyles = null as unknown as ITableWidgetColumnStyles
 
             const parentField = dataFields[cellEvent.cell.dataIndex]
             let fieldStyleString = null as any
@@ -296,7 +296,7 @@ export default defineComponent({
             let headerStylestring = null as any
 
             if (cellEvent.area == 'column') headerStyles = this.propWidget.settings.style.columnHeaders
-            else if (cellEvent.area == 'row') headerStyles = this.propWidget.settings.style.columnHeaders //TODO: Change to rowHeaders when implemented
+            else if (cellEvent.area == 'row') headerStyles = this.propWidget.settings.style.rowHeaders
 
             if (cellEvent.area == 'data' || this.isTotalCell(cellEvent) || parentField || !headerStyles.enabled) return
 
