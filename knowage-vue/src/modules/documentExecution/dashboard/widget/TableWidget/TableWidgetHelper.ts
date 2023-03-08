@@ -50,6 +50,8 @@ export const getColumnConditionalStyles = (propWidget: IWidget, colId: string, v
                     styleString = Object.entries(columnConditionalStyles[i].properties)
                         .map(([k, v]) => `${k}:${v}`)
                         .join(';')
+                } else if (!returnString) {
+                    styleString = columnConditionalStyles[i].properties
                 }
                 break
             }
